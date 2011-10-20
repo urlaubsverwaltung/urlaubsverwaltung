@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+        xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+			    http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
+                            http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.3.xsd">
+                                       
+    <bean id="saltSource" class="org.synyx.ausbildung.adressbuch.security.UserSaltSource" /> 
+    <bean id="passwordEncoder" class="org.springframework.security.authentication.encoding.Md5PasswordEncoder" />
+                                       
+    <bean id="authenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+        <property name="userDetailsService" ref="userService" />
+        <property name="saltSource" ref="saltSource" />
+        <property name="passwordEncoder" ref="passwordEncoder" />
+    </bean>
+    
+    <security:global-method-security jsr250-annotations="enabled" />
+    
+<!-- Anpassen!  -->
+    <security:http>
+         <security:intercept-url pattern="/web/login" filters="none"/>
+         <security:intercept-url pattern="/web/success" filters="none"/>
+         <security:intercept-url pattern="/web/registration" filters="none"/>
+         <security:intercept-url pattern="/css/**" filters="none"/>
+         <security:intercept-url pattern="/images/**" filters="none"/>
+         <security:intercept-url pattern="/js/**" filters="none"/>
+         <security:intercept-url pattern="/stylesheetadressbuch.css" filters="none"/>
+         <security:intercept-url pattern="/**" access="ROLE_USER"/>
+         <security:form-login login-page="/web/login" always-use-default-target="false" default-target-url="/web/adressbuch" login-processing-url="/web/j_spring_security_check"/>
+         <security:logout logout-success-url="/web/login"/>
+     </security:http>
+    
+    <security:authentication-manager alias="authenticationManager">
+        <security:authentication-provider ref="authenticationProvider" />
+    </security:authentication-manager>    
+
+</beans>

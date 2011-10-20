@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:repository="http://www.springframework.org/schema/data/jpa"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:tx="http://www.springframework.org/schema/tx" 
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	                   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+                           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+                           http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
+                           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+                           http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd"> 
+
+<!--
+    Document   : applicationContext.xml
+    Created on : 31. August 2011, 14:48
+    Author     : aljona
+    Description:
+        Purpose of the document follows.
+-->
+
+<context:annotation-config/>
+
+<tx:annotation-driven/>
+
+<import resource="infrastructure.xml"/>
+<import resource="security.xml"/>
+
+<repository:repositories base-package="org.synyx.urlaubsverwaltung.**.dao" />
+
+<!-- Hier Services einfuegen!
+
+<bean id="userService" class="org.synyx.ausbildung.adressbuch.service.UserServiceImpl" />
+<bean id="adressbuchService" class="org.synyx.ausbildung.adressbuch.service.AdressbuchServiceImpl" />
+<bean id="personService" class="org.synyx.ausbildung.adressbuch.service.PersonServiceImpl" />
+<bean id="adresseService" class="org.synyx.ausbildung.adressbuch.service.AdresseServiceImpl" />
+<bean id="kontaktService" class="org.synyx.ausbildung.adressbuch.service.KontaktServiceImpl" />-->
+
+
+</beans>
+
