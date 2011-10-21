@@ -1,112 +1,131 @@
 package org.synyx.urlaubsverwaltung.domain;
 
-import org.springframework.data.jpa.domain.AbstractPersistable;
-
 import javax.persistence.Entity;
 
+import org.springframework.data.jpa.domain.AbstractPersistable;
 
 /**
- * @author  aljona
+ * @author aljona
  */
 
 @Entity
 public class Person extends AbstractPersistable<Integer> {
 
-    private String lastName;
+	private static final long serialVersionUID = 1L;
 
-    private String firstName;
+	private String lastName;
 
-    private String email;
+	private String firstName;
 
-    // residual vacation days of last year
-    private Integer residualVacationDays;
+	private String email;
 
-    // vacation days
-    private Integer vacationDays;
+	// vacation days
+	private Integer vacationDays;
 
-    // used vacation days of this year
-    private Integer usedVacationDays;
+	// amount of remaining days
+	private Integer remainingVacationDays;
 
-//    eventuell fuer die Mitarbeiter-Liste - nur als Idee bisher
-//    private Image userPicture;
+	// residual vacation days of last year
+	private Integer restUrlaub;
 
-    public String getEmail() {
+	// used vacation days of this year
+	private Integer usedVacationDays;
 
-        return email;
-    }
+	private Role role;
 
+	// eventuell fuer die Mitarbeiter-Liste - nur als Idee bisher
+	// private Image userPicture;
 
-    public void setEmail(String email) {
+	public String getEmail() {
 
-        this.email = email;
-    }
+		return email;
+	}
 
+	public void setEmail(String email) {
 
-    public String getFirstName() {
+		this.email = email;
+	}
 
-        return firstName;
-    }
+	public String getFirstName() {
 
+		return firstName;
+	}
 
-    public void setFirstName(String firstName) {
+	public void setFirstName(String firstName) {
 
-        this.firstName = firstName;
-    }
+		this.firstName = firstName;
+	}
 
+	public String getLastName() {
 
-    public String getLastName() {
+		return lastName;
+	}
 
-        return lastName;
-    }
+	public void setLastName(String lastName) {
 
+		this.lastName = lastName;
+	}
 
-    public void setLastName(String lastName) {
+	public Integer getResidualVacationDays() {
 
-        this.lastName = lastName;
-    }
+		return restUrlaub;
+	}
 
+	public void setResidualVacationDays(Integer residualVacationDays) {
 
-    public Integer getResidualVacationDays() {
+		this.restUrlaub = residualVacationDays;
+	}
 
-        return residualVacationDays;
-    }
+	public Integer getRemainingVacationDays() {
+		return remainingVacationDays;
+	}
 
+	public Role getRole() {
+		return role;
+	}
 
-    public void setResidualVacationDays(Integer residualVacationDays) {
+	public void setRemainingVacationDays(Integer remainingVacationDays) {
+		this.remainingVacationDays = remainingVacationDays;
+	}
 
-        this.residualVacationDays = residualVacationDays;
-    }
+	public void setRole(Role role) {
+		this.role = role;
+	}
 
+	public Integer getRestUrlaub() {
+		return restUrlaub;
+	}
 
-    public Integer getUsedVacationDays() {
+	public void setRestUrlaub(Integer restUrlaub) {
+		this.restUrlaub = restUrlaub;
+	}
 
-        return usedVacationDays;
-    }
+	public Integer getUsedVacationDays() {
 
+		return usedVacationDays;
+	}
 
-    public void setUsedVacationDays(Integer usedVacationDays) {
+	public void setUsedVacationDays(Integer usedVacationDays) {
 
-        this.usedVacationDays = usedVacationDays;
-    }
+		this.usedVacationDays = usedVacationDays;
+	}
 
+	public Integer getVacationDays() {
 
-    public Integer getVacationDays() {
+		return vacationDays;
+	}
 
-        return vacationDays;
-    }
+	public void setVacationDays(Integer vacationDays) {
 
-
-    public void setVacationDays(Integer vacationDays) {
-
-        this.vacationDays = vacationDays;
-    }
+		this.vacationDays = vacationDays;
+	}
 }
 
-//    eventuell fuer die Mitarbeiter-Liste - nur als Idee bisher
-//public Image getUserPicture() {
-//        return userPicture;
-//    }
+// eventuell fuer die Mitarbeiter-Liste - nur als Idee bisher
+// public Image getUserPicture() {
+// return userPicture;
+// }
 //
-//public void setUserPicture(String userPicture) {
-//        this.userPicture = userPicture;
-//    }
+// public void setUserPicture(String userPicture) {
+// this.userPicture = userPicture;
+// }
