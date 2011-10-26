@@ -1,127 +1,210 @@
 package org.synyx.urlaubsverwaltung.domain;
 
-import javax.persistence.Entity;
-
 import org.joda.time.DateMidnight;
+
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+
+
 /**
- * @author johannes
+ * @author  johannes
  */
 
 @Entity
 public class Antrag extends AbstractPersistable<Integer> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private Person person;
+    // Eine Person kann mehrere Antraege besitzen
+    @ManyToOne
+    private Person person;
 
-	private Integer beantragteTage;
+    // Abwesenheit insgesamt (also plus Feiertage, Wochenende, etc.)
+    private Integer beantragteTageBrutto;
 
-	private DateMidnight startDate;
+    // Anzahl der Tage netto, die vom Urlaubskonto abgezogen werden
+    private Integer beantragteTageNetto;
 
-	private DateMidnight endDate;
+    // Wenn nachtraeglich hinzugefuegt, werden diese dem Urlaubskonto gutgeschrieben
+    private Integer krankheitsTage;
 
-	private VacationType vacationType;
+    // Zeitraum von wann bis wann
+    private DateMidnight startDate;
 
-	private String reason;
+    private DateMidnight endDate;
 
-	private Person vertreter;
+    // z.B. Erholungsurlaub
+    private VacationType vacationType;
 
-	private String anschrift;
+    // Grund Pflicht bei Sonderurlaub, unbezahltem Urlaub und Ueberstundenabbummeln
+    // bei Erholungsurlaub default = Erholung
+    private String reason;
 
-	private String phone;
+    // Mitarbeiter als Vertreter
+    private Person vertreter;
 
-	private DateMidnight antragsDate;
+    private String anschrift;
 
-	private State state;
+    private String phone;
 
-	public Person getPerson() {
-		return person;
-	}
+    private DateMidnight antragsDate;
 
-	public Integer getBeantragteTage() {
-		return beantragteTage;
-	}
+    private State state;
 
-	public DateMidnight getStartDate() {
-		return startDate;
-	}
+    public Person getPerson() {
 
-	public DateMidnight getEndDate() {
-		return endDate;
-	}
+        return person;
+    }
 
-	public VacationType getVacationType() {
-		return vacationType;
-	}
 
-	public String getReason() {
-		return reason;
-	}
+    public Integer getBeantragteTageBrutto() {
 
-	public Person getVertreter() {
-		return vertreter;
-	}
+        return beantragteTageBrutto;
+    }
 
-	public String getAnschrift() {
-		return anschrift;
-	}
 
-	public String getPhone() {
-		return phone;
-	}
+    public Integer getBeantragteTageNetto() {
 
-	public DateMidnight getAntragsDate() {
-		return antragsDate;
-	}
+        return beantragteTageNetto;
+    }
 
-	public State getState() {
-		return state;
-	}
 
-	public void setPerson(Person person) {
-		this.person = person;
-	}
+    public Integer getKrankheitsTage() {
 
-	public void setBeantragteTage(Integer beantragteTage) {
-		this.beantragteTage = beantragteTage;
-	}
+        return krankheitsTage;
+    }
 
-	public void setStartDate(DateMidnight startDate) {
-		this.startDate = startDate;
-	}
 
-	public void setEndDate(DateMidnight endDate) {
-		this.endDate = endDate;
-	}
+    public DateMidnight getStartDate() {
 
-	public void setVacationType(VacationType vacationType) {
-		this.vacationType = vacationType;
-	}
+        return startDate;
+    }
 
-	public void setReason(String reason) {
-		this.reason = reason;
-	}
 
-	public void setVertreter(Person vertreter) {
-		this.vertreter = vertreter;
-	}
+    public DateMidnight getEndDate() {
 
-	public void setAnschrift(String anschrift) {
-		this.anschrift = anschrift;
-	}
+        return endDate;
+    }
 
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
 
-	public void setAntragsDate(DateMidnight antragsDate) {
-		this.antragsDate = antragsDate;
-	}
+    public VacationType getVacationType() {
 
-	public void setState(State state) {
-		this.state = state;
-	}
+        return vacationType;
+    }
 
+
+    public String getReason() {
+
+        return reason;
+    }
+
+
+    public Person getVertreter() {
+
+        return vertreter;
+    }
+
+
+    public String getAnschrift() {
+
+        return anschrift;
+    }
+
+
+    public String getPhone() {
+
+        return phone;
+    }
+
+
+    public DateMidnight getAntragsDate() {
+
+        return antragsDate;
+    }
+
+
+    public State getState() {
+
+        return state;
+    }
+
+
+    public void setPerson(Person person) {
+
+        this.person = person;
+    }
+
+
+    public void setBeantragteTageBrutto(Integer beantragteTageBrutto) {
+
+        this.beantragteTageBrutto = beantragteTageBrutto;
+    }
+
+
+    public void setBeantragteTageNetto(Integer beantragteTageNetto) {
+
+        this.beantragteTageNetto = beantragteTageNetto;
+    }
+
+
+    public void setKrankheitsTage(Integer krankheitsTage) {
+
+        this.krankheitsTage = krankheitsTage;
+    }
+
+
+    public void setStartDate(DateMidnight startDate) {
+
+        this.startDate = startDate;
+    }
+
+
+    public void setEndDate(DateMidnight endDate) {
+
+        this.endDate = endDate;
+    }
+
+
+    public void setVacationType(VacationType vacationType) {
+
+        this.vacationType = vacationType;
+    }
+
+
+    public void setReason(String reason) {
+
+        this.reason = reason;
+    }
+
+
+    public void setVertreter(Person vertreter) {
+
+        this.vertreter = vertreter;
+    }
+
+
+    public void setAnschrift(String anschrift) {
+
+        this.anschrift = anschrift;
+    }
+
+
+    public void setPhone(String phone) {
+
+        this.phone = phone;
+    }
+
+
+    public void setAntragsDate(DateMidnight antragsDate) {
+
+        this.antragsDate = antragsDate;
+    }
+
+
+    public void setState(State state) {
+
+        this.state = state;
+    }
 }
