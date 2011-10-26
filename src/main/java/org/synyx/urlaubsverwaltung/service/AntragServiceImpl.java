@@ -52,6 +52,22 @@ public class AntragServiceImpl implements AntragService {
 
 
     @Override
+    public void wait(Antrag antrag) {
+
+        antrag.setState(State.WARTEND);
+        antragDAO.save(antrag);
+    }
+
+
+    @Override
+    public void storno(Antrag antrag) {
+
+        antrag.setState(State.STORNIERT);
+        antragDAO.save(antrag);
+    }
+
+
+    @Override
     public Antrag getRequestById(Integer id) {
 
         return antragDAO.findOne(id);
