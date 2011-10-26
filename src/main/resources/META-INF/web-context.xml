@@ -17,49 +17,21 @@
         <property name="suffix" value=".jsp"/>
     </bean>
     
-<!-- HIER DIE CONTROLLER UND DIE SERVICES, DIE SIE NUTZEN, EINFUEGEN
-    
-    <bean class="org.synyx.ausbildung.adressbuch.UserController">
-        <constructor-arg ref="userService" />
-    </bean>
-    
-    <bean class="org.synyx.ausbildung.adressbuch.AdressbuchController">
-        <constructor-arg ref="adressbuchService" />
-        <constructor-arg ref="userService" />
+    <bean class="org.synyx.urlaubsverwaltung.controller.AntragController">
+        <constructor-arg ref="personService" />
+        <constructor-arg ref="antragService" />
         <constructor-arg>
-            <bean class="org.synyx.ausbildung.adressbuch.validator.AdressbuchValidator" />
+            <bean class="org.synyx.urlaubsverwaltung.util.DateService" />
         </constructor-arg>
     </bean>
     
     <bean class="org.synyx.ausbildung.adressbuch.PersonController">
-        <constructor-arg ref="adressbuchService" /> 
-        <constructor-arg ref="personService" /> 
-        <constructor-arg ref="adresseService"/> 
-        <constructor-arg ref="userService" />
+        <constructor-arg ref="personService" />
+        <constructor-arg ref="antragService" />
         <constructor-arg>
-            <bean class="org.synyx.ausbildung.adressbuch.validator.PersonValidator" />
+            <bean class="org.synyx.urlaubsverwaltung.util.DateService" />
         </constructor-arg>
-    </bean>
-    
-    <bean class="org.synyx.ausbildung.adressbuch.AdresseController">
-        <constructor-arg ref="adressbuchService" /> 
-        <constructor-arg ref="personService" /> 
-        <constructor-arg ref="adresseService"/> 
-        <constructor-arg ref="userService" />
-        <constructor-arg>
-            <bean class="org.synyx.ausbildung.adressbuch.validator.AdresseValidator" />
-        </constructor-arg>
-    </bean>
-    
-    <bean class="org.synyx.ausbildung.adressbuch.KontaktController">
-        <constructor-arg ref="adressbuchService" /> 
-        <constructor-arg ref="personService" /> 
-        <constructor-arg ref="kontaktService"/>
-        <constructor-arg ref="userService" />
-        <constructor-arg>
-            <bean class="org.synyx.ausbildung.adressbuch.validator.KontaktValidator" />
-        </constructor-arg>
-    </bean>-->
+    </bean>  
     
      <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
      <property name="basename" value="classpath:messages" />
