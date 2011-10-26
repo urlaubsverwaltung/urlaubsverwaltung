@@ -5,10 +5,10 @@ package org.synyx.urlaubsverwaltung.domain;
  */
 public enum State {
 
-    WARTEND("wartend"),
-    GENEHMIGT("genehmigt"),
-    ABGELEHNT("abgelehnt"),
-    STORNIERT("storniert");
+    WARTEND("state.wait"),
+    GENEHMIGT("state.ok"),
+    ABGELEHNT("state.no"),
+    STORNIERT("state.storniert");
 
     private String stateName;
 

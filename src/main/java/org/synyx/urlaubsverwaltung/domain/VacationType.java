@@ -1,23 +1,24 @@
 package org.synyx.urlaubsverwaltung.domain;
 
 /**
- * @author johannes
+ * @author  johannes
  */
 public enum VacationType {
 
-	ERHOLUNGSURLAUB("erholungsurlaub"), SONDERURLAUB("sonderurlaub"), UNBEZAHLTERURLAUB(
-			"unbezahlterurlaub"), UEBERSTUNDENABBUMMELN("ueberstundenabbummeln");
+    ERHOLUNGSURLAUB("vac.erholung"),
+    SONDERURLAUB("vac.sonder"),
+    UNBEZAHLTERURLAUB("vac.unbezahlt"),
+    UEBERSTUNDENABBUMMELN("vac.ueberstunden");
 
-	private String vacationTypeName;
+    private String vacationTypeName;
 
-	private VacationType(String vacationTypeName) {
+    private VacationType(String vacationTypeName) {
 
-		this.vacationTypeName = vacationTypeName;
-	}
+        this.vacationTypeName = vacationTypeName;
+    }
 
-	public String getStateName() {
+    public String getStateName() {
 
-		return this.vacationTypeName;
-	}
-
+        return this.vacationTypeName;
+    }
 }
