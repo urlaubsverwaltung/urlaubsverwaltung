@@ -9,7 +9,7 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import org.synyx.ausbildung.adressbuch.security.UserAuthority;
+import org.synyx.urlaubsverwaltung.security.UserAuthority;
 
 import java.util.ArrayList;
 import java.util.Collection;
