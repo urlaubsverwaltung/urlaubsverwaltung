@@ -1,21 +1,24 @@
 package org.synyx.urlaubsverwaltung.domain;
 
 /**
- * @author johannes
+ * @author  johannes
  */
 public enum State {
 
-	WARTEND("wartend"), GENEHMIGT("genehmigt"), ABGELEHNT("abgelehnt");
+    WARTEND("wartend"),
+    GENEHMIGT("genehmigt"),
+    ABGELEHNT("abgelehnt"),
+    STORNIERT("storniert");
 
-	private String stateName;
+    private String stateName;
 
-	private State(String stateName) {
+    private State(String stateName) {
 
-		this.stateName = stateName;
-	}
+        this.stateName = stateName;
+    }
 
-	public String getStateName() {
+    public String getStateName() {
 
-		return this.stateName;
-	}
+        return this.stateName;
+    }
 }
