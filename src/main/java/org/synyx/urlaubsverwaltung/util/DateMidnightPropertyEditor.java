@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.synyx.urlaubsverwaltung.editor;
+package org.synyx.urlaubsverwaltung.util;
 
 import org.joda.time.DateTime;
 import org.joda.time.ReadableInstant;
