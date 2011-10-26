@@ -33,13 +33,9 @@
 
 <repository:repositories base-package="org.synyx.urlaubsverwaltung.**.dao" />
 
-<!-- Hier Services einfuegen!
 
-<bean id="userService" class="org.synyx.ausbildung.adressbuch.service.UserServiceImpl" />
-<bean id="adressbuchService" class="org.synyx.ausbildung.adressbuch.service.AdressbuchServiceImpl" />
-<bean id="personService" class="org.synyx.ausbildung.adressbuch.service.PersonServiceImpl" />
-<bean id="adresseService" class="org.synyx.ausbildung.adressbuch.service.AdresseServiceImpl" />
-<bean id="kontaktService" class="org.synyx.ausbildung.adressbuch.service.KontaktServiceImpl" />-->
+<bean id="personService" class="org.synyx.urlaubsverwaltung.service.PersonServiceImpl" />
+<bean id="antragService" class="org.synyx.urlaubsverwaltung.service.AntragServiceImpl" />
 
 
 </beans>
