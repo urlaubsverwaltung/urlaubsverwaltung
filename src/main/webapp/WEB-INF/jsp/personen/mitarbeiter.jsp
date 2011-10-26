@@ -32,7 +32,7 @@
             </tr>
         <c:forEach items="${mitarbeiter}" var="person" varStatus="loopStatus">
             <tr class="${loopStatus.index % 2 == 0 ? 'even' : 'odd'}">
-                <td><c:out value="${person.lastname}"/>&nbsp;<c:out value="${person.firstname}"/></td>
+                <td><c:out value="${person.lastName}"/>&nbsp;<c:out value="${person.firstName}"/></td>
                 <td><c:out value="${person.remainingVacationDays}"/></td>
                 <td><c:out value="${person.restUrlaub}"/></td>
             </tr>    

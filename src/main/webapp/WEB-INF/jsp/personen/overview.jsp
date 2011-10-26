@@ -32,20 +32,20 @@
                     <spring:message code="overview.person" />
                 </th>
                 <td>
-                    <c:out value="${person.lastname}"/>&nbsp;<c:out value="${person.firstname}"/>
+                    <c:out value="${person.lastName}"/>&nbsp;<c:out value="${person.firstName}"/>
                 </td>
             </tr>
             <tr>
                 <th>
-                    <spring:message code="overview.anspruch" />
+                    <spring:message code="anspruch" />
                 </th>
                 <td>
-                    <c:out value="${person.vacationDays}"/>&nbsp;<spring:message code="overview.peryear" />
+                    <c:out value="${person.vacationDays}"/>&nbsp;<spring:message code="peryear" />
                 </td>
             </tr>
             <tr>
                 <th>
-                    <spring:message code="overview.resturlaub" />&nbsp;<c:out value="${year-1}"/>
+                    <spring:message code="resturlaub" />&nbsp;<c:out value="${year-1}"/>
                 </th>
                 <td>
                     <c:out value="${person.restUrlaub}"/>&nbsp;<spring:message code="days" />
@@ -102,7 +102,7 @@
                     <spring:message code="overview.vac.state" />
                 </th>
                 <th>
-                    <spring:message code="overview.vac.edit" />
+                    <spring:message code="edit" />
                 </th>
             </tr>
             
@@ -116,7 +116,7 @@
                     </td>
                     <td>
                         <c:choose>
-                        <c:when test="${antrag.startDate == endDate}">
+                        <c:when test="${antrag.startDate == antrag.endDate}">
                             am&nbsp;<c:out value="${antrag.startDate}"/>
                         </c:when>
                         <c:otherwise>
