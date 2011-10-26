@@ -3,8 +3,8 @@
 
 <!-- Hier Domain-Objekte einfuegen -->
    <persistence-unit name="urlaubsverwaltung">
-        <class>org.synyx.urlaubsverwaltung.domain.User</class>
         <class>org.synyx.urlaubsverwaltung.domain.Person</class>
+        <class>org.synyx.urlaubsverwaltung.domain.Antrag</class>
     </persistence-unit>
     
 </persistence>
