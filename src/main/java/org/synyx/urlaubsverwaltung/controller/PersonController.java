@@ -11,9 +11,8 @@ import org.synyx.urlaubsverwaltung.domain.Antrag;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.service.AntragService;
 import org.synyx.urlaubsverwaltung.service.PersonService;
+import org.synyx.urlaubsverwaltung.util.DateService;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 
@@ -24,23 +23,14 @@ public class PersonController {
 
     private PersonService personService;
     private AntragService antragService;
+    private DateService dateService;
 
-    public PersonController(PersonService personService, AntragService antragService) {
+    public PersonController(PersonService personService, AntragService antragService, DateService dateService) {
 
         this.personService = personService;
         this.antragService = antragService;
+        this.dateService = dateService;
     }
-
-    public Integer getYear() {
-
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date()); // heute
-
-        Integer year = cal.get(Calendar.YEAR);
-
-        return year;
-    }
-
 
     @RequestMapping(value = "/mitarbeiter", method = RequestMethod.GET)
     public String showMitarbeiterList(Model model) {
@@ -49,7 +39,7 @@ public class PersonController {
 
         model.addAttribute("mitarbeiter", mitarbeiter);
 
-        return "mitarbeiter";
+        return "personen/mitarbeiter";
     }
 
 
@@ -60,10 +50,10 @@ public class PersonController {
 
         List<Antrag> requests = antragService.getAllRequestsForPerson(person);
 
-        model.addAttribute("year", getYear());
+        model.addAttribute("year", dateService.getYear());
         model.addAttribute("requests", requests);
         model.addAttribute("person", person);
 
-        return "overview";
+        return "personen/overview";
     }
 }
