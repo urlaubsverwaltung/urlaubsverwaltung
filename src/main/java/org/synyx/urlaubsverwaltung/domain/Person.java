@@ -1,124 +1,151 @@
 package org.synyx.urlaubsverwaltung.domain;
 
-import javax.persistence.Entity;
-
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
+import javax.persistence.Entity;
+
+
 /**
- * @author aljona
+ * @author  aljona
  */
 
 @Entity
 public class Person extends AbstractPersistable<Integer> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String lastName;
+    private String lastName;
 
-	private String firstName;
+    private String firstName;
 
-	private String email;
+    private String email;
 
-	// vacation days
-	private Integer vacationDays;
+    // vacation days - Jahresanspruch Urlaub
+    private Integer vacationDays;
 
-	// amount of remaining days
-	private Integer remainingVacationDays;
+    // amount of remaining days - Verbleibender Urlaubsanspruch dieses Jahr
+    private Integer remainingVacationDays;
 
-	// residual vacation days of last year
-	private Integer restUrlaub;
+    // residual vacation days of last year - Resturlaub
+    private Integer restUrlaub;
 
-	// used vacation days of this year
-	private Integer usedVacationDays;
+    // used vacation days this year of 'normal' vacation days - Jahresurlaubsanspruch dieses Jahr in Anspruch genommen
+    private Integer usedVacationDays;
 
-	private Role role;
+    // used vacation days this year of last year's Resturlaub - Resturlaub dieses Jahr in Anspruch genommen
+    private Integer usedRestUrlaub;
 
-	// eventuell fuer die Mitarbeiter-Liste - nur als Idee bisher
-	// private Image userPicture;
+    private Role role;
 
-	public String getEmail() {
+    // eventuell fuer die Mitarbeiter-Liste - nur als Idee bisher
+    // private Image userPicture;
 
-		return email;
-	}
+    public String getEmail() {
 
-	public void setEmail(String email) {
+        return email;
+    }
 
-		this.email = email;
-	}
 
-	public String getFirstName() {
+    public void setEmail(String email) {
 
-		return firstName;
-	}
+        this.email = email;
+    }
 
-	public void setFirstName(String firstName) {
 
-		this.firstName = firstName;
-	}
+    public String getFirstName() {
 
-	public String getLastName() {
+        return firstName;
+    }
 
-		return lastName;
-	}
 
-	public void setLastName(String lastName) {
+    public void setFirstName(String firstName) {
 
-		this.lastName = lastName;
-	}
+        this.firstName = firstName;
+    }
 
-	public Integer getResidualVacationDays() {
 
-		return restUrlaub;
-	}
+    public String getLastName() {
 
-	public void setResidualVacationDays(Integer residualVacationDays) {
+        return lastName;
+    }
 
-		this.restUrlaub = residualVacationDays;
-	}
 
-	public Integer getRemainingVacationDays() {
-		return remainingVacationDays;
-	}
+    public void setLastName(String lastName) {
 
-	public Role getRole() {
-		return role;
-	}
+        this.lastName = lastName;
+    }
 
-	public void setRemainingVacationDays(Integer remainingVacationDays) {
-		this.remainingVacationDays = remainingVacationDays;
-	}
 
-	public void setRole(Role role) {
-		this.role = role;
-	}
+    public Integer getResidualVacationDays() {
 
-	public Integer getRestUrlaub() {
-		return restUrlaub;
-	}
+        return restUrlaub;
+    }
 
-	public void setRestUrlaub(Integer restUrlaub) {
-		this.restUrlaub = restUrlaub;
-	}
 
-	public Integer getUsedVacationDays() {
+    public void setResidualVacationDays(Integer residualVacationDays) {
 
-		return usedVacationDays;
-	}
+        this.restUrlaub = residualVacationDays;
+    }
 
-	public void setUsedVacationDays(Integer usedVacationDays) {
 
-		this.usedVacationDays = usedVacationDays;
-	}
+    public Integer getRemainingVacationDays() {
 
-	public Integer getVacationDays() {
+        return remainingVacationDays;
+    }
 
-		return vacationDays;
-	}
 
-	public void setVacationDays(Integer vacationDays) {
+    public Role getRole() {
 
-		this.vacationDays = vacationDays;
-	}
+        return role;
+    }
+
+
+    public void setRemainingVacationDays(Integer remainingVacationDays) {
+
+        this.remainingVacationDays = remainingVacationDays;
+    }
+
+
+    public void setRole(Role role) {
+
+        this.role = role;
+    }
+
+
+    public Integer getRestUrlaub() {
+
+        return restUrlaub;
+    }
+
+
+    public void setRestUrlaub(Integer restUrlaub) {
+
+        this.restUrlaub = restUrlaub;
+    }
+
+
+    public Integer getUsedVacationDays() {
+
+        return usedVacationDays;
+    }
+
+
+    public void setUsedVacationDays(Integer usedVacationDays) {
+
+        this.usedVacationDays = usedVacationDays;
+    }
+
+
+    public Integer getVacationDays() {
+
+        return vacationDays;
+    }
+
+
+    public void setVacationDays(Integer vacationDays) {
+
+        this.vacationDays = vacationDays;
+    }
 }
 
 // eventuell fuer die Mitarbeiter-Liste - nur als Idee bisher
