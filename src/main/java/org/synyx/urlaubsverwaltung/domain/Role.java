@@ -6,9 +6,9 @@ package org.synyx.urlaubsverwaltung.domain;
  */
 public enum Role {
 
-    USER("User"),
-    CHEF("Chef"),
-    OFFICE("Office");
+    USER("role.user"),
+    CHEF("role.chef"),
+    OFFICE("role.office");
 
     private String roleName;
 
