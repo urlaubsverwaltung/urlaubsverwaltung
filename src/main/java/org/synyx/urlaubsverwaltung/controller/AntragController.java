@@ -66,7 +66,7 @@ public class AntragController {
 
 
     /**
-     * used if you want to see al 'stornierte'requests
+     * used if you want to see al canceled requests
      * @param model
      * @return 
      */
