@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.domain;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.data.jpa.domain.AbstractPersistable;
@@ -60,17 +61,17 @@ public class Person extends AbstractPersistable<Integer> {
         byte[] bytesOfMessage;
         byte[] theDigest;
         try {
-            bytesOfMessage = email.trim().toLowerCase().getBytes("UTF-8");
+            bytesOfMessage = email.trim().toLowerCase(Locale.ENGLISH).getBytes("UTF-8");
             MessageDigest md = MessageDigest.getInstance("MD5");
             theDigest = md.digest(bytesOfMessage);
         } catch (NoSuchAlgorithmException ex) {
             Logger.getLogger(Person.class.getName()).log(Level.SEVERE, null, ex);
-            return new String();
+            return "";
         } catch (UnsupportedEncodingException ex) {
             Logger.getLogger(Person.class.getName()).log(Level.SEVERE, null, ex);
-            return new String();
+            return "";
         }
-        return theDigest.toString();
+        return new String(theDigest);
     }
 
 

@@ -27,6 +27,9 @@ public class AntragController {
     private PersonService personService;
     private AntragService antragService;
     private DateService dateService;
+    private final static String REQUEST_ATTRIBUTE_NAME = "requests";
+    private final static String REQUESTLIST_VIEW = "antraege/antragsliste";
+    private final static String ACTION_COMPLETE_VIEW = "index"; //muss noch geändert werden
 
     public AntragController(PersonService personService, AntragService antragService, DateService dateService) {
 
@@ -44,9 +47,9 @@ public class AntragController {
     public String showWaiting(Model model) {
 
         List<Antrag> antraege = antragService.getAllRequestsByState(State.WARTEND);
-        model.addAttribute("requests", antraege);
+        model.addAttribute(REQUEST_ATTRIBUTE_NAME, antraege);
 
-        return "antraege/antragsliste";
+        return REQUESTLIST_VIEW;
     }
 
 
@@ -59,9 +62,9 @@ public class AntragController {
     public String showApproved(Model model) {
 
         List<Antrag> antraege = antragService.getAllRequestsByState(State.GENEHMIGT);
-        model.addAttribute("requests", antraege);
+        model.addAttribute(REQUEST_ATTRIBUTE_NAME, antraege);
 
-        return "antraege/antragsliste";
+        return REQUESTLIST_VIEW;
     }
 
 
@@ -74,9 +77,9 @@ public class AntragController {
     public String showStorno(Model model) {
 
         List<Antrag> antraege = antragService.getAllRequestsByState(State.STORNIERT);
-        model.addAttribute("requests", antraege);
+        model.addAttribute(REQUEST_ATTRIBUTE_NAME, antraege);
 
-        return "antraege/antragsliste";
+        return REQUESTLIST_VIEW;
     }
     
     /**
@@ -88,9 +91,9 @@ public class AntragController {
     public String showDeclined(Model model) {
 
         List<Antrag> antraege = antragService.getAllRequestsByState(State.STORNIERT);
-        model.addAttribute("requests", antraege);
+        model.addAttribute(REQUEST_ATTRIBUTE_NAME, antraege);
 
-        return "antraege/antragsliste";
+        return REQUESTLIST_VIEW;
     }
     
      /**
@@ -104,7 +107,7 @@ public class AntragController {
         //über die logik sollten wir nochmal nachdenken...
         antragService.storno(antragService.getRequestById(antragId));
 
-        return "index"; //oder ne successpage oder was ganz anderes
+        return ACTION_COMPLETE_VIEW; //oder ne successpage oder was ganz anderes
     }
     
     /**
@@ -120,7 +123,7 @@ public class AntragController {
         
         //benachrichtigungs-zeugs
 
-        return "index"; //oder ne successpage oder was ganz anderes
+        return ACTION_COMPLETE_VIEW; //oder ne successpage oder was ganz anderes
     }
     
     /**
@@ -138,7 +141,7 @@ public class AntragController {
         
         //benachrichtigungs-zeugs
 
-        return "index"; //oder ne successpage oder was ganz anderes
+        return ACTION_COMPLETE_VIEW; //oder ne successpage oder was ganz anderes
     }
 
     /**
@@ -178,6 +181,6 @@ public class AntragController {
         antrag.setState(State.WARTEND);
         antragService.save(antrag);
 
-        return "index"; //oder vllt auch ine success-seite
+        return ACTION_COMPLETE_VIEW; //oder vllt auch ine success-seite
     }
 }
