@@ -21,11 +21,13 @@ import java.util.List;
 public class AntragServiceImpl implements AntragService {
 
     private AntragDAO antragDAO;
+    private MailServiceImpl mailService;
 
     @Autowired
-    public AntragServiceImpl(AntragDAO antragDAO) {
+    public AntragServiceImpl(AntragDAO antragDAO,MailServiceImpl mailService) {
 
         this.antragDAO = antragDAO;
+        this.mailService = mailService;
     }
 
     @Override
@@ -44,9 +46,10 @@ public class AntragServiceImpl implements AntragService {
 
 
     @Override
-    public void decline(Antrag antrag) {
+    public void decline(Antrag antrag,String reason) {
 
         antrag.setState(State.ABGELEHNT);
+        antrag.setReason(reason);
         antragDAO.save(antrag);
     }
 

@@ -34,8 +34,9 @@ public interface AntragService {
      * use this to set a request to declined (only boss)
      *
      * @param  antrag  the request to be edited
+     * @param reason the reason of the rejection
      */
-    void decline(Antrag antrag);
+    void decline(Antrag antrag,String reason);
 
 
     /**
