@@ -129,64 +129,6 @@ public class AntragController {
 
 
     /**
-     * used if you want to cancel an existing request (owner only/maybe office)
-     *
-     * @param  model
-     *
-     * @return
-     */
-    @RequestMapping(value = "/antrag/{antragId}/stornieren", method = RequestMethod.GET)
-    public String cancelAntrag(@PathVariable("antragId") Integer antragId, Model model) {
-
-        // über die logik sollten wir nochmal nachdenken...
-        antragService.storno(antragService.getRequestById(antragId));
-
-        return ACTION_COMPLETE_VIEW; // oder ne successpage oder was ganz anderes
-    }
-
-
-    /**
-     * used if you want to cancel an existing request(boss only)
-     *
-     * @param  model
-     *
-     * @return
-     */
-    @RequestMapping(value = "/antrag/{antragId}/genehmigen", method = RequestMethod.GET)
-    public String approveAntrag(@PathVariable("antragId") Integer antragId, Model model) {
-
-        // über die logik sollten wir nochmal nachdenken...
-        antragService.approve(antragService.getRequestById(antragId));
-
-        // benachrichtigungs-zeugs
-
-        return ACTION_COMPLETE_VIEW; // oder ne successpage oder was ganz anderes
-    }
-
-
-    /**
-     * used if you want to decline a request (boss only)
-     *
-     * @param  antragId  the id of the to declining request
-     * @param  reason  the reason of the rejection
-     * @param  model
-     *
-     * @return
-     */
-    @RequestMapping(value = "/antrag/{antragId}/ablehnen", method = RequestMethod.GET)
-    public String declineAntrag(@PathVariable("antragId") Integer antragId,
-        @ModelAttribute("reason") String reason, Model model) {
-
-        // über die logik sollten wir nochmal nachdenken...
-        antragService.decline(antragService.getRequestById(antragId), reason);
-
-        // benachrichtigungs-zeugs
-
-        return ACTION_COMPLETE_VIEW; // oder ne successpage oder was ganz anderes
-    }
-
-
-    /**
      * used if you want to create a new request
      *
      * @param  mitarbeiterId  id of the logged in user
@@ -230,5 +172,63 @@ public class AntragController {
         antragService.save(antrag);
 
         return ACTION_COMPLETE_VIEW; // oder vllt auch ine success-seite
+    }
+
+
+    /**
+     * used if you want to cancel an existing request (owner only/maybe office)
+     *
+     * @param  model
+     *
+     * @return
+     */
+    @RequestMapping(value = "/antrag/{antragId}/stornieren", method = RequestMethod.PUT)
+    public String cancelAntrag(@PathVariable("antragId") Integer antragId, Model model) {
+
+        // über die logik sollten wir nochmal nachdenken...
+        antragService.storno(antragService.getRequestById(antragId));
+
+        return ACTION_COMPLETE_VIEW; // oder ne successpage oder was ganz anderes
+    }
+
+
+    /**
+     * used if you want to approve an existing request(boss only)
+     *
+     * @param  model
+     *
+     * @return
+     */
+    @RequestMapping(value = "/antrag/{antragId}/genehmigen", method = RequestMethod.PUT)
+    public String approveAntrag(@PathVariable("antragId") Integer antragId, Model model) {
+
+        // über die logik sollten wir nochmal nachdenken...
+        antragService.approve(antragService.getRequestById(antragId));
+
+        // benachrichtigungs-zeugs
+
+        return ACTION_COMPLETE_VIEW; // oder ne successpage oder was ganz anderes
+    }
+
+
+    /**
+     * used if you want to decline a request (boss only)
+     *
+     * @param  antragId  the id of the to declining request
+     * @param  reason  the reason of the rejection
+     * @param  model
+     *
+     * @return
+     */
+    @RequestMapping(value = "/antrag/{antragId}/ablehnen", method = RequestMethod.PUT)
+    public String declineAntrag(@PathVariable("antragId") Integer antragId,
+        @ModelAttribute("reasonForDeclining") String reasonForDeclining, Model model) {
+
+        // über die logik sollten wir nochmal nachdenken...
+        antragService.decline(antragService.getRequestById(antragId), reasonForDeclining);
+
+        // benachrichtigungs-zeugs
+
+        return ACTION_COMPLETE_VIEW; // oder ne successpage oder was ganz anderes
     }
 }
