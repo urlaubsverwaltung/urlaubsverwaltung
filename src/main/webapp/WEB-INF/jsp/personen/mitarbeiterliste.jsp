@@ -1,6 +1,6 @@
 <%-- 
-    Document   : mitarbeiter
-    Created on : 26.10.2011, 11:35:53
+    Document   : mitarbeiterliste
+    Created on : 31.10.2011, 11:49:42
     Author     : aljona
 --%>
 
@@ -21,20 +21,27 @@
     
     <body>
         
+        <spring:url var="formUrlPrefix" value="/web/urlaubsverwaltung" />
+        
+        <a href="${formUrlPrefix}/mitarbeiter/list"><spring:message code="table.list" /></a>
+        <a href="${formUrlPrefix}/mitarbeiter/detail"><spring:message code="table.detail" /></a>
+        
         <table>
             <tr>
                 <th colspan="3"><spring:message code="table.title" /></th>
             </tr>
             <tr>
-                <th><spring:message code="table.person" /></th>
+                <th><spring:message code="name" /></th>
                 <th><spring:message code="table.vac" /></th>
                 <th><spring:message code="table.resturlaub" /></th>
+                <th>&nbsp;</th>
             </tr>
         <c:forEach items="${mitarbeiter}" var="person" varStatus="loopStatus">
             <tr class="${loopStatus.index % 2 == 0 ? 'even' : 'odd'}">
                 <td><c:out value="${person.lastName}"/>&nbsp;<c:out value="${person.firstName}"/></td>
                 <td><c:out value="${person.remainingVacationDays}"/></td>
                 <td><c:out value="${person.restUrlaub}"/></td>
+                <td><a href="${formUrlPrefix}/antraege/${mitarbeiter.id}"><spring:message code="table.antrag" /></a></td>
             </tr>    
         </c:forEach>
         </table>
