@@ -25,7 +25,7 @@
         
         <h1><spring:message code="antrag.title" /></h1>
         
-        <form:form method="post" action="${formUrlPrefix}/${person.id}/antrag" modelAttribute="antrag"> 
+        <form:form method="post" action="${formUrlPrefix}/antrag/${person.id}/new" modelAttribute="antrag"> 
             <form:hidden path="id"/>
             
         <table>

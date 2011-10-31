@@ -23,8 +23,6 @@
         
         <spring:url var="formUrlPrefix" value="/web/urlaubsverwaltung" />
         
-        <h2><spring:message code="waiting" /></h2>
-        
         <table>
             
             <tr>
@@ -32,10 +30,10 @@
                     <spring:message code="name" />
                 </th>
                 <th>
-                    <spring:message code="email" />
+                    <spring:message code="overview.vac.time" />
                 </th>
                 <th>
-                    <spring:message code="overview.vac.time" />
+                    <spring:message code="overview.vac.days.netto" />
                 </th>
                 <th>
                     &nbsp;
@@ -45,7 +43,6 @@
             <c:forEach items="${requests}" var="antrag" varStatus="loopStatus">
                 <tr class="${loopStatus.index % 2 == 0 ? 'even' : 'odd'}">
                     <td><c:out value="${antrag.person.lastName}"/>&nbsp;<c:out value="${antrag.person.firstName}"/></td>
-                    <td><c:out value="${antrag.person.email}"/></td>
                     <td>
                         <c:choose>
                             <c:when test="${antrag.startDate == antrag.endDate}">
@@ -55,6 +52,9 @@
                                 <c:out value="${antrag.startDate}"/>&nbsp;-&nbsp;<c:out value="${antrag.endDate}"/>
                             </c:otherwise>    
                         </c:choose>
+                    </td>
+                    <td>
+                        <c:out value="${antrag.beantragteTageNetto}" />
                     </td>
                     <td>
                         <a href="${formUrlPrefix}/antrag/${antrag.id}/edit" />
