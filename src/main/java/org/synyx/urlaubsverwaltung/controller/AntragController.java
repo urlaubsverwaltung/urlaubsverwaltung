@@ -194,7 +194,7 @@ public class AntragController {
      *
      * @return  returns the path of the jsp-view
      */
-    @RequestMapping(value = "/antrag/{mitarbeiterId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/antrag/{mitarbeiterId}/new", method = RequestMethod.GET)
     public String showUrlaubsantrag(@PathVariable("mitarbeiterId") Integer mitarbeiterId, Model model) {
 
         Person person = personService.getPersonByID(mitarbeiterId);
@@ -221,7 +221,7 @@ public class AntragController {
      *
      * @return  returns the path to a success-site("your request is being processed") or the main-page
      */
-    @RequestMapping(value = "/antrag/{mitarbeiterId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/antrag/{mitarbeiterId}/new", method = RequestMethod.POST)
     public String saveUrlaubsantrag(@PathVariable("mitarbeiterId") Integer mitarbeiterId,
         @ModelAttribute("antrag") Antrag antrag, Model model) {
 
