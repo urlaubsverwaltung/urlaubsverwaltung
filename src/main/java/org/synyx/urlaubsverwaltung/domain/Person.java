@@ -1,12 +1,15 @@
 package org.synyx.urlaubsverwaltung.domain;
 
+import org.springframework.data.jpa.domain.AbstractPersistable;
+
 import java.io.UnsupportedEncodingException;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import javax.persistence.Entity;
 
@@ -25,6 +28,9 @@ public class Person extends AbstractPersistable<Integer> {
     private String firstName;
 
     private String email;
+
+    // Unterschrift der Person
+    private Image sign;
 
     // vacation days - Jahresanspruch Urlaub
     private Integer vacationDays;
@@ -56,21 +62,28 @@ public class Person extends AbstractPersistable<Integer> {
 
         this.email = email;
     }
-    
+
+
     public String getEMailHash() {
+
         byte[] bytesOfMessage;
         byte[] theDigest;
+
         try {
             bytesOfMessage = email.trim().toLowerCase(Locale.ENGLISH).getBytes("UTF-8");
+
             MessageDigest md = MessageDigest.getInstance("MD5");
             theDigest = md.digest(bytesOfMessage);
         } catch (NoSuchAlgorithmException ex) {
             Logger.getLogger(Person.class.getName()).log(Level.SEVERE, null, ex);
+
             return "";
         } catch (UnsupportedEncodingException ex) {
             Logger.getLogger(Person.class.getName()).log(Level.SEVERE, null, ex);
+
             return "";
         }
+
         return new String(theDigest);
     }
 
@@ -96,6 +109,18 @@ public class Person extends AbstractPersistable<Integer> {
     public void setLastName(String lastName) {
 
         this.lastName = lastName;
+    }
+
+
+    public Image getSign() {
+
+        return sign;
+    }
+
+
+    public void setSign(Image sign) {
+
+        this.sign = sign;
     }
 
 
@@ -171,21 +196,14 @@ public class Person extends AbstractPersistable<Integer> {
     }
 
 
-	public Integer getUsedRestUrlaub() {
-		return usedRestUrlaub;
-	}
+    public Integer getUsedRestUrlaub() {
+
+        return usedRestUrlaub;
+    }
 
 
-	public void setUsedRestUrlaub(Integer usedRestUrlaub) {
-		this.usedRestUrlaub = usedRestUrlaub;
-	}
+    public void setUsedRestUrlaub(Integer usedRestUrlaub) {
+
+        this.usedRestUrlaub = usedRestUrlaub;
+    }
 }
-
-// eventuell fuer die Mitarbeiter-Liste - nur als Idee bisher
-// public Image getUserPicture() {
-// return userPicture;
-// }
-//
-// public void setUserPicture(String userPicture) {
-// this.userPicture = userPicture;
-// }
