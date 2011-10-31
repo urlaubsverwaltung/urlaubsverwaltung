@@ -122,7 +122,7 @@
                     <label for="telefon"><spring:message code='antrag.phone' />:</label>
                 </td>
                 <td colspan="4">
-                    <form:input id="phone" path="phone" />
+                    <form:input id="telefon" path="phone" />
                 </td>
             </tr>
             <tr>
