@@ -32,18 +32,29 @@ public class PersonController {
         this.dateService = dateService;
     }
 
-    @RequestMapping(value = "/mitarbeiter", method = RequestMethod.GET)
+    @RequestMapping(value = "/mitarbeiter/list", method = RequestMethod.GET)
     public String showMitarbeiterList(Model model) {
 
         List<Person> mitarbeiter = personService.getAllPersons();
 
         model.addAttribute("mitarbeiter", mitarbeiter);
 
-        return "personen/mitarbeiter";
+        return "personen/mitarbeiter/list";
     }
 
 
-    @RequestMapping(value = "/{mitarbeiterId}/overview", method = RequestMethod.GET)
+    @RequestMapping(value = "/mitarbeiter/detail", method = RequestMethod.GET)
+    public String showMitarbeiterDetail(Model model) {
+
+        List<Person> mitarbeiter = personService.getAllPersons();
+
+        model.addAttribute("mitarbeiter", mitarbeiter);
+
+        return "personen/mitarbeiter/detail";
+    }
+
+
+    @RequestMapping(value = "/mitarbeiter/{mitarbeiterId}/overview", method = RequestMethod.GET)
     public String showOverview(@PathVariable("mitarbeiterId") Integer mitarbeiterId, Model model) {
 
         Person person = personService.getPersonByID(mitarbeiterId);
