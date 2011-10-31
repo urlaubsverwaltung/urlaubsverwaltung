@@ -176,6 +176,25 @@ public class AntragController {
 
 
     /**
+     * view for chef who has to decide if he approves or declines the request
+     *
+     * @param  antragId
+     * @param  model
+     *
+     * @return
+     */
+    @RequestMapping(value = "/antrag/{antragId}", method = RequestMethod.GET)
+    public String showAntragDetail(@PathVariable("antragId") Integer antragId, Model model) {
+
+        Antrag antrag = antragService.getRequestById(antragId);
+
+        model.addAttribute("antrag", antrag);
+
+        return "antraege/antragdetail";
+    }
+
+
+    /**
      * used if you want to cancel an existing request (owner only/maybe office)
      *
      * @param  model

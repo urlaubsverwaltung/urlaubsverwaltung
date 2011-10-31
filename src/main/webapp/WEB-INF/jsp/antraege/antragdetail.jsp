@@ -14,6 +14,8 @@
 <!DOCTYPE html>
 <html>
     
+    <!--  Ansicht des Urlaubsantrags vom Chef aus, der Antrag genehmigen/ablehnen muss  -->
+    
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title><spring:message code="title" /></title>
@@ -24,17 +26,14 @@
         <spring:url var="formUrlPrefix" value="/web/urlaubsverwaltung" />
         
         <h1><spring:message code="antrag.title" /></h1>
-        
-        <form:form method="post" action="${formUrlPrefix}/${person.id}/antrag" modelAttribute="antrag"> 
-            <form:hidden path="id" />
             
         <table>
             <tr>
                 <td>
-                    <spring:message code="lastname" />:&nbsp;<c:out value="${person.lastName}" />
+                    <spring:message code="lastname" />:&nbsp;<c:out value="${antrag.person.lastName}" />
                 </td>
                 <td>
-                    <spring:message code="firstname" />:&nbsp;<c:out value="${person.firstName}" />
+                    <spring:message code="firstname" />:&nbsp;<c:out value="${antrag.person.firstName}" />
                 </td> 
                 <td colspan="3">&nbsp;</td>
             </tr>
@@ -43,7 +42,7 @@
                     <spring:message code="antrag.anspruch" />:
                 </td>    
                 <td>    
-                    <c:out value="${person.remainingVacationDays}" />&nbsp;<spring:message code="days" />
+                    <c:out value="${antrag.person.remainingVacationDays}" />&nbsp;<spring:message code="days" />
                 </td>
                 <td colspan="2">&nbsp;</td>
             </tr>
@@ -52,7 +51,7 @@
                   <spring:message code="resturlaub" />  
                 </td>
                 <td>
-                    <c:out value="${person.restUrlaub}" />:&nbsp;<spring:message code="resturlaub" />&nbsp;<spring:message code="days" />
+                    <c:out value="${antrag.person.restUrlaub}" />:&nbsp;<spring:message code="resturlaub" />&nbsp;<spring:message code="days" />
                 </td>
                 <td colspan="2">&nbsp;</td>
             </tr>
@@ -61,7 +60,7 @@
                    <spring:message code="antrag.used" />:&nbsp; 
                 </td>
                 <td>
-                    <c:out value="${person.usedVacationDays}" />&nbsp;+&nbsp;<c:out value="${person.usedRestUrlaub}" />&nbsp;<spring:message code="days" />
+                    <c:out value="${antrag.person.usedVacationDays}" />&nbsp;+&nbsp;<c:out value="${antrag.person.usedRestUrlaub}" />&nbsp;<spring:message code="days" />
                 </td>
                 <td colspan="2">&nbsp;</td>
             </tr>
@@ -75,37 +74,27 @@
             </tr>
             <tr>
                 <td colspan="2">
-                   <select id="type" name="type" size="1" items="${vacTypes}" itemLabel="text">
-                        <c:forEach items="${vacTypes}" var="vacType">
-                                <option value="${vacType}">
-                                    <c:out value='${vacType.vacationTypeName}' />
-                                </option>
-                        </c:forEach>
-                    </select>
+                    <c:out value="${antrag.vacationType}" />
                 </td>
                 <td>&nbsp;</td>
                 <td>
                     <label for="grund"><spring:message code='antrag.reason' />:</label>
                 </td>
                 <td>
-                    <form:input id="reason" path="reason" />
+                    <c:out value="${antrag.reason}" />
                 </td>
             </tr>
+<!--         braucht man nicht fuer Detailansicht   
             <tr>
-                <!-- hierhin kommt der DatePicker + Tage gesamt + Urlaubstage + verbleibender Urlaubsanspruch -->
+                 hierhin kommt der DatePicker + Tage gesamt + Urlaubstage + verbleibender Urlaubsanspruch 
             </tr>
+-->
             <tr>
                 <td>
                    <label for="vertreter"><spring:message code='antrag.vertreter' />:</label> 
                 </td>
                 <td colspan="2">
-                    <select id="person" name="person" size="1" items="${mitarbeiter}" itemLabel="text">
-                        <c:forEach items="${mitarbeiter}" var="einmitarbeiter">
-                                <option value="${einmitarbeiter}">
-                                    <c:out value='${einmitarbeiter.lastName}' />&nbsp;<c:out value="${einmitarbeiter.firstName}" />
-                                </option>
-                        </c:forEach>
-                    </select>
+                    <c:out value="${antrag.vertreter}" />
                 </td>
                 <td colspan="2">&nbsp;</td>
             </tr>
@@ -114,7 +103,7 @@
                     <label for="anschrift"><spring:message code='antrag.anschrift' />:</label>
                 </td>
                 <td colspan="4">
-                    <form:input id="anschrift" path="anschrift" />
+                    <c:out value="${antrag.anschrift}" />
                 </td>
             </tr>
             <tr>
@@ -122,12 +111,12 @@
                     <label for="telefon"><spring:message code='antrag.phone' />:</label>
                 </td>
                 <td colspan="4">
-                    <form:input id="phone" path="phone" />
+                    <c:out value="${antrag.phone}" />
                 </td>
             </tr>
             <tr>
                 <td colspan="2">
-                    <spring:message code='antrag.ort' />&nbsp;<c:out value="${date}" />
+                    <spring:message code='antrag.ort' />&nbsp;<c:out value="${antrag.antragsDate}" />
                 </td>
                 <td>&nbsp;</td>
                 <td colspan="2">
@@ -136,7 +125,7 @@
             </tr>
             <tr>
                 <td colspan="2">
-                    <!-- Hier kommt das Bild der Unterschrift des Users rein  -->
+                    <c:out value="${antrag.person.sign}" />
                 </td>
                 <td>&nbsp;</td>
                 <td colspan="2">
@@ -156,7 +145,13 @@
             
         </table>
                 
-        </form:form>        
+       <form method="put" action="${formUrlPrefix}/antrag/${antrag.id}/genehmigen" modelAttribute="antrag"> 
+            <input type="submit" name="<spring:message code='antrag.state.ok' />" value="<spring:message code='antrag.state.ok' />" />    
+       </form>  
+       
+       <form method="put" action="${formUrlPrefix}/antrag/${antrag.id}/ablehnen" modelAttribute="antrag"> 
+            <input type="submit" name="<spring:message code='antrag.state.no' />" value="<spring:message code='antrag.state.no' />" />      
+       </form> 
         
     </body>
     

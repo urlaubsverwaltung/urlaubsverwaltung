@@ -26,7 +26,7 @@
         <h1><spring:message code="antrag.title" /></h1>
         
         <form:form method="post" action="${formUrlPrefix}/antrag/${person.id}/new" modelAttribute="antrag"> 
-            <form:hidden path="id"/>
+            <form:hidden path="id" />
             
         <table>
             <tr>
@@ -99,7 +99,7 @@
                    <label for="vertreter"><spring:message code='antrag.vertreter' />:</label> 
                 </td>
                 <td colspan="2">
-                    <select id="person" name="person" size="1" items="${mitarbeiter}" itemLabel="text">
+                    <select id="vertreter" name="vertreter" size="1" items="${mitarbeiter}" itemLabel="text">
                         <c:forEach items="${mitarbeiter}" var="einmitarbeiter">
                                 <option value="${einmitarbeiter}">
                                     <c:out value='${einmitarbeiter.lastName}' />&nbsp;<c:out value="${einmitarbeiter.firstName}" />
@@ -127,7 +127,7 @@
             </tr>
             <tr>
                 <td colspan="2">
-                    <spring:message code='antrag.ort' />&nbsp;<c:out value="${date}" />
+                    <spring:message code='antrag.ort' />&nbsp;<c:out value="${date}" /><form:hidden path="antragsDate" />
                 </td>
                 <td>&nbsp;</td>
                 <td colspan="2">
@@ -136,7 +136,7 @@
             </tr>
             <tr>
                 <td colspan="2">
-                    <!-- Hier kommt das Bild der Unterschrift des Users rein  -->
+                    <img src="${person.image}" />
                 </td>
                 <td>&nbsp;</td>
                 <td colspan="2">
