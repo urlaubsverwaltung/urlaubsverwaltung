@@ -10,38 +10,70 @@
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
+       
+        <!--  noch absolut provisorisch!   -->
 
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
-    </head>
-    
-    <body>
+
+        <spring:url var="formUrlPrefix" value="/web/urlaubsverwaltung" />
         
-        <!-- geklaut von redmine -->
+        <!-- geklaut von redmine - Anpassen!! -->
+
+        <div id="top-menu">
+            <spring:message code="loggedas" />&nbsp;<c:out value="${user.login}" />     
+        </div>
         
         <div id="header">
-
+            
             <h1>Urlaubsverwaltung</h1>
 
-
             <div id="main-menu">
-                <ul><li><a class="overview" href="/projects/vacation_management">Startseite</a></li>
-                    <li><a class="activity" href="/projects/vacation_management/activity">Urlaub beantragen</a></li>
-                    <li><a class="issues" href="/projects/vacation_management/issues">Übersicht Mitarbeiter</a></li>
-                    <li><a class="settings" href="/projects/vacation_management/settings">Einstellungen</a></li>
+                
+            <!-- muss noch vernünftig angepasst werden -->
+                
+                <c:if test="normalerUser">
+                <ul>
+                    <li><a href="${formUrlPrefix}/mitarbeiter/${person.id}/overview">Übersicht</a></li>
+                    <li><a href="${formUrlPrefix}/antrag/${person.id}/new">Urlaub beantragen</a></li>
                 </ul>
+                </c:if>
+            
+                <c:if test="chef">
+                <ul><li><a href="${formUrlPrefix}/mitarbeiter/${person.id}/overview">Übersicht</a></li>
+                    <li><a href="${formUrlPrefix}/antrag/${person.id}/new">Urlaub beantragen</a></li>
+                    <li><a href="${formUrlPrefix}/antraege/wartend">Wartende Anträge</a></li>
+                    <li><a href="${formUrlPrefix}/antraege/genehmigt">Genehmigte Anträge</a></li>
+                    <li><a href="${formUrlPrefix}/antraege/storniert">Stornierte Anträge</a></li>
+                    <li><a href="${formUrlPrefix}/mitarbeiter/list">Übersicht Mitarbeiter</a></li>
+                </ul>
+                </c:if>
+            
+                <c:if test="office">
+                <ul><li><a href="${formUrlPrefix}/mitarbeiter/${person.id}/overview">Übersicht</a></li>
+                    <li><a href="${formUrlPrefix}/antrag/${person.id}/new">Urlaub beantragen</a></li>
+                    <li><a href="${formUrlPrefix}/antraege/genehmigt">Genehmigte Anträge</a></li>
+                    <li><a href="${formUrlPrefix}/antraege/storniert">Stornierte Anträge</a></li>
+                    <li><a href="${formUrlPrefix}/mitarbeiter/list">Übersicht Mitarbeiter</a></li>
+                    <li><a href="${formUrlPrefix}/manager">Manager Bereich</a></li>
+                </ul>
+                </c:if>
+                
             </div>
 
         </div>
 
 
-        <!-- zugehoeriger style    -->
+        <!-- zugehoeriger style  mal ins css klatschen irgendwann  -->
 
         <!--#header, #top-menu {
             margin: 0;
+        }
+        
+        #top-menu {
+            background: none repeat scroll 0 0 #444444;
+            color: #FFFFFF;
+            font-size: 0.8em;
+            height: 1.8em;
+            padding: 2px 2px 0 6px;
         }
 
         #header {
@@ -59,11 +91,39 @@
             padding: 4px 8px 0 6px;
             position: relative;
         }
+        
+        #header a {
+        color: #505050;
+        }
+
+        #main-menu li a {
+            -moz-border-bottom-colors: none;
+            -moz-border-image: none;
+            -moz-border-left-colors: none;
+            -moz-border-right-colors: none;
+            -moz-border-top-colors: none;
+            background-color: #CCCCCC;
+            border-color: #AAAAAA #AAAAAA #CCCCCC;
+            border-style: solid;
+            border-width: 1px;
+            color: #444444;
+            font-weight: bold;
+        }
+
+        #main-menu li a:hover {
+            background: none repeat scroll 0 0 #CCCCCC;
+            color: #0083CC;
+            text-decoration: underline;
+        }
+
+        #main-menu li a.selected, #main-menu li a.selected:hover {
+            background-color: grey;
+            border: 1px solid grey;
+            color: white;
+        }
 
         body {
             font-family: Verdana,sans-serif;
             font-size: 12px;
         }-->
         
-    </body>
-</html>
