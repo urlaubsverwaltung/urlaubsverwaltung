@@ -6,6 +6,7 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 
 /**
@@ -22,7 +23,11 @@ public class Antrag extends AbstractPersistable<Integer> {
     private Person person;
 
     // Der Chef, der den antrag genehmigt, abgelehnt hat
+    @OneToOne
     private Person boss;
+
+    // Grund, warum Antrag abgelehnt wurde.
+    private String reasonToDecline;
 
     // Abwesenheit insgesamt (also plus Feiertage, Wochenende, etc.)
     private Integer beantragteTageBrutto;
@@ -46,6 +51,7 @@ public class Antrag extends AbstractPersistable<Integer> {
     private String reason;
 
     // Mitarbeiter als Vertreter
+    @OneToOne
     private Person vertreter;
 
     private String anschrift;
@@ -54,7 +60,7 @@ public class Antrag extends AbstractPersistable<Integer> {
 
     private DateMidnight antragsDate;
 
-    private State state;
+    private State status;
 
     public Person getPerson() {
 
@@ -65,6 +71,12 @@ public class Antrag extends AbstractPersistable<Integer> {
     public Person getBoss() {
 
         return boss;
+    }
+
+
+    public String getReasonToDecline() {
+
+        return reasonToDecline;
     }
 
 
@@ -136,7 +148,7 @@ public class Antrag extends AbstractPersistable<Integer> {
 
     public State getState() {
 
-        return state;
+        return status;
     }
 
 
@@ -149,6 +161,12 @@ public class Antrag extends AbstractPersistable<Integer> {
     public void setBoss(Person boss) {
 
         this.boss = boss;
+    }
+
+
+    public void setReasonToDecline(String reasonToDecline) {
+
+        this.reasonToDecline = reasonToDecline;
     }
 
 
@@ -220,6 +238,6 @@ public class Antrag extends AbstractPersistable<Integer> {
 
     public void setState(State state) {
 
-        this.state = state;
+        this.status = state;
     }
 }
