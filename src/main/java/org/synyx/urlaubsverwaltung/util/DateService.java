@@ -13,6 +13,11 @@ import java.util.Date;
  */
 public class DateService {
 
+    /**
+     * get the current year (int)
+     *
+     * @return
+     */
     public Integer getYear() {
 
         Calendar cal = Calendar.getInstance();
@@ -24,6 +29,11 @@ public class DateService {
     }
 
 
+    /**
+     * get the current full date as String
+     *
+     * @return
+     */
     public String getDate() {
 
         Calendar cal = Calendar.getInstance();
@@ -37,6 +47,11 @@ public class DateService {
     }
 
 
+    /**
+     * get current day of month (int)
+     *
+     * @return
+     */
     public int getDay() {
 
         Calendar cal = Calendar.getInstance();
@@ -46,6 +61,11 @@ public class DateService {
     }
 
 
+    /**
+     * get current month (int)
+     *
+     * @return
+     */
     public int getMonth() {
 
         Calendar cal = Calendar.getInstance();
@@ -55,6 +75,11 @@ public class DateService {
     }
 
 
+    /**
+     * get current day of week (Wochentag, int)
+     *
+     * @return
+     */
     public int getDayOfWeek() {
 
         Calendar cal = Calendar.getInstance();
@@ -64,6 +89,11 @@ public class DateService {
     }
 
 
+    /**
+     * get current hour of day (0-24, int)
+     *
+     * @return
+     */
     public int getTime() {
 
         Calendar cal = Calendar.getInstance();

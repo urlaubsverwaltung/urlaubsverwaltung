@@ -40,7 +40,9 @@ public class MailServiceImpl implements MailService {
         this.personService = personService;
     }
 
-    // darf man Parameter wirklich final setzen??
+    /**
+     * @see  MailService#sendDecayNotification()
+     */
     @Override
     public void sendDecayNotification() {
 
@@ -72,6 +74,9 @@ public class MailServiceImpl implements MailService {
     }
 
 
+    /**
+     * @see  MailService#sendNewRequestsNotification(java.util.List, java.util.List)
+     */
     @Override
     public void sendNewRequestsNotification(List<Person> persons, List<Antrag> requests) {
 
@@ -114,6 +119,9 @@ public class MailServiceImpl implements MailService {
     }
 
 
+    /**
+     * @see  MailService#sendApprovedNotification(org.synyx.urlaubsverwaltung.domain.Person, org.synyx.urlaubsverwaltung.domain.Antrag)
+     */
     @Override
     public void sendApprovedNotification(final Person person, final Antrag request) {
 
@@ -162,6 +170,9 @@ public class MailServiceImpl implements MailService {
     }
 
 
+    /**
+     * @see  MailService#sendDeclinedNotification(org.synyx.urlaubsverwaltung.domain.Antrag)
+     */
     @Override
     public void sendDeclinedNotification(final Antrag request) {
 
@@ -192,6 +203,9 @@ public class MailServiceImpl implements MailService {
     }
 
 
+    /**
+     * @see  MailService#sendConfirmation(org.synyx.urlaubsverwaltung.domain.Antrag)
+     */
     @Override
     public void sendConfirmation(Antrag request) {
 
@@ -219,6 +233,11 @@ public class MailServiceImpl implements MailService {
     }
 
 
+    /**
+     * NOT YET IMPLEMENTED
+     *
+     * @see  MailService#sendBalance(java.lang.Object)
+     */
     @Override
     public void sendBalance(Object balanceObject) {
 
@@ -226,6 +245,9 @@ public class MailServiceImpl implements MailService {
     }
 
 
+    /**
+     * @see  MailService#sendWeeklyVacationForecast(java.util.List)
+     */
     @Override
     public void sendWeeklyVacationForecast(List<Person> urlauber) {
 
@@ -260,6 +282,9 @@ public class MailServiceImpl implements MailService {
     }
 
 
+    /**
+     * @see  MailService#sendCanceledNotification(org.synyx.urlaubsverwaltung.domain.Antrag, java.lang.String)
+     */
     @Override
     public void sendCanceledNotification(Antrag request, final String emailAddress) {
 

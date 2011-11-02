@@ -42,7 +42,7 @@ public interface AntragService {
 
 
     /**
-     * if a user request vacation 'antrag' has state 'wartend' until a boss approve it
+     * if a user requests vacation, 'antrag' has state 'wartend' until a boss approves it
      *
      * @param  antrag
      */
@@ -86,7 +86,7 @@ public interface AntragService {
 
 
     /**
-     * use this to get all requests of a certain state(like 'waiting')
+     * use this to get all requests of a certain state (like 'waiting')
      *
      * @return  returns all requests of a state as a list of antrag-objects
      */

@@ -22,11 +22,11 @@ public class Antrag extends AbstractPersistable<Integer> {
     @ManyToOne
     private Person person;
 
-    // Der Chef, der den antrag genehmigt, abgelehnt hat
+    // Der Chef, der den antrag genehmigt/abgelehnt hat
     @OneToOne
     private Person boss;
 
-    // Grund, warum Antrag abgelehnt wurde.
+    // Grund, warum Chef Antrag abgelehnt hat
     private String reasonToDecline;
 
     // Abwesenheit insgesamt (also plus Feiertage, Wochenende, etc.)
@@ -35,7 +35,7 @@ public class Antrag extends AbstractPersistable<Integer> {
     // Anzahl der Tage netto, die vom Urlaubskonto abgezogen werden
     private Integer beantragteTageNetto;
 
-    // Wenn nachtraeglich hinzugefuegt, werden diese dem Urlaubskonto gutgeschrieben
+    // Wenn nachtraeglich hinzugefuegt, werden diese dem Urlaubskonto wieder gutgeschrieben
     private Integer krankheitsTage;
 
     // Zeitraum von wann bis wann
@@ -43,7 +43,7 @@ public class Antrag extends AbstractPersistable<Integer> {
 
     private DateMidnight endDate;
 
-    // z.B. Erholungsurlaub
+    // z.B. Erholungsurlaub, Sonderurlaub, etc.
     private VacationType vacationType;
 
     // Grund Pflicht bei Sonderurlaub, unbezahltem Urlaub und Ueberstundenabbummeln
@@ -54,12 +54,15 @@ public class Antrag extends AbstractPersistable<Integer> {
     @OneToOne
     private Person vertreter;
 
+    // Anschrift und Telefon waehrend Urlaub
     private String anschrift;
 
     private String phone;
 
+    // Datum Antragsstellung
     private DateMidnight antragsDate;
 
+    // Status des Antrags (wartend, genehmigt, ...)
     private State status;
 
     public Person getPerson() {

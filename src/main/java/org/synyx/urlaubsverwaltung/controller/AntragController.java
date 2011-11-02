@@ -95,7 +95,7 @@ public class AntragController {
 
 
     /**
-     * used if you want to see al canceled requests
+     * used if you want to see all cancelled requests
      *
      * @param  model
      *
@@ -112,7 +112,7 @@ public class AntragController {
 
 
     /**
-     * used if you want to see al declined requests
+     * used if you want to see all declined requests
      *
      * @param  model
      *
@@ -129,7 +129,7 @@ public class AntragController {
 
 
     /**
-     * used if you want to create a new request
+     * used if you want to create a new request (shows formular)
      *
      * @param  mitarbeiterId  id of the logged in user
      * @param  model  the datamodel
@@ -155,13 +155,13 @@ public class AntragController {
 
 
     /**
-     * use this to save an request(will be in "waiting" state
+     * use this to save an request (will be in "waiting" state)
      *
      * @param  mitarbeiterId  the id of the employee who made this request
      * @param  antrag  the request-object created by the form-entries
      * @param  model
      *
-     * @return  returns the path to a success-site("your request is being processed") or the main-page
+     * @return  returns the path to a success-site ("your request is being processed") or the main-page
      */
     @RequestMapping(value = "/antrag/{mitarbeiterId}/new", method = RequestMethod.POST)
     public String saveUrlaubsantrag(@PathVariable("mitarbeiterId") Integer mitarbeiterId,
@@ -212,7 +212,7 @@ public class AntragController {
 
 
     /**
-     * used if you want to approve an existing request(boss only)
+     * used if you want to approve an existing request (boss only)
      *
      * @param  model
      *

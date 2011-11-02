@@ -35,6 +35,9 @@ public class AntragServiceImpl implements AntragService {
         this.mailService = mailService;
     }
 
+    /**
+     * @see  AntragService#save(org.synyx.urlaubsverwaltung.domain.Antrag)
+     */
     @Override
     public void save(Antrag antrag) {
 
@@ -42,6 +45,9 @@ public class AntragServiceImpl implements AntragService {
     }
 
 
+    /**
+     * @see  AntragService#approve(org.synyx.urlaubsverwaltung.domain.Antrag)
+     */
     @Override
     public void approve(Antrag antrag) {
 
@@ -52,6 +58,9 @@ public class AntragServiceImpl implements AntragService {
     }
 
 
+    /**
+     * @see  AntragService#decline(org.synyx.urlaubsverwaltung.domain.Antrag, java.lang.String)
+     */
     @Override
     public void decline(Antrag antrag, String reasonToDecline) {
 
@@ -63,6 +72,9 @@ public class AntragServiceImpl implements AntragService {
     }
 
 
+    /**
+     * @see  AntragService#wait(org.synyx.urlaubsverwaltung.domain.Antrag)
+     */
     @Override
     public void wait(Antrag antrag) {
 
@@ -71,6 +83,9 @@ public class AntragServiceImpl implements AntragService {
     }
 
 
+    /**
+     * @see  AntragService#storno(org.synyx.urlaubsverwaltung.domain.Antrag)
+     */
     @Override
     public void storno(Antrag antrag) {
 
@@ -92,6 +107,9 @@ public class AntragServiceImpl implements AntragService {
     }
 
 
+    /**
+     * @see  AntragService#getRequestById(java.lang.Integer)
+     */
     @Override
     public Antrag getRequestById(Integer id) {
 
@@ -99,6 +117,9 @@ public class AntragServiceImpl implements AntragService {
     }
 
 
+    /**
+     * @see  AntragService#getAllRequestsForPerson(org.synyx.urlaubsverwaltung.domain.Person)
+     */
     @Override
     public List<Antrag> getAllRequestsForPerson(Person person) {
 
@@ -108,6 +129,9 @@ public class AntragServiceImpl implements AntragService {
     }
 
 
+    /**
+     * @see  AntragService#getAllRequests()
+     */
     @Override
     public List<Antrag> getAllRequests() {
 
@@ -115,6 +139,9 @@ public class AntragServiceImpl implements AntragService {
     }
 
 
+    /**
+     * @see  AntragService#getAllRequestsByState(org.synyx.urlaubsverwaltung.domain.State)
+     */
     @Override
     public List<Antrag> getAllRequestsByState(State state) {
 
@@ -124,6 +151,9 @@ public class AntragServiceImpl implements AntragService {
     }
 
 
+    /**
+     * @see  AntragService#getAllRequestsForACertainTime(org.joda.time.DateMidnight, org.joda.time.DateMidnight)
+     */
     @Override
     public List<Antrag> getAllRequestsForACertainTime(DateMidnight startDate, DateMidnight endDate) {
 

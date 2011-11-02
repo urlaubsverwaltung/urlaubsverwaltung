@@ -70,9 +70,9 @@ public interface MailService {
 
 
     /**
-     * this method sends a mail to stern@synyx.de mentioning all requests in the list
+     * this method sends a mail to stern@synyx.de mentioning all urlauber
      *
-     * @param  requests  the requests to mention in the mail
+     * @param  urlauber  persons with vacation this week
      */
     void sendWeeklyVacationForecast(List<Person> urlauber);
 

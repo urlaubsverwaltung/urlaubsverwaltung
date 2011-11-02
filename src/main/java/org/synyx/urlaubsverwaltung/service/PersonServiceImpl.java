@@ -37,6 +37,9 @@ public class PersonServiceImpl implements PersonService {
         this.mailService = mailService;
     }
 
+    /**
+     * @see  PersonService#save(org.synyx.urlaubsverwaltung.domain.Person)
+     */
     @Override
     public void save(Person person) {
 
@@ -44,6 +47,9 @@ public class PersonServiceImpl implements PersonService {
     }
 
 
+    /**
+     * @see  PersonService#delete(org.synyx.urlaubsverwaltung.domain.Person)
+     */
     @Override
     public void delete(Person person) {
 
@@ -51,6 +57,9 @@ public class PersonServiceImpl implements PersonService {
     }
 
 
+    /**
+     * @see  PersonService#getPersonByID(java.lang.Integer)
+     */
     @Override
     public Person getPersonByID(Integer id) {
 
@@ -58,6 +67,9 @@ public class PersonServiceImpl implements PersonService {
     }
 
 
+    /**
+     * @see  PersonService#getAllPersons()
+     */
     @Override
     public List<Person> getAllPersons() {
 
@@ -65,6 +77,9 @@ public class PersonServiceImpl implements PersonService {
     }
 
 
+    /**
+     * @see  PersonService#deleteResturlaub()
+     */
     @Override
     public void deleteResturlaub() {
 
@@ -76,6 +91,9 @@ public class PersonServiceImpl implements PersonService {
     }
 
 
+    /**
+     * @see  PersonService#getPersonsWithResturlaub()
+     */
     @Override
     public List<Person> getPersonsWithResturlaub() {
 
@@ -83,6 +101,9 @@ public class PersonServiceImpl implements PersonService {
     }
 
 
+    /**
+     * @see  PersonService#updateVacationDays()
+     */
     @Override
     public void updateVacationDays() {
 
@@ -99,6 +120,9 @@ public class PersonServiceImpl implements PersonService {
     }
 
 
+    /**
+     * @see  PersonService#getAllUrlauberForThisWeekAndPutItInAnEmail(org.joda.time.DateMidnight, org.joda.time.DateMidnight)
+     */
     @Override
     public void getAllUrlauberForThisWeekAndPutItInAnEmail(DateMidnight startDate, DateMidnight endDate) {
 
