@@ -29,18 +29,22 @@ public class MailServiceImpl implements MailService {
     // see here: http://static.springsource.org/spring/docs/2.0.5/reference/mail.html
 
     private JavaMailSender mailSender;
-    private String absender = "urlaubsverwaltung@synyx.de";
-    private String sternchen = "stern@synyx.de";
+    private PersonService personService;
+    private String absender = EmailAdr.MANAGE.getEmail();
+    private String sternchen = EmailAdr.STERN.getEmail();
 
     @Autowired
-    public MailServiceImpl(JavaMailSender mailSender) {
+    public MailServiceImpl(JavaMailSender mailSender, PersonService personService) {
 
         this.mailSender = mailSender;
+        this.personService = personService;
     }
 
     // darf man Parameter wirklich final setzen??
     @Override
-    public void sendDecayNotification(List<Person> persons) {
+    public void sendDecayNotification() {
+
+        List<Person> persons = personService.getPersonsWithResturlaub();
 
         for (final Person person : persons) {
             MimeMessagePreparator prep = new MimeMessagePreparator() {
@@ -50,6 +54,7 @@ public class MailServiceImpl implements MailService {
 
                     mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(person.getEmail()));
                     mimeMessage.setFrom(new InternetAddress(absender));
+                    mimeMessage.setSubject("Erinnerung Resturlaub");
                     mimeMessage.setText("Liebe/-r " + person.getFirstName() + " " + person.getLastName() + ","
                         + "\n\ndu hast aus dem letzten Kalenderjahr Resturlaub ins neue Jahr mitgenommen."
                         + "\nBitte beachte, dass dieser zum 1. April des neuen Jahres verfällt."
@@ -93,6 +98,7 @@ public class MailServiceImpl implements MailService {
 
                 mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(emailAdressen));
                 mimeMessage.setFrom(new InternetAddress(absender));
+                mimeMessage.setSubject("Es liegen neue Urlaubsanträge vor");
                 mimeMessage.setText("Hallo Chef-Etage, "
                     + "\n\nes liegen neue Urlaubsanträge vor, die es zu bearbeiten gilt: "
                     + "\n" + beantragungen
@@ -119,6 +125,7 @@ public class MailServiceImpl implements MailService {
 
                 mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress("office@synyx.de"));
                 mimeMessage.setFrom(new InternetAddress(absender));
+                mimeMessage.setSubject("Neuer bewilligter Antrag");
                 mimeMessage.setText("Hallo Office, "
                     + "\n\nes liegt ein neuer bewilligter Antrag vor."
                     + "\n\nUrlaubsverwaltung");
@@ -138,6 +145,7 @@ public class MailServiceImpl implements MailService {
 
                 mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(person.getEmail()));
                 mimeMessage.setFrom(new InternetAddress(absender));
+                mimeMessage.setSubject("Antrag bewilligt");
                 mimeMessage.setText("Hallo " + person.getFirstName() + " " + person.getLastName() + ","
                     + "\n\ndein Antrag auf Urlaub für den Zeitraum von " + request.getStartDate() + " bis "
                     + request.getEndDate()
@@ -166,6 +174,7 @@ public class MailServiceImpl implements MailService {
 
                 mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(person.getEmail()));
                 mimeMessage.setFrom(new InternetAddress(absender));
+                mimeMessage.setSubject("Antrag abgelehnt");
                 mimeMessage.setText("Hallo " + person.getFirstName() + " " + person.getLastName() + ","
                     + "\n\ndein Antrag für Urlaub im Zeitraum vom " + request.getStartDate() + " bis "
                     + request.getEndDate() + " wurde von " + request.getBoss().getFirstName() + " "
@@ -195,6 +204,7 @@ public class MailServiceImpl implements MailService {
 
                 mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(person.getEmail()));
                 mimeMessage.setFrom(new InternetAddress(absender));
+                mimeMessage.setSubject("Bestätigung Antragstellung");
                 mimeMessage.setText("Hallo " + person.getFirstName() + " " + person.getLastName() + ","
                     + "\n\ndein Antrag wurde erfolgreich gestellt und wird in Kürze durch einen der Chefs bearbeitet werden."
                     + "\n\nUrlaubsverwaltung");
@@ -234,6 +244,7 @@ public class MailServiceImpl implements MailService {
 
                 mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(sternchen));
                 mimeMessage.setFrom(new InternetAddress(absender));
+                mimeMessage.setSubject("Diese Woche im Urlaub");
                 mimeMessage.setText("Hallo Sternchen, "
                     + "\n\nfolgende Mitarbeiter haben diese Woche frei: "
                     + "\n\n" + urlaub + "\n\n"
@@ -250,27 +261,19 @@ public class MailServiceImpl implements MailService {
 
 
     @Override
-    public void sendCanceledNotification(List<Person> persons, Antrag request) {
+    public void sendCanceledNotification(Antrag request, final String emailAddress) {
 
-        String urlauber = "";
-
-        for (Person person : persons) {
-            urlauber = urlauber + "\n" + person.getFirstName() + " " + person.getLastName();
-        }
-
-        final String allUrlauber = urlauber;
+        final String name = request.getPerson().getFirstName() + " " + request.getPerson().getLastName();
 
         MimeMessagePreparator prep = new MimeMessagePreparator() {
 
             @Override
             public void prepare(MimeMessage mimeMessage) throws Exception {
 
-                mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(sternchen));
+                mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(emailAddress));
                 mimeMessage.setFrom(new InternetAddress(absender));
-                mimeMessage.setText("Hallo Sternchen, "
-                    + "\n\nfolgende Mitarbeiter haben diese Woche frei: "
-                    + "\n\n" + allUrlauber + "\n\n"
-                    + "\n\nUrlaubsverwaltung");
+                mimeMessage.setSubject("Antrag storniert");
+                mimeMessage.setText("Der Mitarbeiter " + name + " hat seinen Urlaubsantrag storniert.");
             }
         };
 

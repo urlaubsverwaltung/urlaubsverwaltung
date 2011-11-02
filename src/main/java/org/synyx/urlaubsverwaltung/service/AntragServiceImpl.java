@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.service;
 
+import org.joda.time.DateMidnight;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -21,10 +23,13 @@ import java.util.List;
 public class AntragServiceImpl implements AntragService {
 
     private AntragDAO antragDAO;
+
+    // wird hier und im anderen service benötigt, weil wir ja
+    // ständig irgendwelche mails schicken müssen... =)
     private MailServiceImpl mailService;
 
     @Autowired
-    public AntragServiceImpl(AntragDAO antragDAO,MailServiceImpl mailService) {
+    public AntragServiceImpl(AntragDAO antragDAO, MailServiceImpl mailService) {
 
         this.antragDAO = antragDAO;
         this.mailService = mailService;
@@ -42,15 +47,19 @@ public class AntragServiceImpl implements AntragService {
 
         antrag.setState(State.GENEHMIGT);
         antragDAO.save(antrag);
+
+        mailService.sendApprovedNotification(antrag.getPerson(), antrag);
     }
 
 
     @Override
-    public void decline(Antrag antrag,String reason) {
+    public void decline(Antrag antrag, String reasonToDecline) {
 
         antrag.setState(State.ABGELEHNT);
-        antrag.setReason(reason);
+        antrag.setReasonToDecline(reasonToDecline);
         antragDAO.save(antrag);
+
+        mailService.sendDeclinedNotification(antrag);
     }
 
 
@@ -65,8 +74,21 @@ public class AntragServiceImpl implements AntragService {
     @Override
     public void storno(Antrag antrag) {
 
-        antrag.setState(State.STORNIERT);
-        antragDAO.save(antrag);
+        String emailAddress;
+
+        if (antrag.getState() == State.WARTEND) {
+            antrag.setState(State.STORNIERT);
+            antragDAO.save(antrag);
+
+            // wenn Antrag wartend war, bekommen Chefs die Email
+            mailService.sendCanceledNotification(antrag, EmailAdr.CHEFS.getEmail());
+        } else if (antrag.getState() == State.GENEHMIGT) {
+            antrag.setState(State.STORNIERT);
+            antragDAO.save(antrag);
+
+            // wenn Antrag genehmigt war, bekommt Office die Email
+            mailService.sendCanceledNotification(antrag, EmailAdr.OFFICE.getEmail());
+        }
     }
 
 
@@ -99,5 +121,12 @@ public class AntragServiceImpl implements AntragService {
         antragDAO.getAllRequestsByState(state);
 
         return null;
+    }
+
+
+    @Override
+    public List<Antrag> getAllRequestsForACertainTime(DateMidnight startDate, DateMidnight endDate) {
+
+        return antragDAO.getAllRequestsForACertainTime(startDate, endDate);
     }
 }

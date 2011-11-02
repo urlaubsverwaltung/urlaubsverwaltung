@@ -22,7 +22,7 @@ public interface MailService {
      *
      * @param  persons  the list of persons which should receive the mail
      */
-    void sendDecayNotification(List<Person> persons);
+    void sendDecayNotification();
 
 
     /**
@@ -83,5 +83,5 @@ public interface MailService {
      * @param  persons  the list of persons that will receive a notification-mail
      * @param  request  the request which got canceled
      */
-    void sendCanceledNotification(List<Person> persons, Antrag request);
+    void sendCanceledNotification(Antrag request, String emailAddress);
 }
