@@ -35,4 +35,40 @@ public class DateService {
 
         return day + "." + month + "." + year;
     }
+
+
+    public int getDay() {
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date()); // heute
+
+        return (int) cal.get(Calendar.DAY_OF_MONTH);
+    }
+
+
+    public int getMonth() {
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date()); // heute
+
+        return (int) cal.get(Calendar.MONTH);
+    }
+
+
+    public int getDayOfWeek() {
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date()); // heute
+
+        return (int) cal.get(Calendar.DAY_OF_WEEK);
+    }
+
+
+    public int getTime() {
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date()); // heute
+
+        return cal.get(Calendar.HOUR_OF_DAY);
+    }
 }
