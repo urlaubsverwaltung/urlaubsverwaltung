@@ -20,8 +20,8 @@ public class Antrag extends AbstractPersistable<Integer> {
     // Eine Person kann mehrere Antraege besitzen
     @ManyToOne
     private Person person;
-    
-    //Der Chef, der den antrag genehmigt, abgelehnt hat
+
+    // Der Chef, der den antrag genehmigt, abgelehnt hat
     private Person boss;
 
     // Abwesenheit insgesamt (also plus Feiertage, Wochenende, etc.)
@@ -59,6 +59,12 @@ public class Antrag extends AbstractPersistable<Integer> {
     public Person getPerson() {
 
         return person;
+    }
+
+
+    public Person getBoss() {
+
+        return boss;
     }
 
 
@@ -137,6 +143,12 @@ public class Antrag extends AbstractPersistable<Integer> {
     public void setPerson(Person person) {
 
         this.person = person;
+    }
+
+
+    public void setBoss(Person boss) {
+
+        this.boss = boss;
     }
 
 
