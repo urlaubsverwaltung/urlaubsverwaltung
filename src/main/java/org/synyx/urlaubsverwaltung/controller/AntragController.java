@@ -183,14 +183,33 @@ public class AntragController {
      *
      * @return
      */
-    @RequestMapping(value = "/antrag/{antragId}", method = RequestMethod.GET)
-    public String showAntragDetail(@PathVariable("antragId") Integer antragId, Model model) {
+    @RequestMapping(value = "/antrag/{antragId}/chef", method = RequestMethod.GET)
+    public String showAntragDetailChef(@PathVariable("antragId") Integer antragId, Model model) {
 
         Antrag antrag = antragService.getRequestById(antragId);
 
         model.addAttribute("antrag", antrag);
 
-        return "antraege/antragdetail";
+        return "antraege/antragdetailchef";
+    }
+
+
+    /**
+     * view for office who can print or edit the request
+     *
+     * @param  antragId
+     * @param  model
+     *
+     * @return
+     */
+    @RequestMapping(value = "/antrag/{antragId}/office", method = RequestMethod.GET)
+    public String showAntragDetailOffice(@PathVariable("antragId") Integer antragId, Model model) {
+
+        Antrag antrag = antragService.getRequestById(antragId);
+
+        model.addAttribute("antrag", antrag);
+
+        return "antraege/antragdetailoffice";
     }
 
 

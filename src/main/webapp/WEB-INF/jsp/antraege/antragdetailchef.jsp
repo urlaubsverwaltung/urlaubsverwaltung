@@ -84,11 +84,6 @@
                     <c:out value="${antrag.reason}" />
                 </td>
             </tr>
-<!--         braucht man nicht fuer Detailansicht   
-            <tr>
-                 hierhin kommt der DatePicker + Tage gesamt + Urlaubstage + verbleibender Urlaubsanspruch 
-            </tr>
--->
             <tr>
                 <td>
                    <label for="vertreter"><spring:message code='antrag.vertreter' />:</label> 
@@ -130,7 +125,7 @@
                 <td>&nbsp;</td>
                 <td colspan="2">
                     &nbsp;
-                    <!--  bleibt hier erstmal leer, Platz fuer Chef Unterschrift  -->
+                    <!--  bleibt hier erstmal leer, Platz fuer Chef Unterschrift nach Bestaetigung -->
                 </td>
             </tr>
             <tr>
