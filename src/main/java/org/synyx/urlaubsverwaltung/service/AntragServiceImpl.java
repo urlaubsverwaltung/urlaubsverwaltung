@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.synyx.urlaubsverwaltung.dao.AntragDAO;
+import org.synyx.urlaubsverwaltung.dao.PersonDAO;
 import org.synyx.urlaubsverwaltung.domain.Antrag;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.State;
@@ -23,15 +24,17 @@ import java.util.List;
 public class AntragServiceImpl implements AntragService {
 
     private AntragDAO antragDAO;
+    private PersonDAO personDAO;
 
     // wird hier und im anderen service benötigt, weil wir ja
     // ständig irgendwelche mails schicken müssen... =)
     private MailServiceImpl mailService;
 
     @Autowired
-    public AntragServiceImpl(AntragDAO antragDAO, MailServiceImpl mailService) {
+    public AntragServiceImpl(AntragDAO antragDAO, PersonDAO personDAO, MailServiceImpl mailService) {
 
         this.antragDAO = antragDAO;
+        this.personDAO = personDAO;
         this.mailService = mailService;
     }
 
@@ -89,7 +92,8 @@ public class AntragServiceImpl implements AntragService {
     @Override
     public void storno(Antrag antrag) {
 
-        String emailAddress;
+        Person person = antrag.getPerson();
+        Integer urlaubstageGut = antrag.getBeantragteTageNetto();
 
         if (antrag.getState() == State.WARTEND) {
             antrag.setState(State.STORNIERT);
@@ -104,6 +108,20 @@ public class AntragServiceImpl implements AntragService {
             // wenn Antrag genehmigt war, bekommt Office die Email
             mailService.sendCanceledNotification(antrag, EmailAdr.OFFICE.getEmail());
         }
+
+        Integer teil1 = person.getVacationDays() - person.getRemainingVacationDays();
+
+        if (urlaubstageGut <= teil1) {
+            person.setRemainingVacationDays(person.getRemainingVacationDays() + urlaubstageGut);
+            person.setUsedVacationDays(person.getUsedVacationDays() - urlaubstageGut);
+        } else {
+            person.setRemainingVacationDays(person.getRemainingVacationDays() + teil1);
+            person.setUsedVacationDays(person.getUsedVacationDays() - teil1);
+            person.setRestUrlaub(person.getRestUrlaub() + (urlaubstageGut - teil1));
+            person.setUsedRestUrlaub(person.getUsedRestUrlaub() - (urlaubstageGut - teil1));
+        }
+
+        personDAO.save(person);
     }
 
 
@@ -123,9 +141,7 @@ public class AntragServiceImpl implements AntragService {
     @Override
     public List<Antrag> getAllRequestsForPerson(Person person) {
 
-        antragDAO.getAllRequestsForPerson(person);
-
-        return null;
+        return antragDAO.getAllRequestsForPerson(person);
     }
 
 
@@ -158,5 +174,35 @@ public class AntragServiceImpl implements AntragService {
     public List<Antrag> getAllRequestsForACertainTime(DateMidnight startDate, DateMidnight endDate) {
 
         return antragDAO.getAllRequestsForACertainTime(startDate, endDate);
+    }
+
+
+    /**
+     * @see  AntragService#krankheitBeachten(org.synyx.urlaubsverwaltung.domain.Antrag, java.lang.Integer)
+     */
+    @Override
+    public void krankheitBeachten(Antrag antrag, Integer krankheitsTage) {
+
+        antrag.setKrankheitsTage(krankheitsTage);
+        antrag.setBeantragteTageNetto(antrag.getBeantragteTageNetto() - krankheitsTage);
+
+        antragDAO.save(antrag);
+
+        Person person = antrag.getPerson();
+        Integer urlaubstageGut = krankheitsTage;
+
+        Integer teil1 = person.getVacationDays() - person.getRemainingVacationDays();
+
+        if (urlaubstageGut <= teil1) {
+            person.setRemainingVacationDays(person.getRemainingVacationDays() + urlaubstageGut);
+            person.setUsedVacationDays(person.getUsedVacationDays() - urlaubstageGut);
+        } else {
+            person.setRemainingVacationDays(person.getRemainingVacationDays() + teil1);
+            person.setUsedVacationDays(person.getUsedVacationDays() - teil1);
+            person.setRestUrlaub(person.getRestUrlaub() + (urlaubstageGut - teil1));
+            person.setUsedRestUrlaub(person.getUsedRestUrlaub() - (urlaubstageGut - teil1));
+        }
+
+        personDAO.save(person);
     }
 }

@@ -58,6 +58,14 @@ public interface AntragService {
 
 
     /**
+     * Krankheitstage zum Antrag hinzufuegen: Urlaubskonto gutschreiben und von verbrauchten Urlaubstagen abziehen
+     *
+     * @param  antrag
+     */
+    void krankheitBeachten(Antrag antrag, Integer krankheitsTage);
+
+
+    /**
      * use this to get a certain request if you know its id
      *
      * @param  id  the id of the request
