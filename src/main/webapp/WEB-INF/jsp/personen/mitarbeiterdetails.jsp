@@ -40,6 +40,9 @@
                 </td>
             </tr>
             <tr>
+                <td><a href="mailto:${person.email}"><c:out value="${person.email}"/></a></td>
+            </tr>
+            <tr>
                 <td>
                    <spring:message code="table.vac" />
                 </td>
@@ -59,7 +62,14 @@
                 <td colspan="2">
                     <a href="${formUrlPrefix}/antraege/${mitarbeiter.id}"><spring:message code="table.antrag" /></a>
                 </td>
-            </tr>    
+            </tr>   
+            <c:if test="user == office - wie auch immer das mal gehen mag">
+                <tr> 
+                    <td>
+                        <a href="${formUrlPrefix}/antrag/${antrag.id}/edit" />
+                    </td>
+                </tr>    
+            </c:if>
         </table>    
         <br />        
         </c:forEach>
