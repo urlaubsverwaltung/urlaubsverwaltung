@@ -29,17 +29,17 @@
      
     <filter>
         <filter-name>CharsetFilter</filter-name>
-        <filter-class>org.synyx.ausbildung.adressbuch.CharsetFilter</filter-class>
+        <filter-class>org.synyx.urlaubsverwaltung.util.CharsetFilter</filter-class>
         <init-param>
             <param-name>requestEncoding</param-name>
             <param-value>UTF-8</param-value>
         </init-param>
     </filter>
     
-    <filter>
+<!--    <filter>
         <filter-name>springSecurityFilterChain</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-    </filter>
+    </filter>-->
     
     
     <filter-mapping>
@@ -51,11 +51,11 @@
         <filter-name>httpMethodCorrector</filter-name>
         <url-pattern>/web/*</url-pattern>
     </filter-mapping>
-     
+<!--     
     <filter-mapping>
         <filter-name>springSecurityFilterChain</filter-name>
         <url-pattern>/*</url-pattern>
-    </filter-mapping>
+    </filter-mapping>-->
     
     <servlet>
         <servlet-name>urlaubsverwaltung</servlet-name>

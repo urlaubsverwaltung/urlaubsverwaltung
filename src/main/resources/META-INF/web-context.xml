@@ -25,7 +25,7 @@
         </constructor-arg>
     </bean>
     
-    <bean class="org.synyx.ausbildung.adressbuch.PersonController">
+    <bean class="org.synyx.urlaubsverwaltung.controller.PersonController">
         <constructor-arg ref="personService" />
         <constructor-arg ref="antragService" />
         <constructor-arg>

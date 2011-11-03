@@ -18,16 +18,16 @@ import java.util.List;
 public interface AntragDAO extends JpaRepository<Antrag, Integer> {
 
     // get List<Antrag> by certain state (e.g. 'wartend')
-    @Query("select x from antrag x where x.state = ?")
+    @Query("select x from Antrag x where x.status = ?")
     List<Antrag> getAllRequestsByState(State state);
 
 
     // get List<Antrag> by certain person
-    @Query("select x from antrag x where x.person = ?")
+    @Query("select x from Antrag x where x.person = ?")
     List<Antrag> getAllRequestsForPerson(Person person);
 
 
     // get List<Antrag> for a certain time (between startDate and endDate)
-    @Query("select x from antrag x where x.startDate >= ? and x.endDate <= ?")
+    @Query("select x from Antrag x where x.startDate >= ? and x.endDate <= ?")
     List<Antrag> getAllRequestsForACertainTime(DateMidnight startDate, DateMidnight endDate);
 }
