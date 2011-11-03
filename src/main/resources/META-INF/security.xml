@@ -7,19 +7,19 @@
 			    http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
                             http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.3.xsd">
                                        
-    <bean id="saltSource" class="org.synyx.ausbildung.adressbuch.security.UserSaltSource" /> 
+<!--    <bean id="saltSource" class="org.synyx.ausbildung.adressbuch.security.UserSaltSource" /> 
     <bean id="passwordEncoder" class="org.springframework.security.authentication.encoding.Md5PasswordEncoder" />
                                        
     <bean id="authenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
         <property name="userDetailsService" ref="userService" />
         <property name="saltSource" ref="saltSource" />
         <property name="passwordEncoder" ref="passwordEncoder" />
-    </bean>
+    </bean>-->
     
     <security:global-method-security jsr250-annotations="enabled" />
     
 <!-- Anpassen!  -->
-    <security:http>
+<!--    <security:http>
          <security:intercept-url pattern="/web/login" filters="none"/>
          <security:intercept-url pattern="/web/success" filters="none"/>
          <security:intercept-url pattern="/web/registration" filters="none"/>
@@ -34,6 +34,6 @@
     
     <security:authentication-manager alias="authenticationManager">
         <security:authentication-provider ref="authenticationProvider" />
-    </security:authentication-manager>    
+    </security:authentication-manager>    -->
 
 </beans>

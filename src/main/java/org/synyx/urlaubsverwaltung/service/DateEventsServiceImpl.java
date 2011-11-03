@@ -51,7 +51,6 @@ public class DateEventsServiceImpl {
         // Idee war: 2.1., 2.2., 2.3., 14.3.
         if ((day == 2 && month == 0) || (day == 2 && month == 1) || (day == 2 && month == 2)
                 || (day == 14 && month == 2)) {
-            mailService.sendDecayNotification();
         }
     }
 

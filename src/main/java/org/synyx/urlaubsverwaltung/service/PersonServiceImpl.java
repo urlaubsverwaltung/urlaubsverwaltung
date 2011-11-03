@@ -27,10 +27,10 @@ public class PersonServiceImpl implements PersonService {
 
     // wird hier und im anderen service benötigt, weil wir ja
     // ständig irgendwelche mails schicken müssen... =)
-    private MailServiceImpl mailService;
+    private MailService mailService;
 
     @Autowired
-    public PersonServiceImpl(PersonDAO personDAO, AntragService antragService, MailServiceImpl mailService) {
+    public PersonServiceImpl(PersonDAO personDAO, AntragService antragService, MailService mailService) {
 
         this.personDAO = personDAO;
         this.antragService = antragService;

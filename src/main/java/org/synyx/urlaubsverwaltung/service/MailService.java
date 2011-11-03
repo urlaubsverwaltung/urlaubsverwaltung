@@ -22,7 +22,7 @@ public interface MailService {
      *
      * @param  persons  the list of persons which should receive the mail
      */
-    void sendDecayNotification();
+    void sendDecayNotification(List<Person> persons);
 
 
     /**

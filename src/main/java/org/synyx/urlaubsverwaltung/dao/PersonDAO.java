@@ -14,6 +14,6 @@ import java.util.List;
 public interface PersonDAO extends JpaRepository<Person, Integer> {
 
     // get all persons that have restUrlaub (>0)
-    @Query("select x from person x where x.restUrlaub > 0")
+    @Query("select x from Person x where x.restUrlaub = 0")
     List<Person> getPersonsWithResturlaub();
 }

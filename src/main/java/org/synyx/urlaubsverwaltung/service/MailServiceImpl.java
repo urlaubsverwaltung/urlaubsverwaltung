@@ -29,24 +29,20 @@ public class MailServiceImpl implements MailService {
     // see here: http://static.springsource.org/spring/docs/2.0.5/reference/mail.html
 
     private JavaMailSender mailSender;
-    private PersonService personService;
     private String absender = EmailAdr.MANAGE.getEmail();
     private String sternchen = EmailAdr.STERN.getEmail();
 
     @Autowired
-    public MailServiceImpl(JavaMailSender mailSender, PersonService personService) {
+    public MailServiceImpl(JavaMailSender mailSender) {
 
         this.mailSender = mailSender;
-        this.personService = personService;
     }
 
     /**
      * @see  MailService#sendDecayNotification()
      */
     @Override
-    public void sendDecayNotification() {
-
-        List<Person> persons = personService.getPersonsWithResturlaub();
+    public void sendDecayNotification(List<Person> persons) {
 
         for (final Person person : persons) {
             MimeMessagePreparator prep = new MimeMessagePreparator() {
