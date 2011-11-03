@@ -39,9 +39,15 @@
         <c:forEach items="${mitarbeiter}" var="person" varStatus="loopStatus">
             <tr class="${loopStatus.index % 2 == 0 ? 'even' : 'odd'}">
                 <td><c:out value="${person.lastName}"/>&nbsp;<c:out value="${person.firstName}"/></td>
+                <td><a href="mailto:${person.email}"><c:out value="${person.email}"/></a></td>
                 <td><c:out value="${person.remainingVacationDays}"/></td>
                 <td><c:out value="${person.restUrlaub}"/></td>
                 <td><a href="${formUrlPrefix}/antraege/${mitarbeiter.id}"><spring:message code="table.antrag" /></a></td>
+                <c:if test="user == office - wie auch immer das mal gehen mag">
+                    <td>
+                        <a href="${formUrlPrefix}/antrag/${antrag.id}/edit" />
+                    </td>
+                </c:if>
             </tr>    
         </c:forEach>
         </table>

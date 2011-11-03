@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.service;
 
+import org.joda.time.DateMidnight;
+
 import org.synyx.urlaubsverwaltung.domain.Antrag;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.State;
@@ -34,13 +36,13 @@ public interface AntragService {
      * use this to set a request to declined (only boss)
      *
      * @param  antrag  the request to be edited
-     * @param reason the reason of the rejection
+     * @param  reason  the reason of the rejection
      */
-    void decline(Antrag antrag,String reason);
+    void decline(Antrag antrag, String reason);
 
 
     /**
-     * if a user request vacation 'antrag' has state 'wartend' until a boss approve it
+     * if a user requests vacation, 'antrag' has state 'wartend' until a boss approves it
      *
      * @param  antrag
      */
@@ -53,6 +55,14 @@ public interface AntragService {
      * @param  antrag
      */
     void storno(Antrag antrag);
+
+
+    /**
+     * Krankheitstage zum Antrag hinzufuegen: Urlaubskonto gutschreiben und von verbrauchten Urlaubstagen abziehen
+     *
+     * @param  antrag
+     */
+    void krankheitBeachten(Antrag antrag, Integer krankheitsTage);
 
 
     /**
@@ -84,9 +94,20 @@ public interface AntragService {
 
 
     /**
-     * use this to get all requests of a certain state(like 'waiting')
+     * use this to get all requests of a certain state (like 'waiting')
      *
      * @return  returns all requests of a state as a list of antrag-objects
      */
     List<Antrag> getAllRequestsByState(State state);
+
+
+    /**
+     * use this to get all requests with vacation time between startDate x and endDate y
+     *
+     * @param  startDate
+     * @param  endDate
+     *
+     * @return
+     */
+    List<Antrag> getAllRequestsForACertainTime(DateMidnight startDate, DateMidnight endDate);
 }

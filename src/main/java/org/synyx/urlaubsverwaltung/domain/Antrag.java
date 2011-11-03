@@ -6,6 +6,7 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 
 /**
@@ -20,9 +21,13 @@ public class Antrag extends AbstractPersistable<Integer> {
     // Eine Person kann mehrere Antraege besitzen
     @ManyToOne
     private Person person;
-    
-    //Der Chef, der den antrag genehmigt, abgelehnt hat
+
+    // Der Chef, der den antrag genehmigt/abgelehnt hat
+    @OneToOne
     private Person boss;
+
+    // Grund, warum Chef Antrag abgelehnt hat
+    private String reasonToDecline;
 
     // Abwesenheit insgesamt (also plus Feiertage, Wochenende, etc.)
     private Integer beantragteTageBrutto;
@@ -30,7 +35,7 @@ public class Antrag extends AbstractPersistable<Integer> {
     // Anzahl der Tage netto, die vom Urlaubskonto abgezogen werden
     private Integer beantragteTageNetto;
 
-    // Wenn nachtraeglich hinzugefuegt, werden diese dem Urlaubskonto gutgeschrieben
+    // Wenn nachtraeglich hinzugefuegt, werden diese dem Urlaubskonto wieder gutgeschrieben
     private Integer krankheitsTage;
 
     // Zeitraum von wann bis wann
@@ -38,7 +43,7 @@ public class Antrag extends AbstractPersistable<Integer> {
 
     private DateMidnight endDate;
 
-    // z.B. Erholungsurlaub
+    // z.B. Erholungsurlaub, Sonderurlaub, etc.
     private VacationType vacationType;
 
     // Grund Pflicht bei Sonderurlaub, unbezahltem Urlaub und Ueberstundenabbummeln
@@ -46,19 +51,35 @@ public class Antrag extends AbstractPersistable<Integer> {
     private String reason;
 
     // Mitarbeiter als Vertreter
+    @OneToOne
     private Person vertreter;
 
+    // Anschrift und Telefon waehrend Urlaub
     private String anschrift;
 
     private String phone;
 
+    // Datum Antragsstellung
     private DateMidnight antragsDate;
 
-    private State state;
+    // Status des Antrags (wartend, genehmigt, ...)
+    private State status;
 
     public Person getPerson() {
 
         return person;
+    }
+
+
+    public Person getBoss() {
+
+        return boss;
+    }
+
+
+    public String getReasonToDecline() {
+
+        return reasonToDecline;
     }
 
 
@@ -130,13 +151,25 @@ public class Antrag extends AbstractPersistable<Integer> {
 
     public State getState() {
 
-        return state;
+        return status;
     }
 
 
     public void setPerson(Person person) {
 
         this.person = person;
+    }
+
+
+    public void setBoss(Person boss) {
+
+        this.boss = boss;
+    }
+
+
+    public void setReasonToDecline(String reasonToDecline) {
+
+        this.reasonToDecline = reasonToDecline;
     }
 
 
@@ -208,6 +241,6 @@ public class Antrag extends AbstractPersistable<Integer> {
 
     public void setState(State state) {
 
-        this.state = state;
+        this.status = state;
     }
 }
