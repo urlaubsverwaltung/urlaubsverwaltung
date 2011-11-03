@@ -7,13 +7,33 @@
 			    http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
                             http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.3.xsd">
                                        
-<!--    <bean id="saltSource" class="org.synyx.ausbildung.adressbuch.security.UserSaltSource" /> 
-    <bean id="passwordEncoder" class="org.springframework.security.authentication.encoding.Md5PasswordEncoder" />
+    
+<!--    <bean id="contextSource"
+       class="org.springframework.security.ldap.DefaultSpringSecurityContextSource">
+     <constructor-arg value="ldap://ldap.localdomain"/>
+     <property name="userDn" value="ou=People,cn=manager,dc=theia,dc=localdomain?uid"/>
+   </bean>
+   
+    <bean id="ldapAuthProvider"
+       class="org.springframework.security.ldap.authentication.LdapAuthenticationProvider">
+     <constructor-arg>
+       <bean class="org.springframework.security.ldap.authentication.BindAuthenticator">
+           <constructor-arg ref="contextSource"/>
+           <property name="userDnPatterns"><list><value>uid={0},ou=people</value></list></property>
+       </bean>
+     </constructor-arg>
+     <constructor-arg>
+       <bean class="org.synyx.urlaubsverwaltung.security.AuthoritiesPopulator">
+           <constructor-arg ref="contextSource"/>
+           <constructor-arg value="ou=groups"/>
+           <property name="groupRoleAttribute" value="ou"/>
+       </bean>
+     </constructor-arg>
+   </bean>
+
                                        
-    <bean id="authenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+    <bean id="authenticationProvider" class="org.springframework.security.ldap.authentication.LdapAuthenticationProvider">
         <property name="userDetailsService" ref="userService" />
-        <property name="saltSource" ref="saltSource" />
-        <property name="passwordEncoder" ref="passwordEncoder" />
     </bean>-->
     
     <security:global-method-security jsr250-annotations="enabled" />

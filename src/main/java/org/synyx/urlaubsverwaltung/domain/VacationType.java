@@ -17,7 +17,7 @@ public enum VacationType {
         this.vacationTypeName = vacationTypeName;
     }
 
-    public String getStateName() {
+    public String getVacationTypeName() {
 
         return this.vacationTypeName;
     }

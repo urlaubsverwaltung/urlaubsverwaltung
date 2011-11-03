@@ -60,6 +60,12 @@
 			<version>4.8.2</version>
 			<scope>test</scope>
 		</dependency>
+                
+                <dependency>
+                    <groupId>org.springframework.security</groupId>
+                    <artifactId>spring-security-ldap</artifactId>
+                    <version>3.0.5.RELEASE</version>
+                </dependency>
 
 		<dependency>
 			<groupId>javax.servlet</groupId>

@@ -46,6 +46,9 @@ public class Antrag extends AbstractPersistable<Integer> {
     // z.B. Erholungsurlaub, Sonderurlaub, etc.
     private VacationType vacationType;
 
+    // nur morgens, nur mittags oder ganztägig
+    private Length howLong;
+
     // Grund Pflicht bei Sonderurlaub, unbezahltem Urlaub und Ueberstundenabbummeln
     // bei Erholungsurlaub default = Erholung
     private String reason;
@@ -101,6 +104,30 @@ public class Antrag extends AbstractPersistable<Integer> {
     }
 
 
+    public Length getHowLong() {
+
+        return howLong;
+    }
+
+
+    public void setHowLong(Length howLong) {
+
+        this.howLong = howLong;
+    }
+
+
+    public State getStatus() {
+
+        return status;
+    }
+
+
+    public void setStatus(State status) {
+
+        this.status = status;
+    }
+
+
     public DateMidnight getStartDate() {
 
         return startDate;
@@ -146,12 +173,6 @@ public class Antrag extends AbstractPersistable<Integer> {
     public DateMidnight getAntragsDate() {
 
         return antragsDate;
-    }
-
-
-    public State getState() {
-
-        return status;
     }
 
 
@@ -236,11 +257,5 @@ public class Antrag extends AbstractPersistable<Integer> {
     public void setAntragsDate(DateMidnight antragsDate) {
 
         this.antragsDate = antragsDate;
-    }
-
-
-    public void setState(State state) {
-
-        this.status = state;
     }
 }

@@ -1,6 +1,8 @@
 
 package org.synyx.urlaubsverwaltung.controller;
 
+import org.joda.time.DateMidnight;
+
 import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
@@ -131,7 +133,6 @@ public class PersonController {
         personToUpdate.setLastName(person.getLastName());
         personToUpdate.setFirstName(person.getFirstName());
         personToUpdate.setEmail(person.getEmail());
-        personToUpdate.setVacationDays(person.getVacationDays());
 
         personService.save(personToUpdate);
 
@@ -170,7 +171,10 @@ public class PersonController {
 
         personService.save(person);
 
+        personService.setUrlaubsanspruchForPerson(person, DateMidnight.now().getYear(),
+            person.getCurrentVacationDays());
+
         // braucht noch richtigen Verweis
-        return "redirect:irgendwohin";
+        return "redirect:/web/mitarbeiter/list";
     }
 }

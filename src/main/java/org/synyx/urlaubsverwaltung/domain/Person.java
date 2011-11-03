@@ -23,6 +23,8 @@ public class Person extends AbstractPersistable<Integer> {
 
     private static final long serialVersionUID = 1L;
 
+    private String loginName;
+
     private String lastName;
 
     private String firstName;
@@ -32,8 +34,8 @@ public class Person extends AbstractPersistable<Integer> {
     // Unterschrift der Person
     private Image sign;
 
-    // vacation days - Jahresanspruch Urlaub
-    private Integer vacationDays;
+    // vacation days - aktueller Jahresanspruch Urlaub
+    private Integer currentVacationDays;
 
     // amount of remaining days - Verbleibender Urlaubsanspruch dieses Jahr
     private Integer remainingVacationDays;
@@ -51,6 +53,18 @@ public class Person extends AbstractPersistable<Integer> {
 
     // eventuell fuer die Mitarbeiter-Liste - nur als Idee bisher
     // private Image userPicture;
+
+    public String getLoginName() {
+
+        return loginName;
+    }
+
+
+    public void setLoginName(String loginName) {
+
+        this.loginName = loginName;
+    }
+
 
     public String getEmail() {
 
@@ -112,6 +126,18 @@ public class Person extends AbstractPersistable<Integer> {
     }
 
 
+    public Integer getCurrentVacationDays() {
+
+        return currentVacationDays;
+    }
+
+
+    public void setCurrentVacationDays(Integer currentVacationDays) {
+
+        this.currentVacationDays = currentVacationDays;
+    }
+
+
     public Image getSign() {
 
         return sign;
@@ -121,18 +147,6 @@ public class Person extends AbstractPersistable<Integer> {
     public void setSign(Image sign) {
 
         this.sign = sign;
-    }
-
-
-    public Integer getResidualVacationDays() {
-
-        return restUrlaub;
-    }
-
-
-    public void setResidualVacationDays(Integer residualVacationDays) {
-
-        this.restUrlaub = residualVacationDays;
     }
 
 
@@ -181,18 +195,6 @@ public class Person extends AbstractPersistable<Integer> {
     public void setUsedVacationDays(Integer usedVacationDays) {
 
         this.usedVacationDays = usedVacationDays;
-    }
-
-
-    public Integer getVacationDays() {
-
-        return vacationDays;
-    }
-
-
-    public void setVacationDays(Integer vacationDays) {
-
-        this.vacationDays = vacationDays;
     }
 
 
