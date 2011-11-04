@@ -21,7 +21,7 @@
     
     <body>
         
-        <spring:url var="formUrlPrefix" value="/web/urlaubsverwaltung" />
+        <spring:url var="formUrlPrefix" value="/web" />
         
         <c:choose>
             <c:when test="${person.id == null}">
@@ -34,7 +34,7 @@
             </c:otherwise>
         </c:choose>
         
-        <form:form method="${method}" action="${url}" modelAttribute="person" enctype="multipart/form-data"> 
+        <form:form method="${method}" action="${url}" modelAttribute="person"> 
             <form:hidden path="id" />
                 <table>
                     <tr>
@@ -51,14 +51,16 @@
                     </tr>
                     <tr>
                         <td><label for="urlaubsanspruch"><spring:message code="anspruch" />:</label></td>
-                        <td><form:input id="urlaubsanspruch" path="vacationDays" /></td>
+                        <td><form:input id="urlaubsanspruch" path="currentVacationDays" /></td>
                     </tr>
+                    <%--
                     <c:if test="${person.id == null}">
                     <tr>
-                        <td><label for="unterschrift"><spring:message code="lastname" />:</label></td>
+                        <td><label for="unterschrift"><spring:message code="sign" />:</label></td>
                         <td><input type="file" name="sign" id="unterschrift" size="17%" /></td>
                     </tr>
                     </c:if>
+                    --%>
                     <tr>
                         <td>
                             <input type="submit" name="<spring:message code="save" />" value="<spring:message code="save" />" />                        

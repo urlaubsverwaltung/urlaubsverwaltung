@@ -21,7 +21,7 @@
     
     <body>
         
-        <spring:url var="formUrlPrefix" value="/web/urlaubsverwaltung" />
+        <spring:url var="formUrlPrefix" value="/web" />
         
         <h1><spring:message code="antrag.title" /></h1>
         
@@ -78,17 +78,17 @@
                    <select id="type" name="type" size="1" items="${vacTypes}" itemLabel="text">
                         <c:forEach items="${vacTypes}" var="vacType">
                                 <option value="${vacType}">
-                                    <c:out value='${vacType.vacationTypeName}' />
+                                    <spring:message code='${vacType.vacationTypeName}' />
                                 </option>
                         </c:forEach>
                     </select>
                 </td>
                 <td>&nbsp;</td>
                 <td>
-                    <label for="grund"><spring:message code='antrag.reason' />:</label>
+                    <label for="reason"><spring:message code='antrag.reason' />:</label>
                 </td>
                 <td>
-                    <form:input id="reason" path="reason" />
+                    <form:textarea id="reason" path="reason" />
                 </td>
             </tr>
             <tr>
@@ -114,7 +114,7 @@
                     <label for="anschrift"><spring:message code='antrag.anschrift' />:</label>
                 </td>
                 <td colspan="4">
-                    <form:input id="anschrift" path="anschrift" />
+                    <form:textarea id="anschrift" path="anschrift" />
                 </td>
             </tr>
             <tr>
@@ -136,7 +136,7 @@
             </tr>
             <tr>
                 <td colspan="2">
-                    <img src="${person.image}" />
+<!--                    <img src="${person.sign}" />-->
                 </td>
                 <td>&nbsp;</td>
                 <td colspan="2">

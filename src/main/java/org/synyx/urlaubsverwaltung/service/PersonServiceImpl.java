@@ -7,8 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.synyx.urlaubsverwaltung.dao.PersonDAO;
+import org.synyx.urlaubsverwaltung.dao.UrlaubsanspruchDAO;
 import org.synyx.urlaubsverwaltung.domain.Antrag;
 import org.synyx.urlaubsverwaltung.domain.Person;
+import org.synyx.urlaubsverwaltung.domain.Urlaubsanspruch;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,16 +26,19 @@ public class PersonServiceImpl implements PersonService {
 
     private PersonDAO personDAO;
     private AntragService antragService;
+    private UrlaubsanspruchDAO urlaubsanspruchDAO;
 
     // wird hier und im anderen service benötigt, weil wir ja
     // ständig irgendwelche mails schicken müssen... =)
     private MailService mailService;
 
     @Autowired
-    public PersonServiceImpl(PersonDAO personDAO, AntragService antragService, MailService mailService) {
+    public PersonServiceImpl(PersonDAO personDAO, AntragService antragService, UrlaubsanspruchDAO urlaubsanspruchDAO,
+        MailService mailService) {
 
         this.personDAO = personDAO;
         this.antragService = antragService;
+        this.urlaubsanspruchDAO = urlaubsanspruchDAO;
         this.mailService = mailService;
     }
 
@@ -135,5 +140,31 @@ public class PersonServiceImpl implements PersonService {
         }
 
         mailService.sendWeeklyVacationForecast(urlauber);
+    }
+
+
+    @Override
+    public Urlaubsanspruch getUrlaubsanspruchByPersonAndYear(Person person, Integer year) {
+
+        return urlaubsanspruchDAO.getUrlaubsanspruchByDate(year, person);
+    }
+
+
+    @Override
+    public List<Urlaubsanspruch> getUrlaubsanspruchByPersonForAllYears(Person person) {
+
+        return urlaubsanspruchDAO.getUrlaubsanspruchByDate(person);
+    }
+
+
+    @Override
+    public void setUrlaubsanspruchForPerson(Person person, Integer year, Integer days) {
+
+        Urlaubsanspruch urlaubsanspruch = new Urlaubsanspruch();
+        urlaubsanspruch.setPerson(person);
+        urlaubsanspruch.setYear(year);
+        urlaubsanspruch.setVacationDays(days);
+
+        urlaubsanspruchDAO.save(urlaubsanspruch);
     }
 }

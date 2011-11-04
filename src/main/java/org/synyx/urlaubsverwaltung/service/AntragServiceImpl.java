@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import org.synyx.urlaubsverwaltung.dao.AntragDAO;
 import org.synyx.urlaubsverwaltung.dao.PersonDAO;
+import org.synyx.urlaubsverwaltung.dao.UrlaubsanspruchDAO;
 import org.synyx.urlaubsverwaltung.domain.Antrag;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.State;
@@ -25,16 +26,19 @@ public class AntragServiceImpl implements AntragService {
 
     private AntragDAO antragDAO;
     private PersonDAO personDAO;
+    private UrlaubsanspruchDAO urlaubsanspruchDAO;
 
     // wird hier und im anderen service benötigt, weil wir ja
     // ständig irgendwelche mails schicken müssen... =)
     private MailServiceImpl mailService;
 
     @Autowired
-    public AntragServiceImpl(AntragDAO antragDAO, PersonDAO personDAO, MailServiceImpl mailService) {
+    public AntragServiceImpl(AntragDAO antragDAO, PersonDAO personDAO, UrlaubsanspruchDAO urlaubsanspruchDAO,
+        MailServiceImpl mailService) {
 
         this.antragDAO = antragDAO;
         this.personDAO = personDAO;
+        this.urlaubsanspruchDAO = urlaubsanspruchDAO;
         this.mailService = mailService;
     }
 
@@ -54,7 +58,7 @@ public class AntragServiceImpl implements AntragService {
     @Override
     public void approve(Antrag antrag) {
 
-        antrag.setState(State.GENEHMIGT);
+        antrag.setStatus(State.GENEHMIGT);
         antragDAO.save(antrag);
 
         mailService.sendApprovedNotification(antrag.getPerson(), antrag);
@@ -67,7 +71,7 @@ public class AntragServiceImpl implements AntragService {
     @Override
     public void decline(Antrag antrag, String reasonToDecline) {
 
-        antrag.setState(State.ABGELEHNT);
+        antrag.setStatus(State.ABGELEHNT);
         antrag.setReasonToDecline(reasonToDecline);
         antragDAO.save(antrag);
 
@@ -81,7 +85,7 @@ public class AntragServiceImpl implements AntragService {
     @Override
     public void wait(Antrag antrag) {
 
-        antrag.setState(State.WARTEND);
+        antrag.setStatus(State.WARTEND);
         antragDAO.save(antrag);
     }
 
@@ -95,21 +99,24 @@ public class AntragServiceImpl implements AntragService {
         Person person = antrag.getPerson();
         Integer urlaubstageGut = antrag.getBeantragteTageNetto();
 
-        if (antrag.getState() == State.WARTEND) {
-            antrag.setState(State.STORNIERT);
+        if (antrag.getStatus() == State.WARTEND) {
+            antrag.setStatus(State.STORNIERT);
             antragDAO.save(antrag);
 
             // wenn Antrag wartend war, bekommen Chefs die Email
             mailService.sendCanceledNotification(antrag, EmailAdr.CHEFS.getEmail());
-        } else if (antrag.getState() == State.GENEHMIGT) {
-            antrag.setState(State.STORNIERT);
+        } else if (antrag.getStatus() == State.GENEHMIGT) {
+            antrag.setStatus(State.STORNIERT);
             antragDAO.save(antrag);
 
             // wenn Antrag genehmigt war, bekommt Office die Email
             mailService.sendCanceledNotification(antrag, EmailAdr.OFFICE.getEmail());
         }
 
-        Integer teil1 = person.getVacationDays() - person.getRemainingVacationDays();
+        Integer vacationDays = urlaubsanspruchDAO.getUrlaubsanspruchByDate(DateMidnight.now().getYear(), person)
+            .getVacationDays();
+
+        Integer teil1 = vacationDays - person.getRemainingVacationDays();
 
         if (urlaubstageGut <= teil1) {
             person.setRemainingVacationDays(person.getRemainingVacationDays() + urlaubstageGut);
@@ -191,7 +198,10 @@ public class AntragServiceImpl implements AntragService {
         Person person = antrag.getPerson();
         Integer urlaubstageGut = krankheitsTage;
 
-        Integer teil1 = person.getVacationDays() - person.getRemainingVacationDays();
+        Integer vacationDays = urlaubsanspruchDAO.getUrlaubsanspruchByDate(DateMidnight.now().getYear(), person)
+            .getVacationDays();
+
+        Integer teil1 = vacationDays - person.getRemainingVacationDays();
 
         if (urlaubstageGut <= teil1) {
             person.setRemainingVacationDays(person.getRemainingVacationDays() + urlaubstageGut);

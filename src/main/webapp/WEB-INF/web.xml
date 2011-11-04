@@ -75,7 +75,7 @@
     </servlet-mapping>
     
     <welcome-file-list>
-        <welcome-file>index.jsp</welcome-file>     
+        <welcome-file>login.jsp</welcome-file>     
     </welcome-file-list>
     
     <session-config>
@@ -83,5 +83,14 @@
             30
         </session-timeout>
     </session-config>
+    
+    <login-config>
+   <auth-method>FORM</auth-method>
+   <realm-name>Form-Based Authentication Area</realm-name>
+   <form-login-config>
+     <form-login-page>/security/protected/index.jsp</form-login-page>
+     <form-error-page>/security/protected/error.jsp</form-error-page>
+   </form-login-config>
+</login-config>
         
 </web-app>

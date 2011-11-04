@@ -1,6 +1,9 @@
 
 package org.synyx.urlaubsverwaltung.controller;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
@@ -146,11 +149,13 @@ public class AntragController {
         List<Person> mitarbeiter = personService.getAllPersons();
         String date = dateService.getDate();
         Integer year = dateService.getYear();
+        Antrag antrag = new Antrag();
 
         model.addAttribute("person", person);
         model.addAttribute("mitarbeiter", mitarbeiter);
         model.addAttribute("date", date);
         model.addAttribute("year", year);
+        model.addAttribute("antrag", antrag);
         model.addAttribute("vacTypes", VacationType.values());
 
         return "antraege/antragform";
@@ -171,7 +176,7 @@ public class AntragController {
         @ModelAttribute("antrag") Antrag antrag, Model model) {
 
         antrag.setPerson(personService.getPersonByID(mitarbeiterId));
-        antrag.setState(State.WARTEND);
+        antrag.setStatus(State.WARTEND);
         antragService.save(antrag);
 
         return ACTION_COMPLETE_VIEW; // oder vllt auch ine success-seite
@@ -242,6 +247,8 @@ public class AntragController {
      */
     @RequestMapping(value = "/antrag/{antragId}/genehmigen", method = RequestMethod.PUT)
     public String approveAntrag(@PathVariable("antragId") Integer antragId, Model model) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         // über die logik sollten wir nochmal nachdenken...
         antragService.approve(antragService.getRequestById(antragId));

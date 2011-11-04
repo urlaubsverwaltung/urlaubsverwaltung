@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.service;
 import org.joda.time.DateMidnight;
 
 import org.synyx.urlaubsverwaltung.domain.Person;
+import org.synyx.urlaubsverwaltung.domain.Urlaubsanspruch;
 
 import java.util.List;
 
@@ -76,4 +77,13 @@ public interface PersonService {
      * @return
      */
     void getAllUrlauberForThisWeekAndPutItInAnEmail(DateMidnight startDate, DateMidnight endDate);
+
+
+    Urlaubsanspruch getUrlaubsanspruchByPersonAndYear(Person person, Integer year);
+
+
+    List<Urlaubsanspruch> getUrlaubsanspruchByPersonForAllYears(Person person);
+
+
+    void setUrlaubsanspruchForPerson(Person person, Integer year, Integer days);
 }

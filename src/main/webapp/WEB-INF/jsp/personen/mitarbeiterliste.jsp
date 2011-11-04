@@ -21,7 +21,7 @@
     
     <body>
         
-        <spring:url var="formUrlPrefix" value="/web/urlaubsverwaltung" />
+        <spring:url var="formUrlPrefix" value="/web" />
         
         <a href="${formUrlPrefix}/mitarbeiter/list"><spring:message code="table.list" /></a>
         <a href="${formUrlPrefix}/mitarbeiter/detail"><spring:message code="table.detail" /></a>
@@ -42,7 +42,7 @@
                 <td><a href="mailto:${person.email}"><c:out value="${person.email}"/></a></td>
                 <td><c:out value="${person.remainingVacationDays}"/></td>
                 <td><c:out value="${person.restUrlaub}"/></td>
-                <td><a href="${formUrlPrefix}/antraege/${mitarbeiter.id}"><spring:message code="table.antrag" /></a></td>
+                <td><a href="${formUrlPrefix}/antraege/${person.id}"><spring:message code="table.antrag" /></a></td>
                 <c:if test="user == office - wie auch immer das mal gehen mag">
                     <td>
                         <a href="${formUrlPrefix}/antrag/${antrag.id}/edit" />
