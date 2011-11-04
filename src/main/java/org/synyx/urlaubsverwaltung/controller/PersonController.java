@@ -171,8 +171,8 @@ public class PersonController {
 
         personService.save(person);
 
-        personService.setUrlaubsanspruchForPerson(person, DateMidnight.now().getYear(),
-            person.getCurrentVacationDays());
+//        personService.setUrlaubsanspruchForPerson(person, DateMidnight.now().getYear(),
+//            person.getCurrentVacationDays());
 
         // braucht noch richtigen Verweis
         return "redirect:/web/mitarbeiter/list";
