@@ -115,18 +115,19 @@ public class AntragServiceImpl implements AntragService {
 
         Integer vacationDays = urlaubsanspruchDAO.getUrlaubsanspruchByDate(DateMidnight.now().getYear(), person)
             .getVacationDays();
-
-        Integer teil1 = vacationDays - person.getRemainingVacationDays();
-
-        if (urlaubstageGut <= teil1) {
-            person.setRemainingVacationDays(person.getRemainingVacationDays() + urlaubstageGut);
-            person.setUsedVacationDays(person.getUsedVacationDays() - urlaubstageGut);
-        } else {
-            person.setRemainingVacationDays(person.getRemainingVacationDays() + teil1);
-            person.setUsedVacationDays(person.getUsedVacationDays() - teil1);
-            person.setRestUrlaub(person.getRestUrlaub() + (urlaubstageGut - teil1));
-            person.setUsedRestUrlaub(person.getUsedRestUrlaub() - (urlaubstageGut - teil1));
-        }
+        //das geht im moment nich, aber das wird ja auch noch komplizierter...
+//
+//        Integer teil1 = vacationDays - person.getRemainingVacationDays();
+//
+//        if (urlaubstageGut <= teil1) {
+//            person.setRemainingVacationDays(person.getRemainingVacationDays() + urlaubstageGut);
+//            person.setUsedVacationDays(person.getUsedVacationDays() - urlaubstageGut);
+//        } else {
+//            person.setRemainingVacationDays(person.getRemainingVacationDays() + teil1);
+//            person.setUsedVacationDays(person.getUsedVacationDays() - teil1);
+//            person.setRestUrlaub(person.getRestUrlaub() + (urlaubstageGut - teil1));
+//            person.setUsedRestUrlaub(person.getUsedRestUrlaub() - (urlaubstageGut - teil1));
+//        }
 
         personDAO.save(person);
     }
@@ -201,17 +202,18 @@ public class AntragServiceImpl implements AntragService {
         Integer vacationDays = urlaubsanspruchDAO.getUrlaubsanspruchByDate(DateMidnight.now().getYear(), person)
             .getVacationDays();
 
-        Integer teil1 = vacationDays - person.getRemainingVacationDays();
-
-        if (urlaubstageGut <= teil1) {
-            person.setRemainingVacationDays(person.getRemainingVacationDays() + urlaubstageGut);
-            person.setUsedVacationDays(person.getUsedVacationDays() - urlaubstageGut);
-        } else {
-            person.setRemainingVacationDays(person.getRemainingVacationDays() + teil1);
-            person.setUsedVacationDays(person.getUsedVacationDays() - teil1);
-            person.setRestUrlaub(person.getRestUrlaub() + (urlaubstageGut - teil1));
-            person.setUsedRestUrlaub(person.getUsedRestUrlaub() - (urlaubstageGut - teil1));
-        }
+      //  das geht im moment nich, aber das wird ja auch noch komplizierter
+//        Integer teil1 = vacationDays - person.getRemainingVacationDays();
+//
+//        if (urlaubstageGut <= teil1) {
+//            person.setRemainingVacationDays(person.getRemainingVacationDays() + urlaubstageGut);
+//            person.setUsedVacationDays(person.getUsedVacationDays() - urlaubstageGut);
+//        } else {
+//            person.setRemainingVacationDays(person.getRemainingVacationDays() + teil1);
+//            person.setUsedVacationDays(person.getUsedVacationDays() - teil1);
+//            person.setRestUrlaub(person.getRestUrlaub() + (urlaubstageGut - teil1));
+//            person.setUsedRestUrlaub(person.getUsedRestUrlaub() - (urlaubstageGut - teil1));
+//        }
 
         personDAO.save(person);
     }

@@ -34,21 +34,6 @@ public class Person extends AbstractPersistable<Integer> {
     // Unterschrift der Person
     private Image sign;
 
-    // vacation days - aktueller Jahresanspruch Urlaub
-    private Integer currentVacationDays;
-
-    // amount of remaining days - Verbleibender Urlaubsanspruch dieses Jahr
-    private Integer remainingVacationDays;
-
-    // residual vacation days of last year - Resturlaub
-    private Integer restUrlaub;
-
-    // used vacation days this year of 'normal' vacation days - Jahresurlaubsanspruch dieses Jahr in Anspruch genommen
-    private Integer usedVacationDays;
-
-    // used vacation days this year of last year's Resturlaub - Resturlaub dieses Jahr in Anspruch genommen
-    private Integer usedRestUrlaub;
-
     private Role role;
 
     // eventuell fuer die Mitarbeiter-Liste - nur als Idee bisher
@@ -126,18 +111,6 @@ public class Person extends AbstractPersistable<Integer> {
     }
 
 
-    public Integer getCurrentVacationDays() {
-
-        return currentVacationDays;
-    }
-
-
-    public void setCurrentVacationDays(Integer currentVacationDays) {
-
-        this.currentVacationDays = currentVacationDays;
-    }
-
-
     public Image getSign() {
 
         return sign;
@@ -149,63 +122,14 @@ public class Person extends AbstractPersistable<Integer> {
         this.sign = sign;
     }
 
-
-    public Integer getRemainingVacationDays() {
-
-        return remainingVacationDays;
-    }
-
-
     public Role getRole() {
 
         return role;
     }
-
-
-    public void setRemainingVacationDays(Integer remainingVacationDays) {
-
-        this.remainingVacationDays = remainingVacationDays;
-    }
-
 
     public void setRole(Role role) {
 
         this.role = role;
     }
 
-
-    public Integer getRestUrlaub() {
-
-        return restUrlaub;
-    }
-
-
-    public void setRestUrlaub(Integer restUrlaub) {
-
-        this.restUrlaub = restUrlaub;
-    }
-
-
-    public Integer getUsedVacationDays() {
-
-        return usedVacationDays;
-    }
-
-
-    public void setUsedVacationDays(Integer usedVacationDays) {
-
-        this.usedVacationDays = usedVacationDays;
-    }
-
-
-    public Integer getUsedRestUrlaub() {
-
-        return usedRestUrlaub;
-    }
-
-
-    public void setUsedRestUrlaub(Integer usedRestUrlaub) {
-
-        this.usedRestUrlaub = usedRestUrlaub;
-    }
 }
