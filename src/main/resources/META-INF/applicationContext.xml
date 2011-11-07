@@ -33,7 +33,7 @@
 
 <repository:repositories base-package="org.synyx.urlaubsverwaltung.**.dao" />
 
-
+<bean id="kontoService" class="org.synyx.urlaubsverwaltung.service.KontoServiceImpl" />
 <bean id="personService" class="org.synyx.urlaubsverwaltung.service.PersonServiceImpl" />
 <bean id="antragService" class="org.synyx.urlaubsverwaltung.service.AntragServiceImpl" />
 <bean id="mailService" class="org.synyx.urlaubsverwaltung.service.MailServiceImpl">
@@ -41,7 +41,6 @@
             <bean class="org.springframework.mail.javamail.JavaMailSenderImpl" />
         </constructor-arg>
 </bean>        
-<bean id="kontoService" class="org.synyx.urlaubsverwaltung.service.KontoService" />
 
 
 </beans>

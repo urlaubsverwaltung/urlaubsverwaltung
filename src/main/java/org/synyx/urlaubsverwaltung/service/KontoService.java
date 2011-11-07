@@ -4,108 +4,30 @@
  */
 package org.synyx.urlaubsverwaltung.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-import org.springframework.transaction.annotation.Transactional;
-
-import org.synyx.urlaubsverwaltung.dao.UrlaubsanspruchDAO;
-import org.synyx.urlaubsverwaltung.dao.UrlaubskontoDAO;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.Urlaubsanspruch;
 import org.synyx.urlaubsverwaltung.domain.Urlaubskonto;
 
 
 /**
- * @author  johannes
+ * @author  aljona
  */
-@Transactional
-public class KontoService {
+public interface KontoService {
 
-    private UrlaubskontoDAO urlaubskontoDAO;
-
-    private UrlaubsanspruchDAO urlaubsanspruchDAO;
-
-    @Autowired
-    public KontoService(UrlaubskontoDAO urlaubskontoDAO, UrlaubsanspruchDAO urlaubsanspruchDAO) {
-
-        this.urlaubskontoDAO = urlaubskontoDAO;
-        this.urlaubsanspruchDAO = urlaubsanspruchDAO;
-    }
-
-    public Urlaubsanspruch newUrlaubsanspruch(Person person, Integer year, Integer anspruch) {
-
-        Urlaubsanspruch urlaubsanspruch = new Urlaubsanspruch();
-        urlaubsanspruch.setPerson(person);
-        urlaubsanspruch.setVacationDays(anspruch);
-        urlaubsanspruch.setYear(year);
-
-        urlaubsanspruchDAO.save(urlaubsanspruch);
-
-        return urlaubsanspruch;
-    }
+    Urlaubsanspruch getUrlaubsanspruch(Integer year, Person person);
 
 
-    public void saveUrlaubsanspruch(Urlaubsanspruch urlaubsanspruch) {
-
-        urlaubsanspruchDAO.save(urlaubsanspruch);
-    }
+    Urlaubskonto getUrlaubskonto(Integer year, Person person);
 
 
-    public void saveUrlaubskonto(Urlaubskonto urlaubskonto) {
-
-        urlaubskontoDAO.save(urlaubskonto);
-    }
+    Urlaubsanspruch newUrlaubsanspruch(Person person, Integer year, Integer anspruch);
 
 
-    public Urlaubskonto newUrlaubskonto(Person person, Integer vacDays, Integer restVacDays, Integer year) {
-
-        Urlaubskonto urlaubskonto = new Urlaubskonto();
-
-        urlaubskonto.setPerson(person);
-        urlaubskonto.setRestVacationDays(restVacDays);
-        urlaubskonto.setVacationDays(vacDays);
-        urlaubskonto.setYear(year);
-
-        urlaubskontoDAO.save(urlaubskonto);
-
-        return urlaubskonto;
-    }
+    Urlaubskonto newUrlaubskonto(Person person, Integer vacDays, Integer restVacDays, Integer year);
 
 
-    public Urlaubsanspruch getUrlaubsanspruch(Integer year, Person person) {
-
-        return urlaubsanspruchDAO.getUrlaubsanspruchByDate(year, person);
-    }
+    void saveUrlaubsanspruch(Urlaubsanspruch urlaubsanspruch);
 
 
-    public Urlaubskonto getUrlaubskonto(Integer year, Person person) {
-
-        return urlaubskontoDAO.getUrlaubskontoForDateAndPerson(year, person);
-    }
-
-// !!!! denke, die folgenden methoden sind nicht nötig!!!
-
-// // meine (aljona) ansicht dazu:
-// // fuer was braucht man das eigtl?
-// public void updateUrlaubskonto(Urlaubskonto urlaubskonto, Integer vacDays, Integer restVacDays, Integer year) {
-//
-// urlaubskonto.setVacationDays(vacDays);
-// urlaubskonto.setRestVacationDays(restVacDays);
-// urlaubskonto.setYear(year);
-// urlaubskontoDAO.save(urlaubskonto);
-//
-// // vorher: (jo)
-//// urlaubskontoDAO.delete(urlaubskonto);
-//// urlaubskontoDAO.save(urlaubskonto);
-//    }
-//
-//    // hab ich (aljona) auch mal geaendert
-//    // fuer was braucht man das eigtl?
-//    public void updateUrlaubsanspruch(Urlaubsanspruch urlaubsanspruch, Integer vacDays, Integer year) {
-//
-//        urlaubsanspruch.setVacationDays(vacDays);
-//        urlaubsanspruch.setYear(year);
-//        urlaubsanspruchDAO.save(urlaubsanspruch);
-//    }
-
+    void saveUrlaubskonto(Urlaubskonto urlaubskonto);
 }
