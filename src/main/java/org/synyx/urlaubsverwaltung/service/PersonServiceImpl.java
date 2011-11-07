@@ -234,4 +234,11 @@ public class PersonServiceImpl implements PersonService {
 
         urlaubsanspruchDAO.save(urlaubsanspruch);
     }
+
+
+    @Override
+    public Person getPersonByLogin(String loginName) {
+
+        return personDAO.getPersonByLogin(loginName);
+    }
 }

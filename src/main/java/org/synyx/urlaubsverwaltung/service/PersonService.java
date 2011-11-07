@@ -42,6 +42,16 @@ public interface PersonService {
 
 
     /**
+     * finds a person in the database by login name
+     *
+     * @param  loginName
+     *
+     * @return
+     */
+    Person getPersonByLogin(String loginName);
+
+
+    /**
      * returns all profiles in the database as a list of person-objects
      *
      * @return  returns all profiles in the database as a list of person-objects

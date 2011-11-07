@@ -5,13 +5,13 @@ import org.springframework.data.jpa.repository.Query;
 
 import org.synyx.urlaubsverwaltung.domain.Person;
 
-import java.util.List;
-
 
 /**
  * @author  johannes
  */
 public interface PersonDAO extends JpaRepository<Person, Integer> {
 
-   
+    // get List<Antrag> by certain state (e.g. 'wartend')
+    @Query("select x from Person x where x.loginName = ?")
+    Person getPersonByLogin(String loginName);
 }
