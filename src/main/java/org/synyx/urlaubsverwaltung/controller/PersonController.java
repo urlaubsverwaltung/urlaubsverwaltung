@@ -1,8 +1,6 @@
 
 package org.synyx.urlaubsverwaltung.controller;
 
-import org.joda.time.DateMidnight;
-
 import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
@@ -14,7 +12,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import org.synyx.urlaubsverwaltung.domain.Antrag;
 import org.synyx.urlaubsverwaltung.domain.Person;
+import org.synyx.urlaubsverwaltung.domain.Urlaubsanspruch;
+import org.synyx.urlaubsverwaltung.domain.Urlaubskonto;
 import org.synyx.urlaubsverwaltung.service.AntragService;
+import org.synyx.urlaubsverwaltung.service.KontoService;
 import org.synyx.urlaubsverwaltung.service.PersonService;
 import org.synyx.urlaubsverwaltung.util.DateService;
 
@@ -29,12 +30,15 @@ public class PersonController {
 
     private PersonService personService;
     private AntragService antragService;
+    private KontoService kontoService;
     private DateService dateService;
 
-    public PersonController(PersonService personService, AntragService antragService, DateService dateService) {
+    public PersonController(PersonService personService, AntragService antragService, KontoService kontoService,
+        DateService dateService) {
 
         this.personService = personService;
         this.antragService = antragService;
+        this.kontoService = kontoService;
         this.dateService = dateService;
     }
 
@@ -136,6 +140,11 @@ public class PersonController {
 
         personService.save(personToUpdate);
 
+        Integer year = person.getYearForCurrentUrlaubsanspruch();
+
+        kontoService.newUrlaubsanspruch(person, year, person.getCurrentUrlaubsanspruch());
+        kontoService.newUrlaubskonto(person, person.getCurrentUrlaubsanspruch(), 0, year);
+
         // braucht noch richtigen Verweis
         return "redirect:irgendwohin";
     }
@@ -169,10 +178,21 @@ public class PersonController {
     @RequestMapping(value = "/mitarbeiter/new", method = RequestMethod.POST)
     public String newPerson(@ModelAttribute("person") Person person) {
 
-        personService.save(person);
+        Integer year = dateService.getYear();
+        Urlaubsanspruch urlaubsanspruch = new Urlaubsanspruch();
+        Urlaubskonto urlaubskonto = new Urlaubskonto();
 
-//        personService.setUrlaubsanspruchForPerson(person, DateMidnight.now().getYear(),
-//            person.getCurrentVacationDays());
+        urlaubsanspruch.setYear(year);
+        urlaubsanspruch.setPerson(person);
+        urlaubsanspruch.setVacationDays(person.getCurrentUrlaubsanspruch());
+        kontoService.saveUrlaubsanspruch(null);
+
+        urlaubskonto.setYear(year);
+        urlaubskonto.setPerson(person);
+        urlaubskonto.setVacationDays(person.getCurrentUrlaubsanspruch());
+        kontoService.saveUrlaubskonto(urlaubskonto);
+
+        personService.save(person);
 
         // braucht noch richtigen Verweis
         return "redirect:/web/mitarbeiter/list";
