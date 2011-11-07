@@ -7,11 +7,13 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 
 
 /**
@@ -36,8 +38,14 @@ public class Person extends AbstractPersistable<Integer> {
 
     private Role role;
 
-    // eventuell fuer die Mitarbeiter-Liste - nur als Idee bisher
-    // private Image userPicture;
+    @OneToMany
+    private List<Urlaubsanspruch> urlaubsanspruch;
+
+    @OneToMany
+    private List<Urlaubskonto> urlaubskonten;
+
+    @OneToMany
+    private List<Antrag> antraege;
 
     public String getLoginName() {
 
@@ -122,14 +130,15 @@ public class Person extends AbstractPersistable<Integer> {
         this.sign = sign;
     }
 
+
     public Role getRole() {
 
         return role;
     }
 
+
     public void setRole(Role role) {
 
         this.role = role;
     }
-
 }
