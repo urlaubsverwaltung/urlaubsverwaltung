@@ -10,6 +10,7 @@ import org.synyx.urlaubsverwaltung.dao.AntragDAO;
 import org.synyx.urlaubsverwaltung.dao.PersonDAO;
 import org.synyx.urlaubsverwaltung.dao.UrlaubsanspruchDAO;
 import org.synyx.urlaubsverwaltung.domain.Antrag;
+import org.synyx.urlaubsverwaltung.domain.Kommentar;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.State;
 
@@ -69,10 +70,17 @@ public class AntragServiceImpl implements AntragService {
      * @see  AntragService#decline(org.synyx.urlaubsverwaltung.domain.Antrag, java.lang.String)
      */
     @Override
-    public void decline(Antrag antrag, String reasonToDecline) {
+    public void decline(Antrag antrag, Person boss, String reasonToDecline) {
 
         antrag.setStatus(State.ABGELEHNT);
-        antrag.setReasonToDecline(reasonToDecline);
+
+        Kommentar comment = new Kommentar();
+        comment.setText(reasonToDecline);
+        comment.setPerson(boss);
+        comment.setDatum(DateMidnight.now()); // weiss nicht, ob das stimmt mit dem Datum
+
+        antrag.setReasonToDecline(comment);
+
         antragDAO.save(antrag);
 
         mailService.sendDeclinedNotification(antrag);
@@ -115,19 +123,19 @@ public class AntragServiceImpl implements AntragService {
 
         Integer vacationDays = urlaubsanspruchDAO.getUrlaubsanspruchByDate(DateMidnight.now().getYear(), person)
             .getVacationDays();
-        //das geht im moment nich, aber das wird ja auch noch komplizierter...
+        // das geht im moment nich, aber das wird ja auch noch komplizierter...
 //
-//        Integer teil1 = vacationDays - person.getRemainingVacationDays();
+// Integer teil1 = vacationDays - person.getRemainingVacationDays();
 //
-//        if (urlaubstageGut <= teil1) {
-//            person.setRemainingVacationDays(person.getRemainingVacationDays() + urlaubstageGut);
-//            person.setUsedVacationDays(person.getUsedVacationDays() - urlaubstageGut);
-//        } else {
-//            person.setRemainingVacationDays(person.getRemainingVacationDays() + teil1);
-//            person.setUsedVacationDays(person.getUsedVacationDays() - teil1);
-//            person.setRestUrlaub(person.getRestUrlaub() + (urlaubstageGut - teil1));
-//            person.setUsedRestUrlaub(person.getUsedRestUrlaub() - (urlaubstageGut - teil1));
-//        }
+// if (urlaubstageGut <= teil1) {
+// person.setRemainingVacationDays(person.getRemainingVacationDays() + urlaubstageGut);
+// person.setUsedVacationDays(person.getUsedVacationDays() - urlaubstageGut);
+// } else {
+// person.setRemainingVacationDays(person.getRemainingVacationDays() + teil1);
+// person.setUsedVacationDays(person.getUsedVacationDays() - teil1);
+// person.setRestUrlaub(person.getRestUrlaub() + (urlaubstageGut - teil1));
+// person.setUsedRestUrlaub(person.getUsedRestUrlaub() - (urlaubstageGut - teil1));
+// }
 
         personDAO.save(person);
     }
@@ -202,18 +210,18 @@ public class AntragServiceImpl implements AntragService {
         Integer vacationDays = urlaubsanspruchDAO.getUrlaubsanspruchByDate(DateMidnight.now().getYear(), person)
             .getVacationDays();
 
-      //  das geht im moment nich, aber das wird ja auch noch komplizierter
-//        Integer teil1 = vacationDays - person.getRemainingVacationDays();
+        // das geht im moment nich, aber das wird ja auch noch komplizierter
+// Integer teil1 = vacationDays - person.getRemainingVacationDays();
 //
-//        if (urlaubstageGut <= teil1) {
-//            person.setRemainingVacationDays(person.getRemainingVacationDays() + urlaubstageGut);
-//            person.setUsedVacationDays(person.getUsedVacationDays() - urlaubstageGut);
-//        } else {
-//            person.setRemainingVacationDays(person.getRemainingVacationDays() + teil1);
-//            person.setUsedVacationDays(person.getUsedVacationDays() - teil1);
-//            person.setRestUrlaub(person.getRestUrlaub() + (urlaubstageGut - teil1));
-//            person.setUsedRestUrlaub(person.getUsedRestUrlaub() - (urlaubstageGut - teil1));
-//        }
+// if (urlaubstageGut <= teil1) {
+// person.setRemainingVacationDays(person.getRemainingVacationDays() + urlaubstageGut);
+// person.setUsedVacationDays(person.getUsedVacationDays() - urlaubstageGut);
+// } else {
+// person.setRemainingVacationDays(person.getRemainingVacationDays() + teil1);
+// person.setUsedVacationDays(person.getUsedVacationDays() - teil1);
+// person.setRestUrlaub(person.getRestUrlaub() + (urlaubstageGut - teil1));
+// person.setUsedRestUrlaub(person.getUsedRestUrlaub() - (urlaubstageGut - teil1));
+// }
 
         personDAO.save(person);
     }

@@ -272,8 +272,10 @@ public class AntragController {
     public String declineAntrag(@PathVariable("antragId") Integer antragId,
         @ModelAttribute("reasonForDeclining") String reasonForDeclining, Model model) {
 
-        // über die logik sollten wir nochmal nachdenken...
-        antragService.decline(antragService.getRequestById(antragId), reasonForDeclining);
+        Person boss = personService.getPersonByLogin(reasonForDeclining);
+        Antrag antrag = antragService.getRequestById(antragId);
+
+        antragService.decline(antrag, boss, reasonForDeclining);
 
         // benachrichtigungs-zeugs
 

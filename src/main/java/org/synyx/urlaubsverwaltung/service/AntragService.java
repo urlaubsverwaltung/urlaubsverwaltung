@@ -38,7 +38,7 @@ public interface AntragService {
      * @param  antrag  the request to be edited
      * @param  reason  the reason of the rejection
      */
-    void decline(Antrag antrag, String reason);
+    void decline(Antrag antrag, Person boss, String reasonToDecline);
 
 
     /**
