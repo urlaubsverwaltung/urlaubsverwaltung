@@ -26,7 +26,35 @@ public class Urlaubskonto extends AbstractPersistable<Integer> {
 
     private Integer restVacationDays;
 
+    private Integer sonderUrlaub;
+
+    private Integer unbezahlterUrlaub;
+
     private Integer year;
+
+    public Integer getSonderUrlaub() {
+
+        return sonderUrlaub;
+    }
+
+
+    public void setSonderUrlaub(Integer sonderUrlaub) {
+
+        this.sonderUrlaub = sonderUrlaub;
+    }
+
+
+    public Integer getUnbezahlterUrlaub() {
+
+        return unbezahlterUrlaub;
+    }
+
+
+    public void setUnbezahlterUrlaub(Integer unbezahlterUrlaub) {
+
+        this.unbezahlterUrlaub = unbezahlterUrlaub;
+    }
+
 
     public Integer getRestVacationDays() {
 
