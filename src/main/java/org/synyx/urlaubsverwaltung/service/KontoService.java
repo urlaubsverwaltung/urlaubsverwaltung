@@ -20,10 +20,10 @@ public interface KontoService {
     Urlaubskonto getUrlaubskonto(Integer year, Person person);
 
 
-    Urlaubsanspruch newUrlaubsanspruch(Person person, Integer year, Integer anspruch);
+    void newUrlaubsanspruch(Person person, Integer year, Integer anspruch);
 
 
-    Urlaubskonto newUrlaubskonto(Person person, Integer vacDays, Integer restVacDays, Integer year);
+    void newUrlaubskonto(Person person, Integer vacDays, Integer restVacDays, Integer year);
 
 
     void saveUrlaubsanspruch(Urlaubsanspruch urlaubsanspruch);
