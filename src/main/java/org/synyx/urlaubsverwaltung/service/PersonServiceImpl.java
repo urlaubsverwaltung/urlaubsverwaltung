@@ -140,8 +140,9 @@ public class PersonServiceImpl implements PersonService {
             if (urlaubsanspruch == null) {
                 // wenn der urlaubsanspruch für das neue jahr noch nicht besteht (z.b. durch änderung)
                 // dann nimm den aus dem letzten jahr, der MUSS da sein (YO)
-                urlaubsanspruch = kontoService.newUrlaubsanspruch(person, year,
-                        kontoService.getUrlaubsanspruch(year - 1, person).getVacationDays());
+                kontoService.newUrlaubsanspruch(person, year,
+                    kontoService.getUrlaubsanspruch(year - 1, person).getVacationDays());
+                urlaubsanspruch = kontoService.getUrlaubsanspruch(year, person);
             }
 
             // lies das urlaubskonto für das aktuelle jahr aus
@@ -154,7 +155,8 @@ public class PersonServiceImpl implements PersonService {
                 Integer restDays = kontoService.getUrlaubskonto(year - 1, person).getVacationDays();
 
                 // neues Konto anlegen und zurückgeben
-                urlaubskonto = kontoService.newUrlaubskonto(person, urlaubsanspruch.getVacationDays(), restDays, year);
+                kontoService.newUrlaubskonto(person, urlaubsanspruch.getVacationDays(), restDays, year);
+                urlaubskonto = kontoService.getUrlaubskonto(year, person);
             } else {
                 // wenn das konto schon besteht..
                 Integer restDays = kontoService.getUrlaubskonto(year - 1, person).getVacationDays();
