@@ -141,4 +141,40 @@ public class Person extends AbstractPersistable<Integer> {
 
         this.role = role;
     }
+
+
+    public List<Antrag> getAntraege() {
+
+        return antraege;
+    }
+
+
+    public void setAntraege(List<Antrag> antraege) {
+
+        this.antraege = antraege;
+    }
+
+
+    public List<Urlaubsanspruch> getUrlaubsanspruch() {
+
+        return urlaubsanspruch;
+    }
+
+
+    public void setUrlaubsanspruch(List<Urlaubsanspruch> urlaubsanspruch) {
+
+        this.urlaubsanspruch = urlaubsanspruch;
+    }
+
+
+    public List<Urlaubskonto> getUrlaubskonten() {
+
+        return urlaubskonten;
+    }
+
+
+    public void setUrlaubskonten(List<Urlaubskonto> urlaubskonten) {
+
+        this.urlaubskonten = urlaubskonten;
+    }
 }
