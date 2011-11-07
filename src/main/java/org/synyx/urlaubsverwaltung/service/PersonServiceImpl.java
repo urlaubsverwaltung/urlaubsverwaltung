@@ -11,10 +11,10 @@ import org.synyx.urlaubsverwaltung.dao.UrlaubsanspruchDAO;
 import org.synyx.urlaubsverwaltung.domain.Antrag;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.Urlaubsanspruch;
+import org.synyx.urlaubsverwaltung.domain.Urlaubskonto;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.synyx.urlaubsverwaltung.domain.Urlaubskonto;
 
 
 /**
@@ -105,17 +105,19 @@ public class PersonServiceImpl implements PersonService {
      */
     @Override
     public List<Person> getPersonsWithResturlaub() {
-        
+
         List<Person> restUrlaubPersons = new ArrayList<Person>();
-        
+
         int year = DateMidnight.now().getYear();
 
         List<Person> persons = getAllPersons();
-        for(Person person : persons) {
-            if(kontoService.getUrlaubskonto(year, person).getRestVacationDays() != 0) {
+
+        for (Person person : persons) {
+            if (kontoService.getUrlaubskonto(year, person).getRestVacationDays() != 0) {
                 restUrlaubPersons.add(person);
             }
         }
+
         return restUrlaubPersons;
     }
 
@@ -125,55 +127,67 @@ public class PersonServiceImpl implements PersonService {
      */
     @Override
     public void updateVacationDays() {
-        
+
         int year = DateMidnight.now().getYear();
+
+        Urlaubskonto urlaubskonto;
 
         List<Person> persons = getAllPersons();
 
         for (Person person : persons) {
-                Urlaubsanspruch urlaubsanspruch = kontoService.getUrlaubsanspruch(year, person);
-                if(urlaubsanspruch==null) {
-                    //wenn der urlaubsanspruch für das neue jahr noch nicht besteht (z.b. durch änderung)
-                    //dann nimm den aus dem letzten jahr, der MUSS da sein (YO)
-                    kontoService.saveUrlaubsanspruch(person, year, kontoService.getUrlaubsanspruch(year-1, person).getVacationDays());
-                    urlaubsanspruch = kontoService.getUrlaubsanspruch(year, person);
-                }
-                
-                //lies das urlaubskonto für das aktuelle jahr aus
-                Urlaubskonto urlaubskonto = kontoService.getUrlaubskonto(year, person);
-                
-                if(urlaubskonto == null) {
-                    //wenn das konto noch nicht besteht, trage aktuellen urlaubsanspruch ein
-                    //und übertrage kontostand aus altem jahr als resturlaub ins neue
-                    Integer restDays = kontoService.getUrlaubskonto(year-1, person).getVacationDays();
-                    kontoService.saveUrlaubskonto(person, year, urlaubsanspruch.getVacationDays(),restDays);
-                } else {
-                    //wenn das konto schon besteht..
-                    Integer restDays = kontoService.getUrlaubskonto(year-1, person).getVacationDays();
-                    if(urlaubskonto.getVacationDays()<urlaubsanspruch.getVacationDays()) {
-                        //wenn vom urlaubskonto dieses jahres schon tage abgebucht wurden,
-                        //muss der resturlaub erst dafür verwendet werden, um das urlaubskonto
-                        //wieder aufzufüllen
-                        Integer urlaubsTage;
-                        //urlaubstage enbthält alle tage, die die person in diesem jahr hat
-                        urlaubsTage = urlaubskonto.getVacationDays() + restDays;
-                        restDays = 0;
-                        if(urlaubsTage>urlaubsanspruch.getVacationDays()) {
-                            //falls das mehr sind, als er urlaub haben dürfte, so wird der überhang als
-                            //resturlaub gewertet
-                            restDays = urlaubsTage-urlaubsanspruch.getVacationDays();
-                            //und das normale urlaubskonto ist wieder voll
-                            urlaubsTage = urlaubsanspruch.getVacationDays();
-                        }
-                        //trage die neue anzahl urlaubstage ein
-                        urlaubskonto.setVacationDays(urlaubsTage);
+            Urlaubsanspruch urlaubsanspruch = kontoService.getUrlaubsanspruch(year, person);
+
+            if (urlaubsanspruch == null) {
+                // wenn der urlaubsanspruch für das neue jahr noch nicht besteht (z.b. durch änderung)
+                // dann nimm den aus dem letzten jahr, der MUSS da sein (YO)
+                urlaubsanspruch = kontoService.newUrlaubsanspruch(person, year,
+                        kontoService.getUrlaubsanspruch(year - 1, person).getVacationDays());
+            }
+
+            // lies das urlaubskonto für das aktuelle jahr aus
+            urlaubskonto = kontoService.getUrlaubskonto(year, person);
+
+            if (urlaubskonto == null) {
+                // wenn das konto noch nicht besteht, trage aktuellen urlaubsanspruch ein
+                // und übertrage kontostand aus altem jahr als resturlaub ins neue
+
+                Integer restDays = kontoService.getUrlaubskonto(year - 1, person).getVacationDays();
+
+                // neues Konto anlegen und zurückgeben
+                urlaubskonto = kontoService.newUrlaubskonto(person, urlaubsanspruch.getVacationDays(), restDays, year);
+            } else {
+                // wenn das konto schon besteht..
+                Integer restDays = kontoService.getUrlaubskonto(year - 1, person).getVacationDays();
+
+                if (urlaubskonto.getVacationDays() < urlaubsanspruch.getVacationDays()) {
+                    // wenn vom urlaubskonto dieses jahres schon tage abgebucht wurden,
+                    // muss der resturlaub erst dafür verwendet werden, um das urlaubskonto
+                    // wieder aufzufüllen
+                    Integer urlaubsTage;
+
+                    // urlaubstage enthält alle tage, die die person in diesem jahr hat
+                    urlaubsTage = urlaubskonto.getVacationDays() + restDays;
+                    restDays = 0;
+
+                    if (urlaubsTage > urlaubsanspruch.getVacationDays()) {
+                        // falls das mehr sind, als er urlaub haben dürfte, so wird der überhang als
+                        // resturlaub gewertet
+                        restDays = urlaubsTage - urlaubsanspruch.getVacationDays();
+
+                        // und das normale urlaubskonto ist wieder voll
+                        urlaubsTage = urlaubsanspruch.getVacationDays();
                     }
-                    //trage die resturlaubstage ein
-                    urlaubskonto.setRestVacationDays(restDays);
-                    //schreib alles in die db
-                    kontoService.updateUrlaubskonto(urlaubskonto);
+
+                    // trage die neue anzahl urlaubstage ein
+                    urlaubskonto.setVacationDays(urlaubsTage);
                 }
-                
+
+                // trage die resturlaubstage ein
+                urlaubskonto.setRestVacationDays(restDays);
+
+                // schreib alles in die db
+                kontoService.saveUrlaubskonto(urlaubskonto);
+            }
         }
     }
 
@@ -206,7 +220,7 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public List<Urlaubsanspruch> getUrlaubsanspruchByPersonForAllYears(Person person) {
 
-        return urlaubsanspruchDAO.getUrlaubsanspruchByDate(person);
+        return urlaubsanspruchDAO.getUrlaubsanspruchByPerson(person);
     }
 
 

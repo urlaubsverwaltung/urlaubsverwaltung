@@ -23,5 +23,5 @@ public interface UrlaubsanspruchDAO extends JpaRepository<Urlaubsanspruch, Integ
 
 
     @Query("select x from Urlaubsanspruch x where x.person = ?")
-    List<Urlaubsanspruch> getUrlaubsanspruchByDate(Person person);
+    List<Urlaubsanspruch> getUrlaubsanspruchByPerson(Person person);
 }

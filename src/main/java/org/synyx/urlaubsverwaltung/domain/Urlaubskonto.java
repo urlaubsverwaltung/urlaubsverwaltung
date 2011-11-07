@@ -19,42 +19,56 @@ public class Urlaubskonto extends AbstractPersistable<Integer> {
 
     private Person person;
 
-    public Integer getRestVacationDays() {
-        return RestVacationDays;
-    }
-
-    public void setRestVacationDays(Integer RestVacationDays) {
-        this.RestVacationDays = RestVacationDays;
-    }
-
-    public Person getPerson() {
-        return person;
-    }
-
-    public void setPerson(Person person) {
-        this.person = person;
-    }
-
-    public Integer getVacationDays() {
-        return vacationDays;
-    }
-
-    public void setVacationDays(Integer vacationDays) {
-        this.vacationDays = vacationDays;
-    }
-
-    public Integer getYear() {
-        return year;
-    }
-
-    public void setYear(Integer year) {
-        this.year = year;
-    }
-
     private Integer vacationDays;
-    
-    private Integer RestVacationDays;
+
+    private Integer restVacationDays;
 
     private Integer year;
 
+    public Integer getRestVacationDays() {
+
+        return restVacationDays;
+    }
+
+
+    public void setRestVacationDays(Integer restVacationDays) {
+
+        this.restVacationDays = restVacationDays;
+    }
+
+
+    public Person getPerson() {
+
+        return person;
+    }
+
+
+    public void setPerson(Person person) {
+
+        this.person = person;
+    }
+
+
+    public Integer getVacationDays() {
+
+        return vacationDays;
+    }
+
+
+    public void setVacationDays(Integer vacationDays) {
+
+        this.vacationDays = vacationDays;
+    }
+
+
+    public Integer getYear() {
+
+        return year;
+    }
+
+
+    public void setYear(Integer year) {
+
+        this.year = year;
+    }
 }
