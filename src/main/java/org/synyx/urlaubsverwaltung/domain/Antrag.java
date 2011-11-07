@@ -27,7 +27,7 @@ public class Antrag extends AbstractPersistable<Integer> {
     private Person boss;
 
     // Grund, warum Chef Antrag abgelehnt hat
-    private String reasonToDecline;
+    private Kommentar reasonToDecline;
 
     // Abwesenheit insgesamt (also plus Feiertage, Wochenende, etc.)
     private Integer beantragteTageBrutto;
@@ -80,7 +80,7 @@ public class Antrag extends AbstractPersistable<Integer> {
     }
 
 
-    public String getReasonToDecline() {
+    public Kommentar getReasonToDecline() {
 
         return reasonToDecline;
     }
@@ -188,7 +188,7 @@ public class Antrag extends AbstractPersistable<Integer> {
     }
 
 
-    public void setReasonToDecline(String reasonToDecline) {
+    public void setReasonToDecline(Kommentar reasonToDecline) {
 
         this.reasonToDecline = reasonToDecline;
     }
