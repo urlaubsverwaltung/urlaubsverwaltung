@@ -38,6 +38,12 @@ public class Person extends AbstractPersistable<Integer> {
 
     private Role role;
 
+    // was im Formular eingetragen wird fuer Urlaubsanspruch - wichtig weil Doppelformular fuer Person doof waere
+    private Integer currentUrlaubsanspruch;
+
+    // was im Formular eingetragen wird fuer Urlaubsanspruch - wichtig weil Doppelformular fuer Person doof waere
+    private Integer yearForCurrentUrlaubsanspruch;
+
     @OneToMany
     private List<Urlaubsanspruch> urlaubsanspruch;
 
@@ -176,5 +182,29 @@ public class Person extends AbstractPersistable<Integer> {
     public void setUrlaubskonten(List<Urlaubskonto> urlaubskonten) {
 
         this.urlaubskonten = urlaubskonten;
+    }
+
+
+    public Integer getCurrentUrlaubsanspruch() {
+
+        return currentUrlaubsanspruch;
+    }
+
+
+    public void setCurrentUrlaubsanspruch(Integer currentUrlaubsanspruch) {
+
+        this.currentUrlaubsanspruch = currentUrlaubsanspruch;
+    }
+
+
+    public Integer getYearForCurrentUrlaubsanspruch() {
+
+        return yearForCurrentUrlaubsanspruch;
+    }
+
+
+    public void setYearForCurrentUrlaubsanspruch(Integer yearForCurrentUrlaubsanspruch) {
+
+        this.yearForCurrentUrlaubsanspruch = yearForCurrentUrlaubsanspruch;
     }
 }
