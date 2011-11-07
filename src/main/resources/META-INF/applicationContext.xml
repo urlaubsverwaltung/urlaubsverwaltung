@@ -41,6 +41,7 @@
             <bean class="org.springframework.mail.javamail.JavaMailSenderImpl" />
         </constructor-arg>
 </bean>        
+<bean id="kontoService" class="org.synyx.urlaubsverwaltung.service.KontoService" />
 
 
 </beans>

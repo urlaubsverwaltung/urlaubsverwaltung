@@ -7,6 +7,7 @@ package org.synyx.urlaubsverwaltung.domain;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 
 
 /**
@@ -17,6 +18,8 @@ public class Urlaubskonto extends AbstractPersistable<Integer> {
 
     private static final long serialVersionUID = 1L;
 
+    // Eine Person kann mehrere Urlaubskonten besitzen (je nach Jahr)
+    @ManyToOne
     private Person person;
 
     private Integer vacationDays;
