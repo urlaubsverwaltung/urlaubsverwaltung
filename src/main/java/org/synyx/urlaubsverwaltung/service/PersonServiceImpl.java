@@ -186,10 +186,10 @@ public class PersonServiceImpl implements PersonService {
 
                 // trage die resturlaubstage ein
                 urlaubskonto.setRestVacationDays(restDays);
-
-                // schreib alles in die db
-                kontoService.saveUrlaubskonto(urlaubskonto);
             }
+
+            // schreib alles in die db
+            kontoService.saveUrlaubskonto(urlaubskonto);
         }
     }
 
