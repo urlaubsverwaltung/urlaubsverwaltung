@@ -1,6 +1,8 @@
 
 package org.synyx.urlaubsverwaltung.controller;
 
+import org.apache.log4j.Logger;
+
 import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
@@ -15,6 +17,7 @@ import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.service.AntragService;
 import org.synyx.urlaubsverwaltung.service.KontoService;
 import org.synyx.urlaubsverwaltung.service.PersonService;
+import org.synyx.urlaubsverwaltung.util.CustomLevel;
 import org.synyx.urlaubsverwaltung.util.DateService;
 
 import java.util.List;
@@ -30,6 +33,8 @@ public class PersonController {
     private static final String MITARBEITER_ATTRIBUTE_NAME = "mitarbeiter";
 
     private static final String MITARBEITER_ID = "mitarbeiterId";
+
+    private static Logger logger = Logger.getLogger(PersonController.class);
 
     private PersonService personService;
     private AntragService antragService;
@@ -59,6 +64,8 @@ public class PersonController {
 
         model.addAttribute(MITARBEITER_ATTRIBUTE_NAME, mitarbeiter);
 
+        logger.fatal("Auf Liste geschaut.");
+
         return "personen/mitarbeiterliste";
     }
 
@@ -76,6 +83,8 @@ public class PersonController {
         List<Person> mitarbeiter = personService.getAllPersons();
 
         model.addAttribute(MITARBEITER_ATTRIBUTE_NAME, mitarbeiter);
+
+        logger.fatal("Auf Detail geschaut.");
 
         return "personen/mitarbeiterdetails";
     }
@@ -148,8 +157,7 @@ public class PersonController {
         kontoService.newUrlaubsanspruch(person, year, person.getCurrentUrlaubsanspruch());
         kontoService.newUrlaubskonto(person, person.getCurrentUrlaubsanspruch(), 0, year);
 
-        // braucht noch richtigen Verweis
-        return "redirect:irgendwohin";
+        return "redirect:/web/mitarbeiter/list";
     }
 
 
@@ -191,7 +199,8 @@ public class PersonController {
 
         personService.save(person);
 
-        // braucht noch richtigen Verweis
+        logger.log(CustomLevel.VORGANG, "Neue Person angelegt: " + person.getFirstName() + " " + person.getLastName());
+
         return "redirect:/web/mitarbeiter/list";
     }
 }
