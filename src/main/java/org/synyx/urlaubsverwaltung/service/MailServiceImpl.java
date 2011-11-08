@@ -77,21 +77,24 @@ public class MailServiceImpl implements MailService {
     @Override
     public void sendNewRequestsNotification(List<Person> persons, List<Antrag> requests) {
 
-        String details = "";
-        String emails = "";
+        // nehme StringBuilder, statt String immer wieder neu anzuhaengen
+        // StringBuilder haengt String Ketten an, am Ende wird ein ganzer String daraus erzeugt
+        StringBuilder build = new StringBuilder();
 
         for (Antrag antrag : requests) {
-            details = details + "\n" + antrag.getPerson().getFirstName() + " " + antrag.getPerson().getLastName()
-                + " : " + antrag.getStartDate() + " bis " + antrag.getEndDate();
+            build.append("\n").append(antrag.getPerson().getFirstName()).append(" ").append(antrag.getPerson()
+                .getLastName()).append(" : ").append(antrag.getStartDate()).append(" bis ").append(antrag.getEndDate());
         }
 
-        final String beantragungen = details;
+        final String beantragungen = build.toString();
+
+        build = new StringBuilder();
 
         for (Person beauftragter : persons) {
-            emails = emails + beauftragter.getEmail() + ", ";
+            build.append(beauftragter.getEmail()).append(", ");
         }
 
-        final String emailAdressen = emails;
+        final String emailAdressen = build.toString();
 
         MimeMessagePreparator prep = new MimeMessagePreparator() {
 
