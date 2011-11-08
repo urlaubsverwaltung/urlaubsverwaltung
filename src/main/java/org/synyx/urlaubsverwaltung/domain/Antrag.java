@@ -27,6 +27,7 @@ public class Antrag extends AbstractPersistable<Integer> {
     private Person boss;
 
     // Grund, warum Chef Antrag abgelehnt hat
+    @OneToOne
     private Kommentar reasonToDecline;
 
     // Abwesenheit insgesamt (also plus Feiertage, Wochenende, etc.)

@@ -9,6 +9,7 @@ import org.joda.time.DateMidnight;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import javax.persistence.Entity;
+import javax.persistence.OneToOne;
 
 
 /**
@@ -21,6 +22,7 @@ public class Kommentar extends AbstractPersistable<Integer> {
 
     private String text;
 
+    @OneToOne
     private Person person;
 
     private DateMidnight datum;
