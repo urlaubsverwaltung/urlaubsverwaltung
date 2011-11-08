@@ -98,6 +98,7 @@ public class AntragServiceImpl implements AntragService {
     }
 
 
+    // to be implemented....
     /**
      * @see  AntragService#storno(org.synyx.urlaubsverwaltung.domain.Antrag)
      */
@@ -193,6 +194,7 @@ public class AntragServiceImpl implements AntragService {
     }
 
 
+    // to be implemented
     /**
      * @see  AntragService#krankheitBeachten(org.synyx.urlaubsverwaltung.domain.Antrag, java.lang.Integer)
      */

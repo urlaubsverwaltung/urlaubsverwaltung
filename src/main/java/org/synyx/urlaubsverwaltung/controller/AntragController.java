@@ -1,9 +1,6 @@
 
 package org.synyx.urlaubsverwaltung.controller;
 
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-
 import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
@@ -30,7 +27,11 @@ import java.util.List;
 @Controller
 public class AntragController {
 
+    private static final String ANTRAG_ATTRIBUTE_NAME = "antrag";
+    private static final String PERSON_ATTRIBUTE_NAME = "person";
+    private static final String MITARBEITER_ATTRIBUTE_NAME = "mitarbeiter";
     private static final String REQUEST_ATTRIBUTE_NAME = "requests";
+
     private static final String REQUESTLIST_VIEW = "antraege/antragsliste";
     private static final String ACTION_COMPLETE_VIEW = "index"; // muss noch geändert werden
 
@@ -59,7 +60,7 @@ public class AntragController {
         Person person = personService.getPersonByID(mitarbeiterId);
         List<Antrag> antraege = antragService.getAllRequestsForPerson(person);
 
-        model.addAttribute("person", person);
+        model.addAttribute(PERSON_ATTRIBUTE_NAME, person);
         model.addAttribute(REQUEST_ATTRIBUTE_NAME, antraege);
 
         return "antraege/antraege";
@@ -151,11 +152,11 @@ public class AntragController {
         Integer year = dateService.getYear();
         Antrag antrag = new Antrag();
 
-        model.addAttribute("person", person);
-        model.addAttribute("mitarbeiter", mitarbeiter);
+        model.addAttribute(PERSON_ATTRIBUTE_NAME, person);
+        model.addAttribute(MITARBEITER_ATTRIBUTE_NAME, mitarbeiter);
         model.addAttribute("date", date);
         model.addAttribute("year", year);
-        model.addAttribute("antrag", antrag);
+        model.addAttribute(ANTRAG_ATTRIBUTE_NAME, antrag);
         model.addAttribute("vacTypes", VacationType.values());
 
         return "antraege/antragform";
@@ -196,7 +197,7 @@ public class AntragController {
 
         Antrag antrag = antragService.getRequestById(antragId);
 
-        model.addAttribute("antrag", antrag);
+        model.addAttribute(ANTRAG_ATTRIBUTE_NAME, antrag);
 
         return "antraege/antragdetailchef";
     }
@@ -215,7 +216,7 @@ public class AntragController {
 
         Antrag antrag = antragService.getRequestById(antragId);
 
-        model.addAttribute("antrag", antrag);
+        model.addAttribute(ANTRAG_ATTRIBUTE_NAME, antrag);
 
         return "antraege/antragdetailoffice";
     }
@@ -248,7 +249,7 @@ public class AntragController {
     @RequestMapping(value = "/antrag/{antragId}/genehmigen", method = RequestMethod.PUT)
     public String approveAntrag(@PathVariable("antragId") Integer antragId, Model model) {
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         // über die logik sollten wir nochmal nachdenken...
         antragService.approve(antragService.getRequestById(antragId));

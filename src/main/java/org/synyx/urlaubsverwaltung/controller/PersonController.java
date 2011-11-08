@@ -28,6 +28,9 @@ import java.util.List;
 @Controller
 public class PersonController {
 
+    private static final String PERSON_ATTRIBUTE_NAME = "person";
+    private static final String MITARBEITER_ATTRIBUTE_NAME = "mitarbeiter";
+
     private PersonService personService;
     private AntragService antragService;
     private KontoService kontoService;
@@ -54,7 +57,7 @@ public class PersonController {
 
         List<Person> mitarbeiter = personService.getAllPersons();
 
-        model.addAttribute("mitarbeiter", mitarbeiter);
+        model.addAttribute(MITARBEITER_ATTRIBUTE_NAME, mitarbeiter);
 
         return "personen/mitarbeiterliste";
     }
@@ -72,7 +75,7 @@ public class PersonController {
 
         List<Person> mitarbeiter = personService.getAllPersons();
 
-        model.addAttribute("mitarbeiter", mitarbeiter);
+        model.addAttribute(MITARBEITER_ATTRIBUTE_NAME, mitarbeiter);
 
         return "personen/mitarbeiterdetails";
     }
@@ -95,7 +98,7 @@ public class PersonController {
 
         model.addAttribute("year", dateService.getYear());
         model.addAttribute("requests", requests);
-        model.addAttribute("person", person);
+        model.addAttribute(PERSON_ATTRIBUTE_NAME, person);
 
         return "personen/overview";
     }
@@ -114,7 +117,7 @@ public class PersonController {
 
         Person person = personService.getPersonByID(mitarbeiterId);
 
-        model.addAttribute("person", person);
+        model.addAttribute(PERSON_ATTRIBUTE_NAME, person);
 
         return "personen/personform";
     }
@@ -162,7 +165,7 @@ public class PersonController {
 
         Person person = new Person();
 
-        model.addAttribute("person", person);
+        model.addAttribute(PERSON_ATTRIBUTE_NAME, person);
 
         return "personen/personform";
     }
