@@ -22,12 +22,16 @@ public class Urlaubskonto extends AbstractPersistable<Integer> {
     @ManyToOne
     private Person person;
 
+    // wieviel darf person noch nehmen im jahr year
     private Integer vacationDays;
 
+    // resturlaub im jahr year
     private Integer restVacationDays;
 
+    // genommener sonderurlaub im jahr year
     private Integer sonderUrlaub;
 
+    // genommener unbezahlter urlaub im jahr year
     private Integer unbezahlterUrlaub;
 
     private Integer year;
