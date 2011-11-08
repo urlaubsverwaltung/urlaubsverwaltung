@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import org.synyx.urlaubsverwaltung.domain.Antrag;
 import org.synyx.urlaubsverwaltung.domain.Person;
-import org.synyx.urlaubsverwaltung.domain.Urlaubsanspruch;
-import org.synyx.urlaubsverwaltung.domain.Urlaubskonto;
 import org.synyx.urlaubsverwaltung.service.AntragService;
 import org.synyx.urlaubsverwaltung.service.KontoService;
 import org.synyx.urlaubsverwaltung.service.PersonService;
@@ -30,6 +28,8 @@ public class PersonController {
 
     private static final String PERSON_ATTRIBUTE_NAME = "person";
     private static final String MITARBEITER_ATTRIBUTE_NAME = "mitarbeiter";
+
+    private static final String MITARBEITER_ID = "mitarbeiterId";
 
     private PersonService personService;
     private AntragService antragService;
@@ -90,7 +90,7 @@ public class PersonController {
      * @return
      */
     @RequestMapping(value = "/mitarbeiter/{mitarbeiterId}/overview", method = RequestMethod.GET)
-    public String showOverview(@PathVariable("mitarbeiterId") Integer mitarbeiterId, Model model) {
+    public String showOverview(@PathVariable(MITARBEITER_ID) Integer mitarbeiterId, Model model) {
 
         Person person = personService.getPersonByID(mitarbeiterId);
 
@@ -113,7 +113,7 @@ public class PersonController {
      * @return
      */
     @RequestMapping(value = "/mitarbeiter/{mitarbeiterId}/edit", method = RequestMethod.GET)
-    public String editPersonForm(@PathVariable("mitarbeiterId") Integer mitarbeiterId, Model model) {
+    public String editPersonForm(@PathVariable(MITARBEITER_ID) Integer mitarbeiterId, Model model) {
 
         Person person = personService.getPersonByID(mitarbeiterId);
 
@@ -132,8 +132,8 @@ public class PersonController {
      * @return
      */
     @RequestMapping(value = "/mitarbeiter/{mitarbeiterId}/edit", method = RequestMethod.PUT)
-    public String editPerson(@ModelAttribute("person") Person person,
-        @PathVariable("mitarbeiterId") Integer mitarbeiterId) {
+    public String editPerson(@ModelAttribute(PERSON_ATTRIBUTE_NAME) Person person,
+        @PathVariable(MITARBEITER_ID) Integer mitarbeiterId) {
 
         Person personToUpdate = personService.getPersonByID(mitarbeiterId);
 
@@ -179,21 +179,15 @@ public class PersonController {
      * @return
      */
     @RequestMapping(value = "/mitarbeiter/new", method = RequestMethod.POST)
-    public String newPerson(@ModelAttribute("person") Person person) {
+    public String newPerson(@ModelAttribute(PERSON_ATTRIBUTE_NAME) Person person) {
 
         Integer year = dateService.getYear();
-        Urlaubsanspruch urlaubsanspruch = new Urlaubsanspruch();
-        Urlaubskonto urlaubskonto = new Urlaubskonto();
 
-        urlaubsanspruch.setYear(year);
-        urlaubsanspruch.setPerson(person);
-        urlaubsanspruch.setVacationDays(person.getCurrentUrlaubsanspruch());
-        kontoService.saveUrlaubsanspruch(null);
+        // neuen Urlaubsanspruch erstellen und speichern
+        kontoService.newUrlaubsanspruch(person, year, person.getCurrentUrlaubsanspruch());
 
-        urlaubskonto.setYear(year);
-        urlaubskonto.setPerson(person);
-        urlaubskonto.setVacationDays(person.getCurrentUrlaubsanspruch());
-        kontoService.saveUrlaubskonto(urlaubskonto);
+        // neues Urlaubskonto erstellen und speichern
+        kontoService.newUrlaubskonto(person, person.getCurrentUrlaubsanspruch(), 0, year);
 
         personService.save(person);
 

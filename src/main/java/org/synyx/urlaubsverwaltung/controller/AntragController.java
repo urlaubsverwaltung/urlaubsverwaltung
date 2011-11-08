@@ -32,6 +32,9 @@ public class AntragController {
     private static final String MITARBEITER_ATTRIBUTE_NAME = "mitarbeiter";
     private static final String REQUEST_ATTRIBUTE_NAME = "requests";
 
+    private static final String ANTRAG_ID = "antragId";
+    private static final String MITARBEITER_ID = "mitarbeiterId";
+
     private static final String REQUESTLIST_VIEW = "antraege/antragsliste";
     private static final String ACTION_COMPLETE_VIEW = "index"; // muss noch geändert werden
 
@@ -55,7 +58,7 @@ public class AntragController {
      * @return
      */
     @RequestMapping(value = "/antraege/{mitarbeiterId}", method = RequestMethod.GET)
-    public String showAntraegeByPerson(@PathVariable("mitarbeiterId") Integer mitarbeiterId, Model model) {
+    public String showAntraegeByPerson(@PathVariable(MITARBEITER_ID) Integer mitarbeiterId, Model model) {
 
         Person person = personService.getPersonByID(mitarbeiterId);
         List<Antrag> antraege = antragService.getAllRequestsForPerson(person);
@@ -193,7 +196,7 @@ public class AntragController {
      * @return
      */
     @RequestMapping(value = "/antrag/{antragId}/chef", method = RequestMethod.GET)
-    public String showAntragDetailChef(@PathVariable("antragId") Integer antragId, Model model) {
+    public String showAntragDetailChef(@PathVariable(ANTRAG_ID) Integer antragId, Model model) {
 
         Antrag antrag = antragService.getRequestById(antragId);
 
@@ -212,7 +215,7 @@ public class AntragController {
      * @return
      */
     @RequestMapping(value = "/antrag/{antragId}/office", method = RequestMethod.GET)
-    public String showAntragDetailOffice(@PathVariable("antragId") Integer antragId, Model model) {
+    public String showAntragDetailOffice(@PathVariable(ANTRAG_ID) Integer antragId, Model model) {
 
         Antrag antrag = antragService.getRequestById(antragId);
 
@@ -230,7 +233,7 @@ public class AntragController {
      * @return
      */
     @RequestMapping(value = "/antrag/{antragId}/stornieren", method = RequestMethod.PUT)
-    public String cancelAntrag(@PathVariable("antragId") Integer antragId, Model model) {
+    public String cancelAntrag(@PathVariable(ANTRAG_ID) Integer antragId, Model model) {
 
         // über die logik sollten wir nochmal nachdenken...
         antragService.storno(antragService.getRequestById(antragId));
@@ -247,7 +250,7 @@ public class AntragController {
      * @return
      */
     @RequestMapping(value = "/antrag/{antragId}/genehmigen", method = RequestMethod.PUT)
-    public String approveAntrag(@PathVariable("antragId") Integer antragId, Model model) {
+    public String approveAntrag(@PathVariable(ANTRAG_ID) Integer antragId, Model model) {
 
 //        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
@@ -270,7 +273,7 @@ public class AntragController {
      * @return
      */
     @RequestMapping(value = "/antrag/{antragId}/ablehnen", method = RequestMethod.PUT)
-    public String declineAntrag(@PathVariable("antragId") Integer antragId,
+    public String declineAntrag(@PathVariable(ANTRAG_ID) Integer antragId,
         @ModelAttribute("reasonForDeclining") String reasonForDeclining, Model model) {
 
         Person boss = personService.getPersonByLogin(reasonForDeclining);
