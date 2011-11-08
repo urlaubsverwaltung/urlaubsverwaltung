@@ -190,7 +190,7 @@ public class AntragServiceImpl implements AntragService {
 
                 // wenn so das Urlaubskonto gleich dem Anspruch ist,
                 // setze die Tage vor dem April (beforeApr) ins Resturlaubkonto (das sowieso ab 1.4. verfällt)
-                if (konto1.getVacationDays() == anspruch1.getVacationDays()) {
+                if (konto1.getVacationDays().equals(anspruch1.getVacationDays())) {
                     konto1.setRestVacationDays(konto1.getRestVacationDays() + beforeApr);
                 } else if (konto1.getVacationDays() < anspruch1.getVacationDays()) {
                     // wenn das Auffüllen mit afterApr das Konto noch nicht zum Überlaufen gebracht hat
