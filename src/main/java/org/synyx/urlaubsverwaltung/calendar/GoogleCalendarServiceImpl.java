@@ -8,6 +8,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 
 import com.google.gdata.client.calendar.CalendarQuery;
+import com.google.gdata.data.PlainTextConstruct;
 import com.google.gdata.data.calendar.CalendarEventEntry;
 import com.google.gdata.data.calendar.CalendarEventFeed;
 import com.google.gdata.data.calendar.EventWho;
@@ -29,9 +30,11 @@ import java.io.IOException;
 
 import java.net.URL;
 
+import java.util.List;
+
 
 /**
- * @author  aljona
+ * @author  aljona (not really.... eigtl: @author otto allmendinger)
  *
  *          <p>dies ist ein vorläufiger versuch den google calendar einzubinden die methoden wurden dem
  *          googlecalendarserviceimpl des ressourcenplanungstools von Otto Allmendinger - allmendinger@synyx.de
@@ -60,16 +63,87 @@ public class GoogleCalendarServiceImpl implements CalendarService {
 //    }
 
     @Override
-    public int getWorkDays(LocalDate start, LocalDate end) {
+    public int getWorkDays(LocalDate start, LocalDate end) throws AuthenticationException, IOException,
+        ServiceException {
 
-        throw new UnsupportedOperationException("Not supported yet.");
+        int nettoUrlaubstage = 0;
+
+        // Kalendar Deutsche Feiertage
+
+        URL feedUrl = new URL(
+                "http://www.google.com/calendar/feeds/de.german%23holiday%40group.v.calendar.google.com/public/basic");
+
+        CalendarQuery query = new CalendarQuery(feedUrl);
+
+        // aus LocalDate joda time DateTime erzeugen
+        DateTime startTime = start.toDateTimeAtStartOfDay();
+        DateTime endTime = end.toDateTimeAtStartOfDay();
+
+        // aus joda time DateTime wird GoogleDateTime erzeugt und dann ins When als Start und Ende gesetzt
+        query.setMinimumStartTime(toGoogleDateTime(startTime));
+        query.setMaximumStartTime(toGoogleDateTime(endTime));
+
+        getGoogleCalendarService().setUserCredentials(username, password);
+
+        CalendarEventFeed resultFeed = getGoogleCalendarService().query(query, CalendarEventFeed.class);
+
+        List<CalendarEventEntry> entries = resultFeed.getEntries();
+
+        for (CalendarEventEntry entry : entries) {
+            List<When> when = entry.getTimes();
+
+            for (When w : when) {
+            }
+        }
+
+        return 5;
     }
 
 
+    /**
+     * Einen Eintrag, wer wann Urlaub hat im Google Kalender setzen
+     *
+     * @param  start
+     * @param  end
+     * @param  person
+     * @param  calendarId
+     *
+     * @throws  AuthenticationException
+     * @throws  IOException
+     * @throws  ServiceException
+     *
+     * @author  aljona
+     */
     @Override
-    public void addVacation(LocalDate start, LocalDate end, Person person, String comment) {
+    public void addVacation(LocalDate start, LocalDate end, Person person, String calendarId)
+        throws AuthenticationException, IOException, ServiceException {
 
-        throw new UnsupportedOperationException("Not supported yet.");
+        // Url des Kalenders
+        URL postUrl = new URL(GOOGLE_BASE_URL + calendarId + "/private/full");
+
+        // Entry erzeugen
+        CalendarEventEntry entry = new CalendarEventEntry();
+
+        // Attribute des Eintrags setzen
+        entry.setTitle(new PlainTextConstruct("Urlaub"));
+        entry.setContent(new PlainTextConstruct(person.getFirstName() + " " + person.getLastName() + " hat Urlaub."));
+
+        // aus LocalDate joda time DateTime erzeugen
+        DateTime startTime = start.toDateTimeAtStartOfDay();
+        DateTime endTime = end.toDateTimeAtStartOfDay();
+
+        // When erzeugen
+        When eventTimes = new When();
+
+        // aus joda time DateTime wird GoogleDateTime erzeugt und dann ins When als Start und Ende gesetzt
+        eventTimes.setStartTime(toGoogleDateTime(startTime));
+        eventTimes.setEndTime(toGoogleDateTime(endTime));
+
+        // das When ins Entry setzen
+        entry.addTime(eventTimes);
+
+        // den google calendar service aufrufen und Url und Entry setzen
+        getGoogleCalendarService().insert(postUrl, entry);
     }
 
 
