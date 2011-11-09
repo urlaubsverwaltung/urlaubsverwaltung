@@ -35,7 +35,6 @@ public class PersonController {
 
     private static Logger logger = Logger.getLogger(PersonController.class);
     private static Logger personLogger = Logger.getLogger("personLogger");
-    private static Logger reqLogger = Logger.getLogger("reqLogger");
 
     private PersonService personService;
     private AntragService antragService;
