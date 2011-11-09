@@ -1,6 +1,8 @@
 
 package org.synyx.urlaubsverwaltung.controller;
 
+import org.apache.log4j.Logger;
+
 import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
@@ -37,6 +39,9 @@ public class AntragController {
 
     private static final String REQUESTLIST_VIEW = "antraege/antragsliste";
     private static final String ACTION_COMPLETE_VIEW = "index"; // muss noch geändert werden
+
+    private static Logger logger = Logger.getLogger(PersonController.class);
+    private static Logger reqLogger = Logger.getLogger("reqLogger");
 
     private PersonService personService;
     private AntragService antragService;
@@ -183,6 +188,9 @@ public class AntragController {
         antrag.setStatus(State.WARTEND);
         antragService.save(antrag);
 
+        logger.info("Es wurde ein neuer Antrag angelegt.");
+        reqLogger.info("Es wurde ein neuer Antrag angelegt.");
+
         return ACTION_COMPLETE_VIEW; // oder vllt auch ine success-seite
     }
 
@@ -238,6 +246,9 @@ public class AntragController {
         // über die logik sollten wir nochmal nachdenken...
         antragService.storno(antragService.getRequestById(antragId));
 
+        logger.info("Ein Antrag wurde storniert.");
+        reqLogger.info("Ein Antrag wurde storniert.");
+
         return ACTION_COMPLETE_VIEW; // oder ne successpage oder was ganz anderes
     }
 
@@ -256,6 +267,9 @@ public class AntragController {
 
         // über die logik sollten wir nochmal nachdenken...
         antragService.approve(antragService.getRequestById(antragId));
+
+        logger.info("Ein Antrag wurde genehmigt.");
+        reqLogger.info("Ein Antrag wurde genehmigt.");
 
         // benachrichtigungs-zeugs
 
@@ -280,6 +294,9 @@ public class AntragController {
         Antrag antrag = antragService.getRequestById(antragId);
 
         antragService.decline(antrag, boss, reasonForDeclining);
+
+        logger.info("Ein Antrag wurde abgelehnt.");
+        reqLogger.info("Ein Antrag wurde abgelehnt.");
 
         // benachrichtigungs-zeugs
 

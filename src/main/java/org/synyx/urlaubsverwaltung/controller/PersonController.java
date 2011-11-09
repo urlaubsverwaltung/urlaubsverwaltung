@@ -17,7 +17,6 @@ import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.service.AntragService;
 import org.synyx.urlaubsverwaltung.service.KontoService;
 import org.synyx.urlaubsverwaltung.service.PersonService;
-import org.synyx.urlaubsverwaltung.util.CustomLevel;
 import org.synyx.urlaubsverwaltung.util.DateService;
 
 import java.util.List;
@@ -35,6 +34,8 @@ public class PersonController {
     private static final String MITARBEITER_ID = "mitarbeiterId";
 
     private static Logger logger = Logger.getLogger(PersonController.class);
+    private static Logger personLogger = Logger.getLogger("personLogger");
+    private static Logger reqLogger = Logger.getLogger("reqLogger");
 
     private PersonService personService;
     private AntragService antragService;
@@ -64,7 +65,8 @@ public class PersonController {
 
         model.addAttribute(MITARBEITER_ATTRIBUTE_NAME, mitarbeiter);
 
-        logger.fatal("Auf Liste geschaut.");
+        // nur für Ausprobieren des Loggers
+        personLogger.info("Auf Liste geschaut.");
 
         return "personen/mitarbeiterliste";
     }
@@ -84,7 +86,8 @@ public class PersonController {
 
         model.addAttribute(MITARBEITER_ATTRIBUTE_NAME, mitarbeiter);
 
-        logger.fatal("Auf Detail geschaut.");
+        // nur für Ausprobieren des Loggers
+        personLogger.info("Auf Details geschaut.");
 
         return "personen/mitarbeiterdetails";
     }
@@ -157,6 +160,9 @@ public class PersonController {
         kontoService.newUrlaubsanspruch(person, year, person.getCurrentUrlaubsanspruch());
         kontoService.newUrlaubskonto(person, person.getCurrentUrlaubsanspruch(), 0, year);
 
+        logger.info("Der Mitarbeiter " + person.getFirstName() + " " + person.getLastName() + " wurde editiert.");
+        personLogger.info("Der Mitarbeiter " + person.getFirstName() + " " + person.getLastName() + " wurde editiert.");
+
         return "redirect:/web/mitarbeiter/list";
     }
 
@@ -199,7 +205,8 @@ public class PersonController {
 
         personService.save(person);
 
-        logger.log(CustomLevel.VORGANG, "Neue Person angelegt: " + person.getFirstName() + " " + person.getLastName());
+        logger.info("Neue Person angelegt: " + person.getFirstName() + " " + person.getLastName());
+        personLogger.info("Neue Person angelegt: " + person.getFirstName() + " " + person.getLastName());
 
         return "redirect:/web/mitarbeiter/list";
     }
