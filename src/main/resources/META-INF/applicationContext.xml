@@ -35,7 +35,11 @@
 
 <bean id="kontoService" class="org.synyx.urlaubsverwaltung.service.KontoServiceImpl" />
 <bean id="personService" class="org.synyx.urlaubsverwaltung.service.PersonServiceImpl" />
-<bean id="antragService" class="org.synyx.urlaubsverwaltung.service.AntragServiceImpl" />
+<bean id="antragService" class="org.synyx.urlaubsverwaltung.service.AntragServiceImpl">
+    <constructor-arg>
+        <bean class="org.synyx.urlaubsverwaltung.util.DateService" />
+    </constructor-arg>
+</bean>    
 <bean id="mailService" class="org.synyx.urlaubsverwaltung.service.MailServiceImpl">
        <constructor-arg>
             <bean class="org.springframework.mail.javamail.JavaMailSenderImpl" />
