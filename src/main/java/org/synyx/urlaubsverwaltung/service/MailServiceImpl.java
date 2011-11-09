@@ -4,6 +4,8 @@
  */
 package org.synyx.urlaubsverwaltung.service;
 
+import org.apache.log4j.Logger;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.mail.MailException;
@@ -29,6 +31,8 @@ public class MailServiceImpl implements MailService {
     // see here: http://static.springsource.org/spring/docs/2.0.5/reference/mail.html
 
     private static final String SCHLUSSZEILE = "\n\nUrlaubsverwaltung";
+
+    private static Logger mailLogger = Logger.getLogger("mailLogger");
 
     private JavaMailSender mailSender;
     private String absender = EmailAdr.MANAGE.getEmail();
@@ -65,7 +69,7 @@ public class MailServiceImpl implements MailService {
             try {
                 this.mailSender.send(prep);
             } catch (MailException ex) {
-                System.err.println(ex.getMessage());
+                mailLogger.error(ex.getMessage());
             }
         }
     }
@@ -113,7 +117,7 @@ public class MailServiceImpl implements MailService {
         try {
             this.mailSender.send(prep);
         } catch (MailException ex) {
-            System.err.println(ex.getMessage());
+            mailLogger.error(ex.getMessage());
         }
     }
 
@@ -162,7 +166,7 @@ public class MailServiceImpl implements MailService {
         try {
             this.mailSender.send(prepUser);
         } catch (MailException ex) {
-            System.err.println(ex.getMessage());
+            mailLogger.error(ex.getMessage());
         }
     }
 
@@ -194,7 +198,7 @@ public class MailServiceImpl implements MailService {
         try {
             this.mailSender.send(prep);
         } catch (MailException ex) {
-            System.err.println(ex.getMessage());
+            mailLogger.error(ex.getMessage());
         }
     }
 
@@ -224,7 +228,7 @@ public class MailServiceImpl implements MailService {
         try {
             this.mailSender.send(prep);
         } catch (MailException ex) {
-            System.err.println(ex.getMessage());
+            mailLogger.error(ex.getMessage());
         }
     }
 
@@ -272,7 +276,7 @@ public class MailServiceImpl implements MailService {
         try {
             this.mailSender.send(prep);
         } catch (MailException ex) {
-            System.err.println(ex.getMessage());
+            mailLogger.error(ex.getMessage());
         }
     }
 
@@ -300,7 +304,7 @@ public class MailServiceImpl implements MailService {
         try {
             this.mailSender.send(prep);
         } catch (MailException ex) {
-            System.err.println(ex.getMessage());
+            mailLogger.error(ex.getMessage());
         }
     }
 }
