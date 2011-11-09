@@ -195,7 +195,7 @@ public class GoogleCalendarServiceImpl implements CalendarService {
                 throw new IllegalStateException("username or password not set");
             }
 
-            googleCalendarService = new com.google.gdata.client.calendar.CalendarService(getApplicationName());
+//            googleCalendarService = new com.google.gdata.client.calendar.CalendarService(getApplicationName());
             googleCalendarService.setUserCredentials(username, password);
         }
 
