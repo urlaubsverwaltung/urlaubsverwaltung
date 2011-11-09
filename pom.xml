@@ -39,9 +39,29 @@
 			<name>Synyx OpenSource Repository</name>
 			<url>http://nexus.synyx.de/content/groups/synyx/</url>
 		</repository>
+                <repository>
+		<id>gdata-mvn</id>
+		<name>Nicht offizielles Google API Repository</name>
+		<url>http://mandubian-mvn.googlecode.com/svn/trunk/mandubian-mvn/repository</url>
+                </repository>
 	</repositories>
 
 	<dependencies>
+            
+         <dependency>
+        	<groupId>com.google.gdata</groupId>
+        	<artifactId>gdata-calendar-2.0</artifactId>
+        	<version>1.41.5</version>
+        	<scope>compile</scope>
+        	<exclusions>
+        		<exclusion>
+        			<artifactId>google-collections</artifactId>
+        			<groupId>com.google.collections</groupId>
+        		</exclusion>
+        	</exclusions>
+        </dependency>   
+            
+            
 	 <dependency>
 	  <groupId>javax.mail</groupId>
 	  <artifactId>mail</artifactId>
