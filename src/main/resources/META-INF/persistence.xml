@@ -5,6 +5,8 @@
    <persistence-unit name="urlaubsverwaltung">
         <class>org.synyx.urlaubsverwaltung.domain.Person</class>
         <class>org.synyx.urlaubsverwaltung.domain.Antrag</class>
+        <class>org.synyx.urlaubsverwaltung.domain.Urlaubsanspruch</class>
+        <class>org.synyx.urlaubsverwaltung.domain.Urlaubskonto</class>
     </persistence-unit>
     
 </persistence>

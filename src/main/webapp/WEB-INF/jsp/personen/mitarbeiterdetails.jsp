@@ -21,7 +21,7 @@
     
     <body>
         
-        <spring:url var="formUrlPrefix" value="/web/urlaubsverwaltung" />
+        <spring:url var="formUrlPrefix" value="/web" />
         
         <a href="${formUrlPrefix}/mitarbeiter/list"><spring:message code="table.list" /></a>
         <a href="${formUrlPrefix}/mitarbeiter/detail"><spring:message code="table.detail" /></a>

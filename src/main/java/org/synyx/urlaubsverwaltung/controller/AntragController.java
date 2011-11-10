@@ -1,8 +1,7 @@
 
 package org.synyx.urlaubsverwaltung.controller;
 
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.apache.log4j.Logger;
 
 import org.springframework.stereotype.Controller;
 
@@ -30,9 +29,19 @@ import java.util.List;
 @Controller
 public class AntragController {
 
+    private static final String ANTRAG_ATTRIBUTE_NAME = "antrag";
+    private static final String PERSON_ATTRIBUTE_NAME = "person";
+    private static final String MITARBEITER_ATTRIBUTE_NAME = "mitarbeiter";
     private static final String REQUEST_ATTRIBUTE_NAME = "requests";
+
+    private static final String ANTRAG_ID = "antragId";
+    private static final String MITARBEITER_ID = "mitarbeiterId";
+
     private static final String REQUESTLIST_VIEW = "antraege/antragsliste";
     private static final String ACTION_COMPLETE_VIEW = "index"; // muss noch geändert werden
+
+    private static Logger logger = Logger.getLogger(PersonController.class);
+    private static Logger reqLogger = Logger.getLogger("reqLogger");
 
     private PersonService personService;
     private AntragService antragService;
@@ -54,12 +63,12 @@ public class AntragController {
      * @return
      */
     @RequestMapping(value = "/antraege/{mitarbeiterId}", method = RequestMethod.GET)
-    public String showAntraegeByPerson(@PathVariable("mitarbeiterId") Integer mitarbeiterId, Model model) {
+    public String showAntraegeByPerson(@PathVariable(MITARBEITER_ID) Integer mitarbeiterId, Model model) {
 
         Person person = personService.getPersonByID(mitarbeiterId);
         List<Antrag> antraege = antragService.getAllRequestsForPerson(person);
 
-        model.addAttribute("person", person);
+        model.addAttribute(PERSON_ATTRIBUTE_NAME, person);
         model.addAttribute(REQUEST_ATTRIBUTE_NAME, antraege);
 
         return "antraege/antraege";
@@ -151,11 +160,11 @@ public class AntragController {
         Integer year = dateService.getYear();
         Antrag antrag = new Antrag();
 
-        model.addAttribute("person", person);
-        model.addAttribute("mitarbeiter", mitarbeiter);
+        model.addAttribute(PERSON_ATTRIBUTE_NAME, person);
+        model.addAttribute(MITARBEITER_ATTRIBUTE_NAME, mitarbeiter);
         model.addAttribute("date", date);
         model.addAttribute("year", year);
-        model.addAttribute("antrag", antrag);
+        model.addAttribute(ANTRAG_ATTRIBUTE_NAME, antrag);
         model.addAttribute("vacTypes", VacationType.values());
 
         return "antraege/antragform";
@@ -179,6 +188,9 @@ public class AntragController {
         antrag.setStatus(State.WARTEND);
         antragService.save(antrag);
 
+        logger.info("Es wurde ein neuer Antrag angelegt.");
+        reqLogger.info("Es wurde ein neuer Antrag angelegt.");
+
         return ACTION_COMPLETE_VIEW; // oder vllt auch ine success-seite
     }
 
@@ -192,11 +204,11 @@ public class AntragController {
      * @return
      */
     @RequestMapping(value = "/antrag/{antragId}/chef", method = RequestMethod.GET)
-    public String showAntragDetailChef(@PathVariable("antragId") Integer antragId, Model model) {
+    public String showAntragDetailChef(@PathVariable(ANTRAG_ID) Integer antragId, Model model) {
 
         Antrag antrag = antragService.getRequestById(antragId);
 
-        model.addAttribute("antrag", antrag);
+        model.addAttribute(ANTRAG_ATTRIBUTE_NAME, antrag);
 
         return "antraege/antragdetailchef";
     }
@@ -211,11 +223,11 @@ public class AntragController {
      * @return
      */
     @RequestMapping(value = "/antrag/{antragId}/office", method = RequestMethod.GET)
-    public String showAntragDetailOffice(@PathVariable("antragId") Integer antragId, Model model) {
+    public String showAntragDetailOffice(@PathVariable(ANTRAG_ID) Integer antragId, Model model) {
 
         Antrag antrag = antragService.getRequestById(antragId);
 
-        model.addAttribute("antrag", antrag);
+        model.addAttribute(ANTRAG_ATTRIBUTE_NAME, antrag);
 
         return "antraege/antragdetailoffice";
     }
@@ -229,10 +241,13 @@ public class AntragController {
      * @return
      */
     @RequestMapping(value = "/antrag/{antragId}/stornieren", method = RequestMethod.PUT)
-    public String cancelAntrag(@PathVariable("antragId") Integer antragId, Model model) {
+    public String cancelAntrag(@PathVariable(ANTRAG_ID) Integer antragId, Model model) {
 
         // über die logik sollten wir nochmal nachdenken...
         antragService.storno(antragService.getRequestById(antragId));
+
+        logger.info("Ein Antrag wurde storniert.");
+        reqLogger.info("Ein Antrag wurde storniert.");
 
         return ACTION_COMPLETE_VIEW; // oder ne successpage oder was ganz anderes
     }
@@ -246,12 +261,15 @@ public class AntragController {
      * @return
      */
     @RequestMapping(value = "/antrag/{antragId}/genehmigen", method = RequestMethod.PUT)
-    public String approveAntrag(@PathVariable("antragId") Integer antragId, Model model) {
+    public String approveAntrag(@PathVariable(ANTRAG_ID) Integer antragId, Model model) {
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         // über die logik sollten wir nochmal nachdenken...
         antragService.approve(antragService.getRequestById(antragId));
+
+        logger.info("Ein Antrag wurde genehmigt.");
+        reqLogger.info("Ein Antrag wurde genehmigt.");
 
         // benachrichtigungs-zeugs
 
@@ -269,11 +287,16 @@ public class AntragController {
      * @return
      */
     @RequestMapping(value = "/antrag/{antragId}/ablehnen", method = RequestMethod.PUT)
-    public String declineAntrag(@PathVariable("antragId") Integer antragId,
+    public String declineAntrag(@PathVariable(ANTRAG_ID) Integer antragId,
         @ModelAttribute("reasonForDeclining") String reasonForDeclining, Model model) {
 
-        // über die logik sollten wir nochmal nachdenken...
-        antragService.decline(antragService.getRequestById(antragId), reasonForDeclining);
+        Person boss = personService.getPersonByLogin(reasonForDeclining);
+        Antrag antrag = antragService.getRequestById(antragId);
+
+        antragService.decline(antrag, boss, reasonForDeclining);
+
+        logger.info("Ein Antrag wurde abgelehnt.");
+        reqLogger.info("Ein Antrag wurde abgelehnt.");
 
         // benachrichtigungs-zeugs
 

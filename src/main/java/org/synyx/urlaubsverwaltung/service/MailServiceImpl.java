@@ -4,6 +4,8 @@
  */
 package org.synyx.urlaubsverwaltung.service;
 
+import org.apache.log4j.Logger;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.mail.MailException;
@@ -27,6 +29,10 @@ import javax.mail.internet.MimeMessage;
 public class MailServiceImpl implements MailService {
 
     // see here: http://static.springsource.org/spring/docs/2.0.5/reference/mail.html
+
+    private static final String SCHLUSSZEILE = "\n\nUrlaubsverwaltung";
+
+    private static Logger mailLogger = Logger.getLogger("mailLogger");
 
     private JavaMailSender mailSender;
     private String absender = EmailAdr.MANAGE.getEmail();
@@ -56,15 +62,14 @@ public class MailServiceImpl implements MailService {
                     mimeMessage.setText("Liebe/-r " + person.getFirstName() + " " + person.getLastName() + ","
                         + "\n\ndu hast aus dem letzten Kalenderjahr Resturlaub ins neue Jahr mitgenommen."
                         + "\nBitte beachte, dass dieser zum 1. April des neuen Jahres verfällt."
-                        + "\nNimm' dir also rechtzeitig Urlaub, damit der Resturlaub nicht verfällt."
-                        + "\n\nUrlaubsverwaltung");
+                        + "\nNimm' dir also rechtzeitig Urlaub, damit der Resturlaub nicht verfällt." + SCHLUSSZEILE);
                 }
             };
 
             try {
                 this.mailSender.send(prep);
             } catch (MailException ex) {
-                System.err.println(ex.getMessage());
+                mailLogger.error(ex.getMessage());
             }
         }
     }
@@ -76,21 +81,24 @@ public class MailServiceImpl implements MailService {
     @Override
     public void sendNewRequestsNotification(List<Person> persons, List<Antrag> requests) {
 
-        String details = "";
-        String emails = "";
+        // nehme StringBuilder, statt String immer wieder neu anzuhaengen
+        // StringBuilder haengt String Ketten an, am Ende wird ein ganzer String daraus erzeugt
+        StringBuilder build = new StringBuilder();
 
         for (Antrag antrag : requests) {
-            details = details + "\n" + antrag.getPerson().getFirstName() + " " + antrag.getPerson().getLastName()
-                + " : " + antrag.getStartDate() + " bis " + antrag.getEndDate();
+            build.append("\n").append(antrag.getPerson().getFirstName()).append(" ").append(antrag.getPerson()
+                .getLastName()).append(" : ").append(antrag.getStartDate()).append(" bis ").append(antrag.getEndDate());
         }
 
-        final String beantragungen = details;
+        final String beantragungen = build.toString();
+
+        build = new StringBuilder();
 
         for (Person beauftragter : persons) {
-            emails = emails + beauftragter.getEmail() + ", ";
+            build.append(beauftragter.getEmail()).append(", ");
         }
 
-        final String emailAdressen = emails;
+        final String emailAdressen = build.toString();
 
         MimeMessagePreparator prep = new MimeMessagePreparator() {
 
@@ -102,15 +110,14 @@ public class MailServiceImpl implements MailService {
                 mimeMessage.setSubject("Es liegen neue Urlaubsanträge vor");
                 mimeMessage.setText("Hallo Chef-Etage, "
                     + "\n\nes liegen neue Urlaubsanträge vor, die es zu bearbeiten gilt: "
-                    + "\n" + beantragungen
-                    + "\n\nUrlaubsverwaltung");
+                    + "\n" + beantragungen + SCHLUSSZEILE);
             }
         };
 
         try {
             this.mailSender.send(prep);
         } catch (MailException ex) {
-            System.err.println(ex.getMessage());
+            mailLogger.error(ex.getMessage());
         }
     }
 
@@ -131,8 +138,7 @@ public class MailServiceImpl implements MailService {
                 mimeMessage.setFrom(new InternetAddress(absender));
                 mimeMessage.setSubject("Neuer bewilligter Antrag");
                 mimeMessage.setText("Hallo Office, "
-                    + "\n\nes liegt ein neuer bewilligter Antrag vor."
-                    + "\n\nUrlaubsverwaltung");
+                    + "\n\nes liegt ein neuer bewilligter Antrag vor." + SCHLUSSZEILE);
             }
         };
 
@@ -153,15 +159,14 @@ public class MailServiceImpl implements MailService {
                 mimeMessage.setText("Hallo " + person.getFirstName() + " " + person.getLastName() + ","
                     + "\n\ndein Antrag auf Urlaub für den Zeitraum von " + request.getStartDate() + " bis "
                     + request.getEndDate()
-                    + " wurde bewilligt."
-                    + "\n\nUrlaubsverwaltung");
+                    + " wurde bewilligt." + SCHLUSSZEILE);
             }
         };
 
         try {
             this.mailSender.send(prepUser);
         } catch (MailException ex) {
-            System.err.println(ex.getMessage());
+            mailLogger.error(ex.getMessage());
         }
     }
 
@@ -186,15 +191,14 @@ public class MailServiceImpl implements MailService {
                     + "\n\ndein Antrag für Urlaub im Zeitraum vom " + request.getStartDate() + " bis "
                     + request.getEndDate() + " wurde von " + request.getBoss().getFirstName() + " "
                     + request.getBoss().getLastName() + " leider abgelehnt mit folgender Begründung: "
-                    + "\n" + request.getReasonToDecline()
-                    + "\n\nUrlaubsverwaltung");
+                    + "\n" + request.getReasonToDecline() + SCHLUSSZEILE);
             }
         };
 
         try {
             this.mailSender.send(prep);
         } catch (MailException ex) {
-            System.err.println(ex.getMessage());
+            mailLogger.error(ex.getMessage());
         }
     }
 
@@ -217,14 +221,14 @@ public class MailServiceImpl implements MailService {
                 mimeMessage.setSubject("Bestätigung Antragstellung");
                 mimeMessage.setText("Hallo " + person.getFirstName() + " " + person.getLastName() + ","
                     + "\n\ndein Antrag wurde erfolgreich gestellt und wird in Kürze durch einen der Chefs bearbeitet werden."
-                    + "\n\nUrlaubsverwaltung");
+                    + SCHLUSSZEILE);
             }
         };
 
         try {
             this.mailSender.send(prep);
         } catch (MailException ex) {
-            System.err.println(ex.getMessage());
+            mailLogger.error(ex.getMessage());
         }
     }
 
@@ -265,15 +269,14 @@ public class MailServiceImpl implements MailService {
                 mimeMessage.setSubject("Diese Woche im Urlaub");
                 mimeMessage.setText("Hallo Sternchen, "
                     + "\n\nfolgende Mitarbeiter haben diese Woche frei: "
-                    + "\n\n" + urlaub + "\n\n"
-                    + "\n\nUrlaubsverwaltung");
+                    + "\n\n" + urlaub + "\n\n" + SCHLUSSZEILE);
             }
         };
 
         try {
             this.mailSender.send(prep);
         } catch (MailException ex) {
-            System.err.println(ex.getMessage());
+            mailLogger.error(ex.getMessage());
         }
     }
 
@@ -301,7 +304,7 @@ public class MailServiceImpl implements MailService {
         try {
             this.mailSender.send(prep);
         } catch (MailException ex) {
-            System.err.println(ex.getMessage());
+            mailLogger.error(ex.getMessage());
         }
     }
 }

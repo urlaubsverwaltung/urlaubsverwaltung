@@ -8,10 +8,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import org.synyx.urlaubsverwaltung.domain.Person;
-import org.synyx.urlaubsverwaltung.domain.Urlaubsanspruch;
+import org.synyx.urlaubsverwaltung.domain.Urlaubskonto;
 
 import java.util.List;
-import org.synyx.urlaubsverwaltung.domain.Urlaubskonto;
 
 
 /**
@@ -22,4 +21,7 @@ public interface UrlaubskontoDAO extends JpaRepository<Urlaubskonto, Integer> {
     @Query("select x from Urlaubskonto x where x.year = ? and x.person = ?")
     Urlaubskonto getUrlaubskontoForDateAndPerson(Integer year, Person person);
 
+
+    @Query("select x from Urlaubskonto x where x.person = ?")
+    List<Urlaubskonto> getAllUrlaubskontoByPerson(Person person);
 }

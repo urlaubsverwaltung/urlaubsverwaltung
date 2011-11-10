@@ -1,7 +1,7 @@
 
 package org.synyx.urlaubsverwaltung.controller;
 
-import org.joda.time.DateMidnight;
+import org.apache.log4j.Logger;
 
 import org.springframework.stereotype.Controller;
 
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.synyx.urlaubsverwaltung.domain.Antrag;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.service.AntragService;
+import org.synyx.urlaubsverwaltung.service.KontoService;
 import org.synyx.urlaubsverwaltung.service.PersonService;
 import org.synyx.urlaubsverwaltung.util.DateService;
 
@@ -27,14 +28,25 @@ import java.util.List;
 @Controller
 public class PersonController {
 
+    private static final String PERSON_ATTRIBUTE_NAME = "person";
+    private static final String MITARBEITER_ATTRIBUTE_NAME = "mitarbeiter";
+
+    private static final String MITARBEITER_ID = "mitarbeiterId";
+
+    private static Logger logger = Logger.getLogger(PersonController.class);
+    private static Logger personLogger = Logger.getLogger("personLogger");
+
     private PersonService personService;
     private AntragService antragService;
+    private KontoService kontoService;
     private DateService dateService;
 
-    public PersonController(PersonService personService, AntragService antragService, DateService dateService) {
+    public PersonController(PersonService personService, AntragService antragService, KontoService kontoService,
+        DateService dateService) {
 
         this.personService = personService;
         this.antragService = antragService;
+        this.kontoService = kontoService;
         this.dateService = dateService;
     }
 
@@ -50,7 +62,10 @@ public class PersonController {
 
         List<Person> mitarbeiter = personService.getAllPersons();
 
-        model.addAttribute("mitarbeiter", mitarbeiter);
+        model.addAttribute(MITARBEITER_ATTRIBUTE_NAME, mitarbeiter);
+
+        // nur für Ausprobieren des Loggers
+        personLogger.info("Auf Liste geschaut.");
 
         return "personen/mitarbeiterliste";
     }
@@ -68,7 +83,10 @@ public class PersonController {
 
         List<Person> mitarbeiter = personService.getAllPersons();
 
-        model.addAttribute("mitarbeiter", mitarbeiter);
+        model.addAttribute(MITARBEITER_ATTRIBUTE_NAME, mitarbeiter);
+
+        // nur für Ausprobieren des Loggers
+        personLogger.info("Auf Details geschaut.");
 
         return "personen/mitarbeiterdetails";
     }
@@ -83,7 +101,7 @@ public class PersonController {
      * @return
      */
     @RequestMapping(value = "/mitarbeiter/{mitarbeiterId}/overview", method = RequestMethod.GET)
-    public String showOverview(@PathVariable("mitarbeiterId") Integer mitarbeiterId, Model model) {
+    public String showOverview(@PathVariable(MITARBEITER_ID) Integer mitarbeiterId, Model model) {
 
         Person person = personService.getPersonByID(mitarbeiterId);
 
@@ -91,7 +109,7 @@ public class PersonController {
 
         model.addAttribute("year", dateService.getYear());
         model.addAttribute("requests", requests);
-        model.addAttribute("person", person);
+        model.addAttribute(PERSON_ATTRIBUTE_NAME, person);
 
         return "personen/overview";
     }
@@ -106,11 +124,11 @@ public class PersonController {
      * @return
      */
     @RequestMapping(value = "/mitarbeiter/{mitarbeiterId}/edit", method = RequestMethod.GET)
-    public String editPersonForm(@PathVariable("mitarbeiterId") Integer mitarbeiterId, Model model) {
+    public String editPersonForm(@PathVariable(MITARBEITER_ID) Integer mitarbeiterId, Model model) {
 
         Person person = personService.getPersonByID(mitarbeiterId);
 
-        model.addAttribute("person", person);
+        model.addAttribute(PERSON_ATTRIBUTE_NAME, person);
 
         return "personen/personform";
     }
@@ -125,8 +143,8 @@ public class PersonController {
      * @return
      */
     @RequestMapping(value = "/mitarbeiter/{mitarbeiterId}/edit", method = RequestMethod.PUT)
-    public String editPerson(@ModelAttribute("person") Person person,
-        @PathVariable("mitarbeiterId") Integer mitarbeiterId) {
+    public String editPerson(@ModelAttribute(PERSON_ATTRIBUTE_NAME) Person person,
+        @PathVariable(MITARBEITER_ID) Integer mitarbeiterId) {
 
         Person personToUpdate = personService.getPersonByID(mitarbeiterId);
 
@@ -136,8 +154,15 @@ public class PersonController {
 
         personService.save(personToUpdate);
 
-        // braucht noch richtigen Verweis
-        return "redirect:irgendwohin";
+        Integer year = person.getYearForCurrentUrlaubsanspruch();
+
+        kontoService.newUrlaubsanspruch(person, year, person.getCurrentUrlaubsanspruch());
+        kontoService.newUrlaubskonto(person, person.getCurrentUrlaubsanspruch(), 0, year);
+
+        logger.info("Der Mitarbeiter " + person.getFirstName() + " " + person.getLastName() + " wurde editiert.");
+        personLogger.info("Der Mitarbeiter " + person.getFirstName() + " " + person.getLastName() + " wurde editiert.");
+
+        return "redirect:/web/mitarbeiter/list";
     }
 
 
@@ -153,7 +178,7 @@ public class PersonController {
 
         Person person = new Person();
 
-        model.addAttribute("person", person);
+        model.addAttribute(PERSON_ATTRIBUTE_NAME, person);
 
         return "personen/personform";
     }
@@ -167,14 +192,21 @@ public class PersonController {
      * @return
      */
     @RequestMapping(value = "/mitarbeiter/new", method = RequestMethod.POST)
-    public String newPerson(@ModelAttribute("person") Person person) {
+    public String newPerson(@ModelAttribute(PERSON_ATTRIBUTE_NAME) Person person) {
+
+        Integer year = dateService.getYear();
+
+        // neuen Urlaubsanspruch erstellen und speichern
+        kontoService.newUrlaubsanspruch(person, year, person.getCurrentUrlaubsanspruch());
+
+        // neues Urlaubskonto erstellen und speichern
+        kontoService.newUrlaubskonto(person, person.getCurrentUrlaubsanspruch(), 0, year);
 
         personService.save(person);
 
-//        personService.setUrlaubsanspruchForPerson(person, DateMidnight.now().getYear(),
-//            person.getCurrentVacationDays());
+        logger.info("Neue Person angelegt: " + person.getFirstName() + " " + person.getLastName());
+        personLogger.info("Neue Person angelegt: " + person.getFirstName() + " " + person.getLastName());
 
-        // braucht noch richtigen Verweis
         return "redirect:/web/mitarbeiter/list";
     }
 }

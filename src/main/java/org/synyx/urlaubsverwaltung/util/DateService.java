@@ -4,14 +4,44 @@
  */
 package org.synyx.urlaubsverwaltung.util;
 
+import org.joda.time.DateMidnight;
+
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 
 /**
  * @author  aljona
  */
 public class DateService {
+
+    private static final int MILLISECONDS_IN_DAY = 1000 * 60 * 60 * 24;
+
+    public Integer countDaysBetweenTwoDates(DateMidnight startDate, DateMidnight endDate) {
+
+        Date start = startDate.toDate();
+        Date end = endDate.toDate();
+
+        Calendar startCal = GregorianCalendar.getInstance();
+        startCal.setTime(start);
+        startCal.set(Calendar.HOUR_OF_DAY, 0);
+        startCal.set(Calendar.MINUTE, 0);
+        startCal.set(Calendar.SECOND, 0);
+
+        long startTime = startCal.getTimeInMillis();
+
+        Calendar endCal = GregorianCalendar.getInstance();
+        endCal.setTime(end);
+        endCal.set(Calendar.HOUR_OF_DAY, 0);
+        endCal.set(Calendar.MINUTE, 0);
+        endCal.set(Calendar.SECOND, 0);
+
+        long endTime = endCal.getTimeInMillis();
+
+        return (int) (endTime - startTime) / MILLISECONDS_IN_DAY;
+    }
+
 
     /**
      * get the current year (int)

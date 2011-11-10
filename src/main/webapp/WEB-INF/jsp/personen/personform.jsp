@@ -51,7 +51,11 @@
                     </tr>
                     <tr>
                         <td><label for="urlaubsanspruch"><spring:message code="anspruch" />:</label></td>
-                        <td><form:input id="urlaubsanspruch" path="currentVacationDays" /></td>
+                        <td><form:input id="urlaubsanspruch" path="currentUrlaubsanspruch" /></td>
+                    </tr>
+                    <tr>
+                        <td><label for="jahr"><spring:message code="jahr" />:</label></td>
+                        <td><form:input id="jahr" path="yearForCurrentUrlaubsanspruch" /></td>
                     </tr>
                     <%--
                     <c:if test="${person.id == null}">

@@ -7,11 +7,13 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 
 
 /**
@@ -36,8 +38,20 @@ public class Person extends AbstractPersistable<Integer> {
 
     private Role role;
 
-    // eventuell fuer die Mitarbeiter-Liste - nur als Idee bisher
-    // private Image userPicture;
+    // was im Formular eingetragen wird fuer Urlaubsanspruch - wichtig weil Doppelformular fuer Person doof waere
+    private Integer currentUrlaubsanspruch;
+
+    // was im Formular eingetragen wird fuer Urlaubsanspruch - wichtig weil Doppelformular fuer Person doof waere
+    private Integer yearForCurrentUrlaubsanspruch;
+
+    @OneToMany
+    private List<Urlaubsanspruch> urlaubsanspruch;
+
+    @OneToMany
+    private List<Urlaubskonto> urlaubskonten;
+
+    @OneToMany
+    private List<Antrag> antraege;
 
     public String getLoginName() {
 
@@ -122,14 +136,75 @@ public class Person extends AbstractPersistable<Integer> {
         this.sign = sign;
     }
 
+
     public Role getRole() {
 
         return role;
     }
+
 
     public void setRole(Role role) {
 
         this.role = role;
     }
 
+
+    public List<Antrag> getAntraege() {
+
+        return antraege;
+    }
+
+
+    public void setAntraege(List<Antrag> antraege) {
+
+        this.antraege = antraege;
+    }
+
+
+    public List<Urlaubsanspruch> getUrlaubsanspruch() {
+
+        return urlaubsanspruch;
+    }
+
+
+    public void setUrlaubsanspruch(List<Urlaubsanspruch> urlaubsanspruch) {
+
+        this.urlaubsanspruch = urlaubsanspruch;
+    }
+
+
+    public List<Urlaubskonto> getUrlaubskonten() {
+
+        return urlaubskonten;
+    }
+
+
+    public void setUrlaubskonten(List<Urlaubskonto> urlaubskonten) {
+
+        this.urlaubskonten = urlaubskonten;
+    }
+
+
+    public Integer getCurrentUrlaubsanspruch() {
+
+        return currentUrlaubsanspruch;
+    }
+
+
+    public void setCurrentUrlaubsanspruch(Integer currentUrlaubsanspruch) {
+
+        this.currentUrlaubsanspruch = currentUrlaubsanspruch;
+    }
+
+
+    public Integer getYearForCurrentUrlaubsanspruch() {
+
+        return yearForCurrentUrlaubsanspruch;
+    }
+
+
+    public void setYearForCurrentUrlaubsanspruch(Integer yearForCurrentUrlaubsanspruch) {
+
+        this.yearForCurrentUrlaubsanspruch = yearForCurrentUrlaubsanspruch;
+    }
 }
