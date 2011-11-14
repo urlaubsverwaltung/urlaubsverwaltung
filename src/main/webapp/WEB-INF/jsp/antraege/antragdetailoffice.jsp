@@ -43,7 +43,7 @@
                     <spring:message code="antrag.anspruch" />:
                 </td>    
                 <td>    
-                    <c:out value="${antrag.person.remainingVacationDays}" />&nbsp;<spring:message code="days" />
+                    <c:out value="${antrag.person.urlaubskonto.vacationDays}" />&nbsp;<spring:message code="days" />
                 </td>
                 <td colspan="2">&nbsp;</td>
             </tr>
@@ -52,7 +52,7 @@
                   <spring:message code="resturlaub" />  
                 </td>
                 <td>
-                    <c:out value="${antrag.person.restUrlaub}" />:&nbsp;<spring:message code="resturlaub" />&nbsp;<spring:message code="days" />
+                    <c:out value="${antrag.person.urlaubskonto.restVacationDays}" />:&nbsp;<spring:message code="resturlaub" />&nbsp;<spring:message code="days" />
                 </td>
                 <td colspan="2">&nbsp;</td>
             </tr>
@@ -61,7 +61,7 @@
                    <spring:message code="antrag.used" />:&nbsp; 
                 </td>
                 <td>
-                    <c:out value="${antrag.person.usedVacationDays}" />&nbsp;+&nbsp;<c:out value="${antrag.person.usedRestUrlaub}" />&nbsp;<spring:message code="days" />
+                    <c:out value="${antrag.person.urlaubskonto.usedVacationDays}" />&nbsp;+&nbsp;<c:out value="${antrag.person.urlaubskonto.usedRestVacationDays}" />&nbsp;<spring:message code="days" />
                 </td>
                 <td colspan="2">&nbsp;</td>
             </tr>

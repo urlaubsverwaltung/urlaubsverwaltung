@@ -39,7 +39,7 @@
                    <spring:message code="table.vac" />
                 </td>
                 <td>
-                    <c:out value="${person.remainingVacationDays}"/>
+                    <c:out value="${person.urlaubskonto.vacationDays}"/>
                 </td>
             </tr>
             <tr>
@@ -47,7 +47,7 @@
                     <spring:message code="table.resturlaub" />
                 </td>
                 <td>
-                    <c:out value="${person.restUrlaub}"/>
+                    <c:out value="${person.urlaubskonto.restVacationDays}"/>
                 </td>
             </tr>    
             <tr>

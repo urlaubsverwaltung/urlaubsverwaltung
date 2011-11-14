@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import org.synyx.urlaubsverwaltung.domain.Antrag;
 import org.synyx.urlaubsverwaltung.domain.Person;
+import org.synyx.urlaubsverwaltung.domain.Urlaubskonto;
 import org.synyx.urlaubsverwaltung.service.AntragService;
 import org.synyx.urlaubsverwaltung.service.KontoService;
 import org.synyx.urlaubsverwaltung.service.PersonService;
@@ -68,6 +69,11 @@ public class PersonController {
 
         List<Person> mitarbeiter = personService.getAllPersons();
 
+        for (Person person : mitarbeiter) {
+            Urlaubskonto urlaubskonto = kontoService.getUrlaubskonto(dateService.getYear(), person);
+            person.setUrlaubskonto(urlaubskonto);
+        }
+
         model.addAttribute(MITARBEITER_ATTRIBUTE_NAME, mitarbeiter);
 
         // nur für Ausprobieren des Loggers
@@ -89,6 +95,11 @@ public class PersonController {
 
         List<Person> mitarbeiter = personService.getAllPersons();
 
+        for (Person person : mitarbeiter) {
+            Urlaubskonto urlaubskonto = kontoService.getUrlaubskonto(dateService.getYear(), person);
+            person.setUrlaubskonto(urlaubskonto);
+        }
+
         model.addAttribute(MITARBEITER_ATTRIBUTE_NAME, mitarbeiter);
 
         // nur für Ausprobieren des Loggers
@@ -109,11 +120,16 @@ public class PersonController {
     @RequestMapping(value = "/mitarbeiter/{mitarbeiterId}/overview", method = RequestMethod.GET)
     public String showOverview(@PathVariable(MITARBEITER_ID) Integer mitarbeiterId, Model model) {
 
+        Integer year = dateService.getYear();
+
         Person person = personService.getPersonByID(mitarbeiterId);
 
         List<Antrag> requests = antragService.getAllRequestsForPerson(person);
 
-        model.addAttribute("year", dateService.getYear());
+        Urlaubskonto konto = kontoService.getUrlaubskonto(year, person);
+        person.setUrlaubskonto(konto);
+
+        model.addAttribute("year", year);
         model.addAttribute("requests", requests);
         model.addAttribute(PERSON_ATTRIBUTE_NAME, person);
 
@@ -202,12 +218,6 @@ public class PersonController {
 
         Integer year = dateService.getYear();
 
-        // neuen Urlaubsanspruch erstellen und speichern
-        kontoService.newUrlaubsanspruch(person, year, person.getCurrentUrlaubsanspruch());
-
-        // neues Urlaubskonto erstellen und speichern
-        kontoService.newUrlaubskonto(person, person.getCurrentUrlaubsanspruch(), 0, year);
-
         String fingerprint = null;
 
         try {
@@ -218,6 +228,15 @@ public class PersonController {
 
         person.setSign(fingerprint);
         personService.save(person);
+
+        // neuen Urlaubsanspruch erstellen und speichern
+        kontoService.newUrlaubsanspruch(person, year, person.getCurrentUrlaubsanspruch());
+
+        // neues Urlaubskonto erstellen und speichern
+        kontoService.newUrlaubskonto(person, person.getCurrentUrlaubsanspruch(), 0, year);
+
+        Urlaubskonto konto = kontoService.getUrlaubskonto(dateService.getYear(), person);
+        person.setUrlaubskonto(konto);
 
         logger.info("Neue Person angelegt: " + person.getFirstName() + " " + person.getLastName());
         personLogger.info("Neue Person angelegt: " + person.getFirstName() + " " + person.getLastName());

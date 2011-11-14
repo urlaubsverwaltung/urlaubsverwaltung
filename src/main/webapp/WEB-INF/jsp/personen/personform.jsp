@@ -38,6 +38,10 @@
             <form:hidden path="id" />
                 <table>
                     <tr>
+                        <td><label for="username"><spring:message code="username" />:</label></td>
+                        <td><form:input id="username" path="loginName" /></td>
+                    </tr>
+                    <tr>
                         <td><label for="nachname"><spring:message code="lastname" />:</label></td>
                         <td><form:input id="nachname" path="lastName" /></td>
                     </tr>

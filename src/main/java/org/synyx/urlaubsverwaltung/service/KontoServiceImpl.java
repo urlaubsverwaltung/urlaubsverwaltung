@@ -14,6 +14,8 @@ import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.Urlaubsanspruch;
 import org.synyx.urlaubsverwaltung.domain.Urlaubskonto;
 
+import java.util.List;
+
 
 /**
  * @author  johannes
@@ -87,6 +89,7 @@ public class KontoServiceImpl implements KontoService {
 
 // !!!! denke, die folgenden methoden sind nicht nötig!!!
 
+
 // // meine (aljona) ansicht dazu:
 // // fuer was braucht man das eigtl?
 // public void updateUrlaubskonto(Urlaubskonto urlaubskonto, Integer vacDays, Integer restVacDays, Integer year) {
@@ -110,4 +113,9 @@ public class KontoServiceImpl implements KontoService {
 //        urlaubsanspruchDAO.save(urlaubsanspruch);
 //    }
 
+    @Override
+    public List<Urlaubskonto> getUrlaubskontoForYear(Integer year) {
+
+        return urlaubskontoDAO.getUrlaubskontoForYear(year);
+    }
 }

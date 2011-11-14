@@ -8,6 +8,7 @@ import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.Urlaubsanspruch;
 import org.synyx.urlaubsverwaltung.domain.Urlaubskonto;
 
+import java.util.List;
 
 
 /**
@@ -21,6 +22,9 @@ public interface KontoService {
     Urlaubskonto getUrlaubskonto(Integer year, Person person);
 
 
+    List<Urlaubskonto> getUrlaubskontoForYear(Integer year);
+
+
     void newUrlaubsanspruch(Person person, Integer year, Integer anspruch);
 
 
@@ -31,5 +35,4 @@ public interface KontoService {
 
 
     void saveUrlaubskonto(Urlaubskonto urlaubskonto);
-
 }

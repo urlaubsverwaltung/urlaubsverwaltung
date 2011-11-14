@@ -47,7 +47,7 @@
                    <spring:message code="table.vac" />
                 </td>
                 <td>
-                    <c:out value="${person.remainingVacationDays}"/>
+                    <c:out value="${person.urlaubskonto.vacationDays}"/>
                 </td>
             </tr>
             <tr>
@@ -55,21 +55,21 @@
                     <spring:message code="table.resturlaub" />
                 </td>
                 <td>
-                    <c:out value="${person.restUrlaub}"/>
+                    <c:out value="${person.urlaubskonto.restVacationDays}"/>
                 </td>
             </tr>    
             <tr>
                 <td colspan="2">
-                    <a href="${formUrlPrefix}/antraege/${mitarbeiter.id}"><spring:message code="table.antrag" /></a>
+                    <%--<a href="${formUrlPrefix}/antraege/${mitarbeiter.id}"><spring:message code="table.antrag" /></a>--%>
                 </td>
             </tr>   
-            <c:if test="user == office - wie auch immer das mal gehen mag">
+            <%-- <c:if test="user == office - wie auch immer das mal gehen mag"> --%>
                 <tr> 
                     <td>
                         <a href="${formUrlPrefix}/antrag/${antrag.id}/edit" />
                     </td>
                 </tr>    
-            </c:if>
+            <%--</c:if>--%>
         </table>    
         <br />        
         </c:forEach>

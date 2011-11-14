@@ -22,11 +22,21 @@ public class Urlaubskonto extends AbstractPersistable<Integer> {
     @ManyToOne
     private Person person;
 
+    // Jahr des Urlaubskontos
+    private Integer year;
+
     // wieviel darf person noch nehmen im jahr year
+    // uebrige Urlaubstage, die noch genommen werden duerfen im Jahr year
     private Integer vacationDays;
 
-    // resturlaub im jahr year
+    // verbleibender resturlaub im jahr year
     private Integer restVacationDays;
+
+    // in diesem Jahr benutzter normal-Urlaub
+    private Integer usedVacationDays;
+
+    // in diesem Jahr benutzter resturlaub
+    private Integer usedRestVacationDays;
 
     // genommener sonderurlaub im jahr year
     private Integer sonderUrlaub;
@@ -34,7 +44,29 @@ public class Urlaubskonto extends AbstractPersistable<Integer> {
     // genommener unbezahlter urlaub im jahr year
     private Integer unbezahlterUrlaub;
 
-    private Integer year;
+    public Person getPerson() {
+
+        return person;
+    }
+
+
+    public void setPerson(Person person) {
+
+        this.person = person;
+    }
+
+
+    public Integer getRestVacationDays() {
+
+        return restVacationDays;
+    }
+
+
+    public void setRestVacationDays(Integer restVacationDays) {
+
+        this.restVacationDays = restVacationDays;
+    }
+
 
     public Integer getSonderUrlaub() {
 
@@ -60,27 +92,27 @@ public class Urlaubskonto extends AbstractPersistable<Integer> {
     }
 
 
-    public Integer getRestVacationDays() {
+    public Integer getUsedRestVacationDays() {
 
-        return restVacationDays;
+        return usedRestVacationDays;
     }
 
 
-    public void setRestVacationDays(Integer restVacationDays) {
+    public void setUsedRestVacationDays(Integer usedRestVacationDays) {
 
-        this.restVacationDays = restVacationDays;
+        this.usedRestVacationDays = usedRestVacationDays;
     }
 
 
-    public Person getPerson() {
+    public Integer getUsedVacationDays() {
 
-        return person;
+        return usedVacationDays;
     }
 
 
-    public void setPerson(Person person) {
+    public void setUsedVacationDays(Integer usedVacationDays) {
 
-        this.person = person;
+        this.usedVacationDays = usedVacationDays;
     }
 
 

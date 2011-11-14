@@ -22,6 +22,10 @@ public interface UrlaubskontoDAO extends JpaRepository<Urlaubskonto, Integer> {
     Urlaubskonto getUrlaubskontoForDateAndPerson(Integer year, Person person);
 
 
+    @Query("select x from Urlaubskonto x where x.year = ?")
+    List<Urlaubskonto> getUrlaubskontoForYear(Integer year);
+
+
     @Query("select x from Urlaubskonto x where x.person = ?")
     List<Urlaubskonto> getAllUrlaubskontoByPerson(Person person);
 }

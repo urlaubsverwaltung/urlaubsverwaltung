@@ -26,12 +26,13 @@
         <a href="${formUrlPrefix}/mitarbeiter/list"><spring:message code="table.list" /></a>
         <a href="${formUrlPrefix}/mitarbeiter/detail"><spring:message code="table.detail" /></a>
         
-        <table>
+        <table cellspacing="0">
             <tr>
                 <th colspan="3"><spring:message code="table.title" /></th>
             </tr>
             <tr>
                 <th><spring:message code="name" /></th>
+                <th><spring:message code="email" /></th>
                 <th><spring:message code="table.vac" /></th>
                 <th><spring:message code="table.resturlaub" /></th>
                 <th>&nbsp;</th>
@@ -40,8 +41,8 @@
             <tr class="${loopStatus.index % 2 == 0 ? 'even' : 'odd'}">
                 <td><c:out value="${person.lastName}"/>&nbsp;<c:out value="${person.firstName}"/></td>
                 <td><a href="mailto:${person.email}"><c:out value="${person.email}"/></a></td>
-                <td><c:out value="${person.remainingVacationDays}"/></td>
-                <td><c:out value="${person.restUrlaub}"/></td>
+                <td><c:out value="${person.urlaubskonto.vacationDays}"/></td>
+                <td><c:out value="${person.urlaubskonto.restVacationDays}"/></td>
                 <td><a href="${formUrlPrefix}/antraege/${person.id}"><spring:message code="table.antrag" /></a></td>
                 <c:if test="user == office - wie auch immer das mal gehen mag">
                     <td>

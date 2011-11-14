@@ -45,6 +45,9 @@ public class Person extends AbstractPersistable<Integer> {
     // was im Formular eingetragen wird fuer Urlaubsanspruch - wichtig weil Doppelformular fuer Person doof waere
     private Integer yearForCurrentUrlaubsanspruch;
 
+    // fuer Listenansicht in jsp gebrauchtes Urlaubskonto (je nach Jahr gesetzt)
+    private Urlaubskonto urlaubskonto;
+
     @OneToMany
     private List<Urlaubsanspruch> urlaubsanspruch;
 
@@ -159,6 +162,18 @@ public class Person extends AbstractPersistable<Integer> {
     public void setAntraege(List<Antrag> antraege) {
 
         this.antraege = antraege;
+    }
+
+
+    public Urlaubskonto getUrlaubskonto() {
+
+        return urlaubskonto;
+    }
+
+
+    public void setUrlaubskonto(Urlaubskonto urlaubskonto) {
+
+        this.urlaubskonto = urlaubskonto;
     }
 
 
