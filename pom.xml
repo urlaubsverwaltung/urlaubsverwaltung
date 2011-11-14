@@ -1,6 +1,5 @@
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.synyx</groupId>
@@ -33,7 +32,7 @@
             <url>http://nexus.synyx.de/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
-	
+
     <repositories>
         <repository>
             <id>nexus.synyx.de</id>
@@ -48,7 +47,7 @@
     </repositories>
 
     <dependencies>
-            
+
         <dependency>
             <groupId>com.google.gdata</groupId>
             <artifactId>gdata-calendar-2.0</artifactId>
@@ -60,7 +59,8 @@
                     <groupId>com.google.collections</groupId>
                 </exclusion>
             </exclusions>
-        </dependency>  
+        </dependency>
+        
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
@@ -68,18 +68,19 @@
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
-            
-            
+
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
             <version>1.4.4</version>
         </dependency>
+        
         <dependency>
             <groupId>org.openengsb.wrapped</groupId>
             <artifactId>com.google.gdata</artifactId>
             <version>1.41.5.w1</version>
         </dependency>
+        
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-web-api</artifactId>
@@ -93,7 +94,7 @@
             <version>4.8.2</version>
             <scope>test</scope>
         </dependency>
-                
+
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-ldap</artifactId>
@@ -119,16 +120,19 @@
             <artifactId>spring-core</artifactId>
             <version>${spring.version}</version>
         </dependency>
+        
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
             <version>${spring.version}</version>
         </dependency>
+        
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
             <version>${spring.version}</version>
         </dependency>
+        
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
@@ -159,6 +163,7 @@
             <artifactId>hibernate-entitymanager</artifactId>
             <version>3.5.1-Final</version>
         </dependency>
+        
         <dependency>
             <groupId>commons-dbcp</groupId>
             <artifactId>commons-dbcp</artifactId>
@@ -183,62 +188,76 @@
             <artifactId>joda-time</artifactId>
             <version>2.0</version>
         </dependency>
+        
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time-jsptags</artifactId>
             <version>1.1</version>
         </dependency>
+        
         <dependency>
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
             <version>1.2.1</version>
         </dependency>
+        
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.0.1</version>
         </dependency>
+        
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-jpa</artifactId>
             <version>1.0.1.RELEASE</version>
         </dependency>
+        
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-web</artifactId>
             <version>3.0.5.RELEASE</version>
         </dependency>
+        
         <dependency>
             <groupId>javax.annotation</groupId>
             <artifactId>jsr250-api</artifactId>
             <version>1.0</version>
         </dependency>
+        
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-config</artifactId>
             <version>3.0.5.RELEASE</version>
         </dependency>
+        
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-taglibs</artifactId>
             <version>3.0.5.RELEASE</version>
         </dependency>
+        
     </dependencies>
 
     <dependencyManagement>
+        
         <dependencies>
+            
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>1.6.1</version>
             </dependency>
+            
             <dependency>
                 <groupId>commons-logging</groupId>
                 <artifactId>commons-logging</artifactId>
                 <version>1.1.1</version>
                 <scope>provided</scope>
             </dependency>
+            
         </dependencies>
+        
     </dependencyManagement>
 
     <build>
@@ -259,14 +278,16 @@
                     <target>1.6</target>
                 </configuration>
             </plugin>
+            
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.1.1</version>
                 <configuration>
-                    <failOnMissingWebXml>false</failOnMissingWebXml>
+<!--                    <failOnMissingWebXml>false</failOnMissingWebXml>-->
                 </configuration>
             </plugin>
+            
         </plugins>
     </build>
 

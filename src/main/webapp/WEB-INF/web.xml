@@ -17,6 +17,16 @@
         <param-value>classpath*:META-INF/**/applicationContext.xml</param-value>
     </context-param>
     
+    <context-param>
+        <param-name>log4jConfigLocation</param-name>
+        <param-value>classpath:urlaubsverwaltung/log4j.properties</param-value>
+    </context-param>
+
+    <listener>
+        <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+    </listener>
+
+    
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
@@ -36,10 +46,16 @@
         </init-param>
     </filter>
     
-<!--    <filter>
+    <filter>
         <filter-name>springSecurityFilterChain</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-    </filter>-->
+    </filter>
+    
+    <filter>
+        <filter-name>TestingFilter</filter-name>
+        <filter-class>org.synyx.urlaubsverwaltung.util.TestingFilter</filter-class>
+    </filter>
+
     
     
     <filter-mapping>
@@ -51,11 +67,11 @@
         <filter-name>httpMethodCorrector</filter-name>
         <url-pattern>/web/*</url-pattern>
     </filter-mapping>
-<!--     
+     
     <filter-mapping>
         <filter-name>springSecurityFilterChain</filter-name>
         <url-pattern>/*</url-pattern>
-    </filter-mapping>-->
+    </filter-mapping>
     
     <servlet>
         <servlet-name>urlaubsverwaltung</servlet-name>
@@ -75,7 +91,7 @@
     </servlet-mapping>
     
     <welcome-file-list>
-        <welcome-file>login.jsp</welcome-file>     
+        <welcome-file>index.jsp</welcome-file>     
     </welcome-file-list>
     
     <session-config>
@@ -85,12 +101,13 @@
     </session-config>
     
     <login-config>
-   <auth-method>FORM</auth-method>
-   <realm-name>Form-Based Authentication Area</realm-name>
-   <form-login-config>
-     <form-login-page>/security/protected/index.jsp</form-login-page>
-     <form-error-page>/security/protected/error.jsp</form-error-page>
-   </form-login-config>
-</login-config>
+        <auth-method>FORM</auth-method>
+        <realm-name>Form-Based Authentication Area</realm-name>
+        <form-login-config>
+            <form-login-page>/login.jsp</form-login-page>
+            <form-error-page>/security/protected/error.jsp</form-error-page>
+        </form-login-config>
+    </login-config>
+
         
 </web-app>
