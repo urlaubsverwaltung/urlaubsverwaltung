@@ -34,7 +34,8 @@ public class Person extends AbstractPersistable<Integer> {
     private String email;
 
     // Unterschrift der Person
-    private Image sign;
+    // Fingerprint nach RSA-Schluessel
+    private String sign;
 
     private Role role;
 
@@ -125,13 +126,13 @@ public class Person extends AbstractPersistable<Integer> {
     }
 
 
-    public Image getSign() {
+    public String getSign() {
 
         return sign;
     }
 
 
-    public void setSign(Image sign) {
+    public void setSign(String sign) {
 
         this.sign = sign;
     }

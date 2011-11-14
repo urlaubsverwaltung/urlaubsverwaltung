@@ -18,8 +18,12 @@ import org.synyx.urlaubsverwaltung.service.AntragService;
 import org.synyx.urlaubsverwaltung.service.KontoService;
 import org.synyx.urlaubsverwaltung.service.PersonService;
 import org.synyx.urlaubsverwaltung.util.DateService;
+import org.synyx.urlaubsverwaltung.util.KeyGenerator;
+
+import java.security.NoSuchAlgorithmException;
 
 import java.util.List;
+import java.util.logging.Level;
 
 
 /**
@@ -40,14 +44,16 @@ public class PersonController {
     private AntragService antragService;
     private KontoService kontoService;
     private DateService dateService;
+    private KeyGenerator keyGenerator;
 
     public PersonController(PersonService personService, AntragService antragService, KontoService kontoService,
-        DateService dateService) {
+        DateService dateService, KeyGenerator keyGenerator) {
 
         this.personService = personService;
         this.antragService = antragService;
         this.kontoService = kontoService;
         this.dateService = dateService;
+        this.keyGenerator = keyGenerator;
     }
 
     /**
@@ -202,6 +208,15 @@ public class PersonController {
         // neues Urlaubskonto erstellen und speichern
         kontoService.newUrlaubskonto(person, person.getCurrentUrlaubsanspruch(), 0, year);
 
+        String fingerprint = null;
+
+        try {
+            fingerprint = keyGenerator.getFingerprint();
+        } catch (NoSuchAlgorithmException ex) {
+            java.util.logging.Logger.getLogger(PersonController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        person.setSign(fingerprint);
         personService.save(person);
 
         logger.info("Neue Person angelegt: " + person.getFirstName() + " " + person.getLastName());
