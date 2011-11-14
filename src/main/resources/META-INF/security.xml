@@ -14,7 +14,7 @@
      <property name="userDn" value="ou=People,cn=manager,dc=theia,dc=localdomain?uid"/>
    </bean>
    
-    <bean id="ldapAuthProvider"
+-->    <bean id="ldapAuthProvider"
        class="org.springframework.security.ldap.authentication.LdapAuthenticationProvider">
      <constructor-arg>
        <bean class="org.springframework.security.ldap.authentication.BindAuthenticator">
@@ -29,14 +29,12 @@
            <property name="groupRoleAttribute" value="ou"/>
        </bean>
      </constructor-arg>
-   </bean>
+   </bean><!--
 
                                        
     <bean id="authenticationProvider" class="org.springframework.security.ldap.authentication.LdapAuthenticationProvider">
         <property name="userDetailsService" ref="userService" />
     </bean>-->
-    
-    <security:global-method-security jsr250-annotations="enabled" />
     
 <security:global-method-security jsr250-annotations="enabled" />
 

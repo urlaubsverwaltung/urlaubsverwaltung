@@ -29,7 +29,7 @@
 <tx:annotation-driven/>
 
 <import resource="infrastructure.xml"/>
-<import resource="security.xml"/>
+<!--<import resource="security.xml"/>-->
 
 <repository:repositories base-package="org.synyx.urlaubsverwaltung.**.dao" />
 

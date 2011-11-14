@@ -32,6 +32,9 @@
         <constructor-arg>
             <bean class="org.synyx.urlaubsverwaltung.util.DateService" />
         </constructor-arg>
+        <constructor-arg>
+            <bean class="org.synyx.urlaubsverwaltung.util.KeyGenerator" />
+        </constructor-arg>
     </bean>  
     
      <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
