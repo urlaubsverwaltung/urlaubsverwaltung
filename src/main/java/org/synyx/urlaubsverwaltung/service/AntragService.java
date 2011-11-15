@@ -6,6 +6,9 @@ import org.synyx.urlaubsverwaltung.domain.Antrag;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.State;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+
 import java.util.List;
 
 
@@ -110,4 +113,14 @@ public interface AntragService {
      * @return
      */
     List<Antrag> getAllRequestsForACertainTime(DateMidnight startDate, DateMidnight endDate);
+
+
+    /**
+     * signs a request with private key of the input person
+     *
+     * @param  antrag
+     * @param  signierendePerson
+     */
+    void signAntrag(Antrag antrag, Person signierendePerson, boolean isBoss) throws NoSuchAlgorithmException,
+        InvalidKeySpecException;
 }

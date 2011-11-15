@@ -69,21 +69,33 @@ public class Antrag extends AbstractPersistable<Integer> {
     // Status des Antrags (wartend, genehmigt, ...)
     private State status;
 
-    public Person getPerson() {
+    // Signatur des Antragstellers
+    private byte[] signedDataPerson;
 
-        return person;
+    // Signatur des Bosses
+    private byte[] signedDataBoss;
+
+    public String getAnschrift() {
+
+        return anschrift;
     }
 
 
-    public Person getBoss() {
+    public void setAnschrift(String anschrift) {
 
-        return boss;
+        this.anschrift = anschrift;
     }
 
 
-    public Kommentar getReasonToDecline() {
+    public DateMidnight getAntragsDate() {
 
-        return reasonToDecline;
+        return antragsDate;
+    }
+
+
+    public void setAntragsDate(DateMidnight antragsDate) {
+
+        this.antragsDate = antragsDate;
     }
 
 
@@ -93,15 +105,45 @@ public class Antrag extends AbstractPersistable<Integer> {
     }
 
 
+    public void setBeantragteTageBrutto(Integer beantragteTageBrutto) {
+
+        this.beantragteTageBrutto = beantragteTageBrutto;
+    }
+
+
     public Integer getBeantragteTageNetto() {
 
         return beantragteTageNetto;
     }
 
 
-    public Integer getKrankheitsTage() {
+    public void setBeantragteTageNetto(Integer beantragteTageNetto) {
 
-        return krankheitsTage;
+        this.beantragteTageNetto = beantragteTageNetto;
+    }
+
+
+    public Person getBoss() {
+
+        return boss;
+    }
+
+
+    public void setBoss(Person boss) {
+
+        this.boss = boss;
+    }
+
+
+    public DateMidnight getEndDate() {
+
+        return endDate;
+    }
+
+
+    public void setEndDate(DateMidnight endDate) {
+
+        this.endDate = endDate;
     }
 
 
@@ -117,6 +159,102 @@ public class Antrag extends AbstractPersistable<Integer> {
     }
 
 
+    public Integer getKrankheitsTage() {
+
+        return krankheitsTage;
+    }
+
+
+    public void setKrankheitsTage(Integer krankheitsTage) {
+
+        this.krankheitsTage = krankheitsTage;
+    }
+
+
+    public Person getPerson() {
+
+        return person;
+    }
+
+
+    public void setPerson(Person person) {
+
+        this.person = person;
+    }
+
+
+    public String getPhone() {
+
+        return phone;
+    }
+
+
+    public void setPhone(String phone) {
+
+        this.phone = phone;
+    }
+
+
+    public String getReason() {
+
+        return reason;
+    }
+
+
+    public void setReason(String reason) {
+
+        this.reason = reason;
+    }
+
+
+    public Kommentar getReasonToDecline() {
+
+        return reasonToDecline;
+    }
+
+
+    public void setReasonToDecline(Kommentar reasonToDecline) {
+
+        this.reasonToDecline = reasonToDecline;
+    }
+
+
+    public byte[] getSignedDataBoss() {
+
+        return signedDataBoss;
+    }
+
+
+    public void setSignedDataBoss(byte[] signedDataBoss) {
+
+        this.signedDataBoss = signedDataBoss;
+    }
+
+
+    public byte[] getSignedDataPerson() {
+
+        return signedDataPerson;
+    }
+
+
+    public void setSignedDataPerson(byte[] signedDataPerson) {
+
+        this.signedDataPerson = signedDataPerson;
+    }
+
+
+    public DateMidnight getStartDate() {
+
+        return startDate;
+    }
+
+
+    public void setStartDate(DateMidnight startDate) {
+
+        this.startDate = startDate;
+    }
+
+
     public State getStatus() {
 
         return status;
@@ -129,99 +267,9 @@ public class Antrag extends AbstractPersistable<Integer> {
     }
 
 
-    public DateMidnight getStartDate() {
-
-        return startDate;
-    }
-
-
-    public DateMidnight getEndDate() {
-
-        return endDate;
-    }
-
-
     public VacationType getVacationType() {
 
         return vacationType;
-    }
-
-
-    public String getReason() {
-
-        return reason;
-    }
-
-
-    public Person getVertreter() {
-
-        return vertreter;
-    }
-
-
-    public String getAnschrift() {
-
-        return anschrift;
-    }
-
-
-    public String getPhone() {
-
-        return phone;
-    }
-
-
-    public DateMidnight getAntragsDate() {
-
-        return antragsDate;
-    }
-
-
-    public void setPerson(Person person) {
-
-        this.person = person;
-    }
-
-
-    public void setBoss(Person boss) {
-
-        this.boss = boss;
-    }
-
-
-    public void setReasonToDecline(Kommentar reasonToDecline) {
-
-        this.reasonToDecline = reasonToDecline;
-    }
-
-
-    public void setBeantragteTageBrutto(Integer beantragteTageBrutto) {
-
-        this.beantragteTageBrutto = beantragteTageBrutto;
-    }
-
-
-    public void setBeantragteTageNetto(Integer beantragteTageNetto) {
-
-        this.beantragteTageNetto = beantragteTageNetto;
-    }
-
-
-    public void setKrankheitsTage(Integer krankheitsTage) {
-
-        this.krankheitsTage = krankheitsTage;
-    }
-
-
-    public void setStartDate(DateMidnight startDate) {
-
-        this.startDate = startDate;
-    }
-
-
-    public void setEndDate(DateMidnight endDate) {
-
-        this.endDate = endDate;
     }
 
 
@@ -231,32 +279,14 @@ public class Antrag extends AbstractPersistable<Integer> {
     }
 
 
-    public void setReason(String reason) {
+    public Person getVertreter() {
 
-        this.reason = reason;
+        return vertreter;
     }
 
 
     public void setVertreter(Person vertreter) {
 
         this.vertreter = vertreter;
-    }
-
-
-    public void setAnschrift(String anschrift) {
-
-        this.anschrift = anschrift;
-    }
-
-
-    public void setPhone(String phone) {
-
-        this.phone = phone;
-    }
-
-
-    public void setAntragsDate(DateMidnight antragsDate) {
-
-        this.antragsDate = antragsDate;
     }
 }

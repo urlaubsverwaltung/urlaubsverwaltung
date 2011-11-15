@@ -44,7 +44,8 @@
        <constructor-arg>
             <bean class="org.springframework.mail.javamail.JavaMailSenderImpl" />
         </constructor-arg>
-</bean>        
+</bean>  
+<bean id="pgpService" class="org.synyx.urlaubsverwaltung.service.PGPService" />
 
 
 </beans>

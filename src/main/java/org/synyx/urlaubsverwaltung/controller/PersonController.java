@@ -17,10 +17,11 @@ import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.Urlaubskonto;
 import org.synyx.urlaubsverwaltung.service.AntragService;
 import org.synyx.urlaubsverwaltung.service.KontoService;
+import org.synyx.urlaubsverwaltung.service.PGPService;
 import org.synyx.urlaubsverwaltung.service.PersonService;
 import org.synyx.urlaubsverwaltung.util.DateService;
-import org.synyx.urlaubsverwaltung.util.KeyGenerator;
 
+import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 
 import java.util.List;
@@ -45,16 +46,16 @@ public class PersonController {
     private AntragService antragService;
     private KontoService kontoService;
     private DateService dateService;
-    private KeyGenerator keyGenerator;
+    private PGPService pgpService;
 
     public PersonController(PersonService personService, AntragService antragService, KontoService kontoService,
-        DateService dateService, KeyGenerator keyGenerator) {
+        DateService dateService, PGPService pgpService) {
 
         this.personService = personService;
         this.antragService = antragService;
         this.kontoService = kontoService;
         this.dateService = dateService;
-        this.keyGenerator = keyGenerator;
+        this.pgpService = pgpService;
     }
 
     /**
@@ -218,15 +219,14 @@ public class PersonController {
 
         Integer year = dateService.getYear();
 
-        String fingerprint = null;
-
         try {
-            fingerprint = keyGenerator.getFingerprint();
+            KeyPair keyPair = pgpService.generateKeyPair();
+            person.setPrivateKey(keyPair.getPrivate().getEncoded());
+            person.setPublicKey(keyPair.getPublic().getEncoded());
         } catch (NoSuchAlgorithmException ex) {
             java.util.logging.Logger.getLogger(PersonController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        person.setSign(fingerprint);
         personService.save(person);
 
         // neuen Urlaubsanspruch erstellen und speichern

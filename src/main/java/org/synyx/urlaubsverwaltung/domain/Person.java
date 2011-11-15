@@ -34,8 +34,14 @@ public class Person extends AbstractPersistable<Integer> {
     private String email;
 
     // Unterschrift der Person
-    // Fingerprint nach RSA-Schluessel
-    private String sign;
+    // private key - RSA
+    // private key muss als byte[] gespeichert werden
+    // und bei herausholen aus datenbank wieder umgewandelt in private key
+    private byte[] privateKey;
+
+    // public key der person
+    // fürs speichern gilt das Gleiche wie bei private key
+    private byte[] publicKey;
 
     private Role role;
 
@@ -129,18 +135,6 @@ public class Person extends AbstractPersistable<Integer> {
     }
 
 
-    public String getSign() {
-
-        return sign;
-    }
-
-
-    public void setSign(String sign) {
-
-        this.sign = sign;
-    }
-
-
     public Role getRole() {
 
         return role;
@@ -222,5 +216,29 @@ public class Person extends AbstractPersistable<Integer> {
     public void setYearForCurrentUrlaubsanspruch(Integer yearForCurrentUrlaubsanspruch) {
 
         this.yearForCurrentUrlaubsanspruch = yearForCurrentUrlaubsanspruch;
+    }
+
+
+    public byte[] getPrivateKey() {
+
+        return privateKey;
+    }
+
+
+    public void setPrivateKey(byte[] privateKey) {
+
+        this.privateKey = privateKey;
+    }
+
+
+    public byte[] getPublicKey() {
+
+        return publicKey;
+    }
+
+
+    public void setPublicKey(byte[] publicKey) {
+
+        this.publicKey = publicKey;
     }
 }

@@ -18,6 +18,10 @@ import org.synyx.urlaubsverwaltung.domain.Urlaubsanspruch;
 import org.synyx.urlaubsverwaltung.domain.Urlaubskonto;
 import org.synyx.urlaubsverwaltung.util.DateService;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.spec.InvalidKeySpecException;
+
 import java.util.List;
 
 
@@ -35,6 +39,7 @@ public class AntragServiceImpl implements AntragService {
     private UrlaubskontoDAO urlaubskontoDAO;
     private KontoService kontoService;
     private DateService dateService;
+    private PGPService pgpService;
 
     // wird hier und im anderen service benötigt, weil wir ja
     // ständig irgendwelche mails schicken müssen... =)
@@ -42,7 +47,7 @@ public class AntragServiceImpl implements AntragService {
 
     @Autowired
     public AntragServiceImpl(AntragDAO antragDAO, PersonDAO personDAO, UrlaubsanspruchDAO urlaubsanspruchDAO,
-        UrlaubskontoDAO urlaubskontoDAO, KontoService kontoService, DateService dateService,
+        UrlaubskontoDAO urlaubskontoDAO, KontoService kontoService, DateService dateService, PGPService pgpService,
         MailServiceImpl mailService) {
 
         this.antragDAO = antragDAO;
@@ -51,6 +56,7 @@ public class AntragServiceImpl implements AntragService {
         this.urlaubskontoDAO = urlaubskontoDAO;
         this.kontoService = kontoService;
         this.dateService = dateService;
+        this.pgpService = pgpService;
         this.mailService = mailService;
     }
 
@@ -330,5 +336,31 @@ public class AntragServiceImpl implements AntragService {
 
         antragDAO.save(antrag);
         personDAO.save(person);
+    }
+
+
+    @Override
+    public void signAntrag(Antrag antrag, Person signierendePerson, boolean isBoss) throws NoSuchAlgorithmException,
+        InvalidKeySpecException {
+
+        PrivateKey privKey = pgpService.getPrivateKeyByBytes(signierendePerson.getPrivateKey());
+
+        StringBuffer buf = new StringBuffer();
+
+        buf.append(antrag.getPerson().getLastName());
+        buf.append(antrag.getAntragsDate().toString());
+        buf.append(antrag.getVacationType().toString());
+
+        byte[] data = buf.toString().getBytes();
+
+        data = pgpService.sign(privKey, data);
+
+        if (isBoss) {
+            antrag.setSignedDataBoss(data);
+        } else {
+            antrag.setSignedDataPerson(data);
+        }
+
+        antragDAO.save(antrag);
     }
 }

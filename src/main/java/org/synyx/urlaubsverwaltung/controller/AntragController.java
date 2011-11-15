@@ -20,7 +20,11 @@ import org.synyx.urlaubsverwaltung.service.AntragService;
 import org.synyx.urlaubsverwaltung.service.PersonService;
 import org.synyx.urlaubsverwaltung.util.DateService;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+
 import java.util.List;
+import java.util.logging.Level;
 
 
 /**
@@ -184,9 +188,20 @@ public class AntragController {
     public String saveUrlaubsantrag(@PathVariable("mitarbeiterId") Integer mitarbeiterId,
         @ModelAttribute("antrag") Antrag antrag, Model model) {
 
-        antrag.setPerson(personService.getPersonByID(mitarbeiterId));
+        Person person = personService.getPersonByID(mitarbeiterId);
+
+        antrag.setPerson(person);
         antrag.setStatus(State.WARTEND);
+
         antragService.save(antrag);
+
+        try {
+            antragService.signAntrag(antrag, person, false);
+        } catch (NoSuchAlgorithmException ex) {
+            java.util.logging.Logger.getLogger(AntragController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvalidKeySpecException ex) {
+            java.util.logging.Logger.getLogger(AntragController.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         logger.info("Es wurde ein neuer Antrag angelegt.");
         reqLogger.info("Es wurde ein neuer Antrag angelegt.");
@@ -264,9 +279,23 @@ public class AntragController {
     public String approveAntrag(@PathVariable(ANTRAG_ID) Integer antragId, Model model) {
 
 //        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        // irgendwie an LoginNamen kommen via security stuff
+        String login = "";
+
+        Antrag antrag = antragService.getRequestById(antragId);
+        Person boss = personService.getPersonByLogin(login);
 
         // über die logik sollten wir nochmal nachdenken...
-        antragService.approve(antragService.getRequestById(antragId));
+        antragService.approve(antrag);
+
+        try {
+            // Antrag mit Boss Daten signieren
+            antragService.signAntrag(antrag, boss, true);
+        } catch (NoSuchAlgorithmException ex) {
+            java.util.logging.Logger.getLogger(AntragController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvalidKeySpecException ex) {
+            java.util.logging.Logger.getLogger(AntragController.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         logger.info("Ein Antrag wurde genehmigt.");
         reqLogger.info("Ein Antrag wurde genehmigt.");
@@ -290,10 +319,21 @@ public class AntragController {
     public String declineAntrag(@PathVariable(ANTRAG_ID) Integer antragId,
         @ModelAttribute("reasonForDeclining") String reasonForDeclining, Model model) {
 
-        Person boss = personService.getPersonByLogin(reasonForDeclining);
+        // ueber security zeugs an login name kommen
+        String login = "";
+
+        Person boss = personService.getPersonByLogin(login);
         Antrag antrag = antragService.getRequestById(antragId);
 
         antragService.decline(antrag, boss, reasonForDeclining);
+
+        try {
+            antragService.signAntrag(antrag, boss, true);
+        } catch (NoSuchAlgorithmException ex) {
+            java.util.logging.Logger.getLogger(AntragController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvalidKeySpecException ex) {
+            java.util.logging.Logger.getLogger(AntragController.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         logger.info("Ein Antrag wurde abgelehnt.");
         reqLogger.info("Ein Antrag wurde abgelehnt.");
