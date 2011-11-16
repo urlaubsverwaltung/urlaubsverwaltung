@@ -91,6 +91,8 @@ public class AntragServiceImpl implements AntragService {
 
         antrag.setStatus(State.ABGELEHNT);
 
+        antrag.setBoss(boss);
+
         Kommentar comment = new Kommentar();
         comment.setText(reasonToDecline);
         comment.setPerson(boss);

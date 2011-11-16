@@ -19,7 +19,7 @@ import java.io.IOException;
  */
 public interface CalendarService {
 
-    int getWorkDays(LocalDate start, LocalDate end) throws AuthenticationException, IOException, ServiceException;
+    Integer getFeiertage(LocalDate start, LocalDate end) throws AuthenticationException, IOException, ServiceException;
 
 
     void addVacation(LocalDate start, LocalDate end, Person person, String comment) throws AuthenticationException,

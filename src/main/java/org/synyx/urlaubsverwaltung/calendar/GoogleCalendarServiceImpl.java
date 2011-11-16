@@ -63,10 +63,8 @@ public class GoogleCalendarServiceImpl implements CalendarService {
 //    }
 
     @Override
-    public int getWorkDays(LocalDate start, LocalDate end) throws AuthenticationException, IOException,
+    public Integer getFeiertage(LocalDate start, LocalDate end) throws AuthenticationException, IOException,
         ServiceException {
-
-        int nettoUrlaubstage = 0;
 
         // Kalendar Deutsche Feiertage
 
@@ -89,14 +87,7 @@ public class GoogleCalendarServiceImpl implements CalendarService {
 
         List<CalendarEventEntry> entries = resultFeed.getEntries();
 
-        for (CalendarEventEntry entry : entries) {
-            List<When> when = entry.getTimes();
-
-            for (When w : when) {
-            }
-        }
-
-        return 5;
+        return entries.size();
     }
 
 

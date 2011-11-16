@@ -25,8 +25,8 @@ public final class TestingFilter implements Filter {
 
         String out = new String(brw.getBytes());
 
-        out = out.replace("<body>",
-                "<body><p><a href=\"http://www.thevadersong.com/\"><img src=\"http://farm3.static.flickr.com/2248/2282734669_a7f431e660_o.jpg\"></a></p>");
+//        out = out.replace("<body>",
+//                "<body><p><a href=\"http://www.thevadersong.com/\"><img src=\"http://farm3.static.flickr.com/2248/2282734669_a7f431e660_o.jpg\"></a></p>");
 
         response.getWriter().print(out);
     }
