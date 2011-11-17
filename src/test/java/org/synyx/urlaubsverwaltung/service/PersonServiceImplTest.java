@@ -25,6 +25,7 @@ import org.synyx.urlaubsverwaltung.dao.UrlaubsanspruchDAO;
 /**
  * @author  aljona
  */
+@Ignore
 public class PersonServiceImplTest {
 
     private PersonService instance;

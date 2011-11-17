@@ -12,6 +12,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.synyx.urlaubsverwaltung.domain.Antrag;
 import org.synyx.urlaubsverwaltung.domain.Person;
@@ -20,6 +21,7 @@ import org.synyx.urlaubsverwaltung.domain.Person;
 /**
  * @author  aljona
  */
+@Ignore
 public class MailServiceImplTest {
 
     public MailServiceImplTest() {

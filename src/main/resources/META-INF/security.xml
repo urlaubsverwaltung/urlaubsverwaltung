@@ -8,36 +8,39 @@
                             http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.3.xsd">
                                        
     
-<!--    <bean id="contextSource"
+    <bean id="contextSource"
        class="org.springframework.security.ldap.DefaultSpringSecurityContextSource">
      <constructor-arg value="ldap://ldap.localdomain"/>
-     <property name="userDn" value="ou=People,cn=manager,dc=theia,dc=localdomain?uid"/>
+     
+     <property name="userDn" value="dc=theia,dc=localdomain"/>
    </bean>
    
--->    <bean id="ldapAuthProvider"
+   <security:ldap-server id="ldapAuthServer" url="ldap://ldap:389/dc=theia,dc=localdomain"/>
+   
+    <bean id="ldapAuthProvider"
        class="org.springframework.security.ldap.authentication.LdapAuthenticationProvider">
      <constructor-arg>
        <bean class="org.springframework.security.ldap.authentication.BindAuthenticator">
-           <constructor-arg ref="contextSource"/>
-           <property name="userDnPatterns"><list><value>uid={0},ou=people</value></list></property>
+           <constructor-arg ref="ldapAuthServer"/>
+           <property name="userDnPatterns"><list><value>uid={0},ou=People</value></list></property>
        </bean>
      </constructor-arg>
-     <constructor-arg>
+<!--     <constructor-arg>
        <bean class="org.synyx.urlaubsverwaltung.security.AuthoritiesPopulator">
            <constructor-arg ref="contextSource"/>
            <constructor-arg value="ou=groups"/>
            <property name="groupRoleAttribute" value="ou"/>
        </bean>
-     </constructor-arg>
-   </bean><!--
+     </constructor-arg>-->
+   </bean>
 
                                        
-    <bean id="authenticationProvider" class="org.springframework.security.ldap.authentication.LdapAuthenticationProvider">
+<!--    <bean id="authenticationProvider" class="org.springframework.security.ldap.authentication.LdapAuthenticationProvider">
         <property name="userDetailsService" ref="userService" />
     </bean>-->
     
-<security:global-method-security jsr250-annotations="enabled" />
-
+<!--    <security:global-method-security jsr250-annotations="enabled" />-->
+    
 <!-- Anpassen!  
 -->    <security:http auto-config='true' use-expressions='true'>
 <!--         <security:intercept-url pattern="/web/login" filters="none"/>
@@ -52,10 +55,9 @@
          <security:form-login login-page="/login.jsp" always-use-default-target="false" default-target-url="/web/" authentication-failure-url="/login.jsp?login_error=1"/>
          <security:logout logout-success-url="/web/login"/>
      </security:http>
-
+    
     <security:authentication-manager alias="authenticationManager">
         <security:authentication-provider ref="ldapAuthProvider" />
-    </security:authentication-manager>
-
+    </security:authentication-manager>    
 
 </beans>
