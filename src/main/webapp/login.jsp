@@ -17,9 +17,25 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Login</title>
+        <style type="text/css">
+            #wrapper {
+                border: 2px solid #FFF95C;
+                background-color: #FFF7A4;
+                width:350px;
+                height:130px;
+                position:absolute;
+                top:50%;
+                left:50%;
+                margin-left:-185px;
+                margin-top:-75px;
+                text-align:center;
+                padding:20px;
+            }
+        </style>
     </head>
 
     <body>
+        <div id="wrapper">
         <%
             if (request.getParameter("login_error") != null) {
                 out.println("Der Benutzer ist fehlerhaft.");
@@ -37,6 +53,7 @@
             <br/>
             <input type="submit" value="Login"/>
         </form>
+        </div>
     </body>
 
 </html>
