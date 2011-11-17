@@ -25,13 +25,13 @@
            <property name="userDnPatterns"><list><value>uid={0},ou=People</value></list></property>
        </bean>
      </constructor-arg>
-<!--     <constructor-arg>
-       <bean class="org.synyx.urlaubsverwaltung.security.AuthoritiesPopulator">
-           <constructor-arg ref="contextSource"/>
+     <constructor-arg>
+       <bean class="org.synyx.urlaubsverwaltung.security.AuthoritiesPopulatorImpl">
+<!--           <constructor-arg ref="contextSource"/>
            <constructor-arg value="ou=groups"/>
-           <property name="groupRoleAttribute" value="ou"/>
+           <property name="groupRoleAttribute" value="ou"/>-->
        </bean>
-     </constructor-arg>-->
+     </constructor-arg>
    </bean>
 
                                        
@@ -50,7 +50,8 @@
          <security:intercept-url pattern="/images/**" filters="none"/>
          <security:intercept-url pattern="/js/**" filters="none"/>
          <security:intercept-url pattern="/stylesheetadressbuch.css" filters="none"/>-->
-         <security:intercept-url pattern="/web/**" access="isAuthenticated()"/>
+<!--         <security:intercept-url pattern="/web/**" access="isAuthenticated()"/>-->
+         <security:intercept-url pattern="/web/**" access="hasRole('role.user')"/>
          <security:intercept-url pattern="/login.jsp" access="permitAll"/>
          <security:form-login login-page="/login.jsp" always-use-default-target="false" default-target-url="/web/" authentication-failure-url="/login.jsp?login_error=1"/>
          <security:logout logout-success-url="/web/login"/>
