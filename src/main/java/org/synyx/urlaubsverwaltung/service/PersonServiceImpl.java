@@ -126,9 +126,7 @@ public class PersonServiceImpl implements PersonService {
      * @see  PersonService#updateVacationDays()
      */
     @Override
-    public void updateVacationDays() {
-
-        int year = DateMidnight.now().getYear();
+    public void updateVacationDays(int year) {
 
         Urlaubskonto urlaubskonto;
 

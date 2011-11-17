@@ -76,7 +76,7 @@ public interface PersonService {
      * this method is used by a schedule-job. it transfers unused vacation-days from the old year as resturlaub to the
      * new one and adds the amount of regular vacation-days (execution at 1.1. 0:00)
      */
-    void updateVacationDays();
+    void updateVacationDays(int year);
 
 
     /**
