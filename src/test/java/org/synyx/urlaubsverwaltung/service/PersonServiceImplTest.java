@@ -123,7 +123,7 @@ public class PersonServiceImplTest {
 
     /** Test of updateVacationDays method, of class PersonServiceImpl. */
     @Test
-    public void testUpdateVacationDays() {
+    public void testUpdateVacationDaysResturlaubUeberlaufFall() {
         
         //einige objekte, die PersonService braucht, um zu laufen
         Urlaubsanspruch defaultUrlaubsanspruch  = new Urlaubsanspruch();
@@ -147,6 +147,35 @@ public class PersonServiceImplTest {
 
         Mockito.verify(thisYearKonto).setRestVacationDays(5);
         Mockito.verify(thisYearKonto).setVacationDays(20);
+        //das neue urlaubskonto sollte auch gespeichert werden
+        Mockito.verify(kontoService).saveUrlaubskonto(thisYearKonto);
+    }
+    
+    /** Test of updateVacationDays method, of class PersonServiceImpl. */
+    @Test
+    public void testUpdateVacationDaysNormal() {
+        
+        //einige objekte, die PersonService braucht, um zu laufen
+        Urlaubsanspruch defaultUrlaubsanspruch  = new Urlaubsanspruch();
+        defaultUrlaubsanspruch.setVacationDays(20);
+        Urlaubskonto lastYearKonto = mock(Urlaubskonto.class);
+        Urlaubskonto thisYearKonto = mock(Urlaubskonto.class);
+        List<Person> personList = new ArrayList<Person>();
+        personList.add(new Person());
+        
+        //wenn personService seine dependcies fragt, soll DAS rauskommen
+        Mockito.when(personDAO.findAll()).thenReturn(personList);
+        Mockito.when(lastYearKonto.getVacationDays()).thenReturn(10);
+        Mockito.when(thisYearKonto.getVacationDays()).thenReturn(5);
+        Mockito.when(kontoService.getUrlaubsanspruch(Mockito.anyInt(), (Person) (Mockito.any()))).thenReturn(defaultUrlaubsanspruch);
+        Mockito.when(kontoService.getUrlaubskonto(Mockito.eq(2000), (Person) (Mockito.any()))).thenReturn(lastYearKonto);
+        Mockito.when(kontoService.getUrlaubskonto(Mockito.eq(2001), (Person) (Mockito.any()))).thenReturn(thisYearKonto);
+
+        //rufe zu testende methode auf
+        instance.updateVacationDays(2001);
+        
+
+        Mockito.verify(thisYearKonto).setVacationDays(15);
         //das neue urlaubskonto sollte auch gespeichert werden
         Mockito.verify(kontoService).saveUrlaubskonto(thisYearKonto);
     }

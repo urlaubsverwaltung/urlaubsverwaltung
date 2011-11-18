@@ -30,6 +30,9 @@ import org.synyx.urlaubsverwaltung.domain.VacationType;
 import org.synyx.urlaubsverwaltung.util.DateService;
 
 import java.security.KeyPair;
+import org.mockito.Mockito;
+import org.synyx.urlaubsverwaltung.domain.Urlaubsanspruch;
+import org.synyx.urlaubsverwaltung.domain.Urlaubskonto;
 
 
 /**
@@ -75,11 +78,124 @@ public class AntragServiceImplTest {
 
 
     /** Test of save method, of class AntragServiceImpl. */
-    @Ignore
     @Test
-    public void testSave() {
+    public void testSaveEasy() {
 
-        // nur DAO stuff, nothing to test
+        Antrag antrag = new Antrag();
+        
+        Urlaubskonto konto2000 = mock(Urlaubskonto.class);
+        Urlaubsanspruch anspruch2000 = mock(Urlaubsanspruch.class);
+        
+        Mockito.when(konto2000.getVacationDays()).thenReturn(20);
+        Mockito.when(anspruch2000.getVacationDays()).thenReturn(30);
+        
+        antrag.setStartDate(new DateMidnight(2000, 6, 1));
+        antrag.setEndDate(new DateMidnight(2000, 6, 8));
+        antrag.setBeantragteTageNetto(7);
+        
+        Mockito.when(kontoService.getUrlaubskonto(Mockito.anyInt(), (Person) (Mockito.any()))).thenReturn(konto2000);
+        Mockito.when(kontoService.getUrlaubsanspruch(Mockito.anyInt(), (Person) (Mockito.any()))).thenReturn(anspruch2000);
+        
+        instance.save(antrag);
+        
+        Mockito.verify(konto2000).setVacationDays(13);    
+    }
+    
+    /** Test of save method, of class AntragServiceImpl. */
+    @Test
+    public void testSaveRest() {
+
+        Antrag antrag = new Antrag();
+        
+        Urlaubskonto konto2000 = mock(Urlaubskonto.class);
+        Urlaubsanspruch anspruch2000 = mock(Urlaubsanspruch.class);
+        
+        Mockito.when(konto2000.getVacationDays()).thenReturn(20);
+        Mockito.when(konto2000.getRestVacationDays()).thenReturn(5);
+        Mockito.when(anspruch2000.getVacationDays()).thenReturn(30);
+        
+        antrag.setStartDate(new DateMidnight(2000, 2, 1));
+        antrag.setEndDate(new DateMidnight(2000, 2, 8));
+        antrag.setBeantragteTageNetto(7);
+        
+        Mockito.when(kontoService.getUrlaubskonto(Mockito.anyInt(), (Person) (Mockito.any()))).thenReturn(konto2000);
+        Mockito.when(kontoService.getUrlaubsanspruch(Mockito.anyInt(), (Person) (Mockito.any()))).thenReturn(anspruch2000);
+        
+        instance.save(antrag);
+        
+        Mockito.verify(konto2000).setVacationDays(18);    
+        Mockito.verify(konto2000).setRestVacationDays(0);    
+    }
+    
+    
+        /** Test of save method, of class AntragServiceImpl. */
+    @Test
+    public void testSaveApril() {
+
+        Antrag antrag = new Antrag();
+        
+        Urlaubskonto konto2000 = mock(Urlaubskonto.class);
+        Urlaubsanspruch anspruch2000 = mock(Urlaubsanspruch.class);
+        
+        DateMidnight startDate = new DateMidnight(2000, 3, 27);
+        DateMidnight endDate = new DateMidnight(2000, 4, 4);
+        
+        Mockito.when(konto2000.getVacationDays()).thenReturn(20);
+        Mockito.when(konto2000.getRestVacationDays()).thenReturn(5);
+        Mockito.when(anspruch2000.getVacationDays()).thenReturn(30);
+        
+        Mockito.when(dateService.countDaysBetweenTwoDates(Mockito.eq(startDate),(DateMidnight) (Mockito.any()))).thenReturn(3);
+        Mockito.when(dateService.countDaysBetweenTwoDates((DateMidnight) (Mockito.any()), Mockito.eq(endDate))).thenReturn(4);
+        
+        antrag.setStartDate(startDate);
+        antrag.setEndDate(endDate);
+        antrag.setBeantragteTageNetto(7);
+        
+        Mockito.when(kontoService.getUrlaubskonto(Mockito.anyInt(), (Person) (Mockito.any()))).thenReturn(konto2000);
+        Mockito.when(kontoService.getUrlaubsanspruch(Mockito.anyInt(), (Person) (Mockito.any()))).thenReturn(anspruch2000);
+        
+        instance.save(antrag);
+        
+        Mockito.verify(konto2000).setVacationDays(16);    
+        Mockito.verify(konto2000).setRestVacationDays(2);    
+    }
+    
+    
+            /** Test of save method, of class AntragServiceImpl. */
+    @Test
+    public void testSave2Years() {
+
+        Antrag antrag = new Antrag();
+        
+        Urlaubskonto konto2000 = mock(Urlaubskonto.class);
+        Urlaubsanspruch anspruch2000 = mock(Urlaubsanspruch.class);
+        Urlaubskonto konto2001 = mock(Urlaubskonto.class);
+        Urlaubsanspruch anspruch2001 = mock(Urlaubsanspruch.class);
+        
+        DateMidnight startDate = new DateMidnight(2000, 12, 27);
+        DateMidnight endDate = new DateMidnight(2001, 1, 4);
+        
+        Mockito.when(konto2000.getVacationDays()).thenReturn(5);
+        Mockito.when(anspruch2000.getVacationDays()).thenReturn(30);
+        Mockito.when(konto2001.getVacationDays()).thenReturn(10);
+        Mockito.when(anspruch2001.getVacationDays()).thenReturn(30);
+        
+        Mockito.when(dateService.countDaysBetweenTwoDates(Mockito.eq(startDate),(DateMidnight) (Mockito.any()))).thenReturn(3);
+        Mockito.when(dateService.countDaysBetweenTwoDates((DateMidnight) (Mockito.any()), Mockito.eq(endDate))).thenReturn(4);
+        
+        antrag.setStartDate(startDate);
+        antrag.setEndDate(endDate);
+        antrag.setBeantragteTageNetto(7);
+        
+        Mockito.when(kontoService.getUrlaubskonto(Mockito.eq(2000), (Person) (Mockito.any()))).thenReturn(konto2000);
+        Mockito.when(kontoService.getUrlaubsanspruch(Mockito.eq(2000), (Person) (Mockito.any()))).thenReturn(anspruch2000);
+        Mockito.when(kontoService.getUrlaubskonto(Mockito.eq(2001), (Person) (Mockito.any()))).thenReturn(konto2001);
+        Mockito.when(kontoService.getUrlaubsanspruch(Mockito.eq(2001), (Person) (Mockito.any()))).thenReturn(anspruch2001);
+        
+        instance.save(antrag);
+        
+        Mockito.verify(konto2000).setVacationDays(2);    
+        Mockito.verify(konto2001).setVacationDays(6);    
     }
 
 
@@ -129,10 +245,119 @@ public class AntragServiceImplTest {
 
     /** Test of storno method, of class AntragServiceImpl. */
     @Test
-    public void testStorno() {
+    public void testStornoEasy() {
 
-        // not yet implemented
-        // seeeeeeehr riesige logik
+        Antrag antrag = new Antrag();
+        
+        Urlaubskonto konto2000 = mock(Urlaubskonto.class);
+        Urlaubsanspruch anspruch2000 = mock(Urlaubsanspruch.class);
+        
+        Mockito.when(konto2000.getVacationDays()).thenReturn(20);
+        Mockito.when(anspruch2000.getVacationDays()).thenReturn(30);
+        
+        antrag.setStartDate(new DateMidnight(2000, 6, 1));
+        antrag.setEndDate(new DateMidnight(2000, 6, 8));
+        antrag.setBeantragteTageNetto(7);
+        
+        Mockito.when(urlaubskontoDAO.getUrlaubskontoForDateAndPerson(Mockito.anyInt(), (Person) (Mockito.any()))).thenReturn(konto2000);
+        Mockito.when(urlaubsanspruchDAO.getUrlaubsanspruchByDate(Mockito.anyInt(), (Person) (Mockito.any()))).thenReturn(anspruch2000);
+        
+        instance.storno(antrag);
+        
+        Mockito.verify(konto2000).setVacationDays(27);    
+    }
+    
+    
+    @Test
+    public void testStornoBeforeApril() {
+
+        Antrag antrag = new Antrag();
+        
+        Urlaubskonto konto2000 = mock(Urlaubskonto.class);
+        Urlaubsanspruch anspruch2000 = mock(Urlaubsanspruch.class);
+        
+        Mockito.when(konto2000.getVacationDays()).thenReturn(30);
+        Mockito.when(anspruch2000.getVacationDays()).thenReturn(30);
+        
+        antrag.setStartDate(new DateMidnight(2000, 3, 2));
+        antrag.setEndDate(new DateMidnight(2000, 3, 4));
+        antrag.setBeantragteTageNetto(2);
+        
+        Mockito.when(urlaubskontoDAO.getUrlaubskontoForDateAndPerson(Mockito.anyInt(), (Person) (Mockito.any()))).thenReturn(konto2000);
+        Mockito.when(urlaubsanspruchDAO.getUrlaubsanspruchByDate(Mockito.anyInt(), (Person) (Mockito.any()))).thenReturn(anspruch2000);
+        
+        instance.storno(antrag);
+        
+        Mockito.verify(konto2000).setVacationDays(30);    
+        Mockito.verify(konto2000).setRestVacationDays(2);    
+    }
+    
+    
+    @Test
+    public void testStornoApril() {
+
+        Antrag antrag = new Antrag();
+        
+        Urlaubskonto konto2000 = mock(Urlaubskonto.class);
+        Urlaubsanspruch anspruch2000 = mock(Urlaubsanspruch.class);
+        
+        DateMidnight startDate = new DateMidnight(2000, 3, 27);
+        DateMidnight endDate = new DateMidnight(2000, 4, 4);
+        
+        Mockito.when(konto2000.getVacationDays()).thenReturn(26);
+        Mockito.when(konto2000.getRestVacationDays()).thenReturn(4);
+        Mockito.when(anspruch2000.getVacationDays()).thenReturn(30);
+        
+        Mockito.when(dateService.countDaysBetweenTwoDates(Mockito.eq(startDate),(DateMidnight) (Mockito.any()))).thenReturn(3);
+        Mockito.when(dateService.countDaysBetweenTwoDates((DateMidnight) (Mockito.any()), Mockito.eq(endDate))).thenReturn(4);
+        
+        antrag.setStartDate(startDate);
+        antrag.setEndDate(endDate);
+        antrag.setBeantragteTageNetto(7);
+        
+        Mockito.when(urlaubskontoDAO.getUrlaubskontoForDateAndPerson(Mockito.anyInt(), (Person) (Mockito.any()))).thenReturn(konto2000);
+        Mockito.when(urlaubsanspruchDAO.getUrlaubsanspruchByDate(Mockito.anyInt(), (Person) (Mockito.any()))).thenReturn(anspruch2000);
+        
+        instance.storno(antrag);
+        
+        Mockito.verify(konto2000).setVacationDays(30);    
+        Mockito.verify(konto2000).setRestVacationDays(7);    
+    }
+    
+    
+    @Test
+    public void testStorno2Years() {
+
+        Antrag antrag = new Antrag();
+        
+        Urlaubskonto konto2000 = mock(Urlaubskonto.class);
+        Urlaubsanspruch anspruch2000 = mock(Urlaubsanspruch.class);
+        Urlaubskonto konto2001 = mock(Urlaubskonto.class);
+        Urlaubsanspruch anspruch2001 = mock(Urlaubsanspruch.class);
+        
+        DateMidnight startDate = new DateMidnight(2000, 12, 25);
+        DateMidnight endDate = new DateMidnight(2001, 1, 5);
+        
+        Mockito.when(konto2000.getVacationDays()).thenReturn(10);
+        Mockito.when(anspruch2000.getVacationDays()).thenReturn(30);
+        Mockito.when(konto2001.getVacationDays()).thenReturn(20);
+        Mockito.when(anspruch2001.getVacationDays()).thenReturn(30);
+        
+        Mockito.when(dateService.countDaysBetweenTwoDates((DateMidnight) (Mockito.any()),(DateMidnight) (Mockito.any()))).thenReturn(5);
+        
+        antrag.setStartDate(startDate);
+        antrag.setEndDate(endDate);
+        antrag.setBeantragteTageNetto(10);
+        
+        Mockito.when(urlaubskontoDAO.getUrlaubskontoForDateAndPerson(Mockito.eq(2000), (Person) (Mockito.any()))).thenReturn(konto2000);
+        Mockito.when(urlaubsanspruchDAO.getUrlaubsanspruchByDate(Mockito.eq(2000), (Person) (Mockito.any()))).thenReturn(anspruch2000);
+        Mockito.when(urlaubskontoDAO.getUrlaubskontoForDateAndPerson(Mockito.eq(2001), (Person) (Mockito.any()))).thenReturn(konto2001);
+        Mockito.when(urlaubsanspruchDAO.getUrlaubsanspruchByDate(Mockito.eq(2001), (Person) (Mockito.any()))).thenReturn(anspruch2001);
+        
+        instance.storno(antrag);
+        
+        Mockito.verify(konto2000).setVacationDays(15);    
+        Mockito.verify(konto2001).setVacationDays(25);    
     }
 
 

@@ -24,7 +24,6 @@ import java.security.spec.InvalidKeySpecException;
 
 import java.util.List;
 
-
 /**
  * implementation of the requestdata-access-service.
  *
@@ -40,15 +39,14 @@ public class AntragServiceImpl implements AntragService {
     private KontoService kontoService;
     private DateService dateService;
     private PGPService pgpService;
-
     // wird hier und im anderen service benötigt, weil wir ja
     // ständig irgendwelche mails schicken müssen... =)
     private MailServiceImpl mailService;
 
     @Autowired
     public AntragServiceImpl(AntragDAO antragDAO, PersonDAO personDAO, UrlaubsanspruchDAO urlaubsanspruchDAO,
-        UrlaubskontoDAO urlaubskontoDAO, KontoService kontoService, DateService dateService, PGPService pgpService,
-        MailServiceImpl mailService) {
+            UrlaubskontoDAO urlaubskontoDAO, KontoService kontoService, DateService dateService, PGPService pgpService,
+            MailServiceImpl mailService) {
 
         this.antragDAO = antragDAO;
         this.personDAO = personDAO;
@@ -66,9 +64,86 @@ public class AntragServiceImpl implements AntragService {
     @Override
     public void save(Antrag antrag) {
 
-        antragDAO.save(antrag);
-    }
+        //wenn sich der antrag nur in einem jahr befindet
+        if (antrag.getStartDate().getYear() == antrag.getEndDate().getYear()) {
+            //hole urlaubskonto
+            Urlaubskonto konto = kontoService.getUrlaubskonto(antrag.getStartDate().getYear(), antrag.getPerson());
+            //wenn noch nicht angelegt
+            if (konto == null) {
+                //erzeuge konto
+                kontoService.newUrlaubskonto(antrag.getPerson(), kontoService.getUrlaubsanspruch(antrag.getStartDate().getYear(), antrag.getPerson()).getVacationDays(), 0, antrag.getStartDate().getYear());
+            }
+            konto = kontoService.getUrlaubskonto(antrag.getStartDate().getYear(), antrag.getPerson());
+            //wenn antrag vor april ist
+            if (antrag.getEndDate().getMonthOfYear() < 4) {
+                //errechne, wie viele resturlaubstage übrigbleiben würden
+                Integer newRestDays = konto.getRestVacationDays() - antrag.getBeantragteTageNetto();
+                //wenn das weniger sind als 0
+                if (newRestDays < 0) {
+                    //ziehe die differenz vom normalen konto ab
+                    konto.setVacationDays(konto.getVacationDays() + newRestDays);
+                    //und setze den resturlaub auf 0
+                    konto.setRestVacationDays(0);
+                } else {
+                    //sonst speichere einfach neue resturlaubstage
+                    konto.setRestVacationDays(newRestDays);
+                }
+            } else if (antrag.getStartDate().getMonthOfYear() > 3) {
+                //wenn der antrag nach april ist
+                konto.setVacationDays(konto.getVacationDays() - antrag.getBeantragteTageNetto());
+            } else {
+                //wenn der antrag über april läuft
+                Integer beforeApril = dateService.countDaysBetweenTwoDates(antrag.getStartDate(),
+                        new DateMidnight(antrag.getStartDate().getYear(), 3, 31));
+                Integer afterApril = dateService.countDaysBetweenTwoDates(new DateMidnight(antrag.getEndDate().getYear(), 4, 1), antrag.getEndDate());
+                //errechne, wie viele resturlaubstage übrigbleiben würden
+                Integer newRestDays = konto.getRestVacationDays() - beforeApril;
+                Integer newVacDays = konto.getVacationDays();
+                //wenn es weniger wie 0 sind,
+                if(newRestDays<0) {
+                    //ziehe differenz von normalen urlaubstagen ab
+                    newVacDays = konto.getVacationDays() + newRestDays;
+                    //und setze resturlaub auf 0
+                    newRestDays = 0;
+                }
+                konto.setRestVacationDays(newRestDays);
+                konto.setVacationDays(newVacDays - afterApril);
+                
+                kontoService.saveUrlaubskonto(konto);
+            }
+        } else {
+             //wenn der antrag über 2 Jahre läuft...
+                Integer beforeJan = dateService.countDaysBetweenTwoDates(antrag.getStartDate(),
+                        new DateMidnight(antrag.getStartDate().getYear(), 12, 31));
+                Integer afterJan = dateService.countDaysBetweenTwoDates(new DateMidnight(antrag.getEndDate().getYear(), 1, 1), antrag.getEndDate());
+                Urlaubskonto konto1 = kontoService.getUrlaubskonto(antrag.getStartDate().getYear(), antrag.getPerson());
+                Urlaubskonto konto2 = kontoService.getUrlaubskonto(antrag.getEndDate().getYear(), antrag.getPerson());
+                
+                //konto des alten jahres = einfach die tage vor januar abziehen
+                konto1.setVacationDays(konto1.getVacationDays() - beforeJan);
 
+                //resturlaub des neuen jahres = einfach die tage nach 1.1. abziehen
+                Integer newRestDays = konto2.getRestVacationDays() - afterJan;
+                Integer newVacDays = konto2.getVacationDays();
+                if(newRestDays<0) {
+                    //wenn resttage<0, dann ziehe differenz von den normalen urlaubstagen ab..
+                    newVacDays = newVacDays + newRestDays;
+                    //und setze resturlaub auf 0 (yay)
+                    newRestDays = 0;
+                }
+                
+                //alles schön abspeichern
+                
+                konto2.setRestVacationDays(newRestDays);
+                konto2.setVacationDays(newVacDays);
+                
+                kontoService.saveUrlaubskonto(konto1);
+                kontoService.saveUrlaubskonto(konto2);
+        }
+
+        antragDAO.save(antrag);
+        
+    }
 
     /**
      * @see  AntragService#approve(org.synyx.urlaubsverwaltung.domain.Antrag)
@@ -81,7 +156,6 @@ public class AntragServiceImpl implements AntragService {
 
         mailService.sendApprovedNotification(antrag.getPerson(), antrag);
     }
-
 
     /**
      * @see  AntragService#decline(org.synyx.urlaubsverwaltung.domain.Antrag, java.lang.String)
@@ -105,7 +179,6 @@ public class AntragServiceImpl implements AntragService {
         mailService.sendDeclinedNotification(antrag);
     }
 
-
     /**
      * @see  AntragService#wait(org.synyx.urlaubsverwaltung.domain.Antrag)
      */
@@ -116,10 +189,8 @@ public class AntragServiceImpl implements AntragService {
         antragDAO.save(antrag);
     }
 
-
     // Beachte, dass Berechnung von wie viele Tage noch nicht stimmt
     // Dazu muss Google Kalender benutzt werden, da ja Feiertage dazwischen liegen können
-
     /**
      * @see  AntragService#storno(org.synyx.urlaubsverwaltung.domain.Antrag)
      */
@@ -150,26 +221,36 @@ public class AntragServiceImpl implements AntragService {
             // Urlaubsanspruch für Jahr 2 (vom endDate)
             Urlaubsanspruch anspruch2 = urlaubsanspruchDAO.getUrlaubsanspruchByDate(endDate.getYear(), person);
 
+            Integer oldVacationDays = konto1.getVacationDays() + beforeJan;
+
+            Integer newVacationDays = 0;
+
             // beforeJan füllt Urlaubskonto von Jahr 1 auf
-            konto1.setVacationDays(konto1.getVacationDays() + beforeJan);
+            //konto1.setVacationDays(konto1.getVacationDays() + beforeJan);
 
             // wenn Urlaubskonto Anspruch überschreitet, muss stattdessen Resturlaub aufgefüllt werden
-            if (konto1.getVacationDays() > anspruch1.getVacationDays()) {
+            if (oldVacationDays > anspruch1.getVacationDays()) {
                 konto1.setRestVacationDays(konto1.getRestVacationDays()
-                    + (konto1.getVacationDays() - anspruch1.getVacationDays()));
-                konto1.setVacationDays(konto1.getVacationDays()
-                    - (konto1.getVacationDays() - anspruch1.getVacationDays()));
+                        + (oldVacationDays - anspruch1.getVacationDays()));
+                konto1.setVacationDays(oldVacationDays
+                        - (oldVacationDays - anspruch1.getVacationDays()));
+            } else {
+                konto1.setVacationDays(oldVacationDays);
             }
 
             // afterJan füllt Urlaubskonto von Jahr 2 auf
-            konto2.setVacationDays(konto2.getVacationDays() + afterJan);
+            //konto2.setVacationDays(konto2.getVacationDays() + afterJan);
+
+            newVacationDays = konto2.getVacationDays() + afterJan;
 
             // wenn Urlaubskonto Anspruch überschreitet, muss stattdessen Resturlaub aufgefüllt werden
-            if (konto2.getVacationDays() > anspruch2.getVacationDays()) {
+            if (newVacationDays > anspruch2.getVacationDays()) {
                 konto1.setRestVacationDays(konto2.getRestVacationDays()
-                    + (konto2.getVacationDays() - anspruch2.getVacationDays()));
-                konto2.setVacationDays(konto2.getVacationDays()
-                    - (konto2.getVacationDays() - anspruch2.getVacationDays()));
+                        + (newVacationDays - anspruch2.getVacationDays()));
+                konto2.setVacationDays(newVacationDays
+                        - (newVacationDays - anspruch2.getVacationDays()));
+            } else {
+                konto2.setVacationDays(newVacationDays);
             }
 
             kontoService.saveUrlaubskonto(konto2);
@@ -194,39 +275,47 @@ public class AntragServiceImpl implements AntragService {
                         endDate);
 
                 // erstmal die nach April Tage (afterApr) aufs Urlaubskonto füllen
-                konto1.setVacationDays(konto1.getVacationDays() + afterApr);
+                //konto1.setVacationDays(konto1.getVacationDays() + afterApr);
+
+                Integer newVacationDays = konto1.getVacationDays() + afterApr;
 
                 // wenn so das Urlaubskonto gleich dem Anspruch ist,
                 // setze die Tage vor dem April (beforeApr) ins Resturlaubkonto (das sowieso ab 1.4. verfällt)
-                if (konto1.getVacationDays().equals(anspruch1.getVacationDays())) {
+                if (newVacationDays.equals(anspruch1.getVacationDays())) {
                     konto1.setRestVacationDays(konto1.getRestVacationDays() + beforeApr);
+                    konto1.setVacationDays(newVacationDays);
                 } else if (konto1.getVacationDays() < anspruch1.getVacationDays()) {
                     // wenn das Auffüllen mit afterApr das Konto noch nicht zum Überlaufen gebracht hat
                     // d.h. urlaubskonto < anspruch
                     // addiere beforeApr dazu
-                    konto1.setVacationDays(konto1.getVacationDays() + beforeApr);
+                    //konto1.setVacationDays(konto1.getVacationDays() + beforeApr);
+                    newVacationDays = newVacationDays + beforeApr;
 
                     // wenn so das urlaubskonto überquillt
                     // d.h. urlaubskonto > anspruch
-                    if (konto1.getVacationDays() >= anspruch1.getVacationDays()) {
+                    if (newVacationDays >= anspruch1.getVacationDays()) {
                         // schmeiss den überhängenden scheiss in den resturlaub
                         konto1.setRestVacationDays(konto1.getRestVacationDays()
-                            + (konto1.getVacationDays() - anspruch1.getVacationDays()));
+                                + (newVacationDays - anspruch1.getVacationDays()));
                         konto1.setVacationDays(anspruch1.getVacationDays());
+                    } else {
+                        konto1.setVacationDays(newVacationDays);
                     }
+
                 }
             } else if (endDate.getMonthOfYear() < 4) {
                 // Urlaub ist nach dem 1.1., aber vor dem 1.4., d.h. keine Berührung mit dem 1.4. ganz normal Konto und
                 // evtl. Resturlaub füllen
 
-                Integer gut = antrag.getBeantragteTageNetto();
+                Integer gut = antrag.getBeantragteTageNetto() + konto1.getVacationDays();
                 konto1.setVacationDays(gut + konto1.getVacationDays());
 
-                if (konto1.getVacationDays() > anspruch1.getVacationDays()) {
+                if (gut > anspruch1.getVacationDays()) {
                     konto1.setRestVacationDays(konto1.getRestVacationDays()
-                        + (konto1.getVacationDays() - anspruch1.getVacationDays()));
-                    konto1.setVacationDays(anspruch1.getVacationDays());
+                            + (gut - anspruch1.getVacationDays()));
+                    gut = anspruch1.getVacationDays();
                 }
+                konto1.setVacationDays(gut);
             }
 
             kontoService.saveUrlaubskonto(konto1);
@@ -249,7 +338,6 @@ public class AntragServiceImpl implements AntragService {
         personDAO.save(person);
     }
 
-
     /**
      * @see  AntragService#getRequestById(java.lang.Integer)
      */
@@ -258,7 +346,6 @@ public class AntragServiceImpl implements AntragService {
 
         return antragDAO.findOne(id);
     }
-
 
     /**
      * @see  AntragService#getAllRequestsForPerson(org.synyx.urlaubsverwaltung.domain.Person)
@@ -269,7 +356,6 @@ public class AntragServiceImpl implements AntragService {
         return antragDAO.getAllRequestsForPerson(person);
     }
 
-
     /**
      * @see  AntragService#getAllRequests()
      */
@@ -278,7 +364,6 @@ public class AntragServiceImpl implements AntragService {
 
         return antragDAO.findAll();
     }
-
 
     /**
      * @see  AntragService#getAllRequestsByState(org.synyx.urlaubsverwaltung.domain.State)
@@ -291,7 +376,6 @@ public class AntragServiceImpl implements AntragService {
         return null;
     }
 
-
     /**
      * @see  AntragService#getAllRequestsForACertainTime(org.joda.time.DateMidnight, org.joda.time.DateMidnight)
      */
@@ -301,11 +385,9 @@ public class AntragServiceImpl implements AntragService {
         return antragDAO.getAllRequestsForACertainTime(startDate, endDate);
     }
 
-
     // Hab mal eine einfache Form davon implementiert
     // soll heissen Konto wird immer aufgefüllt, bei Bedarf auch Resturlaub
     // bloss nach dem 1.4. füllt man den Resturlaub nicht auf, da's ja keinen gibt
-
     /**
      * @see  AntragService#krankheitBeachten(org.synyx.urlaubsverwaltung.domain.Antrag, java.lang.Integer)
      */
@@ -340,10 +422,9 @@ public class AntragServiceImpl implements AntragService {
         personDAO.save(person);
     }
 
-
     @Override
     public void signAntrag(Antrag antrag, Person signierendePerson, boolean isBoss) throws NoSuchAlgorithmException,
-        InvalidKeySpecException {
+            InvalidKeySpecException {
 
         PrivateKey privKey = pgpService.getPrivateKeyByBytes(signierendePerson.getPrivateKey());
 
