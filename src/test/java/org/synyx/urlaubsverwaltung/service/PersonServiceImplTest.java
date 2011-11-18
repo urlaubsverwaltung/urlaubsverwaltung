@@ -12,7 +12,7 @@ import org.joda.time.DateMidnight;
 import org.junit.After;
 import org.junit.AfterClass;
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -22,12 +22,14 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import static org.mockito.Mockito.mock;
 
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.synyx.urlaubsverwaltung.dao.PersonDAO;
 import org.synyx.urlaubsverwaltung.dao.UrlaubsanspruchDAO;
+import org.synyx.urlaubsverwaltung.domain.Antrag;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.Urlaubsanspruch;
 import org.synyx.urlaubsverwaltung.domain.Urlaubskonto;
-
 
 /**
  * @author  aljona
@@ -35,7 +37,6 @@ import org.synyx.urlaubsverwaltung.domain.Urlaubskonto;
 public class PersonServiceImplTest {
 
     private PersonService instance;
-
     private PersonDAO personDAO = mock(PersonDAO.class);
     private AntragService antragService = mock(AntragService.class);
     private KontoService kontoService = mock(KontoService.class);
@@ -49,90 +50,100 @@ public class PersonServiceImplTest {
     public static void setUpClass() throws Exception {
     }
 
-
     @AfterClass
     public static void tearDownClass() throws Exception {
     }
 
-
     @Before
     public void setUp() {
-        
+
         instance = new PersonServiceImpl(personDAO, antragService, urlaubsanspruchDAO, mailService, kontoService);
     }
-
 
     @After
     public void tearDown() {
     }
 
-
     /** Test of save method, of class PersonServiceImpl. */
     @Test
     public void testSave() {
-        instance.save(new Person());
-        Mockito.verify(personDAO).save((Person) (Mockito.any()));
+        Person personToSave = new Person();
+        instance.save(personToSave);
+        Mockito.verify(personDAO).save(personToSave);
         // speichert einfach nur: DAO
     }
 
-
     /** Test of delete method, of class PersonServiceImpl. */
     @Test
-    @Ignore
     public void testDelete() {
-
-        // loescht einfach nur: DAO
+        Person personToSave = new Person();
+        instance.delete(personToSave);
+        Mockito.verify(personDAO).delete(personToSave);
     }
-
 
     /** Test of getPersonByID method, of class PersonServiceImpl. */
     @Test
-    @Ignore
     public void testGetPersonByID() {
-
-        // holt sich Person nach Id einfach nur: DAO
+        instance.getPersonByID(123);
+        Mockito.verify(personDAO).findOne(123);
     }
-
 
     /** Test of getAllPersons method, of class PersonServiceImpl. */
     @Test
-    @Ignore
     public void testGetAllPersons() {
-
-        // holt sich alle Personen einfach nur: DAO
+        instance.getAllPersons();
+        Mockito.verify(personDAO).findAll();
     }
-
 
     /** Test of deleteResturlaub method, of class PersonServiceImpl. */
     @Test
-    @Ignore
     public void testDeleteResturlaub() {
 
-        // DAO-Schrott
-    }
+        List<Person> persons = new ArrayList<Person>();
+        Person person = new Person();
+        persons.add(person);
 
+        Urlaubskonto konto = mock(Urlaubskonto.class);
+
+        Mockito.when(personDAO.findAll()).thenReturn(persons);
+        Mockito.when(kontoService.getUrlaubskonto(Mockito.anyInt(), (Person) (Mockito.any()))).thenReturn(konto);
+
+        instance.deleteResturlaub();
+
+        Mockito.verify(konto).setRestVacationDays(0);
+    }
 
     /** Test of getPersonsWithResturlaub method, of class PersonServiceImpl. */
     @Test
-    @Ignore
     public void testGetPersonsWithResturlaub() {
+        List<Person> persons = new ArrayList<Person>();
+        Person person = new Person();
+        persons.add(person);
+        person.setFirstName("babbel");
 
-        // DAO-Schrott
+        Urlaubskonto konto = mock(Urlaubskonto.class);
+
+        Mockito.when(personDAO.findAll()).thenReturn(persons);
+        Mockito.when(kontoService.getUrlaubskonto(Mockito.anyInt(), (Person) (Mockito.any()))).thenReturn(konto);
+        Mockito.when(konto.getRestVacationDays()).thenReturn(5);
+
+        List<Person> result = instance.getPersonsWithResturlaub();
+
+        assertEquals(result.get(0).getFirstName(), "babbel");
     }
-
 
     /** Test of updateVacationDays method, of class PersonServiceImpl. */
     @Test
     public void testUpdateVacationDaysResturlaubUeberlaufFall() {
-        
+
         //einige objekte, die PersonService braucht, um zu laufen
-        Urlaubsanspruch defaultUrlaubsanspruch  = new Urlaubsanspruch();
+        Urlaubsanspruch defaultUrlaubsanspruch = new Urlaubsanspruch();
         defaultUrlaubsanspruch.setVacationDays(20);
         Urlaubskonto lastYearKonto = mock(Urlaubskonto.class);
         Urlaubskonto thisYearKonto = mock(Urlaubskonto.class);
         List<Person> personList = new ArrayList<Person>();
         personList.add(new Person());
-        
+
         //wenn personService seine dependcies fragt, soll DAS rauskommen
         Mockito.when(personDAO.findAll()).thenReturn(personList);
         Mockito.when(lastYearKonto.getVacationDays()).thenReturn(10);
@@ -143,26 +154,26 @@ public class PersonServiceImplTest {
 
         //rufe zu testende methode auf
         instance.updateVacationDays(2001);
-        
+
 
         Mockito.verify(thisYearKonto).setRestVacationDays(5);
         Mockito.verify(thisYearKonto).setVacationDays(20);
         //das neue urlaubskonto sollte auch gespeichert werden
         Mockito.verify(kontoService).saveUrlaubskonto(thisYearKonto);
     }
-    
+
     /** Test of updateVacationDays method, of class PersonServiceImpl. */
     @Test
     public void testUpdateVacationDaysNormal() {
-        
+
         //einige objekte, die PersonService braucht, um zu laufen
-        Urlaubsanspruch defaultUrlaubsanspruch  = new Urlaubsanspruch();
+        Urlaubsanspruch defaultUrlaubsanspruch = new Urlaubsanspruch();
         defaultUrlaubsanspruch.setVacationDays(20);
         Urlaubskonto lastYearKonto = mock(Urlaubskonto.class);
         Urlaubskonto thisYearKonto = mock(Urlaubskonto.class);
         List<Person> personList = new ArrayList<Person>();
         personList.add(new Person());
-        
+
         //wenn personService seine dependcies fragt, soll DAS rauskommen
         Mockito.when(personDAO.findAll()).thenReturn(personList);
         Mockito.when(lastYearKonto.getVacationDays()).thenReturn(10);
@@ -173,69 +184,120 @@ public class PersonServiceImplTest {
 
         //rufe zu testende methode auf
         instance.updateVacationDays(2001);
-        
+
 
         Mockito.verify(thisYearKonto).setVacationDays(15);
         //das neue urlaubskonto sollte auch gespeichert werden
         Mockito.verify(kontoService).saveUrlaubskonto(thisYearKonto);
     }
 
-
     /** Test of getAllUrlauberForThisWeekAndPutItInAnEmail method, of class PersonServiceImpl. */
     @Test
-    @Ignore
     public void testGetAllUrlauberForThisWeekAndPutItInAnEmail() {
 
         System.out.println("getAllUrlauberForThisWeekAndPutItInAnEmail");
 
-        DateMidnight startDate = null;
-        DateMidnight endDate = null;
-        PersonServiceImpl instance = null;
+        DateMidnight startDate = new DateMidnight();
+        DateMidnight endDate = new DateMidnight();
+        List<Antrag> antraege = new ArrayList<Antrag>();
+        Antrag antrag = new Antrag();
+        Person person = new Person();
+        person.setFirstName("hans-peter");
+        antrag.setPerson(person);
+        antraege.add(antrag);
+
+
+        Mockito.when(antragService.getAllRequestsForACertainTime(startDate, endDate)).thenReturn(antraege);
+
         instance.getAllUrlauberForThisWeekAndPutItInAnEmail(startDate, endDate);
 
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        Mockito.verify(mailService).sendWeeklyVacationForecast(Mockito.anyList());
+        
+        Mockito.doAnswer(new Answer() {
+                    public Object answer(InvocationOnMock invocation) {
+                        Object[] args = invocation.getArguments();
+                        List<Person> catchedList = (List<Person>) (args[0]);
+                        assertEquals("hans-peter", catchedList.get(0).getFirstName());
+                        
+                        return null;
+                    }
+                }).when(mailService).sendWeeklyVacationForecast(Mockito.anyList());
     }
-
 
     /** Test of getUrlaubsanspruchByPersonAndYear method, of class PersonServiceImpl. */
     @Test
-    @Ignore
     public void testGetUrlaubsanspruchByPersonAndYear() {
 
-        // DAO-Schrott
-    }
 
+        Person person = new Person();
+        Urlaubsanspruch anspruch = new Urlaubsanspruch();
+
+
+        Mockito.when(urlaubsanspruchDAO.getUrlaubsanspruchByDate(2000, person)).thenReturn(anspruch);
+
+        Urlaubsanspruch gotByMethod = instance.getUrlaubsanspruchByPersonAndYear(person, 2000);
+
+        assertEquals(gotByMethod, anspruch);
+
+
+    }
 
     /** Test of getUrlaubsanspruchByPersonForAllYears method, of class PersonServiceImpl. */
     @Test
-    @Ignore
     public void testGetUrlaubsanspruchByPersonForAllYears() {
 
-        // DAO-Schrott
-    }
+        Person person = new Person();
+        List<Urlaubsanspruch> ansprueche = new ArrayList<Urlaubsanspruch>();
+        Urlaubsanspruch anspruch = new Urlaubsanspruch();
 
+        ansprueche.add(anspruch);
+
+
+        Mockito.when(urlaubsanspruchDAO.getUrlaubsanspruchByPerson(person)).thenReturn(ansprueche);
+
+        List<Urlaubsanspruch> gotByMethod = instance.getUrlaubsanspruchByPersonForAllYears(person);
+
+        assertEquals(gotByMethod.get(0), anspruch);
+    }
 
     /** Test of setUrlaubsanspruchForPerson method, of class PersonServiceImpl. */
     @Test
-    @Ignore
     public void testSetUrlaubsanspruchForPerson() {
 
-//        Person person = new Person();
-//
-//        instance.setUrlaubsanspruchForPerson(person, 2011, 26);
-//
-//        Urlaubsanspruch anspruch = person.getUrlaubsanspruch().get(0);
-//
-//        assertEquals(person, anspruch.getPerson());
-    }
 
+
+
+        Person person = new Person();
+        
+        person.setFirstName("schnullibulli"); //ich bin nicht verrückt...
+        
+         Mockito.when(urlaubsanspruchDAO.save((Urlaubsanspruch) (Mockito.any()))).thenAnswer(
+                new Answer() {
+                    public Object answer(InvocationOnMock invocation) {
+                        Object[] args = invocation.getArguments();
+                        Urlaubsanspruch catchedAnspruch = (Urlaubsanspruch) (args[0]);
+                        assertEquals(catchedAnspruch.getPerson().getFirstName(), "schnullibulli");
+                        assertEquals((int) (catchedAnspruch.getVacationDays()), (int) (26)); //int-cast, weil sonst die 1000x überschriebene assertEquals() nicht eindeutig is....
+                        assertEquals((int) (catchedAnspruch.getYear()), (int) (2011));
+                        
+                        return null;
+                    }
+                });
+
+        instance.setUrlaubsanspruchForPerson(person, 2011, 26);
+
+        Mockito.verify(urlaubsanspruchDAO).save((Urlaubsanspruch) (Mockito.any()));
+
+    }
 
     /** Test of getPersonByLogin method, of class PersonServiceImpl. */
     @Test
     @Ignore
     public void testGetPersonByLogin() {
-
-        // DAO-Schrott
+        Person person = new Person();
+        
+        Mockito.when(personDAO.getPersonByLogin("abcdastutnichtweh")).thenReturn(person);
+        Person returnedPerson = instance.getPersonByLogin("abcdastutnichtweh");
+        assertEquals(person, returnedPerson);
     }
 }
