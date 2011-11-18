@@ -67,7 +67,7 @@ public class AntragServiceImplTest {
     @Before
     public void setUp() {
 
-        instance = new AntragServiceImpl(antragDAO, personDAO, urlaubsanspruchDAO, urlaubskontoDAO, kontoService,
+        instance = new AntragServiceImpl(antragDAO, personDAO, kontoService,
                 dateService, pgpService, mailService);
     }
 
@@ -259,8 +259,8 @@ public class AntragServiceImplTest {
         antrag.setEndDate(new DateMidnight(2000, 6, 8));
         antrag.setBeantragteTageNetto(7);
         
-        Mockito.when(urlaubskontoDAO.getUrlaubskontoForDateAndPerson(Mockito.anyInt(), (Person) (Mockito.any()))).thenReturn(konto2000);
-        Mockito.when(urlaubsanspruchDAO.getUrlaubsanspruchByDate(Mockito.anyInt(), (Person) (Mockito.any()))).thenReturn(anspruch2000);
+        Mockito.when(kontoService.getUrlaubskonto(Mockito.anyInt(), (Person) (Mockito.any()))).thenReturn(konto2000);
+        Mockito.when(kontoService.getUrlaubsanspruch(Mockito.anyInt(), (Person) (Mockito.any()))).thenReturn(anspruch2000);
         
         instance.storno(antrag);
         
@@ -283,8 +283,8 @@ public class AntragServiceImplTest {
         antrag.setEndDate(new DateMidnight(2000, 3, 4));
         antrag.setBeantragteTageNetto(2);
         
-        Mockito.when(urlaubskontoDAO.getUrlaubskontoForDateAndPerson(Mockito.anyInt(), (Person) (Mockito.any()))).thenReturn(konto2000);
-        Mockito.when(urlaubsanspruchDAO.getUrlaubsanspruchByDate(Mockito.anyInt(), (Person) (Mockito.any()))).thenReturn(anspruch2000);
+        Mockito.when(kontoService.getUrlaubskonto(Mockito.anyInt(), (Person) (Mockito.any()))).thenReturn(konto2000);
+        Mockito.when(kontoService.getUrlaubsanspruch(Mockito.anyInt(), (Person) (Mockito.any()))).thenReturn(anspruch2000);
         
         instance.storno(antrag);
         
@@ -315,8 +315,8 @@ public class AntragServiceImplTest {
         antrag.setEndDate(endDate);
         antrag.setBeantragteTageNetto(7);
         
-        Mockito.when(urlaubskontoDAO.getUrlaubskontoForDateAndPerson(Mockito.anyInt(), (Person) (Mockito.any()))).thenReturn(konto2000);
-        Mockito.when(urlaubsanspruchDAO.getUrlaubsanspruchByDate(Mockito.anyInt(), (Person) (Mockito.any()))).thenReturn(anspruch2000);
+        Mockito.when(kontoService.getUrlaubskonto(Mockito.anyInt(), (Person) (Mockito.any()))).thenReturn(konto2000);
+        Mockito.when(kontoService.getUrlaubsanspruch(Mockito.anyInt(), (Person) (Mockito.any()))).thenReturn(anspruch2000);
         
         instance.storno(antrag);
         
@@ -349,10 +349,10 @@ public class AntragServiceImplTest {
         antrag.setEndDate(endDate);
         antrag.setBeantragteTageNetto(10);
         
-        Mockito.when(urlaubskontoDAO.getUrlaubskontoForDateAndPerson(Mockito.eq(2000), (Person) (Mockito.any()))).thenReturn(konto2000);
-        Mockito.when(urlaubsanspruchDAO.getUrlaubsanspruchByDate(Mockito.eq(2000), (Person) (Mockito.any()))).thenReturn(anspruch2000);
-        Mockito.when(urlaubskontoDAO.getUrlaubskontoForDateAndPerson(Mockito.eq(2001), (Person) (Mockito.any()))).thenReturn(konto2001);
-        Mockito.when(urlaubsanspruchDAO.getUrlaubsanspruchByDate(Mockito.eq(2001), (Person) (Mockito.any()))).thenReturn(anspruch2001);
+        Mockito.when(kontoService.getUrlaubskonto(Mockito.eq(2000), (Person) (Mockito.any()))).thenReturn(konto2000);
+        Mockito.when(kontoService.getUrlaubsanspruch(Mockito.eq(2000), (Person) (Mockito.any()))).thenReturn(anspruch2000);
+        Mockito.when(kontoService.getUrlaubskonto(Mockito.eq(2001), (Person) (Mockito.any()))).thenReturn(konto2001);
+        Mockito.when(kontoService.getUrlaubsanspruch(Mockito.eq(2001), (Person) (Mockito.any()))).thenReturn(anspruch2001);
         
         instance.storno(antrag);
         
@@ -408,10 +408,58 @@ public class AntragServiceImplTest {
 
     /** Test of krankheitBeachten method, of class AntragServiceImpl. */
     @Test
-    public void testKrankheitBeachten() {
+    public void testKrankheitBeachtenApril() {
 
-        // not yet implemented
-        // fette logik
+        Antrag antrag = new Antrag();
+        
+        Urlaubskonto konto2000 = mock(Urlaubskonto.class);
+        Urlaubsanspruch anspruch2000 = mock(Urlaubsanspruch.class);
+        
+        DateMidnight startDate = new DateMidnight(2000, 2, 5);
+        DateMidnight endDate = new DateMidnight(2000, 2, 15);
+        
+        Mockito.when(konto2000.getVacationDays()).thenReturn(25);
+        Mockito.when(anspruch2000.getVacationDays()).thenReturn(30);
+        
+        antrag.setStartDate(startDate);
+        antrag.setEndDate(endDate);
+        antrag.setBeantragteTageNetto(10);
+        
+        Mockito.when(kontoService.getUrlaubskonto(Mockito.eq(2000), (Person) (Mockito.any()))).thenReturn(konto2000);
+        Mockito.when(kontoService.getUrlaubsanspruch(Mockito.eq(2000), (Person) (Mockito.any()))).thenReturn(anspruch2000);
+        
+        instance.krankheitBeachten(antrag, 6);
+        
+        Mockito.verify(konto2000).setVacationDays(30);    
+        Mockito.verify(konto2000).setRestVacationDays(1);    
+    }
+    
+    
+        /** Test of krankheitBeachten method, of class AntragServiceImpl. */
+    @Test
+    public void testKrankheitBeachtenNOTApril() {
+
+        Antrag antrag = new Antrag();
+        
+        Urlaubskonto konto2000 = mock(Urlaubskonto.class);
+        Urlaubsanspruch anspruch2000 = mock(Urlaubsanspruch.class);
+        
+        DateMidnight startDate = new DateMidnight(2000, 6, 5);
+        DateMidnight endDate = new DateMidnight(2000, 6, 15);
+        
+        Mockito.when(konto2000.getVacationDays()).thenReturn(10);
+        Mockito.when(anspruch2000.getVacationDays()).thenReturn(30);
+        
+        antrag.setStartDate(startDate);
+        antrag.setEndDate(endDate);
+        antrag.setBeantragteTageNetto(10);
+        
+        Mockito.when(kontoService.getUrlaubskonto(Mockito.eq(2000), (Person) (Mockito.any()))).thenReturn(konto2000);
+        Mockito.when(kontoService.getUrlaubsanspruch(Mockito.eq(2000), (Person) (Mockito.any()))).thenReturn(anspruch2000);
+        
+       instance.krankheitBeachten(antrag, 6);
+        
+        Mockito.verify(konto2000).setVacationDays(16);
     }
 
 
