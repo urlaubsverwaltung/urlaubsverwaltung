@@ -4,16 +4,8 @@
  */
 package org.synyx.urlaubsverwaltung.calendar;
 
-import com.google.gdata.util.AuthenticationException;
-import com.google.gdata.util.ServiceException;
-
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
-
-import java.io.IOException;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
 /**
@@ -21,10 +13,7 @@ import java.util.logging.Logger;
  */
 public class OwnCalendarService {
 
-    private final String username = "google.username";
-    private final String password = "google.pw";
-
-    private GoogleCalendarServiceImpl googleCalendarServiceImpl = new GoogleCalendarServiceImpl(username, password);
+    private JollydayCalendar jollydayCalendar = new JollydayCalendar();
 
     /**
      * es wird vorher validiert, dass Startdatum vor dem Enddatum liegt oder gleich dem Enddatum ist
@@ -57,23 +46,23 @@ public class OwnCalendarService {
     }
 
 
-    public Integer getVacationDays(DateMidnight startDate, DateMidnight endDate) {
+    /**
+     * Berechnet wie viele Netto Urlaubstage im angegebenen Zeitraum draufgehen. getWorkDays errechnet die Werktage,
+     * getFeiertage errechnet die Feiertage innerhalb der Werktage. Die Substraktion voneinander ergibt die endgueltigen
+     * Urlaubstage
+     *
+     * @param  startDate
+     * @param  endDate
+     *
+     * @return  Netto Urlaubstage
+     */
+    public Double getVacationDays(DateMidnight startDate, DateMidnight endDate) {
 
-        Integer vacDays = -1;
+        Double vacDays = 0.0;
 
-        try {
-            vacDays = 0;
+        vacDays = getWorkDays(startDate, endDate).doubleValue();
 
-            vacDays = getWorkDays(startDate, endDate);
-
-            vacDays = vacDays - googleCalendarServiceImpl.getFeiertage(startDate.toLocalDate(), endDate.toLocalDate());
-        } catch (AuthenticationException ex) {
-            Logger.getLogger(OwnCalendarService.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(OwnCalendarService.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ServiceException ex) {
-            Logger.getLogger(OwnCalendarService.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        vacDays = vacDays - jollydayCalendar.getFeiertage(startDate, endDate);
 
         return vacDays;
     }
