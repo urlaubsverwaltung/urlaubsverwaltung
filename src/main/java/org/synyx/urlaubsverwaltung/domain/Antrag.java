@@ -30,14 +30,11 @@ public class Antrag extends AbstractPersistable<Integer> {
     @OneToOne
     private Kommentar reasonToDecline;
 
-    // Abwesenheit insgesamt (also plus Feiertage, Wochenende, etc.)
-    private Integer beantragteTageBrutto;
-
     // Anzahl der Tage netto, die vom Urlaubskonto abgezogen werden
-    private Integer beantragteTageNetto;
+    private Double beantragteTageNetto;
 
     // Wenn nachtraeglich hinzugefuegt, werden diese dem Urlaubskonto wieder gutgeschrieben
-    private Integer krankheitsTage;
+    private Double krankheitsTage;
 
     // Zeitraum von wann bis wann
     private DateMidnight startDate;
@@ -99,25 +96,13 @@ public class Antrag extends AbstractPersistable<Integer> {
     }
 
 
-    public Integer getBeantragteTageBrutto() {
-
-        return beantragteTageBrutto;
-    }
-
-
-    public void setBeantragteTageBrutto(Integer beantragteTageBrutto) {
-
-        this.beantragteTageBrutto = beantragteTageBrutto;
-    }
-
-
-    public Integer getBeantragteTageNetto() {
+    public Double getBeantragteTageNetto() {
 
         return beantragteTageNetto;
     }
 
 
-    public void setBeantragteTageNetto(Integer beantragteTageNetto) {
+    public void setBeantragteTageNetto(Double beantragteTageNetto) {
 
         this.beantragteTageNetto = beantragteTageNetto;
     }
@@ -159,13 +144,13 @@ public class Antrag extends AbstractPersistable<Integer> {
     }
 
 
-    public Integer getKrankheitsTage() {
+    public Double getKrankheitsTage() {
 
         return krankheitsTage;
     }
 
 
-    public void setKrankheitsTage(Integer krankheitsTage) {
+    public void setKrankheitsTage(Double krankheitsTage) {
 
         this.krankheitsTage = krankheitsTage;
     }

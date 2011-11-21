@@ -27,22 +27,22 @@ public class Urlaubskonto extends AbstractPersistable<Integer> {
 
     // wieviel darf person noch nehmen im jahr year
     // uebrige Urlaubstage, die noch genommen werden duerfen im Jahr year
-    private Integer vacationDays;
+    private Double vacationDays;
 
     // verbleibender resturlaub im jahr year
-    private Integer restVacationDays;
+    private Double restVacationDays;
 
     // in diesem Jahr benutzter normal-Urlaub
-    private Integer usedVacationDays;
+    private Double usedVacationDays;
 
     // in diesem Jahr benutzter resturlaub
-    private Integer usedRestVacationDays;
+    private Double usedRestVacationDays;
 
     // genommener sonderurlaub im jahr year
-    private Integer sonderUrlaub;
+    private Double sonderUrlaub;
 
     // genommener unbezahlter urlaub im jahr year
-    private Integer unbezahlterUrlaub;
+    private Double unbezahlterUrlaub;
 
     public Person getPerson() {
 
@@ -56,73 +56,73 @@ public class Urlaubskonto extends AbstractPersistable<Integer> {
     }
 
 
-    public Integer getRestVacationDays() {
+    public Double getRestVacationDays() {
 
         return restVacationDays;
     }
 
 
-    public void setRestVacationDays(Integer restVacationDays) {
+    public void setRestVacationDays(Double restVacationDays) {
 
         this.restVacationDays = restVacationDays;
     }
 
 
-    public Integer getSonderUrlaub() {
+    public Double getSonderUrlaub() {
 
         return sonderUrlaub;
     }
 
 
-    public void setSonderUrlaub(Integer sonderUrlaub) {
+    public void setSonderUrlaub(Double sonderUrlaub) {
 
         this.sonderUrlaub = sonderUrlaub;
     }
 
 
-    public Integer getUnbezahlterUrlaub() {
+    public Double getUnbezahlterUrlaub() {
 
         return unbezahlterUrlaub;
     }
 
 
-    public void setUnbezahlterUrlaub(Integer unbezahlterUrlaub) {
+    public void setUnbezahlterUrlaub(Double unbezahlterUrlaub) {
 
         this.unbezahlterUrlaub = unbezahlterUrlaub;
     }
 
 
-    public Integer getUsedRestVacationDays() {
+    public Double getUsedRestVacationDays() {
 
         return usedRestVacationDays;
     }
 
 
-    public void setUsedRestVacationDays(Integer usedRestVacationDays) {
+    public void setUsedRestVacationDays(Double usedRestVacationDays) {
 
         this.usedRestVacationDays = usedRestVacationDays;
     }
 
 
-    public Integer getUsedVacationDays() {
+    public Double getUsedVacationDays() {
 
         return usedVacationDays;
     }
 
 
-    public void setUsedVacationDays(Integer usedVacationDays) {
+    public void setUsedVacationDays(Double usedVacationDays) {
 
         this.usedVacationDays = usedVacationDays;
     }
 
 
-    public Integer getVacationDays() {
+    public Double getVacationDays() {
 
         return vacationDays;
     }
 
 
-    public void setVacationDays(Integer vacationDays) {
+    public void setVacationDays(Double vacationDays) {
 
         this.vacationDays = vacationDays;
     }

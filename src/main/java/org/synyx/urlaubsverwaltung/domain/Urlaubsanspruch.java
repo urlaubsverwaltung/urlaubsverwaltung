@@ -22,7 +22,7 @@ public class Urlaubsanspruch extends AbstractPersistable<Integer> {
     @ManyToOne
     private Person person;
 
-    private Integer vacationDays;
+    private Double vacationDays;
 
     private Integer year;
 
@@ -38,13 +38,13 @@ public class Urlaubsanspruch extends AbstractPersistable<Integer> {
     }
 
 
-    public Integer getVacationDays() {
+    public Double getVacationDays() {
 
         return vacationDays;
     }
 
 
-    public void setVacationDays(Integer vacationDays) {
+    public void setVacationDays(Double vacationDays) {
 
         this.vacationDays = vacationDays;
     }

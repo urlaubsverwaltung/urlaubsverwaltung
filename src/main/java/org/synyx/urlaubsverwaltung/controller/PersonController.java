@@ -179,8 +179,8 @@ public class PersonController {
 
         Integer year = person.getYearForCurrentUrlaubsanspruch();
 
-        kontoService.newUrlaubsanspruch(person, year, person.getCurrentUrlaubsanspruch());
-        kontoService.newUrlaubskonto(person, person.getCurrentUrlaubsanspruch(), 0, year);
+        kontoService.newUrlaubsanspruch(person, year, person.getCurrentUrlaubsanspruch().doubleValue());
+        kontoService.newUrlaubskonto(person, person.getCurrentUrlaubsanspruch().doubleValue(), 0.0, year);
 
         logger.info("Der Mitarbeiter " + person.getFirstName() + " " + person.getLastName() + " wurde editiert.");
         personLogger.info("Der Mitarbeiter " + person.getFirstName() + " " + person.getLastName() + " wurde editiert.");
@@ -230,10 +230,10 @@ public class PersonController {
         personService.save(person);
 
         // neuen Urlaubsanspruch erstellen und speichern
-        kontoService.newUrlaubsanspruch(person, year, person.getCurrentUrlaubsanspruch());
+        kontoService.newUrlaubsanspruch(person, year, person.getCurrentUrlaubsanspruch().doubleValue());
 
         // neues Urlaubskonto erstellen und speichern
-        kontoService.newUrlaubskonto(person, person.getCurrentUrlaubsanspruch(), 0, year);
+        kontoService.newUrlaubskonto(person, person.getCurrentUrlaubsanspruch().doubleValue(), 0.0, year);
 
         Urlaubskonto konto = kontoService.getUrlaubskonto(dateService.getYear(), person);
         person.setUrlaubskonto(konto);

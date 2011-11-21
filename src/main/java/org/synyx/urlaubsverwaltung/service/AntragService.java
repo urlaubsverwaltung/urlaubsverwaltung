@@ -65,7 +65,7 @@ public interface AntragService {
      *
      * @param  antrag
      */
-    void krankheitBeachten(Antrag antrag, Integer krankheitsTage);
+    void krankheitBeachten(Antrag antrag, Double krankheitsTage);
 
 
     /**

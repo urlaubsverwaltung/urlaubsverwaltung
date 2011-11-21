@@ -83,13 +83,13 @@ public class AntragServiceImpl implements AntragService {
             if (konto == null) {
                 // erzeuge konto
                 kontoService.newUrlaubskonto(person,
-                    kontoService.getUrlaubsanspruch(yearStartDate, person).getVacationDays(), 0, yearStartDate);
+                    kontoService.getUrlaubsanspruch(yearStartDate, person).getVacationDays(), 0.0, yearStartDate);
             }
 
             // wenn antrag vor april ist
             if (antrag.getEndDate().getMonthOfYear() < DateTimeConstants.APRIL) {
                 // errechne, wie viele resturlaubstage übrigbleiben würden
-                Integer newRestDays = konto.getRestVacationDays() - antrag.getBeantragteTageNetto();
+                Double newRestDays = konto.getRestVacationDays() - antrag.getBeantragteTageNetto();
 
                 // wenn das weniger sind als 0
                 if (newRestDays < 0) {
@@ -97,7 +97,7 @@ public class AntragServiceImpl implements AntragService {
                     konto.setVacationDays(konto.getVacationDays() + newRestDays);
 
                     // und setze den resturlaub auf 0
-                    konto.setRestVacationDays(0);
+                    konto.setRestVacationDays(0.0);
                 } else {
                     // sonst speichere einfach neue resturlaubstage
                     konto.setRestVacationDays(newRestDays);
@@ -107,22 +107,22 @@ public class AntragServiceImpl implements AntragService {
                 konto.setVacationDays(konto.getVacationDays() - antrag.getBeantragteTageNetto());
             } else {
                 // wenn der antrag über april läuft
-                Integer beforeApril = calendarService.getVacationDays(antrag.getStartDate(),
+                Double beforeApril = calendarService.getVacationDays(antrag.getStartDate(),
                         new DateMidnight(yearStartDate, DateTimeConstants.MARCH, LAST_DAY));
-                Integer afterApril = calendarService.getVacationDays(new DateMidnight(yearEndDate,
+                Double afterApril = calendarService.getVacationDays(new DateMidnight(yearEndDate,
                             DateTimeConstants.APRIL, FIRST_DAY), antrag.getEndDate());
 
                 // errechne, wie viele resturlaubstage übrigbleiben würden
-                Integer newRestDays = konto.getRestVacationDays() - beforeApril;
-                Integer newVacDays = konto.getVacationDays();
+                Double newRestDays = konto.getRestVacationDays() - beforeApril;
+                Double newVacDays = konto.getVacationDays();
 
                 // wenn es weniger wie 0 sind,
-                if (newRestDays < 0) {
+                if (newRestDays < 0.0) {
                     // ziehe differenz von normalen urlaubstagen ab
                     newVacDays = konto.getVacationDays() + newRestDays;
 
                     // und setze resturlaub auf 0
-                    newRestDays = 0;
+                    newRestDays = 0.0;
                 }
 
                 konto.setRestVacationDays(newRestDays);
@@ -132,9 +132,9 @@ public class AntragServiceImpl implements AntragService {
             }
         } else {
             // wenn der antrag über 2 Jahre läuft...
-            Integer beforeJan = calendarService.getVacationDays(antrag.getStartDate(),
+            Double beforeJan = calendarService.getVacationDays(antrag.getStartDate(),
                     new DateMidnight(yearStartDate, DateTimeConstants.DECEMBER, LAST_DAY));
-            Integer afterJan = calendarService.getVacationDays(new DateMidnight(yearEndDate, DateTimeConstants.JANUARY,
+            Double afterJan = calendarService.getVacationDays(new DateMidnight(yearEndDate, DateTimeConstants.JANUARY,
                         FIRST_DAY), antrag.getEndDate());
             Urlaubskonto kontoCurrentYear = kontoService.getUrlaubskonto(yearStartDate, person);
             Urlaubskonto kontoNextYear = kontoService.getUrlaubskonto(yearEndDate, person);
@@ -143,15 +143,15 @@ public class AntragServiceImpl implements AntragService {
             kontoCurrentYear.setVacationDays(kontoCurrentYear.getVacationDays() - beforeJan);
 
             // resturlaub des neuen jahres = einfach die tage nach 1.1. abziehen
-            Integer newRestDays = kontoNextYear.getRestVacationDays() - afterJan;
-            Integer newVacDays = kontoNextYear.getVacationDays();
+            Double newRestDays = kontoNextYear.getRestVacationDays() - afterJan;
+            Double newVacDays = kontoNextYear.getVacationDays();
 
-            if (newRestDays < 0) {
-                // wenn resttage<0, dann ziehe differenz von den normalen urlaubstagen ab..
+            if (newRestDays < 0.0) {
+                // wenn resttage < 0, dann ziehe differenz von den normalen urlaubstagen ab..
                 newVacDays = newVacDays + newRestDays;
 
                 // und setze resturlaub auf 0 (yay)
-                newRestDays = 0;
+                newRestDays = 0.0;
             }
 
             // alles schön abspeichern
@@ -237,9 +237,9 @@ public class AntragServiceImpl implements AntragService {
 
         // Liegen Start- und Enddatum nicht im gleichen Jahr, läuft der Urlaub über den 1.1.
         if (yearStartDate != yearEndDate) {
-            Integer beforeJan = calendarService.getVacationDays(startDate,
+            Double beforeJan = calendarService.getVacationDays(startDate,
                     new DateMidnight(startDate.getYear(), DateTimeConstants.DECEMBER, LAST_DAY));
-            Integer afterJan = calendarService.getVacationDays(new DateMidnight(yearEndDate, DateTimeConstants.JANUARY,
+            Double afterJan = calendarService.getVacationDays(new DateMidnight(yearEndDate, DateTimeConstants.JANUARY,
                         FIRST_DAY), endDate);
 
             // Urlaubskonto für Jahr 2 (vom endDate)
@@ -248,9 +248,9 @@ public class AntragServiceImpl implements AntragService {
             // Urlaubsanspruch für Jahr 2 (vom endDate)
             Urlaubsanspruch anspruchNextYear = kontoService.getUrlaubsanspruch(yearEndDate, person);
 
-            Integer oldVacationDays = kontoCurrentYear.getVacationDays() + beforeJan;
+            Double oldVacationDays = kontoCurrentYear.getVacationDays() + beforeJan;
 
-            Integer newVacationDays = 0;
+            Double newVacationDays = 0.0;
 
             // beforeJan füllt Urlaubskonto von Jahr 1 auf
             // konto1.setVacationDays(konto1.getVacationDays() + beforeJan);
@@ -286,7 +286,7 @@ public class AntragServiceImpl implements AntragService {
             // Berechnung also easy
             if (startDate.getMonthOfYear() >= DateTimeConstants.APRIL
                     && endDate.getMonthOfYear() <= DateTimeConstants.DECEMBER) {
-                Integer gut = antrag.getBeantragteTageNetto();
+                Double gut = antrag.getBeantragteTageNetto();
                 kontoCurrentYear.setVacationDays(gut + kontoCurrentYear.getVacationDays());
             }
 
@@ -305,7 +305,7 @@ public class AntragServiceImpl implements AntragService {
                 // erstmal die nach April Tage (afterApr) aufs Urlaubskonto füllen
                 // konto1.setVacationDays(konto1.getVacationDays() + afterApr);
 
-                Integer newVacationDays = kontoCurrentYear.getVacationDays() + afterApr;
+                Double newVacationDays = kontoCurrentYear.getVacationDays() + afterApr;
 
                 // wenn so das Urlaubskonto gleich dem Anspruch ist,
                 // setze die Tage vor dem April (beforeApr) ins Resturlaubkonto (das sowieso ab 1.4. verfällt)
@@ -334,7 +334,7 @@ public class AntragServiceImpl implements AntragService {
                 // Urlaub ist nach dem 1.1., aber vor dem 1.4., d.h. keine Berührung mit dem 1.4. ganz normal Konto und
                 // evtl. Resturlaub füllen
 
-                Integer gut = antrag.getBeantragteTageNetto() + kontoCurrentYear.getVacationDays();
+                Double gut = antrag.getBeantragteTageNetto() + kontoCurrentYear.getVacationDays();
                 kontoCurrentYear.setVacationDays(gut + kontoCurrentYear.getVacationDays());
 
                 if (gut > anspruchCurrentYear.getVacationDays()) {
@@ -424,7 +424,7 @@ public class AntragServiceImpl implements AntragService {
      * @see  AntragService#krankheitBeachten(org.synyx.urlaubsverwaltung.domain.Antrag, java.lang.Integer)
      */
     @Override
-    public void krankheitBeachten(Antrag antrag, Integer krankheitsTage) {
+    public void krankheitBeachten(Antrag antrag, Double krankheitsTage) {
 
         antrag.setKrankheitsTage(krankheitsTage);
         antrag.setBeantragteTageNetto(antrag.getBeantragteTageNetto() - krankheitsTage);
@@ -435,7 +435,7 @@ public class AntragServiceImpl implements AntragService {
         Urlaubsanspruch anspruch = kontoService.getUrlaubsanspruch(antrag.getStartDate().getYear(), person);
 
         // konto.setVacationDays(krankheitsTage + konto.getVacationDays());
-        Integer newVacDays = krankheitsTage + konto.getVacationDays();
+        Double newVacDays = krankheitsTage + konto.getVacationDays();
 
         if (newVacDays > anspruch.getVacationDays()) {
             // wenn es vor April ist, wird Konto voll gemacht und Resturlaub auch gefüllt

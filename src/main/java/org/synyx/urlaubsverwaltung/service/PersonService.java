@@ -117,5 +117,5 @@ public interface PersonService {
      * @param  year
      * @param  days
      */
-    void setUrlaubsanspruchForPerson(Person person, Integer year, Integer days);
+    void setUrlaubsanspruchForPerson(Person person, Integer year, Double days);
 }

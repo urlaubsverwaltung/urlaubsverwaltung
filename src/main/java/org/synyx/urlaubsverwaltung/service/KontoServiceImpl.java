@@ -42,7 +42,7 @@ public class KontoServiceImpl implements KontoService {
      *       java.lang.Integer)
      */
     @Override
-    public void newUrlaubsanspruch(Person person, Integer year, Integer anspruch) {
+    public void newUrlaubsanspruch(Person person, Integer year, Double anspruch) {
 
         Urlaubsanspruch urlaubsanspruch = new Urlaubsanspruch();
         urlaubsanspruch.setPerson(person);
@@ -78,7 +78,7 @@ public class KontoServiceImpl implements KontoService {
      *       java.lang.Integer, java.lang.Integer)
      */
     @Override
-    public void newUrlaubskonto(Person person, Integer vacDays, Integer restVacDays, Integer year) {
+    public void newUrlaubskonto(Person person, Double vacDays, Double restVacDays, Integer year) {
 
         Urlaubskonto urlaubskonto = new Urlaubskonto();
 

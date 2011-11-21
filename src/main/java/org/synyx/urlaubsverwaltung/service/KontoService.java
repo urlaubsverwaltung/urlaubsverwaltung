@@ -55,7 +55,7 @@ public interface KontoService {
      * @param  year
      * @param  anspruch
      */
-    void newUrlaubsanspruch(Person person, Integer year, Integer anspruch);
+    void newUrlaubsanspruch(Person person, Integer year, Double anspruch);
 
 
     /**
@@ -66,7 +66,7 @@ public interface KontoService {
      * @param  restVacDays
      * @param  year
      */
-    void newUrlaubskonto(Person person, Integer vacDays, Integer restVacDays, Integer year);
+    void newUrlaubskonto(Person person, Double vacDays, Double restVacDays, Integer year);
 
 
     /**

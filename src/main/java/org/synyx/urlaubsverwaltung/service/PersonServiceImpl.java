@@ -92,7 +92,7 @@ public class PersonServiceImpl implements PersonService {
 
         for (Person person : persons) {
             Urlaubskonto currentKonto = kontoService.getUrlaubskonto(DateMidnight.now().getYear(), person);
-            currentKonto.setRestVacationDays(0);
+            currentKonto.setRestVacationDays(0.0);
         }
     }
 
@@ -147,24 +147,24 @@ public class PersonServiceImpl implements PersonService {
                 // wenn das konto noch nicht besteht, trage aktuellen urlaubsanspruch ein
                 // und übertrage kontostand aus altem jahr als resturlaub ins neue
 
-                Integer restDays = kontoService.getUrlaubskonto(year - 1, person).getVacationDays();
+                Double restDays = kontoService.getUrlaubskonto(year - 1, person).getVacationDays();
 
                 // neues Konto anlegen und zurückgeben
                 kontoService.newUrlaubskonto(person, urlaubsanspruch.getVacationDays(), restDays, year);
                 urlaubskonto = kontoService.getUrlaubskonto(year, person);
             } else {
                 // wenn das konto schon besteht..
-                Integer restDays = kontoService.getUrlaubskonto(year - 1, person).getVacationDays();
+                Double restDays = kontoService.getUrlaubskonto(year - 1, person).getVacationDays();
 
                 if (urlaubskonto.getVacationDays() < urlaubsanspruch.getVacationDays()) {
                     // wenn vom urlaubskonto dieses jahres schon tage abgebucht wurden,
                     // muss der resturlaub erst dafür verwendet werden, um das urlaubskonto
                     // wieder aufzufüllen
-                    Integer urlaubsTage;
+                    Double urlaubsTage;
 
                     // urlaubstage enthält alle tage, die die person in diesem jahr hat
                     urlaubsTage = urlaubskonto.getVacationDays() + restDays;
-                    restDays = 0;
+                    restDays = 0.0;
 
                     if (urlaubsTage > urlaubsanspruch.getVacationDays()) {
                         // falls das mehr sind, als er urlaub haben dürfte, so wird der überhang als
@@ -232,7 +232,7 @@ public class PersonServiceImpl implements PersonService {
      *       java.lang.Integer)
      */
     @Override
-    public void setUrlaubsanspruchForPerson(Person person, Integer year, Integer days) {
+    public void setUrlaubsanspruchForPerson(Person person, Integer year, Double days) {
 
         Urlaubsanspruch urlaubsanspruch = new Urlaubsanspruch();
         urlaubsanspruch.setPerson(person);
