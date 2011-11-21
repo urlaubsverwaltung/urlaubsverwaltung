@@ -62,6 +62,7 @@ public class GoogleCalendarServiceImpl implements CalendarService {
 //        return "synyx.de-resourceplanning-$version"; // TODO: get version from somewhere
 //    }
 
+    // soll nur Feiertage ausgeben, die NICHT am Sa oder So sind
     @Override
     public Integer getFeiertage(LocalDate start, LocalDate end) throws AuthenticationException, IOException,
         ServiceException {

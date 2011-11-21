@@ -29,9 +29,6 @@ public class PersonServiceImpl implements PersonService {
     private AntragService antragService;
     private KontoService kontoService;
     private UrlaubsanspruchDAO urlaubsanspruchDAO;
-
-    // wird hier und im anderen service benötigt, weil wir ja
-    // ständig irgendwelche mails schicken müssen... =)
     private MailService mailService;
 
     @Autowired
@@ -210,6 +207,9 @@ public class PersonServiceImpl implements PersonService {
     }
 
 
+    /**
+     * @see  PersonService#getUrlaubsanspruchByPersonAndYear(org.synyx.urlaubsverwaltung.domain.Person, java.lang.Integer)
+     */
     @Override
     public Urlaubsanspruch getUrlaubsanspruchByPersonAndYear(Person person, Integer year) {
 
@@ -217,6 +217,9 @@ public class PersonServiceImpl implements PersonService {
     }
 
 
+    /**
+     * @see  PersonService#getUrlaubsanspruchByPersonForAllYears(org.synyx.urlaubsverwaltung.domain.Person)
+     */
     @Override
     public List<Urlaubsanspruch> getUrlaubsanspruchByPersonForAllYears(Person person) {
 
@@ -224,6 +227,10 @@ public class PersonServiceImpl implements PersonService {
     }
 
 
+    /**
+     * @see  PersonService#setUrlaubsanspruchForPerson(org.synyx.urlaubsverwaltung.domain.Person, java.lang.Integer,
+     *       java.lang.Integer)
+     */
     @Override
     public void setUrlaubsanspruchForPerson(Person person, Integer year, Integer days) {
 
@@ -236,6 +243,9 @@ public class PersonServiceImpl implements PersonService {
     }
 
 
+    /**
+     * @see  PersonService#getPersonByLogin(java.lang.String)
+     */
     @Override
     public Person getPersonByLogin(String loginName) {
 

@@ -37,6 +37,10 @@ public class KontoServiceImpl implements KontoService {
         this.ownCalendarService = ownCalendarService;
     }
 
+    /**
+     * @see  KontoService#newUrlaubsanspruch(org.synyx.urlaubsverwaltung.domain.Person, java.lang.Integer,
+     *       java.lang.Integer)
+     */
     @Override
     public void newUrlaubsanspruch(Person person, Integer year, Integer anspruch) {
 
@@ -49,6 +53,9 @@ public class KontoServiceImpl implements KontoService {
     }
 
 
+    /**
+     * @see  KontoService#saveUrlaubsanspruch(org.synyx.urlaubsverwaltung.domain.Urlaubsanspruch)
+     */
     @Override
     public void saveUrlaubsanspruch(Urlaubsanspruch urlaubsanspruch) {
 
@@ -56,6 +63,9 @@ public class KontoServiceImpl implements KontoService {
     }
 
 
+    /**
+     * @see  KontoService#saveUrlaubskonto(org.synyx.urlaubsverwaltung.domain.Urlaubskonto)
+     */
     @Override
     public void saveUrlaubskonto(Urlaubskonto urlaubskonto) {
 
@@ -63,6 +73,10 @@ public class KontoServiceImpl implements KontoService {
     }
 
 
+    /**
+     * @see  KontoService#newUrlaubskonto(org.synyx.urlaubsverwaltung.domain.Person, java.lang.Integer,
+     *       java.lang.Integer, java.lang.Integer)
+     */
     @Override
     public void newUrlaubskonto(Person person, Integer vacDays, Integer restVacDays, Integer year) {
 
@@ -77,6 +91,9 @@ public class KontoServiceImpl implements KontoService {
     }
 
 
+    /**
+     * @see  KontoService#getUrlaubsanspruch(java.lang.Integer, org.synyx.urlaubsverwaltung.domain.Person)
+     */
     @Override
     public Urlaubsanspruch getUrlaubsanspruch(Integer year, Person person) {
 
@@ -84,6 +101,9 @@ public class KontoServiceImpl implements KontoService {
     }
 
 
+    /**
+     * @see  KontoService#getUrlaubskonto(java.lang.Integer, org.synyx.urlaubsverwaltung.domain.Person)
+     */
     @Override
     public Urlaubskonto getUrlaubskonto(Integer year, Person person) {
 
@@ -91,6 +111,9 @@ public class KontoServiceImpl implements KontoService {
     }
 
 
+    /**
+     * @see  KontoService#getUrlaubskontoForYear(java.lang.Integer)
+     */
     @Override
     public List<Urlaubskonto> getUrlaubskontoForYear(Integer year) {
 

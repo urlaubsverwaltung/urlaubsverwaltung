@@ -60,8 +60,6 @@ public class AntragServiceImpl implements AntragService {
         this.mailService = mailService;
     }
 
-    // Beachte, dass Berechnung von wie viele Tage noch nicht stimmt
-    // Dazu muss Google Kalender benutzt werden, da ja Feiertage dazwischen liegen können
     /**
      * @see  AntragService#save(org.synyx.urlaubsverwaltung.domain.Antrag)
      */
@@ -217,8 +215,6 @@ public class AntragServiceImpl implements AntragService {
     }
 
 
-    // Beachte, dass Berechnung von wie viele Tage noch nicht stimmt
-    // Dazu muss Google Kalender benutzt werden, da ja Feiertage dazwischen liegen können
     /**
      * @see  AntragService#storno(org.synyx.urlaubsverwaltung.domain.Antrag)
      */
@@ -464,6 +460,10 @@ public class AntragServiceImpl implements AntragService {
     }
 
 
+    /**
+     * @see  AntragService#signAntrag(org.synyx.urlaubsverwaltung.domain.Antrag,org.synyx.urlaubsverwaltung.domain.Person,
+     *       boolean)
+     */
     @Override
     public void signAntrag(Antrag antrag, Person signierendePerson, boolean isBoss) throws NoSuchAlgorithmException,
         InvalidKeySpecException {

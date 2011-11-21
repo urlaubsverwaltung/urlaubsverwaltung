@@ -89,11 +89,33 @@ public interface PersonService {
     void getAllUrlauberForThisWeekAndPutItInAnEmail(DateMidnight startDate, DateMidnight endDate);
 
 
+    /**
+     * get a Urlaubsanspruch for a certain year and person
+     *
+     * @param  person
+     * @param  year
+     *
+     * @return
+     */
     Urlaubsanspruch getUrlaubsanspruchByPersonAndYear(Person person, Integer year);
 
 
+    /**
+     * get a list of Urlaubsanspruch for a certain person
+     *
+     * @param  person
+     *
+     * @return
+     */
     List<Urlaubsanspruch> getUrlaubsanspruchByPersonForAllYears(Person person);
 
 
+    /**
+     * edit a person's Urlaubsanspruch (params: year and vacation days)
+     *
+     * @param  person
+     * @param  year
+     * @param  days
+     */
     void setUrlaubsanspruchForPerson(Person person, Integer year, Integer days);
 }
