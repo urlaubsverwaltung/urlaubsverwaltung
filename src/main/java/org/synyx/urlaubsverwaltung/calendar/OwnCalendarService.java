@@ -12,6 +12,9 @@ import org.joda.time.DateTimeConstants;
 
 import java.io.IOException;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 
 /**
  * @author  aljona
@@ -54,14 +57,23 @@ public class OwnCalendarService {
     }
 
 
-    public Integer getVacationDays(DateMidnight startDate, DateMidnight endDate) throws AuthenticationException,
-        IOException, ServiceException {
+    public Integer getVacationDays(DateMidnight startDate, DateMidnight endDate) {
 
-        Integer vacDays = 0;
+        Integer vacDays = -1;
 
-        vacDays = getWorkDays(startDate, endDate);
+        try {
+            vacDays = 0;
 
-        vacDays = vacDays - googleCalendarServiceImpl.getFeiertage(startDate.toLocalDate(), endDate.toLocalDate());
+            vacDays = getWorkDays(startDate, endDate);
+
+            vacDays = vacDays - googleCalendarServiceImpl.getFeiertage(startDate.toLocalDate(), endDate.toLocalDate());
+        } catch (AuthenticationException ex) {
+            Logger.getLogger(OwnCalendarService.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(OwnCalendarService.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ServiceException ex) {
+            Logger.getLogger(OwnCalendarService.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         return vacDays;
     }

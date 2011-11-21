@@ -4,8 +4,6 @@
  */
 package org.synyx.urlaubsverwaltung.service;
 
-import org.joda.time.DateMidnight;
-
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.Urlaubsanspruch;
 import org.synyx.urlaubsverwaltung.domain.Urlaubskonto;
@@ -37,7 +35,4 @@ public interface KontoService {
 
 
     void saveUrlaubskonto(Urlaubskonto urlaubskonto);
-
-
-    void calculateUrlaubskonto(Person person, DateMidnight startDate, DateMidnight endDate);
 }

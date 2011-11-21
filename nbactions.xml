@@ -6,7 +6,7 @@
                 <goal>package</goal>
             </goals>
             <properties>
-                <skipTests>true</skipTests>
+                
                 <netbeans.deploy>true</netbeans.deploy>
             </properties>
         </action>
