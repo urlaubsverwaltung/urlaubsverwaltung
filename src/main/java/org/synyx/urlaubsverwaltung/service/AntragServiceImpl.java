@@ -375,7 +375,6 @@ public class AntragServiceImpl implements AntragService {
     }
 
 
-    // NOT RIGHT YET!!!!!
     /**
      * @see  AntragService#krankheitBeachten(org.synyx.urlaubsverwaltung.domain.Antrag, java.lang.Integer)
      */
@@ -386,30 +385,51 @@ public class AntragServiceImpl implements AntragService {
         antrag.setBeantragteTageNetto(antrag.getBeantragteTageNetto() - krankheitsTage);
 
         Person person = antrag.getPerson();
+        DateMidnight start = antrag.getStartDate();
+        DateMidnight end = antrag.getEndDate();
 
-        Urlaubskonto konto = kontoService.getUrlaubskonto(antrag.getStartDate().getYear(), person);
-        Urlaubsanspruch anspruch = kontoService.getUrlaubsanspruch(antrag.getStartDate().getYear(), person);
+        // wenn nicht im gleichen Jahr
+        if (start.getYear() != end.getYear()) {
+            Urlaubskonto konto = kontoService.getUrlaubskonto(end.getYear(), person);
 
-        // konto.setVacationDays(krankheitsTage + konto.getVacationDays());
-        Double newVacDays = krankheitsTage + konto.getVacationDays();
-
-        if (newVacDays > anspruch.getVacationDays()) {
-            // wenn es vor April ist, wird Konto voll gemacht und Resturlaub auch gefüllt
-            if (antrag.getEndDate().getMonthOfYear() < DateTimeConstants.APRIL) {
-                konto.setRestVacationDays(newVacDays - anspruch.getVacationDays());
-
-                // konto.setVacationDays(anspruch.getVacationDays());
-                newVacDays = anspruch.getVacationDays();
+            if (konto == null) {
+                // erzeuge konto
+                kontoService.newUrlaubskonto(person,
+                    kontoService.getUrlaubsanspruch(end.getYear(), person).getVacationDays(), 0.0, end.getYear());
+                konto = kontoService.getUrlaubskonto(end.getYear(), person);
             }
 
-            // wenn es nach April ist, hat der Mensch halt Pech gehabt
-            // kriegt nur Konto bis zum Ende befüllt, aber Resturlaub gibbets nicht
-            if (antrag.getEndDate().getMonthOfYear() >= DateTimeConstants.APRIL) {
-                konto.setVacationDays(anspruch.getVacationDays());
+            konto.setVacationDays(konto.getVacationDays() + krankheitsTage);
+
+            if (konto.getVacationDays() > kontoService.getUrlaubsanspruch(end.getYear(), person).getVacationDays()) {
+                konto.setRestVacationDays(konto.getRestVacationDays()
+                    + (konto.getVacationDays()
+                        - kontoService.getUrlaubsanspruch(end.getYear(), person).getVacationDays()));
+                konto.setVacationDays(kontoService.getUrlaubsanspruch(end.getYear(), person).getVacationDays());
             }
+        } else {
+            // im gleichen Jahr
+            Urlaubskonto konto = kontoService.getUrlaubskonto(start.getYear(), person);
+            Urlaubsanspruch anspruch = kontoService.getUrlaubsanspruch(start.getYear(), person);
+
+            Double newVacDays = krankheitsTage + konto.getVacationDays();
+
+            if (newVacDays > anspruch.getVacationDays()) {
+                // wenn es vor April ist, wird Konto voll gemacht und Resturlaub auch gefüllt
+                if (antrag.getEndDate().getMonthOfYear() < DateTimeConstants.APRIL) {
+                    konto.setRestVacationDays(newVacDays - anspruch.getVacationDays());
+                    newVacDays = anspruch.getVacationDays();
+                }
+
+                // wenn es nach April ist, hat der Mensch halt Pech gehabt
+                // kriegt nur Konto bis zum Ende befüllt, aber Resturlaub gibbets nicht
+                if (antrag.getEndDate().getMonthOfYear() >= DateTimeConstants.APRIL) {
+                    newVacDays = anspruch.getVacationDays();
+                }
+            }
+
+            konto.setVacationDays(newVacDays);
         }
-
-        konto.setVacationDays(newVacDays);
 
         antragDAO.save(antrag);
         personService.save(person);
