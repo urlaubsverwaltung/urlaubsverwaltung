@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.dao.UrlaubsanspruchDAO;
 import org.synyx.urlaubsverwaltung.dao.UrlaubskontoDAO;
 import org.synyx.urlaubsverwaltung.domain.Person;
@@ -26,15 +25,12 @@ public class KontoServiceImpl implements KontoService {
 
     private UrlaubskontoDAO urlaubskontoDAO;
     private UrlaubsanspruchDAO urlaubsanspruchDAO;
-    private OwnCalendarService ownCalendarService;
 
     @Autowired
-    public KontoServiceImpl(UrlaubskontoDAO urlaubskontoDAO, UrlaubsanspruchDAO urlaubsanspruchDAO,
-        OwnCalendarService ownCalendarService) {
+    public KontoServiceImpl(UrlaubskontoDAO urlaubskontoDAO, UrlaubsanspruchDAO urlaubsanspruchDAO) {
 
         this.urlaubskontoDAO = urlaubskontoDAO;
         this.urlaubsanspruchDAO = urlaubsanspruchDAO;
-        this.ownCalendarService = ownCalendarService;
     }
 
     /**
