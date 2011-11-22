@@ -11,12 +11,12 @@ import org.junit.AfterClass;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
+
+import org.mockito.Mockito;
 
 import static org.mockito.Mockito.mock;
 
@@ -25,6 +25,7 @@ import org.synyx.urlaubsverwaltung.dao.AntragDAO;
 import org.synyx.urlaubsverwaltung.domain.Antrag;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.State;
+import org.synyx.urlaubsverwaltung.domain.Urlaubsanspruch;
 import org.synyx.urlaubsverwaltung.domain.Urlaubskonto;
 import org.synyx.urlaubsverwaltung.domain.VacationType;
 
@@ -37,7 +38,9 @@ public class AntragServiceImplTest {
     private AntragServiceImpl instance;
     private Antrag antrag;
     private Person person;
-    private Urlaubskonto konto;
+    private Urlaubskonto kontoOne;
+    private Urlaubskonto kontoTwo;
+    private Urlaubsanspruch anspruch;
 
     private AntragDAO antragDAO = mock(AntragDAO.class);
     private KontoService kontoService = mock(KontoService.class);
@@ -74,8 +77,18 @@ public class AntragServiceImplTest {
         antrag.setPerson(person);
 
         // konto fuer person erzeugen
-        konto = new Urlaubskonto();
-        konto.setPerson(person);
+        kontoOne = new Urlaubskonto();
+        kontoOne.setPerson(person);
+
+        kontoTwo = new Urlaubskonto();
+        kontoTwo.setPerson(person);
+
+        anspruch = new Urlaubsanspruch();
+        anspruch.setPerson(person);
+
+        Mockito.when(kontoService.getUrlaubskonto(2011, person)).thenReturn(kontoOne);
+        Mockito.when(kontoService.getUrlaubskonto(2012, person)).thenReturn(kontoTwo);
+        Mockito.when(kontoService.getUrlaubsanspruch(2011, person)).thenReturn(anspruch);
     }
 
 
@@ -152,105 +165,136 @@ public class AntragServiceImplTest {
 
 
     /** Test of save method, of class AntragServiceImpl. */
-    @Ignore
     @Test
     public void testSave() {
 
-        System.out.println("save");
+        // INTERESTING METHODS ARE IN KONTOSERVICE, SO METHODS ARE TESTED IN KONTOSERVICEIMPLTEST
 
-        Antrag antrag = null;
-        AntragServiceImpl instance = null;
-        instance.save(antrag);
-
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
 
     /** Test of decline method, of class AntragServiceImpl. */
-    @Ignore
     @Test
     public void testDecline() {
 
-        System.out.println("decline");
+        // vorgefertigte Infos setzen
+        Person boss = new Person();
+        boss.setLastName("Testboss");
 
-        Antrag antrag = null;
-        Person boss = null;
-        String reasonToDecline = "";
-        AntragServiceImpl instance = null;
-        instance.decline(antrag, boss, reasonToDecline);
+        String reason = "Einfach so halt, weil ich Bock drauf hab.";
 
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        antrag.setStatus(State.WARTEND);
+
+        // bei Aufruf der Methode werden Infos geaendert/gesetzt
+
+        instance.decline(antrag, boss, reason);
+
+        assertEquals(State.ABGELEHNT, antrag.getStatus());
+
+        assertNotNull(antrag.getBoss());
+        assertEquals(boss, antrag.getBoss());
+
+        assertNotNull(antrag.getReasonToDecline());
+        assertEquals(reason, antrag.getReasonToDecline().getText());
     }
 
 
     /** Test of storno method, of class AntragServiceImpl. */
-    @Ignore
     @Test
     public void testStorno() {
 
-        System.out.println("storno");
+        antrag.setStatus(State.WARTEND);
 
-        Antrag antrag = null;
-        AntragServiceImpl instance = null;
         instance.storno(antrag);
 
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-
-    /** Test of rollbackNoticeJanuary method, of class AntragServiceImpl. */
-    @Ignore
-    @Test
-    public void testRollbackNoticeJanuary() {
-
-        System.out.println("rollbackNoticeJanuary");
-
-        Antrag antrag = null;
-        DateMidnight start = null;
-        DateMidnight end = null;
-        AntragServiceImpl instance = null;
-        instance.rollbackNoticeJanuary(antrag, start, end);
-
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-
-    /** Test of rollbackNoticeApril method, of class AntragServiceImpl. */
-    @Ignore
-    @Test
-    public void testRollbackNoticeApril() {
-
-        System.out.println("rollbackNoticeApril");
-
-        Antrag antrag = null;
-        DateMidnight start = null;
-        DateMidnight end = null;
-        AntragServiceImpl instance = null;
-        instance.rollbackNoticeApril(antrag, start, end);
-
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertEquals(State.STORNIERT, antrag.getStatus());
     }
 
 
     /** Test of krankheitBeachten method, of class AntragServiceImpl. */
-    @Ignore
     @Test
     public void testKrankheitBeachten() {
 
-        System.out.println("krankheitBeachten");
+        // kein Sonderfall:
+        // newVacDays < anspruch
 
-        Antrag antrag = null;
-        Double krankheitsTage = null;
-        AntragServiceImpl instance = null;
+        Double krankheitsTage = 3.0;
+        Double daysStart = 16.0;
+        Double nettoTage = 10.0;
+        Double vacAnspruch = 24.0;
+
+        kontoOne.setRestVacationDays(0.0);
+        kontoOne.setVacationDays(daysStart);
+        kontoOne.setYear(2011);
+
+        antrag.setBeantragteTageNetto(nettoTage);
+        antrag.setStartDate(new DateMidnight(2011, 11, 1));
+        antrag.setEndDate(new DateMidnight(2011, 11, 16));
+
+        anspruch.setVacationDays(vacAnspruch);
+
         instance.krankheitBeachten(antrag, krankheitsTage);
 
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertEquals(krankheitsTage, antrag.getKrankheitsTage(), 0.0);
+        assertEquals((nettoTage - krankheitsTage), antrag.getBeantragteTageNetto(), 0.0);
+
+        assertEquals((daysStart + krankheitsTage), kontoOne.getVacationDays(), 0.0);
+
+        // Sonderfall:
+        // newVacDays > anspruch
+        // UND
+        // es ist vor April
+
+        krankheitsTage = 10.0;
+        nettoTage = 15.0;
+        daysStart = 20.0;
+        vacAnspruch = 23.0;
+
+        kontoOne.setRestVacationDays(0.0);
+        kontoOne.setVacationDays(daysStart);
+        kontoOne.setYear(2011);
+
+        antrag.setBeantragteTageNetto(nettoTage);
+        antrag.setStartDate(new DateMidnight(2011, 2, 1));
+        antrag.setEndDate(new DateMidnight(2011, 2, 20));
+
+        anspruch.setVacationDays(vacAnspruch);
+
+        instance.krankheitBeachten(antrag, krankheitsTage);
+
+        assertEquals(krankheitsTage, antrag.getKrankheitsTage(), 0.0);
+        assertEquals((nettoTage - krankheitsTage), antrag.getBeantragteTageNetto(), 0.0);
+
+        assertEquals((krankheitsTage + daysStart) - vacAnspruch, kontoOne.getRestVacationDays(), 0.0);
+        assertEquals((vacAnspruch), kontoOne.getVacationDays(), 0.0);
+
+        // Sonderfall:
+        // newVacDays > anspruch
+        // UND
+        // es ist nach April
+
+        krankheitsTage = 10.0;
+        nettoTage = 12.0;
+        daysStart = 20.0;
+        vacAnspruch = 23.0;
+
+        kontoOne.setRestVacationDays(0.0);
+        kontoOne.setVacationDays(daysStart);
+        kontoOne.setYear(2011);
+
+        antrag.setBeantragteTageNetto(nettoTage);
+        antrag.setStartDate(new DateMidnight(2011, 4, 5));
+        antrag.setEndDate(new DateMidnight(2011, 4, 23));
+
+        anspruch.setVacationDays(vacAnspruch);
+
+        instance.krankheitBeachten(antrag, krankheitsTage);
+
+        assertEquals(krankheitsTage, antrag.getKrankheitsTage(), 0.0);
+        assertEquals((nettoTage - krankheitsTage), antrag.getBeantragteTageNetto(), 0.0);
+
+        assertEquals(0.0, kontoOne.getRestVacationDays(), 0.0);
+        assertEquals((vacAnspruch), kontoOne.getVacationDays(), 0.0);
     }
 
 
@@ -300,9 +344,10 @@ public class AntragServiceImplTest {
         // 5. Tage reichen == true
         // 6. Tage reichen nicht == false
 
-        konto.setRestVacationDays(5.0);
-        konto.setVacationDays(26.0);
-        konto.setYear(2011);
+        // TEST 1 - kein Sonderfall, genug Urlaubstage
+        kontoOne.setRestVacationDays(5.0);
+        kontoOne.setVacationDays(26.0);
+        kontoOne.setYear(2011);
 
         antrag.setStartDate(new DateMidnight(2011, 1, 12));
         antrag.setEndDate(new DateMidnight(2011, 1, 30));
@@ -310,43 +355,61 @@ public class AntragServiceImplTest {
         boolean returnValue = instance.checkAntrag(antrag);
         assertNotNull(returnValue);
         assertEquals(true, returnValue);
-    }
 
+        // TEST 2 - kein Sonderfall, zu wenig Urlaubstage
+        kontoOne.setRestVacationDays(0.0);
+        kontoOne.setVacationDays(5.0);
+        kontoOne.setYear(2011);
 
-    /** Test of noticeJanuary method, of class AntragServiceImpl. */
-    @Ignore
-    @Test
-    public void testNoticeJanuary() {
+        antrag.setStartDate(new DateMidnight(2011, 12, 12));
+        antrag.setEndDate(new DateMidnight(2011, 12, 23));
 
-        System.out.println("noticeJanuary");
+        returnValue = instance.checkAntrag(antrag);
+        assertNotNull(returnValue);
+        assertEquals(false, returnValue);
 
-        Antrag antrag = null;
-        DateMidnight start = null;
-        DateMidnight end = null;
-        boolean mustBeSaved = false;
-        AntragServiceImpl instance = null;
-        instance.noticeJanuary(antrag, start, end, mustBeSaved);
+        // TEST 3 - Sonderfall April, genug Urlaubstage
+        kontoOne.setRestVacationDays(10.0);
+        kontoOne.setVacationDays(26.0);
+        kontoOne.setYear(2011);
 
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
+        antrag.setStartDate(new DateMidnight(2011, 3, 28));
+        antrag.setEndDate(new DateMidnight(2011, 4, 23));
 
+        returnValue = instance.checkAntrag(antrag);
+        assertNotNull(returnValue);
+        assertEquals(true, returnValue);
 
-    /** Test of noticeApril method, of class AntragServiceImpl. */
-    @Ignore
-    @Test
-    public void testNoticeApril() {
+        // TEST 4 - Sonderfall Januar, genug Urlaubstage
+        kontoOne.setRestVacationDays(0.0);
+        kontoOne.setVacationDays(10.0);
+        kontoOne.setYear(2011);
 
-        System.out.println("noticeApril");
+        kontoTwo.setRestVacationDays(2.0);
+        kontoTwo.setVacationDays(26.0);
+        kontoTwo.setYear(2012);
 
-        Antrag antrag = null;
-        Urlaubskonto konto = null;
-        DateMidnight start = null;
-        DateMidnight end = null;
-        AntragServiceImpl instance = null;
-        instance.noticeApril(antrag, konto, start, end);
+        antrag.setStartDate(new DateMidnight(2011, 12, 19));
+        antrag.setEndDate(new DateMidnight(2012, 1, 5));
 
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        returnValue = instance.checkAntrag(antrag);
+        assertNotNull(returnValue);
+        assertEquals(true, returnValue);
+
+        // TEST 5 - Sonderfall Januar, zu wenig Urlaubstage
+        kontoOne.setRestVacationDays(0.0);
+        kontoOne.setVacationDays(5.0);
+        kontoOne.setYear(2011);
+
+        kontoTwo.setRestVacationDays(0.0);
+        kontoTwo.setVacationDays(26.0);
+        kontoTwo.setYear(2012);
+
+        antrag.setStartDate(new DateMidnight(2011, 12, 19));
+        antrag.setEndDate(new DateMidnight(2012, 1, 5));
+
+        returnValue = instance.checkAntrag(antrag);
+        assertNotNull(returnValue);
+        assertEquals(false, returnValue);
     }
 }
