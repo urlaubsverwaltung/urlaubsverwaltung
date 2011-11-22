@@ -20,18 +20,12 @@
     <bean class="org.synyx.urlaubsverwaltung.controller.AntragController">
         <constructor-arg ref="personService" />
         <constructor-arg ref="antragService" />
-        <constructor-arg>
-            <bean class="org.synyx.urlaubsverwaltung.util.DateService" />
-        </constructor-arg>
     </bean>
     
     <bean class="org.synyx.urlaubsverwaltung.controller.PersonController">
         <constructor-arg ref="personService" />
         <constructor-arg ref="antragService" />
         <constructor-arg ref="kontoService" />
-        <constructor-arg>
-            <bean class="org.synyx.urlaubsverwaltung.util.DateService" />
-        </constructor-arg>
         <constructor-arg ref="pgpService" />
     </bean>  
     
