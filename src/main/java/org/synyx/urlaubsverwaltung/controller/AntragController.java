@@ -3,6 +3,9 @@ package org.synyx.urlaubsverwaltung.controller;
 
 import org.apache.log4j.Logger;
 
+import org.joda.time.DateMidnight;
+import org.joda.time.chrono.GregorianChronology;
+
 import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
@@ -18,7 +21,6 @@ import org.synyx.urlaubsverwaltung.domain.State;
 import org.synyx.urlaubsverwaltung.domain.VacationType;
 import org.synyx.urlaubsverwaltung.service.AntragService;
 import org.synyx.urlaubsverwaltung.service.PersonService;
-import org.synyx.urlaubsverwaltung.util.DateService;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -49,13 +51,11 @@ public class AntragController {
 
     private PersonService personService;
     private AntragService antragService;
-    private DateService dateService;
 
-    public AntragController(PersonService personService, AntragService antragService, DateService dateService) {
+    public AntragController(PersonService personService, AntragService antragService) {
 
         this.personService = personService;
         this.antragService = antragService;
-        this.dateService = dateService;
     }
 
     /**
@@ -160,13 +160,14 @@ public class AntragController {
 
         Person person = personService.getPersonByID(mitarbeiterId);
         List<Person> mitarbeiter = personService.getAllPersons();
-        String date = dateService.getDate();
-        Integer year = dateService.getYear();
+        DateMidnight date = DateMidnight.now(GregorianChronology.getInstance());
+        String stringDate = date.getDayOfMonth() + "." + date.getMonthOfYear() + "." + date.getYear();
+        Integer year = date.getYear();
         Antrag antrag = new Antrag();
 
         model.addAttribute(PERSON_ATTRIBUTE_NAME, person);
         model.addAttribute(MITARBEITER_ATTRIBUTE_NAME, mitarbeiter);
-        model.addAttribute("date", date);
+        model.addAttribute("date", stringDate);
         model.addAttribute("year", year);
         model.addAttribute(ANTRAG_ATTRIBUTE_NAME, antrag);
         model.addAttribute("vacTypes", VacationType.values());

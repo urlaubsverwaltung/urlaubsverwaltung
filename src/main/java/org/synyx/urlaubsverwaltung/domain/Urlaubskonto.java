@@ -32,11 +32,8 @@ public class Urlaubskonto extends AbstractPersistable<Integer> {
     // verbleibender resturlaub im jahr year
     private Double restVacationDays;
 
-    // in diesem Jahr benutzter normal-Urlaub
+    // in diesem Jahr benutzte Urlaubstage
     private Double usedVacationDays;
-
-    // in diesem Jahr benutzter resturlaub
-    private Double usedRestVacationDays;
 
     // genommener sonderurlaub im jahr year
     private Double sonderUrlaub;
@@ -89,18 +86,6 @@ public class Urlaubskonto extends AbstractPersistable<Integer> {
     public void setUnbezahlterUrlaub(Double unbezahlterUrlaub) {
 
         this.unbezahlterUrlaub = unbezahlterUrlaub;
-    }
-
-
-    public Double getUsedRestVacationDays() {
-
-        return usedRestVacationDays;
-    }
-
-
-    public void setUsedRestVacationDays(Double usedRestVacationDays) {
-
-        this.usedRestVacationDays = usedRestVacationDays;
     }
 
 

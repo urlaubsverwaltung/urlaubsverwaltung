@@ -3,6 +3,9 @@ package org.synyx.urlaubsverwaltung.controller;
 
 import org.apache.log4j.Logger;
 
+import org.joda.time.DateMidnight;
+import org.joda.time.chrono.GregorianChronology;
+
 import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
@@ -19,7 +22,6 @@ import org.synyx.urlaubsverwaltung.service.AntragService;
 import org.synyx.urlaubsverwaltung.service.KontoService;
 import org.synyx.urlaubsverwaltung.service.PGPService;
 import org.synyx.urlaubsverwaltung.service.PersonService;
-import org.synyx.urlaubsverwaltung.util.DateService;
 
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
@@ -45,16 +47,14 @@ public class PersonController {
     private PersonService personService;
     private AntragService antragService;
     private KontoService kontoService;
-    private DateService dateService;
     private PGPService pgpService;
 
     public PersonController(PersonService personService, AntragService antragService, KontoService kontoService,
-        DateService dateService, PGPService pgpService) {
+        PGPService pgpService) {
 
         this.personService = personService;
         this.antragService = antragService;
         this.kontoService = kontoService;
-        this.dateService = dateService;
         this.pgpService = pgpService;
     }
 
@@ -69,9 +69,10 @@ public class PersonController {
     public String showMitarbeiterList(Model model) {
 
         List<Person> mitarbeiter = personService.getAllPersons();
+        Integer year = DateMidnight.now(GregorianChronology.getInstance()).getYear();
 
         for (Person person : mitarbeiter) {
-            Urlaubskonto urlaubskonto = kontoService.getUrlaubskonto(dateService.getYear(), person);
+            Urlaubskonto urlaubskonto = kontoService.getUrlaubskonto(year, person);
             person.setUrlaubskonto(urlaubskonto);
         }
 
@@ -95,9 +96,10 @@ public class PersonController {
     public String showMitarbeiterDetail(Model model) {
 
         List<Person> mitarbeiter = personService.getAllPersons();
+        Integer year = DateMidnight.now(GregorianChronology.getInstance()).getYear();
 
         for (Person person : mitarbeiter) {
-            Urlaubskonto urlaubskonto = kontoService.getUrlaubskonto(dateService.getYear(), person);
+            Urlaubskonto urlaubskonto = kontoService.getUrlaubskonto(year, person);
             person.setUrlaubskonto(urlaubskonto);
         }
 
@@ -121,7 +123,7 @@ public class PersonController {
     @RequestMapping(value = "/mitarbeiter/{mitarbeiterId}/overview", method = RequestMethod.GET)
     public String showOverview(@PathVariable(MITARBEITER_ID) Integer mitarbeiterId, Model model) {
 
-        Integer year = dateService.getYear();
+        Integer year = DateMidnight.now(GregorianChronology.getInstance()).getYear();
 
         Person person = personService.getPersonByID(mitarbeiterId);
 
@@ -217,7 +219,7 @@ public class PersonController {
     @RequestMapping(value = "/mitarbeiter/new", method = RequestMethod.POST)
     public String newPerson(@ModelAttribute(PERSON_ATTRIBUTE_NAME) Person person) {
 
-        Integer year = dateService.getYear();
+        Integer year = DateMidnight.now(GregorianChronology.getInstance()).getYear();
 
         try {
             KeyPair keyPair = pgpService.generateKeyPair();
@@ -235,7 +237,7 @@ public class PersonController {
         // neues Urlaubskonto erstellen und speichern
         kontoService.newUrlaubskonto(person, person.getCurrentUrlaubsanspruch().doubleValue(), 0.0, year);
 
-        Urlaubskonto konto = kontoService.getUrlaubskonto(dateService.getYear(), person);
+        Urlaubskonto konto = kontoService.getUrlaubskonto(year, person);
         person.setUrlaubskonto(konto);
 
         logger.info("Neue Person angelegt: " + person.getFirstName() + " " + person.getLastName());

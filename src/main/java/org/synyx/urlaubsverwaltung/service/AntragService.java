@@ -123,4 +123,15 @@ public interface AntragService {
      */
     void signAntrag(Antrag antrag, Person signierendePerson, boolean isBoss) throws NoSuchAlgorithmException,
         InvalidKeySpecException;
+
+
+    /**
+     * ueberprueft, ob antrag wirklich gestellt werden kann oder ob gewuenschter urlaubszeitraum das urlaubskonto des
+     * antragstellers sprengt.
+     *
+     * @param  antrag
+     *
+     * @return
+     */
+    boolean checkAntrag(Antrag antrag);
 }
