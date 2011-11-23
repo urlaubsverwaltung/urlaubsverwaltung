@@ -98,7 +98,6 @@
             <groupId>de.jollyday</groupId>
             <artifactId>jollyday</artifactId>
             <version>0.4.4</version>
-            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>javax</groupId>
