@@ -38,18 +38,16 @@ public class AntragServiceImpl implements AntragService {
     private KontoService kontoService;
     private PGPService pgpService;
     private OwnCalendarService calendarService;
-    private PersonService personService;
     private MailService mailService;
 
     @Autowired
     public AntragServiceImpl(AntragDAO antragDAO, KontoService kontoService, PGPService pgpService,
-        OwnCalendarService calendarService, PersonService personService, MailService mailService) {
+        OwnCalendarService calendarService, MailService mailService) {
 
         this.antragDAO = antragDAO;
         this.kontoService = kontoService;
         this.pgpService = pgpService;
         this.calendarService = calendarService;
-        this.personService = personService;
         this.mailService = mailService;
     }
 
@@ -285,7 +283,6 @@ public class AntragServiceImpl implements AntragService {
         }
 
         antragDAO.save(antrag);
-        personService.save(person);
     }
 
 

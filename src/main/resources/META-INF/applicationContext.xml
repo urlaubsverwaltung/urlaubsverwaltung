@@ -34,12 +34,19 @@
 <repository:repositories base-package="org.synyx.urlaubsverwaltung.**.dao" />
 
 <bean id="ownCalendarService" class="org.synyx.urlaubsverwaltung.calendar.OwnCalendarService" />
-<bean id="kontoService" class="org.synyx.urlaubsverwaltung.service.KontoServiceImpl" />
-<bean id="personService" class="org.synyx.urlaubsverwaltung.service.PersonServiceImpl" />
+<bean id="kontoService" class="org.synyx.urlaubsverwaltung.service.KontoServiceImpl">
+    <constructor-arg ref="ownCalendarService" />
+</bean>
+<bean id="personService" class="org.synyx.urlaubsverwaltung.service.PersonServiceImpl">
+    <constructor-arg ref="antragService" />
+    <constructor-arg ref="kontoService" />
+    <constructor-arg ref="mailService" />
+</bean>    
 <bean id="antragService" class="org.synyx.urlaubsverwaltung.service.AntragServiceImpl">
-    <constructor-arg>
-        <bean class="org.synyx.urlaubsverwaltung.util.DateService" />
-    </constructor-arg>
+    <constructor-arg ref="kontoService" />
+    <constructor-arg ref="pgpService" />
+    <constructor-arg ref="ownCalendarService" />
+    <constructor-arg ref="mailService" />
 </bean>    
 <bean id="mailService" class="org.synyx.urlaubsverwaltung.service.MailServiceImpl">
        <constructor-arg>

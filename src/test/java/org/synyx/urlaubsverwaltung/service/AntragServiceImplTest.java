@@ -46,7 +46,6 @@ public class AntragServiceImplTest {
     private KontoService kontoService = mock(KontoService.class);
     private PGPService pgpService = new PGPService();
     private OwnCalendarService calendarService = new OwnCalendarService();
-    private PersonService personService = mock(PersonService.class);
     private MailService mailService = mock(MailService.class);
 
     public AntragServiceImplTest() {
@@ -65,8 +64,7 @@ public class AntragServiceImplTest {
     @Before
     public void setUp() {
 
-        instance = new AntragServiceImpl(antragDAO, kontoService, pgpService, calendarService, personService,
-                mailService);
+        instance = new AntragServiceImpl(antragDAO, kontoService, pgpService, calendarService, mailService);
 
         // person erzeugen, die fuer tests gebraucht wird
         person = new Person();
