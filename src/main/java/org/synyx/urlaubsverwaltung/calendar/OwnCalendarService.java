@@ -58,9 +58,7 @@ public class OwnCalendarService {
      */
     public Double getVacationDays(DateMidnight startDate, DateMidnight endDate) {
 
-        Double vacDays = 0.0;
-
-        vacDays = getWorkDays(startDate, endDate).doubleValue();
+        Double vacDays = getWorkDays(startDate, endDate).doubleValue();
 
         vacDays = vacDays - jollydayCalendar.getFeiertage(startDate, endDate);
 

@@ -212,7 +212,7 @@ public class Antrag extends AbstractPersistable<Integer> {
 
     public void setSignedDataBoss(byte[] signedDataBoss) {
 
-        this.signedDataBoss = signedDataBoss;
+        this.signedDataBoss = signedDataBoss.clone();
     }
 
 
@@ -224,7 +224,7 @@ public class Antrag extends AbstractPersistable<Integer> {
 
     public void setSignedDataPerson(byte[] signedDataPerson) {
 
-        this.signedDataPerson = signedDataPerson;
+        this.signedDataPerson = signedDataPerson.clone();
     }
 
 

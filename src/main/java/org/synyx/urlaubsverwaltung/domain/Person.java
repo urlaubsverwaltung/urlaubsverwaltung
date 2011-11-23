@@ -227,7 +227,7 @@ public class Person extends AbstractPersistable<Integer> {
 
     public void setPrivateKey(byte[] privateKey) {
 
-        this.privateKey = privateKey;
+        this.privateKey = privateKey.clone();
     }
 
 
@@ -239,6 +239,6 @@ public class Person extends AbstractPersistable<Integer> {
 
     public void setPublicKey(byte[] publicKey) {
 
-        this.publicKey = publicKey;
+        this.publicKey = publicKey.clone();
     }
 }

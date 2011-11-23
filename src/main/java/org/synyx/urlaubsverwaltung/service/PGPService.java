@@ -154,16 +154,15 @@ public class PGPService {
     }
 
 
-    /**
-     * just prints encoded signature
-     *
-     * @param  signature
-     */
-    public void printSignature(byte[] signature) {
-
-        System.out.println(new BASE64Encoder().encode(signature));
-    }
-
+//    /**
+//     * just prints encoded signature
+//     *
+//     * @param  signature
+//     */
+//    public void printSignature(byte[] signature) {
+//
+//        System.out.println(new BASE64Encoder().encode(signature));
+//    }
 
     /**
      * get encoded signature

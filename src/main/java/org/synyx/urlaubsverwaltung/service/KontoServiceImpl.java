@@ -178,8 +178,6 @@ public class KontoServiceImpl implements KontoService {
 
         Double oldVacationDays = kontoCurrentYear.getVacationDays() + beforeJan;
 
-        Double newVacationDays = 0.0;
-
         // beforeJan füllt Urlaubskonto von Jahr 1 auf
         // konto1.setVacationDays(konto1.getVacationDays() + beforeJan);
 
@@ -195,7 +193,7 @@ public class KontoServiceImpl implements KontoService {
         // afterJan füllt Urlaubskonto von Jahr 2 auf
         // konto2.setVacationDays(konto2.getVacationDays() + afterJan);
 
-        newVacationDays = kontoNextYear.getVacationDays() + afterJan;
+        Double newVacationDays = kontoNextYear.getVacationDays() + afterJan;
 
         // wenn Urlaubskonto Anspruch überschreitet, muss stattdessen Resturlaub aufgefüllt werden
         if (newVacationDays > anspruchNextYear) {
@@ -237,38 +235,44 @@ public class KontoServiceImpl implements KontoService {
             }
         } else if (start.getMonthOfYear() <= DateTimeConstants.MARCH
                 && end.getMonthOfYear() >= DateTimeConstants.APRIL) {
-            // Urlaub laeuft ueber den 1.4.
-            Double beforeApr = calendarService.getVacationDays(start,
-                    new DateMidnight(start.getYear(), DateTimeConstants.MARCH, LAST_DAY));
-            Double afterApr = calendarService.getVacationDays(new DateMidnight(start.getYear(), DateTimeConstants.APRIL,
-                        FIRST_DAY), end);
+            rollbackOverApril(konto, anspruch, start, end);
+        }
+    }
 
-            // erstmal die nach April Tage (afterApr) aufs Urlaubskonto füllen
-            // konto1.setVacationDays(konto1.getVacationDays() + afterApr);
 
-            Double newVacationDays = konto.getVacationDays() + afterApr;
+    public void rollbackOverApril(Urlaubskonto konto, Double anspruch, DateMidnight start, DateMidnight end) {
 
-            // wenn so das Urlaubskonto gleich dem Anspruch ist,
-            // setze die Tage vor dem April (beforeApr) ins Resturlaubkonto (das sowieso ab 1.4. verfällt)
-            if (newVacationDays.equals(anspruch)) {
-                konto.setRestVacationDays(konto.getRestVacationDays() + beforeApr);
+        // Urlaub laeuft ueber den 1.4.
+        Double beforeApr = calendarService.getVacationDays(start,
+                new DateMidnight(start.getYear(), DateTimeConstants.MARCH, LAST_DAY));
+        Double afterApr = calendarService.getVacationDays(new DateMidnight(start.getYear(), DateTimeConstants.APRIL,
+                    FIRST_DAY), end);
+
+        // erstmal die nach April Tage (afterApr) aufs Urlaubskonto füllen
+        // konto1.setVacationDays(konto1.getVacationDays() + afterApr);
+
+        Double newVacationDays = konto.getVacationDays() + afterApr;
+
+        // wenn so das Urlaubskonto gleich dem Anspruch ist,
+        // setze die Tage vor dem April (beforeApr) ins Resturlaubkonto (das sowieso ab 1.4. verfällt)
+        if (newVacationDays.equals(anspruch)) {
+            konto.setRestVacationDays(konto.getRestVacationDays() + beforeApr);
+            konto.setVacationDays(newVacationDays);
+        } else if (konto.getVacationDays() < anspruch) {
+            // wenn das Auffüllen mit afterApr das Konto noch nicht zum Überlaufen gebracht hat
+            // d.h. urlaubskonto < anspruch
+            // addiere beforeApr dazu
+            // konto1.setVacationDays(konto1.getVacationDays() + beforeApr);
+            newVacationDays = newVacationDays + beforeApr;
+
+            // wenn so das urlaubskonto überquillt
+            // d.h. urlaubskonto > anspruch
+            if (newVacationDays >= anspruch) {
+                // schmeiss den überhängenden scheiss in den resturlaub
+                konto.setRestVacationDays(konto.getRestVacationDays() + (newVacationDays - anspruch));
+                konto.setVacationDays(anspruch);
+            } else {
                 konto.setVacationDays(newVacationDays);
-            } else if (konto.getVacationDays() < anspruch) {
-                // wenn das Auffüllen mit afterApr das Konto noch nicht zum Überlaufen gebracht hat
-                // d.h. urlaubskonto < anspruch
-                // addiere beforeApr dazu
-                // konto1.setVacationDays(konto1.getVacationDays() + beforeApr);
-                newVacationDays = newVacationDays + beforeApr;
-
-                // wenn so das urlaubskonto überquillt
-                // d.h. urlaubskonto > anspruch
-                if (newVacationDays >= anspruch) {
-                    // schmeiss den überhängenden scheiss in den resturlaub
-                    konto.setRestVacationDays(konto.getRestVacationDays() + (newVacationDays - anspruch));
-                    konto.setVacationDays(anspruch);
-                } else {
-                    konto.setVacationDays(newVacationDays);
-                }
             }
         }
     }

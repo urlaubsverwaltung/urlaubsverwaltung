@@ -322,92 +322,111 @@ public class AntragServiceImpl implements AntragService {
     @Override
     public boolean checkAntrag(Antrag antrag) {
 
-        Double days;
-        Person person = antrag.getPerson();
-
         DateMidnight start = antrag.getStartDate();
         DateMidnight end = antrag.getEndDate();
 
         // liegen Datumsangaben im gleichen Jahr?
         // wenn sich der antrag nur in einem jahr befindet
         if (start.getYear() == end.getYear()) {
-            // hole urlaubskonto
-            Urlaubskonto konto = kontoService.getUrlaubskonto(start.getYear(), person);
-
-            // wenn noch nicht angelegt
-            if (konto == null) {
-                // erzeuge konto
-                kontoService.newUrlaubskonto(person,
-                    kontoService.getUrlaubsanspruch(start.getYear(), person).getVacationDays(), 0.0, start.getYear());
-            }
-
-            // wenn antrag vor april ist
-            if (antrag.getEndDate().getMonthOfYear() < DateTimeConstants.APRIL) {
-                days = calendarService.getVacationDays(start, end);
-
-                if (((konto.getRestVacationDays() + konto.getVacationDays()) - days) >= 0) {
-                    return true;
-                }
-            } else if (antrag.getStartDate().getMonthOfYear() >= DateTimeConstants.APRIL) {
-                // wenn der antrag nach april ist, gibt's keinen resturlaub mehr
-
-                days = calendarService.getVacationDays(start, end);
-
-                if ((konto.getVacationDays() - days) >= 0) {
-                    return true;
-                }
-            } else {
-                // wenn der antrag über april läuft
-                Double beforeApril = calendarService.getVacationDays(antrag.getStartDate(),
-                        new DateMidnight(start.getYear(), DateTimeConstants.MARCH, LAST_DAY));
-                Double afterApril = calendarService.getVacationDays(new DateMidnight(end.getYear(),
-                            DateTimeConstants.APRIL, FIRST_DAY), antrag.getEndDate());
-
-                // erstmal beforeApril vom Resturlaub abziehen
-                Double zwischenergebnis = konto.getRestVacationDays() - beforeApril;
-
-                // wenn Resturlaub nicht ausreicht, um beforeApril wegzukriegen
-                // muss beforeApril noch vom normalen Urlaub abgezogen werden
-                // ansonsten eben nicht mehr
-                if (zwischenergebnis > 0) {
-                    beforeApril = -1.0 * (konto.getRestVacationDays() - beforeApril);
-                } else {
-                    beforeApril = 0.0;
-                }
-
-                if ((konto.getVacationDays() - (beforeApril + afterApril)) >= 0) {
-                    return true;
-                }
-            }
+            return checkAntragOneYear(antrag, start, end);
         } else {
             // Antrag laeuft ueber 2 jahre
 
-            // hole urlaubskonten
-            Urlaubskonto kontoCurrentYear = kontoService.getUrlaubskonto(start.getYear(), person);
-            Urlaubskonto kontoNextYear = kontoService.getUrlaubskonto(end.getYear(), person);
+            return checkAntragTwoYears(antrag, start, end);
+        }
+    }
 
-            // wenn noch nicht angelegt
-            if (kontoCurrentYear == null) {
-                // erzeuge konto
-                kontoService.newUrlaubskonto(person,
-                    kontoService.getUrlaubsanspruch(start.getYear(), person).getVacationDays(), 0.0, start.getYear());
-            }
 
-            if (kontoNextYear == null) {
-                // erzeuge konto
-                kontoService.newUrlaubskonto(person,
-                    kontoService.getUrlaubsanspruch(end.getYear(), person).getVacationDays(), 0.0, end.getYear());
-            }
+    public boolean checkAntragOneYear(Antrag antrag, DateMidnight start, DateMidnight end) {
 
-            Double beforeJan = calendarService.getVacationDays(antrag.getStartDate(),
-                    new DateMidnight(start.getYear(), DateTimeConstants.DECEMBER, LAST_DAY));
-            Double afterJan = calendarService.getVacationDays(new DateMidnight(end.getYear(), DateTimeConstants.JANUARY,
-                        FIRST_DAY), antrag.getEndDate());
+        Double days;
 
-            if (((kontoCurrentYear.getVacationDays() - beforeJan) >= 0)
-                    && ((kontoNextYear.getVacationDays() + kontoNextYear.getRestVacationDays() - afterJan) >= 0)) {
+        Person person = antrag.getPerson();
+
+        // hole urlaubskonto
+        Urlaubskonto konto = kontoService.getUrlaubskonto(start.getYear(), person);
+
+        // wenn noch nicht angelegt
+        if (konto == null) {
+            // erzeuge konto
+            kontoService.newUrlaubskonto(person,
+                kontoService.getUrlaubsanspruch(start.getYear(), person).getVacationDays(), 0.0, start.getYear());
+        }
+
+        // wenn antrag vor april ist
+        if (antrag.getEndDate().getMonthOfYear() < DateTimeConstants.APRIL) {
+            days = calendarService.getVacationDays(start, end);
+
+            if (((konto.getRestVacationDays() + konto.getVacationDays()) - days) >= 0) {
                 return true;
             }
+        } else if (antrag.getStartDate().getMonthOfYear() >= DateTimeConstants.APRIL) {
+            // wenn der antrag nach april ist, gibt's keinen resturlaub mehr
+
+            days = calendarService.getVacationDays(start, end);
+
+            if ((konto.getVacationDays() - days) >= 0) {
+                return true;
+            }
+        } else {
+            // wenn der antrag über april läuft
+            Double beforeApril = calendarService.getVacationDays(antrag.getStartDate(),
+                    new DateMidnight(start.getYear(), DateTimeConstants.MARCH, LAST_DAY));
+            Double afterApril = calendarService.getVacationDays(new DateMidnight(end.getYear(), DateTimeConstants.APRIL,
+                        FIRST_DAY), antrag.getEndDate());
+
+            // erstmal beforeApril vom Resturlaub abziehen
+            Double zwischenergebnis = konto.getRestVacationDays() - beforeApril;
+
+            // wenn Resturlaub nicht ausreicht, um beforeApril wegzukriegen
+            // muss beforeApril noch vom normalen Urlaub abgezogen werden
+            // ansonsten eben nicht mehr
+            if (zwischenergebnis > 0) {
+                beforeApril = -1.0 * (konto.getRestVacationDays() - beforeApril);
+            } else {
+                beforeApril = 0.0;
+            }
+
+            if ((konto.getVacationDays() - (beforeApril + afterApril)) >= 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+    public boolean checkAntragTwoYears(Antrag antrag, DateMidnight start, DateMidnight end) {
+
+        Person person = antrag.getPerson();
+
+        // Antrag laeuft ueber 2 jahre
+
+        // hole urlaubskonten
+        Urlaubskonto kontoCurrentYear = kontoService.getUrlaubskonto(start.getYear(), person);
+        Urlaubskonto kontoNextYear = kontoService.getUrlaubskonto(end.getYear(), person);
+
+        // wenn noch nicht angelegt
+        if (kontoCurrentYear == null) {
+            // erzeuge konto
+            kontoService.newUrlaubskonto(person,
+                kontoService.getUrlaubsanspruch(start.getYear(), person).getVacationDays(), 0.0, start.getYear());
+        }
+
+        if (kontoNextYear == null) {
+            // erzeuge konto
+            kontoService.newUrlaubskonto(person,
+                kontoService.getUrlaubsanspruch(end.getYear(), person).getVacationDays(), 0.0, end.getYear());
+        }
+
+        Double beforeJan = calendarService.getVacationDays(antrag.getStartDate(),
+                new DateMidnight(start.getYear(), DateTimeConstants.DECEMBER, LAST_DAY));
+        Double afterJan = calendarService.getVacationDays(new DateMidnight(end.getYear(), DateTimeConstants.JANUARY,
+                    FIRST_DAY), antrag.getEndDate());
+
+        if (((kontoCurrentYear.getVacationDays() - beforeJan) >= 0)
+                && ((kontoNextYear.getVacationDays() + kontoNextYear.getRestVacationDays() - afterJan) >= 0)) {
+            return true;
         }
 
         return false;

@@ -20,7 +20,10 @@ import java.util.Set;
  */
 public class JollydayCalendar {
 
-    HolidayManager manager = HolidayManager.getInstance("synyx");
+    private static final int HEILIGABEND = 24;
+    private static final int SILVESTER = 31;
+
+    private HolidayManager manager = HolidayManager.getInstance("synyx");
 
     /**
      * Berechnet Anzahl der Feiertage zwischen zwei Datumsangaben. Wenn ein Feiertag auf Samstag oder Sonntag faellt,
@@ -32,10 +35,10 @@ public class JollydayCalendar {
      *
      * @return  Anzahl der Feiertage zwischen startDate und endDate
      */
-    public Double getFeiertage(DateMidnight startDate, DateMidnight endDate) {
+    public Double getFeiertage(DateMidnight start, DateMidnight end) {
 
-        startDate = startDate.withChronology(GregorianChronology.getInstance());
-        endDate = endDate.withChronology(GregorianChronology.getInstance());
+        DateMidnight startDate = start.withChronology(GregorianChronology.getInstance());
+        DateMidnight endDate = end.withChronology(GregorianChronology.getInstance());
 
         // hole alle Feiertage dieses Jahrs
         Set<Holiday> holidays = manager.getHolidays(startDate.getYear());
@@ -45,6 +48,23 @@ public class JollydayCalendar {
 
         // da man waehrend des Iterierens das Element nicht aus dem Set entfernen kann, wird stattdessen ein "echtes
         // Set" erzeugt, in dem alle Feiertage, die NICHT auf ein Wochenende fallen gespeichert sind
+
+        Set<Holiday> feiertageAnWerktagen = getOnlyNotWeekendFeiertage(holidays);
+
+        Double feiertage = 0.0;
+
+        // schaue, ob start- und enddatum gleich sind
+        if (startDate.equals(endDate)) {
+            feiertage = isOneDayFeiertag(feiertageAnWerktagen, startDate);
+        } else {
+            feiertage = howManyFeiertage(feiertageAnWerktagen, startDate, endDate);
+        }
+
+        return feiertage;
+    }
+
+
+    public Set<Holiday> getOnlyNotWeekendFeiertage(Set<Holiday> holidays) {
 
         Set<Holiday> feiertageAnWerktagen = new HashSet<Holiday>();
 
@@ -56,64 +76,74 @@ public class JollydayCalendar {
             }
         }
 
+        return feiertageAnWerktagen;
+    }
+
+
+    public Double isOneDayFeiertag(Set<Holiday> feiertageAnWerktagen, DateMidnight date) {
+
         Double feiertage = 0.0;
 
-        // schaue, ob start- und enddatum gleich sind
-        if (startDate.equals(endDate)) {
+        for (Holiday holiday : feiertageAnWerktagen) {
+            // pruefe, ob datum auf einen feiertag faellt
+            if ((date.toLocalDate()).equals(holiday.getDate())) {
+                // pruefe, ob dieser feiertag silvester oder heiligabend ist
+                // denn diese zaehlen nur zu 0,5 als feiertag
+                if (((holiday.getDate().getDayOfMonth() == HEILIGABEND
+                                && holiday.getDate().getMonthOfYear() == DateTimeConstants.DECEMBER)
+                            || (holiday.getDate().getDayOfMonth() == SILVESTER
+                                && holiday.getDate().getMonthOfYear() == DateTimeConstants.DECEMBER))) {
+                    feiertage = feiertage + 0.5;
+                } else {
+                    // ansonsten wird ganzer feiertag aufaddiert
+                    feiertage = feiertage + 1.0;
+                }
+            }
+        }
+
+        return feiertage;
+    }
+
+
+    public Double howManyFeiertage(Set<Holiday> feiertageAnWerktagen, DateMidnight startDate, DateMidnight endDate) {
+
+        Double feiertage = 0.0;
+
+        DateMidnight date = startDate;
+
+        // iteriere ueber die tage drueber: solange startdatum != enddatum
+        while (!date.equals(endDate)) {
+            // pruefe, ob vorkommender tag ein holiday ist
             for (Holiday holiday : feiertageAnWerktagen) {
                 // pruefe, ob datum auf einen feiertag faellt
-                if ((startDate.toLocalDate()).equals(holiday.getDate())) {
+                if ((date.toLocalDate()).equals(holiday.getDate())) {
                     // pruefe, ob dieser feiertag silvester oder heiligabend ist
                     // denn diese zaehlen nur zu 0,5 als feiertag
-                    if (((holiday.getDate().getDayOfMonth() == 24
-                                    && holiday.getDate().getMonthOfYear() == DateTimeConstants.DECEMBER)
-                                || (holiday.getDate().getDayOfMonth() == 31
-                                    && holiday.getDate().getMonthOfYear() == DateTimeConstants.DECEMBER))) {
-                        feiertage = feiertage + 0.5;
-                    } else {
-                        // ansonsten wird ganzer feiertag aufaddiert
-                        feiertage = feiertage + 1.0;
-                    }
-                }
-            }
-        } else {
-            DateMidnight date = startDate;
-            DateMidnight day;
-
-            // iteriere ueber die tage drueber: solange startdatum != enddatum
-            while (!date.equals(endDate)) {
-                // pruefe, ob vorkommender tag ein holiday ist
-                for (Holiday holiday : feiertageAnWerktagen) {
-                    // pruefe, ob datum auf einen feiertag faellt
-                    if ((date.toLocalDate()).equals(holiday.getDate())) {
-                        // pruefe, ob dieser feiertag silvester oder heiligabend ist
-                        // denn diese zaehlen nur zu 0,5 als feiertag
-                        if ((holiday.getDate().getDayOfMonth() == 24
-                                    && holiday.getDate().getMonthOfYear() == DateTimeConstants.DECEMBER)
-                                || (holiday.getDate().getDayOfMonth() == 31
-                                    && holiday.getDate().getMonthOfYear() == DateTimeConstants.DECEMBER)) {
-                            feiertage = feiertage + 0.5;
-                        } else {
-                            // ansonsten wird ganzer feiertag aufaddiert
-                            feiertage = feiertage + 1.0;
-                        }
-                    }
-                }
-
-                date = date.plusDays(1);
-            }
-
-            for (Holiday holiday : feiertageAnWerktagen) {
-                if ((endDate.toLocalDate()).equals(holiday.getDate())) {
-                    if ((holiday.getDate().getDayOfMonth() == 24
+                    if ((holiday.getDate().getDayOfMonth() == HEILIGABEND
                                 && holiday.getDate().getMonthOfYear() == DateTimeConstants.DECEMBER)
-                            || (holiday.getDate().getDayOfMonth() == 31
+                            || (holiday.getDate().getDayOfMonth() == SILVESTER
                                 && holiday.getDate().getMonthOfYear() == DateTimeConstants.DECEMBER)) {
                         feiertage = feiertage + 0.5;
                     } else {
                         // ansonsten wird ganzer feiertag aufaddiert
                         feiertage = feiertage + 1.0;
                     }
+                }
+            }
+
+            date = date.plusDays(1);
+        }
+
+        for (Holiday holiday : feiertageAnWerktagen) {
+            if ((endDate.toLocalDate()).equals(holiday.getDate())) {
+                if ((holiday.getDate().getDayOfMonth() == HEILIGABEND
+                            && holiday.getDate().getMonthOfYear() == DateTimeConstants.DECEMBER)
+                        || (holiday.getDate().getDayOfMonth() == SILVESTER
+                            && holiday.getDate().getMonthOfYear() == DateTimeConstants.DECEMBER)) {
+                    feiertage = feiertage + 0.5;
+                } else {
+                    // ansonsten wird ganzer feiertag aufaddiert
+                    feiertage = feiertage + 1.0;
                 }
             }
         }

@@ -4,8 +4,6 @@
  */
 package org.synyx.urlaubsverwaltung.calendar;
 
-import com.google.common.base.Strings;
-
 import com.google.gdata.data.PlainTextConstruct;
 import com.google.gdata.data.calendar.CalendarEventEntry;
 import com.google.gdata.data.extensions.When;
@@ -93,7 +91,8 @@ public class GoogleCalendarService {
         entry.addTime(eventTimes);
 
         // den google calendar service aufrufen und Url und Entry setzen
-        getGoogleCalendarService().insert(postUrl, entry);
+        googleCalendarService.setUserCredentials(username, password);
+        googleCalendarService.insert(postUrl, entry);
     }
 
 
@@ -106,20 +105,19 @@ public class GoogleCalendarService {
         return dateTime;
     }
 
-
-    private com.google.gdata.client.calendar.CalendarService getGoogleCalendarService() throws AuthenticationException {
-
-        if (googleCalendarService == null) {
-            if (Strings.isNullOrEmpty(username) || Strings.isNullOrEmpty(password)) {
-                throw new IllegalStateException("username or password not set");
-            }
-
-//            googleCalendarService = new com.google.gdata.client.calendar.CalendarService(getApplicationName());
-            googleCalendarService.setUserCredentials(username, password);
-        }
-
-        return googleCalendarService;
-    }
+//    private com.google.gdata.client.calendar.CalendarService getGoogleCalendarService() throws AuthenticationException {
+//
+//        if (googleCalendarService == null) {
+//            if (Strings.isNullOrEmpty(username) || Strings.isNullOrEmpty(password)) {
+//                throw new IllegalStateException("username or password not set");
+//            }
+//
+////            googleCalendarService = new com.google.gdata.client.calendar.CalendarService(getApplicationName());
+//            googleCalendarService.setUserCredentials(username, password);
+//        }
+//
+//        return googleCalendarService;
+//    }
 
 //    private static String calendarEventToString(CalendarEventEntry entry) {
 //
