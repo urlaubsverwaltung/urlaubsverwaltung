@@ -134,4 +134,8 @@ public interface AntragService {
      * @return
      */
     boolean checkAntrag(Antrag antrag);
+    
+    boolean checkAntragOneYear(Antrag antrag, DateMidnight start, DateMidnight end);
+    
+    boolean checkAntragTwoYears(Antrag antrag, DateMidnight start, DateMidnight end);
 }

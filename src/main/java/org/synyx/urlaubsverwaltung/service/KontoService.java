@@ -105,7 +105,7 @@ public interface KontoService {
      * @param  end
      */
     void rollbackNoticeJanuary(Antrag antrag, Urlaubskonto kontoCurrentYear, Urlaubskonto kontoNextYear,
-        Double anspruchCurrentYear, Double anspruchNextYear, DateMidnight start, DateMidnight end);
+        Double anspruchCurrentYear, Double anspruchNextYear);
 
 
     /**
@@ -119,7 +119,7 @@ public interface KontoService {
      * @param  start
      * @param  end
      */
-    void rollbackNoticeApril(Antrag antrag, Urlaubskonto konto, Double anspruch, DateMidnight start, DateMidnight end);
+    void rollbackNoticeApril(Antrag antrag, Urlaubskonto konto, Double anspruch);
 
 
     /**
@@ -134,8 +134,7 @@ public interface KontoService {
      * @param  mustBeSaved  wenn auf true gesetzt, wird in der methode das konto automatisch gespeichert, wenn nicht,
      *                      muss es von aussen gespeichert werden
      */
-    void noticeJanuary(Antrag antrag, Urlaubskonto kontoCurrentYear, Urlaubskonto kontoNextYear, DateMidnight start,
-        DateMidnight end);
+    void noticeJanuary(Antrag antrag, Urlaubskonto kontoCurrentYear, Urlaubskonto kontoNextYear);
 
 
     /**
@@ -147,5 +146,8 @@ public interface KontoService {
      * @param  start
      * @param  end
      */
-    void noticeApril(Antrag antrag, Urlaubskonto konto, DateMidnight start, DateMidnight end);
+    void noticeApril(Antrag antrag, Urlaubskonto konto);
+    
+    void rollbackOverApril(Urlaubskonto konto, Double anspruch, DateMidnight start, DateMidnight end);
+    
 }

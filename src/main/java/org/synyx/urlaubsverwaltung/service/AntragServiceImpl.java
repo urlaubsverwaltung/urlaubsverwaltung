@@ -156,7 +156,7 @@ public class AntragServiceImpl implements AntragService {
             }
 
             // beachte die Sonderfaelle, die April mit sich bringt
-            kontoService.noticeApril(antrag, konto, start, end);
+            kontoService.noticeApril(antrag, konto);
 
             // dann speichere
             kontoService.saveUrlaubskonto(konto);
@@ -166,7 +166,7 @@ public class AntragServiceImpl implements AntragService {
             Urlaubskonto kontoCurrentYear = kontoService.getUrlaubskonto(start.getYear(), antrag.getPerson());
             Urlaubskonto kontoNextYear = kontoService.getUrlaubskonto(end.getYear(), antrag.getPerson());
 
-            kontoService.noticeJanuary(antrag, kontoCurrentYear, kontoNextYear, start, end);
+            kontoService.noticeJanuary(antrag, kontoCurrentYear, kontoNextYear);
 
             kontoService.saveUrlaubskonto(kontoCurrentYear);
             kontoService.saveUrlaubskonto(kontoNextYear);
@@ -336,6 +336,7 @@ public class AntragServiceImpl implements AntragService {
     }
 
 
+    @Override
     public boolean checkAntragOneYear(Antrag antrag, DateMidnight start, DateMidnight end) {
 
         Double days;
@@ -395,6 +396,7 @@ public class AntragServiceImpl implements AntragService {
     }
 
 
+    @Override
     public boolean checkAntragTwoYears(Antrag antrag, DateMidnight start, DateMidnight end) {
 
         Person person = antrag.getPerson();

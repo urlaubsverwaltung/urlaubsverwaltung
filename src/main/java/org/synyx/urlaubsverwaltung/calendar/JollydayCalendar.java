@@ -22,6 +22,7 @@ public class JollydayCalendar {
 
     private static final int HEILIGABEND = 24;
     private static final int SILVESTER = 31;
+    private static final double HALF_DAY = 0.5;
 
     private HolidayManager manager = HolidayManager.getInstance("synyx");
 
@@ -93,7 +94,7 @@ public class JollydayCalendar {
                                 && holiday.getDate().getMonthOfYear() == DateTimeConstants.DECEMBER)
                             || (holiday.getDate().getDayOfMonth() == SILVESTER
                                 && holiday.getDate().getMonthOfYear() == DateTimeConstants.DECEMBER))) {
-                    feiertage = feiertage + 0.5;
+                    feiertage = feiertage + HALF_DAY;
                 } else {
                     // ansonsten wird ganzer feiertag aufaddiert
                     feiertage = feiertage + 1.0;
@@ -123,7 +124,7 @@ public class JollydayCalendar {
                                 && holiday.getDate().getMonthOfYear() == DateTimeConstants.DECEMBER)
                             || (holiday.getDate().getDayOfMonth() == SILVESTER
                                 && holiday.getDate().getMonthOfYear() == DateTimeConstants.DECEMBER)) {
-                        feiertage = feiertage + 0.5;
+                        feiertage = feiertage + HALF_DAY;
                     } else {
                         // ansonsten wird ganzer feiertag aufaddiert
                         feiertage = feiertage + 1.0;
@@ -140,7 +141,7 @@ public class JollydayCalendar {
                             && holiday.getDate().getMonthOfYear() == DateTimeConstants.DECEMBER)
                         || (holiday.getDate().getDayOfMonth() == SILVESTER
                             && holiday.getDate().getMonthOfYear() == DateTimeConstants.DECEMBER)) {
-                    feiertage = feiertage + 0.5;
+                    feiertage = feiertage + HALF_DAY;
                 } else {
                     // ansonsten wird ganzer feiertag aufaddiert
                     feiertage = feiertage + 1.0;

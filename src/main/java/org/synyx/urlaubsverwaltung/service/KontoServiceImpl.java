@@ -132,6 +132,7 @@ public class KontoServiceImpl implements KontoService {
     }
 
 
+    @Override
     public void rollbackUrlaub(Antrag antrag) {
 
         DateMidnight start = antrag.getStartDate();
@@ -146,8 +147,7 @@ public class KontoServiceImpl implements KontoService {
             Urlaubskonto kontoNextYear = getUrlaubskonto(end.getYear(), person);
             Double anspruchNextYear = getUrlaubsanspruch(end.getYear(), person).getVacationDays();
 
-            rollbackNoticeJanuary(antrag, kontoCurrentYear, kontoNextYear, anspruchCurrentYear, anspruchNextYear, start,
-                end);
+            rollbackNoticeJanuary(antrag, kontoCurrentYear, kontoNextYear, anspruchCurrentYear, anspruchNextYear);
 
             saveUrlaubskonto(kontoCurrentYear);
             saveUrlaubskonto(kontoNextYear);
@@ -156,7 +156,7 @@ public class KontoServiceImpl implements KontoService {
             Urlaubskonto konto = getUrlaubskonto(start.getYear(), person);
             Double anspruch = getUrlaubsanspruch(start.getYear(), person).getVacationDays();
 
-            rollbackNoticeApril(antrag, konto, anspruch, start, end);
+            rollbackNoticeApril(antrag, konto, anspruch);
 
             saveUrlaubskonto(konto);
         }
@@ -172,8 +172,12 @@ public class KontoServiceImpl implements KontoService {
      * @param  start
      * @param  end
      */
+    @Override
     public void rollbackNoticeJanuary(Antrag antrag, Urlaubskonto kontoCurrentYear, Urlaubskonto kontoNextYear,
-        Double anspruchCurrentYear, Double anspruchNextYear, DateMidnight start, DateMidnight end) {
+        Double anspruchCurrentYear, Double anspruchNextYear) {
+        
+        DateMidnight start = antrag.getStartDate();
+        DateMidnight end = antrag.getEndDate();
 
         Double beforeJan = calendarService.getVacationDays(start,
                 new DateMidnight(start.getYear(), DateTimeConstants.DECEMBER, LAST_DAY));
@@ -219,8 +223,11 @@ public class KontoServiceImpl implements KontoService {
      * @param  start
      * @param  end
      */
-    public void rollbackNoticeApril(Antrag antrag, Urlaubskonto konto, Double anspruch, DateMidnight start,
-        DateMidnight end) {
+    @Override
+    public void rollbackNoticeApril(Antrag antrag, Urlaubskonto konto, Double anspruch) {
+        
+        DateMidnight start = antrag.getStartDate();
+        DateMidnight end = antrag.getEndDate();
 
         // Urlaub nach dem 1.4., d.h. kein Resturlaub zu berechnen, da kein Resturlaub mehr vorhanden
         // keine Beruehrung mit der Problematik vom 1.4.
@@ -244,6 +251,7 @@ public class KontoServiceImpl implements KontoService {
     }
 
 
+    @Override
     public void rollbackOverApril(Urlaubskonto konto, Double anspruch, DateMidnight start, DateMidnight end) {
 
         // Urlaub laeuft ueber den 1.4.
@@ -292,8 +300,11 @@ public class KontoServiceImpl implements KontoService {
      * @param  mustBeSaved  wenn auf true gesetzt, wird in der methode das konto automatisch gespeichert, wenn nicht,
      *                      muss es von aussen gespeichert werden
      */
-    public void noticeJanuary(Antrag antrag, Urlaubskonto kontoCurrentYear, Urlaubskonto kontoNextYear,
-        DateMidnight start, DateMidnight end) {
+    @Override
+    public void noticeJanuary(Antrag antrag, Urlaubskonto kontoCurrentYear, Urlaubskonto kontoNextYear) {
+        
+        DateMidnight start = antrag.getStartDate();
+        DateMidnight end = antrag.getEndDate();
 
         // wenn der antrag über 2 Jahre läuft...
         Double beforeJan = calendarService.getVacationDays(antrag.getStartDate(),
@@ -332,8 +343,13 @@ public class KontoServiceImpl implements KontoService {
      * @param  start
      * @param  end
      */
-    public void noticeApril(Antrag antrag, Urlaubskonto konto, DateMidnight start, DateMidnight end) {
+    @Override
+    public void noticeApril(Antrag antrag, Urlaubskonto konto) {
 
+        
+        DateMidnight start = antrag.getStartDate();
+        DateMidnight end = antrag.getEndDate();
+        
         // wenn antrag vor april ist
         if (antrag.getEndDate().getMonthOfYear() < DateTimeConstants.APRIL) {
             // errechne, wie viele resturlaubstage übrigbleiben würden
