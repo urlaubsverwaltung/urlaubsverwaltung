@@ -98,40 +98,44 @@ public class AntragServiceImplTest {
     /** Test of getRequestById method, of class AntragServiceImpl. */
     @Test
     public void testGetRequestById() {
-
-        // only DAO stuff
+        instance.getRequestById(1234);
+        Mockito.verify(antragDAO).findOne(1234);
     }
 
 
     /** Test of getAllRequestsForPerson method, of class AntragServiceImpl. */
     @Test
     public void testGetAllRequestsForPerson() {
-
-        // only DAO stuff
+        Person person = new Person();
+        instance.getAllRequestsForPerson(person);
+        Mockito.verify(antragDAO).getAllRequestsForPerson(person);
     }
 
 
     /** Test of getAllRequests method, of class AntragServiceImpl. */
     @Test
     public void testGetAllRequests() {
-
-        // only DAO stuff
+        instance.getAllRequests();
+        Mockito.verify(antragDAO).findAll();
     }
 
 
     /** Test of getAllRequestsByState method, of class AntragServiceImpl. */
     @Test
     public void testGetAllRequestsByState() {
-
-        // only DAO stuff
+        instance.getAllRequestsByState(State.WARTEND);
+        Mockito.verify(antragDAO).getAllRequestsByState(State.WARTEND);
     }
 
 
     /** Test of getAllRequestsForACertainTime method, of class AntragServiceImpl. */
     @Test
     public void testGetAllRequestsForACertainTime() {
-
-        // only DAO stuff
+        DateMidnight start = DateMidnight.now();
+        DateMidnight end = DateMidnight.now();
+                
+        instance.getAllRequestsForACertainTime(start,end);
+        Mockito.verify(antragDAO).getAllRequestsForACertainTime(start, end);
     }
 
 
@@ -164,9 +168,37 @@ public class AntragServiceImplTest {
 
     /** Test of save method, of class AntragServiceImpl. */
     @Test
-    public void testSave() {
+    public void testSave1Year() {
+        Antrag antrag = new Antrag();
+        antrag.setStartDate(new DateMidnight(2000, 3, 10));
+        antrag.setEndDate(new DateMidnight(2000, 3, 20));
+        
+        Urlaubsanspruch anspruch = new Urlaubsanspruch();
+        anspruch.setVacationDays(10.0);
+        
+        Mockito.when(kontoService.getUrlaubsanspruch(Mockito.anyInt(), (Person)(Mockito.any()))).thenReturn(anspruch);
+        
+        instance.save(antrag);
+        Mockito.verify(antragDAO).save(antrag);
+        Mockito.verify(kontoService).noticeApril((Antrag)(Mockito.any()),(Urlaubskonto)(Mockito.any()));
 
-        // INTERESTING METHODS ARE IN KONTOSERVICE, SO METHODS ARE TESTED IN KONTOSERVICEIMPLTEST
+    }
+    
+    /** Test of save method, of class AntragServiceImpl. */
+    @Test
+    public void testSave2Years() {
+        Antrag antrag = new Antrag();
+        antrag.setStartDate(new DateMidnight(2000, 12, 20));
+        antrag.setEndDate(new DateMidnight(2001, 1, 10));
+        
+        Urlaubsanspruch anspruch = new Urlaubsanspruch();
+        anspruch.setVacationDays(10.0);
+        
+        Mockito.when(kontoService.getUrlaubsanspruch(Mockito.anyInt(), (Person)(Mockito.any()))).thenReturn(anspruch);
+        
+        instance.save(antrag);
+        Mockito.verify(antragDAO).save(antrag);
+        Mockito.verify(kontoService).noticeJanuary((Antrag)(Mockito.any()),(Urlaubskonto)(Mockito.any()),(Urlaubskonto)(Mockito.any()));
 
     }
 

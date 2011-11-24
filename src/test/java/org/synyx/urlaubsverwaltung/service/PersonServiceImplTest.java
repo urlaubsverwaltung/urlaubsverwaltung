@@ -323,7 +323,6 @@ public class PersonServiceImplTest {
 
     /** Test of getPersonByLogin method, of class PersonServiceImpl. */
     @Test
-    @Ignore
     public void testGetPersonByLogin() {
 
         Person person = new Person();
