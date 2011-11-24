@@ -410,13 +410,13 @@ public class AntragServiceImpl implements AntragService {
         // wenn noch nicht angelegt
         if (kontoCurrentYear == null) {
             // erzeuge konto
-            kontoService.newUrlaubskonto(person,
+            kontoCurrentYear = kontoService.newUrlaubskonto(person,
                 kontoService.getUrlaubsanspruch(start.getYear(), person).getVacationDays(), 0.0, start.getYear());
         }
 
         if (kontoNextYear == null) {
             // erzeuge konto
-            kontoService.newUrlaubskonto(person,
+            kontoNextYear = kontoService.newUrlaubskonto(person,
                 kontoService.getUrlaubsanspruch(end.getYear(), person).getVacationDays(), 0.0, end.getYear());
         }
 
