@@ -4,8 +4,6 @@
  */
 package org.synyx.urlaubsverwaltung.service;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.AddressException;
 import org.apache.log4j.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.mail.Message;
+import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
@@ -32,11 +31,13 @@ public class MailServiceImpl implements MailService {
 
     // see here: http://static.springsource.org/spring/docs/2.0.5/reference/mail.html
 
-    private static final String SCHLUSSZEILE = "\n\nUrlaubsverwaltung";
+    private static final String SCHLUSSZEILE = "\n\nUrlaubsverwaltung"; // in properties!
 
-    private static Logger mailLogger = Logger.getLogger("mailLogger");
+    private static final Logger mailLogger = Logger.getLogger("mailLogger");
 
     private JavaMailSender mailSender;
+
+    // in properties!
     private String absender = EmailAdr.MANAGE.getEmail();
     private String sternchen = EmailAdr.STERN.getEmail();
 

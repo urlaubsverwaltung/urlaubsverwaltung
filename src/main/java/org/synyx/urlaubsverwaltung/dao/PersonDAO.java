@@ -12,6 +12,6 @@ import org.synyx.urlaubsverwaltung.domain.Person;
 public interface PersonDAO extends JpaRepository<Person, Integer> {
 
     // get List<Antrag> by certain state (e.g. 'wartend')
-    @Query("select x from Person x where x.loginName = ?")
+    @Query("select from Person where loginName = ?1")
     Person getPersonByLogin(String loginName);
 }

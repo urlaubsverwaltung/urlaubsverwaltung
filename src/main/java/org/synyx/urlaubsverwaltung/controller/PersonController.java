@@ -19,8 +19,8 @@ import org.synyx.urlaubsverwaltung.domain.Antrag;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.Urlaubskonto;
 import org.synyx.urlaubsverwaltung.service.AntragService;
+import org.synyx.urlaubsverwaltung.service.CryptoService;
 import org.synyx.urlaubsverwaltung.service.KontoService;
-import org.synyx.urlaubsverwaltung.service.PGPService;
 import org.synyx.urlaubsverwaltung.service.PersonService;
 
 import java.security.KeyPair;
@@ -47,10 +47,10 @@ public class PersonController {
     private PersonService personService;
     private AntragService antragService;
     private KontoService kontoService;
-    private PGPService pgpService;
+    private CryptoService pgpService;
 
     public PersonController(PersonService personService, AntragService antragService, KontoService kontoService,
-        PGPService pgpService) {
+        CryptoService pgpService) {
 
         this.personService = personService;
         this.antragService = antragService;

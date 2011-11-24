@@ -16,11 +16,8 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-
-public class PGPService {
+public class CryptoService {
 
     private static final int KEYSIZE = 2048;
 
@@ -56,30 +53,19 @@ public class PGPService {
      *
      * @throws  NoSuchAlgorithmException
      */
-    public byte[] sign(PrivateKey privKey, byte[] ursprungsData) throws NoSuchAlgorithmException {
+    public byte[] sign(PrivateKey privKey, byte[] ursprungsData) throws NoSuchAlgorithmException, InvalidKeyException,
+        SignatureException {
 
         Signature sign = Signature.getInstance("SHA256withRSA");
         byte[] updatedData = null;
 
-        try {
-            /* Initializing the object with a private key */
-            sign.initSign(privKey);
-        } catch (InvalidKeyException ex) {
-            Logger.getLogger(PGPService.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        /* Initializing the object with a private key */
+        sign.initSign(privKey);
 
-        try {
-            /* Update and sign the data */
-            sign.update(ursprungsData);
-        } catch (SignatureException ex) {
-            Logger.getLogger(PGPService.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        /* Update and sign the data */
+        sign.update(ursprungsData);
 
-        try {
-            updatedData = sign.sign();
-        } catch (SignatureException ex) {
-            Logger.getLogger(PGPService.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        updatedData = sign.sign();
 
         return updatedData;
     }
@@ -154,16 +140,7 @@ public class PGPService {
     }
 
 
-//    /**
-//     * just prints encoded signature
-//     *
-//     * @param  signature
-//     */
-//    public void printSignature(byte[] signature) {
-//
-//        System.out.println(new BASE64Encoder().encode(signature));
-//    }
-
+    // Base64Encoder sollte ersetzt werden...
     /**
      * get encoded signature
      *

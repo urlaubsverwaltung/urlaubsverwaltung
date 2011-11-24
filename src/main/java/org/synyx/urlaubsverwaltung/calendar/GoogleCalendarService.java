@@ -31,7 +31,7 @@ import java.net.URL;
  */
 public class GoogleCalendarService {
 
-    private static final DateTimeZone calendarTimeZone = DateTimeZone.forID("Europe/Berlin");
+    private static final DateTimeZone calendarTimeZone = DateTimeZone.forID("Europe/Berlin"); // als property!!!
 
     private static final String GOOGLE_BASE_URL = "http://www.google.com/calendar/feeds/";
 
@@ -66,6 +66,10 @@ public class GoogleCalendarService {
     public void addVacation(LocalDate start, LocalDate end, Person person, String calendarId)
         throws AuthenticationException, IOException, ServiceException {
 
+        // Strings in properties setzen
+
+        // URl mit String format zusammenbauen
+        // pattern angeben mit parameter hintendran
         // Url des Kalenders
         URL postUrl = new URL(GOOGLE_BASE_URL + calendarId + "/private/full");
 
@@ -93,6 +97,7 @@ public class GoogleCalendarService {
         // den google calendar service aufrufen und Url und Entry setzen
         googleCalendarService.setUserCredentials(username, password);
         googleCalendarService.insert(postUrl, entry);
+        // besser: uri.toUrl
     }
 
 

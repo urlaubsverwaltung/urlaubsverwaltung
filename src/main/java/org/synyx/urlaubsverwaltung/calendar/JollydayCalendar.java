@@ -81,7 +81,7 @@ public class JollydayCalendar {
     }
 
 
-    public Double isOneDayFeiertag(Set<Holiday> feiertageAnWerktagen, DateMidnight date) {
+    private Double isOneDayFeiertag(Set<Holiday> feiertageAnWerktagen, DateMidnight date) {
 
         Double feiertage = 0.0;
 
@@ -106,7 +106,7 @@ public class JollydayCalendar {
     }
 
 
-    public Double howManyFeiertage(Set<Holiday> feiertageAnWerktagen, DateMidnight startDate, DateMidnight endDate) {
+    private Double howManyFeiertage(Set<Holiday> feiertageAnWerktagen, DateMidnight startDate, DateMidnight endDate) {
 
         Double feiertage = 0.0;
 

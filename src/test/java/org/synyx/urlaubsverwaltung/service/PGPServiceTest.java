@@ -30,7 +30,7 @@ import java.security.PublicKey;
  */
 public class PGPServiceTest {
 
-    private PGPService instance;
+    private CryptoService instance;
 
     public PGPServiceTest() {
     }
@@ -51,7 +51,7 @@ public class PGPServiceTest {
     @Before
     public void setUp() {
 
-        instance = new PGPService();
+        instance = new CryptoService();
     }
 
 
@@ -61,7 +61,7 @@ public class PGPServiceTest {
     }
 
 
-    /** Test of generateKeyPair method, of class PGPService. */
+    /** Test of generateKeyPair method, of class CryptoService. */
     @Test
     public void testGenerateKeyPair() throws Exception {
 
@@ -74,7 +74,7 @@ public class PGPServiceTest {
     }
 
 
-    /** Test of sign method, of class PGPService. */
+    /** Test of sign method, of class CryptoService. */
     @Test
     public void testSign() throws Exception {
 
@@ -91,7 +91,7 @@ public class PGPServiceTest {
     }
 
 
-    /** Test of verify method, of class PGPService. */
+    /** Test of verify method, of class CryptoService. */
     @Test
     public void testVerify() throws Exception {
 
@@ -126,7 +126,7 @@ public class PGPServiceTest {
     }
 
 
-    /** Test of getPrivateKeyByBytes method, of class PGPService. */
+    /** Test of getPrivateKeyByBytes method, of class CryptoService. */
     @Test
     public void testGetPrivateKeyByBytes() throws Exception {
 
@@ -141,7 +141,7 @@ public class PGPServiceTest {
     }
 
 
-    /** Test of getPublicKeyByBytes method, of class PGPService. */
+    /** Test of getPublicKeyByBytes method, of class CryptoService. */
     @Test
     public void testGetPublicKeyByBytes() throws Exception {
 
@@ -156,7 +156,7 @@ public class PGPServiceTest {
     }
 
 
-    /** Test of printSignature method, of class PGPService. */
+    /** Test of printSignature method, of class CryptoService. */
     @Ignore
     @Test
     public void testPrintSignature() {
@@ -165,7 +165,7 @@ public class PGPServiceTest {
     }
 
 
-    /** Test of getEncodedSignature method, of class PGPService. */
+    /** Test of getEncodedSignature method, of class CryptoService. */
     @Ignore
     @Test
     public void testGetEncodedSignature() {

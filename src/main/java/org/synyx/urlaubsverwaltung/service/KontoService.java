@@ -147,7 +147,7 @@ public interface KontoService {
      * @param  end
      */
     void noticeApril(Antrag antrag, Urlaubskonto konto);
-    
-    void rollbackOverApril(Urlaubskonto konto, Double anspruch, DateMidnight start, DateMidnight end);
-    
+
+
+    void rollbackOverApril(Antrag antrag, Urlaubskonto konto, Double anspruch, DateMidnight start, DateMidnight end);
 }

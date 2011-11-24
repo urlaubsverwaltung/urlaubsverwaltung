@@ -23,8 +23,8 @@ import static org.mockito.Mockito.mock;
 import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.dao.AntragDAO;
 import org.synyx.urlaubsverwaltung.domain.Antrag;
+import org.synyx.urlaubsverwaltung.domain.AntragStatus;
 import org.synyx.urlaubsverwaltung.domain.Person;
-import org.synyx.urlaubsverwaltung.domain.State;
 import org.synyx.urlaubsverwaltung.domain.Urlaubsanspruch;
 import org.synyx.urlaubsverwaltung.domain.Urlaubskonto;
 import org.synyx.urlaubsverwaltung.domain.VacationType;
@@ -44,7 +44,7 @@ public class AntragServiceImplTest {
 
     private AntragDAO antragDAO = mock(AntragDAO.class);
     private KontoService kontoService = mock(KontoService.class);
-    private PGPService pgpService = new PGPService();
+    private CryptoService pgpService = new CryptoService();
     private OwnCalendarService calendarService = new OwnCalendarService();
     private MailService mailService = mock(MailService.class);
 
@@ -98,6 +98,7 @@ public class AntragServiceImplTest {
     /** Test of getRequestById method, of class AntragServiceImpl. */
     @Test
     public void testGetRequestById() {
+
         instance.getRequestById(1234);
         Mockito.verify(antragDAO).findOne(1234);
     }
@@ -106,6 +107,7 @@ public class AntragServiceImplTest {
     /** Test of getAllRequestsForPerson method, of class AntragServiceImpl. */
     @Test
     public void testGetAllRequestsForPerson() {
+
         Person person = new Person();
         instance.getAllRequestsForPerson(person);
         Mockito.verify(antragDAO).getAllRequestsForPerson(person);
@@ -115,6 +117,7 @@ public class AntragServiceImplTest {
     /** Test of getAllRequests method, of class AntragServiceImpl. */
     @Test
     public void testGetAllRequests() {
+
         instance.getAllRequests();
         Mockito.verify(antragDAO).findAll();
     }
@@ -123,18 +126,20 @@ public class AntragServiceImplTest {
     /** Test of getAllRequestsByState method, of class AntragServiceImpl. */
     @Test
     public void testGetAllRequestsByState() {
-        instance.getAllRequestsByState(State.WARTEND);
-        Mockito.verify(antragDAO).getAllRequestsByState(State.WARTEND);
+
+        instance.getAllRequestsByState(AntragStatus.WARTEND);
+        Mockito.verify(antragDAO).getAllRequestsByState(AntragStatus.WARTEND);
     }
 
 
     /** Test of getAllRequestsForACertainTime method, of class AntragServiceImpl. */
     @Test
     public void testGetAllRequestsForACertainTime() {
+
         DateMidnight start = DateMidnight.now();
         DateMidnight end = DateMidnight.now();
-                
-        instance.getAllRequestsForACertainTime(start,end);
+
+        instance.getAllRequestsForACertainTime(start, end);
         Mockito.verify(antragDAO).getAllRequestsForACertainTime(start, end);
     }
 
@@ -143,10 +148,10 @@ public class AntragServiceImplTest {
     @Test
     public void testWait() {
 
-        antrag.setStatus(State.GENEHMIGT);
+        antrag.setStatus(AntragStatus.GENEHMIGT);
         instance.wait(antrag);
 
-        assertEquals(State.WARTEND, antrag.getStatus());
+        assertEquals(AntragStatus.WARTEND, antrag.getStatus());
     }
 
 
@@ -156,11 +161,11 @@ public class AntragServiceImplTest {
 
         antrag.setStartDate(new DateMidnight(2011, 12, 17));
         antrag.setEndDate(new DateMidnight(2011, 12, 27));
-        antrag.setStatus(State.WARTEND);
+        antrag.setStatus(AntragStatus.WARTEND);
 
         instance.approve(antrag);
 
-        assertEquals(State.GENEHMIGT, antrag.getStatus());
+        assertEquals(AntragStatus.GENEHMIGT, antrag.getStatus());
         assertNotNull(antrag.getBeantragteTageNetto());
         assertEquals(6.0, antrag.getBeantragteTageNetto(), 0.0);
     }
@@ -169,37 +174,39 @@ public class AntragServiceImplTest {
     /** Test of save method, of class AntragServiceImpl. */
     @Test
     public void testSave1Year() {
+
         Antrag antrag = new Antrag();
         antrag.setStartDate(new DateMidnight(2000, 3, 10));
         antrag.setEndDate(new DateMidnight(2000, 3, 20));
-        
+
         Urlaubsanspruch anspruch = new Urlaubsanspruch();
         anspruch.setVacationDays(10.0);
-        
-        Mockito.when(kontoService.getUrlaubsanspruch(Mockito.anyInt(), (Person)(Mockito.any()))).thenReturn(anspruch);
-        
+
+        Mockito.when(kontoService.getUrlaubsanspruch(Mockito.anyInt(), (Person) (Mockito.any()))).thenReturn(anspruch);
+
         instance.save(antrag);
         Mockito.verify(antragDAO).save(antrag);
-        Mockito.verify(kontoService).noticeApril((Antrag)(Mockito.any()),(Urlaubskonto)(Mockito.any()));
-
+        Mockito.verify(kontoService).noticeApril((Antrag) (Mockito.any()), (Urlaubskonto) (Mockito.any()));
     }
-    
+
+
     /** Test of save method, of class AntragServiceImpl. */
     @Test
     public void testSave2Years() {
+
         Antrag antrag = new Antrag();
         antrag.setStartDate(new DateMidnight(2000, 12, 20));
         antrag.setEndDate(new DateMidnight(2001, 1, 10));
-        
+
         Urlaubsanspruch anspruch = new Urlaubsanspruch();
         anspruch.setVacationDays(10.0);
-        
-        Mockito.when(kontoService.getUrlaubsanspruch(Mockito.anyInt(), (Person)(Mockito.any()))).thenReturn(anspruch);
-        
+
+        Mockito.when(kontoService.getUrlaubsanspruch(Mockito.anyInt(), (Person) (Mockito.any()))).thenReturn(anspruch);
+
         instance.save(antrag);
         Mockito.verify(antragDAO).save(antrag);
-        Mockito.verify(kontoService).noticeJanuary((Antrag)(Mockito.any()),(Urlaubskonto)(Mockito.any()),(Urlaubskonto)(Mockito.any()));
-
+        Mockito.verify(kontoService).noticeJanuary((Antrag) (Mockito.any()), (Urlaubskonto) (Mockito.any()),
+            (Urlaubskonto) (Mockito.any()));
     }
 
 
@@ -213,13 +220,13 @@ public class AntragServiceImplTest {
 
         String reason = "Einfach so halt, weil ich Bock drauf hab.";
 
-        antrag.setStatus(State.WARTEND);
+        antrag.setStatus(AntragStatus.WARTEND);
 
         // bei Aufruf der Methode werden Infos geaendert/gesetzt
 
         instance.decline(antrag, boss, reason);
 
-        assertEquals(State.ABGELEHNT, antrag.getStatus());
+        assertEquals(AntragStatus.ABGELEHNT, antrag.getStatus());
 
         assertNotNull(antrag.getBoss());
         assertEquals(boss, antrag.getBoss());
@@ -233,11 +240,11 @@ public class AntragServiceImplTest {
     @Test
     public void testStorno() {
 
-        antrag.setStatus(State.WARTEND);
+        antrag.setStatus(AntragStatus.WARTEND);
 
         instance.storno(antrag);
 
-        assertEquals(State.STORNIERT, antrag.getStatus());
+        assertEquals(AntragStatus.STORNIERT, antrag.getStatus());
     }
 
 

@@ -56,12 +56,16 @@ public class OwnCalendarService {
      *
      * @return  Netto Urlaubstage
      */
-    public Double getVacationDays(DateMidnight startDate, DateMidnight endDate) {
+    public Double getVacationDays(DateMidnight startDate, DateMidnight endDate, boolean ganztags) {
 
         Double vacDays = getWorkDays(startDate, endDate).doubleValue();
 
         vacDays = vacDays - jollydayCalendar.getFeiertage(startDate, endDate);
 
-        return vacDays;
+        if (ganztags) {
+            return vacDays;
+        } else {
+            return vacDays * 0.5;
+        }
     }
 }

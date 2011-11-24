@@ -64,7 +64,7 @@ public class Antrag extends AbstractPersistable<Integer> {
     private DateMidnight antragsDate;
 
     // Status des Antrags (wartend, genehmigt, ...)
-    private State status;
+    private AntragStatus status;
 
     // Signatur des Antragstellers
     private byte[] signedDataPerson;
@@ -212,7 +212,7 @@ public class Antrag extends AbstractPersistable<Integer> {
 
     public void setSignedDataBoss(byte[] signedDataBoss) {
 
-        if(signedDataBoss==null) {
+        if (signedDataBoss == null) {
             this.signedDataBoss = null;
         } else {
             this.signedDataBoss = signedDataBoss.clone();
@@ -228,7 +228,7 @@ public class Antrag extends AbstractPersistable<Integer> {
 
     public void setSignedDataPerson(byte[] signedDataPerson) {
 
-        if(signedDataPerson == null) {
+        if (signedDataPerson == null) {
             this.signedDataPerson = null;
         } else {
             this.signedDataPerson = signedDataPerson.clone();
@@ -248,13 +248,13 @@ public class Antrag extends AbstractPersistable<Integer> {
     }
 
 
-    public State getStatus() {
+    public AntragStatus getStatus() {
 
         return status;
     }
 
 
-    public void setStatus(State status) {
+    public void setStatus(AntragStatus status) {
 
         this.status = status;
     }
@@ -281,5 +281,15 @@ public class Antrag extends AbstractPersistable<Integer> {
     public void setVertreter(Person vertreter) {
 
         this.vertreter = vertreter;
+    }
+
+
+    public boolean isGanztags() {
+
+        if (howLong.equals(Length.GANZTAGS)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

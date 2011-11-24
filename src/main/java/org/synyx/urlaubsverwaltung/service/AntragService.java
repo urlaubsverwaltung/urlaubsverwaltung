@@ -3,8 +3,8 @@ package org.synyx.urlaubsverwaltung.service;
 import org.joda.time.DateMidnight;
 
 import org.synyx.urlaubsverwaltung.domain.Antrag;
+import org.synyx.urlaubsverwaltung.domain.AntragStatus;
 import org.synyx.urlaubsverwaltung.domain.Person;
-import org.synyx.urlaubsverwaltung.domain.State;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -101,7 +101,7 @@ public interface AntragService {
      *
      * @return  returns all requests of a state as a list of antrag-objects
      */
-    List<Antrag> getAllRequestsByState(State state);
+    List<Antrag> getAllRequestsByState(AntragStatus state);
 
 
     /**
@@ -134,8 +134,10 @@ public interface AntragService {
      * @return
      */
     boolean checkAntrag(Antrag antrag);
-    
+
+
     boolean checkAntragOneYear(Antrag antrag, DateMidnight start, DateMidnight end);
-    
+
+
     boolean checkAntragTwoYears(Antrag antrag, DateMidnight start, DateMidnight end);
 }

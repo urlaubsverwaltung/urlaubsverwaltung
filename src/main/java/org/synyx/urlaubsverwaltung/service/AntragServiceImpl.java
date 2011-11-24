@@ -10,17 +10,21 @@ import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.dao.AntragDAO;
 import org.synyx.urlaubsverwaltung.domain.Antrag;
+import org.synyx.urlaubsverwaltung.domain.AntragStatus;
 import org.synyx.urlaubsverwaltung.domain.Kommentar;
 import org.synyx.urlaubsverwaltung.domain.Person;
-import org.synyx.urlaubsverwaltung.domain.State;
 import org.synyx.urlaubsverwaltung.domain.Urlaubsanspruch;
 import org.synyx.urlaubsverwaltung.domain.Urlaubskonto;
 
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -36,12 +40,12 @@ public class AntragServiceImpl implements AntragService {
 
     private AntragDAO antragDAO;
     private KontoService kontoService;
-    private PGPService pgpService;
+    private CryptoService pgpService;
     private OwnCalendarService calendarService;
     private MailService mailService;
 
     @Autowired
-    public AntragServiceImpl(AntragDAO antragDAO, KontoService kontoService, PGPService pgpService,
+    public AntragServiceImpl(AntragDAO antragDAO, KontoService kontoService, CryptoService pgpService,
         OwnCalendarService calendarService, MailService mailService) {
 
         this.antragDAO = antragDAO;
@@ -82,10 +86,10 @@ public class AntragServiceImpl implements AntragService {
 
 
     /**
-     * @see  AntragService#getAllRequestsByState(org.synyx.urlaubsverwaltung.domain.State)
+     * @see  AntragService#getAllRequestsByState(org.synyx.urlaubsverwaltung.domain.AntragStatus)
      */
     @Override
-    public List<Antrag> getAllRequestsByState(State state) {
+    public List<Antrag> getAllRequestsByState(AntragStatus state) {
 
         return antragDAO.getAllRequestsByState(state);
     }
@@ -107,7 +111,7 @@ public class AntragServiceImpl implements AntragService {
     @Override
     public void wait(Antrag antrag) {
 
-        antrag.setStatus(State.WARTEND);
+        antrag.setStatus(AntragStatus.WARTEND);
         antragDAO.save(antrag);
     }
 
@@ -119,10 +123,11 @@ public class AntragServiceImpl implements AntragService {
     public void approve(Antrag antrag) {
 
         // status auf genehmigt setzen
-        antrag.setStatus(State.GENEHMIGT);
+        antrag.setStatus(AntragStatus.GENEHMIGT);
 
         // verbrauchte netto urlaubstage eintragen
-        antrag.setBeantragteTageNetto(calendarService.getVacationDays(antrag.getStartDate(), antrag.getEndDate()));
+        antrag.setBeantragteTageNetto(calendarService.getVacationDays(antrag.getStartDate(), antrag.getEndDate(),
+                antrag.isGanztags()));
 
         antragDAO.save(antrag);
 
@@ -152,7 +157,8 @@ public class AntragServiceImpl implements AntragService {
             if (konto == null) {
                 // erzeuge konto
                 konto = kontoService.newUrlaubskonto(person,
-                    kontoService.getUrlaubsanspruch(start.getYear(), person).getVacationDays(), 0.0, start.getYear());
+                        kontoService.getUrlaubsanspruch(start.getYear(), person).getVacationDays(), 0.0,
+                        start.getYear());
             }
 
             // beachte die Sonderfaelle, die April mit sich bringt
@@ -182,7 +188,7 @@ public class AntragServiceImpl implements AntragService {
     @Override
     public void decline(Antrag antrag, Person boss, String reasonToDecline) {
 
-        antrag.setStatus(State.ABGELEHNT);
+        antrag.setStatus(AntragStatus.ABGELEHNT);
 
         antrag.setBoss(boss);
 
@@ -210,14 +216,14 @@ public class AntragServiceImpl implements AntragService {
 
         kontoService.rollbackUrlaub(antrag);
 
-        if (antrag.getStatus() == State.WARTEND) {
-            antrag.setStatus(State.STORNIERT);
+        if (antrag.getStatus() == AntragStatus.WARTEND) {
+            antrag.setStatus(AntragStatus.STORNIERT);
             antragDAO.save(antrag);
 
             // wenn Antrag wartend war, bekommen Chefs die Email
             mailService.sendCanceledNotification(antrag, EmailAdr.CHEFS.getEmail());
-        } else if (antrag.getStatus() == State.GENEHMIGT) {
-            antrag.setStatus(State.STORNIERT);
+        } else if (antrag.getStatus() == AntragStatus.GENEHMIGT) {
+            antrag.setStatus(AntragStatus.STORNIERT);
             antragDAO.save(antrag);
 
             // wenn Antrag genehmigt war, bekommt Office die Email
@@ -246,7 +252,7 @@ public class AntragServiceImpl implements AntragService {
             if (konto == null) {
                 // erzeuge konto
                 konto = kontoService.newUrlaubskonto(person,
-                    kontoService.getUrlaubsanspruch(end.getYear(), person).getVacationDays(), 0.0, end.getYear());
+                        kontoService.getUrlaubsanspruch(end.getYear(), person).getVacationDays(), 0.0, end.getYear());
             }
 
             konto.setVacationDays(konto.getVacationDays() + krankheitsTage);
@@ -293,6 +299,11 @@ public class AntragServiceImpl implements AntragService {
     public void signAntrag(Antrag antrag, Person signierendePerson, boolean isBoss) throws NoSuchAlgorithmException,
         InvalidKeySpecException {
 
+        // besser fachliche exceptions  statt technische
+
+        // besser splitten: signAntragAsUser, signAntragAsBoss
+        // anfang auslagern als preparesign, das spezielle in jeweilige methode
+
         PrivateKey privKey = pgpService.getPrivateKeyByBytes(signierendePerson.getPrivateKey());
 
         StringBuffer buf = new StringBuffer();
@@ -303,7 +314,13 @@ public class AntragServiceImpl implements AntragService {
 
         byte[] data = buf.toString().getBytes();
 
-        data = pgpService.sign(privKey, data);
+        try {
+            data = pgpService.sign(privKey, data);
+        } catch (InvalidKeyException ex) {
+            Logger.getLogger(AntragServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SignatureException ex) {
+            Logger.getLogger(AntragServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         if (isBoss) {
             antrag.setSignedDataBoss(data);
@@ -350,12 +367,12 @@ public class AntragServiceImpl implements AntragService {
         if (konto == null) {
             // erzeuge konto
             konto = kontoService.newUrlaubskonto(person,
-                kontoService.getUrlaubsanspruch(start.getYear(), person).getVacationDays(), 0.0, start.getYear());
+                    kontoService.getUrlaubsanspruch(start.getYear(), person).getVacationDays(), 0.0, start.getYear());
         }
 
         // wenn antrag vor april ist
         if (antrag.getEndDate().getMonthOfYear() < DateTimeConstants.APRIL) {
-            days = calendarService.getVacationDays(start, end);
+            days = calendarService.getVacationDays(start, end, antrag.isGanztags());
 
             if (((konto.getRestVacationDays() + konto.getVacationDays()) - days) >= 0) {
                 return true;
@@ -363,7 +380,7 @@ public class AntragServiceImpl implements AntragService {
         } else if (antrag.getStartDate().getMonthOfYear() >= DateTimeConstants.APRIL) {
             // wenn der antrag nach april ist, gibt's keinen resturlaub mehr
 
-            days = calendarService.getVacationDays(start, end);
+            days = calendarService.getVacationDays(start, end, antrag.isGanztags());
 
             if ((konto.getVacationDays() - days) >= 0) {
                 return true;
@@ -371,9 +388,9 @@ public class AntragServiceImpl implements AntragService {
         } else {
             // wenn der antrag über april läuft
             Double beforeApril = calendarService.getVacationDays(antrag.getStartDate(),
-                    new DateMidnight(start.getYear(), DateTimeConstants.MARCH, LAST_DAY));
+                    new DateMidnight(start.getYear(), DateTimeConstants.MARCH, LAST_DAY), antrag.isGanztags());
             Double afterApril = calendarService.getVacationDays(new DateMidnight(end.getYear(), DateTimeConstants.APRIL,
-                        FIRST_DAY), antrag.getEndDate());
+                        FIRST_DAY), antrag.getEndDate(), antrag.isGanztags());
 
             // erstmal beforeApril vom Resturlaub abziehen
             Double zwischenergebnis = konto.getRestVacationDays() - beforeApril;
@@ -411,19 +428,19 @@ public class AntragServiceImpl implements AntragService {
         if (kontoCurrentYear == null) {
             // erzeuge konto
             kontoCurrentYear = kontoService.newUrlaubskonto(person,
-                kontoService.getUrlaubsanspruch(start.getYear(), person).getVacationDays(), 0.0, start.getYear());
+                    kontoService.getUrlaubsanspruch(start.getYear(), person).getVacationDays(), 0.0, start.getYear());
         }
 
         if (kontoNextYear == null) {
             // erzeuge konto
             kontoNextYear = kontoService.newUrlaubskonto(person,
-                kontoService.getUrlaubsanspruch(end.getYear(), person).getVacationDays(), 0.0, end.getYear());
+                    kontoService.getUrlaubsanspruch(end.getYear(), person).getVacationDays(), 0.0, end.getYear());
         }
 
         Double beforeJan = calendarService.getVacationDays(antrag.getStartDate(),
-                new DateMidnight(start.getYear(), DateTimeConstants.DECEMBER, LAST_DAY));
+                new DateMidnight(start.getYear(), DateTimeConstants.DECEMBER, LAST_DAY), antrag.isGanztags());
         Double afterJan = calendarService.getVacationDays(new DateMidnight(end.getYear(), DateTimeConstants.JANUARY,
-                    FIRST_DAY), antrag.getEndDate());
+                    FIRST_DAY), antrag.getEndDate(), antrag.isGanztags());
 
         if (((kontoCurrentYear.getVacationDays() - beforeJan) >= 0)
                 && ((kontoNextYear.getVacationDays() + kontoNextYear.getRestVacationDays() - afterJan) >= 0)) {

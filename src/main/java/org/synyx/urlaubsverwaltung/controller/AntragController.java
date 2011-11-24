@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import org.synyx.urlaubsverwaltung.domain.Antrag;
+import org.synyx.urlaubsverwaltung.domain.AntragStatus;
 import org.synyx.urlaubsverwaltung.domain.Person;
-import org.synyx.urlaubsverwaltung.domain.State;
 import org.synyx.urlaubsverwaltung.domain.VacationType;
 import org.synyx.urlaubsverwaltung.service.AntragService;
 import org.synyx.urlaubsverwaltung.service.PersonService;
@@ -89,7 +89,7 @@ public class AntragController {
     @RequestMapping(value = "/antraege/wartend", method = RequestMethod.GET)
     public String showWaiting(Model model) {
 
-        List<Antrag> antraege = antragService.getAllRequestsByState(State.WARTEND);
+        List<Antrag> antraege = antragService.getAllRequestsByState(AntragStatus.WARTEND);
         model.addAttribute(REQUEST_ATTRIBUTE_NAME, antraege);
 
         return REQUESTLIST_VIEW;
@@ -106,7 +106,7 @@ public class AntragController {
     @RequestMapping(value = "/antraege/genehmigt", method = RequestMethod.GET)
     public String showApproved(Model model) {
 
-        List<Antrag> antraege = antragService.getAllRequestsByState(State.GENEHMIGT);
+        List<Antrag> antraege = antragService.getAllRequestsByState(AntragStatus.GENEHMIGT);
         model.addAttribute(REQUEST_ATTRIBUTE_NAME, antraege);
 
         return REQUESTLIST_VIEW;
@@ -123,7 +123,7 @@ public class AntragController {
     @RequestMapping(value = "/antraege/storniert", method = RequestMethod.GET)
     public String showStorno(Model model) {
 
-        List<Antrag> antraege = antragService.getAllRequestsByState(State.STORNIERT);
+        List<Antrag> antraege = antragService.getAllRequestsByState(AntragStatus.STORNIERT);
         model.addAttribute(REQUEST_ATTRIBUTE_NAME, antraege);
 
         return REQUESTLIST_VIEW;
@@ -140,7 +140,7 @@ public class AntragController {
     @RequestMapping(value = "/antraege/abgelehnt", method = RequestMethod.GET)
     public String showDeclined(Model model) {
 
-        List<Antrag> antraege = antragService.getAllRequestsByState(State.STORNIERT);
+        List<Antrag> antraege = antragService.getAllRequestsByState(AntragStatus.STORNIERT);
         model.addAttribute(REQUEST_ATTRIBUTE_NAME, antraege);
 
         return REQUESTLIST_VIEW;
@@ -192,7 +192,7 @@ public class AntragController {
         Person person = personService.getPersonByID(mitarbeiterId);
 
         antrag.setPerson(person);
-        antrag.setStatus(State.WARTEND);
+        antrag.setStatus(AntragStatus.WARTEND);
 
         antragService.save(antrag);
 

@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.domain;
 /**
  * @author  johannes
  */
-public enum State {
+public enum AntragStatus {
 
     WARTEND("state.wait"),
     GENEHMIGT("state.ok"),
@@ -12,7 +12,7 @@ public enum State {
 
     private String stateName;
 
-    private State(String stateName) {
+    private AntragStatus(String stateName) {
 
         this.stateName = stateName;
     }
