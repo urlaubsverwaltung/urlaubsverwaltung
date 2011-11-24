@@ -212,7 +212,11 @@ public class Antrag extends AbstractPersistable<Integer> {
 
     public void setSignedDataBoss(byte[] signedDataBoss) {
 
-        this.signedDataBoss = signedDataBoss.clone();
+        if(signedDataBoss==null) {
+            this.signedDataBoss = null;
+        } else {
+            this.signedDataBoss = signedDataBoss.clone();
+        }
     }
 
 
@@ -224,7 +228,11 @@ public class Antrag extends AbstractPersistable<Integer> {
 
     public void setSignedDataPerson(byte[] signedDataPerson) {
 
-        this.signedDataPerson = signedDataPerson.clone();
+        if(signedDataPerson == null) {
+            this.signedDataPerson = null;
+        } else {
+            this.signedDataPerson = signedDataPerson.clone();
+        }
     }
 
 
