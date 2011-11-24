@@ -13,6 +13,7 @@ import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.security.ldap.userdetails.LdapAuthoritiesPopulator;
 import org.synyx.urlaubsverwaltung.dao.PersonDAO;
 import org.synyx.urlaubsverwaltung.domain.Person;
+import org.synyx.urlaubsverwaltung.domain.Role;
 
 /**
  *
@@ -31,7 +32,12 @@ public class AuthoritiesPopulatorImpl implements LdapAuthoritiesPopulator {
     public Collection<GrantedAuthority> getGrantedAuthorities(DirContextOperations dco, String string) {
         Person person = personDAO.getPersonByLogin(string);
         Collection<GrantedAuthority> output= new ArrayList<GrantedAuthority>();
-        output.add(new GrantedAuthorityImpl(person.getRole().getRoleName()));
+        if(person==null) {
+            //soll das so bleiben? hmmm, weiß net... überlegen....
+            output.add(new GrantedAuthorityImpl(Role.USER.getRoleName()));
+        } else {
+            output.add(new GrantedAuthorityImpl(person.getRole().getRoleName()));
+        }
         return output;
     }
     
