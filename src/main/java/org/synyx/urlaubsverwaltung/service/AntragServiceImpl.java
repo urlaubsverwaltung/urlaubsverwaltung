@@ -151,7 +151,7 @@ public class AntragServiceImpl implements AntragService {
             // wenn noch nicht angelegt
             if (konto == null) {
                 // erzeuge konto
-                kontoService.newUrlaubskonto(person,
+                konto = kontoService.newUrlaubskonto(person,
                     kontoService.getUrlaubsanspruch(start.getYear(), person).getVacationDays(), 0.0, start.getYear());
             }
 
@@ -245,9 +245,8 @@ public class AntragServiceImpl implements AntragService {
 
             if (konto == null) {
                 // erzeuge konto
-                kontoService.newUrlaubskonto(person,
+                konto = kontoService.newUrlaubskonto(person,
                     kontoService.getUrlaubsanspruch(end.getYear(), person).getVacationDays(), 0.0, end.getYear());
-                konto = kontoService.getUrlaubskonto(end.getYear(), person);
             }
 
             konto.setVacationDays(konto.getVacationDays() + krankheitsTage);

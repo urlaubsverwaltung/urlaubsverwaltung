@@ -4,6 +4,8 @@
  */
 package org.synyx.urlaubsverwaltung.service;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
 import org.apache.log4j.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +56,7 @@ public class MailServiceImpl implements MailService {
             MimeMessagePreparator prep = new MimeMessagePreparator() {
 
                 @Override
-                public void prepare(MimeMessage mimeMessage) throws Exception {
+                public void prepare(MimeMessage mimeMessage) throws AddressException, MessagingException {
 
                     mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(person.getEmail()));
                     mimeMessage.setFrom(new InternetAddress(absender));
@@ -103,7 +105,7 @@ public class MailServiceImpl implements MailService {
         MimeMessagePreparator prep = new MimeMessagePreparator() {
 
             @Override
-            public void prepare(MimeMessage mimeMessage) throws Exception {
+            public void prepare(MimeMessage mimeMessage) throws AddressException, MessagingException {
 
                 mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(emailAdressen));
                 mimeMessage.setFrom(new InternetAddress(absender));
@@ -132,7 +134,7 @@ public class MailServiceImpl implements MailService {
         MimeMessagePreparator prepOffice = new MimeMessagePreparator() {
 
             @Override
-            public void prepare(MimeMessage mimeMessage) throws Exception {
+            public void prepare(MimeMessage mimeMessage) throws AddressException, MessagingException {
 
                 mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress("office@synyx.de"));
                 mimeMessage.setFrom(new InternetAddress(absender));
@@ -151,7 +153,7 @@ public class MailServiceImpl implements MailService {
         MimeMessagePreparator prepUser = new MimeMessagePreparator() {
 
             @Override
-            public void prepare(MimeMessage mimeMessage) throws Exception {
+            public void prepare(MimeMessage mimeMessage) throws AddressException, MessagingException {
 
                 mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(person.getEmail()));
                 mimeMessage.setFrom(new InternetAddress(absender));
@@ -182,7 +184,7 @@ public class MailServiceImpl implements MailService {
         MimeMessagePreparator prep = new MimeMessagePreparator() {
 
             @Override
-            public void prepare(MimeMessage mimeMessage) throws Exception {
+            public void prepare(MimeMessage mimeMessage) throws AddressException, MessagingException {
 
                 mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(person.getEmail()));
                 mimeMessage.setFrom(new InternetAddress(absender));
@@ -214,7 +216,7 @@ public class MailServiceImpl implements MailService {
         MimeMessagePreparator prep = new MimeMessagePreparator() {
 
             @Override
-            public void prepare(MimeMessage mimeMessage) throws Exception {
+            public void prepare(MimeMessage mimeMessage) throws AddressException, MessagingException {
 
                 mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(person.getEmail()));
                 mimeMessage.setFrom(new InternetAddress(absender));
@@ -262,7 +264,7 @@ public class MailServiceImpl implements MailService {
         MimeMessagePreparator prep = new MimeMessagePreparator() {
 
             @Override
-            public void prepare(MimeMessage mimeMessage) throws Exception {
+            public void prepare(MimeMessage mimeMessage) throws AddressException, MessagingException {
 
                 mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(sternchen));
                 mimeMessage.setFrom(new InternetAddress(absender));
@@ -292,7 +294,7 @@ public class MailServiceImpl implements MailService {
         MimeMessagePreparator prep = new MimeMessagePreparator() {
 
             @Override
-            public void prepare(MimeMessage mimeMessage) throws Exception {
+            public void prepare(MimeMessage mimeMessage) throws AddressException, MessagingException {
 
                 mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(emailAddress));
                 mimeMessage.setFrom(new InternetAddress(absender));
