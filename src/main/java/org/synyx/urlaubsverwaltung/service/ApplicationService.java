@@ -105,7 +105,7 @@ public interface ApplicationService {
      * @param  application
      * @param  boss
      */
-    void signAntragByBoss(Application application, Person boss);
+    void signApplicationByBoss(Application application, Person boss);
 
 
     /**
@@ -114,7 +114,7 @@ public interface ApplicationService {
      * @param  application
      * @param  user
      */
-    void signAntragByUser(Application application, Person user);
+    void signApplicationByUser(Application application, Person user);
 
 
     /**

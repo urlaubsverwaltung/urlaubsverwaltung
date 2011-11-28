@@ -15,25 +15,21 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import org.synyx.urlaubsverwaltung.domain.Antrag;
-import org.synyx.urlaubsverwaltung.domain.AntragStatus;
+import org.synyx.urlaubsverwaltung.domain.Application;
+import org.synyx.urlaubsverwaltung.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.VacationType;
-import org.synyx.urlaubsverwaltung.service.AntragService;
+import org.synyx.urlaubsverwaltung.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.service.PersonService;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
-
 import java.util.List;
-import java.util.logging.Level;
 
 
 /**
  * @author  aljona
  */
 @Controller
-public class AntragController {
+public class ApplicationController {
 
     private static final String ANTRAG_ATTRIBUTE_NAME = "antrag";
     private static final String PERSON_ATTRIBUTE_NAME = "person";
@@ -50,9 +46,9 @@ public class AntragController {
     private static Logger reqLogger = Logger.getLogger("reqLogger");
 
     private PersonService personService;
-    private AntragService antragService;
+    private ApplicationService antragService;
 
-    public AntragController(PersonService personService, AntragService antragService) {
+    public ApplicationController(PersonService personService, ApplicationService antragService) {
 
         this.personService = personService;
         this.antragService = antragService;
@@ -70,7 +66,7 @@ public class AntragController {
     public String showAntraegeByPerson(@PathVariable(MITARBEITER_ID) Integer mitarbeiterId, Model model) {
 
         Person person = personService.getPersonByID(mitarbeiterId);
-        List<Antrag> antraege = antragService.getAllRequestsForPerson(person);
+        List<Application> antraege = antragService.getAllApplicationsForPerson(person);
 
         model.addAttribute(PERSON_ATTRIBUTE_NAME, person);
         model.addAttribute(REQUEST_ATTRIBUTE_NAME, antraege);
@@ -89,7 +85,7 @@ public class AntragController {
     @RequestMapping(value = "/antraege/wartend", method = RequestMethod.GET)
     public String showWaiting(Model model) {
 
-        List<Antrag> antraege = antragService.getAllRequestsByState(AntragStatus.WARTEND);
+        List<Application> antraege = antragService.getAllApplicationByState(ApplicationStatus.WAITING);
         model.addAttribute(REQUEST_ATTRIBUTE_NAME, antraege);
 
         return REQUESTLIST_VIEW;
@@ -106,7 +102,7 @@ public class AntragController {
     @RequestMapping(value = "/antraege/genehmigt", method = RequestMethod.GET)
     public String showApproved(Model model) {
 
-        List<Antrag> antraege = antragService.getAllRequestsByState(AntragStatus.GENEHMIGT);
+        List<Application> antraege = antragService.getAllApplicationByState(ApplicationStatus.ALLOWED);
         model.addAttribute(REQUEST_ATTRIBUTE_NAME, antraege);
 
         return REQUESTLIST_VIEW;
@@ -123,7 +119,7 @@ public class AntragController {
     @RequestMapping(value = "/antraege/storniert", method = RequestMethod.GET)
     public String showStorno(Model model) {
 
-        List<Antrag> antraege = antragService.getAllRequestsByState(AntragStatus.STORNIERT);
+        List<Application> antraege = antragService.getAllApplicationByState(ApplicationStatus.CANCELLED);
         model.addAttribute(REQUEST_ATTRIBUTE_NAME, antraege);
 
         return REQUESTLIST_VIEW;
@@ -140,7 +136,7 @@ public class AntragController {
     @RequestMapping(value = "/antraege/abgelehnt", method = RequestMethod.GET)
     public String showDeclined(Model model) {
 
-        List<Antrag> antraege = antragService.getAllRequestsByState(AntragStatus.STORNIERT);
+        List<Application> antraege = antragService.getAllApplicationByState(ApplicationStatus.CANCELLED);
         model.addAttribute(REQUEST_ATTRIBUTE_NAME, antraege);
 
         return REQUESTLIST_VIEW;
@@ -163,7 +159,7 @@ public class AntragController {
         DateMidnight date = DateMidnight.now(GregorianChronology.getInstance());
         String stringDate = date.getDayOfMonth() + "." + date.getMonthOfYear() + "." + date.getYear();
         Integer year = date.getYear();
-        Antrag antrag = new Antrag();
+        Application antrag = new Application();
 
         model.addAttribute(PERSON_ATTRIBUTE_NAME, person);
         model.addAttribute(MITARBEITER_ATTRIBUTE_NAME, mitarbeiter);
@@ -187,22 +183,16 @@ public class AntragController {
      */
     @RequestMapping(value = "/antrag/{mitarbeiterId}/new", method = RequestMethod.POST)
     public String saveUrlaubsantrag(@PathVariable("mitarbeiterId") Integer mitarbeiterId,
-        @ModelAttribute("antrag") Antrag antrag, Model model) {
+        @ModelAttribute("antrag") Application antrag, Model model) {
 
         Person person = personService.getPersonByID(mitarbeiterId);
 
         antrag.setPerson(person);
-        antrag.setStatus(AntragStatus.WARTEND);
+        antrag.setStatus(ApplicationStatus.WAITING);
 
         antragService.save(antrag);
 
-        try {
-            antragService.signAntrag(antrag, person, false);
-        } catch (NoSuchAlgorithmException ex) {
-            java.util.logging.Logger.getLogger(AntragController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InvalidKeySpecException ex) {
-            java.util.logging.Logger.getLogger(AntragController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        antragService.signApplicationByUser(antrag, person);
 
         logger.info("Es wurde ein neuer Antrag angelegt.");
         reqLogger.info("Es wurde ein neuer Antrag angelegt.");
@@ -222,9 +212,9 @@ public class AntragController {
     @RequestMapping(value = "/antrag/{antragId}/chef", method = RequestMethod.GET)
     public String showAntragDetailChef(@PathVariable(ANTRAG_ID) Integer antragId, Model model) {
 
-        Antrag antrag = antragService.getRequestById(antragId);
+//        Application antrag = antragService.getRequestById(antragId);
 
-        model.addAttribute(ANTRAG_ATTRIBUTE_NAME, antrag);
+//        model.addAttribute(ANTRAG_ATTRIBUTE_NAME, antrag);
 
         return "antraege/antragdetailchef";
     }
@@ -241,9 +231,9 @@ public class AntragController {
     @RequestMapping(value = "/antrag/{antragId}/office", method = RequestMethod.GET)
     public String showAntragDetailOffice(@PathVariable(ANTRAG_ID) Integer antragId, Model model) {
 
-        Antrag antrag = antragService.getRequestById(antragId);
-
-        model.addAttribute(ANTRAG_ATTRIBUTE_NAME, antrag);
+//        Application antrag = antragService.getRequestById(antragId);
+//
+//        model.addAttribute(ANTRAG_ATTRIBUTE_NAME, antrag);
 
         return "antraege/antragdetailoffice";
     }
@@ -259,8 +249,8 @@ public class AntragController {
     @RequestMapping(value = "/antrag/{antragId}/stornieren", method = RequestMethod.PUT)
     public String cancelAntrag(@PathVariable(ANTRAG_ID) Integer antragId, Model model) {
 
-        // über die logik sollten wir nochmal nachdenken...
-        antragService.storno(antragService.getRequestById(antragId));
+//        // über die logik sollten wir nochmal nachdenken...
+//        antragService.cancel(antragService.getRequestById(antragId));
 
         logger.info("Ein Antrag wurde storniert.");
         reqLogger.info("Ein Antrag wurde storniert.");
@@ -270,7 +260,7 @@ public class AntragController {
 
 
     /**
-     * used if you want to approve an existing request (boss only)
+     * used if you want to allow an existing request (boss only)
      *
      * @param  model
      *
@@ -283,20 +273,20 @@ public class AntragController {
         // irgendwie an LoginNamen kommen via security stuff
         String login = "";
 
-        Antrag antrag = antragService.getRequestById(antragId);
+//        Application antrag = antragService.getRequestById(antragId);
         Person boss = personService.getPersonByLogin(login);
 
         // über die logik sollten wir nochmal nachdenken...
-        antragService.approve(antrag);
+// antragService.allow(antrag);
 
-        try {
-            // Antrag mit Boss Daten signieren
-            antragService.signAntrag(antrag, boss, true);
-        } catch (NoSuchAlgorithmException ex) {
-            java.util.logging.Logger.getLogger(AntragController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InvalidKeySpecException ex) {
-            java.util.logging.Logger.getLogger(AntragController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+// try {
+// // Application mit Boss Daten signieren
+////            antragService.signApplicationByBoss(antrag, boss);
+//        } catch (NoSuchAlgorithmException ex) {
+//            java.util.logging.Logger.getLogger(ApplicationController.class.getName()).log(Level.SEVERE, null, ex);
+//        } catch (InvalidKeySpecException ex) {
+//            java.util.logging.Logger.getLogger(ApplicationController.class.getName()).log(Level.SEVERE, null, ex);
+//        }
 
         logger.info("Ein Antrag wurde genehmigt.");
         reqLogger.info("Ein Antrag wurde genehmigt.");
@@ -308,7 +298,7 @@ public class AntragController {
 
 
     /**
-     * used if you want to decline a request (boss only)
+     * used if you want to reject a request (boss only)
      *
      * @param  antragId  the id of the to declining request
      * @param  reason  the reason of the rejection
@@ -324,17 +314,17 @@ public class AntragController {
         String login = "";
 
         Person boss = personService.getPersonByLogin(login);
-        Antrag antrag = antragService.getRequestById(antragId);
-
-        antragService.decline(antrag, boss, reasonForDeclining);
-
-        try {
-            antragService.signAntrag(antrag, boss, true);
-        } catch (NoSuchAlgorithmException ex) {
-            java.util.logging.Logger.getLogger(AntragController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InvalidKeySpecException ex) {
-            java.util.logging.Logger.getLogger(AntragController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        Application antrag = antragService.getRequestById(antragId);
+//
+//        antragService.reject(antrag, boss, reasonForDeclining);
+//
+//        try {
+//            antragService.signApplicationByBoss(antrag, boss);
+//        } catch (NoSuchAlgorithmException ex) {
+//            java.util.logging.Logger.getLogger(ApplicationController.class.getName()).log(Level.SEVERE, null, ex);
+//        } catch (InvalidKeySpecException ex) {
+//            java.util.logging.Logger.getLogger(ApplicationController.class.getName()).log(Level.SEVERE, null, ex);
+//        }
 
         logger.info("Ein Antrag wurde abgelehnt.");
         reqLogger.info("Ein Antrag wurde abgelehnt.");

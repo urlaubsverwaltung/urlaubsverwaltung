@@ -33,27 +33,29 @@
 
 <repository:repositories base-package="org.synyx.urlaubsverwaltung.**.dao" />
 
+<bean id="calculationService" class="org.synyx.urlaubsverwaltung.service.CalculationService" />
 <bean id="ownCalendarService" class="org.synyx.urlaubsverwaltung.calendar.OwnCalendarService" />
-<bean id="kontoService" class="org.synyx.urlaubsverwaltung.service.KontoServiceImpl">
-    <constructor-arg ref="ownCalendarService" />
+<bean id="accountService" class="org.synyx.urlaubsverwaltung.service.HolidaysAccountServiceImpl">
+    <constructor-arg ref="calculationService" />
 </bean>
 <bean id="personService" class="org.synyx.urlaubsverwaltung.service.PersonServiceImpl">
-    <constructor-arg ref="antragService" />
-    <constructor-arg ref="kontoService" />
+    <constructor-arg ref="applicationService" />
+    <constructor-arg ref="accountService" />
     <constructor-arg ref="mailService" />
 </bean>    
-<bean id="antragService" class="org.synyx.urlaubsverwaltung.service.AntragServiceImpl">
-    <constructor-arg ref="kontoService" />
-    <constructor-arg ref="pgpService" />
+<bean id="applicationService" class="org.synyx.urlaubsverwaltung.service.ApplicationServiceImpl">
+    <constructor-arg ref="accountService" />
+    <constructor-arg ref="cryptoService" />
     <constructor-arg ref="ownCalendarService" />
     <constructor-arg ref="mailService" />
+    <constructor-arg ref="calculationService" />
 </bean>    
 <bean id="mailService" class="org.synyx.urlaubsverwaltung.service.MailServiceImpl">
        <constructor-arg>
             <bean class="org.springframework.mail.javamail.JavaMailSenderImpl" />
         </constructor-arg>
 </bean>  
-<bean id="pgpService" class="org.synyx.urlaubsverwaltung.service.PGPService" />
+<bean id="cryptoService" class="org.synyx.urlaubsverwaltung.service.CryptoService" />
 
 
 </beans>

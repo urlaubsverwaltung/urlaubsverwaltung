@@ -279,10 +279,10 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 
     /**
-     * @see  ApplicationService#signAntragByBoss(org.synyx.urlaubsverwaltung.domain.Application, org.synyx.urlaubsverwaltung.domain.Person)
+     * @see  ApplicationService#signApplicationByBoss(org.synyx.urlaubsverwaltung.domain.Application, org.synyx.urlaubsverwaltung.domain.Person)
      */
     @Override
-    public void signAntragByBoss(Application application, Person boss) {
+    public void signApplicationByBoss(Application application, Person boss) {
 
         byte[] data = signAntrag(application, boss);
 
@@ -294,10 +294,10 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 
     /**
-     * @see  ApplicationService#signAntragByUser(org.synyx.urlaubsverwaltung.domain.Application, org.synyx.urlaubsverwaltung.domain.Person)
+     * @see  ApplicationService#signApplicationByUser(org.synyx.urlaubsverwaltung.domain.Application, org.synyx.urlaubsverwaltung.domain.Person)
      */
     @Override
-    public void signAntragByUser(Application application, Person user) {
+    public void signApplicationByUser(Application application, Person user) {
 
         byte[] data = signAntrag(application, user);
 

@@ -9,8 +9,8 @@ import org.joda.time.DateMidnight;
 import org.junit.After;
 import org.junit.AfterClass;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -18,7 +18,7 @@ import org.junit.Test;
 
 
 /**
- * @author  aljona
+ * @author  Aljona Murygina
  */
 public class OwnCalendarServiceTest {
 
@@ -56,10 +56,10 @@ public class OwnCalendarServiceTest {
         DateMidnight start = new DateMidnight(2011, 11, 16);
         DateMidnight end = new DateMidnight(2011, 11, 28);
 
-        Integer returnValue = instance.getWorkDays(start, end);
+        double returnValue = instance.getWorkDays(start, end);
 
         assertNotNull(returnValue);
-        assertSame(9, returnValue);
+        assertEquals(9.0, returnValue, 0.0);
     }
 
     /** Test of getVacationDays method, of class OwnCalendarService. */

@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import org.synyx.urlaubsverwaltung.domain.Antrag;
+import org.synyx.urlaubsverwaltung.domain.Application;
+import org.synyx.urlaubsverwaltung.domain.HolidaysAccount;
 import org.synyx.urlaubsverwaltung.domain.Person;
-import org.synyx.urlaubsverwaltung.domain.Urlaubskonto;
-import org.synyx.urlaubsverwaltung.service.AntragService;
+import org.synyx.urlaubsverwaltung.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.service.CryptoService;
-import org.synyx.urlaubsverwaltung.service.KontoService;
+import org.synyx.urlaubsverwaltung.service.HolidaysAccountService;
 import org.synyx.urlaubsverwaltung.service.PersonService;
 
 import java.security.KeyPair;
@@ -45,12 +45,12 @@ public class PersonController {
     private static Logger personLogger = Logger.getLogger("personLogger");
 
     private PersonService personService;
-    private AntragService antragService;
-    private KontoService kontoService;
+    private ApplicationService antragService;
+    private HolidaysAccountService kontoService;
     private CryptoService pgpService;
 
-    public PersonController(PersonService personService, AntragService antragService, KontoService kontoService,
-        CryptoService pgpService) {
+    public PersonController(PersonService personService, ApplicationService antragService,
+        HolidaysAccountService kontoService, CryptoService pgpService) {
 
         this.personService = personService;
         this.antragService = antragService;
@@ -72,8 +72,9 @@ public class PersonController {
         Integer year = DateMidnight.now(GregorianChronology.getInstance()).getYear();
 
         for (Person person : mitarbeiter) {
-            Urlaubskonto urlaubskonto = kontoService.getUrlaubskonto(year, person);
-            person.setUrlaubskonto(urlaubskonto);
+            HolidaysAccount urlaubskonto = kontoService.getHolidaysAccount(year, person);
+            // to be implemented....
+// person.setHolidaysAccount(urlaubskonto);
         }
 
         model.addAttribute(MITARBEITER_ATTRIBUTE_NAME, mitarbeiter);
@@ -99,8 +100,9 @@ public class PersonController {
         Integer year = DateMidnight.now(GregorianChronology.getInstance()).getYear();
 
         for (Person person : mitarbeiter) {
-            Urlaubskonto urlaubskonto = kontoService.getUrlaubskonto(year, person);
-            person.setUrlaubskonto(urlaubskonto);
+            HolidaysAccount urlaubskonto = kontoService.getHolidaysAccount(year, person);
+            // to be implemented....
+// person.setHolidaysAccount(urlaubskonto);
         }
 
         model.addAttribute(MITARBEITER_ATTRIBUTE_NAME, mitarbeiter);
@@ -127,10 +129,11 @@ public class PersonController {
 
         Person person = personService.getPersonByID(mitarbeiterId);
 
-        List<Antrag> requests = antragService.getAllRequestsForPerson(person);
+        List<Application> requests = antragService.getAllApplicationsForPerson(person);
 
-        Urlaubskonto konto = kontoService.getUrlaubskonto(year, person);
-        person.setUrlaubskonto(konto);
+        HolidaysAccount konto = kontoService.getHolidaysAccount(year, person);
+        // to be implemented....
+// person.setHolidaysAccount(konto);
 
         model.addAttribute("year", year);
         model.addAttribute("requests", requests);
@@ -179,10 +182,11 @@ public class PersonController {
 
         personService.save(personToUpdate);
 
-        Integer year = person.getYearForCurrentUrlaubsanspruch();
-
-        kontoService.newUrlaubsanspruch(person, year, person.getCurrentUrlaubsanspruch().doubleValue());
-        kontoService.newUrlaubskonto(person, person.getCurrentUrlaubsanspruch().doubleValue(), 0.0, year);
+        // to be implemented....
+// int year = person.getYearForCurrentUrlaubsanspruch();
+//
+// kontoService.newUrlaubsanspruch(person, year, person.getCurrentUrlaubsanspruch().doubleValue());
+// kontoService.newUrlaubskonto(person, person.getCurrentUrlaubsanspruch().doubleValue(), 0.0, year);
 
         logger.info("Der Mitarbeiter " + person.getFirstName() + " " + person.getLastName() + " wurde editiert.");
         personLogger.info("Der Mitarbeiter " + person.getFirstName() + " " + person.getLastName() + " wurde editiert.");
@@ -230,15 +234,17 @@ public class PersonController {
         }
 
         personService.save(person);
+//
 
-        // neuen Urlaubsanspruch erstellen und speichern
-        kontoService.newUrlaubsanspruch(person, year, person.getCurrentUrlaubsanspruch().doubleValue());
-
-        // neues Urlaubskonto erstellen und speichern
-        kontoService.newUrlaubskonto(person, person.getCurrentUrlaubsanspruch().doubleValue(), 0.0, year);
-
-        Urlaubskonto konto = kontoService.getUrlaubskonto(year, person);
-        person.setUrlaubskonto(konto);
+        // to be implemented....
+// // neuen Urlaubsanspruch erstellen und speichern
+// kontoService.newUrlaubsanspruch(person, year, person.getCurrentUrlaubsanspruch().doubleValue());
+//
+// // neues HolidaysAccount erstellen und speichern
+// kontoService.newUrlaubskonto(person, person.getCurrentUrlaubsanspruch().doubleValue(), 0.0, year);
+//
+// HolidaysAccount konto = kontoService.getHolidaysAccount(year, person);
+// person.setHolidaysAccount(konto);
 
         logger.info("Neue Person angelegt: " + person.getFirstName() + " " + person.getLastName());
         personLogger.info("Neue Person angelegt: " + person.getFirstName() + " " + person.getLastName());

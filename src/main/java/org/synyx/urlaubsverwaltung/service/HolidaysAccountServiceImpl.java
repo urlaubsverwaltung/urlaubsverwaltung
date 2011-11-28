@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.dao.HolidayEntitlementDAO;
 import org.synyx.urlaubsverwaltung.dao.HolidaysAccountDAO;
 import org.synyx.urlaubsverwaltung.domain.Application;
@@ -30,22 +29,16 @@ import java.util.List;
 @Transactional
 public class HolidaysAccountServiceImpl implements HolidaysAccountService {
 
-    private static final int LAST_DAY = 31;
-    private static final int FIRST_DAY = 1;
-
     private HolidaysAccountDAO holidaysAccountDAO;
     private HolidayEntitlementDAO holidaysEntitlementDAO;
-    private OwnCalendarService calendarService;
     private CalculationService calculationService;
 
     @Autowired
     public HolidaysAccountServiceImpl(HolidaysAccountDAO holidaysAccountDAO,
-        HolidayEntitlementDAO holidaysEntitlementDAO, OwnCalendarService calendarService,
-        CalculationService calculationService) {
+        HolidayEntitlementDAO holidaysEntitlementDAO, CalculationService calculationService) {
 
         this.holidaysAccountDAO = holidaysAccountDAO;
         this.holidaysEntitlementDAO = holidaysEntitlementDAO;
-        this.calendarService = calendarService;
         this.calculationService = calculationService;
     }
 

@@ -28,11 +28,11 @@ import java.security.PublicKey;
 /**
  * @author  aljona
  */
-public class PGPServiceTest {
+public class CryptoServiceTest {
 
     private CryptoService instance;
 
-    public PGPServiceTest() {
+    public CryptoServiceTest() {
     }
 
     // vor Bauen der Klasse

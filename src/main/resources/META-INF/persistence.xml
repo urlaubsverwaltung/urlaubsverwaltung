@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence version="1.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
-
-<!-- Hier Domain-Objekte einfuegen -->
-   <persistence-unit name="urlaubsverwaltung">
-        <class>org.synyx.urlaubsverwaltung.domain.Person</class>
-        <class>org.synyx.urlaubsverwaltung.domain.Antrag</class>
-        <class>org.synyx.urlaubsverwaltung.domain.Urlaubsanspruch</class>
-        <class>org.synyx.urlaubsverwaltung.domain.Urlaubskonto</class>
-        <class>org.synyx.urlaubsverwaltung.domain.Kommentar</class>
-    </persistence-unit>
-    
+  <persistence-unit name="urlaubsverwaltung">
+    <class>org.synyx.urlaubsverwaltung.domain.Person</class>
+    <class>org.synyx.urlaubsverwaltung.domain.Comment</class>
+    <class>org.synyx.urlaubsverwaltung.domain.Application</class>
+    <class>org.synyx.urlaubsverwaltung.domain.HolidaysAccount</class>
+    <class>org.synyx.urlaubsverwaltung.domain.HolidayEntitlement</class>
+  </persistence-unit>
 </persistence>
