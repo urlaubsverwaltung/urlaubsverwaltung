@@ -4,6 +4,8 @@ import org.joda.time.DateMidnight;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -29,13 +31,13 @@ public class Application extends AbstractPersistable<Integer> {
 
     // Reason why boss rejected an application
     @OneToOne
-    private Kommentar reasonToReject;
+    private Comment reasonToReject;
 
-    // Number of days that is substract from HolidayAccount
-    private Double days;
+    // Number of days that is subtract from HolidayAccount
+    private BigDecimal days;
 
     // If belatedly added, number of days is added to HolidayAccount
-    private Double sickDays;
+    private BigDecimal sickDays;
 
     // Period of holiday
     private DateMidnight startDate;
@@ -45,9 +47,8 @@ public class Application extends AbstractPersistable<Integer> {
     // Type of holiday, e.g. holiday, special leave, etc.
     private VacationType vacationType;
 
-    // lassen oder nicht?
-    // nur morgens, nur mittags oder ganztägig
-    private Length howLong;
+    // length of day: contains time of day (morning, noon or full day) and value (1.0 or 0.5 - as BigDecimal)
+    private DayLength howLong;
 
     // For special and unpaid leave a reason is required
     // for holiday default = "Erholung"
@@ -116,13 +117,13 @@ public class Application extends AbstractPersistable<Integer> {
     }
 
 
-    public Double getDays() {
+    public BigDecimal getDays() {
 
         return days;
     }
 
 
-    public void setDays(Double days) {
+    public void setDays(BigDecimal days) {
 
         this.days = days;
     }
@@ -140,13 +141,13 @@ public class Application extends AbstractPersistable<Integer> {
     }
 
 
-    public Length getHowLong() {
+    public DayLength getHowLong() {
 
         return howLong;
     }
 
 
-    public void setHowLong(Length howLong) {
+    public void setHowLong(DayLength howLong) {
 
         this.howLong = howLong;
     }
@@ -188,13 +189,13 @@ public class Application extends AbstractPersistable<Integer> {
     }
 
 
-    public Kommentar getReasonToReject() {
+    public Comment getReasonToReject() {
 
         return reasonToReject;
     }
 
 
-    public void setReasonToReject(Kommentar reasonToReject) {
+    public void setReasonToReject(Comment reasonToReject) {
 
         this.reasonToReject = reasonToReject;
     }
@@ -212,13 +213,13 @@ public class Application extends AbstractPersistable<Integer> {
     }
 
 
-    public Double getSickDays() {
+    public BigDecimal getSickDays() {
 
         return sickDays;
     }
 
 
-    public void setSickDays(Double sickDays) {
+    public void setSickDays(BigDecimal sickDays) {
 
         this.sickDays = sickDays;
     }

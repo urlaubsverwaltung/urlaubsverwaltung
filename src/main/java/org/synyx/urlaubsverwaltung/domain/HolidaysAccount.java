@@ -6,6 +6,8 @@ package org.synyx.urlaubsverwaltung.domain;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
@@ -27,19 +29,19 @@ public class HolidaysAccount extends AbstractPersistable<Integer> {
     private Integer year;
 
     // Residual number of leave days that person has
-    private Double vacationDays;
+    private BigDecimal vacationDays;
 
     // Residual number of remaining days of vacation that person has
-    private Double remainingVacationDays;
+    private BigDecimal remainingVacationDays;
 
     // Number of days that person has used this year
-    private Double usedVacationDays;
+    private BigDecimal usedVacationDays;
 
     // Number of days of special leave used this year
-    private Double sonderUrlaub;
+    private BigDecimal sonderUrlaub;
 
     // Number of days of unpaid leave used this year
-    private Double unbezahlterUrlaub;
+    private BigDecimal unbezahlterUrlaub;
 
     public static long getSerialVersionUID() {
 
@@ -59,61 +61,61 @@ public class HolidaysAccount extends AbstractPersistable<Integer> {
     }
 
 
-    public Double getRemainingVacationDayss() {
+    public BigDecimal getRemainingVacationDays() {
 
         return remainingVacationDays;
     }
 
 
-    public void setRemainingVacationDays(Double remainingVacationDays) {
+    public void setRemainingVacationDays(BigDecimal remainingVacationDays) {
 
         this.remainingVacationDays = remainingVacationDays;
     }
 
 
-    public Double getSonderUrlaub() {
+    public BigDecimal getSonderUrlaub() {
 
         return sonderUrlaub;
     }
 
 
-    public void setSonderUrlaub(Double sonderUrlaub) {
+    public void setSonderUrlaub(BigDecimal sonderUrlaub) {
 
         this.sonderUrlaub = sonderUrlaub;
     }
 
 
-    public Double getUnbezahlterUrlaub() {
+    public BigDecimal getUnbezahlterUrlaub() {
 
         return unbezahlterUrlaub;
     }
 
 
-    public void setUnbezahlterUrlaub(Double unbezahlterUrlaub) {
+    public void setUnbezahlterUrlaub(BigDecimal unbezahlterUrlaub) {
 
         this.unbezahlterUrlaub = unbezahlterUrlaub;
     }
 
 
-    public Double getUsedVacationDays() {
+    public BigDecimal getUsedVacationDays() {
 
         return usedVacationDays;
     }
 
 
-    public void setUsedVacationDays(Double usedVacationDays) {
+    public void setUsedVacationDays(BigDecimal usedVacationDays) {
 
         this.usedVacationDays = usedVacationDays;
     }
 
 
-    public Double getVacationDays() {
+    public BigDecimal getVacationDays() {
 
         return vacationDays;
     }
 
 
-    public void setVacationDays(Double vacationDays) {
+    public void setVacationDays(BigDecimal vacationDays) {
 
         this.vacationDays = vacationDays;
     }

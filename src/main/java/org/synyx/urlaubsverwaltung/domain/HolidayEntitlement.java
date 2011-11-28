@@ -6,6 +6,8 @@ package org.synyx.urlaubsverwaltung.domain;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
@@ -23,7 +25,7 @@ public class HolidayEntitlement extends AbstractPersistable<Integer> {
     @ManyToOne
     private Person person;
 
-    private Double vacationDays;
+    private BigDecimal vacationDays;
 
     private Integer year;
 
@@ -45,13 +47,13 @@ public class HolidayEntitlement extends AbstractPersistable<Integer> {
     }
 
 
-    public Double getVacationDays() {
+    public BigDecimal getVacationDays() {
 
         return vacationDays;
     }
 
 
-    public void setVacationDays(Double vacationDays) {
+    public void setVacationDays(BigDecimal vacationDays) {
 
         this.vacationDays = vacationDays;
     }
