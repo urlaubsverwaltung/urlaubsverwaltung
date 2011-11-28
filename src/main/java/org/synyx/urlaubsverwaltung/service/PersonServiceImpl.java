@@ -6,12 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import org.synyx.urlaubsverwaltung.dao.HolidayEntitlementDAO;
 import org.synyx.urlaubsverwaltung.dao.PersonDAO;
-import org.synyx.urlaubsverwaltung.dao.UrlaubsanspruchDAO;
-import org.synyx.urlaubsverwaltung.domain.Antrag;
+import org.synyx.urlaubsverwaltung.domain.Application;
+import org.synyx.urlaubsverwaltung.domain.HolidayEntitlement;
+import org.synyx.urlaubsverwaltung.domain.HolidaysAccount;
 import org.synyx.urlaubsverwaltung.domain.Person;
-import org.synyx.urlaubsverwaltung.domain.Urlaubsanspruch;
-import org.synyx.urlaubsverwaltung.domain.Urlaubskonto;
+
+import java.math.BigDecimal;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,26 +22,27 @@ import java.util.List;
 /**
  * implementation of the persondata-access-service. for now just passing functions, but this can change(maybe)
  *
- * @author  johannes
+ * @author  Aljona Murygina
+ * @author  Johannes Reuter
  */
 @Transactional
 public class PersonServiceImpl implements PersonService {
 
     private PersonDAO personDAO;
-    private AntragService antragService;
-    private KontoService kontoService;
-    private UrlaubsanspruchDAO urlaubsanspruchDAO;
+    private ApplicationService applicationService;
+    private HolidaysAccountService accountService;
+    private HolidayEntitlementDAO holidayEntitlementDAO;
     private MailService mailService;
 
     @Autowired
-    public PersonServiceImpl(PersonDAO personDAO, AntragService antragService, UrlaubsanspruchDAO urlaubsanspruchDAO,
-        MailService mailService, KontoService kontoService) {
+    public PersonServiceImpl(PersonDAO personDAO, ApplicationService applicationService,
+        HolidayEntitlementDAO holidayEntitlementDAO, MailService mailService, HolidaysAccountService accountService) {
 
         this.personDAO = personDAO;
-        this.antragService = antragService;
-        this.urlaubsanspruchDAO = urlaubsanspruchDAO;
+        this.applicationService = applicationService;
+        this.holidayEntitlementDAO = holidayEntitlementDAO;
         this.mailService = mailService;
-        this.kontoService = kontoService;
+        this.accountService = accountService;
     }
 
     /**
@@ -73,6 +76,16 @@ public class PersonServiceImpl implements PersonService {
 
 
     /**
+     * @see  PersonService#getPersonByLogin(java.lang.String)
+     */
+    @Override
+    public Person getPersonByLogin(String loginName) {
+
+        return personDAO.getPersonByLogin(loginName);
+    }
+
+
+    /**
      * @see  PersonService#getAllPersons()
      */
     @Override
@@ -83,171 +96,158 @@ public class PersonServiceImpl implements PersonService {
 
 
     /**
-     * @see  PersonService#deleteResturlaub()
+     * @see  PersonService#deleteRemainingVacationDays()
      */
     @Override
-    public void deleteResturlaub() {
+    public void deleteRemainingVacationDays() {
 
         List<Person> persons = getAllPersons();
 
         for (Person person : persons) {
-            Urlaubskonto currentKonto = kontoService.getUrlaubskonto(DateMidnight.now().getYear(), person);
-            currentKonto.setRestVacationDays(0.0);
+            HolidaysAccount currentAccount = accountService.getHolidaysAccount(DateMidnight.now().getYear(), person);
+            currentAccount.setRemainingVacationDays(BigDecimal.ZERO);
         }
     }
 
 
     /**
-     * @see  PersonService#getPersonsWithResturlaub()
+     * @see  PersonService#getPersonsWithRemainingVacationDays()
      */
     @Override
-    public List<Person> getPersonsWithResturlaub() {
+    public List<Person> getPersonsWithRemainingVacationDays() {
 
-        List<Person> restUrlaubPersons = new ArrayList<Person>();
+        List<Person> personsWithRemainingVacationDays = new ArrayList<Person>();
 
         int year = DateMidnight.now().getYear();
 
         List<Person> persons = getAllPersons();
 
         for (Person person : persons) {
-            if (kontoService.getUrlaubskonto(year, person).getRestVacationDays() != 0) {
-                restUrlaubPersons.add(person);
+            if (!accountService.getHolidaysAccount(year, person).getRemainingVacationDays().equals(BigDecimal.ZERO)) {
+                personsWithRemainingVacationDays.add(person);
             }
         }
 
-        return restUrlaubPersons;
+        return personsWithRemainingVacationDays;
     }
 
 
     /**
-     * @see  PersonService#updateVacationDays()
+     * @see  PersonService#updateVacationDays(int)
      */
     @Override
     public void updateVacationDays(int year) {
 
-        Urlaubskonto urlaubskonto;
+        HolidaysAccount account;
 
         List<Person> persons = getAllPersons();
 
         for (Person person : persons) {
-            Urlaubsanspruch urlaubsanspruch = kontoService.getUrlaubsanspruch(year, person);
+            HolidayEntitlement entitlement = accountService.getHolidayEntitlement(year, person);
 
-            if (urlaubsanspruch == null) {
-                // wenn der urlaubsanspruch für das neue jahr noch nicht besteht (z.b. durch änderung)
-                // dann nimm den aus dem letzten jahr, der MUSS da sein (YO)
-                urlaubsanspruch = kontoService.newUrlaubsanspruch(person, year,
-                    kontoService.getUrlaubsanspruch(year - 1, person).getVacationDays());
+            if (entitlement == null) {
+                // if entitlement for this year not yet existent
+                // take that one from past year
+                entitlement = accountService.newHolidayEntitlement(person, year,
+                        accountService.getHolidayEntitlement(year - 1, person).getVacationDays());
             }
 
-            // lies das urlaubskonto für das aktuelle jahr aus
-            urlaubskonto = kontoService.getUrlaubskonto(year, person);
+            account = accountService.getHolidaysAccount(year, person);
 
-            if (urlaubskonto == null) {
-                // wenn das konto noch nicht besteht, trage aktuellen urlaubsanspruch ein
-                // und übertrage kontostand aus altem jahr als resturlaub ins neue
+            if (account == null) {
+                // if account not yet existent, take current entitlement and set vacation days of past year to remaining
+                // vacation days of current year
 
-                Double restDays = kontoService.getUrlaubskonto(year - 1, person).getVacationDays();
+                BigDecimal days = accountService.getHolidaysAccount(year - 1, person).getVacationDays();
 
-                // neues Konto anlegen und zurückgeben
-                kontoService.newUrlaubskonto(person, urlaubsanspruch.getVacationDays(), restDays, year);
-                urlaubskonto = kontoService.getUrlaubskonto(year, person);
+                // create new account
+                accountService.newHolidaysAccount(person, entitlement.getVacationDays(), days, year);
+                account = accountService.getHolidaysAccount(year, person);
             } else {
-                // wenn das konto schon besteht..
-                Double restDays = kontoService.getUrlaubskonto(year - 1, person).getVacationDays();
+                // if account existent
+                BigDecimal days = accountService.getHolidaysAccount(year - 1, person).getVacationDays();
 
-                if (urlaubskonto.getVacationDays() < urlaubsanspruch.getVacationDays()) {
-                    // wenn vom urlaubskonto dieses jahres schon tage abgebucht wurden,
-                    // muss der resturlaub erst dafür verwendet werden, um das urlaubskonto
-                    // wieder aufzufüllen
-                    Double urlaubsTage;
+                if ((account.getVacationDays().compareTo(entitlement.getVacationDays())) == -1) {
+                    // if account of this year already has been used
+                    // take at first remaining vacation days for filling account (vacation days)
+                    BigDecimal vacDays;
 
-                    // urlaubstage enthält alle tage, die die person in diesem jahr hat
-                    urlaubsTage = urlaubskonto.getVacationDays() + restDays;
-                    restDays = 0.0;
+                    // vacDays contains all vacation days that person has this year
+                    vacDays = account.getVacationDays().add(days);
 
-                    if (urlaubsTage > urlaubsanspruch.getVacationDays()) {
-                        // falls das mehr sind, als er urlaub haben dürfte, so wird der überhang als
-                        // resturlaub gewertet
-                        restDays = urlaubsTage - urlaubsanspruch.getVacationDays();
+                    // set remaining vacation days to 0
+                    days = BigDecimal.ZERO;
 
-                        // und das normale urlaubskonto ist wieder voll
-                        urlaubsTage = urlaubsanspruch.getVacationDays();
+                    if ((vacDays.compareTo(entitlement.getVacationDays())) == 1) {
+                        // if vacDays > entitlement
+                        // remaining vacation days = vacDays - entitlement
+                        days = vacDays.subtract(entitlement.getVacationDays());
+
+                        // set normal vacation days as filled full
+                        vacDays = entitlement.getVacationDays();
                     }
 
-                    // trage die neue anzahl urlaubstage ein
-                    urlaubskonto.setVacationDays(urlaubsTage);
+                    account.setVacationDays(vacDays);
                 }
 
-                // trage die resturlaubstage ein
-                urlaubskonto.setRestVacationDays(restDays);
+                account.setRemainingVacationDays(days);
             }
 
-            // schreib alles in die db
-            kontoService.saveUrlaubskonto(urlaubskonto);
+            accountService.saveHolidaysAccount(account);
         }
     }
 
 
     /**
-     * @see  PersonService#getAllUrlauberForThisWeekAndPutItInAnEmail(org.joda.time.DateMidnight, org.joda.time.DateMidnight)
+     * @see  PersonService#getAllPersonsOnHolidayForThisWeekAndPutItInAnEmail(org.joda.time.DateMidnight, org.joda.time.DateMidnight)
      */
     @Override
-    public void getAllUrlauberForThisWeekAndPutItInAnEmail(DateMidnight startDate, DateMidnight endDate) {
+    public void getAllPersonsOnHolidayForThisWeekAndPutItInAnEmail(DateMidnight startDate, DateMidnight endDate) {
 
-        List<Antrag> requests = antragService.getAllRequestsForACertainTime(startDate, endDate);
+        List<Application> applications = applicationService.getAllApplicationsForACertainTime(startDate, endDate);
 
-        List<Person> urlauber = new ArrayList<Person>();
+        List<Person> persons = new ArrayList<Person>();
 
-        for (Antrag antrag : requests) {
-            urlauber.add(antrag.getPerson());
+        for (Application application : applications) {
+            persons.add(application.getPerson());
         }
 
-        mailService.sendWeeklyVacationForecast(urlauber);
+        mailService.sendWeeklyVacationForecast(persons);
     }
 
 
     /**
-     * @see  PersonService#getUrlaubsanspruchByPersonAndYear(org.synyx.urlaubsverwaltung.domain.Person, java.lang.Integer)
+     * @see  PersonService#getHolidayEntitlementByPersonAndYear(org.synyx.urlaubsverwaltung.domain.Person, int)
      */
     @Override
-    public Urlaubsanspruch getUrlaubsanspruchByPersonAndYear(Person person, Integer year) {
+    public HolidayEntitlement getHolidayEntitlementByPersonAndYear(Person person, int year) {
 
-        return urlaubsanspruchDAO.getUrlaubsanspruchByDate(year, person);
+        return holidayEntitlementDAO.getHolidayEntitlementByYearAndPerson(year, person);
     }
 
 
     /**
-     * @see  PersonService#getUrlaubsanspruchByPersonForAllYears(org.synyx.urlaubsverwaltung.domain.Person)
+     * @see  PersonService#getHolidayEntitlementByPersonForAllYears(org.synyx.urlaubsverwaltung.domain.Person)
      */
     @Override
-    public List<Urlaubsanspruch> getUrlaubsanspruchByPersonForAllYears(Person person) {
+    public List<HolidayEntitlement> getHolidayEntitlementByPersonForAllYears(Person person) {
 
-        return urlaubsanspruchDAO.getUrlaubsanspruchByPerson(person);
+        return holidayEntitlementDAO.getHolidayEntitlementByPerson(person);
     }
 
 
     /**
-     * @see  PersonService#setUrlaubsanspruchForPerson(org.synyx.urlaubsverwaltung.domain.Person, java.lang.Integer,
-     *       java.lang.Integer)
+     * @see  PersonService#setHolidayEntitlementForPerson(org.synyx.urlaubsverwaltung.domain.Person, int,
+     *       java.math.BigDecimal)
      */
     @Override
-    public void setUrlaubsanspruchForPerson(Person person, Integer year, Double days) {
+    public void setHolidayEntitlementForPerson(Person person, int year, BigDecimal days) {
 
-        Urlaubsanspruch urlaubsanspruch = new Urlaubsanspruch();
-        urlaubsanspruch.setPerson(person);
-        urlaubsanspruch.setYear(year);
-        urlaubsanspruch.setVacationDays(days);
+        HolidayEntitlement entitlement = new HolidayEntitlement();
+        entitlement.setPerson(person);
+        entitlement.setYear(year);
+        entitlement.setVacationDays(days);
 
-        urlaubsanspruchDAO.save(urlaubsanspruch);
-    }
-
-
-    /**
-     * @see  PersonService#getPersonByLogin(java.lang.String)
-     */
-    @Override
-    public Person getPersonByLogin(String loginName) {
-
-        return personDAO.getPersonByLogin(loginName);
+        holidayEntitlementDAO.save(entitlement);
     }
 }

@@ -2,17 +2,21 @@ package org.synyx.urlaubsverwaltung.service;
 
 import org.joda.time.DateMidnight;
 
+import org.synyx.urlaubsverwaltung.domain.HolidayEntitlement;
 import org.synyx.urlaubsverwaltung.domain.Person;
-import org.synyx.urlaubsverwaltung.domain.Urlaubsanspruch;
+
+import java.math.BigDecimal;
 
 import java.util.List;
 
 
 /**
- * use this service to access to the person-data (firstname, email, vacation-days per year, etc. etc.)
+ * use this service to access to the person-data (firstname, email, vacation-days per year, etc. )
  *
- * @author  johannes
+ * @author  Johannes Reuter
+ * @author  Aljona Murygina
  */
+
 public interface PersonService {
 
     /**
@@ -62,60 +66,61 @@ public interface PersonService {
     /**
      * this method is used by a schedule-job. it deletes existing resturlaub for all persons execution in march(april?)
      */
-    void deleteResturlaub();
+    void deleteRemainingVacationDays();
 
 
     /**
      * this method is used by a schedule-job. it sends mails to all persons who have soon decaying resturlaub-days.
-     * (execution in march, but before deleteResturlaub =)
+     * (execution in march, but before deleteRemainingVacationDays)
      */
-    List<Person> getPersonsWithResturlaub();
+    List<Person> getPersonsWithRemainingVacationDays();
 
 
     /**
      * this method is used by a schedule-job. it transfers unused vacation-days from the old year as resturlaub to the
      * new one and adds the amount of regular vacation-days (execution at 1.1. 0:00)
+     *
+     * @param  year
      */
     void updateVacationDays(int year);
 
 
     /**
-     * get all persons that have days off (=urlaub haben) this week.
+     * get all persons that have days off this week.
      *
-     * @param  requestsOfThisWeek
-     *
-     * @return
+     * @param  startDate
+     * @param  endDate
      */
-    void getAllUrlauberForThisWeekAndPutItInAnEmail(DateMidnight startDate, DateMidnight endDate);
+    void getAllPersonsOnHolidayForThisWeekAndPutItInAnEmail(DateMidnight startDate, DateMidnight endDate);
 
 
     /**
-     * get a Urlaubsanspruch for a certain year and person
+     * get a HolidayEntitlement for a certain year and person
      *
      * @param  person
      * @param  year
      *
      * @return
      */
-    Urlaubsanspruch getUrlaubsanspruchByPersonAndYear(Person person, Integer year);
+    HolidayEntitlement getHolidayEntitlementByPersonAndYear(Person person, int year);
 
 
     /**
-     * get a list of Urlaubsanspruch for a certain person
+     * get a list of HolidayEntitlement for a certain person
      *
      * @param  person
      *
      * @return
      */
-    List<Urlaubsanspruch> getUrlaubsanspruchByPersonForAllYears(Person person);
+    List<HolidayEntitlement> getHolidayEntitlementByPersonForAllYears(Person person);
 
 
     /**
-     * edit a person's Urlaubsanspruch (params: year and vacation days)
+     * edit a person's HolidayEntitlement
      *
      * @param  person
      * @param  year
      * @param  days
      */
-    void setUrlaubsanspruchForPerson(Person person, Integer year, Double days);
+    void setHolidayEntitlementForPerson(Person person, int year, BigDecimal days);
 }
