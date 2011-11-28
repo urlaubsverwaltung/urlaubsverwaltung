@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.synyx.urlaubsverwaltung.domain;
 
 import org.joda.time.DateMidnight;
@@ -13,29 +9,36 @@ import javax.persistence.OneToOne;
 
 
 /**
- * @author  aljona
+ * @author  Johannes Reuter
+ * @author  Aljona Murygina
  */
 @Entity
 public class Kommentar extends AbstractPersistable<Integer> {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = getSerialVersionUID();
 
     private String text;
 
     @OneToOne
     private Person person;
 
-    private DateMidnight datum;
+    private DateMidnight dateOfComment;
 
-    public DateMidnight getDatum() {
+    public static long getSerialVersionUID() {
 
-        return datum;
+        return serialVersionUID;
     }
 
 
-    public void setDatum(DateMidnight datum) {
+    public DateMidnight getDateOfComment() {
 
-        this.datum = datum;
+        return dateOfComment;
+    }
+
+
+    public void setDateOfComment(DateMidnight dateOfComment) {
+
+        this.dateOfComment = dateOfComment;
     }
 
 

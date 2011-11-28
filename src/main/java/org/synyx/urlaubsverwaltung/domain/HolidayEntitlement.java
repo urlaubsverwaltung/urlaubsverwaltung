@@ -11,20 +11,27 @@ import javax.persistence.ManyToOne;
 
 
 /**
- * @author  aljona
+ * @author  Johannes Reuter
+ * @author  Aljona Murygina
  */
 @Entity
-public class Urlaubsanspruch extends AbstractPersistable<Integer> {
+public class HolidayEntitlement extends AbstractPersistable<Integer> {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = getSerialVersionUID();
 
-    // Eine Person kann mehrere Ansprueche besitzen (je nach Jahr)
+    // One person may have multiple entitlements (depending on years)
     @ManyToOne
     private Person person;
 
     private Double vacationDays;
 
     private Integer year;
+
+    public static long getSerialVersionUID() {
+
+        return serialVersionUID;
+    }
+
 
     public Person getPerson() {
 

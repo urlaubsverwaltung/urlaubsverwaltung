@@ -2,28 +2,21 @@ package org.synyx.urlaubsverwaltung.domain;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
-import java.io.UnsupportedEncodingException;
-
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
 import java.util.List;
-import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 
 
 /**
- * @author  aljona
+ * @author  Johannes Reuter
+ * @author  Aljona Murygina
  */
 
 @Entity
 public class Person extends AbstractPersistable<Integer> {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = getSerialVersionUID();
 
     private String loginName;
 
@@ -33,45 +26,53 @@ public class Person extends AbstractPersistable<Integer> {
 
     private String email;
 
-    // Unterschrift der Person
-    // private key - RSA
-    // private key muss als byte[] gespeichert werden
-    // und bei herausholen aus datenbank wieder umgewandelt in private key
+    // private key of person - RSA
+    // private key has to be saved as byte[] in database
+    // when retrieved from database, byte[] have to be transformed back to private key
     private byte[] privateKey;
 
-    // public key der person
-    // fürs speichern gilt das Gleiche wie bei private key
+    // public key of person
+    // saving like private key
     private byte[] publicKey;
 
     private Role role;
 
-    // was im Formular eingetragen wird fuer Urlaubsanspruch - wichtig weil Doppelformular fuer Person doof waere
-    private Integer currentUrlaubsanspruch;
-
-    // was im Formular eingetragen wird fuer Urlaubsanspruch - wichtig weil Doppelformular fuer Person doof waere
-    private Integer yearForCurrentUrlaubsanspruch;
-
-    // fuer Listenansicht in jsp gebrauchtes Urlaubskonto (je nach Jahr gesetzt)
-    private Urlaubskonto urlaubskonto;
+    @OneToMany
+    private List<HolidayEntitlement> entitlements;
 
     @OneToMany
-    private List<Urlaubsanspruch> urlaubsanspruch;
+    private List<HolidaysAccount> accounts;
 
     @OneToMany
-    private List<Urlaubskonto> urlaubskonten;
+    private List<Application> applications;
 
-    @OneToMany
-    private List<Antrag> antraege;
+    public static long getSerialVersionUID() {
 
-    public String getLoginName() {
-
-        return loginName;
+        return serialVersionUID;
     }
 
 
-    public void setLoginName(String loginName) {
+    public List<HolidaysAccount> getAccounts() {
 
-        this.loginName = loginName;
+        return accounts;
+    }
+
+
+    public void setAccounts(List<HolidaysAccount> accounts) {
+
+        this.accounts = accounts;
+    }
+
+
+    public List<Application> getApplications() {
+
+        return applications;
+    }
+
+
+    public void setApplications(List<Application> applications) {
+
+        this.applications = applications;
     }
 
 
@@ -87,27 +88,15 @@ public class Person extends AbstractPersistable<Integer> {
     }
 
 
-    public String getEMailHash() {
+    public List<HolidayEntitlement> getEntitlements() {
 
-        byte[] bytesOfMessage;
-        byte[] theDigest;
+        return entitlements;
+    }
 
-        try {
-            bytesOfMessage = email.trim().toLowerCase(Locale.ENGLISH).getBytes("UTF-8");
 
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            theDigest = md.digest(bytesOfMessage);
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(Person.class.getName()).log(Level.SEVERE, null, ex);
+    public void setEntitlements(List<HolidayEntitlement> entitlements) {
 
-            return "";
-        } catch (UnsupportedEncodingException ex) {
-            Logger.getLogger(Person.class.getName()).log(Level.SEVERE, null, ex);
-
-            return "";
-        }
-
-        return new String(theDigest);
+        this.entitlements = entitlements;
     }
 
 
@@ -135,87 +124,15 @@ public class Person extends AbstractPersistable<Integer> {
     }
 
 
-    public Role getRole() {
+    public String getLoginName() {
 
-        return role;
+        return loginName;
     }
 
 
-    public void setRole(Role role) {
+    public void setLoginName(String loginName) {
 
-        this.role = role;
-    }
-
-
-    public List<Antrag> getAntraege() {
-
-        return antraege;
-    }
-
-
-    public void setAntraege(List<Antrag> antraege) {
-
-        this.antraege = antraege;
-    }
-
-
-    public Urlaubskonto getUrlaubskonto() {
-
-        return urlaubskonto;
-    }
-
-
-    public void setUrlaubskonto(Urlaubskonto urlaubskonto) {
-
-        this.urlaubskonto = urlaubskonto;
-    }
-
-
-    public List<Urlaubsanspruch> getUrlaubsanspruch() {
-
-        return urlaubsanspruch;
-    }
-
-
-    public void setUrlaubsanspruch(List<Urlaubsanspruch> urlaubsanspruch) {
-
-        this.urlaubsanspruch = urlaubsanspruch;
-    }
-
-
-    public List<Urlaubskonto> getUrlaubskonten() {
-
-        return urlaubskonten;
-    }
-
-
-    public void setUrlaubskonten(List<Urlaubskonto> urlaubskonten) {
-
-        this.urlaubskonten = urlaubskonten;
-    }
-
-
-    public Integer getCurrentUrlaubsanspruch() {
-
-        return currentUrlaubsanspruch;
-    }
-
-
-    public void setCurrentUrlaubsanspruch(Integer currentUrlaubsanspruch) {
-
-        this.currentUrlaubsanspruch = currentUrlaubsanspruch;
-    }
-
-
-    public Integer getYearForCurrentUrlaubsanspruch() {
-
-        return yearForCurrentUrlaubsanspruch;
-    }
-
-
-    public void setYearForCurrentUrlaubsanspruch(Integer yearForCurrentUrlaubsanspruch) {
-
-        this.yearForCurrentUrlaubsanspruch = yearForCurrentUrlaubsanspruch;
+        this.loginName = loginName;
     }
 
 
@@ -227,7 +144,7 @@ public class Person extends AbstractPersistable<Integer> {
 
     public void setPrivateKey(byte[] privateKey) {
 
-        this.privateKey = privateKey.clone();
+        this.privateKey = privateKey;
     }
 
 
@@ -239,6 +156,18 @@ public class Person extends AbstractPersistable<Integer> {
 
     public void setPublicKey(byte[] publicKey) {
 
-        this.publicKey = publicKey.clone();
+        this.publicKey = publicKey;
+    }
+
+
+    public Role getRole() {
+
+        return role;
+    }
+
+
+    public void setRole(Role role) {
+
+        this.role = role;
     }
 }

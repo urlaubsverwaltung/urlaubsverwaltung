@@ -11,35 +11,41 @@ import javax.persistence.ManyToOne;
 
 
 /**
- * @author  aljona
+ * @author  Johannes Reuter
+ * @author  Aljona Murygina
  */
 @Entity
-public class Urlaubskonto extends AbstractPersistable<Integer> {
+public class HolidaysAccount extends AbstractPersistable<Integer> {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = getSerialVersionUID();
 
-    // Eine Person kann mehrere Urlaubskonten besitzen (je nach Jahr)
+    // One person may have multiple accounts (depending on years)
     @ManyToOne
     private Person person;
 
-    // Jahr des Urlaubskontos
+    // Year of account
     private Integer year;
 
-    // wieviel darf person noch nehmen im jahr year
-    // uebrige Urlaubstage, die noch genommen werden duerfen im Jahr year
+    // Residual number of leave days that person has
     private Double vacationDays;
 
-    // verbleibender resturlaub im jahr year
-    private Double restVacationDays;
+    // Residual number of remaining days of vacation that person has
+    private Double remainingVacationDays;
 
-    // in diesem Jahr benutzte Urlaubstage
+    // Number of days that person has used this year
     private Double usedVacationDays;
 
-    // genommener sonderurlaub im jahr year
+    // Number of days of special leave used this year
     private Double sonderUrlaub;
 
-    // genommener unbezahlter urlaub im jahr year
+    // Number of days of unpaid leave used this year
     private Double unbezahlterUrlaub;
+
+    public static long getSerialVersionUID() {
+
+        return serialVersionUID;
+    }
+
 
     public Person getPerson() {
 
@@ -53,15 +59,15 @@ public class Urlaubskonto extends AbstractPersistable<Integer> {
     }
 
 
-    public Double getRestVacationDays() {
+    public Double getRemainingVacationDayss() {
 
-        return restVacationDays;
+        return remainingVacationDays;
     }
 
 
-    public void setRestVacationDays(Double restVacationDays) {
+    public void setRemainingVacationDays(Double remainingVacationDays) {
 
-        this.restVacationDays = restVacationDays;
+        this.remainingVacationDays = remainingVacationDays;
     }
 
 

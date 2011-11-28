@@ -1,14 +1,15 @@
 package org.synyx.urlaubsverwaltung.domain;
 
 /**
- * @author  johannes
+ * @author  Johannes Reuter
+ * @author  Aljona Murygina
  */
 public enum VacationType {
 
-    ERHOLUNGSURLAUB("vac.erholung"),
-    SONDERURLAUB("vac.sonder"),
-    UNBEZAHLTERURLAUB("vac.unbezahlt"),
-    UEBERSTUNDENABBUMMELN("vac.ueberstunden");
+    HOLIDAY("vac.erholung"),
+    SPECIALLEAVE("vac.sonder"),
+    UNPAIDLEAVE("vac.unbezahlt"),
+    OVERTIME("vac.ueberstunden");
 
     private String vacationTypeName;
 
