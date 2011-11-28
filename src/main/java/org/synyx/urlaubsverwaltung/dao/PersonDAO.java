@@ -7,11 +7,12 @@ import org.synyx.urlaubsverwaltung.domain.Person;
 
 
 /**
- * @author  johannes
+ * @author  Johannes Reuter
+ * @author  Aljona Murygina
  */
 public interface PersonDAO extends JpaRepository<Person, Integer> {
 
-    // get List<Antrag> by certain state (e.g. 'wartend')
+    // get Person by login name (from LDAP account)
     @Query("select from Person where loginName = ?1")
     Person getPersonByLogin(String loginName);
 }

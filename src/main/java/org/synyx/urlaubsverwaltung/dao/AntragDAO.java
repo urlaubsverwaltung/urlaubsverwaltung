@@ -5,29 +5,30 @@ import org.joda.time.DateMidnight;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import org.synyx.urlaubsverwaltung.domain.Antrag;
-import org.synyx.urlaubsverwaltung.domain.AntragStatus;
+import org.synyx.urlaubsverwaltung.domain.Application;
+import org.synyx.urlaubsverwaltung.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.domain.Person;
 
 import java.util.List;
 
 
 /**
- * @author  johannes
+ * @author  Johannes Reuter
+ * @author  Aljona Murygina
  */
-public interface AntragDAO extends JpaRepository<Antrag, Integer> {
+public interface AntragDAO extends JpaRepository<Application, Integer> {
 
-    // get List<Antrag> by certain state (e.g. 'wartend')
-    @Query("select x from Antrag x where x.status = ?")
-    List<Antrag> getAllRequestsByState(AntragStatus state);
-
-
-    // get List<Antrag> by certain person
-    @Query("select x from Antrag x where x.person = ?")
-    List<Antrag> getAllRequestsForPerson(Person person);
+    // get List<Application> by certain state (e.g. waiting)
+    @Query("select from Antrag where status = ?1")
+    List<Application> getAllApplicationsByState(ApplicationStatus state);
 
 
-    // get List<Antrag> for a certain time (between startDate and endDate)
-    @Query("select x from Antrag x where x.startDate >= ?1 and x.endDate <= ?2")
-    List<Antrag> getAllRequestsForACertainTime(DateMidnight startDate, DateMidnight endDate);
+    // get List<Application> by certain person
+    @Query("select from Antrag where person = ?1")
+    List<Application> getAllApplicationsForPerson(Person person);
+
+
+    // get List<Application> for a certain time (between startDate and endDate)
+    @Query("select from Antrag where startDate >= ?1 and x.endDate <= ?2")
+    List<Application> getAllApplicationsForACertainTime(DateMidnight startDate, DateMidnight endDate);
 }
