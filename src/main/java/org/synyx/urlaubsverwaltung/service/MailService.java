@@ -4,7 +4,7 @@
  */
 package org.synyx.urlaubsverwaltung.service;
 
-import org.synyx.urlaubsverwaltung.domain.Antrag;
+import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.Person;
 
 import java.util.List;
@@ -32,7 +32,7 @@ public interface MailService {
      * @param  persons  the list of persons which should receive the mail
      * @param  requests  the list of requests which should be processed
      */
-    void sendNewRequestsNotification(List<Person> persons, List<Antrag> requests);
+    void sendNewRequestsNotification(List<Person> persons, List<Application> requests);
 
 
     /**
@@ -41,7 +41,7 @@ public interface MailService {
      * @param  request  the request which got approved
      * @param  officeUser  the user representing the office because of the mail-address
      */
-    void sendApprovedNotification(Person officeUser, Antrag request);
+    void sendApprovedNotification(Person officeUser, Application request);
 
 
     /**
@@ -49,7 +49,7 @@ public interface MailService {
      *
      * @param  request  the request which got declined
      */
-    void sendDeclinedNotification(Antrag request);
+    void sendDeclinedNotification(Application request);
 
 
     /**
@@ -57,7 +57,7 @@ public interface MailService {
      *
      * @param  request  the request which got saved
      */
-    void sendConfirmation(Antrag request);
+    void sendConfirmation(Application request);
 
 
     /**
@@ -83,5 +83,5 @@ public interface MailService {
      * @param  persons  the list of persons that will receive a notification-mail
      * @param  request  the request which got canceled
      */
-    void sendCanceledNotification(Antrag request, String emailAddress);
+    void sendCanceledNotification(Application request, String emailAddress);
 }

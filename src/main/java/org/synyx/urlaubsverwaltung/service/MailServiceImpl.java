@@ -12,7 +12,7 @@ import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 
-import org.synyx.urlaubsverwaltung.domain.Antrag;
+import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.Person;
 
 import java.util.ArrayList;
@@ -82,13 +82,13 @@ public class MailServiceImpl implements MailService {
      * @see  MailService#sendNewRequestsNotification(java.util.List, java.util.List)
      */
     @Override
-    public void sendNewRequestsNotification(List<Person> persons, List<Antrag> requests) {
+    public void sendNewRequestsNotification(List<Person> persons, List<Application> requests) {
 
         // nehme StringBuilder, statt String immer wieder neu anzuhaengen
         // StringBuilder haengt String Ketten an, am Ende wird ein ganzer String daraus erzeugt
         StringBuilder build = new StringBuilder();
 
-        for (Antrag antrag : requests) {
+        for (Application antrag : requests) {
             build.append("\n").append(antrag.getPerson().getFirstName()).append(" ").append(antrag.getPerson()
                 .getLastName()).append(" : ").append(antrag.getStartDate()).append(" bis ").append(antrag.getEndDate());
         }
@@ -126,12 +126,12 @@ public class MailServiceImpl implements MailService {
 
 
     /**
-     * @see  MailService#sendApprovedNotification(org.synyx.urlaubsverwaltung.domain.Person, org.synyx.urlaubsverwaltung.domain.Antrag)
+     * @see  MailService#sendApprovedNotification(org.synyx.urlaubsverwaltung.domain.Person, org.synyx.urlaubsverwaltung.domain.Application)
      */
     @Override
-    public void sendApprovedNotification(final Person person, final Antrag request) {
+    public void sendApprovedNotification(final Person person, final Application request) {
 
-        // Email ans Office: es liegt ein neuer Antrag vor
+        // Email ans Office: es liegt ein neuer Application vor
         MimeMessagePreparator prepOffice = new MimeMessagePreparator() {
 
             @Override
@@ -175,10 +175,10 @@ public class MailServiceImpl implements MailService {
 
 
     /**
-     * @see  MailService#sendDeclinedNotification(org.synyx.urlaubsverwaltung.domain.Antrag)
+     * @see  MailService#sendDeclinedNotification(org.synyx.urlaubsverwaltung.domain.Application)
      */
     @Override
-    public void sendDeclinedNotification(final Antrag request) {
+    public void sendDeclinedNotification(final Application request) {
 
         final Person person = request.getPerson();
 
@@ -194,7 +194,7 @@ public class MailServiceImpl implements MailService {
                     + "\n\ndein Antrag für Urlaub im Zeitraum vom " + request.getStartDate() + " bis "
                     + request.getEndDate() + " wurde von " + request.getBoss().getFirstName() + " "
                     + request.getBoss().getLastName() + " leider abgelehnt mit folgender Begründung: "
-                    + "\n" + request.getReasonToDecline() + SCHLUSSZEILE);
+                    + "\n" + request.getReasonToReject() + SCHLUSSZEILE);
             }
         };
 
@@ -207,10 +207,10 @@ public class MailServiceImpl implements MailService {
 
 
     /**
-     * @see  MailService#sendConfirmation(org.synyx.urlaubsverwaltung.domain.Antrag)
+     * @see  MailService#sendConfirmation(org.synyx.urlaubsverwaltung.domain.Application)
      */
     @Override
-    public void sendConfirmation(Antrag request) {
+    public void sendConfirmation(Application request) {
 
         final Person person = request.getPerson();
 
@@ -285,10 +285,10 @@ public class MailServiceImpl implements MailService {
 
 
     /**
-     * @see  MailService#sendCanceledNotification(org.synyx.urlaubsverwaltung.domain.Antrag, java.lang.String)
+     * @see  MailService#sendCanceledNotification(org.synyx.urlaubsverwaltung.domain.Application, java.lang.String)
      */
     @Override
-    public void sendCanceledNotification(Antrag request, final String emailAddress) {
+    public void sendCanceledNotification(Application request, final String emailAddress) {
 
         final String name = request.getPerson().getFirstName() + " " + request.getPerson().getLastName();
 
