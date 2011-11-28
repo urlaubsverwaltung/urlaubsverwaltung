@@ -7,27 +7,32 @@ package org.synyx.urlaubsverwaltung.calendar;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
 
+import org.synyx.urlaubsverwaltung.domain.Application;
+
+import java.math.BigDecimal;
+
 
 /**
- * @author  aljona
+ * @author  Aljona Murygina
  */
 public class OwnCalendarService {
 
     private JollydayCalendar jollydayCalendar = new JollydayCalendar();
 
     /**
-     * es wird vorher validiert, dass Startdatum vor dem Enddatum liegt oder gleich dem Enddatum ist
+     * Note: the start date must be before or equal the end date; this is validated prior to that method
      *
-     * <p>Methode berechnet wie viele Werktage (Feiertage nicht beruecksichtigt) im angegebenen Zeitraum liegen</p>
+     * <p>This method calculates how many workdays are between declared start date and end date (official holidays are
+     * ignored here)</p>
      *
      * @param  startDate
      * @param  endDate
      *
-     * @return  Anzahl der Werktage
+     * @return  number of workdays
      */
-    public Integer getWorkDays(DateMidnight startDate, DateMidnight endDate) {
+    public double getWorkDays(DateMidnight startDate, DateMidnight endDate) {
 
-        Integer workDays = 1;
+        double workDays = 1.0;
 
         if (!startDate.equals(endDate)) {
             DateMidnight day = startDate;
@@ -47,25 +52,21 @@ public class OwnCalendarService {
 
 
     /**
-     * Berechnet wie viele Netto Urlaubstage im angegebenen Zeitraum draufgehen. getWorkDays errechnet die Werktage,
-     * getFeiertage errechnet die Feiertage innerhalb der Werktage. Die Substraktion voneinander ergibt die endgueltigen
-     * Urlaubstage
+     * This method calculates how many vacation days are used in the stated period (from start date to end date)
+     * getWorkDays calculates the number of workdays, getFeiertage calculates the number of official holidays within the
+     * workdays. Number of vacation days results from workdays minus official holidays.
      *
      * @param  startDate
      * @param  endDate
      *
-     * @return  Netto Urlaubstage
+     * @return  number of vacation days
      */
-    public Double getVacationDays(DateMidnight startDate, DateMidnight endDate, boolean ganztags) {
+    public BigDecimal getVacationDays(Application application, DateMidnight startDate, DateMidnight endDate) {
 
-        Double vacDays = getWorkDays(startDate, endDate).doubleValue();
+        double vacDays = getWorkDays(startDate, endDate);
 
         vacDays = vacDays - jollydayCalendar.getFeiertage(startDate, endDate);
 
-        if (ganztags) {
-            return vacDays;
-        } else {
-            return vacDays * 0.5;
-        }
+        return BigDecimal.valueOf(vacDays).multiply(application.getHowLong().getDayLengthNumber());
     }
 }
