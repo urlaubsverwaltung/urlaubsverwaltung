@@ -4,27 +4,48 @@
  */
 package org.synyx.urlaubsverwaltung.service;
 
+import org.apache.velocity.app.VelocityEngine;
+
 import org.junit.After;
 import org.junit.AfterClass;
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
+
+import org.jvnet.mock_javamail.Mailbox;
+
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.Person;
 
+import java.io.IOException;
+
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.internet.InternetAddress;
 
 
 /**
- * @author  aljona
+ * @author  Aljona Murygina
  */
-@Ignore
 public class MailServiceImplTest {
+
+    private MailServiceImpl instance;
+    private JavaMailSender mailSender = new JavaMailSenderImpl();
+    private VelocityEngine velocityEngine = new VelocityEngine();
+    private Person person;
+    private Application application;
 
     public MailServiceImplTest() {
     }
@@ -41,133 +62,300 @@ public class MailServiceImplTest {
 
     @Before
     public void setUp() {
+
+        instance = new MailServiceImpl(mailSender, velocityEngine);
+        person = new Person();
+        application = new Application();
+        application.setPerson(person);
     }
 
 
     @After
     public void tearDown() {
+
+        Mailbox.clearAll();
     }
 
 
-    /** Test of sendDecayNotification method, of class MailServiceImpl. */
+    /** Test of sendExpireNotification method, of class MailServiceImpl. */
     @Test
-    public void testSendDecayNotification() {
+    public void testSendExpireNotification() throws MessagingException, IOException {
 
-        System.out.println("sendDecayNotification");
+        person.setLastName("Test");
+        person.setFirstName("Günther");
+        person.setEmail("guentherklein@test.com");
 
-        List<Person> persons = null;
-        MailServiceImpl instance = null;
-        instance.sendDecayNotification(persons);
+        List<Person> persons = new ArrayList<Person>();
+        persons.add(person);
 
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        instance.sendExpireNotification(persons);
+
+        // was email sent?
+        List<Message> inbox = Mailbox.get("guentherklein@test.com");
+        assertTrue(inbox.size() > 0);
+
+        // get email
+        Message msg = inbox.get(0);
+
+        // check subject
+        assertEquals("subject.expire", msg.getSubject());
+        assertNotSame("subject", msg.getSubject());
+
+        // check from and recipient
+        assertEquals(new InternetAddress("email.manager"), msg.getFrom()[0]);
+        assertEquals(new InternetAddress("guentherklein@test.com"), msg.getAllRecipients()[0]);
+
+        // check content of email
+        String content = (String) msg.getContent();
+        assertTrue(content.contains("Günther"));
+        assertTrue(content.contains("Test"));
+        assertTrue(content.contains("Kalenderjahr"));
+        assertFalse(content.contains("Mist"));
     }
 
 
-    /** Test of sendNewRequestsNotification method, of class MailServiceImpl. */
+    /** Test of sendNewApplicationsNotification method, of class MailServiceImpl. */
     @Test
-    public void testSendNewRequestsNotification() {
+    public void testSendNewApplicationsNotification() throws MessagingException, IOException {
 
-        System.out.println("sendNewRequestsNotification");
+        person.setLastName("Antragsteller");
+        person.setFirstName("Horst");
+        person.setEmail("misterhorst@test.com");
 
-        List<Person> persons = null;
-        List<Application> requests = null;
-        MailServiceImpl instance = null;
-        instance.sendNewRequestsNotification(persons, requests);
+        List<Application> applications = new ArrayList<Application>();
+        applications.add(application);
 
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        instance.sendNewApplicationsNotification(applications);
+
+        // was email sent?
+        List<Message> inbox = Mailbox.get("email.chefs");
+        assertTrue(inbox.size() > 0);
+
+        // get email
+        Message msg = inbox.get(0);
+
+        // check subject
+        assertEquals("subject.new", msg.getSubject());
+        assertNotSame("subject", msg.getSubject());
+
+        // check from and recipient
+        assertEquals(new InternetAddress("email.manager"), msg.getFrom()[0]);
+        assertEquals(new InternetAddress("email.chefs"), msg.getAllRecipients()[0]);
+
+        // check content of email
+        String content = (String) msg.getContent();
+        assertTrue(content.contains("Horst"));
+        assertTrue(content.contains("Antragsteller"));
+        assertTrue(content.contains("Antragsstellung"));
+        assertFalse(content.contains("Mist"));
+
+        // are two emails sent if there are more than one new applications?
+        Application a = new Application();
+        applications.add(a);
+
+        instance.sendNewApplicationsNotification(applications);
+        inbox = Mailbox.get("email.chefs");
+        assertTrue(inbox.size() > 1);
     }
 
 
-    /** Test of sendApprovedNotification method, of class MailServiceImpl. */
+    /** Test of sendAllowedNotification method, of class MailServiceImpl. */
     @Test
-    public void testSendApprovedNotification() {
+    public void testSendAllowedNotification() throws MessagingException, IOException {
 
-        System.out.println("sendApprovedNotification");
+        person.setLastName("Test");
+        person.setFirstName("Bernd");
+        person.setEmail("berndo@test.com");
 
-        Person person = null;
-        Application request = null;
-        MailServiceImpl instance = null;
-        instance.sendApprovedNotification(person, request);
+        List<Application> applications = new ArrayList<Application>();
+        applications.add(application);
 
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        instance.sendAllowedNotification(application);
+
+        // were both emails sent?
+        List<Message> inboxOffice = Mailbox.get("email.office");
+        assertTrue(inboxOffice.size() > 0);
+
+        List<Message> inboxUser = Mailbox.get("berndo@test.com");
+        assertTrue(inboxUser.size() > 0);
+
+        // get email user
+        Message msg = inboxUser.get(0);
+
+        // check subject
+        assertEquals("subject.allowed.user", msg.getSubject());
+        assertNotSame("subject", msg.getSubject());
+
+        // check from and recipient
+        assertEquals(new InternetAddress("email.manager"), msg.getFrom()[0]);
+        assertEquals(new InternetAddress("berndo@test.com"), msg.getAllRecipients()[0]);
+
+        // check content of email
+        String content = (String) msg.getContent();
+        assertTrue(content.contains("Bernd"));
+        assertTrue(content.contains("Einen sch&ouml;nen Urlaub"));
+        assertFalse(content.contains("Mist"));
+
+        // get email office
+        Message msgOffice = inboxOffice.get(0);
+
+        // check subject
+        assertEquals("subject.allowed.office", msgOffice.getSubject());
+        assertNotSame("subject", msgOffice.getSubject());
+
+        // check from and recipient
+        assertEquals(new InternetAddress("email.manager"), msgOffice.getFrom()[0]);
+        assertEquals(new InternetAddress("email.office"), msgOffice.getAllRecipients()[0]);
+
+        // check content of email
+        String contentOfficeMail = (String) msgOffice.getContent();
+        assertTrue(contentOfficeMail.contains("Bernd"));
+        assertTrue(contentOfficeMail.contains("Office"));
+        assertTrue(contentOfficeMail.contains("ein neuer genehmigter Antrag liegt vor"));
+        assertFalse(contentOfficeMail.contains("Mist"));
     }
 
 
-    /** Test of sendDeclinedNotification method, of class MailServiceImpl. */
+    /** Test of sendRejectedNotification method, of class MailServiceImpl. */
     @Test
-    public void testSendDeclinedNotification() {
+    public void testSendRejectedNotification() throws MessagingException, IOException {
 
-        System.out.println("sendDeclinedNotification");
+        person.setLastName("Test");
+        person.setFirstName("Franz");
+        person.setEmail("franzi@test.com");
 
-        Application request = null;
-        MailServiceImpl instance = null;
-        instance.sendDeclinedNotification(request);
+        List<Application> applications = new ArrayList<Application>();
+        applications.add(application);
 
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        instance.sendRejectedNotification(application);
+
+        // was email sent?
+        List<Message> inbox = Mailbox.get("franzi@test.com");
+        assertTrue(inbox.size() > 0);
+
+        Message msg = inbox.get(0);
+
+        // check subject
+        assertEquals("subject.rejected", msg.getSubject());
+        assertNotSame("subject", msg.getSubject());
+
+        // check from and recipient
+        assertEquals(new InternetAddress("email.manager"), msg.getFrom()[0]);
+        assertEquals(new InternetAddress("franzi@test.com"), msg.getAllRecipients()[0]);
+
+        // check content of email
+        String content = (String) msg.getContent();
+        assertTrue(content.contains("Franz"));
+        assertTrue(content.contains("abgelehnt"));
+        assertFalse(content.contains("Mist"));
     }
 
 
     /** Test of sendConfirmation method, of class MailServiceImpl. */
     @Test
-    public void testSendConfirmation() {
+    public void testSendConfirmation() throws MessagingException, IOException {
 
-        System.out.println("sendConfirmation");
+        person.setLastName("Test");
+        person.setFirstName("Hildegard");
+        person.setEmail("hilde@test.com");
 
-        Application request = null;
-        MailServiceImpl instance = null;
-        instance.sendConfirmation(request);
+        List<Application> applications = new ArrayList<Application>();
+        applications.add(application);
 
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
+        instance.sendConfirmation(application);
 
+        // was email sent?
+        List<Message> inbox = Mailbox.get("hilde@test.com");
+        assertTrue(inbox.size() > 0);
 
-    /** Test of sendBalance method, of class MailServiceImpl. */
-    @Test
-    public void testSendBalance() {
+        Message msg = inbox.get(0);
 
-        System.out.println("sendBalance");
+        // check subject
+        assertEquals("subject.confirm", msg.getSubject());
+        assertNotSame("subject", msg.getSubject());
 
-        Object balanceObject = null;
-        MailServiceImpl instance = null;
-        instance.sendBalance(balanceObject);
+        // check from and recipient
+        assertEquals(new InternetAddress("email.manager"), msg.getFrom()[0]);
+        assertEquals(new InternetAddress("hilde@test.com"), msg.getAllRecipients()[0]);
 
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        // check content of email
+        String content = (String) msg.getContent();
+        assertTrue(content.contains("Hildegard"));
+        assertTrue(content.contains("dein Urlaubsantrag wurde erfolgreich eingereicht"));
+        assertFalse(content.contains("Mist"));
     }
 
 
     /** Test of sendWeeklyVacationForecast method, of class MailServiceImpl. */
     @Test
-    public void testSendWeeklyVacationForecast() {
+    public void testSendWeeklyVacationForecast() throws MessagingException, IOException {
 
-        System.out.println("sendWeeklyVacationForecast");
+        person.setLastName("Test");
+        person.setFirstName("Heinz");
 
-        List<Person> urlauber = null;
-        MailServiceImpl instance = null;
-        instance.sendWeeklyVacationForecast(urlauber);
+        Person newPerson = new Person();
+        newPerson.setLastName("Dingsda");
+        newPerson.setFirstName("Aha");
 
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        List<Person> persons = new ArrayList<Person>();
+        persons.add(person);
+        persons.add(newPerson);
+
+        instance.sendWeeklyVacationForecast(persons);
+
+        // was email sent?
+        List<Message> inbox = Mailbox.get("email.all");
+        assertTrue(inbox.size() > 0);
+
+        Message msg = inbox.get(0);
+
+        // check subject
+        assertEquals("subject.weekly", msg.getSubject());
+        assertNotSame("subject", msg.getSubject());
+
+        // check from and recipient
+        assertEquals(new InternetAddress("email.manager"), msg.getFrom()[0]);
+        assertEquals(new InternetAddress("email.all"), msg.getAllRecipients()[0]);
+
+        // check content of email
+        String content = (String) msg.getContent();
+        assertTrue(content.contains("Sternchen"));
+        assertTrue(content.contains("folgende Mitarbeiter sind diese Woche im Urlaub"));
+        assertFalse(content.contains("Mist"));
     }
 
 
-    /** Test of sendCanceledNotification method, of class MailServiceImpl. */
+    /** Test of sendCancelledNotification method, of class MailServiceImpl. */
     @Test
-    public void testSendCanceledNotification() {
+    public void testSendCancelledNotification() throws MessagingException, IOException {
 
-        System.out.println("sendCanceledNotification");
+        person.setLastName("Test");
+        person.setFirstName("Heinrich");
 
-        Application request = null;
-        String emailAddress = "";
-        MailServiceImpl instance = null;
-        instance.sendCanceledNotification(request, emailAddress);
+        List<Application> applications = new ArrayList<Application>();
+        applications.add(application);
 
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        // test for isBoss == true
+        instance.sendCancelledNotification(application, true);
+
+        // was email sent?
+        List<Message> inboxChef = Mailbox.get("email.chefs");
+        assertTrue(inboxChef.size() > 0);
+
+        Message msg = inboxChef.get(0);
+
+        // check subject
+        assertEquals("subject.cancelled", msg.getSubject());
+        assertNotSame("subject", msg.getSubject());
+
+        // check from and recipient
+        assertEquals(new InternetAddress("email.manager"), msg.getFrom()[0]);
+        assertEquals(new InternetAddress("email.chefs"), msg.getAllRecipients()[0]);
+
+        // check content of email
+        String content = (String) msg.getContent();
+        assertTrue(content.contains("Heinrich"));
+        assertTrue(content.contains("storniert"));
+        assertFalse(content.contains("Mist"));
     }
 }
