@@ -1,10 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.synyx.urlaubsverwaltung.service;
 
 import org.apache.log4j.Logger;
+
+import org.apache.velocity.app.VelocityEngine;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -12,11 +10,15 @@ import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 
+import org.springframework.ui.velocity.VelocityEngineUtils;
+
 import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.Person;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -25,95 +27,82 @@ import javax.mail.internet.MimeMessage;
 
 
 /**
- * @author  johannes
+ * @author  Johannes Reuter
+ * @author  Aljona Murygina
+ *
+ *          <p>nice tutorial: http://static.springsource.org/spring/docs/2.0.5/reference/mail.html</p>
  */
 public class MailServiceImpl implements MailService {
 
-    // see here: http://static.springsource.org/spring/docs/2.0.5/reference/mail.html
-
-    private static final String SCHLUSSZEILE = "\n\nUrlaubsverwaltung"; // in properties!
-
     private static final Logger mailLogger = Logger.getLogger("mailLogger");
 
-    private JavaMailSender mailSender;
+    private final String FROM = "email.manager";
 
-    // in properties!
-    private String absender = EmailAdr.MANAGE.getEmail();
-    private String sternchen = EmailAdr.STERN.getEmail();
+    private final String PATH = "src/main/resources/email/";
+    private final String APPLICATION = "application";
+    private final String PERSON = "person";
+    private final String PERSONS = "persons";
+
+    // File names
+    private final String TYPE = ".vm";
+    private final String FILE_ALLOWED_OFFICE = "allowed_office" + TYPE;
+    private final String FILE_ALLOWED_USER = "allowed_user" + TYPE;
+    private final String FILE_CANCELLED = "cancelled" + TYPE;
+    private final String FILE_CONFIRM = "confirm" + TYPE;
+    private final String FILE_EXPIRE = "expire" + TYPE;
+    private final String FILE_NEW = "newapplications" + TYPE;
+    private final String FILE_REJECTED = "rejected" + TYPE;
+    private final String FILE_WEEKLY = "weekly" + TYPE;
+
+    private JavaMailSender mailSender;
+    private VelocityEngine velocityEngine;
 
     @Autowired
-    public MailServiceImpl(JavaMailSender mailSender) {
+    public MailServiceImpl(JavaMailSender mailSender, VelocityEngine velocityEngine) {
 
         this.mailSender = mailSender;
+        this.velocityEngine = velocityEngine;
     }
 
     /**
-     * @see  MailService#sendDecayNotification()
+     * this method prepares an email:
+     *
+     * @param  object  e.g. person or application that should be put in a model object
+     * @param  modelName
+     * @param  fileName  name of email's template file
+     *
+     * @return  String text that must be put in the email as text (sending is done by method sendEmail)
      */
-    @Override
-    public void sendDecayNotification(List<Person> persons) {
+    private String prepareMessage(Object object, String modelName, String fileName) {
 
-        for (final Person person : persons) {
-            MimeMessagePreparator prep = new MimeMessagePreparator() {
+        Map model = new HashMap();
+        model.put(modelName, object);
 
-                @Override
-                public void prepare(MimeMessage mimeMessage) throws MessagingException {
+        // mergeTemplateIntoString(VelocityEngine velocityEngine, String templateLocation, Map model)
+        String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, PATH + fileName, model);
 
-                    mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(person.getEmail()));
-                    mimeMessage.setFrom(new InternetAddress(absender));
-                    mimeMessage.setSubject("Erinnerung Resturlaub");
-                    mimeMessage.setText("Liebe/-r " + person.getFirstName() + " " + person.getLastName() + ","
-                        + "\n\ndu hast aus dem letzten Kalenderjahr Resturlaub ins neue Jahr mitgenommen."
-                        + "\nBitte beachte, dass dieser zum 1. April des neuen Jahres verfällt."
-                        + "\nNimm' dir also rechtzeitig Urlaub, damit der Resturlaub nicht verfällt." + SCHLUSSZEILE);
-                }
-            };
-
-            try {
-                this.mailSender.send(prep);
-            } catch (MailException ex) {
-                mailLogger.error(ex.getMessage());
-            }
-        }
+        return text;
     }
 
 
     /**
-     * @see  MailService#sendNewRequestsNotification(java.util.List, java.util.List)
+     * this method gets the recipient email address, the email's subject and text with this parameters an email is build
+     * and sent
+     *
+     * @param  recipient
+     * @param  subject
+     * @param  text
      */
-    @Override
-    public void sendNewRequestsNotification(List<Person> persons, List<Application> requests) {
-
-        // nehme StringBuilder, statt String immer wieder neu anzuhaengen
-        // StringBuilder haengt String Ketten an, am Ende wird ein ganzer String daraus erzeugt
-        StringBuilder build = new StringBuilder();
-
-        for (Application antrag : requests) {
-            build.append("\n").append(antrag.getPerson().getFirstName()).append(" ").append(antrag.getPerson()
-                .getLastName()).append(" : ").append(antrag.getStartDate()).append(" bis ").append(antrag.getEndDate());
-        }
-
-        final String beantragungen = build.toString();
-
-        build = new StringBuilder();
-
-        for (Person beauftragter : persons) {
-            build.append(beauftragter.getEmail()).append(", ");
-        }
-
-        final String emailAdressen = build.toString();
+    private void sendEmail(final String recipient, final String subject, final String text) {
 
         MimeMessagePreparator prep = new MimeMessagePreparator() {
 
-            @Override
             public void prepare(MimeMessage mimeMessage) throws MessagingException {
 
-                mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(emailAdressen));
-                mimeMessage.setFrom(new InternetAddress(absender));
-                mimeMessage.setSubject("Es liegen neue Urlaubsanträge vor");
-                mimeMessage.setText("Hallo Chef-Etage, "
-                    + "\n\nes liegen neue Urlaubsanträge vor, die es zu bearbeiten gilt: "
-                    + "\n" + beantragungen + SCHLUSSZEILE);
+                mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(recipient));
+                mimeMessage.setFrom(new InternetAddress(FROM));
+                mimeMessage.setSubject(subject);
+                mimeMessage.setText(text);
             }
         };
 
@@ -126,83 +115,60 @@ public class MailServiceImpl implements MailService {
 
 
     /**
-     * @see  MailService#sendApprovedNotification(org.synyx.urlaubsverwaltung.domain.Person, org.synyx.urlaubsverwaltung.domain.Application)
+     * @see  MailService#sendExpireNotification(java.util.List)
      */
     @Override
-    public void sendApprovedNotification(final Person person, final Application request) {
+    public void sendExpireNotification(List<Person> persons) {
 
-        // Email ans Office: es liegt ein neuer Application vor
-        MimeMessagePreparator prepOffice = new MimeMessagePreparator() {
+        for (Person person : persons) {
+            String text = prepareMessage(person, PERSON, FILE_EXPIRE);
 
-            @Override
-            public void prepare(MimeMessage mimeMessage) throws MessagingException {
-
-                mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress("office@synyx.de"));
-                mimeMessage.setFrom(new InternetAddress(absender));
-                mimeMessage.setSubject("Neuer bewilligter Antrag");
-                mimeMessage.setText("Hallo Office, "
-                    + "\n\nes liegt ein neuer bewilligter Antrag vor." + SCHLUSSZEILE);
-            }
-        };
-
-        try {
-            this.mailSender.send(prepOffice);
-        } catch (MailException ex) {
-            mailLogger.error(ex.getMessage());
-        }
-
-        MimeMessagePreparator prepUser = new MimeMessagePreparator() {
-
-            @Override
-            public void prepare(MimeMessage mimeMessage) throws MessagingException {
-
-                mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(person.getEmail()));
-                mimeMessage.setFrom(new InternetAddress(absender));
-                mimeMessage.setSubject("Antrag bewilligt");
-                mimeMessage.setText("Hallo " + person.getFirstName() + " " + person.getLastName() + ","
-                    + "\n\ndein Antrag auf Urlaub für den Zeitraum von " + request.getStartDate() + " bis "
-                    + request.getEndDate()
-                    + " wurde bewilligt." + SCHLUSSZEILE);
-            }
-        };
-
-        try {
-            this.mailSender.send(prepUser);
-        } catch (MailException ex) {
-            mailLogger.error(ex.getMessage());
+            sendEmail(person.getEmail(), "subject.expire", text);
         }
     }
 
 
     /**
-     * @see  MailService#sendDeclinedNotification(org.synyx.urlaubsverwaltung.domain.Application)
+     * @see  MailService#sendNewApplicationsNotification(java.util.List)
      */
     @Override
-    public void sendDeclinedNotification(final Application request) {
+    public void sendNewApplicationsNotification(List<Application> applications) {
 
-        final Person person = request.getPerson();
+        for (Application application : applications) {
+            String text = prepareMessage(application, APPLICATION, FILE_NEW);
 
-        MimeMessagePreparator prep = new MimeMessagePreparator() {
-
-            @Override
-            public void prepare(MimeMessage mimeMessage) throws MessagingException {
-
-                mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(person.getEmail()));
-                mimeMessage.setFrom(new InternetAddress(absender));
-                mimeMessage.setSubject("Antrag abgelehnt");
-                mimeMessage.setText("Hallo " + person.getFirstName() + " " + person.getLastName() + ","
-                    + "\n\ndein Antrag für Urlaub im Zeitraum vom " + request.getStartDate() + " bis "
-                    + request.getEndDate() + " wurde von " + request.getBoss().getFirstName() + " "
-                    + request.getBoss().getLastName() + " leider abgelehnt mit folgender Begründung: "
-                    + "\n" + request.getReasonToReject() + SCHLUSSZEILE);
-            }
-        };
-
-        try {
-            this.mailSender.send(prep);
-        } catch (MailException ex) {
-            mailLogger.error(ex.getMessage());
+            sendEmail(application.getPerson().getEmail(), "subject.new", text);
         }
+    }
+
+
+    /**
+     * @see  MailService#sendAllowedNotification(org.synyx.urlaubsverwaltung.domain.Application)
+     */
+    @Override
+    public void sendAllowedNotification(Application application) {
+
+        // if application has been allowed, two emails must be sent
+        // the applicant gets an email and the office gets an email
+
+        // email to office
+        String textOffice = prepareMessage(application, APPLICATION, FILE_ALLOWED_OFFICE);
+        sendEmail("email.office", "subject.allowed.office", textOffice);
+
+        // email to applicant
+        String textUser = prepareMessage(application, APPLICATION, FILE_ALLOWED_USER);
+        sendEmail(application.getPerson().getEmail(), "subject.allowed.user", textUser);
+    }
+
+
+    /**
+     * @see  MailService#sendRejectedNotification(org.synyx.urlaubsverwaltung.domain.Application)
+     */
+    @Override
+    public void sendRejectedNotification(Application application) {
+
+        String text = prepareMessage(application, APPLICATION, FILE_REJECTED);
+        sendEmail(application.getPerson().getEmail(), "subject.rejected", text);
     }
 
 
@@ -210,41 +176,10 @@ public class MailServiceImpl implements MailService {
      * @see  MailService#sendConfirmation(org.synyx.urlaubsverwaltung.domain.Application)
      */
     @Override
-    public void sendConfirmation(Application request) {
+    public void sendConfirmation(Application application) {
 
-        final Person person = request.getPerson();
-
-        MimeMessagePreparator prep = new MimeMessagePreparator() {
-
-            @Override
-            public void prepare(MimeMessage mimeMessage) throws MessagingException {
-
-                mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(person.getEmail()));
-                mimeMessage.setFrom(new InternetAddress(absender));
-                mimeMessage.setSubject("Bestätigung Antragstellung");
-                mimeMessage.setText("Hallo " + person.getFirstName() + " " + person.getLastName() + ","
-                    + "\n\ndein Antrag wurde erfolgreich gestellt und wird in Kürze durch einen der Chefs bearbeitet werden."
-                    + SCHLUSSZEILE);
-            }
-        };
-
-        try {
-            this.mailSender.send(prep);
-        } catch (MailException ex) {
-            mailLogger.error(ex.getMessage());
-        }
-    }
-
-
-    /**
-     * NOT YET IMPLEMENTED
-     *
-     * @see  MailService#sendBalance(java.lang.Object)
-     */
-    @Override
-    public void sendBalance(Object balanceObject) {
-
-        throw new UnsupportedOperationException("Not supported yet.");
+        String text = prepareMessage(application, APPLICATION, FILE_CONFIRM);
+        sendEmail(application.getPerson().getEmail(), "subject.confirm", text);
     }
 
 
@@ -252,62 +187,49 @@ public class MailServiceImpl implements MailService {
      * @see  MailService#sendWeeklyVacationForecast(java.util.List)
      */
     @Override
-    public void sendWeeklyVacationForecast(List<Person> urlauber) {
+    public void sendWeeklyVacationForecast(List<Person> persons) {
 
         List<String> names = new ArrayList<String>();
 
-        for (Person person : urlauber) {
-            names.add("\n" + person.getFirstName() + " " + person.getLastName());
+        for (Person person : persons) {
+            names.add(person.getFirstName() + " " + person.getLastName());
         }
 
-        final String urlaub = names.toString();
-
-        MimeMessagePreparator prep = new MimeMessagePreparator() {
-
-            @Override
-            public void prepare(MimeMessage mimeMessage) throws MessagingException {
-
-                mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(sternchen));
-                mimeMessage.setFrom(new InternetAddress(absender));
-                mimeMessage.setSubject("Diese Woche im Urlaub");
-                mimeMessage.setText("Hallo Sternchen, "
-                    + "\n\nfolgende Mitarbeiter haben diese Woche frei: "
-                    + "\n\n" + urlaub + "\n\n" + SCHLUSSZEILE);
-            }
-        };
-
-        try {
-            this.mailSender.send(prep);
-        } catch (MailException ex) {
-            mailLogger.error(ex.getMessage());
-        }
+        String text = prepareMessage(names, PERSONS, FILE_WEEKLY);
+        sendEmail("email.all", "subject.weekly", text);
     }
 
 
     /**
-     * @see  MailService#sendCanceledNotification(org.synyx.urlaubsverwaltung.domain.Application, java.lang.String)
+     * @see  MailService#sendCancelledNotification(org.synyx.urlaubsverwaltung.domain.Application, boolean)
      */
     @Override
-    public void sendCanceledNotification(Application request, final String emailAddress) {
+    public void sendCancelledNotification(Application application, boolean isBoss) {
 
-        final String name = request.getPerson().getFirstName() + " " + request.getPerson().getLastName();
+        String text = prepareMessage(application, APPLICATION, FILE_CANCELLED);
 
-        MimeMessagePreparator prep = new MimeMessagePreparator() {
+        // isBoss  describes if chefs (param is true) or office (param is false) get the email
+        // (dependent on application's state: waiting-chefs, allowed-office)
 
-            @Override
-            public void prepare(MimeMessage mimeMessage) throws MessagingException {
-
-                mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(emailAddress));
-                mimeMessage.setFrom(new InternetAddress(absender));
-                mimeMessage.setSubject("Antrag storniert");
-                mimeMessage.setText("Der Mitarbeiter " + name + " hat seinen Urlaubsantrag storniert.");
-            }
-        };
-
-        try {
-            this.mailSender.send(prep);
-        } catch (MailException ex) {
-            mailLogger.error(ex.getMessage());
+        if (isBoss) {
+            sendEmail("email.chefs", "subject.cancelled", text);
+        } else {
+            sendEmail("email.office", "subject.cancelled", text);
         }
     }
+
+    /**
+    * NOT YET IMPLEMENTED
+    * Commented out on Tu, 2011/11/29 - Aljona Murygina
+    * Think about if method really is necessary or not
+    *
+    * @see  MailService#sendBalance(java.lang.Object)
+    */
+
+// @Override
+// public void sendBalance(Object balanceObject) {
+//
+// throw new UnsupportedOperationException("Not supported yet.");
+// }
+
 }
