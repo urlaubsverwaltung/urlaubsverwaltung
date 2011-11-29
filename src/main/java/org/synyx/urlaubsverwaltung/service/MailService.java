@@ -11,77 +11,82 @@ import java.util.List;
 
 
 /**
- * the mailservice provides the sending of notification-mails to the users
+ * the mailservice provides sending of notification-mails to the users, chefs and office
  *
- * @author  johannes
+ * @author  Johannes Reuter
+ * @author  Aljona Murygina
  */
+
 public interface MailService {
 
     /**
-     * this method sends to all persons of the list a notification, that there resturlaub-days will be void very soon
+     * this method sends an email to all persons of the given list that their remaining vacation days are going to
+     * expire soon
      *
-     * @param  persons  the list of persons which should receive the mail
+     * @param  persons  the list of persons which should receive the email
      */
-    void sendDecayNotification(List<Person> persons);
+    void sendExpireNotification(List<Person> persons);
 
 
     /**
-     * this method sends to all persons of the first list a notification that there are some new requests (and a few
-     * information about the requests maybe)
+     * this method sends an email to chefs that there are some new applications information about the new applications
+     * can be found in list of new applications
      *
-     * @param  persons  the list of persons which should receive the mail
-     * @param  requests  the list of requests which should be processed
+     * @param  applications  the list of applications which should be processed
      */
-    void sendNewRequestsNotification(List<Person> persons, List<Application> requests);
+    void sendNewApplicationsNotification(List<Application> applications);
 
 
     /**
-     * this method sends to the applicant of a request and the office the message that its approved
+     * this method sends an email to the applicant and to the office that the application has been allowed
      *
-     * @param  request  the request which got approved
-     * @param  officeUser  the user representing the office because of the mail-address
+     * @param  application  the application which got allowed
      */
-    void sendApprovedNotification(Person officeUser, Application request);
+    void sendAllowedNotification(Application application);
 
 
     /**
-     * this method sends to the applicant of a request the message that its declined
+     * this method sends an email to the applicant that the application has been rejected
      *
-     * @param  request  the request which got declined
+     * @param  application  the application which got rejected
      */
-    void sendDeclinedNotification(Application request);
+    void sendRejectedNotification(Application application);
 
 
     /**
-     * this method sends a mail to the applicant of a request that it is in the system
+     * this method sends an email to the applicant that the application has been made successfully
      *
-     * @param  request  the request which got saved
+     * @param  application  the application which got saved
      */
-    void sendConfirmation(Application request);
+    void sendConfirmation(Application application);
 
 
     /**
+     * this method sends a mail to stern@synyx.de mentioning all person that are on holiday
+     *
+     * @param  persons  persons on vacation this week
+     */
+    void sendWeeklyVacationForecast(List<Person> persons);
+
+
+    /**
+     * this method sends an email if a specified application got canceled by the applicant if the application had state
+     * waiting, chefs get the email if the application had state allowed, office gets the email
+     *
+     * @param  application  the application which got canceled
+     * @param  isBoss  describes if chefs (param is true) or office (param is false) get the email (dependent on
+     *                 application's state: waiting-chefs, allowed-office
+     */
+    void sendCancelledNotification(Application application, boolean isBoss);
+
+    /**
+     * Commented out on Tu, 2011/11/29 - Aljona Murygina
+     * Think about if method really is necessary or not
+     *
      * This method sends a yearly balance to the certain user
      *
      * @param  balanceObject
      */
-    // hierfür müssen wir noch inen data-bean machen, dass bilanz daten hält und vllt auch ausrechnet
-    void sendBalance(Object balanceObject);
-
-
-    /**
-     * this method sends a mail to stern@synyx.de mentioning all urlauber
-     *
-     * @param  urlauber  persons with vacation this week
-     */
-    void sendWeeklyVacationForecast(List<Person> urlauber);
-
-
-    /**
-     * this method sends a notification to a bunch of persons if a specified request got canceled by the applicant
-     *
-     * @param  persons  the list of persons that will receive a notification-mail
-     * @param  request  the request which got canceled
-     */
-    void sendCanceledNotification(Application request, String emailAddress);
+    // data-bean that owns bilance data
+    // void sendBalance(Object balanceObject);
 }

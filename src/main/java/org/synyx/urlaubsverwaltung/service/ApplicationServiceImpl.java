@@ -115,7 +115,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         applicationDAO.save(application);
 
-        mailService.sendApprovedNotification(application.getPerson(), application);
+        mailService.sendAllowedNotification(application);
     }
 
 
@@ -190,7 +190,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         applicationDAO.save(application);
 
-        mailService.sendDeclinedNotification(application);
+        mailService.sendRejectedNotification(application);
     }
 
 
@@ -207,13 +207,13 @@ public class ApplicationServiceImpl implements ApplicationService {
             applicationDAO.save(application);
 
             // if application has been waiting, chefs get email
-            mailService.sendCanceledNotification(application, EmailAdr.CHEFS.getEmail());
+            mailService.sendCancelledNotification(application, true);
         } else if (application.getStatus() == ApplicationStatus.ALLOWED) {
             application.setStatus(ApplicationStatus.CANCELLED);
             applicationDAO.save(application);
 
             // if application has been allowed, office gets email
-            mailService.sendCanceledNotification(application, EmailAdr.OFFICE.getEmail());
+            mailService.sendCancelledNotification(application, false);
         }
     }
 
