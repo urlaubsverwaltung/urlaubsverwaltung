@@ -137,7 +137,7 @@ public class MailServiceImpl implements MailService {
         for (Application application : applications) {
             String text = prepareMessage(application, APPLICATION, FILE_NEW);
 
-            sendEmail(application.getPerson().getEmail(), "subject.new", text);
+            sendEmail("email.chefs", "subject.new", text);
         }
     }
 
