@@ -339,10 +339,6 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public boolean checkApplication(Application application) {
 
-        if (application.getStartDate().getYear() == application.getEndDate().getYear()) {
-            return calculationService.checkApplicationOneYear(application);
-        } else {
-            return calculationService.checkApplicationTwoYears(application);
-        }
+        return calculationService.checkApplicationOneYear(application);
     }
 }
