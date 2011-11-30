@@ -36,9 +36,6 @@ import java.util.List;
 @Transactional
 public class ApplicationServiceImpl implements ApplicationService {
 
-    private static final int LAST_DAY = 31;
-    private static final int FIRST_DAY = 1;
-
     private ApplicationDAO applicationDAO;
     private HolidaysAccountService accountService;
     private CryptoService cryptoService;
@@ -58,6 +55,13 @@ public class ApplicationServiceImpl implements ApplicationService {
         this.mailService = mailService;
         this.calculationService = calculationService;
     }
+
+    @Override
+    public Application getApplicationById(Integer id) {
+
+        return applicationDAO.findOne(id);
+    }
+
 
     /**
      * @see  ApplicationService#getAllApplicationsForPerson(org.synyx.urlaubsverwaltung.domain.Person)
@@ -133,14 +137,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         // start date and end date: same year?
         if (start.getYear() == end.getYear()) {
-            HolidaysAccount account = accountService.getHolidaysAccount(start.getYear(), person);
-
-            // if account not yet existent, create one
-            if (account == null) {
-                account = accountService.newHolidaysAccount(person,
-                        accountService.getHolidayEntitlement(start.getYear(), person).getVacationDays(),
-                        BigDecimal.ZERO, start.getYear());
-            }
+            HolidaysAccount account = accountService.getAccountOrCreateOne(start.getYear(), person);
 
             // notice special case april
             calculationService.noticeApril(application, account);
@@ -232,7 +229,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         DateMidnight end = application.getEndDate();
 
         if (start.getYear() != end.getYear()) {
-            HolidaysAccount account = accountService.getAccountAndIfNotExistentCreateOne(end.getYear(), person);
+            HolidaysAccount account = accountService.getAccountOrCreateOne(end.getYear(), person);
 
             account.setVacationDays(account.getVacationDays().add(BigDecimal.valueOf(sickDays)));
 

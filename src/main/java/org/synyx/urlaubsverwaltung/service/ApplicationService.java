@@ -18,6 +18,16 @@ import java.util.List;
 public interface ApplicationService {
 
     /**
+     * use this to get an application by its id
+     *
+     * @param  id
+     *
+     * @return
+     */
+    Application getApplicationById(Integer id);
+
+
+    /**
      * use this to save an edited application
      *
      * @param  application  the application to be saved
