@@ -18,7 +18,7 @@ import java.util.List;
 public interface ApplicationService {
 
     /**
-     * use this to save an edited existing application
+     * use this to save an edited application
      *
      * @param  application  the application to be saved
      */
@@ -85,7 +85,7 @@ public interface ApplicationService {
      *
      * @return  returns all applications of a state as a list of application-objects
      */
-    List<Application> getAllApplicationByState(ApplicationStatus state);
+    List<Application> getAllApplicationsByState(ApplicationStatus state);
 
 
     /**
@@ -125,5 +125,5 @@ public interface ApplicationService {
      *
      * @return  boolean: true if application is okay, false if there are too little residual number of vacation days
      */
-    boolean checkAntrag(Application application);
+    boolean checkApplication(Application application);
 }

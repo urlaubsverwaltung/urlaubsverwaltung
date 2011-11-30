@@ -70,10 +70,10 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 
     /**
-     * @see  ApplicationService#getAllApplicationByState(org.synyx.urlaubsverwaltung.domain.ApplicationStatus)
+     * @see  ApplicationService#getAllApplicationsByState(org.synyx.urlaubsverwaltung.domain.ApplicationStatus)
      */
     @Override
-    public List<Application> getAllApplicationByState(ApplicationStatus state) {
+    public List<Application> getAllApplicationsByState(ApplicationStatus state) {
 
         return applicationDAO.getAllApplicationsByState(state);
     }
@@ -232,14 +232,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         DateMidnight end = application.getEndDate();
 
         if (start.getYear() != end.getYear()) {
-            HolidaysAccount account = accountService.getHolidaysAccount(end.getYear(), person);
-
-            // if account not yet existing, create one
-            if (account == null) {
-                account = accountService.newHolidaysAccount(person,
-                        accountService.getHolidayEntitlement(end.getYear(), person).getVacationDays(), BigDecimal.ZERO,
-                        end.getYear());
-            }
+            HolidaysAccount account = accountService.getAccountAndIfNotExistentCreateOne(end.getYear(), person);
 
             account.setVacationDays(account.getVacationDays().add(BigDecimal.valueOf(sickDays)));
 
@@ -284,7 +277,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public void signApplicationByBoss(Application application, Person boss) {
 
-        byte[] data = signAntrag(application, boss);
+        byte[] data = signApplication(application, boss);
 
         if (data != null) {
             application.setSignatureBoss(data);
@@ -299,7 +292,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public void signApplicationByUser(Application application, Person user) {
 
-        byte[] data = signAntrag(application, user);
+        byte[] data = signApplication(application, user);
 
         if (data != null) {
             application.setSignaturePerson(data);
@@ -308,8 +301,16 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
 
-    // exceptions has to be catched!
-    public byte[] signAntrag(Application application, Person person) {
+    // exceptions have to be catched!
+    /**
+     * generates signature (byte[]) by private key of person
+     *
+     * @param  application
+     * @param  person
+     *
+     * @return  data (=signature) if using cryptoService was successful or null if there was any mistake
+     */
+    public byte[] signApplication(Application application, Person person) {
 
         try {
             PrivateKey privKey = cryptoService.getPrivateKeyByBytes(person.getPrivateKey());
@@ -336,113 +337,15 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 
     /**
-     * @see  ApplicationService#checkAntrag(org.synyx.urlaubsverwaltung.domain.Application)
+     * @see  ApplicationService#checkApplication(org.synyx.urlaubsverwaltung.domain.Application)
      */
     @Override
-    public boolean checkAntrag(Application application) {
+    public boolean checkApplication(Application application) {
 
         if (application.getStartDate().getYear() == application.getEndDate().getYear()) {
-            return checkAntragOneYear(application);
+            return calculationService.checkApplicationOneYear(application);
         } else {
-            return checkAntragTwoYears(application);
+            return calculationService.checkApplicationTwoYears(application);
         }
-    }
-
-
-    public boolean checkAntragOneYear(Application application) {
-
-        BigDecimal days;
-        DateMidnight start = application.getStartDate();
-        DateMidnight end = application.getEndDate();
-        Person person = application.getPerson();
-
-        HolidaysAccount account = accountService.getHolidaysAccount(start.getYear(), person);
-
-        // if account not yet existent
-        if (account == null) {
-            // create new account
-            account = accountService.newHolidaysAccount(person,
-                    accountService.getHolidayEntitlement(start.getYear(), person).getVacationDays(), BigDecimal.ZERO,
-                    start.getYear());
-        }
-
-        // if application is before April
-        if (application.getEndDate().getMonthOfYear() < DateTimeConstants.APRIL) {
-            days = calendarService.getVacationDays(application, start, end);
-
-            // compareTo >= 0 means: greater than or equal (because it may be 0 or 1)
-            if (((account.getRemainingVacationDays().add(account.getVacationDays())).subtract(days)).compareTo(
-                        BigDecimal.valueOf(0.0)) >= 0) {
-                return true;
-            }
-        } else if (application.getStartDate().getMonthOfYear() >= DateTimeConstants.APRIL) {
-            // if application is after April, there are no remaining vacation days
-
-            days = calendarService.getVacationDays(application, start, end);
-
-            // compareTo >= 0 means: greater than or equal (because it may be 0 or 1)
-            if ((account.getVacationDays().subtract(days)).compareTo(BigDecimal.valueOf(0.0)) >= 0) {
-                return true;
-            }
-        } else {
-            // if period of holiday is before AND after april
-            BigDecimal beforeApril = calendarService.getVacationDays(application, application.getStartDate(),
-                    new DateMidnight(start.getYear(), DateTimeConstants.MARCH, LAST_DAY));
-            BigDecimal afterApril = calendarService.getVacationDays(application,
-                    new DateMidnight(end.getYear(), DateTimeConstants.APRIL, FIRST_DAY), application.getEndDate());
-
-            // subtract beforeApril from remaining vacation days
-            BigDecimal result = account.getRemainingVacationDays().subtract(beforeApril);
-
-            // if beforeApril is greater than remaining vacation days
-            // (remaining vacation days minus beforeApril) has to be subtracted from vacation days
-            if (result.compareTo(BigDecimal.ZERO) == 1) {
-                beforeApril = (account.getRemainingVacationDays().subtract(beforeApril)).negate();
-            } else {
-                beforeApril = BigDecimal.ZERO;
-            }
-
-            if ((account.getVacationDays().subtract(beforeApril.add(afterApril))).compareTo(BigDecimal.ZERO) >= 0) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-
-    public boolean checkAntragTwoYears(Application application) {
-
-        Person person = application.getPerson();
-        DateMidnight start = application.getStartDate();
-        DateMidnight end = application.getEndDate();
-
-        HolidaysAccount accountCurrentYear = accountService.getHolidaysAccount(start.getYear(), person);
-        HolidaysAccount accountNextYear = accountService.getHolidaysAccount(end.getYear(), person);
-
-        if (accountCurrentYear == null) {
-            accountCurrentYear = accountService.newHolidaysAccount(person,
-                    accountService.getHolidayEntitlement(start.getYear(), person).getVacationDays(), BigDecimal.ZERO,
-                    start.getYear());
-        }
-
-        if (accountNextYear == null) {
-            accountNextYear = accountService.newHolidaysAccount(person,
-                    accountService.getHolidayEntitlement(end.getYear(), person).getVacationDays(), BigDecimal.ZERO,
-                    end.getYear());
-        }
-
-        BigDecimal beforeJan = calendarService.getVacationDays(application, application.getStartDate(),
-                new DateMidnight(start.getYear(), DateTimeConstants.DECEMBER, LAST_DAY));
-        BigDecimal afterJan = calendarService.getVacationDays(application,
-                new DateMidnight(end.getYear(), DateTimeConstants.JANUARY, FIRST_DAY), application.getEndDate());
-
-        if (((accountCurrentYear.getVacationDays().subtract(beforeJan)).compareTo(BigDecimal.ZERO) >= 0)
-                && (((accountNextYear.getVacationDays().add(accountNextYear.getRemainingVacationDays())).subtract(
-                            afterJan)).compareTo(BigDecimal.ZERO) >= 0)) {
-            return true;
-        }
-
-        return false;
     }
 }
