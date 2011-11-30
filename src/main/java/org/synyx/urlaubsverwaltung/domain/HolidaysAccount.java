@@ -19,7 +19,7 @@ import javax.persistence.ManyToOne;
 @Entity
 public class HolidaysAccount extends AbstractPersistable<Integer> {
 
-    private static final long serialVersionUID = getSerialVersionUID();
+    private static final long serialVersionUID = 341278947843289L;
 
     // One person may have multiple accounts (depending on years)
     @ManyToOne
@@ -42,12 +42,6 @@ public class HolidaysAccount extends AbstractPersistable<Integer> {
 
     // Number of days of unpaid leave used this year
     private BigDecimal unbezahlterUrlaub;
-
-    public static long getSerialVersionUID() {
-
-        return serialVersionUID;
-    }
-
 
     public Person getPerson() {
 

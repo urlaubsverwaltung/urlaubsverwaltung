@@ -15,7 +15,7 @@ import javax.persistence.OneToOne;
 @Entity
 public class Comment extends AbstractPersistable<Integer> {
 
-    private static final long serialVersionUID = getSerialVersionUID();
+    private static final long serialVersionUID = 8908423789423089L;
 
     private String text;
 
@@ -23,12 +23,6 @@ public class Comment extends AbstractPersistable<Integer> {
     private Person person;
 
     private DateMidnight dateOfComment;
-
-    public static long getSerialVersionUID() {
-
-        return serialVersionUID;
-    }
-
 
     public DateMidnight getDateOfComment() {
 

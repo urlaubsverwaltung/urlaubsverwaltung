@@ -19,7 +19,7 @@ import javax.persistence.ManyToOne;
 @Entity
 public class HolidayEntitlement extends AbstractPersistable<Integer> {
 
-    private static final long serialVersionUID = getSerialVersionUID();
+    private static final long serialVersionUID = 89043562784389L;
 
     // One person may have multiple entitlements (depending on years)
     @ManyToOne
@@ -28,12 +28,6 @@ public class HolidayEntitlement extends AbstractPersistable<Integer> {
     private BigDecimal vacationDays;
 
     private Integer year;
-
-    public static long getSerialVersionUID() {
-
-        return serialVersionUID;
-    }
-
 
     public Person getPerson() {
 

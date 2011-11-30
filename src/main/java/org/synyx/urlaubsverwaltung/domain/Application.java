@@ -19,7 +19,7 @@ import javax.persistence.OneToOne;
 @Entity
 public class Application extends AbstractPersistable<Integer> {
 
-    private static final long serialVersionUID = getSerialVersionUID();
+    private static final long serialVersionUID = 1234589209309L;
 
     // One person may own multiple applications for leave
     @ManyToOne
@@ -73,12 +73,6 @@ public class Application extends AbstractPersistable<Integer> {
 
     // Signature of boss
     private byte[] signatureBoss;
-
-    public static long getSerialVersionUID() {
-
-        return serialVersionUID;
-    }
-
 
     public String getAddress() {
 

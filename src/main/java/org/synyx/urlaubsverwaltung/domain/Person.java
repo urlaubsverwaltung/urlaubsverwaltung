@@ -16,7 +16,7 @@ import javax.persistence.OneToMany;
 @Entity
 public class Person extends AbstractPersistable<Integer> {
 
-    private static final long serialVersionUID = getSerialVersionUID();
+    private static final long serialVersionUID = 765672310978437L;
 
     private String loginName;
 
@@ -45,12 +45,6 @@ public class Person extends AbstractPersistable<Integer> {
 
     @OneToMany
     private List<Application> applications;
-
-    public static long getSerialVersionUID() {
-
-        return serialVersionUID;
-    }
-
 
     public List<HolidaysAccount> getAccounts() {
 
