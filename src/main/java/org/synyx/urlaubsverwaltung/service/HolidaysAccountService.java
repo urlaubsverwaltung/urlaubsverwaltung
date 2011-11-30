@@ -56,7 +56,7 @@ public interface HolidaysAccountService {
      *
      * @return
      */
-    HolidaysAccount getAccountAndIfNotExistentCreateOne(int year, Person person);
+    HolidaysAccount getAccountOrCreateOne(int year, Person person);
 
 
     /**
