@@ -53,8 +53,8 @@ public class OwnCalendarService {
 
     /**
      * This method calculates how many vacation days are used in the stated period (from start date to end date)
-     * getWorkDays calculates the number of workdays, getFeiertage calculates the number of official holidays within the
-     * workdays. Number of vacation days results from workdays minus official holidays.
+     * getWorkDays calculates the number of workdays, getPublicHolidays calculates the number of official holidays
+     * within the workdays. Number of vacation days results from workdays minus official holidays.
      *
      * @param  startDate
      * @param  endDate
@@ -65,7 +65,7 @@ public class OwnCalendarService {
 
         double vacDays = getWorkDays(startDate, endDate);
 
-        vacDays = vacDays - jollydayCalendar.getFeiertage(startDate, endDate);
+        vacDays = vacDays - jollydayCalendar.getPublicHolidays(startDate, endDate);
 
         return BigDecimal.valueOf(vacDays).multiply(application.getHowLong().getDayLengthNumber());
     }
