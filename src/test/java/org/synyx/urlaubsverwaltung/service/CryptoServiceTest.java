@@ -24,9 +24,13 @@ import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
+import java.util.Arrays;
+
 
 /**
- * @author  aljona
+ * tests functionality of cryptoService
+ *
+ * @author  Aljona Murygina
  */
 public class CryptoServiceTest {
 
@@ -87,7 +91,7 @@ public class CryptoServiceTest {
         assertNotNull(returnValue);
 
         // byte[] wurde veraendert durch signieren
-        assertFalse(data.equals(returnValue));
+        assertFalse(Arrays.equals(data, returnValue));
     }
 
 
@@ -153,15 +157,6 @@ public class CryptoServiceTest {
 
         assertNotNull(returnValue);
         assertEquals(pubKey, returnValue);
-    }
-
-
-    /** Test of printSignature method, of class CryptoService. */
-    @Ignore
-    @Test
-    public void testPrintSignature() {
-
-        // method just prints out
     }
 
 

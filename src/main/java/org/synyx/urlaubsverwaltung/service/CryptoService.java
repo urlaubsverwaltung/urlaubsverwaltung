@@ -17,6 +17,13 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
 
+/**
+ * this class contains all methods that deal with private and public keys and signature it is able to: generate private
+ * and public keys get in database as byte[] saved keys and convert them back to rsa keys sign data with private key and
+ * verify signed data with public key
+ *
+ * @author  Aljona Murygina
+ */
 public class CryptoService {
 
     private static final int KEYSIZE = 2048;
@@ -140,7 +147,7 @@ public class CryptoService {
     }
 
 
-    // Base64Encoder sollte ersetzt werden...
+    // Base64Encoder sollte eventuell ersetzt werden...
     /**
      * get encoded signature
      *
