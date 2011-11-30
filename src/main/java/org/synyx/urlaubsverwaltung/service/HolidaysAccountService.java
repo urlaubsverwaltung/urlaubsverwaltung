@@ -49,6 +49,17 @@ public interface HolidaysAccountService {
 
 
     /**
+     * get HolidaysAccount by year and person and if account not existent, creates a new one
+     *
+     * @param  year
+     * @param  person
+     *
+     * @return
+     */
+    HolidaysAccount getAccountAndIfNotExistentCreateOne(int year, Person person);
+
+
+    /**
      * creates a new HolidayEntitlement for a person with params year and anspruch
      *
      * @param  person

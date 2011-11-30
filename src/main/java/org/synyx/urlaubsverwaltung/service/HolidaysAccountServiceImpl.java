@@ -73,6 +73,25 @@ public class HolidaysAccountServiceImpl implements HolidaysAccountService {
 
 
     /**
+     * @see  HolidaysAccountService#getAccountAndIfNotExistentCreateOne(int, org.synyx.urlaubsverwaltung.domain.Person)
+     */
+    @Override
+    public HolidaysAccount getAccountAndIfNotExistentCreateOne(int year, Person person) {
+
+        HolidaysAccount account = holidaysAccountDAO.getHolidaysAccountByYearAndPerson(year, person);
+
+        // if account not yet existent
+        if (account == null) {
+            // create new account
+            account = newHolidaysAccount(person, getHolidayEntitlement(year, person).getVacationDays(), BigDecimal.ZERO,
+                    year);
+        }
+
+        return account;
+    }
+
+
+    /**
      * @see  HolidaysAccountService#newHolidayEntitlement(org.synyx.urlaubsverwaltung.domain.Person, int,
      *       java.math.BigDecimal)
      */
