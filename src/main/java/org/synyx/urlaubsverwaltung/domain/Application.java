@@ -54,9 +54,8 @@ public class Application extends AbstractPersistable<Integer> {
     // for holiday default = "Erholung"
     private String reason;
 
-    // Representative of employee during his/her holiday
-    @OneToOne
-    private Person rep;
+    // Name of representative of employee during his/her holiday
+    private String rep;
 
     // Address and phone number during holiday
     private String address;
@@ -201,13 +200,13 @@ public class Application extends AbstractPersistable<Integer> {
     }
 
 
-    public Person getRep() {
+    public String getRep() {
 
         return rep;
     }
 
 
-    public void setRep(Person rep) {
+    public void setRep(String rep) {
 
         this.rep = rep;
     }
