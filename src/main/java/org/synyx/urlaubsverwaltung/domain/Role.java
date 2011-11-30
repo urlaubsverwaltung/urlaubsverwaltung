@@ -2,7 +2,7 @@
 package org.synyx.urlaubsverwaltung.domain;
 
 /**
- * @author  aljona
+ * @author  Aljona Murygina
  */
 public enum Role {
 

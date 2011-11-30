@@ -6,10 +6,10 @@ package org.synyx.urlaubsverwaltung.domain;
  */
 public enum VacationType {
 
-    HOLIDAY("vac.erholung"),
-    SPECIALLEAVE("vac.sonder"),
-    UNPAIDLEAVE("vac.unbezahlt"),
-    OVERTIME("vac.ueberstunden");
+    HOLIDAY("vac.holiday"),
+    SPECIALLEAVE("vac.special"),
+    UNPAIDLEAVE("vac.unpaid"),
+    OVERTIME("vac.overtime");
 
     private String vacationTypeName;
 

@@ -6,10 +6,10 @@ package org.synyx.urlaubsverwaltung.domain;
  */
 public enum ApplicationStatus {
 
-    WAITING("state.wait"),
-    ALLOWED("state.ok"),
-    REJECTED("state.no"),
-    CANCELLED("state.storniert");
+    WAITING("state.waiting"),
+    ALLOWED("state.allowed"),
+    REJECTED("state.rejected"),
+    CANCELLED("state.cancelled");
 
     private String state;
 
