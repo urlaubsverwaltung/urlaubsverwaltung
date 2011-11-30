@@ -9,6 +9,7 @@ import de.jollyday.HolidayManager;
 
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
+import org.joda.time.LocalDate;
 import org.joda.time.chrono.GregorianChronology;
 
 import java.util.HashSet;
@@ -16,139 +17,134 @@ import java.util.Set;
 
 
 /**
- * @author  aljona
+ * @author  Aljona Murygina
  */
 public class JollydayCalendar {
 
-    private static final int HEILIGABEND = 24;
-    private static final int SILVESTER = 31;
+    private static final int CHRISTMASEVE = 24;
+    private static final int NEWYEARSEVE = 31;
     private static final double HALF_DAY = 0.5;
+    private static final double FULL_DAY = 1.0;
 
     private HolidayManager manager = HolidayManager.getInstance("synyx");
 
     /**
-     * Berechnet Anzahl der Feiertage zwischen zwei Datumsangaben. Wenn ein Feiertag auf Samstag oder Sonntag faellt,
-     * zaehlt dieser nicht als Feiertag. Wochenendtage werden im OwnCalendarService beachtet hier geht es tatsaechlich
-     * rein um Feiertage, die an einem Tag zwischen Montag und Freitag liegen.
+     * Calculates number of public holidays between two given dates. If a public holiday is on Saturday or on Sunday it
+     * is not counted among public holidays. Only public holidays on weekdays (Monday to Friday) are counted here.
      *
      * @param  startDate
      * @param  endDate
      *
-     * @return  Anzahl der Feiertage zwischen startDate und endDate
+     * @return  number of public holidays between startDate and endDate
      */
-    public Double getFeiertage(DateMidnight start, DateMidnight end) {
+    public double getPublicHolidays(DateMidnight start, DateMidnight end) {
 
         DateMidnight startDate = start.withChronology(GregorianChronology.getInstance());
         DateMidnight endDate = end.withChronology(GregorianChronology.getInstance());
 
-        // hole alle Feiertage dieses Jahrs
+        // get all public holidays of this year
         Set<Holiday> holidays = manager.getHolidays(startDate.getYear());
 
-        // pruefe, ob es Feiertage gibt, die auf einen Samstag oder Sonntag fallen wenn ein Feiertag auf Samstag oder
-        // Sonntag faellt, ist er fuer Urlaubsberechnung wertlos
+        // check if there are public holidays that are on Saturday or Sunday these days are worthless for the following
+        // calculation
 
-        // da man waehrend des Iterierens das Element nicht aus dem Set entfernen kann, wird stattdessen ein "echtes
-        // Set" erzeugt, in dem alle Feiertage, die NICHT auf ein Wochenende fallen gespeichert sind
+        // since it is not possible to remove elements during an iteration, you have to create a Set<Holiday> that
+        // contains all public holidays that are on weekdays
 
-        Set<Holiday> feiertageAnWerktagen = getOnlyNotWeekendFeiertage(holidays);
+        Set<Holiday> holidaysOnWeekdays = getOnlyHolidaysOnWeekdays(holidays);
 
-        Double feiertage = 0.0;
+        double numberOfHolidays = 0.0;
 
-        // schaue, ob start- und enddatum gleich sind
+        // check if start date and end date are equal
         if (startDate.equals(endDate)) {
-            feiertage = isOneDayFeiertag(feiertageAnWerktagen, startDate);
+            numberOfHolidays = calculate(holidaysOnWeekdays, startDate);
         } else {
-            feiertage = howManyFeiertage(feiertageAnWerktagen, startDate, endDate);
+            DateMidnight date = startDate;
+
+            // iteration while startdatum != enddatum
+            // calculation for all dates between start date (inclusive start date) and end date (exclusive end date!)
+            while (!date.equals(endDate)) {
+                // check if current date is a public holiday
+                numberOfHolidays += calculate(holidaysOnWeekdays, date);
+                date = date.plusDays(1);
+            }
+
+            // calculation for end date
+            numberOfHolidays += calculate(holidaysOnWeekdays, endDate);
         }
 
-        return feiertage;
+        return numberOfHolidays;
     }
 
 
-    public Set<Holiday> getOnlyNotWeekendFeiertage(Set<Holiday> holidays) {
+    /**
+     * a Set of a year's all public holidays is given, this method creates a Set of public holidays that only are on
+     * weekdays
+     *
+     * @param  holidays  Set of all public holidays of a year
+     *
+     * @return  a Set of public holidays that only are on weekdays
+     */
+    private Set<Holiday> getOnlyHolidaysOnWeekdays(Set<Holiday> holidays) {
 
-        Set<Holiday> feiertageAnWerktagen = new HashSet<Holiday>();
+        Set<Holiday> holidaysOnWeekdays = new HashSet<Holiday>();
 
         for (Holiday holiday : holidays) {
             int day = holiday.getDate().getDayOfWeek();
 
             if (!((day == DateTimeConstants.SATURDAY) || (day == DateTimeConstants.SUNDAY))) {
-                feiertageAnWerktagen.add(holiday);
+                holidaysOnWeekdays.add(holiday);
             }
         }
 
-        return feiertageAnWerktagen;
+        return holidaysOnWeekdays;
     }
 
 
-    private Double isOneDayFeiertag(Set<Holiday> feiertageAnWerktagen, DateMidnight date) {
+    /**
+     * this method checks if a given date is on Christmas Eve or on New Year's Eve
+     *
+     * @param  date
+     *
+     * @return  true if date is on Christmas Eve or on New Year's Eve, else false
+     */
+    private boolean isChristmasEveOrNewYearsEve(LocalDate date) {
 
-        Double feiertage = 0.0;
+        if ((date.getDayOfMonth() == CHRISTMASEVE && date.getMonthOfYear() == DateTimeConstants.DECEMBER)
+                || (date.getDayOfMonth() == NEWYEARSEVE && date.getMonthOfYear() == DateTimeConstants.DECEMBER)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-        for (Holiday holiday : feiertageAnWerktagen) {
-            // pruefe, ob datum auf einen feiertag faellt
+
+    /**
+     * calculates if a given date is a full public holiday (1.0), a half public holiday (0.5) or none (0.0)
+     *
+     * @param  holidaysOnWeekdays
+     * @param  date
+     *
+     * @return
+     */
+    private double calculate(Set<Holiday> holidaysOnWeekdays, DateMidnight date) {
+
+        double publicHolidays = 0.0;
+
+        for (Holiday holiday : holidaysOnWeekdays) {
+            // check if given date is a public holiday
             if ((date.toLocalDate()).equals(holiday.getDate())) {
-                // pruefe, ob dieser feiertag silvester oder heiligabend ist
-                // denn diese zaehlen nur zu 0,5 als feiertag
-                if (((holiday.getDate().getDayOfMonth() == HEILIGABEND
-                                && holiday.getDate().getMonthOfYear() == DateTimeConstants.DECEMBER)
-                            || (holiday.getDate().getDayOfMonth() == SILVESTER
-                                && holiday.getDate().getMonthOfYear() == DateTimeConstants.DECEMBER))) {
-                    feiertage = feiertage + HALF_DAY;
+                // check if given date is Christmas Eve or New Year's Eve
+                // because these ones are counted as 0.5 days
+                if (isChristmasEveOrNewYearsEve(holiday.getDate())) {
+                    publicHolidays += HALF_DAY;
                 } else {
-                    // ansonsten wird ganzer feiertag aufaddiert
-                    feiertage = feiertage + 1.0;
+                    // else 1.0 days are counted
+                    publicHolidays += FULL_DAY;
                 }
             }
         }
 
-        return feiertage;
-    }
-
-
-    private Double howManyFeiertage(Set<Holiday> feiertageAnWerktagen, DateMidnight startDate, DateMidnight endDate) {
-
-        Double feiertage = 0.0;
-
-        DateMidnight date = startDate;
-
-        // iteriere ueber die tage drueber: solange startdatum != enddatum
-        while (!date.equals(endDate)) {
-            // pruefe, ob vorkommender tag ein holiday ist
-            for (Holiday holiday : feiertageAnWerktagen) {
-                // pruefe, ob datum auf einen feiertag faellt
-                if ((date.toLocalDate()).equals(holiday.getDate())) {
-                    // pruefe, ob dieser feiertag silvester oder heiligabend ist
-                    // denn diese zaehlen nur zu 0,5 als feiertag
-                    if ((holiday.getDate().getDayOfMonth() == HEILIGABEND
-                                && holiday.getDate().getMonthOfYear() == DateTimeConstants.DECEMBER)
-                            || (holiday.getDate().getDayOfMonth() == SILVESTER
-                                && holiday.getDate().getMonthOfYear() == DateTimeConstants.DECEMBER)) {
-                        feiertage = feiertage + HALF_DAY;
-                    } else {
-                        // ansonsten wird ganzer feiertag aufaddiert
-                        feiertage = feiertage + 1.0;
-                    }
-                }
-            }
-
-            date = date.plusDays(1);
-        }
-
-        for (Holiday holiday : feiertageAnWerktagen) {
-            if ((endDate.toLocalDate()).equals(holiday.getDate())) {
-                if ((holiday.getDate().getDayOfMonth() == HEILIGABEND
-                            && holiday.getDate().getMonthOfYear() == DateTimeConstants.DECEMBER)
-                        || (holiday.getDate().getDayOfMonth() == SILVESTER
-                            && holiday.getDate().getMonthOfYear() == DateTimeConstants.DECEMBER)) {
-                    feiertage = feiertage + HALF_DAY;
-                } else {
-                    // ansonsten wird ganzer feiertag aufaddiert
-                    feiertage = feiertage + 1.0;
-                }
-            }
-        }
-
-        return feiertage;
+        return publicHolidays;
     }
 }

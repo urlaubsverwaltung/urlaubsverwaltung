@@ -26,7 +26,7 @@ import java.util.Set;
 
 
 /**
- * @author  aljona
+ * @author  Aljona Murygina
  */
 public class JollydayCalendarTest {
 
@@ -57,46 +57,45 @@ public class JollydayCalendarTest {
     }
 
 
-    /** Test of getFeiertage method, of class JollydayCalendar. */
+    /** Test of getPublicHolidays method, of class JollydayCalendar. */
     @Test
-    public void testGetFeiertage() {
+    public void testGetPublicHolidays() {
 
-        // Feiertage, die auf ein Wochenende fallen
-        // 23. ist Freitag, 27. ist Dienstag
-        // d.h. es sollte nur ein Feiertag, naemlich Mo., der 26. erkannt werden
-        // die anderen fallen auf ein Wochenende
+        // statutory holidays (at the weekend)
+        // 23th is Friday, 27th is Tuesday
+        // this means: only one statutory holiday (Monday, the 26th) should be detected
+        // the others are not on weekdays
         DateMidnight startDate = new DateMidnight(2011, 12, 23);
         DateMidnight endDate = new DateMidnight(2011, 12, 27);
 
-        Double returnValue = instance.getFeiertage(startDate, endDate);
+        Double returnValue = instance.getPublicHolidays(startDate, endDate);
         assertNotNull(returnValue);
         assertEquals(1.0, returnValue, 0.0);
 
-        // 24.12. oder 31.12. kommt vor
-        // hier kommt der 24.12. vor und ist ein Freitag
-        // 21. ist ein Dienstag, 24. ist ein Freitag
-        // d.h. es sollte ein halber Feiertag erkannt werden
+        // here:
+        // 24.12. is a Friday
+        // 21.12 is a Tuesday
+        // i.e.: it should be detected a half day as holiday
         startDate = new DateMidnight(2010, 12, 23);
         endDate = new DateMidnight(2010, 12, 24);
 
-        returnValue = instance.getFeiertage(startDate, endDate);
+        returnValue = instance.getPublicHolidays(startDate, endDate);
         assertNotNull(returnValue);
         assertEquals(0.5, returnValue, 0.0);
 
-        // 31.12. kommt vor, Feiertage am Wochenende UND unter der Woche
         // 25.12.2009 - 31.12.2009
-        // Feiertage insgesamt: 2.5
-        // wegen Wochenende netto Feiertage: 1.5
+        // a total of statutory holidays: 2.5
+        // because of weekend real holidays: 1.5
         startDate = new DateMidnight(2009, 12, 25);
         endDate = new DateMidnight(2009, 12, 31);
 
-        returnValue = instance.getFeiertage(startDate, endDate);
+        returnValue = instance.getPublicHolidays(startDate, endDate);
         assertNotNull(returnValue);
         assertEquals(1.5, returnValue, 0.0);
     }
 
 
-    /** Teste, ob Addieren (countBetweenDays) funktioniert */
+    /** Test if adding (countBetweenDays) works correctly */
     @Test
     public void testPlusDays() {
 
@@ -114,7 +113,7 @@ public class JollydayCalendarTest {
     }
 
 
-    /** Teste, ob Holen von Set<Holiday> funktioniert und ob sich Datumsangaben vergleichen lassen */
+    /** Test if getting of Set<Holiday> and comparing dates works */
     @Ignore
     @Test
     public void testHolidaySet() {
@@ -125,7 +124,7 @@ public class JollydayCalendarTest {
 
         for (Holiday day : holidays) {
             if ((day.getDate()).equals(date.toLocalDate())) {
-                System.out.println("DIE SIND GLEICH!!!!");
+                System.out.println("EQUALS!!!!");
                 System.out.println(day.getDate() + " " + day.getDescription());
             }
 
