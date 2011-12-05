@@ -103,5 +103,32 @@ public class OwnCalendarServiceTest {
 
         assertNotNull(returnValue);
         assertEquals(BigDecimal.valueOf(9.0).setScale(2), returnValue);
+
+        // start date and end date are not in the same year
+        start = new DateMidnight(2011, 12, 26);
+        end = new DateMidnight(2012, 1, 15);
+
+        returnValue = instance.getVacationDays(application, start, end);
+
+        assertNotNull(returnValue);
+        assertEquals(BigDecimal.valueOf(13.0).setScale(2), returnValue);
+
+        // Labour Day (1st May)
+        start = new DateMidnight(2009, 4, 27);
+        end = new DateMidnight(2009, 5, 2);
+
+        returnValue = instance.getVacationDays(application, start, end);
+
+        assertNotNull(returnValue);
+        assertEquals(BigDecimal.valueOf(4.0).setScale(2), returnValue);
+
+        // start date is Sunday, end date Saturday
+        start = new DateMidnight(2011, 1, 2);
+        end = new DateMidnight(2011, 1, 8);
+
+        returnValue = instance.getVacationDays(application, start, end);
+
+        assertNotNull(returnValue);
+        assertEquals(BigDecimal.valueOf(4.0).setScale(2), returnValue);
     }
 }

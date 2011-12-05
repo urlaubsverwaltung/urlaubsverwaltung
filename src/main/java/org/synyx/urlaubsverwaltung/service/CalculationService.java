@@ -8,6 +8,7 @@ import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.HolidayEntitlement;
 import org.synyx.urlaubsverwaltung.domain.HolidaysAccount;
+import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.math.BigDecimal;
 
@@ -61,16 +62,16 @@ public class CalculationService {
         int startMonth = application.getStartDate().getMonthOfYear();
         int endMonth = application.getEndDate().getMonthOfYear();
 
-        if (isBeforeApril(startMonth, endMonth)) {
+        if (DateUtil.isBeforeApril(startMonth, endMonth)) {
             account = subtractCaseBeforeApril(application, account);
             accounts.add(account);
-        } else if (isAfterApril(startMonth, endMonth)) {
+        } else if (DateUtil.isAfterApril(startMonth, endMonth)) {
             account = subtractCaseAfterApril(application, account);
             accounts.add(account);
-        } else if (isBetweenMarchAndApril(startMonth, endMonth)) {
+        } else if (DateUtil.isBetweenMarchAndApril(startMonth, endMonth)) {
             account = subtractCaseBetweenApril(application, account);
             accounts.add(account);
-        } else if (isBetweenDecemberAndJanuary(startMonth, endMonth)) {
+        } else if (DateUtil.isBetweenDecemberAndJanuary(startMonth, endMonth)) {
             HolidaysAccount accountNextYear = accountService.getAccountOrCreateOne(application.getEndDate().getYear(),
                     application.getPerson());
             accounts = subtractCaseBetweenJanuary(application, account, accountNextYear);
@@ -102,21 +103,21 @@ public class CalculationService {
         int startMonth = application.getStartDate().getMonthOfYear();
         int endMonth = application.getEndDate().getMonthOfYear();
 
-        if (isBeforeApril(startMonth, endMonth)) {
+        if (DateUtil.isBeforeApril(startMonth, endMonth)) {
             days = getNumberOfVacationDays(application);
             account = addDaysToAccount(account, days);
             accounts.add(account);
-        } else if (isAfterApril(startMonth, endMonth)) {
+        } else if (DateUtil.isAfterApril(startMonth, endMonth)) {
             days = getNumberOfVacationDays(application);
             account.setVacationDays(account.getVacationDays().add(days));
             accounts.add(account);
-        } else if (isBetweenMarchAndApril(startMonth, endMonth)) {
+        } else if (DateUtil.isBetweenMarchAndApril(startMonth, endMonth)) {
             BigDecimal beforeApr = getDaysBeforeLastOfGivenMonth(application, DateTimeConstants.MARCH);
             BigDecimal afterApr = getDaysAfterFirstOfGivenMonth(application, DateTimeConstants.APRIL);
             account.setVacationDays(account.getVacationDays().add(afterApr));
             account = addDaysToAccount(account, beforeApr);
             accounts.add(account);
-        } else if (isBetweenDecemberAndJanuary(startMonth, endMonth)) {
+        } else if (DateUtil.isBetweenDecemberAndJanuary(startMonth, endMonth)) {
             HolidaysAccount accountNextYear = accountService.getAccountOrCreateOne(application.getEndDate().getYear(),
                     application.getPerson());
             BigDecimal beforeJan = getDaysBeforeLastOfGivenMonth(application, DateTimeConstants.DECEMBER);
@@ -151,9 +152,9 @@ public class CalculationService {
     public HolidaysAccount addSickDaysOnHolidaysAccount(Application application, HolidaysAccount account,
         BigDecimal sickDays) {
 
-        if (isBeforeApril(application.getDateOfAddingSickDays())) {
+        if (DateUtil.isBeforeApril(application.getDateOfAddingSickDays())) {
             addDaysToAccount(account, sickDays);
-        } else if (isAfterApril(application.getDateOfAddingSickDays())) {
+        } else if (DateUtil.isAfterApril(application.getDateOfAddingSickDays())) {
             HolidayEntitlement entitlement = accountService.getHolidayEntitlement(account.getYear(),
                     account.getPerson());
             BigDecimal sum = account.getVacationDays().add(sickDays);
@@ -331,112 +332,15 @@ public class CalculationService {
     }
 
 
+    /**
+     * calculates how many work days are between start date and end date of an application
+     *
+     * @param  application
+     *
+     * @return
+     */
     private BigDecimal getNumberOfVacationDays(Application application) {
 
         return calendarService.getVacationDays(application, application.getStartDate(), application.getEndDate());
-    }
-
-
-    /**
-     * checks if given period is before April
-     *
-     * @param  month
-     *
-     * @return
-     */
-    private boolean isBeforeApril(int startMonth, int endMonth) {
-
-        if (startMonth >= DateTimeConstants.JANUARY && endMonth <= DateTimeConstants.MARCH) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-
-    /**
-     * checks if given period is after April
-     *
-     * @param  month
-     *
-     * @return
-     */
-    private boolean isAfterApril(int startMonth, int endMonth) {
-
-        if (startMonth >= DateTimeConstants.APRIL && endMonth <= DateTimeConstants.DECEMBER) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-
-    /**
-     * checks if the given period is between March and April
-     *
-     * @param  monthStart
-     * @param  monthEnd
-     *
-     * @return
-     */
-    private boolean isBetweenMarchAndApril(int startMonth, int endMonth) {
-
-        if (startMonth <= DateTimeConstants.MARCH && endMonth >= DateTimeConstants.APRIL) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-
-    /**
-     * checks if given period is between December and January
-     *
-     * @param  startMonth
-     * @param  endMonth
-     *
-     * @return
-     */
-    private boolean isBetweenDecemberAndJanuary(int startMonth, int endMonth) {
-
-        if (startMonth <= DateTimeConstants.DECEMBER && endMonth >= DateTimeConstants.JANUARY) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-
-    /**
-     * checks if given date is before April
-     *
-     * @param  date
-     *
-     * @return
-     */
-    private boolean isBeforeApril(DateMidnight date) {
-
-        if (date.getMonthOfYear() < DateTimeConstants.APRIL) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-
-    /**
-     * checks if given date is after April
-     *
-     * @param  date
-     *
-     * @return
-     */
-    private boolean isAfterApril(DateMidnight date) {
-
-        if (date.getMonthOfYear() >= DateTimeConstants.APRIL) {
-            return true;
-        } else {
-            return false;
-        }
     }
 }

@@ -5,9 +5,9 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
 import org.joda.time.DateMidnight;
-import org.joda.time.DateTimeConstants;
 
 import org.synyx.urlaubsverwaltung.domain.Application;
+import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.math.BigDecimal;
 
@@ -30,20 +30,23 @@ public class OwnCalendarService {
      *
      * @return  number of workdays
      */
-    public double getWorkDays(DateMidnight startDate, DateMidnight endDate) {
+    protected double getWorkDays(DateMidnight startDate, DateMidnight endDate) {
 
-        double workDays = 1.0;
+        double workDays = 0.0;
 
         if (!startDate.equals(endDate)) {
             DateMidnight day = startDate;
 
-            while (!day.equals(endDate)) {
-                if (!(day.getDayOfWeek() == DateTimeConstants.SATURDAY
-                            || day.getDayOfWeek() == DateTimeConstants.SUNDAY)) {
+            while (!day.isAfter(endDate)) {
+                if (DateUtil.isWorkDay(day)) {
                     workDays++;
                 }
 
                 day = day.plusDays(1);
+            }
+        } else {
+            if (DateUtil.isWorkDay(startDate)) {
+                workDays++;
             }
         }
 

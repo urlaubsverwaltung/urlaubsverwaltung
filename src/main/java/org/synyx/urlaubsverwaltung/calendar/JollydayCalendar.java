@@ -8,9 +8,9 @@ import de.jollyday.Holiday;
 import de.jollyday.HolidayManager;
 
 import org.joda.time.DateMidnight;
-import org.joda.time.DateTimeConstants;
-import org.joda.time.LocalDate;
 import org.joda.time.chrono.GregorianChronology;
+
+import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -21,8 +21,6 @@ import java.util.Set;
  */
 public class JollydayCalendar {
 
-    private static final int CHRISTMASEVE = 24;
-    private static final int NEWYEARSEVE = 31;
     private static final double HALF_DAY = 0.5;
     private static final double FULL_DAY = 1.0;
 
@@ -42,8 +40,15 @@ public class JollydayCalendar {
         DateMidnight startDate = start.withChronology(GregorianChronology.getInstance());
         DateMidnight endDate = end.withChronology(GregorianChronology.getInstance());
 
+        double numberOfHolidays = 0.0;
+
         // get all public holidays of this year
         Set<Holiday> holidays = manager.getHolidays(startDate.getYear());
+
+        if (startDate.getYear() != endDate.getYear()) {
+            Set<Holiday> holidaysNextYear = manager.getHolidays(endDate.getYear());
+            holidays.addAll(holidaysNextYear);
+        }
 
         // check if there are public holidays that are on Saturday or Sunday these days are worthless for the following
         // calculation
@@ -53,8 +58,6 @@ public class JollydayCalendar {
 
         Set<Holiday> holidaysOnWeekdays = getOnlyHolidaysOnWeekdays(holidays);
 
-        double numberOfHolidays = 0.0;
-
         // check if start date and end date are equal
         if (startDate.equals(endDate)) {
             numberOfHolidays = calculate(holidaysOnWeekdays, startDate);
@@ -63,14 +66,11 @@ public class JollydayCalendar {
 
             // iteration while startdatum != enddatum
             // calculation for all dates between start date (inclusive start date) and end date (exclusive end date!)
-            while (!date.equals(endDate)) {
+            while (!date.isAfter(endDate)) {
                 // check if current date is a public holiday
                 numberOfHolidays += calculate(holidaysOnWeekdays, date);
                 date = date.plusDays(1);
             }
-
-            // calculation for end date
-            numberOfHolidays += calculate(holidaysOnWeekdays, endDate);
         }
 
         return numberOfHolidays;
@@ -90,32 +90,12 @@ public class JollydayCalendar {
         Set<Holiday> holidaysOnWeekdays = new HashSet<Holiday>();
 
         for (Holiday holiday : holidays) {
-            int day = holiday.getDate().getDayOfWeek();
-
-            if (!((day == DateTimeConstants.SATURDAY) || (day == DateTimeConstants.SUNDAY))) {
+            if (DateUtil.isWorkDay(holiday.getDate().toDateMidnight())) {
                 holidaysOnWeekdays.add(holiday);
             }
         }
 
         return holidaysOnWeekdays;
-    }
-
-
-    /**
-     * this method checks if a given date is on Christmas Eve or on New Year's Eve
-     *
-     * @param  date
-     *
-     * @return  true if date is on Christmas Eve or on New Year's Eve, else false
-     */
-    private boolean isChristmasEveOrNewYearsEve(LocalDate date) {
-
-        if ((date.getDayOfMonth() == CHRISTMASEVE && date.getMonthOfYear() == DateTimeConstants.DECEMBER)
-                || (date.getDayOfMonth() == NEWYEARSEVE && date.getMonthOfYear() == DateTimeConstants.DECEMBER)) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
 
@@ -136,7 +116,7 @@ public class JollydayCalendar {
             if ((date.toLocalDate()).equals(holiday.getDate())) {
                 // check if given date is Christmas Eve or New Year's Eve
                 // because these ones are counted as 0.5 days
-                if (isChristmasEveOrNewYearsEve(holiday.getDate())) {
+                if (DateUtil.isChristmasEveOrNewYearsEve(holiday.getDate().toDateMidnight())) {
                     publicHolidays += HALF_DAY;
                 } else {
                     // else 1.0 days are counted
