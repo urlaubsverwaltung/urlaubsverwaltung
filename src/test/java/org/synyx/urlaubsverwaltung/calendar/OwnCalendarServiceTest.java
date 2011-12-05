@@ -130,5 +130,16 @@ public class OwnCalendarServiceTest {
 
         assertNotNull(returnValue);
         assertEquals(BigDecimal.valueOf(4.0).setScale(2), returnValue);
+
+        // testing for half days
+        application.setHowLong(DayLength.MORNING);
+
+        start = new DateMidnight(2011, 1, 4);
+        end = new DateMidnight(2011, 1, 8);
+
+        returnValue = instance.getVacationDays(application, start, end);
+
+        assertNotNull(returnValue);
+        assertEquals(BigDecimal.valueOf(1.5).setScale(2), returnValue);
     }
 }
