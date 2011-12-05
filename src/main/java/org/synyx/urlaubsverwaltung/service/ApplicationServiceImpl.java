@@ -111,10 +111,6 @@ public class ApplicationServiceImpl implements ApplicationService {
         // set state on allowed
         application.setStatus(ApplicationStatus.ALLOWED);
 
-        // set number of used days
-        application.setDays(calendarService.getVacationDays(application, application.getStartDate(),
-                application.getEndDate()));
-
         applicationDAO.save(application);
 
         mailService.sendAllowedNotification(application);
@@ -130,6 +126,8 @@ public class ApplicationServiceImpl implements ApplicationService {
         // if check is successful, application is saved
 
         application.setStatus(ApplicationStatus.WAITING);
+
+        // set number of used days
         application.setDays(calendarService.getVacationDays(application, application.getStartDate(),
                 application.getEndDate()));
 
