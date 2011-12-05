@@ -149,20 +149,19 @@ public class CalculationService {
      *
      * @return  updated holiday account
      */
-    public HolidaysAccount addSickDaysOnHolidaysAccount(Application application, HolidaysAccount account,
-        BigDecimal sickDays) {
+    public HolidaysAccount addSickDaysOnHolidaysAccount(Application application, HolidaysAccount account) {
 
         if (DateUtil.isBeforeApril(application.getDateOfAddingSickDays())) {
-            addDaysToAccount(account, sickDays);
+            addDaysToAccount(account, application.getSickDays());
         } else if (DateUtil.isAfterApril(application.getDateOfAddingSickDays())) {
             HolidayEntitlement entitlement = accountService.getHolidayEntitlement(account.getYear(),
                     account.getPerson());
-            BigDecimal sum = account.getVacationDays().add(sickDays);
+            BigDecimal sum = account.getVacationDays().add(application.getSickDays());
 
             if (sum.compareTo(entitlement.getVacationDays()) == 1) {
                 account.setVacationDays(entitlement.getVacationDays());
             } else {
-                account.setVacationDays(account.getVacationDays().add(sickDays));
+                account.setVacationDays(account.getVacationDays().add(application.getSickDays()));
             }
         }
 
@@ -186,7 +185,7 @@ public class CalculationService {
 
         if (sum.compareTo(entitlement.getVacationDays()) == 1) {
             account.setVacationDays(entitlement.getVacationDays());
-            account.setRemainingVacationDays(account.getVacationDays().add(
+            account.setRemainingVacationDays(account.getRemainingVacationDays().add(
                     sum.subtract(entitlement.getVacationDays())));
         }
 
