@@ -4,15 +4,12 @@
  */
 package org.synyx.urlaubsverwaltung.service;
 
-import org.joda.time.DateMidnight;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.transaction.annotation.Transactional;
 
 import org.synyx.urlaubsverwaltung.dao.HolidayEntitlementDAO;
 import org.synyx.urlaubsverwaltung.dao.HolidaysAccountDAO;
-import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.HolidayEntitlement;
 import org.synyx.urlaubsverwaltung.domain.HolidaysAccount;
 import org.synyx.urlaubsverwaltung.domain.Person;
@@ -147,40 +144,5 @@ public class HolidaysAccountServiceImpl implements HolidaysAccountService {
     public void saveHolidaysAccount(HolidaysAccount account) {
 
         holidaysAccountDAO.save(account);
-    }
-
-
-    /**
-     * @see  HolidaysAccountService#rollbackUrlaub(org.synyx.urlaubsverwaltung.domain.Application)
-     */
-    @Override
-    public void rollbackUrlaub(Application application) {
-
-        DateMidnight start = application.getStartDate();
-        DateMidnight end = application.getEndDate();
-        Person person = application.getPerson();
-
-        // if start date != end date, special case January has to be noticed
-        if (start.getYear() != end.getYear()) {
-            HolidaysAccount accountCurrentYear = getHolidaysAccount(start.getYear(), person);
-            BigDecimal entitlementCurrentYear = getHolidayEntitlement(start.getYear(), person).getVacationDays();
-
-            HolidaysAccount accountNextYear = getHolidaysAccount(end.getYear(), person);
-            BigDecimal entitlementNextYear = getHolidayEntitlement(end.getYear(), person).getVacationDays();
-
-            calculationService.rollbackNoticeJanuary(application, accountCurrentYear, accountNextYear,
-                entitlementCurrentYear, entitlementNextYear);
-
-            saveHolidaysAccount(accountCurrentYear);
-            saveHolidaysAccount(accountNextYear);
-        } else {
-            // special case April has to be noticed
-            HolidaysAccount account = getHolidaysAccount(start.getYear(), person);
-            BigDecimal entitlement = getHolidayEntitlement(start.getYear(), person).getVacationDays();
-
-            calculationService.rollbackNoticeApril(application, account, entitlement);
-
-            saveHolidaysAccount(account);
-        }
     }
 }

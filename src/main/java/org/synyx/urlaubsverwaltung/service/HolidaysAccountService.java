@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.service;
 
-import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.HolidayEntitlement;
 import org.synyx.urlaubsverwaltung.domain.HolidaysAccount;
 import org.synyx.urlaubsverwaltung.domain.Person;
@@ -96,12 +95,4 @@ public interface HolidaysAccountService {
      * @param  account
      */
     void saveHolidaysAccount(HolidaysAccount account);
-
-
-    /**
-     * if holiday is cancelled, calculation in HolidaysAccount has to be reversed
-     *
-     * @param  application
-     */
-    void rollbackUrlaub(Application application);
 }
