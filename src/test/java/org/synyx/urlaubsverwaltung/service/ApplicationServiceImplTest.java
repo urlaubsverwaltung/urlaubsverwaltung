@@ -5,6 +5,7 @@
 package org.synyx.urlaubsverwaltung.service;
 
 import org.joda.time.DateMidnight;
+import org.joda.time.DateTimeConstants;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -32,6 +33,9 @@ import org.synyx.urlaubsverwaltung.domain.VacationType;
 
 import java.math.BigDecimal;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * @author  Aljona Murygina
@@ -45,6 +49,7 @@ public class ApplicationServiceImplTest {
     private HolidaysAccount accountOne;
     private HolidaysAccount accountTwo;
     private HolidayEntitlement entitlement;
+    private List<HolidaysAccount> accounts;
 
     private ApplicationDAO applicationDAO = mock(ApplicationDAO.class);
     private HolidaysAccountService accountService = mock(HolidaysAccountService.class);
@@ -91,6 +96,8 @@ public class ApplicationServiceImplTest {
         entitlement = new HolidayEntitlement();
         entitlement.setPerson(person);
 
+        Mockito.when(accountService.getAccountOrCreateOne(2011, person)).thenReturn(accountOne);
+        Mockito.when(accountService.getAccountOrCreateOne(2012, person)).thenReturn(accountTwo);
         Mockito.when(accountService.getHolidaysAccount(2011, person)).thenReturn(accountOne);
         Mockito.when(accountService.getHolidaysAccount(2012, person)).thenReturn(accountTwo);
         Mockito.when(accountService.getHolidayEntitlement(2011, person)).thenReturn(entitlement);
@@ -156,16 +163,11 @@ public class ApplicationServiceImplTest {
     @Test
     public void testAllow() {
 
-        application.setStartDate(new DateMidnight(2011, 12, 17));
-        application.setEndDate(new DateMidnight(2011, 12, 27));
         application.setStatus(ApplicationStatus.WAITING);
-        application.setHowLong(DayLength.FULL);
 
         instance.allow(application);
 
         assertEquals(ApplicationStatus.ALLOWED, application.getStatus());
-        assertNotNull(application.getDays());
-        assertEquals(BigDecimal.valueOf(6.0).setScale(2), application.getDays());
     }
 
 
@@ -173,33 +175,25 @@ public class ApplicationServiceImplTest {
     @Test
     public void testSave() {
 
-        application.setStartDate(new DateMidnight(2000, 3, 10));
-        application.setEndDate(new DateMidnight(2000, 3, 20));
+        application.setStartDate(new DateMidnight(2011, 12, 17));
+        application.setEndDate(new DateMidnight(2011, 12, 27));
+        application.setStatus(null);
+        application.setHowLong(DayLength.FULL);
 
-        entitlement.setVacationDays(BigDecimal.valueOf(10.0));
+        accounts = new ArrayList<HolidaysAccount>();
+        accounts.add(accountOne);
 
-        Mockito.when(accountService.getHolidayEntitlement(Mockito.anyInt(), (Person) (Mockito.any()))).thenReturn(
-            entitlement);
-
-        instance.save(application);
-        Mockito.verify(applicationDAO).save(application);
-        Mockito.verify(calculationService).noticeApril((Application) (Mockito.any()),
-            (HolidaysAccount) (Mockito.any()));
-
-        application = new Application();
-        application.setStartDate(new DateMidnight(2000, 12, 20));
-        application.setEndDate(new DateMidnight(2001, 1, 10));
-
-        entitlement = new HolidayEntitlement();
-        entitlement.setVacationDays(BigDecimal.valueOf(12.0));
-
-        Mockito.when(accountService.getHolidayEntitlement(Mockito.anyInt(), (Person) (Mockito.any()))).thenReturn(
-            entitlement);
+        Mockito.when(calculationService.subtractVacationDays(application)).thenReturn(accounts);
 
         instance.save(application);
+
+        assertEquals(ApplicationStatus.WAITING, application.getStatus());
+        assertNotNull(application.getDays());
+        assertEquals(BigDecimal.valueOf(6.0).setScale(2), application.getDays());
+
         Mockito.verify(applicationDAO).save(application);
-        Mockito.verify(calculationService).noticeJanuary((Application) (Mockito.any()),
-            (HolidaysAccount) (Mockito.any()), (HolidaysAccount) (Mockito.any()));
+
+        Mockito.verify(accountService).saveHolidaysAccount(accountOne);
     }
 
 
@@ -213,6 +207,11 @@ public class ApplicationServiceImplTest {
         String reason = "Einfach so halt, weil ich Bock drauf hab.";
 
         application.setStatus(ApplicationStatus.WAITING);
+
+        accounts = new ArrayList<HolidaysAccount>();
+        accounts.add(accountOne);
+
+        Mockito.when(calculationService.addVacationDays(application)).thenReturn(accounts);
 
         instance.reject(application, boss, reason);
 
@@ -231,6 +230,11 @@ public class ApplicationServiceImplTest {
     public void testCancel() {
 
         application.setStatus(ApplicationStatus.WAITING);
+
+        accounts = new ArrayList<HolidaysAccount>();
+        accounts.add(accountOne);
+
+        Mockito.when(calculationService.addVacationDays(application)).thenReturn(accounts);
 
         instance.cancel(application);
 
@@ -255,8 +259,7 @@ public class ApplicationServiceImplTest {
         accountOne.setYear(2011);
 
         application.setDays(nettoTage);
-        application.setStartDate(new DateMidnight(2011, 11, 1));
-        application.setEndDate(new DateMidnight(2011, 11, 16));
+        application.setDateOfAddingSickDays(new DateMidnight(2011, DateTimeConstants.NOVEMBER, 11));
 
         entitlement.setVacationDays(vacentitlement);
 
@@ -370,6 +373,11 @@ public class ApplicationServiceImplTest {
     /** Test of checkApplication method, of class ApplicationServiceImpl. */
     @Test
     public void testCheckApplication() {
+
+        accounts = new ArrayList<HolidaysAccount>();
+        accounts.add(accountOne);
+
+        Mockito.when(calculationService.subtractVacationDays(application)).thenReturn(accounts);
 
         application.setHowLong(DayLength.FULL);
 

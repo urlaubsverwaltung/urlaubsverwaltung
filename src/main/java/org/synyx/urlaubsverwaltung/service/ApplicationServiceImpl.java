@@ -210,7 +210,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         HolidaysAccount account = accountService.getHolidaysAccount(application.getDateOfAddingSickDays().getYear(),
                 application.getPerson());
 
-        account = calculationService.addSickDaysOnHolidaysAccount(application, account, BigDecimal.valueOf(sickDays));
+        account = calculationService.addSickDaysOnHolidaysAccount(application, account);
 
         accountService.saveHolidaysAccount(account);
         applicationDAO.save(application);
