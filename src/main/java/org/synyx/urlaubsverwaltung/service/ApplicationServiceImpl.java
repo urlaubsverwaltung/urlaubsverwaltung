@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.service;
 
 import org.joda.time.DateMidnight;
-import org.joda.time.DateTimeConstants;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -12,7 +11,6 @@ import org.synyx.urlaubsverwaltung.dao.ApplicationDAO;
 import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.domain.Comment;
-import org.synyx.urlaubsverwaltung.domain.HolidayEntitlement;
 import org.synyx.urlaubsverwaltung.domain.HolidaysAccount;
 import org.synyx.urlaubsverwaltung.domain.Person;
 
@@ -129,38 +127,25 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public void save(Application application) {
 
-        // if check successful, application is saved
+        // if check is successful, application is saved
 
-        Person person = application.getPerson();
-        DateMidnight start = application.getStartDate();
-        DateMidnight end = application.getEndDate();
+        application.setStatus(ApplicationStatus.WAITING);
+        application.setDays(calendarService.getVacationDays(application, application.getStartDate(),
+                application.getEndDate()));
 
-        // start date and end date: same year?
-        if (start.getYear() == end.getYear()) {
-            HolidaysAccount account = accountService.getAccountOrCreateOne(start.getYear(), person);
+        List<HolidaysAccount> accounts = calculationService.subtractVacationDays(application);
 
-            // notice special case april
-            calculationService.noticeApril(application, account);
+        accountService.saveHolidaysAccount(accounts.get(0));
 
-            // then save
-            accountService.saveHolidaysAccount(account);
-        } else {
-            // if start.getYear() != end.getYear() there are two accounts
-
-            HolidaysAccount accountCurrentYear = accountService.getHolidaysAccount(start.getYear(),
-                    application.getPerson());
-            HolidaysAccount accountNextYear = accountService.getHolidaysAccount(end.getYear(), application.getPerson());
-
-            // notice special case January
-            calculationService.noticeJanuary(application, accountCurrentYear, accountNextYear);
-
-            // then save both accounts
-            accountService.saveHolidaysAccount(accountCurrentYear);
-            accountService.saveHolidaysAccount(accountNextYear);
+        if (accounts.size() > 1) {
+            accountService.saveHolidaysAccount(accounts.get(1));
         }
 
         // save changed application in the end
         applicationDAO.save(application);
+
+        // mail to applicant
+        mailService.sendConfirmation(application);
     }
 
 
@@ -183,7 +168,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         application.setReasonToReject(comment);
 
-        accountService.rollbackUrlaub(application);
+        rollback(application);
 
         applicationDAO.save(application);
 
@@ -197,7 +182,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public void cancel(Application application) {
 
-        accountService.rollbackUrlaub(application);
+        rollback(application);
 
         if (application.getStatus() == ApplicationStatus.WAITING) {
             application.setStatus(ApplicationStatus.CANCELLED);
@@ -224,46 +209,12 @@ public class ApplicationServiceImpl implements ApplicationService {
         application.setSickDays(BigDecimal.valueOf(sickDays));
         application.setDays(application.getDays().subtract(BigDecimal.valueOf(sickDays)));
 
-        Person person = application.getPerson();
-        DateMidnight start = application.getStartDate();
-        DateMidnight end = application.getEndDate();
+        HolidaysAccount account = accountService.getHolidaysAccount(application.getDateOfAddingSickDays().getYear(),
+                application.getPerson());
 
-        if (start.getYear() != end.getYear()) {
-            HolidaysAccount account = accountService.getAccountOrCreateOne(end.getYear(), person);
+        account = calculationService.addSickDaysOnHolidaysAccount(application, account, BigDecimal.valueOf(sickDays));
 
-            account.setVacationDays(account.getVacationDays().add(BigDecimal.valueOf(sickDays)));
-
-            // compareTo returns -1, 0, or 1 as Number1 is numerically
-            // less than, equal to, or greater Number2
-            if (account.getVacationDays().compareTo(
-                        accountService.getHolidayEntitlement(end.getYear(), person).getVacationDays()) == 1) {
-                account.setRemainingVacationDays((account.getRemainingVacationDays().add(account.getVacationDays()))
-                    .subtract(accountService.getHolidayEntitlement(end.getYear(), person).getVacationDays()));
-                account.setVacationDays(accountService.getHolidayEntitlement(end.getYear(), person).getVacationDays());
-            }
-        } else {
-            HolidaysAccount account = accountService.getHolidaysAccount(start.getYear(), person);
-            HolidayEntitlement entitlement = accountService.getHolidayEntitlement(start.getYear(), person);
-
-            BigDecimal newVacDays = BigDecimal.valueOf(sickDays).add(account.getVacationDays());
-
-            if (newVacDays.compareTo(entitlement.getVacationDays()) == 1) {
-                // if it is not yet April, vacation days and remaining vacation days are filled
-                if (application.getEndDate().getMonthOfYear() < DateTimeConstants.APRIL) {
-                    account.setRemainingVacationDays(newVacDays.subtract(entitlement.getVacationDays()));
-                    newVacDays = entitlement.getVacationDays();
-                }
-
-                // if April is over, only vacation days are filled, remaining vacation days are not filled after April
-                // because after April there exists no remaining leave
-                if (application.getEndDate().getMonthOfYear() >= DateTimeConstants.APRIL) {
-                    newVacDays = entitlement.getVacationDays();
-                }
-            }
-
-            account.setVacationDays(newVacDays);
-        }
-
+        accountService.saveHolidaysAccount(account);
         applicationDAO.save(application);
     }
 
@@ -339,6 +290,56 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public boolean checkApplication(Application application) {
 
-        return calculationService.checkApplicationOneYear(application);
+        List<HolidaysAccount> accounts = calculationService.subtractVacationDays(application);
+        HolidaysAccount account = accounts.get(0);
+
+        if (accounts.size() == 1) {
+            if (isEqualOrGreaterThanZero(account.getVacationDays())) {
+                return true;
+            }
+        } else if (accounts.size() > 1) {
+            HolidaysAccount accountNextYear = accounts.get(1);
+
+            if ((isEqualOrGreaterThanZero(account.getVacationDays()))
+                    && (isEqualOrGreaterThanZero(accountNextYear.getVacationDays()))) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+    /**
+     * checks if given number is equal or greater than zero.
+     *
+     * @param  number
+     *
+     * @return
+     */
+    private boolean isEqualOrGreaterThanZero(BigDecimal number) {
+
+        if (number.compareTo(BigDecimal.ZERO) >= 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    /**
+     * if holiday is cancelled or rejected, calculation in HolidaysAccount has to be reversed
+     *
+     * @param  application
+     */
+    private void rollback(Application application) {
+
+        List<HolidaysAccount> accounts = calculationService.addVacationDays(application);
+
+        accountService.saveHolidaysAccount(accounts.get(0));
+
+        if (accounts.size() > 1) {
+            accountService.saveHolidaysAccount(accounts.get(1));
+        }
     }
 }

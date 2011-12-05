@@ -39,6 +39,9 @@ public class Application extends AbstractPersistable<Integer> {
     // If belatedly added, number of days is added to HolidayAccount
     private BigDecimal sickDays;
 
+    // Date of adding sick days to application
+    private DateMidnight dateOfAddingSickDays;
+
     // Period of holiday
     private DateMidnight startDate;
 
@@ -119,6 +122,18 @@ public class Application extends AbstractPersistable<Integer> {
     public void setDays(BigDecimal days) {
 
         this.days = days;
+    }
+
+
+    public DateMidnight getDateOfAddingSickDays() {
+
+        return dateOfAddingSickDays;
+    }
+
+
+    public void setDateOfAddingSickDays(DateMidnight dateOfAddingSickDays) {
+
+        this.dateOfAddingSickDays = dateOfAddingSickDays;
     }
 
 

@@ -42,7 +42,7 @@ public class CalculationService {
      *
      * @param  application
      *
-     * @return  updatet holiday account (list contains one element) respectively holiday accounts (list contains two
+     * @return  updated holiday account (list contains one element) respectively holiday accounts (list contains two
      *          elements) if holiday is between December and January
      */
     public List<HolidaysAccount> subtractVacationDays(Application application) {
@@ -87,10 +87,12 @@ public class CalculationService {
      * @param  application
      * @param  days
      *
-     * @return  updatet holiday account (list contains one element) respectively holiday accounts (list contains two
+     * @return  updated holiday account (list contains one element) respectively holiday accounts (list contains two
      *          elements) if holiday is between December and January
      */
-    public List<HolidaysAccount> addVacationDays(Application application, BigDecimal days) {
+    public List<HolidaysAccount> addVacationDays(Application application) {
+
+        BigDecimal days;
 
         List<HolidaysAccount> accounts = new ArrayList<HolidaysAccount>();
 
@@ -101,9 +103,11 @@ public class CalculationService {
         int endMonth = application.getEndDate().getMonthOfYear();
 
         if (isBeforeApril(startMonth, endMonth)) {
+            days = getNumberOfVacationDays(application);
             account = addDaysToAccount(account, days);
             accounts.add(account);
         } else if (isAfterApril(startMonth, endMonth)) {
+            days = getNumberOfVacationDays(application);
             account.setVacationDays(account.getVacationDays().add(days));
             accounts.add(account);
         } else if (isBetweenMarchAndApril(startMonth, endMonth)) {
@@ -126,6 +130,42 @@ public class CalculationService {
         }
 
         return accounts;
+    }
+
+
+    /**
+     * This method updates holiday account by adding sick days to vacation days.
+     *
+     * <p>date of adding sick days to application is the important thing dependent on this date, it is decided if
+     * remaining vacation days are filled or not if date of adding sick days is before April (January - March),
+     * remaining vacation days are filled if date of adding sick days is after April (April - December), remaining
+     * vacation days are ignored case between March and April is handled like after April case between December and
+     * January is handled like before April</p>
+     *
+     * @param  application
+     * @param  account
+     * @param  sickDays
+     *
+     * @return  updated holiday account
+     */
+    public HolidaysAccount addSickDaysOnHolidaysAccount(Application application, HolidaysAccount account,
+        BigDecimal sickDays) {
+
+        if (isBeforeApril(application.getDateOfAddingSickDays())) {
+            addDaysToAccount(account, sickDays);
+        } else if (isAfterApril(application.getDateOfAddingSickDays())) {
+            HolidayEntitlement entitlement = accountService.getHolidayEntitlement(account.getYear(),
+                    account.getPerson());
+            BigDecimal sum = account.getVacationDays().add(sickDays);
+
+            if (sum.compareTo(entitlement.getVacationDays()) == 1) {
+                account.setVacationDays(entitlement.getVacationDays());
+            } else {
+                account.setVacationDays(account.getVacationDays().add(sickDays));
+            }
+        }
+
+        return account;
     }
 
 
@@ -360,6 +400,40 @@ public class CalculationService {
     private boolean isBetweenDecemberAndJanuary(int startMonth, int endMonth) {
 
         if (startMonth <= DateTimeConstants.DECEMBER && endMonth >= DateTimeConstants.JANUARY) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    /**
+     * checks if given date is before April
+     *
+     * @param  date
+     *
+     * @return
+     */
+    private boolean isBeforeApril(DateMidnight date) {
+
+        if (date.getMonthOfYear() < DateTimeConstants.APRIL) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    /**
+     * checks if given date is after April
+     *
+     * @param  date
+     *
+     * @return
+     */
+    private boolean isAfterApril(DateMidnight date) {
+
+        if (date.getMonthOfYear() >= DateTimeConstants.APRIL) {
             return true;
         } else {
             return false;
