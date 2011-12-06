@@ -1,0 +1,22 @@
+/* 
+    Document   : login
+    Created on : 06.12.2011, 12:46:11
+    Author     : Aljona Murygina (original: Johannes Reuter)
+    Description:
+        CSS for login page.
+*/
+
+#wrapper {
+                border: 2px solid #FFF95C;
+                background-color: #FFF7A4;
+                width:350px;
+                height:130px;
+                position:absolute;
+                top:50%;
+                left:50%;
+                margin-left:-185px;
+                margin-top:-75px;
+                text-align:center;
+                padding:20px;
+            }
+

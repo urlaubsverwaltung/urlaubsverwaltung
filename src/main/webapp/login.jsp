@@ -1,7 +1,7 @@
 <%-- 
     Document   : login
     Created on : 31.10.2011, 10:00:23
-    Author     : aljona
+    Author     : Johannes Reuter
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -17,21 +17,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Login</title>
-        <style type="text/css">
-            #wrapper {
-                border: 2px solid #FFF95C;
-                background-color: #FFF7A4;
-                width:350px;
-                height:130px;
-                position:absolute;
-                top:50%;
-                left:50%;
-                margin-left:-185px;
-                margin-top:-75px;
-                text-align:center;
-                padding:20px;
-            }
-        </style>
+        <link rel="stylesheet" type="text/css" href="<spring:url value='css/login.css' />" /> 
     </head>
 
     <body>
