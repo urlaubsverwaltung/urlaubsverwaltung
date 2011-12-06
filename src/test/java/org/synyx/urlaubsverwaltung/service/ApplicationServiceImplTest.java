@@ -246,85 +246,21 @@ public class ApplicationServiceImplTest {
     @Test
     public void testAddSickDaysOnHolidaysAccount() {
 
-        // no special case:
-        // newVacDays < entitlement
-
-        BigDecimal sickDays = BigDecimal.valueOf(3.0);
-        BigDecimal daysStart = BigDecimal.valueOf(16.0);
-        BigDecimal nettoTage = BigDecimal.valueOf(10.0);
-        BigDecimal vacentitlement = BigDecimal.valueOf(24.0);
-
         accountOne.setRemainingVacationDays(BigDecimal.ZERO);
-        accountOne.setVacationDays(daysStart);
+        accountOne.setVacationDays(BigDecimal.valueOf(16.0));
         accountOne.setYear(2011);
 
-        application.setDays(nettoTage);
+        application.setDays(BigDecimal.valueOf(10.0));
         application.setDateOfAddingSickDays(new DateMidnight(2011, DateTimeConstants.NOVEMBER, 11));
 
-        entitlement.setVacationDays(vacentitlement);
+        entitlement.setVacationDays(BigDecimal.valueOf(24.0));
 
-        instance.addSickDaysOnHolidaysAccount(application, sickDays.doubleValue());
+        instance.addSickDaysOnHolidaysAccount(application, 3.0);
 
-        assertEquals(sickDays, application.getSickDays());
-        assertEquals((nettoTage.subtract(sickDays)), application.getDays());
+        assertEquals(BigDecimal.valueOf(3.0), application.getSickDays());
+        assertEquals((BigDecimal.valueOf(10.0).subtract(BigDecimal.valueOf(3.0))), application.getDays());
 
-        assertEquals((daysStart.add(sickDays)), accountOne.getVacationDays());
-
-        // special case:
-        // newVacDays > entitlement
-        // AND
-        // it is before April
-
-        sickDays = BigDecimal.valueOf(10.0);
-        nettoTage = BigDecimal.valueOf(15.0);
-        daysStart = BigDecimal.valueOf(20.0);
-        vacentitlement = BigDecimal.valueOf(23.0);
-
-        accountOne.setRemainingVacationDays(BigDecimal.ZERO);
-        accountOne.setVacationDays(daysStart);
-        accountOne.setYear(2011);
-
-        application.setDays(nettoTage);
-        application.setStartDate(new DateMidnight(2011, 2, 1));
-        application.setEndDate(new DateMidnight(2011, 2, 20));
-
-        entitlement.setVacationDays(vacentitlement);
-
-        instance.addSickDaysOnHolidaysAccount(application, sickDays.doubleValue());
-
-        assertEquals(sickDays, application.getSickDays());
-        assertEquals((nettoTage.subtract(sickDays)), application.getDays());
-
-        assertEquals((sickDays.add(daysStart)).subtract(vacentitlement), accountOne.getRemainingVacationDays());
-        assertEquals((vacentitlement), accountOne.getVacationDays());
-
-        // special case:
-        // newVacDays > entitlement
-        // AND
-        // it is after April
-
-        sickDays = BigDecimal.valueOf(10.0);
-        nettoTage = BigDecimal.valueOf(12.0);
-        daysStart = BigDecimal.valueOf(20.0);
-        vacentitlement = BigDecimal.valueOf(23.0);
-
-        accountOne.setRemainingVacationDays(BigDecimal.ZERO);
-        accountOne.setVacationDays(daysStart);
-        accountOne.setYear(2011);
-
-        application.setDays(nettoTage);
-        application.setStartDate(new DateMidnight(2011, 4, 5));
-        application.setEndDate(new DateMidnight(2011, 4, 23));
-
-        entitlement.setVacationDays(vacentitlement);
-
-        instance.addSickDaysOnHolidaysAccount(application, sickDays.doubleValue());
-
-        assertEquals(sickDays, application.getSickDays());
-        assertEquals((nettoTage.subtract(sickDays)), application.getDays());
-
-        assertEquals(BigDecimal.ZERO, accountOne.getRemainingVacationDays());
-        assertEquals((vacentitlement), accountOne.getVacationDays());
+        Mockito.verify(calculationService).addSickDaysOnHolidaysAccount(application, accountOne);
     }
 
 
@@ -374,108 +310,45 @@ public class ApplicationServiceImplTest {
     @Test
     public void testCheckApplication() {
 
+        // subtractVacationDays of CalculationService makes the real calculation
+        // checkApplication only checks if account's vacation days after calculation are greater or equal than zero
+        // if this case application is valid (return true)
+        // if account's vacation days are less than zero the application is not valid (return false)
+
         accounts = new ArrayList<HolidaysAccount>();
         accounts.add(accountOne);
 
         Mockito.when(calculationService.subtractVacationDays(application)).thenReturn(accounts);
-
-        application.setHowLong(DayLength.FULL);
-
-        // Possible cases:
-        // 1. between December and January
-        // 2. between March and April
-        // 3. before 1st April
-        // 4. after 1st April
-        // 5. enough days mean: check == true
-        // 6. not enough days mean: check == false
-
-        // TEST 1 - no special case, enough days
-        double remainingDays = 5.0;
-        double vacationDays = 26.0;
-        int year = 2011;
-        accountOne.setRemainingVacationDays(BigDecimal.valueOf(remainingDays));
-        accountOne.setVacationDays(BigDecimal.valueOf(vacationDays));
-        accountOne.setYear(year);
-
-        application.setStartDate(new DateMidnight(2011, 1, 12));
-        application.setEndDate(new DateMidnight(2011, 1, 30));
-
+        
+        accountOne.setVacationDays(BigDecimal.ZERO);
+        
         boolean returnValue = instance.checkApplication(application);
         assertNotNull(returnValue);
         assertEquals(true, returnValue);
-
-        // TEST 2 - no special case, not enough days
-        remainingDays = 0.0;
-        vacationDays = 5.0;
-        year = 2011;
-        accountOne.setRemainingVacationDays(BigDecimal.valueOf(remainingDays));
-        accountOne.setVacationDays(BigDecimal.valueOf(vacationDays));
-        accountOne.setYear(year);
-
-        application.setStartDate(new DateMidnight(2011, 12, 12));
-        application.setEndDate(new DateMidnight(2011, 12, 23));
-
-        returnValue = instance.checkApplication(application);
-        assertNotNull(returnValue);
-        assertEquals(false, returnValue);
-
-        // TEST 3 - special case April, enough days
-        remainingDays = 10.0;
-        vacationDays = 26.0;
-        year = 2011;
-        accountOne.setRemainingVacationDays(BigDecimal.valueOf(remainingDays));
-        accountOne.setVacationDays(BigDecimal.valueOf(vacationDays));
-        accountOne.setYear(year);
-
-        application.setStartDate(new DateMidnight(2011, 3, 28));
-        application.setEndDate(new DateMidnight(2011, 4, 23));
-
+        
+        
+        accountOne.setVacationDays(BigDecimal.TEN);
+        
         returnValue = instance.checkApplication(application);
         assertNotNull(returnValue);
         assertEquals(true, returnValue);
-
-        // TEST 4 - special case January, enough days
-        remainingDays = 0.0;
-        vacationDays = 10.0;
-        year = 2011;
-        accountOne.setRemainingVacationDays(BigDecimal.valueOf(remainingDays));
-        accountOne.setVacationDays(BigDecimal.valueOf(vacationDays));
-        accountOne.setYear(year);
-
-        remainingDays = 2.0;
-        vacationDays = 26.0;
-        year = 2012;
-        accountTwo.setRemainingVacationDays(BigDecimal.valueOf(remainingDays));
-        accountTwo.setVacationDays(BigDecimal.valueOf(vacationDays));
-        accountTwo.setYear(year);
-
-        application.setStartDate(new DateMidnight(2011, 12, 19));
-        application.setEndDate(new DateMidnight(2012, 1, 5));
-
-        returnValue = instance.checkApplication(application);
-        assertNotNull(returnValue);
-        assertEquals(true, returnValue);
-
-        // TEST 5 - special case January, not enough days
-        remainingDays = 0.0;
-        vacationDays = 5.0;
-        year = 2011;
-        accountOne.setRemainingVacationDays(BigDecimal.valueOf(remainingDays));
-        accountOne.setVacationDays(BigDecimal.valueOf(vacationDays));
-        accountOne.setYear(year);
-
-        remainingDays = 0.0;
-        vacationDays = 26.0;
-        year = 2012;
-        accountTwo.setRemainingVacationDays(BigDecimal.valueOf(remainingDays));
-        accountTwo.setVacationDays(BigDecimal.valueOf(vacationDays));
-        accountTwo.setYear(year);
-
-        application.setStartDate(new DateMidnight(2011, 12, 19));
-        application.setEndDate(new DateMidnight(2012, 1, 5));
-
+        
+        accountOne.setVacationDays(BigDecimal.valueOf(-5.0));
+        
         returnValue = instance.checkApplication(application);
         assertNotNull(returnValue);
         assertEquals(false, returnValue);
+        
+        
+        accountOne.setVacationDays(BigDecimal.TEN);
+        accountTwo.setVacationDays(BigDecimal.valueOf(-5.0));
+        accounts.add(accountTwo);
+        
+        returnValue = instance.checkApplication(application);
+        assertNotNull(returnValue);
+        assertEquals(false, returnValue);
+        
+        
+       
     }
 }
