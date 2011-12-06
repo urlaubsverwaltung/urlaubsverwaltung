@@ -28,15 +28,13 @@ public class HolidaysAccountServiceImpl implements HolidaysAccountService {
 
     private HolidaysAccountDAO holidaysAccountDAO;
     private HolidayEntitlementDAO holidaysEntitlementDAO;
-    private CalculationService calculationService;
 
     @Autowired
     public HolidaysAccountServiceImpl(HolidaysAccountDAO holidaysAccountDAO,
-        HolidayEntitlementDAO holidaysEntitlementDAO, CalculationService calculationService) {
+        HolidayEntitlementDAO holidaysEntitlementDAO) {
 
         this.holidaysAccountDAO = holidaysAccountDAO;
         this.holidaysEntitlementDAO = holidaysEntitlementDAO;
-        this.calculationService = calculationService;
     }
 
     /**
