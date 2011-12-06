@@ -59,7 +59,7 @@ public interface HolidaysAccountService {
 
 
     /**
-     * creates a new HolidayEntitlement for a person with params year and anspruch
+     * creates a new HolidayEntitlement for a person with params year and number of days
      *
      * @param  person
      * @param  year
@@ -95,4 +95,15 @@ public interface HolidaysAccountService {
      * @param  account
      */
     void saveHolidaysAccount(HolidaysAccount account);
+
+
+    /**
+     * get a list of HolidaysAccount by year, list ordered by last names of persons
+     *
+     * @param  year
+     * @param  person
+     *
+     * @return
+     */
+    List<HolidaysAccount> getHolidaysAccountByYearOrderedByPersons(int year);
 }

@@ -20,11 +20,15 @@ import java.util.List;
 public interface HolidaysAccountDAO extends JpaRepository<HolidaysAccount, Integer> {
 
     @Query("select from HolidaysAccount where year = ?1 and person = ?2")
-    HolidaysAccount getHolidaysAccountByYearAndPerson(Integer year, Person person);
+    HolidaysAccount getHolidaysAccountByYearAndPerson(int year, Person person);
+
+
+    @Query("select from HolidaysAccount where year = ?1 order by person.lastName")
+    List<HolidaysAccount> getHolidaysAccountByYearOrderedByPersons(int year);
 
 
     @Query("select from HolidaysAccount where year = ?1")
-    List<HolidaysAccount> getAllHolidaysAccountsByYear(Integer year);
+    List<HolidaysAccount> getAllHolidaysAccountsByYear(int year);
 
 
     @Query("select from HolidaysAccount where person = ?1")

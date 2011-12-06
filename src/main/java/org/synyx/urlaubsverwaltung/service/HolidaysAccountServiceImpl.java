@@ -143,4 +143,11 @@ public class HolidaysAccountServiceImpl implements HolidaysAccountService {
 
         holidaysAccountDAO.save(account);
     }
+
+
+    @Override
+    public List<HolidaysAccount> getHolidaysAccountByYearOrderedByPersons(int year) {
+
+        return holidaysAccountDAO.getHolidaysAccountByYearOrderedByPersons(year);
+    }
 }
