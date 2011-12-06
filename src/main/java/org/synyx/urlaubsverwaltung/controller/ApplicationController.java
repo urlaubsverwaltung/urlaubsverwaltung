@@ -85,7 +85,7 @@ public class ApplicationController {
     @RequestMapping(value = "/antraege/wartend", method = RequestMethod.GET)
     public String showWaiting(Model model) {
 
-        List<Application> antraege = antragService.getAllApplicationByState(ApplicationStatus.WAITING);
+        List<Application> antraege = antragService.getAllApplicationsByState(ApplicationStatus.WAITING);
         model.addAttribute(REQUEST_ATTRIBUTE_NAME, antraege);
 
         return REQUESTLIST_VIEW;
@@ -102,7 +102,7 @@ public class ApplicationController {
     @RequestMapping(value = "/antraege/genehmigt", method = RequestMethod.GET)
     public String showApproved(Model model) {
 
-        List<Application> antraege = antragService.getAllApplicationByState(ApplicationStatus.ALLOWED);
+        List<Application> antraege = antragService.getAllApplicationsByState(ApplicationStatus.ALLOWED);
         model.addAttribute(REQUEST_ATTRIBUTE_NAME, antraege);
 
         return REQUESTLIST_VIEW;
@@ -119,7 +119,7 @@ public class ApplicationController {
     @RequestMapping(value = "/antraege/storniert", method = RequestMethod.GET)
     public String showStorno(Model model) {
 
-        List<Application> antraege = antragService.getAllApplicationByState(ApplicationStatus.CANCELLED);
+        List<Application> antraege = antragService.getAllApplicationsByState(ApplicationStatus.CANCELLED);
         model.addAttribute(REQUEST_ATTRIBUTE_NAME, antraege);
 
         return REQUESTLIST_VIEW;
@@ -136,7 +136,7 @@ public class ApplicationController {
     @RequestMapping(value = "/antraege/abgelehnt", method = RequestMethod.GET)
     public String showDeclined(Model model) {
 
-        List<Application> antraege = antragService.getAllApplicationByState(ApplicationStatus.CANCELLED);
+        List<Application> antraege = antragService.getAllApplicationsByState(ApplicationStatus.CANCELLED);
         model.addAttribute(REQUEST_ATTRIBUTE_NAME, antraege);
 
         return REQUESTLIST_VIEW;
