@@ -31,107 +31,112 @@ import java.util.logging.Level;
 
 
 /**
- * @author  aljona
+ * @author  Aljona Murygina
  */
 @Controller
 public class PersonController {
 
+    // jsps
+    private static final String OVERVIEW_JSP = "person/overview";
+    private static final String LIST_JSP = "person/staff_list";
+    private static final String DETAIL_JSP = "person/staff_detail";
+    private static final String PERSON_FORM_JSP = "person/person_form";
+
+    // attribute names
     private static final String PERSON_ATTRIBUTE_NAME = "person";
-    private static final String MITARBEITER_ATTRIBUTE_NAME = "mitarbeiter";
+    private static final String PERSONS_ATTRIBUTE_NAME = "persons";
+    private static final String ACCOUNTS_ATTRIBUTE_NAME = "accounts";
 
-    private static final String MITARBEITER_ID = "mitarbeiterId";
+    private static final String PERSON_ID = "personId";
 
-    private static Logger logger = Logger.getLogger(PersonController.class);
-    private static Logger personLogger = Logger.getLogger("personLogger");
+    // links
+    private static final String WEB = "ln.web";
+    private static final String BASIS = "ln.staff";
+    private static final String LIST_LINK = BASIS + "ln.list";
+    private static final String DETAIL_LINK = BASIS + "ln.detail";
+    private static final String OVERVIEW_LINK = BASIS + "/{" + PERSON_ID + "}" + "ln.overview";
+    private static final String EDIT_LINK = BASIS + "/{" + PERSON_ID + "}" + "ln.edit";
+    private static final String NEW_LINK = BASIS + "ln.new";
+
+    // logger
+    private static final Logger LOG = Logger.getLogger(PersonController.class);
 
     private PersonService personService;
-    private ApplicationService antragService;
-    private HolidaysAccountService kontoService;
-    private CryptoService pgpService;
+    private ApplicationService applicationService;
+    private HolidaysAccountService accountService;
+    private CryptoService cryptoService;
 
-    public PersonController(PersonService personService, ApplicationService antragService,
-        HolidaysAccountService kontoService, CryptoService pgpService) {
+    public PersonController(PersonService personService, ApplicationService applicationService,
+        HolidaysAccountService accountService, CryptoService cryptoService) {
 
         this.personService = personService;
-        this.antragService = antragService;
-        this.kontoService = kontoService;
-        this.pgpService = pgpService;
+        this.applicationService = applicationService;
+        this.accountService = accountService;
+        this.cryptoService = cryptoService;
     }
 
     /**
-     * Listenansicht aller Mitarbeiter und ihrer Urlaubstage
+     * view of staffs and their number of vacation days
      *
      * @param  model
      *
      * @return
      */
-    @RequestMapping(value = "/mitarbeiter/list", method = RequestMethod.GET)
-    public String showMitarbeiterList(Model model) {
+    @RequestMapping(value = LIST_LINK, method = RequestMethod.GET)
+    public String showStaffList(Model model) {
 
-        List<Person> mitarbeiter = personService.getAllPersons();
-        Integer year = DateMidnight.now(GregorianChronology.getInstance()).getYear();
+        int year = DateMidnight.now(GregorianChronology.getInstance()).getYear();
+        List<HolidaysAccount> accounts = accountService.getHolidaysAccountByYearOrderedByPersons(year);
 
-        for (Person person : mitarbeiter) {
-            HolidaysAccount urlaubskonto = kontoService.getHolidaysAccount(year, person);
-            // to be implemented....
-// person.setHolidaysAccount(urlaubskonto);
-        }
+        model.addAttribute(ACCOUNTS_ATTRIBUTE_NAME, accounts);
 
-        model.addAttribute(MITARBEITER_ATTRIBUTE_NAME, mitarbeiter);
-
-        // nur für Ausprobieren des Loggers
-        personLogger.info("Auf Liste geschaut.");
-
-        return "personen/mitarbeiterliste";
+        return LIST_JSP;
     }
 
 
     /**
-     * Detailansicht aller Mitarbeiter und ihrer Urlaubstage
+     * Detailansicht aller Staff und ihrer Urlaubstage
      *
      * @param  model
      *
      * @return
      */
-    @RequestMapping(value = "/mitarbeiter/detail", method = RequestMethod.GET)
-    public String showMitarbeiterDetail(Model model) {
+    @RequestMapping(value = DETAIL_LINK, method = RequestMethod.GET)
+    public String showStaffDetail(Model model) {
 
         List<Person> mitarbeiter = personService.getAllPersons();
         Integer year = DateMidnight.now(GregorianChronology.getInstance()).getYear();
 
         for (Person person : mitarbeiter) {
-            HolidaysAccount urlaubskonto = kontoService.getHolidaysAccount(year, person);
+            HolidaysAccount urlaubskonto = accountService.getHolidaysAccount(year, person);
             // to be implemented....
 // person.setHolidaysAccount(urlaubskonto);
         }
 
-        model.addAttribute(MITARBEITER_ATTRIBUTE_NAME, mitarbeiter);
+        model.addAttribute(PERSONS_ATTRIBUTE_NAME, mitarbeiter);
 
-        // nur für Ausprobieren des Loggers
-        personLogger.info("Auf Details geschaut.");
-
-        return "personen/mitarbeiterdetails";
+        return DETAIL_JSP;
     }
 
 
     /**
-     * Uebersicht fuer User: Infos zu einzelnem Mitarbeiter
+     * Uebersicht fuer User: Infos zu einzelnem Staff
      *
      * @param  mitarbeiterId
      * @param  model
      *
      * @return
      */
-    @RequestMapping(value = "/mitarbeiter/{mitarbeiterId}/overview", method = RequestMethod.GET)
-    public String showOverview(@PathVariable(MITARBEITER_ID) Integer mitarbeiterId, Model model) {
+    @RequestMapping(value = OVERVIEW_LINK, method = RequestMethod.GET)
+    public String showOverview(@PathVariable(PERSON_ID) Integer mitarbeiterId, Model model) {
 
         Integer year = DateMidnight.now(GregorianChronology.getInstance()).getYear();
 
         Person person = personService.getPersonByID(mitarbeiterId);
 
-        List<Application> requests = antragService.getAllApplicationsForPerson(person);
+        List<Application> requests = applicationService.getAllApplicationsForPerson(person);
 
-        HolidaysAccount konto = kontoService.getHolidaysAccount(year, person);
+        HolidaysAccount konto = accountService.getHolidaysAccount(year, person);
         // to be implemented....
 // person.setHolidaysAccount(konto);
 
@@ -139,40 +144,40 @@ public class PersonController {
         model.addAttribute("requests", requests);
         model.addAttribute(PERSON_ATTRIBUTE_NAME, person);
 
-        return "personen/overview";
+        return OVERVIEW_JSP;
     }
 
 
     /**
-     * Liefert Formular, um einen Mitarbeiter zu editieren
+     * Liefert Formular, um einen Staff zu editieren
      *
      * @param  mitarbeiterId
      * @param  model
      *
      * @return
      */
-    @RequestMapping(value = "/mitarbeiter/{mitarbeiterId}/edit", method = RequestMethod.GET)
-    public String editPersonForm(@PathVariable(MITARBEITER_ID) Integer mitarbeiterId, Model model) {
+    @RequestMapping(value = EDIT_LINK, method = RequestMethod.GET)
+    public String editPersonForm(@PathVariable(PERSON_ID) Integer mitarbeiterId, Model model) {
 
         Person person = personService.getPersonByID(mitarbeiterId);
 
         model.addAttribute(PERSON_ATTRIBUTE_NAME, person);
 
-        return "personen/personform";
+        return PERSON_FORM_JSP;
     }
 
 
     /**
-     * Speichert Datenaenderungen eines Mitarbeiters ab.
+     * Speichert Datenaenderungen eines Staffs ab.
      *
      * @param  person
      * @param  mitarbeiterId
      *
      * @return
      */
-    @RequestMapping(value = "/mitarbeiter/{mitarbeiterId}/edit", method = RequestMethod.PUT)
+    @RequestMapping(value = EDIT_LINK, method = RequestMethod.PUT)
     public String editPerson(@ModelAttribute(PERSON_ATTRIBUTE_NAME) Person person,
-        @PathVariable(MITARBEITER_ID) Integer mitarbeiterId) {
+        @PathVariable(PERSON_ID) Integer mitarbeiterId) {
 
         Person personToUpdate = personService.getPersonByID(mitarbeiterId);
 
@@ -185,13 +190,12 @@ public class PersonController {
         // to be implemented....
 // int year = person.getYearForCurrentUrlaubsanspruch();
 //
-// kontoService.newUrlaubsanspruch(person, year, person.getCurrentUrlaubsanspruch().doubleValue());
-// kontoService.newUrlaubskonto(person, person.getCurrentUrlaubsanspruch().doubleValue(), 0.0, year);
+// accountService.newUrlaubsanspruch(person, year, person.getCurrentUrlaubsanspruch().doubleValue());
+// accountService.newUrlaubskonto(person, person.getCurrentUrlaubsanspruch().doubleValue(), 0.0, year);
 
-        logger.info("Der Mitarbeiter " + person.getFirstName() + " " + person.getLastName() + " wurde editiert.");
-        personLogger.info("Der Mitarbeiter " + person.getFirstName() + " " + person.getLastName() + " wurde editiert.");
+        LOG.info("Der Staff " + person.getFirstName() + " " + person.getLastName() + " wurde editiert.");
 
-        return "redirect:/web/mitarbeiter/list";
+        return "redirect:" + WEB + LIST_LINK;
     }
 
 
@@ -202,14 +206,14 @@ public class PersonController {
      *
      * @return
      */
-    @RequestMapping(value = "/mitarbeiter/new", method = RequestMethod.GET)
+    @RequestMapping(value = NEW_LINK, method = RequestMethod.GET)
     public String newPersonForm(Model model) {
 
         Person person = new Person();
 
         model.addAttribute(PERSON_ATTRIBUTE_NAME, person);
 
-        return "personen/personform";
+        return PERSON_FORM_JSP;
     }
 
 
@@ -220,13 +224,13 @@ public class PersonController {
      *
      * @return
      */
-    @RequestMapping(value = "/mitarbeiter/new", method = RequestMethod.POST)
+    @RequestMapping(value = NEW_LINK, method = RequestMethod.POST)
     public String newPerson(@ModelAttribute(PERSON_ATTRIBUTE_NAME) Person person) {
 
         Integer year = DateMidnight.now(GregorianChronology.getInstance()).getYear();
 
         try {
-            KeyPair keyPair = pgpService.generateKeyPair();
+            KeyPair keyPair = cryptoService.generateKeyPair();
             person.setPrivateKey(keyPair.getPrivate().getEncoded());
             person.setPublicKey(keyPair.getPublic().getEncoded());
         } catch (NoSuchAlgorithmException ex) {
@@ -238,17 +242,16 @@ public class PersonController {
 
         // to be implemented....
 // // neuen Urlaubsanspruch erstellen und speichern
-// kontoService.newUrlaubsanspruch(person, year, person.getCurrentUrlaubsanspruch().doubleValue());
+// accountService.newUrlaubsanspruch(person, year, person.getCurrentUrlaubsanspruch().doubleValue());
 //
 // // neues HolidaysAccount erstellen und speichern
-// kontoService.newUrlaubskonto(person, person.getCurrentUrlaubsanspruch().doubleValue(), 0.0, year);
+// accountService.newUrlaubskonto(person, person.getCurrentUrlaubsanspruch().doubleValue(), 0.0, year);
 //
-// HolidaysAccount konto = kontoService.getHolidaysAccount(year, person);
+// HolidaysAccount konto = accountService.getHolidaysAccount(year, person);
 // person.setHolidaysAccount(konto);
 
-        logger.info("Neue Person angelegt: " + person.getFirstName() + " " + person.getLastName());
-        personLogger.info("Neue Person angelegt: " + person.getFirstName() + " " + person.getLastName());
+        LOG.info("Neue Person angelegt: " + person.getFirstName() + " " + person.getLastName());
 
-        return "redirect:/web/mitarbeiter/list";
+        return "redirect:" + WEB + LIST_LINK;
     }
 }
