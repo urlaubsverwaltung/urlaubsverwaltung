@@ -26,7 +26,7 @@ public class HolidaysAccount extends AbstractPersistable<Integer> {
     private Person person;
 
     // Year of account
-    private Integer year;
+    private int year;
 
     // Residual number of leave days that person has
     private BigDecimal vacationDays;
@@ -115,13 +115,13 @@ public class HolidaysAccount extends AbstractPersistable<Integer> {
     }
 
 
-    public Integer getYear() {
+    public int getYear() {
 
         return year;
     }
 
 
-    public void setYear(Integer year) {
+    public void setYear(int year) {
 
         this.year = year;
     }

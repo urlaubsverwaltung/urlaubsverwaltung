@@ -27,7 +27,7 @@ public class HolidayEntitlement extends AbstractPersistable<Integer> {
 
     private BigDecimal vacationDays;
 
-    private Integer year;
+    private int year;
 
     public Person getPerson() {
 
@@ -53,13 +53,13 @@ public class HolidayEntitlement extends AbstractPersistable<Integer> {
     }
 
 
-    public Integer getYear() {
+    public int getYear() {
 
         return year;
     }
 
 
-    public void setYear(Integer year) {
+    public void setYear(int year) {
 
         this.year = year;
     }
