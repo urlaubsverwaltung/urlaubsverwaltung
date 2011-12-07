@@ -8,6 +8,7 @@ import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.HolidayEntitlement;
 import org.synyx.urlaubsverwaltung.domain.HolidaysAccount;
+import org.synyx.urlaubsverwaltung.util.CalcUtil;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.math.BigDecimal;
@@ -207,7 +208,7 @@ public class CalculationService {
 
         BigDecimal result = account.getRemainingVacationDays().subtract(days);
 
-        if (result.compareTo(BigDecimal.ZERO) == -1) {
+        if (CalcUtil.isNegative(result)) {
             account.setRemainingVacationDays(BigDecimal.ZERO);
             account.setVacationDays(account.getVacationDays().add(result));
         }
@@ -249,11 +250,10 @@ public class CalculationService {
 
         BigDecimal result = account.getRemainingVacationDays().subtract(daysBeforeApril);
 
-        if (result.compareTo(BigDecimal.ZERO) == -1) {
+        if (CalcUtil.isNegative(result)) {
             account.setVacationDays(account.getVacationDays().add(result));
         }
 
-        account.setRemainingVacationDays(BigDecimal.ZERO);
         account.setVacationDays(account.getVacationDays().subtract(daysAfterApril));
 
         return account;
@@ -276,22 +276,23 @@ public class CalculationService {
         BigDecimal daysAfterJan = getDaysAfterFirstOfGivenMonth(application, DateTimeConstants.JANUARY);
 
         accountCurrentYear.setVacationDays(accountCurrentYear.getVacationDays().subtract(daysBeforeJan));
-
-        if (accountCurrentYear.getVacationDays().compareTo(BigDecimal.ZERO) == 1) {
-            accountNextYear.setRemainingVacationDays(accountCurrentYear.getVacationDays());
-        }
-
-        if (accountNextYear.getRemainingVacationDays().compareTo(BigDecimal.ZERO) == 1) {
-            BigDecimal result = accountNextYear.getRemainingVacationDays().subtract(daysAfterJan);
-
-            if (result.compareTo(BigDecimal.ZERO) == -1) {
-                accountNextYear.setRemainingVacationDays(BigDecimal.ZERO);
-                accountNextYear.setVacationDays(accountNextYear.getVacationDays().add(result));
-            } else {
-                accountNextYear.setRemainingVacationDays(accountNextYear.getRemainingVacationDays().subtract(
-                        daysAfterJan));
-            }
-        }
+        accountNextYear.setVacationDays(accountNextYear.getVacationDays().subtract(daysAfterJan));
+//
+//        if (CalcUtil.isGreaterThanZero(accountCurrentYear.getVacationDays())) {
+//            accountNextYear.setRemainingVacationDays(accountCurrentYear.getVacationDays());
+//        }
+//
+//        if (accountNextYear.getRemainingVacationDays().compareTo(BigDecimal.ZERO) == 1) {
+//            BigDecimal result = accountNextYear.getRemainingVacationDays().subtract(daysAfterJan);
+//
+//            if (result.compareTo(BigDecimal.ZERO) == -1) {
+//                accountNextYear.setRemainingVacationDays(BigDecimal.ZERO);
+//                accountNextYear.setVacationDays(accountNextYear.getVacationDays().add(result));
+//            } else {
+//                accountNextYear.setRemainingVacationDays(accountNextYear.getRemainingVacationDays().subtract(
+//                        daysAfterJan));
+//            }
+//        }
 
         List<HolidaysAccount> accounts = new ArrayList<HolidaysAccount>();
         accounts.add(accountCurrentYear);
