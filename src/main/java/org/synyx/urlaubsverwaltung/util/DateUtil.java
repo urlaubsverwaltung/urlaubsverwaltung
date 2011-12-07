@@ -9,8 +9,11 @@ import org.joda.time.DateTimeConstants;
  */
 public class DateUtil {
 
-    private static final int CHRISTMASEVE = 24;
-    private static final int NEWYEARSEVE = 31;
+    private static final int CHRISTMAS_EVE = 24;
+    private static final int LAST_DAY_OF_MONTH = 31;
+    private static final int FIRST_DAY_OF_MONTH = 1;
+    private static final int SATURDAY = DateTimeConstants.SATURDAY;
+    private static final int SUNDAY = DateTimeConstants.SUNDAY;
 
     /**
      * checks if the given date is a work day
@@ -21,7 +24,7 @@ public class DateUtil {
      */
     public static boolean isWorkDay(DateMidnight date) {
 
-        return !(date.getDayOfWeek() == DateTimeConstants.SATURDAY || date.getDayOfWeek() == DateTimeConstants.SUNDAY);
+        return !(date.getDayOfWeek() == SATURDAY || date.getDayOfWeek() == SUNDAY);
     }
 
 
@@ -116,11 +119,24 @@ public class DateUtil {
      */
     public static boolean isChristmasEveOrNewYearsEve(DateMidnight date) {
 
-        if ((date.getDayOfMonth() == CHRISTMASEVE && date.getMonthOfYear() == DateTimeConstants.DECEMBER)
-                || (date.getDayOfMonth() == NEWYEARSEVE && date.getMonthOfYear() == DateTimeConstants.DECEMBER)) {
+        if ((date.getDayOfMonth() == CHRISTMAS_EVE && date.getMonthOfYear() == DateTimeConstants.DECEMBER)
+                || (date.getDayOfMonth() == LAST_DAY_OF_MONTH && date.getMonthOfYear() == DateTimeConstants.DECEMBER)) {
             return true;
         } else {
             return false;
         }
+    }
+
+
+    /**
+     * this method checks if a given date is on first January (returns true) or not (returns false).
+     *
+     * @param  date
+     *
+     * @return
+     */
+    public static boolean isFirstJanuary(DateMidnight date) {
+
+        return ((date.getDayOfMonth() == FIRST_DAY_OF_MONTH) && (date.getMonthOfYear() == DateTimeConstants.JANUARY));
     }
 }
