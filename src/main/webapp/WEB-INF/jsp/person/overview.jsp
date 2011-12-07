@@ -16,6 +16,7 @@
     
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" type="text/css" href="<spring:url value='css/main.css' />" /> 
         <title><spring:message code="title" /></title>
     </head>
     
@@ -40,7 +41,7 @@
                     <spring:message code="anspruch" />
                 </th>
                 <td>
-                    <c:out value="${person.urlaubskonto.vacationDays}"/>&nbsp;<spring:message code="peryear" />
+                    <c:out value="${daysPerYear}"/>&nbsp;<spring:message code="peryear" />
                 </td>
             </tr>
             <tr>
@@ -48,7 +49,7 @@
                     <spring:message code="resturlaub" />&nbsp;<c:out value="${year-1}"/>
                 </th>
                 <td>
-                    <c:out value="${person.urlaubskonto.restVacationDays}"/>&nbsp;<spring:message code="days" />
+                    <c:out value="${account.remainingVacationDays}"/>&nbsp;<spring:message code="days" />
                 </td>
             </tr>
             <tr>
@@ -64,7 +65,7 @@
                     <c:out value="${year}"/>&nbsp;<spring:message code="overview.uebrig" />
                 </th>
                 <td>
-                    <c:out value="${person.remainingVacationDays}"/>&nbsp;+&nbsp;<c:out value="${person.restUrlaub}"/>
+                    <c:out value="${account.vacationDays}"/>&nbsp;+&nbsp;<c:out value="${person.restUrlaub}"/>
                 </td>
             </tr>
         </table>

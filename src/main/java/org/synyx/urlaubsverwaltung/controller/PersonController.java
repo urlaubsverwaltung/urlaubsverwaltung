@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import org.synyx.urlaubsverwaltung.domain.Application;
+import org.synyx.urlaubsverwaltung.domain.HolidayEntitlement;
 import org.synyx.urlaubsverwaltung.domain.HolidaysAccount;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.service.ApplicationService;
@@ -43,18 +44,22 @@ public class PersonController {
     private static final String PERSON_FORM_JSP = "person/person_form";
 
     // attribute names
-    private static final String PERSON_ATTRIBUTE_NAME = "person";
-    private static final String PERSONS_ATTRIBUTE_NAME = "persons";
-    private static final String ACCOUNTS_ATTRIBUTE_NAME = "accounts";
+    private static final String PERSON = "person";
+    private static final String PERSONS = "persons";
+    private static final String ACCOUNTS = "accounts";
+    private static final String APPLICATIONS = "applications";
+    private static final String ACCOUNT = "account";
+    private static final String DAYS_PER_YEAR = "daysPerYear";
 
     private static final String PERSON_ID = "personId";
+    private static final String YEAR = "year";
 
     // links
     private static final String WEB = "ln.web";
     private static final String BASIS = "ln.staff";
     private static final String LIST_LINK = BASIS + "ln.list";
     private static final String DETAIL_LINK = BASIS + "ln.detail";
-    private static final String OVERVIEW_LINK = BASIS + "/{" + PERSON_ID + "}" + "ln.overview";
+    private static final String OVERVIEW_LINK = BASIS + "/{" + PERSON_ID + "}" + "ln.overview" + "/{" + YEAR + "}";
     private static final String EDIT_LINK = BASIS + "/{" + PERSON_ID + "}" + "ln.edit";
     private static final String NEW_LINK = BASIS + "ln.new";
 
@@ -76,7 +81,7 @@ public class PersonController {
     }
 
     /**
-     * view of staffs and their number of vacation days
+     * view of staffs and their number of vacation days (as list)
      *
      * @param  model
      *
@@ -85,17 +90,14 @@ public class PersonController {
     @RequestMapping(value = LIST_LINK, method = RequestMethod.GET)
     public String showStaffList(Model model) {
 
-        int year = DateMidnight.now(GregorianChronology.getInstance()).getYear();
-        List<HolidaysAccount> accounts = accountService.getHolidaysAccountByYearOrderedByPersons(year);
-
-        model.addAttribute(ACCOUNTS_ATTRIBUTE_NAME, accounts);
+        prepareStaffView(model);
 
         return LIST_JSP;
     }
 
 
     /**
-     * Detailansicht aller Staff und ihrer Urlaubstage
+     * view of staffs and their number of vacation days (detailed)
      *
      * @param  model
      *
@@ -104,45 +106,48 @@ public class PersonController {
     @RequestMapping(value = DETAIL_LINK, method = RequestMethod.GET)
     public String showStaffDetail(Model model) {
 
-        List<Person> mitarbeiter = personService.getAllPersons();
-        Integer year = DateMidnight.now(GregorianChronology.getInstance()).getYear();
-
-        for (Person person : mitarbeiter) {
-            HolidaysAccount urlaubskonto = accountService.getHolidaysAccount(year, person);
-            // to be implemented....
-// person.setHolidaysAccount(urlaubskonto);
-        }
-
-        model.addAttribute(PERSONS_ATTRIBUTE_NAME, mitarbeiter);
+        prepareStaffView(model);
 
         return DETAIL_JSP;
     }
 
 
     /**
-     * Uebersicht fuer User: Infos zu einzelnem Staff
+     * prepares view of staffs; preparing is for both views (list and detail) identic
      *
-     * @param  mitarbeiterId
+     * @param  model
+     */
+    private void prepareStaffView(Model model) {
+
+        int year = DateMidnight.now(GregorianChronology.getInstance()).getYear();
+        List<HolidaysAccount> accounts = accountService.getHolidaysAccountByYearOrderedByPersons(year);
+
+        model.addAttribute(ACCOUNTS, accounts);
+    }
+
+
+    /**
+     * Overview for user: information about one's holiday accounts, etc.
+     *
+     * @param  personId
      * @param  model
      *
      * @return
      */
     @RequestMapping(value = OVERVIEW_LINK, method = RequestMethod.GET)
-    public String showOverview(@PathVariable(PERSON_ID) Integer mitarbeiterId, Model model) {
+    public String showOverview(@PathVariable(PERSON_ID) Integer personId,
+        @PathVariable(YEAR) Integer year, Model model) {
 
-        Integer year = DateMidnight.now(GregorianChronology.getInstance()).getYear();
+        Person person = personService.getPersonByID(personId);
 
-        Person person = personService.getPersonByID(mitarbeiterId);
+        List<Application> applications = applicationService.getAllApplicationsForPerson(person);
+        HolidaysAccount account = accountService.getHolidaysAccount(year, person);
+        HolidayEntitlement entitlement = accountService.getHolidayEntitlement(year, person);
 
-        List<Application> requests = applicationService.getAllApplicationsForPerson(person);
-
-        HolidaysAccount konto = accountService.getHolidaysAccount(year, person);
-        // to be implemented....
-// person.setHolidaysAccount(konto);
-
-        model.addAttribute("year", year);
-        model.addAttribute("requests", requests);
-        model.addAttribute(PERSON_ATTRIBUTE_NAME, person);
+        model.addAttribute(PERSON, person);
+        model.addAttribute(APPLICATIONS, applications);
+        model.addAttribute(ACCOUNT, account);
+        model.addAttribute(DAYS_PER_YEAR, entitlement.getVacationDays());
 
         return OVERVIEW_JSP;
     }
@@ -151,17 +156,17 @@ public class PersonController {
     /**
      * Liefert Formular, um einen Staff zu editieren
      *
-     * @param  mitarbeiterId
+     * @param  personId
      * @param  model
      *
      * @return
      */
     @RequestMapping(value = EDIT_LINK, method = RequestMethod.GET)
-    public String editPersonForm(@PathVariable(PERSON_ID) Integer mitarbeiterId, Model model) {
+    public String editPersonForm(@PathVariable(PERSON_ID) Integer personId, Model model) {
 
-        Person person = personService.getPersonByID(mitarbeiterId);
+        Person person = personService.getPersonByID(personId);
 
-        model.addAttribute(PERSON_ATTRIBUTE_NAME, person);
+        model.addAttribute(PERSON, person);
 
         return PERSON_FORM_JSP;
     }
@@ -171,15 +176,15 @@ public class PersonController {
      * Speichert Datenaenderungen eines Staffs ab.
      *
      * @param  person
-     * @param  mitarbeiterId
+     * @param  personId
      *
      * @return
      */
     @RequestMapping(value = EDIT_LINK, method = RequestMethod.PUT)
-    public String editPerson(@ModelAttribute(PERSON_ATTRIBUTE_NAME) Person person,
-        @PathVariable(PERSON_ID) Integer mitarbeiterId) {
+    public String editPerson(@ModelAttribute(PERSON) Person person,
+        @PathVariable(PERSON_ID) Integer personId) {
 
-        Person personToUpdate = personService.getPersonByID(mitarbeiterId);
+        Person personToUpdate = personService.getPersonByID(personId);
 
         personToUpdate.setLastName(person.getLastName());
         personToUpdate.setFirstName(person.getFirstName());
@@ -211,7 +216,7 @@ public class PersonController {
 
         Person person = new Person();
 
-        model.addAttribute(PERSON_ATTRIBUTE_NAME, person);
+        model.addAttribute(PERSON, person);
 
         return PERSON_FORM_JSP;
     }
@@ -225,7 +230,7 @@ public class PersonController {
      * @return
      */
     @RequestMapping(value = NEW_LINK, method = RequestMethod.POST)
-    public String newPerson(@ModelAttribute(PERSON_ATTRIBUTE_NAME) Person person) {
+    public String newPerson(@ModelAttribute(PERSON) Person person) {
 
         Integer year = DateMidnight.now(GregorianChronology.getInstance()).getYear();
 
