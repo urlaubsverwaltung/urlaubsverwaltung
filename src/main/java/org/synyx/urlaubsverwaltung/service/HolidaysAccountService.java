@@ -69,6 +69,18 @@ public interface HolidaysAccountService {
 
 
     /**
+     * updates an entitlement (respectively the number of this year's entitlement of remaining vacation days) on first
+     * of January.
+     *
+     * @param  person
+     * @param  year
+     *
+     * @return
+     */
+    void updateHolidayEntitlement(List<Person> persons, int year);
+
+
+    /**
      * creates a new HolidaysAccount for a person with params vacation days, resturlaub and year
      *
      * @param  person
