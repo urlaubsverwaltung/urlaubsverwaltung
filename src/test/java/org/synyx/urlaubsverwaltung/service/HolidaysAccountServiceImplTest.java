@@ -24,6 +24,9 @@ import org.synyx.urlaubsverwaltung.domain.Person;
 
 import java.math.BigDecimal;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * @author  Aljona Murygina
@@ -181,5 +184,64 @@ public class HolidaysAccountServiceImplTest {
         HolidaysAccount acc = new HolidaysAccount();
         instance.saveHolidaysAccount(acc);
         Mockito.verify(holidaysAccountDAO).save(acc);
+    }
+
+
+    /** Test of getHolidaysAccountByYearOrderedByPersons method, of class HolidaysAccountServiceImpl. */
+    @Test
+    public void testGetHolidaysAccountByYearOrderedByPersons() {
+
+        // to be implemented...
+        // specially important because of Query in DAO
+    }
+
+
+    /** Test of editHolidayEntitlement method, of class HolidaysAccountServiceImpl. */
+    @Test
+    public void testEditHolidayEntitlement() {
+    }
+
+
+    /** Test of updateHolidayEntitlement method, of class HolidaysAccountServiceImpl. */
+    @Test
+    public void testUpdateHolidayEntitlement() {
+
+        /*
+         * 10 vacation days are left over from last year entitlement of 25 days for new year, but 5 already taken
+         *
+         * Expected: entitlement of remaining vacation days should be 5 days vacation days of holidays account should be
+         * 25 days (== entitlement) remaining vacation days of holidays account should be 5 days (== remaining vacation
+         * days of last year entitlement)
+         */
+
+        entitlement.setPerson(person);
+        entitlement.setYear(2012);
+        entitlement.setVacationDays(BigDecimal.valueOf(25));
+        entitlement.setRemainingVacationDays(BigDecimal.ZERO);
+
+        Mockito.when(holidaysEntitlementDAO.getHolidayEntitlementByYearAndPerson(2012, person)).thenReturn(entitlement);
+
+        List<Person> persons = new ArrayList<Person>();
+        persons.add(person);
+
+        HolidaysAccount accountLastYear = new HolidaysAccount();
+        accountLastYear.setYear(2011);
+        accountLastYear.setPerson(person);
+        accountLastYear.setVacationDays(BigDecimal.TEN);
+
+        HolidaysAccount accountCurrentYear = new HolidaysAccount();
+        accountCurrentYear.setYear(2012);
+        accountCurrentYear.setPerson(person);
+        accountCurrentYear.setVacationDays(BigDecimal.valueOf(20));
+
+        Mockito.when(holidaysAccountDAO.getHolidaysAccountByYearAndPerson(2011, person)).thenReturn(accountLastYear);
+        Mockito.when(holidaysAccountDAO.getHolidaysAccountByYearAndPerson(2012, person)).thenReturn(accountCurrentYear);
+
+        instance.updateHolidayEntitlement(persons, 2012);
+
+        // TO DOOOOOOO
+// assertEquals(BigDecimal.valueOf(5), entitlement.getRemainingVacationDays());
+// assertEquals(BigDecimal.valueOf(25), accountCurrentYear.getVacationDays());
+// assertEquals(BigDecimal.valueOf(5), accountCurrentYear.getRemainingVacationDays());
     }
 }
