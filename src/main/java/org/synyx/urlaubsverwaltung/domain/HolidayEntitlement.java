@@ -25,9 +25,16 @@ public class HolidayEntitlement extends AbstractPersistable<Integer> {
     @ManyToOne
     private Person person;
 
+    // Determined number of vacation days a person may use this year
     private BigDecimal vacationDays;
 
+    // Determined number of remaining vacation days a person may use this year (until 31st March of a year)
+    // is set on 1st January of a year
+    private BigDecimal remainingVacationDays;
+
     private int year;
+
+    private boolean active;
 
     public Person getPerson() {
 
@@ -53,6 +60,18 @@ public class HolidayEntitlement extends AbstractPersistable<Integer> {
     }
 
 
+    public BigDecimal getRemainingVacationDays() {
+
+        return remainingVacationDays;
+    }
+
+
+    public void setRemainingVacationDays(BigDecimal remainingVacationDays) {
+
+        this.remainingVacationDays = remainingVacationDays;
+    }
+
+
     public int getYear() {
 
         return year;
@@ -62,5 +81,17 @@ public class HolidayEntitlement extends AbstractPersistable<Integer> {
     public void setYear(int year) {
 
         this.year = year;
+    }
+
+
+    public boolean isActive() {
+
+        return active;
+    }
+
+
+    public void setActive(boolean active) {
+
+        this.active = active;
     }
 }

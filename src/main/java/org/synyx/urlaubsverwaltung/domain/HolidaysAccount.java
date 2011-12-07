@@ -28,20 +28,32 @@ public class HolidaysAccount extends AbstractPersistable<Integer> {
     // Year of account
     private int year;
 
-    // Residual number of leave days that person has
+    // Current number of leave days that person has
     private BigDecimal vacationDays;
 
-    // Residual number of remaining days of vacation that person has
+    // Current number of remaining days of vacation that person has
+    // will not be used anymore until 31st March of a year
     private BigDecimal remainingVacationDays;
 
-    // Number of days that person has used this year
-    private BigDecimal usedVacationDays;
-
     // Number of days of special leave used this year
-    private BigDecimal sonderUrlaub;
+    private BigDecimal specialLeave;
 
     // Number of days of unpaid leave used this year
-    private BigDecimal unbezahlterUrlaub;
+    private BigDecimal unpaidLeave;
+
+    private boolean active;
+
+    public boolean isActive() {
+
+        return active;
+    }
+
+
+    public void setActive(boolean active) {
+
+        this.active = active;
+    }
+
 
     public Person getPerson() {
 
@@ -67,42 +79,6 @@ public class HolidaysAccount extends AbstractPersistable<Integer> {
     }
 
 
-    public BigDecimal getSonderUrlaub() {
-
-        return sonderUrlaub;
-    }
-
-
-    public void setSonderUrlaub(BigDecimal sonderUrlaub) {
-
-        this.sonderUrlaub = sonderUrlaub;
-    }
-
-
-    public BigDecimal getUnbezahlterUrlaub() {
-
-        return unbezahlterUrlaub;
-    }
-
-
-    public void setUnbezahlterUrlaub(BigDecimal unbezahlterUrlaub) {
-
-        this.unbezahlterUrlaub = unbezahlterUrlaub;
-    }
-
-
-    public BigDecimal getUsedVacationDays() {
-
-        return usedVacationDays;
-    }
-
-
-    public void setUsedVacationDays(BigDecimal usedVacationDays) {
-
-        this.usedVacationDays = usedVacationDays;
-    }
-
-
     public BigDecimal getVacationDays() {
 
         return vacationDays;
@@ -124,5 +100,29 @@ public class HolidaysAccount extends AbstractPersistable<Integer> {
     public void setYear(int year) {
 
         this.year = year;
+    }
+
+
+    public BigDecimal getSpecialLeave() {
+
+        return specialLeave;
+    }
+
+
+    public void setSpecialLeave(BigDecimal specialLeave) {
+
+        this.specialLeave = specialLeave;
+    }
+
+
+    public BigDecimal getUnpaidLeave() {
+
+        return unpaidLeave;
+    }
+
+
+    public void setUnpaidLeave(BigDecimal unpaidLeave) {
+
+        this.unpaidLeave = unpaidLeave;
     }
 }
