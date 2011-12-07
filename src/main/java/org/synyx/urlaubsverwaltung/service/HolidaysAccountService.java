@@ -81,6 +81,17 @@ public interface HolidaysAccountService {
 
 
     /**
+     * if an existing entitlement is edited, a new entitlement and a new account must be created, the current
+     * entitlement and account are set inactive.
+     *
+     * @param  person
+     * @param  year
+     * @param  days
+     */
+    void editHolidayEntitlement(Person person, int year, BigDecimal days);
+
+
+    /**
      * creates a new HolidaysAccount for a person with params vacation days, resturlaub and year
      *
      * @param  person

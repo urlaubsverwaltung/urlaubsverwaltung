@@ -98,8 +98,7 @@ public class HolidaysAccountServiceImpl implements HolidaysAccountService {
         entitlement.setPerson(person);
         entitlement.setVacationDays(days);
         entitlement.setYear(year);
-
-        holidaysEntitlementDAO.save(entitlement);
+        entitlement.setActive(true);
 
         return entitlement;
     }
@@ -119,8 +118,7 @@ public class HolidaysAccountServiceImpl implements HolidaysAccountService {
         account.setRemainingVacationDays(remainingVacDays);
         account.setVacationDays(vacDays);
         account.setYear(year);
-
-        holidaysAccountDAO.save(account);
+        account.setActive(true);
 
         return account;
     }
@@ -146,6 +144,9 @@ public class HolidaysAccountServiceImpl implements HolidaysAccountService {
     }
 
 
+    /**
+     * @see  HolidaysAccountService#getHolidaysAccountByYearOrderedByPersons(int)
+     */
     @Override
     public List<HolidaysAccount> getHolidaysAccountByYearOrderedByPersons(int year) {
 
@@ -153,6 +154,48 @@ public class HolidaysAccountServiceImpl implements HolidaysAccountService {
     }
 
 
+    /**
+     * @see  HolidaysAccountService#editHolidayEntitlement(org.synyx.urlaubsverwaltung.domain.Person, int,
+     *       java.math.BigDecimal)
+     */
+    @Override
+    public void editHolidayEntitlement(Person person, int year, BigDecimal days) {
+
+        // get current entitlement before editing
+        HolidayEntitlement currentEntitlement = getHolidayEntitlement(year, person);
+        currentEntitlement.setActive(false);
+        saveHolidayEntitlement(currentEntitlement);
+
+        // get current account before editing
+        HolidaysAccount currentAccount = getHolidaysAccount(year, person);
+        currentAccount.setActive(false);
+        saveHolidaysAccount(currentAccount);
+
+        // create new entitlement
+        HolidayEntitlement newEntitlement = newHolidayEntitlement(person, year, days);
+
+        HolidaysAccount newAccount = new HolidaysAccount();
+
+        // how many days has person used this year?
+        BigDecimal usedDays = currentEntitlement.getVacationDays().subtract(currentAccount.getVacationDays());
+
+        // check if person may take a holiday with the edited entitlement or not
+        if (usedDays.compareTo(newEntitlement.getVacationDays()) >= 0) {
+            // person is not allowed to take a holiday anymore
+            newAccount = newHolidaysAccount(person, BigDecimal.ZERO, BigDecimal.ZERO, year);
+        } else {
+            BigDecimal vac = newEntitlement.getVacationDays().subtract(usedDays);
+            newAccount = newHolidaysAccount(person, vac, BigDecimal.ZERO, year);
+        }
+
+        saveHolidayEntitlement(newEntitlement);
+        saveHolidaysAccount(newAccount);
+    }
+
+
+    /**
+     * @see  HolidaysAccountService#updateHolidayEntitlement(java.util.List, int)
+     */
     @Override
     public void updateHolidayEntitlement(List<Person> persons, int year) {
 
