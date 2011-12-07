@@ -150,7 +150,7 @@ public class HolidaysAccountServiceImpl implements HolidaysAccountService {
     @Override
     public List<HolidaysAccount> getHolidaysAccountByYearOrderedByPersons(int year) {
 
-        return holidaysAccountDAO.getHolidaysAccountByYearOrderedByPersons(year);
+        return holidaysAccountDAO.getAllHolidaysAccountsByYear(year);
     }
 
 
