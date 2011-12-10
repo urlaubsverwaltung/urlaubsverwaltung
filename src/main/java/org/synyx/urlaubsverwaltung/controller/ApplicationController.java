@@ -42,7 +42,7 @@ public class ApplicationController {
     private static final String REQUESTLIST_VIEW = "antraege/antragsliste";
     private static final String ACTION_COMPLETE_VIEW = "index"; // muss noch geändert werden
 
-    private static Logger logger = Logger.getLogger(PersonController.class);
+    private static final Logger LOG = Logger.getLogger(PersonController.class);
     private static Logger reqLogger = Logger.getLogger("reqLogger");
 
     private PersonService personService;
@@ -194,7 +194,7 @@ public class ApplicationController {
 
         antragService.signApplicationByUser(antrag, person);
 
-        logger.info("Es wurde ein neuer Antrag angelegt.");
+        LOG.info("Es wurde ein neuer Antrag angelegt.");
         reqLogger.info("Es wurde ein neuer Antrag angelegt.");
 
         return ACTION_COMPLETE_VIEW; // oder vllt auch ine success-seite
@@ -252,7 +252,7 @@ public class ApplicationController {
 //        // über die logik sollten wir nochmal nachdenken...
 //        antragService.cancel(antragService.getRequestById(antragId));
 
-        logger.info("Ein Antrag wurde storniert.");
+        LOG.info("Ein Antrag wurde storniert.");
         reqLogger.info("Ein Antrag wurde storniert.");
 
         return ACTION_COMPLETE_VIEW; // oder ne successpage oder was ganz anderes
@@ -288,7 +288,7 @@ public class ApplicationController {
 //            java.util.logging.Logger.getLogger(ApplicationController.class.getName()).log(Level.SEVERE, null, ex);
 //        }
 
-        logger.info("Ein Antrag wurde genehmigt.");
+        LOG.info("Ein Antrag wurde genehmigt.");
         reqLogger.info("Ein Antrag wurde genehmigt.");
 
         // benachrichtigungs-zeugs
@@ -326,7 +326,7 @@ public class ApplicationController {
 //            java.util.logging.Logger.getLogger(ApplicationController.class.getName()).log(Level.SEVERE, null, ex);
 //        }
 
-        logger.info("Ein Antrag wurde abgelehnt.");
+        LOG.info("Ein Antrag wurde abgelehnt.");
         reqLogger.info("Ein Antrag wurde abgelehnt.");
 
         // benachrichtigungs-zeugs

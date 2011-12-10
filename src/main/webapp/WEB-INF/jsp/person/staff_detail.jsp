@@ -16,7 +16,7 @@
     
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <link rel="stylesheet" type="text/css" href="<spring:url value='css/main.css' />" /> 
+        <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />" /> 
         <title><spring:message code="title" /></title>
     </head>
     
@@ -24,7 +24,7 @@
         
         <spring:url var="formUrlPrefix" value="/web" />
         
-        <%@include file="include/header.jsp" %>
+        <%@include file="../include/header.jsp" %>
         
         <div id="show-navi">
         <a href="${formUrlPrefix}/staff/list"><spring:message code="table.list" /></a>
@@ -33,11 +33,10 @@
         
         <div id="content">
         
-            <%--
             <c:forEach items="${accounts}" var="account">
         <table id="person-tbl" cellspacing="0" border="1">
             <tr>
-                <td rowspan="6"><img class="user-pic" src="images/steve-jobs.jpg" /></td>
+                <td rowspan="6"><img class="user-pic" src="<spring:url value='/images/steve-jobs.jpg' />" /></td>
             </tr>
             <tr>
                 <th>
@@ -64,23 +63,14 @@
                 </td>
             </tr>    
             <tr>
-                <th>
-                    <c:out value="${account.year}"/>&nbsp;<spring:message code="overview.used" />
-                </th>
+                <th>&nbsp;</th>
                 <td>
-                    <c:out value="${account}"/>&nbsp;
-                </td>
-                
-                
-                
-                <td>
-                    <a href="${formUrlPrefix}/apply/${account.person.id}"><spring:message code="table.antrag" /></a>
+                    <a href="${formUrlPrefix}/application/${account.person.id}"><spring:message code="table.antrag" /></a>
                 </td>
             </tr>   
         </table>    
         <br />        
         </c:forEach>
-            --%>
         
         </div>
         

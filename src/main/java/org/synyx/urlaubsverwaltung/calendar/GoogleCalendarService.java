@@ -23,7 +23,7 @@ import java.net.URL;
 
 
 /**
- * @author  aljona (urspruenglich: @author otto allmendinger)
+ * @author  Aljona Murygina (urspruenglich: @author otto allmendinger)
  *
  *          <p>dies ist ein vorläufiger versuch den google calendar einzubinden die methoden, die wir fuer das
  *          urlaubsverwaltungstool benoetigen, wurden dem googlecalendarserviceimpl des ressourcenplanungstools von Otto

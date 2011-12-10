@@ -13,6 +13,6 @@ import org.synyx.urlaubsverwaltung.domain.Person;
 public interface PersonDAO extends JpaRepository<Person, Integer> {
 
     // get Person by login name (from LDAP account)
-    @Query("select from Person where loginName = ?1")
+    @Query("select x from Person x where x.loginName = ?")
     Person getPersonByLogin(String loginName);
 }

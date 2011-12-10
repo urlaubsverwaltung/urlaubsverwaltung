@@ -19,17 +19,17 @@ import java.util.List;
  */
 public interface HolidaysAccountDAO extends JpaRepository<HolidaysAccount, Integer> {
 
-    @Query("select from HolidaysAccount where year = ?1 and person = ?2")
+    @Query("select x from HolidaysAccount x where x.year = ?1 and x.person = ?2")
     HolidaysAccount getHolidaysAccountByYearAndPerson(int year, Person person);
 
 
 //    @Query("select from HolidaysAccount where year = ?1")
 //    List<HolidaysAccount> getHolidaysAccountByYearOrderedByPersons(int year);
 
-    @Query("select from HolidaysAccount where year = ?1")
+    @Query("select x from HolidaysAccount x where x.year = ?1")
     List<HolidaysAccount> getAllHolidaysAccountsByYear(int year);
 
 
-    @Query("select from HolidaysAccount where person = ?1")
+    @Query("select x from HolidaysAccount x where x.person = ?1")
     List<HolidaysAccount> getAllHolidaysAccountsByPerson(Person person);
 }

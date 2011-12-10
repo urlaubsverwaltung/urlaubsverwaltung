@@ -21,16 +21,18 @@
     
     <body>
         
+        <%@include file="../include/header.jsp" %>
+        
         <spring:url var="formUrlPrefix" value="/web" />
         
         <c:choose>
             <c:when test="${person.id == null}">
                 <c:set var="method" value="post" />
-                <c:set var="url" value="${formUrlPrefix}/mitarbeiter/new" />
+                <c:set var="url" value="${formUrlPrefix}/staff/new" />
             </c:when>
             <c:otherwise>
                 <c:set var="method" value="put" />
-                <c:set var="url" value="${formUrlPrefix}/mitarbeiter/${person.id}/edit" />
+                <c:set var="url" value="${formUrlPrefix}/staff/${person.id}/edit" />
             </c:otherwise>
         </c:choose>
         
@@ -61,14 +63,6 @@
                         <td><label for="jahr"><spring:message code="jahr" />:</label></td>
                         <td><form:input id="jahr" path="yearForCurrentUrlaubsanspruch" /></td>
                     </tr>
-                    <%--
-                    <c:if test="${person.id == null}">
-                    <tr>
-                        <td><label for="unterschrift"><spring:message code="sign" />:</label></td>
-                        <td><input type="file" name="sign" id="unterschrift" size="17%" /></td>
-                    </tr>
-                    </c:if>
-                    --%>
                     <tr>
                         <td>
                             <input type="submit" name="<spring:message code="save" />" value="<spring:message code="save" />" />                        

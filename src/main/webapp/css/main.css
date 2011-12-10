@@ -18,7 +18,7 @@ a:hover {
 /* Header */
 
 #header, #top-menu {
-    margin: 0;
+    margin: 0px 0px 10px 0px;
 }	
 
 #top-menu {
@@ -28,15 +28,15 @@ a:hover {
     height: 1.5em;
     padding: 2px 2px 0 6px;
     text-align: right;
--moz-box-shadow: 2px 2px 6px #444444;
-     -webkit-box-shadow: 12px 12px 5px #444444;
-     box-shadow: 12px 12px 5px #444444;
+    -moz-box-shadow: 2px 2px 5px #444444;
+     -webkit-box-shadow: 2px 2px 5px #444444;
+     box-shadow: 2px 2px 5px #444444;
 }	
 
 #header {
-	background: url("images/synyx-logo-transp.jpg") no-repeat 5% 20%;
+    background: url("../images/synyx-logo-transp.jpg") no-repeat 5% 20%;
     border-bottom: 1px solid grey;
-    height: 90px;
+    height: 100px;
     padding-bottom: 10px;
     padding-left: 262px;
     padding-top: 40px;
@@ -67,7 +67,7 @@ a:hover {
 }
 
 #show-navi {
-    bottom: 0;
+    top: 142px;
     right: 6px;
     position: absolute;
 }
@@ -175,7 +175,7 @@ padding: 5px 0px 5px 0px;
 }	
 
 #app-tbl {
-	width: 100%;
+	width: 80%;
 font-size: 1.05em;
 }	
 

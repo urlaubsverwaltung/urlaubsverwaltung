@@ -6,6 +6,8 @@ import org.apache.log4j.Logger;
 import org.joda.time.DateMidnight;
 import org.joda.time.chrono.GregorianChronology;
 
+import org.springframework.security.core.context.SecurityContextHolder;
+
 import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
@@ -23,6 +25,7 @@ import org.synyx.urlaubsverwaltung.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.service.CryptoService;
 import org.synyx.urlaubsverwaltung.service.HolidaysAccountService;
 import org.synyx.urlaubsverwaltung.service.PersonService;
+import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
@@ -49,19 +52,19 @@ public class PersonController {
     private static final String ACCOUNTS = "accounts";
     private static final String APPLICATIONS = "applications";
     private static final String ACCOUNT = "account";
-    private static final String DAYS_PER_YEAR = "daysPerYear";
+    private static final String ENTITLEMENT = "entitlement";
+    private static final String APRIL = "april";
 
     private static final String PERSON_ID = "personId";
     private static final String YEAR = "year";
 
     // links
-    private static final String WEB = "ln.web";
-    private static final String BASIS = "ln.staff";
-    private static final String LIST_LINK = BASIS + "ln.list";
-    private static final String DETAIL_LINK = BASIS + "ln.detail";
-    private static final String OVERVIEW_LINK = BASIS + "/{" + PERSON_ID + "}" + "ln.overview" + "/{" + YEAR + "}";
-    private static final String EDIT_LINK = BASIS + "/{" + PERSON_ID + "}" + "ln.edit";
-    private static final String NEW_LINK = BASIS + "ln.new";
+    private static final String WEB = "web/";
+    private static final String LIST_LINK = "/staff/list";
+    private static final String DETAIL_LINK = "/staff/detail";
+    private static final String OVERVIEW_LINK = "/staff/{" + PERSON_ID + "}/overview";
+    private static final String EDIT_LINK = "/staff/{" + PERSON_ID + "}/edit";
+    private static final String NEW_LINK = "/staff/new";
 
     // logger
     private static final Logger LOG = Logger.getLogger(PersonController.class);
@@ -90,6 +93,8 @@ public class PersonController {
     @RequestMapping(value = LIST_LINK, method = RequestMethod.GET)
     public String showStaffList(Model model) {
 
+        setLoggedUser(model);
+
         prepareStaffView(model);
 
         return LIST_JSP;
@@ -106,6 +111,8 @@ public class PersonController {
     @RequestMapping(value = DETAIL_LINK, method = RequestMethod.GET)
     public String showStaffDetail(Model model) {
 
+        setLoggedUser(model);
+
         prepareStaffView(model);
 
         return DETAIL_JSP;
@@ -120,6 +127,8 @@ public class PersonController {
     private void prepareStaffView(Model model) {
 
         int year = DateMidnight.now(GregorianChronology.getInstance()).getYear();
+
+        // order by person's last name must be implemented
         List<HolidaysAccount> accounts = accountService.getHolidaysAccountByYearOrderedByPersons(year);
 
         model.addAttribute(ACCOUNTS, accounts);
@@ -135,26 +144,35 @@ public class PersonController {
      * @return
      */
     @RequestMapping(value = OVERVIEW_LINK, method = RequestMethod.GET)
-    public String showOverview(@PathVariable(PERSON_ID) Integer personId,
-        @PathVariable(YEAR) Integer year, Model model) {
+    public String showOverview(@PathVariable(PERSON_ID) Integer personId, Model model) {
 
         Person person = personService.getPersonByID(personId);
+        int year = DateMidnight.now(GregorianChronology.getInstance()).getYear();
 
         List<Application> applications = applicationService.getAllApplicationsForPerson(person);
         HolidaysAccount account = accountService.getHolidaysAccount(year, person);
         HolidayEntitlement entitlement = accountService.getHolidayEntitlement(year, person);
+        DateMidnight date = DateMidnight.now(GregorianChronology.getInstance());
+        int april = 0;
 
+        if (DateUtil.isBeforeApril(date)) {
+            april = 1;
+        }
+
+        setLoggedUser(model);
         model.addAttribute(PERSON, person);
         model.addAttribute(APPLICATIONS, applications);
         model.addAttribute(ACCOUNT, account);
-        model.addAttribute(DAYS_PER_YEAR, entitlement.getVacationDays());
+        model.addAttribute(ENTITLEMENT, entitlement);
+        model.addAttribute(YEAR, date.getYear());
+        model.addAttribute(APRIL, april);
 
         return OVERVIEW_JSP;
     }
 
 
     /**
-     * Liefert Formular, um einen Staff zu editieren
+     * Form to edit a user.
      *
      * @param  personId
      * @param  model
@@ -166,6 +184,7 @@ public class PersonController {
 
         Person person = personService.getPersonByID(personId);
 
+        setLoggedUser(model);
         model.addAttribute(PERSON, person);
 
         return PERSON_FORM_JSP;
@@ -214,6 +233,8 @@ public class PersonController {
     @RequestMapping(value = NEW_LINK, method = RequestMethod.GET)
     public String newPersonForm(Model model) {
 
+        setLoggedUser(model);
+
         Person person = new Person();
 
         model.addAttribute(PERSON, person);
@@ -258,5 +279,14 @@ public class PersonController {
         LOG.info("Neue Person angelegt: " + person.getFirstName() + " " + person.getLastName());
 
         return "redirect:" + WEB + LIST_LINK;
+    }
+
+
+    private void setLoggedUser(Model model) {
+
+        String user = SecurityContextHolder.getContext().getAuthentication().getName();
+        Person loggedUser = personService.getPersonByLogin(user);
+
+        model.addAttribute("loggedUser", loggedUser);
     }
 }

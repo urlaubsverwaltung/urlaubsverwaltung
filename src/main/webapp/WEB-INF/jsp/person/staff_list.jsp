@@ -16,7 +16,7 @@
     
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <link rel="stylesheet" type="text/css" href="<spring:url value='css/main.css' />" /> 
+        <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />" /> 
         <title><spring:message code="title" /></title>
     </head>
     
@@ -24,7 +24,7 @@
         
         <spring:url var="formUrlPrefix" value="/web" />
         
-        <%@include file="include/header.jsp" %>
+        <%@include file="../include/header.jsp" %>
         
         <div id="show-navi">
         <a href="${formUrlPrefix}/staff/list"><spring:message code="table.list" /></a>

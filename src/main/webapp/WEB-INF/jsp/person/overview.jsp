@@ -16,7 +16,7 @@
 
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <link rel="stylesheet" type="text/css" href="<spring:url value='css/main.css' />" /> 
+        <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />" /> 
         <title><spring:message code="title" /></title>
     </head>
 
@@ -24,13 +24,13 @@
 
         <spring:url var="formUrlPrefix" value="/web" />
 
-        <%@include file="include/header.jsp" %>
+        <%@include file="../include/header.jsp" %>
 
         <div id="content">
 
             <table id="person-tbl" cellspacing="0" border="1">
                 <tr>
-                    <td rowspan="6"><img class="user-pic" src="images/steve-jobs.jpg" /></td>
+                    <td rowspan="6"><img class="user-pic" src="<spring:url value='/images/steve-jobs.jpg' />" /></td>
                 </tr>
                 <tr>
                     <th>
