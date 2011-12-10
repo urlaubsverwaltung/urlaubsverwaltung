@@ -24,49 +24,65 @@
         
         <spring:url var="formUrlPrefix" value="/web" />
         
+        <%@include file="include/header.jsp" %>
+        
+        <div id="show-navi">
         <a href="${formUrlPrefix}/staff/list"><spring:message code="table.list" /></a>
         <a href="${formUrlPrefix}/staff/detail"><spring:message code="table.detail" /></a>
+        </div>
         
-        <c:forEach items="${accounts}" var="account">
-        <table>
+        <div id="content">
+        
+            <%--
+            <c:forEach items="${accounts}" var="account">
+        <table id="person-tbl" cellspacing="0" border="1">
             <tr>
-                <td rowspan="3">
-                    <!--  Bild des Mitarbeiters  -->
-                </td>
-                <td>
-                   <spring:message code="name" />: 
-                </td>
+                <td rowspan="6"><img class="user-pic" src="images/steve-jobs.jpg" /></td>
+            </tr>
+            <tr>
+                <th>
+                   <spring:message code="staff" />: 
+                </th>
                 <td>
                    <c:out value="${account.person.lastName}"/>&nbsp;<c:out value="${account.person.firstName}"/> 
                 </td>
             </tr>
             <tr>
-                <td><a href="mailto:${account.person.email}"><c:out value="${account.person.email}"/></a></td>
-            </tr>
-            <tr>
-                <td>
+                <th>
                    <spring:message code="table.vac" />
-                </td>
+                </th>
                 <td>
-                    <c:out value="${account.vacationDays}"/>
+                    <c:out value="${account.vacationDays}"/>&nbsp;<spring:message code="overview.peryear" />
                 </td>
             </tr>
             <tr>
+                <th>
+                    <spring:message code="table.resturlaub" />&nbsp;<c:out value="${account.year - 1}"/>
+                </th>
                 <td>
-                    <spring:message code="table.resturlaub" />
-                </td>
-                <td>
-                    <c:out value="${account.remainingVacationDays}"/>
+                    <c:out value="${account.remainingVacationDays}"/>&nbsp;<spring:message code="days" />
                 </td>
             </tr>    
             <tr>
-                <td colspan="2">
+                <th>
+                    <c:out value="${account.year}"/>&nbsp;<spring:message code="overview.used" />
+                </th>
+                <td>
+                    <c:out value="${account}"/>&nbsp;
+                </td>
+                
+                
+                
+                <td>
                     <a href="${formUrlPrefix}/apply/${account.person.id}"><spring:message code="table.antrag" /></a>
                 </td>
             </tr>   
         </table>    
         <br />        
         </c:forEach>
+            --%>
+        
+        </div>
         
     </body>
     

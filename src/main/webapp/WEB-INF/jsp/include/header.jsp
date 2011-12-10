@@ -21,33 +21,33 @@
         
         <div id="header">
             
-            <h1>Urlaubsverwaltung</h1>
+            <h1><spring:message code="header.title" /></h1>
 
             <div id="main-menu">
                 
                 <sec:authorize access="hasRole('role.user')">
                 <ul>
-                    <li><a href="${formUrlPrefix}/mitarbeiter/${person.id}/overview"><spring:message code="overview" /></a></li>
-                    <li><a href="${formUrlPrefix}/antrag/${person.id}/new"><spring:message code="apply" /></a></li>
+                    <li><a href="${formUrlPrefix}/staff/${person.id}/overview"><spring:message code="overview" /></a></li>
+                    <li><a href="${formUrlPrefix}/application/${person.id}/new"><spring:message code="apply" /></a></li>
                 </ul>
                 </sec:authorize>
             
                 <sec:authorize access="hasRole('role.chef')">
-                <ul><li><a href="${formUrlPrefix}/mitarbeiter/${person.id}/overview"><spring:message code="overview" /></a></li>
-                    <li><a href="${formUrlPrefix}/antrag/${person.id}/new"><spring:message code="apply" /></a></li>
-                    <li><a href="${formUrlPrefix}/antraege/wartend"><spring:message code="waiting.app" /></a></li>
-                    <li><a href="${formUrlPrefix}/antraege/genehmigt"><spring:message code="allow.app" /></a></li>
-                    <li><a href="${formUrlPrefix}/antraege/storniert"><spring:message code="cancel.app" /></a></li>
-                    <li><a href="${formUrlPrefix}/mitarbeiter/list"><spring:message code="overview" />&nbsp;<spring:message code="staff" /></a></li>
+                <ul><li><a href="${formUrlPrefix}/staff/${person.id}/overview"><spring:message code="overview" /></a></li>
+                    <li><a href="${formUrlPrefix}/application/${person.id}/new"><spring:message code="apply" /></a></li>
+                    <li><a href="${formUrlPrefix}/application/waiting"><spring:message code="waiting.app" /></a></li>
+                    <li><a href="${formUrlPrefix}/application/allowed"><spring:message code="allow.app" /></a></li>
+                    <li><a href="${formUrlPrefix}/application/cancelled"><spring:message code="cancel.app" /></a></li>
+                    <li><a href="${formUrlPrefix}/staff/list"><spring:message code="overview" />&nbsp;<spring:message code="staff" /></a></li>
                 </ul>
                 </sec:authorize>
             
                 <sec:authorize access="hasRole('role.office')">
-                <ul><li><a href="${formUrlPrefix}/mitarbeiter/${person.id}/overview"><spring:message code="overview" /></a></li>
-                    <li><a href="${formUrlPrefix}/antrag/${person.id}/new"><spring:message code="apply" /></a></li>
-                    <li><a href="${formUrlPrefix}/antraege/genehmigt"><spring:message code="allow.app" /></a></li>
-                    <li><a href="${formUrlPrefix}/antraege/storniert"><spring:message code="cancel.app" /></a></li>
-                    <li><a href="${formUrlPrefix}/mitarbeiter/list"><spring:message code="overview" />&nbsp;<spring:message code="staff" /></a></li>
+                <ul><li><a href="${formUrlPrefix}/staff/${person.id}/overview"><spring:message code="overview" /></a></li>
+                    <li><a href="${formUrlPrefix}/application/${person.id}/new"><spring:message code="apply" /></a></li>
+                    <li><a href="${formUrlPrefix}/application/allowed"><spring:message code="allow.app" /></a></li>
+                    <li><a href="${formUrlPrefix}/application/cancelled"><spring:message code="cancel.app" /></a></li>
+                    <li><a href="${formUrlPrefix}/staff/list"><spring:message code="overview" />&nbsp;<spring:message code="staff" /></a></li>
                     <li><a href="${formUrlPrefix}/manager"><spring:message code="office" /></a></li>
                 </ul>
                 </sec:authorize>

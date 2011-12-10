@@ -26,30 +26,32 @@
         
         <%@include file="include/header.jsp" %>
         
+        <div id="show-navi">
         <a href="${formUrlPrefix}/staff/list"><spring:message code="table.list" /></a>
         <a href="${formUrlPrefix}/staff/detail"><spring:message code="table.detail" /></a>
+        </div>
         
-        <table cellspacing="0">
+        
+        <div id="content">
+        <table id="staff-list" cellspacing="0" border="0.5">
             <tr>
-                <th colspan="3"><spring:message code="table.title" /></th>
-            </tr>
-            <tr>
-                <th><spring:message code="name" /></th>
-                <th><spring:message code="email" /></th>
-                <th><spring:message code="table.vac" /></th>
-                <th><spring:message code="table.resturlaub" /></th>
+                <th class="attributes"><spring:message code="name" /></th>
+                <th class="attributes"><spring:message code="email" /></th>
+                <th class="vac"><spring:message code="table.vac" /></th>
+                <th class="vac"><spring:message code="table.resturlaub" /></th>
                 <th>&nbsp;</th>
             </tr>
         <c:forEach items="${accounts}" var="account" varStatus="loopStatus">
             <tr class="${loopStatus.index % 2 == 0 ? 'even' : 'odd'}">
                 <td><c:out value="${account.person.lastName}"/>&nbsp;<c:out value="${account.person.firstName}"/></td>
                 <td><a href="mailto:${account.person.email}"><c:out value="${account.person.email}"/></a></td>
-                <td><c:out value="${account.vacationDays}"/></td>
-                <td><c:out value="${account.remainingVacationDays}"/></td>
-                <td><a href="${formUrlPrefix}/apply/${account.person.id}"><spring:message code="table.antrag" /></a></td>
+                <td class="vac"><c:out value="${account.vacationDays}"/></td>
+                <td class="vac"><c:out value="${account.remainingVacationDays}"/></td>
+                <td class="td-edit"><a href="${formUrlPrefix}/application/${account.person.id}"><img src="images/playlist.png" /></a></td>
             </tr>    
         </c:forEach>
         </table>
+        </div>        
         
     </body>
     

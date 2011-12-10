@@ -7,40 +7,81 @@
 */
 
 
+a {
+color: black;
+}
 
+a:hover {
+	color: #0083CC;
+}
 
 /* Header */
 
 #header, #top-menu {
     margin: 0;
-}
+}	
 
 #top-menu {
     background: none repeat scroll 0 0 #444444;
     color: #FFFFFF;
     font-size: 0.8em;
-    height: 1.8em;
+    height: 1.5em;
     padding: 2px 2px 0 6px;
-}
+    text-align: right;
+-moz-box-shadow: 2px 2px 6px #444444;
+     -webkit-box-shadow: 12px 12px 5px #444444;
+     box-shadow: 12px 12px 5px #444444;
+}	
 
 #header {
-/*    background: url("../images/logo.png") no-repeat scroll 0 50% #DBDDDE;*/
+	background: url("images/synyx-logo-transp.jpg") no-repeat 5% 20%;
     border-bottom: 1px solid grey;
-    height: 50px;
+    height: 90px;
     padding-bottom: 10px;
     padding-left: 262px;
     padding-top: 40px;
 }
 
 #header {
-    background-color: #507AAA;
-    color: #F8F8F8;
-    padding: 4px 8px 0 6px;
+   /* background-color: #E4E5E7; */
+    color: black;
+    padding: 4px 8px 30px 6px;
     position: relative;
 }
 
 #header a {
     color: #505050;
+}
+
+#header h1 {
+	text-align: center;
+	padding-top: 12px;
+	font-size: 2.25em;
+}
+
+#main-menu {
+    bottom: 0;
+    left: 6px;
+    margin-right: -500px;
+    position: absolute;
+}
+
+#show-navi {
+    bottom: 0;
+    right: 6px;
+    position: absolute;
+}
+
+#show-navi a:hover {
+	color: #0083CC;
+}
+
+#main-menu li {
+    float: left;
+    list-style-type: none;
+    margin: 0 6px 5px 0;
+    padding: 0;
+    white-space: nowrap;
 }
 
 #main-menu li a {
@@ -55,6 +96,7 @@
     border-width: 1px;
     color: #444444;
     font-weight: bold;
+    padding: 4px 10px;
 }
 
 #main-menu li a:hover {
@@ -72,4 +114,85 @@
 body {
     font-family: Verdana,sans-serif;
     font-size: 12px;
+    margin: 0;
 }
+
+#content {
+	margin: 30px 35px 100px 45px;
+}	
+
+#staff-list td {
+	padding: 5px 0px 5px 15px;
+}
+
+th.attributes {
+	padding: 7px 0px 7px 15px;
+	text-align: left;
+	width: auto;
+}	
+
+th.vac {
+	padding: 7px 0px 7px 0px;
+	text-align: left;
+	width: 12%;
+}
+
+#staff-list {
+	width: 100%; 
+	/*border: 1px solid #444444;*/
+}
+
+#staff-list th {
+    background-color: #ABC452;
+}
+
+tr.odd {
+    background-color: #EAF2D3
+}
+
+tr.even {
+    background-color: #FFFFFF
+}
+
+#person-tbl {
+	width: 60%;
+	font-size: 1.05em;
+	/* border: 1px solid #BBBBBB;*/
+}
+
+#person-tbl th,  #person-tbl td {
+	text-align: left;
+	padding: 5px 0px 5px 15px;
+}
+
+#person-tbl th {
+	width: 55%;
+}
+
+#person-tbl td#td-img {
+padding: 5px 0px 5px 0px;
+	text-align: center;
+}	
+
+#app-tbl {
+	width: 100%;
+font-size: 1.05em;
+}	
+
+#app-tbl th, #app-tbl td {
+	text-align: left;
+	padding: 2px 0px 2px 10px;
+}
+
+.user-pic {
+	text-align: center;
+}	
+
+#person-tbl td.td-edit {
+	text-align: right;
+	padding-right: 10px;
+}
+	
+
+
+
