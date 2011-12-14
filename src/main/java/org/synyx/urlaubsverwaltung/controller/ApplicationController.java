@@ -12,6 +12,9 @@ import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
 
+import org.springframework.validation.DataBinder;
+
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,14 +22,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.domain.DayLength;
 import org.synyx.urlaubsverwaltung.domain.HolidaysAccount;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.VacationType;
 import org.synyx.urlaubsverwaltung.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.service.HolidaysAccountService;
 import org.synyx.urlaubsverwaltung.service.PersonService;
+import org.synyx.urlaubsverwaltung.util.DateMidnightPropertyEditor;
 
 import java.util.List;
+import java.util.Locale;
 
 
 /**
@@ -80,6 +86,13 @@ public class ApplicationController {
         this.applicationService = applicationService;
         this.accountService = accountService;
     }
+
+    @InitBinder
+    public void initBinder(DataBinder binder, Locale locale) {
+
+        binder.registerCustomEditor(DateMidnight.class, new DateMidnightPropertyEditor(locale));
+    }
+
 
     /**
      * show List<Application> of one person
@@ -195,15 +208,14 @@ public class ApplicationController {
 
         HolidaysAccount account = accountService.getHolidaysAccount(year, person);
 
-        Application application = new Application();
-
         model.addAttribute(PERSON, person);
         model.addAttribute(PERSONS, persons);
         model.addAttribute(DATE, stringDate);
         model.addAttribute(YEAR, year);
-        model.addAttribute(APPLICATION, application);
+        model.addAttribute(APPLICATION, new Application());
         model.addAttribute(ACCOUNT, account);
         model.addAttribute("vacTypes", VacationType.values());
+        model.addAttribute("daylength", DayLength.values());
         setLoggedUser(model);
 
         return APP_FORM_JSP;
@@ -221,21 +233,21 @@ public class ApplicationController {
      */
     @RequestMapping(value = NEW_APP, method = RequestMethod.POST)
     public String newApplication(@PathVariable(PERSON_ID) Integer personId,
-        @ModelAttribute(APPLICATION) Application application, Model model) {
+        @ModelAttribute(APPLICATION) Application application) {
 
         Person person = personService.getPersonByID(personId);
 
         application.setPerson(person);
-        application.setStatus(ApplicationStatus.WAITING);
+        application.setHowLong(DayLength.FULL);
 
         applicationService.save(application);
 
-        applicationService.signApplicationByUser(application, person);
+//        applicationService.signApplicationByUser(application, person);
 
         LOG.info(application.getApplicationDate() + " ID: " + application.getId() + " Es wurde ein neuer Antrag von "
             + person.getLastName() + " " + person.getFirstName() + " angelegt.");
 
-        return "redirect:";
+        return "redirect: web/staff/list";
     }
 
 
