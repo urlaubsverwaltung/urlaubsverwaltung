@@ -8,6 +8,8 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <h1>Hello World!</h1>
+        <% String redirectURL = "http://localhost:8080/Urlaubsverwaltung-1.0-SNAPSHOT/web/login";
+           response.sendRedirect(redirectURL);
+        %>
     </body>
 </html>
