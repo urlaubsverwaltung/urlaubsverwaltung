@@ -1,14 +1,18 @@
 package org.synyx.urlaubsverwaltung.domain;
 
 import org.joda.time.DateMidnight;
+import org.joda.time.DateTime;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import java.math.BigDecimal;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
 
 
 /**
@@ -40,12 +44,15 @@ public class Application extends AbstractPersistable<Integer> {
     private BigDecimal sickDays;
 
     // Date of adding sick days to application
-    private DateMidnight dateOfAddingSickDays;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateOfAddingSickDays;
 
     // Period of holiday
-    private DateMidnight startDate;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date startDate;
 
-    private DateMidnight endDate;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date endDate;
 
     // Type of holiday, e.g. holiday, special leave, etc.
     private VacationType vacationType;
@@ -66,7 +73,8 @@ public class Application extends AbstractPersistable<Integer> {
     private String phone;
 
     // Date of application
-    private DateMidnight applicationDate;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date applicationDate;
 
     // State of application (e.g. waiting, allowed, ...)
     private ApplicationStatus status;
@@ -91,13 +99,21 @@ public class Application extends AbstractPersistable<Integer> {
 
     public DateMidnight getApplicationDate() {
 
-        return applicationDate;
+        if (this.applicationDate == null) {
+            return null;
+        }
+
+        return new DateTime(this.applicationDate).toDateMidnight();
     }
 
 
     public void setApplicationDate(DateMidnight applicationDate) {
 
-        this.applicationDate = applicationDate;
+        if (applicationDate == null) {
+            this.applicationDate = null;
+        } else {
+            this.applicationDate = applicationDate.toDate();
+        }
     }
 
 
@@ -127,25 +143,41 @@ public class Application extends AbstractPersistable<Integer> {
 
     public DateMidnight getDateOfAddingSickDays() {
 
-        return dateOfAddingSickDays;
+        if (this.dateOfAddingSickDays == null) {
+            return null;
+        }
+
+        return new DateTime(this.dateOfAddingSickDays).toDateMidnight();
     }
 
 
     public void setDateOfAddingSickDays(DateMidnight dateOfAddingSickDays) {
 
-        this.dateOfAddingSickDays = dateOfAddingSickDays;
+        if (dateOfAddingSickDays == null) {
+            this.dateOfAddingSickDays = null;
+        } else {
+            this.dateOfAddingSickDays = dateOfAddingSickDays.toDate();
+        }
     }
 
 
     public DateMidnight getEndDate() {
 
-        return endDate;
+        if (this.endDate == null) {
+            return null;
+        }
+
+        return new DateTime(this.endDate).toDateMidnight();
     }
 
 
     public void setEndDate(DateMidnight endDate) {
 
-        this.endDate = endDate;
+        if (endDate == null) {
+            this.endDate = null;
+        } else {
+            this.endDate = endDate.toDate();
+        }
     }
 
 
@@ -259,13 +291,21 @@ public class Application extends AbstractPersistable<Integer> {
 
     public DateMidnight getStartDate() {
 
-        return startDate;
+        if (this.startDate == null) {
+            return null;
+        }
+
+        return new DateTime(this.startDate).toDateMidnight();
     }
 
 
     public void setStartDate(DateMidnight startDate) {
 
-        this.startDate = startDate;
+        if (startDate == null) {
+            this.startDate = null;
+        } else {
+            this.startDate = startDate.toDate();
+        }
     }
 
 
