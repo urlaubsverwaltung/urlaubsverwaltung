@@ -36,7 +36,7 @@
         
         <div id="content">
         
-        <h2><spring:message code="antrag.title" /></h2>
+        <h2><spring:message code="application.title" /></h2>
         
         <br />
         
@@ -54,7 +54,7 @@
             </tr>
             <tr>
                 <td>
-                    <spring:message code="antrag.anspruch" />:
+                    <spring:message code="application.anspruch" />:
                 </td>    
                 <td>    
                     <c:out value="${account.vacationDays}" />&nbsp;<spring:message code="days" />
@@ -76,10 +76,10 @@
             </tr>
             <tr>
                 <td>
-                    <spring:message code="antrag.antrag" />
+                    <spring:message code="application.application" />
                 </td>
                 <td>
-                   <form:select path="vacationType" id="type" size="1" items="${vacTypes}">
+                   <form:select path="vacationType" size="1">
                         <c:forEach items="${vacTypes}" var="vacType">
                                 <option value="${vacType}">
                                     <spring:message code='${vacType.vacationTypeName}' />
@@ -100,15 +100,13 @@
             </tr>
             <tr>
                 <td>
-                    <%--
-                    <form:select path="howLong" size="1" items="${daylength}">
+                    <form:select path="howLong" size="1">
                          <c:forEach items="${daylength}" var="length">
                                 <option value="${length}">
-                                    <c:out value='${length.DayLength}' />
+                                    <spring:message code='${length.dayLength}' />
                                 </option>
                         </c:forEach>
                     </form:select>
-                    --%>
                 </td>
             </tr>
             <tr>
@@ -116,7 +114,7 @@
             </tr>
             <tr>
                 <td>
-                    <label for="reason"><spring:message code='antrag.reason' />:</label>
+                    <label for="reason"><spring:message code='application.reason' />:</label>
                 </td>
                 <td>
                     <form:input id="reason" path="reason" />
@@ -127,18 +125,16 @@
             </tr>
             <tr>
                 <td>
-                   <label for="vertreter"><spring:message code='antrag.vertreter' />:</label> 
+                   <label for="vertreter"><spring:message code='application.vertreter' />:</label> 
                 </td>
                 <td colspan="2">
-                    <%--
-                    <form:select path="rep" id="vertreter" size="1" items="${persons}">
+                    <form:select path="rep" id="vertreter" size="1">
                         <c:forEach items="${persons}" var="einmitarbeiter">
-                                <option value="${einmitarbeiter.lastName}">
+                                <option value="${einmitarbeiter.lastName} ${einmitarbeiter.firstName}">
                                     <c:out value='${einmitarbeiter.lastName}' />&nbsp;<c:out value="${einmitarbeiter.firstName}" />
                                 </option>
                         </c:forEach>
-                    </form:select>
-                    --%>            
+                    </form:select>                             
                 </td>
             </tr>
             <tr>
@@ -146,7 +142,7 @@
             </tr>
             <tr>
                 <td>
-                    <label for="anschrift"><spring:message code='antrag.anschrift' />:</label>
+                    <label for="anschrift"><spring:message code='application.anschrift' />:</label>
                 </td>
                 <td colspan="4">
                     <form:input id="anschrift" path="address" />
@@ -154,7 +150,7 @@
             </tr>
             <tr>
                 <td>
-                    <label for="telefon"><spring:message code='antrag.phone' />:</label>
+                    <label for="telefon"><spring:message code='application.phone' />:</label>
                 </td>
                 <td colspan="4">
                     <form:input id="telefon" path="phone" />
@@ -168,7 +164,7 @@
             </tr>
             <tr>
                 <td colspan="2">
-                    <spring:message code='antrag.ort' />&nbsp;<c:out value="${date}" /><form:hidden path="applicationDate" />
+                    <spring:message code='application.ort' />&nbsp;<c:out value="${date}" /><form:hidden path="applicationDate" />
                 </td>
             </tr>
             <tr>
