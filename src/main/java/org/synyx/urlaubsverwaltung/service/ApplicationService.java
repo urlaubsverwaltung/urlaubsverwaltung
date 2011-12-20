@@ -40,7 +40,7 @@ public interface ApplicationService {
      *
      * @param  application  the application to be edited
      */
-    void allow(Application application);
+    void allow(Application application, Person boss);
 
 
     /**
