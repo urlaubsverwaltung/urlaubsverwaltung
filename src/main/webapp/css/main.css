@@ -192,6 +192,14 @@ font-size: 1.05em;
 	text-align: right;
 	padding-right: 10px;
 }
+
+
+/* Buttons */
+
+.button {
+    float: left;
+    margin-right: 10px;
+}
 	
 
 
