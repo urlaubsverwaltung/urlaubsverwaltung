@@ -40,7 +40,7 @@
         
         <br />
         
-        <form:form method="post" action="${formUrlPrefix}/application/${person.id}/new" modelAttribute="application"> 
+        <form:form method="post" action="${formUrlPrefix}/${person.id}/application/new" modelAttribute="application"> 
             <form:hidden path="id" />
             
         <table>

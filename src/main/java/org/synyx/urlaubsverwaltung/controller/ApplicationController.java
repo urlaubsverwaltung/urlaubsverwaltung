@@ -71,10 +71,10 @@ public class ApplicationController {
     private static final String REJECTED_APPS = "/application/rejected";
 
     // list of applications by person
-    private static final String APPS_BY_PERSON = "/application/{" + PERSON_ID + "}";
+    private static final String APPS_BY_PERSON = "/{" + PERSON_ID + "}/application";
 
     // form to apply vacation
-    private static final String NEW_APP = "/application/{" + PERSON_ID + "}/new";
+    private static final String NEW_APP = "/{" + PERSON_ID + "}/application/new";
 
     // for user: if application has state waiting, user may change various attributes
     // if application has state allowed, user is able to cancel application, but not to edit it

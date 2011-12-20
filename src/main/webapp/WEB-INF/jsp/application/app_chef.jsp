@@ -119,13 +119,13 @@
             </tr>
         </table>
                 
-       <form method="put" action="${formUrlPrefix}/application/${application.id}/genehmigen" modelAttribute="application"> 
+       <form:form method="put" action="${formUrlPrefix}/application/${application.id}/allow"> 
             <input type="submit" name="<spring:message code='application.state.ok' />" value="<spring:message code='application.state.ok' />" class="button" />    
-       </form>  
+       </form:form>  
        
-       <form method="put" action="${formUrlPrefix}/application/${application.id}/ablehnen" modelAttribute="application"> 
+       <form:form method="put" action="${formUrlPrefix}/application/${application.id}/reject"> 
             <input type="submit" name="<spring:message code='application.state.no' />" value="<spring:message code='application.state.no' />" class="button" />      
-       </form>
+       </form:form>
        
         </div>
         
