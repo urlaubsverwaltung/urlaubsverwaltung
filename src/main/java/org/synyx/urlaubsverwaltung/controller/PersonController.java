@@ -27,11 +27,9 @@ import org.synyx.urlaubsverwaltung.service.HolidaysAccountService;
 import org.synyx.urlaubsverwaltung.service.PersonService;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 
-import java.security.KeyPair;
-import java.security.NoSuchAlgorithmException;
-
+import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
+import java.util.Map;
 
 
 /**
@@ -49,10 +47,11 @@ public class PersonController {
     // attribute names
     private static final String PERSON = "person";
     private static final String PERSONS = "persons";
+    private static final String ACCOUNT = "account";
     private static final String ACCOUNTS = "accounts";
     private static final String APPLICATIONS = "applications";
-    private static final String ACCOUNT = "account";
     private static final String ENTITLEMENT = "entitlement";
+    private static final String ENTITLEMENTS = "entitlements";
     private static final String APRIL = "april";
 
     private static final String PERSON_ID = "personId";
@@ -64,7 +63,6 @@ public class PersonController {
     private static final String DETAIL_LINK = "/staff/detail";
     private static final String OVERVIEW_LINK = "/staff/{" + PERSON_ID + "}/overview";
     private static final String EDIT_LINK = "/staff/{" + PERSON_ID + "}/edit";
-    private static final String NEW_LINK = "/staff/new";
 
     // logger
     private static final Logger LOG = Logger.getLogger(PersonController.class);
@@ -128,10 +126,40 @@ public class PersonController {
 
         int year = DateMidnight.now(GregorianChronology.getInstance()).getYear();
 
-        // order by person's last name must be implemented
-        List<HolidaysAccount> accounts = accountService.getHolidaysAccountByYearOrderedByPersons(year);
+        List<Person> persons = personService.getAllPersons();
 
+        Map<Person, HolidaysAccount> accounts = new HashMap<Person, HolidaysAccount>();
+        HolidaysAccount account;
+
+        Map<Person, HolidayEntitlement> entitlements = new HashMap<Person, HolidayEntitlement>();
+        HolidayEntitlement entitlement;
+
+        for (Person person : persons) {
+            account = accountService.getHolidaysAccount(year, person);
+
+            if (account != null) {
+                accounts.put(person, account);
+            }
+
+            entitlement = accountService.getHolidayEntitlement(year, person);
+
+            if (entitlement != null) {
+                entitlements.put(person, entitlement);
+            }
+        }
+
+        int april = 0;
+
+        int month = DateMidnight.now(GregorianChronology.getInstance()).getMonthOfYear();
+
+        if (month >= 1 && month <= 3) {
+            april = 1;
+        }
+
+        model.addAttribute(PERSONS, persons);
         model.addAttribute(ACCOUNTS, accounts);
+        model.addAttribute(ENTITLEMENTS, entitlements);
+        model.addAttribute(APRIL, april);
     }
 
 
@@ -218,65 +246,6 @@ public class PersonController {
 // accountService.newUrlaubskonto(person, person.getCurrentUrlaubsanspruch().doubleValue(), 0.0, year);
 
         LOG.info("Der Staff " + person.getFirstName() + " " + person.getLastName() + " wurde editiert.");
-
-        return "redirect:" + WEB + LIST_LINK;
-    }
-
-
-    /**
-     * Liefert Formular, um eine neue Person anzulegen.
-     *
-     * @param  model
-     *
-     * @return
-     */
-    @RequestMapping(value = NEW_LINK, method = RequestMethod.GET)
-    public String newPersonForm(Model model) {
-
-        setLoggedUser(model);
-
-        Person person = new Person();
-
-        model.addAttribute(PERSON, person);
-
-        return PERSON_FORM_JSP;
-    }
-
-
-    /**
-     * Speichert eine neu angelegte Person ab.
-     *
-     * @param  person
-     *
-     * @return
-     */
-    @RequestMapping(value = NEW_LINK, method = RequestMethod.POST)
-    public String newPerson(@ModelAttribute(PERSON) Person person) {
-
-        Integer year = DateMidnight.now(GregorianChronology.getInstance()).getYear();
-
-        try {
-            KeyPair keyPair = cryptoService.generateKeyPair();
-            person.setPrivateKey(keyPair.getPrivate().getEncoded());
-            person.setPublicKey(keyPair.getPublic().getEncoded());
-        } catch (NoSuchAlgorithmException ex) {
-            java.util.logging.Logger.getLogger(PersonController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        personService.save(person);
-//
-
-        // to be implemented....
-// // neuen Urlaubsanspruch erstellen und speichern
-// accountService.newUrlaubsanspruch(person, year, person.getCurrentUrlaubsanspruch().doubleValue());
-//
-// // neues HolidaysAccount erstellen und speichern
-// accountService.newUrlaubskonto(person, person.getCurrentUrlaubsanspruch().doubleValue(), 0.0, year);
-//
-// HolidaysAccount konto = accountService.getHolidaysAccount(year, person);
-// person.setHolidaysAccount(konto);
-
-        LOG.info("Neue Person angelegt: " + person.getFirstName() + " " + person.getLastName());
 
         return "redirect:" + WEB + LIST_LINK;
     }

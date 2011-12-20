@@ -16,6 +16,7 @@
     
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />" />
         <title><spring:message code="title" /></title>
     </head>
     
@@ -35,6 +36,8 @@
                 <c:set var="url" value="${formUrlPrefix}/staff/${person.id}/edit" />
             </c:otherwise>
         </c:choose>
+        
+        <div id="content">
         
         <form:form method="${method}" action="${url}" modelAttribute="person"> 
             <form:hidden path="id" />
@@ -56,14 +59,6 @@
                         <td><form:input id="email" path="email" /></td>
                     </tr>
                     <tr>
-                        <td><label for="urlaubsanspruch"><spring:message code="anspruch" />:</label></td>
-                        <td><form:input id="urlaubsanspruch" path="currentUrlaubsanspruch" /></td>
-                    </tr>
-                    <tr>
-                        <td><label for="jahr"><spring:message code="jahr" />:</label></td>
-                        <td><form:input id="jahr" path="yearForCurrentUrlaubsanspruch" /></td>
-                    </tr>
-                    <tr>
                         <td>
                             <input type="submit" name="<spring:message code="save" />" value="<spring:message code="save" />" />                        
                         </td>
@@ -74,6 +69,8 @@
                     </tr>
                 </table>
         </form:form>
+            
+        </div>    
         
     </body>
     

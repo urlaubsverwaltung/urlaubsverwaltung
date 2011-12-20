@@ -153,7 +153,7 @@ public class CalculationServiceTest {
         assertEquals(BigDecimal.ZERO, returnAccount.getRemainingVacationDays());
         assertEquals(vacDays.subtract(BigDecimal.valueOf(4.0)).setScale(2), returnAccount.getVacationDays());
 
-        // TO DO!
+        // TODO
         // test for this special case must be modified!
 
         // application between December and January

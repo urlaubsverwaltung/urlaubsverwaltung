@@ -193,7 +193,7 @@ public class MailServiceImplTest {
         // check content of email
         String content = (String) msg.getContent();
         assertTrue(content.contains("Bernd"));
-        assertTrue(content.contains("Einen sch&ouml;nen Urlaub"));
+        assertTrue(content.contains("gestellter Antrag wurde genehmigt"));
         assertFalse(content.contains("Mist"));
 
         // get email office

@@ -57,28 +57,28 @@ public class DateUtil {
 
 
     /**
-     * checks if the given period is between March and April
+     * checks if the given period spans March and April
      *
      * @param  monthStart
      * @param  monthEnd
      *
-     * @return
+     * @return  true if startMonth is March and endMonth is April, false otherwise
      */
-    public static boolean isBetweenMarchAndApril(int startMonth, int endMonth) {
+    public static boolean spansMarchAndApril(int startMonth, int endMonth) {
 
         return (startMonth == DateTimeConstants.MARCH && endMonth == DateTimeConstants.APRIL);
     }
 
 
     /**
-     * checks if given period is between December and January
+     * checks if given period spans December and January
      *
      * @param  startMonth
      * @param  endMonth
      *
-     * @return
+     * @return  true if startMonth is December and endMonth is January, false otherwise
      */
-    public static boolean isBetweenDecemberAndJanuary(int startMonth, int endMonth) {
+    public static boolean spansDecemberAndJanuary(int startMonth, int endMonth) {
 
         return (startMonth == DateTimeConstants.DECEMBER && endMonth == DateTimeConstants.JANUARY);
     }

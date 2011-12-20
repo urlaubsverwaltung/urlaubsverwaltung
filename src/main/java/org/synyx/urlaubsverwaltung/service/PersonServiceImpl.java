@@ -91,7 +91,7 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public List<Person> getAllPersons() {
 
-        return personDAO.findAll();
+        return personDAO.getPersonsOrderedByLastName();
     }
 
 

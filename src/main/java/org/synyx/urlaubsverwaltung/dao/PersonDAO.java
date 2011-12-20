@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.Query;
 
 import org.synyx.urlaubsverwaltung.domain.Person;
 
+import java.util.List;
+
 
 /**
  * @author  Johannes Reuter
@@ -15,4 +17,8 @@ public interface PersonDAO extends JpaRepository<Person, Integer> {
     // get Person by login name (from LDAP account)
     @Query("select x from Person x where x.loginName = ?")
     Person getPersonByLogin(String loginName);
+
+
+    @Query("select x from Person x order by x.lastName")
+    List<Person> getPersonsOrderedByLastName();
 }

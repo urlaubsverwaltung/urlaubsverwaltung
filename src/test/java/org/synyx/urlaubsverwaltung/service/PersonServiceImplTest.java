@@ -124,7 +124,7 @@ public class PersonServiceImplTest {
     public void testGetAllPersons() {
 
         instance.getAllPersons();
-        Mockito.verify(personDAO).findAll();
+        Mockito.verify(personDAO).getPersonsOrderedByLastName();
     }
 
 
@@ -138,7 +138,7 @@ public class PersonServiceImplTest {
 
         HolidaysAccount account = mock(HolidaysAccount.class);
 
-        Mockito.when(personDAO.findAll()).thenReturn(persons);
+        Mockito.when(personDAO.getPersonsOrderedByLastName()).thenReturn(persons);
         Mockito.when(accountService.getHolidaysAccount(Mockito.anyInt(), (Person) (Mockito.any()))).thenReturn(account);
 
         instance.deleteRemainingVacationDays();
@@ -158,7 +158,7 @@ public class PersonServiceImplTest {
 
         HolidaysAccount account = mock(HolidaysAccount.class);
 
-        Mockito.when(personDAO.findAll()).thenReturn(persons);
+        Mockito.when(personDAO.getPersonsOrderedByLastName()).thenReturn(persons);
         Mockito.when(accountService.getHolidaysAccount(Mockito.anyInt(), (Person) (Mockito.any()))).thenReturn(account);
         Mockito.when(account.getRemainingVacationDays()).thenReturn(BigDecimal.valueOf(5.0));
 
@@ -186,7 +186,7 @@ public class PersonServiceImplTest {
         List<Person> personList = new ArrayList<Person>();
         personList.add(new Person());
 
-        Mockito.when(personDAO.findAll()).thenReturn(personList);
+        Mockito.when(personDAO.getPersonsOrderedByLastName()).thenReturn(personList);
         Mockito.when(accountLastYear.getVacationDays()).thenReturn(BigDecimal.TEN);
         Mockito.when(accountCurrentYear.getVacationDays()).thenReturn(BigDecimal.valueOf(15.0));
         Mockito.when(accountService.getHolidayEntitlement(Mockito.anyInt(), (Person) (Mockito.any()))).thenReturn(
@@ -214,7 +214,7 @@ public class PersonServiceImplTest {
         personList = new ArrayList<Person>();
         personList.add(new Person());
 
-        Mockito.when(personDAO.findAll()).thenReturn(personList);
+        Mockito.when(personDAO.getPersonsOrderedByLastName()).thenReturn(personList);
         Mockito.when(accountLastYear.getVacationDays()).thenReturn(BigDecimal.TEN);
         Mockito.when(accountCurrentYear.getVacationDays()).thenReturn(BigDecimal.valueOf(5.0));
         Mockito.when(accountService.getHolidayEntitlement(Mockito.anyInt(), (Person) (Mockito.any()))).thenReturn(

@@ -69,10 +69,10 @@ public class CalculationService {
         } else if (DateUtil.isAfterApril(startMonth, endMonth)) {
             account = subtractCaseAfterApril(application, account);
             accounts.add(account);
-        } else if (DateUtil.isBetweenMarchAndApril(startMonth, endMonth)) {
+        } else if (DateUtil.spansMarchAndApril(startMonth, endMonth)) {
             account = subtractCaseBetweenApril(application, account);
             accounts.add(account);
-        } else if (DateUtil.isBetweenDecemberAndJanuary(startMonth, endMonth)) {
+        } else if (DateUtil.spansDecemberAndJanuary(startMonth, endMonth)) {
             HolidaysAccount accountNextYear = accountService.getAccountOrCreateOne(application.getEndDate().getYear(),
                     application.getPerson());
             accounts = subtractCaseBetweenJanuary(application, account, accountNextYear);
@@ -112,13 +112,13 @@ public class CalculationService {
             days = getNumberOfVacationDays(application);
             account.setVacationDays(account.getVacationDays().add(days));
             accounts.add(account);
-        } else if (DateUtil.isBetweenMarchAndApril(startMonth, endMonth)) {
+        } else if (DateUtil.spansMarchAndApril(startMonth, endMonth)) {
             BigDecimal beforeApr = getDaysBeforeLastOfGivenMonth(application, DateTimeConstants.MARCH);
             BigDecimal afterApr = getDaysAfterFirstOfGivenMonth(application, DateTimeConstants.APRIL);
             account.setVacationDays(account.getVacationDays().add(afterApr));
             account = addDaysToAccount(account, beforeApr);
             accounts.add(account);
-        } else if (DateUtil.isBetweenDecemberAndJanuary(startMonth, endMonth)) {
+        } else if (DateUtil.spansDecemberAndJanuary(startMonth, endMonth)) {
             HolidaysAccount accountNextYear = accountService.getAccountOrCreateOne(application.getEndDate().getYear(),
                     application.getPerson());
             BigDecimal beforeJan = getDaysBeforeLastOfGivenMonth(application, DateTimeConstants.DECEMBER);

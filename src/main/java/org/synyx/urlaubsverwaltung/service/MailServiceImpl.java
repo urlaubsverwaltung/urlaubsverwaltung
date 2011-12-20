@@ -109,7 +109,7 @@ public class MailServiceImpl implements MailService {
         try {
             this.mailSender.send(prep);
         } catch (MailException ex) {
-            mailLogger.error(ex.getMessage());
+            mailLogger.error(ex.getMessage(), ex);
         }
     }
 

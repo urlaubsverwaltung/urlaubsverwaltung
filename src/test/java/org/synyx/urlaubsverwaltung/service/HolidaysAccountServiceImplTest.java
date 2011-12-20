@@ -123,23 +123,24 @@ public class HolidaysAccountServiceImplTest {
         assertEquals(person, returnValue.getPerson());
         assertEquals(null, returnValue.getVacationDays());
 
+        // TODO
         // case 2: account not yet existent
 
-//        Mockito.when(holidaysAccountDAO.getHolidaysAccountByYearAndPerson(NEXT_YEAR, person)).thenReturn(null);
+// Mockito.when(holidaysAccountDAO.getHolidaysAccountByYearAndPerson(NEXT_YEAR, person)).thenReturn(null);
 //
-//        HolidaysAccount newAccount = new HolidaysAccount();
-//        newAccount.setPerson(person);
-//        newAccount.setYear(NEXT_YEAR);
-//        newAccount.setRemainingVacationDays(BigDecimal.ZERO);
-//        newAccount.setVacationDays(ENTITLEMENT);
+// HolidaysAccount newAccount = new HolidaysAccount();
+// newAccount.setPerson(person);
+// newAccount.setYear(NEXT_YEAR);
+// newAccount.setRemainingVacationDays(BigDecimal.ZERO);
+// newAccount.setVacationDays(ENTITLEMENT);
 //
-//        Mockito.when(instance.newHolidaysAccount(person, ENTITLEMENT, BigDecimal.ZERO, NEXT_YEAR)).thenReturn(
-//            newAccount);
+// Mockito.when(instance.newHolidaysAccount(person, ENTITLEMENT, BigDecimal.ZERO, NEXT_YEAR)).thenReturn(
+// newAccount);
 //
-//        returnValue = instance.getAccountOrCreateOne(NEXT_YEAR, person);
-//        Mockito.verify(holidaysAccountDAO).save(newAccount);
-//        assertNotNull(returnValue);
-//        assertEquals(ENTITLEMENT, returnValue.getVacationDays());
+// returnValue = instance.getAccountOrCreateOne(NEXT_YEAR, person);
+// Mockito.verify(holidaysAccountDAO).save(newAccount);
+// assertNotNull(returnValue);
+// assertEquals(ENTITLEMENT, returnValue.getVacationDays());
 
     }
 
@@ -191,6 +192,7 @@ public class HolidaysAccountServiceImplTest {
     @Test
     public void testGetHolidaysAccountByYearOrderedByPersons() {
 
+        // TODO
         // to be implemented...
         // specially important because of Query in DAO
     }
@@ -239,7 +241,7 @@ public class HolidaysAccountServiceImplTest {
 
         instance.updateHolidayEntitlement(persons, 2012);
 
-        // TO DOOOOOOO
+        // TODO
 // assertEquals(BigDecimal.valueOf(5), entitlement.getRemainingVacationDays());
 // assertEquals(BigDecimal.valueOf(25), accountCurrentYear.getVacationDays());
 // assertEquals(BigDecimal.valueOf(5), accountCurrentYear.getRemainingVacationDays());

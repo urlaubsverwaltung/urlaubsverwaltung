@@ -33,21 +33,33 @@
         
         
         <div id="content">
+            
         <table id="staff-list" cellspacing="0" border="0.5">
             <tr>
+                <th class="attributes"><spring:message code="login" /></th>
                 <th class="attributes"><spring:message code="name" /></th>
                 <th class="attributes"><spring:message code="email" /></th>
                 <th class="vac"><spring:message code="table.vac" /></th>
-                <th class="vac"><spring:message code="table.resturlaub" /></th>
+                <th class="vac"><spring:message code="table.urlaub" /></th>
                 <th>&nbsp;</th>
             </tr>
-        <c:forEach items="${accounts}" var="account" varStatus="loopStatus">
+        <c:forEach items="${persons}" var="person" varStatus="loopStatus">
             <tr class="${loopStatus.index % 2 == 0 ? 'even' : 'odd'}">
-                <td><c:out value="${account.person.lastName}"/>&nbsp;<c:out value="${account.person.firstName}"/></td>
-                <td><a href="mailto:${account.person.email}"><c:out value="${account.person.email}"/></a></td>
-                <td class="vac"><c:out value="${account.vacationDays}"/></td>
-                <td class="vac"><c:out value="${account.remainingVacationDays}"/></td>
-                <td class="td-edit"><a href="${formUrlPrefix}/application/${account.person.id}"><img src="images/playlist.png" /></a></td>
+                <td><c:out value="${person.loginName}"/></td>
+                <td><c:out value="${person.lastName}"/>&nbsp;<c:out value="${person.firstName}"/></td>
+                <td><a href="mailto:${person.email}"><c:out value="${person.email}"/></a></td>
+                <td class="vac"><c:out value="${entitlements[person].vacationDays + entitlements[person].remainingVacationDays}"/></td>
+                <td class="vac">
+                    <c:choose>
+                        <c:when test="${april == 1}">
+                            <c:out value="${accounts[person].vacationDays + accounts[person].remainingVacationDays}"/>
+                        </c:when>
+                        <c:otherwise>
+                            <c:out value="${accounts[person].vacationDays}"/>
+                        </c:otherwise>
+                    </c:choose>
+                </td>
+                <td class="td-edit"><a href="${formUrlPrefix}/staff/${person.id}/edit"><img src="<spring:url value='/images/edit.png' />" /></a></td>
             </tr>    
         </c:forEach>
         </table>

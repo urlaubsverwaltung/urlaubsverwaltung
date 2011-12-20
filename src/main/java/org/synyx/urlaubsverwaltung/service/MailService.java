@@ -62,7 +62,7 @@ public interface MailService {
 
 
     /**
-     * this method sends a mail to stern@synyx.de mentioning all person that are on holiday
+     * this method sends a newsletter mentioning all person that are on holiday
      *
      * @param  persons  persons on vacation this week
      */
