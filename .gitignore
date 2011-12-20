@@ -2,3 +2,10 @@
 /.settings/
 /target/
 /lib/~/
+
+# Ignore log directory
+logs
+
+# Ignore IntelliJ IDEA project files
+.idea
+*.iml
