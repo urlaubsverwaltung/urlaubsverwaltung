@@ -28,6 +28,7 @@
                 
                 <ul><li><a href="${formUrlPrefix}/staff/${loggedUser.id}/overview"><spring:message code="overview" /></a></li>
                     <li><a href="${formUrlPrefix}/application/${loggedUser.id}/new"><spring:message code="apply" /></a></li>
+                    <li><a href="${formUrlPrefix}/application/waiting"><spring:message code="waiting.app" /></a></li>
                     <li><a href="${formUrlPrefix}/application/allowed"><spring:message code="allow.app" /></a></li>
                     <li><a href="${formUrlPrefix}/application/cancelled"><spring:message code="cancel.app" /></a></li>
                     <li><a href="${formUrlPrefix}/staff/list"><spring:message code="overview" />&nbsp;<spring:message code="staff" /></a></li>
