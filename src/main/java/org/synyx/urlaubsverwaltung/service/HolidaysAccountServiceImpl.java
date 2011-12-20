@@ -78,9 +78,17 @@ public class HolidaysAccountServiceImpl implements HolidaysAccountService {
 
         // if account not yet existent
         if (account == null) {
+            HolidayEntitlement entitlement = getHolidayEntitlement(year, person);
+
+            if (entitlement == null) {
+                entitlement = newHolidayEntitlement(person, year,
+                        getHolidayEntitlement(year - 1, person).getVacationDays());
+            }
+
+            saveHolidayEntitlement(entitlement);
+
             // create new account
-            account = newHolidaysAccount(person, getHolidayEntitlement(year, person).getVacationDays(), BigDecimal.ZERO,
-                    year);
+            account = newHolidaysAccount(person, entitlement.getVacationDays(), BigDecimal.ZERO, year);
         }
 
         return account;
