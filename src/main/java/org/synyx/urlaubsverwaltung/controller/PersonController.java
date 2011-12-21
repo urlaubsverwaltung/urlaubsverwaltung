@@ -22,10 +22,11 @@ import org.synyx.urlaubsverwaltung.domain.HolidayEntitlement;
 import org.synyx.urlaubsverwaltung.domain.HolidaysAccount;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.service.ApplicationService;
-import org.synyx.urlaubsverwaltung.service.CryptoService;
 import org.synyx.urlaubsverwaltung.service.HolidaysAccountService;
 import org.synyx.urlaubsverwaltung.service.PersonService;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
+import org.synyx.urlaubsverwaltung.view.PersonForm;
+import org.synyx.urlaubsverwaltung.view.ViewService;
 
 import java.util.HashMap;
 import java.util.List;
@@ -45,8 +46,10 @@ public class PersonController {
     private static final String PERSON_FORM_JSP = "person/person_form";
 
     // attribute names
+    private static final String LOGGED_USER = "loggedUser";
     private static final String PERSON = "person";
     private static final String PERSONS = "persons";
+    private static final String PERSONFORM = "personForm";
     private static final String ACCOUNT = "account";
     private static final String ACCOUNTS = "accounts";
     private static final String APPLICATIONS = "applications";
@@ -58,7 +61,6 @@ public class PersonController {
     private static final String YEAR = "year";
 
     // links
-    private static final String WEB = "web/";
     private static final String LIST_LINK = "/staff/list";
     private static final String DETAIL_LINK = "/staff/detail";
     private static final String OVERVIEW_LINK = "/staff/{" + PERSON_ID + "}/overview";
@@ -70,15 +72,15 @@ public class PersonController {
     private PersonService personService;
     private ApplicationService applicationService;
     private HolidaysAccountService accountService;
-    private CryptoService cryptoService;
+    private ViewService viewService;
 
     public PersonController(PersonService personService, ApplicationService applicationService,
-        HolidaysAccountService accountService, CryptoService cryptoService) {
+        HolidaysAccountService accountService, ViewService viewService) {
 
         this.personService = personService;
         this.applicationService = applicationService;
         this.accountService = accountService;
-        this.cryptoService = cryptoService;
+        this.viewService = viewService;
     }
 
     /**
@@ -164,7 +166,7 @@ public class PersonController {
 
 
     /**
-     * Overview for user: information about one's holiday accounts, etc.
+     * Overview for user: information about one's leave accounts, entitlement of holidays, list of applications, etc.
      *
      * @param  personId
      * @param  model
@@ -200,7 +202,7 @@ public class PersonController {
 
 
     /**
-     * Form to edit a user.
+     * Prepares the view object PersonForm and returns jsp with form to edit a user.
      *
      * @param  personId
      * @param  model
@@ -211,51 +213,69 @@ public class PersonController {
     public String editPersonForm(@PathVariable(PERSON_ID) Integer personId, Model model) {
 
         Person person = personService.getPersonByID(personId);
+        PersonForm personForm = viewService.getPersonForm(person);
 
         setLoggedUser(model);
         model.addAttribute(PERSON, person);
+        model.addAttribute(PERSONFORM, personForm);
 
         return PERSON_FORM_JSP;
     }
 
 
     /**
-     * Speichert Datenaenderungen eines Staffs ab.
+     * Gets informations out of view object PersonForm and edits the concerning person and their entitlement to holidays
+     * and leave account.
      *
-     * @param  person
+     * @param  personForm
      * @param  personId
      *
      * @return
      */
     @RequestMapping(value = EDIT_LINK, method = RequestMethod.PUT)
-    public String editPerson(@ModelAttribute(PERSON) Person person,
+    public String editPerson(@ModelAttribute(PERSONFORM) PersonForm personForm,
         @PathVariable(PERSON_ID) Integer personId) {
 
         Person personToUpdate = personService.getPersonByID(personId);
 
-        personToUpdate.setLastName(person.getLastName());
-        personToUpdate.setFirstName(person.getFirstName());
-        personToUpdate.setEmail(person.getEmail());
+        // set person information from PersonForm object on person that is updated
+        personToUpdate.setLastName(personForm.getLastName());
+        personToUpdate.setFirstName(personForm.getFirstName());
+        personToUpdate.setEmail(personForm.getEmail());
 
         personService.save(personToUpdate);
 
-        // to be implemented....
-// int year = person.getYearForCurrentUrlaubsanspruch();
-//
-// accountService.newUrlaubsanspruch(person, year, person.getCurrentUrlaubsanspruch().doubleValue());
-// accountService.newUrlaubskonto(person, person.getCurrentUrlaubsanspruch().doubleValue(), 0.0, year);
+        // check if there is an existing entitlement to holidays
+        HolidayEntitlement entitlement = accountService.getHolidayEntitlement(personForm.getYear(), personToUpdate);
 
-        LOG.info("Der Staff " + person.getFirstName() + " " + person.getLastName() + " wurde editiert.");
+        // if not, create one
+        if (entitlement == null) {
+            entitlement = accountService.newHolidayEntitlement(personToUpdate, personForm.getYear(),
+                    personForm.getVacationDays());
+            accountService.saveHolidayEntitlement(entitlement);
+        } else {
+            // if there is an entitlement: set current entitlement to inactive and creates a new active one with changed
+            // information do this with current leave account too
+            accountService.editHolidayEntitlement(personToUpdate, personForm.getYear(), personForm.getVacationDays());
+        }
 
-        return "redirect:" + WEB + LIST_LINK;
+        LOG.info(DateMidnight.now(GregorianChronology.getInstance()).toString("dd.MM.yyyy") + " ID: " + personId
+            + " Der Mitarbeiter " + personToUpdate.getFirstName() + " " + personToUpdate.getLastName()
+            + " wurde editiert.");
+
+        return "redirect:/web" + LIST_LINK;
     }
 
 
+    /*
+     * This method gets logged-in user and his username; with the username you get the person's ID to be able to show
+     * overview of this person.
+     */
     private void setLoggedUser(Model model) {
 
         String user = SecurityContextHolder.getContext().getAuthentication().getName();
         Person loggedUser = personService.getPersonByLogin(user);
 
-        model.addAttribute("loggedUser", loggedUser);
+        model.addAttribute(LOGGED_USER, loggedUser);
     }
 }

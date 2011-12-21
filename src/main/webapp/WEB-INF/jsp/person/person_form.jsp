@@ -26,21 +26,10 @@
         
         <spring:url var="formUrlPrefix" value="/web" />
         
-        <c:choose>
-            <c:when test="${person.id == null}">
-                <c:set var="method" value="post" />
-                <c:set var="url" value="${formUrlPrefix}/staff/new" />
-            </c:when>
-            <c:otherwise>
-                <c:set var="method" value="put" />
-                <c:set var="url" value="${formUrlPrefix}/staff/${person.id}/edit" />
-            </c:otherwise>
-        </c:choose>
         
         <div id="content">
         
-        <form:form method="${method}" action="${url}" modelAttribute="person"> 
-            <form:hidden path="id" />
+        <form:form method="put" action="${formUrlPrefix}/staff/${person.id}/edit" modelAttribute="personForm"> 
                 <table>
                     <tr>
                         <td><label for="username"><spring:message code="username" />:</label></td>
@@ -59,12 +48,22 @@
                         <td><form:input id="email" path="email" /></td>
                     </tr>
                     <tr>
+                        <td><label for="jahr"><spring:message code="year" />:</label></td>
+                        <td><form:input id="jahr" path="year" /></td>
+                    </tr>
+                    <tr>
+                        <td><label for="urlaubsanspruch"><spring:message code="overview.anspruch" />:</label></td>
+                        <td><form:input id="urlaubsanspruch" path="vacationDays" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">&nbsp;</td>
+                    </tr>
+                    <tr>
                         <td>
                             <input type="submit" name="<spring:message code="save" />" value="<spring:message code="save" />" />                        
                         </td>
                         <td>
-                            <!--  weiss noch nicht, wo der Link hin zeigen soll -->
-                            <a href=""><spring:message code="cancel" /></a>
+                            <a class="button" href="${formUrlPrefix}/staff/list"><spring:message code='cancel' /></a>
                         </td>
                     </tr>
                 </table>

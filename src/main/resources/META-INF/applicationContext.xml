@@ -55,7 +55,10 @@
 <bean id="cryptoService" class="org.synyx.urlaubsverwaltung.service.CryptoService" />
 <bean id="mailService" class="org.synyx.urlaubsverwaltung.service.MailServiceImpl">
        <constructor-arg ref="mailSender" />
-</bean>  
+</bean> 
+<bean id="viewService" class="org.synyx.urlaubsverwaltung.view.ViewService">
+    <constructor-arg ref="accountService" />
+</bean>    
 
 </beans>
 
