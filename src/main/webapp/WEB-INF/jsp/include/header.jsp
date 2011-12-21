@@ -16,8 +16,8 @@
         <spring:url var="formUrlPrefix" value="/web" />
         
         <div id="top-menu">
-            <spring:message code="loggedas" />&nbsp;<sec:authentication property="principal.username" />  
-            <a class="button" href="<spring:url value='/j_spring_security_logout' />">Logout</a>
+            <spring:message code="loggedas" />&nbsp;<sec:authentication property="principal.username" />&nbsp;  
+            <a href="<spring:url value='/j_spring_security_logout' />">Logout</a>
         </div>
         
         <div id="header">

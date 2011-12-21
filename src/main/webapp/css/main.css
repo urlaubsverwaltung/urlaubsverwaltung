@@ -188,17 +188,34 @@ font-size: 1.05em;
 	text-align: center;
 }	
 
-#person-tbl td.td-edit {
-	text-align: right;
+.td-edit {
+	text-align: center;
 	padding-right: 10px;
 }
 
 
 /* Buttons */
 
-.button {
-    float: left;
-    margin-right: 10px;
+/* General button styles (input buttons and link buttons) */
+
+input[type=submit], input[type=button], a.button {
+    
+    background-color: #E6E6E6;
+    border: 1px solid #D3D3D3;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    text-decoration: none;
+    text-align: right;
+    color: #555555;
+    font-size: 0.9em;
+    font-weight: normal;
+    margin-right: 0.3em;    
+    padding: 0.2em 0.3em 0.1em 0.3em;
+}
+
+input[type=submit]:hover, input[type=button]:hover, a.button:hover {
+    background-color: #F2EFEF;
+    cursor: pointer;
 }
 	
 
