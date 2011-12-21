@@ -4,6 +4,8 @@
  */
 package org.synyx.urlaubsverwaltung.view;
 
+import org.synyx.urlaubsverwaltung.domain.Person;
+
 import java.math.BigDecimal;
 
 
@@ -23,6 +25,23 @@ public class PersonForm {
     private int year;
 
     private BigDecimal vacationDays;
+
+    public PersonForm() {
+    }
+
+
+    public PersonForm(Person person, int year, BigDecimal days) {
+
+        this.loginName = person.getLoginName();
+        this.lastName = person.getLastName();
+        this.firstName = person.getFirstName();
+        this.email = person.getEmail();
+        this.year = year;
+
+        if (days != null) {
+            this.vacationDays = days;
+        }
+    }
 
     public String getEmail() {
 
@@ -93,5 +112,15 @@ public class PersonForm {
     public void setYear(int year) {
 
         this.year = year;
+    }
+
+
+    public Person fillPersonObject(Person person) {
+
+        person.setLastName(this.lastName);
+        person.setFirstName(this.firstName);
+        person.setEmail(this.email);
+
+        return person;
     }
 }

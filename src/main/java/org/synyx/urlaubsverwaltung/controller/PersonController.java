@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.HolidayEntitlement;
@@ -26,7 +27,8 @@ import org.synyx.urlaubsverwaltung.service.HolidaysAccountService;
 import org.synyx.urlaubsverwaltung.service.PersonService;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.view.PersonForm;
-import org.synyx.urlaubsverwaltung.view.ViewService;
+
+import java.math.BigDecimal;
 
 import java.util.HashMap;
 import java.util.List;
@@ -46,6 +48,7 @@ public class PersonController {
     private static final String PERSON_FORM_JSP = "person/person_form";
 
     // attribute names
+    private static final String DATE_FORMAT = "dd.MM.yyyy";
     private static final String LOGGED_USER = "loggedUser";
     private static final String PERSON = "person";
     private static final String PERSONS = "persons";
@@ -72,15 +75,13 @@ public class PersonController {
     private PersonService personService;
     private ApplicationService applicationService;
     private HolidaysAccountService accountService;
-    private ViewService viewService;
 
     public PersonController(PersonService personService, ApplicationService applicationService,
-        HolidaysAccountService accountService, ViewService viewService) {
+        HolidaysAccountService accountService) {
 
         this.personService = personService;
         this.applicationService = applicationService;
         this.accountService = accountService;
-        this.viewService = viewService;
     }
 
     /**
@@ -166,7 +167,8 @@ public class PersonController {
 
 
     /**
-     * Overview for user: information about one's leave accounts, entitlement of holidays, list of applications, etc.
+     * Default overview for user: information about one's leave accounts, entitlement of holidays, list of applications,
+     * etc. If there is no parameter set for year, take current year for view.
      *
      * @param  personId
      * @param  model
@@ -174,12 +176,45 @@ public class PersonController {
      * @return
      */
     @RequestMapping(value = OVERVIEW_LINK, method = RequestMethod.GET)
-    public String showOverview(@PathVariable(PERSON_ID) Integer personId, Model model) {
+    public String showDefaultOverview(@PathVariable(PERSON_ID) Integer personId, Model model) {
+
+        prepareOverview(personId, DateMidnight.now(GregorianChronology.getInstance()).getYear(), model);
+
+        return OVERVIEW_JSP;
+    }
+
+
+    /**
+     * Overview with year as parameter for user: information about one's leave accounts, entitlement of holidays, list
+     * of applications, etc.
+     *
+     * @param  personId
+     * @param  model
+     *
+     * @return
+     */
+    @RequestMapping(value = OVERVIEW_LINK, params = "year", method = RequestMethod.GET)
+    public String showOverview(@PathVariable(PERSON_ID) Integer personId,
+        @RequestParam("year") int year, Model model) {
+
+        prepareOverview(personId, year, model);
+
+        return OVERVIEW_JSP;
+    }
+
+
+    /**
+     * Prepares model for overview with given person's ID and year.
+     *
+     * @param  personId
+     * @param  year
+     * @param  model
+     */
+    private void prepareOverview(Integer personId, int year, Model model) {
 
         Person person = personService.getPersonByID(personId);
-        int year = DateMidnight.now(GregorianChronology.getInstance()).getYear();
 
-        List<Application> applications = applicationService.getAllApplicationsForPerson(person);
+        List<Application> applications = applicationService.getApplicationsByPersonAndYear(person, year);
         HolidaysAccount account = accountService.getHolidaysAccount(year, person);
         HolidayEntitlement entitlement = accountService.getHolidayEntitlement(year, person);
         DateMidnight date = DateMidnight.now(GregorianChronology.getInstance());
@@ -196,8 +231,6 @@ public class PersonController {
         model.addAttribute(ENTITLEMENT, entitlement);
         model.addAttribute(YEAR, date.getYear());
         model.addAttribute(APRIL, april);
-
-        return OVERVIEW_JSP;
     }
 
 
@@ -213,7 +246,17 @@ public class PersonController {
     public String editPersonForm(@PathVariable(PERSON_ID) Integer personId, Model model) {
 
         Person person = personService.getPersonByID(personId);
-        PersonForm personForm = viewService.getPersonForm(person);
+
+        int year = DateMidnight.now(GregorianChronology.getInstance()).getYear();
+        BigDecimal days = null;
+
+        HolidayEntitlement entitlement = accountService.getHolidayEntitlement(year, person);
+
+        if (entitlement != null) {
+            days = entitlement.getVacationDays();
+        }
+
+        PersonForm personForm = new PersonForm(person, year, days);
 
         setLoggedUser(model);
         model.addAttribute(PERSON, person);
@@ -239,9 +282,7 @@ public class PersonController {
         Person personToUpdate = personService.getPersonByID(personId);
 
         // set person information from PersonForm object on person that is updated
-        personToUpdate.setLastName(personForm.getLastName());
-        personToUpdate.setFirstName(personForm.getFirstName());
-        personToUpdate.setEmail(personForm.getEmail());
+        personToUpdate = personForm.fillPersonObject(personToUpdate);
 
         personService.save(personToUpdate);
 
@@ -259,7 +300,7 @@ public class PersonController {
             accountService.editHolidayEntitlement(personToUpdate, personForm.getYear(), personForm.getVacationDays());
         }
 
-        LOG.info(DateMidnight.now(GregorianChronology.getInstance()).toString("dd.MM.yyyy") + " ID: " + personId
+        LOG.info(DateMidnight.now(GregorianChronology.getInstance()).toString(DATE_FORMAT) + " ID: " + personId
             + " Der Mitarbeiter " + personToUpdate.getFirstName() + " " + personToUpdate.getLastName()
             + " wurde editiert.");
 

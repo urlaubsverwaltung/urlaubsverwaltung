@@ -27,6 +27,12 @@
         <%@include file="../include/header.jsp" %>
 
         <div id="content">
+            
+            <div id="year-navi">
+                <a href="${formUrlPrefix}/staff/${loggedUser.id}/overview?year=2011">2011</a>
+                <a href="${formUrlPrefix}/staff/${loggedUser.id}/overview?year=2012">2012</a>
+                <a href="${formUrlPrefix}/staff/${loggedUser.id}/overview?year=2013">2013</a>
+            </div>
 
             <table id="person-tbl" cellspacing="0" border="1">
                 <tr>
@@ -34,37 +40,57 @@
                 </tr>
                 <tr>
                     <th>
-                        <spring:message code="entitlement" />
+                        <spring:message code="entitlement" />&nbsp;<spring:message code="in.year" />&nbsp;<c:out value="${year}"/>
                     </th>
                     <td>
-                        <c:out value="${entitlement.vacationDays}"/>&nbsp;<spring:message code="peryear" />
+                        <c:out value="${entitlement.vacationDays + entitlement.remainingVacationDays}"/>
+                        <spring:message code="days" />&nbsp;(<spring:message code="davon" />
+                        <c:choose>
+                            <c:when test="${entitlement.remainingVacationDays == null}">
+                                0
+                            </c:when>
+                            <c:otherwise>
+                                <c:out value="${entitlement.remainingVacationDays}"/>
+                            </c:otherwise>
+                        </c:choose>
+                        <spring:message code="days" />&nbsp;<spring:message code="remaining" />)
                     </td>
                 </tr>
                 <tr>
                     <th>
-                        <spring:message code="remaining" />&nbsp;<c:out value="${year-1}"/>
+                        <spring:message code="overview.used" />
                     </th>
                     <td>
-                        <c:out value="${entitlement.remainingVacationDays}"/>&nbsp;<spring:message code="days" />
+                        <c:choose>
+                            <c:when test="${account != null}">
+                                <c:out value="${(entitlement.vacationDays - account.vacationDays) + (entitlement.remainingVacationDays - account.remainingVacationDays)}"/>&nbsp;<spring:message code="days" />
+                            </c:when>
+                            <c:otherwise>
+                                0 <spring:message code="days" />
+                            </c:otherwise>
+                        </c:choose>    
                     </td>
                 </tr>
                 <tr>
                     <th>
-                        <c:out value="${year}"/>&nbsp;<spring:message code="overview.used" />
+                        <spring:message code="overview.left" />
                     </th>
                     <td>
-                        <c:out value="${entitlement.vacationDays - account.vacationDays}"/>&nbsp;+&nbsp;<c:out value="${entitlement.remainingVacationDays - account.remainingVacationDays}"/>&nbsp;<spring:message code="days" />
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        <c:out value="${year}"/>&nbsp;<spring:message code="days.vac" />
-                    </th>
-                    <td>
-                        <c:out value="${account.vacationDays}"/>
-                        <c:if test="${april == 1}">
-                            &nbsp;+&nbsp;<c:out value="${account.remainingVacationDays}"/>
-                        </c:if>
+                        <c:choose>
+                            <c:when test="${account != null}">
+                                <c:choose>
+                                    <c:when test="${april == 1}">
+                                        <c:out value="${account.vacationDays + account.remainingVacationDays}"/>&nbsp;<spring:message code="days" />
+                                    </c:when>
+                                    <c:otherwise>
+                                        <c:out value="${account.vacationDays}"/>&nbsp;<spring:message code="days" />
+                                    </c:otherwise>
+                                </c:choose>
+                            </c:when>
+                            <c:otherwise>
+                                <c:out value="${entitlement.vacationDays + entitlement.remainingVacationDays}"/>&nbsp;<spring:message code="days" />
+                            </c:otherwise>
+                        </c:choose>
                     </td>
                 </tr>
             </table>

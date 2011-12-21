@@ -42,7 +42,6 @@ import java.util.Locale;
 public class ApplicationController {
 
     // jsps
-    private static final String SHOW_APP_JSP = "application/show";
     private static final String SHOW_APP_CHEF_JSP = "application/app_chef";
     private static final String SHOW_APP_OFFICE_JSP = "application/app_office";
     private static final String PRINT_VIEW_APP_JSP = "application/print";
@@ -50,6 +49,7 @@ public class ApplicationController {
     private static final String APP_FORM_JSP = "application/app_form";
 
     // attribute names
+    private static final String DATE_FORMAT = "dd.MM.yyyy";
     private static final String APPLICATION = "application";
     private static final String APPLICATIONS = "applications";
     private static final String ACCOUNT = "account";
@@ -60,9 +60,6 @@ public class ApplicationController {
 
     private static final String APPLICATION_ID = "applicationId";
     private static final String PERSON_ID = "personId";
-
-    // links
-    private static final String WEB = "web/";
 
     // list of applications by state
     private static final String WAITING_APPS = "/application/waiting";
@@ -121,7 +118,7 @@ public class ApplicationController {
     public String showApplicationsByPerson(@PathVariable(PERSON_ID) Integer personId, Model model) {
 
         Person person = personService.getPersonByID(personId);
-        List<Application> applications = applicationService.getAllApplicationsForPerson(person);
+        List<Application> applications = applicationService.getApplicationsByPerson(person);
 
         model.addAttribute(PERSON, person);
         model.addAttribute(APPLICATIONS, applications);
@@ -141,7 +138,7 @@ public class ApplicationController {
     @RequestMapping(value = WAITING_APPS, method = RequestMethod.GET)
     public String showWaiting(Model model) {
 
-        List<Application> applications = applicationService.getAllApplicationsByState(ApplicationStatus.WAITING);
+        List<Application> applications = applicationService.getApplicationsByState(ApplicationStatus.WAITING);
         model.addAttribute(APPLICATIONS, applications);
         setLoggedUser(model);
 
@@ -159,7 +156,7 @@ public class ApplicationController {
     @RequestMapping(value = ALLOWED_APPS, method = RequestMethod.GET)
     public String showAllowed(Model model) {
 
-        List<Application> applications = applicationService.getAllApplicationsByState(ApplicationStatus.ALLOWED);
+        List<Application> applications = applicationService.getApplicationsByState(ApplicationStatus.ALLOWED);
         model.addAttribute(APPLICATIONS, applications);
         setLoggedUser(model);
 
@@ -177,7 +174,7 @@ public class ApplicationController {
     @RequestMapping(value = CANCELLED_APPS, method = RequestMethod.GET)
     public String showCancelled(Model model) {
 
-        List<Application> applications = applicationService.getAllApplicationsByState(ApplicationStatus.CANCELLED);
+        List<Application> applications = applicationService.getApplicationsByState(ApplicationStatus.CANCELLED);
         model.addAttribute(APPLICATIONS, applications);
         setLoggedUser(model);
 
@@ -195,7 +192,7 @@ public class ApplicationController {
     @RequestMapping(value = REJECTED_APPS, method = RequestMethod.GET)
     public String showRejected(Model model) {
 
-        List<Application> applications = applicationService.getAllApplicationsByState(ApplicationStatus.CANCELLED);
+        List<Application> applications = applicationService.getApplicationsByState(ApplicationStatus.CANCELLED);
         model.addAttribute(APPLICATIONS, applications);
         setLoggedUser(model);
 
@@ -308,7 +305,7 @@ public class ApplicationController {
 
         LOG.info(application.getApplicationDate() + " ID: " + application.getId() + "Der Antrag von "
             + application.getPerson().getFirstName() + " " + application.getPerson().getLastName()
-            + " wurde am " + DateMidnight.now().toString("dd.MM.yyyy") + " von " + boss.getFirstName() + " "
+            + " wurde am " + DateMidnight.now().toString(DATE_FORMAT) + " von " + boss.getFirstName() + " "
             + boss.getLastName() + " genehmigt.");
 
         return "";
@@ -337,7 +334,7 @@ public class ApplicationController {
 
         LOG.info(application.getApplicationDate() + " ID: " + application.getId() + "Der Antrag von "
             + application.getPerson().getFirstName() + " " + application.getPerson().getLastName()
-            + " wurde am " + DateMidnight.now().toString("dd.MM.yyyy") + " von " + boss.getFirstName() + " "
+            + " wurde am " + DateMidnight.now().toString(DATE_FORMAT) + " von " + boss.getFirstName() + " "
             + boss.getLastName() + " abgelehnt.");
 
         return "";

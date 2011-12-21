@@ -166,13 +166,13 @@ tr.even {
 }
 
 #person-tbl th {
-	width: 55%;
+	width: 45%;
 }
 
 #person-tbl td#td-img {
 padding: 5px 0px 5px 0px;
 	text-align: center;
-}	
+}
 
 #app-tbl {
 	width: 80%;
@@ -191,6 +191,12 @@ font-size: 1.05em;
 .td-edit {
 	text-align: center;
 	padding-right: 10px;
+}
+
+
+
+#year-navi {
+    margin-bottom: 20px;
 }
 
 

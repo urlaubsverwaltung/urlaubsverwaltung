@@ -204,7 +204,7 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public void getAllPersonsOnHolidayForThisWeekAndPutItInAnEmail(DateMidnight startDate, DateMidnight endDate) {
 
-        List<Application> applications = applicationService.getAllApplicationsForACertainTime(startDate, endDate);
+        List<Application> applications = applicationService.getApplicationsForACertainTime(startDate, endDate);
 
         List<Person> persons = new ArrayList<Person>();
 

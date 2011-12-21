@@ -32,7 +32,7 @@ public interface HolidaysAccountService {
      * @param  year
      * @param  person
      *
-     * @return
+     * @return  only the active(!) holidays account of the given person for the given year
      */
     HolidaysAccount getHolidaysAccount(int year, Person person);
 

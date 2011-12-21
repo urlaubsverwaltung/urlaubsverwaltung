@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.service;
 
 import org.joda.time.DateMidnight;
+import org.joda.time.DateTimeConstants;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -13,6 +14,7 @@ import org.synyx.urlaubsverwaltung.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.domain.Comment;
 import org.synyx.urlaubsverwaltung.domain.HolidaysAccount;
 import org.synyx.urlaubsverwaltung.domain.Person;
+import org.synyx.urlaubsverwaltung.util.CalcUtil;
 
 import java.math.BigDecimal;
 
@@ -62,32 +64,32 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 
     /**
-     * @see  ApplicationService#getAllApplicationsForPerson(org.synyx.urlaubsverwaltung.domain.Person)
+     * @see  ApplicationService#getApplicationsByPerson(org.synyx.urlaubsverwaltung.domain.Person)
      */
     @Override
-    public List<Application> getAllApplicationsForPerson(Person person) {
+    public List<Application> getApplicationsByPerson(Person person) {
 
-        return applicationDAO.getAllApplicationsForPerson(person);
+        return applicationDAO.getApplicationsByPerson(person);
     }
 
 
     /**
-     * @see  ApplicationService#getAllApplicationsByState(org.synyx.urlaubsverwaltung.domain.ApplicationStatus)
+     * @see  ApplicationService#getApplicationsByState(org.synyx.urlaubsverwaltung.domain.ApplicationStatus)
      */
     @Override
-    public List<Application> getAllApplicationsByState(ApplicationStatus state) {
+    public List<Application> getApplicationsByState(ApplicationStatus state) {
 
-        return applicationDAO.getAllApplicationsByState(state);
+        return applicationDAO.getApplicationsByState(state);
     }
 
 
     /**
-     * @see  ApplicationService#getAllApplicationsForACertainTime(org.joda.time.DateMidnight, org.joda.time.DateMidnight)
+     * @see  ApplicationService#getApplicationsForACertainTime(org.joda.time.DateMidnight, org.joda.time.DateMidnight)
      */
     @Override
-    public List<Application> getAllApplicationsForACertainTime(DateMidnight startDate, DateMidnight endDate) {
+    public List<Application> getApplicationsForACertainTime(DateMidnight startDate, DateMidnight endDate) {
 
-        return applicationDAO.getAllApplicationsForACertainTime(startDate, endDate);
+        return applicationDAO.getApplicationsForACertainTime(startDate.toDate(), endDate.toDate());
     }
 
 
@@ -275,7 +277,8 @@ public class ApplicationServiceImpl implements ApplicationService {
             data = cryptoService.sign(privKey, data);
 
             return data;
-        } catch (InvalidKeyException ex) {
+        } // TODO Logging, catchen von Exceptions
+        catch (InvalidKeyException ex) {
         } catch (SignatureException ex) {
         } catch (NoSuchAlgorithmException ex) {
         } catch (InvalidKeySpecException ex) {
@@ -295,36 +298,19 @@ public class ApplicationServiceImpl implements ApplicationService {
         HolidaysAccount account = accounts.get(0);
 
         if (accounts.size() == 1) {
-            if (isEqualOrGreaterThanZero(account.getVacationDays())) {
+            if (CalcUtil.isEqualOrGreaterThanZero(account.getVacationDays())) {
                 return true;
             }
         } else if (accounts.size() > 1) {
             HolidaysAccount accountNextYear = accounts.get(1);
 
-            if ((isEqualOrGreaterThanZero(account.getVacationDays()))
-                    && (isEqualOrGreaterThanZero(accountNextYear.getVacationDays()))) {
+            if ((CalcUtil.isEqualOrGreaterThanZero(account.getVacationDays()))
+                    && (CalcUtil.isEqualOrGreaterThanZero(accountNextYear.getVacationDays()))) {
                 return true;
             }
         }
 
         return false;
-    }
-
-
-    /**
-     * checks if given number is equal or greater than zero.
-     *
-     * @param  number
-     *
-     * @return
-     */
-    private boolean isEqualOrGreaterThanZero(BigDecimal number) {
-
-        if (number.compareTo(BigDecimal.ZERO) >= 0) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
 
@@ -342,5 +328,15 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (accounts.size() > 1) {
             accountService.saveHolidaysAccount(accounts.get(1));
         }
+    }
+
+
+    @Override
+    public List<Application> getApplicationsByPersonAndYear(Person person, int year) {
+
+        DateMidnight firstDayOfYear = new DateMidnight(year, DateTimeConstants.JANUARY, 1);
+        DateMidnight lastDayOfYear = new DateMidnight(year, DateTimeConstants.DECEMBER, 31);
+
+        return applicationDAO.getApplicationsByPersonAndYear(person, firstDayOfYear.toDate(), lastDayOfYear.toDate());
     }
 }

@@ -245,7 +245,7 @@ public class PersonServiceImplTest {
         application.setPerson(person);
         applications.add(application);
 
-        Mockito.when(applicationService.getAllApplicationsForACertainTime(startDate, endDate)).thenReturn(applications);
+        Mockito.when(applicationService.getApplicationsForACertainTime(startDate, endDate)).thenReturn(applications);
 
         instance.getAllPersonsOnHolidayForThisWeekAndPutItInAnEmail(startDate, endDate);
 

@@ -85,7 +85,18 @@ public interface ApplicationService {
      *
      * @return  returns all applications of a person as a list of Application-objects
      */
-    List<Application> getAllApplicationsForPerson(Person person);
+    List<Application> getApplicationsByPerson(Person person);
+
+
+    /**
+     * use this to get all applications by person and year
+     *
+     * @param  person
+     * @param  year
+     *
+     * @return  return a list of applications of the given person and year
+     */
+    List<Application> getApplicationsByPersonAndYear(Person person, int year);
 
 
     /**
@@ -95,7 +106,7 @@ public interface ApplicationService {
      *
      * @return  returns all applications of a state as a list of application-objects
      */
-    List<Application> getAllApplicationsByState(ApplicationStatus state);
+    List<Application> getApplicationsByState(ApplicationStatus state);
 
 
     /**
@@ -106,7 +117,7 @@ public interface ApplicationService {
      *
      * @return
      */
-    List<Application> getAllApplicationsForACertainTime(DateMidnight startDate, DateMidnight endDate);
+    List<Application> getApplicationsForACertainTime(DateMidnight startDate, DateMidnight endDate);
 
 
     /**

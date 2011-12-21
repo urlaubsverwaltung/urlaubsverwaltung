@@ -119,33 +119,33 @@ public class ApplicationServiceImplTest {
     }
 
 
-    /** Test of getAllApplicationsForPerson method, of class ApplicationServiceImpl. */
+    /** Test of getApplicationsByPerson method, of class ApplicationServiceImpl. */
     @Test
     public void testGetAllApplicationsForPerson() {
 
-        instance.getAllApplicationsForPerson(person);
-        Mockito.verify(applicationDAO).getAllApplicationsForPerson(person);
+        instance.getApplicationsByPerson(person);
+        Mockito.verify(applicationDAO).getApplicationsByPerson(person);
     }
 
 
-    /** Test of getAllApplicationsByState method, of class ApplicationServiceImpl. */
+    /** Test of getApplicationsByState method, of class ApplicationServiceImpl. */
     @Test
     public void testGetAllApplicationsByState() {
 
-        instance.getAllApplicationsByState(ApplicationStatus.WAITING);
-        Mockito.verify(applicationDAO).getAllApplicationsByState(ApplicationStatus.WAITING);
+        instance.getApplicationsByState(ApplicationStatus.WAITING);
+        Mockito.verify(applicationDAO).getApplicationsByState(ApplicationStatus.WAITING);
     }
 
 
-    /** Test of getAllApplicationsForACertainTime method, of class ApplicationServiceImpl. */
+    /** Test of getApplicationsForACertainTime method, of class ApplicationServiceImpl. */
     @Test
     public void testGetAllApplicationsForACertainTime() {
 
         DateMidnight start = DateMidnight.now();
         DateMidnight end = DateMidnight.now();
 
-        instance.getAllApplicationsForACertainTime(start, end);
-        Mockito.verify(applicationDAO).getAllApplicationsForACertainTime(start, end);
+        instance.getApplicationsForACertainTime(start, end);
+        Mockito.verify(applicationDAO).getApplicationsForACertainTime(start.toDate(), end.toDate());
     }
 
 
