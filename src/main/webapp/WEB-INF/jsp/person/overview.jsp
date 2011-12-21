@@ -34,15 +34,7 @@
                 </tr>
                 <tr>
                     <th>
-                        <spring:message code="overview.person" />
-                    </th>
-                    <td>
-                        <c:out value="${person.lastName}"/>&nbsp;<c:out value="${person.firstName}"/>
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        <spring:message code="anspruch" />
+                        <spring:message code="entitlement" />
                     </th>
                     <td>
                         <c:out value="${entitlement.vacationDays}"/>&nbsp;<spring:message code="peryear" />
@@ -50,7 +42,7 @@
                 </tr>
                 <tr>
                     <th>
-                        <spring:message code="resturlaub" />&nbsp;<c:out value="${year-1}"/>
+                        <spring:message code="remaining" />&nbsp;<c:out value="${year-1}"/>
                     </th>
                     <td>
                         <c:out value="${entitlement.remainingVacationDays}"/>&nbsp;<spring:message code="days" />
@@ -66,7 +58,7 @@
                 </tr>
                 <tr>
                     <th>
-                        <c:out value="${year}"/>&nbsp;<spring:message code="overview.uebrig" />
+                        <c:out value="${year}"/>&nbsp;<spring:message code="days.vac" />
                     </th>
                     <td>
                         <c:out value="${account.vacationDays}"/>
@@ -86,22 +78,22 @@
             <table id="app-tbl" cellspacing="0" border="1">
                 <tr>
                     <th>
-                        <spring:message code="overview.vac.type" />
+                        <spring:message code="type" />
                     </th>
                     <th>
-                        <spring:message code="overview.vac.time" />
+                        <spring:message code="time" />
                     </th>
                     <th>
-                        <spring:message code="overview.vac.reason" />
+                        <spring:message code="reason" />
                     </th>
                     <th>
-                        <spring:message code="overview.vac.days" />
+                        <spring:message code="days.vac" />
                     </th>
                     <th>
-                        <spring:message code="overview.vac.ill" />
+                        <spring:message code="days.ill" />
                     </th>
                     <th>
-                        <spring:message code="overview.vac.state" />
+                        <spring:message code="state" />
                     </th>
                     <th>
                         <spring:message code="edit" />

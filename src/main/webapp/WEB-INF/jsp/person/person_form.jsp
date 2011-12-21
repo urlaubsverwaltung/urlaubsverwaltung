@@ -52,7 +52,7 @@
                         <td><form:input id="jahr" path="year" /></td>
                     </tr>
                     <tr>
-                        <td><label for="urlaubsanspruch"><spring:message code="overview.anspruch" />:</label></td>
+                        <td><label for="urlaubsanspruch"><spring:message code="entitlement" />:</label></td>
                         <td><form:input id="urlaubsanspruch" path="vacationDays" /></td>
                     </tr>
                     <tr>

@@ -30,7 +30,7 @@
 
         <div id="content">
             
-        <h2><spring:message code="application.title" /></h2>    
+        <h2><spring:message code="app.title" /></h2>    
             
         <table>
             <tr>
@@ -46,7 +46,7 @@
             </tr>
             <tr>
                 <td>
-                    <spring:message code="application.application" />
+                    <spring:message code="app.apply" />
                 </td>
                 <td>
                     <spring:message code="${application.vacationType.vacationTypeName}" />
@@ -57,7 +57,7 @@
             </tr>
             <tr>
                 <td>
-                    <spring:message code="overview.vac.time" />
+                    <spring:message code="time" />
                 </td>
                 <td>
                    <c:choose>
@@ -75,7 +75,7 @@
             </tr>
             <tr>
                 <td>
-                    <label for="grund"><spring:message code='application.reason' />:</label>
+                    <label for="grund"><spring:message code='reason' />:</label>
                 </td>
                 <td>
                     <c:out value="${application.reason}" />
@@ -83,7 +83,7 @@
             </tr>
             <tr>
                 <td>
-                   <label for="vertreter"><spring:message code='application.vertreter' />:</label> 
+                   <label for="vertreter"><spring:message code='app.rep' />:</label> 
                 </td>
                 <td>
                     <c:out value="${application.rep}" />
@@ -91,7 +91,7 @@
             </tr>
             <tr>
                 <td>
-                    <label for="anschrift"><spring:message code='application.anschrift' />:</label>
+                    <label for="anschrift"><spring:message code='app.address' />:</label>
                 </td>
                 <td colspan="4">
                     <c:out value="${application.address}" />
@@ -99,7 +99,7 @@
             </tr>
             <tr>
                 <td>
-                    <label for="telefon"><spring:message code='application.phone' />:</label>
+                    <label for="telefon"><spring:message code='app.phone' />:</label>
                 </td>
                 <td colspan="4">
                     <c:out value="${application.phone}" />
@@ -110,7 +110,7 @@
             </tr>
             <tr>
                 <td>
-                    <spring:message code='application.ort' />&nbsp;<joda:format style="M-" value="${application.applicationDate}"/>
+                    <spring:message code='app.footer' />&nbsp;<joda:format style="M-" value="${application.applicationDate}"/>
                 </td>
                 <td>&nbsp;</td>
             </tr>
@@ -120,11 +120,11 @@
         </table>
                 
        <form:form method="put" action="${formUrlPrefix}/application/${application.id}/allow"> 
-            <input type="submit" name="<spring:message code='application.state.ok' />" value="<spring:message code='application.state.ok' />" class="button" />    
+            <input type="submit" name="<spring:message code='application.state.ok' />" value="<spring:message code='app.state.ok' />" class="button" />    
        </form:form>  
        
        <form:form method="put" action="${formUrlPrefix}/application/${application.id}/reject"> 
-            <input type="submit" name="<spring:message code='application.state.no' />" value="<spring:message code='application.state.no' />" class="button" />      
+            <input type="submit" name="<spring:message code='application.state.no' />" value="<spring:message code='app.state.no' />" class="button" />      
        </form:form>
        
         </div>

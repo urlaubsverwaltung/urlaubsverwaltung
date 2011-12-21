@@ -33,7 +33,7 @@
         
         <div id="content">
         
-            <c:forEach items="${accounts}" var="account">
+      <c:forEach items="${persons}" var="person">
         <table id="person-tbl" cellspacing="0" border="1">
             <tr>
                 <td rowspan="6"><img class="user-pic" src="<spring:url value='/images/steve-jobs.jpg' />" /></td>
@@ -43,29 +43,21 @@
                    <spring:message code="staff" />: 
                 </th>
                 <td>
-                   <c:out value="${account.person.lastName}"/>&nbsp;<c:out value="${account.person.firstName}"/> 
+                   <c:out value="${person.lastName}"/>&nbsp;<c:out value="${person.firstName}"/> 
                 </td>
             </tr>
             <tr>
                 <th>
-                   <spring:message code="table.vac" />
+                   <spring:message code="entitlement" />
                 </th>
                 <td>
-                    <c:out value="${account.vacationDays}"/>&nbsp;<spring:message code="overview.peryear" />
+                    <c:out value="${entitlements[person].vacationDays + entitlements[person].remainingVacationDays}"/>&nbsp;<spring:message code="peryear" />
                 </td>
-            </tr>
-            <tr>
-                <th>
-                    <spring:message code="table.resturlaub" />&nbsp;<c:out value="${account.year - 1}"/>
-                </th>
-                <td>
-                    <c:out value="${account.remainingVacationDays}"/>&nbsp;<spring:message code="days" />
-                </td>
-            </tr>    
+            </tr>   
             <tr>
                 <th>&nbsp;</th>
                 <td>
-                    <a href="${formUrlPrefix}/application/${account.person.id}"><spring:message code="table.antrag" /></a>
+                    <a href="${formUrlPrefix}/application/${person.id}"><spring:message code="table.app" /></a>
                 </td>
             </tr>   
         </table>    

@@ -22,7 +22,7 @@
         
         <div id="header">
             
-            <h1><spring:message code="header.title" /></h1>
+            <h1><spring:message code="title" /></h1>
 
             <div id="main-menu">
                 
@@ -31,8 +31,7 @@
                     <li><a href="${formUrlPrefix}/application/waiting"><spring:message code="waiting.app" /></a></li>
                     <li><a href="${formUrlPrefix}/application/allowed"><spring:message code="allow.app" /></a></li>
                     <li><a href="${formUrlPrefix}/application/cancelled"><spring:message code="cancel.app" /></a></li>
-                    <li><a href="${formUrlPrefix}/staff/list"><spring:message code="overview" />&nbsp;<spring:message code="staff" /></a></li>
-                    <li><a href="${formUrlPrefix}/manager"><spring:message code="office" /></a></li>
+                    <li><a href="${formUrlPrefix}/staff/list"><spring:message code="staff.manager" /></a></li>
                 </ul>
                 
                     <%--

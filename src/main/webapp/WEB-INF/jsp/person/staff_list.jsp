@@ -39,8 +39,8 @@
                 <th class="attributes"><spring:message code="login" /></th>
                 <th class="attributes"><spring:message code="name" /></th>
                 <th class="attributes"><spring:message code="email" /></th>
-                <th class="vac"><spring:message code="table.vac" /></th>
-                <th class="vac"><spring:message code="table.urlaub" /></th>
+                <th class="vac"><spring:message code="entitlement" /></th>
+                <th class="vac"><spring:message code="days.vac" /></th>
                 <th>&nbsp;</th>
             </tr>
         <c:forEach items="${persons}" var="person" varStatus="loopStatus">

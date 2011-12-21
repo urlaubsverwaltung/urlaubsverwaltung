@@ -34,22 +34,22 @@
                         <spring:message code="staff" />
                     </th>
                     <th>
-                        <spring:message code="overview.vac.type" />
+                        <spring:message code="type" />
                     </th>
                     <th>
-                        <spring:message code="overview.vac.time" />
+                        <spring:message code="time" />
                     </th>
                     <th>
-                        <spring:message code="overview.vac.reason" />
+                        <spring:message code="reason" />
                     </th>
                     <th>
-                        <spring:message code="overview.vac.days" />
+                        <spring:message code="days.vac" />
                     </th>
                     <th>
-                        <spring:message code="overview.vac.ill" />
+                        <spring:message code="days.ill" />
                     </th>
                     <th>
-                        <spring:message code="overview.vac.state" />
+                        <spring:message code="state" />
                     </th>
                     <th>
                         <spring:message code="edit" />
