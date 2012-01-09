@@ -66,7 +66,7 @@ public class PersonController {
     // links
     private static final String LIST_LINK = "/staff/list";
     private static final String DETAIL_LINK = "/staff/detail";
-    private static final String OVERVIEW_LINK = "/staff/{" + PERSON_ID + "}/overview";
+    private static final String OVERVIEW_LINK = "/overview";
     private static final String EDIT_LINK = "/staff/{" + PERSON_ID + "}/edit";
 
     // logger
@@ -176,9 +176,9 @@ public class PersonController {
      * @return
      */
     @RequestMapping(value = OVERVIEW_LINK, method = RequestMethod.GET)
-    public String showDefaultOverview(@PathVariable(PERSON_ID) Integer personId, Model model) {
+    public String showDefaultOverview(Model model) {
 
-        prepareOverview(personId, DateMidnight.now(GregorianChronology.getInstance()).getYear(), model);
+        prepareOverview(DateMidnight.now(GregorianChronology.getInstance()).getYear(), model);
 
         return OVERVIEW_JSP;
     }
@@ -194,10 +194,9 @@ public class PersonController {
      * @return
      */
     @RequestMapping(value = OVERVIEW_LINK, params = "year", method = RequestMethod.GET)
-    public String showOverview(@PathVariable(PERSON_ID) Integer personId,
-        @RequestParam("year") int year, Model model) {
+    public String showOverview(@RequestParam("year") int year, Model model) {
 
-        prepareOverview(personId, year, model);
+        prepareOverview(year, model);
 
         return OVERVIEW_JSP;
     }
@@ -210,9 +209,9 @@ public class PersonController {
      * @param  year
      * @param  model
      */
-    private void prepareOverview(Integer personId, int year, Model model) {
+    private void prepareOverview(int year, Model model) {
 
-        Person person = personService.getPersonByID(personId);
+        Person person = getLoggedUser();
 
         List<Application> applications = applicationService.getApplicationsByPersonAndYear(person, year);
         HolidaysAccount account = accountService.getHolidaysAccount(year, person);
@@ -310,13 +309,23 @@ public class PersonController {
 
     /*
      * This method gets logged-in user and his username; with the username you get the person's ID to be able to show
-     * overview of this person.
+     * overview of this person. Logged-in user is added to model.
      */
     private void setLoggedUser(Model model) {
 
-        String user = SecurityContextHolder.getContext().getAuthentication().getName();
-        Person loggedUser = personService.getPersonByLogin(user);
+        model.addAttribute(LOGGED_USER, getLoggedUser());
+    }
 
-        model.addAttribute(LOGGED_USER, loggedUser);
+
+    /**
+     * This method allows to get a person by logged-in user.
+     *
+     * @return  Person that is logged in
+     */
+    private Person getLoggedUser() {
+
+        String user = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        return personService.getPersonByLogin(user);
     }
 }
