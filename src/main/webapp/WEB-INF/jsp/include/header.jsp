@@ -28,13 +28,14 @@
                 
                 <sec:authorize access="hasRole('role.user')">
                     <ul>
-                        <li><a href="${formUrlPrefix}/staff/${loggedUser.id}/overview"><spring:message code="overview" /></a></li>
+                        <li><a href="${formUrlPrefix}/overview"><spring:message code="overview" /></a></li>
+                        <li><a href="${formUrlPrefix}/${loggedUser.id}/application/new"><spring:message code="apply" /></a></li>
                     </ul>    
                 </sec:authorize>
                 
                 <sec:authorize access="hasRole('role.boss')">
                     <ul>
-                        <li><a href="${formUrlPrefix}/staff/${loggedUser.id}/overview"><spring:message code="overview" /></a></li>
+                        <li><a href="${formUrlPrefix}/overview"><spring:message code="overview" /></a></li>
                         <li><a href="${formUrlPrefix}/${loggedUser.id}/application/new"><spring:message code="apply" /></a></li>
                         <li><a href="${formUrlPrefix}/application/waiting"><spring:message code="waiting.app" /></a></li>
                         <li><a href="${formUrlPrefix}/application/allowed"><spring:message code="allow.app" /></a></li>
@@ -44,7 +45,7 @@
                 
                 <sec:authorize access="hasRole('role.office')">
                     <ul>
-                        <li><a href="${formUrlPrefix}/staff/${loggedUser.id}/overview"><spring:message code="overview" /></a></li>
+                        <li><a href="${formUrlPrefix}/overview"><spring:message code="overview" /></a></li>
                         <li><a href="${formUrlPrefix}/${loggedUser.id}/application/new"><spring:message code="apply" /></a></li>
                         <li><a href="${formUrlPrefix}/application/allowed"><spring:message code="allow.app" /></a></li>
                         <li><a href="${formUrlPrefix}/application/cancelled"><spring:message code="cancel.app" /></a></li>

@@ -18,12 +18,12 @@ import java.util.List;
 public interface ApplicationDAO extends JpaRepository<Application, Integer> {
 
     // get List<Application> by certain state (e.g. waiting)
-    @Query("select x from Application x where x.status = ?1")
+    @Query("select x from Application x where x.status = ?1 order by x.startDate")
     List<Application> getApplicationsByState(ApplicationStatus state);
 
 
     // get List<Application> by certain person
-    @Query("select x from Application x where x.person = ?1")
+    @Query("select x from Application x where x.person = ?1 order by x.startDate")
     List<Application> getApplicationsByPerson(Person person);
 
 

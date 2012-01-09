@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.ApplicationStatus;
@@ -43,7 +44,6 @@ public class ApplicationController {
 
     // jsps
     private static final String SHOW_APP_DETAIL = "application/app_detail";
-    private static final String PRINT_VIEW_APP_JSP = "application/print";
     private static final String APP_LIST_JSP = "application/list";
     private static final String APP_FORM_JSP = "application/app_form";
     private static final String OVERVIEW_JSP = "person/overview";
@@ -65,7 +65,11 @@ public class ApplicationController {
     private static final String WAITING_APPS = "/application/waiting";
     private static final String ALLOWED_APPS = "/application/allowed";
     private static final String CANCELLED_APPS = "/application/cancelled";
-    private static final String REJECTED_APPS = "/application/rejected";
+    private static final String REJECTED_APPS = "/application/rejected"; // not used now, but maybe useful someday
+    private static final String STATE_NUMBER = "stateNumber";
+    private static final int WAITING = 0;
+    private static final int ALLOWED = 1;
+    private static final int CANCELLED = 2;
 
     // list of applications by person
     private static final String APPS_BY_PERSON = "/{" + PERSON_ID + "}/application";
@@ -140,6 +144,7 @@ public class ApplicationController {
 
         List<Application> applications = applicationService.getApplicationsByState(ApplicationStatus.WAITING);
         model.addAttribute(APPLICATIONS, applications);
+        model.addAttribute(STATE_NUMBER, WAITING);
         setLoggedUser(model);
 
         return APP_LIST_JSP;
@@ -158,6 +163,7 @@ public class ApplicationController {
 
         List<Application> applications = applicationService.getApplicationsByState(ApplicationStatus.ALLOWED);
         model.addAttribute(APPLICATIONS, applications);
+        model.addAttribute(STATE_NUMBER, ALLOWED);
         setLoggedUser(model);
 
         return APP_LIST_JSP;
@@ -176,6 +182,7 @@ public class ApplicationController {
 
         List<Application> applications = applicationService.getApplicationsByState(ApplicationStatus.CANCELLED);
         model.addAttribute(APPLICATIONS, applications);
+        model.addAttribute(STATE_NUMBER, CANCELLED);
         setLoggedUser(model);
 
         return APP_LIST_JSP;
@@ -274,12 +281,14 @@ public class ApplicationController {
      *
      * @return
      */
-    @RequestMapping(value = SHOW_APP, method = RequestMethod.GET)
-    public String showApplicationDetail(@PathVariable(APPLICATION_ID) Integer applicationId, Model model) {
+    @RequestMapping(value = SHOW_APP, params = "state", method = RequestMethod.GET)
+    public String showApplicationDetail(@PathVariable(APPLICATION_ID) Integer applicationId,
+        @RequestParam("state") int state, Model model) {
 
         Application application = applicationService.getApplicationById(applicationId);
 
         model.addAttribute(APPLICATION, application);
+        model.addAttribute(STATE_NUMBER, state);
         setLoggedUser(model);
 
         return SHOW_APP_DETAIL;

@@ -117,7 +117,11 @@
                 </tr>
             </table>
 
-            <sec:authorize access="hasRole('role.boss')">         
+
+            <%-- application is waiting --%>            
+            <c:if test="${stateNumber == 0}">
+
+                <sec:authorize access="hasRole('role.boss')">         
 
                 <form:form method="put" action="${formUrlPrefix}/application/${application.id}/allow"> 
                     <input type="submit" name="<spring:message code='app.state.ok' />" value="<spring:message code='app.state.ok' />" class="button" />    
@@ -127,23 +131,26 @@
                     <input type="submit" name="<spring:message code='app.state.no' />" value="<spring:message code='app.state.no' />" class="button" />    
                 </form:form>   
 
-            </sec:authorize>
+                </sec:authorize>
+               
+            </c:if>
 
-            <sec:authorize access="hasRole('role.office')">
+            <%-- application is allowed --%>  
+            <c:if test="${stateNumber == 1}">
+
+                <sec:authorize access="hasRole('role.office')">
+                    
+                    <a class="button" href="???"><spring:message code='add.sickdays' /></a>
+
+                </sec:authorize>
                 
-                <a class="button" href="${formUrlPrefix}/application/${app.id}/print">Drucken</a>
+            </c:if>
+           
+            <sec:authorize access="hasRole('role.office')">
 
-            </sec:authorize>     
+                <a class="button" href="${formUrlPrefix}/application/${app.id}/print"><spring:message code='print' /></a>
 
-            <%--     
-            
-           <input type="button" name="<spring:message code='app.state.no' />" value="<spring:message code='app.state.no' />" onclick="$('#reason-reject').show(1000); return false;" />      
-            
-       <div id="reason-reject" style="display: none;">
-           <spring:message code='reason' />&nbsp;<input type="text" />
-       </div> 
-
-            --%>
+            </sec:authorize>
 
         </div>
 

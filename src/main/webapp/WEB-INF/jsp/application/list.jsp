@@ -51,9 +51,20 @@
                     <th>
                         <spring:message code="state" />
                     </th>
-                    <th>
-                        <spring:message code="edit" />
-                    </th>
+                    <c:choose>
+                        <%-- if applications are cancelled (stateNumber == 2), only printing is possible, not editing --%>
+                        <c:when test="${stateNumber == 2}">
+                            <th>
+                                <spring:message code="print" />
+                            </th>
+                        </c:when>
+                        <%-- if applications are waiting OR allowed (stateNumber == 0 OR 1), you also may edit the application --%>
+                        <c:otherwise>
+                            <th>
+                                <spring:message code="edit" />
+                            </th>
+                        </c:otherwise>
+                    </c:choose>
                 </tr>
 
                 <c:forEach items="${applications}" var="app">
@@ -93,9 +104,27 @@
                         <td>
                             <spring:message code="${app.status.state}" />
                         </td>
+                        
                         <td>
-                            <a href="${formUrlPrefix}/application/${app.id}"><img src="<spring:url value='/images/edit.png' />" /></a>
-                        </td>
+                        
+                        <%-- three possible cases: --%>
+                        
+                        <%-- 0 : applications are waiting --%>
+                        <c:if test="${stateNumber == 0}">
+                            <a href="${formUrlPrefix}/application/${app.id}?state=0"><img src="<spring:url value='/images/edit.png' />" /></a>
+                        </c:if>
+                        
+                        <%-- 1 : applications are allowed --%>
+                        <c:if test="${stateNumber == 1}">
+                            <a href="${formUrlPrefix}/application/${app.id}?state=1"><img src="<spring:url value='/images/edit.png' />" /></a>
+                        </c:if>
+                        
+                        <%-- 2 : applications are cancelled --%>
+                        <c:if test="${stateNumber == 2}">
+                            <a href="${formUrlPrefix}/application/${app.id}?state=2"><img src="<spring:url value='/images/playlist.png' />" /></a>
+                        </c:if>
+                            
+                        </td>    
                     </tr>
                 </c:forEach>
             </table>
