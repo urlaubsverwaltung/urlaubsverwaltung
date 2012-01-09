@@ -320,6 +320,11 @@ public class MailServiceImplTest {
         // check content of email
         String content = (String) msg.getContent();
         assertTrue(content.contains("Sternchen"));
+        assertTrue(content.contains("Dingsda"));
+        assertTrue(content.contains("Aha"));
+        assertTrue(content.contains("Test"));
+        assertTrue(content.contains("Heinz"));
+        assertFalse(content.contains("Hunz"));
         assertTrue(content.contains("folgende Mitarbeiter sind diese Woche im Urlaub"));
         assertFalse(content.contains("Mist"));
     }

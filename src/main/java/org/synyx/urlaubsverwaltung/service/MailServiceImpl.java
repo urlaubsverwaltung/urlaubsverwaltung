@@ -38,7 +38,7 @@ public class MailServiceImpl implements MailService {
 
     private final String FROM = "email.manager";
 
-    private final String PATH = "src/main/resources/email/";
+    private final String PATH = "/src/main/resources/email/";
     private final String APPLICATION = "application";
     private final String PERSON = "person";
     private final String PERSONS = "persons";
@@ -192,7 +192,7 @@ public class MailServiceImpl implements MailService {
         List<String> names = new ArrayList<String>();
 
         for (Person person : persons) {
-            names.add(person.getFirstName() + " " + person.getLastName());
+            names.add(person.getFirstName() + " " + person.getLastName() + "\n");
         }
 
         String text = prepareMessage(names, PERSONS, FILE_WEEKLY);
