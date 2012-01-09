@@ -122,7 +122,7 @@
                         <spring:message code="state" />
                     </th>
                     <th>
-                        <spring:message code="edit" />
+                        <spring:message code="delete" />
                     </th>
                 </tr>
 
@@ -161,7 +161,7 @@
                             <spring:message code="${app.status.state}" />
                         </td>
                         <td>
-                            <a href="${formUrlPrefix}/application/${app.id}/edit"><img src="<spring:url value='/images/edit.png' />" /></a>
+                            <a href="${formUrlPrefix}/application/${app.id}/cancel"><img src="<spring:url value='/images/cancel.png' />" /></a>
                         </td>
                     </tr>
                 </c:forEach>

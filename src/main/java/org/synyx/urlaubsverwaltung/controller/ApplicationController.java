@@ -42,11 +42,11 @@ import java.util.Locale;
 public class ApplicationController {
 
     // jsps
-    private static final String SHOW_APP_CHEF_JSP = "application/app_chef";
-    private static final String SHOW_APP_OFFICE_JSP = "application/app_office";
+    private static final String SHOW_APP_DETAIL = "application/app_detail";
     private static final String PRINT_VIEW_APP_JSP = "application/print";
     private static final String APP_LIST_JSP = "application/list";
     private static final String APP_FORM_JSP = "application/app_form";
+    private static final String OVERVIEW_JSP = "person/overview";
 
     // attribute names
     private static final String DATE_FORMAT = "dd.MM.yyyy";
@@ -73,11 +73,11 @@ public class ApplicationController {
     // form to apply vacation
     private static final String NEW_APP = "/{" + PERSON_ID + "}/application/new";
 
-    // for user: if application has state waiting, user may change various attributes
-    // if application has state allowed, user is able to cancel application, but not to edit it
-    private static final String EDIT_APP = "/application/{" + APPLICATION_ID + "}/edit";
+    // for user: the only way editing an application for user is to cancel it
+    // (application may have state waiting or allowed)
+    private static final String CANCEL_APP = "/application/{" + APPLICATION_ID + "}/cancel";
 
-    // detailed view of application for chef
+    // detailed view of application
     private static final String SHOW_APP = "/application/{" + APPLICATION_ID + "}";
 
     // allow or reject application
@@ -267,7 +267,7 @@ public class ApplicationController {
 
 
     /**
-     * view for chef who has to decide if he allows or rejects the application
+     * view for boss who has to decide if he allows or rejects the application
      *
      * @param  applicationId
      * @param  model
@@ -275,14 +275,14 @@ public class ApplicationController {
      * @return
      */
     @RequestMapping(value = SHOW_APP, method = RequestMethod.GET)
-    public String showApplicationDetailChef(@PathVariable(APPLICATION_ID) Integer applicationId, Model model) {
+    public String showApplicationDetail(@PathVariable(APPLICATION_ID) Integer applicationId, Model model) {
 
         Application application = applicationService.getApplicationById(applicationId);
 
         model.addAttribute(APPLICATION, application);
         setLoggedUser(model);
 
-        return SHOW_APP_CHEF_JSP;
+        return SHOW_APP_DETAIL;
     }
 
 
@@ -308,7 +308,7 @@ public class ApplicationController {
             + " wurde am " + DateMidnight.now().toString(DATE_FORMAT) + " von " + boss.getFirstName() + " "
             + boss.getLastName() + " genehmigt.");
 
-        return "";
+        return "redirect:/web" + WAITING_APPS;
     }
 
 
@@ -323,7 +323,7 @@ public class ApplicationController {
      */
     @RequestMapping(value = REJECT_APP, method = RequestMethod.PUT)
     public String rejectApplication(@PathVariable(APPLICATION_ID) Integer applicationId,
-        @ModelAttribute("reasonForRejecting") String reasonForRejecting, Model model) {
+        @ModelAttribute("reasonForRejecting") String reasonForRejecting) {
 
         Application application = applicationService.getApplicationById(applicationId);
 
@@ -337,7 +337,22 @@ public class ApplicationController {
             + " wurde am " + DateMidnight.now().toString(DATE_FORMAT) + " von " + boss.getFirstName() + " "
             + boss.getLastName() + " abgelehnt.");
 
-        return "";
+        return "redirect:/web" + WAITING_APPS;
+    }
+
+
+    @RequestMapping(value = CANCEL_APP, method = RequestMethod.PUT)
+    public String cancelApplication(@PathVariable(APPLICATION_ID) Integer applicationId) {
+
+        Application application = applicationService.getApplicationById(applicationId);
+
+        applicationService.cancel(application);
+
+        LOG.info(application.getApplicationDate() + " ID: " + application.getId() + "Der Antrag von "
+            + application.getPerson().getFirstName() + " " + application.getPerson().getLastName()
+            + " wurde am " + DateMidnight.now().toString(DATE_FORMAT) + " storniert.");
+
+        return "redirect:/web" + OVERVIEW_JSP;
     }
 
 
@@ -367,25 +382,4 @@ public class ApplicationController {
 //
 //        return "applications/applicationdetailoffice";
 //    }
-//
-//
-//    /**
-//     * used if you want to cancel an existing request (owner only/maybe office)
-//     *
-//     * @param  model
-//     *
-//     * @return
-//     */
-//    @RequestMapping(value = "/application/{applicationId}/stornieren", method = RequestMethod.PUT)
-//    public String cancelapplication(@PathVariable(APPLICATION_ID) Integer applicationId, Model model) {
-//
-////        // über die logik sollten wir nochmal nachdenken...
-////        applicationService.cancel(applicationService.getRequestById(applicationId));
-//
-//        LOG.info("Ein application wurde storniert.");
-//
-//        return "";
-//    }
-//
-//
 }
