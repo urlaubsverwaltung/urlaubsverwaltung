@@ -53,14 +53,6 @@ public interface ApplicationService {
 
 
     /**
-     * if a user makes an application for leave, the application's state is set to waiting until a boss allows it
-     *
-     * @param  application
-     */
-    void wait(Application application);
-
-
-    /**
      * application's state is set to cancelled if user cancels vacation
      *
      * @param  application
@@ -118,24 +110,6 @@ public interface ApplicationService {
      * @return
      */
     List<Application> getApplicationsForACertainTime(DateMidnight startDate, DateMidnight endDate);
-
-
-    /**
-     * signs an application with the private key of the signing boss
-     *
-     * @param  application
-     * @param  boss
-     */
-    void signApplicationByBoss(Application application, Person boss);
-
-
-    /**
-     * signs an application with the private key of the signing user (applicant)
-     *
-     * @param  application
-     * @param  user
-     */
-    void signApplicationByUser(Application application, Person user);
 
 
     /**

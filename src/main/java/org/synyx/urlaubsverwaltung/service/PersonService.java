@@ -5,8 +5,6 @@ import org.joda.time.DateMidnight;
 import org.synyx.urlaubsverwaltung.domain.HolidayEntitlement;
 import org.synyx.urlaubsverwaltung.domain.Person;
 
-import java.math.BigDecimal;
-
 import java.util.List;
 
 
@@ -64,14 +62,8 @@ public interface PersonService {
 
 
     /**
-     * this method is used by a schedule-job. it deletes existing resturlaub for all persons execution in march(april?)
-     */
-    void deleteRemainingVacationDays();
-
-
-    /**
-     * this method is used by a schedule-job. it sends mails to all persons who have soon decaying resturlaub-days.
-     * (execution in march, but before deleteRemainingVacationDays)
+     * this method get all person with remaining vacation days to send an email to these persons that they have
+     * remaining vacation days that decay soon
      */
     List<Person> getPersonsWithRemainingVacationDays();
 
@@ -113,14 +105,4 @@ public interface PersonService {
      * @return
      */
     List<HolidayEntitlement> getHolidayEntitlementByPersonForAllYears(Person person);
-
-
-    /**
-     * edit a person's HolidayEntitlement
-     *
-     * @param  person
-     * @param  year
-     * @param  days
-     */
-    void setHolidayEntitlementForPerson(Person person, int year, BigDecimal days);
 }

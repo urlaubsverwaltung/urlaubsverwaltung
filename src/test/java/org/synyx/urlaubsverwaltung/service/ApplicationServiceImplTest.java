@@ -149,17 +149,6 @@ public class ApplicationServiceImplTest {
     }
 
 
-    /** Test of wait method, of class ApplicationServiceImpl. */
-    @Test
-    public void testWait() {
-
-        application.setStatus(ApplicationStatus.ALLOWED);
-        instance.wait(application);
-
-        assertEquals(ApplicationStatus.WAITING, application.getStatus());
-    }
-
-
     /** Test of allow method, of class ApplicationServiceImpl. */
     @Ignore
     @Test

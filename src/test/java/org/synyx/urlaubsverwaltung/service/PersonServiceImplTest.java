@@ -128,25 +128,6 @@ public class PersonServiceImplTest {
     }
 
 
-    /** Test of deleteRemainingVacationDays method, of class PersonServiceImpl. */
-    @Test
-    public void testDeleteRemainingVacationDays() {
-
-        List<Person> persons = new ArrayList<Person>();
-        Person person = new Person();
-        persons.add(person);
-
-        HolidaysAccount account = mock(HolidaysAccount.class);
-
-        Mockito.when(personDAO.getPersonsOrderedByLastName()).thenReturn(persons);
-        Mockito.when(accountService.getHolidaysAccount(Mockito.anyInt(), (Person) (Mockito.any()))).thenReturn(account);
-
-        instance.deleteRemainingVacationDays();
-
-        Mockito.verify(account).setRemainingVacationDays(BigDecimal.ZERO);
-    }
-
-
     /** Test of getPersonsWithRemainingVacationDays method, of class PersonServiceImpl. */
     @Test
     public void testGetPersonsWithRemainingVacationDays() {
@@ -295,34 +276,5 @@ public class PersonServiceImplTest {
         List<HolidayEntitlement> gotByMethod = instance.getHolidayEntitlementByPersonForAllYears(person);
 
         assertEquals(gotByMethod.get(0), entitlement);
-    }
-
-
-    /** Test of setHolidayEntitlementForPerson method, of class PersonServiceImpl. */
-    @Test
-    public void testSetHolidayEntitlementForPerson() {
-
-        Person person = new Person();
-
-        person.setFirstName("schnullibulli"); // ich bin nicht verrückt...
-
-        Mockito.when(holidayEntitlementDAO.save((HolidayEntitlement) (Mockito.any()))).thenAnswer(new Answer() {
-
-                public Object answer(InvocationOnMock invocation) {
-
-                    Object[] args = invocation.getArguments();
-                    HolidayEntitlement entitlement = (HolidayEntitlement) (args[0]);
-                    assertEquals(entitlement.getPerson().getFirstName(), "schnullibulli");
-
-                    assertEquals(entitlement.getVacationDays(), BigDecimal.valueOf(26.0));
-                    assertEquals((int) (entitlement.getYear()), (int) (2011));
-
-                    return null;
-                }
-            });
-
-        instance.setHolidayEntitlementForPerson(person, 2011, BigDecimal.valueOf(26.0));
-
-        Mockito.verify(holidayEntitlementDAO).save((HolidayEntitlement) (Mockito.any()));
     }
 }

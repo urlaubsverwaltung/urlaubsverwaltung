@@ -59,16 +59,6 @@ public class HolidaysAccountServiceImpl implements HolidaysAccountService {
 
 
     /**
-     * @see  HolidaysAccountService#getHolidaysAccountsForYear(int)
-     */
-    @Override
-    public List<HolidaysAccount> getHolidaysAccountsForYear(int year) {
-
-        return holidaysAccountDAO.getAllHolidaysAccountsByYear(year);
-    }
-
-
-    /**
      * @see  HolidaysAccountService#getAccountOrCreateOne(int, org.synyx.urlaubsverwaltung.domain.Person)
      */
     @Override
@@ -149,16 +139,6 @@ public class HolidaysAccountServiceImpl implements HolidaysAccountService {
     public void saveHolidaysAccount(HolidaysAccount account) {
 
         holidaysAccountDAO.save(account);
-    }
-
-
-    /**
-     * @see  HolidaysAccountService#getHolidaysAccountByYearOrderedByPersons(int)
-     */
-    @Override
-    public List<HolidaysAccount> getHolidaysAccountByYearOrderedByPersons(int year) {
-
-        return holidaysAccountDAO.getAllHolidaysAccountsByYear(year);
     }
 
 

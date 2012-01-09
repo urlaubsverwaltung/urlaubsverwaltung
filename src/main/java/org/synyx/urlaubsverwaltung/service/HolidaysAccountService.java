@@ -38,16 +38,6 @@ public interface HolidaysAccountService {
 
 
     /**
-     * get a list of HolidaysAccount for a certain year
-     *
-     * @param  year
-     *
-     * @return
-     */
-    List<HolidaysAccount> getHolidaysAccountsForYear(int year);
-
-
-    /**
      * get HolidaysAccount by year and person and if account not existent, creates a new one
      *
      * @param  year
@@ -118,15 +108,4 @@ public interface HolidaysAccountService {
      * @param  account
      */
     void saveHolidaysAccount(HolidaysAccount account);
-
-
-    /**
-     * get a list of HolidaysAccount by year, list ordered by last names of persons
-     *
-     * @param  year
-     * @param  person
-     *
-     * @return
-     */
-    List<HolidaysAccount> getHolidaysAccountByYearOrderedByPersons(int year);
 }

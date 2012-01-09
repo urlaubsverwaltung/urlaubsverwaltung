@@ -94,17 +94,6 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 
     /**
-     * @see  ApplicationService#wait(org.synyx.urlaubsverwaltung.domain.Application)
-     */
-    @Override
-    public void wait(Application application) {
-
-        application.setStatus(ApplicationStatus.WAITING);
-        applicationDAO.save(application);
-    }
-
-
-    /**
      * @see  ApplicationService#allow(org.synyx.urlaubsverwaltung.domain.Application,org.synyx.urlaubsverwaltung.domain.Person)
      */
     @Override
@@ -223,9 +212,11 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 
     /**
-     * @see  ApplicationService#signApplicationByBoss(org.synyx.urlaubsverwaltung.domain.Application, org.synyx.urlaubsverwaltung.domain.Person)
+     * signs an application with the private key of the signing boss
+     *
+     * @param  application
+     * @param  boss
      */
-    @Override
     public void signApplicationByBoss(Application application, Person boss) {
 
         byte[] data = signApplication(application, boss);
@@ -238,9 +229,11 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 
     /**
-     * @see  ApplicationService#signApplicationByUser(org.synyx.urlaubsverwaltung.domain.Application, org.synyx.urlaubsverwaltung.domain.Person)
+     * signs an application with the private key of the signing user (applicant)
+     *
+     * @param  application
+     * @param  user
      */
-    @Override
     public void signApplicationByUser(Application application, Person user) {
 
         byte[] data = signApplication(application, user);
@@ -331,6 +324,9 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
 
+    /**
+     * @see  ApplicationService#getApplicationsByPersonAndYear(org.synyx.urlaubsverwaltung.domain.Person, int)
+     */
     @Override
     public List<Application> getApplicationsByPersonAndYear(Person person, int year) {
 

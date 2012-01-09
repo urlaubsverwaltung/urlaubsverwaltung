@@ -23,13 +23,6 @@ public interface HolidaysAccountDAO extends JpaRepository<HolidaysAccount, Integ
     HolidaysAccount getHolidaysAccountByYearAndPerson(int year, Person person);
 
 
-//    @Query("select from HolidaysAccount where year = ?1")
-//    List<HolidaysAccount> getHolidaysAccountByYearOrderedByPersons(int year);
-
-    @Query("select x from HolidaysAccount x where x.year = ?1")
-    List<HolidaysAccount> getAllHolidaysAccountsByYear(int year);
-
-
     @Query("select x from HolidaysAccount x where x.person = ?1")
     List<HolidaysAccount> getAllHolidaysAccountsByPerson(Person person);
 }

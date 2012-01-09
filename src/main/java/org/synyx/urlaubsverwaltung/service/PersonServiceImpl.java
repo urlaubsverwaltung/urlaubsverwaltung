@@ -96,21 +96,6 @@ public class PersonServiceImpl implements PersonService {
 
 
     /**
-     * @see  PersonService#deleteRemainingVacationDays()
-     */
-    @Override
-    public void deleteRemainingVacationDays() {
-
-        List<Person> persons = getAllPersons();
-
-        for (Person person : persons) {
-            HolidaysAccount currentAccount = accountService.getHolidaysAccount(DateMidnight.now().getYear(), person);
-            currentAccount.setRemainingVacationDays(BigDecimal.ZERO);
-        }
-    }
-
-
-    /**
      * @see  PersonService#getPersonsWithRemainingVacationDays()
      */
     @Override
@@ -233,21 +218,5 @@ public class PersonServiceImpl implements PersonService {
     public List<HolidayEntitlement> getHolidayEntitlementByPersonForAllYears(Person person) {
 
         return holidayEntitlementDAO.getHolidayEntitlementByPerson(person);
-    }
-
-
-    /**
-     * @see  PersonService#setHolidayEntitlementForPerson(org.synyx.urlaubsverwaltung.domain.Person, int,
-     *       java.math.BigDecimal)
-     */
-    @Override
-    public void setHolidayEntitlementForPerson(Person person, int year, BigDecimal days) {
-
-        HolidayEntitlement entitlement = new HolidayEntitlement();
-        entitlement.setPerson(person);
-        entitlement.setYear(year);
-        entitlement.setVacationDays(days);
-
-        holidayEntitlementDAO.save(entitlement);
     }
 }

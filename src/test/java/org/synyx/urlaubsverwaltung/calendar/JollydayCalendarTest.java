@@ -68,7 +68,7 @@ public class JollydayCalendarTest {
         DateMidnight startDate = new DateMidnight(2011, 12, 23);
         DateMidnight endDate = new DateMidnight(2011, 12, 27);
 
-        Double returnValue = instance.getPublicHolidays(startDate, endDate);
+        double returnValue = instance.getPublicHolidays(startDate, endDate);
         assertNotNull(returnValue);
         assertEquals(1.0, returnValue, 0.0);
 
@@ -102,7 +102,7 @@ public class JollydayCalendarTest {
         DateMidnight startDate = new DateMidnight(2011, 11, 23);
         DateMidnight endDate = new DateMidnight(2011, 11, 26);
 
-        Integer dings = 0;
+        int dings = 0;
 
         while (!(startDate.equals(endDate))) {
             dings++;

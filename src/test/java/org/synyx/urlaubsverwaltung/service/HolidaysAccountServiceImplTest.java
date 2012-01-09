@@ -96,15 +96,6 @@ public class HolidaysAccountServiceImplTest {
     }
 
 
-    /** Test of getHolidaysAccountsForYear method, of class HolidaysAccountServiceImpl. */
-    @Test
-    public void testGetHolidaysAccountsForYear() {
-
-        instance.getHolidaysAccountsForYear(CURRENT_YEAR);
-        Mockito.verify(holidaysAccountDAO).getAllHolidaysAccountsByYear(CURRENT_YEAR);
-    }
-
-
     /** Test of getAccountOrCreateOne method, of class HolidaysAccountServiceImpl. */
     @Test
     public void testGetAccountOrCreateOne() {
