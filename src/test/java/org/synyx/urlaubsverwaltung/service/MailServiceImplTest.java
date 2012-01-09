@@ -211,7 +211,7 @@ public class MailServiceImplTest {
         String contentOfficeMail = (String) msgOffice.getContent();
         assertTrue(contentOfficeMail.contains("Bernd"));
         assertTrue(contentOfficeMail.contains("Office"));
-        assertTrue(contentOfficeMail.contains("ein neuer genehmigter Antrag liegt vor"));
+        assertTrue(contentOfficeMail.contains("es liegt ein neuer genehmigter Antrag vor"));
         assertFalse(contentOfficeMail.contains("Mist"));
     }
 
