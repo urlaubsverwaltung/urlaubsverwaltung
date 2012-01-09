@@ -31,6 +31,7 @@ import org.synyx.urlaubsverwaltung.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.service.HolidaysAccountService;
 import org.synyx.urlaubsverwaltung.service.PersonService;
 import org.synyx.urlaubsverwaltung.util.DateMidnightPropertyEditor;
+import org.synyx.urlaubsverwaltung.view.AppForm;
 
 import java.util.List;
 import java.util.Locale;
@@ -46,10 +47,11 @@ public class ApplicationController {
     private static final String SHOW_APP_DETAIL = "application/app_detail";
     private static final String APP_LIST_JSP = "application/list";
     private static final String APP_FORM_JSP = "application/app_form";
-    private static final String OVERVIEW_JSP = "person/overview";
+    private static final String OVERVIEW_JSP = "/overview";
 
     // attribute names
     private static final String DATE_FORMAT = "dd.MM.yyyy";
+    private static final String APPFORM = "appForm";
     private static final String APPLICATION = "application";
     private static final String APPLICATIONS = "applications";
     private static final String ACCOUNT = "account";
@@ -231,10 +233,12 @@ public class ApplicationController {
         model.addAttribute(PERSONS, persons);
         model.addAttribute(DATE, stringDate);
         model.addAttribute(YEAR, year);
-        model.addAttribute(APPLICATION, new Application());
+        model.addAttribute(APPFORM, new AppForm());
         model.addAttribute(ACCOUNT, account);
         model.addAttribute("vacTypes", VacationType.values());
-        model.addAttribute("daylength", DayLength.values());
+        model.addAttribute("full", DayLength.FULL);
+        model.addAttribute("morning", DayLength.MORNING);
+        model.addAttribute("noon", DayLength.NOON);
         setLoggedUser(model);
 
         return APP_FORM_JSP;
@@ -252,14 +256,15 @@ public class ApplicationController {
      */
     @RequestMapping(value = NEW_APP, method = RequestMethod.POST)
     public String newApplication(@PathVariable(PERSON_ID) Integer personId,
-        @ModelAttribute(APPLICATION) Application application) {
+        @ModelAttribute(APPFORM) AppForm appForm) {
 
         Person person = personService.getPersonByID(personId);
 
-        application.setPerson(person);
+        Application application = new Application();
+        application = appForm.fillApplicationObject(application);
 
-        DateMidnight date = DateMidnight.now(GregorianChronology.getInstance());
-        application.setApplicationDate(date);
+        application.setPerson(person);
+        application.setApplicationDate(DateMidnight.now(GregorianChronology.getInstance()));
 
         applicationService.save(application);
 
@@ -269,7 +274,7 @@ public class ApplicationController {
         LOG.info(application.getApplicationDate() + " ID: " + application.getId() + " Es wurde ein neuer Antrag von "
             + person.getLastName() + " " + person.getFirstName() + " angelegt.");
 
-        return "redirect:/web/staff/" + personId + "/overview";
+        return "redirect:/web" + OVERVIEW_JSP;
     }
 
 

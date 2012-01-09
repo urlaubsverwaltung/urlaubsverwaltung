@@ -19,8 +19,8 @@
         <link rel="stylesheet" type="text/css" href="<spring:url value='/css/ui-lightness/jquery-ui-1.8.16.custom.css' />" />
         <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />" /> 
         <title><spring:message code="title" /></title>
-        <script src="<spring:url value='/js/jquery-1.6.2.min.js' />" type="text/javascript" ></script>
-        <script src="<spring:url value='/js/jquery-ui-1.8.16.custom.min.js' />" type="text/javascript" ></script>
+        <script src="<spring:url value='/jquery/js/jquery-1.6.2.min.js' />" type="text/javascript" ></script>
+        <script src="<spring:url value='/jquery/js/jquery-ui-1.8.16.custom.min.js' />" type="text/javascript" ></script>
         <script type="text/javascript">
 	$(function() {
 		$( "#datepicker" ).datepicker();
@@ -40,8 +40,7 @@
         
         <br />
         
-        <form:form method="post" action="${formUrlPrefix}/${person.id}/application/new" modelAttribute="application"> 
-            <form:hidden path="id" />
+        <form:form method="post" action="${formUrlPrefix}/${person.id}/application/new" modelAttribute="appForm"> 
             
         <table>
             <tr>
@@ -92,22 +91,21 @@
                 <td colspan="3">&nbsp;</td>
             </tr>
             <tr>
-                <td>Von:&nbsp;&nbsp;<form:input id="startDate" path="startDate" /></td>
-                <td>Bis:&nbsp;&nbsp;<form:input id="endDate" path="endDate" /></td>
+                <td colspan="2">
+                    <form:radiobutton path="howLong" checked="checked" value="${full}" onclick="$('#full-day').show(); $('#half-day').hide();" /><spring:message code='${full.dayLength}' /> 
+                    <form:radiobutton path="howLong" value="${morning}" onclick="$('#full-day').hide(); $('#half-day').show();" /><spring:message code='${morning.dayLength}' />
+                    <form:radiobutton path="howLong" value="${noon}" onclick="$('full-day').hide(); $('half-day').show();" /><spring:message code='${noon.dayLength}' />
+                </td>
             </tr>
             <tr>
                 <td colspan="3">&nbsp;</td>
             </tr>
-            <tr>
-                <td>
-                    <form:select path="howLong" size="1">
-                         <c:forEach items="${daylength}" var="length">
-                                <option value="${length}">
-                                    <spring:message code='${length.dayLength}' />
-                                </option>
-                        </c:forEach>
-                    </form:select>
-                </td>
+            <tr id="full-day">  
+                <td>Von: <form:input id="startDate" path="startDate" /></td>
+                <td>Bis: <form:input id="endDate" path="endDate" /></td>
+            </tr>
+            <tr id="half-day" style="display: none">  
+                <td>Am: <form:input id="startDate" path="startDateHalf" /></td>
             </tr>
             <tr>
                 <td colspan="3">&nbsp;</td>
@@ -164,7 +162,7 @@
             </tr>
             <tr>
                 <td colspan="2">
-                    <spring:message code='app.footer' />&nbsp;<c:out value="${date}" /><form:hidden path="applicationDate" />
+                    <spring:message code='app.footer' />&nbsp;<c:out value="${date}" />
                 </td>
             </tr>
             <tr>
