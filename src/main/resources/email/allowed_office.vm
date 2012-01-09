@@ -1,6 +1,6 @@
 Hallo Office,
 
-ein neuer genehmigter Antrag liegt vor:
+es liegt ein neuer genehmigter Antrag vor:
 ${application.person.firstName} ${application.person.lastName} 
 Zeitraum: ${application.startDate} bis ${application.endDate} 
 

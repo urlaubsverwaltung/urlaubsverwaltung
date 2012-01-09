@@ -1,1 +1,3 @@
-Der Mitarbeiter ${application.person.firstName} ${application.person.lastName} hat seinen Urlaubsantrag (${application.startDate} bis ${application.endDate}) storniert.
+Information:
+
+Der Mitarbeiter ${application.person.firstName} ${application.person.lastName} hat seinen Urlaubsantrag (Zeitraum von ${application.startDate} bis ${application.endDate}) storniert.
