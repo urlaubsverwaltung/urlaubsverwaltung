@@ -11,7 +11,6 @@ import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.dao.ApplicationDAO;
 import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.domain.Comment;
 import org.synyx.urlaubsverwaltung.domain.HolidaysAccount;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.util.CalcUtil;
@@ -146,7 +145,7 @@ public class ApplicationServiceImpl implements ApplicationService {
      *       java.lang.String)
      */
     @Override
-    public void reject(Application application, Person boss, Comment reasonToReject) {
+    public void reject(Application application, Person boss) {
 
         application.setStatus(ApplicationStatus.REJECTED);
 

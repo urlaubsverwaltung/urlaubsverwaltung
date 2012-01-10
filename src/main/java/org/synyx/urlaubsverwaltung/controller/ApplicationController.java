@@ -358,7 +358,7 @@ public class ApplicationController {
         comment.setDateOfComment(DateMidnight.now());
         commentService.saveComment(comment);
 
-        applicationService.reject(application, boss, comment);
+        applicationService.reject(application, boss);
 
         LOG.info(application.getApplicationDate() + " ID: " + application.getId() + "Der Antrag von "
             + application.getPerson().getFirstName() + " " + application.getPerson().getLastName()
