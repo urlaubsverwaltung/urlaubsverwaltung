@@ -52,6 +52,9 @@
                         <spring:message code="state" />
                     </th>
                     <c:choose>
+                        <%-- if applications are sort by person (stateNumber == 3), the field 'th' doesn't exist --%>
+                        <c:when test="${stateNumber == 3}">
+                        </c:when>
                         <%-- if applications are cancelled (stateNumber == 2), only printing is possible, not editing --%>
                         <c:when test="${stateNumber == 2}">
                             <th>
@@ -105,26 +108,27 @@
                             <spring:message code="${app.status.state}" />
                         </td>
                         
-                        <td>
-                        
-                        <%-- three possible cases: --%>
+                        <%-- four possible cases: --%>
                         
                         <%-- 0 : applications are waiting --%>
                         <c:if test="${stateNumber == 0}">
-                            <a href="${formUrlPrefix}/application/${app.id}?state=0"><img src="<spring:url value='/images/edit.png' />" /></a>
+                            <td><a href="${formUrlPrefix}/application/${app.id}?state=0"><img src="<spring:url value='/images/edit.png' />" /></a></td>
                         </c:if>
                         
                         <%-- 1 : applications are allowed --%>
                         <c:if test="${stateNumber == 1}">
-                            <a href="${formUrlPrefix}/application/${app.id}?state=1"><img src="<spring:url value='/images/edit.png' />" /></a>
+                            <td><a href="${formUrlPrefix}/application/${app.id}?state=1"><img src="<spring:url value='/images/edit.png' />" /></a></td>
                         </c:if>
                         
                         <%-- 2 : applications are cancelled --%>
                         <c:if test="${stateNumber == 2}">
-                            <a href="${formUrlPrefix}/application/${app.id}?state=2"><img src="<spring:url value='/images/playlist.png' />" /></a>
+                            <td><a href="${formUrlPrefix}/application/${app.id}?state=2"><img src="<spring:url value='/images/playlist.png' />" /></a></td>
                         </c:if>
                             
-                        </td>    
+                        <%-- 3 : applications sort by person 
+                                 show nothing
+                        --%>
+    
                     </tr>
                 </c:forEach>
             </table>

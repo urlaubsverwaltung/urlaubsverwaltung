@@ -181,6 +181,7 @@ public class PersonController {
         model.addAttribute(ACCOUNTS, accounts);
         model.addAttribute(ENTITLEMENTS, entitlements);
         model.addAttribute(APRIL, april);
+        model.addAttribute(YEAR, DateMidnight.now().getYear());
     }
 
 

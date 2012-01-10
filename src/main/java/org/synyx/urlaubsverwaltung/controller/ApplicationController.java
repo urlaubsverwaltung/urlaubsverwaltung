@@ -75,9 +75,10 @@ public class ApplicationController {
     private static final int WAITING = 0;
     private static final int ALLOWED = 1;
     private static final int CANCELLED = 2;
+    private static final int BY_PERSON = 3;
 
     // list of applications by person
-    private static final String APPS_BY_PERSON = "/application/{" + PERSON_ID + "}";
+    private static final String APPS_BY_PERSON = "/{" + PERSON_ID + "}/application";
 
     // form to apply vacation
     private static final String NEW_APP = "/application/new";
@@ -133,6 +134,7 @@ public class ApplicationController {
 
         model.addAttribute(PERSON, person);
         model.addAttribute(APPLICATIONS, applications);
+        model.addAttribute(STATE_NUMBER, BY_PERSON);
         setLoggedUser(model);
 
         return APP_LIST_JSP;

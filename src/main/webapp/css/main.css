@@ -134,7 +134,7 @@ th.attributes {
 th.vac {
 	padding: 7px 0px 7px 0px;
 	text-align: left;
-	width: 15%;
+	width: 20%;
 }
 
 #staff-list {
@@ -166,7 +166,11 @@ tr.even {
 }
 
 #person-tbl th {
-	width: 45%;
+	width: 37%;
+}
+
+.td-pic {
+    width: 15%;
 }
 
 #person-tbl td#td-img {
