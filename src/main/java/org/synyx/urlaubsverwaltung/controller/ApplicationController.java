@@ -77,10 +77,10 @@ public class ApplicationController {
     private static final int CANCELLED = 2;
 
     // list of applications by person
-    private static final String APPS_BY_PERSON = "/{" + PERSON_ID + "}/application";
+    private static final String APPS_BY_PERSON = "/application/{" + PERSON_ID + "}";
 
     // form to apply vacation
-    private static final String NEW_APP = "/{" + PERSON_ID + "}/application/new";
+    private static final String NEW_APP = "/application/new";
 
     // for user: the only way editing an application for user is to cancel it
     // (application may have state waiting or allowed)
@@ -223,10 +223,11 @@ public class ApplicationController {
      * @return
      */
     @RequestMapping(value = NEW_APP, method = RequestMethod.GET)
-    public String newApplicationForm(@PathVariable(PERSON_ID) Integer personId, Model model) {
+    public String newApplicationForm(Model model) {
 
-        Person person = personService.getPersonByID(personId);
-        List<Person> persons = personService.getAllPersons();
+        Person person = getPersonByLogin();
+
+        List<Person> persons = personService.getAllPersonsExceptOne(person.getId());
 
         DateMidnight date = DateMidnight.now(GregorianChronology.getInstance());
         String stringDate = date.getDayOfMonth() + "." + date.getMonthOfYear() + "." + date.getYear();
@@ -260,10 +261,9 @@ public class ApplicationController {
      * @return  returns the path to a success-site ("your application is being processed") or the main-page
      */
     @RequestMapping(value = NEW_APP, method = RequestMethod.POST)
-    public String newApplication(@PathVariable(PERSON_ID) Integer personId,
-        @ModelAttribute(APPFORM) AppForm appForm) {
+    public String newApplication(@ModelAttribute(APPFORM) AppForm appForm) {
 
-        Person person = personService.getPersonByID(personId);
+        Person person = getPersonByLogin();
 
         Application application = new Application();
         application = appForm.fillApplicationObject(application);
@@ -388,5 +388,13 @@ public class ApplicationController {
         Person loggedUser = personService.getPersonByLogin(user);
 
         model.addAttribute("loggedUser", loggedUser);
+    }
+
+
+    private Person getPersonByLogin() {
+
+        String user = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        return personService.getPersonByLogin(user);
     }
 }

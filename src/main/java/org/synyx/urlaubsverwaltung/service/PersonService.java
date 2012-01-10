@@ -54,11 +54,19 @@ public interface PersonService {
 
 
     /**
-     * returns all profiles in the database as a list of person-objects
+     * returns all persons
      *
-     * @return  returns all profiles in the database as a list of person-objects
+     * @return  returns all persons in a list
      */
     List<Person> getAllPersons();
+
+
+    /**
+     * returns all persons except that one that has the given id
+     *
+     * @return  returns all persons in a list
+     */
+    List<Person> getAllPersonsExceptOne(Integer id);
 
 
     /**

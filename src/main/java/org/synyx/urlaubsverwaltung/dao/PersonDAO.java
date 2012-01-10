@@ -21,4 +21,8 @@ public interface PersonDAO extends JpaRepository<Person, Integer> {
 
     @Query("select x from Person x order by x.lastName")
     List<Person> getPersonsOrderedByLastName();
+
+
+    @Query("select x from Person x where x.id != ?1 order by x.lastName")
+    List<Person> getAllPersonsExceptOne(Integer id);
 }

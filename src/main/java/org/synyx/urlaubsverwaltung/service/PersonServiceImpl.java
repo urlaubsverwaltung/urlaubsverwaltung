@@ -219,4 +219,14 @@ public class PersonServiceImpl implements PersonService {
 
         return holidayEntitlementDAO.getHolidayEntitlementByPerson(person);
     }
+
+
+    /**
+     * @see  PersonService#getAllPersonsExceptOne(java.lang.Integer)
+     */
+    @Override
+    public List<Person> getAllPersonsExceptOne(Integer id) {
+
+        return personDAO.getAllPersonsExceptOne(id);
+    }
 }
