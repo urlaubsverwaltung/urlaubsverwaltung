@@ -1,0 +1,8 @@
+Hallo ${application.person.firstName} ${application.person.lastName},
+
+dein am ${application.applicationDate} gestellter Antrag wurde leider von ${application.boss.firstName} ${application.boss.lastName} abgelehnt
+mit folgender Begründung:
+
+${application.reasonToReject.text}
+(${application.reasonToReject.dateOfComment})
+

@@ -104,7 +104,9 @@ public class ApplicationServiceImpl implements ApplicationService {
         // sign application and save it
         signApplicationByBoss(application, boss);
 
-// mailService.sendAllowedNotification(application);
+        simpleSave(application);
+
+        mailService.sendAllowedNotification(application);
     }
 
 
@@ -134,7 +136,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         applicationDAO.save(application);
 
         // mail to applicant
-// mailService.sendConfirmation(application);
+        mailService.sendConfirmation(application);
     }
 
 
@@ -153,7 +155,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         applicationDAO.save(application);
 
-//        mailService.sendRejectedNotification(application);
+        mailService.sendRejectedNotification(application);
     }
 
 
@@ -170,13 +172,13 @@ public class ApplicationServiceImpl implements ApplicationService {
             applicationDAO.save(application);
 
             // if application has been waiting, chefs get email
-// mailService.sendCancelledNotification(application, true);
+            mailService.sendCancelledNotification(application, true);
         } else if (application.getStatus() == ApplicationStatus.ALLOWED) {
             application.setStatus(ApplicationStatus.CANCELLED);
             applicationDAO.save(application);
 
             // if application has been allowed, office gets email
-// mailService.sendCancelledNotification(application, false);
+            mailService.sendCancelledNotification(application, false);
         }
     }
 

@@ -1,0 +1,5 @@
+Hallo ${application.person.firstName} ${application.person.lastName},
+
+dein am ${application.applicationDate} gestellter Antrag wurde genehmigt.
+Es handelt sich um den Zeitraum von ${application.startDate} bis ${application.endDate}.
+Einen schönen Urlaub! 

@@ -13,8 +13,8 @@
            
 
 <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
-	<property name="host" value="smtp.synyx.de" />
-	<property name="port" value="465" />
+<!--	<property name="host" value="smtp.synyx.de" />
+	<property name="port" value="465" />-->
 <!--	<property name="username" value="username" />
 	<property name="password" value="password" />
  

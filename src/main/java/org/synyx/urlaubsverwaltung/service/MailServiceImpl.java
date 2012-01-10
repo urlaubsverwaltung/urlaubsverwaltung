@@ -38,7 +38,7 @@ public class MailServiceImpl implements MailService {
 
     private final String FROM = "email.manager";
 
-    private final String PATH = "/src/main/resources/email/";
+    private final String PATH = "/email/";
     private final String APPLICATION = "application";
     private final String PERSON = "person";
     private final String PERSONS = "persons";

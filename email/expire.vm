@@ -1,0 +1,5 @@
+Hallo ${person.firstName} ${person.lastName},
+
+du hast aus dem letzten Kalenderjahr Resturlaub ins neue Jahr mitgenommen.
+Bitte beachte, dass dieser zum 1. April des neuen Jahres verfällt. 
+Nimm' dir also rechtzeitig Urlaub, damit der Resturlaub nicht verfällt.

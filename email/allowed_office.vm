@@ -1,0 +1,6 @@
+Hallo Office,
+
+es liegt ein neuer genehmigter Antrag vor:
+${application.person.firstName} ${application.person.lastName} 
+Zeitraum: ${application.startDate} bis ${application.endDate} 
+

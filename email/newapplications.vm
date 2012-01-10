@@ -1,0 +1,8 @@
+Hallo Chefs,
+
+es liegt ein neuer zu genehmigender Antrag vor:
+
+Antragssteller: ${application.person.firstName} ${application.person.lastName}
+Zeitraum des beantragten Urlaubs: ${application.startDate} bis ${application.endDate}
+Art des Urlaubs: ${application.vacationType}
+Datum der Antragsstellung: Antragsdatum: ${application.applicationDate}
