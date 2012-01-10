@@ -36,7 +36,7 @@
 
             <table id="person-tbl" cellspacing="0" border="1">
                 <tr>
-                    <td rowspan="6"><img class="user-pic" src="<spring:url value='/images/steve-jobs.jpg' />" /></td>
+                    <td rowspan="6"><img class="user-pic" src="<c:out value='${gravatar}'/>" /></td>
                 </tr>
                 <tr>
                     <th>

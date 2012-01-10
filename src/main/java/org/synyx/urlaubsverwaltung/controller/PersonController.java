@@ -26,6 +26,7 @@ import org.synyx.urlaubsverwaltung.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.service.HolidaysAccountService;
 import org.synyx.urlaubsverwaltung.service.PersonService;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
+import org.synyx.urlaubsverwaltung.util.GravatarUtil;
 import org.synyx.urlaubsverwaltung.view.PersonForm;
 
 import java.math.BigDecimal;
@@ -59,6 +60,8 @@ public class PersonController {
     private static final String ENTITLEMENT = "entitlement";
     private static final String ENTITLEMENTS = "entitlements";
     private static final String APRIL = "april";
+    private static final String GRAVATAR = "gravatar";
+    private static final String GRAVATAR_URLS = "gravatarUrls";
 
     private static final String PERSON_ID = "personId";
     private static final String YEAR = "year";
@@ -75,13 +78,15 @@ public class PersonController {
     private PersonService personService;
     private ApplicationService applicationService;
     private HolidaysAccountService accountService;
+    private GravatarUtil gravatarUtil;
 
     public PersonController(PersonService personService, ApplicationService applicationService,
-        HolidaysAccountService accountService) {
+        HolidaysAccountService accountService, GravatarUtil gravatarUtil) {
 
         this.personService = personService;
         this.applicationService = applicationService;
         this.accountService = accountService;
+        this.gravatarUtil = gravatarUtil;
     }
 
     /**
@@ -131,6 +136,9 @@ public class PersonController {
 
         List<Person> persons = personService.getAllPersons();
 
+        Map<Person, String> gravatarUrls = new HashMap<Person, String>();
+        String url;
+
         Map<Person, HolidaysAccount> accounts = new HashMap<Person, HolidaysAccount>();
         HolidaysAccount account;
 
@@ -138,12 +146,21 @@ public class PersonController {
         HolidayEntitlement entitlement;
 
         for (Person person : persons) {
+            // get url of person's gravatar image
+            url = gravatarUtil.createImgURL(person.getEmail());
+
+            if (url != null) {
+                gravatarUrls.put(person, url);
+            }
+
+            // get person's account
             account = accountService.getHolidaysAccount(year, person);
 
             if (account != null) {
                 accounts.put(person, account);
             }
 
+            // get person's entitlement
             entitlement = accountService.getHolidayEntitlement(year, person);
 
             if (entitlement != null) {
@@ -160,6 +177,7 @@ public class PersonController {
         }
 
         model.addAttribute(PERSONS, persons);
+        model.addAttribute(GRAVATAR_URLS, gravatarUrls);
         model.addAttribute(ACCOUNTS, accounts);
         model.addAttribute(ENTITLEMENTS, entitlements);
         model.addAttribute(APRIL, april);
@@ -230,6 +248,10 @@ public class PersonController {
         model.addAttribute(ENTITLEMENT, entitlement);
         model.addAttribute(YEAR, date.getYear());
         model.addAttribute(APRIL, april);
+
+        // get url of person's gravatar image
+        String url = gravatarUtil.createImgURL(person.getEmail());
+        model.addAttribute(GRAVATAR, url);
     }
 
 

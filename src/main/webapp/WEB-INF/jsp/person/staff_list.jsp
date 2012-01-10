@@ -36,6 +36,7 @@
             
         <table id="staff-list" cellspacing="0" border="0.5">
             <tr>
+                <th>&nbsp;</th>
                 <th class="attributes"><spring:message code="login" /></th>
                 <th class="attributes"><spring:message code="name" /></th>
                 <th class="attributes"><spring:message code="email" /></th>
@@ -45,6 +46,7 @@
             </tr>
         <c:forEach items="${persons}" var="person" varStatus="loopStatus">
             <tr class="${loopStatus.index % 2 == 0 ? 'even' : 'odd'}">
+                <td><img src="<c:out value='${gravatarUrls[person]}?s=20'/>" /></td>
                 <td><c:out value="${person.loginName}"/></td>
                 <td><c:out value="${person.lastName}"/>&nbsp;<c:out value="${person.firstName}"/></td>
                 <td><a href="mailto:${person.email}"><c:out value="${person.email}"/></a></td>
