@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
 import org.springframework.validation.DataBinder;
+import org.springframework.validation.Errors;
 
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -49,7 +50,6 @@ public class ApplicationController {
     private static final String SHOW_APP_DETAIL = "application/app_detail";
     private static final String APP_LIST_JSP = "application/list";
     private static final String APP_FORM_JSP = "application/app_form";
-    private static final String OVERVIEW_JSP = "/overview";
 
     // attribute names
     private static final String DATE_FORMAT = "dd.MM.yyyy";
@@ -80,6 +80,9 @@ public class ApplicationController {
     // list of applications by person
     private static final String APPS_BY_PERSON = "/{" + PERSON_ID + "}/application";
 
+    // overview
+    private static final String OVERVIEW = "/overview";
+
     // form to apply vacation
     private static final String NEW_APP = "/application/new";
 
@@ -93,6 +96,9 @@ public class ApplicationController {
     // allow or reject application
     private static final String ALLOW_APP = "/application/{" + APPLICATION_ID + "}/allow";
     private static final String REJECT_APP = "/application/{" + APPLICATION_ID + "}/reject";
+
+    // add sick days to application
+    private static final String SICK_DAYS = "/application/{" + APPLICATION_ID + "}/sick";
 
     // logger
     private static final Logger LOG = Logger.getLogger(PersonController.class);
@@ -281,7 +287,7 @@ public class ApplicationController {
         LOG.info(application.getApplicationDate() + " ID: " + application.getId() + " Es wurde ein neuer Antrag von "
             + person.getLastName() + " " + person.getFirstName() + " angelegt.");
 
-        return "redirect:/web" + OVERVIEW_JSP;
+        return "redirect:/web" + OVERVIEW;
     }
 
 
@@ -380,7 +386,34 @@ public class ApplicationController {
             + application.getPerson().getFirstName() + " " + application.getPerson().getLastName()
             + " wurde am " + DateMidnight.now().toString(DATE_FORMAT) + " storniert.");
 
-        return "redirect:/web" + OVERVIEW_JSP;
+        return "redirect:/web" + OVERVIEW;
+    }
+
+
+    @RequestMapping(value = SICK_DAYS, method = RequestMethod.PUT)
+    public String addSickDays(@PathVariable(APPLICATION_ID) Integer applicationId,
+        @ModelAttribute(APPLICATION) Application appForm, Errors errors, Model model) {
+
+        Application application = applicationService.getApplicationById(applicationId);
+
+        // number of vacation days must be greater than number of sick days
+        if (appForm.getSickDays().compareTo(application.getDays()) <= 0) {
+            application.setSickDays(appForm.getSickDays());
+            application.setDateOfAddingSickDays(DateMidnight.now());
+            applicationService.simpleSave(application);
+            applicationService.addSickDaysOnHolidaysAccount(application);
+
+            return "redirect:/web" + ALLOWED_APPS;
+        } else {
+            // shows error in Frontend
+            errors.setNestedPath("sickDays");
+            errors.reject("Schwachsinn");
+            model.addAttribute(APPLICATION, application);
+            model.addAttribute(STATE_NUMBER, ALLOWED);
+            setLoggedUser(model);
+
+            return SHOW_APP_DETAIL;
+        }
     }
 
 

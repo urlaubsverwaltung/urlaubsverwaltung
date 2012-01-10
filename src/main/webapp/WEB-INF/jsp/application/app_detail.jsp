@@ -119,6 +119,8 @@
                 </tr>
             </table>
 
+                    
+            <a class="button" href="${formUrlPrefix}/application/${app.id}/print"><spring:message code='print' /></a>
 
             <%-- application is waiting --%>            
             <c:if test="${stateNumber == 0}">
@@ -150,17 +152,18 @@
 
                 <sec:authorize access="hasRole('role.office')">
                     
-                    <a class="button" href="???"><spring:message code='add.sickdays' /></a>
+                    <input type="button" onclick="$('#sick').show(1000);" name="<spring:message code='add.sickdays' />" value="<spring:message code='add.sickdays' />" />
+                    <form:errors path="sickDays" cssClass="error" />
+                    <div id="sick" style="display: none">
+                        <form:form method="put" action="${formUrlPrefix}/application/${application.id}/sick" modelAttribute="application">
+                            <spring:message code='staff.sick' /><br /><form:input path="sickDays" />   
+                            <input type="submit" name="<spring:message code='save' />" value="<spring:message code='save' />" class="button" />
+                        </form:form>
+                    </div>
 
                 </sec:authorize>
                 
             </c:if>
-           
-            <sec:authorize access="hasRole('role.office')">
-
-                <a class="button" href="${formUrlPrefix}/application/${app.id}/print"><spring:message code='print' /></a>
-
-            </sec:authorize>
 
         </div>
 

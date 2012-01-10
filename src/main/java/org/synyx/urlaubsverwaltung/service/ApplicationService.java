@@ -28,7 +28,16 @@ public interface ApplicationService {
 
 
     /**
-     * use this to save an edited application
+     * use this to save simple an edited application (e.g. after adding sick days)
+     *
+     * @param  application  the application to be saved
+     */
+    void simpleSave(Application application);
+
+
+    /**
+     * use this to save a new application, i.e. state is set to waiting and calculation (subtracting vacation days from
+     * holidays account) is performed
      *
      * @param  application  the application to be saved
      */
@@ -60,13 +69,12 @@ public interface ApplicationService {
 
 
     /**
-     * sick days are added to application's attribute sickDays and the number of sick days is credited to person's leave
-     * account, because sick days are not counted among to holidays
+     * the number of sick days is credited to person's leave account, because sick days are not counted among to
+     * holidays
      *
      * @param  application
-     * @param  sickDays
      */
-    void addSickDaysOnHolidaysAccount(Application application, double sickDays);
+    void addSickDaysOnHolidaysAccount(Application application);
 
 
     /**

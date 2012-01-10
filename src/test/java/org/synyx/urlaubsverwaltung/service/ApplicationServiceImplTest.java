@@ -238,10 +238,11 @@ public class ApplicationServiceImplTest {
 
         application.setDays(BigDecimal.valueOf(10.0));
         application.setDateOfAddingSickDays(new DateMidnight(2011, DateTimeConstants.NOVEMBER, 11));
+        application.setSickDays(BigDecimal.valueOf(3.0));
 
         entitlement.setVacationDays(BigDecimal.valueOf(24.0));
 
-        instance.addSickDaysOnHolidaysAccount(application, 3.0);
+        instance.addSickDaysOnHolidaysAccount(application);
 
         assertEquals(BigDecimal.valueOf(3.0), application.getSickDays());
         assertEquals((BigDecimal.valueOf(10.0).subtract(BigDecimal.valueOf(3.0))), application.getDays());

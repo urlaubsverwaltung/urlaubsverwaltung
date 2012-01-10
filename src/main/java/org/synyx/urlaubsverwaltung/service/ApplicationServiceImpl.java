@@ -15,8 +15,6 @@ import org.synyx.urlaubsverwaltung.domain.HolidaysAccount;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.util.CalcUtil;
 
-import java.math.BigDecimal;
-
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
@@ -187,10 +185,9 @@ public class ApplicationServiceImpl implements ApplicationService {
      * @see  ApplicationService#addSickDaysOnHolidaysAccount(org.synyx.urlaubsverwaltung.domain.Application, double)
      */
     @Override
-    public void addSickDaysOnHolidaysAccount(Application application, double sickDays) {
+    public void addSickDaysOnHolidaysAccount(Application application) {
 
-        application.setSickDays(BigDecimal.valueOf(sickDays));
-        application.setDays(application.getDays().subtract(BigDecimal.valueOf(sickDays)));
+        application.setDays(application.getDays().subtract(application.getSickDays()));
 
         HolidaysAccount account = accountService.getHolidaysAccount(application.getDateOfAddingSickDays().getYear(),
                 application.getPerson());
@@ -325,5 +322,15 @@ public class ApplicationServiceImpl implements ApplicationService {
         DateMidnight lastDayOfYear = new DateMidnight(year, DateTimeConstants.DECEMBER, 31);
 
         return applicationDAO.getApplicationsByPersonAndYear(person, firstDayOfYear.toDate(), lastDayOfYear.toDate());
+    }
+
+
+    /**
+     * @see  ApplicationService#simpleSave(org.synyx.urlaubsverwaltung.domain.Application)
+     */
+    @Override
+    public void simpleSave(Application application) {
+
+        applicationDAO.save(application);
     }
 }
