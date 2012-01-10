@@ -16,14 +16,27 @@
     
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <link rel="stylesheet" type="text/css" href="<spring:url value='/css/ui-lightness/jquery-ui-1.8.16.custom.css' />" />
+        <link rel="stylesheet" type="text/css" href="<spring:url value='/jquery/css/ui-lightness/jquery-ui-1.8.16.custom.css' />" />
         <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />" /> 
         <title><spring:message code="title" /></title>
         <script src="<spring:url value='/jquery/js/jquery-1.6.2.min.js' />" type="text/javascript" ></script>
         <script src="<spring:url value='/jquery/js/jquery-ui-1.8.16.custom.min.js' />" type="text/javascript" ></script>
         <script type="text/javascript">
 	$(function() {
-		$( "#datepicker" ).datepicker();
+		var dates = $( "#from, #to, #at" ).datepicker({
+                        dateFormat: "dd.mm.yy",
+			defaultDate: "+1w",
+			numberOfMonths: 1,
+			onSelect: function( selectedDate ) {
+				var option = this.id == "from" ? "minDate" : "maxDate",
+					instance = $( this ).data( "datepicker" ),
+					date = $.datepicker.parseDate(
+						instance.settings.dateFormat ||
+						$.datepicker._defaults.dateFormat,
+						selectedDate, instance.settings );
+				dates.not( this ).datepicker( "option", option, date );
+			}
+		});
 	});
 	</script>
     </head>
@@ -101,11 +114,11 @@
                 <td colspan="3">&nbsp;</td>
             </tr>
             <tr id="full-day">  
-                <td>Von: <form:input id="startDate" path="startDate" /></td>
-                <td>Bis: <form:input id="endDate" path="endDate" /></td>
+                <td>Von: <form:input id="from" path="startDate" /></td>
+                <td>Bis: <form:input id="to" path="endDate" /></td>
             </tr>
             <tr id="half-day" style="display: none">  
-                <td>Am: <form:input id="startDate" path="startDateHalf" /></td>
+                <td>Am: <form:input id="at" path="startDateHalf" /></td>
             </tr>
             <tr>
                 <td colspan="3">&nbsp;</td>
