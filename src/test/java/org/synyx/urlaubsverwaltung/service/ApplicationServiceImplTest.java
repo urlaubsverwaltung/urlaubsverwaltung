@@ -26,6 +26,7 @@ import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.dao.ApplicationDAO;
 import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.domain.Comment;
 import org.synyx.urlaubsverwaltung.domain.DayLength;
 import org.synyx.urlaubsverwaltung.domain.HolidayEntitlement;
 import org.synyx.urlaubsverwaltung.domain.HolidaysAccount;
@@ -198,6 +199,11 @@ public class ApplicationServiceImplTest {
 
         String reason = "Einfach so halt, weil ich Bock drauf hab.";
 
+        Comment comment = new Comment();
+        comment.setText(reason);
+        comment.setNameOfCommentingPerson(boss.getLastName());
+        comment.setDateOfComment(new DateMidnight(2012, 1, 11));
+
         application.setStatus(ApplicationStatus.WAITING);
 
         accounts = new ArrayList<HolidaysAccount>();
@@ -205,15 +211,17 @@ public class ApplicationServiceImplTest {
 
         Mockito.when(calculationService.addVacationDays(application)).thenReturn(accounts);
 
-        instance.reject(application, boss, reason);
+        instance.reject(application, boss, comment);
 
         assertEquals(ApplicationStatus.REJECTED, application.getStatus());
 
         assertNotNull(application.getBoss());
         assertEquals(boss, application.getBoss());
 
-        assertNotNull(application.getReasonToReject());
-        assertEquals(reason, application.getReasonToReject().getText());
+//        assertNotNull(application.getReasonToReject());
+//        assertEquals(reason, application.getReasonToReject().getText());
+//        assertEquals(boss.getLastName(), application.getReasonToReject().getNameOfCommentingPerson());
+//        assertEquals(new DateMidnight(2012, 1, 11), application.getReasonToReject().getDateOfComment());
     }
 
 

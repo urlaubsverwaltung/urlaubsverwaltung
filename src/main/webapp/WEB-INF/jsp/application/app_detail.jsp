@@ -18,6 +18,8 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />" />
         <title><spring:message code="title" /></title>
+        <script src="<spring:url value='/jquery/js/jquery-1.6.2.min.js' />" type="text/javascript" ></script>
+        <script src="<spring:url value='/jquery/js/jquery-ui-1.8.16.custom.min.js' />" type="text/javascript" ></script>
     </head>
 
     <body>
@@ -125,12 +127,20 @@
 
                 <form:form method="put" action="${formUrlPrefix}/application/${application.id}/allow"> 
                     <input type="submit" name="<spring:message code='app.state.ok' />" value="<spring:message code='app.state.ok' />" class="button" />    
-                </form:form>  
-
-                <form:form method="put" action="${formUrlPrefix}/application/${application.id}/reject"> 
-                    <input type="submit" name="<spring:message code='app.state.no' />" value="<spring:message code='app.state.no' />" class="button" />    
-                </form:form>   
-
+                </form:form>
+                <br />    
+                    
+                <input type="button" name="<spring:message code='app.state.no' />" value="<spring:message code='app.state.no' />" onclick="$('#reject').show(1000);" />
+                <br />
+                <br /> 
+                
+                <div id="reject" style="display: none">    
+                    <form:form method="put" action="${formUrlPrefix}/application/${application.id}/reject" modelAttribute="comment">
+                        <spring:message code='reason' />&nbsp;<form:input path="text" />   
+                        <input type="submit" name="<spring:message code='ok' />" value="<spring:message code='ok' />" class="button" />    
+                    </form:form>
+                </div>    
+                    
                 </sec:authorize>
                
             </c:if>

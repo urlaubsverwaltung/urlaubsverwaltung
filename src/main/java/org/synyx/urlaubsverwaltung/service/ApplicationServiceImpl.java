@@ -146,19 +146,11 @@ public class ApplicationServiceImpl implements ApplicationService {
      *       java.lang.String)
      */
     @Override
-    public void reject(Application application, Person boss, String reasonToReject) {
+    public void reject(Application application, Person boss, Comment reasonToReject) {
 
         application.setStatus(ApplicationStatus.REJECTED);
 
         application.setBoss(boss);
-
-        Comment comment = new Comment();
-        comment.setText(reasonToReject);
-        comment.setPerson(boss);
-        comment.setDateOfComment(new DateMidnight(DateMidnight.now().getYear(), DateMidnight.now().getMonthOfYear(),
-                DateMidnight.now().getDayOfMonth()));
-
-        application.setReasonToReject(comment);
 
         rollback(application);
 

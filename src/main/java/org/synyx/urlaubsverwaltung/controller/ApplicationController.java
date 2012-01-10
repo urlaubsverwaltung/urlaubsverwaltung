@@ -23,11 +23,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.domain.Comment;
 import org.synyx.urlaubsverwaltung.domain.DayLength;
 import org.synyx.urlaubsverwaltung.domain.HolidaysAccount;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.VacationType;
 import org.synyx.urlaubsverwaltung.service.ApplicationService;
+import org.synyx.urlaubsverwaltung.service.CommentService;
 import org.synyx.urlaubsverwaltung.service.HolidaysAccountService;
 import org.synyx.urlaubsverwaltung.service.PersonService;
 import org.synyx.urlaubsverwaltung.util.DateMidnightPropertyEditor;
@@ -51,6 +53,7 @@ public class ApplicationController {
 
     // attribute names
     private static final String DATE_FORMAT = "dd.MM.yyyy";
+    private static final String COMMENT = "comment";
     private static final String APPFORM = "appForm";
     private static final String APPLICATION = "application";
     private static final String APPLICATIONS = "applications";
@@ -96,13 +99,15 @@ public class ApplicationController {
     private PersonService personService;
     private ApplicationService applicationService;
     private HolidaysAccountService accountService;
+    private CommentService commentService;
 
     public ApplicationController(PersonService personService, ApplicationService applicationService,
-        HolidaysAccountService accountService) {
+        HolidaysAccountService accountService, CommentService commentService) {
 
         this.personService = personService;
         this.applicationService = applicationService;
         this.accountService = accountService;
+        this.commentService = commentService;
     }
 
     @InitBinder
@@ -294,6 +299,7 @@ public class ApplicationController {
 
         model.addAttribute(APPLICATION, application);
         model.addAttribute(STATE_NUMBER, state);
+        model.addAttribute(COMMENT, new Comment());
         setLoggedUser(model);
 
         return SHOW_APP_DETAIL;
@@ -337,19 +343,25 @@ public class ApplicationController {
      */
     @RequestMapping(value = REJECT_APP, method = RequestMethod.PUT)
     public String rejectApplication(@PathVariable(APPLICATION_ID) Integer applicationId,
-        @ModelAttribute("reasonForRejecting") String reasonForRejecting) {
+        @ModelAttribute(COMMENT) Comment comment) {
 
         Application application = applicationService.getApplicationById(applicationId);
 
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         Person boss = personService.getPersonByLogin(name);
+        String nameOfCommentingPerson = boss.getLastName() + " " + boss.getFirstName();
 
-        applicationService.reject(application, boss, reasonForRejecting);
+        comment.setNameOfCommentingPerson(nameOfCommentingPerson);
+        comment.setApplication(application);
+        comment.setDateOfComment(DateMidnight.now());
+        commentService.saveComment(comment);
+
+        applicationService.reject(application, boss, comment);
 
         LOG.info(application.getApplicationDate() + " ID: " + application.getId() + "Der Antrag von "
             + application.getPerson().getFirstName() + " " + application.getPerson().getLastName()
-            + " wurde am " + DateMidnight.now().toString(DATE_FORMAT) + " von " + boss.getFirstName() + " "
-            + boss.getLastName() + " abgelehnt.");
+            + " wurde am " + DateMidnight.now().toString(DATE_FORMAT) + " von " + nameOfCommentingPerson
+            + " abgelehnt.");
 
         return "redirect:/web" + WAITING_APPS;
     }
@@ -377,23 +389,4 @@ public class ApplicationController {
 
         model.addAttribute("loggedUser", loggedUser);
     }
-
-    // /**
-// * view for office who can print or edit the request
-// *
-// * @param  applicationId
-// * @param  model
-// *
-// * @return
-// */
-// @RequestMapping(value = "/application/{applicationId}/office", method = RequestMethod.GET)
-// public String showapplicationDetailOffice(@PathVariable(APPLICATION_ID) Integer applicationId, Model model) {
-//
-////        Application application = applicationService.getRequestById(applicationId);
-////
-////        model.addAttribute(application_ATTRIBUTE_NAME, application);
-    // setLoggedUser(model);
-//
-//        return "applications/applicationdetailoffice";
-//    }
 }

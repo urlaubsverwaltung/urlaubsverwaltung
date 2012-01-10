@@ -4,6 +4,7 @@ import org.joda.time.DateMidnight;
 
 import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.domain.Comment;
 import org.synyx.urlaubsverwaltung.domain.Person;
 
 import java.util.List;
@@ -49,7 +50,7 @@ public interface ApplicationService {
      * @param  application  the application to be edited
      * @param  reasonToReject  the reason of the rejection
      */
-    void reject(Application application, Person boss, String reasonToReject);
+    void reject(Application application, Person boss, Comment reasonToReject);
 
 
     /**

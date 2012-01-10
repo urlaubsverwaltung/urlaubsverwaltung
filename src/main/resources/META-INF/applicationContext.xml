@@ -56,6 +56,7 @@
 <bean id="mailService" class="org.synyx.urlaubsverwaltung.service.MailServiceImpl">
        <constructor-arg ref="mailSender" />
 </bean> 
+<bean id="commentService" class="org.synyx.urlaubsverwaltung.service.CommentServiceImpl" />
 
 </beans>
 

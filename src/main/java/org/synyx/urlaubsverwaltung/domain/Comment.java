@@ -1,11 +1,15 @@
 package org.synyx.urlaubsverwaltung.domain;
 
 import org.joda.time.DateMidnight;
+import org.joda.time.DateTime;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
 
 
 /**
@@ -17,45 +21,60 @@ public class Comment extends AbstractPersistable<Integer> {
 
     private static final long serialVersionUID = 8908423789423089L;
 
-    private String text;
+    private String reason;
 
     @OneToOne
-    private Person person;
+    private Application application;
 
-    private DateMidnight dateOfComment;
+    private String nameOfCommentingPerson;
+
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateOfComment;
+
+    public Application getApplication() {
+
+        return application;
+    }
+
+
+    public void setApplication(Application application) {
+
+        this.application = application;
+    }
+
 
     public DateMidnight getDateOfComment() {
 
-        return dateOfComment;
+        return dateOfComment == null ? null : new DateTime(dateOfComment).toDateMidnight();
     }
 
 
     public void setDateOfComment(DateMidnight dateOfComment) {
 
-        this.dateOfComment = dateOfComment;
+        this.dateOfComment = dateOfComment == null ? null : dateOfComment.toDate();
     }
 
 
-    public Person getPerson() {
+    public String getNameOfCommentingPerson() {
 
-        return person;
+        return nameOfCommentingPerson;
     }
 
 
-    public void setPerson(Person person) {
+    public void setNameOfCommentingPerson(String nameOfCommentingPerson) {
 
-        this.person = person;
+        this.nameOfCommentingPerson = nameOfCommentingPerson;
     }
 
 
     public String getText() {
 
-        return text;
+        return reason;
     }
 
 
-    public void setText(String text) {
+    public void setText(String reason) {
 
-        this.text = text;
+        this.reason = reason;
     }
 }

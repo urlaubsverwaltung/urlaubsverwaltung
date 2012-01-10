@@ -33,10 +33,6 @@ public class Application extends AbstractPersistable<Integer> {
     @OneToOne
     private Person boss;
 
-    // Reason why boss rejected an application
-    @OneToOne
-    private Comment reasonToReject;
-
     // Number of days that is subtract from HolidayAccount
     private BigDecimal days;
 
@@ -226,18 +222,6 @@ public class Application extends AbstractPersistable<Integer> {
     public void setReason(String reason) {
 
         this.reason = reason;
-    }
-
-
-    public Comment getReasonToReject() {
-
-        return reasonToReject;
-    }
-
-
-    public void setReasonToReject(Comment reasonToReject) {
-
-        this.reasonToReject = reasonToReject;
     }
 
 
