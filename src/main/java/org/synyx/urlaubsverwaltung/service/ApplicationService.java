@@ -128,4 +128,20 @@ public interface ApplicationService {
      * @return  boolean: true if application is okay, false if there are too little residual number of vacation days
      */
     boolean checkApplication(Application application);
+
+
+    /**
+     * Check if new application is overlapping with an existent application. There are three possible cases: (1) The
+     * period of the new application has no overlap at all with existent applications; i.e. you can calculate the normal
+     * way and save the application if there are enough vacation days on person's holidays account. (2) The period of
+     * the new application is element of an existent application's period; i.e. the new application is not necessary
+     * because there is already an existent application for this period. (3) The period of the new application is part
+     * of an existent application's period, but for a part of it you could apply new vacation; i.e. user must be asked
+     * if he wants to apply for leave for the not overlapping period of the new application.
+     *
+     * @param  application  (the new application)
+     *
+     * @return  1 for case 1, 2 for case 2, 3 for case 3
+     */
+    int checkOverlap(Application application);
 }

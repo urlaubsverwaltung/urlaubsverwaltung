@@ -333,4 +333,197 @@ public class ApplicationServiceImplTest {
         assertNotNull(returnValue);
         assertEquals(false, returnValue);
     }
+
+
+    /** Test of checkOverlap method, of class ApplicationServiceImpl. */
+    @Test
+    public void testCheckOverlap() {
+
+        // case (1) no overlap at all, with gap
+        // a1: 16. - 18. Jan.
+        // aNew: 23. - 24. Jan.
+        // excepted return value == 1
+
+        Application a1 = new Application();
+        a1.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 16));
+        a1.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 18));
+
+        Application aNew = new Application();
+        aNew.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 23));
+        aNew.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 24));
+
+        Mockito.when(instance.getApplicationsByPersonForACertainTime(aNew)).thenReturn(new ArrayList<Application>());
+
+        int returnValue = instance.checkOverlap(aNew);
+
+        assertNotNull(returnValue);
+        assertEquals(1, returnValue);
+        
+        instance = new ApplicationServiceImpl(applicationDAO, accountService, cryptoService, calendarService,
+                mailService, calculationService);
+
+        // case (1) no overlap at all, abuting
+        // a1: 16. - 18. Jan.
+        // aNew: 19. - 20. Jan.
+        // excepted return value == 1
+
+        a1 = new Application();
+        a1.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 16));
+        a1.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 18));
+
+        aNew = new Application();
+        aNew.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 19));
+        aNew.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 20));
+
+        // return new and empty list
+        Mockito.when(instance.getApplicationsByPersonForACertainTime(aNew)).thenReturn(new ArrayList<Application>());
+
+        returnValue = instance.checkOverlap(aNew);
+
+        assertNotNull(returnValue);
+        assertEquals(1, returnValue);
+        
+        instance = new ApplicationServiceImpl(applicationDAO, accountService, cryptoService, calendarService,
+                mailService, calculationService);
+        
+
+        // case (2) period of aNew is element of the period of a1
+        // a1: 16. - 20. Jan.
+        // aNew: 17. - 18. Jan.
+        // excepted return value == 2
+
+        a1 = new Application();
+        a1.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 16));
+        a1.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 20));
+
+        aNew = new Application();
+        aNew.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 17));
+        aNew.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 18));
+
+        List<Application> list = new ArrayList<Application>();
+        list.add(a1);
+
+        Mockito.when(instance.getApplicationsByPersonForACertainTime(aNew)).thenReturn(list);
+
+        returnValue = instance.checkOverlap(aNew);
+
+        assertNotNull(returnValue);
+        assertEquals(2, returnValue);
+        
+        instance = new ApplicationServiceImpl(applicationDAO, accountService, cryptoService, calendarService,
+                mailService, calculationService);
+
+        // case (3) period of aNew is overlapping end of period of a1
+        // a1: 16. - 19. Jan.
+        // aNew: 18. - 20. Jan.
+        // excepted return value == 3
+
+        a1 = new Application();
+        a1.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 16));
+        a1.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 19));
+
+        aNew = new Application();
+        aNew.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 18));
+        aNew.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 20));
+
+        list = new ArrayList<Application>();
+        list.add(a1);
+
+        Mockito.when(instance.getApplicationsByPersonForACertainTime(aNew)).thenReturn(list);
+
+        returnValue = instance.checkOverlap(aNew);
+
+        assertNotNull(returnValue);
+        assertEquals(3, returnValue);
+        
+        instance = new ApplicationServiceImpl(applicationDAO, accountService, cryptoService, calendarService,
+                mailService, calculationService);
+
+        // case (3) period of aNew is overlapping start of period of a1
+        // aNew: 16. - 19. Jan.
+        // a1: 18. - 20. Jan.
+        // excepted return value == 3
+
+        aNew = new Application();
+        aNew.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 16));
+        aNew.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 19));
+
+        a1 = new Application();
+        a1.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 18));
+        a1.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 20));
+
+        list = new ArrayList<Application>();
+        list.add(a1);
+
+        Mockito.when(instance.getApplicationsByPersonForACertainTime(aNew)).thenReturn(list);
+
+        returnValue = instance.checkOverlap(aNew);
+
+        assertNotNull(returnValue);
+        assertEquals(3, returnValue);
+        
+        instance = new ApplicationServiceImpl(applicationDAO, accountService, cryptoService, calendarService,
+                mailService, calculationService);
+
+        // case (3) period of aNew is overlapping two different periods (a1 and a2)
+        // aNew: 17. - 26. Jan.
+        // a1: 16. - 18. Jan.
+        // a2: 25. - 27. Jan.
+        // excepted return value == 3
+
+        aNew = new Application();
+        aNew.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 17));
+        aNew.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 26));
+
+        a1 = new Application();
+        a1.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 16));
+        a1.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 18));
+
+        Application a2 = new Application();
+        a2.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 25));
+        a2.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 27));
+
+        list = new ArrayList<Application>();
+        list.add(a1);
+        list.add(a2);
+
+        Mockito.when(instance.getApplicationsByPersonForACertainTime(aNew)).thenReturn(list);
+
+        returnValue = instance.checkOverlap(aNew);
+
+        assertNotNull(returnValue);
+        assertEquals(3, returnValue);
+        
+        instance = new ApplicationServiceImpl(applicationDAO, accountService, cryptoService, calendarService,
+                mailService, calculationService);
+
+        // periods a1 and a2 abut case (1), aNew is element of both and has no gap case (2)
+        // aNew: 17. - 23. Jan.
+        // a1: 16. - 18. Jan.
+        // a2: 19. - 25. Jan.
+        // excepted return value == 2
+
+        aNew = new Application();
+        aNew.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 17));
+        aNew.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 23));
+
+        a1 = new Application();
+        a1.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 16));
+        a1.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 18));
+
+        a2 = new Application();
+        a2.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 19));
+        a2.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 25));
+
+        list = new ArrayList<Application>();
+        list.add(a1);
+        list.add(a2);
+
+        Mockito.when(instance.getApplicationsByPersonForACertainTime(aNew)).thenReturn(list);
+
+        returnValue = instance.checkOverlap(aNew);
+
+        assertNotNull(returnValue);
+        assertEquals(2, returnValue);
+    }
 }

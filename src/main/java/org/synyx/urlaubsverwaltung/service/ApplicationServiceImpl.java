@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.service;
 
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
+import org.joda.time.Interval;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -21,6 +22,7 @@ import java.security.PrivateKey;
 import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -334,5 +336,97 @@ public class ApplicationServiceImpl implements ApplicationService {
     public void simpleSave(Application application) {
 
         applicationDAO.save(application);
+    }
+
+
+    protected List<Application> getApplicationsByPersonForACertainTime(Application application) {
+
+        return applicationDAO.getApplicationsByPersonForACertainTime(application.getStartDate().toDate(),
+                application.getEndDate().toDate(), application.getPerson());
+    }
+
+
+    @Override
+    public int checkOverlap(Application application) {
+
+        DateMidnight startDate = application.getStartDate();
+        DateMidnight endDate = application.getEndDate();
+
+        Interval interval = new Interval(startDate, endDate);
+        List<Interval> listOfOverlaps = new ArrayList<Interval>();
+
+        // list ordered by startDate of applications
+        List<Application> apps = getApplicationsByPersonForACertainTime(application);
+
+        // case (1): no overlap at all
+        if (apps.isEmpty()) {
+            /* (1) The
+             * period of the new application has no overlap at all with existent applications; i.e. you can calculate
+             * the normal way and save the application if there are enough vacation days on person's holidays account.
+             */
+            return 1;
+        } else {
+            // case (2) or (3): overlap
+
+            for (Application a : apps) {
+                Interval inti = new Interval(a.getStartDate(), a.getEndDate());
+                Interval overlap = inti.overlap(interval);
+
+                // check if they really overlap, else value of overlap would be null
+                if (overlap != null) {
+                    listOfOverlaps.add(overlap);
+                }
+            }
+
+            List<Interval> listOfGaps = new ArrayList<Interval>();
+
+            // check start and end points
+
+            DateMidnight firstOverlapStart = listOfOverlaps.get(0).getStart().toDateMidnight();
+            DateMidnight lastOverlapEnd = listOfOverlaps.get(listOfOverlaps.size() - 1).getEnd().toDateMidnight();
+
+            if (startDate.isBefore(firstOverlapStart)) {
+                Interval gapStart = new Interval(startDate, firstOverlapStart);
+                listOfGaps.add(gapStart);
+            }
+
+            if (endDate.isAfter(lastOverlapEnd)) {
+                Interval gapEnd = new Interval(lastOverlapEnd, endDate);
+                listOfGaps.add(gapEnd);
+            }
+
+            // check if intervals abut or gap
+            for (int i = 0; (i + 1) < listOfOverlaps.size(); i++) {
+                // if they don't abut, you can calculate the gap
+                if (!(listOfOverlaps.get(i).getEnd().equals(listOfOverlaps.get(i + 1).getStart())
+                        || listOfOverlaps.get(i).getEnd().plusDays(1).equals(listOfOverlaps.get(i + 1).getStart()))) {
+                    Interval gap = listOfOverlaps.get(i).gap(listOfOverlaps.get(i + 1));
+                    listOfGaps.add(gap);
+                }
+            }
+
+            // gaps between the intervals mean that you can apply vacation for this periods
+            // this is case (3)
+            if (listOfGaps.size() > 0) {
+                // feature in later version
+                // now only error message
+
+                /* (3) The period of the new application is part
+                 * of an existent application's period, but for a part of it you could apply new vacation; i.e. user
+                 * must be asked if he wants to apply for leave for the not overlapping period of the new application.
+                 */
+                return 3;
+            } else {
+                // no gaps mean that period of application is element of other periods of applications
+                // i.e. you have no free periods to apply vacation for
+                // this is case (2)
+
+                /* (2) The period of
+                 * the new application is element of an existent application's period; i.e. the new application is not
+                 * necessary because there is already an existent application for this period.
+                 */
+                return 2;
+            }
+        }
     }
 }
