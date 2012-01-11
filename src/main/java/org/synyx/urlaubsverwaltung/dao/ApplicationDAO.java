@@ -28,13 +28,15 @@ public interface ApplicationDAO extends JpaRepository<Application, Integer> {
 
 
     // get List<Application> for a certain time (between startDate and endDate)
-    @Query("select x from Application x where x.startDate >= ?1 and x.endDate <= ?2 order by x.startDate")
+    @Query(
+        "select x from Application x where (x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) or (x.startDate < ?1 and x.endDate > ?2) order by x.startDate"
+    )
     List<Application> getApplicationsForACertainTime(Date startDate, Date endDate);
 
 
-    // get List<Application> for a certain time (between startDate and endDate)
+    // get List<Application> for a certain time (between startDate and endDate)for the given person
     @Query(
-        "select x from Application x where (x.startDate >= ?1 and x.endDate <= ?2) or (x.startDate <= ?1 and x.endDate >= ?2) and x.person = ?3 order by x.startDate"
+        "select x from Application x where (x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) or (x.startDate < ?1 and x.endDate > ?2) and x.person = ?3 order by x.startDate"
     )
     List<Application> getApplicationsByPersonForACertainTime(Date startDate, Date endDate, Person person);
 

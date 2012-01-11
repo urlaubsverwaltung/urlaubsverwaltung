@@ -53,7 +53,7 @@
         
         <br />
         
-        <form:form method="post" action="${formUrlPrefix}/${person.id}/application/new" modelAttribute="appForm"> 
+        <form:form method="post" action="${formUrlPrefix}/application/new" modelAttribute="appForm"> 
             
         <table>
             <tr>
@@ -175,7 +175,7 @@
             </tr>
             <tr>
                 <td colspan="2">
-                    <spring:message code='app.footer' />&nbsp;<c:out value="${date}" />
+                    <spring:message code='app.footer' />&nbsp;<joda:format style="M-" value="${date}"/>
                 </td>
             </tr>
             <tr>
@@ -191,6 +191,7 @@
                 
         </form:form>    
         
+        <form:errors />
         
         </div>
         

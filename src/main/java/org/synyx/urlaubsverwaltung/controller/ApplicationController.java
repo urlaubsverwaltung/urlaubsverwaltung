@@ -62,6 +62,10 @@ public class ApplicationController {
     private static final String PERSONS = "persons";
     private static final String YEAR = "year";
     private static final String DATE = "date";
+    private static final String VACTYPES = "vacTypes";
+    private static final String FULL = "full";
+    private static final String MORNING = "morning";
+    private static final String NOON = "noon";
 
     private static final String APPLICATION_ID = "applicationId";
     private static final String PERSON_ID = "personId";
@@ -237,22 +241,20 @@ public class ApplicationController {
 
         List<Person> persons = personService.getAllPersonsExceptOne(person.getId());
 
-        DateMidnight date = DateMidnight.now(GregorianChronology.getInstance());
-        String stringDate = date.getDayOfMonth() + "." + date.getMonthOfYear() + "." + date.getYear();
-        int year = date.getYear();
+        int year = DateMidnight.now(GregorianChronology.getInstance()).getYear();
 
         HolidaysAccount account = accountService.getHolidaysAccount(year, person);
 
         model.addAttribute(PERSON, person);
         model.addAttribute(PERSONS, persons);
-        model.addAttribute(DATE, stringDate);
+        model.addAttribute(DATE, DateMidnight.now(GregorianChronology.getInstance()));
         model.addAttribute(YEAR, year);
         model.addAttribute(APPFORM, new AppForm());
         model.addAttribute(ACCOUNT, account);
-        model.addAttribute("vacTypes", VacationType.values());
-        model.addAttribute("full", DayLength.FULL);
-        model.addAttribute("morning", DayLength.MORNING);
-        model.addAttribute("noon", DayLength.NOON);
+        model.addAttribute(VACTYPES, VacationType.values());
+        model.addAttribute(FULL, DayLength.FULL);
+        model.addAttribute(MORNING, DayLength.MORNING);
+        model.addAttribute(NOON, DayLength.NOON);
         setLoggedUser(model);
 
         return APP_FORM_JSP;
@@ -269,7 +271,7 @@ public class ApplicationController {
      * @return  returns the path to a success-site ("your application is being processed") or the main-page
      */
     @RequestMapping(value = NEW_APP, method = RequestMethod.POST)
-    public String newApplication(@ModelAttribute(APPFORM) AppForm appForm) {
+    public String newApplication(@ModelAttribute(APPFORM) AppForm appForm, Errors errors, Model model) {
 
         Person person = getPersonByLogin();
 
@@ -279,15 +281,55 @@ public class ApplicationController {
         application.setPerson(person);
         application.setApplicationDate(DateMidnight.now(GregorianChronology.getInstance()));
 
-        applicationService.save(application);
+        // check at first if there are existent application for the same period
 
-//        cryptoService and mailService must be modified
-//        applicationService.signApplicationByUser(application, person);
+        // checkOverlap
+        // case 1: ok
+        // case 2: new application is fully part of existent applications, useless to apply it
+        // case 3: gaps in between - feature in later version, now only error message
 
-        LOG.info(application.getApplicationDate() + " ID: " + application.getId() + " Es wurde ein neuer Antrag von "
-            + person.getLastName() + " " + person.getFirstName() + " angelegt.");
+        int overlap = applicationService.checkOverlap(application);
 
-        return "redirect:/web" + OVERVIEW;
+        if (overlap == 2 || overlap == 3) {
+            // in this version, these two cases are handled equal
+            // ERROR message!!!!
+            errors.reject("check.overlap");
+        } else if (overlap == 1) {
+            // everything ok, go to next check
+            boolean enoughDays = applicationService.checkApplication(application);
+
+            // enough days to apply for leave
+            if (enoughDays) {
+                // save the application
+                applicationService.save(application);
+
+                // and sign it
+                applicationService.signApplicationByUser(application, person);
+
+                LOG.info(application.getApplicationDate() + " ID: " + application.getId()
+                    + " Es wurde ein neuer Antrag von " + person.getLastName() + " " + person.getFirstName()
+                    + " angelegt.");
+
+                return "redirect:/web" + OVERVIEW;
+            } else {
+                errors.reject("check.enough");
+            }
+        }
+
+        model.addAttribute(PERSON, person);
+        model.addAttribute(PERSONS, personService.getAllPersonsExceptOne(person.getId()));
+        model.addAttribute(DATE, DateMidnight.now(GregorianChronology.getInstance()));
+        model.addAttribute(YEAR, DateMidnight.now(GregorianChronology.getInstance()).getYear());
+        model.addAttribute(APPFORM, appForm);
+        model.addAttribute(ACCOUNT,
+            accountService.getHolidaysAccount(DateMidnight.now(GregorianChronology.getInstance()).getYear(), person));
+        model.addAttribute(VACTYPES, VacationType.values());
+        model.addAttribute(FULL, DayLength.FULL);
+        model.addAttribute(MORNING, DayLength.MORNING);
+        model.addAttribute(NOON, DayLength.NOON);
+        setLoggedUser(model);
+
+        return APP_FORM_JSP;
     }
 
 
