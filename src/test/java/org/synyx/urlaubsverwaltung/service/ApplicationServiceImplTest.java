@@ -358,9 +358,6 @@ public class ApplicationServiceImplTest {
 
         assertNotNull(returnValue);
         assertEquals(1, returnValue);
-        
-        instance = new ApplicationServiceImpl(applicationDAO, accountService, cryptoService, calendarService,
-                mailService, calculationService);
 
         // case (1) no overlap at all, abuting
         // a1: 16. - 18. Jan.
@@ -382,10 +379,6 @@ public class ApplicationServiceImplTest {
 
         assertNotNull(returnValue);
         assertEquals(1, returnValue);
-        
-        instance = new ApplicationServiceImpl(applicationDAO, accountService, cryptoService, calendarService,
-                mailService, calculationService);
-        
 
         // case (2) period of aNew is element of the period of a1
         // a1: 16. - 20. Jan.
@@ -409,9 +402,6 @@ public class ApplicationServiceImplTest {
 
         assertNotNull(returnValue);
         assertEquals(2, returnValue);
-        
-        instance = new ApplicationServiceImpl(applicationDAO, accountService, cryptoService, calendarService,
-                mailService, calculationService);
 
         // case (3) period of aNew is overlapping end of period of a1
         // a1: 16. - 19. Jan.
@@ -435,9 +425,6 @@ public class ApplicationServiceImplTest {
 
         assertNotNull(returnValue);
         assertEquals(3, returnValue);
-        
-        instance = new ApplicationServiceImpl(applicationDAO, accountService, cryptoService, calendarService,
-                mailService, calculationService);
 
         // case (3) period of aNew is overlapping start of period of a1
         // aNew: 16. - 19. Jan.
@@ -461,9 +448,6 @@ public class ApplicationServiceImplTest {
 
         assertNotNull(returnValue);
         assertEquals(3, returnValue);
-        
-        instance = new ApplicationServiceImpl(applicationDAO, accountService, cryptoService, calendarService,
-                mailService, calculationService);
 
         // case (3) period of aNew is overlapping two different periods (a1 and a2)
         // aNew: 17. - 26. Jan.
@@ -493,9 +477,6 @@ public class ApplicationServiceImplTest {
 
         assertNotNull(returnValue);
         assertEquals(3, returnValue);
-        
-        instance = new ApplicationServiceImpl(applicationDAO, accountService, cryptoService, calendarService,
-                mailService, calculationService);
 
         // periods a1 and a2 abut case (1), aNew is element of both and has no gap case (2)
         // aNew: 17. - 23. Jan.

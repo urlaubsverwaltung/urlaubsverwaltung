@@ -120,6 +120,24 @@ public interface ApplicationService {
 
 
     /**
+     * signs an application with the private key of the signing user (applicant)
+     *
+     * @param  application
+     * @param  user
+     */
+    void signApplicationByUser(Application application, Person user);
+
+
+    /**
+     * signs an application with the private key of the signing boss
+     *
+     * @param  application
+     * @param  boss
+     */
+    void signApplicationByBoss(Application application, Person boss);
+
+
+    /**
      * check if application is valid and may be send to boss to be allowed or rejected or if person's leave account has
      * too little residual number of vacation days, so that taking holiday isn't possible
      *

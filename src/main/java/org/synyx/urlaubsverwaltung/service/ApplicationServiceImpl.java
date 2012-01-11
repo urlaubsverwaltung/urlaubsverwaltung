@@ -204,11 +204,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 
     /**
-     * signs an application with the private key of the signing boss
-     *
-     * @param  application
-     * @param  boss
+     * @see  ApplicationService#signApplicationByBoss(org.synyx.urlaubsverwaltung.domain.Application, org.synyx.urlaubsverwaltung.domain.Person)
      */
+    @Override
     public void signApplicationByBoss(Application application, Person boss) {
 
         byte[] data = signApplication(application, boss);
@@ -221,11 +219,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 
     /**
-     * signs an application with the private key of the signing user (applicant)
-     *
-     * @param  application
-     * @param  user
+     * @see  ApplicationService#signApplicationByUser(org.synyx.urlaubsverwaltung.domain.Application, org.synyx.urlaubsverwaltung.domain.Person)
      */
+    @Override
     public void signApplicationByUser(Application application, Person user) {
 
         byte[] data = signApplication(application, user);
@@ -398,8 +394,10 @@ public class ApplicationServiceImpl implements ApplicationService {
             // check if intervals abut or gap
             for (int i = 0; (i + 1) < listOfOverlaps.size(); i++) {
                 // if they don't abut, you can calculate the gap
-                if (!(listOfOverlaps.get(i).getEnd().equals(listOfOverlaps.get(i + 1).getStart())
-                        || listOfOverlaps.get(i).getEnd().plusDays(1).equals(listOfOverlaps.get(i + 1).getStart()))) {
+                // test if end of interval is equals resp. one day plus of start of other interval
+                // e.g. if period 1: 16.-18. and period 2: 19.-20 --> they abut
+                // e.g. if period 1: 16.-18. and period 2: 20.-22 --> they have a gap
+                if (intervalsHaveGap(listOfOverlaps.get(i), listOfOverlaps.get(i + 1))) {
                     Interval gap = listOfOverlaps.get(i).gap(listOfOverlaps.get(i + 1));
                     listOfGaps.add(gap);
                 }
@@ -408,9 +406,6 @@ public class ApplicationServiceImpl implements ApplicationService {
             // gaps between the intervals mean that you can apply vacation for this periods
             // this is case (3)
             if (listOfGaps.size() > 0) {
-                // feature in later version
-                // now only error message
-
                 /* (3) The period of the new application is part
                  * of an existent application's period, but for a part of it you could apply new vacation; i.e. user
                  * must be asked if he wants to apply for leave for the not overlapping period of the new application.
@@ -427,6 +422,27 @@ public class ApplicationServiceImpl implements ApplicationService {
                  */
                 return 2;
             }
+        }
+    }
+
+
+    /**
+     * This method checks if the two given intervals have a gap or if they abut. Some examples: (1) if period 1: 16.-18.
+     * and period 2: 19.-20 --> they abut (2) if period 1: 16.-18. and period 2: 20.-22 --> they have a gap
+     *
+     * @param  i1
+     * @param  i2
+     *
+     * @return  true if they have a gap between or false if they have no gap
+     */
+    private boolean intervalsHaveGap(Interval i1, Interval i2) {
+
+        // test if end of interval is equals resp. one day plus of start of other interval
+        if (!(i1.getEnd().toDateMidnight().equals(i2.getStart().toDateMidnight())
+                    || i1.getEnd().toDateMidnight().plusDays(1).equals(i2.getStart().toDateMidnight()))) {
+            return true;
+        } else {
+            return false;
         }
     }
 }
