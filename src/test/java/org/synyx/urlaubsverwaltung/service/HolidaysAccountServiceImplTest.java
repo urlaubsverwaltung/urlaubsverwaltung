@@ -237,4 +237,22 @@ public class HolidaysAccountServiceImplTest {
 // assertEquals(BigDecimal.valueOf(25), accountCurrentYear.getVacationDays());
 // assertEquals(BigDecimal.valueOf(5), accountCurrentYear.getRemainingVacationDays());
     }
+
+
+    /** Test of getAllAccountsOfPerson method, of class HolidaysAccountServiceImpl. */
+    @Test
+    public void testGetAllAccountsOfPerson() {
+
+        instance.getAllAccountsOfPerson(person);
+        Mockito.verify(holidaysAccountDAO).getAllHolidaysAccountsByPerson(person);
+    }
+
+
+    /** Test of getAllEntitlementsOfPerson method, of class HolidaysAccountServiceImpl. */
+    @Test
+    public void testGetAllEntitlementsOfPerson() {
+
+        instance.getAllEntitlementsOfPerson(person);
+        Mockito.verify(holidaysEntitlementDAO).getHolidayEntitlementByPerson(person);
+    }
 }

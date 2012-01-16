@@ -108,4 +108,24 @@ public interface HolidaysAccountService {
      * @param  account
      */
     void saveHolidaysAccount(HolidaysAccount account);
+
+
+    /**
+     * this method returns a list of all holidays accounts that a person have
+     *
+     * @param  person
+     *
+     * @return  list of person's holidays accounts
+     */
+    List<HolidaysAccount> getAllAccountsOfPerson(Person person);
+
+
+    /**
+     * this method returns a list of all holiday entitlements that a person have
+     *
+     * @param  person
+     *
+     * @return  list of person's holiday entitlements
+     */
+    List<HolidayEntitlement> getAllEntitlementsOfPerson(Person person);
 }

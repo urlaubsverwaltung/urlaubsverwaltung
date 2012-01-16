@@ -228,4 +228,24 @@ public class HolidaysAccountServiceImpl implements HolidaysAccountService {
             saveHolidayEntitlement(entitlement);
         }
     }
+
+
+    /**
+     * @see  HolidaysAccountService#getAllAccountsOfPerson(org.synyx.urlaubsverwaltung.domain.Person)
+     */
+    @Override
+    public List<HolidaysAccount> getAllAccountsOfPerson(Person person) {
+
+        return holidaysAccountDAO.getAllHolidaysAccountsByPerson(person);
+    }
+
+
+    /**
+     * @see  HolidaysAccountService#getAllEntitlementsOfPerson(org.synyx.urlaubsverwaltung.domain.Person)
+     */
+    @Override
+    public List<HolidayEntitlement> getAllEntitlementsOfPerson(Person person) {
+
+        return holidaysEntitlementDAO.getHolidayEntitlementByPerson(person);
+    }
 }
