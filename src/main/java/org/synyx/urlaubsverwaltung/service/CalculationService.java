@@ -40,7 +40,7 @@ public class CalculationService {
 
     /**
      * This method returns updated holiday account after calculating and setting vacation days and remaining vacation
-     * days. Method is used by ApplicationServiceImpl's methods checkApplication and save.
+     * days. Method is used by ApplicationServiceImpl's method save, i.e. account(s) is/are modified.
      *
      * @param  application
      *
@@ -76,6 +76,58 @@ public class CalculationService {
             HolidaysAccount accountNextYear = accountService.getAccountOrCreateOne(application.getEndDate().getYear(),
                     application.getPerson());
             accounts = subtractCaseBetweenJanuary(application, account, accountNextYear);
+        }
+
+        return accounts;
+    }
+
+
+    /**
+     * This method works alike the method subtractVacationDays excpet that this method doesn't manipulate the real
+     * account(s) but uses copies of the available account(s) days. Method is used by ApplicationServiceImpl's method
+     * checkApplication, i.e. real account(s) is/are not modified but only copies of it.
+     *
+     * @param  application
+     *
+     * @return  list with copies of holidays accounts that only have the attributes vacationDays and
+     *          remainingVacationDays;
+     */
+    public List<HolidaysAccount> subtractForCheck(Application application) {
+
+        List<HolidaysAccount> accounts = new ArrayList<HolidaysAccount>();
+
+        HolidaysAccount account = accountService.getAccountOrCreateOne(application.getStartDate().getYear(),
+                application.getPerson());
+
+        HolidaysAccount accountCopy = new HolidaysAccount();
+        accountCopy.setRemainingVacationDays(account.getRemainingVacationDays());
+        accountCopy.setVacationDays(account.getVacationDays());
+
+        // there are four possible cases for period of holiday
+        // 1. between January and March
+        // 2. between April and December
+        // 3. between March and April
+        // 4. between December and January
+
+        int startMonth = application.getStartDate().getMonthOfYear();
+        int endMonth = application.getEndDate().getMonthOfYear();
+
+        if (DateUtil.isBeforeApril(startMonth, endMonth)) {
+            accountCopy = subtractCaseBeforeApril(application, accountCopy);
+            accounts.add(accountCopy);
+        } else if (DateUtil.isAfterApril(startMonth, endMonth)) {
+            accountCopy = subtractCaseAfterApril(application, accountCopy);
+            accounts.add(accountCopy);
+        } else if (DateUtil.spansMarchAndApril(startMonth, endMonth)) {
+            accountCopy = subtractCaseBetweenApril(application, accountCopy);
+            accounts.add(accountCopy);
+        } else if (DateUtil.spansDecemberAndJanuary(startMonth, endMonth)) {
+            HolidaysAccount accountNextYear = accountService.getAccountOrCreateOne(application.getEndDate().getYear(),
+                    application.getPerson());
+            HolidaysAccount accountNextYearCopy = new HolidaysAccount();
+            accountNextYearCopy.setRemainingVacationDays(accountNextYear.getRemainingVacationDays());
+            accountNextYearCopy.setVacationDays(accountNextYear.getVacationDays());
+            accounts = subtractCaseBetweenJanuary(application, accountCopy, accountNextYearCopy);
         }
 
         return accounts;

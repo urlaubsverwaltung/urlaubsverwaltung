@@ -305,7 +305,7 @@ public class ApplicationServiceImplTest {
         accounts = new ArrayList<HolidaysAccount>();
         accounts.add(accountOne);
 
-        Mockito.when(calculationService.subtractVacationDays(application)).thenReturn(accounts);
+        Mockito.when(calculationService.subtractForCheck(application)).thenReturn(accounts);
 
         accountOne.setVacationDays(BigDecimal.ZERO);
 

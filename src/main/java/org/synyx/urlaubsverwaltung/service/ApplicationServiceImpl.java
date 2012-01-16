@@ -275,7 +275,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public boolean checkApplication(Application application) {
 
-        List<HolidaysAccount> accounts = calculationService.subtractVacationDays(application);
+        List<HolidaysAccount> accounts = calculationService.subtractForCheck(application);
         HolidaysAccount account = accounts.get(0);
 
         if (accounts.size() == 1) {
