@@ -29,6 +29,7 @@
         <div id="show-navi">
         <a href="${formUrlPrefix}/staff/list"><spring:message code="table.list" /></a>
         <a href="${formUrlPrefix}/staff/detail"><spring:message code="table.detail" /></a>
+        <a href="${formUrlPrefix}/staff/inactive"><spring:message code="table.inactive" /></a>
         </div>
         
         

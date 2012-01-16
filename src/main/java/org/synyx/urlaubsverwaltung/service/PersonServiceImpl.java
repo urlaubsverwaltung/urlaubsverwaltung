@@ -66,9 +66,10 @@ public class PersonServiceImpl implements PersonService {
         person.setActive(false);
         person.setRole(Role.INACTIVE);
 
-        // get all holidays accounts and entitlements and set them to inactive too
-
-        accountService.deactivateAccountsAndEntitlements(person);
+        // BETTER DON'T DO THIS
+// // get all holidays accounts and entitlements and set them to inactive too
+//
+// accountService.deactivateAccountsAndEntitlements(person);
     }
 
 
@@ -235,5 +236,12 @@ public class PersonServiceImpl implements PersonService {
     public List<Person> getAllPersonsExceptOne(Integer id) {
 
         return personDAO.getAllPersonsExceptOne(id);
+    }
+
+
+    @Override
+    public List<Person> getInactivePersons() {
+
+        return personDAO.getInactivePersons();
     }
 }

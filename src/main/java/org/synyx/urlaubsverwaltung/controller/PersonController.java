@@ -71,6 +71,7 @@ public class PersonController {
     // links
     private static final String LIST_LINK = "/staff/list";
     private static final String DETAIL_LINK = "/staff/detail";
+    private static final String INACTIVE_LINK = "/staff/inactive";
     private static final String OVERVIEW_LINK = "/overview";
     private static final String EDIT_LINK = "/staff/{" + PERSON_ID + "}/edit";
     private static final String DEACTIVATE_LINK = "/staff/{" + PERSON_ID + "}/deactivate";
@@ -106,7 +107,8 @@ public class PersonController {
         if (getLoggedUser().getRole() == Role.OFFICE) {
             setLoggedUser(model);
 
-            prepareStaffView(model);
+            List<Person> persons = personService.getAllPersons();
+            prepareStaffView(persons, model);
 
             return LIST_JSP;
         } else {
@@ -128,7 +130,31 @@ public class PersonController {
         if (getLoggedUser().getRole() == Role.OFFICE) {
             setLoggedUser(model);
 
-            prepareStaffView(model);
+            List<Person> persons = personService.getAllPersons();
+            prepareStaffView(persons, model);
+
+            return DETAIL_JSP;
+        } else {
+            return ERROR_JSP;
+        }
+    }
+
+
+    /**
+     * view of inactive staff
+     *
+     * @param  model
+     *
+     * @return
+     */
+    @RequestMapping(value = INACTIVE_LINK, method = RequestMethod.GET)
+    public String showInactiveStaff(Model model) {
+
+        if (getLoggedUser().getRole() == Role.OFFICE) {
+            setLoggedUser(model);
+
+            List<Person> persons = personService.getInactivePersons();
+            prepareStaffView(persons, model);
 
             return DETAIL_JSP;
         } else {
@@ -142,11 +168,9 @@ public class PersonController {
      *
      * @param  model
      */
-    private void prepareStaffView(Model model) {
+    private void prepareStaffView(List<Person> persons, Model model) {
 
         int year = DateMidnight.now(GregorianChronology.getInstance()).getYear();
-
-        List<Person> persons = personService.getAllPersons();
 
         Map<Person, String> gravatarUrls = new HashMap<Person, String>();
         String url;
