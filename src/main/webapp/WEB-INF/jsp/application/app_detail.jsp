@@ -16,10 +16,10 @@
 
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />" />
-        <title><spring:message code="title" /></title>
         <script src="<spring:url value='/jquery/js/jquery-1.6.2.min.js' />" type="text/javascript" ></script>
         <script src="<spring:url value='/jquery/js/jquery-ui-1.8.16.custom.min.js' />" type="text/javascript" ></script>
+        <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />" />
+        <title><spring:message code="title" /></title>
     </head>
 
     <body>
@@ -159,13 +159,13 @@
                     
                     <form:form method="put" action="${formUrlPrefix}/application/${application.id}/sick" modelAttribute="appForm">
                         
-<!--                    <div id="sick" style="display: none">-->
+                    <div id="sick" style="display: none">
                             <spring:message code='staff.sick' />
                             <br />
                             <br />
                             <form:input path="sickDays" />   
                             <input type="submit" name="<spring:message code='save' />" value="<spring:message code='save' />" class="button" />
-<!--                    </div>-->
+                    </div>
                     <br />
                     <br />
                     <form:errors path="*" cssClass="error" />

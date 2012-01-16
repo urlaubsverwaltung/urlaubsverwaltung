@@ -22,6 +22,7 @@ import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.HolidayEntitlement;
 import org.synyx.urlaubsverwaltung.domain.HolidaysAccount;
 import org.synyx.urlaubsverwaltung.domain.Person;
+import org.synyx.urlaubsverwaltung.domain.Role;
 import org.synyx.urlaubsverwaltung.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.service.HolidaysAccountService;
 import org.synyx.urlaubsverwaltung.service.PersonService;
@@ -47,6 +48,7 @@ public class PersonController {
     private static final String LIST_JSP = "person/staff_list";
     private static final String DETAIL_JSP = "person/staff_detail";
     private static final String PERSON_FORM_JSP = "person/person_form";
+    private static final String ERROR_JSP = "error";
 
     // attribute names
     private static final String DATE_FORMAT = "dd.MM.yyyy";
@@ -71,6 +73,8 @@ public class PersonController {
     private static final String DETAIL_LINK = "/staff/detail";
     private static final String OVERVIEW_LINK = "/overview";
     private static final String EDIT_LINK = "/staff/{" + PERSON_ID + "}/edit";
+    private static final String DEACTIVATE_LINK = "/staff/{" + PERSON_ID + "}/deactivate";
+    private static final String LOGIN_LINK = "redirect:/login.jsp?login_error=1";
 
     // logger
     private static final Logger LOG = Logger.getLogger(PersonController.class);
@@ -99,11 +103,15 @@ public class PersonController {
     @RequestMapping(value = LIST_LINK, method = RequestMethod.GET)
     public String showStaffList(Model model) {
 
-        setLoggedUser(model);
+        if (getLoggedUser().getRole() == Role.OFFICE) {
+            setLoggedUser(model);
 
-        prepareStaffView(model);
+            prepareStaffView(model);
 
-        return LIST_JSP;
+            return LIST_JSP;
+        } else {
+            return ERROR_JSP;
+        }
     }
 
 
@@ -117,11 +125,15 @@ public class PersonController {
     @RequestMapping(value = DETAIL_LINK, method = RequestMethod.GET)
     public String showStaffDetail(Model model) {
 
-        setLoggedUser(model);
+        if (getLoggedUser().getRole() == Role.OFFICE) {
+            setLoggedUser(model);
 
-        prepareStaffView(model);
+            prepareStaffView(model);
 
-        return DETAIL_JSP;
+            return DETAIL_JSP;
+        } else {
+            return ERROR_JSP;
+        }
     }
 
 
@@ -197,9 +209,13 @@ public class PersonController {
     @RequestMapping(value = OVERVIEW_LINK, method = RequestMethod.GET)
     public String showDefaultOverview(Model model) {
 
-        prepareOverview(DateMidnight.now(GregorianChronology.getInstance()).getYear(), model);
+        if (getLoggedUser().getRole() == Role.INACTIVE) {
+            return LOGIN_LINK;
+        } else {
+            prepareOverview(DateMidnight.now(GregorianChronology.getInstance()).getYear(), model);
 
-        return OVERVIEW_JSP;
+            return OVERVIEW_JSP;
+        }
     }
 
 
@@ -215,9 +231,13 @@ public class PersonController {
     @RequestMapping(value = OVERVIEW_LINK, params = "year", method = RequestMethod.GET)
     public String showOverview(@RequestParam("year") int year, Model model) {
 
-        prepareOverview(year, model);
+        if (getLoggedUser().getRole() == Role.INACTIVE) {
+            return LOGIN_LINK;
+        } else {
+            prepareOverview(year, model);
 
-        return OVERVIEW_JSP;
+            return OVERVIEW_JSP;
+        }
     }
 
 
@@ -267,24 +287,28 @@ public class PersonController {
     @RequestMapping(value = EDIT_LINK, method = RequestMethod.GET)
     public String editPersonForm(@PathVariable(PERSON_ID) Integer personId, Model model) {
 
-        Person person = personService.getPersonByID(personId);
+        if (getLoggedUser().getRole() == Role.OFFICE) {
+            Person person = personService.getPersonByID(personId);
 
-        int year = DateMidnight.now(GregorianChronology.getInstance()).getYear();
-        BigDecimal days = null;
+            int year = DateMidnight.now(GregorianChronology.getInstance()).getYear();
+            BigDecimal days = null;
 
-        HolidayEntitlement entitlement = accountService.getHolidayEntitlement(year, person);
+            HolidayEntitlement entitlement = accountService.getHolidayEntitlement(year, person);
 
-        if (entitlement != null) {
-            days = entitlement.getVacationDays();
+            if (entitlement != null) {
+                days = entitlement.getVacationDays();
+            }
+
+            PersonForm personForm = new PersonForm(person, year, days);
+
+            setLoggedUser(model);
+            model.addAttribute(PERSON, person);
+            model.addAttribute(PERSONFORM, personForm);
+
+            return PERSON_FORM_JSP;
+        } else {
+            return ERROR_JSP;
         }
-
-        PersonForm personForm = new PersonForm(person, year, days);
-
-        setLoggedUser(model);
-        model.addAttribute(PERSON, person);
-        model.addAttribute(PERSONFORM, personForm);
-
-        return PERSON_FORM_JSP;
     }
 
 
@@ -325,6 +349,26 @@ public class PersonController {
         LOG.info(DateMidnight.now(GregorianChronology.getInstance()).toString(DATE_FORMAT) + " ID: " + personId
             + " Der Mitarbeiter " + personToUpdate.getFirstName() + " " + personToUpdate.getLastName()
             + " wurde editiert.");
+
+        return "redirect:/web" + LIST_LINK;
+    }
+
+
+    /**
+     * This method deactivates a person, i.e. information about a deactivated person remains, but he/she has no right to
+     * login, to apply for leave, etc.
+     *
+     * @param  person
+     *
+     * @return
+     */
+    @RequestMapping(value = DEACTIVATE_LINK, method = RequestMethod.PUT)
+    public String deactivatePerson(@PathVariable(PERSON_ID) Integer personId) {
+
+        Person person = personService.getPersonByID(personId);
+
+        personService.deactivate(person);
+        personService.save(person);
 
         return "redirect:/web" + LIST_LINK;
     }

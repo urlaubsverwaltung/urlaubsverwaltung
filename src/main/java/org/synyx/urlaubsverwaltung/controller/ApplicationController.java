@@ -28,6 +28,7 @@ import org.synyx.urlaubsverwaltung.domain.Comment;
 import org.synyx.urlaubsverwaltung.domain.DayLength;
 import org.synyx.urlaubsverwaltung.domain.HolidaysAccount;
 import org.synyx.urlaubsverwaltung.domain.Person;
+import org.synyx.urlaubsverwaltung.domain.Role;
 import org.synyx.urlaubsverwaltung.domain.VacationType;
 import org.synyx.urlaubsverwaltung.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.service.CommentService;
@@ -50,6 +51,7 @@ public class ApplicationController {
     private static final String SHOW_APP_DETAIL = "application/app_detail";
     private static final String APP_LIST_JSP = "application/list";
     private static final String APP_FORM_JSP = "application/app_form";
+    private static final String ERROR_JSP = "error";
 
     // attribute names
     private static final String DATE_FORMAT = "dd.MM.yyyy";
@@ -80,6 +82,9 @@ public class ApplicationController {
     private static final int ALLOWED = 1;
     private static final int CANCELLED = 2;
     private static final int BY_PERSON = 3;
+
+    // login link
+    private static final String LOGIN_LINK = "redirect:/login.jsp?login_error=1";
 
     // list of applications by person
     private static final String APPS_BY_PERSON = "/{" + PERSON_ID + "}/application";
@@ -139,15 +144,19 @@ public class ApplicationController {
     @RequestMapping(value = APPS_BY_PERSON, method = RequestMethod.GET)
     public String showApplicationsByPerson(@PathVariable(PERSON_ID) Integer personId, Model model) {
 
-        Person person = personService.getPersonByID(personId);
-        List<Application> applications = applicationService.getApplicationsByPerson(person);
+        if (getLoggedUser().getRole() == Role.OFFICE || getLoggedUser().getRole() == Role.BOSS) {
+            Person person = personService.getPersonByID(personId);
+            List<Application> applications = applicationService.getApplicationsByPerson(person);
 
-        model.addAttribute(PERSON, person);
-        model.addAttribute(APPLICATIONS, applications);
-        model.addAttribute(STATE_NUMBER, BY_PERSON);
-        setLoggedUser(model);
+            model.addAttribute(PERSON, person);
+            model.addAttribute(APPLICATIONS, applications);
+            model.addAttribute(STATE_NUMBER, BY_PERSON);
+            setLoggedUser(model);
 
-        return APP_LIST_JSP;
+            return APP_LIST_JSP;
+        } else {
+            return ERROR_JSP;
+        }
     }
 
 
@@ -161,12 +170,16 @@ public class ApplicationController {
     @RequestMapping(value = WAITING_APPS, method = RequestMethod.GET)
     public String showWaiting(Model model) {
 
-        List<Application> applications = applicationService.getApplicationsByState(ApplicationStatus.WAITING);
-        model.addAttribute(APPLICATIONS, applications);
-        model.addAttribute(STATE_NUMBER, WAITING);
-        setLoggedUser(model);
+        if (getLoggedUser().getRole() == Role.BOSS) {
+            List<Application> applications = applicationService.getApplicationsByState(ApplicationStatus.WAITING);
+            model.addAttribute(APPLICATIONS, applications);
+            model.addAttribute(STATE_NUMBER, WAITING);
+            setLoggedUser(model);
 
-        return APP_LIST_JSP;
+            return APP_LIST_JSP;
+        } else {
+            return ERROR_JSP;
+        }
     }
 
 
@@ -180,12 +193,16 @@ public class ApplicationController {
     @RequestMapping(value = ALLOWED_APPS, method = RequestMethod.GET)
     public String showAllowed(Model model) {
 
-        List<Application> applications = applicationService.getApplicationsByState(ApplicationStatus.ALLOWED);
-        model.addAttribute(APPLICATIONS, applications);
-        model.addAttribute(STATE_NUMBER, ALLOWED);
-        setLoggedUser(model);
+        if (getLoggedUser().getRole() == Role.OFFICE || getLoggedUser().getRole() == Role.BOSS) {
+            List<Application> applications = applicationService.getApplicationsByState(ApplicationStatus.ALLOWED);
+            model.addAttribute(APPLICATIONS, applications);
+            model.addAttribute(STATE_NUMBER, ALLOWED);
+            setLoggedUser(model);
 
-        return APP_LIST_JSP;
+            return APP_LIST_JSP;
+        } else {
+            return ERROR_JSP;
+        }
     }
 
 
@@ -199,12 +216,16 @@ public class ApplicationController {
     @RequestMapping(value = CANCELLED_APPS, method = RequestMethod.GET)
     public String showCancelled(Model model) {
 
-        List<Application> applications = applicationService.getApplicationsByState(ApplicationStatus.CANCELLED);
-        model.addAttribute(APPLICATIONS, applications);
-        model.addAttribute(STATE_NUMBER, CANCELLED);
-        setLoggedUser(model);
+        if (getLoggedUser().getRole() == Role.OFFICE) {
+            List<Application> applications = applicationService.getApplicationsByState(ApplicationStatus.CANCELLED);
+            model.addAttribute(APPLICATIONS, applications);
+            model.addAttribute(STATE_NUMBER, CANCELLED);
+            setLoggedUser(model);
 
-        return APP_LIST_JSP;
+            return APP_LIST_JSP;
+        } else {
+            return ERROR_JSP;
+        }
     }
 
 
@@ -218,11 +239,15 @@ public class ApplicationController {
     @RequestMapping(value = REJECTED_APPS, method = RequestMethod.GET)
     public String showRejected(Model model) {
 
-        List<Application> applications = applicationService.getApplicationsByState(ApplicationStatus.CANCELLED);
-        model.addAttribute(APPLICATIONS, applications);
-        setLoggedUser(model);
+        if (getLoggedUser().getRole() == Role.BOSS) {
+            List<Application> applications = applicationService.getApplicationsByState(ApplicationStatus.CANCELLED);
+            model.addAttribute(APPLICATIONS, applications);
+            setLoggedUser(model);
 
-        return APP_LIST_JSP;
+            return APP_LIST_JSP;
+        } else {
+            return ERROR_JSP;
+        }
     }
 
 
@@ -237,27 +262,31 @@ public class ApplicationController {
     @RequestMapping(value = NEW_APP, method = RequestMethod.GET)
     public String newApplicationForm(Model model) {
 
-        Person person = getPersonByLogin();
+        if (getLoggedUser().getRole() != Role.INACTIVE) {
+            Person person = getLoggedUser();
 
-        List<Person> persons = personService.getAllPersonsExceptOne(person.getId());
+            List<Person> persons = personService.getAllPersonsExceptOne(person.getId());
 
-        int year = DateMidnight.now(GregorianChronology.getInstance()).getYear();
+            int year = DateMidnight.now(GregorianChronology.getInstance()).getYear();
 
-        HolidaysAccount account = accountService.getHolidaysAccount(year, person);
+            HolidaysAccount account = accountService.getHolidaysAccount(year, person);
 
-        model.addAttribute(PERSON, person);
-        model.addAttribute(PERSONS, persons);
-        model.addAttribute(DATE, DateMidnight.now(GregorianChronology.getInstance()));
-        model.addAttribute(YEAR, year);
-        model.addAttribute(APPFORM, new AppForm());
-        model.addAttribute(ACCOUNT, account);
-        model.addAttribute(VACTYPES, VacationType.values());
-        model.addAttribute(FULL, DayLength.FULL);
-        model.addAttribute(MORNING, DayLength.MORNING);
-        model.addAttribute(NOON, DayLength.NOON);
-        setLoggedUser(model);
+            model.addAttribute(PERSON, person);
+            model.addAttribute(PERSONS, persons);
+            model.addAttribute(DATE, DateMidnight.now(GregorianChronology.getInstance()));
+            model.addAttribute(YEAR, year);
+            model.addAttribute(APPFORM, new AppForm());
+            model.addAttribute(ACCOUNT, account);
+            model.addAttribute(VACTYPES, VacationType.values());
+            model.addAttribute(FULL, DayLength.FULL);
+            model.addAttribute(MORNING, DayLength.MORNING);
+            model.addAttribute(NOON, DayLength.NOON);
+            setLoggedUser(model);
 
-        return APP_FORM_JSP;
+            return APP_FORM_JSP;
+        } else {
+            return LOGIN_LINK;
+        }
     }
 
 
@@ -273,7 +302,7 @@ public class ApplicationController {
     @RequestMapping(value = NEW_APP, method = RequestMethod.POST)
     public String newApplication(@ModelAttribute(APPFORM) AppForm appForm, Errors errors, Model model) {
 
-        Person person = getPersonByLogin();
+        Person person = getLoggedUser();
 
         Application application = new Application();
         application = appForm.fillApplicationObject(application);
@@ -346,15 +375,19 @@ public class ApplicationController {
     public String showApplicationDetail(@PathVariable(APPLICATION_ID) Integer applicationId,
         @RequestParam("state") int state, Model model) {
 
-        Application application = applicationService.getApplicationById(applicationId);
+        if (getLoggedUser().getRole() == Role.OFFICE || getLoggedUser().getRole() == Role.BOSS) {
+            Application application = applicationService.getApplicationById(applicationId);
 
-        model.addAttribute(APPLICATION, application);
-        model.addAttribute(STATE_NUMBER, state);
-        model.addAttribute(APPFORM, new AppForm());
-        model.addAttribute(COMMENT, new Comment());
-        setLoggedUser(model);
+            model.addAttribute(APPLICATION, application);
+            model.addAttribute(STATE_NUMBER, state);
+            model.addAttribute(APPFORM, new AppForm());
+            model.addAttribute(COMMENT, new Comment());
+            setLoggedUser(model);
 
-        return SHOW_APP_DETAIL;
+            return SHOW_APP_DETAIL;
+        } else {
+            return ERROR_JSP;
+        }
     }
 
 
@@ -470,7 +503,7 @@ public class ApplicationController {
     }
 
 
-    private Person getPersonByLogin() {
+    private Person getLoggedUser() {
 
         String user = SecurityContextHolder.getContext().getAuthentication().getName();
 

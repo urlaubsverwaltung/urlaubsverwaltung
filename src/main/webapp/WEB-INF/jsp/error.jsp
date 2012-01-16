@@ -20,7 +20,7 @@
     </head>
     
     <body>
-        <p>Errhor!!!!</p>
+        <p>Du kommst hier nicht rein!</p>
     </body>
     
 </html>

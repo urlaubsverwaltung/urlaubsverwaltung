@@ -16,6 +16,8 @@
     
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script src="<spring:url value='/jquery/js/jquery-1.6.2.min.js' />" type="text/javascript" ></script>
+        <script src="<spring:url value='/jquery/js/jquery-ui-1.8.16.custom.min.js' />" type="text/javascript" ></script>
         <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />" />
         <title><spring:message code="title" /></title>
     </head>
@@ -59,14 +61,24 @@
                         <td colspan="2">&nbsp;</td>
                     </tr>
                     <tr>
-                        <td>
-                            <input type="submit" name="<spring:message code="save" />" value="<spring:message code="save" />" />                        
-                        </td>
-                        <td>
+                        <td colspan="2">
+                            <input type="submit" name="<spring:message code="save" />" value="<spring:message code="save" />" />
                             <a class="button" href="${formUrlPrefix}/staff/list"><spring:message code='cancel' /></a>
+                            <input type="button" onclick="$('#deactivate').show();" name="<spring:message code='person.deactivate' />" value="<spring:message code='person.deactivate' />" />
                         </td>
                     </tr>
                 </table>
+       </form:form>
+            
+          <br />
+          <br />
+            
+        <form:form method="put" action="${formUrlPrefix}/staff/${person.id}/deactivate">                  
+            <div id="deactivate"style="display: none;">
+                <spring:message code='person.deactivate.confirm' />&nbsp;
+                    <input type="submit" name="<spring:message code="yes" />" value="<spring:message code="yes" />" />
+                    <input type="button" onclick="$('#deactivate').hide();" name="<spring:message code="no" />" value="<spring:message code="no" />" /> 
+                </div>         
         </form:form>
             
         </div>    

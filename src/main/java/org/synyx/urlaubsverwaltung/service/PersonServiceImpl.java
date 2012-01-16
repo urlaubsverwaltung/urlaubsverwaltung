@@ -64,11 +64,7 @@ public class PersonServiceImpl implements PersonService {
 
         // set person inactive
         person.setActive(false);
-
-        // disable possibility to login setting role to inactive
         person.setRole(Role.INACTIVE);
-
-        save(person);
 
         // get all holidays accounts and entitlements and set them to inactive too
 
