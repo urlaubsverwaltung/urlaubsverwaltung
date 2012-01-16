@@ -55,7 +55,7 @@ public interface PersonService {
 
 
     /**
-     * returns all persons
+     * returns all active persons ordered by last name
      *
      * @return  returns all persons in a list
      */
