@@ -334,7 +334,8 @@ public class ApplicationController {
 
 
     /**
-     * view for boss who has to decide if he allows or rejects the application
+     * view for boss who has to decide if he allows or rejects the application office is able to add sick days that
+     * occured during a holiday
      *
      * @param  applicationId
      * @param  model
@@ -349,6 +350,7 @@ public class ApplicationController {
 
         model.addAttribute(APPLICATION, application);
         model.addAttribute(STATE_NUMBER, state);
+        model.addAttribute(APPFORM, new AppForm());
         model.addAttribute(COMMENT, new Comment());
         setLoggedUser(model);
 
@@ -434,7 +436,7 @@ public class ApplicationController {
 
     @RequestMapping(value = SICK_DAYS, method = RequestMethod.PUT)
     public String addSickDays(@PathVariable(APPLICATION_ID) Integer applicationId,
-        @ModelAttribute(APPLICATION) Application appForm, Errors errors, Model model) {
+        @ModelAttribute(APPFORM) AppForm appForm, Errors errors, Model model) {
 
         Application application = applicationService.getApplicationById(applicationId);
 
@@ -448,9 +450,9 @@ public class ApplicationController {
             return "redirect:/web" + ALLOWED_APPS;
         } else {
             // shows error in Frontend
-            errors.setNestedPath("sickDays");
-            errors.reject("Schwachsinn");
+            errors.reject("sick.more");
             model.addAttribute(APPLICATION, application);
+            model.addAttribute(APPFORM, appForm);
             model.addAttribute(STATE_NUMBER, ALLOWED);
             setLoggedUser(model);
 

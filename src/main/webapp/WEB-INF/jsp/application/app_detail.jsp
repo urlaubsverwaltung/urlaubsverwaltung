@@ -152,14 +152,24 @@
 
                 <sec:authorize access="hasRole('role.office')">
                     
-                    <input type="button" onclick="$('#sick').show(1000);" name="<spring:message code='add.sickdays' />" value="<spring:message code='add.sickdays' />" />
-                    <form:errors path="sickDays" cssClass="error" />
-                    <div id="sick" style="display: none">
-                        <form:form method="put" action="${formUrlPrefix}/application/${application.id}/sick" modelAttribute="application">
-                            <spring:message code='staff.sick' /><br /><form:input path="sickDays" />   
+                    <input type="button" onclick="$('#sick').show();" name="<spring:message code='add.sickdays' />" value="<spring:message code='add.sickdays' />" />
+                    <br />
+                    <br />
+                    <br />
+                    
+                    <form:form method="put" action="${formUrlPrefix}/application/${application.id}/sick" modelAttribute="appForm">
+                        
+<!--                    <div id="sick" style="display: none">-->
+                            <spring:message code='staff.sick' />
+                            <br />
+                            <br />
+                            <form:input path="sickDays" />   
                             <input type="submit" name="<spring:message code='save' />" value="<spring:message code='save' />" class="button" />
-                        </form:form>
-                    </div>
+<!--                    </div>-->
+                    <br />
+                    <br />
+                    <form:errors path="*" cssClass="error" />
+                    </form:form>
 
                 </sec:authorize>
                 

@@ -10,6 +10,8 @@ import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.DayLength;
 import org.synyx.urlaubsverwaltung.domain.VacationType;
 
+import java.math.BigDecimal;
+
 
 /**
  * @author  Aljona Murygina
@@ -41,6 +43,8 @@ public class AppForm {
     private String phone;
 
     private DateMidnight applicationDate;
+
+    private BigDecimal sickDays;
 
     public String getAddress() {
 
@@ -123,6 +127,18 @@ public class AppForm {
     public void setRep(String rep) {
 
         this.rep = rep;
+    }
+
+
+    public BigDecimal getSickDays() {
+
+        return sickDays;
+    }
+
+
+    public void setSickDays(BigDecimal sickDays) {
+
+        this.sickDays = sickDays;
     }
 
 
