@@ -46,6 +46,20 @@ public class Person extends AbstractPersistable<Integer> {
     @OneToMany
     private List<Application> applications;
 
+    private boolean active;
+
+    public boolean isActive() {
+
+        return active;
+    }
+
+
+    public void setActive(boolean active) {
+
+        this.active = active;
+    }
+
+
     public List<HolidaysAccount> getAccounts() {
 
         return accounts;
