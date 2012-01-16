@@ -30,6 +30,7 @@ import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.HolidayEntitlement;
 import org.synyx.urlaubsverwaltung.domain.HolidaysAccount;
 import org.synyx.urlaubsverwaltung.domain.Person;
+import org.synyx.urlaubsverwaltung.domain.Role;
 
 import java.math.BigDecimal;
 
@@ -86,13 +87,20 @@ public class PersonServiceImplTest {
     }
 
 
-    /** Test of delete method, of class PersonServiceImpl. */
+    /** Test of deactivate method, of class PersonServiceImpl. */
     @Test
-    public void testDelete() {
+    public void testDeactivate() {
 
-        Person personToSave = new Person();
-        instance.delete(personToSave);
-        Mockito.verify(personDAO).delete(personToSave);
+        Person person = new Person();
+        person.setActive(true);
+        person.setRole(Role.USER);
+
+        instance.deactivate(person);
+
+        Mockito.verify(accountService).deactivateAccountsAndEntitlements(person);
+
+        assertEquals(false, person.isActive());
+        assertEquals(Role.INACTIVE, person.getRole());
     }
 
 

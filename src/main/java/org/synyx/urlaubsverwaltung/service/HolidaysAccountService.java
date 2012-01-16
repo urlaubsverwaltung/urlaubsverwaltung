@@ -111,21 +111,9 @@ public interface HolidaysAccountService {
 
 
     /**
-     * this method returns a list of all holidays accounts that a person have
+     * This method get all holidays accounts and entitlements of the given person and set them all to inactive.
      *
      * @param  person
-     *
-     * @return  list of person's holidays accounts
      */
-    List<HolidaysAccount> getAllAccountsOfPerson(Person person);
-
-
-    /**
-     * this method returns a list of all holiday entitlements that a person have
-     *
-     * @param  person
-     *
-     * @return  list of person's holiday entitlements
-     */
-    List<HolidayEntitlement> getAllEntitlementsOfPerson(Person person);
+    void deactivateAccountsAndEntitlements(Person person);
 }

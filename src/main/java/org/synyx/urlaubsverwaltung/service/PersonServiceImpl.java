@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.HolidayEntitlement;
 import org.synyx.urlaubsverwaltung.domain.HolidaysAccount;
 import org.synyx.urlaubsverwaltung.domain.Person;
+import org.synyx.urlaubsverwaltung.domain.Role;
 
 import java.math.BigDecimal;
 
@@ -56,12 +57,22 @@ public class PersonServiceImpl implements PersonService {
 
 
     /**
-     * @see  PersonService#delete(org.synyx.urlaubsverwaltung.domain.Person)
+     * @see  PersonService#deactivate(org.synyx.urlaubsverwaltung.domain.Person)
      */
     @Override
-    public void delete(Person person) {
+    public void deactivate(Person person) {
 
-        personDAO.delete(person);
+        // set person inactive
+        person.setActive(false);
+
+        // disable possibility to login setting role to inactive
+        person.setRole(Role.INACTIVE);
+
+        save(person);
+
+        // get all holidays accounts and entitlements and set them to inactive too
+
+        accountService.deactivateAccountsAndEntitlements(person);
     }
 
 

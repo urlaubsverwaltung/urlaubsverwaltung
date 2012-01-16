@@ -26,11 +26,12 @@ public interface PersonService {
 
 
     /**
-     * use this to delete someones profile
+     * use this to deactivate someones profile, i.e. this person has no right to login, to apply for leave, etc. but
+     * information about the person remains for office
      *
-     * @param  person  the profile to delete
+     * @param  person  the profile to deactivate
      */
-    void delete(Person person);
+    void deactivate(Person person);
 
 
     /**

@@ -255,4 +255,40 @@ public class HolidaysAccountServiceImplTest {
         instance.getAllEntitlementsOfPerson(person);
         Mockito.verify(holidaysEntitlementDAO).getHolidayEntitlementByPerson(person);
     }
+
+
+    /** Test of deactivateAccountsAndEntitlements method, of class HolidaysAccountServiceImpl. */
+    @Test
+    public void testDeactivateAccountsAndEntitlements() {
+
+        HolidaysAccount a1 = new HolidaysAccount();
+        a1.setActive(true);
+
+        HolidaysAccount a2 = new HolidaysAccount();
+        a2.setActive(false);
+
+        HolidayEntitlement e1 = new HolidayEntitlement();
+        e1.setActive(true);
+
+        HolidayEntitlement e2 = new HolidayEntitlement();
+        e2.setActive(true);
+
+        List<HolidaysAccount> accounts = new ArrayList<HolidaysAccount>();
+        accounts.add(a1);
+        accounts.add(a2);
+
+        List<HolidayEntitlement> ents = new ArrayList<HolidayEntitlement>();
+        ents.add(e1);
+        ents.add(e2);
+
+        Mockito.when(instance.getAllAccountsOfPerson(person)).thenReturn(accounts);
+        Mockito.when(instance.getAllEntitlementsOfPerson(person)).thenReturn(ents);
+
+        instance.deactivateAccountsAndEntitlements(person);
+
+        assertEquals(false, a1.isActive());
+        assertEquals(false, a2.isActive());
+        assertEquals(false, e1.isActive());
+        assertEquals(false, e2.isActive());
+    }
 }

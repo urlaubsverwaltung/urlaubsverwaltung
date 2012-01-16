@@ -231,9 +231,36 @@ public class HolidaysAccountServiceImpl implements HolidaysAccountService {
 
 
     /**
-     * @see  HolidaysAccountService#getAllAccountsOfPerson(org.synyx.urlaubsverwaltung.domain.Person)
+     * @see  HolidaysAccountService#deactivateAccountsAndEntitlements(org.synyx.urlaubsverwaltung.domain.Person)
      */
     @Override
+    public void deactivateAccountsAndEntitlements(Person person) {
+
+        // get all holidays accounts and entitlements and set them to inactive
+
+        List<HolidaysAccount> accounts = getAllAccountsOfPerson(person);
+
+        for (HolidaysAccount account : accounts) {
+            account.setActive(false);
+            saveHolidaysAccount(account);
+        }
+
+        List<HolidayEntitlement> entitlements = getAllEntitlementsOfPerson(person);
+
+        for (HolidayEntitlement entitlement : entitlements) {
+            entitlement.setActive(false);
+            saveHolidayEntitlement(entitlement);
+        }
+    }
+
+
+    /**
+     * this method returns a list of all holidays accounts that a person have
+     *
+     * @param  person
+     *
+     * @return  list of person's holidays accounts
+     */
     public List<HolidaysAccount> getAllAccountsOfPerson(Person person) {
 
         return holidaysAccountDAO.getAllHolidaysAccountsByPerson(person);
@@ -241,9 +268,12 @@ public class HolidaysAccountServiceImpl implements HolidaysAccountService {
 
 
     /**
-     * @see  HolidaysAccountService#getAllEntitlementsOfPerson(org.synyx.urlaubsverwaltung.domain.Person)
+     * this method returns a list of all holiday entitlements that a person have
+     *
+     * @param  person
+     *
+     * @return  list of person's holiday entitlements
      */
-    @Override
     public List<HolidayEntitlement> getAllEntitlementsOfPerson(Person person) {
 
         return holidaysEntitlementDAO.getHolidayEntitlementByPerson(person);
