@@ -97,8 +97,6 @@ public class PersonServiceImplTest {
 
         instance.deactivate(person);
 
-        Mockito.verify(accountService).deactivateAccountsAndEntitlements(person);
-
         assertEquals(false, person.isActive());
         assertEquals(Role.INACTIVE, person.getRole());
     }
