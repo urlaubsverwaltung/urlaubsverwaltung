@@ -477,6 +477,17 @@ public class ApplicationController {
 
         Application application = applicationService.getApplicationById(applicationId);
 
+        if (appForm.getSickDays() == null) {
+            // shows error in Frontend
+            errors.reject("sick.more");
+            model.addAttribute(APPLICATION, application);
+            model.addAttribute(APPFORM, appForm);
+            model.addAttribute(STATE_NUMBER, ALLOWED);
+            setLoggedUser(model);
+
+            return SHOW_APP_DETAIL;
+        }
+
         // number of vacation days must be greater than number of sick days
         if (appForm.getSickDays().compareTo(application.getDays()) <= 0) {
             application.setSickDays(appForm.getSickDays());
