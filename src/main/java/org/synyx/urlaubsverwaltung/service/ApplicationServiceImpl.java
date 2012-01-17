@@ -368,6 +368,17 @@ public class ApplicationServiceImpl implements ApplicationService {
                 Interval inti = new Interval(a.getStartDate(), a.getEndDate());
                 Interval overlap = inti.overlap(interval);
 
+                // because intervals are inclusive of the start instant, but exclusive of the end instant
+                // you have to check if end of interval a is start of interval b
+
+                if (inti.getEnd().equals(interval.getStart())) {
+                    overlap = new Interval(interval.getStart(), interval.getStart());
+                }
+
+                if (inti.getStart().equals(interval.getEnd())) {
+                    overlap = new Interval(interval.getEnd(), interval.getEnd());
+                }
+
                 // check if they really overlap, else value of overlap would be null
                 if (overlap != null) {
                     listOfOverlaps.add(overlap);

@@ -26,7 +26,6 @@ import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.domain.Comment;
 import org.synyx.urlaubsverwaltung.domain.DayLength;
-import org.synyx.urlaubsverwaltung.domain.HolidaysAccount;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.Role;
 import org.synyx.urlaubsverwaltung.domain.VacationType;
@@ -35,6 +34,7 @@ import org.synyx.urlaubsverwaltung.service.CommentService;
 import org.synyx.urlaubsverwaltung.service.HolidaysAccountService;
 import org.synyx.urlaubsverwaltung.service.PersonService;
 import org.synyx.urlaubsverwaltung.util.DateMidnightPropertyEditor;
+import org.synyx.urlaubsverwaltung.validator.ApplicationValidator;
 import org.synyx.urlaubsverwaltung.view.AppForm;
 
 import java.util.List;
@@ -116,14 +116,16 @@ public class ApplicationController {
     private ApplicationService applicationService;
     private HolidaysAccountService accountService;
     private CommentService commentService;
+    private ApplicationValidator validator;
 
     public ApplicationController(PersonService personService, ApplicationService applicationService,
-        HolidaysAccountService accountService, CommentService commentService) {
+        HolidaysAccountService accountService, CommentService commentService, ApplicationValidator validator) {
 
         this.personService = personService;
         this.applicationService = applicationService;
         this.accountService = accountService;
         this.commentService = commentService;
+        this.validator = validator;
     }
 
     @InitBinder
@@ -265,23 +267,7 @@ public class ApplicationController {
         if (getLoggedUser().getRole() != Role.INACTIVE) {
             Person person = getLoggedUser();
 
-            List<Person> persons = personService.getAllPersonsExceptOne(person.getId());
-
-            int year = DateMidnight.now(GregorianChronology.getInstance()).getYear();
-
-            HolidaysAccount account = accountService.getHolidaysAccount(year, person);
-
-            model.addAttribute(PERSON, person);
-            model.addAttribute(PERSONS, persons);
-            model.addAttribute(DATE, DateMidnight.now(GregorianChronology.getInstance()));
-            model.addAttribute(YEAR, year);
-            model.addAttribute(APPFORM, new AppForm());
-            model.addAttribute(ACCOUNT, account);
-            model.addAttribute(VACTYPES, VacationType.values());
-            model.addAttribute(FULL, DayLength.FULL);
-            model.addAttribute(MORNING, DayLength.MORNING);
-            model.addAttribute(NOON, DayLength.NOON);
-            setLoggedUser(model);
+            prepareForm(person, new AppForm(), model);
 
             return APP_FORM_JSP;
         } else {
@@ -304,46 +290,66 @@ public class ApplicationController {
 
         Person person = getLoggedUser();
 
-        Application application = new Application();
-        application = appForm.fillApplicationObject(application);
-
-        application.setPerson(person);
-        application.setApplicationDate(DateMidnight.now(GregorianChronology.getInstance()));
-
-        // check at first if there are existent application for the same period
-
-        // checkOverlap
-        // case 1: ok
-        // case 2: new application is fully part of existent applications, useless to apply it
-        // case 3: gaps in between - feature in later version, now only error message
-
-        int overlap = applicationService.checkOverlap(application);
-
-        if (overlap == 2 || overlap == 3) {
-            // in this version, these two cases are handled equal
-            // ERROR message!!!!
-            errors.reject("check.overlap");
-        } else if (overlap == 1) {
-            // everything ok, go to next check
-            boolean enoughDays = applicationService.checkApplication(application);
-
-            // enough days to apply for leave
-            if (enoughDays) {
-                // save the application
-                applicationService.save(application);
-
-                // and sign it
-                applicationService.signApplicationByUser(application, person);
-
-                LOG.info(application.getApplicationDate() + " ID: " + application.getId()
-                    + " Es wurde ein neuer Antrag von " + person.getLastName() + " " + person.getFirstName()
-                    + " angelegt.");
-
-                return "redirect:/web" + OVERVIEW;
-            } else {
-                errors.reject("check.enough");
-            }
+        if (person.getRole() == Role.USER || person.getRole() == Role.BOSS) {
+            validator.validateForUser(appForm, errors);
         }
+
+        validator.validate(appForm, errors);
+
+        if (errors.hasErrors()) {
+            prepareForm(person, appForm, model);
+
+            return APP_FORM_JSP;
+        } else {
+            Application application = new Application();
+            application = appForm.fillApplicationObject(application);
+
+            application.setPerson(person);
+            application.setApplicationDate(DateMidnight.now(GregorianChronology.getInstance()));
+
+            // check at first if there are existent application for the same period
+
+            // checkOverlap
+            // case 1: ok
+            // case 2: new application is fully part of existent applications, useless to apply it
+            // case 3: gaps in between - feature in later version, now only error message
+
+            int overlap = applicationService.checkOverlap(application);
+
+            if (overlap == 2 || overlap == 3) {
+                // in this version, these two cases are handled equal
+                // ERROR message!!!!
+                errors.reject("check.overlap");
+            } else if (overlap == 1) {
+                // everything ok, go to next check
+                boolean enoughDays = applicationService.checkApplication(application);
+
+                // enough days to apply for leave
+                if (enoughDays) {
+                    // save the application
+                    applicationService.save(application);
+
+                    // and sign it
+                    applicationService.signApplicationByUser(application, person);
+
+                    LOG.info(application.getApplicationDate() + " ID: " + application.getId()
+                        + " Es wurde ein neuer Antrag von " + person.getLastName() + " " + person.getFirstName()
+                        + " angelegt.");
+
+                    return "redirect:/web" + OVERVIEW;
+                } else {
+                    errors.reject("check.enough");
+                }
+            }
+
+            prepareForm(person, appForm, model);
+
+            return APP_FORM_JSP;
+        }
+    }
+
+
+    public void prepareForm(Person person, AppForm appForm, Model model) {
 
         model.addAttribute(PERSON, person);
         model.addAttribute(PERSONS, personService.getAllPersonsExceptOne(person.getId()));
@@ -357,8 +363,6 @@ public class ApplicationController {
         model.addAttribute(MORNING, DayLength.MORNING);
         model.addAttribute(NOON, DayLength.NOON);
         setLoggedUser(model);
-
-        return APP_FORM_JSP;
     }
 
 

@@ -240,6 +240,10 @@ input[type=submit]:hover, input[type=button]:hover, a.button:hover {
 .error {
     color:red;
 }
+
+input.error {
+    border-color: red;
+}
 	
 
 

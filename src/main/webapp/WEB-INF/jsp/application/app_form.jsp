@@ -39,6 +39,28 @@
 		});
 	});
 	</script>
+        <%-- Is there a way that this works?!
+        <c:if test="${appForm.howLong != null}">
+        <script type="text/javascript">
+            $(document).ready(function() {
+                
+                var dayLength = <c:out value="${appForm.howLong}" />;
+            
+                if(dayLength.indexOf("FULL") != -1) {
+                    $('#full-day').show(); $('#half-day').hide();
+                } 
+                
+                if(dayLength.indexOf("MORNING") != -1) {
+                    $('#half-day').show(); $('#full-day').hide();
+                }
+                
+                if(dayLength.indexOf("NOON") != -1) {
+                    $('#half-day').show(); $('#full-day').hide();
+                }
+            });
+        </script>
+        </c:if>
+        --%>
     </head>
     
     <body>
@@ -107,18 +129,30 @@
                 <td colspan="2">
                     <form:radiobutton path="howLong" checked="checked" value="${full}" onclick="$('#full-day').show(); $('#half-day').hide();" /><spring:message code='${full.dayLength}' /> 
                     <form:radiobutton path="howLong" value="${morning}" onclick="$('#full-day').hide(); $('#half-day').show();" /><spring:message code='${morning.dayLength}' />
-                    <form:radiobutton path="howLong" value="${noon}" onclick="$('full-day').hide(); $('half-day').show();" /><spring:message code='${noon.dayLength}' />
+                    <form:radiobutton path="howLong" value="${noon}" onclick="$('#full-day').hide(); $('#half-day').show();" /><spring:message code='${noon.dayLength}' />
                 </td>
             </tr>
             <tr>
                 <td colspan="3">&nbsp;</td>
             </tr>
             <tr id="full-day">  
-                <td>Von: <form:input id="from" path="startDate" /></td>
-                <td>Bis: <form:input id="to" path="endDate" /></td>
+                <td>
+                    Von: <form:input id="from" path="startDate" cssErrorClass="error" />
+                    <br />
+                    <form:errors path="startDate" cssClass="error" />
+                </td>
+                <td>
+                    Bis: <form:input id="to" path="endDate" cssErrorClass="error" />
+                    <br />
+                    <form:errors path="endDate" cssClass="error" />
+                </td>
             </tr>
             <tr id="half-day" style="display: none">  
-                <td>Am: <form:input id="at" path="startDateHalf" /></td>
+                <td>
+                    Am: <form:input id="at" path="startDateHalf" cssErrorClass="error" />
+                    <br />
+                    <form:errors path="startDateHalf" cssClass="error" />
+                </td>
             </tr>
             <tr>
                 <td colspan="3">&nbsp;</td>
@@ -128,7 +162,9 @@
                     <label for="reason"><spring:message code='reason' />:</label>
                 </td>
                 <td>
-                    <form:input id="reason" path="reason" />
+                    <form:input id="reason" path="reason" cssErrorClass="error" />
+                    <br />
+                    <form:errors path="reason" cssClass="error" />
                 </td>
             </tr>
             <tr>
@@ -186,12 +222,12 @@
                     <input type="submit" name="<spring:message code='apply' />" value="<spring:message code='apply' />" />
                 </td>
             </tr>
-            <tr>
+<%--            <tr>
                 <td colspan="3">&nbsp;</td>
             </tr>
             <tr>
                 <td colspan="2"><form:errors path="*" cssClass="error" /></td>
-            </tr>
+            </tr>--%>
             
         </table>
                 
