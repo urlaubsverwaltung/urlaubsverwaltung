@@ -15,6 +15,7 @@ a:hover {
 	color: #0083CC;
 }
 
+
 /* Header */
 
 #header, #top-menu {
@@ -74,6 +75,14 @@ a:hover {
 
 #show-navi a:hover {
 	color: #0083CC;
+}
+
+.a-inact {
+    color: black;
+}
+
+.a-act {
+    color: #0083CC;
 }
 
 #main-menu li {
