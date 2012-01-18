@@ -251,7 +251,7 @@ public class Application extends AbstractPersistable<Integer> {
 
     public byte[] getSignatureBoss() {
 
-        return signatureBoss;
+        return signatureBoss.clone();
     }
 
 
@@ -263,7 +263,7 @@ public class Application extends AbstractPersistable<Integer> {
 
     public byte[] getSignaturePerson() {
 
-        return signaturePerson;
+        return signaturePerson.clone();
     }
 
 

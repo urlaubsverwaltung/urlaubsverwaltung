@@ -146,7 +146,7 @@ public class Person extends AbstractPersistable<Integer> {
 
     public byte[] getPrivateKey() {
 
-        return privateKey;
+        return privateKey.clone();
     }
 
 
@@ -158,7 +158,7 @@ public class Person extends AbstractPersistable<Integer> {
 
     public byte[] getPublicKey() {
 
-        return publicKey;
+        return publicKey.clone();
     }
 
 

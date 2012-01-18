@@ -162,7 +162,7 @@ public class HolidaysAccountServiceImpl implements HolidaysAccountService {
         // create new entitlement
         HolidayEntitlement newEntitlement = newHolidayEntitlement(person, year, days);
 
-        HolidaysAccount newAccount = new HolidaysAccount();
+        HolidaysAccount newAccount;
 
         // how many days has person used this year?
         BigDecimal usedDays = currentEntitlement.getVacationDays().subtract(currentAccount.getVacationDays());

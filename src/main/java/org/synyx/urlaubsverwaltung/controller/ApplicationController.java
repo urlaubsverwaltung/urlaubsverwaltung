@@ -47,12 +47,6 @@ import java.util.Locale;
 @Controller
 public class ApplicationController {
 
-    // jsps
-    private static final String SHOW_APP_DETAIL = "application/app_detail";
-    private static final String APP_LIST_JSP = "application/list";
-    private static final String APP_FORM_JSP = "application/app_form";
-    private static final String ERROR_JSP = "error";
-
     // attribute names
     private static final String DATE_FORMAT = "dd.MM.yyyy";
     private static final String COMMENT = "comment";
@@ -69,45 +63,57 @@ public class ApplicationController {
     private static final String MORNING = "morning";
     private static final String NOON = "noon";
 
+    // jsps
+    private static final String SHOW_APP_DETAIL = APPLICATION + "/app_detail";
+    private static final String APP_LIST_JSP = APPLICATION + "/list";
+    private static final String APP_FORM_JSP = APPLICATION + "/app_form";
+    private static final String ERROR_JSP = "error";
+
     private static final String APPLICATION_ID = "applicationId";
     private static final String PERSON_ID = "personId";
 
+    // login link
+    private static final String LOGIN_LINK = "redirect:/login.jsp?login_error=1";
+
+    // list of applications by person
+    private static final String APPS_BY_PERSON = "/{" + PERSON_ID + "}/" + APPLICATION;
+
+    // overview
+    private static final String OVERVIEW = "/overview";
+
+    // links start with...
+    private static final String SHORT_PATH_APPLICATION = "/" + APPLICATION;
+    private static final String LONG_PATH_APPLICATION = "/" + APPLICATION + "/{";
+
     // list of applications by state
-    private static final String WAITING_APPS = "/application/waiting";
-    private static final String ALLOWED_APPS = "/application/allowed";
-    private static final String CANCELLED_APPS = "/application/cancelled";
-    private static final String REJECTED_APPS = "/application/rejected"; // not used now, but maybe useful someday
+    private static final String WAITING_APPS = SHORT_PATH_APPLICATION + "/waiting";
+    private static final String ALLOWED_APPS = SHORT_PATH_APPLICATION + "/allowed";
+    private static final String CANCELLED_APPS = SHORT_PATH_APPLICATION + "/cancelled";
+    private static final String REJECTED_APPS = SHORT_PATH_APPLICATION + "/rejected"; // not used now, but maybe useful
+
+    // someday
     private static final String STATE_NUMBER = "stateNumber";
     private static final int WAITING = 0;
     private static final int ALLOWED = 1;
     private static final int CANCELLED = 2;
     private static final int BY_PERSON = 3;
 
-    // login link
-    private static final String LOGIN_LINK = "redirect:/login.jsp?login_error=1";
-
-    // list of applications by person
-    private static final String APPS_BY_PERSON = "/{" + PERSON_ID + "}/application";
-
-    // overview
-    private static final String OVERVIEW = "/overview";
-
     // form to apply vacation
-    private static final String NEW_APP = "/application/new";
+    private static final String NEW_APP = SHORT_PATH_APPLICATION + "/new";
 
     // for user: the only way editing an application for user is to cancel it
     // (application may have state waiting or allowed)
-    private static final String CANCEL_APP = "/application/{" + APPLICATION_ID + "}/cancel";
+    private static final String CANCEL_APP = LONG_PATH_APPLICATION + APPLICATION_ID + "}/cancel";
 
     // detailed view of application
-    private static final String SHOW_APP = "/application/{" + APPLICATION_ID + "}";
+    private static final String SHOW_APP = LONG_PATH_APPLICATION + APPLICATION_ID + "}";
 
     // allow or reject application
-    private static final String ALLOW_APP = "/application/{" + APPLICATION_ID + "}/allow";
-    private static final String REJECT_APP = "/application/{" + APPLICATION_ID + "}/reject";
+    private static final String ALLOW_APP = LONG_PATH_APPLICATION + APPLICATION_ID + "}/allow";
+    private static final String REJECT_APP = LONG_PATH_APPLICATION + APPLICATION_ID + "}/reject";
 
     // add sick days to application
-    private static final String SICK_DAYS = "/application/{" + APPLICATION_ID + "}/sick";
+    private static final String SICK_DAYS = LONG_PATH_APPLICATION + APPLICATION_ID + "}/sick";
 
     // logger
     private static final Logger LOG = Logger.getLogger(PersonController.class);

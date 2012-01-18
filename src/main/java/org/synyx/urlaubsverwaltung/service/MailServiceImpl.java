@@ -36,23 +36,23 @@ public class MailServiceImpl implements MailService {
 
     private static final Logger mailLogger = Logger.getLogger("mailLogger");
 
-    private final String FROM = "email.manager";
+    private static final String FROM = "email.manager";
 
-    private final String PATH = "/email/";
-    private final String APPLICATION = "application";
-    private final String PERSON = "person";
-    private final String PERSONS = "persons";
+    private static final String PATH = "/email/";
+    private static final String APPLICATION = "application";
+    private static final String PERSON = "person";
+    private static final String PERSONS = "persons";
 
     // File names
-    private final String TYPE = ".vm";
-    private final String FILE_ALLOWED_OFFICE = "allowed_office" + TYPE;
-    private final String FILE_ALLOWED_USER = "allowed_user" + TYPE;
-    private final String FILE_CANCELLED = "cancelled" + TYPE;
-    private final String FILE_CONFIRM = "confirm" + TYPE;
-    private final String FILE_EXPIRE = "expire" + TYPE;
-    private final String FILE_NEW = "newapplications" + TYPE;
-    private final String FILE_REJECTED = "rejected" + TYPE;
-    private final String FILE_WEEKLY = "weekly" + TYPE;
+    private static final String TYPE = ".vm";
+    private static final String FILE_ALLOWED_OFFICE = "allowed_office" + TYPE;
+    private static final String FILE_ALLOWED_USER = "allowed_user" + TYPE;
+    private static final String FILE_CANCELLED = "cancelled" + TYPE;
+    private static final String FILE_CONFIRM = "confirm" + TYPE;
+    private static final String FILE_EXPIRE = "expire" + TYPE;
+    private static final String FILE_NEW = "newapplications" + TYPE;
+    private static final String FILE_REJECTED = "rejected" + TYPE;
+    private static final String FILE_WEEKLY = "weekly" + TYPE;
 
     private JavaMailSender mailSender;
     private VelocityEngine velocityEngine;
