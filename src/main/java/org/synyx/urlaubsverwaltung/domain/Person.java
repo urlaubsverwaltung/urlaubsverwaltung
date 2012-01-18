@@ -146,25 +146,25 @@ public class Person extends AbstractPersistable<Integer> {
 
     public byte[] getPrivateKey() {
 
-        return privateKey.clone();
+        return privateKey;
     }
 
 
     public void setPrivateKey(byte[] privateKey) {
 
-        this.privateKey = privateKey.clone();
+        this.privateKey = privateKey;
     }
 
 
     public byte[] getPublicKey() {
 
-        return publicKey.clone();
+        return publicKey;
     }
 
 
     public void setPublicKey(byte[] publicKey) {
 
-        this.publicKey = publicKey.clone();
+        this.publicKey = publicKey;
     }
 
 

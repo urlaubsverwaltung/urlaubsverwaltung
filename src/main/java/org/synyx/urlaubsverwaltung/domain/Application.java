@@ -251,25 +251,25 @@ public class Application extends AbstractPersistable<Integer> {
 
     public byte[] getSignatureBoss() {
 
-        return signatureBoss.clone();
+        return signatureBoss;
     }
 
 
     public void setSignatureBoss(byte[] signatureBoss) {
 
-        this.signatureBoss = signatureBoss.clone();
+        this.signatureBoss = signatureBoss;
     }
 
 
     public byte[] getSignaturePerson() {
 
-        return signaturePerson.clone();
+        return signaturePerson;
     }
 
 
     public void setSignaturePerson(byte[] signaturePerson) {
 
-        this.signaturePerson = signaturePerson.clone();
+        this.signaturePerson = signaturePerson;
     }
 
 
