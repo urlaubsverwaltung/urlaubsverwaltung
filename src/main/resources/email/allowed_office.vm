@@ -1,6 +1,7 @@
 Hallo Office,
 
 es liegt ein neuer genehmigter Antrag vor:
-${application.person.firstName} ${application.person.lastName} 
-Zeitraum: ${application.startDate} bis ${application.endDate} 
+
+Mitarbeiter: ${application.person.firstName} ${application.person.lastName} 
+Urlaubszeitraum: ${application.startDate.dayOfMonth}.${application.startDate.monthOfYear}.${application.startDate.year} bis ${application.endDate.dayOfMonth}.${application.endDate.monthOfYear}.${application.endDate.year} 
 

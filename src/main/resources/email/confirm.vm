@@ -1,11 +1,11 @@
 Hallo ${application.person.firstName} ${application.person.lastName},
 
 dein Urlaubsantrag wurde erfolgreich eingereicht und wird in Kürze von einem der Chefs bearbeitet werden.
-Für dich zur Erinnerung:
+FÜr dich zur Erinnerung:
 
-Antragsdatum: ${application.applicationDate}
-Zeitraum des beantragten Urlaubs: ${application.startDate} bis ${application.endDate}
-Art des Urlaubs: ${application.vacationType}
+Antragsdatum: ${application.applicationDate.dayOfMonth}.${application.applicationDate.monthOfYear}.${application.applicationDate.year}
+Zeitraum des beantragten Urlaubs: ${application.startDate.dayOfMonth}.${application.startDate.dayOfMonth}.${application.startDate.year} bis ${application.endDate.dayOfMonth}.${application.endDate.monthOfYear}.${application.endDate.year}
+Art des Urlaubs: ${application.vacationType.vacationTypeName}
 Grund: ${application.reason}
 Vertreter: ${application.rep}
 Anschrift während des Urlaubs: ${application.address}

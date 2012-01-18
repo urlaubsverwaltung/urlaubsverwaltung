@@ -36,6 +36,12 @@
          <value>
           resource.loader=class
           class.resource.loader.class=org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+<!--          file.resource.loader.path = /templates/email/-->
+            file.resource.loader.cache = true
+            file.resource.loader.unicode = true
+<!--            file.resource.loader.modificationCheckInterval = 5-->
+            input.encoding=UTF-8
+            output.encoding=UTF-8
          </value>
       </property>
 </bean>         

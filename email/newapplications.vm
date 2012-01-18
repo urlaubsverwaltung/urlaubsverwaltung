@@ -3,6 +3,6 @@ Hallo Chefs,
 es liegt ein neuer zu genehmigender Antrag vor:
 
 Antragssteller: ${application.person.firstName} ${application.person.lastName}
-Zeitraum des beantragten Urlaubs: ${application.startDate} bis ${application.endDate}
-Art des Urlaubs: ${application.vacationType}
+Zeitraum des beantragten Urlaubs: ${application.startDate.dayOfMonth}.${application.startDate.dayOfMonth}.${application.startDate.year} bis ${application.endDate.dayOfMonth}.${application.endDate.monthOfYear}.${application.endDate.year}
+Art des Urlaubs: ${application.vacationType.vacationTypeName}
 Datum der Antragsstellung: Antragsdatum: ${application.applicationDate}

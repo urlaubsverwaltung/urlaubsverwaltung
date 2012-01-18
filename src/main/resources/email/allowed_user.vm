@@ -1,5 +1,5 @@
 Hallo ${application.person.firstName} ${application.person.lastName},
 
-dein am ${application.applicationDate} gestellter Antrag wurde genehmigt.
-Es handelt sich um den Zeitraum von ${application.startDate} bis ${application.endDate}.
+dein am ${application.applicationDate.dayOfMonth}.${application.applicationDate.monthOfYear}.${application.applicationDate.year} gestellter Antrag wurde genehmigt.
+Es handelt sich um den Zeitraum von ${application.startDate.dayOfMonth}.${application.startDate.monthOfYear}.${application.startDate.year} bis ${application.endDate.dayOfMonth}.${application.endDate.monthOfYear}.${application.endDate.year}
 Einen schönen Urlaub! 
