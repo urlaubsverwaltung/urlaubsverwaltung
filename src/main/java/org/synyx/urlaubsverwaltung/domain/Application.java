@@ -257,7 +257,7 @@ public class Application extends AbstractPersistable<Integer> {
 
     public void setSignatureBoss(byte[] signatureBoss) {
 
-        this.signatureBoss = signatureBoss;
+        this.signatureBoss = signatureBoss.clone();
     }
 
 
@@ -269,7 +269,7 @@ public class Application extends AbstractPersistable<Integer> {
 
     public void setSignaturePerson(byte[] signaturePerson) {
 
-        this.signaturePerson = signaturePerson;
+        this.signaturePerson = signaturePerson.clone();
     }
 
 
