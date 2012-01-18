@@ -40,7 +40,6 @@
                         <li><a href="${formUrlPrefix}/application/waiting"><spring:message code="waiting.app" /></a></li>
                         <li><a href="${formUrlPrefix}/application/allowed"><spring:message code="allow.app" /></a></li>
                         <li><a href="${formUrlPrefix}/application/cancelled"><spring:message code="cancel.app" /></a></li>
-                        <li><a href="${formUrlPrefix}/staff"><spring:message code="staff.manager" /></a></li>
                     </ul>
                 </sec:authorize>
                 

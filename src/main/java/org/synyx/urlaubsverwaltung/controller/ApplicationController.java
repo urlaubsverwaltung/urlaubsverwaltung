@@ -218,7 +218,7 @@ public class ApplicationController {
     @RequestMapping(value = CANCELLED_APPS, method = RequestMethod.GET)
     public String showCancelled(Model model) {
 
-        if (getLoggedUser().getRole() == Role.OFFICE) {
+        if (getLoggedUser().getRole() == Role.OFFICE || getLoggedUser().getRole() == Role.BOSS) {
             List<Application> applications = applicationService.getApplicationsByState(ApplicationStatus.CANCELLED);
             model.addAttribute(APPLICATIONS, applications);
             model.addAttribute(STATE_NUMBER, CANCELLED);
