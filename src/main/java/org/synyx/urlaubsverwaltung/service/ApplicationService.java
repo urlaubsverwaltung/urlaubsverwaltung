@@ -88,7 +88,7 @@ public interface ApplicationService {
 
 
     /**
-     * use this to get all applications by person and year
+     * use this to get all applications by person and year (only not cancelled applications)
      *
      * @param  person
      * @param  year

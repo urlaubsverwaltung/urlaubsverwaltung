@@ -16,6 +16,8 @@
 
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script src="<spring:url value='/jquery/js/jquery-1.6.2.min.js' />" type="text/javascript" ></script>
+        <script src="<spring:url value='/jquery/js/jquery-ui-1.8.16.custom.min.js' />" type="text/javascript" ></script>
         <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />" /> 
         <title><spring:message code="title" /></title>
     </head>
@@ -25,7 +27,7 @@
         <spring:url var="formUrlPrefix" value="/web" />
 
         <%@include file="../include/header.jsp" %>
-
+        
         <div id="content">
             
             <div id="year-navi">
@@ -161,14 +163,17 @@
                             <spring:message code="${app.status.state}" />
                         </td>
                         <td>
-                            <a href="${formUrlPrefix}/application/${app.id}/cancel"><img src="<spring:url value='/images/cancel.png' />" /></a>
+                            <img id="storno-img-${app.id}" src="<spring:url value='/images/cancel.png' />" onclick="$('#storno-confirm-${app.id}').show(); $('#storno-img-${app.id}').hide();" />
+                                <form:form method="put" action="${formUrlPrefix}/application/${app.id}/cancel">
+                            <input id="storno-confirm-${app.id}" style="display: none" type="submit" class="button" name="Storno" value="Storno" />
+                            </form:form>
                         </td>
                     </tr>
                 </c:forEach>
             </table>
 
 
-        </div>         
+        </div> 
 
     </body>
 

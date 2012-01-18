@@ -41,9 +41,17 @@ public interface ApplicationDAO extends JpaRepository<Application, Integer> {
     List<Application> getApplicationsByPersonForACertainTime(Date startDate, Date endDate, Person person);
 
 
-    // get List<Application> by certain person
+    // get List<Application> by certain person for a certain year
     @Query(
-        "select x from Application x where x.person = ?1 and (x.startDate between ?2 and ?3) or (x.endDate between ?2 and ?3) order by x.startDate"
+        "select x from Application x where x.person = ?1 and ((x.startDate between ?2 and ?3) or (x.endDate between ?2 and ?3)) order by x.startDate"
     )
     List<Application> getApplicationsByPersonAndYear(Person person, Date firstDayOfYear, Date lastDayOfYear);
+
+
+    // get List<Application> by certain person for a certain year, get only the not cancelled applications
+    @Query(
+        "select x from Application x where x.status != ?1 and x.person = ?2 and ((x.startDate between ?3 and ?4) or (x.endDate between ?3 and ?4)) order by x.startDate"
+    )
+    List<Application> getNotCancelledApplicationsByPersonAndYear(ApplicationStatus state, Person person,
+        Date firstDayOfYear, Date lastDayOfYear);
 }
