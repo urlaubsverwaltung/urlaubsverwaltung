@@ -34,10 +34,6 @@
         <form:form method="put" action="${formUrlPrefix}/staff/${person.id}/edit" modelAttribute="personForm"> 
                 <table>
                     <tr>
-                        <td><label for="username"><spring:message code="username" />:</label></td>
-                        <td><form:input id="username" path="loginName" /></td>
-                    </tr>
-                    <tr>
                         <td><label for="nachname"><spring:message code="lastname" />:</label></td>
                         <td><form:input id="nachname" path="lastName" /></td>
                     </tr>

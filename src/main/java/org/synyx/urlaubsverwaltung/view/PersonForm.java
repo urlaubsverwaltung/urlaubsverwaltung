@@ -14,8 +14,6 @@ import java.math.BigDecimal;
  */
 public class PersonForm {
 
-    private String loginName;
-
     private String lastName;
 
     private String firstName;
@@ -32,7 +30,6 @@ public class PersonForm {
 
     public PersonForm(Person person, int year, BigDecimal days) {
 
-        this.loginName = person.getLoginName();
         this.lastName = person.getLastName();
         this.firstName = person.getFirstName();
         this.email = person.getEmail();
@@ -76,18 +73,6 @@ public class PersonForm {
     public void setLastName(String lastName) {
 
         this.lastName = lastName;
-    }
-
-
-    public String getLoginName() {
-
-        return loginName;
-    }
-
-
-    public void setLoginName(String loginName) {
-
-        this.loginName = loginName;
     }
 
 
