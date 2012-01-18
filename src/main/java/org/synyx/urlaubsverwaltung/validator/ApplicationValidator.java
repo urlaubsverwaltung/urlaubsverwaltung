@@ -15,6 +15,9 @@ import org.synyx.urlaubsverwaltung.view.AppForm;
 
 
 /**
+ * This class validate if an application's form ('AppForm') is filled correctly by the user, else it saves error
+ * messages in errors object.
+ *
  * @author  Aljona Murygina
  */
 public class ApplicationValidator implements Validator {
