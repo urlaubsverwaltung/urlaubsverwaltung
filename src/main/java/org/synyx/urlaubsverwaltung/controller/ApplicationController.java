@@ -410,14 +410,22 @@ public class ApplicationController {
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         Person boss = personService.getPersonByLogin(name);
 
-        applicationService.allow(application, boss);
+        Integer person_id = application.getPerson().getId();
+        Integer boss_id = boss.getId();
 
-        LOG.info(application.getApplicationDate() + " ID: " + application.getId() + "Der Antrag von "
-            + application.getPerson().getFirstName() + " " + application.getPerson().getLastName()
-            + " wurde am " + DateMidnight.now().toString(DATE_FORMAT) + " von " + boss.getFirstName() + " "
-            + boss.getLastName() + " genehmigt.");
+        // boss may only allow an application if this application isn't his own one
+        if (!person_id.equals(boss_id)) {
+            applicationService.allow(application, boss);
 
-        return "redirect:/web" + WAITING_APPS;
+            LOG.info(application.getApplicationDate() + " ID: " + application.getId() + "Der Antrag von "
+                + application.getPerson().getFirstName() + " " + application.getPerson().getLastName()
+                + " wurde am " + DateMidnight.now().toString(DATE_FORMAT) + " von " + boss.getFirstName() + " "
+                + boss.getLastName() + " genehmigt.");
+
+            return "redirect:/web" + WAITING_APPS;
+        } else {
+            return ERROR_JSP;
+        }
     }
 
 
