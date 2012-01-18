@@ -34,6 +34,9 @@
         <constructor-arg>
             <bean class="org.synyx.urlaubsverwaltung.util.GravatarUtil" />
         </constructor-arg>
+        <constructor-arg>
+            <bean class="org.synyx.urlaubsverwaltung.validator.PersonValidator" />
+        </constructor-arg> 
     </bean>  
     
      <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">

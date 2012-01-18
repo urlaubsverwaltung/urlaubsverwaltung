@@ -20,7 +20,7 @@ public class PersonForm {
 
     private String email;
 
-    private int year;
+    private String year;
 
     private BigDecimal vacationDays;
 
@@ -28,7 +28,7 @@ public class PersonForm {
     }
 
 
-    public PersonForm(Person person, int year, BigDecimal days) {
+    public PersonForm(Person person, String year, BigDecimal days) {
 
         this.lastName = person.getLastName();
         this.firstName = person.getFirstName();
@@ -88,13 +88,13 @@ public class PersonForm {
     }
 
 
-    public int getYear() {
+    public String getYear() {
 
         return year;
     }
 
 
-    public void setYear(int year) {
+    public void setYear(String year) {
 
         this.year = year;
     }

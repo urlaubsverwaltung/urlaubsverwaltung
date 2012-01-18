@@ -12,6 +12,8 @@ import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
 
+import org.springframework.validation.Errors;
+
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +30,7 @@ import org.synyx.urlaubsverwaltung.service.HolidaysAccountService;
 import org.synyx.urlaubsverwaltung.service.PersonService;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.util.GravatarUtil;
+import org.synyx.urlaubsverwaltung.validator.PersonValidator;
 import org.synyx.urlaubsverwaltung.view.PersonForm;
 
 import java.math.BigDecimal;
@@ -86,14 +89,16 @@ public class PersonController {
     private ApplicationService applicationService;
     private HolidaysAccountService accountService;
     private GravatarUtil gravatarUtil;
+    private PersonValidator validator;
 
     public PersonController(PersonService personService, ApplicationService applicationService,
-        HolidaysAccountService accountService, GravatarUtil gravatarUtil) {
+        HolidaysAccountService accountService, GravatarUtil gravatarUtil, PersonValidator validator) {
 
         this.personService = personService;
         this.applicationService = applicationService;
         this.accountService = accountService;
         this.gravatarUtil = gravatarUtil;
+        this.validator = validator;
     }
 
     /**
@@ -388,7 +393,7 @@ public class PersonController {
                 days = entitlement.getVacationDays();
             }
 
-            PersonForm personForm = new PersonForm(person, year, days);
+            PersonForm personForm = new PersonForm(person, Integer.toString(year), days);
 
             setLoggedUser(model);
             model.addAttribute(PERSON, person);
@@ -411,35 +416,49 @@ public class PersonController {
      * @return
      */
     @RequestMapping(value = EDIT_LINK, method = RequestMethod.PUT)
-    public String editPerson(@ModelAttribute(PERSONFORM) PersonForm personForm,
-        @PathVariable(PERSON_ID) Integer personId) {
+    public String editPerson(@PathVariable(PERSON_ID) Integer personId,
+        @ModelAttribute(PERSONFORM) PersonForm personForm, Errors errors, Model model) {
 
         Person personToUpdate = personService.getPersonByID(personId);
 
-        // set person information from PersonForm object on person that is updated
-        personToUpdate = personForm.fillPersonObject(personToUpdate);
+        validator.validate(personForm, errors);
 
-        personService.save(personToUpdate);
+        if (errors.hasErrors()) {
+            setLoggedUser(model);
+            model.addAttribute(PERSON, personToUpdate);
+            model.addAttribute(PERSONFORM, personForm);
 
-        // check if there is an existing entitlement to holidays
-        HolidayEntitlement entitlement = accountService.getHolidayEntitlement(personForm.getYear(), personToUpdate);
-
-        // if not, create one
-        if (entitlement == null) {
-            entitlement = accountService.newHolidayEntitlement(personToUpdate, personForm.getYear(),
-                    personForm.getVacationDays());
-            accountService.saveHolidayEntitlement(entitlement);
+            return PERSON_FORM_JSP;
         } else {
-            // if there is an entitlement: set current entitlement to inactive and creates a new active one with changed
-            // information do this with current leave account too
-            accountService.editHolidayEntitlement(personToUpdate, personForm.getYear(), personForm.getVacationDays());
+            // set person information from PersonForm object on person that is updated
+            personToUpdate = personForm.fillPersonObject(personToUpdate);
+
+            personService.save(personToUpdate);
+
+            if (personForm.getVacationDays() != null) {
+                int year = Integer.parseInt(personForm.getYear());
+                BigDecimal days = personForm.getVacationDays();
+
+                // check if there is an existing entitlement to holidays
+                HolidayEntitlement entitlement = accountService.getHolidayEntitlement(year, personToUpdate);
+
+                // if not, create one
+                if (entitlement == null) {
+                    entitlement = accountService.newHolidayEntitlement(personToUpdate, year, days);
+                    accountService.saveHolidayEntitlement(entitlement);
+                } else {
+                    // if there is an entitlement: set current entitlement to inactive and creates a new active one with
+                    // changed information do this with current leave account too
+                    accountService.editHolidayEntitlement(personToUpdate, year, days);
+                }
+            }
+
+            LOG.info(DateMidnight.now(GregorianChronology.getInstance()).toString(DATE_FORMAT) + " ID: " + personId
+                + " Der Mitarbeiter " + personToUpdate.getFirstName() + " " + personToUpdate.getLastName()
+                + " wurde editiert.");
+
+            return "redirect:/web" + ACTIVE_LINK;
         }
-
-        LOG.info(DateMidnight.now(GregorianChronology.getInstance()).toString(DATE_FORMAT) + " ID: " + personId
-            + " Der Mitarbeiter " + personToUpdate.getFirstName() + " " + personToUpdate.getLastName()
-            + " wurde editiert.");
-
-        return "redirect:/web" + ACTIVE_LINK;
     }
 
 

@@ -35,23 +35,38 @@
                 <table>
                     <tr>
                         <td><label for="nachname"><spring:message code="lastname" />:</label></td>
-                        <td><form:input id="nachname" path="lastName" /></td>
+                        <td>
+                            <form:input id="nachname" path="lastName" cssErrorClass="error" />
+                            <form:errors path="lastName" cssClass="error" />
+                        </td>
                     </tr>
                     <tr>
                         <td><label for="vorname"><spring:message code="firstname" />:</label></td>
-                        <td><form:input id="vorname" path="firstName" /></td>
+                        <td>
+                            <form:input id="vorname" path="firstName" cssErrorClass="error" />
+                            <form:errors path="firstName" cssClass="error" />
+                        </td>
                     </tr>
                     <tr>
                         <td><label for="email"><spring:message code="email" />:</label></td>
-                        <td><form:input id="email" path="email" /></td>
+                        <td>
+                            <form:input id="email" path="email" cssErrorClass="error" />
+                            <form:errors path="email" cssClass="error" />
+                        </td>
                     </tr>
                     <tr>
                         <td><label for="jahr"><spring:message code="year" />:</label></td>
-                        <td><form:input id="jahr" path="year" /></td>
+                        <td>
+                            <form:input id="jahr" path="year" cssErrorClass="error" />
+                            <form:errors path="year" cssClass="error" />
+                        </td>
                     </tr>
                     <tr>
                         <td><label for="urlaubsanspruch"><spring:message code="entitlement" />:</label></td>
-                        <td><form:input id="urlaubsanspruch" path="vacationDays" /></td>
+                        <td>
+                            <form:input id="urlaubsanspruch" path="vacationDays" cssErrorClass="error" />
+                            <form:errors path="vacationDays" cssClass="error" />
+                        </td>
                     </tr>
                     <tr>
                         <td colspan="2">&nbsp;</td>
@@ -64,6 +79,7 @@
                         </td>
                     </tr>
                 </table>
+                        
        </form:form>
             
           <br />
