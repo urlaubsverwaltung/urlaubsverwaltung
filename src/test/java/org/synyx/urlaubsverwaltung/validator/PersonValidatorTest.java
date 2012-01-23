@@ -21,6 +21,8 @@ import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.view.PersonForm;
 
+import java.math.BigDecimal;
+
 
 /**
  * @author  Aljona Murygina
@@ -78,6 +80,13 @@ public class PersonValidatorTest {
         PersonForm form = new PersonForm();
         Errors errors = Mockito.mock(Errors.class);
 
+        form.setFirstName("Vorname");
+        form.setLastName("Nachname");
+        form.setYear("2011");
+        form.setEmail("fraulyoner@verwaltung.de");
+        form.setVacationDays(BigDecimal.valueOf(25));
+        form.setRemainingVacationDays(BigDecimal.valueOf(5));
+
         // if the name fields are empty (null or empty String), an error message is set
 
         form.setFirstName(null);
@@ -96,16 +105,25 @@ public class PersonValidatorTest {
         Mockito.verify(errors).rejectValue("lastName", "error.mandatory.field");
         Mockito.reset(errors);
 
-        // if email field is filled: is the email address valid?
-
-        // if it is an empty String or the email address is correct, no interaction with errors
-
+        // everything ok
         form.setFirstName("Vorname");
         form.setLastName("Nachname");
-        form.setYear("2011");
-        form.setEmail("");
         instance.validate(form, errors);
         Mockito.verifyZeroInteractions(errors);
+        Mockito.reset(errors);
+
+        // if email field is filled: is the email address valid?
+
+        // if it is an empty String or null
+
+        form.setEmail(null);
+        instance.validate(form, errors);
+        Mockito.verify(errors).rejectValue("email", "error.mandatory.field");
+        Mockito.reset(errors);
+
+        form.setEmail("");
+        instance.validate(form, errors);
+        Mockito.verify(errors).rejectValue("email", "error.mandatory.field");
         Mockito.reset(errors);
 
         form.setEmail("fraulyoner@verwaltung.de");
@@ -154,6 +172,56 @@ public class PersonValidatorTest {
 
         // correct: year = 2010
         form.setYear("2010");
+        instance.validate(form, errors);
+        Mockito.verifyZeroInteractions(errors);
+        Mockito.reset(errors);
+
+        // set all normal except number of days
+        form.setFirstName("Vorname");
+        form.setLastName("Nachname");
+        form.setEmail("mail@mail.de");
+        form.setYear("2012");
+
+        // validate entitlement of vacation days remaining vacation days
+        form.setVacationDays(null);
+        instance.validate(form, errors);
+        Mockito.verify(errors).rejectValue("vacationDays", "error.mandatory.field");
+        Mockito.reset(errors);
+
+        form.setVacationDays(BigDecimal.valueOf(400));
+        instance.validate(form, errors);
+        Mockito.verify(errors).rejectValue("vacationDays", "error.entry");
+        Mockito.reset(errors);
+
+        form.setVacationDays(BigDecimal.valueOf(-1));
+        instance.validate(form, errors);
+        Mockito.verify(errors).rejectValue("vacationDays", "error.entry");
+        Mockito.reset(errors);
+
+        // set normal
+        form.setVacationDays(BigDecimal.valueOf(25));
+        instance.validate(form, errors);
+        Mockito.verifyZeroInteractions(errors);
+        Mockito.reset(errors);
+
+        // remaining vacation days
+        form.setRemainingVacationDays(null);
+        instance.validate(form, errors);
+        Mockito.verify(errors).rejectValue("remainingVacationDays", "error.mandatory.field");
+        Mockito.reset(errors);
+
+        form.setRemainingVacationDays(BigDecimal.valueOf(400));
+        instance.validate(form, errors);
+        Mockito.verify(errors).rejectValue("remainingVacationDays", "error.entry");
+        Mockito.reset(errors);
+
+        form.setRemainingVacationDays(BigDecimal.valueOf(-1));
+        instance.validate(form, errors);
+        Mockito.verify(errors).rejectValue("remainingVacationDays", "error.entry");
+        Mockito.reset(errors);
+
+        // set normal
+        form.setRemainingVacationDays(BigDecimal.valueOf(5));
         instance.validate(form, errors);
         Mockito.verifyZeroInteractions(errors);
         Mockito.reset(errors);

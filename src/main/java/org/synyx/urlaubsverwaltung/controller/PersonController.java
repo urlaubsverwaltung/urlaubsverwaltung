@@ -393,14 +393,16 @@ public class PersonController {
 
             int year = DateMidnight.now(GregorianChronology.getInstance()).getYear();
             BigDecimal days = null;
+            BigDecimal remaining = null;
 
             HolidayEntitlement entitlement = accountService.getHolidayEntitlement(year, person);
 
             if (entitlement != null) {
                 days = entitlement.getVacationDays();
+                remaining = entitlement.getRemainingVacationDays();
             }
 
-            PersonForm personForm = new PersonForm(person, Integer.toString(year), days);
+            PersonForm personForm = new PersonForm(person, Integer.toString(year), days, remaining);
 
             setLoggedUser(model);
             model.addAttribute(PERSON, person);
@@ -453,6 +455,14 @@ public class PersonController {
                 if (entitlement == null) {
                     entitlement = accountService.newHolidayEntitlement(personToUpdate, year, days);
                     accountService.saveHolidayEntitlement(entitlement);
+
+                    HolidaysAccount account = accountService.getHolidaysAccount(year, personToUpdate);
+
+                    if (account == null) {
+                        account = accountService.newHolidaysAccount(personToUpdate, entitlement.getVacationDays(),
+                                BigDecimal.ZERO, year);
+                        accountService.saveHolidaysAccount(account);
+                    }
                 } else {
                     // if there is an entitlement: set current entitlement to inactive and creates a new active one with
                     // changed information do this with current leave account too

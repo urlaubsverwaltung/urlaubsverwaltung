@@ -62,10 +62,19 @@
                         </td>
                     </tr>
                     <tr>
-                        <td><label for="urlaubsanspruch"><spring:message code="entitlement" />:</label></td>
+                        <td><label for="urlaubsanspruch"><spring:message code="entitlement" />&nbsp;<spring:message code="for" />&nbsp;<c:out value="${year}" />:</label></td>
                         <td>
                             <form:input id="urlaubsanspruch" path="vacationDays" cssErrorClass="error" />
                             <form:errors path="vacationDays" cssClass="error" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="resturlaub"><spring:message code="remaining" />&nbsp;<spring:message code="for" />&nbsp;<c:out value="${year}" />:</label>
+                        </td>
+                        <td>
+                           <form:input id="resturlaub" path="vacationDays" cssErrorClass="error" />
+                           <form:errors path="vacationDays" cssClass="error" /> 
                         </td>
                     </tr>
                     <tr>
@@ -74,7 +83,7 @@
                     <tr>
                         <td colspan="2">
                             <input type="submit" name="<spring:message code="save" />" value="<spring:message code="save" />" />
-                            <a class="button" href="${formUrlPrefix}/staff/list"><spring:message code='cancel' /></a>
+                            <a class="button" href="${formUrlPrefix}/staff"><spring:message code='cancel' /></a>
                             <input type="button" onclick="$('#deactivate').show();" name="<spring:message code='person.deactivate' />" value="<spring:message code='person.deactivate' />" />
                         </td>
                     </tr>

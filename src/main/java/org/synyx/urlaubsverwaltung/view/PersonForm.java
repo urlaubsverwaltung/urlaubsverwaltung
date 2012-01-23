@@ -24,11 +24,13 @@ public class PersonForm {
 
     private BigDecimal vacationDays;
 
+    private BigDecimal remainingVacationDays;
+
     public PersonForm() {
     }
 
 
-    public PersonForm(Person person, String year, BigDecimal days) {
+    public PersonForm(Person person, String year, BigDecimal days, BigDecimal remaining) {
 
         this.lastName = person.getLastName();
         this.firstName = person.getFirstName();
@@ -37,6 +39,10 @@ public class PersonForm {
 
         if (days != null) {
             this.vacationDays = days;
+        }
+
+        if (remaining != null) {
+            this.remainingVacationDays = remaining;
         }
     }
 
@@ -85,6 +91,18 @@ public class PersonForm {
     public void setVacationDays(BigDecimal vacationDays) {
 
         this.vacationDays = vacationDays;
+    }
+
+
+    public BigDecimal getRemainingVacationDays() {
+
+        return remainingVacationDays;
+    }
+
+
+    public void setRemainingVacationDays(BigDecimal remainingVacationDays) {
+
+        this.remainingVacationDays = remainingVacationDays;
     }
 
 
