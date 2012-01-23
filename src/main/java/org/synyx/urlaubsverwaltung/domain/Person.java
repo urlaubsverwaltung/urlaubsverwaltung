@@ -4,6 +4,7 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 
@@ -29,10 +30,12 @@ public class Person extends AbstractPersistable<Integer> {
     // private key of person - RSA
     // private key has to be saved as byte[] in database
     // when retrieved from database, byte[] have to be transformed back to private key
+    @Column(columnDefinition = "longblob")
     private byte[] privateKey;
 
     // public key of person
     // saving like private key
+    @Column(columnDefinition = "longblob")
     private byte[] publicKey;
 
     private Role role;

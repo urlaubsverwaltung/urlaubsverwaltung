@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -76,9 +77,11 @@ public class Application extends AbstractPersistable<Integer> {
     private ApplicationStatus status;
 
     // Signature of applicant
+    @Column(columnDefinition = "longblob")
     private byte[] signaturePerson;
 
     // Signature of boss
+    @Column(columnDefinition = "longblob")
     private byte[] signatureBoss;
 
     public String getAddress() {
