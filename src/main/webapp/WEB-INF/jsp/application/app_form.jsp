@@ -176,6 +176,7 @@
                 </td>
                 <td colspan="2">
                     <form:select path="rep" id="vertreter" size="1">
+                    <option value="<spring:message code='app.no.rep' />"><spring:message code='app.no.rep' /></option>
                         <c:forEach items="${persons}" var="einmitarbeiter">
                                 <option value="${einmitarbeiter.lastName} ${einmitarbeiter.firstName}">
                                     <c:out value='${einmitarbeiter.lastName}' />&nbsp;<c:out value="${einmitarbeiter.firstName}" />

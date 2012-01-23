@@ -167,7 +167,7 @@
                                 <form:form method="put" action="${formUrlPrefix}/application/${app.id}/cancel">
                             <input id="storno-confirm-${app.id}" style="display: none" type="submit" class="button" name="Storno" value="Storno" />
                             </form:form>
-                        </td>
+                        </td>   
                     </tr>
                 </c:forEach>
             </table>
