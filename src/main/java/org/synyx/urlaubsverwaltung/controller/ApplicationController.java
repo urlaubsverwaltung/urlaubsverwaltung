@@ -62,6 +62,9 @@ public class ApplicationController {
     private static final String FULL = "full";
     private static final String MORNING = "morning";
     private static final String NOON = "noon";
+    private static final String NOTPOSSIBLE = "notpossible"; // is it possible for user to apply for leave? (no, if
+                                                             // he/she has no account/entitlement)
+    private static final String NO_APPS = "noapps"; // are there any applications to show?
 
     // jsps
     private static final String SHOW_APP_DETAIL = APPLICATION + "/app_detail";
@@ -141,6 +144,16 @@ public class ApplicationController {
     }
 
 
+    private void setApplications(List<Application> applications, Model model) {
+
+        if (applications.isEmpty()) {
+            model.addAttribute(NO_APPS, true);
+        } else {
+            model.addAttribute(APPLICATIONS, applications);
+        }
+    }
+
+
     /**
      * show List<Application> of one person
      *
@@ -156,8 +169,9 @@ public class ApplicationController {
             Person person = personService.getPersonByID(personId);
             List<Application> applications = applicationService.getApplicationsByPerson(person);
 
+            setApplications(applications, model);
+
             model.addAttribute(PERSON, person);
-            model.addAttribute(APPLICATIONS, applications);
             model.addAttribute(STATE_NUMBER, BY_PERSON);
             setLoggedUser(model);
 
@@ -180,7 +194,9 @@ public class ApplicationController {
 
         if (getLoggedUser().getRole() == Role.BOSS) {
             List<Application> applications = applicationService.getApplicationsByState(ApplicationStatus.WAITING);
-            model.addAttribute(APPLICATIONS, applications);
+
+            setApplications(applications, model);
+
             model.addAttribute(STATE_NUMBER, WAITING);
             setLoggedUser(model);
 
@@ -203,7 +219,9 @@ public class ApplicationController {
 
         if (getLoggedUser().getRole() == Role.OFFICE || getLoggedUser().getRole() == Role.BOSS) {
             List<Application> applications = applicationService.getApplicationsByState(ApplicationStatus.ALLOWED);
-            model.addAttribute(APPLICATIONS, applications);
+
+            setApplications(applications, model);
+
             model.addAttribute(STATE_NUMBER, ALLOWED);
             setLoggedUser(model);
 
@@ -226,7 +244,9 @@ public class ApplicationController {
 
         if (getLoggedUser().getRole() == Role.OFFICE || getLoggedUser().getRole() == Role.BOSS) {
             List<Application> applications = applicationService.getApplicationsByState(ApplicationStatus.CANCELLED);
-            model.addAttribute(APPLICATIONS, applications);
+
+            setApplications(applications, model);
+
             model.addAttribute(STATE_NUMBER, CANCELLED);
             setLoggedUser(model);
 
@@ -249,7 +269,9 @@ public class ApplicationController {
 
         if (getLoggedUser().getRole() == Role.BOSS) {
             List<Application> applications = applicationService.getApplicationsByState(ApplicationStatus.CANCELLED);
-            model.addAttribute(APPLICATIONS, applications);
+
+            setApplications(applications, model);
+
             setLoggedUser(model);
 
             return APP_LIST_JSP;
@@ -273,7 +295,15 @@ public class ApplicationController {
         if (getLoggedUser().getRole() != Role.INACTIVE) {
             Person person = getLoggedUser();
 
-            prepareForm(person, new AppForm(), model);
+            // check if this is a new user without account and/or entitlement or a user that has no active account and
+            // entitlement for current year
+
+            if (accountService.getHolidayEntitlement(DateMidnight.now().getYear(), person) == null
+                    || accountService.getHolidaysAccount(DateMidnight.now().getYear(), person) == null) {
+                model.addAttribute(NOTPOSSIBLE, true);
+            } else {
+                prepareForm(person, new AppForm(), model);
+            }
 
             return APP_FORM_JSP;
         } else {

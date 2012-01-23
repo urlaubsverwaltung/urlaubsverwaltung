@@ -103,7 +103,15 @@
             <br />
             <br />
 
-            <table id="app-tbl" cellspacing="0" border="1">
+            <c:choose>
+                
+                <c:when test="${noapps == true}">
+                    <spring:message code='no.apps' />
+                </c:when>
+                
+                <c:otherwise>
+                    
+                    <table id="app-tbl" cellspacing="0" border="1">
                 <tr>
                     <th>
                         <spring:message code="type" />
@@ -171,7 +179,10 @@
                     </tr>
                 </c:forEach>
             </table>
-
+                    
+                </c:otherwise>
+                
+            </c:choose>
 
         </div> 
 

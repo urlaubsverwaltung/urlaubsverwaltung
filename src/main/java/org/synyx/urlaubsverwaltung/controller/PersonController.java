@@ -70,6 +70,7 @@ public class PersonController {
     private static final String DISPLAY = "display"; // name of test attribute in jsp "staff_view": showing list or
                                                      // detail view
     private static final String NOTEXISTENT = "notexistent"; // are there any persons to show?
+    private static final String NO_APPS = "noapps"; // are there any applications to show?
 
     private static final String PERSON_ID = "personId";
     private static final String YEAR = "year";
@@ -347,6 +348,13 @@ public class PersonController {
         Person person = getLoggedUser();
 
         List<Application> applications = applicationService.getApplicationsByPersonAndYear(person, year);
+
+        if (applications.isEmpty()) {
+            model.addAttribute(NO_APPS, true);
+        } else {
+            model.addAttribute(APPLICATIONS, applications);
+        }
+
         HolidaysAccount account = accountService.getHolidaysAccount(year, person);
         HolidayEntitlement entitlement = accountService.getHolidayEntitlement(year, person);
         DateMidnight date = DateMidnight.now(GregorianChronology.getInstance());
@@ -358,7 +366,6 @@ public class PersonController {
 
         setLoggedUser(model);
         model.addAttribute(PERSON, person);
-        model.addAttribute(APPLICATIONS, applications);
         model.addAttribute(ACCOUNT, account);
         model.addAttribute(ENTITLEMENT, entitlement);
         model.addAttribute(YEAR, date.getYear());

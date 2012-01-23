@@ -55,6 +55,7 @@ public class AuthoritiesPopulatorImpl implements LdapAuthoritiesPopulator {
             person = new Person();
             person.setLoginName(string);
             person.setRole(Role.USER);
+            person.setActive(true);
 
             try {
                 KeyPair keyPair = cryptoService.generateKeyPair();
