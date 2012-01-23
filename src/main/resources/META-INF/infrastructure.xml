@@ -7,10 +7,16 @@
 
 
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
-        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
-        <property name="url" value="jdbc:mysql://127.0.0.1:3306/urlaubsverwaltung" />
-        <property name="username" value="root" />
-        <property name="password" value="" />
+        <property name="driverClassName"><value>${driver}</value></property>
+        <property name="url"><value>${url}</value></property>
+        <property name="username"><value>${username}</value></property>
+        <property name="password"><value>${pwd}</value></property>
+    </bean>
+    
+    <bean id="placeholderConfig" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="systemPropertiesModeName"><value>SYSTEM_PROPERTIES_MODE_OVERRIDE</value></property>
+        <property name="ignoreUnresolvablePlaceholders"><value>true</value></property>
+        <property name="location" value="classpath:config.properties" />
     </bean>
 
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
