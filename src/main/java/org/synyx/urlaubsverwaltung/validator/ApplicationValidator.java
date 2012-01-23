@@ -85,13 +85,13 @@ public class ApplicationValidator implements Validator {
         if (app.getHowLong() == DayLength.FULL) {
             if (app.getStartDate() != null) {
                 if (app.getStartDate().isBeforeNow()) {
-                    errors.rejectValue("startDate", PAST);
+                    errors.reject(PAST);
                 }
             }
         } else {
             if (app.getStartDateHalf() != null) {
                 if (app.getStartDateHalf().isBeforeNow()) {
-                    errors.rejectValue("startDateHalf", PAST);
+                    errors.reject(PAST);
                 }
             }
         }

@@ -223,12 +223,12 @@
                     <input type="submit" name="<spring:message code='apply' />" value="<spring:message code='apply' />" />
                 </td>
             </tr>
-<%--            <tr>
+            <tr>
                 <td colspan="3">&nbsp;</td>
             </tr>
             <tr>
-                <td colspan="2"><form:errors path="*" cssClass="error" /></td>
-            </tr>--%>
+                <td colspan="2"><form:errors cssClass="error" /></td>
+            </tr>
             
         </table>
                 
