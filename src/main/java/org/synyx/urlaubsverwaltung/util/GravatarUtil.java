@@ -30,6 +30,11 @@ public class GravatarUtil {
      */
     public String createImgURL(String email) {
 
+        if (email == null) {
+            // set email to empty String so that no NullpointerException occurs, but a default image can be set
+            email = "";
+        }
+
         String hash = createHash(email);
 
         return BASE_URL + hash;

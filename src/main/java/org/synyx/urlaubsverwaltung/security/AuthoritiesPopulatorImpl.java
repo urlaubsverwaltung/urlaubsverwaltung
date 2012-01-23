@@ -4,6 +4,8 @@
  */
 package org.synyx.urlaubsverwaltung.security;
 
+import org.apache.log4j.Logger;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.ldap.core.DirContextOperations;
@@ -25,9 +27,12 @@ import java.util.Collection;
 
 
 /**
- * @author  johannes
+ * @author  Johannes Reuter
+ * @author  Aljona Murygina
  */
 public class AuthoritiesPopulatorImpl implements LdapAuthoritiesPopulator {
+
+    private static final Logger LOG = Logger.getLogger(AuthoritiesPopulatorImpl.class);
 
     private PersonService personService;
     private CryptoService cryptoService;
@@ -56,7 +61,7 @@ public class AuthoritiesPopulatorImpl implements LdapAuthoritiesPopulator {
                 person.setPrivateKey(keyPair.getPrivate().getEncoded());
                 person.setPublicKey(keyPair.getPublic().getEncoded());
             } catch (NoSuchAlgorithmException ex) {
-                // TODO Logging
+                LOG.error("Beim Erstellen der Keys für den neuen Benutzer ist ein Fehler aufgetreten.", ex);
             }
 
             personService.save(person);

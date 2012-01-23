@@ -81,40 +81,17 @@ public class GravatarUtilTest {
 
         // show that the given email is not part of the url but a hash
         assertFalse(url1.contains(email));
-    }
 
-//    /** Test of createHash method, of class GravatarUtil. */
-//    @Test
-//    public void testCreateHash() {
-//
-//        String email = "frau.lyoner@net.de";
-//
-//        String emailWithUpperCase = "FraU.LyOner@net.de";
-//
-//        String emailWithWhitespaces = " fraU.Lyoner@Net.de";
-//
-//        // show that given email is trimmed and lowercased
-//        // that means: every hash is equals
-//
-//        String encrypt1 = instance.createHash(email);
-//        String encrypt2 = instance.createHash(emailWithUpperCase);
-//        String encrypt3 = instance.createHash(emailWithWhitespaces);
-//
-//        assertNotNull(encrypt1);
-//        assertNotNull(encrypt2);
-//        assertNotNull(encrypt3);
-//
-//        assertEquals(encrypt1, encrypt2);
-//
-//        // WTF??
-//        assertNotSame(encrypt1, encrypt2);
-//
-//        assertEquals(encrypt1, encrypt3);
-//        assertEquals(encrypt2, encrypt3);
-//
-//        // origin emails have been encrypted, are not same
-//        assertNotSame(email, encrypt1);
-//        assertNotSame(emailWithUpperCase, encrypt2);
-//        assertNotSame(emailWithWhitespaces, encrypt3);
-//    }
+        // if email is null
+        String url = instance.createImgURL(null);
+        // NullPointerException is catched by setting email to empty String (!= null)
+
+        // if email is a empty string, same result as if email is null
+        String urlEmpty = instance.createImgURL("");
+
+        // show that there is no image to this email address
+        assertNotNull(url);
+        assertNotNull(urlEmpty);
+        assertEquals(url, urlEmpty);
+    }
 }
