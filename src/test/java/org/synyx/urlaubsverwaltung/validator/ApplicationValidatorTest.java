@@ -146,7 +146,7 @@ public class ApplicationValidatorTest {
         app.setStartDate(new DateMidnight(2012, 1, 16));
 
         instance.validateForUser(app, errors);
-        Mockito.verify(errors).rejectValue("startDate", "error.period.past");
+        Mockito.verify(errors).reject("error.period.past");
         Mockito.reset(errors);
 
         // half day
@@ -154,7 +154,7 @@ public class ApplicationValidatorTest {
         app.setStartDateHalf(new DateMidnight(2012, 1, 16));
 
         instance.validateForUser(app, errors);
-        Mockito.verify(errors).rejectValue("startDateHalf", "error.period.past");
+        Mockito.verify(errors).reject("error.period.past");
         Mockito.reset(errors);
     }
 }
