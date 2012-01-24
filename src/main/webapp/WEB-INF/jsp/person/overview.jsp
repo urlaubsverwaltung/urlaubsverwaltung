@@ -27,9 +27,9 @@
         <spring:url var="formUrlPrefix" value="/web" />
 
         <%@include file="../include/header.jsp" %>
-        
+
         <div id="content">
-            
+
             <div id="year-navi">
                 <a href="${formUrlPrefix}/overview?year=2011">2011</a>
                 <a href="${formUrlPrefix}/overview?year=2012">2012</a>
@@ -45,17 +45,24 @@
                         <spring:message code="entitlement" />&nbsp;<spring:message code="in.year" />&nbsp;<c:out value="${year}"/>
                     </th>
                     <td>
-                        <c:out value="${entitlement.vacationDays + entitlement.remainingVacationDays}"/>
-                        <spring:message code="days" />&nbsp;(<spring:message code="davon" />
                         <c:choose>
-                            <c:when test="${entitlement.remainingVacationDays == null}">
-                                0
+                            <c:when test="${entitlement != null}">
+                                <c:out value="${entitlement.vacationDays + entitlement.remainingVacationDays}"/>
+                                <spring:message code="days" />&nbsp;(<spring:message code="davon" />
+                                <c:choose>
+                                    <c:when test="${entitlement.remainingVacationDays == null}">
+                                        0
+                                    </c:when>
+                                    <c:otherwise>
+                                        <c:out value="${entitlement.remainingVacationDays}"/>
+                                    </c:otherwise>
+                                </c:choose>
+                                <spring:message code="days" />&nbsp;<spring:message code="remaining" />)
                             </c:when>
                             <c:otherwise>
-                                <c:out value="${entitlement.remainingVacationDays}"/>
-                            </c:otherwise>
-                        </c:choose>
-                        <spring:message code="days" />&nbsp;<spring:message code="remaining" />)
+                                <spring:message code='not.specified' />
+                            </c:otherwise>    
+                        </c:choose>    
                     </td>
                 </tr>
                 <tr>
@@ -64,13 +71,13 @@
                     </th>
                     <td>
                         <c:choose>
-                            <c:when test="${account != null}">
+                            <c:when test="${account != null && entitlement != null}">
                                 <c:out value="${(entitlement.vacationDays - account.vacationDays) + (entitlement.remainingVacationDays - account.remainingVacationDays)}"/>&nbsp;<spring:message code="days" />
                             </c:when>
                             <c:otherwise>
-                                0 <spring:message code="days" />
-                            </c:otherwise>
-                        </c:choose>    
+                                <spring:message code='not.specified' />
+                            </c:otherwise>    
+                        </c:choose>
                     </td>
                 </tr>
                 <tr>
@@ -83,6 +90,8 @@
                                 <c:choose>
                                     <c:when test="${april == 1}">
                                         <c:out value="${account.vacationDays + account.remainingVacationDays}"/>&nbsp;<spring:message code="days" />
+                                        &nbsp;(<spring:message code="davon" />&nbsp;<c:out value="${account.remainingVacationDays}"/>
+                                        <spring:message code="days" />&nbsp;<spring:message code="remaining" />)
                                     </c:when>
                                     <c:otherwise>
                                         <c:out value="${account.vacationDays}"/>&nbsp;<spring:message code="days" />
@@ -90,8 +99,8 @@
                                 </c:choose>
                             </c:when>
                             <c:otherwise>
-                                <c:out value="${entitlement.vacationDays + entitlement.remainingVacationDays}"/>&nbsp;<spring:message code="days" />
-                            </c:otherwise>
+                                <spring:message code='not.specified' />
+                            </c:otherwise>    
                         </c:choose>
                     </td>
                 </tr>
@@ -104,84 +113,84 @@
             <br />
 
             <c:choose>
-                
+
                 <c:when test="${noapps == true}">
                     <spring:message code='no.apps' />
                 </c:when>
-                
-                <c:otherwise>
-                    
-                    <table id="app-tbl" cellspacing="0" border="1">
-                <tr>
-                    <th>
-                        <spring:message code="type" />
-                    </th>
-                    <th>
-                        <spring:message code="time" />
-                    </th>
-                    <th>
-                        <spring:message code="reason" />
-                    </th>
-                    <th>
-                        <spring:message code="days.vac" />
-                    </th>
-                    <th>
-                        <spring:message code="days.ill" />
-                    </th>
-                    <th>
-                        <spring:message code="state" />
-                    </th>
-                    <th>
-                        <spring:message code="delete" />
-                    </th>
-                </tr>
 
-                <c:forEach items="${applications}" var="app">
-                    <tr>
-                        <td>
-                            <spring:message code="${app.vacationType.vacationTypeName}"/>
-                        </td>
-                        <td>
-                            <c:choose>
-                                <c:when test="${app.startDate == app.endDate}">
-                                    am&nbsp;<joda:format style="M-" value="${app.startDate}"/>
-                                </c:when>
-                                <c:otherwise>
-                                    <joda:format style="M-" value="${app.startDate}"/>&nbsp;-&nbsp;<joda:format style="M-" value="${app.endDate}"/>
-                                </c:otherwise>    
-                            </c:choose>
-                        </td>
-                        <td>
-                            <c:out value="${app.reason}"/>
-                        </td>
-                        <td>
-                            <c:out value="${app.days}"/>
-                        </td>
-                        <td>
-                            <c:choose>
-                            <c:when test="${app.sickDays == null}">
-                                0
-                            </c:when>
-                            <c:otherwise>
-                                 <c:out value="${app.sickDays}"/>
-                            </c:otherwise>
-                            </c:choose>
-                        </td>                     
-                        <td>
-                            <spring:message code="${app.status.state}" />
-                        </td>
-                        <td>
-                            <img id="storno-img-${app.id}" src="<spring:url value='/images/cancel.png' />" onclick="$('#storno-confirm-${app.id}').show(); $('#storno-img-${app.id}').hide();" />
-                                <form:form method="put" action="${formUrlPrefix}/application/${app.id}/cancel">
-                            <input id="storno-confirm-${app.id}" style="display: none" type="submit" class="button" name="Storno" value="Storno" />
-                            </form:form>
-                        </td>   
-                    </tr>
-                </c:forEach>
-            </table>
-                    
+                <c:otherwise>
+
+                    <table id="app-tbl" cellspacing="0" border="1">
+                        <tr>
+                            <th>
+                                <spring:message code="type" />
+                            </th>
+                            <th>
+                                <spring:message code="time" />
+                            </th>
+                            <th>
+                                <spring:message code="reason" />
+                            </th>
+                            <th>
+                                <spring:message code="days.vac" />
+                            </th>
+                            <th>
+                                <spring:message code="days.ill" />
+                            </th>
+                            <th>
+                                <spring:message code="state" />
+                            </th>
+                            <th>
+                                <spring:message code="delete" />
+                            </th>
+                        </tr>
+
+                        <c:forEach items="${applications}" var="app">
+                            <tr>
+                                <td>
+                                    <spring:message code="${app.vacationType.vacationTypeName}"/>
+                                </td>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${app.startDate == app.endDate}">
+                                            am&nbsp;<joda:format style="M-" value="${app.startDate}"/>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <joda:format style="M-" value="${app.startDate}"/>&nbsp;-&nbsp;<joda:format style="M-" value="${app.endDate}"/>
+                                        </c:otherwise>    
+                                    </c:choose>
+                                </td>
+                                <td>
+                                    <c:out value="${app.reason}"/>
+                                </td>
+                                <td>
+                                    <c:out value="${app.days}"/>
+                                </td>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${app.sickDays == null}">
+                                            0
+                                        </c:when>
+                                        <c:otherwise>
+                                            <c:out value="${app.sickDays}"/>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>                     
+                                <td>
+                                    <spring:message code="${app.status.state}" />
+                                </td>
+                                <td>
+                                    <img id="storno-img-${app.id}" src="<spring:url value='/images/cancel.png' />" onclick="$('#storno-confirm-${app.id}').show(); $('#storno-img-${app.id}').hide();" />
+                                    <form:form method="put" action="${formUrlPrefix}/application/${app.id}/cancel">
+                                        <input id="storno-confirm-${app.id}" style="display: none" type="submit" class="button" name="Storno" value="Storno" />
+                                    </form:form>
+                                </td>   
+                            </tr>
+                        </c:forEach>
+                    </table>
+
                 </c:otherwise>
-                
+
             </c:choose>
 
         </div> 

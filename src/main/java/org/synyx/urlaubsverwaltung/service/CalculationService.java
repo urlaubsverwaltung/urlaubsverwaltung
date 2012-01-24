@@ -260,9 +260,19 @@ public class CalculationService {
 
         BigDecimal result = account.getRemainingVacationDays().subtract(days);
 
-        if (CalcUtil.isNegative(result)) {
+        // three cases:
+        // result is 0
+        // result is greater than 0
+        // result is negative
+
+        if (result.compareTo(BigDecimal.ZERO) == 0) {
             account.setRemainingVacationDays(BigDecimal.ZERO);
-            account.setVacationDays(account.getVacationDays().add(result));
+        } else if (CalcUtil.isGreaterThanZero(result)) {
+            account.setRemainingVacationDays(result);
+        } else if (CalcUtil.isNegative(result)) {
+            account.setRemainingVacationDays(BigDecimal.ZERO);
+            account.setVacationDays(account.getVacationDays().add(result)); // result is negative so that you add it to
+                                                                            // vacation days instead of subtract it
         }
 
         return account;
@@ -302,8 +312,19 @@ public class CalculationService {
 
         BigDecimal result = account.getRemainingVacationDays().subtract(daysBeforeApril);
 
-        if (CalcUtil.isNegative(result)) {
-            account.setVacationDays(account.getVacationDays().add(result));
+        // three cases:
+        // result is 0
+        // result is greater than 0
+        // result is negative
+
+        if (result.compareTo(BigDecimal.ZERO) == 0) {
+            account.setRemainingVacationDays(BigDecimal.ZERO);
+        } else if (CalcUtil.isGreaterThanZero(result)) {
+            account.setRemainingVacationDays(result);
+        } else if (CalcUtil.isNegative(result)) {
+            account.setRemainingVacationDays(BigDecimal.ZERO);
+            account.setVacationDays(account.getVacationDays().add(result)); // result is negative so that you add it to
+                                                                            // vacation days instead of subtract it
         }
 
         account.setVacationDays(account.getVacationDays().subtract(daysAfterApril));

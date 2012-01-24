@@ -460,8 +460,7 @@ public class PersonController {
                     HolidaysAccount account = accountService.getHolidaysAccount(year, personToUpdate);
 
                     if (account == null) {
-                        account = accountService.newHolidaysAccount(personToUpdate, entitlement.getVacationDays(),
-                                BigDecimal.ZERO, year);
+                        account = accountService.newHolidaysAccount(personToUpdate, days, remaining, year);
                         accountService.saveHolidaysAccount(account);
                     }
                 } else {

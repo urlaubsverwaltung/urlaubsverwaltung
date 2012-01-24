@@ -15,7 +15,6 @@ import static org.junit.Assert.assertNotNull;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import org.mockito.Mockito;
@@ -102,7 +101,6 @@ public class CalculationServiceTest {
 
 
     /** Test of subtractVacationDays method, of class CalculationService. */
-    @Ignore
     @Test
     public void testSubtractVacationDays() {
 
@@ -152,6 +150,74 @@ public class CalculationServiceTest {
 
         assertEquals(BigDecimal.ZERO, returnAccount.getRemainingVacationDays());
         assertEquals(vacDays.subtract(BigDecimal.valueOf(4.0)).setScale(2), returnAccount.getVacationDays());
+
+        // number of remaining vacation days of account is equals number of days that are applied for leave
+        application.setHowLong(DayLength.FULL);
+        application.setStartDate(new DateMidnight(NEXT_YEAR, DateTimeConstants.FEBRUARY, 1));
+        application.setEndDate(new DateMidnight(NEXT_YEAR, DateTimeConstants.FEBRUARY, 7));
+
+        remainingVacDays = BigDecimal.valueOf(5);
+        vacDays = BigDecimal.valueOf(24);
+
+        accountNextYear.setRemainingVacationDays(remainingVacDays);
+        accountNextYear.setVacationDays(vacDays);
+
+        returnAccounts = instance.subtractVacationDays(application);
+
+        assertNotNull(returnAccounts);
+        assertEquals(1, returnAccounts.size());
+
+        returnAccount = returnAccounts.get(0);
+
+        assertEquals(BigDecimal.ZERO, returnAccount.getRemainingVacationDays());
+        assertEquals(vacDays, returnAccount.getVacationDays());
+
+        // number of remaining vacation days of account is greater than number of days that are applied for leave
+        application.setHowLong(DayLength.FULL);
+        application.setStartDate(new DateMidnight(NEXT_YEAR, DateTimeConstants.FEBRUARY, 1));
+        application.setEndDate(new DateMidnight(NEXT_YEAR, DateTimeConstants.FEBRUARY, 7));
+
+        remainingVacDays = BigDecimal.valueOf(7);
+        vacDays = BigDecimal.valueOf(24);
+
+        accountNextYear.setRemainingVacationDays(remainingVacDays);
+        accountNextYear.setVacationDays(vacDays);
+
+        returnAccounts = instance.subtractVacationDays(application);
+
+        assertNotNull(returnAccounts);
+        assertEquals(1, returnAccounts.size());
+
+        returnAccount = returnAccounts.get(0);
+
+        assertEquals(BigDecimal.valueOf(2).setScale(2), returnAccount.getRemainingVacationDays());
+        assertEquals(vacDays, returnAccount.getVacationDays());
+
+        // number of remaining vacation days of account is smaller than number of days that are applied for leave
+        application.setHowLong(DayLength.FULL);
+        application.setStartDate(new DateMidnight(NEXT_YEAR, DateTimeConstants.FEBRUARY, 1));
+        application.setEndDate(new DateMidnight(NEXT_YEAR, DateTimeConstants.FEBRUARY, 7));
+
+        remainingVacDays = BigDecimal.valueOf(2);
+        vacDays = BigDecimal.valueOf(24);
+
+        accountNextYear.setRemainingVacationDays(remainingVacDays);
+        accountNextYear.setVacationDays(vacDays);
+
+        returnAccounts = instance.subtractVacationDays(application);
+
+        assertNotNull(returnAccounts);
+        assertEquals(1, returnAccounts.size());
+
+        returnAccount = returnAccounts.get(0);
+
+        // days = 5
+        // remaining days = 2
+        // vac days = 24
+        // --> vacdays = 24 - (5 - 2)
+
+        assertEquals(BigDecimal.ZERO, returnAccount.getRemainingVacationDays());
+        assertEquals(BigDecimal.valueOf(21).setScale(2), returnAccount.getVacationDays());
 
         // TODO
         // test for this special case must be modified!
