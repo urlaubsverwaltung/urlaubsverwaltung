@@ -27,11 +27,21 @@ public interface PersonService {
 
     /**
      * use this to deactivate someones profile, i.e. this person has no right to login, to apply for leave, etc. but
-     * information about the person remains for office
+     * information about the person remains for office. Notice: only person is deactivated, his active entitlement and
+     * account won't be deactivated!
      *
      * @param  person  the profile to deactivate
      */
     void deactivate(Person person);
+
+
+    /**
+     * use this to activate someones profile (e.g. after unintended deactivating of a person), i.e. this person has once
+     * again his user rights)
+     *
+     * @param  person  the profile to activate
+     */
+    void activate(Person person);
 
 
     /**

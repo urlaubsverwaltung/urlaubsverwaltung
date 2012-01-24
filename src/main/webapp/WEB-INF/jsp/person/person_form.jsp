@@ -13,7 +13,7 @@
 
 <!DOCTYPE html>
 <html>
-    
+
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <script src="<spring:url value='/jquery/js/jquery-1.6.2.min.js' />" type="text/javascript" ></script>
@@ -21,17 +21,17 @@
         <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />" />
         <title><spring:message code="title" /></title>
     </head>
-    
+
     <body>
-        
+
         <%@include file="../include/header.jsp" %>
-        
+
         <spring:url var="formUrlPrefix" value="/web" />
-        
-        
+
+
         <div id="content">
-        
-        <form:form method="put" action="${formUrlPrefix}/staff/${person.id}/edit" modelAttribute="personForm"> 
+
+            <form:form method="put" action="${formUrlPrefix}/staff/${person.id}/edit" modelAttribute="personForm"> 
                 <table id="person-form-tbl">
                     <tr>
                         <th><spring:message code='person.data' /></th>
@@ -82,8 +82,8 @@
                             <label for="resturlaub"><spring:message code="remaining" />:</label>
                         </td>
                         <td>
-                           <form:input id="resturlaub" path="remainingVacationDays" cssErrorClass="error" />
-                           <form:errors path="remainingVacationDays" cssClass="error" /> 
+                            <form:input id="resturlaub" path="remainingVacationDays" cssErrorClass="error" />
+                            <form:errors path="remainingVacationDays" cssClass="error" /> 
                         </td>
                     </tr>
                     <tr>
@@ -93,26 +93,53 @@
                         <td colspan="2">
                             <input type="submit" name="<spring:message code="save" />" value="<spring:message code="save" />" />
                             <a class="button" href="${formUrlPrefix}/staff"><spring:message code='cancel' /></a>
-                            <input type="button" onclick="$('#deactivate').show();" name="<spring:message code='person.deactivate' />" value="<spring:message code='person.deactivate' />" />
+                            <input type="button" onclick="$('#activ-action').show();"
+                                   <c:choose>
+                                       <c:when test="${person.active == true}">
+                                           name="<spring:message code='person.deactivate' />"
+                                           value="<spring:message code='person.deactivate' />"
+                                       </c:when>
+                                       <c:otherwise>
+                                           name="<spring:message code='person.activate' />"
+                                           value="<spring:message code='person.activate' />"
+                                       </c:otherwise>
+                                   </c:choose>    
+                                   />
                         </td>
                     </tr>
                 </table>
-                        
-       </form:form>
-            
-          <br />
-          <br />
-            
-        <form:form method="put" action="${formUrlPrefix}/staff/${person.id}/deactivate">                  
-            <div id="deactivate"style="display: none;">
-                <spring:message code='person.deactivate.confirm' />&nbsp;
+
+            </form:form>
+
+            <br />
+            <br />
+
+            <c:choose>
+                <c:when test="${person.active == true}">
+                    <c:set var="formUrl" value="${formUrlPrefix}/staff/${person.id}/deactivate" />
+                </c:when>
+                <c:otherwise>
+                    <c:set var="formUrl" value="${formUrlPrefix}/staff/${person.id}/activate" />  
+                </c:otherwise>
+            </c:choose>
+
+            <form:form method="put" action="${formUrl}">                  
+                <div id="activ-action"style="display: none;">
+                    <c:choose>
+                        <c:when test="${person.active == true}">
+                            <spring:message code='person.deactivate.confirm' />&nbsp;
+                        </c:when>
+                        <c:otherwise>
+                            <spring:message code='person.activate.confirm' />&nbsp;
+                        </c:otherwise> 
+                    </c:choose>       
                     <input type="submit" name="<spring:message code="yes" />" value="<spring:message code="yes" />" />
-                    <input type="button" onclick="$('#deactivate').hide();" name="<spring:message code="no" />" value="<spring:message code="no" />" /> 
+                    <input type="button" onclick="$('#activ-action').hide();" name="<spring:message code="no" />" value="<spring:message code="no" />" /> 
                 </div>         
-        </form:form>
-            
+            </form:form>
+
         </div>    
-        
+
     </body>
-    
+
 </html>

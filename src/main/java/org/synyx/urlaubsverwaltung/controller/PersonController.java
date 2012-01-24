@@ -80,6 +80,7 @@ public class PersonController {
     private static final String OVERVIEW_STAFF_LINK = "/staff/{" + PERSON_ID + "}/overview"; // overview of other person
     private static final String EDIT_LINK = "/staff/{" + PERSON_ID + "}/edit";
     private static final String DEACTIVATE_LINK = "/staff/{" + PERSON_ID + "}/deactivate";
+    private static final String ACTIVATE_LINK = "/staff/{" + PERSON_ID + "}/activate";
     private static final String LOGIN_LINK = "redirect:/login.jsp?login_error=1";
 
     // logger
@@ -508,6 +509,26 @@ public class PersonController {
         Person person = personService.getPersonByID(personId);
 
         personService.deactivate(person);
+        personService.save(person);
+
+        return "redirect:/web" + ACTIVE_LINK;
+    }
+
+
+    /**
+     * This method activates a person (e.g. after unintended deactivating of a person), i.e. this person has once again
+     * his user rights)
+     *
+     * @param  person
+     *
+     * @return
+     */
+    @RequestMapping(value = ACTIVATE_LINK, method = RequestMethod.PUT)
+    public String activatePerson(@PathVariable(PERSON_ID) Integer personId) {
+
+        Person person = personService.getPersonByID(personId);
+
+        personService.activate(person);
         personService.save(person);
 
         return "redirect:/web" + ACTIVE_LINK;

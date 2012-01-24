@@ -102,6 +102,21 @@ public class PersonServiceImplTest {
     }
 
 
+    /** Test of activate method, of class PersonServiceImpl. */
+    @Test
+    public void testActivate() {
+
+        Person person = new Person();
+        person.setActive(false);
+        person.setRole(Role.INACTIVE);
+
+        instance.activate(person);
+
+        assertEquals(true, person.isActive());
+        assertEquals(Role.USER, person.getRole());
+    }
+
+
     /** Test of getPersonByID method, of class PersonServiceImpl. */
     @Test
     public void testGetPersonByID() {

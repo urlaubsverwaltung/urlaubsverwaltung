@@ -65,11 +65,18 @@ public class PersonServiceImpl implements PersonService {
         // set person inactive
         person.setActive(false);
         person.setRole(Role.INACTIVE);
+    }
 
-        // BETTER DON'T DO THIS
-// // get all holidays accounts and entitlements and set them to inactive too
-//
-// accountService.deactivateAccountsAndEntitlements(person);
+
+    /**
+     * @see  PersonService#activate(org.synyx.urlaubsverwaltung.domain.Person)
+     */
+    @Override
+    public void activate(Person person) {
+
+        // set person inactive
+        person.setActive(true);
+        person.setRole(Role.USER);
     }
 
 
