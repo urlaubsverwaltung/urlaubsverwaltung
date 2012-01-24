@@ -52,28 +52,22 @@
 
                 <c:when test="${notexistent == true}">
                     
+                    <br />
+                    <br />
                     <spring:message code="table.empty" />
 
                 </c:when>
 
                 <c:otherwise>
                     
-                    <select size="1" onchange="window.top.location.href=this.options[this.selectedIndex].value">
-                        <option selected="selected"><spring:message code="table.choose" /></option>
-                        <option value="?view=1"><spring:message code="table.list" /></option>
-                        <option value="?view=2"><spring:message code="table.detail" /></option>
-                    </select> 
+                    <a href="?year=2011">2011</a>
+                <a href="?year=2012">2012</a>
+                <a href="?year=2013">2013</a>    
 
                     <br />
                     <br />
 
-                    <c:if test="${display == 1}">
                         <%@include file="../include/staff_list.jsp" %>
-                    </c:if>
-
-                    <c:if test="${display == 2}">
-                        <%@include file="../include/staff_detail.jsp" %>
-                    </c:if>
                     
                 </c:otherwise>    
                     

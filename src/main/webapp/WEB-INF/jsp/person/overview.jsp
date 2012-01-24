@@ -31,9 +31,9 @@
         <div id="content">
 
             <div id="year-navi">
-                <a href="${formUrlPrefix}/overview?year=2011">2011</a>
-                <a href="${formUrlPrefix}/overview?year=2012">2012</a>
-                <a href="${formUrlPrefix}/overview?year=2013">2013</a>
+                <a href="?year=2011">2011</a>
+                <a href="?year=2012">2012</a>
+                <a href="?year=2013">2013</a>
             </div>
 
             <table id="person-tbl" cellspacing="0" border="1">

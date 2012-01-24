@@ -51,7 +51,7 @@
                     </c:otherwise>    
                 </c:choose>
             </td>
-            <td style="text-align: center;"><a href="${formUrlPrefix}/${person.id}/application"><img src="<spring:url value='/images/playlist.png' />" /></a></td>
+            <td style="text-align: center;"><a href="${formUrlPrefix}/staff/${person.id}/overview"><img src="<spring:url value='/images/playlist.png' />" /></a></td>
             <td class="td-edit"><a href="${formUrlPrefix}/staff/${person.id}/edit"><img src="<spring:url value='/images/edit.png' />" /></a></td>
         </tr>    
     </c:forEach>

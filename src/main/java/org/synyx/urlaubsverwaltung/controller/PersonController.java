@@ -66,9 +66,7 @@ public class PersonController {
     private static final String APRIL = "april";
     private static final String GRAVATAR = "gravatar";
     private static final String GRAVATAR_URLS = "gravatarUrls";
-    private static final String VIEW = "view"; // name of param in url
-    private static final String DISPLAY = "display"; // name of test attribute in jsp "staff_view": showing list or
-                                                     // detail view
+
     private static final String NOTEXISTENT = "notexistent"; // are there any persons to show?
     private static final String NO_APPS = "noapps"; // are there any applications to show?
 
@@ -78,7 +76,8 @@ public class PersonController {
     // links
     private static final String ACTIVE_LINK = "/staff";
     private static final String INACTIVE_LINK = "/staff/inactive";
-    private static final String OVERVIEW_LINK = "/overview";
+    private static final String OVERVIEW_LINK = "/overview"; // personal overview
+    private static final String OVERVIEW_STAFF_LINK = "/staff/{" + PERSON_ID + "}/overview"; // overview of other person
     private static final String EDIT_LINK = "/staff/{" + PERSON_ID + "}/edit";
     private static final String DEACTIVATE_LINK = "/staff/{" + PERSON_ID + "}/deactivate";
     private static final String LOGIN_LINK = "redirect:/login.jsp?login_error=1";
@@ -103,14 +102,14 @@ public class PersonController {
     }
 
     /**
-     * Default view of inactive staff. If no param specified in url: default showing inactive staff in a list.
+     * Shows list with inactive staff, default: for current year.
      *
      * @param  model
      *
      * @return
      */
     @RequestMapping(value = INACTIVE_LINK, method = RequestMethod.GET)
-    public String showInactiveStaffDefault(Model model) {
+    public String showInactiveStaff(Model model) {
 
         if (getLoggedUser().getRole() == Role.OFFICE) {
             setLoggedUser(model);
@@ -120,8 +119,7 @@ public class PersonController {
             if (persons.isEmpty()) {
                 model.addAttribute(NOTEXISTENT, true);
             } else {
-                prepareStaffView(persons, model);
-                model.addAttribute(DISPLAY, 1);
+                prepareStaffView(persons, DateMidnight.now().getYear(), model);
             }
 
             return STAFF_JSP;
@@ -132,21 +130,20 @@ public class PersonController {
 
 
     /**
-     * Default view of active staff. If no param specified in url: default showing staff in a list
+     * Shows list with active staff, default: for current year.
      *
      * @param  model
      *
      * @return
      */
     @RequestMapping(value = ACTIVE_LINK, method = RequestMethod.GET)
-    public String showActiveStaffDefault(Model model) {
+    public String showActiveStaff(Model model) {
 
         if (getLoggedUser().getRole() == Role.OFFICE) {
             setLoggedUser(model);
 
             List<Person> persons = personService.getAllPersons();
-            prepareStaffView(persons, model);
-            model.addAttribute(DISPLAY, 1);
+            prepareStaffView(persons, DateMidnight.now().getYear(), model);
 
             return STAFF_JSP;
         } else {
@@ -156,52 +153,15 @@ public class PersonController {
 
 
     /**
-     * View of active staff and their number of vacation days either in a list (param = 1) or detailed (param = 2)
+     * Shows list with inactive staff for the given year.
      *
-     * @param  view
+     * @param  year
      * @param  model
      *
      * @return
      */
-    @RequestMapping(value = ACTIVE_LINK, params = VIEW, method = RequestMethod.GET)
-    public String showActiveStaff(@RequestParam(VIEW) int view, Model model) {
-
-        if (getLoggedUser().getRole() == Role.OFFICE) {
-            setLoggedUser(model);
-
-            List<Person> persons = personService.getAllPersons();
-            prepareStaffView(persons, model);
-
-            // 1 : view in a list
-            if (view == 1) {
-                model.addAttribute(DISPLAY, 1);
-            }
-            // 2 : detail view
-            else if (view == 2) {
-                model.addAttribute(DISPLAY, 2);
-            }
-            // invalid param falls back to default view: list
-            else {
-                model.addAttribute(DISPLAY, 1);
-            }
-
-            return STAFF_JSP;
-        } else {
-            return ERROR_JSP;
-        }
-    }
-
-
-    /**
-     * View of inactive staff and their number of vacation days either in a list (param = 1) or detailed (param = 2)
-     *
-     * @param  view
-     * @param  model
-     *
-     * @return
-     */
-    @RequestMapping(value = INACTIVE_LINK, params = VIEW, method = RequestMethod.GET)
-    public String showInactiveStaff(@RequestParam(VIEW) int view, Model model) {
+    @RequestMapping(value = INACTIVE_LINK, params = YEAR, method = RequestMethod.GET)
+    public String showInactiveStaffByYear(@RequestParam(YEAR) int year, Model model) {
 
         if (getLoggedUser().getRole() == Role.OFFICE) {
             setLoggedUser(model);
@@ -211,21 +171,32 @@ public class PersonController {
             if (persons.isEmpty()) {
                 model.addAttribute(NOTEXISTENT, true);
             } else {
-                prepareStaffView(persons, model);
-
-                // 1 : view in a list
-                if (view == 1) {
-                    model.addAttribute(DISPLAY, 1);
-                }
-                // 2 : detail view
-                else if (view == 2) {
-                    model.addAttribute(DISPLAY, 2);
-                }
-                // invalid param falls back to default view: list
-                else {
-                    model.addAttribute(DISPLAY, 1);
-                }
+                prepareStaffView(persons, year, model);
             }
+
+            return STAFF_JSP;
+        } else {
+            return ERROR_JSP;
+        }
+    }
+
+
+    /**
+     * Shows list with active staff for the given year.
+     *
+     * @param  year
+     * @param  model
+     *
+     * @return
+     */
+    @RequestMapping(value = ACTIVE_LINK, params = YEAR, method = RequestMethod.GET)
+    public String showActiveStaffByYear(@RequestParam(YEAR) int year, Model model) {
+
+        if (getLoggedUser().getRole() == Role.OFFICE) {
+            setLoggedUser(model);
+
+            List<Person> persons = personService.getAllPersons();
+            prepareStaffView(persons, year, model);
 
             return STAFF_JSP;
         } else {
@@ -239,9 +210,7 @@ public class PersonController {
      *
      * @param  model
      */
-    private void prepareStaffView(List<Person> persons, Model model) {
-
-        int year = DateMidnight.now(GregorianChronology.getInstance()).getYear();
+    private void prepareStaffView(List<Person> persons, int year, Model model) {
 
         Map<Person, String> gravatarUrls = new HashMap<Person, String>();
         String url;
@@ -293,21 +262,21 @@ public class PersonController {
 
 
     /**
-     * Default overview for user: information about one's leave accounts, entitlement of holidays, list of applications,
-     * etc. If there is no parameter set for year, take current year for view.
+     * Default personal overview for user: information about one's leave accounts, entitlement of holidays, list of
+     * applications, etc. If there is no parameter set for year, take current year for view.
      *
-     * @param  personId
      * @param  model
      *
      * @return
      */
     @RequestMapping(value = OVERVIEW_LINK, method = RequestMethod.GET)
-    public String showDefaultOverview(Model model) {
+    public String showPersonalOverview(Model model) {
 
         if (getLoggedUser().getRole() == Role.INACTIVE) {
             return LOGIN_LINK;
         } else {
-            prepareOverview(DateMidnight.now(GregorianChronology.getInstance()).getYear(), model);
+            Person person = getLoggedUser();
+            prepareOverview(person, DateMidnight.now(GregorianChronology.getInstance()).getYear(), model);
 
             return OVERVIEW_JSP;
         }
@@ -315,21 +284,22 @@ public class PersonController {
 
 
     /**
-     * Overview with year as parameter for user: information about one's leave accounts, entitlement of holidays, list
-     * of applications, etc.
+     * Personal overview with year as parameter for user: information about one's leave accounts, entitlement of
+     * holidays, list of applications, etc.
      *
-     * @param  personId
+     * @param  year
      * @param  model
      *
      * @return
      */
     @RequestMapping(value = OVERVIEW_LINK, params = YEAR, method = RequestMethod.GET)
-    public String showOverview(@RequestParam(YEAR) int year, Model model) {
+    public String showPersonalOverviewByYear(@RequestParam(YEAR) int year, Model model) {
 
         if (getLoggedUser().getRole() == Role.INACTIVE) {
             return LOGIN_LINK;
         } else {
-            prepareOverview(year, model);
+            Person person = getLoggedUser();
+            prepareOverview(person, year, model);
 
             return OVERVIEW_JSP;
         }
@@ -337,15 +307,60 @@ public class PersonController {
 
 
     /**
-     * Prepares model for overview with given person's ID and year.
+     * The office is able to see overviews of staff with information about this person's leave accounts, entitlement of
+     * holidays, list of applications, etc. The default overview of a staff member (no parameter set for year) is for
+     * the current year.
      *
-     * @param  personId
+     * @param  model
+     *
+     * @return
+     */
+    @RequestMapping(value = OVERVIEW_STAFF_LINK, method = RequestMethod.GET)
+    public String showStaffOverview(@PathVariable(PERSON_ID) Integer personId, Model model) {
+
+        if (getLoggedUser().getRole() != Role.OFFICE) {
+            return ERROR_JSP;
+        } else {
+            Person person = personService.getPersonByID(personId);
+            prepareOverview(person, DateMidnight.now(GregorianChronology.getInstance()).getYear(), model);
+
+            return OVERVIEW_JSP;
+        }
+    }
+
+
+    /**
+     * The office is able to see overviews of staff members with information about this person's leave accounts,
+     * entitlement of holidays, list of applications, etc.; staff overview with year as parameter.
+     *
+     * @param  year
+     * @param  model
+     *
+     * @return
+     */
+    @RequestMapping(value = OVERVIEW_STAFF_LINK, params = YEAR, method = RequestMethod.GET)
+    public String showStaffOverviewByYear(@PathVariable(PERSON_ID) Integer personId,
+        @RequestParam(YEAR) int year, Model model) {
+
+        if (getLoggedUser().getRole() != Role.OFFICE) {
+            return ERROR_JSP;
+        } else {
+            Person person = personService.getPersonByID(personId);
+            prepareOverview(person, year, model);
+
+            return OVERVIEW_JSP;
+        }
+    }
+
+
+    /**
+     * Prepares model for overview with given person and year.
+     *
+     * @param  person
      * @param  year
      * @param  model
      */
-    private void prepareOverview(int year, Model model) {
-
-        Person person = getLoggedUser();
+    private void prepareOverview(Person person, int year, Model model) {
 
         List<Application> applications = applicationService.getApplicationsByPersonAndYear(person, year);
 
