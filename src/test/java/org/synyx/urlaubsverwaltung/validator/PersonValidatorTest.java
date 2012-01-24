@@ -30,6 +30,8 @@ import java.math.BigDecimal;
 public class PersonValidatorTest {
 
     private PersonValidator instance;
+    private PersonForm form;
+    Errors errors = Mockito.mock(Errors.class);
 
     public PersonValidatorTest() {
     }
@@ -48,6 +50,7 @@ public class PersonValidatorTest {
     public void setUp() {
 
         instance = new PersonValidator();
+        form = new PersonForm();
     }
 
 
@@ -77,152 +80,236 @@ public class PersonValidatorTest {
     @Test
     public void testValidate() {
 
-        PersonForm form = new PersonForm();
-        Errors errors = Mockito.mock(Errors.class);
+        // see the several tests to the different fields
 
-        form.setFirstName("Vorname");
-        form.setLastName("Nachname");
-        form.setYear("2011");
-        form.setEmail("fraulyoner@verwaltung.de");
-        form.setVacationDays(BigDecimal.valueOf(25));
-        form.setRemainingVacationDays(BigDecimal.valueOf(5));
+    }
+
+
+    /** Test of validateName method, of class PersonValidator. */
+    @Test
+    public void testValidateName() {
 
         // if the name fields are empty (null or empty String), an error message is set
 
+        // field is null
         form.setFirstName(null);
         form.setLastName(null);
 
-        instance.validate(form, errors);
+        instance.validateName(form.getFirstName(), "firstName", errors);
         Mockito.verify(errors).rejectValue("firstName", "error.mandatory.field");
+        Mockito.reset(errors);
+
+        instance.validateName(form.getLastName(), "lastName", errors);
         Mockito.verify(errors).rejectValue("lastName", "error.mandatory.field");
         Mockito.reset(errors);
 
+        // field is empty
         form.setFirstName("");
         form.setLastName("");
 
-        instance.validate(form, errors);
+        instance.validateName(form.getFirstName(), "firstName", errors);
         Mockito.verify(errors).rejectValue("firstName", "error.mandatory.field");
+        Mockito.reset(errors);
+
+        instance.validateName(form.getLastName(), "lastName", errors);
         Mockito.verify(errors).rejectValue("lastName", "error.mandatory.field");
+        Mockito.reset(errors);
+
+        // numbers or any other invalid character in name (allowed only a-z, A-Z)
+        form.setFirstName("123hakdl");
+        form.setLastName("fh@.-");
+
+        instance.validateName(form.getFirstName(), "firstName", errors);
+        Mockito.verify(errors).rejectValue("firstName", "error.entry");
+        Mockito.reset(errors);
+
+        instance.validateName(form.getLastName(), "lastName", errors);
+        Mockito.verify(errors).rejectValue("lastName", "error.entry");
+        Mockito.reset(errors);
+
+        form.setFirstName("Vorn5ame");
+        form.setLastName("Nachna%me");
+
+        instance.validateName(form.getFirstName(), "firstName", errors);
+        Mockito.verify(errors).rejectValue("firstName", "error.entry");
+        Mockito.reset(errors);
+
+        instance.validateName(form.getLastName(), "lastName", errors);
+        Mockito.verify(errors).rejectValue("lastName", "error.entry");
         Mockito.reset(errors);
 
         // everything ok
         form.setFirstName("Vorname");
         form.setLastName("Nachname");
-        instance.validate(form, errors);
+
+        instance.validateName(form.getFirstName(), "firstName", errors);
         Mockito.verifyZeroInteractions(errors);
         Mockito.reset(errors);
+
+        instance.validateName(form.getLastName(), "lastName", errors);
+        Mockito.verifyZeroInteractions(errors);
+        Mockito.reset(errors);
+    }
+
+
+    /** Test of validateEmail method, of class PersonValidator. */
+    @Test
+    public void testValidateEmail() {
 
         // if email field is filled: is the email address valid?
 
         // if it is an empty String or null
 
         form.setEmail(null);
-        instance.validate(form, errors);
+        instance.validateEmail(form.getEmail(), errors);
         Mockito.verify(errors).rejectValue("email", "error.mandatory.field");
         Mockito.reset(errors);
 
         form.setEmail("");
-        instance.validate(form, errors);
+        instance.validateEmail(form.getEmail(), errors);
         Mockito.verify(errors).rejectValue("email", "error.mandatory.field");
-        Mockito.reset(errors);
-
-        form.setEmail("fraulyoner@verwaltung.de");
-        instance.validate(form, errors);
-        Mockito.verifyZeroInteractions(errors);
         Mockito.reset(errors);
 
         // if there is no '@' in the email address, an error message is set
 
         form.setEmail("fraulyoner(at)verwaltung.de");
-        instance.validate(form, errors);
+        instance.validateEmail(form.getEmail(), errors);
         Mockito.verify(errors).rejectValue("email", "error.entry");
+        Mockito.reset(errors);
+
+        // more than one '@'
+        form.setEmail("fraulyoner@verwa@ltung.de");
+        instance.validateEmail(form.getEmail(), errors);
+        Mockito.verify(errors).rejectValue("email", "error.entry");
+        Mockito.reset(errors);
+
+        // structure not like: user@host.domain
+
+        // e.g. '@' at start of email address
+        form.setEmail("@fraulyonerverwaltung.de");
+        instance.validateEmail(form.getEmail(), errors);
+        Mockito.verify(errors).rejectValue("email", "error.entry");
+        Mockito.reset(errors);
+
+        // e.g. no point after host is
+        form.setEmail("fraulyoner@verwaltungde");
+        instance.validateEmail(form.getEmail(), errors);
+        Mockito.verify(errors).rejectValue("email", "error.entry");
+        Mockito.reset(errors);
+
+        // e.g. structure like: xy@host, no domain
+        form.setEmail("fraulyoner@verwaltung");
+        instance.validateEmail(form.getEmail(), errors);
+        Mockito.verify(errors).rejectValue("email", "error.entry");
+        Mockito.reset(errors);
+
+        // valid email addresses
+        form.setEmail("fraulyoner@verwaltung.de");
+        instance.validateEmail(form.getEmail(), errors);
+        Mockito.verifyZeroInteractions(errors);
+        Mockito.reset(errors);
+
+        // valid is structure like: user@net.de
+        form.setEmail("fraulyoner@verwaltung.com.de");
+        instance.validateEmail(form.getEmail(), errors);
+        Mockito.verifyZeroInteractions(errors);
+        Mockito.reset(errors);
 
         form.setEmail("fraulyoner@verwaltung.de");
+        instance.validateEmail(form.getEmail(), errors);
+        Mockito.verifyZeroInteractions(errors);
+        Mockito.reset(errors);
+    }
+
+
+    /** Test of validateYear method, of class PersonValidator. */
+    @Test
+    public void testValidateYear() {
 
         // is the year field valid?
 
         // error 1: year not set, empty String
         form.setYear("");
-        instance.validate(form, errors);
+        instance.validateYear(form.getYear(), errors);
         Mockito.verify(errors).rejectValue("year", "error.mandatory.field");
         Mockito.reset(errors);
 
         form.setYear(null);
-        instance.validate(form, errors);
+        instance.validateYear(form.getYear(), errors);
         Mockito.verify(errors).rejectValue("year", "error.mandatory.field");
         Mockito.reset(errors);
 
         // error 2: string can't be parsed to int
         form.setYear("abc");
-        instance.validate(form, errors);
+        instance.validateYear(form.getYear(), errors);
         Mockito.verify(errors).rejectValue("year", "error.entry");
         Mockito.reset(errors);
 
         // error 3: year > 2030
         form.setYear("2032");
-        instance.validate(form, errors);
+        instance.validateYear(form.getYear(), errors);
         Mockito.verify(errors).rejectValue("year", "error.entry");
         Mockito.reset(errors);
 
         // error 4: year < 2010
         form.setYear("2009");
-        instance.validate(form, errors);
+        instance.validateYear(form.getYear(), errors);
         Mockito.verify(errors).rejectValue("year", "error.entry");
         Mockito.reset(errors);
 
         // correct: year = 2010
         form.setYear("2010");
-        instance.validate(form, errors);
+        instance.validateYear(form.getYear(), errors);
         Mockito.verifyZeroInteractions(errors);
         Mockito.reset(errors);
+    }
 
-        // set all normal except number of days
-        form.setFirstName("Vorname");
-        form.setLastName("Nachname");
-        form.setEmail("mail@mail.de");
-        form.setYear("2012");
+
+    /** Test of validateNumberOfDays method, of class PersonValidator. */
+    @Test
+    public void testValidateNumberOfDays() {
 
         // validate entitlement of vacation days remaining vacation days
         form.setVacationDays(null);
-        instance.validate(form, errors);
+        instance.validateNumberOfDays(form.getVacationDays(), "vacationDays", 40, errors);
         Mockito.verify(errors).rejectValue("vacationDays", "error.mandatory.field");
         Mockito.reset(errors);
 
         form.setVacationDays(BigDecimal.valueOf(400));
-        instance.validate(form, errors);
+        instance.validateNumberOfDays(form.getVacationDays(), "vacationDays", 40, errors);
         Mockito.verify(errors).rejectValue("vacationDays", "error.entry");
         Mockito.reset(errors);
 
         form.setVacationDays(BigDecimal.valueOf(-1));
-        instance.validate(form, errors);
+        instance.validateNumberOfDays(form.getVacationDays(), "vacationDays", 40, errors);
         Mockito.verify(errors).rejectValue("vacationDays", "error.entry");
         Mockito.reset(errors);
 
         // set normal
         form.setVacationDays(BigDecimal.valueOf(25));
-        instance.validate(form, errors);
+        instance.validateNumberOfDays(form.getVacationDays(), "vacationDays", 40, errors);
         Mockito.verifyZeroInteractions(errors);
         Mockito.reset(errors);
 
         // remaining vacation days
         form.setRemainingVacationDays(null);
-        instance.validate(form, errors);
+        instance.validateNumberOfDays(form.getRemainingVacationDays(), "remainingVacationDays", 20, errors);
         Mockito.verify(errors).rejectValue("remainingVacationDays", "error.mandatory.field");
         Mockito.reset(errors);
 
         form.setRemainingVacationDays(BigDecimal.valueOf(400));
-        instance.validate(form, errors);
+        instance.validateNumberOfDays(form.getRemainingVacationDays(), "remainingVacationDays", 20, errors);
         Mockito.verify(errors).rejectValue("remainingVacationDays", "error.entry");
         Mockito.reset(errors);
 
         form.setRemainingVacationDays(BigDecimal.valueOf(-1));
-        instance.validate(form, errors);
+        instance.validateNumberOfDays(form.getRemainingVacationDays(), "remainingVacationDays", 20, errors);
         Mockito.verify(errors).rejectValue("remainingVacationDays", "error.entry");
         Mockito.reset(errors);
 
         // set normal
         form.setRemainingVacationDays(BigDecimal.valueOf(5));
-        instance.validate(form, errors);
+        instance.validateNumberOfDays(form.getRemainingVacationDays(), "remainingVacationDays", 20, errors);
         Mockito.verifyZeroInteractions(errors);
         Mockito.reset(errors);
     }

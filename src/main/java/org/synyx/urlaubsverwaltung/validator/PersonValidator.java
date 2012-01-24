@@ -13,6 +13,9 @@ import org.synyx.urlaubsverwaltung.view.PersonForm;
 
 import java.math.BigDecimal;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 
 /**
  * This class validate if an person's form ('PersonForm') is filled correctly by the user, else it saves error messages
@@ -32,6 +35,14 @@ public class PersonValidator implements Validator {
     private static final String YEAR = "year";
     private static final String EMAIL = "email";
 
+    private static final String EMAIL_PATTERN =
+        "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+
+    private static final String NAME_PATTERN = "[a-zA-Z]+";
+
+    private Pattern pattern;
+    private Matcher matcher;
+
     @Override
     public boolean supports(Class<?> clazz) {
 
@@ -44,38 +55,75 @@ public class PersonValidator implements Validator {
 
         PersonForm form = (PersonForm) target;
 
-        // are the name fields null/empty?
+        // field first name
+        validateName(form.getFirstName(), FIRST_NAME, errors);
 
-        if (form.getFirstName() == null || !StringUtils.hasText(form.getFirstName())) {
-            errors.rejectValue(FIRST_NAME, MANDATORY_FIELD);
+        // field last name
+        validateName(form.getLastName(), LAST_NAME, errors);
+
+        // field email address
+        validateEmail(form.getEmail(), errors);
+
+        // field year
+        validateYear(form.getYear(), errors);
+
+        // field vacation days
+        validateNumberOfDays(form.getVacationDays(), VACATION_DAYS, 40, errors);
+
+        // field remaining vacation days
+        validateNumberOfDays(form.getRemainingVacationDays(), REMAINING_VACATION_DAYS, 20, errors);
+    }
+
+
+    private boolean matchPattern(String nameOfPattern, String matchSequence) {
+
+        pattern = Pattern.compile(nameOfPattern);
+        matcher = pattern.matcher(matchSequence);
+
+        return matcher.matches();
+    }
+
+
+    protected void validateName(String name, String field, Errors errors) {
+
+        // is the name field null/empty?
+        if (name == null || !StringUtils.hasText(name)) {
+            errors.rejectValue(field, MANDATORY_FIELD);
+        } else {
+            // contains the name field digits?
+            if (!matchPattern(NAME_PATTERN, name)) {
+                errors.rejectValue(field, ERROR_ENTRY);
+            }
         }
+    }
 
-        if (form.getLastName() == null || !StringUtils.hasText(form.getLastName())) {
-            errors.rejectValue(LAST_NAME, MANDATORY_FIELD);
-        }
 
-        // email field filled?
-        if (form.getEmail() == null || !StringUtils.hasText(form.getEmail())) {
+    protected void validateEmail(String email, Errors errors) {
+
+        // is email field null or empty
+        if (email == null || !StringUtils.hasText(email)) {
             errors.rejectValue(EMAIL, MANDATORY_FIELD);
-        }
+        } else {
+            // Commented out: 24th January 2012 validation with class InternetAddress try { InternetAddress address =
+            // new InternetAddress(form.getEmail(), true); address.validate(); } catch (AddressException ex) {
+            // errors.rejectValue(EMAIL, ERROR_ENTRY); }
 
-        // if email field is filled, is this a valid email address?
-
-        if (StringUtils.hasText(form.getEmail())) {
-            if (!form.getEmail().contains("@")) {
+            // validation with regex
+            if (!matchPattern(EMAIL_PATTERN, email)) {
                 errors.rejectValue(EMAIL, ERROR_ENTRY);
             }
         }
+    }
+
+
+    protected void validateYear(String yearForm, Errors errors) {
 
         // is year field filled?
-        if (!StringUtils.hasText(form.getYear())) {
+        if (yearForm == null || !StringUtils.hasText(yearForm)) {
             errors.rejectValue(YEAR, MANDATORY_FIELD);
-        }
-
-        // if year field is filled, it has to be a number resp. a valid year (> 2010)
-        if (StringUtils.hasText(form.getYear())) {
+        } else {
             try {
-                int year = Integer.parseInt(form.getYear());
+                int year = Integer.parseInt(yearForm);
 
                 if (year < 2010 || year > 2030) {
                     errors.rejectValue(YEAR, ERROR_ENTRY);
@@ -84,35 +132,23 @@ public class PersonValidator implements Validator {
                 errors.rejectValue(YEAR, ERROR_ENTRY);
             }
         }
+    }
 
-        // if vacation days fields are not filled
-        if (form.getVacationDays() == null) {
-            errors.rejectValue(VACATION_DAYS, MANDATORY_FIELD);
-        }
 
-        if (form.getRemainingVacationDays() == null) {
-            errors.rejectValue(REMAINING_VACATION_DAYS, MANDATORY_FIELD);
-        }
+    protected void validateNumberOfDays(BigDecimal days, String field, double maximumDays, Errors errors) {
 
-        if (form.getVacationDays() != null) {
-            // if the given number of days < 0
-            if (form.getVacationDays().compareTo(BigDecimal.ZERO) == -1) {
-                errors.rejectValue(VACATION_DAYS, ERROR_ENTRY);
+        // is field filled?
+        if (days == null) {
+            errors.rejectValue(field, MANDATORY_FIELD);
+        } else {
+            // is number of days < 0 ?
+            if (days.compareTo(BigDecimal.ZERO) == -1) {
+                errors.rejectValue(field, ERROR_ENTRY);
             }
 
-            // if the given number of days is unrealistic
-            if (form.getVacationDays().compareTo(BigDecimal.valueOf(40)) == 1) {
-                errors.rejectValue(VACATION_DAYS, ERROR_ENTRY);
-            }
-        }
-
-        if (form.getRemainingVacationDays() != null) {
-            if (form.getRemainingVacationDays().compareTo(BigDecimal.ZERO) == -1) {
-                errors.rejectValue(REMAINING_VACATION_DAYS, ERROR_ENTRY);
-            }
-
-            if (form.getRemainingVacationDays().compareTo(BigDecimal.valueOf(20)) == 1) {
-                errors.rejectValue(REMAINING_VACATION_DAYS, ERROR_ENTRY);
+            // is number of days unrealistic?
+            if (days.compareTo(BigDecimal.valueOf(maximumDays)) == 1) {
+                errors.rejectValue(field, ERROR_ENTRY);
             }
         }
     }
