@@ -142,7 +142,8 @@ public class PersonServiceImpl implements PersonService {
                 // if entitlement for this year not yet existent
                 // take that one from past year
                 entitlement = accountService.newHolidayEntitlement(person, year,
-                        accountService.getHolidayEntitlement(year - 1, person).getVacationDays());
+                        accountService.getHolidayEntitlement(year - 1, person).getVacationDays(),
+                        accountService.getHolidayEntitlement(year - 1, person).getRemainingVacationDays());
             }
 
             account = accountService.getHolidaysAccount(year, person);

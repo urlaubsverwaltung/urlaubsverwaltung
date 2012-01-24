@@ -447,13 +447,14 @@ public class PersonController {
             if (personForm.getVacationDays() != null) {
                 int year = Integer.parseInt(personForm.getYear());
                 BigDecimal days = personForm.getVacationDays();
+                BigDecimal remaining = personForm.getRemainingVacationDays();
 
                 // check if there is an existing entitlement to holidays
                 HolidayEntitlement entitlement = accountService.getHolidayEntitlement(year, personToUpdate);
 
                 // if not, create one
                 if (entitlement == null) {
-                    entitlement = accountService.newHolidayEntitlement(personToUpdate, year, days);
+                    entitlement = accountService.newHolidayEntitlement(personToUpdate, year, days, remaining);
                     accountService.saveHolidayEntitlement(entitlement);
 
                     HolidaysAccount account = accountService.getHolidaysAccount(year, personToUpdate);
@@ -466,7 +467,7 @@ public class PersonController {
                 } else {
                     // if there is an entitlement: set current entitlement to inactive and creates a new active one with
                     // changed information do this with current leave account too
-                    accountService.editHolidayEntitlement(personToUpdate, year, days);
+                    accountService.editHolidayEntitlement(personToUpdate, year, days, remaining);
                 }
             }
 

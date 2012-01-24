@@ -37,6 +37,7 @@ public class HolidaysAccountServiceImplTest {
     private static final int CURRENT_YEAR = 2011;
     private static final int NEXT_YEAR = 2012;
     private static final BigDecimal ENTITLEMENT = BigDecimal.valueOf(25.0);
+    private static final BigDecimal ENTITLEMENT_REMAINING = BigDecimal.valueOf(5.0);
 
     private HolidaysAccountServiceImpl instance;
     private HolidaysAccountDAO holidaysAccountDAO = Mockito.mock(HolidaysAccountDAO.class);
@@ -140,10 +141,12 @@ public class HolidaysAccountServiceImplTest {
     @Test
     public void testNewHolidayEntitlement() {
 
-        HolidayEntitlement returnValue = instance.newHolidayEntitlement(person, NEXT_YEAR, ENTITLEMENT);
+        HolidayEntitlement returnValue = instance.newHolidayEntitlement(person, NEXT_YEAR, ENTITLEMENT,
+                ENTITLEMENT_REMAINING);
         assertNotNull(returnValue);
         assertEquals(person, returnValue.getPerson());
         assertEquals(ENTITLEMENT, returnValue.getVacationDays());
+        assertEquals(ENTITLEMENT_REMAINING, returnValue.getRemainingVacationDays());
     }
 
 

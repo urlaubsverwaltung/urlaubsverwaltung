@@ -54,8 +54,9 @@ public interface HolidaysAccountService {
      * @param  person
      * @param  year
      * @param  days
+     * @param  remaining
      */
-    HolidayEntitlement newHolidayEntitlement(Person person, int year, BigDecimal days);
+    HolidayEntitlement newHolidayEntitlement(Person person, int year, BigDecimal days, BigDecimal remaining);
 
 
     /**
@@ -78,7 +79,7 @@ public interface HolidaysAccountService {
      * @param  year
      * @param  days
      */
-    void editHolidayEntitlement(Person person, int year, BigDecimal days);
+    void editHolidayEntitlement(Person person, int year, BigDecimal days, BigDecimal remaining);
 
 
     /**

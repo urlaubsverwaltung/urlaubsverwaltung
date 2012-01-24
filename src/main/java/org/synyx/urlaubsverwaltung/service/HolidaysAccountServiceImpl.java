@@ -72,7 +72,8 @@ public class HolidaysAccountServiceImpl implements HolidaysAccountService {
 
             if (entitlement == null) {
                 entitlement = newHolidayEntitlement(person, year,
-                        getHolidayEntitlement(year - 1, person).getVacationDays());
+                        getHolidayEntitlement(year - 1, person).getVacationDays(),
+                        getHolidayEntitlement(year - 1, person).getRemainingVacationDays());
             }
 
             saveHolidayEntitlement(entitlement);
@@ -90,11 +91,12 @@ public class HolidaysAccountServiceImpl implements HolidaysAccountService {
      *       java.math.BigDecimal)
      */
     @Override
-    public HolidayEntitlement newHolidayEntitlement(Person person, int year, BigDecimal days) {
+    public HolidayEntitlement newHolidayEntitlement(Person person, int year, BigDecimal days, BigDecimal remaining) {
 
         HolidayEntitlement entitlement = new HolidayEntitlement();
         entitlement.setPerson(person);
         entitlement.setVacationDays(days);
+        entitlement.setRemainingVacationDays(remaining);
         entitlement.setYear(year);
         entitlement.setActive(true);
 
@@ -147,7 +149,7 @@ public class HolidaysAccountServiceImpl implements HolidaysAccountService {
      *       java.math.BigDecimal)
      */
     @Override
-    public void editHolidayEntitlement(Person person, int year, BigDecimal days) {
+    public void editHolidayEntitlement(Person person, int year, BigDecimal days, BigDecimal remaining) {
 
         // get current entitlement before editing
         HolidayEntitlement currentEntitlement = getHolidayEntitlement(year, person);
@@ -160,7 +162,7 @@ public class HolidaysAccountServiceImpl implements HolidaysAccountService {
         saveHolidaysAccount(currentAccount);
 
         // create new entitlement
-        HolidayEntitlement newEntitlement = newHolidayEntitlement(person, year, days);
+        HolidayEntitlement newEntitlement = newHolidayEntitlement(person, year, days, remaining);
 
         HolidaysAccount newAccount;
 
@@ -195,7 +197,8 @@ public class HolidaysAccountServiceImpl implements HolidaysAccountService {
 
             if (entitlement == null) {
                 entitlement = newHolidayEntitlement(person, year,
-                        getHolidayEntitlement(year - 1, person).getVacationDays());
+                        getHolidayEntitlement(year - 1, person).getVacationDays(),
+                        getHolidayEntitlement(year - 1, person).getRemainingVacationDays());
             }
 
             // get holidays account of last year to check how many vacation days are left over
