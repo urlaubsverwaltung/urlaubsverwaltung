@@ -14,7 +14,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import sun.security.rsa.RSAPrivateCrtKeyImpl;
@@ -157,14 +156,5 @@ public class CryptoServiceTest {
 
         assertNotNull(returnValue);
         assertEquals(pubKey, returnValue);
-    }
-
-
-    /** Test of getEncodedSignature method, of class CryptoService. */
-    @Ignore
-    @Test
-    public void testGetEncodedSignature() {
-
-        // method just get encoded signature as String
     }
 }

@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.service;
 
-import sun.misc.BASE64Encoder;
-
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -144,19 +142,5 @@ public class CryptoService {
         PublicKey pubKey = keyFactory.generatePublic(keySpec);
 
         return pubKey;
-    }
-
-
-    // Base64Encoder sollte eventuell ersetzt werden...
-    /**
-     * get encoded signature
-     *
-     * @param  signature
-     *
-     * @return  String with signature
-     */
-    public String getEncodedSignature(byte[] signature) {
-
-        return (new BASE64Encoder().encode(signature));
     }
 }
