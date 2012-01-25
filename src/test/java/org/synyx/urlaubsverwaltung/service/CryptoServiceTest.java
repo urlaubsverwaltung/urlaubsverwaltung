@@ -16,9 +16,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import sun.security.rsa.RSAPrivateCrtKeyImpl;
-import sun.security.rsa.RSAPublicKeyImpl;
-
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -72,8 +69,7 @@ public class CryptoServiceTest {
 
         assertNotNull(returnValue);
 
-        assertEquals(RSAPrivateCrtKeyImpl.class, returnValue.getPrivate().getClass());
-        assertEquals(RSAPublicKeyImpl.class, returnValue.getPublic().getClass());
+        assertEquals(KeyPair.class, returnValue.getClass());
     }
 
 
