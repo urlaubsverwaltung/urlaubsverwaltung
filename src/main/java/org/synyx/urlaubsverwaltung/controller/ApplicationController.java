@@ -525,7 +525,6 @@ public class ApplicationController {
 
         if (errors.hasErrors()) {
             // shows error in Frontend
-            errors.reject("sick.more");
             model.addAttribute(APPLICATION, application);
             model.addAttribute(APPFORM, appForm);
             model.addAttribute(STATE_NUMBER, ALLOWED);

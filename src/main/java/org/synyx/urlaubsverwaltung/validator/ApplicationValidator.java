@@ -108,8 +108,8 @@ public class ApplicationValidator implements Validator {
         if (app.getSickDays() == null) {
             errors.reject("sick.more");
         } else {
-            // number of sick days is zero
-            if (app.getSickDays().compareTo(BigDecimal.ZERO) == 0) {
+            // number of sick days is zero or negative
+            if (app.getSickDays().compareTo(BigDecimal.ZERO) <= 0) {
                 errors.reject("sick.more");
             }
 
