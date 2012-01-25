@@ -404,7 +404,7 @@ public class ApplicationServiceImplTest {
         app.setPerson(person);
 
         instance.checkOverlap(app);
-        Mockito.verify(applicationDAO).getFullDayApplicationsForACertainTime(app.getStartDate().toDate(),
+        Mockito.verify(applicationDAO).getApplicationsByPeriodForEveryDayLength(app.getStartDate().toDate(),
             app.getEndDate().toDate(), person);
 
         // morning
@@ -413,8 +413,8 @@ public class ApplicationServiceImplTest {
         app.setEndDate(new DateMidnight(2012, 1, 25));
 
         instance.checkOverlap(app);
-        Mockito.verify(applicationDAO).getMorningApplicationsForACertainTime(app.getStartDate().toDate(),
-            app.getEndDate().toDate(), person);
+        Mockito.verify(applicationDAO).getApplicationsByPeriodAndDayLength(app.getStartDate().toDate(),
+            app.getEndDate().toDate(), person, DayLength.MORNING);
 
         // noon
         app.setHowLong(DayLength.NOON);
@@ -422,8 +422,8 @@ public class ApplicationServiceImplTest {
         app.setEndDate(new DateMidnight(2012, 1, 25));
 
         instance.checkOverlap(app);
-        Mockito.verify(applicationDAO).getNoonApplicationsForACertainTime(app.getStartDate().toDate(),
-            app.getEndDate().toDate(), person);
+        Mockito.verify(applicationDAO).getApplicationsByPeriodAndDayLength(app.getStartDate().toDate(),
+            app.getEndDate().toDate(), person, DayLength.NOON);
     }
 
 
@@ -446,7 +446,7 @@ public class ApplicationServiceImplTest {
         aNew.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 23));
         aNew.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 24));
 
-        Mockito.when(applicationDAO.getFullDayApplicationsForACertainTime(aNew.getStartDate().toDate(),
+        Mockito.when(applicationDAO.getApplicationsByPeriodForEveryDayLength(aNew.getStartDate().toDate(),
                 aNew.getEndDate().toDate(), aNew.getPerson())).thenReturn(new ArrayList<Application>());
 
         int returnValue = instance.checkOverlap(aNew);
@@ -470,7 +470,7 @@ public class ApplicationServiceImplTest {
         aNew.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 20));
 
         // return new and empty list
-        Mockito.when(applicationDAO.getFullDayApplicationsForACertainTime(aNew.getStartDate().toDate(),
+        Mockito.when(applicationDAO.getApplicationsByPeriodForEveryDayLength(aNew.getStartDate().toDate(),
                 aNew.getEndDate().toDate(), aNew.getPerson())).thenReturn(new ArrayList<Application>());
 
         returnValue = instance.checkOverlap(aNew);
@@ -496,7 +496,7 @@ public class ApplicationServiceImplTest {
         List<Application> list = new ArrayList<Application>();
         list.add(a1);
 
-        Mockito.when(applicationDAO.getFullDayApplicationsForACertainTime(aNew.getStartDate().toDate(),
+        Mockito.when(applicationDAO.getApplicationsByPeriodForEveryDayLength(aNew.getStartDate().toDate(),
                 aNew.getEndDate().toDate(), aNew.getPerson())).thenReturn(list);
 
         returnValue = instance.checkOverlap(aNew);
@@ -522,7 +522,7 @@ public class ApplicationServiceImplTest {
         list = new ArrayList<Application>();
         list.add(a1);
 
-        Mockito.when(applicationDAO.getFullDayApplicationsForACertainTime(aNew.getStartDate().toDate(),
+        Mockito.when(applicationDAO.getApplicationsByPeriodForEveryDayLength(aNew.getStartDate().toDate(),
                 aNew.getEndDate().toDate(), aNew.getPerson())).thenReturn(list);
 
         returnValue = instance.checkOverlap(aNew);
@@ -548,7 +548,7 @@ public class ApplicationServiceImplTest {
         list = new ArrayList<Application>();
         list.add(a1);
 
-        Mockito.when(applicationDAO.getFullDayApplicationsForACertainTime(aNew.getStartDate().toDate(),
+        Mockito.when(applicationDAO.getApplicationsByPeriodForEveryDayLength(aNew.getStartDate().toDate(),
                 aNew.getEndDate().toDate(), aNew.getPerson())).thenReturn(list);
 
         returnValue = instance.checkOverlap(aNew);
@@ -581,7 +581,7 @@ public class ApplicationServiceImplTest {
         list.add(a1);
         list.add(a2);
 
-        Mockito.when(applicationDAO.getFullDayApplicationsForACertainTime(aNew.getStartDate().toDate(),
+        Mockito.when(applicationDAO.getApplicationsByPeriodForEveryDayLength(aNew.getStartDate().toDate(),
                 aNew.getEndDate().toDate(), aNew.getPerson())).thenReturn(list);
 
         returnValue = instance.checkOverlap(aNew);
@@ -614,7 +614,55 @@ public class ApplicationServiceImplTest {
         list.add(a1);
         list.add(a2);
 
-        Mockito.when(applicationDAO.getFullDayApplicationsForACertainTime(aNew.getStartDate().toDate(),
+        Mockito.when(applicationDAO.getApplicationsByPeriodForEveryDayLength(aNew.getStartDate().toDate(),
+                aNew.getEndDate().toDate(), aNew.getPerson())).thenReturn(list);
+
+        returnValue = instance.checkOverlap(aNew);
+
+        assertNotNull(returnValue);
+        assertEquals(2, returnValue);
+
+        // there is an existent application for a half day
+        // new application for full day overlapping this day
+        // because there would be gaps, expected value == 3
+        a1 = new Application();
+        a1.setHowLong(DayLength.MORNING);
+        a1.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 24));
+        a1.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 24));
+
+        aNew = new Application();
+        aNew.setHowLong(DayLength.FULL);
+        aNew.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 23));
+        aNew.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 25));
+
+        list = new ArrayList<Application>();
+        list.add(a1);
+
+        Mockito.when(applicationDAO.getApplicationsByPeriodForEveryDayLength(aNew.getStartDate().toDate(),
+                aNew.getEndDate().toDate(), aNew.getPerson())).thenReturn(list);
+
+        returnValue = instance.checkOverlap(aNew);
+
+        assertNotNull(returnValue);
+        assertEquals(3, returnValue);
+
+        // there is an existent application for a half day
+        // new application for full day on this day
+        // expected value == 2
+        a1 = new Application();
+        a1.setHowLong(DayLength.MORNING);
+        a1.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 24));
+        a1.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 24));
+
+        aNew = new Application();
+        aNew.setHowLong(DayLength.FULL);
+        aNew.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 24));
+        aNew.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 24));
+
+        list = new ArrayList<Application>();
+        list.add(a1);
+
+        Mockito.when(applicationDAO.getApplicationsByPeriodForEveryDayLength(aNew.getStartDate().toDate(),
                 aNew.getEndDate().toDate(), aNew.getPerson())).thenReturn(list);
 
         returnValue = instance.checkOverlap(aNew);
@@ -650,8 +698,8 @@ public class ApplicationServiceImplTest {
         aNew.setEndDate(new DateMidnight(2012, 1, 25));
         aNew.setPerson(person);
 
-        Mockito.when(applicationDAO.getFullDayApplicationsForACertainTime(aNew.getStartDate().toDate(),
-                aNew.getEndDate().toDate(), aNew.getPerson())).thenReturn(list);
+        Mockito.when(applicationDAO.getApplicationsByPeriodAndDayLength(aNew.getStartDate().toDate(),
+                aNew.getEndDate().toDate(), aNew.getPerson(), DayLength.FULL)).thenReturn(list);
 
         returnValue = instance.checkOverlapForMorning(aNew);
 
@@ -661,8 +709,8 @@ public class ApplicationServiceImplTest {
         aNew.setStartDate(new DateMidnight(2012, 1, 23));
         aNew.setEndDate(new DateMidnight(2012, 1, 23));
 
-        Mockito.when(applicationDAO.getFullDayApplicationsForACertainTime(aNew.getStartDate().toDate(),
-                aNew.getEndDate().toDate(), aNew.getPerson())).thenReturn(list);
+        Mockito.when(applicationDAO.getApplicationsByPeriodAndDayLength(aNew.getStartDate().toDate(),
+                aNew.getEndDate().toDate(), aNew.getPerson(), DayLength.FULL)).thenReturn(list);
 
         returnValue = instance.checkOverlapForMorning(aNew);
 
@@ -673,8 +721,8 @@ public class ApplicationServiceImplTest {
         aNew.setStartDate(new DateMidnight(2012, 1, 27));
         aNew.setEndDate(new DateMidnight(2012, 1, 27));
 
-        Mockito.when(applicationDAO.getFullDayApplicationsForACertainTime(aNew.getStartDate().toDate(),
-                aNew.getEndDate().toDate(), aNew.getPerson())).thenReturn(list);
+        Mockito.when(applicationDAO.getApplicationsByPeriodAndDayLength(aNew.getStartDate().toDate(),
+                aNew.getEndDate().toDate(), aNew.getPerson(), DayLength.FULL)).thenReturn(list);
 
         returnValue = instance.checkOverlapForMorning(aNew);
 
@@ -686,10 +734,11 @@ public class ApplicationServiceImplTest {
         aNew.setStartDate(new DateMidnight(2012, 1, 28));
         aNew.setEndDate(new DateMidnight(2012, 1, 28));
 
-        Mockito.when(applicationDAO.getMorningApplicationsForACertainTime(aNew.getStartDate().toDate(),
-                aNew.getEndDate().toDate(), aNew.getPerson())).thenReturn(new ArrayList<Application>());
-        Mockito.when(applicationDAO.getFullDayApplicationsForACertainTime(aNew.getStartDate().toDate(),
-                aNew.getEndDate().toDate(), aNew.getPerson())).thenReturn(new ArrayList<Application>()); // no overlap because of different dates
+        Mockito.when(applicationDAO.getApplicationsByPeriodAndDayLength(aNew.getStartDate().toDate(),
+                aNew.getEndDate().toDate(), aNew.getPerson(), DayLength.FULL)).thenReturn(new ArrayList<Application>());
+        Mockito.when(applicationDAO.getApplicationsByPeriodAndDayLength(aNew.getStartDate().toDate(),
+                aNew.getEndDate().toDate(), aNew.getPerson(), DayLength.MORNING)).thenReturn(
+            new ArrayList<Application>()); // no overlap because of different dates
 
         returnValue = instance.checkOverlapForMorning(aNew);
 
@@ -712,24 +761,24 @@ public class ApplicationServiceImplTest {
         aNew.setStartDate(new DateMidnight(2012, 1, 23));
         aNew.setEndDate(new DateMidnight(2012, 1, 23));
 
-        Mockito.when(applicationDAO.getFullDayApplicationsForACertainTime(aNew.getStartDate().toDate(),
-                aNew.getEndDate().toDate(), aNew.getPerson())).thenReturn(new ArrayList<Application>());
-        Mockito.when(applicationDAO.getMorningApplicationsForACertainTime(aNew.getStartDate().toDate(),
-                aNew.getEndDate().toDate(), aNew.getPerson())).thenReturn(list);
+        Mockito.when(applicationDAO.getApplicationsByPeriodAndDayLength(aNew.getStartDate().toDate(),
+                aNew.getEndDate().toDate(), aNew.getPerson(), DayLength.FULL)).thenReturn(new ArrayList<Application>());
+        Mockito.when(applicationDAO.getApplicationsByPeriodAndDayLength(aNew.getStartDate().toDate(),
+                aNew.getEndDate().toDate(), aNew.getPerson(), DayLength.MORNING)).thenReturn(list);
 
         returnValue = instance.checkOverlapForMorning(aNew);
 
         assertEquals(2, returnValue);
 
-        // existent application for noon i.e. there are no existent applications for full day, but for noon --> lists
-        // with existent applications are empty because there is no overlap!
-        // expected value == 1
+        // existent application for noon i.e. there are no existent applications for full day, but for noon (but not for
+        // morning!) --> lists with existent applications are empty because there is no overlap! expected value == 1
         a.setHowLong(DayLength.NOON);
 
-        Mockito.when(applicationDAO.getFullDayApplicationsForACertainTime(aNew.getStartDate().toDate(),
-                aNew.getEndDate().toDate(), aNew.getPerson())).thenReturn(new ArrayList<Application>());
-        Mockito.when(applicationDAO.getMorningApplicationsForACertainTime(aNew.getStartDate().toDate(),
-                aNew.getEndDate().toDate(), aNew.getPerson())).thenReturn(new ArrayList<Application>());
+        Mockito.when(applicationDAO.getApplicationsByPeriodAndDayLength(aNew.getStartDate().toDate(),
+                aNew.getEndDate().toDate(), aNew.getPerson(), DayLength.FULL)).thenReturn(new ArrayList<Application>());
+        Mockito.when(applicationDAO.getApplicationsByPeriodAndDayLength(aNew.getStartDate().toDate(),
+                aNew.getEndDate().toDate(), aNew.getPerson(), DayLength.MORNING)).thenReturn(
+            new ArrayList<Application>());
 
         returnValue = instance.checkOverlapForMorning(aNew);
 
@@ -763,8 +812,8 @@ public class ApplicationServiceImplTest {
         aNew.setEndDate(new DateMidnight(2012, 1, 25));
         aNew.setPerson(person);
 
-        Mockito.when(applicationDAO.getFullDayApplicationsForACertainTime(aNew.getStartDate().toDate(),
-                aNew.getEndDate().toDate(), aNew.getPerson())).thenReturn(list);
+        Mockito.when(applicationDAO.getApplicationsByPeriodAndDayLength(aNew.getStartDate().toDate(),
+                aNew.getEndDate().toDate(), aNew.getPerson(), DayLength.FULL)).thenReturn(list);
 
         returnValue = instance.checkOverlapForNoon(aNew);
 
@@ -774,8 +823,8 @@ public class ApplicationServiceImplTest {
         aNew.setStartDate(new DateMidnight(2012, 1, 23));
         aNew.setEndDate(new DateMidnight(2012, 1, 23));
 
-        Mockito.when(applicationDAO.getFullDayApplicationsForACertainTime(aNew.getStartDate().toDate(),
-                aNew.getEndDate().toDate(), aNew.getPerson())).thenReturn(list);
+        Mockito.when(applicationDAO.getApplicationsByPeriodAndDayLength(aNew.getStartDate().toDate(),
+                aNew.getEndDate().toDate(), aNew.getPerson(), DayLength.FULL)).thenReturn(list);
 
         returnValue = instance.checkOverlapForNoon(aNew);
 
@@ -786,8 +835,8 @@ public class ApplicationServiceImplTest {
         aNew.setStartDate(new DateMidnight(2012, 1, 27));
         aNew.setEndDate(new DateMidnight(2012, 1, 27));
 
-        Mockito.when(applicationDAO.getFullDayApplicationsForACertainTime(aNew.getStartDate().toDate(),
-                aNew.getEndDate().toDate(), aNew.getPerson())).thenReturn(list);
+        Mockito.when(applicationDAO.getApplicationsByPeriodAndDayLength(aNew.getStartDate().toDate(),
+                aNew.getEndDate().toDate(), aNew.getPerson(), DayLength.FULL)).thenReturn(list);
 
         returnValue = instance.checkOverlapForNoon(aNew);
 
@@ -799,10 +848,10 @@ public class ApplicationServiceImplTest {
         aNew.setStartDate(new DateMidnight(2012, 1, 28));
         aNew.setEndDate(new DateMidnight(2012, 1, 28));
 
-        Mockito.when(applicationDAO.getNoonApplicationsForACertainTime(aNew.getStartDate().toDate(),
-                aNew.getEndDate().toDate(), aNew.getPerson())).thenReturn(new ArrayList<Application>()); // no existent half day applications
-        Mockito.when(applicationDAO.getFullDayApplicationsForACertainTime(aNew.getStartDate().toDate(),
-                aNew.getEndDate().toDate(), aNew.getPerson())).thenReturn(new ArrayList<Application>()); // no overlap because of different dates
+        Mockito.when(applicationDAO.getApplicationsByPeriodAndDayLength(aNew.getStartDate().toDate(),
+                aNew.getEndDate().toDate(), aNew.getPerson(), DayLength.FULL)).thenReturn(new ArrayList<Application>()); // no existent half day applications
+        Mockito.when(applicationDAO.getApplicationsByPeriodAndDayLength(aNew.getStartDate().toDate(),
+                aNew.getEndDate().toDate(), aNew.getPerson(), DayLength.NOON)).thenReturn(new ArrayList<Application>()); // no overlap because of different dates
 
         returnValue = instance.checkOverlapForNoon(aNew);
 
@@ -825,10 +874,10 @@ public class ApplicationServiceImplTest {
         aNew.setStartDate(new DateMidnight(2012, 1, 23));
         aNew.setEndDate(new DateMidnight(2012, 1, 23));
 
-        Mockito.when(applicationDAO.getFullDayApplicationsForACertainTime(aNew.getStartDate().toDate(),
-                aNew.getEndDate().toDate(), aNew.getPerson())).thenReturn(new ArrayList<Application>());
-        Mockito.when(applicationDAO.getNoonApplicationsForACertainTime(aNew.getStartDate().toDate(),
-                aNew.getEndDate().toDate(), aNew.getPerson())).thenReturn(list);
+        Mockito.when(applicationDAO.getApplicationsByPeriodAndDayLength(aNew.getStartDate().toDate(),
+                aNew.getEndDate().toDate(), aNew.getPerson(), DayLength.FULL)).thenReturn(new ArrayList<Application>());
+        Mockito.when(applicationDAO.getApplicationsByPeriodAndDayLength(aNew.getStartDate().toDate(),
+                aNew.getEndDate().toDate(), aNew.getPerson(), DayLength.NOON)).thenReturn(list);
 
         returnValue = instance.checkOverlapForNoon(aNew);
 
@@ -839,10 +888,10 @@ public class ApplicationServiceImplTest {
         // expected value == 1
         a.setHowLong(DayLength.MORNING);
 
-        Mockito.when(applicationDAO.getFullDayApplicationsForACertainTime(aNew.getStartDate().toDate(),
-                aNew.getEndDate().toDate(), aNew.getPerson())).thenReturn(new ArrayList<Application>());
-        Mockito.when(applicationDAO.getNoonApplicationsForACertainTime(aNew.getStartDate().toDate(),
-                aNew.getEndDate().toDate(), aNew.getPerson())).thenReturn(new ArrayList<Application>());
+        Mockito.when(applicationDAO.getApplicationsByPeriodAndDayLength(aNew.getStartDate().toDate(),
+                aNew.getEndDate().toDate(), aNew.getPerson(), DayLength.FULL)).thenReturn(new ArrayList<Application>());
+        Mockito.when(applicationDAO.getApplicationsByPeriodAndDayLength(aNew.getStartDate().toDate(),
+                aNew.getEndDate().toDate(), aNew.getPerson(), DayLength.NOON)).thenReturn(new ArrayList<Application>());
 
         returnValue = instance.checkOverlapForNoon(aNew);
 

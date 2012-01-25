@@ -349,14 +349,14 @@ public class ApplicationServiceImpl implements ApplicationService {
     private List<Application> getApplicationsByPeriodAndDayLength(Application app, DayLength length) {
 
         if (length == DayLength.MORNING) {
-            return applicationDAO.getMorningApplicationsForACertainTime(app.getStartDate().toDate(),
-                    app.getEndDate().toDate(), app.getPerson());
+            return applicationDAO.getApplicationsByPeriodAndDayLength(app.getStartDate().toDate(),
+                    app.getEndDate().toDate(), app.getPerson(), DayLength.MORNING);
         } else if (length == DayLength.NOON) {
-            return applicationDAO.getNoonApplicationsForACertainTime(app.getStartDate().toDate(),
-                    app.getEndDate().toDate(), app.getPerson());
+            return applicationDAO.getApplicationsByPeriodAndDayLength(app.getStartDate().toDate(),
+                    app.getEndDate().toDate(), app.getPerson(), DayLength.NOON);
         } else {
-            return applicationDAO.getFullDayApplicationsForACertainTime(app.getStartDate().toDate(),
-                    app.getEndDate().toDate(), app.getPerson());
+            return applicationDAO.getApplicationsByPeriodAndDayLength(app.getStartDate().toDate(),
+                    app.getEndDate().toDate(), app.getPerson(), DayLength.FULL);
         }
     }
 
@@ -372,7 +372,11 @@ public class ApplicationServiceImpl implements ApplicationService {
         } else if (application.getHowLong() == DayLength.NOON) {
             return checkOverlapForNoon(application);
         } else {
-            return checkOverlapForFullDay(application);
+            // check if there are existent ANY applications (full day and half day)
+            List<Application> apps = applicationDAO.getApplicationsByPeriodForEveryDayLength(application.getStartDate()
+                    .toDate(), application.getEndDate().toDate(), application.getPerson());
+
+            return getCaseOfOverlap(application, apps);
         }
     }
 
@@ -387,6 +391,7 @@ public class ApplicationServiceImpl implements ApplicationService {
      */
     protected int checkOverlapForFullDay(Application application) {
 
+        // check if there are existent ANY applications (full day and half day)
         List<Application> apps = getApplicationsByPeriodAndDayLength(application, DayLength.FULL);
 
         return getCaseOfOverlap(application, apps);

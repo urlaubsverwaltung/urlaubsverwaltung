@@ -354,7 +354,6 @@ public class ApplicationController {
 
             if (overlap == 2 || overlap == 3) {
                 // in this version, these two cases are handled equal
-                // ERROR message!!!!
                 errors.reject("check.overlap");
             } else if (overlap == 1) {
                 // everything ok, go to next check
