@@ -13,6 +13,8 @@ import org.synyx.urlaubsverwaltung.domain.DayLength;
 import org.synyx.urlaubsverwaltung.domain.VacationType;
 import org.synyx.urlaubsverwaltung.view.AppForm;
 
+import java.math.BigDecimal;
+
 
 /**
  * This class validate if an application's form ('AppForm') is filled correctly by the user, else it saves error
@@ -94,6 +96,26 @@ public class ApplicationValidator implements Validator {
                     errors.reject(PAST);
                 }
             }
+        }
+    }
+
+
+    public void validateSickDays(Object target, BigDecimal days, Errors errors) {
+
+        AppForm app = (AppForm) target;
+
+        // field not filled
+        if (app.getSickDays() == null) {
+            errors.reject("sick.more");
+        } else {
+            // number of sick days is zero
+            if (app.getSickDays().compareTo(BigDecimal.ZERO) == 0) {
+                errors.reject("sick.more");
+            }
+
+            // number of sick days is greater than vacation days of application
+            if (app.getSickDays().compareTo(days) == 1)
+                errors.reject("sick.more");
         }
     }
 }

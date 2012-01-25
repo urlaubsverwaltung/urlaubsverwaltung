@@ -521,7 +521,9 @@ public class ApplicationController {
 
         Application application = applicationService.getApplicationById(applicationId);
 
-        if (appForm.getSickDays() == null) {
+        validator.validateSickDays(appForm, application.getDays(), errors);
+
+        if (errors.hasErrors()) {
             // shows error in Frontend
             errors.reject("sick.more");
             model.addAttribute(APPLICATION, application);
@@ -530,25 +532,14 @@ public class ApplicationController {
             setLoggedUser(model);
 
             return SHOW_APP_DETAIL;
-        }
-
-        // number of vacation days must be greater than number of sick days
-        if (appForm.getSickDays().compareTo(application.getDays()) <= 0) {
+        } else {
+            // sick days are smaller than vacation days (resp. equals)
             application.setSickDays(appForm.getSickDays());
             application.setDateOfAddingSickDays(DateMidnight.now());
             applicationService.simpleSave(application);
             applicationService.addSickDaysOnHolidaysAccount(application);
 
             return "redirect:/web" + ALLOWED_APPS;
-        } else {
-            // shows error in Frontend
-            errors.reject("sick.more");
-            model.addAttribute(APPLICATION, application);
-            model.addAttribute(APPFORM, appForm);
-            model.addAttribute(STATE_NUMBER, ALLOWED);
-            setLoggedUser(model);
-
-            return SHOW_APP_DETAIL;
         }
     }
 
