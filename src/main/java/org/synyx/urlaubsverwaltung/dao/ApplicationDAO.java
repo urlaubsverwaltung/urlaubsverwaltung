@@ -34,14 +34,6 @@ public interface ApplicationDAO extends JpaRepository<Application, Integer> {
     List<Application> getApplicationsForACertainTime(Date startDate, Date endDate);
 
 
-    // get List<Application> for a certain time (between startDate and endDate)for the given person, get only the not
-    // cancelled applications!
-    @Query(
-        "select x from Application x where (x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) or (x.startDate < ?1 and x.endDate > ?2) and x.person = ?3 and x.status != 3 order by x.startDate"
-    )
-    List<Application> getApplicationsByPersonForACertainTime(Date startDate, Date endDate, Person person);
-
-
     // get List<Application> by certain person for a certain year
     @Query(
         "select x from Application x where x.person = ?1 and ((x.startDate between ?2 and ?3) or (x.endDate between ?2 and ?3)) order by x.startDate"
@@ -55,4 +47,28 @@ public interface ApplicationDAO extends JpaRepository<Application, Integer> {
     )
     List<Application> getNotCancelledApplicationsByPersonAndYear(ApplicationStatus state, Person person,
         Date firstDayOfYear, Date lastDayOfYear);
+
+
+    // get List<Application> for a certain time (between startDate and endDate, FULL DAY)for the given person, get only
+    // the not cancelled applications!
+    @Query(
+        "select x from Application x where (x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) or (x.startDate < ?1 and x.endDate > ?2) and x.person = ?3 and x.status != 3 and x.howLong == 0 order by x.startDate"
+    )
+    List<Application> getFullDayApplicationsForACertainTime(Date startDate, Date endDate, Person person);
+
+
+    // get List<Application> for a certain time (between startDate and endDate, MORNING)for the given person, get only
+    // the not cancelled applications!
+    @Query(
+        "select x from Application x where (x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) or (x.startDate < ?1 and x.endDate > ?2) and x.person = ?3 and x.status != 3 and x.howLong == 1 order by x.startDate"
+    )
+    List<Application> getMorningApplicationsForACertainTime(Date startDate, Date endDate, Person person);
+
+
+    // get List<Application> for a certain time (between startDate and endDate, NOON)for the given person, get only the
+    // not cancelled applications!
+    @Query(
+        "select x from Application x where (x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) or (x.startDate < ?1 and x.endDate > ?2) and x.person = ?3 and x.status != 3 and x.howLong == 2 order by x.startDate"
+    )
+    List<Application> getNoonApplicationsForACertainTime(Date startDate, Date endDate, Person person);
 }

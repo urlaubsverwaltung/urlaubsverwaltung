@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.dao.ApplicationDAO;
 import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.domain.DayLength;
 import org.synyx.urlaubsverwaltung.domain.HolidaysAccount;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.util.CalcUtil;
@@ -242,7 +243,7 @@ public class ApplicationServiceImpl implements ApplicationService {
      *
      * @return  data (=signature) if using cryptoService was successful or null if there was any mistake
      */
-    public byte[] signApplication(Application application, Person person) {
+    private byte[] signApplication(Application application, Person person) {
 
         try {
             PrivateKey privKey = cryptoService.getPrivateKeyByBytes(person.getPrivateKey());
@@ -336,24 +337,119 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
 
-    protected List<Application> getApplicationsByPersonForACertainTime(Application application) {
+    /**
+     * With this method you get a list of existent applications that overlap with the given period (information about
+     * person and period in application) and have the given day length.
+     *
+     * @param  Application  app
+     * @param  DayLength  length
+     *
+     * @return  List<Application> applications overlapping with the period of the given application
+     */
+    private List<Application> getApplicationsByPeriodAndDayLength(Application app, DayLength length) {
 
-        return applicationDAO.getApplicationsByPersonForACertainTime(application.getStartDate().toDate(),
-                application.getEndDate().toDate(), application.getPerson());
+        if (length == DayLength.MORNING) {
+            return applicationDAO.getMorningApplicationsForACertainTime(app.getStartDate().toDate(),
+                    app.getEndDate().toDate(), app.getPerson());
+        } else if (length == DayLength.NOON) {
+            return applicationDAO.getNoonApplicationsForACertainTime(app.getStartDate().toDate(),
+                    app.getEndDate().toDate(), app.getPerson());
+        } else {
+            return applicationDAO.getFullDayApplicationsForACertainTime(app.getStartDate().toDate(),
+                    app.getEndDate().toDate(), app.getPerson());
+        }
     }
 
 
+    /**
+     * @see  ApplicationService#checkOverlap(org.synyx.urlaubsverwaltung.domain.Application)
+     */
     @Override
     public int checkOverlap(Application application) {
 
-        DateMidnight startDate = application.getStartDate();
-        DateMidnight endDate = application.getEndDate();
+        if (application.getHowLong() == DayLength.MORNING) {
+            return checkOverlapForMorning(application);
+        } else if (application.getHowLong() == DayLength.NOON) {
+            return checkOverlapForNoon(application);
+        } else {
+            return checkOverlapForFullDay(application);
+        }
+    }
 
-        Interval interval = new Interval(startDate, endDate);
-        List<Interval> listOfOverlaps = new ArrayList<Interval>();
 
-        // list ordered by startDate of applications
-        List<Application> apps = getApplicationsByPersonForACertainTime(application);
+    /**
+     * Method to check if the given application with day length "FULL" may be applied or not. (are there existent
+     * applications for this period or not?)
+     *
+     * @param  application
+     *
+     * @return  int 1 for check is alright: application for leave is valid. 2 or 3 for invalid application for leave.
+     */
+    protected int checkOverlapForFullDay(Application application) {
+
+        List<Application> apps = getApplicationsByPeriodAndDayLength(application, DayLength.FULL);
+
+        return getCaseOfOverlap(application, apps);
+    }
+
+
+    /**
+     * Method to check if the given application with day length "MORNING" may be applied or not. (are there existent
+     * applications for this period or not?)
+     *
+     * @param  application
+     *
+     * @return  int 1 for check is alright: application for leave is valid. 2 or 3 for invalid application for leave.
+     */
+    protected int checkOverlapForMorning(Application application) {
+
+        // check if there are overlaps with full day periods
+        if (checkOverlapForFullDay(application) == 1) {
+            // if there are no overlaps with full day periods, you have to check if there are overlaps with half day
+            // (MORNING) periods
+            List<Application> apps = getApplicationsByPeriodAndDayLength(application, DayLength.MORNING);
+
+            return getCaseOfOverlap(application, apps);
+        } else {
+            return checkOverlapForFullDay(application);
+        }
+    }
+
+
+    /**
+     * Method to check if the given application with day length "NOON" may be applied or not. (are there existent
+     * applications for this period or not?)
+     *
+     * @param  application
+     *
+     * @return  int 1 for check is alright: application for leave is valid. 2 or 3 for invalid application for leave.
+     */
+    protected int checkOverlapForNoon(Application application) {
+
+        // check if there are overlaps with full day periods
+        if (checkOverlapForFullDay(application) == 1) {
+            // if there are no overlaps with full day periods, you have to check if there are overlaps with half day
+            // (NOON) periods
+            List<Application> apps = getApplicationsByPeriodAndDayLength(application, DayLength.NOON);
+
+            return getCaseOfOverlap(application, apps);
+        } else {
+            return checkOverlapForFullDay(application);
+        }
+    }
+
+
+    /**
+     * This method contains the logic how to check if there are existent overlapping applications for the given period;
+     * use this method only for full day applications.
+     *
+     * @param  application
+     *
+     * @return  1 if there is no overlap at all - 2 if the given period is element of (an) existent application(s) - 3
+     *          if the new application is part of an existent application's period, but for a part of it you could apply
+     *          new vacation
+     */
+    private int getCaseOfOverlap(Application application, List<Application> apps) {
 
         // case (1): no overlap at all
         if (apps.isEmpty()) {
@@ -365,76 +461,117 @@ public class ApplicationServiceImpl implements ApplicationService {
         } else {
             // case (2) or (3): overlap
 
-            for (Application a : apps) {
-                Interval inti = new Interval(a.getStartDate(), a.getEndDate());
-                Interval overlap = inti.overlap(interval);
+            List<Interval> listOfOverlaps = getListOfOverlaps(application, apps);
 
-                // because intervals are inclusive of the start instant, but exclusive of the end instant
-                // you have to check if end of interval a is start of interval b
+            if (application.getHowLong() == DayLength.FULL) {
+                List<Interval> listOfGaps = getListOfGaps(application, listOfOverlaps);
 
-                if (inti.getEnd().equals(interval.getStart())) {
-                    overlap = new Interval(interval.getStart(), interval.getStart());
-                }
-
-                if (inti.getStart().equals(interval.getEnd())) {
-                    overlap = new Interval(interval.getEnd(), interval.getEnd());
-                }
-
-                // check if they really overlap, else value of overlap would be null
-                if (overlap != null) {
-                    listOfOverlaps.add(overlap);
+                // gaps between the intervals mean that you can apply vacation for this periods
+                // this is case (3)
+                if (listOfGaps.size() > 0) {
+                    /* (3) The period of the new application is part
+                     * of an existent application's period, but for a part of it you could apply new vacation; i.e. user
+                     * must be asked if he wants to apply for leave for the not overlapping period of the new
+                     * application.
+                     */
+                    return 3;
                 }
             }
+            // no gaps mean that period of application is element of other periods of applications
+            // i.e. you have no free periods to apply vacation for
+            // this is case (2)
 
-            List<Interval> listOfGaps = new ArrayList<Interval>();
+            /* (2) The period of
+             * the new application is element of an existent application's period; i.e. the new application is not
+             * necessary because there is already an existent application for this period.
+             */
+            return 2;
+        }
+    }
 
-            // check start and end points
 
-            DateMidnight firstOverlapStart = listOfOverlaps.get(0).getStart().toDateMidnight();
-            DateMidnight lastOverlapEnd = listOfOverlaps.get(listOfOverlaps.size() - 1).getEnd().toDateMidnight();
+    /**
+     * This method gets a list of applications that overlap with the period of the given application; all overlapping
+     * intervals are put in this list for further checking (e.g. if there are gaps) and for getting the case of overlap
+     * (1, 2 or 3)
+     *
+     * @param  application
+     * @param  apps
+     *
+     * @return  List<Interval> list of overlaps
+     */
+    private List<Interval> getListOfOverlaps(Application application, List<Application> apps) {
 
-            if (startDate.isBefore(firstOverlapStart)) {
-                Interval gapStart = new Interval(startDate, firstOverlapStart);
-                listOfGaps.add(gapStart);
+        Interval interval = new Interval(application.getStartDate(), application.getEndDate());
+
+        List<Interval> listOfOverlaps = new ArrayList<Interval>();
+
+        for (Application a : apps) {
+            Interval inti = new Interval(a.getStartDate(), a.getEndDate());
+            Interval overlap = inti.overlap(interval);
+
+            // because intervals are inclusive of the start instant, but exclusive of the end instant
+            // you have to check if end of interval a is start of interval b
+
+            if (inti.getEnd().equals(interval.getStart())) {
+                overlap = new Interval(interval.getStart(), interval.getStart());
             }
 
-            if (endDate.isAfter(lastOverlapEnd)) {
-                Interval gapEnd = new Interval(lastOverlapEnd, endDate);
-                listOfGaps.add(gapEnd);
+            if (inti.getStart().equals(interval.getEnd())) {
+                overlap = new Interval(interval.getEnd(), interval.getEnd());
             }
 
-            // check if intervals abut or gap
-            for (int i = 0; (i + 1) < listOfOverlaps.size(); i++) {
-                // if they don't abut, you can calculate the gap
-                // test if end of interval is equals resp. one day plus of start of other interval
-                // e.g. if period 1: 16.-18. and period 2: 19.-20 --> they abut
-                // e.g. if period 1: 16.-18. and period 2: 20.-22 --> they have a gap
-                if (intervalsHaveGap(listOfOverlaps.get(i), listOfOverlaps.get(i + 1))) {
-                    Interval gap = listOfOverlaps.get(i).gap(listOfOverlaps.get(i + 1));
-                    listOfGaps.add(gap);
-                }
-            }
-
-            // gaps between the intervals mean that you can apply vacation for this periods
-            // this is case (3)
-            if (listOfGaps.size() > 0) {
-                /* (3) The period of the new application is part
-                 * of an existent application's period, but for a part of it you could apply new vacation; i.e. user
-                 * must be asked if he wants to apply for leave for the not overlapping period of the new application.
-                 */
-                return 3;
-            } else {
-                // no gaps mean that period of application is element of other periods of applications
-                // i.e. you have no free periods to apply vacation for
-                // this is case (2)
-
-                /* (2) The period of
-                 * the new application is element of an existent application's period; i.e. the new application is not
-                 * necessary because there is already an existent application for this period.
-                 */
-                return 2;
+            // check if they really overlap, else value of overlap would be null
+            if (overlap != null) {
+                listOfOverlaps.add(overlap);
             }
         }
+
+        return listOfOverlaps;
+    }
+
+
+    /**
+     * This method gets a list of overlaps and checks with the given application if there are any gaps where a user
+     * could apply for leave (these gaps are not yet applied for leave) - may be a feature in later version.
+     *
+     * @param  application
+     * @param  listOfOverlaps
+     *
+     * @return  List<Interval> list of gaps
+     */
+    private List<Interval> getListOfGaps(Application application, List<Interval> listOfOverlaps) {
+
+        List<Interval> listOfGaps = new ArrayList<Interval>();
+
+        // check start and end points
+
+        DateMidnight firstOverlapStart = listOfOverlaps.get(0).getStart().toDateMidnight();
+        DateMidnight lastOverlapEnd = listOfOverlaps.get(listOfOverlaps.size() - 1).getEnd().toDateMidnight();
+
+        if (application.getStartDate().isBefore(firstOverlapStart)) {
+            Interval gapStart = new Interval(application.getStartDate(), firstOverlapStart);
+            listOfGaps.add(gapStart);
+        }
+
+        if (application.getEndDate().isAfter(lastOverlapEnd)) {
+            Interval gapEnd = new Interval(lastOverlapEnd, application.getEndDate());
+            listOfGaps.add(gapEnd);
+        }
+
+        // check if intervals abut or gap
+        for (int i = 0; (i + 1) < listOfOverlaps.size(); i++) {
+            // if they don't abut, you can calculate the gap
+            // test if end of interval is equals resp. one day plus of start of other interval
+            // e.g. if period 1: 16.-18. and period 2: 19.-20 --> they abut
+            // e.g. if period 1: 16.-18. and period 2: 20.-22 --> they have a gap
+            if (intervalsHaveGap(listOfOverlaps.get(i), listOfOverlaps.get(i + 1))) {
+                Interval gap = listOfOverlaps.get(i).gap(listOfOverlaps.get(i + 1));
+                listOfGaps.add(gap);
+            }
+        }
+
+        return listOfGaps;
     }
 
 
