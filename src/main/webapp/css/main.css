@@ -8,7 +8,7 @@
 
 
 a {
-color: black;
+    color: black;
 }
 
 a:hover {
@@ -30,8 +30,8 @@ a:hover {
     padding: 2px 2px 0 6px;
     text-align: right;
     -moz-box-shadow: 2px 2px 5px #444444;
-     -webkit-box-shadow: 2px 2px 5px #444444;
-     box-shadow: 2px 2px 5px #444444;
+    -webkit-box-shadow: 2px 2px 5px #444444;
+    box-shadow: 2px 2px 5px #444444;
 }	
 
 #header {
@@ -44,7 +44,7 @@ a:hover {
 }
 
 #header {
-   /* background-color: #E4E5E7; */
+    /* background-color: #E4E5E7; */
     color: black;
     padding: 4px 8px 30px 6px;
     position: relative;
@@ -55,9 +55,9 @@ a:hover {
 }
 
 #header h1 {
-	text-align: center;
-	padding-top: 12px;
-	font-size: 2.25em;
+    text-align: center;
+    padding-top: 12px;
+    font-size: 2.25em;
 }
 
 #main-menu {
@@ -74,7 +74,7 @@ a:hover {
 }
 
 #show-navi a:hover {
-	color: #0083CC;
+    color: #0083CC;
 }
 
 .a-inact {
@@ -125,35 +125,38 @@ body {
     font-size: 12px;
     margin: 0;
 }
-	
+
 
 #content {
-	margin-top: 30px;
+    margin-top: 30px;
 }
 
 #staff-list td {
-	padding: 5px 0px 5px 15px;
+/*    padding: 5px 0px 5px 15px;*/
+    padding: 0.4em;
 }
 
 th.attributes {
-	padding: 7px 0px 7px 15px;
-	text-align: left;
-	width: auto;
+    padding: 7px 0px 7px 15px;
+    text-align: left;
+    width: auto;
 }	
 
 th.vac {
-	padding: 7px 0px 7px 0px;
-	text-align: left;
-	width: 20%;
+    padding: 7px 0px 7px 0px;
+    text-align: left;
+    width: 20%;
 }
 
 #staff-list {
-	width: 100%; 
-	/*border: 1px solid #444444;*/
+    width: 100%; 
+    font-size: 1em;
+    /*border: 1px solid #444444;*/
 }
 
 #staff-list th {
     background-color: #ABC452;
+    padding: 0.5em;
 }
 
 tr.odd {
@@ -165,18 +168,21 @@ tr.even {
 }
 
 #person-tbl {
-	width: 100%;
-	font-size: 1.05em;
-	/* border: 1px solid #BBBBBB;*/
+    width: 100%;
+    font-size: 1.05em; 
+    border-bottom: 1px solid #D7D7D7;
+    border-right: 1px solid #D7D7D7;
 }
 
 #person-tbl th,  #person-tbl td {
-	text-align: left;
-	padding: 5px 0px 5px 15px;
+    text-align: left;
+    padding: 5px 0px 5px 15px;
+    border-left: 1px solid #D7D7D7;
+    border-top: 1px solid #D7D7D7;
 }
 
 #person-tbl th {
-	width: 37%;
+    width: 37%;
 }
 
 .data {
@@ -197,8 +203,8 @@ tr.even {
 }
 
 #person-tbl td#td-img {
-padding: 5px 0px 5px 0px;
-	text-align: center;
+    padding: 5px 0px 5px 0px;
+    text-align: center;
 }
 
 #person-form-tbl th {
@@ -212,14 +218,22 @@ padding: 5px 0px 5px 0px;
     margin:0;
 }
 
-#app-tbl {
-	width: 100%;
-font-size: 1.05em;
+.app-tbl {
+    width: 100%;
+    font-size: 1.05em;
+/*    border-bottom: 1px solid #D7D7D7;
+    border-right: 1px solid #D7D7D7;
+    border-left: 1px solid #D7D7D7;*/
 }	
 
-#app-tbl th, #app-tbl td {
-	text-align: left;
-	padding: 5px 0px 5px 10px;
+.app-tbl th, .app-tbl td {
+    text-align: left;
+padding: 0.55em;
+
+}
+
+.app-tbl th {
+    background-color: #ABC452;
 }
 
 #app-detail td {
@@ -227,13 +241,13 @@ font-size: 1.05em;
 }
 
 .user-pic {
-	text-align: center;
+    text-align: center;
 }
 
 
-.td-edit {
-	text-align: center;
-	padding-right: 10px;
+#staff-list .td-edit, #staff-list .td-detail, .app-tbl .td-detail  {
+    text-align: center;
+    padding: 0px;
 }
 
 #data {
@@ -250,7 +264,7 @@ font-size: 1.05em;
 /* General button styles (input buttons and link buttons) */
 
 input[type=submit], input[type=button], a.button {
-    
+
     background-color: #E6E6E6;
     border: 1px solid #D3D3D3;
     -webkit-border-radius: 4px;
@@ -258,10 +272,18 @@ input[type=submit], input[type=button], a.button {
     text-decoration: none;
     text-align: right;
     color: #555555;
-    font-size: 0.9em;
     font-weight: normal;
     margin-right: 0.3em;    
-    padding: 0.2em 0.3em 0.1em 0.3em;
+}
+
+a.button {
+    font-size: 0.95em;
+    padding: 0.45em 0.4em 0.3em 0.3em;
+}
+
+input[type=submit], input[type=button] {
+    font-size: 1em;
+    padding: 0.25em 0.3em 0.25em 0.3em;
 }
 
 input[type=submit]:hover, input[type=button]:hover, a.button:hover {
@@ -273,7 +295,7 @@ input[type=submit].back, input[type=button].back, a.button.back {
     background-image: url("../images/agt_action_fail.png");
     background-repeat: no-repeat;
     background-position: 5% 50%;
-    padding-left: 2em;
+    padding-left: 2.5em;
 }
 
 input[type=submit].confirm, input[type=button].confirm, a.button.confirm {
@@ -283,6 +305,24 @@ input[type=submit].confirm, input[type=button].confirm, a.button.confirm {
     padding-left: 2em;
 }
 
+input[type=submit].save, input[type=button].save, a.button.save {
+    background-image: url("../images/filesave.png");
+    background-repeat: no-repeat;
+    background-position: 5% 50%;
+    padding-left: 2em;
+}
+
+input[type=submit].print, input[type=button].print, a.button.print {
+    background-image: url("../images/agt_print.png");
+    background-repeat: no-repeat;
+    background-position: 5% 50%;
+    padding-left: 3em;
+}
+
+input[type=submit].deactivate, input[type=button].deactivate, a.button.deactivate {
+    
+}
+
 .error {
     color:red;
 }
@@ -290,7 +330,7 @@ input[type=submit].confirm, input[type=button].confirm, a.button.confirm {
 input.error {
     border-color: red;
 }
-	
+
 
 
 

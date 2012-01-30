@@ -230,7 +230,7 @@
                             </tr>
                             <tr>
                                 <td colspan="2">
-                                    <input type="submit" name="<spring:message code='apply' />" value="<spring:message code='apply' />" />
+                                    <input class="confirm"type="submit" name="<spring:message code='apply' />" value="<spring:message code='apply' />" />
                                 </td>
                             </tr>
                             <tr>

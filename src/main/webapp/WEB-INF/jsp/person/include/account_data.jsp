@@ -11,7 +11,7 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
     <tr>
-        <td rowspan="6"><img class="user-pic" src="<c:out value='${gravatar}?d=mm'/>" /></td>
+        <td rowspan="6" style="background-color: #EAF2D3"><img class="user-pic" src="<c:out value='${gravatar}?d=mm'/>" /></td>
     </tr>
     <tr>
         <th>

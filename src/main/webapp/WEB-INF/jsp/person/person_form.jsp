@@ -93,8 +93,8 @@
                     </tr>
                     <tr>
                         <td colspan="2">
-                            <input type="submit" name="<spring:message code="save" />" value="<spring:message code="save" />" />
-                            <a class="button" href="${formUrlPrefix}/staff"><spring:message code='cancel' /></a>
+                            <input type="submit" class="save" name="<spring:message code="save" />" value="<spring:message code="save" />" />
+                            <a class="button back" href="${formUrlPrefix}/staff"><spring:message code='cancel' /></a>
                             <input type="button" onclick="$('#activ-action').show();"
                                    <c:choose>
                                        <c:when test="${person.active == true}">

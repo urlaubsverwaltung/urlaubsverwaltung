@@ -40,7 +40,7 @@
                 </div>
 
                 <div class="grid_7">
-                    <table id="person-tbl" cellspacing="0" border="1">
+                    <table id="person-tbl" cellspacing="0">
                     <%@include file="./include/account_data.jsp" %>
                     </table>
                 </div>
@@ -60,7 +60,7 @@
 
                         <c:otherwise>
 
-                            <table id="app-tbl" cellspacing="0" border="1">
+                            <table class="app-tbl" cellspacing="0">
                                 <tr>
                                     <th>
                                         <spring:message code="type" />
@@ -80,13 +80,13 @@
                                     <th>
                                         <spring:message code="state" />
                                     </th>
-                                    <th>
+                                    <th style="text-align: center">
                                         <spring:message code="delete" />
                                     </th>
                                 </tr>
 
-                                <c:forEach items="${applications}" var="app">
-                                    <tr>
+                                <c:forEach items="${applications}" var="app" varStatus="loopStatus">
+                                    <tr class="${loopStatus.index % 2 == 0 ? 'even' : 'odd'}">
                                         <td>
                                             <spring:message code="${app.vacationType.vacationTypeName}"/>
                                         </td>
@@ -120,7 +120,7 @@
                                             <spring:message code="${app.status.state}" />
                                         </td>
                                         <c:if test="${isOffice != true}">
-                                            <td>
+                                            <td style="text-align: center">
                                                 <a href="${formUrlPrefix}/application/${app.id}/cancel"><img src="<spring:url value='/images/cancel.png' />" /></a>
                                             </td>
                                         </c:if>

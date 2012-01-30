@@ -147,8 +147,11 @@
                     
                 <div class="grid_12">&nbsp;</div>
                 <div class="grid_12">&nbsp;</div>
-                <div class="grid_12"><%-- various application's actions dependent on role --%>         
-                    <%@include file="./include/app_actions.jsp" %></div>     
+                
+                <div class="grid_12">
+                    <%-- various application's actions dependent on role --%>         
+                    <%@include file="./include/app_actions.jsp" %>
+                </div>     
 
 
             </div> <!-- end of grid container -->

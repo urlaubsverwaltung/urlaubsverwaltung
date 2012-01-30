@@ -27,18 +27,17 @@
                         <sec:authorize access="hasRole('role.boss')">         
 
                             <form:form method="put" action="${formUrlPrefix}/application/${application.id}/allow"> 
-                                <input type="submit" name="<spring:message code='app.state.ok' />" value="<spring:message code='app.state.ok' />" class="button" />    
-                            </form:form>
-                            <br />    
-
-                            <input type="button" name="<spring:message code='app.state.no' />" value="<spring:message code='app.state.no' />" onclick="$('#reject').show(1000);" />
+                                <input class="confirm" type="submit" name="<spring:message code='app.state.ok' />" value="<spring:message code='app.state.ok' />" class="button" />    
+                                <input class="back" type="button" name="<spring:message code='app.state.no' />" value="<spring:message code='app.state.no' />" onclick="$('#reject').show(1000);" />
+                            </form:form>   
+                                <form:form method="put" action="${formUrlPrefix}/application/${application.id}/reject" modelAttribute="comment">
+                                    <br /><form:errors path="*" cssClass="error" />
                             <br />
                             <br /> 
 
                             <div id="reject" style="display: none">    
-                                <form:form method="put" action="${formUrlPrefix}/application/${application.id}/reject" modelAttribute="comment">
-                                    <spring:message code='reason' />&nbsp;<form:input path="text" />   
-                                    <input type="submit" name="<spring:message code='ok' />" value="<spring:message code='ok' />" class="button" />    
+                                    <spring:message code='reason' />&nbsp;<form:input path="text" cssErrorClass="error" />   
+                                    <input type="submit" name="<spring:message code='ok' />" value="<spring:message code='ok' />" class="button" />
                                 </form:form>
                             </div>    
 
@@ -48,10 +47,10 @@
 
                     <%-- application is allowed --%>  
                     <c:if test="${stateNumber == 1}">
+                        
+                        <a class="button print" href="${formUrlPrefix}/application/${app.id}/print"><spring:message code='app' />&nbsp;<spring:message code='print' /></a>
 
                         <sec:authorize access="hasRole('role.office')">
-
-                            <a class="button" href="${formUrlPrefix}/application/${app.id}/print"><spring:message code='print' /></a>
 
                             <input type="button" onclick="$('#sick').show();" name="<spring:message code='add.sickdays' />" value="<spring:message code='add.sickdays' />" />
                             <br />
@@ -74,4 +73,8 @@
 
                         </sec:authorize>
 
+                    </c:if>
+                    
+                    <c:if test="${stateNumber == 2}">
+                        <a class="button print" href="${formUrlPrefix}/application/${app.id}/print"><spring:message code='app' />&nbsp;<spring:message code='print' /></a>
                     </c:if>
