@@ -86,9 +86,6 @@ public class ApplicationController {
     // login link
     private static final String LOGIN_LINK = "redirect:/login.jsp?login_error=1";
 
-    // list of applications by person
-    private static final String APPS_BY_PERSON = "/{" + PERSON_ID + "}/" + APPLICATION;
-
     // overview
     private static final String OVERVIEW = "/overview";
 
@@ -107,7 +104,6 @@ public class ApplicationController {
     private static final int WAITING = 0;
     private static final int ALLOWED = 1;
     private static final int CANCELLED = 2;
-    private static final int BY_PERSON = 3;
     private static final int TO_CANCEL = 4;
 
     // form to apply vacation
@@ -162,34 +158,6 @@ public class ApplicationController {
             model.addAttribute(NO_APPS, true);
         } else {
             model.addAttribute(APPLICATIONS, applications);
-        }
-    }
-
-
-    /**
-     * show List<Application> of one person
-     *
-     * @param  personId
-     * @param  model
-     *
-     * @return
-     */
-    @RequestMapping(value = APPS_BY_PERSON, method = RequestMethod.GET)
-    public String showApplicationsByPerson(@PathVariable(PERSON_ID) Integer personId, Model model) {
-
-        if (getLoggedUser().getRole() == Role.OFFICE || getLoggedUser().getRole() == Role.BOSS) {
-            Person person = personService.getPersonByID(personId);
-            List<Application> applications = applicationService.getApplicationsByPerson(person);
-
-            setApplications(applications, model);
-
-            model.addAttribute(PERSON, person);
-            model.addAttribute(STATE_NUMBER, BY_PERSON);
-            setLoggedUser(model);
-
-            return APP_LIST_JSP;
-        } else {
-            return ERROR_JSP;
         }
     }
 
@@ -493,27 +461,35 @@ public class ApplicationController {
      */
     @RequestMapping(value = REJECT_APP, method = RequestMethod.PUT)
     public String rejectApplication(@PathVariable(APPLICATION_ID) Integer applicationId,
-        @ModelAttribute(COMMENT) Comment comment) {
+        @ModelAttribute(COMMENT) Comment comment, Errors errors, Model model) {
 
         Application application = applicationService.getApplicationById(applicationId);
 
-        String name = SecurityContextHolder.getContext().getAuthentication().getName();
-        Person boss = personService.getPersonByLogin(name);
-        String nameOfCommentingPerson = boss.getLastName() + " " + boss.getFirstName();
+        validator.validateComment(comment, errors);
 
-        comment.setNameOfCommentingPerson(nameOfCommentingPerson);
-        comment.setApplication(application);
-        comment.setDateOfComment(DateMidnight.now());
-        commentService.saveComment(comment);
+        if (errors.hasErrors()) {
+            prepareDetailView(application, WAITING, model);
 
-        applicationService.reject(application, boss);
+            return SHOW_APP_DETAIL;
+        } else {
+            String name = SecurityContextHolder.getContext().getAuthentication().getName();
+            Person boss = personService.getPersonByLogin(name);
+            String nameOfCommentingPerson = boss.getLastName() + " " + boss.getFirstName();
 
-        LOG.info(application.getApplicationDate() + " ID: " + application.getId() + "Der Antrag von "
-            + application.getPerson().getFirstName() + " " + application.getPerson().getLastName()
-            + " wurde am " + DateMidnight.now().toString(DATE_FORMAT) + " von " + nameOfCommentingPerson
-            + " abgelehnt.");
+            comment.setNameOfCommentingPerson(nameOfCommentingPerson);
+            comment.setApplication(application);
+            comment.setDateOfComment(DateMidnight.now());
+            commentService.saveComment(comment);
 
-        return "redirect:/web" + WAITING_APPS;
+            applicationService.reject(application, boss);
+
+            LOG.info(application.getApplicationDate() + " ID: " + application.getId() + "Der Antrag von "
+                + application.getPerson().getFirstName() + " " + application.getPerson().getLastName()
+                + " wurde am " + DateMidnight.now().toString(DATE_FORMAT) + " von " + nameOfCommentingPerson
+                + " abgelehnt.");
+
+            return "redirect:/web" + WAITING_APPS;
+        }
     }
 
 

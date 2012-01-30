@@ -9,6 +9,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+import org.synyx.urlaubsverwaltung.domain.Comment;
 import org.synyx.urlaubsverwaltung.domain.DayLength;
 import org.synyx.urlaubsverwaltung.domain.VacationType;
 import org.synyx.urlaubsverwaltung.view.AppForm;
@@ -25,6 +26,7 @@ import java.math.BigDecimal;
 public class ApplicationValidator implements Validator {
 
     private static final String MANDATORY_FIELD = "error.mandatory.field";
+    private static final String REASON = "error.reason";
     private static final String PERIOD = "error.period";
     private static final String PAST = "error.period.past";
 
@@ -116,6 +118,16 @@ public class ApplicationValidator implements Validator {
             // number of sick days is greater than vacation days of application
             if (app.getSickDays().compareTo(days) == 1)
                 errors.reject("sick.more");
+        }
+    }
+
+
+    public void validateComment(Object target, Errors errors) {
+
+        Comment comment = (Comment) target;
+
+        if (comment.getText() == null || !StringUtils.hasText(comment.getText())) {
+            errors.rejectValue("text", REASON);
         }
     }
 }

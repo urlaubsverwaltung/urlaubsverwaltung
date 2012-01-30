@@ -20,6 +20,7 @@ import org.mockito.Mockito;
 
 import org.springframework.validation.Errors;
 
+import org.synyx.urlaubsverwaltung.domain.Comment;
 import org.synyx.urlaubsverwaltung.domain.DayLength;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.VacationType;
@@ -201,5 +202,27 @@ public class ApplicationValidatorTest {
         instance.validateSickDays(app, vacationDays, errors);
         Mockito.verifyZeroInteractions(errors);
         Mockito.reset(errors);
+    }
+
+
+    /** Test of validateComment method, of class ApplicationValidator. */
+    @Test
+    public void testValidateComment() {
+
+        Comment comment = new Comment();
+
+        comment.setText(null);
+        instance.validateComment(comment, errors);
+        Mockito.verify(errors).rejectValue("text", "error.reason");
+        Mockito.reset(errors);
+
+        comment.setText("");
+        instance.validateComment(comment, errors);
+        Mockito.verify(errors).rejectValue("text", "error.reason");
+        Mockito.reset(errors);
+
+        comment.setText("Aus gutem Grund");
+        instance.validateComment(comment, errors);
+        Mockito.verifyZeroInteractions(errors);
     }
 }
