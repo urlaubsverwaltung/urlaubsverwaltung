@@ -24,7 +24,10 @@
         <constructor-arg ref="commentService" />
         <constructor-arg>
             <bean class="org.synyx.urlaubsverwaltung.validator.ApplicationValidator" />
-        </constructor-arg>    
+        </constructor-arg>
+        <constructor-arg>
+            <bean class="org.synyx.urlaubsverwaltung.util.GravatarUtil" />
+        </constructor-arg>
     </bean>
     
     <bean class="org.synyx.urlaubsverwaltung.controller.PersonController">
