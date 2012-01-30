@@ -15,7 +15,7 @@
                     <%-- if user wants to cancel an application --%>
                     <c:if test="${stateNumber == 4}">
                         <form:form method="put" action="${formUrlPrefix}/application/${application.id}/cancel">
-                            Wollen Sie diesen Antrag wirklich stornieren? <br /><br />
+                            <spring:message code='cancel.confirm' /> <br /><br />
                             <input type="submit" class="button confirm" name="<spring:message code='delete' />" value="<spring:message code='delete' />" />
                             <a class="button back" href="${formUrlPrefix}/overview"><spring:message code='cancel' /></a>
                         </form:form>

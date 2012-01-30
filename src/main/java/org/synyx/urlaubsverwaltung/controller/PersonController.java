@@ -127,6 +127,8 @@ public class PersonController {
 
             return STAFF_JSP;
         } else {
+            prepareErrorJsp(null, model);
+
             return ERROR_JSP;
         }
     }
@@ -150,6 +152,8 @@ public class PersonController {
 
             return STAFF_JSP;
         } else {
+            prepareErrorJsp(null, model);
+
             return ERROR_JSP;
         }
     }
@@ -179,6 +183,8 @@ public class PersonController {
 
             return STAFF_JSP;
         } else {
+            prepareErrorJsp(null, model);
+
             return ERROR_JSP;
         }
     }
@@ -203,6 +209,8 @@ public class PersonController {
 
             return STAFF_JSP;
         } else {
+            prepareErrorJsp(null, model);
+
             return ERROR_JSP;
         }
     }
@@ -324,6 +332,8 @@ public class PersonController {
     public String showStaffOverview(@PathVariable(PERSON_ID) Integer personId, Model model) {
 
         if (getLoggedUser().getRole() != Role.OFFICE) {
+            prepareErrorJsp(null, model);
+
             return ERROR_JSP;
         } else {
             Person person = personService.getPersonByID(personId);
@@ -349,6 +359,8 @@ public class PersonController {
         @RequestParam(YEAR) int year, Model model) {
 
         if (getLoggedUser().getRole() != Role.OFFICE) {
+            prepareErrorJsp(null, model);
+
             return ERROR_JSP;
         } else {
             Person person = personService.getPersonByID(personId);
@@ -432,6 +444,8 @@ public class PersonController {
 
             return PERSON_FORM_JSP;
         } else {
+            prepareErrorJsp(null, model);
+
             return ERROR_JSP;
         }
     }
@@ -561,5 +575,15 @@ public class PersonController {
         String user = SecurityContextHolder.getContext().getAuthentication().getName();
 
         return personService.getPersonByLogin(user);
+    }
+
+
+    private void prepareErrorJsp(String message, Model model) {
+
+        setLoggedUser(model);
+
+        if (message != null) {
+            model.addAttribute("message", message);
+        }
     }
 }

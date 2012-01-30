@@ -16,11 +16,22 @@
     
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" type="text/css" href="<spring:url value='/css/fluid_grid.css' />" />
+        <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />" />
         <title><spring:message code="title" /></title>
     </head>
     
     <body>
-        <p>Du kommst hier nicht rein!</p>
+        
+        <spring:url var="formUrlPrefix" value="/web/urlaubsverwaltung" />
+        
+        <%@include file="./include/header.jsp" %>
+        
+        <div class="container_12">
+            <div class="grid_12" id="errorpage">
+                <a href="${formUrlPrefix}/overview" id="error-link">&nbsp;</a>
+            </div>
+        </div>
     </body>
     
 </html>

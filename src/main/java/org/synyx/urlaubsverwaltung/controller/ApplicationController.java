@@ -81,7 +81,6 @@ public class ApplicationController {
     private static final String ERROR_JSP = "error";
 
     private static final String APPLICATION_ID = "applicationId";
-    private static final String PERSON_ID = "personId";
 
     // login link
     private static final String LOGIN_LINK = "redirect:/login.jsp?login_error=1";
@@ -182,6 +181,8 @@ public class ApplicationController {
 
             return APP_LIST_JSP;
         } else {
+            prepareErrorJsp(null, model);
+
             return ERROR_JSP;
         }
     }
@@ -207,6 +208,8 @@ public class ApplicationController {
 
             return APP_LIST_JSP;
         } else {
+            prepareErrorJsp(null, model);
+
             return ERROR_JSP;
         }
     }
@@ -232,6 +235,8 @@ public class ApplicationController {
 
             return APP_LIST_JSP;
         } else {
+            prepareErrorJsp(null, model);
+
             return ERROR_JSP;
         }
     }
@@ -256,6 +261,8 @@ public class ApplicationController {
 
             return APP_LIST_JSP;
         } else {
+            prepareErrorJsp(null, model);
+
             return ERROR_JSP;
         }
     }
@@ -411,6 +418,8 @@ public class ApplicationController {
 
             return SHOW_APP_DETAIL;
         } else {
+            prepareErrorJsp("message.curious", model);
+
             return ERROR_JSP;
         }
     }
@@ -445,6 +454,8 @@ public class ApplicationController {
 
             return "redirect:/web" + WAITING_APPS;
         } else {
+            prepareErrorJsp("message.boss", model);
+
             return ERROR_JSP;
         }
     }
@@ -503,6 +514,8 @@ public class ApplicationController {
 
             return SHOW_APP_DETAIL;
         } else {
+            prepareErrorJsp(null, model);
+
             return ERROR_JSP;
         }
     }
@@ -590,5 +603,15 @@ public class ApplicationController {
         String user = SecurityContextHolder.getContext().getAuthentication().getName();
 
         return personService.getPersonByLogin(user);
+    }
+
+
+    private void prepareErrorJsp(String message, Model model) {
+
+        setLoggedUser(model);
+
+        if (message != null) {
+            model.addAttribute("message", message);
+        }
     }
 }
