@@ -67,7 +67,7 @@
                     <br />
                     <br />
 
-                        <%@include file="../include/staff_list.jsp" %>
+                        <%@include file="./include/staff_list.jsp" %>
                     
                 </c:otherwise>    
                     

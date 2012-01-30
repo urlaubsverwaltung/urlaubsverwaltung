@@ -26,6 +26,8 @@ import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.domain.Comment;
 import org.synyx.urlaubsverwaltung.domain.DayLength;
+import org.synyx.urlaubsverwaltung.domain.HolidayEntitlement;
+import org.synyx.urlaubsverwaltung.domain.HolidaysAccount;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.Role;
 import org.synyx.urlaubsverwaltung.domain.VacationType;
@@ -34,6 +36,8 @@ import org.synyx.urlaubsverwaltung.service.CommentService;
 import org.synyx.urlaubsverwaltung.service.HolidaysAccountService;
 import org.synyx.urlaubsverwaltung.service.PersonService;
 import org.synyx.urlaubsverwaltung.util.DateMidnightPropertyEditor;
+import org.synyx.urlaubsverwaltung.util.DateUtil;
+import org.synyx.urlaubsverwaltung.util.GravatarUtil;
 import org.synyx.urlaubsverwaltung.validator.ApplicationValidator;
 import org.synyx.urlaubsverwaltung.view.AppForm;
 
@@ -48,12 +52,14 @@ import java.util.Locale;
 public class ApplicationController {
 
     // attribute names
+    private static final String LOGGED_USER = "loggedUser";
     private static final String DATE_FORMAT = "dd.MM.yyyy";
     private static final String COMMENT = "comment";
     private static final String APPFORM = "appForm";
     private static final String APPLICATION = "application";
     private static final String APPLICATIONS = "applications";
     private static final String ACCOUNT = "account";
+    private static final String ENTITLEMENT = "entitlement";
     private static final String PERSON = "person";
     private static final String PERSONS = "persons";
     private static final String YEAR = "year";
@@ -65,6 +71,8 @@ public class ApplicationController {
     private static final String NOTPOSSIBLE = "notpossible"; // is it possible for user to apply for leave? (no, if
                                                              // he/she has no account/entitlement)
     private static final String NO_APPS = "noapps"; // are there any applications to show?
+    private static final String APRIL = "april";
+    private static final String GRAVATAR = "gravatar";
 
     // jsps
     private static final String SHOW_APP_DETAIL = APPLICATION + "/app_detail";
@@ -94,12 +102,13 @@ public class ApplicationController {
     private static final String CANCELLED_APPS = SHORT_PATH_APPLICATION + "/cancelled";
     private static final String REJECTED_APPS = SHORT_PATH_APPLICATION + "/rejected"; // not used now, but maybe useful
 
-    // someday
+    // order applications by certain numbers
     private static final String STATE_NUMBER = "stateNumber";
     private static final int WAITING = 0;
     private static final int ALLOWED = 1;
     private static final int CANCELLED = 2;
     private static final int BY_PERSON = 3;
+    private static final int TO_CANCEL = 4;
 
     // form to apply vacation
     private static final String NEW_APP = SHORT_PATH_APPLICATION + "/new";
@@ -126,15 +135,18 @@ public class ApplicationController {
     private HolidaysAccountService accountService;
     private CommentService commentService;
     private ApplicationValidator validator;
+    private GravatarUtil gravatarUtil;
 
     public ApplicationController(PersonService personService, ApplicationService applicationService,
-        HolidaysAccountService accountService, CommentService commentService, ApplicationValidator validator) {
+        HolidaysAccountService accountService, CommentService commentService, ApplicationValidator validator,
+        GravatarUtil gravatarUtil) {
 
         this.personService = personService;
         this.applicationService = applicationService;
         this.accountService = accountService;
         this.commentService = commentService;
         this.validator = validator;
+        this.gravatarUtil = gravatarUtil;
     }
 
     @InitBinder
@@ -386,6 +398,14 @@ public class ApplicationController {
 
     public void prepareForm(Person person, AppForm appForm, Model model) {
 
+        int april = 0;
+
+        if (DateUtil.isBeforeApril(DateMidnight.now())) {
+            april = 1;
+        }
+
+        model.addAttribute(APRIL, april);
+
         model.addAttribute(PERSON, person);
         model.addAttribute(PERSONS, personService.getAllPersonsExceptOne(person.getId()));
         model.addAttribute(DATE, DateMidnight.now(GregorianChronology.getInstance()));
@@ -417,11 +437,9 @@ public class ApplicationController {
         if (getLoggedUser().getRole() == Role.OFFICE || getLoggedUser().getRole() == Role.BOSS) {
             Application application = applicationService.getApplicationById(applicationId);
 
-            model.addAttribute(APPLICATION, application);
-            model.addAttribute(STATE_NUMBER, state);
+            prepareDetailView(application, state, model);
             model.addAttribute(APPFORM, new AppForm());
             model.addAttribute(COMMENT, new Comment());
-            setLoggedUser(model);
 
             return SHOW_APP_DETAIL;
         } else {
@@ -499,6 +517,21 @@ public class ApplicationController {
     }
 
 
+    @RequestMapping(value = CANCEL_APP, method = RequestMethod.GET)
+    public String cancelApplicationConfirm(@PathVariable(APPLICATION_ID) Integer applicationId, Model model) {
+
+        Application application = applicationService.getApplicationById(applicationId);
+
+        if (getLoggedUser().equals(application.getPerson())) {
+            prepareDetailView(application, TO_CANCEL, model);
+
+            return SHOW_APP_DETAIL;
+        } else {
+            return ERROR_JSP;
+        }
+    }
+
+
     @RequestMapping(value = CANCEL_APP, method = RequestMethod.PUT)
     public String cancelApplication(@PathVariable(APPLICATION_ID) Integer applicationId) {
 
@@ -524,10 +557,8 @@ public class ApplicationController {
 
         if (errors.hasErrors()) {
             // shows error in Frontend
-            model.addAttribute(APPLICATION, application);
+            prepareDetailView(application, ALLOWED, model);
             model.addAttribute(APPFORM, appForm);
-            model.addAttribute(STATE_NUMBER, ALLOWED);
-            setLoggedUser(model);
 
             return SHOW_APP_DETAIL;
         } else {
@@ -542,12 +573,39 @@ public class ApplicationController {
     }
 
 
+    private void prepareDetailView(Application application, int stateNumber, Model model) {
+
+        setLoggedUser(model);
+        model.addAttribute(APPLICATION, application);
+        model.addAttribute(STATE_NUMBER, stateNumber);
+
+        int year = application.getEndDate().getYear();
+
+        HolidaysAccount account = accountService.getHolidaysAccount(year, application.getPerson());
+        HolidayEntitlement entitlement = accountService.getHolidayEntitlement(year, application.getPerson());
+        int april = 0;
+
+        if (DateUtil.isBeforeApril(application.getEndDate())) {
+            april = 1;
+        }
+
+        model.addAttribute(ACCOUNT, account);
+        model.addAttribute(ENTITLEMENT, entitlement);
+        model.addAttribute(YEAR, year);
+        model.addAttribute(APRIL, april);
+
+        // get url of person's gravatar image
+        String url = gravatarUtil.createImgURL(application.getPerson().getEmail());
+        model.addAttribute(GRAVATAR, url);
+    }
+
+
     private void setLoggedUser(Model model) {
 
         String user = SecurityContextHolder.getContext().getAuthentication().getName();
         Person loggedUser = personService.getPersonByLogin(user);
 
-        model.addAttribute("loggedUser", loggedUser);
+        model.addAttribute(LOGGED_USER, loggedUser);
     }
 
 

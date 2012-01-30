@@ -18,6 +18,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <script src="<spring:url value='/jquery/js/jquery-1.6.2.min.js' />" type="text/javascript" ></script>
         <script src="<spring:url value='/jquery/js/jquery-ui-1.8.16.custom.min.js' />" type="text/javascript" ></script>
+        <link rel="stylesheet" type="text/css" href="<spring:url value='/css/fluid_grid.css' />" />
         <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />" />
         <title><spring:message code="title" /></title>
     </head>
@@ -29,153 +30,130 @@
         <%@include file="../include/header.jsp" %>
 
         <div id="content">
+            <div class="container_12">
 
-            <h2><spring:message code="app.title" /></h2>    
+                <div class="grid_5 app">
+                    <h2><spring:message code="app.title" /></h2>    
 
-            <table>
-                <tr>
-                    <td>
-                        <spring:message code="name" />:&nbsp;
-                    </td>
-                    <td>
-                        <c:out value="${application.person.lastName}" />&nbsp;<c:out value="${application.person.firstName}" />
-                    </td> 
-                </tr>
-                <tr>
-                    <td colspan="2">&nbsp;</td>
-                </tr>
-                <tr>
-                    <td>
-                        <spring:message code="app.apply" />
-                    </td>
-                    <td>
-                        <spring:message code="${application.vacationType.vacationTypeName}" />
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2">&nbsp;</td>
-                </tr>
-                <tr>
-                    <td>
-                        <spring:message code="time" />
-                    </td>
-                    <td>
-                        <c:choose>
-                            <c:when test="${application.startDate == application.endDate}">
-                                am&nbsp;<joda:format style="M-" value="${application.startDate}"/>
-                            </c:when>
-                            <c:otherwise>
-                                <joda:format style="M-" value="${application.startDate}"/>&nbsp;-&nbsp;<joda:format style="M-" value="${application.endDate}"/>
-                            </c:otherwise>    
-                        </c:choose> 
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2">&nbsp;</td>
-                </tr>
-                <tr>
-                    <td>
-                        <label for="grund"><spring:message code='reason' />:</label>
-                    </td>
-                    <td>
-                        <c:out value="${application.reason}" />
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <label for="vertreter"><spring:message code='app.rep' />:</label> 
-                    </td>
-                    <td>
-                        <c:out value="${application.rep}" />
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <label for="anschrift"><spring:message code='app.address' />:</label>
-                    </td>
-                    <td colspan="4">
-                        <c:out value="${application.address}" />
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <label for="telefon"><spring:message code='app.phone' />:</label>
-                    </td>
-                    <td colspan="4">
-                        <c:out value="${application.phone}" />
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2">&nbsp;</td>
-                </tr>
-                <tr>
-                    <td>
-                        <spring:message code='app.footer' />&nbsp;<joda:format style="M-" value="${application.applicationDate}"/>
-                    </td>
-                    <td>&nbsp;</td>
-                </tr>
-                <tr>
-                    <td colspan="2">&nbsp;</td>
-                </tr>
-            </table>
+                    <table id="app-detail">
+                        <tr>
+                            <td>
+                                <spring:message code="app.apply" />
+                            </td>
+                            <td>
+                                <spring:message code="${application.vacationType.vacationTypeName}" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <spring:message code="time" />:
+                            </td>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${application.startDate == application.endDate}">
+                                        am&nbsp;<joda:format style="M-" value="${application.startDate}"/>,&nbsp;<spring:message code="${application.howLong.dayLength}" />
+                                    </c:when>
+                                    <c:otherwise>
+                                        <joda:format style="M-" value="${application.startDate}"/>&nbsp;-&nbsp;<joda:format style="M-" value="${application.endDate}"/>
+                                    </c:otherwise>    
+                                </c:choose> 
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td><spring:message code="days.vac" />:</td>
+                            <td><c:out value="${application.days}"/></td>
+                        </tr>
+                        <tr>
+                            <td><spring:message code="days.ill" />:</td>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${application.sickDays == null}">0</c:when>
+                                    <c:otherwise><c:out value="${application.sickDays}"/></c:otherwise>
+                                </c:choose>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">&nbsp;</td>
+                        </tr>
+                        <c:if test="${application.reason != null && !empty application.reason}">
+                            <tr>
+                                <td>
+                                    <label for="grund"><spring:message code='reason' />:</label>
+                                </td>
+                                <td>
+                                    <c:out value="${application.reason}" />
+                                </td>
+                            </tr>
+                        </c:if>
+                        <tr>
+                            <td>
+                                <label for="vertreter"><spring:message code='app.rep' />:</label> 
+                            </td>
+                            <td>
+                                <c:out value="${application.rep}" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">&nbsp;</td>
+                        </tr>
+                        <c:if test="${application.address!= null && !empty application.address}">
+                            <tr>
+                                <td>
+                                    <label for="anschrift"><spring:message code='app.address' />:</label>
+                                </td>
+                                <td colspan="4">
+                                    <c:out value="${application.address}" />
+                                </td>
+                            </tr>
+                        </c:if>
+                        <c:if test="${application.phone != null && !empty application.phone}">
+                            <tr>
+                                <td>
+                                    <label for="telefon"><spring:message code='app.phone' />:</label>
+                                </td>
+                                <td colspan="4">
+                                    <c:out value="${application.phone}" />
+                                </td>
+                            </tr>
+                        </c:if>
+                        <tr>
+                            <td colspan="2">&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <spring:message code='app.footer' />&nbsp;<joda:format style="M-" value="${application.applicationDate}"/>
+                            </td>
+                            <td>&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">&nbsp;</td>
+                        </tr>
+                    </table>
 
+
+                </div> <!-- end of application for leave -->             
+
+                <div class="grid_5 data" style="height: 100%">
+                    <table id="tbl-data">    
+                        <%@include file="./include/person_data.jsp" %>
+                    </table>
+                </div>
                     
-            <a class="button" href="${formUrlPrefix}/application/${app.id}/print"><spring:message code='print' /></a>
+                <div class="grid_12">&nbsp;</div>
+                <div class="grid_12">&nbsp;</div>
+                <div class="grid_12"><%-- various application's actions dependent on role --%>         
+                    <%@include file="./include/app_actions.jsp" %></div>     
 
-            <%-- application is waiting --%>            
-            <c:if test="${stateNumber == 0}">
 
-                <sec:authorize access="hasRole('role.boss')">         
+            </div> <!-- end of grid container -->
 
-                <form:form method="put" action="${formUrlPrefix}/application/${application.id}/allow"> 
-                    <input type="submit" name="<spring:message code='app.state.ok' />" value="<spring:message code='app.state.ok' />" class="button" />    
-                </form:form>
-                <br />    
-                    
-                <input type="button" name="<spring:message code='app.state.no' />" value="<spring:message code='app.state.no' />" onclick="$('#reject').show(1000);" />
-                <br />
-                <br /> 
-                
-                <div id="reject" style="display: none">    
-                    <form:form method="put" action="${formUrlPrefix}/application/${application.id}/reject" modelAttribute="comment">
-                        <spring:message code='reason' />&nbsp;<form:input path="text" />   
-                        <input type="submit" name="<spring:message code='ok' />" value="<spring:message code='ok' />" class="button" />    
-                    </form:form>
-                </div>    
-                    
-                </sec:authorize>
-               
-            </c:if>
-
-            <%-- application is allowed --%>  
-            <c:if test="${stateNumber == 1}">
-
-                <sec:authorize access="hasRole('role.office')">
-                    
-                    <input type="button" onclick="$('#sick').show();" name="<spring:message code='add.sickdays' />" value="<spring:message code='add.sickdays' />" />
-                    <br />
-                    <br />
-                    <br />
-                    
-                    <form:form method="put" action="${formUrlPrefix}/application/${application.id}/sick" modelAttribute="appForm">
-                        
-                    <div id="sick" style="display: none">
-                            <spring:message code='staff.sick' />
-                            <br />
-                            <br />
-                            <form:input path="sickDays" />   
-                            <input type="submit" name="<spring:message code='save' />" value="<spring:message code='save' />" class="button" />
-                    </div>
-                    <br />
-                    <br />
-                    <form:errors path="*" cssClass="error" />
-                    </form:form>
-
-                </sec:authorize>
-                
-            </c:if>
-
-        </div>
+        </div> <!-- end of content -->
 
     </body>
 

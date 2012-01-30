@@ -125,10 +125,11 @@ body {
     font-size: 12px;
     margin: 0;
 }
+	
 
 #content {
-	margin: 30px 35px 100px 45px;
-}	
+	margin-top: 30px;
+}
 
 #staff-list td {
 	padding: 5px 0px 5px 15px;
@@ -164,7 +165,7 @@ tr.even {
 }
 
 #person-tbl {
-	width: 60%;
+	width: 100%;
 	font-size: 1.05em;
 	/* border: 1px solid #BBBBBB;*/
 }
@@ -177,6 +178,19 @@ tr.even {
 #person-tbl th {
 	width: 37%;
 }
+
+.data {
+    border: 1px solid #D7D7D7; 
+    padding: 2em; 
+    margin-left:3em;
+}
+
+#tbl-data th {
+    text-align: left;
+    vertical-align: top;
+    padding-right: 1em;
+}
+
 
 .td-pic {
     width: 15%;
@@ -191,26 +205,39 @@ padding: 5px 0px 5px 0px;
     text-align: left;
 }
 
+.app {
+    border: 1px solid #D7D7D7; 
+    padding: 1em 2em 2em 2em; 
+    margin:0;
+}
+
 #app-tbl {
-	width: 80%;
+	width: 100%;
 font-size: 1.05em;
 }	
 
 #app-tbl th, #app-tbl td {
 	text-align: left;
-	padding: 2px 0px 2px 10px;
+	padding: 5px 0px 5px 10px;
+}
+
+#app-detail td {
+    padding-right: 2em;
 }
 
 .user-pic {
 	text-align: center;
-}	
+}
+
 
 .td-edit {
 	text-align: center;
 	padding-right: 10px;
 }
 
-
+#data {
+    width: 100%;
+}
 
 #year-navi {
     margin-bottom: 20px;
@@ -239,6 +266,20 @@ input[type=submit], input[type=button], a.button {
 input[type=submit]:hover, input[type=button]:hover, a.button:hover {
     background-color: #F2EFEF;
     cursor: pointer;
+}
+
+input[type=submit].back, input[type=button].back, a.button.back {
+    background-image: url("../images/agt_action_fail.png");
+    background-repeat: no-repeat;
+    background-position: 5% 50%;
+    padding-left: 2em;
+}
+
+input[type=submit].confirm, input[type=button].confirm, a.button.confirm {
+    background-image: url("../images/agt_action_success.png");
+    background-repeat: no-repeat;
+    background-position: 5% 50%;
+    padding-left: 2em;
 }
 
 .error {

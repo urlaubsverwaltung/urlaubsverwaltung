@@ -10,8 +10,6 @@
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
-
-<table id="person-tbl" cellspacing="0" border="1">
     <tr>
         <td rowspan="6"><img class="user-pic" src="<c:out value='${gravatar}?d=mm'/>" /></td>
     </tr>
@@ -79,4 +77,4 @@
             </c:choose>
         </td>
     </tr>
-</table>
+

@@ -97,21 +97,19 @@
                                 </td> 
                             </tr>
                             <tr>
+                                <td><spring:message code="overview.left" />:</td>
                                 <td>
-                                    <spring:message code="entitlement" />:
+                                <c:choose>
+                                    <c:when test="${april == 1}">
+                                        <c:out value="${account.vacationDays + account.remainingVacationDays}"/>&nbsp;<spring:message code="days" />
+                                        &nbsp;(<spring:message code="davon" />&nbsp;<c:out value="${account.remainingVacationDays}"/>
+                                        <spring:message code="days" />&nbsp;<spring:message code="remaining" />)
+                                    </c:when>
+                                    <c:otherwise>
+                                        <c:out value="${account.vacationDays}"/>&nbsp;<spring:message code="days" />
+                                    </c:otherwise>
+                                </c:choose>
                                 </td>    
-                                <td>    
-                                    <c:out value="${account.vacationDays}" />&nbsp;<spring:message code="days" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <spring:message code="remaining" />:  
-                                </td>
-                                <td>
-                                    <c:out value="${account.remainingVacationDays}" />&nbsp;<spring:message code="days" />
-                                </td>
-                            </tr>
                             <tr>
                                 <td colspan="3">&nbsp;</td>
                             </tr>

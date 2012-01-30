@@ -70,6 +70,8 @@ public class PersonController {
     private static final String NOTEXISTENT = "notexistent"; // are there any persons to show?
     private static final String NO_APPS = "noapps"; // are there any applications to show?
 
+    private static final String IS_OFFICE = "isOffice";
+
     private static final String PERSON_ID = "personId";
     private static final String YEAR = "year";
 
@@ -278,6 +280,7 @@ public class PersonController {
         } else {
             Person person = getLoggedUser();
             prepareOverview(person, DateMidnight.now(GregorianChronology.getInstance()).getYear(), model);
+            model.addAttribute(IS_OFFICE, false);
 
             return OVERVIEW_JSP;
         }
@@ -301,6 +304,7 @@ public class PersonController {
         } else {
             Person person = getLoggedUser();
             prepareOverview(person, year, model);
+            model.addAttribute(IS_OFFICE, false);
 
             return OVERVIEW_JSP;
         }
@@ -324,6 +328,7 @@ public class PersonController {
         } else {
             Person person = personService.getPersonByID(personId);
             prepareOverview(person, DateMidnight.now(GregorianChronology.getInstance()).getYear(), model);
+            model.addAttribute(IS_OFFICE, true);
 
             return OVERVIEW_JSP;
         }
@@ -348,6 +353,7 @@ public class PersonController {
         } else {
             Person person = personService.getPersonByID(personId);
             prepareOverview(person, year, model);
+            model.addAttribute(IS_OFFICE, true);
 
             return OVERVIEW_JSP;
         }
