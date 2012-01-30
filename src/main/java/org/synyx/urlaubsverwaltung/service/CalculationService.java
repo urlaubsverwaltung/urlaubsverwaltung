@@ -83,7 +83,7 @@ public class CalculationService {
 
 
     /**
-     * This method works alike the method subtractVacationDays excpet that this method doesn't manipulate the real
+     * This method works alike the method subtractVacationDays except that this method doesn't manipulate the real
      * account(s) but uses copies of the available account(s) days. Method is used by ApplicationServiceImpl's method
      * checkApplication, i.e. real account(s) is/are not modified but only copies of it.
      *
@@ -157,18 +157,23 @@ public class CalculationService {
         int endMonth = application.getEndDate().getMonthOfYear();
 
         if (DateUtil.isBeforeApril(startMonth, endMonth)) {
+            // if the vacation is before April, at first remaining vacation days must be filled and then vacation days
             days = getNumberOfVacationDays(application);
-            account = addDaysToAccount(account, days);
+            account = addDaysBeforeApril(account, days);
             accounts.add(account);
         } else if (DateUtil.isAfterApril(startMonth, endMonth)) {
+            // if the vacation is after April, only vacation days are filled (not the remaining vacation days)
             days = getNumberOfVacationDays(application);
-            account.setVacationDays(account.getVacationDays().add(days));
+            account = addDaysAfterApril(account, days);
             accounts.add(account);
         } else if (DateUtil.spansMarchAndApril(startMonth, endMonth)) {
+            // if the vacations spans March and April, the number of days in March are added to holidays
+            // account's remaining vacation days (and if this is not enough: to vacation days too)
+            // and the number of days in April are added only to vacation days
             BigDecimal beforeApr = getDaysBeforeLastOfGivenMonth(application, DateTimeConstants.MARCH);
             BigDecimal afterApr = getDaysAfterFirstOfGivenMonth(application, DateTimeConstants.APRIL);
-            account.setVacationDays(account.getVacationDays().add(afterApr));
-            account = addDaysToAccount(account, beforeApr);
+            account = addDaysBeforeApril(account, beforeApr);
+            account = addDaysAfterApril(account, afterApr);
             accounts.add(account);
         } else if (DateUtil.spansDecemberAndJanuary(startMonth, endMonth)) {
             HolidaysAccount accountNextYear = accountService.getAccountOrCreateOne(application.getEndDate().getYear(),
@@ -178,7 +183,7 @@ public class CalculationService {
 
             BigDecimal remainingDays = account.getVacationDays().add(beforeJan);
             accountNextYear.setRemainingVacationDays(remainingDays);
-            addDaysToAccount(accountNextYear, afterJan);
+            addDaysAfterApril(accountNextYear, afterJan);
             accounts.add(account);
             accounts.add(accountNextYear);
         }
@@ -205,7 +210,7 @@ public class CalculationService {
     public HolidaysAccount addSickDaysOnHolidaysAccount(Application application, HolidaysAccount account) {
 
         if (DateUtil.isBeforeApril(application.getDateOfAddingSickDays())) {
-            addDaysToAccount(account, application.getSickDays());
+            addDaysAfterApril(account, application.getSickDays());
         } else if (DateUtil.isAfterApril(application.getDateOfAddingSickDays())) {
             HolidayEntitlement entitlement = accountService.getHolidayEntitlement(account.getYear(),
                     account.getPerson());
@@ -223,23 +228,64 @@ public class CalculationService {
 
 
     /**
-     * method that updates a given holiday account by adding given number of days.
+     * If it is after April use this method to update a given holiday account by adding given number of days. At first
+     * the vacation days are filled and then the remaining vacation days of the account.
      *
      * @param  account
      * @param  days
      *
-     * @return
+     * @return  modified holidays account
      */
-    private HolidaysAccount addDaysToAccount(HolidaysAccount account, BigDecimal days) {
+    protected HolidaysAccount addDaysAfterApril(HolidaysAccount account, BigDecimal days) {
 
         BigDecimal sum = account.getVacationDays().add(days);
 
         HolidayEntitlement entitlement = accountService.getHolidayEntitlement(account.getYear(), account.getPerson());
 
+        // if sum is greater than number of entitlement's vacation days, the account's vacation days are set to
+        // entitlement's vacation days and the difference between sum and the number of entitlement's vacation days is
+        // added to account's remaining vacation days
         if (sum.compareTo(entitlement.getVacationDays()) == 1) {
             account.setVacationDays(entitlement.getVacationDays());
             account.setRemainingVacationDays(account.getRemainingVacationDays().add(
                     sum.subtract(entitlement.getVacationDays())));
+        } else {
+            // if sum is equal or smaller than number of entitlement's vacation days, the sum is added to number of
+            // account's vacation days
+            account.setVacationDays(sum);
+        }
+
+        return account;
+    }
+
+
+    /**
+     * If it is before April use this method to update a given holiday account by adding given number of days. At first
+     * the remaining vacation days are filled and then the vacation days of the account.
+     *
+     * @param  account
+     * @param  days
+     *
+     * @return  modified holidays account
+     */
+    protected HolidaysAccount addDaysBeforeApril(HolidaysAccount account, BigDecimal days) {
+
+        BigDecimal sum = account.getRemainingVacationDays().add(days);
+
+        HolidayEntitlement entitlement = accountService.getHolidayEntitlement(account.getYear(), account.getPerson());
+
+        // if sum is greater than number of entitlement's remaining vacation days, the account's number of remaining
+        // vacation days is set to number of entitlement's remaining vacation days. The difference between sum
+        // and the number of entitlement's remaining vacation days is added to number of account's vacation days.
+        if (sum.compareTo(entitlement.getRemainingVacationDays()) == 1) {
+            account.setRemainingVacationDays(entitlement.getRemainingVacationDays());
+
+            account.setVacationDays(account.getVacationDays().add(
+                    sum.subtract(entitlement.getRemainingVacationDays())));
+        } else {
+            // if sum is equal or smaller than number of entitlement's remaining vacation days, the number of the
+            // given days is added to number of account's remaining vacation days
+            account.setRemainingVacationDays(sum);
         }
 
         return account;
@@ -252,7 +298,7 @@ public class CalculationService {
      * @param  application
      * @param  account
      *
-     * @return  updated account
+     * @return  modified holidays account
      */
     private HolidaysAccount subtractCaseBeforeApril(Application application, HolidaysAccount account) {
 
