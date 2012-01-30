@@ -18,6 +18,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <script src="<spring:url value='/jquery/js/jquery-1.6.2.min.js' />" type="text/javascript" ></script>
         <script src="<spring:url value='/jquery/js/jquery-ui-1.8.16.custom.min.js' />" type="text/javascript" ></script>
+        <link rel="stylesheet" type="text/css" href="<spring:url value='/css/fluid_grid.css' />" />
         <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />" />
         <title><spring:message code="title" /></title>
     </head>
@@ -30,6 +31,7 @@
 
 
         <div id="content">
+            <div class="container_12">
 
             <form:form method="put" action="${formUrlPrefix}/staff/${person.id}/edit" modelAttribute="personForm"> 
                 <table id="person-form-tbl">
@@ -138,6 +140,7 @@
                 </div>         
             </form:form>
 
+            </div> 
         </div>    
 
     </body>

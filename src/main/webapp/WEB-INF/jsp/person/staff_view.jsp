@@ -31,6 +31,7 @@
                 }
             });
         </script>
+        <link rel="stylesheet" type="text/css" href="<spring:url value='/css/fluid_grid.css' />" />
         <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />" /> 
         <title><spring:message code="title" /></title>
     </head>
@@ -47,6 +48,7 @@
         </div>
 
         <div id="content">
+            <div class="container_12">
 
             <c:choose>
 
@@ -73,6 +75,7 @@
                     
             </c:choose>
 
+                    </div> 
         </div>        
 
     </body>
