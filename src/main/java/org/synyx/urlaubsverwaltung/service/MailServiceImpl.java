@@ -4,6 +4,8 @@ import org.apache.log4j.Logger;
 
 import org.apache.velocity.app.VelocityEngine;
 
+import org.joda.time.DateMidnight;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.mail.MailException;
@@ -34,7 +36,7 @@ import javax.mail.internet.MimeMessage;
  */
 public class MailServiceImpl implements MailService {
 
-    private static final Logger mailLogger = Logger.getLogger("mailLogger");
+    private static final Logger LOG = Logger.getLogger(MailServiceImpl.class);
 
     private static final String FROM = "email.manager";
 
@@ -109,7 +111,9 @@ public class MailServiceImpl implements MailService {
         try {
             this.mailSender.send(prep);
         } catch (MailException ex) {
-            mailLogger.error(ex.getMessage(), ex);
+            LOG.error(DateMidnight.now().toString("dd.MM.yyyy") + ": Versenden der Email mit dem Betreff '" + subject
+                + "' an " + recipient + " fehlgeschlagen.");
+            LOG.error(ex.getMessage(), ex);
         }
     }
 
@@ -129,16 +133,14 @@ public class MailServiceImpl implements MailService {
 
 
     /**
-     * @see  MailService#sendNewApplicationsNotification(java.util.List)
+     * @see  MailService#sendNewApplicationNotification(org.synyx.urlaubsverwaltung.domain.Application)
      */
     @Override
-    public void sendNewApplicationsNotification(List<Application> applications) {
+    public void sendNewApplicationNotification(Application application) {
 
-        for (Application application : applications) {
-            String text = prepareMessage(application, APPLICATION, FILE_NEW);
+        String text = prepareMessage(application, APPLICATION, FILE_NEW);
 
-            sendEmail("email.chefs", "subject.new", text);
-        }
+        sendEmail("email.chefs", "subject.new", text);
     }
 
 

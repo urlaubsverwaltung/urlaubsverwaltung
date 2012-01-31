@@ -40,19 +40,16 @@ public class ApplicationServiceImpl implements ApplicationService {
     private HolidaysAccountService accountService;
     private CryptoService cryptoService;
     private OwnCalendarService calendarService;
-    private MailService mailService;
     private CalculationService calculationService;
 
     @Autowired
     public ApplicationServiceImpl(ApplicationDAO applicationDAO, HolidaysAccountService accountService,
-        CryptoService cryptoService, OwnCalendarService calendarService, MailService mailService,
-        CalculationService calculationService) {
+        CryptoService cryptoService, OwnCalendarService calendarService, CalculationService calculationService) {
 
         this.applicationDAO = applicationDAO;
         this.accountService = accountService;
         this.cryptoService = cryptoService;
         this.calendarService = calendarService;
-        this.mailService = mailService;
         this.calculationService = calculationService;
     }
 
@@ -108,8 +105,6 @@ public class ApplicationServiceImpl implements ApplicationService {
         signApplicationByBoss(application, boss);
 
         simpleSave(application);
-
-        mailService.sendAllowedNotification(application);
     }
 
 
@@ -137,9 +132,6 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         // save changed application in the end
         applicationDAO.save(application);
-
-        // mail to applicant
-        mailService.sendConfirmation(application);
     }
 
 
@@ -157,8 +149,6 @@ public class ApplicationServiceImpl implements ApplicationService {
         rollback(application);
 
         applicationDAO.save(application);
-
-        mailService.sendRejectedNotification(application);
     }
 
 
@@ -170,19 +160,8 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         rollback(application);
 
-        if (application.getStatus() == ApplicationStatus.WAITING) {
-            application.setStatus(ApplicationStatus.CANCELLED);
-            applicationDAO.save(application);
-
-            // if application has been waiting, chefs get email
-            mailService.sendCancelledNotification(application, true);
-        } else if (application.getStatus() == ApplicationStatus.ALLOWED) {
-            application.setStatus(ApplicationStatus.CANCELLED);
-            applicationDAO.save(application);
-
-            // if application has been allowed, office gets email
-            mailService.sendCancelledNotification(application, false);
-        }
+        application.setStatus(ApplicationStatus.CANCELLED);
+        applicationDAO.save(application);
     }
 
 

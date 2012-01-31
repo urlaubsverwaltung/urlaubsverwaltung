@@ -34,6 +34,7 @@ import org.synyx.urlaubsverwaltung.domain.VacationType;
 import org.synyx.urlaubsverwaltung.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.service.CommentService;
 import org.synyx.urlaubsverwaltung.service.HolidaysAccountService;
+import org.synyx.urlaubsverwaltung.service.MailService;
 import org.synyx.urlaubsverwaltung.service.PersonService;
 import org.synyx.urlaubsverwaltung.util.DateMidnightPropertyEditor;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
@@ -74,13 +75,13 @@ public class ApplicationController {
     private static final String APRIL = "april";
     private static final String GRAVATAR = "gravatar";
 
+    private static final String APPLICATION_ID = "applicationId";
+
     // jsps
     private static final String SHOW_APP_DETAIL = APPLICATION + "/app_detail";
     private static final String APP_LIST_JSP = APPLICATION + "/list";
     private static final String APP_FORM_JSP = APPLICATION + "/app_form";
     private static final String ERROR_JSP = "error";
-
-    private static final String APPLICATION_ID = "applicationId";
 
     // login link
     private static final String LOGIN_LINK = "redirect:/login.jsp?login_error=1";
@@ -131,10 +132,11 @@ public class ApplicationController {
     private CommentService commentService;
     private ApplicationValidator validator;
     private GravatarUtil gravatarUtil;
+    private MailService mailService;
 
     public ApplicationController(PersonService personService, ApplicationService applicationService,
         HolidaysAccountService accountService, CommentService commentService, ApplicationValidator validator,
-        GravatarUtil gravatarUtil) {
+        GravatarUtil gravatarUtil, MailService mailService) {
 
         this.personService = personService;
         this.applicationService = applicationService;
@@ -142,6 +144,7 @@ public class ApplicationController {
         this.commentService = commentService;
         this.validator = validator;
         this.gravatarUtil = gravatarUtil;
+        this.mailService = mailService;
     }
 
     @InitBinder
@@ -358,6 +361,12 @@ public class ApplicationController {
                         + " Es wurde ein neuer Antrag von " + person.getLastName() + " " + person.getFirstName()
                         + " angelegt.");
 
+                    // mail to applicant
+                    mailService.sendConfirmation(application);
+
+                    // mail to boss
+                    mailService.sendNewApplicationNotification(application);
+
                     return "redirect:/web" + OVERVIEW;
                 } else {
                     errors.reject("check.enough");
@@ -452,6 +461,8 @@ public class ApplicationController {
                 + " wurde am " + DateMidnight.now().toString(DATE_FORMAT) + " von " + boss.getFirstName() + " "
                 + boss.getLastName() + " genehmigt.");
 
+            mailService.sendAllowedNotification(application);
+
             return "redirect:/web" + WAITING_APPS;
         } else {
             prepareErrorJsp("message.boss", model);
@@ -499,6 +510,9 @@ public class ApplicationController {
                 + " wurde am " + DateMidnight.now().toString(DATE_FORMAT) + " von " + nameOfCommentingPerson
                 + " abgelehnt.");
 
+            // mail to applicant
+            mailService.sendRejectedNotification(application);
+
             return "redirect:/web" + WAITING_APPS;
         }
     }
@@ -531,6 +545,12 @@ public class ApplicationController {
         LOG.info(application.getApplicationDate() + " ID: " + application.getId() + "Der Antrag von "
             + application.getPerson().getFirstName() + " " + application.getPerson().getLastName()
             + " wurde am " + DateMidnight.now().toString(DATE_FORMAT) + " storniert.");
+
+        // if application has status ALLOWED, office gets an email
+        mailService.sendCancelledNotification(application, false);
+
+        // should boss get an email if application's status is WAITING?
+        // mailService.sendCancelledNotification(application, true);
 
         return "redirect:/web" + OVERVIEW;
     }

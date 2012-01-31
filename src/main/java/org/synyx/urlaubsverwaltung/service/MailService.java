@@ -11,7 +11,7 @@ import java.util.List;
 
 
 /**
- * the mailservice provides sending of notification-mails to the users, chefs and office
+ * the mailservice provides sending of notification-mails to the users, bosses and office
  *
  * @author  Johannes Reuter
  * @author  Aljona Murygina
@@ -29,12 +29,12 @@ public interface MailService {
 
 
     /**
-     * this method sends an email to chefs that there are some new applications information about the new applications
-     * can be found in list of new applications
+     * this method sends an email to the bosses notifying that there is a new application for leave which has to be
+     * allowed or rejected by a boss
      *
-     * @param  applications  the list of applications which should be processed
+     * @param  application
      */
-    void sendNewApplicationsNotification(List<Application> applications);
+    void sendNewApplicationNotification(Application application);
 
 
     /**

@@ -37,26 +37,34 @@
 <bean id="calculationService" class="org.synyx.urlaubsverwaltung.service.CalculationService">
     <constructor-arg ref="accountService" />
     <constructor-arg ref="ownCalendarService" />
-</bean>    
+</bean>
+
 <bean id="ownCalendarService" class="org.synyx.urlaubsverwaltung.calendar.OwnCalendarService" />
+
 <bean id="accountService" class="org.synyx.urlaubsverwaltung.service.HolidaysAccountServiceImpl" />
+
 <bean id="personService" class="org.synyx.urlaubsverwaltung.service.PersonServiceImpl">
     <constructor-arg ref="applicationService" />
     <constructor-arg ref="accountService" />
     <constructor-arg ref="mailService" />
-</bean>    
+</bean>
+
 <bean id="applicationService" class="org.synyx.urlaubsverwaltung.service.ApplicationServiceImpl">
     <constructor-arg ref="accountService" />
     <constructor-arg ref="cryptoService" />
     <constructor-arg ref="ownCalendarService" />
-    <constructor-arg ref="mailService" />
     <constructor-arg ref="calculationService" />
-</bean>    
+</bean>
+
 <bean id="cryptoService" class="org.synyx.urlaubsverwaltung.service.CryptoService" />
+
 <bean id="mailService" class="org.synyx.urlaubsverwaltung.service.MailServiceImpl">
        <constructor-arg ref="mailSender" />
-</bean> 
+</bean>
+
 <bean id="commentService" class="org.synyx.urlaubsverwaltung.service.CommentServiceImpl" />
+
+<bean id="gravatarUtil" class="org.synyx.urlaubsverwaltung.util.GravatarUtil" />
 
 </beans>
 

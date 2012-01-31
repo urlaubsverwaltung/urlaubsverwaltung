@@ -56,7 +56,6 @@ public class ApplicationServiceImplTest {
     private HolidaysAccountService accountService = mock(HolidaysAccountService.class);
     private CryptoService cryptoService = new CryptoService();
     private OwnCalendarService calendarService = new OwnCalendarService();
-    private MailService mailService = mock(MailService.class);
     private CalculationService calculationService = mock(CalculationService.class);
 
     public ApplicationServiceImplTest() {
@@ -76,7 +75,7 @@ public class ApplicationServiceImplTest {
     public void setUp() {
 
         instance = new ApplicationServiceImpl(applicationDAO, accountService, cryptoService, calendarService,
-                mailService, calculationService);
+                calculationService);
 
         // create person that is needed for tests
         person = new Person();

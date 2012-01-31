@@ -114,18 +114,15 @@ public class MailServiceImplTest {
     }
 
 
-    /** Test of sendNewApplicationsNotification method, of class MailServiceImpl. */
+    /** Test of sendNewApplicationNotification method, of class MailServiceImpl. */
     @Test
-    public void testSendNewApplicationsNotification() throws MessagingException, IOException {
+    public void testSendNewApplicationNotification() throws MessagingException, IOException {
 
         person.setLastName("Antragsteller");
         person.setFirstName("Horst");
         person.setEmail("misterhorst@test.com");
 
-        List<Application> applications = new ArrayList<Application>();
-        applications.add(application);
-
-        instance.sendNewApplicationsNotification(applications);
+        instance.sendNewApplicationNotification(application);
 
         // was email sent?
         List<Message> inbox = Mailbox.get("email.chefs");
@@ -148,14 +145,6 @@ public class MailServiceImplTest {
         assertTrue(content.contains("Antragsteller"));
         assertTrue(content.contains("Antragsstellung"));
         assertFalse(content.contains("Mist"));
-
-        // are two emails sent if there are more than one new applications?
-        Application a = new Application();
-        applications.add(a);
-
-        instance.sendNewApplicationsNotification(applications);
-        inbox = Mailbox.get("email.chefs");
-        assertTrue(inbox.size() > 1);
     }
 
 
