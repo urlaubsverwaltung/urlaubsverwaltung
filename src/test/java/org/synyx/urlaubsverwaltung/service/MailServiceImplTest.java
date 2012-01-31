@@ -11,7 +11,9 @@ import org.junit.AfterClass;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
@@ -37,6 +39,8 @@ import javax.mail.internet.InternetAddress;
 
 
 /**
+ * This is a test for MailService implementation for the properties file: messages_de.properties.
+ *
  * @author  Aljona Murygina
  */
 public class MailServiceImplTest {
@@ -98,7 +102,7 @@ public class MailServiceImplTest {
         Message msg = inbox.get(0);
 
         // check subject
-        assertEquals("subject.expire", msg.getSubject());
+        assertEquals("Erinnerung Resturlaub", msg.getSubject());
         assertNotSame("subject", msg.getSubject());
 
         // check from and recipient
@@ -132,7 +136,7 @@ public class MailServiceImplTest {
         Message msg = inbox.get(0);
 
         // check subject
-        assertEquals("subject.new", msg.getSubject());
+        assertEquals("Es liegen neue Urlaubsanträge vor", msg.getSubject());
         assertNotSame("subject", msg.getSubject());
 
         // check from and recipient
@@ -172,7 +176,7 @@ public class MailServiceImplTest {
         Message msg = inboxUser.get(0);
 
         // check subject
-        assertEquals("subject.allowed.user", msg.getSubject());
+        assertEquals("Dein Urlaubsantrag wurde bewilligt", msg.getSubject());
         assertNotSame("subject", msg.getSubject());
 
         // check from and recipient
@@ -189,7 +193,7 @@ public class MailServiceImplTest {
         Message msgOffice = inboxOffice.get(0);
 
         // check subject
-        assertEquals("subject.allowed.office", msgOffice.getSubject());
+        assertEquals("Neuer bewilligter Antrag", msgOffice.getSubject());
         assertNotSame("subject", msgOffice.getSubject());
 
         // check from and recipient
@@ -225,7 +229,7 @@ public class MailServiceImplTest {
         Message msg = inbox.get(0);
 
         // check subject
-        assertEquals("subject.rejected", msg.getSubject());
+        assertEquals("Dein Urlaubsantrag wurde abgelehnt", msg.getSubject());
         assertNotSame("subject", msg.getSubject());
 
         // check from and recipient
@@ -260,7 +264,7 @@ public class MailServiceImplTest {
         Message msg = inbox.get(0);
 
         // check subject
-        assertEquals("subject.confirm", msg.getSubject());
+        assertEquals("Bestätigung Antragsstellung", msg.getSubject());
         assertNotSame("subject", msg.getSubject());
 
         // check from and recipient
@@ -299,7 +303,7 @@ public class MailServiceImplTest {
         Message msg = inbox.get(0);
 
         // check subject
-        assertEquals("subject.weekly", msg.getSubject());
+        assertEquals("Diese Woche im Urlaub", msg.getSubject());
         assertNotSame("subject", msg.getSubject());
 
         // check from and recipient
@@ -339,7 +343,7 @@ public class MailServiceImplTest {
         Message msg = inboxChef.get(0);
 
         // check subject
-        assertEquals("subject.cancelled", msg.getSubject());
+        assertEquals("Antrag wurde storniert", msg.getSubject());
         assertNotSame("subject", msg.getSubject());
 
         // check from and recipient
@@ -351,5 +355,31 @@ public class MailServiceImplTest {
         assertTrue(content.contains("Heinrich"));
         assertTrue(content.contains("storniert"));
         assertFalse(content.contains("Mist"));
+    }
+
+
+    @Test
+    public void testGetProperty() {
+
+        String key = "vac.holiday";
+
+        String returnValue = instance.getProperty(key);
+
+        assertNotNull(returnValue);
+        assertEquals("Erholungsurlaub", returnValue);
+
+        key = "vac.overtime";
+
+        returnValue = instance.getProperty(key);
+
+        assertNotNull(returnValue);
+        assertEquals("Überstunden abbummeln", returnValue);
+
+        key = "unsinn";
+
+        returnValue = instance.getProperty(key);
+
+        assertNull(returnValue);
+        assertNotSame("Erholungsurlaub", returnValue);
     }
 }

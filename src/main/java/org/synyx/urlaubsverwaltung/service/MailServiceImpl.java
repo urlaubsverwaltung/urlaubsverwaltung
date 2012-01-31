@@ -17,10 +17,16 @@ import org.springframework.ui.velocity.VelocityEngineUtils;
 import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.Person;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -37,10 +43,9 @@ import javax.mail.internet.MimeMessage;
 public class MailServiceImpl implements MailService {
 
     private static final Logger LOG = Logger.getLogger(MailServiceImpl.class);
-
     private static final String FROM = "email.manager";
-
     private static final String PATH = "/email/";
+    private static final String PROPERTY_FILE = "./src/main/resources/messages_de.properties";
     private static final String APPLICATION = "application";
     private static final String PERSON = "person";
     private static final String PERSONS = "persons";
@@ -55,7 +60,6 @@ public class MailServiceImpl implements MailService {
     private static final String FILE_NEW = "newapplications" + TYPE;
     private static final String FILE_REJECTED = "rejected" + TYPE;
     private static final String FILE_WEEKLY = "weekly" + TYPE;
-
     private JavaMailSender mailSender;
     private VelocityEngine velocityEngine;
 
@@ -65,6 +69,36 @@ public class MailServiceImpl implements MailService {
         this.mailSender = mailSender;
         this.velocityEngine = velocityEngine;
     }
+
+    /**
+     * This method gets the properties' value of the given key
+     *
+     * @param  key
+     *
+     * @return
+     */
+    protected String getProperty(String key) {
+
+        File propertiesFile = new File(PROPERTY_FILE);
+        Properties properties = new Properties();
+
+        if (propertiesFile.exists()) {
+            try {
+                BufferedInputStream bis;
+                bis = new BufferedInputStream(new FileInputStream(propertiesFile));
+                properties.load(bis);
+                bis.close();
+
+                return properties.getProperty(key);
+            } catch (IOException ex) {
+                LOG.error("Keinen Wert zu gegebenem Property-Key '" + key + "' gefunden.");
+                LOG.error(ex.getMessage(), ex);
+            }
+        }
+
+        return null;
+    }
+
 
     /**
      * this method prepares an email:
@@ -79,6 +113,12 @@ public class MailServiceImpl implements MailService {
 
         Map model = new HashMap();
         model.put(modelName, object);
+
+        if (object.getClass().equals(Application.class)) {
+            Application a = (Application) object;
+            model.put("vacationType", getProperty(a.getVacationType().getVacationTypeName()));
+            model.put("dayLength", getProperty(a.getHowLong().getDayLength()));
+        }
 
         // mergeTemplateIntoString(VelocityEngine velocityEngine, String templateLocation, Map model)
         String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, PATH + fileName, model);
@@ -103,7 +143,7 @@ public class MailServiceImpl implements MailService {
 
                 mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(recipient));
                 mimeMessage.setFrom(new InternetAddress(FROM));
-                mimeMessage.setSubject(subject);
+                mimeMessage.setSubject(getProperty(subject));
                 mimeMessage.setText(text);
             }
         };
@@ -219,19 +259,16 @@ public class MailServiceImpl implements MailService {
             sendEmail("email.office", "subject.cancelled", text);
         }
     }
-
     /**
-    * NOT YET IMPLEMENTED
-    * Commented out on Tu, 2011/11/29 - Aljona Murygina
-    * Think about if method really is necessary or not
-    *
-    * @see  MailService#sendBalance(java.lang.Object)
-    */
-
+     * NOT YET IMPLEMENTED
+     * Commented out on Tu, 2011/11/29 - Aljona Murygina
+     * Think about if method really is necessary or not
+     *
+     * @see  MailService#sendBalance(java.lang.Object)
+     */
 // @Override
 // public void sendBalance(Object balanceObject) {
 //
 // throw new UnsupportedOperationException("Not supported yet.");
 // }
-
 }

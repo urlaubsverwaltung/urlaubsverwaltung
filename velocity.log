@@ -1,220 +1,59 @@
-2012-01-10 16:49:09,314 - ResourceManager : unable to find resource '/email/newapplications.vm' in any resource loader.
-2012-01-10 16:49:09,314 - ResourceManager : unable to find resource '/email/newapplications.vm' in any resource loader.
-2012-01-10 16:49:09,338 - ResourceManager : unable to find resource '/email/allowed_office.vm' in any resource loader.
-2012-01-10 16:49:09,350 - ResourceManager : unable to find resource '/email/rejected.vm' in any resource loader.
-2012-01-10 16:49:09,350 - ResourceManager : unable to find resource '/email/rejected.vm' in any resource loader.
-2012-01-10 16:49:09,361 - ResourceManager : unable to find resource '/email/confirm.vm' in any resource loader.
-2012-01-10 16:49:09,361 - ResourceManager : unable to find resource '/email/confirm.vm' in any resource loader.
-2012-01-10 16:49:09,361 - ResourceManager : unable to find resource '/email/confirm.vm' in any resource loader.
-2012-01-10 16:49:09,368 - ResourceManager : unable to find resource '/email/weekly.vm' in any resource loader.
-2012-01-10 16:49:09,368 - ResourceManager : unable to find resource '/email/weekly.vm' in any resource loader.
-2012-01-10 16:49:09,368 - ResourceManager : unable to find resource '/email/weekly.vm' in any resource loader.
-2012-01-10 16:49:09,368 - ResourceManager : unable to find resource '/email/weekly.vm' in any resource loader.
-2012-01-10 16:49:09,375 - ResourceManager : unable to find resource '/email/cancelled.vm' in any resource loader.
-2012-01-10 16:49:09,375 - ResourceManager : unable to find resource '/email/cancelled.vm' in any resource loader.
-2012-01-10 16:49:09,375 - ResourceManager : unable to find resource '/email/cancelled.vm' in any resource loader.
-2012-01-10 16:49:09,375 - ResourceManager : unable to find resource '/email/cancelled.vm' in any resource loader.
-2012-01-10 16:49:09,375 - ResourceManager : unable to find resource '/email/cancelled.vm' in any resource loader.
-2012-01-10 16:51:26,856 - ResourceManager : unable to find resource '/resources/email/expire.vm' in any resource loader.
-2012-01-10 16:51:26,894 - ResourceManager : unable to find resource '/resources/email/newapplications.vm' in any resource loader.
-2012-01-10 16:51:26,894 - ResourceManager : unable to find resource '/resources/email/newapplications.vm' in any resource loader.
-2012-01-10 16:51:26,907 - ResourceManager : unable to find resource '/resources/email/allowed_office.vm' in any resource loader.
-2012-01-10 16:51:26,907 - ResourceManager : unable to find resource '/resources/email/allowed_office.vm' in any resource loader.
-2012-01-10 16:51:26,914 - ResourceManager : unable to find resource '/resources/email/rejected.vm' in any resource loader.
-2012-01-10 16:51:26,914 - ResourceManager : unable to find resource '/resources/email/rejected.vm' in any resource loader.
-2012-01-10 16:51:26,914 - ResourceManager : unable to find resource '/resources/email/rejected.vm' in any resource loader.
-2012-01-10 16:51:26,920 - ResourceManager : unable to find resource '/resources/email/confirm.vm' in any resource loader.
-2012-01-10 16:51:26,920 - ResourceManager : unable to find resource '/resources/email/confirm.vm' in any resource loader.
-2012-01-10 16:51:26,920 - ResourceManager : unable to find resource '/resources/email/confirm.vm' in any resource loader.
-2012-01-10 16:51:26,920 - ResourceManager : unable to find resource '/resources/email/confirm.vm' in any resource loader.
-2012-01-10 16:51:26,927 - ResourceManager : unable to find resource '/resources/email/weekly.vm' in any resource loader.
-2012-01-10 16:51:26,927 - ResourceManager : unable to find resource '/resources/email/weekly.vm' in any resource loader.
-2012-01-10 16:51:26,927 - ResourceManager : unable to find resource '/resources/email/weekly.vm' in any resource loader.
-2012-01-10 16:51:26,927 - ResourceManager : unable to find resource '/resources/email/weekly.vm' in any resource loader.
-2012-01-10 16:51:26,927 - ResourceManager : unable to find resource '/resources/email/weekly.vm' in any resource loader.
-2012-01-10 16:51:26,933 - ResourceManager : unable to find resource '/resources/email/cancelled.vm' in any resource loader.
-2012-01-10 16:51:26,933 - ResourceManager : unable to find resource '/resources/email/cancelled.vm' in any resource loader.
-2012-01-10 16:51:26,933 - ResourceManager : unable to find resource '/resources/email/cancelled.vm' in any resource loader.
-2012-01-10 16:51:26,933 - ResourceManager : unable to find resource '/resources/email/cancelled.vm' in any resource loader.
-2012-01-10 16:51:26,933 - ResourceManager : unable to find resource '/resources/email/cancelled.vm' in any resource loader.
-2012-01-10 16:51:26,933 - ResourceManager : unable to find resource '/resources/email/cancelled.vm' in any resource loader.
-2012-01-10 16:53:45,486 - ResourceManager : unable to find resource '/src/main/java/resources/email/expire.vm' in any resource loader.
-2012-01-10 16:53:45,523 - ResourceManager : unable to find resource '/src/main/java/resources/email/newapplications.vm' in any resource loader.
-2012-01-10 16:53:45,539 - ResourceManager : unable to find resource '/src/main/java/resources/email/allowed_office.vm' in any resource loader.
-2012-01-10 16:53:45,539 - ResourceManager : unable to find resource '/src/main/java/resources/email/allowed_office.vm' in any resource loader.
-2012-01-10 16:53:45,547 - ResourceManager : unable to find resource '/src/main/java/resources/email/rejected.vm' in any resource loader.
-2012-01-10 16:53:45,547 - ResourceManager : unable to find resource '/src/main/java/resources/email/rejected.vm' in any resource loader.
-2012-01-10 16:53:45,547 - ResourceManager : unable to find resource '/src/main/java/resources/email/rejected.vm' in any resource loader.
-2012-01-10 16:53:45,554 - ResourceManager : unable to find resource '/src/main/java/resources/email/confirm.vm' in any resource loader.
-2012-01-10 16:53:45,554 - ResourceManager : unable to find resource '/src/main/java/resources/email/confirm.vm' in any resource loader.
-2012-01-10 16:53:45,554 - ResourceManager : unable to find resource '/src/main/java/resources/email/confirm.vm' in any resource loader.
-2012-01-10 16:53:45,554 - ResourceManager : unable to find resource '/src/main/java/resources/email/confirm.vm' in any resource loader.
-2012-01-10 16:53:45,561 - ResourceManager : unable to find resource '/src/main/java/resources/email/weekly.vm' in any resource loader.
-2012-01-10 16:53:45,561 - ResourceManager : unable to find resource '/src/main/java/resources/email/weekly.vm' in any resource loader.
-2012-01-10 16:53:45,561 - ResourceManager : unable to find resource '/src/main/java/resources/email/weekly.vm' in any resource loader.
-2012-01-10 16:53:45,561 - ResourceManager : unable to find resource '/src/main/java/resources/email/weekly.vm' in any resource loader.
-2012-01-10 16:53:45,561 - ResourceManager : unable to find resource '/src/main/java/resources/email/weekly.vm' in any resource loader.
-2012-01-10 16:53:45,567 - ResourceManager : unable to find resource '/src/main/java/resources/email/cancelled.vm' in any resource loader.
-2012-01-10 16:53:45,567 - ResourceManager : unable to find resource '/src/main/java/resources/email/cancelled.vm' in any resource loader.
-2012-01-10 16:53:45,567 - ResourceManager : unable to find resource '/src/main/java/resources/email/cancelled.vm' in any resource loader.
-2012-01-10 16:53:45,567 - ResourceManager : unable to find resource '/src/main/java/resources/email/cancelled.vm' in any resource loader.
-2012-01-10 16:53:45,567 - ResourceManager : unable to find resource '/src/main/java/resources/email/cancelled.vm' in any resource loader.
-2012-01-10 16:53:45,567 - ResourceManager : unable to find resource '/src/main/java/resources/email/cancelled.vm' in any resource loader.
-2012-01-10 17:01:00,380 - ResourceManager : unable to find resource 'expire.vm' in any resource loader.
-2012-01-10 17:01:00,414 - ResourceManager : unable to find resource 'newapplications.vm' in any resource loader.
-2012-01-10 17:01:00,414 - ResourceManager : unable to find resource 'newapplications.vm' in any resource loader.
-2012-01-10 17:01:00,434 - ResourceManager : unable to find resource 'allowed_office.vm' in any resource loader.
-2012-01-10 17:01:00,434 - ResourceManager : unable to find resource 'allowed_office.vm' in any resource loader.
-2012-01-10 17:01:00,434 - ResourceManager : unable to find resource 'allowed_office.vm' in any resource loader.
-2012-01-10 17:01:00,447 - ResourceManager : unable to find resource 'rejected.vm' in any resource loader.
-2012-01-10 17:01:00,447 - ResourceManager : unable to find resource 'rejected.vm' in any resource loader.
-2012-01-10 17:01:00,447 - ResourceManager : unable to find resource 'rejected.vm' in any resource loader.
-2012-01-10 17:01:00,447 - ResourceManager : unable to find resource 'rejected.vm' in any resource loader.
-2012-01-10 17:01:00,454 - ResourceManager : unable to find resource 'confirm.vm' in any resource loader.
-2012-01-10 17:01:00,454 - ResourceManager : unable to find resource 'confirm.vm' in any resource loader.
-2012-01-10 17:01:00,454 - ResourceManager : unable to find resource 'confirm.vm' in any resource loader.
-2012-01-10 17:01:00,454 - ResourceManager : unable to find resource 'confirm.vm' in any resource loader.
-2012-01-10 17:01:00,454 - ResourceManager : unable to find resource 'confirm.vm' in any resource loader.
-2012-01-10 17:01:00,465 - ResourceManager : unable to find resource 'weekly.vm' in any resource loader.
-2012-01-10 17:01:00,465 - ResourceManager : unable to find resource 'weekly.vm' in any resource loader.
-2012-01-10 17:01:00,465 - ResourceManager : unable to find resource 'weekly.vm' in any resource loader.
-2012-01-10 17:01:00,465 - ResourceManager : unable to find resource 'weekly.vm' in any resource loader.
-2012-01-10 17:01:00,465 - ResourceManager : unable to find resource 'weekly.vm' in any resource loader.
-2012-01-10 17:01:00,465 - ResourceManager : unable to find resource 'weekly.vm' in any resource loader.
-2012-01-10 17:01:00,498 - ResourceManager : unable to find resource 'cancelled.vm' in any resource loader.
-2012-01-10 17:02:15,279 - ResourceManager : unable to find resource '/expire.vm' in any resource loader.
-2012-01-10 17:02:15,303 - ResourceManager : unable to find resource '/newapplications.vm' in any resource loader.
-2012-01-10 17:02:15,303 - ResourceManager : unable to find resource '/newapplications.vm' in any resource loader.
-2012-01-10 17:02:15,315 - ResourceManager : unable to find resource '/allowed_office.vm' in any resource loader.
-2012-01-10 17:02:15,315 - ResourceManager : unable to find resource '/allowed_office.vm' in any resource loader.
-2012-01-10 17:02:15,315 - ResourceManager : unable to find resource '/allowed_office.vm' in any resource loader.
-2012-01-10 17:02:15,328 - ResourceManager : unable to find resource '/rejected.vm' in any resource loader.
-2012-01-10 17:02:15,328 - ResourceManager : unable to find resource '/rejected.vm' in any resource loader.
-2012-01-10 17:02:15,328 - ResourceManager : unable to find resource '/rejected.vm' in any resource loader.
-2012-01-10 17:02:15,328 - ResourceManager : unable to find resource '/rejected.vm' in any resource loader.
-2012-01-10 17:02:15,340 - ResourceManager : unable to find resource '/confirm.vm' in any resource loader.
-2012-01-10 17:02:15,340 - ResourceManager : unable to find resource '/confirm.vm' in any resource loader.
-2012-01-10 17:02:15,340 - ResourceManager : unable to find resource '/confirm.vm' in any resource loader.
-2012-01-10 17:02:15,340 - ResourceManager : unable to find resource '/confirm.vm' in any resource loader.
-2012-01-10 17:02:15,340 - ResourceManager : unable to find resource '/confirm.vm' in any resource loader.
-2012-01-10 17:02:15,355 - ResourceManager : unable to find resource '/weekly.vm' in any resource loader.
-2012-01-10 17:02:15,355 - ResourceManager : unable to find resource '/weekly.vm' in any resource loader.
-2012-01-10 17:02:15,355 - ResourceManager : unable to find resource '/weekly.vm' in any resource loader.
-2012-01-10 17:02:15,355 - ResourceManager : unable to find resource '/weekly.vm' in any resource loader.
-2012-01-10 17:02:15,355 - ResourceManager : unable to find resource '/weekly.vm' in any resource loader.
-2012-01-10 17:02:15,355 - ResourceManager : unable to find resource '/weekly.vm' in any resource loader.
-2012-01-10 17:02:15,390 - ResourceManager : unable to find resource '/cancelled.vm' in any resource loader.
-2012-01-10 17:02:15,390 - ResourceManager : unable to find resource '/cancelled.vm' in any resource loader.
-2012-01-10 17:02:15,390 - ResourceManager : unable to find resource '/cancelled.vm' in any resource loader.
-2012-01-10 17:02:15,390 - ResourceManager : unable to find resource '/cancelled.vm' in any resource loader.
-2012-01-10 17:02:15,390 - ResourceManager : unable to find resource '/cancelled.vm' in any resource loader.
-2012-01-10 17:02:15,390 - ResourceManager : unable to find resource '/cancelled.vm' in any resource loader.
-2012-01-10 17:02:15,390 - ResourceManager : unable to find resource '/cancelled.vm' in any resource loader.
-2012-01-10 17:37:40,082 - ResourceManager : unable to find resource '/email/expire.vm' in any resource loader.
-2012-01-10 17:37:40,114 - ResourceManager : unable to find resource '/email/newapplications.vm' in any resource loader.
-2012-01-10 17:37:40,114 - ResourceManager : unable to find resource '/email/newapplications.vm' in any resource loader.
-2012-01-10 17:37:40,147 - ResourceManager : unable to find resource '/email/allowed_office.vm' in any resource loader.
-2012-01-10 17:37:40,147 - ResourceManager : unable to find resource '/email/allowed_office.vm' in any resource loader.
-2012-01-10 17:37:40,147 - ResourceManager : unable to find resource '/email/allowed_office.vm' in any resource loader.
-2012-01-10 17:37:40,159 - ResourceManager : unable to find resource '/email/rejected.vm' in any resource loader.
-2012-01-10 17:37:40,159 - ResourceManager : unable to find resource '/email/rejected.vm' in any resource loader.
-2012-01-10 17:37:40,159 - ResourceManager : unable to find resource '/email/rejected.vm' in any resource loader.
-2012-01-10 17:37:40,159 - ResourceManager : unable to find resource '/email/rejected.vm' in any resource loader.
-2012-01-10 17:37:40,170 - ResourceManager : unable to find resource '/email/confirm.vm' in any resource loader.
-2012-01-10 17:37:40,170 - ResourceManager : unable to find resource '/email/confirm.vm' in any resource loader.
-2012-01-10 17:37:40,170 - ResourceManager : unable to find resource '/email/confirm.vm' in any resource loader.
-2012-01-10 17:37:40,170 - ResourceManager : unable to find resource '/email/confirm.vm' in any resource loader.
-2012-01-10 17:37:40,170 - ResourceManager : unable to find resource '/email/confirm.vm' in any resource loader.
-2012-01-10 17:37:40,205 - ResourceManager : unable to find resource '/email/weekly.vm' in any resource loader.
-2012-01-10 17:37:40,213 - ResourceManager : unable to find resource '/email/cancelled.vm' in any resource loader.
-2012-01-10 17:37:40,213 - ResourceManager : unable to find resource '/email/cancelled.vm' in any resource loader.
-2012-01-18 13:51:23,345 - ResourceManager : unable to find resource '/email/expire.vm' in any resource loader.
-2012-01-18 13:51:23,357 - ResourceManager : unable to find resource '/email/newapplications.vm' in any resource loader.
-2012-01-18 13:51:23,357 - ResourceManager : unable to find resource '/email/newapplications.vm' in any resource loader.
-2012-01-18 13:51:23,366 - ResourceManager : unable to find resource '/email/allowed_office.vm' in any resource loader.
-2012-01-18 13:51:23,366 - ResourceManager : unable to find resource '/email/allowed_office.vm' in any resource loader.
-2012-01-18 13:51:23,366 - ResourceManager : unable to find resource '/email/allowed_office.vm' in any resource loader.
-2012-01-18 13:51:23,390 - ResourceManager : unable to find resource '/email/rejected.vm' in any resource loader.
-2012-01-18 13:51:23,399 - ResourceManager : unable to find resource '/email/confirm.vm' in any resource loader.
-2012-01-18 13:51:23,399 - ResourceManager : unable to find resource '/email/confirm.vm' in any resource loader.
-2012-01-18 13:51:23,409 - ResourceManager : unable to find resource '/email/weekly.vm' in any resource loader.
-2012-01-18 13:51:23,409 - ResourceManager : unable to find resource '/email/weekly.vm' in any resource loader.
-2012-01-18 13:51:23,409 - ResourceManager : unable to find resource '/email/weekly.vm' in any resource loader.
-2012-01-18 13:51:23,419 - ResourceManager : unable to find resource '/email/cancelled.vm' in any resource loader.
-2012-01-18 13:51:23,419 - ResourceManager : unable to find resource '/email/cancelled.vm' in any resource loader.
-2012-01-18 13:51:23,419 - ResourceManager : unable to find resource '/email/cancelled.vm' in any resource loader.
-2012-01-18 13:51:23,419 - ResourceManager : unable to find resource '/email/cancelled.vm' in any resource loader.
-2012-01-18 13:52:35,326 - ResourceManager : unable to find resource 'expire.vm' in any resource loader.
-2012-01-18 13:52:35,363 - ResourceManager : unable to find resource 'newapplications.vm' in any resource loader.
-2012-01-18 13:52:35,376 - ResourceManager : unable to find resource 'allowed_office.vm' in any resource loader.
-2012-01-18 13:52:35,376 - ResourceManager : unable to find resource 'allowed_office.vm' in any resource loader.
-2012-01-18 13:52:35,388 - ResourceManager : unable to find resource 'rejected.vm' in any resource loader.
-2012-01-18 13:52:35,388 - ResourceManager : unable to find resource 'rejected.vm' in any resource loader.
-2012-01-18 13:52:35,388 - ResourceManager : unable to find resource 'rejected.vm' in any resource loader.
-2012-01-18 13:52:35,399 - ResourceManager : unable to find resource 'confirm.vm' in any resource loader.
-2012-01-18 13:52:35,399 - ResourceManager : unable to find resource 'confirm.vm' in any resource loader.
-2012-01-18 13:52:35,399 - ResourceManager : unable to find resource 'confirm.vm' in any resource loader.
-2012-01-18 13:52:35,399 - ResourceManager : unable to find resource 'confirm.vm' in any resource loader.
-2012-01-18 13:52:35,410 - ResourceManager : unable to find resource 'weekly.vm' in any resource loader.
-2012-01-18 13:52:35,410 - ResourceManager : unable to find resource 'weekly.vm' in any resource loader.
-2012-01-18 13:52:35,410 - ResourceManager : unable to find resource 'weekly.vm' in any resource loader.
-2012-01-18 13:52:35,410 - ResourceManager : unable to find resource 'weekly.vm' in any resource loader.
-2012-01-18 13:52:35,410 - ResourceManager : unable to find resource 'weekly.vm' in any resource loader.
-2012-01-18 13:52:35,420 - ResourceManager : unable to find resource 'cancelled.vm' in any resource loader.
-2012-01-18 13:52:35,420 - ResourceManager : unable to find resource 'cancelled.vm' in any resource loader.
-2012-01-18 13:52:35,420 - ResourceManager : unable to find resource 'cancelled.vm' in any resource loader.
-2012-01-18 13:52:35,420 - ResourceManager : unable to find resource 'cancelled.vm' in any resource loader.
-2012-01-18 13:52:35,420 - ResourceManager : unable to find resource 'cancelled.vm' in any resource loader.
-2012-01-18 13:52:35,420 - ResourceManager : unable to find resource 'cancelled.vm' in any resource loader.
-2012-01-18 13:53:46,240 - ResourceManager : unable to find resource 'expire.vm' in any resource loader.
-2012-01-18 13:53:46,277 - ResourceManager : unable to find resource 'newapplications.vm' in any resource loader.
-2012-01-18 13:53:46,277 - ResourceManager : unable to find resource 'newapplications.vm' in any resource loader.
-2012-01-18 13:53:46,299 - ResourceManager : unable to find resource 'allowed_office.vm' in any resource loader.
-2012-01-18 13:53:46,299 - ResourceManager : unable to find resource 'allowed_office.vm' in any resource loader.
-2012-01-18 13:53:46,299 - ResourceManager : unable to find resource 'allowed_office.vm' in any resource loader.
-2012-01-18 13:53:46,305 - ResourceManager : unable to find resource 'rejected.vm' in any resource loader.
-2012-01-18 13:53:46,305 - ResourceManager : unable to find resource 'rejected.vm' in any resource loader.
-2012-01-18 13:53:46,305 - ResourceManager : unable to find resource 'rejected.vm' in any resource loader.
-2012-01-18 13:53:46,305 - ResourceManager : unable to find resource 'rejected.vm' in any resource loader.
-2012-01-18 13:53:46,344 - ResourceManager : unable to find resource 'confirm.vm' in any resource loader.
-2012-01-18 13:53:46,344 - ResourceManager : unable to find resource 'confirm.vm' in any resource loader.
-2012-01-18 13:53:46,344 - ResourceManager : unable to find resource 'confirm.vm' in any resource loader.
-2012-01-18 13:53:46,344 - ResourceManager : unable to find resource 'confirm.vm' in any resource loader.
-2012-01-18 13:53:46,344 - ResourceManager : unable to find resource 'confirm.vm' in any resource loader.
-2012-01-18 13:53:46,352 - ResourceManager : unable to find resource 'weekly.vm' in any resource loader.
-2012-01-18 13:53:46,352 - ResourceManager : unable to find resource 'weekly.vm' in any resource loader.
-2012-01-18 13:53:46,352 - ResourceManager : unable to find resource 'weekly.vm' in any resource loader.
-2012-01-18 13:53:46,352 - ResourceManager : unable to find resource 'weekly.vm' in any resource loader.
-2012-01-18 13:53:46,352 - ResourceManager : unable to find resource 'weekly.vm' in any resource loader.
-2012-01-18 13:53:46,352 - ResourceManager : unable to find resource 'weekly.vm' in any resource loader.
-2012-01-18 13:53:46,376 - ResourceManager : unable to find resource 'cancelled.vm' in any resource loader.
-2012-01-18 13:53:46,376 - ResourceManager : unable to find resource 'cancelled.vm' in any resource loader.
-2012-01-18 13:53:46,376 - ResourceManager : unable to find resource 'cancelled.vm' in any resource loader.
-2012-01-18 13:54:59,456 - ResourceManager : unable to find resource '/email/expire.vm' in any resource loader.
-2012-01-18 13:54:59,498 - ResourceManager : unable to find resource '/email/newapplications.vm' in any resource loader.
-2012-01-18 13:54:59,498 - ResourceManager : unable to find resource '/email/newapplications.vm' in any resource loader.
-2012-01-18 13:54:59,515 - ResourceManager : unable to find resource '/email/allowed_office.vm' in any resource loader.
-2012-01-18 13:54:59,515 - ResourceManager : unable to find resource '/email/allowed_office.vm' in any resource loader.
-2012-01-18 13:54:59,515 - ResourceManager : unable to find resource '/email/allowed_office.vm' in any resource loader.
-2012-01-18 13:54:59,548 - ResourceManager : unable to find resource '/email/rejected.vm' in any resource loader.
-2012-01-18 13:54:59,548 - ResourceManager : unable to find resource '/email/rejected.vm' in any resource loader.
-2012-01-18 13:54:59,548 - ResourceManager : unable to find resource '/email/rejected.vm' in any resource loader.
-2012-01-18 13:54:59,548 - ResourceManager : unable to find resource '/email/rejected.vm' in any resource loader.
-2012-01-18 13:54:59,560 - ResourceManager : unable to find resource '/email/confirm.vm' in any resource loader.
-2012-01-18 13:54:59,560 - ResourceManager : unable to find resource '/email/confirm.vm' in any resource loader.
-2012-01-18 13:54:59,560 - ResourceManager : unable to find resource '/email/confirm.vm' in any resource loader.
-2012-01-18 13:54:59,560 - ResourceManager : unable to find resource '/email/confirm.vm' in any resource loader.
-2012-01-18 13:54:59,560 - ResourceManager : unable to find resource '/email/confirm.vm' in any resource loader.
-2012-01-18 13:54:59,570 - ResourceManager : unable to find resource '/email/weekly.vm' in any resource loader.
-2012-01-18 13:54:59,570 - ResourceManager : unable to find resource '/email/weekly.vm' in any resource loader.
-2012-01-18 13:54:59,570 - ResourceManager : unable to find resource '/email/weekly.vm' in any resource loader.
-2012-01-18 13:54:59,570 - ResourceManager : unable to find resource '/email/weekly.vm' in any resource loader.
-2012-01-18 13:54:59,570 - ResourceManager : unable to find resource '/email/weekly.vm' in any resource loader.
-2012-01-18 13:54:59,570 - ResourceManager : unable to find resource '/email/weekly.vm' in any resource loader.
-2012-01-18 13:54:59,579 - ResourceManager : unable to find resource '/email/cancelled.vm' in any resource loader.
-2012-01-18 13:54:59,579 - ResourceManager : unable to find resource '/email/cancelled.vm' in any resource loader.
-2012-01-18 13:54:59,579 - ResourceManager : unable to find resource '/email/cancelled.vm' in any resource loader.
-2012-01-18 13:54:59,579 - ResourceManager : unable to find resource '/email/cancelled.vm' in any resource loader.
-2012-01-18 13:54:59,579 - ResourceManager : unable to find resource '/email/cancelled.vm' in any resource loader.
-2012-01-18 13:54:59,579 - ResourceManager : unable to find resource '/email/cancelled.vm' in any resource loader.
-2012-01-18 13:54:59,579 - ResourceManager : unable to find resource '/email/cancelled.vm' in any resource loader.
+2012-01-31 11:05:44,428 - ResourceManager.getResource() parse exception
+org.apache.velocity.exception.ParseErrorException: Encountered "null" at /email/confirm.vm[line 10, column 28]
+Was expecting one of:
+    "[" ...
+    "{" ...
+    "(" ...
+    <STRING_LITERAL> ...
+    "true" ...
+    "false" ...
+    <INTEGER_LITERAL> ...
+    <FLOATING_POINT_LITERAL> ...
+    <IDENTIFIER> ...
+    "{" ...
+    <LOGICAL_NOT> ...
+    
+	at org.apache.velocity.Template.process(Template.java:141)
+	at org.apache.velocity.runtime.resource.ResourceManagerImpl.loadResource(ResourceManagerImpl.java:446)
+	at org.apache.velocity.runtime.resource.ResourceManagerImpl.getResource(ResourceManagerImpl.java:354)
+	at org.apache.velocity.runtime.RuntimeInstance.getTemplate(RuntimeInstance.java:1400)
+	at org.apache.velocity.app.VelocityEngine.mergeTemplate(VelocityEngine.java:370)
+	at org.apache.velocity.app.VelocityEngine.mergeTemplate(VelocityEngine.java:345)
+	at org.springframework.ui.velocity.VelocityEngineUtils.mergeTemplate(VelocityEngineUtils.java:58)
+	at org.springframework.ui.velocity.VelocityEngineUtils.mergeTemplateIntoString(VelocityEngineUtils.java:122)
+	at org.synyx.urlaubsverwaltung.service.MailServiceImpl.prepareMessage(MailServiceImpl.java:84)
+	at org.synyx.urlaubsverwaltung.service.MailServiceImpl.sendConfirmation(MailServiceImpl.java:183)
+	at org.synyx.urlaubsverwaltung.service.MailServiceImplTest.testSendConfirmation(MailServiceImplTest.java:254)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:44)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:15)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:41)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:20)
+	at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:28)
+	at org.junit.internal.runners.statements.RunAfters.evaluate(RunAfters.java:31)
+	at org.junit.runners.BlockJUnit4ClassRunner.runNotIgnored(BlockJUnit4ClassRunner.java:79)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:71)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:49)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:193)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:52)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:191)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:42)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:184)
+	at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:28)
+	at org.junit.internal.runners.statements.RunAfters.evaluate(RunAfters.java:31)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:236)
+	at org.apache.maven.surefire.junit4.JUnit4TestSet.execute(JUnit4TestSet.java:35)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.executeTestSet(JUnit4Provider.java:115)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.invoke(JUnit4Provider.java:97)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.booter.ProviderFactory$ClassLoaderProxy.invoke(ProviderFactory.java:103)
+	at $Proxy0.invoke(Unknown Source)
+	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:150)
+	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcess(SurefireStarter.java:91)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:69)
