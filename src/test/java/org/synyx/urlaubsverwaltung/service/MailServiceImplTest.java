@@ -26,7 +26,9 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import org.synyx.urlaubsverwaltung.domain.Application;
+import org.synyx.urlaubsverwaltung.domain.DayLength;
 import org.synyx.urlaubsverwaltung.domain.Person;
+import org.synyx.urlaubsverwaltung.domain.VacationType;
 
 import java.io.IOException;
 
@@ -71,6 +73,8 @@ public class MailServiceImplTest {
         person = new Person();
         application = new Application();
         application.setPerson(person);
+        application.setVacationType(VacationType.HOLIDAY);
+        application.setHowLong(DayLength.FULL);
     }
 
 
