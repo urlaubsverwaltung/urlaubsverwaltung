@@ -115,12 +115,9 @@ public class HolidaysAccountServiceImplTest {
         assertEquals(person, returnValue.getPerson());
         assertEquals(null, returnValue.getVacationDays());
 
-        // TODO
         // case 2: account not yet existent
 
         Mockito.when(holidaysAccountDAO.getHolidaysAccountByYearAndPerson(NEXT_YEAR, person)).thenReturn(null);
-
-        HolidaysAccount newAccount = new HolidaysAccount();
 
         Mockito.when(holidaysEntitlementDAO.getHolidayEntitlementByYearAndPerson(CURRENT_YEAR, person)).thenReturn(
             entitlement);
@@ -178,16 +175,6 @@ public class HolidaysAccountServiceImplTest {
         HolidaysAccount acc = new HolidaysAccount();
         instance.saveHolidaysAccount(acc);
         Mockito.verify(holidaysAccountDAO).save(acc);
-    }
-
-
-    /** Test of getHolidaysAccountByYearOrderedByPersons method, of class HolidaysAccountServiceImpl. */
-    @Test
-    public void testGetHolidaysAccountByYearOrderedByPersons() {
-
-        // TODO
-        // to be implemented...
-        // specially important because of Query in DAO
     }
 
 
