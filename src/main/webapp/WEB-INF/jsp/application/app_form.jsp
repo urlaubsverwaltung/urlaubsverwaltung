@@ -40,12 +40,11 @@
                 });
             });
         </script>
-        <%-- Is there a way that this works?!
         <c:if test="${appForm.howLong != null}">
         <script type="text/javascript">
             $(document).ready(function() {
                 
-                var dayLength = <c:out value="${appForm.howLong}" />;
+                var dayLength = "<c:out value='${appForm.howLong}' />";
             
                 if(dayLength.indexOf("FULL") != -1) {
                     $('#full-day').show(); $('#half-day').hide();
@@ -61,7 +60,6 @@
             });
         </script>
         </c:if>
-        --%>
     </head>
 
     <body>
