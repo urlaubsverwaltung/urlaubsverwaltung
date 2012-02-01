@@ -118,22 +118,21 @@ public class HolidaysAccountServiceImplTest {
         // TODO
         // case 2: account not yet existent
 
-// Mockito.when(holidaysAccountDAO.getHolidaysAccountByYearAndPerson(NEXT_YEAR, person)).thenReturn(null);
-//
-// HolidaysAccount newAccount = new HolidaysAccount();
-// newAccount.setPerson(person);
-// newAccount.setYear(NEXT_YEAR);
-// newAccount.setRemainingVacationDays(BigDecimal.ZERO);
-// newAccount.setVacationDays(ENTITLEMENT);
-//
-// Mockito.when(instance.newHolidaysAccount(person, ENTITLEMENT, BigDecimal.ZERO, NEXT_YEAR)).thenReturn(
-// newAccount);
-//
-// returnValue = instance.getAccountOrCreateOne(NEXT_YEAR, person);
-// Mockito.verify(holidaysAccountDAO).save(newAccount);
-// assertNotNull(returnValue);
-// assertEquals(ENTITLEMENT, returnValue.getVacationDays());
+        Mockito.when(holidaysAccountDAO.getHolidaysAccountByYearAndPerson(NEXT_YEAR, person)).thenReturn(null);
 
+        HolidaysAccount newAccount = new HolidaysAccount();
+
+        Mockito.when(holidaysEntitlementDAO.getHolidayEntitlementByYearAndPerson(CURRENT_YEAR, person)).thenReturn(
+            entitlement);
+
+        returnValue = instance.getAccountOrCreateOne(NEXT_YEAR, person);
+
+        assertNotNull(returnValue);
+        assertEquals(ENTITLEMENT, returnValue.getVacationDays());
+        assertEquals(person, returnValue.getPerson());
+        assertEquals(NEXT_YEAR, returnValue.getYear());
+        assertEquals(true, returnValue.isActive());
+        assertEquals(BigDecimal.ZERO, returnValue.getRemainingVacationDays());
     }
 
 
