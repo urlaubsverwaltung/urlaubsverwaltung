@@ -15,7 +15,6 @@ import static org.junit.Assert.assertNotNull;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import org.mockito.Mockito;
@@ -33,6 +32,8 @@ import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.VacationType;
 
 import java.math.BigDecimal;
+
+import java.security.NoSuchAlgorithmException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -149,9 +150,13 @@ public class ApplicationServiceImplTest {
 
 
     /** Test of allow method, of class ApplicationServiceImpl. */
-    @Ignore
     @Test
-    public void testAllow() {
+    public void testAllow() throws NoSuchAlgorithmException {
+
+        // set private key for boss
+        person.setPrivateKey(cryptoService.generateKeyPair().getPrivate().getEncoded());
+        application.setApplicationDate(DateMidnight.now());
+        application.setVacationType(VacationType.HOLIDAY);
 
         application.setStatus(ApplicationStatus.WAITING);
 
