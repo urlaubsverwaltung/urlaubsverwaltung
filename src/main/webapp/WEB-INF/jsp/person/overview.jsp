@@ -39,13 +39,13 @@
                     <a href="?year=2013">2013</a>
                 </div>
 
-                <div class="grid_7">
+                <div class="grid_9">
                     <table id="person-tbl" cellspacing="0">
                     <%@include file="./include/account_data.jsp" %>
                     </table>
                 </div>
 
-                <div class="grid_5">&nbsp;</div> 
+                <div class="grid_3">&nbsp;</div> 
 
                 <div class="grid_12">&nbsp;</div>
                 <div class="grid_12">&nbsp;</div>
