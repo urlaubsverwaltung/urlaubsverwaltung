@@ -17,11 +17,6 @@ import org.springframework.ui.velocity.VelocityEngineUtils;
 import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.Person;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,13 +34,23 @@ import javax.mail.internet.MimeMessage;
  * @author  Aljona Murygina
  *
  *          <p>nice tutorial: http://static.springsource.org/spring/docs/2.0.5/reference/mail.html</p>
+ *
+ *          <p>At the moment properties' values are set hard coded in this class (bad solution...): it would be better
+ *          to read in the properties file (outcommented methods), but this was not successful yet...</p>
  */
 public class MailServiceImpl implements MailService {
 
     private static final Logger LOG = Logger.getLogger(MailServiceImpl.class);
-    private static final String FROM = "email.manager";
+
+    private static final String DATE_FORMAT = "dd.MM.yyyy";
+
     private static final String PATH = "/email/";
-    private static final String PROPERTY_FILE = "./src/main/resources/messages_de.properties";
+
+//    private static final String PROPERTY_FILE = "messages_de.properties";
+//    private static final String PROPERTY_PATH = "./webapps/urlaubsverwaltung-1.0-SNAPSHOT/WEB-INF/classes";
+
+    private static final String FROM = "email.manager";
+
     private static final String APPLICATION = "application";
     private static final String PERSON = "person";
     private static final String PERSONS = "persons";
@@ -60,6 +65,7 @@ public class MailServiceImpl implements MailService {
     private static final String FILE_NEW = "newapplications" + TYPE;
     private static final String FILE_REJECTED = "rejected" + TYPE;
     private static final String FILE_WEEKLY = "weekly" + TYPE;
+
     private JavaMailSender mailSender;
     private VelocityEngine velocityEngine;
 
@@ -70,33 +76,101 @@ public class MailServiceImpl implements MailService {
         this.velocityEngine = velocityEngine;
     }
 
+//    /**
+//     * This method search a file by name in the given directory and returns the result(s) in a ArrayList. Thanks to:
+//     * http://www.java-forum.org/allgemeines/33129-verzeichnisse-durchsuchen-bearbeiten-auslesen.html
+//     *
+//     * @param  dir
+//     * @param  find
+//     *
+//     * @return  ArrayList<File> with matching files
+//     */
+//    private ArrayList<File> searchFile(File dir, String find) {
+//
+//        File[] files = dir.listFiles();
+//        ArrayList<File> matches = new ArrayList<File>();
+//
+//        if (files != null) {
+//            for (int i = 0; i < files.length; i++) {
+//                if (files[i].getName().equalsIgnoreCase(find)) {
+//                    matches.add(files[i]);
+//                }
+//
+//                if (files[i].isDirectory()) {
+//                    matches.addAll(searchFile(files[i], find));
+//                }
+//            }
+//        }
+//
+//        return matches;
+//    }
+//
+//
+//    /**
+//     * This method get the needed properties file.
+//     *
+//     * @return  properties file
+//     */
+//    private File getPropertiesFile() {
+//
+//        File dir = new File(PROPERTY_PATH);
+//        ArrayList<File> result = searchFile(dir, PROPERTY_FILE);
+//
+//        if (result.size() > 0) {
+//            return result.get(0);
+//        } else {
+//            LOG.error(DateMidnight.now().toString(DATE_FORMAT) + ": No property file found.");
+//
+//            return null;
+//        }
+//    }
+
     /**
-     * This method gets the properties' value of the given key
+     * This method gets the properties' value of the given key.
      *
      * @param  key
      *
-     * @return
+     * @return  String: value to the given key
      */
     protected String getProperty(String key) {
 
-        File propertiesFile = new File(PROPERTY_FILE);
         Properties properties = new Properties();
+        properties.setProperty("subject.expire", "Erinnerung Resturlaub");
+        properties.setProperty("subject.new", "Es liegen neue Urlaubsanträge vor");
+        properties.setProperty("subject.allowed.office", "Neuer bewilligter Antrag");
+        properties.setProperty("subject.allowed.user", "Dein Urlaubsantrag wurde bewilligt");
+        properties.setProperty("subject.rejected", "Dein Urlaubsantrag wurde abgelehnt");
+        properties.setProperty("subject.confirm", "Bestätigung Antragsstellung");
+        properties.setProperty("subject.weekly", "Diese Woche im Urlaub");
+        properties.setProperty("subject.cancelled", "Antrag wurde storniert");
 
-        if (propertiesFile.exists()) {
-            try {
-                BufferedInputStream bis;
-                bis = new BufferedInputStream(new FileInputStream(propertiesFile));
-                properties.load(bis);
-                bis.close();
+        properties.setProperty("full", "ganztägig");
+        properties.setProperty("half.morning", "morgens");
+        properties.setProperty("half.noon", "mittags");
 
-                return properties.getProperty(key);
-            } catch (IOException ex) {
-                LOG.error("Keinen Wert zu gegebenem Property-Key '" + key + "' gefunden.");
-                LOG.error(ex.getMessage(), ex);
-            }
-        }
+        properties.setProperty("vac.holiday", "Erholungsurlaub");
+        properties.setProperty("vac.special", "Sonderurlaub");
+        properties.setProperty("vac.unpaid", "Unbezahlter Urlaub");
+        properties.setProperty("vac.overtime", "Überstunden abbummeln");
 
-        return null;
+        return properties.getProperty(key);
+
+//
+//        if (propertiesFile.exists()) {
+//            try {
+//                BufferedInputStream bis;
+//                bis = new BufferedInputStream(new FileInputStream(propertiesFile));
+//                properties.load(bis);
+//                bis.close();
+//
+//                return properties.getProperty(key);
+//            } catch (IOException ex) {
+//                LOG.error("There was found no value for the given property key: '" + key + "'.");
+//                LOG.error(ex.getMessage(), ex);
+//            }
+//        }
+//
+//        return null;
     }
 
 
@@ -111,19 +185,28 @@ public class MailServiceImpl implements MailService {
      */
     private String prepareMessage(Object object, String modelName, String fileName) {
 
+//        if (getPropertiesFile() != null) {
+//            File propertiesFile = getPropertiesFile();
         Map model = new HashMap();
         model.put(modelName, object);
 
         if (object.getClass().equals(Application.class)) {
             Application a = (Application) object;
-            model.put("vacationType", getProperty(a.getVacationType().getVacationTypeName()));
-            model.put("dayLength", getProperty(a.getHowLong().getDayLength()));
+            String vacType = a.getVacationType().getVacationTypeName();
+            String length = a.getHowLong().getDayLength();
+            model.put("vacationType", getProperty(vacType));
+            model.put("dayLength", getProperty(length));
         }
 
         // mergeTemplateIntoString(VelocityEngine velocityEngine, String templateLocation, Map model)
         String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, PATH + fileName, model);
 
         return text;
+//        }
+
+//        LOG.error(DateMidnight.now().toString(DATE_FORMAT) + ": An error occured preparing the email text.");
+//
+//        return null;
     }
 
 
@@ -141,18 +224,24 @@ public class MailServiceImpl implements MailService {
 
             public void prepare(MimeMessage mimeMessage) throws MessagingException {
 
+//                if (getPropertiesFile() != null) {
+//                    File propertiesFile = getPropertiesFile();
                 mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(recipient));
                 mimeMessage.setFrom(new InternetAddress(FROM));
-                mimeMessage.setSubject(getProperty(subject));
+
+                String sub = getProperty(subject);
+                mimeMessage.setSubject(sub);
                 mimeMessage.setText(text);
             }
+//            }
         };
 
         try {
             this.mailSender.send(prep);
         } catch (MailException ex) {
-            LOG.error(DateMidnight.now().toString("dd.MM.yyyy") + ": Versenden der Email mit dem Betreff '" + subject
-                + "' an " + recipient + " fehlgeschlagen.");
+            LOG.error(DateMidnight.now().toString(DATE_FORMAT) + ": Sending the email with following subject '"
+                + subject
+                + "' to " + recipient + " failed.");
             LOG.error(ex.getMessage(), ex);
         }
     }

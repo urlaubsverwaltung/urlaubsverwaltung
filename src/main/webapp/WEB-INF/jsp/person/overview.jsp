@@ -80,9 +80,11 @@
                                     <th>
                                         <spring:message code="state" />
                                     </th>
+                                    <c:if test="${isOffice != true}">
                                     <th style="text-align: center">
                                         <spring:message code="delete" />
                                     </th>
+                                    </c:if>
                                 </tr>
 
                                 <c:forEach items="${applications}" var="app" varStatus="loopStatus">

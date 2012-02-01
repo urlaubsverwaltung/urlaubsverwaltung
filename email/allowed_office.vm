@@ -3,5 +3,5 @@ Hallo Office,
 es liegt ein neuer genehmigter Antrag vor:
 
 Mitarbeiter: ${application.person.firstName} ${application.person.lastName} 
-Urlaubszeitraum: ${application.startDate.dayOfMonth}.${application.startDate.monthOfYear}.${application.startDate.year} bis ${application.endDate.dayOfMonth}.${application.endDate.monthOfYear}.${application.endDate.year} 
+Zeitraum des beantragten Urlaubs: ${application.startDate.toString("dd.MM.yyyy")} bis ${application.endDate.toString("dd.MM.yyyy")}, ${dayLength} 
 

@@ -2,7 +2,17 @@ Hallo Chefs,
 
 es liegt ein neuer zu genehmigender Antrag vor:
 
-Antragssteller: ${application.person.firstName} ${application.person.lastName}
-Zeitraum des beantragten Urlaubs: ${application.startDate.dayOfMonth}.${application.startDate.dayOfMonth}.${application.startDate.year} bis ${application.endDate.dayOfMonth}.${application.endDate.monthOfYear}.${application.endDate.year}
-Art des Urlaubs: ${application.vacationType.vacationTypeName}
-Datum der Antragsstellung: Antragsdatum: ${application.applicationDate}
+Mitarbeiter: ${application.person.firstName} ${application.person.lastName}
+Datum der Antragsstellung: ${application.applicationDate.toString("dd.MM.yyyy")}
+Zeitraum des beantragten Urlaubs: ${application.startDate.toString("dd.MM.yyyy")} bis ${application.endDate.toString("dd.MM.yyyy")}, ${dayLength}
+Art des Urlaubs: ${vacationType}
+#if($application.reason && $application.reason != "")
+Grund: ${application.reason}
+#end
+Vertreter: ${application.rep}
+#if($application.address && $application.address != "")
+Anschrift während des Urlaubs: ${application.address}
+#end
+#if($application.phone && $application.phone != "")
+Telefon während des Urlaubs: ${application.phone}
+#end

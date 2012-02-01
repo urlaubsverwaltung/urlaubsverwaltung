@@ -1,6 +1,6 @@
 Hallo ${application.person.firstName} ${application.person.lastName},
 
-dein am ${application.applicationDate.dayOfMonth}.${application.applicationDate.monthOfYear}.${application.applicationDate.year} gestellter Antrag wurde leider von ${application.boss.firstName} ${application.boss.lastName} abgelehnt
+dein am ${application.applicationDate.toString("dd.MM.yyyy")} gestellter Antrag wurde leider von ${application.boss.firstName} ${application.boss.lastName} abgelehnt
 mit folgender Begründung:
 
 ${application.reasonToReject.text}
