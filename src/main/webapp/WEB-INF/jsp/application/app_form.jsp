@@ -164,11 +164,27 @@
                                     </td>
                                     <td>
                                         <form:select path="vacationType" size="1">
-                                            <c:forEach items="${vacTypes}" var="vacType">
-                                        <option value="${vacType}">
-                                            <spring:message code='${vacType.vacationTypeName}' />
-                                        </option>
-                                    </c:forEach>
+                                            <c:choose>
+                                                <c:when test="${appForm.vacationType == null}">
+                                                    <c:forEach items="${vacTypes}" var="vacType">
+                                                    <option value="${vacType}">
+                                                            <spring:message code='${vacType.vacationTypeName}' />
+                                                        </option>
+                                                    </c:forEach>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <option value="${appForm.vacationType}" selected="selected">
+                                                        <spring:message code='${appForm.vacationType.vacationTypeName}' />
+                                                    </option>
+                                                    <c:forEach items="${vacTypes}" var="vacType">
+                                                        <c:if test="${vacType != appForm.vacationType}">
+                                                            <option value="${vacType}">
+                                                            <spring:message code='${vacType.vacationTypeName}' />
+                                                        </option>
+                                                        </c:if>
+                                                    </c:forEach>
+                                                </c:otherwise>
+                                            </c:choose>
                                 </form:select>
                                 </td>
                                 </tr>

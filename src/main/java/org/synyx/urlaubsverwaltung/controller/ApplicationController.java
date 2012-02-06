@@ -346,11 +346,16 @@ public class ApplicationController {
                 // in this version, these two cases are handled equal
                 errors.reject("check.overlap");
             } else if (overlap == 1) {
-                // everything ok, go to next check
-                boolean enoughDays = applicationService.checkApplication(application);
+                // if there is no overlap go to next check but only if vacation type is holiday, else you don't have to
+                // check if there are enough days on user's holidays account
+                boolean enoughDays = false;
+
+                if (application.getVacationType() == VacationType.HOLIDAY) {
+                    enoughDays = applicationService.checkApplication(application);
+                }
 
                 // enough days to apply for leave
-                if (enoughDays) {
+                if (enoughDays || (application.getVacationType() != VacationType.HOLIDAY)) {
                     // save the application
                     applicationService.save(application);
 
@@ -372,11 +377,11 @@ public class ApplicationController {
                     errors.reject("check.enough");
                 }
             }
-
-            prepareForm(person, appForm, model);
-
-            return APP_FORM_JSP;
         }
+
+        prepareForm(person, appForm, model);
+
+        return APP_FORM_JSP;
     }
 
 

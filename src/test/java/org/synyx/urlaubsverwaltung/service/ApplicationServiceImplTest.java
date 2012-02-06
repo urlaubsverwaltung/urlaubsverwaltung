@@ -175,6 +175,7 @@ public class ApplicationServiceImplTest {
         application.setEndDate(new DateMidnight(2011, 12, 27));
         application.setStatus(null);
         application.setHowLong(DayLength.FULL);
+        application.setVacationType(VacationType.HOLIDAY);
 
         accounts = new ArrayList<HolidaysAccount>();
         accounts.add(accountOne);
@@ -190,6 +191,18 @@ public class ApplicationServiceImplTest {
         Mockito.verify(applicationDAO).save(application);
 
         Mockito.verify(accountService).saveHolidaysAccount(accountOne);
+
+        application.setVacationType(VacationType.SPECIALLEAVE);
+        instance.save(application);
+        assertEquals(BigDecimal.valueOf(6.0).setScale(2), accountOne.getSpecialLeave());
+
+        application.setVacationType(VacationType.UNPAIDLEAVE);
+        instance.save(application);
+        assertEquals(BigDecimal.valueOf(6.0).setScale(2), accountOne.getUnpaidLeave());
+
+        application.setVacationType(VacationType.OVERTIME);
+        instance.save(application);
+        assertEquals(BigDecimal.valueOf(6.0).setScale(2), accountOne.getOvertime());
     }
 
 

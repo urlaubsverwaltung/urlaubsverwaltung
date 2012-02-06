@@ -41,6 +41,9 @@ public class HolidaysAccount extends AbstractPersistable<Integer> {
     // Number of days of unpaid leave used this year
     private BigDecimal unpaidLeave;
 
+    // Number of taken days off because of overtime
+    private BigDecimal overtime;
+
     private boolean active;
 
     public boolean isActive() {
@@ -124,5 +127,17 @@ public class HolidaysAccount extends AbstractPersistable<Integer> {
     public void setUnpaidLeave(BigDecimal unpaidLeave) {
 
         this.unpaidLeave = unpaidLeave;
+    }
+
+
+    public BigDecimal getOvertime() {
+
+        return overtime;
+    }
+
+
+    public void setOvertime(BigDecimal overtime) {
+
+        this.overtime = overtime;
     }
 }

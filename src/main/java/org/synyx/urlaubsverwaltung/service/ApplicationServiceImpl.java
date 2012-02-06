@@ -15,7 +15,10 @@ import org.synyx.urlaubsverwaltung.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.domain.DayLength;
 import org.synyx.urlaubsverwaltung.domain.HolidaysAccount;
 import org.synyx.urlaubsverwaltung.domain.Person;
+import org.synyx.urlaubsverwaltung.domain.VacationType;
 import org.synyx.urlaubsverwaltung.util.CalcUtil;
+
+import java.math.BigDecimal;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -114,24 +117,54 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public void save(Application application) {
 
+        // get number of used days
+        BigDecimal days = calendarService.getVacationDays(application, application.getStartDate(),
+                application.getEndDate());
+
         // if check is successful, application is saved
 
         application.setStatus(ApplicationStatus.WAITING);
 
         // set number of used days
-        application.setDays(calendarService.getVacationDays(application, application.getStartDate(),
-                application.getEndDate()));
-
-        List<HolidaysAccount> accounts = calculationService.subtractVacationDays(application);
-
-        accountService.saveHolidaysAccount(accounts.get(0));
-
-        if (accounts.size() > 1) {
-            accountService.saveHolidaysAccount(accounts.get(1));
-        }
+        application.setDays(days);
 
         // save changed application in the end
         applicationDAO.save(application);
+
+        if (application.getVacationType() == VacationType.HOLIDAY) {
+            List<HolidaysAccount> accounts = calculationService.subtractVacationDays(application);
+
+            accountService.saveHolidaysAccount(accounts.get(0));
+
+            if (accounts.size() > 1) {
+                accountService.saveHolidaysAccount(accounts.get(1));
+            }
+        } else {
+            HolidaysAccount account = accountService.getAccountOrCreateOne(application.getStartDate().getYear(),
+                    application.getPerson());
+
+            if (application.getVacationType() == VacationType.SPECIALLEAVE) {
+                if (account.getSpecialLeave() != null) {
+                    account.setSpecialLeave(account.getSpecialLeave().add(days));
+                } else {
+                    account.setSpecialLeave(days);
+                }
+            } else if (application.getVacationType() == VacationType.UNPAIDLEAVE) {
+                if (account.getUnpaidLeave() != null) {
+                    account.setUnpaidLeave(account.getUnpaidLeave().add(days));
+                } else {
+                    account.setUnpaidLeave(days);
+                }
+            } else if (application.getVacationType() == VacationType.OVERTIME) {
+                if (account.getOvertime() != null) {
+                    account.setOvertime(account.getOvertime().add(days));
+                } else {
+                    account.setOvertime(days);
+                }
+            }
+
+            accountService.saveHolidaysAccount(account);
+        }
     }
 
 
@@ -158,7 +191,9 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public void cancel(Application application) {
 
-        rollback(application);
+        if (application.getVacationType() == VacationType.HOLIDAY) {
+            rollback(application);
+        }
 
         application.setStatus(ApplicationStatus.CANCELLED);
         applicationDAO.save(application);
