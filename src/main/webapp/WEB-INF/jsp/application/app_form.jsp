@@ -44,8 +44,8 @@
                     yearSuffix: ''};  
                 $.datepicker.regional['de'] = {
                     closeText: 'schließen',
-                    prevText: '&#x3c;zurück',
-                    nextText: 'Vor&#x3e;',
+                    prevText: 'Zurück',
+                    nextText: 'Vor',
                     currentText: 'heute',
                     monthNames: ['Januar','Februar','März','April','Mai','Juni',
                         'Juli','August','September','Oktober','November','Dezember'],
@@ -65,10 +65,9 @@
         </script>           
         <script type="text/javascript">
             $(function() {
-                $.datepicker.regional["${pageContext.request.locale.language}"];
                 var dates = $( "#from, #to, #at" ).datepicker({
+                    minDate: +0,
                     dateFormat: "dd.mm.yy",
-                    defaultDate: "+1w",
                     numberOfMonths: 1,
                     onSelect: function( selectedDate ) {
                         var option = this.id == "from" ? "minDate" : "maxDate",
@@ -78,6 +77,7 @@
                             $.datepicker._defaults.dateFormat,
                         selectedDate, instance.settings );
                         dates.not( this ).datepicker( "option", option, date );
+                        $("#to").datepicker("setDate", "#from");
                     }
                 });
             });
