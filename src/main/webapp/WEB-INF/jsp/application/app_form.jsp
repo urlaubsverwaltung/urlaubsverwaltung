@@ -70,15 +70,17 @@
                     dateFormat: "dd.mm.yy",
                     numberOfMonths: 1,
                     onSelect: function( selectedDate ) {
-                        var option = this.id == "from" ? "minDate" : "maxDate",
+                        var option = this.id == "from" ? "minDate" : "maxDate";
                         instance = $( this ).data( "datepicker" ),
                         date = $.datepicker.parseDate(
                         instance.settings.dateFormat ||
                             $.datepicker._defaults.dateFormat,
                         selectedDate, instance.settings );
                         dates.not( this ).datepicker( "option", option, date );
-                        $("#to").datepicker("setDate", "#from");
-                    }
+                        if(this.id == "from") {
+                            $("#to").datepicker("setDate", "#from");
+                        }
+                        }
                 });
             });
         </script>
