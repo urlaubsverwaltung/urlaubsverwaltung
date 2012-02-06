@@ -24,6 +24,48 @@
         <script src="<spring:url value='/jquery/js/jquery-ui-1.8.16.custom.min.js' />" type="text/javascript" ></script>
         <script type="text/javascript">
             $(function() {
+                $.datepicker.regional['en'] = {
+                    closeText: 'Done',
+                    prevText: 'Prev',
+                    nextText: 'Next',
+                    currentText: 'Today',
+                    monthNames: ['January','February','March','April','May','June',
+                        'July','August','September','October','November','December'],
+                    monthNamesShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    dayNames: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+                    dayNamesShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+                    dayNamesMin: ['Su','Mo','Tu','We','Th','Fr','Sa'],
+                    weekHeader: 'Wk',
+                    dateFormat: 'dd/mm/yy',
+                    firstDay: 1,
+                    isRTL: false,
+                    showMonthAfterYear: false,
+                    yearSuffix: ''};  
+                $.datepicker.regional['de'] = {
+                    closeText: 'schließen',
+                    prevText: '&#x3c;zurück',
+                    nextText: 'Vor&#x3e;',
+                    currentText: 'heute',
+                    monthNames: ['Januar','Februar','März','April','Mai','Juni',
+                        'Juli','August','September','Oktober','November','Dezember'],
+                    monthNamesShort: ['Jan','Feb','Mär','Apr','Mai','Jun',
+                        'Jul','Aug','Sep','Okt','Nov','Dez'],
+                    dayNames: ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'],
+                    dayNamesShort: ['So','Mo','Di','Mi','Do','Fr','Sa'],
+                    dayNamesMin: ['So','Mo','Di','Mi','Do','Fr','Sa'],
+                    weekHeader: 'Wo',
+                    dateFormat: 'dd.mm.yy',
+                    firstDay: 1,
+                    isRTL: false,
+                    showMonthAfterYear: false,
+                    yearSuffix: ''};  
+                $.datepicker.setDefaults($.datepicker.regional["${pageContext.request.locale.language}"]);
+            });
+        </script>           
+        <script type="text/javascript">
+            $(function() {
+                $.datepicker.regional["${pageContext.request.locale.language}"];
                 var dates = $( "#from, #to, #at" ).datepicker({
                     dateFormat: "dd.mm.yy",
                     defaultDate: "+1w",
@@ -41,24 +83,24 @@
             });
         </script>
         <c:if test="${appForm.howLong != null}">
-        <script type="text/javascript">
-            $(document).ready(function() {
-                
-                var dayLength = "<c:out value='${appForm.howLong}' />";
+            <script type="text/javascript">
+                $(document).ready(function() {
+                    
+                    var dayLength = "<c:out value='${appForm.howLong}' />";
             
-                if(dayLength.indexOf("FULL") != -1) {
-                    $('#full-day').show(); $('#half-day').hide();
-                } 
+                    if(dayLength.indexOf("FULL") != -1) {
+                        $('#full-day').show(); $('#half-day').hide();
+                    } 
                 
-                if(dayLength.indexOf("MORNING") != -1) {
-                    $('#half-day').show(); $('#full-day').hide();
-                }
+                    if(dayLength.indexOf("MORNING") != -1) {
+                        $('#half-day').show(); $('#full-day').hide();
+                    }
                 
-                if(dayLength.indexOf("NOON") != -1) {
-                    $('#half-day').show(); $('#full-day').hide();
-                }
-            });
-        </script>
+                    if(dayLength.indexOf("NOON") != -1) {
+                        $('#half-day').show(); $('#full-day').hide();
+                    }
+                });
+            </script>
         </c:if>
     </head>
 
@@ -71,182 +113,182 @@
         <div id="content">
 
             <div class="container_12">
-            <c:choose>
+                <c:choose>
 
-                <c:when test="${notpossible == true}">
+                    <c:when test="${notpossible == true}">
 
-                    <spring:message code="app.not.possible" />
+                        <spring:message code="app.not.possible" />
 
-                </c:when>
+                    </c:when>
 
-                <c:otherwise>    
+                    <c:otherwise>    
 
-                    <h2><spring:message code="app.title" /></h2>
+                        <h2><spring:message code="app.title" /></h2>
 
-                    <br />
+                        <br />
 
-                    <form:form method="post" action="${formUrlPrefix}/application/new" modelAttribute="appForm"> 
+                        <form:form method="post" action="${formUrlPrefix}/application/new" modelAttribute="appForm"> 
 
-                        <table>
-                            <tr>
-                                <td>
-                                    <spring:message code="name" />:&nbsp;
+                            <table>
+                                <tr>
+                                    <td>
+                                        <spring:message code="name" />:&nbsp;
+                                    </td>
+                                    <td>
+                                        <c:out value="${person.lastName}" />,&nbsp;<c:out value="${person.firstName}" />
+                                    </td> 
+                                </tr>
+                                <tr>
+                                    <td><spring:message code="overview.left" />:</td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${april == 1}">
+                                                <c:out value="${account.vacationDays + account.remainingVacationDays}"/>&nbsp;<spring:message code="days" />
+                                                &nbsp;(<spring:message code="davon" />&nbsp;<c:out value="${account.remainingVacationDays}"/>
+                                                <spring:message code="days" />&nbsp;<spring:message code="remaining" />)
+                                            </c:when>
+                                            <c:otherwise>
+                                                <c:out value="${account.vacationDays}"/>&nbsp;<spring:message code="days" />
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </td>    
+                                <tr>
+                                    <td colspan="3">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <spring:message code="app.apply" />
+                                    </td>
+                                    <td>
+                                        <form:select path="vacationType" size="1">
+                                            <c:forEach items="${vacTypes}" var="vacType">
+                                        <option value="${vacType}">
+                                            <spring:message code='${vacType.vacationTypeName}' />
+                                        </option>
+                                    </c:forEach>
+                                </form:select>
                                 </td>
-                                <td>
-                                    <c:out value="${person.lastName}" />,&nbsp;<c:out value="${person.firstName}" />
-                                </td> 
-                            </tr>
-                            <tr>
-                                <td><spring:message code="overview.left" />:</td>
-                                <td>
-                                <c:choose>
-                                    <c:when test="${april == 1}">
-                                        <c:out value="${account.vacationDays + account.remainingVacationDays}"/>&nbsp;<spring:message code="days" />
-                                        &nbsp;(<spring:message code="davon" />&nbsp;<c:out value="${account.remainingVacationDays}"/>
-                                        <spring:message code="days" />&nbsp;<spring:message code="remaining" />)
-                                    </c:when>
-                                    <c:otherwise>
-                                        <c:out value="${account.vacationDays}"/>&nbsp;<spring:message code="days" />
-                                    </c:otherwise>
-                                </c:choose>
-                                </td>    
-                            <tr>
-                                <td colspan="3">&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td colspan="3">&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <spring:message code="app.apply" />
+                                </tr>
+                                <tr>
+                                    <td colspan="3">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <form:radiobutton path="howLong" checked="checked" value="${full}" onclick="$('#full-day').show(); $('#half-day').hide();" /><spring:message code='${full.dayLength}' /> 
+                                        <form:radiobutton path="howLong" value="${morning}" onclick="$('#full-day').hide(); $('#half-day').show();" /><spring:message code='${morning.dayLength}' />
+                                        <form:radiobutton path="howLong" value="${noon}" onclick="$('#full-day').hide(); $('#half-day').show();" /><spring:message code='${noon.dayLength}' />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">&nbsp;</td>
+                                </tr>
+                                <tr id="full-day">  
+                                    <td>
+                                        Von: <form:input id="from" path="startDate" cssErrorClass="error" />
+                                        <br />
+                                        <form:errors path="startDate" cssClass="error" />
+                                    </td>
+                                    <td>
+                                        Bis: <form:input id="to" path="endDate" cssErrorClass="error" />
+                                        <br />
+                                        <form:errors path="endDate" cssClass="error" />
+                                    </td>
+                                </tr>
+                                <tr id="half-day" style="display: none">  
+                                    <td>
+                                        Am: <form:input id="at" path="startDateHalf" cssErrorClass="error" />
+                                        <br />
+                                        <form:errors path="startDateHalf" cssClass="error" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label for="reason"><spring:message code='reason' />:</label>
+                                    </td>
+                                    <td>
+                                        <form:input id="reason" path="reason" cssErrorClass="error" />
+                                        <br />
+                                        <form:errors path="reason" cssClass="error" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label for="vertreter"><spring:message code='app.rep' />:</label> 
+                                    </td>
+                                    <td colspan="2">
+                                        <form:select path="rep" id="vertreter" size="1">
+                                    <option value="<spring:message code='app.no.rep' />"><spring:message code='app.no.rep' /></option>
+                                    <c:forEach items="${persons}" var="einmitarbeiter">
+                                        <option value="${einmitarbeiter.lastName} ${einmitarbeiter.firstName}">
+                                            <c:out value='${einmitarbeiter.lastName}' />&nbsp;<c:out value="${einmitarbeiter.firstName}" />
+                                        </option>
+                                    </c:forEach>
+                                </form:select>                             
                                 </td>
-                                <td>
-                                    <form:select path="vacationType" size="1">
-                                        <c:forEach items="${vacTypes}" var="vacType">
-                                    <option value="${vacType}">
-                                        <spring:message code='${vacType.vacationTypeName}' />
-                                    </option>
-                                </c:forEach>
-                            </form:select>
-                            </td>
-                            </tr>
-                            <tr>
-                                <td colspan="3">&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">
-                                    <form:radiobutton path="howLong" checked="checked" value="${full}" onclick="$('#full-day').show(); $('#half-day').hide();" /><spring:message code='${full.dayLength}' /> 
-                                    <form:radiobutton path="howLong" value="${morning}" onclick="$('#full-day').hide(); $('#half-day').show();" /><spring:message code='${morning.dayLength}' />
-                                    <form:radiobutton path="howLong" value="${noon}" onclick="$('#full-day').hide(); $('#half-day').show();" /><spring:message code='${noon.dayLength}' />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="3">&nbsp;</td>
-                            </tr>
-                            <tr id="full-day">  
-                                <td>
-                                    Von: <form:input id="from" path="startDate" cssErrorClass="error" />
-                                    <br />
-                                    <form:errors path="startDate" cssClass="error" />
-                                </td>
-                                <td>
-                                    Bis: <form:input id="to" path="endDate" cssErrorClass="error" />
-                                    <br />
-                                    <form:errors path="endDate" cssClass="error" />
-                                </td>
-                            </tr>
-                            <tr id="half-day" style="display: none">  
-                                <td>
-                                    Am: <form:input id="at" path="startDateHalf" cssErrorClass="error" />
-                                    <br />
-                                    <form:errors path="startDateHalf" cssClass="error" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="3">&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label for="reason"><spring:message code='reason' />:</label>
-                                </td>
-                                <td>
-                                    <form:input id="reason" path="reason" cssErrorClass="error" />
-                                    <br />
-                                    <form:errors path="reason" cssClass="error" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="3">&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label for="vertreter"><spring:message code='app.rep' />:</label> 
-                                </td>
-                                <td colspan="2">
-                                    <form:select path="rep" id="vertreter" size="1">
-                                <option value="<spring:message code='app.no.rep' />"><spring:message code='app.no.rep' /></option>
-                                <c:forEach items="${persons}" var="einmitarbeiter">
-                                    <option value="${einmitarbeiter.lastName} ${einmitarbeiter.firstName}">
-                                        <c:out value='${einmitarbeiter.lastName}' />&nbsp;<c:out value="${einmitarbeiter.firstName}" />
-                                    </option>
-                                </c:forEach>
-                            </form:select>                             
-                            </td>
-                            </tr>
-                            <tr>
-                                <td colspan="3">&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label for="anschrift"><spring:message code='app.address' />:</label>
-                                </td>
-                                <td colspan="4">
-                                    <form:input id="anschrift" path="address" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label for="telefon"><spring:message code='app.phone' />:</label>
-                                </td>
-                                <td colspan="4">
-                                    <form:input id="telefon" path="phone" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="3">&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td colspan="3">&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">
-                                    <spring:message code='app.footer' />&nbsp;<joda:format style="M-" value="${date}"/>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="3">&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">
-                                    <input class="confirm"type="submit" name="<spring:message code='apply' />" value="<spring:message code='apply' />" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="3">&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td colspan="2"><form:errors cssClass="error" /></td>
-                            </tr>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label for="anschrift"><spring:message code='app.address' />:</label>
+                                    </td>
+                                    <td colspan="4">
+                                        <form:input id="anschrift" path="address" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label for="telefon"><spring:message code='app.phone' />:</label>
+                                    </td>
+                                    <td colspan="4">
+                                        <form:input id="telefon" path="phone" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <spring:message code='app.footer' />&nbsp;<joda:format style="M-" value="${date}"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <input class="confirm"type="submit" name="<spring:message code='apply' />" value="<spring:message code='apply' />" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"><form:errors cssClass="error" /></td>
+                                </tr>
 
-                        </table>
+                            </table>
 
-                    </form:form>  
-                </c:otherwise>
-            </c:choose>
+                        </form:form>  
+                    </c:otherwise>
+                </c:choose>
 
             </div>
-            </div>
+        </div>
 
-        </body>
+    </body>
 
-    </html>
+</html>
