@@ -17,6 +17,8 @@ import org.springframework.ui.velocity.VelocityEngineUtils;
 import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.Person;
 
+import java.net.URL;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,10 +48,7 @@ public class MailServiceImpl implements MailService {
 
     private static final String PATH = "/email/";
 
-//    private static final String PROPERTY_FILE = "messages_de.properties";
-//    private static final String PROPERTY_PATH = "./webapps/urlaubsverwaltung-1.0-SNAPSHOT/WEB-INF/classes";
-
-    private static final String FROM = "email.manager";
+    private static final String PROPERTIES_FILE = "messages_de.properties";
 
     private static final String APPLICATION = "application";
     private static final String PERSON = "person";
@@ -68,62 +67,41 @@ public class MailServiceImpl implements MailService {
 
     private JavaMailSender mailSender;
     private VelocityEngine velocityEngine;
+    private Properties properties;
 
     @Autowired
     public MailServiceImpl(JavaMailSender mailSender, VelocityEngine velocityEngine) {
 
         this.mailSender = mailSender;
         this.velocityEngine = velocityEngine;
+
+        try {
+            this.properties = load(PROPERTIES_FILE);
+        } catch (Exception ex) {
+            LOG.error(DateMidnight.now().toString(DATE_FORMAT) + "No properties file found.");
+            LOG.error(ex.getMessage(), ex);
+        }
     }
 
-//    /**
-//     * This method search a file by name in the given directory and returns the result(s) in a ArrayList. Thanks to:
-//     * http://www.java-forum.org/allgemeines/33129-verzeichnisse-durchsuchen-bearbeiten-auslesen.html
-//     *
-//     * @param  dir
-//     * @param  find
-//     *
-//     * @return  ArrayList<File> with matching files
-//     */
-//    private ArrayList<File> searchFile(File dir, String find) {
-//
-//        File[] files = dir.listFiles();
-//        ArrayList<File> matches = new ArrayList<File>();
-//
-//        if (files != null) {
-//            for (int i = 0; i < files.length; i++) {
-//                if (files[i].getName().equalsIgnoreCase(find)) {
-//                    matches.add(files[i]);
-//                }
-//
-//                if (files[i].isDirectory()) {
-//                    matches.addAll(searchFile(files[i], find));
-//                }
-//            }
-//        }
-//
-//        return matches;
-//    }
-//
-//
-//    /**
-//     * This method get the needed properties file.
-//     *
-//     * @return  properties file
-//     */
-//    private File getPropertiesFile() {
-//
-//        File dir = new File(PROPERTY_PATH);
-//        ArrayList<File> result = searchFile(dir, PROPERTY_FILE);
-//
-//        if (result.size() > 0) {
-//            return result.get(0);
-//        } else {
-//            LOG.error(DateMidnight.now().toString(DATE_FORMAT) + ": No property file found.");
-//
-//            return null;
-//        }
-//    }
+    /**
+     * Load a properties file from the classpath. Thanks to: http://www.rgagnon.com/javadetails/java-0434.html
+     *
+     * @param  propsName
+     *
+     * @return  Properties
+     *
+     * @throws  Exception
+     */
+    public static Properties load(String propsName) throws Exception {
+
+        Properties props = new Properties();
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        URL url = cl.getResource(propsName);
+        props.load(url.openStream());
+
+        return props;
+    }
+
 
     /**
      * This method gets the properties' value of the given key.
@@ -134,43 +112,7 @@ public class MailServiceImpl implements MailService {
      */
     protected String getProperty(String key) {
 
-        Properties properties = new Properties();
-        properties.setProperty("subject.expire", "Erinnerung Resturlaub");
-        properties.setProperty("subject.new", "Es liegen neue Urlaubsanträge vor");
-        properties.setProperty("subject.allowed.office", "Neuer bewilligter Antrag");
-        properties.setProperty("subject.allowed.user", "Dein Urlaubsantrag wurde bewilligt");
-        properties.setProperty("subject.rejected", "Dein Urlaubsantrag wurde abgelehnt");
-        properties.setProperty("subject.confirm", "Bestätigung Antragsstellung");
-        properties.setProperty("subject.weekly", "Diese Woche im Urlaub");
-        properties.setProperty("subject.cancelled", "Antrag wurde storniert");
-
-        properties.setProperty("full", "ganztägig");
-        properties.setProperty("half.morning", "morgens");
-        properties.setProperty("half.noon", "mittags");
-
-        properties.setProperty("vac.holiday", "Erholungsurlaub");
-        properties.setProperty("vac.special", "Sonderurlaub");
-        properties.setProperty("vac.unpaid", "Unbezahlter Urlaub");
-        properties.setProperty("vac.overtime", "Überstunden abbummeln");
-
         return properties.getProperty(key);
-
-//
-//        if (propertiesFile.exists()) {
-//            try {
-//                BufferedInputStream bis;
-//                bis = new BufferedInputStream(new FileInputStream(propertiesFile));
-//                properties.load(bis);
-//                bis.close();
-//
-//                return properties.getProperty(key);
-//            } catch (IOException ex) {
-//                LOG.error("There was found no value for the given property key: '" + key + "'.");
-//                LOG.error(ex.getMessage(), ex);
-//            }
-//        }
-//
-//        return null;
     }
 
 
@@ -185,8 +127,6 @@ public class MailServiceImpl implements MailService {
      */
     private String prepareMessage(Object object, String modelName, String fileName) {
 
-//        if (getPropertiesFile() != null) {
-//            File propertiesFile = getPropertiesFile();
         Map model = new HashMap();
         model.put(modelName, object);
 
@@ -198,15 +138,9 @@ public class MailServiceImpl implements MailService {
             model.put("dayLength", getProperty(length));
         }
 
-        // mergeTemplateIntoString(VelocityEngine velocityEngine, String templateLocation, Map model)
         String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, PATH + fileName, model);
 
         return text;
-//        }
-
-//        LOG.error(DateMidnight.now().toString(DATE_FORMAT) + ": An error occured preparing the email text.");
-//
-//        return null;
     }
 
 
@@ -224,16 +158,11 @@ public class MailServiceImpl implements MailService {
 
             public void prepare(MimeMessage mimeMessage) throws MessagingException {
 
-//                if (getPropertiesFile() != null) {
-//                    File propertiesFile = getPropertiesFile();
-                mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(recipient));
-                mimeMessage.setFrom(new InternetAddress(FROM));
+                mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(recipient)); // TODO: later email.office and email.boss must also set by getProperty()
 
-                String sub = getProperty(subject);
-                mimeMessage.setSubject(sub);
+                mimeMessage.setSubject(getProperty(subject));
                 mimeMessage.setText(text);
             }
-//            }
         };
 
         try {
@@ -269,7 +198,7 @@ public class MailServiceImpl implements MailService {
 
         String text = prepareMessage(application, APPLICATION, FILE_NEW);
 
-        sendEmail("email.chefs", "subject.new", text);
+        sendEmail("email.boss", "subject.new", text);
     }
 
 
@@ -343,7 +272,7 @@ public class MailServiceImpl implements MailService {
         // (dependent on application's state: waiting-chefs, allowed-office)
 
         if (isBoss) {
-            sendEmail("email.chefs", "subject.cancelled", text);
+            sendEmail("email.boss", "subject.cancelled", text);
         } else {
             sendEmail("email.office", "subject.cancelled", text);
         }

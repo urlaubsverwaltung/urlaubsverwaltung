@@ -14,17 +14,8 @@
            
 
 <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
-<!--	<property name="host" value="smtp.synyx.de" />
-	<property name="port" value="465" />-->
-<!--	<property name="username" value="username" />
-	<property name="password" value="password" />
- 
-	<property name="javaMailProperties">
-	     <props>
-           	<prop key="mail.smtp.auth">true</prop>
-           	<prop key="mail.smtp.starttls.enable">true</prop>
-       	     </props>
-	</property>-->
+        <property name="host" value="${mail.host}" />
+        <property name="port" value="${mail.port}" />
 </bean>
  
 <bean id="mailService" class="org.synyx.urlaubsverwaltung.service.MailServiceImpl">
@@ -39,10 +30,8 @@
           class.resource.loader.class=org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
             file.resource.loader.cache = true
             file.resource.loader.unicode = true
-<!--            file.resource.loader.modificationCheckInterval = 5-->
             input.encoding=UTF-8
             output.encoding=UTF-8
-            velocimacro.library=org/springframework/web/servlet/view/velocity/spring.vm
          </value>
       </property>
 </bean>         

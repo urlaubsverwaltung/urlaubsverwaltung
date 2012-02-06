@@ -43,14 +43,14 @@ import javax.mail.internet.InternetAddress;
  *
  * @author  Aljona Murygina
  */
-
 public class MailServiceImplTest {
 
-    private static final String FILE_PATH = "./messages_de.properties";
+    private static final String FILE_PATH = "messages_de.properties";
 
     private MailServiceImpl instance;
     private JavaMailSender mailSender = new JavaMailSenderImpl();
     private VelocityEngine velocityEngine = new VelocityEngine();
+
     private Person person;
     private Application application;
 
@@ -111,7 +111,6 @@ public class MailServiceImplTest {
         assertNotSame("subject", msg.getSubject());
 
         // check from and recipient
-        assertEquals(new InternetAddress("email.manager"), msg.getFrom()[0]);
         assertEquals(new InternetAddress("guentherklein@test.com"), msg.getAllRecipients()[0]);
 
         // check content of email
@@ -134,7 +133,7 @@ public class MailServiceImplTest {
         instance.sendNewApplicationNotification(application);
 
         // was email sent?
-        List<Message> inbox = Mailbox.get("email.chefs");
+        List<Message> inbox = Mailbox.get("email.boss");
         assertTrue(inbox.size() > 0);
 
         // get email
@@ -145,8 +144,7 @@ public class MailServiceImplTest {
         assertNotSame("subject", msg.getSubject());
 
         // check from and recipient
-        assertEquals(new InternetAddress("email.manager"), msg.getFrom()[0]);
-        assertEquals(new InternetAddress("email.chefs"), msg.getAllRecipients()[0]);
+        assertEquals(new InternetAddress("email.boss"), msg.getAllRecipients()[0]);
 
         // check content of email
         String content = (String) msg.getContent();
@@ -185,7 +183,6 @@ public class MailServiceImplTest {
         assertNotSame("subject", msg.getSubject());
 
         // check from and recipient
-        assertEquals(new InternetAddress("email.manager"), msg.getFrom()[0]);
         assertEquals(new InternetAddress("berndo@test.com"), msg.getAllRecipients()[0]);
 
         // check content of email
@@ -203,7 +200,6 @@ public class MailServiceImplTest {
         assertNotSame("subject", msgOffice.getSubject());
 
         // check from and recipient
-        assertEquals(new InternetAddress("email.manager"), msgOffice.getFrom()[0]);
         assertEquals(new InternetAddress("email.office"), msgOffice.getAllRecipients()[0]);
 
         // check content of email
@@ -239,7 +235,6 @@ public class MailServiceImplTest {
         assertNotSame("subject", msg.getSubject());
 
         // check from and recipient
-        assertEquals(new InternetAddress("email.manager"), msg.getFrom()[0]);
         assertEquals(new InternetAddress("franzi@test.com"), msg.getAllRecipients()[0]);
 
         // check content of email
@@ -274,7 +269,6 @@ public class MailServiceImplTest {
         assertNotSame("subject", msg.getSubject());
 
         // check from and recipient
-        assertEquals(new InternetAddress("email.manager"), msg.getFrom()[0]);
         assertEquals(new InternetAddress("hilde@test.com"), msg.getAllRecipients()[0]);
 
         // check content of email
@@ -313,7 +307,6 @@ public class MailServiceImplTest {
         assertNotSame("subject", msg.getSubject());
 
         // check from and recipient
-        assertEquals(new InternetAddress("email.manager"), msg.getFrom()[0]);
         assertEquals(new InternetAddress("email.all"), msg.getAllRecipients()[0]);
 
         // check content of email
@@ -343,7 +336,7 @@ public class MailServiceImplTest {
         instance.sendCancelledNotification(application, true);
 
         // was email sent?
-        List<Message> inboxChef = Mailbox.get("email.chefs");
+        List<Message> inboxChef = Mailbox.get("email.boss");
         assertTrue(inboxChef.size() > 0);
 
         Message msg = inboxChef.get(0);
@@ -353,8 +346,7 @@ public class MailServiceImplTest {
         assertNotSame("subject", msg.getSubject());
 
         // check from and recipient
-        assertEquals(new InternetAddress("email.manager"), msg.getFrom()[0]);
-        assertEquals(new InternetAddress("email.chefs"), msg.getAllRecipients()[0]);
+        assertEquals(new InternetAddress("email.boss"), msg.getAllRecipients()[0]);
 
         // check content of email
         String content = (String) msg.getContent();
