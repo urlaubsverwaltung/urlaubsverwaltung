@@ -139,7 +139,9 @@ public class PersonValidator implements Validator {
 
         // is field filled?
         if (days == null) {
-            errors.rejectValue(field, MANDATORY_FIELD);
+            if (errors.getFieldErrors(VACATION_DAYS).isEmpty()) {
+                errors.rejectValue(field, MANDATORY_FIELD);
+            }
         } else {
             // is number of days < 0 ?
             if (days.compareTo(BigDecimal.ZERO) == -1) {

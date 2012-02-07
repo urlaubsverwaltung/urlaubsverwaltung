@@ -25,10 +25,20 @@ import java.math.BigDecimal;
  */
 public class ApplicationValidator implements Validator {
 
+    // errors' properties keys
     private static final String MANDATORY_FIELD = "error.mandatory.field";
-    private static final String REASON = "error.reason";
-    private static final String PERIOD = "error.period";
-    private static final String PAST = "error.period.past";
+    private static final String ERROR_REASON = "error.reason";
+    private static final String ERROR_PERIOD = "error.period";
+    private static final String ERROR_PAST = "error.period.past";
+    private static final String ERROR_SICK = "sick.more";
+
+    // names of fields
+    private static final String START_DATE = "startDate";
+    private static final String END_DATE = "endDate";
+    private static final String START_DATE_HALF = "startDateHalf";
+    private static final String REASON = "reason";
+    private static final String TEXT = "text";
+    private static final String SICK_DAYS = "sickDays";
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -46,29 +56,35 @@ public class ApplicationValidator implements Validator {
         if (app.getHowLong() == DayLength.FULL) {
             // check if date fields are not filled
             if (app.getStartDate() == null) {
-                errors.rejectValue("startDate", MANDATORY_FIELD);
+                if (errors.getFieldErrors(START_DATE).isEmpty()) {
+                    errors.rejectValue(START_DATE, MANDATORY_FIELD);
+                }
             }
 
             if (app.getEndDate() == null) {
-                errors.rejectValue("endDate", MANDATORY_FIELD);
+                if (errors.getFieldErrors(END_DATE).isEmpty()) {
+                    errors.rejectValue(END_DATE, MANDATORY_FIELD);
+                }
             }
 
             if (app.getStartDate() != null && app.getEndDate() != null) {
                 // check if from < to
                 if (app.getStartDate().isAfter(app.getEndDate())) {
-                    errors.reject(PERIOD);
+                    errors.reject(ERROR_PERIOD);
                 }
             }
         } else {
             if (app.getStartDateHalf() == null) {
-                errors.rejectValue("startDateHalf", MANDATORY_FIELD);
+                if (errors.getFieldErrors(START_DATE_HALF).isEmpty()) {
+                    errors.rejectValue(START_DATE_HALF, MANDATORY_FIELD);
+                }
             }
         }
 
         // check if reason is not filled
         if (app.getVacationType() != VacationType.HOLIDAY) {
             if (app.getReason() == null || !StringUtils.hasText(app.getReason())) {
-                errors.rejectValue("reason", MANDATORY_FIELD);
+                errors.rejectValue(REASON, MANDATORY_FIELD);
             }
         }
     }
@@ -89,13 +105,13 @@ public class ApplicationValidator implements Validator {
         if (app.getHowLong() == DayLength.FULL) {
             if (app.getStartDate() != null) {
                 if (app.getStartDate().isBeforeNow()) {
-                    errors.reject(PAST);
+                    errors.reject(ERROR_PAST);
                 }
             }
         } else {
             if (app.getStartDateHalf() != null) {
                 if (app.getStartDateHalf().isBeforeNow()) {
-                    errors.reject(PAST);
+                    errors.reject(ERROR_PAST);
                 }
             }
         }
@@ -108,16 +124,18 @@ public class ApplicationValidator implements Validator {
 
         // field not filled
         if (app.getSickDays() == null) {
-            errors.reject("sick.more");
+            if (errors.getFieldErrors(SICK_DAYS).isEmpty()) {
+                errors.reject(ERROR_SICK);
+            }
         } else {
             // number of sick days is zero or negative
             if (app.getSickDays().compareTo(BigDecimal.ZERO) <= 0) {
-                errors.reject("sick.more");
+                errors.reject(ERROR_SICK);
             }
 
             // number of sick days is greater than vacation days of application
             if (app.getSickDays().compareTo(days) == 1)
-                errors.reject("sick.more");
+                errors.reject(ERROR_SICK);
         }
     }
 
@@ -127,7 +145,7 @@ public class ApplicationValidator implements Validator {
         Comment comment = (Comment) target;
 
         if (comment.getText() == null || !StringUtils.hasText(comment.getText())) {
-            errors.rejectValue("text", REASON);
+            errors.rejectValue(TEXT, ERROR_REASON);
         }
     }
 }
