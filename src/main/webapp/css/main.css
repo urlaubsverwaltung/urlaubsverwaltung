@@ -250,6 +250,16 @@ tr.even {
     left: 0em;
 }
 
+#reject-error {
+    border: 1px solid #E76757;
+    background: url("../images/alarm_16.png") no-repeat 1% 40%;
+    background-color: #FFE3E3;
+    padding: 0.5em 0.5em 0.5em 2.25em;
+    position: absolute;
+    top: 3em;
+    left: 25em;
+}
+
 .app {
     border: 1px solid #D7D7D7; 
     padding: 1em 2em 2em 2em; 

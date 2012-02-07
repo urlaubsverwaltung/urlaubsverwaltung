@@ -27,6 +27,7 @@ public class PersonValidator implements Validator {
 
     private static final String MANDATORY_FIELD = "error.mandatory.field";
     private static final String ERROR_ENTRY = "error.entry";
+    private static final String ERROR_EMAIL = "error.email";
 
     private static final String FIRST_NAME = "firstName";
     private static final String LAST_NAME = "lastName";
@@ -104,13 +105,9 @@ public class PersonValidator implements Validator {
         if (email == null || !StringUtils.hasText(email)) {
             errors.rejectValue(EMAIL, MANDATORY_FIELD);
         } else {
-            // Commented out: 24th January 2012 validation with class InternetAddress try { InternetAddress address =
-            // new InternetAddress(form.getEmail(), true); address.validate(); } catch (AddressException ex) {
-            // errors.rejectValue(EMAIL, ERROR_ENTRY); }
-
             // validation with regex
             if (!matchPattern(EMAIL_PATTERN, email)) {
-                errors.rejectValue(EMAIL, ERROR_ENTRY);
+                errors.rejectValue(EMAIL, ERROR_EMAIL);
             }
         }
     }

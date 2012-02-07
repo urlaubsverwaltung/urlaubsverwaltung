@@ -28,18 +28,26 @@
 
                             <form:form method="put" action="${formUrlPrefix}/application/${application.id}/allow"> 
                                 <input class="confirm" type="submit" name="<spring:message code='app.state.ok' />" value="<spring:message code='app.state.ok' />" class="button" />    
-                                <input class="back" type="button" name="<spring:message code='app.state.no' />" value="<spring:message code='app.state.no' />" onclick="$('#reject').show(1000);" />
+                                <input class="back" type="button" name="<spring:message code='app.state.no' />" value="<spring:message code='app.state.no' />" onclick="$('#reject').show();" />
                             </form:form>   
                                 <form:form method="put" action="${formUrlPrefix}/application/${application.id}/reject" modelAttribute="comment">
-                                    <br /><form:errors path="*" cssClass="error" />
-                            <br />
-                            <br /> 
-
-                            <div id="reject" style="display: none">    
-                                    <spring:message code='reason' />&nbsp;<form:input path="text" cssErrorClass="error" />   
+                                 <br />
+                            <div id="reject" style="
+                                     <c:choose>
+                                         <c:when test="${not empty errors}">display: block</c:when>
+                                         <c:otherwise>display: none</c:otherwise>
+                                     </c:choose>
+                                ">            
+                                    <spring:message code='reason' />:&nbsp;&nbsp;<form:input path="text" cssErrorClass="error" />   
                                     <input type="submit" name="<spring:message code='ok' />" value="<spring:message code='ok' />" class="button" />
-                                </form:form>
-                            </div>    
+                                    <script type="text/javascript">
+                                    $(document).ready(function() {
+                                        $('#reject-error').show('drop', 500);
+                                    });
+                                </script>
+                                    <form:errors path="text" cssClass="error" id="reject-error" />
+                                </div>
+                                </form:form>  
 
                         </sec:authorize>
 

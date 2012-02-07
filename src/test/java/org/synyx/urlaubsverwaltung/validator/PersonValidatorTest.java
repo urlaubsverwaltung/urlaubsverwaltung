@@ -174,13 +174,13 @@ public class PersonValidatorTest {
 
         form.setEmail("fraulyoner(at)verwaltung.de");
         instance.validateEmail(form.getEmail(), errors);
-        Mockito.verify(errors).rejectValue("email", "error.entry");
+        Mockito.verify(errors).rejectValue("email", "error.email");
         Mockito.reset(errors);
 
         // more than one '@'
         form.setEmail("fraulyoner@verwa@ltung.de");
         instance.validateEmail(form.getEmail(), errors);
-        Mockito.verify(errors).rejectValue("email", "error.entry");
+        Mockito.verify(errors).rejectValue("email", "error.email");
         Mockito.reset(errors);
 
         // structure not like: user@host.domain
@@ -188,19 +188,19 @@ public class PersonValidatorTest {
         // e.g. '@' at start of email address
         form.setEmail("@fraulyonerverwaltung.de");
         instance.validateEmail(form.getEmail(), errors);
-        Mockito.verify(errors).rejectValue("email", "error.entry");
+        Mockito.verify(errors).rejectValue("email", "error.email");
         Mockito.reset(errors);
 
         // e.g. no point after host is
         form.setEmail("fraulyoner@verwaltungde");
         instance.validateEmail(form.getEmail(), errors);
-        Mockito.verify(errors).rejectValue("email", "error.entry");
+        Mockito.verify(errors).rejectValue("email", "error.email");
         Mockito.reset(errors);
 
         // e.g. structure like: xy@host, no domain
         form.setEmail("fraulyoner@verwaltung");
         instance.validateEmail(form.getEmail(), errors);
-        Mockito.verify(errors).rejectValue("email", "error.entry");
+        Mockito.verify(errors).rejectValue("email", "error.email");
         Mockito.reset(errors);
 
         // valid email addresses

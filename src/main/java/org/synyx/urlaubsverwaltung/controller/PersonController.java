@@ -441,6 +441,7 @@ public class PersonController {
             setLoggedUser(model);
             model.addAttribute(PERSON, person);
             model.addAttribute(PERSONFORM, personForm);
+            model.addAttribute("currentYear", DateMidnight.now().getYear());
 
             return PERSON_FORM_JSP;
         } else {
@@ -472,6 +473,8 @@ public class PersonController {
             setLoggedUser(model);
             model.addAttribute(PERSON, personToUpdate);
             model.addAttribute(PERSONFORM, personForm);
+            model.addAttribute("currentYear", DateMidnight.now().getYear());
+            model.addAttribute("errors", errors);
 
             return PERSON_FORM_JSP;
         } else {
