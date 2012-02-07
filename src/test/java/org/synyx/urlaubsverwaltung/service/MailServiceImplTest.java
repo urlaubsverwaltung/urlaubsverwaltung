@@ -45,8 +45,6 @@ import javax.mail.internet.InternetAddress;
  */
 public class MailServiceImplTest {
 
-    private static final String FILE_PATH = "messages_de.properties";
-
     private MailServiceImpl instance;
     private JavaMailSender mailSender = new JavaMailSenderImpl();
     private VelocityEngine velocityEngine = new VelocityEngine();
