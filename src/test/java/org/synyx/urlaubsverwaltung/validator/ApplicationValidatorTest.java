@@ -170,25 +170,25 @@ public class ApplicationValidatorTest {
         // sick days == null
         app.setSickDays(null);
         instance.validateSickDays(app, vacationDays, errors);
-        Mockito.verify(errors).reject("sick.more");
+        Mockito.verify(errors).rejectValue("sickDays", "sick.empty");
         Mockito.reset(errors);
 
         // sick days == 0
         app.setSickDays(BigDecimal.ZERO);
         instance.validateSickDays(app, vacationDays, errors);
-        Mockito.verify(errors).reject("sick.more");
+        Mockito.verify(errors).rejectValue("sickDays", "sick.zero");
         Mockito.reset(errors);
 
         // sick days < 0
         app.setSickDays(BigDecimal.valueOf(-1));
         instance.validateSickDays(app, vacationDays, errors);
-        Mockito.verify(errors).reject("sick.more");
+        Mockito.verify(errors).rejectValue("sickDays", "sick.negative");
         Mockito.reset(errors);
 
         // number of sick days is greater than number of application's vacation days
         app.setSickDays(BigDecimal.valueOf(6));
         instance.validateSickDays(app, vacationDays, errors);
-        Mockito.verify(errors).reject("sick.more");
+        Mockito.verify(errors).rejectValue("sickDays", "sick.more");
         Mockito.reset(errors);
 
         // number of sick days is smaller than number of application's vacation days

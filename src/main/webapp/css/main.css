@@ -212,6 +212,44 @@ tr.even {
     padding-right: 1em;
 }
 
+.app-form {
+    border: 1px solid #D7D7D7;
+    padding: 1em 2em 2em 2em; 
+    margin:0;
+}
+
+.tbl-right {
+    text-align: left;
+    padding-left: 3em;
+}
+
+#date-to {
+    padding-left: 1em;
+}
+
+#error-div {
+    width: 50em;
+    background: url("../images/alarm_16.png") no-repeat 1% 40%;
+/*    position: absolute;
+    top: 34.25em;
+    left: 55em;*/
+    border: 1px solid #E76757;
+    background-color: #FFE3E3;
+    padding: 0.5em 0.5em 0.5em 2.25em;
+    margin-left: 0;
+}
+
+#sick-error {
+    border: 1px solid #E76757;
+    background: url("../images/alarm_16.png") no-repeat 1% 40%;
+    background-color: #FFE3E3;
+    padding: 0.5em 0.5em 0.5em 2.25em;
+    float: left;
+    position: absolute;
+    top: 10em;
+    left: 0em;
+}
+
 .app {
     border: 1px solid #D7D7D7; 
     padding: 1em 2em 2em 2em; 

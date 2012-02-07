@@ -1,4 +1,4 @@
-Hallo ${application.person.firstName} ${application.person.lastName},
+Hallo ${application.person.firstName},
 
 dein Urlaubsantrag wurde erfolgreich eingereicht und wird in Kürze von einem der Chefs bearbeitet werden.
 Für dich zur Erinnerung:

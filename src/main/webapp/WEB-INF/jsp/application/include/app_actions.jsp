@@ -59,16 +59,24 @@
 
                             <form:form method="put" action="${formUrlPrefix}/application/${application.id}/sick" modelAttribute="appForm">
 
-                                <div id="sick" style="display: none">
+                                <div id="sick" style="
+                                     <c:choose>
+                                         <c:when test="${not empty errors}">display: block</c:when>
+                                         <c:otherwise>display: none</c:otherwise>
+                                     </c:choose>
+                                ">         
                                     <spring:message code='staff.sick' />
                                     <br />
                                     <br />
-                                    <form:input path="sickDays" />   
+                                    <form:input path="sickDays" cssErrorClass="error" />   
                                     <input type="submit" name="<spring:message code='save' />" value="<spring:message code='save' />" class="button" />
+                                    <script type="text/javascript">
+                                    $(document).ready(function() {
+                                        $('#sick-error').show('drop', 500);
+                                    });
+                                </script>
+                                    <form:errors path="sickDays" cssClass="error" id="sick-error" />
                                 </div>
-                                <br />
-                                <br />
-                                <form:errors path="*" cssClass="error" />
                             </form:form>
 
                         </sec:authorize>

@@ -27,6 +27,7 @@ public class ApplicationValidator implements Validator {
 
     // errors' properties keys
     private static final String MANDATORY_FIELD = "error.mandatory.field";
+    private static final String ERROR_ENTRY = "error.entry";
     private static final String ERROR_REASON = "error.reason";
     private static final String ERROR_PERIOD = "error.period";
     private static final String ERROR_PAST = "error.period.past";
@@ -125,17 +126,21 @@ public class ApplicationValidator implements Validator {
         // field not filled
         if (app.getSickDays() == null) {
             if (errors.getFieldErrors(SICK_DAYS).isEmpty()) {
-                errors.reject(ERROR_SICK);
+                errors.rejectValue(SICK_DAYS, "sick.empty");
             }
         } else {
             // number of sick days is zero or negative
-            if (app.getSickDays().compareTo(BigDecimal.ZERO) <= 0) {
-                errors.reject(ERROR_SICK);
+            if (app.getSickDays().compareTo(BigDecimal.ZERO) == 0) {
+                errors.rejectValue(SICK_DAYS, "sick.zero");
+            }
+
+            if (app.getSickDays().compareTo(BigDecimal.ZERO) == -1) {
+                errors.rejectValue(SICK_DAYS, "sick.negative");
             }
 
             // number of sick days is greater than vacation days of application
             if (app.getSickDays().compareTo(days) == 1)
-                errors.reject(ERROR_SICK);
+                errors.rejectValue(SICK_DAYS, ERROR_SICK);
         }
     }
 

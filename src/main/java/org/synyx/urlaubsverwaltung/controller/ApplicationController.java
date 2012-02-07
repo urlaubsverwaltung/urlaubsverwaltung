@@ -325,6 +325,10 @@ public class ApplicationController {
         if (errors.hasErrors()) {
             prepareForm(person, appForm, model);
 
+            if (errors.hasGlobalErrors()) {
+                model.addAttribute("errors", errors);
+            }
+
             return APP_FORM_JSP;
         } else {
             Application application = new Application();
@@ -375,11 +379,16 @@ public class ApplicationController {
                     return "redirect:/web" + OVERVIEW;
                 } else {
                     errors.reject("check.enough");
+                    model.addAttribute("daysApp", application.getDays());
                 }
             }
         }
 
         prepareForm(person, appForm, model);
+
+        if (errors.hasGlobalErrors()) {
+            model.addAttribute("errors", errors);
+        }
 
         return APP_FORM_JSP;
     }
@@ -573,6 +582,7 @@ public class ApplicationController {
             // shows error in Frontend
             prepareDetailView(application, ALLOWED, model);
             model.addAttribute(APPFORM, appForm);
+            model.addAttribute("errors", errors);
 
             return SHOW_APP_DETAIL;
         } else {
