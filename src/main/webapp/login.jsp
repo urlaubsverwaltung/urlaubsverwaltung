@@ -1,7 +1,7 @@
 <%-- 
     Document   : login
     Created on : 31.10.2011, 10:00:23
-    Author     : Johannes Reuter
+    Author     : Johannes Reuter + Aljona Murygina
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -18,7 +18,19 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Login</title>
         <link rel="stylesheet" type="text/css" href="<spring:url value='/css/login.css' />" /> 
-        <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />" /> 
+        <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />" />
+        <script src="<spring:url value='/jquery/js/jquery-1.6.2.min.js' />" type="text/javascript" ></script>
+        <script src="<spring:url value='/jquery/js/jquery-ui-1.8.16.custom.min.js' />" type="text/javascript" ></script>
+        <script type="text/javascript">
+                $(document).ready(function() {
+                    
+                    var url = document.URL;
+            
+                    if(url.indexOf("login_error") != -1) {
+                        $('#login-error').show('drop', {direction: "up"}); 
+                    } 
+                });
+            </script>
     </head>
 
     <body>
@@ -36,19 +48,13 @@
 
         <div id="login-content">
 
-            <div id="wrapper">
-                <%
-                    if (request.getParameter("login_error") != null) {
-                        out.println("Der Benutzer ist fehlerhaft.");
-                    }
-
-                %>
-                
+                <div id="wrapper">
+                    
                 <form method="post" action="j_spring_security_check">
                     
                     <table id="login-tbl">
                         <tr>
-                            <td>
+                            <td style="text-align: left">
                                 <label for="j_username">Username</label>
                             </td>
                             <td>
@@ -56,8 +62,8 @@
                             </td>
                         </tr>
                         <tr>
-                            <td>
-                                <label for="j_password">Password</label>
+                            <td style="text-align: left">
+                                <label for="j_password">Passwort</label>
                             </td>
                             <td>
                                 <input type="password" name="j_password" id="j_password" />
@@ -68,7 +74,7 @@
                                 &nbsp;
                             </td>
                             <td style="padding-top: 1em;">
-                               <input type='checkbox' name='_spring_security_remember_me' /> Remember me on this computer.
+                               <input type='checkbox' name='_spring_security_remember_me' />Angemeldet bleiben
                             </td>
                         </tr>
                         <tr>
@@ -81,6 +87,11 @@
                         </tr>
                     </table>
                 </form>
+                    
+                    <div id="login-error" style="display:none">
+                Der eingegebene Nutzername oder das Passwort ist falsch.
+            </div>
+                    
             </div>
 
         </div>    

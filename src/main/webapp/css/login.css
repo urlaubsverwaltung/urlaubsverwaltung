@@ -19,5 +19,16 @@
                 text-align:center;
                 padding:20px;
             }
+           
+            #login-error {
+                    border: 1px solid #E76757;
+    background: url("../images/alarm_16.png") no-repeat 1% 40%;
+    background-color: #FFE3E3;
+    padding: 0.5em 0.5em 0.5em 2.25em;
+    width: 30em;
+    position: relative;
+    top: 3em;
+    left: -3.75em;
+            }
                   
 

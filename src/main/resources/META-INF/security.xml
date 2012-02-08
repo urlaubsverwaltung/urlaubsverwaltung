@@ -47,8 +47,6 @@
          <security:intercept-url pattern="/login.jsp" access="permitAll"/>
          <security:intercept-url pattern="/messages_de.properties" access="permitAll"/>
          <security:intercept-url pattern="/messages_en.properties" access="permitAll"/>
-         <security:intercept-url pattern="/main.css" access="permitAll"/>
-         <security:intercept-url pattern="/login.css" access="permitAll"/>
          <security:intercept-url pattern="/images/synyx-logo-transp.jpg" access="permitAll"/>
          <security:form-login login-page="/login.jsp" always-use-default-target="true" default-target-url="/web/overview" authentication-failure-url="/login.jsp?login_error=1"/>
          <security:logout logout-success-url="/web/login"/>
