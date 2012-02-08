@@ -39,7 +39,7 @@ public class PersonValidator implements Validator {
     private static final String EMAIL_PATTERN =
         "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
-    private static final String NAME_PATTERN = "[a-zA-Z]+";
+    private static final String NAME_PATTERN = "\\p{L}+"; // any kind of letter from any language.
 
     private Pattern pattern;
     private Matcher matcher;

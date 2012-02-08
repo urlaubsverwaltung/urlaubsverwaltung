@@ -149,6 +149,41 @@ public class PersonValidatorTest {
         instance.validateName(form.getLastName(), "lastName", errors);
         Mockito.verifyZeroInteractions(errors);
         Mockito.reset(errors);
+
+        // names with special characters
+        // should be no error
+        form.setFirstName("Réne");
+        form.setLastName("Hûgo");
+
+        instance.validateName(form.getFirstName(), "firstName", errors);
+        Mockito.verifyZeroInteractions(errors);
+        Mockito.reset(errors);
+
+        instance.validateName(form.getLastName(), "lastName", errors);
+        Mockito.verifyZeroInteractions(errors);
+        Mockito.reset(errors);
+
+        form.setFirstName("Mark");
+        form.setLastName("Müller"); // umlaut allowed too
+
+        instance.validateName(form.getFirstName(), "firstName", errors);
+        Mockito.verifyZeroInteractions(errors);
+        Mockito.reset(errors);
+
+        instance.validateName(form.getLastName(), "lastName", errors);
+        Mockito.verifyZeroInteractions(errors);
+        Mockito.reset(errors);
+
+        form.setFirstName("λα"); // greek allowed too
+        form.setLastName("Müller");
+
+        instance.validateName(form.getFirstName(), "firstName", errors);
+        Mockito.verifyZeroInteractions(errors);
+        Mockito.reset(errors);
+
+        instance.validateName(form.getLastName(), "lastName", errors);
+        Mockito.verifyZeroInteractions(errors);
+        Mockito.reset(errors);
     }
 
 
