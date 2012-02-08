@@ -189,8 +189,6 @@ public class ApplicationController {
 
             return APP_LIST_JSP;
         } else {
-            prepareErrorJsp(null, model);
-
             return ERROR_JSP;
         }
     }
@@ -216,8 +214,6 @@ public class ApplicationController {
 
             return APP_LIST_JSP;
         } else {
-            prepareErrorJsp(null, model);
-
             return ERROR_JSP;
         }
     }
@@ -243,8 +239,6 @@ public class ApplicationController {
 
             return APP_LIST_JSP;
         } else {
-            prepareErrorJsp(null, model);
-
             return ERROR_JSP;
         }
     }
@@ -269,8 +263,6 @@ public class ApplicationController {
 
             return APP_LIST_JSP;
         } else {
-            prepareErrorJsp(null, model);
-
             return ERROR_JSP;
         }
     }
@@ -430,7 +422,46 @@ public class ApplicationController {
 
 
     /**
-     * view for boss who has to decide if he allows or rejects the application office is able to add sick days that
+     * application detail view for office; link in
+     *
+     * @param  applicationId
+     * @param  model
+     *
+     * @return
+     */
+    @RequestMapping(value = SHOW_APP, method = RequestMethod.GET)
+    public String showApplicationDetail(@PathVariable(APPLICATION_ID) Integer applicationId, Model model) {
+
+        if (getLoggedUser().getRole() == Role.OFFICE || getLoggedUser().getRole() == Role.BOSS) {
+            Application application = applicationService.getApplicationById(applicationId);
+
+            int state = -1;
+
+            // remember state numbers:
+            // WAITING = 0;
+            // ALLOWED = 1;
+            // CANCELLED = 2;
+            if (application.getStatus() == ApplicationStatus.WAITING) {
+                state = 0;
+            } else if (application.getStatus() == ApplicationStatus.ALLOWED) {
+                state = 1;
+            } else if (application.getStatus() == ApplicationStatus.CANCELLED) {
+                state = 2;
+            }
+
+            prepareDetailView(application, state, model);
+            model.addAttribute(APPFORM, new AppForm());
+            model.addAttribute(COMMENT, new Comment());
+
+            return SHOW_APP_DETAIL;
+        } else {
+            return ERROR_JSP;
+        }
+    }
+
+
+    /**
+     * view for boss who has to decide if he allows or rejects the application, the office is able to add sick days that
      * occured during a holiday
      *
      * @param  applicationId
@@ -439,7 +470,7 @@ public class ApplicationController {
      * @return
      */
     @RequestMapping(value = SHOW_APP, params = "state", method = RequestMethod.GET)
-    public String showApplicationDetail(@PathVariable(APPLICATION_ID) Integer applicationId,
+    public String showApplicationDetailByState(@PathVariable(APPLICATION_ID) Integer applicationId,
         @RequestParam("state") int state, Model model) {
 
         if (getLoggedUser().getRole() == Role.OFFICE || getLoggedUser().getRole() == Role.BOSS) {
@@ -451,8 +482,6 @@ public class ApplicationController {
 
             return SHOW_APP_DETAIL;
         } else {
-            prepareErrorJsp("message.curious", model);
-
             return ERROR_JSP;
         }
     }
@@ -489,8 +518,6 @@ public class ApplicationController {
 
             return "redirect:/web" + WAITING_APPS;
         } else {
-            prepareErrorJsp("message.boss", model);
-
             return ERROR_JSP;
         }
     }
@@ -543,6 +570,15 @@ public class ApplicationController {
     }
 
 
+    /**
+     * This method shows a confirm page with details about the application that user wants to cancel; the user has to
+     * confirm that he really wants to cancel this application.
+     *
+     * @param  applicationId
+     * @param  model
+     *
+     * @return
+     */
     @RequestMapping(value = CANCEL_APP, method = RequestMethod.GET)
     public String cancelApplicationConfirm(@PathVariable(APPLICATION_ID) Integer applicationId, Model model) {
 
@@ -553,13 +589,18 @@ public class ApplicationController {
 
             return SHOW_APP_DETAIL;
         } else {
-            prepareErrorJsp(null, model);
-
             return ERROR_JSP;
         }
     }
 
 
+    /**
+     * After confirming by user: this method set an application to cancelled.
+     *
+     * @param  applicationId
+     *
+     * @return
+     */
     @RequestMapping(value = CANCEL_APP, method = RequestMethod.PUT)
     public String cancelApplication(@PathVariable(APPLICATION_ID) Integer applicationId) {
 
@@ -581,6 +622,16 @@ public class ApplicationController {
     }
 
 
+    /**
+     * This method allows the office to adding sick days to an application.
+     *
+     * @param  applicationId
+     * @param  appForm
+     * @param  errors
+     * @param  model
+     *
+     * @return
+     */
     @RequestMapping(value = SICK_DAYS, method = RequestMethod.PUT)
     public String addSickDays(@PathVariable(APPLICATION_ID) Integer applicationId,
         @ModelAttribute(APPFORM) AppForm appForm, Errors errors, Model model) {
@@ -649,15 +700,5 @@ public class ApplicationController {
         String user = SecurityContextHolder.getContext().getAuthentication().getName();
 
         return personService.getPersonByLogin(user);
-    }
-
-
-    private void prepareErrorJsp(String message, Model model) {
-
-        setLoggedUser(model);
-
-        if (message != null) {
-            model.addAttribute("message", message);
-        }
     }
 }

@@ -73,7 +73,7 @@
                             <c:forEach items="${applications}" var="app" varStatus="loopStatus">
                                 <tr class="${loopStatus.index % 2 == 0 ? 'even' : 'odd'}">
                                     <td>
-                                        <c:out value="${app.person.lastName}" />&nbsp;<c:out value="${app.person.firstName}" />
+                                        <c:out value="${app.person.firstName}" />&nbsp;<c:out value="${app.person.lastName}" />
                                     </td>
                                     <td>
                                         <spring:message code="${app.vacationType.vacationTypeName}"/>

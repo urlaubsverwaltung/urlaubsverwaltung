@@ -55,8 +55,8 @@ a:hover {
 }
 
 #header h1 {
-    text-align: center;
-    padding-top: 12px;
+    padding-left: 10em;
+    padding-top: 0.45em;
     font-size: 2.25em;
 }
 
@@ -151,7 +151,7 @@ th.vac {
 #staff-list {
     width: 100%; 
     font-size: 1em;
-    /*border: 1px solid #444444;*/
+border: 1px solid #EAF2D3;
 }
 
 #staff-list th {
@@ -269,6 +269,8 @@ tr.even {
 .app-tbl {
     width: 100%;
     font-size: 1.05em;
+    border: 1px solid #EAF2D3;
+    margin-bottom: 4em;
 /*    border-bottom: 1px solid #D7D7D7;
     border-right: 1px solid #D7D7D7;
     border-left: 1px solid #D7D7D7;*/
@@ -290,6 +292,21 @@ padding: 0.55em;
 
 .user-pic {
     text-align: center;
+}
+
+.overview-header {
+        border: 1px solid #D7D7D7;
+        width: 100%;
+        margin-bottom: 2em;
+        background-color: #EAF2D3;
+}
+
+
+.overview-header td {
+    font-size: 1.1em;
+    font-weight: 100;
+    height: 2.25em;
+    padding-left: 0.5em;
 }
 
 

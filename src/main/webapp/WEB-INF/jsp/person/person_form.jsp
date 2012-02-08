@@ -40,21 +40,21 @@
                             <th colspan="2">&nbsp;</th>
                         </tr>
                         <tr>
-                            <td><label for="nachname"><spring:message code="lastname" />:</label></td>
-                            <td>
-                                <form:input id="nachname" path="lastName" cssErrorClass="error" />
-                            </td>
-                            <td>
-                                <form:errors path="lastName" cssClass="error" />
-                            </td>
-                        </tr>
-                        <tr>
                             <td><label for="vorname"><spring:message code="firstname" />:</label></td>
                             <td>
                                 <form:input id="vorname" path="firstName" cssErrorClass="error" />
                             </td>
                             <td>
                                 <form:errors path="firstName" cssClass="error" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><label for="nachname"><spring:message code="lastname" />:</label></td>
+                            <td>
+                                <form:input id="nachname" path="lastName" cssErrorClass="error" />
+                            </td>
+                            <td>
+                                <form:errors path="lastName" cssClass="error" />
                             </td>
                         </tr>
                         <tr>

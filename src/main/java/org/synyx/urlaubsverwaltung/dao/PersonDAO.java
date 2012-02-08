@@ -19,11 +19,11 @@ public interface PersonDAO extends JpaRepository<Person, Integer> {
     Person getPersonByLogin(String loginName);
 
 
-    @Query("select x from Person x where x.active = true order by x.lastName")
+    @Query("select x from Person x where x.active = true order by x.firstName")
     List<Person> getPersonsOrderedByLastName();
 
 
-    @Query("select x from Person x where x.active = false order by x.lastName")
+    @Query("select x from Person x where x.active = false order by x.firstName")
     List<Person> getInactivePersons();
 
 

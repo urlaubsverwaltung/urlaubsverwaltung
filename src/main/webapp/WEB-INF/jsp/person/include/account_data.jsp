@@ -10,12 +10,21 @@
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
+<c:choose>
+<c:when test="${!empty param.year}">
+    <c:set var="displayYear" value="${param.year}" />
+</c:when>
+    <c:otherwise>
+<c:set var="displayYear" value="${year}" />
+    </c:otherwise>
+</c:choose>
+
     <tr>
-        <td rowspan="6" style="background-color: #EAF2D3"><img class="user-pic" src="<c:out value='${gravatar}?d=mm'/>" /></td>
+        <td rowspan="6" style="background-color: #EAF2D3; width: 13%;"><img class="user-pic" src="<c:out value='${gravatar}?d=mm'/>" /></td>
     </tr>
     <tr>
         <th>
-            <spring:message code="entitlement" />&nbsp;<spring:message code="in.year" />&nbsp;<c:out value="${year}"/>
+            <spring:message code="entitlement" />&nbsp;<spring:message code="in.year" />&nbsp;<c:out value="${displayYear}"/>
         </th>
         <td>
             <c:choose>

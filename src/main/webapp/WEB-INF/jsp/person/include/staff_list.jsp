@@ -22,7 +22,7 @@
         <tr class="${loopStatus.index % 2 == 0 ? 'even' : 'odd'}">
             <td><img src="<c:out value='${gravatarUrls[person]}?s=20&d=mm'/>" /></td>
             <td><c:out value="${person.loginName}"/></td>
-            <td><c:out value="${person.lastName}"/>&nbsp;<c:out value="${person.firstName}"/></td>
+            <td><c:out value="${person.firstName}"/>&nbsp;<c:out value="${person.lastName}"/></td>
             <td><a href="mailto:${person.email}"><c:out value="${person.email}"/></a></td>
             <td class="vac">
                 <c:choose>
@@ -55,5 +55,8 @@
             <td class="td-edit"><a href="${formUrlPrefix}/staff/${person.id}/edit"><img src="<spring:url value='/images/edit.png' />" /></a></td>
         </tr>    
     </c:forEach>
+<!--        <tr>
+            <td colspan="8" style="border-top: 1px solid #EAF2D3">&nbsp;</td>
+        </tr>-->
 </table>
 

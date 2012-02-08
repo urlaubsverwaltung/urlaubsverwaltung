@@ -164,7 +164,7 @@
                                             <spring:message code="name" />:&nbsp;
                                         </td>
                                         <td class="tbl-right">
-                                            <c:out value="${person.lastName}" />,&nbsp;<c:out value="${person.firstName}" />
+                                            <c:out value="${person.firstName}" />&nbsp;<c:out value="${person.lastName}" />
                                         </td> 
                                     </tr>
                                     <tr>
@@ -274,7 +274,7 @@
                                         <option value="<spring:message code='app.no.rep' />"><spring:message code='app.no.rep' /></option>
                                         <c:forEach items="${persons}" var="einmitarbeiter">
                                             <option value="${einmitarbeiter.lastName} ${einmitarbeiter.firstName}">
-                                                <c:out value='${einmitarbeiter.lastName}' />&nbsp;<c:out value="${einmitarbeiter.firstName}" />
+                                                <c:out value="${einmitarbeiter.firstName}" />&nbsp;<c:out value='${einmitarbeiter.lastName}' />
                                             </option>
                                         </c:forEach>
                                     </form:select>                             

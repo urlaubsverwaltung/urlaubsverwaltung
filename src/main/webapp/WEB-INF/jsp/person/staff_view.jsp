@@ -50,32 +50,47 @@
         <div id="content">
             <div class="container_12">
 
-            <c:choose>
+                <c:choose>
 
-                <c:when test="${notexistent == true}">
-                    
-                    <br />
-                    <br />
-                    <spring:message code="table.empty" />
+                    <c:when test="${notexistent == true}">
 
-                </c:when>
+                        <spring:message code="table.empty" />
 
-                <c:otherwise>
-                    
-                    <a href="?year=2011">2011</a>
-                <a href="?year=2012">2012</a>
-                <a href="?year=2013">2013</a>    
+                    </c:when>
 
-                    <br />
-                    <br />
+                    <c:otherwise>
 
+                        <c:choose>
+                            <c:when test="${!empty param.year}">
+                                <c:set var="displayYear" value="${param.year}" />
+                            </c:when>
+                            <c:otherwise>
+                                <c:set var="displayYear" value="${year}" />
+                            </c:otherwise>
+                        </c:choose>
+                        <table class="overview-header">
+                            <tr>
+                                <td>
+                                    <spring:message code="table.overview" />&nbsp;<c:out value="${displayYear}" />
+                                </td>
+                                <td style="text-align: right;">
+                                    <select onchange="window.location.href=this.options[this.selectedIndex].value">
+                                        <option selected="selected" value=""><spring:message code="ov.header.year" /></option>
+                                        <option value="?year=<c:out value='${year - 1}' />"><c:out value="${year - 1}" /></option>
+                                        <option value="?year=<c:out value='${year}' />"><c:out value="${year}" /></option>
+                                        <option value="?year=<c:out value='${year + 1}' />"><c:out value="${year + 1}" /></option>
+                                    </select> 
+                                </td>
+                            </tr>
+                        </table>
+                        
                         <%@include file="./include/staff_list.jsp" %>
-                    
-                </c:otherwise>    
-                    
-            </c:choose>
 
-                    </div> 
+                    </c:otherwise>    
+
+                </c:choose>
+
+            </div> 
         </div>        
 
     </body>

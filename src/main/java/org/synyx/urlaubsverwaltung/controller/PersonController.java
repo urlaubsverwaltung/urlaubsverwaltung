@@ -47,7 +47,8 @@ import java.util.Map;
 public class PersonController {
 
     // jsps
-    private static final String OVERVIEW_JSP = "person/overview";
+    private static final String OVERVIEW_JSP = "person/overview"; // jsp for personal overview
+    private static final String OVERVIEW_OFFICE_JSP = "person/overview_office"; // jsp for office's overview
     private static final String STAFF_JSP = "person/staff_view";
     private static final String PERSON_FORM_JSP = "person/person_form";
     private static final String ERROR_JSP = "error";
@@ -127,8 +128,6 @@ public class PersonController {
 
             return STAFF_JSP;
         } else {
-            prepareErrorJsp(null, model);
-
             return ERROR_JSP;
         }
     }
@@ -152,8 +151,6 @@ public class PersonController {
 
             return STAFF_JSP;
         } else {
-            prepareErrorJsp(null, model);
-
             return ERROR_JSP;
         }
     }
@@ -183,8 +180,6 @@ public class PersonController {
 
             return STAFF_JSP;
         } else {
-            prepareErrorJsp(null, model);
-
             return ERROR_JSP;
         }
     }
@@ -209,8 +204,6 @@ public class PersonController {
 
             return STAFF_JSP;
         } else {
-            prepareErrorJsp(null, model);
-
             return ERROR_JSP;
         }
     }
@@ -332,15 +325,23 @@ public class PersonController {
     public String showStaffOverview(@PathVariable(PERSON_ID) Integer personId, Model model) {
 
         if (getLoggedUser().getRole() != Role.OFFICE) {
-            prepareErrorJsp(null, model);
-
             return ERROR_JSP;
         } else {
             Person person = personService.getPersonByID(personId);
+            List<Person> persons;
+
+            if (person.isActive()) {
+                persons = personService.getAllPersons();
+            } else {
+                persons = personService.getInactivePersons();
+            }
+
+            model.addAttribute(PERSONS, persons);
+
             prepareOverview(person, DateMidnight.now(GregorianChronology.getInstance()).getYear(), model);
             model.addAttribute(IS_OFFICE, true);
 
-            return OVERVIEW_JSP;
+            return OVERVIEW_OFFICE_JSP;
         }
     }
 
@@ -359,15 +360,24 @@ public class PersonController {
         @RequestParam(YEAR) int year, Model model) {
 
         if (getLoggedUser().getRole() != Role.OFFICE) {
-            prepareErrorJsp(null, model);
-
             return ERROR_JSP;
         } else {
             Person person = personService.getPersonByID(personId);
+
+            List<Person> persons;
+
+            if (person.isActive()) {
+                persons = personService.getAllPersons();
+            } else {
+                persons = personService.getInactivePersons();
+            }
+
+            model.addAttribute(PERSONS, persons);
+
             prepareOverview(person, year, model);
             model.addAttribute(IS_OFFICE, true);
 
-            return OVERVIEW_JSP;
+            return OVERVIEW_OFFICE_JSP;
         }
     }
 
@@ -445,8 +455,6 @@ public class PersonController {
 
             return PERSON_FORM_JSP;
         } else {
-            prepareErrorJsp(null, model);
-
             return ERROR_JSP;
         }
     }
@@ -577,15 +585,5 @@ public class PersonController {
         String user = SecurityContextHolder.getContext().getAuthentication().getName();
 
         return personService.getPersonByLogin(user);
-    }
-
-
-    private void prepareErrorJsp(String message, Model model) {
-
-        setLoggedUser(model);
-
-        if (message != null) {
-            model.addAttribute("message", message);
-        }
     }
 }

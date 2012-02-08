@@ -1,6 +1,6 @@
 <%-- 
-    Document   : overview
-    Created on : 26.10.2011, 11:53:47
+    Document   : overview_office
+    Created on : 08.02.2012, 14:13:05
     Author     : Aljona Murygina
 --%>
 
@@ -19,7 +19,7 @@
         <script src="<spring:url value='/jquery/js/jquery-1.6.2.min.js' />" type="text/javascript" ></script>
         <script src="<spring:url value='/jquery/js/jquery-ui-1.8.16.custom.min.js' />" type="text/javascript" ></script>
         <link rel="stylesheet" type="text/css" href="<spring:url value='/css/fluid_grid.css' />" />
-        <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />" /> 
+        <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />" />
         <title><spring:message code="title" /></title>
     </head>
 
@@ -34,26 +34,22 @@
             <div class="container_12">
 
                 <div class="grid_9"> 
-                    
-                    <c:choose>
-                            <c:when test="${!empty param.year}">
-                                <c:set var="displayYear" value="${param.year}" />
-                            </c:when>
-                            <c:otherwise>
-                                <c:set var="displayYear" value="${year}" />
-                            </c:otherwise>
-                   </c:choose>
-                    
                     <table class="overview-header">
                         <tr>
-                            <td><spring:message code="table.overview" />&nbsp;<c:out value="${displayYear}" /></td>
+                            <td style="font-size: 1.1em;"><c:out value="${person.firstName}"/>&nbsp;<c:out value="${person.lastName}"/></td>
                             <td style="text-align: right;">
-                                    <select onchange="window.location.href=this.options
-                                    [this.selectedIndex].value">
+                                    <select onchange="window.location.href=this.options[this.selectedIndex].value">
                                         <option selected="selected" value=""><spring:message code="ov.header.year" /></option>
                                     <option value="?year=<c:out value='${year - 1}' />"><c:out value="${year - 1}" /></option>
                                     <option value="?year=<c:out value='${year}' />"><c:out value="${year}" /></option>
                                     <option value="?year=<c:out value='${year + 1}' />"><c:out value="${year + 1}" /></option>
+                                </select>
+                                &nbsp;
+                            <select onchange="window.location.href=this.options[this.selectedIndex].value">
+                                    <option selected="selected" value=""><spring:message code="ov.header.person" /></option>
+                                    <c:forEach items="${persons}" var="person">
+                                        <option value="${formUrlPrefix}/staff/<c:out value='${person.id}' />/overview"><c:out value="${person.firstName}"/>&nbsp;<c:out value="${person.lastName}"/></option>
+                                    </c:forEach>
                                 </select>
                             </td>
                         </tr>
@@ -62,7 +58,7 @@
 
                 <div class="grid_9">
                     <table id="person-tbl" cellspacing="0">
-                    <%@include file="./include/account_data.jsp" %>
+                        <%@include file="./include/account_data.jsp" %>
                     </table>
                 </div>
 
@@ -104,11 +100,6 @@
                                     <th class="td-detail">
                                     <spring:message code="table.detail" />
                                 </th>
-                                    <c:if test="${isOffice != true}">
-                                    <th style="text-align: center">
-                                        <spring:message code="delete" />
-                                    </th>
-                                    </c:if>
                                 </tr>
 
                                 <c:forEach items="${applications}" var="app" varStatus="loopStatus">
@@ -145,12 +136,7 @@
                                         <td>
                                             <spring:message code="${app.status.state}" />
                                         </td>
-                                        <td class="td-detail"><a href="${formUrlPrefix}/application/${app.id}"><img src="<spring:url value='/images/playlist.png' />" /></a></td>
-                                        <c:if test="${isOffice != true}">
-                                            <td style="text-align: center">
-                                                <a href="${formUrlPrefix}/application/${app.id}/cancel"><img src="<spring:url value='/images/cancel.png' />" /></a>
-                                            </td>
-                                        </c:if>
+                                            <td class="td-detail"><a href="${formUrlPrefix}/application/${app.id}"><img src="<spring:url value='/images/playlist.png' />" /></a></td>
                                     </tr>
                                 </c:forEach>
                             </table>
@@ -167,3 +153,4 @@
     </body>
 
 </html>
+
