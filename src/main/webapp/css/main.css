@@ -187,14 +187,16 @@ tr.even {
 
 .data {
     border: 1px solid #D7D7D7; 
-    padding: 2em; 
+    padding: 2em 0 2em 2em; 
     margin-left:3em;
+    height: 28.95em;
 }
 
 #tbl-data th {
     text-align: left;
     vertical-align: top;
-    padding-right: 1em;
+    width:44%;
+    padding-bottom: 0.75em;
 }
 
 
@@ -264,6 +266,7 @@ tr.even {
     border: 1px solid #D7D7D7; 
     padding: 1em 2em 2em 2em; 
     margin:0;
+    height: 30em;
 }
 
 .app-tbl {
@@ -303,7 +306,8 @@ padding: 0.55em;
 
 
 .overview-header td {
-    font-size: 1.1em;
+    color:#516310;
+    font-size: 1.25em;
     font-weight: 100;
     height: 2.25em;
     padding-left: 0.5em;

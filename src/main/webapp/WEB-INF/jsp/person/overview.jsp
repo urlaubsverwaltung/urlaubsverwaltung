@@ -34,23 +34,23 @@
             <div class="container_12">
 
                 <div class="grid_9"> 
-                    
+
                     <c:choose>
-                            <c:when test="${!empty param.year}">
-                                <c:set var="displayYear" value="${param.year}" />
-                            </c:when>
-                            <c:otherwise>
-                                <c:set var="displayYear" value="${year}" />
-                            </c:otherwise>
-                   </c:choose>
-                    
+                        <c:when test="${!empty param.year}">
+                            <c:set var="displayYear" value="${param.year}" />
+                        </c:when>
+                        <c:otherwise>
+                            <c:set var="displayYear" value="${year}" />
+                        </c:otherwise>
+                    </c:choose>
+
                     <table class="overview-header">
                         <tr>
-                            <td><spring:message code="table.overview" />&nbsp;<c:out value="${displayYear}" /></td>
+                            <td><spring:message code="table.overview" /><c:out value="${displayYear}" /></td>
                             <td style="text-align: right;">
                                     <select onchange="window.location.href=this.options
-                                    [this.selectedIndex].value">
-                                        <option selected="selected" value=""><spring:message code="ov.header.year" /></option>
+                                        [this.selectedIndex].value">
+                                    <option selected="selected" value=""><spring:message code="ov.header.year" /></option>
                                     <option value="?year=<c:out value='${year - 1}' />"><c:out value="${year - 1}" /></option>
                                     <option value="?year=<c:out value='${year}' />"><c:out value="${year}" /></option>
                                     <option value="?year=<c:out value='${year + 1}' />"><c:out value="${year + 1}" /></option>
@@ -62,7 +62,19 @@
 
                 <div class="grid_9">
                     <table id="person-tbl" cellspacing="0">
-                    <%@include file="./include/account_data.jsp" %>
+                        <c:choose>
+                            <c:when test="${!empty param.year}">
+                                <c:set var="displayYear" value="${param.year}" />
+                            </c:when>
+                            <c:otherwise>
+                                <c:set var="displayYear" value="${year}" />
+                            </c:otherwise>
+                        </c:choose>
+
+                        <tr>
+                            <td rowspan="6" style="background-color: #EAF2D3; width: 13%;"><img class="user-pic" src="<c:out value='${gravatar}?d=mm'/>" /></td>
+                        </tr>
+                        <%@include file="../application/include/account_days.jsp" %>
                     </table>
                 </div>
 
@@ -102,12 +114,12 @@
                                         <spring:message code="state" />
                                     </th>
                                     <th class="td-detail">
-                                    <spring:message code="table.detail" />
-                                </th>
-                                    <c:if test="${isOffice != true}">
-                                    <th style="text-align: center">
-                                        <spring:message code="delete" />
+                                        <spring:message code="table.detail" />
                                     </th>
+                                    <c:if test="${isOffice != true}">
+                                        <th style="text-align: center">
+                                            <spring:message code="delete" />
+                                        </th>
                                     </c:if>
                                 </tr>
 
@@ -146,7 +158,7 @@
                                             <spring:message code="${app.status.state}" />
                                         </td>
                                         <td class="td-detail"><a href="${formUrlPrefix}/application/${app.id}"><img src="<spring:url value='/images/playlist.png' />" /></a></td>
-                                        <c:if test="${isOffice != true}">
+                                                <c:if test="${isOffice != true}">
                                             <td style="text-align: center">
                                                 <a href="${formUrlPrefix}/application/${app.id}/cancel"><img src="<spring:url value='/images/cancel.png' />" /></a>
                                             </td>

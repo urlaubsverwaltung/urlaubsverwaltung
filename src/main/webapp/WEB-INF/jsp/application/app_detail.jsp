@@ -81,16 +81,21 @@
                         <tr>
                             <td colspan="2">&nbsp;</td>
                         </tr>
-                        <c:if test="${application.reason != null && !empty application.reason}">
-                            <tr>
-                                <td>
-                                    <label for="grund"><spring:message code='reason' />:</label>
-                                </td>
-                                <td>
-                                    <c:out value="${application.reason}" />
-                                </td>
-                            </tr>
-                        </c:if>
+                        <tr>
+                            <td>
+                                <label for="grund"><spring:message code='reason' />:</label>
+                            </td>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${application.reason != null && !empty application.reason}">
+                                        <c:out value="${application.reason}" />
+                                    </c:when>
+                                    <c:otherwise>
+                                        <spring:message code="not.stated" />
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
+                        </tr>
                         <tr>
                             <td>
                                 <label for="vertreter"><spring:message code='app.rep' />:</label> 
@@ -102,26 +107,37 @@
                         <tr>
                             <td colspan="2">&nbsp;</td>
                         </tr>
-                        <c:if test="${application.address!= null && !empty application.address}">
                             <tr>
                                 <td>
                                     <label for="anschrift"><spring:message code='app.address' />:</label>
                                 </td>
-                                <td colspan="4">
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${application.address!= null && !empty application.address}">
+                                            <c:out value="${application.address}" />
+                                        </c:when>
+                                        <c:otherwise>
+                                            <spring:message code="not.stated" />
+                                        </c:otherwise>
+                                    </c:choose>
                                     <c:out value="${application.address}" />
                                 </td>
                             </tr>
-                        </c:if>
-                        <c:if test="${application.phone != null && !empty application.phone}">
                             <tr>
                                 <td>
                                     <label for="telefon"><spring:message code='app.phone' />:</label>
                                 </td>
-                                <td colspan="4">
-                                    <c:out value="${application.phone}" />
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${application.phone != null && !empty application.phone}">
+                                            <c:out value="${application.phone}" />
+                                        </c:when>
+                                        <c:otherwise>
+                                            <spring:message code="not.stated" />
+                                        </c:otherwise>
+                                    </c:choose>
                                 </td>
                             </tr>
-                        </c:if>
                         <tr>
                             <td colspan="2">&nbsp;</td>
                         </tr>
@@ -139,15 +155,31 @@
 
                 </div> <!-- end of application for leave -->             
 
-                <div class="grid_5 data" style="height: 100%">
+                <div class="grid_5 data">
                     <table id="tbl-data">    
-                        <%@include file="./include/person_data.jsp" %>
+                        <tr>
+                            <td rowspan="2"><img style="margin-left: 1.5em;"class="user-pic" src="<c:out value='${gravatar}?d=mm'/>" /></td>
+                            <td style="font-size:1.1em;"><c:out value="${application.person.firstName}" />&nbsp;<c:out value="${application.person.lastName}" />
+                                <br />
+                                <br />
+                                <c:out value="${application.person.email}" /></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">&nbsp;</td>
+                        </tr>
+                        <%@include file="./include/account_days.jsp" %>
                     </table>
                 </div>
-                    
+
                 <div class="grid_12">&nbsp;</div>
                 <div class="grid_12">&nbsp;</div>
-                
+
                 <div class="grid_12">
                     <%-- various application's actions dependent on role --%>         
                     <%@include file="./include/app_actions.jsp" %>

@@ -170,16 +170,7 @@
                                     <tr>
                                         <td><spring:message code="overview.left" />:</td>
                                         <td class="tbl-right">
-                                            <c:choose>
-                                                <c:when test="${april == 1}">
-                                                    <c:out value="${account.vacationDays + account.remainingVacationDays}"/>&nbsp;<spring:message code="days" />
-                                                    &nbsp;(<spring:message code="davon" />&nbsp;<c:out value="${account.remainingVacationDays}"/>
-                                                    <spring:message code="days" />&nbsp;<spring:message code="remaining" />)
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <c:out value="${account.vacationDays}"/>&nbsp;<spring:message code="days" />
-                                                </c:otherwise>
-                                            </c:choose>
+                                            <%@include file="./include/left_days.jsp" %>
                                         </td>    
                                     <tr>
                                         <td colspan="2">&nbsp;</td>

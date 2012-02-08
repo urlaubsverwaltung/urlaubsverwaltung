@@ -36,7 +36,7 @@
                 <div class="grid_9"> 
                     <table class="overview-header">
                         <tr>
-                            <td style="font-size: 1.1em;"><c:out value="${person.firstName}"/>&nbsp;<c:out value="${person.lastName}"/></td>
+                            <td><c:out value="${person.firstName}"/>&nbsp;<c:out value="${person.lastName}"/></td>
                             <td style="text-align: right;">
                                     <select onchange="window.location.href=this.options[this.selectedIndex].value">
                                         <option selected="selected" value=""><spring:message code="ov.header.year" /></option>
@@ -58,7 +58,19 @@
 
                 <div class="grid_9">
                     <table id="person-tbl" cellspacing="0">
-                        <%@include file="./include/account_data.jsp" %>
+                        <c:choose>
+                            <c:when test="${!empty param.year}">
+                                <c:set var="displayYear" value="${param.year}" />
+                            </c:when>
+                            <c:otherwise>
+                                <c:set var="displayYear" value="${year}" />
+                            </c:otherwise>
+                        </c:choose>
+
+                        <tr>
+                            <td rowspan="6" style="background-color: #EAF2D3; width: 13%;"><img class="user-pic" src="<c:out value='${gravatar}?d=mm'/>" /></td>
+                        </tr>
+                        <%@include file="../application/include/account_days.jsp" %>
                     </table>
                 </div>
 
