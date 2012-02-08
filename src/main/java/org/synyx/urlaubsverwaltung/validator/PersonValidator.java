@@ -36,8 +36,15 @@ public class PersonValidator implements Validator {
     private static final String YEAR = "year";
     private static final String EMAIL = "email";
 
+    // this was the first version of email regex (commented out on 8th Feb. 2012)
+// private static final String EMAIL_PATTERN =
+// "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+
+    // a regex for email addresses that are valid, but may be "strange looking" (e.g. tomr$2@example.com)
+    // original from: http://www.markussipila.info/pub/emailvalidator.php?action=validate
+    // modified by adding following characters: äöüß
     private static final String EMAIL_PATTERN =
-        "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+        "^[a-zäöüß0-9,!#\\$%&'\\*\\+/=\\?\\^_`\\{\\|}~-]+(\\.[a-zäöüß0-9,!#\\$%&'\\*\\+/=\\?\\^_`\\{\\|}~-]+)*@[a-zäöüß0-9-]+(\\.[a-zäöüß0-9-]+)*\\.([a-z]{2,})$";
 
     private static final String NAME_PATTERN = "\\p{L}+"; // any kind of letter from any language.
 
@@ -106,6 +113,8 @@ public class PersonValidator implements Validator {
             errors.rejectValue(EMAIL, MANDATORY_FIELD);
         } else {
             // validation with regex
+            email = email.trim().toLowerCase();
+
             if (!matchPattern(EMAIL_PATTERN, email)) {
                 errors.rejectValue(EMAIL, ERROR_EMAIL);
             }

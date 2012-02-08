@@ -250,7 +250,32 @@ public class PersonValidatorTest {
         Mockito.verifyZeroInteractions(errors);
         Mockito.reset(errors);
 
-        form.setEmail("fraulyoner@verwaltung.de");
+        form.setEmail("frauLyoner@verwaltung.de");
+        instance.validateEmail(form.getEmail(), errors);
+        Mockito.verifyZeroInteractions(errors);
+        Mockito.reset(errors);
+
+        // umlaut
+        // should not result in error
+        form.setEmail("müller@verwaltung.de");
+        instance.validateEmail(form.getEmail(), errors);
+        Mockito.verifyZeroInteractions(errors);
+        Mockito.reset(errors);
+
+        form.setEmail("tom@müller.de");
+        instance.validateEmail(form.getEmail(), errors);
+        Mockito.verifyZeroInteractions(errors);
+        Mockito.reset(errors);
+
+        // ß
+        // should not result in error
+        form.setEmail("maß@mod.de");
+        instance.validateEmail(form.getEmail(), errors);
+        Mockito.verifyZeroInteractions(errors);
+        Mockito.reset(errors);
+
+        // special cases: strange looking, but valid
+        form.setEmail("to#m@arbeit.de");
         instance.validateEmail(form.getEmail(), errors);
         Mockito.verifyZeroInteractions(errors);
         Mockito.reset(errors);
