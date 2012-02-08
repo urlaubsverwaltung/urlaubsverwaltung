@@ -474,7 +474,6 @@ public class PersonController {
             model.addAttribute(PERSON, personToUpdate);
             model.addAttribute(PERSONFORM, personForm);
             model.addAttribute("currentYear", DateMidnight.now().getYear());
-            model.addAttribute("errors", errors);
 
             return PERSON_FORM_JSP;
         } else {

@@ -316,11 +316,13 @@ public class ApplicationController {
 
         Person person = getLoggedUser();
 
-        if (person.getRole() == Role.USER || person.getRole() == Role.BOSS) {
-            validator.validateForUser(appForm, errors);
-        }
-
         validator.validate(appForm, errors);
+
+        if (person.getRole() == Role.USER || person.getRole() == Role.BOSS) {
+            if (!errors.hasErrors()) {
+                validator.validateForUser(appForm, errors);
+            }
+        }
 
         if (errors.hasErrors()) {
             prepareForm(person, appForm, model);
@@ -505,6 +507,7 @@ public class ApplicationController {
 
         if (errors.hasErrors()) {
             prepareDetailView(application, WAITING, model);
+            model.addAttribute("errors", errors);
 
             return SHOW_APP_DETAIL;
         } else {
