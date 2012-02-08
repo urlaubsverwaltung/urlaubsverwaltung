@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.domain.Comment;
@@ -41,6 +42,8 @@ import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.util.GravatarUtil;
 import org.synyx.urlaubsverwaltung.validator.ApplicationValidator;
 import org.synyx.urlaubsverwaltung.view.AppForm;
+
+import java.math.BigDecimal;
 
 import java.util.List;
 import java.util.Locale;
@@ -133,10 +136,11 @@ public class ApplicationController {
     private ApplicationValidator validator;
     private GravatarUtil gravatarUtil;
     private MailService mailService;
+    private OwnCalendarService calendarService;
 
     public ApplicationController(PersonService personService, ApplicationService applicationService,
         HolidaysAccountService accountService, CommentService commentService, ApplicationValidator validator,
-        GravatarUtil gravatarUtil, MailService mailService) {
+        GravatarUtil gravatarUtil, MailService mailService, OwnCalendarService calendarService) {
 
         this.personService = personService;
         this.applicationService = applicationService;
@@ -145,6 +149,7 @@ public class ApplicationController {
         this.validator = validator;
         this.gravatarUtil = gravatarUtil;
         this.mailService = mailService;
+        this.calendarService = calendarService;
     }
 
     @InitBinder
@@ -381,7 +386,10 @@ public class ApplicationController {
                     return "redirect:/web" + OVERVIEW;
                 } else {
                     errors.reject("check.enough");
-                    model.addAttribute("daysApp", application.getDays());
+
+                    BigDecimal days = calendarService.getVacationDays(application, application.getStartDate(),
+                            application.getEndDate());
+                    model.addAttribute("daysApp", days);
                 }
             }
         }

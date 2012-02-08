@@ -137,9 +137,10 @@
                             <c:if test="${not empty errors}">
                                 <div class="grid_6" id="error-div">
                                     <form:errors cssClass="error" />
-                                    <c:if test="${days != null}">
-                                        <spring:message code="error.days.start" />&nbsp;<c:out value="${days}" />
-                                        <spring:message code="error.days.end" />&nbsp;
+                                    <c:if test="${daysApp != null}">
+                                        <span class="error">
+                                        <spring:message code="error.days.start" />&nbsp;<c:out value="${daysApp}" />
+                                        <spring:message code="error.days.end" />
                                         <c:choose>
                                                 <c:when test="${april == 1}">
                                                     <c:out value="${account.vacationDays + account.remainingVacationDays}"/>&nbsp;<spring:message code="days" />
@@ -148,6 +149,7 @@
                                                     <c:out value="${account.vacationDays}"/>&nbsp;<spring:message code="days" />
                                                 </c:otherwise>
                                         </c:choose>
+                                                    <span/>
                                     </c:if>
                                 </div>
                             </c:if>

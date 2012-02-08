@@ -27,6 +27,7 @@
         </constructor-arg>
         <constructor-arg ref="gravatarUtil" />
         <constructor-arg ref="mailService" />
+        <constructor-arg ref="ownCalendarService" />
     </bean>
     
     <bean class="org.synyx.urlaubsverwaltung.controller.PersonController">
