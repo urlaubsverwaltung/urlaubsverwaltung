@@ -329,48 +329,72 @@ public class PersonValidatorTest {
     @Test
     public void testValidateNumberOfDays() {
 
+        double max_days = 365;
+
         // validate entitlement of vacation days remaining vacation days
         form.setVacationDays(null);
-        instance.validateNumberOfDays(form.getVacationDays(), "vacationDays", 40, errors);
+        instance.validateNumberOfDays(form.getVacationDays(), "vacationDays", max_days, errors);
         Mockito.verify(errors).rejectValue("vacationDays", "error.mandatory.field");
         Mockito.reset(errors);
 
         form.setVacationDays(BigDecimal.valueOf(400));
-        instance.validateNumberOfDays(form.getVacationDays(), "vacationDays", 40, errors);
+        instance.validateNumberOfDays(form.getVacationDays(), "vacationDays", max_days, errors);
         Mockito.verify(errors).rejectValue("vacationDays", "error.entry");
         Mockito.reset(errors);
 
         form.setVacationDays(BigDecimal.valueOf(-1));
-        instance.validateNumberOfDays(form.getVacationDays(), "vacationDays", 40, errors);
+        instance.validateNumberOfDays(form.getVacationDays(), "vacationDays", max_days, errors);
         Mockito.verify(errors).rejectValue("vacationDays", "error.entry");
         Mockito.reset(errors);
 
         // set normal
         form.setVacationDays(BigDecimal.valueOf(25));
-        instance.validateNumberOfDays(form.getVacationDays(), "vacationDays", 40, errors);
+        instance.validateNumberOfDays(form.getVacationDays(), "vacationDays", max_days, errors);
         Mockito.verifyZeroInteractions(errors);
+        Mockito.reset(errors);
+
+        // border = 365
+        form.setVacationDays(BigDecimal.valueOf(365));
+        instance.validateNumberOfDays(form.getVacationDays(), "vacationDays", max_days, errors);
+        Mockito.verifyZeroInteractions(errors);
+        Mockito.reset(errors);
+
+        form.setVacationDays(BigDecimal.valueOf(366));
+        instance.validateNumberOfDays(form.getVacationDays(), "vacationDays", max_days, errors);
+        Mockito.verify(errors).rejectValue("vacationDays", "error.entry");
         Mockito.reset(errors);
 
         // remaining vacation days
         form.setRemainingVacationDays(null);
-        instance.validateNumberOfDays(form.getRemainingVacationDays(), "remainingVacationDays", 20, errors);
+        instance.validateNumberOfDays(form.getRemainingVacationDays(), "remainingVacationDays", max_days, errors);
         Mockito.verify(errors).rejectValue("remainingVacationDays", "error.mandatory.field");
         Mockito.reset(errors);
 
         form.setRemainingVacationDays(BigDecimal.valueOf(400));
-        instance.validateNumberOfDays(form.getRemainingVacationDays(), "remainingVacationDays", 20, errors);
+        instance.validateNumberOfDays(form.getRemainingVacationDays(), "remainingVacationDays", max_days, errors);
         Mockito.verify(errors).rejectValue("remainingVacationDays", "error.entry");
         Mockito.reset(errors);
 
         form.setRemainingVacationDays(BigDecimal.valueOf(-1));
-        instance.validateNumberOfDays(form.getRemainingVacationDays(), "remainingVacationDays", 20, errors);
+        instance.validateNumberOfDays(form.getRemainingVacationDays(), "remainingVacationDays", max_days, errors);
         Mockito.verify(errors).rejectValue("remainingVacationDays", "error.entry");
         Mockito.reset(errors);
 
         // set normal
         form.setRemainingVacationDays(BigDecimal.valueOf(5));
-        instance.validateNumberOfDays(form.getRemainingVacationDays(), "remainingVacationDays", 20, errors);
+        instance.validateNumberOfDays(form.getRemainingVacationDays(), "remainingVacationDays", max_days, errors);
         Mockito.verifyZeroInteractions(errors);
+        Mockito.reset(errors);
+
+        // border = 365
+        form.setRemainingVacationDays(BigDecimal.valueOf(365));
+        instance.validateNumberOfDays(form.getRemainingVacationDays(), "vacationDays", max_days, errors);
+        Mockito.verifyZeroInteractions(errors);
+        Mockito.reset(errors);
+
+        form.setRemainingVacationDays(BigDecimal.valueOf(366));
+        instance.validateNumberOfDays(form.getRemainingVacationDays(), "remainingVacationDays", max_days, errors);
+        Mockito.verify(errors).rejectValue("remainingVacationDays", "error.entry");
         Mockito.reset(errors);
     }
 }

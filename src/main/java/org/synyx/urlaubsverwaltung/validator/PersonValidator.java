@@ -36,6 +36,8 @@ public class PersonValidator implements Validator {
     private static final String YEAR = "year";
     private static final String EMAIL = "email";
 
+    private static final double MAX_DAYS = 365;
+
     // this was the first version of email regex (commented out on 8th Feb. 2012)
 // private static final String EMAIL_PATTERN =
 // "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
@@ -76,10 +78,10 @@ public class PersonValidator implements Validator {
         validateYear(form.getYear(), errors);
 
         // field vacation days
-        validateNumberOfDays(form.getVacationDays(), VACATION_DAYS, 40, errors);
+        validateNumberOfDays(form.getVacationDays(), VACATION_DAYS, MAX_DAYS, errors);
 
         // field remaining vacation days
-        validateNumberOfDays(form.getRemainingVacationDays(), REMAINING_VACATION_DAYS, 20, errors);
+        validateNumberOfDays(form.getRemainingVacationDays(), REMAINING_VACATION_DAYS, MAX_DAYS, errors);
     }
 
 
