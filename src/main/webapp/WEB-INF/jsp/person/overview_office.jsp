@@ -42,7 +42,7 @@
                             </c:otherwise>
                         </c:choose>
 
-                <div class="grid_9"> 
+                <div class="grid_10"> 
                     <table class="overview-header">
                         <tr>
                             <td><c:out value="${person.firstName}"/>&nbsp;<c:out value="${person.lastName}"/>&nbsp;&ndash;&nbsp;<spring:message code="table.overview" /><c:out value="${displayYear}" /></td>
@@ -65,22 +65,18 @@
                     </table>
                 </div>
 
-                <div class="grid_9">
+                <div class="grid_10">
                     <table id="person-tbl" cellspacing="0">
-                        <tr>
-                            <td rowspan="6" style="background-color: #EAF2D3; width: 13%;"><img class="user-pic" src="<c:out value='${gravatar}?d=mm'/>" /></td>
-                        </tr>
                         <%@include file="../application/include/account_days.jsp" %>
                     </table>
                 </div>
 
-                <div class="grid_3">&nbsp;</div> 
-
                 <div class="grid_12">&nbsp;</div>
                 <div class="grid_12">&nbsp;</div>
+                <div class="grid_12">&nbsp;</div>
 
 
-                <div class="grid_9">
+                <div class="grid_10">
                     <c:choose>
 
                         <c:when test="${noapps == true}">
@@ -89,6 +85,11 @@
 
                         <c:otherwise>
 
+                            <a class="button apply" style="margin-bottom: 1em; float:right;" href="${formUrlPrefix}/${person.id}/application/new">
+                                <c:set var="staff" value="${person.firstName} ${person.lastName}" />
+                                <spring:message code="ov.apply.for.user" arguments="${staff}"/>
+                            </a>
+                            
                             <table class="app-tbl" cellspacing="0">
                                 <tr>
                                     <th>
@@ -157,7 +158,6 @@
 
                     </c:choose>
                 </div>
-                <div class="grid_3">&nbsp;</div>
 
             </div>
         </div>

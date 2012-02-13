@@ -380,6 +380,14 @@ input[type=submit].confirm, input[type=button].confirm, a.button.confirm {
     padding-left: 2em;
 }
 
+a.button.apply {
+    background-image: url("../images/edit.png");
+    background-repeat: no-repeat;
+    background-position: 1% 50%;
+    padding-left: 2em;
+}
+
+
 input[type=submit].save, input[type=button].save, a.button.save {
     background-image: url("../images/filesave.png");
     background-repeat: no-repeat;

@@ -33,7 +33,7 @@
 
             <div class="container_12">
 
-                <div class="grid_9"> 
+                <div class="grid_10"> 
 
                     <c:choose>
                         <c:when test="${!empty param.year}">
@@ -60,7 +60,7 @@
                     </table>
                 </div>
 
-                <div class="grid_9">
+                <div class="grid_10">
                     <table id="person-tbl" cellspacing="0">
                         <c:choose>
                             <c:when test="${!empty param.year}">
@@ -71,20 +71,18 @@
                             </c:otherwise>
                         </c:choose>
 
-                        <tr>
-                            <td rowspan="6" style="background-color: #EAF2D3; width: 13%;"><img class="user-pic" src="<c:out value='${gravatar}?d=mm'/>" /></td>
-                        </tr>
                         <%@include file="../application/include/account_days.jsp" %>
+
                     </table>
                 </div>
 
-                <div class="grid_3">&nbsp;</div> 
 
                 <div class="grid_12">&nbsp;</div>
                 <div class="grid_12">&nbsp;</div>
+                <div class="grid_12">&nbsp;</div>
 
 
-                <div class="grid_9">
+                <div class="grid_10">
                     <c:choose>
 
                         <c:when test="${noapps == true}">
@@ -171,7 +169,6 @@
 
                     </c:choose>
                 </div>
-                <div class="grid_3">&nbsp;</div>
 
             </div>
         </div>

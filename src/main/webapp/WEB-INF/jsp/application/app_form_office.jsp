@@ -1,8 +1,9 @@
 <%-- 
-    Document   : app_form
-    Created on : 26.10.2011, 15:05:51
+    Document   : app_form_office
+    Created on : 13.02.2012, 17:05:50
     Author     : Aljona Murygina
 --%>
+
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -21,7 +22,7 @@
         <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />" /> 
         <title><spring:message code="title" /></title>
         <script src="<spring:url value='/jquery/js/jquery-1.6.2.min.js' />" type="text/javascript" ></script>
-        <script src="<spring:url value='/jquery/js/jquery-ui-1.8.16.custom.min.js' />" type="text/javascript" ></script>     
+        <script src="<spring:url value='/jquery/js/jquery-ui-1.8.16.custom.min.js' />" type="text/javascript" ></script>          
         <script type="text/javascript">
             $(function() {
                 $.datepicker.regional['en'] = {
@@ -61,10 +62,6 @@
                     showMonthAfterYear: false,
                     yearSuffix: ''};  
                 $.datepicker.setDefaults($.datepicker.regional["${pageContext.request.locale.language}"]);
-            });
-        </script>           
-        <script type="text/javascript">
-            $(function() {
                 var dates = $( "#from, #to, #at" ).datepicker({
                     minDate: +0,
                     dateFormat: "dd.mm.yy",
@@ -120,7 +117,6 @@
         <div id="content">
 
             <div class="container_12">
-                
                 <c:choose>
 
                     <c:when test="${notpossible == true}">
@@ -133,50 +129,11 @@
 
                         <h2><spring:message code="app.title" /></h2>
 
-                        <form:form method="post" action="${formUrlPrefix}/application/new" modelAttribute="appForm"> 
+                        <form:form method="post" action="${formUrlPrefix}/${person.id}/application/new" modelAttribute="appForm"> 
 
                             <c:if test="${not empty errors}">
                                 <div class="grid_6" id="error-div">
                                     <form:errors cssClass="error" />
-                                    <c:if test="${daysApp != null}">
-                                        <span class="error">
-                                            <c:choose>
-                                                <c:when test="${daysApp <= 1.00 && daysApp > 0.50}">
-                                                    <c:set var="msg1" value="error.days.start.sing" />
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <c:set var="msg1" value="error.days.start.plural" />
-                                                </c:otherwise>
-                                            </c:choose>
-                                        
-                                            <spring:message code="${msg1}" arguments="${daysApp}" />
-                                        <c:choose>
-                                                <c:when test="${april == 1}">
-                                                    <c:set var="numberOfDays" value="${account.vacationDays + account.remainingVacationDays}" />
-                                                    <c:choose>
-                                                        <c:when test="${numberOfDays <= 1.00 && numberOfDays > 0.50}">
-                                                            <c:set var="msg2" value="error.days.end.sing" />
-                                                        </c:when>
-                                                        <c:otherwise>
-                                                            <c:set var="msg2" value="error.days.end.plural" />
-                                                        </c:otherwise>
-                                                    </c:choose>
-                                                    <spring:message code="${msg2}" arguments="${numberOfDays}" />
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <c:choose>
-                                                        <c:when test="${account.vacationDays <= 1.00 && account.vacationDays > 0.50}">
-                                                            <c:set var="msg2" value="error.days.end.sing" />
-                                                        </c:when>
-                                                        <c:otherwise>
-                                                            <c:set var="msg2" value="error.days.end.plural" />
-                                                        </c:otherwise>
-                                                    </c:choose>
-                                                    <spring:message code="${msg2}" arguments="${account.vacationDays}" />
-                                                </c:otherwise>
-                                        </c:choose>
-                                                    <span/>
-                                    </c:if>
                                 </div>
                             </c:if>
                             
@@ -190,14 +147,23 @@
                                             <spring:message code="name" />:&nbsp;
                                         </td>
                                         <td class="tbl-right">
-                                            <c:out value="${person.firstName}" />&nbsp;<c:out value="${person.lastName}" />
+                                            <select onchange="window.location.href=this.options
+                                                         [this.selectedIndex].value">
+                                                <option value="${formUrlPrefix}/${person.id}/application/new" selected="selected"><c:out value="${person.firstName}" />&nbsp;<c:out value="${person.lastName}" /></option>
+                                                <c:forEach items="${personList}" var="p">
+                                                    <c:if test="${person.id != p.id}">
+                                                <option value="${formUrlPrefix}/${p.id}/application/new"><c:out value="${p.firstName}" />&nbsp;<c:out value="${p.lastName}" /></option>
+                                                    </c:if>
+                                                </c:forEach>
+                                            </select>
                                         </td> 
                                     </tr>
                                     <tr>
                                         <td><spring:message code="overview.left" />:</td>
                                         <td class="tbl-right">
-                                            <%@include file="./include/left_days.jsp" %>
-                                        </td>    
+                                            <%@include file="./include/left_days_persons.jsp" %>
+                                        </td>
+                                    </tr>    
                                     <tr>
                                         <td colspan="2">&nbsp;</td>
                                     </tr>
@@ -346,3 +312,4 @@
     </body>
 
 </html>
+

@@ -12,6 +12,7 @@
 
 
 <tr>
+    <td rowspan="3" style="background-color: #EAF2D3; width: 13%;"><img class="user-pic" src="<c:out value='${gravatar}?d=mm'/>" /></td>
         <th>
             <spring:message code="entitlement" />&nbsp;<spring:message code="in.year" />&nbsp;<c:out value="${displayYear}"/>
         </th>
@@ -55,6 +56,7 @@
                     
             </c:choose>    
         </td>
+        
     </tr>
     <tr>
         <th>
