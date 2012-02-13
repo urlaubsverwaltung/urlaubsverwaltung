@@ -56,7 +56,7 @@
                     <%-- application is allowed --%>  
                     <c:if test="${stateNumber == 1}">
                         
-                        <a class="button print" href="${formUrlPrefix}/application/${app.id}/print"><spring:message code='app' />&nbsp;<spring:message code='print' /></a>
+                        <a class="button print" href="${formUrlPrefix}/application/${application.id}/print"><spring:message code='app' />&nbsp;<spring:message code='print' /></a>
 
                         <sec:authorize access="hasRole('role.office')">
 
@@ -72,7 +72,7 @@
                                          <c:when test="${not empty errors}">display: block</c:when>
                                          <c:otherwise>display: none</c:otherwise>
                                      </c:choose>
-                                ">         
+                                ">   
                                     <spring:message code='staff.sick' />
                                     <br />
                                     <br />

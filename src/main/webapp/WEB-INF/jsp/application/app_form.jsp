@@ -139,14 +139,39 @@
                                     <form:errors cssClass="error" />
                                     <c:if test="${daysApp != null}">
                                         <span class="error">
-                                        <spring:message code="error.days.start" />&nbsp;<c:out value="${daysApp}" />
-                                        <spring:message code="error.days.end" />
-                                        <c:choose>
-                                                <c:when test="${april == 1}">
-                                                    <c:out value="${account.vacationDays + account.remainingVacationDays}"/>&nbsp;<spring:message code="days" />
+                                            <c:choose>
+                                                <c:when test="${daysApp <= 1.00 && daysApp > 0.50}">
+                                                    <c:set var="msg1" value="error.days.start.sing" />
                                                 </c:when>
                                                 <c:otherwise>
-                                                    <c:out value="${account.vacationDays}"/>&nbsp;<spring:message code="days" />
+                                                    <c:set var="msg1" value="error.days.start.plural" />
+                                                </c:otherwise>
+                                            </c:choose>
+                                        
+                                            <spring:message code="${msg1}" arguments="${daysApp}" />
+                                        <c:choose>
+                                                <c:when test="${april == 1}">
+                                                    <c:set var="numberOfDays" value="${account.vacationDays + account.remainingVacationDays}" />
+                                                    <c:choose>
+                                                        <c:when test="${numberOfDays <= 1.00 && numberOfDays > 0.50}">
+                                                            <c:set var="msg2" value="error.days.end.sing" />
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <c:set var="msg2" value="error.days.end.plural" />
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                    <spring:message code="${msg2}" arguments="${numberOfDays}" />
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <c:choose>
+                                                        <c:when test="${account.vacationDays <= 1.00 && account.vacationDays > 0.50}">
+                                                            <c:set var="msg2" value="error.days.end.sing" />
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <c:set var="msg2" value="error.days.end.plural" />
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                    <spring:message code="${msg2}" arguments="${account.vacationDays}" />
                                                 </c:otherwise>
                                         </c:choose>
                                                     <span/>

@@ -20,34 +20,33 @@
                 
                 <c:when test="${entitlement != null}">
                     <c:set var ="ent" value="${entitlement.vacationDays + entitlement.remainingVacationDays}" />
-                    <c:out value="${ent}" />
                     <c:choose>
                         <c:when test="${ent <= 1.00 && ent > 0.50}">
-                            <spring:message code="day" />
+                            <c:set var="numberOfDays" value="day" />
                         </c:when>
                         <c:otherwise>
-                            <spring:message code="days" />
+                            <c:set var="numberOfDays" value="days" />
                         </c:otherwise>
                     </c:choose>
-                    (<spring:message code="davon" />
+                    <spring:message code="${numberOfDays}" arguments="${ent}" />
+                    
                     <c:choose>
                         <c:when test="${entitlement.remainingVacationDays == null}">
-                            <c:set var="remaining" value="0.00" />
+                            <c:set var="remDays" value="0.00" />
                         </c:when>
                         <c:otherwise>
-                            <c:set var="remaining" value="${entitlement.remainingVacationDays}" />
+                            <c:set var="remDays" value="${entitlement.remainingVacationDays}" />
                         </c:otherwise>
                     </c:choose>
-                    <c:out value="${remaining}" />
                     <c:choose>
-                        <c:when test="${remaining <= 1.00 && remaining > 0.50}">
-                            <spring:message code="day" />
+                        <c:when test="${remDays <= 1.00 && remDays > 0.50}">
+                            <c:set var="remaining" value="remaining.sing"/>
                         </c:when>
                         <c:otherwise>
-                            <spring:message code="days" />
+                            <c:set var="remaining" value="remaining.plural"/>
                         </c:otherwise>
                     </c:choose>
-                    <spring:message code="remaining" />)
+                    <spring:message code="${remaining}" arguments="${remDays}" />
                 </c:when>
                     
                 <c:otherwise>
@@ -65,15 +64,15 @@
             <c:choose>
                 <c:when test="${account != null && entitlement != null}">
                     <c:set var="used" value="${(entitlement.vacationDays - account.vacationDays) + (entitlement.remainingVacationDays - account.remainingVacationDays)}" />
-                    <c:out value="${used}" />
                     <c:choose>
                         <c:when test="${used <= 1.00 && used > 0.50}">
-                            <spring:message code="day" />
+                            <c:set var="numberOfUsedDays" value="day" />
                         </c:when>
                         <c:otherwise>
-                            <spring:message code="days" />
+                            <c:set var="numberOfUsedDays" value="days" />
                         </c:otherwise>
                     </c:choose>
+                    <spring:message code="${numberOfUsedDays}" arguments="${used}" />
                 </c:when>
                 <c:otherwise>
                     <spring:message code='not.specified' />

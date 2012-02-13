@@ -639,7 +639,14 @@ public class ApplicationController {
 
         Application application = applicationService.getApplicationById(applicationId);
 
-        validator.validateSickDays(appForm, application.getDays(), errors);
+        // if field sick days is null you have to check if the number of given sick days is greater than vacation days
+        if (application.getSickDays() == null) {
+            validator.validateSickDays(appForm, application.getDays(), errors);
+        } else {
+            // if field sick days is already filled you have to check if the new value of sick days is smaller than
+            // vacation days plus sick days
+            validator.validateSickDays(appForm, application.getDays().add(application.getSickDays()), errors);
+        }
 
         if (errors.hasErrors()) {
             // shows error in Frontend
