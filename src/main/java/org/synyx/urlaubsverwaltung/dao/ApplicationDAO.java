@@ -19,8 +19,10 @@ import java.util.List;
 public interface ApplicationDAO extends JpaRepository<Application, Integer> {
 
     // get List<Application> by certain state (e.g. waiting)
-    @Query("select x from Application x where x.status = ?1 order by x.startDate")
-    List<Application> getApplicationsByState(ApplicationStatus state);
+    @Query(
+        "select x from Application x where x.status = ?1 and ((x.startDate between ?2 and ?3) or (x.endDate between ?2 and ?3)) order by x.startDate"
+    )
+    List<Application> getApplicationsByStateAndYear(ApplicationStatus state, Date firstDayOfYear, Date lastDayOfYear);
 
 
     // get List<Application> by certain person

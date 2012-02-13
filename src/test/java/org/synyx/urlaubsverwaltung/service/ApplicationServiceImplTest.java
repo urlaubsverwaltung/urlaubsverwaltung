@@ -128,12 +128,16 @@ public class ApplicationServiceImplTest {
     }
 
 
-    /** Test of getApplicationsByState method, of class ApplicationServiceImpl. */
+    /** Test of getApplicationsByStateAndYear method, of class ApplicationServiceImpl. */
     @Test
-    public void testGetAllApplicationsByState() {
+    public void testgetApplicationsByStateAndYear() {
 
-        instance.getApplicationsByState(ApplicationStatus.WAITING);
-        Mockito.verify(applicationDAO).getApplicationsByState(ApplicationStatus.WAITING);
+        DateMidnight firstDayOfYear = new DateMidnight(2012, DateTimeConstants.JANUARY, 1);
+        DateMidnight lastDayOfYear = new DateMidnight(2012, DateTimeConstants.DECEMBER, 31);
+
+        instance.getApplicationsByStateAndYear(ApplicationStatus.WAITING, 2012);
+        Mockito.verify(applicationDAO).getApplicationsByStateAndYear(ApplicationStatus.WAITING, firstDayOfYear.toDate(),
+            lastDayOfYear.toDate());
     }
 
 
@@ -372,18 +376,6 @@ public class ApplicationServiceImplTest {
 
         instance.getApplicationsByPerson(person);
         Mockito.verify(applicationDAO).getApplicationsByPerson(person);
-    }
-
-
-    /** Test of getApplicationsByState method, of class ApplicationServiceImpl. */
-    @Test
-    public void testGetApplicationsByState() {
-
-        instance.getApplicationsByState(ApplicationStatus.WAITING);
-        Mockito.verify(applicationDAO).getApplicationsByState(ApplicationStatus.WAITING);
-
-        instance.getApplicationsByState(ApplicationStatus.ALLOWED);
-        Mockito.verify(applicationDAO).getApplicationsByState(ApplicationStatus.ALLOWED);
     }
 
 

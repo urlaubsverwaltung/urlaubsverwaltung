@@ -101,7 +101,7 @@ public class ApplicationController {
     private static final String WAITING_APPS = SHORT_PATH_APPLICATION + "/waiting";
     private static final String ALLOWED_APPS = SHORT_PATH_APPLICATION + "/allowed";
     private static final String CANCELLED_APPS = SHORT_PATH_APPLICATION + "/cancelled";
-    private static final String REJECTED_APPS = SHORT_PATH_APPLICATION + "/rejected"; // not used now, but maybe useful
+//    private static final String REJECTED_APPS = SHORT_PATH_APPLICATION + "/rejected"; // not used now, but maybe useful
 
     // order applications by certain numbers
     private static final String STATE_NUMBER = "stateNumber";
@@ -189,28 +189,88 @@ public class ApplicationController {
     public String showDefaultListView(Model model) {
 
         if (getLoggedUser().getRole() == Role.BOSS) {
-            List<Application> applications = applicationService.getApplicationsByState(ApplicationStatus.WAITING);
+            List<Application> applications = applicationService.getApplicationsByStateAndYear(ApplicationStatus.WAITING,
+                    DateMidnight.now().getYear());
 
             setApplications(applications, model);
 
             model.addAttribute(STATE_NUMBER, WAITING);
             setLoggedUser(model);
             model.addAttribute(TITLE_APP, TITLE_WAITING);
+            model.addAttribute(YEAR, DateMidnight.now().getYear());
 
             return APP_LIST_JSP;
         } else if (getLoggedUser().getRole() == Role.OFFICE) {
-            List<Application> applications = applicationService.getApplicationsByState(ApplicationStatus.ALLOWED);
+            List<Application> applications = applicationService.getApplicationsByStateAndYear(ApplicationStatus.ALLOWED,
+                    DateMidnight.now().getYear());
 
             setApplications(applications, model);
 
             model.addAttribute(STATE_NUMBER, ALLOWED);
             setLoggedUser(model);
             model.addAttribute(TITLE_APP, TITLE_ALLOWED);
+            model.addAttribute(YEAR, DateMidnight.now().getYear());
 
             return APP_LIST_JSP;
         } else {
             return ERROR_JSP;
         }
+    }
+
+
+    /**
+     * This method prepares applications list view by the given ApplicationStatus.
+     *
+     * @param  state
+     * @param  year
+     * @param  model
+     *
+     * @return
+     */
+    private String prepareAppListView(ApplicationStatus state, int year, Model model) {
+
+        int stateNumber = -1;
+        String title = "";
+
+        if (state == ApplicationStatus.WAITING) {
+            stateNumber = WAITING;
+            title = TITLE_WAITING;
+        } else if (state == ApplicationStatus.ALLOWED) {
+            stateNumber = ALLOWED;
+            title = TITLE_ALLOWED;
+        } else if (state == ApplicationStatus.CANCELLED) {
+            stateNumber = CANCELLED;
+            title = TITLE_CANCELLED;
+        }
+
+        if (getLoggedUser().getRole() == Role.BOSS || getLoggedUser().getRole() == Role.OFFICE) {
+            List<Application> applications = applicationService.getApplicationsByStateAndYear(state, year);
+
+            setApplications(applications, model);
+
+            model.addAttribute(STATE_NUMBER, stateNumber);
+            setLoggedUser(model);
+            model.addAttribute(TITLE_APP, title);
+            model.addAttribute(YEAR, DateMidnight.now().getYear());
+
+            return APP_LIST_JSP;
+        } else {
+            return ERROR_JSP;
+        }
+    }
+
+
+    /**
+     * used if you want to see all waiting applications of the given year
+     *
+     * @param  model
+     *
+     * @return
+     */
+    @RequestMapping(value = WAITING_APPS, params = YEAR, method = RequestMethod.GET)
+    public String showWaitingByYear(@RequestParam(YEAR) int year, Model model) {
+
+        return prepareAppListView(ApplicationStatus.WAITING, year, model);
     }
 
 
@@ -224,19 +284,21 @@ public class ApplicationController {
     @RequestMapping(value = WAITING_APPS, method = RequestMethod.GET)
     public String showWaiting(Model model) {
 
-        if (getLoggedUser().getRole() == Role.BOSS || getLoggedUser().getRole() == Role.OFFICE) {
-            List<Application> applications = applicationService.getApplicationsByState(ApplicationStatus.WAITING);
+        return prepareAppListView(ApplicationStatus.WAITING, DateMidnight.now().getYear(), model);
+    }
 
-            setApplications(applications, model);
 
-            model.addAttribute(STATE_NUMBER, WAITING);
-            setLoggedUser(model);
-            model.addAttribute(TITLE_APP, TITLE_WAITING);
+    /**
+     * used if you want to see all allowed applications of the given year
+     *
+     * @param  model
+     *
+     * @return
+     */
+    @RequestMapping(value = ALLOWED_APPS, params = YEAR, method = RequestMethod.GET)
+    public String showAllowedByYear(@RequestParam(YEAR) int year, Model model) {
 
-            return APP_LIST_JSP;
-        } else {
-            return ERROR_JSP;
-        }
+        return prepareAppListView(ApplicationStatus.ALLOWED, year, model);
     }
 
 
@@ -250,19 +312,21 @@ public class ApplicationController {
     @RequestMapping(value = ALLOWED_APPS, method = RequestMethod.GET)
     public String showAllowed(Model model) {
 
-        if (getLoggedUser().getRole() == Role.OFFICE || getLoggedUser().getRole() == Role.BOSS) {
-            List<Application> applications = applicationService.getApplicationsByState(ApplicationStatus.ALLOWED);
+        return prepareAppListView(ApplicationStatus.ALLOWED, DateMidnight.now().getYear(), model);
+    }
 
-            setApplications(applications, model);
 
-            model.addAttribute(STATE_NUMBER, ALLOWED);
-            setLoggedUser(model);
-            model.addAttribute(TITLE_APP, TITLE_ALLOWED);
+    /**
+     * used if you want to see all cancelled applications of the given year
+     *
+     * @param  model
+     *
+     * @return
+     */
+    @RequestMapping(value = CANCELLED_APPS, params = YEAR, method = RequestMethod.GET)
+    public String showCancelledByYear(@RequestParam(YEAR) int year, Model model) {
 
-            return APP_LIST_JSP;
-        } else {
-            return ERROR_JSP;
-        }
+        return prepareAppListView(ApplicationStatus.CANCELLED, year, model);
     }
 
 
@@ -276,45 +340,32 @@ public class ApplicationController {
     @RequestMapping(value = CANCELLED_APPS, method = RequestMethod.GET)
     public String showCancelled(Model model) {
 
-        if (getLoggedUser().getRole() == Role.OFFICE || getLoggedUser().getRole() == Role.BOSS) {
-            List<Application> applications = applicationService.getApplicationsByState(ApplicationStatus.CANCELLED);
-
-            setApplications(applications, model);
-
-            model.addAttribute(STATE_NUMBER, CANCELLED);
-            setLoggedUser(model);
-            model.addAttribute(TITLE_APP, TITLE_CANCELLED);
-
-            return APP_LIST_JSP;
-        } else {
-            return ERROR_JSP;
-        }
+        return prepareAppListView(ApplicationStatus.CANCELLED, DateMidnight.now().getYear(), model);
     }
 
 
-    /**
-     * NOT USED AT THE MOMENT - but maybe important in later versions used if you want to see all rejected requests
-     *
-     * @param  model
-     *
-     * @return
-     */
-    @RequestMapping(value = REJECTED_APPS, method = RequestMethod.GET)
-    public String showRejected(Model model) {
-
-        if (getLoggedUser().getRole() == Role.BOSS) {
-            List<Application> applications = applicationService.getApplicationsByState(ApplicationStatus.CANCELLED);
-
-            setApplications(applications, model);
-
-            setLoggedUser(model);
-
-            return APP_LIST_JSP;
-        } else {
-            return ERROR_JSP;
-        }
-    }
-
+//    /**
+//     * NOT USED AT THE MOMENT - but maybe important in later versions used if you want to see all rejected requests
+//     * Commented out by Aljona Murygina - 13th Feb. 2012
+//     * @param  model
+//     *
+//     * @return
+//     */
+//    @RequestMapping(value = REJECTED_APPS, method = RequestMethod.GET)
+//    public String showRejected(Model model) {
+//
+//        if (getLoggedUser().getRole() == Role.BOSS) {
+//            List<Application> applications = applicationService.getApplicationsByState(ApplicationStatus.CANCELLED);
+//
+//            setApplications(applications, model);
+//
+//            setLoggedUser(model);
+//
+//            return APP_LIST_JSP;
+//        } else {
+//            return ERROR_JSP;
+//        }
+//    }
 
     /**
      * used if you want to apply an application for leave (shows formular)

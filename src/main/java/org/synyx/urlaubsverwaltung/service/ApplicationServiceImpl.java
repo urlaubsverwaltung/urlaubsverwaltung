@@ -74,12 +74,15 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 
     /**
-     * @see  ApplicationService#getApplicationsByState(org.synyx.urlaubsverwaltung.domain.ApplicationStatus)
+     * @see  ApplicationService#getApplicationsByStateAndYear(org.synyx.urlaubsverwaltung.domain.ApplicationStatus, int)
      */
     @Override
-    public List<Application> getApplicationsByState(ApplicationStatus state) {
+    public List<Application> getApplicationsByStateAndYear(ApplicationStatus state, int year) {
 
-        return applicationDAO.getApplicationsByState(state);
+        DateMidnight firstDayOfYear = new DateMidnight(year, DateTimeConstants.JANUARY, 1);
+        DateMidnight lastDayOfYear = new DateMidnight(year, DateTimeConstants.DECEMBER, 31);
+
+        return applicationDAO.getApplicationsByStateAndYear(state, firstDayOfYear.toDate(), lastDayOfYear.toDate());
     }
 
 

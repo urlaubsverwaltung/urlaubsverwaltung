@@ -31,25 +31,42 @@
         <div id="content">
 
             <div class="container_12">
-                
+
                 <div class="grid_12">
-                
-                <table class="overview-header">
+
+                    <c:choose>
+                        <c:when test="${!empty param.year}">
+                            <c:set var="displayYear" value="${param.year}" />
+                        </c:when>
+                        <c:otherwise>
+                            <c:set var="displayYear" value="${year}" />
+                        </c:otherwise>
+                    </c:choose>
+
+                    <table class="overview-header">
                         <tr>
-                            <td><spring:message code="${titleApp}" /></td>
+                            <td><spring:message code="${titleApp}" />&nbsp;&ndash;&nbsp;<c:out value="${displayYear}" /></td>
                             <td style="text-align: right;">
-                                    <select onchange="window.location.href=this.options
-                                        [this.selectedIndex].value">
+                                <select onchange="window.location.href=this.options
+                                    [this.selectedIndex].value">
                                     <option selected="selected" value=""><spring:message code="status.app" /></option>
                                     <option value="${linkPrefix}/waiting"><spring:message code="waiting.app" /></option>
                                     <option value="${linkPrefix}/allowed"><spring:message code="allow.app" /></option>
                                     <option value="${linkPrefix}/cancelled"><spring:message code="cancel.app" /></option>
                                 </select>
+                                &nbsp;
+                                <select onchange="window.location.href=this.options
+                                    [this.selectedIndex].value">
+                                    <option selected="selected" value=""><spring:message code="ov.header.year" /></option>
+                                    <option value="?year=<c:out value='${year - 1}' />"><c:out value="${year - 1}" /></option>
+                                    <option value="?year=<c:out value='${year}' />"><c:out value="${year}" /></option>
+                                    <option value="?year=<c:out value='${year + 1}' />"><c:out value="${year + 1}" /></option>
+                                </select>
                             </td>
                         </tr>
                     </table>
 
-                <%@include file="./include/list.jsp" %> 
+                    <%@include file="./include/list.jsp" %> 
 
                 </div>
             </div>

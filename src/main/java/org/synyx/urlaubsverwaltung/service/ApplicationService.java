@@ -104,13 +104,14 @@ public interface ApplicationService {
 
 
     /**
-     * use this to get all applications of a certain state (like waiting)
+     * use this to get all applications by a certain state (like waiting) and year
      *
      * @param  state
+     * @param  year
      *
      * @return  returns all applications of a state as a list of application-objects
      */
-    List<Application> getApplicationsByState(ApplicationStatus state);
+    List<Application> getApplicationsByStateAndYear(ApplicationStatus state, int year);
 
 
     /**
