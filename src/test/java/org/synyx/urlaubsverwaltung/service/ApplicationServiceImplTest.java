@@ -249,22 +249,36 @@ public class ApplicationServiceImplTest {
     @Test
     public void testAddSickDaysOnHolidaysAccount() {
 
+        entitlement.setVacationDays(BigDecimal.valueOf(24.0));
         accountOne.setRemainingVacationDays(BigDecimal.ZERO);
         accountOne.setVacationDays(BigDecimal.valueOf(16.0));
         accountOne.setYear(2011);
 
+        // case 1: field sick days has been null
         application.setDays(BigDecimal.valueOf(10.0));
         application.setDateOfAddingSickDays(new DateMidnight(2011, DateTimeConstants.NOVEMBER, 11));
-        application.setSickDays(BigDecimal.valueOf(3.0));
+        application.setSickDays(null);
 
-        entitlement.setVacationDays(BigDecimal.valueOf(24.0));
+        instance.addSickDaysOnHolidaysAccount(application, BigDecimal.valueOf(5));
 
-        instance.addSickDaysOnHolidaysAccount(application);
+        assertEquals(BigDecimal.valueOf(5), application.getSickDays());
+        assertEquals((BigDecimal.valueOf(10.0).subtract(BigDecimal.valueOf(5))), application.getDays());
 
-        assertEquals(BigDecimal.valueOf(3.0), application.getSickDays());
-        assertEquals((BigDecimal.valueOf(10.0).subtract(BigDecimal.valueOf(3.0))), application.getDays());
+        // case 2: field sick days already filled
+        application.setDays(BigDecimal.valueOf(10.0));
+        application.setDateOfAddingSickDays(new DateMidnight(2011, DateTimeConstants.NOVEMBER, 11));
+        application.setSickDays(BigDecimal.valueOf(3));
 
-        Mockito.verify(calculationService).addSickDaysOnHolidaysAccount(application, accountOne);
+        instance.addSickDaysOnHolidaysAccount(application, BigDecimal.valueOf(5));
+
+        assertEquals(BigDecimal.valueOf(5), application.getSickDays());
+
+        // 10 (days old) + 3 (sick days old) = 13
+        // 13 - 5 (sick days new) = 8
+        assertEquals((BigDecimal.valueOf(8).setScale(1)), application.getDays());
+
+        // test for subtracting days from holidays account (in case 2: if field sick days is already filled) is in
+        // CalculationServiceTest#testSubtractSickDays
     }
 
 

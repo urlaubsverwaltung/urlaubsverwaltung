@@ -623,7 +623,8 @@ public class ApplicationController {
 
 
     /**
-     * This method allows the office to adding sick days to an application.
+     * This method allows the office to adding sick days to an application. (really: the number of sick days is set on
+     * field sickDays, not added)
      *
      * @param  applicationId
      * @param  appForm
@@ -649,10 +650,7 @@ public class ApplicationController {
             return SHOW_APP_DETAIL;
         } else {
             // sick days are smaller than vacation days (resp. equals)
-            application.setSickDays(appForm.getSickDays());
-            application.setDateOfAddingSickDays(DateMidnight.now());
-            applicationService.simpleSave(application);
-            applicationService.addSickDaysOnHolidaysAccount(application);
+            applicationService.addSickDaysOnHolidaysAccount(application, appForm.getSickDays());
 
             return "redirect:/web" + ALLOWED_APPS;
         }

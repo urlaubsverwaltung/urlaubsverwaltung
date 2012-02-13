@@ -6,6 +6,8 @@ import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.domain.Person;
 
+import java.math.BigDecimal;
+
 import java.util.List;
 
 
@@ -69,12 +71,15 @@ public interface ApplicationService {
 
 
     /**
-     * the number of sick days is credited to person's leave account, because sick days are not counted among to
-     * holidays
+     * This method set the given sick days to person's holidays accpunt: the number of sick days is credited to the
+     * holidays account, because sick days are not counted among to holidays. Explanatory note: this method doesn't add,
+     * but set(!) the sick days, i.e. if the field 'sickDays' of application is already filled, it will be overwritten
+     * by the new value.
      *
      * @param  application
+     * @param  sickDays
      */
-    void addSickDaysOnHolidaysAccount(Application application);
+    void addSickDaysOnHolidaysAccount(Application application, BigDecimal sickDays);
 
 
     /**

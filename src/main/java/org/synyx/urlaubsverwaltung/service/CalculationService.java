@@ -8,6 +8,7 @@ import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.HolidayEntitlement;
 import org.synyx.urlaubsverwaltung.domain.HolidaysAccount;
+import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.util.CalcUtil;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 
@@ -79,6 +80,41 @@ public class CalculationService {
         }
 
         return accounts;
+    }
+
+
+    /**
+     * This method is used if application's field 'sickDays' has not been null, but already filled. Then you have to
+     * subtract the old value of sick days from holidays account.
+     *
+     * @param  account
+     * @param  sickDays
+     *
+     * @return  updated holidays account
+     */
+    public HolidaysAccount subtractSickDays(Person person, BigDecimal sickDays, DateMidnight date) {
+
+        HolidaysAccount account = accountService.getHolidaysAccount(date.getYear(), person);
+
+        // subtract remaining vacation days at first
+        if (DateUtil.isBeforeApril(date)) {
+            BigDecimal diff = account.getRemainingVacationDays().subtract(sickDays);
+
+            // example:
+            // 3 (remaining vacation days) - 5 (sick days) = -2
+            // so you have to add -2 to holidays account's vacation days
+            if (CalcUtil.isNegative(diff)) {
+                account.setRemainingVacationDays(BigDecimal.ZERO);
+                account.setVacationDays(account.getVacationDays().add(diff));
+            } else {
+                account.setRemainingVacationDays(diff);
+            }
+        } else if (DateUtil.isAfterApril(date)) {
+            // do not subtract remaining vacation days
+            account.setVacationDays(account.getVacationDays().subtract(sickDays));
+        }
+
+        return account;
     }
 
 
