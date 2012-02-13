@@ -23,7 +23,7 @@
     
     <body>
         
-        <spring:url var="formUrlPrefix" value="/web/urlaubsverwaltung" />
+        <spring:url var="formUrlPrefix" value="/web" />
         
         <%@include file="./include/header.jsp" %>
         

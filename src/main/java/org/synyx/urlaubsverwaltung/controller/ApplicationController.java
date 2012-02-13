@@ -81,8 +81,8 @@ public class ApplicationController {
     private static final String APPLICATION_ID = "applicationId";
 
     // jsps
-    private static final String SHOW_APP_DETAIL = APPLICATION + "/app_detail";
-    private static final String APP_LIST_JSP = APPLICATION + "/list";
+    private static final String APP_LIST_JSP = APPLICATION + "/app_list";
+    private static final String SHOW_APP_DETAIL_JSP = APPLICATION + "/app_detail";
     private static final String APP_FORM_JSP = APPLICATION + "/app_form";
     private static final String ERROR_JSP = "error";
 
@@ -97,6 +97,7 @@ public class ApplicationController {
     private static final String LONG_PATH_APPLICATION = "/" + APPLICATION + "/{";
 
     // list of applications by state
+    private static final String APP_LIST = SHORT_PATH_APPLICATION;
     private static final String WAITING_APPS = SHORT_PATH_APPLICATION + "/waiting";
     private static final String ALLOWED_APPS = SHORT_PATH_APPLICATION + "/allowed";
     private static final String CANCELLED_APPS = SHORT_PATH_APPLICATION + "/cancelled";
@@ -108,6 +109,13 @@ public class ApplicationController {
     private static final int ALLOWED = 1;
     private static final int CANCELLED = 2;
     private static final int TO_CANCEL = 4;
+
+    // applications' status
+    // title in list jsp
+    private static final String TITLE_APP = "titleApp";
+    private static final String TITLE_WAITING = "waiting.app";
+    private static final String TITLE_ALLOWED = "allow.app";
+    private static final String TITLE_CANCELLED = "cancel.app";
 
     // form to apply vacation
     private static final String NEW_APP = SHORT_PATH_APPLICATION + "/new";
@@ -170,6 +178,43 @@ public class ApplicationController {
 
 
     /**
+     * Used to show default list view of applications - order by status, dependent on role (if boss: waiting is default,
+     * if office: allowed is default)
+     *
+     * @param  model
+     *
+     * @return
+     */
+    @RequestMapping(value = APP_LIST, method = RequestMethod.GET)
+    public String showDefaultListView(Model model) {
+
+        if (getLoggedUser().getRole() == Role.BOSS) {
+            List<Application> applications = applicationService.getApplicationsByState(ApplicationStatus.WAITING);
+
+            setApplications(applications, model);
+
+            model.addAttribute(STATE_NUMBER, WAITING);
+            setLoggedUser(model);
+            model.addAttribute(TITLE_APP, TITLE_WAITING);
+
+            return APP_LIST_JSP;
+        } else if (getLoggedUser().getRole() == Role.OFFICE) {
+            List<Application> applications = applicationService.getApplicationsByState(ApplicationStatus.ALLOWED);
+
+            setApplications(applications, model);
+
+            model.addAttribute(STATE_NUMBER, ALLOWED);
+            setLoggedUser(model);
+            model.addAttribute(TITLE_APP, TITLE_ALLOWED);
+
+            return APP_LIST_JSP;
+        } else {
+            return ERROR_JSP;
+        }
+    }
+
+
+    /**
      * used if you want to see all waiting applications
      *
      * @param  model
@@ -179,13 +224,14 @@ public class ApplicationController {
     @RequestMapping(value = WAITING_APPS, method = RequestMethod.GET)
     public String showWaiting(Model model) {
 
-        if (getLoggedUser().getRole() == Role.BOSS) {
+        if (getLoggedUser().getRole() == Role.BOSS || getLoggedUser().getRole() == Role.OFFICE) {
             List<Application> applications = applicationService.getApplicationsByState(ApplicationStatus.WAITING);
 
             setApplications(applications, model);
 
             model.addAttribute(STATE_NUMBER, WAITING);
             setLoggedUser(model);
+            model.addAttribute(TITLE_APP, TITLE_WAITING);
 
             return APP_LIST_JSP;
         } else {
@@ -211,6 +257,7 @@ public class ApplicationController {
 
             model.addAttribute(STATE_NUMBER, ALLOWED);
             setLoggedUser(model);
+            model.addAttribute(TITLE_APP, TITLE_ALLOWED);
 
             return APP_LIST_JSP;
         } else {
@@ -236,6 +283,7 @@ public class ApplicationController {
 
             model.addAttribute(STATE_NUMBER, CANCELLED);
             setLoggedUser(model);
+            model.addAttribute(TITLE_APP, TITLE_CANCELLED);
 
             return APP_LIST_JSP;
         } else {
@@ -245,7 +293,7 @@ public class ApplicationController {
 
 
     /**
-     * used if you want to see all rejected requests
+     * NOT USED AT THE MOMENT - but maybe important in later versions used if you want to see all rejected requests
      *
      * @param  model
      *
@@ -453,7 +501,7 @@ public class ApplicationController {
             model.addAttribute(APPFORM, new AppForm());
             model.addAttribute(COMMENT, new Comment());
 
-            return SHOW_APP_DETAIL;
+            return SHOW_APP_DETAIL_JSP;
         } else {
             return ERROR_JSP;
         }
@@ -480,7 +528,7 @@ public class ApplicationController {
             model.addAttribute(APPFORM, new AppForm());
             model.addAttribute(COMMENT, new Comment());
 
-            return SHOW_APP_DETAIL;
+            return SHOW_APP_DETAIL_JSP;
         } else {
             return ERROR_JSP;
         }
@@ -544,7 +592,7 @@ public class ApplicationController {
             prepareDetailView(application, WAITING, model);
             model.addAttribute("errors", errors);
 
-            return SHOW_APP_DETAIL;
+            return SHOW_APP_DETAIL_JSP;
         } else {
             String name = SecurityContextHolder.getContext().getAuthentication().getName();
             Person boss = personService.getPersonByLogin(name);
@@ -587,7 +635,7 @@ public class ApplicationController {
         if (getLoggedUser().equals(application.getPerson())) {
             prepareDetailView(application, TO_CANCEL, model);
 
-            return SHOW_APP_DETAIL;
+            return SHOW_APP_DETAIL_JSP;
         } else {
             return ERROR_JSP;
         }
@@ -654,7 +702,7 @@ public class ApplicationController {
             model.addAttribute(APPFORM, appForm);
             model.addAttribute("errors", errors);
 
-            return SHOW_APP_DETAIL;
+            return SHOW_APP_DETAIL_JSP;
         } else {
             // sick days are smaller than vacation days (resp. equals)
             applicationService.addSickDaysOnHolidaysAccount(application, appForm.getSickDays());

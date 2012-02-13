@@ -15,6 +15,13 @@ a:hover {
 	color: #0083CC;
 }
 
+.logout {
+    color: #0083CC;
+}
+
+.logout:hover {
+    color:white;
+}
 
 /* Header */
 
@@ -27,7 +34,7 @@ a:hover {
     color: #FFFFFF;
     font-size: 0.8em;
     height: 1.5em;
-    padding: 2px 2px 0 6px;
+    padding: 2px 8px 0 6px;
     text-align: right;
     -moz-box-shadow: 2px 2px 5px #444444;
     -webkit-box-shadow: 2px 2px 5px #444444;
@@ -46,7 +53,7 @@ a:hover {
 #header {
     /* background-color: #E4E5E7; */
     color: black;
-    padding: 4px 8px 30px 6px;
+    padding: 4px 8px 35px 6px;
     position: relative;
 }
 
@@ -56,15 +63,14 @@ a:hover {
 
 #header h1 {
     padding-left: 10em;
-    padding-top: 0.45em;
+    padding-top: 0.5em;
     font-size: 2.25em;
 }
 
 #main-menu {
     bottom: 0;
-    left: 6px;
-    margin-right: -500px;
     position: absolute;
+    margin-left: 1.25em;
 }
 
 #show-navi {

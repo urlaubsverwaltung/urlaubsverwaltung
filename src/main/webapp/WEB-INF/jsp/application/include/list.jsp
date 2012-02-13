@@ -11,26 +11,6 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 
-<!DOCTYPE html>
-<html>
-
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <link rel="stylesheet" type="text/css" href="<spring:url value='/css/fluid_grid.css' />" />
-        <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />" /> 
-        <title><spring:message code="title" /></title>
-    </head>
-
-    <body>
-
-        <spring:url var="formUrlPrefix" value="/web/urlaubsverwaltung" />
-
-        <%@include file="../include/header.jsp" %>
-
-        <div id="content">
-
-            <div class="container_12">
-
                 <c:choose>
 
                     <c:when test="${noapps == true}">
@@ -133,9 +113,3 @@
                     </c:otherwise> 
                 </c:choose>  
 
-            </div>
-        </div>            
-
-    </body>
-
-</html>

@@ -16,14 +16,15 @@
         <spring:url var="formUrlPrefix" value="/web" />
         
         <div id="top-menu">
-            <spring:message code="loggedas" />&nbsp;<sec:authentication property="principal.username" />&nbsp;  
-            <a href="<spring:url value='/j_spring_security_logout' />">Logout</a>
+            <spring:message code="loggedas" />&nbsp;<sec:authentication property="principal.username" />&nbsp;&nbsp;  
+            <a class="logout" href="<spring:url value='/j_spring_security_logout' />">Logout</a>
         </div>
         
         <div id="header">
             
             <h1><spring:message code="title" /></h1>
 
+            <div 
             <div id="main-menu">
                 
                 <sec:authorize access="hasRole('role.user')">
@@ -37,9 +38,7 @@
                     <ul>
                         <li><a href="${formUrlPrefix}/overview"><spring:message code="overview" /></a></li>
                         <li><a href="${formUrlPrefix}/application/new"><spring:message code="apply" /></a></li>
-                        <li><a href="${formUrlPrefix}/application/waiting"><spring:message code="waiting.app" /></a></li>
-                        <li><a href="${formUrlPrefix}/application/allowed"><spring:message code="allow.app" /></a></li>
-                        <li><a href="${formUrlPrefix}/application/cancelled"><spring:message code="cancel.app" /></a></li>
+                        <li><a href="${formUrlPrefix}/application"><spring:message code="h.apps" /></a></li>
                     </ul>
                 </sec:authorize>
                 
@@ -47,8 +46,7 @@
                     <ul>
                         <li><a href="${formUrlPrefix}/overview"><spring:message code="overview" /></a></li>
                         <li><a href="${formUrlPrefix}/application/new"><spring:message code="apply" /></a></li>
-                        <li><a href="${formUrlPrefix}/application/allowed"><spring:message code="allow.app" /></a></li>
-                        <li><a href="${formUrlPrefix}/application/cancelled"><spring:message code="cancel.app" /></a></li>
+                        <li><a href="${formUrlPrefix}/application"><spring:message code="h.apps" /></a></li>
                         <li><a href="${formUrlPrefix}/staff"><spring:message code="staff.manager" /></a></li>
                     </ul>
                 </sec:authorize>
