@@ -50,6 +50,8 @@
         <div id="content">
             <div class="container_12">
 
+                <div class="grid_12">
+                
                 <c:choose>
 
                     <c:when test="${notexistent == true}">
@@ -90,6 +92,7 @@
 
                 </c:choose>
 
+                </div>
             </div> 
         </div>        
 
