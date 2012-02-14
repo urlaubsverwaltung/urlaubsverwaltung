@@ -71,6 +71,8 @@
                             </c:otherwise>
                         </c:choose>
 
+                        <tr>
+                            <td rowspan="3" style="background-color: #EAF2D3; width: 13%;"><img class="user-pic" src="<c:out value='${gravatar}?d=mm'/>" /></td>
                         <%@include file="../application/include/account_days.jsp" %>
 
                     </table>
