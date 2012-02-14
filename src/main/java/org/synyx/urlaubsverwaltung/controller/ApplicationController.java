@@ -662,15 +662,16 @@ public class ApplicationController {
     @RequestMapping(value = SHOW_APP, method = RequestMethod.GET)
     public String showApplicationDetail(@PathVariable(APPLICATION_ID) Integer applicationId, Model model) {
 
-        if (getLoggedUser().getRole() == Role.OFFICE || getLoggedUser().getRole() == Role.BOSS) {
-            Application application = applicationService.getApplicationById(applicationId);
+        Application application = applicationService.getApplicationById(applicationId);
 
+        if (getLoggedUser().getRole() == Role.OFFICE || getLoggedUser().getRole() == Role.BOSS) {
             int state = -1;
 
             // remember state numbers:
             // WAITING = 0;
             // ALLOWED = 1;
             // CANCELLED = 2;
+            // TO_CANCEL = 4;
             if (application.getStatus() == ApplicationStatus.WAITING) {
                 state = 0;
             } else if (application.getStatus() == ApplicationStatus.ALLOWED) {
@@ -682,6 +683,10 @@ public class ApplicationController {
             prepareDetailView(application, state, model);
             model.addAttribute(APPFORM, new AppForm());
             model.addAttribute(COMMENT, new Comment());
+
+            return SHOW_APP_DETAIL_JSP;
+        } else if (getLoggedUser().equals(application.getPerson())) {
+            prepareDetailView(application, -1, model);
 
             return SHOW_APP_DETAIL_JSP;
         } else {

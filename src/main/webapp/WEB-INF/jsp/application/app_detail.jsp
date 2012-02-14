@@ -148,6 +148,12 @@
                             <td>&nbsp;</td>
                         </tr>
                         <tr>
+                            <td>
+                                <spring:message code="state" />:
+                                <spring:message code="${application.status.state}" />
+                            </td>
+                        </tr>
+                        <tr>
                             <td colspan="2">&nbsp;</td>
                         </tr>
                     </table>
