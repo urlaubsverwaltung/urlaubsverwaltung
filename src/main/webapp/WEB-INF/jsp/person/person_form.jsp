@@ -32,12 +32,18 @@
 
         <div id="content">
             <div class="container_12">
+                
+                <div class="grid_12">
 
                 <form:form method="put" action="${formUrlPrefix}/staff/${person.id}/edit" modelAttribute="personForm"> 
                     <table id="person-form-tbl">
                         <tr>
-                            <th><spring:message code='person.data' /></th>
+                            <th style="padding-bottom: 0.5em;"><spring:message code='person.data' /></th>
                             <th colspan="2">&nbsp;</th>
+                        </tr>
+                        <tr>
+                            <td><spring:message code='login' />:</td>
+                            <td><c:out value="${person.loginName}" /></td>
                         </tr>
                         <tr>
                             <td><label for="vorname"><spring:message code="firstname" />:</label></td>
@@ -87,10 +93,10 @@
                         <tr>
                             <td><label for="urlaubsanspruch"><spring:message code="vac.year" />:</label></td>
                             <td>
-                                <form:input id="urlaubsanspruch" path="vacationDays" cssErrorClass="error" />
+                                <form:input id="urlaubsanspruch" path="vacationDaysEnt" cssErrorClass="error" />
                             </td>
                             <td>
-                                <form:errors path="vacationDays" cssClass="error" />
+                                <form:errors path="vacationDaysEnt" cssClass="error" />
                             </td>
                         </tr>
                         <tr>   
@@ -98,10 +104,50 @@
                                 <label for="resturlaub"><spring:message code="remaining" />&nbsp;<spring:message code="last.year" />:</label>
                             </td>
                             <td>
-                                <form:input id="resturlaub" path="remainingVacationDays" cssErrorClass="error" />
+                                <form:input id="resturlaub" path="remainingVacationDaysEnt" cssErrorClass="error" />
                             </td>
                             <td>
-                                <form:errors path="remainingVacationDays" cssClass="error" /> 
+                                <form:errors path="remainingVacationDaysEnt" cssClass="error" /> 
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <th>
+                                <spring:message code='person.account' />
+                            </th>
+                        </tr>    
+                        <tr>
+                            <td>
+                                <spring:message code='overview.left' />:
+                            </td>
+                            <td>
+                                <form:input path="vacationDaysAcc" cssErrorClass="error" />
+                            </td>
+                            <td>
+                                <form:errors path="vacationDaysAcc" cssClass="error" /> 
+                            </td>    
+                        </tr>  
+                        <tr>
+                            <td>
+                                <spring:message code='overview.left.remaining' />:
+                            </td>
+                            <td>
+                                <form:input path="remainingVacationDaysAcc" cssErrorClass="error" />
+                            </td>
+                            <td>
+                                <form:errors path="remainingVacationDaysAcc" cssClass="error" /> 
+                            </td> 
+                        </tr>
+                        <tr>
+                            <td>
+                                <spring:message code='person.expire' />
+                            </td>
+                            <td>
+                                <spring:message code='yes' /> <form:radiobutton path="remainingVacationDaysExpireAcc" value="true"  />
+                                &nbsp;&nbsp;&nbsp;    
+                                <spring:message code='no' /> <form:radiobutton path="remainingVacationDaysExpireAcc" value="false" />
                             </td>
                         </tr>
                         <tr>
@@ -156,6 +202,7 @@
                     </div>         
                 </form:form>
 
+                </div>
             </div> 
         </div>    
 
