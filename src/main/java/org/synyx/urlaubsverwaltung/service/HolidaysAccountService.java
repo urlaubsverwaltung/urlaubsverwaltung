@@ -49,53 +49,6 @@ public interface HolidaysAccountService {
 
 
     /**
-     * creates a new HolidayEntitlement for a person with params year and number of days
-     *
-     * @param  person
-     * @param  year
-     * @param  days
-     * @param  remaining
-     */
-    HolidayEntitlement newHolidayEntitlement(Person person, int year, BigDecimal days, BigDecimal remaining);
-
-
-    /**
-     * updates an entitlement (respectively the number of this year's entitlement of remaining vacation days) on first
-     * of January.
-     *
-     * @param  person
-     * @param  year
-     *
-     * @return
-     */
-    void updateHolidayEntitlement(List<Person> persons, int year);
-
-
-    /**
-     * if an existing entitlement is edited, a new entitlement and a new account must be created, the current
-     * entitlement and account are set inactive.
-     *
-     * @param  person
-     * @param  year
-     * @param  days
-     */
-    void editHolidayEntitlement(Person person, int year, BigDecimal days, BigDecimal remaining);
-
-
-    /**
-     * creates a new HolidaysAccount for a person with params vacation days, resturlaub and year
-     *
-     * @param  person
-     * @param  vacDays
-     * @param  remainingVacDays
-     * @param  year
-     *
-     * @return
-     */
-    HolidaysAccount newHolidaysAccount(Person person, BigDecimal vacDays, BigDecimal remainingVacDays, int year);
-
-
-    /**
      * saves HolidayEntitlement
      *
      * @param  entitlement
@@ -112,9 +65,59 @@ public interface HolidaysAccountService {
 
 
     /**
-     * This method get all holidays accounts and entitlements of the given person and set them all to inactive.
+     * creates a new HolidayEntitlement for a person with params year and number of days
      *
      * @param  person
+     * @param  year
+     * @param  days
+     * @param  remaining
      */
-    void deactivateAccountsAndEntitlements(Person person);
+    HolidayEntitlement newHolidayEntitlement(Person person, int year, BigDecimal days, BigDecimal remaining);
+
+
+    /**
+     * creates a new HolidaysAccount for a person with params vacation days, resturlaub and year
+     *
+     * @param  person
+     * @param  vacDays
+     * @param  remainingVacDays
+     * @param  year
+     *
+     * @return
+     */
+    HolidaysAccount newHolidaysAccount(Person person, int year, BigDecimal vacDays, BigDecimal remainingVacDays,
+        boolean remainingDaysExpire);
+
+
+    /**
+     * method to edit an existent entitlement and to save the updated entitlement
+     *
+     * @param  person
+     * @param  year
+     * @param  days
+     */
+    void editHolidayEntitlement(HolidayEntitlement entitlement, BigDecimal days, BigDecimal remaining);
+
+
+    /**
+     * method to edit an existent holidays account and to save the updated holidays account
+     *
+     * @param  account
+     * @param  days
+     * @param  remaining
+     */
+    void editHolidaysAccount(HolidaysAccount account, BigDecimal days, BigDecimal remaining,
+        boolean remainingDaysExpire);
+
+
+    /**
+     * updates an entitlement (respectively the number of this year's entitlement of remaining vacation days) on first
+     * of January.
+     *
+     * @param  person
+     * @param  year
+     *
+     * @return
+     */
+    void updateHolidayEntitlement(List<Person> persons, int year);
 }

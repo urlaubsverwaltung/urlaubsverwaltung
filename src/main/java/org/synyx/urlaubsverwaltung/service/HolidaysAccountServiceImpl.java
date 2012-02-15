@@ -59,72 +59,6 @@ public class HolidaysAccountServiceImpl implements HolidaysAccountService {
 
 
     /**
-     * @see  HolidaysAccountService#getAccountOrCreateOne(int, org.synyx.urlaubsverwaltung.domain.Person)
-     */
-    @Override
-    public HolidaysAccount getAccountOrCreateOne(int year, Person person) {
-
-        HolidaysAccount account = holidaysAccountDAO.getHolidaysAccountByYearAndPerson(year, person);
-
-        // if account not yet existent
-        if (account == null) {
-            HolidayEntitlement entitlement = getHolidayEntitlement(year, person);
-
-            if (entitlement == null) {
-                entitlement = newHolidayEntitlement(person, year,
-                        getHolidayEntitlement(year - 1, person).getVacationDays(),
-                        getHolidayEntitlement(year - 1, person).getRemainingVacationDays());
-            }
-
-            saveHolidayEntitlement(entitlement);
-
-            // create new account
-            account = newHolidaysAccount(person, entitlement.getVacationDays(), BigDecimal.ZERO, year);
-        }
-
-        return account;
-    }
-
-
-    /**
-     * @see  HolidaysAccountService#newHolidayEntitlement(org.synyx.urlaubsverwaltung.domain.Person, int,
-     *       java.math.BigDecimal)
-     */
-    @Override
-    public HolidayEntitlement newHolidayEntitlement(Person person, int year, BigDecimal days, BigDecimal remaining) {
-
-        HolidayEntitlement entitlement = new HolidayEntitlement();
-        entitlement.setPerson(person);
-        entitlement.setVacationDays(days);
-        entitlement.setRemainingVacationDays(remaining);
-        entitlement.setYear(year);
-        entitlement.setActive(true);
-
-        return entitlement;
-    }
-
-
-    /**
-     * @see  HolidaysAccountService#newHolidaysAccount(org.synyx.urlaubsverwaltung.domain.Person, java.math.BigDecimal,
-     *       java.math.BigDecimal, int)
-     */
-    @Override
-    public HolidaysAccount newHolidaysAccount(Person person, BigDecimal vacDays, BigDecimal remainingVacDays,
-        int year) {
-
-        HolidaysAccount account = new HolidaysAccount();
-
-        account.setPerson(person);
-        account.setRemainingVacationDays(remainingVacDays);
-        account.setVacationDays(vacDays);
-        account.setYear(year);
-        account.setActive(true);
-
-        return account;
-    }
-
-
-    /**
      * @see  HolidaysAccountService#saveHolidayEntitlement(org.synyx.urlaubsverwaltung.domain.HolidayEntitlement)
      */
     @Override
@@ -145,41 +79,96 @@ public class HolidaysAccountServiceImpl implements HolidaysAccountService {
 
 
     /**
-     * @see  HolidaysAccountService#editHolidayEntitlement(org.synyx.urlaubsverwaltung.domain.Person, int,
+     * @see  HolidaysAccountService#getAccountOrCreateOne(int, org.synyx.urlaubsverwaltung.domain.Person)
+     */
+    @Override
+    public HolidaysAccount getAccountOrCreateOne(int year, Person person) {
+
+        HolidaysAccount account = holidaysAccountDAO.getHolidaysAccountByYearAndPerson(year, person);
+
+        // if account not yet existent
+        if (account == null) {
+            HolidayEntitlement entitlement = getHolidayEntitlement(year, person);
+
+            if (entitlement == null) {
+                entitlement = newHolidayEntitlement(person, year,
+                        getHolidayEntitlement(year - 1, person).getVacationDays(),
+                        getHolidayEntitlement(year - 1, person).getRemainingVacationDays());
+            }
+
+            saveHolidayEntitlement(entitlement);
+
+            // create new account
+            account = newHolidaysAccount(person, year, entitlement.getVacationDays(), BigDecimal.ZERO, true);
+        }
+
+        return account;
+    }
+
+
+    /**
+     * @see  HolidaysAccountService#newHolidayEntitlement(org.synyx.urlaubsverwaltung.domain.Person, int,
+     *       java.math.BigDecimal, java.math.BigDecimal)
+     */
+    @Override
+    public HolidayEntitlement newHolidayEntitlement(Person person, int year, BigDecimal days, BigDecimal remaining) {
+
+        HolidayEntitlement entitlement = new HolidayEntitlement();
+        entitlement.setPerson(person);
+        entitlement.setVacationDays(days);
+        entitlement.setRemainingVacationDays(remaining);
+        entitlement.setYear(year);
+
+        return entitlement;
+    }
+
+
+    /**
+     * @see  HolidaysAccountService#newHolidaysAccount(org.synyx.urlaubsverwaltung.domain.Person, int,
+     *       java.math.BigDecimal, java.math.BigDecimal, boolean)
+     */
+    @Override
+    public HolidaysAccount newHolidaysAccount(Person person, int year, BigDecimal vacDays, BigDecimal remainingVacDays,
+        boolean remainingDaysExpire) {
+
+        HolidaysAccount account = new HolidaysAccount();
+
+        account.setPerson(person);
+        account.setRemainingVacationDays(remainingVacDays);
+        account.setVacationDays(vacDays);
+        account.setYear(year);
+        account.setRemainingVacationDaysExpire(remainingDaysExpire);
+
+        return account;
+    }
+
+
+    /**
+     * @see  HolidaysAccountService#editHolidayEntitlement(org.synyx.urlaubsverwaltung.domain.HolidayEntitlement,java.math.BigDecimal,
      *       java.math.BigDecimal)
      */
     @Override
-    public void editHolidayEntitlement(Person person, int year, BigDecimal days, BigDecimal remaining) {
+    public void editHolidayEntitlement(HolidayEntitlement entitlement, BigDecimal days, BigDecimal remaining) {
 
-        // get current entitlement before editing
-        HolidayEntitlement currentEntitlement = getHolidayEntitlement(year, person);
-        currentEntitlement.setActive(false);
-        saveHolidayEntitlement(currentEntitlement);
+        entitlement.setVacationDays(days);
+        entitlement.setRemainingVacationDays(remaining);
 
-        // get current account before editing
-        HolidaysAccount currentAccount = getHolidaysAccount(year, person);
-        currentAccount.setActive(false);
-        saveHolidaysAccount(currentAccount);
+        saveHolidayEntitlement(entitlement);
+    }
 
-        // create new entitlement
-        HolidayEntitlement newEntitlement = newHolidayEntitlement(person, year, days, remaining);
 
-        HolidaysAccount newAccount;
+    /**
+     * @see  HolidaysAccountService#editHolidaysAccount(org.synyx.urlaubsverwaltung.domain.HolidaysAccount,java.math.BigDecimal,
+     *       java.math.BigDecimal, boolean)
+     */
+    @Override
+    public void editHolidaysAccount(HolidaysAccount account, BigDecimal days, BigDecimal remaining,
+        boolean remainingDaysExpire) {
 
-        // how many days has person used this year?
-        BigDecimal usedDays = currentEntitlement.getVacationDays().subtract(currentAccount.getVacationDays());
-
-        // check if person may take a holiday with the edited entitlement or not
-        if (usedDays.compareTo(newEntitlement.getVacationDays()) >= 0) {
-            // person is not allowed to take a holiday anymore
-            newAccount = newHolidaysAccount(person, BigDecimal.ZERO, BigDecimal.ZERO, year);
-        } else {
-            BigDecimal vac = newEntitlement.getVacationDays().subtract(usedDays);
-            newAccount = newHolidaysAccount(person, vac, BigDecimal.ZERO, year);
-        }
-
-        saveHolidayEntitlement(newEntitlement);
-        saveHolidaysAccount(newAccount);
+        account.setVacationDays(days);
+        account.setRemainingVacationDays(remaining);
+        account.setRemainingVacationDaysExpire(remainingDaysExpire);
+        saveHolidaysAccount(account);
     }
 
 
@@ -230,55 +219,5 @@ public class HolidaysAccountServiceImpl implements HolidaysAccountService {
 
             saveHolidayEntitlement(entitlement);
         }
-    }
-
-
-    /**
-     * @see  HolidaysAccountService#deactivateAccountsAndEntitlements(org.synyx.urlaubsverwaltung.domain.Person)
-     */
-    @Override
-    public void deactivateAccountsAndEntitlements(Person person) {
-
-        // get all holidays accounts and entitlements and set them to inactive
-
-        List<HolidaysAccount> accounts = getAllAccountsOfPerson(person);
-
-        for (HolidaysAccount account : accounts) {
-            account.setActive(false);
-            saveHolidaysAccount(account);
-        }
-
-        List<HolidayEntitlement> entitlements = getAllEntitlementsOfPerson(person);
-
-        for (HolidayEntitlement entitlement : entitlements) {
-            entitlement.setActive(false);
-            saveHolidayEntitlement(entitlement);
-        }
-    }
-
-
-    /**
-     * this method returns a list of all holidays accounts that a person have
-     *
-     * @param  person
-     *
-     * @return  list of person's holidays accounts
-     */
-    public List<HolidaysAccount> getAllAccountsOfPerson(Person person) {
-
-        return holidaysAccountDAO.getAllHolidaysAccountsByPerson(person);
-    }
-
-
-    /**
-     * this method returns a list of all holiday entitlements that a person have
-     *
-     * @param  person
-     *
-     * @return  list of person's holiday entitlements
-     */
-    public List<HolidayEntitlement> getAllEntitlementsOfPerson(Person person) {
-
-        return holidaysEntitlementDAO.getHolidayEntitlementByPerson(person);
     }
 }

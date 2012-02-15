@@ -162,7 +162,7 @@ public class PersonServiceImpl implements PersonService {
                 BigDecimal days = accountService.getHolidaysAccount(year - 1, person).getVacationDays();
 
                 // create new account
-                accountService.newHolidaysAccount(person, entitlement.getVacationDays(), days, year);
+                accountService.newHolidaysAccount(person, year, entitlement.getVacationDays(), days, true);
                 account = accountService.getHolidaysAccount(year, person);
             } else {
                 // if account existent

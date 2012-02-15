@@ -128,7 +128,6 @@ public class HolidaysAccountServiceImplTest {
         assertEquals(ENTITLEMENT, returnValue.getVacationDays());
         assertEquals(person, returnValue.getPerson());
         assertEquals(NEXT_YEAR, returnValue.getYear());
-        assertEquals(true, returnValue.isActive());
         assertEquals(BigDecimal.ZERO, returnValue.getRemainingVacationDays());
     }
 
@@ -150,11 +149,13 @@ public class HolidaysAccountServiceImplTest {
     @Test
     public void testNewHolidaysAccount() {
 
-        HolidaysAccount returnValue = instance.newHolidaysAccount(person, ENTITLEMENT, BigDecimal.TEN, CURRENT_YEAR);
+        HolidaysAccount returnValue = instance.newHolidaysAccount(person, CURRENT_YEAR, ENTITLEMENT, BigDecimal.TEN,
+                true);
         assertNotNull(returnValue);
         assertEquals(person, returnValue.getPerson());
         assertEquals(BigDecimal.TEN, returnValue.getRemainingVacationDays());
         assertEquals(ENTITLEMENT, returnValue.getVacationDays());
+        assertEquals(true, returnValue.isRemainingVacationDaysExpire());
     }
 
 
@@ -175,12 +176,6 @@ public class HolidaysAccountServiceImplTest {
         HolidaysAccount acc = new HolidaysAccount();
         instance.saveHolidaysAccount(acc);
         Mockito.verify(holidaysAccountDAO).save(acc);
-    }
-
-
-    /** Test of editHolidayEntitlement method, of class HolidaysAccountServiceImpl. */
-    @Test
-    public void testEditHolidayEntitlement() {
     }
 
 
@@ -228,56 +223,36 @@ public class HolidaysAccountServiceImplTest {
     }
 
 
-    /** Test of getAllAccountsOfPerson method, of class HolidaysAccountServiceImpl. */
+    /** Test of editHolidayEntitlement method, of class HolidaysAccountServiceImpl. */
     @Test
-    public void testGetAllAccountsOfPerson() {
+    public void testEditHolidayEntitlement() {
 
-        instance.getAllAccountsOfPerson(person);
-        Mockito.verify(holidaysAccountDAO).getAllHolidaysAccountsByPerson(person);
+        HolidayEntitlement ent = new HolidayEntitlement();
+        ent.setVacationDays(BigDecimal.valueOf(23));
+        ent.setRemainingVacationDays(BigDecimal.valueOf(5));
+
+        instance.editHolidayEntitlement(ent, BigDecimal.valueOf(18), BigDecimal.valueOf(2));
+        Mockito.verify(holidaysEntitlementDAO).save(ent);
+
+        assertEquals(BigDecimal.valueOf(18), ent.getVacationDays());
+        assertEquals(BigDecimal.valueOf(2), ent.getRemainingVacationDays());
     }
 
 
-    /** Test of getAllEntitlementsOfPerson method, of class HolidaysAccountServiceImpl. */
+    /** Test of editHolidaysAccount method, of class HolidaysAccountServiceImpl. */
     @Test
-    public void testGetAllEntitlementsOfPerson() {
+    public void testEditHolidaysAccount() {
 
-        instance.getAllEntitlementsOfPerson(person);
-        Mockito.verify(holidaysEntitlementDAO).getHolidayEntitlementByPerson(person);
-    }
+        HolidaysAccount acc = new HolidaysAccount();
+        acc.setVacationDays(BigDecimal.valueOf(22));
+        acc.setRemainingVacationDays(BigDecimal.valueOf(3));
+        acc.setRemainingVacationDaysExpire(true);
 
+        instance.editHolidaysAccount(acc, BigDecimal.valueOf(28), BigDecimal.valueOf(5), false);
+        Mockito.verify(holidaysAccountDAO).save(acc);
 
-    /** Test of deactivateAccountsAndEntitlements method, of class HolidaysAccountServiceImpl. */
-    @Test
-    public void testDeactivateAccountsAndEntitlements() {
-
-        HolidaysAccount a1 = new HolidaysAccount();
-        a1.setActive(true);
-
-        HolidaysAccount a2 = new HolidaysAccount();
-        a2.setActive(false);
-
-        HolidayEntitlement e1 = new HolidayEntitlement();
-        e1.setActive(true);
-
-        HolidayEntitlement e2 = new HolidayEntitlement();
-        e2.setActive(true);
-
-        List<HolidaysAccount> accounts = new ArrayList<HolidaysAccount>();
-        accounts.add(a1);
-        accounts.add(a2);
-
-        List<HolidayEntitlement> ents = new ArrayList<HolidayEntitlement>();
-        ents.add(e1);
-        ents.add(e2);
-
-        Mockito.when(instance.getAllAccountsOfPerson(person)).thenReturn(accounts);
-        Mockito.when(instance.getAllEntitlementsOfPerson(person)).thenReturn(ents);
-
-        instance.deactivateAccountsAndEntitlements(person);
-
-        assertEquals(false, a1.isActive());
-        assertEquals(false, a2.isActive());
-        assertEquals(false, e1.isActive());
-        assertEquals(false, e2.isActive());
+        assertEquals(BigDecimal.valueOf(28), acc.getVacationDays());
+        assertEquals(BigDecimal.valueOf(5), acc.getRemainingVacationDays());
+        assertEquals(false, acc.isRemainingVacationDaysExpire());
     }
 }
