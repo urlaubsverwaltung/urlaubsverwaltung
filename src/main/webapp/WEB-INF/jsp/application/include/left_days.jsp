@@ -34,7 +34,7 @@
                                     <c:set var="remDays" value="${account.remainingVacationDays}"/>
                                 </c:when>
                                 <c:otherwise>
-                                    <c:set var="remDays" value="0.00"/>
+                                    <c:set var="remDays" value="0"/>
                                 </c:otherwise>
                             </c:choose>
                             <c:choose>
