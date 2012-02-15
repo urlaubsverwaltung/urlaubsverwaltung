@@ -28,11 +28,14 @@ public class PersonValidator implements Validator {
     private static final String MANDATORY_FIELD = "error.mandatory.field";
     private static final String ERROR_ENTRY = "error.entry";
     private static final String ERROR_EMAIL = "error.email";
+    private static final String ERROR_NUMBER = "error.number";
 
     private static final String FIRST_NAME = "firstName";
     private static final String LAST_NAME = "lastName";
-    private static final String VACATION_DAYS = "vacationDays";
-    private static final String REMAINING_VACATION_DAYS = "remainingVacationDays";
+    private static final String VACATION_DAYS_ENT = "vacationDaysEnt";
+    private static final String REMAINING_VACATION_DAYS_ENT = "remainingVacationDaysEnt";
+    private static final String VACATION_DAYS_ACC = "vacationDaysAcc";
+    private static final String REMAINING_VACATION_DAYS_ACC = "remainingVacationDaysAcc";
     private static final String YEAR = "year";
     private static final String EMAIL = "email";
 
@@ -77,11 +80,13 @@ public class PersonValidator implements Validator {
         // field year
         validateYear(form.getYear(), errors);
 
-        // field vacation days
-        validateNumberOfDays(form.getVacationDays(), VACATION_DAYS, MAX_DAYS, errors);
+        // entitlement's days must not be null
 
-        // field remaining vacation days
-        validateNumberOfDays(form.getRemainingVacationDays(), REMAINING_VACATION_DAYS, MAX_DAYS, errors);
+        // field entitlement's vacation days
+        validateNumberOfDays(form.getVacationDaysEnt(), VACATION_DAYS_ENT, MAX_DAYS, errors);
+
+        // field entitlement's remaining vacation days
+        validateNumberOfDays(form.getRemainingVacationDaysEnt(), REMAINING_VACATION_DAYS_ENT, MAX_DAYS, errors);
     }
 
 
@@ -94,6 +99,14 @@ public class PersonValidator implements Validator {
     }
 
 
+    /**
+     * This method checks if the field firstName or the field lastName is filled and if it is filled, it validates the
+     * entry with a regex.
+     *
+     * @param  name  (may be the field firstName or lastName)
+     * @param  field
+     * @param  errors
+     */
     protected void validateName(String name, String field, Errors errors) {
 
         // is the name field null/empty?
@@ -108,6 +121,12 @@ public class PersonValidator implements Validator {
     }
 
 
+    /**
+     * This method checks if the field email is filled and if it is filled, it validates the entry with a regex.
+     *
+     * @param  email
+     * @param  errors
+     */
     protected void validateEmail(String email, Errors errors) {
 
         // is email field null or empty
@@ -124,6 +143,13 @@ public class PersonValidator implements Validator {
     }
 
 
+    /**
+     * This method checks if the field year is filled and if it is filled, it checks if the year entry makes sense (at
+     * the moment: from 2010 - 2030 alright)
+     *
+     * @param  yearForm
+     * @param  errors
+     */
     protected void validateYear(String yearForm, Errors errors) {
 
         // is year field filled?
@@ -143,11 +169,20 @@ public class PersonValidator implements Validator {
     }
 
 
+    /**
+     * This method validates if the holiday entitlement's fields remaining vacation days and vacation days are filled
+     * and if they are filled, it checks if the number of days is realistic
+     *
+     * @param  days
+     * @param  field
+     * @param  maximumDays
+     * @param  errors
+     */
     protected void validateNumberOfDays(BigDecimal days, String field, double maximumDays, Errors errors) {
 
         // is field filled?
         if (days == null) {
-            if (errors.getFieldErrors(VACATION_DAYS).isEmpty()) {
+            if (errors.getFieldErrors(field).isEmpty()) {
                 errors.rejectValue(field, MANDATORY_FIELD);
             }
         } else {
@@ -159,6 +194,57 @@ public class PersonValidator implements Validator {
             // is number of days unrealistic?
             if (days.compareTo(BigDecimal.valueOf(maximumDays)) == 1) {
                 errors.rejectValue(field, ERROR_ENTRY);
+            }
+        }
+    }
+
+
+    /**
+     * This method validates if the holidays account's fields are filled and if they are filled, it checks if the number
+     * of the holidays account's days are smaller than or equals holiday entitlement days
+     *
+     * @param  form
+     * @param  errors
+     */
+    public void validateAccountDays(PersonForm form, Errors errors) {
+
+        if (form.getRemainingVacationDaysAcc() == null) {
+            if (errors.getFieldErrors(REMAINING_VACATION_DAYS_ACC).isEmpty()) {
+                errors.rejectValue(REMAINING_VACATION_DAYS_ACC, MANDATORY_FIELD);
+            }
+        }
+
+        if (form.getVacationDaysAcc() == null) {
+            if (errors.getFieldErrors(VACATION_DAYS_ACC).isEmpty()) {
+                errors.rejectValue(VACATION_DAYS_ACC, MANDATORY_FIELD);
+            }
+        }
+
+        if (form.getVacationDaysAcc() != null) {
+            // is number of days < 0 ?
+            if (form.getVacationDaysAcc().compareTo(BigDecimal.ZERO) == -1) {
+                errors.rejectValue(VACATION_DAYS_ACC, ERROR_ENTRY);
+            }
+        }
+
+        if (form.getRemainingVacationDaysAcc() != null) {
+            // is number of days < 0 ?
+            if (form.getRemainingVacationDaysAcc().compareTo(BigDecimal.ZERO) == -1) {
+                errors.rejectValue(REMAINING_VACATION_DAYS_ACC, ERROR_ENTRY);
+            }
+        }
+
+        if (form.getVacationDaysEnt() != null && form.getVacationDaysAcc() != null) {
+            // check if number of account's days is greater than number of entitlement's days
+            if (form.getVacationDaysAcc().compareTo(form.getVacationDaysEnt()) == 1) {
+                errors.rejectValue(VACATION_DAYS_ACC, ERROR_NUMBER);
+            }
+        }
+
+        if (form.getRemainingVacationDaysEnt() != null && form.getRemainingVacationDaysAcc() != null) {
+            // account days must not be greater than entitlement days
+            if (form.getRemainingVacationDaysAcc().compareTo(form.getRemainingVacationDaysEnt()) == 1) {
+                errors.rejectValue(REMAINING_VACATION_DAYS_ACC, ERROR_NUMBER);
             }
         }
     }
