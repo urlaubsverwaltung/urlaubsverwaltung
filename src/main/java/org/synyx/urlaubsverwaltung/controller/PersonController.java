@@ -436,27 +436,44 @@ public class PersonController {
             Person person = personService.getPersonByID(personId);
 
             int year = DateMidnight.now(GregorianChronology.getInstance()).getYear();
-            BigDecimal days = null;
-            BigDecimal remaining = null;
+            BigDecimal daysEnt = null;
+            BigDecimal remainingEnt = null;
+            BigDecimal daysAcc = null;
+            BigDecimal remainingAcc = null;
+            boolean daysExpire = true;
 
             HolidayEntitlement entitlement = accountService.getHolidayEntitlement(year, person);
 
             if (entitlement != null) {
-                days = entitlement.getVacationDays();
-                remaining = entitlement.getRemainingVacationDays();
+                daysEnt = entitlement.getVacationDays();
+                remainingEnt = entitlement.getRemainingVacationDays();
             }
 
-            PersonForm personForm = new PersonForm(person, Integer.toString(year), days, remaining);
+            HolidaysAccount account = accountService.getHolidaysAccount(year, person);
 
-            setLoggedUser(model);
-            model.addAttribute(PERSON, person);
-            model.addAttribute(PERSONFORM, personForm);
-            model.addAttribute("currentYear", DateMidnight.now().getYear());
+            if (account != null) {
+                daysAcc = account.getVacationDays();
+                remainingAcc = account.getRemainingVacationDays();
+            }
+
+            PersonForm personForm = new PersonForm(person, Integer.toString(year), daysEnt, remainingEnt, daysAcc,
+                    remainingAcc, daysExpire);
+
+            preparePersonForm(person, personForm, model);
 
             return PERSON_FORM_JSP;
         } else {
             return ERROR_JSP;
         }
+    }
+
+
+    private void preparePersonForm(Person person, PersonForm personForm, Model model) {
+
+        setLoggedUser(model);
+        model.addAttribute(PERSON, person);
+        model.addAttribute(PERSONFORM, personForm);
+        model.addAttribute("currentYear", DateMidnight.now().getYear());
     }
 
 
@@ -475,13 +492,12 @@ public class PersonController {
 
         Person personToUpdate = personService.getPersonByID(personId);
 
-        validator.validate(personForm, errors);
+        validator.validate(personForm, errors); // validates all fields except the account's days fields
+        validator.validateAccountDays(personForm, errors); // validates holidays account's remaining vacation days and
+                                                           // vacation days
 
         if (errors.hasErrors()) {
-            setLoggedUser(model);
-            model.addAttribute(PERSON, personToUpdate);
-            model.addAttribute(PERSONFORM, personForm);
-            model.addAttribute("currentYear", DateMidnight.now().getYear());
+            preparePersonForm(personToUpdate, personForm, model);
 
             return PERSON_FORM_JSP;
         } else {
@@ -490,30 +506,33 @@ public class PersonController {
 
             personService.save(personToUpdate);
 
-            if (personForm.getVacationDays() != null) {
-                int year = Integer.parseInt(personForm.getYear());
-                BigDecimal days = personForm.getVacationDays();
-                BigDecimal remaining = personForm.getRemainingVacationDays();
+            int year = Integer.parseInt(personForm.getYear());
+            BigDecimal daysEnt = personForm.getVacationDaysEnt();
+            BigDecimal remainingEnt = personForm.getRemainingVacationDaysEnt();
 
-                // check if there is an existing entitlement to holidays
-                HolidayEntitlement entitlement = accountService.getHolidayEntitlement(year, personToUpdate);
+            // check if there is an existing entitlement to holidays
+            HolidayEntitlement entitlement = accountService.getHolidayEntitlement(year, personToUpdate);
 
-                // if not, create one
-                if (entitlement == null) {
-                    entitlement = accountService.newHolidayEntitlement(personToUpdate, year, days, remaining);
-                    accountService.saveHolidayEntitlement(entitlement);
+            // if not, create one
+            if (entitlement == null) {
+                entitlement = accountService.newHolidayEntitlement(personToUpdate, year, daysEnt, remainingEnt);
+                accountService.saveHolidayEntitlement(entitlement);
+            } else {
+                accountService.editHolidayEntitlement(entitlement, daysEnt, remainingEnt);
+            }
 
-                    HolidaysAccount account = accountService.getHolidaysAccount(year, personToUpdate);
+            HolidaysAccount account = accountService.getHolidaysAccount(year, personToUpdate);
 
-                    if (account == null) {
-                        account = accountService.newHolidaysAccount(personToUpdate, days, remaining, year);
-                        accountService.saveHolidaysAccount(account);
-                    }
-                } else {
-                    // if there is an entitlement: set current entitlement to inactive and creates a new active one with
-                    // changed information do this with current leave account too
-                    accountService.editHolidayEntitlement(personToUpdate, year, days, remaining);
-                }
+            BigDecimal daysAcc = personForm.getVacationDaysAcc();
+            BigDecimal remainingAcc = personForm.getRemainingVacationDaysAcc();
+            boolean remainingDaysExpire = personForm.isRemainingVacationDaysExpireAcc();
+
+            if (account == null) {
+                account = accountService.newHolidaysAccount(personToUpdate, year, daysAcc, remainingAcc,
+                        remainingDaysExpire);
+                accountService.saveHolidaysAccount(account);
+            } else {
+                accountService.editHolidaysAccount(account, daysAcc, remainingAcc, remainingDaysExpire);
             }
 
             LOG.info(DateMidnight.now(GregorianChronology.getInstance()).toString(DATE_FORMAT) + " ID: " + personId
