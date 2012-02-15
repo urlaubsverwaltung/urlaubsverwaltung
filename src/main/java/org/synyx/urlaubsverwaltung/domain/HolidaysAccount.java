@@ -14,7 +14,7 @@ import javax.persistence.ManyToOne;
 
 /**
  * @author  Johannes Reuter
- * @author  Aljona Murygina
+ * @author  Aljona Murygina This class contains current values of vacation days that a person has.
  */
 @Entity
 public class HolidaysAccount extends AbstractPersistable<Integer> {
@@ -31,9 +31,15 @@ public class HolidaysAccount extends AbstractPersistable<Integer> {
     // Current number of leave days that person has
     private BigDecimal vacationDays;
 
+    // remainingVacationDays + remainingVacationDaysNotExpiring = entitlement's remainingVacationDays
+
     // Current number of remaining days of vacation that person has
     // will not be used anymore until 31st March of a year
     private BigDecimal remainingVacationDays;
+
+    // if true: remaining vacation days expire on 1st Apr.
+    // if false: remaining vacation days don't expire and may be used even after Apr. (until Dec.)
+    private boolean remainingVacationDaysExpire;
 
     // Number of days of special leave used this year
     private BigDecimal specialLeave;
@@ -43,20 +49,6 @@ public class HolidaysAccount extends AbstractPersistable<Integer> {
 
     // Number of taken days off because of overtime
     private BigDecimal overtime;
-
-    private boolean active;
-
-    public boolean isActive() {
-
-        return active;
-    }
-
-
-    public void setActive(boolean active) {
-
-        this.active = active;
-    }
-
 
     public Person getPerson() {
 
@@ -79,6 +71,18 @@ public class HolidaysAccount extends AbstractPersistable<Integer> {
     public void setRemainingVacationDays(BigDecimal remainingVacationDays) {
 
         this.remainingVacationDays = remainingVacationDays;
+    }
+
+
+    public boolean isRemainingVacationDaysExpire() {
+
+        return remainingVacationDaysExpire;
+    }
+
+
+    public void setRemainingVacationDaysExpire(boolean remainingVacationDaysExpire) {
+
+        this.remainingVacationDaysExpire = remainingVacationDaysExpire;
     }
 
 

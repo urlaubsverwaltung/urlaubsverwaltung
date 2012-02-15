@@ -15,6 +15,8 @@ import javax.persistence.ManyToOne;
 /**
  * @author  Johannes Reuter
  * @author  Aljona Murygina
+ *
+ *          <p>This class describes the holidays entitlement that a person has for a whole year.</p>
  */
 @Entity
 public class HolidayEntitlement extends AbstractPersistable<Integer> {
@@ -33,8 +35,6 @@ public class HolidayEntitlement extends AbstractPersistable<Integer> {
     private BigDecimal remainingVacationDays;
 
     private int year;
-
-    private boolean active;
 
     public Person getPerson() {
 
@@ -81,17 +81,5 @@ public class HolidayEntitlement extends AbstractPersistable<Integer> {
     public void setYear(int year) {
 
         this.year = year;
-    }
-
-
-    public boolean isActive() {
-
-        return active;
-    }
-
-
-    public void setActive(boolean active) {
-
-        this.active = active;
     }
 }
