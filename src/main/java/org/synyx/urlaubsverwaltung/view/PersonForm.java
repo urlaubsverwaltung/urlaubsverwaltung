@@ -22,27 +22,43 @@ public class PersonForm {
 
     private String year;
 
-    private BigDecimal vacationDays;
+    private BigDecimal vacationDaysEnt;
 
-    private BigDecimal remainingVacationDays;
+    private BigDecimal remainingVacationDaysEnt;
+
+    private BigDecimal vacationDaysAcc;
+
+    private BigDecimal remainingVacationDaysAcc;
+
+    private boolean remainingVacationDaysExpireAcc;
 
     public PersonForm() {
     }
 
 
-    public PersonForm(Person person, String year, BigDecimal days, BigDecimal remaining) {
+    public PersonForm(Person person, String year, BigDecimal daysEnt, BigDecimal remainingEnt, BigDecimal daysAcc,
+        BigDecimal remainingAcc, boolean expiring) {
 
         this.lastName = person.getLastName();
         this.firstName = person.getFirstName();
         this.email = person.getEmail();
         this.year = year;
+        this.remainingVacationDaysExpireAcc = expiring;
 
-        if (days != null) {
-            this.vacationDays = days;
+        if (daysEnt != null) {
+            this.vacationDaysEnt = daysEnt;
         }
 
-        if (remaining != null) {
-            this.remainingVacationDays = remaining;
+        if (remainingEnt != null) {
+            this.remainingVacationDaysEnt = remainingEnt;
+        }
+
+        if (daysAcc != null) {
+            this.vacationDaysAcc = daysAcc;
+        }
+
+        if (remainingAcc != null) {
+            this.remainingVacationDaysAcc = remainingAcc;
         }
     }
 
@@ -82,27 +98,63 @@ public class PersonForm {
     }
 
 
-    public BigDecimal getVacationDays() {
+    public BigDecimal getRemainingVacationDaysAcc() {
 
-        return vacationDays;
+        return remainingVacationDaysAcc;
     }
 
 
-    public void setVacationDays(BigDecimal vacationDays) {
+    public void setRemainingVacationDaysAcc(BigDecimal remainingVacationDaysAcc) {
 
-        this.vacationDays = vacationDays;
+        this.remainingVacationDaysAcc = remainingVacationDaysAcc;
     }
 
 
-    public BigDecimal getRemainingVacationDays() {
+    public BigDecimal getRemainingVacationDaysEnt() {
 
-        return remainingVacationDays;
+        return remainingVacationDaysEnt;
     }
 
 
-    public void setRemainingVacationDays(BigDecimal remainingVacationDays) {
+    public void setRemainingVacationDaysEnt(BigDecimal remainingVacationDaysEnt) {
 
-        this.remainingVacationDays = remainingVacationDays;
+        this.remainingVacationDaysEnt = remainingVacationDaysEnt;
+    }
+
+
+    public boolean isRemainingVacationDaysExpireAcc() {
+
+        return remainingVacationDaysExpireAcc;
+    }
+
+
+    public void setRemainingVacationDaysExpireAcc(boolean remainingVacationDaysExpireAcc) {
+
+        this.remainingVacationDaysExpireAcc = remainingVacationDaysExpireAcc;
+    }
+
+
+    public BigDecimal getVacationDaysAcc() {
+
+        return vacationDaysAcc;
+    }
+
+
+    public void setVacationDaysAcc(BigDecimal vacationDaysAcc) {
+
+        this.vacationDaysAcc = vacationDaysAcc;
+    }
+
+
+    public BigDecimal getVacationDaysEnt() {
+
+        return vacationDaysEnt;
+    }
+
+
+    public void setVacationDaysEnt(BigDecimal vacationDaysEnt) {
+
+        this.vacationDaysEnt = vacationDaysEnt;
     }
 
 
