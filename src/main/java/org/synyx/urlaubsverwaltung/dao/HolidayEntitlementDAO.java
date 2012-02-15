@@ -15,7 +15,7 @@ import java.util.List;
  */
 public interface HolidayEntitlementDAO extends JpaRepository<HolidayEntitlement, Integer> {
 
-    @Query("select x from HolidayEntitlement x where x.year = ?1 and x.person = ?2 and x.active = true")
+    @Query("select x from HolidayEntitlement x where x.year = ?1 and x.person = ?2")
     HolidayEntitlement getHolidayEntitlementByYearAndPerson(int year, Person person);
 
 

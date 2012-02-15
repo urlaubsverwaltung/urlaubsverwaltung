@@ -10,8 +10,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.synyx.urlaubsverwaltung.domain.HolidaysAccount;
 import org.synyx.urlaubsverwaltung.domain.Person;
 
-import java.util.List;
-
 
 /**
  * @author  Johannes Reuter
@@ -19,10 +17,6 @@ import java.util.List;
  */
 public interface HolidaysAccountDAO extends JpaRepository<HolidaysAccount, Integer> {
 
-    @Query("select x from HolidaysAccount x where x.year = ?1 and x.person = ?2 and x.active = true")
+    @Query("select x from HolidaysAccount x where x.year = ?1 and x.person = ?2")
     HolidaysAccount getHolidaysAccountByYearAndPerson(int year, Person person);
-
-
-    @Query("select x from HolidaysAccount x where x.person = ?1")
-    List<HolidaysAccount> getAllHolidaysAccountsByPerson(Person person);
 }
