@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.service;
 
+import org.apache.log4j.Logger;
+
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.Interval;
@@ -38,6 +40,10 @@ import java.util.List;
  */
 @Transactional
 public class ApplicationServiceImpl implements ApplicationService {
+
+    private static final Logger LOG = Logger.getLogger(ApplicationServiceImpl.class);
+
+    private static final String DATE_FORMAT = "dd.MM.yyyy";
 
     private ApplicationDAO applicationDAO;
     private HolidaysAccountService accountService;
@@ -123,6 +129,10 @@ public class ApplicationServiceImpl implements ApplicationService {
         // get number of used days
         BigDecimal days = calendarService.getVacationDays(application, application.getStartDate(),
                 application.getEndDate());
+
+        LOG.info("Antrag-Id " + application.getId() + ": Im Zeitraum von "
+            + application.getStartDate().toString(DATE_FORMAT) + " bis "
+            + application.getEndDate().toString(DATE_FORMAT) + " liegen " + days + " Arbeitstage.");
 
         // if check is successful, application is saved
 
