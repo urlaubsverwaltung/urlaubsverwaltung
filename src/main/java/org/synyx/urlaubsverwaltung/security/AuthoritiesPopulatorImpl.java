@@ -17,6 +17,7 @@ import org.springframework.security.ldap.userdetails.LdapAuthoritiesPopulator;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.Role;
 import org.synyx.urlaubsverwaltung.service.CryptoService;
+import org.synyx.urlaubsverwaltung.service.MailService;
 import org.synyx.urlaubsverwaltung.service.PersonService;
 
 import java.security.KeyPair;
@@ -36,12 +37,14 @@ public class AuthoritiesPopulatorImpl implements LdapAuthoritiesPopulator {
 
     private PersonService personService;
     private CryptoService cryptoService;
+    private MailService mailService;
 
     @Autowired
-    public AuthoritiesPopulatorImpl(PersonService personService, CryptoService cryptoService) {
+    public AuthoritiesPopulatorImpl(PersonService personService, CryptoService cryptoService, MailService mailService) {
 
         this.personService = personService;
         this.cryptoService = cryptoService;
+        this.mailService = mailService;
     }
 
     @Override
@@ -62,7 +65,9 @@ public class AuthoritiesPopulatorImpl implements LdapAuthoritiesPopulator {
                 person.setPrivateKey(keyPair.getPrivate().getEncoded());
                 person.setPublicKey(keyPair.getPublic().getEncoded());
             } catch (NoSuchAlgorithmException ex) {
-                LOG.error("Beim Erstellen der Keys für den neuen Benutzer ist ein Fehler aufgetreten.", ex);
+                LOG.error("Beim Erstellen der Keys für den neuen Benutzer mit dem Login " + person.getLoginName()
+                    + " ist ein Fehler aufgetreten.", ex);
+                mailService.sendKeyGeneratingErrorNotification(string);
             }
 
             personService.save(person);

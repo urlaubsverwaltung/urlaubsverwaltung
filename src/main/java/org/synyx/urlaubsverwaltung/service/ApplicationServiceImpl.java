@@ -50,16 +50,19 @@ public class ApplicationServiceImpl implements ApplicationService {
     private CryptoService cryptoService;
     private OwnCalendarService calendarService;
     private CalculationService calculationService;
+    private MailService mailService;
 
     @Autowired
     public ApplicationServiceImpl(ApplicationDAO applicationDAO, HolidaysAccountService accountService,
-        CryptoService cryptoService, OwnCalendarService calendarService, CalculationService calculationService) {
+        CryptoService cryptoService, OwnCalendarService calendarService, CalculationService calculationService,
+        MailService mailService) {
 
         this.applicationDAO = applicationDAO;
         this.accountService = accountService;
         this.cryptoService = cryptoService;
         this.calendarService = calendarService;
         this.calculationService = calculationService;
+        this.mailService = mailService;
     }
 
     @Override
@@ -303,14 +306,31 @@ public class ApplicationServiceImpl implements ApplicationService {
             data = cryptoService.sign(privKey, data);
 
             return data;
-        } // TODO Logging, catchen von Exceptions
-        catch (InvalidKeyException ex) {
+        } catch (InvalidKeyException ex) {
+            catchSignException(application.getId(), ex);
         } catch (SignatureException ex) {
+            catchSignException(application.getId(), ex);
         } catch (NoSuchAlgorithmException ex) {
+            catchSignException(application.getId(), ex);
         } catch (InvalidKeySpecException ex) {
+            catchSignException(application.getId(), ex);
         }
 
         return null;
+    }
+
+
+    /**
+     * This method logs exception's details and sends an email to inform the tool manager that an error occured while
+     * signing the application.
+     *
+     * @param  applicationId
+     * @param  ex
+     */
+    private void catchSignException(Integer applicationId, Exception ex) {
+
+        LOG.error("An error occured during signing application with id " + applicationId, ex);
+        mailService.sendSignErrorNotification(applicationId, ex.getMessage());
     }
 
 
