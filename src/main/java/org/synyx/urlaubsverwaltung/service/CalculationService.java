@@ -29,7 +29,9 @@ import java.util.List;
  */
 public class CalculationService {
 
-    private static final Logger LOG = Logger.getLogger(CalculationService.class);
+    // audit logger: logs nontechnically occurences like 'user x applied for leave' or 'subtracted n days from
+    // holidays account y'
+    private static final Logger LOG = Logger.getLogger("audit");
 
     private static final int LAST_DAY = 31;
     private static final int FIRST_DAY = 1;
@@ -370,8 +372,10 @@ public class CalculationService {
                                                                             // vacation days instead of subtract it
         }
 
-        LOG.info("Urlaubskonto-Id " + account.getId() + ": es wurden " + days
-            + " abgezogen durch den Antrag mit der Id " + application.getId());
+        if (account.getId() != null) {
+            LOG.info("Urlaubskonto-Id " + account.getId() + ": es wurden " + days
+                + " abgezogen durch den Antrag mit der Id " + application.getId());
+        }
 
         return account;
     }
@@ -391,8 +395,10 @@ public class CalculationService {
 
         account.setVacationDays(account.getVacationDays().subtract(days));
 
-        LOG.info("Urlaubskonto-Id " + account.getId() + ": es wurden " + days
-            + " abgezogen durch den Antrag mit der Id " + application.getId());
+        if (account.getId() != null) {
+            LOG.info("Urlaubskonto-Id " + account.getId() + ": es wurden " + days
+                + " abgezogen durch den Antrag mit der Id " + application.getId());
+        }
 
         return account;
     }
@@ -430,8 +436,10 @@ public class CalculationService {
 
         account.setVacationDays(account.getVacationDays().subtract(daysAfterApril));
 
-        LOG.info("Urlaubskonto-Id " + account.getId() + ": es wurden " + (daysBeforeApril.add(daysAfterApril))
-            + " abgezogen durch den Antrag mit der Id " + application.getId());
+        if (account.getId() != null) {
+            LOG.info("Urlaubskonto-Id " + account.getId() + ": es wurden " + (daysBeforeApril.add(daysAfterApril))
+                + " abgezogen durch den Antrag mit der Id " + application.getId());
+        }
 
         return account;
     }
@@ -475,11 +483,15 @@ public class CalculationService {
         accounts.add(accountCurrentYear);
         accounts.add(accountNextYear);
 
-        LOG.info("Urlaubskonto-Id " + accountCurrentYear.getId() + ": es wurden " + daysBeforeJan
-            + " abgezogen durch den Antrag mit der Id " + application.getId());
+        if (accountCurrentYear.getId() != null) {
+            LOG.info("Urlaubskonto-Id " + accountCurrentYear.getId() + ": es wurden " + daysBeforeJan
+                + " abgezogen durch den Antrag mit der Id " + application.getId());
+        }
 
-        LOG.info("Urlaubskonto-Id " + accountNextYear.getId() + ": es wurden " + daysAfterJan
-            + " abgezogen durch den Antrag mit der Id " + application.getId());
+        if (accountNextYear.getId() != null) {
+            LOG.info("Urlaubskonto-Id " + accountNextYear.getId() + ": es wurden " + daysAfterJan
+                + " abgezogen durch den Antrag mit der Id " + application.getId());
+        }
 
         return accounts;
     }

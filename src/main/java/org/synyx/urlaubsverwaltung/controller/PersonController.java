@@ -86,8 +86,9 @@ public class PersonController {
     private static final String ACTIVATE_LINK = "/staff/{" + PERSON_ID + "}/activate";
     private static final String LOGIN_LINK = "redirect:/login.jsp?login_error=1";
 
-    // logger
-    private static final Logger LOG = Logger.getLogger(PersonController.class);
+    // audit logger: logs nontechnically occurences like 'user x applied for leave' or 'subtracted n days from
+    // holidays account y'
+    private static final Logger LOG = Logger.getLogger("audit");
 
     private PersonService personService;
     private ApplicationService applicationService;

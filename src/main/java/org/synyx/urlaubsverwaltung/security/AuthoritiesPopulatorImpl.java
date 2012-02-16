@@ -33,7 +33,8 @@ import java.util.Collection;
  */
 public class AuthoritiesPopulatorImpl implements LdapAuthoritiesPopulator {
 
-    private static final Logger LOG = Logger.getLogger(AuthoritiesPopulatorImpl.class);
+    // sign logger: logs possible occurent errors relating to private and public keys of users
+    private static final Logger LOG_SIGN = Logger.getLogger("sign");
 
     private PersonService personService;
     private CryptoService cryptoService;
@@ -65,7 +66,7 @@ public class AuthoritiesPopulatorImpl implements LdapAuthoritiesPopulator {
                 person.setPrivateKey(keyPair.getPrivate().getEncoded());
                 person.setPublicKey(keyPair.getPublic().getEncoded());
             } catch (NoSuchAlgorithmException ex) {
-                LOG.error("Beim Erstellen der Keys für den neuen Benutzer mit dem Login " + person.getLoginName()
+                LOG_SIGN.error("Beim Erstellen der Keys für den neuen Benutzer mit dem Login " + person.getLoginName()
                     + " ist ein Fehler aufgetreten.", ex);
                 mailService.sendKeyGeneratingErrorNotification(string);
             }

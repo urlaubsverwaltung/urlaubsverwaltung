@@ -41,7 +41,12 @@ import java.util.List;
 @Transactional
 public class ApplicationServiceImpl implements ApplicationService {
 
-    private static final Logger LOG = Logger.getLogger(ApplicationServiceImpl.class);
+    // audit logger: logs nontechnically occurences like 'user x applied for leave' or 'subtracted n days from
+    // holidays account y'
+    private static final Logger LOG = Logger.getLogger("audit");
+
+    // sign logger: logs possible occurent errors relating to private and public keys of users
+    private static final Logger LOG_SIGN = Logger.getLogger("sign");
 
     private static final String DATE_FORMAT = "dd.MM.yyyy";
 
@@ -133,10 +138,6 @@ public class ApplicationServiceImpl implements ApplicationService {
         BigDecimal days = calendarService.getVacationDays(application, application.getStartDate(),
                 application.getEndDate());
 
-        LOG.info("Antrag-Id " + application.getId() + ": Im Zeitraum von "
-            + application.getStartDate().toString(DATE_FORMAT) + " bis "
-            + application.getEndDate().toString(DATE_FORMAT) + " liegen " + days + " Arbeitstage.");
-
         // if check is successful, application is saved
 
         application.setStatus(ApplicationStatus.WAITING);
@@ -146,6 +147,10 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         // save changed application in the end
         applicationDAO.save(application);
+
+        LOG.info("Antrag-Id " + application.getId() + ": Im Zeitraum von "
+            + application.getStartDate().toString(DATE_FORMAT) + " bis "
+            + application.getEndDate().toString(DATE_FORMAT) + " liegen " + days + " Arbeitstage.");
 
         if (application.getVacationType() == VacationType.HOLIDAY) {
             List<HolidaysAccount> accounts = calculationService.subtractVacationDays(application);
@@ -329,7 +334,7 @@ public class ApplicationServiceImpl implements ApplicationService {
      */
     private void catchSignException(Integer applicationId, Exception ex) {
 
-        LOG.error("An error occured during signing application with id " + applicationId, ex);
+        LOG_SIGN.error("An error occured during signing application with id " + applicationId, ex);
         mailService.sendSignErrorNotification(applicationId, ex.getMessage());
     }
 

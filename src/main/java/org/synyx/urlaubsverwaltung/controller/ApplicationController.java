@@ -141,8 +141,9 @@ public class ApplicationController {
     // add sick days to application
     private static final String SICK_DAYS = LONG_PATH_APPLICATION + APPLICATION_ID + "}/sick";
 
-    // logger
-    private static final Logger LOG = Logger.getLogger(PersonController.class);
+    // audit logger: logs nontechnically occurences like 'user x applied for leave' or 'subtracted n days from
+    // holidays account y'
+    private static final Logger LOG = Logger.getLogger("audit");
 
     private PersonService personService;
     private ApplicationService applicationService;
