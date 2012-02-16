@@ -54,6 +54,7 @@
     <constructor-arg ref="cryptoService" />
     <constructor-arg ref="ownCalendarService" />
     <constructor-arg ref="calculationService" />
+    <constructor-arg ref="mailService" />
 </bean>
 
 <bean id="cryptoService" class="org.synyx.urlaubsverwaltung.service.CryptoService" />

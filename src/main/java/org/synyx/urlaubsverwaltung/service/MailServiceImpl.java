@@ -48,7 +48,9 @@ public class MailServiceImpl implements MailService {
 
     private static final String PATH = "/email/";
 
-    private static final String PROPERTIES_FILE = "messages_de.properties";
+    private static final String PROPERTIES_FILE = "messages_de.properties"; // genereal properties
+    private static final String CUSTOM_PROPERTIES_FILE = "custom.properties"; // custom configuration like email
+                                                                              // addresses, etc.
 
     private static final String APPLICATION = "application";
     private static final String PERSON = "person";
@@ -68,6 +70,7 @@ public class MailServiceImpl implements MailService {
     private JavaMailSender mailSender;
     private VelocityEngine velocityEngine;
     private Properties properties;
+    private Properties customProperties;
 
     @Autowired
     public MailServiceImpl(JavaMailSender mailSender, VelocityEngine velocityEngine) {
@@ -77,6 +80,7 @@ public class MailServiceImpl implements MailService {
 
         try {
             this.properties = load(PROPERTIES_FILE);
+            this.customProperties = load(CUSTOM_PROPERTIES_FILE);
         } catch (Exception ex) {
             LOG.error(DateMidnight.now().toString(DATE_FORMAT) + "No properties file found.");
             LOG.error(ex.getMessage(), ex);
@@ -92,7 +96,7 @@ public class MailServiceImpl implements MailService {
      *
      * @throws  Exception
      */
-    public static Properties load(String propsName) throws Exception {
+    public Properties load(String propsName) throws Exception {
 
         Properties props = new Properties();
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
@@ -110,7 +114,7 @@ public class MailServiceImpl implements MailService {
      *
      * @return  String: value to the given key
      */
-    protected String getProperty(String key) {
+    private String getProperty(String key) {
 
         return properties.getProperty(key);
     }
@@ -158,9 +162,9 @@ public class MailServiceImpl implements MailService {
 
             public void prepare(MimeMessage mimeMessage) throws MessagingException {
 
-                mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(recipient)); // TODO: later email.office and email.boss must also set by getProperty()
+                mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(recipient));
 
-                mimeMessage.setSubject(getProperty(subject));
+                mimeMessage.setSubject(customProperties.getProperty(subject));
                 mimeMessage.setText(text);
             }
         };
@@ -198,7 +202,7 @@ public class MailServiceImpl implements MailService {
 
         String text = prepareMessage(application, APPLICATION, FILE_NEW);
 
-        sendEmail("email.boss", "subject.new", text);
+        sendEmail(customProperties.getProperty("email.boss"), "subject.new", text);
     }
 
 
@@ -213,7 +217,7 @@ public class MailServiceImpl implements MailService {
 
         // email to office
         String textOffice = prepareMessage(application, APPLICATION, FILE_ALLOWED_OFFICE);
-        sendEmail("email.office", "subject.allowed.office", textOffice);
+        sendEmail(customProperties.getProperty("email.office"), "subject.allowed.office", textOffice);
 
         // email to applicant
         String textUser = prepareMessage(application, APPLICATION, FILE_ALLOWED_USER);
@@ -256,7 +260,7 @@ public class MailServiceImpl implements MailService {
         }
 
         String text = prepareMessage(names, PERSONS, FILE_WEEKLY);
-        sendEmail("email.all", "subject.weekly", text);
+        sendEmail(customProperties.getProperty("email.all"), "subject.weekly", text);
     }
 
 
@@ -272,10 +276,27 @@ public class MailServiceImpl implements MailService {
         // (dependent on application's state: waiting-chefs, allowed-office)
 
         if (isBoss) {
-            sendEmail("email.boss", "subject.cancelled", text);
+            sendEmail(customProperties.getProperty("email.boss"), "subject.cancelled", text);
         } else {
-            sendEmail("email.office", "subject.cancelled", text);
+            sendEmail(customProperties.getProperty("email.office"), "subject.cancelled", text);
         }
+    }
+
+
+    @Override
+    public void sendKeyGeneratingErrorNotification(String loginName) {
+
+        String text = "An error occured during key generation for person with login " + loginName + " failed.";
+        sendEmail(customProperties.getProperty("email.manager"), "subject.key.error", text);
+    }
+
+
+    @Override
+    public void sendSignErrorNotification(Integer applicationId, String exception) {
+
+        String text = "An error occured while signing the application with id " + applicationId + "\n" + exception;
+
+        sendEmail(customProperties.getProperty("email.manager"), "subject.sign.error", text);
     }
     /**
      * NOT YET IMPLEMENTED

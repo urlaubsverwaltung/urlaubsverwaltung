@@ -32,9 +32,11 @@ import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
 
@@ -45,9 +47,13 @@ import javax.mail.internet.InternetAddress;
  */
 public class MailServiceImplTest {
 
+    private static final String CUSTOM_PROPERTIES_FILE = "custom.properties"; // custom configuration like email
+                                                                              // addresses, etc.
+
     private MailServiceImpl instance;
     private JavaMailSender mailSender = new JavaMailSenderImpl();
     private VelocityEngine velocityEngine = new VelocityEngine();
+    private Properties customProperties;
 
     private Person person;
     private Application application;
@@ -66,9 +72,10 @@ public class MailServiceImplTest {
 
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
 
         instance = new MailServiceImpl(mailSender, velocityEngine);
+        customProperties = instance.load(CUSTOM_PROPERTIES_FILE);
         person = new Person();
         application = new Application();
         application.setPerson(person);
@@ -131,18 +138,18 @@ public class MailServiceImplTest {
         instance.sendNewApplicationNotification(application);
 
         // was email sent?
-        List<Message> inbox = Mailbox.get("email.boss");
+        List<Message> inbox = Mailbox.get(customProperties.getProperty("email.boss"));
         assertTrue(inbox.size() > 0);
 
         // get email
         Message msg = inbox.get(0);
 
         // check subject
-        assertEquals("Es liegen neue Urlaubsanträge vor", msg.getSubject());
+        assertEquals("Neuer Urlaubsantrag", msg.getSubject());
         assertNotSame("subject", msg.getSubject());
 
         // check from and recipient
-        assertEquals(new InternetAddress("email.boss"), msg.getAllRecipients()[0]);
+        assertEquals(new InternetAddress(customProperties.getProperty("email.boss")), msg.getAllRecipients()[0]);
 
         // check content of email
         String content = (String) msg.getContent();
@@ -167,7 +174,7 @@ public class MailServiceImplTest {
         instance.sendAllowedNotification(application);
 
         // were both emails sent?
-        List<Message> inboxOffice = Mailbox.get("email.office");
+        List<Message> inboxOffice = Mailbox.get(customProperties.getProperty("email.office"));
         assertTrue(inboxOffice.size() > 0);
 
         List<Message> inboxUser = Mailbox.get("berndo@test.com");
@@ -198,7 +205,8 @@ public class MailServiceImplTest {
         assertNotSame("subject", msgOffice.getSubject());
 
         // check from and recipient
-        assertEquals(new InternetAddress("email.office"), msgOffice.getAllRecipients()[0]);
+        assertEquals(new InternetAddress(customProperties.getProperty("email.office")),
+            msgOffice.getAllRecipients()[0]);
 
         // check content of email
         String contentOfficeMail = (String) msgOffice.getContent();
@@ -295,7 +303,7 @@ public class MailServiceImplTest {
         instance.sendWeeklyVacationForecast(persons);
 
         // was email sent?
-        List<Message> inbox = Mailbox.get("email.all");
+        List<Message> inbox = Mailbox.get(customProperties.getProperty("email.all"));
         assertTrue(inbox.size() > 0);
 
         Message msg = inbox.get(0);
@@ -305,7 +313,7 @@ public class MailServiceImplTest {
         assertNotSame("subject", msg.getSubject());
 
         // check from and recipient
-        assertEquals(new InternetAddress("email.all"), msg.getAllRecipients()[0]);
+        assertEquals(new InternetAddress(customProperties.getProperty("email.all")), msg.getAllRecipients()[0]);
 
         // check content of email
         String content = (String) msg.getContent();
@@ -334,17 +342,17 @@ public class MailServiceImplTest {
         instance.sendCancelledNotification(application, true);
 
         // was email sent?
-        List<Message> inboxChef = Mailbox.get("email.boss");
+        List<Message> inboxChef = Mailbox.get(customProperties.getProperty("email.boss"));
         assertTrue(inboxChef.size() > 0);
 
         Message msg = inboxChef.get(0);
 
         // check subject
-        assertEquals("Antrag wurde storniert", msg.getSubject());
+        assertEquals("Ein Antrag wurde storniert", msg.getSubject());
         assertNotSame("subject", msg.getSubject());
 
         // check from and recipient
-        assertEquals(new InternetAddress("email.boss"), msg.getAllRecipients()[0]);
+        assertEquals(new InternetAddress(customProperties.getProperty("email.boss")), msg.getAllRecipients()[0]);
 
         // check content of email
         String content = (String) msg.getContent();
@@ -353,30 +361,42 @@ public class MailServiceImplTest {
         assertFalse(content.contains("Mist"));
     }
 
-//    @Test
-//    public void testGetProperty() {
-//
-//        File propertiesFile = new File(FILE_PATH);
-//
-//        String key = "vac.holiday";
-//
-//        String returnValue = instance.getProperty(propertiesFile, key);
-//
-//        assertNotNull(returnValue);
-//        assertEquals("Erholungsurlaub", returnValue);
-//
-//        key = "vac.overtime";
-//
-//        returnValue = instance.getProperty(propertiesFile, key);
-//
-//        assertNotNull(returnValue);
-//        assertEquals("Überstunden abbummeln", returnValue);
-//
-//        key = "unsinn";
-//
-//        returnValue = instance.getProperty(propertiesFile, key);
-//
-//        assertNull(returnValue);
-//        assertNotSame("Erholungsurlaub", returnValue);
-//    }
+
+    /** Test of sendKeyGeneratingErrorNotification method, of class MailServiceImpl. */
+    @Test
+    public void testSendKeyGeneratingErrorNotification() throws AddressException, MessagingException, IOException {
+
+        instance.sendKeyGeneratingErrorNotification("müller");
+
+        List<Message> inbox = Mailbox.get(customProperties.getProperty("email.manager"));
+        assertTrue(inbox.size() > 0);
+
+        Message msg = inbox.get(0);
+
+        assertEquals("Fehler beim Generieren der Keys", msg.getSubject());
+
+        String content = (String) msg.getContent();
+
+        assertTrue(content.contentEquals(
+                "An error occured during key generation for person with login müller failed."));
+    }
+
+
+    /** Test of sendSignErrorNotification method, of class MailServiceImpl. */
+    @Test
+    public void testSendSignErrorNotification() throws AddressException, MessagingException, IOException {
+
+        instance.sendSignErrorNotification(5, "test exception message");
+
+        List<Message> inbox = Mailbox.get(customProperties.getProperty("email.manager"));
+        assertTrue(inbox.size() > 0);
+
+        Message msg = inbox.get(0);
+
+        assertEquals("Fehler beim Signieren eines Antrags", msg.getSubject());
+
+        String content = (String) msg.getContent();
+
+        assertTrue(content.contains("An error occured while signing the application with id 5"));
+    }
 }

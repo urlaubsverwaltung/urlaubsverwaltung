@@ -79,6 +79,25 @@ public interface MailService {
      */
     void sendCancelledNotification(Application application, boolean isBoss);
 
+
+    /**
+     * this method sends an email to the tool's manager to inform if an error occured while generating private and
+     * public key for a new user with the given login name
+     *
+     * @param  loginName
+     */
+    void sendKeyGeneratingErrorNotification(String loginName);
+
+
+    /**
+     * this method sends an email to the tool's manager to inform if an error occured while signing an application with
+     * the given id
+     *
+     * @param  applicationId
+     * @param  exception
+     */
+    void sendSignErrorNotification(Integer applicationId, String exception);
+
     /**
      * Commented out on Tu, 2011/11/29 - Aljona Murygina
      * Think about if method really is necessary or not

@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.synyx.urlaubsverwaltung.service;
 
 import org.joda.time.DateMidnight;
@@ -58,6 +54,7 @@ public class ApplicationServiceImplTest {
     private CryptoService cryptoService = new CryptoService();
     private OwnCalendarService calendarService = new OwnCalendarService();
     private CalculationService calculationService = mock(CalculationService.class);
+    private MailService mailService = mock(MailService.class);
 
     public ApplicationServiceImplTest() {
     }
@@ -76,7 +73,7 @@ public class ApplicationServiceImplTest {
     public void setUp() {
 
         instance = new ApplicationServiceImpl(applicationDAO, accountService, cryptoService, calendarService,
-                calculationService);
+                calculationService, mailService);
 
         // create person that is needed for tests
         person = new Person();
