@@ -33,9 +33,17 @@
             <div class="container_12">
 
                 <div class="grid_5 app">
-                    <h2><spring:message code="app.title" /></h2>    
+                    <h2><spring:message code="app.title" /></h2>
 
                     <table id="app-detail">
+                        <tr>
+                            <td>
+                                <spring:message code="state" />:
+                            </td>
+                            <td>
+                                <spring:message code="${application.status.state}" />
+                            </td>
+                        </tr>
                         <tr>
                             <td>
                                 <spring:message code="app.apply" />
@@ -107,37 +115,36 @@
                         <tr>
                             <td colspan="2">&nbsp;</td>
                         </tr>
-                            <tr>
-                                <td>
-                                    <label for="anschrift"><spring:message code='app.address' />:</label>
-                                </td>
-                                <td>
-                                    <c:choose>
-                                        <c:when test="${application.address!= null && !empty application.address}">
-                                            <c:out value="${application.address}" />
-                                        </c:when>
-                                        <c:otherwise>
-                                            <spring:message code="not.stated" />
-                                        </c:otherwise>
-                                    </c:choose>
-                                    <c:out value="${application.address}" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label for="telefon"><spring:message code='app.phone' />:</label>
-                                </td>
-                                <td>
-                                    <c:choose>
-                                        <c:when test="${application.phone != null && !empty application.phone}">
-                                            <c:out value="${application.phone}" />
-                                        </c:when>
-                                        <c:otherwise>
-                                            <spring:message code="not.stated" />
-                                        </c:otherwise>
-                                    </c:choose>
-                                </td>
-                            </tr>
+                        <tr>
+                            <td>
+                                <label for="anschrift"><spring:message code='app.address' />:</label>
+                            </td>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${application.address!= null && !empty application.address}">
+                                        <c:out value="${application.address}" />
+                                    </c:when>
+                                    <c:otherwise>
+                                        <spring:message code="not.stated" />
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for="telefon"><spring:message code='app.phone' />:</label>
+                            </td>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${application.phone != null && !empty application.phone}">
+                                        <c:out value="${application.phone}" />
+                                    </c:when>
+                                    <c:otherwise>
+                                        <spring:message code="not.stated" />
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
+                        </tr>
                         <tr>
                             <td colspan="2">&nbsp;</td>
                         </tr>
@@ -146,15 +153,6 @@
                                 <spring:message code='app.footer' />&nbsp;<joda:format style="M-" value="${application.applicationDate}"/>
                             </td>
                             <td>&nbsp;</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <spring:message code="state" />:
-                                <spring:message code="${application.status.state}" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">&nbsp;</td>
                         </tr>
                     </table>
 
