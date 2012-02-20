@@ -82,7 +82,11 @@
                     <c:choose>
 
                         <c:when test="${noapps == true}">
-                            <spring:message code='no.apps' />
+                            <spring:message code='no.apps' /><br /><br />
+                            <a class="button apply" style="margin-top: 1em;" href="${formUrlPrefix}/${person.id}/application/new">
+                                <c:set var="staff" value="${person.firstName} ${person.lastName}" />
+                                <spring:message code="ov.apply.for.user" arguments="${staff}"/>
+                            </a>
                         </c:when>
 
                         <c:otherwise>

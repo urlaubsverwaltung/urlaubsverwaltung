@@ -16,6 +16,7 @@
         <th class="vac"><spring:message code="entitlement" />&nbsp;<spring:message code="whole" /></th>
         <th class="vac"><spring:message code="overview.left" /></th>
         <th><spring:message code="table.detail" /></th>
+        <th>Antrag stellen</th>
         <th><spring:message code="edit" /></th>
     </tr>
     <c:forEach items="${persons}" var="person" varStatus="loopStatus">
@@ -52,6 +53,7 @@
                 </c:choose>
             </td>
             <td class="td-detail"><a href="${formUrlPrefix}/staff/${person.id}/overview"><img src="<spring:url value='/images/playlist.png' />" /></a></td>
+            <td class="td-detail"><a href="${formUrlPrefix}/${person.id}/application/new"><img src="<spring:url value='/images/new window.png' />" /></a></td>
             <td class="td-edit"><a href="${formUrlPrefix}/staff/${person.id}/edit"><img src="<spring:url value='/images/edit.png' />" /></a></td>
         </tr>    
     </c:forEach>
