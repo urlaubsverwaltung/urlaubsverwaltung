@@ -182,7 +182,7 @@ public class ApplicationValidatorTest {
         // sick days == 0
         app.setSickDays(BigDecimal.ZERO);
         instance.validateSickDays(app, vacationDays, errors);
-        Mockito.verify(errors).rejectValue("sickDays", "sick.zero");
+        Mockito.verifyZeroInteractions(errors);
         Mockito.reset(errors);
 
         // sick days < 0

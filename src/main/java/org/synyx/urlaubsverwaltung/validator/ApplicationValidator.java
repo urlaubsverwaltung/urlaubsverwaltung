@@ -155,11 +155,7 @@ public class ApplicationValidator implements Validator {
                 errors.rejectValue(SICK_DAYS, "sick.empty");
             }
         } else {
-            // number of sick days is zero or negative
-            if (app.getSickDays().compareTo(BigDecimal.ZERO) == 0) {
-                errors.rejectValue(SICK_DAYS, "sick.zero");
-            }
-
+            // number of sick days is negative
             if (app.getSickDays().compareTo(BigDecimal.ZERO) == -1) {
                 errors.rejectValue(SICK_DAYS, "sick.negative");
             }
