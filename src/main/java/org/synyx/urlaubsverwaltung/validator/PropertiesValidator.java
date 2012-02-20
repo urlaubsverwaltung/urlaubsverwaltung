@@ -16,6 +16,9 @@ import java.util.Properties;
 
 /**
  * @author  Aljona Murygina
+ *
+ *          <p>This class checks if the tested property keys have a valid value. If not, the tool manager is notified
+ *          and errors objects are filled.</p>
  */
 public class PropertiesValidator {
 
