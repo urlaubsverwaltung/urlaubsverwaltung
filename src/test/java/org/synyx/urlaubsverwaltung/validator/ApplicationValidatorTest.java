@@ -24,6 +24,7 @@ import org.synyx.urlaubsverwaltung.domain.Comment;
 import org.synyx.urlaubsverwaltung.domain.DayLength;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.VacationType;
+import org.synyx.urlaubsverwaltung.service.MailService;
 import org.synyx.urlaubsverwaltung.view.AppForm;
 
 import java.math.BigDecimal;
@@ -38,7 +39,9 @@ public class ApplicationValidatorTest {
     private AppForm app;
     Errors errors = Mockito.mock(Errors.class);
 
-    public ApplicationValidatorTest() {
+    private MailService mailService = Mockito.mock(MailService.class);
+
+    public ApplicationValidatorTest() throws Exception {
     }
 
     @BeforeClass
@@ -54,7 +57,7 @@ public class ApplicationValidatorTest {
     @Before
     public void setUp() throws Exception {
 
-        instance = new ApplicationValidator();
+        instance = new ApplicationValidator(mailService);
         app = new AppForm();
         Mockito.reset(errors);
     }
@@ -138,6 +141,7 @@ public class ApplicationValidatorTest {
         Mockito.reset(errors);
 
         // test if everything is ok
+        app.setStartDate(new DateMidnight(2012, 1, 17));
         app.setEndDate(new DateMidnight(2012, 1, 20));
         app.setVacationType(VacationType.SPECIALLEAVE);
         app.setReason("Hochzeit");

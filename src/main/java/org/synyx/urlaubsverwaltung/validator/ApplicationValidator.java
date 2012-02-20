@@ -16,6 +16,7 @@ import org.springframework.validation.Validator;
 import org.synyx.urlaubsverwaltung.domain.Comment;
 import org.synyx.urlaubsverwaltung.domain.DayLength;
 import org.synyx.urlaubsverwaltung.domain.VacationType;
+import org.synyx.urlaubsverwaltung.service.MailService;
 import org.synyx.urlaubsverwaltung.util.PropertiesUtil;
 import org.synyx.urlaubsverwaltung.view.AppForm;
 
@@ -39,11 +40,15 @@ public class ApplicationValidator implements Validator {
     // errors' properties keys
     private static final String MANDATORY_FIELD = "error.mandatory.field";
     private static final String ERROR_ENTRY = "error.entry";
+    private static final String ERROR_STH_WRONG = "error.sth.went.wrong";
     private static final String ERROR_REASON = "error.reason";
     private static final String ERROR_PERIOD = "error.period";
     private static final String ERROR_TOO_LONG = "error.too.long";
     private static final String ERROR_PAST = "error.period.past";
     private static final String ERROR_SICK = "sick.more";
+
+    // property key
+    private static final String MAX_MONTHS = "maximum.months";
 
     // names of fields
     private static final String START_DATE = "startDate";
@@ -55,8 +60,11 @@ public class ApplicationValidator implements Validator {
 
     private static final String CUSTOM_PROPERTIES_FILE = "custom.properties";
     private Properties customProperties;
+    private MailService mailService;
 
-    public ApplicationValidator() {
+    public ApplicationValidator(MailService mailService) {
+
+        this.mailService = mailService;
 
         try {
             this.customProperties = PropertiesUtil.load(CUSTOM_PROPERTIES_FILE);
@@ -98,20 +106,25 @@ public class ApplicationValidator implements Validator {
                 if (app.getStartDate().isAfter(app.getEndDate())) {
                     errors.reject(ERROR_PERIOD);
                 } else {
-                    // applying for leave maximum permissible x year in advance
-                    int x;
-                    String propValue = customProperties.getProperty("maximum.year");
+                    // applying for leave maximum permissible x months in advance
+                    String propValue = customProperties.getProperty(MAX_MONTHS);
 
-                    if (propValue.isEmpty()) {
-                        x = 1;
-                    } else {
-                        x = Integer.parseInt(propValue);
-                    }
+                    try {
+                        int x = Integer.parseInt(propValue);
 
-                    DateMidnight future = DateMidnight.now().plusYears(x);
+                        if (x > 0 && x < 37) {
+                            DateMidnight future = DateMidnight.now().plusMonths(x);
 
-                    if (app.getEndDate().isAfter(future)) {
-                        errors.reject(ERROR_TOO_LONG);
+                            if (app.getEndDate().isAfter(future)) {
+                                errors.reject(ERROR_TOO_LONG);
+                            }
+                        } else {
+                            errors.reject(ERROR_STH_WRONG);
+                            mailService.sendPropertiesErrorNotification(MAX_MONTHS);
+                        }
+                    } catch (NumberFormatException ex) {
+                        errors.reject(ERROR_STH_WRONG);
+                        mailService.sendPropertiesErrorNotification(MAX_MONTHS);
                     }
                 }
             }

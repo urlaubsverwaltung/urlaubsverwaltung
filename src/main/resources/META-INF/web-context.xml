@@ -23,7 +23,9 @@
         <constructor-arg ref="accountService" />
         <constructor-arg ref="commentService" />
         <constructor-arg>
-            <bean class="org.synyx.urlaubsverwaltung.validator.ApplicationValidator" />
+            <bean class="org.synyx.urlaubsverwaltung.validator.ApplicationValidator">
+                <constructor-arg ref="mailService" />
+            </bean>
         </constructor-arg>
         <constructor-arg ref="gravatarUtil" />
         <constructor-arg ref="mailService" />

@@ -107,6 +107,15 @@ public interface MailService {
      */
     void sendSignErrorNotification(Integer applicationId, String exception);
 
+
+    /**
+     * this method sends an email to the tool's manager to inform if an error occured because of invalid defined
+     * property value (e.g. "maximum.months")
+     *
+     * @param  name  of the concerned property key
+     */
+    void sendPropertiesErrorNotification(String propertyName);
+
     /**
      * Commented out on Tu, 2011/11/29 - Aljona Murygina
      * Think about if method really is necessary or not
