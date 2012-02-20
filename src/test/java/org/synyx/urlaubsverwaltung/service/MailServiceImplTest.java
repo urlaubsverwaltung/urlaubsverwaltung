@@ -27,6 +27,7 @@ import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.DayLength;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.VacationType;
+import org.synyx.urlaubsverwaltung.util.PropertiesUtil;
 
 import java.io.IOException;
 
@@ -75,7 +76,7 @@ public class MailServiceImplTest {
     public void setUp() throws Exception {
 
         instance = new MailServiceImpl(mailSender, velocityEngine);
-        customProperties = instance.load(CUSTOM_PROPERTIES_FILE);
+        customProperties = PropertiesUtil.load(CUSTOM_PROPERTIES_FILE);
         person = new Person();
         application = new Application();
         application.setPerson(person);

@@ -16,8 +16,7 @@ import org.springframework.ui.velocity.VelocityEngineUtils;
 
 import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.Person;
-
-import java.net.URL;
+import org.synyx.urlaubsverwaltung.util.PropertiesUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -80,46 +79,13 @@ public class MailServiceImpl implements MailService {
         this.velocityEngine = velocityEngine;
 
         try {
-            this.properties = load(PROPERTIES_FILE);
-            this.customProperties = load(CUSTOM_PROPERTIES_FILE);
+            this.properties = PropertiesUtil.load(PROPERTIES_FILE);
+            this.customProperties = PropertiesUtil.load(CUSTOM_PROPERTIES_FILE);
         } catch (Exception ex) {
             LOG.error(DateMidnight.now().toString(DATE_FORMAT) + "No properties file found.");
             LOG.error(ex.getMessage(), ex);
         }
     }
-
-    /**
-     * Load a properties file from the classpath. Thanks to: http://www.rgagnon.com/javadetails/java-0434.html
-     *
-     * @param  propsName
-     *
-     * @return  Properties
-     *
-     * @throws  Exception
-     */
-    public Properties load(String propsName) throws Exception {
-
-        Properties props = new Properties();
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        URL url = cl.getResource(propsName);
-        props.load(url.openStream());
-
-        return props;
-    }
-
-
-    /**
-     * This method gets the properties' value of the given key.
-     *
-     * @param  key
-     *
-     * @return  String: value to the given key
-     */
-    private String getProperty(String key) {
-
-        return properties.getProperty(key);
-    }
-
 
     /**
      * this method prepares an email:
@@ -139,8 +105,8 @@ public class MailServiceImpl implements MailService {
             Application a = (Application) object;
             String vacType = a.getVacationType().getVacationTypeName();
             String length = a.getHowLong().getDayLength();
-            model.put("vacationType", getProperty(vacType));
-            model.put("dayLength", getProperty(length));
+            model.put("vacationType", properties.getProperty(vacType));
+            model.put("dayLength", properties.getProperty(length));
         }
 
         String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, PATH + fileName, model);

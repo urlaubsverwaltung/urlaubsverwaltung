@@ -52,7 +52,7 @@ public class ApplicationValidatorTest {
 
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
 
         instance = new ApplicationValidator();
         app = new AppForm();
@@ -127,6 +127,14 @@ public class ApplicationValidatorTest {
         app.setEndDate(new DateMidnight(2012, 1, 12));
         instance.validate(app, errors);
         Mockito.verify(errors).reject("error.period");
+        Mockito.reset(errors);
+
+        // if application's year is later than maximum permissible date
+        app.setHowLong(DayLength.FULL);
+        app.setStartDate(new DateMidnight(2012, 1, 17));
+        app.setEndDate(new DateMidnight(2030, 1, 12));
+        instance.validate(app, errors);
+        Mockito.verify(errors).reject("error.too.long");
         Mockito.reset(errors);
 
         // test if everything is ok

@@ -4,6 +4,10 @@
  */
 package org.synyx.urlaubsverwaltung.validator;
 
+import org.apache.log4j.Logger;
+
+import org.joda.time.DateMidnight;
+
 import org.springframework.util.StringUtils;
 
 import org.springframework.validation.Errors;
@@ -12,9 +16,12 @@ import org.springframework.validation.Validator;
 import org.synyx.urlaubsverwaltung.domain.Comment;
 import org.synyx.urlaubsverwaltung.domain.DayLength;
 import org.synyx.urlaubsverwaltung.domain.VacationType;
+import org.synyx.urlaubsverwaltung.util.PropertiesUtil;
 import org.synyx.urlaubsverwaltung.view.AppForm;
 
 import java.math.BigDecimal;
+
+import java.util.Properties;
 
 
 /**
@@ -25,11 +32,16 @@ import java.math.BigDecimal;
  */
 public class ApplicationValidator implements Validator {
 
+    private static final Logger LOG = Logger.getLogger(ApplicationValidator.class);
+
+    private static final String DATE_FORMAT = "dd.MM.yyyy";
+
     // errors' properties keys
     private static final String MANDATORY_FIELD = "error.mandatory.field";
     private static final String ERROR_ENTRY = "error.entry";
     private static final String ERROR_REASON = "error.reason";
     private static final String ERROR_PERIOD = "error.period";
+    private static final String ERROR_TOO_LONG = "error.too.long";
     private static final String ERROR_PAST = "error.period.past";
     private static final String ERROR_SICK = "sick.more";
 
@@ -40,6 +52,19 @@ public class ApplicationValidator implements Validator {
     private static final String REASON = "reason";
     private static final String TEXT = "text";
     private static final String SICK_DAYS = "sickDays";
+
+    private static final String CUSTOM_PROPERTIES_FILE = "custom.properties";
+    private Properties customProperties;
+
+    public ApplicationValidator() {
+
+        try {
+            this.customProperties = PropertiesUtil.load(CUSTOM_PROPERTIES_FILE);
+        } catch (Exception ex) {
+            LOG.error(DateMidnight.now().toString(DATE_FORMAT) + "No properties file found.");
+            LOG.error(ex.getMessage(), ex);
+        }
+    }
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -72,6 +97,22 @@ public class ApplicationValidator implements Validator {
                 // check if from < to
                 if (app.getStartDate().isAfter(app.getEndDate())) {
                     errors.reject(ERROR_PERIOD);
+                } else {
+                    // applying for leave maximum permissible x year in advance
+                    int x;
+                    String propValue = customProperties.getProperty("maximum.year");
+
+                    if (propValue.isEmpty()) {
+                        x = 1;
+                    } else {
+                        x = Integer.parseInt(propValue);
+                    }
+
+                    DateMidnight future = DateMidnight.now().plusYears(x);
+
+                    if (app.getEndDate().isAfter(future)) {
+                        errors.reject(ERROR_TOO_LONG);
+                    }
                 }
             }
         } else {
