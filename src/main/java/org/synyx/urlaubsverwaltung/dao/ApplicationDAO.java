@@ -18,11 +18,18 @@ import java.util.List;
  */
 public interface ApplicationDAO extends JpaRepository<Application, Integer> {
 
-    // get List<Application> by certain state (e.g. waiting)
+    // get List<Application> by certain state (e.g. waiting) and for a certain year
     @Query(
         "select x from Application x where x.status = ?1 and ((x.startDate between ?2 and ?3) or (x.endDate between ?2 and ?3)) order by x.startDate"
     )
     List<Application> getApplicationsByStateAndYear(ApplicationStatus state, Date firstDayOfYear, Date lastDayOfYear);
+
+
+    // get list of cancelled applications that have been allowed before cancelling
+    @Query(
+        "select x from Application x where x.status = ?1 and x.formerlyAllowed = true and ((x.startDate between ?2 and ?3) or (x.endDate between ?2 and ?3)) order by x.startDate"
+    )
+    List<Application> getCancelledApplicationsByYear(ApplicationStatus state, Date firstDayOfYear, Date lastDayOfYear);
 
 
     // get List<Application> by certain person

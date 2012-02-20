@@ -96,7 +96,12 @@ public class ApplicationServiceImpl implements ApplicationService {
         DateMidnight firstDayOfYear = new DateMidnight(year, DateTimeConstants.JANUARY, 1);
         DateMidnight lastDayOfYear = new DateMidnight(year, DateTimeConstants.DECEMBER, 31);
 
-        return applicationDAO.getApplicationsByStateAndYear(state, firstDayOfYear.toDate(), lastDayOfYear.toDate());
+        if (state == ApplicationStatus.CANCELLED) {
+            return applicationDAO.getCancelledApplicationsByYear(state, firstDayOfYear.toDate(),
+                    lastDayOfYear.toDate());
+        } else {
+            return applicationDAO.getApplicationsByStateAndYear(state, firstDayOfYear.toDate(), lastDayOfYear.toDate());
+        }
     }
 
 

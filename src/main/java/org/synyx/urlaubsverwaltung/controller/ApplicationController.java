@@ -842,17 +842,28 @@ public class ApplicationController {
 
         Application application = applicationService.getApplicationById(applicationId);
 
+        int allowed = 0;
+
+        if (application.getStatus() == ApplicationStatus.ALLOWED) {
+            allowed = 1;
+        }
+
+        if (allowed == 1) {
+            application.setFormerlyAllowed(true);
+
+            // if application has status ALLOWED, office gets an email
+            mailService.sendCancelledNotification(application, false);
+        }
+
+        // AT THE MOMENT: not sending an email to boss if a waiting application is cancelled
+        // should boss get an email if application's status is WAITING?
+        // mailService.sendCancelledNotification(application, true);
+
         applicationService.cancel(application);
 
         LOG.info(application.getApplicationDate() + " ID: " + application.getId() + "Der Antrag von "
             + application.getPerson().getFirstName() + " " + application.getPerson().getLastName()
             + " wurde am " + DateMidnight.now().toString(DATE_FORMAT) + " storniert.");
-
-        // if application has status ALLOWED, office gets an email
-        mailService.sendCancelledNotification(application, false);
-
-        // should boss get an email if application's status is WAITING?
-        // mailService.sendCancelledNotification(application, true);
 
         return "redirect:/web" + OVERVIEW;
     }

@@ -76,6 +76,10 @@ public class Application extends AbstractPersistable<Integer> {
     // State of application (e.g. waiting, allowed, ...)
     private ApplicationStatus status;
 
+    // if application has been cancelled during status allowed: formerlyAllowed is true
+    // if application has been cancelled during status waiting: formerlyAllowed is false
+    private boolean formerlyAllowed;
+
     // Signature of applicant
     @Column(columnDefinition = "longblob")
     private byte[] signaturePerson;
@@ -317,5 +321,17 @@ public class Application extends AbstractPersistable<Integer> {
     public void setVacationType(VacationType vacationType) {
 
         this.vacationType = vacationType;
+    }
+
+
+    public boolean isFormerlyAllowed() {
+
+        return formerlyAllowed;
+    }
+
+
+    public void setFormerlyAllowed(boolean formerlyAllowed) {
+
+        this.formerlyAllowed = formerlyAllowed;
     }
 }
