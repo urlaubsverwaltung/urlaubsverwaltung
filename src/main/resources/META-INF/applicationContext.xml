@@ -67,5 +67,17 @@
 
 <bean id="gravatarUtil" class="org.synyx.urlaubsverwaltung.util.GravatarUtil" />
 
+<bean id="propertiesValidator" class="org.synyx.urlaubsverwaltung.validator.PropertiesValidator">
+    <constructor-arg ref="mailService" />
+</bean>
+
+<bean id="applicationValidator" class="org.synyx.urlaubsverwaltung.validator.ApplicationValidator">
+    <constructor-arg ref="propertiesValidator" />
+</bean>
+
+<bean id="personValidator" class="org.synyx.urlaubsverwaltung.validator.PersonValidator">
+    <constructor-arg ref="propertiesValidator" />
+</bean>
+
 </beans>
 

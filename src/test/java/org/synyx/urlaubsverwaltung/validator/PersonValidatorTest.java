@@ -33,6 +33,8 @@ public class PersonValidatorTest {
     private PersonForm form;
     Errors errors = Mockito.mock(Errors.class);
 
+    private PropertiesValidator propValidator = Mockito.mock(PropertiesValidator.class);
+
     public PersonValidatorTest() {
     }
 
@@ -49,7 +51,7 @@ public class PersonValidatorTest {
     @Before
     public void setUp() {
 
-        instance = new PersonValidator();
+        instance = new PersonValidator(propValidator);
         form = new PersonForm();
     }
 
@@ -329,6 +331,7 @@ public class PersonValidatorTest {
     @Test
     public void testValidateNumberOfDays() {
 
+        // test for
         double max_days = 365;
 
         // validate entitlement of vacation days remaining vacation days
@@ -474,5 +477,13 @@ public class PersonValidatorTest {
         instance.validateAccountDays(form, errors);
         Mockito.verify(errors).rejectValue("vacationDaysAcc", "error.entry");
         Mockito.reset(errors);
+    }
+
+
+    /** Test of validateProperties method, of class PersonValidator. */
+    @Test
+    public void testValidateProperties() {
+
+        // is tested in PropertiesValidatorTest: test for method validateAnnualVacationProperty
     }
 }

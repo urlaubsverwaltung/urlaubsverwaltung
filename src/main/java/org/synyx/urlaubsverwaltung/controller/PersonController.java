@@ -493,7 +493,18 @@ public class PersonController {
 
         Person personToUpdate = personService.getPersonByID(personId);
 
-        validator.validate(personForm, errors); // validates all fields except the account's days fields
+        validator.validateProperties(personForm, errors); // validates if the set value of the property key is valid
+
+        if (errors.hasErrors()) {
+            preparePersonForm(personToUpdate, personForm, model);
+            model.addAttribute("errors", errors);
+
+            return PERSON_FORM_JSP;
+        }
+
+        validator.validate(personForm, errors); // validates the 'not-number' fields and holiday entitlement's vacation
+                                                // days and remaining vacation days
+
         validator.validateAccountDays(personForm, errors); // validates holidays account's remaining vacation days and
                                                            // vacation days
 

@@ -24,7 +24,6 @@ import org.synyx.urlaubsverwaltung.domain.Comment;
 import org.synyx.urlaubsverwaltung.domain.DayLength;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.VacationType;
-import org.synyx.urlaubsverwaltung.service.MailService;
 import org.synyx.urlaubsverwaltung.view.AppForm;
 
 import java.math.BigDecimal;
@@ -39,7 +38,7 @@ public class ApplicationValidatorTest {
     private AppForm app;
     Errors errors = Mockito.mock(Errors.class);
 
-    private MailService mailService = Mockito.mock(MailService.class);
+    private PropertiesValidator propValidator = Mockito.mock(PropertiesValidator.class);
 
     public ApplicationValidatorTest() throws Exception {
     }
@@ -57,7 +56,7 @@ public class ApplicationValidatorTest {
     @Before
     public void setUp() throws Exception {
 
-        instance = new ApplicationValidator(mailService);
+        instance = new ApplicationValidator(propValidator);
         app = new AppForm();
         Mockito.reset(errors);
     }
@@ -133,12 +132,7 @@ public class ApplicationValidatorTest {
         Mockito.reset(errors);
 
         // if application's year is later than maximum permissible date
-        app.setHowLong(DayLength.FULL);
-        app.setStartDate(new DateMidnight(2012, 1, 17));
-        app.setEndDate(new DateMidnight(2030, 1, 12));
-        instance.validate(app, errors);
-        Mockito.verify(errors).reject("error.too.long");
-        Mockito.reset(errors);
+        // is tested in PropertiesValidatorTest: test for method validateMaximumVacationProperty
 
         // test if everything is ok
         app.setStartDate(new DateMidnight(2012, 1, 17));

@@ -22,11 +22,7 @@
         <constructor-arg ref="applicationService" />
         <constructor-arg ref="accountService" />
         <constructor-arg ref="commentService" />
-        <constructor-arg>
-            <bean class="org.synyx.urlaubsverwaltung.validator.ApplicationValidator">
-                <constructor-arg ref="mailService" />
-            </bean>
-        </constructor-arg>
+        <constructor-arg ref="applicationValidator" />
         <constructor-arg ref="gravatarUtil" />
         <constructor-arg ref="mailService" />
         <constructor-arg ref="ownCalendarService" />
@@ -37,9 +33,7 @@
         <constructor-arg ref="applicationService" />
         <constructor-arg ref="accountService" />
         <constructor-arg ref="gravatarUtil" />
-        <constructor-arg>
-            <bean class="org.synyx.urlaubsverwaltung.validator.PersonValidator" />
-        </constructor-arg> 
+        <constructor-arg ref="personValidator" />
     </bean>  
     
      <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">

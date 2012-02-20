@@ -4,15 +4,19 @@
  */
 package org.synyx.urlaubsverwaltung.validator;
 
+import org.apache.log4j.Logger;
+
 import org.springframework.util.StringUtils;
 
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+import org.synyx.urlaubsverwaltung.util.PropertiesUtil;
 import org.synyx.urlaubsverwaltung.view.PersonForm;
 
 import java.math.BigDecimal;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,6 +28,9 @@ import java.util.regex.Pattern;
  * @author  Aljona Murygina
  */
 public class PersonValidator implements Validator {
+
+    // logs general errors like "properties file not found"
+    private static final Logger LOG = Logger.getLogger("errorLog");
 
     private static final String MANDATORY_FIELD = "error.mandatory.field";
     private static final String ERROR_ENTRY = "error.entry";
@@ -39,12 +46,6 @@ public class PersonValidator implements Validator {
     private static final String YEAR = "year";
     private static final String EMAIL = "email";
 
-    private static final double MAX_DAYS = 365;
-
-    // this was the first version of email regex (commented out on 8th Feb. 2012)
-// private static final String EMAIL_PATTERN =
-// "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-
     // a regex for email addresses that are valid, but may be "strange looking" (e.g. tomr$2@example.com)
     // original from: http://www.markussipila.info/pub/emailvalidator.php?action=validate
     // modified by adding following characters: äöüß
@@ -53,8 +54,27 @@ public class PersonValidator implements Validator {
 
     private static final String NAME_PATTERN = "\\p{L}+"; // any kind of letter from any language.
 
+    private static final String MAX_DAYS = "annual.vacation.max";
+
+    private static final String CUSTOM_PROPERTIES_FILE = "custom.properties";
+
     private Pattern pattern;
     private Matcher matcher;
+
+    private PropertiesValidator propValidator;
+    private Properties customProperties;
+
+    public PersonValidator(PropertiesValidator propValidator) {
+
+        this.propValidator = propValidator;
+
+        try {
+            this.customProperties = PropertiesUtil.load(CUSTOM_PROPERTIES_FILE);
+        } catch (Exception ex) {
+            LOG.error("No properties file found.");
+            LOG.error(ex.getMessage(), ex);
+        }
+    }
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -80,13 +100,12 @@ public class PersonValidator implements Validator {
         // field year
         validateYear(form.getYear(), errors);
 
-        // entitlement's days must not be null
+        // only achieved if invalid property values are precluded by method validateProperties
+        String propValue = customProperties.getProperty(MAX_DAYS);
+        double max = Double.parseDouble(propValue);
 
-        // field entitlement's vacation days
-        validateNumberOfDays(form.getVacationDaysEnt(), VACATION_DAYS_ENT, MAX_DAYS, errors);
-
-        // field entitlement's remaining vacation days
-        validateNumberOfDays(form.getRemainingVacationDaysEnt(), REMAINING_VACATION_DAYS_ENT, MAX_DAYS, errors);
+        // entitlement fields
+        validateEntitlementDays(max, form, errors);
     }
 
 
@@ -166,6 +185,36 @@ public class PersonValidator implements Validator {
                 errors.rejectValue(YEAR, ERROR_ENTRY);
             }
         }
+    }
+
+
+    /**
+     * This method checks if the value of property with key 'annual.vacation.max' is valid. If it's not, the tool
+     * manager is notified and editing the person is not possible.
+     *
+     * @param  form
+     * @param  errors
+     */
+    public void validateProperties(PersonForm form, Errors errors) {
+
+        propValidator.validateAnnualVacationProperty(customProperties, errors);
+    }
+
+
+    /**
+     * This method gets the property value for maximal number of annual vacation days and notifies Tool-Manager if
+     * necessary (false property value) or validate the number of entitlement's days with method validateNumberOfDays.
+     *
+     * @param  form
+     * @param  errors
+     */
+    private void validateEntitlementDays(double max, PersonForm form, Errors errors) {
+
+        // field entitlement's vacation days
+        validateNumberOfDays(form.getVacationDaysEnt(), VACATION_DAYS_ENT, max, errors);
+
+        // field entitlement's remaining vacation days
+        validateNumberOfDays(form.getRemainingVacationDaysEnt(), REMAINING_VACATION_DAYS_ENT, max, errors);
     }
 
 

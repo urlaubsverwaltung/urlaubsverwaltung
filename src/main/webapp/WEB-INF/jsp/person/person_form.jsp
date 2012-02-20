@@ -21,6 +21,11 @@
         <link rel="stylesheet" type="text/css" href="<spring:url value='/css/fluid_grid.css' />" />
         <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />" />
         <title><spring:message code="title" /></title>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $('#error-div').show('drop', 500);
+            });
+        </script>
     </head>
 
     <body>
@@ -33,9 +38,14 @@
         <div id="content">
             <div class="container_12">
                 
-                <div class="grid_12">
-
                 <form:form method="put" action="${formUrlPrefix}/staff/${person.id}/edit" modelAttribute="personForm"> 
+                    <c:if test="${not empty errors}">
+                        <div class="grid_6" id="error-div"><form:errors cssClass="error" /></div>
+                    </c:if>   
+                    
+                    <div class="grid_12">&nbsp;</div>
+                        
+                    <div class="grid_12">
                     <table id="person-form-tbl">
                         <tr>
                             <th style="padding-bottom: 0.5em;"><spring:message code='person.data' /></th>

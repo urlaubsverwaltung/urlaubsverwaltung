@@ -19,7 +19,9 @@ import java.util.logging.Logger;
 public class GravatarUtil {
 
     private static final String BASE_URL = "http://www.gravatar.com/avatar/";
-    private static final Logger LOG = Logger.getLogger(GravatarUtil.class.getName());
+
+    // logs general errors
+    private static final Logger LOG = Logger.getLogger("errorLog");
 
     /**
      * This method generates the complete gravatar's url by the given email address.
