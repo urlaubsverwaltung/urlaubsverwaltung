@@ -497,7 +497,7 @@ public class PersonController {
 
         if (errors.hasErrors()) {
             preparePersonForm(personToUpdate, personForm, model);
-            model.addAttribute("errors", errors);
+            model.addAttribute("thereAreErrors", "yes");
 
             return PERSON_FORM_JSP;
         }

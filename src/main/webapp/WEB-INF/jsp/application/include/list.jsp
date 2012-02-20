@@ -9,6 +9,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 
                 <c:choose>
@@ -72,7 +73,7 @@
                                         <c:out value="${app.reason}"/>
                                     </td>
                                     <td>
-                                        <c:out value="${app.days}"/>
+                                        <fmt:formatNumber maxFractionDigits="1" value="${app.days}" />
                                     </td>
                                     <td>
                                         <c:choose>
@@ -80,7 +81,7 @@
                                                 0
                                             </c:when>
                                             <c:otherwise>
-                                                <c:out value="${app.sickDays}"/>
+                                                <fmt:formatNumber maxFractionDigits="1" value="${app.sickDays}" />
                                             </c:otherwise>
                                         </c:choose>
                                     </td>                     

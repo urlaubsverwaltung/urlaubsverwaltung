@@ -6,6 +6,7 @@
 
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <table id="staff-list" cellspacing="0">
     <tr>
@@ -16,7 +17,7 @@
         <th class="vac"><spring:message code="entitlement" />&nbsp;<spring:message code="whole" /></th>
         <th class="vac"><spring:message code="overview.left" /></th>
         <th><spring:message code="table.detail" /></th>
-        <th>Antrag stellen</th>
+        <th><spring:message code="table.apply" /></th>
         <th><spring:message code="edit" /></th>
     </tr>
     <c:forEach items="${persons}" var="person" varStatus="loopStatus">
@@ -28,7 +29,7 @@
             <td class="vac">
                 <c:choose>
                     <c:when test="${entitlements[person] != null}">
-                        <c:out value="${entitlements[person].vacationDays + entitlements[person].remainingVacationDays}"/>
+                        <fmt:formatNumber maxFractionDigits="1" value="${entitlements[person].vacationDays + entitlements[person].remainingVacationDays}"/>
                     </c:when>
                     <c:otherwise>
                         <spring:message code='not.specified' />
@@ -40,10 +41,10 @@
                     <c:when test="${accounts[person] != null}">
                         <c:choose>
                             <c:when test="${april == 1}">
-                                <c:out value="${accounts[person].vacationDays + accounts[person].remainingVacationDays}"/>
+                                <fmt:formatNumber maxFractionDigits="1" value="${accounts[person].vacationDays + accounts[person].remainingVacationDays}"/>
                             </c:when>
                             <c:otherwise>
-                                <c:out value="${accounts[person].vacationDays}"/>
+                                <fmt:formatNumber maxFractionDigits="1" value="${accounts[person].vacationDays}"/>
                             </c:otherwise>
                         </c:choose>
                     </c:when>

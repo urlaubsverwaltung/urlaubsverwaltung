@@ -502,7 +502,7 @@ public class ApplicationController {
                     // application is signed by office's key
                     applicationService.signApplicationByUser(application, getLoggedUser());
 
-                    LOG.info(application.getApplicationDate() + " ID: " + application.getId()
+                    LOG.info(" ID: " + application.getId()
                         + " Es wurde ein neuer Antrag von " + getLoggedUser().getFirstName() + " "
                         + getLoggedUser().getLastName() + " für " + person.getFirstName() + " " + person.getLastName()
                         + " angelegt.");
@@ -515,7 +515,7 @@ public class ApplicationController {
                     // application is signed by user's key
                     applicationService.signApplicationByUser(application, person);
 
-                    LOG.info(application.getApplicationDate() + " ID: " + application.getId()
+                    LOG.info(" ID: " + application.getId()
                         + " Es wurde ein neuer Antrag von " + person.getFirstName() + " " + person.getLastName()
                         + " angelegt.");
 
