@@ -29,6 +29,23 @@ public interface MailService {
 
 
     /**
+     * this method sends an email to the applicant that the application has been made successfully
+     *
+     * @param  application
+     */
+    void sendConfirmation(Application application);
+
+
+    /**
+     * this method sends an email to the person of the given application that the office has applied for leave on behalf
+     * of himself
+     *
+     * @param  application
+     */
+    void sendAppliedForLeaveByOfficeNotification(Application application);
+
+
+    /**
      * this method sends an email to the bosses notifying that there is a new application for leave which has to be
      * allowed or rejected by a boss
      *
@@ -51,14 +68,6 @@ public interface MailService {
      * @param  application  the application which got rejected
      */
     void sendRejectedNotification(Application application);
-
-
-    /**
-     * this method sends an email to the applicant that the application has been made successfully
-     *
-     * @param  application  the application which got saved
-     */
-    void sendConfirmation(Application application);
 
 
     /**

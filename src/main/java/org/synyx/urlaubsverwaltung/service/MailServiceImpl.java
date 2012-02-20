@@ -48,7 +48,7 @@ public class MailServiceImpl implements MailService {
 
     private static final String PATH = "/email/";
 
-    private static final String PROPERTIES_FILE = "messages_de.properties"; // genereal properties
+    private static final String PROPERTIES_FILE = "messages_de.properties"; // general properties
     private static final String CUSTOM_PROPERTIES_FILE = "custom.properties"; // custom configuration like email
                                                                               // addresses, etc.
 
@@ -63,6 +63,7 @@ public class MailServiceImpl implements MailService {
     private static final String FILE_CANCELLED = "cancelled" + TYPE;
     private static final String FILE_CONFIRM = "confirm" + TYPE;
     private static final String FILE_EXPIRE = "expire" + TYPE;
+    private static final String FILE_NEW_BY_OFFICE = "new_application_by_office" + TYPE;
     private static final String FILE_NEW = "newapplications" + TYPE;
     private static final String FILE_REJECTED = "rejected" + TYPE;
     private static final String FILE_WEEKLY = "weekly" + TYPE;
@@ -247,6 +248,14 @@ public class MailServiceImpl implements MailService {
     }
 
 
+    @Override
+    public void sendAppliedForLeaveByOfficeNotification(Application application) {
+
+        String text = prepareMessage(application, APPLICATION, FILE_NEW_BY_OFFICE);
+        sendEmail(application.getPerson().getEmail(), "subject.new.app.by.office", text);
+    }
+
+
     /**
      * @see  MailService#sendWeeklyVacationForecast(java.util.List)
      */
@@ -298,6 +307,7 @@ public class MailServiceImpl implements MailService {
 
         sendEmail(customProperties.getProperty("email.manager"), "subject.sign.error", text);
     }
+
     /**
      * NOT YET IMPLEMENTED
      * Commented out on Tu, 2011/11/29 - Aljona Murygina
@@ -305,9 +315,9 @@ public class MailServiceImpl implements MailService {
      *
      * @see  MailService#sendBalance(java.lang.Object)
      */
-// @Override
-// public void sendBalance(Object balanceObject) {
-//
-// throw new UnsupportedOperationException("Not supported yet.");
-// }
+    // @Override
+    // public void sendBalance(Object balanceObject) {
+    //
+    // throw new UnsupportedOperationException("Not supported yet.");
+    // }
 }

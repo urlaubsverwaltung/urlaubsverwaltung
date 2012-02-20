@@ -499,23 +499,29 @@ public class ApplicationController {
 
                 // if office applies for leave on behalf of a user
                 if (isOffice == true) {
+                    // application is signed by office's key
                     applicationService.signApplicationByUser(application, getLoggedUser());
 
                     LOG.info(application.getApplicationDate() + " ID: " + application.getId()
                         + " Es wurde ein neuer Antrag von " + getLoggedUser().getFirstName() + " "
                         + getLoggedUser().getLastName() + " für " + person.getFirstName() + " " + person.getLastName()
                         + " angelegt.");
+
+                    // mail to person of application that office has made an application for him/her
+                    mailService.sendAppliedForLeaveByOfficeNotification(application);
                 } else {
                     // if user himself applies for leave
+
+                    // application is signed by user's key
                     applicationService.signApplicationByUser(application, person);
 
                     LOG.info(application.getApplicationDate() + " ID: " + application.getId()
                         + " Es wurde ein neuer Antrag von " + person.getFirstName() + " " + person.getLastName()
                         + " angelegt.");
-                }
 
-                // mail to applicant
-                mailService.sendConfirmation(application);
+                    // mail to applicant
+                    mailService.sendConfirmation(application);
+                }
 
                 // mail to boss
                 mailService.sendNewApplicationNotification(application);

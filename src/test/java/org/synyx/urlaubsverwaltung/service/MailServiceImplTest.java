@@ -168,9 +168,6 @@ public class MailServiceImplTest {
         person.setFirstName("Bernd");
         person.setEmail("berndo@test.com");
 
-        List<Application> applications = new ArrayList<Application>();
-        applications.add(application);
-
         instance.sendAllowedNotification(application);
 
         // were both emails sent?
@@ -225,9 +222,6 @@ public class MailServiceImplTest {
         person.setFirstName("Franz");
         person.setEmail("franzi@test.com");
 
-        List<Application> applications = new ArrayList<Application>();
-        applications.add(application);
-
         instance.sendRejectedNotification(application);
 
         // was email sent?
@@ -258,9 +252,6 @@ public class MailServiceImplTest {
         person.setLastName("Test");
         person.setFirstName("Hildegard");
         person.setEmail("hilde@test.com");
-
-        List<Application> applications = new ArrayList<Application>();
-        applications.add(application);
 
         instance.sendConfirmation(application);
 
@@ -335,9 +326,6 @@ public class MailServiceImplTest {
         person.setLastName("Test");
         person.setFirstName("Heinrich");
 
-        List<Application> applications = new ArrayList<Application>();
-        applications.add(application);
-
         // test for isBoss == true
         instance.sendCancelledNotification(application, true);
 
@@ -398,5 +386,36 @@ public class MailServiceImplTest {
         String content = (String) msg.getContent();
 
         assertTrue(content.contains("An error occured while signing the application with id 5"));
+    }
+
+
+    /** Test of sendAppliedForLeaveByOfficeNotification method, of class MailServiceImpl. */
+    @Test
+    public void testSendAppliedForLeaveByOfficeNotification() throws AddressException, MessagingException, IOException {
+
+        person.setLastName("Müller");
+        person.setFirstName("Günther");
+        person.setEmail("bla@test.com");
+
+        instance.sendAppliedForLeaveByOfficeNotification(application);
+
+        // was email sent?
+        List<Message> inbox = Mailbox.get("bla@test.com");
+        assertTrue(inbox.size() > 0);
+
+        Message msg = inbox.get(0);
+
+        // check subject
+        assertEquals("Für dich wurde ein Urlaubsantrag eingereicht", msg.getSubject());
+        assertNotSame("subject", msg.getSubject());
+
+        // check from and recipient
+        assertEquals(new InternetAddress("bla@test.com"), msg.getAllRecipients()[0]);
+
+        // check content of email
+        String content = (String) msg.getContent();
+        assertTrue(content.contains("Hallo Günther"));
+        assertTrue(content.contains("das Office hat einen Urlaubsantrag"));
+        assertFalse(content.contains("Mist"));
     }
 }

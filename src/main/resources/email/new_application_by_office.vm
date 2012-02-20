@@ -1,0 +1,19 @@
+Hallo ${application.person.firstName},
+
+das Office hat einen Urlaubsantrag für dich gestellt, der in Kürze von einem der Chefs bearbeitet werden sollte.
+
+Hier die Details zum Antrag:
+
+Antragsdatum: ${application.applicationDate.toString("dd.MM.yyyy")}
+Zeitraum des beantragten Urlaubs: ${application.startDate.toString("dd.MM.yyyy")} bis ${application.endDate.toString("dd.MM.yyyy")}, ${dayLength}
+Art des Urlaubs: ${vacationType} 
+#if($application.reason && $application.reason != "")
+Grund: ${application.reason}
+#end
+Vertreter: ${application.rep}
+#if($application.address && $application.address != "")
+Anschrift während des Urlaubs: ${application.address}
+#end
+#if($application.phone && $application.phone != "")
+Telefon während des Urlaubs: ${application.phone}
+#end
