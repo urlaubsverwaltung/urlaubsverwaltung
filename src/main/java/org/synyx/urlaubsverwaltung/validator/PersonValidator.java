@@ -11,11 +11,13 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+import org.synyx.urlaubsverwaltung.util.NumberUtil;
 import org.synyx.urlaubsverwaltung.util.PropertiesUtil;
 import org.synyx.urlaubsverwaltung.view.PersonForm;
 
 import java.math.BigDecimal;
 
+import java.util.Locale;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -99,13 +101,6 @@ public class PersonValidator implements Validator {
 
         // field year
         validateYear(form.getYear(), errors);
-
-        // only achieved if invalid property values are precluded by method validateProperties
-        String propValue = customProperties.getProperty(MAX_DAYS);
-        double max = Double.parseDouble(propValue);
-
-        // entitlement fields
-        validateEntitlementDays(max, form, errors);
     }
 
 
@@ -207,14 +202,29 @@ public class PersonValidator implements Validator {
      *
      * @param  form
      * @param  errors
+     * @param  locale
      */
-    private void validateEntitlementDays(double max, PersonForm form, Errors errors) {
+    public void validateEntitlementDays(PersonForm form, Errors errors, Locale locale) {
 
-        // field entitlement's vacation days
-        validateNumberOfDays(form.getVacationDaysEnt(), VACATION_DAYS_ENT, max, errors);
+        // only achieved if invalid property values are precluded by method validateProperties
+        String propValue = customProperties.getProperty(MAX_DAYS);
+        double max = Double.parseDouble(propValue);
 
-        // field entitlement's remaining vacation days
-        validateNumberOfDays(form.getRemainingVacationDaysEnt(), REMAINING_VACATION_DAYS_ENT, max, errors);
+        try {
+            // field entitlement's vacation days
+            validateNumberOfDays(NumberUtil.parseNumber(form.getVacationDaysEnt(), locale), VACATION_DAYS_ENT, max,
+                errors);
+        } catch (NumberFormatException ex) {
+            errors.rejectValue(VACATION_DAYS_ENT, ERROR_ENTRY);
+        }
+
+        try {
+            // field entitlement's remaining vacation days
+            validateNumberOfDays(NumberUtil.parseNumber(form.getRemainingVacationDaysEnt(), locale),
+                REMAINING_VACATION_DAYS_ENT, max, errors);
+        } catch (NumberFormatException ex) {
+            errors.rejectValue(REMAINING_VACATION_DAYS_ENT, ERROR_ENTRY);
+        }
     }
 
 
@@ -255,7 +265,7 @@ public class PersonValidator implements Validator {
      * @param  form
      * @param  errors
      */
-    public void validateAccountDays(PersonForm form, Errors errors) {
+    public void validateAccountDays(PersonForm form, Errors errors, Locale locale) {
 
         if (form.getRemainingVacationDaysAcc() == null) {
             if (errors.getFieldErrors(REMAINING_VACATION_DAYS_ACC).isEmpty()) {
@@ -270,30 +280,56 @@ public class PersonValidator implements Validator {
         }
 
         if (form.getVacationDaysAcc() != null) {
-            // is number of days < 0 ?
-            if (form.getVacationDaysAcc().compareTo(BigDecimal.ZERO) == -1) {
+            try {
+                BigDecimal vacDaysAcc = NumberUtil.parseNumber(form.getVacationDaysAcc(), locale);
+
+                // is number of days < 0 ?
+                if (vacDaysAcc.compareTo(BigDecimal.ZERO) == -1) {
+                    errors.rejectValue(VACATION_DAYS_ACC, ERROR_ENTRY);
+                }
+            } catch (NumberFormatException ex) {
                 errors.rejectValue(VACATION_DAYS_ACC, ERROR_ENTRY);
             }
         }
 
         if (form.getRemainingVacationDaysAcc() != null) {
-            // is number of days < 0 ?
-            if (form.getRemainingVacationDaysAcc().compareTo(BigDecimal.ZERO) == -1) {
+            try {
+                BigDecimal vacRemDaysAcc = NumberUtil.parseNumber(form.getRemainingVacationDaysAcc(), locale);
+
+                // is number of days < 0 ?
+                if (vacRemDaysAcc.compareTo(BigDecimal.ZERO) == -1) {
+                    errors.rejectValue(REMAINING_VACATION_DAYS_ACC, ERROR_ENTRY);
+                }
+            } catch (NumberFormatException ex) {
                 errors.rejectValue(REMAINING_VACATION_DAYS_ACC, ERROR_ENTRY);
             }
         }
 
         if (form.getVacationDaysEnt() != null && form.getVacationDaysAcc() != null) {
-            // check if number of account's days is greater than number of entitlement's days
-            if (form.getVacationDaysAcc().compareTo(form.getVacationDaysEnt()) == 1) {
-                errors.rejectValue(VACATION_DAYS_ACC, ERROR_NUMBER);
+            try {
+                BigDecimal vacDaysAcc = NumberUtil.parseNumber(form.getVacationDaysAcc(), locale);
+                BigDecimal vacDaysEnt = NumberUtil.parseNumber(form.getVacationDaysEnt(), locale);
+
+                // check if number of account's days is greater than number of entitlement's days
+                if (vacDaysAcc.compareTo(vacDaysEnt) == 1) {
+                    errors.rejectValue(VACATION_DAYS_ACC, ERROR_NUMBER);
+                }
+            } catch (NumberFormatException ex) {
+                // is catched above
             }
         }
 
         if (form.getRemainingVacationDaysEnt() != null && form.getRemainingVacationDaysAcc() != null) {
-            // account days must not be greater than entitlement days
-            if (form.getRemainingVacationDaysAcc().compareTo(form.getRemainingVacationDaysEnt()) == 1) {
-                errors.rejectValue(REMAINING_VACATION_DAYS_ACC, ERROR_NUMBER);
+            try {
+                BigDecimal vacRemDaysAcc = NumberUtil.parseNumber(form.getRemainingVacationDaysAcc(), locale);
+                BigDecimal vacRemDaysEnt = NumberUtil.parseNumber(form.getRemainingVacationDaysEnt(), locale);
+
+                // account days must not be greater than entitlement days
+                if (vacRemDaysAcc.compareTo(vacRemDaysEnt) == 1) {
+                    errors.rejectValue(REMAINING_VACATION_DAYS_ACC, ERROR_NUMBER);
+                }
+            } catch (NumberFormatException ex) {
+                // is catched above
             }
         }
     }

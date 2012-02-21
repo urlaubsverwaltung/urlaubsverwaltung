@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.HolidayEntitlement;
@@ -30,6 +31,7 @@ import org.synyx.urlaubsverwaltung.service.HolidaysAccountService;
 import org.synyx.urlaubsverwaltung.service.PersonService;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.util.GravatarUtil;
+import org.synyx.urlaubsverwaltung.util.NumberUtil;
 import org.synyx.urlaubsverwaltung.validator.PersonValidator;
 import org.synyx.urlaubsverwaltung.view.PersonForm;
 
@@ -37,7 +39,10 @@ import java.math.BigDecimal;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -431,7 +436,8 @@ public class PersonController {
      * @return
      */
     @RequestMapping(value = EDIT_LINK, method = RequestMethod.GET)
-    public String editPersonForm(@PathVariable(PERSON_ID) Integer personId, Model model) {
+    public String editPersonForm(HttpServletRequest request,
+        @PathVariable(PERSON_ID) Integer personId, Model model) {
 
         if (getLoggedUser().getRole() == Role.OFFICE) {
             Person person = personService.getPersonByID(personId);
@@ -457,8 +463,12 @@ public class PersonController {
                 remainingAcc = account.getRemainingVacationDays();
             }
 
-            PersonForm personForm = new PersonForm(person, Integer.toString(year), daysEnt, remainingEnt, daysAcc,
-                    remainingAcc, daysExpire);
+            Locale locale = RequestContextUtils.getLocale(request);
+
+            PersonForm personForm = new PersonForm(person, Integer.toString(year),
+                    NumberUtil.formatNumber(daysEnt, locale), NumberUtil.formatNumber(remainingEnt, locale),
+                    NumberUtil.formatNumber(daysAcc, locale), NumberUtil.formatNumber(remainingAcc, locale),
+                    daysExpire);
 
             preparePersonForm(person, personForm, model);
 
@@ -488,8 +498,11 @@ public class PersonController {
      * @return
      */
     @RequestMapping(value = EDIT_LINK, method = RequestMethod.PUT)
-    public String editPerson(@PathVariable(PERSON_ID) Integer personId,
+    public String editPerson(HttpServletRequest request,
+        @PathVariable(PERSON_ID) Integer personId,
         @ModelAttribute(PERSONFORM) PersonForm personForm, Errors errors, Model model) {
+
+        Locale locale = RequestContextUtils.getLocale(request);
 
         Person personToUpdate = personService.getPersonByID(personId);
 
@@ -502,11 +515,13 @@ public class PersonController {
             return PERSON_FORM_JSP;
         }
 
-        validator.validate(personForm, errors); // validates the 'not-number' fields and holiday entitlement's vacation
-                                                // days and remaining vacation days
+        validator.validate(personForm, errors); // validates the name fields, the email field and the year field
 
-        validator.validateAccountDays(personForm, errors); // validates holidays account's remaining vacation days and
-                                                           // vacation days
+        validator.validateEntitlementDays(personForm, errors, locale); // validates holiday entitlement's vacation days
+                                                                       // and remaining vacation days
+
+        validator.validateAccountDays(personForm, errors, locale); // validates holidays account's remaining vacation
+                                                                   // days and vacation days
 
         if (errors.hasErrors()) {
             preparePersonForm(personToUpdate, personForm, model);
@@ -519,8 +534,9 @@ public class PersonController {
             personService.save(personToUpdate);
 
             int year = Integer.parseInt(personForm.getYear());
-            BigDecimal daysEnt = personForm.getVacationDaysEnt();
-            BigDecimal remainingEnt = personForm.getRemainingVacationDaysEnt();
+
+            BigDecimal daysEnt = NumberUtil.parseNumber(personForm.getVacationDaysEnt(), locale);
+            BigDecimal remainingEnt = NumberUtil.parseNumber(personForm.getRemainingVacationDaysEnt(), locale);
 
             // check if there is an existing entitlement to holidays
             HolidayEntitlement entitlement = accountService.getHolidayEntitlement(year, personToUpdate);
@@ -535,8 +551,8 @@ public class PersonController {
 
             HolidaysAccount account = accountService.getHolidaysAccount(year, personToUpdate);
 
-            BigDecimal daysAcc = personForm.getVacationDaysAcc();
-            BigDecimal remainingAcc = personForm.getRemainingVacationDaysAcc();
+            BigDecimal daysAcc = NumberUtil.parseNumber(personForm.getVacationDaysAcc(), locale);
+            BigDecimal remainingAcc = NumberUtil.parseNumber(personForm.getRemainingVacationDaysAcc(), locale);
             boolean remainingDaysExpire = personForm.isRemainingVacationDaysExpireAcc();
 
             if (account == null) {

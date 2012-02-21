@@ -6,8 +6,6 @@ package org.synyx.urlaubsverwaltung.view;
 
 import org.synyx.urlaubsverwaltung.domain.Person;
 
-import java.math.BigDecimal;
-
 
 /**
  * @author  Aljona Murygina
@@ -22,13 +20,13 @@ public class PersonForm {
 
     private String year;
 
-    private BigDecimal vacationDaysEnt;
+    private String vacationDaysEnt;
 
-    private BigDecimal remainingVacationDaysEnt;
+    private String remainingVacationDaysEnt;
 
-    private BigDecimal vacationDaysAcc;
+    private String vacationDaysAcc;
 
-    private BigDecimal remainingVacationDaysAcc;
+    private String remainingVacationDaysAcc;
 
     private boolean remainingVacationDaysExpireAcc;
 
@@ -36,8 +34,8 @@ public class PersonForm {
     }
 
 
-    public PersonForm(Person person, String year, BigDecimal daysEnt, BigDecimal remainingEnt, BigDecimal daysAcc,
-        BigDecimal remainingAcc, boolean expiring) {
+    public PersonForm(Person person, String year, String daysEnt, String remainingEnt, String daysAcc,
+        String remainingAcc, boolean expiring) {
 
         this.lastName = person.getLastName();
         this.firstName = person.getFirstName();
@@ -98,25 +96,25 @@ public class PersonForm {
     }
 
 
-    public BigDecimal getRemainingVacationDaysAcc() {
+    public String getRemainingVacationDaysAcc() {
 
         return remainingVacationDaysAcc;
     }
 
 
-    public void setRemainingVacationDaysAcc(BigDecimal remainingVacationDaysAcc) {
+    public void setRemainingVacationDaysAcc(String remainingVacationDaysAcc) {
 
         this.remainingVacationDaysAcc = remainingVacationDaysAcc;
     }
 
 
-    public BigDecimal getRemainingVacationDaysEnt() {
+    public String getRemainingVacationDaysEnt() {
 
         return remainingVacationDaysEnt;
     }
 
 
-    public void setRemainingVacationDaysEnt(BigDecimal remainingVacationDaysEnt) {
+    public void setRemainingVacationDaysEnt(String remainingVacationDaysEnt) {
 
         this.remainingVacationDaysEnt = remainingVacationDaysEnt;
     }
@@ -134,25 +132,25 @@ public class PersonForm {
     }
 
 
-    public BigDecimal getVacationDaysAcc() {
+    public String getVacationDaysAcc() {
 
         return vacationDaysAcc;
     }
 
 
-    public void setVacationDaysAcc(BigDecimal vacationDaysAcc) {
+    public void setVacationDaysAcc(String vacationDaysAcc) {
 
         this.vacationDaysAcc = vacationDaysAcc;
     }
 
 
-    public BigDecimal getVacationDaysEnt() {
+    public String getVacationDaysEnt() {
 
         return vacationDaysEnt;
     }
 
 
-    public void setVacationDaysEnt(BigDecimal vacationDaysEnt) {
+    public void setVacationDaysEnt(String vacationDaysEnt) {
 
         this.vacationDaysEnt = vacationDaysEnt;
     }
