@@ -210,20 +210,28 @@ public class PersonValidator implements Validator {
         String propValue = customProperties.getProperty(MAX_DAYS);
         double max = Double.parseDouble(propValue);
 
-        try {
-            // field entitlement's vacation days
-            validateNumberOfDays(NumberUtil.parseNumber(form.getVacationDaysEnt(), locale), VACATION_DAYS_ENT, max,
-                errors);
-        } catch (NumberFormatException ex) {
-            errors.rejectValue(VACATION_DAYS_ENT, ERROR_ENTRY);
+        if (form.getVacationDaysEnt() != null && !form.getVacationDaysEnt().isEmpty()) {
+            try {
+                // field entitlement's vacation days
+                validateNumberOfDays(NumberUtil.parseNumber(form.getVacationDaysEnt(), locale), VACATION_DAYS_ENT, max,
+                    errors);
+            } catch (NumberFormatException ex) {
+                errors.rejectValue(VACATION_DAYS_ENT, ERROR_ENTRY);
+            }
+        } else {
+            errors.rejectValue(VACATION_DAYS_ENT, MANDATORY_FIELD);
         }
 
-        try {
-            // field entitlement's remaining vacation days
-            validateNumberOfDays(NumberUtil.parseNumber(form.getRemainingVacationDaysEnt(), locale),
-                REMAINING_VACATION_DAYS_ENT, max, errors);
-        } catch (NumberFormatException ex) {
-            errors.rejectValue(REMAINING_VACATION_DAYS_ENT, ERROR_ENTRY);
+        if (form.getRemainingVacationDaysEnt() != null && !form.getRemainingVacationDaysEnt().isEmpty()) {
+            try {
+                // field entitlement's remaining vacation days
+                validateNumberOfDays(NumberUtil.parseNumber(form.getRemainingVacationDaysEnt(), locale),
+                    REMAINING_VACATION_DAYS_ENT, max, errors);
+            } catch (NumberFormatException ex) {
+                errors.rejectValue(REMAINING_VACATION_DAYS_ENT, ERROR_ENTRY);
+            }
+        } else {
+            errors.rejectValue(REMAINING_VACATION_DAYS_ENT, MANDATORY_FIELD);
         }
     }
 
@@ -267,19 +275,19 @@ public class PersonValidator implements Validator {
      */
     public void validateAccountDays(PersonForm form, Errors errors, Locale locale) {
 
-        if (form.getRemainingVacationDaysAcc() == null) {
+        if (form.getRemainingVacationDaysAcc() == null || form.getRemainingVacationDaysAcc().isEmpty()) {
             if (errors.getFieldErrors(REMAINING_VACATION_DAYS_ACC).isEmpty()) {
                 errors.rejectValue(REMAINING_VACATION_DAYS_ACC, MANDATORY_FIELD);
             }
         }
 
-        if (form.getVacationDaysAcc() == null) {
+        if (form.getVacationDaysAcc() == null || form.getVacationDaysAcc().isEmpty()) {
             if (errors.getFieldErrors(VACATION_DAYS_ACC).isEmpty()) {
                 errors.rejectValue(VACATION_DAYS_ACC, MANDATORY_FIELD);
             }
         }
 
-        if (form.getVacationDaysAcc() != null) {
+        if (form.getVacationDaysAcc() != null && !form.getVacationDaysAcc().isEmpty()) {
             try {
                 BigDecimal vacDaysAcc = NumberUtil.parseNumber(form.getVacationDaysAcc(), locale);
 
@@ -292,7 +300,7 @@ public class PersonValidator implements Validator {
             }
         }
 
-        if (form.getRemainingVacationDaysAcc() != null) {
+        if (form.getRemainingVacationDaysAcc() != null && !form.getRemainingVacationDaysAcc().isEmpty()) {
             try {
                 BigDecimal vacRemDaysAcc = NumberUtil.parseNumber(form.getRemainingVacationDaysAcc(), locale);
 
@@ -305,7 +313,8 @@ public class PersonValidator implements Validator {
             }
         }
 
-        if (form.getVacationDaysEnt() != null && form.getVacationDaysAcc() != null) {
+        if ((form.getVacationDaysEnt() != null && !form.getVacationDaysEnt().isEmpty())
+                && (form.getVacationDaysAcc() != null && !form.getVacationDaysAcc().isEmpty())) {
             try {
                 BigDecimal vacDaysAcc = NumberUtil.parseNumber(form.getVacationDaysAcc(), locale);
                 BigDecimal vacDaysEnt = NumberUtil.parseNumber(form.getVacationDaysEnt(), locale);
@@ -319,7 +328,8 @@ public class PersonValidator implements Validator {
             }
         }
 
-        if (form.getRemainingVacationDaysEnt() != null && form.getRemainingVacationDaysAcc() != null) {
+        if ((form.getRemainingVacationDaysEnt() != null && !form.getRemainingVacationDaysEnt().isEmpty())
+                && (form.getRemainingVacationDaysAcc() != null && !form.getRemainingVacationDaysAcc().isEmpty())) {
             try {
                 BigDecimal vacRemDaysAcc = NumberUtil.parseNumber(form.getRemainingVacationDaysAcc(), locale);
                 BigDecimal vacRemDaysEnt = NumberUtil.parseNumber(form.getRemainingVacationDaysEnt(), locale);
