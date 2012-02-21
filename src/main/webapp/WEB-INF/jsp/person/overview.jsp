@@ -133,7 +133,7 @@
                                         <td>
                                             <c:choose>
                                                 <c:when test="${app.startDate == app.endDate}">
-                                                    am&nbsp;<joda:format style="M-" value="${app.startDate}"/>
+                                                    <spring:message code="at" />&nbsp;<joda:format style="M-" value="${app.startDate}"/>
                                                 </c:when>
                                                 <c:otherwise>
                                                     <joda:format style="M-" value="${app.startDate}"/>&nbsp;-&nbsp;<joda:format style="M-" value="${app.endDate}"/>
