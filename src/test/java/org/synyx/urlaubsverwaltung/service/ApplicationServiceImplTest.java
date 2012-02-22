@@ -329,6 +329,12 @@ public class ApplicationServiceImplTest {
     @Test
     public void testCheckApplication() {
 
+        // OwnCalendarService wants to be happy, so avoid NullPointerExceptions by setting some stupid values in
+        // application
+        application.setStartDate(DateMidnight.now());
+        application.setEndDate(DateMidnight.now());
+        application.setHowLong(DayLength.FULL);
+
         // subtractVacationDays of CalculationService makes the real calculation
         // checkApplication only checks if account's vacation days after calculation are greater or equal than zero
         // if this case application is valid (return true)
