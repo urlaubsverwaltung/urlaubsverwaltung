@@ -151,7 +151,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         application.setDays(days);
 
         // save changed application in the end
-        applicationDAO.save(application);
+        simpleSave(application);
 
         LOG.info("Antrag-Id " + application.getId() + ": Im Zeitraum von "
             + application.getStartDate().toString(DATE_FORMAT) + " bis "
@@ -349,6 +349,12 @@ public class ApplicationServiceImpl implements ApplicationService {
      */
     @Override
     public boolean checkApplication(Application application) {
+
+        // get number of used days
+        BigDecimal days = calendarService.getVacationDays(application, application.getStartDate(),
+                application.getEndDate());
+
+        application.setDays(days);
 
         List<HolidaysAccount> accounts = calculationService.subtractForCheck(application);
         HolidaysAccount account = accounts.get(0);

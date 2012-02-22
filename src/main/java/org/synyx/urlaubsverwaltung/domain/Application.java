@@ -80,6 +80,12 @@ public class Application extends AbstractPersistable<Integer> {
     // if application has been cancelled during status waiting: formerlyAllowed is false
     private boolean formerlyAllowed;
 
+    // for applications that spans December and January there are two extra applications: one for the period in December
+    // and one for the period in January these supplemental applications are only used for calculations (e.g. to add
+    // sick days) true if the application is only a supplemental application for calculation false if the application is
+    // a default application
+    private boolean onlyForCalculation;
+
     // Signature of applicant
     @Column(columnDefinition = "longblob")
     private byte[] signaturePerson;
@@ -333,5 +339,17 @@ public class Application extends AbstractPersistable<Integer> {
     public void setFormerlyAllowed(boolean formerlyAllowed) {
 
         this.formerlyAllowed = formerlyAllowed;
+    }
+
+
+    public boolean isOnlyForCalculation() {
+
+        return onlyForCalculation;
+    }
+
+
+    public void setOnlyForCalculation(boolean onlyForCalculation) {
+
+        this.onlyForCalculation = onlyForCalculation;
     }
 }
