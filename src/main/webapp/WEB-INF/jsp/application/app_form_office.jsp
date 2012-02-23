@@ -237,7 +237,7 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                            <label for="reason"><spring:message code='reason' />:</label>
+                                            <label for="reason"><spring:message code='reason' />&nbsp;<spring:message code='app.reason.describe' /></label>
                                         </td>
                                         <td class="tbl-right">
                                             <form:input id="reason" path="reason" cssErrorClass="error" />
