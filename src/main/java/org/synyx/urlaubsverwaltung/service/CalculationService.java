@@ -116,7 +116,7 @@ public class CalculationService {
             accounts = new ArrayList<HolidaysAccount>();
 
             // check if holiday's period is in future: now.getYear() + 1 ?
-            if (DateMidnight.now().getYear() != application.getStartDate().getYear()) {
+            if (getCurrentYear() != application.getStartDate().getYear()) {
                 HolidaysAccount accountNextYear = subtractCaseFutureYear(application, isCheck);
                 accounts.add(accountNextYear);
             } else {
@@ -138,135 +138,6 @@ public class CalculationService {
         }
 
         return accounts;
-    }
-
-
-    /**
-     * This method returns updated holiday account after calculating and setting vacation days and remaining vacation
-     * days. Method is used by ApplicationServiceImpl's methods of cancel and rollback holiday.
-     *
-     * @param  application
-     * @param  days
-     *
-     * @return  updated holiday account (list contains one element) respectively holiday accounts (list contains two
-     *          elements) if holiday is between December and January
-     */
-    public List<HolidaysAccount> addVacationDays(Application application) {
-
-        BigDecimal days;
-
-        List<HolidaysAccount> accounts = new ArrayList<HolidaysAccount>();
-
-        HolidaysAccount account = accountService.getAccountOrCreateOne(application.getStartDate().getYear(),
-                application.getPerson());
-
-        int startMonth = application.getStartDate().getMonthOfYear();
-        int endMonth = application.getEndDate().getMonthOfYear();
-
-        if (DateUtil.isBeforeApril(startMonth, endMonth) || (account.isRemainingVacationDaysExpire() == false)) {
-            // if the vacation is before April, at first remaining vacation days must be filled and then vacation days
-            days = getNumberOfVacationDays(application);
-            account = addDaysBeforeApril(account, days);
-            accounts.add(account);
-        } else if (DateUtil.isAfterApril(startMonth, endMonth)) {
-            // if the vacation is after April, only vacation days are filled (not the remaining vacation days)
-            days = getNumberOfVacationDays(application);
-            account = addDaysAfterApril(account, days);
-            accounts.add(account);
-        } else if (DateUtil.spansMarchAndApril(startMonth, endMonth)) {
-            // if the vacations spans March and April, the number of days in March are added to holidays
-            // account's remaining vacation days (and if this is not enough: to vacation days too)
-            // and the number of days in April are added only to vacation days
-            BigDecimal beforeApr = getDaysBeforeLastOfGivenMonth(application, DateTimeConstants.MARCH);
-            BigDecimal afterApr = getDaysAfterFirstOfGivenMonth(application, DateTimeConstants.APRIL);
-            account = addDaysBeforeApril(account, beforeApr);
-            account = addDaysAfterApril(account, afterApr);
-            accounts.add(account);
-        } else if (DateUtil.spansDecemberAndJanuary(startMonth, endMonth)) {
-            HolidaysAccount accountNextYear = accountService.getAccountOrCreateOne(application.getEndDate().getYear(),
-                    application.getPerson());
-            BigDecimal beforeJan = getDaysBeforeLastOfGivenMonth(application, DateTimeConstants.DECEMBER);
-            BigDecimal afterJan = getDaysAfterFirstOfGivenMonth(application, DateTimeConstants.JANUARY);
-
-            BigDecimal remainingDays = account.getVacationDays().add(beforeJan);
-            accountNextYear.setRemainingVacationDays(remainingDays);
-            addDaysAfterApril(accountNextYear, afterJan);
-            accounts.add(account);
-            accounts.add(accountNextYear);
-        }
-
-        return accounts;
-    }
-
-
-    /**
-     * If it is after April use this method to update a given holiday account by adding given number of days. At first
-     * the vacation days are filled and then the remaining vacation days of the account.
-     *
-     * @param  account
-     * @param  days
-     *
-     * @return  modified holidays account
-     */
-    protected HolidaysAccount addDaysAfterApril(HolidaysAccount account, BigDecimal days) {
-
-        BigDecimal sum = account.getVacationDays().add(days);
-
-        HolidayEntitlement entitlement = accountService.getHolidayEntitlement(account.getYear(), account.getPerson());
-
-        // if sum is greater than number of entitlement's vacation days, the account's vacation days are set to
-        // entitlement's vacation days and the difference between sum and the number of entitlement's vacation days is
-        // added to account's remaining vacation days
-        if (sum.compareTo(entitlement.getVacationDays()) == 1) {
-            account.setVacationDays(entitlement.getVacationDays());
-            account.setRemainingVacationDays(account.getRemainingVacationDays().add(
-                    sum.subtract(entitlement.getVacationDays())));
-        } else {
-            // if sum is equal or smaller than number of entitlement's vacation days, the sum is added to number of
-            // account's vacation days
-            account.setVacationDays(sum);
-        }
-
-        LOG.info("Urlaubskonto-Id " + account.getId() + ": aufgrund von Krankheitstagen wurden " + days
-            + " aufaddiert.");
-
-        return account;
-    }
-
-
-    /**
-     * If it is before April use this method to update a given holiday account by adding given number of days. At first
-     * the remaining vacation days are filled and then the vacation days of the account.
-     *
-     * @param  account
-     * @param  days
-     *
-     * @return  modified holidays account
-     */
-    protected HolidaysAccount addDaysBeforeApril(HolidaysAccount account, BigDecimal days) {
-
-        BigDecimal sum = account.getRemainingVacationDays().add(days);
-
-        HolidayEntitlement entitlement = accountService.getHolidayEntitlement(account.getYear(), account.getPerson());
-
-        // if sum is greater than number of entitlement's remaining vacation days, the account's number of remaining
-        // vacation days is set to number of entitlement's remaining vacation days. The difference between sum
-        // and the number of entitlement's remaining vacation days is added to number of account's vacation days.
-        if (sum.compareTo(entitlement.getRemainingVacationDays()) == 1) {
-            account.setRemainingVacationDays(entitlement.getRemainingVacationDays());
-
-            account.setVacationDays(account.getVacationDays().add(
-                    sum.subtract(entitlement.getRemainingVacationDays())));
-        } else {
-            // if sum is equal or smaller than number of entitlement's remaining vacation days, the number of the
-            // given days is added to number of account's remaining vacation days
-            account.setRemainingVacationDays(sum);
-        }
-
-        LOG.info("Urlaubskonto-Id " + account.getId() + ": aufgrund von Krankheitstagen wurden " + days
-            + " aufaddiert.");
-
-        return account;
     }
 
 
@@ -390,8 +261,11 @@ public class CalculationService {
 
         // create two new applications - they are only for calculation, so the flag onlyForCalculation is true
 
-        Application decemberApplication = createSupplementalApplication(application, true, true); // application for
-                                                                                                  // current year
+        Application decemberApplication = createSupplementalApplication(application, true); // application for
+                                                                                            // current year
+
+        Application januaryApplication = createSupplementalApplication(application, false); // application for
+                                                                                            // current year
 
         if (accountCurrentYear.isRemainingVacationDaysExpire()) {
             subtractCaseAfterApril(decemberApplication, accountCurrentYear);
@@ -404,13 +278,37 @@ public class CalculationService {
         HolidaysAccount accountNextYear = accountService.getAccountOrCreateOne(application.getEndDate().getYear(),
                 accountCurrentYear.getPerson());
 
-        if (isCheck) {
-            HolidaysAccount copyAccountNextYear = createCopyOfHolidaysAccount(accountNextYear);
-            copyAccountNextYear.setVacationDays(copyAccountNextYear.getVacationDays().subtract(daysAfterJan));
-            accounts.add(copyAccountNextYear);
-        } else {
-            accountNextYear.setVacationDays(accountNextYear.getVacationDays().subtract(daysAfterJan));
-            accounts.add(accountNextYear);
+        HolidaysAccount copyAccountNextYear = createCopyOfHolidaysAccount(accountNextYear); // only needed for check
+
+        // date of applying for leave is in the same year like the application's start date, i.e. applying occur
+        // scheduled
+        if (getCurrentYear() == application.getStartDate().getYear()) {
+            if (isCheck) {
+                copyAccountNextYear.setVacationDays(copyAccountNextYear.getVacationDays().subtract(daysAfterJan));
+                accounts.add(copyAccountNextYear);
+            } else {
+                accountNextYear.setVacationDays(accountNextYear.getVacationDays().subtract(daysAfterJan));
+                accounts.add(accountNextYear);
+            }
+        } // date of applying for leave is NOT in the same year like the application's start date, i.e. applying occurs
+          // subsequently
+        else {
+            if (isCheck) {
+                copyAccountNextYear.setRemainingVacationDays(copyAccountNextYear.getRemainingVacationDays().subtract(
+                        daysBeforeJan));
+                subtractCaseBeforeApril(januaryApplication, copyAccountNextYear);
+                accounts.add(copyAccountNextYear);
+            } else {
+                HolidayEntitlement ent = accountService.getHolidayEntitlement(application.getEndDate().getYear(),
+                        application.getPerson());
+                ent.setRemainingVacationDays(ent.getRemainingVacationDays().subtract(daysBeforeJan));
+                accountService.saveHolidayEntitlement(ent);
+
+                accountNextYear.setRemainingVacationDays(accountNextYear.getRemainingVacationDays().subtract(
+                        daysBeforeJan));
+                subtractCaseBeforeApril(januaryApplication, accountNextYear);
+                accounts.add(accountNextYear);
+            }
         }
 
         if (accountCurrentYear.getId() != null) {
@@ -427,6 +325,12 @@ public class CalculationService {
     }
 
 
+    protected int getCurrentYear() {
+
+        return DateMidnight.now().getYear();
+    }
+
+
     /**
      * This method creates and saves the supplemental applications by using data of the original application.
      *
@@ -438,8 +342,7 @@ public class CalculationService {
      *
      * @return  generated application
      */
-    public Application createSupplementalApplication(Application originalApplication, boolean forNewYear,
-        boolean isBeforeTheGivenMonth) {
+    public Application createSupplementalApplication(Application originalApplication, boolean isForEndOfMonth) {
 
         Application app = new Application();
 
@@ -456,34 +359,21 @@ public class CalculationService {
 
         app.setOnlyForCalculation(true);
 
-        int month;
-
-        if (isBeforeTheGivenMonth) {
+        if (isForEndOfMonth) {
             // use the days from original application's start date to last day in month
-
-            if (forNewYear) {
-                month = DateTimeConstants.DECEMBER;
-            } else {
-                month = DateTimeConstants.MARCH;
-            }
-
-            BigDecimal days = getDaysBeforeLastOfGivenMonth(originalApplication, month);
+            BigDecimal days = getDaysBeforeLastOfGivenMonth(originalApplication, DateTimeConstants.DECEMBER);
 
             app.setStartDate(originalApplication.getStartDate());
-            app.setEndDate(new DateMidnight(originalApplication.getStartDate().getYear(), month, LAST_DAY));
+            app.setEndDate(new DateMidnight(originalApplication.getStartDate().getYear(), DateTimeConstants.DECEMBER,
+                    LAST_DAY));
             app.setDays(days);
         } else {
             // use the days from first day in month to original application's end date
 
-            if (forNewYear) {
-                month = DateTimeConstants.JANUARY;
-            } else {
-                month = DateTimeConstants.APRIL;
-            }
+            BigDecimal days = getDaysAfterFirstOfGivenMonth(originalApplication, DateTimeConstants.JANUARY);
 
-            BigDecimal days = getDaysAfterFirstOfGivenMonth(originalApplication, month);
-
-            app.setStartDate(new DateMidnight(originalApplication.getEndDate().getYear(), month, FIRST_DAY));
+            app.setStartDate(new DateMidnight(originalApplication.getEndDate().getYear(), DateTimeConstants.JANUARY,
+                    FIRST_DAY));
             app.setEndDate(originalApplication.getEndDate());
             app.setDays(days);
         }
@@ -514,6 +404,206 @@ public class CalculationService {
 
             return accountNextYear;
         }
+    }
+
+
+    /**
+     * This method returns updated holiday account after calculating and setting vacation days and remaining vacation
+     * days. Method is used by ApplicationServiceImpl's methods of cancel and rollback holiday.
+     *
+     * @param  application
+     * @param  days
+     *
+     * @return  updated holiday account (list contains one element) respectively holiday accounts (list contains two
+     *          elements) if holiday is between December and January
+     */
+    public List<HolidaysAccount> addVacationDays(Application application) {
+
+        // for adding vacation days you have to distinguish between following cases
+        // 1. period is before April - is equivalent to - account's remaining vacation days don't expire on 1st April
+        // 2. period is after April
+        // 3. period spans March and April
+        // 4. period is in future (current year plus 1), i.e. after 1st January of the new year
+        // 5. period spans December and January AND cancelling date is before 1st January
+        // 6. period spans December and January AND cancelling date is after 1st January
+
+        BigDecimal days;
+
+        List<HolidaysAccount> accounts = new ArrayList<HolidaysAccount>();
+
+        HolidaysAccount account = accountService.getAccountOrCreateOne(application.getStartDate().getYear(),
+                application.getPerson());
+
+        int startMonth = application.getStartDate().getMonthOfYear();
+        int endMonth = application.getEndDate().getMonthOfYear();
+
+        // the order of following methods is reallly, reeeeeeally(!) important if you change it, you risk that not the
+        // right method is used e.g. an application that spans December and January shall be rollbacked, this means that
+        // both of the first following conditions would be true, but only the first contains the right method for such a
+        // case
+
+        if (DateUtil.spansDecemberAndJanuary(startMonth, endMonth)) {
+            accounts = addDaysOfApplicationSpanningDecemberAndJanuary(application, account);
+        }
+        // period is in future (current year plus 1), i.e. after 1st January of the new year
+        else if (getCurrentYear() != application.getStartDate().getYear()) {
+            days = application.getDays();
+
+            HolidaysAccount accountNextYear = accountService.getAccountOrCreateOne(application.getEndDate().getYear(),
+                    application.getPerson());
+            accountNextYear.setVacationDays(accountNextYear.getVacationDays().add(days));
+            accounts.add(accountNextYear);
+        }
+        // period is before April - is equivalent to - account's remaining vacation days don't expire on 1st April
+        else if (DateUtil.isBeforeApril(startMonth, endMonth) || (account.isRemainingVacationDaysExpire() == false)) {
+            // if the vacation is before April, at first remaining vacation days must be filled and then vacation days
+            days = application.getDays();
+            account = addDaysBeforeApril(account, days);
+            accounts.add(account);
+        } // period is after April
+        else if (DateUtil.isAfterApril(startMonth, endMonth)) {
+            // if the vacation is after April, only vacation days are filled (not the remaining vacation days)
+            days = application.getDays();
+            account = addDaysAfterApril(account, days);
+            accounts.add(account);
+        } // period spans March and April
+        else if (DateUtil.spansMarchAndApril(startMonth, endMonth)) {
+            // if the vacations spans March and April, the number of days in March are added to holidays
+            // account's remaining vacation days (and if this is not enough: to vacation days too)
+            // and the number of days in April are added only to vacation days
+            BigDecimal beforeApr = getDaysBeforeLastOfGivenMonth(application, DateTimeConstants.MARCH);
+            BigDecimal afterApr = getDaysAfterFirstOfGivenMonth(application, DateTimeConstants.APRIL);
+            account = addDaysBeforeApril(account, beforeApr);
+            account = addDaysAfterApril(account, afterApr);
+            accounts.add(account);
+        }
+
+        return accounts;
+    }
+
+
+    /**
+     * This method add vacation days on holidays accounts of last year and new year dependent on cancelling date. (if
+     * it's before or after 1st January)
+     *
+     * @param  application
+     * @param  account
+     *
+     * @return  list of updated holidays accounts: new year's account and last year's account
+     */
+    protected List<HolidaysAccount> addDaysOfApplicationSpanningDecemberAndJanuary(Application application,
+        HolidaysAccount account) {
+
+        List<HolidaysAccount> accounts = new ArrayList<HolidaysAccount>();
+
+        BigDecimal beforeJan = getDaysBeforeLastOfGivenMonth(application, DateTimeConstants.DECEMBER);
+        BigDecimal afterJan = getDaysAfterFirstOfGivenMonth(application, DateTimeConstants.JANUARY);
+
+        HolidaysAccount accountNextYear = accountService.getAccountOrCreateOne(application.getEndDate().getYear(),
+                application.getPerson());
+
+        // if date of cancelling is before 1st January
+        if (getCurrentYear() == application.getStartDate().getYear()) {
+            if (account.isRemainingVacationDaysExpire()) {
+                account.setVacationDays(account.getVacationDays().add(beforeJan));
+            } else {
+                addDaysBeforeApril(account, beforeJan); // fill at first remaining vacation days before filling vacation
+                                                        // days
+            }
+
+            accountNextYear.setVacationDays(accountNextYear.getVacationDays().add(afterJan));
+        } else {
+            // date of cancelling is after 1st January i.e. the new year's holidays account contains the right values
+            // (remaining vacation days AND vacation days) after being updated on 1st January
+
+            // the remaining vacation days of the new year's holidays account and entitlement are the values of the last
+            // year's vacation days i.e. add days before January on last year's account vacation days and on new year's
+            // account's and entitlement's remaining vacation days
+            account.setVacationDays(account.getVacationDays().add(beforeJan));
+
+            HolidayEntitlement ent = accountService.getHolidayEntitlement(application.getEndDate().getYear(),
+                    account.getPerson());
+            ent.setRemainingVacationDays(ent.getRemainingVacationDays().add(beforeJan));
+            accountService.saveHolidayEntitlement(ent);
+
+            addDaysBeforeApril(accountNextYear, afterJan);
+        }
+
+        accounts.add(account);
+        accounts.add(accountNextYear);
+
+        return accounts;
+    }
+
+
+    /**
+     * If it is after April use this method to update a given holiday account by adding given number of days. At first
+     * the vacation days are filled and then the remaining vacation days of the account.
+     *
+     * @param  account
+     * @param  days
+     *
+     * @return  modified holidays account
+     */
+    protected HolidaysAccount addDaysAfterApril(HolidaysAccount account, BigDecimal days) {
+
+        BigDecimal sum = account.getVacationDays().add(days);
+
+        HolidayEntitlement entitlement = accountService.getHolidayEntitlement(account.getYear(), account.getPerson());
+
+        // if sum is greater than number of entitlement's vacation days, the account's vacation days are set to
+        // entitlement's vacation days and the difference between sum and the number of entitlement's vacation days is
+        // added to account's remaining vacation days
+        if (sum.compareTo(entitlement.getVacationDays()) == 1) {
+            account.setVacationDays(entitlement.getVacationDays());
+            account.setRemainingVacationDays(account.getRemainingVacationDays().add(
+                    sum.subtract(entitlement.getVacationDays())));
+        } else {
+            // if sum is equal or smaller than number of entitlement's vacation days, the sum is added to number of
+            // account's vacation days
+            account.setVacationDays(sum);
+        }
+
+        LOG.info("Urlaubskonto-Id " + account.getId() + ": es wurden " + days
+            + " aufaddiert.");
+
+        return account;
+    }
+
+
+    /**
+     * If it is before April use this method to update a given holiday account by adding given number of days. At first
+     * the remaining vacation days are filled and then the vacation days of the account.
+     *
+     * @param  account
+     * @param  days
+     *
+     * @return  modified holidays account
+     */
+    protected HolidaysAccount addDaysBeforeApril(HolidaysAccount account, BigDecimal days) {
+
+        BigDecimal sum = account.getRemainingVacationDays().add(days);
+
+        HolidayEntitlement entitlement = accountService.getHolidayEntitlement(account.getYear(), account.getPerson());
+
+        // if sum is greater than number of entitlement's remaining vacation days, the account's number of remaining
+        // vacation days is set to number of entitlement's remaining vacation days. The difference between sum
+        // and the number of entitlement's remaining vacation days is added to number of account's vacation days.
+        if (sum.compareTo(entitlement.getRemainingVacationDays()) == 1) {
+            account.setRemainingVacationDays(entitlement.getRemainingVacationDays());
+
+            account.setVacationDays(account.getVacationDays().add(
+                    sum.subtract(entitlement.getRemainingVacationDays())));
+        } else {
+            // if sum is equal or smaller than number of entitlement's remaining vacation days, the number of the
+            // given days is added to number of account's remaining vacation days
+            account.setRemainingVacationDays(sum);
+        }
+
+        LOG.info("Urlaubskonto-Id " + account.getId() + ": es wurden " + days
+            + " aufaddiert.");
+
+        return account;
     }
 
 

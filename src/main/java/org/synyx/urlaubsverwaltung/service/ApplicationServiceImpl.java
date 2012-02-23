@@ -153,12 +153,10 @@ public class ApplicationServiceImpl implements ApplicationService {
 
             if (DateUtil.spansDecemberAndJanuary(application.getStartDate().getMonthOfYear(),
                         application.getEndDate().getMonthOfYear())) {
-                Application decemberApplication = calculationService.createSupplementalApplication(application, true,
-                        true); // application for current year
+                Application decemberApplication = calculationService.createSupplementalApplication(application, true); // application for current year
                 simpleSave(decemberApplication);
 
-                Application januaryApplication = calculationService.createSupplementalApplication(application, true,
-                        false); // application for new year
+                Application januaryApplication = calculationService.createSupplementalApplication(application, false); // application for new year
                 simpleSave(januaryApplication);
             }
 
