@@ -38,14 +38,11 @@ public class CalculationService {
 
     private OwnCalendarService calendarService;
     private HolidaysAccountService accountService;
-    private ApplicationService applicationService;
 
-    public CalculationService(OwnCalendarService calendarService, HolidaysAccountService accountService,
-        ApplicationService applicationService) {
+    public CalculationService(OwnCalendarService calendarService, HolidaysAccountService accountService) {
 
         this.calendarService = calendarService;
         this.accountService = accountService;
-        this.applicationService = applicationService;
     }
 
     /**
@@ -62,7 +59,7 @@ public class CalculationService {
         HolidaysAccount account = accountService.getAccountOrCreateOne(application.getStartDate().getYear(),
                 application.getPerson());
 
-        return doCalculation(application, account, false);
+        return doCalculation(application, account);
     }
 
 
@@ -84,8 +81,10 @@ public class CalculationService {
         HolidaysAccount accountCopy = new HolidaysAccount();
         accountCopy.setRemainingVacationDays(account.getRemainingVacationDays());
         accountCopy.setVacationDays(account.getVacationDays());
+        accountCopy.setPerson(account.getPerson());
+        accountCopy.setYear(account.getYear());
 
-        return doCalculation(application, accountCopy, true);
+        return doCalculation(application, accountCopy);
     }
 
 
@@ -99,7 +98,7 @@ public class CalculationService {
      *
      * @return  list of updated holidays account
      */
-    private List<HolidaysAccount> doCalculation(Application application, HolidaysAccount account, boolean isCheck) {
+    private List<HolidaysAccount> doCalculation(Application application, HolidaysAccount account) {
 
         // for calculation you have to distinguish between five cases
         // 1. period spans December and January
@@ -117,7 +116,7 @@ public class CalculationService {
         // two supplementary applications are created and saved
         // calculation of holidays account's values occurs
         if (DateUtil.spansDecemberAndJanuary(startMonth, endMonth)) {
-            accounts = subtractCaseSpanningDecemberAndJanuary(application, account, isCheck);
+            accounts = subtractCaseSpanningDecemberAndJanuary(application, account);
         } else {
             accounts = new ArrayList<HolidaysAccount>();
 
@@ -454,12 +453,11 @@ public class CalculationService {
      *
      * @param  application
      * @param  accountCurrentYear
-     * @param  isCheck  important to know if supplemental applications are saved or not
      *
      * @return  updated accounts: account of current year and account of next year
      */
     protected List<HolidaysAccount> subtractCaseSpanningDecemberAndJanuary(Application application,
-        HolidaysAccount accountCurrentYear, boolean isCheck) {
+        HolidaysAccount accountCurrentYear) {
 
         List<HolidaysAccount> accounts = new ArrayList<HolidaysAccount>();
 
@@ -470,14 +468,6 @@ public class CalculationService {
 
         Application decemberApplication = createSupplementalApplication(application, true, true); // application for
                                                                                                   // current year
-
-        Application januaryApplication = createSupplementalApplication(application, true, false); // application for new
-                                                                                                  // year
-
-        if (!isCheck) {
-            applicationService.simpleSave(decemberApplication);
-            applicationService.simpleSave(januaryApplication);
-        }
 
         if (accountCurrentYear.isRemainingVacationDaysExpire()) {
             subtractCaseAfterApril(decemberApplication, accountCurrentYear);

@@ -465,9 +465,28 @@ public class PersonController {
 
             Locale locale = RequestContextUtils.getLocale(request);
 
-            PersonForm personForm = new PersonForm(person, Integer.toString(year),
-                    NumberUtil.formatNumber(daysEnt, locale), NumberUtil.formatNumber(remainingEnt, locale),
-                    NumberUtil.formatNumber(daysAcc, locale), NumberUtil.formatNumber(remainingAcc, locale),
+            String ent = "";
+            String remEnt = "";
+            String acc = "";
+            String remAcc = "";
+
+            if (daysEnt != null) {
+                ent = NumberUtil.formatNumber(daysEnt, locale);
+            }
+
+            if (remainingEnt != null) {
+                remEnt = NumberUtil.formatNumber(remainingEnt, locale);
+            }
+
+            if (daysAcc != null) {
+                acc = NumberUtil.formatNumber(daysAcc, locale);
+            }
+
+            if (remainingAcc != null) {
+                remAcc = NumberUtil.formatNumber(remainingAcc, locale);
+            }
+
+            PersonForm personForm = new PersonForm(person, Integer.toString(year), ent, remEnt, acc, remAcc,
                     daysExpire);
 
             preparePersonForm(person, personForm, model);

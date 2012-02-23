@@ -19,6 +19,7 @@ import org.synyx.urlaubsverwaltung.domain.HolidaysAccount;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.VacationType;
 import org.synyx.urlaubsverwaltung.util.CalcUtil;
+import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.math.BigDecimal;
 
@@ -159,6 +160,17 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         if (application.getVacationType() == VacationType.HOLIDAY) {
             List<HolidaysAccount> accounts = calculationService.subtractVacationDays(application);
+
+            if (DateUtil.spansDecemberAndJanuary(application.getStartDate().getMonthOfYear(),
+                        application.getEndDate().getMonthOfYear())) {
+                Application decemberApplication = calculationService.createSupplementalApplication(application, true,
+                        true); // application for current year
+                simpleSave(decemberApplication);
+
+                Application januaryApplication = calculationService.createSupplementalApplication(application, true,
+                        false); // application for new year
+                simpleSave(januaryApplication);
+            }
 
             accountService.saveHolidaysAccount(accounts.get(0));
 

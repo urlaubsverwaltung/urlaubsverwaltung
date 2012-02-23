@@ -51,7 +51,6 @@ public class CalculationServiceTest {
 
     private OwnCalendarService calendarService = new OwnCalendarService();
     private HolidaysAccountService accountService = mock(HolidaysAccountService.class);
-    private ApplicationService applicationService = mock(ApplicationService.class);
 
     public CalculationServiceTest() {
     }
@@ -69,7 +68,7 @@ public class CalculationServiceTest {
     @Before
     public void setUp() {
 
-        instance = new CalculationService(calendarService, accountService, applicationService);
+        instance = new CalculationService(calendarService, accountService);
 
         person = new Person();
 
@@ -608,7 +607,7 @@ public class CalculationServiceTest {
         accountNextYear.setVacationDays(BigDecimal.valueOf(28));
 
         List<HolidaysAccount> returnedAccounts = instance.subtractCaseSpanningDecemberAndJanuary(application,
-                accountCurrentYear, false);
+                accountCurrentYear);
 
         assertTrue(!returnedAccounts.isEmpty());
         assertTrue(returnedAccounts.size() == 2);
@@ -628,7 +627,7 @@ public class CalculationServiceTest {
         accountNextYear.setRemainingVacationDays(BigDecimal.ZERO);
         accountNextYear.setVacationDays(BigDecimal.valueOf(28));
 
-        returnedAccounts = instance.subtractCaseSpanningDecemberAndJanuary(application, accountCurrentYear, false);
+        returnedAccounts = instance.subtractCaseSpanningDecemberAndJanuary(application, accountCurrentYear);
 
         assertTrue(!returnedAccounts.isEmpty());
         assertTrue(returnedAccounts.size() == 2);

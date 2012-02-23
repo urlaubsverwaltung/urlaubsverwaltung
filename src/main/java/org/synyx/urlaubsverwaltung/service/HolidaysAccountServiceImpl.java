@@ -92,8 +92,7 @@ public class HolidaysAccountServiceImpl implements HolidaysAccountService {
 
             if (entitlement == null) {
                 entitlement = newHolidayEntitlement(person, year,
-                        getHolidayEntitlement(year - 1, person).getVacationDays(),
-                        getHolidayEntitlement(year - 1, person).getRemainingVacationDays());
+                        getHolidayEntitlement(year - 1, person).getVacationDays(), BigDecimal.ZERO);
             }
 
             saveHolidayEntitlement(entitlement);
