@@ -10,7 +10,6 @@ import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.HolidayEntitlement;
 import org.synyx.urlaubsverwaltung.domain.HolidaysAccount;
-import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.util.CalcUtil;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 
@@ -147,41 +146,6 @@ public class CalculationService {
 
 
     /**
-     * This method is used if application's field 'sickDays' has not been null, but already filled. Then you have to
-     * subtract the old value of sick days from holidays account.
-     *
-     * @param  account
-     * @param  sickDays
-     *
-     * @return  updated holidays account
-     */
-    public HolidaysAccount subtractSickDays(Person person, BigDecimal sickDays, DateMidnight date) {
-
-        HolidaysAccount account = accountService.getHolidaysAccount(date.getYear(), person);
-
-        // subtract remaining vacation days at first
-        if (DateUtil.isBeforeApril(date) || (account.isRemainingVacationDaysExpire() == false)) {
-            BigDecimal diff = account.getRemainingVacationDays().subtract(sickDays);
-
-            // example:
-            // 3 (remaining vacation days) - 5 (sick days) = -2
-            // so you have to add -2 to holidays account's vacation days
-            if (CalcUtil.isNegative(diff)) {
-                account.setRemainingVacationDays(BigDecimal.ZERO);
-                account.setVacationDays(account.getVacationDays().add(diff));
-            } else {
-                account.setRemainingVacationDays(diff);
-            }
-        } else if (DateUtil.isAfterApril(date)) {
-            // do not subtract remaining vacation days
-            account.setVacationDays(account.getVacationDays().subtract(sickDays));
-        }
-
-        return account;
-    }
-
-
-    /**
      * This method returns updated holiday account after calculating and setting vacation days and remaining vacation
      * days. Method is used by ApplicationServiceImpl's methods of cancel and rollback holiday.
      *
@@ -236,42 +200,6 @@ public class CalculationService {
         }
 
         return accounts;
-    }
-
-
-    /**
-     * This method updates holiday account by adding sick days to vacation days.
-     *
-     * <p>date of adding sick days to application is the important thing dependent on this date, it is decided if
-     * remaining vacation days are filled or not if date of adding sick days is before April (January - March),
-     * remaining vacation days are filled if date of adding sick days is after April (April - December), remaining
-     * vacation days are ignored case between March and April is handled like after April case between December and
-     * January is handled like before April</p>
-     *
-     * @param  application
-     * @param  account
-     * @param  sickDays
-     *
-     * @return  updated holiday account
-     */
-    public HolidaysAccount addSickDaysOnHolidaysAccount(Application application, HolidaysAccount account) {
-
-        if (DateUtil.isBeforeApril(application.getDateOfAddingSickDays())
-                || (account.isRemainingVacationDaysExpire() == false)) {
-            addDaysBeforeApril(account, application.getSickDays());
-        } else if (DateUtil.isAfterApril(application.getDateOfAddingSickDays())) {
-            HolidayEntitlement entitlement = accountService.getHolidayEntitlement(account.getYear(),
-                    account.getPerson());
-            BigDecimal sum = account.getVacationDays().add(application.getSickDays());
-
-            if (sum.compareTo(entitlement.getVacationDays()) == 1) {
-                account.setVacationDays(entitlement.getVacationDays());
-            } else {
-                account.setVacationDays(account.getVacationDays().add(application.getSickDays()));
-            }
-        }
-
-        return account;
     }
 
 

@@ -53,6 +53,9 @@ import java.util.Map;
 
 /**
  * @author  Aljona Murygina
+ *
+ *          <p>This class contains all methods that are necessary for handling applications for leave, i.e. apply for
+ *          leave, show and edit applications.</p>
  */
 @Controller
 public class ApplicationController {
@@ -78,7 +81,6 @@ public class ApplicationController {
     private static final String NOON = "noon";
     private static final String NOTPOSSIBLE = "notpossible"; // is it possible for user to apply for leave? (no, if
                                                              // he/she has no account/entitlement)
-    private static final String NO_APPS = "noapps"; // are there any applications to show?
     private static final String APRIL = "april";
     private static final String GRAVATAR = "gravatar";
 
@@ -107,7 +109,7 @@ public class ApplicationController {
     private static final String WAITING_APPS = SHORT_PATH_APPLICATION + "/waiting";
     private static final String ALLOWED_APPS = SHORT_PATH_APPLICATION + "/allowed";
     private static final String CANCELLED_APPS = SHORT_PATH_APPLICATION + "/cancelled";
-//    private static final String REJECTED_APPS = SHORT_PATH_APPLICATION + "/rejected"; // not used now, but maybe useful
+//    private static final String REJECTED_APPS = SHORT_PATH_APPLICATION + "/rejected"; // not used now, but maybe useful some time
 
     // order applications by certain numbers
     private static final String STATE_NUMBER = "stateNumber";
@@ -137,9 +139,6 @@ public class ApplicationController {
     // allow or reject application
     private static final String ALLOW_APP = LONG_PATH_APPLICATION + APPLICATION_ID + "}/allow";
     private static final String REJECT_APP = LONG_PATH_APPLICATION + APPLICATION_ID + "}/reject";
-
-    // add sick days to application
-    private static final String SICK_DAYS = LONG_PATH_APPLICATION + APPLICATION_ID + "}/sick";
 
     // audit logger: logs nontechnically occurences like 'user x applied for leave' or 'subtracted n days from
     // holidays account y'
@@ -175,16 +174,6 @@ public class ApplicationController {
     }
 
 
-    private void setApplications(List<Application> applications, Model model) {
-
-        if (applications.isEmpty()) {
-            model.addAttribute(NO_APPS, true);
-        } else {
-            model.addAttribute(APPLICATIONS, applications);
-        }
-    }
-
-
     /**
      * Used to show default list view of applications - order by status, dependent on role (if boss: waiting is default,
      * if office: allowed is default)
@@ -200,8 +189,7 @@ public class ApplicationController {
             List<Application> applications = applicationService.getApplicationsByStateAndYear(ApplicationStatus.WAITING,
                     DateMidnight.now().getYear());
 
-            setApplications(applications, model);
-
+            model.addAttribute(APPLICATIONS, applications);
             model.addAttribute(STATE_NUMBER, WAITING);
             setLoggedUser(model);
             model.addAttribute(TITLE_APP, TITLE_WAITING);
@@ -212,8 +200,7 @@ public class ApplicationController {
             List<Application> applications = applicationService.getApplicationsByStateAndYear(ApplicationStatus.ALLOWED,
                     DateMidnight.now().getYear());
 
-            setApplications(applications, model);
-
+            model.addAttribute(APPLICATIONS, applications);
             model.addAttribute(STATE_NUMBER, ALLOWED);
             setLoggedUser(model);
             model.addAttribute(TITLE_APP, TITLE_ALLOWED);
@@ -254,8 +241,7 @@ public class ApplicationController {
         if (getLoggedUser().getRole() == Role.BOSS || getLoggedUser().getRole() == Role.OFFICE) {
             List<Application> applications = applicationService.getApplicationsByStateAndYear(state, year);
 
-            setApplications(applications, model);
-
+            model.addAttribute(APPLICATIONS, applications);
             model.addAttribute(STATE_NUMBER, stateNumber);
             setLoggedUser(model);
             model.addAttribute(TITLE_APP, title);
@@ -872,48 +858,6 @@ public class ApplicationController {
             + " wurde am " + DateMidnight.now().toString(DATE_FORMAT) + " storniert.");
 
         return "redirect:/web" + OVERVIEW;
-    }
-
-
-    /**
-     * This method allows the office to adding sick days to an application. (really: the number of sick days is set on
-     * field sickDays, not added)
-     *
-     * @param  applicationId
-     * @param  appForm
-     * @param  errors
-     * @param  model
-     *
-     * @return
-     */
-    @RequestMapping(value = SICK_DAYS, method = RequestMethod.PUT)
-    public String addSickDays(@PathVariable(APPLICATION_ID) Integer applicationId,
-        @ModelAttribute(APPFORM) AppForm appForm, Errors errors, Model model) {
-
-        Application application = applicationService.getApplicationById(applicationId);
-
-        // if field sick days is null you have to check if the number of given sick days is greater than vacation days
-        if (application.getSickDays() == null) {
-            validator.validateSickDays(appForm, application.getDays(), errors);
-        } else {
-            // if field sick days is already filled you have to check if the new value of sick days is smaller than
-            // vacation days plus sick days
-            validator.validateSickDays(appForm, application.getDays().add(application.getSickDays()), errors);
-        }
-
-        if (errors.hasErrors()) {
-            // shows error in Frontend
-            prepareDetailView(application, ALLOWED, model);
-            model.addAttribute(APPFORM, appForm);
-            model.addAttribute("errors", errors);
-
-            return SHOW_APP_DETAIL_JSP;
-        } else {
-            // sick days are smaller than vacation days (resp. equals)
-            applicationService.addSickDaysOnHolidaysAccount(application, appForm.getSickDays());
-
-            return "redirect:/web" + ALLOWED_APPS;
-        }
     }
 
 

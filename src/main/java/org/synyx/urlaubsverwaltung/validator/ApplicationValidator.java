@@ -17,8 +17,6 @@ import org.synyx.urlaubsverwaltung.domain.VacationType;
 import org.synyx.urlaubsverwaltung.util.PropertiesUtil;
 import org.synyx.urlaubsverwaltung.view.AppForm;
 
-import java.math.BigDecimal;
-
 import java.util.Properties;
 
 
@@ -38,7 +36,6 @@ public class ApplicationValidator implements Validator {
     private static final String ERROR_REASON = "error.reason";
     private static final String ERROR_PERIOD = "error.period";
     private static final String ERROR_PAST = "error.period.past";
-    private static final String ERROR_SICK = "sick.more";
 
     // names of fields
     private static final String START_DATE = "startDate";
@@ -46,7 +43,6 @@ public class ApplicationValidator implements Validator {
     private static final String START_DATE_HALF = "startDateHalf";
     private static final String REASON = "reason";
     private static final String TEXT = "text";
-    private static final String SICK_DAYS = "sickDays";
 
     private static final String CUSTOM_PROPERTIES_FILE = "custom.properties";
     private Properties customProperties;
@@ -141,28 +137,6 @@ public class ApplicationValidator implements Validator {
                     errors.reject(ERROR_PAST);
                 }
             }
-        }
-    }
-
-
-    public void validateSickDays(Object target, BigDecimal days, Errors errors) {
-
-        AppForm app = (AppForm) target;
-
-        // field not filled
-        if (app.getSickDays() == null) {
-            if (errors.getFieldErrors(SICK_DAYS).isEmpty()) {
-                errors.rejectValue(SICK_DAYS, "sick.empty");
-            }
-        } else {
-            // number of sick days is negative
-            if (app.getSickDays().compareTo(BigDecimal.ZERO) == -1) {
-                errors.rejectValue(SICK_DAYS, "sick.negative");
-            }
-
-            // number of sick days is greater than vacation days of application
-            if (app.getSickDays().compareTo(days) == 1)
-                errors.rejectValue(SICK_DAYS, ERROR_SICK);
         }
     }
 

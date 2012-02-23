@@ -37,13 +37,6 @@ public class Application extends AbstractPersistable<Integer> {
     // Number of days that is subtract from HolidayAccount
     private BigDecimal days;
 
-    // If belatedly added, number of days is added to HolidayAccount
-    private BigDecimal sickDays;
-
-    // Date of adding sick days to application
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateOfAddingSickDays;
-
     // Period of holiday
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date startDate;
@@ -150,26 +143,6 @@ public class Application extends AbstractPersistable<Integer> {
     }
 
 
-    public DateMidnight getDateOfAddingSickDays() {
-
-        if (this.dateOfAddingSickDays == null) {
-            return null;
-        }
-
-        return new DateTime(this.dateOfAddingSickDays).toDateMidnight();
-    }
-
-
-    public void setDateOfAddingSickDays(DateMidnight dateOfAddingSickDays) {
-
-        if (dateOfAddingSickDays == null) {
-            this.dateOfAddingSickDays = null;
-        } else {
-            this.dateOfAddingSickDays = dateOfAddingSickDays.toDate();
-        }
-    }
-
-
     public DateMidnight getEndDate() {
 
         if (this.endDate == null) {
@@ -247,18 +220,6 @@ public class Application extends AbstractPersistable<Integer> {
     public void setRep(String rep) {
 
         this.rep = rep;
-    }
-
-
-    public BigDecimal getSickDays() {
-
-        return sickDays;
-    }
-
-
-    public void setSickDays(BigDecimal sickDays) {
-
-        this.sickDays = sickDays;
     }
 
 

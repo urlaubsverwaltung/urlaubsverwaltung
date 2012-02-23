@@ -79,16 +79,6 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 
     /**
-     * @see  ApplicationService#getApplicationsByPerson(org.synyx.urlaubsverwaltung.domain.Person)
-     */
-    @Override
-    public List<Application> getApplicationsByPerson(Person person) {
-
-        return applicationDAO.getApplicationsByPerson(person);
-    }
-
-
-    /**
      * @see  ApplicationService#getApplicationsByStateAndYear(org.synyx.urlaubsverwaltung.domain.ApplicationStatus, int)
      */
     @Override
@@ -239,41 +229,6 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 
     /**
-     * @see  ApplicationService#addSickDaysOnHolidaysAccount(org.synyx.urlaubsverwaltung.domain.Application, java.math.BigDecimal)
-     */
-    @Override
-    public void addSickDaysOnHolidaysAccount(Application application, BigDecimal sickDays) {
-
-        DateMidnight now = DateMidnight.now();
-
-        application.setDateOfAddingSickDays(now);
-
-        HolidaysAccount account = new HolidaysAccount();
-
-        if (application.getSickDays() == null) {
-            application.setSickDays(sickDays);
-            application.setDays(application.getDays().subtract(application.getSickDays()));
-            account = accountService.getHolidaysAccount(application.getDateOfAddingSickDays().getYear(),
-                    application.getPerson());
-        } else {
-            // subtract old value of sick days from account
-            BigDecimal oldValue = application.getSickDays();
-            account = calculationService.subtractSickDays(application.getPerson(), oldValue, now);
-
-            // update days and sick days of application
-            application.setDays(application.getDays().add(oldValue)); // reset days
-            application.setSickDays(sickDays); // set new sick days value
-            application.setDays(application.getDays().subtract(sickDays)); // calculate new number of days
-        }
-
-        account = calculationService.addSickDaysOnHolidaysAccount(application, account);
-
-        accountService.saveHolidaysAccount(account); // save updated account
-        simpleSave(application); // save updated application
-    }
-
-
-    /**
      * @see  ApplicationService#signApplicationByBoss(org.synyx.urlaubsverwaltung.domain.Application, org.synyx.urlaubsverwaltung.domain.Person)
      */
     @Override
@@ -329,13 +284,13 @@ public class ApplicationServiceImpl implements ApplicationService {
 
             return data;
         } catch (InvalidKeyException ex) {
-            catchSignException(application.getId(), ex);
+            logSignException(application.getId(), ex);
         } catch (SignatureException ex) {
-            catchSignException(application.getId(), ex);
+            logSignException(application.getId(), ex);
         } catch (NoSuchAlgorithmException ex) {
-            catchSignException(application.getId(), ex);
+            logSignException(application.getId(), ex);
         } catch (InvalidKeySpecException ex) {
-            catchSignException(application.getId(), ex);
+            logSignException(application.getId(), ex);
         }
 
         return null;
@@ -349,7 +304,7 @@ public class ApplicationServiceImpl implements ApplicationService {
      * @param  applicationId
      * @param  ex
      */
-    private void catchSignException(Integer applicationId, Exception ex) {
+    private void logSignException(Integer applicationId, Exception ex) {
 
         LOG_SIGN.error("An error occured during signing application with id " + applicationId, ex);
         mailService.sendSignErrorNotification(applicationId, ex.getMessage());

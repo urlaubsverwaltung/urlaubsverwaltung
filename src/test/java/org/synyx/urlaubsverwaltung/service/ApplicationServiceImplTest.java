@@ -116,15 +116,6 @@ public class ApplicationServiceImplTest {
     }
 
 
-    /** Test of getApplicationsByPerson method, of class ApplicationServiceImpl. */
-    @Test
-    public void testGetAllApplicationsForPerson() {
-
-        instance.getApplicationsByPerson(person);
-        Mockito.verify(applicationDAO).getApplicationsByPerson(person);
-    }
-
-
     /** Test of getApplicationsByStateAndYear method, of class ApplicationServiceImpl. */
     @Test
     public void testgetApplicationsByStateAndYear() {
@@ -246,43 +237,6 @@ public class ApplicationServiceImplTest {
     }
 
 
-    /** Test of addSickDaysOnHolidaysAccount method, of class ApplicationServiceImpl. */
-    @Test
-    public void testAddSickDaysOnHolidaysAccount() {
-
-        entitlement.setVacationDays(BigDecimal.valueOf(24.0));
-        accountOne.setRemainingVacationDays(BigDecimal.ZERO);
-        accountOne.setVacationDays(BigDecimal.valueOf(16.0));
-        accountOne.setYear(2011);
-
-        // case 1: field sick days has been null
-        application.setDays(BigDecimal.valueOf(10.0));
-        application.setDateOfAddingSickDays(new DateMidnight(2011, DateTimeConstants.NOVEMBER, 11));
-        application.setSickDays(null);
-
-        instance.addSickDaysOnHolidaysAccount(application, BigDecimal.valueOf(5));
-
-        assertEquals(BigDecimal.valueOf(5), application.getSickDays());
-        assertEquals((BigDecimal.valueOf(10.0).subtract(BigDecimal.valueOf(5))), application.getDays());
-
-        // case 2: field sick days already filled
-        application.setDays(BigDecimal.valueOf(10.0));
-        application.setDateOfAddingSickDays(new DateMidnight(2011, DateTimeConstants.NOVEMBER, 11));
-        application.setSickDays(BigDecimal.valueOf(3));
-
-        instance.addSickDaysOnHolidaysAccount(application, BigDecimal.valueOf(5));
-
-        assertEquals(BigDecimal.valueOf(5), application.getSickDays());
-
-        // 10 (days old) + 3 (sick days old) = 13
-        // 13 - 5 (sick days new) = 8
-        assertEquals((BigDecimal.valueOf(8).setScale(1)), application.getDays());
-
-        // test for subtracting days from holidays account (in case 2: if field sick days is already filled) is in
-        // CalculationServiceTest#testSubtractSickDays
-    }
-
-
     /** Test of signApplicationByUser method, of class ApplicationServiceImpl. */
     @Test
     public void testSignApplicationByUser() throws Exception {
@@ -370,15 +324,6 @@ public class ApplicationServiceImplTest {
         returnValue = instance.checkApplication(application);
         assertNotNull(returnValue);
         assertEquals(false, returnValue);
-    }
-
-
-    /** Test of getApplicationsByPerson method, of class ApplicationServiceImpl. */
-    @Test
-    public void testGetApplicationsByPerson() {
-
-        instance.getApplicationsByPerson(person);
-        Mockito.verify(applicationDAO).getApplicationsByPerson(person);
     }
 
 

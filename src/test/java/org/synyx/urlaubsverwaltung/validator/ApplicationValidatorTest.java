@@ -26,8 +26,6 @@ import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.VacationType;
 import org.synyx.urlaubsverwaltung.view.AppForm;
 
-import java.math.BigDecimal;
-
 
 /**
  * @author  Aljona Murygina
@@ -162,51 +160,6 @@ public class ApplicationValidatorTest {
 
         instance.validateForUser(app, errors);
         Mockito.verify(errors).reject("error.period.past");
-        Mockito.reset(errors);
-    }
-
-
-    /** Test of validateSickDays method, of class ApplicationValidator. */
-    @Test
-    public void testValidateSickDays() {
-
-        // number of application's vacation days used for validating number of sick days
-        BigDecimal vacationDays = BigDecimal.valueOf(5);
-
-        // sick days == null
-        app.setSickDays(null);
-        instance.validateSickDays(app, vacationDays, errors);
-        Mockito.verify(errors).rejectValue("sickDays", "sick.empty");
-        Mockito.reset(errors);
-
-        // sick days == 0
-        app.setSickDays(BigDecimal.ZERO);
-        instance.validateSickDays(app, vacationDays, errors);
-        Mockito.verifyZeroInteractions(errors);
-        Mockito.reset(errors);
-
-        // sick days < 0
-        app.setSickDays(BigDecimal.valueOf(-1));
-        instance.validateSickDays(app, vacationDays, errors);
-        Mockito.verify(errors).rejectValue("sickDays", "sick.negative");
-        Mockito.reset(errors);
-
-        // number of sick days is greater than number of application's vacation days
-        app.setSickDays(BigDecimal.valueOf(6));
-        instance.validateSickDays(app, vacationDays, errors);
-        Mockito.verify(errors).rejectValue("sickDays", "sick.more");
-        Mockito.reset(errors);
-
-        // number of sick days is smaller than number of application's vacation days
-        app.setSickDays(BigDecimal.valueOf(4));
-        instance.validateSickDays(app, vacationDays, errors);
-        Mockito.verifyZeroInteractions(errors);
-        Mockito.reset(errors);
-
-        // number of sick days is equals number of application's vacation days
-        app.setSickDays(BigDecimal.valueOf(5));
-        instance.validateSickDays(app, vacationDays, errors);
-        Mockito.verifyZeroInteractions(errors);
         Mockito.reset(errors);
     }
 

@@ -248,58 +248,6 @@ public class CalculationServiceTest {
     }
 
 
-    /** Test of addSickDaysOnHolidaysAccount method, of class CalculationService. */
-    @Test
-    public void testAddSickDaysOnHolidaysAccount() {
-
-        // before April
-        application.setSickDays(BigDecimal.valueOf(10.0));
-        application.setDateOfAddingSickDays(new DateMidnight(CURRENT_YEAR, DateTimeConstants.FEBRUARY, 6));
-
-        accountCurrentYear.setRemainingVacationDays(BigDecimal.ZERO);
-        accountCurrentYear.setVacationDays(BigDecimal.valueOf(20.0));
-        entitlement.setVacationDays(BigDecimal.valueOf(25.0));
-        entitlement.setRemainingVacationDays(BigDecimal.valueOf(5));
-
-        HolidaysAccount returnAccount = instance.addSickDaysOnHolidaysAccount(application, accountCurrentYear);
-
-        assertNotNull(returnAccount);
-        assertEquals(entitlement.getVacationDays(), accountCurrentYear.getVacationDays());
-        assertEquals(BigDecimal.valueOf(5), accountCurrentYear.getRemainingVacationDays());
-
-        // after April
-        application.setSickDays(BigDecimal.valueOf(12.0));
-        application.setDateOfAddingSickDays(new DateMidnight(CURRENT_YEAR, DateTimeConstants.MAY, 9));
-
-        accountCurrentYear.setRemainingVacationDays(BigDecimal.ZERO);
-        accountCurrentYear.setVacationDays(BigDecimal.valueOf(20.0));
-        accountCurrentYear.setRemainingVacationDaysExpire(true);
-        entitlement.setVacationDays(BigDecimal.valueOf(25.0));
-
-        returnAccount = instance.addSickDaysOnHolidaysAccount(application, accountCurrentYear);
-
-        assertNotNull(returnAccount);
-        assertEquals(entitlement.getVacationDays(), accountCurrentYear.getVacationDays());
-        assertEquals(BigDecimal.ZERO, accountCurrentYear.getRemainingVacationDays());
-
-        // after April, but remaining vacation days don't expire
-        application.setSickDays(BigDecimal.valueOf(10));
-        application.setDateOfAddingSickDays(new DateMidnight(CURRENT_YEAR, DateTimeConstants.MAY, 9));
-
-        accountCurrentYear.setRemainingVacationDays(BigDecimal.ZERO);
-        accountCurrentYear.setVacationDays(BigDecimal.valueOf(20));
-        accountCurrentYear.setRemainingVacationDaysExpire(false);
-        entitlement.setVacationDays(BigDecimal.valueOf(25));
-        entitlement.setRemainingVacationDays(BigDecimal.valueOf(5));
-
-        returnAccount = instance.addSickDaysOnHolidaysAccount(application, accountCurrentYear);
-
-        assertNotNull(returnAccount);
-        assertEquals(entitlement.getVacationDays(), accountCurrentYear.getVacationDays());
-        assertEquals(BigDecimal.valueOf(5), accountCurrentYear.getRemainingVacationDays());
-    }
-
-
     /** Test of subtractForCheck method, of class CalculationService. */
     @Test
     public void testSubtractForCheck() {
@@ -420,69 +368,6 @@ public class CalculationServiceTest {
                                                                                             // is equals number of
                                                                                             // entitlement's remaining
                                                                                             // vacation days
-    }
-
-
-    /** Test of subtractSickDays method, of class CalculationService. */
-    @Test
-    public void testSubtractSickDays() {
-
-        DateMidnight date = new DateMidnight(2012, 2, 13);
-
-        Person p = new Person();
-        p.setLastName("Testperson");
-
-        HolidaysAccount acc = new HolidaysAccount();
-        acc.setYear(date.getYear());
-        acc.setPerson(p);
-
-        Mockito.when(accountService.getHolidaysAccount(date.getYear(), p)).thenReturn(acc);
-
-        // case 1: now is before April - 13th Feb 2012
-
-        // remaining vacation days greater than sick days
-        acc.setRemainingVacationDays(BigDecimal.valueOf(4));
-        acc.setVacationDays(BigDecimal.valueOf(20));
-
-        instance.subtractSickDays(p, BigDecimal.valueOf(3), date);
-
-        // 4 (remaining vacation days) - 3 (sick days) = 1
-        assertEquals(BigDecimal.valueOf(1), acc.getRemainingVacationDays());
-        assertEquals(BigDecimal.valueOf(20), acc.getVacationDays());
-
-        // remaining vacation days equals sick days
-        acc.setRemainingVacationDays(BigDecimal.valueOf(4));
-        acc.setVacationDays(BigDecimal.valueOf(20));
-
-        instance.subtractSickDays(p, BigDecimal.valueOf(4), date);
-
-        // 4 (remaining vacation days) - 4 (sick days) = 0
-        assertEquals(BigDecimal.ZERO, acc.getRemainingVacationDays());
-        assertEquals(BigDecimal.valueOf(20), acc.getVacationDays());
-
-        // remaining vacation days smaller than sick days
-        acc.setRemainingVacationDays(BigDecimal.valueOf(4));
-        acc.setVacationDays(BigDecimal.valueOf(20));
-
-        instance.subtractSickDays(p, BigDecimal.valueOf(5), date);
-
-        // 4 (remaining vacation days) - 5 (sick days) = -1
-        assertEquals(BigDecimal.valueOf(0), acc.getRemainingVacationDays());
-
-        // 20 (vacation days) + -1 (diff) = 19
-        assertEquals(BigDecimal.valueOf(19), acc.getVacationDays());
-
-        // CASE 2: now is after April - 13th Apr 2012
-        date = new DateMidnight(2012, 4, 13);
-
-        acc.setRemainingVacationDays(BigDecimal.valueOf(4));
-        acc.setVacationDays(BigDecimal.valueOf(20));
-        acc.setRemainingVacationDaysExpire(true);
-
-        instance.subtractSickDays(p, BigDecimal.valueOf(5), date);
-
-        assertEquals(BigDecimal.valueOf(4), acc.getRemainingVacationDays()); // unchanged
-        assertEquals(BigDecimal.valueOf(15), acc.getVacationDays()); // 20 (vacation days) - 5 (sick days) = 15
     }
 
 

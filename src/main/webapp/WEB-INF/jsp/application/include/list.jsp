@@ -14,7 +14,7 @@
 
                 <c:choose>
 
-                    <c:when test="${noapps == true}">
+                    <c:when test="${empty applications}">
 
                         <spring:message code="no.apps" />
 
@@ -38,9 +38,6 @@
                                 </th>
                                 <th>
                                     <spring:message code="days.vac" />
-                                </th>
-                                <th>
-                                    <spring:message code="days.ill" />
                                 </th>
                                 <th>
                                     <spring:message code="state" />
@@ -75,16 +72,6 @@
                                     <td>
                                         <fmt:formatNumber maxFractionDigits="1" value="${app.days}" />
                                     </td>
-                                    <td>
-                                        <c:choose>
-                                            <c:when test="${app.sickDays == null}">
-                                                0
-                                            </c:when>
-                                            <c:otherwise>
-                                                <fmt:formatNumber maxFractionDigits="1" value="${app.sickDays}" />
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </td>                     
                                     <td>
                                         <spring:message code="${app.status.state}" />
                                     </td>

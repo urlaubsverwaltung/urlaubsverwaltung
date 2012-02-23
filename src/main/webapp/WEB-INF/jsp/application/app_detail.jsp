@@ -78,15 +78,6 @@
                             <td><c:out value="${application.days}"/></td>
                         </tr>
                         <tr>
-                            <td><spring:message code="days.ill" />:</td>
-                            <td>
-                                <c:choose>
-                                    <c:when test="${application.sickDays == null}">0</c:when>
-                                    <c:otherwise><c:out value="${application.sickDays}"/></c:otherwise>
-                                </c:choose>
-                            </td>
-                        </tr>
-                        <tr>
                             <td colspan="2">&nbsp;</td>
                         </tr>
                         <tr>
