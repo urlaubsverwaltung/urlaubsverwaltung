@@ -20,7 +20,7 @@ import java.util.List;
 
 
 /**
- * this class contains all methods to calculate with vacation days e.g. checking if an application is valid (are there
+ * This class contains all methods to calculate with vacation days e.g. checking if an application is valid (are there
  * enough vacation days on person's HolidaysAccount) or noticing the special cases January and April for
  * calculation/updating HolidaysAccount(s)
  *
@@ -32,8 +32,8 @@ public class CalculationService {
     // holidays account y'
     private static final Logger LOG = Logger.getLogger("audit");
 
-    private static final int LAST_DAY = 31;
-    private static final int FIRST_DAY = 1;
+    private static final int LAST_DAY = 31; // last day of month
+    private static final int FIRST_DAY = 1; // first day of month
 
     private OwnCalendarService calendarService;
     private HolidaysAccountService accountService;
@@ -58,7 +58,7 @@ public class CalculationService {
         HolidaysAccount account = accountService.getAccountOrCreateOne(application.getStartDate().getYear(),
                 application.getPerson());
 
-        return doCalculation(application, account);
+        return doCalculation(application, account, false);
     }
 
 
@@ -77,13 +77,9 @@ public class CalculationService {
         HolidaysAccount account = accountService.getAccountOrCreateOne(application.getStartDate().getYear(),
                 application.getPerson());
 
-        HolidaysAccount accountCopy = new HolidaysAccount();
-        accountCopy.setRemainingVacationDays(account.getRemainingVacationDays());
-        accountCopy.setVacationDays(account.getVacationDays());
-        accountCopy.setPerson(account.getPerson());
-        accountCopy.setYear(account.getYear());
+        HolidaysAccount accountCopy = createCopyOfHolidaysAccount(account);
 
-        return doCalculation(application, accountCopy);
+        return doCalculation(application, accountCopy, true);
     }
 
 
@@ -97,7 +93,7 @@ public class CalculationService {
      *
      * @return  list of updated holidays account
      */
-    private List<HolidaysAccount> doCalculation(Application application, HolidaysAccount account) {
+    private List<HolidaysAccount> doCalculation(Application application, HolidaysAccount account, boolean isCheck) {
 
         // for calculation you have to distinguish between five cases
         // 1. period spans December and January
@@ -115,13 +111,13 @@ public class CalculationService {
         // two supplementary applications are created and saved
         // calculation of holidays account's values occurs
         if (DateUtil.spansDecemberAndJanuary(startMonth, endMonth)) {
-            accounts = subtractCaseSpanningDecemberAndJanuary(application, account);
+            accounts = subtractCaseSpanningDecemberAndJanuary(application, account, isCheck);
         } else {
             accounts = new ArrayList<HolidaysAccount>();
 
             // check if holiday's period is in future: now.getYear() + 1 ?
             if (DateMidnight.now().getYear() != application.getStartDate().getYear()) {
-                HolidaysAccount accountNextYear = subtractCaseFutureYear(application);
+                HolidaysAccount accountNextYear = subtractCaseFutureYear(application, isCheck);
                 accounts.add(accountNextYear);
             } else {
                 if (DateUtil.isBeforeApril(startMonth, endMonth) || !account.isRemainingVacationDaysExpire()) {
@@ -385,7 +381,7 @@ public class CalculationService {
      * @return  updated accounts: account of current year and account of next year
      */
     protected List<HolidaysAccount> subtractCaseSpanningDecemberAndJanuary(Application application,
-        HolidaysAccount accountCurrentYear) {
+        HolidaysAccount accountCurrentYear, boolean isCheck) {
 
         List<HolidaysAccount> accounts = new ArrayList<HolidaysAccount>();
 
@@ -403,9 +399,19 @@ public class CalculationService {
             subtractCaseBeforeApril(decemberApplication, accountCurrentYear);
         }
 
+        accounts.add(accountCurrentYear);
+
         HolidaysAccount accountNextYear = accountService.getAccountOrCreateOne(application.getEndDate().getYear(),
                 accountCurrentYear.getPerson());
-        accountNextYear.setVacationDays(accountNextYear.getVacationDays().subtract(daysAfterJan));
+
+        if (isCheck) {
+            HolidaysAccount copyAccountNextYear = createCopyOfHolidaysAccount(accountNextYear);
+            copyAccountNextYear.setVacationDays(copyAccountNextYear.getVacationDays().subtract(daysAfterJan));
+            accounts.add(copyAccountNextYear);
+        } else {
+            accountNextYear.setVacationDays(accountNextYear.getVacationDays().subtract(daysAfterJan));
+            accounts.add(accountNextYear);
+        }
 
         if (accountCurrentYear.getId() != null) {
             LOG.info("Urlaubskonto-Id " + accountCurrentYear.getId() + ": es wurden " + daysBeforeJan
@@ -416,9 +422,6 @@ public class CalculationService {
             LOG.info("Urlaubskonto-Id " + accountNextYear.getId() + ": es wurden " + daysAfterJan
                 + " abgezogen durch den Antrag mit der Id " + application.getId());
         }
-
-        accounts.add(accountCurrentYear);
-        accounts.add(accountNextYear);
 
         return accounts;
     }
@@ -496,14 +499,21 @@ public class CalculationService {
      *
      * @return  updated holidays account of next year
      */
-    protected HolidaysAccount subtractCaseFutureYear(Application application) {
+    protected HolidaysAccount subtractCaseFutureYear(Application application, boolean isCheck) {
 
         HolidaysAccount accountNextYear = accountService.getAccountOrCreateOne(application.getEndDate().getYear(),
                 application.getPerson());
 
-        accountNextYear.setVacationDays(accountNextYear.getVacationDays().subtract(application.getDays()));
+        if (isCheck) {
+            HolidaysAccount copyAccountNextYear = createCopyOfHolidaysAccount(accountNextYear);
+            copyAccountNextYear.setVacationDays(copyAccountNextYear.getVacationDays().subtract(application.getDays()));
 
-        return accountNextYear;
+            return copyAccountNextYear;
+        } else {
+            accountNextYear.setVacationDays(accountNextYear.getVacationDays().subtract(application.getDays()));
+
+            return accountNextYear;
+        }
     }
 
 
@@ -547,5 +557,26 @@ public class CalculationService {
     private BigDecimal getNumberOfVacationDays(Application application) {
 
         return calendarService.getVacationDays(application, application.getStartDate(), application.getEndDate());
+    }
+
+
+    /**
+     * This method creates a copy of the given holidays account. If subtraction is performed only for check, you must
+     * not use the real holidays accounts, but copies of them.
+     *
+     * @param  account  holidays account that shall be copied
+     *
+     * @return  HolidaysAccount copy of the given holidays account
+     */
+    private HolidaysAccount createCopyOfHolidaysAccount(HolidaysAccount account) {
+
+        HolidaysAccount accountCopy = new HolidaysAccount();
+        accountCopy.setRemainingVacationDaysExpire(account.isRemainingVacationDaysExpire());
+        accountCopy.setRemainingVacationDays(account.getRemainingVacationDays());
+        accountCopy.setVacationDays(account.getVacationDays());
+        accountCopy.setPerson(account.getPerson());
+        accountCopy.setYear(account.getYear());
+
+        return accountCopy;
     }
 }

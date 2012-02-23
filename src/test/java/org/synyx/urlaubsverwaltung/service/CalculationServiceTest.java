@@ -492,7 +492,7 @@ public class CalculationServiceTest {
         accountNextYear.setVacationDays(BigDecimal.valueOf(28));
 
         List<HolidaysAccount> returnedAccounts = instance.subtractCaseSpanningDecemberAndJanuary(application,
-                accountCurrentYear);
+                accountCurrentYear, false); // test for case not checking
 
         assertTrue(!returnedAccounts.isEmpty());
         assertTrue(returnedAccounts.size() == 2);
@@ -512,7 +512,7 @@ public class CalculationServiceTest {
         accountNextYear.setRemainingVacationDays(BigDecimal.ZERO);
         accountNextYear.setVacationDays(BigDecimal.valueOf(28));
 
-        returnedAccounts = instance.subtractCaseSpanningDecemberAndJanuary(application, accountCurrentYear);
+        returnedAccounts = instance.subtractCaseSpanningDecemberAndJanuary(application, accountCurrentYear, false); // test for case not checking
 
         assertTrue(!returnedAccounts.isEmpty());
         assertTrue(returnedAccounts.size() == 2);
@@ -539,7 +539,7 @@ public class CalculationServiceTest {
         application.setDays(BigDecimal.valueOf(7));
         application.setEndDate(new DateMidnight(NEXT_YEAR, DateTimeConstants.JANUARY, 18));
 
-        HolidaysAccount returnValue = instance.subtractCaseFutureYear(application);
+        HolidaysAccount returnValue = instance.subtractCaseFutureYear(application, false); // test for case not checking
 
         assertNotNull(returnValue);
         assertEquals(BigDecimal.ZERO, returnValue.getRemainingVacationDays());
