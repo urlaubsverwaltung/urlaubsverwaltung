@@ -31,6 +31,8 @@
 
         <div id="content">
             <div class="container_12">
+                 
+                <div class="grid_12">&nbsp;</div>
 
                 <div class="grid_5 app">
                     <h2><spring:message code="app.title" /></h2>
@@ -146,8 +148,43 @@
                             <td>&nbsp;</td>
                         </tr>
                     </table>
+                        
+                            <sec:authorize access="hasRole('role.office')">
+                        <a class="button print" href="${formUrlPrefix}/application/${application.id}/print"><spring:message code='app' />&nbsp;<spring:message code='print' /></a>
+                            </sec:authorize>
+                        
+                         <%-- application is waiting --%>            
+                    <c:if test="${stateNumber == 0}">
 
+                        <sec:authorize access="hasRole('role.boss')">         
 
+                            <div class="boss-view">
+                            <form:form method="put" action="${formUrlPrefix}/application/${application.id}/allow"> 
+                                <input class="confirm" type="submit" name="<spring:message code='app.state.ok' />" value="<spring:message code='app.state.ok' />" class="button" />    
+                                <input class="back" type="button" name="<spring:message code='app.state.no' />" value="<spring:message code='app.state.no' />" onclick="$('#reject').show();" />
+                            </form:form>   
+                                <form:form method="put" action="${formUrlPrefix}/application/${application.id}/reject" modelAttribute="comment">
+                                 <br />
+                            <div id="reject" style="
+                                     <c:choose>
+                                         <c:when test="${not empty errors}">display: block</c:when>
+                                         <c:otherwise>display: none</c:otherwise>
+                                     </c:choose>
+                                ">            
+                                    <spring:message code='reason' />:&nbsp;&nbsp;<form:input path="text" cssErrorClass="error" />   
+                                    <input type="submit" name="<spring:message code='ok' />" value="<spring:message code='ok' />" class="button" />
+                                    <script type="text/javascript">
+                                    $(document).ready(function() {
+                                        $('#reject-error').show('drop', 500);
+                                    });
+                                </script>
+                                    <form:errors path="text" cssClass="error" id="reject-error" />
+                                </div>
+                                </form:form>  
+                            </div>
+                        </sec:authorize>
+
+                    </c:if>
                 </div> <!-- end of application for leave -->             
 
                 <div class="grid_5 data">
@@ -170,15 +207,31 @@
                         </tr>
                         <%@include file="./include/account_days.jsp" %>
                     </table>
+                    
+                        <sec:authorize access="hasRole('role.office')">
+                            <a class="button staff" href="${formUrlPrefix}/staff/${application.person.id}/overview" /><spring:message code="staff.back" /></a>
+                        </sec:authorize>
+                
+                        
                 </div>
 
                 <div class="grid_12">&nbsp;</div>
                 <div class="grid_12">&nbsp;</div>
+                
 
-                <div class="grid_12">
-                    <%-- various application's actions dependent on role --%>         
-                    <%@include file="./include/app_actions.jsp" %>
-                </div>     
+                    <%-- if user wants to cancel an application --%>
+                    <c:if test="${stateNumber == 4}">
+                        <div class="grid_12">
+                        <div id="test">
+                        <form:form method="put" action="${formUrlPrefix}/application/${application.id}/cancel">
+                            <spring:message code='cancel.confirm' />&nbsp;&nbsp;&nbsp;&nbsp;
+                            <input type="submit" class="button confirm" name="<spring:message code='delete' />" value="<spring:message code='delete' />" />
+                            <a class="button back" href="${formUrlPrefix}/overview"><spring:message code='cancel' /></a>
+                        </form:form>
+                        </div>   
+                        </div>
+                    </c:if>
+
 
 
             </div> <!-- end of grid container -->

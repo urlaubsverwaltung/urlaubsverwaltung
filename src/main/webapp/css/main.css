@@ -193,9 +193,9 @@ tr.even {
 
 .data {
     border: 1px solid #D7D7D7; 
-    padding: 2em 0 2em 2em; 
+    padding: 2em 0 1em 2em; 
     margin-left:3em;
-    height: 28.95em;
+    height: 31.95em;
 }
 
 #tbl-data th {
@@ -245,32 +245,24 @@ tr.even {
     margin-left: 0;
 }
 
-#sick-error {
-    border: 1px solid #E76757;
-    background: url("../images/alarm_16.png") no-repeat 1% 40%;
-    background-color: #FFE3E3;
-    padding: 0.5em 0.5em 0.5em 2.25em;
-    float: left;
-    position: absolute;
-    top: 10em;
-    left: 0em;
-}
 
 #reject-error {
+    margin-top: 1em;
+    float: right;
     border: 1px solid #E76757;
     background: url("../images/alarm_16.png") no-repeat 1% 40%;
     background-color: #FFE3E3;
     padding: 0.5em 0.5em 0.5em 2.25em;
-    position: absolute;
-    top: 3em;
-    left: 25em;
+/*    position: relative;*/
+/*    top: 3em;*/
+/*    left: 25em;*/
 }
 
 .app {
     border: 1px solid #D7D7D7; 
-    padding: 1em 2em 2em 2em; 
+    padding: 1em 2em 1em 2em; 
     margin:0;
-    height: 30em;
+    height: 33em;
 }
 
 .app-tbl {
@@ -376,6 +368,11 @@ input[type=submit].confirm, input[type=button].confirm, a.button.confirm {
     background-repeat: no-repeat;
     background-position: 5% 50%;
     padding-left: 2em;
+    margin-right: 1em;
+}
+
+#reject {
+    margin-top: 2em;
 }
 
 a.button.apply {
@@ -400,8 +397,41 @@ input[type=submit].print, input[type=button].print, a.button.print {
     padding-left: 3em;
 }
 
-input[type=submit].deactivate, input[type=button].deactivate, a.button.deactivate {
+.print, .staff {
+    float: right;
+}
+
+input[type=submit].staff, input[type=button].staff, a.button.staff {
+    background-image: url("../images/edit_user.png");
+    background-repeat: no-repeat;
+    background-position: 5% 50%;
+    padding-left: 3em;
+}
+
+.staff {
+    position: relative;
+    top: 12.5em;
+    right: 2em;
     
+}
+
+.print {
+    position: relative;
+    top: 3em;
+    right: 0em;
+    
+}
+
+.boss-view {
+    text-align: right;
+    margin-top: 3em;
+}
+
+input[type=submit].deactivate, input[type=button].deactivate, a.button.deactivate {
+    background-image: url("../images/delete_user.png");
+    background-repeat: no-repeat;
+    background-position: 5% 50%;
+    padding-left: 2em;
 }
 
 .error {

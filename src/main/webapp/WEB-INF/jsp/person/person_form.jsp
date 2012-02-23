@@ -172,6 +172,7 @@
                                            <c:when test="${person.active == true}">
                                                name="<spring:message code='person.deactivate' />"
                                                value="<spring:message code='person.deactivate' />"
+                                               class="deactivate"
                                            </c:when>
                                            <c:otherwise>
                                                name="<spring:message code='person.activate' />"
