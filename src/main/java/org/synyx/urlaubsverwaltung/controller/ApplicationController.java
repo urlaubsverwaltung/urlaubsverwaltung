@@ -427,7 +427,7 @@ public class ApplicationController {
 
             return APP_FORM_JSP;
         } else {
-            if (checkApplicationForm(appForm, person, false, errors, model) == 1) {
+            if (checkApplicationForm(appForm, person, false, errors, model)) {
                 return "redirect:/web" + OVERVIEW;
             }
         }
@@ -448,18 +448,27 @@ public class ApplicationController {
      *
      * @param  appForm
      * @param  person
+     * @param  isOffice
      * @param  errors
      * @param  model
      *
-     * @return
+     * @return  true if everything is alright and application can be saved, else false
      */
-    private int checkApplicationForm(AppForm appForm, Person person, boolean isOffice, Errors errors, Model model) {
+    private boolean checkApplicationForm(AppForm appForm, Person person, boolean isOffice, Errors errors, Model model) {
 
         Application application = new Application();
         application = appForm.fillApplicationObject(application);
 
         application.setPerson(person);
         application.setApplicationDate(DateMidnight.now(GregorianChronology.getInstance()));
+
+        // check if the vacation would have more than 0 days
+        if (calendarService.getVacationDays(application, application.getStartDate(), application.getEndDate())
+                .compareTo(BigDecimal.ZERO) == 0) {
+            errors.reject("check.zero");
+
+            return false;
+        }
 
         // check at first if there are existent application for the same period
 
@@ -516,7 +525,7 @@ public class ApplicationController {
                 // mail to boss
                 mailService.sendNewApplicationNotification(application);
 
-                return 1;
+                return true;
             } else {
                 if (isOffice == true) {
                     errors.reject("check.enough.office");
@@ -530,7 +539,7 @@ public class ApplicationController {
             }
         }
 
-        return -1;
+        return false;
     }
 
 
@@ -608,7 +617,7 @@ public class ApplicationController {
 
             return APP_FORM_OFFICE_JSP;
         } else {
-            if (checkApplicationForm(appForm, person, true, errors, model) == 1) {
+            if (checkApplicationForm(appForm, person, true, errors, model)) {
                 return "redirect:/web/staff/" + personId + "/overview";
             }
         }
