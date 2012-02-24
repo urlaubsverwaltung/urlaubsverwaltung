@@ -1,6 +1,8 @@
 
 package org.synyx.urlaubsverwaltung.controller;
 
+import org.apache.commons.lang.StringUtils;
+
 import org.apache.log4j.Logger;
 
 import org.joda.time.DateMidnight;
@@ -47,6 +49,7 @@ import java.math.BigDecimal;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
 
@@ -628,10 +631,22 @@ public class ApplicationController {
             april = 1;
         }
 
+        List<Person> persons = personService.getAllPersonsExceptOne(person.getId());
+
+        ListIterator itr = persons.listIterator();
+
+        while (itr.hasNext()) {
+            Person p = (Person) itr.next();
+
+            if (StringUtils.isEmpty(p.getFirstName()) && (StringUtils.isEmpty(p.getLastName()))) {
+                itr.remove();
+            }
+        }
+
         model.addAttribute(APRIL, april);
 
         model.addAttribute(PERSON, person);
-        model.addAttribute(PERSONS, personService.getAllPersonsExceptOne(person.getId()));
+        model.addAttribute(PERSONS, persons);
         model.addAttribute(DATE, DateMidnight.now(GregorianChronology.getInstance()));
         model.addAttribute(YEAR, DateMidnight.now(GregorianChronology.getInstance()).getYear());
         model.addAttribute(APPFORM, appForm);
