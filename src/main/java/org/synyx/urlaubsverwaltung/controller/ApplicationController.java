@@ -463,9 +463,11 @@ public class ApplicationController {
         application.setPerson(person);
         application.setApplicationDate(DateMidnight.now(GregorianChronology.getInstance()));
 
+        BigDecimal days = calendarService.getVacationDays(application, application.getStartDate(),
+                application.getEndDate());
+
         // check if the vacation would have more than 0 days
-        if (calendarService.getVacationDays(application, application.getStartDate(), application.getEndDate())
-                .compareTo(BigDecimal.ZERO) == 0) {
+        if (days.compareTo(BigDecimal.ZERO) == 0) {
             errors.reject("check.zero");
 
             return false;
@@ -534,9 +536,11 @@ public class ApplicationController {
                     errors.reject("check.enough");
                 }
 
-                BigDecimal days = calendarService.getVacationDays(application, application.getStartDate(),
-                        application.getEndDate());
-                model.addAttribute("daysApp", days);
+                if (application.getStartDate().getYear() != application.getEndDate().getYear()) {
+                    model.addAttribute("daysApp", null);
+                } else {
+                    model.addAttribute("daysApp", days);
+                }
             }
         }
 

@@ -110,7 +110,7 @@ public class CalculationService {
         // if application spans December and January, it's the very special case!
         // two supplementary applications are created and saved
         // calculation of holidays account's values occurs
-        if (DateUtil.spansDecemberAndJanuary(startMonth, endMonth)) {
+        if (application.getStartDate().getYear() != application.getEndDate().getYear()) {
             accounts = subtractCaseSpanningDecemberAndJanuary(application, account, isCheck);
         } else {
             accounts = new ArrayList<HolidaysAccount>();
