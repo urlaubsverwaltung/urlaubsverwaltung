@@ -167,8 +167,8 @@
                                  <br />
                             <div id="reject" style="
                                      <c:choose>
-                                         <c:when test="${not empty errors}">display: block</c:when>
-                                         <c:otherwise>display: none</c:otherwise>
+                                         <c:when test="${empty errors}">display: none</c:when>
+                                         <c:otherwise>display: block</c:otherwise>
                                      </c:choose>
                                 ">            
                                     <spring:message code='reason' />:&nbsp;&nbsp;<form:input path="text" cssErrorClass="error" />   
@@ -214,13 +214,12 @@
                 
                         
                 </div>
-
-                <div class="grid_12">&nbsp;</div>
-                <div class="grid_12">&nbsp;</div>
                 
 
                     <%-- if user wants to cancel an application --%>
                     <c:if test="${stateNumber == 4}">
+                        <div class="grid_12">&nbsp;</div>
+                <div class="grid_12">&nbsp;</div>
                         <div class="grid_12">
                         <div id="test">
                         <form:form method="put" action="${formUrlPrefix}/application/${application.id}/cancel">
