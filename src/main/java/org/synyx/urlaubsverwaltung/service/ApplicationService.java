@@ -155,7 +155,7 @@ public interface ApplicationService {
      *
      * @param  application  (the new application)
      *
-     * @return  1 for case 1, 2 for case 2, 3 for case 3
+     * @return  OverlapCase (Enum)
      */
-    int checkOverlap(Application application);
+    OverlapCase checkOverlap(Application application);
 }

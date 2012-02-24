@@ -483,7 +483,7 @@ public class ApplicationServiceImpl implements ApplicationService {
      * @see  ApplicationService#checkOverlap(org.synyx.urlaubsverwaltung.domain.Application)
      */
     @Override
-    public int checkOverlap(Application application) {
+    public OverlapCase checkOverlap(Application application) {
 
         if (application.getHowLong() == DayLength.MORNING) {
             return checkOverlapForMorning(application);
@@ -507,7 +507,7 @@ public class ApplicationServiceImpl implements ApplicationService {
      *
      * @return  int 1 for check is alright: application for leave is valid. 2 or 3 for invalid application for leave.
      */
-    protected int checkOverlapForFullDay(Application application) {
+    protected OverlapCase checkOverlapForFullDay(Application application) {
 
         // check if there are existent ANY applications (full day and half day)
         List<Application> apps = getApplicationsByPeriodAndDayLength(application, DayLength.FULL);
@@ -524,10 +524,10 @@ public class ApplicationServiceImpl implements ApplicationService {
      *
      * @return  int 1 for check is alright: application for leave is valid. 2 or 3 for invalid application for leave.
      */
-    protected int checkOverlapForMorning(Application application) {
+    protected OverlapCase checkOverlapForMorning(Application application) {
 
         // check if there are overlaps with full day periods
-        if (checkOverlapForFullDay(application) == 1) {
+        if (checkOverlapForFullDay(application) == OverlapCase.NO_OVERLAPPING) {
             // if there are no overlaps with full day periods, you have to check if there are overlaps with half day
             // (MORNING) periods
             List<Application> apps = getApplicationsByPeriodAndDayLength(application, DayLength.MORNING);
@@ -547,10 +547,10 @@ public class ApplicationServiceImpl implements ApplicationService {
      *
      * @return  int 1 for check is alright: application for leave is valid. 2 or 3 for invalid application for leave.
      */
-    protected int checkOverlapForNoon(Application application) {
+    protected OverlapCase checkOverlapForNoon(Application application) {
 
         // check if there are overlaps with full day periods
-        if (checkOverlapForFullDay(application) == 1) {
+        if (checkOverlapForFullDay(application) == OverlapCase.NO_OVERLAPPING) {
             // if there are no overlaps with full day periods, you have to check if there are overlaps with half day
             // (NOON) periods
             List<Application> apps = getApplicationsByPeriodAndDayLength(application, DayLength.NOON);
@@ -572,7 +572,7 @@ public class ApplicationServiceImpl implements ApplicationService {
      *          if the new application is part of an existent application's period, but for a part of it you could apply
      *          new vacation
      */
-    private int getCaseOfOverlap(Application application, List<Application> apps) {
+    private OverlapCase getCaseOfOverlap(Application application, List<Application> apps) {
 
         // case (1): no overlap at all
         if (apps.isEmpty()) {
@@ -580,7 +580,7 @@ public class ApplicationServiceImpl implements ApplicationService {
              * period of the new application has no overlap at all with existent applications; i.e. you can calculate
              * the normal way and save the application if there are enough vacation days on person's holidays account.
              */
-            return 1;
+            return OverlapCase.NO_OVERLAPPING;
         } else {
             // case (2) or (3): overlap
 
@@ -597,7 +597,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                      * must be asked if he wants to apply for leave for the not overlapping period of the new
                      * application.
                      */
-                    return 3;
+                    return OverlapCase.FULLY_OVERLAPPING.PARTLY_OVERLAPPING;
                 }
             }
             // no gaps mean that period of application is element of other periods of applications
@@ -608,7 +608,7 @@ public class ApplicationServiceImpl implements ApplicationService {
              * the new application is element of an existent application's period; i.e. the new application is not
              * necessary because there is already an existent application for this period.
              */
-            return 2;
+            return OverlapCase.FULLY_OVERLAPPING;
         }
     }
 

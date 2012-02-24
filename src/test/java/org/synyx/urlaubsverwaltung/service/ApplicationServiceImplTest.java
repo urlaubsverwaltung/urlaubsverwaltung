@@ -473,10 +473,10 @@ public class ApplicationServiceImplTest {
         Mockito.when(applicationDAO.getApplicationsByPeriodForEveryDayLength(aNew.getStartDate().toDate(),
                 aNew.getEndDate().toDate(), aNew.getPerson())).thenReturn(new ArrayList<Application>());
 
-        int returnValue = instance.checkOverlap(aNew);
+        OverlapCase returnValue = instance.checkOverlap(aNew);
 
         assertNotNull(returnValue);
-        assertEquals(1, returnValue);
+        assertEquals(OverlapCase.NO_OVERLAPPING, returnValue);
 
         // case (1) no overlap at all, abuting
         // a1: 16. - 18. Jan.
@@ -500,7 +500,7 @@ public class ApplicationServiceImplTest {
         returnValue = instance.checkOverlap(aNew);
 
         assertNotNull(returnValue);
-        assertEquals(1, returnValue);
+        assertEquals(OverlapCase.NO_OVERLAPPING, returnValue);
 
         // case (2) period of aNew is element of the period of a1
         // a1: 16. - 20. Jan.
@@ -526,7 +526,7 @@ public class ApplicationServiceImplTest {
         returnValue = instance.checkOverlap(aNew);
 
         assertNotNull(returnValue);
-        assertEquals(2, returnValue);
+        assertEquals(OverlapCase.FULLY_OVERLAPPING, returnValue);
 
         // case (3) period of aNew is overlapping end of period of a1
         // a1: 16. - 19. Jan.
@@ -552,7 +552,7 @@ public class ApplicationServiceImplTest {
         returnValue = instance.checkOverlap(aNew);
 
         assertNotNull(returnValue);
-        assertEquals(3, returnValue);
+        assertEquals(OverlapCase.PARTLY_OVERLAPPING, returnValue);
 
         // case (3) period of aNew is overlapping start of period of a1
         // aNew: 16. - 19. Jan.
@@ -578,7 +578,7 @@ public class ApplicationServiceImplTest {
         returnValue = instance.checkOverlap(aNew);
 
         assertNotNull(returnValue);
-        assertEquals(3, returnValue);
+        assertEquals(OverlapCase.PARTLY_OVERLAPPING, returnValue);
 
         // case (3) period of aNew is overlapping two different periods (a1 and a2)
         // aNew: 17. - 26. Jan.
@@ -611,7 +611,7 @@ public class ApplicationServiceImplTest {
         returnValue = instance.checkOverlap(aNew);
 
         assertNotNull(returnValue);
-        assertEquals(3, returnValue);
+        assertEquals(OverlapCase.PARTLY_OVERLAPPING, returnValue);
 
         // periods a1 and a2 abut case (1), aNew is element of both and has no gap case (2)
         // aNew: 17. - 23. Jan.
@@ -644,7 +644,7 @@ public class ApplicationServiceImplTest {
         returnValue = instance.checkOverlap(aNew);
 
         assertNotNull(returnValue);
-        assertEquals(2, returnValue);
+        assertEquals(OverlapCase.FULLY_OVERLAPPING, returnValue);
 
         // there is an existent application for a half day
         // new application for full day overlapping this day
@@ -668,7 +668,7 @@ public class ApplicationServiceImplTest {
         returnValue = instance.checkOverlap(aNew);
 
         assertNotNull(returnValue);
-        assertEquals(3, returnValue);
+        assertEquals(OverlapCase.PARTLY_OVERLAPPING, returnValue);
 
         // there is an existent application for a half day
         // new application for full day on this day
@@ -692,7 +692,7 @@ public class ApplicationServiceImplTest {
         returnValue = instance.checkOverlap(aNew);
 
         assertNotNull(returnValue);
-        assertEquals(2, returnValue);
+        assertEquals(OverlapCase.FULLY_OVERLAPPING, returnValue);
     }
 
 
@@ -700,7 +700,7 @@ public class ApplicationServiceImplTest {
     @Test
     public void testCheckOverlapForMorning() {
 
-        int returnValue;
+        OverlapCase returnValue;
         List<Application> list = new ArrayList<Application>();
 
         // FIRST CHECK: OVERLAP WITH FULL DAY PERIOD
@@ -727,7 +727,7 @@ public class ApplicationServiceImplTest {
 
         returnValue = instance.checkOverlapForMorning(aNew);
 
-        assertEquals(2, returnValue);
+        assertEquals(OverlapCase.FULLY_OVERLAPPING, returnValue);
 
         // new application at start of existent application
         aNew.setStartDate(new DateMidnight(2012, 1, 23));
@@ -738,7 +738,7 @@ public class ApplicationServiceImplTest {
 
         returnValue = instance.checkOverlapForMorning(aNew);
 
-        assertEquals(2, returnValue);
+        assertEquals(OverlapCase.FULLY_OVERLAPPING, returnValue);
 
         // new application at end of existent application
 
@@ -750,7 +750,7 @@ public class ApplicationServiceImplTest {
 
         returnValue = instance.checkOverlapForMorning(aNew);
 
-        assertEquals(2, returnValue);
+        assertEquals(OverlapCase.FULLY_OVERLAPPING, returnValue);
 
         // new application has no overlap with full day period
         // i.e. list of existent applications for full day is empty (and for half days too)
@@ -766,7 +766,7 @@ public class ApplicationServiceImplTest {
 
         returnValue = instance.checkOverlapForMorning(aNew);
 
-        assertEquals(1, returnValue);
+        assertEquals(OverlapCase.NO_OVERLAPPING, returnValue);
 
         // SECOND CHECK: OVERLAP WITH HALF DAY
 
@@ -792,7 +792,7 @@ public class ApplicationServiceImplTest {
 
         returnValue = instance.checkOverlapForMorning(aNew);
 
-        assertEquals(2, returnValue);
+        assertEquals(OverlapCase.FULLY_OVERLAPPING, returnValue);
 
         // existent application for noon i.e. there are no existent applications for full day, but for noon (but not for
         // morning!) --> lists with existent applications are empty because there is no overlap! expected value == 1
@@ -806,7 +806,7 @@ public class ApplicationServiceImplTest {
 
         returnValue = instance.checkOverlapForMorning(aNew);
 
-        assertEquals(1, returnValue);
+        assertEquals(OverlapCase.NO_OVERLAPPING, returnValue);
     }
 
 
@@ -814,7 +814,7 @@ public class ApplicationServiceImplTest {
     @Test
     public void testCheckOverlapForNoon() {
 
-        int returnValue;
+        OverlapCase returnValue;
         List<Application> list = new ArrayList<Application>();
 
         // FIRST CHECK: OVERLAP WITH FULL DAY PERIOD
@@ -841,7 +841,7 @@ public class ApplicationServiceImplTest {
 
         returnValue = instance.checkOverlapForNoon(aNew);
 
-        assertEquals(2, returnValue);
+        assertEquals(OverlapCase.FULLY_OVERLAPPING, returnValue);
 
         // new application at start of existent application
         aNew.setStartDate(new DateMidnight(2012, 1, 23));
@@ -852,7 +852,7 @@ public class ApplicationServiceImplTest {
 
         returnValue = instance.checkOverlapForNoon(aNew);
 
-        assertEquals(2, returnValue);
+        assertEquals(OverlapCase.FULLY_OVERLAPPING, returnValue);
 
         // new application at end of existent application
 
@@ -864,7 +864,7 @@ public class ApplicationServiceImplTest {
 
         returnValue = instance.checkOverlapForNoon(aNew);
 
-        assertEquals(2, returnValue);
+        assertEquals(OverlapCase.FULLY_OVERLAPPING, returnValue);
 
         // new application has no overlap with full day period
         // i.e. list of existent applications for full day is empty (and for half days empty too)
@@ -879,7 +879,7 @@ public class ApplicationServiceImplTest {
 
         returnValue = instance.checkOverlapForNoon(aNew);
 
-        assertEquals(1, returnValue);
+        assertEquals(OverlapCase.NO_OVERLAPPING, returnValue);
 
         // SECOND CHECK: OVERLAP WITH HALF DAY
 
@@ -905,7 +905,7 @@ public class ApplicationServiceImplTest {
 
         returnValue = instance.checkOverlapForNoon(aNew);
 
-        assertEquals(2, returnValue);
+        assertEquals(OverlapCase.FULLY_OVERLAPPING, returnValue);
 
         // existent application for noon i.e. there are no existent applications for full day, but for noon --> lists
         // with existent applications are empty because there is no overlap!
@@ -919,7 +919,7 @@ public class ApplicationServiceImplTest {
 
         returnValue = instance.checkOverlapForNoon(aNew);
 
-        assertEquals(1, returnValue);
+        assertEquals(OverlapCase.NO_OVERLAPPING, returnValue);
     }
 
 

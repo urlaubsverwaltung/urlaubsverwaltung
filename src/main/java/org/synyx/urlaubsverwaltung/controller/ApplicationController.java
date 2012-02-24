@@ -38,6 +38,7 @@ import org.synyx.urlaubsverwaltung.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.service.CommentService;
 import org.synyx.urlaubsverwaltung.service.HolidaysAccountService;
 import org.synyx.urlaubsverwaltung.service.MailService;
+import org.synyx.urlaubsverwaltung.service.OverlapCase;
 import org.synyx.urlaubsverwaltung.service.PersonService;
 import org.synyx.urlaubsverwaltung.util.DateMidnightPropertyEditor;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
@@ -477,12 +478,12 @@ public class ApplicationController {
         // case 2: new application is fully part of existent applications, useless to apply it
         // case 3: gaps in between - feature in later version, now only error message
 
-        int overlap = applicationService.checkOverlap(application);
+        OverlapCase overlap = applicationService.checkOverlap(application);
 
-        if (overlap == 2 || overlap == 3) {
+        if (overlap == OverlapCase.FULLY_OVERLAPPING || overlap == OverlapCase.PARTLY_OVERLAPPING) {
             // in this version, these two cases are handled equal
             errors.reject("check.overlap");
-        } else if (overlap == 1) {
+        } else if (overlap == OverlapCase.NO_OVERLAPPING) {
             // if there is no overlap go to next check but only if vacation type is holiday, else you don't have to
             // check if there are enough days on user's holidays account
             boolean enoughDays = false;
