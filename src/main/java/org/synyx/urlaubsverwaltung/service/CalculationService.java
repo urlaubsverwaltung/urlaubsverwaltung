@@ -346,18 +346,13 @@ public class CalculationService {
 
         Application app = new Application();
 
-        app.setAddress(originalApplication.getAddress());
-        app.setApplicationDate(originalApplication.getApplicationDate());
         app.setHowLong(originalApplication.getHowLong());
         app.setPerson(originalApplication.getPerson());
-        app.setPhone(originalApplication.getPhone());
-        app.setReason(originalApplication.getReason());
-        app.setRep(originalApplication.getRep());
-        app.setSignaturePerson(originalApplication.getSignaturePerson());
         app.setStatus(originalApplication.getStatus());
         app.setVacationType(originalApplication.getVacationType());
 
-        app.setOnlyForCalculation(true);
+        app.setSupplementaryApplication(true);
+        app.setIdOfApplication(originalApplication.getId());
 
         if (isForEndOfMonth) {
             // use the days from original application's start date to last day in month

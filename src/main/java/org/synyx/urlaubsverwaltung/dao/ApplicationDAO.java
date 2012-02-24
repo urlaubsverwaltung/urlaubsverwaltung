@@ -20,40 +20,55 @@ public interface ApplicationDAO extends JpaRepository<Application, Integer> {
 
     // get List<Application> by certain state (e.g. waiting) and for a certain year
     @Query(
-        "select x from Application x where x.status = ?1 and x.onlyForCalculation = false and ((x.startDate between ?2 and ?3) or (x.endDate between ?2 and ?3)) order by x.startDate"
+        "select x from Application x where x.status = ?1 and x.supplementaryApplication = false and ((x.startDate between ?2 and ?3) or (x.endDate between ?2 and ?3)) order by x.startDate"
     )
     List<Application> getApplicationsByStateAndYear(ApplicationStatus state, Date firstDayOfYear, Date lastDayOfYear);
 
 
     // get list of cancelled applications that have been allowed before cancelling
     @Query(
-        "select x from Application x where x.status = ?1 and x.formerlyAllowed = true and x.onlyForCalculation = false and ((x.startDate between ?2 and ?3) or (x.endDate between ?2 and ?3)) order by x.startDate"
+        "select x from Application x where x.status = ?1 and x.formerlyAllowed = true and x.supplementaryApplication = false and ((x.startDate between ?2 and ?3) or (x.endDate between ?2 and ?3)) order by x.startDate"
     )
     List<Application> getCancelledApplicationsByYear(ApplicationStatus state, Date firstDayOfYear, Date lastDayOfYear);
 
 
     // get List<Application> by certain person
-    @Query("select x from Application x where x.person = ?1 and x.onlyForCalculation = false order by x.startDate")
+    @Query(
+        "select x from Application x where x.person = ?1 and x.supplementaryApplication = false order by x.startDate"
+    )
     List<Application> getApplicationsByPerson(Person person);
 
 
     // get List<Application> for a certain time (between startDate and endDate)
     @Query(
-        "select x from Application x where (x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) or (x.startDate < ?1 and x.endDate > ?2) and x.onlyForCalculation = false order by x.startDate"
+        "select x from Application x where (x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) or (x.startDate < ?1 and x.endDate > ?2) and x.supplementaryApplication = false order by x.startDate"
     )
     List<Application> getApplicationsForACertainTime(Date startDate, Date endDate);
 
 
+    // get List<Application> (only the supplemental applications) by certain person for a certain year
+    @Query(
+        "select x from Application x where x.person = ?1 and x.supplementaryApplication = true and ((x.startDate between ?2 and ?3) or (x.endDate between ?2 and ?3)) order by x.startDate"
+    )
+    List<Application> getSupplementalApplicationsByPersonAndYear(Person person, Date firstDayOfYear,
+        Date lastDayOfYear);
+
+
+    // get List<Application> the supplemental applications for the given application resp. its id
+    @Query("select x from Application x where x.idOfApplication = ?1 order by x.startDate")
+    List<Application> getSupplementalApplicationsForApplication(Integer applicationId);
+
+
     // get List<Application> by certain person for a certain year
     @Query(
-        "select x from Application x where x.person = ?1 and x.onlyForCalculation = false and ((x.startDate between ?2 and ?3) or (x.endDate between ?2 and ?3)) order by x.startDate"
+        "select x from Application x where x.person = ?1 and x.supplementaryApplication = false and ((x.startDate between ?2 and ?3) or (x.endDate between ?2 and ?3)) order by x.startDate"
     )
     List<Application> getApplicationsByPersonAndYear(Person person, Date firstDayOfYear, Date lastDayOfYear);
 
 
     // get List<Application> by certain person for a certain year, get only the not cancelled applications
     @Query(
-        "select x from Application x where x.status != ?1 and x.person = ?2 and x.onlyForCalculation = false and ((x.startDate between ?3 and ?4) or (x.endDate between ?3 and ?4)) order by x.startDate"
+        "select x from Application x where x.status != ?1 and x.person = ?2 and x.supplementaryApplication = false and ((x.startDate between ?3 and ?4) or (x.endDate between ?3 and ?4)) order by x.startDate"
     )
     List<Application> getNotCancelledApplicationsByPersonAndYear(ApplicationStatus state, Person person,
         Date firstDayOfYear, Date lastDayOfYear);
@@ -63,7 +78,7 @@ public interface ApplicationDAO extends JpaRepository<Application, Integer> {
     // length, get only the not cancelled applications!
     @Query(
         "select x from Application x where ((x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) or (x.startDate < ?1 and x.endDate > ?2)) "
-        + "and x.person = ?3 and x.status != 3 and x.howLong = ?4 and x.onlyForCalculation = false order by x.startDate"
+        + "and x.person = ?3 and x.status != 3 and x.howLong = ?4 and x.supplementaryApplication = false order by x.startDate"
     )
     List<Application> getApplicationsByPeriodAndDayLength(Date startDate, Date endDate, Person person,
         DayLength length);
@@ -73,7 +88,7 @@ public interface ApplicationDAO extends JpaRepository<Application, Integer> {
     // length, get only the not cancelled applications!
     @Query(
         "select x from Application x where ((x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) or (x.startDate < ?1 and x.endDate > ?2)) "
-        + "and x.person = ?3 and x.status != 3 and x.onlyForCalculation = false order by x.startDate"
+        + "and x.person = ?3 and x.status != 3 and x.supplementaryApplication = false order by x.startDate"
     )
     List<Application> getApplicationsByPeriodForEveryDayLength(Date startDate, Date endDate, Person person);
 }

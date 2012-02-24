@@ -97,6 +97,47 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 
     /**
+     * @see  ApplicationService#getUsedVacationDaysOfPersonForYear(org.synyx.urlaubsverwaltung.domain.Person, int)
+     */
+    @Override
+    public BigDecimal getUsedVacationDaysOfPersonForYear(Person person, int year) {
+
+        BigDecimal numberOfVacationDays = BigDecimal.ZERO;
+
+        DateMidnight firstDayOfYear = new DateMidnight(year, DateTimeConstants.JANUARY, 1);
+        DateMidnight lastDayOfYear = new DateMidnight(year, DateTimeConstants.DECEMBER, 31);
+
+        // get all applications of person for the given year
+        List<Application> applications = applicationDAO.getApplicationsByPersonAndYear(person, firstDayOfYear.toDate(),
+                lastDayOfYear.toDate());
+
+        // get the supplemental applications of person for the given year
+        List<Application> supplementalApplications = applicationDAO.getSupplementalApplicationsByPersonAndYear(person,
+                firstDayOfYear.toDate(), lastDayOfYear.toDate());
+
+        // put the supplemental applications that have status waiting or allowed in the list of applications
+        for (Application a : supplementalApplications) {
+            if (a.getStatus() == ApplicationStatus.WAITING || a.getStatus() == ApplicationStatus.ALLOWED) {
+                applications.add(a);
+            }
+        }
+
+        // calculate number of vacation days
+        for (Application a : applications) {
+            // use only the waiting or allowed applications for calculation
+            if (a.getStatus() == ApplicationStatus.WAITING || a.getStatus() == ApplicationStatus.ALLOWED) {
+                // use only the applications that do not span December and January
+                if (a.getStartDate().getYear() == a.getEndDate().getYear()) {
+                    numberOfVacationDays = numberOfVacationDays.add(a.getDays());
+                }
+            }
+        }
+
+        return numberOfVacationDays;
+    }
+
+
+    /**
      * @see  ApplicationService#getApplicationsForACertainTime(org.joda.time.DateMidnight, org.joda.time.DateMidnight)
      */
     @Override
@@ -203,11 +244,15 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         application.setStatus(ApplicationStatus.REJECTED);
 
+        // are there any supplemental applications?
+        // change their status too
+        setStatusOfSupplementalApplications(application, ApplicationStatus.REJECTED);
+
         application.setBoss(boss);
 
         rollback(application);
 
-        applicationDAO.save(application);
+        simpleSave(application);
     }
 
 
@@ -221,8 +266,36 @@ public class ApplicationServiceImpl implements ApplicationService {
             rollback(application);
         }
 
+        // are there any supplemental applications?
+        // change their status too
+        setStatusOfSupplementalApplications(application, ApplicationStatus.CANCELLED);
+
         application.setStatus(ApplicationStatus.CANCELLED);
-        applicationDAO.save(application);
+        simpleSave(application);
+    }
+
+
+    /**
+     * If an application that spans December and January is cancelled or rejected, the supplemental applications of this
+     * application have to get the new status too.
+     *
+     * @param  application
+     * @param  state
+     */
+    private void setStatusOfSupplementalApplications(Application application, ApplicationStatus state) {
+
+        // are there any supplemental applications?
+        if (application.getStartDate().getYear() != application.getEndDate().getYear()) {
+            // if an application spans December and January, it has to own two supplementary applications
+
+            List<Application> sApps = applicationDAO.getSupplementalApplicationsForApplication(application.getId());
+
+            // edit status of supplemental applications too
+            for (Application sa : sApps) {
+                sa.setStatus(state);
+                simpleSave(sa);
+            }
+        }
     }
 
 

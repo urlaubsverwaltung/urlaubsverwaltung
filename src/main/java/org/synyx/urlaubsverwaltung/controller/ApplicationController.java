@@ -69,6 +69,7 @@ public class ApplicationController {
     private static final String APPLICATIONS = "applications";
     private static final String ACCOUNT = "account";
     private static final String ACCOUNTS = "accounts";
+    private static final String USED_DAYS = "usedDays";
     private static final String ENTITLEMENT = "entitlement";
     private static final String PERSON = "person";
     private static final String PERSONS = "persons"; // persons for selecting rep
@@ -883,6 +884,11 @@ public class ApplicationController {
         setLoggedUser(model);
         model.addAttribute(APPLICATION, application);
         model.addAttribute(STATE_NUMBER, stateNumber);
+
+        // get the number of vacation days that person has used in the given year
+        BigDecimal numberOfUsedDays = applicationService.getUsedVacationDaysOfPersonForYear(application.getPerson(),
+                application.getStartDate().getYear());
+        model.addAttribute(USED_DAYS, numberOfUsedDays);
 
         int year = application.getEndDate().getYear();
 

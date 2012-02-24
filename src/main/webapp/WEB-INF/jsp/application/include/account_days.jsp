@@ -63,16 +63,15 @@
         <td>
             <c:choose>
                 <c:when test="${account != null && entitlement != null}">
-                    <c:set var="used" value="${(entitlement.vacationDays - account.vacationDays) + (entitlement.remainingVacationDays - account.remainingVacationDays)}" />
                     <c:choose>
-                        <c:when test="${used <= 1.00 && used > 0.50}">
+                        <c:when test="${usedDays <= 1.00 && usedDays > 0.50}">
                             <c:set var="numberOfUsedDays" value="day" />
                         </c:when>
                         <c:otherwise>
                             <c:set var="numberOfUsedDays" value="days" />
                         </c:otherwise>
                     </c:choose>
-                    <spring:message code="${numberOfUsedDays}" arguments="${used}" />
+                    <spring:message code="${numberOfUsedDays}" arguments="${usedDays}" />
                 </c:when>
                 <c:otherwise>
                     <spring:message code='not.specified' />

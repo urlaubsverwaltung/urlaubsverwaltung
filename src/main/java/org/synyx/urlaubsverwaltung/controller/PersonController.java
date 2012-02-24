@@ -67,6 +67,7 @@ public class PersonController {
     private static final String ACCOUNT = "account";
     private static final String ACCOUNTS = "accounts";
     private static final String APPLICATIONS = "applications";
+    private static final String USED_DAYS = "usedDays";
     private static final String ENTITLEMENT = "entitlement";
     private static final String ENTITLEMENTS = "entitlements";
     private static final String APRIL = "april";
@@ -397,6 +398,7 @@ public class PersonController {
      */
     private void prepareOverview(Person person, int year, Model model) {
 
+        // get the person's applications for the given year
         List<Application> applications = applicationService.getApplicationsByPersonAndYear(person, year);
 
         if (applications.isEmpty()) {
@@ -405,6 +407,11 @@ public class PersonController {
             model.addAttribute(APPLICATIONS, applications);
         }
 
+        // get the number of vacation days that person has used in the given year
+        BigDecimal numberOfUsedDays = applicationService.getUsedVacationDaysOfPersonForYear(person, year);
+        model.addAttribute(USED_DAYS, numberOfUsedDays);
+
+        // get person's holidays account and entitlement for the given year
         HolidaysAccount account = accountService.getHolidaysAccount(year, person);
         HolidayEntitlement entitlement = accountService.getHolidayEntitlement(year, person);
         DateMidnight date = DateMidnight.now(GregorianChronology.getInstance());

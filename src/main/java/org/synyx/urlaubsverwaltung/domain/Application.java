@@ -76,8 +76,12 @@ public class Application extends AbstractPersistable<Integer> {
     // for applications that spans December and January there are two extra applications: one for the period in December
     // and one for the period in January these supplemental applications are only used for calculations (e.g. to add
     // sick days) true if the application is only a supplemental application for calculation false if the application is
-    // a default application
-    private boolean onlyForCalculation;
+    // a regular application
+    private boolean supplementaryApplication;
+
+    // if an application is only a supplementary application, this field contains the id of the regular application
+    // that amongs to this supplementary application
+    private Integer idOfApplication;
 
     // Signature of applicant
     @Column(columnDefinition = "longblob")
@@ -303,14 +307,26 @@ public class Application extends AbstractPersistable<Integer> {
     }
 
 
-    public boolean isOnlyForCalculation() {
+    public boolean isSupplementaryApplication() {
 
-        return onlyForCalculation;
+        return supplementaryApplication;
     }
 
 
-    public void setOnlyForCalculation(boolean onlyForCalculation) {
+    public void setSupplementaryApplication(boolean supplementaryApplication) {
 
-        this.onlyForCalculation = onlyForCalculation;
+        this.supplementaryApplication = supplementaryApplication;
+    }
+
+
+    public Integer getIdOfApplication() {
+
+        return idOfApplication;
+    }
+
+
+    public void setIdOfApplication(Integer idOfApplication) {
+
+        this.idOfApplication = idOfApplication;
     }
 }
