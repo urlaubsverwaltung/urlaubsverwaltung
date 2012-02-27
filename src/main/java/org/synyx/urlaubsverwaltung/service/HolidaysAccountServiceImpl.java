@@ -4,6 +4,8 @@
  */
 package org.synyx.urlaubsverwaltung.service;
 
+import org.joda.time.DateMidnight;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -91,8 +93,14 @@ public class HolidaysAccountServiceImpl implements HolidaysAccountService {
             HolidayEntitlement entitlement = getHolidayEntitlement(year, person);
 
             if (entitlement == null) {
-                entitlement = newHolidayEntitlement(person, year,
-                        getHolidayEntitlement(year - 1, person).getVacationDays(), BigDecimal.ZERO);
+                if (year < DateMidnight.now().getYear()) {
+                    entitlement = newHolidayEntitlement(person, year,
+                            getHolidayEntitlement(DateMidnight.now().getYear(), person).getVacationDays(),
+                            BigDecimal.ZERO);
+                } else {
+                    entitlement = newHolidayEntitlement(person, year,
+                            getHolidayEntitlement(year - 1, person).getVacationDays(), BigDecimal.ZERO);
+                }
             }
 
             saveHolidayEntitlement(entitlement);

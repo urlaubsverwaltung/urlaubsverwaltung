@@ -62,7 +62,7 @@ public interface ApplicationDAO extends JpaRepository<Application, Integer> {
 
     // get List<Application> by certain person for a certain year, get only the applications before 1st April
     @Query(
-        "select x from Application x where x.person = ?1 and x.supplementaryApplication = false and ((x.startDate between ?3 and ?4) or (x.endDate between ?3 and ?4)) order by x.startDate"
+        "select x from Application x where x.person = ?1 and x.supplementaryApplication = false and ((x.startDate between ?2 and ?3) or (x.endDate between ?2 and ?3)) order by x.startDate"
     )
     List<Application> getApplicationsBeforeAprilByPersonAndYear(Person person, Date firstJanuary, Date lastDayOfMarch);
 

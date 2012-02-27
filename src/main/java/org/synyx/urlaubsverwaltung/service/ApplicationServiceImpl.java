@@ -19,6 +19,7 @@ import org.synyx.urlaubsverwaltung.domain.HolidaysAccount;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.VacationType;
 import org.synyx.urlaubsverwaltung.util.CalcUtil;
+import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.math.BigDecimal;
 
@@ -391,15 +392,147 @@ public class ApplicationServiceImpl implements ApplicationService {
      *
      * @param  application
      */
-    private void rollback(Application application) {
+    protected void rollback(Application application) {
 
-        List<HolidaysAccount> accounts = calculationService.addVacationDays(application);
+        // for adding vacation days you have to distinguish between following cases
+        // 1. period is before April - is equivalent to - account's remaining vacation days don't expire on 1st April
+        // 2. period is after April
+        // 3. period spans March and April
+        // 4. period is in future (current year plus 1), i.e. after 1st January of the new year
+        // 5. period spans December and January AND cancelling date is before 1st January
+        // 6. period spans December and January AND cancelling date is after 1st January
+
+        Person person = application.getPerson();
+
+        BigDecimal days;
+
+        List<HolidaysAccount> accounts = new ArrayList<HolidaysAccount>();
+
+        HolidaysAccount account = accountService.getAccountOrCreateOne(application.getStartDate().getYear(), person);
+
+        int startMonth = application.getStartDate().getMonthOfYear();
+        int endMonth = application.getEndDate().getMonthOfYear();
+
+        // the order of following methods is reallly, reeeeeeally(!) important if you change it, you risk that not the
+        // right method is used e.g. an application that spans December and January shall be rollbacked, this means that
+        // both of the first following conditions would be true, but only the first contains the right method for such a
+        // case
+
+        if (DateUtil.spansDecemberAndJanuary(startMonth, endMonth)) {
+            BigDecimal usedDaysCurrentYear = getUsedVacationDaysOfPersonForYear(person,
+                    application.getStartDate().getYear());
+            BigDecimal usedDaysNextYear = getUsedVacationDaysOfPersonForYear(person,
+                    application.getEndDate().getYear());
+            accounts = calculationService.addDaysOfApplicationSpanningDecemberAndJanuary(application, account,
+                    usedDaysCurrentYear, usedDaysNextYear);
+        }
+        // period is in future (current year plus 1), i.e. after 1st January of the new year
+        else if (calculationService.getCurrentYear() != application.getStartDate().getYear()) {
+            days = application.getDays();
+
+            HolidaysAccount accountNextYear = accountService.getAccountOrCreateOne(application.getEndDate().getYear(),
+                    person);
+            accountNextYear.setVacationDays(accountNextYear.getVacationDays().add(days));
+            accounts.add(accountNextYear);
+        }
+        // period is before April - is equivalent to - account's remaining vacation days don't expire on 1st April
+        else if (DateUtil.isBeforeApril(startMonth, endMonth) || (account.isRemainingVacationDaysExpire() == false)) {
+            BigDecimal usedDaysBeforeApril = getUsedVacationDaysBeforeAprilOfPerson(person, account.getYear());
+
+            days = application.getDays();
+            account = calculationService.addDaysBeforeApril(account, days, usedDaysBeforeApril);
+            accounts.add(account);
+        } // period is after April
+        else if (DateUtil.isAfterApril(startMonth, endMonth)) {
+            // if the vacation is after April, only vacation days are filled (not the remaining vacation days)
+            days = application.getDays();
+            account = calculationService.addDaysAfterApril(account, days);
+            accounts.add(account);
+        } // period spans March and April
+        else if (DateUtil.spansMarchAndApril(startMonth, endMonth)) {
+            // if the vacations spans March and April, the number of days in March are added to holidays
+            // account's remaining vacation days (and if this is not enough: to vacation days too)
+            // and the number of days in April are added only to vacation days
+            BigDecimal usedDaysBeforeApril = getUsedVacationDaysBeforeAprilOfPerson(person, account.getYear());
+            account = calculationService.addDaysOfApplicationSpanningMarchAndApril(application, account,
+                    usedDaysBeforeApril);
+            accounts.add(account);
+        }
 
         accountService.saveHolidaysAccount(accounts.get(0));
 
         if (accounts.size() > 1) {
             accountService.saveHolidaysAccount(accounts.get(1));
         }
+    }
+
+
+    /**
+     * @see  ApplicationService#getUsedVacationDaysOfPersonForYear(org.synyx.urlaubsverwaltung.domain.Person, int)
+     */
+    @Override
+    public BigDecimal getUsedVacationDaysOfPersonForYear(Person person, int year) {
+
+        BigDecimal numberOfVacationDays = BigDecimal.ZERO;
+
+        // get all non cancelled applications of person for the given year
+        List<Application> applications = getApplicationsByPersonAndYear(person, year);
+
+        // get the supplemental applications of person for the given year
+        List<Application> supplementalApplications = getSupplementalApplicationsByPersonAndYear(person, year);
+
+        // put the supplemental applications that have status waiting or allowed in the list of applications
+        for (Application a : supplementalApplications) {
+            if (a.getStatus() == ApplicationStatus.WAITING || a.getStatus() == ApplicationStatus.ALLOWED) {
+                applications.add(a);
+            }
+        }
+
+        // calculate number of vacation days
+        for (Application a : applications) {
+            // use only the waiting or allowed applications for calculation
+            if (a.getStatus() == ApplicationStatus.WAITING || a.getStatus() == ApplicationStatus.ALLOWED) {
+                // use only the applications that do not span December and January
+                if (a.getStartDate().getYear() == a.getEndDate().getYear()) {
+                    numberOfVacationDays = numberOfVacationDays.add(a.getDays());
+                }
+            }
+        }
+
+        return numberOfVacationDays;
+    }
+
+
+    /**
+     * @see  ApplicationService#getUsedVacationDaysBeforeAprilOfPerson(org.synyx.urlaubsverwaltung.domain.Person, int)
+     */
+    @Override
+    public BigDecimal getUsedVacationDaysBeforeAprilOfPerson(Person person, int year) {
+
+        BigDecimal numberOfVacationDays = BigDecimal.ZERO;
+
+        // get all applications of person for the given year before April
+        List<Application> applications = getApplicationsBeforeAprilByPersonAndYear(person, year);
+
+        // calculate number of vacation days
+        for (Application a : applications) {
+            // use only the waiting or allowed applications for calculation
+            if (a.getStatus() == ApplicationStatus.WAITING || a.getStatus() == ApplicationStatus.ALLOWED) {
+                // if application doesn't span March and April, just add application's days to number of used vacation
+                // days
+                if (a.getEndDate().isBefore(new DateMidnight(year, DateTimeConstants.APRIL, 1))) {
+                    numberOfVacationDays = numberOfVacationDays.add(a.getDays());
+                } else {
+                    // if application spans March and April, add number of days from application start date to 31st
+                    // March
+                    BigDecimal days = calendarService.getVacationDays(a, a.getStartDate(),
+                            new DateMidnight(year, DateTimeConstants.MARCH, 31));
+                    numberOfVacationDays = numberOfVacationDays.add(days);
+                }
+            }
+        }
+
+        return numberOfVacationDays;
     }
 
 

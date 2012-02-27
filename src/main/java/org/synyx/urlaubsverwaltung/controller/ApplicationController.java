@@ -40,7 +40,6 @@ import org.synyx.urlaubsverwaltung.service.HolidaysAccountService;
 import org.synyx.urlaubsverwaltung.service.MailService;
 import org.synyx.urlaubsverwaltung.service.OverlapCase;
 import org.synyx.urlaubsverwaltung.service.PersonService;
-import org.synyx.urlaubsverwaltung.service.VacationDaysService;
 import org.synyx.urlaubsverwaltung.util.DateMidnightPropertyEditor;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.util.GravatarUtil;
@@ -158,12 +157,10 @@ public class ApplicationController {
     private GravatarUtil gravatarUtil;
     private MailService mailService;
     private OwnCalendarService calendarService;
-    private VacationDaysService daysService;
 
     public ApplicationController(PersonService personService, ApplicationService applicationService,
         HolidaysAccountService accountService, CommentService commentService, ApplicationValidator validator,
-        GravatarUtil gravatarUtil, MailService mailService, OwnCalendarService calendarService,
-        VacationDaysService daysService) {
+        GravatarUtil gravatarUtil, MailService mailService, OwnCalendarService calendarService) {
 
         this.personService = personService;
         this.applicationService = applicationService;
@@ -173,7 +170,6 @@ public class ApplicationController {
         this.gravatarUtil = gravatarUtil;
         this.mailService = mailService;
         this.calendarService = calendarService;
-        this.daysService = daysService;
     }
 
     @InitBinder
@@ -938,7 +934,7 @@ public class ApplicationController {
         model.addAttribute(STATE_NUMBER, stateNumber);
 
         // get the number of vacation days that person has used in the given year
-        BigDecimal numberOfUsedDays = daysService.getUsedVacationDaysOfPersonForYear(application.getPerson(),
+        BigDecimal numberOfUsedDays = applicationService.getUsedVacationDaysOfPersonForYear(application.getPerson(),
                 application.getStartDate().getYear());
         model.addAttribute(USED_DAYS, numberOfUsedDays);
 

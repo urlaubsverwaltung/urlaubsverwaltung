@@ -26,7 +26,6 @@
         <constructor-arg ref="gravatarUtil" />
         <constructor-arg ref="mailService" />
         <constructor-arg ref="ownCalendarService" />
-        <constructor-arg ref="vacationDaysService" />
     </bean>
     
     <bean class="org.synyx.urlaubsverwaltung.controller.PersonController">
@@ -35,7 +34,6 @@
         <constructor-arg ref="accountService" />
         <constructor-arg ref="gravatarUtil" />
         <constructor-arg ref="personValidator" />
-        <constructor-arg ref="vacationDaysService" />
     </bean>  
     
      <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">

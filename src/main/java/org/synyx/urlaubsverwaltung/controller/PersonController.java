@@ -29,7 +29,6 @@ import org.synyx.urlaubsverwaltung.domain.Role;
 import org.synyx.urlaubsverwaltung.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.service.HolidaysAccountService;
 import org.synyx.urlaubsverwaltung.service.PersonService;
-import org.synyx.urlaubsverwaltung.service.VacationDaysService;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.util.GravatarUtil;
 import org.synyx.urlaubsverwaltung.util.NumberUtil;
@@ -102,18 +101,15 @@ public class PersonController {
     private HolidaysAccountService accountService;
     private GravatarUtil gravatarUtil;
     private PersonValidator validator;
-    private VacationDaysService daysService;
 
     public PersonController(PersonService personService, ApplicationService applicationService,
-        HolidaysAccountService accountService, GravatarUtil gravatarUtil, PersonValidator validator,
-        VacationDaysService daysService) {
+        HolidaysAccountService accountService, GravatarUtil gravatarUtil, PersonValidator validator) {
 
         this.personService = personService;
         this.applicationService = applicationService;
         this.accountService = accountService;
         this.gravatarUtil = gravatarUtil;
         this.validator = validator;
-        this.daysService = daysService;
     }
 
     /**
@@ -412,7 +408,7 @@ public class PersonController {
         }
 
         // get the number of vacation days that person has used in the given year
-        BigDecimal numberOfUsedDays = daysService.getUsedVacationDaysOfPersonForYear(person, year);
+        BigDecimal numberOfUsedDays = applicationService.getUsedVacationDaysOfPersonForYear(person, year);
         model.addAttribute(USED_DAYS, numberOfUsedDays);
 
         // get person's holidays account and entitlement for the given year

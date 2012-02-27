@@ -297,226 +297,6 @@ public class CalculationServiceTest {
     }
 
 
-    /** Test of addVacationDays method, of class CalculationService. */
-    @Test
-    public void testAddVacationDays() {
-
-        instance = new CalculationService(calendarService, accountService) {
-
-            @Override
-            protected int getCurrentYear() {
-
-                return CURRENT_YEAR;
-            }
-        };
-
-        entitlement.setVacationDays(BigDecimal.valueOf(24));
-        entitlement.setRemainingVacationDays(BigDecimal.valueOf(5));
-
-        application.setHowLong(DayLength.FULL);
-
-        // application before April, 11 work days
-        application.setStartDate(new DateMidnight(CURRENT_YEAR, DateTimeConstants.MARCH, 1));
-        application.setEndDate(new DateMidnight(CURRENT_YEAR, DateTimeConstants.MARCH, 15));
-        application.setDays(calendarService.getVacationDays(application, application.getStartDate(),
-                application.getEndDate()));
-
-        accountCurrentYear.setRemainingVacationDays(BigDecimal.ZERO);
-        accountCurrentYear.setVacationDays(BigDecimal.valueOf(20.0));
-
-        List<HolidaysAccount> returnAccounts = instance.addVacationDays(application);
-
-        assertNotNull(returnAccounts);
-        assertEquals(1, returnAccounts.size());
-
-        HolidaysAccount returnAccount = returnAccounts.get(0);
-
-        assertNotNull(returnAccount);
-        assertEquals(BigDecimal.valueOf(5), accountCurrentYear.getRemainingVacationDays()); // remaining vacation days
-                                                                                            // are filled up to number
-                                                                                            // of entitlement's
-                                                                                            // remaining vacation days
-        assertEquals(BigDecimal.valueOf(26).setScale(2), accountCurrentYear.getVacationDays()); // 11 - 5 = 6 days are
-                                                                                                // added to account's
-                                                                                                // vacation days
-
-        // application after April, 8 work days
-        application.setStartDate(new DateMidnight(CURRENT_YEAR, DateTimeConstants.MAY, 18));
-        application.setEndDate(new DateMidnight(CURRENT_YEAR, DateTimeConstants.MAY, 28));
-        application.setDays(calendarService.getVacationDays(application, application.getStartDate(),
-                application.getEndDate()));
-
-        accountCurrentYear.setRemainingVacationDays(BigDecimal.ZERO);
-        accountCurrentYear.setVacationDays(BigDecimal.valueOf(15.0));
-        accountCurrentYear.setRemainingVacationDaysExpire(true);
-
-        returnAccounts = instance.addVacationDays(application);
-
-        assertNotNull(returnAccounts);
-        assertEquals(1, returnAccounts.size());
-
-        returnAccount = returnAccounts.get(0);
-
-        assertNotNull(returnAccount);
-        assertEquals(BigDecimal.valueOf(15.0 + 8.0).setScale(2), accountCurrentYear.getVacationDays());
-        assertEquals(BigDecimal.ZERO, accountCurrentYear.getRemainingVacationDays()); // not changed
-
-        // application between March and April, 4 plus 7 work days (11.0)
-        application.setStartDate(new DateMidnight(CURRENT_YEAR, DateTimeConstants.MARCH, 28));
-        application.setEndDate(new DateMidnight(CURRENT_YEAR, DateTimeConstants.APRIL, 11));
-        application.setDays(calendarService.getVacationDays(application, application.getStartDate(),
-                application.getEndDate()));
-
-        accountCurrentYear.setRemainingVacationDays(BigDecimal.ZERO);
-        accountCurrentYear.setVacationDays(BigDecimal.valueOf(17.0));
-
-        returnAccounts = instance.addVacationDays(application);
-
-        assertNotNull(returnAccounts);
-        assertEquals(1, returnAccounts.size());
-
-        returnAccount = returnAccounts.get(0);
-
-        assertNotNull(returnAccount);
-        assertEquals(entitlement.getVacationDays().setScale(2), accountCurrentYear.getVacationDays());
-        assertEquals(BigDecimal.valueOf(4).setScale(2), accountCurrentYear.getRemainingVacationDays());
-
-        // application spans December and January
-
-        HolidayEntitlement ent = new HolidayEntitlement();
-        ent.setRemainingVacationDays(BigDecimal.valueOf(5));
-        ent.setVacationDays(BigDecimal.valueOf(28));
-        ent.setPerson(person);
-        ent.setYear(NEXT_YEAR);
-
-        Mockito.when(accountService.getHolidayEntitlement(NEXT_YEAR, person)).thenReturn(ent);
-
-        accountNextYear.setRemainingVacationDays(BigDecimal.valueOf(2));
-        accountNextYear.setVacationDays(BigDecimal.valueOf(15));
-
-        HolidaysAccount accNew = new HolidaysAccount();
-        accNew.setPerson(person);
-        accNew.setYear(NEXT_YEAR + 1);
-        accNew.setRemainingVacationDays(BigDecimal.ZERO);
-        accNew.setVacationDays(BigDecimal.valueOf(24));
-
-        Mockito.when(accountService.getAccountOrCreateOne(NEXT_YEAR + 1, person)).thenReturn(accNew);
-
-        application.setHowLong(DayLength.FULL);
-
-        // two cases
-        // 1 : cancelling occur before 1st January
-        // 2 : cancelling occur after 1st January
-
-        // 1 : cancelling occur before 1st January
-
-        instance = new CalculationService(calendarService, accountService) {
-
-            @Override
-            protected int getCurrentYear() {
-
-                return NEXT_YEAR;
-            }
-        };
-
-        application.setStartDate(new DateMidnight(NEXT_YEAR, DateTimeConstants.DECEMBER, 25)); // 2.5 days before 1st
-                                                                                               // January
-        application.setEndDate(new DateMidnight(NEXT_YEAR + 1, DateTimeConstants.JANUARY, 8)); // 5 days after 1st
-                                                                                               // January
-
-        // remaining vacation days expire
-        accountNextYear.setRemainingVacationDaysExpire(true);
-
-        List<HolidaysAccount> accs = instance.addVacationDays(application);
-
-        assertTrue(accs.size() == 2);
-        assertEquals(BigDecimal.valueOf(15 + 2.5).setScale(2), accs.get(0).getVacationDays());
-        assertEquals(BigDecimal.valueOf(24 + 5).setScale(2), accs.get(1).getVacationDays());
-
-        // remaining vacation days do not expire
-        accountNextYear.setRemainingVacationDaysExpire(false);
-        accountNextYear.setRemainingVacationDays(BigDecimal.valueOf(2));
-        accountNextYear.setVacationDays(BigDecimal.valueOf(15));
-
-        accNew.setRemainingVacationDays(BigDecimal.ZERO);
-        accNew.setVacationDays(BigDecimal.valueOf(24));
-
-        accs = instance.addVacationDays(application);
-
-        assertTrue(accs.size() == 2);
-        assertEquals(BigDecimal.valueOf(2 + 2.5).setScale(2), accs.get(0).getRemainingVacationDays());
-        assertEquals(BigDecimal.valueOf(15), accs.get(0).getVacationDays());
-        assertEquals(BigDecimal.valueOf(24 + 5).setScale(2), accs.get(1).getVacationDays());
-
-        // 2 : cancelling occur after 1st January
-
-        instance = new CalculationService(calendarService, accountService) {
-
-            @Override
-            protected int getCurrentYear() {
-
-                return NEXT_YEAR;
-            }
-        };
-
-        accountCurrentYear.setVacationDays(BigDecimal.valueOf(3));
-        accountCurrentYear.setRemainingVacationDays(BigDecimal.valueOf(2));
-        accountCurrentYear.setRemainingVacationDaysExpire(true);
-
-        ent.setVacationDays(BigDecimal.valueOf(28));
-        ent.setRemainingVacationDays(BigDecimal.valueOf(3)); // new year's entitlement's remaining vacation days == last
-                                                             // year's account's vacation days
-
-        accountNextYear.setVacationDays(BigDecimal.valueOf(27));
-        accountNextYear.setRemainingVacationDays(BigDecimal.valueOf(0));
-
-        application.setStartDate(new DateMidnight(CURRENT_YEAR, DateTimeConstants.DECEMBER, 28)); // 3 days
-        application.setEndDate(new DateMidnight(NEXT_YEAR, DateTimeConstants.JANUARY, 8)); // 4 days
-
-        accs = instance.addVacationDays(application);
-
-        assertTrue(accs.size() == 2);
-        assertEquals(BigDecimal.valueOf(28), ent.getVacationDays()); // unchanged
-        assertEquals(BigDecimal.valueOf(3 + 3).setScale(2), ent.getRemainingVacationDays()); // old value (3) plus days
-                                                                                             // before January (3)
-        assertEquals(BigDecimal.valueOf(3 + 3).setScale(2), accs.get(0).getVacationDays()); // old value (3) plus days
-                                                                                            // before January (3)
-        assertEquals(BigDecimal.valueOf(2), accs.get(0).getRemainingVacationDays()); // unchanged
-        assertEquals(BigDecimal.valueOf(27), accs.get(1).getVacationDays()); // unchanged because remaining
-                                                                             // vacation days are filled at
-                                                                             // first
-        assertEquals(BigDecimal.valueOf(0 + 4).setScale(2), accs.get(1).getRemainingVacationDays()); // old value (0) plus days after January (4)
-
-        // application is in future (next year)
-
-        instance = new CalculationService(calendarService, accountService) {
-
-            @Override
-            protected int getCurrentYear() {
-
-                return CURRENT_YEAR;
-            }
-        };
-
-        accountNextYear.setRemainingVacationDays(BigDecimal.ZERO); // because it is not yet after 1st January,
-                                                                   // automatically set 0
-        accountNextYear.setVacationDays(BigDecimal.valueOf(21));
-
-        application.setHowLong(DayLength.FULL);
-
-        // 9 days
-        application.setStartDate(new DateMidnight(NEXT_YEAR, DateTimeConstants.JANUARY, 4));
-        application.setEndDate(new DateMidnight(NEXT_YEAR, DateTimeConstants.JANUARY, 17));
-        application.setDays(BigDecimal.valueOf(9));
-
-        accs = instance.addVacationDays(application);
-
-        assertTrue(accs.size() == 1);
-        assertEquals(BigDecimal.valueOf(21 + 9), accs.get(0).getVacationDays()); // old value (21) plus number of days
-                                                                                 // (9)
-    }
-
-
     /** Test of subtractForCheck method, of class CalculationService. */
     @Test
     public void testSubtractForCheck() {
@@ -585,6 +365,8 @@ public class CalculationServiceTest {
     @Test
     public void testAddDaysBeforeApril() {
 
+        // 1 : simulate there aren't any applications before April
+
         entitlement.setRemainingVacationDays(BigDecimal.valueOf(6));
         entitlement.setVacationDays(BigDecimal.valueOf(24));
 
@@ -596,7 +378,7 @@ public class CalculationServiceTest {
 
         BigDecimal days = BigDecimal.valueOf(2);
 
-        instance.addDaysBeforeApril(accountCurrentYear, days);
+        instance.addDaysBeforeApril(accountCurrentYear, days, BigDecimal.ZERO);
 
         assertNotNull(accountCurrentYear);
         assertEquals(BigDecimal.valueOf(20), accountCurrentYear.getVacationDays()); // not changed
@@ -610,7 +392,7 @@ public class CalculationServiceTest {
 
         days = BigDecimal.valueOf(3);
 
-        instance.addDaysBeforeApril(accountCurrentYear, days);
+        instance.addDaysBeforeApril(accountCurrentYear, days, BigDecimal.ZERO);
 
         assertNotNull(accountCurrentYear);
         assertEquals(BigDecimal.valueOf(20), accountCurrentYear.getVacationDays()); // not changed
@@ -628,7 +410,7 @@ public class CalculationServiceTest {
 
         days = BigDecimal.valueOf(8);
 
-        instance.addDaysBeforeApril(accountCurrentYear, days);
+        instance.addDaysBeforeApril(accountCurrentYear, days, BigDecimal.ZERO);
 
         assertNotNull(accountCurrentYear);
         assertEquals(BigDecimal.valueOf(25), accountCurrentYear.getVacationDays()); // added 5 days
@@ -637,6 +419,73 @@ public class CalculationServiceTest {
                                                                                             // is equals number of
                                                                                             // entitlement's remaining
                                                                                             // vacation days
+
+        // 2 : simulate there already are some applications before April
+
+        entitlement.setRemainingVacationDays(BigDecimal.valueOf(5));
+        accountCurrentYear.setRemainingVacationDays(BigDecimal.ZERO);
+        accountCurrentYear.setVacationDays(BigDecimal.valueOf(20));
+
+        days = BigDecimal.valueOf(6);
+
+        instance.addDaysBeforeApril(accountCurrentYear, days, BigDecimal.valueOf(21)); // used days + number of adding
+                                                                                       // days
+
+        assertNotNull(accountCurrentYear);
+        assertEquals(BigDecimal.ZERO, accountCurrentYear.getRemainingVacationDays());
+        assertEquals(BigDecimal.valueOf(26), accountCurrentYear.getVacationDays());
+
+        entitlement.setRemainingVacationDays(BigDecimal.valueOf(5));
+        accountCurrentYear.setRemainingVacationDays(BigDecimal.ZERO);
+        accountCurrentYear.setVacationDays(BigDecimal.valueOf(20));
+
+        days = BigDecimal.valueOf(6);
+
+        instance.addDaysBeforeApril(accountCurrentYear, days, BigDecimal.valueOf(8)); // used days + number of adding
+                                                                                      // days
+
+        assertNotNull(accountCurrentYear);
+        assertEquals(BigDecimal.valueOf(3), accountCurrentYear.getRemainingVacationDays());
+        assertEquals(BigDecimal.valueOf(23), accountCurrentYear.getVacationDays());
+
+        entitlement.setRemainingVacationDays(BigDecimal.valueOf(6));
+        accountCurrentYear.setRemainingVacationDays(BigDecimal.ZERO);
+        accountCurrentYear.setVacationDays(BigDecimal.valueOf(21));
+
+        days = BigDecimal.valueOf(6);
+
+        instance.addDaysBeforeApril(accountCurrentYear, days, BigDecimal.valueOf(9)); // used days + number of adding
+                                                                                      // days
+
+        assertNotNull(accountCurrentYear);
+        assertEquals(BigDecimal.valueOf(3), accountCurrentYear.getRemainingVacationDays());
+        assertEquals(BigDecimal.valueOf(24), accountCurrentYear.getVacationDays());
+
+        entitlement.setRemainingVacationDays(BigDecimal.valueOf(6));
+        accountCurrentYear.setRemainingVacationDays(BigDecimal.ZERO);
+        accountCurrentYear.setVacationDays(BigDecimal.valueOf(22));
+
+        days = BigDecimal.valueOf(3);
+
+        instance.addDaysBeforeApril(accountCurrentYear, days, BigDecimal.valueOf(8)); // used days + number of adding
+                                                                                      // days
+
+        assertNotNull(accountCurrentYear);
+        assertEquals(BigDecimal.valueOf(1), accountCurrentYear.getRemainingVacationDays());
+        assertEquals(BigDecimal.valueOf(24), accountCurrentYear.getVacationDays());
+
+        entitlement.setRemainingVacationDays(BigDecimal.valueOf(6));
+        accountCurrentYear.setRemainingVacationDays(BigDecimal.ZERO);
+        accountCurrentYear.setVacationDays(BigDecimal.valueOf(23));
+
+        days = BigDecimal.valueOf(7);
+
+        instance.addDaysBeforeApril(accountCurrentYear, days, BigDecimal.valueOf(7)); // used days + number of adding
+                                                                                      // days
+
+        assertNotNull(accountCurrentYear);
+        assertEquals(BigDecimal.valueOf(6), accountCurrentYear.getRemainingVacationDays());
+        assertEquals(BigDecimal.valueOf(24), accountCurrentYear.getVacationDays());
     }
 
 
@@ -878,7 +727,7 @@ public class CalculationServiceTest {
         accountNextYear.setRemainingVacationDaysExpire(true);
 
         List<HolidaysAccount> accs = instance.addDaysOfApplicationSpanningDecemberAndJanuary(application,
-                accountNextYear);
+                accountNextYear, BigDecimal.ZERO, BigDecimal.ZERO);
 
         assertTrue(accs.size() == 2);
         assertEquals(BigDecimal.valueOf(15 + 2.5).setScale(2), accs.get(0).getVacationDays());
@@ -892,7 +741,10 @@ public class CalculationServiceTest {
         accNew.setRemainingVacationDays(BigDecimal.ZERO);
         accNew.setVacationDays(BigDecimal.valueOf(24));
 
-        accs = instance.addDaysOfApplicationSpanningDecemberAndJanuary(application, accountNextYear);
+        // simulate there aren't any applications before April
+
+        accs = instance.addDaysOfApplicationSpanningDecemberAndJanuary(application, accountNextYear, BigDecimal.ZERO,
+                BigDecimal.ZERO);
 
         assertTrue(accs.size() == 2);
         assertEquals(BigDecimal.valueOf(2 + 2.5).setScale(2), accs.get(0).getRemainingVacationDays());
@@ -924,7 +776,8 @@ public class CalculationServiceTest {
         application.setStartDate(new DateMidnight(CURRENT_YEAR, DateTimeConstants.DECEMBER, 28)); // 3 days
         application.setEndDate(new DateMidnight(NEXT_YEAR, DateTimeConstants.JANUARY, 8)); // 4 days
 
-        accs = instance.addDaysOfApplicationSpanningDecemberAndJanuary(application, accountCurrentYear);
+        accs = instance.addDaysOfApplicationSpanningDecemberAndJanuary(application, accountCurrentYear, BigDecimal.ZERO,
+                BigDecimal.ZERO);
 
         assertTrue(accs.size() == 2);
         assertEquals(BigDecimal.valueOf(28), ent.getVacationDays()); // unchanged
@@ -933,10 +786,12 @@ public class CalculationServiceTest {
         assertEquals(BigDecimal.valueOf(3 + 3).setScale(2), accs.get(0).getVacationDays()); // old value (3) plus days
                                                                                             // before January (3)
         assertEquals(BigDecimal.valueOf(2), accs.get(0).getRemainingVacationDays()); // unchanged
-        assertEquals(BigDecimal.valueOf(27), accs.get(1).getVacationDays()); // unchanged because remaining
-                                                                             // vacation days are filled at
-                                                                             // first
-        assertEquals(BigDecimal.valueOf(0 + 4).setScale(2), accs.get(1).getRemainingVacationDays()); // old value (0) plus days after January (4)
+
+        // 4 days are added
+        // 3 are added to remaining vacation days
+        // 1 is added to vacation days
+        assertEquals(BigDecimal.valueOf(28).setScale(2), accs.get(1).getVacationDays());
+        assertEquals(BigDecimal.valueOf(6).setScale(2), accs.get(1).getRemainingVacationDays());
     }
 
 
