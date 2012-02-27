@@ -326,26 +326,61 @@ public class MailServiceImplTest {
         person.setLastName("Test");
         person.setFirstName("Heinrich");
 
-        // test for isBoss == true
-        instance.sendCancelledNotification(application, true);
+        // test for cancelledByOffice == false
+        // i.e. office gets a mail
+
+        instance.sendCancelledNotification(application, false);
 
         // was email sent?
-        List<Message> inboxChef = Mailbox.get(mailProperties.getProperty("email.boss"));
-        assertTrue(inboxChef.size() > 0);
+        List<Message> inboxOffice = Mailbox.get(mailProperties.getProperty("email.office"));
+        assertTrue(inboxOffice.size() > 0);
 
-        Message msg = inboxChef.get(0);
+        Message msg = inboxOffice.get(0);
 
         // check subject
         assertEquals("Ein Antrag wurde storniert", msg.getSubject());
         assertNotSame("subject", msg.getSubject());
 
         // check from and recipient
-        assertEquals(new InternetAddress(mailProperties.getProperty("email.boss")), msg.getAllRecipients()[0]);
+        assertEquals(new InternetAddress(mailProperties.getProperty("email.office")), msg.getAllRecipients()[0]);
 
         // check content of email
         String content = (String) msg.getContent();
-        assertTrue(content.contains("Heinrich"));
-        assertTrue(content.contains("storniert"));
+        assertTrue(content.contains("Der Mitarbeiter Heinrich Test hat seinen Urlaubsantrag storniert"));
+        assertFalse(content.contains("Mist"));
+
+        // test for cancelledByOffice == true
+        // i.e. applicant gets a mail
+
+        person.setLastName("Mann");
+        person.setFirstName("Muster");
+        person.setEmail("muster@mann.de");
+
+        Person office = new Person();
+        office.setLastName("Musteroffice");
+        office.setFirstName("Magdalena");
+
+        application.setOffice(office);
+
+        instance.sendCancelledNotification(application, true);
+
+        // was email sent?
+        List<Message> inboxApplicant = Mailbox.get("muster@mann.de");
+        assertTrue(inboxApplicant.size() > 0);
+
+        msg = inboxApplicant.get(0);
+
+        // check subject
+        assertEquals("Dein Antrag wurde storniert", msg.getSubject());
+        assertNotSame("subject", msg.getSubject());
+
+        // check from and recipient
+        assertEquals(new InternetAddress("muster@mann.de"), msg.getAllRecipients()[0]);
+
+        // check content of email
+        content = (String) msg.getContent();
+        assertTrue(content.contains("dein Urlaubsantrag wurde von Magdalena"));
+        assertTrue(content.contains("wende dich bitte direkt an Magdalena"));
         assertFalse(content.contains("Mist"));
     }
 

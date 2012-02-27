@@ -10,6 +10,7 @@
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 
                 <c:choose>
@@ -45,7 +46,15 @@
                                 <th class="td-detail">
                                     <spring:message code="table.detail" />
                                 </th>
-
+                                <%-- the roles office and boss are able to see the application list
+                                but only office can cancel applications of other users --%>    
+                            <sec:authorize access="hasRole('role.office')">
+                                <c:if test="${stateNumber == 0 || stateNumber == 1}">
+                                    <th style="text-align: center">
+                                            <spring:message code="delete" />
+                                    </th>
+                                </c:if>
+                            </sec:authorize>      
                             </tr>
 
                             <c:forEach items="${applications}" var="app" varStatus="loopStatus">
@@ -94,6 +103,14 @@
                                     </c:if>
 
                                     <td class="td-detail"><a href="${url}"><img src="<spring:url value='/images/playlist.png' />" /></a></td>     
+                                    
+                                    <sec:authorize access="hasRole('role.office')">
+                                    <c:if test="${stateNumber == 0 || stateNumber == 1}">
+                                    <td style="text-align: center">
+                                       <a href="${formUrlPrefix}/application/${app.id}/cancel"><img src="<spring:url value='/images/cancel.png' />" /></a>
+                                    </td>
+                                    </c:if>
+                                    </sec:authorize>     
 
                                 </tr>
                             </c:forEach>

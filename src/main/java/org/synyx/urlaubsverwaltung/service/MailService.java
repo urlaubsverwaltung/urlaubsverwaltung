@@ -79,14 +79,15 @@ public interface MailService {
 
 
     /**
-     * this method sends an email if a specified application got canceled by the applicant if the application had state
-     * waiting, chefs get the email if the application had state allowed, office gets the email
+     * This method sends an email if an application got cancelled. If the application had the status allowed and was
+     * cancelled by the applicant, the office gets an email. If the application was cancelled by the office (regardless
+     * of which status), the applicant gets an email.
      *
      * @param  application  the application which got canceled
-     * @param  isBoss  describes if chefs (param is true) or office (param is false) get the email (dependent on
-     *                 application's state: waiting-chefs, allowed-office
+     * @param  cancelledByOffice  describes if chefs (param is true) or office (param is false) get the email (dependent
+     *                            on application's state: waiting-chefs, allowed-office
      */
-    void sendCancelledNotification(Application application, boolean isBoss);
+    void sendCancelledNotification(Application application, boolean cancelledByOffice);
 
 
     /**

@@ -57,3 +57,7 @@ Was expecting one of:
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:150)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcess(SurefireStarter.java:91)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:69)
+2012-02-27 11:51:02,505 - ResourceManager : unable to find resource '/email/cancelled_by_office.vm' in any resource loader.
+2012-02-27 11:51:02,505 - ResourceManager : unable to find resource '/email/cancelled_by_office.vm' in any resource loader.
+2012-02-27 11:51:02,505 - ResourceManager : unable to find resource '/email/cancelled_by_office.vm' in any resource loader.
+2012-02-27 11:51:02,505 - ResourceManager : unable to find resource '/email/cancelled_by_office.vm' in any resource loader.

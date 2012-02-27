@@ -842,12 +842,20 @@ public class ApplicationController {
 
         Application application = applicationService.getApplicationById(applicationId);
 
-        if (getLoggedUser().equals(application.getPerson())) {
+        // office may cancel waiting or allowed applications of other users
+        if (getLoggedUser().getRole() == Role.OFFICE) {
             prepareDetailView(application, TO_CANCEL, model);
 
             return SHOW_APP_DETAIL_JSP;
         } else {
-            return ERROR_JSP;
+            // user may cancel only his own waiting applications
+            if (getLoggedUser().equals(application.getPerson())) {
+                prepareDetailView(application, TO_CANCEL, model);
+
+                return SHOW_APP_DETAIL_JSP;
+            } else {
+                return ERROR_JSP;
+            }
         }
     }
 
@@ -864,30 +872,41 @@ public class ApplicationController {
 
         Application application = applicationService.getApplicationById(applicationId);
 
-        int allowed = 0;
+        boolean allowed = false;
 
+        // if application had status allowed set field formerlyAllowed to true
         if (application.getStatus() == ApplicationStatus.ALLOWED) {
-            allowed = 1;
-        }
-
-        if (allowed == 1) {
+            allowed = true;
             application.setFormerlyAllowed(true);
-
-            // if application has status ALLOWED, office gets an email
-            mailService.sendCancelledNotification(application, false);
         }
-
-        // AT THE MOMENT: not sending an email to boss if a waiting application is cancelled
-        // should boss get an email if application's status is WAITING?
-        // mailService.sendCancelledNotification(application, true);
 
         applicationService.cancel(application);
 
-        LOG.info(application.getApplicationDate() + " ID: " + application.getId() + "Der Antrag von "
-            + application.getPerson().getFirstName() + " " + application.getPerson().getLastName()
-            + " wurde am " + DateMidnight.now().toString(DATE_FORMAT) + " storniert.");
+        // user has cancelled his own application
+        if (getLoggedUser().equals(application.getPerson())) {
+            if (allowed) {
+                // if application has status ALLOWED, office gets an email
+                mailService.sendCancelledNotification(application, false);
+            }
 
-        return "redirect:/web" + OVERVIEW;
+            LOG.info("Antrag-ID: " + application.getId() + "Der Antrag wurde vom Antragssteller ("
+                + application.getPerson().getFirstName() + " " + application.getPerson().getLastName()
+                + ") storniert.");
+
+            return "redirect:/web" + OVERVIEW;
+        } else {
+            // application has been cancelled by office
+            application.setOffice(getLoggedUser());
+            applicationService.simpleSave(application);
+
+            // applicant gets an mail regardless of which application status
+            mailService.sendCancelledNotification(application, true);
+            LOG.info("Antrag-ID: " + application.getId() + "Der Antrag wurde vom Office ("
+                + application.getOffice().getFirstName() + " " + application.getOffice().getLastName()
+                + ") storniert.");
+
+            return "redirect:/web" + OVERVIEW;
+        }
     }
 
 

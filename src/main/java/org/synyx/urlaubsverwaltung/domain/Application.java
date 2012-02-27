@@ -34,6 +34,10 @@ public class Application extends AbstractPersistable<Integer> {
     @OneToOne
     private Person boss;
 
+    // if application was cancelled not by applicant himself: person who cancelled application
+    @OneToOne
+    private Person office;
+
     // Number of days that is subtract from HolidayAccount
     private BigDecimal days;
 
@@ -132,6 +136,18 @@ public class Application extends AbstractPersistable<Integer> {
     public void setBoss(Person boss) {
 
         this.boss = boss;
+    }
+
+
+    public Person getOffice() {
+
+        return office;
+    }
+
+
+    public void setOffice(Person office) {
+
+        this.office = office;
     }
 
 

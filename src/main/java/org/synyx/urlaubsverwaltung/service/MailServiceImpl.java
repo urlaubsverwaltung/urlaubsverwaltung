@@ -60,6 +60,7 @@ public class MailServiceImpl implements MailService {
     private static final String FILE_ALLOWED_OFFICE = "allowed_office" + TYPE;
     private static final String FILE_ALLOWED_USER = "allowed_user" + TYPE;
     private static final String FILE_CANCELLED = "cancelled" + TYPE;
+    private static final String FILE_CANCELLED_BY_OFFICE = "cancelled_by_office" + TYPE;
     private static final String FILE_CONFIRM = "confirm" + TYPE;
     private static final String FILE_EXPIRE = "expire" + TYPE;
     private static final String FILE_NEW_BY_OFFICE = "new_application_by_office" + TYPE;
@@ -243,16 +244,17 @@ public class MailServiceImpl implements MailService {
      * @see  MailService#sendCancelledNotification(org.synyx.urlaubsverwaltung.domain.Application, boolean)
      */
     @Override
-    public void sendCancelledNotification(Application application, boolean isBoss) {
+    public void sendCancelledNotification(Application application, boolean cancelledByOffice) {
 
-        String text = prepareMessage(application, APPLICATION, FILE_CANCELLED);
+        String text;
 
-        // isBoss  describes if chefs (param is true) or office (param is false) get the email
-        // (dependent on application's state: waiting-chefs, allowed-office)
-
-        if (isBoss) {
-            sendEmail(mailProperties.getProperty("email.boss"), "subject.cancelled", text);
+        if (cancelledByOffice) {
+            // mail to applicant
+            text = prepareMessage(application, APPLICATION, FILE_CANCELLED_BY_OFFICE);
+            sendEmail(application.getPerson().getEmail(), "subject.cancelled.by.office", text);
         } else {
+            // mail to office
+            text = prepareMessage(application, APPLICATION, FILE_CANCELLED);
             sendEmail(mailProperties.getProperty("email.office"), "subject.cancelled", text);
         }
     }

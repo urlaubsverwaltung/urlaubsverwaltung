@@ -222,7 +222,7 @@
                         <div class="grid_12">&nbsp;</div>
                         <div class="grid_12">
                         <sec:authorize access="hasRole('role.office')">
-                        <c:if test="${application.status.number == 0 || app.status.number == 1}">      
+                        <c:if test="${application.status.number == 0 || application.status.number == 1}">      
                         <form:form method="put" action="${formUrlPrefix}/application/${application.id}/cancel">
                             <spring:message code='cancel.confirm' />&nbsp;&nbsp;&nbsp;&nbsp;
                             <input type="submit" class="button confirm" name="<spring:message code='delete' />" value="<spring:message code='delete' />" />
