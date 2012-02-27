@@ -32,7 +32,6 @@ import java.math.BigDecimal;
 import java.security.NoSuchAlgorithmException;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 
@@ -920,92 +919,5 @@ public class ApplicationServiceImplTest {
         returnValue = instance.checkOverlapForNoon(aNew);
 
         assertEquals(OverlapCase.NO_OVERLAPPING, returnValue);
-    }
-
-
-    /** Test of getUsedVacationDaysOfPersonForYear method, of class ApplicationServiceImpl. */
-    @Test
-    public void testGetUsedVacationDaysOfPersonForYear() {
-
-        int year = 2012;
-        Date firstDayOfYear = new DateMidnight(year, DateTimeConstants.JANUARY, 1).toDate();
-        Date lastDayOfYear = new DateMidnight(year, DateTimeConstants.DECEMBER, 31).toDate();
-
-        // expected to be used for calculation : 2 days
-        Application a1 = new Application();
-        a1.setStartDate(new DateMidnight(year, DateTimeConstants.FEBRUARY, 2));
-        a1.setEndDate(new DateMidnight(year, DateTimeConstants.FEBRUARY, 4));
-        a1.setDays(BigDecimal.valueOf(2));
-        a1.setStatus(ApplicationStatus.WAITING);
-        a1.setSupplementaryApplication(false);
-
-        // expected to be used for calculation : 3 days
-        Application a2 = new Application();
-        a2.setStartDate(new DateMidnight(year, DateTimeConstants.APRIL, 3));
-        a2.setEndDate(new DateMidnight(year, DateTimeConstants.APRIL, 6));
-        a2.setDays(BigDecimal.valueOf(3));
-        a2.setStatus(ApplicationStatus.ALLOWED);
-        a2.setSupplementaryApplication(false);
-
-        // expected to be NOT used for calculation : 7 days - status is cancelled
-        Application a3 = new Application();
-        a3.setStartDate(new DateMidnight(year, DateTimeConstants.JUNE, 12));
-        a3.setEndDate(new DateMidnight(year, DateTimeConstants.JUNE, 20));
-        a3.setDays(BigDecimal.valueOf(7));
-        a3.setStatus(ApplicationStatus.CANCELLED);
-        a3.setSupplementaryApplication(false);
-
-        // expected to be NOT used for calculation : 6 days - application spans December and January
-        Application a4 = new Application();
-        a4.setStartDate(new DateMidnight(year, DateTimeConstants.DECEMBER, 21));
-        a4.setEndDate(new DateMidnight(year + 1, DateTimeConstants.JANUARY, 3));
-        a4.setDays(BigDecimal.valueOf(6)); // 4 days before 1st January
-        a4.setStatus(ApplicationStatus.ALLOWED);
-        a4.setSupplementaryApplication(false);
-
-        List<Application> apps = new ArrayList<Application>();
-        apps.add(a1);
-        apps.add(a2);
-        apps.add(a3);
-        apps.add(a4);
-
-        Mockito.when(applicationDAO.getApplicationsByPersonAndYear(person, firstDayOfYear, lastDayOfYear)).thenReturn(
-            apps);
-
-        // expected to be used for calculation : 4 days
-        Application sa1 = new Application();
-        sa1.setStartDate(new DateMidnight(year, DateTimeConstants.DECEMBER, 21));
-        sa1.setEndDate(new DateMidnight(year, DateTimeConstants.DECEMBER, 31));
-        sa1.setDays(BigDecimal.valueOf(4));
-        sa1.setStatus(ApplicationStatus.ALLOWED);
-        sa1.setSupplementaryApplication(true);
-
-        // expected to be NOT used for calculation : 2 days - status is rejected
-        Application sa2 = new Application();
-        sa2.setStartDate(new DateMidnight(year, DateTimeConstants.JANUARY, 1));
-        sa2.setEndDate(new DateMidnight(year, DateTimeConstants.JANUARY, 3));
-        sa2.setDays(BigDecimal.valueOf(2));
-        sa2.setStatus(ApplicationStatus.REJECTED);
-        sa2.setSupplementaryApplication(true);
-
-        List<Application> sApps = new ArrayList<Application>();
-        sApps.add(sa1);
-        sApps.add(sa2);
-
-        Mockito.when(applicationDAO.getSupplementalApplicationsByPersonAndYear(person, firstDayOfYear, lastDayOfYear))
-            .thenReturn(sApps);
-
-        // so it's ecpected that the calculation occurs following way:
-        // a1 : +2
-        // a2 : +3
-        // ( a3 : 7 ) not used
-        // ( a4 : 6 ) not used
-        // sa1 : +4
-        // ( sa2 : 2 ) not used
-        // total number = 2 + 3 + 4 = 9 days
-
-        BigDecimal returnValue = instance.getUsedVacationDaysOfPersonForYear(person, year);
-        assertNotNull(returnValue);
-        assertEquals(BigDecimal.valueOf(9), returnValue);
     }
 }

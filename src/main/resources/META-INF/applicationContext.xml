@@ -37,11 +37,17 @@
 <bean id="calculationService" class="org.synyx.urlaubsverwaltung.service.CalculationService">
     <constructor-arg ref="accountService" />
     <constructor-arg ref="ownCalendarService" />
+    <constructor-arg ref="vacationDaysService" />
 </bean>
 
 <bean id="ownCalendarService" class="org.synyx.urlaubsverwaltung.calendar.OwnCalendarService" />
 
 <bean id="accountService" class="org.synyx.urlaubsverwaltung.service.HolidaysAccountServiceImpl" />
+
+<bean id="vacationDaysService" class="org.synyx.urlaubsverwaltung.service.VacationDaysService">
+    <constructor-arg ref="applicationService" />
+    <constructor-arg ref="ownCalendarService" />
+</bean>
 
 <bean id="personService" class="org.synyx.urlaubsverwaltung.service.PersonServiceImpl">
     <constructor-arg ref="applicationService" />

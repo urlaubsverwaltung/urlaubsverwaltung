@@ -32,13 +32,6 @@ public interface ApplicationDAO extends JpaRepository<Application, Integer> {
     List<Application> getCancelledApplicationsByYear(ApplicationStatus state, Date firstDayOfYear, Date lastDayOfYear);
 
 
-    // get List<Application> by certain person
-    @Query(
-        "select x from Application x where x.person = ?1 and x.supplementaryApplication = false order by x.startDate"
-    )
-    List<Application> getApplicationsByPerson(Person person);
-
-
     // get List<Application> for a certain time (between startDate and endDate)
     @Query(
         "select x from Application x where (x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) or (x.startDate < ?1 and x.endDate > ?2) and x.supplementaryApplication = false order by x.startDate"
@@ -59,19 +52,19 @@ public interface ApplicationDAO extends JpaRepository<Application, Integer> {
     List<Application> getSupplementalApplicationsForApplication(Integer applicationId);
 
 
-    // get List<Application> by certain person for a certain year
-    @Query(
-        "select x from Application x where x.person = ?1 and x.supplementaryApplication = false and ((x.startDate between ?2 and ?3) or (x.endDate between ?2 and ?3)) order by x.startDate"
-    )
-    List<Application> getApplicationsByPersonAndYear(Person person, Date firstDayOfYear, Date lastDayOfYear);
-
-
     // get List<Application> by certain person for a certain year, get only the not cancelled applications
     @Query(
         "select x from Application x where x.status != ?1 and x.person = ?2 and x.supplementaryApplication = false and ((x.startDate between ?3 and ?4) or (x.endDate between ?3 and ?4)) order by x.startDate"
     )
     List<Application> getNotCancelledApplicationsByPersonAndYear(ApplicationStatus state, Person person,
         Date firstDayOfYear, Date lastDayOfYear);
+
+
+    // get List<Application> by certain person for a certain year, get only the applications before 1st April
+    @Query(
+        "select x from Application x where x.person = ?1 and x.supplementaryApplication = false and ((x.startDate between ?3 and ?4) or (x.endDate between ?3 and ?4)) order by x.startDate"
+    )
+    List<Application> getApplicationsBeforeAprilByPersonAndYear(Person person, Date firstJanuary, Date lastDayOfMarch);
 
 
     // get List<Application> for a certain time (between startDate and endDate)for the given person and the given day

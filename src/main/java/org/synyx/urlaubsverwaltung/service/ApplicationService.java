@@ -6,8 +6,6 @@ import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.domain.Person;
 
-import java.math.BigDecimal;
-
 import java.util.List;
 
 
@@ -82,15 +80,25 @@ public interface ApplicationService {
 
 
     /**
-     * This method calculates with the regular applications and the supplemental applications the number of days that
-     * the given person has used for holidays in the given year.
+     * This method gets a list of all applications of the given person for the given year that start before 1st April.
      *
      * @param  person
      * @param  year
      *
-     * @return  number of vacation days that the given person has used in the given year
+     * @return  list of applications
      */
-    BigDecimal getUsedVacationDaysOfPersonForYear(Person person, int year);
+    List<Application> getApplicationsBeforeAprilByPersonAndYear(Person person, int year);
+
+
+    /**
+     * This method calculates get all supplemental applications of the given person and year.
+     *
+     * @param  person
+     * @param  year
+     *
+     * @return  list of all supplemental applications of the given person and year
+     */
+    List<Application> getSupplementalApplicationsByPersonAndYear(Person person, int year);
 
 
     /**

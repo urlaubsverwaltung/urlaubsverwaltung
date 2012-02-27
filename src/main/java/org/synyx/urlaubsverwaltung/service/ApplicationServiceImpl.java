@@ -29,6 +29,7 @@ import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -99,40 +100,13 @@ public class ApplicationServiceImpl implements ApplicationService {
      * @see  ApplicationService#getUsedVacationDaysOfPersonForYear(org.synyx.urlaubsverwaltung.domain.Person, int)
      */
     @Override
-    public BigDecimal getUsedVacationDaysOfPersonForYear(Person person, int year) {
-
-        BigDecimal numberOfVacationDays = BigDecimal.ZERO;
+    public List<Application> getSupplementalApplicationsByPersonAndYear(Person person, int year) {
 
         DateMidnight firstDayOfYear = new DateMidnight(year, DateTimeConstants.JANUARY, 1);
         DateMidnight lastDayOfYear = new DateMidnight(year, DateTimeConstants.DECEMBER, 31);
 
-        // get all applications of person for the given year
-        List<Application> applications = applicationDAO.getApplicationsByPersonAndYear(person, firstDayOfYear.toDate(),
+        return applicationDAO.getSupplementalApplicationsByPersonAndYear(person, firstDayOfYear.toDate(),
                 lastDayOfYear.toDate());
-
-        // get the supplemental applications of person for the given year
-        List<Application> supplementalApplications = applicationDAO.getSupplementalApplicationsByPersonAndYear(person,
-                firstDayOfYear.toDate(), lastDayOfYear.toDate());
-
-        // put the supplemental applications that have status waiting or allowed in the list of applications
-        for (Application a : supplementalApplications) {
-            if (a.getStatus() == ApplicationStatus.WAITING || a.getStatus() == ApplicationStatus.ALLOWED) {
-                applications.add(a);
-            }
-        }
-
-        // calculate number of vacation days
-        for (Application a : applications) {
-            // use only the waiting or allowed applications for calculation
-            if (a.getStatus() == ApplicationStatus.WAITING || a.getStatus() == ApplicationStatus.ALLOWED) {
-                // use only the applications that do not span December and January
-                if (a.getStartDate().getYear() == a.getEndDate().getYear()) {
-                    numberOfVacationDays = numberOfVacationDays.add(a.getDays());
-                }
-            }
-        }
-
-        return numberOfVacationDays;
     }
 
 
@@ -714,5 +688,15 @@ public class ApplicationServiceImpl implements ApplicationService {
         } else {
             return false;
         }
+    }
+
+
+    @Override
+    public List<Application> getApplicationsBeforeAprilByPersonAndYear(Person person, int year) {
+
+        Date firstJanuary = new DateMidnight(year, DateTimeConstants.JANUARY, 1).toDate();
+        Date lastOfMarch = new DateMidnight(year, DateTimeConstants.MARCH, 31).toDate();
+
+        return applicationDAO.getApplicationsBeforeAprilByPersonAndYear(person, firstJanuary, lastOfMarch);
     }
 }
