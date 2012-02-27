@@ -219,15 +219,38 @@
                     <%-- if user wants to cancel an application --%>
                     <c:if test="${stateNumber == 4}">
                         <div class="grid_12">&nbsp;</div>
-                <div class="grid_12">&nbsp;</div>
+                        <div class="grid_12">&nbsp;</div>
                         <div class="grid_12">
-                        <div id="test">
+                        <sec:authorize access="hasRole('role.office')">
+                        <c:if test="${application.status.number == 0 || app.status.number == 1}">      
                         <form:form method="put" action="${formUrlPrefix}/application/${application.id}/cancel">
                             <spring:message code='cancel.confirm' />&nbsp;&nbsp;&nbsp;&nbsp;
                             <input type="submit" class="button confirm" name="<spring:message code='delete' />" value="<spring:message code='delete' />" />
                             <a class="button back" href="${formUrlPrefix}/overview"><spring:message code='cancel' /></a>
                         </form:form>
-                        </div>   
+                        </c:if>
+                        </sec:authorize>
+                            
+                        <sec:authorize access="hasRole('role.user')">
+                        <c:if test="${application.status.number == 0}">      
+                        <form:form method="put" action="${formUrlPrefix}/application/${application.id}/cancel">
+                            <spring:message code='cancel.confirm' />&nbsp;&nbsp;&nbsp;&nbsp;
+                            <input type="submit" class="button confirm" name="<spring:message code='delete' />" value="<spring:message code='delete' />" />
+                            <a class="button back" href="${formUrlPrefix}/overview"><spring:message code='cancel' /></a>
+                        </form:form>
+                        </c:if>
+                        </sec:authorize>  
+                            
+                        <sec:authorize access="hasRole('role.boss')">
+                        <c:if test="${application.status.number == 0}">      
+                        <form:form method="put" action="${formUrlPrefix}/application/${application.id}/cancel">
+                            <spring:message code='cancel.confirm' />&nbsp;&nbsp;&nbsp;&nbsp;
+                            <input type="submit" class="button confirm" name="<spring:message code='delete' />" value="<spring:message code='delete' />" />
+                            <a class="button back" href="${formUrlPrefix}/overview"><spring:message code='cancel' /></a>
+                        </form:form>
+                        </c:if>
+                        </sec:authorize>  
+                            
                         </div>
                     </c:if>
 

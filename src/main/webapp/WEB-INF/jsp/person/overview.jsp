@@ -86,80 +86,8 @@
                 <div class="grid_12">&nbsp;</div>
 
 
-                <div class="grid_10">
-                    <c:choose>
-
-                        <c:when test="${noapps == true}">
-                            <spring:message code='no.apps' />
-                        </c:when>
-
-                        <c:otherwise>
-
-                            <table class="app-tbl" cellspacing="0">
-                                <tr>
-                                    <th>
-                                        <spring:message code="type" />
-                                    </th>
-                                    <th>
-                                        <spring:message code="time" />
-                                    </th>
-                                    <th>
-                                        <spring:message code="reason" />
-                                    </th>
-                                    <th>
-                                        <spring:message code="days.vac" />
-                                    </th>
-                                    <th>
-                                        <spring:message code="state" />
-                                    </th>
-                                    <th class="td-detail">
-                                        <spring:message code="table.detail" />
-                                    </th>
-                                    <c:if test="${isOffice != true}">
-                                        <th style="text-align: center">
-                                            <spring:message code="delete" />
-                                        </th>
-                                    </c:if>
-                                </tr>
-
-                                <c:forEach items="${applications}" var="app" varStatus="loopStatus">
-                                    <tr class="${loopStatus.index % 2 == 0 ? 'even' : 'odd'}">
-                                        <td>
-                                            <spring:message code="${app.vacationType.vacationTypeName}"/>
-                                        </td>
-                                        <td>
-                                            <c:choose>
-                                                <c:when test="${app.startDate == app.endDate}">
-                                                    <spring:message code="at" />&nbsp;<joda:format style="M-" value="${app.startDate}"/>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <joda:format style="M-" value="${app.startDate}"/>&nbsp;-&nbsp;<joda:format style="M-" value="${app.endDate}"/>
-                                                </c:otherwise>    
-                                            </c:choose>
-                                        </td>
-                                        <td>
-                                            <c:out value="${app.reason}"/>
-                                        </td>
-                                        <td>
-                                            <fmt:formatNumber maxFractionDigits="1" value="${app.days}" />
-                                        </td>
-                                        <td>
-                                            <spring:message code="${app.status.state}" />
-                                        </td>
-                                        <td class="td-detail"><a href="${formUrlPrefix}/application/${app.id}"><img src="<spring:url value='/images/playlist.png' />" /></a></td>
-                                                <c:if test="${isOffice != true}">
-                                            <td style="text-align: center">
-                                                <a href="${formUrlPrefix}/application/${app.id}/cancel"><img src="<spring:url value='/images/cancel.png' />" /></a>
-                                            </td>
-                                        </c:if>
-                                    </tr>
-                                </c:forEach>
-                            </table>
-
-                        </c:otherwise>
-
-                    </c:choose>
-                </div>
+                <%@include  file="./include/overview_app_list.jsp" %>
+                
 
             </div>
         </div>

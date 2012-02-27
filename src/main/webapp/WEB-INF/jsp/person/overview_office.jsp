@@ -77,81 +77,18 @@
                 <div class="grid_12">&nbsp;</div>
                 <div class="grid_12">&nbsp;</div>
                 <div class="grid_12">&nbsp;</div>
-
-
-                <div class="grid_10">
-                    <c:choose>
-
-                        <c:when test="${noapps == true}">
-                            <spring:message code='no.apps' /><br /><br />
-                            <a class="button apply" style="margin-top: 1em;" href="${formUrlPrefix}/${person.id}/application/new">
-                                <c:set var="staff" value="${person.firstName} ${person.lastName}" />
-                                <spring:message code="ov.apply.for.user" arguments="${staff}"/>
-                            </a>
-                        </c:when>
-
-                        <c:otherwise>
-
-                            <a class="button apply" style="margin-bottom: 1em; float:right;" href="${formUrlPrefix}/${person.id}/application/new">
-                                <c:set var="staff" value="${person.firstName} ${person.lastName}" />
-                                <spring:message code="ov.apply.for.user" arguments="${staff}"/>
-                            </a>
-                            
-                            <table class="app-tbl" cellspacing="0">
-                                <tr>
-                                    <th>
-                                        <spring:message code="type" />
-                                    </th>
-                                    <th>
-                                        <spring:message code="time" />
-                                    </th>
-                                    <th>
-                                        <spring:message code="reason" />
-                                    </th>
-                                    <th>
-                                        <spring:message code="days.vac" />
-                                    </th>
-                                    <th>
-                                        <spring:message code="state" />
-                                    </th>
-                                    <th class="td-detail">
-                                    <spring:message code="table.detail" />
-                                </th>
-                                </tr>
-
-                                <c:forEach items="${applications}" var="app" varStatus="loopStatus">
-                                    <tr class="${loopStatus.index % 2 == 0 ? 'even' : 'odd'}">
-                                        <td>
-                                            <spring:message code="${app.vacationType.vacationTypeName}"/>
-                                        </td>
-                                        <td>
-                                            <c:choose>
-                                                <c:when test="${app.startDate == app.endDate}">
-                                                    <spring:message code="at" />&nbsp;<joda:format style="M-" value="${app.startDate}"/>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <joda:format style="M-" value="${app.startDate}"/>&nbsp;-&nbsp;<joda:format style="M-" value="${app.endDate}"/>
-                                                </c:otherwise>    
-                                            </c:choose>
-                                        </td>
-                                        <td>
-                                            <c:out value="${app.reason}"/>
-                                        </td>
-                                        <td>
-                                            <fmt:formatNumber maxFractionDigits="1" value="${app.days}" />
-                                        </td>
-                                        <td>
-                                            <spring:message code="${app.status.state}" />
-                                        </td>
-                                            <td class="td-detail"><a href="${formUrlPrefix}/application/${app.id}"><img src="<spring:url value='/images/playlist.png' />" /></a></td>
-                                    </tr>
-                                </c:forEach>
-                            </table>
-
-                        </c:otherwise>
-
-                    </c:choose>
+                
+                <div class="grid_12">
+                     <a class="button apply" style="margin-top: 1em;" href="${formUrlPrefix}/${person.id}/application/new">
+                     <c:set var="staff" value="${person.firstName} ${person.lastName}" />
+                     <spring:message code="ov.apply.for.user" arguments="${staff}"/>
+                     </a>
                 </div>
+                     <div class="grid_12">&nbsp;</div>
+
+
+                
+                 <%@include  file="./include/overview_app_list.jsp" %>
 
             </div>
         </div>
