@@ -159,7 +159,7 @@
                                 </td>
                                 <td>
                                     <spring:message code='yes' /> <form:radiobutton path="remainingVacationDaysExpireAcc" value="true"  />
-                                    &nbsp;&nbsp;&nbsp;    
+                                    &nbsp;&nbsp;&nbsp;  
                                     <spring:message code='no' /> <form:radiobutton path="remainingVacationDaysExpireAcc" value="false" />
                                 </td>
                             </tr>

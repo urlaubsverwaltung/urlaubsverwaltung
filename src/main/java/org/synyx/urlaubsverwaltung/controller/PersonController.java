@@ -525,6 +525,7 @@ public class PersonController {
         if (account != null) {
             daysAcc = account.getVacationDays();
             remainingAcc = account.getRemainingVacationDays();
+            daysExpire = account.isRemainingVacationDaysExpire();
         }
 
         String ent = "";
