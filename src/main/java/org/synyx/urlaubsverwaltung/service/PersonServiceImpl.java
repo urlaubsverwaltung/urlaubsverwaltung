@@ -6,11 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import org.synyx.urlaubsverwaltung.dao.HolidayEntitlementDAO;
 import org.synyx.urlaubsverwaltung.dao.PersonDAO;
 import org.synyx.urlaubsverwaltung.domain.Application;
-import org.synyx.urlaubsverwaltung.domain.HolidayEntitlement;
-import org.synyx.urlaubsverwaltung.domain.HolidaysAccount;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.Role;
 
@@ -32,16 +29,14 @@ public class PersonServiceImpl implements PersonService {
     private PersonDAO personDAO;
     private ApplicationService applicationService;
     private HolidaysAccountService accountService;
-    private HolidayEntitlementDAO holidayEntitlementDAO;
     private MailService mailService;
 
     @Autowired
-    public PersonServiceImpl(PersonDAO personDAO, ApplicationService applicationService,
-        HolidayEntitlementDAO holidayEntitlementDAO, MailService mailService, HolidaysAccountService accountService) {
+    public PersonServiceImpl(PersonDAO personDAO, ApplicationService applicationService, MailService mailService,
+        HolidaysAccountService accountService) {
 
         this.personDAO = personDAO;
         this.applicationService = applicationService;
-        this.holidayEntitlementDAO = holidayEntitlementDAO;
         this.mailService = mailService;
         this.accountService = accountService;
     }
@@ -133,73 +128,6 @@ public class PersonServiceImpl implements PersonService {
 
 
     /**
-     * @see  PersonService#updateVacationDays(int)
-     */
-    @Override
-    public void updateVacationDays(int year) {
-
-        HolidaysAccount account;
-
-        List<Person> persons = getAllPersons();
-
-        for (Person person : persons) {
-            HolidayEntitlement entitlement = accountService.getHolidayEntitlement(year, person);
-
-            if (entitlement == null) {
-                // if entitlement for this year not yet existent
-                // take that one from past year
-                entitlement = accountService.newHolidayEntitlement(person, year,
-                        accountService.getHolidayEntitlement(year - 1, person).getVacationDays(),
-                        accountService.getHolidayEntitlement(year - 1, person).getRemainingVacationDays());
-            }
-
-            account = accountService.getHolidaysAccount(year, person);
-
-            if (account == null) {
-                // if account not yet existent, take current entitlement and set vacation days of past year to remaining
-                // vacation days of current year
-
-                BigDecimal days = accountService.getHolidaysAccount(year - 1, person).getVacationDays();
-
-                // create new account
-                accountService.newHolidaysAccount(person, year, entitlement.getVacationDays(), days, true);
-                account = accountService.getHolidaysAccount(year, person);
-            } else {
-                // if account existent
-                BigDecimal days = accountService.getHolidaysAccount(year - 1, person).getVacationDays();
-
-                if ((account.getVacationDays().compareTo(entitlement.getVacationDays())) == -1) {
-                    // if account of this year already has been used
-                    // take at first remaining vacation days for filling account (vacation days)
-                    BigDecimal vacDays;
-
-                    // vacDays contains all vacation days that person has this year
-                    vacDays = account.getVacationDays().add(days);
-
-                    // set remaining vacation days to 0
-                    days = BigDecimal.ZERO;
-
-                    if ((vacDays.compareTo(entitlement.getVacationDays())) == 1) {
-                        // if vacDays > entitlement
-                        // remaining vacation days = vacDays - entitlement
-                        days = vacDays.subtract(entitlement.getVacationDays());
-
-                        // set normal vacation days as filled full
-                        vacDays = entitlement.getVacationDays();
-                    }
-
-                    account.setVacationDays(vacDays);
-                }
-
-                account.setRemainingVacationDays(days);
-            }
-
-            accountService.saveHolidaysAccount(account);
-        }
-    }
-
-
-    /**
      * @see  PersonService#getAllPersonsOnHolidayForThisWeekAndPutItInAnEmail(org.joda.time.DateMidnight, org.joda.time.DateMidnight)
      */
     @Override
@@ -214,26 +142,6 @@ public class PersonServiceImpl implements PersonService {
         }
 
         mailService.sendWeeklyVacationForecast(persons);
-    }
-
-
-    /**
-     * @see  PersonService#getHolidayEntitlementByPersonAndYear(org.synyx.urlaubsverwaltung.domain.Person, int)
-     */
-    @Override
-    public HolidayEntitlement getHolidayEntitlementByPersonAndYear(Person person, int year) {
-
-        return holidayEntitlementDAO.getHolidayEntitlementByYearAndPerson(year, person);
-    }
-
-
-    /**
-     * @see  PersonService#getHolidayEntitlementByPersonForAllYears(org.synyx.urlaubsverwaltung.domain.Person)
-     */
-    @Override
-    public List<HolidayEntitlement> getHolidayEntitlementByPersonForAllYears(Person person) {
-
-        return holidayEntitlementDAO.getHolidayEntitlementByPerson(person);
     }
 
 

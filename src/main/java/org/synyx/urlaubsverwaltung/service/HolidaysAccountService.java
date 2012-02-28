@@ -69,10 +69,14 @@ public interface HolidaysAccountService {
      *
      * @param  person
      * @param  year
+     * @param  annualVacationDays
      * @param  days
      * @param  remaining
+     *
+     * @return
      */
-    HolidayEntitlement newHolidayEntitlement(Person person, int year, BigDecimal days, BigDecimal remaining);
+    HolidayEntitlement newHolidayEntitlement(Person person, int year, BigDecimal annualVacationDays, BigDecimal days,
+        BigDecimal remaining);
 
 
     /**
@@ -92,11 +96,13 @@ public interface HolidaysAccountService {
     /**
      * method to edit an existent entitlement and to save the updated entitlement
      *
-     * @param  person
-     * @param  year
+     * @param  entitlement
+     * @param  annualVacationDays
      * @param  days
+     * @param  remaining
      */
-    void editHolidayEntitlement(HolidayEntitlement entitlement, BigDecimal days, BigDecimal remaining);
+    void editHolidayEntitlement(HolidayEntitlement entitlement, BigDecimal annualVacationDays, BigDecimal days,
+        BigDecimal remaining);
 
 
     /**

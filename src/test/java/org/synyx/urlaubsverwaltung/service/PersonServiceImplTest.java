@@ -24,10 +24,8 @@ import org.mockito.invocation.InvocationOnMock;
 
 import org.mockito.stubbing.Answer;
 
-import org.synyx.urlaubsverwaltung.dao.HolidayEntitlementDAO;
 import org.synyx.urlaubsverwaltung.dao.PersonDAO;
 import org.synyx.urlaubsverwaltung.domain.Application;
-import org.synyx.urlaubsverwaltung.domain.HolidayEntitlement;
 import org.synyx.urlaubsverwaltung.domain.HolidaysAccount;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.Role;
@@ -46,7 +44,6 @@ public class PersonServiceImplTest {
 
     private PersonService instance;
     private PersonDAO personDAO = mock(PersonDAO.class);
-    private HolidayEntitlementDAO holidayEntitlementDAO = mock(HolidayEntitlementDAO.class);
     private ApplicationService applicationService = mock(ApplicationService.class);
     private HolidaysAccountService accountService = mock(HolidaysAccountService.class);
     private MailService mailService = mock(MailService.class);
@@ -67,8 +64,7 @@ public class PersonServiceImplTest {
     @Before
     public void setUp() {
 
-        instance = new PersonServiceImpl(personDAO, applicationService, holidayEntitlementDAO, mailService,
-                accountService);
+        instance = new PersonServiceImpl(personDAO, applicationService, mailService, accountService);
     }
 
 
@@ -170,70 +166,6 @@ public class PersonServiceImplTest {
     }
 
 
-    /**
-     * Test of updateVacationDays method, of class PersonServiceImpl.
-     *
-     * @author  Johannes Reuter
-     */
-    @Test
-    public void testUpdateVacationDays() {
-
-        // case 1
-
-        HolidayEntitlement defaultEntitlement = new HolidayEntitlement();
-        defaultEntitlement.setVacationDays(BigDecimal.valueOf(20.0));
-
-        HolidaysAccount accountLastYear = mock(HolidaysAccount.class);
-        HolidaysAccount accountCurrentYear = mock(HolidaysAccount.class);
-        List<Person> personList = new ArrayList<Person>();
-        personList.add(new Person());
-
-        Mockito.when(personDAO.getPersonsOrderedByLastName()).thenReturn(personList);
-        Mockito.when(accountLastYear.getVacationDays()).thenReturn(BigDecimal.TEN);
-        Mockito.when(accountCurrentYear.getVacationDays()).thenReturn(BigDecimal.valueOf(15.0));
-        Mockito.when(accountService.getHolidayEntitlement(Mockito.anyInt(), (Person) (Mockito.any()))).thenReturn(
-            defaultEntitlement);
-        Mockito.when(accountService.getHolidaysAccount(Mockito.eq(2000), (Person) (Mockito.any()))).thenReturn(
-            accountLastYear);
-        Mockito.when(accountService.getHolidaysAccount(Mockito.eq(2001), (Person) (Mockito.any()))).thenReturn(
-            accountCurrentYear);
-
-        instance.updateVacationDays(2001);
-
-        Mockito.verify(accountCurrentYear).setRemainingVacationDays(BigDecimal.valueOf(5.0));
-        Mockito.verify(accountCurrentYear).setVacationDays(BigDecimal.valueOf(20.0));
-
-        Mockito.verify(accountService).saveHolidaysAccount(accountCurrentYear);
-
-        // case 2
-
-        defaultEntitlement = new HolidayEntitlement();
-        defaultEntitlement.setVacationDays(BigDecimal.valueOf(20.0));
-
-        accountLastYear = mock(HolidaysAccount.class);
-        accountCurrentYear = mock(HolidaysAccount.class);
-
-        personList = new ArrayList<Person>();
-        personList.add(new Person());
-
-        Mockito.when(personDAO.getPersonsOrderedByLastName()).thenReturn(personList);
-        Mockito.when(accountLastYear.getVacationDays()).thenReturn(BigDecimal.TEN);
-        Mockito.when(accountCurrentYear.getVacationDays()).thenReturn(BigDecimal.valueOf(5.0));
-        Mockito.when(accountService.getHolidayEntitlement(Mockito.anyInt(), (Person) (Mockito.any()))).thenReturn(
-            defaultEntitlement);
-        Mockito.when(accountService.getHolidaysAccount(Mockito.eq(2000), (Person) (Mockito.any()))).thenReturn(
-            accountLastYear);
-        Mockito.when(accountService.getHolidaysAccount(Mockito.eq(2001), (Person) (Mockito.any()))).thenReturn(
-            accountCurrentYear);
-
-        instance.updateVacationDays(2001);
-
-        Mockito.verify(accountCurrentYear).setVacationDays(BigDecimal.valueOf(15.0));
-
-        Mockito.verify(accountService).saveHolidaysAccount(accountCurrentYear);
-    }
-
-
     /** Test of getAllPersonsOnHolidayForThisWeekAndPutItInAnEmail method, of class PersonServiceImpl. */
     @Test
     public void testGetAllPersonsOnHolidayForThisWeekAndPutItInAnEmail() {
@@ -264,38 +196,5 @@ public class PersonServiceImplTest {
                     return null;
                 }
             }).when(mailService).sendWeeklyVacationForecast(Mockito.anyList());
-    }
-
-
-    /** Test of getHolidayEntitlementByPersonAndYear method, of class PersonServiceImpl. */
-    @Test
-    public void testGetHolidayEntitlementByPersonAndYear() {
-
-        Person person = new Person();
-        HolidayEntitlement entitlement = new HolidayEntitlement();
-
-        Mockito.when(holidayEntitlementDAO.getHolidayEntitlementByYearAndPerson(2000, person)).thenReturn(entitlement);
-
-        HolidayEntitlement gotByMethod = instance.getHolidayEntitlementByPersonAndYear(person, 2000);
-
-        assertEquals(gotByMethod, entitlement);
-    }
-
-
-    /** Test of getHolidayEntitlementByPersonForAllYears method, of class PersonServiceImpl. */
-    @Test
-    public void testGetHolidayEntitlementByPersonForAllYears() {
-
-        Person person = new Person();
-        List<HolidayEntitlement> entitlements = new ArrayList<HolidayEntitlement>();
-        HolidayEntitlement entitlement = new HolidayEntitlement();
-
-        entitlements.add(entitlement);
-
-        Mockito.when(holidayEntitlementDAO.getHolidayEntitlementByPerson(person)).thenReturn(entitlements);
-
-        List<HolidayEntitlement> gotByMethod = instance.getHolidayEntitlementByPersonForAllYears(person);
-
-        assertEquals(gotByMethod.get(0), entitlement);
     }
 }

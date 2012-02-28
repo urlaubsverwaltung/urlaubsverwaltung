@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.service;
 
 import org.joda.time.DateMidnight;
 
-import org.synyx.urlaubsverwaltung.domain.HolidayEntitlement;
 import org.synyx.urlaubsverwaltung.domain.Person;
 
 import java.util.List;
@@ -96,40 +95,10 @@ public interface PersonService {
 
 
     /**
-     * this method is used by a schedule-job. it transfers unused vacation-days from the old year as resturlaub to the
-     * new one and adds the amount of regular vacation-days (execution at 1.1. 0:00)
-     *
-     * @param  year
-     */
-    void updateVacationDays(int year);
-
-
-    /**
      * get all persons that have days off this week.
      *
      * @param  startDate
      * @param  endDate
      */
     void getAllPersonsOnHolidayForThisWeekAndPutItInAnEmail(DateMidnight startDate, DateMidnight endDate);
-
-
-    /**
-     * get a HolidayEntitlement for a certain year and person
-     *
-     * @param  person
-     * @param  year
-     *
-     * @return
-     */
-    HolidayEntitlement getHolidayEntitlementByPersonAndYear(Person person, int year);
-
-
-    /**
-     * get a list of HolidayEntitlement for a certain person
-     *
-     * @param  person
-     *
-     * @return
-     */
-    List<HolidayEntitlement> getHolidayEntitlementByPersonForAllYears(Person person);
 }

@@ -122,10 +122,12 @@ public class HolidaysAccountServiceImplTest {
         Mockito.when(holidaysEntitlementDAO.getHolidayEntitlementByYearAndPerson(CURRENT_YEAR, person)).thenReturn(
             entitlement);
 
+        entitlement.setAnnualVacationDays(BigDecimal.valueOf(28));
+
         returnValue = instance.getAccountOrCreateOne(NEXT_YEAR, person);
 
         assertNotNull(returnValue);
-        assertEquals(ENTITLEMENT, returnValue.getVacationDays());
+        assertEquals(BigDecimal.valueOf(28), returnValue.getVacationDays());
         assertEquals(person, returnValue.getPerson());
         assertEquals(NEXT_YEAR, returnValue.getYear());
         assertEquals(BigDecimal.ZERO, returnValue.getRemainingVacationDays());
@@ -136,10 +138,11 @@ public class HolidaysAccountServiceImplTest {
     @Test
     public void testNewHolidayEntitlement() {
 
-        HolidayEntitlement returnValue = instance.newHolidayEntitlement(person, NEXT_YEAR, ENTITLEMENT,
-                ENTITLEMENT_REMAINING);
+        HolidayEntitlement returnValue = instance.newHolidayEntitlement(person, NEXT_YEAR, BigDecimal.valueOf(28),
+                ENTITLEMENT, ENTITLEMENT_REMAINING);
         assertNotNull(returnValue);
         assertEquals(person, returnValue.getPerson());
+        assertEquals(BigDecimal.valueOf(28), returnValue.getAnnualVacationDays());
         assertEquals(ENTITLEMENT, returnValue.getVacationDays());
         assertEquals(ENTITLEMENT_REMAINING, returnValue.getRemainingVacationDays());
     }
@@ -231,9 +234,10 @@ public class HolidaysAccountServiceImplTest {
         ent.setVacationDays(BigDecimal.valueOf(23));
         ent.setRemainingVacationDays(BigDecimal.valueOf(5));
 
-        instance.editHolidayEntitlement(ent, BigDecimal.valueOf(18), BigDecimal.valueOf(2));
+        instance.editHolidayEntitlement(ent, BigDecimal.valueOf(25), BigDecimal.valueOf(18), BigDecimal.valueOf(2));
         Mockito.verify(holidaysEntitlementDAO).save(ent);
 
+        assertEquals(BigDecimal.valueOf(25), ent.getAnnualVacationDays());
         assertEquals(BigDecimal.valueOf(18), ent.getVacationDays());
         assertEquals(BigDecimal.valueOf(2), ent.getRemainingVacationDays());
     }

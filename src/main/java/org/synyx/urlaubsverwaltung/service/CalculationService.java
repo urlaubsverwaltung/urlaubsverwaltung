@@ -469,22 +469,27 @@ public class CalculationService {
             ent.setRemainingVacationDays(ent.getRemainingVacationDays().add(beforeJan));
             accountService.saveHolidayEntitlement(ent);
 
-            accountNextYear.setRemainingVacationDays(accountNextYear.getRemainingVacationDays().add(beforeJan));
+            BigDecimal addingDays = beforeJan.add(afterJan);
 
-            BigDecimal sum = accountNextYear.getRemainingVacationDays().add(afterJan);
-
-            // if sum is greater than number of entitlement's remaining vacation days, the account's number of remaining
-            // vacation days is set to number of entitlement's remaining vacation days. The difference between sum and
-            // the number of entitlement's remaining vacation days is added to number of account's vacation days.
-            if (sum.compareTo(ent.getRemainingVacationDays()) == 1) {
-                accountNextYear.setRemainingVacationDays(ent.getRemainingVacationDays());
-
-                accountNextYear.setVacationDays(accountNextYear.getVacationDays().add(
-                        sum.subtract(ent.getRemainingVacationDays())));
+            if (usedDaysNextYear.compareTo(ent.getRemainingVacationDays()) >= 0) {
+                accountNextYear.setVacationDays(accountNextYear.getVacationDays().add(addingDays));
             } else {
-                // if sum is equal or smaller than number of entitlement's remaining vacation days, the number of the
-                // given days is added to number of account's remaining vacation days
-                accountNextYear.setRemainingVacationDays(sum);
+                BigDecimal sum = accountNextYear.getRemainingVacationDays().add(addingDays);
+
+                // if sum is greater than number of entitlement's remaining vacation days, the account's number of
+                // remaining vacation days is set to number of entitlement's remaining vacation days. The difference
+                // between sum and the number of entitlement's remaining vacation days is added to number of account's
+                // vacation days.
+                if (sum.compareTo(ent.getRemainingVacationDays()) == 1) {
+                    accountNextYear.setRemainingVacationDays(ent.getRemainingVacationDays());
+
+                    accountNextYear.setVacationDays(accountNextYear.getVacationDays().add(
+                            sum.subtract(ent.getRemainingVacationDays())));
+                } else {
+                    // if sum is equal or smaller than number of entitlement's remaining vacation days, the number of
+                    // the given days is added to number of account's remaining vacation days
+                    accountNextYear.setRemainingVacationDays(sum);
+                }
             }
         }
 

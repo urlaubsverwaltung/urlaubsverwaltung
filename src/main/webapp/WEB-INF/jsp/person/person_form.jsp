@@ -47,11 +47,11 @@
 
                     <div class="grid_12">&nbsp;</div>
 
-                    <div class="grid_12">
+                    <div class="grid_8">
                         <table id="person-form-tbl">
                             <tr>
                                 <th style="padding-bottom: 0.5em;"><spring:message code='person.data' /></th>
-                                <th colspan="2">&nbsp;</th>
+                                <td colspan="2">&nbsp;</td>
                             </tr>
                             <tr>
                                 <td><spring:message code='login' />:</td>
@@ -104,9 +104,18 @@
                             </td>
                             </tr>
                             <tr>
-                                <td><label for="urlaubsanspruch"><spring:message code="vac.year" />:</label></td>
+                                <td><spring:message code="person.annual.vacation" />:</td>
                                 <td>
-                                    <form:input id="urlaubsanspruch" path="vacationDaysEnt" cssErrorClass="error" />
+                                    <form:input path="annualVacationDaysEnt" cssErrorClass="error" />
+                                </td>
+                                <td>
+                                    <form:errors path="annualVacationDaysEnt" cssClass="error" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><spring:message code="person.vac" />:</td>
+                                <td>
+                                    <form:input path="vacationDaysEnt" cssErrorClass="error" />
                                 </td>
                                 <td>
                                     <form:errors path="vacationDaysEnt" cssClass="error" />
@@ -114,10 +123,10 @@
                             </tr>
                             <tr>   
                                 <td>
-                                    <label for="resturlaub"><spring:message code="remaining" />&nbsp;<spring:message code="last.year" />:</label>
+                                    <spring:message code="remaining" />&nbsp;<spring:message code="last.year" />:
                                 </td>
                                 <td>
-                                    <form:input id="resturlaub" path="remainingVacationDaysEnt" cssErrorClass="error" />
+                                    <form:input path="remainingVacationDaysEnt" cssErrorClass="error" />
                                 </td>
                                 <td>
                                     <form:errors path="remainingVacationDaysEnt" cssClass="error" /> 
@@ -166,8 +175,9 @@
                             <tr>
                                 <td colspan="2">&nbsp;</td>
                             </tr>
-                            <tr>
-                                <td colspan="2">
+                        </table>
+
+                                <br />
                                     <input type="submit" class="save" name="<spring:message code="save" />" value="<spring:message code="save" />" />
                                     <a class="button back" href="${formUrlPrefix}/staff"><spring:message code='cancel' /></a>
                                     <input type="button" onclick="$('#activ-action').show();"
@@ -183,9 +193,7 @@
                                                </c:otherwise>
                                            </c:choose>    
                                            />
-                                </td>
-                            </tr>
-                        </table>
+
 
                     </form:form>
 
@@ -217,6 +225,8 @@
                     </form:form>
 
                 </div>
+
+                    
             </div> 
         </div>    
 

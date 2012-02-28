@@ -23,14 +23,19 @@ public class HolidayEntitlement extends AbstractPersistable<Integer> {
 
     private static final long serialVersionUID = 89043562784389L;
 
-    // One person may have multiple entitlements (depending on years)
+    // a person may have multiple entitlements (depending on years)
     @ManyToOne
     private Person person;
 
-    // Determined number of vacation days a person may use this year
+    // theoretical number of vacation days a person has, i.e. it's the annual entitlement, but it is possible that
+    // person e.g. will quit soon the company so he has not the full holidays entitlement; the actual number of vacation
+    // days for a year describes the field vacationDays
+    private BigDecimal annualVacationDays;
+
+    // actual number of vacation days a person may use this year
     private BigDecimal vacationDays;
 
-    // Determined number of remaining vacation days a person may use this year (until 31st March of a year)
+    // number of remaining vacation days a person may use this year (until 31st March of a year)
     // is set on 1st January of a year
     private BigDecimal remainingVacationDays;
 
@@ -45,6 +50,18 @@ public class HolidayEntitlement extends AbstractPersistable<Integer> {
     public void setPerson(Person person) {
 
         this.person = person;
+    }
+
+
+    public BigDecimal getAnnualVacationDays() {
+
+        return annualVacationDays;
+    }
+
+
+    public void setAnnualVacationDays(BigDecimal annualVacationDays) {
+
+        this.annualVacationDays = annualVacationDays;
     }
 
 

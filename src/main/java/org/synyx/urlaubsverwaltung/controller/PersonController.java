@@ -507,6 +507,7 @@ public class PersonController {
      */
     private PersonForm preparePersonForm(int year, Person person, Locale locale) {
 
+        BigDecimal annDaysEnt = null;
         BigDecimal daysEnt = null;
         BigDecimal remainingEnt = null;
         BigDecimal daysAcc = null;
@@ -516,6 +517,7 @@ public class PersonController {
         HolidayEntitlement entitlement = accountService.getHolidayEntitlement(year, person);
 
         if (entitlement != null) {
+            annDaysEnt = entitlement.getAnnualVacationDays();
             daysEnt = entitlement.getVacationDays();
             remainingEnt = entitlement.getRemainingVacationDays();
         }
@@ -528,10 +530,15 @@ public class PersonController {
             daysExpire = account.isRemainingVacationDaysExpire();
         }
 
+        String ann = "";
         String ent = "";
         String remEnt = "";
         String acc = "";
         String remAcc = "";
+
+        if (annDaysEnt != null) {
+            ann = NumberUtil.formatNumber(annDaysEnt, locale);
+        }
 
         if (daysEnt != null) {
             ent = NumberUtil.formatNumber(daysEnt, locale);
@@ -549,7 +556,7 @@ public class PersonController {
             remAcc = NumberUtil.formatNumber(remainingAcc, locale);
         }
 
-        return new PersonForm(person, Integer.toString(year), ent, remEnt, acc, remAcc, daysExpire);
+        return new PersonForm(person, Integer.toString(year), ann, ent, remEnt, acc, remAcc, daysExpire);
     }
 
 
@@ -591,15 +598,20 @@ public class PersonController {
 
         if (errors.hasErrors()) {
             addModelAttributesForPersonForm(personToUpdate, personForm, model);
-            model.addAttribute("thereAreErrors", "yes");
 
             return PERSON_FORM_JSP;
         }
 
         validator.validate(personForm, errors); // validates the name fields, the email field and the year field
 
-        validator.validateEntitlementDays(personForm, errors, locale); // validates holiday entitlement's vacation days
-                                                                       // and remaining vacation days
+        validator.validateAnnualVacation(personForm, errors, locale);
+
+        validator.validateEntitlementVacationDays(personForm, errors, locale); // validates holiday entitlement's
+                                                                               // vacation days
+
+        validator.validateEntitlementRemainingVacationDays(personForm, errors, locale); // validates holiday
+                                                                                        // entitlement's remaining
+                                                                                        // vacation days
 
         validator.validateAccountDays(personForm, errors, locale); // validates holidays account's remaining vacation
                                                                    // days and vacation days
@@ -608,49 +620,69 @@ public class PersonController {
             addModelAttributesForPersonForm(personToUpdate, personForm, model);
 
             return PERSON_FORM_JSP;
-        } else {
-            // set person information from PersonForm object on person that is updated
-            personToUpdate = personForm.fillPersonObject(personToUpdate);
-
-            personService.save(personToUpdate);
-
-            int year = Integer.parseInt(personForm.getYear());
-
-            BigDecimal daysEnt = NumberUtil.parseNumber(personForm.getVacationDaysEnt(), locale);
-            BigDecimal remainingEnt = NumberUtil.parseNumber(personForm.getRemainingVacationDaysEnt(), locale);
-
-            // check if there is an existing entitlement to holidays
-            HolidayEntitlement entitlement = accountService.getHolidayEntitlement(year, personToUpdate);
-
-            // if not, create one
-            if (entitlement == null) {
-                entitlement = accountService.newHolidayEntitlement(personToUpdate, year, daysEnt, remainingEnt);
-                accountService.saveHolidayEntitlement(entitlement);
-            } else {
-                accountService.editHolidayEntitlement(entitlement, daysEnt, remainingEnt);
-            }
-
-            HolidaysAccount account = accountService.getHolidaysAccount(year, personToUpdate);
-
-            BigDecimal daysAcc = NumberUtil.parseNumber(personForm.getVacationDaysAcc(), locale);
-            BigDecimal remainingAcc = NumberUtil.parseNumber(personForm.getRemainingVacationDaysAcc(), locale);
-            boolean remainingDaysExpire = personForm.isRemainingVacationDaysExpireAcc();
-
-            if (account == null) {
-                account = accountService.newHolidaysAccount(personToUpdate, year, daysAcc, remainingAcc,
-                        remainingDaysExpire);
-                accountService.saveHolidaysAccount(account);
-            } else {
-                accountService.editHolidaysAccount(account, daysAcc, remainingAcc, remainingDaysExpire);
-            }
-
-            LOG.info(DateMidnight.now(GregorianChronology.getInstance()).toString(DATE_FORMAT) + " ID: " + personId
-                + " Der Mitarbeiter " + personToUpdate.getFirstName() + " " + personToUpdate.getLastName()
-                + " wurde editiert.");
-
-            return "redirect:/web" + ACTIVE_LINK;
         }
+
+        // set person information from PersonForm object on person that is updated
+        personToUpdate = personForm.fillPersonObject(personToUpdate);
+
+        personService.save(personToUpdate);
+
+        int year = Integer.parseInt(personForm.getYear());
+
+        // check if there is an existing entitlement to holidays
+        HolidayEntitlement entitlement = accountService.getHolidayEntitlement(year, personToUpdate);
+
+        BigDecimal annualVacationDays = NumberUtil.parseNumber(personForm.getAnnualVacationDaysEnt(), locale);
+        BigDecimal vacationDaysEnt = NumberUtil.parseNumber(personForm.getVacationDaysEnt(), locale);
+        BigDecimal remainingVacationDaysEnt = NumberUtil.parseNumber(personForm.getRemainingVacationDaysEnt(), locale);
+
+        BigDecimal vacationDaysAcc = NumberUtil.parseNumber(personForm.getVacationDaysAcc(), locale);
+        BigDecimal remainingVacationDaysAcc = NumberUtil.parseNumber(personForm.getRemainingVacationDaysAcc(), locale);
+        boolean remainingVacationDaysExpire = personForm.isRemainingVacationDaysExpireAcc();
+
+        // if not, create one
+        if (entitlement == null) {
+            entitlement = accountService.newHolidayEntitlement(personToUpdate, year, annualVacationDays,
+                    vacationDaysEnt, remainingVacationDaysEnt);
+            accountService.saveHolidayEntitlement(entitlement);
+        } else {
+            accountService.editHolidayEntitlement(entitlement, annualVacationDays, vacationDaysEnt,
+                remainingVacationDaysEnt);
+        }
+
+        HolidaysAccount account = accountService.getHolidaysAccount(year, personToUpdate);
+
+        if (account == null) {
+            account = accountService.newHolidaysAccount(personToUpdate, year, vacationDaysAcc, remainingVacationDaysAcc,
+                    remainingVacationDaysExpire);
+            accountService.saveHolidaysAccount(account);
+        } else {
+            accountService.editHolidaysAccount(account, vacationDaysAcc, remainingVacationDaysAcc,
+                remainingVacationDaysExpire);
+        }
+
+        LOG.info(DateMidnight.now(GregorianChronology.getInstance()).toString(DATE_FORMAT) + " ID: " + personId
+            + " Der Mitarbeiter " + personToUpdate.getFirstName() + " " + personToUpdate.getLastName()
+            + " wurde editiert.");
+
+        return "redirect:/web" + ACTIVE_LINK;
     }
+//
+//
+//    /**
+//     * This method checks if all other day fields of person form (except for field annual vacation days) are null resp.
+//     * empty.
+//     *
+//     * @param  form
+//     *
+//     * @return  true if all other day fields are empty, false if one or more of these fields are filled
+//     */
+//    private boolean allOtherDayFieldsAreEmpty(PersonForm form) {
+//
+//        return (StringUtils.isEmpty(form.getRemainingVacationDaysEnt())
+//                && StringUtils.isEmpty(form.getVacationDaysAcc())
+//                && StringUtils.isEmpty(form.getRemainingVacationDaysAcc()));
+//    }
 
 
     /**

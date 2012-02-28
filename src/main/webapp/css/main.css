@@ -213,13 +213,21 @@ tr.even {
     text-align: center;
 }
 
+#person-form-tbl {
+    width: 90%;
+    border: 1px solid #D7D7D7;
+    padding: 2em 0em 2em 2em;
+}
+
 #person-form-tbl th {
+    width: 40%;
     text-align: left;
     padding-right: 1em;
 }
 
+
 .app-form {
-    border: 1px solid #D7D7D7;
+    border-top: 1px solid #D7D7D7;
     padding: 1em 2em 2em 2em; 
     margin:0;
 }

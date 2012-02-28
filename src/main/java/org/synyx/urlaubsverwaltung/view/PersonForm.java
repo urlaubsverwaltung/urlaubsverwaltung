@@ -20,6 +20,8 @@ public class PersonForm {
 
     private String year;
 
+    private String annualVacationDaysEnt;
+
     private String vacationDaysEnt;
 
     private String remainingVacationDaysEnt;
@@ -34,14 +36,18 @@ public class PersonForm {
     }
 
 
-    public PersonForm(Person person, String year, String daysEnt, String remainingEnt, String daysAcc,
-        String remainingAcc, boolean expiring) {
+    public PersonForm(Person person, String year, String annualDaysEnt, String daysEnt, String remainingEnt,
+        String daysAcc, String remainingAcc, boolean expiring) {
 
         this.lastName = person.getLastName();
         this.firstName = person.getFirstName();
         this.email = person.getEmail();
         this.year = year;
         this.remainingVacationDaysExpireAcc = expiring;
+
+        if (annualDaysEnt != null) {
+            this.annualVacationDaysEnt = annualDaysEnt;
+        }
 
         if (daysEnt != null) {
             this.vacationDaysEnt = daysEnt;
@@ -153,6 +159,18 @@ public class PersonForm {
     public void setVacationDaysEnt(String vacationDaysEnt) {
 
         this.vacationDaysEnt = vacationDaysEnt;
+    }
+
+
+    public String getAnnualVacationDaysEnt() {
+
+        return annualVacationDaysEnt;
+    }
+
+
+    public void setAnnualVacationDaysEnt(String annualVacationDaysEnt) {
+
+        this.annualVacationDaysEnt = annualVacationDaysEnt;
     }
 
 
