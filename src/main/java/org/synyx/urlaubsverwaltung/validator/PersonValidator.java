@@ -4,9 +4,9 @@
  */
 package org.synyx.urlaubsverwaltung.validator;
 
-import org.apache.commons.lang.StringUtils;
-
 import org.apache.log4j.Logger;
+
+import org.springframework.util.StringUtils;
 
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -38,6 +38,7 @@ public class PersonValidator implements Validator {
     private static final String ERROR_ENTRY = "error.entry";
     private static final String ERROR_EMAIL = "error.email";
     private static final String ERROR_NUMBER = "error.number";
+    private static final String ERROR_LENGTH = "error.length";
 
     private static final String FIRST_NAME = "firstName";
     private static final String LAST_NAME = "lastName";
@@ -125,9 +126,14 @@ public class PersonValidator implements Validator {
     protected void validateName(String name, String field, Errors errors) {
 
         // is the name field null/empty?
-        if (StringUtils.isEmpty(name)) {
+        if (!StringUtils.hasText(name)) {
             errors.rejectValue(field, MANDATORY_FIELD);
         } else {
+            // is String length alright?
+            if (!validateStringLength(name)) {
+                errors.rejectValue(field, ERROR_LENGTH);
+            }
+
             // contains the name field digits?
             if (!matchPattern(NAME_PATTERN, name)) {
                 errors.rejectValue(field, ERROR_ENTRY);
@@ -145,9 +151,14 @@ public class PersonValidator implements Validator {
     protected void validateEmail(String email, Errors errors) {
 
         // is email field null or empty
-        if (StringUtils.isEmpty(email)) {
+        if (!StringUtils.hasText(email)) {
             errors.rejectValue(EMAIL, MANDATORY_FIELD);
         } else {
+            // String length alright?
+            if (!validateStringLength(email)) {
+                errors.rejectValue(EMAIL, ERROR_LENGTH);
+            }
+
             // validation with regex
             email = email.trim().toLowerCase();
 
@@ -168,7 +179,7 @@ public class PersonValidator implements Validator {
     protected void validateYear(String yearForm, Errors errors) {
 
         // is year field filled?
-        if (StringUtils.isEmpty(yearForm)) {
+        if (!StringUtils.hasText(yearForm)) {
             errors.rejectValue(YEAR, MANDATORY_FIELD);
         } else {
             try {
@@ -197,7 +208,7 @@ public class PersonValidator implements Validator {
         String propValue = customProperties.getProperty(MAX_DAYS);
         double max = Double.parseDouble(propValue);
 
-        if (form.getAnnualVacationDaysEnt() != null && !form.getAnnualVacationDaysEnt().isEmpty()) {
+        if (StringUtils.hasText(form.getAnnualVacationDaysEnt())) {
             try {
                 validateNumberOfDays(NumberUtil.parseNumber(form.getAnnualVacationDaysEnt(), locale),
                     ANNUAL_VACATION_ENT, max, errors);
@@ -237,7 +248,7 @@ public class PersonValidator implements Validator {
         String propValue = customProperties.getProperty(MAX_DAYS);
         double max = Double.parseDouble(propValue);
 
-        if (form.getVacationDaysEnt() != null && !form.getVacationDaysEnt().isEmpty()) {
+        if (StringUtils.hasText(form.getVacationDaysEnt())) {
             try {
                 // field entitlement's vacation days
                 validateNumberOfDays(NumberUtil.parseNumber(form.getVacationDaysEnt(), locale), VACATION_DAYS_ENT, max,
@@ -265,7 +276,7 @@ public class PersonValidator implements Validator {
         String propValue = customProperties.getProperty(MAX_DAYS);
         double max = Double.parseDouble(propValue);
 
-        if (form.getRemainingVacationDaysEnt() != null && !form.getRemainingVacationDaysEnt().isEmpty()) {
+        if (StringUtils.hasText(form.getRemainingVacationDaysEnt())) {
             try {
                 // field entitlement's remaining vacation days
                 validateNumberOfDays(NumberUtil.parseNumber(form.getRemainingVacationDaysEnt(), locale),
@@ -318,19 +329,19 @@ public class PersonValidator implements Validator {
      */
     public void validateAccountDays(PersonForm form, Errors errors, Locale locale) {
 
-        if (form.getRemainingVacationDaysAcc() == null || form.getRemainingVacationDaysAcc().isEmpty()) {
+        if (!StringUtils.hasText(form.getRemainingVacationDaysAcc())) {
             if (errors.getFieldErrors(REMAINING_VACATION_DAYS_ACC).isEmpty()) {
                 errors.rejectValue(REMAINING_VACATION_DAYS_ACC, MANDATORY_FIELD);
             }
         }
 
-        if (form.getVacationDaysAcc() == null || form.getVacationDaysAcc().isEmpty()) {
+        if (!StringUtils.hasText(form.getVacationDaysAcc())) {
             if (errors.getFieldErrors(VACATION_DAYS_ACC).isEmpty()) {
                 errors.rejectValue(VACATION_DAYS_ACC, MANDATORY_FIELD);
             }
         }
 
-        if (form.getVacationDaysAcc() != null && !form.getVacationDaysAcc().isEmpty()) {
+        if (StringUtils.hasText(form.getVacationDaysAcc())) {
             try {
                 BigDecimal vacDaysAcc = NumberUtil.parseNumber(form.getVacationDaysAcc(), locale);
 
@@ -343,7 +354,7 @@ public class PersonValidator implements Validator {
             }
         }
 
-        if (form.getRemainingVacationDaysAcc() != null && !form.getRemainingVacationDaysAcc().isEmpty()) {
+        if (StringUtils.hasText(form.getRemainingVacationDaysAcc())) {
             try {
                 BigDecimal vacRemDaysAcc = NumberUtil.parseNumber(form.getRemainingVacationDaysAcc(), locale);
 
@@ -356,8 +367,7 @@ public class PersonValidator implements Validator {
             }
         }
 
-        if ((form.getVacationDaysEnt() != null && !form.getVacationDaysEnt().isEmpty())
-                && (form.getVacationDaysAcc() != null && !form.getVacationDaysAcc().isEmpty())) {
+        if (StringUtils.hasText(form.getVacationDaysEnt()) && StringUtils.hasText(form.getVacationDaysAcc())) {
             try {
                 BigDecimal vacDaysAcc = NumberUtil.parseNumber(form.getVacationDaysAcc(), locale);
                 BigDecimal vacDaysEnt = NumberUtil.parseNumber(form.getVacationDaysEnt(), locale);
@@ -371,8 +381,8 @@ public class PersonValidator implements Validator {
             }
         }
 
-        if ((form.getRemainingVacationDaysEnt() != null && !form.getRemainingVacationDaysEnt().isEmpty())
-                && (form.getRemainingVacationDaysAcc() != null && !form.getRemainingVacationDaysAcc().isEmpty())) {
+        if (StringUtils.hasText(form.getRemainingVacationDaysEnt())
+                && StringUtils.hasText(form.getRemainingVacationDaysAcc())) {
             try {
                 BigDecimal vacRemDaysAcc = NumberUtil.parseNumber(form.getRemainingVacationDaysAcc(), locale);
                 BigDecimal vacRemDaysEnt = NumberUtil.parseNumber(form.getRemainingVacationDaysEnt(), locale);
@@ -384,6 +394,23 @@ public class PersonValidator implements Validator {
             } catch (NumberFormatException ex) {
                 // is catched above
             }
+        }
+    }
+
+
+    /**
+     * Checks if a String has a valid length.
+     *
+     * @param  string
+     *
+     * @return
+     */
+    protected boolean validateStringLength(String string) {
+
+        if (string.length() > 50) {
+            return false;
+        } else {
+            return true;
         }
     }
 }

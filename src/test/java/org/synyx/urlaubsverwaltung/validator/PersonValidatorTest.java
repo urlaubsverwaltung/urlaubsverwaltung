@@ -189,6 +189,29 @@ public class PersonValidatorTest {
         instance.validateName(form.getLastName(), "lastName", errors);
         Mockito.verifyZeroInteractions(errors);
         Mockito.reset(errors);
+
+        // invalid String length
+        form.setFirstName("Vorname");
+        form.setLastName("AAAAAAAAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+
+        instance.validateName(form.getFirstName(), "firstName", errors);
+        Mockito.verifyZeroInteractions(errors);
+        Mockito.reset(errors);
+
+        instance.validateName(form.getLastName(), "lastName", errors);
+        Mockito.verify(errors).rejectValue("lastName", "error.length");
+        Mockito.reset(errors);
+
+        form.setFirstName("AAAAAAAAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+        form.setLastName("Nachname");
+
+        instance.validateName(form.getFirstName(), "firstName", errors);
+        Mockito.verify(errors).rejectValue("firstName", "error.length");
+        Mockito.reset(errors);
+
+        instance.validateName(form.getLastName(), "lastName", errors);
+        Mockito.verifyZeroInteractions(errors);
+        Mockito.reset(errors);
     }
 
 
@@ -283,6 +306,12 @@ public class PersonValidatorTest {
         form.setEmail("to#m@arbeit.de");
         instance.validateEmail(form.getEmail(), errors);
         Mockito.verifyZeroInteractions(errors);
+        Mockito.reset(errors);
+
+        // invalid String length
+        form.setEmail("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@net.de");
+        instance.validateEmail(form.getEmail(), errors);
+        Mockito.verify(errors).rejectValue("email", "error.length");
         Mockito.reset(errors);
     }
 

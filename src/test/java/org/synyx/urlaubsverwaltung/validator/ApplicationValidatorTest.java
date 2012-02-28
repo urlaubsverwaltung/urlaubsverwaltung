@@ -10,6 +10,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
@@ -139,6 +140,38 @@ public class ApplicationValidatorTest {
         app.setReason("Hochzeit");
         instance.validate(app, errors);
         Mockito.verifyZeroInteractions(errors);
+
+        // String length
+
+        app.setAddress("endlooooooooooooooooooooooooooooooooooooooose Adresse");
+        instance.validate(app, errors);
+        Mockito.verify(errors).rejectValue("address", "error.length");
+        Mockito.reset(errors);
+
+        app.setAddress("normale Adresse");
+        instance.validate(app, errors);
+        Mockito.verifyZeroInteractions(errors);
+        Mockito.reset(errors);
+
+        app.setPhone("00000000000000000000000000000000000000000000000000000000000007237894237849284923840923");
+        instance.validate(app, errors);
+        Mockito.verify(errors).rejectValue("phone", "error.length");
+        Mockito.reset(errors);
+
+        app.setPhone("072173128329");
+        instance.validate(app, errors);
+        Mockito.verifyZeroInteractions(errors);
+        Mockito.reset(errors);
+
+        app.setReason("endloooooooooooooooooooooooooooooooooooooooser Grund");
+        instance.validate(app, errors);
+        Mockito.verify(errors).rejectValue("reason", "error.length");
+        Mockito.reset(errors);
+
+        app.setReason("normaler Grund");
+        instance.validate(app, errors);
+        Mockito.verifyZeroInteractions(errors);
+        Mockito.reset(errors);
     }
 
 
@@ -183,5 +216,26 @@ public class ApplicationValidatorTest {
         comment.setText("Aus gutem Grund");
         instance.validateComment(comment, errors);
         Mockito.verifyZeroInteractions(errors);
+        Mockito.reset(errors);
+
+        comment.setText("ich quatsche gerne viel zu viel und gebe totaaaaal viele unnötige Informationen");
+        instance.validateComment(comment, errors);
+        Mockito.verify(errors).rejectValue("text", "error.length");
+    }
+
+
+    /** Test of validateStringLength method, of class ApplicationValidator. */
+    @Test
+    public void testValidateStringLength() {
+
+        String text = "riesengroße begründung, die kein mensch braucht, so ein Quatsch!";
+        boolean returnValue = instance.validateStringLength(text);
+        assertNotNull(returnValue);
+        assertFalse(returnValue);
+
+        text = "kurze knackige Begründung";
+        returnValue = instance.validateStringLength(text);
+        assertNotNull(returnValue);
+        assertTrue(returnValue);
     }
 }

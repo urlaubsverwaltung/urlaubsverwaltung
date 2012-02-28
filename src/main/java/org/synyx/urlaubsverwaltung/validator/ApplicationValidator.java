@@ -36,12 +36,15 @@ public class ApplicationValidator implements Validator {
     private static final String ERROR_REASON = "error.reason";
     private static final String ERROR_PERIOD = "error.period";
     private static final String ERROR_PAST = "error.period.past";
+    private static final String ERROR_LENGTH = "error.length";
 
     // names of fields
     private static final String START_DATE = "startDate";
     private static final String END_DATE = "endDate";
     private static final String START_DATE_HALF = "startDateHalf";
     private static final String REASON = "reason";
+    private static final String ADDRESS = "address";
+    private static final String PHONE = "phone";
     private static final String TEXT = "text";
 
     private static final String CUSTOM_PROPERTIES_FILE = "custom.properties";
@@ -106,10 +109,12 @@ public class ApplicationValidator implements Validator {
 
         // check if reason is not filled
         if (app.getVacationType() != VacationType.HOLIDAY) {
-            if (app.getReason() == null || !StringUtils.hasText(app.getReason())) {
+            if (!StringUtils.hasText(app.getReason())) {
                 errors.rejectValue(REASON, MANDATORY_FIELD);
             }
         }
+
+        validateStringFields(app, errors);
     }
 
 
@@ -141,12 +146,67 @@ public class ApplicationValidator implements Validator {
     }
 
 
+    /**
+     * Validates if comment field is filled (mandatory if application is rejected by boss).
+     *
+     * @param  target
+     * @param  errors
+     */
     public void validateComment(Object target, Errors errors) {
 
         Comment comment = (Comment) target;
 
-        if (comment.getText() == null || !StringUtils.hasText(comment.getText())) {
+        if (StringUtils.hasText(comment.getText())) {
+            if (!validateStringLength(comment.getText())) {
+                errors.rejectValue(TEXT, ERROR_LENGTH);
+            }
+        } else {
             errors.rejectValue(TEXT, ERROR_REASON);
+        }
+    }
+
+
+    /**
+     * Check if String fields of application form have a valid length.
+     *
+     * @param  target
+     * @param  errors
+     */
+    private void validateStringFields(AppForm app, Errors errors) {
+
+        if (StringUtils.hasText(app.getReason())) {
+            if (!validateStringLength(app.getReason())) {
+                errors.rejectValue(REASON, ERROR_LENGTH);
+            }
+        }
+
+        if (StringUtils.hasText(app.getAddress())) {
+            if (!validateStringLength(app.getAddress())) {
+                errors.rejectValue(ADDRESS, ERROR_LENGTH);
+            }
+        }
+
+        if (StringUtils.hasText(app.getPhone())) {
+            if (!validateStringLength(app.getPhone())) {
+                errors.rejectValue(PHONE, ERROR_LENGTH);
+            }
+        }
+    }
+
+
+    /**
+     * Checks if a String has a valid length.
+     *
+     * @param  string
+     *
+     * @return
+     */
+    protected boolean validateStringLength(String string) {
+
+        if (string.length() > 50) {
+            return false;
+        } else {
+            return true;
         }
     }
 }

@@ -667,22 +667,6 @@ public class PersonController {
 
         return "redirect:/web" + ACTIVE_LINK;
     }
-//
-//
-//    /**
-//     * This method checks if all other day fields of person form (except for field annual vacation days) are null resp.
-//     * empty.
-//     *
-//     * @param  form
-//     *
-//     * @return  true if all other day fields are empty, false if one or more of these fields are filled
-//     */
-//    private boolean allOtherDayFieldsAreEmpty(PersonForm form) {
-//
-//        return (StringUtils.isEmpty(form.getRemainingVacationDaysEnt())
-//                && StringUtils.isEmpty(form.getVacationDaysAcc())
-//                && StringUtils.isEmpty(form.getRemainingVacationDaysAcc()));
-//    }
 
 
     /**

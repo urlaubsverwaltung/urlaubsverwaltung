@@ -227,7 +227,7 @@ tr.even {
 
 
 .app-form {
-    border-top: 1px solid #D7D7D7;
+    border: 1px solid #D7D7D7;
     padding: 1em 2em 2em 2em; 
     margin:0;
 }
