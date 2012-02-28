@@ -450,53 +450,11 @@ public class PersonController {
             Person person = personService.getPersonByID(personId);
 
             int year = DateMidnight.now(GregorianChronology.getInstance()).getYear();
-            BigDecimal daysEnt = null;
-            BigDecimal remainingEnt = null;
-            BigDecimal daysAcc = null;
-            BigDecimal remainingAcc = null;
-            boolean daysExpire = true;
-
-            HolidayEntitlement entitlement = accountService.getHolidayEntitlement(year, person);
-
-            if (entitlement != null) {
-                daysEnt = entitlement.getVacationDays();
-                remainingEnt = entitlement.getRemainingVacationDays();
-            }
-
-            HolidaysAccount account = accountService.getHolidaysAccount(year, person);
-
-            if (account != null) {
-                daysAcc = account.getVacationDays();
-                remainingAcc = account.getRemainingVacationDays();
-            }
 
             Locale locale = RequestContextUtils.getLocale(request);
 
-            String ent = "";
-            String remEnt = "";
-            String acc = "";
-            String remAcc = "";
-
-            if (daysEnt != null) {
-                ent = NumberUtil.formatNumber(daysEnt, locale);
-            }
-
-            if (remainingEnt != null) {
-                remEnt = NumberUtil.formatNumber(remainingEnt, locale);
-            }
-
-            if (daysAcc != null) {
-                acc = NumberUtil.formatNumber(daysAcc, locale);
-            }
-
-            if (remainingAcc != null) {
-                remAcc = NumberUtil.formatNumber(remainingAcc, locale);
-            }
-
-            PersonForm personForm = new PersonForm(person, Integer.toString(year), ent, remEnt, acc, remAcc,
-                    daysExpire);
-
-            preparePersonForm(person, personForm, model);
+            PersonForm personForm = preparePersonForm(year, person, locale);
+            addModelAttributesForPersonForm(person, personForm, model);
 
             return PERSON_FORM_JSP;
         } else {
@@ -505,7 +463,103 @@ public class PersonController {
     }
 
 
-    private void preparePersonForm(Person person, PersonForm personForm, Model model) {
+    /**
+     * Prepares the view object PersonForm and returns jsp with form to edit a user.
+     *
+     * @param  personId
+     * @param  model
+     *
+     * @return
+     */
+    @RequestMapping(value = EDIT_LINK, params = YEAR, method = RequestMethod.GET)
+    public String editPersonFormForYear(HttpServletRequest request,
+        @RequestParam(YEAR) int year,
+        @PathVariable(PERSON_ID) Integer personId, Model model) {
+
+        int currentYear = DateMidnight.now().getYear();
+
+        if (year - currentYear > 2 || currentYear - year > 2) {
+            return ERROR_JSP;
+        }
+
+        if (getLoggedUser().getRole() == Role.OFFICE) {
+            Person person = personService.getPersonByID(personId);
+
+            Locale locale = RequestContextUtils.getLocale(request);
+
+            PersonForm personForm = preparePersonForm(year, person, locale);
+            addModelAttributesForPersonForm(person, personForm, model);
+
+            return PERSON_FORM_JSP;
+        } else {
+            return ERROR_JSP;
+        }
+    }
+
+
+    /**
+     * Prepares PersonForm object with the given parameters.
+     *
+     * @param  year
+     * @param  person
+     * @param  locale
+     * @param  model
+     */
+    private PersonForm preparePersonForm(int year, Person person, Locale locale) {
+
+        BigDecimal daysEnt = null;
+        BigDecimal remainingEnt = null;
+        BigDecimal daysAcc = null;
+        BigDecimal remainingAcc = null;
+        boolean daysExpire = true;
+
+        HolidayEntitlement entitlement = accountService.getHolidayEntitlement(year, person);
+
+        if (entitlement != null) {
+            daysEnt = entitlement.getVacationDays();
+            remainingEnt = entitlement.getRemainingVacationDays();
+        }
+
+        HolidaysAccount account = accountService.getHolidaysAccount(year, person);
+
+        if (account != null) {
+            daysAcc = account.getVacationDays();
+            remainingAcc = account.getRemainingVacationDays();
+        }
+
+        String ent = "";
+        String remEnt = "";
+        String acc = "";
+        String remAcc = "";
+
+        if (daysEnt != null) {
+            ent = NumberUtil.formatNumber(daysEnt, locale);
+        }
+
+        if (remainingEnt != null) {
+            remEnt = NumberUtil.formatNumber(remainingEnt, locale);
+        }
+
+        if (daysAcc != null) {
+            acc = NumberUtil.formatNumber(daysAcc, locale);
+        }
+
+        if (remainingAcc != null) {
+            remAcc = NumberUtil.formatNumber(remainingAcc, locale);
+        }
+
+        return new PersonForm(person, Integer.toString(year), ent, remEnt, acc, remAcc, daysExpire);
+    }
+
+
+    /**
+     * Adding attributes to model.
+     *
+     * @param  person
+     * @param  personForm
+     * @param  model
+     */
+    private void addModelAttributesForPersonForm(Person person, PersonForm personForm, Model model) {
 
         setLoggedUser(model);
         model.addAttribute(PERSON, person);
@@ -535,7 +589,7 @@ public class PersonController {
         validator.validateProperties(personForm, errors); // validates if the set value of the property key is valid
 
         if (errors.hasErrors()) {
-            preparePersonForm(personToUpdate, personForm, model);
+            addModelAttributesForPersonForm(personToUpdate, personForm, model);
             model.addAttribute("thereAreErrors", "yes");
 
             return PERSON_FORM_JSP;
@@ -550,7 +604,7 @@ public class PersonController {
                                                                    // days and vacation days
 
         if (errors.hasErrors()) {
-            preparePersonForm(personToUpdate, personForm, model);
+            addModelAttributesForPersonForm(personToUpdate, personForm, model);
 
             return PERSON_FORM_JSP;
         } else {
