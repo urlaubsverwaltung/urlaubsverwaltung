@@ -15,11 +15,7 @@
 <html>
 
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <script src="<spring:url value='/jquery/js/jquery-1.6.2.min.js' />" type="text/javascript" ></script>
-        <script src="<spring:url value='/jquery/js/jquery-ui-1.8.16.custom.min.js' />" type="text/javascript" ></script>
-        <link rel="stylesheet" type="text/css" href="<spring:url value='/css/fluid_grid.css' />" />
-        <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />" />
+        <%@include file="../include/header.jsp" %>
         <title><spring:message code="title" /></title>
     </head>
 
@@ -27,7 +23,7 @@
 
         <spring:url var="formUrlPrefix" value="/web" />
 
-        <%@include file="../include/header.jsp" %>
+        <%@include file="../include/menu_header.jsp" %>
 
         <div id="content">
             <div class="container_12">

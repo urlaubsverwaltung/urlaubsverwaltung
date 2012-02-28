@@ -15,9 +15,8 @@
 <html>
 
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <script src="<spring:url value='/jquery/js/jquery-1.6.2.min.js' />" type="text/javascript" ></script>
-        <script src="<spring:url value='/jquery/js/jquery-ui-1.8.16.custom.min.js' />" type="text/javascript" ></script>
+        <title><spring:message code="title" /></title>
+        <%@include file="../include/header.jsp" %>
         <script type="text/javascript">
             $(document).ready(function() {
                 var path = window.location.pathname;
@@ -31,16 +30,13 @@
                 }
             });
         </script>
-        <link rel="stylesheet" type="text/css" href="<spring:url value='/css/fluid_grid.css' />" />
-        <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />" /> 
-        <title><spring:message code="title" /></title>
     </head>
 
     <body>
 
         <spring:url var="formUrlPrefix" value="/web" />
 
-        <%@include file="../include/header.jsp" %>
+        <%@include file="../include/menu_header.jsp" %>
 
         <div id="show-navi">
             <a href="${formUrlPrefix}/staff" id="staff-act"><spring:message code="table.active" /></a>

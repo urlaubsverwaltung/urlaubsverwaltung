@@ -15,13 +15,8 @@
 <html>
 
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <link rel="stylesheet" type="text/css" href="<spring:url value='/jquery/css/ui-lightness/jquery-ui-1.8.16.custom.css' />" />
-        <link rel="stylesheet" type="text/css" href="<spring:url value='/css/fluid_grid.css' />" />
-        <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />" /> 
+        <%@include file="../include/header.jsp" %>
         <title><spring:message code="title" /></title>
-        <script src="<spring:url value='/jquery/js/jquery-1.6.2.min.js' />" type="text/javascript" ></script>
-        <script src="<spring:url value='/jquery/js/jquery-ui-1.8.16.custom.min.js' />" type="text/javascript" ></script>     
         <script type="text/javascript">
             $(function() {
                 $.datepicker.regional['en'] = {
@@ -115,7 +110,7 @@
 
         <spring:url var="formUrlPrefix" value="/web" />
 
-        <%@include file="../include/header.jsp" %>
+        <%@include file="../include/menu_header.jsp" %>
 
         <div id="content">
 

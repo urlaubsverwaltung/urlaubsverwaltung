@@ -15,10 +15,8 @@
 <html>
 
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <link rel="stylesheet" type="text/css" href="<spring:url value='/css/fluid_grid.css' />" />
-        <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />" /> 
         <title><spring:message code="title" /></title>
+        <%@include file="../include/header.jsp" %>
     </head>
 
     <body>
@@ -26,7 +24,7 @@
         <spring:url var="formUrlPrefix" value="/web" />
         <c:set var="linkPrefix" value="${formUrlPrefix}/application" />
 
-        <%@include file="../include/header.jsp" %>
+        <%@include file="../include/menu_header.jsp" %>
 
         <div id="content">
 

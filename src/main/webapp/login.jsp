@@ -15,12 +15,9 @@
 <html>
 
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Login</title>
-        <link rel="stylesheet" type="text/css" href="<spring:url value='/css/login.css' />" /> 
-        <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />" />
-        <script src="<spring:url value='/jquery/js/jquery-1.6.2.min.js' />" type="text/javascript" ></script>
-        <script src="<spring:url value='/jquery/js/jquery-ui-1.8.16.custom.min.js' />" type="text/javascript" ></script>
+        <%@include file="/WEB-INF/jsp/include/header.jsp" %>
+        <link rel="stylesheet" type="text/css" href="<spring:url value='/css/login.css' />" />
         <script type="text/javascript">
                 $(document).ready(function() {
                     

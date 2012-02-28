@@ -15,17 +15,15 @@
 <html>
     
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <link rel="stylesheet" type="text/css" href="<spring:url value='/css/fluid_grid.css' />" />
-        <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />" />
         <title><spring:message code="title" /></title>
+        <%@include file="./include/header.jsp" %>
     </head>
     
     <body>
         
         <spring:url var="formUrlPrefix" value="/web" />
         
-        <%@include file="./include/header.jsp" %>
+        <%@include file="./include/menu_header.jsp" %>
         
         <div class="container_12">
             <div class="grid_12" id="errorpage">
