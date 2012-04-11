@@ -16,7 +16,7 @@
                 <c:when test="${account != null}">
                     <c:choose>
                         
-                        <c:when test="${april == 1}">
+                        <c:when test="${april == 1 || not account.remainingVacationDaysExpire}">
                             <c:set var="left" value="${account.vacationDays + account.remainingVacationDays}" />
                             <c:choose>
                                 <c:when test="${left <= 1.00 && left > 0.50}">
