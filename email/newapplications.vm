@@ -16,3 +16,5 @@ Anschrift während des Urlaubs: ${application.address}
 #if($application.phone && $application.phone != "")
 Telefon während des Urlaubs: ${application.phone}
 #end
+
+Link zum Antrag: ${link}

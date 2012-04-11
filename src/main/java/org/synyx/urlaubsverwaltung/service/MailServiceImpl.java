@@ -24,11 +24,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import java.util.StringTokenizer;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-
 
 /**
  * @author  Johannes Reuter
@@ -42,19 +42,14 @@ import javax.mail.internet.MimeMessage;
 public class MailServiceImpl implements MailService {
 
     private static final Logger LOG = Logger.getLogger(MailServiceImpl.class);
-
     private static final String DATE_FORMAT = "dd.MM.yyyy";
-
     private static final String PATH = "/email/";
-
     private static final String PROPERTIES_FILE = "messages_de.properties"; // general properties
     private static final String MAIL_PROPERTIES_FILE = "mail.properties"; // custom configuration like email
-                                                                          // addresses, etc.
-
+    // addresses, etc.
     private static final String APPLICATION = "application";
     private static final String PERSON = "person";
     private static final String PERSONS = "persons";
-
     // File names
     private static final String TYPE = ".vm";
     private static final String FILE_ALLOWED_OFFICE = "allowed_office" + TYPE;
@@ -67,7 +62,6 @@ public class MailServiceImpl implements MailService {
     private static final String FILE_NEW = "newapplications" + TYPE;
     private static final String FILE_REJECTED = "rejected" + TYPE;
     private static final String FILE_WEEKLY = "weekly" + TYPE;
-
     private JavaMailSender mailSender;
     private VelocityEngine velocityEngine;
     private Properties properties;
@@ -108,13 +102,13 @@ public class MailServiceImpl implements MailService {
             String length = a.getHowLong().getDayLength();
             model.put("vacationType", properties.getProperty(vacType));
             model.put("dayLength", properties.getProperty(length));
+            model.put("link", "http://urlaubsverwaltung/web/application/" + a.getId());
         }
 
         String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, PATH + fileName, model);
 
         return text;
     }
-
 
     /**
      * this method gets the recipient email address, the email's subject and text with this parameters an email is build
@@ -141,12 +135,11 @@ public class MailServiceImpl implements MailService {
             this.mailSender.send(prep);
         } catch (MailException ex) {
             LOG.error(DateMidnight.now().toString(DATE_FORMAT) + ": Sending the email with following subject '"
-                + subject
-                + "' to " + recipient + " failed.");
+                    + subject
+                    + "' to " + recipient + " failed.");
             LOG.error(ex.getMessage(), ex);
         }
     }
-
 
     /**
      * @see  MailService#sendExpireNotification(java.util.List)
@@ -161,7 +154,6 @@ public class MailServiceImpl implements MailService {
         }
     }
 
-
     /**
      * @see  MailService#sendNewApplicationNotification(org.synyx.urlaubsverwaltung.domain.Application)
      */
@@ -170,131 +162,212 @@ public class MailServiceImpl implements MailService {
 
         String text = prepareMessage(application, APPLICATION, FILE_NEW);
 
-        sendEmail(mailProperties.getProperty("email.boss"), "subject.new", text);
+        sendEmailToMultipleRecipients(mailProperties.getProperty("email.boss"), "subject.new", text);
+    }
+
+    /**
+     * This method is equivalent to the method sendEmail except that it sends the email to multiple recipients instead of only to one.
+     * 
+     * @param recipients
+     * @param subject
+     * @param text 
+     */
+    private void sendEmailToMultipleRecipients(final String recipients, final String subject, final String text) {
+
+        MimeMessagePreparator prep = new MimeMessagePreparator() {
+
+            public void prepare(MimeMessage mimeMessage) throws MessagingException {
+
+                ArrayList<String> recipientsList = new ArrayList<String>();
+                StringTokenizer st = new StringTokenizer(recipients, ",");
+                while (st.hasMoreTokens()) {
+                    recipientsList.add(st.nextToken());
+                }
+
+                int sizeTo = recipientsList.size();
+                
+                InternetAddress[] addressTo = new InternetAddress[sizeTo];
+                for (int i = 0; i < sizeTo; i++) {
+                    addressTo[i] = new InternetAddress(recipientsList.get(i).toString());
+                }
+
+                mimeMessage.setRecipients(Message.RecipientType.TO, addressTo);
+
+                mimeMessage.setSubject(mailProperties.getProperty(subject));
+                mimeMessage.setText(text);
+            }
+        };
+
+        try {
+            this.mailSender.send(prep);
+        } catch (MailException ex) {
+            LOG.error(DateMidnight.now().toString(DATE_FORMAT) + ": Sending the email with following subject '"
+                    + subject
+                    + "' to following recipients " + " failed.");
+            LOG.error(ex.getMessage(), ex);
+        }
     }
 
 
-    /**
-     * @see  MailService#sendAllowedNotification(org.synyx.urlaubsverwaltung.domain.Application)
-     */
-    @Override
-    public void sendAllowedNotification(Application application) {
+        /**
+         * @see  MailService#sendAllowedNotification(org.synyx.urlaubsverwaltung.domain.Application)
+         */
+        @Override
+        public void sendAllowedNotification
+        (Application application
+        
+            
+            ) {
 
         // if application has been allowed, two emails must be sent
         // the applicant gets an email and the office gets an email
 
         // email to office
         String textOffice = prepareMessage(application, APPLICATION, FILE_ALLOWED_OFFICE);
-        sendEmail(mailProperties.getProperty("email.office"), "subject.allowed.office", textOffice);
+            sendEmail(mailProperties.getProperty("email.office"), "subject.allowed.office", textOffice);
 
-        // email to applicant
-        String textUser = prepareMessage(application, APPLICATION, FILE_ALLOWED_USER);
-        sendEmail(application.getPerson().getEmail(), "subject.allowed.user", textUser);
-    }
+            // email to applicant
+            String textUser = prepareMessage(application, APPLICATION, FILE_ALLOWED_USER);
+            sendEmail(application.getPerson().getEmail(), "subject.allowed.user", textUser);
+        }
 
 
-    /**
-     * @see  MailService#sendRejectedNotification(org.synyx.urlaubsverwaltung.domain.Application)
-     */
-    @Override
-    public void sendRejectedNotification(Application application) {
+        /**
+         * @see  MailService#sendRejectedNotification(org.synyx.urlaubsverwaltung.domain.Application)
+         */
+        @Override
+        public void sendRejectedNotification
+        (Application application
+        
+            
+            ) {
 
         String text = prepareMessage(application, APPLICATION, FILE_REJECTED);
-        sendEmail(application.getPerson().getEmail(), "subject.rejected", text);
-    }
+            sendEmail(application.getPerson().getEmail(), "subject.rejected", text);
+        }
 
 
-    /**
-     * @see  MailService#sendConfirmation(org.synyx.urlaubsverwaltung.domain.Application)
-     */
-    @Override
-    public void sendConfirmation(Application application) {
+        /**
+         * @see  MailService#sendConfirmation(org.synyx.urlaubsverwaltung.domain.Application)
+         */
+        @Override
+        public void sendConfirmation
+        (Application application
+        
+            
+            ) {
 
         String text = prepareMessage(application, APPLICATION, FILE_CONFIRM);
-        sendEmail(application.getPerson().getEmail(), "subject.confirm", text);
-    }
+            sendEmail(application.getPerson().getEmail(), "subject.confirm", text);
+        }
 
 
-    @Override
-    public void sendAppliedForLeaveByOfficeNotification(Application application) {
+        @Override
+        public void sendAppliedForLeaveByOfficeNotification
+        (Application application
+        
+            
+            ) {
 
         String text = prepareMessage(application, APPLICATION, FILE_NEW_BY_OFFICE);
-        sendEmail(application.getPerson().getEmail(), "subject.new.app.by.office", text);
-    }
+            sendEmail(application.getPerson().getEmail(), "subject.new.app.by.office", text);
+        }
 
 
-    /**
-     * @see  MailService#sendWeeklyVacationForecast(java.util.List)
-     */
-    @Override
-    public void sendWeeklyVacationForecast(List<Person> persons) {
+        /**
+         * @see  MailService#sendWeeklyVacationForecast(java.util.List)
+         */
+        @Override
+        public void sendWeeklyVacationForecast
+        (List<Person> persons
+        
+            
+            ) {
 
         List<String> names = new ArrayList<String>();
 
-        for (Person person : persons) {
-            names.add(person.getFirstName() + " " + person.getLastName() + "\n");
+            for (Person person : persons) {
+                names.add(person.getFirstName() + " " + person.getLastName() + "\n");
+            }
+
+            String text = prepareMessage(names, PERSONS, FILE_WEEKLY);
+            sendEmail(mailProperties.getProperty("email.all"), "subject.weekly", text);
         }
 
-        String text = prepareMessage(names, PERSONS, FILE_WEEKLY);
-        sendEmail(mailProperties.getProperty("email.all"), "subject.weekly", text);
-    }
 
-
-    /**
-     * @see  MailService#sendCancelledNotification(org.synyx.urlaubsverwaltung.domain.Application, boolean)
-     */
-    @Override
-    public void sendCancelledNotification(Application application, boolean cancelledByOffice) {
+        /**
+         * @see  MailService#sendCancelledNotification(org.synyx.urlaubsverwaltung.domain.Application, boolean)
+         */
+        @Override
+        public void sendCancelledNotification
+        (Application application, 
+        
+        boolean cancelledByOffice
+        
+            
+            ) {
 
         String text;
 
-        if (cancelledByOffice) {
-            // mail to applicant
-            text = prepareMessage(application, APPLICATION, FILE_CANCELLED_BY_OFFICE);
-            sendEmail(application.getPerson().getEmail(), "subject.cancelled.by.office", text);
-        } else {
-            // mail to office
-            text = prepareMessage(application, APPLICATION, FILE_CANCELLED);
-            sendEmail(mailProperties.getProperty("email.office"), "subject.cancelled", text);
+            if (cancelledByOffice) {
+                // mail to applicant
+                text = prepareMessage(application, APPLICATION, FILE_CANCELLED_BY_OFFICE);
+                sendEmail(application.getPerson().getEmail(), "subject.cancelled.by.office", text);
+            } else {
+                // mail to office
+                text = prepareMessage(application, APPLICATION, FILE_CANCELLED);
+                sendEmail(mailProperties.getProperty("email.office"), "subject.cancelled", text);
+            }
         }
-    }
 
 
-    @Override
-    public void sendKeyGeneratingErrorNotification(String loginName) {
+        @Override
+        public void sendKeyGeneratingErrorNotification
+        (String loginName
+        
+            
+            ) {
 
         String text = "An error occured during key generation for person with login " + loginName + " failed.";
-        sendEmail(mailProperties.getProperty("email.manager"), "subject.key.error", text);
-    }
+            sendEmail(mailProperties.getProperty("email.manager"), "subject.key.error", text);
+        }
 
 
-    @Override
-    public void sendSignErrorNotification(Integer applicationId, String exception) {
+        @Override
+        public void sendSignErrorNotification
+        (Integer applicationId, String exception
+        
+            
+            ) {
 
         String text = "An error occured while signing the application with id " + applicationId + "\n" + exception;
 
-        sendEmail(mailProperties.getProperty("email.manager"), "subject.sign.error", text);
-    }
+            sendEmail(mailProperties.getProperty("email.manager"), "subject.sign.error", text);
+        }
 
 
-    @Override
-    public void sendPropertiesErrorNotification(String propertyName) {
+        @Override
+        public void sendPropertiesErrorNotification
+        (String propertyName
+        
+            
+            ) {
 
         String text = "The value of the property key '" + propertyName
-            + "' seems to be invalid. Please control and correct it if necessary.";
-        sendEmail(mailProperties.getProperty("email.manager"), "subject.prop.error", text);
-    }
+                    + "' seems to be invalid. Please control and correct it if necessary.";
+            sendEmail(mailProperties.getProperty("email.manager"), "subject.prop.error", text);
+        }
 
-    /**
-     * NOT YET IMPLEMENTED
-     * Commented out on Tu, 2011/11/29 - Aljona Murygina
-     * Think about if method really is necessary or not
-     *
-     * @see  MailService#sendBalance(java.lang.Object)
-     */
-    // @Override
-    // public void sendBalance(Object balanceObject) {
-    //
-    // throw new UnsupportedOperationException("Not supported yet.");
-    // }
-}
+        /**
+         * NOT YET IMPLEMENTED
+         * Commented out on Tu, 2011/11/29 - Aljona Murygina
+         * Think about if method really is necessary or not
+         *
+         * @see  MailService#sendBalance(java.lang.Object)
+         */
+        // @Override
+        // public void sendBalance(Object balanceObject) {
+        //
+        // throw new UnsupportedOperationException("Not supported yet.");
+        // }
+    }
