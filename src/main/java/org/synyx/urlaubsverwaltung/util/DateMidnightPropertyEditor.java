@@ -25,7 +25,7 @@ public class DateMidnightPropertyEditor extends PropertyEditorSupport {
 
     public DateMidnightPropertyEditor(Locale locale) {
 
-        this.formatter = DateTimeFormat.mediumDate().withLocale(locale);
+        this.formatter = DateTimeFormat.forPattern("dd.MM.yyyy");
     }
 
     // aus Datum String machen

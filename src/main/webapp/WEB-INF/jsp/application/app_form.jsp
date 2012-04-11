@@ -32,7 +32,7 @@
                     dayNamesShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
                     dayNamesMin: ['Su','Mo','Tu','We','Th','Fr','Sa'],
                     weekHeader: 'Wk',
-                    dateFormat: 'dd/mm/yy',
+                    dateFormat: 'dd.mm.yy',
                     firstDay: 1,
                     isRTL: false,
                     showMonthAfterYear: false,
@@ -62,7 +62,6 @@
             $(function() {
                 var dates = $( "#from, #to, #at" ).datepicker({
                     minDate: +0,
-                    dateFormat: "dd.mm.yy",
                     numberOfMonths: 1,
                     onSelect: function( selectedDate ) {
                         var option = this.id == "from" ? "minDate" : "maxDate";

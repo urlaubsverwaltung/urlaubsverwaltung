@@ -58,7 +58,6 @@
                     yearSuffix: ''};  
                 $.datepicker.setDefaults($.datepicker.regional["${pageContext.request.locale.language}"]);
                 var dates = $( "#from, #to, #at" ).datepicker({
-                    dateFormat: "dd.mm.yy",
                     numberOfMonths: 1,
                     onSelect: function( selectedDate ) {
                         var option = this.id == "from" ? "minDate" : "maxDate";
