@@ -14,9 +14,7 @@
 <c:choose>
                 
                 <c:when test="${accounts[person] != null}">
-                    <c:choose>
-                        
-                        <c:when test="${april == 1 || not accounts[person].remainingVacationDaysExpire}">
+                    
                             <c:set var="left" value="${accounts[person].vacationDays + accounts[person].remainingVacationDays}" />
                             <c:choose>
                                 <c:when test="${left <= 1.00 && left > 0.50}">
@@ -46,21 +44,7 @@
                                 </c:otherwise>
                             </c:choose>
                             <spring:message code="${remaining}" arguments="${remDays}" />
-                        </c:when>
-                            
-                        <c:otherwise>
-                            <c:choose>
-                                <c:when test="${accounts[person].vacationDays <= 1.00 && accounts[person].vacationDays > 0.50}">
-                                    <c:set var="numberOfDays" value="day" />
-                                </c:when> 
-                                <c:otherwise>
-                                    <c:set var="numberOfDays" value="days" />
-                                </c:otherwise>
-                            </c:choose>
-                            <spring:message code="${numberOfDays}" arguments="${accounts[person].vacationDays}"/>
-                        </c:otherwise>
-                            
-                    </c:choose>
+                                                     
                 </c:when>
                             
                 <c:otherwise>

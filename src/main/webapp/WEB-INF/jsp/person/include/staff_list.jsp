@@ -40,15 +40,8 @@
             <td class="vac">
                 <c:choose>
                     <c:when test="${accounts[person] != null}">
-                        <c:choose>
-                            <c:when test="${april == 1 || not accounts[person].remainingVacationDaysExpire}">
                                 <fmt:formatNumber maxFractionDigits="1" value="${accounts[person].vacationDays}"/> +
                                 <fmt:formatNumber maxFractionDigits="1" value="${accounts[person].remainingVacationDays}"/>
-                            </c:when>
-                            <c:otherwise>
-                                <fmt:formatNumber maxFractionDigits="1" value="${accounts[person].vacationDays}"/>
-                            </c:otherwise>
-                        </c:choose>
                     </c:when>
                     <c:otherwise>
                         <spring:message code='not.specified' />

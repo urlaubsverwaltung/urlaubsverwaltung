@@ -145,7 +145,7 @@
                                         
                                             <spring:message code="${msg1}" arguments="${daysApp}" />
                                         <c:choose>
-                                                <c:when test="${april == 1}">
+                                                <c:when test="${april == 1 || not account.remainingVacationDaysExpire}">
                                                     <c:set var="numberOfDays" value="${account.vacationDays + account.remainingVacationDays}" />
                                                     <c:choose>
                                                         <c:when test="${numberOfDays <= 1.00 && numberOfDays > 0.50}">

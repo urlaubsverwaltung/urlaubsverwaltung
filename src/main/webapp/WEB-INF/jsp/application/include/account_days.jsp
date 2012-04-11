@@ -31,7 +31,7 @@
                     
                     <c:choose>
                         <c:when test="${entitlement.remainingVacationDays == null}">
-                            <c:set var="remDays" value="0.00" />
+                            <c:set var="remDays" value="0" />
                         </c:when>
                         <c:otherwise>
                             <c:set var="remDays" value="${entitlement.remainingVacationDays}" />
