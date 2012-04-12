@@ -143,7 +143,7 @@ public class ApplicationValidatorTest {
 
         // String length
 
-        app.setAddress("endlooooooooooooooooooooooooooooooooooooooose Adresse");
+        app.setAddress("endlooooooooooooooooooooooooooooooooooooooose Adresse endlooooooooooooooooooooooooooooooooooooooose Adresse");
         instance.validate(app, errors);
         Mockito.verify(errors).rejectValue("address", "error.length");
         Mockito.reset(errors);
@@ -163,7 +163,7 @@ public class ApplicationValidatorTest {
         Mockito.verifyZeroInteractions(errors);
         Mockito.reset(errors);
 
-        app.setReason("endloooooooooooooooooooooooooooooooooooooooser Grund");
+        app.setReason("Freilebende Gummibärchen gibt es nicht. Man kauft sie in Packungen an der Kinokasse. Dieser Kauf ist der Beginn einer fast erotischen und sehr ambivalenten Beziehung Gummibärchen-Mensch. Zuerst gen...toller Text ist das, einfach wow!");
         instance.validate(app, errors);
         Mockito.verify(errors).rejectValue("reason", "error.length");
         Mockito.reset(errors);
@@ -218,7 +218,7 @@ public class ApplicationValidatorTest {
         Mockito.verifyZeroInteractions(errors);
         Mockito.reset(errors);
 
-        comment.setReason("ich quatsche gerne viel zu viel und gebe totaaaaal viele unnötige Informationen");
+        comment.setReason("Freilebende Gummibärchen gibt es nicht. Man kauft sie in Packungen an der Kinokasse. Dieser Kauf ist der Beginn einer fast erotischen und sehr ambivalenten Beziehung Gummibärchen-Mensch. Zuerst gen...toller Text ist das, einfach wow!");
         instance.validateComment(comment, errors);
         Mockito.verify(errors).rejectValue("text", "error.length");
     }
@@ -229,12 +229,12 @@ public class ApplicationValidatorTest {
     public void testValidateStringLength() {
 
         String text = "riesengroße begründung, die kein mensch braucht, so ein Quatsch!";
-        boolean returnValue = instance.validateStringLength(text);
+        boolean returnValue = instance.validateStringLength(text, 50);
         assertNotNull(returnValue);
         assertFalse(returnValue);
 
         text = "kurze knackige Begründung";
-        returnValue = instance.validateStringLength(text);
+        returnValue = instance.validateStringLength(text, 50);
         assertNotNull(returnValue);
         assertTrue(returnValue);
     }

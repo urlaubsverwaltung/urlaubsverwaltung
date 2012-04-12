@@ -167,14 +167,17 @@
                                          <c:otherwise>display: block</c:otherwise>
                                      </c:choose>
                                 ">            
-                                    <spring:message code='reason' />:&nbsp;&nbsp;<form:input path="text" cssErrorClass="error" />   
+                                <spring:message code='reason' />: (<spring:message code="max.chars" />)
+                                <br />
+                                <form:textarea path="reason" cssErrorClass="error" />
+                                <br />
                                     <input type="submit" name="<spring:message code='ok' />" value="<spring:message code='ok' />" class="button" />
                                     <script type="text/javascript">
                                     $(document).ready(function() {
                                         $('#reject-error').show('drop', 500);
                                     });
                                 </script>
-                                    <form:errors path="text" cssClass="error" id="reject-error" />
+                                    <form:errors path="reason" cssClass="error" id="reject-error" />
                                 </div>
                                 </form:form>  
                             </div>

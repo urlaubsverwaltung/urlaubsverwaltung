@@ -276,7 +276,7 @@ tr.even {
     border: 1px solid #D7D7D7; 
     padding: 1em 2em 1em 2em; 
     margin:0;
-    min-height: 33em;
+    height: 33em;
 }
 
 .app-tbl {
@@ -387,6 +387,7 @@ input[type=submit].confirm, input[type=button].confirm, a.button.confirm {
 
 #reject {
     margin-top: 2em;
+    text-align:left;
 }
 
 a.button.apply {

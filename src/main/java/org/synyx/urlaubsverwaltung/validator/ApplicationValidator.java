@@ -157,7 +157,7 @@ public class ApplicationValidator implements Validator {
         Comment comment = (Comment) target;
 
         if (StringUtils.hasText(comment.getReason())) {
-            if (!validateStringLength(comment.getReason())) {
+            if (!validateStringLength(comment.getReason(), 200)) {
                 errors.rejectValue(TEXT, ERROR_LENGTH);
             }
         } else {
@@ -175,19 +175,19 @@ public class ApplicationValidator implements Validator {
     private void validateStringFields(AppForm app, Errors errors) {
 
         if (StringUtils.hasText(app.getReason())) {
-            if (!validateStringLength(app.getReason())) {
+            if (!validateStringLength(app.getReason(), 80)) {
                 errors.rejectValue(REASON, ERROR_LENGTH);
             }
         }
 
         if (StringUtils.hasText(app.getAddress())) {
-            if (!validateStringLength(app.getAddress())) {
+            if (!validateStringLength(app.getAddress(), 100)) {
                 errors.rejectValue(ADDRESS, ERROR_LENGTH);
             }
         }
 
         if (StringUtils.hasText(app.getPhone())) {
-            if (!validateStringLength(app.getPhone())) {
+            if (!validateStringLength(app.getPhone(), 50)) {
                 errors.rejectValue(PHONE, ERROR_LENGTH);
             }
         }
@@ -201,9 +201,9 @@ public class ApplicationValidator implements Validator {
      *
      * @return
      */
-    protected boolean validateStringLength(String string) {
+    protected boolean validateStringLength(String string, int length) {
 
-        if (string.length() > 50) {
+        if (string.length() > length) {
             return false;
         } else {
             return true;
