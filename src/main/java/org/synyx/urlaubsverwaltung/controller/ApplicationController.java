@@ -898,15 +898,23 @@ public class ApplicationController {
     public String cancelApplicationConfirm(@PathVariable(APPLICATION_ID) Integer applicationId, Model model) {
 
         Application application = applicationService.getApplicationById(applicationId);
+        model.addAttribute(STATE_NUMBER, TO_CANCEL);
+        
+        Person loggedUser = getLoggedUser();
 
         // office may cancel waiting or allowed applications of other users
-        if (getLoggedUser().getRole() == Role.OFFICE) {
+        if (loggedUser.getRole() == Role.OFFICE) {
             prepareDetailView(application, TO_CANCEL, model);
 
             return SHOW_APP_DETAIL_JSP;
         } else {
             // user may cancel only his own waiting applications
-            if (getLoggedUser().equals(application.getPerson())) {
+            if (loggedUser.equals(application.getPerson())) {
+                if(loggedUser.getRole() == Role.BOSS && application.getStatus() == ApplicationStatus.WAITING) {
+            List<Person> vips = personService.getPersonsByRole(loggedUser.getRole());
+            model.addAttribute("vips", vips);
+            model.addAttribute("modelPerson", new Person());
+        }
                 prepareDetailView(application, TO_CANCEL, model);
 
                 return SHOW_APP_DETAIL_JSP;
@@ -915,6 +923,7 @@ public class ApplicationController {
             }
         }
     }
+    
 
 
     /**

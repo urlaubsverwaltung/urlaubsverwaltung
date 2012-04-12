@@ -11,7 +11,7 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 
-<div class="grid_10">
+<div class="grid_12">
                     <c:choose>
 
                         <c:when test="${noapps == true}">

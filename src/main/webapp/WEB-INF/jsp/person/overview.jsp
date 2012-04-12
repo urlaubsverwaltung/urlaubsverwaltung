@@ -31,7 +31,7 @@
 
             <div class="container_12">
 
-                <div class="grid_10"> 
+                <div class="grid_12"> 
 
                     <c:choose>
                         <c:when test="${!empty param.year}">
@@ -58,7 +58,7 @@
                     </table>
                 </div>
 
-                <div class="grid_10">
+                <div class="grid_12">
                     <table id="person-tbl" cellspacing="0">
                         <c:choose>
                             <c:when test="${!empty param.year}">

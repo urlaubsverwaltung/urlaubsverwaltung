@@ -9,7 +9,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <!DOCTYPE html>
 <html>
@@ -27,60 +27,59 @@
 
         <div id="content">
             <div class="container_12">
-                 
+
                 <div class="grid_12">&nbsp;</div>
 
-                <div class="grid_5 app">
-                    <h2><spring:message code="app.title" /></h2>
 
-                    <table id="app-detail">
+                <div class="grid_6">
+                    
+                    <table class="overview-header">
                         <tr>
-                            <td>
-                                <spring:message code="state" />:
-                            </td>
-                            <td>
-                                <spring:message code="${application.status.state}" />
-                            </td>
+                            <td><spring:message code="app.title" /></td>
                         </tr>
-                        <tr>
-                            <td>
-                                <spring:message code="app.apply" />
-                            </td>
-                            <td>
-                                <spring:message code="${application.vacationType.vacationTypeName}" />
-                            </td>
+                    </table>
+
+                    <table class="app-detail" cellspacing="0">
+                        <tr class="odd">
+<!--                            <td rowspan="2"><img style="margin-left: 1.5em;"class="user-pic" src="<c:out value='${gravatar}?s=60&d=mm'/>" /></td>-->
+                            <th><c:out value="${application.person.firstName} ${application.person.lastName}" /></th>
+                            <td><c:out value="${application.person.email}" /></td>
                         </tr>
-                        <tr>
-                            <td colspan="2">&nbsp;</td>
                         </tr>
-                        <tr>
-                            <td>
-                                <spring:message code="time" />:
-                            </td>
+                        <%@include file="./include/account_days_for_app_view.jsp" %>
+                    </table>
+                    <table class="app-detail" cellspacing="0" style="margin-top: 2em;">
+                        <tr class="odd">
+                            <th colspan="2">
+                                <spring:message code="app.apply" /> <spring:message code="${application.vacationType.vacationTypeName}" />
+                            </th>
+                        </tr>
+                        <tr class="even">
                             <td>
                                 <c:choose>
                                     <c:when test="${application.startDate == application.endDate}">
-                                        am&nbsp;<joda:format style="M-" value="${application.startDate}"/>,&nbsp;<spring:message code="${application.howLong.dayLength}" />
+                                        <spring:message code="at" /> <joda:format style="M-" value="${application.startDate}"/>
                                     </c:when>
                                     <c:otherwise>
-                                        <joda:format style="M-" value="${application.startDate}"/>&nbsp;-&nbsp;<joda:format style="M-" value="${application.endDate}"/>
+                                        <spring:message code="from" /> <joda:format style="M-" value="${application.startDate}"/> <spring:message code="to" /> <joda:format style="M-" value="${application.endDate}"/>
                                     </c:otherwise>    
-                                </c:choose> 
+                                </c:choose>
+                            </td>
+                            <td>
+                                = <fmt:formatNumber maxFractionDigits="1" value="${application.days}"/> 
+                                <c:choose>
+                                    <c:when test="${application.days > 0.50 && application.days <= 1.00}">
+                                        Urlaubstag
+                                    </c:when>
+                                    <c:otherwise>
+                                        <spring:message code="days.vac" />
+                                    </c:otherwise>
+                                </c:choose>
                             </td>
                         </tr>
-                        <tr>
-                            <td colspan="2">&nbsp;</td>
-                        </tr>
-                        <tr>
-                            <td><spring:message code="days.vac" />:</td>
-                            <td><c:out value="${application.days}"/></td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">&nbsp;</td>
-                        </tr>
-                        <tr>
+                        <tr class="odd">
                             <td>
-                                <label for="grund"><spring:message code='reason' />:</label>
+                                <label for="grund"><spring:message code='reason' /></label>
                             </td>
                             <td>
                                 <c:choose>
@@ -93,20 +92,17 @@
                                 </c:choose>
                             </td>
                         </tr>
-                        <tr>
+                        <tr class="even">
                             <td>
-                                <label for="vertreter"><spring:message code='app.rep' />:</label> 
+                                <label for="vertreter"><spring:message code='app.rep' /></label> 
                             </td>
                             <td>
                                 <c:out value="${application.rep}" />
                             </td>
                         </tr>
-                        <tr>
-                            <td colspan="2">&nbsp;</td>
-                        </tr>
-                        <tr>
+                        <tr class="odd">
                             <td>
-                                <label for="anschrift"><spring:message code='app.address' />:</label>
+                                <label for="anschrift"><spring:message code='app.address' /></label>
                             </td>
                             <td>
                                 <c:choose>
@@ -119,9 +115,9 @@
                                 </c:choose>
                             </td>
                         </tr>
-                        <tr>
+                        <tr class="even">
                             <td>
-                                <label for="telefon"><spring:message code='app.phone' />:</label>
+                                <label for="telefon"><spring:message code='app.phone' /></label>
                             </td>
                             <td>
                                 <c:choose>
@@ -134,149 +130,42 @@
                                 </c:choose>
                             </td>
                         </tr>
-                        <tr>
-                            <td colspan="2">&nbsp;</td>
+                    </table>
+                    <table class="app-detail" cellspacing="0" style="margin-top: 2em;">
+                        <tr class="odd">
+                            <th colspan="2"><spring:message code="state" /></th>
                         </tr>
-                        <tr>
+                        <tr class="even">
+                            <td><spring:message code="${application.status.state}" /></td>
                             <td>
-                                <spring:message code='app.footer' />&nbsp;<joda:format style="M-" value="${application.applicationDate}"/>
+                                <c:choose>
+                                    <c:when test="${application.status.number == 0}">
+                                        <c:set var="appDate" value="${application.applicationDate}"/>
+                                        <c:set var="edited" value="app.date.applied" />
+                                    </c:when>
+                                    <c:when test="${application.status.number == 1}">
+                                        <c:set var="appDate" value="${application.editedDate}"/>
+                                        <c:set var="edited" value="app.date.allowed" />
+                                    </c:when>
+                                    <c:when test="${application.status.number == 2}">
+                                        <c:set var="appDate" value="${application.editedDate}"/>
+                                        <c:set var="edited" value="app.date.rejected" />
+                                    </c:when>
+                                    <c:when test="${application.status.number == 3}">
+                                        <c:set var="appDate" value="${application.cancelDate}"/>
+                                        <c:set var="edited" value="app.date.cancelled" />
+                                    </c:when>
+                                </c:choose>
+                                <spring:message code='${edited}' />&nbsp;<joda:format style="M-" value="${appDate}"/>
                             </td>
-                            <td>&nbsp;</td>
                         </tr>
                     </table>
-                        
-                            <sec:authorize access="hasRole('role.office')">
-                        <a class="button print" href="${formUrlPrefix}/application/${application.id}/print"><spring:message code='app' />&nbsp;<spring:message code='print' /></a>
-                            </sec:authorize>
-                        
-                    <%-- application is waiting --%>            
-                    <c:if test="${application.status.number == 0}">
 
-                        <sec:authorize access="hasRole('role.boss')">         
-
-                            <div class="boss-view">
-                            <form:form method="put" action="${formUrlPrefix}/application/${application.id}/allow"> 
-                                <input class="confirm" type="submit" name="<spring:message code='app.state.ok' />" value="<spring:message code='app.state.ok' />" class="button" />    
-                                <input class="back" type="button" name="<spring:message code='app.state.no' />" value="<spring:message code='app.state.no' />" onclick="$('#reject').show();" />
-                                <input class="refer" type="button" name="<spring:message code='app.state.refer' />" value="<spring:message code='app.state.refer' />" onclick="$('#refer').show();" />
-                            </form:form>   
-                                <form:form method="put" action="${formUrlPrefix}/application/${application.id}/reject" modelAttribute="comment">
-                                 <br />
-                            <div id="reject" style="
-                                     <c:choose>
-                                         <c:when test="${empty errors}">display: none</c:when>
-                                         <c:otherwise>display: block</c:otherwise>
-                                     </c:choose>
-                                ">            
-                                <spring:message code='reason' />: (<spring:message code="max.chars" />)
-                                <br />
-                                <form:textarea path="reason" cssErrorClass="error" />
-                                <br />
-                                    <input type="submit" name="<spring:message code='ok' />" value="<spring:message code='ok' />" class="button" />
-                                    <script type="text/javascript">
-                                    $(document).ready(function() {
-                                        $('#reject-error').show('drop', 500);
-                                    });
-                                </script>
-                                    <form:errors path="reason" cssClass="error" id="reject-error" />
-                                </div>
-                                </form:form>
-                            <form:form method="put" action="${formUrlPrefix}/application/${application.id}/refer" modelAttribute="modelPerson">
-                                <div id="refer">
-                                    <spring:message code="please.refer" />
-                                    <form:select path="loginName">
-                                        <c:forEach items="${vips}" var="p">
-                                            <option value="${p.loginName}"><c:out value="${p.firstName} ${p.lastName}" /></option>
-                                        </c:forEach>
-                                    </form:select>
-                                    <input type="submit" name="<spring:message code='ok' />" value="<spring:message code='ok' />" class="button" />
-                                </div>
-                            </form:form>
-                            </div>
-                        </sec:authorize>
-
-                    </c:if>
-                </div> <!-- end of application for leave -->             
-
-                <div class="grid_5 data">
-                    
-                    <sec:authorize access="hasRole('role.office')">
-                            <a class="button staff" href="${formUrlPrefix}/staff/${application.person.id}/overview" /><spring:message code="staff.back" /></a>
-                    </sec:authorize>
-               
-                    
-                    <table id="tbl-data">    
-                        <tr>
-                            <td rowspan="2"><img style="margin-left: 1.5em;"class="user-pic" src="<c:out value='${gravatar}?d=mm'/>" /></td>
-                            <td style="font-size:1.1em;"><c:out value="${application.person.firstName}" />&nbsp;<c:out value="${application.person.lastName}" />
-                                <br />
-                                <br />
-                                <c:out value="${application.person.email}" /></td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">&nbsp;</td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">&nbsp;</td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">&nbsp;</td>
-                        </tr>
-                        <%@include file="./include/account_days.jsp" %>
-                    </table>
-                        
                 </div>
-                    
-                    <div class="grid_12">&nbsp;</div>
-                    
-                    <%-- if application has status rejected --%>
-                    <c:if test="${application.status.number == 2}">
-                        <div class="grid_5" id="reject-reason">
-                            <span><spring:message code="app.reject.reason" arguments="${rejectDate}, ${comment.nameOfCommentingPerson}" /></span><br /><br />
-                            <c:out value="${comment.reason}" />
-                        </div>
-                    </c:if>
-                
 
-                    <%-- if user wants to cancel an application --%>
-                    <c:if test="${stateNumber == 4}">
-                        <div class="grid_12">&nbsp;</div>
-                        <div class="grid_12">&nbsp;</div>
-                        <div class="grid_12">
-                        <sec:authorize access="hasRole('role.office')">
-                        <c:if test="${application.status.number == 0 || application.status.number == 1}">      
-                        <form:form method="put" action="${formUrlPrefix}/application/${application.id}/cancel">
-                            <spring:message code='cancel.confirm' />&nbsp;&nbsp;&nbsp;&nbsp;
-                            <input type="submit" class="button confirm" name="<spring:message code='delete' />" value="<spring:message code='delete' />" />
-                            <a class="button back" href="${formUrlPrefix}/overview"><spring:message code='cancel' /></a>
-                        </form:form>
-                        </c:if>
-                        </sec:authorize>
-                            
-                        <sec:authorize access="hasRole('role.user')">
-                        <c:if test="${application.status.number == 0}">      
-                        <form:form method="put" action="${formUrlPrefix}/application/${application.id}/cancel">
-                            <spring:message code='cancel.confirm' />&nbsp;&nbsp;&nbsp;&nbsp;
-                            <input type="submit" class="button confirm" name="<spring:message code='delete' />" value="<spring:message code='delete' />" />
-                            <a class="button back" href="${formUrlPrefix}/overview"><spring:message code='cancel' /></a>
-                        </form:form>
-                        </c:if>
-                        </sec:authorize>  
-                            
-                        <sec:authorize access="hasRole('role.boss')">
-                        <c:if test="${application.status.number == 0}">      
-                        <form:form method="put" action="${formUrlPrefix}/application/${application.id}/cancel">
-                            <spring:message code='cancel.confirm' />&nbsp;&nbsp;&nbsp;&nbsp;
-                            <input type="submit" class="button confirm" name="<spring:message code='delete' />" value="<spring:message code='delete' />" />
-                            <a class="button back" href="${formUrlPrefix}/overview"><spring:message code='cancel' /></a>
-                        </form:form>
-                        </c:if>
-                        </sec:authorize>  
-                            
-                        </div>
-                    </c:if>
-
-
+                <div class="grid_6" style="margin-top:0.5em;">
+                    <%@include file="./include/actions.jsp" %>
+                </div>
 
             </div> <!-- end of grid container -->
 

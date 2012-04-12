@@ -39,7 +39,7 @@
                             </c:otherwise>
                         </c:choose>
 
-                <div class="grid_10"> 
+                <div class="grid_12"> 
                     <table class="overview-header">
                         <tr>
                             <td><c:out value="${person.firstName}"/>&nbsp;<c:out value="${person.lastName}"/>&nbsp;&ndash;&nbsp;<spring:message code="table.overview" /><c:out value="${displayYear}" /></td>
@@ -62,7 +62,7 @@
                     </table>
                 </div>
 
-                <div class="grid_10">
+                <div class="grid_12">
                     <table id="person-tbl" cellspacing="0">
                         <tr>
                             <td rowspan="3" style="background-color: #EAF2D3; width: 13%;"><img class="user-pic" src="<c:out value='${gravatar}?d=mm'/>" /></td>

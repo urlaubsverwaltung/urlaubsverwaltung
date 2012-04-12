@@ -203,6 +203,10 @@ tr.even {
     width:44%;
 }
 
+#tbl-data {
+    float:left;
+}
+
 
 .td-pic {
     width: 15%;
@@ -299,8 +303,21 @@ padding: 0.55em;
     background-color: #ABC452;
 }
 
-#app-detail td {
-    padding-right: 2em;
+.app-detail td, .app-detail th {
+    text-align: left;
+    padding: 0.55em;
+}
+
+.app-detail td {
+    width:30%;
+}
+
+.app-detail {
+    width: 100%;
+float:left;
+border: 1px solid #EAF2D3;
+font-size: 1.05em;
+margin-right:1em;
 }
 
 .user-pic {
@@ -370,6 +387,13 @@ input[type=submit]:hover, input[type=button]:hover, a.button:hover {
     cursor: pointer;
 }
 
+a.button.remind {
+   background-image: url("../images/bell.png");
+    background-repeat: no-repeat;
+    background-position: 5% 50%;
+    padding-left: 2.5em; 
+}
+
 input[type=submit].back, input[type=button].back, a.button.back {
     background-image: url("../images/agt_action_fail.png");
     background-repeat: no-repeat;
@@ -386,8 +410,13 @@ input[type=submit].confirm, input[type=button].confirm, a.button.confirm {
 }
 
 #reject {
-    margin-top: 2em;
+    margin-top: 1em;
     text-align:left;
+}
+
+.reject-text {
+    width: 80%;
+    min-height: 5em;
 }
 
 a.button.apply {
@@ -412,9 +441,6 @@ input[type=submit].print, input[type=button].print, a.button.print {
     padding-left: 3em;
 }
 
-/*.print, .staff {
-    float: right;
-}*/
 
 input[type=submit].staff, input[type=button].staff, a.button.staff {
     background-image: url("../images/edit_user.png");
@@ -423,23 +449,19 @@ input[type=submit].staff, input[type=button].staff, a.button.staff {
     padding-left: 3em;
 }
 
-.staff {
-    position: relative;
-    top: 21em;
-/*    left: 28em;*/
-    
+
+#refer {
+    margin-top: 2em;
 }
 
-.print {
-    position: relative;
-    top: 3.15em;
-    right: 0em;
-    
+#cancel {
+    margin-top:2em;
+    padding: 1em;
 }
 
-.boss-view {
-    text-align: right;
-    margin-top: 3em;
+#rejected-app {
+    border: 1px solid #EAF2D3;
+    padding:1em;
 }
 
 input[type=button].refer {
