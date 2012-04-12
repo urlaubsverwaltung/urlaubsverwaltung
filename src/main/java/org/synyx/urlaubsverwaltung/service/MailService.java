@@ -68,6 +68,13 @@ public interface MailService {
      * @param  application  the application which got rejected
      */
     void sendRejectedNotification(Application application);
+    
+    /**
+     * If a boss is not sure about the decision of an application (reject or allow), he can ask another boss to decide about this application via a generated email. 
+     * @param a
+     * @param p 
+     */
+    void sendReferApplicationNotification(Application a, Person reciever, String sender);
 
 
     /**

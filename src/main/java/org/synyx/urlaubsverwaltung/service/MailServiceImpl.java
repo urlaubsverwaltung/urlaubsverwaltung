@@ -61,6 +61,7 @@ public class MailServiceImpl implements MailService {
     private static final String FILE_NEW_BY_OFFICE = "new_application_by_office" + TYPE;
     private static final String FILE_NEW = "newapplications" + TYPE;
     private static final String FILE_REJECTED = "rejected" + TYPE;
+    private static final String FILE_REFER = "refer" + TYPE;
     private static final String FILE_WEEKLY = "weekly" + TYPE;
     private JavaMailSender mailSender;
     private VelocityEngine velocityEngine;
@@ -91,11 +92,16 @@ public class MailServiceImpl implements MailService {
      *
      * @return  String text that must be put in the email as text (sending is done by method sendEmail)
      */
-    private String prepareMessage(Object object, String modelName, String fileName) {
+    private String prepareMessage(Object object, String modelName, String fileName, String reciever, String sender) {
 
         Map model = new HashMap();
         model.put(modelName, object);
-
+        
+        if(reciever != null && sender != null) {
+            model.put("reciever", reciever);
+            model.put("sender", sender);
+        }
+        
         if (object.getClass().equals(Application.class)) {
             Application a = (Application) object;
             String vacType = a.getVacationType().getVacationTypeName();
@@ -148,7 +154,7 @@ public class MailServiceImpl implements MailService {
     public void sendExpireNotification(List<Person> persons) {
 
         for (Person person : persons) {
-            String text = prepareMessage(person, PERSON, FILE_EXPIRE);
+            String text = prepareMessage(person, PERSON, FILE_EXPIRE, null, null);
 
             sendEmail(person.getEmail(), "subject.expire", text);
         }
@@ -160,7 +166,7 @@ public class MailServiceImpl implements MailService {
     @Override
     public void sendNewApplicationNotification(Application application) {
 
-        String text = prepareMessage(application, APPLICATION, FILE_NEW);
+        String text = prepareMessage(application, APPLICATION, FILE_NEW, null, null);
 
         sendEmailToMultipleRecipients(mailProperties.getProperty("email.boss"), "subject.new", text);
     }
@@ -223,11 +229,11 @@ public class MailServiceImpl implements MailService {
         // the applicant gets an email and the office gets an email
 
         // email to office
-        String textOffice = prepareMessage(application, APPLICATION, FILE_ALLOWED_OFFICE);
+        String textOffice = prepareMessage(application, APPLICATION, FILE_ALLOWED_OFFICE, null, null);
             sendEmail(mailProperties.getProperty("email.office"), "subject.allowed.office", textOffice);
 
             // email to applicant
-            String textUser = prepareMessage(application, APPLICATION, FILE_ALLOWED_USER);
+            String textUser = prepareMessage(application, APPLICATION, FILE_ALLOWED_USER, null, null);
             sendEmail(application.getPerson().getEmail(), "subject.allowed.user", textUser);
         }
 
@@ -242,9 +248,18 @@ public class MailServiceImpl implements MailService {
             
             ) {
 
-        String text = prepareMessage(application, APPLICATION, FILE_REJECTED);
+        String text = prepareMessage(application, APPLICATION, FILE_REJECTED, null, null);
             sendEmail(application.getPerson().getEmail(), "subject.rejected", text);
         }
+        
+        /**
+         * @see MailService#sendReferApplicationNotification(org.synyx.urlaubsverwaltung.domain.Application, org.synyx.urlaubsverwaltung.domain.Person) 
+         */
+          @Override
+         public void sendReferApplicationNotification(Application a, Person reciever, String sender) {
+              String text = prepareMessage(a, APPLICATION, FILE_REFER, reciever.getFirstName(), sender);
+              sendEmail(reciever.getEmail(), "subject.refer", text);
+    }
 
 
         /**
@@ -257,7 +272,7 @@ public class MailServiceImpl implements MailService {
             
             ) {
 
-        String text = prepareMessage(application, APPLICATION, FILE_CONFIRM);
+        String text = prepareMessage(application, APPLICATION, FILE_CONFIRM, null, null);
             sendEmail(application.getPerson().getEmail(), "subject.confirm", text);
         }
 
@@ -269,7 +284,7 @@ public class MailServiceImpl implements MailService {
             
             ) {
 
-        String text = prepareMessage(application, APPLICATION, FILE_NEW_BY_OFFICE);
+        String text = prepareMessage(application, APPLICATION, FILE_NEW_BY_OFFICE, null, null);
             sendEmail(application.getPerson().getEmail(), "subject.new.app.by.office", text);
         }
 
@@ -290,7 +305,7 @@ public class MailServiceImpl implements MailService {
                 names.add(person.getFirstName() + " " + person.getLastName() + "\n");
             }
 
-            String text = prepareMessage(names, PERSONS, FILE_WEEKLY);
+            String text = prepareMessage(names, PERSONS, FILE_WEEKLY, null, null);
             sendEmail(mailProperties.getProperty("email.all"), "subject.weekly", text);
         }
 
@@ -305,11 +320,11 @@ public class MailServiceImpl implements MailService {
 
             if (cancelledByOffice) {
                 // mail to applicant
-                text = prepareMessage(application, APPLICATION, FILE_CANCELLED_BY_OFFICE);
+                text = prepareMessage(application, APPLICATION, FILE_CANCELLED_BY_OFFICE, null, null);
                 sendEmail(application.getPerson().getEmail(), "subject.cancelled.by.office", text);
             } else {
                 // mail to office
-                text = prepareMessage(application, APPLICATION, FILE_CANCELLED);
+                text = prepareMessage(application, APPLICATION, FILE_CANCELLED, null, null);
                 sendEmail(mailProperties.getProperty("email.office"), "subject.cancelled", text);
             }
         }

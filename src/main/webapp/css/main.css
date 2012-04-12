@@ -442,6 +442,15 @@ input[type=submit].staff, input[type=button].staff, a.button.staff {
     margin-top: 3em;
 }
 
+input[type=button].refer {
+    background-image: url("../images/agt_forward.png");
+    background-repeat: no-repeat;
+    background-position: 5% 50%;
+    padding-left: 2em;
+    margin-left: 0.6em;
+}
+    
+
 input[type=submit].deactivate, input[type=button].deactivate, a.button.deactivate {
     background-image: url("../images/delete_user.png");
     background-repeat: no-repeat;

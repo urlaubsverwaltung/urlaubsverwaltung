@@ -156,6 +156,9 @@ public class ApplicationController {
     // allow or reject application
     private static final String ALLOW_APP = LONG_PATH_APPLICATION + APPLICATION_ID + "}/allow";
     private static final String REJECT_APP = LONG_PATH_APPLICATION + APPLICATION_ID + "}/reject";
+    
+    // refer application to other boss
+    private static final String REFER_APP = LONG_PATH_APPLICATION + APPLICATION_ID + "}/refer";
 
     // audit logger: logs nontechnically occurences like 'user x applied for leave' or 'subtracted n days from
     // holidays account y'
@@ -747,26 +750,23 @@ public class ApplicationController {
     @RequestMapping(value = SHOW_APP, method = RequestMethod.GET)
     public String showApplicationDetail(HttpServletRequest request, @PathVariable(APPLICATION_ID) Integer applicationId, Model model) {
 
+        Person loggedUser = getLoggedUser();
+        Role role = loggedUser.getRole();
+        
         Application application = applicationService.getApplicationById(applicationId);
-        
-        Comment comment = commentService.getCommentByApplication(application);
-        
-        if(application.getStatus() == ApplicationStatus.REJECTED && comment != null) {
-            // use this later maybe
-            // Locale locale = RequestContextUtils.getLocale(request);
-            String rejectDate = comment.getDateOfComment().toString(DATE_FORMAT);
-            model.addAttribute("rejectDate", rejectDate);
-            model.addAttribute(COMMENT, comment);
-            } else {
-                 model.addAttribute(COMMENT, new Comment());
-            }
 
-        if (getLoggedUser().getRole() == Role.OFFICE || getLoggedUser().getRole() == Role.BOSS) {
+        if(application.getStatus() == ApplicationStatus.WAITING && role == Role.BOSS) {
+            List<Person> vips = personService.getPersonsByRole(role);
+            model.addAttribute("vips", vips);
+            model.addAttribute("modelPerson", new Person());
+        }
+
+        if (role == Role.OFFICE || role == Role.BOSS) {
 
             prepareDetailView(application, -1, model);
             
             return SHOW_APP_DETAIL_JSP;
-        } else if (getLoggedUser().equals(application.getPerson())) {
+        } else if (loggedUser.equals(application.getPerson())) {
             prepareDetailView(application, -1, model);
 
             return SHOW_APP_DETAIL_JSP;
@@ -808,6 +808,27 @@ public class ApplicationController {
         else {
             return ERROR_JSP;
         }
+    }
+    
+    /**
+     * If a boss is not sure about the decision if an application should be allowed or rejected, he can ask another boss to decide about this application (an email is sent)
+     * @param applicationId
+     * @param model
+     * @return 
+     */
+    @RequestMapping(value = REFER_APP, method = RequestMethod.PUT)
+    public String referApplication(@PathVariable(APPLICATION_ID) Integer applicationId,
+        @ModelAttribute("modelPerson") Person p) {
+        
+        Application application = applicationService.getApplicationById(applicationId);
+        
+        Person sender = getLoggedUser();
+        String senderName = sender.getFirstName() + " " + sender.getLastName();
+        Person reciever = personService.getPersonByLogin(p.getLoginName());
+        mailService.sendReferApplicationNotification(application, reciever, senderName);
+        
+        return "redirect:/web/application/" + applicationId;
+        
     }
 
 
@@ -969,6 +990,18 @@ public class ApplicationController {
 
     private void prepareDetailView(Application application, int stateNumber, Model model) {
 
+         Comment comment = commentService.getCommentByApplication(application);
+        
+        if(application.getStatus() == ApplicationStatus.REJECTED && comment != null) {
+            // use this later maybe
+            // Locale locale = RequestContextUtils.getLocale(request);
+            String rejectDate = comment.getDateOfComment().toString(DATE_FORMAT);
+            model.addAttribute("rejectDate", rejectDate);
+            model.addAttribute(COMMENT, comment);
+            } else {
+                 model.addAttribute(COMMENT, new Comment());
+            }
+        
         setLoggedUser(model);
         model.addAttribute(APPLICATION, application);
         model.addAttribute(STATE_NUMBER, stateNumber);

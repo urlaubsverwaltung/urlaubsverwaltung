@@ -5,6 +5,7 @@ import org.joda.time.DateMidnight;
 import org.synyx.urlaubsverwaltung.domain.Person;
 
 import java.util.List;
+import org.synyx.urlaubsverwaltung.domain.Role;
 
 
 /**
@@ -61,6 +62,16 @@ public interface PersonService {
      * @return
      */
     Person getPersonByLogin(String loginName);
+    
+    
+    /**
+     * finds a person in the database by the given {@link Role}
+     *
+     * @param  role
+     *
+     * @return
+     */
+    List<Person> getPersonsByRole(Role role);
 
 
     /**

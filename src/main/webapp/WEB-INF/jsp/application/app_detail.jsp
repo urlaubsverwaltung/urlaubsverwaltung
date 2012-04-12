@@ -158,6 +158,7 @@
                             <form:form method="put" action="${formUrlPrefix}/application/${application.id}/allow"> 
                                 <input class="confirm" type="submit" name="<spring:message code='app.state.ok' />" value="<spring:message code='app.state.ok' />" class="button" />    
                                 <input class="back" type="button" name="<spring:message code='app.state.no' />" value="<spring:message code='app.state.no' />" onclick="$('#reject').show();" />
+                                <input class="refer" type="button" name="<spring:message code='app.state.refer' />" value="<spring:message code='app.state.refer' />" onclick="$('#refer').show();" />
                             </form:form>   
                                 <form:form method="put" action="${formUrlPrefix}/application/${application.id}/reject" modelAttribute="comment">
                                  <br />
@@ -179,7 +180,18 @@
                                 </script>
                                     <form:errors path="reason" cssClass="error" id="reject-error" />
                                 </div>
-                                </form:form>  
+                                </form:form>
+                            <form:form method="put" action="${formUrlPrefix}/application/${application.id}/refer" modelAttribute="modelPerson">
+                                <div id="refer">
+                                    <spring:message code="please.refer" />
+                                    <form:select path="loginName">
+                                        <c:forEach items="${vips}" var="p">
+                                            <option value="${p.loginName}"><c:out value="${p.firstName} ${p.lastName}" /></option>
+                                        </c:forEach>
+                                    </form:select>
+                                    <input type="submit" name="<spring:message code='ok' />" value="<spring:message code='ok' />" class="button" />
+                                </div>
+                            </form:form>
                             </div>
                         </sec:authorize>
 

@@ -160,4 +160,9 @@ public class PersonServiceImpl implements PersonService {
 
         return personDAO.getInactivePersons();
     }
+
+    @Override
+    public List<Person> getPersonsByRole(Role role) {
+        return personDAO.getPersonsByRole(role);
+    }
 }
