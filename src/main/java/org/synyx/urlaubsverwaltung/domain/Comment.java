@@ -67,13 +67,13 @@ public class Comment extends AbstractPersistable<Integer> {
     }
 
 
-    public String getText() {
+    public String getReason() {
 
         return reason;
     }
 
 
-    public void setText(String reason) {
+    public void setReason(String reason) {
 
         this.reason = reason;
     }

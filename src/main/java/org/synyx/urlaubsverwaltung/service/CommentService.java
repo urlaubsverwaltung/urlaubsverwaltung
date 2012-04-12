@@ -1,9 +1,6 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.synyx.urlaubsverwaltung.service;
 
+import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.Comment;
 
 
@@ -13,4 +10,6 @@ import org.synyx.urlaubsverwaltung.domain.Comment;
 public interface CommentService {
 
     void saveComment(Comment comment);
+    
+    Comment getCommentByApplication(Application a);
 }

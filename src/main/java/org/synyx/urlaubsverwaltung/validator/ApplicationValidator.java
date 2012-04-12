@@ -156,8 +156,8 @@ public class ApplicationValidator implements Validator {
 
         Comment comment = (Comment) target;
 
-        if (StringUtils.hasText(comment.getText())) {
-            if (!validateStringLength(comment.getText())) {
+        if (StringUtils.hasText(comment.getReason())) {
+            if (!validateStringLength(comment.getReason())) {
                 errors.rejectValue(TEXT, ERROR_LENGTH);
             }
         } else {

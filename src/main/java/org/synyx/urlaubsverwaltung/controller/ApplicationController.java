@@ -53,7 +53,10 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
 import org.joda.time.DateTimeConstants;
+import org.springframework.web.servlet.support.RequestContextUtils;
+import org.synyx.urlaubsverwaltung.util.NumberUtil;
 
 
 /**
@@ -742,16 +745,26 @@ public class ApplicationController {
      * @return
      */
     @RequestMapping(value = SHOW_APP, method = RequestMethod.GET)
-    public String showApplicationDetail(@PathVariable(APPLICATION_ID) Integer applicationId, Model model) {
+    public String showApplicationDetail(HttpServletRequest request, @PathVariable(APPLICATION_ID) Integer applicationId, Model model) {
 
         Application application = applicationService.getApplicationById(applicationId);
+        
+        Comment comment = commentService.getCommentByApplication(application);
+        
+        if(application.getStatus() == ApplicationStatus.REJECTED && comment != null) {
+            // use this later maybe
+            // Locale locale = RequestContextUtils.getLocale(request);
+            String rejectDate = comment.getDateOfComment().toString(DATE_FORMAT);
+            model.addAttribute("rejectDate", rejectDate);
+            model.addAttribute(COMMENT, comment);
+            } else {
+                 model.addAttribute(COMMENT, new Comment());
+            }
 
         if (getLoggedUser().getRole() == Role.OFFICE || getLoggedUser().getRole() == Role.BOSS) {
 
             prepareDetailView(application, -1, model);
-            model.addAttribute(APPFORM, new AppForm());
-            model.addAttribute(COMMENT, new Comment());
-
+            
             return SHOW_APP_DETAIL_JSP;
         } else if (getLoggedUser().equals(application.getPerson())) {
             prepareDetailView(application, -1, model);
@@ -762,32 +775,6 @@ public class ApplicationController {
         }
     }
 
-
-//    /**
-//     * view for boss who has to decide if he allows or rejects the application, the office is able to add sick days that
-//     * occured during a holiday
-//     *
-//     * @param  applicationId
-//     * @param  model
-//     *
-//     * @return
-//     */
-//    @RequestMapping(value = SHOW_APP, params = "state", method = RequestMethod.GET)
-//    public String showApplicationDetailByState(@PathVariable(APPLICATION_ID) Integer applicationId,
-//        @RequestParam("state") int state, Model model) {
-//
-//        if (getLoggedUser().getRole() == Role.OFFICE || getLoggedUser().getRole() == Role.BOSS) {
-//            Application application = applicationService.getApplicationById(applicationId);
-//
-//            prepareDetailView(application, state, model);
-//            model.addAttribute(APPFORM, new AppForm());
-//            model.addAttribute(COMMENT, new Comment());
-//
-//            return SHOW_APP_DETAIL_JSP;
-//        } else {
-//            return ERROR_JSP;
-//        }
-//    }
 
 
     /**
@@ -852,7 +839,7 @@ public class ApplicationController {
             return SHOW_APP_DETAIL_JSP;
         } else {
 
-            String nameOfCommentingPerson = boss.getLastName() + " " + boss.getFirstName();
+            String nameOfCommentingPerson = boss.getFirstName() + " " + boss.getLastName();
 
             comment.setNameOfCommentingPerson(nameOfCommentingPerson);
             comment.setApplication(application);

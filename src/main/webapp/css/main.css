@@ -193,9 +193,9 @@ tr.even {
 
 .data {
     border: 1px solid #D7D7D7; 
-    padding: 2em 0 1em 2em; 
+    padding: 2em 0 5em 2em; 
     margin-left:3em;
-    height: 31.95em;
+/*    height: 31.95em;*/
 }
 
 #tbl-data th {
@@ -266,11 +266,17 @@ tr.even {
 /*    left: 25em;*/
 }
 
+#reject-reason {
+    border: 1px solid #D7D7D7;
+    padding: 1em 2em 1em 2em;
+    margin:0;
+}
+
 .app {
     border: 1px solid #D7D7D7; 
     padding: 1em 2em 1em 2em; 
     margin:0;
-    height: 33em;
+    min-height: 33em;
 }
 
 .app-tbl {
@@ -405,9 +411,9 @@ input[type=submit].print, input[type=button].print, a.button.print {
     padding-left: 3em;
 }
 
-.print, .staff {
+/*.print, .staff {
     float: right;
-}
+}*/
 
 input[type=submit].staff, input[type=button].staff, a.button.staff {
     background-image: url("../images/edit_user.png");
@@ -418,8 +424,8 @@ input[type=submit].staff, input[type=button].staff, a.button.staff {
 
 .staff {
     position: relative;
-    top: 12.5em;
-    right: 2em;
+    top: 21em;
+/*    left: 28em;*/
     
 }
 

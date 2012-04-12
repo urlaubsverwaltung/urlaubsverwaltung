@@ -184,6 +184,12 @@
                 </div> <!-- end of application for leave -->             
 
                 <div class="grid_5 data">
+                    
+                    <sec:authorize access="hasRole('role.office')">
+                            <a class="button staff" href="${formUrlPrefix}/staff/${application.person.id}/overview" /><spring:message code="staff.back" /></a>
+                    </sec:authorize>
+               
+                    
                     <table id="tbl-data">    
                         <tr>
                             <td rowspan="2"><img style="margin-left: 1.5em;"class="user-pic" src="<c:out value='${gravatar}?d=mm'/>" /></td>
@@ -203,13 +209,18 @@
                         </tr>
                         <%@include file="./include/account_days.jsp" %>
                     </table>
-                    
-                        <sec:authorize access="hasRole('role.office')">
-                            <a class="button staff" href="${formUrlPrefix}/staff/${application.person.id}/overview" /><spring:message code="staff.back" /></a>
-                        </sec:authorize>
-                
                         
                 </div>
+                    
+                    <div class="grid_12">&nbsp;</div>
+                    
+                    <%-- if application has status rejected --%>
+                    <c:if test="${application.status.number == 2}">
+                        <div class="grid_5" id="reject-reason">
+                            <span><spring:message code="app.reject.reason" arguments="${rejectDate}, ${comment.nameOfCommentingPerson}" /></span><br /><br />
+                            <c:out value="${comment.reason}" />
+                        </div>
+                    </c:if>
                 
 
                     <%-- if user wants to cancel an application --%>

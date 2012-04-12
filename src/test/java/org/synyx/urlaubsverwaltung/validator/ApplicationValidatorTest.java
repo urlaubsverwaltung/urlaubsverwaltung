@@ -203,22 +203,22 @@ public class ApplicationValidatorTest {
 
         Comment comment = new Comment();
 
-        comment.setText(null);
+        comment.setReason(null);
         instance.validateComment(comment, errors);
         Mockito.verify(errors).rejectValue("text", "error.reason");
         Mockito.reset(errors);
 
-        comment.setText("");
+        comment.setReason("");
         instance.validateComment(comment, errors);
         Mockito.verify(errors).rejectValue("text", "error.reason");
         Mockito.reset(errors);
 
-        comment.setText("Aus gutem Grund");
+        comment.setReason("Aus gutem Grund");
         instance.validateComment(comment, errors);
         Mockito.verifyZeroInteractions(errors);
         Mockito.reset(errors);
 
-        comment.setText("ich quatsche gerne viel zu viel und gebe totaaaaal viele unnötige Informationen");
+        comment.setReason("ich quatsche gerne viel zu viel und gebe totaaaaal viele unnötige Informationen");
         instance.validateComment(comment, errors);
         Mockito.verify(errors).rejectValue("text", "error.length");
     }

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.synyx.urlaubsverwaltung.dao.CommentDAO;
+import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.Comment;
 
 
@@ -30,5 +31,10 @@ public class CommentServiceImpl implements CommentService {
     public void saveComment(Comment comment) {
 
         commentDAO.save(comment);
+    }
+
+    @Override
+    public Comment getCommentByApplication(Application a) {
+        return commentDAO.getCommentByApplication(a);
     }
 }
