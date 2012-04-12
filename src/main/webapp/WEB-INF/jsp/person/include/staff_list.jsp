@@ -41,8 +41,8 @@
                 <c:choose>
                     <c:when test="${accounts[person] != null}">
                         <fmt:formatNumber maxFractionDigits="1" value="${accounts[person].vacationDays}"/>
-                        <%-- show number of remaining vacation days only if current date is before April OR (if user's remaining vacation days don't expire AND number of remaining vacation days is greater than zero) --%>
-                        <c:if test="${april == 1 || (not accounts[person].remainingVacationDaysExpire && accounts[person].remainingVacationDays > 0.00)}">
+                        <%-- show number of remaining vacation days only if current date is before April OR if user's remaining vacation days don't expire AND only if number of remaining vacation days is greater than zero --%>
+                        <c:if test="${(april == 1 || not accounts[person].remainingVacationDaysExpire) && accounts[person].remainingVacationDays > 0.00}">
                             + <fmt:formatNumber maxFractionDigits="1" value="${accounts[person].remainingVacationDays}"/>
                         </c:if>
                     </c:when>

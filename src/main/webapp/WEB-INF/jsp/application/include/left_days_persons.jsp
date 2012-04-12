@@ -17,8 +17,8 @@
     <c:when test="${accounts[person] != null}">
 
         <c:choose>
-            <%-- if current date is before April or remaining vacation days of user don't expire on 1st April, show the number of remaining vacation days --%>
-            <c:when test="${april == 1 || (not accounts[person].remainingVacationDaysExpire && accounts[person].remainingVacationDays > 0.00)}">
+            <%-- if current date is before April OR remaining vacation days of user don't expire on 1st April AND only if number of days is greater than 0, show the number of remaining vacation days --%>
+            <c:when test="${(april == 1 || not accounts[person].remainingVacationDaysExpire) && accounts[person].remainingVacationDays > 0.00}">
                 <c:set var="left" value="${accounts[person].vacationDays + accounts[person].remainingVacationDays}" />
                 <c:choose>
                     <c:when test="${left <= 1.00 && left > 0.50}">
@@ -53,7 +53,7 @@
 
             </c:when>
 
-            <%-- if current date is after April and remaining vacation days of user expire on 1st April, don't show number of remaining vacation days --%>
+            <%-- if current date is after April and remaining vacation days of user expire on 1st April OR if number of days is not greater than 0, don't show number of remaining vacation days --%>
             <c:otherwise>
                 <c:set var="left" value="${accounts[person].vacationDays}" />
                 <c:choose>
