@@ -149,8 +149,8 @@
                         <a class="button print" href="${formUrlPrefix}/application/${application.id}/print"><spring:message code='app' />&nbsp;<spring:message code='print' /></a>
                             </sec:authorize>
                         
-                         <%-- application is waiting --%>            
-                    <c:if test="${stateNumber == 0}">
+                    <%-- application is waiting --%>            
+                    <c:if test="${application.status.number == 0}">
 
                         <sec:authorize access="hasRole('role.boss')">         
 

@@ -1,7 +1,7 @@
 Hallo ${application.person.firstName},
 
-dein Urlaubsantrag wurde von ${application.office.firstName} für dich storniert.
-Falls Klärungsbedarf bestehen sollte, wende dich bitte direkt an ${application.office.firstName}.
+dein Urlaubsantrag wurde von ${application.canceller.firstName} für dich storniert.
+Falls Klärungsbedarf bestehen sollte, wende dich bitte direkt an ${application.canceller.firstName}.
 
 Es handelt sich um folgenden Urlaubsantrag:
 

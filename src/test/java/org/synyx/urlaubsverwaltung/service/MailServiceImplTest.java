@@ -364,8 +364,7 @@ public class MailServiceImplTest {
         office.setLastName("Musteroffice");
         office.setFirstName("Magdalena");
 
-        application.setOffice(office);
-
+        application.setCanceller(office);
         instance.sendCancelledNotification(application, true);
 
         // was email sent?

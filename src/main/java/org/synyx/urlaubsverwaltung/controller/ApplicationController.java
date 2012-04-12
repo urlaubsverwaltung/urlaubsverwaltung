@@ -53,6 +53,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
+import org.joda.time.DateTimeConstants;
 
 
 /**
@@ -114,13 +115,11 @@ public class ApplicationController {
     private static final String WAITING_APPS = SHORT_PATH_APPLICATION + "/waiting";
     private static final String ALLOWED_APPS = SHORT_PATH_APPLICATION + "/allowed";
     private static final String CANCELLED_APPS = SHORT_PATH_APPLICATION + "/cancelled";
-//    private static final String REJECTED_APPS = SHORT_PATH_APPLICATION + "/rejected"; // not used now, but maybe useful some time
+    private static final String REJECTED_APPS = SHORT_PATH_APPLICATION + "/rejected"; 
 
     // order applications by certain numbers
     private static final String STATE_NUMBER = "stateNumber";
     private static final int WAITING = 0;
-    private static final int ALLOWED = 1;
-    private static final int CANCELLED = 2;
     private static final int TO_CANCEL = 4;
 
     // applications' status
@@ -128,7 +127,17 @@ public class ApplicationController {
     private static final String TITLE_APP = "titleApp";
     private static final String TITLE_WAITING = "waiting.app";
     private static final String TITLE_ALLOWED = "allow.app";
+    private static final String TITLE_REJECTED = "reject.app";
     private static final String TITLE_CANCELLED = "cancel.app";
+    
+    private static final String TOUCHED_DATE = "touchedDate";
+    private static final String DATE_OVERVIEW = "app.date.overview";
+    private static final String DATE_APPLIED = "app.date.applied";
+    private static final String DATE_ALLOWED = "app.date.allowed";
+    private static final String DATE_REJECTED = "app.date.rejected";
+    private static final String DATE_CANCELLED = "app.date.cancelled";
+    
+    private static final String CHECKBOXES = "showCheckboxes";
 
     // form to apply vacation
     private static final String NEW_APP = SHORT_PATH_APPLICATION + "/new"; // form for user
@@ -180,35 +189,58 @@ public class ApplicationController {
 
 
     /**
-     * Used to show default list view of applications - order by status, dependent on role (if boss: waiting is default,
-     * if office: allowed is default)
+     * show a list of all {@link Application} for the current year not dependent on {@link ApplicationStatus}
      *
      * @param  model
      *
      * @return
      */
     @RequestMapping(value = APP_LIST, method = RequestMethod.GET)
-    public String showDefaultListView(Model model) {
+    public String showAll(Model model) {
 
-        if (getLoggedUser().getRole() == Role.BOSS) {
-            List<Application> applications = applicationService.getApplicationsByStateAndYear(ApplicationStatus.WAITING,
-                    DateMidnight.now().getYear());
+        Role role = getLoggedUser().getRole();
+        
+        if (role == Role.BOSS || role == Role.OFFICE) {
+            int year = DateMidnight.now().getYear();
+            DateMidnight firstDay = new DateMidnight(year, DateTimeConstants.JANUARY, 1);
+            DateMidnight lastDay = new DateMidnight(year, DateTimeConstants.DECEMBER, 31);
+            
+            List<Application> applications = applicationService.getApplicationsForACertainTime(firstDay, lastDay);
 
             model.addAttribute(APPLICATIONS, applications);
-            model.addAttribute(STATE_NUMBER, WAITING);
             setLoggedUser(model);
-            model.addAttribute(TITLE_APP, TITLE_WAITING);
+            model.addAttribute(TITLE_APP, "all.app");
+            model.addAttribute(TOUCHED_DATE, DATE_OVERVIEW);
             model.addAttribute(YEAR, DateMidnight.now().getYear());
 
             return APP_LIST_JSP;
-        } else if (getLoggedUser().getRole() == Role.OFFICE) {
-            List<Application> applications = applicationService.getApplicationsByStateAndYear(ApplicationStatus.ALLOWED,
-                    DateMidnight.now().getYear());
+        } else {
+            return ERROR_JSP;
+        }
+    }
+    
+    
+    /**
+     * show a list of all {@link Application} for the given year not dependent on {@link ApplicationStatus}
+     * @param year
+     * @param model
+     * @return 
+     */
+    @RequestMapping(value = APP_LIST, params = YEAR, method = RequestMethod.GET)
+    public String showAllByYear(@RequestParam(YEAR) int year, Model model) {
+     
+        Role role = getLoggedUser().getRole();
+        
+        if (role == Role.BOSS || role == Role.OFFICE) {
+            DateMidnight firstDay = new DateMidnight(year, DateTimeConstants.JANUARY, 1);
+            DateMidnight lastDay = new DateMidnight(year, DateTimeConstants.DECEMBER, 31);
+            
+            List<Application> applications = applicationService.getApplicationsForACertainTime(firstDay, lastDay);
 
             model.addAttribute(APPLICATIONS, applications);
-            model.addAttribute(STATE_NUMBER, ALLOWED);
             setLoggedUser(model);
-            model.addAttribute(TITLE_APP, TITLE_ALLOWED);
+            model.addAttribute(TITLE_APP, "all.app");
+            model.addAttribute(TOUCHED_DATE, DATE_OVERVIEW);
             model.addAttribute(YEAR, DateMidnight.now().getYear());
 
             return APP_LIST_JSP;
@@ -229,27 +261,30 @@ public class ApplicationController {
      */
     private String prepareAppListView(ApplicationStatus state, int year, Model model) {
 
-        int stateNumber = -1;
         String title = "";
+        String touchedDate = "";
 
         if (state == ApplicationStatus.WAITING) {
-            stateNumber = WAITING;
             title = TITLE_WAITING;
+            touchedDate = DATE_APPLIED;
         } else if (state == ApplicationStatus.ALLOWED) {
-            stateNumber = ALLOWED;
             title = TITLE_ALLOWED;
+            touchedDate = DATE_ALLOWED;
         } else if (state == ApplicationStatus.CANCELLED) {
-            stateNumber = CANCELLED;
             title = TITLE_CANCELLED;
+            touchedDate = DATE_CANCELLED;
+        } else if (state == ApplicationStatus.REJECTED) {
+            title = TITLE_REJECTED;
+            touchedDate = DATE_REJECTED;
         }
 
         if (getLoggedUser().getRole() == Role.BOSS || getLoggedUser().getRole() == Role.OFFICE) {
             List<Application> applications = applicationService.getApplicationsByStateAndYear(state, year);
 
             model.addAttribute(APPLICATIONS, applications);
-            model.addAttribute(STATE_NUMBER, stateNumber);
             setLoggedUser(model);
             model.addAttribute(TITLE_APP, title);
+            model.addAttribute(TOUCHED_DATE, touchedDate);
             model.addAttribute(YEAR, DateMidnight.now().getYear());
 
             return APP_LIST_JSP;
@@ -257,8 +292,8 @@ public class ApplicationController {
             return ERROR_JSP;
         }
     }
-
-
+    
+    
     /**
      * used if you want to see all waiting applications of the given year
      *
@@ -297,6 +332,7 @@ public class ApplicationController {
     @RequestMapping(value = ALLOWED_APPS, params = YEAR, method = RequestMethod.GET)
     public String showAllowedByYear(@RequestParam(YEAR) int year, Model model) {
 
+        model.addAttribute(CHECKBOXES, true);
         return prepareAppListView(ApplicationStatus.ALLOWED, year, model);
     }
 
@@ -311,7 +347,23 @@ public class ApplicationController {
     @RequestMapping(value = ALLOWED_APPS, method = RequestMethod.GET)
     public String showAllowed(Model model) {
 
+        model.addAttribute(CHECKBOXES, true);
         return prepareAppListView(ApplicationStatus.ALLOWED, DateMidnight.now().getYear(), model);
+    }
+    
+    
+    @RequestMapping(value = ALLOWED_APPS + "/{" + APPLICATION_ID + "}", method = RequestMethod.PUT)
+    public String setAllowedApplicationToEdited(@PathVariable(APPLICATION_ID) Integer applicationId) {
+        Application app = applicationService.getApplicationById(applicationId);
+        
+        if(app.isIsInCalendar() == false) {
+            app.setIsInCalendar(true);
+        } else {
+            app.setIsInCalendar(false);
+        }
+        
+        applicationService.simpleSave(app);
+        return "redirect:/web" + ALLOWED_APPS;
     }
 
 
@@ -342,29 +394,30 @@ public class ApplicationController {
         return prepareAppListView(ApplicationStatus.CANCELLED, DateMidnight.now().getYear(), model);
     }
 
+    
+    /**
+     * show all rejected applications of the given year
+     * @param year
+     * @param model
+     * @return 
+     */
+    @RequestMapping(value = REJECTED_APPS, params = YEAR, method = RequestMethod.GET)
+    public String showRejectedByYear(@RequestParam(YEAR) int year, Model model) {
 
-//    /**
-//     * NOT USED AT THE MOMENT - but maybe important in later versions used if you want to see all rejected requests
-//     * Commented out by Aljona Murygina - 13th Feb. 2012
-//     * @param  model
-//     *
-//     * @return
-//     */
-//    @RequestMapping(value = REJECTED_APPS, method = RequestMethod.GET)
-//    public String showRejected(Model model) {
-//
-//        if (getLoggedUser().getRole() == Role.BOSS) {
-//            List<Application> applications = applicationService.getApplicationsByState(ApplicationStatus.CANCELLED);
-//
-//            setApplications(applications, model);
-//
-//            setLoggedUser(model);
-//
-//            return APP_LIST_JSP;
-//        } else {
-//            return ERROR_JSP;
-//        }
-//    }
+        return prepareAppListView(ApplicationStatus.REJECTED, year, model);
+    }
+
+    /**
+     * show all rejected applications
+     * @param  model
+     *
+     * @return
+     */
+    @RequestMapping(value = REJECTED_APPS, method = RequestMethod.GET)
+    public String showRejected(Model model) {
+
+        return prepareAppListView(ApplicationStatus.REJECTED, DateMidnight.now().getYear(), model);
+    }
 
     /**
      * used if you want to apply an application for leave (shows formular)
@@ -428,7 +481,7 @@ public class ApplicationController {
 
             return APP_FORM_JSP;
         } else {
-            if (checkApplicationForm(appForm, person, false, errors, model)) {
+            if (checkAndSaveApplicationForm(appForm, person, false, errors, model)) {
                 return "redirect:/web" + OVERVIEW;
             }
         }
@@ -455,13 +508,14 @@ public class ApplicationController {
      *
      * @return  true if everything is alright and application can be saved, else false
      */
-    private boolean checkApplicationForm(AppForm appForm, Person person, boolean isOffice, Errors errors, Model model) {
+    private boolean checkAndSaveApplicationForm(AppForm appForm, Person person, boolean isOffice, Errors errors, Model model) {
 
         Application application = new Application();
         application = appForm.fillApplicationObject(application);
 
         application.setPerson(person);
         application.setApplicationDate(DateMidnight.now(GregorianChronology.getInstance()));
+        application.setApplier(getLoggedUser());
 
         BigDecimal days = calendarService.getVacationDays(application, application.getStartDate(),
                 application.getEndDate());
@@ -604,6 +658,8 @@ public class ApplicationController {
     public String newApplicationByOffice(@PathVariable(PERSON_ID) Integer personId,
         @ModelAttribute(APPFORM) AppForm appForm, Errors errors, Model model) {
 
+        if(getLoggedUser().getRole() == Role.OFFICE) {
+        
         List<Person> persons = personService.getAllPersons(); // get all active persons
         model.addAttribute(PERSON_LIST, persons);
 
@@ -622,7 +678,7 @@ public class ApplicationController {
 
             return APP_FORM_OFFICE_JSP;
         } else {
-            if (checkApplicationForm(appForm, person, true, errors, model)) {
+            if (checkAndSaveApplicationForm(appForm, person, true, errors, model)) {
                 return "redirect:/web/staff/" + personId + "/overview";
             }
         }
@@ -634,6 +690,9 @@ public class ApplicationController {
         }
 
         return APP_FORM_OFFICE_JSP;
+        } else {
+            return ERROR_JSP;
+        }
     }
 
 
@@ -688,22 +747,8 @@ public class ApplicationController {
         Application application = applicationService.getApplicationById(applicationId);
 
         if (getLoggedUser().getRole() == Role.OFFICE || getLoggedUser().getRole() == Role.BOSS) {
-            int state = -1;
 
-            // remember state numbers:
-            // WAITING = 0;
-            // ALLOWED = 1;
-            // CANCELLED = 2;
-            // TO_CANCEL = 4;
-            if (application.getStatus() == ApplicationStatus.WAITING) {
-                state = 0;
-            } else if (application.getStatus() == ApplicationStatus.ALLOWED) {
-                state = 1;
-            } else if (application.getStatus() == ApplicationStatus.CANCELLED) {
-                state = 2;
-            }
-
-            prepareDetailView(application, state, model);
+            prepareDetailView(application, -1, model);
             model.addAttribute(APPFORM, new AppForm());
             model.addAttribute(COMMENT, new Comment());
 
@@ -718,31 +763,31 @@ public class ApplicationController {
     }
 
 
-    /**
-     * view for boss who has to decide if he allows or rejects the application, the office is able to add sick days that
-     * occured during a holiday
-     *
-     * @param  applicationId
-     * @param  model
-     *
-     * @return
-     */
-    @RequestMapping(value = SHOW_APP, params = "state", method = RequestMethod.GET)
-    public String showApplicationDetailByState(@PathVariable(APPLICATION_ID) Integer applicationId,
-        @RequestParam("state") int state, Model model) {
-
-        if (getLoggedUser().getRole() == Role.OFFICE || getLoggedUser().getRole() == Role.BOSS) {
-            Application application = applicationService.getApplicationById(applicationId);
-
-            prepareDetailView(application, state, model);
-            model.addAttribute(APPFORM, new AppForm());
-            model.addAttribute(COMMENT, new Comment());
-
-            return SHOW_APP_DETAIL_JSP;
-        } else {
-            return ERROR_JSP;
-        }
-    }
+//    /**
+//     * view for boss who has to decide if he allows or rejects the application, the office is able to add sick days that
+//     * occured during a holiday
+//     *
+//     * @param  applicationId
+//     * @param  model
+//     *
+//     * @return
+//     */
+//    @RequestMapping(value = SHOW_APP, params = "state", method = RequestMethod.GET)
+//    public String showApplicationDetailByState(@PathVariable(APPLICATION_ID) Integer applicationId,
+//        @RequestParam("state") int state, Model model) {
+//
+//        if (getLoggedUser().getRole() == Role.OFFICE || getLoggedUser().getRole() == Role.BOSS) {
+//            Application application = applicationService.getApplicationById(applicationId);
+//
+//            prepareDetailView(application, state, model);
+//            model.addAttribute(APPFORM, new AppForm());
+//            model.addAttribute(COMMENT, new Comment());
+//
+//            return SHOW_APP_DETAIL_JSP;
+//        } else {
+//            return ERROR_JSP;
+//        }
+//    }
 
 
     /**
@@ -755,16 +800,12 @@ public class ApplicationController {
     @RequestMapping(value = ALLOW_APP, method = RequestMethod.PUT)
     public String allowApplication(@PathVariable(APPLICATION_ID) Integer applicationId, Model model) {
 
+        Person boss = getLoggedUser();
         Application application = applicationService.getApplicationById(applicationId);
-
-        String name = SecurityContextHolder.getContext().getAuthentication().getName();
-        Person boss = personService.getPersonByLogin(name);
-
-        Integer person_id = application.getPerson().getId();
-        Integer boss_id = boss.getId();
-
-        // boss may only allow an application if this application isn't his own one
-        if (!person_id.equals(boss_id)) {
+        
+        // only boss is able to allow an application but only if this application isn't his own one
+        if(boss.getRole() == Role.BOSS && !application.getPerson().equals(boss)) {
+            
             applicationService.allow(application, boss);
 
             LOG.info(application.getApplicationDate() + " ID: " + application.getId() + "Der Antrag von "
@@ -775,7 +816,9 @@ public class ApplicationController {
             mailService.sendAllowedNotification(application);
 
             return "redirect:/web" + WAITING_APPS;
-        } else {
+        }
+        
+        else {
             return ERROR_JSP;
         }
     }
@@ -794,6 +837,10 @@ public class ApplicationController {
     public String rejectApplication(@PathVariable(APPLICATION_ID) Integer applicationId,
         @ModelAttribute(COMMENT) Comment comment, Errors errors, Model model) {
 
+        Person boss = getLoggedUser();
+        
+        if(boss.getRole() == Role.BOSS) {
+            
         Application application = applicationService.getApplicationById(applicationId);
 
         validator.validateComment(comment, errors);
@@ -804,8 +851,7 @@ public class ApplicationController {
 
             return SHOW_APP_DETAIL_JSP;
         } else {
-            String name = SecurityContextHolder.getContext().getAuthentication().getName();
-            Person boss = personService.getPersonByLogin(name);
+
             String nameOfCommentingPerson = boss.getLastName() + " " + boss.getFirstName();
 
             comment.setNameOfCommentingPerson(nameOfCommentingPerson);
@@ -824,6 +870,9 @@ public class ApplicationController {
             mailService.sendRejectedNotification(application);
 
             return "redirect:/web" + WAITING_APPS;
+        }
+        } else {
+            return ERROR_JSP;
         }
     }
 
@@ -871,7 +920,10 @@ public class ApplicationController {
     public String cancelApplication(@PathVariable(APPLICATION_ID) Integer applicationId) {
 
         Application application = applicationService.getApplicationById(applicationId);
-
+        Person loggedUser = getLoggedUser();
+        
+        // security check: only user himself or the person that has the role 'office' must be able to cancel an application
+        if (loggedUser.equals(application.getPerson()) || loggedUser.getRole() == Role.OFFICE) {
         boolean allowed = false;
 
         // if application had status allowed set field formerlyAllowed to true
@@ -879,33 +931,34 @@ public class ApplicationController {
             allowed = true;
             application.setFormerlyAllowed(true);
         }
-
+        
+        application.setCanceller(loggedUser);
         applicationService.cancel(application);
 
         // user has cancelled his own application
-        if (getLoggedUser().equals(application.getPerson())) {
+        if (loggedUser.equals(application.getPerson())) {
             if (allowed) {
                 // if application has status ALLOWED, office gets an email
                 mailService.sendCancelledNotification(application, false);
             }
 
             LOG.info("Antrag-ID: " + application.getId() + "Der Antrag wurde vom Antragssteller ("
-                + application.getPerson().getFirstName() + " " + application.getPerson().getLastName()
+                + loggedUser.getFirstName() + " " + loggedUser.getLastName()
                 + ") storniert.");
 
             return "redirect:/web" + OVERVIEW;
         } else {
             // application has been cancelled by office
-            application.setOffice(getLoggedUser());
-            applicationService.simpleSave(application);
-
             // applicant gets an mail regardless of which application status
             mailService.sendCancelledNotification(application, true);
             LOG.info("Antrag-ID: " + application.getId() + "Der Antrag wurde vom Office ("
-                + application.getOffice().getFirstName() + " " + application.getOffice().getLastName()
+                + loggedUser.getFirstName() + " " + loggedUser.getLastName()
                 + ") storniert.");
 
             return "redirect:/web/staff/" + application.getPerson().getId() + OVERVIEW;
+        }
+    } else {
+            return ERROR_JSP;
         }
     }
 

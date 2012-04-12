@@ -128,6 +128,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     public void allow(Application application, Person boss) {
 
         application.setBoss(boss);
+        application.setEditedDate(DateMidnight.now());
 
         // set state on allowed
         application.setStatus(ApplicationStatus.ALLOWED);
@@ -209,8 +210,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 
     /**
-     * @see  ApplicationService#reject(org.synyx.urlaubsverwaltung.domain.Application,org.synyx.urlaubsverwaltung.domain.Person,
-     *       java.lang.String)
+     * @see  ApplicationService#reject(org.synyx.urlaubsverwaltung.domain.Application,org.synyx.urlaubsverwaltung.domain.Person)
      */
     @Override
     public void reject(Application application, Person boss) {
@@ -222,6 +222,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         setStatusOfSupplementalApplications(application, ApplicationStatus.REJECTED);
 
         application.setBoss(boss);
+        application.setEditedDate(DateMidnight.now());
 
         rollback(application);
 
@@ -244,6 +245,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         setStatusOfSupplementalApplications(application, ApplicationStatus.CANCELLED);
 
         application.setStatus(ApplicationStatus.CANCELLED);
+        application.setCancelDate(DateMidnight.now());
         simpleSave(application);
     }
 

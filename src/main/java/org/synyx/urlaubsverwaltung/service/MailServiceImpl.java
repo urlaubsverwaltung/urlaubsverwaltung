@@ -299,13 +299,7 @@ public class MailServiceImpl implements MailService {
          * @see  MailService#sendCancelledNotification(org.synyx.urlaubsverwaltung.domain.Application, boolean)
          */
         @Override
-        public void sendCancelledNotification
-        (Application application, 
-        
-        boolean cancelledByOffice
-        
-            
-            ) {
+        public void sendCancelledNotification (Application application, boolean cancelledByOffice) {
 
         String text;
 

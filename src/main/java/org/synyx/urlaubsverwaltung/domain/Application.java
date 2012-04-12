@@ -27,16 +27,21 @@ public class Application extends AbstractPersistable<Integer> {
     private static final long serialVersionUID = 1234589209309L;
 
     // One person may own multiple applications for leave
+    // Person for who the application is
     @ManyToOne
     private Person person;
+    
+    // The person that applied the application: might be user himself or office
+    @ManyToOne
+    private Person applier;
 
-    // The boss who allowed/rejected an application
-    @OneToOne
+    // The boss who allowed/rejected the application
+    @ManyToOne
     private Person boss;
 
-    // if application was cancelled not by applicant himself: person who cancelled application
-    @OneToOne
-    private Person office;
+    // The person that cancelled the application: might be user himself or office
+    @ManyToOne
+    private Person canceller;
 
     // Number of days that is subtract from HolidayAccount
     private BigDecimal days;
@@ -66,9 +71,17 @@ public class Application extends AbstractPersistable<Integer> {
 
     private String phone;
 
-    // Date of application
+    // Date of application (applied by user himself or by office)
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date applicationDate;
+    
+    // Date of cancelling an application (cancelled by user himself or by office)
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date cancelDate;
+    
+    // Date of editing (allow or reject) an application by a boss
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date editedDate;
 
     // State of application (e.g. waiting, allowed, ...)
     private ApplicationStatus status;
@@ -94,6 +107,9 @@ public class Application extends AbstractPersistable<Integer> {
     // Signature of boss
     @Column(columnDefinition = "longblob")
     private byte[] signatureBoss;
+    
+    // for office: is this application already in Calendar?
+    private boolean isInCalendar;
 
     public String getAddress() {
 
@@ -126,6 +142,47 @@ public class Application extends AbstractPersistable<Integer> {
         }
     }
 
+    public DateMidnight getCancelDate() {
+        if (this.cancelDate == null) {
+            return null;
+        }
+
+        return new DateTime(this.cancelDate).toDateMidnight();
+    }
+
+    public void setCancelDate(DateMidnight cancelDate) {
+        if (cancelDate == null) {
+            this.cancelDate = null;
+        } else {
+            this.cancelDate = cancelDate.toDate();
+        }
+    }
+
+    public DateMidnight getEditedDate() {
+        if (this.editedDate == null) {
+            return null;
+        }
+
+        return new DateTime(this.editedDate).toDateMidnight();
+    }
+
+    public void setEditedDate(DateMidnight editedDate) {
+        if (editedDate == null) {
+            this.editedDate = null;
+        } else {
+            this.editedDate = editedDate.toDate();
+        }
+    }
+
+    public Person getApplier() {
+        return applier;
+    }
+
+    public void setApplier(Person applier) {
+        this.applier = applier;
+    }
+    
+    
 
     public Person getBoss() {
 
@@ -139,15 +196,15 @@ public class Application extends AbstractPersistable<Integer> {
     }
 
 
-    public Person getOffice() {
+    public Person getCanceller() {
 
-        return office;
+        return canceller;
     }
 
 
-    public void setOffice(Person office) {
+    public void setCanceller(Person canceller) {
 
-        this.office = office;
+        this.canceller = canceller;
     }
 
 
@@ -345,4 +402,14 @@ public class Application extends AbstractPersistable<Integer> {
 
         this.idOfApplication = idOfApplication;
     }
+
+    public boolean isIsInCalendar() {
+        return isInCalendar;
+    }
+
+    public void setIsInCalendar(boolean isInCalendar) {
+        this.isInCalendar = isInCalendar;
+    }
+    
+    
 }
