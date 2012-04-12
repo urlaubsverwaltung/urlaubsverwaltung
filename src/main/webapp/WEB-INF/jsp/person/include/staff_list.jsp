@@ -40,8 +40,11 @@
             <td class="vac">
                 <c:choose>
                     <c:when test="${accounts[person] != null}">
-                                <fmt:formatNumber maxFractionDigits="1" value="${accounts[person].vacationDays}"/> +
-                                <fmt:formatNumber maxFractionDigits="1" value="${accounts[person].remainingVacationDays}"/>
+                        <fmt:formatNumber maxFractionDigits="1" value="${accounts[person].vacationDays}"/>
+                        <%-- show number of remaining vacation days only if current date is before April OR (if user's remaining vacation days don't expire AND number of remaining vacation days is greater than zero) --%>
+                        <c:if test="${april == 1 || (not accounts[person].remainingVacationDaysExpire && accounts[person].remainingVacationDays > 0.00)}">
+                            + <fmt:formatNumber maxFractionDigits="1" value="${accounts[person].remainingVacationDays}"/>
+                        </c:if>
                     </c:when>
                     <c:otherwise>
                         <spring:message code='not.specified' />
@@ -53,8 +56,5 @@
             <td class="td-edit"><a href="${formUrlPrefix}/staff/${person.id}/edit"><img src="<spring:url value='/images/edit.png' />" /></a></td>
         </tr>    
     </c:forEach>
-<!--        <tr>
-            <td colspan="8" style="border-top: 1px solid #EAF2D3">&nbsp;</td>
-        </tr>-->
 </table>
 

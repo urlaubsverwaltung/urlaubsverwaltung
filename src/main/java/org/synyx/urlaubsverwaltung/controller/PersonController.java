@@ -255,19 +255,11 @@ public class PersonController {
             }
         }
 
-        int april = 0;
-
-        int month = DateMidnight.now(GregorianChronology.getInstance()).getMonthOfYear();
-
-        if (month >= 1 && month <= 3) {
-            april = 1;
-        }
-
+        addAprilAttributeToModel(model);
         model.addAttribute(PERSONS, persons);
         model.addAttribute(GRAVATAR_URLS, gravatarUrls);
         model.addAttribute(ACCOUNTS, accounts);
         model.addAttribute(ENTITLEMENTS, entitlements);
-        model.addAttribute(APRIL, april);
         model.addAttribute(YEAR, DateMidnight.now().getYear());
     }
 
@@ -414,19 +406,13 @@ public class PersonController {
         // get person's holidays account and entitlement for the given year
         HolidaysAccount account = accountService.getHolidaysAccount(year, person);
         HolidayEntitlement entitlement = accountService.getHolidayEntitlement(year, person);
-        DateMidnight date = DateMidnight.now(GregorianChronology.getInstance());
-        int april = 0;
-
-        if (DateUtil.isBeforeApril(date)) {
-            april = 1;
-        }
 
         setLoggedUser(model);
+        addAprilAttributeToModel(model);
         model.addAttribute(PERSON, person);
         model.addAttribute(ACCOUNT, account);
         model.addAttribute(ENTITLEMENT, entitlement);
-        model.addAttribute(YEAR, date.getYear());
-        model.addAttribute(APRIL, april);
+        model.addAttribute(YEAR, DateMidnight.now().getYear());
 
         // get url of person's gravatar image
         String url = gravatarUtil.createImgURL(person.getEmail());
@@ -729,5 +715,25 @@ public class PersonController {
         String user = SecurityContextHolder.getContext().getAuthentication().getName();
 
         return personService.getPersonByLogin(user);
+    }
+    
+    /**
+     * If current date is before April, the value of the attribute 'april' is 1, otherwise the value is 0.
+     * @param model
+     * @return model containing attribute 'april'
+     */
+    private Model addAprilAttributeToModel(Model model) {
+        
+        DateMidnight date = DateMidnight.now(GregorianChronology.getInstance());
+        int april = 0;
+
+        if (DateUtil.isBeforeApril(date)) {
+            april = 1;
+        }
+        
+        model.addAttribute(APRIL, april);
+        
+        return model;
+        
     }
 }
