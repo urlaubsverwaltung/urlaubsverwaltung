@@ -16,7 +16,7 @@
     </properties>
 
     <scm>
-        <developerConnection>scm:git:git://git.synyx.de:urlaubsverwaltung.git</developerConnection>
+        <developerConnection>scm:git:git://git.synyx.de/urlaubsverwaltung.git</developerConnection>
         <connection>scm:git:git@git.synyx.de:urlaubsverwaltung.git</connection>
     </scm>
 
