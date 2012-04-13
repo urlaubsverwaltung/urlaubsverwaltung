@@ -173,7 +173,7 @@ public class MailServiceImplTest {
         person.setFirstName("Bernd");
         person.setEmail("berndo@test.com");
 
-        instance.sendAllowedNotification(application);
+        instance.sendAllowedNotification(application, null);
 
         // were both emails sent?
         List<Message> inboxOffice = Mailbox.get(mailProperties.getProperty("email.office"));
@@ -226,7 +226,7 @@ public class MailServiceImplTest {
         person.setFirstName("Franz");
         person.setEmail("franzi@test.com");
 
-        instance.sendRejectedNotification(application);
+        instance.sendRejectedNotification(application, null);
 
         // was email sent?
         List<Message> inbox = Mailbox.get("franzi@test.com");
@@ -333,7 +333,7 @@ public class MailServiceImplTest {
         // test for cancelledByOffice == false
         // i.e. office gets a mail
 
-        instance.sendCancelledNotification(application, false);
+        instance.sendCancelledNotification(application, false, null);
 
         // was email sent?
         List<Message> inboxOffice = Mailbox.get(mailProperties.getProperty("email.office"));
@@ -350,7 +350,8 @@ public class MailServiceImplTest {
 
         // check content of email
         String content = (String) msg.getContent();
-        assertTrue(content.contains("Der Mitarbeiter Heinrich Test hat seinen Urlaubsantrag storniert"));
+        assertTrue(content.contains("Der Urlaubsantrag von Heinrich Test"));
+        assertTrue(content.contains("wurde storniert"));
         assertFalse(content.contains("Mist"));
 
         // test for cancelledByOffice == true
@@ -365,7 +366,7 @@ public class MailServiceImplTest {
         office.setFirstName("Magdalena");
 
         application.setCanceller(office);
-        instance.sendCancelledNotification(application, true);
+        instance.sendCancelledNotification(application, true, null);
 
         // was email sent?
         List<Message> inboxApplicant = Mailbox.get("muster@mann.de");

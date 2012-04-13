@@ -1,6 +1,6 @@
 Hallo Chefs,
 
-es liegt ein neuer zu genehmigender Antrag vor:
+es liegt ein neuer zu genehmigender Antrag vor: Link zum Antrag: ${link}
 
 Mitarbeiter: ${application.person.firstName} ${application.person.lastName}
 Datum der Antragsstellung: ${application.applicationDate.toString("dd.MM.yyyy")}
@@ -16,5 +16,3 @@ Anschrift während des Urlaubs: ${application.address}
 #if($application.phone && $application.phone != "")
 Telefon während des Urlaubs: ${application.phone}
 #end
-
-Link zum Antrag: ${link}

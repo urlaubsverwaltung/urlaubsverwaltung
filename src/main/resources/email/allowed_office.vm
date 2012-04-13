@@ -1,7 +1,10 @@
 Hallo Office,
 
-es liegt ein neuer genehmigter Antrag vor:
+es liegt ein neuer genehmigter Antrag vor: ${link}
 
 Mitarbeiter: ${application.person.firstName} ${application.person.lastName} 
 Zeitraum des beantragten Urlaubs: ${application.startDate.toString("dd.MM.yyyy")} bis ${application.endDate.toString("dd.MM.yyyy")}, ${dayLength} 
 
+#if($comment.reason && $comment.reason != "")
+Kommentar von ${comment.nameOfCommentingPerson} zum Antrag: ${comment.reason}
+#end

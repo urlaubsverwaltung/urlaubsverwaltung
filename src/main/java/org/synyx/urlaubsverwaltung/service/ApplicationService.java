@@ -154,10 +154,21 @@ public interface ApplicationService {
      * @param  state
      * @param  year
      *
-     * @return  returns all applications of a state as a list of application-objects
+     * @return  returns all applications in a list
      */
     List<Application> getApplicationsByStateAndYear(ApplicationStatus state, int year);
 
+    
+    /**
+     * use this to get all cancelled applications that have have been allowed sometime (i.e. formerlyAllowed = true) by a certain year
+     *
+     * @param  year
+     *
+     * @return  returns all applications in a list
+     */
+    List<Application> getCancelledApplicationsByYearFormerlyAllowed(int year);
+    
+    
 
     /**
      * use this to get all applications with vacation time between startDate x and endDate y

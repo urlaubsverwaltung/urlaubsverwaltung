@@ -3,7 +3,11 @@ Hallo ${application.person.firstName},
 dein Urlaubsantrag wurde von ${application.canceller.firstName} ${application.canceller.lastName} für dich storniert.
 Falls Klärungsbedarf bestehen sollte, wende dich bitte direkt an ${application.canceller.firstName} ${application.canceller.lastName}.
 
-Es handelt sich um folgenden Urlaubsantrag:
+#if($comment.reason && $comment.reason != "")
+Kommentar zur Stornierung von ${comment.nameOfCommentingPerson} zum Antrag: ${comment.reason}
+#end 
+
+Es handelt sich um folgenden Urlaubsantrag: ${link}
 
 Antragsdatum: ${application.applicationDate.toString("dd.MM.yyyy")}
 Zeitraum des beantragten Urlaubs: ${application.startDate.toString("dd.MM.yyyy")} bis ${application.endDate.toString("dd.MM.yyyy")}, ${dayLength}

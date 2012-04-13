@@ -467,7 +467,7 @@ input[type=button].cancel {
 
 #cancel {
     border: 1px solid #E76757;
-    background-color: #FFE3E3;
+/*    background-color: #FFE3E3;*/
     padding: 1em 1em 1em 2.5em;
     margin-top:1em;
 }

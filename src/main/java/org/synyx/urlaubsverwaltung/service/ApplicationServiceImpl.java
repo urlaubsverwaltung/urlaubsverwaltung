@@ -848,4 +848,11 @@ public class ApplicationServiceImpl implements ApplicationService {
     public int getIdOfLatestApplication(Person person, ApplicationStatus status) {
         return applicationDAO.getIdOfLatestApplication(person, status);
     }
+
+    @Override
+    public List<Application> getCancelledApplicationsByYearFormerlyAllowed(int year) {
+        DateMidnight firstDayOfYear = new DateMidnight(year, DateTimeConstants.JANUARY, 1);
+        DateMidnight lastDayOfYear = new DateMidnight(year, DateTimeConstants.DECEMBER, 31);
+        return applicationDAO.getCancelledApplicationsByYear(ApplicationStatus.CANCELLED, firstDayOfYear.toDate(), lastDayOfYear.toDate());
+    }
 }

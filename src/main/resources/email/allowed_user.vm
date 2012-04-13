@@ -2,4 +2,10 @@ Hallo ${application.person.firstName} ${application.person.lastName},
 
 dein am ${application.applicationDate.toString("dd.MM.yyyy")} gestellter Antrag wurde von ${application.boss.firstName} ${application.boss.lastName} genehmigt.
 Es handelt sich um den Zeitraum von ${application.startDate.toString("dd.MM.yyyy")} bis ${application.endDate.toString("dd.MM.yyyy")}, ${dayLength}
-Einen schönen Urlaub! 
+Einen schönen Urlaub!
+
+#if($comment.reason && $comment.reason != "")
+Kommentar von ${comment.nameOfCommentingPerson} zum Antrag: ${comment.reason}
+#end 
+
+Link zum Antrag: ${link}

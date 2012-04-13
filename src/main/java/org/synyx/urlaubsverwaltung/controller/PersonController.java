@@ -37,12 +37,14 @@ import org.synyx.urlaubsverwaltung.view.PersonForm;
 
 import java.math.BigDecimal;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import org.synyx.urlaubsverwaltung.domain.ApplicationStatus;
 
 
 /**
@@ -391,13 +393,28 @@ public class PersonController {
     private void prepareOverview(Person person, int year, Model model) {
 
         // get the person's applications for the given year
-        List<Application> applications = applicationService.getAllApplicationsByPersonAndYear(person, year);
-
-        if (applications.isEmpty()) {
+        List<Application> apps = applicationService.getAllApplicationsByPersonAndYear(person, year);
+        
+        if(apps.isEmpty()) {
             model.addAttribute(NO_APPS, true);
         } else {
-            model.addAttribute(APPLICATIONS, applications);
+            List<Application> applications = new ArrayList<Application>();
+        
+            for(Application a : apps) {
+            if(a.getStatus() != ApplicationStatus.CANCELLED) {
+                applications.add(a);
+            } else {
+                if(a.isFormerlyAllowed() == true) {
+                    applications.add(a);
+                }
+            }
         }
+        
+        model.addAttribute(APPLICATIONS, applications);
+        
+        }
+        
+
 
         // get the number of vacation days that person has used in the given year
         BigDecimal numberOfUsedDays = applicationService.getUsedVacationDaysOfPersonForYear(person, year);

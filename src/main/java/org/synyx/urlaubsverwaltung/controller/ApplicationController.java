@@ -48,6 +48,7 @@ import org.synyx.urlaubsverwaltung.view.AppForm;
 
 import java.math.BigDecimal;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
@@ -218,6 +219,41 @@ public class ApplicationController {
 
 
     /**
+     * Prepares the model object for the showAll or showAllByYear methods.
+     * 
+     * @param year
+     * @param model
+     * @return 
+     */
+    private Model prepareModelForShowAllMethods(int year, Model model) {
+        
+            DateMidnight firstDay = new DateMidnight(year, DateTimeConstants.JANUARY, 1);
+            DateMidnight lastDay = new DateMidnight(year, DateTimeConstants.DECEMBER, 31);
+            
+            List<Application> apps = applicationService.getApplicationsForACertainTime(firstDay, lastDay);
+            
+            List<Application> applications = new ArrayList<Application>();
+        
+            for(Application a : apps) {
+            if(a.getStatus() != ApplicationStatus.CANCELLED) {
+                applications.add(a);
+            } else {
+                if(a.isFormerlyAllowed() == true) {
+                    applications.add(a);
+                }
+            }
+            }
+
+            model.addAttribute(APPLICATIONS, applications);
+            setLoggedUser(model);
+            model.addAttribute(TITLE_APP, "all.app");
+            model.addAttribute(TOUCHED_DATE, DATE_OVERVIEW);
+            model.addAttribute(YEAR, DateMidnight.now().getYear());
+            
+            return model;
+    }
+    
+    /**
      * show a list of all {@link Application} for the current year not dependent on {@link ApplicationStatus}
      *
      * @param  model
@@ -231,21 +267,13 @@ public class ApplicationController {
         
         if (role == Role.BOSS || role == Role.OFFICE) {
             int year = DateMidnight.now().getYear();
-            DateMidnight firstDay = new DateMidnight(year, DateTimeConstants.JANUARY, 1);
-            DateMidnight lastDay = new DateMidnight(year, DateTimeConstants.DECEMBER, 31);
+            prepareModelForShowAllMethods(year, model);
             
-            List<Application> applications = applicationService.getApplicationsForACertainTime(firstDay, lastDay);
-
-            model.addAttribute(APPLICATIONS, applications);
-            setLoggedUser(model);
-            model.addAttribute(TITLE_APP, "all.app");
-            model.addAttribute(TOUCHED_DATE, DATE_OVERVIEW);
-            model.addAttribute(YEAR, DateMidnight.now().getYear());
-
             return APP_LIST_JSP;
         } else {
             return ERROR_JSP;
         }
+
     }
     
     
@@ -261,17 +289,8 @@ public class ApplicationController {
         Role role = getLoggedUser().getRole();
         
         if (role == Role.BOSS || role == Role.OFFICE) {
-            DateMidnight firstDay = new DateMidnight(year, DateTimeConstants.JANUARY, 1);
-            DateMidnight lastDay = new DateMidnight(year, DateTimeConstants.DECEMBER, 31);
+            prepareModelForShowAllMethods(year, model);
             
-            List<Application> applications = applicationService.getApplicationsForACertainTime(firstDay, lastDay);
-
-            model.addAttribute(APPLICATIONS, applications);
-            setLoggedUser(model);
-            model.addAttribute(TITLE_APP, "all.app");
-            model.addAttribute(TOUCHED_DATE, DATE_OVERVIEW);
-            model.addAttribute(YEAR, DateMidnight.now().getYear());
-
             return APP_LIST_JSP;
         } else {
             return ERROR_JSP;
@@ -308,7 +327,12 @@ public class ApplicationController {
         }
 
         if (getLoggedUser().getRole() == Role.BOSS || getLoggedUser().getRole() == Role.OFFICE) {
-            List<Application> applications = applicationService.getApplicationsByStateAndYear(state, year);
+            List<Application> applications;
+            if(state == ApplicationStatus.CANCELLED) {
+                applications = applicationService.getCancelledApplicationsByYearFormerlyAllowed(year);
+            } else {
+                applications = applicationService.getApplicationsByStateAndYear(state, year);
+            }
 
             model.addAttribute(APPLICATIONS, applications);
             setLoggedUser(model);
@@ -825,14 +849,14 @@ public class ApplicationController {
             
             applicationService.allow(application, boss);
             
-                commentService.saveComment(comment, boss, application);
+            commentService.saveComment(comment, boss, application);
 
             LOG.info(application.getApplicationDate() + " ID: " + application.getId() + "Der Antrag von "
                 + application.getPerson().getFirstName() + " " + application.getPerson().getLastName()
                 + " wurde am " + DateMidnight.now().toString(DATE_FORMAT) + " von " + boss.getFirstName() + " "
                 + boss.getLastName() + " genehmigt.");
 
-            mailService.sendAllowedNotification(application);
+            mailService.sendAllowedNotification(application, comment);
 
             return "redirect:/web/application/" + applicationId;
         }
@@ -891,8 +915,6 @@ public class ApplicationController {
 
             return SHOW_APP_DETAIL_JSP;
         } else {
-            commentService.saveComment(comment, boss, application);
-
             applicationService.reject(application, boss);
             
              commentService.saveComment(comment, boss, application);
@@ -903,7 +925,7 @@ public class ApplicationController {
                 + " abgelehnt.");
 
             // mail to applicant
-            mailService.sendRejectedNotification(application);
+            mailService.sendRejectedNotification(application, comment);
 
             return "redirect:/web/application/" + applicationId;
         }
@@ -971,6 +993,18 @@ public class ApplicationController {
         if (loggedUser.equals(application.getPerson()) || loggedUser.getRole() == Role.OFFICE) {
             
             
+        if(!loggedUser.equals(application.getPerson()) || application.getStatus() == ApplicationStatus.ALLOWED) {    
+        validator.validateComment(comment, errors);
+
+        if (errors.hasErrors()) {
+            prepareDetailView(application, WAITING, model);
+            model.addAttribute("errors", errors);
+
+            return SHOW_APP_DETAIL_JSP;
+        }
+        }
+            
+            
         boolean allowed = false;
 
         // if application had status allowed set field formerlyAllowed to true
@@ -984,13 +1018,13 @@ public class ApplicationController {
         
         commentService.saveComment(comment, loggedUser, application);
 
-        // user has cancelled his own application
-        if (loggedUser.equals(application.getPerson())) {
             if (allowed) {
-                // if application has status ALLOWED, office gets an email
-                mailService.sendCancelledNotification(application, false);
+                // if application has status ALLOWED, office and bosses get an email
+                mailService.sendCancelledNotification(application, false, comment);
             }
 
+            // user has cancelled his own application
+        if (loggedUser.equals(application.getPerson())) {
             LOG.info("Antrag-ID: " + application.getId() + "Der Antrag wurde vom Antragssteller ("
                 + loggedUser.getFirstName() + " " + loggedUser.getLastName()
                 + ") storniert.");
@@ -998,7 +1032,7 @@ public class ApplicationController {
         } else {
             // application has been cancelled by office
             // applicant gets an mail regardless of which application status
-            mailService.sendCancelledNotification(application, true);
+            mailService.sendCancelledNotification(application, true, comment);
             LOG.info("Antrag-ID: " + application.getId() + "Der Antrag wurde vom Office ("
                 + loggedUser.getFirstName() + " " + loggedUser.getLastName()
                 + ") storniert.");

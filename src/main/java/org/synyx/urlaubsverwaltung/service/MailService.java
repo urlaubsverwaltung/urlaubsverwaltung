@@ -8,6 +8,7 @@ import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.Person;
 
 import java.util.List;
+import org.synyx.urlaubsverwaltung.domain.Comment;
 
 
 /**
@@ -58,16 +59,18 @@ public interface MailService {
      * this method sends an email to the applicant and to the office that the application has been allowed
      *
      * @param  application  the application which got allowed
+     * @param comment made during allowing application
      */
-    void sendAllowedNotification(Application application);
+    void sendAllowedNotification(Application application, Comment comment);
 
 
     /**
      * this method sends an email to the applicant that the application has been rejected
      *
      * @param  application  the application which got rejected
+     * @param comment reason why application was rejected
      */
-    void sendRejectedNotification(Application application);
+    void sendRejectedNotification(Application application, Comment comment);
     
     /**
      * If a boss is not sure about the decision of an application (reject or allow), he can ask another boss to decide about this application via a generated email. 
@@ -100,8 +103,9 @@ public interface MailService {
      * @param  application  the application which got canceled
      * @param  cancelledByOffice  describes if chefs (param is true) or office (param is false) get the email (dependent
      *                            on application's state: waiting-chefs, allowed-office
+     * @param comment
      */
-    void sendCancelledNotification(Application application, boolean cancelledByOffice);
+    void sendCancelledNotification(Application application, boolean cancelledByOffice, Comment comment);
 
 
     /**
