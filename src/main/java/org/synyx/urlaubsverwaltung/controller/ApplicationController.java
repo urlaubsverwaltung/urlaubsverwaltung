@@ -160,6 +160,9 @@ public class ApplicationController {
     
     // refer application to other boss
     private static final String REFER_APP = LONG_PATH_APPLICATION + APPLICATION_ID + "}/refer";
+    
+    // remind boss to decide about application
+    private static final String REMIND = LONG_PATH_APPLICATION + APPLICATION_ID + "}/remind";
 
     // audit logger: logs nontechnically occurences like 'user x applied for leave' or 'subtracted n days from
     // holidays account y'
@@ -1093,5 +1096,40 @@ public class ApplicationController {
         String user = SecurityContextHolder.getContext().getAuthentication().getName();
 
         return personService.getPersonByLogin(user);
+    }
+    
+    
+    @RequestMapping(value = REMIND, method = RequestMethod.PUT)
+    public String remindBoss(@PathVariable(APPLICATION_ID) Integer applicationId, Model model) {
+        
+        
+        Application application = applicationService.getApplicationById(applicationId);
+        DateMidnight remindDate = application.getRemindDate();
+        
+        if(remindDate != null) {
+            if(remindDate.equals(DateMidnight.now())) {
+            model.addAttribute("alreadySent", true);
+            }
+        }  else {
+        
+        long applicationDate = application.getApplicationDate().getMillis();
+        long now = DateMidnight.now().getMillis();
+        
+        // minimal difference should be two days
+        long minDifference = 2 * 24 * 60 * 60 * 1000;
+        
+        if(now - applicationDate > minDifference) {
+            mailService.sendRemindBossNotification(application);
+            application.setRemindDate(DateMidnight.now());
+            applicationService.simpleSave(application);
+            model.addAttribute("isSent", true);
+        } else {
+            model.addAttribute("noWay", true);
+        }
+        }
+        
+        prepareDetailView(application, WAITING, model);
+        return SHOW_APP_DETAIL_JSP;
+        
     }
 }

@@ -75,6 +75,13 @@ public interface MailService {
      * @param p 
      */
     void sendReferApplicationNotification(Application a, Person reciever, String sender);
+    
+    /**
+     * If an application has status waiting and no boss has decided about it after a certain time, the bosses recieve a reminding notification.
+     * 
+     * @param a 
+     */
+    void sendRemindBossNotification(Application a);
 
 
     /**

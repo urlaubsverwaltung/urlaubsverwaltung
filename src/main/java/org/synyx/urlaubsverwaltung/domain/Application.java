@@ -82,6 +82,10 @@ public class Application extends AbstractPersistable<Integer> {
     // Date of editing (allow or reject) an application by a boss
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date editedDate;
+    
+    // Last date of sending a reminding email to boss
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date remindDate;
 
     // State of application (e.g. waiting, allowed, ...)
     private ApplicationStatus status;
@@ -409,6 +413,26 @@ public class Application extends AbstractPersistable<Integer> {
 
     public void setIsInCalendar(boolean isInCalendar) {
         this.isInCalendar = isInCalendar;
+    }
+
+    
+     public DateMidnight getRemindDate() {
+
+        if (this.remindDate == null) {
+            return null;
+        }
+
+        return new DateTime(this.remindDate).toDateMidnight();
+    }
+
+
+    public void setRemindDate(DateMidnight remindDate) {
+
+        if (startDate == null) {
+            this.remindDate = null;
+        } else {
+            this.remindDate = remindDate.toDate();
+        }
     }
     
     

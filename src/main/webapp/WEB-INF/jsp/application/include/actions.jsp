@@ -17,17 +17,40 @@
     <%-- cancel application button for office --%>
     <%-- show only if application is not cancelled yet --%>
     <c:if test="${application.status.number != 3}">
-        <input type="button" class="cancel" name="<spring:message code='app.state.cancel' />" value="<spring:message code='app.state.cancel' />" onclick="$('#reject').hide(); $('#confirm').hide(); $('#refer').hide(); $('#cancel').show();" />
-    </c:if>
+    <input type="button" class="cancel" name="<spring:message code='app.state.cancel' />" value="<spring:message code='app.state.cancel' />" onclick="$('#reject').hide(); $('#confirm').hide(); $('#refer').hide(); $('#cancel').show();" />
+</c:if>
 </sec:authorize>
 <sec:authorize access="hasRole('role.user')">
     <c:if test="${application.status.number == 0}">
-        <a class="button remind" href="${formUrlPrefix}/application/${application.id}/remind"><spring:message code='remind.chef' /></a>
+        <form:form method="put" action="${formUrlPrefix}/application/${application.id}/remind" style="display:inline;">
+                <c:if test="${noWay == true}">
+                    <script type="text/javascript">
+                        $(document).ready(function() {
+                            alert('<spring:message code='dont.get.impatient' />');
+                        });
+                    </script>
+                </c:if>
+                <c:if test="${isSent == true}">
+                    <script type="text/javascript">
+                        $(document).ready(function() {
+                            alert('<spring:message code='chef.is.reminded' />');
+                        });
+                    </script>
+                </c:if>
+                <c:if test="${alreadySent == true}">
+                    <script type="text/javascript">
+                        $(document).ready(function() {
+                            alert('<spring:message code='already.sent.today' />');
+                        });
+                    </script>
+                </c:if>
+                <input type="button" class="remind" onclick="this.form.submit();" name="<spring:message code='remind.chef' />" value="<spring:message code='remind.chef' />" />
+        </form:form>
     </c:if>
 </sec:authorize>
-    <c:if test="${(loggedUser.role.number == 0 || loggedUser.role.number == 1) && application.status.number != 3 && application.person.id == loggedUser.id}">
-        <input type="button" class="cancel" name="<spring:message code='app.state.cancel' />" value="<spring:message code='app.state.cancel' />" onclick="$('#reject').hide(); $('#confirm').hide(); $('#refer').hide(); $('#cancel').show();" />
-    </c:if>
+<c:if test="${(loggedUser.role.number == 0 || loggedUser.role.number == 1) && application.status.number != 3 && application.person.id == loggedUser.id}">
+    <input type="button" class="cancel" name="<spring:message code='app.state.cancel' />" value="<spring:message code='app.state.cancel' />" onclick="$('#reject').hide(); $('#confirm').hide(); $('#refer').hide(); $('#cancel').show();" />
+</c:if>
 <br /><br />
 
 
@@ -107,60 +130,52 @@
         $(document).ready(function() {
             $('#cancel').show();
         });
-     </script>
+    </script>
 </c:if>
-    <div id="cancel" style="display: none">
-        <sec:authorize access="hasRole('role.office')">
-            <c:if test="${application.status.number == 0 || application.status.number == 1}">
-                <form:form method="put" action="${formUrlPrefix}/application/${application.id}/cancel" modelAttribute="comment">
-                    <spring:message code='cancel.confirm' />
-                    <br /><br />
-                    <spring:message code='comment' />, <spring:message code="optional" />: (<spring:message code="max.chars" />)
-                    <br />
-                    <form:textarea path="reason" cssClass="text" onkeydown="maxChars(this,200);" />
-                    <br /><br />
-                    <input type="submit" class="button confirm" name="<spring:message code='delete' />" value="<spring:message code='delete' />" />
-                    <input type="button" name="<spring:message code='cancel' />" value="<spring:message code='cancel' />" onclick="$('#cancel').hide();" />
-                </form:form>
-            </c:if>
-        </sec:authorize>
+<div id="cancel" style="display: none">
+    <sec:authorize access="hasRole('role.office')">
+        <c:if test="${application.status.number == 0 || application.status.number == 1}">
+            <form:form method="put" action="${formUrlPrefix}/application/${application.id}/cancel" modelAttribute="comment">
+                <spring:message code='cancel.confirm' />
+                <br /><br />
+                <spring:message code='comment' />, <spring:message code="optional" />: (<spring:message code="max.chars" />)
+                <br />
+                <form:textarea path="reason" cssClass="text" onkeydown="maxChars(this,200);" />
+                <br /><br />
+                <input type="submit" class="button confirm" name="<spring:message code='delete' />" value="<spring:message code='delete' />" />
+                <input type="button" name="<spring:message code='cancel' />" value="<spring:message code='cancel' />" onclick="$('#cancel').hide();" />
+            </form:form>
+        </c:if>
+    </sec:authorize>
 
-        <sec:authorize access="hasRole('role.user')">
-            <c:if test="${application.status.number == 0 || application.status.number == 1}">
-                <form:form method="put" action="${formUrlPrefix}/application/${application.id}/cancel" modelAttribute="comment">
-                    <spring:message code='cancel.confirm' />
-                    <br /><br />
-                    <c:if test="${!empty errors}">
-                    <div id="reject-error">
-                    </div>
-                </c:if>
-                    <spring:message code='app.comment' />, <spring:message code="optional" />: (<spring:message code="max.chars" />)
-                    <br />
-                    <form:textarea path="reason" cssClass="text" onkeydown="maxChars(this,200);" />
-                    <br /><br />
-                    <input type="submit" class="button confirm" name="<spring:message code='delete' />" value="<spring:message code='delete' />" />
-                    <input type="button" name="<spring:message code='cancel' />" value="<spring:message code='cancel' />" onclick="$('#cancel').hide();" />
-                </form:form>
-            </c:if>
-        </sec:authorize>  
+    <sec:authorize access="hasRole('role.user')">
+        <c:if test="${application.status.number == 0 || application.status.number == 1}">
+            <form:form method="put" action="${formUrlPrefix}/application/${application.id}/cancel" modelAttribute="comment">
+                <spring:message code='cancel.confirm' />
+                <br /><br />
+                <spring:message code='comment' />, <spring:message code="optional" />: (<spring:message code="max.chars" />)
+                <br />
+                <form:textarea path="reason" cssClass="text" onkeydown="maxChars(this,200);" />
+                <br /><br />
+                <input type="submit" class="button confirm" name="<spring:message code='delete' />" value="<spring:message code='delete' />" />
+                <input type="button" name="<spring:message code='cancel' />" value="<spring:message code='cancel' />" onclick="$('#cancel').hide();" />
+            </form:form>
+        </c:if>
+    </sec:authorize>  
 
-        <sec:authorize access="hasRole('role.boss')">
-            <c:if test="${application.status.number == 0 || application.status.number == 1}">
-                <form:form method="put" action="${formUrlPrefix}/application/${application.id}/cancel" modelAttribute="comment">
-                    <spring:message code='cancel.confirm' />
-                    <br /><br />
-                    <c:if test="${!empty errors}">
-                    <div id="reject-error">
-                    </div>
-                </c:if>
-                    <spring:message code='app.comment' />, <spring:message code="optional" />: (<spring:message code="max.chars" />)
-                    <br />
-                    <form:textarea path="reason" cssClass="text" onkeydown="maxChars(this,200);" />
-                    <br /><br />
-                    <input type="submit" class="button confirm" name="<spring:message code='delete' />" value="<spring:message code='delete' />" />
-                    <input type="button" name="<spring:message code='cancel' />" value="<spring:message code='cancel' />" onclick="$('#cancel').hide();" />
-                </form:form>
-            </c:if>
-        </sec:authorize>  
-    </div>
+    <sec:authorize access="hasRole('role.boss')">
+        <c:if test="${application.status.number == 0 || application.status.number == 1}">
+            <form:form method="put" action="${formUrlPrefix}/application/${application.id}/cancel" modelAttribute="comment">
+                <spring:message code='cancel.confirm' />
+                <br /><br />
+                <spring:message code='comment' />, <spring:message code="optional" />: (<spring:message code="max.chars" />)
+                <br />
+                <form:textarea path="reason" cssClass="text" onkeydown="maxChars(this,200);" />
+                <br /><br />
+                <input type="submit" class="button confirm" name="<spring:message code='delete' />" value="<spring:message code='delete' />" />
+                <input type="button" name="<spring:message code='cancel' />" value="<spring:message code='cancel' />" onclick="$('#cancel').hide();" />
+            </form:form>
+        </c:if>
+    </sec:authorize>  
+</div>
 

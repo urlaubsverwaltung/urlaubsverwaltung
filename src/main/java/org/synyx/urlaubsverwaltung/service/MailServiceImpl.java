@@ -62,6 +62,7 @@ public class MailServiceImpl implements MailService {
     private static final String FILE_NEW = "newapplications" + TYPE;
     private static final String FILE_REJECTED = "rejected" + TYPE;
     private static final String FILE_REFER = "refer" + TYPE;
+    private static final String FILE_REMIND = "remind" + TYPE;
     private static final String FILE_WEEKLY = "weekly" + TYPE;
     private JavaMailSender mailSender;
     private VelocityEngine velocityEngine;
@@ -169,6 +170,15 @@ public class MailServiceImpl implements MailService {
         String text = prepareMessage(application, APPLICATION, FILE_NEW, null, null);
 
         sendEmailToMultipleRecipients(mailProperties.getProperty("email.boss"), "subject.new", text);
+    }
+    
+    @Override
+    public void sendRemindBossNotification(Application a) {
+        
+        String text = prepareMessage(a, APPLICATION, FILE_REMIND, null, null);
+        
+        sendEmailToMultipleRecipients(mailProperties.getProperty("email.boss"), "subject.remind", text);
+        
     }
 
     /**

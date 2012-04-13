@@ -48,7 +48,18 @@
                 </div>
 
                 <div class="grid_6">
+                    
                     <table class="app-detail" cellspacing="0">
+                        <tr class="odd">
+    <!--                            <td rowspan="2"><img style="margin-left: 1.5em;"class="user-pic" src="<c:out value='${gravatar}?s=60&d=mm'/>" /></td>-->
+                            <th><c:out value="${application.person.firstName} ${application.person.lastName}" /></th>
+                            <td><c:out value="${application.person.email}" /></td>
+                        </tr>
+                        </tr>
+                        <%@include file="./include/account_days_for_app_view.jsp" %>
+                    </table>
+                    
+                    <table class="app-detail tbl-margin-top" cellspacing="0">
                         <tr class="odd">
                             <th colspan="2">
                                 <spring:message code="app.apply" /> <spring:message code="${application.vacationType.vacationTypeName}" />
@@ -131,7 +142,10 @@
                             </td>
                         </tr>
                     </table>
-                    <table class="app-detail tbl-margin-top" cellspacing="0">
+                            
+                            <%-- because of table below not really needed --%>
+                            
+<%--                    <table class="app-detail tbl-margin-top" cellspacing="0">
                         <tr class="odd">
                             <th colspan="2"><spring:message code="state" /></th>
                         </tr>
@@ -159,10 +173,15 @@
                                 <spring:message code='${edited}' />&nbsp;<joda:format style="M-" value="${appDate}"/>
                             </td>
                         </tr>
-                    </table>
+                    </table>--%>
 
+                    
+
+                </div>
+
+                <div class="grid_6">
                     <!-- there are four possible status, so there are max. four lines -->
-                    <table class="app-detail tbl-margin-top" cellspacing="0">
+                    <table class="app-detail" cellspacing="0" style="margin-bottom:2em;">
                         <tr class="odd">
                             <th colspan="2">Verlauf</th>
                         </tr>
@@ -186,7 +205,7 @@
                                     </td>
                                     <td>
                                         <spring:message code="by" /> <c:out value="${c.nameOfCommentingPerson}" />
-                                        <c:if test="${c.reason != null}">
+                                        <c:if test="${c.reason != null && not empty c.reason}">
                                             <spring:message code="app.comment" />
                                             <br />
                                             <i><c:out value="${c.reason}" /></i>
@@ -201,7 +220,7 @@
                                     </td>
                                     <td>
                                         <spring:message code="by" /> <c:out value="${c.nameOfCommentingPerson}" />
-                                        <c:if test="${c.reason != null}">
+                                        <c:if test="${c.reason != null && not empty c.reason}">
                                             <spring:message code="app.comment" />
                                             <br />
                                             <i><c:out value="${c.reason}" /></i>
@@ -211,19 +230,6 @@
 
                             </tr>
                         </c:forEach>
-                    </table>
-
-                </div>
-
-                <div class="grid_6">
-                    <table class="app-detail" cellspacing="0" style="margin-bottom:2em;">
-                        <tr class="odd">
-    <!--                            <td rowspan="2"><img style="margin-left: 1.5em;"class="user-pic" src="<c:out value='${gravatar}?s=60&d=mm'/>" /></td>-->
-                            <th><c:out value="${application.person.firstName} ${application.person.lastName}" /></th>
-                            <td><c:out value="${application.person.email}" /></td>
-                        </tr>
-                        </tr>
-                        <%@include file="./include/account_days_for_app_view.jsp" %>
                     </table>
                     <%@include file="./include/actions.jsp" %>
                 </div>

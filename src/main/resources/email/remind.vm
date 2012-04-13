@@ -1,0 +1,4 @@
+Hallo liebe Chefs,
+
+${application.person.firstName} ${application.person.lastName} bittet darum, dass sich einer von euch um den am ${application.applicationDate.toString("dd.MM.yyyy")} gestellten Urlaubsantrag kümmert, andernfalls kann es passieren, dass ihr weitere Benachrichtungs-Spam-Emails bekommt ;-)
+Den Urlaubsantrag findet ihr hier: ${link}
