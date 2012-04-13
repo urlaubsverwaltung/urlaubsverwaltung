@@ -46,8 +46,8 @@
                         <tr>
                             <td><spring:message code="table.overview" /><c:out value="${displayYear}" /></td>
                             <td style="text-align: right;">
-                                    <select onchange="window.location.href=this.options
-                                        [this.selectedIndex].value">
+                                <select onchange="window.location.href=this.options
+                                    [this.selectedIndex].value">
                                     <option selected="selected" value=""><spring:message code="ov.header.year" /></option>
                                     <option value="?year=<c:out value='${year - 1}' />"><c:out value="${year - 1}" /></option>
                                     <option value="?year=<c:out value='${year}' />"><c:out value="${year}" /></option>
@@ -71,7 +71,7 @@
 
                         <tr>
                             <td rowspan="3" style="background-color: #EAF2D3; width: 9.7%;"><img class="user-pic" src="<c:out value='${gravatar}?d=mm'/>" /></td>
-                        <%@include file="../application/include/account_days.jsp" %>
+                                <%@include file="../application/include/account_days.jsp" %>
 
                     </table>
                 </div>
@@ -81,9 +81,17 @@
                 <div class="grid_12">&nbsp;</div>
                 <div class="grid_12">&nbsp;</div>
 
+                <div class="grid_12">
+                    <a class="button apply" style="margin-top: 1em;" href="${formUrlPrefix}/application/new">
+                        <c:set var="staff" value="${person.firstName} ${person.lastName}" />
+                        <spring:message code="ov.apply" />
+                    </a>
+                </div>
+                <div class="grid_12">&nbsp;</div>
+
 
                 <%@include  file="./include/overview_app_list.jsp" %>
-                
+
 
             </div>
         </div>

@@ -30,22 +30,19 @@
                 <sec:authorize access="hasRole('role.user')">
                     <ul>
                         <li><a href="${formUrlPrefix}/overview"><spring:message code="overview" /></a></li>
-                        <li><a href="${formUrlPrefix}/application/new"><spring:message code="apply" /></a></li>
                     </ul>    
                 </sec:authorize>
                 
                 <sec:authorize access="hasRole('role.boss')">
                     <ul>
-                        <li><a href="${formUrlPrefix}/overview"><spring:message code="overview" /></a></li>
-                        <li><a href="${formUrlPrefix}/application/new"><spring:message code="apply" /></a></li>
+                        <li><a href="${formUrlPrefix}/overview"><spring:message code="personal" /></a></li>
                         <li><a href="${formUrlPrefix}/application"><spring:message code="h.apps" /></a></li>
                     </ul>
                 </sec:authorize>
                 
                 <sec:authorize access="hasRole('role.office')">
                     <ul>
-                        <li><a href="${formUrlPrefix}/overview"><spring:message code="overview" /></a></li>
-                        <li><a href="${formUrlPrefix}/application/new"><spring:message code="apply" /></a></li>
+                        <li><a href="${formUrlPrefix}/overview"><spring:message code="personal" /></a></li>
                         <li><a href="${formUrlPrefix}/application"><spring:message code="h.apps" /></a></li>
                         <li><a href="${formUrlPrefix}/staff"><spring:message code="staff.manager" /></a></li>
                     </ul>

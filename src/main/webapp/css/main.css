@@ -371,7 +371,6 @@ input[type=submit], input[type=button], a.button {
     text-align: right;
     color: #555555;
     font-weight: normal;
-    margin-right: 0.3em;    
 }
 
 a.button {
@@ -393,14 +392,14 @@ input[type=button].remind {
    background-image: url("../images/bell.png");
     background-repeat: no-repeat;
     background-position: 5% 50%;
-    padding-left: 2.5em; 
+    padding-left: 2em; 
 }
 
 input[type=submit].back, input[type=button].back, a.button.back {
     background-image: url("../images/agt_action_fail.png");
     background-repeat: no-repeat;
     background-position: 5% 50%;
-    padding-left: 2.5em;
+    padding-left: 2em;
 }
 
 input[type=submit].confirm, input[type=button].confirm, a.button.confirm {
@@ -411,7 +410,7 @@ input[type=submit].confirm, input[type=button].confirm, a.button.confirm {
 }
 
 #confirm {
-    margin-top: 2em;
+    margin-top: 1em;
 }
 
 #reject {
@@ -421,7 +420,7 @@ input[type=submit].confirm, input[type=button].confirm, a.button.confirm {
 
 .text {
     width: 80%;
-    min-height: 5em;
+    min-height: 6em;
 }
 
 a.button.apply {
@@ -443,7 +442,7 @@ input[type=submit].print, input[type=button].print, a.button.print {
     background-image: url("../images/agt_print.png");
     background-repeat: no-repeat;
     background-position: 5% 50%;
-    padding-left: 3em;
+    padding-left: 2.5em;
 }
 
 
@@ -451,7 +450,7 @@ input[type=submit].staff, input[type=button].staff, a.button.staff {
     background-image: url("../images/edit_user.png");
     background-repeat: no-repeat;
     background-position: 5% 50%;
-    padding-left: 3em;
+    padding-left: 2em;
 }
 
 
@@ -470,6 +469,7 @@ input[type=button].cancel {
     border: 1px solid #E76757;
     background-color: #FFE3E3;
     padding: 1em 1em 1em 2.5em;
+    margin-top:1em;
 }
 
 #rejected-app {
