@@ -478,7 +478,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         BigDecimal numberOfVacationDays = BigDecimal.ZERO;
 
         // get all non cancelled applications of person for the given year
-        List<Application> applications = getApplicationsByPersonAndYear(person, year);
+        List<Application> applications = getNotCancelledApplicationsByPersonAndYear(person, year);
 
         // get the supplemental applications of person for the given year
         List<Application> supplementalApplications = getSupplementalApplicationsByPersonAndYear(person, year);
@@ -539,10 +539,10 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 
     /**
-     * @see  ApplicationService#getApplicationsByPersonAndYear(org.synyx.urlaubsverwaltung.domain.Person, int)
+     * @see  ApplicationService#getNotCancelledApplicationsByPersonAndYear(org.synyx.urlaubsverwaltung.domain.Person, int)
      */
     @Override
-    public List<Application> getApplicationsByPersonAndYear(Person person, int year) {
+    public List<Application> getNotCancelledApplicationsByPersonAndYear(Person person, int year) {
 
         DateMidnight firstDayOfYear = new DateMidnight(year, DateTimeConstants.JANUARY, 1);
         DateMidnight lastDayOfYear = new DateMidnight(year, DateTimeConstants.DECEMBER, 31);
@@ -833,5 +833,19 @@ public class ApplicationServiceImpl implements ApplicationService {
         Date lastOfMarch = new DateMidnight(year, DateTimeConstants.MARCH, 31).toDate();
 
         return applicationDAO.getApplicationsBeforeAprilByPersonAndYear(person, firstJanuary, lastOfMarch);
+    }
+
+    @Override
+    public List<Application> getAllApplicationsByPersonAndYear(Person person, int year) {
+        DateMidnight firstDayOfYear = new DateMidnight(year, DateTimeConstants.JANUARY, 1);
+        DateMidnight lastDayOfYear = new DateMidnight(year, DateTimeConstants.DECEMBER, 31);
+        
+        return applicationDAO.getAllApplicationsByPersonAndYear(person,
+                firstDayOfYear.toDate(), lastDayOfYear.toDate());
+    }
+
+    @Override
+    public int getIdOfLatestApplication(Person person, ApplicationStatus status) {
+        return applicationDAO.getIdOfLatestApplication(person, status);
     }
 }

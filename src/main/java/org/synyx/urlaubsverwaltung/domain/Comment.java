@@ -8,6 +8,7 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 
@@ -22,14 +23,19 @@ public class Comment extends AbstractPersistable<Integer> {
     private static final long serialVersionUID = 8908423789423089L;
 
     private String reason;
+    
+    private String progress;
 
-    @OneToOne
+    @ManyToOne
     private Application application;
 
     private String nameOfCommentingPerson;
 
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateOfComment;
+    
+    // each application may only have one comment to each ApplicationStatus
+    private ApplicationStatus status;
 
     public Application getApplication() {
 
@@ -77,4 +83,24 @@ public class Comment extends AbstractPersistable<Integer> {
 
         this.reason = reason;
     }
+
+    public ApplicationStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ApplicationStatus status) {
+        this.status = status;
+    }
+
+    public String getProgress() {
+        return progress;
+    }
+
+    public void setProgress(String progress) {
+        this.progress = progress;
+    }
+    
+    
+    
+    
 }

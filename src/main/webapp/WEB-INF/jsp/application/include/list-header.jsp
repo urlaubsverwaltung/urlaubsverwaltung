@@ -27,7 +27,7 @@
             <select onchange="window.location.href=this.options
                                     [this.selectedIndex].value">
                 <option selected="selected" value=""><spring:message code="status.app" /></option>
-                <option value="${linkPrefix}"><spring:message code="all.app" /></option>
+                <option value="${linkPrefix}/all"><spring:message code="all.app" /></option>
                 <option value="${linkPrefix}/waiting"><spring:message code="waiting.app" /></option>
                 <option value="${linkPrefix}/allowed"><spring:message code="allow.app" /></option>
                 <option value="${linkPrefix}/rejected"><spring:message code="reject.app" /></option>

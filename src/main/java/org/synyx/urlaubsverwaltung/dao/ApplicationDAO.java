@@ -18,6 +18,9 @@ import java.util.List;
  */
 public interface ApplicationDAO extends JpaRepository<Application, Integer> {
 
+    @Query("select max(id) from Application x where x.person = ?1 and x.status = ?2")
+    int getIdOfLatestApplication(Person person, ApplicationStatus status);
+    
     // get List<Application> by certain state (e.g. waiting) and for a certain year
     @Query(
         "select x from Application x where x.status = ?1 and x.supplementaryApplication = false and ((x.startDate between ?2 and ?3) or (x.endDate between ?2 and ?3)) order by x.startDate"
@@ -57,6 +60,13 @@ public interface ApplicationDAO extends JpaRepository<Application, Integer> {
         "select x from Application x where x.status != ?1 and x.person = ?2 and x.supplementaryApplication = false and ((x.startDate between ?3 and ?4) or (x.endDate between ?3 and ?4)) order by x.startDate"
     )
     List<Application> getNotCancelledApplicationsByPersonAndYear(ApplicationStatus state, Person person,
+        Date firstDayOfYear, Date lastDayOfYear);
+    
+        // get List<Application> by certain person for a certain year, get only all applications not dependent on status
+    @Query(
+        "select x from Application x where x.person = ?1 and x.supplementaryApplication = false and ((x.startDate between ?2 and ?3) or (x.endDate between ?2 and ?3)) order by x.startDate"
+    )
+    List<Application> getAllApplicationsByPersonAndYear(Person person,
         Date firstDayOfYear, Date lastDayOfYear);
 
 

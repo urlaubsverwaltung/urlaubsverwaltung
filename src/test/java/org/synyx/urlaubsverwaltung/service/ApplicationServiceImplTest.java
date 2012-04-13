@@ -400,14 +400,14 @@ public class ApplicationServiceImplTest {
     }
 
 
-    /** Test of getApplicationsByPersonAndYear method, of class ApplicationServiceImpl. */
+    /** Test of getNotCancelledApplicationsByPersonAndYear method, of class ApplicationServiceImpl. */
     @Test
     public void testGetApplicationsByPersonAndYear() {
 
         DateMidnight firstDayOfYear = new DateMidnight(2012, DateTimeConstants.JANUARY, 1);
         DateMidnight lastDayOfYear = new DateMidnight(2012, DateTimeConstants.DECEMBER, 31);
 
-        instance.getApplicationsByPersonAndYear(person, 2012);
+        instance.getNotCancelledApplicationsByPersonAndYear(person, 2012);
         Mockito.verify(applicationDAO).getNotCancelledApplicationsByPersonAndYear(ApplicationStatus.CANCELLED, person,
             firstDayOfYear.toDate(), lastDayOfYear.toDate());
     }

@@ -115,6 +115,7 @@ public class ApplicationController {
 
     // list of applications by state
     private static final String APP_LIST = SHORT_PATH_APPLICATION;
+    private static final String ALL_APPS = SHORT_PATH_APPLICATION + "/all";
     private static final String WAITING_APPS = SHORT_PATH_APPLICATION + "/waiting";
     private static final String ALLOWED_APPS = SHORT_PATH_APPLICATION + "/allowed";
     private static final String CANCELLED_APPS = SHORT_PATH_APPLICATION + "/cancelled";
@@ -192,6 +193,25 @@ public class ApplicationController {
 
         binder.registerCustomEditor(DateMidnight.class, new DateMidnightPropertyEditor(locale));
     }
+    
+    
+    /**
+     * shows the default list, dependent on user role: if boss show waiting applications, if office show all applications
+     * @param model 
+     */
+    @RequestMapping(value = APP_LIST, method = RequestMethod.GET)
+    public String showDefault(Model model) {
+        
+        Role role = getLoggedUser().getRole();
+        
+        if(role == Role.BOSS) {
+            return "redirect:/web" + WAITING_APPS;
+        } else if (role == Role.OFFICE) {
+            return "redirect:/web" + ALL_APPS;
+        } else {
+            return ERROR_JSP;
+        }
+    }
 
 
     /**
@@ -201,7 +221,7 @@ public class ApplicationController {
      *
      * @return
      */
-    @RequestMapping(value = APP_LIST, method = RequestMethod.GET)
+    @RequestMapping(value = ALL_APPS, method = RequestMethod.GET)
     public String showAll(Model model) {
 
         Role role = getLoggedUser().getRole();
@@ -232,7 +252,7 @@ public class ApplicationController {
      * @param model
      * @return 
      */
-    @RequestMapping(value = APP_LIST, params = YEAR, method = RequestMethod.GET)
+    @RequestMapping(value = ALL_APPS, params = YEAR, method = RequestMethod.GET)
     public String showAllByYear(@RequestParam(YEAR) int year, Model model) {
      
         Role role = getLoggedUser().getRole();
@@ -468,18 +488,18 @@ public class ApplicationController {
     @RequestMapping(value = NEW_APP, method = RequestMethod.POST)
     public String newApplication(@ModelAttribute(APPFORM) AppForm appForm, Errors errors, Model model) {
 
-        Person person = getLoggedUser();
+        Person loggedUser = getLoggedUser();
 
         validator.validate(appForm, errors);
 
-        if (person.getRole() == Role.USER || person.getRole() == Role.BOSS) {
+        if (loggedUser.getRole() == Role.USER || loggedUser.getRole() == Role.BOSS) {
             if (!errors.hasErrors()) {
                 validator.validateForUser(appForm, errors);
             }
         }
 
         if (errors.hasErrors()) {
-            prepareForm(person, appForm, model);
+            prepareForm(loggedUser, appForm, model);
 
             if (errors.hasGlobalErrors()) {
                 model.addAttribute("errors", errors);
@@ -487,12 +507,17 @@ public class ApplicationController {
 
             return APP_FORM_JSP;
         } else {
-            if (checkAndSaveApplicationForm(appForm, person, false, errors, model)) {
-                return "redirect:/web" + OVERVIEW;
+            if (checkAndSaveApplicationForm(appForm, loggedUser, false, errors, model)) {
+                int id = applicationService.getIdOfLatestApplication(loggedUser, ApplicationStatus.WAITING);
+                Application application = applicationService.getApplicationById(id);
+                
+                commentService.saveComment(new Comment(), loggedUser, application);
+                
+                return "redirect:/web/application/" + id;
             }
         }
 
-        prepareForm(person, appForm, model);
+        prepareForm(loggedUser, appForm, model);
 
         if (errors.hasGlobalErrors()) {
             model.addAttribute("errors", errors);
@@ -507,7 +532,7 @@ public class ApplicationController {
      * leave.
      *
      * @param  appForm
-     * @param  person
+     * @param  loggedUser
      * @param  isOffice
      * @param  errors
      * @param  model
@@ -569,7 +594,7 @@ public class ApplicationController {
                         + getLoggedUser().getLastName() + " für " + person.getFirstName() + " " + person.getLastName()
                         + " angelegt.");
 
-                    // mail to person of application that office has made an application for him/her
+                    // mail to loggedUser of application that office has made an application for him/her
                     mailService.sendAppliedForLeaveByOfficeNotification(application);
                 } else {
                     // if user himself applies for leave
@@ -622,11 +647,11 @@ public class ApplicationController {
 
         // only office may apply for leave on behalf of other users
         if (getLoggedUser().getRole() == Role.OFFICE) {
-            Person person = personService.getPersonByID(personId); // get person
+            Person person = personService.getPersonByID(personId); // get loggedUser
 
-            // check if the person is active
+            // check if the loggedUser is active
             if (person.getRole() != Role.INACTIVE) {
-                // check if the person has a current/valid holidays account and entitlement
+                // check if the loggedUser has a current/valid holidays account and entitlement
                 if (accountService.getHolidayEntitlement(DateMidnight.now().getYear(), person) == null
                         || accountService.getHolidaysAccount(DateMidnight.now().getYear(), person) == null) {
                     model.addAttribute(NOTPOSSIBLE, true); // not possible to apply for leave
@@ -664,7 +689,9 @@ public class ApplicationController {
     public String newApplicationByOffice(@PathVariable(PERSON_ID) Integer personId,
         @ModelAttribute(APPFORM) AppForm appForm, Errors errors, Model model) {
 
-        if(getLoggedUser().getRole() == Role.OFFICE) {
+        Person loggedUser = getLoggedUser();
+        
+        if(loggedUser.getRole() == Role.OFFICE) {
         
         List<Person> persons = personService.getAllPersons(); // get all active persons
         model.addAttribute(PERSON_LIST, persons);
@@ -685,7 +712,12 @@ public class ApplicationController {
             return APP_FORM_OFFICE_JSP;
         } else {
             if (checkAndSaveApplicationForm(appForm, person, true, errors, model)) {
-                return "redirect:/web/staff/" + personId + "/overview";
+                int id = applicationService.getIdOfLatestApplication(person, ApplicationStatus.WAITING);
+                Application application = applicationService.getApplicationById(id);
+                
+                commentService.saveComment(new Comment(), loggedUser, application);
+                
+                return "redirect:/web/application/" + id;
             }
         }
 
@@ -712,10 +744,10 @@ public class ApplicationController {
 
         List<Person> persons = personService.getAllPersonsExceptOne(person.getId());
 
-        ListIterator itr = persons.listIterator();
+        ListIterator<Person> itr = persons.listIterator();
 
         while (itr.hasNext()) {
-            Person p = (Person) itr.next();
+            Person p = itr.next();
 
             if (StringUtils.isEmpty(p.getFirstName()) && (StringUtils.isEmpty(p.getLastName()))) {
                 itr.remove();
@@ -755,12 +787,6 @@ public class ApplicationController {
         
         Application application = applicationService.getApplicationById(applicationId);
 
-        if(application.getStatus() == ApplicationStatus.WAITING && role == Role.BOSS) {
-            List<Person> vips = personService.getPersonsByRole(role);
-            model.addAttribute("vips", vips);
-            model.addAttribute("modelPerson", new Person());
-        }
-
         if (role == Role.OFFICE || role == Role.BOSS) {
 
             prepareDetailView(application, -1, model);
@@ -785,15 +811,18 @@ public class ApplicationController {
      * @return
      */
     @RequestMapping(value = ALLOW_APP, method = RequestMethod.PUT)
-    public String allowApplication(@PathVariable(APPLICATION_ID) Integer applicationId, Model model) {
+    public String allowApplication(@PathVariable(APPLICATION_ID) Integer applicationId, @ModelAttribute(COMMENT) Comment comment, Errors errors, Model model) {
 
         Person boss = getLoggedUser();
         Application application = applicationService.getApplicationById(applicationId);
+        
         
         // only boss is able to allow an application but only if this application isn't his own one
         if(boss.getRole() == Role.BOSS && !application.getPerson().equals(boss)) {
             
             applicationService.allow(application, boss);
+            
+                commentService.saveComment(comment, boss, application);
 
             LOG.info(application.getApplicationDate() + " ID: " + application.getId() + "Der Antrag von "
                 + application.getPerson().getFirstName() + " " + application.getPerson().getLastName()
@@ -802,7 +831,7 @@ public class ApplicationController {
 
             mailService.sendAllowedNotification(application);
 
-            return "redirect:/web" + WAITING_APPS;
+            return "redirect:/web/application/" + applicationId;
         }
         
         else {
@@ -859,25 +888,21 @@ public class ApplicationController {
 
             return SHOW_APP_DETAIL_JSP;
         } else {
-
-            String nameOfCommentingPerson = boss.getFirstName() + " " + boss.getLastName();
-
-            comment.setNameOfCommentingPerson(nameOfCommentingPerson);
-            comment.setApplication(application);
-            comment.setDateOfComment(DateMidnight.now());
-            commentService.saveComment(comment);
+            commentService.saveComment(comment, boss, application);
 
             applicationService.reject(application, boss);
+            
+             commentService.saveComment(comment, boss, application);
 
             LOG.info(application.getApplicationDate() + " ID: " + application.getId() + "Der Antrag von "
                 + application.getPerson().getFirstName() + " " + application.getPerson().getLastName()
-                + " wurde am " + DateMidnight.now().toString(DATE_FORMAT) + " von " + nameOfCommentingPerson
+                + " wurde am " + DateMidnight.now().toString(DATE_FORMAT) + " von " + comment.getNameOfCommentingPerson()
                 + " abgelehnt.");
 
             // mail to applicant
             mailService.sendRejectedNotification(application);
 
-            return "redirect:/web" + WAITING_APPS;
+            return "redirect:/web/application/" + applicationId;
         }
         } else {
             return ERROR_JSP;
@@ -934,13 +959,15 @@ public class ApplicationController {
      * @return
      */
     @RequestMapping(value = CANCEL_APP, method = RequestMethod.PUT)
-    public String cancelApplication(@PathVariable(APPLICATION_ID) Integer applicationId) {
+    public String cancelApplication(@PathVariable(APPLICATION_ID) Integer applicationId, @ModelAttribute(COMMENT) Comment comment, Errors errors, Model model) {
 
         Application application = applicationService.getApplicationById(applicationId);
         Person loggedUser = getLoggedUser();
         
-        // security check: only user himself or the person that has the role 'office' must be able to cancel an application
+        // security check: only user himself or the loggedUser that has the role 'office' must be able to cancel an application
         if (loggedUser.equals(application.getPerson()) || loggedUser.getRole() == Role.OFFICE) {
+            
+            
         boolean allowed = false;
 
         // if application had status allowed set field formerlyAllowed to true
@@ -951,6 +978,8 @@ public class ApplicationController {
         
         application.setCanceller(loggedUser);
         applicationService.cancel(application);
+        
+        commentService.saveComment(comment, loggedUser, application);
 
         // user has cancelled his own application
         if (loggedUser.equals(application.getPerson())) {
@@ -963,7 +992,6 @@ public class ApplicationController {
                 + loggedUser.getFirstName() + " " + loggedUser.getLastName()
                 + ") storniert.");
 
-            return "redirect:/web" + OVERVIEW;
         } else {
             // application has been cancelled by office
             // applicant gets an mail regardless of which application status
@@ -971,9 +999,9 @@ public class ApplicationController {
             LOG.info("Antrag-ID: " + application.getId() + "Der Antrag wurde vom Office ("
                 + loggedUser.getFirstName() + " " + loggedUser.getLastName()
                 + ") storniert.");
-
-            return "redirect:/web/staff/" + application.getPerson().getId() + OVERVIEW;
         }
+        
+        return "redirect:/web/application/" + applicationId;
     } else {
             return ERROR_JSP;
         }
@@ -999,23 +1027,33 @@ public class ApplicationController {
 
     private void prepareDetailView(Application application, int stateNumber, Model model) {
 
-         Comment comment = commentService.getCommentByApplication(application);
+        Comment comment = commentService.getCommentByApplicationAndStatus(application, application.getStatus());
         
-        if(application.getStatus() == ApplicationStatus.REJECTED && comment != null) {
+        if(comment != null) {
             // use this later maybe
             // Locale locale = RequestContextUtils.getLocale(request);
-            String rejectDate = comment.getDateOfComment().toString(DATE_FORMAT);
-            model.addAttribute("rejectDate", rejectDate);
             model.addAttribute(COMMENT, comment);
             } else {
                  model.addAttribute(COMMENT, new Comment());
             }
         
+        List<Comment> comments = commentService.getCommentsByApplication(application);
+        
+       model.addAttribute("comments", comments);
+        
+        Role role = getLoggedUser().getRole();
+        
+        if(application.getStatus() == ApplicationStatus.WAITING && role == Role.BOSS) {
+            List<Person> vips = personService.getPersonsByRole(role);
+            model.addAttribute("vips", vips);
+            model.addAttribute("modelPerson", new Person());
+        }
+        
         setLoggedUser(model);
         model.addAttribute(APPLICATION, application);
         model.addAttribute(STATE_NUMBER, stateNumber);
 
-        // get the number of vacation days that person has used in the given year
+        // get the number of vacation days that loggedUser has used in the given year
         BigDecimal numberOfUsedDays = applicationService.getUsedVacationDaysOfPersonForYear(application.getPerson(),
                 application.getStartDate().getYear());
         model.addAttribute(USED_DAYS, numberOfUsedDays);
@@ -1035,7 +1073,7 @@ public class ApplicationController {
         model.addAttribute(YEAR, year);
         model.addAttribute(APRIL, april);
 
-        // get url of person's gravatar image
+        // get url of loggedUser's gravatar image
         String url = gravatarUtil.createImgURL(application.getPerson().getEmail());
         model.addAttribute(GRAVATAR, url);
     }

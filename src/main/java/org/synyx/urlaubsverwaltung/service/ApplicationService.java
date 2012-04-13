@@ -18,6 +18,16 @@ import java.util.List;
  * @author  Aljona Murygina
  */
 public interface ApplicationService {
+    
+    
+    /**
+     * get Id of latest Application with given Person and ApplicationStatus
+     * 
+     * @param person
+     * @param status
+     * @return int id (primary key of Application)
+     */
+    int getIdOfLatestApplication(Person person, ApplicationStatus status);
 
     /**
      * use this to get an application by its id
@@ -102,7 +112,18 @@ public interface ApplicationService {
      *
      * @return  return a list of applications of the given person and year
      */
-    List<Application> getApplicationsByPersonAndYear(Person person, int year);
+    List<Application> getNotCancelledApplicationsByPersonAndYear(Person person, int year);
+    
+    
+    /**
+     * use this to get all applications by person and year (all applications no matter which status they have)
+     *
+     * @param  person
+     * @param  year
+     *
+     * @return  return a list of applications of the given person and year
+     */
+    List<Application> getAllApplicationsByPersonAndYear(Person person, int year);
 
 
     /**

@@ -65,7 +65,7 @@
                 <div class="grid_12">
                     <table id="person-tbl" cellspacing="0">
                         <tr>
-                            <td rowspan="3" style="background-color: #EAF2D3; width: 13%;"><img class="user-pic" src="<c:out value='${gravatar}?d=mm'/>" /></td>
+                            <td rowspan="3" style="background-color: #EAF2D3; width: 9.7%;"><img class="user-pic" src="<c:out value='${gravatar}?d=mm'/>" /></td>
                         <%@include file="../application/include/account_days.jsp" %>
                     </table>
                 </div>

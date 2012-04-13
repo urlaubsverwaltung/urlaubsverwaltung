@@ -17,6 +17,13 @@
     <head>
         <%@include file="../include/header.jsp" %>
         <title><spring:message code="title" /></title>
+        <script type="text/javascript">
+            function maxChars(elem, max) {
+                if (elem.value.length > max) {
+                    elem.value = elem.value.substring(0, max);
+                }
+            }
+        </script>
     </head>
 
     <body>
@@ -31,24 +38,17 @@
                 <div class="grid_12">&nbsp;</div>
 
 
-                <div class="grid_6">
-                    
+                <div class="grid_12">
+
                     <table class="overview-header">
                         <tr>
                             <td><spring:message code="app.title" /></td>
                         </tr>
                     </table>
+                </div>
 
+                <div class="grid_6">
                     <table class="app-detail" cellspacing="0">
-                        <tr class="odd">
-<!--                            <td rowspan="2"><img style="margin-left: 1.5em;"class="user-pic" src="<c:out value='${gravatar}?s=60&d=mm'/>" /></td>-->
-                            <th><c:out value="${application.person.firstName} ${application.person.lastName}" /></th>
-                            <td><c:out value="${application.person.email}" /></td>
-                        </tr>
-                        </tr>
-                        <%@include file="./include/account_days_for_app_view.jsp" %>
-                    </table>
-                    <table class="app-detail" cellspacing="0" style="margin-top: 2em;">
                         <tr class="odd">
                             <th colspan="2">
                                 <spring:message code="app.apply" /> <spring:message code="${application.vacationType.vacationTypeName}" />
@@ -69,7 +69,7 @@
                                 = <fmt:formatNumber maxFractionDigits="1" value="${application.days}"/> 
                                 <c:choose>
                                     <c:when test="${application.days > 0.50 && application.days <= 1.00}">
-                                        Urlaubstag
+                                        <spring:message code="day.vac" />
                                     </c:when>
                                     <c:otherwise>
                                         <spring:message code="days.vac" />
@@ -131,7 +131,7 @@
                             </td>
                         </tr>
                     </table>
-                    <table class="app-detail" cellspacing="0" style="margin-top: 2em;">
+                    <table class="app-detail tbl-margin-top" cellspacing="0">
                         <tr class="odd">
                             <th colspan="2"><spring:message code="state" /></th>
                         </tr>
@@ -161,9 +161,70 @@
                         </tr>
                     </table>
 
+                    <!-- there are four possible status, so there are max. four lines -->
+                    <table class="app-detail tbl-margin-top" cellspacing="0">
+                        <tr class="odd">
+                            <th colspan="2">Verlauf</th>
+                        </tr>
+                        <c:forEach items="${comments}" var="c" varStatus="loopStatus">
+                            <tr class="${loopStatus.index % 2 == 0 ? 'even' : 'odd'}">
+
+                                <!-- application is waiting -->
+                                <c:if test="${c.status.number == 0}">
+                                    <td>
+                                        <spring:message code="${c.progress}" /> <joda:format style="M-" value="${application.applicationDate}"/>  
+                                    </td>
+                                    <td>
+                                        <spring:message code="by" /> <c:out value="${c.nameOfCommentingPerson}" />
+                                    </td>
+                                </c:if>
+
+                                <!-- application is allowed or rejected -->
+                                <c:if test="${c.status.number == 1 || c.status.number == 2}">
+                                    <td>
+                                        <spring:message code="${c.progress}" /> <joda:format style="M-" value="${application.editedDate}"/>  
+                                    </td>
+                                    <td>
+                                        <spring:message code="by" /> <c:out value="${c.nameOfCommentingPerson}" />
+                                        <c:if test="${c.reason != null}">
+                                            <spring:message code="app.comment" />
+                                            <br />
+                                            <i><c:out value="${c.reason}" /></i>
+                                        </c:if>
+                                    </td>
+                                </c:if>
+
+                                <!-- application is cancelled -->
+                                <c:if test="${c.status.number == 3}">
+                                    <td>
+                                        <spring:message code="${c.progress}" /> <joda:format style="M-" value="${application.cancelDate}"/>
+                                    </td>
+                                    <td>
+                                        <spring:message code="by" /> <c:out value="${c.nameOfCommentingPerson}" />
+                                        <c:if test="${c.reason != null}">
+                                            <spring:message code="app.comment" />
+                                            <br />
+                                            <i><c:out value="${c.reason}" /></i>
+                                        </c:if>
+                                    </td>
+                                </c:if>
+
+                            </tr>
+                        </c:forEach>
+                    </table>
+
                 </div>
 
-                <div class="grid_6" style="margin-top:0.5em;">
+                <div class="grid_6">
+                    <table class="app-detail" cellspacing="0" style="margin-bottom:2em;">
+                        <tr class="odd">
+    <!--                            <td rowspan="2"><img style="margin-left: 1.5em;"class="user-pic" src="<c:out value='${gravatar}?s=60&d=mm'/>" /></td>-->
+                            <th><c:out value="${application.person.firstName} ${application.person.lastName}" /></th>
+                            <td><c:out value="${application.person.email}" /></td>
+                        </tr>
+                        </tr>
+                        <%@include file="./include/account_days_for_app_view.jsp" %>
+                    </table>
                     <%@include file="./include/actions.jsp" %>
                 </div>
 

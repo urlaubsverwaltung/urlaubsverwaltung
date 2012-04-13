@@ -45,7 +45,7 @@ public class ApplicationValidator implements Validator {
     private static final String REASON = "reason";
     private static final String ADDRESS = "address";
     private static final String PHONE = "phone";
-    private static final String TEXT = "text";
+    private static final String TEXT = "reason";
 
     private static final String CUSTOM_PROPERTIES_FILE = "custom.properties";
     private Properties customProperties;

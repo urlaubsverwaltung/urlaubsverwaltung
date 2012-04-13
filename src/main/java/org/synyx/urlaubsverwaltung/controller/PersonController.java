@@ -391,7 +391,7 @@ public class PersonController {
     private void prepareOverview(Person person, int year, Model model) {
 
         // get the person's applications for the given year
-        List<Application> applications = applicationService.getApplicationsByPersonAndYear(person, year);
+        List<Application> applications = applicationService.getAllApplicationsByPersonAndYear(person, year);
 
         if (applications.isEmpty()) {
             model.addAttribute(NO_APPS, true);

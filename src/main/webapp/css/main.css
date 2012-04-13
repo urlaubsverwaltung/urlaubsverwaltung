@@ -260,14 +260,12 @@ tr.even {
 
 #reject-error {
     margin-top: 1em;
-    float: right;
+    margin-bottom: 1em;
+    width:75%;
     border: 1px solid #E76757;
     background: url("../images/alarm_16.png") no-repeat 1% 40%;
     background-color: #FFE3E3;
     padding: 0.5em 0.5em 0.5em 2.25em;
-/*    position: relative;*/
-/*    top: 3em;*/
-/*    left: 25em;*/
 }
 
 #reject-reason {
@@ -318,6 +316,10 @@ float:left;
 border: 1px solid #EAF2D3;
 font-size: 1.05em;
 margin-right:1em;
+}
+
+.tbl-margin-top {
+    margin-top:2em;
 }
 
 .user-pic {
@@ -406,7 +408,10 @@ input[type=submit].confirm, input[type=button].confirm, a.button.confirm {
     background-repeat: no-repeat;
     background-position: 5% 50%;
     padding-left: 2em;
-    margin-right: 1em;
+}
+
+#confirm {
+    margin-top: 2em;
 }
 
 #reject {
@@ -414,7 +419,7 @@ input[type=submit].confirm, input[type=button].confirm, a.button.confirm {
     text-align:left;
 }
 
-.reject-text {
+.text {
     width: 80%;
     min-height: 5em;
 }
@@ -451,12 +456,20 @@ input[type=submit].staff, input[type=button].staff, a.button.staff {
 
 
 #refer {
-    margin-top: 2em;
+    margin-top: 1em;
+}
+
+input[type=button].cancel {
+    background-image: url("../images/cancel.png");
+    background-repeat: no-repeat;
+    background-position: 5% 50%;
+    padding-left: 2em;
 }
 
 #cancel {
-    margin-top:2em;
-    padding: 1em;
+    border: 1px solid #E76757;
+    background-color: #FFE3E3;
+    padding: 1em 1em 1em 2.5em;
 }
 
 #rejected-app {
@@ -469,8 +482,8 @@ input[type=button].refer {
     background-repeat: no-repeat;
     background-position: 5% 50%;
     padding-left: 2em;
-    margin-left: 0.6em;
 }
+
     
 
 input[type=submit].deactivate, input[type=button].deactivate, a.button.deactivate {
