@@ -62,7 +62,6 @@
                         <th><c:out value="${application.person.firstName} ${application.person.lastName}" /></th>
                         <td><c:out value="${application.person.email}" /></td>
                     </tr>
-                    </tr>
                     <%@include file="./include/account_days_for_app_view.jsp" %>
                 </table>
 
@@ -76,10 +75,10 @@
                         <td>
                             <c:choose>
                                 <c:when test="${application.startDate == application.endDate}">
-                                    <spring:message code="at" /> <joda:format style="M-" value="${application.startDate}"/>
+                                    <spring:message code="at" /> <b><joda:format style="M-" value="${application.startDate}"/></b>
                                 </c:when>
                                 <c:otherwise>
-                                    <spring:message code="from" /> <joda:format style="M-" value="${application.startDate}"/> <spring:message code="to" /> <joda:format style="M-" value="${application.endDate}"/>
+                                    <spring:message code="from" /> <b><joda:format style="M-" value="${application.startDate}"/></b> <spring:message code="to" /> <b><joda:format style="M-" value="${application.endDate}"/></b>
                                 </c:otherwise>    
                             </c:choose>
                         </td>

@@ -502,55 +502,91 @@ public class ApplicationController {
         }
     }
 
-
-    /**
-     * use this to save an application (will be in "waiting" state)
-     *
-     * @param  personId  the id of the employee who made this application
-     * @param  application  the application-object created by the form-entries
-     * @param  model
-     *
-     * @return  returns the path to a success-site ("your application is being processed") or the main-page
-     */
-    @RequestMapping(value = NEW_APP, method = RequestMethod.POST)
-    public String newApplication(@ModelAttribute(APPFORM) AppForm appForm, Errors errors, Model model) {
+    
+    public String newApplication(Person person, int force, AppForm appForm, boolean isOffice, Errors errors, Model model) {
 
         Person loggedUser = getLoggedUser();
-
-        validator.validate(appForm, errors);
-
-        if (loggedUser.getRole() == Role.USER || loggedUser.getRole() == Role.BOSS) {
-            if (!errors.hasErrors()) {
-                validator.validateForUser(appForm, errors);
-            }
+        
+        Person personForForm;
+        
+        if(isOffice) {
+            personForForm = person;
+        } else {
+            personForForm = loggedUser;
         }
 
-        if (errors.hasErrors()) {
-            prepareForm(loggedUser, appForm, model);
+        validator.validate(appForm, errors);
+        
+        if(errors.hasErrors()) {
+            prepareForm(personForForm, appForm, model);
 
             if (errors.hasGlobalErrors()) {
                 model.addAttribute("errors", errors);
             }
 
-            return APP_FORM_JSP;
-        } else {
-            if (checkAndSaveApplicationForm(appForm, loggedUser, false, errors, model)) {
-                int id = applicationService.getIdOfLatestApplication(loggedUser, ApplicationStatus.WAITING);
+            if(isOffice) {
+                return APP_FORM_OFFICE_JSP;
+            } else {
+                return APP_FORM_JSP;
+            }
+        }
+
+        validator.validatePast(appForm, errors, model);
+
+        if (force != 1 ) {
+            prepareForm(personForForm, appForm, model);
+
+            if (errors.hasGlobalErrors()) {
+                model.addAttribute("errors", errors);
+            }
+
+            if(isOffice) {
+                return APP_FORM_OFFICE_JSP;
+            } else {
+                return APP_FORM_JSP;
+            }
+        } 
+        
+            if (checkAndSaveApplicationForm(appForm, personForForm, isOffice, errors, model)) {
+                int id = applicationService.getIdOfLatestApplication(personForForm, ApplicationStatus.WAITING);
                 Application application = applicationService.getApplicationById(id);
                 
                 commentService.saveComment(new Comment(), loggedUser, application);
                 
                 return "redirect:/web/application/" + id;
+            } else {
+                model.addAttribute("setForce", 0);
             }
-        }
+        
 
-        prepareForm(loggedUser, appForm, model);
+            prepareForm(personForForm, appForm, model);
 
         if (errors.hasGlobalErrors()) {
             model.addAttribute("errors", errors);
         }
 
-        return APP_FORM_JSP;
+        if(isOffice) {
+                return APP_FORM_OFFICE_JSP;
+            } else {
+                return APP_FORM_JSP;
+            }
+    }
+    
+     /**
+     * 
+     * use this to save an application (will be in "waiting" state)
+     * 
+     * @param force is 0 to check if application's period is in the past, after reconfirming is application saved
+     * @param appForm {@link AppForm}
+     * @param isOffice false: user applies for leave for oneself
+     * @param errors
+     * @param model
+     * @return if success returns the detail view of the new applied application
+     */
+    @RequestMapping(value = NEW_APP, params = "force", method = RequestMethod.POST)
+    public String newApplicationByUser(@RequestParam("force") int force, @ModelAttribute(APPFORM) AppForm appForm, Errors errors, Model model) {
+        
+        return newApplication(getLoggedUser(), force, appForm, false, errors, model);
     }
 
 
@@ -684,16 +720,14 @@ public class ApplicationController {
                     model.addAttribute(NOTPOSSIBLE, true); // not possible to apply for leave
                 } else {
                     prepareForm(person, new AppForm(), model);
-                    model.addAttribute(PERSON_LIST, personService.getAllPersons()); // get all active persons
+                    List<Person> persons = personService.getAllPersons(); // get all active persons
+                    model.addAttribute(PERSON_LIST, persons);
+
+                    prepareAccountsMap(persons, model);
                 }
             } else {
-                // not possible to apply for leave
+                model.addAttribute("notpossible", true);
             }
-
-            List<Person> persons = personService.getAllPersons(); // get all active persons
-            model.addAttribute(PERSON_LIST, persons);
-
-            prepareAccountsMap(persons, model);
 
             return APP_FORM_OFFICE_JSP;
         } else {
@@ -703,63 +737,29 @@ public class ApplicationController {
 
 
     /**
+     * 
      * This method saves an application that is applied by the office on behalf of an user.
-     *
-     * @param  personId
-     * @param  appForm
-     * @param  errors
-     * @param  model
-     *
-     * @return
+     * 
+     * @param force is 0 to check if application's period is in the past, after reconfirming is application saved
+     * @param personId person on behalf application is applied
+     * @param appForm {@link AppForm}
+     * @param errors
+     * @param model
+     * @return if success returns the detail view of the new applied application
      */
-    @RequestMapping(value = NEW_APP_OFFICE, method = RequestMethod.POST)
-    public String newApplicationByOffice(@PathVariable(PERSON_ID) Integer personId,
+    @RequestMapping(value = NEW_APP_OFFICE, params = "force", method = RequestMethod.POST)
+    public String newApplicationByOffice(@RequestParam("force") int force, @PathVariable(PERSON_ID) Integer personId,
         @ModelAttribute(APPFORM) AppForm appForm, Errors errors, Model model) {
 
-        Person loggedUser = getLoggedUser();
-        
-        if(loggedUser.getRole() == Role.OFFICE) {
-        
         List<Person> persons = personService.getAllPersons(); // get all active persons
         model.addAttribute(PERSON_LIST, persons);
 
         prepareAccountsMap(persons, model);
 
         Person person = personService.getPersonByID(personId);
-
-        validator.validate(appForm, errors);
-
-        if (errors.hasErrors()) {
-            prepareForm(person, appForm, model);
-
-            if (errors.hasGlobalErrors()) {
-                model.addAttribute("errors", errors);
-            }
-
-            return APP_FORM_OFFICE_JSP;
-        } else {
-            if (checkAndSaveApplicationForm(appForm, person, true, errors, model)) {
-                int id = applicationService.getIdOfLatestApplication(person, ApplicationStatus.WAITING);
-                Application application = applicationService.getApplicationById(id);
-                
-                commentService.saveComment(new Comment(), loggedUser, application);
-                
-                return "redirect:/web/application/" + id;
-            }
-        }
-
-        prepareForm(person, appForm, model);
-
-        if (errors.hasGlobalErrors()) {
-            model.addAttribute("errors", errors);
-        }
-
-        return APP_FORM_OFFICE_JSP;
-        } else {
-            return ERROR_JSP;
-        }
+        
+        return newApplication(person, force, appForm, true, errors, model);
     }
-
 
     public void prepareForm(Person person, AppForm appForm, Model model) {
 

@@ -135,6 +135,7 @@ body {
 
 #content {
     margin-top: 30px;
+    margin-left:10px;
 }
 
 #staff-list td {
@@ -246,15 +247,13 @@ tr.even {
 }
 
 #error-div {
-    width: 48.4em;
+    width: 43.5em;
+    margin-top:7em;
     background: url("../images/alarm_16.png") no-repeat 1% 40%;
-/*    position: absolute;
-    top: 34.25em;
-    left: 55em;*/
     border: 1px solid #E76757;
     background-color: #FFE3E3;
     padding: 0.5em 0.5em 0.5em 2.5em;
-    margin-left: 0;
+    color: red;
 }
 
 

@@ -1,6 +1,6 @@
 Hallo Chefs,
 
-es liegt ein neuer zu genehmigender Antrag vor: Link zum Antrag: ${link}
+es liegt ein neuer zu genehmigender Antrag vor: ${link}
 
 Mitarbeiter: ${application.person.firstName} ${application.person.lastName}
 Datum der Antragsstellung: ${application.applicationDate.toString("dd.MM.yyyy")}

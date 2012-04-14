@@ -18,6 +18,8 @@ import org.synyx.urlaubsverwaltung.util.PropertiesUtil;
 import org.synyx.urlaubsverwaltung.view.AppForm;
 
 import java.util.Properties;
+import org.joda.time.DateMidnight;
+import org.springframework.ui.Model;
 
 
 /**
@@ -119,30 +121,36 @@ public class ApplicationValidator implements Validator {
 
 
     /**
-     * If a user (or a boss) applies for leave, startDate has to be equal or greater than now(). The office is able to
-     * apply for leave for someone else and may apply for past too.
+     * Check if application's period is in the past; to be able to display a warning message. ("Period is in the past. Are you sure?")
      *
      * @param  target
      * @param  errors
      */
-    public void validateForUser(Object target, Errors errors) {
+    public void validatePast(Object target, Errors errors, Model model) {
 
         AppForm app = (AppForm) target;
-
-        // check if given dates are valid
+        
+        DateMidnight startDate;
+        
         if (app.getHowLong() == DayLength.FULL) {
-            if (app.getStartDate() != null) {
-                if (app.getStartDate().isBeforeNow()) {
-                    errors.reject(ERROR_PAST);
-                }
-            }
+            startDate = app.getStartDate();
         } else {
-            if (app.getStartDateHalf() != null) {
-                if (app.getStartDateHalf().isBeforeNow()) {
-                    errors.reject(ERROR_PAST);
+            startDate = app.getStartDateHalf();
+        }
+
+            if (startDate != null) {
+                if (startDate.isBeforeNow()) {
+                    if(startDate.isBefore(DateMidnight.now().minusYears(1))) {
+//                        errors.reject("error.period.past.wide");
+                        model.addAttribute("setForce", 0);
+                        model.addAttribute("timeError", "error.period.past.wide");
+                    } else {
+//                        errors.reject(ERROR_PAST);
+                        model.addAttribute("timeError", ERROR_PAST);
+                        model.addAttribute("setForce", 1);
+                    }
                 }
             }
-        }
     }
 
 

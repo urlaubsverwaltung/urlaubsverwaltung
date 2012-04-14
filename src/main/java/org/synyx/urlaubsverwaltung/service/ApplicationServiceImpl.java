@@ -599,7 +599,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         } else {
             // check if there are existent ANY applications (full day and half day)
             List<Application> apps = applicationDAO.getApplicationsByPeriodForEveryDayLength(application.getStartDate()
-                    .toDate(), application.getEndDate().toDate(), application.getPerson());
+                    .toDate(), application.getEndDate().toDate(), application.getPerson(), ApplicationStatus.CANCELLED);
 
             return getCaseOfOverlap(application, apps);
         }

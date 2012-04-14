@@ -28,9 +28,9 @@
                                     <th>
                                         <spring:message code="time" />
                                     </th>
-                                    <th>
+<!--                                    <th>
                                         <spring:message code="reason" />
-                                    </th>
+                                    </th>-->
                                     <th>
                                         <spring:message code="days.vac" />
                                     </th>
@@ -60,9 +60,9 @@
                                                 </c:otherwise>    
                                             </c:choose>
                                         </td>
-                                        <td>
+<!--                                        <td>
                                             <c:out value="${app.reason}"/>
-                                        </td>
+                                        </td>-->
                                         <td>
                                             <fmt:formatNumber maxFractionDigits="1" value="${app.days}" />
                                         </td>
