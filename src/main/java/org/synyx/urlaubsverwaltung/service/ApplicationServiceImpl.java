@@ -8,6 +8,7 @@ import org.joda.time.Interval;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.jmx.export.notification.NotificationPublisher;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
@@ -32,6 +33,8 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.management.Notification;
+import org.springframework.jmx.export.notification.NotificationPublisherAware;
 
 
 /**
@@ -49,6 +52,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     // sign logger: logs possible occurent errors relating to private and public keys of users
     private static final Logger LOG_SIGN = Logger.getLogger("sign");
+    
+    // jmx demo logger
+    private static final Logger LOG_JMX = Logger.getLogger("jmx");
 
     private static final String DATE_FORMAT = "dd.MM.yyyy";
 
@@ -855,4 +861,41 @@ public class ApplicationServiceImpl implements ApplicationService {
         DateMidnight lastDayOfYear = new DateMidnight(year, DateTimeConstants.DECEMBER, 31);
         return applicationDAO.getCancelledApplicationsByYear(ApplicationStatus.CANCELLED, firstDayOfYear.toDate(), lastDayOfYear.toDate());
     }
+
+    @Override
+    public List<Application> getWaitingApplications() {
+        
+        int year = DateMidnight.now().getYear();
+        
+        DateMidnight firstDayOfYear = new DateMidnight(year, DateTimeConstants.JANUARY, 1);
+        DateMidnight lastDayOfYear = new DateMidnight(year, DateTimeConstants.DECEMBER, 31);
+        
+        return applicationDAO.getApplicationsByStateAndYear(ApplicationStatus.WAITING, firstDayOfYear.toDate(), lastDayOfYear.toDate());
+    }
+
+    @Override
+    public long countWaitingApplications() {
+        int year = DateMidnight.now().getYear();
+        
+        DateMidnight firstDayOfYear = new DateMidnight(year, DateTimeConstants.JANUARY, 1);
+        DateMidnight lastDayOfYear = new DateMidnight(year, DateTimeConstants.DECEMBER, 31);
+        
+        return applicationDAO.countApplicationsInStateAndYear(ApplicationStatus.WAITING, firstDayOfYear.toDate(), lastDayOfYear.toDate());
+    }
+
+    @Override
+    public long countApplicationsInStatus(ApplicationStatus status) {
+        int year = DateMidnight.now().getYear();
+        
+        DateMidnight firstDayOfYear = new DateMidnight(year, DateTimeConstants.JANUARY, 1);
+        DateMidnight lastDayOfYear = new DateMidnight(year, DateTimeConstants.DECEMBER, 31);
+        
+        return applicationDAO.countApplicationsInStateAndYear(status, firstDayOfYear.toDate(), lastDayOfYear.toDate());
+    }
+
+    @Override
+    public void demonstrateSigningError() {
+//        LOG_JMX.error("An error occured during signing application with ID 23 of Marlene Muster.");
+    }
+    
 }

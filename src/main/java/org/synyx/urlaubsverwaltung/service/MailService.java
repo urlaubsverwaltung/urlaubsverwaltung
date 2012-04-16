@@ -85,6 +85,14 @@ public interface MailService {
      * @param a 
      */
     void sendRemindBossNotification(Application a);
+    
+    
+    /**
+     * Needed for jmx demo: send a notification to remind boss about waiting applications that have to be allowed or rejected.
+     * 
+     * @param apps 
+     */
+    void sendRemindingBossAboutWaitingApplicationsNotification(List<Application> apps);
 
 
     /**

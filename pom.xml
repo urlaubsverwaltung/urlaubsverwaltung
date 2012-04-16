@@ -50,6 +50,12 @@
     <dependencies>
 
         <dependency>
+            <groupId>org.jminix</groupId>
+            <artifactId>jminix</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.google.gdata</groupId>
             <artifactId>gdata-calendar-2.0</artifactId>
             <version>1.41.5</version>

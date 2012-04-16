@@ -197,7 +197,33 @@ public interface ApplicationService {
      * @param  boss
      */
     void signApplicationByBoss(Application application, Person boss);
-
+    
+    /**
+     * Needed for jmx demo: get all applications for leave in status waiting.
+     * 
+     * @return 
+     */
+    List<Application> getWaitingApplications();
+    
+    /**
+     * Needed for jmx demo: get number of waiting applications.
+     * 
+     * @return 
+     */
+    long countWaitingApplications();
+    
+    /**
+     * Needed for jmx demo: get number of applications with the given status.
+     * 
+     * @return
+     */
+    long countApplicationsInStatus(ApplicationStatus status);
+    
+    /**
+     * needed for jmx to demonstrate how notifications work
+     */
+    void demonstrateSigningError();
+    
 
     /**
      * check if application is valid and may be send to boss to be allowed or rejected or if person's leave account has

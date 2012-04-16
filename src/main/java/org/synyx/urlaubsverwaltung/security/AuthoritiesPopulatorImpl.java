@@ -25,6 +25,7 @@ import java.security.NoSuchAlgorithmException;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import org.synyx.urlaubsverwaltung.jmx.JmxDemo;
 
 
 /**
@@ -36,6 +37,9 @@ public class AuthoritiesPopulatorImpl implements LdapAuthoritiesPopulator {
     // sign logger: logs possible occurent errors relating to private and public keys of users
     private static final Logger LOG_SIGN = Logger.getLogger("sign");
 
+    @Autowired
+    private JmxDemo jmxDemo;
+    
     private PersonService personService;
     private CryptoService cryptoService;
     private MailService mailService;
@@ -70,12 +74,25 @@ public class AuthoritiesPopulatorImpl implements LdapAuthoritiesPopulator {
                     + " ist ein Fehler aufgetreten.", ex);
                 mailService.sendKeyGeneratingErrorNotification(string);
             }
-
             personService.save(person);
         }
 
+        // for jmx demo
+        handleCreatingKeysException(string);
+        
         output.add(new GrantedAuthorityImpl(person.getRole().getRoleName()));
 
         return output;
+    }
+    
+    /**
+     * Needed for jmx demo: if an exception occurs while public and private key for new user are created, send jmx notifications
+     * @param login 
+     */
+    private void handleCreatingKeysException(String login) {
+
+        
+        String msg = "Error while creating keys for new user with login " + login; 
+        jmxDemo.notifyAboutFailedKeyGeneration(msg);
     }
 }

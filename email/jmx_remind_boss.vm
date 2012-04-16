@@ -1,0 +1,7 @@
+Hallo liebe Chefs,
+
+folgende Anträge haben immer noch den Status wartend und brennen darauf von euch hoffentlich bewilligt und nicht abgelehnt zu werden:
+
+#foreach( $app in $applications )
+${app.person.firstName} ${app.person.lastName} hat am ${app.applicationDate.toString("dd.MM.yyyy")} Urlaub beantragt für den Zeitraum von ${app.startDate.toString("dd.MM.yyyy")} bis ${app.endDate.toString("dd.MM.yyyy")}
+#end

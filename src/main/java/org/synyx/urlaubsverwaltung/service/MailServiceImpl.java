@@ -385,6 +385,20 @@ public class MailServiceImpl implements MailService {
             sendEmail(mailProperties.getProperty("email.manager"), "subject.prop.error", text);
         }
 
+    @Override
+    public void sendRemindingBossAboutWaitingApplicationsNotification(List<Application> apps) {
+        
+        Map<String, Object> model = new HashMap();
+        model.put("applications", apps);
+        
+        String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, PATH + "jmx_remind_boss.vm", model);
+
+        sendEmail(mailProperties.getProperty("email.manager"), "subject.remind.boss", text);
+        
+    }
+    
+     
+
         /**
          * NOT YET IMPLEMENTED
          * Commented out on Tu, 2011/11/29 - Aljona Murygina
