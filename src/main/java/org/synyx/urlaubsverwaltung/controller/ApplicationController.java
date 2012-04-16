@@ -533,7 +533,7 @@ public class ApplicationController {
 
         validator.validatePast(appForm, errors, model);
 
-        if (force != 1 ) {
+        if (force != 1 && model.containsAttribute("timeError")) {
             prepareForm(personForForm, appForm, model);
 
             if (errors.hasGlobalErrors()) {
