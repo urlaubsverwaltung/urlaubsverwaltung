@@ -17,7 +17,7 @@ import java.util.Locale;
 
 
 /**
- * @author  aljona
+ * @author  Aljona Murygina
  */
 public class DateMidnightPropertyEditor extends PropertyEditorSupport {
 
@@ -25,6 +25,7 @@ public class DateMidnightPropertyEditor extends PropertyEditorSupport {
 
     public DateMidnightPropertyEditor(Locale locale) {
 
+        // TODO: don't do this shit with pattern!!!
         this.formatter = DateTimeFormat.forPattern("dd.MM.yyyy");
     }
 

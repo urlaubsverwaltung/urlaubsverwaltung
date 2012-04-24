@@ -56,7 +56,9 @@ import java.util.Locale;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import org.joda.time.DateTimeConstants;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.support.RequestContextUtils;
+import org.synyx.urlaubsverwaltung.jmx.JmxDemo;
 import org.synyx.urlaubsverwaltung.util.NumberUtil;
 
 
@@ -169,6 +171,9 @@ public class ApplicationController {
     // holidays account y'
     private static final Logger LOG = Logger.getLogger("audit");
 
+    @Autowired
+    private JmxDemo jmxDemo;
+    
     private PersonService personService;
     private ApplicationService applicationService;
     private HolidaysAccountService accountService;
@@ -851,12 +856,15 @@ public class ApplicationController {
             
             commentService.saveComment(comment, boss, application);
 
+            String bossName = boss.getFirstName() + " " + boss.getLastName();
+            
             LOG.info(application.getApplicationDate() + " ID: " + application.getId() + "Der Antrag von "
                 + application.getPerson().getFirstName() + " " + application.getPerson().getLastName()
-                + " wurde am " + DateMidnight.now().toString(DATE_FORMAT) + " von " + boss.getFirstName() + " "
-                + boss.getLastName() + " genehmigt.");
+                + " wurde am " + DateMidnight.now().toString(DATE_FORMAT) + " von " + bossName + " genehmigt.");
 
             mailService.sendAllowedNotification(application, comment);
+            
+            jmxDemo.notifyAboutBossAction(bossName + " allowed application with id " + application.getId());
 
             return "redirect:/web/application/" + applicationId;
         }
@@ -918,14 +926,18 @@ public class ApplicationController {
             applicationService.reject(application, boss);
             
              commentService.saveComment(comment, boss, application);
+             
+             String bossName = comment.getNameOfCommentingPerson();
 
             LOG.info(application.getApplicationDate() + " ID: " + application.getId() + "Der Antrag von "
                 + application.getPerson().getFirstName() + " " + application.getPerson().getLastName()
-                + " wurde am " + DateMidnight.now().toString(DATE_FORMAT) + " von " + comment.getNameOfCommentingPerson()
+                + " wurde am " + DateMidnight.now().toString(DATE_FORMAT) + " von " + bossName
                 + " abgelehnt.");
 
             // mail to applicant
             mailService.sendRejectedNotification(application, comment);
+            
+            jmxDemo.notifyAboutBossAction(bossName + " rejected application with id " + application.getId());
 
             return "redirect:/web/application/" + applicationId;
         }

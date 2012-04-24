@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.jmx;
 
-import java.util.ArrayList;
 import java.util.List;
 import javax.management.Notification;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
@@ -12,11 +11,11 @@ import org.springframework.jmx.export.notification.NotificationPublisher;
 import org.springframework.jmx.export.notification.NotificationPublisherAware;
 import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.service.MailService;
 
 /**
+ * Ready jmx bean including annotations and notifying function.
  * Manage waiting applications for leave with this class. Send an email to boss for a certain application or for all waiting applications.
  * 
  * @author Aljona Murygina
@@ -60,7 +59,7 @@ public class JmxDemo implements NotificationPublisherAware {
         
         List<Application> applications = applicationService.getWaitingApplications();
         
-        return generateOutputListByListOfApplications(applications);
+        return JmxViewUtil.generateReturnList(applications);
     }
     
     @ManagedOperation(description = "Reminds the boss via email to decide about the current waiting applications.")
@@ -74,32 +73,12 @@ public class JmxDemo implements NotificationPublisherAware {
     }
     
     /**
-     * is not annotated with managedoperation because you should not see this method, but it is just called if an error occurs
+     * is not annotated with managedoperation because you should not see this method, but it is just called by another class if an error occurs
      */
-    public void notifyAboutFailedKeyGeneration(String msg) {
-        notificationPublisher.sendNotification(new Notification("Sign Error", this, 0, msg));
+    public void notifyAboutBossAction(String msg) {
+        notificationPublisher.sendNotification(new Notification("Boss Action", this, 0, msg));
     }
     
-    private List<String> generateOutputListByListOfApplications(List<Application> applications) {
-        
-        List<String> result = new ArrayList<String>();
-        
-        if (applications.isEmpty()) {
-            result.add("There are no applications with status waiting.");
-        } else {
-            result.add(String.format("%8s", "ID") + String.format("%20s", "Application date")
-                + String.format("%18s", "Person"));
-
-            for (Application app : applications) {
-                Person person = app.getPerson();
-                result.add(String.format("%8d", app.getId()) + String.format("%20s", app.getApplicationDate().toString("dd.MM.yyyy"))
-                    + String.format("%18s", person.getFirstName() + " " + person.getLastName()));
-            }
-        }
-        
-        return result;
-        
-    }
 
     @Override
     public void setNotificationPublisher(NotificationPublisher notificationPublisher) {

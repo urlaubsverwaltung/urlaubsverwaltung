@@ -37,9 +37,6 @@ public class AuthoritiesPopulatorImpl implements LdapAuthoritiesPopulator {
     // sign logger: logs possible occurent errors relating to private and public keys of users
     private static final Logger LOG_SIGN = Logger.getLogger("sign");
 
-    @Autowired
-    private JmxDemo jmxDemo;
-    
     private PersonService personService;
     private CryptoService cryptoService;
     private MailService mailService;
@@ -70,16 +67,11 @@ public class AuthoritiesPopulatorImpl implements LdapAuthoritiesPopulator {
                 person.setPrivateKey(keyPair.getPrivate().getEncoded());
                 person.setPublicKey(keyPair.getPublic().getEncoded());
             } catch (NoSuchAlgorithmException ex) {
-                LOG_SIGN.error("Beim Erstellen der Keys für den neuen Benutzer mit dem Login " + person.getLoginName()
-                    + " ist ein Fehler aufgetreten.", ex);
-                mailService.sendKeyGeneratingErrorNotification(string);
+                handleCreatingKeysException(string, ex);
             }
             personService.save(person);
         }
 
-        // for jmx demo
-        handleCreatingKeysException(string);
-        
         output.add(new GrantedAuthorityImpl(person.getRole().getRoleName()));
 
         return output;
@@ -89,10 +81,14 @@ public class AuthoritiesPopulatorImpl implements LdapAuthoritiesPopulator {
      * Needed for jmx demo: if an exception occurs while public and private key for new user are created, send jmx notifications
      * @param login 
      */
-    private void handleCreatingKeysException(String login) {
+    private void handleCreatingKeysException(String login, Exception ex) {
 
+        LOG_SIGN.error("Beim Erstellen der Keys für den neuen Benutzer mit dem Login " + login
+                    + " ist ein Fehler aufgetreten.", ex);
+                mailService.sendKeyGeneratingErrorNotification(login);
         
-        String msg = "Error while creating keys for new user with login " + login; 
-        jmxDemo.notifyAboutFailedKeyGeneration(msg);
+//        for jmx demo
+//        String msg = "Error while creating keys for new user with login " + login; 
+//        jmxDemo.notifyAboutBossAction(msg);
     }
 }
