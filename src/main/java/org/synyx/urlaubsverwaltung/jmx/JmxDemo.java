@@ -30,6 +30,7 @@ public class JmxDemo implements NotificationPublisherAware {
     private ApplicationService applicationService;
     private MailService mailService;
 
+//    My constructor
     public JmxDemo(ApplicationService applicationService, MailService mailService) {
         this.applicationService = applicationService;
         this.mailService = mailService;
@@ -40,7 +41,7 @@ public class JmxDemo implements NotificationPublisherAware {
         this.numberOfWaitingApplications = applicationService.countWaitingApplications();
         return numberOfWaitingApplications;
     }
-
+    
     @ManagedOperation(description = "Get the number of all applications that have the given status.")
     @ManagedOperationParameters({
         @ManagedOperationParameter(name = "status", description = "The status may be waiting, allowed, rejected or cancelled.")
@@ -84,5 +85,6 @@ public class JmxDemo implements NotificationPublisherAware {
     public void setNotificationPublisher(NotificationPublisher notificationPublisher) {
         this.notificationPublisher = notificationPublisher;
     }
+   
     
 }
