@@ -116,8 +116,8 @@ public class ApplicationServiceImplTest {
     @After
     public void tearDown() {
     }
-
-
+    
+  
     /** Test of getApplicationById method, of class ApplicationServiceImpl. */
     @Test
     public void testGetApplicationById() {
@@ -409,7 +409,7 @@ public class ApplicationServiceImplTest {
 
         instance.getNotCancelledApplicationsByPersonAndYear(person, 2012);
         Mockito.verify(applicationDAO).getNotCancelledApplicationsByPersonAndYear(ApplicationStatus.CANCELLED, person,
-            firstDayOfYear.toDate(), lastDayOfYear.toDate());
+            firstDayOfYear.toDate(), lastDayOfYear.toDate(), VacationType.HOLIDAY);
     }
 
 
@@ -929,13 +929,15 @@ public class ApplicationServiceImplTest {
 
         assertEquals(OverlapCase.NO_OVERLAPPING, returnValue);
     }
-
-
+    
+ 
     /** Test of getUsedVacationDaysOfPersonForYear method, of class ApplicationServiceImpl. */
     @Test
     public void testGetUsedVacationDaysOfPersonForYear() {
-
+        
         int year = 2012;
+        
+        // following testing is only for Applications with VacationType = HOLIDAY
 
         // expected to be used for calculation : 2 days
         Application a1 = new Application();
@@ -977,7 +979,7 @@ public class ApplicationServiceImplTest {
 
         Mockito.when(applicationDAO.getNotCancelledApplicationsByPersonAndYear(ApplicationStatus.CANCELLED, person,
                 new DateMidnight(year, DateTimeConstants.JANUARY, 1).toDate(),
-                new DateMidnight(year, DateTimeConstants.DECEMBER, 31).toDate())).thenReturn(apps);
+                new DateMidnight(year, DateTimeConstants.DECEMBER, 31).toDate(), VacationType.HOLIDAY)).thenReturn(apps);
 
         // expected to be used for calculation : 4 days
         Application sa1 = new Application();
@@ -1021,7 +1023,7 @@ public class ApplicationServiceImplTest {
     /** Test of getUsedVacationDaysBeforeAprilOfPerson method, of class ApplicationServiceImpl. */
     @Test
     public void testGetUsedVacationDaysBeforeAprilOfPerson() {
-
+        
         int year = 2012;
 
         // expected to be used for calculation : 2 days
@@ -1070,7 +1072,7 @@ public class ApplicationServiceImplTest {
 
         Mockito.when(applicationDAO.getApplicationsBeforeAprilByPersonAndYear(person,
                 new DateMidnight(year, DateTimeConstants.JANUARY, 1).toDate(),
-                new DateMidnight(year, DateTimeConstants.MARCH, 31).toDate())).thenReturn(apps);
+                new DateMidnight(year, DateTimeConstants.MARCH, 31).toDate(), VacationType.HOLIDAY)).thenReturn(apps);
 
         // so it's ecpected that the calculation occurs following way:
         // a1 : +2

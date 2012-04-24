@@ -418,15 +418,15 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         HolidaysAccount account = accountService.getAccountOrCreateOne(application.getStartDate().getYear(), person);
 
-        int startMonth = application.getStartDate().getMonthOfYear();
-        int endMonth = application.getEndDate().getMonthOfYear();
+        DateMidnight startDate = application.getStartDate();
+        DateMidnight endDate = application.getEndDate();
 
         // the order of following methods is reallly, reeeeeeally(!) important if you change it, you risk that not the
         // right method is used e.g. an application that spans December and January shall be rollbacked, this means that
         // both of the first following conditions would be true, but only the first contains the right method for such a
         // case
 
-        if (DateUtil.spansDecemberAndJanuary(startMonth, endMonth)) {
+        if (DateUtil.spansDecemberAndJanuary(startDate, endDate)) {
             BigDecimal usedDaysCurrentYear = getUsedVacationDaysOfPersonForYear(person,
                     application.getStartDate().getYear());
             BigDecimal usedDaysNextYear = getUsedVacationDaysOfPersonForYear(person,
@@ -442,22 +442,8 @@ public class ApplicationServiceImpl implements ApplicationService {
                     person);
             accountNextYear.setVacationDays(accountNextYear.getVacationDays().add(days));
             accounts.add(accountNextYear);
-        }
-        // period is before April - is equivalent to - account's remaining vacation days don't expire on 1st April
-        else if (DateUtil.isBeforeApril(startMonth, endMonth) || (account.isRemainingVacationDaysExpire() == false)) {
-            BigDecimal usedDaysBeforeApril = getUsedVacationDaysBeforeAprilOfPerson(person, account.getYear());
-
-            days = application.getDays();
-            account = calculationService.addDaysBeforeApril(account, days, usedDaysBeforeApril);
-            accounts.add(account);
-        } // period is after April
-        else if (DateUtil.isAfterApril(startMonth, endMonth)) {
-            // if the vacation is after April, only vacation days are filled (not the remaining vacation days)
-            days = application.getDays();
-            account = calculationService.addDaysAfterApril(account, days);
-            accounts.add(account);
         } // period spans March and April
-        else if (DateUtil.spansMarchAndApril(startMonth, endMonth)) {
+        else if (DateUtil.spansMarchAndApril(startDate, endDate)) {
             // if the vacations spans March and April, the number of days in March are added to holidays
             // account's remaining vacation days (and if this is not enough: to vacation days too)
             // and the number of days in April are added only to vacation days
@@ -466,6 +452,20 @@ public class ApplicationServiceImpl implements ApplicationService {
                     usedDaysBeforeApril);
             accounts.add(account);
         }
+        // period is before April - is equivalent to - account's remaining vacation days don't expire on 1st April
+        else if (DateUtil.isBeforeApril(endDate) || (account.isRemainingVacationDaysExpire() == false)) {
+            BigDecimal usedDaysBeforeApril = getUsedVacationDaysBeforeAprilOfPerson(person, account.getYear());
+
+            days = application.getDays();
+            account = calculationService.addDaysBeforeApril(account, days, usedDaysBeforeApril);
+            accounts.add(account);
+        } // period is after April
+        else if (DateUtil.isAfterApril(startDate)) {
+            // if the vacation is after April, only vacation days are filled (not the remaining vacation days)
+            days = application.getDays();
+            account = calculationService.addDaysAfterApril(account, days);
+            accounts.add(account);
+        } 
 
         accountService.saveHolidaysAccount(accounts.get(0));
 
@@ -554,7 +554,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         DateMidnight lastDayOfYear = new DateMidnight(year, DateTimeConstants.DECEMBER, 31);
 
         return applicationDAO.getNotCancelledApplicationsByPersonAndYear(ApplicationStatus.CANCELLED, person,
-                firstDayOfYear.toDate(), lastDayOfYear.toDate());
+                firstDayOfYear.toDate(), lastDayOfYear.toDate(), VacationType.HOLIDAY);
     }
 
 
@@ -838,7 +838,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         Date firstJanuary = new DateMidnight(year, DateTimeConstants.JANUARY, 1).toDate();
         Date lastOfMarch = new DateMidnight(year, DateTimeConstants.MARCH, 31).toDate();
 
-        return applicationDAO.getApplicationsBeforeAprilByPersonAndYear(person, firstJanuary, lastOfMarch);
+        return applicationDAO.getApplicationsBeforeAprilByPersonAndYear(person, firstJanuary, lastOfMarch, VacationType.HOLIDAY);
     }
 
     @Override

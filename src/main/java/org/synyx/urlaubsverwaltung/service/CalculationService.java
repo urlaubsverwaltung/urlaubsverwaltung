@@ -129,7 +129,7 @@ public class CalculationService {
                     // remaining vacation days are not used for calculation
                     account = subtractCaseAfterApril(application, account);
                     accounts.add(account);
-                } else if (DateUtil.spansMarchAndApril(startMonth, endMonth)) {
+                } else if (DateUtil.spansMarchAndApril(application.getStartDate(), application.getEndDate())) {
                     // partly remaining vacation days are used for calculation, partly not
                     account = subtractCaseBetweenApril(application, account);
                     accounts.add(account);

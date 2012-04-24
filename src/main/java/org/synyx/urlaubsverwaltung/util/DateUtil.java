@@ -64,9 +64,9 @@ public class DateUtil {
      *
      * @return  true if startMonth is March and endMonth is April, false otherwise
      */
-    public static boolean spansMarchAndApril(int startMonth, int endMonth) {
+    public static boolean spansMarchAndApril(DateMidnight startDate, DateMidnight endDate) {
 
-        return (startMonth == DateTimeConstants.MARCH && endMonth == DateTimeConstants.APRIL);
+        return (isBeforeApril(startDate) && isAfterApril(endDate));
     }
 
 
@@ -78,9 +78,9 @@ public class DateUtil {
      *
      * @return  true if startMonth is December and endMonth is January, false otherwise
      */
-    public static boolean spansDecemberAndJanuary(int startMonth, int endMonth) {
+    public static boolean spansDecemberAndJanuary(DateMidnight startDate, DateMidnight endDate) {
 
-        return (startMonth == DateTimeConstants.DECEMBER && endMonth == DateTimeConstants.JANUARY);
+        return (startDate.getYear() != endDate.getYear());
     }
 
 
