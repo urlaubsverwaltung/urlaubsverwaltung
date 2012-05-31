@@ -517,6 +517,10 @@ input.error {
     left: 35.75em;
 }
 
-
+@media print {
+	.button { display: none; }
+        #header { display: none; }
+        .overview-header td { color: black; font-weight: bold;}
+}
 
 

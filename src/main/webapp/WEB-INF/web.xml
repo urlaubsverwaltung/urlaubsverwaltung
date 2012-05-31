@@ -21,6 +21,11 @@
         <param-name>log4jConfigLocation</param-name>
         <param-value>classpath:log4j.properties</param-value>
     </context-param>
+    
+    <context-param>
+        <param-name>webAppRootKey</param-name>
+        <param-value>178328</param-value>
+    </context-param>
 
     <listener>
         <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
@@ -103,6 +108,18 @@
             <form-error-page>/security/protected/error.jsp</form-error-page>
         </form-login-config>
     </login-config>
+    
+    <!-- JMX -->
+    <servlet>
+        <servlet-name>JmxMiniConsoleServlet</servlet-name>
+        <servlet-class>org.jminix.console.servlet.MiniConsoleServlet</servlet-class>
+    </servlet>
+
+
+    <servlet-mapping>
+        <servlet-name>JmxMiniConsoleServlet</servlet-name>
+        <url-pattern>/jmx/*</url-pattern>
+    </servlet-mapping>
     
         
 </web-app>

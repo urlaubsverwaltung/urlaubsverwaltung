@@ -11,13 +11,13 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 
-<a class="button print" href="${formUrlPrefix}/application/${application.id}/print"><spring:message code='app' />&nbsp;<spring:message code='print' /></a>
+<input type="button" class="button print" media="print" onclick="window.print(); return false;" name="<spring:message code='app' />&nbsp;<spring:message code='print' />" value="<spring:message code='app' />&nbsp;<spring:message code='print' />" />
 <sec:authorize access="hasRole('role.office')">
     <a class="button staff" href="${formUrlPrefix}/staff/${application.person.id}/overview" /><spring:message code="staff.back" /></a>
     <%-- cancel application button for office --%>
     <%-- show only if application is not cancelled yet --%>
     <c:if test="${application.status.number == 0 || application.status.number == 1}">
-    <input type="button" class="cancel" name="<spring:message code='app.state.cancel' />" value="<spring:message code='app.state.cancel' />" onclick="$('#reject').hide(); $('#confirm').hide(); $('#refer').hide(); $('#cancel').show();" />
+    <input type="button" media="print" class="cancel button" name="<spring:message code='app.state.cancel' />" value="<spring:message code='app.state.cancel' />" onclick="$('#reject').hide(); $('#confirm').hide(); $('#refer').hide(); $('#cancel').show();" />
 </c:if>
 </sec:authorize>
 <sec:authorize access="hasRole('role.user')">
@@ -44,7 +44,7 @@
                     });
                 </script>
             </c:if>
-            <input type="button" class="remind" onclick="this.form.submit();" name="<spring:message code='remind.chef' />" value="<spring:message code='remind.chef' />" />
+            <input type="button" media="print" class="remind button" onclick="this.form.submit();" name="<spring:message code='remind.chef' />" value="<spring:message code='remind.chef' />" />
         </form:form>
     </c:if>
 </sec:authorize>
@@ -52,16 +52,16 @@
 <%-- application is waiting --%>            
 <c:if test="${application.status.number == 0}">    
     <sec:authorize access="hasRole('role.boss')">
-        <input class="refer" type="button" name="<spring:message code='app.state.refer' />" value="<spring:message code='app.state.refer' />" onclick="$('#reject').hide(); $('#confirm').hide(); $('#cancel').hide(); $('#refer').show();" /> 
+        <input class="refer button" media="print" type="button" name="<spring:message code='app.state.refer' />" value="<spring:message code='app.state.refer' />" onclick="$('#reject').hide(); $('#confirm').hide(); $('#cancel').hide(); $('#refer').show();" /> 
         <c:if test="${application.person.id != loggedUser.id}">
-            <input class="confirm" type="button" name="<spring:message code='app.state.ok' />" value="<spring:message code='app.state.ok' />" onclick="$('#reject').hide(); $('#refer').hide();  $('#cancel').hide(); $('#confirm').show();" />    
-            <input class="back" type="button" name="<spring:message code='app.state.no' />" value="<spring:message code='app.state.no' />" onclick="$('#refer').hide(); $('#confirm').hide();  $('#cancel').hide(); $('#reject').show();" />
+            <input class="confirm button" media="print" type="button" name="<spring:message code='app.state.ok' />" value="<spring:message code='app.state.ok' />" onclick="$('#reject').hide(); $('#refer').hide();  $('#cancel').hide(); $('#confirm').show();" />    
+            <input class="back button" media="print" type="button" name="<spring:message code='app.state.no' />" value="<spring:message code='app.state.no' />" onclick="$('#refer').hide(); $('#confirm').hide();  $('#cancel').hide(); $('#reject').show();" />
         </c:if>
     </sec:authorize>
 </c:if>  
 
 <c:if test="${(loggedUser.role.number == 0 || loggedUser.role.number == 1) && application.status.number != 3 && application.person.id == loggedUser.id}">
-    <input type="button" class="cancel" name="<spring:message code='app.state.cancel' />" value="<spring:message code='app.state.cancel' />" onclick="$('#reject').hide(); $('#confirm').hide(); $('#refer').hide(); $('#cancel').show();" />
+    <input type="button" media="print" class="cancel button" name="<spring:message code='app.state.cancel' />" value="<spring:message code='app.state.cancel' />" onclick="$('#reject').hide(); $('#confirm').hide(); $('#refer').hide(); $('#cancel').show();" />
 </c:if>
 <br />
 
@@ -78,8 +78,8 @@
                 <br />
                 <form:textarea path="reason" cssClass="text" onkeyup="count(this.value, 'text-confirm');" onkeydown="maxChars(this,200); count(this.value, 'text-confirm');" />
                 <br />
-                <input type="submit" name="<spring:message code='app.state.ok.short' />" value="<spring:message code='app.state.ok.short' />" class="button" />
-                <input type="button" name="<spring:message code='cancel' />" value="<spring:message code='cancel' />" onclick="$('#confirm').hide();" />
+                <input type="submit" media="print" name="<spring:message code='app.state.ok.short' />" value="<spring:message code='app.state.ok.short' />" class="button" />
+                <input type="button" media="print" class="button" name="<spring:message code='cancel' />" value="<spring:message code='cancel' />" onclick="$('#confirm').hide();" />
             </div>
         </form:form>
 
@@ -105,8 +105,8 @@
                 <br />
                 <form:textarea path="reason" cssErrorClass="error" cssClass="text" onkeyup="count(this.value, 'text-reject');" onkeydown="maxChars(this,200); count(this.value, 'text-reject');" />
                 <br />
-                <input type="submit" name="<spring:message code='app.state.no.short' />" value="<spring:message code='app.state.no.short' />" class="button" />
-                <input type="button" name="<spring:message code='cancel' />" value="<spring:message code='cancel' />" onclick="$('#reject').hide();" />
+                <input type="submit" media="print" name="<spring:message code='app.state.no.short' />" value="<spring:message code='app.state.no.short' />" class="button" />
+                <input type="button" class="button" media="print" name="<spring:message code='cancel' />" value="<spring:message code='cancel' />" onclick="$('#reject').hide();" />
             </div>
         </form:form>
 
@@ -119,8 +119,8 @@
                         <option value="${p.loginName}"><c:out value="${p.firstName} ${p.lastName}" /></option>
                     </c:forEach>
                 </form:select>
-                <input type="submit" name="<spring:message code='ok' />" value="<spring:message code='ok' />" class="button" />
-                <input type="button" name="<spring:message code='cancel' />" value="<spring:message code='cancel' />" onclick="$('#refer').hide();" />
+                <input type="submit" media="print" name="<spring:message code='ok' />" value="<spring:message code='ok' />" class="button" />
+                <input type="button" media="print"class="button" name="<spring:message code='cancel' />" value="<spring:message code='cancel' />" onclick="$('#refer').hide();" />
             </div>
         </form:form>           
     </sec:authorize>
@@ -166,8 +166,8 @@
             <br />
             <form:textarea path="reason" cssClass="text" onkeyup="count(this.value, 'text-cancel');" onkeydown="maxChars(this,200); count(this.value, 'text-cancel');" />
             <br /><br />
-            <input type="submit" class="button confirm" name="<spring:message code='delete' />" value="<spring:message code='delete' />" />
-            <input type="button" name="<spring:message code='cancel' />" value="<spring:message code='cancel' />" onclick="$('#cancel').hide();" />
+            <input type="submit" media="print" class="button confirm" name="<spring:message code='delete' />" value="<spring:message code='delete' />" />
+            <input type="button" class="button" media="print" name="<spring:message code='cancel' />" value="<spring:message code='cancel' />" onclick="$('#cancel').hide();" />
         </form:form>
     </c:if>
 
