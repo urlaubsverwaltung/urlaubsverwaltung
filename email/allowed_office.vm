@@ -4,6 +4,9 @@ es liegt ein neuer genehmigter Antrag vor: ${link}
 
 Mitarbeiter: ${application.person.firstName} ${application.person.lastName} 
 
+Antragsteller: ${application.applier.firstName} ${application.applier.lastName}
+Genehmigender: ${application.boss.firstName} ${application.boss.lastName} 
+
 Antragsdatum: ${application.applicationDate.toString("dd.MM.yyyy")}
 Zeitraum des beantragten Urlaubs: ${application.startDate.toString("dd.MM.yyyy")} bis ${application.endDate.toString("dd.MM.yyyy")}, ${dayLength}
 Art des Urlaubs: ${vacationType} 
