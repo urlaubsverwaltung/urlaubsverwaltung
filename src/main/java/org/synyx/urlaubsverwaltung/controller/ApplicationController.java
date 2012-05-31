@@ -171,9 +171,6 @@ public class ApplicationController {
     // holidays account y'
     private static final Logger LOG = Logger.getLogger("audit");
 
-    @Autowired
-    private JmxDemo jmxDemo;
-    
     private PersonService personService;
     private ApplicationService applicationService;
     private HolidaysAccountService accountService;
@@ -864,8 +861,6 @@ public class ApplicationController {
 
             mailService.sendAllowedNotification(application, comment);
             
-            jmxDemo.notifyAboutBossAction(bossName + " allowed application with id " + application.getId());
-
             return "redirect:/web/application/" + applicationId;
         }
         
@@ -937,8 +932,6 @@ public class ApplicationController {
             // mail to applicant
             mailService.sendRejectedNotification(application, comment);
             
-            jmxDemo.notifyAboutBossAction(bossName + " rejected application with id " + application.getId());
-
             return "redirect:/web/application/" + applicationId;
         }
         } else {

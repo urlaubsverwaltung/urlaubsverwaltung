@@ -30,7 +30,6 @@ public class JmxDemo implements NotificationPublisherAware {
     private ApplicationService applicationService;
     private MailService mailService;
 
-//    My constructor
     public JmxDemo(ApplicationService applicationService, MailService mailService) {
         this.applicationService = applicationService;
         this.mailService = mailService;
@@ -63,21 +62,23 @@ public class JmxDemo implements NotificationPublisherAware {
         return JmxViewUtil.generateReturnList(applications);
     }
     
-    @ManagedOperation(description = "Reminds the boss via email to decide about the current waiting applications.")
-    public String remindBossAboutWaitingApplications() {
-        
-        List<Application> applications = applicationService.getWaitingApplications();
-        
-        mailService.sendRemindingBossAboutWaitingApplicationsNotification(applications);
-        
-        return "The boss got reminded via email now.";
-    }
+// use this maybe later, but not now for demo
+    
+//    @ManagedOperation(description = "Reminds the boss via email to decide about the current waiting applications.")
+//    public String remindBossAboutWaitingApplications() {
+//        
+//        List<Application> applications = applicationService.getWaitingApplications();
+//        
+//        mailService.sendRemindingBossAboutWaitingApplicationsNotification(applications);
+//        
+//        return "The boss got reminded via email now.";
+//    }
     
     /**
      * is not annotated with managedoperation because you should not see this method, but it is just called by another class if an error occurs
      */
-    public void notifyAboutBossAction(String msg) {
-        notificationPublisher.sendNotification(new Notification("Boss Action", this, 0, msg));
+    public void notifyAboutLogin(String msg) {
+        notificationPublisher.sendNotification(new Notification("Login", this, 0, msg));
     }
     
 

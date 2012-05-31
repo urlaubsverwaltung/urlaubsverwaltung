@@ -36,7 +36,7 @@ public class AuthoritiesPopulatorImpl implements LdapAuthoritiesPopulator {
 
     // sign logger: logs possible occurent errors relating to private and public keys of users
     private static final Logger LOG_SIGN = Logger.getLogger("sign");
-
+    
     private PersonService personService;
     private CryptoService cryptoService;
     private MailService mailService;
@@ -87,8 +87,5 @@ public class AuthoritiesPopulatorImpl implements LdapAuthoritiesPopulator {
                     + " ist ein Fehler aufgetreten.", ex);
                 mailService.sendKeyGeneratingErrorNotification(login);
         
-//        for jmx demo
-//        String msg = "Error while creating keys for new user with login " + login; 
-//        jmxDemo.notifyAboutBossAction(msg);
     }
 }
