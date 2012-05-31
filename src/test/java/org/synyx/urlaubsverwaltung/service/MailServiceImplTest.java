@@ -436,6 +436,11 @@ public class MailServiceImplTest {
         person.setFirstName("Günther");
         person.setEmail("bla@test.com");
 
+        Person applier = new Person();
+        applier.setFirstName("Hans");
+        applier.setLastName("Wurst");
+        
+        application.setApplier(applier);
         instance.sendAppliedForLeaveByOfficeNotification(application);
 
         // was email sent?
@@ -454,7 +459,7 @@ public class MailServiceImplTest {
         // check content of email
         String content = (String) msg.getContent();
         assertTrue(content.contains("Hallo Günther"));
-        assertTrue(content.contains("das Office hat einen Urlaubsantrag"));
+        assertTrue(content.contains("Hans Wurst hat einen Urlaubsantrag"));
         assertFalse(content.contains("Mist"));
     }
 }
