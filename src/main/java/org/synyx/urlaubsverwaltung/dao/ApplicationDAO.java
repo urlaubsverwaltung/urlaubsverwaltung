@@ -88,9 +88,9 @@ public interface ApplicationDAO extends JpaRepository<Application, Integer> {
     // length, get only the not cancelled applications!
     @Query(
         "select x from Application x where ((x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) or (x.startDate < ?1 and x.endDate > ?2)) "
-        + "and x.person = ?3 and x.status != 3 and x.howLong = ?4 and x.supplementaryApplication = false order by x.startDate"
+        + "and x.person = ?3 and (x.status = 0 or x.status = 1) and x.howLong = ?4 and x.supplementaryApplication = false order by x.startDate"
     )
-    List<Application> getApplicationsByPeriodAndDayLength(Date startDate, Date endDate, Person person,
+    List<Application> getRelevantActiveApplicationsByPeriodAndDayLength(Date startDate, Date endDate, Person person,
         DayLength length);
 
 
@@ -98,9 +98,9 @@ public interface ApplicationDAO extends JpaRepository<Application, Integer> {
     // length, get only the not cancelled applications!
     @Query(
         "select x from Application x where ((x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) or (x.startDate < ?1 and x.endDate > ?2)) "
-        + "and x.person = ?3 and x.status != ?4 and x.supplementaryApplication = false order by x.startDate"
+        + "and x.person = ?3 and (x.status = 0 or x.status = 1) and x.supplementaryApplication = false order by x.startDate"
     )
-    List<Application> getApplicationsByPeriodForEveryDayLength(Date startDate, Date endDate, Person person, ApplicationStatus status);
+    List<Application> getRelevantActiveApplicationsByPeriodForEveryDayLength(Date startDate, Date endDate, Person person);
     
     
     // TODO: check if querys are valid! (enums!)

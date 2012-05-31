@@ -580,13 +580,13 @@ public class ApplicationServiceImpl implements ApplicationService {
     private List<Application> getApplicationsByPeriodAndDayLength(Application app, DayLength length) {
 
         if (length == DayLength.MORNING) {
-            return applicationDAO.getApplicationsByPeriodAndDayLength(app.getStartDate().toDate(),
+            return applicationDAO.getRelevantActiveApplicationsByPeriodAndDayLength(app.getStartDate().toDate(),
                     app.getEndDate().toDate(), app.getPerson(), DayLength.MORNING);
         } else if (length == DayLength.NOON) {
-            return applicationDAO.getApplicationsByPeriodAndDayLength(app.getStartDate().toDate(),
+            return applicationDAO.getRelevantActiveApplicationsByPeriodAndDayLength(app.getStartDate().toDate(),
                     app.getEndDate().toDate(), app.getPerson(), DayLength.NOON);
         } else {
-            return applicationDAO.getApplicationsByPeriodAndDayLength(app.getStartDate().toDate(),
+            return applicationDAO.getRelevantActiveApplicationsByPeriodAndDayLength(app.getStartDate().toDate(),
                     app.getEndDate().toDate(), app.getPerson(), DayLength.FULL);
         }
     }
@@ -604,8 +604,8 @@ public class ApplicationServiceImpl implements ApplicationService {
             return checkOverlapForNoon(application);
         } else {
             // check if there are existent ANY applications (full day and half day)
-            List<Application> apps = applicationDAO.getApplicationsByPeriodForEveryDayLength(application.getStartDate()
-                    .toDate(), application.getEndDate().toDate(), application.getPerson(), ApplicationStatus.CANCELLED);
+            List<Application> apps = applicationDAO.getRelevantActiveApplicationsByPeriodForEveryDayLength(application.getStartDate()
+                    .toDate(), application.getEndDate().toDate(), application.getPerson());
 
             return getCaseOfOverlap(application, apps);
         }
