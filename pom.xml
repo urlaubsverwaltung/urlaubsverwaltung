@@ -24,8 +24,8 @@
     </properties>
 
     <scm>
-        <developerConnection>scm:git:ssh://git.synyx.de/urlaubsverwaltung.git</developerConnection>
-        <connection>scm:git:ssh@git.synyx.de:urlaubsverwaltung.git</connection>
+        <developerConnection>scm:git:ssh://git@git.synyx.de/urlaubsverwaltung.git</developerConnection>
+        <connection>scm:git:ssh@git@git.synyx.de:urlaubsverwaltung.git</connection>
     </scm>
 
     <distributionManagement>
