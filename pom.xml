@@ -13,6 +13,14 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.version>3.0.5.RELEASE</spring.version>
         <netbeans.hint.deploy.server>Tomcat</netbeans.hint.deploy.server>
+
+        <jenkins.job.goals>clean install</jenkins.job.goals>
+        <jenkins.maven.name>Maven3</jenkins.maven.name>
+        <jenkins.jdk.name>Java6</jenkins.jdk.name>
+        <jenkins.job.project.redmine>https://project.synyx.de/</jenkins.job.project.redmine>
+        <jenkins.job.project.name>urlaubsverwaltung</jenkins.job.project.name>
+        <jenkins.job.reporters.email>indy@synyx.de</jenkins.job.reporters.email>
+
     </properties>
 
     <scm>
@@ -44,7 +52,16 @@
             <name>Nicht offizielles Google API Repository</name>
             <url>http://mandubian-mvn.googlecode.com/svn/trunk/mandubian-mvn/repository</url>
         </repository>
+
     </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>maven.jenkins-ci.org</id>
+            <name>Jenkins Repo</name>
+            <url>http://kuali-nexus-lb-287160402.us-east-1.elb.amazonaws.com/content/groups/public/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
 
     <dependencies>
 
@@ -60,7 +77,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        
+
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
@@ -74,7 +91,7 @@
             <artifactId>mail</artifactId>
             <version>1.4.4</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.openengsb.wrapped</groupId>
             <artifactId>com.google.gdata</artifactId>
@@ -144,25 +161,25 @@
             <version>2.1</version>
             <scope>provided</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
             <version>${spring.version}</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
             <version>${spring.version}</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
             <version>${spring.version}</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
@@ -193,7 +210,7 @@
             <artifactId>hibernate-entitymanager</artifactId>
             <version>3.5.1-Final</version>
         </dependency>
-        
+
         <dependency>
             <groupId>commons-dbcp</groupId>
             <artifactId>commons-dbcp</artifactId>
@@ -218,80 +235,102 @@
             <artifactId>joda-time</artifactId>
             <version>2.0</version>
         </dependency>
-        
+
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time-jsptags</artifactId>
             <version>1.1</version>
         </dependency>
-        
+
         <dependency>
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
             <version>1.2.1</version>
         </dependency>
-        
+
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.0.1</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-jpa</artifactId>
             <version>1.0.1.RELEASE</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-web</artifactId>
             <version>${spring.version}</version>
         </dependency>
-        
+
         <dependency>
             <groupId>javax.annotation</groupId>
             <artifactId>jsr250-api</artifactId>
             <version>1.0</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-config</artifactId>
             <version>${spring.version}</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-taglibs</artifactId>
             <version>${spring.version}</version>
         </dependency>
-        
+
     </dependencies>
 
     <dependencyManagement>
-        
+
         <dependencies>
-            
+
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>1.6.1</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>commons-logging</groupId>
                 <artifactId>commons-logging</artifactId>
                 <version>1.1.1</version>
                 <scope>provided</scope>
             </dependency>
-            
+
         </dependencies>
-        
+
     </dependencyManagement>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.kuali.maven.plugins</groupId>
+                <artifactId>jenkins-maven-plugin</artifactId>
+                <version>1.1.10</version>
+                <configuration>
+                    <failOnError>true</failOnError>
+                    <jobTypes>build</jobTypes>
+                    <types>build</types>
+                    <template>classpath:org/synyx/jenkins/jobs/template.xml</template>
+                    <url>http://jenkins-vm:8080/</url>
+                    <majorVersion>trunk</majorVersion>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.synyx.jenkins</groupId>
+                        <artifactId>jenkins-config</artifactId>
+                        <version>0.3</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+
 
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -308,16 +347,16 @@
                     <target>1.6</target>
                 </configuration>
             </plugin>
-            
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.1.1</version>
                 <configuration>
-<!--                    <failOnMissingWebXml>false</failOnMissingWebXml>-->
+                    <!--                    <failOnMissingWebXml>false</failOnMissingWebXml>-->
                 </configuration>
             </plugin>
-            
+
         </plugins>
     </build>
 
