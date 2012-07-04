@@ -29,6 +29,7 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import org.springframework.beans.factory.annotation.Value;
 import org.synyx.urlaubsverwaltung.domain.Comment;
 
 /**
@@ -69,6 +70,18 @@ public class MailServiceImpl implements MailService {
     private VelocityEngine velocityEngine;
     private Properties properties;
     private Properties mailProperties;
+    
+    @Value("${email.boss}")
+    protected String emailBoss;
+    
+    @Value("${email.office}")
+    protected String emailOffice;
+    
+    @Value("${email.all}")
+    protected String emailAll;
+    
+    @Value("${email.manager}")
+    protected String emailManager;
 
     @Autowired
     public MailServiceImpl(JavaMailSender mailSender, VelocityEngine velocityEngine) {
@@ -174,7 +187,7 @@ public class MailServiceImpl implements MailService {
 
         String text = prepareMessage(application, APPLICATION, FILE_NEW, null, null, null);
 
-        sendEmailToMultipleRecipients(mailProperties.getProperty("email.boss"), "subject.new", text);
+        sendEmailToMultipleRecipients(emailBoss, "subject.new", text);
     }
     
     @Override
@@ -182,7 +195,7 @@ public class MailServiceImpl implements MailService {
         
         String text = prepareMessage(a, APPLICATION, FILE_REMIND, null, null, null);
         
-        sendEmailToMultipleRecipients(mailProperties.getProperty("email.boss"), "subject.remind", text);
+        sendEmailToMultipleRecipients(emailBoss, "subject.remind", text);
         
     }
 
@@ -242,7 +255,7 @@ public class MailServiceImpl implements MailService {
 
         // email to office
         String textOffice = prepareMessage(application, APPLICATION, FILE_ALLOWED_OFFICE, null, null, comment);
-            sendEmail(mailProperties.getProperty("email.office"), "subject.allowed.office", textOffice);
+            sendEmail(emailOffice, "subject.allowed.office", textOffice);
 
             // email to applicant
             String textUser = prepareMessage(application, APPLICATION, FILE_ALLOWED_USER, null, null, comment);
@@ -302,11 +315,7 @@ public class MailServiceImpl implements MailService {
          * @see  MailService#sendWeeklyVacationForecast(java.util.List)
          */
         @Override
-        public void sendWeeklyVacationForecast
-        (List<Person> persons
-        
-            
-            ) {
+        public void sendWeeklyVacationForecast(List<Person> persons) {
 
         List<String> names = new ArrayList<String>();
 
@@ -315,7 +324,7 @@ public class MailServiceImpl implements MailService {
             }
 
             String text = prepareMessage(names, PERSONS, FILE_WEEKLY, null, null, null);
-            sendEmail(mailProperties.getProperty("email.all"), "subject.weekly", text);
+            sendEmail(emailAll, "subject.weekly", text);
         }
 
 
@@ -340,10 +349,10 @@ public class MailServiceImpl implements MailService {
                 text = prepareMessage(application, APPLICATION, FILE_CANCELLED, null, null, comment);
                 
                 // mail to office
-                sendEmail(mailProperties.getProperty("email.office"), "subject.cancelled", text);
+                sendEmail(emailOffice, "subject.cancelled", text);
                 
                 // mail to bosses
-                sendEmailToMultipleRecipients(mailProperties.getProperty("email.boss"), "subject.cancelled", text);
+                sendEmailToMultipleRecipients(emailBoss, "subject.cancelled", text);
             }
         }
 
@@ -356,7 +365,7 @@ public class MailServiceImpl implements MailService {
             ) {
 
         String text = "An error occured during key generation for person with login " + loginName + " failed.";
-            sendEmail(mailProperties.getProperty("email.manager"), "subject.key.error", text);
+            sendEmail(emailManager, "subject.key.error", text);
         }
 
 
@@ -369,7 +378,7 @@ public class MailServiceImpl implements MailService {
 
         String text = "An error occured while signing the application with id " + applicationId + "\n" + exception;
 
-            sendEmail(mailProperties.getProperty("email.manager"), "subject.sign.error", text);
+            sendEmail(emailManager, "subject.sign.error", text);
         }
 
 
@@ -382,7 +391,7 @@ public class MailServiceImpl implements MailService {
 
         String text = "The value of the property key '" + propertyName
                     + "' seems to be invalid. Please control and correct it if necessary.";
-            sendEmail(mailProperties.getProperty("email.manager"), "subject.prop.error", text);
+            sendEmail(emailManager, "subject.prop.error", text);
         }
 
     @Override
@@ -393,7 +402,7 @@ public class MailServiceImpl implements MailService {
         
         String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, PATH + "jmx_remind_boss.vm", model);
 
-        sendEmail(mailProperties.getProperty("email.manager"), "subject.remind.boss", text);
+        sendEmail(emailManager, "subject.remind.boss", text);
         
     }
     

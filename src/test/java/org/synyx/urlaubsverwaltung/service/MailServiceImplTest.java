@@ -140,10 +140,11 @@ public class MailServiceImplTest {
         person.setFirstName("Horst");
         person.setEmail("misterhorst@test.com");
 
+        instance.emailBoss = "boss@boss.de";
         instance.sendNewApplicationNotification(application);
 
         // was email sent?
-        List<Message> inbox = Mailbox.get(mailProperties.getProperty("email.boss"));
+        List<Message> inbox = Mailbox.get("boss@boss.de");
         assertTrue(inbox.size() > 0);
 
         // get email
@@ -154,7 +155,7 @@ public class MailServiceImplTest {
         assertNotSame("subject", msg.getSubject());
 
         // check from and recipient
-        assertEquals(new InternetAddress(mailProperties.getProperty("email.boss")), msg.getAllRecipients()[0]);
+        assertEquals(new InternetAddress("boss@boss.de"), msg.getAllRecipients()[0]);
 
         // check content of email
         String content = (String) msg.getContent();
@@ -173,10 +174,11 @@ public class MailServiceImplTest {
         person.setFirstName("Bernd");
         person.setEmail("berndo@test.com");
 
+        instance.emailOffice = "office@synyx.de";
         instance.sendAllowedNotification(application, null);
 
         // were both emails sent?
-        List<Message> inboxOffice = Mailbox.get(mailProperties.getProperty("email.office"));
+        List<Message> inboxOffice = Mailbox.get("office@synyx.de");
         assertTrue(inboxOffice.size() > 0);
 
         List<Message> inboxUser = Mailbox.get("berndo@test.com");
@@ -207,7 +209,7 @@ public class MailServiceImplTest {
         assertNotSame("subject", msgOffice.getSubject());
 
         // check from and recipient
-        assertEquals(new InternetAddress(mailProperties.getProperty("email.office")), msgOffice.getAllRecipients()[0]);
+        assertEquals(new InternetAddress("office@synyx.de"), msgOffice.getAllRecipients()[0]);
 
         // check content of email
         String contentOfficeMail = (String) msgOffice.getContent();
@@ -295,10 +297,11 @@ public class MailServiceImplTest {
         persons.add(person);
         persons.add(newPerson);
 
+        instance.emailAll = "all@net.org";
         instance.sendWeeklyVacationForecast(persons);
 
         // was email sent?
-        List<Message> inbox = Mailbox.get(mailProperties.getProperty("email.all"));
+        List<Message> inbox = Mailbox.get("all@net.org");
         assertTrue(inbox.size() > 0);
 
         Message msg = inbox.get(0);
@@ -308,7 +311,7 @@ public class MailServiceImplTest {
         assertNotSame("subject", msg.getSubject());
 
         // check from and recipient
-        assertEquals(new InternetAddress(mailProperties.getProperty("email.all")), msg.getAllRecipients()[0]);
+        assertEquals(new InternetAddress("all@net.org"), msg.getAllRecipients()[0]);
 
         // check content of email
         String content = (String) msg.getContent();
@@ -333,10 +336,13 @@ public class MailServiceImplTest {
         // test for cancelledByOffice == false
         // i.e. office gets a mail
 
+        instance.emailOffice = "office@synyx.de";
+        instance.emailBoss = "boss@boss.org";
+        
         instance.sendCancelledNotification(application, false, null);
 
         // was email sent?
-        List<Message> inboxOffice = Mailbox.get(mailProperties.getProperty("email.office"));
+        List<Message> inboxOffice = Mailbox.get("office@synyx.de");
         assertTrue(inboxOffice.size() > 0);
 
         Message msg = inboxOffice.get(0);
@@ -346,7 +352,7 @@ public class MailServiceImplTest {
         assertNotSame("subject", msg.getSubject());
 
         // check from and recipient
-        assertEquals(new InternetAddress(mailProperties.getProperty("email.office")), msg.getAllRecipients()[0]);
+        assertEquals(new InternetAddress("office@synyx.de"), msg.getAllRecipients()[0]);
 
         // check content of email
         String content = (String) msg.getContent();
@@ -393,9 +399,10 @@ public class MailServiceImplTest {
     @Test
     public void testSendKeyGeneratingErrorNotification() throws AddressException, MessagingException, IOException {
 
+        instance.emailManager = "manager@uv.de";
         instance.sendKeyGeneratingErrorNotification("müller");
 
-        List<Message> inbox = Mailbox.get(mailProperties.getProperty("email.manager"));
+        List<Message> inbox = Mailbox.get("manager@uv.de");
         assertTrue(inbox.size() > 0);
 
         Message msg = inbox.get(0);
@@ -413,9 +420,10 @@ public class MailServiceImplTest {
     @Test
     public void testSendSignErrorNotification() throws AddressException, MessagingException, IOException {
 
+        instance.emailManager = "manager@uv.de";
         instance.sendSignErrorNotification(5, "test exception message");
 
-        List<Message> inbox = Mailbox.get(mailProperties.getProperty("email.manager"));
+        List<Message> inbox = Mailbox.get("manager@uv.de");
         assertTrue(inbox.size() > 0);
 
         Message msg = inbox.get(0);

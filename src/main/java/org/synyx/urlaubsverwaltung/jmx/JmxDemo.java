@@ -20,7 +20,7 @@ import org.synyx.urlaubsverwaltung.service.MailService;
  * 
  * @author Aljona Murygina
  */
-@ManagedResource(objectName = "mbeans:name=myJmxDemoBean", description = "Manage some 'Urlaubsverwaltung' problems.")
+//@ManagedResource(objectName = "mbeans:name=myJmxDemoBean", description = "Manage some 'Urlaubsverwaltung' problems.")
 public class JmxDemo implements NotificationPublisherAware {
     
     private long numberOfWaitingApplications;

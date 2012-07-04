@@ -80,5 +80,7 @@
     <constructor-arg ref="propertiesValidator" />
 </bean>
 
+<bean id="startupService" class="org.synyx.urlaubsverwaltung.service.StartupService" />
+
 </beans>
 
