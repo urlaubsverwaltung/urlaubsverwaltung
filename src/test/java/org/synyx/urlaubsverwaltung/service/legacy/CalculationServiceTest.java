@@ -33,7 +33,6 @@ import org.synyx.urlaubsverwaltung.domain.Person;
 import java.math.BigDecimal;
 
 import java.util.List;
-import org.synyx.urlaubsverwaltung.service.HolidaysAccountService;
 
 
 /**

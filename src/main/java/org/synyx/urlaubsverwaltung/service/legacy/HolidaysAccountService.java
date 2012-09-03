@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.service;
+package org.synyx.urlaubsverwaltung.service.legacy;
 
 import org.synyx.urlaubsverwaltung.domain.legacy.HolidayEntitlement;
 import org.synyx.urlaubsverwaltung.domain.legacy.HolidaysAccount;

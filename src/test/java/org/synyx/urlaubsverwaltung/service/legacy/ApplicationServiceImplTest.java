@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.service.legacy;
 
-import org.synyx.urlaubsverwaltung.service.legacy.ApplicationServiceImpl;
 import org.synyx.urlaubsverwaltung.service.legacy.CalculationService;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
@@ -20,7 +19,7 @@ import org.mockito.Mockito;
 import static org.mockito.Mockito.mock;
 
 import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
-import org.synyx.urlaubsverwaltung.dao.ApplicationDAO;
+import org.synyx.urlaubsverwaltung.dao.legacy.ApplicationDAO;
 import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.domain.DayLength;
@@ -35,8 +34,10 @@ import java.security.NoSuchAlgorithmException;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.synyx.urlaubsverwaltung.service.CryptoService;
-import org.synyx.urlaubsverwaltung.service.HolidaysAccountService;
 import org.synyx.urlaubsverwaltung.service.MailService;
 import org.synyx.urlaubsverwaltung.service.OverlapCase;
 

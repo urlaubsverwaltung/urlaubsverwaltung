@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
-import org.synyx.urlaubsverwaltung.dao.ApplicationDAO;
+import org.synyx.urlaubsverwaltung.dao.legacy.ApplicationDAO;
 import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.domain.DayLength;
@@ -34,10 +34,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.synyx.urlaubsverwaltung.service.ApplicationService;
+import org.synyx.urlaubsverwaltung.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.service.CryptoService;
-import org.synyx.urlaubsverwaltung.service.HolidaysAccountService;
+import org.synyx.urlaubsverwaltung.service.CryptoService;
+import org.synyx.urlaubsverwaltung.service.MailService;
 import org.synyx.urlaubsverwaltung.service.MailService;
 import org.synyx.urlaubsverwaltung.service.OverlapCase;
+import org.synyx.urlaubsverwaltung.service.OverlapCase;
+import org.synyx.urlaubsverwaltung.service.legacy.CalculationService;
+import org.synyx.urlaubsverwaltung.service.legacy.HolidaysAccountService;
 
 
 /**

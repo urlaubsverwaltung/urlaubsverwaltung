@@ -4,6 +4,7 @@
  */
 package org.synyx.urlaubsverwaltung.service;
 
+import org.synyx.urlaubsverwaltung.service.legacy.HolidaysAccountServiceImpl;
 import org.junit.After;
 import org.junit.AfterClass;
 
@@ -16,8 +17,8 @@ import org.junit.Test;
 
 import org.mockito.Mockito;
 
-import org.synyx.urlaubsverwaltung.dao.HolidayEntitlementDAO;
-import org.synyx.urlaubsverwaltung.dao.HolidaysAccountDAO;
+import org.synyx.urlaubsverwaltung.dao.legacy.HolidayEntitlementDAO;
+import org.synyx.urlaubsverwaltung.dao.legacy.HolidaysAccountDAO;
 import org.synyx.urlaubsverwaltung.domain.legacy.HolidayEntitlement;
 import org.synyx.urlaubsverwaltung.domain.legacy.HolidaysAccount;
 import org.synyx.urlaubsverwaltung.domain.Person;

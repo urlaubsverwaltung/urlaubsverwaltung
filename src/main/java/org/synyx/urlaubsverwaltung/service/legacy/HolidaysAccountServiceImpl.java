@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.synyx.urlaubsverwaltung.service;
+package org.synyx.urlaubsverwaltung.service.legacy;
 
 import org.joda.time.DateMidnight;
 
@@ -10,8 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import org.synyx.urlaubsverwaltung.dao.HolidayEntitlementDAO;
-import org.synyx.urlaubsverwaltung.dao.HolidaysAccountDAO;
+import org.synyx.urlaubsverwaltung.dao.legacy.HolidayEntitlementDAO;
+import org.synyx.urlaubsverwaltung.dao.legacy.HolidaysAccountDAO;
 import org.synyx.urlaubsverwaltung.domain.legacy.HolidayEntitlement;
 import org.synyx.urlaubsverwaltung.domain.legacy.HolidaysAccount;
 import org.synyx.urlaubsverwaltung.domain.Person;

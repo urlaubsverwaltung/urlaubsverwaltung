@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.service;
 
+import org.synyx.urlaubsverwaltung.service.legacy.HolidaysAccountService;
 import org.joda.time.DateMidnight;
 
 import static org.junit.Assert.assertEquals;
