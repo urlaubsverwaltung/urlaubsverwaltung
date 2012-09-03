@@ -12,7 +12,6 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 
 
@@ -46,10 +45,6 @@ public class Application extends AbstractPersistable<Integer> {
     // Number of days that is subtract from HolidayAccount
     private BigDecimal days;
     
-    private BigDecimal daysBeforeApril;
-    
-    private BigDecimal daysAfterApril;
-
     // Period of holiday
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date startDate;
@@ -438,22 +433,5 @@ public class Application extends AbstractPersistable<Integer> {
             this.remindDate = remindDate.toDate();
         }
     }
-
-    public BigDecimal getDaysAfterApril() {
-        return daysAfterApril;
-    }
-
-    public void setDaysAfterApril(BigDecimal daysAfterApril) {
-        this.daysAfterApril = daysAfterApril;
-    }
-
-    public BigDecimal getDaysBeforeApril() {
-        return daysBeforeApril;
-    }
-
-    public void setDaysBeforeApril(BigDecimal daysBeforeApril) {
-        this.daysBeforeApril = daysBeforeApril;
-    }
-    
     
 }

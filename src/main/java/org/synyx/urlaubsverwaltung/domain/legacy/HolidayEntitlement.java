@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.synyx.urlaubsverwaltung.domain;
+package org.synyx.urlaubsverwaltung.domain.legacy;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import org.synyx.urlaubsverwaltung.domain.Person;
 
 
 /**

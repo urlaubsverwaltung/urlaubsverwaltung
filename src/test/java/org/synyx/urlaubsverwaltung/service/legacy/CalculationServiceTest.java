@@ -2,8 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.synyx.urlaubsverwaltung.service;
+package org.synyx.urlaubsverwaltung.service.legacy;
 
+import org.synyx.urlaubsverwaltung.service.legacy.CalculationService;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
 
@@ -25,13 +26,14 @@ import static org.mockito.Mockito.mock;
 import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.DayLength;
-import org.synyx.urlaubsverwaltung.domain.HolidayEntitlement;
-import org.synyx.urlaubsverwaltung.domain.HolidaysAccount;
+import org.synyx.urlaubsverwaltung.domain.legacy.HolidayEntitlement;
+import org.synyx.urlaubsverwaltung.domain.legacy.HolidaysAccount;
 import org.synyx.urlaubsverwaltung.domain.Person;
 
 import java.math.BigDecimal;
 
 import java.util.List;
+import org.synyx.urlaubsverwaltung.service.HolidaysAccountService;
 
 
 /**

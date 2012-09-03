@@ -1,5 +1,7 @@
-package org.synyx.urlaubsverwaltung.service;
+package org.synyx.urlaubsverwaltung.service.legacy;
 
+import org.synyx.urlaubsverwaltung.service.legacy.ApplicationServiceImpl;
+import org.synyx.urlaubsverwaltung.service.legacy.CalculationService;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
 
@@ -22,8 +24,8 @@ import org.synyx.urlaubsverwaltung.dao.ApplicationDAO;
 import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.domain.DayLength;
-import org.synyx.urlaubsverwaltung.domain.HolidayEntitlement;
-import org.synyx.urlaubsverwaltung.domain.HolidaysAccount;
+import org.synyx.urlaubsverwaltung.domain.legacy.HolidayEntitlement;
+import org.synyx.urlaubsverwaltung.domain.legacy.HolidaysAccount;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.VacationType;
 
@@ -33,6 +35,10 @@ import java.security.NoSuchAlgorithmException;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.synyx.urlaubsverwaltung.service.CryptoService;
+import org.synyx.urlaubsverwaltung.service.HolidaysAccountService;
+import org.synyx.urlaubsverwaltung.service.MailService;
+import org.synyx.urlaubsverwaltung.service.OverlapCase;
 
 
 /**

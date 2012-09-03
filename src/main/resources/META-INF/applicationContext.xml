@@ -35,7 +35,7 @@
 
 <repository:repositories base-package="org.synyx.urlaubsverwaltung.**.dao" />
 
-<bean id="calculationService" class="org.synyx.urlaubsverwaltung.service.CalculationService">
+<bean id="calculationService" class="org.synyx.urlaubsverwaltung.service.legacy.CalculationService">
     <constructor-arg ref="accountService" />
     <constructor-arg ref="ownCalendarService" />
 </bean>
@@ -50,7 +50,7 @@
     <constructor-arg ref="mailService" />
 </bean>
 
-<bean id="applicationService" class="org.synyx.urlaubsverwaltung.service.ApplicationServiceImpl">
+<bean id="applicationService" class="org.synyx.urlaubsverwaltung.service.legacy.ApplicationServiceImpl">
     <constructor-arg ref="accountService" />
     <constructor-arg ref="cryptoService" />
     <constructor-arg ref="ownCalendarService" />

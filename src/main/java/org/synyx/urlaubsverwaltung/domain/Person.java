@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.domain;
 
+import org.synyx.urlaubsverwaltung.domain.legacy.HolidayEntitlement;
+import org.synyx.urlaubsverwaltung.domain.legacy.HolidaysAccount;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import java.util.List;

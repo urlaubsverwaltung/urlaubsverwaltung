@@ -18,7 +18,7 @@ import org.mockito.stubbing.Answer;
 
 import org.synyx.urlaubsverwaltung.dao.PersonDAO;
 import org.synyx.urlaubsverwaltung.domain.Application;
-import org.synyx.urlaubsverwaltung.domain.HolidaysAccount;
+import org.synyx.urlaubsverwaltung.domain.legacy.HolidaysAccount;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.Role;
 

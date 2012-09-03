@@ -1,5 +1,6 @@
-package org.synyx.urlaubsverwaltung.service;
+package org.synyx.urlaubsverwaltung.service.legacy;
 
+import org.synyx.urlaubsverwaltung.service.legacy.CalculationService;
 import org.apache.log4j.Logger;
 
 import org.joda.time.DateMidnight;
@@ -8,7 +9,6 @@ import org.joda.time.Interval;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.jmx.export.notification.NotificationPublisher;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
@@ -16,7 +16,7 @@ import org.synyx.urlaubsverwaltung.dao.ApplicationDAO;
 import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.domain.DayLength;
-import org.synyx.urlaubsverwaltung.domain.HolidaysAccount;
+import org.synyx.urlaubsverwaltung.domain.legacy.HolidaysAccount;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.VacationType;
 import org.synyx.urlaubsverwaltung.util.CalcUtil;
@@ -33,8 +33,11 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.management.Notification;
-import org.springframework.jmx.export.notification.NotificationPublisherAware;
+import org.synyx.urlaubsverwaltung.service.ApplicationService;
+import org.synyx.urlaubsverwaltung.service.CryptoService;
+import org.synyx.urlaubsverwaltung.service.HolidaysAccountService;
+import org.synyx.urlaubsverwaltung.service.MailService;
+import org.synyx.urlaubsverwaltung.service.OverlapCase;
 
 
 /**

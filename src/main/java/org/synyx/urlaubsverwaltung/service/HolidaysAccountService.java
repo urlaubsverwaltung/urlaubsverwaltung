@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.service;
 
-import org.synyx.urlaubsverwaltung.domain.HolidayEntitlement;
-import org.synyx.urlaubsverwaltung.domain.HolidaysAccount;
+import org.synyx.urlaubsverwaltung.domain.legacy.HolidayEntitlement;
+import org.synyx.urlaubsverwaltung.domain.legacy.HolidaysAccount;
 import org.synyx.urlaubsverwaltung.domain.Person;
 
 import java.math.BigDecimal;

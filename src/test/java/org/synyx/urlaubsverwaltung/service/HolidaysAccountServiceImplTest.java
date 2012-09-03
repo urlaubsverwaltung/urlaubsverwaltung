@@ -18,8 +18,8 @@ import org.mockito.Mockito;
 
 import org.synyx.urlaubsverwaltung.dao.HolidayEntitlementDAO;
 import org.synyx.urlaubsverwaltung.dao.HolidaysAccountDAO;
-import org.synyx.urlaubsverwaltung.domain.HolidayEntitlement;
-import org.synyx.urlaubsverwaltung.domain.HolidaysAccount;
+import org.synyx.urlaubsverwaltung.domain.legacy.HolidayEntitlement;
+import org.synyx.urlaubsverwaltung.domain.legacy.HolidaysAccount;
 import org.synyx.urlaubsverwaltung.domain.Person;
 
 import java.math.BigDecimal;

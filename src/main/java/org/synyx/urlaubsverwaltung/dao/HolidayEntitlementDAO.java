@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.dao;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import org.synyx.urlaubsverwaltung.domain.HolidayEntitlement;
+import org.synyx.urlaubsverwaltung.domain.legacy.HolidayEntitlement;
 import org.synyx.urlaubsverwaltung.domain.Person;
 
 import java.util.List;
