@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.domain;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
+import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import org.joda.time.DateMidnight;
@@ -15,6 +16,7 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
  * 
  * @author Aljona Murygina - murygina@synyx.de
  */
+@Entity
 public class Account extends AbstractPersistable<Integer> {
 
     private static final long serialVersionUID = 890434378423784389L;
@@ -34,6 +36,9 @@ public class Account extends AbstractPersistable<Integer> {
     // if true: remaining vacation days expire on 1st Apr.
     // if false: remaining vacation days don't expire and may be used even after Apr. (until Dec.)
     private boolean remainingVacationDaysExpire;
+
+    public Account() {
+    }
 
     public Account(Person person, Date validFrom, Date validTo, BigDecimal annualVacationDays, BigDecimal remainingVacationDays, boolean remainingVacationDaysExpire) {
         this.person = person;
