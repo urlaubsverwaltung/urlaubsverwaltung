@@ -107,10 +107,14 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 
     /**
-     * @see  ApplicationService#getUsedVacationDaysOfPersonForYear(org.synyx.urlaubsverwaltung.domain.Person, int)
+     * This method calculates get all supplemental applications of the given person and year.
+     *
+     * @param  person
+     * @param  year
+     *
+     * @return  list of all supplemental applications of the given person and year
      */
-    @Override
-    public List<Application> getSupplementalApplicationsByPersonAndYear(Person person, int year) {
+    protected List<Application> getSupplementalApplicationsByPersonAndYear(Person person, int year) {
 
         DateMidnight firstDayOfYear = new DateMidnight(year, DateTimeConstants.JANUARY, 1);
         DateMidnight lastDayOfYear = new DateMidnight(year, DateTimeConstants.DECEMBER, 31);
@@ -515,10 +519,15 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 
     /**
-     * @see  ApplicationService#getUsedVacationDaysBeforeAprilOfPerson(org.synyx.urlaubsverwaltung.domain.Person, int)
+     * This method calculates the number of days that the given person has used for holidays in the given year before
+     * 1st April.
+     *
+     * @param  person
+     * @param  year
+     *
+     * @return  number of vacation days that the given person has used in the given year before 1st April
      */
-    @Override
-    public BigDecimal getUsedVacationDaysBeforeAprilOfPerson(Person person, int year) {
+    protected BigDecimal getUsedVacationDaysBeforeAprilOfPerson(Person person, int year) {
 
         BigDecimal numberOfVacationDays = BigDecimal.ZERO;
 
@@ -548,10 +557,14 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 
     /**
-     * @see  ApplicationService#getNotCancelledApplicationsByPersonAndYear(org.synyx.urlaubsverwaltung.domain.Person, int)
+     * use this to get all applications by person and year (only not cancelled applications)
+     *
+     * @param  person
+     * @param  year
+     *
+     * @return  return a list of applications of the given person and year
      */
-    @Override
-    public List<Application> getNotCancelledApplicationsByPersonAndYear(Person person, int year) {
+    protected List<Application> getNotCancelledApplicationsByPersonAndYear(Person person, int year) {
 
         DateMidnight firstDayOfYear = new DateMidnight(year, DateTimeConstants.JANUARY, 1);
         DateMidnight lastDayOfYear = new DateMidnight(year, DateTimeConstants.DECEMBER, 31);
@@ -835,8 +848,15 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
 
-    @Override
-    public List<Application> getApplicationsBeforeAprilByPersonAndYear(Person person, int year) {
+    /**
+     * This method gets a list of all applications of the given person for the given year that start before 1st April.
+     *
+     * @param  person
+     * @param  year
+     *
+     * @return  list of applications
+     */
+    protected List<Application> getApplicationsBeforeAprilByPersonAndYear(Person person, int year) {
 
         Date firstJanuary = new DateMidnight(year, DateTimeConstants.JANUARY, 1).toDate();
         Date lastOfMarch = new DateMidnight(year, DateTimeConstants.MARCH, 31).toDate();
@@ -896,9 +916,4 @@ public class ApplicationServiceImpl implements ApplicationService {
         return applicationDAO.countApplicationsInStateAndYear(status, firstDayOfYear.toDate(), lastDayOfYear.toDate());
     }
 
-    @Override
-    public void demonstrateSigningError() {
-//        LOG_JMX.error("An error occured during signing application with ID 23 of Marlene Muster.");
-    }
-    
 }

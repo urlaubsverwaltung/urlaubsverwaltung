@@ -81,18 +81,6 @@ public interface ApplicationService {
 
 
     /**
-     * This method calculates the number of days that the given person has used for holidays in the given year before
-     * 1st April.
-     *
-     * @param  person
-     * @param  year
-     *
-     * @return  number of vacation days that the given person has used in the given year before 1st April
-     */
-    BigDecimal getUsedVacationDaysBeforeAprilOfPerson(Person person, int year);
-
-
-    /**
      * This method calculates with the regular applications and the supplemental applications the number of days that
      * the given person has used for holidays in the given year.
      *
@@ -104,16 +92,6 @@ public interface ApplicationService {
     BigDecimal getUsedVacationDaysOfPersonForYear(Person person, int year);
 
 
-    /**
-     * use this to get all applications by person and year (only not cancelled applications)
-     *
-     * @param  person
-     * @param  year
-     *
-     * @return  return a list of applications of the given person and year
-     */
-    List<Application> getNotCancelledApplicationsByPersonAndYear(Person person, int year);
-    
     
     /**
      * use this to get all applications by person and year (all applications no matter which status they have)
@@ -125,27 +103,6 @@ public interface ApplicationService {
      */
     List<Application> getAllApplicationsByPersonAndYear(Person person, int year);
 
-
-    /**
-     * This method gets a list of all applications of the given person for the given year that start before 1st April.
-     *
-     * @param  person
-     * @param  year
-     *
-     * @return  list of applications
-     */
-    List<Application> getApplicationsBeforeAprilByPersonAndYear(Person person, int year);
-
-
-    /**
-     * This method calculates get all supplemental applications of the given person and year.
-     *
-     * @param  person
-     * @param  year
-     *
-     * @return  list of all supplemental applications of the given person and year
-     */
-    List<Application> getSupplementalApplicationsByPersonAndYear(Person person, int year);
 
 
     /**
@@ -218,11 +175,6 @@ public interface ApplicationService {
      * @return
      */
     long countApplicationsInStatus(ApplicationStatus status);
-    
-    /**
-     * needed for jmx to demonstrate how notifications work
-     */
-    void demonstrateSigningError();
     
 
     /**
