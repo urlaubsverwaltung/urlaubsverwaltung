@@ -27,7 +27,7 @@ import org.synyx.urlaubsverwaltung.domain.legacy.HolidaysAccount;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.Role;
 import org.synyx.urlaubsverwaltung.service.ApplicationService;
-import org.synyx.urlaubsverwaltung.service.HolidaysAccountService;
+import org.synyx.urlaubsverwaltung.service.legacy.HolidaysAccountService;
 import org.synyx.urlaubsverwaltung.service.PersonService;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.util.GravatarUtil;

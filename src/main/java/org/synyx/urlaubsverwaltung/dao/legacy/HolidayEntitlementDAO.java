@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.dao;
+package org.synyx.urlaubsverwaltung.dao.legacy;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
