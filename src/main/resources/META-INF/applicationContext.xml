@@ -42,7 +42,7 @@
 
 <bean id="ownCalendarService" class="org.synyx.urlaubsverwaltung.calendar.OwnCalendarService" />
 
-<bean id="accountService" class="org.synyx.urlaubsverwaltung.service.HolidaysAccountServiceImpl" />
+<bean id="accountService" class="org.synyx.urlaubsverwaltung.service.legacy.HolidaysAccountServiceImpl" />
 
 <bean id="personService" class="org.synyx.urlaubsverwaltung.service.PersonServiceImpl">
     <constructor-arg ref="applicationService" />
