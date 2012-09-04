@@ -8,6 +8,7 @@ import java.util.List;
 import org.synyx.urlaubsverwaltung.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.domain.DayLength;
 import org.synyx.urlaubsverwaltung.domain.Person;
+import org.synyx.urlaubsverwaltung.domain.VacationType;
 
 /**
  *
@@ -17,6 +18,33 @@ public interface ApplicationDAO extends JpaRepository<Application, Integer> {
 
     @Query("select max(id) from Application x where x.person = ?1 and x.status = ?2")
     int getIdOfLatestApplication(Person person, ApplicationStatus status);
+
+    @Query("select x from Application x where x.person = ?1 "
+    + "and x.supplementaryApplication = false "
+    + "and ((x.startDate between ?2 and ?3) and (x.endDate between ?2 and ?3)) "
+    + "and x.vacationType = ?4 "
+    + "and x.status != ?5 "
+    + "order by x.startDate")
+    List<Application> getApplicationsBetweenTwoMilestones(Person person,
+            Date firstMilestone, Date lastMilestone, VacationType type, ApplicationStatus state);
+
+    @Query("select x from Application x where x.person = ?1 "
+    + "and x.supplementaryApplication = false "
+    + "and ((x.startDate < ?2) and (x.endDate between ?2 and ?3)) "
+    + "and x.vacationType = ?4 "
+    + "and x.status != ?5 "
+    + "order by x.startDate")
+    List<Application> getApplicationsBeforeFirstMilestone(Person person,
+            Date firstMilestone, Date lastMilestone, VacationType type, ApplicationStatus state);
+
+    @Query("select x from Application x where x.person = ?1 "
+    + "and x.supplementaryApplication = false "
+    + "and ((x.startDate between ?2 and ?3) and (x.endDate > ?3)) "
+    + "and x.vacationType = ?4 "
+    + "and x.status != ?5 "
+    + "order by x.startDate")
+    List<Application> getApplicationsAfterLastMilestone(Person person,
+            Date firstMilestone, Date lastMilestone, VacationType type, ApplicationStatus state);
 
     // get List<Application> the supplemental applications for the given application resp. its id
     @Query("select x from Application x where x.idOfApplication = ?1 order by x.startDate")
