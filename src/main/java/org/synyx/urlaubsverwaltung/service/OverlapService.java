@@ -39,7 +39,7 @@ public class OverlapService {
      *
      * @return  OverlapCase (Enum)
      */
-    OverlapCase checkOverlap(Application application) {
+    public OverlapCase checkOverlap(Application application) {
 
         if (application.getHowLong() == DayLength.MORNING) {
             return checkOverlapForMorning(application);

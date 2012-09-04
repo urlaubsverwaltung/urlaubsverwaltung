@@ -19,7 +19,7 @@ import org.mockito.Mockito;
 import static org.mockito.Mockito.mock;
 
 import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
-import org.synyx.urlaubsverwaltung.dao.legacy.ApplicationDAO;
+import org.synyx.urlaubsverwaltung.legacy.dao.ApplicationDAO;
 import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.domain.DayLength;

@@ -23,7 +23,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.Role;
-import org.synyx.urlaubsverwaltung.service.legacy.ApplicationService;
+import org.synyx.urlaubsverwaltung.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.service.HolidaysAccountService;
 import org.synyx.urlaubsverwaltung.service.PersonService;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
@@ -365,46 +365,48 @@ public class PersonController {
      */
     private void prepareOverview(Person person, int year, Model model) {
 
-        // get the person's applications for the given year
-        List<Application> apps = applicationService.getAllApplicationsByPersonAndYear(person, year);
-
-        if (apps.isEmpty()) {
-            model.addAttribute(NO_APPS, true);
-        } else {
-            List<Application> applications = new ArrayList<Application>();
-
-            for (Application a : apps) {
-                if (a.getStatus() != ApplicationStatus.CANCELLED) {
-                    applications.add(a);
-                } else {
-                    if (a.isFormerlyAllowed() == true) {
-                        applications.add(a);
-                    }
-                }
-            }
-
-            model.addAttribute(APPLICATIONS, applications);
-
-        }
-
-
-
-        // get the number of vacation days that person has used in the given year
-        BigDecimal numberOfUsedDays = applicationService.getUsedVacationDaysOfPersonForYear(person, year);
-        model.addAttribute(USED_DAYS, numberOfUsedDays);
-
-        // get person's holidays account and entitlement for the given year
-        Account account = accountService.getHolidaysAccount(year, person);
-
-        setLoggedUser(model);
-        addAprilAttributeToModel(model);
-        model.addAttribute(PERSON, person);
-        model.addAttribute(ACCOUNT, account);
-        model.addAttribute(YEAR, DateMidnight.now().getYear());
-
-        // get url of person's gravatar image
-        String url = gravatarUtil.createImgURL(person.getEmail());
-        model.addAttribute(GRAVATAR, url);
+        // TODO: modify!
+        
+//        // get the person's applications for the given year
+//        List<Application> apps = applicationService.getAllApplicationsByPersonAndYear(person, year);
+//
+//        if (apps.isEmpty()) {
+//            model.addAttribute(NO_APPS, true);
+//        } else {
+//            List<Application> applications = new ArrayList<Application>();
+//
+//            for (Application a : apps) {
+//                if (a.getStatus() != ApplicationStatus.CANCELLED) {
+//                    applications.add(a);
+//                } else {
+//                    if (a.isFormerlyAllowed() == true) {
+//                        applications.add(a);
+//                    }
+//                }
+//            }
+//
+//            model.addAttribute(APPLICATIONS, applications);
+//
+//        }
+//
+//
+//
+//        // get the number of vacation days that person has used in the given year
+//        BigDecimal numberOfUsedDays = applicationService.getUsedVacationDaysOfPersonForYear(person, year);
+//        model.addAttribute(USED_DAYS, numberOfUsedDays);
+//
+//        // get person's holidays account and entitlement for the given year
+//        Account account = accountService.getHolidaysAccount(year, person);
+//
+//        setLoggedUser(model);
+//        addAprilAttributeToModel(model);
+//        model.addAttribute(PERSON, person);
+//        model.addAttribute(ACCOUNT, account);
+//        model.addAttribute(YEAR, DateMidnight.now().getYear());
+//
+//        // get url of person's gravatar image
+//        String url = gravatarUtil.createImgURL(person.getEmail());
+//        model.addAttribute(GRAVATAR, url);
     }
 
     /**

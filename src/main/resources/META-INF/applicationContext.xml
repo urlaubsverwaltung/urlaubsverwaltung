@@ -28,23 +28,21 @@
 
 <tx:annotation-driven/>
 
-<import resource="jmxContext.xml"/>
+<!--<import resource="jmxContext.xml"/>-->
 <import resource="infrastructure.xml"/>
 <import resource="security.xml"/>
 <import resource="spring-mail.xml"/>
 
 <repository:repositories base-package="org.synyx.urlaubsverwaltung.**.dao" />
 
-<bean id="calculationService" class="org.synyx.urlaubsverwaltung.service.legacy.CalculationService">
+<bean id="calculationService" class="org.synyx.urlaubsverwaltung.service.CalculationService">
     <constructor-arg ref="accountService" />
     <constructor-arg ref="ownCalendarService" />
 </bean>
 
 <bean id="ownCalendarService" class="org.synyx.urlaubsverwaltung.calendar.OwnCalendarService" />
 
-<bean id="accountService" class="org.synyx.urlaubsverwaltung.service.legacy.HolidaysAccountServiceImpl" />
-
-<bean id="newAccountService" class="org.synyx.urlaubsverwaltung.service.HolidaysAccountServiceImpl" />
+<bean id="accountService" class="org.synyx.urlaubsverwaltung.service.HolidaysAccountServiceImpl" />
 
 <bean id="personService" class="org.synyx.urlaubsverwaltung.service.PersonServiceImpl">
     <constructor-arg ref="applicationService" />
@@ -52,11 +50,8 @@
     <constructor-arg ref="mailService" />
 </bean>
 
-<bean id="applicationService" class="org.synyx.urlaubsverwaltung.service.legacy.ApplicationServiceImpl">
-    <constructor-arg ref="accountService" />
+<bean id="applicationService" class="org.synyx.urlaubsverwaltung.service.ApplicationServiceImpl">
     <constructor-arg ref="cryptoService" />
-    <constructor-arg ref="ownCalendarService" />
-    <constructor-arg ref="calculationService" />
     <constructor-arg ref="mailService" />
 </bean>
 

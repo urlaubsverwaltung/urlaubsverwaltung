@@ -1,6 +1,7 @@
 
 package org.synyx.urlaubsverwaltung.service;
 
+import java.math.BigDecimal;
 import org.synyx.urlaubsverwaltung.dao.ApplicationDAO;
 import org.apache.log4j.Logger;
 
@@ -19,6 +20,8 @@ import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
 
 import java.util.List;
+import org.joda.time.DateTimeConstants;
+import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
 
 /**
  * Implementation of interface {@link ApplicationService}.
@@ -34,12 +37,14 @@ public class ApplicationServiceImpl implements ApplicationService {
     
     private CryptoService cryptoService;
     private MailService mailService;
+    private OwnCalendarService calendarService;
 
     @Autowired
-    public ApplicationServiceImpl(ApplicationDAO applicationDAO, CryptoService cryptoService, MailService mailService) {
+    public ApplicationServiceImpl(ApplicationDAO applicationDAO, CryptoService cryptoService, MailService mailService, OwnCalendarService calendarService) {
         this.applicationDAO = applicationDAO;
         this.cryptoService = cryptoService;
         this.mailService = mailService;
+        this.calendarService = calendarService;
     }
     
     @Override
@@ -55,6 +60,20 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public void save(Application application) {
         applicationDAO.save(application);
+    }
+    
+    @Override
+    public Application apply(Application application, Person person, Person applier) {
+        
+        BigDecimal days = calendarService.getVacationDays(application, application.getStartDate(),
+                application.getEndDate());
+        
+        application.setStatus(ApplicationStatus.WAITING);
+        application.setDays(days);
+        application.setPerson(person);
+        application.setApplier(applier);
+        
+        return application;
     }
 
     @Override
@@ -189,6 +208,40 @@ public class ApplicationServiceImpl implements ApplicationService {
                 save(sa);
             }
         }
+    }
+
+    @Override
+    public List<Application> getAllowedApplicationsForACertainPeriod(DateMidnight startDate, DateMidnight endDate) {
+        
+        return applicationDAO.getApplicationsForACertainTimeAndState(startDate.toDate(), endDate.toDate(), ApplicationStatus.ALLOWED);
+        
+    }
+
+    @Override
+    public List<Application> getApplicationsForACertainPeriod(DateMidnight startDate, DateMidnight endDate) {
+        
+        return applicationDAO.getApplicationsForACertainTime(startDate.toDate(), endDate.toDate());
+    }
+
+    @Override
+    public List<Application> getApplicationsByStateAndYear(ApplicationStatus state, int year) {
+        
+        DateMidnight firstDayOfYear = new DateMidnight(year, DateTimeConstants.JANUARY, 1);
+        DateMidnight lastDayOfYear = new DateMidnight(year, DateTimeConstants.DECEMBER, 31);
+
+        if (state == ApplicationStatus.CANCELLED) {
+            return applicationDAO.getCancelledApplicationsByYearThatHaveBeenAllowedFormerly(state, firstDayOfYear.toDate(),
+                    lastDayOfYear.toDate());
+        } else {
+            return applicationDAO.getApplicationsByStateAndYear(state, firstDayOfYear.toDate(), lastDayOfYear.toDate());
+        }
+    }
+
+    @Override
+    public List<Application> getCancelledApplicationsByYearFormerlyAllowed(int year) {
+        DateMidnight firstDayOfYear = new DateMidnight(year, DateTimeConstants.JANUARY, 1);
+        DateMidnight lastDayOfYear = new DateMidnight(year, DateTimeConstants.DECEMBER, 31);
+        return applicationDAO.getCancelledApplicationsByYearThatHaveBeenAllowedFormerly(ApplicationStatus.CANCELLED, firstDayOfYear.toDate(), lastDayOfYear.toDate());
     }
     
 }

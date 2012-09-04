@@ -99,10 +99,9 @@ public interface PersonService {
 
 
     /**
-     * this method get all person with remaining vacation days to send an email to these persons that they have
-     * remaining vacation days that decay soon
+     * this method get all persons with remainingVacationDaysExpire == true to be able to send a reminder email to these persons
      */
-    List<Person> getPersonsWithRemainingVacationDays();
+    List<Person> getPersonsWithExpiringRemainingVacationDays();
 
 
     /**

@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.dao.legacy;
+package org.synyx.urlaubsverwaltung.legacy.dao;
 
 import java.math.BigDecimal;
 import org.springframework.data.jpa.repository.JpaRepository;

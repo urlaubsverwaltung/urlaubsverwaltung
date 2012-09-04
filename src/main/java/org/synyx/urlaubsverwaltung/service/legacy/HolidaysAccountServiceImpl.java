@@ -10,8 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import org.synyx.urlaubsverwaltung.dao.legacy.HolidayEntitlementDAO;
-import org.synyx.urlaubsverwaltung.dao.legacy.HolidaysAccountDAO;
+import org.synyx.urlaubsverwaltung.legacy.dao.HolidayEntitlementDAO;
+import org.synyx.urlaubsverwaltung.legacy.dao.HolidaysAccountDAO;
 import org.synyx.urlaubsverwaltung.domain.legacy.HolidayEntitlement;
 import org.synyx.urlaubsverwaltung.domain.legacy.HolidaysAccount;
 import org.synyx.urlaubsverwaltung.domain.Person;

@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.service;
 
-import org.synyx.urlaubsverwaltung.service.legacy.ApplicationService;
-import org.synyx.urlaubsverwaltung.service.legacy.HolidaysAccountService;
 import org.joda.time.DateMidnight;
 
 import static org.junit.Assert.assertEquals;
@@ -20,11 +18,9 @@ import org.mockito.stubbing.Answer;
 
 import org.synyx.urlaubsverwaltung.dao.PersonDAO;
 import org.synyx.urlaubsverwaltung.domain.Application;
-import org.synyx.urlaubsverwaltung.domain.legacy.HolidaysAccount;
+import org.synyx.urlaubsverwaltung.domain.Account;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.Role;
-
-import java.math.BigDecimal;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -123,23 +119,33 @@ public class PersonServiceImplTest {
     }
 
 
-    /** Test of getPersonsWithRemainingVacationDays method, of class PersonServiceImpl. */
+    /** Test of getPersonsWithExpiringRemainingVacationDays method, of class PersonServiceImpl. */
     @Test
-    public void testGetPersonsWithRemainingVacationDays() {
+    public void testGetPersonsWithExpiringRemainingVacationDays() {
 
         List<Person> persons = new ArrayList<Person>();
-        Person person = new Person();
-        persons.add(person);
-        person.setFirstName("babbel");
-
-        HolidaysAccount account = mock(HolidaysAccount.class);
+        
+        Person babbel = new Person();
+        babbel.setFirstName("babbel");
+        
+        Person horst = new Person();
+        horst.setFirstName("horscht");
+        
+        persons.add(babbel);
+        persons.add(horst);
+        
+        Account babbelsAccount = mock(Account.class);
+        Account horstsAccount = mock(Account.class);
 
         Mockito.when(personDAO.getPersonsOrderedByLastName()).thenReturn(persons);
-        Mockito.when(accountService.getHolidaysAccount(Mockito.anyInt(), (Person) (Mockito.any()))).thenReturn(account);
-        Mockito.when(account.getRemainingVacationDays()).thenReturn(BigDecimal.valueOf(5.0));
+        Mockito.when(accountService.getHolidaysAccount(DateMidnight.now().getYear(), babbel)).thenReturn(babbelsAccount);
+        Mockito.when(accountService.getHolidaysAccount(DateMidnight.now().getYear(), horst)).thenReturn(horstsAccount);
+        Mockito.when(babbelsAccount.isRemainingVacationDaysExpire()).thenReturn(true);
+        Mockito.when(horstsAccount.isRemainingVacationDaysExpire()).thenReturn(false);
 
-        List<Person> result = instance.getPersonsWithRemainingVacationDays();
+        List<Person> result = instance.getPersonsWithExpiringRemainingVacationDays();
 
+        assertEquals(1, result.size());
         assertEquals(result.get(0).getFirstName(), "babbel");
     }
 
@@ -157,7 +163,7 @@ public class PersonServiceImplTest {
         application.setPerson(person);
         applications.add(application);
 
-        Mockito.when(applicationService.getApplicationsForACertainTime(startDate, endDate)).thenReturn(applications);
+        Mockito.when(applicationService.getAllowedApplicationsForACertainPeriod(startDate, endDate)).thenReturn(applications);
 
         instance.getAllPersonsOnHolidayForThisWeekAndPutItInAnEmail(startDate, endDate);
 

@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.service;
 
-import org.synyx.urlaubsverwaltung.service.legacy.ApplicationService;
-import org.synyx.urlaubsverwaltung.service.legacy.HolidaysAccountService;
 import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +10,6 @@ import org.synyx.urlaubsverwaltung.dao.PersonDAO;
 import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.Role;
-
-import java.math.BigDecimal;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -108,10 +104,10 @@ public class PersonServiceImpl implements PersonService {
 
 
     /**
-     * @see  PersonService#getPersonsWithRemainingVacationDays()
+     * @see  PersonService#getPersonsWithExpiringRemainingVacationDays()
      */
     @Override
-    public List<Person> getPersonsWithRemainingVacationDays() {
+    public List<Person> getPersonsWithExpiringRemainingVacationDays() {
 
         List<Person> personsWithRemainingVacationDays = new ArrayList<Person>();
 
@@ -120,7 +116,7 @@ public class PersonServiceImpl implements PersonService {
         List<Person> persons = getAllPersons();
 
         for (Person person : persons) {
-            if (!accountService.getHolidaysAccount(year, person).getRemainingVacationDays().equals(BigDecimal.ZERO)) {
+            if(accountService.getHolidaysAccount(year, person).isRemainingVacationDaysExpire()) {
                 personsWithRemainingVacationDays.add(person);
             }
         }
@@ -135,7 +131,7 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public void getAllPersonsOnHolidayForThisWeekAndPutItInAnEmail(DateMidnight startDate, DateMidnight endDate) {
 
-        List<Application> applications = applicationService.getApplicationsForACertainTime(startDate, endDate);
+        List<Application> applications = applicationService.getAllowedApplicationsForACertainPeriod(startDate, endDate);
 
         List<Person> persons = new ArrayList<Person>();
 

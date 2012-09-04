@@ -147,12 +147,12 @@ public class CalculationService {
     protected BigDecimal getDaysBetweenTwoMilestones(Person person, DateMidnight firstMilestone, DateMidnight lastMilestone) {
 
         List<Application> applicationsBetweenMilestones =
-                applicationDAO.getApplicationsBetweenTwoMilestones(person, firstMilestone.toDate(), lastMilestone.toDate(), VacationType.HOLIDAY, ApplicationStatus.CANCELLED);
+                applicationDAO.getApplicationsBetweenTwoMilestones(person, firstMilestone.toDate(), lastMilestone.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED);
 
         List<Application> applicationsBetweenMilestonesSpanningFirstMilestone =
-                applicationDAO.getApplicationsBeforeFirstMilestone(person, firstMilestone.toDate(), lastMilestone.toDate(), VacationType.HOLIDAY, ApplicationStatus.CANCELLED);
+                applicationDAO.getApplicationsBeforeFirstMilestone(person, firstMilestone.toDate(), lastMilestone.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED);
         List<Application> applicationsBetweenMilestonesSpanningLastMilestone =
-                applicationDAO.getApplicationsAfterLastMilestone(person, firstMilestone.toDate(), lastMilestone.toDate(), VacationType.HOLIDAY, ApplicationStatus.CANCELLED);
+                applicationDAO.getApplicationsAfterLastMilestone(person, firstMilestone.toDate(), lastMilestone.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED);
 
         BigDecimal days = BigDecimal.ZERO;
 

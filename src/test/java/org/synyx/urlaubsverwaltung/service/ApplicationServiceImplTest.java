@@ -13,6 +13,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.dao.ApplicationDAO;
 import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.ApplicationStatus;
@@ -30,6 +31,7 @@ public class ApplicationServiceImplTest {
     private ApplicationDAO applicationDAO;
     private CryptoService cryptoService;
     private MailService mailService;
+    private OwnCalendarService calendarService;
     private Application application;
     private Person person;
 
@@ -39,8 +41,9 @@ public class ApplicationServiceImplTest {
         applicationDAO = Mockito.mock(ApplicationDAO.class);
         cryptoService = new CryptoService();
         mailService = Mockito.mock(MailService.class);
+        calendarService = new OwnCalendarService();
 
-        instance = new ApplicationServiceImpl(applicationDAO, cryptoService, mailService);
+        instance = new ApplicationServiceImpl(applicationDAO, cryptoService, mailService, calendarService);
 
         // create person that is needed for tests
         person = new Person();

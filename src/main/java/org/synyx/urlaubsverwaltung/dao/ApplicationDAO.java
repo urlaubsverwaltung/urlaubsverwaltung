@@ -19,32 +19,48 @@ public interface ApplicationDAO extends JpaRepository<Application, Integer> {
     @Query("select max(id) from Application x where x.person = ?1 and x.status = ?2")
     int getIdOfLatestApplication(Person person, ApplicationStatus status);
 
+    @Query("select x from Application x "
+    + "where (x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) "
+    + "or (x.startDate < ?1 and x.endDate > ?2) "
+    + "and x.supplementaryApplication = false "
+    + "and x.status = ?3 order by x.startDate")
+    List<Application> getApplicationsForACertainTimeAndState(Date startDate, Date endDate, ApplicationStatus allowedState);
+
+    @Query("select x from Application x where (x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) or (x.startDate < ?1 and x.endDate > ?2) and x.supplementaryApplication = false order by x.startDate")
+    List<Application> getApplicationsForACertainTime(Date startDate, Date endDate);
+
+    @Query("select x from Application x where x.status = ?1 and x.supplementaryApplication = false and ((x.startDate between ?2 and ?3) or (x.endDate between ?2 and ?3)) order by x.startDate")
+    List<Application> getApplicationsByStateAndYear(ApplicationStatus state, Date firstDayOfYear, Date lastDayOfYear);
+
+    @Query("select x from Application x where x.status = ?1 and x.formerlyAllowed = true and x.supplementaryApplication = false and ((x.startDate between ?2 and ?3) or (x.endDate between ?2 and ?3)) order by x.startDate")
+    List<Application> getCancelledApplicationsByYearThatHaveBeenAllowedFormerly(ApplicationStatus state, Date firstDayOfYear, Date lastDayOfYear);
+
     @Query("select x from Application x where x.person = ?1 "
     + "and x.supplementaryApplication = false "
     + "and ((x.startDate between ?2 and ?3) and (x.endDate between ?2 and ?3)) "
     + "and x.vacationType = ?4 "
-    + "and x.status != ?5 "
+    + "and (x.status = ?5 or x.status = ?6) "
     + "order by x.startDate")
     List<Application> getApplicationsBetweenTwoMilestones(Person person,
-            Date firstMilestone, Date lastMilestone, VacationType type, ApplicationStatus state);
+            Date firstMilestone, Date lastMilestone, VacationType type, ApplicationStatus waitingState, ApplicationStatus allowedState);
 
     @Query("select x from Application x where x.person = ?1 "
     + "and x.supplementaryApplication = false "
     + "and ((x.startDate < ?2) and (x.endDate between ?2 and ?3)) "
     + "and x.vacationType = ?4 "
-    + "and x.status != ?5 "
+    + "and (x.status = ?5 or x.status = ?6) "
     + "order by x.startDate")
     List<Application> getApplicationsBeforeFirstMilestone(Person person,
-            Date firstMilestone, Date lastMilestone, VacationType type, ApplicationStatus state);
+            Date firstMilestone, Date lastMilestone, VacationType type, ApplicationStatus cancelledState, ApplicationStatus allowedState);
 
     @Query("select x from Application x where x.person = ?1 "
     + "and x.supplementaryApplication = false "
     + "and ((x.startDate between ?2 and ?3) and (x.endDate > ?3)) "
     + "and x.vacationType = ?4 "
-    + "and x.status != ?5 "
+    + "and (x.status = ?5 or x.status = ?6) "
     + "order by x.startDate")
     List<Application> getApplicationsAfterLastMilestone(Person person,
-            Date firstMilestone, Date lastMilestone, VacationType type, ApplicationStatus state);
+            Date firstMilestone, Date lastMilestone, VacationType type, ApplicationStatus cancelledState, ApplicationStatus allowedState);
 
     // get List<Application> the supplemental applications for the given application resp. its id
     @Query("select x from Application x where x.idOfApplication = ?1 order by x.startDate")

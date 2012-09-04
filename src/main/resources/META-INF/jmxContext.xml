@@ -11,10 +11,10 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
            
-    <bean id="jmxDemo" class="org.synyx.urlaubsverwaltung.jmx.JmxDemo">
-        <constructor-arg ref="applicationService" />
+<!--    <bean id="jmxDemo" class="org.synyx.urlaubsverwaltung.jmx.JmxDemo">
+        <constructor-arg ref="legacyApplicationService" />
         <constructor-arg ref="mailService" />
-    </bean>
+    </bean>-->
 
     <bean id="exporter" class="org.springframework.jmx.export.MBeanExporter" lazy-init="false">
         <property name="autodetect" value="true" />

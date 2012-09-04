@@ -17,8 +17,8 @@ import org.junit.Test;
 
 import org.mockito.Mockito;
 
-import org.synyx.urlaubsverwaltung.dao.legacy.HolidayEntitlementDAO;
-import org.synyx.urlaubsverwaltung.dao.legacy.HolidaysAccountDAO;
+import org.synyx.urlaubsverwaltung.legacy.dao.HolidayEntitlementDAO;
+import org.synyx.urlaubsverwaltung.legacy.dao.HolidaysAccountDAO;
 import org.synyx.urlaubsverwaltung.domain.legacy.HolidayEntitlement;
 import org.synyx.urlaubsverwaltung.domain.legacy.HolidaysAccount;
 import org.synyx.urlaubsverwaltung.domain.Person;
