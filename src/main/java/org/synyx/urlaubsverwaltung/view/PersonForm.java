@@ -1,9 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package org.synyx.urlaubsverwaltung.view;
 
+import org.joda.time.DateMidnight;
+import org.synyx.urlaubsverwaltung.domain.Account;
 import org.synyx.urlaubsverwaltung.domain.Person;
 
 
@@ -17,171 +16,132 @@ public class PersonForm {
     private String firstName;
 
     private String email;
+    
+    private String dayFrom;
+    
+    private String monthFrom;
+
+    private String dayTo;
+    
+    private String monthTo;
 
     private String year;
 
-    private String annualVacationDaysEnt;
+    private String annualVacationDays;
 
-    private String vacationDaysEnt;
+    private String remainingVacationDays;
 
-    private String remainingVacationDaysEnt;
-
-    private String vacationDaysAcc;
-
-    private String remainingVacationDaysAcc;
-
-    private boolean remainingVacationDaysExpireAcc;
+    private boolean remainingVacationDaysExpire;
 
     public PersonForm() {
     }
 
-
-    public PersonForm(Person person, String year, String annualDaysEnt, String daysEnt, String remainingEnt,
-        String daysAcc, String remainingAcc, boolean expiring) {
-
+    public PersonForm(Person person, Account account, String annualVacationDays, String remainingVacationDays, boolean remainingVacationDaysExpire) {
+        
         this.lastName = person.getLastName();
         this.firstName = person.getFirstName();
         this.email = person.getEmail();
-        this.year = year;
-        this.remainingVacationDaysExpireAcc = expiring;
-
-        if (annualDaysEnt != null) {
-            this.annualVacationDaysEnt = annualDaysEnt;
+        
+        if(account != null) {
+        this.dayFrom = String.valueOf(account.getValidFrom().getDayOfMonth());
+        this.monthFrom = String.valueOf(account.getValidFrom().getMonthOfYear());
+        this.dayTo = String.valueOf(account.getValidTo().getDayOfMonth());
+        this.monthTo = String.valueOf(account.getValidTo().getMonthOfYear());
+        this.year = String.valueOf(account.getYear());
+        this.annualVacationDays = annualVacationDays;
+        this.remainingVacationDays = remainingVacationDays;
+        this.remainingVacationDaysExpire = remainingVacationDaysExpire;
+        } else {
+            this.year = String.valueOf(DateMidnight.now().getYear());
         }
+    }
+    
 
-        if (daysEnt != null) {
-            this.vacationDaysEnt = daysEnt;
-        }
+    public String getAnnualVacationDays() {
+        return annualVacationDays;
+    }
 
-        if (remainingEnt != null) {
-            this.remainingVacationDaysEnt = remainingEnt;
-        }
+    public void setAnnualVacationDays(String annualVacationDays) {
+        this.annualVacationDays = annualVacationDays;
+    }
 
-        if (daysAcc != null) {
-            this.vacationDaysAcc = daysAcc;
-        }
+    public String getDayFrom() {
+        return dayFrom;
+    }
 
-        if (remainingAcc != null) {
-            this.remainingVacationDaysAcc = remainingAcc;
-        }
+    public void setDayFrom(String dayFrom) {
+        this.dayFrom = dayFrom;
+    }
+
+    public String getDayTo() {
+        return dayTo;
+    }
+
+    public void setDayTo(String dayTo) {
+        this.dayTo = dayTo;
     }
 
     public String getEmail() {
-
         return email;
     }
 
-
     public void setEmail(String email) {
-
         this.email = email;
     }
 
-
     public String getFirstName() {
-
         return firstName;
     }
 
-
     public void setFirstName(String firstName) {
-
         this.firstName = firstName;
     }
 
-
     public String getLastName() {
-
         return lastName;
     }
 
-
     public void setLastName(String lastName) {
-
         this.lastName = lastName;
     }
 
-
-    public String getRemainingVacationDaysAcc() {
-
-        return remainingVacationDaysAcc;
+    public String getMonthFrom() {
+        return monthFrom;
     }
 
-
-    public void setRemainingVacationDaysAcc(String remainingVacationDaysAcc) {
-
-        this.remainingVacationDaysAcc = remainingVacationDaysAcc;
+    public void setMonthFrom(String monthFrom) {
+        this.monthFrom = monthFrom;
     }
 
-
-    public String getRemainingVacationDaysEnt() {
-
-        return remainingVacationDaysEnt;
+    public String getMonthTo() {
+        return monthTo;
     }
 
-
-    public void setRemainingVacationDaysEnt(String remainingVacationDaysEnt) {
-
-        this.remainingVacationDaysEnt = remainingVacationDaysEnt;
+    public void setMonthTo(String monthTo) {
+        this.monthTo = monthTo;
     }
 
-
-    public boolean isRemainingVacationDaysExpireAcc() {
-
-        return remainingVacationDaysExpireAcc;
+    public String getRemainingVacationDays() {
+        return remainingVacationDays;
     }
 
-
-    public void setRemainingVacationDaysExpireAcc(boolean remainingVacationDaysExpireAcc) {
-
-        this.remainingVacationDaysExpireAcc = remainingVacationDaysExpireAcc;
+    public void setRemainingVacationDays(String remainingVacationDays) {
+        this.remainingVacationDays = remainingVacationDays;
     }
 
-
-    public String getVacationDaysAcc() {
-
-        return vacationDaysAcc;
+    public boolean isRemainingVacationDaysExpire() {
+        return remainingVacationDaysExpire;
     }
 
-
-    public void setVacationDaysAcc(String vacationDaysAcc) {
-
-        this.vacationDaysAcc = vacationDaysAcc;
+    public void setRemainingVacationDaysExpire(boolean remainingVacationDaysExpire) {
+        this.remainingVacationDaysExpire = remainingVacationDaysExpire;
     }
-
-
-    public String getVacationDaysEnt() {
-
-        return vacationDaysEnt;
-    }
-
-
-    public void setVacationDaysEnt(String vacationDaysEnt) {
-
-        this.vacationDaysEnt = vacationDaysEnt;
-    }
-
-
-    public String getAnnualVacationDaysEnt() {
-
-        return annualVacationDaysEnt;
-    }
-
-
-    public void setAnnualVacationDaysEnt(String annualVacationDaysEnt) {
-
-        this.annualVacationDaysEnt = annualVacationDaysEnt;
-    }
-
 
     public String getYear() {
-
         return year;
     }
 
-
     public void setYear(String year) {
-
         this.year = year;
     }
 

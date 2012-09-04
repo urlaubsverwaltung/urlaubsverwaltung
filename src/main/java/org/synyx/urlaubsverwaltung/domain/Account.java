@@ -44,6 +44,7 @@ public class Account extends AbstractPersistable<Integer> {
         this.person = person;
         this.validFrom = validFrom;
         this.validTo = validTo;
+        this.year = new DateTime(this.validFrom).toDateMidnight().getYear();
         this.annualVacationDays = annualVacationDays;
         this.remainingVacationDays = remainingVacationDays;
         this.remainingVacationDaysExpire = remainingVacationDaysExpire;
@@ -70,7 +71,7 @@ public class Account extends AbstractPersistable<Integer> {
         Integer referenceValue = Integer.parseInt(bdString);
         BigDecimal days;
 
-        // please notice: d.intValue() is an Integer, e.g. 11
+        // please notice: bd.intValue() is an Integer, e.g. 11
         int bdIntValue = bd.intValue();
 
         if (referenceValue > 0 && referenceValue < 30) {
@@ -174,10 +175,7 @@ public class Account extends AbstractPersistable<Integer> {
     }
 
     public int getYear() {
-        return year;
+        return new DateTime(this.validFrom).toDateMidnight().getYear();
     }
 
-    public void setYear(int year) {
-        this.year = year;
-    }
 }

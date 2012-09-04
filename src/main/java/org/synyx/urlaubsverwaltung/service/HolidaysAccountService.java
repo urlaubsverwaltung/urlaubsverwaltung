@@ -16,7 +16,7 @@ import org.synyx.urlaubsverwaltung.domain.Person;
  */
 public interface HolidaysAccountService {
  
-    List<Account> getHolidaysAccounts(int year, Person person);
+    Account getHolidaysAccount(int year, Person person);
     
     void createHolidaysAccount(Person person, DateMidnight validFrom, DateMidnight validTo, BigDecimal days, BigDecimal remaining, boolean remainingDaysExpire);
     

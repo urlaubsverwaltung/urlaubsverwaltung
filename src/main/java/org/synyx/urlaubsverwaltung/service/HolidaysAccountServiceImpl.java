@@ -17,12 +17,17 @@ import org.synyx.urlaubsverwaltung.domain.Person;
 @Transactional
 public class HolidaysAccountServiceImpl implements HolidaysAccountService {
 
-    @Autowired
+//    @Autowired
     private AccountDAO accountDAO;
     
+    @Autowired
+    public HolidaysAccountServiceImpl(AccountDAO accountDAO) {
+        this.accountDAO = accountDAO;
+    }
+    
     @Override
-    public List<Account> getHolidaysAccounts(int year, Person person) {
-        return accountDAO.getHolidaysAccountsByYearAndPerson(year, person);
+    public Account getHolidaysAccount(int year, Person person) {
+        return accountDAO.getHolidaysAccountByYearAndPerson(year, person);
     }
     
     @Override
@@ -39,7 +44,6 @@ public class HolidaysAccountServiceImpl implements HolidaysAccountService {
         
         account.setValidFrom(validFrom);
         account.setValidTo(validTo);
-        account.setYear(validFrom.getYear());
         account.setAnnualVacationDays(days);
         account.setRemainingVacationDays(remaining);
         account.setRemainingVacationDaysExpire(remainingDaysExpire);

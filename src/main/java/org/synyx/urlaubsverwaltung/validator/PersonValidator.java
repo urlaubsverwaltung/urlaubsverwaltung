@@ -1,7 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package org.synyx.urlaubsverwaltung.validator;
 
 import org.apache.log4j.Logger;
@@ -208,9 +205,9 @@ public class PersonValidator implements Validator {
         String propValue = customProperties.getProperty(MAX_DAYS);
         double max = Double.parseDouble(propValue);
 
-        if (StringUtils.hasText(form.getAnnualVacationDaysEnt())) {
+        if (StringUtils.hasText(form.getAnnualVacationDays())) {
             try {
-                validateNumberOfDays(NumberUtil.parseNumber(form.getAnnualVacationDaysEnt(), locale),
+                validateNumberOfDays(NumberUtil.parseNumber(form.getAnnualVacationDays(), locale),
                     ANNUAL_VACATION_ENT, max, errors);
             } catch (NumberFormatException ex) {
                 errors.rejectValue(ANNUAL_VACATION_ENT, ERROR_ENTRY);
@@ -235,34 +232,6 @@ public class PersonValidator implements Validator {
 
 
     /**
-     * This method gets the property value for maximal number of vacation days and notifies Tool-Manager if necessary
-     * (false property value) or validate the number of entitlement's vacation days with method validateNumberOfDays.
-     *
-     * @param  form
-     * @param  errors
-     * @param  locale
-     */
-    public void validateEntitlementVacationDays(PersonForm form, Errors errors, Locale locale) {
-
-        // only achieved if invalid property values are precluded by method validateProperties
-        String propValue = customProperties.getProperty(MAX_DAYS);
-        double max = Double.parseDouble(propValue);
-
-        if (StringUtils.hasText(form.getVacationDaysEnt())) {
-            try {
-                // field entitlement's vacation days
-                validateNumberOfDays(NumberUtil.parseNumber(form.getVacationDaysEnt(), locale), VACATION_DAYS_ENT, max,
-                    errors);
-            } catch (NumberFormatException ex) {
-                errors.rejectValue(VACATION_DAYS_ENT, ERROR_ENTRY);
-            }
-        } else {
-            errors.rejectValue(VACATION_DAYS_ENT, MANDATORY_FIELD);
-        }
-    }
-
-
-    /**
      * This method gets the property value for maximal number of days and notifies Tool-Manager if necessary (false
      * property value) or validate the number of entitlement's remaining vacation days with method validateNumberOfDays.
      *
@@ -270,16 +239,16 @@ public class PersonValidator implements Validator {
      * @param  errors
      * @param  locale
      */
-    public void validateEntitlementRemainingVacationDays(PersonForm form, Errors errors, Locale locale) {
+    public void validateRemainingVacationDays(PersonForm form, Errors errors, Locale locale) {
 
         // only achieved if invalid property values are precluded by method validateProperties
         String propValue = customProperties.getProperty(MAX_DAYS);
         double max = Double.parseDouble(propValue);
 
-        if (StringUtils.hasText(form.getRemainingVacationDaysEnt())) {
+        if (StringUtils.hasText(form.getRemainingVacationDays())) {
             try {
                 // field entitlement's remaining vacation days
-                validateNumberOfDays(NumberUtil.parseNumber(form.getRemainingVacationDaysEnt(), locale),
+                validateNumberOfDays(NumberUtil.parseNumber(form.getRemainingVacationDays(), locale),
                     REMAINING_VACATION_DAYS_ENT, max, errors);
             } catch (NumberFormatException ex) {
                 errors.rejectValue(REMAINING_VACATION_DAYS_ENT, ERROR_ENTRY);
@@ -315,84 +284,6 @@ public class PersonValidator implements Validator {
             // is number of days unrealistic?
             if (days.compareTo(BigDecimal.valueOf(maximumDays)) == 1) {
                 errors.rejectValue(field, ERROR_ENTRY);
-            }
-        }
-    }
-
-
-    /**
-     * This method validates if the holidays account's fields are filled and if they are filled, it checks if the number
-     * of the holidays account's days are smaller than or equals holiday entitlement days
-     *
-     * @param  form
-     * @param  errors
-     */
-    public void validateAccountDays(PersonForm form, Errors errors, Locale locale) {
-
-        if (!StringUtils.hasText(form.getRemainingVacationDaysAcc())) {
-            if (errors.getFieldErrors(REMAINING_VACATION_DAYS_ACC).isEmpty()) {
-                errors.rejectValue(REMAINING_VACATION_DAYS_ACC, MANDATORY_FIELD);
-            }
-        }
-
-        if (!StringUtils.hasText(form.getVacationDaysAcc())) {
-            if (errors.getFieldErrors(VACATION_DAYS_ACC).isEmpty()) {
-                errors.rejectValue(VACATION_DAYS_ACC, MANDATORY_FIELD);
-            }
-        }
-
-        if (StringUtils.hasText(form.getVacationDaysAcc())) {
-            try {
-                BigDecimal vacDaysAcc = NumberUtil.parseNumber(form.getVacationDaysAcc(), locale);
-
-                // is number of days < 0 ?
-                if (vacDaysAcc.compareTo(BigDecimal.ZERO) == -1) {
-                    errors.rejectValue(VACATION_DAYS_ACC, ERROR_ENTRY);
-                }
-            } catch (NumberFormatException ex) {
-                errors.rejectValue(VACATION_DAYS_ACC, ERROR_ENTRY);
-            }
-        }
-
-        if (StringUtils.hasText(form.getRemainingVacationDaysAcc())) {
-            try {
-                BigDecimal vacRemDaysAcc = NumberUtil.parseNumber(form.getRemainingVacationDaysAcc(), locale);
-
-                // is number of days < 0 ?
-                if (vacRemDaysAcc.compareTo(BigDecimal.ZERO) == -1) {
-                    errors.rejectValue(REMAINING_VACATION_DAYS_ACC, ERROR_ENTRY);
-                }
-            } catch (NumberFormatException ex) {
-                errors.rejectValue(REMAINING_VACATION_DAYS_ACC, ERROR_ENTRY);
-            }
-        }
-
-        if (StringUtils.hasText(form.getVacationDaysEnt()) && StringUtils.hasText(form.getVacationDaysAcc())) {
-            try {
-                BigDecimal vacDaysAcc = NumberUtil.parseNumber(form.getVacationDaysAcc(), locale);
-                BigDecimal vacDaysEnt = NumberUtil.parseNumber(form.getVacationDaysEnt(), locale);
-
-                // check if number of account's days is greater than number of entitlement's days
-                if (vacDaysAcc.compareTo(vacDaysEnt) == 1) {
-                    errors.rejectValue(VACATION_DAYS_ACC, ERROR_NUMBER);
-                }
-            } catch (NumberFormatException ex) {
-                // is catched above
-            }
-        }
-
-        if (StringUtils.hasText(form.getRemainingVacationDaysEnt())
-                && StringUtils.hasText(form.getRemainingVacationDaysAcc())) {
-            try {
-                BigDecimal vacRemDaysAcc = NumberUtil.parseNumber(form.getRemainingVacationDaysAcc(), locale);
-                BigDecimal vacRemDaysEnt = NumberUtil.parseNumber(form.getRemainingVacationDaysEnt(), locale);
-
-                // account days must not be greater than entitlement days
-                if (vacRemDaysAcc.compareTo(vacRemDaysEnt) == 1) {
-                    errors.rejectValue(REMAINING_VACATION_DAYS_ACC, ERROR_NUMBER);
-                }
-            } catch (NumberFormatException ex) {
-                // is catched above
             }
         }
     }

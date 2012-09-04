@@ -403,107 +403,6 @@ public class PersonValidatorTest {
     }
 
 
-    /** Test of validateAccountDays method, of class PersonValidator. */
-    @Test
-    public void testValidateAccountDays() {
-
-        String vacDaysAcc;
-        String vacRemDaysAcc;
-
-        String vacDaysEnt;
-        String vacRemDaysEnt;
-
-        // fields are null
-
-        vacRemDaysAcc = null;
-        form.setRemainingVacationDaysAcc(vacRemDaysAcc);
-        instance.validateAccountDays(form, errors, Locale.GERMAN);
-        Mockito.verify(errors).rejectValue("remainingVacationDaysAcc", "error.mandatory.field");
-        Mockito.reset(errors);
-
-        vacDaysAcc = null;
-        form.setVacationDaysAcc(vacDaysAcc);
-        instance.validateAccountDays(form, errors, Locale.GERMAN);
-        Mockito.verify(errors).rejectValue("vacationDaysAcc", "error.mandatory.field");
-        Mockito.reset(errors);
-
-        // check difference between holidays account's days and holiday entitlement's days
-        vacRemDaysAcc = NumberUtil.formatNumber(BigDecimal.TEN, Locale.GERMAN);
-        form.setRemainingVacationDaysAcc(vacRemDaysAcc); // may not be null for following tests, if in some
-                                                         // cases zero interactions with errors expected/wanted
-
-        // number of holidays account's vacation days is greater than number of holiday entitlement's vacation days
-        vacDaysAcc = NumberUtil.formatNumber(BigDecimal.valueOf(24), Locale.GERMAN);
-        form.setVacationDaysAcc(vacDaysAcc);
-        vacDaysEnt = NumberUtil.formatNumber(BigDecimal.valueOf(19), Locale.GERMAN);
-        form.setVacationDaysEnt(vacDaysEnt);
-        instance.validateAccountDays(form, errors, Locale.GERMAN);
-        Mockito.verify(errors).rejectValue("vacationDaysAcc", "error.number");
-        Mockito.reset(errors);
-
-        // number of holidays account's vacation days equals number of holiday entitlement's vacation days
-        vacDaysAcc = NumberUtil.formatNumber(BigDecimal.valueOf(19), Locale.GERMAN);
-        form.setVacationDaysAcc(vacDaysAcc);
-        vacDaysEnt = NumberUtil.formatNumber(BigDecimal.valueOf(19), Locale.GERMAN);
-        form.setVacationDaysEnt(vacDaysEnt);
-        instance.validateAccountDays(form, errors, Locale.GERMAN);
-        Mockito.verifyZeroInteractions(errors);
-        Mockito.reset(errors);
-
-        // number of holidays account's vacation days is smaller than number of holiday entitlement's vacation days
-        vacDaysAcc = NumberUtil.formatNumber(BigDecimal.valueOf(18), Locale.GERMAN);
-        form.setVacationDaysAcc(vacDaysAcc);
-        vacDaysEnt = NumberUtil.formatNumber(BigDecimal.valueOf(19), Locale.GERMAN);
-        form.setVacationDaysEnt(vacDaysEnt);
-        instance.validateAccountDays(form, errors, Locale.GERMAN);
-        Mockito.verifyZeroInteractions(errors);
-        Mockito.reset(errors);
-
-        // number of holidays account's remaining vacation days is greater than number of holiday entitlement's
-        // remaining vacation days
-        vacRemDaysAcc = NumberUtil.formatNumber(BigDecimal.valueOf(25), Locale.GERMAN);
-        form.setRemainingVacationDaysAcc(vacRemDaysAcc);
-        vacRemDaysEnt = NumberUtil.formatNumber(BigDecimal.valueOf(20), Locale.GERMAN);
-        form.setRemainingVacationDaysEnt(vacRemDaysEnt);
-        instance.validateAccountDays(form, errors, Locale.GERMAN);
-        Mockito.verify(errors).rejectValue("remainingVacationDaysAcc", "error.number");
-        Mockito.reset(errors);
-
-        // number of holidays account's remaining vacation days is equals number of holiday entitlement's remaining
-        // vacation days
-        vacRemDaysAcc = NumberUtil.formatNumber(BigDecimal.valueOf(25), Locale.GERMAN);
-        form.setRemainingVacationDaysAcc(vacRemDaysAcc);
-        vacRemDaysEnt = NumberUtil.formatNumber(BigDecimal.valueOf(25), Locale.GERMAN);
-        form.setRemainingVacationDaysEnt(vacRemDaysEnt);
-        instance.validateAccountDays(form, errors, Locale.GERMAN);
-        Mockito.verifyZeroInteractions(errors);
-        Mockito.reset(errors);
-
-        // number of holidays account's remaining vacation days is smaller than number of holiday entitlement's
-        // remaining vacation days
-        vacRemDaysAcc = NumberUtil.formatNumber(BigDecimal.valueOf(25), Locale.GERMAN);
-        form.setRemainingVacationDaysAcc(vacRemDaysAcc);
-        vacRemDaysEnt = NumberUtil.formatNumber(BigDecimal.valueOf(28), Locale.GERMAN);
-        form.setRemainingVacationDaysEnt(vacRemDaysEnt);
-        instance.validateAccountDays(form, errors, Locale.GERMAN);
-        Mockito.verifyZeroInteractions(errors);
-        Mockito.reset(errors);
-
-        // negative values
-        vacRemDaysAcc = NumberUtil.formatNumber(BigDecimal.valueOf(-1), Locale.GERMAN);
-        form.setRemainingVacationDaysAcc(vacRemDaysAcc);
-        instance.validateAccountDays(form, errors, Locale.GERMAN);
-        Mockito.verify(errors).rejectValue("remainingVacationDaysAcc", "error.entry");
-        Mockito.reset(errors);
-
-        vacDaysAcc = NumberUtil.formatNumber(BigDecimal.valueOf(-1), Locale.GERMAN);
-        form.setVacationDaysAcc(vacDaysAcc);
-        instance.validateAccountDays(form, errors, Locale.GERMAN);
-        Mockito.verify(errors).rejectValue("vacationDaysAcc", "error.entry");
-        Mockito.reset(errors);
-    }
-
-
     /** Test of validateProperties method, of class PersonValidator. */
     @Test
     public void testValidateProperties() {
@@ -521,82 +420,39 @@ public class PersonValidatorTest {
         // fields are null or empty
 
         annualVac = null;
-        form.setAnnualVacationDaysEnt(annualVac);
+        form.setAnnualVacationDays(annualVac);
         instance.validateAnnualVacation(form, errors, Locale.GERMAN);
         Mockito.verify(errors).rejectValue("annualVacationDaysEnt", "error.mandatory.field");
         Mockito.reset(errors);
 
         annualVac = "";
-        form.setAnnualVacationDaysEnt(annualVac);
+        form.setAnnualVacationDays(annualVac);
         instance.validateAnnualVacation(form, errors, Locale.GERMAN);
         Mockito.verify(errors).rejectValue("annualVacationDaysEnt", "error.mandatory.field");
         Mockito.reset(errors);
 
         // invalid values
         annualVac = "a";
-        form.setAnnualVacationDaysEnt(annualVac);
+        form.setAnnualVacationDays(annualVac);
         instance.validateAnnualVacation(form, errors, Locale.GERMAN);
         Mockito.verify(errors).rejectValue("annualVacationDaysEnt", "error.entry");
         Mockito.reset(errors);
 
         // not realistic numbers
         annualVac = "367";
-        form.setAnnualVacationDaysEnt(annualVac);
+        form.setAnnualVacationDays(annualVac);
         instance.validateAnnualVacation(form, errors, Locale.GERMAN);
         Mockito.verify(errors).rejectValue("annualVacationDaysEnt", "error.entry");
         Mockito.reset(errors);
 
         // everything is alright
         annualVac = "28";
-        form.setAnnualVacationDaysEnt(annualVac);
+        form.setAnnualVacationDays(annualVac);
         instance.validateAnnualVacation(form, errors, Locale.GERMAN);
         Mockito.verifyZeroInteractions(errors);
         Mockito.reset(errors);
     }
 
-
-    /** Test of validateEntitlementVacationDays method, of class PersonValidator. */
-    @Test
-    public void testValidateEntitlementVacationDays() {
-
-        String vacDaysEnt;
-
-        // null or empty
-
-        vacDaysEnt = null;
-        form.setVacationDaysEnt(vacDaysEnt);
-        instance.validateEntitlementVacationDays(form, errors, Locale.GERMAN);
-        Mockito.verify(errors).rejectValue("vacationDaysEnt", "error.mandatory.field");
-        Mockito.reset(errors);
-
-        vacDaysEnt = "";
-        form.setVacationDaysEnt(vacDaysEnt);
-        instance.validateEntitlementVacationDays(form, errors, Locale.GERMAN);
-        Mockito.verify(errors).rejectValue("vacationDaysEnt", "error.mandatory.field");
-        Mockito.reset(errors);
-
-        // invalid values
-        vacDaysEnt = "a";
-        form.setVacationDaysEnt(vacDaysEnt);
-        instance.validateEntitlementVacationDays(form, errors, Locale.GERMAN);
-        Mockito.verify(errors).rejectValue("vacationDaysEnt", "error.entry");
-        Mockito.reset(errors);
-
-        // not realistic numbers
-        vacDaysEnt = "367";
-        form.setVacationDaysEnt(vacDaysEnt);
-        instance.validateEntitlementVacationDays(form, errors, Locale.GERMAN);
-        Mockito.verify(errors).rejectValue("vacationDaysEnt", "error.entry");
-        Mockito.reset(errors);
-
-        // everything is alright
-        vacDaysEnt = "28";
-
-        form.setVacationDaysEnt(vacDaysEnt);
-        instance.validateEntitlementVacationDays(form, errors, Locale.GERMAN);
-        Mockito.verifyZeroInteractions(errors);
-        Mockito.reset(errors);
-    }
 
 
     /** Test of validateEntitlementRemainingVacationDays method, of class PersonValidator. */
@@ -607,35 +463,35 @@ public class PersonValidatorTest {
 
         // null or empty
         vacRemDaysEnt = null;
-        form.setRemainingVacationDaysEnt(vacRemDaysEnt);
-        instance.validateEntitlementRemainingVacationDays(form, errors, Locale.GERMAN);
+        form.setRemainingVacationDays(vacRemDaysEnt);
+        instance.validateRemainingVacationDays(form, errors, Locale.GERMAN);
         Mockito.verify(errors).rejectValue("remainingVacationDaysEnt", "error.mandatory.field");
         Mockito.reset(errors);
 
         vacRemDaysEnt = "";
-        form.setRemainingVacationDaysEnt(vacRemDaysEnt);
-        instance.validateEntitlementRemainingVacationDays(form, errors, Locale.GERMAN);
+        form.setRemainingVacationDays(vacRemDaysEnt);
+        instance.validateRemainingVacationDays(form, errors, Locale.GERMAN);
         Mockito.verify(errors).rejectValue("remainingVacationDaysEnt", "error.mandatory.field");
         Mockito.reset(errors);
 
         // invalid values
         vacRemDaysEnt = "a";
-        form.setRemainingVacationDaysEnt(vacRemDaysEnt);
-        instance.validateEntitlementRemainingVacationDays(form, errors, Locale.GERMAN);
+        form.setRemainingVacationDays(vacRemDaysEnt);
+        instance.validateRemainingVacationDays(form, errors, Locale.GERMAN);
         Mockito.verify(errors).rejectValue("remainingVacationDaysEnt", "error.entry");
         Mockito.reset(errors);
 
         // not realistic numbers
         vacRemDaysEnt = "367";
-        form.setRemainingVacationDaysEnt(vacRemDaysEnt);
-        instance.validateEntitlementRemainingVacationDays(form, errors, Locale.GERMAN);
+        form.setRemainingVacationDays(vacRemDaysEnt);
+        instance.validateRemainingVacationDays(form, errors, Locale.GERMAN);
         Mockito.verify(errors).rejectValue("remainingVacationDaysEnt", "error.entry");
         Mockito.reset(errors);
 
         // everything is alright
         vacRemDaysEnt = "5";
-        form.setRemainingVacationDaysEnt(vacRemDaysEnt);
-        instance.validateEntitlementRemainingVacationDays(form, errors, Locale.GERMAN);
+        form.setRemainingVacationDays(vacRemDaysEnt);
+        instance.validateRemainingVacationDays(form, errors, Locale.GERMAN);
         Mockito.verifyZeroInteractions(errors);
         Mockito.reset(errors);
     }

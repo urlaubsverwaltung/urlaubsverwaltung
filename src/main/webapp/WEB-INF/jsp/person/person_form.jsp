@@ -93,32 +93,95 @@
                                 </th>
                                 <td>
                                     <form:select path="year" size="1" onchange="change(this.options[this.selectedIndex].value);">
-                                <form:option value="${currentYear - 1}"><c:out value="${currentYear - 1}" /></form:option>
-                                <form:option value="${currentYear}"><c:out value="${currentYear}" /></form:option>
-                                <form:option value="${currentYear + 1}"><c:out value="${currentYear + 1}" /></form:option>
-                                <form:option value="${currentYear + 2}"><c:out value="${currentYear + 2}" /></form:option>
-                                </form:select>
-                            </td>
-                            <td>
-                                <form:errors path="year" cssClass="error" />
-                            </td>
+                                        <form:option value="${currentYear - 1}"><c:out value="${currentYear - 1}" /></form:option>
+                                        <form:option value="${currentYear}"><c:out value="${currentYear}" /></form:option>
+                                        <form:option value="${currentYear + 1}"><c:out value="${currentYear + 1}" /></form:option>
+                                        <form:option value="${currentYear + 2}"><c:out value="${currentYear + 2}" /></form:option>
+                                    </form:select>
+                                </td>
+                                <td>
+                                    <form:errors path="year" cssClass="error" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td>
+                                    <spring:message code='by' />
+                                    <form:select path="dayFrom" size="1">
+                                        <form:option value="0" selected="selected" disabled="disabled"><spring:message code='person.edit.day' /></form:option>
+                                        <script type="text/javascript">
+                                            var i = 1;
+                                            for(i = 1; i < 32; i++) {
+                                                document.write('<form:option value="' + i + '">' + i + '</form:option>');
+                                            }
+                                        </script>
+                                    </form:select>
+                                    <form:select path="monthFrom" size="1">
+                                        <form:option value="0" selected="selected" disabled="disabled"><spring:message code='person.edit.month' /></form:option>
+                                        <script type="text/javascript">
+                                            var regional = "${pageContext.request.locale.language}";
+                                            var monthNames;
+                
+                                            if(regional == "en") {
+                                                monthNames = ['January','February','March','April','May','June',
+                                                    'July','August','September','October','November','December'];
+                                            } else {
+                                                // default = german
+                                                monthNames = ['Januar','Februar','März','April','Mai','Juni',
+                                                    'Juli','August','September','Oktober','November','Dezember'];
+                                            }
+                
+                                            var i = 1;
+                                            for(i = 1; i < 13; i++) {
+                                                document.write('<form:option value="' + i + '">' + monthNames[i-1] + '</form:option>');
+                                            }
+                                            </script>
+                                    </form:select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td>
+                                    <spring:message code='to' />
+                                    <form:select path="dayTo" size="1">
+                                        <form:option value="0" selected="selected" disabled="disabled">Tag</form:option>
+                                        <script type="text/javascript">
+                                            var i = 1;
+                                            for(i     = 1; i < 32; i++) {
+                                                document.write('<form:option value="' + i + '">' + i + '</form:option>');
+                                            }
+                                            </script>
+                                    </form:select>
+                                    <form:select path="monthTo" size="1">
+                                        <form:option value="0" selected="selected" disabled="disabled">Monat</form:option>
+                                        <script type="text/javascript">
+                                            var regional = "${pageContext.request.locale.language}";
+                                            var monthNames;
+                
+                                            if(regional == "en") {
+                                                monthNames = ['January','February','March','April','May','June',
+                                                    'July','August','September','October','November','December'];
+                                            } else {
+                                                // default = german
+                                                monthNames = ['Januar','Februar','März','April','Mai','Juni',
+                                                    'Juli','August','September','Oktober','November','Dezember'];
+                                            }
+                
+                                            var i = 1;
+                                            for(i = 1; i < 13; i++) {
+                                                document.write('<form:option value="' + i + '">' + monthNames[i-1] + '</form:option>');
+                                            }
+                                            </script>
+                                    </form:select>
+                                </td>
                             </tr>
                             <tr>
                                 <td><spring:message code="person.annual.vacation" />:</td>
                                 <td>
-                                    <form:input path="annualVacationDaysEnt" cssErrorClass="error" />
+                                    <form:input path="annualVacationDays" cssErrorClass="error" />
                                 </td>
                                 <td>
-                                    <form:errors path="annualVacationDaysEnt" cssClass="error" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><spring:message code="person.vac" />:</td>
-                                <td>
-                                    <form:input path="vacationDaysEnt" cssErrorClass="error" />
-                                </td>
-                                <td>
-                                    <form:errors path="vacationDaysEnt" cssClass="error" />
+                                    <form:errors path="annualVacationDays" cssClass="error" />
                                 </td>
                             </tr>
                             <tr>   
@@ -126,50 +189,23 @@
                                     <spring:message code="remaining" />&nbsp;<spring:message code="last.year" />:
                                 </td>
                                 <td>
-                                    <form:input path="remainingVacationDaysEnt" cssErrorClass="error" />
+                                    <form:input path="remainingVacationDays" cssErrorClass="error" />
                                 </td>
                                 <td>
-                                    <form:errors path="remainingVacationDaysEnt" cssClass="error" /> 
+                                    <form:errors path="remainingVacationDays" cssClass="error" /> 
                                 </td>
                             </tr>
                             <tr>
                                 <td colspan="2">&nbsp;</td>
                             </tr>
                             <tr>
-                                <th>
-                                    <spring:message code='person.account' />
-                                </th>
-                            </tr>    
-                            <tr>
-                                <td>
-                                    <spring:message code='overview.left' />:
-                                </td>
-                                <td>
-                                    <form:input path="vacationDaysAcc" cssErrorClass="error" />
-                                </td>
-                                <td>
-                                    <form:errors path="vacationDaysAcc" cssClass="error" /> 
-                                </td>    
-                            </tr>  
-                            <tr>
-                                <td>
-                                    <spring:message code='overview.left.remaining' />:
-                                </td>
-                                <td>
-                                    <form:input path="remainingVacationDaysAcc" cssErrorClass="error" />
-                                </td>
-                                <td>
-                                    <form:errors path="remainingVacationDaysAcc" cssClass="error" /> 
-                                </td> 
-                            </tr>
-                            <tr>
                                 <td>
                                     <spring:message code='person.expire' />
                                 </td>
                                 <td>
-                                    <spring:message code='yes' /> <form:radiobutton path="remainingVacationDaysExpireAcc" value="true"  />
+                                    <spring:message code='yes' /> <form:radiobutton path="remainingVacationDaysExpire" value="true"  />
                                     &nbsp;&nbsp;&nbsp;  
-                                    <spring:message code='no' /> <form:radiobutton path="remainingVacationDaysExpireAcc" value="false" />
+                                    <spring:message code='no' /> <form:radiobutton path="remainingVacationDaysExpire" value="false" />
                                 </td>
                             </tr>
                             <tr>
@@ -177,22 +213,22 @@
                             </tr>
                         </table>
 
-                                <br />
-                                    <input type="submit" class="save" name="<spring:message code="save" />" value="<spring:message code="save" />" />
-                                    <a class="button back" href="${formUrlPrefix}/staff"><spring:message code='cancel' /></a>
-                                    <input type="button" onclick="$('#activ-action').show();"
-                                           <c:choose>
-                                               <c:when test="${person.active == true}">
-                                                   name="<spring:message code='person.deactivate' />"
-                                                   value="<spring:message code='person.deactivate' />"
-                                                   class="deactivate"
-                                               </c:when>
-                                               <c:otherwise>
-                                                   name="<spring:message code='person.activate' />"
-                                                   value="<spring:message code='person.activate' />"
-                                               </c:otherwise>
-                                           </c:choose>    
-                                           />
+                        <br />
+                        <input type="submit" class="save" name="<spring:message code="save" />" value="<spring:message code="save" />" />
+                        <a class="button back" href="${formUrlPrefix}/staff"><spring:message code='cancel' /></a>
+                        <input type="button" onclick="$('#activ-action').show();"
+                               <c:choose>
+                                   <c:when test="${person.active == true}">
+                                       name="<spring:message code='person.deactivate' />"
+                                       value="<spring:message code='person.deactivate' />"
+                                       class="deactivate"
+                                   </c:when>
+                                   <c:otherwise>
+                                       name="<spring:message code='person.activate' />"
+                                       value="<spring:message code='person.activate' />"
+                                   </c:otherwise>
+                               </c:choose>    
+                               />
 
 
                     </form:form>
@@ -226,7 +262,7 @@
 
                 </div>
 
-                    
+
             </div> 
         </div>    
 

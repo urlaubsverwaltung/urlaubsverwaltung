@@ -44,6 +44,8 @@
 
 <bean id="accountService" class="org.synyx.urlaubsverwaltung.service.legacy.HolidaysAccountServiceImpl" />
 
+<bean id="newAccountService" class="org.synyx.urlaubsverwaltung.service.HolidaysAccountServiceImpl" />
+
 <bean id="personService" class="org.synyx.urlaubsverwaltung.service.PersonServiceImpl">
     <constructor-arg ref="applicationService" />
     <constructor-arg ref="accountService" />
