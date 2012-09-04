@@ -33,8 +33,6 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import org.synyx.urlaubsverwaltung.service.ApplicationService;
-import org.synyx.urlaubsverwaltung.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.service.CryptoService;
 import org.synyx.urlaubsverwaltung.service.CryptoService;
 import org.synyx.urlaubsverwaltung.service.MailService;

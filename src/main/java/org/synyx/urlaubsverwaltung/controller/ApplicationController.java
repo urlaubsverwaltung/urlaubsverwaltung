@@ -34,7 +34,7 @@ import org.synyx.urlaubsverwaltung.domain.legacy.HolidaysAccount;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.Role;
 import org.synyx.urlaubsverwaltung.domain.VacationType;
-import org.synyx.urlaubsverwaltung.service.ApplicationService;
+import org.synyx.urlaubsverwaltung.service.legacy.ApplicationService;
 import org.synyx.urlaubsverwaltung.service.CommentService;
 import org.synyx.urlaubsverwaltung.service.legacy.HolidaysAccountService;
 import org.synyx.urlaubsverwaltung.service.MailService;

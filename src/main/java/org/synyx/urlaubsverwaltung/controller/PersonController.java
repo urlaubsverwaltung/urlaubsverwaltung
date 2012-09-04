@@ -23,7 +23,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.Role;
-import org.synyx.urlaubsverwaltung.service.ApplicationService;
+import org.synyx.urlaubsverwaltung.service.legacy.ApplicationService;
 import org.synyx.urlaubsverwaltung.service.HolidaysAccountService;
 import org.synyx.urlaubsverwaltung.service.PersonService;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
