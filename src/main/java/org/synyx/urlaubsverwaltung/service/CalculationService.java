@@ -1,4 +1,3 @@
-
 package org.synyx.urlaubsverwaltung.service;
 
 import java.math.BigDecimal;
@@ -47,14 +46,14 @@ public class CalculationService {
             Person person = application.getPerson();
             int startYear = application.getStartDate().getYear();
             int endYear = application.getEndDate().getYear();
-            
+
             Application tmp1 = new Application();
             tmp1.setStartDate(application.getStartDate());
             tmp1.setEndDate(new DateMidnight(startYear, DateTimeConstants.DECEMBER, 31));
             tmp1.setPerson(person);
             tmp1.setHowLong(application.getHowLong());
             tmp1.setDays(calendarService.getVacationDays(tmp1, application.getStartDate(), new DateMidnight(startYear, DateTimeConstants.DECEMBER, 31)));
-            
+
             Application tmp2 = new Application();
             tmp2.setStartDate(new DateMidnight(endYear, DateTimeConstants.JANUARY, 1));
             tmp2.setEndDate(application.getEndDate());
@@ -68,7 +67,7 @@ public class CalculationService {
                 return checkIfThereAreEnoughVacationDays(tmp2);
             } else {
                 // this is the normal case: someone applies for leave for the next year
-                if(checkIfThereAreEnoughVacationDays(tmp1) && checkIfThereAreEnoughVacationDays(tmp2)) {
+                if (checkIfThereAreEnoughVacationDays(tmp1) && checkIfThereAreEnoughVacationDays(tmp2)) {
                     return true;
                 }
             }
@@ -91,7 +90,7 @@ public class CalculationService {
         DateMidnight firstOfApril = new DateMidnight(year, DateTimeConstants.APRIL, 1);
         DateMidnight lastOfDecember = new DateMidnight(year, DateTimeConstants.DECEMBER, 31);
 
-        Account account = accountService.getHolidaysAccount(year, person);
+        Account account = getOrCreateNewAccount(year, person);
 
         BigDecimal vacationDays = account.getVacationDays();
         BigDecimal remainingVacationDays = account.getRemainingVacationDays();
@@ -126,6 +125,22 @@ public class CalculationService {
         }
 
         return false;
+
+    }
+
+    protected Account getOrCreateNewAccount(int year, Person person) {
+
+        Account account = accountService.getHolidaysAccount(year, person);
+
+        if (account == null) {
+            Account lastYearsAccount = accountService.getHolidaysAccount(year - 1, person);
+            accountService.createHolidaysAccount(person, new DateMidnight(year, DateTimeConstants.JANUARY, 1),
+                    new DateMidnight(year, DateTimeConstants.DECEMBER, 31),
+                    lastYearsAccount.getAnnualVacationDays(), BigDecimal.ZERO, lastYearsAccount.isRemainingVacationDaysExpire());
+            account = accountService.getHolidaysAccount(year, person);
+        }
+
+        return account;
 
     }
 
