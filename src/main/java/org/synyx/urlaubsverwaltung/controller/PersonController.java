@@ -217,6 +217,8 @@ public class PersonController {
 
         Map<Person, Account> accounts = new HashMap<Person, Account>();
         Account account;
+        
+        Map<Person, BigDecimal> leftDays = new HashMap<Person, BigDecimal>();
 
         for (Person person : persons) {
             // get url of person's gravatar image
@@ -231,6 +233,9 @@ public class PersonController {
 
             if (account != null) {
                 accounts.put(person, account);
+                
+                BigDecimal vacationDaysLeft = calculationService.calculateLeftVacationDays(account);
+                leftDays.put(person, vacationDaysLeft);
             }
 
         }
@@ -239,6 +244,7 @@ public class PersonController {
         model.addAttribute(PERSONS, persons);
         model.addAttribute(GRAVATAR_URLS, gravatarUrls);
         model.addAttribute(ACCOUNTS, accounts);
+        model.addAttribute("leftDays", leftDays);
         model.addAttribute(YEAR, DateMidnight.now().getYear());
     }
 

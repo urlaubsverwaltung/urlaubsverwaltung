@@ -28,9 +28,9 @@
             <td><a href="mailto:${person.email}"><c:out value="${person.email}"/></a></td>
             <td class="vac">
                 <c:choose>
-                    <c:when test="${entitlements[person] != null}">
-                        <fmt:formatNumber maxFractionDigits="1" value="${entitlements[person].vacationDays}"/> +
-                        <fmt:formatNumber maxFractionDigits="1" value="${entitlements[person].remainingVacationDays}"/>
+                    <c:when test="${accounts[person] != null}">
+                        <fmt:formatNumber maxFractionDigits="1" value="${accounts[person].annualVacationDays}"/> +
+                        <fmt:formatNumber maxFractionDigits="1" value="${accounts[person].remainingVacationDays}"/>
                     </c:when>
                     <c:otherwise>
                         <spring:message code='not.specified' />
@@ -39,12 +39,8 @@
             </td>
             <td class="vac">
                 <c:choose>
-                    <c:when test="${accounts[person] != null}">
-                        <fmt:formatNumber maxFractionDigits="1" value="${accounts[person].vacationDays}"/>
-                        <%-- show number of remaining vacation days only if current date is before April OR if user's remaining vacation days don't expire AND only if number of remaining vacation days is greater than zero --%>
-                        <c:if test="${(april == 1 || not accounts[person].remainingVacationDaysExpire) && accounts[person].remainingVacationDays > 0.00}">
-                            + <fmt:formatNumber maxFractionDigits="1" value="${accounts[person].remainingVacationDays}"/>
-                        </c:if>
+                    <c:when test="${leftDays[person] != null}">
+                        <fmt:formatNumber maxFractionDigits="1" value="${leftDays[person]}"/>
                     </c:when>
                     <c:otherwise>
                         <spring:message code='not.specified' />

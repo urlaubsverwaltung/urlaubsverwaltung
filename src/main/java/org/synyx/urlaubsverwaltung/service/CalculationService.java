@@ -93,7 +93,7 @@ public class CalculationService {
         return false;
 
     }
-    
+
     /**
      * Calculates how many days the person may apply for leave, i.e. how many vacation days are left on the holidays account.
      * 
@@ -102,15 +102,15 @@ public class CalculationService {
      * @return left vacation days 
      */
     public BigDecimal calculateLeftVacationDays(Account account) {
-        
+
         int year = account.getYear();
         Person person = account.getPerson();
-        
+
         DateMidnight firstOfJanuary = new DateMidnight(year, DateTimeConstants.JANUARY, 1);
         DateMidnight lastOfMarch = new DateMidnight(year, DateTimeConstants.MARCH, 31);
         DateMidnight firstOfApril = new DateMidnight(year, DateTimeConstants.APRIL, 1);
         DateMidnight lastOfDecember = new DateMidnight(year, DateTimeConstants.DECEMBER, 31);
-        
+
         BigDecimal vacationDays = account.getVacationDays();
         BigDecimal remainingVacationDays = account.getRemainingVacationDays();
 
@@ -128,19 +128,28 @@ public class CalculationService {
             vacationDays = vacationDays.add(result); // result is negative so that you add it to vacation days instead of subtract it
         }
 
-        if (account.isRemainingVacationDaysExpire()) {
 
-            vacationDays = vacationDays.subtract(daysAfterApril);
+        // if the remaining vacation days do not expire or it is before April
+        // you just can see the vacation days as sum of vacation days and remaining vacation days
+
+        // do we have April or later?
+        if (DateMidnight.now().getMonthOfYear() >= DateTimeConstants.APRIL) {
+
+            if (account.isRemainingVacationDaysExpire()) {
+                vacationDays = vacationDays.subtract(daysAfterApril);
+            } else {
+                vacationDays = vacationDays.add(remainingVacationDays);
+                vacationDays = vacationDays.subtract(daysAfterApril);
+            }
 
         } else {
-            // if the remaining vacation days do not expire, you just can see it as sum
+            // it's before April
             vacationDays = vacationDays.add(remainingVacationDays);
             vacationDays = vacationDays.subtract(daysAfterApril);
-
         }
-        
+
         return vacationDays;
-        
+
     }
 
     protected Account getOrCreateNewAccount(int year, Person person) {
