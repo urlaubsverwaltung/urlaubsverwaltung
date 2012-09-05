@@ -26,7 +26,6 @@ import org.synyx.urlaubsverwaltung.domain.Role;
 import org.synyx.urlaubsverwaltung.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.service.HolidaysAccountService;
 import org.synyx.urlaubsverwaltung.service.PersonService;
-import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.util.GravatarUtil;
 import org.synyx.urlaubsverwaltung.util.NumberUtil;
 import org.synyx.urlaubsverwaltung.validator.PersonValidator;
@@ -41,6 +40,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import org.joda.time.DateTimeConstants;
+import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.domain.Account;
 import org.synyx.urlaubsverwaltung.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.service.CalculationService;
@@ -66,7 +67,6 @@ public class PersonController {
     private static final String ACCOUNTS = "accounts";
     private static final String APPLICATIONS = "applications";
     private static final String LEFT_DAYS = "leftDays";
-    private static final String APRIL = "april";
     private static final String GRAVATAR = "gravatar";
     private static final String GRAVATAR_URLS = "gravatarUrls";
     private static final String NOTEXISTENT = "notexistent"; // are there any persons to show?
@@ -91,9 +91,10 @@ public class PersonController {
     private CalculationService calculationService;
     private GravatarUtil gravatarUtil;
     private PersonValidator validator;
+    private OwnCalendarService calendarService;
 
     public PersonController(PersonService personService, ApplicationService applicationService,
-            HolidaysAccountService accountService, CalculationService calculationService, GravatarUtil gravatarUtil, PersonValidator validator) {
+            HolidaysAccountService accountService, CalculationService calculationService, GravatarUtil gravatarUtil, PersonValidator validator, OwnCalendarService calendarService) {
 
         this.personService = personService;
         this.applicationService = applicationService;
@@ -101,6 +102,7 @@ public class PersonController {
         this.calculationService = calculationService;
         this.gravatarUtil = gravatarUtil;
         this.validator = validator;
+        this.calendarService = calendarService;
     }
 
     /**
@@ -240,7 +242,6 @@ public class PersonController {
 
         }
 
-        addAprilAttributeToModel(model);
         model.addAttribute(PERSONS, persons);
         model.addAttribute(GRAVATAR_URLS, gravatarUrls);
         model.addAttribute(ACCOUNTS, accounts);
@@ -375,9 +376,7 @@ public class PersonController {
         // get the person's applications for the given year
         List<Application> apps = applicationService.getAllApplicationsByPersonAndYear(person, year);
 
-        if (apps.isEmpty()) {
-            model.addAttribute(NO_APPS, true);
-        } else {
+        if (!apps.isEmpty()) {
             List<Application> applications = new ArrayList<Application>();
 
             BigDecimal numberOfHolidayDays = BigDecimal.valueOf(0);
@@ -390,9 +389,15 @@ public class PersonController {
                     applications.add(a);
 
                     if (a.getStatus() == ApplicationStatus.ALLOWED || a.getStatus() == ApplicationStatus.WAITING) {
-                        
-                        BigDecimal days = a.getDays();
 
+                        BigDecimal days = BigDecimal.ZERO;
+                        
+                        if(a.getStartDate().getYear() != a.getEndDate().getYear()) {
+                            days = calendarService.getVacationDays(a, a.getStartDate(), new DateMidnight(a.getStartDate().getYear(), DateTimeConstants.DECEMBER, 31));
+                        } else {
+                            days = a.getDays();
+                        }
+                        
                         switch (a.getVacationType()) {
                             case HOLIDAY:
                                 numberOfHolidayDays = numberOfHolidayDays.add(days);
@@ -417,7 +422,12 @@ public class PersonController {
                 }
             }
 
-            model.addAttribute(APPLICATIONS, applications);
+            if(applications.isEmpty()) {
+                model.addAttribute(NO_APPS, true);
+            } else {
+                model.addAttribute(APPLICATIONS, applications);
+            }
+            
             model.addAttribute("numberOfHolidayDays", numberOfHolidayDays);
             model.addAttribute("numberOfSpecialLeaveDays", numberOfSpecialLeaveDays);
             model.addAttribute("numberOfUnpaidLeaveDays", numberOfUnpaidLeaveDays);
@@ -434,7 +444,6 @@ public class PersonController {
         }
 
         setLoggedUser(model);
-        addAprilAttributeToModel(model);
         model.addAttribute(PERSON, person);
         model.addAttribute(ACCOUNT, account);
         model.addAttribute(YEAR, DateMidnight.now().getYear());
@@ -696,23 +705,4 @@ public class PersonController {
         return personService.getPersonByLogin(user);
     }
 
-    /**
-     * If current date is before April, the value of the attribute 'april' is 1, otherwise the value is 0.
-     * @param model
-     * @return model containing attribute 'april'
-     */
-    private Model addAprilAttributeToModel(Model model) {
-
-        DateMidnight date = DateMidnight.now(GregorianChronology.getInstance());
-        int april = 0;
-
-        if (DateUtil.isBeforeApril(date)) {
-            april = 1;
-        }
-
-        model.addAttribute(APRIL, april);
-
-        return model;
-
-    }
 }
