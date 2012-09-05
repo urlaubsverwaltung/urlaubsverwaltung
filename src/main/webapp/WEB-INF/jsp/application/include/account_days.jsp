@@ -10,7 +10,7 @@
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
-
+<tr class="odd">
 <th>
     <spring:message code='overview.entitlement.per.year' />
 </th>
@@ -39,7 +39,7 @@
 </td>
 </tr>
 
-<tr>
+<tr class="even">
     <th>
         <spring:message code='overview.remaining.days.last.year' />
     </th>
@@ -66,7 +66,7 @@
     </td>
 </tr>
 
-<tr>
+<tr class="odd">
     <th>
         <spring:message code='overview.valid.period' />
     </th>
@@ -75,7 +75,7 @@
     </td>
 </tr>
 
-<tr>
+<tr class="even">
     <th>
         <spring:message code='overview.actual.entitlement' />
     </th>
@@ -113,11 +113,11 @@
     </td>
 </tr>
 
-<tr>
-    <th>
+<tr class="odd">
+    <th style="border-top: 2px solid #D7D7D7">
         <spring:message code="overview.left" />
     </th>
-    <td>
+    <td style="border-top: 2px solid #D7D7D7">
         <c:choose>
 
         <c:when test="${account != null}">

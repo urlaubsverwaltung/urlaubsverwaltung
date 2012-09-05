@@ -19,6 +19,11 @@
     <head>
         <title><spring:message code="title" /></title>
         <%@include file="../include/header.jsp" %>
+        <style type="text/css">
+            .app-detail td {
+                width: auto;
+            }
+        </style>
     </head>
 
     <body>
@@ -42,49 +47,66 @@
                         </c:otherwise>
                     </c:choose>
 
-                    <table class="overview-header">
-                        <tr>
-                            <td><spring:message code="table.overview" /><c:out value="${displayYear}" /></td>
-                            <td style="text-align: right;">
-                                <select onchange="window.location.href=this.options
-                                    [this.selectedIndex].value">
-                                    <option selected="selected" value=""><spring:message code="ov.header.year" /></option>
-                                    <option value="?year=<c:out value='${year - 1}' />"><c:out value="${year - 1}" /></option>
-                                    <option value="?year=<c:out value='${year}' />"><c:out value="${year}" /></option>
-                                    <option value="?year=<c:out value='${year + 1}' />"><c:out value="${year + 1}" /></option>
-                                </select>
+                    <sec:authorize access="hasRole('role.office')">
+                        <%@include file="./include/overview_header_office.jsp" %>
+                    </sec:authorize>
+
+                    <sec:authorize access="hasAnyRole('role.user', 'role.boss')">
+                        <%@include file="./include/overview_header_user.jsp" %>
+                    </sec:authorize>
+
+                </div>
+
+                <div class="grid_2">
+                    <table class="app-detail" cellspacing="0" style="height: 12em; text-align: center">
+                        <tr class="odd">
+                            <td rowspan="6" style="text-align: center">
+                                <img class="user-pic" src="<c:out value='${gravatar}?d=mm&s=110'/>" /> 
                             </td>
                         </tr>
                     </table>
                 </div>
 
-                <div class="grid_12">
-                    <table id="person-tbl" cellspacing="0">
-                        <c:choose>
-                            <c:when test="${!empty param.year}">
-                                <c:set var="displayYear" value="${param.year}" />
-                            </c:when>
-                            <c:otherwise>
-                                <c:set var="displayYear" value="${year}" />
-                            </c:otherwise>
-                        </c:choose>
-
-                        <tr>
-                            <td rowspan="5" style="background-color: #EAF2D3; width: 9.7%;"><img class="user-pic" src="<c:out value='${gravatar}?d=mm'/>" /></td>
-                                <%@include file="../application/include/account_days.jsp" %>
-
+                <div class="grid_6">
+                    <table class="app-detail" cellspacing="0">
+                        <%@include file="../application/include/account_days.jsp" %>
                     </table>
                 </div>
 
+                <div class="grid_4">
+                    <table class="app-detail" cellspacing="0">
+                        <%@include file="./include/used_days.jsp" %>
+                    </table>
+                </div>
 
                 <div class="grid_12">&nbsp;</div>
                 <div class="grid_12">&nbsp;</div>
                 <div class="grid_12">&nbsp;</div>
 
                 <div class="grid_12">
-                    <a class="button apply" style="margin-top: 1em;" href="${formUrlPrefix}/application/new">
-                        <spring:message code="ov.apply" />
-                    </a>
+
+                    <sec:authorize access="hasRole('role.office')">
+                        <c:choose>
+                            <c:when test="${person.id == loggedUser.id}">
+                                <a class="button apply" style="margin-top: 1em;" href="${formUrlPrefix}/application/new">
+                                    <spring:message code="ov.apply" />
+                                </a>
+                            </c:when>
+                            <c:otherwise>
+                                <a class="button apply" style="margin-top: 1em;" href="${formUrlPrefix}/${person.id}/application/new">
+                                    <c:set var="staff" value="${person.firstName} ${person.lastName}" />
+                                    <spring:message code="ov.apply.for.user" arguments="${staff}"/>
+                                </a>
+                            </c:otherwise>
+                        </c:choose>
+                    </sec:authorize>
+
+                    <sec:authorize access="hasAnyRole('role.user', 'role.boss')">
+                        <a class="button apply" style="margin-top: 1em;" href="${formUrlPrefix}/application/new">
+                            <spring:message code="ov.apply" />
+                        </a>
+                    </sec:authorize>
+
                 </div>
                 <div class="grid_12">&nbsp;</div>
 

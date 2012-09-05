@@ -53,7 +53,6 @@ public class PersonController {
 
     // jsps
     private static final String OVERVIEW_JSP = "person/overview"; // jsp for personal overview
-    private static final String OVERVIEW_OFFICE_JSP = "person/overview_office"; // jsp for office's overview
     private static final String STAFF_JSP = "person/staff_view";
     private static final String PERSON_FORM_JSP = "person/person_form";
     private static final String ERROR_JSP = "error";
@@ -72,7 +71,6 @@ public class PersonController {
     private static final String GRAVATAR_URLS = "gravatarUrls";
     private static final String NOTEXISTENT = "notexistent"; // are there any persons to show?
     private static final String NO_APPS = "noapps"; // are there any applications to show?
-    private static final String IS_OFFICE = "isOffice";
     private static final String PERSON_ID = "personId";
     private static final String YEAR = "year";
     // links
@@ -260,7 +258,7 @@ public class PersonController {
         } else {
             Person person = getLoggedUser();
             prepareOverview(person, DateMidnight.now(GregorianChronology.getInstance()).getYear(), model);
-            model.addAttribute(IS_OFFICE, false);
+            model.addAttribute("loggedUser", person);
 
             return OVERVIEW_JSP;
         }
@@ -283,7 +281,7 @@ public class PersonController {
         } else {
             Person person = getLoggedUser();
             prepareOverview(person, year, model);
-            model.addAttribute(IS_OFFICE, false);
+            model.addAttribute("loggedUser", person);
 
             return OVERVIEW_JSP;
         }
@@ -317,9 +315,9 @@ public class PersonController {
             model.addAttribute(PERSONS, persons);
 
             prepareOverview(person, DateMidnight.now(GregorianChronology.getInstance()).getYear(), model);
-            model.addAttribute(IS_OFFICE, true);
+            model.addAttribute("loggedUser", getLoggedUser());
 
-            return OVERVIEW_OFFICE_JSP;
+            return OVERVIEW_JSP;
         }
     }
 
@@ -353,9 +351,9 @@ public class PersonController {
             model.addAttribute(PERSONS, persons);
 
             prepareOverview(person, year, model);
-            model.addAttribute(IS_OFFICE, true);
+            model.addAttribute("loggedUser", getLoggedUser());
 
-            return OVERVIEW_OFFICE_JSP;
+            return OVERVIEW_JSP;
         }
     }
 
@@ -376,9 +374,34 @@ public class PersonController {
         } else {
             List<Application> applications = new ArrayList<Application>();
 
+            BigDecimal numberOfHolidayDays = BigDecimal.valueOf(0);
+            BigDecimal numberOfSpecialLeaveDays = BigDecimal.ZERO;
+            BigDecimal numberOfUnpaidLeaveDays = BigDecimal.ZERO;
+            BigDecimal numberOfOvertimeDays = BigDecimal.ZERO;
+
             for (Application a : apps) {
                 if (a.getStatus() != ApplicationStatus.CANCELLED) {
                     applications.add(a);
+
+                    if (a.getStatus() == ApplicationStatus.ALLOWED || a.getStatus() == ApplicationStatus.WAITING) {
+
+                        switch (a.getVacationType()) {
+                            case HOLIDAY:
+                                numberOfHolidayDays = numberOfHolidayDays.add(a.getDays());
+                                break;
+                            case SPECIALLEAVE:
+                                numberOfSpecialLeaveDays = numberOfSpecialLeaveDays.add(a.getDays());
+                                break;
+                            case UNPAIDLEAVE:
+                                numberOfUnpaidLeaveDays = numberOfUnpaidLeaveDays.add(a.getDays());
+                                break;
+                            case OVERTIME:
+                                numberOfOvertimeDays = numberOfOvertimeDays.add(a.getDays());
+                                break;
+                        }
+
+                    }
+
                 } else {
                     if (a.isFormerlyAllowed() == true) {
                         applications.add(a);
@@ -387,15 +410,19 @@ public class PersonController {
             }
 
             model.addAttribute(APPLICATIONS, applications);
+            model.addAttribute("numberOfHolidayDays", numberOfHolidayDays);
+            model.addAttribute("numberOfSpecialLeaveDays", numberOfSpecialLeaveDays);
+            model.addAttribute("numberOfUnpaidLeaveDays", numberOfUnpaidLeaveDays);
+            model.addAttribute("numberOfOvertimeDays", numberOfOvertimeDays);
 
         }
 
         // get person's holidays account and entitlement for the given year
         Account account = accountService.getHolidaysAccount(year, person);
-        
-        if(account != null) {
-        BigDecimal vacationDaysLeft = calculationService.calculateLeftVacationDays(account);
-        model.addAttribute(LEFT_DAYS, vacationDaysLeft);
+
+        if (account != null) {
+            BigDecimal vacationDaysLeft = calculationService.calculateLeftVacationDays(account);
+            model.addAttribute(LEFT_DAYS, vacationDaysLeft);
         }
 
         setLoggedUser(model);
@@ -576,14 +603,14 @@ public class PersonController {
         int monthFrom = Integer.parseInt(personForm.getMonthFrom());
         int dayTo = Integer.parseInt(personForm.getDayTo());
         int monthTo = Integer.parseInt(personForm.getMonthTo());
-        
+
         DateMidnight validFrom = new DateMidnight(year, monthFrom, dayFrom);
         DateMidnight validTo = new DateMidnight(year, monthTo, dayTo);
-        
+
         BigDecimal annualVacationDays = new BigDecimal(personForm.getAnnualVacationDays());
         BigDecimal remainingVacationDays = new BigDecimal(personForm.getRemainingVacationDays());
         boolean expiring = personForm.isRemainingVacationDaysExpire();
-        
+
         // check if there is an existing account
         Account account = accountService.getHolidaysAccount(year, personToUpdate);
 
