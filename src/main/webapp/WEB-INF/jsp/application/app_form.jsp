@@ -99,8 +99,8 @@
             });
         </script>
         <style type="text/css">
-            .app-detail td {
-                width:auto;
+            .app-detail th {
+                width: 20%;
             }
         </style>
     </head>
@@ -125,7 +125,7 @@
 
                     <c:otherwise>
 
-                        <div class="grid_6">
+                        <div class="grid_8">
 
                             <table class="overview-header" style="margin-bottom:1em">
                                 <tr>
@@ -146,7 +146,7 @@
 
                             <div class="grid_12">&nbsp;</div>
 
-                            <div class="grid_6">
+                            <div class="grid_8">
 
                                 <table class="app-detail" cellspacing="0">
                                     <tr class="odd">
@@ -218,7 +218,7 @@
                                             <spring:message code="app.apply" />
                                         </th>
                                         <td>
-                                            <form:select path="vacationType" size="1" style="width:98%;">
+                                            <form:select path="vacationType" size="1" class="form-select">
                                                 <c:choose>
                                                     <c:when test="${appForm.vacationType == null}">
                                                         <c:forEach items="${vacTypes}" var="vacType">
@@ -246,20 +246,20 @@
                                     <tr class="even">
                                         <td>
                                             <form:radiobutton path="howLong" checked="checked" value="${full}" onclick="$('#full-day').show(); $('#half-day').hide();" /><spring:message code='${full.dayLength}' /> 
-                                            <form:radiobutton path="howLong" value="${morning}" onclick="$('#full-day').hide(); $('#half-day').show();" /><spring:message code='${morning.dayLength}' />
-                                            <form:radiobutton path="howLong" value="${noon}" onclick="$('#full-day').hide(); $('#half-day').show();" /><spring:message code='${noon.dayLength}' />
+                                            &nbsp;<form:radiobutton path="howLong" value="${morning}" onclick="$('#full-day').hide(); $('#half-day').show();" /><spring:message code='${morning.dayLength}' />
+                                            &nbsp;<form:radiobutton path="howLong" value="${noon}" onclick="$('#full-day').hide(); $('#half-day').show();" /><spring:message code='${noon.dayLength}' />
                                         </td>
                                         <td>
                                             <span id="full-day">
-                                                Von: <form:input id="from" path="startDate" cssErrorClass="error" size="4" />
+                                                Von: <form:input id="from" path="startDate" cssErrorClass="error" style="width: 33%" />
                                                 <%-- <form:errors path="startDate" cssClass="error" cssStyle="padding-left: 2.45em;" /> --%>
                                                 &nbsp;
-                                                Bis: <form:input id="to" path="endDate" cssErrorClass="error" size="4" />
+                                                Bis: <form:input id="to" path="endDate" cssErrorClass="error" style="width: 33%" />
                                                 <%--<form:errors path="endDate" cssClass="error" cssStyle="padding-left: 2em;" />--%>
                                             </span>
 
                                             <span id="half-day" style="display: none">
-                                                Am: <form:input id="at" path="startDateHalf" cssErrorClass="error" size="4" />
+                                                Am: <form:input id="at" path="startDateHalf" cssErrorClass="error" style="width: 20%" />
                                                 <br />
                                                 <%--<form:errors path="startDateHalf" cssClass="error" cssStyle="padding-left: 2.45em;" />--%>
                                             </span>
@@ -270,7 +270,7 @@
                                             <label for="reason"><spring:message code='reason' />&nbsp;<spring:message code='app.reason.describe' /></label>
                                         </td>
                                         <td>
-                                            <form:input id="reason" path="reason" cssErrorClass="error" size="22" />
+                                            <form:textarea id="reason" path="reason" cssErrorClass="error" class="form-textarea" />
                                             <br />
                                             <form:errors path="reason" cssClass="error" />
                                         </td>
@@ -280,7 +280,7 @@
                                             <label for="vertreter"><spring:message code='app.rep' />:</label> 
                                         </td>
                                         <td>
-                                            <form:select path="rep" id="vertreter" size="1" style="width:98%;">
+                                            <form:select path="rep" id="vertreter" size="1" class="form-select">
                                         <option value="<spring:message code='app.no.rep' />"><spring:message code='app.no.rep' /></option>
                                         <c:forEach items="${persons}" var="einmitarbeiter">
                                             <option value="${einmitarbeiter.lastName} ${einmitarbeiter.firstName}">
@@ -295,15 +295,7 @@
                                             <label for="anschrift"><spring:message code='app.address' />:</label>
                                         </td>
                                         <td>
-                                            <form:input id="anschrift" path="address" size="22" />
-                                        </td>
-                                    </tr>
-                                    <tr class="even">
-                                        <td>
-                                            <label for="telefon"><spring:message code='app.phone' />:</label>
-                                        </td>
-                                        <td>
-                                            <form:input id="telefon" path="phone" size="22" />
+                                            <form:textarea id="anschrift" path="address" class="form-textarea"  />
                                         </td>
                                     </tr>
                                 </table>
@@ -312,8 +304,8 @@
                                         <td>
                                             <spring:message code='app.footer' />&nbsp;<joda:format style="M-" value="${date}"/>
                                         </td>
-                                        <td style="text-align:right;padding-right:1.9em;">
-                                            <input class="confirm"type="submit" name="<spring:message code='apply' />" value="<spring:message code='apply' />" />
+                                        <td style="text-align:right;padding-right:2.5em;">
+                                            <input class="btn btn-primary" type="submit" name="<spring:message code='apply' />" value="<spring:message code='apply' />" />
                                         </td>
                                     </tr>
                                 </table>       

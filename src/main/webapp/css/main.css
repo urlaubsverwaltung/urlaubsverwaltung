@@ -12,7 +12,7 @@ a {
 }
 
 a:hover {
-	color: #0083CC;
+    color: #0083CC;
 }
 
 .logout {
@@ -134,12 +134,11 @@ body {
 
 
 #content {
-    margin-top: 30px;
-    margin-left:10px;
+    margin-top: 8em;
 }
 
 #staff-list td {
-/*    padding: 5px 0px 5px 15px;*/
+    /*    padding: 5px 0px 5px 15px;*/
     padding: 0.4em;
 }
 
@@ -158,7 +157,7 @@ th.vac {
 #staff-list {
     width: 100%; 
     font-size: 1em;
-border: 1px solid #EAF2D3;
+    border: 1px solid #EAF2D3;
 }
 
 #staff-list th {
@@ -196,7 +195,7 @@ tr.even {
     border: 1px solid #D7D7D7; 
     padding: 2em 0 5em 2em; 
     margin-left:3em;
-/*    height: 31.95em;*/
+    /*    height: 31.95em;*/
 }
 
 #tbl-data th {
@@ -285,14 +284,14 @@ tr.even {
     font-size: 1.05em;
     border: 1px solid #EAF2D3;
     margin-bottom: 4em;
-/*    border-bottom: 1px solid #D7D7D7;
-    border-right: 1px solid #D7D7D7;
-    border-left: 1px solid #D7D7D7;*/
+    /*    border-bottom: 1px solid #D7D7D7;
+        border-right: 1px solid #D7D7D7;
+        border-left: 1px solid #D7D7D7;*/
 }	
 
 .app-tbl th, .app-tbl td {
     text-align: left;
-padding: 0.55em;
+    padding: 0.55em;
 
 }
 
@@ -311,10 +310,10 @@ padding: 0.55em;
 
 .app-detail {
     width: 100%;
-float:left;
-border: 1px solid #EAF2D3;
-font-size: 1.05em;
-margin-right:1em;
+    float:left;
+    border: 1px solid #EAF2D3;
+    font-size: 1.05em;
+    margin-right:1em;
 }
 
 .tbl-margin-top {
@@ -326,10 +325,10 @@ margin-right:1em;
 }
 
 .overview-header {
-        border: 1px solid #D7D7D7;
-        width: 100%;
-        margin-bottom: 2em;
-        background-color: #EAF2D3;
+    border: 1px solid #D7D7D7;
+    width: 100%;
+    margin-bottom: 2em;
+    background-color: #EAF2D3;
 }
 
 
@@ -360,7 +359,7 @@ margin-right:1em;
 
 /* General button styles (input buttons and link buttons) */
 
-input[type=submit], input[type=button], a.button {
+/*input[type=submit], input[type=button], a.button {
 
     background-color: #E6E6E6;
     border: 1px solid #D3D3D3;
@@ -388,7 +387,7 @@ input[type=submit]:hover, input[type=button]:hover, a.button:hover {
 }
 
 input[type=button].remind {
-   background-image: url("../images/bell.png");
+    background-image: url("../images/bell.png");
     background-repeat: no-repeat;
     background-position: 5% 50%;
     padding-left: 2em; 
@@ -406,9 +405,9 @@ input[type=submit].confirm, input[type=button].confirm, a.button.confirm {
     background-repeat: no-repeat;
     background-position: 5% 50%;
     padding-left: 2em;
-}
+}*/
 
-#confirm {
+/*#confirm {
     margin-top: 1em;
 }
 
@@ -466,7 +465,7 @@ input[type=button].cancel {
 
 #cancel {
     border: 1px solid #E76757;
-/*    background-color: #FFE3E3;*/
+        background-color: #FFE3E3;
     padding: 1em 1em 1em 2.5em;
     margin-top:1em;
 }
@@ -483,10 +482,17 @@ input[type=button].refer {
     padding-left: 2em;
 }
 
-    
+
 
 input[type=submit].deactivate, input[type=button].deactivate, a.button.deactivate {
     background-image: url("../images/delete_user.png");
+    background-repeat: no-repeat;
+    background-position: 5% 50%;
+    padding-left: 2em;
+}*/
+
+.save {
+    background-image: url("../images/filesave.png");
     background-repeat: no-repeat;
     background-position: 5% 50%;
     padding-left: 2em;
@@ -518,9 +524,54 @@ input.error {
 }
 
 @media print {
-	.button { display: none; }
-        #header { display: none; }
-        .overview-header td { color: black; font-weight: bold;}
+    .button { display: none; }
+    #header { display: none; }
+    .overview-header td { color: black; font-weight: bold;}
 }
 
+.form-textarea {
+    width: 90%;
+    min-height: 6em;
+}
 
+/* 
+Overriding bootstrap stuff
+*/
+
+.navbar .nav {
+    float: right;
+}
+
+.navbar .nav > li > a {
+    color: #555555;
+    text-shadow: none;
+    padding: 12px 10px 11px;
+    text-align: right;
+}
+
+.navbar .nav > li > a:hover {
+    color: #999999;
+    cursor: pointer;
+}
+
+.navbar .brand {
+    color: #555555;  
+    background: url("../images/synyx-logo-2.jpg") no-repeat 10% 50%;
+    padding: 12px 50px 12px;
+}
+
+.navbar-inner {
+    background-image: none; 
+    background-color: #F8F8F8;
+    min-height: 46px;
+}
+
+.form-select {
+    width: 92%;
+    margin-bottom: 0;
+}
+
+select {
+    width: auto;
+    margin-bottom: 0;
+}

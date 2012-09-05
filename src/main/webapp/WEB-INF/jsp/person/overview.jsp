@@ -88,12 +88,12 @@
                     <sec:authorize access="hasRole('role.office')">
                         <c:choose>
                             <c:when test="${person.id == loggedUser.id}">
-                                <a class="button apply" style="margin-top: 1em;" href="${formUrlPrefix}/application/new">
+                                <a class="btn btn-primary" style="margin-top: 1em;" href="${formUrlPrefix}/application/new">
                                     <spring:message code="ov.apply" />
                                 </a>
                             </c:when>
                             <c:otherwise>
-                                <a class="button apply" style="margin-top: 1em;" href="${formUrlPrefix}/${person.id}/application/new">
+                                <a class="btn btn-primary" style="margin-top: 1em;" href="${formUrlPrefix}/${person.id}/application/new">
                                     <c:set var="staff" value="${person.firstName} ${person.lastName}" />
                                     <spring:message code="ov.apply.for.user" arguments="${staff}"/>
                                 </a>
@@ -102,7 +102,7 @@
                     </sec:authorize>
 
                     <sec:authorize access="hasAnyRole('role.user', 'role.boss')">
-                        <a class="button apply" style="margin-top: 1em;" href="${formUrlPrefix}/application/new">
+                        <a class="btn btn-success" style="margin-top: 1em;" href="${formUrlPrefix}/application/new">
                             <spring:message code="ov.apply" />
                         </a>
                     </sec:authorize>
