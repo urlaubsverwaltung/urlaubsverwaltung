@@ -34,16 +34,12 @@ public class PersonValidator implements Validator {
     private static final String MANDATORY_FIELD = "error.mandatory.field";
     private static final String ERROR_ENTRY = "error.entry";
     private static final String ERROR_EMAIL = "error.email";
-    private static final String ERROR_NUMBER = "error.number";
     private static final String ERROR_LENGTH = "error.length";
 
     private static final String FIRST_NAME = "firstName";
     private static final String LAST_NAME = "lastName";
-    private static final String VACATION_DAYS_ENT = "vacationDaysEnt";
-    private static final String ANNUAL_VACATION_ENT = "annualVacationDaysEnt";
-    private static final String REMAINING_VACATION_DAYS_ENT = "remainingVacationDaysEnt";
-    private static final String VACATION_DAYS_ACC = "vacationDaysAcc";
-    private static final String REMAINING_VACATION_DAYS_ACC = "remainingVacationDaysAcc";
+    private static final String ANNUAL_VACATION_DAYS = "annualVacationDays";
+    private static final String REMAINING_VACATION_DAYS = "remainingVacationDays";
     private static final String YEAR = "year";
     private static final String EMAIL = "email";
 
@@ -208,12 +204,12 @@ public class PersonValidator implements Validator {
         if (StringUtils.hasText(form.getAnnualVacationDays())) {
             try {
                 validateNumberOfDays(NumberUtil.parseNumber(form.getAnnualVacationDays(), locale),
-                    ANNUAL_VACATION_ENT, max, errors);
+                    ANNUAL_VACATION_DAYS, max, errors);
             } catch (NumberFormatException ex) {
-                errors.rejectValue(ANNUAL_VACATION_ENT, ERROR_ENTRY);
+                errors.rejectValue(ANNUAL_VACATION_DAYS, ERROR_ENTRY);
             }
         } else {
-            errors.rejectValue(ANNUAL_VACATION_ENT, MANDATORY_FIELD);
+            errors.rejectValue(ANNUAL_VACATION_DAYS, MANDATORY_FIELD);
         }
     }
 
@@ -249,12 +245,12 @@ public class PersonValidator implements Validator {
             try {
                 // field entitlement's remaining vacation days
                 validateNumberOfDays(NumberUtil.parseNumber(form.getRemainingVacationDays(), locale),
-                    REMAINING_VACATION_DAYS_ENT, max, errors);
+                    REMAINING_VACATION_DAYS, max, errors);
             } catch (NumberFormatException ex) {
-                errors.rejectValue(REMAINING_VACATION_DAYS_ENT, ERROR_ENTRY);
+                errors.rejectValue(REMAINING_VACATION_DAYS, ERROR_ENTRY);
             }
         } else {
-            errors.rejectValue(REMAINING_VACATION_DAYS_ENT, MANDATORY_FIELD);
+            errors.rejectValue(REMAINING_VACATION_DAYS, MANDATORY_FIELD);
         }
     }
 

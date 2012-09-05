@@ -29,7 +29,7 @@
             }
         </script>
         <style type="text/css">
-            .app-detail td {
+            .td-name {
                 width: 40%;
             }
         </style>
@@ -63,12 +63,12 @@
                     <div class="grid_8">
                         <table class="app-detail" cellspacing="0">
                             <tr class="odd">
-                                <td><spring:message code='login' />:</td>
+                                <td class="td-name"><spring:message code='login' />:</td>
                                 <td><c:out value="${person.loginName}" /></td>
                                 <td>&nbsp;</td>
                             </tr>
                             <tr class="even">
-                                <td><label for="vorname"><spring:message code="firstname" />:</label></td>
+                                <td class="td-name"><label for="vorname"><spring:message code="firstname" />:</label></td>
                                 <td>
                                     <form:input id="vorname" path="firstName" cssErrorClass="error" />
                                 </td>
@@ -77,7 +77,7 @@
                                 </td>
                             </tr>
                             <tr class="odd">
-                                <td><label for="nachname"><spring:message code="lastname" />:</label></td>
+                                <td class="td-name"><label for="nachname"><spring:message code="lastname" />:</label></td>
                                 <td>
                                     <form:input id="nachname" path="lastName" cssErrorClass="error" />
                                 </td>
@@ -86,7 +86,7 @@
                                 </td>
                             </tr>
                             <tr class="even">
-                                <td><label for="email"><spring:message code="email" />:</label></td>
+                                <td class="td-name"><label for="email"><spring:message code="email" />:</label></td>
                                 <td>
                                     <form:input id="email" path="email" cssErrorClass="error" />
                                 </td>
@@ -113,7 +113,7 @@
                         <table class="app-detail" cellspacing="0">
 
                             <tr class="odd">
-                                <td><spring:message code='year' /></td>
+                                <td class="td-name"><spring:message code='year' /></td>
                                 <td>
                                     <form:select path="year" size="1" onchange="change(this.options[this.selectedIndex].value);" id="year-dropdown">
                                         <form:option value="${currentYear - 1}"><c:out value="${currentYear - 1}" /></form:option>
@@ -128,7 +128,7 @@
                             </tr>
 
                             <tr class="even">
-                                <td><spring:message code='time' /></td>
+                                <td class="td-name"><spring:message code='time' /></td>
                                 <td colspan="2">
                                     <form:select path="dayFrom" size="1">
                                         <%--<form:option value="0" disabled="disabled"><spring:message code='person.edit.day' /></form:option>--%>
@@ -211,27 +211,27 @@
                                 </td>
                             </tr>
                             <tr class="odd">
-                                <td><spring:message code="person.annual.vacation" />:</td>
+                                <td class="td-name"><spring:message code="person.annual.vacation" />:</td>
                                 <td>
-                                    <form:input path="annualVacationDays" cssErrorClass="error" />
+                                    <form:input path="annualVacationDays" cssErrorClass="error" size="1" />
                                 </td>
                                 <td>
                                     <form:errors path="annualVacationDays" cssClass="error" />
                                 </td>
                             </tr>
                             <tr class="even">   
-                                <td>
+                                <td class="td-name">
                                     <spring:message code="remaining" />&nbsp;<spring:message code="last.year" />:
                                 </td>
                                 <td>
-                                    <form:input path="remainingVacationDays" cssErrorClass="error" />
+                                    <form:input path="remainingVacationDays" cssErrorClass="error" size="1"  />
                                 </td>
                                 <td>
                                     <form:errors path="remainingVacationDays" cssClass="error" /> 
                                 </td>
                             </tr>
                             <tr class="odd">
-                                <td>
+                                <td class="td-name">
                                     <spring:message code='person.expire' />
                                 </td>
                                 <td>

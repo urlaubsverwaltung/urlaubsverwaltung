@@ -1,7 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package org.synyx.urlaubsverwaltung.validator;
 
 import org.junit.After;
@@ -19,7 +16,6 @@ import org.mockito.Mockito;
 import org.springframework.validation.Errors;
 
 import org.synyx.urlaubsverwaltung.domain.Application;
-import org.synyx.urlaubsverwaltung.util.NumberUtil;
 import org.synyx.urlaubsverwaltung.view.PersonForm;
 
 import java.math.BigDecimal;
@@ -28,6 +24,8 @@ import java.util.Locale;
 
 
 /**
+ * Unit test for {@link PersonValidator}.
+ * 
  * @author  Aljona Murygina
  */
 public class PersonValidatorTest {
@@ -422,27 +420,27 @@ public class PersonValidatorTest {
         annualVac = null;
         form.setAnnualVacationDays(annualVac);
         instance.validateAnnualVacation(form, errors, Locale.GERMAN);
-        Mockito.verify(errors).rejectValue("annualVacationDaysEnt", "error.mandatory.field");
+        Mockito.verify(errors).rejectValue("annualVacationDays", "error.mandatory.field");
         Mockito.reset(errors);
 
         annualVac = "";
         form.setAnnualVacationDays(annualVac);
         instance.validateAnnualVacation(form, errors, Locale.GERMAN);
-        Mockito.verify(errors).rejectValue("annualVacationDaysEnt", "error.mandatory.field");
+        Mockito.verify(errors).rejectValue("annualVacationDays", "error.mandatory.field");
         Mockito.reset(errors);
 
         // invalid values
         annualVac = "a";
         form.setAnnualVacationDays(annualVac);
         instance.validateAnnualVacation(form, errors, Locale.GERMAN);
-        Mockito.verify(errors).rejectValue("annualVacationDaysEnt", "error.entry");
+        Mockito.verify(errors).rejectValue("annualVacationDays", "error.entry");
         Mockito.reset(errors);
 
         // not realistic numbers
         annualVac = "367";
         form.setAnnualVacationDays(annualVac);
         instance.validateAnnualVacation(form, errors, Locale.GERMAN);
-        Mockito.verify(errors).rejectValue("annualVacationDaysEnt", "error.entry");
+        Mockito.verify(errors).rejectValue("annualVacationDays", "error.entry");
         Mockito.reset(errors);
 
         // everything is alright
@@ -465,27 +463,27 @@ public class PersonValidatorTest {
         vacRemDaysEnt = null;
         form.setRemainingVacationDays(vacRemDaysEnt);
         instance.validateRemainingVacationDays(form, errors, Locale.GERMAN);
-        Mockito.verify(errors).rejectValue("remainingVacationDaysEnt", "error.mandatory.field");
+        Mockito.verify(errors).rejectValue("remainingVacationDays", "error.mandatory.field");
         Mockito.reset(errors);
 
         vacRemDaysEnt = "";
         form.setRemainingVacationDays(vacRemDaysEnt);
         instance.validateRemainingVacationDays(form, errors, Locale.GERMAN);
-        Mockito.verify(errors).rejectValue("remainingVacationDaysEnt", "error.mandatory.field");
+        Mockito.verify(errors).rejectValue("remainingVacationDays", "error.mandatory.field");
         Mockito.reset(errors);
 
         // invalid values
         vacRemDaysEnt = "a";
         form.setRemainingVacationDays(vacRemDaysEnt);
         instance.validateRemainingVacationDays(form, errors, Locale.GERMAN);
-        Mockito.verify(errors).rejectValue("remainingVacationDaysEnt", "error.entry");
+        Mockito.verify(errors).rejectValue("remainingVacationDays", "error.entry");
         Mockito.reset(errors);
 
         // not realistic numbers
         vacRemDaysEnt = "367";
         form.setRemainingVacationDays(vacRemDaysEnt);
         instance.validateRemainingVacationDays(form, errors, Locale.GERMAN);
-        Mockito.verify(errors).rejectValue("remainingVacationDaysEnt", "error.entry");
+        Mockito.verify(errors).rejectValue("remainingVacationDays", "error.entry");
         Mockito.reset(errors);
 
         // everything is alright
