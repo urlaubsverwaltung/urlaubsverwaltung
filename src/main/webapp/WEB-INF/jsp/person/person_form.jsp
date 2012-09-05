@@ -161,7 +161,7 @@
                                             var i = 1;
                                             for(i = 1; i < 13; i++) {
                                                 if(<c:out value="${personForm.monthFrom}" /> == i) {
-                                                    document.write('<form:option selected="selected" value="' + i + '        ">' + monthNames[i-1] + '</form:option>');
+                                                    document.write('<form:option selected="selected" value="' + i + '">' + monthNames[i-1] + '</form:option>');
                                                 } else {
                                                     document.write('<form:option value="' + i + '">' + monthNames[i-1] + '</form:option>');
                                                 }
@@ -201,7 +201,7 @@
                                             var i = 1;
                                             for(i = 1; i < 13; i++) {        
                                                 if(<c:out value="${personForm.monthTo}" /> == i) {
-                                                    document.write('<form:option selected="selected" value="' + i + '        ">' + monthNames[i-1] + '</form:option>');
+                                                    document.write('<form:option selected="selected" value="' + i + '">' + monthNames[i-1] + '</form:option>');
                                                 } else {
                                                     document.write('<form:option value="' + i + '">' + monthNames[i-1] + '</form:option>');
                                                 }
