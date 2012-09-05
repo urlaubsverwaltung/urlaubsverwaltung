@@ -92,7 +92,7 @@
                                     <spring:message code='person.entitlement' />
                                 </th>
                                 <td>
-                                    <form:select path="year" size="1" onchange="change(this.options[this.selectedIndex].value);">
+                                    <form:select path="year" size="1" onchange="change(this.options[this.selectedIndex].value);" id="year-dropdown">
                                         <form:option value="${currentYear - 1}"><c:out value="${currentYear - 1}" /></form:option>
                                         <form:option value="${currentYear}"><c:out value="${currentYear}" /></form:option>
                                         <form:option value="${currentYear + 1}"><c:out value="${currentYear + 1}" /></form:option>
@@ -108,16 +108,20 @@
                                 <td>
                                     <spring:message code='by' />
                                     <form:select path="dayFrom" size="1">
-                                        <form:option value="0" selected="selected" disabled="disabled"><spring:message code='person.edit.day' /></form:option>
+                                        <%--<form:option value="0" disabled="disabled"><spring:message code='person.edit.day' /></form:option>--%>
                                         <script type="text/javascript">
                                             var i = 1;
                                             for(i = 1; i < 32; i++) {
-                                                document.write('<form:option value="' + i + '">' + i + '</form:option>');
+                                                if(<c:out value="${personForm.dayFrom}" /> == i) {
+                                                    document.write('<form:option selected="selected" value="' + i + '">' + i + '</form:option>');
+                                                } else {
+                                                    document.write('<form:option value="' + i + '">' + i + '</form:option>');
+                                                }
                                             }
                                         </script>
                                     </form:select>
                                     <form:select path="monthFrom" size="1">
-                                        <form:option value="0" selected="selected" disabled="disabled"><spring:message code='person.edit.month' /></form:option>
+                                        <%--<form:option value="0" disabled="disabled"><spring:message code='person.edit.month' /></form:option>--%>
                                         <script type="text/javascript">
                                             var regional = "${pageContext.request.locale.language}";
                                             var monthNames;
@@ -133,7 +137,11 @@
                 
                                             var i = 1;
                                             for(i = 1; i < 13; i++) {
-                                                document.write('<form:option value="' + i + '">' + monthNames[i-1] + '</form:option>');
+                                                if(<c:out value="${personForm.monthFrom}" /> == i) {
+                                                    document.write('<form:option selected="selected" value="' + i + '">' + monthNames[i-1] + '</form:option>');
+                                                } else {
+                                                    document.write('<form:option value="' + i + '">' + monthNames[i-1] + '</form:option>');
+                                                }
                                             }
                                             </script>
                                     </form:select>
@@ -144,16 +152,20 @@
                                 <td>
                                     <spring:message code='to' />
                                     <form:select path="dayTo" size="1">
-                                        <form:option value="0" selected="selected" disabled="disabled">Tag</form:option>
+                                        <%--<form:option value="0" selected="selected" disabled="disabled"><spring:message code='person.edit.day' /></form:option>--%>
                                         <script type="text/javascript">
                                             var i = 1;
-                                            for(i     = 1; i < 32; i++) {
-                                                document.write('<form:option value="' + i + '">' + i + '</form:option>');
+                                            for(i = 1; i < 32; i++) {
+                                                if(<c:out value="${personForm.dayTo}" /> == i) {
+                                                    document.write('<form:option selected="selected" value="' + i + '">' + i + '</form:option>');
+                                                } else {
+                                                    document.write('<form:option value="' + i + '">' + i + '</form:option>');
+                                                }
                                             }
                                             </script>
                                     </form:select>
                                     <form:select path="monthTo" size="1">
-                                        <form:option value="0" selected="selected" disabled="disabled">Monat</form:option>
+                                        <%--<form:option value="0" selected="selected" disabled="disabled"><spring:message code='person.edit.month' /></form:option>--%>
                                         <script type="text/javascript">
                                             var regional = "${pageContext.request.locale.language}";
                                             var monthNames;
@@ -169,7 +181,11 @@
                 
                                             var i = 1;
                                             for(i = 1; i < 13; i++) {
-                                                document.write('<form:option value="' + i + '">' + monthNames[i-1] + '</form:option>');
+                                                if(<c:out value="${personForm.monthTo}" /> == i) {
+                                                    document.write('<form:option selected="selected" value="' + i + '">' + monthNames[i-1] + '</form:option>');
+                                                } else {
+                                                    document.write('<form:option value="' + i + '">' + monthNames[i-1] + '</form:option>');
+                                                }
                                             }
                                             </script>
                                     </form:select>

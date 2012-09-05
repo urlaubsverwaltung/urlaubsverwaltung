@@ -36,23 +36,27 @@ public class PersonForm {
     public PersonForm() {
     }
 
-    public PersonForm(Person person, Account account, String annualVacationDays, String remainingVacationDays, boolean remainingVacationDaysExpire) {
+    public PersonForm(Person person, String year, Account account, String annualVacationDays, String remainingVacationDays, boolean remainingVacationDaysExpire) {
         
         this.lastName = person.getLastName();
         this.firstName = person.getFirstName();
         this.email = person.getEmail();
+        this.year = year;
         
         if(account != null) {
         this.dayFrom = String.valueOf(account.getValidFrom().getDayOfMonth());
         this.monthFrom = String.valueOf(account.getValidFrom().getMonthOfYear());
         this.dayTo = String.valueOf(account.getValidTo().getDayOfMonth());
         this.monthTo = String.valueOf(account.getValidTo().getMonthOfYear());
-        this.year = String.valueOf(account.getYear());
         this.annualVacationDays = annualVacationDays;
         this.remainingVacationDays = remainingVacationDays;
         this.remainingVacationDaysExpire = remainingVacationDaysExpire;
         } else {
-            this.year = String.valueOf(DateMidnight.now().getYear());
+            // default values for validFrom and validTo: 1.1. - 31.12.
+            this.dayFrom = String.valueOf(1);
+            this.monthFrom = String.valueOf(1);
+            this.dayTo = String.valueOf(31);
+            this.monthTo = String.valueOf(12);
         }
     }
     

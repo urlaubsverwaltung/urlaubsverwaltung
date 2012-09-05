@@ -505,7 +505,7 @@ public class PersonController {
             rem = NumberUtil.formatNumber(remainingVacationDays, locale);
         }
 
-        return new PersonForm(person, account, ann, rem, remainingVacationDaysExpire);
+        return new PersonForm(person, String.valueOf(year), account, ann, rem, remainingVacationDaysExpire);
     }
 
     /**
