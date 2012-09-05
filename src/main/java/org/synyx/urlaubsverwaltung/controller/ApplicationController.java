@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.domain.Comment;
@@ -75,7 +74,6 @@ public class ApplicationController {
     private static final String APPLICATIONS = "applications";
     private static final String ACCOUNT = "account";
     private static final String ACCOUNTS = "accounts";
-    private static final String USED_DAYS = "usedDays";
     private static final String PERSON = "person";
     private static final String PERSONS = "persons"; // persons for selecting rep
     private static final String PERSON_LIST = "personList"; // office can apply for leave for this persons
@@ -154,20 +152,17 @@ public class ApplicationController {
     private ApplicationValidator validator;
     private GravatarUtil gravatarUtil;
     private MailService mailService;
-    private OwnCalendarService calendarService;
 
-    public ApplicationController(PersonService personService, ApplicationService applicationService,
-            HolidaysAccountService accountService, CommentService commentService, ApplicationValidator validator,
-            GravatarUtil gravatarUtil, MailService mailService, OwnCalendarService calendarService) {
-
+    public ApplicationController(PersonService personService, ApplicationService applicationService, OverlapService overlapService, CalculationService calculationService, HolidaysAccountService accountService, CommentService commentService, ApplicationValidator validator, GravatarUtil gravatarUtil, MailService mailService) {
         this.personService = personService;
         this.applicationService = applicationService;
+        this.overlapService = overlapService;
+        this.calculationService = calculationService;
         this.accountService = accountService;
         this.commentService = commentService;
         this.validator = validator;
         this.gravatarUtil = gravatarUtil;
         this.mailService = mailService;
-        this.calendarService = calendarService;
     }
 
     @InitBinder
@@ -452,17 +447,11 @@ public class ApplicationController {
         if (getLoggedUser().getRole() != Role.INACTIVE) {
             Person person = getLoggedUser();
 
-            // check if this is a new user without account and/or entitlement or a user that has no active account and
-            // entitlement for current year
-
-            // TODO must be modified
-
-//            if (accountService.getHolidayEntitlement(DateMidnight.now().getYear(), person) == null
-//                    || accountService.getHolidaysAccount(DateMidnight.now().getYear(), person) == null) {
-//                model.addAttribute(NOTPOSSIBLE, true);
-//            } else {
-//                prepareForm(person, new AppForm(), model);
-//            }
+            if (accountService.getHolidaysAccount(DateMidnight.now().getYear(), person) == null) {
+                model.addAttribute(NOTPOSSIBLE, true);
+            } else {
+                prepareForm(person, new AppForm(), model);
+            }
 
             return APP_FORM_JSP;
         } else {
@@ -575,7 +564,7 @@ public class ApplicationController {
 
         application = applicationService.apply(application, person, getLoggedUser());
         BigDecimal days = application.getDays();
-        
+
         // check if the vacation would have more than 0 days
         if (days.compareTo(BigDecimal.ZERO) == 0) {
             errors.reject("check.zero");
@@ -740,15 +729,20 @@ public class ApplicationController {
             }
         }
 
-        model.addAttribute(APRIL, april);
+        Account account = accountService.getHolidaysAccount(DateMidnight.now(GregorianChronology.getInstance()).getYear(), person);
 
+        if (account != null) {
+            BigDecimal vacationDaysLeft = calculationService.calculateLeftVacationDays(account);
+            model.addAttribute("leftDays", vacationDaysLeft);
+        }
+
+        model.addAttribute(APRIL, april);
         model.addAttribute(PERSON, person);
         model.addAttribute(PERSONS, persons);
         model.addAttribute(DATE, DateMidnight.now(GregorianChronology.getInstance()));
         model.addAttribute(YEAR, DateMidnight.now(GregorianChronology.getInstance()).getYear());
         model.addAttribute(APPFORM, appForm);
-        model.addAttribute(ACCOUNT,
-                accountService.getHolidaysAccount(DateMidnight.now(GregorianChronology.getInstance()).getYear(), person));
+        model.addAttribute(ACCOUNT, account);
         model.addAttribute(VACTYPES, VacationType.values());
         model.addAttribute(FULL, DayLength.FULL);
         model.addAttribute(MORNING, DayLength.MORNING);
@@ -1041,15 +1035,15 @@ public class ApplicationController {
         model.addAttribute(APPLICATION, application);
         model.addAttribute(STATE_NUMBER, stateNumber);
 
-        // get the number of vacation days that loggedUser has used in the given year
-//        BigDecimal numberOfUsedDays = applicationService.getUsedVacationDaysOfPersonForYear(application.getPerson(),
-//                application.getStartDate().getYear());
-        BigDecimal numberOfUsedDays = BigDecimal.ZERO; // TODO this has to be modified!
-        model.addAttribute(USED_DAYS, numberOfUsedDays);
-
         int year = application.getEndDate().getYear();
 
         Account account = accountService.getHolidaysAccount(year, application.getPerson());
+
+        if (account != null) {
+            BigDecimal vacationDaysLeft = calculationService.calculateLeftVacationDays(account);
+            model.addAttribute("leftDays", vacationDaysLeft);
+        }
+
         int april = 0;
 
         if (DateUtil.isBeforeApril(application.getEndDate())) {

@@ -390,19 +390,21 @@ public class PersonController {
                     applications.add(a);
 
                     if (a.getStatus() == ApplicationStatus.ALLOWED || a.getStatus() == ApplicationStatus.WAITING) {
+                        
+                        BigDecimal days = a.getDays();
 
                         switch (a.getVacationType()) {
                             case HOLIDAY:
-                                numberOfHolidayDays = numberOfHolidayDays.add(a.getDays());
+                                numberOfHolidayDays = numberOfHolidayDays.add(days);
                                 break;
                             case SPECIALLEAVE:
-                                numberOfSpecialLeaveDays = numberOfSpecialLeaveDays.add(a.getDays());
+                                numberOfSpecialLeaveDays = numberOfSpecialLeaveDays.add(days);
                                 break;
                             case UNPAIDLEAVE:
-                                numberOfUnpaidLeaveDays = numberOfUnpaidLeaveDays.add(a.getDays());
+                                numberOfUnpaidLeaveDays = numberOfUnpaidLeaveDays.add(days);
                                 break;
                             case OVERTIME:
-                                numberOfOvertimeDays = numberOfOvertimeDays.add(a.getDays());
+                                numberOfOvertimeDays = numberOfOvertimeDays.add(days);
                                 break;
                         }
 

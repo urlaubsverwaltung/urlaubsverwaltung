@@ -40,6 +40,8 @@
     <constructor-arg ref="ownCalendarService" />
 </bean>
 
+<bean id="overlapService" class="org.synyx.urlaubsverwaltung.service.OverlapService" />
+
 <bean id="ownCalendarService" class="org.synyx.urlaubsverwaltung.calendar.OwnCalendarService" />
 
 <bean id="accountService" class="org.synyx.urlaubsverwaltung.service.HolidaysAccountServiceImpl" />

@@ -58,7 +58,6 @@
 
                 <table class="app-detail" cellspacing="0">
                     <tr class="odd">
-<!--                            <td rowspan="2"><img style="margin-left: 1.5em;"class="user-pic" src="<c:out value='${gravatar}?s=60&d=mm'/>" /></td>-->
                         <th><c:out value="${application.person.firstName} ${application.person.lastName}" /></th>
                         <td><c:out value="${application.person.email}" /></td>
                     </tr>

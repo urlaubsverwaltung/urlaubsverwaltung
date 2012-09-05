@@ -11,32 +11,32 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <tr class="odd">
-<th>
-    <spring:message code='overview.entitlement.per.year' />
-</th>
-<td>
-    <c:choose>
+    <th>
+        <spring:message code='overview.entitlement.per.year' />
+    </th>
+    <td>
+        <c:choose>
 
-        <c:when test="${account != null}">
-            <c:set var ="ent" value="${account.annualVacationDays}" />
-            <c:choose>
-                <c:when test="${ent <= 1.00 && ent > 0.50}">
-                    <c:set var="numberOfDays" value="day" />
-                </c:when>
-                <c:otherwise>
-                    <c:set var="numberOfDays" value="days" />
-                </c:otherwise>
-            </c:choose>
-            <spring:message code="${numberOfDays}" arguments="${ent}" />
-        </c:when>
+            <c:when test="${account != null}">
+                <c:set var ="ent" value="${account.annualVacationDays}" />
+                <c:choose>
+                    <c:when test="${ent <= 1.00 && ent > 0.50}">
+                        <c:set var="numberOfDays" value="day" />
+                    </c:when>
+                    <c:otherwise>
+                        <c:set var="numberOfDays" value="days" />
+                    </c:otherwise>
+                </c:choose>
+                <spring:message code="${numberOfDays}" arguments="${ent}" />
+            </c:when>
 
-        <c:otherwise>
-            <spring:message code='not.specified' />
-        </c:otherwise> 
+            <c:otherwise>
+                <spring:message code='not.specified' />
+            </c:otherwise> 
 
-    </c:choose> 
+        </c:choose> 
 
-</td>
+    </td>
 </tr>
 
 <tr class="even">
@@ -120,23 +120,23 @@
     <td style="border-top: 2px solid #D7D7D7">
         <c:choose>
 
-        <c:when test="${account != null}">
-            <c:set var ="left" value="${leftDays}" />
-            <c:choose>
-                <c:when test="${left <= 1.00 && left > 0.50}">
-                    <c:set var="numberOfDays" value="day" />
-                </c:when>
-                <c:otherwise>
-                    <c:set var="numberOfDays" value="days" />
-                </c:otherwise>
-            </c:choose>
-            <spring:message code="${numberOfDays}" arguments="${left}" />
-        </c:when>
+            <c:when test="${account != null}">
+                <c:set var ="left" value="${leftDays}" />
+                <c:choose>
+                    <c:when test="${left <= 1.00 && left > 0.50}">
+                        <c:set var="numberOfDays" value="day" />
+                    </c:when>
+                    <c:otherwise>
+                        <c:set var="numberOfDays" value="days" />
+                    </c:otherwise>
+                </c:choose>
+                <spring:message code="${numberOfDays}" arguments="${left}" />
+            </c:when>
 
-        <c:otherwise>
-            <spring:message code='not.specified' />
-        </c:otherwise> 
+            <c:otherwise>
+                <spring:message code='not.specified' />
+            </c:otherwise> 
 
-    </c:choose> 
+        </c:choose> 
     </td>
 </tr>

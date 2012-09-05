@@ -72,6 +72,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         application.setDays(days);
         application.setPerson(person);
         application.setApplier(applier);
+        application.setApplicationDate(DateMidnight.now());
         
         return application;
     }

@@ -133,7 +133,7 @@
                                 </tr>
                             </table>
                         </div>
-                                
+
                         <c:choose>
                             <c:when test="${setForce != null}">
                                 <c:set var="forcy" value="${setForce}" />
@@ -142,7 +142,7 @@
                                 <c:set var="forcy" value="0" />
                             </c:otherwise>
                         </c:choose>
-                                    <form:form method="post" action="${formUrlPrefix}/application/new?force=${forcy}" modelAttribute="appForm"> 
+                        <form:form method="post" action="${formUrlPrefix}/application/new?force=${forcy}" modelAttribute="appForm"> 
 
                             <div class="grid_12">&nbsp;</div>
 
@@ -156,60 +156,79 @@
                                     <tr class="even">
                                         <td><spring:message code="overview.left" /></td>
                                         <td>
-                                            <%@include file="./include/left_days.jsp" %>
+                                            <c:choose>
+
+                                                <c:when test="${account != null}">
+                                                    <c:set var ="left" value="${leftDays}" />
+                                                    <c:choose>
+                                                        <c:when test="${left <= 1.00 && left > 0.50}">
+                                                            <c:set var="numberOfDays" value="day" />
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <c:set var="numberOfDays" value="days" />
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                    <spring:message code="${numberOfDays}" arguments="${left}" />
+                                                </c:when>
+
+                                                <c:otherwise>
+                                                    <spring:message code='not.specified' />
+                                                </c:otherwise> 
+
+                                            </c:choose>
                                         </td>
                                     </tr>
                                 </table>
 
-                             <c:if test="${not empty errors || timeError != null}">
-                                
-                                <div id="error-div">
-                                    <c:if test="${empty errors}">
-                                    <spring:message code="${timeError}" />
-                                    </c:if>
-                                    <form:errors cssClass="error" />
-                                    <c:if test="${daysApp != null}">
-                                        <span class="error">
-                                            <c:choose>
-                                                <c:when test="${daysApp <= 1.00 && daysApp > 0.50}">
-                                                    <c:set var="msg1" value="error.days.start.sing" />
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <c:set var="msg1" value="error.days.start.plural" />
-                                                </c:otherwise>
-                                            </c:choose>
+                                <c:if test="${not empty errors || timeError != null}">
 
-                                            <spring:message code="${msg1}" arguments="${daysApp}" />
-                                            <c:choose>
-                                                <c:when test="${april == 1 || not account.remainingVacationDaysExpire}">
-                                                    <c:set var="numberOfDays" value="${account.vacationDays + account.remainingVacationDays}" />
-                                                    <c:choose>
-                                                        <c:when test="${numberOfDays <= 1.00 && numberOfDays > 0.50}">
-                                                            <c:set var="msg2" value="error.days.end.sing" />
-                                                        </c:when>
-                                                        <c:otherwise>
-                                                            <c:set var="msg2" value="error.days.end.plural" />
-                                                        </c:otherwise>
-                                                    </c:choose>
-                                                    <spring:message code="${msg2}" arguments="${numberOfDays}" />
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <c:choose>
-                                                        <c:when test="${account.vacationDays <= 1.00 && account.vacationDays > 0.50}">
-                                                            <c:set var="msg2" value="error.days.end.sing" />
-                                                        </c:when>
-                                                        <c:otherwise>
-                                                            <c:set var="msg2" value="error.days.end.plural" />
-                                                        </c:otherwise>
-                                                    </c:choose>
-                                                    <spring:message code="${msg2}" arguments="${account.vacationDays}" />
-                                                </c:otherwise>
-                                            </c:choose>
-                                            <span/>
+                                    <div id="error-div">
+                                        <c:if test="${empty errors}">
+                                            <spring:message code="${timeError}" />
                                         </c:if>
-                                </div>
-                            </c:if>
-                                        
+                                        <form:errors cssClass="error" />
+                                        <c:if test="${daysApp != null}">
+                                            <span class="error">
+                                                <c:choose>
+                                                    <c:when test="${daysApp <= 1.00 && daysApp > 0.50}">
+                                                        <c:set var="msg1" value="error.days.start.sing" />
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <c:set var="msg1" value="error.days.start.plural" />
+                                                    </c:otherwise>
+                                                </c:choose>
+
+                                                <spring:message code="${msg1}" arguments="${daysApp}" />
+                                                <c:choose>
+                                                    <c:when test="${april == 1 || not account.remainingVacationDaysExpire}">
+                                                        <c:set var="numberOfDays" value="${account.vacationDays + account.remainingVacationDays}" />
+                                                        <c:choose>
+                                                            <c:when test="${numberOfDays <= 1.00 && numberOfDays > 0.50}">
+                                                                <c:set var="msg2" value="error.days.end.sing" />
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <c:set var="msg2" value="error.days.end.plural" />
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                        <spring:message code="${msg2}" arguments="${numberOfDays}" />
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <c:choose>
+                                                            <c:when test="${account.vacationDays <= 1.00 && account.vacationDays > 0.50}">
+                                                                <c:set var="msg2" value="error.days.end.sing" />
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <c:set var="msg2" value="error.days.end.plural" />
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                        <spring:message code="${msg2}" arguments="${account.vacationDays}" />
+                                                    </c:otherwise>
+                                                </c:choose>
+                                                <span/>
+                                            </c:if>
+                                    </div>
+                                </c:if>
+
                                 <table class="app-detail tbl-margin-top" cellspacing="0">
                                     <tr class="odd">
                                         <th>
@@ -305,7 +324,7 @@
                                         </td>
                                     </tr>
                                 </table>
-                                 <table class="app-detail tbl-margin-top" cellspacing="0">
+                                <table class="app-detail tbl-margin-top" cellspacing="0">
                                     <tr class="odd">
                                         <td>
                                             <spring:message code='app.footer' />&nbsp;<joda:format style="M-" value="${date}"/>
