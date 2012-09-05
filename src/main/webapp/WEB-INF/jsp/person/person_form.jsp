@@ -28,6 +28,11 @@
                 window.location.href= url;
             }
         </script>
+        <style type="text/css">
+            .app-detail td {
+                width: 40%;
+            }
+        </style>
     </head>
 
     <body>
@@ -42,22 +47,27 @@
 
                 <form:form method="put" action="${formUrlPrefix}/staff/${person.id}/edit" modelAttribute="personForm"> 
                     <c:if test="${not empty errors}">
-                        <div class="grid_6" id="error-div"><form:errors cssClass="error" /></div>
+                        <div class="grid_8" id="error-div"><form:errors cssClass="error" /></div>
                     </c:if>   
 
-                    <div class="grid_12">&nbsp;</div>
+                    <div class="grid_8">
+                        <table class="overview-header" style="margin-bottom:1em">
+                            <tbody>
+                                <tr>
+                                    <td><spring:message code='person.data' /></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
 
                     <div class="grid_8">
-                        <table id="person-form-tbl">
-                            <tr>
-                                <th style="padding-bottom: 0.5em;"><spring:message code='person.data' /></th>
-                                <td colspan="2">&nbsp;</td>
-                            </tr>
-                            <tr>
+                        <table class="app-detail" cellspacing="0">
+                            <tr class="odd">
                                 <td><spring:message code='login' />:</td>
                                 <td><c:out value="${person.loginName}" /></td>
+                                <td>&nbsp;</td>
                             </tr>
-                            <tr>
+                            <tr class="even">
                                 <td><label for="vorname"><spring:message code="firstname" />:</label></td>
                                 <td>
                                     <form:input id="vorname" path="firstName" cssErrorClass="error" />
@@ -66,7 +76,7 @@
                                     <form:errors path="firstName" cssClass="error" />
                                 </td>
                             </tr>
-                            <tr>
+                            <tr class="odd">
                                 <td><label for="nachname"><spring:message code="lastname" />:</label></td>
                                 <td>
                                     <form:input id="nachname" path="lastName" cssErrorClass="error" />
@@ -75,7 +85,7 @@
                                     <form:errors path="lastName" cssClass="error" />
                                 </td>
                             </tr>
-                            <tr>
+                            <tr class="even">
                                 <td><label for="email"><spring:message code="email" />:</label></td>
                                 <td>
                                     <form:input id="email" path="email" cssErrorClass="error" />
@@ -84,13 +94,26 @@
                                     <form:errors path="email" cssClass="error" />
                                 </td>
                             </tr>
-                            <tr>
-                                <td colspan="2">&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <th>
-                                    <spring:message code='person.entitlement' />
-                                </th>
+                        </table>
+                    </div>
+
+                    <div class="grid_12">&nbsp;</div>
+
+                    <div class="grid_8">
+                        <table class="overview-header" style="margin-bottom:1em">
+                            <tbody>
+                                <tr>
+                                    <td><spring:message code='entitlement' /></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="grid_8">
+                        <table class="app-detail" cellspacing="0">
+
+                            <tr class="odd">
+                                <td><spring:message code='year' /></td>
                                 <td>
                                     <form:select path="year" size="1" onchange="change(this.options[this.selectedIndex].value);" id="year-dropdown">
                                         <form:option value="${currentYear - 1}"><c:out value="${currentYear - 1}" /></form:option>
@@ -103,10 +126,10 @@
                                     <form:errors path="year" cssClass="error" />
                                 </td>
                             </tr>
-                            <tr>
-                                <td>&nbsp;</td>
-                                <td>
-                                    <spring:message code='by' />
+
+                            <tr class="even">
+                                <td><spring:message code='time' /></td>
+                                <td colspan="2">
                                     <form:select path="dayFrom" size="1">
                                         <%--<form:option value="0" disabled="disabled"><spring:message code='person.edit.day' /></form:option>--%>
                                         <script type="text/javascript">
@@ -134,22 +157,18 @@
                                                 monthNames = ['Januar','Februar','März','April','Mai','Juni',
                                                     'Juli','August','September','Oktober','November','Dezember'];
                                             }
-                
+                        
                                             var i = 1;
                                             for(i = 1; i < 13; i++) {
                                                 if(<c:out value="${personForm.monthFrom}" /> == i) {
-                                                    document.write('<form:option selected="selected" value="' + i + '">' + monthNames[i-1] + '</form:option>');
+                                                    document.write('<form:option selected="selected" value="' + i + '        ">' + monthNames[i-1] + '</form:option>');
                                                 } else {
                                                     document.write('<form:option value="' + i + '">' + monthNames[i-1] + '</form:option>');
                                                 }
                                             }
-                                            </script>
+                                        </script>
                                     </form:select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>&nbsp;</td>
-                                <td>
+
                                     <spring:message code='to' />
                                     <form:select path="dayTo" size="1">
                                         <%--<form:option value="0" selected="selected" disabled="disabled"><spring:message code='person.edit.day' /></form:option>--%>
@@ -162,7 +181,7 @@
                                                     document.write('<form:option value="' + i + '">' + i + '</form:option>');
                                                 }
                                             }
-                                            </script>
+                                        </script>
                                     </form:select>
                                     <form:select path="monthTo" size="1">
                                         <%--<form:option value="0" selected="selected" disabled="disabled"><spring:message code='person.edit.month' /></form:option>--%>
@@ -178,20 +197,20 @@
                                                 monthNames = ['Januar','Februar','März','April','Mai','Juni',
                                                     'Juli','August','September','Oktober','November','Dezember'];
                                             }
-                
+                        
                                             var i = 1;
-                                            for(i = 1; i < 13; i++) {
+                                            for(i = 1; i < 13; i++) {        
                                                 if(<c:out value="${personForm.monthTo}" /> == i) {
-                                                    document.write('<form:option selected="selected" value="' + i + '">' + monthNames[i-1] + '</form:option>');
+                                                    document.write('<form:option selected="selected" value="' + i + '        ">' + monthNames[i-1] + '</form:option>');
                                                 } else {
                                                     document.write('<form:option value="' + i + '">' + monthNames[i-1] + '</form:option>');
                                                 }
                                             }
-                                            </script>
+                                        </script>
                                     </form:select>
                                 </td>
                             </tr>
-                            <tr>
+                            <tr class="odd">
                                 <td><spring:message code="person.annual.vacation" />:</td>
                                 <td>
                                     <form:input path="annualVacationDays" cssErrorClass="error" />
@@ -200,7 +219,7 @@
                                     <form:errors path="annualVacationDays" cssClass="error" />
                                 </td>
                             </tr>
-                            <tr>   
+                            <tr class="even">   
                                 <td>
                                     <spring:message code="remaining" />&nbsp;<spring:message code="last.year" />:
                                 </td>
@@ -211,10 +230,7 @@
                                     <form:errors path="remainingVacationDays" cssClass="error" /> 
                                 </td>
                             </tr>
-                            <tr>
-                                <td colspan="2">&nbsp;</td>
-                            </tr>
-                            <tr>
+                            <tr class="odd">
                                 <td>
                                     <spring:message code='person.expire' />
                                 </td>
@@ -223,13 +239,15 @@
                                     &nbsp;&nbsp;&nbsp;  
                                     <spring:message code='no' /> <form:radiobutton path="remainingVacationDaysExpire" value="false" />
                                 </td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">&nbsp;</td>
+                                <td>&nbsp;</td>
                             </tr>
                         </table>
+                    </div>
 
-                        <br />
+                    <!--                        <div class="grid_12" style="margin-top: 2em; background-color: #EAF2D3;">-->
+                    <div class="grid_12">&nbsp;</div>
+                    <div class="grid_8" style="background-color: #EAF2D3; height: 2em; padding-top: 1em; padding-bottom: 1em;">
+                        &nbsp;
                         <input type="submit" class="save" name="<spring:message code="save" />" value="<spring:message code="save" />" />
                         <a class="button back" href="${formUrlPrefix}/staff"><spring:message code='cancel' /></a>
                         <input type="button" onclick="$('#activ-action').show();"
@@ -275,8 +293,8 @@
                             <input type="button" onclick="$('#activ-action').hide();" name="<spring:message code="no" />" value="<spring:message code="no" />" /> 
                         </div>         
                     </form:form>
-
                 </div>
+
 
 
             </div> 
