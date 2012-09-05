@@ -170,7 +170,26 @@
                                     <tr class="even">
                                         <td><spring:message code="overview.left" /></td>
                                         <td>
-                                            <%@include file="./include/left_days_persons.jsp" %>
+                                            <c:choose>
+
+                                                <c:when test="${account != null}">
+                                                    <c:set var ="left" value="${leftDays}" />
+                                                    <c:choose>
+                                                        <c:when test="${left <= 1.00 && left > 0.50}">
+                                                            <c:set var="numberOfDays" value="day" />
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <c:set var="numberOfDays" value="days" />
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                    <spring:message code="${numberOfDays}" arguments="${left}" />
+                                                </c:when>
+
+                                                <c:otherwise>
+                                                    <spring:message code='not.specified' />
+                                                </c:otherwise> 
+
+                                            </c:choose>
                                         </td>
                                     </tr>    
                                 </table>

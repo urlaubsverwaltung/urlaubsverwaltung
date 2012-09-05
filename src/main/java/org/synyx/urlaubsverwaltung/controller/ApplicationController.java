@@ -85,7 +85,6 @@ public class ApplicationController {
     private static final String NOON = "noon";
     private static final String NOTPOSSIBLE = "notpossible"; // is it possible for user to apply for leave? (no, if
     // he/she has no account/entitlement)
-    private static final String APRIL = "april";
     private static final String GRAVATAR = "gravatar";
     private static final String APPLICATION_ID = "applicationId";
     private static final String PERSON_ID = "personId";
@@ -672,7 +671,7 @@ public class ApplicationController {
                     List<Person> persons = personService.getAllPersons(); // get all active persons
                     model.addAttribute(PERSON_LIST, persons);
 
-                    prepareAccountsMap(persons, model);
+//                    prepareAccountsMap(persons, model);
                 }
             } else {
                 model.addAttribute("notpossible", true);
@@ -711,12 +710,6 @@ public class ApplicationController {
 
     public void prepareForm(Person person, AppForm appForm, Model model) {
 
-        int april = 0;
-
-        if (DateUtil.isBeforeApril(DateMidnight.now())) {
-            april = 1;
-        }
-
         List<Person> persons = personService.getAllPersonsExceptOne(person.getId());
 
         ListIterator<Person> itr = persons.listIterator();
@@ -736,7 +729,6 @@ public class ApplicationController {
             model.addAttribute("leftDays", vacationDaysLeft);
         }
 
-        model.addAttribute(APRIL, april);
         model.addAttribute(PERSON, person);
         model.addAttribute(PERSONS, persons);
         model.addAttribute(DATE, DateMidnight.now(GregorianChronology.getInstance()));
@@ -1035,7 +1027,7 @@ public class ApplicationController {
         model.addAttribute(APPLICATION, application);
         model.addAttribute(STATE_NUMBER, stateNumber);
 
-        int year = application.getEndDate().getYear();
+        int year = application.getStartDate().getYear();
 
         Account account = accountService.getHolidaysAccount(year, application.getPerson());
 
@@ -1044,15 +1036,8 @@ public class ApplicationController {
             model.addAttribute("leftDays", vacationDaysLeft);
         }
 
-        int april = 0;
-
-        if (DateUtil.isBeforeApril(application.getEndDate())) {
-            april = 1;
-        }
-
         model.addAttribute(ACCOUNT, account);
         model.addAttribute(YEAR, year);
-        model.addAttribute(APRIL, april);
 
         // get url of loggedUser's gravatar image
         String url = gravatarUtil.createImgURL(application.getPerson().getEmail());

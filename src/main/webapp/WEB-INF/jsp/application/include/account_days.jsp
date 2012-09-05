@@ -71,7 +71,14 @@
         <spring:message code='overview.valid.period' />
     </th>
     <td>
-        <joda:format style="M-" value="${account.validFrom}"/> bis <joda:format style="M-" value="${account.validTo}"/>
+        <c:choose>
+            <c:when test="${account != null}">
+                <joda:format style="M-" value="${account.validFrom}"/> <spring:message code='to' /> <joda:format style="M-" value="${account.validTo}"/>
+            </c:when>
+            <c:otherwise>
+                <spring:message code='not.specified' />
+            </c:otherwise> 
+        </c:choose>   
     </td>
 </tr>
 
