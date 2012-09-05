@@ -642,7 +642,7 @@ public class PersonController {
                 + " wurde editiert.");
 
 
-        return "redirect:/web" + ACTIVE_LINK;
+        return "redirect:/web/staff/" + personToUpdate.getId() + "/overview";
     }
 
     /**
