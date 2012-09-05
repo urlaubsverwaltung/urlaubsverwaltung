@@ -70,7 +70,7 @@
                         </c:choose>
 
                         <tr>
-                            <td rowspan="3" style="background-color: #EAF2D3; width: 9.7%;"><img class="user-pic" src="<c:out value='${gravatar}?d=mm'/>" /></td>
+                            <td rowspan="5" style="background-color: #EAF2D3; width: 9.7%;"><img class="user-pic" src="<c:out value='${gravatar}?d=mm'/>" /></td>
                                 <%@include file="../application/include/account_days.jsp" %>
 
                     </table>
@@ -83,7 +83,6 @@
 
                 <div class="grid_12">
                     <a class="button apply" style="margin-top: 1em;" href="${formUrlPrefix}/application/new">
-                        <c:set var="staff" value="${person.firstName} ${person.lastName}" />
                         <spring:message code="ov.apply" />
                     </a>
                 </div>

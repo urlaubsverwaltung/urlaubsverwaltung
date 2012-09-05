@@ -43,6 +43,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import org.synyx.urlaubsverwaltung.domain.Account;
 import org.synyx.urlaubsverwaltung.domain.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.service.CalculationService;
 
 /**
  * @author  Aljona Murygina
@@ -65,7 +66,7 @@ public class PersonController {
     private static final String ACCOUNT = "account";
     private static final String ACCOUNTS = "accounts";
     private static final String APPLICATIONS = "applications";
-    private static final String USED_DAYS = "usedDays";
+    private static final String LEFT_DAYS = "leftDays";
     private static final String APRIL = "april";
     private static final String GRAVATAR = "gravatar";
     private static final String GRAVATAR_URLS = "gravatarUrls";
@@ -89,15 +90,17 @@ public class PersonController {
     private PersonService personService;
     private ApplicationService applicationService;
     private HolidaysAccountService accountService;
+    private CalculationService calculationService;
     private GravatarUtil gravatarUtil;
     private PersonValidator validator;
 
     public PersonController(PersonService personService, ApplicationService applicationService,
-            HolidaysAccountService accountService, GravatarUtil gravatarUtil, PersonValidator validator) {
+            HolidaysAccountService accountService, CalculationService calculationService, GravatarUtil gravatarUtil, PersonValidator validator) {
 
         this.personService = personService;
         this.applicationService = applicationService;
         this.accountService = accountService;
+        this.calculationService = calculationService;
         this.gravatarUtil = gravatarUtil;
         this.validator = validator;
     }
@@ -365,48 +368,45 @@ public class PersonController {
      */
     private void prepareOverview(Person person, int year, Model model) {
 
-        // TODO: modify!
+        // get the person's applications for the given year
+        List<Application> apps = applicationService.getAllApplicationsByPersonAndYear(person, year);
+
+        if (apps.isEmpty()) {
+            model.addAttribute(NO_APPS, true);
+        } else {
+            List<Application> applications = new ArrayList<Application>();
+
+            for (Application a : apps) {
+                if (a.getStatus() != ApplicationStatus.CANCELLED) {
+                    applications.add(a);
+                } else {
+                    if (a.isFormerlyAllowed() == true) {
+                        applications.add(a);
+                    }
+                }
+            }
+
+            model.addAttribute(APPLICATIONS, applications);
+
+        }
+
+        // get person's holidays account and entitlement for the given year
+        Account account = accountService.getHolidaysAccount(year, person);
         
-//        // get the person's applications for the given year
-//        List<Application> apps = applicationService.getAllApplicationsByPersonAndYear(person, year);
-//
-//        if (apps.isEmpty()) {
-//            model.addAttribute(NO_APPS, true);
-//        } else {
-//            List<Application> applications = new ArrayList<Application>();
-//
-//            for (Application a : apps) {
-//                if (a.getStatus() != ApplicationStatus.CANCELLED) {
-//                    applications.add(a);
-//                } else {
-//                    if (a.isFormerlyAllowed() == true) {
-//                        applications.add(a);
-//                    }
-//                }
-//            }
-//
-//            model.addAttribute(APPLICATIONS, applications);
-//
-//        }
-//
-//
-//
-//        // get the number of vacation days that person has used in the given year
-//        BigDecimal numberOfUsedDays = applicationService.getUsedVacationDaysOfPersonForYear(person, year);
-//        model.addAttribute(USED_DAYS, numberOfUsedDays);
-//
-//        // get person's holidays account and entitlement for the given year
-//        Account account = accountService.getHolidaysAccount(year, person);
-//
-//        setLoggedUser(model);
-//        addAprilAttributeToModel(model);
-//        model.addAttribute(PERSON, person);
-//        model.addAttribute(ACCOUNT, account);
-//        model.addAttribute(YEAR, DateMidnight.now().getYear());
-//
-//        // get url of person's gravatar image
-//        String url = gravatarUtil.createImgURL(person.getEmail());
-//        model.addAttribute(GRAVATAR, url);
+        if(account != null) {
+        BigDecimal vacationDaysLeft = calculationService.calculateLeftVacationDays(account);
+        model.addAttribute(LEFT_DAYS, vacationDaysLeft);
+        }
+
+        setLoggedUser(model);
+        addAprilAttributeToModel(model);
+        model.addAttribute(PERSON, person);
+        model.addAttribute(ACCOUNT, account);
+        model.addAttribute(YEAR, DateMidnight.now().getYear());
+
+        // get url of person's gravatar image
+        String url = gravatarUtil.createImgURL(person.getEmail());
+        model.addAttribute(GRAVATAR, url);
     }
 
     /**

@@ -84,6 +84,17 @@ public interface ApplicationService {
      * @param  boss
      */
     void signApplicationByBoss(Application application, Person boss);
+    
+    
+     /**
+     * use this to get all applications by person and year (all applications no matter which status they have)
+     *
+     * @param  person
+     * @param  year
+     *
+     * @return  return a list of applications of the given person and year
+     */
+    List<Application> getAllApplicationsByPersonAndYear(Person person, int year);
 
     /**
      * use this to get all applications by a certain state (like waiting) and year

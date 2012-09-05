@@ -82,16 +82,35 @@ public class CalculationService {
 
     private boolean checkIfThereAreEnoughVacationDays(Application application) {
 
-        Person person = application.getPerson();
-        int year = application.getStartDate().getYear();
+        Account account = getOrCreateNewAccount(application.getStartDate().getYear(), application.getPerson());
 
+        BigDecimal vacationDays = calculateLeftVacationDays(account);
+
+        if (vacationDays.compareTo(application.getDays()) >= 0) {
+            return true;
+        }
+
+        return false;
+
+    }
+    
+    /**
+     * Calculates how many days the person may apply for leave, i.e. how many vacation days are left on the holidays account.
+     * 
+     * @param account
+     * 
+     * @return left vacation days 
+     */
+    public BigDecimal calculateLeftVacationDays(Account account) {
+        
+        int year = account.getYear();
+        Person person = account.getPerson();
+        
         DateMidnight firstOfJanuary = new DateMidnight(year, DateTimeConstants.JANUARY, 1);
         DateMidnight lastOfMarch = new DateMidnight(year, DateTimeConstants.MARCH, 31);
         DateMidnight firstOfApril = new DateMidnight(year, DateTimeConstants.APRIL, 1);
         DateMidnight lastOfDecember = new DateMidnight(year, DateTimeConstants.DECEMBER, 31);
-
-        Account account = getOrCreateNewAccount(year, person);
-
+        
         BigDecimal vacationDays = account.getVacationDays();
         BigDecimal remainingVacationDays = account.getRemainingVacationDays();
 
@@ -119,13 +138,9 @@ public class CalculationService {
             vacationDays = vacationDays.subtract(daysAfterApril);
 
         }
-
-        if (vacationDays.compareTo(application.getDays()) >= 0) {
-            return true;
-        }
-
-        return false;
-
+        
+        return vacationDays;
+        
     }
 
     protected Account getOrCreateNewAccount(int year, Person person) {

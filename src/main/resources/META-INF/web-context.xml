@@ -32,6 +32,7 @@
         <constructor-arg ref="personService" />
         <constructor-arg ref="applicationService" />
         <constructor-arg ref="accountService" />
+        <constructor-arg ref="calculationService" />
         <constructor-arg ref="gravatarUtil" />
         <constructor-arg ref="personValidator" />
     </bean>  

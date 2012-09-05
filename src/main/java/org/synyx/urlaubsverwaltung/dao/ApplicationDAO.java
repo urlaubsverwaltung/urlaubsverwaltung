@@ -19,6 +19,11 @@ public interface ApplicationDAO extends JpaRepository<Application, Integer> {
     @Query("select max(id) from Application x where x.person = ?1 and x.status = ?2")
     int getIdOfLatestApplication(Person person, ApplicationStatus status);
 
+    // get List<Application> by certain person for a certain year, get only all applications not dependent on status
+    @Query("select x from Application x where x.person = ?1 and x.supplementaryApplication = false and ((x.startDate between ?2 and ?3) or (x.endDate between ?2 and ?3)) order by x.startDate")
+    List<Application> getAllApplicationsByPersonAndYear(Person person,
+            Date firstDayOfYear, Date lastDayOfYear);
+
     @Query("select x from Application x "
     + "where (x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) "
     + "or (x.startDate < ?1 and x.endDate > ?2) "
