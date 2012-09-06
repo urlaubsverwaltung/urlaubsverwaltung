@@ -1,11 +1,6 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package org.synyx.urlaubsverwaltung.validator;
 
-import java.util.Collection;
-import java.util.Map;
 import org.joda.time.DateMidnight;
 
 import org.junit.After;
@@ -22,7 +17,6 @@ import org.junit.Test;
 
 import org.mockito.Mockito;
 
-import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 
 import org.synyx.urlaubsverwaltung.domain.Comment;
@@ -147,7 +141,7 @@ public class ApplicationValidatorTest {
 
         // String length
 
-        app.setAddress("endlooooooooooooooooooooooooooooooooooooooose Adresse endlooooooooooooooooooooooooooooooooooooooose Adresse");
+        app.setAddress("Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. ");
         instance.validate(app, errors);
         Mockito.verify(errors).rejectValue("address", "error.length");
         Mockito.reset(errors);
@@ -157,7 +151,7 @@ public class ApplicationValidatorTest {
         Mockito.verifyZeroInteractions(errors);
         Mockito.reset(errors);
 
-        app.setPhone("00000000000000000000000000000000000000000000000000000000000007237894237849284923840923");
+        app.setPhone("Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. ");
         instance.validate(app, errors);
         Mockito.verify(errors).rejectValue("phone", "error.length");
         Mockito.reset(errors);

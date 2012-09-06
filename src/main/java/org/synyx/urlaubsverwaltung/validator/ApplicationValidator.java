@@ -183,19 +183,19 @@ public class ApplicationValidator implements Validator {
     private void validateStringFields(AppForm app, Errors errors) {
 
         if (StringUtils.hasText(app.getReason())) {
-            if (!validateStringLength(app.getReason(), 80)) {
+            if (!validateStringLength(app.getReason(), 200)) {
                 errors.rejectValue(REASON, ERROR_LENGTH);
             }
         }
 
         if (StringUtils.hasText(app.getAddress())) {
-            if (!validateStringLength(app.getAddress(), 100)) {
+            if (!validateStringLength(app.getAddress(), 200)) {
                 errors.rejectValue(ADDRESS, ERROR_LENGTH);
             }
         }
 
         if (StringUtils.hasText(app.getPhone())) {
-            if (!validateStringLength(app.getPhone(), 50)) {
+            if (!validateStringLength(app.getPhone(), 200)) {
                 errors.rejectValue(PHONE, ERROR_LENGTH);
             }
         }

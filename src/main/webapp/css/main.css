@@ -229,7 +229,7 @@ tr.even {
 
 #error-div {
 /*    width: 43.5em;*/
-    margin-top:7em;
+    margin-bottom: 2em;
     background: url("../images/alarm_16.png") no-repeat 1% 40%;
     border: 1px solid #E76757;
     background-color: #FFE3E3;
@@ -498,7 +498,7 @@ input[type=submit].deactivate, input[type=button].deactivate, a.button.deactivat
     color:red;
 }
 
-input.error {
+input.error, textarea.error {
     border-color: red;
 }
 
@@ -526,7 +526,7 @@ input.error {
 }
 
 .form-textarea {
-    width: 90%;
+    width: 91%;
     min-height: 6em;
 }
 
@@ -568,7 +568,7 @@ Overriding bootstrap stuff
 }
 
 .form-select {
-    width: 92%;
+    width: 95%;
     height: auto;
     margin-bottom: 0;
 }

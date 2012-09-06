@@ -92,7 +92,6 @@ public class ApplicationController {
     private static final String APP_LIST_JSP = APPLICATION + "/app_list";
     private static final String SHOW_APP_DETAIL_JSP = APPLICATION + "/app_detail";
     private static final String APP_FORM_JSP = APPLICATION + "/app_form";
-    private static final String APP_FORM_OFFICE_JSP = APPLICATION + "/app_form_office";
     private static final String ERROR_JSP = "error";
     // login link
     private static final String LOGIN_LINK = "redirect:/login.jsp?login_error=1";
@@ -478,12 +477,12 @@ public class ApplicationController {
             if (errors.hasGlobalErrors()) {
                 model.addAttribute("errors", errors);
             }
-
-            if (isOffice) {
-                return APP_FORM_OFFICE_JSP;
-            } else {
+//
+//            if (isOffice) {
+//                return APP_FORM_OFFICE_JSP;
+//            } else {
                 return APP_FORM_JSP;
-            }
+//            }
         }
 
         validator.validatePast(appForm, errors, model);
@@ -495,11 +494,11 @@ public class ApplicationController {
                 model.addAttribute("errors", errors);
             }
 
-            if (isOffice) {
-                return APP_FORM_OFFICE_JSP;
-            } else {
+//            if (isOffice) {
+//                return APP_FORM_OFFICE_JSP;
+//            } else {
                 return APP_FORM_JSP;
-            }
+//            }
         }
 
         if (checkAndSaveApplicationForm(appForm, personForForm, isOffice, errors, model)) {
@@ -520,11 +519,11 @@ public class ApplicationController {
             model.addAttribute("errors", errors);
         }
 
-        if (isOffice) {
-            return APP_FORM_OFFICE_JSP;
-        } else {
+//        if (isOffice) {
+//            return APP_FORM_OFFICE_JSP;
+//        } else {
             return APP_FORM_JSP;
-        }
+//        }
     }
 
     /**
@@ -677,7 +676,7 @@ public class ApplicationController {
                 model.addAttribute("notpossible", true);
             }
 
-            return APP_FORM_OFFICE_JSP;
+            return APP_FORM_JSP;
         } else {
             return ERROR_JSP;
         }

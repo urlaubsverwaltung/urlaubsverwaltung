@@ -17,20 +17,6 @@
     <head>
         <%@include file="../include/header.jsp" %>
         <title><spring:message code="title" /></title>
-        <script type="text/javascript">
-            function maxChars(elem, max) {
-                if (elem.value.length > max) {
-                    elem.value = elem.value.substring(0, max);
-                }
-            }
-        </script>
-        <!-- script to count number of chars in textarea -->
-        <script type='text/javascript'>
-            function count(val, id) {
-                document.getElementById(id).innerHTML = val.length + "/";
-            }
-            
-        </script>
     </head>
 
     <body>
