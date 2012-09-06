@@ -7,21 +7,21 @@
 */
 
 #wrapper {
-                border: 2px solid #FFF95C;
-                background-color: #FFF7A4;
-                width:300px;
-                height:130px;
-                position:absolute;
-                top:50%;
-                left:50%;
-                margin-left:-185px;
-                margin-top:-90px;
-                text-align:center;
-                padding:20px;
-            }
-           
-            #login-error {
-                    border: 1px solid #E76757;
+    border: 2px solid #FFF95C;
+    background-color: #FFF7A4;
+    width:300px;
+    height:130px;
+    position:absolute;
+    top:50%;
+    left:50%;
+    margin-left:-185px;
+    margin-top:-90px;
+    text-align:center;
+    padding:20px;
+}
+
+#login-error {
+    border: 1px solid #E76757;
     background: url("../images/alarm_16.png") no-repeat 1% 40%;
     background-color: #FFE3E3;
     padding: 0.5em 0.5em 0.5em 2.25em;
@@ -29,6 +29,6 @@
     position: relative;
     top: 3em;
     left: -3.75em;
-            }
-                  
+}
+
 

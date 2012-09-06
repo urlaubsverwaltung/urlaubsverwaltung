@@ -19,36 +19,36 @@
         <%@include file="/WEB-INF/jsp/include/header.jsp" %>
         <link rel="stylesheet" type="text/css" href="<spring:url value='/css/login.css' />" />
         <script type="text/javascript">
-                $(document).ready(function() {
+            $(document).ready(function() {
                     
-                    var url = document.URL;
+                var url = document.URL;
             
-                    if(url.indexOf("login_error") != -1) {
-                        $('#login-error').show('drop', {direction: "up"}); 
-                    } 
-                });
-            </script>
+                if(url.indexOf("login_error") != -1) {
+                    $('#login-error').show('drop', {direction: "up"}); 
+                } 
+            });
+        </script>
     </head>
 
     <body>
 
-        <div id="top-menu">
-            Login
-        </div>
 
-        <div id="header">
-
-            <h1 style="top:50%;
-                left:50%;">Urlaubsverwaltung</h1>
-
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container_12">
+                    <div class="grid_12">
+                        <a class="brand" href="#">Urlaubsverwaltung</a>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div id="login-content">
 
-                <div id="wrapper">
-                    
+            <div id="wrapper">
+
                 <form method="post" action="j_spring_security_check">
-                    
+
                     <table id="login-tbl">
                         <tr>
                             <td style="text-align: left">
@@ -71,24 +71,16 @@
                                 &nbsp;
                             </td>
                             <td style="padding-top: 1em;">
-                               <input type='checkbox' name='_spring_security_remember_me' />Angemeldet bleiben
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                &nbsp;
-                            </td>
-                            <td style="padding-top: 1em;">
-                               <input type="submit" value="Login" name="Login" style="float: right;" />
+                                <input class="btn btn-primary" type="submit" value="Login" name="Login" style="float: right;" />
                             </td>
                         </tr>
                     </table>
                 </form>
-                    
-                    <div id="login-error" style="display:none">
-                Der eingegebene Nutzername oder das Passwort ist falsch.
-            </div>
-                    
+
+                <div id="login-error" style="display:none">
+                    Der eingegebene Nutzername oder das Passwort ist falsch.
+                </div>
+
             </div>
 
         </div>    
