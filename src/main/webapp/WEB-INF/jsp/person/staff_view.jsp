@@ -22,12 +22,39 @@
                 var path = window.location.pathname;
             
                 if(path.indexOf("inactive") != -1) {
-                    document.getElementById("staff-inact").setAttribute("class", "a-act");
-                    document.getElementById("staff-act").setAttribute("class", "a-inact");
+                    document.getElementById("staff-active").removeAttribute("selected");
+                    document.getElementById("staff-inactive").setAttribute("selected", "selected");
                 } else {
-                    document.getElementById("staff-inact").setAttribute("class", "a-inact");
-                    document.getElementById("staff-act").setAttribute("class", "a-act");
+                    document.getElementById("staff-inactive").removeAttribute("selected");
+                    document.getElementById("staff-active").setAttribute("selected", "selected");
                 }
+            });
+        </script>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                var url = window.location.href;
+                var currentYearValue = "?year=" + <c:out value='${year}' />;
+                
+                var options = document.getElementById("year-selector").options;
+                
+                for(var i = 0; i < options.length; i++) {
+                    
+                    var optionValue = options[i].value;
+                    
+                    if(url.indexOf("?year=") != -1) {
+                        if(url.indexOf(optionValue) != -1) {
+                            options[i].setAttribute("selected", "selected");
+                        } else {
+                            options[i].removeAttribute("selected");
+                        }
+                    } else {
+                        if(optionValue == currentYearValue) {
+                            options[i].setAttribute("selected", "selected");
+                        }
+                    }
+                    
+                }
+            
             });
         </script>
     </head>
@@ -38,55 +65,52 @@
 
         <%@include file="../include/menu_header.jsp" %>
 
-        <div id="show-navi">
-            <a href="${formUrlPrefix}/staff" id="staff-act"><spring:message code="table.active" /></a>
-            <a href="${formUrlPrefix}/staff/inactive" id="staff-inact"><spring:message code="table.inactive" /></a>
-        </div>
-
         <div id="content">
             <div class="container_12">
 
                 <div class="grid_12">
-                
-                <c:choose>
 
-                    <c:when test="${notexistent == true}">
+                    <c:choose>
+                        <c:when test="${!empty param.year}">
+                            <c:set var="displayYear" value="${param.year}" />
+                        </c:when>
+                        <c:otherwise>
+                            <c:set var="displayYear" value="${year}" />
+                        </c:otherwise>
+                    </c:choose>
 
-                        <spring:message code="table.empty" />
-
-                    </c:when>
-
-                    <c:otherwise>
-
-                        <c:choose>
-                            <c:when test="${!empty param.year}">
-                                <c:set var="displayYear" value="${param.year}" />
-                            </c:when>
-                            <c:otherwise>
-                                <c:set var="displayYear" value="${year}" />
-                            </c:otherwise>
-                        </c:choose>
-                        <table class="overview-header">
-                            <tr>
-                                <td>
+                    <table class="overview-header">
+                        <tr>
+                            <td>
                                     <spring:message code="table.overview" /><c:out value="${displayYear}" />
-                                </td>
-                                <td style="text-align: right;">
-                                    <select onchange="window.location.href=this.options[this.selectedIndex].value">
-                                        <option selected="selected" value=""><spring:message code="ov.header.year" /></option>
-                                        <option value="?year=<c:out value='${year - 1}' />"><c:out value="${year - 1}" /></option>
-                                        <option value="?year=<c:out value='${year}' />"><c:out value="${year}" /></option>
-                                        <option value="?year=<c:out value='${year + 1}' />"><c:out value="${year + 1}" /></option>
-                                    </select> 
-                                </td>
-                            </tr>
-                        </table>
-                        
-                        <%@include file="./include/staff_list.jsp" %>
+                            </td>
+                            <td style="text-align: right;">
+                                <select id="year-selector" onchange="window.location.href=this.options[this.selectedIndex].value">
+                                    <option value="?year=<c:out value='${year - 1}' />"><c:out value="${year - 1}" /></option>
+                                    <option selected="selected" value="?year=<c:out value='${year}' />"><c:out value="${year}" /></option>
+                                    <option value="?year=<c:out value='${year + 1}' />"><c:out value="${year + 1}" /></option>
+                                </select>
+                                <select onchange="window.location.href=this.options[this.selectedIndex].value">
+                                    <option id="staff-active" value="${formUrlPrefix}/staff"><spring:message code="table.active" /></option>
+                                    <option id="staff-inactive" value="${formUrlPrefix}/staff/inactive"><spring:message code="table.inactive" /></option>
+                                </select> 
+                            </td>
+                        </tr>
+                    </table>
 
-                    </c:otherwise>    
+                    <c:choose>
 
-                </c:choose>
+                        <c:when test="${notexistent == true}">
+
+                            <spring:message code="table.empty" />
+
+                        </c:when>
+
+                        <c:otherwise>
+                            <%@include file="./include/staff_list.jsp" %>
+                        </c:otherwise>
+
+                    </c:choose>
 
                 </div>
             </div> 

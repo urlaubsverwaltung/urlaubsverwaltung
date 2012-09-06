@@ -73,24 +73,6 @@ a:hover {
     margin-left: 1.25em;
 }
 
-#show-navi {
-    top: 142px;
-    right: 6px;
-    position: absolute;
-}
-
-#show-navi a:hover {
-    color: #0083CC;
-}
-
-.a-inact {
-    color: black;
-}
-
-.a-act {
-    color: #0083CC;
-}
-
 #main-menu li {
     float: left;
     list-style-type: none;
@@ -246,7 +228,7 @@ tr.even {
 }
 
 #error-div {
-    width: 43.5em;
+/*    width: 43.5em;*/
     margin-top:7em;
     background: url("../images/alarm_16.png") no-repeat 1% 40%;
     border: 1px solid #E76757;
@@ -557,8 +539,8 @@ Overriding bootstrap stuff
 }
 
 .navbar .nav > li > a {
-    color: #0083CC;
-    /*    color: #555555;*/
+    /*    color: #0083CC;*/
+    color: #555555;
     text-shadow: none;
     padding: 15px 10px 11px;
     text-align: right;
@@ -566,8 +548,8 @@ Overriding bootstrap stuff
 }
 
 .navbar .nav > li > a:hover {
-    /*    color: #0083CC;*/
-    color: #555555;
+    color: #0083CC;
+    /*    color: #555555;*/
     cursor: pointer;
 }
 

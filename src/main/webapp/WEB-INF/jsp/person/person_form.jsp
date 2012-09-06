@@ -248,9 +248,9 @@
                     <div class="grid_12">&nbsp;</div>
                     <div class="grid_8" style="background-color: #EAF2D3; height: 2em; padding-top: 1em; padding-bottom: 1em;">
                         &nbsp;
-                        <input type="submit" class="save" name="<spring:message code="save" />" value="<spring:message code="save" />" />
-                        <a class="button back" href="${formUrlPrefix}/staff"><spring:message code='cancel' /></a>
-                        <input type="button" onclick="$('#activ-action').show();"
+                        <input class="btn btn-primary" type="submit" name="<spring:message code="save" />" value="<spring:message code="save" />" />
+                        <a class="btn" href="${formUrlPrefix}/staff"><spring:message code='cancel' /></a>
+                        <input class="btn" type="button" onclick="$('#activ-action').show();"
                                <c:choose>
                                    <c:when test="${person.active == true}">
                                        name="<spring:message code='person.deactivate' />"
@@ -280,7 +280,7 @@
                     </c:choose>
 
                     <form:form method="put" action="${formUrl}">                  
-                        <div id="activ-action"style="display: none;">
+                        <div id="activ-action"style="display: none;" class="confirm-green">
                             <c:choose>
                                 <c:when test="${person.active == true}">
                                     <spring:message code='person.deactivate.confirm' />&nbsp;
@@ -289,8 +289,8 @@
                                     <spring:message code='person.activate.confirm' />&nbsp;
                                 </c:otherwise> 
                             </c:choose>       
-                            <input type="submit" name="<spring:message code="yes" />" value="<spring:message code="yes" />" />
-                            <input type="button" onclick="$('#activ-action').hide();" name="<spring:message code="no" />" value="<spring:message code="no" />" /> 
+                            <input class="btn" type="submit" name="<spring:message code="yes" />" value="<spring:message code="yes" />" />
+                            <input class="btn" type="button" onclick="$('#activ-action').hide();" name="<spring:message code="no" />" value="<spring:message code="no" />" /> 
                         </div>         
                     </form:form>
                 </div>

@@ -14,7 +14,7 @@
 <div class="grid_12">
                     <c:choose>
 
-                        <c:when test="${noapps == true}">
+                        <c:when test="${empty applications}">
                             <spring:message code='no.apps' />
                         </c:when>
 
