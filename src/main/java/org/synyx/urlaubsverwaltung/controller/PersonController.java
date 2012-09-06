@@ -122,6 +122,7 @@ public class PersonController {
 
             if (persons.isEmpty()) {
                 model.addAttribute(NOTEXISTENT, true);
+                model.addAttribute(YEAR, DateMidnight.now().getYear());
             } else {
                 prepareStaffView(persons, DateMidnight.now().getYear(), model);
             }
@@ -172,6 +173,7 @@ public class PersonController {
 
             if (persons.isEmpty()) {
                 model.addAttribute(NOTEXISTENT, true);
+                model.addAttribute(YEAR, DateMidnight.now().getYear());
             } else {
                 prepareStaffView(persons, year, model);
             }
