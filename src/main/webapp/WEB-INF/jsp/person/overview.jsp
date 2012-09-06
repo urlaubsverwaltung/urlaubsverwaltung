@@ -47,18 +47,21 @@
                         </c:otherwise>
                     </c:choose>
 
-                    <sec:authorize access="hasRole('role.office')">
-                        <%@include file="./include/overview_header_office.jsp" %>
-                    </sec:authorize>
-
-                    <sec:authorize access="hasAnyRole('role.user', 'role.boss')">
-                        <%@include file="./include/overview_header_user.jsp" %>
-                    </sec:authorize>
+                    <c:choose>
+                        <c:when test="${person.id == loggedUser.id}">
+                            <%@include file="./include/overview_header_user.jsp" %>
+                        </c:when>
+                        <c:otherwise>
+                            <sec:authorize access="hasRole('role.office')">
+                                <%@include file="./include/overview_header_office.jsp" %>
+                            </sec:authorize>
+                        </c:otherwise>
+                    </c:choose>
 
                 </div>
 
                 <div class="grid_2">
-                    <table class="app-detail" cellspacing="0" style="height: 12em; text-align: center">
+                    <table class="app-detail" cellspacing="0" style="height: 13em; text-align: center">
                         <tr class="odd">
                             <td rowspan="6" style="text-align: center">
                                 <img class="user-pic" src="<c:out value='${gravatar}?d=mm&s=110'/>" /> 
@@ -102,7 +105,7 @@
                     </sec:authorize>
 
                     <sec:authorize access="hasAnyRole('role.user', 'role.boss')">
-                        <a class="btn btn-success" style="margin-top: 1em;" href="${formUrlPrefix}/application/new">
+                        <a class="btn btn-primary" href="${formUrlPrefix}/application/new">
                             <spring:message code="ov.apply" />
                         </a>
                     </sec:authorize>

@@ -16,12 +16,12 @@
         <td><spring:message code="table.overview" /><c:out value="${displayYear}" /></td>
         <td style="text-align: right;">
             <select onchange="window.location.href=this.options
-                                    [this.selectedIndex].value">
-                <option selected="selected" value=""><spring:message code="ov.header.year" /></option>
-                <option value="?year=<c:out value='${year - 1}' />"><c:out value="${year - 1}" /></option>
-                <option value="?year=<c:out value='${year}' />"><c:out value="${year}" /></option>
-                <option value="?year=<c:out value='${year + 1}' />"><c:out value="${year + 1}" /></option>
-            </select>
+                                                [this.selectedIndex].value">
+                            <option selected="selected" value=""><spring:message code="ov.header.year" /></option>
+                            <option value="?year=<c:out value='${year - 1}' />"><c:out value="${year - 1}" /></option>
+                            <option value="?year=<c:out value='${year}' />"><c:out value="${year}" /></option>
+                            <option value="?year=<c:out value='${year + 1}' />"><c:out value="${year + 1}" /></option>
+                        </select>
         </td>
     </tr>
 </table>

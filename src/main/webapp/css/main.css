@@ -334,7 +334,7 @@ tr.even {
 
 .overview-header td {
     color:#516310;
-    font-size: 1.25em;
+    font-size: 1.5em;
     font-weight: 100;
     height: 2.25em;
     padding-left: 0.5em;
@@ -463,13 +463,6 @@ input[type=button].cancel {
     padding-left: 2em;
 }
 
-#cancel {
-    border: 1px solid #E76757;
-        background-color: #FFE3E3;
-    padding: 1em 1em 1em 2.5em;
-    margin-top:1em;
-}
-
 #rejected-app {
     border: 1px solid #EAF2D3;
     padding:1em;
@@ -490,6 +483,27 @@ input[type=submit].deactivate, input[type=button].deactivate, a.button.deactivat
     background-position: 5% 50%;
     padding-left: 2em;
 }*/
+
+#reject {
+    margin-top: 1em;
+    text-align:left;
+}
+
+.confirm-green {
+    border: 1px solid #D7D7D7;
+    /*    border: 1px solid #EAF2D3;*/
+    /*    background-color: #FFFFFF;*/
+    background-color: #EAF2D3;
+    padding: 1em 1em 1em 2.5em;
+    margin-top:1em;
+}
+
+.confirm-red {
+    border: 1px solid #E76757;
+    background-color: #FFE3E3;
+    padding: 1em 1em 1em 2.5em;
+    margin-top:1em;
+}
 
 .save {
     background-image: url("../images/filesave.png");
@@ -543,35 +557,42 @@ Overriding bootstrap stuff
 }
 
 .navbar .nav > li > a {
-    color: #555555;
+    color: #0083CC;
+    /*    color: #555555;*/
     text-shadow: none;
-    padding: 12px 10px 11px;
+    padding: 15px 10px 11px;
     text-align: right;
+    font-size: 1.1em;
 }
 
 .navbar .nav > li > a:hover {
-    color: #999999;
+    /*    color: #0083CC;*/
+    color: #555555;
     cursor: pointer;
 }
 
 .navbar .brand {
-    color: #555555;  
+    /*    color: #555555; */
+    color: #516310;
     background: url("../images/synyx-logo-2.jpg") no-repeat 10% 50%;
     padding: 12px 50px 12px;
+    font-size: 1.75em;
 }
 
 .navbar-inner {
     background-image: none; 
     background-color: #F8F8F8;
-    min-height: 46px;
+    min-height: 50px;
 }
 
 .form-select {
     width: 92%;
+    height: auto;
     margin-bottom: 0;
 }
 
 select {
     width: auto;
+    height: auto;
     margin-bottom: 0;
 }
