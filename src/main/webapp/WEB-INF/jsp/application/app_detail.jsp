@@ -28,9 +28,6 @@
         <div id="content">
             <div class="container_12">
 
-                <div class="grid_12">&nbsp;</div>
-
-
                 <div class="grid_12">
 
                     <table class="overview-header">

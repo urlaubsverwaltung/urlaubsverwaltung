@@ -541,13 +541,14 @@ Overriding bootstrap stuff
 
 .navbar .nav {
     float: right;
+    margin:0;
 }
 
 .navbar .nav > li > a {
     /*    color: #0083CC;*/
     color: #555555;
     text-shadow: none;
-    padding: 15px 10px 11px;
+    padding: 15px 18px 11px;
     text-align: right;
     font-size: 1.1em;
 }

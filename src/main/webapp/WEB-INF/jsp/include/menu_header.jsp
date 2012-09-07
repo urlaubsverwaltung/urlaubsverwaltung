@@ -25,21 +25,22 @@
                     <ul class="nav">
 
                         <sec:authorize access="hasRole('role.user')">
-                            <li><a href="${formUrlPrefix}/overview"><spring:message code="overview" /></a></li>
+                            <li><a href="${formUrlPrefix}/overview"><i class="icon-home"></i>&nbsp;<spring:message code="overview" /></a></li>
+                            <li><a href="${formUrlPrefix}/application/new"><i class="icon-pencil"></i>&nbsp;<spring:message code="ov.apply" /></a></li>
                         </sec:authorize>
 
                         <sec:authorize access="hasRole('role.boss')">
-                            <li><a href="${formUrlPrefix}/overview"><spring:message code="personal" /></a></li>
-                            <li><a href="${formUrlPrefix}/application"><spring:message code="h.apps" /></a></li>
+                            <li><a href="${formUrlPrefix}/overview"><i class="icon-home"></i>&nbsp;<spring:message code="personal" /></a></li>
+                            <li><a href="${formUrlPrefix}/application"><i class="icon-list-alt"></i>&nbsp;<spring:message code="h.apps" /></a></li>
                         </sec:authorize>
 
                         <sec:authorize access="hasRole('role.office')">
-                            <li><a href="${formUrlPrefix}/overview"><spring:message code="personal" /></a></li>
-                            <li><a href="${formUrlPrefix}/application"><spring:message code="h.apps" /></a></li>
-                            <li><a href="${formUrlPrefix}/staff"><spring:message code="staff.manager" /></a></li>
+                            <li><a href="${formUrlPrefix}/overview"><i class="icon-home"></i>&nbsp;<spring:message code="personal" /></a></li>
+                            <li><a href="${formUrlPrefix}/application"><i class="icon-list-alt"></i>&nbsp;<spring:message code="h.apps" /></a></li>
+                            <li><a href="${formUrlPrefix}/staff"><i class="icon-user"></i>&nbsp;<spring:message code="staff.manager" /></a></li>
                         </sec:authorize>
 
-                        <li><a href="<spring:url value='/j_spring_security_logout' />">Logout</a></li>
+                        <li><a href="<spring:url value='/j_spring_security_logout' />"><i class="icon-off"></i>&nbsp;Logout</a></li>
 
                     </ul>
                 </div>

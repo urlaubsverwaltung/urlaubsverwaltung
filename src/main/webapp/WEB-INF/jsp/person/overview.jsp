@@ -84,7 +84,6 @@
 
                 <div class="grid_12">&nbsp;</div>
                 <div class="grid_12">&nbsp;</div>
-                <div class="grid_12">&nbsp;</div>
 
                 <div class="grid_12">
 
