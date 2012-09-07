@@ -302,6 +302,10 @@ tr.even {
     margin-top:2em;
 }
 
+.tbl-margin-bottom {
+    margin-bottom:2em;
+}
+
 .user-pic {
     text-align: center;
 }
@@ -520,9 +524,10 @@ input.error, textarea.error {
 }
 
 @media print {
-    .button { display: none; }
-    #header { display: none; }
+    .btn, .btn-primary, .btn-danger, .btn-success { display: none; }
+    .navbar, .navbar-inverse, .navbar-inner, .nav, .brand { display: none; }
     .overview-header td { color: black; font-weight: bold;}
+    #content {margin-top: 0;}
 }
 
 .form-textarea {

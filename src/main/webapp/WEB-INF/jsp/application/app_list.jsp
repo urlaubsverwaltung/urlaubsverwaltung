@@ -32,9 +32,9 @@
 
                 <div class="grid_12">
 
-                    <%@include file="./include/list-header.jsp" %> 
+                    <%@include file="./include/app-list-elements/list-header.jsp" %> 
 
-                    <%@include file="./include/list.jsp" %> 
+                    <%@include file="./include/app-list-elements/list.jsp" %> 
 
                 </div>
             </div>
