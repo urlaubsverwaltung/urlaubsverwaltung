@@ -204,9 +204,10 @@
                                         <td>
                                             <label for="anschrift"><spring:message code='app.address' />:</label>
                                             (<span id="text-address"></span><spring:message code="max.chars" />)<br />
+                                            <form:errors path="address" cssClass="error" />
                                         </td>
                                         <td>
-                                            <form:textarea id="anschrift" path="address" class="form-textarea" onkeyup="count(this.value, 'text-address');" onkeydown="maxChars(this,200); count(this.value, 'text-address');" />
+                                            <form:textarea id="anschrift" path="address" class="form-textarea" cssErrorClass="error form-textarea" onkeyup="count(this.value, 'text-address');" onkeydown="maxChars(this,200); count(this.value, 'text-address');" />
                                         </td>
                                     </tr>
                                     <tr class="even">
@@ -221,10 +222,11 @@
                                     <tr class="odd">
                                         <td>
                                             <label for="kommentar"><spring:message code='app.form.comment' />:</label>
-                                            (<span id="text-comment"></span><spring:message code="max.chars" />)
+                                            (<span id="text-comment"></span><spring:message code="max.chars" />)<br />
+                                            <form:errors path="comment" cssClass="error" /></br>
                                         </td>
                                         <td>
-                                            <form:textarea id="kommentar" path="comment" class="form-textarea" onkeyup="count(this.value, 'text-comment');" onkeydown="maxChars(this,200); count(this.value, 'text-comment');" />
+                                            <form:textarea id="kommentar" path="comment" class="form-textarea" cssErrorClass="error form-textarea" onkeyup="count(this.value, 'text-comment');" onkeydown="maxChars(this,200); count(this.value, 'text-comment');" />
                                         </td>
                                     </tr>
                                 </table>
