@@ -158,10 +158,23 @@ public class CalculationService {
 
         if (account == null) {
             Account lastYearsAccount = accountService.getHolidaysAccount(year - 1, person);
-            accountService.createHolidaysAccount(person, new DateMidnight(year, DateTimeConstants.JANUARY, 1),
-                    new DateMidnight(year, DateTimeConstants.DECEMBER, 31),
-                    lastYearsAccount.getAnnualVacationDays(), BigDecimal.ZERO, lastYearsAccount.isRemainingVacationDaysExpire());
+
+            if (lastYearsAccount != null) {
+                accountService.createHolidaysAccount(person, new DateMidnight(year, DateTimeConstants.JANUARY, 1),
+                        new DateMidnight(year, DateTimeConstants.DECEMBER, 31),
+                        lastYearsAccount.getAnnualVacationDays(), BigDecimal.ZERO, lastYearsAccount.isRemainingVacationDaysExpire());
+            } else {
+                // maybe user tries to apply for leave for past year --> no account information
+                // in this case just create an account for this year with the data of the current year's account
+                // if a user is able to apply for leave, it's for sure that there is a current year's account 
+                Account currentYearAccount = accountService.getHolidaysAccount(DateMidnight.now().getYear(), person);
+
+                accountService.createHolidaysAccount(person, new DateMidnight(year, DateTimeConstants.JANUARY, 1),
+                        new DateMidnight(year, DateTimeConstants.DECEMBER, 31), currentYearAccount.getAnnualVacationDays(), BigDecimal.ZERO, true);
+            }
+
             account = accountService.getHolidaysAccount(year, person);
+
         }
 
         return account;

@@ -139,13 +139,16 @@ public class ApplicationValidator implements Validator {
         }
 
             if (startDate != null) {
-                if (startDate.isBeforeNow()) {
+
+                DateMidnight now = DateMidnight.now();
+                
+                DateMidnight todaysMidnight = new DateMidnight(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth());
+                
+                if (startDate.isBefore(todaysMidnight)) {
                     if(startDate.isBefore(DateMidnight.now().minusYears(1))) {
-//                        errors.reject("error.period.past.wide");
                         model.addAttribute("setForce", 0);
                         model.addAttribute("timeError", "error.period.past.wide");
                     } else {
-//                        errors.reject(ERROR_PAST);
                         model.addAttribute("timeError", ERROR_PAST);
                         model.addAttribute("setForce", 1);
                     }

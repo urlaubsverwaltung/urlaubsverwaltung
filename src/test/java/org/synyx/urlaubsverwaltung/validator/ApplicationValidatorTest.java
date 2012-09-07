@@ -1,8 +1,8 @@
-
 package org.synyx.urlaubsverwaltung.validator;
 
 import org.joda.time.DateMidnight;
 
+import org.joda.time.DateTimeConstants;
 import org.junit.After;
 import org.junit.AfterClass;
 
@@ -17,6 +17,7 @@ import org.junit.Test;
 
 import org.mockito.Mockito;
 
+import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 
 import org.synyx.urlaubsverwaltung.domain.Comment;
@@ -24,7 +25,6 @@ import org.synyx.urlaubsverwaltung.domain.DayLength;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.VacationType;
 import org.synyx.urlaubsverwaltung.view.AppForm;
-
 
 /**
  * @author  Aljona Murygina
@@ -34,7 +34,6 @@ public class ApplicationValidatorTest {
     private ApplicationValidator instance;
     private AppForm app;
     Errors errors = Mockito.mock(Errors.class);
-
     private PropertiesValidator propValidator = Mockito.mock(PropertiesValidator.class);
 
     public ApplicationValidatorTest() throws Exception {
@@ -44,11 +43,9 @@ public class ApplicationValidatorTest {
     public static void setUpClass() throws Exception {
     }
 
-
     @AfterClass
     public static void tearDownClass() throws Exception {
     }
-
 
     @Before
     public void setUp() throws Exception {
@@ -58,11 +55,9 @@ public class ApplicationValidatorTest {
         Mockito.reset(errors);
     }
 
-
     @After
     public void tearDown() {
     }
-
 
     /** Test of supports method, of class ApplicationValidator. */
     @Test
@@ -79,7 +74,6 @@ public class ApplicationValidatorTest {
         returnValue = instance.supports(AppForm.class);
         assertTrue(returnValue);
     }
-
 
     /** Test of validate method, of class ApplicationValidator. */
     @Test
@@ -170,18 +164,17 @@ public class ApplicationValidatorTest {
         instance.validate(app, errors);
         Mockito.verifyZeroInteractions(errors);
         Mockito.reset(errors);
-        
+
         app.setComment("kleiner Kommentar");
         instance.validate(app, errors);
         Mockito.verifyZeroInteractions(errors);
         Mockito.reset(errors);
-        
+
         app.setComment("Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis");
         instance.validate(app, errors);
         Mockito.verify(errors).rejectValue("comment", "error.length");
         Mockito.reset(errors);
     }
-
 
     /** Test of validateComment method, of class ApplicationValidator. */
     @Test
@@ -210,7 +203,6 @@ public class ApplicationValidatorTest {
         Mockito.verify(errors).rejectValue("reason", "error.length");
     }
 
-
     /** Test of validateStringLength method, of class ApplicationValidator. */
     @Test
     public void testValidateStringLength() {
@@ -224,5 +216,114 @@ public class ApplicationValidatorTest {
         returnValue = instance.validateStringLength(text, 50);
         assertNotNull(returnValue);
         assertTrue(returnValue);
+    }
+
+    @Test
+    public void testValidateAppForTodayFullDay() {
+
+        Model model = Mockito.mock(Model.class);
+
+        DateMidnight date = new DateMidnight(2012, DateTimeConstants.SEPTEMBER, 7);
+
+        app.setHowLong(DayLength.FULL);
+        app.setStartDate(date);
+
+        instance.validatePast(app, errors, model);
+        Mockito.verifyZeroInteractions(model);
+
+    }
+
+    @Test
+    public void testValidateAppForYesterdayFullDay() {
+
+        Model model = Mockito.mock(Model.class);
+
+        DateMidnight date = new DateMidnight(2012, DateTimeConstants.SEPTEMBER, 6);
+
+        app.setHowLong(DayLength.FULL);
+        app.setStartDate(date);
+
+        instance.validatePast(app, errors, model);
+        Mockito.verify(model).addAttribute("timeError", "error.period.past");
+        Mockito.verify(model).addAttribute("setForce", 1);
+
+    }
+
+    @Test
+    public void testValidateAppForTodayMorning() {
+
+        Model model = Mockito.mock(Model.class);
+
+        DateMidnight date = new DateMidnight(2012, DateTimeConstants.SEPTEMBER, 7);
+
+        app.setHowLong(DayLength.MORNING);
+        app.setStartDateHalf(date);
+
+        instance.validatePast(app, errors, model);
+        Mockito.verifyZeroInteractions(model);
+
+    }
+
+    @Test
+    public void testValidateAppForTodayAfternoon() {
+
+        Model model = Mockito.mock(Model.class);
+
+        DateMidnight date = new DateMidnight(2012, DateTimeConstants.SEPTEMBER, 7);
+
+        app.setHowLong(DayLength.MORNING);
+        app.setStartDateHalf(date);
+
+        instance.validatePast(app, errors, model);
+        Mockito.verifyZeroInteractions(model);
+
+    }
+
+    @Test
+    public void testValidateAppForYesterdayMorning() {
+
+        Model model = Mockito.mock(Model.class);
+
+        DateMidnight date = new DateMidnight(2012, DateTimeConstants.SEPTEMBER, 6);
+
+        app.setHowLong(DayLength.MORNING);
+        app.setStartDateHalf(date);
+
+        instance.validatePast(app, errors, model);
+        Mockito.verify(model).addAttribute("timeError", "error.period.past");
+        Mockito.verify(model).addAttribute("setForce", 1);
+
+    }
+
+    @Test
+    public void testValidateAppForYesterdayAfternoon() {
+
+        Model model = Mockito.mock(Model.class);
+
+        DateMidnight date = new DateMidnight(2012, DateTimeConstants.SEPTEMBER, 6);
+
+        app.setHowLong(DayLength.MORNING);
+        app.setStartDateHalf(date);
+
+        instance.validatePast(app, errors, model);
+        Mockito.verify(model).addAttribute("timeError", "error.period.past");
+        Mockito.verify(model).addAttribute("setForce", 1);
+
+    }
+
+    @Test
+    public void testValidateAppForVeryPastDate() {
+
+        Model model = Mockito.mock(Model.class);
+
+        DateMidnight date = new DateMidnight(2011, DateTimeConstants.SEPTEMBER, 1);
+
+        app.setHowLong(DayLength.FULL);
+        app.setStartDate(date);
+
+        instance.validatePast(app, errors, model);
+        Mockito.verify(model).addAttribute("timeError", "error.period.past.wide");
+        Mockito.verify(model).addAttribute("setForce", 0);
+
     }
 }
