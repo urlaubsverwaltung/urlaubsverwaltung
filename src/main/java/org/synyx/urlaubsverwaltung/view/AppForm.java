@@ -194,13 +194,13 @@ public class AppForm {
         app.setApplicationDate(this.applicationDate);
         app.setTeamInformed(this.teamInformed);
         app.setComment(this.comment);
-
-        if (this.startDateHalf != null) {
-            app.setStartDate(this.startDateHalf);
-            app.setEndDate(this.startDateHalf);
-        } else {
+        
+        if(this.howLong == DayLength.FULL) {
             app.setStartDate(this.startDate);
             app.setEndDate(this.endDate);
+        } else {
+            app.setStartDate(this.startDateHalf);
+            app.setEndDate(this.startDateHalf);
         }
 
         return app;
