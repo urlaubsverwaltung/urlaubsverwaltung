@@ -113,6 +113,11 @@ public class Application extends AbstractPersistable<Integer> {
     
     // for office: is this application already in Calendar?
     private boolean isInCalendar;
+    
+    // is team informed about the holidays?
+    private boolean teamInformed;
+    
+    private String comment;
 
     public String getAddress() {
 
@@ -433,5 +438,22 @@ public class Application extends AbstractPersistable<Integer> {
             this.remindDate = remindDate.toDate();
         }
     }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public boolean isTeamInformed() {
+        return teamInformed;
+    }
+
+    public void setTeamInformed(boolean teamInformed) {
+        this.teamInformed = teamInformed;
+    }
+    
     
 }

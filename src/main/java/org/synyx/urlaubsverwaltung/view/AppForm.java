@@ -41,6 +41,10 @@ public class AppForm {
     private String phone;
 
     private DateMidnight applicationDate;
+    
+    private boolean teamInformed;
+    
+    private String comment;
 
     public String getAddress() {
 
@@ -161,6 +165,22 @@ public class AppForm {
         this.vacationType = vacationType;
     }
 
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public boolean isTeamInformed() {
+        return teamInformed;
+    }
+
+    public void setTeamInformed(boolean teamInformed) {
+        this.teamInformed = teamInformed;
+    }
+    
 
     public Application fillApplicationObject(Application app) {
 
@@ -172,6 +192,8 @@ public class AppForm {
         app.setAddress(this.address);
         app.setPhone(this.phone);
         app.setApplicationDate(this.applicationDate);
+        app.setTeamInformed(this.teamInformed);
+        app.setComment(this.comment);
 
         if (this.startDateHalf != null) {
             app.setStartDate(this.startDateHalf);
