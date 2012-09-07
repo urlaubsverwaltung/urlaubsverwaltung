@@ -193,6 +193,12 @@ public class ApplicationValidator implements Validator {
                 errors.rejectValue(ADDRESS, ERROR_LENGTH);
             }
         }
+        
+        if (StringUtils.hasText(app.getComment())) {
+            if (!validateStringLength(app.getComment(), 200)) {
+                errors.rejectValue("comment", ERROR_LENGTH);
+            }
+        }
 
         if (StringUtils.hasText(app.getPhone())) {
             if (!validateStringLength(app.getPhone(), 200)) {

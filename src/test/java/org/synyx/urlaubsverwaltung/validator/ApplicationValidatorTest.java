@@ -170,30 +170,16 @@ public class ApplicationValidatorTest {
         instance.validate(app, errors);
         Mockito.verifyZeroInteractions(errors);
         Mockito.reset(errors);
-    }
-
-
-    /** Test of validatePast method, of class ApplicationValidator. */
-    @Test
-    @Ignore
-    public void testValidatePast() {
-
-        // TO DO!
-        // Don't know how to put model in test....
         
-//        // full day
-//        app.setHowLong(DayLength.FULL);
-//        app.setStartDate(new DateMidnight(2012, 1, 16));
-//
-//        instance.validatePast(app, errors, model);
-//        Mockito.verify(model.containsAttribute("timeError"));
-//
-//        // half day
-//        app.setHowLong(DayLength.MORNING);
-//        app.setStartDateHalf(new DateMidnight(2012, 1, 16));
-//
-//        instance.validatePast(app, errors, model);
-//        Mockito.verify(model.containsAttribute("timeError"));
+        app.setComment("kleiner Kommentar");
+        instance.validate(app, errors);
+        Mockito.verifyZeroInteractions(errors);
+        Mockito.reset(errors);
+        
+        app.setComment("Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis");
+        instance.validate(app, errors);
+        Mockito.verify(errors).rejectValue("comment", "error.length");
+        Mockito.reset(errors);
     }
 
 
