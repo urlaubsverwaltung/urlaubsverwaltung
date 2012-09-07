@@ -9,6 +9,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 
 <!DOCTYPE html>
@@ -191,13 +192,31 @@
                                         </td>
                                         <td>
                                             <form:select path="rep" id="vertreter" size="1" class="form-select">
-                                        <option value="<spring:message code='app.no.rep' />"><spring:message code='app.no.rep' /></option>
-                                        <c:forEach items="${persons}" var="einmitarbeiter">
-                                            <option value="${einmitarbeiter.lastName} ${einmitarbeiter.firstName}">
-                                                <c:out value="${einmitarbeiter.firstName}" />&nbsp;<c:out value='${einmitarbeiter.lastName}' />
-                                            </option>
-                                        </c:forEach>
-                                    </form:select>                             
+                                                <c:choose>
+                                                    <c:when test="${appForm.rep == null}">
+                                                <option value="<spring:message code='app.no.rep' />"><spring:message code='app.no.rep' /></option>
+                                                <c:forEach items="${persons}" var="einmitarbeiter">
+                                                    <option value="${einmitarbeiter.firstName} ${einmitarbeiter.lastName}">
+                                                        <c:out value="${einmitarbeiter.firstName}" />&nbsp;<c:out value='${einmitarbeiter.lastName}' />
+                                                    </option>
+                                                </c:forEach>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <option value="${appForm.rep}" selected="selected">
+                                                    <c:out value="${appForm.rep}" />
+                                                </option>
+                                                <option value="<spring:message code='app.no.rep' />"><spring:message code='app.no.rep' /></option>
+                                                <c:forEach items="${persons}" var="einmitarbeiter">
+                                                    <c:if test="${!(fn:contains(appForm.rep, einmitarbeiter.lastName) && fn:contains(appForm.rep, einmitarbeiter.firstName))}">
+                                                        <option value="${einmitarbeiter.firstName} ${einmitarbeiter.lastName}">
+                                                            <c:out value="${einmitarbeiter.firstName}" />&nbsp;<c:out value='${einmitarbeiter.lastName}' />
+                                                        </option>
+                                                    </c:if>
+                                                </c:forEach>
+                                            </c:otherwise>
+                                        </c:choose>
+
+                                    </form:select>  
                                     </td>
                                     </tr>
                                     <tr class="odd">
@@ -253,8 +272,8 @@
                                                     <b><spring:message code="name" /></b>
                                                 </td>
                                                 <td>
-                                                        <select class="form-select" onchange="window.location.href=this.options
-                                                                [this.selectedIndex].value">
+                                                    <select class="form-select" onchange="window.location.href=this.options
+                                                        [this.selectedIndex].value">
                                                         <option value="${formUrlPrefix}/${person.id}/application/new" selected="selected"><c:out value="${person.firstName}" />&nbsp;<c:out value="${person.lastName}" /></option>
                                                         <c:forEach items="${personList}" var="p">
                                                             <c:if test="${person.id != p.id}">
