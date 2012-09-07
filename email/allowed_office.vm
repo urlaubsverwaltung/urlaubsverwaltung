@@ -15,10 +15,10 @@ Grund: ${application.reason}
 #end
 Vertreter: ${application.rep}
 #if($application.address && $application.address != "")
-Anschrift während des Urlaubs: ${application.address}
+Anschrift/Telefon während des Urlaubs: ${application.address}
 #end
-#if($application.phone && $application.phone != "")
-Telefon während des Urlaubs: ${application.phone}
+#if($application.comment && $application.comment != "")
+Kommentar: ${application.comment}
 #end
 
 #if($comment.reason && $comment.reason != "")
