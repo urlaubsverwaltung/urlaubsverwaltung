@@ -223,10 +223,10 @@ public class ApplicationValidatorTest {
 
         Model model = Mockito.mock(Model.class);
 
-        DateMidnight date = new DateMidnight(2012, DateTimeConstants.SEPTEMBER, 7);
+        DateMidnight today = DateMidnight.now();
 
         app.setHowLong(DayLength.FULL);
-        app.setStartDate(date);
+        app.setStartDate(today);
 
         instance.validatePast(app, errors, model);
         Mockito.verifyZeroInteractions(model);
@@ -238,10 +238,10 @@ public class ApplicationValidatorTest {
 
         Model model = Mockito.mock(Model.class);
 
-        DateMidnight date = new DateMidnight(2012, DateTimeConstants.SEPTEMBER, 6);
+        DateMidnight yesterday = DateMidnight.now().minusDays(1);
 
         app.setHowLong(DayLength.FULL);
-        app.setStartDate(date);
+        app.setStartDate(yesterday);
 
         instance.validatePast(app, errors, model);
         Mockito.verify(model).addAttribute("timeError", "error.period.past");
@@ -254,10 +254,10 @@ public class ApplicationValidatorTest {
 
         Model model = Mockito.mock(Model.class);
 
-        DateMidnight date = new DateMidnight(2012, DateTimeConstants.SEPTEMBER, 7);
+        DateMidnight today = DateMidnight.now();
 
         app.setHowLong(DayLength.MORNING);
-        app.setStartDateHalf(date);
+        app.setStartDateHalf(today);
 
         instance.validatePast(app, errors, model);
         Mockito.verifyZeroInteractions(model);
@@ -269,10 +269,10 @@ public class ApplicationValidatorTest {
 
         Model model = Mockito.mock(Model.class);
 
-        DateMidnight date = new DateMidnight(2012, DateTimeConstants.SEPTEMBER, 7);
+        DateMidnight today = DateMidnight.now();
 
         app.setHowLong(DayLength.MORNING);
-        app.setStartDateHalf(date);
+        app.setStartDateHalf(today);
 
         instance.validatePast(app, errors, model);
         Mockito.verifyZeroInteractions(model);
@@ -284,10 +284,10 @@ public class ApplicationValidatorTest {
 
         Model model = Mockito.mock(Model.class);
 
-        DateMidnight date = new DateMidnight(2012, DateTimeConstants.SEPTEMBER, 6);
+        DateMidnight yesterday = DateMidnight.now().minusDays(1);
 
         app.setHowLong(DayLength.MORNING);
-        app.setStartDateHalf(date);
+        app.setStartDateHalf(yesterday);
 
         instance.validatePast(app, errors, model);
         Mockito.verify(model).addAttribute("timeError", "error.period.past");
@@ -300,10 +300,10 @@ public class ApplicationValidatorTest {
 
         Model model = Mockito.mock(Model.class);
 
-        DateMidnight date = new DateMidnight(2012, DateTimeConstants.SEPTEMBER, 6);
+        DateMidnight yesterday = DateMidnight.now().minusDays(1);
 
         app.setHowLong(DayLength.MORNING);
-        app.setStartDateHalf(date);
+        app.setStartDateHalf(yesterday);
 
         instance.validatePast(app, errors, model);
         Mockito.verify(model).addAttribute("timeError", "error.period.past");
