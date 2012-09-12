@@ -119,7 +119,9 @@ public class CalculationServiceTest {
         
         Account account = new Account(person, new DateMidnight(2012, DateTimeConstants.JANUARY, 1).toDate(), new DateMidnight(2012, DateTimeConstants.DECEMBER, 31).toDate(), 
                 BigDecimal.valueOf(28), BigDecimal.valueOf(5), true);
-        account.calculateActualVacationDays();
+        
+        Mockito.when(accountService.calculateActualVacationDays(account)).thenReturn(BigDecimal.valueOf(28));
+        account.setVacationDays(BigDecimal.valueOf(28));
         
         Mockito.when(accountService.getHolidaysAccount(2012, person)).thenReturn(account);
         
@@ -136,7 +138,9 @@ public class CalculationServiceTest {
         // set days to little so it can't be true
         account = new Account(person, new DateMidnight(2012, DateTimeConstants.JANUARY, 1).toDate(), new DateMidnight(2012, DateTimeConstants.DECEMBER, 31).toDate(), 
                 BigDecimal.valueOf(20), BigDecimal.valueOf(4.5), true);
-        account.calculateActualVacationDays();
+        
+        Mockito.when(accountService.calculateActualVacationDays(account)).thenReturn(BigDecimal.valueOf(20));
+        account.setVacationDays(BigDecimal.valueOf(20));
         
         Mockito.when(accountService.getHolidaysAccount(2012, person)).thenReturn(account);
         
@@ -146,7 +150,9 @@ public class CalculationServiceTest {
         // set days so that sum is exact zero - so check is true 
         account = new Account(person, new DateMidnight(2012, DateTimeConstants.JANUARY, 1).toDate(), new DateMidnight(2012, DateTimeConstants.DECEMBER, 31).toDate(), 
                 BigDecimal.valueOf(20), BigDecimal.valueOf(6.5), true);
-        account.calculateActualVacationDays();
+       
+        Mockito.when(accountService.calculateActualVacationDays(account)).thenReturn(BigDecimal.valueOf(20));
+        account.setVacationDays(BigDecimal.valueOf(20));
         
         Mockito.when(accountService.getHolidaysAccount(2012, person)).thenReturn(account);
         
@@ -156,7 +162,9 @@ public class CalculationServiceTest {
         // remaining vacation days do not expire so it can be done
         account = new Account(person, new DateMidnight(2012, DateTimeConstants.JANUARY, 1).toDate(), new DateMidnight(2012, DateTimeConstants.DECEMBER, 31).toDate(), 
                 BigDecimal.valueOf(5), BigDecimal.valueOf(22), false);
-        account.calculateActualVacationDays();
+        
+        Mockito.when(accountService.calculateActualVacationDays(account)).thenReturn(BigDecimal.valueOf(5));
+        account.setVacationDays(BigDecimal.valueOf(5));
         
         Mockito.when(accountService.getHolidaysAccount(2012, person)).thenReturn(account);
         
@@ -227,7 +235,9 @@ public class CalculationServiceTest {
         
         Account account = new Account(person, new DateMidnight(2012, DateTimeConstants.JANUARY, 1).toDate(), new DateMidnight(2012, DateTimeConstants.DECEMBER, 31).toDate(), 
                 BigDecimal.valueOf(28), BigDecimal.valueOf(5), true);
-        account.calculateActualVacationDays();
+        
+        Mockito.when(accountService.calculateActualVacationDays(account)).thenReturn(BigDecimal.valueOf(28));
+        account.setVacationDays(BigDecimal.valueOf(28));
         
         
         Application n = new Application();
@@ -246,7 +256,9 @@ public class CalculationServiceTest {
         
         account = new Account(person, new DateMidnight(2012, DateTimeConstants.JANUARY, 1).toDate(), new DateMidnight(2012, DateTimeConstants.DECEMBER, 31).toDate(), 
                 BigDecimal.valueOf(10), BigDecimal.valueOf(5), true);
-        account.calculateActualVacationDays();
+        
+        Mockito.when(accountService.calculateActualVacationDays(account)).thenReturn(BigDecimal.valueOf(10));
+        account.setVacationDays(BigDecimal.valueOf(10));
         
         Mockito.when(accountService.getHolidaysAccount(2012, person)).thenReturn(account);
         
@@ -262,7 +274,7 @@ public class CalculationServiceTest {
         
         Account account = new Account(person, new DateMidnight(2012, DateTimeConstants.JANUARY, 1).toDate(), new DateMidnight(2012, DateTimeConstants.DECEMBER, 31).toDate(), 
                 BigDecimal.valueOf(28), BigDecimal.valueOf(5), true);
-        account.calculateActualVacationDays();
+//        accountService.calculateActualVacationDays(account);
         
         Mockito.when(accountService.getHolidaysAccount(2012, person)).thenReturn(account);
         

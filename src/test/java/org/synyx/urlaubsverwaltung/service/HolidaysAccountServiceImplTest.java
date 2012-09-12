@@ -1,4 +1,3 @@
-
 package org.synyx.urlaubsverwaltung.service;
 
 import java.math.BigDecimal;
@@ -18,38 +17,92 @@ import org.synyx.urlaubsverwaltung.domain.Person;
  * @author Aljona Murygina - murygina@synyx.de
  */
 public class HolidaysAccountServiceImplTest {
-    
+
     private HolidaysAccountServiceImpl service;
     private AccountDAO accountDAO;
-    
     private Account account;
     private Person person;
-    
+
     @Before
     public void setup() {
-        
+
         accountDAO = Mockito.mock(AccountDAO.class);
         service = new HolidaysAccountServiceImpl(accountDAO);
-        
+
         person = new Person();
         person.setLoginName("horscht");
-        
+
         DateMidnight validFrom = new DateMidnight(2012, DateTimeConstants.JANUARY, 1);
         DateMidnight validTo = new DateMidnight(2012, DateTimeConstants.DECEMBER, 31);
-        
+
         account = new Account(person, validFrom.toDate(), validTo.toDate(), BigDecimal.valueOf(28), BigDecimal.valueOf(5), true);
-        
+
     }
-    
+
     @Test
     public void testGetAccount() {
-        
+
         Mockito.when(accountDAO.getHolidaysAccountByYearAndPerson(2012, person)).thenReturn(account);
-        
+
         Account result = service.getHolidaysAccount(2012, person);
-        
+
         Assert.assertNotNull(result);
         Assert.assertEquals(account, result);
     }
-    
+
+    @Test
+    public void testCalculateActualVacationDaysGreaterThanHalf() {
+
+        DateMidnight startDate = new DateMidnight(2012, DateTimeConstants.AUGUST, 1);
+        DateMidnight endDate = new DateMidnight(2012, DateTimeConstants.DECEMBER, 31);
+
+        account = new Account(person, startDate.toDate(), endDate.toDate(), BigDecimal.valueOf(28), BigDecimal.ZERO, true);
+
+        BigDecimal result = service.calculateActualVacationDays(account);
+
+        Assert.assertEquals(BigDecimal.valueOf(12), result);
+
+    }
+
+    @Test
+    public void testCalculateActualVacationDaysBetweenHalf() {
+
+        DateMidnight startDate = new DateMidnight(2012, DateTimeConstants.SEPTEMBER, 1);
+        DateMidnight endDate = new DateMidnight(2012, DateTimeConstants.DECEMBER, 31);
+
+        account = new Account(person, startDate.toDate(), endDate.toDate(), BigDecimal.valueOf(28), BigDecimal.ZERO, true);
+
+        BigDecimal result = service.calculateActualVacationDays(account);
+
+        Assert.assertEquals(BigDecimal.valueOf(9.5), result);
+
+    }
+
+    @Test
+    public void testCalculateActualVacationDaysAlmostZero() {
+
+        DateMidnight startDate = new DateMidnight(2012, DateTimeConstants.SEPTEMBER, 1);
+        DateMidnight endDate = new DateMidnight(2012, DateTimeConstants.DECEMBER, 31);
+
+        account = new Account(person, startDate.toDate(), endDate.toDate(), BigDecimal.valueOf(33.3), BigDecimal.ZERO, true);
+
+        BigDecimal result = service.calculateActualVacationDays(account);
+
+        Assert.assertEquals(BigDecimal.valueOf(11), result);
+
+    }
+
+    @Test
+    public void testCalculateActualVacationDaysForHalfMonths() {
+
+        DateMidnight startDate = new DateMidnight(2012, DateTimeConstants.MAY, 15);
+        DateMidnight endDate = new DateMidnight(2012, DateTimeConstants.DECEMBER, 31);
+
+        account = new Account(person, startDate.toDate(), endDate.toDate(), BigDecimal.valueOf(28), BigDecimal.ZERO, true);
+
+        BigDecimal result = service.calculateActualVacationDays(account);
+
+        // TODO!
+//        Assert.assertEquals(BigDecimal.valueOf(17.5), result);
+    }
 }

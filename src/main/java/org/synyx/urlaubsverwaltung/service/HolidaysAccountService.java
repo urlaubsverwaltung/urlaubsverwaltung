@@ -24,5 +24,15 @@ public interface HolidaysAccountService {
     
     void updateHolidaysAccounts(List<Person> persons, int year);
     
+    /**
+     * Method to calculate the actual vacation days: (months * annual vacation days) / months per year
+     * e.g.: (5 months * 28 days)/12 = 11.6666 = 12
+     * 
+     * Please notice following rounding rules:
+     * 11.1 --> 11.0
+     * 11.3 --> 11.5
+     * 11.6 --> 12.0
+     */
+    BigDecimal calculateActualVacationDays(Account account);
     
 }
