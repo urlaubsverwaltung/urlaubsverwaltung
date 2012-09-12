@@ -7,6 +7,7 @@ import org.joda.time.DateTimeConstants;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.dao.AccountDAO;
 import org.synyx.urlaubsverwaltung.domain.Account;
 import org.synyx.urlaubsverwaltung.domain.Person;
@@ -20,6 +21,7 @@ public class HolidaysAccountServiceImplTest {
 
     private HolidaysAccountServiceImpl service;
     private AccountDAO accountDAO;
+    private OwnCalendarService calendarService;
     private Account account;
     private Person person;
 
@@ -27,7 +29,8 @@ public class HolidaysAccountServiceImplTest {
     public void setup() {
 
         accountDAO = Mockito.mock(AccountDAO.class);
-        service = new HolidaysAccountServiceImpl(accountDAO);
+        calendarService = new OwnCalendarService();
+        service = new HolidaysAccountServiceImpl(accountDAO, calendarService);
 
         person = new Person();
         person.setLoginName("horscht");
@@ -93,7 +96,7 @@ public class HolidaysAccountServiceImplTest {
     }
 
     @Test
-    public void testCalculateActualVacationDaysForHalfMonths() {
+    public void testCalculateActualVacationDaysForHalfMonths1() {
 
         DateMidnight startDate = new DateMidnight(2012, DateTimeConstants.MAY, 15);
         DateMidnight endDate = new DateMidnight(2012, DateTimeConstants.DECEMBER, 31);
@@ -102,7 +105,19 @@ public class HolidaysAccountServiceImplTest {
 
         BigDecimal result = service.calculateActualVacationDays(account);
 
-        // TODO!
-//        Assert.assertEquals(BigDecimal.valueOf(17.5), result);
+        Assert.assertEquals(BigDecimal.valueOf(18), result);
+    }
+    
+    @Test
+    public void testCalculateActualVacationDaysForHalfMonths2() {
+
+        DateMidnight startDate = new DateMidnight(2012, DateTimeConstants.JULY, 16);
+        DateMidnight endDate = new DateMidnight(2012, DateTimeConstants.DECEMBER, 31);
+
+        account = new Account(person, startDate.toDate(), endDate.toDate(), BigDecimal.valueOf(28), BigDecimal.ZERO, true);
+
+        BigDecimal result = service.calculateActualVacationDays(account);
+
+        Assert.assertEquals(BigDecimal.valueOf(13.00), result);
     }
 }

@@ -10,8 +10,8 @@ import org.synyx.urlaubsverwaltung.dao.AccountDAO;
 import org.synyx.urlaubsverwaltung.domain.Account;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.apache.log4j.Logger;
-import org.joda.time.DateTime;
 import org.joda.time.Months;
+import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
 
 /**
  *
@@ -22,10 +22,12 @@ public class HolidaysAccountServiceImpl implements HolidaysAccountService {
 
     private static final Logger LOG = Logger.getLogger("audit");
     private AccountDAO accountDAO;
+    private OwnCalendarService calendarService;
 
     @Autowired
-    public HolidaysAccountServiceImpl(AccountDAO accountDAO) {
+    public HolidaysAccountServiceImpl(AccountDAO accountDAO, OwnCalendarService calendarService) {
         this.accountDAO = accountDAO;
+        this.calendarService = calendarService;
     }
 
     @Override
@@ -72,10 +74,62 @@ public class HolidaysAccountServiceImpl implements HolidaysAccountService {
      */
     @Override
     public BigDecimal calculateActualVacationDays(Account account) {
-        
-        int months = Months.monthsBetween(new DateTime(account.getValidFrom()).toDateMidnight(), new DateTime(account.getValidTo()).toDateMidnight()).getMonths() + 1;
 
-        double unroundedVacationDays = (months * account.getAnnualVacationDays().doubleValue()) / 12;
+        DateMidnight start = account.getValidFrom();
+        DateMidnight end = account.getValidTo();
+
+        DateMidnight firstDayOfStartDatesMonth = start.dayOfMonth().withMinimumValue();
+        DateMidnight lastDayOfEndDatesMonth = end.dayOfMonth().withMaximumValue();
+
+        double unroundedVacationDays = 0.0;
+
+        // if validity period is not from 1st to last day of month, e.g. 15. May - 31. December
+        if (!start.isEqual(firstDayOfStartDatesMonth) || !end.isEqual(lastDayOfEndDatesMonth)) {
+
+            /* 21 work days per month - public holidays are handled like normal work days
+             * (28 : 12) : 21 = 0.1111 vacation days per work day
+             * 
+             * so you have to calculate (0.1111 * work days) to get the actual vacation days 
+             */
+
+            double entitlementPerMonth = 28.0/12.0;
+            double entitlementPerDay = entitlementPerMonth/21.0;
+            double workDays = 0.0;
+
+            DateMidnight startForMonthCalc = start;
+            DateMidnight endForMonthCalc = end;
+
+            if (!start.isEqual(firstDayOfStartDatesMonth)) {
+                workDays += calendarService.getWorkDays(start, start.dayOfMonth().withMaximumValue());
+                startForMonthCalc = start.plusMonths(1).dayOfMonth().withMinimumValue();
+            }
+
+            if (!end.isEqual(lastDayOfEndDatesMonth)) {
+                workDays += calendarService.getWorkDays(end.dayOfMonth().withMinimumValue(), end);
+                endForMonthCalc = end.minusMonths(1).dayOfMonth().withMaximumValue();
+            }
+
+            unroundedVacationDays += entitlementPerDay * workDays;
+            int fullMonths = getNumberOfMonthsForPeriod(startForMonthCalc, endForMonthCalc);
+            unroundedVacationDays += (fullMonths * account.getAnnualVacationDays().doubleValue()) / 12;
+
+        } else {
+            // that's the simple case
+            int months = getNumberOfMonthsForPeriod(start, end);
+            unroundedVacationDays += (months * account.getAnnualVacationDays().doubleValue()) / 12;
+        }
+
+        return roundItTheSpecialWay(unroundedVacationDays);
+    }
+
+    private int getNumberOfMonthsForPeriod(DateMidnight start, DateMidnight end) {
+
+        return Months.monthsBetween(start, end).getMonths() + 1;
+
+    }
+
+    private BigDecimal roundItTheSpecialWay(double unroundedVacationDays) {
+
         BigDecimal bd = new BigDecimal(unroundedVacationDays).setScale(2, RoundingMode.HALF_UP);
 
         String bdString = bd.toString();
@@ -102,8 +156,9 @@ public class HolidaysAccountServiceImpl implements HolidaysAccountService {
             // default fallback because I'm a scaredy cat
             days = new BigDecimal(unroundedVacationDays).setScale(2);
         }
-        
+
         return days;
+
     }
 
     @Override

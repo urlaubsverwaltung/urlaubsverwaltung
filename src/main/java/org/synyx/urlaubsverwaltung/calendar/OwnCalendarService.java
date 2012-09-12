@@ -30,7 +30,7 @@ public class OwnCalendarService {
      *
      * @return  number of workdays
      */
-    protected double getWorkDays(DateMidnight startDate, DateMidnight endDate) {
+    public double getWorkDays(DateMidnight startDate, DateMidnight endDate) {
 
         double workDays = 0.0;
 
