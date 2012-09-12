@@ -118,6 +118,6 @@ public class HolidaysAccountServiceImplTest {
 
         BigDecimal result = service.calculateActualVacationDays(account);
 
-        Assert.assertEquals(BigDecimal.valueOf(13.00), result);
+        Assert.assertEquals(BigDecimal.valueOf(13).setScale(2), result.setScale(2));
     }
 }
