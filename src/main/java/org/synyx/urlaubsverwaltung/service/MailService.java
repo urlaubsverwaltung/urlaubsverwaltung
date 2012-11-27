@@ -5,10 +5,11 @@
 package org.synyx.urlaubsverwaltung.service;
 
 import org.synyx.urlaubsverwaltung.domain.Application;
+import org.synyx.urlaubsverwaltung.domain.Comment;
 import org.synyx.urlaubsverwaltung.domain.Person;
 
 import java.util.List;
-import org.synyx.urlaubsverwaltung.domain.Comment;
+import java.util.Map;
 
 
 /**
@@ -59,7 +60,7 @@ public interface MailService {
      * this method sends an email to the applicant and to the office that the application has been allowed
      *
      * @param  application  the application which got allowed
-     * @param comment made during allowing application
+     * @param  comment  made during allowing application
      */
     void sendAllowedNotification(Application application, Comment comment);
 
@@ -68,29 +69,35 @@ public interface MailService {
      * this method sends an email to the applicant that the application has been rejected
      *
      * @param  application  the application which got rejected
-     * @param comment reason why application was rejected
+     * @param  comment  reason why application was rejected
      */
     void sendRejectedNotification(Application application, Comment comment);
-    
+
+
     /**
-     * If a boss is not sure about the decision of an application (reject or allow), he can ask another boss to decide about this application via a generated email. 
-     * @param a
-     * @param p 
+     * If a boss is not sure about the decision of an application (reject or allow), he can ask another boss to decide
+     * about this application via a generated email.
+     *
+     * @param  a
+     * @param  p
      */
     void sendReferApplicationNotification(Application a, Person reciever, String sender);
-    
+
+
     /**
-     * If an application has status waiting and no boss has decided about it after a certain time, the bosses recieve a reminding notification.
-     * 
-     * @param a 
+     * If an application has status waiting and no boss has decided about it after a certain time, the bosses recieve a
+     * reminding notification.
+     *
+     * @param  a
      */
     void sendRemindBossNotification(Application a);
-    
-    
+
+
     /**
-     * Needed for jmx demo: send a notification to remind boss about waiting applications that have to be allowed or rejected.
-     * 
-     * @param apps 
+     * Needed for jmx demo: send a notification to remind boss about waiting applications that have to be allowed or
+     * rejected.
+     *
+     * @param  apps
      */
     void sendRemindingBossAboutWaitingApplicationsNotification(List<Application> apps);
 
@@ -100,7 +107,7 @@ public interface MailService {
      *
      * @param  persons  persons on vacation this week
      */
-    void sendWeeklyVacationForecast(List<Person> persons);
+    void sendWeeklyVacationForecast(Map<String, Person> persons);
 
 
     /**
@@ -111,7 +118,7 @@ public interface MailService {
      * @param  application  the application which got canceled
      * @param  cancelledByOffice  describes if chefs (param is true) or office (param is false) get the email (dependent
      *                            on application's state: waiting-chefs, allowed-office
-     * @param comment
+     * @param  comment
      */
     void sendCancelledNotification(Application application, boolean cancelledByOffice, Comment comment);
 
@@ -142,6 +149,15 @@ public interface MailService {
      * @param  name  of the concerned property key
      */
     void sendPropertiesErrorNotification(String propertyName);
+
+
+    /**
+     * Sends mail to the tool's manager if holidays accounts were updated successfully on 1st January of a year.
+     * (setting remaining vacation days)
+     *
+     * @param  content  content for email
+     */
+    void sendSuccessfullyUpdatedAccounts(String content);
 
     /**
      * Commented out on Tu, 2011/11/29 - Aljona Murygina

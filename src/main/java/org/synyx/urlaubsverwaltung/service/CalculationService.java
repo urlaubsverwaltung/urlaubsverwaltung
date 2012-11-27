@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.service;
 
-import java.math.BigDecimal;
-import java.util.List;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.dao.ApplicationDAO;
 import org.synyx.urlaubsverwaltung.domain.Account;
@@ -13,10 +13,15 @@ import org.synyx.urlaubsverwaltung.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.VacationType;
 
+import java.math.BigDecimal;
+
+import java.util.List;
+
+
 /**
  * This service calculates if a person may apply for leave, i.e. if he/she has enough vacation days to apply for leave.
- * 
- * @author Aljona Murygina - murygina@synyx.de
+ *
+ * @author  Aljona Murygina - murygina@synyx.de
  */
 public class CalculationService {
 
@@ -25,7 +30,9 @@ public class CalculationService {
     private OwnCalendarService calendarService;
 
     @Autowired
-    public CalculationService(ApplicationDAO applicationDAO, HolidaysAccountService accountService, OwnCalendarService calendarService) {
+    public CalculationService(ApplicationDAO applicationDAO, HolidaysAccountService accountService,
+        OwnCalendarService calendarService) {
+
         this.applicationDAO = applicationDAO;
         this.accountService = accountService;
         this.calendarService = calendarService;
@@ -42,7 +49,6 @@ public class CalculationService {
     public boolean checkApplication(Application application) {
 
         if (application.getStartDate().getYear() != application.getEndDate().getYear()) {
-
             Person person = application.getPerson();
             int startYear = application.getStartDate().getYear();
             int endYear = application.getEndDate().getYear();
@@ -52,14 +58,16 @@ public class CalculationService {
             tmp1.setEndDate(new DateMidnight(startYear, DateTimeConstants.DECEMBER, 31));
             tmp1.setPerson(person);
             tmp1.setHowLong(application.getHowLong());
-            tmp1.setDays(calendarService.getVacationDays(tmp1, application.getStartDate(), new DateMidnight(startYear, DateTimeConstants.DECEMBER, 31)));
+            tmp1.setDays(calendarService.getVacationDays(tmp1, application.getStartDate(),
+                    new DateMidnight(startYear, DateTimeConstants.DECEMBER, 31)));
 
             Application tmp2 = new Application();
             tmp2.setStartDate(new DateMidnight(endYear, DateTimeConstants.JANUARY, 1));
             tmp2.setEndDate(application.getEndDate());
             tmp2.setPerson(person);
             tmp2.setHowLong(application.getHowLong());
-            tmp2.setDays(calendarService.getVacationDays(application, new DateMidnight(endYear, DateTimeConstants.JANUARY, 1), application.getEndDate()));
+            tmp2.setDays(calendarService.getVacationDays(application,
+                    new DateMidnight(endYear, DateTimeConstants.JANUARY, 1), application.getEndDate()));
 
             if (accountService.getHolidaysAccount(startYear, person) == null) {
                 // this may happen if someone applies for leave for the past year and there is set no account information
@@ -71,18 +79,18 @@ public class CalculationService {
                     return true;
                 }
             }
-
         } else {
             return checkIfThereAreEnoughVacationDays(application);
         }
 
         return false;
-
     }
+
 
     private boolean checkIfThereAreEnoughVacationDays(Application application) {
 
-        Account account = getOrCreateNewAccount(application.getStartDate().getYear(), application.getPerson());
+        Account account = accountService.getOrCreateNewAccount(application.getStartDate().getYear(),
+                application.getPerson());
 
         BigDecimal vacationDays = calculateLeftVacationDays(account);
 
@@ -91,15 +99,16 @@ public class CalculationService {
         }
 
         return false;
-
     }
 
+
     /**
-     * Calculates how many days the person may apply for leave, i.e. how many vacation days are left on the holidays account.
-     * 
-     * @param account
-     * 
-     * @return left vacation days 
+     * Calculates how many days the person may apply for leave, i.e. how many vacation days are left on the holidays
+     * account.
+     *
+     * @param  account
+     *
+     * @return  left vacation days
      */
     public BigDecimal calculateLeftVacationDays(Account account) {
 
@@ -128,20 +137,17 @@ public class CalculationService {
             vacationDays = vacationDays.add(result); // result is negative so that you add it to vacation days instead of subtract it
         }
 
-
         // if the remaining vacation days do not expire or it is before April
         // you just can see the vacation days as sum of vacation days and remaining vacation days
 
         // do we have April or later?
         if (DateMidnight.now().getMonthOfYear() >= DateTimeConstants.APRIL) {
-
             if (account.isRemainingVacationDaysExpire()) {
                 vacationDays = vacationDays.subtract(daysAfterApril);
             } else {
                 vacationDays = vacationDays.add(remainingVacationDays);
                 vacationDays = vacationDays.subtract(daysAfterApril);
             }
-
         } else {
             // it's before April
             vacationDays = vacationDays.add(remainingVacationDays);
@@ -149,47 +155,22 @@ public class CalculationService {
         }
 
         return vacationDays;
-
     }
 
-    protected Account getOrCreateNewAccount(int year, Person person) {
 
-        Account account = accountService.getHolidaysAccount(year, person);
+    protected BigDecimal getDaysBetweenTwoMilestones(Person person, DateMidnight firstMilestone,
+        DateMidnight lastMilestone) {
 
-        if (account == null) {
-            Account lastYearsAccount = accountService.getHolidaysAccount(year - 1, person);
-
-            if (lastYearsAccount != null) {
-                accountService.createHolidaysAccount(person, new DateMidnight(year, DateTimeConstants.JANUARY, 1),
-                        new DateMidnight(year, DateTimeConstants.DECEMBER, 31),
-                        lastYearsAccount.getAnnualVacationDays(), BigDecimal.ZERO, lastYearsAccount.isRemainingVacationDaysExpire());
-            } else {
-                // maybe user tries to apply for leave for past year --> no account information
-                // in this case just create an account for this year with the data of the current year's account
-                // if a user is able to apply for leave, it's for sure that there is a current year's account 
-                Account currentYearAccount = accountService.getHolidaysAccount(DateMidnight.now().getYear(), person);
-
-                accountService.createHolidaysAccount(person, new DateMidnight(year, DateTimeConstants.JANUARY, 1),
-                        new DateMidnight(year, DateTimeConstants.DECEMBER, 31), currentYearAccount.getAnnualVacationDays(), BigDecimal.ZERO, true);
-            }
-
-            account = accountService.getHolidaysAccount(year, person);
-
-        }
-
-        return account;
-
-    }
-
-    protected BigDecimal getDaysBetweenTwoMilestones(Person person, DateMidnight firstMilestone, DateMidnight lastMilestone) {
-
-        List<Application> applicationsBetweenMilestones =
-                applicationDAO.getApplicationsBetweenTwoMilestones(person, firstMilestone.toDate(), lastMilestone.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED);
+        List<Application> applicationsBetweenMilestones = applicationDAO.getApplicationsBetweenTwoMilestones(person,
+                firstMilestone.toDate(), lastMilestone.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING,
+                ApplicationStatus.ALLOWED);
 
         List<Application> applicationsBetweenMilestonesSpanningFirstMilestone =
-                applicationDAO.getApplicationsBeforeFirstMilestone(person, firstMilestone.toDate(), lastMilestone.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED);
+            applicationDAO.getApplicationsBeforeFirstMilestone(person, firstMilestone.toDate(), lastMilestone.toDate(),
+                VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED);
         List<Application> applicationsBetweenMilestonesSpanningLastMilestone =
-                applicationDAO.getApplicationsAfterLastMilestone(person, firstMilestone.toDate(), lastMilestone.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED);
+            applicationDAO.getApplicationsAfterLastMilestone(person, firstMilestone.toDate(), lastMilestone.toDate(),
+                VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED);
 
         BigDecimal days = BigDecimal.ZERO;
 
@@ -206,6 +187,5 @@ public class CalculationService {
         }
 
         return days;
-
     }
 }

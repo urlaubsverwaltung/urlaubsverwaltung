@@ -83,5 +83,22 @@
 
 <bean id="startupService" class="org.synyx.urlaubsverwaltung.service.StartupService" />
 
+<!-- Scheduling config -->
+<task:annotation-driven executor="executor" scheduler="scheduler" />
+<task:executor id="executor" pool-size="5" />
+<task:scheduler id="scheduler" pool-size="10" />
+
+<!-- remaining vacation days calculator on 1st January -->
+<bean class="org.synyx.urlaubsverwaltung.service.cron.TurnOfTheYearAccountUpdaterService">
+    <constructor-arg ref="personService" />
+    <constructor-arg ref="accountService" />
+    <constructor-arg ref="calculationService" />
+    <constructor-arg ref="mailService" />
+</bean>
+
+<bean class="org.synyx.urlaubsverwaltung.service.cron.CronMailService">
+    <constructor-arg ref="personService" />
+</bean>
+
 </beans>
 

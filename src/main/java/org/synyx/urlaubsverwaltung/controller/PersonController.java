@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.controller;
 import org.apache.log4j.Logger;
 
 import org.joda.time.DateMidnight;
+import org.joda.time.DateTimeConstants;
 import org.joda.time.chrono.GregorianChronology;
 
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,10 +21,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
+import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
+import org.synyx.urlaubsverwaltung.domain.Account;
 import org.synyx.urlaubsverwaltung.domain.Application;
+import org.synyx.urlaubsverwaltung.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.Role;
 import org.synyx.urlaubsverwaltung.service.ApplicationService;
+import org.synyx.urlaubsverwaltung.service.CalculationService;
 import org.synyx.urlaubsverwaltung.service.HolidaysAccountService;
 import org.synyx.urlaubsverwaltung.service.PersonService;
 import org.synyx.urlaubsverwaltung.util.GravatarUtil;
@@ -40,11 +45,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import org.joda.time.DateTimeConstants;
-import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
-import org.synyx.urlaubsverwaltung.domain.Account;
-import org.synyx.urlaubsverwaltung.domain.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.service.CalculationService;
+
 
 /**
  * @author  Aljona Murygina
@@ -57,6 +58,7 @@ public class PersonController {
     private static final String STAFF_JSP = "person/staff_view";
     private static final String PERSON_FORM_JSP = "person/person_form";
     private static final String ERROR_JSP = "error";
+
     // attribute names
     private static final String DATE_FORMAT = "dd.MM.yyyy";
     private static final String LOGGED_USER = "loggedUser";
@@ -73,6 +75,7 @@ public class PersonController {
     private static final String NO_APPS = "noapps"; // are there any applications to show?
     private static final String PERSON_ID = "personId";
     private static final String YEAR = "year";
+
     // links
     private static final String ACTIVE_LINK = "/staff";
     private static final String INACTIVE_LINK = "/staff/inactive";
@@ -82,6 +85,7 @@ public class PersonController {
     private static final String DEACTIVATE_LINK = "/staff/{" + PERSON_ID + "}/deactivate";
     private static final String ACTIVATE_LINK = "/staff/{" + PERSON_ID + "}/activate";
     private static final String LOGIN_LINK = "redirect:/login.jsp?login_error=1";
+
     // audit logger: logs nontechnically occurences like 'user x applied for leave' or 'subtracted n days from
     // holidays account y'
     private static final Logger LOG = Logger.getLogger("audit");
@@ -94,7 +98,8 @@ public class PersonController {
     private OwnCalendarService calendarService;
 
     public PersonController(PersonService personService, ApplicationService applicationService,
-            HolidaysAccountService accountService, CalculationService calculationService, GravatarUtil gravatarUtil, PersonValidator validator, OwnCalendarService calendarService) {
+        HolidaysAccountService accountService, CalculationService calculationService, GravatarUtil gravatarUtil,
+        PersonValidator validator, OwnCalendarService calendarService) {
 
         this.personService = personService;
         this.applicationService = applicationService;
@@ -133,6 +138,7 @@ public class PersonController {
         }
     }
 
+
     /**
      * Shows list with active staff, default: for current year.
      *
@@ -154,6 +160,7 @@ public class PersonController {
             return ERROR_JSP;
         }
     }
+
 
     /**
      * Shows list with inactive staff for the given year.
@@ -184,6 +191,7 @@ public class PersonController {
         }
     }
 
+
     /**
      * Shows list with active staff for the given year.
      *
@@ -207,12 +215,13 @@ public class PersonController {
         }
     }
 
+
     /**
      * prepares view of staffs; preparing is for both views (list and detail) identic
-     * 
-     * @param persons
-     * @param year
-     * @param model 
+     *
+     * @param  persons
+     * @param  year
+     * @param  model
      */
     private void prepareStaffView(List<Person> persons, int year, Model model) {
 
@@ -221,7 +230,7 @@ public class PersonController {
 
         Map<Person, Account> accounts = new HashMap<Person, Account>();
         Account account;
-        
+
         Map<Person, BigDecimal> leftDays = new HashMap<Person, BigDecimal>();
 
         for (Person person : persons) {
@@ -237,11 +246,10 @@ public class PersonController {
 
             if (account != null) {
                 accounts.put(person, account);
-                
+
                 BigDecimal vacationDaysLeft = calculationService.calculateLeftVacationDays(account);
                 leftDays.put(person, vacationDaysLeft);
             }
-
         }
 
         model.addAttribute(PERSONS, persons);
@@ -250,6 +258,7 @@ public class PersonController {
         model.addAttribute("leftDays", leftDays);
         model.addAttribute(YEAR, DateMidnight.now().getYear());
     }
+
 
     /**
      * Default personal overview for user: information about one's leave accounts, entitlement of holidays, list of
@@ -272,6 +281,7 @@ public class PersonController {
             return OVERVIEW_JSP;
         }
     }
+
 
     /**
      * Personal overview with year as parameter for user: information about one's leave accounts, entitlement of
@@ -296,15 +306,16 @@ public class PersonController {
         }
     }
 
+
     /**
      * The office is able to see overviews of staff with information about this person's leave accounts, entitlement of
      * holidays, list of applications, etc. The default overview of a staff member (no parameter set for year) is for
      * the current year.
-     * 
-     * @param personId
-     * @param model
-     * 
-     * @return 
+     *
+     * @param  personId
+     * @param  model
+     *
+     * @return
      */
     @RequestMapping(value = OVERVIEW_STAFF_LINK, method = RequestMethod.GET)
     public String showStaffOverview(@PathVariable(PERSON_ID) Integer personId, Model model) {
@@ -330,19 +341,20 @@ public class PersonController {
         }
     }
 
+
     /**
      * The office is able to see overviews of staff members with information about this person's leave accounts,
      * entitlement of holidays, list of applications, etc.; staff overview with year as parameter.
-     * 
-     * @param personId
-     * @param year
-     * @param model
-     * 
-     * @return 
+     *
+     * @param  personId
+     * @param  year
+     * @param  model
+     *
+     * @return
      */
     @RequestMapping(value = OVERVIEW_STAFF_LINK, params = YEAR, method = RequestMethod.GET)
     public String showStaffOverviewByYear(@PathVariable(PERSON_ID) Integer personId,
-            @RequestParam(YEAR) int year, Model model) {
+        @RequestParam(YEAR) int year, Model model) {
 
         if (getLoggedUser().getRole() != Role.OFFICE) {
             return ERROR_JSP;
@@ -365,6 +377,7 @@ public class PersonController {
             return OVERVIEW_JSP;
         }
     }
+
 
     /**
      * Prepares model for overview with given person and year.
@@ -391,32 +404,43 @@ public class PersonController {
                     applications.add(a);
 
                     if (a.getStatus() == ApplicationStatus.ALLOWED || a.getStatus() == ApplicationStatus.WAITING) {
-
                         BigDecimal days = BigDecimal.ZERO;
-                        
-                        if(a.getStartDate().getYear() != a.getEndDate().getYear()) {
-                            days = calendarService.getVacationDays(a, a.getStartDate(), new DateMidnight(a.getStartDate().getYear(), DateTimeConstants.DECEMBER, 31));
+
+                        if (a.getStartDate().getYear() != a.getEndDate().getYear()) {
+                            // 2 possibilities:
+                            // e.g.
+                            // Dez. 2011 - Jan. 2012 ------ year ------ Dez. 2012 - Jan. 2013
+
+                            if (a.getStartDate().getYear() == year - 1 && a.getEndDate().getYear() == year) {
+                                days = calendarService.getVacationDays(a,
+                                        new DateMidnight(a.getEndDate().getYear(), DateTimeConstants.JANUARY, 1),
+                                        a.getEndDate());
+                            } else if (a.getStartDate().getYear() == year && a.getEndDate().getYear() == year + 1) {
+                                days = calendarService.getVacationDays(a, a.getStartDate(),
+                                        new DateMidnight(a.getStartDate().getYear(), DateTimeConstants.DECEMBER, 31));
+                            }
                         } else {
                             days = a.getDays();
                         }
-                        
+
                         switch (a.getVacationType()) {
                             case HOLIDAY:
                                 numberOfHolidayDays = numberOfHolidayDays.add(days);
                                 break;
+
                             case SPECIALLEAVE:
                                 numberOfSpecialLeaveDays = numberOfSpecialLeaveDays.add(days);
                                 break;
+
                             case UNPAIDLEAVE:
                                 numberOfUnpaidLeaveDays = numberOfUnpaidLeaveDays.add(days);
                                 break;
+
                             case OVERTIME:
                                 numberOfOvertimeDays = numberOfOvertimeDays.add(days);
                                 break;
                         }
-
                     }
-
                 } else {
                     if (a.isFormerlyAllowed() == true) {
                         applications.add(a);
@@ -424,17 +448,16 @@ public class PersonController {
                 }
             }
 
-            if(applications.isEmpty()) {
+            if (applications.isEmpty()) {
                 model.addAttribute(NO_APPS, true);
             } else {
                 model.addAttribute(APPLICATIONS, applications);
             }
-            
+
             model.addAttribute("numberOfHolidayDays", numberOfHolidayDays);
             model.addAttribute("numberOfSpecialLeaveDays", numberOfSpecialLeaveDays);
             model.addAttribute("numberOfUnpaidLeaveDays", numberOfUnpaidLeaveDays);
             model.addAttribute("numberOfOvertimeDays", numberOfOvertimeDays);
-
         }
 
         // get person's holidays account and entitlement for the given year
@@ -455,18 +478,19 @@ public class PersonController {
         model.addAttribute(GRAVATAR, url);
     }
 
+
     /**
      * Prepares the view object PersonForm and returns jsp with form to edit a user.
-     * 
-     * @param request
-     * @param personId
-     * @param model
-     * 
-     * @return 
+     *
+     * @param  request
+     * @param  personId
+     * @param  model
+     *
+     * @return
      */
     @RequestMapping(value = EDIT_LINK, method = RequestMethod.GET)
     public String editPersonForm(HttpServletRequest request,
-            @PathVariable(PERSON_ID) Integer personId, Model model) {
+        @PathVariable(PERSON_ID) Integer personId, Model model) {
 
         if (getLoggedUser().getRole() == Role.OFFICE) {
             Person person = personService.getPersonByID(personId);
@@ -484,20 +508,21 @@ public class PersonController {
         }
     }
 
+
     /**
      * Prepares the view object PersonForm and returns jsp with form to edit a user.
-     * 
-     * @param request
-     * @param year
-     * @param personId
-     * @param model
-     * 
-     * @return 
+     *
+     * @param  request
+     * @param  year
+     * @param  personId
+     * @param  model
+     *
+     * @return
      */
     @RequestMapping(value = EDIT_LINK, params = YEAR, method = RequestMethod.GET)
     public String editPersonFormForYear(HttpServletRequest request,
-            @RequestParam(YEAR) int year,
-            @PathVariable(PERSON_ID) Integer personId, Model model) {
+        @RequestParam(YEAR) int year,
+        @PathVariable(PERSON_ID) Integer personId, Model model) {
 
         int currentYear = DateMidnight.now().getYear();
 
@@ -518,6 +543,7 @@ public class PersonController {
             return ERROR_JSP;
         }
     }
+
 
     /**
      * Prepares PersonForm object with the given parameters.
@@ -554,6 +580,7 @@ public class PersonController {
         return new PersonForm(person, String.valueOf(year), account, ann, rem, remainingVacationDaysExpire);
     }
 
+
     /**
      * Adding attributes to model.
      *
@@ -569,21 +596,23 @@ public class PersonController {
         model.addAttribute("currentYear", DateMidnight.now().getYear());
     }
 
+
     /**
-     * Gets informations out of view object PersonForm and edits the concerning person and their entitlement to holidays account.
-     * 
-     * @param request
-     * @param personId
-     * @param personForm
-     * @param errors
-     * @param model
-     * 
-     * @return 
+     * Gets informations out of view object PersonForm and edits the concerning person and their entitlement to holidays
+     * account.
+     *
+     * @param  request
+     * @param  personId
+     * @param  personForm
+     * @param  errors
+     * @param  model
+     *
+     * @return
      */
     @RequestMapping(value = EDIT_LINK, method = RequestMethod.PUT)
     public String editPerson(HttpServletRequest request,
-            @PathVariable(PERSON_ID) Integer personId,
-            @ModelAttribute(PERSONFORM) PersonForm personForm, Errors errors, Model model) {
+        @PathVariable(PERSON_ID) Integer personId,
+        @ModelAttribute(PERSONFORM) PersonForm personForm, Errors errors, Model model) {
 
         Locale locale = RequestContextUtils.getLocale(request);
 
@@ -600,9 +629,11 @@ public class PersonController {
         validator.validate(personForm, errors); // validates the name fields, the email field and the year field
 
         validator.validateAnnualVacation(personForm, errors, locale); // validates holiday entitlement's
+
         // vacation days
 
         validator.validateRemainingVacationDays(personForm, errors, locale); // validates holiday
+
         // entitlement's remaining
         // vacation days
 
@@ -634,18 +665,20 @@ public class PersonController {
         Account account = accountService.getHolidaysAccount(year, personToUpdate);
 
         if (account == null) {
-            accountService.createHolidaysAccount(personToUpdate, validFrom, validTo, annualVacationDays, remainingVacationDays, expiring);
+            accountService.createHolidaysAccount(personToUpdate, validFrom, validTo, annualVacationDays,
+                remainingVacationDays, expiring);
         } else {
-            accountService.editHolidaysAccount(account, validFrom, validTo, annualVacationDays, remainingVacationDays, expiring);
+            accountService.editHolidaysAccount(account, validFrom, validTo, annualVacationDays, remainingVacationDays,
+                expiring);
         }
 
         LOG.info(DateMidnight.now(GregorianChronology.getInstance()).toString(DATE_FORMAT) + " ID: " + personId
-                + " Der Mitarbeiter " + personToUpdate.getFirstName() + " " + personToUpdate.getLastName()
-                + " wurde editiert.");
-
+            + " Der Mitarbeiter " + personToUpdate.getFirstName() + " " + personToUpdate.getLastName()
+            + " wurde editiert.");
 
         return "redirect:/web/staff/" + personToUpdate.getId() + "/overview";
     }
+
 
     /**
      * This method deactivates a person, i.e. information about a deactivated person remains, but he/she has no right to
@@ -665,6 +698,7 @@ public class PersonController {
 
         return "redirect:/web" + ACTIVE_LINK;
     }
+
 
     /**
      * This method activates a person (e.g. after unintended deactivating of a person), i.e. this person has once again
@@ -695,6 +729,7 @@ public class PersonController {
         model.addAttribute(LOGGED_USER, getLoggedUser());
     }
 
+
     /**
      * This method allows to get a person by logged-in user.
      *
@@ -706,5 +741,4 @@ public class PersonController {
 
         return personService.getPersonByLogin(user);
     }
-
 }

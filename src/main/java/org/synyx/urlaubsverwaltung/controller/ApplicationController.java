@@ -994,9 +994,8 @@ public class ApplicationController {
             if (userIsCancelling) {
                 validator.validateComment(comment, errors, false);
             }
-
             // office cancels application of other users, state can be waiting or allowed, so the comment is mandatory
-            if (officeIsCancelling) {
+            else if (officeIsCancelling) {
                 validator.validateComment(comment, errors, true);
             }
 

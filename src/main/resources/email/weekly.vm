@@ -2,7 +2,9 @@ Hallo Sternchen,
 
 folgende Mitarbeiter sind diese Woche im Urlaub:
 
-${persons}
+#foreach( $p in $persons )
+${p.firstName} ${p.lastName}
+#end
 
 
 

@@ -1,14 +1,15 @@
 package org.synyx.urlaubsverwaltung.service;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
 import junit.framework.Assert;
+
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
+
 import org.junit.Before;
 import org.junit.Test;
+
 import org.mockito.Mockito;
+
 import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.dao.ApplicationDAO;
 import org.synyx.urlaubsverwaltung.domain.Account;
@@ -18,10 +19,16 @@ import org.synyx.urlaubsverwaltung.domain.DayLength;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.VacationType;
 
+import java.math.BigDecimal;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
+
 /**
  * Unit test for {@link CalculationService}.
- * 
- * @author Aljona Murygina - murygina@synyx.de
+ *
+ * @author  Aljona Murygina - murygina@synyx.de
  */
 public class CalculationServiceTest {
 
@@ -38,8 +45,8 @@ public class CalculationServiceTest {
         calendarService = new OwnCalendarService();
 
         service = new CalculationService(applicationDAO, accountService, calendarService);
-
     }
+
 
     /**
      * Test of checkApplication method, of class CalculationService.
@@ -78,15 +85,17 @@ public class CalculationServiceTest {
         // must be 6 days at all: 2 before April + 4 after April
 
         Mockito.when(applicationDAO.getApplicationsBetweenTwoMilestones(person, firstMilestone.toDate(),
-                lastMilestone.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED)).thenReturn(Arrays.asList(a2, a3));
+                lastMilestone.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED))
+            .thenReturn(Arrays.asList(a2, a3));
 
         Mockito.when(applicationDAO.getApplicationsBeforeFirstMilestone(person, firstMilestone.toDate(),
-                lastMilestone.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED)).thenReturn(Arrays.asList(a1));
+                lastMilestone.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED))
+            .thenReturn(Arrays.asList(a1));
 
         Mockito.when(applicationDAO.getApplicationsAfterLastMilestone(person, firstMilestone.toDate(),
-                lastMilestone.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED)).thenReturn(Arrays.asList(a4));
+                lastMilestone.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED))
+            .thenReturn(Arrays.asList(a4));
 
-        
         DateMidnight firstMilestone2 = new DateMidnight(2012, DateTimeConstants.APRIL, 1);
         DateMidnight lastMilestone2 = new DateMidnight(2012, DateTimeConstants.DECEMBER, 31);
 
@@ -109,72 +118,80 @@ public class CalculationServiceTest {
         // must be 6 days at all: 2 before April + 4 after April
 
         Mockito.when(applicationDAO.getApplicationsBetweenTwoMilestones(person, firstMilestone2.toDate(),
-                lastMilestone2.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED)).thenReturn(Arrays.asList(b2));
+                lastMilestone2.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED))
+            .thenReturn(Arrays.asList(b2));
 
         Mockito.when(applicationDAO.getApplicationsBeforeFirstMilestone(person, firstMilestone2.toDate(),
-                lastMilestone2.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED)).thenReturn(Arrays.asList(b4));
+                lastMilestone2.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED))
+            .thenReturn(Arrays.asList(b4));
 
         Mockito.when(applicationDAO.getApplicationsAfterLastMilestone(person, firstMilestone2.toDate(),
-                lastMilestone2.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED)).thenReturn(Arrays.asList(b1));
-        
-        Account account = new Account(person, new DateMidnight(2012, DateTimeConstants.JANUARY, 1).toDate(), new DateMidnight(2012, DateTimeConstants.DECEMBER, 31).toDate(), 
-                BigDecimal.valueOf(28), BigDecimal.valueOf(5), true);
-        
+                lastMilestone2.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED))
+            .thenReturn(Arrays.asList(b1));
+
+        Account account = new Account(person, new DateMidnight(2012, DateTimeConstants.JANUARY, 1).toDate(),
+                new DateMidnight(2012, DateTimeConstants.DECEMBER, 31).toDate(), BigDecimal.valueOf(28),
+                BigDecimal.valueOf(5), true);
+
         Mockito.when(accountService.calculateActualVacationDays(account)).thenReturn(BigDecimal.valueOf(28));
         account.setVacationDays(BigDecimal.valueOf(28));
-        
+
         Mockito.when(accountService.getHolidaysAccount(2012, person)).thenReturn(account);
-        
+        Mockito.when(accountService.getOrCreateNewAccount(2012, person)).thenReturn(account);
+
         Application n = new Application();
         n.setStartDate(new DateMidnight(2012, DateTimeConstants.AUGUST, 20));
         n.setEndDate(new DateMidnight(2012, DateTimeConstants.AUGUST, 22));
         n.setDays(BigDecimal.valueOf(2));
         n.setPerson(person);
         n.setHowLong(DayLength.FULL);
-        
+
         Assert.assertTrue(service.checkApplication(n));
-        
-        
+
         // set days to little so it can't be true
-        account = new Account(person, new DateMidnight(2012, DateTimeConstants.JANUARY, 1).toDate(), new DateMidnight(2012, DateTimeConstants.DECEMBER, 31).toDate(), 
-                BigDecimal.valueOf(20), BigDecimal.valueOf(4.5), true);
-        
+        account = new Account(person, new DateMidnight(2012, DateTimeConstants.JANUARY, 1).toDate(),
+                new DateMidnight(2012, DateTimeConstants.DECEMBER, 31).toDate(), BigDecimal.valueOf(20),
+                BigDecimal.valueOf(4.5), true);
+
         Mockito.when(accountService.calculateActualVacationDays(account)).thenReturn(BigDecimal.valueOf(20));
         account.setVacationDays(BigDecimal.valueOf(20));
-        
+
         Mockito.when(accountService.getHolidaysAccount(2012, person)).thenReturn(account);
-        
+        Mockito.when(accountService.getOrCreateNewAccount(2012, person)).thenReturn(account);
+
         Assert.assertFalse(service.checkApplication(n));
-        
-        
-        // set days so that sum is exact zero - so check is true 
-        account = new Account(person, new DateMidnight(2012, DateTimeConstants.JANUARY, 1).toDate(), new DateMidnight(2012, DateTimeConstants.DECEMBER, 31).toDate(), 
-                BigDecimal.valueOf(20), BigDecimal.valueOf(6.5), true);
-       
+
+        // set days so that sum is exact zero - so check is true
+        account = new Account(person, new DateMidnight(2012, DateTimeConstants.JANUARY, 1).toDate(),
+                new DateMidnight(2012, DateTimeConstants.DECEMBER, 31).toDate(), BigDecimal.valueOf(20),
+                BigDecimal.valueOf(6.5), true);
+
         Mockito.when(accountService.calculateActualVacationDays(account)).thenReturn(BigDecimal.valueOf(20));
         account.setVacationDays(BigDecimal.valueOf(20));
-        
+
         Mockito.when(accountService.getHolidaysAccount(2012, person)).thenReturn(account);
-        
+        Mockito.when(accountService.getOrCreateNewAccount(2012, person)).thenReturn(account);
+
         Assert.assertTrue(service.checkApplication(n));
-        
-        
+
         // remaining vacation days do not expire so it can be done
-        account = new Account(person, new DateMidnight(2012, DateTimeConstants.JANUARY, 1).toDate(), new DateMidnight(2012, DateTimeConstants.DECEMBER, 31).toDate(), 
-                BigDecimal.valueOf(5), BigDecimal.valueOf(22), false);
-        
+        account = new Account(person, new DateMidnight(2012, DateTimeConstants.JANUARY, 1).toDate(),
+                new DateMidnight(2012, DateTimeConstants.DECEMBER, 31).toDate(), BigDecimal.valueOf(5),
+                BigDecimal.valueOf(22), false);
+
         Mockito.when(accountService.calculateActualVacationDays(account)).thenReturn(BigDecimal.valueOf(5));
         account.setVacationDays(BigDecimal.valueOf(5));
-        
+
         Mockito.when(accountService.getHolidaysAccount(2012, person)).thenReturn(account);
-        
+        Mockito.when(accountService.getOrCreateNewAccount(2012, person)).thenReturn(account);
+
         Assert.assertTrue(service.checkApplication(n));
     }
-    
-    
+
+
     @Test
     public void testCheckApplicationForNextYear() {
-        
+
         Person person = new Person();
         person.setLoginName("horscht");
 
@@ -200,15 +217,17 @@ public class CalculationServiceTest {
         // must be 6 days at all: 2 before April + 4 after April
 
         Mockito.when(applicationDAO.getApplicationsBetweenTwoMilestones(person, firstMilestone.toDate(),
-                lastMilestone.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED)).thenReturn(Arrays.asList(a2, a3));
+                lastMilestone.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED))
+            .thenReturn(Arrays.asList(a2, a3));
 
         Mockito.when(applicationDAO.getApplicationsBeforeFirstMilestone(person, firstMilestone.toDate(),
-                lastMilestone.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED)).thenReturn(new ArrayList<Application>());
+                lastMilestone.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED))
+            .thenReturn(new ArrayList<Application>());
 
         Mockito.when(applicationDAO.getApplicationsAfterLastMilestone(person, firstMilestone.toDate(),
-                lastMilestone.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED)).thenReturn(Arrays.asList(a4));
+                lastMilestone.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED))
+            .thenReturn(Arrays.asList(a4));
 
-        
         DateMidnight firstMilestone2 = new DateMidnight(2012, DateTimeConstants.APRIL, 1);
         DateMidnight lastMilestone2 = new DateMidnight(2012, DateTimeConstants.DECEMBER, 31);
 
@@ -225,21 +244,24 @@ public class CalculationServiceTest {
         // must be 6 days at all: 2 before April + 4 after April
 
         Mockito.when(applicationDAO.getApplicationsBetweenTwoMilestones(person, firstMilestone2.toDate(),
-                lastMilestone2.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED)).thenReturn(Arrays.asList(b2));
+                lastMilestone2.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED))
+            .thenReturn(Arrays.asList(b2));
 
         Mockito.when(applicationDAO.getApplicationsBeforeFirstMilestone(person, firstMilestone2.toDate(),
-                lastMilestone2.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED)).thenReturn(Arrays.asList(b4));
+                lastMilestone2.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED))
+            .thenReturn(Arrays.asList(b4));
 
         Mockito.when(applicationDAO.getApplicationsAfterLastMilestone(person, firstMilestone2.toDate(),
-                lastMilestone2.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED)).thenReturn(new ArrayList<Application>());
-        
-        Account account = new Account(person, new DateMidnight(2012, DateTimeConstants.JANUARY, 1).toDate(), new DateMidnight(2012, DateTimeConstants.DECEMBER, 31).toDate(), 
-                BigDecimal.valueOf(28), BigDecimal.valueOf(5), true);
-        
+                lastMilestone2.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED))
+            .thenReturn(new ArrayList<Application>());
+
+        Account account = new Account(person, new DateMidnight(2012, DateTimeConstants.JANUARY, 1).toDate(),
+                new DateMidnight(2012, DateTimeConstants.DECEMBER, 31).toDate(), BigDecimal.valueOf(28),
+                BigDecimal.valueOf(5), true);
+
         Mockito.when(accountService.calculateActualVacationDays(account)).thenReturn(BigDecimal.valueOf(28));
         account.setVacationDays(BigDecimal.valueOf(28));
-        
-        
+
         Application n = new Application();
         n.setStartDate(new DateMidnight(2011, DateTimeConstants.DECEMBER, 20));
         n.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 3));
@@ -247,43 +269,25 @@ public class CalculationServiceTest {
         n.setPerson(person);
         n.setHowLong(DayLength.FULL);
         // at all there are 8 + 2 days (but only the 2 days of the new year are part of the calculation)
-        
+
         Mockito.when(accountService.getHolidaysAccount(2012, person)).thenReturn(account);
-        
+        Mockito.when(accountService.getOrCreateNewAccount(2012, person)).thenReturn(account);
+
         Assert.assertTrue(service.checkApplication(n));
-        
-        
-        
-        account = new Account(person, new DateMidnight(2012, DateTimeConstants.JANUARY, 1).toDate(), new DateMidnight(2012, DateTimeConstants.DECEMBER, 31).toDate(), 
-                BigDecimal.valueOf(10), BigDecimal.valueOf(5), true);
-        
+
+        account = new Account(person, new DateMidnight(2012, DateTimeConstants.JANUARY, 1).toDate(),
+                new DateMidnight(2012, DateTimeConstants.DECEMBER, 31).toDate(), BigDecimal.valueOf(10),
+                BigDecimal.valueOf(5), true);
+
         Mockito.when(accountService.calculateActualVacationDays(account)).thenReturn(BigDecimal.valueOf(10));
         account.setVacationDays(BigDecimal.valueOf(10));
-        
+
         Mockito.when(accountService.getHolidaysAccount(2012, person)).thenReturn(account);
-        
+        Mockito.when(accountService.getOrCreateNewAccount(2012, person)).thenReturn(account);
+
         Assert.assertFalse(service.checkApplication(n));
-        
     }
-    
-    @Test
-    public void testGetOrCreateNewAccount() {
-        
-        Person person = new Person();
-        person.setLoginName("horscht");
-        
-        Account account = new Account(person, new DateMidnight(2012, DateTimeConstants.JANUARY, 1).toDate(), new DateMidnight(2012, DateTimeConstants.DECEMBER, 31).toDate(), 
-                BigDecimal.valueOf(28), BigDecimal.valueOf(5), true);
-//        accountService.calculateActualVacationDays(account);
-        
-        Mockito.when(accountService.getHolidaysAccount(2012, person)).thenReturn(account);
-        
-        service.getOrCreateNewAccount(2013, person);
-        
-        Mockito.verify(accountService).createHolidaysAccount(person, new DateMidnight(2013, DateTimeConstants.JANUARY, 1), new DateMidnight(2013, DateTimeConstants.DECEMBER, 31), account.getAnnualVacationDays(), BigDecimal.ZERO, account.isRemainingVacationDaysExpire());
-        
-    }
-    
+
 
     @Test
     public void testGetDaysBeforeApril() {
@@ -319,21 +323,24 @@ public class CalculationServiceTest {
         // must be 6 days at all: 2 before April + 4 after April
 
         Mockito.when(applicationDAO.getApplicationsBetweenTwoMilestones(person, firstMilestone.toDate(),
-                lastMilestone.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED)).thenReturn(Arrays.asList(a2, a3));
+                lastMilestone.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED))
+            .thenReturn(Arrays.asList(a2, a3));
 
         Mockito.when(applicationDAO.getApplicationsBeforeFirstMilestone(person, firstMilestone.toDate(),
-                lastMilestone.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED)).thenReturn(Arrays.asList(a1));
+                lastMilestone.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED))
+            .thenReturn(Arrays.asList(a1));
 
         Mockito.when(applicationDAO.getApplicationsAfterLastMilestone(person, firstMilestone.toDate(),
-                lastMilestone.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED)).thenReturn(Arrays.asList(a4));
+                lastMilestone.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED))
+            .thenReturn(Arrays.asList(a4));
 
         BigDecimal days = service.getDaysBetweenTwoMilestones(person, firstMilestone, lastMilestone);
         // must be: 2 + 5 + 4 + 2 = 13
 
         Assert.assertNotNull(days);
         Assert.assertEquals(BigDecimal.valueOf(13).setScale(2), days);
-
     }
+
 
     @Test
     public void testGetDaysAfterApril() {
@@ -363,19 +370,21 @@ public class CalculationServiceTest {
         // must be 6 days at all: 2 before April + 4 after April
 
         Mockito.when(applicationDAO.getApplicationsBetweenTwoMilestones(person, firstMilestone.toDate(),
-                lastMilestone.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED)).thenReturn(Arrays.asList(a2));
+                lastMilestone.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED))
+            .thenReturn(Arrays.asList(a2));
 
         Mockito.when(applicationDAO.getApplicationsBeforeFirstMilestone(person, firstMilestone.toDate(),
-                lastMilestone.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED)).thenReturn(Arrays.asList(a4));
+                lastMilestone.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED))
+            .thenReturn(Arrays.asList(a4));
 
         Mockito.when(applicationDAO.getApplicationsAfterLastMilestone(person, firstMilestone.toDate(),
-                lastMilestone.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED)).thenReturn(Arrays.asList(a1));
+                lastMilestone.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED))
+            .thenReturn(Arrays.asList(a1));
 
         BigDecimal days = service.getDaysBetweenTwoMilestones(person, firstMilestone, lastMilestone);
         // must be: 2.5 + 5 + 4 = 11.5
 
         Assert.assertNotNull(days);
         Assert.assertEquals(BigDecimal.valueOf(11.5).setScale(2), days);
-
     }
 }

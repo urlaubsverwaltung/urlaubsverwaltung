@@ -17,8 +17,8 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import org.synyx.urlaubsverwaltung.dao.PersonDAO;
-import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.Account;
+import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.Role;
 
@@ -43,11 +43,14 @@ public class PersonServiceImplTest {
 
     @Before
     public void setUp() {
-        instance = new PersonServiceImpl(personDAO, applicationService, mailService, accountService);
 
+        instance = new PersonServiceImpl(personDAO, applicationService, mailService, accountService);
     }
 
-    /** Test of save method, of class PersonServiceImpl. */
+
+    /**
+     * Test of save method, of class PersonServiceImpl.
+     */
     @Test
     public void testSave() {
 
@@ -57,7 +60,9 @@ public class PersonServiceImplTest {
     }
 
 
-    /** Test of deactivate method, of class PersonServiceImpl. */
+    /**
+     * Test of deactivate method, of class PersonServiceImpl.
+     */
     @Test
     public void testDeactivate() {
 
@@ -72,7 +77,9 @@ public class PersonServiceImplTest {
     }
 
 
-    /** Test of activate method, of class PersonServiceImpl. */
+    /**
+     * Test of activate method, of class PersonServiceImpl.
+     */
     @Test
     public void testActivate() {
 
@@ -87,7 +94,9 @@ public class PersonServiceImplTest {
     }
 
 
-    /** Test of getPersonByID method, of class PersonServiceImpl. */
+    /**
+     * Test of getPersonByID method, of class PersonServiceImpl.
+     */
     @Test
     public void testGetPersonByID() {
 
@@ -96,7 +105,9 @@ public class PersonServiceImplTest {
     }
 
 
-    /** Test of getPersonByLogin method, of class PersonServiceImpl. */
+    /**
+     * Test of getPersonByLogin method, of class PersonServiceImpl.
+     */
     @Test
     public void testGetPersonByLogin() {
 
@@ -110,7 +121,9 @@ public class PersonServiceImplTest {
     }
 
 
-    /** Test of getAllPersons method, of class PersonServiceImpl. */
+    /**
+     * Test of getAllPersons method, of class PersonServiceImpl.
+     */
     @Test
     public void testGetAllPersons() {
 
@@ -119,26 +132,29 @@ public class PersonServiceImplTest {
     }
 
 
-    /** Test of getPersonsWithExpiringRemainingVacationDays method, of class PersonServiceImpl. */
+    /**
+     * Test of getPersonsWithExpiringRemainingVacationDays method, of class PersonServiceImpl.
+     */
     @Test
     public void testGetPersonsWithExpiringRemainingVacationDays() {
 
         List<Person> persons = new ArrayList<Person>();
-        
+
         Person babbel = new Person();
         babbel.setFirstName("babbel");
-        
+
         Person horst = new Person();
         horst.setFirstName("horscht");
-        
+
         persons.add(babbel);
         persons.add(horst);
-        
+
         Account babbelsAccount = mock(Account.class);
         Account horstsAccount = mock(Account.class);
 
         Mockito.when(personDAO.getPersonsOrderedByLastName()).thenReturn(persons);
-        Mockito.when(accountService.getHolidaysAccount(DateMidnight.now().getYear(), babbel)).thenReturn(babbelsAccount);
+        Mockito.when(accountService.getHolidaysAccount(DateMidnight.now().getYear(), babbel)).thenReturn(
+            babbelsAccount);
         Mockito.when(accountService.getHolidaysAccount(DateMidnight.now().getYear(), horst)).thenReturn(horstsAccount);
         Mockito.when(babbelsAccount.isRemainingVacationDaysExpire()).thenReturn(true);
         Mockito.when(horstsAccount.isRemainingVacationDaysExpire()).thenReturn(false);
@@ -150,7 +166,9 @@ public class PersonServiceImplTest {
     }
 
 
-    /** Test of getAllPersonsOnHolidayForThisWeekAndPutItInAnEmail method, of class PersonServiceImpl. */
+    /**
+     * Test of getAllPersonsOnHolidayForThisWeekAndPutItInAnEmail method, of class PersonServiceImpl.
+     */
     @Test
     public void testGetAllPersonsOnHolidayForThisWeekAndPutItInAnEmail() {
 
@@ -163,11 +181,12 @@ public class PersonServiceImplTest {
         application.setPerson(person);
         applications.add(application);
 
-        Mockito.when(applicationService.getAllowedApplicationsForACertainPeriod(startDate, endDate)).thenReturn(applications);
+        Mockito.when(applicationService.getAllowedApplicationsForACertainPeriod(startDate, endDate)).thenReturn(
+            applications);
 
         instance.getAllPersonsOnHolidayForThisWeekAndPutItInAnEmail(startDate, endDate);
 
-        Mockito.verify(mailService).sendWeeklyVacationForecast(Mockito.anyList());
+        Mockito.verify(mailService).sendWeeklyVacationForecast(Mockito.anyMap());
 
         Mockito.doAnswer(new Answer() {
 
@@ -179,6 +198,6 @@ public class PersonServiceImplTest {
 
                     return null;
                 }
-            }).when(mailService).sendWeeklyVacationForecast(Mockito.anyList());
+            }).when(mailService).sendWeeklyVacationForecast(Mockito.anyMap());
     }
 }

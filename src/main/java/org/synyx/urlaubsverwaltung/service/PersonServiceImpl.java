@@ -12,7 +12,9 @@ import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.Role;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -116,7 +118,7 @@ public class PersonServiceImpl implements PersonService {
         List<Person> persons = getAllPersons();
 
         for (Person person : persons) {
-            if(accountService.getHolidaysAccount(year, person).isRemainingVacationDaysExpire()) {
+            if (accountService.getHolidaysAccount(year, person).isRemainingVacationDaysExpire()) {
                 personsWithRemainingVacationDays.add(person);
             }
         }
@@ -133,10 +135,10 @@ public class PersonServiceImpl implements PersonService {
 
         List<Application> applications = applicationService.getAllowedApplicationsForACertainPeriod(startDate, endDate);
 
-        List<Person> persons = new ArrayList<Person>();
+        Map<String, Person> persons = new HashMap<String, Person>();
 
         for (Application application : applications) {
-            persons.add(application.getPerson());
+            persons.put(application.getPerson().getLoginName(), application.getPerson());
         }
 
         mailService.sendWeeklyVacationForecast(persons);
@@ -159,8 +161,10 @@ public class PersonServiceImpl implements PersonService {
         return personDAO.getInactivePersons();
     }
 
+
     @Override
     public List<Person> getPersonsByRole(Role role) {
+
         return personDAO.getPersonsByRole(role);
     }
 }
