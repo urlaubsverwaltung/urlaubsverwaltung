@@ -49,4 +49,7 @@
 </c:if>
 
 <%-- Cancel the application for leave --%> 
-<%@include file="./actions/cancel.jsp" %>
+<%-- but only if the application for leave has the state WAITING --%>
+<c:if test="${application.status.number == 0}">
+    <%@include file="./actions/cancel.jsp" %>
+</c:if>

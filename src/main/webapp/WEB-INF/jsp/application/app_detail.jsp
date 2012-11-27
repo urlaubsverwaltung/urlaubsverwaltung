@@ -42,21 +42,26 @@
                     <%@include file="./include/app-detail-elements/app_info.jsp" %>
 
                     <div style="margin-bottom: 8em">
-                    
-                    <c:choose>
-                        <c:when test="${application.person.id == loggedUser.id}">
-                            <%@include file="./include/app-detail-elements/actions_user.jsp" %>
-                        </c:when>
-                        <c:otherwise>
-                            <sec:authorize access="hasRole('role.boss')">
-                                <%@include file="./include/app-detail-elements/actions_boss.jsp" %>
-                            </sec:authorize>
-                            <sec:authorize access="hasRole('role.office')">
-                                <%@include file="./include/app-detail-elements/actions_office.jsp" %>
-                            </sec:authorize>
-                        </c:otherwise>
-                    </c:choose>
-                        
+
+                        <%-- Office is always powerful --%>
+                        <sec:authorize access="hasRole('role.office')">
+                            <%@include file="./include/app-detail-elements/actions_office.jsp" %>
+                        </sec:authorize>    
+
+                        <sec:authorize access="hasAnyRole('role.boss', 'role.user')">
+                            <%-- Boss is powerful only if the application for leave is not for himself --%>
+                            <c:choose>
+                                <c:when test="${application.person.id == loggedUser.id}">
+                                    <%@include file="./include/app-detail-elements/actions_user.jsp" %>
+                                </c:when>
+                                <c:otherwise>
+                                    <sec:authorize access="hasRole('role.boss')">
+                                        <%@include file="./include/app-detail-elements/actions_boss.jsp" %>
+                                    </sec:authorize>
+                                </c:otherwise>
+                            </c:choose>
+                        </sec:authorize>
+
                     </div>
 
                 </div>

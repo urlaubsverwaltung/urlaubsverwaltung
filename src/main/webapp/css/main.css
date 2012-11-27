@@ -510,7 +510,7 @@ input.error, textarea.error {
     background-image: url("../images/errorpage.png");
     background-repeat: no-repeat;
     min-height: 550px;
-    margin-top: 30px;
+    margin-top: 80px;
 }
 
 #error-link {

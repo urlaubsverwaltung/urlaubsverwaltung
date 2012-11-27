@@ -1,8 +1,8 @@
 package org.synyx.urlaubsverwaltung.validator;
 
 import org.joda.time.DateMidnight;
-
 import org.joda.time.DateTimeConstants;
+
 import org.junit.After;
 import org.junit.AfterClass;
 
@@ -18,6 +18,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import org.springframework.ui.Model;
+
 import org.springframework.validation.Errors;
 
 import org.synyx.urlaubsverwaltung.domain.Comment;
@@ -25,6 +26,7 @@ import org.synyx.urlaubsverwaltung.domain.DayLength;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.VacationType;
 import org.synyx.urlaubsverwaltung.view.AppForm;
+
 
 /**
  * @author  Aljona Murygina
@@ -43,9 +45,11 @@ public class ApplicationValidatorTest {
     public static void setUpClass() throws Exception {
     }
 
+
     @AfterClass
     public static void tearDownClass() throws Exception {
     }
+
 
     @Before
     public void setUp() throws Exception {
@@ -55,11 +59,15 @@ public class ApplicationValidatorTest {
         Mockito.reset(errors);
     }
 
+
     @After
     public void tearDown() {
     }
 
-    /** Test of supports method, of class ApplicationValidator. */
+
+    /**
+     * Test of supports method, of class ApplicationValidator.
+     */
     @Test
     public void testSupports() {
 
@@ -75,7 +83,10 @@ public class ApplicationValidatorTest {
         assertTrue(returnValue);
     }
 
-    /** Test of validate method, of class ApplicationValidator. */
+
+    /**
+     * Test of validate method, of class ApplicationValidator.
+     */
     @Test
     public void testValidate() {
 
@@ -135,7 +146,8 @@ public class ApplicationValidatorTest {
 
         // String length
 
-        app.setAddress("Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. ");
+        app.setAddress(
+            "Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. ");
         instance.validate(app, errors);
         Mockito.verify(errors).rejectValue("address", "error.length");
         Mockito.reset(errors);
@@ -145,7 +157,8 @@ public class ApplicationValidatorTest {
         Mockito.verifyZeroInteractions(errors);
         Mockito.reset(errors);
 
-        app.setPhone("Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. ");
+        app.setPhone(
+            "Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. ");
         instance.validate(app, errors);
         Mockito.verify(errors).rejectValue("phone", "error.length");
         Mockito.reset(errors);
@@ -155,7 +168,8 @@ public class ApplicationValidatorTest {
         Mockito.verifyZeroInteractions(errors);
         Mockito.reset(errors);
 
-        app.setReason("Freilebende Gummibärchen gibt es nicht. Man kauft sie in Packungen an der Kinokasse. Dieser Kauf ist der Beginn einer fast erotischen und sehr ambivalenten Beziehung Gummibärchen-Mensch. Zuerst gen...toller Text ist das, einfach wow!");
+        app.setReason(
+            "Freilebende Gummibärchen gibt es nicht. Man kauft sie in Packungen an der Kinokasse. Dieser Kauf ist der Beginn einer fast erotischen und sehr ambivalenten Beziehung Gummibärchen-Mensch. Zuerst gen...toller Text ist das, einfach wow!");
         instance.validate(app, errors);
         Mockito.verify(errors).rejectValue("reason", "error.length");
         Mockito.reset(errors);
@@ -170,40 +184,70 @@ public class ApplicationValidatorTest {
         Mockito.verifyZeroInteractions(errors);
         Mockito.reset(errors);
 
-        app.setComment("Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis");
+        app.setComment(
+            "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis");
         instance.validate(app, errors);
         Mockito.verify(errors).rejectValue("comment", "error.length");
         Mockito.reset(errors);
     }
 
-    /** Test of validateComment method, of class ApplicationValidator. */
+
+    /**
+     * Test of validateComment method, of class ApplicationValidator.
+     */
     @Test
-    @Ignore
     public void testValidateComment() {
 
         Comment comment = new Comment();
 
         comment.setReason(null);
-        instance.validateComment(comment, errors);
+        instance.validateComment(comment, errors, true);
         Mockito.verify(errors).rejectValue("reason", "error.reason");
         Mockito.reset(errors);
 
         comment.setReason("");
-        instance.validateComment(comment, errors);
+        instance.validateComment(comment, errors, true);
         Mockito.verify(errors).rejectValue("reason", "error.reason");
         Mockito.reset(errors);
 
         comment.setReason("Aus gutem Grund");
-        instance.validateComment(comment, errors);
+        instance.validateComment(comment, errors, true);
         Mockito.verifyZeroInteractions(errors);
         Mockito.reset(errors);
 
-        comment.setReason("Freilebende Gummibärchen gibt es nicht. Man kauft sie in Packungen an der Kinokasse. Dieser Kauf ist der Beginn einer fast erotischen und sehr ambivalenten Beziehung Gummibärchen-Mensch. Zuerst gen...toller Text ist das, einfach wow!");
-        instance.validateComment(comment, errors);
+        comment.setReason(
+            "Freilebende Gummibärchen gibt es nicht. Man kauft sie in Packungen an der Kinokasse. Dieser Kauf ist der Beginn einer fast erotischen und sehr ambivalenten Beziehung Gummibärchen-Mensch. Zuerst gen...toller Text ist das, einfach wow!");
+        instance.validateComment(comment, errors, true);
         Mockito.verify(errors).rejectValue("reason", "error.length");
     }
 
-    /** Test of validateStringLength method, of class ApplicationValidator. */
+
+    @Test
+    public void testValidateCommentMayBeEmptyIfNotMandatory() {
+
+        Comment comment = new Comment();
+
+        comment.setReason(null);
+        instance.validateComment(comment, errors, false);
+        Mockito.verifyZeroInteractions(errors);
+        Mockito.reset(errors);
+
+        comment.setReason("");
+        instance.validateComment(comment, errors, false);
+        Mockito.verifyZeroInteractions(errors);
+        Mockito.reset(errors);
+
+        // has error if text is too long
+        comment.setReason(
+            "Freilebende Gummibärchen gibt es nicht. Man kauft sie in Packungen an der Kinokasse. Dieser Kauf ist der Beginn einer fast erotischen und sehr ambivalenten Beziehung Gummibärchen-Mensch. Zuerst gen...toller Text ist das, einfach wow!");
+        instance.validateComment(comment, errors, false);
+        Mockito.verify(errors).rejectValue("reason", "error.length");
+    }
+
+
+    /**
+     * Test of validateStringLength method, of class ApplicationValidator.
+     */
     @Test
     public void testValidateStringLength() {
 
@@ -218,6 +262,7 @@ public class ApplicationValidatorTest {
         assertTrue(returnValue);
     }
 
+
     @Test
     public void testValidateAppForTodayFullDay() {
 
@@ -230,8 +275,8 @@ public class ApplicationValidatorTest {
 
         instance.validatePast(app, errors, model);
         Mockito.verifyZeroInteractions(model);
-
     }
+
 
     @Test
     public void testValidateAppForYesterdayFullDay() {
@@ -246,8 +291,8 @@ public class ApplicationValidatorTest {
         instance.validatePast(app, errors, model);
         Mockito.verify(model).addAttribute("timeError", "error.period.past");
         Mockito.verify(model).addAttribute("setForce", 1);
-
     }
+
 
     @Test
     public void testValidateAppForTodayMorning() {
@@ -261,8 +306,8 @@ public class ApplicationValidatorTest {
 
         instance.validatePast(app, errors, model);
         Mockito.verifyZeroInteractions(model);
-
     }
+
 
     @Test
     public void testValidateAppForTodayAfternoon() {
@@ -276,8 +321,8 @@ public class ApplicationValidatorTest {
 
         instance.validatePast(app, errors, model);
         Mockito.verifyZeroInteractions(model);
-
     }
+
 
     @Test
     public void testValidateAppForYesterdayMorning() {
@@ -292,8 +337,8 @@ public class ApplicationValidatorTest {
         instance.validatePast(app, errors, model);
         Mockito.verify(model).addAttribute("timeError", "error.period.past");
         Mockito.verify(model).addAttribute("setForce", 1);
-
     }
+
 
     @Test
     public void testValidateAppForYesterdayAfternoon() {
@@ -308,8 +353,8 @@ public class ApplicationValidatorTest {
         instance.validatePast(app, errors, model);
         Mockito.verify(model).addAttribute("timeError", "error.period.past");
         Mockito.verify(model).addAttribute("setForce", 1);
-
     }
+
 
     @Test
     public void testValidateAppForVeryPastDate() {
@@ -324,6 +369,5 @@ public class ApplicationValidatorTest {
         instance.validatePast(app, errors, model);
         Mockito.verify(model).addAttribute("timeError", "error.period.past.wide");
         Mockito.verify(model).addAttribute("setForce", 0);
-
     }
 }

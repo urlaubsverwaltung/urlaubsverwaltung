@@ -6,6 +6,10 @@ package org.synyx.urlaubsverwaltung.validator;
 
 import org.apache.log4j.Logger;
 
+import org.joda.time.DateMidnight;
+
+import org.springframework.ui.Model;
+
 import org.springframework.util.StringUtils;
 
 import org.springframework.validation.Errors;
@@ -18,8 +22,6 @@ import org.synyx.urlaubsverwaltung.util.PropertiesUtil;
 import org.synyx.urlaubsverwaltung.view.AppForm;
 
 import java.util.Properties;
-import org.joda.time.DateMidnight;
-import org.springframework.ui.Model;
 
 
 /**
@@ -121,7 +123,8 @@ public class ApplicationValidator implements Validator {
 
 
     /**
-     * Check if application's period is in the past; to be able to display a warning message. ("Period is in the past. Are you sure?")
+     * Check if application's period is in the past; to be able to display a warning message. ("Period is in the past.
+     * Are you sure?")
      *
      * @param  target
      * @param  errors
@@ -129,31 +132,30 @@ public class ApplicationValidator implements Validator {
     public void validatePast(Object target, Errors errors, Model model) {
 
         AppForm app = (AppForm) target;
-        
+
         DateMidnight startDate;
-        
+
         if (app.getHowLong() == DayLength.FULL) {
             startDate = app.getStartDate();
         } else {
             startDate = app.getStartDateHalf();
         }
 
-            if (startDate != null) {
+        if (startDate != null) {
+            DateMidnight now = DateMidnight.now();
 
-                DateMidnight now = DateMidnight.now();
-                
-                DateMidnight todaysMidnight = new DateMidnight(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth());
-                
-                if (startDate.isBefore(todaysMidnight)) {
-                    if(startDate.isBefore(DateMidnight.now().minusYears(1))) {
-                        model.addAttribute("setForce", 0);
-                        model.addAttribute("timeError", "error.period.past.wide");
-                    } else {
-                        model.addAttribute("timeError", ERROR_PAST);
-                        model.addAttribute("setForce", 1);
-                    }
+            DateMidnight todaysMidnight = new DateMidnight(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth());
+
+            if (startDate.isBefore(todaysMidnight)) {
+                if (startDate.isBefore(DateMidnight.now().minusYears(1))) {
+                    model.addAttribute("setForce", 0);
+                    model.addAttribute("timeError", "error.period.past.wide");
+                } else {
+                    model.addAttribute("timeError", ERROR_PAST);
+                    model.addAttribute("setForce", 1);
                 }
             }
+        }
     }
 
 
@@ -162,8 +164,9 @@ public class ApplicationValidator implements Validator {
      *
      * @param  target
      * @param  errors
+     * @param  mandatory  (true e.g. if application is rejected by boss, false e.g. if user cancels his own application)
      */
-    public void validateComment(Object target, Errors errors) {
+    public void validateComment(Object target, Errors errors, boolean mandatory) {
 
         Comment comment = (Comment) target;
 
@@ -172,7 +175,9 @@ public class ApplicationValidator implements Validator {
                 errors.rejectValue(TEXT, ERROR_LENGTH);
             }
         } else {
-            errors.rejectValue(TEXT, ERROR_REASON);
+            if (mandatory) {
+                errors.rejectValue(TEXT, ERROR_REASON);
+            }
         }
     }
 
@@ -196,7 +201,7 @@ public class ApplicationValidator implements Validator {
                 errors.rejectValue(ADDRESS, ERROR_LENGTH);
             }
         }
-        
+
         if (StringUtils.hasText(app.getComment())) {
             if (!validateStringLength(app.getComment(), 200)) {
                 errors.rejectValue("comment", ERROR_LENGTH);
