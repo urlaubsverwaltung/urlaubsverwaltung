@@ -6,18 +6,19 @@ package org.synyx.urlaubsverwaltung.domain.legacy;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
+import org.synyx.urlaubsverwaltung.domain.Person;
+
 import java.math.BigDecimal;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
-import org.synyx.urlaubsverwaltung.domain.Person;
 
 
 /**
  * @author  Johannes Reuter
  * @author  Aljona Murygina This class contains current values of vacation days that a person has.
  */
-@Entity
+@Entity(name = "LegacyAccount")
 public class HolidaysAccount extends AbstractPersistable<Integer> {
 
     private static final long serialVersionUID = 341278947843289L;

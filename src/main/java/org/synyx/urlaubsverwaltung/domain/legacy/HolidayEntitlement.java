@@ -6,11 +6,12 @@ package org.synyx.urlaubsverwaltung.domain.legacy;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
+import org.synyx.urlaubsverwaltung.domain.Person;
+
 import java.math.BigDecimal;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
-import org.synyx.urlaubsverwaltung.domain.Person;
 
 
 /**
@@ -19,7 +20,7 @@ import org.synyx.urlaubsverwaltung.domain.Person;
  *
  *          <p>This class describes the holidays entitlement that a person has for a whole year.</p>
  */
-@Entity
+@Entity(name = "LegacyEntitlement")
 public class HolidayEntitlement extends AbstractPersistable<Integer> {
 
     private static final long serialVersionUID = 89043562784389L;
