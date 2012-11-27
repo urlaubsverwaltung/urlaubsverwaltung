@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.domain;
 
-import org.synyx.urlaubsverwaltung.domain.legacy.HolidayEntitlement;
-import org.synyx.urlaubsverwaltung.domain.legacy.HolidaysAccount;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import java.util.List;
@@ -43,12 +41,6 @@ public class Person extends AbstractPersistable<Integer> {
     private Role role;
 
     @OneToMany
-    private List<HolidayEntitlement> entitlements;
-
-    @OneToMany
-    private List<HolidaysAccount> accounts;
-
-    @OneToMany
     private List<Application> applications;
 
     private boolean active;
@@ -62,18 +54,6 @@ public class Person extends AbstractPersistable<Integer> {
     public void setActive(boolean active) {
 
         this.active = active;
-    }
-
-
-    public List<HolidaysAccount> getAccounts() {
-
-        return accounts;
-    }
-
-
-    public void setAccounts(List<HolidaysAccount> accounts) {
-
-        this.accounts = accounts;
     }
 
 
@@ -98,18 +78,6 @@ public class Person extends AbstractPersistable<Integer> {
     public void setEmail(String email) {
 
         this.email = email;
-    }
-
-
-    public List<HolidayEntitlement> getEntitlements() {
-
-        return entitlements;
-    }
-
-
-    public void setEntitlements(List<HolidayEntitlement> entitlements) {
-
-        this.entitlements = entitlements;
     }
 
 

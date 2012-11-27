@@ -5,7 +5,5 @@
     <class>org.synyx.urlaubsverwaltung.domain.Comment</class>
     <class>org.synyx.urlaubsverwaltung.domain.Application</class>
     <class>org.synyx.urlaubsverwaltung.domain.Account</class>
-    <class>org.synyx.urlaubsverwaltung.domain.legacy.HolidaysAccount</class>
-    <class>org.synyx.urlaubsverwaltung.domain.legacy.HolidayEntitlement</class>
   </persistence-unit>
 </persistence>
