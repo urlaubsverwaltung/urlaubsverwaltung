@@ -5,6 +5,7 @@
 
 # Ignore log directory
 logs
+*.log
 
 # Ignore IntelliJ IDEA project files
 .idea
