@@ -1,7 +1,12 @@
 package org.synyx.urlaubsverwaltung.util;
 
+import java.io.IOException;
+import java.util.Properties;
+import org.apache.log4j.Logger;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 
 /**
@@ -9,11 +14,16 @@ import org.joda.time.DateTimeConstants;
  */
 public class DateUtil {
 
+    private static final Logger LOG = Logger.getLogger("errorLog");
+    
     private static final int CHRISTMAS_EVE = 24;
     private static final int LAST_DAY_OF_MONTH = 31;
     private static final int FIRST_DAY_OF_MONTH = 1;
     private static final int SATURDAY = DateTimeConstants.SATURDAY;
     private static final int SUNDAY = DateTimeConstants.SUNDAY;
+    
+    private static final String PROP_FILE = "custom.properties";
+    private static final String PROP_KEY = "holiday.corpus.christi";
 
     /**
      * checks if the given date is a work day
@@ -138,5 +148,39 @@ public class DateUtil {
     public static boolean isFirstJanuary(DateMidnight date) {
 
         return ((date.getDayOfMonth() == FIRST_DAY_OF_MONTH) && (date.getMonthOfYear() == DateTimeConstants.JANUARY));
+    }
+    
+    /**
+     * Since Jollyday is not able to recognize Corpus Christi (Fronleichnam), 
+     * this method is a quickfix to recognize Corpus Christi dates for the next years. 
+     * (dates are registered in custom.properties)
+     * @param date
+     * @return true if the given date is on Corpus Christi, else false
+     */
+    public static boolean isCorpusChristi(DateMidnight date) {
+        
+        try {
+            Properties props = PropertiesUtil.load(PROP_FILE);
+            
+            String[] dates = props.getProperty(PROP_KEY).split(";");
+            DateTimeFormatter fmt = DateTimeFormat.forPattern("dd.MM.yyyy");
+            
+            
+            for(String d : dates) {
+                
+                DateMidnight compareDate = DateMidnight.parse(d, fmt);
+                
+                if(date.isEqual(compareDate)) {
+                    return true;
+                }
+                
+            }
+            
+        } catch (IOException ex) {
+            LOG.error(DateMidnight.now().toString("dd.MM.yyyy") + "No properties file found.");
+            LOG.error(ex.getMessage(), ex);
+        }
+        
+        return false;
     }
 }

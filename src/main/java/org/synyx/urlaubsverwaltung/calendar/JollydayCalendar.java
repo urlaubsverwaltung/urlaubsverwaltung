@@ -124,7 +124,15 @@ public class JollydayCalendar {
                 }
             }
         }
-
+        
+        // after having compared the date with all holidays of Jollyday's holiday set
+        // check if the given date is on Corpus Christi (Fronleichnam)
+        // this 'hardcoded' quickfix is necessary because Jollyday is not able to recognize Corpus Christ
+        if(DateUtil.isCorpusChristi(date)) {
+            publicHolidays += FULL_DAY;
+        }
+        
+        
         return publicHolidays;
     }
 }

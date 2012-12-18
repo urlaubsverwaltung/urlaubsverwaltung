@@ -1,59 +1,26 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package org.synyx.urlaubsverwaltung.calendar;
 
-import de.jollyday.Holiday;
-import de.jollyday.HolidayManager;
-
 import org.joda.time.DateMidnight;
-import org.joda.time.chrono.GregorianChronology;
-
-import org.junit.After;
-import org.junit.AfterClass;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-
+import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import java.util.Set;
 
 
 /**
+ * Unit test for {@link JollydayCalendar}.
+ * 
  * @author  Aljona Murygina
  */
 public class JollydayCalendarTest {
 
     private JollydayCalendar instance;
 
-    public JollydayCalendarTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-
     @Before
     public void setUp() {
 
         instance = new JollydayCalendar();
-    }
-
-
-    @After
-    public void tearDown() {
     }
 
 
@@ -69,8 +36,8 @@ public class JollydayCalendarTest {
         DateMidnight endDate = new DateMidnight(2011, 12, 27);
 
         double returnValue = instance.getPublicHolidays(startDate, endDate);
-        assertNotNull(returnValue);
-        assertEquals(1.0, returnValue, 0.0);
+        Assert.assertNotNull(returnValue);
+        Assert.assertEquals(1.0, returnValue, 0.0);
 
         // here:
         // 24.12. is a Friday
@@ -80,8 +47,8 @@ public class JollydayCalendarTest {
         endDate = new DateMidnight(2010, 12, 24);
 
         returnValue = instance.getPublicHolidays(startDate, endDate);
-        assertNotNull(returnValue);
-        assertEquals(0.5, returnValue, 0.0);
+        Assert.assertNotNull(returnValue);
+        Assert.assertEquals(0.5, returnValue, 0.0);
 
         // 25.12.2009 - 31.12.2009
         // a total of statutory holidays: 2.5
@@ -90,8 +57,8 @@ public class JollydayCalendarTest {
         endDate = new DateMidnight(2009, 12, 31);
 
         returnValue = instance.getPublicHolidays(startDate, endDate);
-        assertNotNull(returnValue);
-        assertEquals(1.5, returnValue, 0.0);
+        Assert.assertNotNull(returnValue);
+        Assert.assertEquals(1.5, returnValue, 0.0);
     }
 
 
@@ -109,27 +76,24 @@ public class JollydayCalendarTest {
             startDate = startDate.plusDays(1);
         }
 
-        assertSame(3, dings);
+        Assert.assertSame(3, dings);
     }
-
-
-    /** Test if getting of Set<Holiday> and comparing dates works */
-    @Ignore
+    
     @Test
-    public void testHolidaySet() {
-
-        HolidayManager manager = HolidayManager.getInstance("synyx");
-        Set<Holiday> holidays = manager.getHolidays(2011);
-        DateMidnight date = new DateMidnight(2011, 01, 06, GregorianChronology.getInstance());
-
-        for (Holiday day : holidays) {
-            if ((day.getDate()).equals(date.toLocalDate())) {
-                System.out.println("EQUALS!!!!");
-                System.out.println(day.getDate() + " " + day.getDescription());
-            }
-
-            System.out.println(day.getDate());
-            System.out.println(day.getDescription());
-        }
+    public void testCorpusChristiProblem() {
+        
+        DateMidnight startDate = new DateMidnight(2013, 5, 29);
+        DateMidnight endDate = new DateMidnight(2013, 6, 6);
+        
+        double returnValue = instance.getPublicHolidays(startDate, endDate);
+        
+        // expected that Corpus Christi is found as one and only public holiday in this period
+        Assert.assertEquals(1, returnValue, 0);
+        
     }
+
+
+    
+    
+    
 }

@@ -4,6 +4,7 @@
  */
 package org.synyx.urlaubsverwaltung.util;
 
+import java.io.IOException;
 import java.net.URL;
 
 import java.util.Properties;
@@ -23,7 +24,7 @@ public class PropertiesUtil {
      *
      * @throws  Exception
      */
-    public static Properties load(String propsName) throws Exception {
+    public static Properties load(String propsName) throws IOException {
 
         Properties props = new Properties();
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
