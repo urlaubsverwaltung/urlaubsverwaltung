@@ -400,21 +400,14 @@ public class MailServiceImpl implements MailService {
     @Override
     public void sendSuccessfullyUpdatedAccounts(String content) {
 
-        String text = "Remaining vacation days for " + DateMidnight.now().getYear() + "\n\n" + content;
+        String text = "Stand Resturlaubstage zum 1. Januar " + DateMidnight.now().getYear() + " (mitgenommene Resturlaubstage aus dem Vorjahr)" + "\n\n" + content;
 
+        // send email to office for printing statistic
+        sendEmail(emailOffice, "subject.account.update", text);
+        
+        // send email to manager to notify about update of accounts
         sendEmail(emailManager, "subject.account.update", text);
+        
     }
 
-    /**
-     * NOT YET IMPLEMENTED
-     * Commented out on Tu, 2011/11/29 - Aljona Murygina
-     * Think about if method really is necessary or not
-     *
-     * @see  MailService#sendBalance(java.lang.Object)
-     */
-    // @Override
-    // public void sendBalance(Object balanceObject) {
-    //
-    // throw new UnsupportedOperationException("Not supported yet.");
-    // }
 }
