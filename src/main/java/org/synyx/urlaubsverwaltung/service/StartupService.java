@@ -1,12 +1,11 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package org.synyx.urlaubsverwaltung.service;
 
+import java.io.IOException;
 import javax.annotation.PostConstruct;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
+import org.synyx.urlaubsverwaltung.calendar.TestGoogleCalendarService;
 
 /**
  *
@@ -34,9 +33,15 @@ public class StartupService {
     @Value("${email.manager}")
     private String emailManager;
     
+    private TestGoogleCalendarService googleCalendarService;
+
+    public StartupService(TestGoogleCalendarService googleCalendarService) {
+        this.googleCalendarService = googleCalendarService;
+    }
+    
     
     @PostConstruct
-    public void logStartupInfo() {
+    public void logStartupInfo() throws IOException {
         
         LOG.info("Using database with username " + dbName + " and Url " + dbUrl);
         
@@ -46,6 +51,8 @@ public class StartupService {
         LOG.info("Email all: " + emailAll);
         LOG.info("Email manager: " + emailManager);
         
+        LOG.info("Getting access token for Google Calendar API");
+        googleCalendarService.setUp();
         
     }
     

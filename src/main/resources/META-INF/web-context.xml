@@ -37,7 +37,17 @@
         <constructor-arg ref="gravatarUtil" />
         <constructor-arg ref="personValidator" />
         <constructor-arg ref="ownCalendarService" />
-    </bean>  
+    </bean> 
+    
+     <bean class="org.synyx.urlaubsverwaltung.controller.UserManagementController">
+        <constructor-arg ref="personService" />
+        <constructor-arg ref="accountService" />
+        <constructor-arg ref="personValidator" />
+    </bean> 
+    
+    <bean class="org.synyx.urlaubsverwaltung.controller.TestController">
+        <constructor-arg ref="googleCalendarService" />
+    </bean>
     
      <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
      <property name="basename" value="classpath:messages" />
