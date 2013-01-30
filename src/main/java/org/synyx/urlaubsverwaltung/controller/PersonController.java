@@ -53,38 +53,14 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 public class PersonController {
 
-    // jsps
-    private static final String OVERVIEW_JSP = "person/overview"; // jsp for personal overview
-    private static final String STAFF_JSP = "person/staff_view";
-    private static final String PERSON_FORM_JSP = "person/person_form";
-    private static final String ERROR_JSP = "error";
-
-    // attribute names
-    private static final String DATE_FORMAT = "dd.MM.yyyy";
-    private static final String LOGGED_USER = "loggedUser";
-    private static final String PERSON = "person";
-    private static final String PERSONS = "persons";
-    private static final String PERSONFORM = "personForm";
-    private static final String ACCOUNT = "account";
-    private static final String ACCOUNTS = "accounts";
-    private static final String APPLICATIONS = "applications";
-    private static final String LEFT_DAYS = "leftDays";
-    private static final String GRAVATAR = "gravatar";
-    private static final String GRAVATAR_URLS = "gravatarUrls";
-    private static final String NOTEXISTENT = "notexistent"; // are there any persons to show?
-    private static final String NO_APPS = "noapps"; // are there any applications to show?
-    private static final String PERSON_ID = "personId";
-    private static final String YEAR = "year";
-
     // links
     private static final String ACTIVE_LINK = "/staff";
     private static final String INACTIVE_LINK = "/staff/inactive";
     private static final String OVERVIEW_LINK = "/overview"; // personal overview
-    private static final String OVERVIEW_STAFF_LINK = "/staff/{" + PERSON_ID + "}/overview"; // overview of other person
-    private static final String EDIT_LINK = "/staff/{" + PERSON_ID + "}/edit";
-    private static final String DEACTIVATE_LINK = "/staff/{" + PERSON_ID + "}/deactivate";
-    private static final String ACTIVATE_LINK = "/staff/{" + PERSON_ID + "}/activate";
-    private static final String LOGIN_LINK = "redirect:/login.jsp?login_error=1";
+    private static final String OVERVIEW_STAFF_LINK = "/staff/{" + PersonConstants.PERSON_ID + "}/overview"; // overview of other person
+    private static final String EDIT_LINK = "/staff/{" + PersonConstants.PERSON_ID + "}/edit";
+    private static final String DEACTIVATE_LINK = "/staff/{" + PersonConstants.PERSON_ID + "}/deactivate";
+    private static final String ACTIVATE_LINK = "/staff/{" + PersonConstants.PERSON_ID + "}/activate";
 
     // audit logger: logs nontechnically occurences like 'user x applied for leave' or 'subtracted n days from
     // holidays account y'
@@ -126,15 +102,15 @@ public class PersonController {
             List<Person> persons = personService.getInactivePersons();
 
             if (persons.isEmpty()) {
-                model.addAttribute(NOTEXISTENT, true);
-                model.addAttribute(YEAR, DateMidnight.now().getYear());
+                model.addAttribute(PersonConstants.NOTEXISTENT, true);
+                model.addAttribute(ControllerConstants.YEAR, DateMidnight.now().getYear());
             } else {
                 prepareStaffView(persons, DateMidnight.now().getYear(), model);
             }
 
-            return STAFF_JSP;
+            return PersonConstants.STAFF_JSP;
         } else {
-            return ERROR_JSP;
+            return ControllerConstants.ERROR_JSP;
         }
     }
 
@@ -155,9 +131,9 @@ public class PersonController {
             List<Person> persons = personService.getAllPersons();
             prepareStaffView(persons, DateMidnight.now().getYear(), model);
 
-            return STAFF_JSP;
+            return PersonConstants.STAFF_JSP;
         } else {
-            return ERROR_JSP;
+            return ControllerConstants.ERROR_JSP;
         }
     }
 
@@ -170,8 +146,8 @@ public class PersonController {
      *
      * @return
      */
-    @RequestMapping(value = INACTIVE_LINK, params = YEAR, method = RequestMethod.GET)
-    public String showInactiveStaffByYear(@RequestParam(YEAR) int year, Model model) {
+    @RequestMapping(value = INACTIVE_LINK, params = ControllerConstants.YEAR, method = RequestMethod.GET)
+    public String showInactiveStaffByYear(@RequestParam(ControllerConstants.YEAR) int year, Model model) {
 
         if (getLoggedUser().getRole() == Role.OFFICE) {
             setLoggedUser(model);
@@ -179,15 +155,15 @@ public class PersonController {
             List<Person> persons = personService.getInactivePersons();
 
             if (persons.isEmpty()) {
-                model.addAttribute(NOTEXISTENT, true);
-                model.addAttribute(YEAR, DateMidnight.now().getYear());
+                model.addAttribute(PersonConstants.NOTEXISTENT, true);
+                model.addAttribute(ControllerConstants.YEAR, DateMidnight.now().getYear());
             } else {
                 prepareStaffView(persons, year, model);
             }
 
-            return STAFF_JSP;
+            return PersonConstants.STAFF_JSP;
         } else {
-            return ERROR_JSP;
+            return ControllerConstants.ERROR_JSP;
         }
     }
 
@@ -200,8 +176,8 @@ public class PersonController {
      *
      * @return
      */
-    @RequestMapping(value = ACTIVE_LINK, params = YEAR, method = RequestMethod.GET)
-    public String showActiveStaffByYear(@RequestParam(YEAR) int year, Model model) {
+    @RequestMapping(value = ACTIVE_LINK, params = ControllerConstants.YEAR, method = RequestMethod.GET)
+    public String showActiveStaffByYear(@RequestParam(ControllerConstants.YEAR) int year, Model model) {
 
         if (getLoggedUser().getRole() == Role.OFFICE) {
             setLoggedUser(model);
@@ -209,9 +185,9 @@ public class PersonController {
             List<Person> persons = personService.getAllPersons();
             prepareStaffView(persons, year, model);
 
-            return STAFF_JSP;
+            return PersonConstants.STAFF_JSP;
         } else {
-            return ERROR_JSP;
+            return ControllerConstants.ERROR_JSP;
         }
     }
 
@@ -252,11 +228,11 @@ public class PersonController {
             }
         }
 
-        model.addAttribute(PERSONS, persons);
-        model.addAttribute(GRAVATAR_URLS, gravatarUrls);
-        model.addAttribute(ACCOUNTS, accounts);
+        model.addAttribute(ControllerConstants.PERSONS, persons);
+        model.addAttribute(PersonConstants.GRAVATAR_URLS, gravatarUrls);
+        model.addAttribute(ControllerConstants.ACCOUNTS, accounts);
         model.addAttribute("leftDays", leftDays);
-        model.addAttribute(YEAR, DateMidnight.now().getYear());
+        model.addAttribute(ControllerConstants.YEAR, DateMidnight.now().getYear());
     }
 
 
@@ -272,13 +248,13 @@ public class PersonController {
     public String showPersonalOverview(Model model) {
 
         if (getLoggedUser().getRole() == Role.INACTIVE) {
-            return LOGIN_LINK;
+            return ControllerConstants.LOGIN_LINK;
         } else {
             Person person = getLoggedUser();
             prepareOverview(person, DateMidnight.now(GregorianChronology.getInstance()).getYear(), model);
             model.addAttribute("loggedUser", person);
 
-            return OVERVIEW_JSP;
+            return PersonConstants.OVERVIEW_JSP;
         }
     }
 
@@ -292,17 +268,17 @@ public class PersonController {
      *
      * @return
      */
-    @RequestMapping(value = OVERVIEW_LINK, params = YEAR, method = RequestMethod.GET)
-    public String showPersonalOverviewByYear(@RequestParam(YEAR) int year, Model model) {
+    @RequestMapping(value = OVERVIEW_LINK, params = ControllerConstants.YEAR, method = RequestMethod.GET)
+    public String showPersonalOverviewByYear(@RequestParam(ControllerConstants.YEAR) int year, Model model) {
 
         if (getLoggedUser().getRole() == Role.INACTIVE) {
-            return LOGIN_LINK;
+            return ControllerConstants.LOGIN_LINK;
         } else {
             Person person = getLoggedUser();
             prepareOverview(person, year, model);
             model.addAttribute("loggedUser", person);
 
-            return OVERVIEW_JSP;
+            return PersonConstants.OVERVIEW_JSP;
         }
     }
 
@@ -318,10 +294,10 @@ public class PersonController {
      * @return
      */
     @RequestMapping(value = OVERVIEW_STAFF_LINK, method = RequestMethod.GET)
-    public String showStaffOverview(@PathVariable(PERSON_ID) Integer personId, Model model) {
+    public String showStaffOverview(@PathVariable(PersonConstants.PERSON_ID) Integer personId, Model model) {
 
         if (getLoggedUser().getRole() != Role.OFFICE) {
-            return ERROR_JSP;
+            return ControllerConstants.ERROR_JSP;
         } else {
             Person person = personService.getPersonByID(personId);
             List<Person> persons;
@@ -332,12 +308,12 @@ public class PersonController {
                 persons = personService.getInactivePersons();
             }
 
-            model.addAttribute(PERSONS, persons);
+            model.addAttribute(ControllerConstants.PERSONS, persons);
 
             prepareOverview(person, DateMidnight.now(GregorianChronology.getInstance()).getYear(), model);
             model.addAttribute("loggedUser", getLoggedUser());
 
-            return OVERVIEW_JSP;
+            return PersonConstants.OVERVIEW_JSP;
         }
     }
 
@@ -352,12 +328,12 @@ public class PersonController {
      *
      * @return
      */
-    @RequestMapping(value = OVERVIEW_STAFF_LINK, params = YEAR, method = RequestMethod.GET)
-    public String showStaffOverviewByYear(@PathVariable(PERSON_ID) Integer personId,
-        @RequestParam(YEAR) int year, Model model) {
+    @RequestMapping(value = OVERVIEW_STAFF_LINK, params = ControllerConstants.YEAR, method = RequestMethod.GET)
+    public String showStaffOverviewByYear(@PathVariable(PersonConstants.PERSON_ID) Integer personId,
+        @RequestParam(ControllerConstants.YEAR) int year, Model model) {
 
         if (getLoggedUser().getRole() != Role.OFFICE) {
-            return ERROR_JSP;
+            return ControllerConstants.ERROR_JSP;
         } else {
             Person person = personService.getPersonByID(personId);
 
@@ -369,12 +345,12 @@ public class PersonController {
                 persons = personService.getInactivePersons();
             }
 
-            model.addAttribute(PERSONS, persons);
+            model.addAttribute(ControllerConstants.PERSONS, persons);
 
             prepareOverview(person, year, model);
             model.addAttribute("loggedUser", getLoggedUser());
 
-            return OVERVIEW_JSP;
+            return PersonConstants.OVERVIEW_JSP;
         }
     }
 
@@ -449,9 +425,9 @@ public class PersonController {
             }
 
             if (applications.isEmpty()) {
-                model.addAttribute(NO_APPS, true);
+                model.addAttribute(PersonConstants.NO_APPS, true);
             } else {
-                model.addAttribute(APPLICATIONS, applications);
+                model.addAttribute(ControllerConstants.APPLICATIONS, applications);
             }
 
             model.addAttribute("numberOfHolidayDays", numberOfHolidayDays);
@@ -465,17 +441,17 @@ public class PersonController {
 
         if (account != null) {
             BigDecimal vacationDaysLeft = calculationService.calculateLeftVacationDays(account);
-            model.addAttribute(LEFT_DAYS, vacationDaysLeft);
+            model.addAttribute(PersonConstants.LEFT_DAYS, vacationDaysLeft);
         }
 
         setLoggedUser(model);
-        model.addAttribute(PERSON, person);
-        model.addAttribute(ACCOUNT, account);
-        model.addAttribute(YEAR, DateMidnight.now().getYear());
+        model.addAttribute(ControllerConstants.PERSON, person);
+        model.addAttribute(ControllerConstants.ACCOUNT, account);
+        model.addAttribute(ControllerConstants.YEAR, DateMidnight.now().getYear());
 
         // get url of person's gravatar image
         String url = gravatarUtil.createImgURL(person.getEmail());
-        model.addAttribute(GRAVATAR, url);
+        model.addAttribute(PersonConstants.GRAVATAR, url);
     }
 
 
@@ -490,7 +466,7 @@ public class PersonController {
      */
     @RequestMapping(value = EDIT_LINK, method = RequestMethod.GET)
     public String editPersonForm(HttpServletRequest request,
-        @PathVariable(PERSON_ID) Integer personId, Model model) {
+        @PathVariable(PersonConstants.PERSON_ID) Integer personId, Model model) {
 
         if (getLoggedUser().getRole() == Role.OFFICE) {
             Person person = personService.getPersonByID(personId);
@@ -502,9 +478,9 @@ public class PersonController {
             PersonForm personForm = preparePersonForm(year, person, locale);
             addModelAttributesForPersonForm(person, personForm, model);
 
-            return PERSON_FORM_JSP;
+            return PersonConstants.PERSON_FORM_JSP;
         } else {
-            return ERROR_JSP;
+            return ControllerConstants.ERROR_JSP;
         }
     }
 
@@ -519,15 +495,15 @@ public class PersonController {
      *
      * @return
      */
-    @RequestMapping(value = EDIT_LINK, params = YEAR, method = RequestMethod.GET)
+    @RequestMapping(value = EDIT_LINK, params = ControllerConstants.YEAR, method = RequestMethod.GET)
     public String editPersonFormForYear(HttpServletRequest request,
-        @RequestParam(YEAR) int year,
-        @PathVariable(PERSON_ID) Integer personId, Model model) {
+        @RequestParam(ControllerConstants.YEAR) int year,
+        @PathVariable(PersonConstants.PERSON_ID) Integer personId, Model model) {
 
         int currentYear = DateMidnight.now().getYear();
 
         if (year - currentYear > 2 || currentYear - year > 2) {
-            return ERROR_JSP;
+            return ControllerConstants.ERROR_JSP;
         }
 
         if (getLoggedUser().getRole() == Role.OFFICE) {
@@ -538,9 +514,9 @@ public class PersonController {
             PersonForm personForm = preparePersonForm(year, person, locale);
             addModelAttributesForPersonForm(person, personForm, model);
 
-            return PERSON_FORM_JSP;
+            return PersonConstants.PERSON_FORM_JSP;
         } else {
-            return ERROR_JSP;
+            return ControllerConstants.ERROR_JSP;
         }
     }
 
@@ -591,8 +567,8 @@ public class PersonController {
     private void addModelAttributesForPersonForm(Person person, PersonForm personForm, Model model) {
 
         setLoggedUser(model);
-        model.addAttribute(PERSON, person);
-        model.addAttribute(PERSONFORM, personForm);
+        model.addAttribute(ControllerConstants.PERSON, person);
+        model.addAttribute(PersonConstants.PERSONFORM, personForm);
         model.addAttribute("currentYear", DateMidnight.now().getYear());
     }
 
@@ -611,8 +587,8 @@ public class PersonController {
      */
     @RequestMapping(value = EDIT_LINK, method = RequestMethod.PUT)
     public String editPerson(HttpServletRequest request,
-        @PathVariable(PERSON_ID) Integer personId,
-        @ModelAttribute(PERSONFORM) PersonForm personForm, Errors errors, Model model) {
+        @PathVariable(PersonConstants.PERSON_ID) Integer personId,
+        @ModelAttribute(PersonConstants.PERSONFORM) PersonForm personForm, Errors errors, Model model) {
 
         Locale locale = RequestContextUtils.getLocale(request);
 
@@ -623,7 +599,7 @@ public class PersonController {
         if (errors.hasErrors()) {
             addModelAttributesForPersonForm(personToUpdate, personForm, model);
 
-            return PERSON_FORM_JSP;
+            return PersonConstants.PERSON_FORM_JSP;
         }
 
         validator.validate(personForm, errors); // validates the name fields, the email field and the year field
@@ -640,7 +616,7 @@ public class PersonController {
         if (errors.hasErrors()) {
             addModelAttributesForPersonForm(personToUpdate, personForm, model);
 
-            return PERSON_FORM_JSP;
+            return PersonConstants.PERSON_FORM_JSP;
         }
 
         // set person information from PersonForm object on person that is updated
@@ -672,7 +648,7 @@ public class PersonController {
                 expiring);
         }
 
-        LOG.info(DateMidnight.now(GregorianChronology.getInstance()).toString(DATE_FORMAT) + " ID: " + personId
+        LOG.info(DateMidnight.now(GregorianChronology.getInstance()).toString(ControllerConstants.DATE_FORMAT) + " ID: " + personId
             + " Der Mitarbeiter " + personToUpdate.getFirstName() + " " + personToUpdate.getLastName()
             + " wurde editiert.");
 
@@ -689,7 +665,7 @@ public class PersonController {
      * @return
      */
     @RequestMapping(value = DEACTIVATE_LINK, method = RequestMethod.PUT)
-    public String deactivatePerson(@PathVariable(PERSON_ID) Integer personId) {
+    public String deactivatePerson(@PathVariable(PersonConstants.PERSON_ID) Integer personId) {
 
         Person person = personService.getPersonByID(personId);
 
@@ -709,7 +685,7 @@ public class PersonController {
      * @return
      */
     @RequestMapping(value = ACTIVATE_LINK, method = RequestMethod.PUT)
-    public String activatePerson(@PathVariable(PERSON_ID) Integer personId) {
+    public String activatePerson(@PathVariable(PersonConstants.PERSON_ID) Integer personId) {
 
         Person person = personService.getPersonByID(personId);
 
@@ -726,7 +702,7 @@ public class PersonController {
      */
     private void setLoggedUser(Model model) {
 
-        model.addAttribute(LOGGED_USER, getLoggedUser());
+        model.addAttribute(PersonConstants.LOGGED_USER, getLoggedUser());
     }
 
 
