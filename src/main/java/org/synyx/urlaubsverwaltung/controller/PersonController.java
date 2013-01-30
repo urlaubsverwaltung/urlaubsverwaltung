@@ -12,14 +12,10 @@ import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
 
-import org.springframework.validation.Errors;
-
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.support.RequestContextUtils;
 
 import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.domain.Account;
@@ -32,19 +28,15 @@ import org.synyx.urlaubsverwaltung.service.CalculationService;
 import org.synyx.urlaubsverwaltung.service.HolidaysAccountService;
 import org.synyx.urlaubsverwaltung.service.PersonService;
 import org.synyx.urlaubsverwaltung.util.GravatarUtil;
-import org.synyx.urlaubsverwaltung.util.NumberUtil;
 import org.synyx.urlaubsverwaltung.validator.PersonValidator;
-import org.synyx.urlaubsverwaltung.view.PersonForm;
 
 import java.math.BigDecimal;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -58,13 +50,7 @@ public class PersonController {
     private static final String INACTIVE_LINK = "/staff/inactive";
     private static final String OVERVIEW_LINK = "/overview"; // personal overview
     private static final String OVERVIEW_STAFF_LINK = "/staff/{" + PersonConstants.PERSON_ID + "}/overview"; // overview of other person
-    private static final String EDIT_LINK = "/staff/{" + PersonConstants.PERSON_ID + "}/edit";
-    private static final String DEACTIVATE_LINK = "/staff/{" + PersonConstants.PERSON_ID + "}/deactivate";
-    private static final String ACTIVATE_LINK = "/staff/{" + PersonConstants.PERSON_ID + "}/activate";
 
-    // audit logger: logs nontechnically occurences like 'user x applied for leave' or 'subtracted n days from
-    // holidays account y'
-    private static final Logger LOG = Logger.getLogger("audit");
     private PersonService personService;
     private ApplicationService applicationService;
     private HolidaysAccountService accountService;
@@ -455,245 +441,6 @@ public class PersonController {
     }
 
 
-    /**
-     * Prepares the view object PersonForm and returns jsp with form to edit a user.
-     *
-     * @param  request
-     * @param  personId
-     * @param  model
-     *
-     * @return
-     */
-    @RequestMapping(value = EDIT_LINK, method = RequestMethod.GET)
-    public String editPersonForm(HttpServletRequest request,
-        @PathVariable(PersonConstants.PERSON_ID) Integer personId, Model model) {
-
-        if (getLoggedUser().getRole() == Role.OFFICE) {
-            Person person = personService.getPersonByID(personId);
-
-            int year = DateMidnight.now(GregorianChronology.getInstance()).getYear();
-
-            Locale locale = RequestContextUtils.getLocale(request);
-
-            PersonForm personForm = preparePersonForm(year, person, locale);
-            addModelAttributesForPersonForm(person, personForm, model);
-
-            return PersonConstants.PERSON_FORM_JSP;
-        } else {
-            return ControllerConstants.ERROR_JSP;
-        }
-    }
-
-
-    /**
-     * Prepares the view object PersonForm and returns jsp with form to edit a user.
-     *
-     * @param  request
-     * @param  year
-     * @param  personId
-     * @param  model
-     *
-     * @return
-     */
-    @RequestMapping(value = EDIT_LINK, params = ControllerConstants.YEAR, method = RequestMethod.GET)
-    public String editPersonFormForYear(HttpServletRequest request,
-        @RequestParam(ControllerConstants.YEAR) int year,
-        @PathVariable(PersonConstants.PERSON_ID) Integer personId, Model model) {
-
-        int currentYear = DateMidnight.now().getYear();
-
-        if (year - currentYear > 2 || currentYear - year > 2) {
-            return ControllerConstants.ERROR_JSP;
-        }
-
-        if (getLoggedUser().getRole() == Role.OFFICE) {
-            Person person = personService.getPersonByID(personId);
-
-            Locale locale = RequestContextUtils.getLocale(request);
-
-            PersonForm personForm = preparePersonForm(year, person, locale);
-            addModelAttributesForPersonForm(person, personForm, model);
-
-            return PersonConstants.PERSON_FORM_JSP;
-        } else {
-            return ControllerConstants.ERROR_JSP;
-        }
-    }
-
-
-    /**
-     * Prepares PersonForm object with the given parameters.
-     *
-     * @param  year
-     * @param  person
-     * @param  locale
-     */
-    private PersonForm preparePersonForm(int year, Person person, Locale locale) {
-
-        Account account = accountService.getHolidaysAccount(year, person);
-
-        BigDecimal annualVacationDays = null;
-        BigDecimal remainingVacationDays = null;
-        boolean remainingVacationDaysExpire = true;
-
-        if (account != null) {
-            annualVacationDays = account.getAnnualVacationDays();
-            remainingVacationDays = account.getRemainingVacationDays();
-            remainingVacationDaysExpire = account.isRemainingVacationDaysExpire();
-        }
-
-        String ann = "";
-        String rem = "";
-
-        if (annualVacationDays != null) {
-            ann = NumberUtil.formatNumber(annualVacationDays, locale);
-        }
-
-        if (remainingVacationDays != null) {
-            rem = NumberUtil.formatNumber(remainingVacationDays, locale);
-        }
-
-        return new PersonForm(person, String.valueOf(year), account, ann, rem, remainingVacationDaysExpire);
-    }
-
-
-    /**
-     * Adding attributes to model.
-     *
-     * @param  person
-     * @param  personForm
-     * @param  model
-     */
-    private void addModelAttributesForPersonForm(Person person, PersonForm personForm, Model model) {
-
-        setLoggedUser(model);
-        model.addAttribute(ControllerConstants.PERSON, person);
-        model.addAttribute(PersonConstants.PERSONFORM, personForm);
-        model.addAttribute("currentYear", DateMidnight.now().getYear());
-    }
-
-
-    /**
-     * Gets informations out of view object PersonForm and edits the concerning person and their entitlement to holidays
-     * account.
-     *
-     * @param  request
-     * @param  personId
-     * @param  personForm
-     * @param  errors
-     * @param  model
-     *
-     * @return
-     */
-    @RequestMapping(value = EDIT_LINK, method = RequestMethod.PUT)
-    public String editPerson(HttpServletRequest request,
-        @PathVariable(PersonConstants.PERSON_ID) Integer personId,
-        @ModelAttribute(PersonConstants.PERSONFORM) PersonForm personForm, Errors errors, Model model) {
-
-        Locale locale = RequestContextUtils.getLocale(request);
-
-        Person personToUpdate = personService.getPersonByID(personId);
-
-        validator.validateProperties(personForm, errors); // validates if the set value of the property key is valid
-
-        if (errors.hasErrors()) {
-            addModelAttributesForPersonForm(personToUpdate, personForm, model);
-
-            return PersonConstants.PERSON_FORM_JSP;
-        }
-
-        validator.validate(personForm, errors); // validates the name fields, the email field and the year field
-
-        validator.validateAnnualVacation(personForm, errors, locale); // validates holiday entitlement's
-
-        // vacation days
-
-        validator.validateRemainingVacationDays(personForm, errors, locale); // validates holiday
-
-        // entitlement's remaining
-        // vacation days
-
-        if (errors.hasErrors()) {
-            addModelAttributesForPersonForm(personToUpdate, personForm, model);
-
-            return PersonConstants.PERSON_FORM_JSP;
-        }
-
-        // set person information from PersonForm object on person that is updated
-        personToUpdate = personForm.fillPersonObject(personToUpdate);
-
-        personService.save(personToUpdate);
-
-        int year = Integer.parseInt(personForm.getYear());
-        int dayFrom = Integer.parseInt(personForm.getDayFrom());
-        int monthFrom = Integer.parseInt(personForm.getMonthFrom());
-        int dayTo = Integer.parseInt(personForm.getDayTo());
-        int monthTo = Integer.parseInt(personForm.getMonthTo());
-
-        DateMidnight validFrom = new DateMidnight(year, monthFrom, dayFrom);
-        DateMidnight validTo = new DateMidnight(year, monthTo, dayTo);
-
-        BigDecimal annualVacationDays = new BigDecimal(personForm.getAnnualVacationDays());
-        BigDecimal remainingVacationDays = new BigDecimal(personForm.getRemainingVacationDays());
-        boolean expiring = personForm.isRemainingVacationDaysExpire();
-
-        // check if there is an existing account
-        Account account = accountService.getHolidaysAccount(year, personToUpdate);
-
-        if (account == null) {
-            accountService.createHolidaysAccount(personToUpdate, validFrom, validTo, annualVacationDays,
-                remainingVacationDays, expiring);
-        } else {
-            accountService.editHolidaysAccount(account, validFrom, validTo, annualVacationDays, remainingVacationDays,
-                expiring);
-        }
-
-        LOG.info(DateMidnight.now(GregorianChronology.getInstance()).toString(ControllerConstants.DATE_FORMAT) + " ID: " + personId
-            + " Der Mitarbeiter " + personToUpdate.getFirstName() + " " + personToUpdate.getLastName()
-            + " wurde editiert.");
-
-        return "redirect:/web/staff/" + personToUpdate.getId() + "/overview";
-    }
-
-
-    /**
-     * This method deactivates a person, i.e. information about a deactivated person remains, but he/she has no right to
-     * login, to apply for leave, etc.
-     *
-     * @param  person
-     *
-     * @return
-     */
-    @RequestMapping(value = DEACTIVATE_LINK, method = RequestMethod.PUT)
-    public String deactivatePerson(@PathVariable(PersonConstants.PERSON_ID) Integer personId) {
-
-        Person person = personService.getPersonByID(personId);
-
-        personService.deactivate(person);
-        personService.save(person);
-
-        return "redirect:/web" + ACTIVE_LINK;
-    }
-
-
-    /**
-     * This method activates a person (e.g. after unintended deactivating of a person), i.e. this person has once again
-     * his user rights)
-     *
-     * @param  person
-     *
-     * @return
-     */
-    @RequestMapping(value = ACTIVATE_LINK, method = RequestMethod.PUT)
-    public String activatePerson(@PathVariable(PersonConstants.PERSON_ID) Integer personId) {
-
-        Person person = personService.getPersonByID(personId);
-
-        personService.activate(person);
-        personService.save(person);
-
-        return "redirect:/web" + ACTIVE_LINK;
-    }
 
 
     /*

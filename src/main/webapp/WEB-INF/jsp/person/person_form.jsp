@@ -45,7 +45,18 @@
         <div id="content">
             <div class="container_12">
 
-                <form:form method="put" action="${formUrlPrefix}/staff/${person.id}/edit" modelAttribute="personForm"> 
+                <c:choose>
+                    <c:when test="${person.id == null}">
+                        <c:set var="METHOD" value="POST" />
+                        <c:set var="ACTION" value="${formUrlPrefix}/staff/new" />
+                    </c:when>
+                    <c:otherwise>
+                        <c:set var="METHOD" value="PUT" />
+                        <c:set var="ACTION" value="${formUrlPrefix}/staff/${person.id}/edit" />
+                    </c:otherwise>
+                </c:choose>
+                
+                <form:form method="${METHOD}" action="${ACTION}" modelAttribute="personForm"> 
                     <c:if test="${not empty errors}">
                         <div class="grid_8" id="error-div"><form:errors cssClass="error" /></div>
                     </c:if>   
