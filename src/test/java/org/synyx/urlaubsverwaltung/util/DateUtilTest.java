@@ -57,4 +57,16 @@ public class DateUtilTest {
         
     }
     
+    @Test
+    public void testIsWorkDay() {
+        
+        // should be a Monday
+        DateMidnight date = new DateMidnight(2011, 12, 26);
+        
+        boolean returnValue = DateUtil.isWorkDay(date);
+        
+        Assert.assertTrue(returnValue);
+        
+    }
+    
 }
