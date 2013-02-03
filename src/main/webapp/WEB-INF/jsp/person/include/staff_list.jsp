@@ -9,7 +9,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <spring:url var="formUrlPrefix" value="/web" />
-<a class="btn btn-primary" href="${formUrlPrefix}/staff/new">Neue Person</a>
+<a class="btn btn-new-user" href="${formUrlPrefix}/staff/new"><spring:message code="table.new.person" /></a>
 
 <table id="staff-list" cellspacing="0">
     <tr>
