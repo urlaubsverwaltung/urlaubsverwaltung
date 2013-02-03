@@ -11,11 +11,15 @@ import org.synyx.urlaubsverwaltung.domain.Person;
  */
 public class PersonForm {
 
+    private String loginName;
+    
     private String lastName;
 
     private String firstName;
 
     private String email;
+    
+    private boolean active = true;
     
     private String dayFrom;
     
@@ -38,6 +42,7 @@ public class PersonForm {
 
     public PersonForm(Person person, String year, Account account, String annualVacationDays, String remainingVacationDays, boolean remainingVacationDaysExpire) {
         
+        this.loginName = person.getLoginName();
         this.lastName = person.getLastName();
         this.firstName = person.getFirstName();
         this.email = person.getEmail();
@@ -60,7 +65,24 @@ public class PersonForm {
         }
     }
     
+    public void setDefaultValuesForValidity() {
+        // default values for validFrom and validTo: 1.1. - 31.12.
+            this.dayFrom = String.valueOf(1);
+            this.monthFrom = String.valueOf(1);
+            this.dayTo = String.valueOf(31);
+            this.monthTo = String.valueOf(12);
+    }
 
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    
+    
     public String getAnnualVacationDays() {
         return annualVacationDays;
     }
@@ -149,12 +171,24 @@ public class PersonForm {
         this.year = year;
     }
 
+    public String getLoginName() {
+        return loginName;
+    }
+
+    public void setLoginName(String loginName) {
+        this.loginName = loginName;
+    }
+    
+    
+
 
     public Person fillPersonObject(Person person) {
 
+        person.setLoginName(this.loginName);
         person.setLastName(this.lastName);
         person.setFirstName(this.firstName);
         person.setEmail(this.email);
+        person.setActive(this.active);
 
         return person;
     }

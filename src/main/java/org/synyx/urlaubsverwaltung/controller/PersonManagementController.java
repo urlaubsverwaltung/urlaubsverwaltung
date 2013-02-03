@@ -1,7 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package org.synyx.urlaubsverwaltung.controller;
 
 import java.math.BigDecimal;
@@ -11,6 +8,7 @@ import org.apache.log4j.Logger;
 import org.joda.time.DateMidnight;
 import org.joda.time.chrono.GregorianChronology;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -32,21 +30,19 @@ import org.synyx.urlaubsverwaltung.view.PersonForm;
  *
  * @author Aljona Murygina - murygina@synyx.de
  */
-public class UserManagementController {
+@Controller
+public class PersonManagementController {
 
     private static final String ACTIVE_LINK = "/staff";
     private static final String NEW_LINK = ACTIVE_LINK + "/new";
     private static final String EDIT_LINK = ACTIVE_LINK + "/{" + PersonConstants.PERSON_ID + "}/edit";
     private static final String DEACTIVATE_LINK = ACTIVE_LINK + "/{" + PersonConstants.PERSON_ID + "}/deactivate";
     private static final String ACTIVATE_LINK = ACTIVE_LINK + "/{" + PersonConstants.PERSON_ID + "}/activate";
-    // audit logger: logs nontechnically occurences like 'user x applied for leave' or 'subtracted n days from
-    // holidays account y'
-    private static final Logger LOG = Logger.getLogger("audit");
     private PersonService personService;
     private HolidaysAccountService accountService;
     private PersonValidator validator;
 
-    public UserManagementController(PersonService personService, HolidaysAccountService accountService,
+    public PersonManagementController(PersonService personService, HolidaysAccountService accountService,
             PersonValidator validator) {
 
         this.personService = personService;
@@ -186,45 +182,8 @@ public class UserManagementController {
         if (getLoggedUser().getRole() == Role.OFFICE) {
             Person person = new Person();
 
-            int year = DateMidnight.now(GregorianChronology.getInstance()).getYear();
-
-            Locale locale = RequestContextUtils.getLocale(request);
-
-            PersonForm personForm = preparePersonForm(year, person, locale);
-            addModelAttributesForPersonForm(person, personForm, model);
-
-            return PersonConstants.PERSON_FORM_JSP;
-        } else {
-            return ControllerConstants.ERROR_JSP;
-        }
-    }
-
-    /**
-     * Prepares the view object PersonForm and returns jsp with form to create a new
-     * user.
-     *
-     * @param request
-     * @param year
-     * @param model
-     *
-     * @return
-     */
-    @RequestMapping(value = NEW_LINK, params = ControllerConstants.YEAR, method = RequestMethod.GET)
-    public String newPersonFormForYear(HttpServletRequest request,
-            @RequestParam(ControllerConstants.YEAR) int year, Model model) {
-
-        int currentYear = DateMidnight.now().getYear();
-
-        if (year - currentYear > 2 || currentYear - year > 2) {
-            return ControllerConstants.ERROR_JSP;
-        }
-
-        if (getLoggedUser().getRole() == Role.OFFICE) {
-            Person person = new Person();
-
-            Locale locale = RequestContextUtils.getLocale(request);
-
-            PersonForm personForm = preparePersonForm(year, person, locale);
+            PersonForm personForm = new PersonForm();
+            personForm.setDefaultValuesForValidity();
             addModelAttributesForPersonForm(person, personForm, model);
 
             return PersonConstants.PERSON_FORM_JSP;
@@ -279,7 +238,7 @@ public class UserManagementController {
             return PersonConstants.PERSON_FORM_JSP;
         }
 
-        saveOrUpdatePerson(personToUpdate, personForm);
+        personService.createOrUpdate(personToUpdate, personForm);
 
         return "redirect:/web/staff/" + personToUpdate.getId() + "/overview";
     }
@@ -317,57 +276,11 @@ public class UserManagementController {
             return PersonConstants.PERSON_FORM_JSP;
         }
 
-        saveOrUpdatePerson(person, personForm);
+        personService.createOrUpdate(person, personForm);
 
         return "redirect:/web/staff/" + person.getId() + "/overview";
     }
 
-    private void saveOrUpdatePerson(Person person, PersonForm personForm) {
-
-        boolean newPerson = false;
-
-        if (person.getId() == null) {
-            newPerson = true;
-        }
-
-        // set person information from PersonForm object on person that is updated
-        person = personForm.fillPersonObject(person);
-
-        personService.save(person);
-
-        int year = Integer.parseInt(personForm.getYear());
-        int dayFrom = Integer.parseInt(personForm.getDayFrom());
-        int monthFrom = Integer.parseInt(personForm.getMonthFrom());
-        int dayTo = Integer.parseInt(personForm.getDayTo());
-        int monthTo = Integer.parseInt(personForm.getMonthTo());
-
-        DateMidnight validFrom = new DateMidnight(year, monthFrom, dayFrom);
-        DateMidnight validTo = new DateMidnight(year, monthTo, dayTo);
-
-        BigDecimal annualVacationDays = new BigDecimal(personForm.getAnnualVacationDays());
-        BigDecimal remainingVacationDays = new BigDecimal(personForm.getRemainingVacationDays());
-        boolean expiring = personForm.isRemainingVacationDaysExpire();
-
-        // check if there is an existing account
-        Account account = accountService.getHolidaysAccount(year, person);
-
-        if (account == null) {
-            accountService.createHolidaysAccount(person, validFrom, validTo, annualVacationDays,
-                    remainingVacationDays, expiring);
-        } else {
-            accountService.editHolidaysAccount(account, validFrom, validTo, annualVacationDays, remainingVacationDays,
-                    expiring);
-        }
-
-        if (newPerson) {
-            LOG.info(DateMidnight.now(GregorianChronology.getInstance()).toString(ControllerConstants.DATE_FORMAT) + " Ein neuer Mitarbeiter wurde angelegt. ID: " + person.getId()
-                    + ", Vorname: " + person.getFirstName() + ", Nachname: " + person.getLastName());
-        } else {
-            LOG.info(DateMidnight.now(GregorianChronology.getInstance()).toString(ControllerConstants.DATE_FORMAT) + " ID: " + person.getId()
-                    + " Der Mitarbeiter " + person.getFirstName() + " " + person.getLastName()
-                    + " wurde editiert.");
-        }
-    }
 
     /**
      * This method deactivates a person, i.e. information about a deactivated
@@ -428,4 +341,5 @@ public class UserManagementController {
 
         return personService.getPersonByLogin(user);
     }
+    
 }

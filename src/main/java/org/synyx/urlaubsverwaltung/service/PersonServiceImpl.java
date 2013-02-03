@@ -1,5 +1,8 @@
 package org.synyx.urlaubsverwaltung.service;
 
+import java.math.BigDecimal;
+import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
 import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.log4j.Logger;
+import org.joda.time.chrono.GregorianChronology;
+import org.synyx.urlaubsverwaltung.controller.ControllerConstants;
+import org.synyx.urlaubsverwaltung.domain.Account;
+import org.synyx.urlaubsverwaltung.view.PersonForm;
 
 
 /**
@@ -26,19 +34,25 @@ import java.util.Map;
 @Transactional
 public class PersonServiceImpl implements PersonService {
 
+    // audit logger: logs nontechnically occurences like 'user x applied for leave' or 'subtracted n days from
+    // holidays account y'
+    private static final Logger LOG = Logger.getLogger("audit");
+    
     private PersonDAO personDAO;
     private ApplicationService applicationService;
     private HolidaysAccountService accountService;
     private MailService mailService;
+    private CryptoService cryptoService;
 
     @Autowired
     public PersonServiceImpl(PersonDAO personDAO, ApplicationService applicationService, MailService mailService,
-        HolidaysAccountService accountService) {
+        HolidaysAccountService accountService, CryptoService cryptoService) {
 
         this.personDAO = personDAO;
         this.applicationService = applicationService;
         this.mailService = mailService;
         this.accountService = accountService;
+        this.cryptoService = cryptoService;
     }
 
     /**
@@ -48,6 +62,71 @@ public class PersonServiceImpl implements PersonService {
     public void save(Person person) {
 
         personDAO.save(person);
+    }
+    
+    /**
+     * @see  PersonService#createOrUpdate(org.synyx.urlaubsverwaltung.domain.Person, org.synyx.urlaubsverwaltung.view.PersonForm) 
+     */
+    @Override
+    public void createOrUpdate(Person person, PersonForm personForm) {
+        
+        boolean newPerson = false;
+
+        if (person.getId() == null) {
+            newPerson = true;
+            
+            // TODO: this should be variable
+            person.setRole(Role.USER);
+
+            try {
+                KeyPair keyPair = cryptoService.generateKeyPair();
+                person.setPrivateKey(keyPair.getPrivate().getEncoded());
+                person.setPublicKey(keyPair.getPublic().getEncoded());
+            } catch (NoSuchAlgorithmException ex) {
+                LOG.error("Beim Erstellen der Keys für den neuen Benutzer mit dem Login " + personForm.getLoginName()
+                    + " ist ein Fehler aufgetreten.", ex);
+                mailService.sendKeyGeneratingErrorNotification(personForm.getLoginName());
+            }
+        }
+
+        // set person information from PersonForm object on person that is updated
+        person = personForm.fillPersonObject(person);
+
+        save(person);
+        
+        int year = Integer.parseInt(personForm.getYear());
+        int dayFrom = Integer.parseInt(personForm.getDayFrom());
+        int monthFrom = Integer.parseInt(personForm.getMonthFrom());
+        int dayTo = Integer.parseInt(personForm.getDayTo());
+        int monthTo = Integer.parseInt(personForm.getMonthTo());
+
+        DateMidnight validFrom = new DateMidnight(year, monthFrom, dayFrom);
+        DateMidnight validTo = new DateMidnight(year, monthTo, dayTo);
+
+        BigDecimal annualVacationDays = new BigDecimal(personForm.getAnnualVacationDays());
+        BigDecimal remainingVacationDays = new BigDecimal(personForm.getRemainingVacationDays());
+        boolean expiring = personForm.isRemainingVacationDaysExpire();
+
+        // check if there is an existing account
+        Account account = accountService.getHolidaysAccount(year, person);
+
+        if (account == null) {
+            accountService.createHolidaysAccount(person, validFrom, validTo, annualVacationDays,
+                    remainingVacationDays, expiring);
+        } else {
+            accountService.editHolidaysAccount(account, validFrom, validTo, annualVacationDays, remainingVacationDays,
+                    expiring);
+        }
+
+        if (newPerson) {
+            LOG.info(DateMidnight.now(GregorianChronology.getInstance()).toString(ControllerConstants.DATE_FORMAT) + " Ein neuer Mitarbeiter wurde angelegt. ID: " + person.getId()
+                    + ", Vorname: " + person.getFirstName() + ", Nachname: " + person.getLastName());
+        } else {
+            LOG.info(DateMidnight.now(GregorianChronology.getInstance()).toString(ControllerConstants.DATE_FORMAT) + " ID: " + person.getId()
+                    + " Der Mitarbeiter " + person.getFirstName() + " " + person.getLastName()
+                    + " wurde editiert.");
+        }
+        
     }
 
 

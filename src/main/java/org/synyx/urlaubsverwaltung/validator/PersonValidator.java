@@ -36,6 +36,7 @@ public class PersonValidator implements Validator {
     private static final String ERROR_EMAIL = "error.email";
     private static final String ERROR_LENGTH = "error.length";
 
+    private static final String LOGIN_NAME = "loginName";
     private static final String FIRST_NAME = "firstName";
     private static final String LAST_NAME = "lastName";
     private static final String ANNUAL_VACATION_DAYS = "annualVacationDays";
@@ -85,6 +86,9 @@ public class PersonValidator implements Validator {
 
         PersonForm form = (PersonForm) target;
 
+        // field login name
+        validateName(form.getLoginName(), LOGIN_NAME, errors);
+        
         // field first name
         validateName(form.getFirstName(), FIRST_NAME, errors);
 

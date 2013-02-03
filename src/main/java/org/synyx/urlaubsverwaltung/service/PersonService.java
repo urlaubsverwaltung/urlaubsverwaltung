@@ -6,6 +6,7 @@ import org.synyx.urlaubsverwaltung.domain.Person;
 
 import java.util.List;
 import org.synyx.urlaubsverwaltung.domain.Role;
+import org.synyx.urlaubsverwaltung.view.PersonForm;
 
 
 /**
@@ -23,6 +24,15 @@ public interface PersonService {
      * @param  person  the data to save
      */
     void save(Person person);
+    
+    
+    /**
+     * Creates or updates a {@link Person} with the values of the given {@link PersonForm} incl. creating/updating {@link Account} information.
+     * 
+     * @param person
+     * @param personForm 
+     */
+    void createOrUpdate(Person person, PersonForm personForm);
 
 
     /**

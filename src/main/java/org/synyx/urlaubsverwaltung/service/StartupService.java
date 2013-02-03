@@ -52,7 +52,7 @@ public class StartupService {
         LOG.info("Email manager: " + emailManager);
         
         LOG.info("Getting access token for Google Calendar API");
-        googleCalendarService.setUp();
+//        googleCalendarService.setUp();
         
     }
     

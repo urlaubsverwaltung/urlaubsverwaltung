@@ -70,13 +70,25 @@
                             </tbody>
                         </table>
                     </div>
-
+                        
                     <div class="grid_8">
                         <table class="app-detail" cellspacing="0">
                             <tr class="odd">
                                 <td class="td-name"><spring:message code='login' />:</td>
-                                <td><c:out value="${person.loginName}" /></td>
-                                <td>&nbsp;</td>
+                                <c:choose>
+                                    <c:when test="${person.id == null}">
+                                        <td>
+                                            <form:input id="login" path="loginName" cssErrorClass="error" />
+                                        </td>
+                                        <td> <form:errors path="loginName" cssClass="error" /></td>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <td>
+                                        <c:out value="${person.loginName}" />
+                                         </td>
+                                        <td>&nbsp;</td>
+                                    </c:otherwise>
+                                </c:choose>
                             </tr>
                             <tr class="even">
                                 <td class="td-name"><label for="vorname"><spring:message code="firstname" />:</label></td>
@@ -105,6 +117,18 @@
                                     <form:errors path="email" cssClass="error" />
                                 </td>
                             </tr>
+                            <c:if test="${person.id == null}">
+                              <tr class="odd">
+                                <td class="td-name"><label for="active"><spring:message code="person.activate" />:</label></td>
+                                <td>
+                                    <form:radiobutton path="active" value="true" /><spring:message code="yes" />
+                                    <form:radiobutton path="active" value="false" /><spring:message code="no" />
+                                </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                            </tr>  
+                            </c:if>
                         </table>
                     </div>
 
@@ -119,25 +143,37 @@
                             </tbody>
                         </table>
                     </div>
-
+                        
                     <div class="grid_8">
-                        <table class="app-detail" cellspacing="0">
-
+                            <table class="app-detail" cellspacing="0">
+                                            
                             <tr class="odd">
                                 <td class="td-name"><spring:message code='year' /></td>
                                 <td>
-                                    <form:select path="year" size="1" onchange="change(this.options[this.selectedIndex].value);" id="year-dropdown">
-                                        <form:option value="${currentYear - 1}"><c:out value="${currentYear - 1}" /></form:option>
-                                        <form:option value="${currentYear}"><c:out value="${currentYear}" /></form:option>
-                                        <form:option value="${currentYear + 1}"><c:out value="${currentYear + 1}" /></form:option>
-                                        <form:option value="${currentYear + 2}"><c:out value="${currentYear + 2}" /></form:option>
-                                    </form:select>
+                                    <c:choose>
+                                        <c:when test="${person.id == null}">
+                                            <form:select path="year" size="1" id="year-dropdown">
+                                                <form:option value="${currentYear - 1}"><c:out value="${currentYear - 1}" /></form:option>
+                                                <form:option value="${currentYear}" selected="selected"><c:out value="${currentYear}" /></form:option>
+                                                <form:option value="${currentYear + 1}"><c:out value="${currentYear + 1}" /></form:option>
+                                                <form:option value="${currentYear + 2}"><c:out value="${currentYear + 2}" /></form:option>
+                                            </form:select> 
+                                        </c:when>
+                                        <c:otherwise>
+                                            <form:select path="year" size="1" onchange="change(this.options[this.selectedIndex].value);" id="year-dropdown">
+                                                <form:option value="${currentYear - 1}"><c:out value="${currentYear - 1}" /></form:option>
+                                                <form:option value="${currentYear}"><c:out value="${currentYear}" /></form:option>
+                                                <form:option value="${currentYear + 1}"><c:out value="${currentYear + 1}" /></form:option>
+                                                <form:option value="${currentYear + 2}"><c:out value="${currentYear + 2}" /></form:option>
+                                            </form:select>
+                                        </c:otherwise>
+                                    </c:choose>
                                 </td>
                                 <td>
                                     <form:errors path="year" cssClass="error" />
                                 </td>
                             </tr>
-
+                                                
                             <tr class="even">
                                 <td class="td-name"><spring:message code='time' /></td>
                                 <td colspan="2">
@@ -152,7 +188,7 @@
                                                     document.write('<form:option value="' + i + '">' + i + '</form:option>');
                                                 }
                                             }
-                                        </script>
+                                            </script>
                                     </form:select>
                                     <form:select path="monthFrom" size="1">
                                         <%--<form:option value="0" disabled="disabled"><spring:message code='person.edit.month' /></form:option>--%>
@@ -255,57 +291,71 @@
                         </table>
                     </div>
 
-                    <!--                        <div class="grid_12" style="margin-top: 2em; background-color: #EAF2D3;">-->
                     <div class="grid_12">&nbsp;</div>
                     <div class="grid_8" style="background-color: #EAF2D3; height: 2em; padding-top: 1em; padding-bottom: 1em;">
                         &nbsp;
-                        <input class="btn btn-primary" type="submit" name="<spring:message code="save" />" value="<spring:message code="save" />" />
-                        <a class="btn" href="${formUrlPrefix}/staff"><spring:message code='cancel' /></a>
-                        <input class="btn" type="button" onclick="$('#activ-action').show();"
-                               <c:choose>
-                                   <c:when test="${person.active == true}">
-                                       name="<spring:message code='person.deactivate' />"
-                                       value="<spring:message code='person.deactivate' />"
-                                       class="deactivate"
-                                   </c:when>
-                                   <c:otherwise>
-                                       name="<spring:message code='person.activate' />"
-                                       value="<spring:message code='person.activate' />"
-                                   </c:otherwise>
-                               </c:choose>    
-                               />
 
+                        <c:choose>
+                            <c:when test="${person.id == null}">
+                                <input class="btn btn-primary" type="submit" name="<spring:message code="save" />" value="<spring:message code="save" />" />
+                                <a class="btn" href="${formUrlPrefix}/staff"><spring:message code='cancel' /></a>
+                            </c:when>
+                            <c:otherwise>
+                                <input class="btn btn-primary" type="submit" name="<spring:message code="save" />" value="<spring:message code="save" />" />
+                                <a class="btn" href="${formUrlPrefix}/staff"><spring:message code='cancel' /></a>
+                            
+                            
+                                <input class="btn" type="button" onclick="$('#activ-action').show();"
+                                       <c:choose>
+                                           <c:when test="${person.active == true}">
+                                               name="<spring:message code='person.deactivate' />"
+                                               value="<spring:message code='person.deactivate' />"
+                                               class="deactivate"
+                                           </c:when>
+                                           <c:otherwise>
+                                               name="<spring:message code='person.activate' />"
+                                               value="<spring:message code='person.activate' />"
+                                           </c:otherwise>
+                                       </c:choose>    
+                                       />
+                              </c:otherwise> 
+                          </c:choose>      
+                                   
+                          </form:form>
+                        
+                                <br />
+                                <br />
+                        
+                                <c:if test="${person.id != null}">
+                                
+                                <c:choose>
+                                    <c:when test="${person.active == true}">
+                                        <c:set var="formUrl" value="${formUrlPrefix}/staff/${person.id}/deactivate" />
+                                    </c:when>
+                                    <c:otherwise>
+                                        <c:set var="formUrl" value="${formUrlPrefix}/staff/${person.id}/activate" />  
+                                    </c:otherwise>
+                                </c:choose>
+                        
+                                <form:form method="put" action="${formUrl}">                  
+                                    <div id="activ-action"style="display: none;" class="confirm-green">
+                                        <c:choose>
+                                            <c:when test="${person.active == true}">
+                                                <spring:message code='person.deactivate.confirm' />&nbsp;
+                                            </c:when>
+                                            <c:otherwise>
+                                                <spring:message code='person.activate.confirm' />&nbsp;
+                                            </c:otherwise> 
+                                        </c:choose>       
+                                        <input class="btn" type="submit" name="<spring:message code="yes" />" value="<spring:message code="yes" />" />
+                                        <input class="btn" type="button" onclick="$('#activ-action').hide();" name="<spring:message code="no" />" value="<spring:message code="no" />" /> 
+                                    </div>         
+                                </form:form>
+                                    
+                                </c:if>
 
-                    </form:form>
-
-                    <br />
-                    <br />
-
-                    <c:choose>
-                        <c:when test="${person.active == true}">
-                            <c:set var="formUrl" value="${formUrlPrefix}/staff/${person.id}/deactivate" />
-                        </c:when>
-                        <c:otherwise>
-                            <c:set var="formUrl" value="${formUrlPrefix}/staff/${person.id}/activate" />  
-                        </c:otherwise>
-                    </c:choose>
-
-                    <form:form method="put" action="${formUrl}">                  
-                        <div id="activ-action"style="display: none;" class="confirm-green">
-                            <c:choose>
-                                <c:when test="${person.active == true}">
-                                    <spring:message code='person.deactivate.confirm' />&nbsp;
-                                </c:when>
-                                <c:otherwise>
-                                    <spring:message code='person.activate.confirm' />&nbsp;
-                                </c:otherwise> 
-                            </c:choose>       
-                            <input class="btn" type="submit" name="<spring:message code="yes" />" value="<spring:message code="yes" />" />
-                            <input class="btn" type="button" onclick="$('#activ-action').hide();" name="<spring:message code="no" />" value="<spring:message code="no" />" /> 
-                        </div>         
-                    </form:form>
-                </div>
-
+                    </div>
+                        
 
 
             </div> 

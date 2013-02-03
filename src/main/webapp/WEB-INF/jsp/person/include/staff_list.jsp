@@ -8,6 +8,9 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
+<spring:url var="formUrlPrefix" value="/web" />
+<a class="btn btn-primary" href="${formUrlPrefix}/staff/new">Neue Person</a>
+
 <table id="staff-list" cellspacing="0">
     <tr>
         <th>&nbsp;</th>

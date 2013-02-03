@@ -37,6 +37,7 @@ public class PersonServiceImplTest {
     private ApplicationService applicationService = mock(ApplicationService.class);
     private HolidaysAccountService accountService = mock(HolidaysAccountService.class);
     private MailService mailService = mock(MailService.class);
+    private CryptoService cryptoService = mock(CryptoService.class);
 
     public PersonServiceImplTest() {
     }
@@ -44,7 +45,7 @@ public class PersonServiceImplTest {
     @Before
     public void setUp() {
 
-        instance = new PersonServiceImpl(personDAO, applicationService, mailService, accountService);
+        instance = new PersonServiceImpl(personDAO, applicationService, mailService, accountService, cryptoService);
     }
 
 
