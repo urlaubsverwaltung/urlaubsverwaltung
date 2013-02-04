@@ -45,6 +45,11 @@
         <constructor-arg ref="personValidator" />
     </bean> 
     
+    <bean class="org.synyx.urlaubsverwaltung.controller.RoleManagementController">
+        <constructor-arg ref="personService" />
+        <constructor-arg ref="gravatarUtil" />
+    </bean>
+    
     <bean class="org.synyx.urlaubsverwaltung.controller.TestController">
         <constructor-arg ref="googleCalendarService" />
     </bean>

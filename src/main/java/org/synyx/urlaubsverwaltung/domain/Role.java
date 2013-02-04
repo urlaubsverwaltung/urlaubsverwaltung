@@ -9,7 +9,8 @@ public enum Role {
     USER("role.user", 0),
     BOSS("role.boss", 1),
     OFFICE("role.office", 2),
-    INACTIVE("role.inactive", 3);
+    INACTIVE("role.inactive", 3),
+    ADMIN("role.admin", 4);
 
     private String roleName;
     

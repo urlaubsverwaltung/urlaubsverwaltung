@@ -74,9 +74,6 @@ public class PersonServiceImpl implements PersonService {
 
         if (person.getId() == null) {
             newPerson = true;
-            
-            // TODO: this should be variable
-            person.setRole(Role.USER);
 
             try {
                 KeyPair keyPair = cryptoService.generateKeyPair();

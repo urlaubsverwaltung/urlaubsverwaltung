@@ -40,6 +40,11 @@
                             <li><a href="${formUrlPrefix}/staff"><i class="icon-user"></i>&nbsp;<spring:message code="staff.manager" /></a></li>
                         </sec:authorize>
 
+                        <sec:authorize access="hasRole('role.admin')">
+                            <li><a href="${formUrlPrefix}/overview"><i class="icon-home"></i>&nbsp;<spring:message code="overview" /></a></li>
+                            <li><a href="${formUrlPrefix}/management"><i class="icon-user"></i>&nbsp;<spring:message code="role.management" /></a></li>
+                        </sec:authorize>
+
                         <li><a href="<spring:url value='/j_spring_security_logout' />"><i class="icon-off"></i>&nbsp;Logout</a></li>
 
                     </ul>
