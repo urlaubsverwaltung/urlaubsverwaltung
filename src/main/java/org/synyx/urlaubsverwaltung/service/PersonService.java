@@ -38,10 +38,9 @@ public interface PersonService {
      * Updates role and state (active/inactive) of the given person. Please notice: if state is inactive, then role is inactive too
      * 
      * @param person
-     * @param active
      * @param permissions
      */
-    void editPermissions(Person person, boolean active, Collection<Role> permissions);
+    void editPermissions(Person person, Collection<Role> permissions);
 
     /**
      * use this to deactivate someones profile, i.e. this person has no right to login, to apply for leave, etc. but

@@ -126,22 +126,38 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public void editPermissions(Person person, boolean active, Collection<Role> permissions) {
+    public void editPermissions(Person person, Collection<Role> permissions) {
         
-        person.setActive(active);
-        
-        if(active) {
-            person.setPermissions(permissions);  
-        } else {
+        if(personShouldBeSetToInactive(permissions)) {
+            person.setActive(false);
             List<Role> onlyInactive = new ArrayList<Role>();
             onlyInactive.add(Role.INACTIVE);
             person.setPermissions(onlyInactive);
+        } else {
+            person.setActive(true);
+            person.setPermissions(permissions);
         }
         
         save(person);
         
     }
 
+    
+    private boolean personShouldBeSetToInactive(Collection<Role> permissions) {
+        
+        boolean inactive = false;
+        
+        if(permissions.size() == 1) {
+            for(Role r : permissions) {
+                if(r.equals(Role.INACTIVE)) {
+                    inactive = true;
+                }
+            }
+        }
+        
+        return inactive;
+        
+    }
 
     /**
      * @see  PersonService#deactivate(org.synyx.urlaubsverwaltung.domain.Person)

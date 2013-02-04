@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.controller;
 
+import java.util.Collection;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -14,6 +15,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.springframework.util.StringUtils;
+import org.springframework.validation.Errors;
+import org.synyx.urlaubsverwaltung.domain.Role;
 
 /**
  * Controller for managing user roles relevant stuff.
@@ -24,7 +28,6 @@ import java.util.Map;
 public class RoleManagementController {
 
     private final String JSP_FOLDER = "rolemanagement";
-    
     private PersonService personService;
     private GravatarUtil gravatarUtil;
     private SecurityUtil securityUtil;
@@ -89,10 +92,7 @@ public class RoleManagementController {
             @PathVariable(PersonConstants.PERSON_ID) Integer personId, Model model) {
 
         if (securityUtil.isAdmin()) {
-            Person person = personService.getPersonByID(personId);
-
-            securityUtil.setLoggedUser(model);
-            model.addAttribute(ControllerConstants.PERSON, person);
+            prepareModel(model, personService.getPersonByID(personId));
 
             return JSP_FOLDER + "/role_edit";
         } else {
@@ -108,7 +108,15 @@ public class RoleManagementController {
         if (securityUtil.isAdmin()) {
 
             Person personToSave = personService.getPersonByID(personId);
-            personService.editPermissions(personToSave, person.isActive(), person.getPermissions());
+            
+            String msg = validatePermissions(person);
+            if (StringUtils.hasText(msg)) {
+                prepareModel(model, personToSave);
+                model.addAttribute("msg", msg);
+                return JSP_FOLDER + "/role_edit";
+            }
+
+            personService.editPermissions(personToSave, person.getPermissions());
 
             return "redirect:/web/management/";
 
@@ -117,4 +125,44 @@ public class RoleManagementController {
         }
     }
 
+    private String validatePermissions(Person person) {
+
+        String msg = "";
+        
+        Collection<Role> roles = person.getPermissions();
+        
+        if(roles == null || roles.isEmpty()) {
+            msg = "role.error.least";
+        } else {
+            
+            // if role inactive set, then only this role may be selected
+            // else this is an error
+            
+            boolean roleInactiveSet = false;
+            
+            for(Role r : roles) {
+                if(r == Role.INACTIVE) {
+                    roleInactiveSet = true;
+                }
+            }
+            
+            if(roleInactiveSet) {
+                // validate that there is only role inactive set
+                // this means size of role collection must have size 1
+                if(roles.size() != 1) {
+                    msg = "role.error.inactive";
+                }
+            }
+        }
+            
+        return msg;
+
+    }
+
+    private void prepareModel(Model model, Person person) {
+
+        securityUtil.setLoggedUser(model);
+        model.addAttribute(ControllerConstants.PERSON, person);
+
+    }
 }

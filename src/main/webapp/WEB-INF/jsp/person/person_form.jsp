@@ -85,6 +85,7 @@
                                     <c:otherwise>
                                         <td>
                                         <c:out value="${person.loginName}" />
+                                        <form:hidden path="loginName" value="${person.loginName}" />
                                          </td>
                                         <td>&nbsp;</td>
                                     </c:otherwise>

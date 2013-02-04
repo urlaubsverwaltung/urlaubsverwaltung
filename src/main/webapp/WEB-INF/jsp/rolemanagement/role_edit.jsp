@@ -13,6 +13,11 @@
         <%@include file="../include/header.jsp" %>
         <style type="text/css">
             .app-detail .td-name {
+                width: 20%;
+                padding-right: 1.5em;
+            }
+            
+            td.roles {
                 width: 10%;
             }
         </style>
@@ -67,22 +72,58 @@
                                 </td>
                             </tr>
                             <tr class="odd">
-                                <td class="td-name"><spring:message code="user.state" />:</td>
-                                <td colspan="2">
-                                    <form:radiobutton path="active" value="true" /><spring:message code="user.activated" />
-                                    <form:radiobutton path="active" value="false" /><spring:message code="user.deactivated" />
+                                <td class="td-name">
+                                    <spring:message code="role" />:
+                                    <br /><br />
+                                    <c:if test="${not empty msg}">
+                                    <span class="error">
+                                        <spring:message code="${msg}" />
+                                    </span>
+                                    </c:if>
                                 </td>
-                            </tr>  
-                            <tr class="odd">
-                                <td class="td-name"><spring:message code="role" />:</td>
-                                <td colspan="2">
-                                    <form:checkbox path="permissions" value="USER" />&nbsp;<spring:message code="role.user" />
-                                    <form:checkbox path="permissions" value="BOSS" />&nbsp;<spring:message code="role.boss" />
-                                    <form:checkbox path="permissions" value="OFFICE" />&nbsp;<spring:message code="role.office" />
-                                    <form:checkbox path="permissions" value="ADMIN" />&nbsp;<spring:message code="role.admin" />
+                                <td class="roles">
                                     <form:checkbox path="permissions" value="INACTIVE" />&nbsp;<spring:message code="role.inactive" />
                                 </td>
-                            </tr> 
+                                <td>
+                                   <spring:message code="role.inactive.dsc" /> 
+                                </td>
+                            </tr>
+                            <tr class="odd">
+                                <td class="td-name">&nbsp;</td>
+                                <td class="roles">
+                                    <form:checkbox path="permissions" value="USER" />&nbsp;<spring:message code="role.user" />
+                                </td>
+                                <td>
+                                   <spring:message code="role.user.dsc" /> 
+                                </td>
+                            </tr>
+                            <tr class="odd">
+                                <td class="td-name">&nbsp;</td>
+                                <td class="roles">
+                                    <form:checkbox path="permissions" value="BOSS" />&nbsp;<spring:message code="role.boss" />
+                                </td>
+                                <td>
+                                   <spring:message code="role.boss.dsc" /> 
+                                </td>
+                            </tr>
+                            <tr class="odd">
+                                <td class="td-name">&nbsp;</td>
+                                <td class="roles">
+                                    <form:checkbox path="permissions" value="OFFICE" />&nbsp;<spring:message code="role.office" />
+                                </td>
+                                <td>
+                                   <spring:message code="role.office.dsc" /> 
+                                </td>
+                            </tr>
+                            <tr class="odd">
+                                <td class="td-name">&nbsp;</td>
+                                <td class="roles">
+                                    <form:checkbox path="permissions" value="ADMIN" />&nbsp;<spring:message code="role.admin" />
+                                </td>
+                                <td>
+                                   <spring:message code="role.admin.dsc" /> 
+                                </td>
+                            </tr>
                         </table>
                     </div>
 

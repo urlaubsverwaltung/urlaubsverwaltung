@@ -43,23 +43,29 @@
 
                     <div style="margin-bottom: 8em">
 
-                        <%-- Office is always powerful --%>
+                        <sec:authorize access="hasRole('role.user')">
+                            <%@include file="./include/app-detail-elements/actions/print.jsp" %>
+                            <c:if test="${application.person.id == loggedUser.id && application.status.number == 0}">
+                                <%@include file="./include/app-detail-elements/actions/remind.jsp" %>
+                                <%@include file="./include/app-detail-elements/actions/cancel.jsp" %>
+                            </c:if>
+                        </sec:authorize>
+                        
+                        <sec:authorize access="hasRole('role.boss')">
+                            <c:if test="${application.person.id != loggedUser.id && application.status.number == 0}">
+                                <%@include file="./include/app-detail-elements/actions/allow.jsp" %>
+                                <%@include file="./include/app-detail-elements/actions/reject.jsp" %>
+                                <%@include file="./include/app-detail-elements/actions/refer.jsp" %>
+                            </c:if>
+                        </sec:authorize> 
+                        
                         <sec:authorize access="hasRole('role.office')">
-                            <%@include file="./include/app-detail-elements/actions_office.jsp" %>
-                        </sec:authorize>    
-
-                        <sec:authorize access="hasAnyRole('role.boss', 'role.user')">
-                            <%-- Boss is powerful only if the application for leave is not for himself --%>
-                            <c:choose>
-                                <c:when test="${application.person.id == loggedUser.id}">
-                                    <%@include file="./include/app-detail-elements/actions_user.jsp" %>
-                                </c:when>
-                                <c:otherwise>
-                                    <sec:authorize access="hasRole('role.boss')">
-                                        <%@include file="./include/app-detail-elements/actions_boss.jsp" %>
-                                    </sec:authorize>
-                                </c:otherwise>
-                            </c:choose>
+                            <c:if test="${application.person.id != loggedUser.id && (application.status.number == 0 || application.status.number == 1)}">
+                                <%@include file="./include/app-detail-elements/actions/cancel_for_other.jsp" %>
+                            </c:if>
+                            <c:if test="${application.person.id != loggedUser.id}">
+                                <%@include file="./include/app-detail-elements/actions/back_to_member.jsp" %>
+                            </c:if>
                         </sec:authorize>
 
                     </div>
