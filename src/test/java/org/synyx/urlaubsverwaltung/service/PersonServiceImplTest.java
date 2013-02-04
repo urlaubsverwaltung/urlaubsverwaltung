@@ -1,29 +1,22 @@
 package org.synyx.urlaubsverwaltung.service;
 
 import org.joda.time.DateMidnight;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mockito.Mockito;
-
-import static org.mockito.Mockito.mock;
-
 import org.mockito.invocation.InvocationOnMock;
-
 import org.mockito.stubbing.Answer;
-
 import org.synyx.urlaubsverwaltung.dao.PersonDAO;
 import org.synyx.urlaubsverwaltung.domain.Account;
 import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.Person;
-import org.synyx.urlaubsverwaltung.domain.Role;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
 
 
 /**
@@ -69,12 +62,10 @@ public class PersonServiceImplTest {
 
         Person person = new Person();
         person.setActive(true);
-        person.setRole(Role.USER);
 
         instance.deactivate(person);
 
         assertEquals(false, person.isActive());
-        assertEquals(Role.INACTIVE, person.getRole());
     }
 
 
@@ -86,12 +77,10 @@ public class PersonServiceImplTest {
 
         Person person = new Person();
         person.setActive(false);
-        person.setRole(Role.INACTIVE);
 
         instance.activate(person);
 
         assertEquals(true, person.isActive());
-        assertEquals(Role.USER, person.getRole());
     }
 
 

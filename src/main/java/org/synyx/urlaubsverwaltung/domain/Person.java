@@ -1,12 +1,12 @@
 package org.synyx.urlaubsverwaltung.domain;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
+import javax.persistence.*;
+import java.util.Collection;
 import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
 
 
 /**
@@ -39,6 +39,11 @@ public class Person extends AbstractPersistable<Integer> {
     private byte[] publicKey;
 
     private Role role;
+
+    @ElementCollection
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @Enumerated(EnumType.STRING)
+    private Collection<Role> permissions;
 
     @OneToMany
     private List<Application> applications;
@@ -150,5 +155,28 @@ public class Person extends AbstractPersistable<Integer> {
     public void setRole(Role role) {
 
         this.role = role;
+    }
+
+    public void setPermissions(Collection<Role> permissions) {
+
+        this.permissions = permissions;
+    }
+
+
+    public Collection<Role> getPermissions() {
+
+        return permissions;
+    }
+    
+    public boolean hasRole(Role role) {
+        
+        for(Role r : getPermissions()) {
+            if(r.equals(role)) {
+                return true;
+            }
+        }
+        
+        return false;
+        
     }
 }

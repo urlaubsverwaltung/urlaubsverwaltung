@@ -1,12 +1,13 @@
 
 package org.synyx.urlaubsverwaltung.controller;
 
-import java.io.IOException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.synyx.urlaubsverwaltung.calendar.TestGoogleCalendarService;
+
+import java.io.IOException;
 
 /**
  * @author  Aljona Murygina
@@ -23,7 +24,7 @@ public class TestController {
     @RequestMapping(value = "/calendar", method = RequestMethod.GET)
     public String addEvent(Model model) throws IOException {
 
-        googleCalendarService.addEvent();
+//        googleCalendarService.addEvent();
         
         return "test";
     }

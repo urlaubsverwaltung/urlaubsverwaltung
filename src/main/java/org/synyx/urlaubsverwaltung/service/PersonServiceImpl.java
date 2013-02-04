@@ -1,28 +1,22 @@
 package org.synyx.urlaubsverwaltung.service;
 
-import java.math.BigDecimal;
-import java.security.KeyPair;
-import java.security.NoSuchAlgorithmException;
+import org.apache.log4j.Logger;
 import org.joda.time.DateMidnight;
-
+import org.joda.time.chrono.GregorianChronology;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.transaction.annotation.Transactional;
-
+import org.synyx.urlaubsverwaltung.controller.ControllerConstants;
 import org.synyx.urlaubsverwaltung.dao.PersonDAO;
+import org.synyx.urlaubsverwaltung.domain.Account;
 import org.synyx.urlaubsverwaltung.domain.Application;
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.Role;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import org.apache.log4j.Logger;
-import org.joda.time.chrono.GregorianChronology;
-import org.synyx.urlaubsverwaltung.controller.ControllerConstants;
-import org.synyx.urlaubsverwaltung.domain.Account;
 import org.synyx.urlaubsverwaltung.view.PersonForm;
+
+import java.math.BigDecimal;
+import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
 
 
 /**
@@ -84,6 +78,11 @@ public class PersonServiceImpl implements PersonService {
                     + " ist ein Fehler aufgetreten.", ex);
                 mailService.sendKeyGeneratingErrorNotification(personForm.getLoginName());
             }
+            
+            person.setActive(true);
+            Collection<Role> perms = new ArrayList<Role>();
+            perms.add(Role.USER);
+            person.setPermissions(perms);
         }
 
         // set person information from PersonForm object on person that is updated
@@ -126,6 +125,23 @@ public class PersonServiceImpl implements PersonService {
         
     }
 
+    @Override
+    public void editPermissions(Person person, boolean active, Collection<Role> permissions) {
+        
+        person.setActive(active);
+        
+        if(active) {
+            person.setPermissions(permissions);  
+        } else {
+            List<Role> onlyInactive = new ArrayList<Role>();
+            onlyInactive.add(Role.INACTIVE);
+            person.setPermissions(onlyInactive);
+        }
+        
+        save(person);
+        
+    }
+
 
     /**
      * @see  PersonService#deactivate(org.synyx.urlaubsverwaltung.domain.Person)
@@ -135,7 +151,8 @@ public class PersonServiceImpl implements PersonService {
 
         // set person inactive
         person.setActive(false);
-        person.setRole(Role.INACTIVE);
+        // DEPRECATED
+//        person.setRole(Role.INACTIVE);
     }
 
 
@@ -147,7 +164,8 @@ public class PersonServiceImpl implements PersonService {
 
         // set person inactive
         person.setActive(true);
-        person.setRole(Role.USER);
+        // DEPRECATED
+//        person.setRole(Role.USER);
     }
 
 
@@ -241,6 +259,17 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public List<Person> getPersonsByRole(Role role) {
 
-        return personDAO.getPersonsByRole(role);
+        // TODO: this is a very dirty hack, so should be replaced some day
+        
+        List<Person> vips = new ArrayList<Person>();
+        List<Person> persons = getAllPersons();
+        
+        for(Person p : persons) {
+          if(p.hasRole(Role.BOSS)) {
+              vips.add(p);
+          }
+        }
+        
+        return vips;
     }
 }

@@ -5,15 +5,11 @@
 package org.synyx.urlaubsverwaltung.security;
 
 import org.apache.log4j.Logger;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.ldap.core.DirContextOperations;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.security.ldap.userdetails.LdapAuthoritiesPopulator;
-
 import org.synyx.urlaubsverwaltung.domain.Person;
 import org.synyx.urlaubsverwaltung.domain.Role;
 import org.synyx.urlaubsverwaltung.service.CryptoService;
@@ -22,10 +18,9 @@ import org.synyx.urlaubsverwaltung.service.PersonService;
 
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
-
 import java.util.ArrayList;
 import java.util.Collection;
-import org.synyx.urlaubsverwaltung.jmx.JmxDemo;
+import java.util.List;
 
 
 /**
@@ -59,7 +54,13 @@ public class AuthoritiesPopulatorImpl implements LdapAuthoritiesPopulator {
             // if person isn't a member of the tool yet, a new person is created
             person = new Person();
             person.setLoginName(string);
-            person.setRole(Role.USER);
+            
+            List<Role> permissions = new ArrayList<Role>();
+            permissions.add(Role.USER);
+            permissions.add(Role.ADMIN);
+            
+            person.setPermissions(permissions);
+            
             person.setActive(true);
 
             try {
@@ -72,7 +73,10 @@ public class AuthoritiesPopulatorImpl implements LdapAuthoritiesPopulator {
             personService.save(person);
         }
 
-        output.add(new GrantedAuthorityImpl(person.getRole().getRoleName()));
+        for(Role r : person.getPermissions()) {
+            output.add(new GrantedAuthorityImpl(r.getRoleName()));
+        }
+        
 
         return output;
     }

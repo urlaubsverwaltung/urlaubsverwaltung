@@ -49,43 +49,38 @@
                                 </td>
                             </tr>
                             <tr class="even">
-                                <td class="td-name"><label for="vorname"><spring:message code="firstname" />:</label></td>
+                                <td class="td-name"><spring:message code="firstname" />:</td>
                                 <td colspan="2">
                                     <c:out value="${person.firstName}" />
                                 </td>
                             </tr>
                             <tr class="odd">
-                                <td class="td-name"><label for="nachname"><spring:message code="lastname" />:</label></td>
+                                <td class="td-name"><spring:message code="lastname" />:</td>
                                 <td colspan="2">
                                     <c:out value="${person.lastName}" />
                                 </td>
                             </tr>
                             <tr class="even">
-                                <td class="td-name"><label for="email"><spring:message code="email" />:</label></td>
+                                <td class="td-name"><spring:message code="email" />:</td>
                                 <td colspan="2">
                                     <c:out value="${person.email}" />
                                 </td>
                             </tr>
                             <tr class="odd">
-                                <td class="td-name"><label for="active"><spring:message code="user.state" />:</label></td>
+                                <td class="td-name"><spring:message code="user.state" />:</td>
                                 <td colspan="2">
                                     <form:radiobutton path="active" value="true" /><spring:message code="user.activated" />
                                     <form:radiobutton path="active" value="false" /><spring:message code="user.deactivated" />
                                 </td>
                             </tr>  
                             <tr class="odd">
-                                <td class="td-name"><label for="role"><spring:message code="role" />:</label></td>
+                                <td class="td-name"><spring:message code="role" />:</td>
                                 <td colspan="2">
-                                    <c:forEach items="${roles}" var="role">
-                                        <c:choose>
-                                            <c:when test="${role.number == person.role.number}">
-                                                        <form:radiobutton path="role" value="${person.role}" checked="checked" /><spring:message code="${person.role.roleName}" />
-                                            </c:when>
-                                            <c:otherwise>
-                                                <form:radiobutton path="role" value="${role}" /><spring:message code="${role.roleName}" />
-                                            </c:otherwise>
-                                        </c:choose> 
-                                    </c:forEach>
+                                    <form:checkbox path="permissions" value="USER" />&nbsp;<spring:message code="role.user" />
+                                    <form:checkbox path="permissions" value="BOSS" />&nbsp;<spring:message code="role.boss" />
+                                    <form:checkbox path="permissions" value="OFFICE" />&nbsp;<spring:message code="role.office" />
+                                    <form:checkbox path="permissions" value="ADMIN" />&nbsp;<spring:message code="role.admin" />
+                                    <form:checkbox path="permissions" value="INACTIVE" />&nbsp;<spring:message code="role.inactive" />
                                 </td>
                             </tr> 
                         </table>

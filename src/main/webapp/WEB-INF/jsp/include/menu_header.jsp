@@ -29,19 +29,15 @@
                             <li><a href="${formUrlPrefix}/application/new"><i class="icon-pencil"></i>&nbsp;<spring:message code="ov.apply" /></a></li>
                         </sec:authorize>
 
-                        <sec:authorize access="hasRole('role.boss')">
-                            <li><a href="${formUrlPrefix}/overview"><i class="icon-home"></i>&nbsp;<spring:message code="personal" /></a></li>
+                        <sec:authorize access="hasAnyRole('role.boss', 'role.office')">
                             <li><a href="${formUrlPrefix}/application"><i class="icon-list-alt"></i>&nbsp;<spring:message code="h.apps" /></a></li>
                         </sec:authorize>
 
                         <sec:authorize access="hasRole('role.office')">
-                            <li><a href="${formUrlPrefix}/overview"><i class="icon-home"></i>&nbsp;<spring:message code="personal" /></a></li>
-                            <li><a href="${formUrlPrefix}/application"><i class="icon-list-alt"></i>&nbsp;<spring:message code="h.apps" /></a></li>
                             <li><a href="${formUrlPrefix}/staff"><i class="icon-user"></i>&nbsp;<spring:message code="staff.manager" /></a></li>
                         </sec:authorize>
 
                         <sec:authorize access="hasRole('role.admin')">
-                            <li><a href="${formUrlPrefix}/overview"><i class="icon-home"></i>&nbsp;<spring:message code="overview" /></a></li>
                             <li><a href="${formUrlPrefix}/management"><i class="icon-user"></i>&nbsp;<spring:message code="role.management" /></a></li>
                         </sec:authorize>
 

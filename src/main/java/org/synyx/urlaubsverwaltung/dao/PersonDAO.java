@@ -19,9 +19,10 @@ public interface PersonDAO extends JpaRepository<Person, Integer> {
     @Query("select x from Person x where x.loginName = ?")
     Person getPersonByLogin(String loginName);
     
+    // TODO: must be removed or changed
     // get Person by Role
-    @Query("select x from Person x where x.role = ?")
-    List<Person> getPersonsByRole(Role role);
+//    @Query("select Person_id from Person_permissions x where x.permissions = ?")
+//    List<Integer> getPersonsByRole(Role role);
 
 
     @Query("select x from Person x where x.active = true order by x.firstName")

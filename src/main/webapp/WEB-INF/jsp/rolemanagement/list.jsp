@@ -59,7 +59,9 @@
                                         <td><c:out value="${person.firstName}"/>&nbsp;<c:out value="${person.lastName}"/></td>
                                         <td><a href="mailto:${person.email}"><c:out value="${person.email}"/></a></td>
                                         <td>
-                                            <spring:message code="${person.role.roleName}"/>
+                                            <c:forEach items="${person.permissions}" var="perm" varStatus="status">
+                                                <spring:message code="${perm.roleName}"/><c:if test="${!status.last}">, </c:if>
+                                            </c:forEach>
                                         </td>
                                         <td>
                                             <c:choose>

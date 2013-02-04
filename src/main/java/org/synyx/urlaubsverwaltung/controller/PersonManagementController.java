@@ -1,30 +1,24 @@
 
 package org.synyx.urlaubsverwaltung.controller;
 
-import java.math.BigDecimal;
-import java.util.Locale;
-import javax.servlet.http.HttpServletRequest;
-import org.apache.log4j.Logger;
 import org.joda.time.DateMidnight;
 import org.joda.time.chrono.GregorianChronology;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.synyx.urlaubsverwaltung.domain.Account;
 import org.synyx.urlaubsverwaltung.domain.Person;
-import org.synyx.urlaubsverwaltung.domain.Role;
 import org.synyx.urlaubsverwaltung.service.HolidaysAccountService;
 import org.synyx.urlaubsverwaltung.service.PersonService;
 import org.synyx.urlaubsverwaltung.util.NumberUtil;
 import org.synyx.urlaubsverwaltung.validator.PersonValidator;
 import org.synyx.urlaubsverwaltung.view.PersonForm;
+
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.util.Locale;
 
 /**
  *
@@ -38,16 +32,19 @@ public class PersonManagementController {
     private static final String EDIT_LINK = ACTIVE_LINK + "/{" + PersonConstants.PERSON_ID + "}/edit";
     private static final String DEACTIVATE_LINK = ACTIVE_LINK + "/{" + PersonConstants.PERSON_ID + "}/deactivate";
     private static final String ACTIVATE_LINK = ACTIVE_LINK + "/{" + PersonConstants.PERSON_ID + "}/activate";
+    
     private PersonService personService;
     private HolidaysAccountService accountService;
     private PersonValidator validator;
+    private SecurityUtil securityUtil;
 
     public PersonManagementController(PersonService personService, HolidaysAccountService accountService,
-            PersonValidator validator) {
+            PersonValidator validator, SecurityUtil securityUtil) {
 
         this.personService = personService;
         this.accountService = accountService;
         this.validator = validator;
+        this.securityUtil = securityUtil;
     }
 
     /**
@@ -64,7 +61,7 @@ public class PersonManagementController {
     public String editPersonForm(HttpServletRequest request,
             @PathVariable(PersonConstants.PERSON_ID) Integer personId, Model model) {
 
-        if (getLoggedUser().getRole() == Role.OFFICE) {
+        if (securityUtil.isOffice()) {
             Person person = personService.getPersonByID(personId);
 
             int year = DateMidnight.now(GregorianChronology.getInstance()).getYear();
@@ -102,7 +99,7 @@ public class PersonManagementController {
             return ControllerConstants.ERROR_JSP;
         }
 
-        if (getLoggedUser().getRole() == Role.OFFICE) {
+        if (securityUtil.isOffice()) {
             Person person = personService.getPersonByID(personId);
 
             Locale locale = RequestContextUtils.getLocale(request);
@@ -160,7 +157,7 @@ public class PersonManagementController {
      */
     private void addModelAttributesForPersonForm(Person person, PersonForm personForm, Model model) {
 
-        setLoggedUser(model);
+        securityUtil.setLoggedUser(model);
         model.addAttribute(ControllerConstants.PERSON, person);
         model.addAttribute(PersonConstants.PERSONFORM, personForm);
         model.addAttribute("currentYear", DateMidnight.now().getYear());
@@ -179,7 +176,7 @@ public class PersonManagementController {
     @RequestMapping(value = NEW_LINK, method = RequestMethod.GET)
     public String newPersonForm(HttpServletRequest request, Model model) {
 
-        if (getLoggedUser().getRole() == Role.OFFICE) {
+        if (securityUtil.isOffice()) {
             Person person = new Person();
 
             PersonForm personForm = new PersonForm();
@@ -287,7 +284,7 @@ public class PersonManagementController {
      * person remains, but he/she has no right to login, to apply for leave,
      * etc.
      *
-     * @param person
+     * @param personId
      *
      * @return
      */
@@ -306,7 +303,7 @@ public class PersonManagementController {
      * This method activates a person (e.g. after unintended deactivating of a
      * person), i.e. this person has once again his user rights)
      *
-     * @param person
+     * @param personId
      *
      * @return
      */
@@ -321,25 +318,5 @@ public class PersonManagementController {
         return "redirect:/web" + ACTIVE_LINK;
     }
 
-    /*
-     * This method gets logged-in user and his username; with the username you get the person's ID to be able to show
-     * overview of this person. Logged-in user is added to model.
-     */
-    private void setLoggedUser(Model model) {
-
-        model.addAttribute(PersonConstants.LOGGED_USER, getLoggedUser());
-    }
-
-    /**
-     * This method allows to get a person by logged-in user.
-     *
-     * @return Person that is logged in
-     */
-    private Person getLoggedUser() {
-
-        String user = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        return personService.getPersonByLogin(user);
-    }
     
 }

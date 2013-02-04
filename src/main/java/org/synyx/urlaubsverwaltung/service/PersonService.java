@@ -1,12 +1,12 @@
 package org.synyx.urlaubsverwaltung.service;
 
 import org.joda.time.DateMidnight;
-
 import org.synyx.urlaubsverwaltung.domain.Person;
-
-import java.util.List;
 import org.synyx.urlaubsverwaltung.domain.Role;
 import org.synyx.urlaubsverwaltung.view.PersonForm;
+
+import java.util.Collection;
+import java.util.List;
 
 
 /**
@@ -34,6 +34,14 @@ public interface PersonService {
      */
     void createOrUpdate(Person person, PersonForm personForm);
 
+    /**
+     * Updates role and state (active/inactive) of the given person. Please notice: if state is inactive, then role is inactive too
+     * 
+     * @param person
+     * @param active
+     * @param permissions
+     */
+    void editPermissions(Person person, boolean active, Collection<Role> permissions);
 
     /**
      * use this to deactivate someones profile, i.e. this person has no right to login, to apply for leave, etc. but

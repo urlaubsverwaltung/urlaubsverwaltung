@@ -117,18 +117,21 @@
                                     <form:errors path="email" cssClass="error" />
                                 </td>
                             </tr>
-                            <c:if test="${person.id == null}">
-                              <tr class="odd">
-                                <td class="td-name"><label for="active"><spring:message code="person.activate" />:</label></td>
-                                <td>
-                                    <form:radiobutton path="active" value="true" /><spring:message code="yes" />
-                                    <form:radiobutton path="active" value="false" /><spring:message code="no" />
-                                </td>
-                                <td>
-                                    &nbsp;
-                                </td>
-                            </tr>  
-                            </c:if>
+                            
+                            <%-- Commented out on 4th February 2013, because there should be a role management now --%>
+                            
+                            <%--<c:if test="${person.id == null}">--%>
+                              <%--<tr class="odd">--%>
+                                <%--<td class="td-name"><label for="active"><spring:message code="person.activate" />:</label></td>--%>
+                                <%--<td>--%>
+                                    <%--<form:radiobutton path="active" value="true" /><spring:message code="yes" />--%>
+                                    <%--<form:radiobutton path="active" value="false" /><spring:message code="no" />--%>
+                                <%--</td>--%>
+                                <%--<td>--%>
+                                    <%--&nbsp;--%>
+                                <%--</td>--%>
+                            <%--</tr>  --%>
+                            <%--</c:if>--%>
                         </table>
                     </div>
 
@@ -295,64 +298,69 @@
                     <div class="grid_8" style="background-color: #EAF2D3; height: 2em; padding-top: 1em; padding-bottom: 1em;">
                         &nbsp;
 
-                        <c:choose>
-                            <c:when test="${person.id == null}">
-                                <input class="btn btn-primary" type="submit" name="<spring:message code="save" />" value="<spring:message code="save" />" />
-                                <a class="btn" href="${formUrlPrefix}/staff"><spring:message code='cancel' /></a>
-                            </c:when>
-                            <c:otherwise>
-                                <input class="btn btn-primary" type="submit" name="<spring:message code="save" />" value="<spring:message code="save" />" />
-                                <a class="btn" href="${formUrlPrefix}/staff"><spring:message code='cancel' /></a>
-                            
-                            
-                                <input class="btn" type="button" onclick="$('#activ-action').show();"
-                                       <c:choose>
-                                           <c:when test="${person.active == true}">
-                                               name="<spring:message code='person.deactivate' />"
-                                               value="<spring:message code='person.deactivate' />"
-                                               class="deactivate"
-                                           </c:when>
-                                           <c:otherwise>
-                                               name="<spring:message code='person.activate' />"
-                                               value="<spring:message code='person.activate' />"
-                                           </c:otherwise>
-                                       </c:choose>    
-                                       />
-                              </c:otherwise> 
-                          </c:choose>      
+                        <input class="btn btn-primary" type="submit" name="<spring:message code="save" />" value="<spring:message code="save" />" />
+                        <a class="btn" href="${formUrlPrefix}/staff"><spring:message code='cancel' /></a>
+                        
+                            <%-- Commented out on 4th February 2013, because there should be a role management now --%>
+                        
+                        <%--<c:choose>--%>
+                            <%--<c:when test="${person.id == null}">--%>
+                                <%--<input class="btn btn-primary" type="submit" name="<spring:message code="save" />" value="<spring:message code="save" />" />--%>
+                                <%--<a class="btn" href="${formUrlPrefix}/staff"><spring:message code='cancel' /></a>--%>
+                            <%--</c:when>--%>
+                            <%--<c:otherwise>--%>
+                                <%--<input class="btn btn-primary" type="submit" name="<spring:message code="save" />" value="<spring:message code="save" />" />--%>
+                                <%--<a class="btn" href="${formUrlPrefix}/staff"><spring:message code='cancel' /></a>--%>
+                            <%----%>
+                            <%----%>
+                                <%--<input class="btn" type="button" onclick="$('#activ-action').show();"--%>
+                                       <%--<c:choose>--%>
+                                           <%--<c:when test="${person.active == true}">--%>
+                                               <%--name="<spring:message code='person.deactivate' />"--%>
+                                               <%--value="<spring:message code='person.deactivate' />"--%>
+                                               <%--class="deactivate"--%>
+                                           <%--</c:when>--%>
+                                           <%--<c:otherwise>--%>
+                                               <%--name="<spring:message code='person.activate' />"--%>
+                                               <%--value="<spring:message code='person.activate' />"--%>
+                                           <%--</c:otherwise>--%>
+                                       <%--</c:choose>    --%>
+                                       <%--/>--%>
+                              <%--</c:otherwise> --%>
+                          <%--</c:choose>      --%>
                                    
                           </form:form>
                         
-                                <br />
-                                <br />
-                        
-                                <c:if test="${person.id != null}">
-                                
-                                <c:choose>
-                                    <c:when test="${person.active == true}">
-                                        <c:set var="formUrl" value="${formUrlPrefix}/staff/${person.id}/deactivate" />
-                                    </c:when>
-                                    <c:otherwise>
-                                        <c:set var="formUrl" value="${formUrlPrefix}/staff/${person.id}/activate" />  
-                                    </c:otherwise>
-                                </c:choose>
-                        
-                                <form:form method="put" action="${formUrl}">                  
-                                    <div id="activ-action"style="display: none;" class="confirm-green">
-                                        <c:choose>
-                                            <c:when test="${person.active == true}">
-                                                <spring:message code='person.deactivate.confirm' />&nbsp;
-                                            </c:when>
-                                            <c:otherwise>
-                                                <spring:message code='person.activate.confirm' />&nbsp;
-                                            </c:otherwise> 
-                                        </c:choose>       
-                                        <input class="btn" type="submit" name="<spring:message code="yes" />" value="<spring:message code="yes" />" />
-                                        <input class="btn" type="button" onclick="$('#activ-action').hide();" name="<spring:message code="no" />" value="<spring:message code="no" />" /> 
-                                    </div>         
-                                </form:form>
-                                    
-                                </c:if>
+                                <%--<br />--%>
+                                <%--<br />--%>
+                        <%----%>
+                                <%--<c:if test="${person.id != null}">--%>
+                                <%----%>
+                                <%--<c:choose>--%>
+                                    <%--<c:when test="${person.active == true}">--%>
+                                        <%--<c:set var="formUrl" value="${formUrlPrefix}/staff/${person.id}/deactivate" />--%>
+                                    <%--</c:when>--%>
+                                    <%--<c:otherwise>--%>
+                                        <%--<c:set var="formUrl" value="${formUrlPrefix}/staff/${person.id}/activate" />  --%>
+                                    <%--</c:otherwise>--%>
+                                <%--</c:choose>--%>
+                        <%----%>
+                                <%--<form:form method="put" action="${formUrl}">                  --%>
+                                    <%--<div id="activ-action"style="display: none;" class="confirm-green">--%>
+                                        <%--<c:choose>--%>
+                                            <%--<c:when test="${person.active == true}">--%>
+                                                <%--<spring:message code='person.deactivate.confirm' />&nbsp;--%>
+                                            <%--</c:when>--%>
+                                            <%--<c:otherwise>--%>
+                                                <%--<spring:message code='person.activate.confirm' />&nbsp;--%>
+                                            <%--</c:otherwise> --%>
+                                        <%--</c:choose>       --%>
+                                        <%--<input class="btn" type="submit" name="<spring:message code="yes" />" value="<spring:message code="yes" />" />--%>
+                                        <%--<input class="btn" type="button" onclick="$('#activ-action').hide();" name="<spring:message code="no" />" value="<spring:message code="no" />" /> --%>
+                                    <%--</div>         --%>
+                                <%--</form:form>--%>
+                                    <%----%>
+                                <%--</c:if>--%>
 
                     </div>
                         

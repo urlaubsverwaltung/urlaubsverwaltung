@@ -1,10 +1,5 @@
 package org.synyx.urlaubsverwaltung.controller;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -12,9 +7,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.synyx.urlaubsverwaltung.domain.Person;
-import org.synyx.urlaubsverwaltung.domain.Role;
 import org.synyx.urlaubsverwaltung.service.PersonService;
 import org.synyx.urlaubsverwaltung.util.GravatarUtil;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Controller for managing user roles relevant stuff.
@@ -25,12 +24,15 @@ import org.synyx.urlaubsverwaltung.util.GravatarUtil;
 public class RoleManagementController {
 
     private final String JSP_FOLDER = "rolemanagement";
+    
     private PersonService personService;
     private GravatarUtil gravatarUtil;
+    private SecurityUtil securityUtil;
 
-    public RoleManagementController(PersonService personService, GravatarUtil gravatarUtil) {
+    public RoleManagementController(PersonService personService, GravatarUtil gravatarUtil, SecurityUtil securityUtil) {
         this.personService = personService;
         this.gravatarUtil = gravatarUtil;
+        this.securityUtil = securityUtil;
     }
 
     /**
@@ -43,8 +45,8 @@ public class RoleManagementController {
     @RequestMapping(value = "/management", method = RequestMethod.GET)
     public String showStaffWithRoles(Model model) {
 
-        if (getLoggedUser().getRole() == Role.ADMIN) {
-            setLoggedUser(model);
+        if (securityUtil.isAdmin()) {
+            securityUtil.setLoggedUser(model);
 
             List<Person> persons = personService.getAllPersons();
             persons.addAll(personService.getInactivePersons());
@@ -86,12 +88,11 @@ public class RoleManagementController {
     public String editRoleForm(HttpServletRequest request,
             @PathVariable(PersonConstants.PERSON_ID) Integer personId, Model model) {
 
-        if (getLoggedUser().getRole() == Role.ADMIN) {
+        if (securityUtil.isAdmin()) {
             Person person = personService.getPersonByID(personId);
 
-            setLoggedUser(model);
+            securityUtil.setLoggedUser(model);
             model.addAttribute(ControllerConstants.PERSON, person);
-            model.addAttribute("roles", Role.values());
 
             return JSP_FOLDER + "/role_edit";
         } else {
@@ -104,12 +105,10 @@ public class RoleManagementController {
             @PathVariable(PersonConstants.PERSON_ID) Integer personId,
             @ModelAttribute("person") Person person, Model model) {
 
-        if (getLoggedUser().getRole() == Role.ADMIN) {
+        if (securityUtil.isAdmin()) {
 
             Person personToSave = personService.getPersonByID(personId);
-            personToSave.setActive(person.isActive());
-            personToSave.setRole(person.getRole());
-            personService.save(personToSave);
+            personService.editPermissions(personToSave, person.isActive(), person.getPermissions());
 
             return "redirect:/web/management/";
 
@@ -118,24 +117,4 @@ public class RoleManagementController {
         }
     }
 
-    /*
-     * This method gets logged-in user and his username; with the username you get the person's ID to be able to show
-     * overview of this person. Logged-in user is added to model.
-     */
-    private void setLoggedUser(Model model) {
-
-        model.addAttribute(PersonConstants.LOGGED_USER, getLoggedUser());
-    }
-
-    /**
-     * This method allows to get a person by logged-in user.
-     *
-     * @return Person that is logged in
-     */
-    private Person getLoggedUser() {
-
-        String user = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        return personService.getPersonByLogin(user);
-    }
 }
