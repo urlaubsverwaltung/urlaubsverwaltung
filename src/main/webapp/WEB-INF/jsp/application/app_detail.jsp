@@ -41,14 +41,38 @@
 
                     <%@include file="./include/app-detail-elements/app_info.jsp" %>
 
-                    <div style="margin-bottom: 8em">
+                    <div class="actions" style="margin-bottom: 8em">
 
+                        <c:set var="isOffice" value="false" />
+                        <c:forEach var="item" items="${loggedUser.permissions}">
+                            <c:if test="${item eq 'OFFICE'}">
+                                <c:set var="isOffice" value="true" />
+                            </c:if>
+                        </c:forEach>
+
+                        <%-- permission dependant buttons START --%>
+                        
                         <sec:authorize access="hasRole('role.user')">
                             <%@include file="./include/app-detail-elements/actions/print.jsp" %>
                             <c:if test="${application.person.id == loggedUser.id && application.status.number == 0}">
                                 <%@include file="./include/app-detail-elements/actions/remind.jsp" %>
-                                <%@include file="./include/app-detail-elements/actions/cancel.jsp" %>
                             </c:if>
+                            
+                            <%-- if role is office then allowed applications for leave may be cancelled --%>
+                            
+                            <c:choose>
+                                <c:when test="${isOffice}">
+                                    <c:if test="${application.person.id == loggedUser.id && (application.status.number == 0 || application.status.number == 1)}">
+                                        <%@include file="./include/app-detail-elements/actions/cancel.jsp" %>
+                                    </c:if>
+                                </c:when>
+                                <c:otherwise>
+                                    <c:if test="${application.person.id == loggedUser.id && application.status.number == 0}">
+                                        <%@include file="./include/app-detail-elements/actions/cancel.jsp" %>
+                                    </c:if>
+                                </c:otherwise>
+                            </c:choose>
+                            
                         </sec:authorize>
                         
                         <sec:authorize access="hasRole('role.boss')">
@@ -67,6 +91,45 @@
                                 <%@include file="./include/app-detail-elements/actions/back_to_member.jsp" %>
                             </c:if>
                         </sec:authorize>
+
+                        <%-- permission dependant buttons END --%>
+
+                        <%-- permission dependant forms to the buttons above START --%>
+
+                        <sec:authorize access="hasRole('role.user')">
+
+                            <%-- if role is office then allowed applications for leave may be cancelled --%>
+
+                            <c:choose>
+                                <c:when test="${isOffice}">
+                                    <c:if test="${application.person.id == loggedUser.id && (application.status.number == 0 || application.status.number == 1)}">
+                                        <%@include file="./include/app-detail-elements/actions/cancel_form.jsp" %>
+                                    </c:if>
+                                </c:when>
+                                <c:otherwise>
+                                    <c:if test="${application.person.id == loggedUser.id && application.status.number == 0}">
+                                        <%@include file="./include/app-detail-elements/actions/cancel_form.jsp" %>
+                                    </c:if>
+                                </c:otherwise>
+                            </c:choose>
+
+                        </sec:authorize>
+
+                        <sec:authorize access="hasRole('role.boss')">
+                                <c:if test="${application.person.id != loggedUser.id && application.status.number == 0}">
+                                    <%@include file="./include/app-detail-elements/actions/allow_form.jsp" %>
+                                    <%@include file="./include/app-detail-elements/actions/reject_form.jsp" %>
+                                    <%@include file="./include/app-detail-elements/actions/refer_form.jsp" %>
+                                </c:if>
+                        </sec:authorize>
+
+                        <sec:authorize access="hasRole('role.office')">
+                                <c:if test="${application.person.id != loggedUser.id && (application.status.number == 0 || application.status.number == 1)}">
+                                    <%@include file="./include/app-detail-elements/actions/cancel_for_other_form.jsp" %>
+                                </c:if>
+                        </sec:authorize>    
+
+                        <%-- permission dependant forms to the buttons above END --%>
 
                     </div>
 

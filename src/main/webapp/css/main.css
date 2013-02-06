@@ -595,3 +595,7 @@ select {
     height: auto;
     margin-bottom: 0;
 }
+
+.actions .btn {
+    margin-top: 0.5em;
+}
