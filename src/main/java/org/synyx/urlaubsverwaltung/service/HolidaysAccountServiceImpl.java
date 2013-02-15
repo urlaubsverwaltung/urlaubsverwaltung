@@ -1,15 +1,11 @@
 package org.synyx.urlaubsverwaltung.service;
 
 import org.apache.log4j.Logger;
-
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.Months;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.transaction.annotation.Transactional;
-
 import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.dao.AccountDAO;
 import org.synyx.urlaubsverwaltung.domain.Account;
@@ -127,7 +123,9 @@ public class HolidaysAccountServiceImpl implements HolidaysAccountService {
             unroundedVacationDays += entitlementPerDay * workDays;
 
             int fullMonths = getNumberOfMonthsForPeriod(startForMonthCalc, endForMonthCalc);
-            unroundedVacationDays += (fullMonths * account.getAnnualVacationDays().doubleValue()) / 12;
+            fullMonths = (fullMonths * account.getAnnualVacationDays().intValue()) / 12;
+            
+            unroundedVacationDays += fullMonths;
         } else {
             // that's the simple case
             int months = getNumberOfMonthsForPeriod(start, end);

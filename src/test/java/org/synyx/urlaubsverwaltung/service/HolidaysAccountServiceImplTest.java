@@ -107,32 +107,31 @@ public class HolidaysAccountServiceImplTest {
 
 
     @Test
-    public void testCalculateActualVacationDaysForHalfMonths1() {
+    public void testCalculateActualVacationDaysForHalfMonths() {
 
-        DateMidnight startDate = new DateMidnight(2012, DateTimeConstants.MAY, 15);
-        DateMidnight endDate = new DateMidnight(2012, DateTimeConstants.DECEMBER, 31);
+        DateMidnight startDate = new DateMidnight(2013, DateTimeConstants.MAY, 15);
+        DateMidnight endDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 31);
 
         account = new Account(person, startDate.toDate(), endDate.toDate(), BigDecimal.valueOf(28), BigDecimal.ZERO,
                 true);
 
         BigDecimal result = service.calculateActualVacationDays(account);
 
-        Assert.assertEquals(BigDecimal.valueOf(18), result);
+        Assert.assertEquals(new BigDecimal("17.5"), result);
     }
-
 
     @Test
     public void testCalculateActualVacationDaysForHalfMonths2() {
 
-        DateMidnight startDate = new DateMidnight(2012, DateTimeConstants.JULY, 16);
-        DateMidnight endDate = new DateMidnight(2012, DateTimeConstants.DECEMBER, 31);
+        DateMidnight startDate = new DateMidnight(2013, DateTimeConstants.MAY, 14);
+        DateMidnight endDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 31);
 
         account = new Account(person, startDate.toDate(), endDate.toDate(), BigDecimal.valueOf(28), BigDecimal.ZERO,
                 true);
 
         BigDecimal result = service.calculateActualVacationDays(account);
 
-        Assert.assertEquals(BigDecimal.valueOf(13).setScale(2), result.setScale(2));
+        Assert.assertEquals(new BigDecimal("18"), result);
     }
 
 
