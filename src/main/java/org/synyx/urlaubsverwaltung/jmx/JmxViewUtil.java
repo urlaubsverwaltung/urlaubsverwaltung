@@ -3,8 +3,8 @@ package org.synyx.urlaubsverwaltung.jmx;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.synyx.urlaubsverwaltung.domain.Application;
-import org.synyx.urlaubsverwaltung.domain.Person;
+import org.synyx.urlaubsverwaltung.application.domain.Application;
+import org.synyx.urlaubsverwaltung.person.Person;
 
 /**
  *

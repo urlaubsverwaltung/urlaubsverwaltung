@@ -6,7 +6,7 @@ package org.synyx.urlaubsverwaltung.calendar;
 
 import org.joda.time.DateMidnight;
 
-import org.synyx.urlaubsverwaltung.domain.Application;
+import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.math.BigDecimal;

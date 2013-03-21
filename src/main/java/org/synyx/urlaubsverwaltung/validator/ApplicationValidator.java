@@ -15,11 +15,11 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import org.synyx.urlaubsverwaltung.domain.Comment;
-import org.synyx.urlaubsverwaltung.domain.DayLength;
-import org.synyx.urlaubsverwaltung.domain.VacationType;
+import org.synyx.urlaubsverwaltung.application.domain.Comment;
+import org.synyx.urlaubsverwaltung.application.domain.DayLength;
+import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.util.PropertiesUtil;
-import org.synyx.urlaubsverwaltung.view.AppForm;
+import org.synyx.urlaubsverwaltung.application.web.AppForm;
 
 import java.util.Properties;
 

@@ -15,8 +15,8 @@ import org.mockito.Mockito;
 
 import org.springframework.validation.Errors;
 
-import org.synyx.urlaubsverwaltung.domain.Application;
-import org.synyx.urlaubsverwaltung.view.PersonForm;
+import org.synyx.urlaubsverwaltung.application.domain.Application;
+import org.synyx.urlaubsverwaltung.person.web.PersonForm;
 
 import java.math.BigDecimal;
 

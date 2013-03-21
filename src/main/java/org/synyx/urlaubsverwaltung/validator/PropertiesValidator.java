@@ -8,8 +8,8 @@ import org.joda.time.DateMidnight;
 
 import org.springframework.validation.Errors;
 
-import org.synyx.urlaubsverwaltung.service.MailService;
-import org.synyx.urlaubsverwaltung.view.AppForm;
+import org.synyx.urlaubsverwaltung.mail.MailService;
+import org.synyx.urlaubsverwaltung.application.web.AppForm;
 
 import java.util.Properties;
 

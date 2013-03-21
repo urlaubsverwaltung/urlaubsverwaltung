@@ -14,11 +14,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.security.ldap.userdetails.LdapAuthoritiesPopulator;
 
-import org.synyx.urlaubsverwaltung.domain.Person;
-import org.synyx.urlaubsverwaltung.domain.Role;
-import org.synyx.urlaubsverwaltung.service.CryptoService;
-import org.synyx.urlaubsverwaltung.service.MailService;
-import org.synyx.urlaubsverwaltung.service.PersonService;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.mail.MailService;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;

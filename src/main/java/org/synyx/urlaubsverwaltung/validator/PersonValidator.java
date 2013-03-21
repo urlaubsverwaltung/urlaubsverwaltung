@@ -10,7 +10,7 @@ import org.springframework.validation.Validator;
 
 import org.synyx.urlaubsverwaltung.util.NumberUtil;
 import org.synyx.urlaubsverwaltung.util.PropertiesUtil;
-import org.synyx.urlaubsverwaltung.view.PersonForm;
+import org.synyx.urlaubsverwaltung.person.web.PersonForm;
 
 import java.math.BigDecimal;
 

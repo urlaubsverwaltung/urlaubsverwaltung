@@ -7,9 +7,9 @@ package org.synyx.urlaubsverwaltung.jmx;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
 
-import org.synyx.urlaubsverwaltung.dao.ApplicationDAO;
-import org.synyx.urlaubsverwaltung.domain.Application;
-import org.synyx.urlaubsverwaltung.domain.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.application.dao.ApplicationDAO;
+import org.synyx.urlaubsverwaltung.application.domain.Application;
+import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 
 import java.util.List;
 

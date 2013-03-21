@@ -15,7 +15,7 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
 import org.joda.time.Period;
 
-import org.synyx.urlaubsverwaltung.domain.Person;
+import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.io.IOException;
 

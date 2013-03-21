@@ -17,11 +17,11 @@
         <property name="suffix" value=".jsp"/>
     </bean>
     
-    <bean id="securityUtil" class="org.synyx.urlaubsverwaltung.controller.SecurityUtil">
+    <bean id="securityUtil" class="org.synyx.urlaubsverwaltung.security.web.SecurityUtil">
         <constructor-arg ref="personService" />
     </bean>
     
-    <bean class="org.synyx.urlaubsverwaltung.controller.ApplicationController">
+    <bean class="org.synyx.urlaubsverwaltung.application.web.ApplicationController">
         <constructor-arg ref="personService" />
         <constructor-arg ref="applicationService" />
         <constructor-arg ref="overlapService" />
@@ -34,7 +34,7 @@
         <constructor-arg ref="securityUtil" />
     </bean>
     
-    <bean class="org.synyx.urlaubsverwaltung.controller.PersonController">
+    <bean class="org.synyx.urlaubsverwaltung.person.web.PersonController">
         <constructor-arg ref="personService" />
         <constructor-arg ref="applicationService" />
         <constructor-arg ref="accountService" />
@@ -45,20 +45,20 @@
         <constructor-arg ref="securityUtil" />
     </bean> 
     
-     <bean class="org.synyx.urlaubsverwaltung.controller.PersonManagementController">
+     <bean class="org.synyx.urlaubsverwaltung.person.web.PersonManagementController">
         <constructor-arg ref="personService" />
         <constructor-arg ref="accountService" />
         <constructor-arg ref="personValidator" />
          <constructor-arg ref="securityUtil" />
     </bean> 
     
-    <bean class="org.synyx.urlaubsverwaltung.controller.RoleManagementController">
+    <bean class="org.synyx.urlaubsverwaltung.security.web.RoleManagementController">
         <constructor-arg ref="personService" />
         <constructor-arg ref="gravatarUtil" />
         <constructor-arg ref="securityUtil" />
     </bean>
     
-    <bean class="org.synyx.urlaubsverwaltung.controller.TestController">
+    <bean class="org.synyx.urlaubsverwaltung.web.TestController">
         <constructor-arg ref="googleCalendarService" />
     </bean>
     
