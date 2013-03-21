@@ -13,8 +13,6 @@ import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 
-import org.springframework.scheduling.annotation.Scheduled;
-
 import org.springframework.ui.velocity.VelocityEngineUtils;
 
 import org.synyx.urlaubsverwaltung.application.domain.Application;
@@ -44,7 +42,7 @@ import javax.mail.internet.MimeMessage;
  *          <p>At the moment properties' values are set hard coded in this class (bad solution...): it would be better
  *          to read in the properties file (outcommented methods), but this was not successful yet...</p>
  */
-public class MailServiceImpl implements MailService {
+class MailServiceImpl implements MailService {
 
     private static final Logger LOG = Logger.getLogger(MailServiceImpl.class);
     private static final String DATE_FORMAT = "dd.MM.yyyy";

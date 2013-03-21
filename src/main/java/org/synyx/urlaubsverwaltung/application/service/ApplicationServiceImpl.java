@@ -30,7 +30,7 @@ import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
  * 
  * @author Aljona Murygina - murygina@synyx.de
  */
-public class ApplicationServiceImpl implements ApplicationService {
+class ApplicationServiceImpl implements ApplicationService {
 
     // sign logger: logs possible occurent errors relating to private and public keys of users
     private static final Logger LOG_SIGN = Logger.getLogger("sign");

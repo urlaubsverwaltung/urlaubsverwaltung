@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.security.Role;
 import org.synyx.urlaubsverwaltung.person.web.PersonForm;
 
@@ -29,7 +28,7 @@ import org.synyx.urlaubsverwaltung.account.HolidaysAccountService;
  * @author  Johannes Reuter
  */
 @Transactional
-public class PersonServiceImpl implements PersonService {
+class PersonServiceImpl implements PersonService {
 
     // audit logger: logs nontechnically occurences like 'user x applied for leave' or 'subtracted n days from
     // holidays account y'

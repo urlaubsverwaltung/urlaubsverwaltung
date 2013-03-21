@@ -19,7 +19,7 @@ import java.util.Set;
 /**
  * @author  Aljona Murygina
  */
-public class JollydayCalendar {
+class JollydayCalendar {
 
     private static final double HALF_DAY = 0.5;
     private static final double FULL_DAY = 1.0;
@@ -35,7 +35,7 @@ public class JollydayCalendar {
      *
      * @return  number of public holidays between startDate and endDate
      */
-    public double getPublicHolidays(DateMidnight start, DateMidnight end) {
+    double getPublicHolidays(DateMidnight start, DateMidnight end) {
 
         DateMidnight startDate = start.withChronology(GregorianChronology.getInstance());
         DateMidnight endDate = end.withChronology(GregorianChronology.getInstance());

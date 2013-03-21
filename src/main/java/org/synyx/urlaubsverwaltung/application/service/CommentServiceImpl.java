@@ -21,7 +21,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
  * @author  Aljona Murygina
  */
 @Transactional
-public class CommentServiceImpl implements CommentService {
+class CommentServiceImpl implements CommentService {
 
     private CommentDAO commentDAO;
     
