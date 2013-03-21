@@ -40,15 +40,10 @@ public class Person extends AbstractPersistable<Integer> {
     @Column(columnDefinition = "longblob")
     private byte[] publicKey;
 
-    private Role role;
-
     @ElementCollection
     @LazyCollection(LazyCollectionOption.FALSE)
     @Enumerated(EnumType.STRING)
     private Collection<Role> permissions;
-
-    @OneToMany
-    private List<Application> applications;
 
     private boolean active;
 
@@ -62,19 +57,6 @@ public class Person extends AbstractPersistable<Integer> {
 
         this.active = active;
     }
-
-
-    public List<Application> getApplications() {
-
-        return applications;
-    }
-
-
-    public void setApplications(List<Application> applications) {
-
-        this.applications = applications;
-    }
-
 
     public String getEmail() {
 
@@ -147,17 +129,6 @@ public class Person extends AbstractPersistable<Integer> {
         this.publicKey = publicKey;
     }
 
-
-    public Role getRole() {
-
-        return role;
-    }
-
-
-    public void setRole(Role role) {
-
-        this.role = role;
-    }
 
     public void setPermissions(Collection<Role> permissions) {
 
