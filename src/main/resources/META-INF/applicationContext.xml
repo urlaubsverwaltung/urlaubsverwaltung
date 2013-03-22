@@ -44,7 +44,7 @@
 
 <bean id="ownCalendarService" class="org.synyx.urlaubsverwaltung.calendar.OwnCalendarService" />
 
-<bean id="googleCalendarService" class="org.synyx.urlaubsverwaltung.calendar.TestGoogleCalendarService" />
+<bean id="googleCalendarService" class="org.synyx.urlaubsverwaltung.calendar.GoogleCalendarService" />
 
 <bean id="accountService" class="org.synyx.urlaubsverwaltung.account.HolidaysAccountServiceImpl">
     <constructor-arg ref="ownCalendarService" />
@@ -83,9 +83,7 @@
     <constructor-arg ref="propertiesValidator" />
 </bean>
 
-<bean id="startupService" class="org.synyx.urlaubsverwaltung.startup.StartupService">
-    <constructor-arg ref="googleCalendarService" />
-</bean>
+<bean id="startupService" class="org.synyx.urlaubsverwaltung.startup.StartupService" />
 
 <!-- Scheduling config -->
 <task:annotation-driven executor="executor" scheduler="scheduler" />
@@ -102,6 +100,10 @@
 
 <bean class="org.synyx.urlaubsverwaltung.cron.CronMailService">
     <constructor-arg ref="personService" />
+</bean>
+
+<bean class="org.synyx.urlaubsverwaltung.cron.TestService">
+    <constructor-arg ref="googleCalendarService" />
 </bean>
 
 </beans>

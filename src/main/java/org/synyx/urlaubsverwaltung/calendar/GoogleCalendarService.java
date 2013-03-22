@@ -1,178 +1,155 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.synyx.urlaubsverwaltung.calendar;
 
-import com.google.gdata.data.PlainTextConstruct;
-import com.google.gdata.data.calendar.CalendarEventEntry;
-import com.google.gdata.data.extensions.When;
-import com.google.gdata.util.AuthenticationException;
-import com.google.gdata.util.ServiceException;
-
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.LocalDate;
-import org.joda.time.Period;
-
-import org.synyx.urlaubsverwaltung.person.Person;
-
+import com.google.api.client.auth.oauth2.draft10.AccessTokenResponse;
+import com.google.api.client.googleapis.auth.oauth2.draft10.GoogleAccessTokenRequest.GoogleAuthorizationCodeGrant;
+import com.google.api.client.googleapis.auth.oauth2.draft10.GoogleAuthorizationRequestUrl;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.jackson.JacksonFactory;
+import java.io.BufferedReader;
 import java.io.IOException;
-
-import java.net.URL;
-
+import java.io.InputStreamReader;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.joda.time.DateTime;
+import org.synyx.urlaubsverwaltung.application.domain.Application;
 
 /**
- * @author  Aljona Murygina (urspruenglich: @author otto allmendinger)
+ * Test implementation for google calendar service.
  *
- *          <p>dies ist ein vorläufiger versuch den google calendar einzubinden die methoden, die wir fuer das
- *          urlaubsverwaltungstool benoetigen, wurden dem googlecalendarserviceimpl des ressourcenplanungstools von Otto
- *          Allmendinger - allmendinger@synyx.de entnommen für das urlaubsverwaltungstool</p>
+ * @author Aljona Murygina - murygina@synyx.de
  */
 public class GoogleCalendarService {
 
-    private static final DateTimeZone calendarTimeZone = DateTimeZone.forID("Europe/Berlin"); // als property!!!
+    private final String CLIENT_ID = "315787839390-bd33ftir4vacke605mcb3kvreoq17uf4.apps.googleusercontent.com";
+    private final String CLIENT_SECRET = "-3c-FYcHHZysRgAjG3Y93PxL";
+    private final String REDIRECT_URL = "urn:ietf:wg:oauth:2.0:oob";
+    private final String SCOPE = "https://www.googleapis.com/auth/calendar";
+    private final String CALENDAR_ID = "rbsvabg6l0h2b7t5t44462vouo%40group.calendar.google.com";
+    private final String API_KEY = "AIzaSyASpM0lqp1oje-S4jT45loAC2rebeSbWyA";
+    private AccessTokenResponse response;
 
-    private static final String GOOGLE_BASE_URL = "http://www.google.com/calendar/feeds/";
+    public void setUp() throws IOException {
 
-    private final String username;
-    private final String password;
-    private com.google.gdata.client.calendar.CalendarService googleCalendarService = null;
+        HttpTransport httpTransport = new NetHttpTransport();
+        JacksonFactory jsonFactory = new JacksonFactory();
 
-    public GoogleCalendarService(String username, String password) {
+        String authorizationUrl = new GoogleAuthorizationRequestUrl(CLIENT_ID, REDIRECT_URL, SCOPE).build();
 
-        this.username = username;
-        this.password = password;
+        System.out.println("Go to the following link in your browser:");
+        System.out.println(authorizationUrl);
+
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+        System.out.println("What is the authorization code?");
+        String code = in.readLine();
+
+        response = new GoogleAuthorizationCodeGrant(httpTransport, jsonFactory,
+                CLIENT_ID, CLIENT_SECRET, code, REDIRECT_URL).execute();
+
     }
 
-//    private static String getApplicationName() {
-//        return "synyx.de-resourceplanning-$version"; // TODO: get version from somewhere
-//    }
+    private void getNewAccessToken() throws IOException {
 
-    /**
-     * Einen Eintrag, wer wann Urlaub hat im Google Kalender setzen
-     *
-     * @param  start
-     * @param  end
-     * @param  person
-     * @param  calendarId
-     *
-     * @throws  AuthenticationException
-     * @throws  IOException
-     * @throws  ServiceException
-     *
-     * @author  aljona
-     */
-    public void addVacation(LocalDate start, LocalDate end, Person person, String calendarId)
-        throws AuthenticationException, IOException, ServiceException {
+        String url = "https://accounts.google.com/o/oauth2/token"
+                + "&client_id=" + CLIENT_ID
+                + "&client_secret=" + CLIENT_SECRET
+                + "&refresh_token=" + response.refreshToken + "grant_type=refresh_token";
 
-        // Strings in properties setzen
+        //  To obtain a new access token, make an HTTPs POST to this url
 
-        // URl mit String format zusammenbauen
-        // pattern angeben mit parameter hintendran
-        // Url des Kalenders
-        URL postUrl = new URL(GOOGLE_BASE_URL + calendarId + "/private/full");
+        // TODO: please change this
 
-        // Entry erzeugen
-        CalendarEventEntry entry = new CalendarEventEntry();
+        HttpPost post = new HttpPost(url);
 
-        // Attribute des Eintrags setzen
-        entry.setTitle(new PlainTextConstruct("Urlaub"));
-        entry.setContent(new PlainTextConstruct(person.getFirstName() + " " + person.getLastName() + " hat Urlaub."));
+        HttpClient client = new DefaultHttpClient();
+        org.apache.http.HttpResponse r = client.execute(post);
 
-        // aus LocalDate joda time DateTime erzeugen
-        DateTime startTime = start.toDateTimeAtStartOfDay();
-        DateTime endTime = end.toDateTimeAtStartOfDay();
+        System.out.println("Result of trying to obtain a new acces token:");
+        System.out.println("Status: " + r.getStatusLine().getStatusCode());
 
-        // When erzeugen
-        When eventTimes = new When();
 
-        // aus joda time DateTime wird GoogleDateTime erzeugt und dann ins When als Start und Ende gesetzt
-        eventTimes.setStartTime(toGoogleDateTime(startTime));
-        eventTimes.setEndTime(toGoogleDateTime(endTime));
-
-        // das When ins Entry setzen
-        entry.addTime(eventTimes);
-
-        // den google calendar service aufrufen und Url und Entry setzen
-        googleCalendarService.setUserCredentials(username, password);
-        googleCalendarService.insert(postUrl, entry);
-        // besser: uri.toUrl
     }
 
+    private boolean isTokenValid() throws IOException {
 
-    private static com.google.gdata.data.DateTime toGoogleDateTime(DateTime input) {
+        // check this url to test if token is expired
+        // https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=ya29.AHES6ZQwox5uFTs6tkBBJd03N8nfBsjNoXBQFmyJVLOMjqY
 
-        com.google.gdata.data.DateTime dateTime = new com.google.gdata.data.DateTime();
-        dateTime.setTzShift(new Period(calendarTimeZone.getOffset(input)).toStandardMinutes().getMinutes());
-        dateTime.setValue(input.getMillis());
+        // if token is expired you get this:
+        // {"error":"invalid_token"}
+        // and status code 401
 
-        return dateTime;
+        int statusCode = doGet("https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=" + response.accessToken);
+
+        if (statusCode == 401) {
+            // refresh token
+            return false;
+        }
+
+        return true;
     }
 
-//    private com.google.gdata.client.calendar.CalendarService getGoogleCalendarService() throws AuthenticationException {
-//
-//        if (googleCalendarService == null) {
-//            if (Strings.isNullOrEmpty(username) || Strings.isNullOrEmpty(password)) {
-//                throw new IllegalStateException("username or password not set");
-//            }
-//
-////            googleCalendarService = new com.google.gdata.client.calendar.CalendarService(getApplicationName());
-//            googleCalendarService.setUserCredentials(username, password);
-//        }
-//
-//        return googleCalendarService;
-//    }
+    public void addEvent() throws IOException {
 
-//    private static String calendarEventToString(CalendarEventEntry entry) {
-//
-//        StringBuilder stringBuilder = new StringBuilder();
-//        stringBuilder.append("Calendar Event \"").append(entry.getTitle().getPlainText()).append("\", times [");
-//
-//        for (When when : entry.getTimes()) {
-//            stringBuilder.append(when.getStartTime()).append(" to ").append(when.getEndTime()).append(" ");
-//        }
-//
-//        stringBuilder.append("], participants [");
-//
-//        for (EventWho who : entry.getParticipants()) {
-//            stringBuilder.append(who.getEmail()).append(" ");
-//        }
-//
-//        stringBuilder.append("]");
-//
-//        return stringBuilder.toString();
-//    }
-//
-//
-//    public CalendarEventFeed getCalendarEventFeed(String calendarId, YearWeek yearWeek) throws AuthenticationException,
-//        IOException, ServiceException {
-//
-//        return getCalendarEventFeed(new URL(GOOGLE_BASE_URL + calendarId + "/private/full"), yearWeek);
-//    }
-//
-//
-//    public CalendarEventFeed getCalendarEventFeed(URL calendarFeedUrl, YearWeek yearWeek)
-//        throws AuthenticationException, ServiceException, IOException {
-//
-//        CalendarQuery query = new CalendarQuery(calendarFeedUrl);
-//        query.setMinimumStartTime(toGoogleDateTime(yearWeek.getFirstDay().toDateTimeAtStartOfDay(calendarTimeZone)));
-//        query.setMaximumStartTime(toGoogleDateTime(
-//                yearWeek.getNextWeek().getFirstDay().toDateTimeAtStartOfDay(calendarTimeZone)));
-//
-//        query.setStringCustomParameter("singleevents", "true"); // expand recurring events into single events
-//        query.setStringCustomParameter("orderby", "starttime");
-//        query.setStringCustomParameter("sortorder", "ascending");
-//
-//        CalendarEventFeed calendarEventFeed = getGoogleCalendarService().query(query, CalendarEventFeed.class);
-//
-//        if (!calendarEventFeed.getTimeZone().getValue().equals(calendarTimeZone.getID())) {
-//            throw new GoogleCalendarSynchronisationException(String.format(
-//                    "Google Calendar time zone %s doesn't match expected time zone %s",
-//                    calendarEventFeed.getTimeZone().getValue(), calendarTimeZone.getID()));
-//        }
-//
-//        return calendarEventFeed;
-//    }
+        if (!isTokenValid()) {
+            System.out.println("Token is invalid, get a new one.");
+            getNewAccessToken();
+        }
 
+        String summary = "Test " + DateTime.now().getHourOfDay() + ":" + DateTime.now().getMinuteOfHour();
+        
+        String json = "{'kind':'calendar#event','start':{'date': '2013-03-22'},'end': {'date': '2013-03-22'},'summary': '" + summary + "'}";
+
+        doPost(json, response.accessToken);
+
+
+    }
+
+    private String getJson(Application a) {
+
+        String startDate = a.getStartDate().toString("yyyy-MM-dd");
+        String endDate = a.getEndDate().toString("yyyy-MM-dd");
+        String summary = a.getPerson().getFirstName() + " " + a.getPerson().getLastName() + " Urlaub";
+
+        String json = "{'kind':'calendar#event','start':{'date': '" + startDate + "'},'end': {'date': '" + endDate + "'},'summary': '" + summary + "'}";
+
+        return json;
+    }
+
+    public void deleteEvent() {
+        // TODO
+    }
+
+    public void doPost(String json, String token) throws IOException {
+
+        StringEntity stringEntity = new StringEntity(json, "UTF-8");
+        stringEntity.setContentType("application/json");
+
+        String url = "https://www.googleapis.com/calendar/v3/calendars/"
+                + CALENDAR_ID + "/events?key=" + API_KEY;
+
+        HttpPost post = new HttpPost(url);
+        post.setEntity(stringEntity);
+        post.setHeader("Content-Type", "application/json");
+        post.setHeader("Authorization", "OAuth " + token);
+
+        HttpClient client = new DefaultHttpClient();
+        org.apache.http.HttpResponse r = client.execute(post);
+
+        System.out.println("Done POST for " + url);
+        System.out.println("Got status: " + r.getStatusLine().getStatusCode());
+
+    }
+
+    public int doGet(String url) throws IOException {
+
+        HttpGet get = new HttpGet(url);
+        HttpClient client = new DefaultHttpClient();
+        org.apache.http.HttpResponse r = client.execute(get);
+
+        return r.getStatusLine().getStatusCode();
+    }
 }

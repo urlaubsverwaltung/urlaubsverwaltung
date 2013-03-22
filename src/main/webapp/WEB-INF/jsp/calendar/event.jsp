@@ -12,6 +12,7 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <h1>Was successful!</h1>
+        <h1>Adding Google Calendar Event was successful!</h1>
+        <a href="/urlaubsverwaltung/web/calendar">Zurück</a>
     </body>
 </html>
