@@ -17,6 +17,8 @@ public class PersonConstants {
     public static final String LOGGED_USER = "loggedUser";
     public static final String PERSONFORM = "personForm";
     public static final String LEFT_DAYS = "leftDays";
+    public static final String REM_LEFT_DAYS = "remLeftDays";
+    public static final String BEFORE_APRIL = "beforeApril";
     public static final String GRAVATAR = "gravatar";
     public static final String GRAVATAR_URLS = "gravatarUrls";
     public static final String NOTEXISTENT = "notexistent"; // are there any persons to show?

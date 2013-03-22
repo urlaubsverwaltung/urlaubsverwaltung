@@ -35,6 +35,8 @@ import org.synyx.urlaubsverwaltung.validator.ApplicationValidator;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.*;
+import org.synyx.urlaubsverwaltung.person.web.PersonConstants;
+import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 
 /**
@@ -704,7 +706,10 @@ public class ApplicationController {
 
         if (account != null) {
             BigDecimal vacationDaysLeft = calculationService.calculateLeftVacationDays(account);
-            model.addAttribute("leftDays", vacationDaysLeft);
+            BigDecimal remainingVacationDaysLeft = calculationService.calculateLeftRemainingVacationDays(account);
+            model.addAttribute(PersonConstants.LEFT_DAYS, vacationDaysLeft);
+            model.addAttribute(PersonConstants.REM_LEFT_DAYS, remainingVacationDaysLeft);
+            model.addAttribute(PersonConstants.BEFORE_APRIL, DateUtil.isBeforeApril(DateMidnight.now()));
         }
 
         model.addAttribute(ControllerConstants.PERSON, person);
@@ -1019,7 +1024,10 @@ public class ApplicationController {
 
         if (account != null) {
             BigDecimal vacationDaysLeft = calculationService.calculateLeftVacationDays(account);
-            model.addAttribute("leftDays", vacationDaysLeft);
+            BigDecimal remainingVacationDaysLeft = calculationService.calculateLeftRemainingVacationDays(account);
+            model.addAttribute(PersonConstants.LEFT_DAYS, vacationDaysLeft);
+            model.addAttribute(PersonConstants.REM_LEFT_DAYS, remainingVacationDaysLeft);
+            model.addAttribute(PersonConstants.BEFORE_APRIL, DateUtil.isBeforeApril(DateMidnight.now()));
         }
 
         model.addAttribute(ControllerConstants.ACCOUNT, account);

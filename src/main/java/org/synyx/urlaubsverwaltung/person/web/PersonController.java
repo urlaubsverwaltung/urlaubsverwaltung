@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 
 /**
@@ -183,7 +184,8 @@ public class PersonController {
         Account account;
 
         Map<Person, BigDecimal> leftDays = new HashMap<Person, BigDecimal>();
-
+        Map<Person, BigDecimal> remLeftDays = new HashMap<Person, BigDecimal>();
+        
         for (Person person : persons) {
             // get url of person's gravatar image
             url = gravatarUtil.createImgURL(person.getEmail());
@@ -200,13 +202,18 @@ public class PersonController {
 
                 BigDecimal vacationDaysLeft = calculationService.calculateLeftVacationDays(account);
                 leftDays.put(person, vacationDaysLeft);
+                
+                BigDecimal remVacationDaysLeft = calculationService.calculateLeftRemainingVacationDays(account);
+                remLeftDays.put(person, remVacationDaysLeft);
             }
         }
 
         model.addAttribute(ControllerConstants.PERSONS, persons);
         model.addAttribute(PersonConstants.GRAVATAR_URLS, gravatarUrls);
         model.addAttribute(ControllerConstants.ACCOUNTS, accounts);
-        model.addAttribute("leftDays", leftDays);
+        model.addAttribute(PersonConstants.LEFT_DAYS, leftDays);
+        model.addAttribute(PersonConstants.REM_LEFT_DAYS, remLeftDays);
+        model.addAttribute(PersonConstants.BEFORE_APRIL, DateUtil.isBeforeApril(DateMidnight.now()));
         model.addAttribute(ControllerConstants.YEAR, DateMidnight.now().getYear());
     }
 
@@ -413,7 +420,10 @@ public class PersonController {
 
         if (account != null) {
             BigDecimal vacationDaysLeft = calculationService.calculateLeftVacationDays(account);
+            BigDecimal remainingVacationDaysLeft = calculationService.calculateLeftRemainingVacationDays(account);
             model.addAttribute(PersonConstants.LEFT_DAYS, vacationDaysLeft);
+            model.addAttribute(PersonConstants.REM_LEFT_DAYS, remainingVacationDaysLeft);
+            model.addAttribute(PersonConstants.BEFORE_APRIL, DateUtil.isBeforeApril(DateMidnight.now()));
         }
 
         securityUtil.setLoggedUser(model);

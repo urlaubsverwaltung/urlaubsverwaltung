@@ -157,6 +157,39 @@ public class CalculationService {
 
         return vacationDays;
     }
+    
+    public BigDecimal calculateLeftRemainingVacationDays(Account account) {
+        
+        int year = account.getYear();
+        Person person = account.getPerson();
+
+        DateMidnight firstOfJanuary = new DateMidnight(year, DateTimeConstants.JANUARY, 1);
+        DateMidnight lastOfMarch = new DateMidnight(year, DateTimeConstants.MARCH, 31);
+        DateMidnight firstOfApril = new DateMidnight(year, DateTimeConstants.APRIL, 1);
+        DateMidnight lastOfDecember = new DateMidnight(year, DateTimeConstants.DECEMBER, 31);
+
+        BigDecimal remainingVacationDays = account.getRemainingVacationDays();
+
+        BigDecimal daysBeforeApril = getDaysBetweenTwoMilestones(person, firstOfJanuary, lastOfMarch);
+        BigDecimal daysAfterApril = getDaysBetweenTwoMilestones(person, firstOfApril, lastOfDecember);
+
+        
+        // subtract days before April in every case
+        BigDecimal result = remainingVacationDays.subtract(daysBeforeApril);
+        
+        // if remaining vacation days do not expire, do also subtract days after April
+        if(!account.isRemainingVacationDaysExpire()) {
+            result = result.subtract(daysAfterApril);
+        } 
+        
+        // if result is negative
+        if(result.compareTo(BigDecimal.ZERO) < 0) {
+            result = BigDecimal.ZERO;
+        }
+
+        return result;
+        
+    }
 
 
     protected BigDecimal getDaysBetweenTwoMilestones(Person person, DateMidnight firstMilestone,
