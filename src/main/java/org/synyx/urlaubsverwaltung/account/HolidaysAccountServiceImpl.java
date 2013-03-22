@@ -7,7 +7,6 @@ import org.joda.time.Months;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
-import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
@@ -180,7 +179,7 @@ class HolidaysAccountServiceImpl implements HolidaysAccountService {
             if (lastYearsAccount != null) {
                 createHolidaysAccount(person, new DateMidnight(year, DateTimeConstants.JANUARY, 1),
                     new DateMidnight(year, DateTimeConstants.DECEMBER, 31), lastYearsAccount.getAnnualVacationDays(),
-                    BigDecimal.ZERO, lastYearsAccount.isRemainingVacationDaysExpire());
+                    BigDecimal.ZERO, true);
             } else {
                 // maybe user tries to apply for leave for past year --> no account information
                 // in this case just create an account for this year with the data of the current year's account

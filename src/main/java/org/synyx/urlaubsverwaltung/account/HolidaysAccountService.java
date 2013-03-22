@@ -50,6 +50,7 @@ public interface HolidaysAccountService {
     /**
      * Try to get the {@link Account} for the given year and person, if it doesn't exist, try to create a new
      * {@link Account} with the information of the {@link Account} of the last year. (@param year - 1)
+     * If a new account is created, the attribute remainingVacationDaysExpire is set to true. (was desired by the office as default value) 
      *
      * @param  year
      * @param  person
