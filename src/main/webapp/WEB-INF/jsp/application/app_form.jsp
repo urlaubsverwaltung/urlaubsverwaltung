@@ -171,8 +171,10 @@
 
                                             <span id="half-day" style="display: none">
                                                 Am: <form:input id="at" path="startDateHalf" cssErrorClass="error" style="width: 27%" />
-                                                <br />
                                             </span>
+                                            <br />
+                                            <%-- this span with class days is filled by datepicker --%>
+                                            <span class="days"></span>
                                         </td>
                                     </tr>
                                     <tr class="odd">

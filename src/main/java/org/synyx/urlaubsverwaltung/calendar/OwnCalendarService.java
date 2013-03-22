@@ -1,15 +1,12 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package org.synyx.urlaubsverwaltung.calendar;
 
 import org.joda.time.DateMidnight;
 
-import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.math.BigDecimal;
+import org.synyx.urlaubsverwaltung.application.domain.DayLength;
 
 
 /**
@@ -59,17 +56,18 @@ public class OwnCalendarService {
      * getWorkDays calculates the number of workdays, getPublicHolidays calculates the number of official holidays
      * within the workdays. Number of vacation days results from workdays minus official holidays.
      *
+     * @param dayLength
      * @param  startDate
      * @param  endDate
      *
      * @return  number of vacation days
      */
-    public BigDecimal getVacationDays(Application application, DateMidnight startDate, DateMidnight endDate) {
+    public BigDecimal getVacationDays(DayLength dayLength, DateMidnight startDate, DateMidnight endDate) {
 
         double vacDays = getWorkDays(startDate, endDate);
 
         vacDays = vacDays - jollydayCalendar.getPublicHolidays(startDate, endDate);
 
-        return BigDecimal.valueOf(vacDays).multiply(application.getHowLong().getDayLengthNumber());
+        return BigDecimal.valueOf(vacDays).multiply(dayLength.getDayLengthNumber());
     }
 }

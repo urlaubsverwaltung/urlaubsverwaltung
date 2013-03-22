@@ -58,8 +58,9 @@
         <constructor-arg ref="securityUtil" />
     </bean>
     
-    <bean class="org.synyx.urlaubsverwaltung.web.TestController">
+    <bean class="org.synyx.urlaubsverwaltung.web.CalendarController">
         <constructor-arg ref="googleCalendarService" />
+        <constructor-arg ref="ownCalendarService" />
     </bean>
     
      <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">

@@ -67,7 +67,7 @@ class ApplicationServiceImpl implements ApplicationService {
     @Override
     public Application apply(Application application, Person person, Person applier) {
         
-        BigDecimal days = calendarService.getVacationDays(application, application.getStartDate(),
+        BigDecimal days = calendarService.getVacationDays(application.getHowLong(), application.getStartDate(),
                 application.getEndDate());
         
         application.setStatus(ApplicationStatus.WAITING);
