@@ -57,14 +57,6 @@ $(document).ready(function()
             .bind("sortEnd", function() {
                 $(".zebra-table tr:even").addClass("alt");
             });
-            
-        $(".zebra-table tr").mouseover(function() {
-            $(this).addClass("over");
-        });
-
-        $(".zebra-table tr").mouseout(function() {
-            $(this).removeClass("over");
-        });
 
     }
 );
