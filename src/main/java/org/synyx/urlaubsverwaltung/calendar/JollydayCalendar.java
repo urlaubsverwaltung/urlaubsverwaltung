@@ -6,12 +6,11 @@ package org.synyx.urlaubsverwaltung.calendar;
 
 import de.jollyday.Holiday;
 import de.jollyday.HolidayManager;
-
 import org.joda.time.DateMidnight;
 import org.joda.time.chrono.GregorianChronology;
-
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 
+import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,19 +18,28 @@ import java.util.Set;
 /**
  * @author  Aljona Murygina
  */
-class JollydayCalendar {
+public class JollydayCalendar {
 
     private static final double HALF_DAY = 0.5;
     private static final double FULL_DAY = 1.0;
 
-    private HolidayManager manager = HolidayManager.getInstance("synyx");
+    private HolidayManager manager;
+
+    public JollydayCalendar() {
+
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        URL url = cl.getResource("Holidays_synyx.xml");
+        
+        manager = HolidayManager.getInstance(url);
+
+    }
 
     /**
      * Calculates number of public holidays between two given dates. If a public holiday is on Saturday or on Sunday it
      * is not counted among public holidays. Only public holidays on weekdays (Monday to Friday) are counted here.
      *
-     * @param  startDate
-     * @param  endDate
+     * @param  start
+     * @param  end
      *
      * @return  number of public holidays between startDate and endDate
      */
@@ -77,6 +85,18 @@ class JollydayCalendar {
     }
 
 
+    public boolean isPublicHoliday(DateMidnight date) {
+
+        Set<Holiday> holidays = manager.getHolidays(date.toInterval());
+
+        // if set is empty, the given date is no holiday
+        if(!holidays.isEmpty()) {
+            return true;
+        }
+        
+        return false;
+    }
+    
     /**
      * a Set of a year's all public holidays is given, this method creates a Set of public holidays that only are on
      * weekdays
@@ -113,7 +133,7 @@ class JollydayCalendar {
 
         for (Holiday holiday : holidaysOnWeekdays) {
             // check if given date is a public holiday
-            if ((date.toLocalDate()).equals(holiday.getDate())) {
+            if (date.isEqual(holiday.getDate().toDateMidnight())) {
                 // check if given date is Christmas Eve or New Year's Eve
                 // because these ones are counted as 0.5 days
                 if (DateUtil.isChristmasEveOrNewYearsEve(holiday.getDate().toDateMidnight())) {
@@ -123,13 +143,6 @@ class JollydayCalendar {
                     publicHolidays += FULL_DAY;
                 }
             }
-        }
-        
-        // after having compared the date with all holidays of Jollyday's holiday set
-        // check if the given date is on Corpus Christi (Fronleichnam)
-        // this 'hardcoded' quickfix is necessary because Jollyday is not able to recognize Corpus Christ
-        if(DateUtil.isCorpusChristi(date)) {
-            publicHolidays += FULL_DAY;
         }
         
         

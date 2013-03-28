@@ -92,7 +92,41 @@ public class JollydayCalendarTest {
         
     }
 
+    @Test
+    public void testCorpusChristiProblem2() {
 
+        DateMidnight startDate = new DateMidnight(2014, 6, 19);
+        DateMidnight endDate = new DateMidnight(2014, 6, 19);
+
+        double returnValue = instance.getPublicHolidays(startDate, endDate);
+
+        // expected that Corpus Christi is found as one and only public holiday in this period
+        Assert.assertEquals(1, returnValue, 0);
+
+    }
+
+    
+    @Test
+    public void testIsPublicHoliday() {
+
+        DateMidnight date = new DateMidnight(2013, 3, 29);   // Karfreitag
+        
+        boolean returnValue = instance.isPublicHoliday(date);
+        
+        Assert.assertTrue(returnValue);
+        
+    }
+
+    @Test
+    public void testIsNoPublicHoliday() {
+
+        DateMidnight date = new DateMidnight(2013, 3, 28);   // simple work day
+
+        boolean returnValue = instance.isPublicHoliday(date);
+
+        Assert.assertFalse(returnValue);
+
+    }
     
     
     

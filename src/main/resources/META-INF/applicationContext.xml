@@ -42,7 +42,11 @@
 
 <bean id="overlapService" class="org.synyx.urlaubsverwaltung.application.service.OverlapService" />
 
-<bean id="ownCalendarService" class="org.synyx.urlaubsverwaltung.calendar.OwnCalendarService" />
+<bean id="jollydayCalendar" class="org.synyx.urlaubsverwaltung.calendar.JollydayCalendar" />        
+    
+<bean id="ownCalendarService" class="org.synyx.urlaubsverwaltung.calendar.OwnCalendarService">
+    <constructor-arg ref="jollydayCalendar" />
+</bean>
 
 <bean id="googleCalendarService" class="org.synyx.urlaubsverwaltung.calendar.GoogleCalendarService" />
 

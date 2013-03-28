@@ -1,18 +1,13 @@
 package org.synyx.urlaubsverwaltung.account;
 
-import org.synyx.urlaubsverwaltung.account.HolidaysAccountServiceImpl;
 import junit.framework.Assert;
-
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
-
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mockito.Mockito;
-
+import org.synyx.urlaubsverwaltung.calendar.JollydayCalendar;
 import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
-import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
@@ -35,7 +30,7 @@ public class HolidaysAccountServiceImplTest {
     public void setup() {
 
         accountDAO = Mockito.mock(AccountDAO.class);
-        calendarService = new OwnCalendarService();
+        calendarService = new OwnCalendarService(new JollydayCalendar());
         service = new HolidaysAccountServiceImpl(accountDAO, calendarService);
 
         person = new Person();

@@ -634,3 +634,8 @@ th.tablesorter-headerDesc, th.tablesorter-headerAsc {
 .centered-tbl td {
     text-align: center;
 }
+
+/* nice looking for public holidays in datepicker */
+td.notworkday a {
+    color: #F8B851 !important;
+}

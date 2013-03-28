@@ -53,6 +53,37 @@
         $.datepicker.setDefaults($.datepicker.regional["${pageContext.request.locale.language}"]);
         var dates = $("#from, #to, #at").datepicker({
             numberOfMonths: 1,
+            beforeShowDay: function(date) {
+                // if day is saturday or sunday, highlight it
+                if(date.getDay()== 6 || date.getDay()== 0){
+                    return [true,"notworkday"];
+                } else {
+                    // if date is a work day, check if it is a public holiday
+                    // if so highlight it
+                    var prefix = "<spring:url value='/web/calendar/public-holiday' />";
+                    var dateString = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+                    var url = prefix + "?date=" + dateString;
+
+                    var result = null
+
+
+                    $.ajax({ 
+                        url: url,
+                        async: false,
+                        success: function(data) {
+                            result = data;
+                        }
+                    });
+
+                    if(result == "0") {
+                        return [true,""];
+                    } else {
+                        return [true,"notworkday"];
+                    }
+                    
+                }  
+                
+            },
             onSelect: function(selectedDate) {
                 instance = $(this).data("datepicker"),
                         date = $.datepicker.parseDate(

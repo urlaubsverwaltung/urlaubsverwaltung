@@ -2,21 +2,14 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
 import org.joda.time.DateMidnight;
-
-import org.junit.After;
-import org.junit.AfterClass;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
+import org.junit.*;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.DayLength;
 
 import java.math.BigDecimal;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 
 /**
@@ -25,6 +18,7 @@ import java.math.BigDecimal;
 public class OwnCalendarServiceTest {
 
     private OwnCalendarService instance;
+    private JollydayCalendar jollydayCalendar;
     private Application application;
 
     public OwnCalendarServiceTest() {
@@ -43,7 +37,8 @@ public class OwnCalendarServiceTest {
     @Before
     public void setUp() {
 
-        instance = new OwnCalendarService();
+        jollydayCalendar = new JollydayCalendar();
+        instance = new OwnCalendarService(jollydayCalendar);
 
         application = new Application();
     }

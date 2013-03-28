@@ -1,21 +1,23 @@
 package org.synyx.urlaubsverwaltung.web;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.synyx.urlaubsverwaltung.calendar.GoogleCalendarService;
-
-import java.io.IOException;
-import java.math.BigDecimal;
 import org.joda.time.DateMidnight;
+import org.joda.time.IllegalFieldValueException;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.synyx.urlaubsverwaltung.application.domain.DayLength;
+import org.synyx.urlaubsverwaltung.calendar.GoogleCalendarService;
+import org.synyx.urlaubsverwaltung.calendar.JollydayCalendar;
 import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
+
+import java.io.IOException;
+import java.math.BigDecimal;
 
 /**
  * Controller for calendar relevant stuff.
@@ -28,10 +30,12 @@ public class CalendarController {
     private static final String JSP_FOLDER = "calendar/";
     private GoogleCalendarService googleCalendarService;
     private OwnCalendarService ownCalendarService;
+    private JollydayCalendar jollydayCalendar;
 
-    public CalendarController(GoogleCalendarService googleCalendarService, OwnCalendarService ownCalendarService) {
+    public CalendarController(GoogleCalendarService googleCalendarService, OwnCalendarService ownCalendarService, JollydayCalendar jollydayCalendar) {
         this.googleCalendarService = googleCalendarService;
         this.ownCalendarService = ownCalendarService;
+        this.jollydayCalendar = jollydayCalendar;
     }
 
     /**
@@ -62,6 +66,33 @@ public class CalendarController {
 
                 return days.toString();
             }
+        }
+
+        return "N/A";
+    }
+
+    @RequestMapping(value = "/calendar/public-holiday", method = RequestMethod.GET)
+    @ResponseBody
+    public String isPublicHoliday(@RequestParam("date") String date) {
+
+        if (StringUtils.hasText(date)) {
+
+            DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd"); // please do not change, because is used in custom.js
+            
+            
+            try {
+                DateMidnight d = DateMidnight.parse(date, fmt);
+                boolean publicHoliday = jollydayCalendar.isPublicHoliday(d);
+
+                if(publicHoliday) {
+                    return "1";
+                } else {
+                    return "0";
+                }
+            } catch (IllegalFieldValueException ex) {
+                  return "N/A";
+            }
+            
         }
 
         return "N/A";

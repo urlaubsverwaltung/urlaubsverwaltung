@@ -149,38 +149,4 @@ public class DateUtil {
 
         return ((date.getDayOfMonth() == FIRST_DAY_OF_MONTH) && (date.getMonthOfYear() == DateTimeConstants.JANUARY));
     }
-    
-    /**
-     * Since Jollyday is not able to recognize Corpus Christi (Fronleichnam), 
-     * this method is a quickfix to recognize Corpus Christi dates for the next years. 
-     * (dates are registered in custom.properties)
-     * @param date
-     * @return true if the given date is on Corpus Christi, else false
-     */
-    public static boolean isCorpusChristi(DateMidnight date) {
-        
-        try {
-            Properties props = PropertiesUtil.load(PROP_FILE);
-            
-            String[] dates = props.getProperty(PROP_KEY).split(";");
-            DateTimeFormatter fmt = DateTimeFormat.forPattern("dd.MM.yyyy");
-            
-            
-            for(String d : dates) {
-                
-                DateMidnight compareDate = DateMidnight.parse(d, fmt);
-                
-                if(date.isEqual(compareDate)) {
-                    return true;
-                }
-                
-            }
-            
-        } catch (IOException ex) {
-            LOG.error(DateMidnight.now().toString("dd.MM.yyyy") + "No properties file found.");
-            LOG.error(ex.getMessage(), ex);
-        }
-        
-        return false;
-    }
 }

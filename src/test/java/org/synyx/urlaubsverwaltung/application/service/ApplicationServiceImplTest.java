@@ -4,24 +4,25 @@
  */
 package org.synyx.urlaubsverwaltung.application.service;
 
-import org.synyx.urlaubsverwaltung.application.service.ApplicationServiceImpl;
-import org.synyx.urlaubsverwaltung.security.CryptoService;
-import org.synyx.urlaubsverwaltung.mail.MailService;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.List;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.application.dao.ApplicationDAO;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
+import org.synyx.urlaubsverwaltung.calendar.JollydayCalendar;
+import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
+import org.synyx.urlaubsverwaltung.mail.MailService;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.security.CryptoService;
+
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Unit test for serivce {@link ApplicationServiceImpl}.
@@ -44,7 +45,7 @@ public class ApplicationServiceImplTest {
         applicationDAO = Mockito.mock(ApplicationDAO.class);
         cryptoService = new CryptoService();
         mailService = Mockito.mock(MailService.class);
-        calendarService = new OwnCalendarService();
+        calendarService = new OwnCalendarService(new JollydayCalendar());
 
         instance = new ApplicationServiceImpl(applicationDAO, cryptoService, mailService, calendarService);
 

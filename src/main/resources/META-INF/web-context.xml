@@ -61,6 +61,7 @@
     <bean class="org.synyx.urlaubsverwaltung.web.CalendarController">
         <constructor-arg ref="googleCalendarService" />
         <constructor-arg ref="ownCalendarService" />
+        <constructor-arg ref="jollydayCalendar" />
     </bean>
     
      <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">

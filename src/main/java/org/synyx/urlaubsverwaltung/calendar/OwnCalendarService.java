@@ -2,11 +2,10 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
 import org.joda.time.DateMidnight;
-
+import org.synyx.urlaubsverwaltung.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.math.BigDecimal;
-import org.synyx.urlaubsverwaltung.application.domain.DayLength;
 
 
 /**
@@ -14,7 +13,11 @@ import org.synyx.urlaubsverwaltung.application.domain.DayLength;
  */
 public class OwnCalendarService {
 
-    private JollydayCalendar jollydayCalendar = new JollydayCalendar();
+    private JollydayCalendar jollydayCalendar;
+
+    public OwnCalendarService(JollydayCalendar jollydayCalendar) {
+        this.jollydayCalendar = jollydayCalendar;
+    }
 
     /**
      * Note: the start date must be before or equal the end date; this is validated prior to that method
