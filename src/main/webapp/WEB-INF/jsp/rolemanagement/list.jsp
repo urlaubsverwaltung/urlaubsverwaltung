@@ -42,7 +42,7 @@
                         </c:when>
 
                         <c:otherwise>
-                            <table id="staff-list" class="tablesorter zebra-table" cellspacing="0">
+                            <table id="staff-list" class="sortable-tbl tablesorter zebra-table" cellspacing="0">
                                 <thead>
                                 <tr>
                                     <th class="attributes" colspan="2"><spring:message code="login" /></th>

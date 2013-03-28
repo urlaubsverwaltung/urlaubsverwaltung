@@ -23,20 +23,6 @@
 
     <c:otherwise>     
 
-        <script type="text/javascript">
-            $(document).ready(function()
-                    {
-                        $(".zebra-table tr").mouseover(function() {
-                            $(this).addClass("over");
-                        });
-
-                        $(".zebra-table tr").mouseout(function() {
-                            $(this).removeClass("over");
-                        });
-                    }
-            );
-        </script>
-        
         <%-- has css class tablesorter only because of styling, no sorting here because date sorting behaves strange--%>
         <table class="app-tbl centered-tbl zebra-table tablesorter" cellspacing="0">
             <thead>
@@ -79,7 +65,7 @@
 
             <tbody>
             <c:forEach items="${applications}" var="app" varStatus="loopStatus">
-                <tr class="${loopStatus.index % 2 == 0 ? 'even' : 'odd'}">
+                <tr>
                     <td>
                         <spring:message code="${app.status.state}" />
                     </td>

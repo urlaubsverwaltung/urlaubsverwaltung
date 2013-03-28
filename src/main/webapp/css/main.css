@@ -623,6 +623,10 @@ select {
     cursor: pointer;
 }
 
+.app-tbl th:hover {
+    cursor: default;
+}
+
 .tablesorter th, .tablesorter td {
     border: 1px solid #D7D7D7;
 }

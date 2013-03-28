@@ -11,7 +11,7 @@
 <spring:url var="formUrlPrefix" value="/web" />
 <a class="btn btn-new-user" href="${formUrlPrefix}/staff/new"><spring:message code="table.new.person" /></a>
 
-<table id="staff-list" cellspacing="0" class="tablesorter zebra-table">
+<table id="staff-list" cellspacing="0" class="sortable-tbl tablesorter zebra-table">
     <thead>
     <tr>
         <th class="attributes" colspan="2"><spring:message code="login" /></th>

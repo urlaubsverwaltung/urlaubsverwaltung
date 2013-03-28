@@ -39,14 +39,14 @@ function sendGetDaysRequest(urlPrefix) {
     }
 }
 
-// sortable table for "Mitarbeiter" and "Rechteverwaltung" tables
+// sortable tables
 $(document).ready(function()
     {
         // set initial striping
         $(".zebra-table tr:even").addClass("alt");
 
         // bind start and end order events
-        $("#staff-list").tablesorter()
+        $(".sortable-tbl").tablesorter()
 
             // if sorting start remove striping
             .bind("sortStart", function() {
@@ -57,7 +57,21 @@ $(document).ready(function()
             .bind("sortEnd", function() {
                 $(".zebra-table tr:even").addClass("alt");
             });
+            
+        $(".zebra-table tr").mouseover(function() {
+            $(this).addClass("over");
+        });
 
+        $(".zebra-table tr").mouseout(function() {
+            $(this).removeClass("over");
+        });
+
+    }
+);
+    
+// mouseover effects: rows highlighted
+$(document).ready(function()
+    {
         $(".zebra-table tr").mouseover(function() {
             $(this).addClass("over");
         });
