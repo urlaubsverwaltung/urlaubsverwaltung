@@ -42,21 +42,25 @@
                         </c:when>
 
                         <c:otherwise>
-                            <table id="staff-list" cellspacing="0">
+                            <table id="staff-list" class="tablesorter zebra-table" cellspacing="0">
+                                <thead>
                                 <tr>
-                                    <th>&nbsp;</th>
-                                    <th class="attributes"><spring:message code="login" /></th>
+                                    <th class="attributes" colspan="2"><spring:message code="login" /></th>
+                                    <th class="attributes"><spring:message code="firstname" /></th>
                                     <th class="attributes"><spring:message code="name" /></th>
                                     <th class="attributes"><spring:message code="email" /></th>
                                     <th class="attributes"><spring:message code="role" /></th>
                                     <th class="attributes"><spring:message code="user.state" /></th>
                                     <th><spring:message code="edit" /></th>
                                 </tr>
+                                </thead>
+                                <tbody>
                                 <c:forEach items="${persons}" var="person" varStatus="loopStatus">
-                                    <tr class="${loopStatus.index % 2 == 0 ? 'even' : 'odd'}">
+                                    <tr>
                                         <td><img src="<c:out value='${gravatarUrls[person]}?s=20&d=mm'/>" /></td>
                                         <td><c:out value="${person.loginName}"/></td>
-                                        <td><c:out value="${person.firstName}"/>&nbsp;<c:out value="${person.lastName}"/></td>
+                                        <td><c:out value="${person.firstName}"/></td>
+                                        <td><c:out value="${person.lastName}"/></td>
                                         <td><a href="mailto:${person.email}"><c:out value="${person.email}"/></a></td>
                                         <td>
                                             <c:forEach items="${person.permissions}" var="perm" varStatus="status">
@@ -76,6 +80,7 @@
                                         <td class="td-edit"><a href="${formUrlPrefix}/management/${person.id}"><img src="<spring:url value='/images/edit.png' />" /></a></td>
                                     </tr>    
                                 </c:forEach>
+                                </tbody>
                             </table>
                         </c:otherwise>
 

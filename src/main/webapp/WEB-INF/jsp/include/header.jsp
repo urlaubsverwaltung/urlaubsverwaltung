@@ -19,6 +19,7 @@
 <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />" />
 <script src="<spring:url value='/jquery/js/jquery-1.6.2.min.js' />" type="text/javascript" ></script>
 <script src="<spring:url value='/jquery/js/jquery-ui-1.8.16.custom.min.js' />" type="text/javascript" ></script>
+<script src="<spring:url value='/jquery/js/jquery.tablesorter.js' />" type="text/javascript" ></script>
 <script src="<spring:url value='/js/custom.js' />" type="text/javascript" ></script>
 <%-- Commented out because if bootstrap.js is used than you can't use jquery.js - it just doesn't work.... --%>
 <!--<script src="<spring:url value='/js/bootstrap.js' />" type="text/javascript" ></script>-->

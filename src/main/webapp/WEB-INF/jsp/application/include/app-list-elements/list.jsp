@@ -23,8 +23,23 @@
 
     <c:otherwise>     
 
+        <script type="text/javascript">
+            $(document).ready(function()
+                    {
+                        $(".zebra-table tr").mouseover(function() {
+                            $(this).addClass("over");
+                        });
+
+                        $(".zebra-table tr").mouseout(function() {
+                            $(this).removeClass("over");
+                        });
+                    }
+            );
+        </script>
         
-        <table class="app-tbl" cellspacing="0">
+        <%-- has css class tablesorter only because of styling, no sorting here because date sorting behaves strange--%>
+        <table class="app-tbl centered-tbl zebra-table tablesorter" cellspacing="0">
+            <thead>
             <tr>
                 <th>
                     <spring:message code="state" />
@@ -60,7 +75,9 @@
                         </c:if>
                 </sec:authorize>      
             </tr>
+            </thead>
 
+            <tbody>
             <c:forEach items="${applications}" var="app" varStatus="loopStatus">
                 <tr class="${loopStatus.index % 2 == 0 ? 'even' : 'odd'}">
                     <td>
@@ -101,7 +118,7 @@
                             </c:otherwise>    
                         </c:choose>
                     </td>
-                    <td style="padding-left:3.5em;">
+                    <td>
                         <fmt:formatNumber maxFractionDigits="1" value="${app.days}" />
                     </td>
 
@@ -131,6 +148,7 @@
 
                 </tr>
             </c:forEach>
+            </tbody>
         </table>
     </c:otherwise> 
 </c:choose>  

@@ -11,23 +11,27 @@
 <spring:url var="formUrlPrefix" value="/web" />
 <a class="btn btn-new-user" href="${formUrlPrefix}/staff/new"><spring:message code="table.new.person" /></a>
 
-<table id="staff-list" cellspacing="0">
+<table id="staff-list" cellspacing="0" class="tablesorter zebra-table">
+    <thead>
     <tr>
-        <th>&nbsp;</th>
-        <th class="attributes"><spring:message code="login" /></th>
+        <th class="attributes" colspan="2"><spring:message code="login" /></th>
+        <th class="attributes"><spring:message code="firstname" /></th>
         <th class="attributes"><spring:message code="name" /></th>
         <th class="attributes"><spring:message code="email" /></th>
-        <th class="vac"><spring:message code="entitlement" />&nbsp;<spring:message code="whole" /></th>
-        <th class="vac"><spring:message code="overview.left" /></th>
+        <th class="vac"><spring:message code="entitlement" /></th>
+        <th class="vac"><spring:message code="left" /></th>
         <th><spring:message code="table.detail" /></th>
         <th><spring:message code="table.apply" /></th>
         <th><spring:message code="edit" /></th>
     </tr>
+    </thead>
+    <tbody>
     <c:forEach items="${persons}" var="person" varStatus="loopStatus">
-        <tr class="${loopStatus.index % 2 == 0 ? 'even' : 'odd'}">
+        <tr>
             <td><img src="<c:out value='${gravatarUrls[person]}?s=20&d=mm'/>" /></td>
             <td><c:out value="${person.loginName}"/></td>
-            <td><c:out value="${person.firstName}"/>&nbsp;<c:out value="${person.lastName}"/></td>
+            <td><c:out value="${person.firstName}"/></td>
+            <td><c:out value="${person.lastName}"/></td>
             <td><a href="mailto:${person.email}"><c:out value="${person.email}"/></a></td>
             <td class="vac">
                 <c:choose>
@@ -59,5 +63,6 @@
             <td class="td-edit"><a href="${formUrlPrefix}/staff/${person.id}/edit"><img src="<spring:url value='/images/edit.png' />" /></a></td>
         </tr>    
     </c:forEach>
+    </tbody>
 </table>
 

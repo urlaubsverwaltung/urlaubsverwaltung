@@ -20,7 +20,8 @@
 
         <c:otherwise>
 
-            <table class="app-tbl" cellspacing="0">
+            <%-- has css class tablesorter only because of styling, is not sortable --%>
+            <table class="app-tbl centered-tbl tablesorter" cellspacing="0">
                 <tr>
                     <th>
                         <spring:message code="type" />

@@ -39,4 +39,34 @@ function sendGetDaysRequest(urlPrefix) {
     }
 }
 
+// sortable table for "Mitarbeiter" and "Rechteverwaltung" tables
+$(document).ready(function()
+    {
+        // set initial striping
+        $(".zebra-table tr:even").addClass("alt");
+
+        // bind start and end order events
+        $("#staff-list").tablesorter()
+
+            // if sorting start remove striping
+            .bind("sortStart", function() {
+                $(".zebra-table tr:even").removeClass("alt");
+            })
+
+            // if sorting done set striping
+            .bind("sortEnd", function() {
+                $(".zebra-table tr:even").addClass("alt");
+            });
+
+        $(".zebra-table tr").mouseover(function() {
+            $(this).addClass("over");
+        });
+
+        $(".zebra-table tr").mouseout(function() {
+            $(this).removeClass("over");
+        });
+
+    }
+);
+
 

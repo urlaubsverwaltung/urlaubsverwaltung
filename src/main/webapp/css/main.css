@@ -126,14 +126,18 @@ body {
 
 th.attributes {
     padding: 7px 0px 7px 15px;
-    text-align: left;
-    width: auto;
+    /*text-align: left;*/
+    /*width: auto;*/
 }	
 
 th.vac {
     padding: 7px 0px 7px 0px;
-    text-align: left;
-    width: 20%;
+    /*text-align: left;*/
+    /*width: 20%;*/
+}
+
+td.vac {
+    text-align: center;
 }
 
 #staff-list {
@@ -158,12 +162,24 @@ a.btn-new-user, a.btn-new-user:hover {
     margin-bottom: 1em;
 }
 
+/* zebra table with for each loop status */
 tr.odd {
     background-color: #EAF2D3
 }
 
 tr.even {
     background-color: #FFFFFF
+}
+
+/* zebra table with jquery */
+tr.alt td {
+    background: #EAF2D3
+}
+
+/* mouse over rows */
+tr.over td {
+    /*background: #E6EEEE;*/
+    background: #DEEFA4;
 }
 
 #person-tbl {
@@ -283,7 +299,7 @@ tr.even {
 }	
 
 .app-tbl th, .app-tbl td {
-    text-align: left;
+    /*text-align: left;*/
     padding: 0.55em;
 
 }
@@ -293,7 +309,7 @@ tr.even {
 }
 
 .app-detail td, .app-detail th {
-    text-align: left;
+    /*text-align: left;*/
     padding: 0.55em;
 }
 
@@ -598,4 +614,23 @@ select {
 
 .actions .btn {
     margin-top: 0.5em;
+}
+
+
+/* sortable table
+*/
+.tablesorter th:hover {
+    cursor: pointer;
+}
+
+.tablesorter th, .tablesorter td {
+    border: 1px solid #D7D7D7;
+}
+
+th.tablesorter-headerDesc, th.tablesorter-headerAsc {
+   background-color: #99AF4C !important;
+}
+
+.centered-tbl td {
+    text-align: center;
 }
