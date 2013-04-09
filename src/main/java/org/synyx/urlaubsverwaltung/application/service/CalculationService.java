@@ -5,18 +5,18 @@ import org.joda.time.DateTimeConstants;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
-import org.synyx.urlaubsverwaltung.application.dao.ApplicationDAO;
 import org.synyx.urlaubsverwaltung.account.Account;
+import org.synyx.urlaubsverwaltung.account.HolidaysAccountService;
+import org.synyx.urlaubsverwaltung.application.dao.ApplicationDAO;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
+import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
+import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
 
 import java.util.List;
-import org.synyx.urlaubsverwaltung.account.HolidaysAccountService;
 
 
 /**
@@ -41,7 +41,7 @@ public class CalculationService {
 
     /**
      * check if application is valid and may be send to boss to be allowed or rejected or if person's leave account has
-     * too little residual number of vacation days, so that taking holiday isn't possible
+     * too little residual number of vacation days, so that taking holiday isn't possible.
      *
      * @param  application
      *
@@ -93,7 +93,7 @@ public class CalculationService {
         Account account = accountService.getOrCreateNewAccount(application.getStartDate().getYear(),
                 application.getPerson());
 
-        BigDecimal vacationDays = calculateLeftVacationDays(account);
+        BigDecimal vacationDays = calculateTotalLeftVacationDays(account);
 
         if (vacationDays.compareTo(application.getDays()) >= 0) {
             return true;
@@ -104,28 +104,20 @@ public class CalculationService {
 
 
     /**
-     * Calculates how many days the person may apply for leave, i.e. how many vacation days are left on the holidays
-     * account.
+     * Calculates how many days the person may apply for leave, i.e. how many vacation days + remaining vacation days
+     * can be used for applying for leave.
      *
      * @param  account
      *
      * @return  left vacation days
      */
-    public BigDecimal calculateLeftVacationDays(Account account) {
-
-        int year = account.getYear();
-        Person person = account.getPerson();
-
-        DateMidnight firstOfJanuary = new DateMidnight(year, DateTimeConstants.JANUARY, 1);
-        DateMidnight lastOfMarch = new DateMidnight(year, DateTimeConstants.MARCH, 31);
-        DateMidnight firstOfApril = new DateMidnight(year, DateTimeConstants.APRIL, 1);
-        DateMidnight lastOfDecember = new DateMidnight(year, DateTimeConstants.DECEMBER, 31);
+    public BigDecimal calculateTotalLeftVacationDays(Account account) {
 
         BigDecimal vacationDays = account.getVacationDays();
         BigDecimal remainingVacationDays = account.getRemainingVacationDays();
 
-        BigDecimal daysBeforeApril = getDaysBetweenTwoMilestones(person, firstOfJanuary, lastOfMarch);
-        BigDecimal daysAfterApril = getDaysBetweenTwoMilestones(person, firstOfApril, lastOfDecember);
+        BigDecimal daysBeforeApril = getDaysBeforeApril(account);
+        BigDecimal daysAfterApril = getDaysAfterApril(account);
 
         BigDecimal result = remainingVacationDays.subtract(daysBeforeApril);
 
@@ -157,38 +149,86 @@ public class CalculationService {
 
         return vacationDays;
     }
-    
-    public BigDecimal calculateLeftRemainingVacationDays(Account account) {
-        
-        int year = account.getYear();
-        Person person = account.getPerson();
 
-        DateMidnight firstOfJanuary = new DateMidnight(year, DateTimeConstants.JANUARY, 1);
-        DateMidnight lastOfMarch = new DateMidnight(year, DateTimeConstants.MARCH, 31);
-        DateMidnight firstOfApril = new DateMidnight(year, DateTimeConstants.APRIL, 1);
-        DateMidnight lastOfDecember = new DateMidnight(year, DateTimeConstants.DECEMBER, 31);
+
+    /**
+     * Returns the number of left vacation days (without remaining vacation days: for displaying)
+     *
+     * @param  account
+     *
+     * @return  number of left vacation days (without remaining vacation days)
+     */
+    public BigDecimal calculateLeftVacationDays(Account account) {
+
+        BigDecimal vacationDays = account.getVacationDays();
+        BigDecimal remainingVacationDays = account.getRemainingVacationDays();
+
+        BigDecimal daysBeforeApril = getDaysBeforeApril(account);
+        BigDecimal daysAfterApril = getDaysAfterApril(account);
+
+        BigDecimal result1 = remainingVacationDays.subtract(daysBeforeApril);
+
+        if (result1.compareTo(BigDecimal.ZERO) < 0) {
+            vacationDays = vacationDays.add(result1); // result is negative so that you add it to vacation days instead of subtract it
+        }
+
+        if (account.isRemainingVacationDaysExpire()) {
+            vacationDays = vacationDays.subtract(daysAfterApril);
+        } else {
+            BigDecimal result2 = remainingVacationDays.subtract(daysAfterApril);
+
+            if (result2.compareTo(BigDecimal.ZERO) < 0) {
+                vacationDays = vacationDays.add(result2); // result is negative so that you add it to vacation days instead of subtract it
+            }
+        }
+
+        return vacationDays;
+    }
+
+
+    public BigDecimal calculateLeftRemainingVacationDays(Account account) {
 
         BigDecimal remainingVacationDays = account.getRemainingVacationDays();
 
-        BigDecimal daysBeforeApril = getDaysBetweenTwoMilestones(person, firstOfJanuary, lastOfMarch);
-        BigDecimal daysAfterApril = getDaysBetweenTwoMilestones(person, firstOfApril, lastOfDecember);
+        BigDecimal daysBeforeApril = getDaysBeforeApril(account);
+        BigDecimal daysAfterApril = getDaysAfterApril(account);
 
-        
         // subtract days before April in every case
         BigDecimal result = remainingVacationDays.subtract(daysBeforeApril);
-        
+
         // if remaining vacation days do not expire, do also subtract days after April
-        if(!account.isRemainingVacationDaysExpire()) {
+        if (!account.isRemainingVacationDaysExpire()) {
             result = result.subtract(daysAfterApril);
-        } 
-        
+        }
+
         // if result is negative
-        if(result.compareTo(BigDecimal.ZERO) < 0) {
+        if (result.compareTo(BigDecimal.ZERO) < 0) {
             result = BigDecimal.ZERO;
         }
 
         return result;
-        
+    }
+
+
+    private BigDecimal getDaysBeforeApril(Account account) {
+
+        DateMidnight firstOfJanuary = new DateMidnight(account.getYear(), DateTimeConstants.JANUARY, 1);
+        DateMidnight lastOfMarch = new DateMidnight(account.getYear(), DateTimeConstants.MARCH, 31);
+
+        BigDecimal daysBeforeApril = getDaysBetweenTwoMilestones(account.getPerson(), firstOfJanuary, lastOfMarch);
+
+        return daysBeforeApril;
+    }
+
+
+    private BigDecimal getDaysAfterApril(Account account) {
+
+        DateMidnight firstOfApril = new DateMidnight(account.getYear(), DateTimeConstants.APRIL, 1);
+        DateMidnight lastOfDecember = new DateMidnight(account.getYear(), DateTimeConstants.DECEMBER, 31);
+
+        BigDecimal daysAfterApril = getDaysBetweenTwoMilestones(account.getPerson(), firstOfApril, lastOfDecember);
+
+        return daysAfterApril;
     }
 
 

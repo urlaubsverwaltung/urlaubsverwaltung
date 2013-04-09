@@ -128,7 +128,7 @@
         <c:choose>
 
             <c:when test="${account != null}">
-                <c:set var ="left" value="${leftDays - remLeftDays}" />
+                <c:set var ="left" value="${leftDays}" />
                 <c:choose>
                     <c:when test="${left <= 1.00 && left > 0.50}">
                         <c:set var="numberOfDays" value="day" />

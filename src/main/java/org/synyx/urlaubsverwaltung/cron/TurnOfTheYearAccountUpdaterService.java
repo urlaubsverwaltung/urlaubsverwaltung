@@ -8,10 +8,10 @@ import org.joda.time.DateMidnight;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import org.synyx.urlaubsverwaltung.account.Account;
-import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.application.service.CalculationService;
 import org.synyx.urlaubsverwaltung.account.HolidaysAccountService;
+import org.synyx.urlaubsverwaltung.application.service.CalculationService;
 import org.synyx.urlaubsverwaltung.mail.MailService;
+import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.math.BigDecimal;
@@ -65,7 +65,7 @@ public class TurnOfTheYearAccountUpdaterService {
             Account accountLastYear = accountService.getHolidaysAccount(year - 1, p);
 
             if (accountLastYear != null && accountLastYear.getAnnualVacationDays() != null) {
-                BigDecimal leftDays = calculationService.calculateLeftVacationDays(accountLastYear);
+                BigDecimal leftDays = calculationService.calculateTotalLeftVacationDays(accountLastYear);
 
                 Account accountNewYear = accountService.getOrCreateNewAccount(year, p);
 

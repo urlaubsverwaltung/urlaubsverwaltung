@@ -47,7 +47,7 @@
             <td class="vac">
                 <c:choose>
                     <c:when test="${leftDays[person] != null && remLeftDays[person] != null}">
-                        <fmt:formatNumber maxFractionDigits="1" value="${leftDays[person] - remLeftDays[person]}"/>
+                        <fmt:formatNumber maxFractionDigits="1" value="${leftDays[person]}"/>
                         <c:if test="${beforeApril || !accounts[person].remainingVacationDaysExpire}">
                             +
                             <fmt:formatNumber maxFractionDigits="1" value="${remLeftDays[person]}"/>
