@@ -28,7 +28,7 @@
     <tbody>
     <c:forEach items="${persons}" var="person" varStatus="loopStatus">
         <tr>
-            <td><img src="<c:out value='${gravatarUrls[person]}?s=20&d=mm'/>" /></td>
+            <td class="td-img"><img src="<c:out value='${gravatarUrls[person]}?s=20&d=mm'/>" /></td>
             <td><c:out value="${person.loginName}"/></td>
             <td><c:out value="${person.firstName}"/></td>
             <td><c:out value="${person.lastName}"/></td>

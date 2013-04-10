@@ -643,3 +643,11 @@ th.tablesorter-headerDesc, th.tablesorter-headerAsc {
 td.notworkday a {
     color: #F8B851 !important;
 }
+
+.app-detail th {
+    text-align: left;
+}
+
+.td-img {
+    text-align: center;
+}
