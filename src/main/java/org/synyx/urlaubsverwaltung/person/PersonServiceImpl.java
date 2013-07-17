@@ -1,24 +1,34 @@
 package org.synyx.urlaubsverwaltung.person;
 
-import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
-import org.synyx.urlaubsverwaltung.security.CryptoService;
-import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.apache.log4j.Logger;
+
 import org.joda.time.DateMidnight;
 import org.joda.time.chrono.GregorianChronology;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.transaction.annotation.Transactional;
-import org.synyx.urlaubsverwaltung.web.ControllerConstants;
+
 import org.synyx.urlaubsverwaltung.account.Account;
+import org.synyx.urlaubsverwaltung.account.HolidaysAccountService;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.security.Role;
+import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
+import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.web.PersonForm;
+import org.synyx.urlaubsverwaltung.security.CryptoService;
+import org.synyx.urlaubsverwaltung.security.Role;
+import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 
 import java.math.BigDecimal;
+
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
-import org.synyx.urlaubsverwaltung.account.HolidaysAccountService;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -33,7 +43,7 @@ class PersonServiceImpl implements PersonService {
     // audit logger: logs nontechnically occurences like 'user x applied for leave' or 'subtracted n days from
     // holidays account y'
     private static final Logger LOG = Logger.getLogger("audit");
-    
+
     private PersonDAO personDAO;
     private ApplicationService applicationService;
     private HolidaysAccountService accountService;
@@ -59,13 +69,14 @@ class PersonServiceImpl implements PersonService {
 
         personDAO.save(person);
     }
-    
+
+
     /**
-     * @see  PersonService#createOrUpdate(org.synyx.urlaubsverwaltung.domain.Person, org.synyx.urlaubsverwaltung.view.PersonForm) 
+     * @see  PersonService#createOrUpdate(org.synyx.urlaubsverwaltung.domain.Person, org.synyx.urlaubsverwaltung.view.PersonForm)
      */
     @Override
     public void createOrUpdate(Person person, PersonForm personForm) {
-        
+
         boolean newPerson = false;
 
         if (person.getId() == null) {
@@ -80,8 +91,9 @@ class PersonServiceImpl implements PersonService {
                     + " ist ein Fehler aufgetreten.", ex);
                 mailService.sendKeyGeneratingErrorNotification(personForm.getLoginName());
             }
-            
+
             person.setActive(true);
+
             Collection<Role> perms = new ArrayList<Role>();
             perms.add(Role.USER);
             person.setPermissions(perms);
@@ -91,7 +103,7 @@ class PersonServiceImpl implements PersonService {
         person = personForm.fillPersonObject(person);
 
         save(person);
-        
+
         int year = Integer.parseInt(personForm.getYear());
         int dayFrom = Integer.parseInt(personForm.getDayFrom());
         int monthFrom = Integer.parseInt(personForm.getMonthFrom());
@@ -109,29 +121,32 @@ class PersonServiceImpl implements PersonService {
         Account account = accountService.getHolidaysAccount(year, person);
 
         if (account == null) {
-            accountService.createHolidaysAccount(person, validFrom, validTo, annualVacationDays,
-                    remainingVacationDays, expiring);
+            accountService.createHolidaysAccount(person, validFrom, validTo, annualVacationDays, remainingVacationDays,
+                expiring);
         } else {
             accountService.editHolidaysAccount(account, validFrom, validTo, annualVacationDays, remainingVacationDays,
-                    expiring);
+                expiring);
         }
 
         if (newPerson) {
-            LOG.info(DateMidnight.now(GregorianChronology.getInstance()).toString(ControllerConstants.DATE_FORMAT) + " Ein neuer Mitarbeiter wurde angelegt. ID: " + person.getId()
-                    + ", Vorname: " + person.getFirstName() + ", Nachname: " + person.getLastName());
+            LOG.info(DateMidnight.now(GregorianChronology.getInstance()).toString(ControllerConstants.DATE_FORMAT)
+                + " Ein neuer Mitarbeiter wurde angelegt. ID: " + person.getId()
+                + ", Vorname: " + person.getFirstName() + ", Nachname: " + person.getLastName());
         } else {
-            LOG.info(DateMidnight.now(GregorianChronology.getInstance()).toString(ControllerConstants.DATE_FORMAT) + " ID: " + person.getId()
-                    + " Der Mitarbeiter " + person.getFirstName() + " " + person.getLastName()
-                    + " wurde editiert.");
+            LOG.info(DateMidnight.now(GregorianChronology.getInstance()).toString(ControllerConstants.DATE_FORMAT)
+                + " ID: " + person.getId()
+                + " Der Mitarbeiter " + person.getFirstName() + " " + person.getLastName()
+                + " wurde editiert.");
         }
-        
     }
+
 
     @Override
     public void editPermissions(Person person, Collection<Role> permissions) {
-        
-        if(personShouldBeSetToInactive(permissions)) {
+
+        if (personShouldBeSetToInactive(permissions)) {
             person.setActive(false);
+
             List<Role> onlyInactive = new ArrayList<Role>();
             onlyInactive.add(Role.INACTIVE);
             person.setPermissions(onlyInactive);
@@ -139,27 +154,26 @@ class PersonServiceImpl implements PersonService {
             person.setActive(true);
             person.setPermissions(permissions);
         }
-        
+
         save(person);
-        
     }
 
-    
+
     private boolean personShouldBeSetToInactive(Collection<Role> permissions) {
-        
+
         boolean inactive = false;
-        
-        if(permissions.size() == 1) {
-            for(Role r : permissions) {
-                if(r.equals(Role.INACTIVE)) {
+
+        if (permissions.size() == 1) {
+            for (Role r : permissions) {
+                if (r.equals(Role.INACTIVE)) {
                     inactive = true;
                 }
             }
         }
-        
+
         return inactive;
-        
     }
+
 
     /**
      * @see  PersonService#deactivate(org.synyx.urlaubsverwaltung.domain.Person)
@@ -278,16 +292,16 @@ class PersonServiceImpl implements PersonService {
     public List<Person> getPersonsByRole(Role role) {
 
         // TODO: this is a very dirty hack, so should be replaced some day
-        
+
         List<Person> vips = new ArrayList<Person>();
         List<Person> persons = getAllPersons();
-        
-        for(Person p : persons) {
-          if(p.hasRole(Role.BOSS)) {
-              vips.add(p);
-          }
+
+        for (Person p : persons) {
+            if (p.hasRole(role)) {
+                vips.add(p);
+            }
         }
-        
+
         return vips;
     }
 }
