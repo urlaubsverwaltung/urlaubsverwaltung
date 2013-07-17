@@ -14,8 +14,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.security.ldap.userdetails.LdapAuthoritiesPopulator;
 
-import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.mail.MailService;
+import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.security.KeyPair;
@@ -35,17 +35,14 @@ public class AuthoritiesPopulatorImpl implements LdapAuthoritiesPopulator {
     // sign logger: logs possible occurent errors relating to private and public keys of users
     private static final Logger LOG_SIGN = Logger.getLogger("sign");
 
+    @Autowired
     private PersonService personService;
-    private CryptoService cryptoService;
-    private MailService mailService;
 
     @Autowired
-    public AuthoritiesPopulatorImpl(PersonService personService, CryptoService cryptoService, MailService mailService) {
+    private CryptoService cryptoService;
 
-        this.personService = personService;
-        this.cryptoService = cryptoService;
-        this.mailService = mailService;
-    }
+    @Autowired
+    private MailService mailService;
 
     @Override
     public Collection<GrantedAuthority> getGrantedAuthorities(DirContextOperations dco, String string) {
@@ -60,6 +57,14 @@ public class AuthoritiesPopulatorImpl implements LdapAuthoritiesPopulator {
 
             List<Role> permissions = new ArrayList<Role>();
             permissions.add(Role.USER);
+
+            // there has to be at least one user with admin role to be able to set rights to users
+            // so the first person that logins, will be admin
+            // TODO: think about a different solution...
+            if (personService.getPersonsByRole(Role.ADMIN).size() == 0) {
+                permissions.add(Role.ADMIN);
+            }
+
             person.setPermissions(permissions);
             person.setActive(true);
 

@@ -8,17 +8,9 @@
                             http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.3.xsd">
                                        
     
-    <bean id="contextSource"
-       class="org.springframework.security.ldap.DefaultSpringSecurityContextSource">
-     <constructor-arg value="ldap://ldap.localdomain"/>
-     
-     <property name="userDn" value="dc=theia,dc=localdomain"/>
-   </bean>
+   <security:ldap-server id="ldapAuthServer" url="${ldap.url}/${ldap.base}"/>
    
-   <security:ldap-server id="ldapAuthServer" url="ldap://ldap:389/dc=theia,dc=localdomain"/>
-   
-    <bean id="ldapAuthProvider"
-       class="org.springframework.security.ldap.authentication.LdapAuthenticationProvider">
+    <bean id="ldapAuthProvider" class="org.springframework.security.ldap.authentication.LdapAuthenticationProvider">
      <constructor-arg>
        <bean class="org.springframework.security.ldap.authentication.BindAuthenticator">
            <constructor-arg ref="ldapAuthServer"/>
@@ -26,26 +18,13 @@
        </bean>
      </constructor-arg>
      <constructor-arg>
-       <bean class="org.synyx.urlaubsverwaltung.security.AuthoritiesPopulatorImpl">
-<!--           <constructor-arg ref="contextSource"/>
-           <constructor-arg value="ou=groups"/>
-           <property name="groupRoleAttribute" value="ou"/>-->
-       </bean>
+       <bean class="org.synyx.urlaubsverwaltung.security.AuthoritiesPopulatorImpl" />
      </constructor-arg>
    </bean>
-
-                                       
-<!--    <bean id="authenticationProvider" class="org.springframework.security.ldap.authentication.LdapAuthenticationProvider">
-        <property name="userDetailsService" ref="userService" />
-    </bean>-->
-    
-<!--    <security:global-method-security jsr250-annotations="enabled" />-->
-    
 
     <security:http auto-config='true' use-expressions='true'>
         <security:intercept-url pattern="/jmx/**" access="isAuthenticated()"/>
          <security:intercept-url pattern="/web/**" access="isAuthenticated()"/>
-         <!--<security:intercept-url pattern="/web/calendar" access="permitAll"/>-->
          <security:intercept-url pattern="/login.jsp" access="permitAll"/>
          <security:intercept-url pattern="/messages_de.properties" access="permitAll"/>
          <security:intercept-url pattern="/messages_en.properties" access="permitAll"/>
