@@ -8,8 +8,8 @@ import org.joda.time.DateMidnight;
 
 import org.springframework.validation.Errors;
 
-import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.application.web.AppForm;
+import org.synyx.urlaubsverwaltung.mail.MailService;
 
 import java.util.Properties;
 
@@ -41,7 +41,7 @@ public class PropertiesValidator {
      * This method checks if the value of property with key 'annual.vacation.max' is valid. If it's not, the tool
      * manager is notified and editing the person is not possible.
      *
-     * @param  form
+     * @param  properties
      * @param  errors
      */
     public void validateAnnualVacationProperty(Properties properties, Errors errors) {

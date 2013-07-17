@@ -1,11 +1,15 @@
 package org.synyx.urlaubsverwaltung.account;
 
 import junit.framework.Assert;
+
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
+
 import org.junit.Before;
 import org.junit.Test;
+
 import org.mockito.Mockito;
+
 import org.synyx.urlaubsverwaltung.calendar.JollydayCalendar;
 import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -14,13 +18,13 @@ import java.math.BigDecimal;
 
 
 /**
- * Unit test for {@link HolidaysAccountServiceImpl}.
+ * Unit test for {@link AccountServiceImpl}.
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
 public class HolidaysAccountServiceImplTest {
 
-    private HolidaysAccountServiceImpl service;
+    private AccountServiceImpl service;
     private AccountDAO accountDAO;
     private OwnCalendarService calendarService;
     private Account account;
@@ -31,7 +35,7 @@ public class HolidaysAccountServiceImplTest {
 
         accountDAO = Mockito.mock(AccountDAO.class);
         calendarService = new OwnCalendarService(new JollydayCalendar());
-        service = new HolidaysAccountServiceImpl(accountDAO, calendarService);
+        service = new AccountServiceImpl(accountDAO, calendarService);
 
         person = new Person();
         person.setLoginName("horscht");
@@ -114,6 +118,7 @@ public class HolidaysAccountServiceImplTest {
 
         Assert.assertEquals(new BigDecimal("17.5"), result);
     }
+
 
     @Test
     public void testCalculateActualVacationDaysForHalfMonths2() {

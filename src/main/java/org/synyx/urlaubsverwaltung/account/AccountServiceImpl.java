@@ -1,11 +1,15 @@
 package org.synyx.urlaubsverwaltung.account;
 
 import org.apache.log4j.Logger;
+
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.Months;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.transaction.annotation.Transactional;
+
 import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -14,22 +18,27 @@ import java.math.RoundingMode;
 
 
 /**
+ * Implementation of interface {@link AccountService}.
+ *
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Transactional
-class HolidaysAccountServiceImpl implements HolidaysAccountService {
+class AccountServiceImpl implements AccountService {
 
     private static final Logger LOG = Logger.getLogger("audit");
     private AccountDAO accountDAO;
     private OwnCalendarService calendarService;
 
     @Autowired
-    HolidaysAccountServiceImpl(AccountDAO accountDAO, OwnCalendarService calendarService) {
+    AccountServiceImpl(AccountDAO accountDAO, OwnCalendarService calendarService) {
 
         this.accountDAO = accountDAO;
         this.calendarService = calendarService;
     }
 
+    /**
+     * @see  AccountService#getHolidaysAccount(int, org.synyx.urlaubsverwaltung.person.Person)
+     */
     @Override
     public Account getHolidaysAccount(int year, Person person) {
 
@@ -37,6 +46,10 @@ class HolidaysAccountServiceImpl implements HolidaysAccountService {
     }
 
 
+    /**
+     * @see  AccountService#createHolidaysAccount(org.synyx.urlaubsverwaltung.person.Person, org.joda.time.DateMidnight,
+     *       org.joda.time.DateMidnight, java.math.BigDecimal, java.math.BigDecimal, boolean)
+     */
     @Override
     public void createHolidaysAccount(Person person, DateMidnight validFrom, DateMidnight validTo, BigDecimal days,
         BigDecimal remaining, boolean remainingDaysExpire) {
@@ -54,6 +67,10 @@ class HolidaysAccountServiceImpl implements HolidaysAccountService {
     }
 
 
+    /**
+     * @see  AccountService#editHolidaysAccount(Account, org.joda.time.DateMidnight, org.joda.time.DateMidnight,
+     *       java.math.BigDecimal, java.math.BigDecimal, boolean)
+     */
     @Override
     public void editHolidaysAccount(Account account, DateMidnight validFrom, DateMidnight validTo, BigDecimal days,
         BigDecimal remaining, boolean remainingDaysExpire) {
@@ -77,10 +94,7 @@ class HolidaysAccountServiceImpl implements HolidaysAccountService {
 
 
     /**
-     * Method to calculate the actual vacation days: (months * annual vacation days) / months per year e.g.: (5 months *
-     * 28 days)/12 = 11.6666 = 12
-     *
-     * <p>Please notice following rounding rules: 11.1 --> 11.0 11.3 --> 11.5 11.6 --> 12.0</p>
+     * @see  AccountService#calculateActualVacationDays(Account)
      */
     @Override
     public BigDecimal calculateActualVacationDays(Account account) {
@@ -90,6 +104,13 @@ class HolidaysAccountServiceImpl implements HolidaysAccountService {
 
         DateMidnight firstDayOfStartDatesMonth = start.dayOfMonth().withMinimumValue();
         DateMidnight lastDayOfEndDatesMonth = end.dayOfMonth().withMaximumValue();
+
+        /*
+         * Method to calculate the actual vacation days: (months * annual vacation days) / months per year e.g.: (5 months *
+         * 28 days)/12 = 11.6666 = 12
+         *
+         * Please notice following rounding rules: 11.1 --> 11.0 11.3 --> 11.5 11.6 --> 12.0
+         */
 
         double unroundedVacationDays = 0.0;
 
@@ -122,7 +143,7 @@ class HolidaysAccountServiceImpl implements HolidaysAccountService {
 
             int fullMonths = getNumberOfMonthsForPeriod(startForMonthCalc, endForMonthCalc);
             fullMonths = (fullMonths * account.getAnnualVacationDays().intValue()) / 12;
-            
+
             unroundedVacationDays += fullMonths;
         } else {
             // that's the simple case
@@ -140,6 +161,13 @@ class HolidaysAccountServiceImpl implements HolidaysAccountService {
     }
 
 
+    /**
+     * Rounds the given value in a special way, rounding rules are: 11.1 --> 11.0 11.3 --> 11.5 11.6 --> 12.0
+     *
+     * @param  unroundedVacationDays  double
+     *
+     * @return  {@link BigDecimal} rounded value
+     */
     private BigDecimal roundItTheSpecialWay(double unroundedVacationDays) {
 
         BigDecimal bd = new BigDecimal(unroundedVacationDays).setScale(2, RoundingMode.HALF_UP);
@@ -160,7 +188,7 @@ class HolidaysAccountServiceImpl implements HolidaysAccountService {
         } else if (referenceValue >= 50) {
             days = new BigDecimal(bdIntValue + 1);
         } else {
-            // default fallback because I'm a scaredy cat
+            // default fallback because I'm a chicken
             days = new BigDecimal(unroundedVacationDays).setScale(2);
         }
 
@@ -168,6 +196,9 @@ class HolidaysAccountServiceImpl implements HolidaysAccountService {
     }
 
 
+    /**
+     * @see  AccountService#getOrCreateNewAccount(int, org.synyx.urlaubsverwaltung.person.Person)
+     */
     @Override
     public Account getOrCreateNewAccount(int year, Person person) {
 
@@ -198,6 +229,9 @@ class HolidaysAccountServiceImpl implements HolidaysAccountService {
     }
 
 
+    /**
+     * @see  AccountService#save(Account)
+     */
     @Override
     public void save(Account account) {
 

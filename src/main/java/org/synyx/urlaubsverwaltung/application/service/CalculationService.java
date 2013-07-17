@@ -6,7 +6,7 @@ import org.joda.time.DateTimeConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.synyx.urlaubsverwaltung.account.Account;
-import org.synyx.urlaubsverwaltung.account.HolidaysAccountService;
+import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.application.dao.ApplicationDAO;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
@@ -20,18 +20,19 @@ import java.util.List;
 
 
 /**
- * This service calculates if a person may apply for leave, i.e. if he/she has enough vacation days to apply for leave.
+ * This service calculates if a {@link Person} may apply for leave, i.e. if he/she has enough vacation days to apply for
+ * leave.
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
 public class CalculationService {
 
     private ApplicationDAO applicationDAO;
-    private HolidaysAccountService accountService;
+    private AccountService accountService;
     private OwnCalendarService calendarService;
 
     @Autowired
-    public CalculationService(ApplicationDAO applicationDAO, HolidaysAccountService accountService,
+    public CalculationService(ApplicationDAO applicationDAO, AccountService accountService,
         OwnCalendarService calendarService) {
 
         this.applicationDAO = applicationDAO;
@@ -40,12 +41,14 @@ public class CalculationService {
     }
 
     /**
-     * check if application is valid and may be send to boss to be allowed or rejected or if person's leave account has
-     * too little residual number of vacation days, so that taking holiday isn't possible.
+     * Checks if the given {@link Application} is valid and may be send to boss to be allowed or rejected or if
+     * {@link Person}'s {@link Account} has too little residual number of vacation days, so that taking holiday isn't
+     * possible.
      *
-     * @param  application
+     * @param  application {@link Application}
      *
-     * @return  boolean: true if application is okay, false if there are too little residual number of vacation days
+     * @return  boolean: true if {@link Application} is okay, false if there are too little residual number of vacation
+     *          days
      */
     public boolean checkApplication(Application application) {
 
@@ -104,10 +107,10 @@ public class CalculationService {
 
 
     /**
-     * Calculates how many days the person may apply for leave, i.e. how many vacation days + remaining vacation days
-     * can be used for applying for leave.
+     * Calculates how many days the {@link Person} may apply for leave, i.e. how many vacation days + remaining vacation
+     * days can be used for applying for leave.
      *
-     * @param  account
+     * @param  account {@link Account}
      *
      * @return  left vacation days
      */
@@ -154,7 +157,7 @@ public class CalculationService {
     /**
      * Returns the number of left vacation days (without remaining vacation days: for displaying)
      *
-     * @param  account
+     * @param  account {@link Account}
      *
      * @return  number of left vacation days (without remaining vacation days)
      */
@@ -186,6 +189,13 @@ public class CalculationService {
     }
 
 
+    /**
+     * Returns the number of left remaining vacation days.
+     *
+     * @param  account {@link Account}
+     *
+     * @return  number of left remaining vacation days
+     */
     public BigDecimal calculateLeftRemainingVacationDays(Account account) {
 
         BigDecimal remainingVacationDays = account.getRemainingVacationDays();

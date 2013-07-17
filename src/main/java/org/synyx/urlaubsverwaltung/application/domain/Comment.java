@@ -9,11 +9,12 @@ import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 
 
 /**
+ * This class describes the information that every step of an {@link Application}'s lifecycle contains.
+ *
  * @author  Johannes Reuter
  * @author  Aljona Murygina
  */
@@ -23,7 +24,7 @@ public class Comment extends AbstractPersistable<Integer> {
     private static final long serialVersionUID = 8908423789423089L;
 
     private String reason;
-    
+
     private String progress;
 
     @ManyToOne
@@ -33,7 +34,7 @@ public class Comment extends AbstractPersistable<Integer> {
 
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateOfComment;
-    
+
     // each application may only have one comment to each ApplicationStatus
     private ApplicationStatus status;
 
@@ -84,23 +85,27 @@ public class Comment extends AbstractPersistable<Integer> {
         this.reason = reason;
     }
 
+
     public ApplicationStatus getStatus() {
+
         return status;
     }
 
+
     public void setStatus(ApplicationStatus status) {
+
         this.status = status;
     }
 
+
     public String getProgress() {
+
         return progress;
     }
 
+
     public void setProgress(String progress) {
+
         this.progress = progress;
     }
-    
-    
-    
-    
 }

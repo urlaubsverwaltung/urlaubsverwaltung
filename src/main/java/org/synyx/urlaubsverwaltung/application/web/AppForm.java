@@ -12,6 +12,8 @@ import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 
 
 /**
+ * View class representing an application for leave.
+ *
  * @author  Aljona Murygina
  */
 public class AppForm {
@@ -41,9 +43,9 @@ public class AppForm {
     private String phone;
 
     private DateMidnight applicationDate;
-    
+
     private boolean teamInformed;
-    
+
     private String comment;
 
     public String getAddress() {
@@ -165,22 +167,30 @@ public class AppForm {
         this.vacationType = vacationType;
     }
 
+
     public String getComment() {
+
         return comment;
     }
 
+
     public void setComment(String comment) {
+
         this.comment = comment;
     }
 
+
     public boolean isTeamInformed() {
+
         return teamInformed;
     }
 
+
     public void setTeamInformed(boolean teamInformed) {
+
         this.teamInformed = teamInformed;
     }
-    
+
 
     public Application fillApplicationObject(Application app) {
 
@@ -194,8 +204,8 @@ public class AppForm {
         app.setApplicationDate(this.applicationDate);
         app.setTeamInformed(this.teamInformed);
         app.setComment(this.comment);
-        
-        if(this.howLong == DayLength.FULL) {
+
+        if (this.howLong == DayLength.FULL) {
             app.setStartDate(this.startDate);
             app.setEndDate(this.endDate);
         } else {

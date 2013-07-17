@@ -1,26 +1,29 @@
 package org.synyx.urlaubsverwaltung.person;
 
-import org.synyx.urlaubsverwaltung.account.HolidaysAccountService;
-import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.person.PersonServiceImpl;
-import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
-import org.synyx.urlaubsverwaltung.security.CryptoService;
-import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.joda.time.DateMidnight;
+
 import org.junit.Before;
 import org.junit.Test;
+
 import org.mockito.Mockito;
+
 import org.mockito.invocation.InvocationOnMock;
+
 import org.mockito.stubbing.Answer;
+
 import org.synyx.urlaubsverwaltung.account.Account;
+import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
+import org.synyx.urlaubsverwaltung.mail.MailService;
+import org.synyx.urlaubsverwaltung.security.CryptoService;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+
 import static org.mockito.Mockito.mock;
 
 
@@ -33,7 +36,7 @@ public class PersonServiceImplTest {
     private PersonService instance;
     private PersonDAO personDAO = mock(PersonDAO.class);
     private ApplicationService applicationService = mock(ApplicationService.class);
-    private HolidaysAccountService accountService = mock(HolidaysAccountService.class);
+    private AccountService accountService = mock(AccountService.class);
     private MailService mailService = mock(MailService.class);
     private CryptoService cryptoService = mock(CryptoService.class);
 
@@ -185,6 +188,7 @@ public class PersonServiceImplTest {
 
         Mockito.doAnswer(new Answer() {
 
+                @Override
                 public Object answer(InvocationOnMock invocation) {
 
                     Object[] args = invocation.getArguments();

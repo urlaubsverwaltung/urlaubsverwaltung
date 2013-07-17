@@ -1,17 +1,20 @@
 package org.synyx.urlaubsverwaltung.person;
 
-import org.synyx.urlaubsverwaltung.security.Role;
-import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
+
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
-import javax.persistence.*;
+import org.synyx.urlaubsverwaltung.security.Role;
+
 import java.util.Collection;
-import java.util.List;
+
+import javax.persistence.*;
 
 
 /**
+ * This class describes a person.
+ *
  * @author  Johannes Reuter
  * @author  Aljona Murygina
  */
@@ -57,6 +60,7 @@ public class Person extends AbstractPersistable<Integer> {
 
         this.active = active;
     }
+
 
     public String getEmail() {
 
@@ -140,16 +144,16 @@ public class Person extends AbstractPersistable<Integer> {
 
         return permissions;
     }
-    
+
+
     public boolean hasRole(Role role) {
-        
-        for(Role r : getPermissions()) {
-            if(r.equals(role)) {
+
+        for (Role r : getPermissions()) {
+            if (r.equals(role)) {
                 return true;
             }
         }
-        
+
         return false;
-        
     }
 }

@@ -18,15 +18,15 @@ import org.springframework.validation.Validator;
 import org.synyx.urlaubsverwaltung.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
-import org.synyx.urlaubsverwaltung.util.PropertiesUtil;
 import org.synyx.urlaubsverwaltung.application.web.AppForm;
+import org.synyx.urlaubsverwaltung.util.PropertiesUtil;
 
 import java.util.Properties;
 
 
 /**
- * This class validate if an application's form ('AppForm') is filled correctly by the user, else it saves error
- * messages in errors object.
+ * This class validate if an {@link AppForm} is filled correctly by the user, else it saves error messages in errors
+ * object.
  *
  * @author  Aljona Murygina
  */
@@ -185,7 +185,7 @@ public class ApplicationValidator implements Validator {
     /**
      * Check if String fields of application form have a valid length.
      *
-     * @param  target
+     * @param  app
      * @param  errors
      */
     private void validateStringFields(AppForm app, Errors errors) {

@@ -22,6 +22,7 @@ import javax.management.Notification;
  *
  * @author  Aljona Murygina
  */
+// remove comment if you want to use this
 //@ManagedResource(objectName = "mbeans:name=myJmxDemoBean", description = "Manage some 'Urlaubsverwaltung' problems.")
 public class JmxDemo implements NotificationPublisherAware {
 
@@ -73,8 +74,6 @@ public class JmxDemo implements NotificationPublisherAware {
         return JmxViewUtil.generateReturnList(applications);
     }
 
-// use this maybe later, but not now for demo
-
 
 //    @ManagedOperation(description = "Reminds the boss via email to decide about the current waiting applications.")
 //    public String remindBossAboutWaitingApplications() {
@@ -88,7 +87,7 @@ public class JmxDemo implements NotificationPublisherAware {
 
     /**
      * is not annotated with managedoperation because you should not see this method, but it is just called by another
-     * class if an error occurs
+     * class if an error occurs.
      */
     public void notifyAboutLogin(String msg) {
 

@@ -1,6 +1,8 @@
 package org.synyx.urlaubsverwaltung.application.domain;
 
 /**
+ * Enum describing which possible types of vacation exist.
+ *
  * @author  Johannes Reuter
  * @author  Aljona Murygina
  */

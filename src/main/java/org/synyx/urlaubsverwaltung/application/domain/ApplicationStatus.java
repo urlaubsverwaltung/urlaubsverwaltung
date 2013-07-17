@@ -1,6 +1,8 @@
 package org.synyx.urlaubsverwaltung.application.domain;
 
 /**
+ * Enum describing which states an {@link Application} may have.
+ *
  * @author  Johannes Reuter
  * @author  Aljona Murygina
  */

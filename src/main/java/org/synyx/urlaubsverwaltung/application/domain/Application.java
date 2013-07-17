@@ -5,6 +5,8 @@ import org.joda.time.DateTime;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
+import org.synyx.urlaubsverwaltung.person.Person;
+
 import java.math.BigDecimal;
 
 import java.util.Date;
@@ -13,10 +15,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
-import org.synyx.urlaubsverwaltung.person.Person;
 
 
 /**
+ * This class describes an application for leave.
+ *
  * @author  Johannes Reuter
  * @author  Aljona Murygina
  */
@@ -27,15 +30,14 @@ public class Application extends AbstractPersistable<Integer> {
     private static final long serialVersionUID = 1234589209309L;
 
     // One person may own multiple applications for leave
-    // Person for who the application is
     @ManyToOne
     private Person person;
-    
+
     // The person that applied the application: might be user himself or office
     @ManyToOne
     private Person applier;
 
-    // The boss who allowed/rejected the application
+    // The person that allowed/rejected the application: might never be user himself
     @ManyToOne
     private Person boss;
 
@@ -45,7 +47,7 @@ public class Application extends AbstractPersistable<Integer> {
 
     // Number of days that is subtract from HolidayAccount
     private BigDecimal days;
-    
+
     // Period of holiday
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date startDate;
@@ -74,15 +76,15 @@ public class Application extends AbstractPersistable<Integer> {
     // Date of application (applied by user himself or by office)
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date applicationDate;
-    
+
     // Date of cancelling an application (cancelled by user himself or by office)
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date cancelDate;
-    
+
     // Date of editing (allow or reject) an application by a boss
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date editedDate;
-    
+
     // Last date of sending a reminding email to boss
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date remindDate;
@@ -95,8 +97,8 @@ public class Application extends AbstractPersistable<Integer> {
     private boolean formerlyAllowed;
 
     // for applications that spans December and January there are two extra applications: one for the period in December
-    // and one for the period in January these supplemental applications are only used for calculations (e.g. to add
-    // sick days) true if the application is only a supplemental application for calculation false if the application is
+    // and one for the period in January these supplemental applications are only used for calculations
+    // true if the application is only a supplemental application for calculation false if the application is
     // a regular application
     private boolean supplementaryApplication;
 
@@ -111,13 +113,13 @@ public class Application extends AbstractPersistable<Integer> {
     // Signature of boss
     @Column(columnDefinition = "longblob")
     private byte[] signatureBoss;
-    
-    // for office: is this application already in Calendar?
+
+    // for office: holiday already registered in Calendar?
     private boolean isInCalendar;
-    
-    // is team informed about the holidays?
+
+    // team informed about holidays?
     private boolean teamInformed;
-    
+
     private String comment;
 
     public String getAddress() {
@@ -151,7 +153,9 @@ public class Application extends AbstractPersistable<Integer> {
         }
     }
 
+
     public DateMidnight getCancelDate() {
+
         if (this.cancelDate == null) {
             return null;
         }
@@ -159,7 +163,9 @@ public class Application extends AbstractPersistable<Integer> {
         return new DateTime(this.cancelDate).toDateMidnight();
     }
 
+
     public void setCancelDate(DateMidnight cancelDate) {
+
         if (cancelDate == null) {
             this.cancelDate = null;
         } else {
@@ -167,7 +173,9 @@ public class Application extends AbstractPersistable<Integer> {
         }
     }
 
+
     public DateMidnight getEditedDate() {
+
         if (this.editedDate == null) {
             return null;
         }
@@ -175,7 +183,9 @@ public class Application extends AbstractPersistable<Integer> {
         return new DateTime(this.editedDate).toDateMidnight();
     }
 
+
     public void setEditedDate(DateMidnight editedDate) {
+
         if (editedDate == null) {
             this.editedDate = null;
         } else {
@@ -183,15 +193,18 @@ public class Application extends AbstractPersistable<Integer> {
         }
     }
 
+
     public Person getApplier() {
+
         return applier;
     }
 
+
     public void setApplier(Person applier) {
+
         this.applier = applier;
     }
-    
-    
+
 
     public Person getBoss() {
 
@@ -412,16 +425,20 @@ public class Application extends AbstractPersistable<Integer> {
         this.idOfApplication = idOfApplication;
     }
 
+
     public boolean isIsInCalendar() {
+
         return isInCalendar;
     }
 
+
     public void setIsInCalendar(boolean isInCalendar) {
+
         this.isInCalendar = isInCalendar;
     }
 
-    
-     public DateMidnight getRemindDate() {
+
+    public DateMidnight getRemindDate() {
 
         if (this.remindDate == null) {
             return null;
@@ -440,21 +457,27 @@ public class Application extends AbstractPersistable<Integer> {
         }
     }
 
+
     public String getComment() {
+
         return comment;
     }
 
+
     public void setComment(String comment) {
+
         this.comment = comment;
     }
 
+
     public boolean isTeamInformed() {
+
         return teamInformed;
     }
 
+
     public void setTeamInformed(boolean teamInformed) {
+
         this.teamInformed = teamInformed;
     }
-    
-    
 }

@@ -3,8 +3,6 @@ package org.synyx.urlaubsverwaltung.cron;
 
 import org.joda.time.DateMidnight;
 
-import org.springframework.scheduling.annotation.Scheduled;
-
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 
@@ -22,6 +20,7 @@ public class CronMailService {
         this.personService = personService;
     }
 
+    // TODO: remove comment if to be executed
     // executed every monday at 06:00 am
 //    @Scheduled(cron = "0 0 6 * * MON")
     void sendWeeklyVacationForecast() {

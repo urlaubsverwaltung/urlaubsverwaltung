@@ -28,12 +28,13 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 
 import javax.mail.Message;
-import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 
 /**
+ * Implementation of interface {@link MailService}.
+ *
  * @author  Johannes Reuter
  * @author  Aljona Murygina
  */
@@ -151,7 +152,7 @@ class MailServiceImpl implements MailService {
         MimeMessagePreparator prep = new MimeMessagePreparator() {
 
             @Override
-            public void prepare(MimeMessage mimeMessage) throws MessagingException {
+            public void prepare(MimeMessage mimeMessage) throws javax.mail.MessagingException {
 
                 mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(recipient));
 
@@ -186,7 +187,7 @@ class MailServiceImpl implements MailService {
 
 
     /**
-     * @see  MailService#sendNewApplicationNotification(org.synyx.urlaubsverwaltung.domain.Application)
+     * @see  MailService#sendNewApplicationNotification(org.synyx.urlaubsverwaltung.application.domain.Application)
      */
     @Override
     public void sendNewApplicationNotification(Application application) {
@@ -197,6 +198,9 @@ class MailServiceImpl implements MailService {
     }
 
 
+    /**
+     * @see  MailService#sendRemindBossNotification(org.synyx.urlaubsverwaltung.application.domain.Application)
+     */
     @Override
     public void sendRemindBossNotification(Application a) {
 
@@ -219,7 +223,7 @@ class MailServiceImpl implements MailService {
         MimeMessagePreparator prep = new MimeMessagePreparator() {
 
             @Override
-            public void prepare(MimeMessage mimeMessage) throws MessagingException {
+            public void prepare(MimeMessage mimeMessage) throws javax.mail.MessagingException {
 
                 ArrayList<String> recipientsList = new ArrayList<String>();
                 StringTokenizer st = new StringTokenizer(recipients, ",");
@@ -255,7 +259,7 @@ class MailServiceImpl implements MailService {
 
 
     /**
-     * @see  MailService#sendAllowedNotification(org.synyx.urlaubsverwaltung.domain.Application)
+     * @see  MailService#sendAllowedNotification(org.synyx.urlaubsverwaltung.application.domain.Application, org.synyx.urlaubsverwaltung.application.domain.Comment)
      */
     @Override
     public void sendAllowedNotification(Application application, Comment comment) {
@@ -274,7 +278,7 @@ class MailServiceImpl implements MailService {
 
 
     /**
-     * @see  MailService#sendRejectedNotification(org.synyx.urlaubsverwaltung.domain.Application)
+     * @see  MailService#sendRejectedNotification(org.synyx.urlaubsverwaltung.application.domain.Application, org.synyx.urlaubsverwaltung.application.domain.Comment)
      */
     @Override
     public void sendRejectedNotification(Application application, Comment comment) {
@@ -285,7 +289,8 @@ class MailServiceImpl implements MailService {
 
 
     /**
-     * @see  MailService#sendReferApplicationNotification(org.synyx.urlaubsverwaltung.domain.Application, org.synyx.urlaubsverwaltung.domain.Person)
+     * @see  MailService#sendReferApplicationNotification(org.synyx.urlaubsverwaltung.application.domain.Application,org.synyx.urlaubsverwaltung.person.Person,
+     *       String)
      */
     @Override
     public void sendReferApplicationNotification(Application a, Person recipient, String sender) {
@@ -296,7 +301,7 @@ class MailServiceImpl implements MailService {
 
 
     /**
-     * @see  MailService#sendConfirmation(org.synyx.urlaubsverwaltung.domain.Application)
+     * @see  MailService#sendConfirmation(org.synyx.urlaubsverwaltung.application.domain.Application)
      */
     @Override
     public void sendConfirmation(Application application) {
@@ -306,6 +311,9 @@ class MailServiceImpl implements MailService {
     }
 
 
+    /**
+     * @see  MailService#sendAppliedForLeaveByOfficeNotification(org.synyx.urlaubsverwaltung.application.domain.Application)
+     */
     @Override
     public void sendAppliedForLeaveByOfficeNotification(Application application) {
 
@@ -315,7 +323,7 @@ class MailServiceImpl implements MailService {
 
 
     /**
-     * @see  MailService#sendWeeklyVacationForecast(java.util.List)
+     * @see  MailService#sendWeeklyVacationForecast(java.util.Map)
      */
     @Override
     public void sendWeeklyVacationForecast(Map<String, Person> persons) {
@@ -330,7 +338,8 @@ class MailServiceImpl implements MailService {
 
 
     /**
-     * @see  MailService#sendCancelledNotification(org.synyx.urlaubsverwaltung.domain.Application, boolean)
+     * @see  MailService#sendCancelledNotification(org.synyx.urlaubsverwaltung.application.domain.Application, boolean,
+     *       org.synyx.urlaubsverwaltung.application.domain.Comment)
      */
     @Override
     public void sendCancelledNotification(Application application, boolean cancelledByOffice, Comment comment) {
@@ -357,6 +366,9 @@ class MailServiceImpl implements MailService {
     }
 
 
+    /**
+     * @see  MailService#sendKeyGeneratingErrorNotification(String)
+     */
     @Override
     public void sendKeyGeneratingErrorNotification(String loginName) {
 
@@ -365,6 +377,9 @@ class MailServiceImpl implements MailService {
     }
 
 
+    /**
+     * @see  MailService#sendSignErrorNotification(Integer, String)
+     */
     @Override
     public void sendSignErrorNotification(Integer applicationId, String exception) {
 
@@ -374,6 +389,9 @@ class MailServiceImpl implements MailService {
     }
 
 
+    /**
+     * @see  MailService#sendPropertiesErrorNotification(String)
+     */
     @Override
     public void sendPropertiesErrorNotification(String propertyName) {
 
@@ -383,6 +401,9 @@ class MailServiceImpl implements MailService {
     }
 
 
+    /**
+     * @see  MailService#sendRemindingBossAboutWaitingApplicationsNotification(java.util.List)
+     */
     @Override
     public void sendRemindingBossAboutWaitingApplicationsNotification(List<Application> apps) {
 
@@ -395,6 +416,9 @@ class MailServiceImpl implements MailService {
     }
 
 
+    /**
+     * @see  MailService#sendSuccessfullyUpdatedAccounts(String)
+     */
     @Override
     public void sendSuccessfullyUpdatedAccounts(String content) {
 

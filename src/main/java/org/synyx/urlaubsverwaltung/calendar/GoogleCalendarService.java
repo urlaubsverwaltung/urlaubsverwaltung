@@ -6,30 +6,37 @@ import com.google.api.client.googleapis.auth.oauth2.draft10.GoogleAuthorizationR
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson.JacksonFactory;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+
 import org.joda.time.DateTime;
+
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+
 /**
- * Test implementation for google calendar service.
+ * TODO: This class is in development! Test implementation for google calendar service.
  *
- * @author Aljona Murygina - murygina@synyx.de
+ * @author  Aljona Murygina - murygina@synyx.de
  */
 public class GoogleCalendarService {
 
-    private final String CLIENT_ID = "315787839390-bd33ftir4vacke605mcb3kvreoq17uf4.apps.googleusercontent.com";
-    private final String CLIENT_SECRET = "-3c-FYcHHZysRgAjG3Y93PxL";
-    private final String REDIRECT_URL = "urn:ietf:wg:oauth:2.0:oob";
+    // TODO: set this properties in config.properties file
+
+    private final String CLIENT_ID = "";
+    private final String CLIENT_SECRET = "";
+    private final String REDIRECT_URL = "";
     private final String SCOPE = "https://www.googleapis.com/auth/calendar";
-    private final String CALENDAR_ID = "rbsvabg6l0h2b7t5t44462vouo%40group.calendar.google.com";
-    private final String API_KEY = "AIzaSyASpM0lqp1oje-S4jT45loAC2rebeSbWyA";
+    private final String CALENDAR_ID = "";
+    private final String API_KEY = "";
     private AccessTokenResponse response;
 
     public void setUp() throws IOException {
@@ -44,21 +51,22 @@ public class GoogleCalendarService {
 
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("What is the authorization code?");
+
         String code = in.readLine();
 
-        response = new GoogleAuthorizationCodeGrant(httpTransport, jsonFactory,
-                CLIENT_ID, CLIENT_SECRET, code, REDIRECT_URL).execute();
-
+        response = new GoogleAuthorizationCodeGrant(httpTransport, jsonFactory, CLIENT_ID, CLIENT_SECRET, code,
+                REDIRECT_URL).execute();
     }
+
 
     private void getNewAccessToken() throws IOException {
 
         String url = "https://accounts.google.com/o/oauth2/token"
-                + "&client_id=" + CLIENT_ID
-                + "&client_secret=" + CLIENT_SECRET
-                + "&refresh_token=" + response.refreshToken + "grant_type=refresh_token";
+            + "&client_id=" + CLIENT_ID
+            + "&client_secret=" + CLIENT_SECRET
+            + "&refresh_token=" + response.refreshToken + "grant_type=refresh_token";
 
-        //  To obtain a new access token, make an HTTPs POST to this url
+        // To obtain a new access token, make an HTTPs POST to this url
 
         // TODO: please change this
 
@@ -69,9 +77,8 @@ public class GoogleCalendarService {
 
         System.out.println("Result of trying to obtain a new acces token:");
         System.out.println("Status: " + r.getStatusLine().getStatusCode());
-
-
     }
+
 
     private boolean isTokenValid() throws IOException {
 
@@ -92,6 +99,7 @@ public class GoogleCalendarService {
         return true;
     }
 
+
     public void addEvent() throws IOException {
 
         if (!isTokenValid()) {
@@ -100,13 +108,14 @@ public class GoogleCalendarService {
         }
 
         String summary = "Test " + DateTime.now().getHourOfDay() + ":" + DateTime.now().getMinuteOfHour();
-        
-        String json = "{'kind':'calendar#event','start':{'date': '2013-03-22'},'end': {'date': '2013-03-22'},'summary': '" + summary + "'}";
+
+        String json =
+            "{'kind':'calendar#event','start':{'date': '2013-03-22'},'end': {'date': '2013-03-22'},'summary': '"
+            + summary + "'}";
 
         doPost(json, response.accessToken);
-
-
     }
+
 
     private String getJson(Application a) {
 
@@ -114,14 +123,18 @@ public class GoogleCalendarService {
         String endDate = a.getEndDate().toString("yyyy-MM-dd");
         String summary = a.getPerson().getFirstName() + " " + a.getPerson().getLastName() + " Urlaub";
 
-        String json = "{'kind':'calendar#event','start':{'date': '" + startDate + "'},'end': {'date': '" + endDate + "'},'summary': '" + summary + "'}";
+        String json = "{'kind':'calendar#event','start':{'date': '" + startDate + "'},'end': {'date': '" + endDate
+            + "'},'summary': '" + summary + "'}";
 
         return json;
     }
 
+
     public void deleteEvent() {
+
         // TODO
     }
+
 
     public void doPost(String json, String token) throws IOException {
 
@@ -129,7 +142,7 @@ public class GoogleCalendarService {
         stringEntity.setContentType("application/json");
 
         String url = "https://www.googleapis.com/calendar/v3/calendars/"
-                + CALENDAR_ID + "/events?key=" + API_KEY;
+            + CALENDAR_ID + "/events?key=" + API_KEY;
 
         HttpPost post = new HttpPost(url);
         post.setEntity(stringEntity);
@@ -141,8 +154,8 @@ public class GoogleCalendarService {
 
         System.out.println("Done POST for " + url);
         System.out.println("Got status: " + r.getStatusLine().getStatusCode());
-
     }
+
 
     public int doGet(String url) throws IOException {
 

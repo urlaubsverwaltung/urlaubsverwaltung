@@ -2,6 +2,8 @@
 package org.synyx.urlaubsverwaltung.security;
 
 /**
+ * Enum describing possible types of rights/roles a user may have.
+ *
  * @author  Aljona Murygina
  */
 public enum Role {
@@ -13,7 +15,7 @@ public enum Role {
     ADMIN("role.admin", 4);
 
     private String roleName;
-    
+
     private int number;
 
     private Role(String roleName, int number) {
@@ -27,7 +29,9 @@ public enum Role {
         return this.roleName;
     }
 
+
     public int getNumber() {
+
         return number;
     }
 }

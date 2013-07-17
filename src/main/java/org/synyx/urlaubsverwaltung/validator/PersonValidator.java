@@ -8,9 +8,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+import org.synyx.urlaubsverwaltung.person.web.PersonForm;
 import org.synyx.urlaubsverwaltung.util.NumberUtil;
 import org.synyx.urlaubsverwaltung.util.PropertiesUtil;
-import org.synyx.urlaubsverwaltung.person.web.PersonForm;
 
 import java.math.BigDecimal;
 
@@ -21,8 +21,8 @@ import java.util.regex.Pattern;
 
 
 /**
- * This class validate if an person's form ('PersonForm') is filled correctly by the user, else it saves error messages
- * in errors object.
+ * This class validate if a {@link PersonForm} is filled correctly by the user, else it saves error messages in errors
+ * object.
  *
  * @author  Aljona Murygina
  */
@@ -88,7 +88,7 @@ public class PersonValidator implements Validator {
 
         // field login name
         validateName(form.getLoginName(), LOGIN_NAME, errors);
-        
+
         // field first name
         validateName(form.getFirstName(), FIRST_NAME, errors);
 
@@ -207,8 +207,8 @@ public class PersonValidator implements Validator {
 
         if (StringUtils.hasText(form.getAnnualVacationDays())) {
             try {
-                validateNumberOfDays(NumberUtil.parseNumber(form.getAnnualVacationDays(), locale),
-                    ANNUAL_VACATION_DAYS, max, errors);
+                validateNumberOfDays(NumberUtil.parseNumber(form.getAnnualVacationDays(), locale), ANNUAL_VACATION_DAYS,
+                    max, errors);
             } catch (NumberFormatException ex) {
                 errors.rejectValue(ANNUAL_VACATION_DAYS, ERROR_ENTRY);
             }
@@ -261,7 +261,7 @@ public class PersonValidator implements Validator {
 
     /**
      * This method validates if the holiday entitlement's fields remaining vacation days and vacation days are filled
-     * and if they are filled, it checks if the number of days is realistic
+     * and if they are filled, it checks if the number of days is realistic.
      *
      * @param  days
      * @param  field

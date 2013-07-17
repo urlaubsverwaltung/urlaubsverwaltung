@@ -2,7 +2,7 @@
 <!--
     Document   : jmxContext.xml
     Created on : 16. April 2012, 11:31
-    Author     : murygina
+    Author     : murygina@synyx.de
     Description: configuration of jmx mbeans
 -->
 
@@ -10,7 +10,9 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
-           
+          
+    <!-- remove comment to use jmx demo -->
+    
 <!--    <bean id="jmxDemo" class="org.synyx.urlaubsverwaltung.jmx.JmxDemo">
         <constructor-arg>
             <bean class="org.synyx.urlaubsverwaltung.jmx.JmxApplicationService" />

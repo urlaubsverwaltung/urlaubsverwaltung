@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import org.synyx.urlaubsverwaltung.account.Account;
-import org.synyx.urlaubsverwaltung.account.HolidaysAccountService;
+import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.domain.Comment;
@@ -59,10 +59,9 @@ import javax.servlet.http.HttpServletRequest;
 
 
 /**
- * @author  Aljona Murygina
+ * Controller for management of {@link Application} entities.
  *
- *          <p>This class contains all methods that are necessary for handling applications for leave, i.e. apply for
- *          leave, show and edit applications.</p>
+ * @author  Aljona Murygina
  */
 @Controller
 public class ApplicationController {
@@ -107,7 +106,7 @@ public class ApplicationController {
     private ApplicationService applicationService;
     private OverlapService overlapService;
     private CalculationService calculationService;
-    private HolidaysAccountService accountService;
+    private AccountService accountService;
     private CommentService commentService;
     private ApplicationValidator validator;
     private GravatarUtil gravatarUtil;
@@ -115,7 +114,7 @@ public class ApplicationController {
     private SecurityUtil securityUtil;
 
     public ApplicationController(PersonService personService, ApplicationService applicationService,
-        OverlapService overlapService, CalculationService calculationService, HolidaysAccountService accountService,
+        OverlapService overlapService, CalculationService calculationService, AccountService accountService,
         CommentService commentService, ApplicationValidator validator, GravatarUtil gravatarUtil,
         MailService mailService, SecurityUtil securityUtil) {
 
@@ -469,12 +468,7 @@ public class ApplicationController {
                 model.addAttribute("errors", errors);
             }
 
-//
-//            if (isOffice) {
-//                return APP_FORM_OFFICE_JSP;
-//            } else {
             return ApplicationConstants.APP_FORM_JSP;
-//            }
         }
 
         validator.validatePast(appForm, errors, model);
@@ -486,11 +480,7 @@ public class ApplicationController {
                 model.addAttribute("errors", errors);
             }
 
-//            if (isOffice) {
-//                return APP_FORM_OFFICE_JSP;
-//            } else {
             return ApplicationConstants.APP_FORM_JSP;
-//            }
         }
 
         if (checkAndSaveApplicationForm(appForm, personForForm, isOffice, errors, model)) {
@@ -510,11 +500,7 @@ public class ApplicationController {
             model.addAttribute("errors", errors);
         }
 
-//        if (isOffice) {
-//            return APP_FORM_OFFICE_JSP;
-//        } else {
         return ApplicationConstants.APP_FORM_JSP;
-//        }
     }
 
 
@@ -669,8 +655,6 @@ public class ApplicationController {
 
                     List<Person> persons = personService.getAllPersons(); // get all active persons
                     model.addAttribute(ApplicationConstants.PERSON_LIST, persons);
-
-//                    prepareAccountsMap(persons, model);
                 }
             }
 

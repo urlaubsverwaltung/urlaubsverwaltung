@@ -27,7 +27,7 @@ public class CryptoService {
     private static final int KEYSIZE = 2048;
 
     /**
-     * generates a key pair (private key, public key)
+     * generates a key pair (private key, public key).
      *
      * @return  KeyPair
      *
@@ -52,13 +52,13 @@ public class CryptoService {
      * <p>With the private key you sign the data, with the public key you verify the signed data.</p>
      *
      * @param  privKey
-     * @param  data
+     * @param  originData
      *
      * @return  signed data {byte[]}
      *
      * @throws  NoSuchAlgorithmException
      */
-    public byte[] sign(PrivateKey privKey, byte[] ursprungsData) throws NoSuchAlgorithmException, InvalidKeyException,
+    public byte[] sign(PrivateKey privKey, byte[] originData) throws NoSuchAlgorithmException, InvalidKeyException,
         SignatureException {
 
         Signature sign = Signature.getInstance("SHA256withRSA");
@@ -68,7 +68,7 @@ public class CryptoService {
         sign.initSign(privKey);
 
         /* Update and sign the data */
-        sign.update(ursprungsData);
+        sign.update(originData);
 
         updatedData = sign.sign();
 
@@ -77,9 +77,9 @@ public class CryptoService {
 
 
     /**
-     * verifies if signature is valid (test with public key if signature is created with private key)
+     * verifies if signature is valid (test with public key if signature is created with private key).
      *
-     * @param  ursprungsData
+     * @param  originData
      * @param  signatureToVerify
      * @param  pubKey
      *
@@ -89,20 +89,20 @@ public class CryptoService {
      * @throws  SignatureException
      * @throws  InvalidKeyException
      */
-    public boolean verify(byte[] ursprungsData, byte[] signatureToVerify, PublicKey pubKey)
+    public boolean verify(byte[] originData, byte[] signatureToVerify, PublicKey pubKey)
         throws NoSuchAlgorithmException, SignatureException, InvalidKeyException {
 
         Signature sign = Signature.getInstance("SHA256withRSA");
 
         sign.initVerify(pubKey);
-        sign.update(ursprungsData);
+        sign.update(originData);
 
         return sign.verify(signatureToVerify);
     }
 
 
     /**
-     * takes in database saved bytes of PrivateKey and converts back to PrivateKey
+     * takes bytes of PrivateKey saved in database and converts back to PrivateKey.
      *
      * @param  savedKey
      *
@@ -124,7 +124,7 @@ public class CryptoService {
 
 
     /**
-     * takes in database saved bytes of PublicKey and converts back to PublicKey
+     * takes bytes of PublicKey saved in database and converts back to PublicKey.
      *
      * @param  savedKey
      *

@@ -8,7 +8,7 @@ import org.joda.time.DateMidnight;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import org.synyx.urlaubsverwaltung.account.Account;
-import org.synyx.urlaubsverwaltung.account.HolidaysAccountService;
+import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.application.service.CalculationService;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -29,11 +29,11 @@ public class TurnOfTheYearAccountUpdaterService {
     private static final Logger LOG = Logger.getLogger("audit");
 
     private PersonService personService;
-    private HolidaysAccountService accountService;
+    private AccountService accountService;
     private CalculationService calculationService;
     private MailService mailService;
 
-    public TurnOfTheYearAccountUpdaterService(PersonService personService, HolidaysAccountService accountService,
+    public TurnOfTheYearAccountUpdaterService(PersonService personService, AccountService accountService,
         CalculationService calculationService, MailService mailService) {
 
         this.personService = personService;
@@ -42,7 +42,10 @@ public class TurnOfTheYearAccountUpdaterService {
         this.mailService = mailService;
     }
 
-    // executed every 1st January at 05:00 am
+    /**
+     * This cronjob is executed every 1st January at 05:00 am, it calculates for every user how many vacation days
+     * he/she has left from last year, this number is set as number of remaining vacation days for the new year.
+     */
     @Scheduled(cron = "0 0 5 1 1 *")
     void updateHolidaysAccounts() {
 

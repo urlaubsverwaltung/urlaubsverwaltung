@@ -1,29 +1,40 @@
 
 package org.synyx.urlaubsverwaltung.person.web;
 
-import org.synyx.urlaubsverwaltung.security.web.SecurityUtil;
-import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.joda.time.DateMidnight;
 import org.joda.time.chrono.GregorianChronology;
+
 import org.springframework.stereotype.Controller;
+
 import org.springframework.ui.Model;
+
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.*;
+
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.support.RequestContextUtils;
+
 import org.synyx.urlaubsverwaltung.account.Account;
+import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.account.HolidaysAccountService;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.security.web.SecurityUtil;
 import org.synyx.urlaubsverwaltung.util.NumberUtil;
 import org.synyx.urlaubsverwaltung.validator.PersonValidator;
+import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 
-import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+
 import java.util.Locale;
 
+import javax.servlet.http.HttpServletRequest;
+
+
 /**
- *
- * @author Aljona Murygina - murygina@synyx.de
+ * @author  Aljona Murygina - murygina@synyx.de
  */
 @Controller
 public class PersonManagementController {
@@ -33,14 +44,14 @@ public class PersonManagementController {
     private static final String EDIT_LINK = ACTIVE_LINK + "/{" + PersonConstants.PERSON_ID + "}/edit";
     private static final String DEACTIVATE_LINK = ACTIVE_LINK + "/{" + PersonConstants.PERSON_ID + "}/deactivate";
     private static final String ACTIVATE_LINK = ACTIVE_LINK + "/{" + PersonConstants.PERSON_ID + "}/activate";
-    
+
     private PersonService personService;
-    private HolidaysAccountService accountService;
+    private AccountService accountService;
     private PersonValidator validator;
     private SecurityUtil securityUtil;
 
-    public PersonManagementController(PersonService personService, HolidaysAccountService accountService,
-            PersonValidator validator, SecurityUtil securityUtil) {
+    public PersonManagementController(PersonService personService, AccountService accountService,
+        PersonValidator validator, SecurityUtil securityUtil) {
 
         this.personService = personService;
         this.accountService = accountService;
@@ -49,18 +60,17 @@ public class PersonManagementController {
     }
 
     /**
-     * Prepares the view object PersonForm and returns jsp with form to edit a
-     * user.
+     * Prepares the view object PersonForm and returns jsp with form to edit a user.
      *
-     * @param request
-     * @param personId
-     * @param model
+     * @param  request
+     * @param  personId
+     * @param  model
      *
      * @return
      */
     @RequestMapping(value = EDIT_LINK, method = RequestMethod.GET)
     public String editPersonForm(HttpServletRequest request,
-            @PathVariable(PersonConstants.PERSON_ID) Integer personId, Model model) {
+        @PathVariable(PersonConstants.PERSON_ID) Integer personId, Model model) {
 
         if (securityUtil.isOffice()) {
             Person person = personService.getPersonByID(personId);
@@ -78,21 +88,21 @@ public class PersonManagementController {
         }
     }
 
+
     /**
-     * Prepares the view object PersonForm and returns jsp with form to edit a
-     * user.
+     * Prepares the view object PersonForm and returns jsp with form to edit a user.
      *
-     * @param request
-     * @param year
-     * @param personId
-     * @param model
+     * @param  request
+     * @param  year
+     * @param  personId
+     * @param  model
      *
      * @return
      */
     @RequestMapping(value = EDIT_LINK, params = ControllerConstants.YEAR, method = RequestMethod.GET)
     public String editPersonFormForYear(HttpServletRequest request,
-            @RequestParam(ControllerConstants.YEAR) int year,
-            @PathVariable(PersonConstants.PERSON_ID) Integer personId, Model model) {
+        @RequestParam(ControllerConstants.YEAR) int year,
+        @PathVariable(PersonConstants.PERSON_ID) Integer personId, Model model) {
 
         int currentYear = DateMidnight.now().getYear();
 
@@ -114,12 +124,13 @@ public class PersonManagementController {
         }
     }
 
+
     /**
      * Prepares PersonForm object with the given parameters.
      *
-     * @param year
-     * @param person
-     * @param locale
+     * @param  year
+     * @param  person
+     * @param  locale
      */
     private PersonForm preparePersonForm(int year, Person person, Locale locale) {
 
@@ -149,12 +160,13 @@ public class PersonManagementController {
         return new PersonForm(person, String.valueOf(year), account, ann, rem, remainingVacationDaysExpire);
     }
 
+
     /**
      * Adding attributes to model.
      *
-     * @param person
-     * @param personForm
-     * @param model
+     * @param  person
+     * @param  personForm
+     * @param  model
      */
     private void addModelAttributesForPersonForm(Person person, PersonForm personForm, Model model) {
 
@@ -162,15 +174,14 @@ public class PersonManagementController {
         model.addAttribute(ControllerConstants.PERSON, person);
         model.addAttribute(PersonConstants.PERSONFORM, personForm);
         model.addAttribute("currentYear", DateMidnight.now().getYear());
-        
     }
-    
-   /**
-     * Prepares the view object PersonForm and returns jsp with form to create a new
-     * user.
+
+
+    /**
+     * Prepares the view object PersonForm and returns jsp with form to create a new user.
      *
-     * @param request
-     * @param model
+     * @param  request
+     * @param  model
      *
      * @return
      */
@@ -190,22 +201,23 @@ public class PersonManagementController {
         }
     }
 
+
     /**
-     * Gets informations out of view object PersonForm and edits the concerning
-     * person and their entitlement to holidays account.
+     * Gets informations out of view object PersonForm and edits the concerning person and their entitlement to holidays
+     * account.
      *
-     * @param request
-     * @param personId
-     * @param personForm
-     * @param errors
-     * @param model
+     * @param  request
+     * @param  personId
+     * @param  personForm
+     * @param  errors
+     * @param  model
      *
      * @return
      */
     @RequestMapping(value = EDIT_LINK, method = RequestMethod.PUT)
     public String editPerson(HttpServletRequest request,
-            @PathVariable(PersonConstants.PERSON_ID) Integer personId,
-            @ModelAttribute(PersonConstants.PERSONFORM) PersonForm personForm, Errors errors, Model model) {
+        @PathVariable(PersonConstants.PERSON_ID) Integer personId,
+        @ModelAttribute(PersonConstants.PERSONFORM) PersonForm personForm, Errors errors, Model model) {
 
         Locale locale = RequestContextUtils.getLocale(request);
 
@@ -241,9 +253,10 @@ public class PersonManagementController {
         return "redirect:/web/staff/" + personToUpdate.getId() + "/overview";
     }
 
+
     @RequestMapping(value = NEW_LINK, method = RequestMethod.POST)
-    public String newPerson(HttpServletRequest request, @ModelAttribute(PersonConstants.PERSONFORM) PersonForm personForm,
-            Errors errors, Model model) {
+    public String newPerson(HttpServletRequest request,
+        @ModelAttribute(PersonConstants.PERSONFORM) PersonForm personForm, Errors errors, Model model) {
 
         Locale locale = RequestContextUtils.getLocale(request);
 
@@ -281,11 +294,10 @@ public class PersonManagementController {
 
 
     /**
-     * This method deactivates a person, i.e. information about a deactivated
-     * person remains, but he/she has no right to login, to apply for leave,
-     * etc.
+     * This method deactivates a person, i.e. information about a deactivated person remains, but he/she has no right to
+     * login, to apply for leave, etc.
      *
-     * @param personId
+     * @param  personId
      *
      * @return
      */
@@ -300,11 +312,12 @@ public class PersonManagementController {
         return "redirect:/web" + ACTIVE_LINK;
     }
 
+
     /**
-     * This method activates a person (e.g. after unintended deactivating of a
-     * person), i.e. this person has once again his user rights)
+     * This method activates a person (e.g. after unintended deactivating of a person), i.e. this person has once again
+     * his user rights)
      *
-     * @param personId
+     * @param  personId
      *
      * @return
      */
@@ -318,6 +331,4 @@ public class PersonManagementController {
 
         return "redirect:/web" + ACTIVE_LINK;
     }
-
-    
 }

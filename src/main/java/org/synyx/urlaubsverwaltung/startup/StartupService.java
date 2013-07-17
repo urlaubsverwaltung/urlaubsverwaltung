@@ -11,6 +11,8 @@ import javax.annotation.PostConstruct;
 
 
 /**
+ * This service is executed every time the application is started.
+ *
  * @author  Aljona Murygina - murygina@synyx.de
  */
 public class StartupService {

@@ -18,10 +18,7 @@
         <property name="port" value="${mail.port}" />
 </bean>
  
-<bean id="mailService" class="org.synyx.urlaubsverwaltung.mail.MailServiceImpl">
-	<property name="mailSender" ref="mailSender" />
-	<property name="velocityEngine" ref="velocityEngine" />
-</bean>
+<bean id="mailService" class="org.synyx.urlaubsverwaltung.mail.MailServiceImpl" />
  
 <bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
       <property name="velocityProperties">

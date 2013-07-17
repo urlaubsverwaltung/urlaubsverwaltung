@@ -1,12 +1,9 @@
 package org.synyx.urlaubsverwaltung.util;
 
-import java.io.IOException;
-import java.util.Properties;
 import org.apache.log4j.Logger;
+
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 
 /**
@@ -15,18 +12,18 @@ import org.joda.time.format.DateTimeFormatter;
 public class DateUtil {
 
     private static final Logger LOG = Logger.getLogger("errorLog");
-    
+
     private static final int CHRISTMAS_EVE = 24;
     private static final int LAST_DAY_OF_MONTH = 31;
     private static final int FIRST_DAY_OF_MONTH = 1;
     private static final int SATURDAY = DateTimeConstants.SATURDAY;
     private static final int SUNDAY = DateTimeConstants.SUNDAY;
-    
+
     private static final String PROP_FILE = "custom.properties";
     private static final String PROP_KEY = "holiday.corpus.christi";
 
     /**
-     * checks if the given date is a work day
+     * checks if the given date is a work day.
      *
      * @param  date
      *
@@ -39,9 +36,10 @@ public class DateUtil {
 
 
     /**
-     * checks if the given period is before April
+     * checks if the given period is before April.
      *
-     * @param  month
+     * @param  startMonth
+     * @param  endMonth
      *
      * @return
      */
@@ -53,9 +51,10 @@ public class DateUtil {
 
 
     /**
-     * checks if the given period is after April
+     * checks if the given period is after April.
      *
-     * @param  month
+     * @param  startMonth
+     * @param  endMonth
      *
      * @return
      */
@@ -67,10 +66,10 @@ public class DateUtil {
 
 
     /**
-     * checks if the given period spans March and April
+     * checks if the given period spans March and April.
      *
-     * @param  monthStart
-     * @param  monthEnd
+     * @param  startDate
+     * @param  endDate
      *
      * @return  true if startMonth is March and endMonth is April, false otherwise
      */
@@ -81,10 +80,10 @@ public class DateUtil {
 
 
     /**
-     * checks if given period spans December and January
+     * checks if given period spans December and January.
      *
-     * @param  startMonth
-     * @param  endMonth
+     * @param  startDate
+     * @param  endDate
      *
      * @return  true if startMonth is December and endMonth is January, false otherwise
      */
@@ -95,7 +94,7 @@ public class DateUtil {
 
 
     /**
-     * checks if given date is before April
+     * checks if given date is before April.
      *
      * @param  date
      *
@@ -108,7 +107,7 @@ public class DateUtil {
 
 
     /**
-     * checks if given date is after April
+     * checks if given date is after April.
      *
      * @param  date
      *
@@ -121,7 +120,7 @@ public class DateUtil {
 
 
     /**
-     * this method checks if a given date is on Christmas Eve or on New Year's Eve
+     * this method checks if a given date is on Christmas Eve or on New Year's Eve.
      *
      * @param  date
      *

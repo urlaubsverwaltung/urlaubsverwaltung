@@ -25,11 +25,11 @@ public class DateMidnightPropertyEditor extends PropertyEditorSupport {
 
     public DateMidnightPropertyEditor(Locale locale) {
 
-        // TODO: don't do this shit with pattern!!!
+        // TODO: not so nice....
         this.formatter = DateTimeFormat.forPattern("dd.MM.yyyy");
     }
 
-    // aus Datum String machen
+    // Date to String
     @Override
     public String getAsText() {
 
@@ -41,7 +41,7 @@ public class DateMidnightPropertyEditor extends PropertyEditorSupport {
     }
 
 
-    // aus String Datum erzeugen
+    // String to Date
     @Override
     public void setAsText(String text) throws IllegalArgumentException {
 

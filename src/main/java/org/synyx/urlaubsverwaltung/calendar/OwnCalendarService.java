@@ -2,6 +2,7 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
 import org.joda.time.DateMidnight;
+
 import org.synyx.urlaubsverwaltung.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 
@@ -9,6 +10,8 @@ import java.math.BigDecimal;
 
 
 /**
+ * Service for calendar purpose.
+ *
  * @author  Aljona Murygina
  */
 public class OwnCalendarService {
@@ -16,6 +19,7 @@ public class OwnCalendarService {
     private JollydayCalendar jollydayCalendar;
 
     public OwnCalendarService(JollydayCalendar jollydayCalendar) {
+
         this.jollydayCalendar = jollydayCalendar;
     }
 
@@ -59,7 +63,7 @@ public class OwnCalendarService {
      * getWorkDays calculates the number of workdays, getPublicHolidays calculates the number of official holidays
      * within the workdays. Number of vacation days results from workdays minus official holidays.
      *
-     * @param dayLength
+     * @param  dayLength
      * @param  startDate
      * @param  endDate
      *

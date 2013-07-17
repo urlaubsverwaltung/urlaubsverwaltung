@@ -26,7 +26,7 @@ public class GravatarUtil {
     /**
      * This method generates the complete gravatar's url by the given email address.
      *
-     * @param  String  email
+     * @param  email  String
      *
      * @return  complete url of the gravatar
      */
@@ -46,7 +46,7 @@ public class GravatarUtil {
     /**
      * This method creates a md5 hash of the given email.
      *
-     * @param  email
+     * @param  email  String
      *
      * @return  encrypted email address
      */

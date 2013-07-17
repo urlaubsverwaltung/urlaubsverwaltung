@@ -6,16 +6,21 @@ package org.synyx.urlaubsverwaltung.calendar;
 
 import de.jollyday.Holiday;
 import de.jollyday.HolidayManager;
+
 import org.joda.time.DateMidnight;
 import org.joda.time.chrono.GregorianChronology;
+
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.net.URL;
+
 import java.util.HashSet;
 import java.util.Set;
 
 
 /**
+ * Service for calendar purpose using jollyday library.
+ *
  * @author  Aljona Murygina
  */
 public class JollydayCalendar {
@@ -28,10 +33,9 @@ public class JollydayCalendar {
     public JollydayCalendar() {
 
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        URL url = cl.getResource("Holidays_synyx.xml");
-        
-        manager = HolidayManager.getInstance(url);
+        URL url = cl.getResource("Holidays_custom.xml");
 
+        manager = HolidayManager.getInstance(url);
     }
 
     /**
@@ -90,16 +94,17 @@ public class JollydayCalendar {
         Set<Holiday> holidays = manager.getHolidays(date.toInterval());
 
         // if set is empty, the given date is no holiday
-        if(!holidays.isEmpty()) {
+        if (!holidays.isEmpty()) {
             return true;
         }
-        
+
         return false;
     }
-    
+
+
     /**
      * a Set of a year's all public holidays is given, this method creates a Set of public holidays that only are on
-     * weekdays
+     * weekdays.
      *
      * @param  holidays  Set of all public holidays of a year
      *
@@ -120,7 +125,7 @@ public class JollydayCalendar {
 
 
     /**
-     * calculates if a given date is a full public holiday (1.0), a half public holiday (0.5) or none (0.0)
+     * calculates if a given date is a full public holiday (1.0), a half public holiday (0.5) or none (0.0).
      *
      * @param  holidaysOnWeekdays
      * @param  date
@@ -144,8 +149,7 @@ public class JollydayCalendar {
                 }
             }
         }
-        
-        
+
         return publicHolidays;
     }
 }

@@ -7,10 +7,10 @@
 
 
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
-        <property name="driverClassName"><value>${driver}</value></property>
-        <property name="url"><value>${url}</value></property>
-        <property name="username"><value>${username}</value></property>
-        <property name="password"><value>${pwd}</value></property>
+        <property name="driverClassName"><value>${db.driver}</value></property>
+        <property name="url"><value>${db.url}</value></property>
+        <property name="username"><value>${db.username}</value></property>
+        <property name="password"><value>${db.pwd}</value></property>
         <property name="validationQuery" value="SELECT 1" />
         <property name="testOnBorrow" value="true" />
     </bean>

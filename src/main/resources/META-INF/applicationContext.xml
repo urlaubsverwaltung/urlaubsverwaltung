@@ -16,19 +16,13 @@
                            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
                            http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd"> 
 
-<!--
-    Document   : applicationContext.xml
-    Created on : 31. August 2011, 14:48
-    Author     : Aljona Murygina
-    Description:
-        Purpose of the document follows.
--->
-
 <context:annotation-config/>
 
 <tx:annotation-driven/>
 
+<!-- remove comment to use jmx demo --> 
 <!--<import resource="jmxContext.xml"/>-->
+    
 <import resource="infrastructure.xml"/>
 <import resource="security.xml"/>
 <import resource="spring-mail.xml"/>
@@ -48,9 +42,7 @@
     <constructor-arg ref="jollydayCalendar" />
 </bean>
 
-<bean id="googleCalendarService" class="org.synyx.urlaubsverwaltung.calendar.GoogleCalendarService" />
-
-<bean id="accountService" class="org.synyx.urlaubsverwaltung.account.HolidaysAccountServiceImpl">
+<bean id="accountService" class="org.synyx.urlaubsverwaltung.account.AccountServiceImpl">
     <constructor-arg ref="ownCalendarService" />
 </bean>
 
@@ -106,9 +98,8 @@
     <constructor-arg ref="personService" />
 </bean>
 
-<bean class="org.synyx.urlaubsverwaltung.cron.TestService">
-    <constructor-arg ref="googleCalendarService" />
-</bean>
-
+<!-- only for developing purpose -->
+<bean id="googleCalendarService" class="org.synyx.urlaubsverwaltung.calendar.GoogleCalendarService" />
+    
 </beans>
 

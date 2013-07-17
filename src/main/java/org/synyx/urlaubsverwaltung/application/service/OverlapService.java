@@ -1,44 +1,48 @@
 package org.synyx.urlaubsverwaltung.application.service;
 
-import org.synyx.urlaubsverwaltung.application.domain.OverlapCase;
-import java.util.ArrayList;
-import java.util.List;
 import org.joda.time.DateMidnight;
 import org.joda.time.Interval;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.synyx.urlaubsverwaltung.application.dao.ApplicationDAO;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.DayLength;
+import org.synyx.urlaubsverwaltung.application.domain.OverlapCase;
+
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
- * This service handles the validation of applications for leave concerning overlapping, 
- * i.e. if there is already an existent application for leave in the same period, 
- * the user may not apply for leave in this period.
- * 
- * @author Aljona Murygina - murygina@synyx.de
+ * This service handles the validation of {@link Application} for leave concerning overlapping, i.e. if there is already
+ * an existent {@link Application} for leave in the same period, the user may not apply for leave in this period.
+ *
+ * @author  Aljona Murygina - murygina@synyx.de
  */
 public class OverlapService {
-    
+
     private ApplicationDAO applicationDAO;
-    
+
     @Autowired
     public OverlapService(ApplicationDAO applicationDAO) {
+
         this.applicationDAO = applicationDAO;
     }
-    
-    
+
     /**
-     * Check if new application is overlapping with an existent application. There are three possible cases: (1) The
-     * period of the new application has no overlap at all with existent applications; i.e. you can calculate the normal
-     * way and save the application if there are enough vacation days on person's holidays account. (2) The period of
-     * the new application is element of an existent application's period; i.e. the new application is not necessary
-     * because there is already an existent application for this period. (3) The period of the new application is part
-     * of an existent application's period, but for a part of it you could apply new vacation; i.e. user must be asked
-     * if he wants to apply for leave for the not overlapping period of the new application.
+     * Check if the given new {@link Application} is overlapping with an existent {@link Application}. There are three
+     * possible cases: (1) The period of the new application has no overlap at all with existent applications; i.e. you
+     * can calculate the normal way and save the application if there are enough vacation days on person's holidays
+     * account. (2) The period of the new application is element of an existent application's period; i.e. the new
+     * application is not necessary because there is already an existent application for this period. (3) The period of
+     * the new application is part of an existent application's period, but for a part of it you could apply new
+     * vacation; i.e. user must be asked if he wants to apply for leave for the not overlapping period of the new
+     * application.
      *
-     * @param  application  (the new application)
+     * @param  application {@link Application} (the new application)
      *
-     * @return  OverlapCase (Enum)
+     * @return  {@link OverlapCase} (Enum)
      */
     public OverlapCase checkOverlap(Application application) {
 
@@ -48,22 +52,22 @@ public class OverlapService {
             return checkOverlapForNoon(application);
         } else {
             // check if there are existent ANY applications (full day and half day)
-            List<Application> apps = applicationDAO.getRelevantActiveApplicationsByPeriodForEveryDayLength(application.getStartDate().toDate(), application.getEndDate().toDate(), application.getPerson());
+            List<Application> apps = applicationDAO.getRelevantActiveApplicationsByPeriodForEveryDayLength(
+                    application.getStartDate().toDate(), application.getEndDate().toDate(), application.getPerson());
 
             return getCaseOfOverlap(application, apps);
         }
-
     }
-    
-    
-        /**
+
+
+    /**
      * With this method you get a list of existent applications that overlap with the given period (information about
      * person and period in application) and have the given day length.
      *
-     * @param  Application  app
-     * @param  DayLength  length
+     * @param  app {@link Application}
+     * @param  length {@link DayLength}
      *
-     * @return  List<Application> applications overlapping with the period of the given application
+     * @return  {@link List} of {@link Application}s overlapping with the period of the given {@link Application}
      */
     private List<Application> getApplicationsByPeriodAndDayLength(Application app, DayLength length) {
 
@@ -79,13 +83,14 @@ public class OverlapService {
         }
     }
 
+
     /**
-     * Method to check if the given application with day length "FULL" may be applied or not. (are there existent
-     * applications for this period or not?)
+     * Method to check if the given {@link Application} with {@link DayLength.FULL} may be applied or not. (are there
+     * existent {@link Application}s for this period or not?)
      *
-     * @param  application
+     * @param  application {@link Application}
      *
-     * @return  int 1 for check is alright: application for leave is valid. 2 or 3 for invalid application for leave.
+     * @return  int 1 for check is alright: {@link Application} is valid. 2 or 3 for invalid {@link Application}.
      */
     protected OverlapCase checkOverlapForFullDay(Application application) {
 
@@ -95,13 +100,14 @@ public class OverlapService {
         return getCaseOfOverlap(application, apps);
     }
 
+
     /**
-     * Method to check if the given application with day length "MORNING" may be applied or not. (are there existent
-     * applications for this period or not?)
+     * Method to check if the given {@link Application} with {@link DayLength.MORNING} may be applied or not. (are there
+     * existent {@link Application}s for this period or not?)
      *
-     * @param  application
+     * @param  application {@link Application}
      *
-     * @return  int 1 for check is alright: application for leave is valid. 2 or 3 for invalid application for leave.
+     * @return  int 1 for check is alright: {@link Application} is valid. 2 or 3 for invalid {@link Application}.
      */
     protected OverlapCase checkOverlapForMorning(Application application) {
 
@@ -117,8 +123,9 @@ public class OverlapService {
         }
     }
 
+
     /**
-     * Method to check if the given application with day length "NOON" may be applied or not. (are there existent
+     * Method to check if the given application with {@link DayLength.NOON} may be applied or not. (are there existent
      * applications for this period or not?)
      *
      * @param  application
@@ -139,15 +146,16 @@ public class OverlapService {
         }
     }
 
+
     /**
-     * This method contains the logic how to check if there are existent overlapping applications for the given period;
-     * use this method only for full day applications.
+     * This method contains the logic how to check if there are existent overlapping {@link Application} for the given
+     * period; use this method only for full day {@link Application}s.
      *
-     * @param  application
+     * @param  application {@link Application}
      *
-     * @return  1 if there is no overlap at all - 2 if the given period is element of (an) existent application(s) - 3
-     *          if the new application is part of an existent application's period, but for a part of it you could apply
-     *          new vacation
+     * @return  1 if there is no overlap at all - 2 if the given period is element of (an) existent {@link Application}
+     *          (s) - 3 if the new {@link Application} is part of an existent {@link Application}'s period, but for a
+     *          part of it you could apply new vacation
      */
     private OverlapCase getCaseOfOverlap(Application application, List<Application> apps) {
 
@@ -189,15 +197,16 @@ public class OverlapService {
         }
     }
 
+
     /**
-     * This method gets a list of applications that overlap with the period of the given application; all overlapping
-     * intervals are put in this list for further checking (e.g. if there are gaps) and for getting the case of overlap
-     * (1, 2 or 3)
+     * This method gets a list of {@link Application}s that overlap with the period of the given {@link Application};
+     * all overlapping intervals are put in this list for further checking (e.g. if there are gaps) and for getting the
+     * case of overlap (1, 2 or 3)
      *
-     * @param  application
-     * @param  apps
+     * @param  application {@link Application}
+     * @param  apps {@link List} of {@link Application}
      *
-     * @return  List<Interval> list of overlaps
+     * @return  {@link List} of overlap intervals
      */
     private List<Interval> getListOfOverlaps(Application application, List<Application> apps) {
 
@@ -229,14 +238,15 @@ public class OverlapService {
         return listOfOverlaps;
     }
 
+
     /**
-     * This method gets a list of overlaps and checks with the given application if there are any gaps where a user
-     * could apply for leave (these gaps are not yet applied for leave) - may be a feature in later version.
+     * This method gets a list of overlaps and checks with the given {@link Application} if there are any gaps where a
+     * user could apply for leave (these gaps are not yet applied for leave) - may be a feature in later version.
      *
-     * @param  application
-     * @param  listOfOverlaps
+     * @param  application {@link Application}
+     * @param  listOfOverlaps {@link List} of {@link Interval}
      *
-     * @return  List<Interval> list of gaps
+     * @return  {@link List} of {@link Interval} list of gaps
      */
     private List<Interval> getListOfGaps(Application application, List<Interval> listOfOverlaps) {
 
@@ -272,12 +282,13 @@ public class OverlapService {
         return listOfGaps;
     }
 
+
     /**
      * This method checks if the two given intervals have a gap or if they abut. Some examples: (1) if period 1: 16.-18.
      * and period 2: 19.-20 --> they abut (2) if period 1: 16.-18. and period 2: 20.-22 --> they have a gap
      *
-     * @param  i1
-     * @param  i2
+     * @param  i1 {@link Interval}
+     * @param  i2 {@link Interval}
      *
      * @return  true if they have a gap between or false if they have no gap
      */
@@ -285,7 +296,7 @@ public class OverlapService {
 
         // test if end of interval is equals resp. one day plus of start of other interval
         if (!(i1.getEnd().toDateMidnight().equals(i2.getStart().toDateMidnight())
-                || i1.getEnd().toDateMidnight().plusDays(1).equals(i2.getStart().toDateMidnight()))) {
+                    || i1.getEnd().toDateMidnight().plusDays(1).equals(i2.getStart().toDateMidnight()))) {
             return true;
         } else {
             return false;

@@ -1,38 +1,45 @@
 package org.synyx.urlaubsverwaltung.person.web;
 
-import org.synyx.urlaubsverwaltung.security.web.SecurityUtil;
-import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.chrono.GregorianChronology;
+
 import org.springframework.stereotype.Controller;
+
 import org.springframework.ui.Model;
+
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
+
 import org.synyx.urlaubsverwaltung.account.Account;
+import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.service.CalculationService;
-import org.synyx.urlaubsverwaltung.account.HolidaysAccountService;
+import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
+import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.security.web.SecurityUtil;
+import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.util.GravatarUtil;
 import org.synyx.urlaubsverwaltung.validator.PersonValidator;
+import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 
 import java.math.BigDecimal;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 
 /**
- * @author Aljona Murygina
+ * Controller for management of {@link Person} entities.
+ *
+ * @author  Aljona Murygina
  */
 @Controller
 public class PersonController {
@@ -45,7 +52,7 @@ public class PersonController {
 
     private PersonService personService;
     private ApplicationService applicationService;
-    private HolidaysAccountService accountService;
+    private AccountService accountService;
     private CalculationService calculationService;
     private GravatarUtil gravatarUtil;
     private PersonValidator validator;
@@ -53,8 +60,8 @@ public class PersonController {
     private SecurityUtil securityUtil;
 
     public PersonController(PersonService personService, ApplicationService applicationService,
-                            HolidaysAccountService accountService, CalculationService calculationService, GravatarUtil gravatarUtil,
-                            PersonValidator validator, OwnCalendarService calendarService, SecurityUtil securityUtil) {
+        AccountService accountService, CalculationService calculationService, GravatarUtil gravatarUtil,
+        PersonValidator validator, OwnCalendarService calendarService, SecurityUtil securityUtil) {
 
         this.personService = personService;
         this.applicationService = applicationService;
@@ -69,7 +76,8 @@ public class PersonController {
     /**
      * Shows list with inactive staff, default: for current year.
      *
-     * @param model
+     * @param  model
+     *
      * @return
      */
     @RequestMapping(value = INACTIVE_LINK, method = RequestMethod.GET)
@@ -97,7 +105,8 @@ public class PersonController {
     /**
      * Shows list with active staff, default: for current year.
      *
-     * @param model
+     * @param  model
+     *
      * @return
      */
     @RequestMapping(value = ACTIVE_LINK, method = RequestMethod.GET)
@@ -119,8 +128,9 @@ public class PersonController {
     /**
      * Shows list with inactive staff for the given year.
      *
-     * @param year
-     * @param model
+     * @param  year
+     * @param  model
+     *
      * @return
      */
     @RequestMapping(value = INACTIVE_LINK, params = ControllerConstants.YEAR, method = RequestMethod.GET)
@@ -148,8 +158,9 @@ public class PersonController {
     /**
      * Shows list with active staff for the given year.
      *
-     * @param year
-     * @param model
+     * @param  year
+     * @param  model
+     *
      * @return
      */
     @RequestMapping(value = ACTIVE_LINK, params = ControllerConstants.YEAR, method = RequestMethod.GET)
@@ -169,11 +180,11 @@ public class PersonController {
 
 
     /**
-     * prepares view of staffs; preparing is for both views (list and detail) identic
+     * prepares view of staffs; preparing is for both views (list and detail) identic.
      *
-     * @param persons
-     * @param year
-     * @param model
+     * @param  persons
+     * @param  year
+     * @param  model
      */
     private void prepareStaffView(List<Person> persons, int year, Model model) {
 
@@ -185,7 +196,7 @@ public class PersonController {
 
         Map<Person, BigDecimal> leftDays = new HashMap<Person, BigDecimal>();
         Map<Person, BigDecimal> remLeftDays = new HashMap<Person, BigDecimal>();
-        
+
         for (Person person : persons) {
             // get url of person's gravatar image
             url = gravatarUtil.createImgURL(person.getEmail());
@@ -202,7 +213,7 @@ public class PersonController {
 
                 BigDecimal vacationDaysLeft = calculationService.calculateLeftVacationDays(account);
                 leftDays.put(person, vacationDaysLeft);
-                
+
                 BigDecimal remVacationDaysLeft = calculationService.calculateLeftRemainingVacationDays(account);
                 remLeftDays.put(person, remVacationDaysLeft);
             }
@@ -222,7 +233,8 @@ public class PersonController {
      * Default personal overview for user: information about one's leave accounts, entitlement of holidays, list of
      * applications, etc. If there is no parameter set for year, take current year for view.
      *
-     * @param model
+     * @param  model
+     *
      * @return
      */
     @RequestMapping(value = OVERVIEW_LINK, method = RequestMethod.GET)
@@ -244,8 +256,9 @@ public class PersonController {
      * Personal overview with year as parameter for user: information about one's leave accounts, entitlement of
      * holidays, list of applications, etc.
      *
-     * @param year
-     * @param model
+     * @param  year
+     * @param  model
+     *
      * @return
      */
     @RequestMapping(value = OVERVIEW_LINK, params = ControllerConstants.YEAR, method = RequestMethod.GET)
@@ -268,8 +281,9 @@ public class PersonController {
      * holidays, list of applications, etc. The default overview of a staff member (no parameter set for year) is for
      * the current year.
      *
-     * @param personId
-     * @param model
+     * @param  personId
+     * @param  model
+     *
      * @return
      */
     @RequestMapping(value = OVERVIEW_STAFF_LINK, method = RequestMethod.GET)
@@ -288,7 +302,7 @@ public class PersonController {
             model.addAttribute(ControllerConstants.PERSONS, persons);
 
             prepareOverview(person, DateMidnight.now(GregorianChronology.getInstance()).getYear(), model);
-            
+
             securityUtil.setLoggedUser(model);
 
             return PersonConstants.OVERVIEW_JSP;
@@ -302,14 +316,15 @@ public class PersonController {
      * The office is able to see overviews of staff members with information about this person's leave accounts,
      * entitlement of holidays, list of applications, etc.; staff overview with year as parameter.
      *
-     * @param personId
-     * @param year
-     * @param model
+     * @param  personId
+     * @param  year
+     * @param  model
+     *
      * @return
      */
     @RequestMapping(value = OVERVIEW_STAFF_LINK, params = ControllerConstants.YEAR, method = RequestMethod.GET)
     public String showStaffOverviewByYear(@PathVariable(PersonConstants.PERSON_ID) Integer personId,
-                                          @RequestParam(ControllerConstants.YEAR) int year, Model model) {
+        @RequestParam(ControllerConstants.YEAR) int year, Model model) {
 
         if (securityUtil.isOffice()) {
             Person person = personService.getPersonByID(personId);
@@ -337,9 +352,9 @@ public class PersonController {
     /**
      * Prepares model for overview with given person and year.
      *
-     * @param person
-     * @param year
-     * @param model
+     * @param  person
+     * @param  year
+     * @param  model
      */
     private void prepareOverview(Person person, int year, Model model) {
 
@@ -435,5 +450,4 @@ public class PersonController {
         String url = gravatarUtil.createImgURL(person.getEmail());
         model.addAttribute(PersonConstants.GRAVATAR, url);
     }
-
 }

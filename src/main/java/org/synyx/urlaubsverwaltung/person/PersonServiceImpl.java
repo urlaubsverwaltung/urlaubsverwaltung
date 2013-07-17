@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.synyx.urlaubsverwaltung.account.Account;
-import org.synyx.urlaubsverwaltung.account.HolidaysAccountService;
+import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.mail.MailService;
@@ -32,7 +32,7 @@ import java.util.Map;
 
 
 /**
- * implementation of the persondata-access-service. for now just passing functions, but this can change(maybe)
+ * Implementation for interface {@link PersonService}.
  *
  * @author  Aljona Murygina
  * @author  Johannes Reuter
@@ -46,13 +46,13 @@ class PersonServiceImpl implements PersonService {
 
     private PersonDAO personDAO;
     private ApplicationService applicationService;
-    private HolidaysAccountService accountService;
+    private AccountService accountService;
     private MailService mailService;
     private CryptoService cryptoService;
 
     @Autowired
     public PersonServiceImpl(PersonDAO personDAO, ApplicationService applicationService, MailService mailService,
-        HolidaysAccountService accountService, CryptoService cryptoService) {
+        AccountService accountService, CryptoService cryptoService) {
 
         this.personDAO = personDAO;
         this.applicationService = applicationService;
@@ -62,7 +62,7 @@ class PersonServiceImpl implements PersonService {
     }
 
     /**
-     * @see  PersonService#save(org.synyx.urlaubsverwaltung.domain.Person)
+     * @see  PersonService#save(Person)
      */
     @Override
     public void save(Person person) {
@@ -72,7 +72,7 @@ class PersonServiceImpl implements PersonService {
 
 
     /**
-     * @see  PersonService#createOrUpdate(org.synyx.urlaubsverwaltung.domain.Person, org.synyx.urlaubsverwaltung.view.PersonForm)
+     * @see  PersonService#createOrUpdate(Person, org.synyx.urlaubsverwaltung.person.web.PersonForm)
      */
     @Override
     public void createOrUpdate(Person person, PersonForm personForm) {
@@ -141,6 +141,9 @@ class PersonServiceImpl implements PersonService {
     }
 
 
+    /**
+     * @see  PersonService#editPermissions(Person, java.util.Collection)
+     */
     @Override
     public void editPermissions(Person person, Collection<Role> permissions) {
 
@@ -176,28 +179,22 @@ class PersonServiceImpl implements PersonService {
 
 
     /**
-     * @see  PersonService#deactivate(org.synyx.urlaubsverwaltung.domain.Person)
+     * @see  PersonService#deactivate(Person)
      */
     @Override
     public void deactivate(Person person) {
 
-        // set person inactive
         person.setActive(false);
-        // DEPRECATED
-//        person.setRole(Role.INACTIVE);
     }
 
 
     /**
-     * @see  PersonService#activate(org.synyx.urlaubsverwaltung.domain.Person)
+     * @see  PersonService#activate(Person)
      */
     @Override
     public void activate(Person person) {
 
-        // set person inactive
         person.setActive(true);
-        // DEPRECATED
-//        person.setRole(Role.USER);
     }
 
 

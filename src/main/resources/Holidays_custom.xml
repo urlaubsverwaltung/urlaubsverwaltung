@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tns:Configuration hierarchy="synyx" description="synyx" xmlns:tns="http://www.example.org/Holiday" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.example.org/Holiday/Holiday.xsd">
+<tns:Configuration hierarchy="custom" description="custom" xmlns:tns="http://www.example.org/Holiday" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.example.org/Holiday/Holiday.xsd">
     <tns:Holidays>
         <tns:Fixed month="JANUARY" day="1" descriptionPropertiesKey="NEW_YEAR"/> <!-- Neujahr -->
         <tns:Fixed month="JANUARY" day="6" descriptionPropertiesKey="EPIPHANY"/> <!-- Hl. 3 Koenige -->
