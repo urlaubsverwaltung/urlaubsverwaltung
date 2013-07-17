@@ -46,10 +46,8 @@ public class OverlapService {
      */
     public OverlapCase checkOverlap(Application application) {
 
-        if (application.getHowLong() == DayLength.MORNING) {
-            return checkOverlapForMorning(application);
-        } else if (application.getHowLong() == DayLength.NOON) {
-            return checkOverlapForNoon(application);
+        if (application.getHowLong() != DayLength.FULL) {
+            return checkOverlapForHalfDay(application, application.getHowLong());
         } else {
             // check if there are existent ANY applications (full day and half day)
             List<Application> apps = applicationDAO.getRelevantActiveApplicationsByPeriodForEveryDayLength(
@@ -102,43 +100,19 @@ public class OverlapService {
 
 
     /**
-     * Method to check if the given {@link Application} with {@link DayLength.MORNING} may be applied or not. (are there
-     * existent {@link Application}s for this period or not?)
+     * Method to check if the given {@link Application} with {@link DayLength.MORNING} or {@link DayLength.NOON} may be
+     * applied or not. (are there existent {@link Application}s for this period or not?)
      *
      * @param  application {@link Application}
      *
      * @return  int 1 for check is alright: {@link Application} is valid. 2 or 3 for invalid {@link Application}.
      */
-    protected OverlapCase checkOverlapForMorning(Application application) {
+    protected OverlapCase checkOverlapForHalfDay(Application application, DayLength dayLength) {
 
         // check if there are overlaps with full day periods
         if (checkOverlapForFullDay(application) == OverlapCase.NO_OVERLAPPING) {
-            // if there are no overlaps with full day periods, you have to check if there are overlaps with half day
-            // (MORNING) periods
-            List<Application> apps = getApplicationsByPeriodAndDayLength(application, DayLength.MORNING);
-
-            return getCaseOfOverlap(application, apps);
-        } else {
-            return checkOverlapForFullDay(application);
-        }
-    }
-
-
-    /**
-     * Method to check if the given application with {@link DayLength.NOON} may be applied or not. (are there existent
-     * applications for this period or not?)
-     *
-     * @param  application
-     *
-     * @return  int 1 for check is alright: application for leave is valid. 2 or 3 for invalid application for leave.
-     */
-    protected OverlapCase checkOverlapForNoon(Application application) {
-
-        // check if there are overlaps with full day periods
-        if (checkOverlapForFullDay(application) == OverlapCase.NO_OVERLAPPING) {
-            // if there are no overlaps with full day periods, you have to check if there are overlaps with half day
-            // (NOON) periods
-            List<Application> apps = getApplicationsByPeriodAndDayLength(application, DayLength.NOON);
+            // if there are no overlaps with full day periods, you have to check if there are overlaps with half day periods
+            List<Application> apps = getApplicationsByPeriodAndDayLength(application, dayLength);
 
             return getCaseOfOverlap(application, apps);
         } else {
