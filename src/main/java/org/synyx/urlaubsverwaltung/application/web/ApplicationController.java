@@ -1,42 +1,61 @@
 package org.synyx.urlaubsverwaltung.application.web;
 
-import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.account.HolidaysAccountService;
-import org.synyx.urlaubsverwaltung.account.Account;
-import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.security.Role;
-import org.synyx.urlaubsverwaltung.application.service.OverlapService;
-import org.synyx.urlaubsverwaltung.application.domain.OverlapCase;
-import org.synyx.urlaubsverwaltung.application.service.CalculationService;
-import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
-import org.synyx.urlaubsverwaltung.application.service.CommentService;
-import org.synyx.urlaubsverwaltung.mail.MailService;
-import org.synyx.urlaubsverwaltung.security.web.SecurityUtil;
-import org.synyx.urlaubsverwaltung.web.ControllerConstants;
-import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.application.domain.Comment;
-import org.synyx.urlaubsverwaltung.application.domain.DayLength;
-import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.apache.commons.lang.StringUtils;
+
 import org.apache.log4j.Logger;
+
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.chrono.GregorianChronology;
+
 import org.springframework.stereotype.Controller;
+
 import org.springframework.ui.Model;
+
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.*;
+
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import org.synyx.urlaubsverwaltung.account.Account;
+import org.synyx.urlaubsverwaltung.account.HolidaysAccountService;
+import org.synyx.urlaubsverwaltung.application.domain.Application;
+import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.application.domain.Comment;
+import org.synyx.urlaubsverwaltung.application.domain.DayLength;
+import org.synyx.urlaubsverwaltung.application.domain.OverlapCase;
+import org.synyx.urlaubsverwaltung.application.domain.VacationType;
+import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
+import org.synyx.urlaubsverwaltung.application.service.CalculationService;
+import org.synyx.urlaubsverwaltung.application.service.CommentService;
+import org.synyx.urlaubsverwaltung.application.service.OverlapService;
+import org.synyx.urlaubsverwaltung.mail.MailService;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.web.PersonConstants;
+import org.synyx.urlaubsverwaltung.security.Role;
+import org.synyx.urlaubsverwaltung.security.web.SecurityUtil;
 import org.synyx.urlaubsverwaltung.util.DateMidnightPropertyEditor;
+import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.util.GravatarUtil;
 import org.synyx.urlaubsverwaltung.validator.ApplicationValidator;
+import org.synyx.urlaubsverwaltung.web.ControllerConstants;
+
+import java.math.BigDecimal;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import java.math.BigDecimal;
-import java.util.*;
-import org.synyx.urlaubsverwaltung.person.web.PersonConstants;
-import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 
 /**
@@ -48,7 +67,7 @@ import org.synyx.urlaubsverwaltung.util.DateUtil;
 @Controller
 public class ApplicationController {
 
-        // links start with...
+    // links start with...
     private static final String SHORT_PATH_APPLICATION = "/" + ControllerConstants.APPLICATION;
     private static final String LONG_PATH_APPLICATION = "/" + ControllerConstants.APPLICATION + "/{";
 
@@ -59,7 +78,7 @@ public class ApplicationController {
     private static final String ALLOWED_APPS = SHORT_PATH_APPLICATION + "/allowed";
     private static final String CANCELLED_APPS = SHORT_PATH_APPLICATION + "/cancelled";
     private static final String REJECTED_APPS = SHORT_PATH_APPLICATION + "/rejected";
-    
+
     // form to apply vacation
     private static final String NEW_APP = SHORT_PATH_APPLICATION + "/new"; // form for user
     private static final String NEW_APP_OFFICE = "/{" + ApplicationConstants.PERSON_ID + "}/application/new"; // form for office
@@ -80,7 +99,7 @@ public class ApplicationController {
 
     // remind boss to decide about application
     private static final String REMIND = LONG_PATH_APPLICATION + ApplicationConstants.APPLICATION_ID + "}/remind";
-    
+
     // audit logger: logs nontechnically occurences like 'user x applied for leave' or 'subtracted n days from
     // holidays account y'
     private static final Logger LOG = Logger.getLogger("audit");
@@ -176,7 +195,7 @@ public class ApplicationController {
 
 
     /**
-     * show a list of all {@link Application} for the current year not dependent on {@link ApplicationStatus}
+     * show a list of all {@link Application} for the current year not dependent on {@link ApplicationStatus}.
      *
      * @param  model
      *
@@ -197,7 +216,7 @@ public class ApplicationController {
 
 
     /**
-     * show a list of all {@link Application} for the given year not dependent on {@link ApplicationStatus}
+     * show a list of all {@link Application} for the given year not dependent on {@link ApplicationStatus}.
      *
      * @param  year
      * @param  model
@@ -268,7 +287,7 @@ public class ApplicationController {
 
 
     /**
-     * used if you want to see all waiting applications of the given year
+     * used if you want to see all waiting applications of the given year.
      *
      * @param  model
      *
@@ -282,7 +301,7 @@ public class ApplicationController {
 
 
     /**
-     * used if you want to see all waiting applications
+     * used if you want to see all waiting applications.
      *
      * @param  model
      *
@@ -296,7 +315,7 @@ public class ApplicationController {
 
 
     /**
-     * used if you want to see all allowed applications of the given year
+     * used if you want to see all allowed applications of the given year.
      *
      * @param  model
      *
@@ -312,7 +331,7 @@ public class ApplicationController {
 
 
     /**
-     * used if you want to see all allowed applications
+     * used if you want to see all allowed applications.
      *
      * @param  model
      *
@@ -328,7 +347,8 @@ public class ApplicationController {
 
 
     @RequestMapping(value = ALLOWED_APPS + "/{" + ApplicationConstants.APPLICATION_ID + "}", method = RequestMethod.PUT)
-    public String setAllowedApplicationToEdited(@PathVariable(ApplicationConstants.APPLICATION_ID) Integer applicationId) {
+    public String setAllowedApplicationToEdited(
+        @PathVariable(ApplicationConstants.APPLICATION_ID) Integer applicationId) {
 
         Application app = applicationService.getApplicationById(applicationId);
 
@@ -345,7 +365,7 @@ public class ApplicationController {
 
 
     /**
-     * used if you want to see all cancelled applications of the given year
+     * used if you want to see all cancelled applications of the given year.
      *
      * @param  model
      *
@@ -359,7 +379,7 @@ public class ApplicationController {
 
 
     /**
-     * used if you want to see all cancelled applications
+     * used if you want to see all cancelled applications.
      *
      * @param  model
      *
@@ -373,7 +393,7 @@ public class ApplicationController {
 
 
     /**
-     * show all rejected applications of the given year
+     * show all rejected applications of the given year.
      *
      * @param  year
      * @param  model
@@ -388,7 +408,7 @@ public class ApplicationController {
 
 
     /**
-     * show all rejected applications
+     * show all rejected applications.
      *
      * @param  model
      *
@@ -402,7 +422,7 @@ public class ApplicationController {
 
 
     /**
-     * used if you want to apply an application for leave (shows formular)
+     * used if you want to apply an application for leave (shows formular).
      *
      * @param  model  the datamodel
      *
@@ -414,7 +434,6 @@ public class ApplicationController {
         if (securityUtil.isInactive()) {
             return ControllerConstants.LOGIN_LINK;
         } else {
-            
             Person person = securityUtil.getLoggedUser();
 
             if (accountService.getHolidaysAccount(DateMidnight.now().getYear(), person) == null) {
@@ -424,7 +443,7 @@ public class ApplicationController {
             }
 
             return ApplicationConstants.APP_FORM_JSP;
-        } 
+        }
     }
 
 
@@ -500,7 +519,7 @@ public class ApplicationController {
 
 
     /**
-     * use this to save an application (will be in "waiting" state)
+     * use this to save an application (will be in "waiting" state).
      *
      * @param  force  is 0 to check if application's period is in the past, after reconfirming is application saved
      * @param  appForm {@link AppForm}
@@ -578,7 +597,8 @@ public class ApplicationController {
 
                     LOG.info(" ID: " + application.getId()
                         + " Es wurde ein neuer Antrag von " + securityUtil.getLoggedUser().getFirstName() + " "
-                        + securityUtil.getLoggedUser().getLastName() + " für " + person.getFirstName() + " " + person.getLastName()
+                        + securityUtil.getLoggedUser().getLastName() + " für " + person.getFirstName() + " "
+                        + person.getLastName()
                         + " angelegt.");
 
                     // mail to loggedUser of application that office has made an application for him/her
@@ -630,7 +650,8 @@ public class ApplicationController {
      * @return
      */
     @RequestMapping(value = NEW_APP_OFFICE, method = RequestMethod.GET)
-    public String newApplicationFormForOffice(@PathVariable(ApplicationConstants.PERSON_ID) Integer personId, Model model) {
+    public String newApplicationFormForOffice(@PathVariable(ApplicationConstants.PERSON_ID) Integer personId,
+        Model model) {
 
         // only office may apply for leave on behalf of other users
         if (securityUtil.isOffice()) {
@@ -651,7 +672,7 @@ public class ApplicationController {
 
 //                    prepareAccountsMap(persons, model);
                 }
-            } 
+            }
 
             return ApplicationConstants.APP_FORM_JSP;
         } else {
@@ -727,7 +748,7 @@ public class ApplicationController {
 
 
     /**
-     * application detail view for office; link in
+     * application detail view for office; link in.
      *
      * @param  applicationId
      * @param  model
@@ -757,7 +778,7 @@ public class ApplicationController {
 
 
     /**
-     * used if you want to allow an existing request (boss only)
+     * used if you want to allow an existing request (boss only).
      *
      * @param  model
      *
@@ -780,7 +801,8 @@ public class ApplicationController {
 
             LOG.info(application.getApplicationDate() + " ID: " + application.getId() + "Der Antrag von "
                 + application.getPerson().getFirstName() + " " + application.getPerson().getLastName()
-                + " wurde am " + DateMidnight.now().toString(ControllerConstants.DATE_FORMAT) + " von " + bossName + " genehmigt.");
+                + " wurde am " + DateMidnight.now().toString(ControllerConstants.DATE_FORMAT) + " von " + bossName
+                + " genehmigt.");
 
             mailService.sendAllowedNotification(application, comment);
 
@@ -793,7 +815,7 @@ public class ApplicationController {
 
     /**
      * If a boss is not sure about the decision if an application should be allowed or rejected, he can ask another boss
-     * to decide about this application (an email is sent)
+     * to decide about this application (an email is sent).
      *
      * @param  applicationId
      *
@@ -807,15 +829,15 @@ public class ApplicationController {
 
         Person sender = securityUtil.getLoggedUser();
         String senderName = sender.getFirstName() + " " + sender.getLastName();
-        Person reciever = personService.getPersonByLogin(p.getLoginName());
-        mailService.sendReferApplicationNotification(application, reciever, senderName);
+        Person recipient = personService.getPersonByLogin(p.getLoginName());
+        mailService.sendReferApplicationNotification(application, recipient, senderName);
 
         return "redirect:/web/application/" + applicationId;
     }
 
 
     /**
-     * used if you want to reject a request (boss only)
+     * used if you want to reject a request (boss only).
      *
      * @param  applicationId  the id of the to declining request
      * @param  model
@@ -871,7 +893,8 @@ public class ApplicationController {
      * @return
      */
     @RequestMapping(value = CANCEL_APP, method = RequestMethod.GET)
-    public String cancelApplicationConfirm(@PathVariable(ApplicationConstants.APPLICATION_ID) Integer applicationId, Model model) {
+    public String cancelApplicationConfirm(@PathVariable(ApplicationConstants.APPLICATION_ID) Integer applicationId,
+        Model model) {
 
         Application application = applicationService.getApplicationById(applicationId);
         model.addAttribute(ApplicationConstants.STATE_NUMBER, ApplicationConstants.TO_CANCEL);

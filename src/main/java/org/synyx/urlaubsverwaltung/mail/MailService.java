@@ -13,7 +13,7 @@ import java.util.Map;
 
 
 /**
- * the mailservice provides sending of notification-mails to the users, bosses and office
+ * the mailservice provides sending of notification-mails to the users, bosses and office.
  *
  * @author  Johannes Reuter
  * @author  Aljona Murygina
@@ -23,7 +23,7 @@ public interface MailService {
 
     /**
      * this method sends an email to all persons of the given list that their remaining vacation days are going to
-     * expire soon
+     * expire soon.
      *
      * @param  persons  the list of persons which should receive the email
      */
@@ -31,7 +31,7 @@ public interface MailService {
 
 
     /**
-     * this method sends an email to the applicant that the application has been made successfully
+     * this method sends an email to the applicant that the application has been made successfully.
      *
      * @param  application
      */
@@ -40,7 +40,7 @@ public interface MailService {
 
     /**
      * this method sends an email to the person of the given application that the office has applied for leave on behalf
-     * of himself
+     * of himself.
      *
      * @param  application
      */
@@ -49,7 +49,7 @@ public interface MailService {
 
     /**
      * this method sends an email to the bosses notifying that there is a new application for leave which has to be
-     * allowed or rejected by a boss
+     * allowed or rejected by a boss.
      *
      * @param  application
      */
@@ -57,7 +57,7 @@ public interface MailService {
 
 
     /**
-     * this method sends an email to the applicant and to the office that the application has been allowed
+     * this method sends an email to the applicant and to the office that the application has been allowed.
      *
      * @param  application  the application which got allowed
      * @param  comment  made during allowing application
@@ -66,7 +66,7 @@ public interface MailService {
 
 
     /**
-     * this method sends an email to the applicant that the application has been rejected
+     * this method sends an email to the applicant that the application has been rejected.
      *
      * @param  application  the application which got rejected
      * @param  comment  reason why application was rejected
@@ -81,7 +81,7 @@ public interface MailService {
      * @param  a
      * @param  p
      */
-    void sendReferApplicationNotification(Application a, Person reciever, String sender);
+    void sendReferApplicationNotification(Application a, Person recipient, String sender);
 
 
     /**
@@ -103,7 +103,7 @@ public interface MailService {
 
 
     /**
-     * this method sends a newsletter mentioning all person that are on holiday
+     * this method sends a newsletter mentioning all person that are on holiday.
      *
      * @param  persons  persons on vacation this week
      */
@@ -125,7 +125,7 @@ public interface MailService {
 
     /**
      * this method sends an email to the tool's manager to inform if an error occured while generating private and
-     * public key for a new user with the given login name
+     * public key for a new user with the given login name.
      *
      * @param  loginName
      */
@@ -134,7 +134,7 @@ public interface MailService {
 
     /**
      * this method sends an email to the tool's manager to inform if an error occured while signing an application with
-     * the given id
+     * the given id.
      *
      * @param  applicationId
      * @param  exception

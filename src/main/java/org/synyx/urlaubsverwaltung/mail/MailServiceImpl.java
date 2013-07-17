@@ -36,11 +36,6 @@ import javax.mail.internet.MimeMessage;
 /**
  * @author  Johannes Reuter
  * @author  Aljona Murygina
- *
- *          <p>nice tutorial: http://static.springsource.org/spring/docs/2.0.5/reference/mail.html</p>
- *
- *          <p>At the moment properties' values are set hard coded in this class (bad solution...): it would be better
- *          to read in the properties file (outcommented methods), but this was not successful yet...</p>
  */
 class MailServiceImpl implements MailService {
 
@@ -86,6 +81,9 @@ class MailServiceImpl implements MailService {
     @Value("${email.manager}")
     protected String emailManager;
 
+    @Value("${application.url}")
+    protected String applicationUrl;
+
     @Autowired
     public MailServiceImpl(JavaMailSender mailSender, VelocityEngine velocityEngine) {
 
@@ -110,14 +108,14 @@ class MailServiceImpl implements MailService {
      *
      * @return  String text that must be put in the email as text (sending is done by method sendEmail)
      */
-    private String prepareMessage(Object object, String modelName, String fileName, String reciever, String sender,
+    private String prepareMessage(Object object, String modelName, String fileName, String recipient, String sender,
         Comment comment) {
 
         Map model = new HashMap();
         model.put(modelName, object);
 
-        if (reciever != null && sender != null) {
-            model.put("reciever", reciever);
+        if (recipient != null && sender != null) {
+            model.put("recipient", recipient);
             model.put("sender", sender);
         }
 
@@ -131,7 +129,7 @@ class MailServiceImpl implements MailService {
             String length = a.getHowLong().getDayLength();
             model.put("vacationType", properties.getProperty(vacType));
             model.put("dayLength", properties.getProperty(length));
-            model.put("link", "http://urlaubsverwaltung/web/application/" + a.getId());
+            model.put("link", applicationUrl + "web/application/" + a.getId());
         }
 
         String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, PATH + fileName, model);
@@ -142,7 +140,7 @@ class MailServiceImpl implements MailService {
 
     /**
      * this method gets the recipient email address, the email's subject and text with this parameters an email is build
-     * and sent
+     * and sent.
      *
      * @param  recipient
      * @param  subject
@@ -152,6 +150,7 @@ class MailServiceImpl implements MailService {
 
         MimeMessagePreparator prep = new MimeMessagePreparator() {
 
+            @Override
             public void prepare(MimeMessage mimeMessage) throws MessagingException {
 
                 mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(recipient));
@@ -219,6 +218,7 @@ class MailServiceImpl implements MailService {
 
         MimeMessagePreparator prep = new MimeMessagePreparator() {
 
+            @Override
             public void prepare(MimeMessage mimeMessage) throws MessagingException {
 
                 ArrayList<String> recipientsList = new ArrayList<String>();
@@ -288,10 +288,10 @@ class MailServiceImpl implements MailService {
      * @see  MailService#sendReferApplicationNotification(org.synyx.urlaubsverwaltung.domain.Application, org.synyx.urlaubsverwaltung.domain.Person)
      */
     @Override
-    public void sendReferApplicationNotification(Application a, Person reciever, String sender) {
+    public void sendReferApplicationNotification(Application a, Person recipient, String sender) {
 
-        String text = prepareMessage(a, APPLICATION, FILE_REFER, reciever.getFirstName(), sender, null);
-        sendEmail(reciever.getEmail(), "subject.refer", text);
+        String text = prepareMessage(a, APPLICATION, FILE_REFER, recipient.getFirstName(), sender, null);
+        sendEmail(recipient.getEmail(), "subject.refer", text);
     }
 
 
@@ -398,14 +398,13 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendSuccessfullyUpdatedAccounts(String content) {
 
-        String text = "Stand Resturlaubstage zum 1. Januar " + DateMidnight.now().getYear() + " (mitgenommene Resturlaubstage aus dem Vorjahr)" + "\n\n" + content;
+        String text = "Stand Resturlaubstage zum 1. Januar " + DateMidnight.now().getYear()
+            + " (mitgenommene Resturlaubstage aus dem Vorjahr)" + "\n\n" + content;
 
         // send email to office for printing statistic
         sendEmail(emailOffice, "subject.account.update", text);
-        
+
         // send email to manager to notify about update of accounts
         sendEmail(emailManager, "subject.account.update", text);
-        
     }
-
 }

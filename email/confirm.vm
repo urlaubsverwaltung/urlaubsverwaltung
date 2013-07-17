@@ -1,6 +1,6 @@
 Hallo ${application.person.firstName},
 
-dein Urlaubsantrag wurde erfolgreich eingereicht und wird in Kürze von einem der Chefs bearbeitet werden.
+dein Urlaubsantrag wurde erfolgreich eingereicht und wird in Kürze bearbeitet werden.
 Link zum Antrag: ${link}
 
 Antragsdatum: ${application.applicationDate.toString("dd.MM.yyyy")}

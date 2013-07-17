@@ -1,6 +1,6 @@
 Hallo ${application.person.firstName},
 
-${application.applier.firstName} ${application.applier.lastName} hat einen Urlaubsantrag für dich gestellt, der in Kürze von einem der Chefs bearbeitet werden sollte.
+${application.applier.firstName} ${application.applier.lastName} hat einen Urlaubsantrag für dich gestellt, der in Kürze bearbeitet werden sollte.
 
 Link zum Antrag: ${link}
 
