@@ -9,6 +9,19 @@
 
     <name>Urlaubsverwaltung</name>
 
+    <organization>
+        <name>synyx</name>
+        <url>http://synyx.de</url>
+    </organization>
+
+    <developers>
+        <developer>
+            <id>murygina</id>
+            <name>Aljona Murygina</name>
+            <email>murygina@synyx.de</email>
+        </developer>
+    </developers>
+    
     <properties>
 	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	<spring.version>3.0.5.RELEASE</spring.version>
