@@ -29,16 +29,16 @@
 
 	<jenkins.job.goals>clean install</jenkins.job.goals>
 	<jenkins.maven.name>Maven3</jenkins.maven.name>
-	<jenkins.jdk.name>Java6</jenkins.jdk.name>
+	<jenkins.jdk.name>Java7</jenkins.jdk.name>
 	<jenkins.job.project.redmine>https://project.synyx.de/</jenkins.job.project.redmine>
 	<jenkins.job.project.name>urlaubsverwaltung</jenkins.job.project.name>
-	<jenkins.job.reporters.email>indy@synyx.de</jenkins.job.reporters.email>
+	<jenkins.job.reporters.email>murygina@synyx.de</jenkins.job.reporters.email>
 
     </properties>
 
     <scm>
-	<developerConnection>scm:git:ssh://git@github.com:synyx/urlaubsverwaltung.git</developerConnection>
-	<connection>scm:git:ssh@git@github.com:synyx/urlaubsverwaltung.git</connection>
+	<developerConnection>scm:git:https://github.com/synyx/urlaubsverwaltung</developerConnection>
+	<connection>scm:git:https://github.com/synyx/urlaubsverwaltung</connection>
     </scm>
 
     <distributionManagement>
