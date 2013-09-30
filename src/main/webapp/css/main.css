@@ -524,3 +524,8 @@ td.notworkday a {
 .td-img {
     text-align: center;
 }
+
+/* vacation types like special leave, etc. should be highlighted */
+td.SPECIALLEAVE, td.UNPAIDLEAVE, td.OVERTIME {
+    color: #C13A33;
+}

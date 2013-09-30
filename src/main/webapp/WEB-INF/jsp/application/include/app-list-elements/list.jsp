@@ -91,7 +91,7 @@
                     <td>
                         <c:out value="${app.person.firstName}" />&nbsp;<c:out value="${app.person.lastName}" />
                     </td>
-                    <td>
+                    <td class="${app.vacationType}">
                         <spring:message code="${app.vacationType.vacationTypeName}"/>
                     </td>
                     <td>

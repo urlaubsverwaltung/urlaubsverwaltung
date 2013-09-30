@@ -16,7 +16,7 @@
         <td>
             <spring:message code="app.apply" />
         </td>
-        <td>
+        <td class="${application.vacationType}">
             <b><spring:message code="${application.vacationType.vacationTypeName}" /></b>
         </td>
     </tr>
