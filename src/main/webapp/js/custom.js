@@ -76,3 +76,11 @@ $(document).ready(function()
 );
 
 
+function checkSonderurlaub(value) {
+
+    if(value === "SPECIALLEAVE") {
+        $('#special-leave-modal').modal("toggle"); 
+    }
+
+}
+

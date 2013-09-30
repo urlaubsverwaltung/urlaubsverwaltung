@@ -131,7 +131,7 @@
                                             <spring:message code="app.apply" />
                                         </th>
                                         <td>
-                                            <form:select path="vacationType" size="1" class="form-select">
+                                            <form:select path="vacationType" size="1" class="form-select" onchange="checkSonderurlaub(value);">
                                                 <c:choose>
                                                     <c:when test="${appForm.vacationType == null}">
                                                         <c:forEach items="${vacTypes}" var="vacType">
@@ -154,7 +154,34 @@
                                             </c:otherwise>
                                         </c:choose>
                                     </form:select>
+
+                                            <script type="text/javascript">
+
+                                                $(document).ready(function() {
+                                                    $('#special-leave-info').popover(); 
+                                                });
+                                                
+                                            </script>
+
+                                            <img id="special-leave-info" src="<spring:url value='/images/info.png' />" style="vertical-align: middle" data-placement="right" data-toggle="popover" data-original-title="<spring:message code='special.leave.title.short' />" data-content="<spring:message code='special.leave.explanation' />" data-trigger="hover" />
                                     </td>
+
+                                        <!-- Modal -->
+                                        <div id="special-leave-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                                <h3 id="myModalLabel"><spring:message code='special.leave.title.long' /></h3>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p><spring:message code='special.leave.explanation' /></p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button class="btn" data-dismiss="modal" aria-hidden="true">Schließen</button>
+                                            </div>
+                                        </div>
+                                        
+                                        
+                                        
                                     </tr>
                                     <tr class="even">
                                         <td>
