@@ -14,7 +14,9 @@ import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.net.URL;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -89,16 +91,20 @@ public class JollydayCalendar {
     }
 
 
-    public boolean isPublicHoliday(DateMidnight date) {
+    public List<String> getPublicHolidays(int year, int month) {
 
-        Set<Holiday> holidays = manager.getHolidays(date.toInterval());
+        // get all public holidays of this year
+        Set<Holiday> holidays = manager.getHolidays(year);
 
-        // if set is empty, the given date is no holiday
-        if (!holidays.isEmpty()) {
-            return true;
+        List<String> monthHolidays = new ArrayList<String>();
+
+        for (Holiday holiday : holidays) {
+            if (holiday.getDate().getMonthOfYear() == month) {
+                monthHolidays.add(holiday.getDate().toString());
+            }
         }
 
-        return false;
+        return monthHolidays;
     }
 
 

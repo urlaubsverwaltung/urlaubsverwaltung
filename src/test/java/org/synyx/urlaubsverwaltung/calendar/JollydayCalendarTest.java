@@ -2,15 +2,17 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
 import org.joda.time.DateMidnight;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.List;
 
 
 /**
  * Unit test for {@link JollydayCalendar}.
- * 
+ *
  * @author  Aljona Murygina
  */
 public class JollydayCalendarTest {
@@ -24,7 +26,9 @@ public class JollydayCalendarTest {
     }
 
 
-    /** Test of getPublicHolidays method, of class JollydayCalendar. */
+    /**
+     * Test of getPublicHolidays method, of class JollydayCalendar.
+     */
     @Test
     public void testGetPublicHolidays() {
 
@@ -62,7 +66,9 @@ public class JollydayCalendarTest {
     }
 
 
-    /** Test if adding (countBetweenDays) works correctly */
+    /**
+     * Test if adding (countBetweenDays) works correctly.
+     */
     @Test
     public void testPlusDays() {
 
@@ -78,19 +84,20 @@ public class JollydayCalendarTest {
 
         Assert.assertSame(3, dings);
     }
-    
+
+
     @Test
     public void testCorpusChristiProblem() {
-        
+
         DateMidnight startDate = new DateMidnight(2013, 5, 29);
         DateMidnight endDate = new DateMidnight(2013, 6, 6);
-        
+
         double returnValue = instance.getPublicHolidays(startDate, endDate);
-        
+
         // expected that Corpus Christi is found as one and only public holiday in this period
         Assert.assertEquals(1, returnValue, 0);
-        
     }
+
 
     @Test
     public void testCorpusChristiProblem2() {
@@ -102,32 +109,16 @@ public class JollydayCalendarTest {
 
         // expected that Corpus Christi is found as one and only public holiday in this period
         Assert.assertEquals(1, returnValue, 0);
-
     }
 
-    
-    @Test
-    public void testIsPublicHoliday() {
-
-        DateMidnight date = new DateMidnight(2013, 3, 29);   // Karfreitag
-        
-        boolean returnValue = instance.isPublicHoliday(date);
-        
-        Assert.assertTrue(returnValue);
-        
-    }
 
     @Test
-    public void testIsNoPublicHoliday() {
+    public void testGetPublicHolidaysFoo() {
 
-        DateMidnight date = new DateMidnight(2013, 3, 28);   // simple work day
+        List<String> holidays = instance.getPublicHolidays(2013, 10);
 
-        boolean returnValue = instance.isPublicHoliday(date);
-
-        Assert.assertFalse(returnValue);
-
+        // 3.10.2013
+        Assert.assertEquals(holidays.size(), 1);
+        Assert.assertEquals(holidays.get(0).toString(), "2013-10-03");
     }
-    
-    
-    
 }

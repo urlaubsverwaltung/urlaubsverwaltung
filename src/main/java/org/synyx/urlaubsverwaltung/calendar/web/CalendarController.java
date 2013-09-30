@@ -1,7 +1,8 @@
 package org.synyx.urlaubsverwaltung.calendar.web;
 
+import com.google.gson.Gson;
+
 import org.joda.time.DateMidnight;
-import org.joda.time.IllegalFieldValueException;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -24,6 +25,8 @@ import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
 import java.io.IOException;
 
 import java.math.BigDecimal;
+
+import java.util.List;
 
 
 /**
@@ -83,27 +86,25 @@ public class CalendarController {
     /**
      * Is used in jquery datepicker to mark public holidays: ajax call to check if date is a public holiday.
      *
-     * @param  date
+     * @param  month
+     * @param  year
      *
      * @return  "1" if date is a public holiday, "0" if not, "N/A" if parameter not valid
      */
     @RequestMapping(value = "/calendar/public-holiday", method = RequestMethod.GET)
     @ResponseBody
-    public String isPublicHoliday(@RequestParam("date") String date) {
+    public String getPublicHolidays(@RequestParam("year") String year,
+        @RequestParam("month") String month) {
 
-        if (StringUtils.hasText(date)) {
-            DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd"); // please do not change, because is used in custom.js
-
+        if (StringUtils.hasText(year) && StringUtils.hasText(month)) {
             try {
-                DateMidnight d = DateMidnight.parse(date, fmt);
-                boolean publicHoliday = jollydayCalendar.isPublicHoliday(d);
+                List<String> holidays = jollydayCalendar.getPublicHolidays(Integer.parseInt(year),
+                        Integer.parseInt(month));
 
-                if (publicHoliday) {
-                    return "1";
-                } else {
-                    return "0";
-                }
-            } catch (IllegalFieldValueException ex) {
+                String json = new Gson().toJson(holidays);
+
+                return json;
+            } catch (NumberFormatException ex) {
                 return "N/A";
             }
         }
