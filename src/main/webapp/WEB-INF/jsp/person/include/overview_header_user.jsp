@@ -13,11 +13,13 @@
 
 <div class="overview-header">
 
-    <p class="heading">
-        <c:out value="${person.firstName}"/>&nbsp;<c:out value="${person.lastName}"/>&nbsp;&ndash;&nbsp;<spring:message
+    <legend>
+        <p>
+            <img class="user-pic" src="<c:out value='${gravatar}?d=mm&s=40'/>"/>&nbsp;
+            <c:out value="${person.firstName}"/>&nbsp;<c:out value="${person.lastName}"/>&nbsp;&ndash;&nbsp;<spring:message
             code="table.overview"/><c:out value="${displayYear}"/>
-    </p>
-
-    <jsp:include page="../include/year_selector.jsp" />
-
+        </p>
+        <jsp:include page="../include/year_selector.jsp" />
+    </legend>
+    
 </div>

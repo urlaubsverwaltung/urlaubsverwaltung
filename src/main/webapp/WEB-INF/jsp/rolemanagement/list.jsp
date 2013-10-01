@@ -27,9 +27,11 @@
 
                     <div class="overview-header">
 
-                        <p class="heading">
-                            <spring:message code="role.management" />
-                        </p>
+                        <legend>
+                            <p>
+                                <spring:message code="role.management" />
+                            </p> 
+                        </legend>
 
                     </div>
                     

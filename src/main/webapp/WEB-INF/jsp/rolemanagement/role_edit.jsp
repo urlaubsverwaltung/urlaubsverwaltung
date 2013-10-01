@@ -36,13 +36,17 @@
                 <form:form method="PUT" action="${formUrlPrefix}/management/${person.id}" modelAttribute="person"> 
 
                     <div class="grid_8">
-                        <table class="overview-header" style="margin-bottom:1em">
-                            <tbody>
-                                <tr>
-                                    <td><spring:message code='person.data' /></td>
-                                </tr>
-                            </tbody>
-                        </table>
+
+                        <div class="overview-header">
+
+                            <legend>
+                                <p>
+                                    <spring:message code="person.data" />
+                                </p>
+                            </legend>
+
+                        </div>
+
                     </div>
 
                     <div class="grid_8">

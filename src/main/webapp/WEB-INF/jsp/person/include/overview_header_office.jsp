@@ -12,31 +12,36 @@
 
 <div class="overview-header">
 
-    <p class="heading">
-        <c:out value="${person.firstName}"/>&nbsp;<c:out value="${person.lastName}"/>&nbsp;&ndash;&nbsp;<spring:message
-            code="table.overview"/><c:out value="${displayYear}"/>
-    </p>
+    <legend>
+        
+        <p>
+            <img class="user-pic" src="<c:out value='${gravatar}?d=mm&s=40'/>"/>&nbsp;
+            <c:out value="${person.firstName}"/>&nbsp;<c:out value="${person.lastName}"/>&nbsp;&ndash;&nbsp;<spring:message
+                code="table.overview"/><c:out value="${displayYear}"/>
+        </p>
 
-    <div class="btn-group person-selector">
+        <jsp:include page="../include/year_selector.jsp" />
+        
+        <div class="btn-group person-selector">
 
-        <button class="btn dropdown-toggle" data-toggle="dropdown">
-            <spring:message code="ov.header.person" />&nbsp;<span class="caret"></span>
-        </button>
+            <button class="btn dropdown-toggle" data-toggle="dropdown">
+                <spring:message code="ov.header.person" />&nbsp;<span class="caret"></span>
+            </button>
 
-        <ul class="dropdown-menu">
+            <ul class="dropdown-menu">
 
-            <c:forEach items="${persons}" var="person">
-                <li>
-                    <a href="${formUrlPrefix}/staff/<c:out value='${person.id}' />/overview">
-                        <c:out value="${person.firstName}"/>&nbsp;<c:out value="${person.lastName}"/>
-                    </a>
-                </li>
-            </c:forEach> 
+                <c:forEach items="${persons}" var="person">
+                    <li>
+                        <a href="${formUrlPrefix}/staff/<c:out value='${person.id}' />/overview">
+                            <c:out value="${person.firstName}"/>&nbsp;<c:out value="${person.lastName}"/>
+                        </a>
+                    </li>
+                </c:forEach>
 
-        </ul>
+            </ul>
 
-    </div>
+        </div>
 
-    <jsp:include page="../include/year_selector.jsp" />
-
+    </legend>
+    
 </div>

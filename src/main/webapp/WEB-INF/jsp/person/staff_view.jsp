@@ -52,23 +52,27 @@
 
                     <div class="overview-header">
 
-                        <p class="heading">
-                            <spring:message code="table.overview" /><c:out value="${displayYear}" />
-                        </p>
+                        <legend style="margin-bottom: 17px">
+                            
+                            <p>
+                                <spring:message code="table.overview" /><c:out value="${displayYear}" />
+                            </p>
 
-                        <jsp:include page="../include/year_selector.jsp" />
+                            <jsp:include page="../include/year_selector.jsp" />
 
-                        <div class="btn-group status-selector">
+                            <div class="btn-group status-selector">
 
-                            <button class="btn dropdown-toggle" data-toggle="dropdown">
-                            </button>
+                                <button class="btn dropdown-toggle" data-toggle="dropdown">
+                                </button>
 
-                            <ul class="dropdown-menu">
-                                <li><a href="${formUrlPrefix}/staff"><spring:message code="table.active" /></a></li>
-                                <li><a href="${formUrlPrefix}/staff/inactive"><spring:message code="table.inactive" /></a></li>
-                            </ul>
+                                <ul class="dropdown-menu">
+                                    <li><a href="${formUrlPrefix}/staff"><spring:message code="table.active" /></a></li>
+                                    <li><a href="${formUrlPrefix}/staff/inactive"><spring:message code="table.inactive" /></a></li>
+                                </ul>
 
-                        </div>
+                            </div>
+                            
+                        </legend>
 
                     </div>
                     

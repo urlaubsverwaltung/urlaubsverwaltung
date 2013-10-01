@@ -30,11 +30,16 @@
 
                 <div class="grid_12">
 
-                    <table class="overview-header">
-                        <tr>
-                            <td><spring:message code="app.title" /></td>
-                        </tr>
-                    </table>
+                    <div class="overview-header">
+
+                        <legend>
+                            <p>
+                                <spring:message code="app.title" />
+                            </p>
+                        </legend>
+
+                    </div>
+                    
                 </div>
 
                 <div class="grid_6">

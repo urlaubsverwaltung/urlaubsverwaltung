@@ -22,53 +22,57 @@
 
 <div class="overview-header">
 
-    <p class="heading">
-        <spring:message code="${titleApp}"/>&nbsp;&ndash;&nbsp;<c:out value="${displayYear}"/>
-    </p>
+    <legend>
+        
+        <p>
+            <spring:message code="${titleApp}"/>&nbsp;&ndash;&nbsp;<c:out value="${displayYear}"/>
+        </p>
+        
+        <jsp:include page="../include/year_selector.jsp" />
 
-    <div class="btn-group person-selector">
+        <div class="btn-group person-selector">
 
-        <button class="btn dropdown-toggle" data-toggle="dropdown">
-            <spring:message code="status.app"/>&nbsp;<span class="caret"></span>
-        </button>
+            <button class="btn dropdown-toggle" data-toggle="dropdown">
+                <spring:message code="status.app"/>&nbsp;<span class="caret"></span>
+            </button>
 
-        <ul class="dropdown-menu">
+            <ul class="dropdown-menu">
 
-            <li>
-                <a href="${linkPrefix}/all">
-                    <spring:message code="all.app"/>
-                </a>
-            </li>
+                <li>
+                    <a href="${linkPrefix}/all">
+                        <spring:message code="all.app"/>
+                    </a>
+                </li>
 
-            <li>
-                <a href="${linkPrefix}/waiting">
-                    <spring:message code="waiting.app"/>
-                </a>
-            </li>
+                <li>
+                    <a href="${linkPrefix}/waiting">
+                        <spring:message code="waiting.app"/>
+                    </a>
+                </li>
 
-            <li>
-                <a href="${linkPrefix}/allowed">
-                    <spring:message code="allow.app"/>
-                </a>
-            </li>
+                <li>
+                    <a href="${linkPrefix}/allowed">
+                        <spring:message code="allow.app"/>
+                    </a>
+                </li>
 
-            <li>
-                <a href="${linkPrefix}/rejected">
-                    <spring:message code="reject.app"/>
-                </a>
-            </li>
+                <li>
+                    <a href="${linkPrefix}/rejected">
+                        <spring:message code="reject.app"/>
+                    </a>
+                </li>
 
-            <li>
-                <a href="${linkPrefix}/cancelled">
-                    <spring:message code="cancel.app"/>
-                </a>
-            </li>
+                <li>
+                    <a href="${linkPrefix}/cancelled">
+                        <spring:message code="cancel.app"/>
+                    </a>
+                </li>
 
-        </ul>
+            </ul>
 
-    </div>
-
-    <jsp:include page="../include/year_selector.jsp"/>
-
+        </div>
+        
+    </legend>
+    
 </div>
 

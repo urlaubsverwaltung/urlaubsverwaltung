@@ -56,23 +56,13 @@
 
         </div>
 
-        <div class="grid_2 avatar">
-            <table class="app-detail" cellspacing="0" style="height: 13em; text-align: center">
-                <tr class="odd">
-                    <td rowspan="6" style="text-align: center">
-                        <img class="user-pic" src="<c:out value='${gravatar}?d=mm&s=110'/>"/>
-                    </td>
-                </tr>
-            </table>
-        </div>
-
-        <div class="grid_6 vacation-entitlement">
+        <div class="grid_7 vacation-entitlement">
             <table class="app-detail" cellspacing="0">
                 <%@include file="../application/include/account_days.jsp" %>
             </table>
         </div>
-
-        <div class="grid_4 vacation-days">
+        
+        <div class="grid_5 vacation-days">
             <table class="app-detail" cellspacing="0">
                 <%@include file="./include/used_days.jsp" %>
             </table>

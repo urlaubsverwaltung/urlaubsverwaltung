@@ -59,9 +59,11 @@
 
                             <div class="overview-header">
 
-                                <p class="heading">
-                                    <spring:message code="app.title" />
-                                </p>
+                                <legend>
+                                    <p>
+                                        <spring:message code="app.title" />  
+                                    </p>
+                                </legend>
 
                             </div>
                             
@@ -91,8 +93,6 @@
 
 
                         <form:form method="post" action="${actionUrl}" modelAttribute="appForm"> 
-
-                            <div class="grid_12">&nbsp;</div>
 
                             <div class="grid_6">
 
