@@ -43,47 +43,24 @@
             </div>
         </div>
 
-        <div id="login-content">
+        <div class="container">
 
-            <div id="wrapper">
+            <form class="form-signin" method="post" action="j_spring_security_check">
+                <label for="j_username">Username</label>
+                <input class="input-block-level" type="text" name="j_username" id="j_username">
 
-                <form method="post" action="j_spring_security_check">
-
-                    <table id="login-tbl">
-                        <tr>
-                            <td style="text-align: left">
-                                <label for="j_username">Username</label>
-                            </td>
-                            <td>
-                                <input type="text" name="j_username" id="j_username" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="text-align: left">
-                                <label for="j_password">Passwort</label>
-                            </td>
-                            <td>
-                                <input type="password" name="j_password" id="j_password" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                &nbsp;
-                            </td>
-                            <td style="padding-top: 1em;">
-                                <input class="btn btn-primary" type="submit" value="Login" name="Login" style="float: right;" />
-                            </td>
-                        </tr>
-                    </table>
-                </form>
+                <label for="j_password">Passwort</label>
+                <input class="input-block-level" type="password" name="j_password" id="j_password" >
+                
+                <button class="btn btn-large btn-primary" type="submit">Login</button>
 
                 <div id="login-error" style="display:none">
                     Der eingegebene Nutzername oder das Passwort ist falsch.
                 </div>
+            </form>
 
-            </div>
+        </div>
 
-        </div>    
     </body>
 
 </html>
