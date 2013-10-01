@@ -13,7 +13,7 @@
 
 <table class="overview-header">
     <tr>
-        <td><spring:message code="table.overview" /><c:out value="${displayYear}" /></td>
+        <td><c:out value="${person.firstName}"/>&nbsp;<c:out value="${person.lastName}"/>&nbsp;&ndash;&nbsp;<spring:message code="table.overview" /><c:out value="${displayYear}" /></td>
         <td style="text-align: right;">
             <select onchange="window.location.href=this.options
                                                 [this.selectedIndex].value">

@@ -56,7 +56,7 @@
 
         </div>
 
-        <div class="grid_2">
+        <div class="grid_2 avatar">
             <table class="app-detail" cellspacing="0" style="height: 13em; text-align: center">
                 <tr class="odd">
                     <td rowspan="6" style="text-align: center">
@@ -66,13 +66,13 @@
             </table>
         </div>
 
-        <div class="grid_6">
+        <div class="grid_6 vacation-entitlement">
             <table class="app-detail" cellspacing="0">
                 <%@include file="../application/include/account_days.jsp" %>
             </table>
         </div>
 
-        <div class="grid_4">
+        <div class="grid_4 vacation-days">
             <table class="app-detail" cellspacing="0">
                 <%@include file="./include/used_days.jsp" %>
             </table>
@@ -83,6 +83,10 @@
 
         <div class="grid_12">
 
+            <input type="button" style="font-size: 14px;" class="btn" media="print" onclick="window.print(); return false;"
+                   name="<spring:message code='overview' />&nbsp;<spring:message code='print' />"
+                   value="<spring:message code='overview' />&nbsp;<spring:message code='print' />" />
+            
             <c:choose>
                 <c:when test="${person.id == loggedUser.id}">
                     <a class="btn btn-primary" href="${formUrlPrefix}/application/new">
@@ -92,7 +96,7 @@
                 <c:otherwise>
                     <sec:authorize access="hasRole('role.office')">
                         <c:if test="${person.id != loggedUser.id}">
-                            <a class="btn btn-primary" style="margin-top: 1em;"
+                            <a class="btn btn-primary"
                                href="${formUrlPrefix}/${person.id}/application/new">
                                 <c:set var="staff" value="${person.firstName} ${person.lastName}"/>
                                 <spring:message code="ov.apply.for.user" arguments="${staff}"/>

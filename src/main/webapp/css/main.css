@@ -529,3 +529,24 @@ td.notworkday a {
 td.SPECIALLEAVE, td.UNPAIDLEAVE, td.OVERTIME {
     color: #C13A33;
 }
+
+/* print css for staff overview */
+@media print {
+    select {
+        display: none;  
+    }
+    .td-action, .td-detail, div.avatar {
+        display: none;
+    }
+    div.vacation-entitlement {
+        width: 100% !important;
+    }
+    div.vacation-days {
+        width: 100% !important;
+        margin-top: 2em;
+    }
+
+    div.vacation-entitlement table th, div.vacation-days table th {
+        width: 50%;
+    }
+}

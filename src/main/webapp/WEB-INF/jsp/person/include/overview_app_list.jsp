@@ -41,7 +41,7 @@
                     <th class="td-detail">
                         <spring:message code="table.detail" />
                     </th>
-                    <th style="text-align: center">
+                    <th style="text-align: center" class="td-action">
                         <spring:message code="delete" />
                     </th>
                 </tr>
@@ -71,7 +71,7 @@
                         <spring:message code="${app.status.state}" />
                     </td>
                     <td class="td-detail"><a href="${formUrlPrefix}/application/${app.id}"><img src="<spring:url value='/images/playlist.png' />" /></a></td>
-                    <td style="text-align: center">
+                    <td style="text-align: center" class="td-action">
 
                         <c:if test="${app.status.number == 1}">  
                         <sec:authorize access="hasRole('role.office')">
