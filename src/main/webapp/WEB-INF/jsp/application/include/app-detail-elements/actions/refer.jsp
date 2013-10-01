@@ -4,7 +4,6 @@
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
-<input class="btn btn-primary" type="button" name="<spring:message code='app.state.refer' />" 
-       value="<spring:message code='app.state.refer' />" 
-       onclick="$('#reject').hide(); $('#confirm').hide(); $('#cancel').hide(); $('#refer').show();" /> 
-
+<button type="button" class="btn btn-primary" onclick="$('#reject').hide(); $('#confirm').hide(); $('#cancel').hide(); $('#refer').show();">
+    <i class="icon-share-alt icon-white"></i>&nbsp;<spring:message code='app.state.refer' />
+</button>

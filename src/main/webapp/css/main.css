@@ -314,7 +314,6 @@ tr.over td {
 
 .app-detail {
     width: 100%;
-    float:left;
     border: 1px solid #EAF2D3;
     font-size: 1.05em;
     margin-right:1em;
@@ -494,6 +493,10 @@ select {
     margin-top: 0.5em;
 }
 
+.actions {
+    margin-top: 3em;
+}
+
 
 /* sortable table
 */
@@ -565,10 +568,14 @@ td.SPECIALLEAVE, td.UNPAIDLEAVE, td.OVERTIME {
     text-align: left;
 }
 
-button.btn, a.btn {
+button.btn, a.btn, input.btn {
     font-size: 14px;
 }
 
 div.vacation-data .control-label {
     width: 40%; 
+}
+
+[class^="icon-"], [class*=" icon-"] {
+    vertical-align: middle;
 }

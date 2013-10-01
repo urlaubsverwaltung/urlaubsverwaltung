@@ -4,4 +4,6 @@
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
-<a class="btn btn-primary" href="${formUrlPrefix}/staff/${application.person.id}/overview" /><spring:message code="staff.back" /></a>
+<a class="btn" href="${formUrlPrefix}/staff/${application.person.id}/overview" />
+<i class="icon-user"></i>&nbsp;<spring:message code="staff.back" />
+</a>

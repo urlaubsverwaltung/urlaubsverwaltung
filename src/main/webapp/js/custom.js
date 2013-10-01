@@ -84,3 +84,13 @@ function checkSonderurlaub(value) {
 
 }
 
+function showErrorDivIfAction(action) {
+
+    var path = window.location.pathname;
+
+    if(path.indexOf(action) != -1) {
+        $("div#" + action).attr("style", "display: block")
+    } 
+    
+}
+

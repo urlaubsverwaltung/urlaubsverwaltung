@@ -10,6 +10,8 @@
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
+<button type="button" class="btn btn-danger" onclick="$('#reject').hide(); $('#confirm').hide(); $('#refer').hide(); $('#cancel').show();">
+    <i class="icon-trash icon-white"></i>&nbsp;<spring:message code='app.state.cancel' /> 
+</button> 
 
-<input type="button" class="btn btn-danger" name="<spring:message code='app.state.cancel' />" value="<spring:message code='app.state.cancel' />" onclick="$('#reject').hide(); $('#confirm').hide(); $('#refer').hide(); $('#cancel').show();" />
  

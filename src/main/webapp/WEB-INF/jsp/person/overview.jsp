@@ -85,7 +85,7 @@
                             <a class="btn"
                                href="${formUrlPrefix}/${person.id}/application/new">
                                 <c:set var="staff" value="${person.firstName} ${person.lastName}"/>
-                                <i class="icon-pencil"></i>&nbsp;<spring:message code="ov.apply.for.user" arguments="${staff}"/>
+                                <i class="icon-pencil"></i>&nbsp;<spring:message code="ov.apply"/>
                             </a>
                         </c:if>
                     </sec:authorize>

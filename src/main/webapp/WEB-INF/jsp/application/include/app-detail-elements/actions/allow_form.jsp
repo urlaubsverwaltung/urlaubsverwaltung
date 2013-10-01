@@ -12,7 +12,11 @@
         <br />
         <form:textarea path="reason" cssClass="form-textarea" onkeyup="count(this.value, 'text-confirm');" onkeydown="maxChars(this,200); count(this.value, 'text-confirm');" />
         <br />
-        <input type="submit" class="btn" name="<spring:message code='app.state.ok.short' />" value="<spring:message code='app.state.ok.short' />" />
-        <input type="button" class="btn" name="<spring:message code='cancel' />" value="<spring:message code='cancel' />" onclick="$('#confirm').hide();" />
+        <button type="submit" class="btn">
+            <i class="icon-check"></i>&nbsp;<spring:message code='app.state.ok.short' />
+        </button>
+        <button type="button" class="btn" onclick="$('#confirm').hide();">
+            <i class="icon-remove"></i>&nbsp;<spring:message code='cancel' />
+        </button>
     </div>
 </form:form>

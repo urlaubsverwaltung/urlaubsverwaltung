@@ -11,6 +11,6 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 
-<input type="button" class="btn btn-primary" media="print" onclick="window.print(); return false;" 
-       name="<spring:message code='app' />&nbsp;<spring:message code='print' />" 
-       value="<spring:message code='app' />&nbsp;<spring:message code='print' />" />
+<button type="button" class="btn" media="print" onclick="window.print(); return false;">
+    <i class="icon-print"></i>&nbsp;<spring:message code='app' />&nbsp;<spring:message code='print' /> 
+</button>

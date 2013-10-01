@@ -11,7 +11,7 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 
-<table class="app-detail tbl-margin-bottom" cellspacing="0">
+<table class="app-detail" cellspacing="0">
     <tr class="odd">
         <td>
             <spring:message code="app.apply" />

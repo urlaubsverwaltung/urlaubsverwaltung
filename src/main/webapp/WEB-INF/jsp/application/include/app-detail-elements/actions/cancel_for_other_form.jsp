@@ -13,12 +13,16 @@
     </script>
 </c:if>
 
-<div id="cancel" class="confirm-red" style="
-     <c:choose>
-         <c:when test="${empty errors}">display: none</c:when>
-         <c:otherwise>display: block</c:otherwise>
-     </c:choose>
-     ">
+<div id="cancel" class="confirm-red" style="display: none">
+
+    <if test="${!empty errors}">
+        <script type="text/javascript">
+            $(document).ready(function() {
+                showErrorDivIfAction("cancel");
+            });
+        </script>
+    </if>
+    
     <form:form method="put" action="${formUrlPrefix}/application/${application.id}/cancel" modelAttribute="comment">
         <c:if test="${!empty errors}">
             <div id="reject-error">
@@ -42,7 +46,11 @@
         <br />
         <form:textarea path="reason" cssClass="form-textarea" onkeyup="count(this.value, 'text-cancel');" onkeydown="maxChars(this,200); count(this.value, 'text-cancel');" />
         <br /><br />
-        <input type="submit" class="btn" name="<spring:message code='delete' />" value="<spring:message code='delete' />" />
-        <input type="button" class="btn" name="<spring:message code='cancel' />" value="<spring:message code='cancel' />" onclick="$('#cancel').hide();" />
+        <button type="submit" class="btn">
+            <i class="icon-trash"></i>&nbsp;<spring:message code='delete' />
+        </button>
+        <button type="button" class="btn" onclick="$('#cancel').hide();">
+            <i class="icon-remove"></i>&nbsp;<spring:message code='cancel' />
+        </button>
     </form:form>
 </div> 

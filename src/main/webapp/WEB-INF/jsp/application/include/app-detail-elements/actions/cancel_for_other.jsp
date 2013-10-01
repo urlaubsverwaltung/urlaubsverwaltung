@@ -5,6 +5,8 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 
-<input type="button" class="btn btn-danger" name="<spring:message code='app.state.cancel' />" value="<spring:message code='app.state.cancel' />" onclick="$('#reject').hide(); $('#confirm').hide(); $('#refer').hide(); $('#cancel').show();" />
+<button type="button" class="btn btn-danger" onclick="$('#reject').hide(); $('#confirm').hide(); $('#refer').hide(); $('#cancel').show();">
+    <i class="icon-trash icon-white"></i>&nbsp;<spring:message code='app.state.cancel' />
+</button> 
 
 
