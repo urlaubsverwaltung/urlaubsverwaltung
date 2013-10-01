@@ -83,28 +83,28 @@
 
         <div class="grid_12">
 
-            <a class="btn" href="#" media="print" onclick="window.print(); return false;">
-                <i class="icon-print"></i>&nbsp;<spring:message code='overview' />&nbsp;<spring:message code='print' />
-            </a>
-            
             <c:choose>
                 <c:when test="${person.id == loggedUser.id}">
-                    <a class="btn btn-primary" href="${formUrlPrefix}/application/new">
-                        <spring:message code="ov.apply"/>
+                    <a class="btn" href="${formUrlPrefix}/application/new">
+                        <i class="icon-pencil"></i>&nbsp;<spring:message code="ov.apply"/>
                     </a>
                 </c:when>
                 <c:otherwise>
                     <sec:authorize access="hasRole('role.office')">
                         <c:if test="${person.id != loggedUser.id}">
-                            <a class="btn btn-primary"
+                            <a class="btn"
                                href="${formUrlPrefix}/${person.id}/application/new">
                                 <c:set var="staff" value="${person.firstName} ${person.lastName}"/>
-                                <spring:message code="ov.apply.for.user" arguments="${staff}"/>
+                                <i class="icon-pencil"></i>&nbsp;<spring:message code="ov.apply.for.user" arguments="${staff}"/>
                             </a>
                         </c:if>
                     </sec:authorize>
                 </c:otherwise>
             </c:choose>
+
+            <a class="btn" href="#" media="print" onclick="window.print(); return false;">
+                <i class="icon-print"></i>&nbsp;<spring:message code='overview' />&nbsp;<spring:message code='print' />
+            </a>
 
         </div>
         <div class="grid_12">&nbsp;</div>
