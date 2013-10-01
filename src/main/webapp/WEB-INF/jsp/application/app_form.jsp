@@ -94,7 +94,7 @@
 
                         <form:form method="post" action="${actionUrl}" modelAttribute="appForm"> 
 
-                            <div class="grid_6">
+                            <div class="grid_6" style="margin-bottom: 4em;">
 
                                 <c:if test="${not empty errors || timeError != null}">
 
@@ -166,7 +166,7 @@
                                                 
                                             </script>
 
-                                            <img id="special-leave-info" src="<spring:url value='/images/info.png' />" style="vertical-align: middle" data-placement="right" data-toggle="popover" data-original-title="<spring:message code='special.leave.title.short' />" data-content="<spring:message code='special.leave.explanation' />" data-trigger="hover" />
+                                            <img id="special-leave-info" src="<spring:url value='/images/info.png' />" style="vertical-align: middle" data-placement="bottom" data-toggle="popover" data-original-title="<spring:message code='special.leave.title.short' />" data-content="<spring:message code='special.leave.explanation' />" data-trigger="hover" />
                                     </td>
 
                                         <!-- Modal -->
@@ -209,11 +209,15 @@
                                     </tr>
                                     <tr class="odd">
                                         <td>
-                                            <label for="reason"><spring:message code='reason' />&nbsp;<spring:message code='app.reason.describe' /></label>
-                                            (<span id="text-reason"></span><spring:message code="max.chars" />)<br />
+                                            <label for="reason">
+                                                <spring:message code='reason' />:
+                                                <br />
+                                                <spring:message code='app.reason.describe' />
+                                            </label>
                                             <form:errors path="reason" cssClass="error" />
                                         </td>
                                         <td>
+                                            <span id="text-reason"></span>200 Zeichen
                                             <form:textarea id="reason" path="reason" cssErrorClass="error form-textarea" class="form-textarea"
                                                            onkeyup="count(this.value, 'text-reason');" onkeydown="maxChars(this,200); count(this.value, 'text-reason');" />
                                         </td>
@@ -253,17 +257,21 @@
                                     </tr>
                                     <tr class="odd">
                                         <td>
-                                            <label for="anschrift"><spring:message code='app.address' />:</label>
-                                            (<span id="text-address"></span><spring:message code="max.chars" />)<br />
+                                            <label for="anschrift">
+                                                <spring:message code='app.address' />:
+                                                <br />
+                                                <spring:message code='app.optional' />
+                                            </label>
                                             <form:errors path="address" cssClass="error" />
                                         </td>
                                         <td>
+                                            <span id="text-address"></span><spring:message code="max.chars" />
                                             <form:textarea id="anschrift" path="address" class="form-textarea" cssErrorClass="error form-textarea" onkeyup="count(this.value, 'text-address');" onkeydown="maxChars(this,200); count(this.value, 'text-address');" />
                                         </td>
                                     </tr>
                                     <tr class="even">
                                         <td>
-                                            <label for="team"><spring:message code='app.team' /></label>
+                                            <label><spring:message code='app.team' /></label>
                                         </td>
                                         <td>
                                             <form:radiobutton path="teamInformed" value="true" />&nbsp;<spring:message code='yes' />&nbsp;&nbsp;
@@ -272,22 +280,29 @@
                                     </tr>
                                     <tr class="odd">
                                         <td>
-                                            <label for="kommentar"><spring:message code='app.form.comment' />:</label>
-                                            (<span id="text-comment"></span><spring:message code="max.chars" />)<br />
-                                            <form:errors path="comment" cssClass="error" /></br>
+                                            <label for="kommentar">
+                                                <spring:message code='app.form.comment' />:
+                                                <br />
+                                                <spring:message code='app.optional' />
+                                            </label>
+                                            <form:errors path="comment" cssClass="error" />
                                         </td>
                                         <td>
+                                            <span id="text-comment"></span><spring:message code="max.chars" />
                                             <form:textarea id="kommentar" path="comment" class="form-textarea" cssErrorClass="error form-textarea" onkeyup="count(this.value, 'text-comment');" onkeydown="maxChars(this,200); count(this.value, 'text-comment');" />
                                         </td>
                                     </tr>
                                 </table>
+
                                 <table class="app-detail tbl-margin-top" cellspacing="0">
                                     <tr class="odd">
                                         <td>
                                             <spring:message code='app.footer' />&nbsp;<joda:format style="M-" value="${date}"/>
                                         </td>
-                                        <td style="text-align:right;padding-right:2.5em;">
-                                            <input class="btn btn-primary" type="submit" name="<spring:message code='apply' />" value="<spring:message code='apply' />" />
+                                        <td>
+                                            <button type="submit" class="btn btn-primary" style="float: right;">
+                                                <i class='icon-ok icon-white'></i>&nbsp;<spring:message code='apply' />
+                                            </button>
                                         </td>
                                     </tr>
                                 </table>       
