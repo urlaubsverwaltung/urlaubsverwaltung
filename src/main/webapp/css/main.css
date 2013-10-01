@@ -329,9 +329,7 @@ tr.over td {
 }
 
 .user-pic {
-    background: none repeat scroll 0 0 #FFFFFF;
-    border: 1px solid #D5D5D5;
-    padding: 5px;
+    padding: 3px;
 }
 
 .overview-header legend p {
@@ -339,13 +337,12 @@ tr.over td {
     color:#516310;
     font-weight: 100;
     vertical-align: middle;
-    /*margin: 0;*/
+    margin: 0;
 }
 
 .overview-header .year-selector, .overview-header .person-selector, .overview-header .status-selector {
     float: right;
     margin-left: 0.5em;
-    /*padding: 1em;*/
 }
 
 .year-selector button, .person-selector button, .status-selector button {
