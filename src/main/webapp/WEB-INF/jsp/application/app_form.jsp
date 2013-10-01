@@ -57,11 +57,14 @@
 
                         <div class="grid_12">
 
-                            <table class="overview-header" style="margin-bottom:1em">
-                                <tr>
-                                    <td><spring:message code="app.title" /></td>
-                                </tr>
-                            </table>
+                            <div class="overview-header">
+
+                                <p class="heading">
+                                    <spring:message code="app.title" />
+                                </p>
+
+                            </div>
+                            
                         </div>
 
                         <c:choose>

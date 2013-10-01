@@ -154,7 +154,6 @@ td.vac {
 
 a.btn-new-user, a.btn-new-user:hover {
     float: right;
-    margin-top: 1em;
     margin-bottom: 1em;
 }
 
@@ -340,15 +339,38 @@ tr.over td {
     background-color: #EAF2D3;
 }
 
-
-.overview-header td {
+.overview-header .heading {
+    display: inline-block;
     color:#516310;
     font-size: 18px;
     font-weight: 100;
-    height: 2.25em;
-    padding-left: 0.5em;
+    vertical-align: middle;
+    margin: 0;
 }
 
+.overview-header .heading {
+    padding: 1em 0.25em 1em 0.5em; 
+}
+
+.overview-header .year-selector, .overview-header .person-selector, .overview-header .status-selector {
+    float: right;
+    padding: 1em;
+}
+
+.year-selector button, .person-selector button, .status-selector button {
+    font-size: 14px;
+}
+
+.year-selector ul.dropdown-menu, .person-selector ul.dropdown-menu, .status-selector ul.dropdown-menu {
+    top: 80%;
+    left: 10%;
+    min-width: 117px;
+}
+
+.year-selector ul.dropdown-menu, .person-selector ul.dropdown-menu {
+    max-height: 190px;
+    overflow-y: auto;
+}
 
 #staff-list .td-edit, #staff-list .td-detail, .app-tbl .td-detail  {
     text-align: center;

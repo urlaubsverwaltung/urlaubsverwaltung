@@ -4,7 +4,7 @@
     Author     : Aljona Murygina
 --%>
 
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
@@ -13,34 +13,62 @@
 
 <c:choose>
     <c:when test="${!empty param.year}">
-        <c:set var="displayYear" value="${param.year}" />
+        <c:set var="displayYear" value="${param.year}"/>
     </c:when>
     <c:otherwise>
-        <c:set var="displayYear" value="${year}" />
+        <c:set var="displayYear" value="${year}"/>
     </c:otherwise>
 </c:choose>
 
-<table class="overview-header">
-    <tr>
-        <td><spring:message code="${titleApp}" />&nbsp;&ndash;&nbsp;<c:out value="${displayYear}" /></td>
-        <td style="text-align: right;">
-            <select onchange="window.location.href=this.options
-                                    [this.selectedIndex].value">
-                <option selected="selected" value=""><spring:message code="status.app" /></option>
-                <option value="${linkPrefix}/all"><spring:message code="all.app" /></option>
-                <option value="${linkPrefix}/waiting"><spring:message code="waiting.app" /></option>
-                <option value="${linkPrefix}/allowed"><spring:message code="allow.app" /></option>
-                <option value="${linkPrefix}/rejected"><spring:message code="reject.app" /></option>
-                <option value="${linkPrefix}/cancelled"><spring:message code="cancel.app" /></option>
-            </select>
-            &nbsp;
-            <select onchange="window.location.href=this.options
-                                    [this.selectedIndex].value">
-                <option selected="selected" value=""><spring:message code="ov.header.year" /></option>
-                <option value="?year=<c:out value='${year - 1}' />"><c:out value="${year - 1}" /></option>
-                <option value="?year=<c:out value='${year}' />"><c:out value="${year}" /></option>
-                <option value="?year=<c:out value='${year + 1}' />"><c:out value="${year + 1}" /></option>
-            </select>
-        </td>
-    </tr>
-</table>
+<div class="overview-header">
+
+    <p class="heading">
+        <spring:message code="${titleApp}"/>&nbsp;&ndash;&nbsp;<c:out value="${displayYear}"/>
+    </p>
+
+    <div class="btn-group person-selector">
+
+        <button class="btn dropdown-toggle" data-toggle="dropdown">
+            <spring:message code="status.app"/>&nbsp;<span class="caret"></span>
+        </button>
+
+        <ul class="dropdown-menu">
+
+            <li>
+                <a href="${linkPrefix}/all">
+                    <spring:message code="all.app"/>
+                </a>
+            </li>
+
+            <li>
+                <a href="${linkPrefix}/waiting">
+                    <spring:message code="waiting.app"/>
+                </a>
+            </li>
+
+            <li>
+                <a href="${linkPrefix}/allowed">
+                    <spring:message code="allow.app"/>
+                </a>
+            </li>
+
+            <li>
+                <a href="${linkPrefix}/rejected">
+                    <spring:message code="reject.app"/>
+                </a>
+            </li>
+
+            <li>
+                <a href="${linkPrefix}/cancelled">
+                    <spring:message code="cancel.app"/>
+                </a>
+            </li>
+
+        </ul>
+
+    </div>
+
+    <jsp:include page="../include/year_selector.jsp"/>
+
+</div>
+

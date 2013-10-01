@@ -25,14 +25,14 @@
 
                 <div class="grid_12">
 
-                    <table class="overview-header">
-                        <tr>
-                            <td colspan="2">
-                                <spring:message code="role.management" />
-                            </td>
-                        </tr>
-                    </table>
+                    <div class="overview-header">
 
+                        <p class="heading">
+                            <spring:message code="role.management" />
+                        </p>
+
+                    </div>
+                    
                     <c:choose>
 
                         <c:when test="${notexistent == true}">

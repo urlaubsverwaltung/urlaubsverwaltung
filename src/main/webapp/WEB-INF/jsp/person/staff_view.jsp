@@ -20,41 +20,12 @@
         <script type="text/javascript">
             $(document).ready(function() {
                 var path = window.location.pathname;
-            
+
                 if(path.indexOf("inactive") != -1) {
-                    document.getElementById("staff-active").removeAttribute("selected");
-                    document.getElementById("staff-inactive").setAttribute("selected", "selected");
+                    $("div.status-selector button").html('<spring:message code="table.inactive" />&nbsp;<span class="caret"></span>');
                 } else {
-                    document.getElementById("staff-inactive").removeAttribute("selected");
-                    document.getElementById("staff-active").setAttribute("selected", "selected");
+                    $("div.status-selector button").html('<spring:message code="table.active" />&nbsp;<span class="caret"></span>')
                 }
-            });
-        </script>
-        <script type="text/javascript">
-            $(document).ready(function() {
-                var url = window.location.href;
-                var currentYearValue = "?year=" + <c:out value='${year}' />;
-                
-                var options = document.getElementById("year-selector").options;
-                
-                for(var i = 0; i < options.length; i++) {
-                    
-                    var optionValue = options[i].value;
-                    
-                    if(url.indexOf("?year=") != -1) {
-                        if(url.indexOf(optionValue) != -1) {
-                            options[i].setAttribute("selected", "selected");
-                        } else {
-                            options[i].removeAttribute("selected");
-                        }
-                    } else {
-                        if(optionValue == currentYearValue) {
-                            options[i].setAttribute("selected", "selected");
-                        }
-                    }
-                    
-                }
-            
             });
         </script>
     </head>
@@ -79,25 +50,28 @@
                         </c:otherwise>
                     </c:choose>
 
-                    <table class="overview-header" style="margin-bottom: 0em;">
-                        <tr>
-                            <td>
-                                    <spring:message code="table.overview" /><c:out value="${displayYear}" />
-                            </td>
-                            <td style="text-align: right;">
-                                <select id="year-selector" onchange="window.location.href=this.options[this.selectedIndex].value">
-                                    <option value="?year=<c:out value='${year - 1}' />"><c:out value="${year - 1}" /></option>
-                                    <option selected="selected" value="?year=<c:out value='${year}' />"><c:out value="${year}" /></option>
-                                    <option value="?year=<c:out value='${year + 1}' />"><c:out value="${year + 1}" /></option>
-                                </select>
-                                <select onchange="window.location.href=this.options[this.selectedIndex].value">
-                                    <option id="staff-active" value="${formUrlPrefix}/staff"><spring:message code="table.active" /></option>
-                                    <option id="staff-inactive" value="${formUrlPrefix}/staff/inactive"><spring:message code="table.inactive" /></option>
-                                </select> 
-                            </td>
-                        </tr>
-                    </table>
+                    <div class="overview-header">
 
+                        <p class="heading">
+                            <spring:message code="table.overview" /><c:out value="${displayYear}" />
+                        </p>
+
+                        <jsp:include page="../include/year_selector.jsp" />
+
+                        <div class="btn-group status-selector">
+
+                            <button class="btn dropdown-toggle" data-toggle="dropdown">
+                            </button>
+
+                            <ul class="dropdown-menu">
+                                <li><a href="${formUrlPrefix}/staff"><spring:message code="table.active" /></a></li>
+                                <li><a href="${formUrlPrefix}/staff/inactive"><spring:message code="table.inactive" /></a></li>
+                            </ul>
+
+                        </div>
+
+                    </div>
+                    
                     <c:choose>
 
                         <c:when test="${notexistent == true}">
