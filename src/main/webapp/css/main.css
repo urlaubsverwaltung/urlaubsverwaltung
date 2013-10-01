@@ -256,7 +256,7 @@ tr.over td {
     border: 1px solid #E76757;
     background-color: #FFE3E3;
     padding: 0.5em 0.5em 0.5em 2.5em;
-    color: red;
+    color: #B94A48;
 }
 
 
@@ -404,11 +404,11 @@ tr.over td {
 }
 
 .error {
-    color:red;
+    color:#B94A48;
 }
 
 input.error, textarea.error {
-    border-color: red;
+    border-color: #B94A48;
 }
 
 #errorpage {
@@ -554,4 +554,21 @@ td.SPECIALLEAVE, td.UNPAIDLEAVE, td.OVERTIME {
     div.vacation-entitlement table th, div.vacation-days table th {
         width: 50%;
     }
+    
+    .overview-header legend p {
+        color: black; font-weight: bold; 
+    }
+}
+
+
+.form-horizontal .control-label {
+    text-align: left;
+}
+
+button.btn, a.btn {
+    font-size: 14px;
+}
+
+div.vacation-data .control-label {
+    width: 40%; 
 }
