@@ -83,9 +83,9 @@
 
         <div class="grid_12">
 
-            <input type="button" style="font-size: 14px;" class="btn" media="print" onclick="window.print(); return false;"
-                   name="<spring:message code='overview' />&nbsp;<spring:message code='print' />"
-                   value="<spring:message code='overview' />&nbsp;<spring:message code='print' />" />
+            <a class="btn" href="#" media="print" onclick="window.print(); return false;">
+                <i class="icon-print"></i>&nbsp;<spring:message code='overview' />&nbsp;<spring:message code='print' />
+            </a>
             
             <c:choose>
                 <c:when test="${person.id == loggedUser.id}">
