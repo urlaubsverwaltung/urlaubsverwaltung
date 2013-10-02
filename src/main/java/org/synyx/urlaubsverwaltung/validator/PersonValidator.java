@@ -90,9 +90,6 @@ public class PersonValidator implements Validator {
 
         PersonForm form = (PersonForm) target;
 
-        // field login name
-        validateLogin(form.getLoginName(), errors);
-
         // field first name
         validateName(form.getFirstName(), FIRST_NAME, errors);
 
@@ -143,7 +140,7 @@ public class PersonValidator implements Validator {
     }
 
 
-    protected void validateLogin(String login, Errors errors) {
+    public void validateLogin(String login, Errors errors) {
 
         validateName(login, LOGIN_NAME, errors);
 

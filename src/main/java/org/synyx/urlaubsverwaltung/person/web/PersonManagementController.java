@@ -272,6 +272,9 @@ public class PersonManagementController {
 
         validator.validate(personForm, errors); // validates the name fields, the email field and the year field
 
+        // validate login name
+        validator.validateLogin(personForm.getLoginName(), errors);
+
         validator.validateAnnualVacation(personForm, errors, locale); // validates holiday entitlement's
 
         // vacation days
