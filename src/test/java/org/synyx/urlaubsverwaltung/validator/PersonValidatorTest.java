@@ -1,6 +1,8 @@
 
 package org.synyx.urlaubsverwaltung.validator;
 
+import org.joda.time.DateMidnight;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -349,20 +351,20 @@ public class PersonValidatorTest {
         Mockito.verify(errors).rejectValue("year", "error.entry");
         Mockito.reset(errors);
 
-        // error 3: year > 2030
-        form.setYear("2032");
+        // error 3: year greater than +10 years
+        form.setYear(String.valueOf(DateMidnight.now().getYear() + 20));
         instance.validateYear(form.getYear(), errors);
         Mockito.verify(errors).rejectValue("year", "error.entry");
         Mockito.reset(errors);
 
-        // error 4: year < 2010
-        form.setYear("2009");
+        // error 4: year smaller than -10 years
+        form.setYear(String.valueOf(DateMidnight.now().getYear() - 12));
         instance.validateYear(form.getYear(), errors);
         Mockito.verify(errors).rejectValue("year", "error.entry");
         Mockito.reset(errors);
 
-        // correct: year = 2010
-        form.setYear("2010");
+        // correct: year
+        form.setYear(String.valueOf(DateMidnight.now().getYear()));
         instance.validateYear(form.getYear(), errors);
         Mockito.verifyZeroInteractions(errors);
         Mockito.reset(errors);

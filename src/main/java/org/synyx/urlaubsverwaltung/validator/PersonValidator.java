@@ -200,7 +200,9 @@ public class PersonValidator implements Validator {
             try {
                 int year = Integer.parseInt(yearForm);
 
-                if (year < 2010 || year > 2030) {
+                int now = DateMidnight.now().getYear();
+
+                if (year < (now - 11) || year > (now + 10)) {
                     errors.rejectValue(YEAR, ERROR_ENTRY);
                 }
             } catch (NumberFormatException ex) {
