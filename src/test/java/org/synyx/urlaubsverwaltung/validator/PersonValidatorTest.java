@@ -536,4 +536,88 @@ public class PersonValidatorTest {
 
         Mockito.verify(errors, Mockito.never()).rejectValue(Mockito.anyString(), Mockito.anyString());
     }
+
+
+    @Test
+    public void testInvalidPeriod1() {
+
+        Mockito.reset(errors);
+
+        // invalid period: 5.1.2013 - 1.1.2013
+
+        form.setYear("2013");
+
+        form.setMonthFrom("1");
+        form.setMonthTo("1");
+
+        form.setDayFrom("5");
+        form.setDayTo("1");
+
+        instance.validatePeriod(form, errors);
+
+        Mockito.verify(errors).reject("error.period");
+    }
+
+
+    @Test
+    public void testInvalidPeriod2() {
+
+        Mockito.reset(errors);
+
+        // invalid period: 5.1.2013 - 5.1.2013
+
+        form.setYear("2013");
+
+        form.setMonthFrom("1");
+        form.setMonthTo("1");
+
+        form.setDayFrom("5");
+        form.setDayTo("5");
+
+        instance.validatePeriod(form, errors);
+
+        Mockito.verify(errors).reject("error.period");
+    }
+
+
+    @Test
+    public void testInvalidPeriod3() {
+
+        Mockito.reset(errors);
+
+        // invalid period: 1.5.2013 - 5.1.2013
+
+        form.setYear("2013");
+
+        form.setMonthFrom("5");
+        form.setMonthTo("1");
+
+        form.setDayFrom("1");
+        form.setDayTo("5");
+
+        instance.validatePeriod(form, errors);
+
+        Mockito.verify(errors).reject("error.period");
+    }
+
+
+    @Test
+    public void testValidPeriod() {
+
+        Mockito.reset(errors);
+
+        // valid period: 1.5.2013 - 5.5.2013
+
+        form.setYear("2013");
+
+        form.setMonthFrom("5");
+        form.setMonthTo("5");
+
+        form.setDayFrom("1");
+        form.setDayTo("5");
+
+        instance.validatePeriod(form, errors);
+
+        Mockito.verifyZeroInteractions(errors);
+    }
 }

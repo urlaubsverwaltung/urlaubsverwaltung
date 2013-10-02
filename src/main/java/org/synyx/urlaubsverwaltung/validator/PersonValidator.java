@@ -3,6 +3,8 @@ package org.synyx.urlaubsverwaltung.validator;
 
 import org.apache.log4j.Logger;
 
+import org.joda.time.DateMidnight;
+
 import org.springframework.util.StringUtils;
 
 import org.springframework.validation.Errors;
@@ -101,6 +103,8 @@ public class PersonValidator implements Validator {
 
         // field year
         validateYear(form.getYear(), errors);
+
+        validatePeriod(form, errors);
     }
 
 
@@ -202,6 +206,26 @@ public class PersonValidator implements Validator {
             } catch (NumberFormatException ex) {
                 errors.rejectValue(YEAR, ERROR_ENTRY);
             }
+        }
+    }
+
+
+    /**
+     * Validates that from date is before to date, i.e. is a valid period.
+     *
+     * @param  form  PersonForm
+     * @param  errors  Errors
+     */
+    protected void validatePeriod(PersonForm form, Errors errors) {
+
+        DateMidnight from = new DateMidnight(Integer.parseInt(form.getYear()), Integer.parseInt(form.getMonthFrom()),
+                Integer.parseInt(form.getDayFrom()));
+
+        DateMidnight to = new DateMidnight(Integer.parseInt(form.getYear()), Integer.parseInt(form.getMonthTo()),
+                Integer.parseInt(form.getDayTo()));
+
+        if (!from.isBefore(to)) {
+            errors.reject("error.period");
         }
     }
 

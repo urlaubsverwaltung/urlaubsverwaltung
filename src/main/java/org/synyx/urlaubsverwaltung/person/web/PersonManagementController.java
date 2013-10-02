@@ -233,6 +233,10 @@ public class PersonManagementController {
 
         validator.validate(personForm, errors); // validates the name fields, the email field and the year field
 
+        if (errors.hasGlobalErrors()) {
+            model.addAttribute("errors", errors);
+        }
+
         validator.validateAnnualVacation(personForm, errors, locale); // validates holiday entitlement's
 
         // vacation days
@@ -271,6 +275,10 @@ public class PersonManagementController {
         }
 
         validator.validate(personForm, errors); // validates the name fields, the email field and the year field
+
+        if (errors.hasGlobalErrors()) {
+            model.addAttribute("errors", errors);
+        }
 
         // validate login name
         validator.validateLogin(personForm.getLoginName(), errors);

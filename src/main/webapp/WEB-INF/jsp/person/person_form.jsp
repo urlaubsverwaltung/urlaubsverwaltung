@@ -57,9 +57,6 @@
 </c:choose>
 
 <form:form method="${METHOD}" action="${ACTION}" modelAttribute="personForm" class="form-horizontal">
-<c:if test="${not empty errors}">
-    <div class="grid_6" id="error-div"><form:errors cssClass="error"/></div>
-</c:if>
 
 <div class="grid_5 person-data">
 
@@ -164,7 +161,13 @@
     </div>
 
     <div class="control-group">
-        <label class="control-label"><spring:message code='time'/></label>
+        <label class="control-label">
+            <spring:message code='time'/>
+            <c:if test="${not empty errors}">
+                <br />
+                <span><form:errors cssClass="error"/></span>
+            </c:if>
+        </label>
 
         <div class="controls">
 
