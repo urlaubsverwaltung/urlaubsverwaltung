@@ -17,22 +17,41 @@
     <head>
         <title><spring:message code="title" /></title>
         <%@include file="../include/header.jsp" %>
+
+        <spring:url var="formUrlPrefix" value="/web" />
+
+        <c:choose>
+            <c:when test="${!empty param.year}">
+                <c:set var="displayYear" value="${param.year}" />
+            </c:when>
+            <c:otherwise>
+                <c:set var="displayYear" value="${year}" />
+            </c:otherwise>
+        </c:choose>
+        
         <script type="text/javascript">
             $(document).ready(function() {
                 var path = window.location.pathname;
 
+                var active;
+                
                 if(path.indexOf("inactive") != -1) {
                     $("div.status-selector button").html('<spring:message code="table.inactive" />&nbsp;<span class="caret"></span>');
+                    active = "false";
                 } else {
-                    $("div.status-selector button").html('<spring:message code="table.active" />&nbsp;<span class="caret"></span>')
+                    $("div.status-selector button").html('<spring:message code="table.active" />&nbsp;<span class="caret"></span>');
+                    active = "true";
                 }
+
+                var href = "${formUrlPrefix}/staff/print?year=${displayYear}&active=" + active;
+                
+                $("a.print-view").attr("href", href);
+                
             });
         </script>
     </head>
 
     <body>
-
-        <spring:url var="formUrlPrefix" value="/web" />
 
         <%@include file="../include/menu_header.jsp" %>
 
@@ -40,15 +59,6 @@
             <div class="container_12">
 
                 <div class="grid_12">
-
-                    <c:choose>
-                        <c:when test="${!empty param.year}">
-                            <c:set var="displayYear" value="${param.year}" />
-                        </c:when>
-                        <c:otherwise>
-                            <c:set var="displayYear" value="${year}" />
-                        </c:otherwise>
-                    </c:choose>
 
                     <div class="overview-header">
 

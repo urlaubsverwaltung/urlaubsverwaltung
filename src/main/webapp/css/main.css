@@ -152,9 +152,16 @@ td.vac {
     padding: 0.5em;
 }
 
-a.btn-new-user, a.btn-new-user:hover {
+a.btn-right {
     float: right;
     margin-bottom: 1em;
+    margin-left: 0.5em;
+}
+
+a.btn-left {
+    float: left;
+    margin-bottom: 1em;
+    margin-left: 0.5em;
 }
 
 /* zebra table with for each loop status */
@@ -578,4 +585,9 @@ div.vacation-data .control-label {
 
 [class^="icon-"], [class*=" icon-"] {
     vertical-align: middle;
+}
+
+p.heading-date {
+    font-size: 13px;
+    float: right;
 }
