@@ -29,9 +29,6 @@
                     <th>
                         <spring:message code="time" />
                     </th>
-                    <!--                                    <th>
-                    <spring:message code="reason" />
-                </th>-->
                     <th>
                         <spring:message code="days.vac" />
                     </th>
@@ -61,11 +58,25 @@
                                 </c:otherwise>    
                             </c:choose>
                         </td>
-                        <!--                                        <td>
-                        <c:out value="${app.reason}"/>
-                    </td>-->
-                        <td>
-                    <fmt:formatNumber maxFractionDigits="1" value="${app.days}" />
+                        <td class="days-${loopStatus.index}">
+
+                            <script type="text/javascript">
+
+                                $(document).ready(function() {
+
+                                    var dayLength = '<c:out value="${app.howLong}" />';
+                                    
+                                    var startDate= "<joda:format pattern='yyyy/MM/dd' value='${app.startDate}' />";
+                                    var endDate = "<joda:format pattern='yyyy/MM/dd' value='${app.endDate}' />";
+                                    
+                                    var from = new Date(startDate);
+                                    var to = new Date(endDate);
+                                    
+                                    sendGetDaysRequest("<spring:url value='/web/calendar/vacation' />", from, to, dayLength, ".days-${loopStatus.index}");
+                                    
+                                });
+
+                            </script>
                     </td>
                     <td>
                         <spring:message code="${app.status.state}" />

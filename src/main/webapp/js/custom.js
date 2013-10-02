@@ -9,22 +9,23 @@ function maxChars(elem, max) {
     }
 }
 
-function sendGetDaysRequest(urlPrefix) {
+function formatNumber(number) {
     
-    $(".days").empty();
+    var num = new Number(number).toFixed(1);
     
-    var dayLength = $('input:radio[name=howLong]:checked').val();
-    var startDate = "";
-    var toDate = "";
-
-    if (dayLength === "FULL") {
-        startDate = $("#from").datepicker("getDate");
-        toDate = $("#to").datepicker("getDate");
-    } else {
-        startDate = $("#at").datepicker("getDate");
-        toDate = $("#at").datepicker("getDate");
+    var nArr = num.split(".");
+    
+    if(nArr[1] == 0) {
+        num = new Number(number).toFixed(0);
     }
+    
+    return num;
+}
 
+function sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, el, long) {
+    
+    $(el).empty();
+    
     if(startDate !== undefined && toDate !== undefined && startDate !== null && toDate !== null) {
 
     var startDateString = startDate.getFullYear() + '-' + (startDate.getMonth() + 1) + '-' + startDate.getDate();
@@ -34,7 +35,13 @@ function sendGetDaysRequest(urlPrefix) {
 
     $.get(url, function(data) {
 
-        var text = "entspricht " + data + " Urlaubstag(e)";
+        var text;
+        
+        if(long) {
+            text = "entspricht " + formatNumber(data) + " Urlaubstag(e)";  
+        } else {
+            text = formatNumber(data);
+        }
 
         if(startDate.getFullYear() != toDate.getFullYear()) {
 
@@ -60,25 +67,30 @@ function sendGetDaysRequest(urlPrefix) {
             var url = urlPrefix + "?start=" + startString + "&end=" + toString + "&length=" + dayLength;
 
             $.get(url, function(data) {
-                daysBefore = data;
+                daysBefore = formatNumber(data);
 
                 startString = after.getFullYear() + '-1-1';
                 toString = after.getFullYear() + "-" + (after.getMonth() + 1) + '-' + after.getDate();
                 url = urlPrefix + "?start=" + startString + "&end=" + toString + "&length=" + dayLength;
 
                 $.get(url, function(data) {
-                    daysAfter = data;
+                    daysAfter = formatNumber(data);
 
-                    text += "<br />(davon " + daysBefore + " Tag(e) in " + before.getFullYear() 
-                        + " und " + daysAfter + " Tag(e) in " + after.getFullYear() + ")";
+                    if(long) {
+                        text += "<br />(davon " + daysBefore + " in " + before.getFullYear()
+                            + " und " + daysAfter + " in " + after.getFullYear() + ")";  
+                    } else {
+                        text += "<br />(" + before.getFullYear() + ": " + daysBefore + ", " 
+                            + after.getFullYear() + ": " + daysAfter + ")";
+                    }
                     
-                    $(".days").html(text);
+                    $(el).html(text);
                 });
 
             });
 
         } else {
-            $(".days").html(text); 
+            $(el).html(text); 
         }
 
     });

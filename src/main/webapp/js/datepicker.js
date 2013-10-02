@@ -110,7 +110,20 @@ function createDatepickerInstances(regional, urlPrefix, vacationUrl) {
                 $("#to").datepicker("setDate", selectedDate);
             }
 
-            sendGetDaysRequest(vacationUrl);
+
+            var dayLength = $('input:radio[name=howLong]:checked').val();
+            var startDate = "";
+            var toDate = "";
+
+            if (dayLength === "FULL") {
+                startDate = $("#from").datepicker("getDate");
+                toDate = $("#to").datepicker("getDate");
+            } else {
+                startDate = $("#at").datepicker("getDate");
+                toDate = $("#at").datepicker("getDate");
+            }
+            
+            sendGetDaysRequest(vacationUrl, startDate, toDate, dayLength, ".days", true);
 
         }
     });
