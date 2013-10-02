@@ -34,9 +34,57 @@ function sendGetDaysRequest(urlPrefix) {
 
     $.get(url, function(data) {
 
-        $(".days").html("entspricht " + data + " Urlaubstag(e)");
+        var text = "entspricht " + data + " Urlaubstag(e)";
+
+        if(startDate.getFullYear() != toDate.getFullYear()) {
+
+            var before;
+            var after;
+
+            if(startDate.getFullYear() < toDate.getFullYear()) {
+                before = startDate;
+                after = toDate;
+            } else {
+                before = toDate;
+                after = startDate;
+            }
+
+            // before - 31.12.
+            // 1.1.   - after
+
+            var daysBefore;
+            var daysAfter;
+
+            var startString = before.getFullYear() + "-" + (before.getMonth() + 1) + '-' + before.getDate();
+            var toString = before.getFullYear() + '-12-31';
+            var url = urlPrefix + "?start=" + startString + "&end=" + toString + "&length=" + dayLength;
+
+            $.get(url, function(data) {
+                daysBefore = data;
+
+                startString = after.getFullYear() + '-1-1';
+                toString = after.getFullYear() + "-" + (after.getMonth() + 1) + '-' + after.getDate();
+                url = urlPrefix + "?start=" + startString + "&end=" + toString + "&length=" + dayLength;
+
+                $.get(url, function(data) {
+                    daysAfter = data;
+
+                    text += "<br />(davon " + daysBefore + " Tag(e) in " + before.getFullYear() 
+                        + " und " + daysAfter + " Tag(e) in " + after.getFullYear() + ")";
+                    
+                    $(".days").html(text);
+                });
+
+            });
+
+        } else {
+            $(".days").html(text); 
+        }
+
     });
+        
     }
+    
 }
 
 // sortable tables
