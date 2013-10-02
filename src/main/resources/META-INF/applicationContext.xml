@@ -77,6 +77,7 @@
 
 <bean id="personValidator" class="org.synyx.urlaubsverwaltung.validator.PersonValidator">
     <constructor-arg ref="propertiesValidator" />
+    <constructor-arg ref="personService" />
 </bean>
 
 <bean id="startupService" class="org.synyx.urlaubsverwaltung.startup.StartupService" />

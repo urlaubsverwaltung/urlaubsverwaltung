@@ -3,10 +3,6 @@ package org.synyx.urlaubsverwaltung.validator;
 
 import org.junit.After;
 import org.junit.AfterClass;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -16,16 +12,21 @@ import org.mockito.Mockito;
 import org.springframework.validation.Errors;
 
 import org.synyx.urlaubsverwaltung.application.domain.Application;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.web.PersonForm;
 
 import java.math.BigDecimal;
 
 import java.util.Locale;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 
 /**
  * Unit test for {@link PersonValidator}.
- * 
+ *
  * @author  Aljona Murygina
  */
 public class PersonValidatorTest {
@@ -35,6 +36,7 @@ public class PersonValidatorTest {
     Errors errors = Mockito.mock(Errors.class);
 
     private PropertiesValidator propValidator = Mockito.mock(PropertiesValidator.class);
+    private PersonService personService = Mockito.mock(PersonService.class);
 
     public PersonValidatorTest() {
     }
@@ -52,7 +54,7 @@ public class PersonValidatorTest {
     @Before
     public void setUp() {
 
-        instance = new PersonValidator(propValidator);
+        instance = new PersonValidator(propValidator, personService);
         form = new PersonForm();
     }
 
@@ -62,7 +64,9 @@ public class PersonValidatorTest {
     }
 
 
-    /** Test of supports method, of class PersonValidator. */
+    /**
+     * Test of supports method, of class PersonValidator.
+     */
     @Test
     public void testSupports() {
 
@@ -79,7 +83,9 @@ public class PersonValidatorTest {
     }
 
 
-    /** Test of validate method, of class PersonValidator. */
+    /**
+     * Test of validate method, of class PersonValidator.
+     */
     @Test
     public void testValidate() {
 
@@ -88,7 +94,9 @@ public class PersonValidatorTest {
     }
 
 
-    /** Test of validateName method, of class PersonValidator. */
+    /**
+     * Test of validateName method, of class PersonValidator.
+     */
     @Test
     public void testValidateName() {
 
@@ -213,7 +221,9 @@ public class PersonValidatorTest {
     }
 
 
-    /** Test of validateEmail method, of class PersonValidator. */
+    /**
+     * Test of validateEmail method, of class PersonValidator.
+     */
     @Test
     public void testValidateEmail() {
 
@@ -314,7 +324,9 @@ public class PersonValidatorTest {
     }
 
 
-    /** Test of validateYear method, of class PersonValidator. */
+    /**
+     * Test of validateYear method, of class PersonValidator.
+     */
     @Test
     public void testValidateYear() {
 
@@ -357,7 +369,9 @@ public class PersonValidatorTest {
     }
 
 
-    /** Test of validateNumberOfDays method, of class PersonValidator. */
+    /**
+     * Test of validateNumberOfDays method, of class PersonValidator.
+     */
     @Test
     public void testValidateNumberOfDays() {
 
@@ -401,7 +415,9 @@ public class PersonValidatorTest {
     }
 
 
-    /** Test of validateProperties method, of class PersonValidator. */
+    /**
+     * Test of validateProperties method, of class PersonValidator.
+     */
     @Test
     public void testValidateProperties() {
 
@@ -409,7 +425,9 @@ public class PersonValidatorTest {
     }
 
 
-    /** Test of validateAnnualVacation method, of class PersonValidator. */
+    /**
+     * Test of validateAnnualVacation method, of class PersonValidator.
+     */
     @Test
     public void testValidateAnnualVacation() {
 
@@ -452,8 +470,9 @@ public class PersonValidatorTest {
     }
 
 
-
-    /** Test of validateEntitlementRemainingVacationDays method, of class PersonValidator. */
+    /**
+     * Test of validateEntitlementRemainingVacationDays method, of class PersonValidator.
+     */
     @Test
     public void testValidateEntitlementRemainingVacationDays() {
 
@@ -492,5 +511,29 @@ public class PersonValidatorTest {
         instance.validateRemainingVacationDays(form, errors, Locale.GERMAN);
         Mockito.verifyZeroInteractions(errors);
         Mockito.reset(errors);
+    }
+
+
+    @Test
+    public void testNotUniqueLoginName() {
+
+        Mockito.reset(errors);
+        Mockito.when(personService.getPersonByLogin("foo")).thenReturn(new Person());
+
+        instance.validateLogin("foo", errors);
+
+        Mockito.verify(errors).rejectValue("loginName", "error.login.unique");
+    }
+
+
+    @Test
+    public void testUniqueLoginName() {
+
+        Mockito.reset(errors);
+        Mockito.when(personService.getPersonByLogin("foo")).thenReturn(null);
+
+        instance.validateLogin("foo", errors);
+
+        Mockito.verify(errors, Mockito.never()).rejectValue(Mockito.anyString(), Mockito.anyString());
     }
 }

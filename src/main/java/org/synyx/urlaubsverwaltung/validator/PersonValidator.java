@@ -8,6 +8,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.web.PersonForm;
 import org.synyx.urlaubsverwaltung.util.NumberUtil;
 import org.synyx.urlaubsverwaltung.util.PropertiesUtil;
@@ -35,6 +36,7 @@ public class PersonValidator implements Validator {
     private static final String ERROR_ENTRY = "error.entry";
     private static final String ERROR_EMAIL = "error.email";
     private static final String ERROR_LENGTH = "error.length";
+    private static final String ERROR_LOGIN_UNIQUE = "error.login.unique";
 
     private static final String LOGIN_NAME = "loginName";
     private static final String FIRST_NAME = "firstName";
@@ -61,10 +63,12 @@ public class PersonValidator implements Validator {
 
     private PropertiesValidator propValidator;
     private Properties customProperties;
+    private PersonService personService;
 
-    public PersonValidator(PropertiesValidator propValidator) {
+    public PersonValidator(PropertiesValidator propValidator, PersonService personService) {
 
         this.propValidator = propValidator;
+        this.personService = personService;
 
         try {
             this.customProperties = PropertiesUtil.load(CUSTOM_PROPERTIES_FILE);
@@ -87,7 +91,7 @@ public class PersonValidator implements Validator {
         PersonForm form = (PersonForm) target;
 
         // field login name
-        validateName(form.getLoginName(), LOGIN_NAME, errors);
+        validateLogin(form.getLoginName(), errors);
 
         // field first name
         validateName(form.getFirstName(), FIRST_NAME, errors);
@@ -134,6 +138,19 @@ public class PersonValidator implements Validator {
             // contains the name field digits?
             if (!matchPattern(NAME_PATTERN, name)) {
                 errors.rejectValue(field, ERROR_ENTRY);
+            }
+        }
+    }
+
+
+    protected void validateLogin(String login, Errors errors) {
+
+        validateName(login, LOGIN_NAME, errors);
+
+        if (!errors.hasFieldErrors(LOGIN_NAME)) {
+            // validate unique login name
+            if (personService.getPersonByLogin(login) != null) {
+                errors.rejectValue(LOGIN_NAME, ERROR_LOGIN_UNIQUE);
             }
         }
     }
