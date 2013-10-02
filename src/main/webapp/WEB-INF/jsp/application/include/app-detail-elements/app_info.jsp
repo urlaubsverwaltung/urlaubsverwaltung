@@ -31,7 +31,7 @@
                 </c:otherwise>    
             </c:choose>
         </td>
-        <td>
+        <td class="days">
             = <fmt:formatNumber maxFractionDigits="1" value="${application.days}"/> 
             <c:choose>
                 <c:when test="${application.days > 0.50 && application.days <= 1.00}">
@@ -41,6 +41,29 @@
                     <spring:message code="days.vac" />
                 </c:otherwise>
             </c:choose>
+            
+            <c:if test="${application.startDate.year != application.endDate.year}">
+
+                <script type="text/javascript">
+
+                    $(document).ready(function() {
+
+                        var dayLength = '<c:out value="${application.howLong}" />';
+
+                        var startDate= "<joda:format pattern='yyyy/MM/dd' value='${application.startDate}' />";
+                        var endDate = "<joda:format pattern='yyyy/MM/dd' value='${application.endDate}' />";
+
+                        var from = new Date(startDate);
+                        var to = new Date(endDate);
+
+                        sendGetDaysRequest("<spring:url value='/web/calendar/vacation' />", from, to, dayLength, ".days", true);
+
+                    });
+
+                </script> 
+                
+            </c:if>
+            
 </td>
 </tr>
 <tr class="odd">

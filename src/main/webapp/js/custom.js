@@ -38,7 +38,7 @@ function sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, el, long) {
         var text;
         
         if(long) {
-            text = "entspricht " + formatNumber(data) + " Urlaubstag(e)";  
+            text = "= " + formatNumber(data) + " Urlaubstag(e)";  
         } else {
             text = formatNumber(data);
         }
