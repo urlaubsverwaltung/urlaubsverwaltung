@@ -63,6 +63,9 @@
         <constructor-arg ref="ownCalendarService" />
         <constructor-arg ref="jollydayCalendar" />
     </bean>
+
+    <bean class="org.synyx.urlaubsverwaltung.sicknote.SickNoteController">
+    </bean>
     
      <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
      <property name="basename" value="classpath:messages" />

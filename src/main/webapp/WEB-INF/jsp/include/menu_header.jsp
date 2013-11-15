@@ -26,7 +26,7 @@
 
                         <sec:authorize access="hasRole('role.user')">
                             <li><a href="${formUrlPrefix}/overview"><i class="icon-home"></i>&nbsp;<spring:message code="overview" /></a></li>
-                            <li><a href="${formUrlPrefix}/application/new"><i class="icon-pencil"></i>&nbsp;<spring:message code="ov.apply" /></a></li>
+                            <li><a href="${formUrlPrefix}/application/new"><i class="icon-pencil"></i>&nbsp;<spring:message code="app" /></a></li>
                         </sec:authorize>
 
                         <sec:authorize access="hasAnyRole('role.boss', 'role.office')">
@@ -35,6 +35,7 @@
 
                         <sec:authorize access="hasRole('role.office')">
                             <li><a href="${formUrlPrefix}/staff"><i class="icon-user"></i>&nbsp;<spring:message code="staff.manager" /></a></li>
+                            <li><a href="${formUrlPrefix}/sicknote/new"><i class="icon-eye-close"></i>&nbsp;<spring:message code="sicknotes" /></a></li>
                         </sec:authorize>
 
                         <sec:authorize access="hasRole('role.admin')">
