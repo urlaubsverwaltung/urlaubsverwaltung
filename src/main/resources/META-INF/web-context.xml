@@ -65,6 +65,8 @@
     </bean>
 
     <bean class="org.synyx.urlaubsverwaltung.sicknote.SickNoteController">
+        <constructor-arg ref="sickNoteService" />
+        <constructor-arg ref="personService" />
     </bean>
     
      <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
