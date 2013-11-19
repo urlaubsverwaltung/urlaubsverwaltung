@@ -26,7 +26,7 @@
                 </legend>
             </div>
             
-            <form:form method="POST" action="#" modelAttribute="sickNote" class="form-horizontal">
+            <form:form method="POST" action="#" modelAttribute="sickNote" class="form-horizontal form-sicknote">
 
                 <div class="control-group">
                     <label class="control-label" for="employee"><spring:message code='staff'/></label>
@@ -41,11 +41,19 @@
                 </div>
 
                 <div class="control-group">
-                    <label class="control-label"><spring:message code='time'/></label>
+                    <label class="control-label" for="from"><spring:message code='From' /></label>
+
                     <div class="controls">
-                        <spring:message code='from' />&nbsp;<form:input path="startDate" />
-                        <spring:message code='to' />&nbsp;<form:input path="endDate" />
+                        <form:input id="from" path="startDate" cssClass="input-medium" />
                         <span class="help-inline"><form:errors path="startDate" cssClass="error"/></span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="to"><spring:message code='To' /></label>
+
+                    <div class="controls">
+                        <form:input id="to" path="endDate" cssClass="input-medium" />
                         <span class="help-inline"><form:errors path="endDate" cssClass="error"/></span>
                     </div>
                 </div>
@@ -60,11 +68,20 @@
                 </div>
                 
                 <div class="control-group">
-                    <label class="control-label" for="comment"><spring:message code='comment'/></label>
+                    <label class="control-label" for="comment">
+                        <spring:message code='comment'/>&nbsp;<spring:message code='app.optional' />
+                    </label>
                     <div class="controls">
                         <form:textarea id="comment" path="comment" cssErrorClass="error"/>
                         <span class="help-inline"><form:errors path="comment" cssClass="error"/></span>
                     </div>
+                </div>
+
+                <hr/>
+                
+                <div class="control-group">
+                    <button class="btn" type="submit"><i class='icon-ok'></i>&nbsp;<spring:message code="save" /></button>
+                    <a class="btn" href="#"><i class='icon-remove'></i>&nbsp;<spring:message code='cancel'/></a>
                 </div>
             
             </form:form>

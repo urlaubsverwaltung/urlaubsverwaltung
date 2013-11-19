@@ -591,3 +591,12 @@ p.heading-date {
     font-size: 13px;
     float: right;
 }
+
+/* styling for sick note form */
+.form-sicknote .control-label {
+    width: 30em !important;
+}
+
+.form-sicknote input[type="text"] {
+    height: 28px !important;
+}
