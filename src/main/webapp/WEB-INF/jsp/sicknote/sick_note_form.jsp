@@ -7,6 +7,38 @@
 <head>
     <title><spring:message code="title"/></title>
     <%@include file="../include/header.jsp" %>
+
+    <script src="<spring:url value='/js/datepicker.js' />" type="text/javascript" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+
+            var regional = "${pageContext.request.locale.language}";
+
+            $.datepicker.setDefaults($.datepicker.regional[regional]);
+            
+            $("#from, #to").datepicker({
+                numberOfMonths: 1,
+                onSelect: function(date) {
+                    if (this.id == "from") {
+                        $("#to").datepicker("setDate", date);
+                    } 
+                },
+                beforeShowDay: function (date) {
+
+                    // if day is saturday or sunday, highlight it
+                    if (date.getDay() == 6 || date.getDay() == 0) {
+                        return [true, "notworkday"];
+                    } else {
+                        return [true, ""];
+                    } 
+
+                }
+            });
+            
+        });
+    </script>
+    
 </head>
 <body>
 
