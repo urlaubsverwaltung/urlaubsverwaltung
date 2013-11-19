@@ -36,7 +36,7 @@
 
                         <sec:authorize access="hasRole('role.office')">
                             <li>
-                                <a href="${formUrlPrefix}/sicknote"><i class="icon-eye-close"></i>&nbsp;<spring:message code="sicknotes" /></a>
+                                <a href="${formUrlPrefix}/sicknote"><img src="<spring:url value='/images/agt_virus-off.png' />" />&nbsp;<spring:message code="sicknotes" /></a>
                             </li>
                             <li><a href="${formUrlPrefix}/staff"><i class="icon-user"></i>&nbsp;<spring:message code="staff.manager" /></a></li>
                         </sec:authorize>
