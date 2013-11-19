@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 
 /**
  * Service for handling {@link SickNote}s.
@@ -19,5 +21,20 @@ public class SickNoteService {
     public SickNoteService(SickNoteDAO sickNoteDAO) {
 
         this.sickNoteDAO = sickNoteDAO;
+    }
+
+
+    public SickNoteService() {
+    }
+
+    public void save(SickNote sickNote) {
+
+        sickNoteDAO.save(sickNote);
+    }
+
+
+    public List<SickNote> getAll() {
+
+        return sickNoteDAO.findAll();
     }
 }

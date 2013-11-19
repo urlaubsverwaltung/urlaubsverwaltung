@@ -1,5 +1,8 @@
 package org.synyx.urlaubsverwaltung.sicknote;
 
+import org.joda.time.DateMidnight;
+import org.joda.time.DateTime;
+
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -55,27 +58,43 @@ public class SickNote extends AbstractPersistable<Integer> {
     }
 
 
-    public Date getStartDate() {
+    public DateMidnight getStartDate() {
 
-        return startDate;
+        if (this.startDate == null) {
+            return null;
+        }
+
+        return new DateTime(this.startDate).toDateMidnight();
     }
 
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(DateMidnight startDate) {
 
-        this.startDate = startDate;
+        if (startDate == null) {
+            this.startDate = null;
+        } else {
+            this.startDate = startDate.toDate();
+        }
     }
 
 
-    public Date getEndDate() {
+    public DateMidnight getEndDate() {
 
-        return endDate;
+        if (this.endDate == null) {
+            return null;
+        }
+
+        return new DateTime(this.endDate).toDateMidnight();
     }
 
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(DateMidnight endDate) {
 
-        this.endDate = endDate;
+        if (endDate == null) {
+            this.endDate = null;
+        } else {
+            this.endDate = endDate.toDate();
+        }
     }
 
 
@@ -115,14 +134,22 @@ public class SickNote extends AbstractPersistable<Integer> {
     }
 
 
-    public Date getLastEdited() {
+    public DateMidnight getLastEdited() {
 
-        return lastEdited;
+        if (this.lastEdited == null) {
+            return null;
+        }
+
+        return new DateTime(this.lastEdited).toDateMidnight();
     }
 
 
-    public void setLastEdited(Date lastEdited) {
+    public void setLastEdited(DateMidnight lastEdited) {
 
-        this.lastEdited = lastEdited;
+        if (lastEdited == null) {
+            this.lastEdited = null;
+        } else {
+            this.lastEdited = lastEdited.toDate();
+        }
     }
 }

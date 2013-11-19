@@ -58,7 +58,7 @@
                 </legend>
             </div>
             
-            <form:form method="POST" action="#" modelAttribute="sickNote" class="form-horizontal form-sicknote">
+            <form:form method="POST" action="${formUrlPrefix}/sicknote" modelAttribute="sickNote" class="form-horizontal form-sicknote">
 
                 <div class="control-group">
                     <label class="control-label" for="employee"><spring:message code='staff'/></label>

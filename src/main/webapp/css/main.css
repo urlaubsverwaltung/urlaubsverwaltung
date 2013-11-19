@@ -346,7 +346,7 @@ tr.over td {
     margin: 0;
 }
 
-.overview-header .year-selector, .overview-header .person-selector, .overview-header .status-selector {
+.overview-header .year-selector, .overview-header .person-selector, .overview-header .status-selector, .sicknote-button {
     float: right;
     margin-left: 0.5em;
 }

@@ -35,7 +35,7 @@
 
                         <sec:authorize access="hasRole('role.office')">
                             <li><a href="${formUrlPrefix}/staff"><i class="icon-user"></i>&nbsp;<spring:message code="staff.manager" /></a></li>
-                            <li><a href="${formUrlPrefix}/sicknote/new"><i class="icon-eye-close"></i>&nbsp;<spring:message code="sicknotes" /></a></li>
+                            <li><a href="${formUrlPrefix}/sicknote"><i class="icon-eye-close"></i>&nbsp;<spring:message code="sicknotes" /></a></li>
                         </sec:authorize>
 
                         <sec:authorize access="hasRole('role.admin')">
