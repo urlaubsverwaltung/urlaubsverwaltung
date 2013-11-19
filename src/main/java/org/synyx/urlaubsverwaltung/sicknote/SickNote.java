@@ -42,9 +42,6 @@ public class SickNote extends AbstractPersistable<Integer> {
     // aub = Arbeitsunfähigkeitsbescheinigung
     private boolean aubPresent;
 
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date aubPresentedDate;
-
     private String comment;
 
     @Temporal(javax.persistence.TemporalType.DATE)
@@ -111,18 +108,6 @@ public class SickNote extends AbstractPersistable<Integer> {
     public void setAubPresent(boolean aubPresent) {
 
         this.aubPresent = aubPresent;
-    }
-
-
-    public Date getAubPresentedDate() {
-
-        return aubPresentedDate;
-    }
-
-
-    public void setAubPresentedDate(Date aubPresentedDate) {
-
-        this.aubPresentedDate = aubPresentedDate;
     }
 
 
