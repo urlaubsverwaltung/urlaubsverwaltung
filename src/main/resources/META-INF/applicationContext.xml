@@ -82,6 +82,8 @@
     <constructor-arg ref="personService" />
 </bean>
 
+<bean id="sickNoteValidator" class="org.synyx.urlaubsverwaltung.validator.SickNoteValidator" />
+
 <bean id="startupService" class="org.synyx.urlaubsverwaltung.startup.StartupService" />
 
 <!-- Scheduling config -->

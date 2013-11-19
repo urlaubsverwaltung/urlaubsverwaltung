@@ -69,6 +69,7 @@
                                 <form:option value="${person.id}">${person.firstName}&nbsp;${person.lastName}</form:option>
                             </c:forEach>
                         </form:select>
+                        <span class="help-inline"><form:errors path="person" cssClass="error"/></span>
                     </div>
                 </div>
 
@@ -76,7 +77,7 @@
                     <label class="control-label" for="from"><spring:message code='From' /></label>
 
                     <div class="controls">
-                        <form:input id="from" path="startDate" cssClass="input-medium" />
+                        <form:input id="from" path="startDate" cssClass="input-medium" cssErrorClass="error input-medium" />
                         <span class="help-inline"><form:errors path="startDate" cssClass="error"/></span>
                     </div>
                 </div>
@@ -85,7 +86,7 @@
                     <label class="control-label" for="to"><spring:message code='To' /></label>
 
                     <div class="controls">
-                        <form:input id="to" path="endDate" cssClass="input-medium" />
+                        <form:input id="to" path="endDate" cssClass="input-medium" cssErrorClass="error input-medium" />
                         <span class="help-inline"><form:errors path="endDate" cssClass="error"/></span>
                     </div>
                 </div>
