@@ -29,12 +29,16 @@
                         </sec:authorize>
 
                         <sec:authorize access="hasAnyRole('role.boss', 'role.office')">
-                            <li><a href="${formUrlPrefix}/application"><i class="icon-list-alt"></i>&nbsp;<spring:message code="h.apps" /></a></li>
+                            <li>
+                                <a href="${formUrlPrefix}/application"><i class="icon-list-alt"></i>&nbsp;<spring:message code="apps.vac" /></a>
+                            </li>
                         </sec:authorize>
 
                         <sec:authorize access="hasRole('role.office')">
+                            <li>
+                                <a href="${formUrlPrefix}/sicknote"><i class="icon-eye-close"></i>&nbsp;<spring:message code="sicknotes" /></a>
+                            </li>
                             <li><a href="${formUrlPrefix}/staff"><i class="icon-user"></i>&nbsp;<spring:message code="staff.manager" /></a></li>
-                            <li><a href="${formUrlPrefix}/sicknote"><i class="icon-eye-close"></i>&nbsp;<spring:message code="sicknotes" /></a></li>
                         </sec:authorize>
 
                         <sec:authorize access="hasRole('role.admin')">
