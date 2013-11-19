@@ -12,6 +12,7 @@ import org.springframework.validation.Errors;
 
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteComment;
 
 
 /**
@@ -37,7 +38,6 @@ public class SickNoteValidatorTest {
         sickNote.setStartDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 19));
         sickNote.setEndDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 20));
         sickNote.setAubPresent(true);
-        sickNote.setComment("I am a fluffy little comment");
     }
 
 
@@ -84,14 +84,23 @@ public class SickNoteValidatorTest {
     @Test
     public void testValidateComment() {
 
+        SickNoteComment comment = new SickNoteComment();
+
+        validator.validateComment(comment, errors);
+        validator.validate(sickNote, errors);
+        Mockito.verify(errors).rejectValue("text", "error.mandatory.field");
+        Mockito.reset(errors);
+
+        comment.setText(
+            "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores bla bla");
+        validator.validateComment(comment, errors);
+        validator.validate(sickNote, errors);
+        Mockito.verify(errors).rejectValue("text", "error.length");
+        Mockito.reset(errors);
+
+        comment.setText("I am a fluffy little comment");
+        validator.validateComment(comment, errors);
         validator.validate(sickNote, errors);
         Mockito.verifyZeroInteractions(errors);
-
-        sickNote.setComment(
-            "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores bla bla");
-
-        validator.validate(sickNote, errors);
-        Mockito.verify(errors).rejectValue("comment", "error.length");
-        Mockito.reset(errors);
     }
 }

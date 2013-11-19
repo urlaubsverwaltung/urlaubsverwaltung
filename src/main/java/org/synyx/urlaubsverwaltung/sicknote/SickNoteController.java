@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.security.web.SecurityUtil;
+import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteComment;
 import org.synyx.urlaubsverwaltung.util.DateMidnightPropertyEditor;
 import org.synyx.urlaubsverwaltung.validator.SickNoteValidator;
 
@@ -34,13 +36,15 @@ public class SickNoteController {
     private SickNoteService sickNoteService;
     private PersonService personService;
     private SickNoteValidator validator;
+    private SecurityUtil securityUtil;
 
-    public SickNoteController(SickNoteService sickNoteService, PersonService personService,
-        SickNoteValidator validator) {
+    public SickNoteController(SickNoteService sickNoteService, PersonService personService, SickNoteValidator validator,
+        SecurityUtil securityUtil) {
 
         this.sickNoteService = sickNoteService;
         this.personService = personService;
         this.validator = validator;
+        this.securityUtil = securityUtil;
     }
 
     @InitBinder
@@ -74,6 +78,7 @@ public class SickNoteController {
     public String sickNoteDetails(@PathVariable("id") Integer id, Model model) {
 
         model.addAttribute("sickNote", sickNoteService.getById(id));
+        model.addAttribute("comment", new SickNoteComment());
 
         return "sicknote/sick_note";
     }
@@ -91,8 +96,29 @@ public class SickNoteController {
             return "sicknote/sick_note_form";
         }
 
+        sickNoteService.setWorkDays(sickNote);
         sickNoteService.save(sickNote);
 
         return "redirect:/web/sicknote";
+    }
+
+
+    @RequestMapping(value = "/sicknote/{id}", method = RequestMethod.POST)
+    public String addComment(@PathVariable("id") Integer id,
+        @ModelAttribute("comment") SickNoteComment comment, Errors errors, Model model) {
+
+        validator.validateComment(comment, errors);
+
+        if (errors.hasErrors()) {
+            model.addAttribute("sickNote", sickNoteService.getById(id));
+            model.addAttribute("comment", comment);
+            model.addAttribute("error", true);
+
+            return "sicknote/sick_note";
+        }
+
+        sickNoteService.addComment(id, comment, securityUtil.getLoggedUser());
+
+        return "redirect:/web/sicknote/" + id;
     }
 }

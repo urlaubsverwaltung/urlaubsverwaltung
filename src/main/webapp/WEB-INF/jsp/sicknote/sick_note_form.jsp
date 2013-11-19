@@ -19,6 +19,12 @@
             
             $("#from, #to").datepicker({
                 numberOfMonths: 1,
+                beforeShow: function(input, inst){
+                var calendrier = inst.dpDiv;
+                var top  = $(this).offset().top + $(this).outerHeight();
+                var left = $(this).offset().left;
+                setTimeout(function(){ calendrier.css({'top' : top, 'left': left}); },10);
+                },
                 onSelect: function(date) {
                     if (this.id == "from") {
                         $("#to").datepicker("setDate", date);
@@ -100,18 +106,6 @@
                     </div>
                 </div>
                 
-                <div class="control-group">
-                    <label class="control-label" for="comment">
-                        <spring:message code='comment'/>&nbsp;<spring:message code='app.optional' />
-                    </label>
-                    <div class="controls">
-                        <span id="text-comment"></span><spring:message code="max.chars" />
-                        <br />
-                        <form:textarea id="comment" path="comment" rows="5" cssErrorClass="error" onkeyup="count(this.value, 'text-comment');" onkeydown="maxChars(this,200); count(this.value, 'text-comment');" />
-                        <span class="help-inline"><form:errors path="comment" cssClass="error"/></span>
-                    </div>
-                </div>
-
                 <hr/>
                 
                 <div class="control-group">

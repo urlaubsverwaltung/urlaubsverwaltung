@@ -8,6 +8,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteComment;
 
 
 /**
@@ -23,7 +24,7 @@ public class SickNoteValidator implements Validator {
 
     private static final String START_DATE = "startDate";
     private static final String END_DATE = "endDate";
-    private static final String COMMENT = "comment";
+    private static final String COMMENT = "text";
 
     private static final int MAX_LENGTH = 200;
 
@@ -59,13 +60,19 @@ public class SickNoteValidator implements Validator {
                 errors.rejectValue(END_DATE, ERROR_PERIOD);
             }
         }
+    }
 
-        String comment = sickNote.getComment();
 
-        if (StringUtils.hasText(comment)) {
-            if (comment.length() > MAX_LENGTH) {
+    public void validateComment(SickNoteComment comment, Errors errors) {
+
+        String text = comment.getText();
+
+        if (StringUtils.hasText(text)) {
+            if (text.length() > MAX_LENGTH) {
                 errors.rejectValue(COMMENT, ERROR_LENGTH);
             }
+        } else {
+            errors.rejectValue(COMMENT, MANDATORY_FIELD);
         }
     }
 }

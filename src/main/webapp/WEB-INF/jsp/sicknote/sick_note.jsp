@@ -68,13 +68,50 @@
                 <table class="app-detail">
                     <tbody>
                         <tr class="odd">
-                            <td><b><spring:message code="progress" /></b></td>
+                            <td colspan="3">
+                                <b><spring:message code="progress" /></b>
+                            </td>
                         </tr>
-                        <tr class="even">
-                            <td><c:out value="${sickNote.comment}" /></td>
-                        </tr>
+                        <c:forEach items="${sickNote.comments}" var="comment" varStatus="loopStatus">
+                            <tr class="${loopStatus.index % 2 == 0 ? 'even' : 'odd'}">
+                                <td style="width:10%"><joda:format style="M-" value="${comment.date}"/></td>
+                                <td style="width:10%">
+                                    <c:out value="${comment.person.firstName}" />&nbsp;<c:out value="${comment.person.lastName}" />
+                                </td>
+                                <td><c:out value="${comment.text}" /></td>
+                            </tr>
+                        </c:forEach>
                     </tbody>
                 </table>
+                
+                <br />
+                <button class="btn" onclick="$('div#comment-form').show();">
+                    <i class="icon-plus"></i>&nbsp;Neuer Kommentar
+                </button>
+
+                <c:choose>
+                    <c:when test="${error}">
+                       <c:set var="STYLE" value="display: block" /> 
+                    </c:when>
+                    <c:otherwise>
+                        <c:set var="STYLE" value="display: none" /> 
+                    </c:otherwise>
+                </c:choose>
+                
+                <div class="confirm-green" id="comment-form" style="${STYLE}">
+                    <form:form method="POST" action="${formUrlPrefix}/sicknote/${sickNote.id}" modelAttribute="comment">
+                        <form:errors path="text" cssClass="error" />
+                        <form:textarea class="form-textarea" path="text" cssErrorClass="form-textarea error" />
+                        <br />
+                        <button class="btn" type="submit">
+                            <i class="icon-ok"></i>&nbsp;<spring:message code="save" />
+                        </button>
+                        <button class="btn" type="button" onclick="$('div#comment-form').hide();">
+                            <i class="icon-remove"></i><spring:message code="cancel" />
+                        </button>
+                    </form:form> 
+                </div>
+                
             </div>
 
         </div>

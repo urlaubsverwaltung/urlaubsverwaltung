@@ -6,13 +6,19 @@ import org.joda.time.DateTime;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteComment;
 
 import java.math.BigDecimal;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 
 
@@ -42,7 +48,8 @@ public class SickNote extends AbstractPersistable<Integer> {
     // aub = Arbeitsunfähigkeitsbescheinigung
     private boolean aubPresent;
 
-    private String comment;
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    private List<SickNoteComment> comments = new ArrayList<SickNoteComment>();
 
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date lastEdited;
@@ -111,15 +118,21 @@ public class SickNote extends AbstractPersistable<Integer> {
     }
 
 
-    public String getComment() {
+    public List<SickNoteComment> getComments() {
 
-        return comment;
+        return comments;
     }
 
 
-    public void setComment(String comment) {
+    public void setComments(List<SickNoteComment> comments) {
 
-        this.comment = comment;
+        this.comments = comments;
+    }
+
+
+    public void addComment(SickNoteComment comment) {
+
+        this.comments.add(comment);
     }
 
 
