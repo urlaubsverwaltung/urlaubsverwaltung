@@ -99,7 +99,7 @@ public class SickNoteController {
         sickNoteService.setWorkDays(sickNote);
         sickNoteService.save(sickNote);
 
-        return "redirect:/web/sicknote";
+        return "redirect:/web/sicknote/" + sickNote.getId();
     }
 
 
