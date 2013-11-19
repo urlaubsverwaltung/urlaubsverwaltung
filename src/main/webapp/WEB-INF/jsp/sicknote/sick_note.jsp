@@ -100,8 +100,9 @@
                 
                 <div class="confirm-green" id="comment-form" style="${STYLE}">
                     <form:form method="POST" action="${formUrlPrefix}/sicknote/${sickNote.id}" modelAttribute="comment">
-                        <form:errors path="text" cssClass="error" />
-                        <form:textarea class="form-textarea" path="text" cssErrorClass="form-textarea error" />
+                        <form:errors path="text" cssClass="error" /><br />
+                        <span id="text-comment"></span><spring:message code="max.chars" />
+                        <form:textarea class="form-textarea" path="text" cssErrorClass="form-textarea error" onkeyup="count(this.value, 'text-comment');" onkeydown="maxChars(this,200); count(this.value, 'text-comment');" />
                         <br />
                         <button class="btn" type="submit">
                             <i class="icon-ok"></i>&nbsp;<spring:message code="save" />
