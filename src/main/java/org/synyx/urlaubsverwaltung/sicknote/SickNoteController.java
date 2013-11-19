@@ -99,7 +99,16 @@ public class SickNoteController {
         sickNoteService.setWorkDays(sickNote);
         sickNoteService.save(sickNote);
 
-        return "redirect:/web/sicknote/" + sickNote.getId();
+        Integer id = sickNote.getId();
+
+        SickNoteComment comment = new SickNoteComment();
+
+        // TODO: not the best solution to hard code things...but hey make it better!
+        comment.setText("Krankmeldung angelegt");
+
+        sickNoteService.addComment(id, comment, securityUtil.getLoggedUser());
+
+        return "redirect:/web/sicknote/" + id;
     }
 
 
