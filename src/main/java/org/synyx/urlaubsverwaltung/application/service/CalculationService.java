@@ -62,7 +62,7 @@ public class CalculationService {
             tmp1.setEndDate(new DateMidnight(startYear, DateTimeConstants.DECEMBER, 31));
             tmp1.setPerson(person);
             tmp1.setHowLong(application.getHowLong());
-            tmp1.setDays(calendarService.getVacationDays(tmp1.getHowLong(), application.getStartDate(),
+            tmp1.setDays(calendarService.getWorkDays(tmp1.getHowLong(), application.getStartDate(),
                     new DateMidnight(startYear, DateTimeConstants.DECEMBER, 31)));
 
             Application tmp2 = new Application();
@@ -70,7 +70,7 @@ public class CalculationService {
             tmp2.setEndDate(application.getEndDate());
             tmp2.setPerson(person);
             tmp2.setHowLong(application.getHowLong());
-            tmp2.setDays(calendarService.getVacationDays(application.getHowLong(),
+            tmp2.setDays(calendarService.getWorkDays(application.getHowLong(),
                     new DateMidnight(endYear, DateTimeConstants.JANUARY, 1), application.getEndDate()));
 
             if (accountService.getHolidaysAccount(startYear, person) == null) {
@@ -263,11 +263,11 @@ public class CalculationService {
         }
 
         for (Application a : applicationsBetweenMilestonesSpanningFirstMilestone) {
-            days = days.add(calendarService.getVacationDays(a.getHowLong(), firstMilestone, a.getEndDate()));
+            days = days.add(calendarService.getWorkDays(a.getHowLong(), firstMilestone, a.getEndDate()));
         }
 
         for (Application a : applicationsBetweenMilestonesSpanningLastMilestone) {
-            days = days.add(calendarService.getVacationDays(a.getHowLong(), a.getStartDate(), lastMilestone));
+            days = days.add(calendarService.getWorkDays(a.getHowLong(), a.getStartDate(), lastMilestone));
         }
 
         return days;

@@ -26,15 +26,15 @@ public class OwnCalendarService {
     /**
      * Note: the start date must be before or equal the end date; this is validated prior to that method
      *
-     * <p>This method calculates how many workdays are between declared start date and end date (official holidays are
+     * <p>This method calculates how many weekdays are between declared start date and end date (official holidays are
      * ignored here)</p>
      *
      * @param  startDate
      * @param  endDate
      *
-     * @return  number of workdays
+     * @return  number of weekdays
      */
-    public double getWorkDays(DateMidnight startDate, DateMidnight endDate) {
+    public double getWeekDays(DateMidnight startDate, DateMidnight endDate) {
 
         double workDays = 0.0;
 
@@ -59,19 +59,19 @@ public class OwnCalendarService {
 
 
     /**
-     * This method calculates how many vacation days are used in the stated period (from start date to end date)
-     * getWorkDays calculates the number of workdays, getPublicHolidays calculates the number of official holidays
-     * within the workdays. Number of vacation days results from workdays minus official holidays.
+     * This method calculates how many workdays are used in the stated period (from start date to end date) getWeekDays
+     * calculates the number of weekdays, getPublicHolidays calculates the number of official holidays within the week
+     * days period. Number of workdays results from difference between weekdays and official holidays.
      *
      * @param  dayLength
      * @param  startDate
      * @param  endDate
      *
-     * @return  number of vacation days
+     * @return  number of workdays
      */
-    public BigDecimal getVacationDays(DayLength dayLength, DateMidnight startDate, DateMidnight endDate) {
+    public BigDecimal getWorkDays(DayLength dayLength, DateMidnight startDate, DateMidnight endDate) {
 
-        double vacDays = getWorkDays(startDate, endDate);
+        double vacDays = getWeekDays(startDate, endDate);
 
         vacDays = vacDays - jollydayCalendar.getPublicHolidays(startDate, endDate);
 

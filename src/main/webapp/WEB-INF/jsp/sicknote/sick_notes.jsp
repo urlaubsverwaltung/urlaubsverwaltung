@@ -4,6 +4,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 
 <!DOCTYPE html>
@@ -49,11 +50,14 @@
                 </c:when>
 
                 <c:otherwise>
-                    <table class="app-tbl sortable-tbl tablesorter zebra-table" cellspacing="0">
+                    <table class="app-tbl centered-tbl sortable-tbl tablesorter zebra-table" cellspacing="0">
                         <thead>
                         <tr>
                             <th><spring:message code="name" /></th>
                             <th><spring:message code="time" /></th>
+                            <th><spring:message code="work.days" /></th>
+                            <th><spring:message code="sicknotes.aub.short" /></th>
+                            <th><spring:message code="app.date.overview" /></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -64,6 +68,26 @@
                                 </td>
                                 <td>
                                     <joda:format style="M-" value="${sickNote.startDate}"/>&nbsp;-&nbsp;<joda:format style="M-" value="${sickNote.endDate}"/>
+                                </td>
+                                <td>
+                                    <fmt:formatNumber maxFractionDigits="1" value="${sickNote.workDays}" />
+                                </td>
+                                <td>
+                                    <c:if test="${sickNote.aubPresent}">
+                                        <i class="icon-ok"></i> 
+                                    </c:if>
+                                    <%-- TODO: other possibility is to show x if not present--%>
+                                    <%--<c:choose>--%>
+                                        <%--<c:when test="${sickNote.aubPresent}">--%>
+                                            <%--<i class="icon-ok"></i> --%>
+                                        <%--</c:when>--%>
+                                        <%--<c:otherwise>--%>
+                                            <%--<i class="icon-remove"></i>--%>
+                                        <%--</c:otherwise>--%>
+                                    <%--</c:choose>--%>
+                                </td>
+                                <td>
+                                    <joda:format style="M-" value="${sickNote.lastEdited}"/> 
                                 </td>
                         </c:forEach>
                         </tbody>

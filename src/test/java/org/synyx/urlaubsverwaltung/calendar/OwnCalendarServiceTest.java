@@ -2,7 +2,13 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
 import org.joda.time.DateMidnight;
-import org.junit.*;
+
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.DayLength;
 
@@ -49,21 +55,25 @@ public class OwnCalendarServiceTest {
     }
 
 
-    /** Test of getWorkDays method, of class OwnCalendarService. */
+    /**
+     * Test of getWeekDays method, of class OwnCalendarService.
+     */
     @Test
     public void testGetWorkDays() {
 
         DateMidnight start = new DateMidnight(2011, 11, 16);
         DateMidnight end = new DateMidnight(2011, 11, 28);
 
-        double returnValue = instance.getWorkDays(start, end);
+        double returnValue = instance.getWeekDays(start, end);
 
         assertNotNull(returnValue);
         assertEquals(9.0, returnValue, 0.0);
     }
 
 
-    /** Test of getVacationDays method, of class OwnCalendarService. */
+    /**
+     * Test of getWorkDays method, of class OwnCalendarService.
+     */
     @Test
     public void testGetVacationDays() {
 
@@ -78,7 +88,7 @@ public class OwnCalendarServiceTest {
         DateMidnight start = new DateMidnight(2010, 12, 17);
         DateMidnight end = new DateMidnight(2010, 12, 31);
 
-        BigDecimal returnValue = instance.getVacationDays(application.getHowLong(), start, end);
+        BigDecimal returnValue = instance.getWorkDays(application.getHowLong(), start, end);
 
         assertNotNull(returnValue);
         assertEquals(BigDecimal.valueOf(10.0).setScale(2), returnValue);
@@ -91,7 +101,7 @@ public class OwnCalendarServiceTest {
         start = new DateMidnight(2009, 12, 17);
         end = new DateMidnight(2009, 12, 31);
 
-        returnValue = instance.getVacationDays(application.getHowLong(), start, end);
+        returnValue = instance.getWorkDays(application.getHowLong(), start, end);
 
         assertNotNull(returnValue);
         assertEquals(BigDecimal.valueOf(9.0).setScale(2), returnValue);
@@ -100,7 +110,7 @@ public class OwnCalendarServiceTest {
         start = new DateMidnight(2011, 12, 26);
         end = new DateMidnight(2012, 1, 15);
 
-        returnValue = instance.getVacationDays(application.getHowLong(), start, end);
+        returnValue = instance.getWorkDays(application.getHowLong(), start, end);
 
         assertNotNull(returnValue);
         assertEquals(BigDecimal.valueOf(13.0).setScale(2), returnValue);
@@ -109,7 +119,7 @@ public class OwnCalendarServiceTest {
         start = new DateMidnight(2009, 4, 27);
         end = new DateMidnight(2009, 5, 2);
 
-        returnValue = instance.getVacationDays(application.getHowLong(), start, end);
+        returnValue = instance.getWorkDays(application.getHowLong(), start, end);
 
         assertNotNull(returnValue);
         assertEquals(BigDecimal.valueOf(4.0).setScale(2), returnValue);
@@ -118,7 +128,7 @@ public class OwnCalendarServiceTest {
         start = new DateMidnight(2011, 1, 2);
         end = new DateMidnight(2011, 1, 8);
 
-        returnValue = instance.getVacationDays(application.getHowLong(), start, end);
+        returnValue = instance.getWorkDays(application.getHowLong(), start, end);
 
         assertNotNull(returnValue);
         assertEquals(BigDecimal.valueOf(4.0).setScale(2), returnValue);
@@ -129,7 +139,7 @@ public class OwnCalendarServiceTest {
         start = new DateMidnight(2011, 1, 4);
         end = new DateMidnight(2011, 1, 8);
 
-        returnValue = instance.getVacationDays(application.getHowLong(), start, end);
+        returnValue = instance.getWorkDays(application.getHowLong(), start, end);
 
         assertNotNull(returnValue);
         assertEquals(BigDecimal.valueOf(1.5).setScale(2), returnValue);

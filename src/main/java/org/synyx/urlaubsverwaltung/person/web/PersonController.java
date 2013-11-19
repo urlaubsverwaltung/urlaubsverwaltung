@@ -412,11 +412,11 @@ public class PersonController {
                             // Dez. 2011 - Jan. 2012 ------ year ------ Dez. 2012 - Jan. 2013
 
                             if (a.getStartDate().getYear() == year - 1 && a.getEndDate().getYear() == year) {
-                                days = calendarService.getVacationDays(a.getHowLong(),
+                                days = calendarService.getWorkDays(a.getHowLong(),
                                         new DateMidnight(a.getEndDate().getYear(), DateTimeConstants.JANUARY, 1),
                                         a.getEndDate());
                             } else if (a.getStartDate().getYear() == year && a.getEndDate().getYear() == year + 1) {
-                                days = calendarService.getVacationDays(a.getHowLong(), a.getStartDate(),
+                                days = calendarService.getWorkDays(a.getHowLong(), a.getStartDate(),
                                         new DateMidnight(a.getStartDate().getYear(), DateTimeConstants.DECEMBER, 31));
                             }
                         } else {

@@ -73,7 +73,7 @@ public class CalendarController {
             if (startDate.isBefore(endDate) || startDate.isEqual(endDate)) {
                 DayLength howLong = DayLength.valueOf(length);
 
-                BigDecimal days = ownCalendarService.getVacationDays(howLong, startDate, endDate);
+                BigDecimal days = ownCalendarService.getWorkDays(howLong, startDate, endDate);
 
                 return days.toString();
             }

@@ -130,12 +130,12 @@ class AccountServiceImpl implements AccountService {
             DateMidnight endForMonthCalc = end;
 
             if (!start.isEqual(firstDayOfStartDatesMonth)) {
-                workDays += calendarService.getWorkDays(start, start.dayOfMonth().withMaximumValue());
+                workDays += calendarService.getWeekDays(start, start.dayOfMonth().withMaximumValue());
                 startForMonthCalc = start.plusMonths(1).dayOfMonth().withMinimumValue();
             }
 
             if (!end.isEqual(lastDayOfEndDatesMonth)) {
-                workDays += calendarService.getWorkDays(end.dayOfMonth().withMinimumValue(), end);
+                workDays += calendarService.getWeekDays(end.dayOfMonth().withMinimumValue(), end);
                 endForMonthCalc = end.minusMonths(1).dayOfMonth().withMaximumValue();
             }
 
