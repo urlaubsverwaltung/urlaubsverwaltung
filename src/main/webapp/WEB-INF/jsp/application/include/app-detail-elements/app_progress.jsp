@@ -14,7 +14,7 @@
 <!-- there are four possible status, so there are max. four lines -->
 <table class="app-detail tbl-margin-top" cellspacing="0" style="margin-bottom:2em;">
     <tr class="odd">
-        <th colspan="2">Verlauf</th>
+        <th colspan="2"><spring:message code="progress" /></th>
     </tr>
     <c:forEach items="${comments}" var="c" varStatus="loopStatus">
         <tr class="${loopStatus.index % 2 == 0 ? 'even' : 'odd'}">

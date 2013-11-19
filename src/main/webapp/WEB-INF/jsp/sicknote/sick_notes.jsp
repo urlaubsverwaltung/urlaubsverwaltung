@@ -58,6 +58,7 @@
                             <th><spring:message code="work.days" /></th>
                             <th><spring:message code="sicknotes.aub.short" /></th>
                             <th><spring:message code="app.date.overview" /></th>
+                            <th><spring:message code="table.detail" /></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -88,6 +89,11 @@
                                 </td>
                                 <td>
                                     <joda:format style="M-" value="${sickNote.lastEdited}"/> 
+                                </td>
+                                <td>
+                                    <a href="${formUrlPrefix}/sicknote/${sickNote.id}">
+                                        <img src="<spring:url value='/images/playlist.png' />" />
+                                    </a>
                                 </td>
                         </c:forEach>
                         </tbody>

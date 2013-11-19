@@ -52,4 +52,10 @@ public class SickNoteService {
 
         return sickNoteDAO.findAll();
     }
+
+
+    public SickNote getById(Integer id) {
+
+        return sickNoteDAO.findOne(id);
+    }
 }
