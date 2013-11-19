@@ -72,7 +72,9 @@
                         <spring:message code='comment'/>&nbsp;<spring:message code='app.optional' />
                     </label>
                     <div class="controls">
-                        <form:textarea id="comment" path="comment" cssErrorClass="error"/>
+                        <span id="text-comment"></span><spring:message code="max.chars" />
+                        <br />
+                        <form:textarea id="comment" path="comment" rows="5" cssErrorClass="error" onkeyup="count(this.value, 'text-comment');" onkeydown="maxChars(this,200); count(this.value, 'text-comment');" />
                         <span class="help-inline"><form:errors path="comment" cssClass="error"/></span>
                     </div>
                 </div>
