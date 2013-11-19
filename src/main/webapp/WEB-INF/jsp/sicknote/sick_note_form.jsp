@@ -116,7 +116,7 @@
                 
                 <div class="control-group">
                     <button class="btn" type="submit"><i class='icon-ok'></i>&nbsp;<spring:message code="save" /></button>
-                    <a class="btn" href="#"><i class='icon-remove'></i>&nbsp;<spring:message code='cancel'/></a>
+                    <a class="btn" href="${formUrlPrefix}/sicknote"><i class='icon-remove'></i>&nbsp;<spring:message code='cancel'/></a>
                 </div>
             
             </form:form>
