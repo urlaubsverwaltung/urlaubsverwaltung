@@ -60,22 +60,51 @@
 
             <div class="overview-header">
                 <legend>
-                    <p><spring:message code="sicknotes.new" /></p>
+                    <p>
+                        <c:choose>
+                            <c:when test="${sickNote.id == null}">
+                                <spring:message code="sicknotes.new" /> 
+                            </c:when>
+                            <c:otherwise>
+                                <spring:message code="sicknotes.edit" /> 
+                            </c:otherwise>
+                        </c:choose>
+                    </p>
                 </legend>
             </div>
+
+            <c:choose>
+                <c:when test="${sickNote.id == null}">
+                    <c:set var="METHOD" value="POST" />
+                    <c:set var="ACTION" value="${formUrlPrefix}/sicknote" />
+                </c:when>
+                <c:otherwise>
+                    <c:set var="METHOD" value="PUT" />
+                    <c:set var="ACTION" value="${formUrlPrefix}/sicknote/${sickNote.id}/edit" />
+                </c:otherwise>
+            </c:choose>
             
-            <form:form method="POST" action="${formUrlPrefix}/sicknote" modelAttribute="sickNote" class="form-horizontal form-sicknote">
+            <form:form method="${METHOD}" action="${ACTION}" modelAttribute="sickNote" class="form-horizontal form-sicknote">
 
                 <div class="control-group">
                     <label class="control-label" for="employee"><spring:message code='staff'/></label>
 
                     <div class="controls">
-                        <form:select path="person" id="employee" cssErrorClass="error">
-                            <c:forEach items="${persons}" var="person">
-                                <form:option value="${person.id}">${person.firstName}&nbsp;${person.lastName}</form:option>
-                            </c:forEach>
-                        </form:select>
-                        <span class="help-inline"><form:errors path="person" cssClass="error"/></span>
+                        <c:choose>
+                            <c:when test="${sickNote.id == null}">
+                                <form:select path="person" id="employee" cssErrorClass="error">
+                                    <c:forEach items="${persons}" var="person">
+                                        <form:option value="${person.id}">${person.firstName}&nbsp;${person.lastName}</form:option>
+                                    </c:forEach>
+                                </form:select>
+                                <span class="help-inline"><form:errors path="person" cssClass="error"/></span>
+                            </c:when>
+                            <c:otherwise>
+                                <form:hidden path="id" />
+                                <form:hidden path="person" value="${sickNote.person.id}" />
+                                <c:out value="${sickNote.person.firstName}" />&nbsp;<c:out value="${sickNote.person.lastName}" />
+                            </c:otherwise>
+                        </c:choose>
                     </div>
                 </div>
 

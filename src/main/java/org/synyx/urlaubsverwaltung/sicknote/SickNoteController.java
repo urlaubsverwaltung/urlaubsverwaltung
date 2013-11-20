@@ -109,6 +109,36 @@ public class SickNoteController {
     }
 
 
+    @RequestMapping(value = "/sicknote/{id}/edit", method = RequestMethod.GET)
+    public String editSickNote(@PathVariable("id") Integer id, Model model) {
+
+        model.addAttribute("sickNote", sickNoteService.getById(id));
+
+        return "sicknote/sick_note_form";
+    }
+
+
+    @RequestMapping(value = "/sicknote/{id}/edit", method = RequestMethod.PUT)
+    public String editSickNote(@PathVariable("id") Integer id,
+        @ModelAttribute("sickNote") SickNote sickNote, Errors errors, Model model) {
+
+        validator.validate(sickNote, errors);
+
+        if (errors.hasErrors()) {
+            model.addAttribute("sickNote", sickNote);
+
+            return "sicknote/sick_note_form";
+        }
+
+        // this step is necessary because collections can not be binded with form:hidden
+        sickNote.setComments(sickNoteService.getById(id).getComments());
+        sickNoteService.setWorkDays(sickNote);
+        sickNoteService.save(sickNote);
+
+        return "redirect:/web/sicknote/" + id;
+    }
+
+
     @RequestMapping(value = "/sicknote/{id}", method = RequestMethod.POST)
     public String addComment(@PathVariable("id") Integer id,
         @ModelAttribute("comment") SickNoteComment comment, Errors errors, Model model) {

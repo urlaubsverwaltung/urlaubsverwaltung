@@ -48,7 +48,7 @@ public class SickNote extends AbstractPersistable<Integer> {
     // aub = Arbeitsunfähigkeitsbescheinigung
     private boolean aubPresent;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<SickNoteComment> comments = new ArrayList<SickNoteComment>();
 
     @Temporal(javax.persistence.TemporalType.DATE)
@@ -165,5 +165,12 @@ public class SickNote extends AbstractPersistable<Integer> {
     public void setWorkDays(BigDecimal workDays) {
 
         this.workDays = workDays;
+    }
+
+
+    @Override
+    public void setId(Integer id) {
+
+        super.setId(id);
     }
 }
