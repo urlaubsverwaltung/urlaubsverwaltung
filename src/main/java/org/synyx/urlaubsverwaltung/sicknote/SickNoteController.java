@@ -22,6 +22,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.security.web.SecurityUtil;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteComment;
+import org.synyx.urlaubsverwaltung.sicknote.web.SearchRequest;
 import org.synyx.urlaubsverwaltung.util.DateMidnightPropertyEditor;
 import org.synyx.urlaubsverwaltung.validator.SickNoteValidator;
 
@@ -36,6 +37,8 @@ import java.util.Locale;
  */
 @Controller
 public class SickNoteController {
+
+    private static final String DATE_PATTERN = "dd.MM.yyyy";
 
     private SickNoteService sickNoteService;
     private PersonService personService;
@@ -70,9 +73,43 @@ public class SickNoteController {
 
 
     @RequestMapping(value = "/sicknote", method = RequestMethod.GET)
-    public String allSickNotes(Model model) {
+    public String allSickNotes() {
 
-        model.addAttribute("sickNotes", sickNoteService.getAll());
+        DateMidnight now = DateMidnight.now();
+        DateMidnight startDate = now.dayOfMonth().withMinimumValue();
+        DateMidnight endDate = now.dayOfMonth().withMaximumValue();
+
+        return "redirect:/web/sicknote?from=" + startDate.toString(DATE_PATTERN) + "&to="
+            + endDate.toString(DATE_PATTERN);
+    }
+
+
+    @RequestMapping(value = "/sicknote/filter", method = RequestMethod.POST)
+    public String filterSickNotes(@ModelAttribute("searchRequest") SearchRequest searchRequest, Errors errors,
+        Model model) {
+
+        Person person = personService.getPersonByID(searchRequest.getPersonId());
+
+        if (person != null) {
+            return "redirect:/web/sicknote?staff=" + person.getId() + "&from=" + searchRequest.getFrom() + "&to="
+                + searchRequest.getTo();
+        } else {
+            return "redirect:/web/sicknote?from=" + searchRequest.getFrom() + "&to=" + searchRequest.getTo();
+        }
+    }
+
+
+    @RequestMapping(value = "/sicknote", method = RequestMethod.GET, params = { "from", "to" })
+    public String periodsSickNotes(@RequestParam("from") String from,
+        @RequestParam("to") String to, Model model) {
+
+        DateTimeFormatter formatter = DateTimeFormat.forPattern(DATE_PATTERN);
+        DateMidnight fromDate = DateMidnight.parse(from, formatter);
+        DateMidnight toDate = DateMidnight.parse(to, formatter);
+
+        List<SickNote> sickNoteList = sickNoteService.getByPeriod(fromDate, toDate);
+
+        fillModel(model, sickNoteList, fromDate, toDate);
 
         return "sicknote/sick_notes";
     }
@@ -83,21 +120,30 @@ public class SickNoteController {
         @RequestParam("from") String from,
         @RequestParam("to") String to, Model model) {
 
-        Person person = personService.getPersonByID(personId);
+        List<SickNote> sickNoteList;
 
-        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd.MM.yyyy");
+        DateTimeFormatter formatter = DateTimeFormat.forPattern(DATE_PATTERN);
         DateMidnight fromDate = DateMidnight.parse(from, formatter);
         DateMidnight toDate = DateMidnight.parse(to, formatter);
 
-        List<SickNote> sickNoteList = sickNoteService.getByPersonAndPeriod(person, fromDate, toDate);
+        Person person = personService.getPersonByID(personId);
+        sickNoteList = sickNoteService.getByPersonAndPeriod(person, fromDate, toDate);
 
         model.addAttribute("person", person);
+        fillModel(model, sickNoteList, fromDate, toDate);
+
+        return "sicknote/sick_notes";
+    }
+
+
+    private void fillModel(Model model, List<SickNote> sickNoteList, DateMidnight fromDate, DateMidnight toDate) {
+
         model.addAttribute("sickNotes", sickNoteList);
         model.addAttribute("today", DateMidnight.now());
         model.addAttribute("from", fromDate);
         model.addAttribute("to", toDate);
-
-        return "sicknote/sick_notes_overview";
+        model.addAttribute("searchRequest", new SearchRequest());
+        model.addAttribute("persons", personService.getAllPersons());
     }
 
 

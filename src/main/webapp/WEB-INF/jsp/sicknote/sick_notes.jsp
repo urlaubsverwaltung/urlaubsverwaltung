@@ -13,6 +13,17 @@
 <head>
     <title><spring:message code="title" /></title>
     <%@include file="../include/header.jsp" %>
+    <script src="<spring:url value='/js/datepicker.js' />" type="text/javascript" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+
+            var regional = "${pageContext.request.locale.language}";
+
+            createDatepickerInstanceForSickNote(regional);
+
+        });
+    </script>
 </head>
 
 <body>
@@ -28,20 +39,87 @@
 
             <div class="overview-header">
 
-                <legend>
+                <legend style="margin-bottom: 0">
                     <p>
                         <spring:message code="sicknotes" />
                     </p>
-                    <div class="btn-group sicknote-button">
-
-                        <a class="btn" href="${formUrlPrefix}/sicknote/new">
-                            <i class="icon-plus"></i>&nbsp;<spring:message code="sicknotes.new" />
-                        </a>
-
-                    </div>
+                    <a class="btn sicknote-button" href="${formUrlPrefix}/sicknote/new">
+                        <i class="icon-plus"></i>&nbsp;<spring:message code="sicknotes.new" />
+                    </a>
+                    <a class="btn btn-right" href="#" media="print" onclick="window.print(); return false;">
+                        <i class="icon-print"></i>&nbsp;<spring:message code='Print' />
+                    </a>
+                    <a href="#changeViewModal" role="button" class="btn sicknote-button" data-toggle="modal">
+                        <i class="icon-eye-open"></i>&nbsp;<spring:message code="filter" />
+                    </a>
                 </legend>
 
             </div>
+
+            <div id="changeViewModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 id="myModalLabel"><spring:message code="filter" /></h3>
+                </div>
+                <form:form method="POST" action="${formUrlPrefix}/sicknote/filter" modelAttribute="searchRequest" class="form-horizontal">
+                <div class="modal-body">
+
+                    <div class="control-group">
+                        <label class="control-label" for="employee"><spring:message code="staff" /></label>
+
+                        <div class="controls">
+                            <form:select path="personId" id="employee" cssErrorClass="error">
+                                <form:option value="-1"><spring:message code="staff.all" /></form:option>
+                                <c:forEach items="${persons}" var="person">
+                                    <form:option value="${person.id}">${person.firstName}&nbsp;${person.lastName}</form:option>
+                                </c:forEach>
+                            </form:select>
+                            <span class="help-inline"><form:errors path="personId" cssClass="error"/></span>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label" for="from"><spring:message code="From" /></label>
+
+                        <div class="controls">
+                            <form:input path="from" id="from" />
+                            <span class="help-inline"><form:errors path="from" cssClass="error"/></span>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label" for="to"><spring:message code="To" /></label>
+
+                        <div class="controls">
+                            <form:input path="to" id="to" />
+                            <span class="help-inline"><form:errors path="to" cssClass="error"/></span>
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" type="submit"><spring:message code="go" /></button>
+                    <button class="btn" data-dismiss="modal" aria-hidden="true"><spring:message code="cancel" /></button>
+                </div>
+                </form:form>
+            </div>
+
+        </div>
+
+        <div class="grid_12">
+
+            <div class="second-legend">
+                <p style="float:left">
+                    <spring:message code="time"/>:&nbsp;<joda:format style="M-" value="${from}"/>&nbsp;-&nbsp;<joda:format style="M-" value="${to}"/>
+                </p>
+                <p style="float:right">
+                    <spring:message code="Effective"/>&nbsp;<joda:format style="M-" value="${today}"/>
+                </p>
+            </div>
+
+        </div>
+
+        <div class="grid_12">
 
             <c:choose>
 
@@ -57,9 +135,9 @@
                             <th><spring:message code="time" /></th>
                             <th><spring:message code="work.days" /></th>
                             <th><spring:message code="sicknotes.aub.short" /></th>
-                            <th><spring:message code="app.date.overview" /></th>
-                            <th><spring:message code="table.detail" /></th>
-                            <th><spring:message code="edit" /></th>
+                            <th class="print-invisible"><spring:message code="app.date.overview" /></th>
+                            <th class="print-invisible"><spring:message code="table.detail" /></th>
+                            <th class="print-invisible"><spring:message code="edit" /></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -76,27 +154,27 @@
                                 </td>
                                 <td>
                                     <c:if test="${sickNote.aubPresent}">
-                                        <i class="icon-ok"></i> 
+                                        <img src="<spring:url value='/images/black_success.png' />" /> 
                                     </c:if>
-                                    <%-- TODO: other possibility is to show x if not present--%>
-                                    <%--<c:choose>--%>
+                                        <%-- TODO: other possibility is to show x if not present--%>
+                                        <%--<c:choose>--%>
                                         <%--<c:when test="${sickNote.aubPresent}">--%>
-                                            <%--<i class="icon-ok"></i> --%>
+                                        <%--<img src="<spring:url value='/images/black_success.png' />" /> --%>
                                         <%--</c:when>--%>
                                         <%--<c:otherwise>--%>
-                                            <%--<i class="icon-remove"></i>--%>
+                                        <%--<img src="<spring:url value='/images/black_fail.png' />" />--%>
                                         <%--</c:otherwise>--%>
-                                    <%--</c:choose>--%>
+                                        <%--</c:choose>--%>
                                 </td>
-                                <td>
+                                <td class="print-invisible">
                                     <joda:format style="M-" value="${sickNote.lastEdited}"/> 
                                 </td>
-                                <td>
+                                <td class="print-invisible">
                                     <a href="${formUrlPrefix}/sicknote/${sickNote.id}">
                                         <img src="<spring:url value='/images/playlist.png' />" />
                                     </a>
                                 </td>
-                                <td>
+                                <td class="print-invisible">
                                     <a href="${formUrlPrefix}/sicknote/${sickNote.id}/edit"><img src="<spring:url value='/images/edit.png' />" /></a>
                                 </td>
                         </c:forEach>
