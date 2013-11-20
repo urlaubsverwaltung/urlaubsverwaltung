@@ -51,9 +51,7 @@ public class PropertiesValidator {
         try {
             double max = Double.parseDouble(propValue);
 
-            if (max > 0 && max < 367) {
-                // do nothing number check occurs in method validateEntitlementDays of class PersonValidator
-            } else {
+            if (max < 1 || max > 366) {
                 errors.reject(ERROR_STH_WRONG);
                 mailService.sendPropertiesErrorNotification(MAX_DAYS);
             }
