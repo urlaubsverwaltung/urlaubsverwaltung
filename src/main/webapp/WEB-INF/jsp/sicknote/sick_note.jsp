@@ -22,13 +22,15 @@
 
         <div class="grid_12">
 
-            <div class="overview-header">
-                <legend>
-                    <p><spring:message code="sicknote" /></p>
-                </legend>
-            </div>
+            <div class="grid_6">
 
-            <div class="grid_6" style="margin-left: 0">
+                <div class="overview-header">
+                    <legend>
+                        <p><spring:message code="sicknote" /></p>
+                        <a class="btn" style="float:right" href="${formUrlPrefix}/sicknote/${sickNote.id}/edit"><i class="icon-pencil"></i>&nbsp;<spring:message code="edit" /></a>
+                    </legend>
+                </div>
+                
               <table class="app-detail">
                   <tbody>
                       <tr class="odd">
@@ -65,15 +67,20 @@
             </div>
 
             <div class="grid_6">
+
+                <div class="overview-header">
+                    <legend>
+                        <p><spring:message code="progress" /></p>
+                        <button class="btn" style="float:right;" onclick="$('div#comment-form').show();">
+                            <i class="icon-plus"></i>&nbsp;Neuer Kommentar
+                        </button>
+                    </legend>
+                </div>
+                
                 <table class="app-detail">
                     <tbody>
-                        <tr class="odd">
-                            <td colspan="3">
-                                <b><spring:message code="progress" /></b>
-                            </td>
-                        </tr>
                         <c:forEach items="${sickNote.comments}" var="comment" varStatus="loopStatus">
-                            <tr class="${loopStatus.index % 2 == 0 ? 'even' : 'odd'}">
+                            <tr class="${loopStatus.index % 2 == 0 ? 'odd' : 'even'}">
                                 <td style="width:10%"><joda:format style="M-" value="${comment.date}"/></td>
                                 <td style="width:10%">
                                     <c:out value="${comment.person.firstName}" />&nbsp;<c:out value="${comment.person.lastName}" />
@@ -94,11 +101,6 @@
                     </tbody>
                 </table>
                 
-                <br />
-                <button class="btn" onclick="$('div#comment-form').show();">
-                    <i class="icon-plus"></i>&nbsp;Neuer Kommentar
-                </button>
-
                 <c:choose>
                     <c:when test="${error}">
                        <c:set var="STYLE" value="display: block" /> 

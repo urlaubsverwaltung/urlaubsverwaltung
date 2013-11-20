@@ -59,6 +59,7 @@
                             <th><spring:message code="sicknotes.aub.short" /></th>
                             <th><spring:message code="app.date.overview" /></th>
                             <th><spring:message code="table.detail" /></th>
+                            <th><spring:message code="edit" /></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -94,6 +95,9 @@
                                     <a href="${formUrlPrefix}/sicknote/${sickNote.id}">
                                         <img src="<spring:url value='/images/playlist.png' />" />
                                     </a>
+                                </td>
+                                <td>
+                                    <a href="${formUrlPrefix}/sicknote/${sickNote.id}/edit"><img src="<spring:url value='/images/edit.png' />" /></a>
                                 </td>
                         </c:forEach>
                         </tbody>
