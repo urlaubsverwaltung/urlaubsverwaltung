@@ -72,7 +72,7 @@
                     <legend>
                         <p><spring:message code="progress" /></p>
                         <button class="btn" style="float:right;" onclick="$('div#comment-form').show();">
-                            <i class="icon-plus"></i>&nbsp;Neuer Kommentar
+                            <i class="icon-comment"></i>&nbsp;Neuer Kommentar
                         </button>
                     </legend>
                 </div>
