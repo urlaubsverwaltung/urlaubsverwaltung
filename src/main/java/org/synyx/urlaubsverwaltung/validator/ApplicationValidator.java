@@ -80,6 +80,21 @@ public class ApplicationValidator implements Validator {
         AppForm app = (AppForm) target;
 
         // check if date fields are valid
+        validateDateFields(app, errors);
+
+        // check if reason is not filled
+        if (app.getVacationType() != VacationType.HOLIDAY) {
+            if (!StringUtils.hasText(app.getReason())) {
+                errors.rejectValue(REASON, MANDATORY_FIELD);
+            }
+        }
+
+        validateStringFields(app, errors);
+    }
+
+
+    private void validateDateFields(AppForm app, Errors errors) {
+
         if (app.getHowLong() == DayLength.FULL) {
             // check if date fields are not filled
             if (app.getStartDate() == null) {
@@ -110,15 +125,6 @@ public class ApplicationValidator implements Validator {
                 }
             }
         }
-
-        // check if reason is not filled
-        if (app.getVacationType() != VacationType.HOLIDAY) {
-            if (!StringUtils.hasText(app.getReason())) {
-                errors.rejectValue(REASON, MANDATORY_FIELD);
-            }
-        }
-
-        validateStringFields(app, errors);
     }
 
 
@@ -190,27 +196,28 @@ public class ApplicationValidator implements Validator {
      */
     private void validateStringFields(AppForm app, Errors errors) {
 
-        if (StringUtils.hasText(app.getReason())) {
-            if (!validateStringLength(app.getReason(), 200)) {
-                errors.rejectValue(REASON, ERROR_LENGTH);
-            }
-        }
+        validateStringField(app.getReason(), REASON, errors);
 
-        if (StringUtils.hasText(app.getAddress())) {
-            if (!validateStringLength(app.getAddress(), 200)) {
-                errors.rejectValue(ADDRESS, ERROR_LENGTH);
-            }
-        }
+        validateStringField(app.getAddress(), ADDRESS, errors);
 
-        if (StringUtils.hasText(app.getComment())) {
-            if (!validateStringLength(app.getComment(), 200)) {
-                errors.rejectValue("comment", ERROR_LENGTH);
-            }
-        }
+        validateStringField(app.getComment(), "comment", errors);
 
-        if (StringUtils.hasText(app.getPhone())) {
-            if (!validateStringLength(app.getPhone(), 200)) {
-                errors.rejectValue(PHONE, ERROR_LENGTH);
+        validateStringField(app.getPhone(), PHONE, errors);
+    }
+
+
+    /**
+     * Ensure that string field is not empty and has not more than 200 chars.
+     *
+     * @param  text
+     * @param  field
+     * @param  errors
+     */
+    private void validateStringField(String text, String field, Errors errors) {
+
+        if (StringUtils.hasText(text)) {
+            if (!validateStringLength(text, 200)) {
+                errors.rejectValue(field, ERROR_LENGTH);
             }
         }
     }
