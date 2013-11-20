@@ -1,6 +1,8 @@
 package org.synyx.urlaubsverwaltung.sicknote;
 
 import org.joda.time.DateMidnight;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import org.springframework.stereotype.Controller;
 
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -22,6 +25,7 @@ import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteComment;
 import org.synyx.urlaubsverwaltung.util.DateMidnightPropertyEditor;
 import org.synyx.urlaubsverwaltung.validator.SickNoteValidator;
 
+import java.util.List;
 import java.util.Locale;
 
 
@@ -71,6 +75,29 @@ public class SickNoteController {
         model.addAttribute("sickNotes", sickNoteService.getAll());
 
         return "sicknote/sick_notes";
+    }
+
+
+    @RequestMapping(value = "/sicknote", method = RequestMethod.GET, params = { "staff", "from", "to" })
+    public String personsSickNotes(@RequestParam("staff") Integer personId,
+        @RequestParam("from") String from,
+        @RequestParam("to") String to, Model model) {
+
+        Person person = personService.getPersonByID(personId);
+
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd.MM.yyyy");
+        DateMidnight fromDate = DateMidnight.parse(from, formatter);
+        DateMidnight toDate = DateMidnight.parse(to, formatter);
+
+        List<SickNote> sickNoteList = sickNoteService.getByPersonAndPeriod(person, fromDate, toDate);
+
+        model.addAttribute("person", person);
+        model.addAttribute("sickNotes", sickNoteList);
+        model.addAttribute("today", DateMidnight.now());
+        model.addAttribute("from", fromDate);
+        model.addAttribute("to", toDate);
+
+        return "sicknote/sick_notes_overview";
     }
 
 

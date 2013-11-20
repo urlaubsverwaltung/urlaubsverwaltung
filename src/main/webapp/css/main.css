@@ -550,7 +550,7 @@ td.SPECIALLEAVE, td.UNPAIDLEAVE, td.OVERTIME {
     select {
         display: none;  
     }
-    .td-action, .td-detail, .user-pic {
+    .td-action, .td-detail, .user-pic, .print-invisible {
         display: none;
     }
     div.vacation-entitlement {
@@ -567,6 +567,10 @@ td.SPECIALLEAVE, td.UNPAIDLEAVE, td.OVERTIME {
     
     .overview-header legend p {
         color: black; font-weight: bold; 
+    }
+    
+    i.icon-ok {
+        display: block;
     }
 }
 

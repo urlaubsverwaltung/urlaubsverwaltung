@@ -83,4 +83,10 @@ public class SickNoteService {
 
         return sickNoteDAO.findOne(id);
     }
+
+
+    public List<SickNote> getByPersonAndPeriod(Person person, DateMidnight from, DateMidnight to) {
+
+        return sickNoteDAO.findByPersonAndPeriod(person, from.toDate(), to.toDate());
+    }
 }

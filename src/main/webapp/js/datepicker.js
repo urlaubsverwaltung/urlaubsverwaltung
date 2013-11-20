@@ -129,3 +129,34 @@ function createDatepickerInstances(regional, urlPrefix, vacationUrl) {
     });
 }
 
+
+function createDatepickerInstanceForSickNote(regional) {
+
+    $.datepicker.setDefaults($.datepicker.regional[regional]);
+
+    $("#from, #to").datepicker({
+        numberOfMonths: 1,
+        beforeShow: function(input, inst){
+            var calendrier = inst.dpDiv;
+            var top  = $(this).offset().top + $(this).outerHeight();
+            var left = $(this).offset().left;
+            setTimeout(function(){ calendrier.css({'top' : top, 'left': left}); },10);
+        },
+        onSelect: function(date) {
+            if (this.id == "from") {
+                $("#to").datepicker("setDate", date);
+            }
+        },
+        beforeShowDay: function (date) {
+
+            // if day is saturday or sunday, highlight it
+            if (date.getDay() == 6 || date.getDay() == 0) {
+                return [true, "notworkday"];
+            } else {
+                return [true, ""];
+            }
+
+        }
+    });
+    
+}
