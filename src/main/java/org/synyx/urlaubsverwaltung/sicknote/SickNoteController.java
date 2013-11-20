@@ -103,9 +103,6 @@ public class SickNoteController {
 
         SickNoteComment comment = new SickNoteComment();
 
-        // TODO: not the best solution to hard code things...but hey make it better!
-        comment.setText("Krankmeldung angelegt");
-
         sickNoteService.addComment(id, comment, securityUtil.getLoggedUser());
 
         return "redirect:/web/sicknote/" + id;
