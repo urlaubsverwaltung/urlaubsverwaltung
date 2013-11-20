@@ -23,6 +23,43 @@
             createDatepickerInstanceForSickNote(regional);
 
         });
+        
+        function validate() {
+
+            $("span#from-error").empty();
+            $("span#from-to").empty(); 
+            
+            var from = $("input#from").val();
+            var to = $("input#to").val();
+            
+            var error = 0;
+            
+            if(from == "") {
+               $("span#from-error").html("darf nicht leer sein");
+               error = 1;
+            } else {
+              if(!isValidDate(from)) {
+                  $("span#from-error").html("ungültige Eingabe");
+                  error = 1;  
+              }  
+            } 
+            
+            if(to == "") {
+                $("span#to-error").html("darf nicht leer sein"); 
+                error = 1;
+            } else {
+                if(!isValidDate(to)) {
+                    $("span#to-error").html("ungültige Eingabe");
+                    error = 1;
+                }
+            } 
+            
+            if(error == 0) {
+                $("form#searchRequest-form").submit(); 
+            }
+            
+        }
+        
     </script>
 </head>
 
@@ -61,7 +98,7 @@
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                     <h3 id="myModalLabel"><spring:message code="filter" /></h3>
                 </div>
-                <form:form method="POST" action="${formUrlPrefix}/sicknote/filter" modelAttribute="searchRequest" class="form-horizontal">
+                <form:form method="POST" id="searchRequest-form" action="${formUrlPrefix}/sicknote/filter" modelAttribute="searchRequest" class="form-horizontal">
                 <div class="modal-body">
 
                     <div class="control-group">
@@ -74,7 +111,6 @@
                                     <form:option value="${person.id}">${person.firstName}&nbsp;${person.lastName}</form:option>
                                 </c:forEach>
                             </form:select>
-                            <span class="help-inline"><form:errors path="personId" cssClass="error"/></span>
                         </div>
                     </div>
 
@@ -82,8 +118,8 @@
                         <label class="control-label" for="from"><spring:message code="From" /></label>
 
                         <div class="controls">
-                            <form:input path="from" id="from" />
-                            <span class="help-inline"><form:errors path="from" cssClass="error"/></span>
+                            <form:input path="from" id="from" cssClass="input-medium" />
+                            <span class="help-inline error" id="from-error"></span>
                         </div>
                     </div>
 
@@ -91,14 +127,14 @@
                         <label class="control-label" for="to"><spring:message code="To" /></label>
 
                         <div class="controls">
-                            <form:input path="to" id="to" />
-                            <span class="help-inline"><form:errors path="to" cssClass="error"/></span>
+                            <form:input path="to" id="to" cssClass="input-medium" />
+                            <span class="help-inline error" id="to-error"></span>
                         </div>
                     </div>
                     
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-primary" type="submit"><spring:message code="go" /></button>
+                    <button class="btn btn-primary" type="button" onclick="validate();"><spring:message code="go" /></button>
                     <button class="btn" data-dismiss="modal" aria-hidden="true"><spring:message code="cancel" /></button>
                 </div>
                 </form:form>

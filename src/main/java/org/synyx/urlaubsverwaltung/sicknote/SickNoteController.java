@@ -85,8 +85,7 @@ public class SickNoteController {
 
 
     @RequestMapping(value = "/sicknote/filter", method = RequestMethod.POST)
-    public String filterSickNotes(@ModelAttribute("searchRequest") SearchRequest searchRequest, Errors errors,
-        Model model) {
+    public String filterSickNotes(@ModelAttribute("searchRequest") SearchRequest searchRequest) {
 
         Person person = personService.getPersonByID(searchRequest.getPersonId());
 
