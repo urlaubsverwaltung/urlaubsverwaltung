@@ -6,7 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import org.synyx.urlaubsverwaltung.application.domain.Application;
+import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.application.domain.DayLength;
+import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
+import org.synyx.urlaubsverwaltung.application.service.CommentService;
+import org.synyx.urlaubsverwaltung.application.web.AppForm;
 import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteComment;
@@ -28,13 +34,18 @@ public class SickNoteService {
     private SickNoteDAO sickNoteDAO;
     private SickNoteCommentDAO commentDAO;
     private OwnCalendarService calendarService;
+    private ApplicationService applicationService;
+    private CommentService commentService;
 
     @Autowired
-    public SickNoteService(SickNoteDAO sickNoteDAO, SickNoteCommentDAO commentDAO, OwnCalendarService calendarService) {
+    public SickNoteService(SickNoteDAO sickNoteDAO, SickNoteCommentDAO commentDAO, OwnCalendarService calendarService,
+        ApplicationService applicationService, CommentService commentService) {
 
         this.sickNoteDAO = sickNoteDAO;
         this.commentDAO = commentDAO;
         this.calendarService = calendarService;
+        this.applicationService = applicationService;
+        this.commentService = commentService;
     }
 
 
@@ -94,5 +105,23 @@ public class SickNoteService {
     public List<SickNote> getByPeriod(DateMidnight from, DateMidnight to) {
 
         return sickNoteDAO.findByPeriod(from.toDate(), to.toDate());
+    }
+
+
+    public void convertSickNoteToVacation(AppForm appForm, SickNote sickNote, Person loggedUser) {
+
+        appForm.setHowLong(DayLength.FULL);
+
+        Application application = appForm.createApplicationObject();
+
+        applicationService.apply(application, sickNote.getPerson(), loggedUser);
+
+        application.setStatus(ApplicationStatus.ALLOWED);
+        application.setEditedDate(DateMidnight.now());
+
+        applicationService.signApplicationByUser(application, loggedUser);
+        applicationService.save(application);
+
+        commentService.saveComment(new Comment(), loggedUser, application);
     }
 }

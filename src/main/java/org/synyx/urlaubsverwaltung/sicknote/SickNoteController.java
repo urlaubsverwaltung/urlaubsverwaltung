@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import org.synyx.urlaubsverwaltung.application.domain.VacationType;
+import org.synyx.urlaubsverwaltung.application.web.AppForm;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.security.web.SecurityUtil;
@@ -226,6 +228,29 @@ public class SickNoteController {
         }
 
         sickNoteService.addComment(id, comment, securityUtil.getLoggedUser());
+
+        return "redirect:/web/sicknote/" + id;
+    }
+
+
+    @RequestMapping(value = "/sicknote/{id}/convert", method = RequestMethod.GET)
+    public String convertSickNoteToVacation(@PathVariable("id") Integer id, Model model) {
+
+        model.addAttribute("sickNote", sickNoteService.getById(id));
+        model.addAttribute("appForm", new AppForm());
+        model.addAttribute("vacTypes", VacationType.values());
+
+        return "sicknote/sick_note_convert";
+    }
+
+
+    @RequestMapping(value = "/sicknote/{id}/convert", method = RequestMethod.POST)
+    public String convertSickNoteToVacation(@PathVariable("id") Integer id,
+        @ModelAttribute("appForm") AppForm appForm, Model model) {
+
+        SickNote sickNote = sickNoteService.getById(id);
+
+        sickNoteService.convertSickNoteToVacation(appForm, sickNote, securityUtil.getLoggedUser());
 
         return "redirect:/web/sicknote/" + id;
     }

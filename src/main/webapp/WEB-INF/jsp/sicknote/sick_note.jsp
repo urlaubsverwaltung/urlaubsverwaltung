@@ -27,6 +27,7 @@
                 <div class="overview-header">
                     <legend>
                         <p><spring:message code="sicknote" /></p>
+                        <a class="btn" style="float:right" href="${formUrlPrefix}/sicknote/${sickNote.id}/convert"><i class="icon-random"></i>&nbsp;<spring:message code="sicknotes.convert.vacation" /></a>
                         <a class="btn" style="float:right" href="${formUrlPrefix}/sicknote/${sickNote.id}/edit"><i class="icon-pencil"></i>&nbsp;<spring:message code="edit" /></a>
                     </legend>
                 </div>

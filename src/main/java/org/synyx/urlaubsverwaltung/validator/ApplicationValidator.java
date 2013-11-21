@@ -201,8 +201,6 @@ public class ApplicationValidator implements Validator {
         validateStringField(app.getAddress(), ADDRESS, errors);
 
         validateStringField(app.getComment(), "comment", errors);
-
-        validateStringField(app.getPhone(), PHONE, errors);
     }
 
 

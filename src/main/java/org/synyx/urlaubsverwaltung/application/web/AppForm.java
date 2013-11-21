@@ -40,8 +40,6 @@ public class AppForm {
     // Address and phone number during holiday
     private String address;
 
-    private String phone;
-
     private DateMidnight applicationDate;
 
     private boolean teamInformed;
@@ -93,18 +91,6 @@ public class AppForm {
     public void setHowLong(DayLength howLong) {
 
         this.howLong = howLong;
-    }
-
-
-    public String getPhone() {
-
-        return phone;
-    }
-
-
-    public void setPhone(String phone) {
-
-        this.phone = phone;
     }
 
 
@@ -192,7 +178,9 @@ public class AppForm {
     }
 
 
-    public Application fillApplicationObject(Application app) {
+    public Application createApplicationObject() {
+
+        Application app = new Application();
 
         app.setAddress(this.address);
         app.setVacationType(this.vacationType);
@@ -200,7 +188,6 @@ public class AppForm {
         app.setReason(this.reason);
         app.setRep(this.rep);
         app.setAddress(this.address);
-        app.setPhone(this.phone);
         app.setApplicationDate(this.applicationDate);
         app.setTeamInformed(this.teamInformed);
         app.setComment(this.comment);

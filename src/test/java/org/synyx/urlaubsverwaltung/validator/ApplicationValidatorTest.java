@@ -5,14 +5,8 @@ import org.joda.time.DateTimeConstants;
 
 import org.junit.After;
 import org.junit.AfterClass;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import org.mockito.Mockito;
@@ -23,9 +17,13 @@ import org.springframework.validation.Errors;
 
 import org.synyx.urlaubsverwaltung.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.application.domain.DayLength;
-import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.web.AppForm;
+import org.synyx.urlaubsverwaltung.person.Person;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 
 /**
@@ -153,17 +151,6 @@ public class ApplicationValidatorTest {
         Mockito.reset(errors);
 
         app.setAddress("normale Adresse");
-        instance.validate(app, errors);
-        Mockito.verifyZeroInteractions(errors);
-        Mockito.reset(errors);
-
-        app.setPhone(
-            "Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. ");
-        instance.validate(app, errors);
-        Mockito.verify(errors).rejectValue("phone", "error.length");
-        Mockito.reset(errors);
-
-        app.setPhone("072173128329");
         instance.validate(app, errors);
         Mockito.verifyZeroInteractions(errors);
         Mockito.reset(errors);

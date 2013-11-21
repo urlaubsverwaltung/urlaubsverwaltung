@@ -536,8 +536,7 @@ public class ApplicationController {
     private boolean checkAndSaveApplicationForm(AppForm appForm, Person person, boolean isOffice, Errors errors,
         Model model) {
 
-        Application application = new Application();
-        application = appForm.fillApplicationObject(application);
+        Application application = appForm.createApplicationObject();
 
         application = applicationService.apply(application, person, securityUtil.getLoggedUser());
 
