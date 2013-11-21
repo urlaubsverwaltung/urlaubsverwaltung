@@ -19,7 +19,27 @@
 
             createDatepickerInstanceForSickNote(regional, "aubFrom", "aubTo");
             
+            <c:choose>
+                <c:when test="${sickNote.aubPresent}">
+                    showAUFields();
+                </c:when>
+                <c:otherwise>
+                    hideAUFields();
+                </c:otherwise>
+            </c:choose>
+            
         });
+        
+        function showAUFields() {
+           $("div.AU").show(); 
+        }
+        
+        function hideAUFields() {
+            $("div.AU").hide();
+            $("input#aubFrom").datepicker("setDate", null);
+            $("input#aubTo").datepicker("setDate", null);
+        }
+        
     </script>
     
 </head>
@@ -110,13 +130,13 @@
                 <div class="control-group">
                     <label class="control-label"><spring:message code='sicknotes.aub'/></label>
                     <div class="controls">
-                        <form:radiobutton path="aubPresent" value="true" />&nbsp;<spring:message code='yes' />&nbsp;&nbsp;
-                        <form:radiobutton path="aubPresent" value="false" />&nbsp;<spring:message code='no' />
+                        <form:radiobutton path="aubPresent" value="true" onclick="showAUFields();" />&nbsp;<spring:message code='yes' />&nbsp;&nbsp;
+                        <form:radiobutton path="aubPresent" value="false" onclick="hideAUFields();" />&nbsp;<spring:message code='no' />
                         <span class="help-inline"><form:errors path="aubPresent" cssClass="error"/></span>
                     </div>
                 </div>
 
-                <div class="control-group">
+                <div class="control-group AU">
                     <label class="control-label" for="aubFrom">
                         <spring:message code="sicknotes.aub.time" />
                         <br />
@@ -131,7 +151,7 @@
                     </div>
                 </div>
 
-                <div class="control-group">
+                <div class="control-group AU">
                     <label class="control-label" for="aubTo">&nbsp;</label>
 
                     <div class="controls">
