@@ -48,6 +48,13 @@ public class SickNote extends AbstractPersistable<Integer> {
     // aub = Arbeitsunfähigkeitsbescheinigung
     private boolean aubPresent;
 
+    // period of the aub (Arbeitsunfähigkeitsbescheinigung)
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date aubStartDate;
+
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date aubEndDate;
+
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<SickNoteComment> comments = new ArrayList<SickNoteComment>();
 
@@ -115,6 +122,46 @@ public class SickNote extends AbstractPersistable<Integer> {
     public void setAubPresent(boolean aubPresent) {
 
         this.aubPresent = aubPresent;
+    }
+
+
+    public DateMidnight getAubStartDate() {
+
+        if (this.aubStartDate == null) {
+            return null;
+        }
+
+        return new DateTime(this.aubStartDate).toDateMidnight();
+    }
+
+
+    public void setAubStartDate(DateMidnight aubStartDate) {
+
+        if (aubStartDate == null) {
+            this.aubStartDate = null;
+        } else {
+            this.aubStartDate = aubStartDate.toDate();
+        }
+    }
+
+
+    public DateMidnight getAubEndDate() {
+
+        if (this.aubEndDate == null) {
+            return null;
+        }
+
+        return new DateTime(this.aubEndDate).toDateMidnight();
+    }
+
+
+    public void setAubEndDate(DateMidnight aubEndDate) {
+
+        if (aubEndDate == null) {
+            this.aubEndDate = null;
+        } else {
+            this.aubEndDate = aubEndDate.toDate();
+        }
     }
 
 

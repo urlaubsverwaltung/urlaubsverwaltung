@@ -130,11 +130,13 @@ function createDatepickerInstances(regional, urlPrefix, vacationUrl) {
 }
 
 
-function createDatepickerInstanceForSickNote(regional) {
+function createDatepickerInstanceForSickNote(regional, from, to) {
 
     $.datepicker.setDefaults($.datepicker.regional[regional]);
 
-    $("#from, #to").datepicker({
+    var selector = "#" + from + ", #" + to;
+    
+    $(selector).datepicker({
         numberOfMonths: 1,
         beforeShow: function(input, inst){
             var calendrier = inst.dpDiv;
@@ -143,8 +145,8 @@ function createDatepickerInstanceForSickNote(regional) {
             setTimeout(function(){ calendrier.css({'top' : top, 'left': left}); },10);
         },
         onSelect: function(date) {
-            if (this.id == "from") {
-                $("#to").datepicker("setDate", date);
+            if (this.id == from) {
+                $("#" + to).datepicker("setDate", date);
             }
         },
         beforeShowDay: function (date) {

@@ -20,7 +20,7 @@
 
             var regional = "${pageContext.request.locale.language}";
 
-            createDatepickerInstanceForSickNote(regional);
+            createDatepickerInstanceForSickNote(regional, "from", "to");
 
         });
         
@@ -168,7 +168,7 @@
                         <thead>
                         <tr>
                             <th><spring:message code="name" /></th>
-                            <th><spring:message code="time" /></th>
+                            <th><spring:message code="sicknotes.time" /></th>
                             <th><spring:message code="work.days" /></th>
                             <th><spring:message code="sicknotes.aub.short" /></th>
                             <th class="print-invisible"><spring:message code="app.date.overview" /></th>
@@ -189,18 +189,7 @@
                                     <fmt:formatNumber maxFractionDigits="1" value="${sickNote.workDays}" />
                                 </td>
                                 <td>
-                                    <c:if test="${sickNote.aubPresent}">
-                                        <img src="<spring:url value='/images/black_success.png' />" /> 
-                                    </c:if>
-                                        <%-- TODO: other possibility is to show x if not present--%>
-                                        <%--<c:choose>--%>
-                                        <%--<c:when test="${sickNote.aubPresent}">--%>
-                                        <%--<img src="<spring:url value='/images/black_success.png' />" /> --%>
-                                        <%--</c:when>--%>
-                                        <%--<c:otherwise>--%>
-                                        <%--<img src="<spring:url value='/images/black_fail.png' />" />--%>
-                                        <%--</c:otherwise>--%>
-                                        <%--</c:choose>--%>
+                                    <joda:format style="M-" value="${sickNote.aubStartDate}"/>&nbsp;-&nbsp;<joda:format style="M-" value="${sickNote.aubEndDate}"/>
                                 </td>
                                 <td class="print-invisible">
                                     <joda:format style="M-" value="${sickNote.lastEdited}"/> 

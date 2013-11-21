@@ -15,7 +15,9 @@
 
             var regional = "${pageContext.request.locale.language}";
 
-            createDatepickerInstanceForSickNote(regional);
+            createDatepickerInstanceForSickNote(regional, "from", "to");
+
+            createDatepickerInstanceForSickNote(regional, "aubFrom", "aubTo");
             
         });
     </script>
@@ -84,29 +86,59 @@
                 </div>
 
                 <div class="control-group">
-                    <label class="control-label" for="from"><spring:message code='From' /></label>
+                    <label class="control-label" for="from"><spring:message code="sicknotes.time" /></label>
 
                     <div class="controls">
+                        <spring:message code="From" />
+                        <br />
                         <form:input id="from" path="startDate" cssClass="input-medium" cssErrorClass="error input-medium" />
                         <span class="help-inline"><form:errors path="startDate" cssClass="error"/></span>
                     </div>
                 </div>
 
                 <div class="control-group">
-                    <label class="control-label" for="to"><spring:message code='To' /></label>
+                    <label class="control-label" for="to">&nbsp;</label>
 
                     <div class="controls">
+                        <spring:message code="To" />
+                        <br />
                         <form:input id="to" path="endDate" cssClass="input-medium" cssErrorClass="error input-medium" />
                         <span class="help-inline"><form:errors path="endDate" cssClass="error"/></span>
                     </div>
                 </div>
-
+                
                 <div class="control-group">
                     <label class="control-label"><spring:message code='sicknotes.aub'/></label>
                     <div class="controls">
                         <form:radiobutton path="aubPresent" value="true" />&nbsp;<spring:message code='yes' />&nbsp;&nbsp;
                         <form:radiobutton path="aubPresent" value="false" />&nbsp;<spring:message code='no' />
                         <span class="help-inline"><form:errors path="aubPresent" cssClass="error"/></span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="aubFrom">
+                        <spring:message code="sicknotes.aub.time" />
+                        <br />
+                        <spring:message code="sicknotes.aub.time.note" />
+                    </label>
+
+                    <div class="controls">
+                        <spring:message code="From" />
+                        <br />
+                        <form:input id="aubFrom" path="aubStartDate" cssClass="input-medium" cssErrorClass="error input-medium" />
+                        <span class="help-inline"><form:errors path="aubStartDate" cssClass="error"/></span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="aubTo">&nbsp;</label>
+
+                    <div class="controls">
+                        <spring:message code="To" />
+                        <br />
+                        <form:input id="aubTo" path="aubEndDate" cssClass="input-medium" cssErrorClass="error input-medium" />
+                        <span class="help-inline"><form:errors path="aubEndDate" cssClass="error"/></span>
                     </div>
                 </div>
                 
