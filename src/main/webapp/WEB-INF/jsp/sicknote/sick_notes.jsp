@@ -22,6 +22,15 @@
 
             createDatepickerInstanceForSickNote(regional, "from", "to");
 
+            $(".sortable-tbl").tablesorter({
+                sortList: [[1,0]], 
+                headers: { 
+                    1: { sorter:'germanDate' },
+                    3: { sorter:'germanDate' },
+                    4: { sorter:'germanDate' }
+                }
+            });
+            
         });
         
         function validate() {

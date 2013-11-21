@@ -17,6 +17,20 @@
     <head>
         <title><spring:message code="title" /></title>
         <%@include file="../include/header.jsp" %>
+        <script type="text/javascript">
+            $(document).ready(function() {
+
+                $(".sortable-tbl").tablesorter({
+                    sortList: [[1,1]],
+                    headers: {
+                        1: { sorter: 'germanDate' },
+                        4: { sorter: 'germanDate' },
+                        5: { sorter: 'commaNumber' }
+                    }
+                });
+
+            });
+        </script>
     </head>
 
     <body>

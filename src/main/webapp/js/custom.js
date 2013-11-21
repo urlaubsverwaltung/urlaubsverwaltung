@@ -105,16 +105,51 @@ $(document).ready(function()
         // set initial striping
         $(".zebra-table tr:even").addClass("alt");
 
-        // bind start and end order events
-        $(".sortable-tbl").tablesorter()
+        $.tablesorter.addParser({
+            id: 'germanDate',
+            is: function(s) {
+                return false;
+            },
+            format: function(s) {
+                var d;
+                if(s.length > 10) {
+                    d = s.substring(0, 9);  
+                } else if(s.length == 10) {
+                    d = s;
+                } else {
+                    return 0;
+                }
+                
+                var a = d.split('.');
+                a[1] = a[1].replace(/^[0]+/g,"");
+                return new Date(a.reverse().join("/")).getTime();
+            },
+            type: 'numeric'
+        });
 
-            // if sorting start remove striping
+        $.tablesorter.addParser({
+            id: 'commaNumber',
+            is: function(s){
+                return false;
+            },
+            format: function(s) {
+                
+                s = s.replace(/[\,\.]/g,'.');
+                
+                // possible that string is sth like that: 30 + 2
+                return eval(s);
+            },
+            type: 'numeric'
+        });
+        
+        // bind start and end order events
+        $(".sortable-tbl")
             .bind("sortStart", function() {
+                // if sorting start remove striping
                 $(".zebra-table tr:even").removeClass("alt");
             })
-
-            // if sorting done set striping
             .bind("sortEnd", function() {
+                // if sorting done set striping
                 $(".zebra-table tr:even").addClass("alt");
             });
 

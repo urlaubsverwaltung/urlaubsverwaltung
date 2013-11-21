@@ -21,7 +21,7 @@
         <c:otherwise>
 
             <%-- has css class tablesorter only because of styling, is not sortable --%>
-            <table class="app-tbl centered-tbl tablesorter" cellspacing="0">
+            <table class="app-tbl centered-tbl tablesorter overview-tbl" cellspacing="0">
                 <tr>
                     <th>
                         <spring:message code="type" />
@@ -51,7 +51,7 @@
                         <td>
                             <c:choose>
                                 <c:when test="${app.startDate == app.endDate}">
-                                    <spring:message code="at" />&nbsp;<joda:format style="M-" value="${app.startDate}"/>, <spring:message code="${app.howLong.dayLength}" />
+                                   <joda:format style="M-" value="${app.startDate}"/>, <spring:message code="${app.howLong.dayLength}" />
                                 </c:when>
                                 <c:otherwise>
                                     <joda:format style="M-" value="${app.startDate}"/>&nbsp;-&nbsp;<joda:format style="M-" value="${app.endDate}"/>

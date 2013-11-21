@@ -511,7 +511,7 @@ select {
     cursor: pointer;
 }
 
-.app-tbl th:hover {
+.overview-tbl th:hover {
     cursor: default;
 }
 

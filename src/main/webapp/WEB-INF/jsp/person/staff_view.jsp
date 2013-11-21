@@ -31,6 +31,15 @@
         
         <script type="text/javascript">
             $(document).ready(function() {
+
+                $(".sortable-tbl").tablesorter({
+                    sortList: [[2,0]],
+                    headers: {
+                      5: { sorter: 'commaNumber' }, 
+                      6: { sorter: 'commaNumber' }
+                    }
+                });
+                
                 var path = window.location.pathname;
 
                 var active;
