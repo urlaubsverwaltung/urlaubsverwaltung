@@ -37,7 +37,7 @@ public class SickNoteValidatorTest {
         sickNote.setPerson(new Person());
         sickNote.setStartDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 19));
         sickNote.setEndDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 20));
-        sickNote.setAubPresent(true);
+        sickNote.setAubPresent(false);
     }
 
 
@@ -102,5 +102,36 @@ public class SickNoteValidatorTest {
         validator.validateComment(comment, errors);
         validator.validate(sickNote, errors);
         Mockito.verifyZeroInteractions(errors);
+    }
+
+
+    @Test
+    public void testValidateAUPeriod() {
+
+        sickNote.setAubPresent(true);
+
+        // if there is an AU, there has to be a period set (aubStartDate and aubEndDate must not be empty)
+        validator.validate(sickNote, errors);
+        Mockito.verify(errors).rejectValue("aubStartDate", "error.mandatory.field");
+        Mockito.verify(errors).rejectValue("aubEndDate", "error.mandatory.field");
+        Mockito.reset(errors);
+
+        sickNote.setAubStartDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 19));
+        sickNote.setAubEndDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 20));
+        validator.validate(sickNote, errors);
+        Mockito.verifyZeroInteractions(errors);
+    }
+
+
+    @Test
+    public void testValidateAUPeriodNotInSickNotePeriod() {
+
+        sickNote.setAubPresent(true);
+
+        sickNote.setAubStartDate(new DateMidnight(2013, DateTimeConstants.DECEMBER, 19));
+        sickNote.setAubEndDate(new DateMidnight(2013, DateTimeConstants.DECEMBER, 20));
+        validator.validate(sickNote, errors);
+        Mockito.verify(errors).rejectValue("aubStartDate", "error.period.sicknote");
+        Mockito.verify(errors).rejectValue("aubEndDate", "error.period.sicknote");
     }
 }
