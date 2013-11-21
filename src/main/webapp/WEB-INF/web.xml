@@ -95,9 +95,8 @@
     </welcome-file-list>
     
     <session-config>
-        <session-timeout>
-            30
-        </session-timeout>
+        <!--  set session timeout to 12 hours -->
+        <session-timeout>720</session-timeout>
     </session-config>
     
     <login-config>
