@@ -53,50 +53,16 @@ public class SickNoteServiceTest {
 
 
     @Test
-    public void testAdjustSickNoteIdenticalEnd() {
-
-        sickNote.setStartDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 18));
-        sickNote.setEndDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 22));
-
-        application.setStartDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 20));
-        application.setEndDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 22));
-
-        service.adjustSickNote(sickNote, application);
-
-        Assert.assertEquals(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 18), sickNote.getStartDate());
-        Assert.assertEquals(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 19), sickNote.getEndDate());
-    }
-
-
-    @Test
-    public void testAdjustSickNoteIdenticalStart() {
-
-        sickNote.setStartDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 18));
-        sickNote.setEndDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 22));
-
-        application.setStartDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 18));
-        application.setEndDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 19));
-
-        service.adjustSickNote(sickNote, application);
-
-        Assert.assertEquals(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 20), sickNote.getStartDate());
-        Assert.assertEquals(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 22), sickNote.getEndDate());
-    }
-
-
-    @Test
     public void testAdjustSickNoteIdenticalRange() {
 
         sickNote.setStartDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 18));
         sickNote.setEndDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 22));
 
-        application.setStartDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 18));
-        application.setEndDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 22));
-
-        service.adjustSickNote(sickNote, application);
+        service.adjustSickNote(sickNote);
 
         Assert.assertEquals(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 18), sickNote.getStartDate());
         Assert.assertEquals(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 22), sickNote.getEndDate());
+        Assert.assertEquals(false, sickNote.isActive());
         Assert.assertEquals(BigDecimal.ZERO, sickNote.getWorkDays());
     }
 }

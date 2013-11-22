@@ -187,7 +187,15 @@
                         </thead>
                         <tbody>
                         <c:forEach items="${sickNotes}" var="sickNote" varStatus="loopStatus">
-                            <tr>
+                            <c:choose>
+                                <c:when test="${sickNote.active}">
+                                    <c:set var="CSS_CLASS" value="active" />
+                                </c:when>
+                                <c:otherwise>
+                                    <c:set var="CSS_CLASS" value="inactive" />
+                                </c:otherwise>
+                            </c:choose>
+                            <tr class="${CSS_CLASS}">
                                 <td>
                                     <c:out value="${sickNote.person.firstName}" />&nbsp;<c:out value="${sickNote.person.lastName}" />
                                 </td>
@@ -209,7 +217,11 @@
                                     </a>
                                 </td>
                                 <td class="print-invisible">
-                                    <a href="${formUrlPrefix}/sicknote/${sickNote.id}/edit"><img src="<spring:url value='/images/edit.png' />" /></a>
+                                    <c:if test="${sickNote.active}">
+                                        <a href="${formUrlPrefix}/sicknote/${sickNote.id}/edit">
+                                            <img src="<spring:url value='/images/edit.png' />" />
+                                        </a>
+                                    </c:if>
                                 </td>
                         </c:forEach>
                         </tbody>

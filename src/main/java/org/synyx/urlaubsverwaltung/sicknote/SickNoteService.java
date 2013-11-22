@@ -63,6 +63,7 @@ public class SickNoteService {
 
     public void touch(SickNote sickNote, SickNoteStatus status, Person loggedUser) {
 
+        sickNote.setActive(true);
         setWorkDays(sickNote);
         save(sickNote);
 
@@ -128,6 +129,8 @@ public class SickNoteService {
     public void convertSickNoteToVacation(AppForm appForm, SickNote sickNote, Person loggedUser) {
 
         appForm.setHowLong(DayLength.FULL);
+        appForm.setStartDate(sickNote.getStartDate());
+        appForm.setEndDate(sickNote.getEndDate());
 
         Application application = appForm.createApplicationObject();
 
@@ -141,7 +144,7 @@ public class SickNoteService {
 
         commentService.saveComment(new Comment(), loggedUser, application);
 
-        adjustSickNote(sickNote, application);
+        adjustSickNote(sickNote);
 
         save(sickNote);
 
@@ -150,21 +153,9 @@ public class SickNoteService {
     }
 
 
-    protected void adjustSickNote(SickNote sickNote, Application application) {
+    protected void adjustSickNote(SickNote sickNote) {
 
-        SickNoteConversion conversion = new SickNoteConversion(sickNote, application);
-
-        if (conversion.identicalRange()) {
-            sickNote.setWorkDays(BigDecimal.ZERO);
-        } else if (conversion.onlyStartIsEqual()) {
-            sickNote.setStartDate(application.getEndDate().plusDays(1));
-            setWorkDays(sickNote);
-        } else if (conversion.onlyEndIsEqual()) {
-            sickNote.setEndDate(application.getStartDate().minusDays(1));
-            setWorkDays(sickNote);
-        } else {
-            // overlapping case not implemented at the moment
-            // sick note start date != application start date AND sick note end date != application end date
-        }
+        sickNote.setWorkDays(BigDecimal.ZERO);
+        sickNote.setActive(false);
     }
 }

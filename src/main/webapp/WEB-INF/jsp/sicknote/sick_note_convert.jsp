@@ -10,38 +10,6 @@
     <title><spring:message code="title"/></title>
     <%@include file="../include/header.jsp" %>
 
-    <script src="<spring:url value='/js/datepicker.js' />" type="text/javascript" ></script>
-
-    <script type="text/javascript">
-        $(document).ready(function() {
-
-            var regional = "${pageContext.request.locale.language}";
-
-            $.datepicker.setDefaults($.datepicker.regional[regional]);
-
-            $("#from, #to").datepicker({
-                numberOfMonths: 1,
-                onSelect: function(date) {
-                    if (this.id == "from") {
-                        $("#to").datepicker("setDate", date);
-                    }
-                },
-                beforeShowDay: function (date) {
-
-                    // if day is saturday or sunday, highlight it
-                    if (date.getDay() == 6 || date.getDay() == 0) {
-                        return [true, "notworkday"];
-                    } else {
-                        return [true, ""];
-                    }
-
-                }
-            });
-
-        });
-        
-    </script>
-    
     <style type="text/css">
         form.form-horizontal .control-label {
             width: 20em !important;
@@ -69,7 +37,7 @@
                 <div class="overview-header">
                     <legend>
                         <p>
-                            Krankmeldung in Urlaub umwandeln
+                            <spring:message code="sicknotes.convert.vacation" />
                         </p>
                     </legend>
                 </div>
@@ -88,7 +56,7 @@
                     </div>
 
                     <div class="control-group">
-                        <label class="control-label">Urlaubstyp</label>
+                        <label class="control-label"><spring:message code="vac.type" /></label>
 
                         <div class="controls">
                             <form:select path="vacationType" size="1" class="input-medium">
@@ -102,27 +70,13 @@
                     </div>
     
                     <div class="control-group">
-                        <label class="control-label" for="from"><spring:message code="time" /></label>
+                        <label class="control-label"><spring:message code="time" /></label>
     
                         <div class="controls">
-                            <spring:message code="From" />
-                            <br />
-                            <form:input id="from" path="startDate" cssClass="input-medium" cssErrorClass="error input-medium" />
-                            <span class="help-inline"><form:errors path="startDate" cssClass="error"/></span>
+                            <joda:format style="M-" value="${sickNote.startDate}"/>&nbsp;-&nbsp;<joda:format style="M-" value="${sickNote.endDate}"/> 
                         </div>
                     </div>
     
-                    <div class="control-group">
-                        <label class="control-label" for="to">&nbsp;</label>
-    
-                        <div class="controls">
-                            <spring:message code="To" />
-                            <br />
-                            <form:input id="to" path="endDate" cssClass="input-medium" cssErrorClass="error input-medium" />
-                            <span class="help-inline"><form:errors path="endDate" cssClass="error"/></span>
-                        </div>
-                    </div>
-
                     <div class="control-group">
                         <label class="control-label">
                             <label class="control-label" for="reason"><spring:message code="reason" /></label>

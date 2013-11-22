@@ -28,6 +28,7 @@ import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.sicknote.web.SearchRequest;
 import org.synyx.urlaubsverwaltung.util.DateMidnightPropertyEditor;
 import org.synyx.urlaubsverwaltung.validator.SickNoteValidator;
+import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 
 import java.util.List;
 import java.util.Locale;
@@ -180,9 +181,15 @@ public class SickNoteController {
     @RequestMapping(value = "/sicknote/{id}/edit", method = RequestMethod.GET)
     public String editSickNote(@PathVariable("id") Integer id, Model model) {
 
-        model.addAttribute("sickNote", sickNoteService.getById(id));
+        SickNote sickNote = sickNoteService.getById(id);
 
-        return "sicknote/sick_note_form";
+        if (sickNote.isActive()) {
+            model.addAttribute("sickNote", sickNote);
+
+            return "sicknote/sick_note_form";
+        }
+
+        return ControllerConstants.ERROR_JSP;
     }
 
 
@@ -229,11 +236,17 @@ public class SickNoteController {
     @RequestMapping(value = "/sicknote/{id}/convert", method = RequestMethod.GET)
     public String convertSickNoteToVacation(@PathVariable("id") Integer id, Model model) {
 
-        model.addAttribute("sickNote", sickNoteService.getById(id));
-        model.addAttribute("appForm", new AppForm());
-        model.addAttribute("vacTypes", VacationType.values());
+        SickNote sickNote = sickNoteService.getById(id);
 
-        return "sicknote/sick_note_convert";
+        if (sickNote.isActive()) {
+            model.addAttribute("sickNote", sickNote);
+            model.addAttribute("appForm", new AppForm());
+            model.addAttribute("vacTypes", VacationType.values());
+
+            return "sicknote/sick_note_convert";
+        }
+
+        return ControllerConstants.ERROR_JSP;
     }
 
 

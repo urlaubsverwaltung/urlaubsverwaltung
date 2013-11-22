@@ -61,6 +61,9 @@ public class SickNote extends AbstractPersistable<Integer> {
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date lastEdited;
 
+    // if sick note has been converted to vacation, it's not active
+    private boolean active;
+
     public Person getPerson() {
 
         return person;
@@ -212,6 +215,18 @@ public class SickNote extends AbstractPersistable<Integer> {
     public void setWorkDays(BigDecimal workDays) {
 
         this.workDays = workDays;
+    }
+
+
+    public boolean isActive() {
+
+        return active;
+    }
+
+
+    public void setActive(boolean active) {
+
+        this.active = active;
     }
 
 

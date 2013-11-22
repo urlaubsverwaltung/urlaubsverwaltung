@@ -604,3 +604,11 @@ p.heading-date {
 .form-sicknote input[type="text"] {
     height: 28px !important;
 }
+
+tr.active {
+  color: inherit;  
+}
+
+tr.inactive {
+  color: lightgrey;  
+}
