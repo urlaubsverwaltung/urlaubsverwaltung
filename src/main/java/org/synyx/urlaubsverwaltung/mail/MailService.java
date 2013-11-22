@@ -157,4 +157,12 @@ public interface MailService {
      * @param  content  content for email
      */
     void sendSuccessfullyUpdatedAccounts(String content);
+
+
+    /**
+     * Sends mail to the affected person if sick note is converted to vacation.
+     *
+     * @param  application
+     */
+    void sendSickNoteConvertedToVacationNotification(Application application);
 }

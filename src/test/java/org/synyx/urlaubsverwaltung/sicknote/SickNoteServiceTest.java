@@ -14,6 +14,7 @@ import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.service.CommentService;
 import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
+import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentDAO;
 
 import java.math.BigDecimal;
@@ -32,6 +33,7 @@ public class SickNoteServiceTest {
     private OwnCalendarService calendarService;
     private ApplicationService applicationService;
     private CommentService commentService;
+    private MailService mailService;
 
     private SickNote sickNote;
     private Application application;
@@ -44,8 +46,10 @@ public class SickNoteServiceTest {
         calendarService = Mockito.mock(OwnCalendarService.class);
         applicationService = Mockito.mock(ApplicationService.class);
         commentService = Mockito.mock(CommentService.class);
+        mailService = Mockito.mock(MailService.class);
 
-        service = new SickNoteService(sickNoteDAO, commentDAO, calendarService, applicationService, commentService);
+        service = new SickNoteService(sickNoteDAO, commentDAO, calendarService, applicationService, commentService,
+                mailService);
 
         sickNote = new SickNote();
         application = new Application();

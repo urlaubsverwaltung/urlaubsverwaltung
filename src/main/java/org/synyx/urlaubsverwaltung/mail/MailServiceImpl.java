@@ -422,6 +422,7 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendSuccessfullyUpdatedAccounts(String content) {
 
+        // TODO: oje...hard coded text...
         String text = "Stand Resturlaubstage zum 1. Januar " + DateMidnight.now().getYear()
             + " (mitgenommene Resturlaubstage aus dem Vorjahr)" + "\n\n" + content;
 
@@ -430,5 +431,22 @@ class MailServiceImpl implements MailService {
 
         // send email to manager to notify about update of accounts
         sendEmail(emailManager, "subject.account.update", text);
+    }
+
+
+    /**
+     * @see  org.synyx.urlaubsverwaltung.mail.MailService#sendSickNoteConvertedToVacationNotification(Application)
+     */
+    @Override
+    public void sendSickNoteConvertedToVacationNotification(Application application) {
+
+        Map<String, Object> model = new HashMap();
+        model.put("application", application);
+        model.put("link", applicationUrl + "web/application/" + application.getId());
+
+        String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, PATH + "sicknote_converted.vm",
+                model);
+
+        sendEmail(application.getPerson().getEmail(), "subject.sicknote.converted", text);
     }
 }

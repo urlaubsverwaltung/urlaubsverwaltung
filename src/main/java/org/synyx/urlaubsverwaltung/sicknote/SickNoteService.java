@@ -14,6 +14,7 @@ import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.service.CommentService;
 import org.synyx.urlaubsverwaltung.application.web.AppForm;
 import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
+import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteComment;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentDAO;
@@ -37,16 +38,18 @@ public class SickNoteService {
     private OwnCalendarService calendarService;
     private ApplicationService applicationService;
     private CommentService commentService;
+    private MailService mailService;
 
     @Autowired
     public SickNoteService(SickNoteDAO sickNoteDAO, SickNoteCommentDAO commentDAO, OwnCalendarService calendarService,
-        ApplicationService applicationService, CommentService commentService) {
+        ApplicationService applicationService, CommentService commentService, MailService mailService) {
 
         this.sickNoteDAO = sickNoteDAO;
         this.commentDAO = commentDAO;
         this.calendarService = calendarService;
         this.applicationService = applicationService;
         this.commentService = commentService;
+        this.mailService = mailService;
     }
 
 
@@ -150,6 +153,8 @@ public class SickNoteService {
 
         SickNoteComment sickNoteComment = new SickNoteComment();
         addComment(sickNote.getId(), sickNoteComment, SickNoteStatus.CONVERTED_TO_VACATION, loggedUser);
+
+        mailService.sendSickNoteConvertedToVacationNotification(application);
     }
 
 
