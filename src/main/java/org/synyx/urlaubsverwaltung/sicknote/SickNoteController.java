@@ -27,6 +27,7 @@ import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteComment;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.sicknote.web.SearchRequest;
 import org.synyx.urlaubsverwaltung.util.DateMidnightPropertyEditor;
+import org.synyx.urlaubsverwaltung.validator.ApplicationValidator;
 import org.synyx.urlaubsverwaltung.validator.SickNoteValidator;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 
@@ -48,14 +49,16 @@ public class SickNoteController {
     private PersonService personService;
     private SickNoteValidator validator;
     private SecurityUtil securityUtil;
+    private ApplicationValidator applicationValidator;
 
     public SickNoteController(SickNoteService sickNoteService, PersonService personService, SickNoteValidator validator,
-        SecurityUtil securityUtil) {
+        SecurityUtil securityUtil, ApplicationValidator applicationValidator) {
 
         this.sickNoteService = sickNoteService;
         this.personService = personService;
         this.validator = validator;
         this.securityUtil = securityUtil;
+        this.applicationValidator = applicationValidator;
     }
 
     @InitBinder
@@ -252,9 +255,19 @@ public class SickNoteController {
 
     @RequestMapping(value = "/sicknote/{id}/convert", method = RequestMethod.POST)
     public String convertSickNoteToVacation(@PathVariable("id") Integer id,
-        @ModelAttribute("appForm") AppForm appForm, Model model) {
+        @ModelAttribute("appForm") AppForm appForm, Errors errors, Model model) {
 
         SickNote sickNote = sickNoteService.getById(id);
+
+        applicationValidator.validatedShortenedAppForm(appForm, errors);
+
+        if (errors.hasErrors()) {
+            model.addAttribute("sickNote", sickNote);
+            model.addAttribute("appForm", appForm);
+            model.addAttribute("vacTypes", VacationType.values());
+
+            return "sicknote/sick_note_convert";
+        }
 
         sickNoteService.convertSickNoteToVacation(appForm, sickNote, securityUtil.getLoggedUser());
 

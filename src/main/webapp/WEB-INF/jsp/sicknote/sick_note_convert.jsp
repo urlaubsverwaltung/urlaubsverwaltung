@@ -56,10 +56,14 @@
                     </div>
 
                     <div class="control-group">
-                        <label class="control-label"><spring:message code="vac.type" /></label>
+                        <label class="control-label">
+                            <spring:message code="vac.type" />
+                            <br />
+                            <span class="help-inline"><form:errors path="vacationType" cssClass="error"/></span>
+                        </label>
 
                         <div class="controls">
-                            <form:select path="vacationType" size="1" class="input-medium">
+                            <form:select path="vacationType" size="1" cssClass="input-medium" cssErrorClass="input-medium error">
                                 <c:forEach items="${vacTypes}" var="vacType">
                                     <option value="${vacType}">
                                         <spring:message code='${vacType.vacationTypeName}' />
@@ -80,6 +84,7 @@
                     <div class="control-group">
                         <label class="control-label">
                             <label class="control-label" for="reason"><spring:message code="reason" /></label>
+                            <span class="help-inline"><form:errors path="reason" cssClass="error"/></span>
                         </label>
 
                         <div class="controls">

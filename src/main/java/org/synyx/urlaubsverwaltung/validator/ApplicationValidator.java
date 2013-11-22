@@ -236,4 +236,20 @@ public class ApplicationValidator implements Validator {
             return true;
         }
     }
+
+
+    /**
+     * Validation for converting sick note to vacation: {@link AppForm} only reason and vacation type must be validated.
+     *
+     * @param  app
+     * @param  errors
+     */
+    public void validatedShortenedAppForm(AppForm app, Errors errors) {
+
+        if (!StringUtils.hasText(app.getReason())) {
+            errors.rejectValue(REASON, MANDATORY_FIELD);
+        } else {
+            validateStringField(app.getReason(), REASON, errors);
+        }
+    }
 }
