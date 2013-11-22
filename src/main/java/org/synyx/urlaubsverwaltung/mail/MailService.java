@@ -7,6 +7,7 @@ package org.synyx.urlaubsverwaltung.mail;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 
 import java.util.List;
 import java.util.Map;
@@ -165,4 +166,12 @@ public interface MailService {
      * @param  application
      */
     void sendSickNoteConvertedToVacationNotification(Application application);
+
+
+    /**
+     * Sends mail to person and office if sick pay (gesetzliche Lohnfortzahlung im Krankheitsfall) is about to end.
+     *
+     * @param  sickNote
+     */
+    void sendEndOfSickPayNotification(SickNote sickNote);
 }

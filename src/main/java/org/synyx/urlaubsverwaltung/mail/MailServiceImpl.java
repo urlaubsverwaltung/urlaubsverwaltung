@@ -18,6 +18,7 @@ import org.springframework.ui.velocity.VelocityEngineUtils;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.util.PropertiesUtil;
 
 import java.util.ArrayList;
@@ -448,5 +449,22 @@ class MailServiceImpl implements MailService {
                 model);
 
         sendEmail(application.getPerson().getEmail(), "subject.sicknote.converted", text);
+    }
+
+
+    /**
+     * @see  MailService#sendEndOfSickPayNotification(org.synyx.urlaubsverwaltung.sicknote.SickNote)
+     */
+    @Override
+    public void sendEndOfSickPayNotification(SickNote sickNote) {
+
+        Map<String, Object> model = new HashMap();
+        model.put("sickNote", sickNote);
+
+        String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, PATH + "sicknote_end_of_sick_pay.vm",
+                model);
+
+        sendEmail(sickNote.getPerson().getEmail(), "subject.sicknote.endOfSickPay", text);
+        sendEmail(emailOffice, "subject.sicknote.endOfSickPay", text);
     }
 }

@@ -1,9 +1,13 @@
 
 package org.synyx.urlaubsverwaltung.cron;
 
-import org.joda.time.DateMidnight;
+import org.springframework.scheduling.annotation.Scheduled;
 
-import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.mail.MailService;
+import org.synyx.urlaubsverwaltung.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
+
+import java.util.List;
 
 
 /**
@@ -13,19 +17,25 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
  */
 public class CronMailService {
 
-    private PersonService personService;
+    private SickNoteService sickNoteService;
+    private MailService mailService;
 
-    public CronMailService(PersonService personService) {
+    public CronMailService(SickNoteService sickNoteService, MailService mailService) {
 
-        this.personService = personService;
+        this.sickNoteService = sickNoteService;
+        this.mailService = mailService;
     }
 
-    // TODO: remove comment if to be executed
-    // executed every monday at 06:00 am
-//    @Scheduled(cron = "0 0 6 * * MON")
-    void sendWeeklyVacationForecast() {
+    // executed every day at 06:00 am
+    @Scheduled(cron = "0 0 6 * * ?")
+    void sendEndOfSickPayNotification() {
 
-        personService.getAllPersonsOnHolidayForThisWeekAndPutItInAnEmail(new DateMidnight(2012, 11, 26),
-            new DateMidnight(2012, 12, 2));
+        List<SickNote> sickNotes = sickNoteService.getSickNotesReachingEndOfSickPay();
+
+        System.out.println(sickNotes.size());
+
+        for (SickNote sickNote : sickNotes) {
+            mailService.sendEndOfSickPayNotification(sickNote);
+        }
     }
 }

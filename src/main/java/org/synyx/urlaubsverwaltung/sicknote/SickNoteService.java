@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.sicknote;
 import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +40,12 @@ public class SickNoteService {
     private ApplicationService applicationService;
     private CommentService commentService;
     private MailService mailService;
+
+    @Value("${sicknote.sickPay.limit}")
+    protected int sickPayLimit;
+
+    @Value("${sicknote.sickPay.notification}")
+    protected int sickPayNotificationTime;
 
     @Autowired
     public SickNoteService(SickNoteDAO sickNoteDAO, SickNoteCommentDAO commentDAO, OwnCalendarService calendarService,
@@ -162,5 +169,13 @@ public class SickNoteService {
 
         sickNote.setWorkDays(BigDecimal.ZERO);
         sickNote.setActive(false);
+    }
+
+
+    public List<SickNote> getSickNotesReachingEndOfSickPay() {
+
+        DateMidnight endDate = DateMidnight.now().plusDays(sickPayNotificationTime);
+
+        return sickNoteDAO.findSickNotesByMinimumLengthAndEndDate(sickPayLimit, endDate.toDate());
     }
 }

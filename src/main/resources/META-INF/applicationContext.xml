@@ -102,7 +102,8 @@
 </bean>
 
 <bean class="org.synyx.urlaubsverwaltung.cron.CronMailService">
-    <constructor-arg ref="personService" />
+    <constructor-arg ref="sickNoteService" />
+    <constructor-arg ref="mailService" />
 </bean>
 
 <!-- only for developing purpose -->
