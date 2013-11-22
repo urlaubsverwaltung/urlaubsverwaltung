@@ -10,6 +10,8 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 
@@ -29,6 +31,9 @@ public class SickNoteComment extends AbstractPersistable<Integer> {
     private Person person;
 
     private String text;
+
+    @Enumerated(EnumType.STRING)
+    private SickNoteStatus status;
 
     public DateMidnight getDate() {
 
@@ -59,6 +64,18 @@ public class SickNoteComment extends AbstractPersistable<Integer> {
     public void setPerson(Person person) {
 
         this.person = person;
+    }
+
+
+    public SickNoteStatus getStatus() {
+
+        return status;
+    }
+
+
+    public void setStatus(SickNoteStatus status) {
+
+        this.status = status;
     }
 
 

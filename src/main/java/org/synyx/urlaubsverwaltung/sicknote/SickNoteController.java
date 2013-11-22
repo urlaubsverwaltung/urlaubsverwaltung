@@ -24,6 +24,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.security.web.SecurityUtil;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteComment;
+import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.sicknote.web.SearchRequest;
 import org.synyx.urlaubsverwaltung.util.DateMidnightPropertyEditor;
 import org.synyx.urlaubsverwaltung.validator.SickNoteValidator;
@@ -170,16 +171,9 @@ public class SickNoteController {
             return "sicknote/sick_note_form";
         }
 
-        sickNoteService.setWorkDays(sickNote);
-        sickNoteService.save(sickNote);
+        sickNoteService.touch(sickNote, SickNoteStatus.CREATED, securityUtil.getLoggedUser());
 
-        Integer id = sickNote.getId();
-
-        SickNoteComment comment = new SickNoteComment();
-
-        sickNoteService.addComment(id, comment, securityUtil.getLoggedUser());
-
-        return "redirect:/web/sicknote/" + id;
+        return "redirect:/web/sicknote/" + sickNote.getId();
     }
 
 
@@ -206,8 +200,7 @@ public class SickNoteController {
 
         // this step is necessary because collections can not be binded with form:hidden
         sickNote.setComments(sickNoteService.getById(id).getComments());
-        sickNoteService.setWorkDays(sickNote);
-        sickNoteService.save(sickNote);
+        sickNoteService.touch(sickNote, SickNoteStatus.EDITED, securityUtil.getLoggedUser());
 
         return "redirect:/web/sicknote/" + id;
     }
@@ -227,7 +220,7 @@ public class SickNoteController {
             return "sicknote/sick_note";
         }
 
-        sickNoteService.addComment(id, comment, securityUtil.getLoggedUser());
+        sickNoteService.addComment(id, comment, SickNoteStatus.COMMENTED, securityUtil.getLoggedUser());
 
         return "redirect:/web/sicknote/" + id;
     }

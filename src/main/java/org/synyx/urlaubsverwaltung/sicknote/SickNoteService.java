@@ -17,6 +17,7 @@ import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteComment;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentDAO;
+import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteStatus;
 
 import java.math.BigDecimal;
 
@@ -60,20 +61,36 @@ public class SickNoteService {
     }
 
 
+    public void touch(SickNote sickNote, SickNoteStatus status, Person loggedUser) {
+
+        setWorkDays(sickNote);
+        save(sickNote);
+
+        SickNoteComment comment = new SickNoteComment();
+        addComment(sickNote.getId(), comment, status, loggedUser);
+    }
+
+
     public void setWorkDays(SickNote sickNote) {
 
-        BigDecimal workDays = calendarService.getWorkDays(DayLength.FULL, sickNote.getStartDate(),
-                sickNote.getEndDate());
+        BigDecimal workDays;
+
+        if (sickNote.getStartDate() != null && sickNote.getEndDate() != null) {
+            workDays = calendarService.getWorkDays(DayLength.FULL, sickNote.getStartDate(), sickNote.getEndDate());
+        } else {
+            workDays = BigDecimal.ZERO;
+        }
 
         sickNote.setWorkDays(workDays);
     }
 
 
-    public void addComment(Integer sickNoteId, SickNoteComment comment, Person author) {
+    public void addComment(Integer sickNoteId, SickNoteComment comment, SickNoteStatus status, Person author) {
 
         SickNote sickNote = getById(sickNoteId);
 
         comment.setDate(DateMidnight.now());
+        comment.setStatus(status);
         comment.setPerson(author);
 
         commentDAO.save(comment);
@@ -123,5 +140,31 @@ public class SickNoteService {
         applicationService.save(application);
 
         commentService.saveComment(new Comment(), loggedUser, application);
+
+        adjustSickNote(sickNote, application);
+
+        save(sickNote);
+
+        SickNoteComment sickNoteComment = new SickNoteComment();
+        addComment(sickNote.getId(), sickNoteComment, SickNoteStatus.CONVERTED_TO_VACATION, loggedUser);
+    }
+
+
+    protected void adjustSickNote(SickNote sickNote, Application application) {
+
+        SickNoteConversion conversion = new SickNoteConversion(sickNote, application);
+
+        if (conversion.identicalRange()) {
+            sickNote.setWorkDays(BigDecimal.ZERO);
+        } else if (conversion.onlyStartIsEqual()) {
+            sickNote.setStartDate(application.getEndDate().plusDays(1));
+            setWorkDays(sickNote);
+        } else if (conversion.onlyEndIsEqual()) {
+            sickNote.setEndDate(application.getStartDate().minusDays(1));
+            setWorkDays(sickNote);
+        } else {
+            // overlapping case not implemented at the moment
+            // sick note start date != application start date AND sick note end date != application end date
+        }
     }
 }

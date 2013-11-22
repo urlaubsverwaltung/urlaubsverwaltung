@@ -44,7 +44,7 @@ public class SickNoteConversion {
     }
 
 
-    public boolean identicRange() {
+    public boolean identicalRange() {
 
         if (sickNoteStartDate.isEqual(appStartDate) && sickNoteEndDate.isEqual(appEndDate)) {
             return true;

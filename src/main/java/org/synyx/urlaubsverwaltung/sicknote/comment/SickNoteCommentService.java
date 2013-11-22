@@ -8,7 +8,7 @@ import java.util.List;
 
 
 /**
- * Service for handling {@link org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteComment}s.
+ * Service for handling {@link SickNoteComment}s.
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */

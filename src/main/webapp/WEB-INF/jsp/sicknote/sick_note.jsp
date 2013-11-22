@@ -92,9 +92,8 @@
                                 </td>
                                 <td>
                                     <c:choose>
-                                        <c:when test="${loopStatus.index == 0}">
-                                            <%-- first comment is auto generated during creation of sick note --%>
-                                            <spring:message code="sicknotes.created" />
+                                        <c:when test="${empty comment.text}">
+                                            <spring:message code="${comment.status.messageKey}" /> 
                                         </c:when>
                                         <c:otherwise>
                                             <c:out value="${comment.text}" />
