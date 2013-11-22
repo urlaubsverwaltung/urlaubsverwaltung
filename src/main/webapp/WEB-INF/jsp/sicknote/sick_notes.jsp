@@ -89,6 +89,9 @@
                     <p>
                         <spring:message code="sicknotes" />
                     </p>
+                    <a class="btn btn-right" href="${formUrlPrefix}/sicknote/statistics">
+                        <i class="icon-tasks"></i>&nbsp;<spring:message code='sicknotes.statistics.short' />
+                    </a>
                     <a class="btn sicknote-button" href="${formUrlPrefix}/sicknote/new">
                         <i class="icon-plus"></i>&nbsp;<spring:message code="sicknotes.new" />
                     </a>

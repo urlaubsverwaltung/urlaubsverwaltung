@@ -26,6 +26,12 @@ public interface SickNoteDAO extends JpaRepository<SickNote, Integer> {
     List<SickNote> findByPeriod(Date startDate, Date endDate);
 
 
+    @Query(
+        "SELECT x FROM SickNote x WHERE (YEAR(x.startDate) = ?1 AND MONTH(x.startDate) = ?2) OR (YEAR(x.endDate) = ?1 AND MONTH(x.endDate) = ?2)"
+    )
+    List<SickNote> findByMonth(int year, int month);
+
+
     @Query("SELECT x FROM SickNote x WHERE DATEDIFF(x.endDate, x.startDate) >= ?1 AND x.endDate = ?2)")
     List<SickNote> findSickNotesByMinimumLengthAndEndDate(int limit, Date endDate);
 }

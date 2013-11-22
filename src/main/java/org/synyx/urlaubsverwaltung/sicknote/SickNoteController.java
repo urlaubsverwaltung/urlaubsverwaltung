@@ -25,6 +25,8 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.security.web.SecurityUtil;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteComment;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteStatus;
+import org.synyx.urlaubsverwaltung.sicknote.statistics.SickNoteStatistics;
+import org.synyx.urlaubsverwaltung.sicknote.statistics.SickNoteStatisticsService;
 import org.synyx.urlaubsverwaltung.sicknote.web.SearchRequest;
 import org.synyx.urlaubsverwaltung.util.DateMidnightPropertyEditor;
 import org.synyx.urlaubsverwaltung.validator.ApplicationValidator;
@@ -50,15 +52,18 @@ public class SickNoteController {
     private SickNoteValidator validator;
     private SecurityUtil securityUtil;
     private ApplicationValidator applicationValidator;
+    private SickNoteStatisticsService statisticsService;
 
     public SickNoteController(SickNoteService sickNoteService, PersonService personService, SickNoteValidator validator,
-        SecurityUtil securityUtil, ApplicationValidator applicationValidator) {
+        SecurityUtil securityUtil, ApplicationValidator applicationValidator,
+        SickNoteStatisticsService statisticsService) {
 
         this.sickNoteService = sickNoteService;
         this.personService = personService;
         this.validator = validator;
         this.securityUtil = securityUtil;
         this.applicationValidator = applicationValidator;
+        this.statisticsService = statisticsService;
     }
 
     @InitBinder
@@ -272,5 +277,16 @@ public class SickNoteController {
         sickNoteService.convertSickNoteToVacation(appForm, sickNote, securityUtil.getLoggedUser());
 
         return "redirect:/web/sicknote/" + id;
+    }
+
+
+    @RequestMapping(value = "/sicknote/statistics", method = RequestMethod.GET)
+    public String sickNotesStatistics(Model model) {
+
+        SickNoteStatistics statistics = statisticsService.createStatistics(DateMidnight.now().getYear());
+
+        model.addAttribute("statistics", statistics);
+
+        return "sicknote/sick_notes_statistics";
     }
 }

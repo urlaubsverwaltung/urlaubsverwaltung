@@ -69,6 +69,8 @@
 
 <bean id="sickNoteCommentService" class="org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService" />
 
+<bean id="sickNoteStatisticsService" class="org.synyx.urlaubsverwaltung.sicknote.statistics.SickNoteStatisticsService" />    
+    
 <bean id="gravatarUtil" class="org.synyx.urlaubsverwaltung.util.GravatarUtil" />
 
 <bean id="propertiesValidator" class="org.synyx.urlaubsverwaltung.validator.PropertiesValidator">
