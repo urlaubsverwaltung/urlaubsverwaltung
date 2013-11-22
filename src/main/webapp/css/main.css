@@ -434,13 +434,6 @@ input.error, textarea.error {
     left: 35.75em;
 }
 
-@media print {
-    .btn, .btn-primary, .btn-danger, .btn-success { display: none; }
-    .navbar, .navbar-inverse, .navbar-inner, .nav, .brand { display: none; }
-    .overview-header td { color: black; font-weight: bold;}
-    #content {margin-top: 0;}
-}
-
 .form-textarea {
     width: 96%;
     min-height: 6em;
@@ -545,36 +538,6 @@ td.SPECIALLEAVE, td.UNPAIDLEAVE, td.OVERTIME {
     color: #C13A33;
 }
 
-/* print css for staff overview */
-@media print {
-    select {
-        display: none;  
-    }
-    .td-action, .td-detail, .user-pic, .print-invisible {
-        display: none;
-    }
-    div.vacation-entitlement {
-        width: 100% !important;
-    }
-    div.vacation-days {
-        width: 100% !important;
-        margin-top: 2em;
-    }
-
-    div.vacation-entitlement table th, div.vacation-days table th {
-        width: 50%;
-    }
-    
-    .overview-header legend p {
-        color: black; font-weight: bold; 
-    }
-    
-    i.icon-ok {
-        display: block;
-    }
-}
-
-
 .form-horizontal .control-label {
     text-align: left;
 }
@@ -611,4 +574,58 @@ tr.active {
 
 tr.inactive {
   color: lightgrey;  
+}
+
+/* print css */
+@media print {
+    .btn, .btn-primary, .btn-danger, .btn-success { 
+        display: none; 
+    }
+    
+    .navbar, .navbar-inverse, .navbar-inner, .nav, .brand { 
+        display: none; 
+    }
+    
+    .overview-header td { 
+        color: black; 
+        font-weight: bold;
+    }
+    
+    #content {
+        margin-top: 0;
+    }
+    
+    select {
+        display: none;
+    }
+    
+    .td-action, .td-detail, .user-pic, .print-invisible {
+        display: none;
+    }
+    
+    div.vacation-entitlement {
+        width: 100% !important;
+    }
+    
+    div.vacation-days {
+        width: 100% !important;
+        margin-top: 2em;
+    }
+
+    div.vacation-entitlement table th, div.vacation-days table th {
+        width: 50%;
+    }
+
+    .overview-header legend p {
+        color: black; 
+        font-weight: bold;
+    }
+
+    i.icon-ok {
+        display: block;
+    }
+
+    tr.inactive {
+        display: none;
+    }
 }
