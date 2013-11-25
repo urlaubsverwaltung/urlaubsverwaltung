@@ -23,14 +23,18 @@
    </bean>
 
     <security:http auto-config='true' use-expressions='true'>
-        <security:intercept-url pattern="/jmx/**" access="isAuthenticated()"/>
-         <security:intercept-url pattern="/web/**" access="isAuthenticated()"/>
+         <security:intercept-url pattern="/jmx/**" access="isAuthenticated()"/>
+         <security:intercept-url pattern="/web/overview" access="isAuthenticated()"/>
+         <security:intercept-url pattern="/web/application/**" access="isAuthenticated()"/>
+         <security:intercept-url pattern="/web/sicknote/**" access="hasRole('role.office')"/>
+        <security:intercept-url pattern="/web/staff/**" access="hasAnyRole('role.boss', 'role.office')"/>
+         <security:intercept-url pattern="/web/management/**" access="hasRole('role.admin')"/>
          <security:intercept-url pattern="/login.jsp" access="permitAll"/>
          <security:intercept-url pattern="/messages_de.properties" access="permitAll"/>
          <security:intercept-url pattern="/messages_en.properties" access="permitAll"/>
          <security:intercept-url pattern="/images/synyx-logo-transp.jpg" access="permitAll"/>
          <security:form-login login-page="/login.jsp" always-use-default-target="true" default-target-url="/web/overview" authentication-failure-url="/login.jsp?login_error=1"/>
-         <security:logout logout-success-url="/web/login"/>
+         <security:logout logout-success-url="/login.jsp"/>
      </security:http>
     
     <security:authentication-manager alias="authenticationManager">
