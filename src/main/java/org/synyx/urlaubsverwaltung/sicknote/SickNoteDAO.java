@@ -31,6 +31,12 @@ public interface SickNoteDAO extends JpaRepository<SickNote, Integer> {
 
 
     @Query(
+        "SELECT COUNT(DISTINCT x.person) FROM SickNote x WHERE (YEAR(x.startDate) = ?1 OR YEAR(x.endDate) = ?1) AND x.active = true"
+    )
+    Long findNumberOfPersonsWithMinimumOneSickNote(int year);
+
+
+    @Query(
         "SELECT x FROM SickNote x WHERE DATEDIFF(x.endDate, x.startDate) >= ?1 AND x.endDate = ?2) AND x.active = true"
     )
     List<SickNote> findSickNotesByMinimumLengthAndEndDate(int limit, Date endDate);

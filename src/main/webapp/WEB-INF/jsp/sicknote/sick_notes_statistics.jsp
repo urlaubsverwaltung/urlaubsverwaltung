@@ -88,6 +88,22 @@
                         <fmt:formatNumber maxFractionDigits="1" value="${statistics.averageDurationOfDisease}" />
                     </td>
                 </tr>
+                <tr>
+                    <td>
+                        <spring:message code="sicknotes.staff.number" />
+                    </td>
+                    <td>
+                        <c:out value="${statistics.numberOfPersonsWithMinimumOneSickNote}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <spring:message code="sicknotes.staff.average" />
+                    </td>
+                    <td>
+                        <fmt:formatNumber maxFractionDigits="1" value="${statistics.averageDurationOfDiseasePerPerson}" />
+                    </td>
+                </tr>
             </table>
             
         </div>

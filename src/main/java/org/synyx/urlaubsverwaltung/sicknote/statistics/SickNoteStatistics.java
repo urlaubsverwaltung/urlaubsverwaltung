@@ -7,6 +7,7 @@ import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.SickNoteDAO;
 
 import java.math.BigDecimal;
 
@@ -24,62 +25,68 @@ public class SickNoteStatistics {
 
     private int year;
 
-    private OwnCalendarService calendarService;
+    private int totalNumberOfSickNotes;
 
-    private List<SickNote> sickNotes;
+    private BigDecimal totalNumberOfSickDays;
 
-    public SickNoteStatistics(int year, List<SickNote> sickNotes, OwnCalendarService calendarService) {
+    private Long numberOfPersonsWithMinimumOneSickNote;
+
+    public SickNoteStatistics(int year, SickNoteDAO sickNoteDAO, OwnCalendarService calendarService) {
 
         this.year = year;
-        this.sickNotes = sickNotes;
-        this.calendarService = calendarService;
-
+        this.numberOfPersonsWithMinimumOneSickNote = sickNoteDAO.findNumberOfPersonsWithMinimumOneSickNote(year);
         this.created = DateMidnight.now();
+
+        List<SickNote> sickNotes = sickNoteDAO.findAllActiveByYear(year);
+
+        this.totalNumberOfSickNotes = sickNotes.size();
+        this.totalNumberOfSickDays = calculateTotalNumberOfSickDays(calendarService, sickNotes);
     }
 
     public int getTotalNumberOfSickNotes() {
 
-        return this.sickNotes.size();
+        return this.totalNumberOfSickNotes;
     }
 
 
     public BigDecimal getTotalNumberOfSickDays() {
 
+        return this.totalNumberOfSickDays;
+    }
+
+
+    private BigDecimal calculateTotalNumberOfSickDays(OwnCalendarService calendarService, List<SickNote> sickNotes) {
+
         BigDecimal numberOfSickDays = BigDecimal.ZERO;
 
-        for (SickNote sickNote : this.sickNotes) {
-            BigDecimal workDays = getWorkDaysOfSickNote(sickNote);
+        for (SickNote sickNote : sickNotes) {
+            DateMidnight sickNoteStartDate = sickNote.getStartDate();
+            DateMidnight sickNoteEndDate = sickNote.getEndDate();
+
+            DateMidnight startDate;
+            DateMidnight endDate;
+
+            Assert.isTrue(sickNoteStartDate.getYear() == this.year || sickNoteEndDate.getYear() == this.year,
+                "Start date OR end date of the sick note must be in the year " + this.year);
+
+            if (sickNoteStartDate.getYear() == this.year) {
+                startDate = sickNoteStartDate;
+            } else {
+                startDate = sickNoteEndDate.dayOfYear().withMinimumValue();
+            }
+
+            if (sickNoteEndDate.getYear() == this.year) {
+                endDate = sickNoteEndDate;
+            } else {
+                endDate = sickNoteStartDate.dayOfYear().withMaximumValue();
+            }
+
+            BigDecimal workDays = calendarService.getWorkDays(DayLength.FULL, startDate, endDate);
+
             numberOfSickDays = numberOfSickDays.add(workDays);
         }
 
         return numberOfSickDays;
-    }
-
-
-    private BigDecimal getWorkDaysOfSickNote(SickNote sickNote) {
-
-        DateMidnight sickNoteStartDate = sickNote.getStartDate();
-        DateMidnight sickNoteEndDate = sickNote.getEndDate();
-
-        DateMidnight startDate;
-        DateMidnight endDate;
-
-        Assert.isTrue(sickNoteStartDate.getYear() == this.year || sickNoteEndDate.getYear() == this.year,
-            "Start date OR end date of the sick note must be in the year " + this.year);
-
-        if (sickNoteStartDate.getYear() == this.year) {
-            startDate = sickNoteStartDate;
-        } else {
-            startDate = sickNoteEndDate.dayOfYear().withMinimumValue();
-        }
-
-        if (sickNoteEndDate.getYear() == this.year) {
-            endDate = sickNoteEndDate;
-        } else {
-            endDate = sickNoteStartDate.dayOfYear().withMaximumValue();
-        }
-
-        return calendarService.getWorkDays(DayLength.FULL, startDate, endDate);
     }
 
 
@@ -95,9 +102,23 @@ public class SickNoteStatistics {
     }
 
 
+    public Long getNumberOfPersonsWithMinimumOneSickNote() {
+
+        return this.numberOfPersonsWithMinimumOneSickNote;
+    }
+
+
     public BigDecimal getAverageDurationOfDisease() {
 
         double averageDuration = getTotalNumberOfSickDays().doubleValue() / getTotalNumberOfSickNotes();
+
+        return BigDecimal.valueOf(averageDuration);
+    }
+
+
+    public BigDecimal getAverageDurationOfDiseasePerPerson() {
+
+        double averageDuration = getTotalNumberOfSickDays().doubleValue() / getNumberOfPersonsWithMinimumOneSickNote();
 
         return BigDecimal.valueOf(averageDuration);
     }

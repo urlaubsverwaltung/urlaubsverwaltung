@@ -5,10 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
-import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteDAO;
-
-import java.util.List;
 
 
 /**
@@ -35,10 +32,6 @@ public class SickNoteStatisticsService {
 
     public SickNoteStatistics createStatistics(int year) {
 
-        List<SickNote> sickNotes = sickNoteDAO.findAllActiveByYear(year);
-
-        SickNoteStatistics statistics = new SickNoteStatistics(year, sickNotes, calendarService);
-
-        return statistics;
+        return new SickNoteStatistics(year, sickNoteDAO, calendarService);
     }
 }

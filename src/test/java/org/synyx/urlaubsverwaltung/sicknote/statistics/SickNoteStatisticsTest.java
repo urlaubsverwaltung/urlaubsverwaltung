@@ -13,6 +13,7 @@ import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.SickNoteDAO;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -30,12 +31,14 @@ public class SickNoteStatisticsTest {
 
     private SickNoteStatistics statistics;
     private OwnCalendarService calendarService;
+    private SickNoteDAO sickNoteDAO;
     private List<SickNote> sickNotes;
 
     @Before
     public void setUp() throws Exception {
 
         calendarService = Mockito.mock(OwnCalendarService.class);
+        sickNoteDAO = Mockito.mock(SickNoteDAO.class);
         sickNotes = new ArrayList<SickNote>();
 
         SickNote sickNote1 = new SickNote();
@@ -49,13 +52,16 @@ public class SickNoteStatisticsTest {
         sickNotes.add(sickNote1);
         sickNotes.add(sickNote2);
 
-        statistics = new SickNoteStatistics(2013, sickNotes, calendarService);
+        Mockito.when(sickNoteDAO.findNumberOfPersonsWithMinimumOneSickNote(2013)).thenReturn(42L);
+        Mockito.when(sickNoteDAO.findAllActiveByYear(2013)).thenReturn(sickNotes);
 
         Mockito.when(calendarService.getWorkDays(DayLength.FULL, new DateMidnight(2013, DateTimeConstants.OCTOBER, 7),
                 new DateMidnight(2013, DateTimeConstants.OCTOBER, 11))).thenReturn(new BigDecimal("5"));
 
         Mockito.when(calendarService.getWorkDays(DayLength.FULL, new DateMidnight(2013, DateTimeConstants.DECEMBER, 18),
                 new DateMidnight(2013, DateTimeConstants.DECEMBER, 31))).thenReturn(new BigDecimal("9"));
+
+        statistics = new SickNoteStatistics(2013, sickNoteDAO, calendarService);
     }
 
 
@@ -86,7 +92,9 @@ public class SickNoteStatisticsTest {
     @Test(expected = IllegalArgumentException.class)
     public void testGetTotalNumberOfSickDaysInvalidDateRange() throws Exception {
 
-        statistics = new SickNoteStatistics(2015, sickNotes, calendarService);
+        Mockito.when(sickNoteDAO.findAllActiveByYear(2015)).thenReturn(sickNotes);
+
+        statistics = new SickNoteStatistics(2015, sickNoteDAO, calendarService);
 
         statistics.getTotalNumberOfSickDays();
     }
