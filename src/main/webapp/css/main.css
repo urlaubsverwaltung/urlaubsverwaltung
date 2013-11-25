@@ -485,7 +485,16 @@ Overriding bootstrap stuff
 .navbar-inner {
     background-image: none; 
     background-color: #F8F8F8;
-    min-height: 50px;
+    min-height: 45px;
+}
+
+.navbar .dropdown-menu:after, .navbar .dropdown-menu:before {
+    left: 20px;
+}
+
+.navbar .dropdown.open .caret, .navbar .dropdown .caret {
+    border-bottom-color: #555555 !important;
+    border-top-color: #555555 !important;
 }
 
 .form-select {

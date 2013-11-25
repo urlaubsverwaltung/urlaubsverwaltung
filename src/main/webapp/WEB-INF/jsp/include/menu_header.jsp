@@ -19,18 +19,68 @@
 <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container_12">
-            <div class="grid_12">
                 <a class="brand" href="${formUrlPrefix}/overview">Urlaubsverwaltung</a>
-                <div class="nav-collapse collapse">
                     <ul class="nav">
 
                         <sec:authorize access="hasRole('role.user')">
-                            <li><a href="${formUrlPrefix}/overview"><i class="icon-home"></i>&nbsp;<spring:message code="overview" /></a></li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <i class="icon-home"></i>&nbsp;<spring:message code="overview" />
+                                    <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a href="${formUrlPrefix}/overview">
+                                            <i class="icon-home"></i>&nbsp;<spring:message code="overview" />
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="${formUrlPrefix}/application/new">
+                                            <i class="icon-pencil"></i>&nbsp;<spring:message code="ov.apply"/>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="${formUrlPrefix}/overview#sickNotes">
+                                            <img src="<spring:url value='/images/agt_virus-off.png' />" />&nbsp;<spring:message code="sicknotes" />
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
                         </sec:authorize>
-
+                        
                         <sec:authorize access="hasAnyRole('role.boss', 'role.office')">
-                            <li>
-                                <a href="${formUrlPrefix}/application"><i class="icon-list-alt"></i>&nbsp;<spring:message code="apps.vac" /></a>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <i class="icon-list-alt"></i>&nbsp;<spring:message code="apps.vac" />
+                                    <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a href="${formUrlPrefix}/application/all">
+                                            <i class="icon-th-list"></i>&nbsp;<spring:message code="all.app" />
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="${formUrlPrefix}/application/waiting">
+                                            <i class="icon-edit"></i>&nbsp;<spring:message code="waiting.app" />
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="${formUrlPrefix}/application/allowed">
+                                            <i class="icon-ok-circle"></i>&nbsp;<spring:message code="allow.app" />
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="${formUrlPrefix}/application/rejected">
+                                            <i class="icon-remove-circle"></i>&nbsp;<spring:message code="reject.app" />
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="${formUrlPrefix}/application/cancelled">
+                                            <i class="icon-trash"></i>&nbsp;<spring:message code="cancel.app" />
+                                        </a>
+                                    </li>
+                                </ul>
                             </li>
                         </sec:authorize>
 
@@ -48,8 +98,6 @@
                         <li><a href="<spring:url value='/j_spring_security_logout' />"><i class="icon-off"></i>&nbsp;Logout</a></li>
 
                     </ul>
-                </div>
-            </div>
         </div>
     </div>
 </div>

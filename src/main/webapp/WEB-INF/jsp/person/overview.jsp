@@ -106,7 +106,7 @@
 
             <div class="overview-header">
 
-                <legend>
+                <legend id="sickNotes">
                     <p>
                        <spring:message code="sicknotes" />
                     </p>
