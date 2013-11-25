@@ -121,10 +121,10 @@
 </tr>
 
 <tr class="odd">
-    <th style="border-top: 2px solid #D7D7D7">
+    <th>
         <spring:message code="overview.left" />
     </th>
-    <td style="border-top: 2px solid #D7D7D7">
+    <td>
         <c:choose>
 
             <c:when test="${account != null}">

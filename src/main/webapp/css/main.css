@@ -504,6 +504,14 @@ select {
     margin-top: 3em;
 }
 
+td.center, th.center {
+   text-align: center !important;  
+}
+
+tr.border-top {
+    border-top: 2px solid #D7D7D7
+}
+
 
 /* sortable table
 */

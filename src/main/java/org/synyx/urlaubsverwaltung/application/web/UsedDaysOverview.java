@@ -6,11 +6,16 @@ import org.springframework.util.Assert;
 
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
 
 import java.math.BigDecimal;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 
 /**
@@ -21,19 +26,19 @@ import java.util.List;
 public class UsedDaysOverview {
 
     private int year;
-    private BigDecimal numberOfHolidayDays = BigDecimal.ZERO;
-    private BigDecimal numberOfSpecialLeaveDays = BigDecimal.ZERO;
-    private BigDecimal numberOfUnpaidLeaveDays = BigDecimal.ZERO;
-    private BigDecimal numberOfOvertimeDays = BigDecimal.ZERO;
+    private Map<VacationType, UsedDays> usedDays;
+    private final List<ApplicationStatus> usedStates = Arrays.asList(ApplicationStatus.WAITING,
+            ApplicationStatus.ALLOWED);
 
     public UsedDaysOverview(List<Application> applications, int year, OwnCalendarService calendarService) {
 
         this.year = year;
+        this.usedDays = initializeUsedDays();
 
         for (Application application : applications) {
             ApplicationStatus status = application.getStatus();
 
-            if (status == ApplicationStatus.ALLOWED || status == ApplicationStatus.WAITING) {
+            if (this.usedStates.contains(status)) {
                 BigDecimal days;
 
                 int yearOfStartDate = application.getStartDate().getYear();
@@ -51,54 +56,32 @@ public class UsedDaysOverview {
                     days = application.getDays();
                 }
 
-                addDays(application, days);
+                this.usedDays.get(application.getVacationType()).addDays(status, days);
             }
         }
     }
 
-    public BigDecimal getNumberOfHolidayDays() {
+    public Map<VacationType, UsedDays> getUsedDays() {
 
-        return numberOfHolidayDays;
+        return usedDays;
     }
 
 
-    public BigDecimal getNumberOfSpecialLeaveDays() {
+    private Map<VacationType, UsedDays> initializeUsedDays() {
 
-        return numberOfSpecialLeaveDays;
-    }
+        SortedMap<VacationType, UsedDays> usedDays = new TreeMap<VacationType, UsedDays>();
 
+        for (VacationType type : VacationType.values()) {
+            UsedDays usedDaysElement = new UsedDays(type);
 
-    public BigDecimal getNumberOfUnpaidLeaveDays() {
+            for (ApplicationStatus status : this.usedStates) {
+                usedDaysElement.addDays(status, BigDecimal.ZERO);
+            }
 
-        return numberOfUnpaidLeaveDays;
-    }
-
-
-    public BigDecimal getNumberOfOvertimeDays() {
-
-        return numberOfOvertimeDays;
-    }
-
-
-    private void addDays(Application application, BigDecimal days) {
-
-        switch (application.getVacationType()) {
-            case HOLIDAY:
-                numberOfHolidayDays = numberOfHolidayDays.add(days);
-                break;
-
-            case SPECIALLEAVE:
-                numberOfSpecialLeaveDays = numberOfSpecialLeaveDays.add(days);
-                break;
-
-            case UNPAIDLEAVE:
-                numberOfUnpaidLeaveDays = numberOfUnpaidLeaveDays.add(days);
-                break;
-
-            case OVERTIME:
-                numberOfOvertimeDays = numberOfOvertimeDays.add(days);
-                break;
+            usedDays.put(type, usedDaysElement);
         }
+
+        return usedDays;
     }
 
 

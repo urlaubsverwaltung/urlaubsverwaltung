@@ -200,6 +200,9 @@ public class PersonalOverviewController {
                 model.addAttribute(ControllerConstants.APPLICATIONS, applications);
             }
         }
+
+        model.addAttribute("ALLOWED", ApplicationStatus.ALLOWED);
+        model.addAttribute("WAITING", ApplicationStatus.WAITING);
     }
 
 
