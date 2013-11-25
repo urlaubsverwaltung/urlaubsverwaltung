@@ -20,7 +20,7 @@
     <div class="container_12" style="margin-top: 1em">
 
         <a class="btn" href="${formUrlPrefix}/staff">
-            <i class="icon-arrow-left"></i>&nbsp;Zurück
+            <i class="icon-arrow-left"></i>&nbsp;<spring:message code="back" />
         </a>
 
         <a class="btn btn-right" href="#" media="print" onclick="window.print(); return false;">

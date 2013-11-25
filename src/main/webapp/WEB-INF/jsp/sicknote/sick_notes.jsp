@@ -92,9 +92,21 @@
                             <spring:message code="for" />&nbsp;<c:out value="${person.firstName}" />&nbsp;<c:out value="${person.lastName}" />
                         </c:if>
                     </p>
-                    <a class="btn btn-right" href="${formUrlPrefix}/sicknote/statistics">
-                        <i class="icon-tasks"></i>&nbsp;<spring:message code='sicknotes.statistics.short' />
-                    </a>
+                    <div class="btn-group btn-group-legend">
+                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                            <i class="icon-tasks"></i>&nbsp;<spring:message code='sicknotes.statistics.short' />
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <c:forEach begin="0" end="10" varStatus="counter">
+                                <li>
+                                    <a href="${formUrlPrefix}/sicknote/statistics?year=${today.year - counter.index}">
+                                        <c:out value="${today.year - counter.index}" />
+                                    </a>
+                                </li> 
+                            </c:forEach>
+                        </ul>
+                    </div>
                     <a class="btn sicknote-button" href="${formUrlPrefix}/sicknote/new">
                         <i class="icon-plus"></i>&nbsp;<spring:message code="sicknotes.new" />
                     </a>

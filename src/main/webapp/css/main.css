@@ -164,6 +164,13 @@ a.btn-left {
     margin-left: 0.5em;
 }
 
+div.btn-group-legend {
+    float: right;
+    margin-bottom: 1em;
+    margin-left: 0.5em;
+    font-size: 13px;
+}
+
 /* zebra table with for each loop status */
 tr.odd {
     background-color: #EAF2D3

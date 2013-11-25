@@ -280,10 +280,10 @@ public class SickNoteController {
     }
 
 
-    @RequestMapping(value = "/sicknote/statistics", method = RequestMethod.GET)
-    public String sickNotesStatistics(Model model) {
+    @RequestMapping(value = "/sicknote/statistics", method = RequestMethod.GET, params = "year")
+    public String sickNotesStatistics(@RequestParam("year") Integer year, Model model) {
 
-        SickNoteStatistics statistics = statisticsService.createStatistics(DateMidnight.now().getYear());
+        SickNoteStatistics statistics = statisticsService.createStatistics(year);
 
         model.addAttribute("statistics", statistics);
 

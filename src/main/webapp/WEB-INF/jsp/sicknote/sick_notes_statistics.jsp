@@ -21,6 +21,8 @@
 
 <%@include file="../include/menu_header.jsp" %>
 
+<spring:url var="formUrlPrefix" value="/web" />
+
 <div id="content">
     <div class="container_12">
 
@@ -32,11 +34,11 @@
                     <p>
                         <spring:message code="sicknotes" />
                     </p>
-                    <a class="btn sicknote-button" href="${formUrlPrefix}/sicknote/new">
-                        <i class="icon-plus"></i>&nbsp;<spring:message code="sicknotes.new" />
-                    </a>
                     <a class="btn btn-right" href="#" media="print" onclick="window.print(); return false;">
                         <i class="icon-print"></i>&nbsp;<spring:message code='Print' />
+                    </a>
+                    <a class="btn btn-right" href="${formUrlPrefix}/sicknote/">
+                        <i class="icon-arrow-left"></i>&nbsp;<spring:message code='back' />
                     </a>
                 </legend>
 
