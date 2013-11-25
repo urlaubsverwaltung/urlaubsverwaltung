@@ -48,7 +48,7 @@
 
             <div class="second-legend">
                 <p style="float:left">
-                    <spring:message code="sicknotes.statistics" arguments="${statistics.year}" />
+                    <spring:message code="sicknotes.statistics" />&nbsp;${statistics.year}
                 </p>
                 <p style="float:right">
                     <spring:message code="Effective"/>&nbsp;<joda:format style="M-" value="${statistics.created}"/>
@@ -64,29 +64,32 @@
         <div class="grid_12">
             
             <table class="table">
-                <thead>
-                    <th>&nbsp;</th>
-                    <th><spring:message code="sicknotes.number" /></th>
-                    <th><spring:message code="sicknotes.days.number" /></th>
-                </thead>
-                <tbody>
-                    <c:forEach items="${statistics.monthStatistics}" var="statistic">
-                        <tr>
-                            <td><spring:message code="${statistic.month.messageKey}" /></td>
-                            <td><c:out value="${statistic.numberOfSickNotes}" /></td>
-                            <td><fmt:formatNumber maxFractionDigits="1" value="${statistic.numberOfSickDays}" /></td>
-                        </tr>
-                    </c:forEach>
-                    <tr>
-                        <td><b><spring:message code="sicknotes.days.total" /></b></td>
-                        <td><b><c:out value="${statistics.totalNumberOfSickNotes}" /></b></td>
-                        <td>
-                            <b><fmt:formatNumber maxFractionDigits="1" value="${statistics.totalNumberOfSickDays}" /></b>
-                        </td>
-                    </tr>
-                </tbody>
+                <tr>
+                    <td>
+                        <spring:message code="sicknotes.number" />
+                    </td>
+                    <td>
+                        <c:out value="${statistics.totalNumberOfSickNotes}" /> 
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <spring:message code="sicknotes.days.number" />  
+                    </td>
+                    <td>
+                        <fmt:formatNumber maxFractionDigits="1" value="${statistics.totalNumberOfSickDays}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <spring:message code="sicknotes.average.duration" />
+                    </td>
+                    <td>
+                        <fmt:formatNumber maxFractionDigits="1" value="${statistics.averageDurationOfDisease}" />
+                    </td>
+                </tr>
             </table>
-
+            
         </div>
     </div>
 </div>
