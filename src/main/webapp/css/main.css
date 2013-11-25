@@ -119,6 +119,10 @@ body {
     margin-top: 7em;
 }
 
+.last-element {
+    margin-bottom: 4em;
+}
+
 #staff-list td {
     /*    padding: 5px 0px 5px 15px;*/
     padding: 0.4em;

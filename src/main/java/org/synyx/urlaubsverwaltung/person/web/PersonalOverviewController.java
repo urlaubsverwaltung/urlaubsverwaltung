@@ -27,6 +27,8 @@ import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.security.web.SecurityUtil;
+import org.synyx.urlaubsverwaltung.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.util.GravatarUtil;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
@@ -57,10 +59,11 @@ public class PersonalOverviewController {
     private SecurityUtil securityUtil;
     private ApplicationService applicationService;
     private OwnCalendarService calendarService;
+    private SickNoteService sickNoteService;
 
     public PersonalOverviewController(PersonService personService, AccountService accountService,
         CalculationService calculationService, GravatarUtil gravatarUtil, SecurityUtil securityUtil,
-        ApplicationService applicationService, OwnCalendarService calendarService) {
+        ApplicationService applicationService, OwnCalendarService calendarService, SickNoteService sickNoteService) {
 
         this.personService = personService;
         this.accountService = accountService;
@@ -69,6 +72,7 @@ public class PersonalOverviewController {
         this.securityUtil = securityUtil;
         this.applicationService = applicationService;
         this.calendarService = calendarService;
+        this.sickNoteService = sickNoteService;
     }
 
     /**
@@ -173,6 +177,17 @@ public class PersonalOverviewController {
 
         String url = gravatarUtil.createImgURL(person.getEmail());
         model.addAttribute(PersonConstants.GRAVATAR, url);
+
+        prepareSickNoteList(person, year, model);
+    }
+
+
+    private void prepareSickNoteList(Person person, int year, Model model) {
+
+        List<SickNote> sickNotes = sickNoteService.getByPersonAndPeriod(person, DateUtil.getFirstDayOfYear(year),
+                DateUtil.getLastDayOfYear(year));
+
+        model.addAttribute("sickNotes", sickNotes);
     }
 
 

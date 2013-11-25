@@ -27,10 +27,12 @@
                 <div class="overview-header">
                     <legend>
                         <p><spring:message code="sicknote" /></p>
-                        <c:if test="${sickNote.active}">
-                            <a class="btn btn-right" href="${formUrlPrefix}/sicknote/${sickNote.id}/convert"><i class="icon-random"></i>&nbsp;<spring:message code="sicknotes.convert.vacation.short" /></a>
-                            <a class="btn btn-right" href="${formUrlPrefix}/sicknote/${sickNote.id}/edit"><i class="icon-pencil"></i>&nbsp;<spring:message code="edit" /></a>
-                        </c:if>
+                        <sec:authorize access="hasRole('role.office')">
+                            <c:if test="${sickNote.active}">
+                                <a class="btn btn-right" href="${formUrlPrefix}/sicknote/${sickNote.id}/convert"><i class="icon-random"></i>&nbsp;<spring:message code="sicknotes.convert.vacation.short" /></a>
+                                <a class="btn btn-right" href="${formUrlPrefix}/sicknote/${sickNote.id}/edit"><i class="icon-pencil"></i>&nbsp;<spring:message code="edit" /></a>
+                            </c:if>
+                        </sec:authorize>
                     </legend>
                 </div>
                 
@@ -78,9 +80,11 @@
                 <div class="overview-header">
                     <legend>
                         <p><spring:message code="progress" /></p>
-                        <button class="btn" style="float:right;" onclick="$('div#comment-form').show();">
-                            <i class="icon-comment"></i>&nbsp;Neuer Kommentar
-                        </button>
+                        <sec:authorize access="hasRole('role.office')">
+                            <button class="btn" style="float:right;" onclick="$('div#comment-form').show();">
+                                <i class="icon-comment"></i>&nbsp;Neuer Kommentar
+                            </button>
+                        </sec:authorize>
                     </legend>
                 </div>
                 
@@ -106,30 +110,34 @@
                         </c:forEach>
                     </tbody>
                 </table>
+
+                <sec:authorize access="hasRole('role.office')">
                 
-                <c:choose>
-                    <c:when test="${error}">
-                       <c:set var="STYLE" value="display: block" /> 
-                    </c:when>
-                    <c:otherwise>
-                        <c:set var="STYLE" value="display: none" /> 
-                    </c:otherwise>
-                </c:choose>
+                    <c:choose>
+                        <c:when test="${error}">
+                           <c:set var="STYLE" value="display: block" /> 
+                        </c:when>
+                        <c:otherwise>
+                            <c:set var="STYLE" value="display: none" /> 
+                        </c:otherwise>
+                    </c:choose>
+                    
+                    <div id="comment-form" style="${STYLE}">
+                        <form:form method="POST" action="${formUrlPrefix}/sicknote/${sickNote.id}" modelAttribute="comment">
+                            <form:errors path="text" cssClass="error" /><br />
+                            <span id="text-comment"></span><spring:message code="max.chars" />
+                            <form:textarea style="width: 100%;" rows="4" path="text" cssErrorClass="form-textarea error" onkeyup="count(this.value, 'text-comment');" onkeydown="maxChars(this,200); count(this.value, 'text-comment');" />
+                            <br />
+                            <button class="btn" type="submit">
+                                <i class="icon-ok"></i>&nbsp;<spring:message code="save" />
+                            </button>
+                            <button class="btn" type="button" onclick="$('div#comment-form').hide();">
+                                <i class="icon-remove"></i>&nbsp;<spring:message code="cancel" />
+                            </button>
+                        </form:form> 
+                    </div>
                 
-                <div id="comment-form" style="${STYLE}">
-                    <form:form method="POST" action="${formUrlPrefix}/sicknote/${sickNote.id}" modelAttribute="comment">
-                        <form:errors path="text" cssClass="error" /><br />
-                        <span id="text-comment"></span><spring:message code="max.chars" />
-                        <form:textarea style="width: 100%;" rows="4" path="text" cssErrorClass="form-textarea error" onkeyup="count(this.value, 'text-comment');" onkeydown="maxChars(this,200); count(this.value, 'text-comment');" />
-                        <br />
-                        <button class="btn" type="submit">
-                            <i class="icon-ok"></i>&nbsp;<spring:message code="save" />
-                        </button>
-                        <button class="btn" type="button" onclick="$('div#comment-form').hide();">
-                            <i class="icon-remove"></i>&nbsp;<spring:message code="cancel" />
-                        </button>
-                    </form:form> 
-                </div>
+                </sec:authorize>
                 
             </div>
 

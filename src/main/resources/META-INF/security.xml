@@ -26,8 +26,8 @@
          <security:intercept-url pattern="/jmx/**" access="isAuthenticated()"/>
          <security:intercept-url pattern="/web/overview" access="isAuthenticated()"/>
          <security:intercept-url pattern="/web/application/**" access="isAuthenticated()"/>
-         <security:intercept-url pattern="/web/sicknote/**" access="hasRole('role.office')"/>
-        <security:intercept-url pattern="/web/staff/**" access="hasAnyRole('role.boss', 'role.office')"/>
+         <security:intercept-url pattern="/web/staff/**" access="hasAnyRole('role.boss', 'role.office')"/>
+        <!-- security rules for sick notes are located in SickNoteController -->
          <security:intercept-url pattern="/web/management/**" access="hasRole('role.admin')"/>
          <security:intercept-url pattern="/login.jsp" access="permitAll"/>
          <security:intercept-url pattern="/messages_de.properties" access="permitAll"/>

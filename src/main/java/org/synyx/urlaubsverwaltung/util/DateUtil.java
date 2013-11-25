@@ -148,4 +148,16 @@ public class DateUtil {
 
         return ((date.getDayOfMonth() == FIRST_DAY_OF_MONTH) && (date.getMonthOfYear() == DateTimeConstants.JANUARY));
     }
+
+
+    public static DateMidnight getFirstDayOfYear(int year) {
+
+        return new DateMidnight(year, DateTimeConstants.JANUARY, 1);
+    }
+
+
+    public static DateMidnight getLastDayOfYear(int year) {
+
+        return new DateMidnight(year, DateTimeConstants.DECEMBER, 31);
+    }
 }
