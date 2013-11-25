@@ -36,16 +36,23 @@
     
     <bean class="org.synyx.urlaubsverwaltung.person.web.PersonController">
         <constructor-arg ref="personService" />
-        <constructor-arg ref="applicationService" />
         <constructor-arg ref="accountService" />
         <constructor-arg ref="calculationService" />
         <constructor-arg ref="gravatarUtil" />
-        <constructor-arg ref="personValidator" />
-        <constructor-arg ref="ownCalendarService" />
         <constructor-arg ref="securityUtil" />
-    </bean> 
-    
-     <bean class="org.synyx.urlaubsverwaltung.person.web.PersonManagementController">
+    </bean>
+
+    <bean class="org.synyx.urlaubsverwaltung.person.web.PersonalOverviewController">
+        <constructor-arg ref="personService" />
+        <constructor-arg ref="accountService" />
+        <constructor-arg ref="calculationService" />
+        <constructor-arg ref="gravatarUtil" />
+        <constructor-arg ref="securityUtil" />
+        <constructor-arg ref="applicationService" />
+        <constructor-arg ref="ownCalendarService" />
+    </bean>
+
+    <bean class="org.synyx.urlaubsverwaltung.person.web.PersonManagementController">
         <constructor-arg ref="personService" />
         <constructor-arg ref="accountService" />
         <constructor-arg ref="personValidator" />
