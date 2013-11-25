@@ -88,6 +88,9 @@
                 <legend style="margin-bottom: 0">
                     <p>
                         <spring:message code="sicknotes" />
+                        <c:if test="${person != null}">
+                            <spring:message code="for" />&nbsp;<c:out value="${person.firstName}" />&nbsp;<c:out value="${person.lastName}" />
+                        </c:if>
                     </p>
                     <a class="btn btn-right" href="${formUrlPrefix}/sicknote/statistics">
                         <i class="icon-tasks"></i>&nbsp;<spring:message code='sicknotes.statistics.short' />
