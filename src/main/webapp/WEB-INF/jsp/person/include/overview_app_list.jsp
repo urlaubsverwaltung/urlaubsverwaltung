@@ -12,10 +12,50 @@
 
 
 <div class="grid_12">
+
+    <div class="overview-header">
+
+        <legend id="sickNotes">
+            <p>
+                <spring:message code="apps.vac" />
+            </p>
+            
+            <div class="btn-group-legend">
+
+                <a class="btn btn-right" href="#" media="print" onclick="window.print(); return false;">
+                    <i class="icon-print"></i>&nbsp;<spring:message code='overview' />&nbsp;<spring:message code='print' />
+                </a>
+                
+                <c:choose>
+                    <c:when test="${person.id == loggedUser.id}">
+                        <a class="btn btn-right" href="${formUrlPrefix}/application/new">
+                            <i class="icon-pencil"></i>&nbsp;<spring:message code="ov.apply"/>
+                        </a>
+                    </c:when>
+                    <c:otherwise>
+                        <sec:authorize access="hasRole('role.office')">
+                            <c:if test="${person.id != loggedUser.id}">
+                                <a class="btn"
+                                   href="${formUrlPrefix}/${person.id}/application/new">
+                                    <c:set var="staff" value="${person.firstName} ${person.lastName}"/>
+                                    <i class="icon-pencil"></i>&nbsp;<spring:message code="ov.apply"/>
+                                </a>
+                            </c:if>
+                        </sec:authorize>
+                    </c:otherwise>
+                </c:choose>
+
+            </div>
+        </legend>
+
+    </div>
+    
     <c:choose>
 
         <c:when test="${empty applications}">
-            <spring:message code='no.apps' />
+            <p style="margin-bottom: 4em;">
+                <spring:message code='no.apps' />
+            </p>
         </c:when>
 
         <c:otherwise>

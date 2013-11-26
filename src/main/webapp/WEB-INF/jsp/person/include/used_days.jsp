@@ -5,6 +5,8 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
+<c:if test="${account != null}">
+
 <tr class="odd">
     <th>&nbsp;</th>
     <th class="center"><spring:message code="state.allowed" /></th>
@@ -42,4 +44,6 @@
         </td>
     </tr>
 </c:forEach>
+
+</c:if>    
 

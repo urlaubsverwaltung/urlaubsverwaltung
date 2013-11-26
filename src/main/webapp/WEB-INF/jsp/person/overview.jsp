@@ -71,35 +71,6 @@
         <div class="grid_12">&nbsp;</div>
         <div class="grid_12">&nbsp;</div>
 
-        <div class="grid_12">
-
-            <c:choose>
-                <c:when test="${person.id == loggedUser.id}">
-                    <a class="btn" href="${formUrlPrefix}/application/new">
-                        <i class="icon-pencil"></i>&nbsp;<spring:message code="ov.apply"/>
-                    </a>
-                </c:when>
-                <c:otherwise>
-                    <sec:authorize access="hasRole('role.office')">
-                        <c:if test="${person.id != loggedUser.id}">
-                            <a class="btn"
-                               href="${formUrlPrefix}/${person.id}/application/new">
-                                <c:set var="staff" value="${person.firstName} ${person.lastName}"/>
-                                <i class="icon-pencil"></i>&nbsp;<spring:message code="ov.apply"/>
-                            </a>
-                        </c:if>
-                    </sec:authorize>
-                </c:otherwise>
-            </c:choose>
-
-            <a class="btn" href="#" media="print" onclick="window.print(); return false;">
-                <i class="icon-print"></i>&nbsp;<spring:message code='overview' />&nbsp;<spring:message code='print' />
-            </a>
-
-        </div>
-        <div class="grid_12">&nbsp;</div>
-
-
         <%@include file="./include/overview_app_list.jsp" %>
 
         <div class="grid_12 last-element">
