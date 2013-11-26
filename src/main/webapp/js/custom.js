@@ -133,11 +133,18 @@ $(document).ready(function()
                 return false;
             },
             format: function(s) {
+
+                var reg = new RegExp("[0-9]+");
                 
-                s = s.replace(/[\,\.]/g,'.');
+                if(reg.test(s)) {
+                    s = s.replace(/[\,\.]/g,'.');
+
+                    // possible that string is sth like that: 30 + 2
+                    return eval(s);  
+                } else {
+                    return 0;
+                }
                 
-                // possible that string is sth like that: 30 + 2
-                return eval(s);
             },
             type: 'numeric'
         });
