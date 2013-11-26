@@ -11,11 +11,13 @@
 <spring:url var="formUrlPrefix" value="/web" />
 
 <%-- href is set by javascript: see staff_view.jsp --%>
-<a class="btn btn-right print-view" href="#">
-    <i class="icon-print"></i>&nbsp;<spring:message code='print.preview' />
-</a>
+<sec:authorize access="hasRole('role.office')">
+    <a class="btn btn-right print-view" href="#">
+        <i class="icon-print"></i>&nbsp;<spring:message code='print.preview' />
+    </a>
 
-<a class="btn btn-right" href="${formUrlPrefix}/staff/new"><i class="icon-plus"></i><i class="icon-user"></i>&nbsp;<spring:message code="table.new.person" /></a>
+    <a class="btn btn-right" href="${formUrlPrefix}/staff/new"><i class="icon-plus"></i><i class="icon-user"></i>&nbsp;<spring:message code="table.new.person" /></a>
+</sec:authorize>
 
 <table id="staff-list" cellspacing="0" class="sortable-tbl tablesorter zebra-table">
     <thead>
@@ -27,8 +29,10 @@
         <th class="vac"><spring:message code="entitlement" /></th>
         <th class="vac"><spring:message code="left" /></th>
         <th><spring:message code="table.detail" /></th>
-        <th><spring:message code="table.apply" /></th>
-        <th><spring:message code="edit" /></th>
+        <sec:authorize access="hasRole('role.office')"> 
+            <th><spring:message code="table.apply" /></th>
+            <th><spring:message code="edit" /></th>
+        </sec:authorize>    
     </tr>
     </thead>
     <tbody>
@@ -65,8 +69,10 @@
                 </c:choose>
             </td>
             <td class="td-detail"><a href="${formUrlPrefix}/staff/${person.id}/overview"><img src="<spring:url value='/images/playlist.png' />" /></a></td>
+            <sec:authorize access="hasRole('role.office')">
             <td class="td-detail"><a href="${formUrlPrefix}/${person.id}/application/new"><img src="<spring:url value='/images/new window.png' />" /></a></td>
             <td class="td-edit"><a href="${formUrlPrefix}/staff/${person.id}/edit"><img src="<spring:url value='/images/edit.png' />" /></a></td>
+            </sec:authorize>
         </tr>    
     </c:forEach>
     </tbody>

@@ -48,7 +48,7 @@
                     <%@include file="./include/overview_header_user.jsp" %>
                 </c:when>
                 <c:otherwise>
-                    <sec:authorize access="hasRole('role.office')">
+                    <sec:authorize access="hasAnyRole('role.office', 'role.boss')">
                         <%@include file="./include/overview_header_office.jsp" %>
                     </sec:authorize>
                 </c:otherwise>
@@ -75,66 +75,15 @@
 
         <div class="grid_12 last-element">
 
-            <div class="overview-header">
-
-                <legend id="sickNotes">
-                    <p>
-                       <spring:message code="sicknotes" />
-                    </p>
-                </legend>
-
-            </div>
-
             <c:choose>
-
-                <c:when test="${empty sickNotes}">
-                    <spring:message code="sicknotes.none" />
+                <c:when test="${person.id == loggedUser.id}">
+                    <%@include file="./include/sick_notes.jsp" %>
                 </c:when>
-
                 <c:otherwise>
-                    <table class="app-tbl centered-tbl sortable-tbl tablesorter zebra-table" cellspacing="0">
-                        <thead>
-                        <tr>
-                            <th><spring:message code="sicknotes.time" /></th>
-                            <th><spring:message code="work.days" /></th>
-                            <th><spring:message code="sicknotes.aub.short" /></th>
-                            <th class="print-invisible"><spring:message code="app.date.overview" /></th>
-                            <th class="print-invisible"><spring:message code="table.detail" /></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <c:forEach items="${sickNotes}" var="sickNote" varStatus="loopStatus">
-                        <c:choose>
-                            <c:when test="${sickNote.active}">
-                                <c:set var="CSS_CLASS" value="active" />
-                            </c:when>
-                            <c:otherwise>
-                                <c:set var="CSS_CLASS" value="inactive" />
-                            </c:otherwise>
-                        </c:choose>
-                        <tr class="${CSS_CLASS}">
-                            <td>
-                                <joda:format style="M-" value="${sickNote.startDate}"/>&nbsp;-&nbsp;<joda:format style="M-" value="${sickNote.endDate}"/>
-                            </td>
-                            <td>
-                                <fmt:formatNumber maxFractionDigits="1" value="${sickNote.workDays}" />
-                            </td>
-                            <td>
-                                <joda:format style="M-" value="${sickNote.aubStartDate}"/>&nbsp;-&nbsp;<joda:format style="M-" value="${sickNote.aubEndDate}"/>
-                            </td>
-                            <td class="print-invisible">
-                                <joda:format style="M-" value="${sickNote.lastEdited}"/>
-                            </td>
-                            <td class="print-invisible">
-                                <a href="${formUrlPrefix}/sicknote/${sickNote.id}">
-                                    <img src="<spring:url value='/images/playlist.png' />" />
-                                </a>
-                            </td>
-                            </c:forEach>
-                        </tbody>
-                    </table>
+                    <sec:authorize access="hasRole('role.office')">
+                        <%@include file="./include/sick_notes.jsp" %>
+                    </sec:authorize>
                 </c:otherwise>
-
             </c:choose>
             
         </div>

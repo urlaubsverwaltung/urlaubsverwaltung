@@ -5,6 +5,6 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <button type="button" class="btn btn-danger" onclick="$('#refer').hide(); $('#confirm').hide();  $('#cancel').hide(); $('#reject').show();">
-    <i class="icon-ban-circle icon-white"></i>&nbsp;<spring:message code='app.state.no' />
+    <i class="icon-ban-circle icon-white"></i>&nbsp;<spring:message code='app.state.no.short' />
 </button>
 

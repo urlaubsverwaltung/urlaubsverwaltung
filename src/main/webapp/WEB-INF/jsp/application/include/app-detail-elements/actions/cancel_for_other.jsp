@@ -6,7 +6,7 @@
 
 
 <button type="button" class="btn btn-danger" onclick="$('#reject').hide(); $('#confirm').hide(); $('#refer').hide(); $('#cancel').show();">
-    <i class="icon-remove-circle icon-white"></i>&nbsp;<spring:message code='app.state.cancel' />
+    <i class="icon-remove-circle icon-white"></i>&nbsp;<spring:message code='delete' />
 </button> 
 
 

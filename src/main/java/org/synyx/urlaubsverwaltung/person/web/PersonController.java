@@ -65,7 +65,7 @@ public class PersonController {
     @RequestMapping(value = INACTIVE_LINK, method = RequestMethod.GET)
     public String showInactiveStaff(Model model) {
 
-        if (securityUtil.isOffice()) {
+        if (securityUtil.isOffice() || securityUtil.isBoss()) {
             securityUtil.setLoggedUser(model);
 
             List<Person> persons = personService.getInactivePersons();
@@ -94,7 +94,7 @@ public class PersonController {
     @RequestMapping(value = ACTIVE_LINK, method = RequestMethod.GET)
     public String showActiveStaff(Model model) {
 
-        if (securityUtil.isOffice()) {
+        if (securityUtil.isOffice() || securityUtil.isBoss()) {
             securityUtil.setLoggedUser(model);
 
             List<Person> persons = personService.getAllPersons();
@@ -118,7 +118,7 @@ public class PersonController {
     @RequestMapping(value = INACTIVE_LINK, params = ControllerConstants.YEAR, method = RequestMethod.GET)
     public String showInactiveStaffByYear(@RequestParam(ControllerConstants.YEAR) int year, Model model) {
 
-        if (securityUtil.isOffice()) {
+        if (securityUtil.isOffice() || securityUtil.isBoss()) {
             securityUtil.setLoggedUser(model);
 
             List<Person> persons = personService.getInactivePersons();
@@ -148,7 +148,7 @@ public class PersonController {
     @RequestMapping(value = ACTIVE_LINK, params = ControllerConstants.YEAR, method = RequestMethod.GET)
     public String showActiveStaffByYear(@RequestParam(ControllerConstants.YEAR) int year, Model model) {
 
-        if (securityUtil.isOffice()) {
+        if (securityUtil.isOffice() || securityUtil.isBoss()) {
             securityUtil.setLoggedUser(model);
 
             List<Person> persons = personService.getAllPersons();

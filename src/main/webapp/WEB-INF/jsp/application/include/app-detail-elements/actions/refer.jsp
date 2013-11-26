@@ -5,5 +5,5 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <button type="button" class="btn btn-primary" onclick="$('#reject').hide(); $('#confirm').hide(); $('#cancel').hide(); $('#refer').show();">
-    <i class="icon-share icon-white"></i>&nbsp;<spring:message code='app.state.refer' />
+    <i class="icon-share icon-white"></i>&nbsp;<spring:message code='app.state.refer.short' />
 </button>

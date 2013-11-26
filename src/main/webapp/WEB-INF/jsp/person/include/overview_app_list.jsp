@@ -15,7 +15,7 @@
 
     <div class="overview-header">
 
-        <legend id="sickNotes">
+        <legend>
             <p>
                 <spring:message code="apps.vac" />
             </p>
@@ -61,8 +61,11 @@
         <c:otherwise>
 
             <%-- has css class tablesorter only because of styling, is not sortable --%>
-            <table class="app-tbl centered-tbl tablesorter overview-tbl" cellspacing="0">
+            <table class="app-tbl centered-tbl tablesorter overview-tbl zebra-table" cellspacing="0">
                 <tr>
+                    <th>
+                        <spring:message code="state" />
+                    </th>
                     <th>
                         <spring:message code="type" />
                     </th>
@@ -72,19 +75,37 @@
                     <th>
                         <spring:message code="days.vac" />
                     </th>
-                    <th>
-                        <spring:message code="state" />
-                    </th>
                     <th class="td-detail">
                         <spring:message code="table.detail" />
-                    </th>
-                    <th style="text-align: center" class="td-action">
-                        <spring:message code="delete" />
                     </th>
                 </tr>
 
                 <c:forEach items="${applications}" var="app" varStatus="loopStatus">
-                    <tr class="${loopStatus.index % 2 == 0 ? 'even' : 'odd'}">
+                    <tr>
+                        <td>
+                            <span class="print-visible">
+                                <spring:message code="${app.status.state}" />
+                            </span>
+                            <span class="print-invisible">
+                                 <c:choose>
+                                     <c:when test="${app.status.state == 'state.waiting'}">
+                                         <b style="font-size: 15px">?</b>
+                                     </c:when>
+                                     <c:when test="${app.status.state == 'state.allowed'}">
+                                         <i class="icon-ok"></i>
+                                     </c:when>
+                                     <c:when test="${app.status.state == 'state.rejected'}">
+                                         <i class="icon-ban-circle"></i>
+                                     </c:when>
+                                     <c:when test="${app.status.state == 'state.cancelled'}">
+                                         <i class="icon-trash"></i>
+                                     </c:when>
+                                     <c:otherwise>
+                                         &nbsp;
+                                     </c:otherwise>
+                                 </c:choose>
+                            </span>
+                        </td>
                         <td class="${app.vacationType}">
                             <spring:message code="${app.vacationType.vacationTypeName}"/>
                         </td>
@@ -118,25 +139,7 @@
 
                             </script>
                     </td>
-                    <td>
-                        <spring:message code="${app.status.state}" />
-                    </td>
                     <td class="td-detail"><a href="${formUrlPrefix}/application/${app.id}"><img src="<spring:url value='/images/playlist.png' />" /></a></td>
-                    <td style="text-align: center" class="td-action">
-
-                        <c:if test="${app.status.number == 1}">  
-                        <sec:authorize access="hasRole('role.office')">
-                            <a href="${formUrlPrefix}/application/${app.id}/cancel"><img src="<spring:url value='/images/cancel.png' />" /></a>
-                        </sec:authorize>
-                    </c:if>
-
-                    <c:if test="${app.status.number == 0}">
-                        <sec:authorize access="hasAnyRole('role.user', 'role.boss', 'role.office')">
-                            <a href="${formUrlPrefix}/application/${app.id}/cancel"><img src="<spring:url value='/images/cancel.png' />" /></a>
-                        </sec:authorize>
-                    </c:if>
-
-                    </td>
                     </tr>
                 </c:forEach>
             </table>

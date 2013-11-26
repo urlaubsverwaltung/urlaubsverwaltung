@@ -115,22 +115,26 @@ public class PersonalOverviewController {
     public String showStaffOverview(@PathVariable(PersonConstants.PERSON_ID) Integer personId,
         @RequestParam(value = ControllerConstants.YEAR, required = false) String year, Model model) {
 
-        Person person = personService.getPersonByID(personId);
-        List<Person> persons;
+        if (securityUtil.isOffice() || securityUtil.isBoss()) {
+            Person person = personService.getPersonByID(personId);
+            List<Person> persons;
 
-        if (person.isActive()) {
-            persons = personService.getAllPersons();
-        } else {
-            persons = personService.getInactivePersons();
+            if (person.isActive()) {
+                persons = personService.getAllPersons();
+            } else {
+                persons = personService.getInactivePersons();
+            }
+
+            model.addAttribute(ControllerConstants.PERSONS, persons);
+
+            prepareOverview(person, parseYearParameter(year), model);
+
+            securityUtil.setLoggedUser(model);
+
+            return PersonConstants.OVERVIEW_JSP;
         }
 
-        model.addAttribute(ControllerConstants.PERSONS, persons);
-
-        prepareOverview(person, parseYearParameter(year), model);
-
-        securityUtil.setLoggedUser(model);
-
-        return PersonConstants.OVERVIEW_JSP;
+        return ControllerConstants.ERROR_JSP;
     }
 
 

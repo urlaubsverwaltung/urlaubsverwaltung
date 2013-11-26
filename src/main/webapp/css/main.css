@@ -633,7 +633,11 @@ tr.inactive {
     }
     
     .td-action, .td-detail, .user-pic, .print-invisible {
-        display: none;
+        display: none !important;
+    }
+    
+    .print-visible {
+        display: block !important;
     }
     
     div.vacation-entitlement {
@@ -661,4 +665,8 @@ tr.inactive {
     tr.inactive {
         display: none;
     }
+}
+
+.print-visible {
+    display: none;
 }

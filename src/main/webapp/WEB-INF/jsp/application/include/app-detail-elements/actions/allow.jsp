@@ -5,7 +5,7 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <button type="button" class="btn btn-success" onclick="$('#reject').hide(); $('#refer').hide();  $('#cancel').hide(); $('#confirm').show();">
-    <i class="icon-check icon-white"></i>&nbsp;<spring:message code='app.state.ok' />
+    <i class="icon-check icon-white"></i>&nbsp;<spring:message code='app.state.ok.short' />
 </button>
 
 
