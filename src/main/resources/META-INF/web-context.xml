@@ -58,6 +58,7 @@
         <constructor-arg ref="accountService" />
         <constructor-arg ref="personValidator" />
          <constructor-arg ref="securityUtil" />
+        <constructor-arg ref="workingTimeService" />
     </bean> 
     
     <bean class="org.synyx.urlaubsverwaltung.security.web.RoleManagementController">

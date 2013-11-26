@@ -213,7 +213,7 @@ class AccountServiceImpl implements AccountService {
                     BigDecimal.ZERO, true);
             } else {
                 // maybe user tries to apply for leave for past year --> no account information
-                // in this case just create an account for this year with the data of the current year's account
+                // in this case just touch an account for this year with the data of the current year's account
                 // if a user is able to apply for leave, it's for sure that there is a current year's account
                 Account currentYearAccount = getHolidaysAccount(DateMidnight.now().getYear(), person);
 

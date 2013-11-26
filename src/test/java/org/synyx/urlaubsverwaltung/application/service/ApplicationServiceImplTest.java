@@ -6,10 +6,13 @@ package org.synyx.urlaubsverwaltung.application.service;
 
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
 import org.mockito.Mockito;
+
 import org.synyx.urlaubsverwaltung.application.dao.ApplicationDAO;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
@@ -21,13 +24,15 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.security.CryptoService;
 
 import java.security.NoSuchAlgorithmException;
+
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
  * Unit test for serivce {@link ApplicationServiceImpl}.
- * 
- * @author Aljona Murygina - murygina@synyx.de
+ *
+ * @author  Aljona Murygina - murygina@synyx.de
  */
 public class ApplicationServiceImplTest {
 
@@ -49,17 +54,19 @@ public class ApplicationServiceImplTest {
 
         instance = new ApplicationServiceImpl(applicationDAO, cryptoService, mailService, calendarService);
 
-        // create person that is needed for tests
+        // touch person that is needed for tests
         person = new Person();
         person.setLastName("Testperson");
 
-        // create application that is needed for tests
+        // touch application that is needed for tests
         application = new Application();
         application.setPerson(person);
-
     }
 
-    /** Test of getApplicationById method, of class ApplicationServiceImpl. */
+
+    /**
+     * Test of getApplicationById method, of class ApplicationServiceImpl.
+     */
     @Test
     public void testGetApplicationById() {
 
@@ -67,7 +74,10 @@ public class ApplicationServiceImplTest {
         Mockito.verify(applicationDAO).findOne(1234);
     }
 
-    /** Test of save method, of class ApplicationServiceImpl. */
+
+    /**
+     * Test of save method, of class ApplicationServiceImpl.
+     */
     @Test
     public void testSave() {
 
@@ -75,7 +85,10 @@ public class ApplicationServiceImplTest {
         Mockito.verify(applicationDAO).save(application);
     }
 
-    /** Test of allow method, of class ApplicationServiceImpl. */
+
+    /**
+     * Test of allow method, of class ApplicationServiceImpl.
+     */
     @Test
     public void testAllow() throws NoSuchAlgorithmException {
 
@@ -92,7 +105,10 @@ public class ApplicationServiceImplTest {
         Assert.assertEquals(person, application.getBoss());
     }
 
-    /** Test of reject method, of class ApplicationServiceImpl. */
+
+    /**
+     * Test of reject method, of class ApplicationServiceImpl.
+     */
     @Test
     public void testReject() {
 
@@ -134,7 +150,10 @@ public class ApplicationServiceImplTest {
         Assert.assertEquals(boss, application.getBoss());
     }
 
-    /** Test of cancel method, of class ApplicationServiceImpl. */
+
+    /**
+     * Test of cancel method, of class ApplicationServiceImpl.
+     */
     @Test
     public void testCancel() {
 
@@ -171,7 +190,10 @@ public class ApplicationServiceImplTest {
         Assert.assertEquals(ApplicationStatus.CANCELLED, sApps.get(1).getStatus());
     }
 
-    /** Test of signApplicationByUser method, of class ApplicationServiceImpl. */
+
+    /**
+     * Test of signApplicationByUser method, of class ApplicationServiceImpl.
+     */
     @Test
     public void testSignApplicationByUser() throws Exception {
 
@@ -191,7 +213,10 @@ public class ApplicationServiceImplTest {
         Assert.assertEquals(null, application.getSignatureBoss());
     }
 
-    /** Test of signApplicationByBoss method, of class ApplicationServiceImpl. */
+
+    /**
+     * Test of signApplicationByBoss method, of class ApplicationServiceImpl.
+     */
     @Test
     public void testSignApplicationByBoss() throws Exception {
 

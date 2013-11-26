@@ -2,7 +2,13 @@
 package org.synyx.urlaubsverwaltung.person.web;
 
 import org.synyx.urlaubsverwaltung.account.Account;
+import org.synyx.urlaubsverwaltung.application.domain.DayLength;
+import org.synyx.urlaubsverwaltung.calendar.Day;
+import org.synyx.urlaubsverwaltung.calendar.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.person.Person;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -38,14 +44,14 @@ public class PersonForm {
 
     private boolean remainingVacationDaysExpire;
 
-    private Integer[] workingDays;
+    private List<Integer> workingDays;
 
     public PersonForm() {
     }
 
 
     public PersonForm(Person person, String year, Account account, String annualVacationDays,
-        String remainingVacationDays, boolean remainingVacationDaysExpire) {
+        String remainingVacationDays, boolean remainingVacationDaysExpire, WorkingTime workingTime) {
 
         this.loginName = person.getLoginName();
         this.lastName = person.getLastName();
@@ -67,6 +73,20 @@ public class PersonForm {
             this.monthFrom = String.valueOf(1);
             this.dayTo = String.valueOf(31);
             this.monthTo = String.valueOf(12);
+        }
+
+        this.workingDays = new ArrayList<Integer>();
+
+        if (workingTime != null) {
+            for (Day day : Day.values()) {
+                Integer dayOfWeek = day.getDayOfWeek();
+
+                DayLength dayLength = workingTime.getDayLengthForWeekDay(dayOfWeek);
+
+                if (dayLength != DayLength.ZERO) {
+                    workingDays.add(dayOfWeek);
+                }
+            }
         }
     }
 
@@ -236,13 +256,13 @@ public class PersonForm {
     }
 
 
-    public Integer[] getWorkingDays() {
+    public List<Integer> getWorkingDays() {
 
         return workingDays;
     }
 
 
-    public void setWorkingDays(Integer[] workingDays) {
+    public void setWorkingDays(List<Integer> workingDays) {
 
         this.workingDays = workingDays;
     }

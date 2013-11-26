@@ -107,7 +107,7 @@ class PersonServiceImpl implements PersonService {
 
         save(person);
 
-        workingTimeService.create(personForm.getWorkingDays(), person);
+        workingTimeService.touch(personForm.getWorkingDays(), person);
 
         int year = Integer.parseInt(personForm.getYear());
         int dayFrom = Integer.parseInt(personForm.getDayFrom());

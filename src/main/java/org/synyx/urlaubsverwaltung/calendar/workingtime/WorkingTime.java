@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.calendar.workingtime;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import org.synyx.urlaubsverwaltung.application.domain.DayLength;
@@ -47,6 +49,23 @@ public class WorkingTime extends AbstractPersistable<Integer> {
 
     public WorkingTime() {
 
+        setAllDayLengthsToZero();
+    }
+
+    public void setWorkingDays(List<Integer> workingDays, DayLength dayLength) {
+
+        setAllDayLengthsToZero();
+
+        if (!CollectionUtils.isEmpty(workingDays)) {
+            for (Integer dayOfWeek : workingDays) {
+                setDayLengthForWeekDay(dayOfWeek, dayLength);
+            }
+        }
+    }
+
+
+    private void setAllDayLengthsToZero() {
+
         this.monday = DayLength.ZERO;
         this.tuesday = DayLength.ZERO;
         this.wednesday = DayLength.ZERO;
@@ -54,13 +73,6 @@ public class WorkingTime extends AbstractPersistable<Integer> {
         this.friday = DayLength.ZERO;
         this.saturday = DayLength.ZERO;
         this.sunday = DayLength.ZERO;
-    }
-
-    public void setWorkingDays(List<Integer> workingDays, DayLength dayLength) {
-
-        for (Integer dayOfWeek : workingDays) {
-            setDayLengthForWeekDay(dayOfWeek, dayLength);
-        }
     }
 
 

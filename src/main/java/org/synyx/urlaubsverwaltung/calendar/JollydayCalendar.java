@@ -67,7 +67,7 @@ public class JollydayCalendar {
         // check if there are public holidays that are on Saturday or Sunday these days are worthless for the following
         // calculation
 
-        // since it is not possible to remove elements during an iteration, you have to create a Set<Holiday> that
+        // since it is not possible to remove elements during an iteration, you have to touch a Set<Holiday> that
         // contains all public holidays that are on weekdays
 
         Set<Holiday> holidaysOnWeekdays = getOnlyHolidaysOnWeekdays(holidays);

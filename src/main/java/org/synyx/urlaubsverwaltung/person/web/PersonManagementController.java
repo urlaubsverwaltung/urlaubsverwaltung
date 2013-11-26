@@ -20,6 +20,8 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.calendar.Day;
+import org.synyx.urlaubsverwaltung.calendar.workingtime.WorkingTime;
+import org.synyx.urlaubsverwaltung.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.security.web.SecurityUtil;
@@ -50,14 +52,16 @@ public class PersonManagementController {
     private AccountService accountService;
     private PersonValidator validator;
     private SecurityUtil securityUtil;
+    private WorkingTimeService workingTimeService;
 
     public PersonManagementController(PersonService personService, AccountService accountService,
-        PersonValidator validator, SecurityUtil securityUtil) {
+        PersonValidator validator, SecurityUtil securityUtil, WorkingTimeService workingTimeService) {
 
         this.personService = personService;
         this.accountService = accountService;
         this.validator = validator;
         this.securityUtil = securityUtil;
+        this.workingTimeService = workingTimeService;
     }
 
     /**
@@ -158,7 +162,10 @@ public class PersonManagementController {
             rem = NumberUtil.formatNumber(remainingVacationDays, locale);
         }
 
-        return new PersonForm(person, String.valueOf(year), account, ann, rem, remainingVacationDaysExpire);
+        WorkingTime workingTime = workingTimeService.getByPerson(person);
+
+        return new PersonForm(person, String.valueOf(year), account, ann, rem, remainingVacationDaysExpire,
+                workingTime);
     }
 
 
@@ -180,7 +187,7 @@ public class PersonManagementController {
 
 
     /**
-     * Prepares the view object PersonForm and returns jsp with form to create a new user.
+     * Prepares the view object PersonForm and returns jsp with form to touch a new user.
      *
      * @param  request
      * @param  model

@@ -40,8 +40,8 @@ public interface AccountService {
      * @param  person {@link Person}
      * @param  validFrom {@link DateMidnight}, e.g. 1.1.2012
      * @param  validTo {@link DateMidnight}, e.g. 31.12.2012
-     * @param  days {@link BigDecimal}   number of annual vacation days (method calculates the actual vacation days
-     *               using the validity period)
+     * @param  days {@link BigDecimal} number of annual vacation days (method calculates the actual vacation days using
+     *               the validity period)
      * @param  remaining {@link BigDecimal} number of remaining vacation days
      * @param  remainingDaysExpire  boolean true if remaining vacation days expire on 1st April, else false
      */
@@ -50,7 +50,7 @@ public interface AccountService {
 
 
     /**
-     * Try to get the {@link Account} for the given year and person, if it doesn't exist, try to create a new
+     * Try to get the {@link Account} for the given year and person, if it doesn't exist, try to touch a new
      * {@link Account} with the information of the {@link Account} of the last year. (@param year - 1) If a new account
      * is created, the attribute remainingVacationDaysExpire is set to true. (was desired by the office as default
      * value)
@@ -58,7 +58,7 @@ public interface AccountService {
      * @param  year  int
      * @param  person {@link Person}
      *
-     * @return  {@link Account} for the given year and person, if not existing yet create it at first
+     * @return  {@link Account} for the given year and person, if not existing yet touch it at first
      */
     Account getOrCreateNewAccount(int year, Person person);
 
@@ -69,8 +69,8 @@ public interface AccountService {
      * @param  account {@link Account} to be edited
      * @param  validFrom {@link DateMidnight}, e.g. 1.1.2012
      * @param  validTo {@link DateMidnight}, e.g. 31.12.2012
-     * @param  days {@link BigDecimal} number of annual vacation days (method calculates the actual vacation days using
-     *               the validity period)
+     * @param  days {@link BigDecimal}   number of annual vacation days (method calculates the actual vacation days
+     *               using the validity period)
      * @param  remaining {@link BigDecimal} number of remaining vacation days
      * @param  remainingDaysExpire  boolean true if remaining vacation days expire on 1st April, else false
      */

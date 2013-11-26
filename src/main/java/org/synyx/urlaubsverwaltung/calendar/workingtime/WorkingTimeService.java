@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -31,13 +30,23 @@ public class WorkingTimeService {
     public WorkingTimeService() {
     }
 
-    public void create(Integer[] workingDaysArray, Person person) {
+    public void touch(List<Integer> workingDays, Person person) {
 
-        List<Integer> workingDays = Arrays.asList(workingDaysArray);
-        WorkingTime workingTime = new WorkingTime();
+        WorkingTime workingTime = getByPerson(person);
+
+        if (workingTime == null) {
+            workingTime = new WorkingTime();
+            workingTime.setPerson(person);
+        }
+
         workingTime.setWorkingDays(workingDays, DayLength.FULL);
-        workingTime.setPerson(person);
 
         workingTimeDAO.save(workingTime);
+    }
+
+
+    public WorkingTime getByPerson(Person person) {
+
+        return workingTimeDAO.findByPerson(person);
     }
 }
