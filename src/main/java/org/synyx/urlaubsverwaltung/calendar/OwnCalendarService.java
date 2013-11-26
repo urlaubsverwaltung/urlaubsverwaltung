@@ -59,9 +59,36 @@ public class OwnCalendarService {
 
 
     /**
+     * Calculates the number of workdays considering the individual person's working time.
+     *
+     * @param  startDate
+     * @param  endDate
+     * @param  workingTime
+     *
+     * @return  number of workdays
+     */
+    protected BigDecimal getPersonalWorkDays(DateMidnight startDate, DateMidnight endDate, WorkingTime workingTime) {
+
+        BigDecimal workDays = BigDecimal.ZERO;
+
+        DateMidnight day = startDate;
+
+        while (!day.isAfter(endDate)) {
+            int dayOfWeek = day.getDayOfWeek();
+            DayLength dayLength = workingTime.getDayLengthForWeekDay(dayOfWeek);
+            workDays = workDays.add(dayLength.getDuration());
+
+            day = day.plusDays(1);
+        }
+
+        return workDays;
+    }
+
+
+    /**
      * This method calculates how many workdays are used in the stated period (from start date to end date) getWeekDays
-     * calculates the number of weekdays, getPublicHolidays calculates the number of official holidays within the week
-     * days period. Number of workdays results from difference between weekdays and official holidays.
+     * calculates the number of weekdays (MON to FRI), getPublicHolidays calculates the number of official holidays
+     * within the week days period. Number of workdays results from difference between weekdays and official holidays.
      *
      * @param  dayLength
      * @param  startDate
@@ -75,6 +102,6 @@ public class OwnCalendarService {
 
         vacDays = vacDays - jollydayCalendar.getPublicHolidays(startDate, endDate);
 
-        return BigDecimal.valueOf(vacDays).multiply(dayLength.getDayLengthNumber());
+        return BigDecimal.valueOf(vacDays).multiply(dayLength.getDuration());
     }
 }

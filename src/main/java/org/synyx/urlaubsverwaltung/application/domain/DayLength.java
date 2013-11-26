@@ -10,15 +10,16 @@ public enum DayLength {
 
     FULL("full", BigDecimal.valueOf(1.0)),
     MORNING("half.morning", BigDecimal.valueOf(0.5)),
-    NOON("half.noon", BigDecimal.valueOf(0.5));
+    NOON("half.noon", BigDecimal.valueOf(0.5)),
+    ZERO("zero", BigDecimal.ZERO);
 
     private String dayLength;
-    private BigDecimal dayLengthNumber;
+    private BigDecimal duration;
 
-    private DayLength(String dayLength, BigDecimal dayLengthNumber) {
+    private DayLength(String dayLength, BigDecimal duration) {
 
         this.dayLength = dayLength;
-        this.dayLengthNumber = dayLengthNumber;
+        this.duration = duration;
     }
 
     public String getDayLength() {
@@ -27,8 +28,8 @@ public enum DayLength {
     }
 
 
-    public BigDecimal getDayLengthNumber() {
+    public BigDecimal getDuration() {
 
-        return this.dayLengthNumber;
+        return this.duration;
     }
 }
