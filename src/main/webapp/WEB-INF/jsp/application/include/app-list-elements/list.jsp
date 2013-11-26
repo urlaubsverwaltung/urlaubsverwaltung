@@ -48,18 +48,6 @@
                 <th class="td-detail">
                     <spring:message code="table.detail" />
                 </th>
-                <%-- the roles office and boss are able to see the application list
-                but only office can cancel applications of other users --%>    
-                <sec:authorize access="hasRole('role.office')">
-                        <th style="text-align: center">
-                            <spring:message code="delete" />
-                        </th>
-                        <c:if test="${showCheckboxes == true}">
-                        <th>
-                            <spring:message code="in.calendar" />
-                        </th>
-                        </c:if>
-                </sec:authorize>      
             </tr>
             </thead>
 
@@ -109,28 +97,6 @@
                     </td>
 
                     <td class="td-detail"><a href="${formUrlPrefix}/application/${app.id}"><img src="<spring:url value='/images/playlist.png' />" /></a></td>     
-
-                    <sec:authorize access="hasRole('role.office')">
-                            <td style="text-align: center">
-                                <c:if test="${app.status.number == 0 || app.status.number == 1}">
-                                    <a href="${formUrlPrefix}/application/${app.id}/cancel"><img src="<spring:url value='/images/cancel.png' />" /></a>
-                                </c:if>
-                            </td>
-                            <c:if test="${showCheckboxes == true}">
-                            <form:form action="${formUrlPrefix}/application/allowed/${app.id}" method="PUT">
-                            <td style="padding-left:2.5em;">
-                                <c:choose>
-                                    <c:when test="${app.isInCalendar == true}">
-                                        <input type="checkbox" checked="checked" onclick="this.form.submit();" />
-                                    </c:when>
-                                    <c:otherwise>
-                                        <input type="checkbox" onclick="this.form.submit();" />
-                                    </c:otherwise>
-                                </c:choose>
-                            </td>
-                            </form:form>
-                            </c:if>
-                    </sec:authorize>     
 
                 </tr>
             </c:forEach>
