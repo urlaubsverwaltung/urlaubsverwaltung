@@ -11,6 +11,21 @@
 <head>
     <title><spring:message code="title"/></title>
     <%@include file="../include/header.jsp" %>
+    <script type="text/javascript">
+        $(document).ready(function() {
+
+            $(".sortable-tbl").tablesorter({
+                sortList: [[0,0]],
+                headers: {
+                    2: { sorter: 'commaNumber' },
+                    3: { sorter: 'commaNumber' },
+                    4: { sorter: 'commaNumber' },
+                    5: { sorter: 'commaNumber' }
+                }
+            });
+
+        });
+    </script>
 </head>
 
 <body>
@@ -30,6 +45,7 @@
         <div class="btn-group year-selector" style="float:right; margin-left: 0.5em;">
 
             <button class="btn dropdown-toggle" data-toggle="dropdown">
+                <i class="icon-time"></i>
                 <spring:message code="ov.header.year" />&nbsp;<span class="caret"></span>
             </button>
 
@@ -75,9 +91,9 @@
                     var active = getUrlParam("active");
                     
                     if(active === "true") {
-                        $("div.status-selector button").html('<spring:message code="table.active" />&nbsp;<span class="caret"></span>');
+                        $("div.status-selector button").html('<img src="<spring:url value='/images/online.png' />" />&nbsp;<spring:message code="table.active" />&nbsp;<span class="caret"></span>');
                     } else {
-                        $("div.status-selector button").html('<spring:message code="table.inactive" />&nbsp;<span class="caret"></span>')
+                        $("div.status-selector button").html('<img src="<spring:url value='/images/offline.png' />" />&nbsp;<spring:message code="table.inactive" />&nbsp;<span class="caret"></span>')
                     }
 
                     var href = window.location.href;
@@ -86,11 +102,11 @@
                     var inactiveHref = href.replace(/(active=)[^\&]+/, '$1' + "false");
                     
                     $("div.status-selector ul.dropdown-menu").append(
-                            '<li><a href="' + activeHref + '"><spring:message code="table.active" /></a></li>'
+                            '<li><a href="' + activeHref + '"><img src="<spring:url value='/images/online.png' />" />&nbsp;<spring:message code="table.active" /></a></li>'
                     );
 
                     $("div.status-selector ul.dropdown-menu").append(
-                            '<li><a href="' + inactiveHref + '"><spring:message code="table.inactive" /></a></li>'
+                            '<li><a href="' + inactiveHref + '"><img src="<spring:url value='/images/offline.png' />" />&nbsp;<spring:message code="table.inactive" /></a></li>'
                     );
                     
                 });
