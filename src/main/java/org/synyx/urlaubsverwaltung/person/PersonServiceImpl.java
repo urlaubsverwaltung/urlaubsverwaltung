@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
+import org.synyx.urlaubsverwaltung.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.web.PersonForm;
 import org.synyx.urlaubsverwaltung.security.CryptoService;
@@ -49,16 +50,18 @@ class PersonServiceImpl implements PersonService {
     private AccountService accountService;
     private MailService mailService;
     private CryptoService cryptoService;
+    private WorkingTimeService workingTimeService;
 
     @Autowired
     public PersonServiceImpl(PersonDAO personDAO, ApplicationService applicationService, MailService mailService,
-        AccountService accountService, CryptoService cryptoService) {
+        AccountService accountService, CryptoService cryptoService, WorkingTimeService workingTimeService) {
 
         this.personDAO = personDAO;
         this.applicationService = applicationService;
         this.mailService = mailService;
         this.accountService = accountService;
         this.cryptoService = cryptoService;
+        this.workingTimeService = workingTimeService;
     }
 
     /**
@@ -103,6 +106,8 @@ class PersonServiceImpl implements PersonService {
         person = personForm.fillPersonObject(person);
 
         save(person);
+
+        workingTimeService.create(personForm.getWorkingDays(), person);
 
         int year = Integer.parseInt(personForm.getYear());
         int dayFrom = Integer.parseInt(personForm.getDayFrom());

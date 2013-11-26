@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.calendar;
+package org.synyx.urlaubsverwaltung.calendar.workingtime;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
@@ -61,6 +61,12 @@ public class WorkingTime extends AbstractPersistable<Integer> {
         for (Integer dayOfWeek : workingDays) {
             setDayLengthForWeekDay(dayOfWeek, dayLength);
         }
+    }
+
+
+    public void setPerson(Person person) {
+
+        this.person = person;
     }
 
 

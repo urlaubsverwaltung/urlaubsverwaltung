@@ -19,6 +19,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
+import org.synyx.urlaubsverwaltung.calendar.Day;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.security.web.SecurityUtil;
@@ -174,6 +175,7 @@ public class PersonManagementController {
         model.addAttribute(ControllerConstants.PERSON, person);
         model.addAttribute(PersonConstants.PERSONFORM, personForm);
         model.addAttribute("currentYear", DateMidnight.now().getYear());
+        model.addAttribute("weekDays", Day.values());
     }
 
 

@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.DayLength;
+import org.synyx.urlaubsverwaltung.calendar.workingtime.WorkingTime;
 
 import java.math.BigDecimal;
 

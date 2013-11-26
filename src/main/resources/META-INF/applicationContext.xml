@@ -50,7 +50,10 @@
     <constructor-arg ref="applicationService" />
     <constructor-arg ref="accountService" />
     <constructor-arg ref="mailService" />
+    <constructor-arg ref="workingTimeService" />
 </bean>
+
+<bean id="workingTimeService" class="org.synyx.urlaubsverwaltung.calendar.workingtime.WorkingTimeService" />
 
 <bean id="applicationService" class="org.synyx.urlaubsverwaltung.application.service.ApplicationServiceImpl">
     <constructor-arg ref="cryptoService" />

@@ -114,6 +114,44 @@
         </div>
     </div>
 
+    <div class="control-group">
+        <label class="control-label"><spring:message code='working.time'/></label>
+
+        <div class="controls">
+            
+            <form:checkboxes path="workingDays" items="${weekDays}" itemValue="dayOfWeek" />
+
+            <%--<label class="checkbox" for="monday">--%>
+                <%--<form:checkbox id="monday" path="workingTimeForm.monday" />&nbsp;<spring:message code='monday'/>--%>
+            <%--</label>--%>
+
+            <%--<label class="checkbox" for="tuesday">--%>
+                <%--<form:checkbox id="tuesday" path="workingTimeForm.tuesday" />&nbsp;<spring:message code='tuesday'/>--%>
+            <%--</label>--%>
+
+            <%--<label class="checkbox" for="wednesday">--%>
+                <%--<form:checkbox id="wednesday" path="workingTimeForm.wednesday" />&nbsp;<spring:message code='wednesday'/>--%>
+            <%--</label>--%>
+
+            <%--<label class="checkbox" for="thursday">--%>
+                <%--<form:checkbox id="thursday" path="workingTimeForm.thursday" />&nbsp;<spring:message code='thursday'/>--%>
+            <%--</label>--%>
+
+            <%--<label class="checkbox" for="friday">--%>
+                <%--<form:checkbox id="friday" path="workingTimeForm.friday" />&nbsp;<spring:message code='friday'/>--%>
+            <%--</label>--%>
+
+            <%--<label class="checkbox" for="saturday">--%>
+                <%--<form:checkbox id="saturday" path="workingTimeForm.saturday" />&nbsp;<spring:message code='saturday'/>--%>
+            <%--</label>--%>
+            <%----%>
+            <%--<label class="checkbox" for="sunday">--%>
+                <%--<form:checkbox id="sunday" path="workingTimeForm.sunday" />&nbsp;<spring:message code='sunday'/>--%>
+            <%--</label>--%>
+            
+        </div>
+    </div>
+
 </div>
 
 

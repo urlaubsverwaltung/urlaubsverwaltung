@@ -38,6 +38,8 @@ public class PersonForm {
 
     private boolean remainingVacationDaysExpire;
 
+    private Integer[] workingDays;
+
     public PersonForm() {
     }
 
@@ -231,6 +233,18 @@ public class PersonForm {
     public void setLoginName(String loginName) {
 
         this.loginName = loginName;
+    }
+
+
+    public Integer[] getWorkingDays() {
+
+        return workingDays;
+    }
+
+
+    public void setWorkingDays(Integer[] workingDays) {
+
+        this.workingDays = workingDays;
     }
 
 
