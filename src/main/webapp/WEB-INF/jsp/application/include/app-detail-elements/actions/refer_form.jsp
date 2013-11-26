@@ -14,7 +14,11 @@
             </c:forEach>
         </form:select>
         &nbsp;
-        <input type="submit" class="btn" name="<spring:message code='ok' />" value="<spring:message code='ok' />" />
-        <input type="button" class="btn" name="<spring:message code='cancel' />" value="<spring:message code='cancel' />" onclick="$('#refer').hide();" />
+        <button type="submit" class="btn" style="margin-top: 0">
+            <i class="icon-share"></i>&nbsp;<spring:message code='app.state.refer.short' />
+        </button>
+        <button type="button" class="btn" style="margin-top: 0" onclick="$('#refer').hide();">
+            <i class="icon-remove"></i>&nbsp;<spring:message code='cancel' />
+        </button>
     </div>
 </form:form>

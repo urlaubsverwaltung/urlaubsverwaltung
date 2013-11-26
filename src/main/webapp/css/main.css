@@ -497,6 +497,11 @@ Overriding bootstrap stuff
     border-top-color: #555555 !important;
 }
 
+.navbar .dropdown .caret:hover, .navbar .dropdown:hover .caret {
+    border-bottom-color: #0083CC !important;
+    border-top-color: #0083CC !important;
+}
+
 .form-select {
     width: 90%;
     height: auto;

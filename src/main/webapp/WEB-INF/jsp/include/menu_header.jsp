@@ -72,12 +72,12 @@
                                     </li>
                                     <li>
                                         <a href="${formUrlPrefix}/application/rejected">
-                                            <i class="icon-remove-circle"></i>&nbsp;<spring:message code="reject.app" />
+                                            <i class="icon-ban-circle"></i>&nbsp;<spring:message code="reject.app" />
                                         </a>
                                     </li>
                                     <li>
                                         <a href="${formUrlPrefix}/application/cancelled">
-                                            <i class="icon-trash"></i>&nbsp;<spring:message code="cancel.app" />
+                                            <i class="icon-remove-circle"></i>&nbsp;<spring:message code="cancel.app" />
                                         </a>
                                     </li>
                                 </ul>

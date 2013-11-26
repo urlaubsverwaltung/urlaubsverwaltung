@@ -47,7 +47,7 @@
         <form:textarea path="reason" cssClass="form-textarea" onkeyup="count(this.value, 'text-cancel');" onkeydown="maxChars(this,200); count(this.value, 'text-cancel');" />
         <br /><br />
         <button type="submit" class="btn">
-            <i class="icon-trash"></i>&nbsp;<spring:message code='delete' />
+            <i class="icon-remove-circle"></i>&nbsp;<spring:message code='delete' />
         </button>
         <button type="button" class="btn" onclick="$('#cancel').hide();">
             <i class="icon-remove"></i>&nbsp;<spring:message code='cancel' />

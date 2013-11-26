@@ -7,6 +7,7 @@
 <div class="btn-group year-selector">
 
     <button class="btn dropdown-toggle" data-toggle="dropdown">
+        <i class="icon-time"></i>
         <spring:message code="ov.header.year" />&nbsp;<span class="caret"></span>
     </button>
 

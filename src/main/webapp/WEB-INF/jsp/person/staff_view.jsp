@@ -45,10 +45,10 @@
                 var active;
                 
                 if(path.indexOf("inactive") != -1) {
-                    $("div.status-selector button").html('<spring:message code="table.inactive" />&nbsp;<span class="caret"></span>');
+                    $("div.status-selector button").html('<img src="<spring:url value='/images/offline.png' />" />&nbsp;<spring:message code="table.inactive" />&nbsp;<span class="caret"></span>');
                     active = "false";
                 } else {
-                    $("div.status-selector button").html('<spring:message code="table.active" />&nbsp;<span class="caret"></span>');
+                    $("div.status-selector button").html('<img src="<spring:url value='/images/online.png' />" />&nbsp;<spring:message code="table.active" />&nbsp;<span class="caret"></span>');
                     active = "true";
                 }
 
@@ -85,8 +85,18 @@
                                 </button>
 
                                 <ul class="dropdown-menu">
-                                    <li><a href="${formUrlPrefix}/staff"><spring:message code="table.active" /></a></li>
-                                    <li><a href="${formUrlPrefix}/staff/inactive"><spring:message code="table.inactive" /></a></li>
+                                    <li>
+                                        <a href="${formUrlPrefix}/staff">
+                                            <img src="<spring:url value='/images/online.png' />" />
+                                            <spring:message code="table.active" />
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="${formUrlPrefix}/staff/inactive">
+                                            <img src="<spring:url value='/images/offline.png' />" />
+                                            <spring:message code="table.inactive" />
+                                        </a>
+                                    </li>
                                 </ul>
 
                             </div>

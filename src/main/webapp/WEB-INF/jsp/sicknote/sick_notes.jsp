@@ -114,7 +114,7 @@
                         <i class="icon-print"></i>&nbsp;<spring:message code='Print' />
                     </a>
                     <a href="#changeViewModal" role="button" class="btn sicknote-button" data-toggle="modal">
-                        <i class="icon-eye-open"></i>&nbsp;<spring:message code="filter" />
+                        <i class="icon-filter"></i>&nbsp;<spring:message code="filter" />
                     </a>
                 </legend>
 

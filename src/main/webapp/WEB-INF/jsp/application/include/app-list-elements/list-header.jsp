@@ -33,6 +33,7 @@
         <div class="btn-group person-selector">
 
             <button class="btn dropdown-toggle" data-toggle="dropdown">
+                <i class="icon-filter"></i>
                 <spring:message code="status.app"/>&nbsp;<span class="caret"></span>
             </button>
 
@@ -40,31 +41,27 @@
 
                 <li>
                     <a href="${linkPrefix}/all">
-                        <spring:message code="all.app"/>
+                        <i class="icon-th-list"></i>&nbsp;<spring:message code="all.app" />
                     </a>
                 </li>
-
                 <li>
                     <a href="${linkPrefix}/waiting">
-                        <spring:message code="waiting.app"/>
+                        <i class="icon-edit"></i>&nbsp;<spring:message code="waiting.app" />
                     </a>
                 </li>
-
                 <li>
                     <a href="${linkPrefix}/allowed">
-                        <spring:message code="allow.app"/>
+                        <i class="icon-ok-circle"></i>&nbsp;<spring:message code="allow.app" />
                     </a>
                 </li>
-
                 <li>
                     <a href="${linkPrefix}/rejected">
-                        <spring:message code="reject.app"/>
+                        <i class="icon-ban-circle"></i>&nbsp;<spring:message code="reject.app" />
                     </a>
                 </li>
-
                 <li>
                     <a href="${linkPrefix}/cancelled">
-                        <spring:message code="cancel.app"/>
+                        <i class="icon-remove-circle"></i>&nbsp;<spring:message code="cancel.app" />
                     </a>
                 </li>
 

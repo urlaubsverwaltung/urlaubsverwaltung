@@ -25,6 +25,7 @@
         <div class="btn-group person-selector">
 
             <button class="btn dropdown-toggle" data-toggle="dropdown">
+                <i class="icon-user"></i>
                 <spring:message code="ov.header.person" />&nbsp;<span class="caret"></span>
             </button>
 
