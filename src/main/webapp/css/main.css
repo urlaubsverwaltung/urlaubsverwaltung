@@ -502,6 +502,11 @@ Overriding bootstrap stuff
     border-top-color: #0083CC !important;
 }
 
+ul.icons-on-top [class^="icon-"], ul.icons-on-top [class*=" icon-"] {
+    vertical-align: top !important;
+    vertical-align: top !important;
+}
+
 .form-select {
     width: 90%;
     height: auto;
@@ -669,4 +674,12 @@ tr.inactive {
 
 .print-visible {
     display: none;
+}
+
+b.waiting-icon {
+    font-size: 15px;
+}
+
+.dropdown-menu li a:hover b.waiting-icon {
+    color: #333333 !important;
 }

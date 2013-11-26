@@ -54,7 +54,7 @@
                                     <i class="icon-list-alt"></i>&nbsp;<spring:message code="apps.vac" />
                                     <span class="caret"></span>
                                 </a>
-                                <ul class="dropdown-menu">
+                                <ul class="dropdown-menu icons-on-top">
                                     <li>
                                         <a href="${formUrlPrefix}/application/all">
                                             <i class="icon-th-list"></i>&nbsp;<spring:message code="all.app" />
@@ -62,12 +62,12 @@
                                     </li>
                                     <li>
                                         <a href="${formUrlPrefix}/application/waiting">
-                                            <i class="icon-edit"></i>&nbsp;<spring:message code="waiting.app" />
+                                            &nbsp;<b class="waiting-icon">?</b>&nbsp;<spring:message code="waiting.app" />
                                         </a>
                                     </li>
                                     <li>
                                         <a href="${formUrlPrefix}/application/allowed">
-                                            <i class="icon-ok-circle"></i>&nbsp;<spring:message code="allow.app" />
+                                            <i class="icon-ok"></i>&nbsp;<spring:message code="allow.app" />
                                         </a>
                                     </li>
                                     <li>
@@ -77,7 +77,7 @@
                                     </li>
                                     <li>
                                         <a href="${formUrlPrefix}/application/cancelled">
-                                            <i class="icon-remove-circle"></i>&nbsp;<spring:message code="cancel.app" />
+                                            <i class="icon-trash"></i>&nbsp;<spring:message code="cancel.app" />
                                         </a>
                                     </li>
                                 </ul>

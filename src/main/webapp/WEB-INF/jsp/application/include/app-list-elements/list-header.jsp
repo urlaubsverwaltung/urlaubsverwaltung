@@ -37,7 +37,7 @@
                 <spring:message code="status.app"/>&nbsp;<span class="caret"></span>
             </button>
 
-            <ul class="dropdown-menu">
+            <ul class="dropdown-menu icons-on-top">
 
                 <li>
                     <a href="${linkPrefix}/all">
@@ -46,12 +46,12 @@
                 </li>
                 <li>
                     <a href="${linkPrefix}/waiting">
-                        <i class="icon-edit"></i>&nbsp;<spring:message code="waiting.app" />
+                        &nbsp;<b class="waiting-icon">?</b>&nbsp;<spring:message code="waiting.app" />
                     </a>
                 </li>
                 <li>
                     <a href="${linkPrefix}/allowed">
-                        <i class="icon-ok-circle"></i>&nbsp;<spring:message code="allow.app" />
+                        <i class="icon-ok"></i>&nbsp;<spring:message code="allow.app" />
                     </a>
                 </li>
                 <li>
@@ -61,7 +61,7 @@
                 </li>
                 <li>
                     <a href="${linkPrefix}/cancelled">
-                        <i class="icon-remove-circle"></i>&nbsp;<spring:message code="cancel.app" />
+                        <i class="icon-trash"></i>&nbsp;<spring:message code="cancel.app" />
                     </a>
                 </li>
 
