@@ -57,7 +57,7 @@ function getHolidaysForMonth(year, month, urlPrefix) {
 
 }
 
-function createDatepickerInstances(regional, urlPrefix, vacationUrl) {
+function createDatepickerInstances(regional, urlPrefix, vacationUrl, personId) {
 
     $.datepicker.setDefaults($.datepicker.regional[regional]);
     $("#from, #to, #at").datepicker({
@@ -123,7 +123,7 @@ function createDatepickerInstances(regional, urlPrefix, vacationUrl) {
                 toDate = $("#at").datepicker("getDate");
             }
             
-            sendGetDaysRequest(vacationUrl, startDate, toDate, dayLength, ".days", true);
+            sendGetDaysRequest(vacationUrl, startDate, toDate, dayLength, personId, ".days", true);
 
         }
     });

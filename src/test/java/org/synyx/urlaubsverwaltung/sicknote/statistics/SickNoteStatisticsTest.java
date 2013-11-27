@@ -12,6 +12,7 @@ import org.mockito.Mockito;
 
 import org.synyx.urlaubsverwaltung.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
+import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteDAO;
 
@@ -33,6 +34,7 @@ public class SickNoteStatisticsTest {
     private OwnCalendarService calendarService;
     private SickNoteDAO sickNoteDAO;
     private List<SickNote> sickNotes;
+    private Person person;
 
     @Before
     public void setUp() throws Exception {
@@ -40,14 +42,17 @@ public class SickNoteStatisticsTest {
         calendarService = Mockito.mock(OwnCalendarService.class);
         sickNoteDAO = Mockito.mock(SickNoteDAO.class);
         sickNotes = new ArrayList<SickNote>();
+        person = new Person();
 
         SickNote sickNote1 = new SickNote();
         sickNote1.setStartDate(new DateMidnight(2013, DateTimeConstants.OCTOBER, 7));
         sickNote1.setEndDate(new DateMidnight(2013, DateTimeConstants.OCTOBER, 11));
+        sickNote1.setPerson(person);
 
         SickNote sickNote2 = new SickNote();
         sickNote2.setStartDate(new DateMidnight(2013, DateTimeConstants.DECEMBER, 18));
         sickNote2.setEndDate(new DateMidnight(2014, DateTimeConstants.JANUARY, 3));
+        sickNote2.setPerson(person);
 
         sickNotes.add(sickNote1);
         sickNotes.add(sickNote2);
@@ -56,10 +61,10 @@ public class SickNoteStatisticsTest {
         Mockito.when(sickNoteDAO.findAllActiveByYear(2013)).thenReturn(sickNotes);
 
         Mockito.when(calendarService.getWorkDays(DayLength.FULL, new DateMidnight(2013, DateTimeConstants.OCTOBER, 7),
-                new DateMidnight(2013, DateTimeConstants.OCTOBER, 11))).thenReturn(new BigDecimal("5"));
+                new DateMidnight(2013, DateTimeConstants.OCTOBER, 11), person)).thenReturn(new BigDecimal("5"));
 
         Mockito.when(calendarService.getWorkDays(DayLength.FULL, new DateMidnight(2013, DateTimeConstants.DECEMBER, 18),
-                new DateMidnight(2013, DateTimeConstants.DECEMBER, 31))).thenReturn(new BigDecimal("9"));
+                new DateMidnight(2013, DateTimeConstants.DECEMBER, 31), person)).thenReturn(new BigDecimal("9"));
 
         statistics = new SickNoteStatistics(2013, sickNoteDAO, calendarService);
     }

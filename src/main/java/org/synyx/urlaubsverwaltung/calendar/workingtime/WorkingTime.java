@@ -24,7 +24,7 @@ import javax.persistence.OneToOne;
 public class WorkingTime extends AbstractPersistable<Integer> {
 
     @OneToOne
-    Person person;
+    private Person person;
 
     @Enumerated(EnumType.STRING)
     private DayLength monday;

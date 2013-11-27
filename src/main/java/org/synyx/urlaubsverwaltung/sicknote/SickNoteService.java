@@ -86,8 +86,13 @@ public class SickNoteService {
 
         BigDecimal workDays;
 
-        if (sickNote.getStartDate() != null && sickNote.getEndDate() != null) {
-            workDays = calendarService.getWorkDays(DayLength.FULL, sickNote.getStartDate(), sickNote.getEndDate());
+        DateMidnight startDate = sickNote.getStartDate();
+        DateMidnight endDate = sickNote.getEndDate();
+
+        if (startDate != null && endDate != null) {
+            Person person = sickNote.getPerson();
+
+            workDays = calendarService.getWorkDays(DayLength.FULL, startDate, endDate, person);
         } else {
             workDays = BigDecimal.ZERO;
         }

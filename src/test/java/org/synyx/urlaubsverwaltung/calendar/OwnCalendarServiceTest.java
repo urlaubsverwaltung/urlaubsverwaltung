@@ -4,15 +4,16 @@ package org.synyx.urlaubsverwaltung.calendar;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
 
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
+
+import org.mockito.Mockito;
 
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.calendar.workingtime.WorkingTime;
+import org.synyx.urlaubsverwaltung.calendar.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
 
@@ -24,39 +25,36 @@ import static org.junit.Assert.assertNotNull;
 
 
 /**
+ * Unit test for {@link OwnCalendarService}.
+ *
  * @author  Aljona Murygina
  */
 public class OwnCalendarServiceTest {
 
     private OwnCalendarService instance;
     private JollydayCalendar jollydayCalendar;
+    private WorkingTimeService workingTimeService;
     private Application application;
-
-    public OwnCalendarServiceTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
+    private WorkingTime workingTime;
+    private Person person;
 
     @Before
     public void setUp() {
 
         jollydayCalendar = new JollydayCalendar();
-        instance = new OwnCalendarService(jollydayCalendar);
+        workingTimeService = Mockito.mock(WorkingTimeService.class);
+
+        instance = new OwnCalendarService(jollydayCalendar, workingTimeService);
 
         application = new Application();
-    }
+        person = new Person();
+        workingTime = new WorkingTime();
 
+        List<Integer> workingDays = Arrays.asList(DateTimeConstants.MONDAY, DateTimeConstants.TUESDAY,
+                DateTimeConstants.WEDNESDAY, DateTimeConstants.THURSDAY, DateTimeConstants.FRIDAY);
+        workingTime.setWorkingDays(workingDays, DayLength.FULL);
 
-    @After
-    public void tearDown() {
+        Mockito.when(workingTimeService.getByPerson(person)).thenReturn(workingTime);
     }
 
 
@@ -93,10 +91,10 @@ public class OwnCalendarServiceTest {
         DateMidnight start = new DateMidnight(2010, 12, 17);
         DateMidnight end = new DateMidnight(2010, 12, 31);
 
-        BigDecimal returnValue = instance.getWorkDays(application.getHowLong(), start, end);
+        BigDecimal returnValue = instance.getWorkDays(application.getHowLong(), start, end, person);
 
         assertNotNull(returnValue);
-        assertEquals(BigDecimal.valueOf(10.0).setScale(2), returnValue);
+        assertEquals(BigDecimal.valueOf(10.0), returnValue);
 
         // Testing for 2009: 17.12. is Thursday, 31.12. ist Thursday
         // between these dates: 2 public holidays (25., 26.) plus 2*0.5 public holidays (24., 31.)
@@ -106,37 +104,37 @@ public class OwnCalendarServiceTest {
         start = new DateMidnight(2009, 12, 17);
         end = new DateMidnight(2009, 12, 31);
 
-        returnValue = instance.getWorkDays(application.getHowLong(), start, end);
+        returnValue = instance.getWorkDays(application.getHowLong(), start, end, person);
 
         assertNotNull(returnValue);
-        assertEquals(BigDecimal.valueOf(9.0).setScale(2), returnValue);
+        assertEquals(BigDecimal.valueOf(9.0), returnValue);
 
         // start date and end date are not in the same year
         start = new DateMidnight(2011, 12, 26);
         end = new DateMidnight(2012, 1, 15);
 
-        returnValue = instance.getWorkDays(application.getHowLong(), start, end);
+        returnValue = instance.getWorkDays(application.getHowLong(), start, end, person);
 
         assertNotNull(returnValue);
-        assertEquals(BigDecimal.valueOf(13.0).setScale(2), returnValue);
+        assertEquals(BigDecimal.valueOf(13.0), returnValue);
 
         // Labour Day (1st May)
         start = new DateMidnight(2009, 4, 27);
         end = new DateMidnight(2009, 5, 2);
 
-        returnValue = instance.getWorkDays(application.getHowLong(), start, end);
+        returnValue = instance.getWorkDays(application.getHowLong(), start, end, person);
 
         assertNotNull(returnValue);
-        assertEquals(BigDecimal.valueOf(4.0).setScale(2), returnValue);
+        assertEquals(BigDecimal.valueOf(4.0), returnValue);
 
         // start date is Sunday, end date Saturday
         start = new DateMidnight(2011, 1, 2);
         end = new DateMidnight(2011, 1, 8);
 
-        returnValue = instance.getWorkDays(application.getHowLong(), start, end);
+        returnValue = instance.getWorkDays(application.getHowLong(), start, end, person);
 
         assertNotNull(returnValue);
-        assertEquals(BigDecimal.valueOf(4.0).setScale(2), returnValue);
+        assertEquals(BigDecimal.valueOf(4.0), returnValue);
 
         // testing for half days
         application.setHowLong(DayLength.MORNING);
@@ -144,10 +142,10 @@ public class OwnCalendarServiceTest {
         start = new DateMidnight(2011, 1, 4);
         end = new DateMidnight(2011, 1, 8);
 
-        returnValue = instance.getWorkDays(application.getHowLong(), start, end);
+        returnValue = instance.getWorkDays(application.getHowLong(), start, end, person);
 
         assertNotNull(returnValue);
-        assertEquals(BigDecimal.valueOf(1.5).setScale(2), returnValue);
+        assertEquals(BigDecimal.valueOf(1.5), returnValue);
     }
 
 
@@ -166,7 +164,7 @@ public class OwnCalendarServiceTest {
 
         BigDecimal returnValue = instance.getPersonalWorkDays(startDate, endDate, workingTime);
 
-        assertEquals(BigDecimal.valueOf(4.0), returnValue);
+        assertEquals(new BigDecimal("4.0"), returnValue);
     }
 
 
@@ -185,7 +183,7 @@ public class OwnCalendarServiceTest {
 
         BigDecimal returnValue = instance.getPersonalWorkDays(startDate, endDate, workingTime);
 
-        assertEquals(BigDecimal.valueOf(1.0), returnValue);
+        assertEquals(BigDecimal.ONE, returnValue.setScale(0));
 
         // tuesday
         startDate = new DateMidnight(2013, DateTimeConstants.NOVEMBER, 26);
@@ -193,6 +191,77 @@ public class OwnCalendarServiceTest {
 
         returnValue = instance.getPersonalWorkDays(startDate, endDate, workingTime);
 
-        assertEquals(BigDecimal.valueOf(0), returnValue);
+        assertEquals(BigDecimal.ZERO, returnValue);
+    }
+
+
+    @Test
+    public void testGetWorkDaysForTeilzeitStaff() {
+
+        List<Integer> workingDays = Arrays.asList(DateTimeConstants.MONDAY, DateTimeConstants.WEDNESDAY,
+                DateTimeConstants.FRIDAY, DateTimeConstants.SATURDAY);
+        workingTime.setWorkingDays(workingDays, DayLength.FULL);
+
+        DateMidnight startDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 16);
+        DateMidnight endDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 31);
+
+        BigDecimal returnValue = instance.getWorkDays(DayLength.FULL, startDate, endDate, person);
+
+        assertEquals(new BigDecimal("8.0"), returnValue);
+    }
+
+
+    @Test
+    public void testGetWorkDaysForVollzeitStaff() {
+
+        List<Integer> workingDays = Arrays.asList(DateTimeConstants.MONDAY, DateTimeConstants.TUESDAY,
+                DateTimeConstants.WEDNESDAY, DateTimeConstants.THURSDAY, DateTimeConstants.FRIDAY);
+        workingTime.setWorkingDays(workingDays, DayLength.FULL);
+
+        DateMidnight startDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 16);
+        DateMidnight endDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 31);
+
+        BigDecimal returnValue = instance.getWorkDays(DayLength.FULL, startDate, endDate, person);
+
+        assertEquals(new BigDecimal("9.0"), returnValue);
+    }
+
+
+    @Test
+    public void testGetWorkDaysHalfDay() {
+
+        // monday
+        DateMidnight startDate = new DateMidnight(2013, DateTimeConstants.NOVEMBER, 25);
+        DateMidnight endDate = new DateMidnight(2013, DateTimeConstants.NOVEMBER, 25);
+
+        BigDecimal returnValue = instance.getWorkDays(DayLength.MORNING, startDate, endDate, person);
+
+        assertEquals(new BigDecimal("0.5"), returnValue);
+    }
+
+
+    @Test
+    public void testGetWorkDaysZero() {
+
+        // saturday
+        DateMidnight startDate = new DateMidnight(2013, DateTimeConstants.NOVEMBER, 23);
+        DateMidnight endDate = new DateMidnight(2013, DateTimeConstants.NOVEMBER, 23);
+
+        BigDecimal returnValue = instance.getWorkDays(DayLength.FULL, startDate, endDate, person);
+
+        assertEquals(BigDecimal.ZERO, returnValue.setScale(0));
+    }
+
+
+    @Test
+    public void testGetWorkDaysHalfDayZero() {
+
+        // monday
+        DateMidnight startDate = new DateMidnight(2013, DateTimeConstants.NOVEMBER, 23);
+        DateMidnight endDate = new DateMidnight(2013, DateTimeConstants.NOVEMBER, 23);
+
+        BigDecimal returnValue = instance.getWorkDays(DayLength.MORNING, startDate, endDate, person);
+
+        assertEquals(BigDecimal.ZERO, returnValue.setScale(0));
     }
 }

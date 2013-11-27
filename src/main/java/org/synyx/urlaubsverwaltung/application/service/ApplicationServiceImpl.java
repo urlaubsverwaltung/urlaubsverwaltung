@@ -91,7 +91,7 @@ class ApplicationServiceImpl implements ApplicationService {
     public Application apply(Application application, Person person, Person applier) {
 
         BigDecimal days = calendarService.getWorkDays(application.getHowLong(), application.getStartDate(),
-                application.getEndDate());
+                application.getEndDate(), person);
 
         application.setStatus(ApplicationStatus.WAITING);
         application.setDays(days);

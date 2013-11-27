@@ -19,12 +19,15 @@ import org.synyx.urlaubsverwaltung.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.calendar.JollydayCalendar;
 import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
+import org.synyx.urlaubsverwaltung.calendar.workingtime.WorkingTime;
+import org.synyx.urlaubsverwaltung.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -44,7 +47,17 @@ public class CalculationServiceTest {
 
         applicationDAO = Mockito.mock(ApplicationDAO.class);
         accountService = Mockito.mock(AccountService.class);
-        calendarService = new OwnCalendarService(new JollydayCalendar());
+
+        WorkingTimeService workingTimeService = Mockito.mock(WorkingTimeService.class);
+        calendarService = new OwnCalendarService(new JollydayCalendar(), workingTimeService);
+
+        // create working time object (MON-FRI)
+        WorkingTime workingTime = new WorkingTime();
+        List<Integer> workingDays = Arrays.asList(DateTimeConstants.MONDAY, DateTimeConstants.TUESDAY,
+                DateTimeConstants.WEDNESDAY, DateTimeConstants.THURSDAY, DateTimeConstants.FRIDAY);
+        workingTime.setWorkingDays(workingDays, DayLength.FULL);
+
+        Mockito.when(workingTimeService.getByPerson(Mockito.any(Person.class))).thenReturn(workingTime);
 
         service = new CalculationService(applicationDAO, accountService, calendarService);
     }
@@ -340,7 +353,7 @@ public class CalculationServiceTest {
         // must be: 2 + 5 + 4 + 2 = 13
 
         Assert.assertNotNull(days);
-        Assert.assertEquals(BigDecimal.valueOf(13).setScale(2), days);
+        Assert.assertEquals(new BigDecimal("13.0"), days);
     }
 
 
@@ -387,6 +400,6 @@ public class CalculationServiceTest {
         // must be: 2.5 + 5 + 4 = 11.5
 
         Assert.assertNotNull(days);
-        Assert.assertEquals(BigDecimal.valueOf(11.5).setScale(2), days);
+        Assert.assertEquals(new BigDecimal("11.5"), days);
     }
 }

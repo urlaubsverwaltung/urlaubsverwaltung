@@ -71,6 +71,7 @@
         <constructor-arg ref="googleCalendarService" />
         <constructor-arg ref="ownCalendarService" />
         <constructor-arg ref="jollydayCalendar" />
+        <constructor-arg ref="personService" />
     </bean>
 
     <bean class="org.synyx.urlaubsverwaltung.sicknote.SickNoteController">

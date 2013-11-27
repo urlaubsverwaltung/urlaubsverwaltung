@@ -22,7 +22,7 @@ function formatNumber(number) {
     return num;
 }
 
-function sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, el, long) {
+function sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, el, long) {
     
     $(el).empty();
     
@@ -31,8 +31,8 @@ function sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, el, long) {
     var startDateString = startDate.getFullYear() + '-' + (startDate.getMonth() + 1) + '-' + startDate.getDate();
     var toDateString = toDate.getFullYear() + '-' + (toDate.getMonth() + 1) + '-' + toDate.getDate();
 
-    var url = urlPrefix + "?start=" + startDateString + "&end=" + toDateString + "&length=" + dayLength;
-
+    var url = buildUrl(urlPrefix, startDateString, toDateString, dayLength, personId);
+        
     $.get(url, function(data) {
 
         var text;
@@ -64,14 +64,14 @@ function sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, el, long) {
 
             var startString = before.getFullYear() + "-" + (before.getMonth() + 1) + '-' + before.getDate();
             var toString = before.getFullYear() + '-12-31';
-            var url = urlPrefix + "?start=" + startString + "&end=" + toString + "&length=" + dayLength;
+            var url = buildUrl(urlPrefix, startString, toString, dayLength, personId);
 
             $.get(url, function(data) {
                 daysBefore = formatNumber(data);
 
                 startString = after.getFullYear() + '-1-1';
                 toString = after.getFullYear() + "-" + (after.getMonth() + 1) + '-' + after.getDate();
-                url = urlPrefix + "?start=" + startString + "&end=" + toString + "&length=" + dayLength;
+                url = buildUrl(urlPrefix, startString, toString, dayLength, personId);
 
                 $.get(url, function(data) {
                     daysAfter = formatNumber(data);
@@ -96,6 +96,12 @@ function sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, el, long) {
     });
         
     }
+    
+}
+
+function buildUrl(urlPrefix, startDate, endDate, dayLength, personId) {
+
+    return urlPrefix + "?start=" + startDate + "&end=" + endDate + "&length=" + dayLength + "&person=" + personId; 
     
 }
 

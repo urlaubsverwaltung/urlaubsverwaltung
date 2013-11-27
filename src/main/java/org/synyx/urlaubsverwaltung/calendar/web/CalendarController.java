@@ -21,6 +21,8 @@ import org.synyx.urlaubsverwaltung.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.calendar.GoogleCalendarService;
 import org.synyx.urlaubsverwaltung.calendar.JollydayCalendar;
 import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.io.IOException;
 
@@ -41,13 +43,15 @@ public class CalendarController {
     private GoogleCalendarService googleCalendarService;
     private OwnCalendarService ownCalendarService;
     private JollydayCalendar jollydayCalendar;
+    private PersonService personService;
 
     public CalendarController(GoogleCalendarService googleCalendarService, OwnCalendarService ownCalendarService,
-        JollydayCalendar jollydayCalendar) {
+        JollydayCalendar jollydayCalendar, PersonService personService) {
 
         this.googleCalendarService = googleCalendarService;
         this.ownCalendarService = ownCalendarService;
         this.jollydayCalendar = jollydayCalendar;
+        this.personService = personService;
     }
 
     /**
@@ -56,6 +60,7 @@ public class CalendarController {
      * @param  start  start date as String (e.g. 2013-3-21)
      * @param  end  end date as String (e.g. 2013-3-21)
      * @param  length  day length as String (FULL, MORNING or NOON)
+     * @param  personId  id of the person to calculate used days for
      *
      * @return  number of days as String for the given parameters or "N/A" if parameters are not valid in any way
      */
@@ -63,7 +68,8 @@ public class CalendarController {
     @ResponseBody
     public String getNumberOfDays(@RequestParam("start") String start,
         @RequestParam("end") String end,
-        @RequestParam("length") String length) {
+        @RequestParam("length") String length,
+        @RequestParam("person") Integer personId) {
 
         if (StringUtils.hasText(start) && StringUtils.hasText(end) && StringUtils.hasText(length)) {
             DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd"); // please do not change, because is used in custom.js
@@ -72,8 +78,8 @@ public class CalendarController {
 
             if (startDate.isBefore(endDate) || startDate.isEqual(endDate)) {
                 DayLength howLong = DayLength.valueOf(length);
-
-                BigDecimal days = ownCalendarService.getWorkDays(howLong, startDate, endDate);
+                Person person = personService.getPersonByID(personId);
+                BigDecimal days = ownCalendarService.getWorkDays(howLong, startDate, endDate, person);
 
                 return days.toString();
             }

@@ -6,8 +6,10 @@ import org.springframework.util.Assert;
 
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
+import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
 
@@ -50,8 +52,10 @@ public class UsedDaysOverview {
                 if (yearOfStartDate != yearOfEndDate) {
                     DateMidnight startDate = getStartDateForCalculation(application);
                     DateMidnight endDate = getEndDateForCalculation(application);
+                    DayLength dayLength = application.getHowLong();
+                    Person person = application.getPerson();
 
-                    days = calendarService.getWorkDays(application.getHowLong(), startDate, endDate);
+                    days = calendarService.getWorkDays(dayLength, startDate, endDate, person);
                 } else {
                     days = application.getDays();
                 }

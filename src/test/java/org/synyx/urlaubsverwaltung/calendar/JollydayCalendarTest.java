@@ -2,10 +2,13 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
 import org.joda.time.DateMidnight;
+import org.joda.time.DateTimeConstants;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.math.BigDecimal;
 
 import java.util.List;
 
@@ -27,7 +30,7 @@ public class JollydayCalendarTest {
 
 
     /**
-     * Test of getPublicHolidays method, of class JollydayCalendar.
+     * Test of getNumberOfPublicHolidays method, of class JollydayCalendar.
      */
     @Test
     public void testGetPublicHolidays() {
@@ -39,7 +42,7 @@ public class JollydayCalendarTest {
         DateMidnight startDate = new DateMidnight(2011, 12, 23);
         DateMidnight endDate = new DateMidnight(2011, 12, 27);
 
-        double returnValue = instance.getPublicHolidays(startDate, endDate);
+        double returnValue = instance.getNumberOfPublicHolidays(startDate, endDate);
         Assert.assertNotNull(returnValue);
         Assert.assertEquals(1.0, returnValue, 0.0);
 
@@ -50,7 +53,7 @@ public class JollydayCalendarTest {
         startDate = new DateMidnight(2010, 12, 23);
         endDate = new DateMidnight(2010, 12, 24);
 
-        returnValue = instance.getPublicHolidays(startDate, endDate);
+        returnValue = instance.getNumberOfPublicHolidays(startDate, endDate);
         Assert.assertNotNull(returnValue);
         Assert.assertEquals(0.5, returnValue, 0.0);
 
@@ -60,7 +63,7 @@ public class JollydayCalendarTest {
         startDate = new DateMidnight(2009, 12, 25);
         endDate = new DateMidnight(2009, 12, 31);
 
-        returnValue = instance.getPublicHolidays(startDate, endDate);
+        returnValue = instance.getNumberOfPublicHolidays(startDate, endDate);
         Assert.assertNotNull(returnValue);
         Assert.assertEquals(1.5, returnValue, 0.0);
     }
@@ -92,7 +95,7 @@ public class JollydayCalendarTest {
         DateMidnight startDate = new DateMidnight(2013, 5, 29);
         DateMidnight endDate = new DateMidnight(2013, 6, 6);
 
-        double returnValue = instance.getPublicHolidays(startDate, endDate);
+        double returnValue = instance.getNumberOfPublicHolidays(startDate, endDate);
 
         // expected that Corpus Christi is found as one and only public holiday in this period
         Assert.assertEquals(1, returnValue, 0);
@@ -105,7 +108,7 @@ public class JollydayCalendarTest {
         DateMidnight startDate = new DateMidnight(2014, 6, 19);
         DateMidnight endDate = new DateMidnight(2014, 6, 19);
 
-        double returnValue = instance.getPublicHolidays(startDate, endDate);
+        double returnValue = instance.getNumberOfPublicHolidays(startDate, endDate);
 
         // expected that Corpus Christi is found as one and only public holiday in this period
         Assert.assertEquals(1, returnValue, 0);
@@ -120,5 +123,115 @@ public class JollydayCalendarTest {
         // 3.10.2013
         Assert.assertEquals(holidays.size(), 1);
         Assert.assertEquals(holidays.get(0).toString(), "2013-10-03");
+    }
+
+
+    @Test
+    public void testIsPublicHoliday() {
+
+        DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 25);
+
+        boolean returnValue = instance.isPublicHoliday(testDate);
+
+        Assert.assertEquals(true, returnValue);
+    }
+
+
+    @Test
+    public void testIsNotPublicHoliday() {
+
+        DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 20);
+
+        boolean returnValue = instance.isPublicHoliday(testDate);
+
+        Assert.assertEquals(false, returnValue);
+    }
+
+
+    @Test
+    public void testCorpusChristiIsPublicHoliday() {
+
+        DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.MAY, 30);
+
+        boolean returnValue = instance.isPublicHoliday(testDate);
+
+        Assert.assertEquals(true, returnValue);
+    }
+
+
+    @Test
+    public void testChristmasEveIsPublicHoliday() {
+
+        DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 24);
+
+        boolean returnValue = instance.isPublicHoliday(testDate);
+
+        Assert.assertEquals(true, returnValue);
+    }
+
+
+    @Test
+    public void testNewYearsEveIsPublicHoliday() {
+
+        DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 31);
+
+        boolean returnValue = instance.isPublicHoliday(testDate);
+
+        Assert.assertEquals(true, returnValue);
+    }
+
+
+    @Test
+    public void testEasterIsPublicHoliday() {
+
+        DateMidnight testDate = new DateMidnight(2012, DateTimeConstants.APRIL, 8);
+
+        boolean returnValue = instance.isPublicHoliday(testDate);
+
+        Assert.assertEquals(true, returnValue);
+    }
+
+
+    @Test
+    public void testGetWorkingDurationOfDateNoHoliday() {
+
+        DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.NOVEMBER, 27);
+
+        BigDecimal returnValue = instance.getWorkingDurationOfDate(testDate);
+
+        Assert.assertEquals(BigDecimal.ONE, returnValue);
+    }
+
+
+    @Test
+    public void testGetWorkingDurationOfDateIsHoliday() {
+
+        DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 25);
+
+        BigDecimal returnValue = instance.getWorkingDurationOfDate(testDate);
+
+        Assert.assertEquals(BigDecimal.ZERO, returnValue);
+    }
+
+
+    @Test
+    public void testGetWorkingDurationOfDateIsChristmasEve() {
+
+        DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 24);
+
+        BigDecimal returnValue = instance.getWorkingDurationOfDate(testDate);
+
+        Assert.assertEquals(new BigDecimal("0.5"), returnValue);
+    }
+
+
+    @Test
+    public void testGetWorkingDurationOfDateIsNewYearsEve() {
+
+        DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 31);
+
+        BigDecimal returnValue = instance.getWorkingDurationOfDate(testDate);
+
+        Assert.assertEquals(new BigDecimal("0.5"), returnValue);
     }
 }

@@ -19,10 +19,12 @@
         var urlPrefix = "<spring:url value='/web/calendar/public-holiday' />";
         var vacationUrl = "<spring:url value='/web/calendar/vacation' />";
 
-        createDatepickerInstances(datepickerLocale, urlPrefix, vacationUrl);
+        var personId = '<c:out value="${person.id}" />';
+        
+        createDatepickerInstances(datepickerLocale, urlPrefix, vacationUrl, personId);
         
         $("input:radio[name=howLong]").change(function() {
-            sendGetDaysRequest(vacationUrl);
+//            sendGetDaysRequest(vacationUrl);
         });
     });
 </script>

@@ -19,6 +19,7 @@ import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.calendar.JollydayCalendar;
 import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
+import org.synyx.urlaubsverwaltung.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.security.CryptoService;
@@ -50,7 +51,9 @@ public class ApplicationServiceImplTest {
         applicationDAO = Mockito.mock(ApplicationDAO.class);
         cryptoService = new CryptoService();
         mailService = Mockito.mock(MailService.class);
-        calendarService = new OwnCalendarService(new JollydayCalendar());
+
+        WorkingTimeService workingTimeService = Mockito.mock(WorkingTimeService.class);
+        calendarService = new OwnCalendarService(new JollydayCalendar(), workingTimeService);
 
         instance = new ApplicationServiceImpl(applicationDAO, cryptoService, mailService, calendarService);
 

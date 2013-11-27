@@ -38,9 +38,7 @@
 
 <bean id="jollydayCalendar" class="org.synyx.urlaubsverwaltung.calendar.JollydayCalendar" />        
     
-<bean id="ownCalendarService" class="org.synyx.urlaubsverwaltung.calendar.OwnCalendarService">
-    <constructor-arg ref="jollydayCalendar" />
-</bean>
+<bean id="ownCalendarService" class="org.synyx.urlaubsverwaltung.calendar.OwnCalendarService" />
 
 <bean id="accountService" class="org.synyx.urlaubsverwaltung.account.AccountServiceImpl">
     <constructor-arg ref="ownCalendarService" />
@@ -55,10 +53,7 @@
 
 <bean id="workingTimeService" class="org.synyx.urlaubsverwaltung.calendar.workingtime.WorkingTimeService" />
 
-<bean id="applicationService" class="org.synyx.urlaubsverwaltung.application.service.ApplicationServiceImpl">
-    <constructor-arg ref="cryptoService" />
-    <constructor-arg ref="mailService" />
-</bean>
+<bean id="applicationService" class="org.synyx.urlaubsverwaltung.application.service.ApplicationServiceImpl" />
 
 <bean id="cryptoService" class="org.synyx.urlaubsverwaltung.security.CryptoService" />
 

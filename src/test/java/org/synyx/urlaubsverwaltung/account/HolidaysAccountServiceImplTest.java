@@ -12,6 +12,7 @@ import org.mockito.Mockito;
 
 import org.synyx.urlaubsverwaltung.calendar.JollydayCalendar;
 import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
+import org.synyx.urlaubsverwaltung.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
@@ -34,7 +35,9 @@ public class HolidaysAccountServiceImplTest {
     public void setup() {
 
         accountDAO = Mockito.mock(AccountDAO.class);
-        calendarService = new OwnCalendarService(new JollydayCalendar());
+
+        WorkingTimeService workingTimeService = Mockito.mock(WorkingTimeService.class);
+        calendarService = new OwnCalendarService(new JollydayCalendar(), workingTimeService);
         service = new AccountServiceImpl(accountDAO, calendarService);
 
         person = new Person();

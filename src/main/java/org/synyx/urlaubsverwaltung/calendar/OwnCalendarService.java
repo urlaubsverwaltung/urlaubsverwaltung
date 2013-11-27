@@ -3,8 +3,12 @@ package org.synyx.urlaubsverwaltung.calendar;
 
 import org.joda.time.DateMidnight;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.synyx.urlaubsverwaltung.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.calendar.workingtime.WorkingTime;
+import org.synyx.urlaubsverwaltung.calendar.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.math.BigDecimal;
@@ -18,10 +22,13 @@ import java.math.BigDecimal;
 public class OwnCalendarService {
 
     private JollydayCalendar jollydayCalendar;
+    private WorkingTimeService workingTimeService;
 
-    public OwnCalendarService(JollydayCalendar jollydayCalendar) {
+    @Autowired
+    public OwnCalendarService(JollydayCalendar jollydayCalendar, WorkingTimeService workingTimeService) {
 
         this.jollydayCalendar = jollydayCalendar;
+        this.workingTimeService = workingTimeService;
     }
 
     /**
@@ -87,22 +94,40 @@ public class OwnCalendarService {
 
 
     /**
-     * This method calculates how many workdays are used in the stated period (from start date to end date) getWeekDays
-     * calculates the number of weekdays (MON to FRI), getPublicHolidays calculates the number of official holidays
-     * within the week days period. Number of workdays results from difference between weekdays and official holidays.
+     * This method calculates how many workdays are used in the stated period (from start date to end date) considering
+     * the personal working time of the given person, getNumberOfPublicHolidays calculates the number of official
+     * holidays within the personal workdays period. Number of workdays results from difference between personal
+     * workdays and official holidays.
      *
      * @param  dayLength
      * @param  startDate
      * @param  endDate
+     * @param  person
      *
      * @return  number of workdays
      */
-    public BigDecimal getWorkDays(DayLength dayLength, DateMidnight startDate, DateMidnight endDate) {
+    public BigDecimal getWorkDays(DayLength dayLength, DateMidnight startDate, DateMidnight endDate, Person person) {
 
-        double vacDays = getWeekDays(startDate, endDate);
+        WorkingTime workingTime = workingTimeService.getByPerson(person);
 
-        vacDays = vacDays - jollydayCalendar.getPublicHolidays(startDate, endDate);
+        BigDecimal vacationDays = BigDecimal.ZERO;
 
-        return BigDecimal.valueOf(vacDays).multiply(dayLength.getDuration());
+        DateMidnight day = startDate;
+
+        while (!day.isAfter(endDate)) {
+            // value may be 1 for public holiday, 0 for not public holiday or 0.5 for Christmas Eve or New Year's Eve
+            BigDecimal duration = jollydayCalendar.getWorkingDurationOfDate(day);
+
+            int dayOfWeek = day.getDayOfWeek();
+            BigDecimal workingDuration = workingTime.getDayLengthForWeekDay(dayOfWeek).getDuration();
+
+            BigDecimal result = duration.multiply(workingDuration);
+
+            vacationDays = vacationDays.add(result);
+
+            day = day.plusDays(1);
+        }
+
+        return vacationDays.multiply(dayLength.getDuration()).setScale(1);
     }
 }

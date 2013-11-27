@@ -49,6 +49,7 @@
                     $(document).ready(function() {
 
                         var dayLength = '<c:out value="${application.howLong}" />';
+                        var personId = '<c:out value="${application.person.id}" />';
 
                         var startDate= "<joda:format pattern='yyyy/MM/dd' value='${application.startDate}' />";
                         var endDate = "<joda:format pattern='yyyy/MM/dd' value='${application.endDate}' />";
@@ -56,7 +57,7 @@
                         var from = new Date(startDate);
                         var to = new Date(endDate);
 
-                        sendGetDaysRequest("<spring:url value='/web/calendar/vacation' />", from, to, dayLength, ".days", true);
+                        sendGetDaysRequest("<spring:url value='/web/calendar/vacation' />", from, to, dayLength, personId, ".days", true);
 
                     });
 

@@ -12,6 +12,8 @@ import org.joda.time.chrono.GregorianChronology;
 
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 
+import java.math.BigDecimal;
+
 import java.net.URL;
 
 import java.util.ArrayList;
@@ -41,20 +43,14 @@ public class JollydayCalendar {
     }
 
     /**
-     * Calculates number of public holidays between two given dates. If a public holiday is on Saturday or on Sunday it
-     * is not counted among public holidays. Only public holidays on weekdays (Monday to Friday) are counted here.
+     * Returns all public holidays in a set that lie in the given date range.
      *
-     * @param  start
-     * @param  end
+     * @param  startDate
+     * @param  endDate
      *
-     * @return  number of public holidays between startDate and endDate
+     * @return
      */
-    double getPublicHolidays(DateMidnight start, DateMidnight end) {
-
-        DateMidnight startDate = start.withChronology(GregorianChronology.getInstance());
-        DateMidnight endDate = end.withChronology(GregorianChronology.getInstance());
-
-        double numberOfHolidays = 0.0;
+    private Set<Holiday> getPublicHolidays(DateMidnight startDate, DateMidnight endDate) {
 
         // get all public holidays of this year
         Set<Holiday> holidays = manager.getHolidays(startDate.getYear());
@@ -63,6 +59,68 @@ public class JollydayCalendar {
             Set<Holiday> holidaysNextYear = manager.getHolidays(endDate.getYear());
             holidays.addAll(holidaysNextYear);
         }
+
+        return holidays;
+    }
+
+
+    /**
+     * Checks if the given date is a public holiday by lookup in the given set of public holidays.
+     *
+     * @param  date
+     *
+     * @return  true if the given date is a public holiday, else false
+     */
+    boolean isPublicHoliday(DateMidnight date) {
+
+        if (manager.isHoliday(date.toLocalDate())) {
+            return true;
+        }
+
+        return false;
+    }
+
+
+    /**
+     * Returns the working duration for a date: may be full day (1.0) for a non public holiday, half day (0.5) for
+     * Christmas Eve or New Year's Eve or zero (0.0) for a public holiday.
+     *
+     * @param  date
+     *
+     * @return  working duration as BigDecimal: 1.0 for a non public holiday, 0.5 for Christmas Eve or New Year's Eve,
+     *          0.0 for a public holiday
+     */
+    BigDecimal getWorkingDurationOfDate(DateMidnight date) {
+
+        if (isPublicHoliday(date)) {
+            if (DateUtil.isChristmasEveOrNewYearsEve(date)) {
+                return new BigDecimal("0.5");
+            } else {
+                return BigDecimal.ZERO;
+            }
+        }
+
+        return BigDecimal.ONE;
+    }
+
+
+    /**
+     * Calculates number of public holidays between two given dates. If a public holiday is on Saturday or on Sunday it
+     * is not counted among public holidays. Only public holidays on weekdays (Monday to Friday) are counted here.
+     *
+     * @param  start
+     * @param  end
+     *
+     * @return  number of public holidays between startDate and endDate
+     */
+    double getNumberOfPublicHolidays(DateMidnight start, DateMidnight end) {
+
+        DateMidnight startDate = start.withChronology(GregorianChronology.getInstance());
+        DateMidnight endDate = end.withChronology(GregorianChronology.getInstance());
+
+        double numberOfHolidays = 0.0;
+
+        Set<Holiday> holidays = getPublicHolidays(startDate, endDate);
 
         // check if there are public holidays that are on Saturday or Sunday these days are worthless for the following
         // calculation

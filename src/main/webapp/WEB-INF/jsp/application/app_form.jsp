@@ -319,7 +319,7 @@
                                                     <b><spring:message code="name" /></b>
                                                 </td>
                                                 <td>
-                                                    <select class="form-select" onchange="window.location.href=this.options
+                                                    <select id="person-select" class="form-select" onchange="window.location.href=this.options
                                                         [this.selectedIndex].value">
                                                         <option value="${formUrlPrefix}/${person.id}/application/new" selected="selected"><c:out value="${person.firstName}" />&nbsp;<c:out value="${person.lastName}" /></option>
                                                         <c:forEach items="${personList}" var="p">
