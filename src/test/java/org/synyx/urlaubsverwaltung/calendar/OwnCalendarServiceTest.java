@@ -54,7 +54,8 @@ public class OwnCalendarServiceTest {
                 DateTimeConstants.WEDNESDAY, DateTimeConstants.THURSDAY, DateTimeConstants.FRIDAY);
         workingTime.setWorkingDays(workingDays, DayLength.FULL);
 
-        Mockito.when(workingTimeService.getByPerson(person)).thenReturn(workingTime);
+        Mockito.when(workingTimeService.getByPersonAndValidityDate(Mockito.eq(person), Mockito.any(DateMidnight.class)))
+            .thenReturn(workingTime);
     }
 
 

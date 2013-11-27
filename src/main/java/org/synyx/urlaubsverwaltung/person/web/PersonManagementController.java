@@ -162,7 +162,7 @@ public class PersonManagementController {
             rem = NumberUtil.formatNumber(remainingVacationDays, locale);
         }
 
-        WorkingTime workingTime = workingTimeService.getByPerson(person);
+        WorkingTime workingTime = workingTimeService.getCurrentOne(person);
 
         return new PersonForm(person, String.valueOf(year), account, ann, rem, remainingVacationDaysExpire,
                 workingTime);

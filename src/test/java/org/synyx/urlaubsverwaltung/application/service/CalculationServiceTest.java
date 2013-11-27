@@ -57,7 +57,8 @@ public class CalculationServiceTest {
                 DateTimeConstants.WEDNESDAY, DateTimeConstants.THURSDAY, DateTimeConstants.FRIDAY);
         workingTime.setWorkingDays(workingDays, DayLength.FULL);
 
-        Mockito.when(workingTimeService.getByPerson(Mockito.any(Person.class))).thenReturn(workingTime);
+        Mockito.when(workingTimeService.getByPersonAndValidityDate(Mockito.any(Person.class),
+                Mockito.any(DateMidnight.class))).thenReturn(workingTime);
 
         service = new CalculationService(applicationDAO, accountService, calendarService);
     }

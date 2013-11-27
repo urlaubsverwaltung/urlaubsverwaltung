@@ -5,6 +5,9 @@ import org.springframework.data.jpa.repository.Query;
 
 import org.synyx.urlaubsverwaltung.person.Person;
 
+import java.util.Date;
+import java.util.List;
+
 
 /**
  * Repository for accessing {@link WorkingTime} entities.
@@ -14,5 +17,17 @@ import org.synyx.urlaubsverwaltung.person.Person;
 public interface WorkingTimeDAO extends JpaRepository<WorkingTime, Integer> {
 
     @Query("SELECT x FROM WorkingTime x WHERE x.person = ?1")
-    WorkingTime findByPerson(Person person);
+    List<WorkingTime> findByPerson(Person person);
+
+
+    @Query(
+        "SELECT x FROM WorkingTime x WHERE x.person = ?1 AND x.validFrom = (SELECT MAX(w.validFrom) from WorkingTime w WHERE w.person = ?1 AND w.validFrom <= ?2)"
+    )
+    WorkingTime findByPersonAndValidityDate(Person person, Date date);
+
+
+    @Query(
+        "SELECT x FROM WorkingTime x WHERE x.person = ?1 AND x.validFrom = (SELECT MAX(w.validFrom) from WorkingTime w WHERE w.person = ?1)"
+    )
+    WorkingTime findLastOneByPerson(Person person);
 }
