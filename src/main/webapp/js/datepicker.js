@@ -162,3 +162,93 @@ function createDatepickerInstanceForSickNote(regional, from, to) {
     });
     
 }
+
+var publicHolidays = new Array();
+
+function getPublicHolidays(year, month, urlPrefix) {
+
+    var url = urlPrefix + "public-holiday?year=" + year + "&month=" + month;
+
+    console.log("Load public holidays for month=" + month);
+    
+    $.ajax({
+        url: url,
+        async: false,
+        dataType: "json",
+        type: "GET",
+        success: function (data) {
+
+            publicHolidays = data;
+
+        }
+    }); 
+    
+}
+
+var holidays = new Array();
+function getHolidays(year, month, urlPrefix, personId) {
+
+    var url = urlPrefix + "holiday?year=" + year + "&month=" + month + "&person=" + personId;
+
+    console.log("Load holidays for month=" + month);
+    
+    $.ajax({
+        url: url,
+        async: false,
+        dataType: "json",
+        type: "GET",
+        success: function (data) {
+
+            holidays = data;
+            
+        }
+    });
+
+}
+
+
+function createDatepickerForVacationOverview(div, regional, urlPrefix, personId) {
+
+    $.datepicker.setDefaults($.datepicker.regional[regional]);
+
+    var date = new Date();
+
+    var year = date.getFullYear();
+    var month = (date.getMonth() + 1);
+
+    getPublicHolidays(year, month, urlPrefix);
+    getHolidays(year, month, urlPrefix, personId);
+    
+    $(div).datepicker({
+        numberOfMonths: 1,
+        onChangeMonthYear: function(year, month) {
+            getPublicHolidays(year, month, urlPrefix);
+            getHolidays(year, month, urlPrefix, personId);
+        },
+        beforeShowDay: function (date) {
+
+            // if day is saturday or sunday, highlight it
+            if (date.getDay() == 6 || date.getDay() == 0) {
+                return [true, "notworkday"];
+            } else {
+                // if date is a work day, check if it is a public holiday
+                // if so highlight it
+
+                var dateString = $.datepicker.formatDate("yy-mm-dd", date);
+
+                if($.inArray(dateString, publicHolidays) != -1) {
+                    console.log(dateString + " is a public holiday");
+                    return [true, "notworkday"];
+                } if($.inArray(dateString, holidays) != -1) {
+                    console.log(dateString + " is vacation");
+                    return [true, "holiday"];
+                } else {
+                    return [true, ""];
+                }
+
+            }
+
+        }
+    });
+    
+}

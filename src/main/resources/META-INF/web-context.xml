@@ -72,6 +72,7 @@
         <constructor-arg ref="ownCalendarService" />
         <constructor-arg ref="jollydayCalendar" />
         <constructor-arg ref="personService" />
+        <constructor-arg ref="applicationService" />
     </bean>
 
     <bean class="org.synyx.urlaubsverwaltung.sicknote.SickNoteController">

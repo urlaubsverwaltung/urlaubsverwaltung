@@ -31,6 +31,12 @@ public interface ApplicationDAO extends JpaRepository<Application, Integer> {
 
 
     @Query(
+        "SELECT x FROM Application x WHERE x.person = ?1 AND x.supplementaryApplication = false AND ((YEAR(x.startDate) = ?3 AND MONTH(x.startDate) = ?2) OR (YEAR(x.endDate) = ?3 AND MONTH(x.endDate) = ?2))"
+    )
+    List<Application> getAllAllowedApplicationsOfAPersonForMonth(Person person, int month, int year);
+
+
+    @Query(
         "select x from Application x "
         + "where (x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) "
         + "or (x.startDate < ?1 and x.endDate > ?2) "

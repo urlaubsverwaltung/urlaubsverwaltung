@@ -285,6 +285,13 @@ class ApplicationServiceImpl implements ApplicationService {
     }
 
 
+    @Override
+    public List<Application> getAllAllowedApplicationsOfAPersonForAMonth(Person person, int month, int year) {
+
+        return applicationDAO.getAllAllowedApplicationsOfAPersonForMonth(person, month, year);
+    }
+
+
     /**
      * @see  ApplicationService#getApplicationsByStateAndYear(org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus,
      *       int)

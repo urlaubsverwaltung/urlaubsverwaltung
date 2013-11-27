@@ -68,6 +68,24 @@
             </table>
         </div>
 
+        <div class="grid_12">
+        
+            <div id="datepicker" style="float:right"></div>
+            
+        </div>
+
+        <script src="<spring:url value='/js/datepicker.js' />" type="text/javascript" ></script>
+        <script>
+            $(function() {
+                var datepickerLocale = "${pageContext.request.locale.language}";
+                var personId = '<c:out value="${person.id}" />';
+                var urlPrefix = "<spring:url value='/web/calendar/' />";
+
+                createDatepickerForVacationOverview("#datepicker", datepickerLocale, urlPrefix, personId);
+    
+            });
+        </script>
+
         <div class="grid_12">&nbsp;</div>
         <div class="grid_12">&nbsp;</div>
 

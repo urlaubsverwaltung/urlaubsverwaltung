@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.DayLength;
+import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.calendar.GoogleCalendarService;
 import org.synyx.urlaubsverwaltung.calendar.JollydayCalendar;
 import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
@@ -28,6 +30,7 @@ import java.io.IOException;
 
 import java.math.BigDecimal;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -40,18 +43,23 @@ import java.util.List;
 public class CalendarController {
 
     private static final String JSP_FOLDER = "calendar/";
+
+    private static final String DATE_PATTERN = "yyyy-MM-dd"; // please do not change, because is used in custom.js"
+
     private GoogleCalendarService googleCalendarService;
     private OwnCalendarService ownCalendarService;
     private JollydayCalendar jollydayCalendar;
     private PersonService personService;
+    private ApplicationService applicationService;
 
     public CalendarController(GoogleCalendarService googleCalendarService, OwnCalendarService ownCalendarService,
-        JollydayCalendar jollydayCalendar, PersonService personService) {
+        JollydayCalendar jollydayCalendar, PersonService personService, ApplicationService applicationService) {
 
         this.googleCalendarService = googleCalendarService;
         this.ownCalendarService = ownCalendarService;
         this.jollydayCalendar = jollydayCalendar;
         this.personService = personService;
+        this.applicationService = applicationService;
     }
 
     /**
@@ -72,7 +80,7 @@ public class CalendarController {
         @RequestParam("person") Integer personId) {
 
         if (StringUtils.hasText(start) && StringUtils.hasText(end) && StringUtils.hasText(length)) {
-            DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd"); // please do not change, because is used in custom.js
+            DateTimeFormatter fmt = DateTimeFormat.forPattern(DATE_PATTERN);
             DateMidnight startDate = DateMidnight.parse(start, fmt);
             DateMidnight endDate = DateMidnight.parse(end, fmt);
 
@@ -106,6 +114,49 @@ public class CalendarController {
             try {
                 List<String> holidays = jollydayCalendar.getPublicHolidays(Integer.parseInt(year),
                         Integer.parseInt(month));
+
+                String json = new Gson().toJson(holidays);
+
+                return json;
+            } catch (NumberFormatException ex) {
+                return "N/A";
+            }
+        }
+
+        return "N/A";
+    }
+
+
+    @RequestMapping(value = "/calendar/holiday", method = RequestMethod.GET)
+    @ResponseBody
+    public String getPersonsHoliday(@RequestParam("year") String year,
+        @RequestParam("month") String month,
+        @RequestParam("person") Integer personId) {
+
+        if (StringUtils.hasText(year) && StringUtils.hasText(month) && personId != null) {
+            try {
+                Person person = personService.getPersonByID(personId);
+
+                if (person == null) {
+                    return "N/A";
+                }
+
+                List<Application> applications = applicationService.getAllAllowedApplicationsOfAPersonForAMonth(person,
+                        Integer.parseInt(month), Integer.parseInt(year));
+
+                List<String> holidays = new ArrayList<String>();
+
+                for (Application app : applications) {
+                    DateMidnight startDate = app.getStartDate();
+                    DateMidnight endDate = app.getEndDate();
+
+                    DateMidnight day = startDate;
+
+                    while (!day.isAfter(endDate)) {
+                        holidays.add(day.toString(DATE_PATTERN));
+                        day = day.plusDays(1);
+                    }
+                }
 
                 String json = new Gson().toJson(holidays);
 

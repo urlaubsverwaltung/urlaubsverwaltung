@@ -23,8 +23,5 @@
         
         createDatepickerInstances(datepickerLocale, urlPrefix, vacationUrl, personId);
         
-        $("input:radio[name=howLong]").change(function() {
-//            sendGetDaysRequest(vacationUrl);
-        });
     });
 </script>

@@ -151,4 +151,16 @@ public interface ApplicationService {
      * @return  all {@link Application}s with vacation time between startDate x and endDate y
      */
     List<Application> getApplicationsForACertainPeriod(DateMidnight startDate, DateMidnight endDate);
+
+
+    /**
+     * Gets all application for the given month and person.
+     *
+     * @param  person
+     * @param  month
+     * @param  year
+     *
+     * @return  all person's applications that lie in the given month
+     */
+    List<Application> getAllAllowedApplicationsOfAPersonForAMonth(Person person, int month, int year);
 }
