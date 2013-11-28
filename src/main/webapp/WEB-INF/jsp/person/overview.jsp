@@ -25,6 +25,11 @@
             color: #1C94C4 !important;
         }
         
+        td.ui-datepicker-today a {
+            color: #2C7FB8 !important;
+            background: #9ECAE1 !important;
+        }
+        
     </style>
 </head>
 
