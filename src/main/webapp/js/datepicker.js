@@ -79,7 +79,16 @@ function createDatepickerInstances(regional, urlPrefix, vacationUrl, personId) {
             });
 
             getHighlighted(urlPrefix + "holiday?year=" + year + "&month=" + month + "&person=" + personId, function(data) {
-                highlightedVacation = data;
+
+                highlightedVacation = new Array();
+                
+                for(var i = 0; i < data.length; i++) {
+                    var value = data[i].date;
+                    if($.inArray(value, highlightedVacation) == -1) {
+                        highlightedVacation.push(value);
+                    }
+                }
+                
             });
 
         },
@@ -90,7 +99,14 @@ function createDatepickerInstances(regional, urlPrefix, vacationUrl, personId) {
             });
 
             getHighlighted(urlPrefix + "holiday?year=" + year + "&month=" + month + "&person=" + personId, function(data) {
-                highlightedVacation = data;
+                highlightedVacation = new Array();
+
+                for(var i = 0; i < data.length; i++) {
+                    var value = data[i].date;
+                    if($.inArray(value, highlightedVacation) == -1) {
+                        highlightedVacation.push(value);
+                    }
+                }
             });
             
         },
@@ -141,10 +157,10 @@ function colorizeDate(date, publicHolidays, vacation) {
         var dateString = $.datepicker.formatDate("yy-mm-dd", date);
 
         if($.inArray(dateString, publicHolidays) != -1) {
-            console.log(dateString + " is a public holiday");
+//            console.log(dateString + " is a public holiday");
             return [true, "notworkday"];
         } else if($.inArray(dateString, vacation) != -1) {
-            console.log(dateString + " is vacation");
+//            console.log(dateString + " is vacation");
             return [true, "holiday"];
         } else {
             return [true, ""];
@@ -210,6 +226,7 @@ function getPublicHolidays(year, month, urlPrefix) {
 }
 
 var holidays = new Array();
+var ids = new Array();
 function getHolidays(year, month, urlPrefix, personId) {
 
     var url = urlPrefix + "holiday?year=" + year + "&month=" + month + "&person=" + personId;
@@ -220,9 +237,10 @@ function getHolidays(year, month, urlPrefix, personId) {
 
         // do add loaded data only if not already in holidays array
         for(var i = 0; i < data.length; i++) {
-            var value = data[i];
+            var value = data[i].date;
             if($.inArray(value, holidays) == -1) {
                 holidays.push(value);
+                ids[value] = data[i].applicationId;
             }
         }  
         
@@ -234,6 +252,7 @@ function fetchHighlightedDays(date, urlPrefix, personId) {
 
     publicHolidays = new Array();
     holidays = new Array();
+    ids = new Array();
 
     // last month
     date.addMonths(-1);
@@ -252,15 +271,35 @@ function fetchHighlightedDays(date, urlPrefix, personId) {
     }
     
 }
+
+function calculateNumberOfMonths() {
+    
+    // per month minimum 240px!
+    
+    var width = $(window).width();
+    
+    var numberOfMonths = 1;
+    var size = width;
+    
+    while(size > 361 && numberOfMonths < 5) {
+        size = width / numberOfMonths;
+        console.log("SIZE=" + size);
+        numberOfMonths++;
+        console.log("number=" + numberOfMonths);
+    }
+    
+    return numberOfMonths;
+    
+}
     
 function createDatepickerForVacationOverview(div, regional, urlPrefix, personId, defaultDate) {
 
-    console.log(defaultDate);
+    var calenderUrl = urlPrefix + "/calendar/";
     
     $.datepicker.setDefaults($.datepicker.regional[regional]);
 
     $(div).datepicker({
-        numberOfMonths: 5,
+        numberOfMonths: calculateNumberOfMonths(),
         defaultDate: defaultDate,
         onChangeMonthYear: function(year, month) {
 
@@ -269,21 +308,31 @@ function createDatepickerForVacationOverview(div, regional, urlPrefix, personId,
             
             var date = Date.today().set({ year: year, month: (month-1), day: 1 });
             
-            getPublicHolidays(date.getFullYear(), (date.getMonth() + 1), urlPrefix);
-            getHolidays(date.getFullYear(), (date.getMonth() + 1), urlPrefix, personId);
+            getPublicHolidays(date.getFullYear(), (date.getMonth() + 1), calenderUrl);
+            getHolidays(date.getFullYear(), (date.getMonth() + 1), calenderUrl, personId);
             
             // +4 because showing 5 months
             date.addMonths(+4);
 
-            getPublicHolidays(date.getFullYear(), (date.getMonth() + 1), urlPrefix);
-            getHolidays(date.getFullYear(), (date.getMonth() + 1), urlPrefix, personId);
-            
+            getPublicHolidays(date.getFullYear(), (date.getMonth() + 1), calenderUrl);
+            getHolidays(date.getFullYear(), (date.getMonth() + 1), calenderUrl, personId);
             
         },
         beforeShowDay: function (date) {
 
             return colorizeDate(date, publicHolidays, holidays);
 
+        },
+        onSelect: function (dateString) {
+            
+            var date = Date.parse(dateString);
+            
+            var id = ids[date.toString('yyyy-MM-dd')];
+
+            if(id !== undefined) {
+                document.location.href = urlPrefix + "/application/" + id;  
+            }
+            
         }
     });
     

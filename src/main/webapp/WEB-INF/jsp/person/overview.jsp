@@ -83,7 +83,7 @@
         
         <div class="grid_12">
         
-            <div id="datepicker" style="float:left"></div>
+            <div id="datepicker"></div>
             
         </div>
 
@@ -92,7 +92,7 @@
             $(function() {
                 var datepickerLocale = "${pageContext.request.locale.language}";
                 var personId = '<c:out value="${person.id}" />';
-                var urlPrefix = "<spring:url value='/web/calendar/' />";
+                var urlPrefix = "<spring:url value='/web' />";
 
                 var year = getUrlParam("year");
                 var date;
@@ -106,7 +106,7 @@
                     defaultDate = Date.today();
                 }
 
-                fetchHighlightedDays(date, urlPrefix, personId);
+                fetchHighlightedDays(date, urlPrefix + "/calendar/", personId);
                 createDatepickerForVacationOverview("#datepicker", datepickerLocale, urlPrefix, personId, defaultDate);
 
             });

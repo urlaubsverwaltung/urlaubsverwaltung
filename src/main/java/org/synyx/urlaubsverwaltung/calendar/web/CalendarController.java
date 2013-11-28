@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.calendar.web;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.joda.time.DateMidnight;
 import org.joda.time.format.DateTimeFormat;
@@ -27,6 +28,8 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.io.IOException;
+
+import java.lang.reflect.Type;
 
 import java.math.BigDecimal;
 
@@ -146,6 +149,10 @@ public class CalendarController {
 
                 List<String> holidays = new ArrayList<String>();
 
+                Type type = new TypeToken<List<VacationDate>>() {
+                    }.getType();
+                List<VacationDate> vacationDateList = new ArrayList<VacationDate>();
+
                 for (Application app : applications) {
                     DateMidnight startDate = app.getStartDate();
                     DateMidnight endDate = app.getEndDate();
@@ -153,12 +160,14 @@ public class CalendarController {
                     DateMidnight day = startDate;
 
                     while (!day.isAfter(endDate)) {
-                        holidays.add(day.toString(DATE_PATTERN));
+                        vacationDateList.add(new VacationDate(day.toString(DATE_PATTERN), app.getId()));
+
+//                        holidays.add(day.toString(DATE_PATTERN));
                         day = day.plusDays(1);
                     }
                 }
 
-                String json = new Gson().toJson(holidays);
+                String json = new Gson().toJson(vacationDateList);
 
                 return json;
             } catch (NumberFormatException ex) {
@@ -196,5 +205,23 @@ public class CalendarController {
         googleCalendarService.addEvent();
 
         return JSP_FOLDER + "event";
+    }
+
+    private class VacationDate {
+
+        private String date;
+        private Integer applicationId;
+
+        public VacationDate(String date, Integer applicationId) {
+
+            this.date = date;
+            this.applicationId = applicationId;
+        }
+
+        @Override
+        public String toString() {
+
+            return "date = " + this.date + ", href = " + this.applicationId;
+        }
     }
 }
