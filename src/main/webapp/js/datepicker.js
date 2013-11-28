@@ -169,7 +169,7 @@ function getPublicHolidays(year, month, urlPrefix) {
 
     var url = urlPrefix + "public-holiday?year=" + year + "&month=" + month;
 
-    console.log("Load public holidays for month=" + month);
+    console.log("Load public holidays for year=" + year + " and month=" + month);
     
     $.ajax({
         url: url,
@@ -178,7 +178,13 @@ function getPublicHolidays(year, month, urlPrefix) {
         type: "GET",
         success: function (data) {
 
-            publicHolidays = data;
+            // do add loaded data only if not already in publicHolidays array
+            for(var i = 0; i < data.length; i++) {
+                var value = data[i];
+                if($.inArray(value, publicHolidays) == -1) {
+                    publicHolidays.push(value);
+                }
+            }
 
         }
     }); 
@@ -190,7 +196,7 @@ function getHolidays(year, month, urlPrefix, personId) {
 
     var url = urlPrefix + "holiday?year=" + year + "&month=" + month + "&person=" + personId;
 
-    console.log("Load holidays for month=" + month);
+    console.log("Load vacations for year=" + year + " and month=" + month);
     
     $.ajax({
         url: url,
@@ -199,31 +205,66 @@ function getHolidays(year, month, urlPrefix, personId) {
         type: "GET",
         success: function (data) {
 
-            holidays = data;
+            // do add loaded data only if not already in holidays array
+            for(var i = 0; i < data.length; i++) {
+                var value = data[i];
+                if($.inArray(value, holidays) == -1) {
+                    holidays.push(value); 
+                } 
+            }
             
         }
     });
 
 }
 
+function fetchHighlightedDays(date, urlPrefix, personId) {
 
+    publicHolidays = new Array();
+    holidays = new Array();
+
+    // last month
+    date.addMonths(-1);
+    var year = date.getFullYear();
+    var month = date.getMonth() + 1;
+    getPublicHolidays(year, month, urlPrefix);
+    getHolidays(year, month, urlPrefix, personId);
+
+    // 4 times: current month, next month, next month + 1, next month + 2 
+    for(var i = 1; i < 5; i++) {
+        date.addMonths(+1);
+        year = date.getFullYear();
+        month = date.getMonth() + 1;
+        getPublicHolidays(year, month, urlPrefix);
+        getHolidays(year, month, urlPrefix, personId); 
+    }
+    
+}
+    
 function createDatepickerForVacationOverview(div, regional, urlPrefix, personId) {
 
     $.datepicker.setDefaults($.datepicker.regional[regional]);
 
-    var date = new Date();
-
-    var year = date.getFullYear();
-    var month = (date.getMonth() + 1);
-
-    getPublicHolidays(year, month, urlPrefix);
-    getHolidays(year, month, urlPrefix, personId);
-    
     $(div).datepicker({
-        numberOfMonths: 1,
+        numberOfMonths: 5,
+        defaultDate: "-1m",
         onChangeMonthYear: function(year, month) {
-            getPublicHolidays(year, month, urlPrefix);
-            getHolidays(year, month, urlPrefix, personId);
+
+            // month can be changed in two directions: previous/next
+            // so holidays have to be loaded for previous month and next month in datepicker container
+            
+            var date = Date.today().set({ year: year, month: (month-1), day: 1 });
+            
+            getPublicHolidays(date.getFullYear(), (date.getMonth() + 1), urlPrefix);
+            getHolidays(date.getFullYear(), (date.getMonth() + 1), urlPrefix, personId);
+            
+            // +4 because showing 5 months
+            date.addMonths(+4);
+
+            getPublicHolidays(date.getFullYear(), (date.getMonth() + 1), urlPrefix);
+            getHolidays(date.getFullYear(), (date.getMonth() + 1), urlPrefix, personId);
+            
+            
         },
         beforeShowDay: function (date) {
 
@@ -237,10 +278,10 @@ function createDatepickerForVacationOverview(div, regional, urlPrefix, personId)
                 var dateString = $.datepicker.formatDate("yy-mm-dd", date);
 
                 if($.inArray(dateString, publicHolidays) != -1) {
-                    console.log(dateString + " is a public holiday");
+//                    console.log(dateString + " is a public holiday");
                     return [true, "notworkday"];
                 } if($.inArray(dateString, holidays) != -1) {
-                    console.log(dateString + " is vacation");
+//                    console.log(dateString + " is vacation");
                     return [true, "holiday"];
                 } else {
                     return [true, ""];

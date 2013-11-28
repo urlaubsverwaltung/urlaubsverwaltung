@@ -20,6 +20,11 @@
         .app-detail td {
             width: auto;
         }
+        a.ui-state-default {
+            border: 1px solid #CCCCCC !important;
+            color: #1C94C4 !important;
+        }
+        
     </style>
 </head>
 
@@ -68,9 +73,12 @@
             </table>
         </div>
 
+        <div class="grid_12">&nbsp;</div>
+        <div class="grid_12">&nbsp;</div>
+        
         <div class="grid_12">
         
-            <div id="datepicker" style="float:right"></div>
+            <div id="datepicker" style="float:left"></div>
             
         </div>
 
@@ -81,8 +89,9 @@
                 var personId = '<c:out value="${person.id}" />';
                 var urlPrefix = "<spring:url value='/web/calendar/' />";
 
+                fetchHighlightedDays(Date.today(), urlPrefix, personId);
                 createDatepickerForVacationOverview("#datepicker", datepickerLocale, urlPrefix, personId);
-    
+
             });
         </script>
 

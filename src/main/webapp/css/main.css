@@ -569,12 +569,6 @@ td.holiday a {
     background: #FFEDA0 !important;
 }
 
-.ui-widget-header, ui-datepicker-header {
-    background-color: #ABC452 !important;
-    border: 1px solid #ABC452 !important;
-    color: #333333; 
-}
-
 .app-detail th {
     text-align: left;
 }
