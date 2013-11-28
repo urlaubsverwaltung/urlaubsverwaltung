@@ -9,6 +9,7 @@ import org.joda.time.DateMidnight;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
+import org.synyx.urlaubsverwaltung.person.Person;
 
 
 /**
@@ -34,8 +35,8 @@ public class AppForm {
     // for holiday default = "Erholung"
     private String reason;
 
-    // Name of representative of employee during his/her holiday
-    private String rep;
+    // Representative of employee during his/her holiday
+    private Person rep;
 
     // Address and phone number during holiday
     private String address;
@@ -106,13 +107,13 @@ public class AppForm {
     }
 
 
-    public String getRep() {
+    public Person getRep() {
 
         return rep;
     }
 
 
-    public void setRep(String rep) {
+    public void setRep(Person rep) {
 
         this.rep = rep;
     }

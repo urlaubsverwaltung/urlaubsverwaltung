@@ -87,7 +87,14 @@
         <spring:message code='app.rep' />
     </td>
     <td>
-        <c:out value="${application.rep}" />
+        <c:choose>
+            <c:when test="${application.repDeprecated != null}">
+                <c:out value="${application.repDeprecated}" />
+            </c:when>
+            <c:otherwise>
+                <c:out value="${application.rep.niceName}" />
+            </c:otherwise>
+        </c:choose>
     </td>
 </tr>
 <tr class="odd">

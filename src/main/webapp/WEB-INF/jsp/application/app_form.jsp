@@ -229,25 +229,23 @@
                                         <td>
                                             <form:select path="rep" id="vertreter" size="1" class="form-select">
                                                 <c:choose>
-                                                    <c:when test="${appForm.rep == null}">
-                                                <option value="<spring:message code='app.no.rep' />"><spring:message code='app.no.rep' /></option>
-                                                <c:forEach items="${persons}" var="einmitarbeiter">
-                                                    <option value="${einmitarbeiter.firstName} ${einmitarbeiter.lastName}">
-                                                        <c:out value="${einmitarbeiter.firstName}" />&nbsp;<c:out value='${einmitarbeiter.lastName}' />
+                                                <c:when test="${appForm.rep == null}">
+                                                <option value="-1"><spring:message code='app.no.rep' /></option>
+                                                <c:forEach items="${persons}" var="staff">
+                                                    <option value="${staff.id}">
+                                                        <c:out value="${staff.niceName}" />
                                                     </option>
                                                 </c:forEach>
                                             </c:when>
                                             <c:otherwise>
                                                 <option value="${appForm.rep}" selected="selected">
-                                                    <c:out value="${appForm.rep}" />
+                                                    <c:out value="${appForm.rep.niceName}" />
                                                 </option>
-                                                <option value="<spring:message code='app.no.rep' />"><spring:message code='app.no.rep' /></option>
-                                                <c:forEach items="${persons}" var="einmitarbeiter">
-                                                    <c:if test="${!(fn:contains(appForm.rep, einmitarbeiter.lastName) && fn:contains(appForm.rep, einmitarbeiter.firstName))}">
-                                                        <option value="${einmitarbeiter.firstName} ${einmitarbeiter.lastName}">
-                                                            <c:out value="${einmitarbeiter.firstName}" />&nbsp;<c:out value='${einmitarbeiter.lastName}' />
-                                                        </option>
-                                                    </c:if>
+                                                <option value="-1"><spring:message code='app.no.rep' /></option>
+                                                <c:forEach items="${persons}" var="staff">
+                                                    <option value="${staff.id}">
+                                                        <c:out value="${staff.niceName}" />
+                                                    </option>
                                                 </c:forEach>
                                             </c:otherwise>
                                         </c:choose>

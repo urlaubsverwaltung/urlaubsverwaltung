@@ -5,6 +5,8 @@ import org.hibernate.annotations.LazyCollectionOption;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
+import org.springframework.util.StringUtils;
+
 import org.synyx.urlaubsverwaltung.security.Role;
 
 import java.util.Collection;
@@ -155,5 +157,15 @@ public class Person extends AbstractPersistable<Integer> {
         }
 
         return false;
+    }
+
+
+    public String getNiceName() {
+
+        if (StringUtils.hasText(this.firstName) && StringUtils.hasText(this.lastName)) {
+            return this.firstName + " " + this.lastName;
+        }
+
+        return this.loginName;
     }
 }

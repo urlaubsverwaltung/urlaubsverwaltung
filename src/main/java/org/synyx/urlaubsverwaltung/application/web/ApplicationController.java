@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.application.web;
 
-import org.apache.commons.lang.StringUtils;
-
 import org.apache.log4j.Logger;
 
 import org.joda.time.DateMidnight;
@@ -40,6 +38,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.web.PersonConstants;
 import org.synyx.urlaubsverwaltung.security.Role;
 import org.synyx.urlaubsverwaltung.security.web.SecurityUtil;
+import org.synyx.urlaubsverwaltung.sicknote.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.util.DateMidnightPropertyEditor;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.util.GravatarUtil;
@@ -51,7 +50,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
 
@@ -134,6 +132,7 @@ public class ApplicationController {
     public void initBinder(DataBinder binder, Locale locale) {
 
         binder.registerCustomEditor(DateMidnight.class, new DateMidnightPropertyEditor(locale));
+        binder.registerCustomEditor(Person.class, new PersonPropertyEditor(personService));
     }
 
 
@@ -676,16 +675,6 @@ public class ApplicationController {
     public void prepareForm(Person person, AppForm appForm, Model model) {
 
         List<Person> persons = personService.getAllPersonsExceptOne(person.getId());
-
-        ListIterator<Person> itr = persons.listIterator();
-
-        while (itr.hasNext()) {
-            Person p = itr.next();
-
-            if (StringUtils.isEmpty(p.getFirstName()) && (StringUtils.isEmpty(p.getLastName()))) {
-                itr.remove();
-            }
-        }
 
         Account account = accountService.getHolidaysAccount(DateMidnight.now(GregorianChronology.getInstance())
                 .getYear(), person);

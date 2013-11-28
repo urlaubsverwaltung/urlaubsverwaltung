@@ -65,8 +65,13 @@ public class Application extends AbstractPersistable<Integer> {
     // for holiday default = "Erholung"
     private String reason;
 
-    // Name of representative of employee during his/her holiday
-    private String rep;
+    // Representative person of employee during his/her holiday
+    @ManyToOne
+    private Person rep;
+
+    // old field before refactoring and using Person object as rep field
+    @Column(name = "rep")
+    private String repDeprecated;
 
     // Address and phone number during holiday
     private String address;
@@ -283,15 +288,21 @@ public class Application extends AbstractPersistable<Integer> {
     }
 
 
-    public String getRep() {
+    public Person getRep() {
 
         return rep;
     }
 
 
-    public void setRep(String rep) {
+    public void setRep(Person rep) {
 
         this.rep = rep;
+    }
+
+
+    public String getRepDeprecated() {
+
+        return repDeprecated;
     }
 
 

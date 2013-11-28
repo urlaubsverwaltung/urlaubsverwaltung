@@ -48,13 +48,11 @@ class CommentServiceImpl implements CommentService {
     @Override
     public void saveComment(Comment comment, Person person, Application application) {
 
-        String nameOfCommentingPerson = person.getFirstName() + " " + person.getLastName();
-
         ApplicationStatus status = application.getStatus();
         setProgressOfComment(comment, status);
         comment.setStatus(status);
 
-        comment.setNameOfCommentingPerson(nameOfCommentingPerson);
+        comment.setNameOfCommentingPerson(person.getNiceName());
         comment.setApplication(application);
         comment.setDateOfComment(DateMidnight.now());
         commentDAO.save(comment);
