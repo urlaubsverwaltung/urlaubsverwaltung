@@ -11,10 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.synyx.urlaubsverwaltung.application.dao.ApplicationDAO;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.security.CryptoService;
+import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 
 import java.math.BigDecimal;
 
@@ -36,21 +38,24 @@ class ApplicationServiceImpl implements ApplicationService {
 
     // sign logger: logs possible occurent errors relating to private and public keys of users
     private static final Logger LOG_SIGN = Logger.getLogger("sign");
+    private static final Logger LOG = Logger.getLogger("audit");
 
     private ApplicationDAO applicationDAO;
 
     private CryptoService cryptoService;
     private MailService mailService;
     private OwnCalendarService calendarService;
+    private CommentService commentService;
 
     @Autowired
     public ApplicationServiceImpl(ApplicationDAO applicationDAO, CryptoService cryptoService, MailService mailService,
-        OwnCalendarService calendarService) {
+        OwnCalendarService calendarService, CommentService commentService) {
 
         this.applicationDAO = applicationDAO;
         this.cryptoService = cryptoService;
         this.mailService = mailService;
         this.calendarService = calendarService;
+        this.commentService = commentService;
     }
 
     /**
@@ -104,10 +109,11 @@ class ApplicationServiceImpl implements ApplicationService {
 
 
     /**
-     * @see  ApplicationService#allow(org.synyx.urlaubsverwaltung.application.domain.Application, org.synyx.urlaubsverwaltung.person.Person)
+     * @see  ApplicationService#allow(org.synyx.urlaubsverwaltung.application.domain.Application,org.synyx.urlaubsverwaltung.person.Person,
+     *       org.synyx.urlaubsverwaltung.application.domain.Comment)
      */
     @Override
-    public void allow(Application application, Person boss) {
+    public void allow(Application application, Person boss, Comment comment) {
 
         application.setBoss(boss);
         application.setEditedDate(DateMidnight.now());
@@ -119,6 +125,20 @@ class ApplicationServiceImpl implements ApplicationService {
         signApplicationByBoss(application, boss);
 
         save(application);
+
+        LOG.info(application.getApplicationDate() + " ID: " + application.getId() + "Der Antrag von "
+            + application.getPerson().getNiceName()
+            + " wurde am " + DateMidnight.now().toString(ControllerConstants.DATE_FORMAT) + " von " + boss
+            .getNiceName()
+            + " genehmigt.");
+
+        commentService.saveComment(comment, boss, application);
+
+        mailService.sendAllowedNotification(application, comment);
+
+        if (application.getRep() != null) {
+            mailService.notifyRepresentative(application);
+        }
     }
 
 

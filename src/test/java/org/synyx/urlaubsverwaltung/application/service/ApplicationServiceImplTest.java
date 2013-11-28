@@ -16,6 +16,7 @@ import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.application.dao.ApplicationDAO;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.calendar.JollydayCalendar;
 import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
@@ -39,6 +40,7 @@ public class ApplicationServiceImplTest {
     private CryptoService cryptoService;
     private MailService mailService;
     private OwnCalendarService calendarService;
+    private CommentService commentService;
     private Application application;
     private Person person;
 
@@ -48,11 +50,13 @@ public class ApplicationServiceImplTest {
         applicationDAO = Mockito.mock(ApplicationDAO.class);
         cryptoService = new CryptoService();
         mailService = Mockito.mock(MailService.class);
+        commentService = Mockito.mock(CommentService.class);
 
         WorkingTimeService workingTimeService = Mockito.mock(WorkingTimeService.class);
         calendarService = new OwnCalendarService(new JollydayCalendar(), workingTimeService);
 
-        instance = new ApplicationServiceImpl(applicationDAO, cryptoService, mailService, calendarService);
+        instance = new ApplicationServiceImpl(applicationDAO, cryptoService, mailService, calendarService,
+                commentService);
 
         // touch person that is needed for tests
         person = new Person();
@@ -99,10 +103,51 @@ public class ApplicationServiceImplTest {
 
         application.setStatus(ApplicationStatus.WAITING);
 
-        instance.allow(application, person);
+        Comment comment = new Comment();
+
+        instance.allow(application, person, comment);
 
         Assert.assertEquals(ApplicationStatus.ALLOWED, application.getStatus());
         Assert.assertEquals(person, application.getBoss());
+
+        Mockito.verify(commentService).saveComment(comment, person, application);
+
+        Mockito.verify(mailService).sendAllowedNotification(application, comment);
+    }
+
+
+    @Test
+    public void testAllowNoRep() throws NoSuchAlgorithmException {
+
+        // set private key for boss
+        person.setPrivateKey(cryptoService.generateKeyPair().getPrivate().getEncoded());
+        application.setApplicationDate(DateMidnight.now());
+        application.setVacationType(VacationType.HOLIDAY);
+        application.setStatus(ApplicationStatus.WAITING);
+
+        Comment comment = new Comment();
+
+        instance.allow(application, person, comment);
+
+        Mockito.verify(mailService, Mockito.never()).notifyRepresentative(application);
+    }
+
+
+    @Test
+    public void testAllowWithRep() throws NoSuchAlgorithmException {
+
+        // set private key for boss
+        person.setPrivateKey(cryptoService.generateKeyPair().getPrivate().getEncoded());
+        application.setApplicationDate(DateMidnight.now());
+        application.setVacationType(VacationType.HOLIDAY);
+        application.setStatus(ApplicationStatus.WAITING);
+        application.setRep(new Person());
+
+        Comment comment = new Comment();
+
+        instance.allow(application, person, comment);
+
+        Mockito.verify(mailService).notifyRepresentative(application);
     }
 
 

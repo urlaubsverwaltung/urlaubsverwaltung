@@ -174,4 +174,12 @@ public interface MailService {
      * @param  sickNote
      */
     void sendEndOfSickPayNotification(SickNote sickNote);
+
+
+    /**
+     * Sends mail to person to inform that he/she has been selected as representative during someone's vacation.
+     *
+     * @param  application
+     */
+    void notifyRepresentative(Application application);
 }

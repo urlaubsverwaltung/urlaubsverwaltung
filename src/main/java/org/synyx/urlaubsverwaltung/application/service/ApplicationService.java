@@ -4,6 +4,7 @@ import org.joda.time.DateMidnight;
 
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.util.List;
@@ -59,8 +60,10 @@ public interface ApplicationService {
      * Sets an {@link Application}'s state to allowed (only by boss).
      *
      * @param  application {@link Application}
+     * @param  boss {@link Person}
+     * @param  comment {@link Comment}
      */
-    void allow(Application application, Person boss);
+    void allow(Application application, Person boss, Comment comment);
 
 
     /**

@@ -1,6 +1,6 @@
 Hallo ${application.person.firstName},
 
-${application.applier.firstName} ${application.applier.lastName} hat einen Urlaubsantrag für dich gestellt, der in Kürze bearbeitet werden sollte.
+${application.applier.firstName} ${application.applier.lastName} hat einen Urlaubsantrag für dich gestellt, der in Kürze von einem der Chefs bearbeitet werden sollte.
 
 Link zum Antrag: ${link}
 
@@ -10,7 +10,9 @@ Art des Urlaubs: ${vacationType}
 #if($application.reason && $application.reason != "")
 Grund: ${application.reason}
 #end
-Vertreter: ${application.rep}
+#if($application.rep.niceName && $application.rep.niceName != "")
+Vertreter: ${application.rep.niceName}
+#end
 #if($application.address && $application.address != "")
 Anschrift/Telefon während des Urlaubs: ${application.address}
 #end

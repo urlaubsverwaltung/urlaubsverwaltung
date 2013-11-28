@@ -747,18 +747,7 @@ public class ApplicationController {
 
         // only boss is able to allow an application but only if this application isn't his own one
         if (securityUtil.isBoss() && !application.getPerson().equals(boss)) {
-            applicationService.allow(application, boss);
-
-            commentService.saveComment(comment, boss, application);
-
-            String bossName = boss.getFirstName() + " " + boss.getLastName();
-
-            LOG.info(application.getApplicationDate() + " ID: " + application.getId() + "Der Antrag von "
-                + application.getPerson().getFirstName() + " " + application.getPerson().getLastName()
-                + " wurde am " + DateMidnight.now().toString(ControllerConstants.DATE_FORMAT) + " von " + bossName
-                + " genehmigt.");
-
-            mailService.sendAllowedNotification(application, comment);
+            applicationService.allow(application, boss, comment);
 
             return "redirect:/web/application/" + applicationId;
         } else {

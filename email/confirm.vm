@@ -1,6 +1,6 @@
 Hallo ${application.person.firstName},
 
-dein Urlaubsantrag wurde erfolgreich eingereicht und wird in Kürze bearbeitet werden.
+dein Urlaubsantrag wurde erfolgreich eingereicht und wird in Kürze von einem der Chefs bearbeitet werden.
 Link zum Antrag: ${link}
 
 Antragsdatum: ${application.applicationDate.toString("dd.MM.yyyy")}
@@ -9,7 +9,9 @@ Art des Urlaubs: ${vacationType}
 #if($application.reason && $application.reason != "")
 Grund: ${application.reason}
 #end
-Vertreter: ${application.rep}
+#if($application.rep.niceName && $application.rep.niceName != "")
+Vertreter: ${application.rep.niceName}
+#end
 #if($application.address && $application.address != "")
 Anschrift/Telefon während des Urlaubs: ${application.address}
 #end

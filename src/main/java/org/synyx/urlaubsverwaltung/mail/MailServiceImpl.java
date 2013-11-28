@@ -467,4 +467,17 @@ class MailServiceImpl implements MailService {
         sendEmail(sickNote.getPerson().getEmail(), "subject.sicknote.endOfSickPay", text);
         sendEmail(emailOffice, "subject.sicknote.endOfSickPay", text);
     }
+
+
+    @Override
+    public void notifyRepresentative(Application application) {
+
+        Map<String, Object> model = new HashMap();
+        model.put("application", application);
+        model.put("dayLength", properties.getProperty(application.getHowLong().getDayLength()));
+
+        String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, PATH + "rep.vm", model);
+
+        sendEmail(application.getRep().getEmail(), "subject.rep", text);
+    }
 }
