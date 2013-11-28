@@ -16,7 +16,7 @@
     $(document).ready(function() {
         
         var datepickerLocale = "${pageContext.request.locale.language}";
-        var urlPrefix = "<spring:url value='/web/calendar/public-holiday' />";
+        var urlPrefix = "<spring:url value='/web/calendar/' />";
         var vacationUrl = "<spring:url value='/web/calendar/vacation' />";
 
         var personId = '<c:out value="${person.id}" />';

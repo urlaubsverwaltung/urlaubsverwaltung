@@ -37,66 +37,66 @@ $.datepicker.regional['de'] = {
     yearSuffix: ''
 };
 
-var highlighted = new Array();
 
-function getHolidaysForMonth(year, month, urlPrefix) {
+function getHighlighted(url, callback) {
 
-    var url = urlPrefix + "?year=" + year + "&month=" + month;
-    
     $.ajax({
         url: url,
         async: false,
         dataType: "json",
         type: "GET",
         success: function (data) {
+            callback(data);
 
-            highlighted = data;
-            
         }
     });
-
+    
 }
 
 function createDatepickerInstances(regional, urlPrefix, vacationUrl, personId) {
 
+    var highlighted;
+    var highlightedVacation;
+    
     $.datepicker.setDefaults($.datepicker.regional[regional]);
     $("#from, #to, #at").datepicker({
         numberOfMonths: 1,
         beforeShow: function(input) {
 
-            // if there is no selected date use current year and current month
-            if($(input).datepicker("getDate") == null) {
-                var date = new Date();
-                getHolidaysForMonth(date.getFullYear(), date.getMonth() + 1, urlPrefix);
-            } else {
-               // if there is a selected date use its year and month
-                var date = $(input).datepicker("getDate");
-                getHolidaysForMonth(date.getFullYear(), date.getMonth() + 1, urlPrefix); 
-            }
+            var date;
             
+            if($(input).datepicker("getDate") == null) {
+                date = Date.today();
+            } else {
+                date = $(input).datepicker("getDate");
+            }
+
+            var year = date.getFullYear();
+            var month = date.getMonth() + 1;
+            
+            getHighlighted(urlPrefix + "public-holiday?year=" + year + "&month=" + month, function(data) {
+                highlighted = data;
+            });
+
+            getHighlighted(urlPrefix + "holiday?year=" + year + "&month=" + month + "&person=" + personId, function(data) {
+                highlightedVacation = data;
+            });
+
         },
         onChangeMonthYear: function(year, month) {
-            getHolidaysForMonth(year, month, urlPrefix);
+
+            getHighlighted(urlPrefix + "public-holiday?year=" + year + "&month=" + month, function(data) {
+                highlighted = data;
+            });
+
+            getHighlighted(urlPrefix + "holiday?year=" + year + "&month=" + month + "&person=" + personId, function(data) {
+                highlightedVacation = data;
+            });
+            
         },
         beforeShowDay: function (date) {
 
-            // if day is saturday or sunday, highlight it
-            if (date.getDay() == 6 || date.getDay() == 0) {
-                return [true, "notworkday"];
-            } else {
-                // if date is a work day, check if it is a public holiday
-                // if so highlight it
-
-                var dateString = $.datepicker.formatDate("yy-mm-dd", date);
-                
-                if($.inArray(dateString, highlighted) != -1) {
-                    console.log(dateString + " is a public holiday");
-                    return [true, "notworkday"];  
-                } else {
-                    return [true, ""];
-                }
-                
-            }
+            return colorizeDate(date, highlighted, highlightedVacation);
 
         },
         onSelect: function (selectedDate) {
@@ -127,6 +127,31 @@ function createDatepickerInstances(regional, urlPrefix, vacationUrl, personId) {
 
         }
     });
+}
+
+function colorizeDate(date, publicHolidays, vacation) {
+
+    // if day is saturday or sunday, highlight it
+    if (date.getDay() == 6 || date.getDay() == 0) {
+        return [true, "notworkday"];
+    } else {
+        // if date is a work day, check if it is a public holiday
+        // if so highlight it
+
+        var dateString = $.datepicker.formatDate("yy-mm-dd", date);
+
+        if($.inArray(dateString, publicHolidays) != -1) {
+            console.log(dateString + " is a public holiday");
+            return [true, "notworkday"];
+        } else if($.inArray(dateString, vacation) != -1) {
+            console.log(dateString + " is vacation");
+            return [true, "holiday"];
+        } else {
+            return [true, ""];
+        }
+
+    }
+    
 }
 
 
@@ -164,30 +189,23 @@ function createDatepickerInstanceForSickNote(regional, from, to) {
 }
 
 var publicHolidays = new Array();
-
 function getPublicHolidays(year, month, urlPrefix) {
 
     var url = urlPrefix + "public-holiday?year=" + year + "&month=" + month;
 
     console.log("Load public holidays for year=" + year + " and month=" + month);
     
-    $.ajax({
-        url: url,
-        async: false,
-        dataType: "json",
-        type: "GET",
-        success: function (data) {
+    getHighlighted(url, function(data) {
 
-            // do add loaded data only if not already in publicHolidays array
-            for(var i = 0; i < data.length; i++) {
-                var value = data[i];
-                if($.inArray(value, publicHolidays) == -1) {
-                    publicHolidays.push(value);
-                }
+        // do add loaded data only if not already in publicHolidays array
+        for(var i = 0; i < data.length; i++) {
+            var value = data[i];
+            if($.inArray(value, publicHolidays) == -1) {
+                publicHolidays.push(value);
             }
-
-        }
-    }); 
+        } 
+        
+    })
     
 }
 
@@ -198,23 +216,17 @@ function getHolidays(year, month, urlPrefix, personId) {
 
     console.log("Load vacations for year=" + year + " and month=" + month);
     
-    $.ajax({
-        url: url,
-        async: false,
-        dataType: "json",
-        type: "GET",
-        success: function (data) {
+    getHighlighted(url, function(data) {
 
-            // do add loaded data only if not already in holidays array
-            for(var i = 0; i < data.length; i++) {
-                var value = data[i];
-                if($.inArray(value, holidays) == -1) {
-                    holidays.push(value); 
-                } 
+        // do add loaded data only if not already in holidays array
+        for(var i = 0; i < data.length; i++) {
+            var value = data[i];
+            if($.inArray(value, holidays) == -1) {
+                holidays.push(value);
             }
-            
-        }
-    });
+        }  
+        
+    })
 
 }
 
@@ -270,26 +282,7 @@ function createDatepickerForVacationOverview(div, regional, urlPrefix, personId,
         },
         beforeShowDay: function (date) {
 
-            // if day is saturday or sunday, highlight it
-            if (date.getDay() == 6 || date.getDay() == 0) {
-                return [true, "notworkday"];
-            } else {
-                // if date is a work day, check if it is a public holiday
-                // if so highlight it
-
-                var dateString = $.datepicker.formatDate("yy-mm-dd", date);
-
-                if($.inArray(dateString, publicHolidays) != -1) {
-//                    console.log(dateString + " is a public holiday");
-                    return [true, "notworkday"];
-                } if($.inArray(dateString, holidays) != -1) {
-//                    console.log(dateString + " is vacation");
-                    return [true, "holiday"];
-                } else {
-                    return [true, ""];
-                }
-
-            }
+            return colorizeDate(date, publicHolidays, holidays);
 
         }
     });
