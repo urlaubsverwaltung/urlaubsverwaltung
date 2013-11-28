@@ -319,10 +319,14 @@
                                                 <td>
                                                     <select id="person-select" class="form-select" onchange="window.location.href=this.options
                                                         [this.selectedIndex].value">
-                                                        <option value="${formUrlPrefix}/${person.id}/application/new" selected="selected"><c:out value="${person.firstName}" />&nbsp;<c:out value="${person.lastName}" /></option>
+                                                        <option value="${formUrlPrefix}/${person.id}/application/new" selected="selected">
+                                                            <c:out value="${person.niceName}" />
+                                                        </option>
                                                         <c:forEach items="${personList}" var="p">
                                                             <c:if test="${person.id != p.id}">
-                                                                <option value="${formUrlPrefix}/${p.id}/application/new"><c:out value="${p.firstName}" />&nbsp;<c:out value="${p.lastName}" /></option>
+                                                                <option value="${formUrlPrefix}/${p.id}/application/new">
+                                                                    <c:out value="${p.niceName}" />
+                                                                </option>
                                                             </c:if>
                                                         </c:forEach>
                                                     </select>
@@ -330,7 +334,7 @@
                                             </c:when>
                                             <c:otherwise>
                                                 <%-- applying for himself/herself --%>
-                                                <td style="height:47px;"><b><c:out value="${person.firstName} ${person.lastName}" /></b></td>
+                                                <td style="height:47px;"><b><c:out value="${person.niceName}" /></b></td>
                                                 <td><c:out value="${person.email}" /></td>
                                             </c:otherwise>
                                         </c:choose>

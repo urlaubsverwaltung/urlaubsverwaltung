@@ -91,7 +91,7 @@
                             <c:when test="${sickNote.id == null}">
                                 <form:select path="person" id="employee" cssErrorClass="error">
                                     <c:forEach items="${persons}" var="person">
-                                        <form:option value="${person.id}">${person.firstName}&nbsp;${person.lastName}</form:option>
+                                        <form:option value="${person.id}">${person.niceName}</form:option>
                                     </c:forEach>
                                 </form:select>
                                 <span class="help-inline"><form:errors path="person" cssClass="error"/></span>
@@ -99,7 +99,7 @@
                             <c:otherwise>
                                 <form:hidden path="id" />
                                 <form:hidden path="person" value="${sickNote.person.id}" />
-                                <c:out value="${sickNote.person.firstName}" />&nbsp;<c:out value="${sickNote.person.lastName}" />
+                                <c:out value="${sickNote.person.niceName}" />
                             </c:otherwise>
                         </c:choose>
                     </div>

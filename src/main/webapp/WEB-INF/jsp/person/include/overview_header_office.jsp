@@ -34,7 +34,7 @@
                 <c:forEach items="${persons}" var="person">
                     <li>
                         <a href="${formUrlPrefix}/staff/<c:out value='${person.id}' />/overview">
-                            <c:out value="${person.firstName}"/>&nbsp;<c:out value="${person.lastName}"/>
+                            <c:out value="${person.niceName}"/>
                         </a>
                     </li>
                 </c:forEach>
