@@ -94,8 +94,20 @@
                 var personId = '<c:out value="${person.id}" />';
                 var urlPrefix = "<spring:url value='/web/calendar/' />";
 
-                fetchHighlightedDays(Date.today(), urlPrefix, personId);
-                createDatepickerForVacationOverview("#datepicker", datepickerLocale, urlPrefix, personId);
+                var year = getUrlParam("year");
+                var date;
+                var defaultDate;
+                
+                if(year.length > 0) {
+                    date = Date.today().set({ year: parseInt(year), month: 0, day: 1 });
+                    defaultDate = Date.today().set({ year: parseInt(year), month: 0, day: 1 });
+                } else {
+                    date = Date.today();
+                    defaultDate = Date.today();
+                }
+
+                fetchHighlightedDays(date, urlPrefix, personId);
+                createDatepickerForVacationOverview("#datepicker", datepickerLocale, urlPrefix, personId, defaultDate);
 
             });
         </script>

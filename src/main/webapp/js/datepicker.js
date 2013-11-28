@@ -241,13 +241,15 @@ function fetchHighlightedDays(date, urlPrefix, personId) {
     
 }
     
-function createDatepickerForVacationOverview(div, regional, urlPrefix, personId) {
+function createDatepickerForVacationOverview(div, regional, urlPrefix, personId, defaultDate) {
 
+    console.log(defaultDate);
+    
     $.datepicker.setDefaults($.datepicker.regional[regional]);
 
     $(div).datepicker({
         numberOfMonths: 5,
-        defaultDate: "-1m",
+        defaultDate: defaultDate,
         onChangeMonthYear: function(year, month) {
 
             // month can be changed in two directions: previous/next
