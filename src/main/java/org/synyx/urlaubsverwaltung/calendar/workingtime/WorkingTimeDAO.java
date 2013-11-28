@@ -16,7 +16,7 @@ import java.util.List;
  */
 public interface WorkingTimeDAO extends JpaRepository<WorkingTime, Integer> {
 
-    @Query("SELECT x FROM WorkingTime x WHERE x.person = ?1")
+    @Query("SELECT x FROM WorkingTime x WHERE x.person = ?1 ORDER BY x.validFrom")
     List<WorkingTime> findByPerson(Person person);
 
 

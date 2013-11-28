@@ -183,6 +183,8 @@ public class PersonManagementController {
         model.addAttribute(PersonConstants.PERSONFORM, personForm);
         model.addAttribute("currentYear", DateMidnight.now().getYear());
         model.addAttribute("weekDays", Day.values());
+
+        model.addAttribute("workingTimes", workingTimeService.getByPerson(person));
     }
 
 

@@ -197,4 +197,46 @@ public class WorkingTime extends AbstractPersistable<Integer> {
             this.validFrom = validFrom.toDate();
         }
     }
+
+
+    public DayLength getMonday() {
+
+        return monday;
+    }
+
+
+    public DayLength getTuesday() {
+
+        return tuesday;
+    }
+
+
+    public DayLength getWednesday() {
+
+        return wednesday;
+    }
+
+
+    public DayLength getThursday() {
+
+        return thursday;
+    }
+
+
+    public DayLength getFriday() {
+
+        return friday;
+    }
+
+
+    public DayLength getSaturday() {
+
+        return saturday;
+    }
+
+
+    public DayLength getSunday() {
+
+        return sunday;
+    }
 }

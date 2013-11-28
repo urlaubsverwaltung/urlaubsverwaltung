@@ -9,6 +9,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 
 <!DOCTYPE html>
@@ -113,6 +114,45 @@
             <span class="help-inline"><form:errors path="email" cssClass="error"/></span>
         </div>
     </div>
+    
+    <c:if test="${fn:length(workingTimes) > 1}">
+
+    <div class="control-group">
+        <label class="control-label"><spring:message code='working.times'/></label>
+
+        <div class="controls">
+            <c:forEach items="${workingTimes}" var="time">
+                <spring:message code="working.time.valid.from" />
+                <joda:format style="M-" value="${time.validFrom}" />:
+                <br />
+                <c:if test="${time.monday.duration > 0}">
+                    <spring:message code="monday" />
+                </c:if>
+                <c:if test="${time.tuesday.duration > 0}">
+                    <spring:message code="tuesday" />
+                </c:if>
+                <c:if test="${time.wednesday.duration > 0}">
+                    <spring:message code="wednesday" />
+                </c:if>
+                <c:if test="${time.thursday.duration > 0}">
+                    <spring:message code="thursday" />
+                </c:if>
+                <c:if test="${time.friday.duration > 0}">
+                    <spring:message code="friday" />
+                </c:if>
+                <c:if test="${time.saturday.duration > 0}">
+                    <spring:message code="saturday" />
+                </c:if>
+                <c:if test="${time.sunday.duration > 0}">
+                    <spring:message code="sunday" />
+                </c:if>
+                <br />
+                <br />
+            </c:forEach>
+        </div>
+    </div>
+
+    </c:if>
 
     <div class="control-group">
         <label class="control-label"><spring:message code='working.time'/></label>
