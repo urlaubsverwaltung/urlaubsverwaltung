@@ -71,8 +71,6 @@ public class Application extends AbstractPersistable<Integer> {
     // Address and phone number during holiday
     private String address;
 
-    private String phone;
-
     // Date of application (applied by user himself or by office)
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date applicationDate;
@@ -96,16 +94,6 @@ public class Application extends AbstractPersistable<Integer> {
     // if application has been cancelled during status waiting: formerlyAllowed is false
     private boolean formerlyAllowed;
 
-    // for applications that spans December and January there are two extra applications: one for the period in December
-    // and one for the period in January these supplemental applications are only used for calculations
-    // true if the application is only a supplemental application for calculation false if the application is
-    // a regular application
-    private boolean supplementaryApplication;
-
-    // if an application is only a supplementary application, this field contains the id of the regular application
-    // that amongs to this supplementary application
-    private Integer idOfApplication;
-
     // Signature of applicant
     @Column(columnDefinition = "longblob")
     private byte[] signaturePerson;
@@ -113,9 +101,6 @@ public class Application extends AbstractPersistable<Integer> {
     // Signature of boss
     @Column(columnDefinition = "longblob")
     private byte[] signatureBoss;
-
-    // for office: holiday already registered in Calendar?
-    private boolean isInCalendar;
 
     // team informed about holidays?
     private boolean teamInformed;
@@ -286,18 +271,6 @@ public class Application extends AbstractPersistable<Integer> {
     }
 
 
-    public String getPhone() {
-
-        return phone;
-    }
-
-
-    public void setPhone(String phone) {
-
-        this.phone = phone;
-    }
-
-
     public String getReason() {
 
         return reason;
@@ -399,42 +372,6 @@ public class Application extends AbstractPersistable<Integer> {
     public void setFormerlyAllowed(boolean formerlyAllowed) {
 
         this.formerlyAllowed = formerlyAllowed;
-    }
-
-
-    public boolean isSupplementaryApplication() {
-
-        return supplementaryApplication;
-    }
-
-
-    public void setSupplementaryApplication(boolean supplementaryApplication) {
-
-        this.supplementaryApplication = supplementaryApplication;
-    }
-
-
-    public Integer getIdOfApplication() {
-
-        return idOfApplication;
-    }
-
-
-    public void setIdOfApplication(Integer idOfApplication) {
-
-        this.idOfApplication = idOfApplication;
-    }
-
-
-    public boolean isIsInCalendar() {
-
-        return isInCalendar;
-    }
-
-
-    public void setIsInCalendar(boolean isInCalendar) {
-
-        this.isInCalendar = isInCalendar;
     }
 
 

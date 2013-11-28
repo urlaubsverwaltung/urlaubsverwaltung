@@ -26,9 +26,6 @@ import org.synyx.urlaubsverwaltung.security.CryptoService;
 
 import java.security.NoSuchAlgorithmException;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 /**
  * Unit test for serivce {@link ApplicationServiceImpl}.
@@ -124,30 +121,9 @@ public class ApplicationServiceImplTest {
         application.setEndDate(endDate);
         application.setStatus(ApplicationStatus.WAITING);
 
-        // supplemental applications
-
-        List<Application> sApps = new ArrayList<Application>();
-
-        Application sa1 = new Application();
-        sa1.setStatus(ApplicationStatus.WAITING);
-        sa1.setStartDate(startDate);
-        sa1.setEndDate(new DateMidnight(2012, DateTimeConstants.DECEMBER, 31));
-
-        Application sa2 = new Application();
-        sa2.setStatus(ApplicationStatus.WAITING);
-        sa2.setStartDate(new DateMidnight(2013, DateTimeConstants.JANUARY, 1));
-        sa2.setEndDate(endDate);
-
-        sApps.add(sa1);
-        sApps.add(sa2);
-
-        Mockito.when(applicationDAO.getSupplementalApplicationsForApplication(application.getId())).thenReturn(sApps);
-
         instance.reject(application, boss);
 
         Assert.assertEquals(ApplicationStatus.REJECTED, application.getStatus());
-        Assert.assertEquals(ApplicationStatus.REJECTED, sApps.get(0).getStatus());
-        Assert.assertEquals(ApplicationStatus.REJECTED, sApps.get(1).getStatus());
 
         Assert.assertNotNull(application.getBoss());
         Assert.assertEquals(boss, application.getBoss());
@@ -167,30 +143,9 @@ public class ApplicationServiceImplTest {
         application.setStartDate(startDate);
         application.setEndDate(endDate);
 
-        // supplemental applications
-
-        List<Application> sApps = new ArrayList<Application>();
-
-        Application sa1 = new Application();
-        sa1.setStatus(ApplicationStatus.WAITING);
-        sa1.setStartDate(startDate);
-        sa1.setEndDate(new DateMidnight(2012, DateTimeConstants.DECEMBER, 31));
-
-        Application sa2 = new Application();
-        sa2.setStatus(ApplicationStatus.WAITING);
-        sa2.setStartDate(new DateMidnight(2013, DateTimeConstants.JANUARY, 1));
-        sa2.setEndDate(endDate);
-
-        sApps.add(sa1);
-        sApps.add(sa2);
-
-        Mockito.when(applicationDAO.getSupplementalApplicationsForApplication(application.getId())).thenReturn(sApps);
-
         instance.cancel(application);
 
         Assert.assertEquals(ApplicationStatus.CANCELLED, application.getStatus());
-        Assert.assertEquals(ApplicationStatus.CANCELLED, sApps.get(0).getStatus());
-        Assert.assertEquals(ApplicationStatus.CANCELLED, sApps.get(1).getStatus());
     }
 
 

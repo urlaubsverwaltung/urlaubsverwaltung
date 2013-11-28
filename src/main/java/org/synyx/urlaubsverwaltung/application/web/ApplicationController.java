@@ -345,24 +345,6 @@ public class ApplicationController {
     }
 
 
-    @RequestMapping(value = ALLOWED_APPS + "/{" + ApplicationConstants.APPLICATION_ID + "}", method = RequestMethod.PUT)
-    public String setAllowedApplicationToEdited(
-        @PathVariable(ApplicationConstants.APPLICATION_ID) Integer applicationId) {
-
-        Application app = applicationService.getApplicationById(applicationId);
-
-        if (app.isIsInCalendar() == false) {
-            app.setIsInCalendar(true);
-        } else {
-            app.setIsInCalendar(false);
-        }
-
-        applicationService.save(app);
-
-        return "redirect:/web" + ALLOWED_APPS;
-    }
-
-
     /**
      * used if you want to see all cancelled applications of the given year.
      *

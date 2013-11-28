@@ -130,10 +130,6 @@ class ApplicationServiceImpl implements ApplicationService {
 
         application.setStatus(ApplicationStatus.REJECTED);
 
-        // are there any supplemental applications?
-        // change their status too
-        setStatusOfSupplementalApplications(application, ApplicationStatus.REJECTED);
-
         application.setBoss(boss);
         application.setEditedDate(DateMidnight.now());
 
@@ -146,10 +142,6 @@ class ApplicationServiceImpl implements ApplicationService {
      */
     @Override
     public void cancel(Application application) {
-
-        // are there any supplemental applications?
-        // change their status too
-        setStatusOfSupplementalApplications(application, ApplicationStatus.CANCELLED);
 
         application.setStatus(ApplicationStatus.CANCELLED);
         application.setCancelDate(DateMidnight.now());
@@ -237,30 +229,6 @@ class ApplicationServiceImpl implements ApplicationService {
 
         LOG_SIGN.error("An error occured during signing application with id " + applicationId, ex);
         mailService.sendSignErrorNotification(applicationId, ex.getMessage());
-    }
-
-
-    /**
-     * If an {@link Application} that spans December and January is cancelled or rejected, the supplemental applications
-     * of this {@link Application} have to get the new status too.
-     *
-     * @param  application {@link Application}
-     * @param  state {@link ApplicationStatus}
-     */
-    private void setStatusOfSupplementalApplications(Application application, ApplicationStatus state) {
-
-        // are there any supplemental applications?
-        if (application.getStartDate().getYear() != application.getEndDate().getYear()) {
-            // if an application spans December and January, it has to own two supplementary applications
-
-            List<Application> sApps = applicationDAO.getSupplementalApplicationsForApplication(application.getId());
-
-            // edit status of supplemental applications too
-            for (Application sa : sApps) {
-                sa.setStatus(state);
-                save(sa);
-            }
-        }
     }
 
 
