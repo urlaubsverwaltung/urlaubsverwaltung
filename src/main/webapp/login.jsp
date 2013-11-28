@@ -47,10 +47,10 @@
 
             <form class="form-signin" method="post" action="j_spring_security_check">
                 <label for="j_username">Username</label>
-                <input class="input-block-level" type="text" name="j_username" id="j_username">
+                <input class="input-block-level" type="text" name="j_username" id="j_username" autofocus="autofocus">
 
                 <label for="j_password">Passwort</label>
-                <input class="input-block-level" type="password" name="j_password" id="j_password" >
+                <input class="input-block-level" type="password" name="j_password" id="j_password">
                 
                 <button class="btn btn-large btn-primary" type="submit">Login</button>
 
