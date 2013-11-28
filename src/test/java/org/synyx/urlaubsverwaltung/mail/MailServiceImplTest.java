@@ -46,7 +46,7 @@ import javax.mail.internet.InternetAddress;
 
 
 /**
- * This is a test for MailService implementation for the properties file: messages_de.properties.
+ * This is a test for MailService implementation for the properties file: messages.properties.
  *
  * @author  Aljona Murygina
  */

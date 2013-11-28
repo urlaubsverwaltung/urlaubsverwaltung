@@ -44,7 +44,7 @@ class MailServiceImpl implements MailService {
     private static final Logger LOG = Logger.getLogger(MailServiceImpl.class);
     private static final String DATE_FORMAT = "dd.MM.yyyy";
     private static final String PATH = "/email/";
-    private static final String PROPERTIES_FILE = "messages_de.properties"; // general properties
+    private static final String PROPERTIES_FILE = "messages.properties"; // general properties
     private static final String MAIL_PROPERTIES_FILE = "mail.properties"; // custom configuration like email
 
     // addresses, etc.
