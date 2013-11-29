@@ -55,20 +55,6 @@
 
                     <c:otherwise>
 
-                        <div class="grid_12">
-
-                            <div class="overview-header">
-
-                                <legend>
-                                    <p>
-                                        <spring:message code="app.title" />  
-                                    </p>
-                                </legend>
-
-                            </div>
-                            
-                        </div>
-
                         <c:choose>
                             <c:when test="${setForce != null}">
                                 <c:set var="forcy" value="${setForce}" />
@@ -95,6 +81,16 @@
                         <form:form method="post" action="${actionUrl}" modelAttribute="appForm"> 
 
                             <div class="grid_6" style="margin-bottom: 4em;">
+
+                            <div class="overview-header">
+
+                                <legend>
+                                    <p>
+                                        <spring:message code="app.title" />
+                                    </p>
+                                </legend>
+
+                            </div>
 
                                 <c:if test="${not empty errors || timeError != null}">
 
@@ -292,21 +288,27 @@
                                     </tr>
                                 </table>
 
-                                <table class="app-detail tbl-margin-top" cellspacing="0">
-                                    <tr class="odd">
-                                        <td>
-                                            <spring:message code='app.footer' />&nbsp;<joda:format style="M-" value="${date}"/>
-                                        </td>
-                                        <td>
-                                            <button type="submit" class="btn btn-primary" style="float: right;">
-                                                <i class='icon-ok icon-white'></i>&nbsp;<spring:message code='apply' />
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </table>       
+                                <hr />
+
+                                <spring:message code='app.footer' />&nbsp;<joda:format style="M-" value="${date}"/>
+
+                                <button type="submit" class="btn btn-primary" style="float: right;">
+                                    <i class='icon-ok icon-white'></i>&nbsp;<spring:message code='apply' />
+                                </button>
+
                             </div>
 
                             <div class="grid_6">
+
+                                <div class="overview-header">
+
+                                    <legend>
+                                        <p>
+                                            <spring:message code="person.account" />
+                                        </p>
+                                    </legend>
+
+                                </div>
 
                                 <table class="app-detail" cellspacing="0">
                                     <tr class="odd">
