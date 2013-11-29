@@ -184,7 +184,9 @@ public class PersonManagementController {
         model.addAttribute("currentYear", DateMidnight.now().getYear());
         model.addAttribute("weekDays", Day.values());
 
+        if(person.getId() != null) {
         model.addAttribute("workingTimes", workingTimeService.getByPerson(person));
+        }
     }
 
 
