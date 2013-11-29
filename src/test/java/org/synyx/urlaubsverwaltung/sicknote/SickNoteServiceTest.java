@@ -62,7 +62,7 @@ public class SickNoteServiceTest {
         sickNote.setStartDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 18));
         sickNote.setEndDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 22));
 
-        service.adjustSickNote(sickNote);
+        service.setSickNoteInactive(sickNote);
 
         Assert.assertEquals(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 18), sickNote.getStartDate());
         Assert.assertEquals(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 22), sickNote.getEndDate());

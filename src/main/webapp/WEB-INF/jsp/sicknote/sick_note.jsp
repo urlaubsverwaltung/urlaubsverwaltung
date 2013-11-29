@@ -29,12 +29,31 @@
                         <p><spring:message code="sicknote" /></p>
                         <sec:authorize access="hasRole('role.office')">
                             <c:if test="${sickNote.active}">
+                                <a href="#modal-cancel" role="button" class="btn btn-right" data-toggle="modal">
+                                    <i class="icon-trash"></i>&nbsp;<spring:message code="delete" />
+                                </a>
                                 <a class="btn btn-right" href="${formUrlPrefix}/sicknote/${sickNote.id}/convert"><i class="icon-random"></i>&nbsp;<spring:message code="sicknotes.convert.vacation.short" /></a>
                                 <a class="btn btn-right" href="${formUrlPrefix}/sicknote/${sickNote.id}/edit"><i class="icon-pencil"></i>&nbsp;<spring:message code="edit" /></a>
                             </c:if>
                         </sec:authorize>
                     </legend>
                 </div>
+
+                <form:form method="POST" action="${formUrlPrefix}/sicknote/${sickNote.id}/cancel">
+                <div id="modal-cancel" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h3 id="myModalLabel"><spring:message code="sicknote" />&nbsp;<spring:message code="delete" />?</h3>
+                    </div>
+                        <div class="modal-body">
+                            <spring:message code="sicknote.cancel" />
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-danger" type="submit"><i class="icon-trash icon-white"></i>&nbsp;<spring:message code="delete" /></button>
+                            <button class="btn" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i>&nbsp;<spring:message code="cancel" /></button>
+                        </div>
+                </div>
+                </form:form>
                 
               <table class="app-detail">
                   <tbody>

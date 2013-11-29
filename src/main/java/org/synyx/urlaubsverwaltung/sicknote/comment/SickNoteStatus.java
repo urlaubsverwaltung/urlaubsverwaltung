@@ -8,6 +8,7 @@ public enum SickNoteStatus {
     CREATED("sicknote.created"),
     EDITED("sicknote.edited"),
     CONVERTED_TO_VACATION("sicknote.converted"),
+    CANCELLED("sicknote.cancelled"),
     COMMENTED("sicknote.commented");
 
     private String messageKey;

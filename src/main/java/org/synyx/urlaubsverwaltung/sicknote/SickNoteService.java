@@ -159,7 +159,7 @@ public class SickNoteService {
 
         commentService.saveComment(new Comment(), loggedUser, application);
 
-        adjustSickNote(sickNote);
+        setSickNoteInactive(sickNote);
 
         save(sickNote);
 
@@ -169,8 +169,18 @@ public class SickNoteService {
         mailService.sendSickNoteConvertedToVacationNotification(application);
     }
 
+    public void cancel(SickNote sickNote, Person loggedUser) {
 
-    protected void adjustSickNote(SickNote sickNote) {
+        setSickNoteInactive(sickNote);
+        save(sickNote);
+
+        SickNoteComment sickNoteComment = new SickNoteComment();
+        addComment(sickNote.getId(), sickNoteComment, SickNoteStatus.CANCELLED, loggedUser);
+
+    }
+
+
+    protected void setSickNoteInactive(SickNote sickNote) {
 
         sickNote.setWorkDays(BigDecimal.ZERO);
         sickNote.setActive(false);

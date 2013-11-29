@@ -326,6 +326,20 @@ public class SickNoteController {
         return ControllerConstants.ERROR_JSP;
     }
 
+    @RequestMapping(value = "/sicknote/{id}/cancel", method = RequestMethod.POST)
+    public String cancelSickNote(@PathVariable("id") Integer id, Model model) {
+
+        if (securityUtil.isOffice()) {
+            SickNote sickNote = sickNoteService.getById(id);
+
+            sickNoteService.cancel(sickNote, securityUtil.getLoggedUser());
+
+            return "redirect:/web/sicknote/" + id;
+        }
+
+        return ControllerConstants.ERROR_JSP;
+    }
+
 
     @RequestMapping(value = "/sicknote/statistics", method = RequestMethod.GET, params = "year")
     public String sickNotesStatistics(@RequestParam("year") Integer year, Model model) {
