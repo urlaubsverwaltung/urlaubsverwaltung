@@ -135,7 +135,7 @@
                             <form:select path="personId" id="employee" cssErrorClass="error">
                                 <form:option value="-1"><spring:message code="staff.all" /></form:option>
                                 <c:forEach items="${persons}" var="person">
-                                    <form:option value="${person.id}">${person.firstName}&nbsp;${person.lastName}</form:option>
+                                    <form:option value="${person.id}">${person.niceName}</form:option>
                                 </c:forEach>
                             </form:select>
                         </div>
