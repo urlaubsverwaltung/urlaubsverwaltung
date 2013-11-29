@@ -274,8 +274,6 @@ function fetchHighlightedDays(date, urlPrefix, personId) {
 
 function calculateNumberOfMonths() {
     
-    // per month minimum 240px!
-    
     var width = $(window).width();
     
     var numberOfMonths = 1;
@@ -283,10 +281,10 @@ function calculateNumberOfMonths() {
     
     while(size > 361 && numberOfMonths < 5) {
         size = width / numberOfMonths;
-        console.log("SIZE=" + size);
         numberOfMonths++;
-        console.log("number=" + numberOfMonths);
     }
+
+    console.log("Window width=" + width + " displaying " + numberOfMonths + " months");
     
     return numberOfMonths;
     
