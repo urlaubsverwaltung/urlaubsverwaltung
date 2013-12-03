@@ -36,12 +36,6 @@ function sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, e
     $.get(url, function(data) {
 
         var text;
-        
-        if(long) {
-            text = "= " + formatNumber(data) + " Urlaubstag(e)";  
-        } else {
-            text = formatNumber(data);
-        }
 
         if(startDate.getFullYear() != toDate.getFullYear()) {
 
@@ -61,12 +55,14 @@ function sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, e
 
             var daysBefore;
             var daysAfter;
+            var daysTotal = 0;
 
             var startString = before.getFullYear() + "-" + (before.getMonth() + 1) + '-' + before.getDate();
             var toString = before.getFullYear() + '-12-31';
             var url = buildUrl(urlPrefix, startString, toString, dayLength, personId);
 
             $.get(url, function(data) {
+                daysTotal += parseFloat(data);
                 daysBefore = formatNumber(data);
 
                 startString = after.getFullYear() + '-1-1';
@@ -74,8 +70,15 @@ function sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, e
                 url = buildUrl(urlPrefix, startString, toString, dayLength, personId);
 
                 $.get(url, function(data) {
+                    daysTotal += parseFloat(data);
                     daysAfter = formatNumber(data);
 
+                    if(long) {
+                        text = "= " + formatNumber(daysTotal) + " Urlaubstag(e)";
+                    } else {
+                        text = formatNumber(daysTotal);
+                    }
+                    
                     if(long) {
                         text += "<br />(davon " + daysBefore + " in " + before.getFullYear()
                             + " und " + daysAfter + " in " + after.getFullYear() + ")";  
@@ -90,6 +93,13 @@ function sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, e
             });
 
         } else {
+
+            if(long) {
+                text = "= " + formatNumber(data) + " Urlaubstag(e)";
+            } else {
+                text = formatNumber(data);
+            }
+
             $(el).html(text); 
         }
 

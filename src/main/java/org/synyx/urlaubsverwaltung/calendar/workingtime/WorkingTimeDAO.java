@@ -20,10 +20,14 @@ public interface WorkingTimeDAO extends JpaRepository<WorkingTime, Integer> {
     List<WorkingTime> findByPerson(Person person);
 
 
+    @Query("SELECT x FROM WorkingTime x WHERE x.person = ?1 AND x.validFrom = ?2")
+    WorkingTime findByPersonAndValidityDate(Person person, Date date);
+
+
     @Query(
         "SELECT x FROM WorkingTime x WHERE x.person = ?1 AND x.validFrom = (SELECT MAX(w.validFrom) from WorkingTime w WHERE w.person = ?1 AND w.validFrom <= ?2)"
     )
-    WorkingTime findByPersonAndValidityDate(Person person, Date date);
+    WorkingTime findByPersonAndValidityDateEqualsOrMinorDate(Person person, Date date);
 
 
     @Query(

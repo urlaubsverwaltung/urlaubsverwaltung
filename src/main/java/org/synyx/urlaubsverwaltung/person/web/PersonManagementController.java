@@ -8,8 +8,10 @@ import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
 
+import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
 
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +27,7 @@ import org.synyx.urlaubsverwaltung.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.security.web.SecurityUtil;
+import org.synyx.urlaubsverwaltung.util.DateMidnightPropertyEditor;
 import org.synyx.urlaubsverwaltung.util.NumberUtil;
 import org.synyx.urlaubsverwaltung.validator.PersonValidator;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
@@ -63,6 +66,13 @@ public class PersonManagementController {
         this.securityUtil = securityUtil;
         this.workingTimeService = workingTimeService;
     }
+
+    @InitBinder
+    public void initBinder(DataBinder binder, Locale locale) {
+
+        binder.registerCustomEditor(DateMidnight.class, new DateMidnightPropertyEditor(locale));
+    }
+
 
     /**
      * Prepares the view object PersonForm and returns jsp with form to edit a user.
@@ -184,8 +194,8 @@ public class PersonManagementController {
         model.addAttribute("currentYear", DateMidnight.now().getYear());
         model.addAttribute("weekDays", Day.values());
 
-        if(person.getId() != null) {
-        model.addAttribute("workingTimes", workingTimeService.getByPerson(person));
+        if (person.getId() != null) {
+            model.addAttribute("workingTimes", workingTimeService.getByPerson(person));
         }
     }
 

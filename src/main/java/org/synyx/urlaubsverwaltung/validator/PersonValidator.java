@@ -105,6 +105,10 @@ public class PersonValidator implements Validator {
         validateYear(form.getYear(), errors);
 
         validatePeriod(form, errors);
+
+        if (form.getValidFrom() == null) {
+            errors.rejectValue("validFrom", MANDATORY_FIELD);
+        }
     }
 
 

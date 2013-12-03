@@ -32,50 +32,25 @@ public class WorkingTimeService {
     public WorkingTimeService() {
     }
 
-    public void touch(List<Integer> workingDays, Person person) {
+    public void touch(List<Integer> workingDays, DateMidnight validFrom, Person person) {
 
-        WorkingTime workingTime = getCurrentOne(person);
+        WorkingTime workingTime = workingTimeDAO.findByPersonAndValidityDate(person, validFrom.toDate());
 
         /*
-         * create a new WorkingTime object if no one existent for the person
-         * or if the properties (working days) differ from the current WorkingTime object
+         * create a new WorkingTime object if no one existent for the given person and date
          */
-        if (newOneMustBeCreated(workingTime, workingDays)) {
+        if (workingTime == null) {
             workingTime = new WorkingTime();
             workingTime.setPerson(person);
-            workingTime.setValidFrom(DateMidnight.now());
+            workingTime.setValidFrom(validFrom);
         }
 
+        /**
+         * else just change the working days of the current working time object
+         */
         workingTime.setWorkingDays(workingDays, DayLength.FULL);
 
         workingTimeDAO.save(workingTime);
-    }
-
-
-    /**
-     * If the given {@link WorkingTime} is null or if its working days and validFrom date would be changed, a new
-     * {@link WorkingTime} object has to be created.
-     *
-     * @param  workingTime
-     * @param  workingDays
-     *
-     * @return  true if a new {@link WorkingTime} object has to be created, false if the {@link WorkingTime} object can
-     *          be edited
-     */
-    private boolean newOneMustBeCreated(WorkingTime workingTime, List<Integer> workingDays) {
-
-        if (workingTime == null) {
-            return true;
-        }
-
-        DateMidnight validFrom = workingTime.getValidFrom();
-        DateMidnight now = DateMidnight.now();
-
-        if ((!workingTime.hasWorkingDays(workingDays) && !validFrom.isEqual(now))) {
-            return true;
-        }
-
-        return false;
     }
 
 
@@ -85,9 +60,9 @@ public class WorkingTimeService {
     }
 
 
-    public WorkingTime getByPersonAndValidityDate(Person person, DateMidnight date) {
+    public WorkingTime getByPersonAndValidityDateEqualsOrMinorDate(Person person, DateMidnight date) {
 
-        return workingTimeDAO.findByPersonAndValidityDate(person, date.toDate());
+        return workingTimeDAO.findByPersonAndValidityDateEqualsOrMinorDate(person, date.toDate());
     }
 
 

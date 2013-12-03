@@ -29,6 +29,14 @@
             window.location.href = url;
         }
     </script>
+    <script src="<spring:url value='/js/datepicker.js' />" type="text/javascript" ></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var regional = "${pageContext.request.locale.language}";
+            $.datepicker.setDefaults($.datepicker.regional[regional]);
+            $("#validFrom").datepicker();
+        });
+    </script>
     <style type="text/css">
         .td-name {
             width: 40%;
@@ -155,9 +163,17 @@
     </c:if>
 
     <div class="control-group">
-        <label class="control-label"><spring:message code='working.time'/></label>
+        <label class="control-label">
+            <spring:message code='working.time'/>
+            <br />
+            <form:errors path="validFrom" cssClass="error" />
+        </label>
 
         <div class="controls">
+
+            <spring:message code="working.time.valid.from" />&nbsp;
+            <joda:format style="M-" var="VALID_FROM" value="${personForm.validFrom}" />
+            <form:input id="validFrom" path="validFrom" value="${VALID_FROM}" cssErrorClass="error input-medium" cssClass="input-medium" />
             
             <c:forEach items="${weekDays}" var="weekDay">
                 <label class="checkbox" for="${weekDay.name}">

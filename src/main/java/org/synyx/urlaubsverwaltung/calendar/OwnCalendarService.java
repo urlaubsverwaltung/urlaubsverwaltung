@@ -108,7 +108,7 @@ public class OwnCalendarService {
      */
     public BigDecimal getWorkDays(DayLength dayLength, DateMidnight startDate, DateMidnight endDate, Person person) {
 
-        WorkingTime workingTime = workingTimeService.getByPersonAndValidityDate(person, startDate);
+        WorkingTime workingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(person, startDate);
 
         BigDecimal vacationDays = BigDecimal.ZERO;
 

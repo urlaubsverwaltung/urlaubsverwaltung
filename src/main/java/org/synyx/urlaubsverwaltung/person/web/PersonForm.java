@@ -1,6 +1,8 @@
 
 package org.synyx.urlaubsverwaltung.person.web;
 
+import org.joda.time.DateMidnight;
+
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.calendar.Day;
@@ -43,6 +45,8 @@ public class PersonForm {
     private String remainingVacationDays;
 
     private boolean remainingVacationDaysExpire;
+
+    private DateMidnight validFrom;
 
     private List<Integer> workingDays;
 
@@ -87,6 +91,8 @@ public class PersonForm {
                     workingDays.add(dayOfWeek);
                 }
             }
+
+            this.validFrom = workingTime.getValidFrom();
         }
     }
 
@@ -265,6 +271,18 @@ public class PersonForm {
     public void setWorkingDays(List<Integer> workingDays) {
 
         this.workingDays = workingDays;
+    }
+
+
+    public DateMidnight getValidFrom() {
+
+        return validFrom;
+    }
+
+
+    public void setValidFrom(DateMidnight validFrom) {
+
+        this.validFrom = validFrom;
     }
 
 
