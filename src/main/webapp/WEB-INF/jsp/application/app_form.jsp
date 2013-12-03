@@ -31,6 +31,11 @@
             .app-detail th {
                 width: 36%;
             }
+            td.ui-datepicker-today a {
+                color: #2C7FB8 !important;
+                background: #9ECAE1 !important;
+                border: 0 none !important;
+            }
         </style>
 
     </head>
