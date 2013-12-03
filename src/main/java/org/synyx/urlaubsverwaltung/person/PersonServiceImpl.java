@@ -18,6 +18,7 @@ import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.web.PersonForm;
 import org.synyx.urlaubsverwaltung.security.CryptoService;
 import org.synyx.urlaubsverwaltung.security.Role;
+import org.synyx.urlaubsverwaltung.util.NumberUtil;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 
 import java.math.BigDecimal;
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -75,10 +77,10 @@ class PersonServiceImpl implements PersonService {
 
 
     /**
-     * @see  PersonService#createOrUpdate(Person, org.synyx.urlaubsverwaltung.person.web.PersonForm)
+     * @see  PersonService#createOrUpdate(Person, org.synyx.urlaubsverwaltung.person.web.PersonForm, java.util.Locale)
      */
     @Override
-    public void createOrUpdate(Person person, PersonForm personForm) {
+    public void createOrUpdate(Person person, PersonForm personForm, Locale locale) {
 
         boolean newPerson = false;
 
@@ -118,8 +120,8 @@ class PersonServiceImpl implements PersonService {
         DateMidnight validFrom = new DateMidnight(year, monthFrom, dayFrom);
         DateMidnight validTo = new DateMidnight(year, monthTo, dayTo);
 
-        BigDecimal annualVacationDays = new BigDecimal(personForm.getAnnualVacationDays());
-        BigDecimal remainingVacationDays = new BigDecimal(personForm.getRemainingVacationDays());
+        BigDecimal annualVacationDays = NumberUtil.parseNumber(personForm.getAnnualVacationDays(), locale);
+        BigDecimal remainingVacationDays = NumberUtil.parseNumber(personForm.getRemainingVacationDays(), locale);
         boolean expiring = personForm.isRemainingVacationDaysExpire();
 
         // check if there is an existing account

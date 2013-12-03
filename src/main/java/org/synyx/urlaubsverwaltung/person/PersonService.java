@@ -7,6 +7,7 @@ import org.synyx.urlaubsverwaltung.security.Role;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 
 /**
@@ -33,7 +34,7 @@ public interface PersonService {
      * @param  person {@link Person}
      * @param  personForm {@link PersonForm}
      */
-    void createOrUpdate(Person person, PersonForm personForm);
+    void createOrUpdate(Person person, PersonForm personForm, Locale locale);
 
 
     /**

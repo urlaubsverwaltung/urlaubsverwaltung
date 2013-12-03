@@ -275,7 +275,7 @@ public class PersonManagementController {
             return PersonConstants.PERSON_FORM_JSP;
         }
 
-        personService.createOrUpdate(personToUpdate, personForm);
+        personService.createOrUpdate(personToUpdate, personForm, locale);
 
         return "redirect:/web/staff/" + personToUpdate.getId() + "/overview";
     }
@@ -321,7 +321,7 @@ public class PersonManagementController {
             return PersonConstants.PERSON_FORM_JSP;
         }
 
-        personService.createOrUpdate(person, personForm);
+        personService.createOrUpdate(person, personForm, locale);
 
         return "redirect:/web/staff/" + person.getId() + "/overview";
     }
