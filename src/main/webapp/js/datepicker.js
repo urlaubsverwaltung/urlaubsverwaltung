@@ -147,9 +147,17 @@ function createDatepickerInstances(regional, urlPrefix, vacationUrl, personId) {
 
 function colorizeDate(date, publicHolidays, vacation) {
 
+    // 24.12.xx and 31.12.xx are half workdays
+    function isHalfWorkday(date) {
+        var d;
+        return date && date.getMonth() === 11 && (d = date.getDate()) && (d === 24 || d === 31);
+    }
+
     // if day is saturday or sunday, highlight it
     if (date.getDay() == 6 || date.getDay() == 0) {
         return [true, "notworkday"];
+    } else if (isHalfWorkday(date)) {
+        return [true, 'halfworkday'];
     } else {
         // if date is a work day, check if it is a public holiday
         // if so highlight it
@@ -167,7 +175,7 @@ function colorizeDate(date, publicHolidays, vacation) {
         }
 
     }
-    
+
 }
 
 

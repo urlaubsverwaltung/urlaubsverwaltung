@@ -564,6 +564,11 @@ td.notworkday a {
     background: #E5F5E0 !important;
 }
 
+td.halfworkday a {
+    color: #31A354 !important;
+    background: linear-gradient(-45deg, #E5F5E0 50%, #FFF 50%) !important;
+}
+
 td.holiday a {
     color: #F8B851 !important;
     background: #FFEDA0 !important;
