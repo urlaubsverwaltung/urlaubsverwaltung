@@ -19,8 +19,8 @@
 
         <tr class="odd">
             <th>&nbsp;</th>
-            <th class="center"><spring:message code="state.allowed" /></th>
-            <th class="center"><spring:message code="state.waiting" /></th>
+            <td class="center"><b><spring:message code="state.allowed" /></b></td>
+            <td class="center"><b><spring:message code="state.waiting" /></b></td>
         </tr>
 
         <c:forEach items="${usedDaysOverview.usedDays}" var="usedDays" varStatus="loopStatus">

@@ -156,13 +156,13 @@ td.vac {
     padding: 0.5em;
 }
 
-a.btn-right {
+.btn-right {
     float: right;
     margin-bottom: 1em;
     margin-left: 0.5em;
 }
 
-a.btn-left {
+.btn-left {
     float: left;
     margin-bottom: 1em;
     margin-left: 0.5em;
@@ -640,6 +640,10 @@ tr.inactive {
         font-weight: bold;
     }
     
+    div#datepicker {
+        display: none;
+    }
+    
     #content {
         margin-top: 0;
     }
@@ -656,17 +660,35 @@ tr.inactive {
         display: block !important;
     }
     
-    div.vacation-entitlement {
+    div.print-box {
         width: 100% !important;
-    }
-    
-    div.vacation-days {
-        width: 100% !important;
-        margin-top: 2em;
+        margin-bottom: 2em;
     }
 
-    div.vacation-entitlement table th, div.vacation-days table th {
-        width: 50%;
+    div.print-box table {
+        border: none;
+    }
+
+    div.print-box table tr {
+        border-bottom: 1px solid lightgrey;
+    }
+
+    div.print-box table tr:first-child {
+        border-top: 1px solid #E5E5E5;
+    }
+
+    div.print-box table td.center,
+    div.print-box table th.center {
+        text-align: left !important;
+    }
+
+    div.print-box legend {
+        border: none;
+        margin-bottom: 0;
+    }
+
+    div.print-box form {
+        display: none;
     }
 
     .overview-header legend p {

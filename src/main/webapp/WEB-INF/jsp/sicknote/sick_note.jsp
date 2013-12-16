@@ -22,7 +22,7 @@
 
         <div class="grid_12">
 
-            <div class="grid_6">
+            <div class="grid_6 print-box">
 
                 <div class="overview-header">
                     <legend>
@@ -34,6 +34,9 @@
                                 </a>
                                 <a class="btn btn-right" href="${formUrlPrefix}/sicknote/${sickNote.id}/convert"><i class="icon-random"></i>&nbsp;<spring:message code="sicknotes.convert.vacation.short" /></a>
                                 <a class="btn btn-right" href="${formUrlPrefix}/sicknote/${sickNote.id}/edit"><i class="icon-pencil"></i>&nbsp;<spring:message code="edit" /></a>
+                                <button class="btn btn-right" media="print" onclick="window.print(); return false;">
+                                    <i class="icon-print"></i>&nbsp;<spring:message code='Print' />
+                                </button>
                             </c:if>
                         </sec:authorize>
                     </legend>
@@ -94,7 +97,7 @@
               </table>  
             </div>
 
-            <div class="grid_6">
+            <div class="grid_6 print-box">
 
                 <div class="overview-header">
                     <legend>

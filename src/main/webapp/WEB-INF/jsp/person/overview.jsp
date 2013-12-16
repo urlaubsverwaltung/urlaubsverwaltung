@@ -66,13 +66,13 @@
 
         </div>
 
-        <div class="grid_7 vacation-entitlement">
+        <div class="grid_7 print-box">
             <table class="app-detail" cellspacing="0">
                 <%@include file="../application/include/account_days.jsp" %>
             </table>
         </div>
         
-        <div class="grid_5 vacation-days">
+        <div class="grid_5 print-box">
             <table class="app-detail" cellspacing="0">
                 <%@include file="./include/used_days.jsp" %>
             </table>

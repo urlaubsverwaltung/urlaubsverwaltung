@@ -63,7 +63,7 @@
                     
                 </div>
 
-                <div class="grid_6">
+                <div class="grid_6 print-box">
                     
                     <%@include file="./include/app-detail-elements/app_info.jsp" %>
 
@@ -150,7 +150,7 @@
 
                 </div>
 
-                <div class="grid_6">
+                <div class="grid_6 print-box">
 
                     <table class="app-detail" cellspacing="0">
                         <tr class="odd">
