@@ -337,6 +337,8 @@ function createDatepickerForVacationOverview(div, regional, urlPrefix, personId,
 
             if(id !== undefined) {
                 document.location.href = urlPrefix + "/application/" + id;  
+            } else {
+                document.location.href = urlPrefix + "/application/new"; 
             }
             
         }
