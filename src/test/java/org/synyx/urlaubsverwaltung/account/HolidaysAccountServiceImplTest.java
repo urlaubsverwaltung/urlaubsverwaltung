@@ -139,6 +139,66 @@ public class HolidaysAccountServiceImplTest {
 
 
     @Test
+    public void testCalculateActualVacationDaysForTwoMonths() {
+
+        DateMidnight startDate = new DateMidnight(2013, DateTimeConstants.NOVEMBER, 1);
+        DateMidnight endDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 31);
+
+        account = new Account(person, startDate.toDate(), endDate.toDate(), BigDecimal.valueOf(30), BigDecimal.ZERO,
+                true);
+
+        BigDecimal result = service.calculateActualVacationDays(account);
+
+        Assert.assertEquals(new BigDecimal("5.0").setScale(2), result);
+    }
+
+
+    @Test
+    public void testCalculateActualVacationDaysForOneMonth() {
+
+        DateMidnight startDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 1);
+        DateMidnight endDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 31);
+
+        account = new Account(person, startDate.toDate(), endDate.toDate(), BigDecimal.valueOf(30), BigDecimal.ZERO,
+                true);
+
+        BigDecimal result = service.calculateActualVacationDays(account);
+
+        Assert.assertEquals(new BigDecimal("2.5").setScale(2), result);
+    }
+
+
+    @Test
+    public void testCalculateActualVacationDaysForHalfMonthToLastOfMonth() {
+
+        DateMidnight startDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 15);
+        DateMidnight endDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 31);
+
+        account = new Account(person, startDate.toDate(), endDate.toDate(), BigDecimal.valueOf(30), BigDecimal.ZERO,
+                true);
+
+        BigDecimal result = service.calculateActualVacationDays(account);
+
+        Assert.assertEquals(new BigDecimal("1.5"), result);
+    }
+
+
+    @Test
+    public void testCalculateActualVacationDaysForHalfMonthFromFirstOfMonth() {
+
+        DateMidnight startDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 1);
+        DateMidnight endDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 16);
+
+        account = new Account(person, startDate.toDate(), endDate.toDate(), BigDecimal.valueOf(30), BigDecimal.ZERO,
+                true);
+
+        BigDecimal result = service.calculateActualVacationDays(account);
+
+        Assert.assertEquals(new BigDecimal("1.5"), result);
+    }
+
+
+    @Test
     public void testGetOrCreateAccount() {
 
         Account a = new Account(person, new DateMidnight(2012, DateTimeConstants.JANUARY, 1).toDate(),

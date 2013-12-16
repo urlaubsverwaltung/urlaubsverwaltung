@@ -122,7 +122,8 @@ class AccountServiceImpl implements AccountService {
              * so you have to calculate (0.1111 * work days) to get the actual vacation days
              */
 
-            double entitlementPerMonth = 28.0 / 12.0;
+            double entitlementPerYear = account.getAnnualVacationDays().doubleValue();
+            double entitlementPerMonth = entitlementPerYear / 12.0;
             double entitlementPerDay = entitlementPerMonth / 21.0;
             double workDays = 0.0;
 
@@ -142,9 +143,11 @@ class AccountServiceImpl implements AccountService {
             unroundedVacationDays += entitlementPerDay * workDays;
 
             int fullMonths = getNumberOfMonthsForPeriod(startForMonthCalc, endForMonthCalc);
-            fullMonths = (fullMonths * account.getAnnualVacationDays().intValue()) / 12;
 
-            unroundedVacationDays += fullMonths;
+            if (fullMonths > 1) {
+                fullMonths = (fullMonths * account.getAnnualVacationDays().intValue()) / 12;
+                unroundedVacationDays += fullMonths;
+            }
         } else {
             // that's the simple case
             int months = getNumberOfMonthsForPeriod(start, end);
@@ -185,7 +188,7 @@ class AccountServiceImpl implements AccountService {
             days = new BigDecimal(bdIntValue);
         } else if (referenceValue >= 30 && referenceValue < 50) {
             days = new BigDecimal(bdIntValue + 0.5);
-        } else if (referenceValue >= 50) {
+        } else if (referenceValue > 50) {
             days = new BigDecimal(bdIntValue + 1);
         } else {
             // default fallback because I'm a chicken
