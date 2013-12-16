@@ -128,6 +128,11 @@ public class OwnCalendarService {
             day = day.plusDays(1);
         }
 
+        // vacation days < 1 day --> must not be divided, else an ArithmeticException is thrown
+        if (vacationDays.compareTo(BigDecimal.ONE) < 0) {
+            return vacationDays.setScale(1);
+        }
+
         return vacationDays.multiply(dayLength.getDuration()).setScale(1);
     }
 }

@@ -257,12 +257,80 @@ public class OwnCalendarServiceTest {
     @Test
     public void testGetWorkDaysHalfDayZero() {
 
-        // monday
+        // saturday
         DateMidnight startDate = new DateMidnight(2013, DateTimeConstants.NOVEMBER, 23);
         DateMidnight endDate = new DateMidnight(2013, DateTimeConstants.NOVEMBER, 23);
 
         BigDecimal returnValue = instance.getWorkDays(DayLength.MORNING, startDate, endDate, person);
 
         assertEquals(BigDecimal.ZERO, returnValue.setScale(0));
+    }
+
+
+    @Test
+    public void testGetWorkDaysForChristmasEve() {
+
+        DateMidnight date = new DateMidnight(2013, DateTimeConstants.DECEMBER, 24);
+
+        BigDecimal returnValue = instance.getWorkDays(DayLength.FULL, date, date, person);
+
+        assertEquals(new BigDecimal("0.5"), returnValue);
+    }
+
+
+    @Test
+    public void testGetWorkDaysForChristmasEveDayLengthMorning() {
+
+        DateMidnight date = new DateMidnight(2013, DateTimeConstants.DECEMBER, 24);
+
+        BigDecimal returnValue = instance.getWorkDays(DayLength.MORNING, date, date, person);
+
+        assertEquals(new BigDecimal("0.5"), returnValue);
+    }
+
+
+    @Test
+    public void testGetWorkDaysForNewYearsEve() {
+
+        DateMidnight date = new DateMidnight(2013, DateTimeConstants.DECEMBER, 31);
+
+        BigDecimal returnValue = instance.getWorkDays(DayLength.FULL, date, date, person);
+
+        assertEquals(new BigDecimal("0.5"), returnValue);
+    }
+
+
+    @Test
+    public void testGetWorkDaysForNewYearsEveDayLengthMorning() {
+
+        DateMidnight date = new DateMidnight(2013, DateTimeConstants.DECEMBER, 31);
+
+        BigDecimal returnValue = instance.getWorkDays(DayLength.MORNING, date, date, person);
+
+        assertEquals(new BigDecimal("0.5"), returnValue);
+    }
+
+
+    @Test
+    public void testGetWorkDaysForChristmasEveAndNewYearsHoliday() {
+
+        DateMidnight from = new DateMidnight(2013, DateTimeConstants.DECEMBER, 23);
+        DateMidnight to = new DateMidnight(2014, DateTimeConstants.JANUARY, 2);
+
+        BigDecimal returnValue = instance.getWorkDays(DayLength.FULL, from, to, person);
+
+        assertEquals(new BigDecimal("5.0"), returnValue);
+    }
+
+
+    @Test
+    public void testGetWorkDaysForChristmasEveAndNewYearsHolidayDayLengthMorning() {
+
+        DateMidnight from = new DateMidnight(2013, DateTimeConstants.DECEMBER, 23);
+        DateMidnight to = new DateMidnight(2014, DateTimeConstants.JANUARY, 2);
+
+        BigDecimal returnValue = instance.getWorkDays(DayLength.MORNING, from, to, person);
+
+        assertEquals(new BigDecimal("2.5"), returnValue);
     }
 }
