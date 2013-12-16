@@ -170,6 +170,38 @@ public class SickNoteController {
     }
 
 
+    @RequestMapping(value = "/sicknote/quartal", method = RequestMethod.GET)
+    public String quartalSickNotes() {
+
+        if (securityUtil.isOffice()) {
+            DateMidnight now = DateMidnight.now();
+
+            DateMidnight from = now.dayOfMonth().withMinimumValue().minusMonths(2);
+            DateMidnight to = now.dayOfMonth().withMaximumValue();
+
+            return "redirect:/web/sicknote?from=" + from.toString(DATE_PATTERN) + "&to=" + to.toString(DATE_PATTERN);
+        }
+
+        return ControllerConstants.ERROR_JSP;
+    }
+
+
+    @RequestMapping(value = "/sicknote/year", method = RequestMethod.GET)
+    public String yearSickNotes() {
+
+        if (securityUtil.isOffice()) {
+            DateMidnight now = DateMidnight.now();
+
+            DateMidnight from = now.dayOfYear().withMinimumValue();
+            DateMidnight to = now.dayOfYear().withMaximumValue();
+
+            return "redirect:/web/sicknote?from=" + from.toString(DATE_PATTERN) + "&to=" + to.toString(DATE_PATTERN);
+        }
+
+        return ControllerConstants.ERROR_JSP;
+    }
+
+
     private void fillModel(Model model, List<SickNote> sickNoteList, DateMidnight fromDate, DateMidnight toDate) {
 
         model.addAttribute("sickNotes", sickNoteList);
@@ -325,6 +357,7 @@ public class SickNoteController {
 
         return ControllerConstants.ERROR_JSP;
     }
+
 
     @RequestMapping(value = "/sicknote/{id}/cancel", method = RequestMethod.POST)
     public String cancelSickNote(@PathVariable("id") Integer id, Model model) {

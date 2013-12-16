@@ -85,8 +85,34 @@
                         </sec:authorize>
 
                         <sec:authorize access="hasRole('role.office')">
-                            <li>
-                                <a href="${formUrlPrefix}/sicknote"><img src="<spring:url value='/images/agt_virus-off.png' />" />&nbsp;<spring:message code="sicknotes" /></a>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <img src="<spring:url value='/images/agt_virus-off.png' />" />&nbsp;<spring:message code="sicknotes" />
+                                    <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu icons-on-top">
+                                    <li>
+                                        <a href="${formUrlPrefix}/sicknote">
+                                            <spring:message code="sicknotes.nav.current" />
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="${formUrlPrefix}/sicknote/quartal">
+                                            <spring:message code="sicknotes.nav.quartal" />
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="${formUrlPrefix}/sicknote/year">
+                                            <spring:message code="sicknotes.nav.year" />
+                                        </a>
+                                    </li>
+                                    <li class="divider"></li>
+                                    <li>
+                                        <a href="${formUrlPrefix}/sicknote/new">
+                                            <i class="icon-plus"></i>&nbsp;<spring:message code="sicknotes.nav.new" />
+                                        </a>
+                                    </li>
+                                </ul>
                             </li>
                         </sec:authorize>
 
