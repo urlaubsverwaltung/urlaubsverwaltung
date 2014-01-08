@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.util.CalcUtil;
 
 import java.math.BigDecimal;
 
@@ -172,16 +173,16 @@ public class CalculationService {
 
         BigDecimal result1 = remainingVacationDays.subtract(daysBeforeApril);
 
-        if (result1.compareTo(BigDecimal.ZERO) < 0) {
+        if (CalcUtil.isNegative(result1)) {
             vacationDays = vacationDays.add(result1); // result is negative so that you add it to vacation days instead of subtract it
         }
 
-        if (account.isRemainingVacationDaysExpire()) {
+        if (account.isRemainingVacationDaysExpire() || CalcUtil.isZero(result1)) {
             vacationDays = vacationDays.subtract(daysAfterApril);
         } else {
             BigDecimal result2 = remainingVacationDays.subtract(daysAfterApril);
 
-            if (result2.compareTo(BigDecimal.ZERO) < 0) {
+            if (CalcUtil.isNegative(result2)) {
                 vacationDays = vacationDays.add(result2); // result is negative so that you add it to vacation days instead of subtract it
             }
         }
@@ -221,7 +222,7 @@ public class CalculationService {
     }
 
 
-    private BigDecimal getDaysBeforeApril(Account account) {
+    protected BigDecimal getDaysBeforeApril(Account account) {
 
         DateMidnight firstOfJanuary = new DateMidnight(account.getYear(), DateTimeConstants.JANUARY, 1);
         DateMidnight lastOfMarch = new DateMidnight(account.getYear(), DateTimeConstants.MARCH, 31);
@@ -232,7 +233,7 @@ public class CalculationService {
     }
 
 
-    private BigDecimal getDaysAfterApril(Account account) {
+    protected BigDecimal getDaysAfterApril(Account account) {
 
         DateMidnight firstOfApril = new DateMidnight(account.getYear(), DateTimeConstants.APRIL, 1);
         DateMidnight lastOfDecember = new DateMidnight(account.getYear(), DateTimeConstants.DECEMBER, 31);

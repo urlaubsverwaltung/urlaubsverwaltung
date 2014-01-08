@@ -20,6 +20,12 @@ public class CalcUtil {
      * if negative: -1 if zero: 0 if positive: 1
      */
 
+    public static boolean isZero(BigDecimal number) {
+
+        return number.signum() == 0;
+    }
+
+
     public static boolean isNegative(BigDecimal number) {
 
         return number.signum() == -1;

@@ -403,4 +403,99 @@ public class CalculationServiceTest {
         Assert.assertNotNull(days);
         Assert.assertEquals(new BigDecimal("11.5"), days);
     }
+
+
+    @Test
+    public void testCalculateLeftVacationDays() {
+
+        service = new CalculationService(applicationDAO, accountService, calendarService) {
+
+            @Override
+            protected BigDecimal getDaysBeforeApril(Account account) {
+
+                return new BigDecimal("8");
+            }
+
+
+            @Override
+            protected BigDecimal getDaysAfterApril(Account account) {
+
+                return new BigDecimal("28");
+            }
+        };
+
+        Account account = new Account();
+        account.setRemainingVacationDaysExpire(false);
+        account.setAnnualVacationDays(new BigDecimal("30"));
+        account.setVacationDays(new BigDecimal("30"));
+        account.setRemainingVacationDays(new BigDecimal("8"));
+
+        BigDecimal result = service.calculateLeftVacationDays(account);
+
+        Assert.assertEquals(new BigDecimal("2"), result);
+    }
+
+
+    @Test
+    public void testCalculateLeftVacationDays2() {
+
+        service = new CalculationService(applicationDAO, accountService, calendarService) {
+
+            @Override
+            protected BigDecimal getDaysBeforeApril(Account account) {
+
+                return BigDecimal.ZERO;
+            }
+
+
+            @Override
+            protected BigDecimal getDaysAfterApril(Account account) {
+
+                return new BigDecimal("15");
+            }
+        };
+
+        Account account = new Account();
+        account.setRemainingVacationDaysExpire(false);
+        account.setAnnualVacationDays(new BigDecimal("30"));
+        account.setVacationDays(new BigDecimal("23"));
+        account.setRemainingVacationDays(BigDecimal.ZERO);
+
+        BigDecimal result = service.calculateLeftVacationDays(account);
+
+        Assert.assertEquals(new BigDecimal("8"), result);
+    }
+
+
+    @Test
+    public void testCalculateLeftRemainingVacationDays() {
+
+        service = new CalculationService(applicationDAO, accountService, calendarService) {
+
+            @Override
+            protected BigDecimal getDaysBeforeApril(Account account) {
+
+                return new BigDecimal("2");
+            }
+
+
+            @Override
+            protected BigDecimal getDaysAfterApril(Account account) {
+
+                return BigDecimal.ZERO;
+            }
+        };
+
+        Account account = new Account();
+        account.setRemainingVacationDaysExpire(false);
+        account.setAnnualVacationDays(new BigDecimal("30"));
+        account.setVacationDays(new BigDecimal("30"));
+        account.setRemainingVacationDays(new BigDecimal("2.5"));
+
+        BigDecimal vacationDays = service.calculateLeftVacationDays(account);
+        BigDecimal remainingVacationDays = service.calculateLeftRemainingVacationDays(account);
+
+        Assert.assertEquals(new BigDecimal("30"), vacationDays);
+        Assert.assertEquals(new BigDecimal("0.5"), remainingVacationDays);
+    }
 }
