@@ -171,23 +171,28 @@ public class CalculationService {
         BigDecimal daysBeforeApril = getDaysBeforeApril(account);
         BigDecimal daysAfterApril = getDaysAfterApril(account);
 
-        BigDecimal result1 = remainingVacationDays.subtract(daysBeforeApril);
+        BigDecimal result;
 
-        if (CalcUtil.isNegative(result1)) {
-            vacationDays = vacationDays.add(result1); // result is negative so that you add it to vacation days instead of subtract it
-        }
+        BigDecimal interimResult = remainingVacationDays.subtract(daysBeforeApril);
 
-        if (account.isRemainingVacationDaysExpire() || CalcUtil.isZero(result1)) {
-            vacationDays = vacationDays.subtract(daysAfterApril);
+        if (CalcUtil.isNegative(interimResult)) {
+            // result is negative so that you add it to vacation days instead of subtract it
+            result = vacationDays.add(interimResult).subtract(daysAfterApril);
         } else {
-            BigDecimal result2 = remainingVacationDays.subtract(daysAfterApril);
+            if (account.isRemainingVacationDaysExpire() || CalcUtil.isZero(interimResult)) {
+                result = vacationDays.subtract(daysAfterApril);
+            } else {
+                BigDecimal interimResult2 = interimResult.subtract(daysAfterApril);
 
-            if (CalcUtil.isNegative(result2)) {
-                vacationDays = vacationDays.add(result2); // result is negative so that you add it to vacation days instead of subtract it
+                if (CalcUtil.isNegative(interimResult2)) {
+                    result = vacationDays.add(interimResult2);
+                } else {
+                    result = vacationDays.subtract(interimResult2);
+                }
             }
         }
 
-        return vacationDays;
+        return result;
     }
 
 
@@ -214,7 +219,7 @@ public class CalculationService {
         }
 
         // if result is negative
-        if (result.compareTo(BigDecimal.ZERO) < 0) {
+        if (CalcUtil.isNegative(result)) {
             result = BigDecimal.ZERO;
         }
 
