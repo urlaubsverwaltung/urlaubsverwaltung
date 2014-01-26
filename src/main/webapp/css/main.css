@@ -711,6 +711,10 @@ tr.inactive td {
     tr.inactive {
         display: none;
     }
+
+    div.btn-group, .dropdown-menu {
+        display: none !important;
+    }
 }
 
 .print-visible {
@@ -723,4 +727,8 @@ b.waiting-icon {
 
 .dropdown-menu li a:hover b.waiting-icon {
     color: #333333 !important;
+}
+
+legend .dropdown-menu {
+    font-size: 12px;
 }

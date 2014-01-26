@@ -29,14 +29,35 @@
                         <p><spring:message code="sicknote" /></p>
                         <sec:authorize access="hasRole('role.office')">
                             <c:if test="${sickNote.active}">
-                                <a href="#modal-cancel" role="button" class="btn btn-right" data-toggle="modal">
-                                    <i class="icon-trash"></i>&nbsp;<spring:message code="delete" />
-                                </a>
-                                <a class="btn btn-right" href="${formUrlPrefix}/sicknote/${sickNote.id}/convert"><i class="icon-random"></i>&nbsp;<spring:message code="sicknotes.convert.vacation.short" /></a>
-                                <a class="btn btn-right" href="${formUrlPrefix}/sicknote/${sickNote.id}/edit"><i class="icon-pencil"></i>&nbsp;<spring:message code="edit" /></a>
-                                <button class="btn btn-right" media="print" onclick="window.print(); return false;">
-                                    <i class="icon-print"></i>&nbsp;<spring:message code='Print' />
-                                </button>
+                                <div class="btn-group btn-right">
+                                    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                                        <i class="icon-asterisk"></i>
+                                        <spring:message code="action" />
+                                        <span class="caret"></span>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <a href="#" media="print" onclick="window.print(); return false;">
+                                                <i class="icon-print"></i>&nbsp;&nbsp;<spring:message code='Print' />
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="${formUrlPrefix}/sicknote/${sickNote.id}/edit">
+                                                <i class="icon-pencil"></i>&nbsp;&nbsp;<spring:message code="edit" />
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="${formUrlPrefix}/sicknote/${sickNote.id}/convert">
+                                                <i class="icon-random"></i>&nbsp;&nbsp;<spring:message code="sicknotes.convert.vacation.short" />
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#modal-cancel" role="button" data-toggle="modal">
+                                                <i class="icon-trash"></i>&nbsp;&nbsp;<spring:message code="delete" />
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </c:if>
                         </sec:authorize>
                     </legend>
