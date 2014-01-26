@@ -78,6 +78,14 @@
                 </tr>
 
                 <c:forEach items="${applications}" var="app" varStatus="loopStatus">
+                    <c:choose>
+                        <c:when test="${app.status.state == 'state.cancelled' || app.status.state == 'state.rejected'}">
+                            <c:set var="CSS_CLASS" value="inactive" />
+                        </c:when>
+                        <c:otherwise>
+                            <c:set var="CSS_CLASS" value="active" />
+                        </c:otherwise>
+                    </c:choose>
                     <tr class="${CSS_CLASS}" onclick="navigate('${formUrlPrefix}/application/${app.id}');">
                         <td>
                             <span class="print-visible">

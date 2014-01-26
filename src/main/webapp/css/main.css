@@ -629,8 +629,8 @@ tr.active {
   color: inherit;  
 }
 
-tr.inactive {
-  color: lightgrey;  
+tr.inactive td {
+  color: lightgrey !important;
 }
 
 /* print css */
