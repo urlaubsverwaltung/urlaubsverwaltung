@@ -93,9 +93,30 @@
                         
                         <sec:authorize access="hasRole('role.boss')">
                             <c:if test="${application.person.id != loggedUser.id && application.status.number == 0}">
-                                <%@include file="./include/app-detail-elements/actions/allow.jsp" %>
-                                <%@include file="./include/app-detail-elements/actions/reject.jsp" %>
-                                <%@include file="./include/app-detail-elements/actions/refer.jsp" %>
+                                <div class="btn-group" style="float:left; margin-right: 0.5em">
+                                    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
+                                        <i class="icon-asterisk icon-white"></i>
+                                        <spring:message code="process" />
+                                        <span class="caret"></span>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <a href="#" onclick="$('#reject').hide(); $('#refer').hide();  $('#cancel').hide(); $('#confirm').show();">
+                                                <i class="icon-ok"></i>&nbsp;<spring:message code='app.state.ok.short' />
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#" onclick="$('#refer').hide(); $('#confirm').hide();  $('#cancel').hide(); $('#reject').show();">
+                                                <i class="icon-ban-circle"></i>&nbsp;<spring:message code='app.state.no.short' />
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#" onclick="$('#reject').hide(); $('#confirm').hide(); $('#cancel').hide(); $('#refer').show();">
+                                                <i class="icon-share"></i>&nbsp;<spring:message code='app.state.refer.short' />
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </c:if>
                         </sec:authorize>
 
