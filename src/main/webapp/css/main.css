@@ -128,6 +128,10 @@ body {
     padding: 0.4em;
 }
 
+#staff-list tr:hover {
+   cursor: pointer;
+}
+
 th.attributes {
     padding: 7px 0px 7px 15px;
     /*text-align: left;*/
@@ -309,7 +313,11 @@ tr.over td {
     /*    border-bottom: 1px solid #D7D7D7;
         border-right: 1px solid #D7D7D7;
         border-left: 1px solid #D7D7D7;*/
-}	
+}
+
+.app-tbl tr:hover {
+    cursor: pointer;
+}
 
 .app-tbl th, .app-tbl td {
     /*text-align: left;*/
@@ -376,7 +384,7 @@ tr.over td {
     overflow-y: auto;
 }
 
-#staff-list .td-edit, #staff-list .td-detail, .app-tbl .td-detail  {
+#staff-list .td-action  {
     text-align: center;
     padding: 0px;
 }
@@ -652,7 +660,7 @@ tr.inactive {
         display: none;
     }
     
-    .td-action, .td-detail, .user-pic, .print-invisible {
+    .td-action, .user-pic, .print-invisible {
         display: none !important;
     }
     

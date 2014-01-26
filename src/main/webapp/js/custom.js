@@ -9,6 +9,10 @@ function maxChars(elem, max) {
     }
 }
 
+function navigate(url) {
+    window.location.href = url;
+}
+
 function formatNumber(number) {
     
     var num = new Number(number).toFixed(1);

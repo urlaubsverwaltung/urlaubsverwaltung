@@ -75,13 +75,10 @@
                     <th>
                         <spring:message code="days.vac" />
                     </th>
-                    <th class="td-detail">
-                        <spring:message code="table.detail" />
-                    </th>
                 </tr>
 
                 <c:forEach items="${applications}" var="app" varStatus="loopStatus">
-                    <tr>
+                    <tr class="${CSS_CLASS}" onclick="navigate('${formUrlPrefix}/application/${app.id}');">
                         <td>
                             <span class="print-visible">
                                 <spring:message code="${app.status.state}" />
@@ -140,7 +137,6 @@
 
                             </script>
                     </td>
-                    <td class="td-detail"><a href="${formUrlPrefix}/application/${app.id}"><img src="<spring:url value='/images/playlist.png' />" /></a></td>
                     </tr>
                 </c:forEach>
             </table>

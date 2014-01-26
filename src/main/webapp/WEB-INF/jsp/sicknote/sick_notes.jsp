@@ -199,7 +199,6 @@
                             <th><spring:message code="work.days" /></th>
                             <th><spring:message code="sicknotes.aub.short" /></th>
                             <th class="print-invisible"><spring:message code="app.date.overview" /></th>
-                            <th class="print-invisible"><spring:message code="table.detail" /></th>
                             <th class="print-invisible"><spring:message code="edit" /></th>
                         </tr>
                         </thead>
@@ -213,7 +212,7 @@
                                     <c:set var="CSS_CLASS" value="inactive" />
                                 </c:otherwise>
                             </c:choose>
-                            <tr class="${CSS_CLASS}">
+                            <tr class="${CSS_CLASS}" onclick="navigate('${formUrlPrefix}/sicknote/${sickNote.id}');">
                                 <td>
                                     <c:out value="${sickNote.person.firstName}" />&nbsp;<c:out value="${sickNote.person.lastName}" />
                                 </td>
@@ -228,11 +227,6 @@
                                 </td>
                                 <td class="print-invisible">
                                     <joda:format style="M-" value="${sickNote.lastEdited}"/> 
-                                </td>
-                                <td class="print-invisible">
-                                    <a href="${formUrlPrefix}/sicknote/${sickNote.id}">
-                                        <img src="<spring:url value='/images/playlist.png' />" />
-                                    </a>
                                 </td>
                                 <td class="print-invisible">
                                     <c:if test="${sickNote.active}">

@@ -88,7 +88,7 @@
                                                 </c:otherwise>
                                             </c:choose>
                                         </td>
-                                        <td class="td-edit"><a href="${formUrlPrefix}/management/${person.id}"><img src="<spring:url value='/images/edit.png' />" /></a></td>
+                                        <td class="td-action"><a href="${formUrlPrefix}/management/${person.id}"><img src="<spring:url value='/images/edit.png' />" /></a></td>
                                     </tr>    
                                 </c:forEach>
                                 </tbody>

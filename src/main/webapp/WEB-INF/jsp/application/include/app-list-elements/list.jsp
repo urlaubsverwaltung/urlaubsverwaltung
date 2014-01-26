@@ -45,15 +45,12 @@
                 <th>
                     <spring:message code="days.vac" />
                 </th>
-                <th class="td-detail">
-                    <spring:message code="table.detail" />
-                </th>
             </tr>
             </thead>
 
             <tbody>
             <c:forEach items="${applications}" var="app" varStatus="loopStatus">
-                <tr>
+                <tr onclick="navigate('${formUrlPrefix}/application/${app.id}');">
                     <td>
                         <spring:message code="${app.status.state}" />
                     </td>
@@ -95,8 +92,6 @@
                     <td>
                         <fmt:formatNumber maxFractionDigits="1" value="${app.days}" />
                     </td>
-
-                    <td class="td-detail"><a href="${formUrlPrefix}/application/${app.id}"><img src="<spring:url value='/images/playlist.png' />" /></a></td>     
 
                 </tr>
             </c:forEach>

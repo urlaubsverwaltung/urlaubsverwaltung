@@ -28,8 +28,7 @@
         <th class="attributes"><spring:message code="email" /></th>
         <th class="vac"><spring:message code="entitlement" /></th>
         <th class="vac"><spring:message code="left" /></th>
-        <th><spring:message code="table.detail" /></th>
-        <sec:authorize access="hasRole('role.office')"> 
+        <sec:authorize access="hasRole('role.office')">
             <th><spring:message code="table.apply" /></th>
             <th><spring:message code="edit" /></th>
         </sec:authorize>    
@@ -37,7 +36,7 @@
     </thead>
     <tbody>
     <c:forEach items="${persons}" var="person" varStatus="loopStatus">
-        <tr>
+        <tr onclick="navigate('${formUrlPrefix}/staff/${person.id}/overview');">
             <td class="td-img"><img src="<c:out value='${gravatarUrls[person]}?s=20&d=mm'/>" /></td>
             <td><c:out value="${person.loginName}"/></td>
             <td><c:out value="${person.firstName}"/></td>
@@ -68,10 +67,9 @@
                     </c:otherwise>    
                 </c:choose>
             </td>
-            <td class="td-detail"><a href="${formUrlPrefix}/staff/${person.id}/overview"><img src="<spring:url value='/images/playlist.png' />" /></a></td>
             <sec:authorize access="hasRole('role.office')">
-            <td class="td-detail"><a href="${formUrlPrefix}/${person.id}/application/new"><img src="<spring:url value='/images/new window.png' />" /></a></td>
-            <td class="td-edit"><a href="${formUrlPrefix}/staff/${person.id}/edit"><img src="<spring:url value='/images/edit.png' />" /></a></td>
+            <td class="td-action"><a href="${formUrlPrefix}/${person.id}/application/new"><img src="<spring:url value='/images/new window.png' />" /></a></td>
+            <td class="td-action"><a href="${formUrlPrefix}/staff/${person.id}/edit"><img src="<spring:url value='/images/edit.png' />" /></a></td>
             </sec:authorize>
         </tr>    
     </c:forEach>
