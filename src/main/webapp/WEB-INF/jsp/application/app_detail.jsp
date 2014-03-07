@@ -46,13 +46,13 @@
 
                             <div style="float: right; display: inline-block">
 
-                                <sec:authorize access="hasAnyRole('role.boss', 'role.office')">
+                                <sec:authorize access="hasAnyRole('BOSS', 'OFFICE')">
                                     <c:if test="${application.person.id != loggedUser.id}">
                                         <%@include file="./include/app-detail-elements/actions/back_to_member.jsp" %>
                                     </c:if>
                                 </sec:authorize>
 
-                                <sec:authorize access="hasRole('role.user')">
+                                <sec:authorize access="hasRole('USER')">
                                 <%@include file="./include/app-detail-elements/actions/print.jsp" %>
                                 </sec:authorize>
 
@@ -69,7 +69,7 @@
 
                     <div style="margin-top: 0.5em">
                         
-                        <sec:authorize access="hasRole('role.user')">
+                        <sec:authorize access="hasRole('USER')">
                             <c:if test="${application.person.id == loggedUser.id && application.status.number == 0}">
                                 <%@include file="./include/app-detail-elements/actions/remind.jsp" %>
                             </c:if>
@@ -91,7 +91,7 @@
 
                         </sec:authorize>
                         
-                        <sec:authorize access="hasRole('role.boss')">
+                        <sec:authorize access="hasRole('BOSS')">
                             <c:if test="${application.person.id != loggedUser.id && application.status.number == 0}">
                                 <div class="btn-group" style="float:left; margin-right: 0.5em">
                                     <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
@@ -120,7 +120,7 @@
                             </c:if>
                         </sec:authorize>
 
-                        <sec:authorize access="hasRole('role.office')">
+                        <sec:authorize access="hasRole('OFFICE')">
                             <c:if test="${application.person.id != loggedUser.id && (application.status.number == 0 || application.status.number == 1)}">
                                 <%@include file="./include/app-detail-elements/actions/cancel_for_other.jsp" %>
                             </c:if>
@@ -132,7 +132,7 @@
 
                         <%-- permission dependant forms to the buttons above START --%>
 
-                        <sec:authorize access="hasRole('role.user')">
+                        <sec:authorize access="hasRole('USER')">
 
                             <%-- if role is office then allowed applications for leave may be cancelled --%>
 
@@ -151,7 +151,7 @@
 
                         </sec:authorize>
 
-                        <sec:authorize access="hasRole('role.boss')">
+                        <sec:authorize access="hasRole('BOSS')">
                                 <c:if test="${application.person.id != loggedUser.id && application.status.number == 0}">
                                     <%@include file="./include/app-detail-elements/actions/allow_form.jsp" %>
                                     <%@include file="./include/app-detail-elements/actions/reject_form.jsp" %>
@@ -159,7 +159,7 @@
                                 </c:if>
                         </sec:authorize>
 
-                        <sec:authorize access="hasRole('role.office')">
+                        <sec:authorize access="hasRole('OFFICE')">
                                 <c:if test="${application.person.id != loggedUser.id && (application.status.number == 0 || application.status.number == 1)}">
                                     <%@include file="./include/app-detail-elements/actions/cancel_for_other_form.jsp" %>
                                 </c:if>

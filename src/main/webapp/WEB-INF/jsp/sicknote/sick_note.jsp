@@ -27,7 +27,7 @@
                 <div class="overview-header">
                     <legend>
                         <p><spring:message code="sicknote" /></p>
-                        <sec:authorize access="hasRole('role.office')">
+                        <sec:authorize access="hasRole('OFFICE')">
                             <c:if test="${sickNote.active}">
                                 <div class="btn-group btn-right">
                                     <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
@@ -123,7 +123,7 @@
                 <div class="overview-header">
                     <legend>
                         <p><spring:message code="progress" /></p>
-                        <sec:authorize access="hasRole('role.office')">
+                        <sec:authorize access="hasRole('OFFICE')">
                             <button class="btn" style="float:right;" onclick="$('div#comment-form').show();">
                                 <i class="icon-comment"></i>&nbsp;Neuer Kommentar
                             </button>
@@ -154,7 +154,7 @@
                     </tbody>
                 </table>
 
-                <sec:authorize access="hasRole('role.office')">
+                <sec:authorize access="hasRole('OFFICE')">
                 
                     <c:choose>
                         <c:when test="${error}">

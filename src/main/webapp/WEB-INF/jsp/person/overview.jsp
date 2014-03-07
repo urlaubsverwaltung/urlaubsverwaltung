@@ -58,7 +58,7 @@
                     <%@include file="./include/overview_header_user.jsp" %>
                 </c:when>
                 <c:otherwise>
-                    <sec:authorize access="hasAnyRole('role.office', 'role.boss')">
+                    <sec:authorize access="hasAnyRole('OFFICE', 'BOSS')">
                         <%@include file="./include/overview_header_office.jsp" %>
                     </sec:authorize>
                 </c:otherwise>
@@ -124,7 +124,7 @@
                     <%@include file="./include/sick_notes.jsp" %>
                 </c:when>
                 <c:otherwise>
-                    <sec:authorize access="hasRole('role.office')">
+                    <sec:authorize access="hasRole('OFFICE')">
                         <%@include file="./include/sick_notes.jsp" %>
                     </sec:authorize>
                 </c:otherwise>

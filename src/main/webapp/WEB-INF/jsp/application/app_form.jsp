@@ -75,7 +75,7 @@
                                 <c:set var="actionUrl" value="${formUrlPrefix}/application/new?force=${forcy}" />
                             </c:when>
                             <c:otherwise>
-                                <sec:authorize access="hasRole('role.office')">
+                                <sec:authorize access="hasRole('OFFICE')">
                                     <c:set var="appliesAsRep" value="true" />
                                     <c:set var="actionUrl" value="${formUrlPrefix}/${person.id}/application/new?force=${forcy}" />
                                 </sec:authorize>

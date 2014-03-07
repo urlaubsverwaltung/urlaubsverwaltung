@@ -74,8 +74,8 @@
                                         <td><c:out value="${person.lastName}"/></td>
                                         <td><a href="mailto:${person.email}"><c:out value="${person.email}"/></a></td>
                                         <td>
-                                            <c:forEach items="${person.permissions}" var="perm" varStatus="status">
-                                                <spring:message code="${perm.roleName}"/><c:if test="${!status.last}">, </c:if>
+                                            <c:forEach items="${person.permissions}" var="permission" varStatus="status">
+                                                <spring:message code="${permission.propertyKey}"/><c:if test="${!status.last}">, </c:if>
                                             </c:forEach>
                                         </td>
                                         <td>

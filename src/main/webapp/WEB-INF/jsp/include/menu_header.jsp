@@ -22,7 +22,7 @@
                 <a class="brand" href="${formUrlPrefix}/overview">Urlaubsverwaltung</a>
                     <ul class="nav">
 
-                        <sec:authorize access="hasRole('role.user')">
+                        <sec:authorize access="hasRole('USER')">
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                     <i class="icon-home"></i>&nbsp;<spring:message code="overview" />
@@ -48,7 +48,7 @@
                             </li>
                         </sec:authorize>
                         
-                        <sec:authorize access="hasAnyRole('role.boss', 'role.office')">
+                        <sec:authorize access="hasAnyRole('BOSS', 'OFFICE')">
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                     <i class="icon-list-alt"></i>&nbsp;<spring:message code="apps.vac" />
@@ -84,7 +84,7 @@
                             </li>
                         </sec:authorize>
 
-                        <sec:authorize access="hasRole('role.office')">
+                        <sec:authorize access="hasRole('OFFICE')">
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                     <img src="<spring:url value='/images/agt_virus-off.png' />" />&nbsp;<spring:message code="sicknotes" />
@@ -116,7 +116,7 @@
                             </li>
                         </sec:authorize>
 
-                        <sec:authorize access="hasAnyRole('role.boss', 'role.office')">
+                        <sec:authorize access="hasAnyRole('BOSS', 'OFFICE')">
                         
                             <li>
                                 <a href="${formUrlPrefix}/staff"><i class="icon-user"></i>&nbsp;<spring:message code="staff.manager" /></a>
@@ -124,7 +124,7 @@
 
                         </sec:authorize>
     
-                        <sec:authorize access="hasRole('role.admin')">
+                        <sec:authorize access="hasRole('ADMIN')">
                             <li><a href="${formUrlPrefix}/management"><i class="icon-wrench"></i>&nbsp;<spring:message code="role.management" /></a></li>
                         </sec:authorize>
 

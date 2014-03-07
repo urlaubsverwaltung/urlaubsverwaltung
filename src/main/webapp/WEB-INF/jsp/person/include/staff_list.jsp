@@ -11,7 +11,7 @@
 <spring:url var="formUrlPrefix" value="/web" />
 
 <%-- href is set by javascript: see staff_view.jsp --%>
-<sec:authorize access="hasRole('role.office')">
+<sec:authorize access="hasRole('OFFICE')">
     <a class="btn btn-right print-view" href="#">
         <i class="icon-print"></i>&nbsp;<spring:message code='print.preview' />
     </a>
@@ -28,7 +28,7 @@
         <th class="attributes"><spring:message code="email" /></th>
         <th class="vac"><spring:message code="entitlement" /></th>
         <th class="vac"><spring:message code="left" /></th>
-        <sec:authorize access="hasRole('role.office')">
+        <sec:authorize access="hasRole('OFFICE')">
             <th><spring:message code="table.apply" /></th>
             <th><spring:message code="edit" /></th>
         </sec:authorize>    
@@ -67,7 +67,7 @@
                     </c:otherwise>    
                 </c:choose>
             </td>
-            <sec:authorize access="hasRole('role.office')">
+            <sec:authorize access="hasRole('OFFICE')">
             <td class="td-action"><a href="${formUrlPrefix}/${person.id}/application/new"><img src="<spring:url value='/images/new window.png' />" /></a></td>
             <td class="td-action"><a href="${formUrlPrefix}/staff/${person.id}/edit"><img src="<spring:url value='/images/edit.png' />" /></a></td>
             </sec:authorize>

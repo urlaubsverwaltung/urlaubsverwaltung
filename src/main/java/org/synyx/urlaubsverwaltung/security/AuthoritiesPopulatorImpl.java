@@ -79,8 +79,8 @@ public class AuthoritiesPopulatorImpl implements LdapAuthoritiesPopulator {
             personService.save(person);
         }
 
-        for (Role r : person.getPermissions()) {
-            output.add(new GrantedAuthorityImpl(r.getRoleName()));
+        for (Role role : person.getPermissions()) {
+            output.add(new GrantedAuthorityImpl(role.toString()));
         }
 
         return output;

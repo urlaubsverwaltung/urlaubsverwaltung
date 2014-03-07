@@ -33,7 +33,7 @@
                         </a>
                     </c:when>
                     <c:otherwise>
-                        <sec:authorize access="hasRole('role.office')">
+                        <sec:authorize access="hasRole('OFFICE')">
                             <c:if test="${person.id != loggedUser.id}">
                                 <a class="btn"
                                    href="${formUrlPrefix}/${person.id}/application/new">

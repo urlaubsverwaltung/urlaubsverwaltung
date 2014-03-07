@@ -214,7 +214,7 @@ public class SickNoteController {
 
 
     @RequestMapping(value = "/sicknote/{id}", method = RequestMethod.GET)
-    @RolesAllowed({ "role.user", "role.office" })
+    @RolesAllowed({ "USER", "OFFICE" })
     public String sickNoteDetails(@PathVariable("id") Integer id, Model model) {
 
         Person loggedUser = securityUtil.getLoggedUser();
