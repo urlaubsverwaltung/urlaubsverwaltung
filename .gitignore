@@ -3,6 +3,7 @@ nbactions.xml
 /.settings/
 /target/
 /lib/~/
+*.dump.sql
 
 # Ignore log directory
 logs
