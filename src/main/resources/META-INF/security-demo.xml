@@ -6,7 +6,7 @@
                            http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.3.xsd">
 
     <security:user-service id="userDetailsService">
-        <security:user name="test" password="secret" authorities="USER"/>
+        <security:user name="test" password="secret" authorities="USER, ADMIN, BOSS, OFFICE"/>
     </security:user-service>
 
     <security:authentication-manager alias="authenticationManager">
