@@ -12,7 +12,7 @@
 
 
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<link rel="shortcut icon" type="image/x-icon" href="<spring:url value='/favicon.ico' />" />
+<link rel="shortcut icon" type="image/x-icon" href="<spring:url value='/favicon.ico?' />" />
 <link rel="stylesheet" type="text/css" href="<spring:url value='/jquery/css/ui-lightness/jquery-ui-1.10.3.custom.css' />" />
 <link rel="stylesheet" type="text/css" href="<spring:url value='/css/fluid_grid.css' />" />
 <link rel="stylesheet" type="text/css" href="<spring:url value='/css/bootstrap.css' />" />
