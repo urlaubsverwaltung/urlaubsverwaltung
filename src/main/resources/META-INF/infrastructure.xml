@@ -21,7 +21,13 @@
         <property name="location" value="classpath:config.properties" />
     </bean>
 
-    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+    <bean id="liquibase" class="liquibase.integration.spring.SpringLiquibase" >
+        <property name="dataSource" ref="dataSource" />
+        <property name="changeLog" value="classpath:dbchangelogs/changelogmaster.xml" />
+        <property name="contexts" value="${liquibase.context}" />
+    </bean>
+
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="liquibase">
         <property name="dataSource" ref="dataSource" />
         <property name="jpaVendorAdapter">
             <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
@@ -33,7 +39,7 @@
         <property name="jpaPropertyMap">
             <map>
                 <entry key="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect" />
-                <entry key="hibernate.hbm2ddl.auto" value="update" />
+                <entry key="hibernate.hbm2ddl.auto" value="verify" />
                 <entry key="hibernate.show_sql" value="false" />
                 <entry key="hibernate.format_sql" value="false" />
             </map>
