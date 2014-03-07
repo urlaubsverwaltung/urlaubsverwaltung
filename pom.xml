@@ -1,5 +1,5 @@
-
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.synyx</groupId>
@@ -21,68 +21,68 @@
             <email>murygina@synyx.de</email>
         </developer>
     </developers>
-    
-    <properties>
-	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	<spring.version>3.0.5.RELEASE</spring.version>
-	<netbeans.hint.deploy.server>Tomcat</netbeans.hint.deploy.server>
 
-	<jenkins.job.goals>clean install</jenkins.job.goals>
-	<jenkins.maven.name>Maven3</jenkins.maven.name>
-	<jenkins.jdk.name>Java7</jenkins.jdk.name>
-	<jenkins.job.project.redmine>https://project.synyx.de/</jenkins.job.project.redmine>
-	<jenkins.job.project.name>urlaubsverwaltung</jenkins.job.project.name>
-	<jenkins.job.reporters.email>murygina@synyx.de</jenkins.job.reporters.email>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <spring.version>3.0.5.RELEASE</spring.version>
+        <netbeans.hint.deploy.server>Tomcat</netbeans.hint.deploy.server>
+
+        <jenkins.job.goals>clean install</jenkins.job.goals>
+        <jenkins.maven.name>Maven3</jenkins.maven.name>
+        <jenkins.jdk.name>Java7</jenkins.jdk.name>
+        <jenkins.job.project.redmine>https://project.synyx.de/</jenkins.job.project.redmine>
+        <jenkins.job.project.name>urlaubsverwaltung</jenkins.job.project.name>
+        <jenkins.job.reporters.email>murygina@synyx.de</jenkins.job.reporters.email>
 
     </properties>
 
     <scm>
-	<developerConnection>scm:git:https://github.com/synyx/urlaubsverwaltung</developerConnection>
-	<connection>scm:git:https://github.com/synyx/urlaubsverwaltung</connection>
+        <developerConnection>scm:git:https://github.com/synyx/urlaubsverwaltung</developerConnection>
+        <connection>scm:git:https://github.com/synyx/urlaubsverwaltung</connection>
     </scm>
 
     <distributionManagement>
-	<repository>
-	    <id>releases.nexus.synyx.de</id>
-	    <name>Synyx Nexus: Releases</name>
-	    <url>http://nexus.synyx.de/content/repositories/releases</url>
-	</repository>
-	<snapshotRepository>
-	    <id>snapshots.nexus.synyx.de</id>
-	    <name>Synyx Nexus: Snapshots</name>
-	    <url>http://nexus.synyx.de/content/repositories/snapshots</url>
-	</snapshotRepository>
+        <repository>
+            <id>releases.nexus.synyx.de</id>
+            <name>Synyx Nexus: Releases</name>
+            <url>http://nexus.synyx.de/content/repositories/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots.nexus.synyx.de</id>
+            <name>Synyx Nexus: Snapshots</name>
+            <url>http://nexus.synyx.de/content/repositories/snapshots</url>
+        </snapshotRepository>
     </distributionManagement>
 
     <repositories>
-	<repository>
-	    <id>nexus.synyx.de</id>
-	    <name>Synyx OpenSource Repository</name>
-	    <url>http://nexus.synyx.de/content/groups/synyx/</url>
-	</repository>
-	<repository>
-	    <id>gdata-mvn</id>
-	    <name>Nicht offizielles Google API Repository</name>
-	    <url>http://mandubian-mvn.googlecode.com/svn/trunk/mandubian-mvn/repository</url>
-	</repository>
+        <repository>
+            <id>nexus.synyx.de</id>
+            <name>Synyx OpenSource Repository</name>
+            <url>http://nexus.synyx.de/content/groups/synyx/</url>
+        </repository>
+        <repository>
+            <id>gdata-mvn</id>
+            <name>Nicht offizielles Google API Repository</name>
+            <url>http://mandubian-mvn.googlecode.com/svn/trunk/mandubian-mvn/repository</url>
+        </repository>
         <repository>
             <id>google-api-services</id>
             <url>http://google-api-client-libraries.appspot.com/mavenrepo</url>
         </repository>
     </repositories>
 
-  <pluginRepositories>
-    <pluginRepository>
-      <id>nexus.synyx.de</id>
-      <name>Synyx OpenSource Repository</name>
-      <url>http://repo.synyx.org</url>
-    </pluginRepository>
-    <pluginRepository>
-      <id>maven.jenkins-ci.org</id>
-      <name>Jenkins Repo</name>
-      <url>http://kuali-nexus-lb-287160402.us-east-1.elb.amazonaws.com/content/groups/public/</url>
-    </pluginRepository>
-  </pluginRepositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>nexus.synyx.de</id>
+            <name>Synyx OpenSource Repository</name>
+            <url>http://repo.synyx.org</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>maven.jenkins-ci.org</id>
+            <name>Jenkins Repo</name>
+            <url>http://kuali-nexus-lb-287160402.us-east-1.elb.amazonaws.com/content/groups/public/</url>
+        </pluginRepository>
+    </pluginRepositories>
 
     <dependencies>
 
@@ -116,27 +116,27 @@
             <version>1.8.4</version>
             <type>jar</type>
         </dependency>
-        
-	<dependency>
-	    <groupId>com.google.gdata</groupId>
-	    <artifactId>gdata-calendar-2.0</artifactId>
-	    <version>1.41.5</version>
-	    <scope>compile</scope>
-	    <exclusions>
-		<exclusion>
-		    <artifactId>google-collections</artifactId>
-		    <groupId>com.google.collections</groupId>
-		</exclusion>
-	    </exclusions>
-	</dependency>
 
-	<dependency>
-	    <groupId>com.google.guava</groupId>
-	    <artifactId>guava</artifactId>
-	    <version>r09</version>
-	    <type>jar</type>
-	    <scope>compile</scope>
-	</dependency>
+        <dependency>
+            <groupId>com.google.gdata</groupId>
+            <artifactId>gdata-calendar-2.0</artifactId>
+            <version>1.41.5</version>
+            <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>google-collections</artifactId>
+                    <groupId>com.google.collections</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>r09</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
 
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -145,286 +145,286 @@
             <scope>compile</scope>
         </dependency>
 
-	<dependency>
-	    <groupId>javax.mail</groupId>
-	    <artifactId>mail</artifactId>
-	    <version>1.4.4</version>
-	</dependency>
-
-	<dependency>
-	    <groupId>org.openengsb.wrapped</groupId>
-	    <artifactId>com.google.gdata</artifactId>
-	    <version>1.41.5.w1</version>
-	</dependency>
-	<dependency>
-	    <groupId>org.dbunit</groupId>
-	    <artifactId>dbunit</artifactId>
-	    <version>2.4.7</version>
-	    <scope>test</scope>
-	    <type>jar</type>
-	</dependency>
-	<dependency>
-	    <groupId>org.mockito</groupId>
-	    <artifactId>mockito-all</artifactId>
-	    <version>1.9.0-rc1</version>
-	    <scope>test</scope>
-	</dependency>
-	<dependency>
-	    <groupId>de.jollyday</groupId>
-	    <artifactId>jollyday</artifactId>
-	    <version>0.4.7</version>
-	    <type>jar</type>
-	</dependency>
-	<dependency>
-	    <groupId>org.apache.velocity</groupId>
-	    <artifactId>velocity</artifactId>
-	    <version>1.6.4</version>
-	</dependency>
-	<dependency>
-	    <groupId>org.jvnet.mock-javamail</groupId>
-	    <artifactId>mock-javamail</artifactId>
-	    <version>1.9</version>
-	    <scope>test</scope>
-	    <type>jar</type>
-	</dependency>
         <dependency>
-	    <groupId>javax</groupId>
-	    <artifactId>javaee-web-api</artifactId>
-	    <version>6.0</version>
-	    <scope>provided</scope>
-	</dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>1.4.4</version>
+        </dependency>
 
-	<dependency>
-	    <groupId>junit</groupId>
-	    <artifactId>junit</artifactId>
-	    <version>4.8.2</version>
-	    <scope>test</scope>
-	</dependency>
+        <dependency>
+            <groupId>org.openengsb.wrapped</groupId>
+            <artifactId>com.google.gdata</artifactId>
+            <version>1.41.5.w1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.dbunit</groupId>
+            <artifactId>dbunit</artifactId>
+            <version>2.4.7</version>
+            <scope>test</scope>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.9.0-rc1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.jollyday</groupId>
+            <artifactId>jollyday</artifactId>
+            <version>0.4.7</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity</artifactId>
+            <version>1.6.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jvnet.mock-javamail</groupId>
+            <artifactId>mock-javamail</artifactId>
+            <version>1.9</version>
+            <scope>test</scope>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-web-api</artifactId>
+            <version>6.0</version>
+            <scope>provided</scope>
+        </dependency>
 
-	<dependency>
-	    <groupId>org.springframework.security</groupId>
-	    <artifactId>spring-security-ldap</artifactId>
-	    <version>${spring.version}</version>
-	</dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.2</version>
+            <scope>test</scope>
+        </dependency>
 
-	<dependency>
-	    <groupId>javax.servlet</groupId>
-	    <artifactId>servlet-api</artifactId>
-	    <version>2.5</version>
-	    <scope>provided</scope>
-	</dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-ldap</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
 
-	<dependency>
-	    <groupId>javax.servlet.jsp</groupId>
-	    <artifactId>jsp-api</artifactId>
-	    <version>2.1</version>
-	    <scope>provided</scope>
-	</dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.5</version>
+            <scope>provided</scope>
+        </dependency>
 
-	<dependency>
-	    <groupId>org.springframework</groupId>
-	    <artifactId>spring-core</artifactId>
-	    <version>${spring.version}</version>
-	</dependency>
+        <dependency>
+            <groupId>javax.servlet.jsp</groupId>
+            <artifactId>jsp-api</artifactId>
+            <version>2.1</version>
+            <scope>provided</scope>
+        </dependency>
 
-	<dependency>
-	    <groupId>org.springframework</groupId>
-	    <artifactId>spring-beans</artifactId>
-	    <version>${spring.version}</version>
-	</dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
 
-	<dependency>
-	    <groupId>org.springframework</groupId>
-	    <artifactId>spring-web</artifactId>
-	    <version>${spring.version}</version>
-	</dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
 
-	<dependency>
-	    <groupId>org.springframework</groupId>
-	    <artifactId>spring-webmvc</artifactId>
-	    <version>${spring.version}</version>
-	</dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
 
-	<dependency>
-	    <groupId>org.springframework</groupId>
-	    <artifactId>spring-test</artifactId>
-	    <version>${spring.version}</version>
-	    <scope>test</scope>
-	</dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
 
-	<dependency>
-	    <groupId>org.slf4j</groupId>
-	    <artifactId>slf4j-log4j12</artifactId>
-	    <version>1.6.1</version>
-	</dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${spring.version}</version>
+            <scope>test</scope>
+        </dependency>
 
-	<dependency>
-	    <groupId>javax.servlet</groupId>
-	    <artifactId>jstl</artifactId>
-	    <version>1.2</version>
-	</dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.6.1</version>
+        </dependency>
 
-	<dependency>
-	    <groupId>org.hibernate</groupId>
-	    <artifactId>hibernate-entitymanager</artifactId>
-	    <version>3.5.1-Final</version>
-	</dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <version>1.2</version>
+        </dependency>
 
-	<dependency>
-	    <groupId>commons-dbcp</groupId>
-	    <artifactId>commons-dbcp</artifactId>
-	    <version>1.4</version>
-	</dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>3.5.1-Final</version>
+        </dependency>
 
-	<dependency>
-	    <groupId>mysql</groupId>
-	    <artifactId>mysql-connector-java</artifactId>
-	    <version>5.1.17</version>
-	</dependency>
+        <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+            <version>1.4</version>
+        </dependency>
 
-	<dependency>
-	    <groupId>org.mockito</groupId>
-	    <artifactId>mockito-core</artifactId>
-	    <version>1.8.5</version>
-	    <scope>test</scope>
-	</dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.17</version>
+        </dependency>
 
-	<dependency>
-	    <groupId>joda-time</groupId>
-	    <artifactId>joda-time</artifactId>
-	    <version>2.0</version>
-	</dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>1.8.5</version>
+            <scope>test</scope>
+        </dependency>
 
-	<dependency>
-	    <groupId>joda-time</groupId>
-	    <artifactId>joda-time-jsptags</artifactId>
-	    <version>1.1</version>
-	</dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.0</version>
+        </dependency>
 
-	<dependency>
-	    <groupId>commons-fileupload</groupId>
-	    <artifactId>commons-fileupload</artifactId>
-	    <version>1.2.1</version>
-	</dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time-jsptags</artifactId>
+            <version>1.1</version>
+        </dependency>
 
-	<dependency>
-	    <groupId>commons-io</groupId>
-	    <artifactId>commons-io</artifactId>
-	    <version>2.0.1</version>
-	</dependency>
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+            <version>1.2.1</version>
+        </dependency>
 
-	<dependency>
-	    <groupId>org.springframework.data</groupId>
-	    <artifactId>spring-data-jpa</artifactId>
-	    <version>1.0.1.RELEASE</version>
-	</dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.0.1</version>
+        </dependency>
 
-	<dependency>
-	    <groupId>org.springframework.security</groupId>
-	    <artifactId>spring-security-web</artifactId>
-	    <version>${spring.version}</version>
-	</dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jpa</artifactId>
+            <version>1.0.1.RELEASE</version>
+        </dependency>
 
-	<dependency>
-	    <groupId>javax.annotation</groupId>
-	    <artifactId>jsr250-api</artifactId>
-	    <version>1.0</version>
-	</dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
 
-	<dependency>
-	    <groupId>org.springframework.security</groupId>
-	    <artifactId>spring-security-config</artifactId>
-	    <version>${spring.version}</version>
-	</dependency>
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>jsr250-api</artifactId>
+            <version>1.0</version>
+        </dependency>
 
-	<dependency>
-	    <groupId>org.springframework.security</groupId>
-	    <artifactId>spring-security-taglibs</artifactId>
-	    <version>${spring.version}</version>
-	</dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-taglibs</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
 
     </dependencies>
 
     <dependencyManagement>
 
-	<dependencies>
+        <dependencies>
 
-	    <dependency>
-		<groupId>org.slf4j</groupId>
-		<artifactId>slf4j-api</artifactId>
-		<version>1.6.1</version>
-	    </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>1.6.1</version>
+            </dependency>
 
-	    <dependency>
-		<groupId>commons-logging</groupId>
-		<artifactId>commons-logging</artifactId>
-		<version>1.1.1</version>
-		<scope>provided</scope>
-	    </dependency>
+            <dependency>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>1.1.1</version>
+                <scope>provided</scope>
+            </dependency>
 
-	</dependencies>
+        </dependencies>
 
     </dependencyManagement>
 
     <build>
-	<plugins>
-	  <plugin>
-	      <groupId>org.synyx.maven.plugins</groupId>
-	      <artifactId>jenkins-maven-plugin</artifactId>
-	      <version>1.0.0</version>
-	      <configuration>
-		  <jobTypes>build</jobTypes>
-		  <types>build</types>
-		  <names>build</names>
-		  <failOnError>true</failOnError>
-		  <template>classpath:org/synyx/jenkins/jobs/template.xml</template>
-		  <propertiesBase>classpath:org/synyx/jenkins/jobs/properties/</propertiesBase>
-		  <url>http://jenkins-vm:8080/</url>
-		  <majorVersion>trunk</majorVersion>
-	      </configuration>
-	      <dependencies>
-		  <dependency>
-		      <groupId>org.synyx.jenkins</groupId>
-		      <artifactId>jenkins-config</artifactId>
-		      <version>0.4</version>
-		  </dependency>
-	      </dependencies>
-	  </plugin>
+        <plugins>
+            <plugin>
+                <groupId>org.synyx.maven.plugins</groupId>
+                <artifactId>jenkins-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <configuration>
+                    <jobTypes>build</jobTypes>
+                    <types>build</types>
+                    <names>build</names>
+                    <failOnError>true</failOnError>
+                    <template>classpath:org/synyx/jenkins/jobs/template.xml</template>
+                    <propertiesBase>classpath:org/synyx/jenkins/jobs/properties/</propertiesBase>
+                    <url>http://jenkins-vm:8080/</url>
+                    <majorVersion>trunk</majorVersion>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.synyx.jenkins</groupId>
+                        <artifactId>jenkins-config</artifactId>
+                        <version>0.4</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
 
 
-        <plugin>
-            <groupId>org.apache.tomcat.maven</groupId>
-            <artifactId>tomcat7-maven-plugin</artifactId>
-            <version>2.1</version>
-        </plugin>
+            <plugin>
+                <groupId>org.apache.tomcat.maven</groupId>
+                <artifactId>tomcat7-maven-plugin</artifactId>
+                <version>2.1</version>
+            </plugin>
 
 
-	    <plugin>
-		<groupId>org.codehaus.mojo</groupId>
-		<artifactId>sonar-maven-plugin</artifactId>
-		<version>1.0-beta-2</version>
-	    </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>1.0-beta-2</version>
+            </plugin>
 
-	    <plugin>
-		<groupId>org.apache.maven.plugins</groupId>
-		<artifactId>maven-compiler-plugin</artifactId>
-		<version>2.3.2</version>
-		<configuration>
-		    <source>1.6</source>
-		    <target>1.6</target>
-		</configuration>
-	    </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
 
-	    <plugin>
-		<groupId>org.apache.maven.plugins</groupId>
-		<artifactId>maven-war-plugin</artifactId>
-		<version>2.1.1</version>
-		<configuration>
-		    <!--                    <failOnMissingWebXml>false</failOnMissingWebXml>-->
-		</configuration>
-	    </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.1.1</version>
+                <configuration>
+                    <!--                    <failOnMissingWebXml>false</failOnMissingWebXml>-->
+                </configuration>
+            </plugin>
 
-	</plugins>
+        </plugins>
     </build>
 
 </project>
