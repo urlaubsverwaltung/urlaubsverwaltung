@@ -1,6 +1,7 @@
 
 package org.synyx.urlaubsverwaltung.jmx;
 
+import org.synyx.urlaubsverwaltung.DateFormat;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -28,7 +29,7 @@ public class JmxViewUtil {
             for (Application app : applications) {
                 Person person = app.getPerson();
                 result.add(String.format("%8d", app.getId())
-                    + String.format("%20s", app.getApplicationDate().toString("dd.MM.yyyy"))
+                    + String.format("%20s", app.getApplicationDate().toString(DateFormat.PATTERN))
                     + String.format("%18s", person.getFirstName() + " " + person.getLastName()));
             }
         }

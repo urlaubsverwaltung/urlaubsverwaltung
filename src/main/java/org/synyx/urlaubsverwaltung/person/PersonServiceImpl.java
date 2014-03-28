@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import org.synyx.urlaubsverwaltung.DateFormat;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
@@ -19,7 +20,6 @@ import org.synyx.urlaubsverwaltung.person.web.PersonForm;
 import org.synyx.urlaubsverwaltung.security.CryptoService;
 import org.synyx.urlaubsverwaltung.security.Role;
 import org.synyx.urlaubsverwaltung.util.NumberUtil;
-import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 
 import java.math.BigDecimal;
 
@@ -136,11 +136,11 @@ class PersonServiceImpl implements PersonService {
         }
 
         if (newPerson) {
-            LOG.info(DateMidnight.now(GregorianChronology.getInstance()).toString(ControllerConstants.DATE_FORMAT)
+            LOG.info(DateMidnight.now(GregorianChronology.getInstance()).toString(DateFormat.PATTERN)
                 + " Ein neuer Mitarbeiter wurde angelegt. ID: " + person.getId()
                 + ", Vorname: " + person.getFirstName() + ", Nachname: " + person.getLastName());
         } else {
-            LOG.info(DateMidnight.now(GregorianChronology.getInstance()).toString(ControllerConstants.DATE_FORMAT)
+            LOG.info(DateMidnight.now(GregorianChronology.getInstance()).toString(DateFormat.PATTERN)
                 + " ID: " + person.getId()
                 + " Der Mitarbeiter " + person.getFirstName() + " " + person.getLastName()
                 + " wurde editiert.");

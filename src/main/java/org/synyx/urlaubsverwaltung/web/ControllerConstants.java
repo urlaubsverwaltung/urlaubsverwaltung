@@ -11,7 +11,6 @@ public class ControllerConstants {
 
     public static final String LOGIN_LINK = "redirect:/login.jsp?login_error=1";
 
-    public static final String DATE_FORMAT = "dd.MM.yyyy";
     public static final String YEAR = "year";
 
     public static final String PERSON = "person";

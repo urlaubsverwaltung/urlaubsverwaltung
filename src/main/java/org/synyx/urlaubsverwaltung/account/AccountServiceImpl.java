@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import org.synyx.urlaubsverwaltung.DateFormat;
 import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -61,7 +62,7 @@ class AccountServiceImpl implements AccountService {
         accountDAO.save(account);
 
         LOG.info("Created holidays account for " + person.getLoginName() + " with following values: " + "{validFrom: "
-            + validFrom.toString("dd.MM.yyyy") + ", validTo: " + validTo.toString("dd.MM.yyyy")
+            + validFrom.toString(DateFormat.PATTERN) + ", validTo: " + validTo.toString(DateFormat.PATTERN)
             + ", annualVacationDays: " + days + ", remainingDays: " + remaining + ", remainingDaysExpiring: "
             + remainingDaysExpire + "}");
     }
@@ -87,7 +88,8 @@ class AccountServiceImpl implements AccountService {
         accountDAO.save(account);
 
         LOG.info("Edited holidays account of " + account.getPerson().getLoginName() + " with following values: "
-            + "{validFrom: " + validFrom.toString("dd.MM.yyyy") + ", validTo: " + validTo.toString("dd.MM.yyyy")
+            + "{validFrom: " + validFrom.toString(DateFormat.PATTERN) + ", validTo: "
+            + validTo.toString(DateFormat.PATTERN)
             + ", annualVacationDays: " + days + ", remainingDays: " + remaining + ", remainingDaysExpiring: "
             + remainingDaysExpire + "}");
     }

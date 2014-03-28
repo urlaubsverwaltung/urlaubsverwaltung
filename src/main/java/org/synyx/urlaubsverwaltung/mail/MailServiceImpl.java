@@ -15,6 +15,7 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 
 import org.springframework.ui.velocity.VelocityEngineUtils;
 
+import org.synyx.urlaubsverwaltung.DateFormat;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -42,7 +43,6 @@ import javax.mail.internet.MimeMessage;
 class MailServiceImpl implements MailService {
 
     private static final Logger LOG = Logger.getLogger(MailServiceImpl.class);
-    private static final String DATE_FORMAT = "dd.MM.yyyy";
     private static final String PATH = "/email/";
     private static final String PROPERTIES_FILE = "messages.properties"; // general properties
     private static final String MAIL_PROPERTIES_FILE = "mail.properties"; // custom configuration like email
@@ -96,7 +96,7 @@ class MailServiceImpl implements MailService {
             this.properties = PropertiesUtil.load(PROPERTIES_FILE);
             this.mailProperties = PropertiesUtil.load(MAIL_PROPERTIES_FILE);
         } catch (Exception ex) {
-            LOG.error(DateMidnight.now().toString(DATE_FORMAT) + "No properties file found.");
+            LOG.error(DateMidnight.now().toString(DateFormat.PATTERN) + "No properties file found.");
             LOG.error(ex.getMessage(), ex);
         }
     }
@@ -165,7 +165,7 @@ class MailServiceImpl implements MailService {
         try {
             this.mailSender.send(prep);
         } catch (MailException ex) {
-            LOG.error(DateMidnight.now().toString(DATE_FORMAT) + ": Sending the email with following subject '"
+            LOG.error(DateMidnight.now().toString(DateFormat.PATTERN) + ": Sending the email with following subject '"
                 + subject
                 + "' to " + recipient + " failed.");
             LOG.error(ex.getMessage(), ex);
@@ -251,7 +251,7 @@ class MailServiceImpl implements MailService {
         try {
             this.mailSender.send(prep);
         } catch (MailException ex) {
-            LOG.error(DateMidnight.now().toString(DATE_FORMAT) + ": Sending the email with following subject '"
+            LOG.error(DateMidnight.now().toString(DateFormat.PATTERN) + ": Sending the email with following subject '"
                 + subject
                 + "' to following recipients " + " failed.");
             LOG.error(ex.getMessage(), ex);

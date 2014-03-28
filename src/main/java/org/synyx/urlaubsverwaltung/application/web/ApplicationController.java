@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import org.synyx.urlaubsverwaltung.DateFormat;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
@@ -812,7 +813,7 @@ public class ApplicationController {
 
                 LOG.info(application.getApplicationDate() + " ID: " + application.getId() + "Der Antrag von "
                     + application.getPerson().getFirstName() + " " + application.getPerson().getLastName()
-                    + " wurde am " + DateMidnight.now().toString(ControllerConstants.DATE_FORMAT) + " von " + bossName
+                    + " wurde am " + DateMidnight.now().toString(DateFormat.PATTERN) + " von " + bossName
                     + " abgelehnt.");
 
                 // mail to applicant

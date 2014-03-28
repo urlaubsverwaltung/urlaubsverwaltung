@@ -8,6 +8,7 @@ import org.joda.time.DateTimeConstants;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.synyx.urlaubsverwaltung.DateFormat;
 import org.synyx.urlaubsverwaltung.application.dao.ApplicationDAO;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
@@ -16,7 +17,6 @@ import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.security.CryptoService;
-import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 
 import java.math.BigDecimal;
 
@@ -128,8 +128,7 @@ class ApplicationServiceImpl implements ApplicationService {
 
         LOG.info(application.getApplicationDate() + " ID: " + application.getId() + "Der Antrag von "
             + application.getPerson().getNiceName()
-            + " wurde am " + DateMidnight.now().toString(ControllerConstants.DATE_FORMAT) + " von " + boss
-            .getNiceName()
+            + " wurde am " + DateMidnight.now().toString(DateFormat.PATTERN) + " von " + boss.getNiceName()
             + " genehmigt.");
 
         commentService.saveComment(comment, boss, application);

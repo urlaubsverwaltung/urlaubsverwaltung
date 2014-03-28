@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import org.synyx.urlaubsverwaltung.DateFormat;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.web.AppForm;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -47,8 +48,6 @@ import javax.annotation.security.RolesAllowed;
  */
 @Controller
 public class SickNoteController {
-
-    private static final String DATE_PATTERN = "dd.MM.yyyy";
 
     private SickNoteService sickNoteService;
     private PersonService personService;
@@ -99,8 +98,8 @@ public class SickNoteController {
             DateMidnight startDate = now.dayOfMonth().withMinimumValue();
             DateMidnight endDate = now.dayOfMonth().withMaximumValue();
 
-            return "redirect:/web/sicknote?from=" + startDate.toString(DATE_PATTERN) + "&to="
-                + endDate.toString(DATE_PATTERN);
+            return "redirect:/web/sicknote?from=" + startDate.toString(DateFormat.PATTERN) + "&to="
+                + endDate.toString(DateFormat.PATTERN);
         }
 
         return ControllerConstants.ERROR_JSP;
@@ -130,7 +129,7 @@ public class SickNoteController {
         @RequestParam("to") String to, Model model) {
 
         if (securityUtil.isOffice()) {
-            DateTimeFormatter formatter = DateTimeFormat.forPattern(DATE_PATTERN);
+            DateTimeFormatter formatter = DateTimeFormat.forPattern(DateFormat.PATTERN);
             DateMidnight fromDate = DateMidnight.parse(from, formatter);
             DateMidnight toDate = DateMidnight.parse(to, formatter);
 
@@ -153,7 +152,7 @@ public class SickNoteController {
         if (securityUtil.isOffice()) {
             List<SickNote> sickNoteList;
 
-            DateTimeFormatter formatter = DateTimeFormat.forPattern(DATE_PATTERN);
+            DateTimeFormatter formatter = DateTimeFormat.forPattern(DateFormat.PATTERN);
             DateMidnight fromDate = DateMidnight.parse(from, formatter);
             DateMidnight toDate = DateMidnight.parse(to, formatter);
 
@@ -179,7 +178,8 @@ public class SickNoteController {
             DateMidnight from = now.dayOfMonth().withMinimumValue().minusMonths(2);
             DateMidnight to = now.dayOfMonth().withMaximumValue();
 
-            return "redirect:/web/sicknote?from=" + from.toString(DATE_PATTERN) + "&to=" + to.toString(DATE_PATTERN);
+            return "redirect:/web/sicknote?from=" + from.toString(DateFormat.PATTERN) + "&to="
+                + to.toString(DateFormat.PATTERN);
         }
 
         return ControllerConstants.ERROR_JSP;
@@ -195,7 +195,8 @@ public class SickNoteController {
             DateMidnight from = now.dayOfYear().withMinimumValue();
             DateMidnight to = now.dayOfYear().withMaximumValue();
 
-            return "redirect:/web/sicknote?from=" + from.toString(DATE_PATTERN) + "&to=" + to.toString(DATE_PATTERN);
+            return "redirect:/web/sicknote?from=" + from.toString(DateFormat.PATTERN) + "&to="
+                + to.toString(DateFormat.PATTERN);
         }
 
         return ControllerConstants.ERROR_JSP;

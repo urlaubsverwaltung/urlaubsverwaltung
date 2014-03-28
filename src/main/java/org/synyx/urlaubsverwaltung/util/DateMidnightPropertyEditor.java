@@ -11,6 +11,8 @@ import org.joda.time.format.DateTimeFormatter;
 
 import org.springframework.util.StringUtils;
 
+import org.synyx.urlaubsverwaltung.DateFormat;
+
 import java.beans.PropertyEditorSupport;
 
 import java.util.Locale;
@@ -26,7 +28,7 @@ public class DateMidnightPropertyEditor extends PropertyEditorSupport {
     public DateMidnightPropertyEditor(Locale locale) {
 
         // TODO: not so nice....
-        this.formatter = DateTimeFormat.forPattern("dd.MM.yyyy");
+        this.formatter = DateTimeFormat.forPattern(DateFormat.PATTERN);
     }
 
     // Date to String
