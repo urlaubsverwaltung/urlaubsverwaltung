@@ -5,7 +5,9 @@ import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.synyx.urlaubsverwaltung.DateFormat;
 import org.synyx.urlaubsverwaltung.application.domain.DayLength;
+import org.synyx.urlaubsverwaltung.calendar.workingtime.NoValidWorkingTimeException;
 import org.synyx.urlaubsverwaltung.calendar.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -109,6 +111,12 @@ public class OwnCalendarService {
     public BigDecimal getWorkDays(DayLength dayLength, DateMidnight startDate, DateMidnight endDate, Person person) {
 
         WorkingTime workingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(person, startDate);
+
+        if (workingTime == null) {
+            throw new NoValidWorkingTimeException("No working time found for User '" + person.getLoginName()
+                + "' in period " + startDate.toString(DateFormat.PATTERN) + " - " + endDate.toString(DateFormat.PATTERN)
+                + ". Please contact the application manager.");
+        }
 
         BigDecimal vacationDays = BigDecimal.ZERO;
 

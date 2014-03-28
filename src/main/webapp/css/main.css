@@ -436,6 +436,10 @@ input.error, textarea.error {
     border-color: #B94A48;
 }
 
+#errorpage-exception {
+    margin-top: 80px;  
+}
+
 #errorpage {
     background-image: url("../images/errorpage.png");
     background-repeat: no-repeat;

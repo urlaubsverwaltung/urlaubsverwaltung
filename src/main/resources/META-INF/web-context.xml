@@ -4,6 +4,15 @@
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
 
+    <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+        <property name="exceptionMappings">
+            <props>
+                <prop key="org.synyx.urlaubsverwaltung.calendar.workingtime.NoValidWorkingTimeException">error</prop>
+            </props>
+        </property>
+        <property name="defaultErrorView" value="error" />
+    </bean>
+    
     <bean id="handlerMapping"
          class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
          <property name="interceptors">
