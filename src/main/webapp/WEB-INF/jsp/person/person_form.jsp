@@ -5,6 +5,7 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="person" tagdir="/WEB-INF/tags/person" %>
 
 
 <!DOCTYPE html>
@@ -86,19 +87,19 @@
     </div>
 
     <div class="control-group">
-        <label class="control-label" for="vorname"><spring:message code='firstname'/></label>
+        <label class="control-label" for="firstName"><spring:message code='firstname'/></label>
 
         <div class="controls">
-            <form:input id="vorname" path="firstName" cssErrorClass="error"/>
+            <form:input id="firstName" path="firstName" cssErrorClass="error"/>
             <span class="help-inline"><form:errors path="firstName" cssClass="error"/></span>
         </div>
     </div>
 
     <div class="control-group">
-        <label class="control-label" for="nachname"><spring:message code='lastname'/></label>
+        <label class="control-label" for="lastName"><spring:message code='lastname'/></label>
 
         <div class="controls">
-            <form:input id="nachname" path="lastName" cssErrorClass="error"/>
+            <form:input id="lastName" path="lastName" cssErrorClass="error"/>
             <span class="help-inline"><form:errors path="lastName" cssClass="error"/></span>
         </div>
     </div>
@@ -230,98 +231,15 @@
         </label>
 
         <div class="controls">
-
-            <form:select path="dayFrom" size="1">
-                <script type="text/javascript">
-                    var i = 1;
-                    for (i = 1; i < 32; i++) {
-                        if (<c:out value="${personForm.dayFrom}" /> == i
-                    )
-                        {
-                            document.write('<form:option selected="selected" value="' + i + '">' + i + '</form:option>');
-                        }
-                    else
-                        {
-                            document.write('<form:option value="' + i + '">' + i + '</form:option>');
-                        }
-                    }
-                </script>
-            </form:select>
-            <form:select path="monthFrom" size="1">
-                <script type="text/javascript">
-                    var regional = "${pageContext.request.locale.language}";
-                    var monthNames;
-
-                    if (regional == "en") {
-                        monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
-                            'July', 'August', 'September', 'October', 'November', 'December'];
-                    } else {
-                        // default = german
-                        monthNames = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
-                            'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
-                    }
-
-                    var i = 1;
-                    for (i = 1; i < 13; i++) {
-                        if (<c:out value="${personForm.monthFrom}" /> == i
-                    )
-                        {
-                            document.write('<form:option selected="selected" value="' + i + '">' + monthNames[i - 1] + '</form:option>');
-                        }
-                    else
-                        {
-                            document.write('<form:option value="' + i + '">' + monthNames[i - 1] + '</form:option>');
-                        }
-                    }
-                </script>
-            </form:select>
-
+            
+            <person:day-dropdown path="dayFrom" selected="${personForm.dayFrom}" />
+            <person:month-dropdown path="monthFrom" selected="${personForm.monthFrom}" />
+            
             <spring:message code='to'/>
-            <form:select path="dayTo" size="1">
-                <script type="text/javascript">
-                    var i = 1;
-                    for (i = 1; i < 32; i++) {
-                        if (<c:out value="${personForm.dayTo}" /> == i
-                    )
-                        {
-                            document.write('<form:option selected="selected" value="' + i + '">' + i + '</form:option>');
-                        }
-                    else
-                        {
-                            document.write('<form:option value="' + i + '">' + i + '</form:option>');
-                        }
-                    }
-                </script>
-            </form:select>
-            <form:select path="monthTo" size="1">
-                <script type="text/javascript">
-                    var regional = "${pageContext.request.locale.language}";
-                    var monthNames;
 
-                    if (regional == "en") {
-                        monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
-                            'July', 'August', 'September', 'October', 'November', 'December'];
-                    } else {
-                        // default = german
-                        monthNames = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
-                            'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
-                    }
-
-                    var i = 1;
-                    for (i = 1; i < 13; i++) {
-                        if (<c:out value="${personForm.monthTo}" /> == i
-                    )
-                        {
-                            document.write('<form:option selected="selected" value="' + i + '">' + monthNames[i - 1] + '</form:option>');
-                        }
-                    else
-                        {
-                            document.write('<form:option value="' + i + '">' + monthNames[i - 1] + '</form:option>');
-                        }
-                    }
-                </script>
-            </form:select>
-
+            <person:day-dropdown path="dayTo" selected="${personForm.dayTo}" />
+            <person:month-dropdown path="monthTo" selected="${personForm.monthTo}" />
+            
         </div>
     </div>
 
