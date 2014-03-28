@@ -1,12 +1,7 @@
-<%-- 
-    Document   : staff_list
-    Created on : 31.10.2011, 11:49:42
-    Author     : Aljona Murygina
---%>
-
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <spring:url var="formUrlPrefix" value="/web" />
 
