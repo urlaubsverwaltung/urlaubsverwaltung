@@ -9,14 +9,14 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
 
 <!DOCTYPE html>
 <html>
 
     <head>
-        <title>Login</title>
-        <%@include file="/WEB-INF/jsp/include/header.jsp" %>
+        <uv:head />
         <link rel="stylesheet" type="text/css" href="<spring:url value='/css/login.css' />" />
         <script type="text/javascript">
             $(document).ready(function() {

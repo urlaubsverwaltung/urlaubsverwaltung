@@ -4,13 +4,13 @@
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
 <!DOCTYPE html>
 <html>
 
 <head>
-    <title><spring:message code="title"/></title>
-    <%@include file="../include/header.jsp" %>
+    <uv:head />
     <script type="text/javascript">
         $(document).ready(function() {
 

@@ -2,11 +2,11 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
 <html>
 <head>
-    <title><spring:message code="title"/></title>
-    <%@include file="../include/header.jsp" %>
+    <uv:head />
 
     <script src="<spring:url value='/js/datepicker.js' />" type="text/javascript" ></script>
 
@@ -47,7 +47,7 @@
 
 <spring:url var="formUrlPrefix" value="/web"/>
 
-<%@include file="../include/menu_header.jsp" %>
+<uv:menu />
 
 <div id="content">
 

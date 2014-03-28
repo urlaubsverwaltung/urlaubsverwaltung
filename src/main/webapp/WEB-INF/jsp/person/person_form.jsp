@@ -1,23 +1,17 @@
-<%-- 
-    Document   : person_form
-    Created on : 31.10.2011, 10:00:10
-    Author     : Aljona Murygina
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
 
 <!DOCTYPE html>
 <html>
 
 <head>
-    <title><spring:message code="title"/></title>
-    <%@include file="../include/header.jsp" %>
+    <uv:head />
     <script type="text/javascript">
         $(document).ready(function () {
             $('#error-div').show('drop', 500);
@@ -37,16 +31,11 @@
             $("#validFrom").datepicker();
         });
     </script>
-    <style type="text/css">
-        .td-name {
-            width: 40%;
-        }
-    </style>
 </head>
 
 <body>
 
-<%@include file="../include/menu_header.jsp" %>
+<uv:menu />
 
 <spring:url var="formUrlPrefix" value="/web"/>
 

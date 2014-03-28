@@ -9,14 +9,14 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
 
 <!DOCTYPE html>
 <html>
 
     <head>
-        <title><spring:message code="title" /></title>
-        <%@include file="../include/header.jsp" %>
+        <uv:head />
 
         <spring:url var="formUrlPrefix" value="/web" />
 
@@ -62,7 +62,7 @@
 
     <body>
 
-        <%@include file="../include/menu_header.jsp" %>
+        <uv:menu />
 
         <div id="content">
             <div class="container_12">

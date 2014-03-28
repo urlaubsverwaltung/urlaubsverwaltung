@@ -10,14 +10,14 @@
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
 
 <!DOCTYPE html>
 <html>
 
     <head>
-        <title><spring:message code="title" /></title>
-        <%@include file="../include/header.jsp" %>
+        <uv:head />
 
         <%@include file="./include/app-form-elements/datepicker.jsp" %>
         <%@include file="./include/app-form-elements/day-length-selector.jsp" %>
@@ -44,7 +44,7 @@
 
         <spring:url var="formUrlPrefix" value="/web" />
 
-        <%@include file="../include/menu_header.jsp" %>
+        <uv:menu />
 
         <div id="content">
 
