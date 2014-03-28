@@ -54,8 +54,6 @@ public class PersonValidator implements Validator {
     private static final String EMAIL_PATTERN =
         "^[a-zäöüß0-9,!#\\$%&'\\*\\+/=\\?\\^_`\\{\\|}~-]+(\\.[a-zäöüß0-9,!#\\$%&'\\*\\+/=\\?\\^_`\\{\\|}~-]+)*@[a-zäöüß0-9-]+(\\.[a-zäöüß0-9-]+)*\\.([a-z]{2,})$";
 
-    private static final String NAME_PATTERN = "\\p{L}+"; // any kind of letter from any language.
-
     private static final String MAX_DAYS = "annual.vacation.max";
 
     private static final String CUSTOM_PROPERTIES_FILE = "custom.properties";
@@ -122,8 +120,8 @@ public class PersonValidator implements Validator {
 
 
     /**
-     * This method checks if the field firstName or the field lastName is filled and if it is filled, it validates the
-     * entry with a regex.
+     * This method ensures that the field firstName and the field lastName are not {@code null} or empty and not too
+     * long.
      *
      * @param  name  (may be the field firstName or lastName)
      * @param  field
@@ -138,11 +136,6 @@ public class PersonValidator implements Validator {
             // is String length alright?
             if (!validateStringLength(name)) {
                 errors.rejectValue(field, ERROR_LENGTH);
-            }
-
-            // contains the name field digits?
-            if (!matchPattern(NAME_PATTERN, name)) {
-                errors.rejectValue(field, ERROR_ENTRY);
             }
         }
     }
