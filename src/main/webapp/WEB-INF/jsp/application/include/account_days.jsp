@@ -73,7 +73,7 @@
     <td>
         <c:choose>
             <c:when test="${account != null}">
-                <joda:format style="M-" value="${account.validFrom}"/> <spring:message code='to' /> <joda:format style="M-" value="${account.validTo}"/>
+                <uv:date date="${account.validFrom}" /> <spring:message code='to' /> <uv:date date="${account.validTo}" />
             </c:when>
             <c:otherwise>
                 <spring:message code='not.specified' />

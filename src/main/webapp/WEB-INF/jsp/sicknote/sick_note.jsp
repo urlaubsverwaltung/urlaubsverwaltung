@@ -88,7 +88,9 @@
                       </tr>
                       <tr class="even">
                           <td><spring:message code="sicknotes.time" /></td>
-                          <td><joda:format style="M-" value="${sickNote.startDate}"/>&nbsp;-&nbsp;<joda:format style="M-" value="${sickNote.endDate}"/></td>
+                          <td>
+                              <uv:date date="${sickNote.startDate}" /> - <uv:date date="${sickNote.endDate}" />
+                          </td>
                       </tr>
                       <tr class="odd">
                           <td><spring:message code="work.days" /></td>
@@ -109,11 +111,13 @@
                       </tr>
                       <tr class="odd">
                           <td><spring:message code="sicknotes.aub.time" /></td>
-                          <td><joda:format style="M-" value="${sickNote.aubStartDate}"/>&nbsp;-&nbsp;<joda:format style="M-" value="${sickNote.aubEndDate}"/></td>
+                          <td>
+                              <uv:date date="${sickNote.aubStartDate}" /> - <uv:date date="${sickNote.aubEndDate}" />
+                          </td>
                       </tr>
                       <tr class="even">
                           <td><spring:message code="app.date.overview" /></td>
-                          <td><joda:format style="M-" value="${sickNote.lastEdited}"/></td>
+                          <td><uv:date date="${sickNote.lastEdited}" /></td>
                       </tr>
                   </tbody>
               </table>  
@@ -136,7 +140,7 @@
                     <tbody>
                         <c:forEach items="${sickNote.comments}" var="comment" varStatus="loopStatus">
                             <tr class="${loopStatus.index % 2 == 0 ? 'odd' : 'even'}">
-                                <td style="width:10%"><joda:format style="M-" value="${comment.date}"/></td>
+                                <td style="width:10%"><uv:date date="${comment.date}" /></td>
                                 <td style="width:10%">
                                     <c:out value="${comment.person.firstName}" />&nbsp;<c:out value="${comment.person.lastName}" />
                                 </td>

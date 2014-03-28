@@ -42,16 +42,16 @@
                 </c:choose>
                 <tr class="${CSS_CLASS}" onclick="navigate('${formUrlPrefix}/sicknote/${sickNote.id}');">
                     <td>
-                        <joda:format style="M-" value="${sickNote.startDate}"/>&nbsp;-&nbsp;<joda:format style="M-" value="${sickNote.endDate}"/>
+                        <uv:date date="${sickNote.startDate}" /> - <uv:date date="${sickNote.endDate}" />
                     </td>
                     <td>
                         <fmt:formatNumber maxFractionDigits="1" value="${sickNote.workDays}" />
                     </td>
                     <td>
-                        <joda:format style="M-" value="${sickNote.aubStartDate}"/>&nbsp;-&nbsp;<joda:format style="M-" value="${sickNote.aubEndDate}"/>
+                        <uv:date date="${sickNote.aubStartDate}" /> - <uv:date date="${sickNote.aubEndDate}" />
                     </td>
                     <td class="print-invisible">
-                        <joda:format style="M-" value="${sickNote.lastEdited}"/>
+                        <uv:date date="${sickNote.lastEdited}" />
                     </td>
             </c:forEach>
             </tbody>

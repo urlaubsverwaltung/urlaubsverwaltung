@@ -140,7 +140,7 @@
                     </p>
                     
                     <p class="heading-date">
-                        <spring:message code="Effective"/>&nbsp;<joda:format style="M-" value="${today}"/>
+                        <spring:message code="Effective"/>&nbsp;<uv:date date="${today}" />
                     </p>
 
                 </legend>

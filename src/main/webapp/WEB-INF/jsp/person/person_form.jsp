@@ -121,7 +121,7 @@
         <div class="controls">
             <c:forEach items="${workingTimes}" var="time">
                 <spring:message code="working.time.valid.from" />
-                <joda:format style="M-" value="${time.validFrom}" />:
+                <uv:date date="${time.validFrom}" />
                 <br />
                 <c:if test="${time.monday.duration > 0}">
                     <spring:message code="monday" />
@@ -162,7 +162,7 @@
         <div class="controls">
 
             <spring:message code="working.time.valid.from" />&nbsp;
-            <joda:format style="M-" var="VALID_FROM" value="${personForm.validFrom}" />
+            <c:set var="VALID_FROM"><uv:date date="${personForm.validFrom}" /></c:set>
             <form:input id="validFrom" path="validFrom" value="${VALID_FROM}" cssErrorClass="error input-medium" cssClass="input-medium" />
 
             <c:forEach items="${weekDays}" var="weekDay">

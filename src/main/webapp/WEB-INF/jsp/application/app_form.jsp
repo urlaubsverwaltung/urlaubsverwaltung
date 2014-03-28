@@ -290,7 +290,7 @@
 
                                 <hr />
 
-                                <spring:message code='app.footer' />&nbsp;<joda:format style="M-" value="${date}"/>
+                                <spring:message code='app.footer' />&nbsp;<uv:date date="${date}" />
 
                                 <button type="submit" class="btn btn-primary" style="float: right;">
                                     <i class='icon-ok icon-white'></i>&nbsp;<spring:message code='apply' />

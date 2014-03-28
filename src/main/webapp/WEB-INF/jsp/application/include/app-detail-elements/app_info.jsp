@@ -24,10 +24,10 @@
         <td>
             <c:choose>
                 <c:when test="${application.startDate == application.endDate}">
-                    <spring:message code="at" /> <b><joda:format style="M-" value="${application.startDate}"/></b>, <spring:message code="${application.howLong.dayLength}" />
+                    <spring:message code="at" /> <b><uv:date date="${application.startDate}" /></b>, <spring:message code="${application.howLong.dayLength}" />
                 </c:when>
                 <c:otherwise>
-                    <spring:message code="from" /> <b><joda:format style="M-" value="${application.startDate}"/></b> <spring:message code="to" /> <b><joda:format style="M-" value="${application.endDate}"/></b>
+                    <spring:message code="from" /> <b><uv:date date="${application.startDate}" /></b> <spring:message code="to" /> <b><uv:date date="${application.endDate}" /></b>
                 </c:otherwise>    
             </c:choose>
         </td>

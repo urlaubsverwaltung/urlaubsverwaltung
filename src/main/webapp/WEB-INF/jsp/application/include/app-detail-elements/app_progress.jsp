@@ -22,7 +22,7 @@
             <!-- application is waiting -->
             <c:if test="${c.status.number == 0}">
                 <td>
-                    <spring:message code="${c.progress}" /> <joda:format style="M-" value="${application.applicationDate}"/>  
+                    <spring:message code="${c.progress}" /> <uv:date date="${application.applicationDate}" />  
                 </td>
                 <td>
                     <spring:message code="by" /> <c:out value="${c.nameOfCommentingPerson}" />
@@ -32,7 +32,7 @@
             <!-- application is allowed or rejected -->
             <c:if test="${c.status.number == 1 || c.status.number == 2}">
                 <td>
-                    <spring:message code="${c.progress}" /> <joda:format style="M-" value="${application.editedDate}"/>  
+                    <spring:message code="${c.progress}" /> <uv:date date="${application.editedDate}" />  
                 </td>
                 <td>
                     <spring:message code="by" /> <c:out value="${c.nameOfCommentingPerson}" />
@@ -47,7 +47,7 @@
             <!-- application is cancelled -->
             <c:if test="${c.status.number == 3}">
                 <td>
-                    <spring:message code="${c.progress}" /> <joda:format style="M-" value="${application.cancelDate}"/>
+                    <spring:message code="${c.progress}" /> <uv:date date="${application.cancelDate}" />
                 </td>
                 <td>
                     <spring:message code="by" /> <c:out value="${c.nameOfCommentingPerson}" />

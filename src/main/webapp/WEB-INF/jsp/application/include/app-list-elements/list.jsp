@@ -70,8 +70,8 @@
                     <c:if test="${app.status.number == 3}">
                         <c:set var="appTouched" value="${app.cancelDate}" />
                     </c:if>
-                                        
-                    <joda:format style="M-" value="${appTouched}"/>
+                   
+                    <uv:date date="${appTouched}" />
                     </td>
                     <td>
                         <c:out value="${app.person.firstName}" />&nbsp;<c:out value="${app.person.lastName}" />
@@ -82,10 +82,10 @@
                     <td>
                         <c:choose>
                             <c:when test="${app.startDate == app.endDate}">
-                                <joda:format style="M-" value="${app.startDate}"/>, <spring:message code="${app.howLong.dayLength}" />
+                                <uv:date date="${app.startDate}" />, <spring:message code="${app.howLong.dayLength}" />
                             </c:when>
                             <c:otherwise>
-                                <joda:format style="M-" value="${app.startDate}"/>&nbsp;-&nbsp;<joda:format style="M-" value="${app.endDate}"/>
+                                <uv:date date="${app.startDate}" /> - <uv:date date="${app.endDate}" />
                             </c:otherwise>    
                         </c:choose>
                     </td>

@@ -77,7 +77,7 @@
                         <label class="control-label"><spring:message code="time" /></label>
     
                         <div class="controls">
-                            <joda:format style="M-" value="${sickNote.startDate}"/>&nbsp;-&nbsp;<joda:format style="M-" value="${sickNote.endDate}"/> 
+                            <uv:date date="${sickNote.startDate}" /> - <uv:date date="${sickNote.endDate}" />
                         </div>
                     </div>
     
@@ -121,7 +121,9 @@
                     </tr>
                     <tr class="even">
                         <td><spring:message code="sicknotes.time" /></td>
-                        <td><joda:format style="M-" value="${sickNote.startDate}"/>&nbsp;-&nbsp;<joda:format style="M-" value="${sickNote.endDate}"/></td>
+                        <td>
+                            <uv:date date="${sickNote.startDate}" /> - <uv:date date="${sickNote.endDate}" />
+                        </td>
                     </tr>
                     <tr class="odd">
                         <td><spring:message code="work.days" /></td>
@@ -142,7 +144,9 @@
                     </tr>
                     <tr class="odd">
                         <td><spring:message code="sicknotes.aub.time" /></td>
-                        <td><joda:format style="M-" value="${sickNote.aubStartDate}"/>&nbsp;-&nbsp;<joda:format style="M-" value="${sickNote.aubEndDate}"/></td>
+                        <td>
+                            <uv:date date="${sickNote.aubStartDate}" /> - <uv:date date="${sickNote.aubEndDate}" />
+                        </td>
                     </tr>
                     </tbody>
                 </table>

@@ -53,7 +53,7 @@
                     <spring:message code="sicknotes.statistics" />&nbsp;${statistics.year}
                 </p>
                 <p style="float:right">
-                    <spring:message code="Effective"/>&nbsp;<joda:format style="M-" value="${statistics.created}"/>
+                    <spring:message code="Effective"/> <uv:date date="${statistics.created}" />
                 </p>
             </div>
 

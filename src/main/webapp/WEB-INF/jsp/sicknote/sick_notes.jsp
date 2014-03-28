@@ -173,10 +173,10 @@
 
             <div class="second-legend">
                 <p style="float:left">
-                    <spring:message code="time"/>:&nbsp;<joda:format style="M-" value="${from}"/>&nbsp;-&nbsp;<joda:format style="M-" value="${to}"/>
+                    <spring:message code="time"/>:&nbsp;<uv:date date="${from}" /> - <uv:date date="${to}" />
                 </p>
                 <p style="float:right">
-                    <spring:message code="Effective"/>&nbsp;<joda:format style="M-" value="${today}"/>
+                    <spring:message code="Effective"/> <uv:date date="${today}" />
                 </p>
             </div>
 
@@ -217,16 +217,16 @@
                                     <c:out value="${sickNote.person.firstName}" />&nbsp;<c:out value="${sickNote.person.lastName}" />
                                 </td>
                                 <td>
-                                    <joda:format style="M-" value="${sickNote.startDate}"/>&nbsp;-&nbsp;<joda:format style="M-" value="${sickNote.endDate}"/>
+                                    <uv:date date="${sickNote.startDate}" /> - <uv:date date="${sickNote.endDate}" />
                                 </td>
                                 <td>
                                     <fmt:formatNumber maxFractionDigits="1" value="${sickNote.workDays}" />
                                 </td>
                                 <td>
-                                    <joda:format style="M-" value="${sickNote.aubStartDate}"/>&nbsp;-&nbsp;<joda:format style="M-" value="${sickNote.aubEndDate}"/>
+                                    <uv:date date="${sickNote.aubStartDate}" /> - <uv:date date="${sickNote.aubEndDate}" />
                                 </td>
                                 <td class="print-invisible">
-                                    <joda:format style="M-" value="${sickNote.lastEdited}"/> 
+                                    <uv:date date="${sickNote.lastEdited}" />
                                 </td>
                                 <td class="print-invisible">
                                     <c:if test="${sickNote.active}">
