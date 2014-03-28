@@ -38,11 +38,19 @@ Im Browser lässt sich die Anwendung dann über `http://localhost:8080/urlaubsve
 
 ## Benutzung
 
-Die Art der Authentifizierungsmethode wird über die globale Property `authentication.type` gesetzt. 
-Hierbei kann gewählt werden zwischen `demo` und `ldap`.
-Bei der Authentifizierungsmethode `demo` gibt es einen Testbenutzer mit Benutzernamen "test" und Passwort "secret".
-Bei der Authentifizierungsmethode `ldap` wird die LDAP-UR aus `src/main/resources/config.properties` genutzt. 
+Es gibt bisher zwei Authentifizierungsmethoden: LDAP und Demo.
+
+Bei der Authentifizierungsmethode Demo gibt es einen Testbenutzer mit Benutzernamen "test" und Passwort "secret".
+Möchte man diese Authentifizierungsmethode nutzen, muss das Liquibase Skript, das den erwähnten Testuser anlegt, durchlaufen. 
+Dazu muss die Anwendung mit einer Property gestartet werden, nämlich folgendermaßen:
+<pre>  mvn tomcat:run -Dliquibase.context=demo</pre>
+
+  
+Bei der Authentifizierungsmethode LDAP wird die LDAP-URL aus `src/main/resources/config.properties` genutzt. 
 Ist die Authentifizierung erfolgreich und der Benutzer noch nicht im System der Urlaubsverwaltung eingepflegt, wird die Person automatisch angelegt. Dem ersten Benutzer, der auf diese Weise im System angelegt wird, wird die Rolle Admin zugewiesen (ermöglicht Rechteverwaltung). Alle anderen Benutzer, die automatisch beim Einloggen im System angelegt werden, erhalten die Rolle User (was dann selbstverständlich über die Rechteverwaltung von Benutzern mit der Rolle Admin angepasst werden kann)
+Für diese Authentifizierungsmethode kann die Anwendung ganz normal mit
+<pre>  mvn tomcat:run</pre>
+gestartet werden.
 
 Ein User hat immer eine oder mehrere folgender Berechtigungen inne:
 * **inaktiv**: hat keinen Zugang mehr zur Urlaubsverwaltung (bestehende Daten des Benutzers bleiben zur Archivierung bestehen)

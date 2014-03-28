@@ -22,7 +22,31 @@
         <security:logout logout-success-url="/login.jsp"/>
     </security:http>
 
-    <!-- Authentication type must be set as system property -->
-    <import resource="security-${authentication.type}.xml"/>
-    
+    <security:ldap-server id="ldapAuthServer" url="${ldap.url}/${ldap.base}"/>
+
+    <bean id="ldapAuthProvider" class="org.springframework.security.ldap.authentication.LdapAuthenticationProvider">
+        <constructor-arg>
+            <bean class="org.springframework.security.ldap.authentication.BindAuthenticator">
+                <constructor-arg ref="ldapAuthServer"/>
+                <property name="userDnPatterns">
+                    <list>
+                        <value>uid={0},ou=People</value>
+                    </list>
+                </property>
+            </bean>
+        </constructor-arg>
+        <constructor-arg>
+            <bean class="org.synyx.urlaubsverwaltung.security.AuthoritiesPopulatorImpl"/>
+        </constructor-arg>
+    </bean>
+
+    <security:user-service id="userDetailsService">
+        <security:user name="test" password="secret" authorities="USER, ADMIN, BOSS, OFFICE"/>
+    </security:user-service>
+
+    <security:authentication-manager alias="authenticationManager">
+        <security:authentication-provider ref="ldapAuthProvider"/>
+        <security:authentication-provider user-service-ref="userDetailsService"/>
+    </security:authentication-manager>
+
 </beans>
