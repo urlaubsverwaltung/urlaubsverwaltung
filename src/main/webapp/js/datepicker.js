@@ -262,15 +262,10 @@ function fetchHighlightedDays(date, urlPrefix, personId) {
     holidays = new Array();
     ids = new Array();
 
-    // last month
-    date.addMonths(-1);
     var year = date.getFullYear();
     var month = date.getMonth() + 1;
-    getPublicHolidays(year, month, urlPrefix);
-    getHolidays(year, month, urlPrefix, personId);
 
-    // 4 times: current month, next month, next month + 1, next month + 2 
-    for(var i = 1; i < 5; i++) {
+    for(var i = 1; i < calculateNumberOfMonths(); i++) {
         date.addMonths(+1);
         year = date.getFullYear();
         month = date.getMonth() + 1;
