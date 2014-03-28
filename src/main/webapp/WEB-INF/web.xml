@@ -1,13 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!--
-    Document   : web.xml
-    Created on : 26. Oktober 2011, 11:15
-    Author     : aljona
-    Description:
-        Purpose of the document follows.
--->
-
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
     
     <display-name>Urlaubsverwaltung</display-name>
@@ -91,7 +83,7 @@
     </servlet-mapping>
     
     <welcome-file-list>
-        <welcome-file>index.jsp</welcome-file>     
+        <welcome-file>login.jsp</welcome-file>     
     </welcome-file-list>
     
     <session-config>
@@ -99,14 +91,4 @@
         <session-timeout>720</session-timeout>
     </session-config>
     
-    <login-config>
-        <auth-method>FORM</auth-method>
-        <realm-name>Form-Based Authentication Area</realm-name>
-        <form-login-config>
-            <form-login-page>/login.jsp</form-login-page>
-            <form-error-page>/security/protected/error.jsp</form-error-page>
-        </form-login-config>
-    </login-config>
-    
-        
 </web-app>

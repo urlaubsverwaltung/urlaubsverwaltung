@@ -1,23 +1,22 @@
-<%-- 
-    Document   : login
-    Created on : 31.10.2011, 10:00:23
-    Author     : Johannes Reuter + Aljona Murygina
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
 
 <!DOCTYPE html>
 <html>
 
     <head>
-        <uv:head />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>Login</title>
+        <link rel="shortcut icon" type="image/x-icon" href="<spring:url value='/favicon.ico?' />" />
+        <link rel="stylesheet" type="text/css" href="<spring:url value='/css/fluid_grid.css' />" />
+        <link rel="stylesheet" type="text/css" href="<spring:url value='/css/bootstrap.css' />" />
+        <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />" />
         <link rel="stylesheet" type="text/css" href="<spring:url value='/css/login.css' />" />
+        <script src="<spring:url value='/jquery/js/jquery-1.9.1.js' />" type="text/javascript" ></script>
         <script type="text/javascript">
             $(document).ready(function() {
                     
