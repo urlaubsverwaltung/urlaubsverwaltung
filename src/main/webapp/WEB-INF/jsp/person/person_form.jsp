@@ -164,10 +164,10 @@
             <spring:message code="working.time.valid.from" />&nbsp;
             <joda:format style="M-" var="VALID_FROM" value="${personForm.validFrom}" />
             <form:input id="validFrom" path="validFrom" value="${VALID_FROM}" cssErrorClass="error input-medium" cssClass="input-medium" />
-            
+
             <c:forEach items="${weekDays}" var="weekDay">
                 <label class="checkbox" for="${weekDay.name}">
-                    <form:checkbox name="workingDays" path="workingDays" value="${weekDay.dayOfWeek}" />
+                    <form:checkbox id="${weekDay.name}" path="workingDays" value="${weekDay.dayOfWeek}" />
                     &nbsp;<spring:message code='${weekDay.name}'/>
                 </label> 
             </c:forEach>
