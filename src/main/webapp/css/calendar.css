@@ -15,11 +15,9 @@
     align-items: stretch;
     justify-content: center;
 
-    height: 260px;
-
     cursor: default;
     font-family: Trebuchet MS,Tahoma,Verdana,Arial,sans-serif;
-    font-size: 1.1em;
+    font-size: 1em;
     background: linear-gradient( 0deg, #EEE 75%, #FFF);
     border: 1px solid #DDD;
     border-radius: 0.3em;
@@ -39,6 +37,7 @@
     overflow: hidden;
 
     width: 1086px;
+    height: 220px;
 }
 
 .datepicker-table {
@@ -46,6 +45,7 @@
     border-spacing: 0;
     border-collapse: collapse;
     font-size: 1em;
+    width: 100%;
 }
 
 .datepicker-table th, .datepicker-table td {
@@ -75,7 +75,7 @@
 .datepicker-month {
     position: absolute;
     width: 256px;
-    transition: left 500ms;
+    transition: left 500ms ease-out;
 }
 
 .datepicker-month:nth-child(2) {
