@@ -1,4 +1,3 @@
-// TODO left-click / right-click
 // TODO booking on click instead mousedown
 // TODO half holidays
 // TODO responsivness (various widths, browsers, os, ...)
@@ -10,6 +9,12 @@ $(function() {
 
     var keyCodes = {
         escape: 27
+    };
+
+    var mouseButtons = {
+        left   : 0,
+        middle : 1,
+        right  : 2
     };
 
     var CSS = {
@@ -363,7 +368,12 @@ $(function() {
 
         var datepickerHandlers = {
 
-            mousedown: function() {
+            mousedown: function(event) {
+
+                if (event.button != mouseButtons.left) {
+                    return;
+                }
+
                 $(document.body).addClass(CSS.mousedown);
 
                 var date;
