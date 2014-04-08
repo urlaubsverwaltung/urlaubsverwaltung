@@ -6,17 +6,14 @@ package org.synyx.urlaubsverwaltung.calendar;
 
 import de.jollyday.Holiday;
 import de.jollyday.HolidayManager;
-
 import org.joda.time.DateMidnight;
 import org.joda.time.chrono.GregorianChronology;
-
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.math.BigDecimal;
-
 import java.net.URL;
-
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -148,6 +145,20 @@ public class JollydayCalendar {
         return numberOfHolidays;
     }
 
+
+    public List<String> getPublicHolidays(int year) {
+
+        // get all public holidays of this year
+        Collection<Holiday> holidays = manager.getHolidays(year);
+
+        List<String> monthHolidays = new ArrayList<String>(holidays.size());
+
+        for (Holiday holiday : holidays) {
+            monthHolidays.add(holiday.getDate().toString());
+        }
+
+        return monthHolidays;
+    }
 
     public List<String> getPublicHolidays(int year, int month) {
 

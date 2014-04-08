@@ -2,22 +2,16 @@ package org.synyx.urlaubsverwaltung.calendar.web;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 import org.joda.time.DateMidnight;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-
 import org.springframework.stereotype.Controller;
-
 import org.springframework.ui.Model;
-
 import org.springframework.util.StringUtils;
-
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
@@ -28,11 +22,8 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.io.IOException;
-
 import java.lang.reflect.Type;
-
 import java.math.BigDecimal;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -111,22 +102,29 @@ public class CalendarController {
     @RequestMapping(value = "/calendar/public-holiday", method = RequestMethod.GET)
     @ResponseBody
     public String getPublicHolidays(@RequestParam("year") String year,
-        @RequestParam("month") String month) {
+        @RequestParam(value = "month", required = false) String month) {
 
-        if (StringUtils.hasText(year) && StringUtils.hasText(month)) {
-            try {
-                List<String> holidays = jollydayCalendar.getPublicHolidays(Integer.parseInt(year),
-                        Integer.parseInt(month));
+        String response = "N/A";
 
-                String json = new Gson().toJson(holidays);
+        boolean hasYear  = StringUtils.hasText(year);
+        boolean hasMonth = StringUtils.hasText(month);
 
-                return json;
-            } catch (NumberFormatException ex) {
-                return "N/A";
+        try {
+            List<String> holidays = null;
+
+            if (hasYear && !hasMonth) {
+                holidays = jollydayCalendar.getPublicHolidays(Integer.parseInt(year));
             }
+            else if (hasYear && hasMonth) {
+                holidays = jollydayCalendar.getPublicHolidays(Integer.parseInt(year), Integer.parseInt(month));
+            }
+
+            response = new Gson().toJson(holidays);
+
+        } catch (NumberFormatException e) {
         }
 
-        return "N/A";
+        return response;
     }
 
 
