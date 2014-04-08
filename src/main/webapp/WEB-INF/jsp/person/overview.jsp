@@ -12,28 +12,37 @@
 <head>
     <uv:head />
     <link rel="stylesheet" href="<spring:url value='/css/calendar.css' />">
-    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js" type="text/javascript" ></script>
     <script type="text/javascript">
         /**
-        *
-        * @param {string|{}} data
-        * @param {string} [data.src]
-        * @param {string} [data.fallback]
-        * @param {function} [success]
+         * @param {string|{}} data
+         * @param {string} [data.src]
+         * @param {string} [data.fallback]
+         * @return {$.Deferred}
          */
-        function addScript(data, success) {
+        function addScript(data) {
+
+            var deferred = $.Deferred();
+            var isFallback = typeof data === 'string';
 
             var script  = document.createElement('script');
-            script.src  = typeof data === 'string' ? data : data.src;
+            script.src  = isFallback ? data : data.src;
             script.type = 'text/javascript';
 
-            script.onload  = success || function() {};
+            script.onload  = function() {
+                deferred.resolve();
+            };
 
             script.onerror = function() {
-                addScript(data.fallback, success);
+                if (isFallback) {
+                    deferred.reject();
+                } else {
+                    addScript(data.fallback);
+                }
             };
 
             document.getElementsByTagName('head')[0].appendChild(script);
+
+            return deferred.promise();
         }
     </script>
     <style type="text/css">
@@ -117,35 +126,41 @@
                 var personId = '<c:out value="${person.id}" />';
                 var urlPrefix = "<spring:url value='/web' />";
 
-                if (typeof moment === 'undefined') {
-                    addScript({
-                        src: '<spring:url value='/moment.min.js' />'
+                function addMomentScript() {
+                    return addScript({
+                        src: '//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js',
+                        fallback: '<spring:url value='/moment.min.js' />'
                     });
                 }
 
-                addScript({
-                    src: '//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/lang/' + datepickerLocale + '.js',
-                    fallback: '<spring:url value='/js/moment.lang.de.js' />'
-                });
-
-                var year = getUrlParam("year");
-                var date = moment();
-
-                if (year.length > 0) {
-                    date.year(year).month(0).date(1);
+                function addMomentLangScript() {
+                    return addScript({
+                        src: '//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/lang/' + datepickerLocale + '.js',
+                        fallback: '<spring:url value='/js/moment.lang.de.js' />'
+                    });
                 }
 
-                <%--fetchHighlightedDays(date, urlPrefix + "/calendar/", personId);--%>
-                <%--createDatepickerForVacationOverview("#datepicker", datepickerLocale, urlPrefix, personId, defaultDate);--%>
+                function initCalendar() {
+                    var year = getUrlParam("year");
+                    var date = moment();
 
-                Urlaubsverwaltung.HolidayService.fetchPublic(date.year())
-                .then(function() {
-                    Urlaubsverwaltung.HolidayService.fetchPersonal(+personId, date.year())
-                    .always(function() {
+                    if (year.length > 0) {
+                        date.year(year).month(0).date(1);
+                    }
+
+                    <%--fetchHighlightedDays(date, urlPrefix + "/calendar/", personId);--%>
+                    <%--createDatepickerForVacationOverview("#datepicker", datepickerLocale, urlPrefix, personId, defaultDate);--%>
+
+                    $.when(
+                        Urlaubsverwaltung.HolidayService.fetchPublic  (date.year()),
+                        Urlaubsverwaltung.HolidayService.fetchPersonal(+personId, date.year())
+                    ).always(function() {
                         Urlaubsverwaltung.Calendar.View.display();
                         Urlaubsverwaltung.Calendar.Controller.bind();
                     });
-                });
+                }
+
+                addMomentScript().then(addMomentLangScript).then(initCalendar);
             });
         </script>
 
