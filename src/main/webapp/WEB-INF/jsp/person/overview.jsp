@@ -11,6 +11,31 @@
 
 <head>
     <uv:head />
+    <link rel="stylesheet" href="<spring:url value='/css/calendar.css' />">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js" type="text/javascript" ></script>
+    <script type="text/javascript">
+        /**
+        *
+        * @param {string|{}} data
+        * @param {string} [data.src]
+        * @param {string} [data.fallback]
+        * @param {function} [success]
+         */
+        function addScript(data, success) {
+
+            var script  = document.createElement('script');
+            script.src  = typeof data === 'string' ? data : data.src;
+            script.type = 'text/javascript';
+
+            script.onload  = success || function() {};
+
+            script.onerror = function() {
+                addScript(data.fallback, success);
+            };
+
+            document.getElementsByTagName('head')[0].appendChild(script);
+        }
+    </script>
     <style type="text/css">
         .app-detail td {
             width: auto;
@@ -82,28 +107,45 @@
             
         </div>
 
-        <script src="<spring:url value='/js/datepicker.js' />" type="text/javascript" ></script>
+        <%--<script src="<spring:url value='/js/datepicker.js' />" type="text/javascript" ></script>--%>
+        <script src="<spring:url value='/js/calendar.js' />" type="text/javascript" ></script>
+        <%--<script src="<spring:url value='/js/moment.lang.de.js' />" type="text/javascript" ></script>--%>
         <script>
             $(function() {
+
                 var datepickerLocale = "${pageContext.request.locale.language}";
                 var personId = '<c:out value="${person.id}" />';
                 var urlPrefix = "<spring:url value='/web' />";
 
-                var year = getUrlParam("year");
-                var date;
-                var defaultDate;
-                
-                if(year.length > 0) {
-                    date = Date.today().set({ year: parseInt(year), month: 0, day: 1 });
-                    defaultDate = Date.today().set({ year: parseInt(year), month: 0, day: 1 });
-                } else {
-                    date = Date.today();
-                    defaultDate = Date.today();
+                if (typeof moment === 'undefined') {
+                    addScript({
+                        src: '<spring:url value='/moment.min.js' />'
+                    });
                 }
 
-                fetchHighlightedDays(date, urlPrefix + "/calendar/", personId);
-                createDatepickerForVacationOverview("#datepicker", datepickerLocale, urlPrefix, personId, defaultDate);
+                addScript({
+                    src: '//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/lang/' + datepickerLocale + '.js',
+                    fallback: '<spring:url value='/js/moment.lang.de.js' />'
+                });
 
+                var year = getUrlParam("year");
+                var date = moment();
+
+                if (year.length > 0) {
+                    date.year(year).month(0).date(1);
+                }
+
+                <%--fetchHighlightedDays(date, urlPrefix + "/calendar/", personId);--%>
+                <%--createDatepickerForVacationOverview("#datepicker", datepickerLocale, urlPrefix, personId, defaultDate);--%>
+
+                Urlaubsverwaltung.HolidayService.fetchPublic(date.year())
+                .then(function() {
+                    Urlaubsverwaltung.HolidayService.fetchPersonal(+personId, date.year())
+                    .always(function() {
+                        Urlaubsverwaltung.Calendar.View.display();
+                        Urlaubsverwaltung.Calendar.Controller.bind();
+                    });
+                });
             });
         </script>
 
