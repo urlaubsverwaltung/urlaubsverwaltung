@@ -1,4 +1,3 @@
-// TODO booking on click instead mousedown
 // TODO half holidays
 // TODO responsivness (various widths, browsers, os, ...)
 // TODO description of day colors
@@ -376,25 +375,16 @@ $(function() {
 
                 $(document.body).addClass(CSS.mousedown);
 
-                var date;
-
-                var dateFrom = selectionFrom();
-                var dateTo   = selectionTo  ();
-
                 var dateThis = getDateFromEl(this);
 
-                if (sameOrBetween(dateThis, dateFrom, dateTo)) {
-                    bookHoliday(dateFrom, dateTo);
-                }
-                else {
+                if ( !sameOrBetween(dateThis, selectionFrom(), selectionTo()) ) {
+
                     clearSelection();
 
-                    date = getDateFromEl(this);
+                    $datepicker.data(DATA.selected, dateThis);
 
-                    $datepicker.data(DATA.selected, date);
-
-                    selectionFrom( date );
-                    selectionTo  ( date );
+                    selectionFrom( dateThis );
+                    selectionTo  ( dateThis );
                 }
             },
 
@@ -412,6 +402,18 @@ $(function() {
 
                     selectionFrom( isThisBefore ? dateThis     : dateSelected );
                     selectionTo  ( isThisBefore ? dateSelected : dateThis     );
+                }
+            },
+
+            click: function() {
+                
+                var dateFrom = selectionFrom();
+                var dateTo   = selectionTo  ();
+
+                var dateThis = getDateFromEl(this);
+
+                if (sameOrBetween(dateThis, dateFrom, dateTo)) {
+                    bookHoliday(dateFrom, dateTo);
                 }
             },
 
@@ -522,6 +524,7 @@ $(function() {
 
                 $datepicker.on('mousedown', '.' + CSS.day , datepickerHandlers.mousedown);
                 $datepicker.on('mouseover', '.' + CSS.day , datepickerHandlers.mouseover);
+                $datepicker.on('click'    , '.' + CSS.day , datepickerHandlers.click    );
 
                 $datepicker.on('click'    , '.' + CSS.prev, datepickerHandlers.clickPrev);
                 $datepicker.on('click'    , '.' + CSS.next, datepickerHandlers.clickNext);
