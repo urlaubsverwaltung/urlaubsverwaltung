@@ -24,6 +24,7 @@ $(function() {
         dayPast            : 'datepicker-day-past',
         dayPublicHoliday   : 'datepicker-day-public-holiday',
         dayPersonalHoliday : 'datepicker-day-personal-holiday',
+        dayHalfHoliday     : 'datepicker-day-half-holiday',
         next               : 'datepicker-next',
         prev               : 'datepicker-prev',
         month              : 'datepicker-month',
@@ -62,6 +63,11 @@ $(function() {
             },
             isPersonalHoliday: function(date) {
                 return holidayService.isPersonalHoliday(date);
+            },
+            isHalfHoliday: function(date) {
+                // TODO check booked holidays from user
+                // hardcoded 24.12. and 31.12. ... don't know...
+                return date.month() === 11 && (date.date() === 24 || date.date() === 31);
             }
         };
 
@@ -324,13 +330,17 @@ $(function() {
                     assert.isWeekend         (date) ? CSS.dayWeekend         : '',
                     assert.isPast            (date) ? CSS.dayPast            : '',
                     assert.isPublicHoliday   (date) ? CSS.dayPublicHoliday   : '',
-                    assert.isPersonalHoliday (date) ? CSS.dayPersonalHoliday : ''
+                    assert.isPersonalHoliday (date) ? CSS.dayPersonalHoliday : '',
+                    assert.isHalfHoliday     (date) ? CSS.dayHalfHoliday     : ''
                 ].join(' ');
             }
 
             function isSelectable() {
-                return !(
-                    assert.isPast(date) ||
+                var isPast = assert.isPast(date);
+                var isFutureHalf = assert.isHalfHoliday(date) && !isPast
+
+                return isFutureHalf || !(
+                    isPast ||
                     assert.isWeekend(date) ||
                     assert.isPublicHoliday(date) ||
                     assert.isPersonalHoliday(date)

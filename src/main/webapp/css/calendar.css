@@ -127,6 +127,12 @@
 .datepicker-day-past.datepicker-day-weekend {
     border-color: #E5F5E0;
 }
+.datepicker-day-past.datepicker-day-half-holiday {
+    background: linear-gradient(-45deg, #E5F5E0 50%, #F5F5F5 50%);
+    border-color: #F5F5F5;
+    border-right-color: #E5F5E0;
+    border-bottom-color: #E5F5E0;
+}
 
 
 .datepicker-day-public-holiday {
@@ -139,6 +145,10 @@
     background-color: #FFEDA0;
 }
 
+.datepicker-day-half-holiday {
+    color: #31A354;
+    background: linear-gradient(-45deg, #E5F5E0 50%, #FFF 50%);
+}
 
 
 .datepicker-day:not([data-datepicker-selectable=false]) {
@@ -147,6 +157,10 @@
 
 .datepicker-day:not([data-datepicker-selectable=false]):hover {
     background-color: #FDF5CE;
+}
+
+.datepicker-day-half-holiday:not(.datepicker-day-past):hover {
+    background: linear-gradient(-45deg, #E5F5E0 50%, #FDF5CE 50%);
 }
 
 .datepicker-day-weekend {
@@ -164,6 +178,13 @@
     /* !important to override :hover */
     background-color: #ABC452 !important;
     color: #000;
+    border-right-color: #92AA3E;
+    border-bottom-color: #92AA3E;
+}
+
+.datepicker-day-selected.datepicker-day-half-holiday {
+    /* !important to override :hover */
+    background: linear-gradient(-45deg, #E5F5E0 50%, #ABC452 50%) !important;
     border-right-color: #92AA3E;
     border-bottom-color: #92AA3E;
 }
