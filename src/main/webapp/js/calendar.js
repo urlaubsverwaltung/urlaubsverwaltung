@@ -43,28 +43,43 @@ $(function() {
     };
 
 
-    var assert = {
-        isToday: function(date) {
-            return date.format('DD.MM.YY') === moment().format('DD.MM.YY');
-        },
-        isWeekend: function(date) {
-            return date.day() === 0 || date.day() === 6;
-        },
-        isPast: function(date) {
-            return date.isBefore( moment() );
-        },
-        isPublicHoliday: function(date) {
-            return HolidayService.isPublicHoliday(date);
-        },
-        isPersonalHoliday: function(date) {
-            return HolidayService.isPersonalHoliday(date);
-        }
-    };
+    var Assertion = (function() {
+
+        var holidayService;
+
+        var assert = {
+            isToday: function(date) {
+                return date.format('DD.MM.YY') === moment().format('DD.MM.YY');
+            },
+            isWeekend: function(date) {
+                return date.day() === 0 || date.day() === 6;
+            },
+            isPast: function(date) {
+                return date.isBefore( moment() );
+            },
+            isPublicHoliday: function(date) {
+                return holidayService.isPublicHoliday(date);
+            },
+            isPersonalHoliday: function(date) {
+                return holidayService.isPersonalHoliday(date);
+            }
+        };
+
+        return {
+            create: function(_holidayService) {
+                holidayService = _holidayService;
+                return assert;
+            }
+        };
+
+    }());
 
 
     var HolidayService = (function() {
 
         var _CACHE  = {};
+
+        var urlPrefix;
 
         function paramize(p) {
             var result = '?';
@@ -87,7 +102,7 @@ $(function() {
             var query = endpoint + paramize(params);
 
             return $.ajax({
-                url: '/urlaubsverwaltung/web/calendar/' + query,
+                url: urlPrefix + '/calendar/' + query,
                 dataType: 'json'
             });
         }
@@ -110,7 +125,7 @@ $(function() {
             };
         }
 
-        return {
+        var HolidayService = {
 
             isPersonalHoliday: isHoliday('holiday'),
 
@@ -155,10 +170,20 @@ $(function() {
                 }
             }
         };
+
+        return {
+            create: function(_urlPrefix) {
+                urlPrefix = _urlPrefix;
+                return HolidayService;
+            }
+        };
+
     }());
 
 
     var View = (function() {
+
+        var assert;
 
         var TMPL = {
 
@@ -320,7 +345,7 @@ $(function() {
             });
         }
 
-        return {
+        var View = {
 
             display: function() {
                 $datepicker.html( renderCalendar()).addClass('unselectable');
@@ -360,10 +385,20 @@ $(function() {
                 $firstMonth.before($prevMonth).removeClass(CSS.monthPrev);
             }
         };
+
+        return {
+            create: function(_assert) {
+                assert = _assert;
+                return View;
+            }
+        };
     }());
 
 
     var Controller = (function() {
+
+        var view;
+        var holidayService;
 
         var datepickerHandlers = {
 
@@ -428,9 +463,9 @@ $(function() {
                     .add('M', 1);
 
                 $.when(
-                    HolidayService.fetchPublic(date.year())
+                    holidayService.fetchPublic(date.year())
 //                    , Holidays.fetchPersonal()
-                ).then(View.displayNext);
+                ).then(view.displayNext);
             },
 
             clickPrev: function() {
@@ -444,9 +479,9 @@ $(function() {
                     .subtract('M', 1);
 
                 $.when(
-                    HolidayService.fetchPublic(date.year())
+                    holidayService.fetchPublic(date.year())
 //                    , Holidays.fetchPersonal()
-                ).then(View.displayPrev);
+                ).then(view.displayPrev);
             }
         };
 
@@ -519,7 +554,7 @@ $(function() {
             }
         }
 
-        return {
+        var Controller = {
             bind: function() {
 
                 $datepicker.on('mousedown', '.' + CSS.day , datepickerHandlers.mousedown);
@@ -541,17 +576,35 @@ $(function() {
                 });
             }
         };
+
+        return {
+            create: function(_holidayService, _view) {
+                holidayService = _holidayService;
+                view = _view;
+                return Controller;
+            }
+        };
     }());
+
+
+    var Calendar = {
+        init: function(holidayService) {
+
+            var a = Assertion.create (holidayService);
+            var v = View.create(a);
+            var c = Controller.create(holidayService, v);
+
+            v.display();
+            c.bind();
+        }
+    };
 
     /**
      * @export
      */
     window.Urlaubsverwaltung = {
-        HolidayService: HolidayService,
-        Calendar: {
-            View: View,
-            Controller: Controller
-        }
+        Calendar      : Calendar,
+        HolidayService: HolidayService
     };
 
 });

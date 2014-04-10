@@ -133,6 +133,8 @@
                     });
                 }
 
+                // dependently of the locale a specific language file is fetched for momentjs
+                // fallback is a german language file
                 function addMomentLangScript() {
                     return addScript({
                         src: '//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/lang/' + datepickerLocale + '.js',
@@ -140,6 +142,7 @@
                     });
                 }
 
+                // calendar is initialised when moment.js AND moment.language.js are loaded
                 function initCalendar() {
                     var year = getUrlParam("year");
                     var date = moment();
@@ -148,15 +151,13 @@
                         date.year(year).month(0).date(1);
                     }
 
-                    <%--fetchHighlightedDays(date, urlPrefix + "/calendar/", personId);--%>
-                    <%--createDatepickerForVacationOverview("#datepicker", datepickerLocale, urlPrefix, personId, defaultDate);--%>
+                    var holidayService = Urlaubsverwaltung.HolidayService.create(urlPrefix);
 
                     $.when(
-                        Urlaubsverwaltung.HolidayService.fetchPublic  (date.year()),
-                        Urlaubsverwaltung.HolidayService.fetchPersonal(+personId, date.year())
+                        holidayService.fetchPublic   ( date.year() ),
+                        holidayService.fetchPersonal ( +personId, date.year() )
                     ).always(function() {
-                        Urlaubsverwaltung.Calendar.View.display();
-                        Urlaubsverwaltung.Calendar.Controller.bind();
+                        Urlaubsverwaltung.Calendar.init(holidayService);
                     });
                 }
 
