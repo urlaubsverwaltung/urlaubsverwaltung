@@ -36,7 +36,7 @@
                 if (isFallback) {
                     deferred.reject();
                 } else {
-                    addScript(data.fallback);
+                    addScript(data.fallback).then(deferred.resolve);
                 }
             };
 
