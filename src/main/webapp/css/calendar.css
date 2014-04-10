@@ -113,16 +113,21 @@
     background-color: #FFF;
     cursor: default;
 
-    border: 1px solid transparent;
+    border: 1px solid #FFF;
     border-right-color : #DDD;
     border-bottom-color: #DDD;
 }
 
 /* must be the first special day, so other special days are overriding this */
 .datepicker-day-past {
-    border-color: transparent;
+    border-color: #F5F5F5;
     background-color: #F5F5F5;
 }
+.datepicker-day-past.datepicker-day-public-holiday,
+.datepicker-day-past.datepicker-day-weekend {
+    border-color: #E5F5E0;
+}
+
 
 .datepicker-day-public-holiday {
     color: #31A354;
@@ -152,10 +157,12 @@
 .datepicker-day-today {
     color: #2C7FB8;
     background-color: #9ECAE1;
+    border-color: #9ECAE1;
 }
 
 .datepicker-day-selected {
-    background-color: #ABC452 !important; /* override :hover */
+    /* !important to override :hover */
+    background-color: #ABC452 !important;
     color: #000;
     border-right-color: #92AA3E;
     border-bottom-color: #92AA3E;
