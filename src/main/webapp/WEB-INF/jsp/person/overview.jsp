@@ -151,11 +151,11 @@
                         date.year(year).month(0).date(1);
                     }
 
-                    var holidayService = Urlaubsverwaltung.HolidayService.create(urlPrefix);
+                    var holidayService = Urlaubsverwaltung.HolidayService.create(urlPrefix, +personId);
 
                     $.when(
                         holidayService.fetchPublic   ( date.year() ),
-                        holidayService.fetchPersonal ( +personId, date.year() )
+                        holidayService.fetchPersonal ( date.year() )
                     ).always(function() {
                         Urlaubsverwaltung.Calendar.init(holidayService);
                     });

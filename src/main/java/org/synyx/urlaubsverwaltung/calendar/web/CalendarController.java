@@ -131,10 +131,13 @@ public class CalendarController {
     @RequestMapping(value = "/calendar/holiday", method = RequestMethod.GET)
     @ResponseBody
     public String getPersonsHoliday(@RequestParam("year") String year,
-        @RequestParam("month") String month,
+        @RequestParam(value = "month", required = false) String month,
         @RequestParam("person") Integer personId) {
 
-        if (StringUtils.hasText(year) && StringUtils.hasText(month) && personId != null) {
+        boolean hasYear  = StringUtils.hasText(year);
+        boolean hasMonth = StringUtils.hasText(month);
+
+        if (hasYear && personId != null) {
             try {
                 Person person = personService.getPersonByID(personId);
 
@@ -142,8 +145,9 @@ public class CalendarController {
                     return "N/A";
                 }
 
-                List<Application> applications = applicationService.getAllAllowedApplicationsOfAPersonForAMonth(person,
-                        Integer.parseInt(month), Integer.parseInt(year));
+                List<Application> applications = hasMonth
+                        ? applicationService.getAllAllowedApplicationsOfAPersonForAMonth(person, Integer.parseInt(month), Integer.parseInt(year))
+                        : applicationService.getAllApplicationsByPersonAndYear(person, Integer.parseInt(year));
 
                 List<String> holidays = new ArrayList<String>();
 

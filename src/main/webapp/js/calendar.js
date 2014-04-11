@@ -1,5 +1,4 @@
 // TODO half holidays
-// TODO responsivness (various widths, browsers, os, ...)
 // TODO description of day colors
 // TODO selectedDays -> mouseover -> tooltip how many holidays are selected
 // TODO highlight selected days in red if remaining holidays are not enough
@@ -88,6 +87,7 @@ $(function() {
         var _CACHE  = {};
 
         var urlPrefix;
+        var personId;
 
         function paramize(p) {
             var result = '?';
@@ -112,6 +112,18 @@ $(function() {
             return $.ajax({
                 url: urlPrefix + '/calendar/' + query,
                 dataType: 'json'
+            });
+        }
+
+        function cacheHoliday(response) {
+
+            var c = _CACHE['holiday'] = _CACHE['holiday'] || {};
+
+            $.each(response, function(idx, data) {
+                var date = data.date;
+                var y = date.match(/\d{0,4}/)[0];
+                c[y] = c[y] || [];
+                c[y].push(date);
             });
         }
 
@@ -165,7 +177,7 @@ $(function() {
              * @param {number} [month]
              * @returns {$.ajax}
              */
-            fetchPersonal: function(personId, year) {
+            fetchPersonal: function(year) {
                 var deferred = $.Deferred();
 
                 _CACHE['holiday'] = _CACHE['holiday'] || {};
@@ -174,14 +186,15 @@ $(function() {
                     return deferred.resolve( _CACHE[year] );
                 }
                 else {
-                    return fetch('holiday', {personId: personId, year: year}).success( cacheData('holiday') );
+                    return fetch('holiday', {person: personId, year: year}).success( cacheHoliday );
                 }
             }
         };
 
         return {
-            create: function(_urlPrefix) {
+            create: function(_urlPrefix, _personId) {
                 urlPrefix = _urlPrefix;
+                personId  = _personId;
                 return HolidayService;
             }
         };
@@ -475,8 +488,8 @@ $(function() {
                     .add('M', 1);
 
                 $.when(
-                    holidayService.fetchPublic(date.year())
-//                    , Holidays.fetchPersonal()
+                    holidayService.fetchPublic   ( date.year() ),
+                    holidayService.fetchPersonal ( date.year() )
                 ).then(view.displayNext);
             },
 
@@ -491,8 +504,8 @@ $(function() {
                     .subtract('M', 1);
 
                 $.when(
-                    holidayService.fetchPublic(date.year())
-//                    , Holidays.fetchPersonal()
+                    holidayService.fetchPublic   ( date.year() ),
+                    holidayService.fetchPersonal ( date.year() )
                 ).then(view.displayPrev);
             }
         };
