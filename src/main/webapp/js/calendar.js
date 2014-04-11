@@ -153,6 +153,21 @@ $(function() {
 
             /**
              *
+             * @param {moment} from
+             * @param {moment} [to]
+             */
+            bookHoliday: function(from, to) {
+
+                var params = {
+                    from :      from.format('YYYY-MM-DD'),
+                    to   : to ? to  .format('YYYY-MM-DD') : undefined
+                };
+
+                document.location.href = urlPrefix + '/application/new' + paramize( params );
+            },
+
+            /**
+             *
              * @param {number} year
              * @returns {$.ajax}
              */
@@ -473,7 +488,7 @@ $(function() {
                 var dateThis = getDateFromEl(this);
 
                 if (sameOrBetween(dateThis, dateFrom, dateTo)) {
-                    bookHoliday(dateFrom, dateTo);
+                    holidayService.bookHoliday(dateFrom, dateTo);
                 }
             },
 
@@ -551,16 +566,6 @@ $(function() {
                 var d = moment( $(this).data(DATA.date) );
                 select(this, sameOrBetween(d, from, to));
             });
-        }
-
-        function bookHoliday(from, to) {
-
-            function format(d) {
-                return d.format('dd, DD. MMMM YY');
-            }
-
-            // TODO redirect to new page
-            console.log('booking holiday from ' + format(from) + ' to ' + format(to));
         }
 
         function select(el, select) {
