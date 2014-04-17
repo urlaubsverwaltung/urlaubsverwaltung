@@ -195,6 +195,36 @@
                                                 Bis: <form:input id="to" path="endDate" cssErrorClass="error" style="width: 28%" />
                                             </span>
 
+                                            <script type="text/javascript">
+                                                $(function() {
+
+                                                    function preset(id, dateString) {
+
+                                                        var match = dateString.match(/\d+/g);
+
+                                                        var y = match[0];
+                                                        var m = match[1] - 1;
+                                                        var d = match[2];
+
+                                                        $(id).datepicker('setDate', new Date(y, m , d));
+                                                    }
+
+                                                    var from = '${param.from}';
+                                                    var to   = '${param.to}';
+
+                                                    if (from) {
+                                                        preset('#from', from);
+                                                        preset('#to'  , to || from);
+
+                                                        sendGetDaysRequest("<spring:url value='/web/calendar/vacation' />",
+                                                                $("#from").datepicker("getDate"),
+                                                                $("#to").datepicker("getDate"), 
+                                                                $('input:radio[name=howLong]:checked').val(), 
+                                                                '<c:out value="${person.id}" />', ".days", true);
+                                                    }
+                                                });
+                                            </script>
+
                                             <span id="half-day" style="display: none">
                                                 Am: <form:input id="at" path="startDateHalf" cssErrorClass="error" style="width: 27%" />
                                             </span>

@@ -1,0 +1,175 @@
+
+.unselectable {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+#datepicker {
+
+    display: -webkit-flex;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+
+    cursor: default;
+    font-family: Trebuchet MS,Tahoma,Verdana,Arial,sans-serif;
+    font-size: 1em;
+    background: linear-gradient( 0deg, #EEE 75%, #FFF);
+    border: 1px solid #DDD;
+    border-radius: 0.3em;
+}
+.datepicker-prev,
+.datepicker-next,
+.datepicker-months-container {
+    margin: .5em;
+}
+
+.datepicker-months-container {
+    /* months are positioned absolute with 'left' property  */
+    /* to enable smooth scrooling when user cicks prev/next */
+    position: relative;
+
+    /* months outside his div should not be visible */
+    overflow: hidden;
+
+    width: auto;
+    height: 190px;
+}
+
+.datepicker-table {
+    border: none;
+    border-spacing: 0;
+    border-collapse: collapse;
+    font-size: 1em;
+    width: 100%;
+}
+
+.datepicker-table th, .datepicker-table td {
+    padding: 0;
+    margin: 0;
+}
+
+.datepicker-table thead tr th {
+    padding: .5em;
+}
+
+.datepicker-prev,
+.datepicker-next {
+    border: none;
+    padding: 0 0.7em;
+    cursor: pointer;
+    border-radius: .2em;
+    background-color: transparent;
+    transition: background-color .2s;
+}
+
+.datepicker-prev:hover,
+.datepicker-next:hover {
+    background-color: #DDD;
+}
+
+.datepicker-month {
+    width: 230px;
+    margin-left: 12px;
+    margin-right: 12px;
+    float: left;
+}
+
+.datepicker-month-next {
+    display: none;
+}
+
+.datepicker-month h3 {
+    margin : 0 0 .5em 0;
+    padding: .2em 0;
+    font-size: 1.1em;
+    text-align: center;
+    background-color: #ABC452;
+    border-radius: .3em;
+}
+
+.datepicker-day {
+    display: block;
+    padding: .2em .6em;
+    background-color: #FFF;
+    cursor: default;
+
+    border: 1px solid #FFF;
+    border-right-color : #DDD;
+    border-bottom-color: #DDD;
+}
+
+/* must be the first special day, so other special days are overriding this */
+.datepicker-day-past {
+    border-color: #F5F5F5;
+    background-color: #F5F5F5;
+}
+.datepicker-day-past.datepicker-day-public-holiday,
+.datepicker-day-past.datepicker-day-weekend {
+    border-color: #E5F5E0;
+}
+.datepicker-day-past.datepicker-day-half-holiday {
+    background: linear-gradient(-45deg, #E5F5E0 50%, #F5F5F5 50%);
+    border-color: #F5F5F5;
+    border-right-color: #E5F5E0;
+    border-bottom-color: #E5F5E0;
+}
+
+
+.datepicker-day-public-holiday {
+    color: #31A354;
+    background-color: #E5F5E0;
+}
+
+.datepicker-day-personal-holiday {
+    color: #F8B851;
+    background-color: #FFEDA0;
+}
+
+.datepicker-day-half-holiday {
+    color: #31A354;
+    background: linear-gradient(-45deg, #E5F5E0 50%, #FFF 50%);
+}
+
+
+.datepicker-day:not([data-datepicker-selectable=false]) {
+    cursor: pointer;
+}
+
+.datepicker-day:not([data-datepicker-selectable=false]):hover {
+    background-color: #FDF5CE;
+}
+
+.datepicker-day-half-holiday:not(.datepicker-day-past):hover {
+    background: linear-gradient(-45deg, #E5F5E0 50%, #FDF5CE 50%);
+}
+
+.datepicker-day-weekend {
+    color: #31A354;
+    background-color: #E5F5E0;
+}
+
+.datepicker-day-today {
+    color: #2C7FB8;
+    background-color: #9ECAE1;
+    border-color: #9ECAE1;
+}
+
+.datepicker-day-selected {
+    /* !important to override :hover */
+    background-color: #ABC452 !important;
+    color: #000;
+    border-right-color: #92AA3E;
+    border-bottom-color: #92AA3E;
+}
+
+.datepicker-day-selected.datepicker-day-half-holiday {
+    /* !important to override :hover */
+    background: linear-gradient(-45deg, #E5F5E0 50%, #ABC452 50%) !important;
+    border-right-color: #92AA3E;
+    border-bottom-color: #92AA3E;
+}
