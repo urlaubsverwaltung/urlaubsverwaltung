@@ -252,17 +252,32 @@ $(function() {
             });
         }
 
+        function calculateNumberOfMonths() {
+
+            var datePickerWidth = $("#datepicker").width();
+            var widthOfPrevNextButtons = 2 * 15;
+            
+            var numberOfMonths = Math.floor((datePickerWidth - widthOfPrevNextButtons) / 250);
+
+            // 0 index
+            console.log("Displaying " + (numberOfMonths) + " months");
+
+            return numberOfMonths;
+
+        }
+
         function renderCalendar() {
 
             var date = moment();
-            var monthsToShow = 4;
+            // 0 index
+            var monthsToShow = calculateNumberOfMonths() - 1;
 
             return render(TMPL.container, {
 
                 prevBtn   : renderButton ( CSS.prev, '&lt;&lt;'),
                 nextBtn   : renderButton ( CSS.next, '&gt;&gt;'),
                 prevMonth : renderMonth  ( moment(date).add('M', -1), CSS.monthPrev ),
-                nextMonth : renderMonth  ( moment(date).add('M', monthsToShow + 1) , CSS.monthNext ),
+                nextMonth : renderMonth  ( moment(date).add('M', monthsToShow) , CSS.monthNext ),
 
                 months: function() {
                     var html = '';

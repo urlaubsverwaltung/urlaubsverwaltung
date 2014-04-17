@@ -119,4 +119,10 @@ public interface ApplicationDAO extends JpaRepository<Application, Integer> {
         "select count(x) from Application x where x.status = ?1 and ((x.startDate between ?2 and ?3) or (x.endDate between ?2 and ?3)) order by x.startDate"
     )
     long countApplicationsInStateAndYear(ApplicationStatus state, Date firstDayOfYear, Date lastDayOfYear);
+
+
+    @Query(
+        "SELECT x FROM Application x WHERE x.person = ?1 AND (YEAR(x.startDate) = ?2 OR YEAR(x.endDate) = ?2) AND x.status = ?3 ORDER BY x.startDate"
+    )
+    List<Application> getApplicationsByPersonAndYearAndState(Person person, int year, ApplicationStatus status);
 }

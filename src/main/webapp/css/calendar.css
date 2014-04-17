@@ -36,8 +36,8 @@
     /* months outside his div should not be visible */
     overflow: hidden;
 
-    width: 1086px;
-    height: 220px;
+    width: auto;
+    height: 190px;
 }
 
 .datepicker-table {
@@ -73,29 +73,14 @@
 }
 
 .datepicker-month {
-    position: absolute;
-    width: 256px;
-    transition: left 500ms ease-out;
+    width: 230px;
+    margin-left: 12px;
+    margin-right: 12px;
+    float: left;
 }
 
-.datepicker-month:nth-child(2) {
-    left: 0px;
-}
-.datepicker-month:nth-child(3) {
-    left: 276px;
-}
-.datepicker-month:nth-child(4) {
-    left: 552px;
-}
-.datepicker-month:nth-child(5) {
-    left: 828px;
-}
-
-.datepicker-month-prev {
-    left: -276px;
-}
 .datepicker-month-next {
-    left: 1104px;
+    display: none;
 }
 
 .datepicker-month h3 {
@@ -109,7 +94,7 @@
 
 .datepicker-day {
     display: block;
-    padding: .2em .8em;
+    padding: .2em .6em;
     background-color: #FFF;
     cursor: default;
 

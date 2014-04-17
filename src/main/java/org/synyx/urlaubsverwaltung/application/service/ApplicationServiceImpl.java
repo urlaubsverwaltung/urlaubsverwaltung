@@ -324,4 +324,12 @@ class ApplicationServiceImpl implements ApplicationService {
         return applicationDAO.getAllApplicationsByPersonAndYear(person, firstDayOfYear.toDate(),
                 lastDayOfYear.toDate());
     }
+
+
+    @Override
+    public List<Application> getAllApplicationsByPersonAndYearAndState(Person person, int year,
+        ApplicationStatus state) {
+
+        return applicationDAO.getApplicationsByPersonAndYearAndState(person, year, state);
+    }
 }

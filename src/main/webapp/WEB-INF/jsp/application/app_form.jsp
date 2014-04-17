@@ -215,6 +215,12 @@
                                                     if (from) {
                                                         preset('#from', from);
                                                         preset('#to'  , to || from);
+
+                                                        sendGetDaysRequest("<spring:url value='/web/calendar/vacation' />",
+                                                                $("#from").datepicker("getDate"),
+                                                                $("#to").datepicker("getDate"), 
+                                                                $('input:radio[name=howLong]:checked').val(), 
+                                                                '<c:out value="${person.id}" />', ".days", true);
                                                     }
                                                 });
                                             </script>

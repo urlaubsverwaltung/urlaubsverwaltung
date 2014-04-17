@@ -1,18 +1,24 @@
 package org.synyx.urlaubsverwaltung.calendar.web;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+
 import org.joda.time.DateMidnight;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+
 import org.springframework.stereotype.Controller;
+
 import org.springframework.ui.Model;
+
 import org.springframework.util.StringUtils;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 import org.synyx.urlaubsverwaltung.application.domain.Application;
+import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.calendar.GoogleCalendarService;
@@ -22,8 +28,9 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
+
 import java.math.BigDecimal;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -106,7 +113,7 @@ public class CalendarController {
 
         String response = "N/A";
 
-        boolean hasYear  = StringUtils.hasText(year);
+        boolean hasYear = StringUtils.hasText(year);
         boolean hasMonth = StringUtils.hasText(month);
 
         try {
@@ -114,13 +121,11 @@ public class CalendarController {
 
             if (hasYear && !hasMonth) {
                 holidays = jollydayCalendar.getPublicHolidays(Integer.parseInt(year));
-            }
-            else if (hasYear && hasMonth) {
+            } else if (hasYear && hasMonth) {
                 holidays = jollydayCalendar.getPublicHolidays(Integer.parseInt(year), Integer.parseInt(month));
             }
 
             response = new Gson().toJson(holidays);
-
         } catch (NumberFormatException e) {
         }
 
@@ -134,7 +139,7 @@ public class CalendarController {
         @RequestParam(value = "month", required = false) String month,
         @RequestParam("person") Integer personId) {
 
-        boolean hasYear  = StringUtils.hasText(year);
+        boolean hasYear = StringUtils.hasText(year);
         boolean hasMonth = StringUtils.hasText(month);
 
         if (hasYear && personId != null) {
@@ -146,13 +151,11 @@ public class CalendarController {
                 }
 
                 List<Application> applications = hasMonth
-                        ? applicationService.getAllAllowedApplicationsOfAPersonForAMonth(person, Integer.parseInt(month), Integer.parseInt(year))
-                        : applicationService.getAllApplicationsByPersonAndYear(person, Integer.parseInt(year));
+                    ? applicationService.getAllAllowedApplicationsOfAPersonForAMonth(person, Integer.parseInt(month),
+                        Integer.parseInt(year))
+                    : applicationService.getAllApplicationsByPersonAndYearAndState(person, Integer.parseInt(year),
+                        ApplicationStatus.ALLOWED);
 
-                List<String> holidays = new ArrayList<String>();
-
-                Type type = new TypeToken<List<VacationDate>>() {
-                    }.getType();
                 List<VacationDate> vacationDateList = new ArrayList<VacationDate>();
 
                 for (Application app : applications) {
@@ -162,9 +165,9 @@ public class CalendarController {
                     DateMidnight day = startDate;
 
                     while (!day.isAfter(endDate)) {
-                        vacationDateList.add(new VacationDate(day.toString(DATE_PATTERN), app.getId()));
+                        vacationDateList.add(new VacationDate(day.toString(DATE_PATTERN), app.getId(),
+                                app.getStatus().name()));
 
-//                        holidays.add(day.toString(DATE_PATTERN));
                         day = day.plusDays(1);
                     }
                 }
@@ -213,17 +216,19 @@ public class CalendarController {
 
         private String date;
         private Integer applicationId;
+        private String status;
 
-        public VacationDate(String date, Integer applicationId) {
+        public VacationDate(String date, Integer applicationId, String status) {
 
             this.date = date;
             this.applicationId = applicationId;
+            this.status = status;
         }
 
         @Override
         public String toString() {
 
-            return "date = " + this.date + ", href = " + this.applicationId;
+            return "date = " + this.date + ", href = " + this.applicationId + ", status = " + status;
         }
     }
 }

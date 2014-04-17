@@ -113,6 +113,18 @@ public interface ApplicationService {
 
 
     /**
+     * Gets all {@link Application}s by {@link Person}, year and {@link ApplicationStatus}.
+     *
+     * @param  person
+     * @param  year
+     * @param  state
+     *
+     * @return  {@link List} of {@link Application}s
+     */
+    List<Application> getAllApplicationsByPersonAndYearAndState(Person person, int year, ApplicationStatus state);
+
+
+    /**
      * Gets all {@link Application}s by a certain {@link ApplicationStatus} and year.
      *
      * @param  state {@link ApplicationStatus}
