@@ -1,14 +1,9 @@
-<%-- 
-    Document   : list-header
-    Created on : 12.04.2012, 10:53:14
-    Author     : Aljona Murygina
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
 
 <c:choose>
@@ -28,8 +23,7 @@
             <spring:message code="${titleApp}"/>&nbsp;&ndash;&nbsp;<c:out value="${displayYear}"/>
         </p>
         
-        <jsp:include page="../include/year_selector.jsp" />
-
+        <uv:year-selector year="${year}" />
         <div class="btn-group person-selector">
 
             <button class="btn dropdown-toggle" data-toggle="dropdown">

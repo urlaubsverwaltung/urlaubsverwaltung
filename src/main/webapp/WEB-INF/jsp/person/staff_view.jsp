@@ -77,7 +77,7 @@
                                 <spring:message code="table.overview" /><c:out value="${displayYear}" />
                             </p>
 
-                            <jsp:include page="../include/year_selector.jsp" />
+                            <uv:year-selector year="${year}" />
 
                             <div class="btn-group status-selector">
 
