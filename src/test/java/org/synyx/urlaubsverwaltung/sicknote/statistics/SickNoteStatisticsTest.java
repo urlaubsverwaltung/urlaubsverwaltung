@@ -85,16 +85,6 @@ public class SickNoteStatisticsTest {
 
 
     @Test
-    public void testGetAverageDurationOfDisease() throws Exception {
-
-        // 2 sick notes: 1st with 5 workdays and 2nd with 9 workdays --> sum = 14 workdays
-
-        Assert.assertEquals(new BigDecimal(14 / 2).setScale(2, RoundingMode.HALF_UP),
-            statistics.getAverageDurationOfDisease().setScale(2, RoundingMode.HALF_UP));
-    }
-
-
-    @Test
     public void testGetAverageDurationOfDiseasePerPerson() throws Exception {
 
         // 2 sick notes: 1st with 5 workdays and 2nd with 9 workdays --> sum = 14 workdays

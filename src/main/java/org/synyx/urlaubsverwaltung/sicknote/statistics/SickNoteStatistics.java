@@ -108,20 +108,6 @@ public class SickNoteStatistics {
     }
 
 
-    public BigDecimal getAverageDurationOfDisease() {
-
-        int totalNumberOfSickNotes = getTotalNumberOfSickNotes();
-
-        if (totalNumberOfSickNotes == 0) {
-            return BigDecimal.ZERO;
-        } else {
-            double averageDuration = getTotalNumberOfSickDays().doubleValue() / totalNumberOfSickNotes;
-
-            return BigDecimal.valueOf(averageDuration);
-        }
-    }
-
-
     public BigDecimal getAverageDurationOfDiseasePerPerson() {
 
         Long numberOfPersons = getNumberOfPersonsWithMinimumOneSickNote();

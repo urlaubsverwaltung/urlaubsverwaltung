@@ -84,14 +84,6 @@
                 </tr>
                 <tr>
                     <td>
-                        <spring:message code="sicknotes.average.duration" />
-                    </td>
-                    <td>
-                        <fmt:formatNumber maxFractionDigits="1" value="${statistics.averageDurationOfDisease}" />
-                    </td>
-                </tr>
-                <tr>
-                    <td>
                         <spring:message code="sicknotes.staff.number" />
                     </td>
                     <td>
