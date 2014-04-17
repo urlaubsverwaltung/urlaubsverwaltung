@@ -365,21 +365,21 @@ tr.over td {
     margin: 0;
 }
 
-.overview-header .year-selector, .overview-header .person-selector, .overview-header .status-selector, .sicknote-button {
+.overview-header .selector, .sicknote-button {
     float: right;
     margin-left: 0.5em;
 }
 
-.year-selector button, .person-selector button, .status-selector button {
+.selector button {
     font-size: 14px;
 }
 
-.year-selector ul.dropdown-menu, .person-selector ul.dropdown-menu, .status-selector ul.dropdown-menu {
+.selector ul.dropdown-menu {
     min-width: 105px;
     font-size: 12px;
 }
 
-.year-selector ul.dropdown-menu, .person-selector ul.dropdown-menu {
+.selector ul.dropdown-menu {
     max-height: 190px;
     overflow-y: auto;
 }

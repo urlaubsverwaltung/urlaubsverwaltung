@@ -45,10 +45,10 @@
                 var active;
                 
                 if(path.indexOf("inactive") != -1) {
-                    $("div.status-selector button").html('<img src="<spring:url value='/images/offline.png' />" />&nbsp;<spring:message code="table.inactive" />&nbsp;<span class="caret"></span>');
+                    $("div#active-state button").html('<img src="<spring:url value='/images/offline.png' />" />&nbsp;<spring:message code="table.inactive" />&nbsp;<span class="caret"></span>');
                     active = "false";
                 } else {
-                    $("div.status-selector button").html('<img src="<spring:url value='/images/online.png' />" />&nbsp;<spring:message code="table.active" />&nbsp;<span class="caret"></span>');
+                    $("div#active-state button").html('<img src="<spring:url value='/images/online.png' />" />&nbsp;<spring:message code="table.active" />&nbsp;<span class="caret"></span>');
                     active = "true";
                 }
 
@@ -79,7 +79,7 @@
 
                             <uv:year-selector year="${year}" />
 
-                            <div class="btn-group status-selector">
+                            <div id="active-state" class="btn-group selector">
 
                                 <button class="btn dropdown-toggle" data-toggle="dropdown">
                                 </button>

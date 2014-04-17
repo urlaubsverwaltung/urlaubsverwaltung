@@ -24,7 +24,8 @@
         </p>
         
         <uv:year-selector year="${year}" />
-        <div class="btn-group person-selector">
+        
+        <div class="btn-group selector">
 
             <button class="btn dropdown-toggle" data-toggle="dropdown">
                 <i class="icon-filter"></i>
