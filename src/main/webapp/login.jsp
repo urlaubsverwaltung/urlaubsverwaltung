@@ -37,6 +37,13 @@
                 <div class="container_12">
                     <div class="grid_12">
                         <a class="brand" href="#">Urlaubsverwaltung</a>
+                        <div class="nav-collapse collapse">
+                            <ul class="nav">
+                                <li>
+                                    <a title="Version ${project.version} - Commit ${git.commit.id.abbrev}" href="#">Version ${project.version}</a>
+                                </li>
+                            </ul>
+                        </div>    
                     </div>
                 </div>
             </div>
