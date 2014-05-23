@@ -3,12 +3,12 @@ package org.synyx.urlaubsverwaltung.restapi;
 /**
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public class BaseResponse {
+class BaseResponse {
 
     private String version;
     private String userName;
 
-    public BaseResponse(String version, String userName) {
+    BaseResponse(String version, String userName) {
 
         this.version = version;
         this.userName = userName;

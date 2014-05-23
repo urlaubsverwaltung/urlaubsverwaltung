@@ -63,7 +63,7 @@ public class SickNoteService {
     public SickNoteService() {
     }
 
-    public void save(SickNote sickNote) {
+    private void save(SickNote sickNote) {
 
         sickNote.setLastEdited(DateMidnight.now());
 
@@ -82,7 +82,7 @@ public class SickNoteService {
     }
 
 
-    public void setWorkDays(SickNote sickNote) {
+    private void setWorkDays(SickNote sickNote) {
 
         BigDecimal workDays;
 
@@ -117,12 +117,6 @@ public class SickNoteService {
     }
 
 
-    public List<SickNote> getAll() {
-
-        return sickNoteDAO.findAll();
-    }
-
-
     public SickNote getById(Integer id) {
 
         return sickNoteDAO.findOne(id);
@@ -138,6 +132,12 @@ public class SickNoteService {
     public List<SickNote> getByPeriod(DateMidnight from, DateMidnight to) {
 
         return sickNoteDAO.findByPeriod(from.toDate(), to.toDate());
+    }
+
+
+    public List<SickNote> getAllActiveByPeriod(DateMidnight from, DateMidnight to) {
+
+        return sickNoteDAO.findAllActiveByPeriod(from.toDate(), to.toDate());
     }
 
 
@@ -169,6 +169,7 @@ public class SickNoteService {
         mailService.sendSickNoteConvertedToVacationNotification(application);
     }
 
+
     public void cancel(SickNote sickNote, Person loggedUser) {
 
         setSickNoteInactive(sickNote);
@@ -176,11 +177,10 @@ public class SickNoteService {
 
         SickNoteComment sickNoteComment = new SickNoteComment();
         addComment(sickNote.getId(), sickNoteComment, SickNoteStatus.CANCELLED, loggedUser);
-
     }
 
 
-    protected void setSickNoteInactive(SickNote sickNote) {
+    void setSickNoteInactive(SickNote sickNote) {
 
         sickNote.setWorkDays(BigDecimal.ZERO);
         sickNote.setActive(false);

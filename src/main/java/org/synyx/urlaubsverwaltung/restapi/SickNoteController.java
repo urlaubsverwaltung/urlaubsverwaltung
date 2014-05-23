@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
+import org.synyx.urlaubsverwaltung.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 
 import java.util.List;
 
@@ -26,34 +26,34 @@ import java.util.List;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Controller
-public class VacationController {
+public class SickNoteController {
 
-    private static final String ROOT_URL = "/vacation";
+    private static final String ROOT_URL = "/sicknotes";
 
     @Autowired
-    private ApplicationService applicationService;
+    private SickNoteService sickNoteService;
 
     @RequestMapping(value = ROOT_URL, method = RequestMethod.GET)
     @ModelAttribute("response")
-    public VacationListResponse vacations(@RequestParam(value = "start", required = true) String start,
+    public SickNoteListResponse vacations(@RequestParam(value = "start", required = true) String start,
         @RequestParam(value = "end", required = true) String end) {
 
         DateTimeFormatter formatter = DateTimeFormat.forPattern(RestApiDateFormat.PATTERN);
         DateMidnight startDate = formatter.parseDateTime(start).toDateMidnight();
         DateMidnight endDate = formatter.parseDateTime(end).toDateMidnight();
 
-        List<Application> applications = applicationService.getAllowedApplicationsForACertainPeriod(startDate, endDate);
+        List<SickNote> sickNotes = sickNoteService.getByPeriod(startDate, endDate);
 
-        List<AbsenceResponse> vacationResponses = Lists.transform(applications,
-                new Function<Application, AbsenceResponse>() {
+        List<AbsenceResponse> sickNoteResponses = Lists.transform(sickNotes,
+                new Function<SickNote, AbsenceResponse>() {
 
                     @Override
-                    public AbsenceResponse apply(Application application) {
+                    public AbsenceResponse apply(SickNote sickNote) {
 
-                        return new AbsenceResponse(application);
+                        return new AbsenceResponse(sickNote);
                     }
                 });
 
-        return new VacationListResponse(vacationResponses);
+        return new SickNoteListResponse(sickNoteResponses);
     }
 }

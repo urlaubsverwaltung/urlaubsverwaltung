@@ -6,7 +6,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 /**
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public class PersonResponse {
+class PersonResponse {
 
     private String ldapName;
 
@@ -16,7 +16,7 @@ public class PersonResponse {
 
     private String lastName;
 
-    public PersonResponse(Person person) {
+    PersonResponse(Person person) {
 
         this.ldapName = person.getLoginName();
         this.email = person.getEmail();

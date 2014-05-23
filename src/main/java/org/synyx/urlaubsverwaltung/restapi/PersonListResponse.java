@@ -6,11 +6,11 @@ import java.util.List;
 /**
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public class PersonListResponse {
+class PersonListResponse {
 
     private List<PersonResponse> persons;
 
-    public PersonListResponse(List<PersonResponse> persons) {
+    PersonListResponse(List<PersonResponse> persons) {
 
         this.persons = persons;
     }

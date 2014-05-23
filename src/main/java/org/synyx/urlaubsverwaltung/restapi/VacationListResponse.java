@@ -8,20 +8,20 @@ import java.util.List;
  */
 class VacationListResponse {
 
-    private List<VacationResponse> vacations;
+    private List<AbsenceResponse> vacations;
 
-    VacationListResponse(List<VacationResponse> vacations) {
+    VacationListResponse(List<AbsenceResponse> vacations) {
 
         this.vacations = vacations;
     }
 
-    public List<VacationResponse> getVacations() {
+    public List<AbsenceResponse> getVacations() {
 
         return vacations;
     }
 
 
-    public void setVacations(List<VacationResponse> vacations) {
+    public void setVacations(List<AbsenceResponse> vacations) {
 
         this.vacations = vacations;
     }
