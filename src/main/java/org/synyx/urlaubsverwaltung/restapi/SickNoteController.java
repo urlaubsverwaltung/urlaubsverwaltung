@@ -35,12 +35,12 @@ public class SickNoteController {
 
     @RequestMapping(value = ROOT_URL, method = RequestMethod.GET)
     @ModelAttribute("response")
-    public SickNoteListResponse vacations(@RequestParam(value = "start", required = true) String start,
-        @RequestParam(value = "end", required = true) String end) {
+    public SickNoteListResponse vacations(@RequestParam(value = "from", required = true) String from,
+        @RequestParam(value = "to", required = true) String to) {
 
         DateTimeFormatter formatter = DateTimeFormat.forPattern(RestApiDateFormat.PATTERN);
-        DateMidnight startDate = formatter.parseDateTime(start).toDateMidnight();
-        DateMidnight endDate = formatter.parseDateTime(end).toDateMidnight();
+        DateMidnight startDate = formatter.parseDateTime(from).toDateMidnight();
+        DateMidnight endDate = formatter.parseDateTime(to).toDateMidnight();
 
         List<SickNote> sickNotes = sickNoteService.getByPeriod(startDate, endDate);
 

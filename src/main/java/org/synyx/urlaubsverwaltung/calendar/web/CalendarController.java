@@ -38,7 +38,9 @@ import java.util.List;
 
 
 /**
- * Controller for calendar relevant stuff.
+ * TODO: Move these methods in RestAPI
+ *
+ * <p>Controller for calendar relevant stuff.</p>
  *
  * @author  Aljona Murygina
  */
