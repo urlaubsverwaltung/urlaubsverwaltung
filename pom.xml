@@ -33,6 +33,9 @@
         <jenkins.job.project.name>urlaubsverwaltung</jenkins.job.project.name>
         <jenkins.job.reporters.email>murygina@synyx.de</jenkins.job.reporters.email>
 
+        <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
+        <buildTime>${maven.build.timestamp}</buildTime>
+
     </properties>
 
     <scm>
@@ -382,6 +385,14 @@
     </dependencies>
 
     <build>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
         <plugins>
             <plugin>
                 <groupId>org.synyx.maven.plugins</groupId>

@@ -6,6 +6,7 @@
                             http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.3.xsd">
 
     <security:http auto-config='true' use-expressions='true'>
+        <security:intercept-url pattern="/api/**" access="isAuthenticated()" />
         <security:intercept-url pattern="/jmx/**" access="isAuthenticated()"/>
         <security:intercept-url pattern="/web/overview" access="isAuthenticated()"/>
         <security:intercept-url pattern="/web/application/**" access="isAuthenticated()"/>
