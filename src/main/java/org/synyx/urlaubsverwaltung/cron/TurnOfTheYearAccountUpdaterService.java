@@ -5,7 +5,11 @@ import org.apache.log4j.Logger;
 
 import org.joda.time.DateMidnight;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.scheduling.annotation.Scheduled;
+
+import org.springframework.stereotype.Service;
 
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
@@ -24,6 +28,7 @@ import java.util.List;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
+@Service
 public class TurnOfTheYearAccountUpdaterService {
 
     private static final Logger LOG = Logger.getLogger("audit");
@@ -33,6 +38,7 @@ public class TurnOfTheYearAccountUpdaterService {
     private CalculationService calculationService;
     private MailService mailService;
 
+    @Autowired
     public TurnOfTheYearAccountUpdaterService(PersonService personService, AccountService accountService,
         CalculationService calculationService, MailService mailService) {
 

@@ -6,12 +6,18 @@ package org.synyx.urlaubsverwaltung.calendar;
 
 import de.jollyday.Holiday;
 import de.jollyday.HolidayManager;
+
 import org.joda.time.DateMidnight;
 import org.joda.time.chrono.GregorianChronology;
+
+import org.springframework.stereotype.Component;
+
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.math.BigDecimal;
+
 import java.net.URL;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -24,6 +30,7 @@ import java.util.Set;
  *
  * @author  Aljona Murygina
  */
+@Component
 public class JollydayCalendar {
 
     private static final double HALF_DAY = 0.5;
@@ -159,6 +166,7 @@ public class JollydayCalendar {
 
         return monthHolidays;
     }
+
 
     public List<String> getPublicHolidays(int year, int month) {
 

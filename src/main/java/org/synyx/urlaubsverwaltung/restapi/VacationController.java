@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * @author  Aljona Murygina - murygina@synyx.de
  */
-@Controller
+@Controller("restApiVacationController")
 public class VacationController {
 
     private static final String ROOT_URL = "/vacation";

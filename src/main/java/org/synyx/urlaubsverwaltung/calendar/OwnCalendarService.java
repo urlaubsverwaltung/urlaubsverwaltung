@@ -5,6 +5,8 @@ import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.stereotype.Service;
+
 import org.synyx.urlaubsverwaltung.DateFormat;
 import org.synyx.urlaubsverwaltung.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.calendar.workingtime.NoValidWorkingTimeException;
@@ -21,6 +23,7 @@ import java.math.BigDecimal;
  *
  * @author  Aljona Murygina
  */
+@Service
 public class OwnCalendarService {
 
     private JollydayCalendar jollydayCalendar;

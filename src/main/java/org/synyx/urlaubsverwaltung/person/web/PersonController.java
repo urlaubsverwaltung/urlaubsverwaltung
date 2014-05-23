@@ -2,6 +2,8 @@ package org.synyx.urlaubsverwaltung.person.web;
 
 import org.joda.time.DateMidnight;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
@@ -15,7 +17,7 @@ import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.application.service.CalculationService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.security.web.SecurityUtil;
+import org.synyx.urlaubsverwaltung.security.web.SessionService;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.util.GravatarUtil;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
@@ -39,21 +41,17 @@ public class PersonController {
     private static final String ACTIVE_LINK = "/staff";
     private static final String INACTIVE_LINK = "/staff/inactive";
 
+    @Autowired
     private PersonService personService;
+
+    @Autowired
     private AccountService accountService;
+
+    @Autowired
     private CalculationService calculationService;
-    private GravatarUtil gravatarUtil;
-    private SecurityUtil securityUtil;
 
-    public PersonController(PersonService personService, AccountService accountService,
-        CalculationService calculationService, GravatarUtil gravatarUtil, SecurityUtil securityUtil) {
-
-        this.personService = personService;
-        this.accountService = accountService;
-        this.calculationService = calculationService;
-        this.gravatarUtil = gravatarUtil;
-        this.securityUtil = securityUtil;
-    }
+    @Autowired
+    private SessionService sessionService;
 
     /**
      * Shows list with inactive staff, default: for current year.
@@ -65,8 +63,8 @@ public class PersonController {
     @RequestMapping(value = INACTIVE_LINK, method = RequestMethod.GET)
     public String showInactiveStaff(Model model) {
 
-        if (securityUtil.isOffice() || securityUtil.isBoss()) {
-            securityUtil.setLoggedUser(model);
+        if (sessionService.isOffice() || sessionService.isBoss()) {
+            sessionService.setLoggedUser(model);
 
             List<Person> persons = personService.getInactivePersons();
 
@@ -94,8 +92,8 @@ public class PersonController {
     @RequestMapping(value = ACTIVE_LINK, method = RequestMethod.GET)
     public String showActiveStaff(Model model) {
 
-        if (securityUtil.isOffice() || securityUtil.isBoss()) {
-            securityUtil.setLoggedUser(model);
+        if (sessionService.isOffice() || sessionService.isBoss()) {
+            sessionService.setLoggedUser(model);
 
             List<Person> persons = personService.getAllPersons();
             prepareStaffView(persons, DateMidnight.now().getYear(), model);
@@ -118,8 +116,8 @@ public class PersonController {
     @RequestMapping(value = INACTIVE_LINK, params = ControllerConstants.YEAR, method = RequestMethod.GET)
     public String showInactiveStaffByYear(@RequestParam(ControllerConstants.YEAR) int year, Model model) {
 
-        if (securityUtil.isOffice() || securityUtil.isBoss()) {
-            securityUtil.setLoggedUser(model);
+        if (sessionService.isOffice() || sessionService.isBoss()) {
+            sessionService.setLoggedUser(model);
 
             List<Person> persons = personService.getInactivePersons();
 
@@ -148,8 +146,8 @@ public class PersonController {
     @RequestMapping(value = ACTIVE_LINK, params = ControllerConstants.YEAR, method = RequestMethod.GET)
     public String showActiveStaffByYear(@RequestParam(ControllerConstants.YEAR) int year, Model model) {
 
-        if (securityUtil.isOffice() || securityUtil.isBoss()) {
-            securityUtil.setLoggedUser(model);
+        if (sessionService.isOffice() || sessionService.isBoss()) {
+            sessionService.setLoggedUser(model);
 
             List<Person> persons = personService.getAllPersons();
             prepareStaffView(persons, year, model);
@@ -165,8 +163,8 @@ public class PersonController {
     public String showPrintStaffList(@RequestParam(ControllerConstants.YEAR) int year,
         @RequestParam("active") boolean active, Model model) {
 
-        if (securityUtil.isOffice()) {
-            securityUtil.setLoggedUser(model);
+        if (sessionService.isOffice()) {
+            sessionService.setLoggedUser(model);
 
             List<Person> persons;
 
@@ -211,7 +209,7 @@ public class PersonController {
 
         for (Person person : persons) {
             // get url of person's gravatar image
-            url = gravatarUtil.createImgURL(person.getEmail());
+            url = GravatarUtil.createImgURL(person.getEmail());
 
             if (url != null) {
                 gravatarUrls.put(person, url);

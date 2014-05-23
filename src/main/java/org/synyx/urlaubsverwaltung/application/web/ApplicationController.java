@@ -6,6 +6,8 @@ import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.chrono.GregorianChronology;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
@@ -38,7 +40,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.web.PersonConstants;
 import org.synyx.urlaubsverwaltung.security.Role;
-import org.synyx.urlaubsverwaltung.security.web.SecurityUtil;
+import org.synyx.urlaubsverwaltung.security.web.SessionService;
 import org.synyx.urlaubsverwaltung.sicknote.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.util.DateMidnightPropertyEditor;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
@@ -101,33 +103,33 @@ public class ApplicationController {
     // audit logger: logs nontechnically occurences like 'user x applied for leave' or 'subtracted n days from
     // holidays account y'
     private static final Logger LOG = Logger.getLogger("audit");
+
+    @Autowired
     private PersonService personService;
+
+    @Autowired
     private ApplicationService applicationService;
+
+    @Autowired
     private OverlapService overlapService;
+
+    @Autowired
     private CalculationService calculationService;
+
+    @Autowired
     private AccountService accountService;
+
+    @Autowired
     private CommentService commentService;
+
+    @Autowired
     private ApplicationValidator validator;
-    private GravatarUtil gravatarUtil;
+
+    @Autowired
     private MailService mailService;
-    private SecurityUtil securityUtil;
 
-    public ApplicationController(PersonService personService, ApplicationService applicationService,
-        OverlapService overlapService, CalculationService calculationService, AccountService accountService,
-        CommentService commentService, ApplicationValidator validator, GravatarUtil gravatarUtil,
-        MailService mailService, SecurityUtil securityUtil) {
-
-        this.personService = personService;
-        this.applicationService = applicationService;
-        this.overlapService = overlapService;
-        this.calculationService = calculationService;
-        this.accountService = accountService;
-        this.commentService = commentService;
-        this.validator = validator;
-        this.gravatarUtil = gravatarUtil;
-        this.mailService = mailService;
-        this.securityUtil = securityUtil;
-    }
+    @Autowired
+    private SessionService sessionService;
 
     @InitBinder
     public void initBinder(DataBinder binder, Locale locale) {
@@ -146,9 +148,9 @@ public class ApplicationController {
     @RequestMapping(value = APP_LIST, method = RequestMethod.GET)
     public String showDefault(Model model) {
 
-        if (securityUtil.isBoss()) {
+        if (sessionService.isBoss()) {
             return "redirect:/web" + WAITING_APPS;
-        } else if (securityUtil.isOffice()) {
+        } else if (sessionService.isOffice()) {
             return "redirect:/web" + ALL_APPS;
         } else {
             return ControllerConstants.ERROR_JSP;
@@ -184,7 +186,7 @@ public class ApplicationController {
         }
 
         model.addAttribute(ControllerConstants.APPLICATIONS, applications);
-        securityUtil.setLoggedUser(model);
+        sessionService.setLoggedUser(model);
         model.addAttribute(ApplicationConstants.TITLE_APP, "all.app");
         model.addAttribute(ApplicationConstants.TOUCHED_DATE, ApplicationConstants.DATE_OVERVIEW);
         model.addAttribute(ControllerConstants.YEAR, DateMidnight.now().getYear());
@@ -203,7 +205,7 @@ public class ApplicationController {
     @RequestMapping(value = ALL_APPS, method = RequestMethod.GET)
     public String showAll(Model model) {
 
-        if (securityUtil.isBoss() || securityUtil.isOffice()) {
+        if (sessionService.isBoss() || sessionService.isOffice()) {
             int year = DateMidnight.now().getYear();
             prepareModelForShowAllMethods(year, model);
 
@@ -225,7 +227,7 @@ public class ApplicationController {
     @RequestMapping(value = ALL_APPS, params = ControllerConstants.YEAR, method = RequestMethod.GET)
     public String showAllByYear(@RequestParam(ControllerConstants.YEAR) int year, Model model) {
 
-        if (securityUtil.isBoss() || securityUtil.isOffice()) {
+        if (sessionService.isBoss() || sessionService.isOffice()) {
             prepareModelForShowAllMethods(year, model);
 
             return ApplicationConstants.APP_LIST_JSP;
@@ -263,7 +265,7 @@ public class ApplicationController {
             touchedDate = ApplicationConstants.DATE_REJECTED;
         }
 
-        if (securityUtil.isBoss() || securityUtil.isOffice()) {
+        if (sessionService.isBoss() || sessionService.isOffice()) {
             List<Application> applications;
 
             if (state == ApplicationStatus.CANCELLED) {
@@ -273,7 +275,7 @@ public class ApplicationController {
             }
 
             model.addAttribute(ControllerConstants.APPLICATIONS, applications);
-            securityUtil.setLoggedUser(model);
+            sessionService.setLoggedUser(model);
             model.addAttribute(ApplicationConstants.TITLE_APP, title);
             model.addAttribute(ApplicationConstants.TOUCHED_DATE, touchedDate);
             model.addAttribute(ControllerConstants.YEAR, DateMidnight.now().getYear());
@@ -412,10 +414,10 @@ public class ApplicationController {
     @RequestMapping(value = NEW_APP, method = RequestMethod.GET)
     public String newApplicationForm(Model model) {
 
-        if (securityUtil.isInactive()) {
+        if (sessionService.isInactive()) {
             return ControllerConstants.LOGIN_LINK;
         } else {
-            Person person = securityUtil.getLoggedUser();
+            Person person = sessionService.getLoggedUser();
 
             if (accountService.getHolidaysAccount(DateMidnight.now().getYear(), person) == null) {
                 model.addAttribute(ApplicationConstants.NOTPOSSIBLE, true);
@@ -431,7 +433,7 @@ public class ApplicationController {
     public String newApplication(Person person, int force, AppForm appForm, boolean isOffice, Errors errors,
         Model model) {
 
-        Person loggedUser = securityUtil.getLoggedUser();
+        Person loggedUser = sessionService.getLoggedUser();
 
         Person personForForm;
 
@@ -500,7 +502,7 @@ public class ApplicationController {
     public String newApplicationByUser(@RequestParam("force") int force,
         @ModelAttribute(ApplicationConstants.APPFORM) AppForm appForm, Errors errors, Model model) {
 
-        return newApplication(securityUtil.getLoggedUser(), force, appForm, false, errors, model);
+        return newApplication(sessionService.getLoggedUser(), force, appForm, false, errors, model);
     }
 
 
@@ -520,7 +522,7 @@ public class ApplicationController {
 
         Application application = appForm.createApplicationObject();
 
-        application = applicationService.apply(application, person, securityUtil.getLoggedUser());
+        application = applicationService.apply(application, person, sessionService.getLoggedUser());
 
         BigDecimal days = application.getDays();
 
@@ -560,11 +562,11 @@ public class ApplicationController {
                 // if office applies for leave on behalf of a user
                 if (isOffice == true) {
                     // application is signed by office's key
-                    applicationService.signApplicationByUser(application, securityUtil.getLoggedUser());
+                    applicationService.signApplicationByUser(application, sessionService.getLoggedUser());
 
                     LOG.info(" ID: " + application.getId()
-                        + " Es wurde ein neuer Antrag von " + securityUtil.getLoggedUser().getFirstName() + " "
-                        + securityUtil.getLoggedUser().getLastName() + " für " + person.getFirstName() + " "
+                        + " Es wurde ein neuer Antrag von " + sessionService.getLoggedUser().getFirstName() + " "
+                        + sessionService.getLoggedUser().getLastName() + " für " + person.getFirstName() + " "
                         + person.getLastName()
                         + " angelegt.");
 
@@ -621,11 +623,11 @@ public class ApplicationController {
         Model model) {
 
         // only office may apply for leave on behalf of other users
-        if (securityUtil.isOffice()) {
+        if (sessionService.isOffice()) {
             Person person = personService.getPersonByID(personId); // get loggedUser
 
             // check if the loggedUser is active
-            if (securityUtil.isInactive()) {
+            if (sessionService.isInactive()) {
                 model.addAttribute("notpossible", true);
             } else {
                 // check if the loggedUser has a current/valid holidays account
@@ -698,7 +700,7 @@ public class ApplicationController {
         model.addAttribute("full", DayLength.FULL);
         model.addAttribute("morning", DayLength.MORNING);
         model.addAttribute("noon", DayLength.NOON);
-        securityUtil.setLoggedUser(model);
+        sessionService.setLoggedUser(model);
     }
 
 
@@ -714,11 +716,11 @@ public class ApplicationController {
     public String showApplicationDetail(HttpServletRequest request,
         @PathVariable(ApplicationConstants.APPLICATION_ID) Integer applicationId, Model model) {
 
-        Person loggedUser = securityUtil.getLoggedUser();
+        Person loggedUser = sessionService.getLoggedUser();
 
         Application application = applicationService.getApplicationById(applicationId);
 
-        if (securityUtil.isBoss() || securityUtil.isOffice()) {
+        if (sessionService.isBoss() || sessionService.isOffice()) {
             prepareDetailView(application, -1, model);
 
             return ApplicationConstants.SHOW_APP_DETAIL_JSP;
@@ -743,11 +745,11 @@ public class ApplicationController {
     public String allowApplication(@PathVariable(ApplicationConstants.APPLICATION_ID) Integer applicationId,
         @ModelAttribute(ApplicationConstants.COMMENT) Comment comment, Errors errors, Model model) {
 
-        Person boss = securityUtil.getLoggedUser();
+        Person boss = sessionService.getLoggedUser();
         Application application = applicationService.getApplicationById(applicationId);
 
         // only boss is able to allow an application but only if this application isn't his own one
-        if (securityUtil.isBoss() && !application.getPerson().equals(boss)) {
+        if (sessionService.isBoss() && !application.getPerson().equals(boss)) {
             applicationService.allow(application, boss, comment);
 
             return "redirect:/web/application/" + applicationId;
@@ -771,7 +773,7 @@ public class ApplicationController {
 
         Application application = applicationService.getApplicationById(applicationId);
 
-        Person sender = securityUtil.getLoggedUser();
+        Person sender = sessionService.getLoggedUser();
         String senderName = sender.getFirstName() + " " + sender.getLastName();
         Person recipient = personService.getPersonByLogin(p.getLoginName());
         mailService.sendReferApplicationNotification(application, recipient, senderName);
@@ -792,9 +794,9 @@ public class ApplicationController {
     public String rejectApplication(@PathVariable(ApplicationConstants.APPLICATION_ID) Integer applicationId,
         @ModelAttribute(ApplicationConstants.COMMENT) Comment comment, Errors errors, Model model) {
 
-        Person boss = securityUtil.getLoggedUser();
+        Person boss = sessionService.getLoggedUser();
 
-        if (securityUtil.isBoss()) {
+        if (sessionService.isBoss()) {
             Application application = applicationService.getApplicationById(applicationId);
 
             validator.validateComment(comment, errors, true);
@@ -843,10 +845,10 @@ public class ApplicationController {
         Application application = applicationService.getApplicationById(applicationId);
         model.addAttribute(ApplicationConstants.STATE_NUMBER, ApplicationConstants.TO_CANCEL);
 
-        Person loggedUser = securityUtil.getLoggedUser();
+        Person loggedUser = sessionService.getLoggedUser();
 
         // office may cancel waiting or allowed applications of other users
-        if (securityUtil.isOffice()) {
+        if (sessionService.isOffice()) {
             prepareDetailView(application, ApplicationConstants.TO_CANCEL, model);
 
             return ApplicationConstants.SHOW_APP_DETAIL_JSP;
@@ -875,13 +877,13 @@ public class ApplicationController {
         @ModelAttribute(ApplicationConstants.COMMENT) Comment comment, Errors errors, Model model) {
 
         Application application = applicationService.getApplicationById(applicationId);
-        Person loggedUser = securityUtil.getLoggedUser();
+        Person loggedUser = sessionService.getLoggedUser();
         ApplicationStatus status = application.getStatus();
 
         // security check: only two cases where cancelling is possible
         // 1: office can cancel all applications for leave that has the state waiting or allowed, even for other persons
         // 2: user can cancel his own applications for leave if they have the state waiting
-        boolean officeIsCancelling = securityUtil.isOffice()
+        boolean officeIsCancelling = sessionService.isOffice()
             && (status == ApplicationStatus.WAITING || status == ApplicationStatus.ALLOWED);
         boolean userIsCancelling = loggedUser.equals(application.getPerson()) && status == ApplicationStatus.WAITING;
 
@@ -974,14 +976,14 @@ public class ApplicationController {
 
         model.addAttribute("comments", comments);
 
-        if (application.getStatus() == ApplicationStatus.WAITING && securityUtil.isBoss()) {
+        if (application.getStatus() == ApplicationStatus.WAITING && sessionService.isBoss()) {
             // get all persons that have the Boss Role
             List<Person> vips = personService.getPersonsByRole(Role.BOSS);
             model.addAttribute("vips", vips);
             model.addAttribute("modelPerson", new Person());
         }
 
-        securityUtil.setLoggedUser(model);
+        sessionService.setLoggedUser(model);
         model.addAttribute(ControllerConstants.APPLICATION, application);
         model.addAttribute(ApplicationConstants.STATE_NUMBER, stateNumber);
 
@@ -1001,7 +1003,7 @@ public class ApplicationController {
         model.addAttribute(ControllerConstants.YEAR, year);
 
         // get url of loggedUser's gravatar image
-        String url = gravatarUtil.createImgURL(application.getPerson().getEmail());
+        String url = GravatarUtil.createImgURL(application.getPerson().getEmail());
         model.addAttribute("gravatar", url);
     }
 

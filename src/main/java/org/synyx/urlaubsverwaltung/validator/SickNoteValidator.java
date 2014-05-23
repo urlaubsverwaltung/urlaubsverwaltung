@@ -3,6 +3,8 @@ package org.synyx.urlaubsverwaltung.validator;
 import org.joda.time.DateMidnight;
 import org.joda.time.Interval;
 
+import org.springframework.stereotype.Component;
+
 import org.springframework.util.StringUtils;
 
 import org.springframework.validation.Errors;
@@ -17,6 +19,7 @@ import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteComment;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
+@Component
 public class SickNoteValidator implements Validator {
 
     private static final String MANDATORY_FIELD = "error.mandatory.field";

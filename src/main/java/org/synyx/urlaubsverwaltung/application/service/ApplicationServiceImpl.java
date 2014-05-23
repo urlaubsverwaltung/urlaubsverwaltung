@@ -8,6 +8,8 @@ import org.joda.time.DateTimeConstants;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.stereotype.Service;
+
 import org.synyx.urlaubsverwaltung.DateFormat;
 import org.synyx.urlaubsverwaltung.application.dao.ApplicationDAO;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
@@ -16,7 +18,7 @@ import org.synyx.urlaubsverwaltung.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.security.CryptoService;
+import org.synyx.urlaubsverwaltung.security.CryptoUtil;
 
 import java.math.BigDecimal;
 
@@ -34,6 +36,7 @@ import java.util.List;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
+@Service
 class ApplicationServiceImpl implements ApplicationService {
 
     // sign logger: logs possible occurent errors relating to private and public keys of users
@@ -41,18 +44,15 @@ class ApplicationServiceImpl implements ApplicationService {
     private static final Logger LOG = Logger.getLogger("audit");
 
     private ApplicationDAO applicationDAO;
-
-    private CryptoService cryptoService;
     private MailService mailService;
     private OwnCalendarService calendarService;
     private CommentService commentService;
 
     @Autowired
-    public ApplicationServiceImpl(ApplicationDAO applicationDAO, CryptoService cryptoService, MailService mailService,
+    public ApplicationServiceImpl(ApplicationDAO applicationDAO, MailService mailService,
         OwnCalendarService calendarService, CommentService commentService) {
 
         this.applicationDAO = applicationDAO;
-        this.cryptoService = cryptoService;
         this.mailService = mailService;
         this.calendarService = calendarService;
         this.commentService = commentService;
@@ -210,7 +210,7 @@ class ApplicationServiceImpl implements ApplicationService {
     private byte[] signApplication(Application application, Person person) {
 
         try {
-            PrivateKey privKey = cryptoService.getPrivateKeyByBytes(person.getPrivateKey());
+            PrivateKey privKey = CryptoUtil.getPrivateKeyByBytes(person.getPrivateKey());
 
             StringBuilder build = new StringBuilder();
 
@@ -220,7 +220,7 @@ class ApplicationServiceImpl implements ApplicationService {
 
             byte[] data = build.toString().getBytes();
 
-            data = cryptoService.sign(privKey, data);
+            data = CryptoUtil.sign(privKey, data);
 
             return data;
         } catch (InvalidKeyException ex) {

@@ -4,110 +4,31 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:repository="http://www.springframework.org/schema/data/jpa"
        xmlns:task="http://www.springframework.org/schema/task"
-       xmlns:util="http://www.springframework.org/schema/util"
-       xmlns:tx="http://www.springframework.org/schema/tx" 
-       xmlns:aop="http://www.springframework.org/schema/aop"
-       
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 	                   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
-                           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
                            http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd
-                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
-                           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
-                           http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd"> 
+                           http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+                           http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd">
 
-<context:annotation-config/>
+    <context:annotation-config/>
+    <context:component-scan base-package="org.synyx.urlaubsverwaltung"/>
+    <mvc:annotation-driven/>
 
-<tx:annotation-driven/>
+    <!-- remove comment to use jmx demo -->
+    <!--<import resource="jmxContext.xml"/>-->
 
-<!-- remove comment to use jmx demo --> 
-<!--<import resource="jmxContext.xml"/>-->
-    
-<import resource="infrastructure.xml"/>
-<import resource="security.xml"/>
-<import resource="spring-mail.xml"/>
+    <import resource="infrastructure.xml"/>
+    <import resource="security.xml"/>
+    <import resource="spring-mail.xml"/>
 
-<repository:repositories base-package="org.synyx.urlaubsverwaltung" />
+    <repository:repositories base-package="org.synyx.urlaubsverwaltung"/>
 
-<bean id="calculationService" class="org.synyx.urlaubsverwaltung.application.service.CalculationService">
-    <constructor-arg ref="accountService" />
-    <constructor-arg ref="ownCalendarService" />
-</bean>
+    <!-- Scheduling config -->
+    <task:annotation-driven executor="executor" scheduler="scheduler"/>
+    <task:executor id="executor" pool-size="5"/>
+    <task:scheduler id="scheduler" pool-size="10"/>
 
-<bean id="overlapService" class="org.synyx.urlaubsverwaltung.application.service.OverlapService" />
-
-<bean id="jollydayCalendar" class="org.synyx.urlaubsverwaltung.calendar.JollydayCalendar" />        
-    
-<bean id="ownCalendarService" class="org.synyx.urlaubsverwaltung.calendar.OwnCalendarService" />
-
-<bean id="accountService" class="org.synyx.urlaubsverwaltung.account.AccountServiceImpl">
-    <constructor-arg ref="ownCalendarService" />
-</bean>
-
-<bean id="personService" class="org.synyx.urlaubsverwaltung.person.PersonServiceImpl">
-    <constructor-arg ref="applicationService" />
-    <constructor-arg ref="accountService" />
-    <constructor-arg ref="mailService" />
-    <constructor-arg ref="workingTimeService" />
-</bean>
-
-<bean id="workingTimeService" class="org.synyx.urlaubsverwaltung.calendar.workingtime.WorkingTimeService" />
-
-<bean id="applicationService" class="org.synyx.urlaubsverwaltung.application.service.ApplicationServiceImpl" />
-
-<bean id="cryptoService" class="org.synyx.urlaubsverwaltung.security.CryptoService" />
-
-<bean id="mailService" class="org.synyx.urlaubsverwaltung.mail.MailServiceImpl">
-       <constructor-arg ref="mailSender" />
-</bean>
-
-<bean id="commentService" class="org.synyx.urlaubsverwaltung.application.service.CommentServiceImpl" />
-
-<bean id="sickNoteService" class="org.synyx.urlaubsverwaltung.sicknote.SickNoteService" />
-
-<bean id="sickNoteCommentService" class="org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService" />
-
-<bean id="sickNoteStatisticsService" class="org.synyx.urlaubsverwaltung.sicknote.statistics.SickNoteStatisticsService" />    
-    
-<bean id="gravatarUtil" class="org.synyx.urlaubsverwaltung.util.GravatarUtil" />
-
-<bean id="propertiesValidator" class="org.synyx.urlaubsverwaltung.validator.PropertiesValidator">
-    <constructor-arg ref="mailService" />
-</bean>
-
-<bean id="applicationValidator" class="org.synyx.urlaubsverwaltung.validator.ApplicationValidator">
-    <constructor-arg ref="propertiesValidator" />
-</bean>
-
-<bean id="personValidator" class="org.synyx.urlaubsverwaltung.validator.PersonValidator">
-    <constructor-arg ref="propertiesValidator" />
-    <constructor-arg ref="personService" />
-</bean>
-
-<bean id="sickNoteValidator" class="org.synyx.urlaubsverwaltung.validator.SickNoteValidator" />
-
-<bean id="startupService" class="org.synyx.urlaubsverwaltung.startup.StartupService" />
-
-<!-- Scheduling config -->
-<task:annotation-driven executor="executor" scheduler="scheduler" />
-<task:executor id="executor" pool-size="5" />
-<task:scheduler id="scheduler" pool-size="10" />
-
-<!-- remaining vacation days calculator on 1st January -->
-<bean class="org.synyx.urlaubsverwaltung.cron.TurnOfTheYearAccountUpdaterService">
-    <constructor-arg ref="personService" />
-    <constructor-arg ref="accountService" />
-    <constructor-arg ref="calculationService" />
-    <constructor-arg ref="mailService" />
-</bean>
-
-<bean class="org.synyx.urlaubsverwaltung.cron.CronMailService">
-    <constructor-arg ref="sickNoteService" />
-    <constructor-arg ref="mailService" />
-</bean>
-
-<!-- only for developing purpose -->
-<bean id="googleCalendarService" class="org.synyx.urlaubsverwaltung.calendar.GoogleCalendarService" />
-    
 </beans>
 

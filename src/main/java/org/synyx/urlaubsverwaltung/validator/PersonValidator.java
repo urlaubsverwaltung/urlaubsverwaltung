@@ -5,6 +5,10 @@ import org.apache.log4j.Logger;
 
 import org.joda.time.DateMidnight;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.stereotype.Component;
+
 import org.springframework.util.StringUtils;
 
 import org.springframework.validation.Errors;
@@ -29,6 +33,7 @@ import java.util.regex.Pattern;
  *
  * @author  Aljona Murygina
  */
+@Component
 public class PersonValidator implements Validator {
 
     // logs general errors like "properties file not found"
@@ -65,6 +70,7 @@ public class PersonValidator implements Validator {
     private Properties customProperties;
     private PersonService personService;
 
+    @Autowired
     public PersonValidator(PropertiesValidator propValidator, PersonService personService) {
 
         this.propValidator = propValidator;

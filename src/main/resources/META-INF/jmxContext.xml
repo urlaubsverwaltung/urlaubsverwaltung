@@ -1,11 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-    Document   : jmxContext.xml
-    Created on : 16. April 2012, 11:31
-    Author     : murygina@synyx.de
-    Description: configuration of jmx mbeans
--->
-
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
@@ -21,19 +14,19 @@
     </bean>-->
 
     <bean id="exporter" class="org.springframework.jmx.export.MBeanExporter" lazy-init="false">
-        <property name="autodetect" value="true" />
-        <property name="namingStrategy" ref="namingStrategy" />
-        <property name="assembler" ref="assembler" />
+        <property name="autodetect" value="true"/>
+        <property name="namingStrategy" ref="namingStrategy"/>
+        <property name="assembler" ref="assembler"/>
     </bean>
-    
+
     <bean id="jmxAttributeSource" class="org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource"/>
-    
+
     <bean id="assembler" class="org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler">
-        <property name="attributeSource" ref="jmxAttributeSource" />
+        <property name="attributeSource" ref="jmxAttributeSource"/>
     </bean>
-    
+
     <bean id="namingStrategy" class="org.springframework.jmx.export.naming.MetadataNamingStrategy">
-        <property name="attributeSource" ref="jmxAttributeSource" />
+        <property name="attributeSource" ref="jmxAttributeSource"/>
     </bean>
 
 </beans>

@@ -17,7 +17,6 @@ import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.mail.MailService;
-import org.synyx.urlaubsverwaltung.security.CryptoService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +38,6 @@ public class PersonServiceImplTest {
     private ApplicationService applicationService = mock(ApplicationService.class);
     private AccountService accountService = mock(AccountService.class);
     private MailService mailService = mock(MailService.class);
-    private CryptoService cryptoService = mock(CryptoService.class);
     private WorkingTimeService workingTimeService = mock(WorkingTimeService.class);
 
     public PersonServiceImplTest() {
@@ -48,7 +46,7 @@ public class PersonServiceImplTest {
     @Before
     public void setUp() {
 
-        instance = new PersonServiceImpl(personDAO, applicationService, mailService, accountService, cryptoService,
+        instance = new PersonServiceImpl(personDAO, applicationService, mailService, accountService,
                 workingTimeService);
     }
 

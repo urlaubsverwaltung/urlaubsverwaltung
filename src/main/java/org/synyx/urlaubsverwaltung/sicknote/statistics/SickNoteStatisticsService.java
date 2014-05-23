@@ -2,6 +2,8 @@ package org.synyx.urlaubsverwaltung.sicknote.statistics;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.stereotype.Service;
+
 import org.springframework.transaction.annotation.Transactional;
 
 import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
@@ -13,6 +15,7 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNoteDAO;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
+@Service
 @Transactional
 public class SickNoteStatisticsService {
 
@@ -28,6 +31,9 @@ public class SickNoteStatisticsService {
 
 
     public SickNoteStatisticsService() {
+
+        /* needed by Spring */
+
     }
 
     public SickNoteStatistics createStatistics(int year) {

@@ -5,6 +5,8 @@ import org.apache.log4j.Logger;
 
 import org.springframework.beans.factory.annotation.Value;
 
+import org.springframework.stereotype.Service;
+
 import java.io.IOException;
 
 import javax.annotation.PostConstruct;
@@ -15,6 +17,7 @@ import javax.annotation.PostConstruct;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
+@Service
 public class StartupService {
 
     private static final Logger LOG = Logger.getLogger(StartupService.class);

@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * @author  Aljona Murygina - murygina@synyx.de
  */
-@Controller
+@Controller("restApiSickNoteController")
 public class SickNoteController {
 
     private static final String ROOT_URL = "/sicknotes";

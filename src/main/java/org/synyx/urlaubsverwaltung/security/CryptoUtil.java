@@ -6,13 +6,11 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
 
 
 /**
@@ -22,7 +20,7 @@ import java.security.spec.X509EncodedKeySpec;
  *
  * @author  Aljona Murygina
  */
-public class CryptoService {
+public class CryptoUtil {
 
     private static final int KEYSIZE = 2048;
 
@@ -33,7 +31,7 @@ public class CryptoService {
      *
      * @throws  NoSuchAlgorithmException
      */
-    public KeyPair generateKeyPair() throws NoSuchAlgorithmException {
+    public static KeyPair generateKeyPair() throws NoSuchAlgorithmException {
 
         KeyPairGenerator pairgen = KeyPairGenerator.getInstance("RSA");
         SecureRandom random = new SecureRandom();
@@ -58,8 +56,8 @@ public class CryptoService {
      *
      * @throws  NoSuchAlgorithmException
      */
-    public byte[] sign(PrivateKey privKey, byte[] originData) throws NoSuchAlgorithmException, InvalidKeyException,
-        SignatureException {
+    public static byte[] sign(PrivateKey privKey, byte[] originData) throws NoSuchAlgorithmException,
+        InvalidKeyException, SignatureException {
 
         Signature sign = Signature.getInstance("SHA256withRSA");
         byte[] updatedData = null;
@@ -77,31 +75,6 @@ public class CryptoService {
 
 
     /**
-     * verifies if signature is valid (test with public key if signature is created with private key).
-     *
-     * @param  originData
-     * @param  signatureToVerify
-     * @param  pubKey
-     *
-     * @return
-     *
-     * @throws  NoSuchAlgorithmException
-     * @throws  SignatureException
-     * @throws  InvalidKeyException
-     */
-    public boolean verify(byte[] originData, byte[] signatureToVerify, PublicKey pubKey)
-        throws NoSuchAlgorithmException, SignatureException, InvalidKeyException {
-
-        Signature sign = Signature.getInstance("SHA256withRSA");
-
-        sign.initVerify(pubKey);
-        sign.update(originData);
-
-        return sign.verify(signatureToVerify);
-    }
-
-
-    /**
      * takes bytes of PrivateKey saved in database and converts back to PrivateKey.
      *
      * @param  savedKey
@@ -111,7 +84,8 @@ public class CryptoService {
      * @throws  NoSuchAlgorithmException
      * @throws  InvalidKeySpecException
      */
-    public PrivateKey getPrivateKeyByBytes(byte[] savedKey) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    public static PrivateKey getPrivateKeyByBytes(byte[] savedKey) throws NoSuchAlgorithmException,
+        InvalidKeySpecException {
 
         PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(savedKey);
 
@@ -120,27 +94,5 @@ public class CryptoService {
         PrivateKey privKey = keyFactory.generatePrivate(keySpec);
 
         return privKey;
-    }
-
-
-    /**
-     * takes bytes of PublicKey saved in database and converts back to PublicKey.
-     *
-     * @param  savedKey
-     *
-     * @return
-     *
-     * @throws  NoSuchAlgorithmException
-     * @throws  InvalidKeySpecException
-     */
-    public PublicKey getPublicKeyByBytes(byte[] savedKey) throws NoSuchAlgorithmException, InvalidKeySpecException {
-
-        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(savedKey);
-
-        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-
-        PublicKey pubKey = keyFactory.generatePublic(keySpec);
-
-        return pubKey;
     }
 }

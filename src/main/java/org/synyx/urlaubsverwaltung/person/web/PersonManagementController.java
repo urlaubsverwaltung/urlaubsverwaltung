@@ -4,6 +4,8 @@ package org.synyx.urlaubsverwaltung.person.web;
 import org.joda.time.DateMidnight;
 import org.joda.time.chrono.GregorianChronology;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
@@ -26,7 +28,7 @@ import org.synyx.urlaubsverwaltung.calendar.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.security.web.SecurityUtil;
+import org.synyx.urlaubsverwaltung.security.web.SessionService;
 import org.synyx.urlaubsverwaltung.util.DateMidnightPropertyEditor;
 import org.synyx.urlaubsverwaltung.util.NumberUtil;
 import org.synyx.urlaubsverwaltung.validator.PersonValidator;
@@ -51,21 +53,20 @@ public class PersonManagementController {
     private static final String DEACTIVATE_LINK = ACTIVE_LINK + "/{" + PersonConstants.PERSON_ID + "}/deactivate";
     private static final String ACTIVATE_LINK = ACTIVE_LINK + "/{" + PersonConstants.PERSON_ID + "}/activate";
 
+    @Autowired
     private PersonService personService;
+
+    @Autowired
     private AccountService accountService;
+
+    @Autowired
     private PersonValidator validator;
-    private SecurityUtil securityUtil;
+
+    @Autowired
+    private SessionService sessionService;
+
+    @Autowired
     private WorkingTimeService workingTimeService;
-
-    public PersonManagementController(PersonService personService, AccountService accountService,
-        PersonValidator validator, SecurityUtil securityUtil, WorkingTimeService workingTimeService) {
-
-        this.personService = personService;
-        this.accountService = accountService;
-        this.validator = validator;
-        this.securityUtil = securityUtil;
-        this.workingTimeService = workingTimeService;
-    }
 
     @InitBinder
     public void initBinder(DataBinder binder, Locale locale) {
@@ -87,7 +88,7 @@ public class PersonManagementController {
     public String editPersonForm(HttpServletRequest request,
         @PathVariable(PersonConstants.PERSON_ID) Integer personId, Model model) {
 
-        if (securityUtil.isOffice()) {
+        if (sessionService.isOffice()) {
             Person person = personService.getPersonByID(personId);
 
             int year = DateMidnight.now(GregorianChronology.getInstance()).getYear();
@@ -125,7 +126,7 @@ public class PersonManagementController {
             return ControllerConstants.ERROR_JSP;
         }
 
-        if (securityUtil.isOffice()) {
+        if (sessionService.isOffice()) {
             Person person = personService.getPersonByID(personId);
 
             Locale locale = RequestContextUtils.getLocale(request);
@@ -188,7 +189,7 @@ public class PersonManagementController {
      */
     private void addModelAttributesForPersonForm(Person person, PersonForm personForm, Model model) {
 
-        securityUtil.setLoggedUser(model);
+        sessionService.setLoggedUser(model);
         model.addAttribute(ControllerConstants.PERSON, person);
         model.addAttribute(PersonConstants.PERSONFORM, personForm);
         model.addAttribute("currentYear", DateMidnight.now().getYear());
@@ -211,7 +212,7 @@ public class PersonManagementController {
     @RequestMapping(value = NEW_LINK, method = RequestMethod.GET)
     public String newPersonForm(HttpServletRequest request, Model model) {
 
-        if (securityUtil.isOffice()) {
+        if (sessionService.isOffice()) {
             Person person = new Person();
 
             PersonForm personForm = new PersonForm();

@@ -5,6 +5,8 @@ import org.joda.time.Interval;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.stereotype.Service;
+
 import org.synyx.urlaubsverwaltung.application.dao.ApplicationDAO;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.DayLength;
@@ -20,6 +22,7 @@ import java.util.List;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
+@Service
 public class OverlapService {
 
     private ApplicationDAO applicationDAO;

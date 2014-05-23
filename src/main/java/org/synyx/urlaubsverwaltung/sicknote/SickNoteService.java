@@ -5,6 +5,8 @@ import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
+import org.springframework.stereotype.Service;
+
 import org.springframework.transaction.annotation.Transactional;
 
 import org.synyx.urlaubsverwaltung.application.domain.Application;
@@ -31,6 +33,7 @@ import java.util.List;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
+@Service
 @Transactional
 public class SickNoteService {
 
@@ -61,6 +64,8 @@ public class SickNoteService {
 
 
     public SickNoteService() {
+
+        /* needed by Spring */
     }
 
     private void save(SickNote sickNote) {

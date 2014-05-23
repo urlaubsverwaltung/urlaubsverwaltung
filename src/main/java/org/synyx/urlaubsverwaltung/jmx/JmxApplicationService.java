@@ -7,6 +7,8 @@ package org.synyx.urlaubsverwaltung.jmx;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.synyx.urlaubsverwaltung.application.dao.ApplicationDAO;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
@@ -23,6 +25,7 @@ public class JmxApplicationService {
 
     private ApplicationDAO applicationDAO;
 
+    @Autowired
     public JmxApplicationService(ApplicationDAO applicationDAO) {
 
         this.applicationDAO = applicationDAO;

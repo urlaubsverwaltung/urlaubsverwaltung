@@ -4,6 +4,8 @@ import org.joda.time.DateMidnight;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
@@ -24,7 +26,7 @@ import org.synyx.urlaubsverwaltung.application.web.AppForm;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.security.Role;
-import org.synyx.urlaubsverwaltung.security.web.SecurityUtil;
+import org.synyx.urlaubsverwaltung.security.web.SessionService;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteComment;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.sicknote.statistics.SickNoteStatistics;
@@ -49,24 +51,23 @@ import javax.annotation.security.RolesAllowed;
 @Controller
 public class SickNoteController {
 
+    @Autowired
     private SickNoteService sickNoteService;
+
+    @Autowired
     private PersonService personService;
+
+    @Autowired
     private SickNoteValidator validator;
-    private SecurityUtil securityUtil;
+
+    @Autowired
+    private SessionService sessionService;
+
+    @Autowired
     private ApplicationValidator applicationValidator;
+
+    @Autowired
     private SickNoteStatisticsService statisticsService;
-
-    public SickNoteController(SickNoteService sickNoteService, PersonService personService, SickNoteValidator validator,
-        SecurityUtil securityUtil, ApplicationValidator applicationValidator,
-        SickNoteStatisticsService statisticsService) {
-
-        this.sickNoteService = sickNoteService;
-        this.personService = personService;
-        this.validator = validator;
-        this.securityUtil = securityUtil;
-        this.applicationValidator = applicationValidator;
-        this.statisticsService = statisticsService;
-    }
 
     @InitBinder
     public void initBinder(DataBinder binder, Locale locale) {
@@ -79,7 +80,7 @@ public class SickNoteController {
     @RequestMapping(value = "/sicknote/new", method = RequestMethod.GET)
     public String newSickNote(Model model) {
 
-        if (securityUtil.isOffice()) {
+        if (sessionService.isOffice()) {
             model.addAttribute("sickNote", new SickNote());
             model.addAttribute("persons", personService.getAllPersons());
 
@@ -93,7 +94,7 @@ public class SickNoteController {
     @RequestMapping(value = "/sicknote", method = RequestMethod.GET)
     public String allSickNotes() {
 
-        if (securityUtil.isOffice()) {
+        if (sessionService.isOffice()) {
             DateMidnight now = DateMidnight.now();
             DateMidnight startDate = now.dayOfMonth().withMinimumValue();
             DateMidnight endDate = now.dayOfMonth().withMaximumValue();
@@ -109,7 +110,7 @@ public class SickNoteController {
     @RequestMapping(value = "/sicknote/filter", method = RequestMethod.POST)
     public String filterSickNotes(@ModelAttribute("searchRequest") SearchRequest searchRequest) {
 
-        if (securityUtil.isOffice()) {
+        if (sessionService.isOffice()) {
             Person person = personService.getPersonByID(searchRequest.getPersonId());
 
             if (person != null) {
@@ -128,7 +129,7 @@ public class SickNoteController {
     public String periodsSickNotes(@RequestParam("from") String from,
         @RequestParam("to") String to, Model model) {
 
-        if (securityUtil.isOffice()) {
+        if (sessionService.isOffice()) {
             DateTimeFormatter formatter = DateTimeFormat.forPattern(DateFormat.PATTERN);
             DateMidnight fromDate = DateMidnight.parse(from, formatter);
             DateMidnight toDate = DateMidnight.parse(to, formatter);
@@ -149,7 +150,7 @@ public class SickNoteController {
         @RequestParam("from") String from,
         @RequestParam("to") String to, Model model) {
 
-        if (securityUtil.isOffice()) {
+        if (sessionService.isOffice()) {
             List<SickNote> sickNoteList;
 
             DateTimeFormatter formatter = DateTimeFormat.forPattern(DateFormat.PATTERN);
@@ -172,7 +173,7 @@ public class SickNoteController {
     @RequestMapping(value = "/sicknote/quartal", method = RequestMethod.GET)
     public String quartalSickNotes() {
 
-        if (securityUtil.isOffice()) {
+        if (sessionService.isOffice()) {
             DateMidnight now = DateMidnight.now();
 
             DateMidnight from = now.dayOfMonth().withMinimumValue().minusMonths(2);
@@ -189,7 +190,7 @@ public class SickNoteController {
     @RequestMapping(value = "/sicknote/year", method = RequestMethod.GET)
     public String yearSickNotes() {
 
-        if (securityUtil.isOffice()) {
+        if (sessionService.isOffice()) {
             DateMidnight now = DateMidnight.now();
 
             DateMidnight from = now.dayOfYear().withMinimumValue();
@@ -218,7 +219,7 @@ public class SickNoteController {
     @RolesAllowed({ "USER", "OFFICE" })
     public String sickNoteDetails(@PathVariable("id") Integer id, Model model) {
 
-        Person loggedUser = securityUtil.getLoggedUser();
+        Person loggedUser = sessionService.getLoggedUser();
         SickNote sickNote = sickNoteService.getById(id);
 
         if (loggedUser.hasRole(Role.OFFICE) || sickNote.getPerson().equals(loggedUser)) {
@@ -235,7 +236,7 @@ public class SickNoteController {
     @RequestMapping(value = "/sicknote", method = RequestMethod.POST)
     public String newSickNote(@ModelAttribute("sickNote") SickNote sickNote, Errors errors, Model model) {
 
-        if (securityUtil.isOffice()) {
+        if (sessionService.isOffice()) {
             validator.validate(sickNote, errors);
 
             if (errors.hasErrors()) {
@@ -245,7 +246,7 @@ public class SickNoteController {
                 return "sicknote/sick_note_form";
             }
 
-            sickNoteService.touch(sickNote, SickNoteStatus.CREATED, securityUtil.getLoggedUser());
+            sickNoteService.touch(sickNote, SickNoteStatus.CREATED, sessionService.getLoggedUser());
 
             return "redirect:/web/sicknote/" + sickNote.getId();
         }
@@ -259,7 +260,7 @@ public class SickNoteController {
 
         SickNote sickNote = sickNoteService.getById(id);
 
-        if (sickNote.isActive() && securityUtil.isOffice()) {
+        if (sickNote.isActive() && sessionService.isOffice()) {
             model.addAttribute("sickNote", sickNote);
 
             return "sicknote/sick_note_form";
@@ -273,7 +274,7 @@ public class SickNoteController {
     public String editSickNote(@PathVariable("id") Integer id,
         @ModelAttribute("sickNote") SickNote sickNote, Errors errors, Model model) {
 
-        if (securityUtil.isOffice()) {
+        if (sessionService.isOffice()) {
             validator.validate(sickNote, errors);
 
             if (errors.hasErrors()) {
@@ -284,7 +285,7 @@ public class SickNoteController {
 
             // this step is necessary because collections can not be binded with form:hidden
             sickNote.setComments(sickNoteService.getById(id).getComments());
-            sickNoteService.touch(sickNote, SickNoteStatus.EDITED, securityUtil.getLoggedUser());
+            sickNoteService.touch(sickNote, SickNoteStatus.EDITED, sessionService.getLoggedUser());
 
             return "redirect:/web/sicknote/" + id;
         }
@@ -297,7 +298,7 @@ public class SickNoteController {
     public String addComment(@PathVariable("id") Integer id,
         @ModelAttribute("comment") SickNoteComment comment, Errors errors, Model model) {
 
-        if (securityUtil.isOffice()) {
+        if (sessionService.isOffice()) {
             validator.validateComment(comment, errors);
 
             if (errors.hasErrors()) {
@@ -308,7 +309,7 @@ public class SickNoteController {
                 return "sicknote/sick_note";
             }
 
-            sickNoteService.addComment(id, comment, SickNoteStatus.COMMENTED, securityUtil.getLoggedUser());
+            sickNoteService.addComment(id, comment, SickNoteStatus.COMMENTED, sessionService.getLoggedUser());
 
             return "redirect:/web/sicknote/" + id;
         }
@@ -322,7 +323,7 @@ public class SickNoteController {
 
         SickNote sickNote = sickNoteService.getById(id);
 
-        if (sickNote.isActive() && securityUtil.isOffice()) {
+        if (sickNote.isActive() && sessionService.isOffice()) {
             model.addAttribute("sickNote", sickNote);
             model.addAttribute("appForm", new AppForm());
             model.addAttribute("vacTypes", VacationType.values());
@@ -338,7 +339,7 @@ public class SickNoteController {
     public String convertSickNoteToVacation(@PathVariable("id") Integer id,
         @ModelAttribute("appForm") AppForm appForm, Errors errors, Model model) {
 
-        if (securityUtil.isOffice()) {
+        if (sessionService.isOffice()) {
             SickNote sickNote = sickNoteService.getById(id);
 
             applicationValidator.validatedShortenedAppForm(appForm, errors);
@@ -351,7 +352,7 @@ public class SickNoteController {
                 return "sicknote/sick_note_convert";
             }
 
-            sickNoteService.convertSickNoteToVacation(appForm, sickNote, securityUtil.getLoggedUser());
+            sickNoteService.convertSickNoteToVacation(appForm, sickNote, sessionService.getLoggedUser());
 
             return "redirect:/web/sicknote/" + id;
         }
@@ -363,10 +364,10 @@ public class SickNoteController {
     @RequestMapping(value = "/sicknote/{id}/cancel", method = RequestMethod.POST)
     public String cancelSickNote(@PathVariable("id") Integer id, Model model) {
 
-        if (securityUtil.isOffice()) {
+        if (sessionService.isOffice()) {
             SickNote sickNote = sickNoteService.getById(id);
 
-            sickNoteService.cancel(sickNote, securityUtil.getLoggedUser());
+            sickNoteService.cancel(sickNote, sessionService.getLoggedUser());
 
             return "redirect:/web/sicknote/" + id;
         }
@@ -378,7 +379,7 @@ public class SickNoteController {
     @RequestMapping(value = "/sicknote/statistics", method = RequestMethod.GET, params = "year")
     public String sickNotesStatistics(@RequestParam("year") Integer year, Model model) {
 
-        if (securityUtil.isOffice()) {
+        if (sessionService.isOffice()) {
             SickNoteStatistics statistics = statisticsService.createStatistics(year);
 
             model.addAttribute("statistics", statistics);

@@ -7,6 +7,8 @@ import org.joda.time.chrono.GregorianChronology;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.stereotype.Service;
+
 import org.springframework.transaction.annotation.Transactional;
 
 import org.synyx.urlaubsverwaltung.DateFormat;
@@ -17,7 +19,7 @@ import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.web.PersonForm;
-import org.synyx.urlaubsverwaltung.security.CryptoService;
+import org.synyx.urlaubsverwaltung.security.CryptoUtil;
 import org.synyx.urlaubsverwaltung.security.Role;
 import org.synyx.urlaubsverwaltung.util.NumberUtil;
 
@@ -40,6 +42,7 @@ import java.util.Map;
  * @author  Aljona Murygina
  * @author  Johannes Reuter
  */
+@Service
 @Transactional
 class PersonServiceImpl implements PersonService {
 
@@ -51,18 +54,16 @@ class PersonServiceImpl implements PersonService {
     private ApplicationService applicationService;
     private AccountService accountService;
     private MailService mailService;
-    private CryptoService cryptoService;
     private WorkingTimeService workingTimeService;
 
     @Autowired
     public PersonServiceImpl(PersonDAO personDAO, ApplicationService applicationService, MailService mailService,
-        AccountService accountService, CryptoService cryptoService, WorkingTimeService workingTimeService) {
+        AccountService accountService, WorkingTimeService workingTimeService) {
 
         this.personDAO = personDAO;
         this.applicationService = applicationService;
         this.mailService = mailService;
         this.accountService = accountService;
-        this.cryptoService = cryptoService;
         this.workingTimeService = workingTimeService;
     }
 
@@ -88,7 +89,7 @@ class PersonServiceImpl implements PersonService {
             newPerson = true;
 
             try {
-                KeyPair keyPair = cryptoService.generateKeyPair();
+                KeyPair keyPair = CryptoUtil.generateKeyPair();
                 person.setPrivateKey(keyPair.getPrivate().getEncoded());
                 person.setPublicKey(keyPair.getPublic().getEncoded());
             } catch (NoSuchAlgorithmException ex) {

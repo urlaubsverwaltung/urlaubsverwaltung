@@ -5,6 +5,8 @@ import org.apache.log4j.Logger;
 import org.joda.time.DateMidnight;
 import org.joda.time.chrono.GregorianChronology;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
@@ -26,7 +28,7 @@ import org.synyx.urlaubsverwaltung.application.web.UsedDaysOverview;
 import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.security.web.SecurityUtil;
+import org.synyx.urlaubsverwaltung.security.web.SessionService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
@@ -52,28 +54,26 @@ public class PersonalOverviewController {
     private static final String OVERVIEW_LINK = "/overview"; // personal overview
     private static final String OVERVIEW_STAFF_LINK = "/staff/{" + PersonConstants.PERSON_ID + "}/overview"; // overview of other person
 
+    @Autowired
     private PersonService personService;
+
+    @Autowired
     private AccountService accountService;
+
+    @Autowired
     private CalculationService calculationService;
-    private GravatarUtil gravatarUtil;
-    private SecurityUtil securityUtil;
+
+    @Autowired
+    private SessionService sessionService;
+
+    @Autowired
     private ApplicationService applicationService;
+
+    @Autowired
     private OwnCalendarService calendarService;
+
+    @Autowired
     private SickNoteService sickNoteService;
-
-    public PersonalOverviewController(PersonService personService, AccountService accountService,
-        CalculationService calculationService, GravatarUtil gravatarUtil, SecurityUtil securityUtil,
-        ApplicationService applicationService, OwnCalendarService calendarService, SickNoteService sickNoteService) {
-
-        this.personService = personService;
-        this.accountService = accountService;
-        this.calculationService = calculationService;
-        this.gravatarUtil = gravatarUtil;
-        this.securityUtil = securityUtil;
-        this.applicationService = applicationService;
-        this.calendarService = calendarService;
-        this.sickNoteService = sickNoteService;
-    }
 
     /**
      * Default personal overview for user: information about one's leave accounts, entitlement of holidays, list of
@@ -88,12 +88,12 @@ public class PersonalOverviewController {
     public String showPersonalOverview(@RequestParam(value = ControllerConstants.YEAR, required = false) String year,
         Model model) {
 
-        if (securityUtil.isInactive()) {
+        if (sessionService.isInactive()) {
             return ControllerConstants.LOGIN_LINK;
         } else {
-            Person person = securityUtil.getLoggedUser();
+            Person person = sessionService.getLoggedUser();
             prepareOverview(person, parseYearParameter(year), model);
-            securityUtil.setLoggedUser(model);
+            sessionService.setLoggedUser(model);
 
             return PersonConstants.OVERVIEW_JSP;
         }
@@ -115,7 +115,7 @@ public class PersonalOverviewController {
     public String showStaffOverview(@PathVariable(PersonConstants.PERSON_ID) Integer personId,
         @RequestParam(value = ControllerConstants.YEAR, required = false) String year, Model model) {
 
-        if (securityUtil.isOffice() || securityUtil.isBoss()) {
+        if (sessionService.isOffice() || sessionService.isBoss()) {
             Person person = personService.getPersonByID(personId);
             List<Person> persons;
 
@@ -129,7 +129,7 @@ public class PersonalOverviewController {
 
             prepareOverview(person, parseYearParameter(year), model);
 
-            securityUtil.setLoggedUser(model);
+            sessionService.setLoggedUser(model);
 
             return PersonConstants.OVERVIEW_JSP;
         }
@@ -175,11 +175,11 @@ public class PersonalOverviewController {
 
         prepareHolidayAccounts(person, year, model);
 
-        securityUtil.setLoggedUser(model);
+        sessionService.setLoggedUser(model);
         model.addAttribute(ControllerConstants.PERSON, person);
         model.addAttribute(ControllerConstants.YEAR, DateMidnight.now().getYear());
 
-        String url = gravatarUtil.createImgURL(person.getEmail());
+        String url = GravatarUtil.createImgURL(person.getEmail());
         model.addAttribute(PersonConstants.GRAVATAR, url);
 
         prepareSickNoteList(person, year, model);

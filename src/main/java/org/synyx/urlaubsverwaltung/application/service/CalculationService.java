@@ -5,6 +5,8 @@ import org.joda.time.DateTimeConstants;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.stereotype.Service;
+
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.application.dao.ApplicationDAO;
@@ -26,6 +28,7 @@ import java.util.List;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
+@Service
 public class CalculationService {
 
     private ApplicationDAO applicationDAO;

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 /**
  * @author  Aljona Murygina - murygina@synyx.de
  */
-@Controller
+@Controller("restApiBaseController")
 public class BaseController {
 
     private static final String ROOT_URL = "/";

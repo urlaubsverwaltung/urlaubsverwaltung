@@ -13,6 +13,8 @@ import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 
+import org.springframework.stereotype.Service;
+
 import org.springframework.ui.velocity.VelocityEngineUtils;
 
 import org.synyx.urlaubsverwaltung.DateFormat;
@@ -40,6 +42,7 @@ import javax.mail.internet.MimeMessage;
  * @author  Johannes Reuter
  * @author  Aljona Murygina
  */
+@Service
 class MailServiceImpl implements MailService {
 
     private static final Logger LOG = Logger.getLogger(MailServiceImpl.class);

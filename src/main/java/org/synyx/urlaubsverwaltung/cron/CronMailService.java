@@ -1,7 +1,11 @@
 
 package org.synyx.urlaubsverwaltung.cron;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.scheduling.annotation.Scheduled;
+
+import org.springframework.stereotype.Service;
 
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
@@ -15,11 +19,13 @@ import java.util.List;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
+@Service
 public class CronMailService {
 
     private SickNoteService sickNoteService;
     private MailService mailService;
 
+    @Autowired
     public CronMailService(SickNoteService sickNoteService, MailService mailService) {
 
         this.sickNoteService = sickNoteService;

@@ -6,6 +6,10 @@ package org.synyx.urlaubsverwaltung.validator;
 
 import org.joda.time.DateMidnight;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.stereotype.Component;
+
 import org.springframework.validation.Errors;
 
 import org.synyx.urlaubsverwaltung.application.web.AppForm;
@@ -20,6 +24,7 @@ import java.util.Properties;
  *          <p>This class checks if the tested property keys have a valid value. If not, the tool manager is notified
  *          and errors objects are filled.</p>
  */
+@Component
 public class PropertiesValidator {
 
     // property keys (custom properties)
@@ -32,6 +37,7 @@ public class PropertiesValidator {
 
     private MailService mailService;
 
+    @Autowired
     public PropertiesValidator(MailService mailService) {
 
         this.mailService = mailService;

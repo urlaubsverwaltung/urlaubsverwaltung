@@ -39,9 +39,6 @@ public class AuthoritiesPopulatorImpl implements LdapAuthoritiesPopulator {
     private PersonService personService;
 
     @Autowired
-    private CryptoService cryptoService;
-
-    @Autowired
     private MailService mailService;
 
     @Override
@@ -69,7 +66,7 @@ public class AuthoritiesPopulatorImpl implements LdapAuthoritiesPopulator {
             person.setActive(true);
 
             try {
-                KeyPair keyPair = cryptoService.generateKeyPair();
+                KeyPair keyPair = CryptoUtil.generateKeyPair();
                 person.setPrivateKey(keyPair.getPrivate().getEncoded());
                 person.setPublicKey(keyPair.getPublic().getEncoded());
             } catch (NoSuchAlgorithmException ex) {

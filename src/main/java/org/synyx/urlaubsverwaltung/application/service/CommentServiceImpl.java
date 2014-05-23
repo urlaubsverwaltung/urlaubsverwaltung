@@ -8,6 +8,8 @@ import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.stereotype.Service;
+
 import org.springframework.transaction.annotation.Transactional;
 
 import org.synyx.urlaubsverwaltung.application.dao.CommentDAO;
@@ -24,6 +26,7 @@ import java.util.List;
  *
  * @author  Aljona Murygina
  */
+@Service
 @Transactional
 class CommentServiceImpl implements CommentService {
 

@@ -8,6 +8,10 @@ import org.apache.log4j.Logger;
 
 import org.joda.time.DateMidnight;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.stereotype.Component;
+
 import org.springframework.ui.Model;
 
 import org.springframework.util.StringUtils;
@@ -30,6 +34,7 @@ import java.util.Properties;
  *
  * @author  Aljona Murygina
  */
+@Component
 public class ApplicationValidator implements Validator {
 
     // logs general errors like "properties file not found"
@@ -54,6 +59,7 @@ public class ApplicationValidator implements Validator {
     private Properties customProperties;
     private PropertiesValidator propValidator;
 
+    @Autowired
     public ApplicationValidator(PropertiesValidator propValidator) {
 
         this.propValidator = propValidator;

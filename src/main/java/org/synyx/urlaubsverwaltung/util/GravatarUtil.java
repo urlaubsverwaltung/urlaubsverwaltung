@@ -30,7 +30,7 @@ public class GravatarUtil {
      *
      * @return  complete url of the gravatar
      */
-    public String createImgURL(String email) {
+    public static String createImgURL(String email) {
 
         if (email == null) {
             // set email to empty String so that no NullpointerException occurs, but a default image can be set
@@ -50,7 +50,7 @@ public class GravatarUtil {
      *
      * @return  encrypted email address
      */
-    private String createHash(String email) {
+    private static String createHash(String email) {
 
         String encryptEmail = null;
 
@@ -75,7 +75,7 @@ public class GravatarUtil {
      *
      * @return  String of bytes that have been converted to hex.
      */
-    private String convertToHex(byte[] data) {
+    private static String convertToHex(byte[] data) {
 
         StringBuffer buf = new StringBuffer();
 

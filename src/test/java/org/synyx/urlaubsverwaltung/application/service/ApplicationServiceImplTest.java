@@ -23,7 +23,7 @@ import org.synyx.urlaubsverwaltung.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.security.CryptoService;
+import org.synyx.urlaubsverwaltung.security.CryptoUtil;
 
 import java.security.NoSuchAlgorithmException;
 
@@ -37,7 +37,6 @@ public class ApplicationServiceImplTest {
 
     private ApplicationServiceImpl instance;
     private ApplicationDAO applicationDAO;
-    private CryptoService cryptoService;
     private MailService mailService;
     private OwnCalendarService calendarService;
     private CommentService commentService;
@@ -48,15 +47,13 @@ public class ApplicationServiceImplTest {
     public void setUp() {
 
         applicationDAO = Mockito.mock(ApplicationDAO.class);
-        cryptoService = new CryptoService();
         mailService = Mockito.mock(MailService.class);
         commentService = Mockito.mock(CommentService.class);
 
         WorkingTimeService workingTimeService = Mockito.mock(WorkingTimeService.class);
         calendarService = new OwnCalendarService(new JollydayCalendar(), workingTimeService);
 
-        instance = new ApplicationServiceImpl(applicationDAO, cryptoService, mailService, calendarService,
-                commentService);
+        instance = new ApplicationServiceImpl(applicationDAO, mailService, calendarService, commentService);
 
         // touch person that is needed for tests
         person = new Person();
@@ -97,7 +94,7 @@ public class ApplicationServiceImplTest {
     public void testAllow() throws NoSuchAlgorithmException {
 
         // set private key for boss
-        person.setPrivateKey(cryptoService.generateKeyPair().getPrivate().getEncoded());
+        person.setPrivateKey(CryptoUtil.generateKeyPair().getPrivate().getEncoded());
         application.setApplicationDate(DateMidnight.now());
         application.setVacationType(VacationType.HOLIDAY);
 
@@ -120,7 +117,7 @@ public class ApplicationServiceImplTest {
     public void testAllowNoRep() throws NoSuchAlgorithmException {
 
         // set private key for boss
-        person.setPrivateKey(cryptoService.generateKeyPair().getPrivate().getEncoded());
+        person.setPrivateKey(CryptoUtil.generateKeyPair().getPrivate().getEncoded());
         application.setApplicationDate(DateMidnight.now());
         application.setVacationType(VacationType.HOLIDAY);
         application.setStatus(ApplicationStatus.WAITING);
@@ -137,7 +134,7 @@ public class ApplicationServiceImplTest {
     public void testAllowWithRep() throws NoSuchAlgorithmException {
 
         // set private key for boss
-        person.setPrivateKey(cryptoService.generateKeyPair().getPrivate().getEncoded());
+        person.setPrivateKey(CryptoUtil.generateKeyPair().getPrivate().getEncoded());
         application.setApplicationDate(DateMidnight.now());
         application.setVacationType(VacationType.HOLIDAY);
         application.setStatus(ApplicationStatus.WAITING);
@@ -201,7 +198,7 @@ public class ApplicationServiceImplTest {
     public void testSignApplicationByUser() throws Exception {
 
         // person needs some info: private key, last name
-        person.setPrivateKey(cryptoService.generateKeyPair().getPrivate().getEncoded());
+        person.setPrivateKey(CryptoUtil.generateKeyPair().getPrivate().getEncoded());
 
         // application needs data
         application.setPerson(person);
@@ -224,7 +221,7 @@ public class ApplicationServiceImplTest {
     public void testSignApplicationByBoss() throws Exception {
 
         // person needs some info: private key, last name
-        person.setPrivateKey(cryptoService.generateKeyPair().getPrivate().getEncoded());
+        person.setPrivateKey(CryptoUtil.generateKeyPair().getPrivate().getEncoded());
 
         // application needs data
         application.setPerson(person);

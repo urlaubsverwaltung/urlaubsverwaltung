@@ -15,6 +15,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import org.joda.time.DateTime;
 
+import org.springframework.stereotype.Service;
+
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 
 import java.io.BufferedReader;
@@ -27,6 +29,7 @@ import java.io.InputStreamReader;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
+@Service
 public class GoogleCalendarService {
 
     // TODO: set this properties in config.properties file

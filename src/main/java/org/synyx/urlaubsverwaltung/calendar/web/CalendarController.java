@@ -6,6 +6,8 @@ import org.joda.time.DateMidnight;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
@@ -47,21 +49,20 @@ public class CalendarController {
 
     private static final String DATE_PATTERN = "yyyy-MM-dd"; // please do not change, because is used in custom.js"
 
+    @Autowired
     private GoogleCalendarService googleCalendarService;
+
+    @Autowired
     private OwnCalendarService ownCalendarService;
+
+    @Autowired
     private JollydayCalendar jollydayCalendar;
+
+    @Autowired
     private PersonService personService;
+
+    @Autowired
     private ApplicationService applicationService;
-
-    public CalendarController(GoogleCalendarService googleCalendarService, OwnCalendarService ownCalendarService,
-        JollydayCalendar jollydayCalendar, PersonService personService, ApplicationService applicationService) {
-
-        this.googleCalendarService = googleCalendarService;
-        this.ownCalendarService = ownCalendarService;
-        this.jollydayCalendar = jollydayCalendar;
-        this.personService = personService;
-        this.applicationService = applicationService;
-    }
 
     /**
      * Is used in application form: ajax call to calculate vacation days for dates given by datepicker.

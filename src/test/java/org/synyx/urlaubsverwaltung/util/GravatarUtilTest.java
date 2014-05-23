@@ -4,17 +4,12 @@
  */
 package org.synyx.urlaubsverwaltung.util;
 
-import org.junit.After;
-import org.junit.AfterClass;
+import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 
 /**
@@ -24,34 +19,9 @@ public class GravatarUtilTest {
 
     private static final String BASE_URL = "http://www.gravatar.com/avatar/";
 
-    private GravatarUtil instance;
-
-    public GravatarUtilTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-
-    @Before
-    public void setUp() {
-
-        instance = new GravatarUtil();
-    }
-
-
-    @After
-    public void tearDown() {
-    }
-
-
-    /** Test of createImgURL method, of class GravatarUtil. */
+    /**
+     * Test of createImgURL method, of class GravatarUtil.
+     */
     @Test
     public void testCreateImgURL() {
 
@@ -64,9 +34,9 @@ public class GravatarUtilTest {
         // show that given email is trimmed and lowercased
         // that means: every url is equals
 
-        String url1 = instance.createImgURL(email);
-        String url2 = instance.createImgURL(emailWithUpperCase);
-        String url3 = instance.createImgURL(emailWithWhitespaces);
+        String url1 = GravatarUtil.createImgURL(email);
+        String url2 = GravatarUtil.createImgURL(emailWithUpperCase);
+        String url3 = GravatarUtil.createImgURL(emailWithWhitespaces);
 
         assertNotNull(url1);
         assertNotNull(url2);
@@ -83,11 +53,11 @@ public class GravatarUtilTest {
         assertFalse(url1.contains(email));
 
         // if email is null
-        String url = instance.createImgURL(null);
+        String url = GravatarUtil.createImgURL(null);
         // NullPointerException is catched by setting email to empty String (!= null)
 
         // if email is a empty string, same result as if email is null
-        String urlEmpty = instance.createImgURL("");
+        String urlEmpty = GravatarUtil.createImgURL("");
 
         // show that there is no image to this email address
         assertNotNull(url);
