@@ -6,7 +6,7 @@
     <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
         <property name="exceptionMappings">
             <props>
-                <prop key="org.synyx.urlaubsverwaltung.calendar.workingtime.NoValidWorkingTimeException">error</prop>
+                <prop key="org.synyx.urlaubsverwaltung.core.calendar.workingtime.NoValidWorkingTimeException">error</prop>
             </props>
         </property>
         <property name="defaultErrorView" value="error" />

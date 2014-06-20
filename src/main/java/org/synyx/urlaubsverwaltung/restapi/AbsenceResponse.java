@@ -1,8 +1,8 @@
 package org.synyx.urlaubsverwaltung.restapi;
 
-import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.domain.DayLength;
-import org.synyx.urlaubsverwaltung.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.core.application.domain.Application;
+import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
+import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 
 import java.math.BigDecimal;
 

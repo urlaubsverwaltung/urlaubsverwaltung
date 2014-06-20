@@ -36,7 +36,7 @@
 
     <filter>
         <filter-name>CharsetFilter</filter-name>
-        <filter-class>org.synyx.urlaubsverwaltung.util.CharsetFilter</filter-class>
+        <filter-class>org.synyx.urlaubsverwaltung.web.util.CharsetFilter</filter-class>
         <init-param>
             <param-name>requestEncoding</param-name>
             <param-value>UTF-8</param-value>

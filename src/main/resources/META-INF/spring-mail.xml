@@ -9,7 +9,7 @@
         <property name="port" value="${mail.port}"/>
     </bean>
 
-    <bean id="mailService" class="org.synyx.urlaubsverwaltung.mail.MailServiceImpl">
+    <bean id="mailService" class="org.synyx.urlaubsverwaltung.core.mail.MailServiceImpl">
         <constructor-arg ref="mailSender"/>
     </bean>
 

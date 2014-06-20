@@ -2,8 +2,8 @@
 package org.synyx.urlaubsverwaltung.jmx;
 
 import org.synyx.urlaubsverwaltung.DateFormat;
-import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.core.application.domain.Application;
+import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.util.ArrayList;
 import java.util.List;
