@@ -42,7 +42,7 @@
                 <beans:bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView"/>
             </beans:list>
         </beans:property>
-
+        
     </beans:bean>
 
     <beans:bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
@@ -59,4 +59,13 @@
 
     </beans:bean>
 
+    <!-- Generate documentation for rest api -->
+    <beans:bean class="org.synyx.urlaubsverwaltung.restapi.MySwaggerConfig"/>
+
+    <!-- Map resources of swagger-ui -->
+    <resources location="/swagger-ui/" mapping="/**" />
+    <resources location="/swagger-ui/css/" mapping="/css/**" />
+    <resources location="/swagger-ui/images/" mapping="/images/**" />
+    <resources location="/swagger-ui/lib/" mapping="/lib/**" />
+    
 </beans:beans>

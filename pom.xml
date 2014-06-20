@@ -94,7 +94,14 @@
             <artifactId>commons-io</artifactId>
             <version>2.4</version>
         </dependency>
-        
+
+        <dependency>
+            <groupId>com.mangofactory</groupId>
+            <artifactId>swagger-springmvc</artifactId>
+            <version>0.8.4</version>
+        </dependency>
+
+
         <!-- DEPENDENCIES FOR GOOGLE CALENDAR -->
 
         <dependency>

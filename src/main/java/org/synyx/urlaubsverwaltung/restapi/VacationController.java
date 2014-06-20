@@ -3,6 +3,8 @@ package org.synyx.urlaubsverwaltung.restapi;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
+import com.wordnik.swagger.annotations.Api;
+
 import org.joda.time.DateMidnight;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -25,6 +27,7 @@ import java.util.List;
 /**
  * @author  Aljona Murygina - murygina@synyx.de
  */
+@Api(value = "Vacations", description = "Get all vacations for a certain period")
 @Controller("restApiVacationController")
 public class VacationController {
 

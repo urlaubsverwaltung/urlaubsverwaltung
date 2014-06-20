@@ -3,6 +3,8 @@ package org.synyx.urlaubsverwaltung.restapi;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
+import com.wordnik.swagger.annotations.Api;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Controller;
@@ -22,6 +24,7 @@ import java.util.List;
 /**
  * @author  Aljona Murygina - murygina@synyx.de
  */
+@Api(value = "Persons", description = "Get information about the persons of the application")
 @Controller("restApiPersonController")
 public class PersonController {
 

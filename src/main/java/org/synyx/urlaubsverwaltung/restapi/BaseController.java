@@ -1,14 +1,12 @@
 package org.synyx.urlaubsverwaltung.restapi;
 
-import org.springframework.beans.factory.annotation.Value;
-
-import org.springframework.security.core.context.SecurityContextHolder;
+import com.mangofactory.swagger.annotations.ApiIgnore;
 
 import org.springframework.stereotype.Controller;
 
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.view.RedirectView;
 
 
 /**
@@ -18,16 +16,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class BaseController {
 
     private static final String ROOT_URL = "/";
+    private static final boolean RELATIVE_CONTEXT = true;
 
-    @Value(value = "${application.version}")
-    private String version;
-
+    @ApiIgnore
     @RequestMapping(value = ROOT_URL, method = RequestMethod.GET)
-    @ModelAttribute("response")
-    public BaseResponse discover() {
+    public RedirectView discover() {
 
-        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        return new BaseResponse(version, userName);
+        return new RedirectView("index.html", RELATIVE_CONTEXT);
     }
 }
