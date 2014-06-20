@@ -4,11 +4,10 @@
  */
 package org.synyx.urlaubsverwaltung.web.util;
 
+import org.apache.log4j.Logger;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
 /**
@@ -18,10 +17,9 @@ import java.util.logging.Logger;
  */
 public class GravatarUtil {
 
-    private static final String BASE_URL = "http://www.gravatar.com/avatar/";
+    private static final Logger LOG = Logger.getLogger(GravatarUtil.class);
 
-    // logs general errors
-    private static final Logger LOG = Logger.getLogger("errorLog");
+    private static final String BASE_URL = "http://www.gravatar.com/avatar/";
 
     /**
      * This method generates the complete gravatar's url by the given email address.
@@ -61,7 +59,7 @@ public class GravatarUtil {
             byte[] updatedData = md.digest(email.getBytes());
             encryptEmail = convertToHex(updatedData);
         } catch (NoSuchAlgorithmException ex) {
-            LOG.log(Level.WARNING, "Creation of MessageDigest failed.", ex);
+            LOG.error("Creation of MessageDigest failed.", ex);
         }
 
         return encryptEmail;

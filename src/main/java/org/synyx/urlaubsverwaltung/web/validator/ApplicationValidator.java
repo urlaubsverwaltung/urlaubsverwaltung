@@ -37,8 +37,7 @@ import java.util.Properties;
 @Component
 public class ApplicationValidator implements Validator {
 
-    // logs general errors like "properties file not found"
-    private static final Logger LOG = Logger.getLogger("errorLog");
+    private static final Logger LOG = Logger.getLogger(ApplicationValidator.class);
 
     // errors' properties keys
     private static final String MANDATORY_FIELD = "error.mandatory.field";

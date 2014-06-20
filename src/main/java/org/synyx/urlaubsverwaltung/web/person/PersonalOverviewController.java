@@ -49,7 +49,7 @@ import java.util.List;
 @Controller
 public class PersonalOverviewController {
 
-    private static final Logger LOG = Logger.getLogger("error");
+    private static final Logger LOG = Logger.getLogger(PersonalOverviewController.class);
 
     private static final String OVERVIEW_LINK = "/overview"; // personal overview
     private static final String OVERVIEW_STAFF_LINK = "/staff/{" + PersonConstants.PERSON_ID + "}/overview"; // overview of other person

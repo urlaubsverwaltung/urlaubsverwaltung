@@ -46,6 +46,7 @@ import javax.mail.internet.MimeMessage;
 class MailServiceImpl implements MailService {
 
     private static final Logger LOG = Logger.getLogger(MailServiceImpl.class);
+
     private static final String PATH = "/email/";
     private static final String PROPERTIES_FILE = "messages.properties"; // general properties
     private static final String MAIL_PROPERTIES_FILE = "mail.properties"; // custom configuration like email
@@ -169,7 +170,7 @@ class MailServiceImpl implements MailService {
             this.mailSender.send(prep);
         } catch (MailException ex) {
             LOG.error(DateMidnight.now().toString(DateFormat.PATTERN) + ": Sending the email with following subject '"
-                + subject
+                + mailProperties.getProperty(subject)
                 + "' to " + recipient + " failed.");
             LOG.error(ex.getMessage(), ex);
         }
@@ -255,7 +256,7 @@ class MailServiceImpl implements MailService {
             this.mailSender.send(prep);
         } catch (MailException ex) {
             LOG.error(DateMidnight.now().toString(DateFormat.PATTERN) + ": Sending the email with following subject '"
-                + subject
+                + mailProperties.getProperty(subject)
                 + "' to following recipients " + " failed.");
             LOG.error(ex.getMessage(), ex);
         }

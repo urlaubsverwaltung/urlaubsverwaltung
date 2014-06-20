@@ -46,9 +46,7 @@ import java.util.Map;
 @Transactional
 class PersonServiceImpl implements PersonService {
 
-    // audit logger: logs nontechnically occurences like 'user x applied for leave' or 'subtracted n days from
-    // holidays account y'
-    private static final Logger LOG = Logger.getLogger("audit");
+    private static final Logger LOG = Logger.getLogger(PersonServiceImpl.class);
 
     private PersonDAO personDAO;
     private ApplicationService applicationService;

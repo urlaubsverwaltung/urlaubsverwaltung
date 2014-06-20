@@ -67,8 +67,11 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 public class ApplicationController {
 
+    private static final Logger LOG = Logger.getLogger(ApplicationController.class);
+
     // links start with...
     private static final String SHORT_PATH_APPLICATION = "/" + ControllerConstants.APPLICATION;
+
     private static final String LONG_PATH_APPLICATION = "/" + ControllerConstants.APPLICATION + "/{";
 
     // list of applications by state
@@ -77,10 +80,12 @@ public class ApplicationController {
     private static final String WAITING_APPS = SHORT_PATH_APPLICATION + "/waiting";
     private static final String ALLOWED_APPS = SHORT_PATH_APPLICATION + "/allowed";
     private static final String CANCELLED_APPS = SHORT_PATH_APPLICATION + "/cancelled";
+
     private static final String REJECTED_APPS = SHORT_PATH_APPLICATION + "/rejected";
 
     // form to apply vacation
     private static final String NEW_APP = SHORT_PATH_APPLICATION + "/new"; // form for user
+
     private static final String NEW_APP_OFFICE = "/{" + ApplicationConstants.PERSON_ID + "}/application/new"; // form for office
 
     // for user: the only way editing an application for user is to cancel it
@@ -92,6 +97,7 @@ public class ApplicationController {
 
     // allow or reject application
     private static final String ALLOW_APP = LONG_PATH_APPLICATION + ApplicationConstants.APPLICATION_ID + "}/allow";
+
     private static final String REJECT_APP = LONG_PATH_APPLICATION + ApplicationConstants.APPLICATION_ID + "}/reject";
 
     // refer application to other boss
@@ -99,10 +105,6 @@ public class ApplicationController {
 
     // remind boss to decide about application
     private static final String REMIND = LONG_PATH_APPLICATION + ApplicationConstants.APPLICATION_ID + "}/remind";
-
-    // audit logger: logs nontechnically occurences like 'user x applied for leave' or 'subtracted n days from
-    // holidays account y'
-    private static final Logger LOG = Logger.getLogger("audit");
 
     @Autowired
     private PersonService personService;
@@ -813,7 +815,7 @@ public class ApplicationController {
 
                 String bossName = comment.getNameOfCommentingPerson();
 
-                LOG.info(application.getApplicationDate() + " ID: " + application.getId() + "Der Antrag von "
+                LOG.info(application.getApplicationDate() + " ID: " + application.getId() + " Der Antrag von "
                     + application.getPerson().getFirstName() + " " + application.getPerson().getLastName()
                     + " wurde am " + DateMidnight.now().toString(DateFormat.PATTERN) + " von " + bossName
                     + " abgelehnt.");
@@ -924,14 +926,14 @@ public class ApplicationController {
 
             // user has cancelled his own application
             if (loggedUser.equals(application.getPerson())) {
-                LOG.info("Antrag-ID: " + application.getId() + "Der Antrag wurde von (" + loggedUser.getFirstName()
+                LOG.info("Antrag-ID: " + application.getId() + " Der Antrag wurde von (" + loggedUser.getFirstName()
                     + " " + loggedUser.getLastName()
                     + ") storniert.");
             } else {
                 // application has been cancelled by office
                 // applicant gets an mail regardless of which application status
                 mailService.sendCancelledNotification(application, true, comment);
-                LOG.info("Antrag-ID: " + application.getId() + "Der Antrag wurde vom Office ("
+                LOG.info("Antrag-ID: " + application.getId() + " Der Antrag wurde vom Office ("
                     + loggedUser.getFirstName() + " " + loggedUser.getLastName()
                     + ") storniert.");
             }

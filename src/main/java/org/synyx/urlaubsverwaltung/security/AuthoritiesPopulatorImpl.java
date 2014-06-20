@@ -32,8 +32,7 @@ import java.util.List;
  */
 public class AuthoritiesPopulatorImpl implements LdapAuthoritiesPopulator {
 
-    // sign logger: logs possible occurent errors relating to private and public keys of users
-    private static final Logger LOG_SIGN = Logger.getLogger("sign");
+    private static final Logger LOG = Logger.getLogger(AuthoritiesPopulatorImpl.class);
 
     @Autowired
     private PersonService personService;
@@ -92,7 +91,7 @@ public class AuthoritiesPopulatorImpl implements LdapAuthoritiesPopulator {
      */
     private void handleCreatingKeysException(String login, Exception ex) {
 
-        LOG_SIGN.error("Beim Erstellen der Keys für den neuen Benutzer mit dem Login " + login
+        LOG.error("Beim Erstellen der Keys für den neuen Benutzer mit dem Login " + login
             + " ist ein Fehler aufgetreten.", ex);
         mailService.sendKeyGeneratingErrorNotification(login);
     }

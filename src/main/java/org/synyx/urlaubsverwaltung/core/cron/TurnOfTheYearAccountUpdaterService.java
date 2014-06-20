@@ -31,7 +31,7 @@ import java.util.List;
 @Service
 public class TurnOfTheYearAccountUpdaterService {
 
-    private static final Logger LOG = Logger.getLogger("audit");
+    private static final Logger LOG = Logger.getLogger(TurnOfTheYearAccountUpdaterService.class);
 
     private PersonService personService;
     private AccountService accountService;

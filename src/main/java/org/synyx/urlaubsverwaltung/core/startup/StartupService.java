@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-
 import javax.annotation.PostConstruct;
 
 
@@ -41,7 +39,7 @@ public class StartupService {
     private String emailManager;
 
     @PostConstruct
-    public void logStartupInfo() throws IOException {
+    public void logStartupInfo() {
 
         LOG.info("Using database " + dbUrl + " with user " + dbUser);
 

@@ -29,7 +29,8 @@ import java.math.RoundingMode;
 @Transactional
 class AccountServiceImpl implements AccountService {
 
-    private static final Logger LOG = Logger.getLogger("audit");
+    private static final Logger LOG = Logger.getLogger(AccountServiceImpl.class);
+
     private AccountDAO accountDAO;
     private OwnCalendarService calendarService;
 

@@ -36,8 +36,7 @@ import java.util.regex.Pattern;
 @Component
 public class PersonValidator implements Validator {
 
-    // logs general errors like "properties file not found"
-    private static final Logger LOG = Logger.getLogger("errorLog");
+    private static final Logger LOG = Logger.getLogger(PersonValidator.class);
 
     private static final String MANDATORY_FIELD = "error.mandatory.field";
     private static final String ERROR_ENTRY = "error.entry";

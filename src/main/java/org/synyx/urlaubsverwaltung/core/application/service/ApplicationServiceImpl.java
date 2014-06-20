@@ -39,9 +39,7 @@ import java.util.List;
 @Service
 class ApplicationServiceImpl implements ApplicationService {
 
-    // sign logger: logs possible occurent errors relating to private and public keys of users
-    private static final Logger LOG_SIGN = Logger.getLogger("sign");
-    private static final Logger LOG = Logger.getLogger("audit");
+    private static final Logger LOG = Logger.getLogger(ApplicationServiceImpl.class);
 
     private ApplicationDAO applicationDAO;
     private MailService mailService;
@@ -126,7 +124,7 @@ class ApplicationServiceImpl implements ApplicationService {
 
         save(application);
 
-        LOG.info(application.getApplicationDate() + " ID: " + application.getId() + "Der Antrag von "
+        LOG.info(application.getApplicationDate() + " ID: " + application.getId() + " Der Antrag von "
             + application.getPerson().getNiceName()
             + " wurde am " + DateMidnight.now().toString(DateFormat.PATTERN) + " von " + boss.getNiceName()
             + " genehmigt.");
@@ -246,7 +244,7 @@ class ApplicationServiceImpl implements ApplicationService {
      */
     private void logSignException(Integer applicationId, Exception ex) {
 
-        LOG_SIGN.error("An error occured during signing application with id " + applicationId, ex);
+        LOG.error("An error occurred during signing application with id " + applicationId, ex);
         mailService.sendSignErrorNotification(applicationId, ex.getMessage());
     }
 

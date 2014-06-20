@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.core.util;
 
-import org.apache.log4j.Logger;
-
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
 
@@ -10,8 +8,6 @@ import org.joda.time.DateTimeConstants;
  * @author  Aljona Murygina
  */
 public class DateUtil {
-
-    private static final Logger LOG = Logger.getLogger("errorLog");
 
     private static final int CHRISTMAS_EVE = 24;
     private static final int LAST_DAY_OF_MONTH = 31;
