@@ -56,8 +56,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
 
 /**
  * Controller for management of {@link Application} entities.
@@ -715,8 +713,8 @@ public class ApplicationController {
      * @return
      */
     @RequestMapping(value = SHOW_APP, method = RequestMethod.GET)
-    public String showApplicationDetail(HttpServletRequest request,
-        @PathVariable(ApplicationConstants.APPLICATION_ID) Integer applicationId, Model model) {
+    public String showApplicationDetail(@PathVariable(ApplicationConstants.APPLICATION_ID) Integer applicationId,
+        Model model) {
 
         Person loggedUser = sessionService.getLoggedUser();
 

@@ -50,4 +50,25 @@
         <security:authentication-provider user-service-ref="userDetailsService"/>
     </security:authentication-manager>
 
+    <bean id="delegatingAuthenticationEntryPoint"
+          class="org.springframework.security.web.authentication.DelegatingAuthenticationEntryPoint">
+        <constructor-arg>
+            <map>
+                <entry key="hasHeader('Content-Type', 'application/json')" value-ref="basicAuthenticationEntryPoint"/>
+                <entry key="not(hasHeader('Accept', 'text/html'))" value-ref="basicAuthenticationEntryPoint"/>
+            </map>
+        </constructor-arg>
+        <property name="defaultEntryPoint" ref="formAuthenticationEntryPoint"/>
+    </bean>
+
+    <bean id="formAuthenticationEntryPoint"
+          class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
+        <constructor-arg value="/login.jsp"/>
+    </bean>
+
+    <bean id="basicAuthenticationEntryPoint"
+          class="org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint">
+        <property name="realmName" value="Urlaubsverwaltung API"/>
+    </bean>
+
 </beans>
