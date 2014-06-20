@@ -24,8 +24,12 @@
 
   <script type="text/javascript">
     $(function () {
+      
+      var currentUrl = window.location.href;
+      var url = currentUrl.replace("index.html", "api-docs");
+        
       window.swaggerUi = new SwaggerUi({
-      url: "/urlaubsverwaltung/api/api-docs",
+      url: url,
       dom_id: "swagger-ui-container",
       supportedSubmitMethods: ['get', 'post', 'put', 'delete'],
       onComplete: function(swaggerApi, swaggerUi){
