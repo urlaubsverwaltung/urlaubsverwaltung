@@ -31,7 +31,7 @@
                 <constructor-arg ref="ldapAuthServer"/>
                 <property name="userDnPatterns">
                     <list>
-                        <value>uid={0},ou=People</value>
+                        <value>${ldap.userDnPatterns}</value>
                     </list>
                 </property>
             </bean>
