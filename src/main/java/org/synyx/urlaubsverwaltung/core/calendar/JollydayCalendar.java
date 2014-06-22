@@ -4,16 +4,22 @@
  */
 package org.synyx.urlaubsverwaltung.core.calendar;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import de.jollyday.Holiday;
 import de.jollyday.HolidayManager;
 
 import org.joda.time.DateMidnight;
+import org.joda.time.DateTime;
 import org.joda.time.chrono.GregorianChronology;
 
 import org.springframework.stereotype.Component;
 
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 
+import javax.annotation.Nullable;
 import java.math.BigDecimal;
 
 import java.net.URL;
@@ -150,6 +156,28 @@ public class JollydayCalendar {
         }
 
         return numberOfHolidays;
+    }
+
+    public Set<Holiday> getHolidays(int year) {
+
+        return manager.getHolidays(year);
+
+    }
+
+    public Set<Holiday> getHolidays(int year, final int month) {
+
+        Set<Holiday> holidays = getHolidays(year);
+
+        Iterable<Holiday> holidaysForMonth = Iterables.filter(holidays, new Predicate<Holiday>() {
+            @Override
+            public boolean apply(Holiday holiday) {
+
+                return holiday.getDate().getMonthOfYear() == month;
+            }
+        });
+
+        return Sets.newHashSet(holidaysForMonth);
+
     }
 
 
