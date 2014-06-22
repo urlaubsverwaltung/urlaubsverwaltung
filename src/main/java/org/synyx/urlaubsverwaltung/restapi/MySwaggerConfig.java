@@ -22,7 +22,7 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScan(basePackages = { "org.synyx.urlaubsverwaltung.restapi" })
 public class MySwaggerConfig {
 
-    @Value(value = "${application.version}")
+    @Value(value = "${application.version.short}")
     private String version;
 
     private SpringSwaggerConfig springSwaggerConfig;
@@ -57,7 +57,7 @@ public class MySwaggerConfig {
         public ProjectApiInfo() {
 
             super("Urlaubsverwaltung API",
-                "This Rest API provides the possibility to fetch information about the persons and their vacation and sick notes of the application.",
+                "This Rest API provides the possibility to fetch information about the persons and their vacation and sick notes of the application.\n" + version,
                 null, "murygina@synyx.de", null, null);
         }
     }
