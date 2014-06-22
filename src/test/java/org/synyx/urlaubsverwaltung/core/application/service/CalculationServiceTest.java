@@ -620,6 +620,43 @@ public class CalculationServiceTest {
         Assert.assertEquals(new BigDecimal("0"), remainingVacationDays);
     }
 
+    @Test
+    public void testCalculateLeftVacationDaysWhenNoVacationYetAndRemainingVacationDaysDoNotExpire() {
+
+        initCustomService("0", "0");
+
+        Account account = new Account();
+        account.setRemainingVacationDaysExpire(false);
+        account.setAnnualVacationDays(new BigDecimal("28"));
+        account.setVacationDays(new BigDecimal("28"));
+        account.setRemainingVacationDays(new BigDecimal("4"));
+
+        BigDecimal vacationDays = service.calculateLeftVacationDays(account);
+        BigDecimal remainingVacationDays = service.calculateLeftRemainingVacationDays(account);
+
+        Assert.assertEquals(new BigDecimal("28"), vacationDays);
+        Assert.assertEquals(new BigDecimal("4"), remainingVacationDays);
+
+    }
+
+    @Test
+    public void testCalculateLeftVacationDaysWhenNoVacationYetAndRemainingVacationDaysDoExpire() {
+
+        initCustomService("0", "0");
+
+        Account account = new Account();
+        account.setRemainingVacationDaysExpire(true);
+        account.setAnnualVacationDays(new BigDecimal("28"));
+        account.setVacationDays(new BigDecimal("28"));
+        account.setRemainingVacationDays(new BigDecimal("4"));
+
+        BigDecimal vacationDays = service.calculateLeftVacationDays(account);
+        BigDecimal remainingVacationDays = service.calculateLeftRemainingVacationDays(account);
+
+        Assert.assertEquals(new BigDecimal("28"), vacationDays);
+        Assert.assertEquals(new BigDecimal("4"), remainingVacationDays);
+
+    }
 
     private void initCustomService(final String daysBeforeApril, final String daysAfterApril) {
 

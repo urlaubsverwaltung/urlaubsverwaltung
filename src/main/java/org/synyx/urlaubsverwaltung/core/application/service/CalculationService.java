@@ -174,6 +174,10 @@ public class CalculationService {
         BigDecimal daysBeforeApril = getDaysBeforeApril(account);
         BigDecimal daysAfterApril = getDaysAfterApril(account);
 
+        if(daysBeforeApril.equals(BigDecimal.ZERO) && daysAfterApril.equals(BigDecimal.ZERO)) {
+            return vacationDays;
+        }
+
         BigDecimal result;
 
         BigDecimal interimResult = remainingVacationDays.subtract(daysBeforeApril);
