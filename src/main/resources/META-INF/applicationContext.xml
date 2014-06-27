@@ -12,9 +12,13 @@
                            http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
                            http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd">
 
-    <context:annotation-config/>
-    <context:component-scan base-package="org.synyx.urlaubsverwaltung"/>
     <mvc:annotation-driven/>
+
+    <context:component-scan base-package="org.synyx.urlaubsverwaltung">
+        <context:exclude-filter type="regex" expression="org\.synyx\.urlaubsverwaltung\.restapi.*"/>
+    </context:component-scan>
+    
+    <context:annotation-config/>
 
     <!-- remove comment to use jmx demo -->
     <!--<import resource="jmxContext.xml"/>-->
