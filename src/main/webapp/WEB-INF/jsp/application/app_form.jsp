@@ -216,7 +216,7 @@
                                                         preset('#from', from);
                                                         preset('#to'  , to || from);
 
-                                                        sendGetDaysRequest("<spring:url value='/web/calendar/vacation' />",
+                                                        sendGetDaysRequest("<spring:url value='/api' />",
                                                                 $("#from").datepicker("getDate"),
                                                                 $("#to").datepicker("getDate"), 
                                                                 $('input:radio[name=howLong]:checked').val(), 

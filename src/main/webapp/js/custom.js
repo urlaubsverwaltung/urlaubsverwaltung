@@ -35,7 +35,9 @@ function sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, e
     var startDateString = startDate.getFullYear() + '-' + (startDate.getMonth() + 1) + '-' + startDate.getDate();
     var toDateString = toDate.getFullYear() + '-' + (toDate.getMonth() + 1) + '-' + toDate.getDate();
 
-    var url = buildUrl(urlPrefix, startDateString, toDateString, dayLength, personId);
+    var requestUrl = urlPrefix + "/vacation/calculate";    
+        
+    var url = buildUrl(requestUrl, startDateString, toDateString, dayLength, personId);
         
     $.get(url, function(data) {
 
@@ -63,7 +65,7 @@ function sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, e
 
             var startString = before.getFullYear() + "-" + (before.getMonth() + 1) + '-' + before.getDate();
             var toString = before.getFullYear() + '-12-31';
-            var url = buildUrl(urlPrefix, startString, toString, dayLength, personId);
+            var url = buildUrl(requestUrl, startString, toString, dayLength, personId);
 
             $.get(url, function(data) {
                 daysTotal += parseFloat(data);
@@ -71,7 +73,7 @@ function sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, e
 
                 startString = after.getFullYear() + '-1-1';
                 toString = after.getFullYear() + "-" + (after.getMonth() + 1) + '-' + after.getDate();
-                url = buildUrl(urlPrefix, startString, toString, dayLength, personId);
+                url = buildUrl(requestUrl, startString, toString, dayLength, personId);
 
                 $.get(url, function(data) {
                     daysTotal += parseFloat(data);

@@ -134,7 +134,7 @@
                                     var from = new Date(startDate);
                                     var to = new Date(endDate);
                                     
-                                    sendGetDaysRequest("<spring:url value='/web/calendar/vacation' />", from, to, dayLength, personId, ".days-${loopStatus.index}");
+                                    sendGetDaysRequest("<spring:url value='/api' />", from, to, dayLength, personId, ".days-${loopStatus.index}");
                                     
                                 });
 

@@ -53,7 +53,7 @@ function getHighlighted(url, callback) {
     
 }
 
-function createDatepickerInstances(regional, urlPrefix, vacationUrl, personId) {
+function createDatepickerInstances(regional, urlPrefix, personId) {
 
     var highlighted;
     var highlightedVacation;
@@ -74,11 +74,11 @@ function createDatepickerInstances(regional, urlPrefix, vacationUrl, personId) {
             var year = date.getFullYear();
             var month = date.getMonth() + 1;
             
-            getHighlighted(urlPrefix + "public-holiday?year=" + year + "&month=" + month, function(data) {
-                highlighted = data;
+            getHighlighted(urlPrefix + "/public-holiday?year=" + year + "&month=" + month, function(data) {
+                highlighted = getDatesOfPublicHolidays(data);
             });
 
-            getHighlighted(urlPrefix + "holiday?year=" + year + "&month=" + month + "&person=" + personId, function(data) {
+            getHighlighted(urlPrefix + "/vacation/application-info?year=" + year + "&month=" + month + "&person=" + personId, function(data) {
 
                 highlightedVacation = new Array();
                 
@@ -94,11 +94,11 @@ function createDatepickerInstances(regional, urlPrefix, vacationUrl, personId) {
         },
         onChangeMonthYear: function(year, month) {
 
-            getHighlighted(urlPrefix + "public-holiday?year=" + year + "&month=" + month, function(data) {
-                highlighted = data;
+            getHighlighted(urlPrefix + "/public-holiday?year=" + year + "&month=" + month, function(data) {
+                highlighted = getDatesOfPublicHolidays(data);
             });
 
-            getHighlighted(urlPrefix + "holiday?year=" + year + "&month=" + month + "&person=" + personId, function(data) {
+            getHighlighted(urlPrefix + "/vacation/application-info?year=" + year + "&month=" + month + "&person=" + personId, function(data) {
                 highlightedVacation = new Array();
 
                 for(var i = 0; i < data.length; i++) {
@@ -139,10 +139,23 @@ function createDatepickerInstances(regional, urlPrefix, vacationUrl, personId) {
                 toDate = $("#at").datepicker("getDate");
             }
             
-            sendGetDaysRequest(vacationUrl, startDate, toDate, dayLength, personId, ".days", true);
+            sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, ".days", true);
 
         }
     });
+}
+
+function getDatesOfPublicHolidays(data) {
+
+    var publicHolidayDates = new Array();
+
+    for(var i = 0; i < data.response.publicHolidays.length; i++) {
+        var value = data.response.publicHolidays[i].date;
+        publicHolidayDates.push(value);
+    }
+
+    return publicHolidayDates; 
+    
 }
 
 function colorizeDate(date, publicHolidays, vacation) {

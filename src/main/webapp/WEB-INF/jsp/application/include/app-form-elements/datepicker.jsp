@@ -16,12 +16,11 @@
     $(document).ready(function() {
         
         var datepickerLocale = "${pageContext.request.locale.language}";
-        var urlPrefix = "<spring:url value='/web/calendar/' />";
-        var vacationUrl = "<spring:url value='/web/calendar/vacation' />";
+        var urlPrefix = "<spring:url value='/api' />";
 
         var personId = '<c:out value="${person.id}" />';
         
-        createDatepickerInstances(datepickerLocale, urlPrefix, vacationUrl, personId);
+        createDatepickerInstances(datepickerLocale, urlPrefix, personId);
         
     });
 </script>

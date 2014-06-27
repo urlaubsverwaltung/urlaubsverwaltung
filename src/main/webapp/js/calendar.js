@@ -86,7 +86,8 @@ $(function() {
 
         var _CACHE  = {};
 
-        var urlPrefix;
+        var webPrefix;
+        var apiPrefix;
         var personId;
 
         function paramize(p) {
@@ -110,7 +111,7 @@ $(function() {
             var query = endpoint + paramize(params);
 
             return $.ajax({
-                url: urlPrefix + '/calendar/' + query,
+                url: apiPrefix + query,
                 dataType: 'json'
             });
         }
@@ -130,10 +131,15 @@ $(function() {
         function cacheData(type) {
             var c = _CACHE[type] = _CACHE[type] || {};
             return function(data) {
-                $.each(data, function(idx, d) {
-                    var y = d.match(/\d{0,4}/)[0];
+                
+                var publicHolidays = data.response.publicHolidays;
+                
+                $.each(publicHolidays, function(idx, publicHoliday) {
+                    var date = publicHoliday.date;
+                    var description = publicHoliday.description;
+                    var y = date.match(/\d{0,4}/)[0];
                     c[y] = c[y] || [];
-                    c[y].push(d);
+                    c[y].push(date);
                 });
             }
         }
@@ -163,7 +169,7 @@ $(function() {
                     to   : to ? to  .format('YYYY-MM-DD') : undefined
                 };
 
-                document.location.href = urlPrefix + '/application/new' + paramize( params );
+                document.location.href = webPrefix + '/application/new' + paramize( params );
             },
 
             /**
@@ -181,7 +187,7 @@ $(function() {
                     return deferred.resolve( _CACHE[year] );
                 }
                 else {
-                    return fetch('public-holiday', {year: year}).success( cacheData('publicHoliday') );
+                    return fetch('/public-holiday', {year: year}).success( cacheData('publicHoliday') );
                 }
             },
 
@@ -201,14 +207,15 @@ $(function() {
                     return deferred.resolve( _CACHE[year] );
                 }
                 else {
-                    return fetch('holiday', {person: personId, year: year}).success( cacheHoliday );
+                    return fetch('/vacation/application-info', {person: personId, year: year}).success( cacheHoliday );
                 }
             }
         };
 
         return {
-            create: function(_urlPrefix, _personId) {
-                urlPrefix = _urlPrefix;
+            create: function(_webPrefix, _apiPrefix, _personId) {
+                webPrefix = _webPrefix;
+                apiPrefix = _apiPrefix;
                 personId  = _personId;
                 return HolidayService;
             }

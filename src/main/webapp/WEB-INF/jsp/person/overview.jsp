@@ -124,7 +124,8 @@
 
                 var datepickerLocale = "${pageContext.request.locale.language}";
                 var personId = '<c:out value="${person.id}" />';
-                var urlPrefix = "<spring:url value='/web' />";
+                var webPrefix = "<spring:url value='/web' />";
+                var apiPrefix = "<spring:url value='/api' />";
 
                 function addMomentScript() {
                     return addScript({
@@ -151,7 +152,7 @@
                         date.year(year).month(0).date(1);
                     }
 
-                    var holidayService = Urlaubsverwaltung.HolidayService.create(urlPrefix, +personId);
+                    var holidayService = Urlaubsverwaltung.HolidayService.create(webPrefix, apiPrefix, +personId);
 
                     $.when(
                         holidayService.fetchPublic   ( date.year() ),
