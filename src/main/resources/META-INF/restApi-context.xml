@@ -60,7 +60,7 @@
     </beans:bean>
 
     <!-- Generate documentation for rest api -->
-    <beans:bean class="org.synyx.urlaubsverwaltung.restapi.MySwaggerConfig"/>
+    <beans:bean class="org.synyx.urlaubsverwaltung.restapi.SwaggerConfig"/>
 
     <!-- Map resources of swagger-ui -->
     <resources location="/swagger-ui/" mapping="/**" />

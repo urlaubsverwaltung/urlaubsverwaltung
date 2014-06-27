@@ -20,16 +20,13 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableSwagger
 @ComponentScan(basePackages = { "org.synyx.urlaubsverwaltung.restapi" })
-public class MySwaggerConfig {
+public class SwaggerConfig {
 
     @Value(value = "${application.version.short}")
     private String version;
 
     private SpringSwaggerConfig springSwaggerConfig;
 
-    /**
-     * Required to autowire SpringSwaggerConfig.
-     */
     @Autowired
     public void setSpringSwaggerConfig(SpringSwaggerConfig springSwaggerConfig) {
 
@@ -37,12 +34,8 @@ public class MySwaggerConfig {
     }
 
 
-    /**
-     * Every SwaggerSpringMvcPlugin bean is picked up by the swagger-mvc framework - allowing for multiple swagger
-     * groups i.e. same code base multiple swagger resource listings.
-     */
     @Bean
-    public SwaggerSpringMvcPlugin customImplementation() {
+    public SwaggerSpringMvcPlugin swaggerSpringMvcPlugin() {
 
         SwaggerSpringMvcPlugin swaggerSpringMvcPlugin = new SwaggerSpringMvcPlugin(this.springSwaggerConfig);
 
@@ -56,8 +49,8 @@ public class MySwaggerConfig {
 
         public ProjectApiInfo() {
 
-            super("Urlaubsverwaltung API",
-                "This Rest API provides the possibility to fetch information about the persons and their vacation and sick notes of the application.\n" + version,
+            super("Urlaubsverwaltung API: " + version,
+                "This Rest API provides the possibility to fetch information about the persons and their vacation and sick notes of the application.",
                 null, "murygina@synyx.de", null, null);
         }
     }
