@@ -6,6 +6,8 @@ import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 
 import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
 
 import org.joda.time.DateMidnight;
 import org.joda.time.format.DateTimeFormat;
@@ -55,10 +57,16 @@ public class VacationController {
     @Autowired
     private OwnCalendarService ownCalendarService;
 
+    @ApiOperation(value = "Get all vacations for a certain period", notes = "Get all vacations for a certain period")
     @RequestMapping(value = ROOT_URL, method = RequestMethod.GET)
     @ModelAttribute("response")
-    public VacationListResponse vacations(@RequestParam(value = "from", required = true) String from,
-        @RequestParam(value = "to", required = true) String to) {
+    public VacationListResponse vacations(
+        @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = "2014-01-01")
+        @RequestParam(value = "from", required = true)
+        String from,
+        @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = "2014-12-31")
+        @RequestParam(value = "to", required = true)
+        String to) {
 
         DateTimeFormatter formatter = DateTimeFormat.forPattern(RestApiDateFormat.PATTERN);
         DateMidnight startDate = formatter.parseDateTime(from).toDateMidnight();
@@ -83,24 +91,37 @@ public class VacationController {
     /**
      * Calculate number of vacation days for given period and person.
      *
-     * @param  start  start date as String (e.g. 2013-3-21)
-     * @param  end  end date as String (e.g. 2013-3-21)
+     * @param  from  start date as String (e.g. 2013-3-21)
+     * @param  to  end date as String (e.g. 2013-3-21)
      * @param  length  day length as String (FULL, MORNING or NOON)
      * @param  personId  id of the person to calculate used days for
      *
      * @return  number of days as String for the given parameters or "N/A" if parameters are not valid in any way
      */
+    @ApiOperation(
+        value = "Calculate the hypothetical number of vacation days for a certain period and person",
+        notes = "Calculate the hypothetical number of vacation days for a certain period and person"
+    )
     @RequestMapping(value = ROOT_URL + "/calculate", method = RequestMethod.GET)
     @ResponseBody
-    public String numberOfVacationDays(@RequestParam("start") String start,
-        @RequestParam("end") String end,
-        @RequestParam("length") String length,
-        @RequestParam("person") Integer personId) {
+    public String numberOfVacationDays(
+        @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = "2014-01-01")
+        @RequestParam("from")
+        String from,
+        @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = "2014-01-08")
+        @RequestParam("to")
+        String to,
+        @ApiParam(value = "Day Length", defaultValue = "FULL")
+        @RequestParam("length")
+        String length,
+        @ApiParam(value = "ID of the person")
+        @RequestParam("person")
+        Integer personId) {
 
-        if (StringUtils.hasText(start) && StringUtils.hasText(end) && StringUtils.hasText(length)) {
+        if (StringUtils.hasText(from) && StringUtils.hasText(to) && StringUtils.hasText(length)) {
             DateTimeFormatter fmt = DateTimeFormat.forPattern(RestApiDateFormat.PATTERN);
-            DateMidnight startDate = DateMidnight.parse(start, fmt);
-            DateMidnight endDate = DateMidnight.parse(end, fmt);
+            DateMidnight startDate = DateMidnight.parse(from, fmt);
+            DateMidnight endDate = DateMidnight.parse(to, fmt);
 
             if (startDate.isBefore(endDate) || startDate.isEqual(endDate)) {
                 DayLength howLong = DayLength.valueOf(length);
@@ -115,11 +136,22 @@ public class VacationController {
     }
 
 
+    @ApiOperation(
+        value = "Get applications for leave information for a certain period and person",
+        notes = "Get applications for leave information for a certain period and person"
+    )
     @RequestMapping(value = ROOT_URL + "/application-info", method = RequestMethod.GET)
     @ResponseBody
-    public String personsVacations(@RequestParam("year") String year,
-        @RequestParam(value = "month", required = false) String month,
-        @RequestParam("person") Integer personId) {
+    public String personsVacations(
+        @ApiParam(value = "Year to get the applications for leave for", defaultValue = "2014")
+        @RequestParam("year")
+        String year,
+        @ApiParam(value = "Month of year to get the applications for leave for")
+        @RequestParam(value = "month", required = false)
+        String month,
+        @ApiParam(value = "ID of the person")
+        @RequestParam("person")
+        Integer personId) {
 
         boolean hasYear = StringUtils.hasText(year);
         boolean hasMonth = StringUtils.hasText(month);

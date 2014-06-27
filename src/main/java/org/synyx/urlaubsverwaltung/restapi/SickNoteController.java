@@ -4,6 +4,8 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
 
 import org.joda.time.DateMidnight;
 import org.joda.time.format.DateTimeFormat;
@@ -36,10 +38,16 @@ public class SickNoteController {
     @Autowired
     private SickNoteService sickNoteService;
 
+    @ApiOperation(value = "Get all sick notes for a certain period", notes = "Get all sick notes for a certain period")
     @RequestMapping(value = ROOT_URL, method = RequestMethod.GET)
     @ModelAttribute("response")
-    public SickNoteListResponse vacations(@RequestParam(value = "from", required = true) String from,
-        @RequestParam(value = "to", required = true) String to) {
+    public SickNoteListResponse sickNotes(
+        @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = "2014-01-01")
+        @RequestParam(value = "from", required = true)
+        String from,
+        @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = "2014-12-31")
+        @RequestParam(value = "to", required = true)
+        String to) {
 
         DateTimeFormatter formatter = DateTimeFormat.forPattern(RestApiDateFormat.PATTERN);
         DateMidnight startDate = formatter.parseDateTime(from).toDateMidnight();

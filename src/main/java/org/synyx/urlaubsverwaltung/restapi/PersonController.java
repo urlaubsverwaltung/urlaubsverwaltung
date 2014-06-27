@@ -4,6 +4,8 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -33,9 +35,13 @@ public class PersonController {
     @Autowired
     private PersonService personService;
 
+    @ApiOperation(value = "Get persons of the application", notes = "Get persons of the application")
     @RequestMapping(value = ROOT_URL, method = RequestMethod.GET)
     @ModelAttribute("response")
-    public PersonListResponse persons(@RequestParam(value = "ldap", required = false) String ldapName) {
+    public PersonListResponse persons(
+        @ApiParam(value = "LDAP Login")
+        @RequestParam(value = "ldap", required = false)
+        String ldapName) {
 
         List<Person> persons = new ArrayList<Person>();
 

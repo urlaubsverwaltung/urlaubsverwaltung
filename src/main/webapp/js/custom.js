@@ -117,7 +117,7 @@ function sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, e
 
 function buildUrl(urlPrefix, startDate, endDate, dayLength, personId) {
 
-    return urlPrefix + "?start=" + startDate + "&end=" + endDate + "&length=" + dayLength + "&person=" + personId; 
+    return urlPrefix + "?from=" + startDate + "&to=" + endDate + "&length=" + dayLength + "&person=" + personId; 
     
 }
 
