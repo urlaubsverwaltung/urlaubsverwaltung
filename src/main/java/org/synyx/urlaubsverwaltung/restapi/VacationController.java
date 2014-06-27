@@ -57,7 +57,10 @@ public class VacationController {
     @Autowired
     private OwnCalendarService ownCalendarService;
 
-    @ApiOperation(value = "Get all vacations for a certain period", notes = "Get all vacations for a certain period")
+    @ApiOperation(
+        value = "Get all vacations for a certain period",
+        notes = "Get all vacations for a certain period. Information only reachable for users with role boss or office."
+    )
     @RequestMapping(value = ROOT_URL, method = RequestMethod.GET)
     @ModelAttribute("response")
     public VacationListResponse vacations(

@@ -38,7 +38,10 @@ public class SickNoteController {
     @Autowired
     private SickNoteService sickNoteService;
 
-    @ApiOperation(value = "Get all sick notes for a certain period", notes = "Get all sick notes for a certain period")
+    @ApiOperation(
+        value = "Get all sick notes for a certain period",
+        notes = "Get all sick notes for a certain period. Information only reachable for users with role office."
+    )
     @RequestMapping(value = ROOT_URL, method = RequestMethod.GET)
     @ModelAttribute("response")
     public SickNoteListResponse sickNotes(

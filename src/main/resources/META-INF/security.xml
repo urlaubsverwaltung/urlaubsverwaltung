@@ -7,7 +7,8 @@
 
     <security:http auto-config='true' use-expressions='true'>
         <security:intercept-url pattern="/api/" access="isAuthenticated()" />
-        <security:intercept-url pattern="/api/vacation/**" access="hasAnyRole('BOSS', 'OFFICE')"/>
+        <security:intercept-url pattern="/api/vacation" access="hasAnyRole('BOSS', 'OFFICE')"/>
+        <security:intercept-url pattern="/api/vacation/**" access="isAuthenticated()"/>
         <security:intercept-url pattern="/api/sicknotes/**" access="hasRole('OFFICE')"/>
         <security:intercept-url pattern="/jmx/**" access="isAuthenticated()"/>
         <security:intercept-url pattern="/web/overview" access="isAuthenticated()"/>
