@@ -163,6 +163,22 @@
                 }
 
                 addMomentScript().then(addMomentLangScript).then(initCalendar);
+
+                var resizeTimer = null;
+                
+                $(window).on('resize', function () {
+
+                    if (resizeTimer !== null) {
+                        clearTimeout(resizeTimer);
+                    }
+
+                    resizeTimer = setTimeout(function () {
+                        Urlaubsverwaltung.Calendar.reRender();
+                        resizeTimer = null;
+                    }, 30)
+
+                });
+                
             });
         </script>
 

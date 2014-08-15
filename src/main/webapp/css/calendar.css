@@ -13,7 +13,7 @@
     display: -webkit-flex;
     display: flex;
     align-items: stretch;
-    justify-content: center;
+    justify-content: space-between;
 
     cursor: default;
     font-family: Trebuchet MS,Tahoma,Verdana,Arial,sans-serif;
@@ -21,11 +21,6 @@
     background: linear-gradient( 0deg, #EEE 75%, #FFF);
     border: 1px solid #DDD;
     border-radius: 0.3em;
-}
-.datepicker-prev,
-.datepicker-next,
-.datepicker-months-container {
-    margin: .5em;
 }
 
 .datepicker-months-container {
@@ -37,7 +32,9 @@
     overflow: hidden;
 
     width: auto;
-    height: 190px;
+    height: auto;
+    margin-top: 6px;
+    margin-bottom: 6px;
 }
 
 .datepicker-table {
@@ -45,7 +42,9 @@
     border-spacing: 0;
     border-collapse: collapse;
     font-size: 1em;
-    width: 100%;
+    width: 95%;
+    /* margin left is half of difference of 100% - 95% table width */
+    margin-left: 2.5%;
 }
 
 .datepicker-table th, .datepicker-table td {
@@ -59,8 +58,9 @@
 
 .datepicker-prev,
 .datepicker-next {
+    margin: 6px;
     border: none;
-    padding: 0 0.7em;
+    padding: 6px;
     cursor: pointer;
     border-radius: .2em;
     background-color: transparent;
@@ -74,8 +74,6 @@
 
 .datepicker-month {
     width: 230px;
-    margin-left: 12px;
-    margin-right: 12px;
     float: left;
 }
 
@@ -89,7 +87,7 @@
     font-size: 1.1em;
     text-align: center;
     background-color: #ABC452;
-    border-radius: .3em;
+    border-right: 1px solid #d7d7d7;
 }
 
 .datepicker-day {

@@ -261,12 +261,33 @@ $(function() {
 
         function calculateNumberOfMonths() {
 
-            var datePickerWidth = $("#datepicker").width();
-            var widthOfPrevNextButtons = 2 * 15;
-            
-            var numberOfMonths = Math.floor((datePickerWidth - widthOfPrevNextButtons) / 250);
+            var minTick = 6;
 
-            // 0 index
+            var datePickerWidth = $("#datepicker").width();
+
+            var prevNextButtonWidth = 20;
+            var prevNextButtonMargin = minTick;
+            var prevNextButtonPadding = minTick;
+            var prevNextButtonsWidth = (2 * prevNextButtonWidth) + 2 * (prevNextButtonMargin * 2) + 2 * (prevNextButtonPadding * 2);
+
+            var datePickerMonthWidth = 230;
+            
+            var datePickerMonthsContainerMargin = 2 * minTick;
+            var datePickerMonthsContainerBorder = 2 * 1;
+            
+            var datePickerElementsWidth = prevNextButtonsWidth + datePickerMonthsContainerMargin + datePickerMonthsContainerBorder;
+
+            var placeForDatePickerMonths = datePickerWidth - datePickerElementsWidth;
+            
+            var numberOfMonths = Math.floor(placeForDatePickerMonths / datePickerMonthWidth);
+            
+            var totalWidth = (numberOfMonths * datePickerMonthWidth) + datePickerElementsWidth;
+            
+            if(totalWidth > datePickerWidth) {
+                numberOfMonths = 
+                    Math.floor(placeForDatePickerMonths / (datePickerMonthWidth + datePickerElementsWidth)); 
+            }
+
             console.log("Displaying " + (numberOfMonths) + " months");
 
             return numberOfMonths;
@@ -408,7 +429,7 @@ $(function() {
         }
 
         var View = {
-
+            
             display: function() {
                 $datepicker.html( renderCalendar()).addClass('unselectable');
             },
@@ -640,15 +661,23 @@ $(function() {
 
 
     var Calendar = {
+        
+        view: null,
+        
         init: function(holidayService) {
 
             var a = Assertion.create (holidayService);
-            var v = View.create(a);
-            var c = Controller.create(holidayService, v);
+            view = View.create(a);
+            var c = Controller.create(holidayService, view);
 
-            v.display();
+            view.display();
             c.bind();
-        }
+        },
+        
+        reRender: function() {
+            view.display();
+            
+        } 
     };
 
     /**
