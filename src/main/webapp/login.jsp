@@ -23,7 +23,7 @@
                 var url = document.URL;
             
                 if(url.indexOf("login_error") != -1) {
-                    $('#login-error').show('drop', {direction: "up"}); 
+                    $('#login--error').show('drop', {direction: "up"}); 
                 } 
             });
         </script>
@@ -31,42 +31,48 @@
 
     <body>
 
-
         <div class="navbar navbar-inverse navbar-fixed-top">
             <div class="navbar-inner">
                 <div class="container_12">
                     <div class="grid_12">
                         <a class="brand" href="#">Urlaubsverwaltung</a>
-                        <div class="nav-collapse collapse">
-                            <ul class="nav">
-                                <li>
-                                    <a title="Version ${project.version} - Commit ${git.commit.id.abbrev}" href="#">Version ${project.version}</a>
-                                </li>
-                            </ul>
-                        </div>    
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="container">
+        <div class="content">
 
-            <form class="form-signin" method="post" action="j_spring_security_check">
-                <label for="j_username">Username</label>
-                <input class="input-block-level" type="text" name="j_username" id="j_username" autofocus="autofocus">
+            <div class="login">
 
-                <label for="j_password">Passwort</label>
-                <input class="input-block-level" type="password" name="j_password" id="j_password">
-                
-                <button class="btn btn-large btn-primary" type="submit">Login</button>
+                <form class="login--form" method="post" action="j_spring_security_check">
+                    <label for="j_username">Username</label>
+                    <input class="input-block-level" type="text" name="j_username" id="j_username" autofocus="autofocus">
 
-                <div id="login-error" style="display:none">
-                    Der eingegebene Nutzername oder das Passwort ist falsch.
-                </div>
-            </form>
+                    <label for="j_password">Passwort</label>
+                    <input class="input-block-level" type="password" name="j_password" id="j_password">
+
+                    <button class="btn btn-large btn-primary" type="submit">Login</button>
+
+                    <div id="login--error" style="display:none">
+                        Der eingegebene Nutzername oder das Passwort ist falsch.
+                    </div>
+                </form>
+
+            </div>
 
         </div>
 
     </body>
+
+    <footer>
+        <div class="container_12">
+            <div class="grid_12">
+                <p title="Version ${project.version} - Commit ${git.commit.id.abbrev}">
+                    synyx Urlaubsverwaltung Version ${project.version}  
+                </p>
+            </div>
+        </div>
+    </footer>
 
 </html>

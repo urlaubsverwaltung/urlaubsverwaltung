@@ -48,7 +48,7 @@
     <c:choose>
 
         <c:when test="${empty applications}">
-            <p style="margin-bottom: 4em;">
+            <p class="data-table--info">
                 <spring:message code='no.apps' />
             </p>
         </c:when>
@@ -56,7 +56,7 @@
         <c:otherwise>
 
             <%-- has css class tablesorter only because of styling, is not sortable --%>
-            <table class="app-tbl centered-tbl tablesorter overview-tbl zebra-table" cellspacing="0">
+            <table class="data-table centered-tbl tablesorter overview-tbl zebra-table" cellspacing="0">
                 <tr>
                     <th>
                         <spring:message code="state" />
@@ -83,10 +83,10 @@
                     </c:choose>
                     <tr class="${CSS_CLASS}" onclick="navigate('${formUrlPrefix}/application/${app.id}');">
                         <td>
-                            <span class="print-visible">
+                            <span class="print--visible">
                                 <spring:message code="${app.status.state}" />
                             </span>
-                            <span class="print-invisible">
+                            <span class="print--invisible">
                                  <c:choose>
                                      <c:when test="${app.status.state == 'state.waiting'}">
                                          <b style="font-size: 15px">?</b>

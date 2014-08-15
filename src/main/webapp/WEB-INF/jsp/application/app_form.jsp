@@ -41,7 +41,7 @@
 
         <uv:menu />
 
-        <div id="content">
+        <div class="content">
 
             <div class="container_12">
 

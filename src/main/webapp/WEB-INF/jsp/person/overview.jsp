@@ -67,7 +67,7 @@
 
 <uv:menu />
 
-<div id="content">
+<div class="content">
 
     <div class="container_12">
 
@@ -187,7 +187,7 @@
 
         <%@include file="./include/overview_app_list.jsp" %>
 
-        <div class="grid_12 last-element">
+        <div class="grid_12">
 
             <c:choose>
                 <c:when test="${person.id == loggedUser.id}">

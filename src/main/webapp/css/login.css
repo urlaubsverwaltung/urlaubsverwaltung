@@ -1,21 +1,28 @@
-/* 
-    Document   : login
-    Created on : 06.12.2011, 12:46:11
-    Author     : Aljona Murygina (original: Johannes Reuter)
-    Description:
-        CSS for login page.
-*/
+
+/* OVERWRITE COMMON STYLING */
 
 body {
-    padding-top: 200px;
-    padding-bottom: 40px;
     background-color: #f5f5f5;
 }
 
-.form-signin {
+.content {
+    margin-top: 17em; 
+}
+
+/**************************************************************************
+  
+  LOGIN MODULE
+  
+**************************************************************************/
+
+.login {
+    /* Ok */
+}
+
+.login--form {
     max-width: 300px;
-    padding: 19px 29px 29px;
-    margin: 0 auto 20px;
+    padding: 18px 30px 30px;
+    margin: 0 auto 30px;
     background-color: #fff;
     border: 1px solid #e5e5e5;
     -webkit-border-radius: 5px;
@@ -25,24 +32,75 @@ body {
     -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
     box-shadow: 0 1px 2px rgba(0,0,0,.05);
 }
-.form-signin .form-signin-heading,
-.form-signin .checkbox {
-    margin-bottom: 10px;
-}
-.form-signin input[type="text"],
-.form-signin input[type="password"] {
+
+.login--form input[type="text"],
+.login--form input[type="password"] {
     font-size: 16px;
     height: auto;
-    margin-bottom: 15px;
-    padding: 7px 9px;
+    margin-bottom: 18px;
+    padding: 6px 12px;
 }
 
-#login-error {
+.login--form button {
+    margin-top: 6px;
+}
+
+#login--error {
     border: 1px solid #E76757;
     background: url("../images/alarm_16.png") no-repeat 1% 40%;
     background-color: #FFE3E3;
-    padding: 0.5em 0.5em 0.5em 2.25em;
-    margin-top: 1em;
+    padding: 6px 6px 6px 30px;
+    margin-top: 18px;
+}
+
+
+
+/**************************************************************************
+  
+  RESPONSIVENESS 
+  
+**************************************************************************/
+
+/* Narrow desktop */
+@media all and (max-width: 960px) {
+    /* Ok */
+}
+
+/* Tablet */
+@media all and (max-width: 768px) {
+    /* Ok */
+    
+}
+
+/* Small Tablet */
+@media all and (max-width: 600px) {
+    /* Ok */
+}
+
+/* Mobile */
+@media all and (max-width: 480px) {
+
+    #content {
+        margin-top: 10em;
+    }
+    
+    .btn-large {
+        width: 100%;
+    }
+    
+    .login {
+        margin-top: 10em;
+    }
+    
+    .login--form {
+        width: auto;
+        margin: 0 auto 30px;
+        padding: 0;
+        background: none;
+        border: none;
+        box-shadow: none;
+    }
+
 }
 
 

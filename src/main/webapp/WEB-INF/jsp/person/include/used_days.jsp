@@ -19,8 +19,8 @@
 
         <tr class="odd">
             <th>&nbsp;</th>
-            <td class="center"><b><spring:message code="state.allowed" /></b></td>
-            <td class="center"><b><spring:message code="state.waiting" /></b></td>
+            <td class="is-centered"><b><spring:message code="state.allowed" /></b></td>
+            <td class="is-centered"><b><spring:message code="state.waiting" /></b></td>
         </tr>
 
         <c:forEach items="${usedDaysOverview.usedDays}" var="usedDays" varStatus="loopStatus">
@@ -28,7 +28,7 @@
                 <th>
                     <spring:message code="${usedDays.key.vacationTypeName}" />
                 </th>
-                <td class="center">
+                <td class="is-centered">
                     <c:set var="days" value="${usedDays.value.map[ALLOWED] + 0}" />
                     <c:choose>
                         <c:when test="${days <= 1.00 && days > 0.50}">
@@ -40,7 +40,7 @@
                     </c:choose>
                     <spring:message code="${numberOfDays}" arguments="${days}" />
                 </td>
-                <td class="center">
+                <td class="is-centered">
                     <c:set var="days" value="${usedDays.value.map[WAITING] + 0}" />
                     <c:choose>
                         <c:when test="${days <= 1.00 && days > 0.50}">

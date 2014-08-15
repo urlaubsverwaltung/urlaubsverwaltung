@@ -1,11 +1,24 @@
-/* 
-    Document   : main
-    Created on : 06.12.2011, 12:50:16
-    Author     : Aljona Murygina
-    Description:
-        Main stylesheet of web application.
-*/
+/**************************************************************************
+  
+  COMMON STYLING
+  
+**************************************************************************/
 
+body {
+    font-family: Verdana,sans-serif;
+    font-size: 12px;
+    margin: 0;
+}
+
+footer {
+    color: #aaa;
+    font-size: 11px;
+    text-align: center;
+}
+
+.content {
+    margin-top: 7em;
+}
 
 a {
     color: black;
@@ -15,456 +28,15 @@ a:hover {
     color: #0083CC;
 }
 
-.logout {
-    color: #0083CC;
-}
-
-.logout:hover {
-    color:white;
-}
-
-/* Header */
-
-#header, #top-menu {
-    margin: 0px 0px 10px 0px;
-}	
-
-#top-menu {
-    background: none repeat scroll 0 0 #444444;
-    color: #FFFFFF;
-    font-size: 0.8em;
-    height: 1.5em;
-    padding: 2px 8px 0 6px;
-    text-align: right;
-    -moz-box-shadow: 2px 2px 5px #444444;
-    -webkit-box-shadow: 2px 2px 5px #444444;
-    box-shadow: 2px 2px 5px #444444;
-}	
-
-#header {
-    background: url("../images/synyx-logo-transp.jpg") no-repeat 5% 20%;
-    border-bottom: 1px solid grey;
-    height: 100px;
-    padding-bottom: 10px;
-    padding-left: 262px;
-    padding-top: 40px;
-}
-
-#header {
-    /* background-color: #E4E5E7; */
-    color: black;
-    padding: 4px 8px 35px 6px;
-    position: relative;
-}
-
-#header a {
-    color: #505050;
-}
-
-#header h1 {
-    padding-left: 16em;
-    padding-top: 0.5em;
-    font-size: 2.25em;
-}
-
-#main-menu {
-    bottom: 0;
-    position: absolute;
-    margin-left: 1.25em;
-}
-
-#main-menu li {
-    float: left;
-    list-style-type: none;
-    margin: 0 6px 5px 0;
-    padding: 0;
-    white-space: nowrap;
-}
-
-#main-menu li a {
-    -moz-border-bottom-colors: none;
-    -moz-border-image: none;
-    -moz-border-left-colors: none;
-    -moz-border-right-colors: none;
-    -moz-border-top-colors: none;
-    background-color: #CCCCCC;
-    border-color: #AAAAAA #AAAAAA #CCCCCC;
-    border-style: solid;
-    border-width: 1px;
-    color: #444444;
-    font-weight: bold;
-    padding: 4px 10px;
-}
-
-#main-menu li a:hover {
-    background: none repeat scroll 0 0 #CCCCCC;
-    color: #0083CC;
-    text-decoration: underline;
-}
-
-#main-menu li a.selected, #main-menu li a.selected:hover {
-    background-color: grey;
-    border: 1px solid grey;
-    color: white;
-}
-
-body {
-    font-family: Verdana,sans-serif;
-    font-size: 12px;
-    margin: 0;
-}
-
-
-#content {
-    margin-top: 7em;
-}
-
-.last-element {
-    margin-bottom: 4em;
-}
-
-#staff-list td {
-    /*    padding: 5px 0px 5px 15px;*/
-    padding: 0.4em;
-}
-
-#staff-list tr:hover {
-   cursor: pointer;
-}
-
-th.attributes {
-    padding: 7px 0px 7px 15px;
-    /*text-align: left;*/
-    /*width: auto;*/
-}	
-
-th.vac {
-    padding: 7px 0px 7px 0px;
-    /*text-align: left;*/
-    /*width: 20%;*/
-}
-
-td.vac {
+.is-centered {
     text-align: center;
 }
 
-#staff-list {
-    width: 100%; 
-    font-size: 1em;
-    border: 1px solid #EAF2D3;
-    margin-bottom: 4em;
-}
-
-#staff-list th {
-    background-color: #ABC452;
-    padding: 0.5em;
-}
-
-.btn-right {
-    float: right;
-    margin-bottom: 1em;
-    margin-left: 0.5em;
-}
-
-.btn-left {
-    float: left;
-    margin-bottom: 1em;
-    margin-left: 0.5em;
-}
-
-div.btn-group-legend {
-    float: right;
-    margin-bottom: 1em;
-    margin-left: 0.5em;
-    font-size: 13px;
-}
-
-/* zebra table with for each loop status */
-tr.odd {
-    background-color: #EAF2D3
-}
-
-tr.even {
-    background-color: #FFFFFF
-}
-
-/* zebra table with jquery */
-tr.alt td {
-    background: #EAF2D3
-}
-
-/* mouse over rows */
-tr.over td {
-    /*background: #E6EEEE;*/
-    background: #DEEFA4;
-}
-
-#person-tbl {
-    width: 100%;
-    font-size: 1.05em; 
-    border-bottom: 1px solid #D7D7D7;
-    border-right: 1px solid #D7D7D7;
-}
-
-#person-tbl th,  #person-tbl td {
-    text-align: left;
-    padding: 5px 0px 5px 15px;
-    border-left: 1px solid #D7D7D7;
-    border-top: 1px solid #D7D7D7;
-}
-
-#person-tbl th {
-    width: 37%;
-}
-
-.data {
-    border: 1px solid #D7D7D7; 
-    padding: 2em 0 5em 2em; 
-    margin-left:3em;
-    /*    height: 31.95em;*/
-}
-
-#tbl-data th {
-    text-align: left;
-    width:44%;
-}
-
-#tbl-data {
-    float:left;
-}
-
-
-.td-pic {
-    width: 15%;
-}
-
-#person-tbl td#td-img {
-    padding: 5px 0px 5px 0px;
-    text-align: center;
-}
-
-#person-form-tbl {
-    width: 90%;
-    border: 1px solid #D7D7D7;
-    padding: 2em 0em 2em 2em;
-}
-
-#person-form-tbl th {
-    width: 40%;
-    text-align: left;
-    padding-right: 1em;
-}
-
-
-.app-form {
-    border: 1px solid #D7D7D7;
-    padding: 1em 2em 2em 2em; 
-    margin:0;
-}
-
-.tbl-right {
-    text-align: left;
-    padding-left: 3em;
-}
-
-#date-to {
-    padding-left: 1em;
-}
-
-#error-div {
-/*    width: 43.5em;*/
-    margin-bottom: 2em;
-    background: url("../images/alarm_16.png") no-repeat 1% 40%;
-    border: 1px solid #E76757;
-    background-color: #FFE3E3;
-    padding: 0.5em 0.5em 0.5em 2.5em;
-    color: #B94A48;
-}
-
-
-#reject-error {
-    margin-top: 1em;
-    margin-bottom: 1em;
-    width:75%;
-    border: 1px solid #E76757;
-    background: url("../images/alarm_16.png") no-repeat 1% 40%;
-    background-color: #FFE3E3;
-    padding: 0.5em 0.5em 0.5em 2.25em;
-}
-
-#reject-reason {
-    border: 1px solid #D7D7D7;
-    padding: 1em 2em 1em 2em;
-    margin:0;
-}
-
-.app {
-    border: 1px solid #D7D7D7; 
-    padding: 1em 2em 1em 2em; 
-    margin:0;
-    height: 33em;
-}
-
-.app-tbl {
-    width: 100%;
-    font-size: 1.05em;
-    border: 1px solid #EAF2D3;
-    margin-bottom: 4em;
-    /*    border-bottom: 1px solid #D7D7D7;
-        border-right: 1px solid #D7D7D7;
-        border-left: 1px solid #D7D7D7;*/
-}
-
-.app-tbl tr:hover {
-    cursor: pointer;
-}
-
-.app-tbl th, .app-tbl td {
-    /*text-align: left;*/
-    padding: 0.55em;
-
-}
-
-.app-tbl th {
-    background-color: #ABC452;
-}
-
-.app-detail td, .app-detail th {
-    /*text-align: left;*/
-    padding: 0.55em;
-}
-
-.app-detail td {
-    width:30%;
-}
-
-.app-detail {
-    width: 100%;
-    border: 1px solid #EAF2D3;
-    font-size: 1.05em;
-    margin-right:1em;
-}
-
-.tbl-margin-top {
-    margin-top:2em;
-}
-
-.tbl-margin-bottom {
-    margin-bottom:2em;
-}
-
-.user-pic {
-    padding: 3px;
-}
-
-.overview-header legend p {
-    display: inline-block;
-    color:#516310;
-    font-weight: 100;
-    vertical-align: middle;
-    margin: 0;
-}
-
-.overview-header .selector, .sicknote-button {
-    float: right;
-    margin-left: 0.5em;
-}
-
-.selector button {
-    font-size: 14px;
-}
-
-.selector ul.dropdown-menu {
-    min-width: 105px;
-    font-size: 12px;
-}
-
-.selector ul.dropdown-menu {
-    max-height: 190px;
-    overflow-y: auto;
-}
-
-#staff-list .td-action  {
-    text-align: center;
-    padding: 0px;
-}
-
-#data {
-    width: 100%;
-}
-
-#year-navi {
-    margin-bottom: 20px;
-}
-
-
-/* Buttons */
-
-#reject {
-    margin-top: 1em;
-    text-align:left;
-}
-
-.confirm-green {
-    border: 1px solid #D7D7D7;
-    /*    border: 1px solid #EAF2D3;*/
-    /*    background-color: #FFFFFF;*/
-    background-color: #EAF2D3;
-    padding: 1em 1em 1em 2.5em;
-    margin-top:1em;
-}
-
-.confirm-red {
-    border: 1px solid #E76757;
-    background-color: #FFE3E3;
-    padding: 1em 1em 1em 2.5em;
-    margin-top:1em;
-}
-
-.save {
-    background-image: url("../images/filesave.png");
-    background-repeat: no-repeat;
-    background-position: 5% 50%;
-    padding-left: 2em;
-}
-
-.error {
-    color:#B94A48;
-}
-
-input.error, textarea.error {
-    border-color: #B94A48;
-}
-
-#errorpage-exception {
-    margin-top: 80px;  
-}
-
-#errorpage {
-    background-image: url("../images/errorpage.png");
-    background-repeat: no-repeat;
-    min-height: 550px;
-    margin-top: 80px;
-}
-
-#error-link {
-    text-decoration: none;
-    display: block;
-    width: 99px;
-    height: 44px;
-    position: absolute;
-    top: 41.5em;
-    left: 35.75em;
-}
-
-.form-textarea {
-    width: 96%;
-    min-height: 6em;
-}
-
-/* 
-Overriding bootstrap stuff
-*/
+/**************************************************************************
+  
+  HEADER
+  
+**************************************************************************/
 
 .navbar .nav {
     float: right;
@@ -472,7 +44,6 @@ Overriding bootstrap stuff
 }
 
 .navbar .nav > li > a {
-    /*    color: #0083CC;*/
     color: #555555;
     text-shadow: none;
     padding: 15px 18px 11px;
@@ -482,12 +53,10 @@ Overriding bootstrap stuff
 
 .navbar .nav > li > a:hover {
     color: #0083CC;
-    /*    color: #555555;*/
     cursor: pointer;
 }
 
 .navbar .brand {
-    /*    color: #555555; */
     color: #516310;
     background: url("../images/synyx-logo-2.jpg") no-repeat 10% 50%;
     padding: 12px 50px 12px;
@@ -495,7 +64,7 @@ Overriding bootstrap stuff
 }
 
 .navbar-inner {
-    background-image: none; 
+    background-image: none;
     background-color: #F8F8F8;
     min-height: 45px;
 }
@@ -519,6 +88,264 @@ ul.icons-on-top [class^="icon-"], ul.icons-on-top [class*=" icon-"] {
     vertical-align: top !important;
 }
 
+
+/**************************************************************************
+  
+  TABLES
+  
+**************************************************************************/
+
+.data-table {
+    width: 100%;
+    border: 1px solid #EAF2D3;
+    font-size: 13px;
+    margin-bottom: 30px;
+}
+
+.data-table tr:hover {
+    cursor: pointer;
+}
+
+.data-table th {
+    background-color: #ABC452;
+    padding: 6px;
+}
+
+.data-table td {
+    padding: 6px; 
+}
+
+/* zebra table with for each loop status */
+tr.odd {
+    background-color: #EAF2D3
+}
+
+tr.even {
+    background-color: #FFFFFF
+}
+
+/* zebra table with jquery */
+tr.alt td {
+    background: #EAF2D3
+}
+
+/* mouse over rows */
+tr.over td {
+    background: #DEEFA4;
+}
+
+.tablesorter th, .tablesorter td {
+    border: 1px solid #d7d7d7;
+}
+
+th.tablesorter-headerDesc, th.tablesorter-headerAsc {
+    background-color: #99AF4C !important;
+}
+
+.centered-tbl td {
+    text-align: center;
+}
+
+/* Info text if no data to display table */
+.data-table--info {
+    margin-bottom: 30px;  
+}
+
+/**************************************************************************
+  
+  BUTTONS
+  
+**************************************************************************/
+
+.btn-right {
+    float: right;
+    margin-bottom: 1em;
+    margin-left: 0.5em;
+}
+
+.btn-left {
+    float: left;
+    margin-bottom: 1em;
+    margin-left: 0.5em;
+}
+
+div.btn-group-legend {
+    float: right;
+    margin-bottom: 1em;
+    margin-left: 0.5em;
+    font-size: 13px;
+}
+
+button.btn, a.btn, input.btn {
+    font-size: 14px;
+}
+
+
+/**************************************************************************
+  
+  ERROR WINDOWS
+  
+**************************************************************************/
+
+#error-div {
+/*    width: 43.5em;*/
+    margin-bottom: 2em;
+    background: url("../images/alarm_16.png") no-repeat 1% 40%;
+    border: 1px solid #E76757;
+    background-color: #FFE3E3;
+    padding: 0.5em 0.5em 0.5em 2.5em;
+    color: #B94A48;
+}
+
+#reject-error {
+    margin-top: 1em;
+    margin-bottom: 1em;
+    width:75%;
+    border: 1px solid #E76757;
+    background: url("../images/alarm_16.png") no-repeat 1% 40%;
+    background-color: #FFE3E3;
+    padding: 0.5em 0.5em 0.5em 2.25em;
+}
+
+
+/**************************************************************************
+  
+  DETAILS TABLE
+  
+**************************************************************************/
+
+/* TODO: rename everywhere to detail-table */
+
+.app-detail td, .app-detail th {
+    padding: 0.55em;
+}
+
+.app-detail th {
+    text-align: left;
+}
+
+.app-detail td {
+    width: 30%;
+}
+
+.app-detail {
+    width: 100%;
+    border: 1px solid #EAF2D3;
+    font-size: 1.05em;
+    margin-right:1em;
+}
+
+/**************************************************************************
+  
+  OVERVIEW SPECIFIC STYLING RULES
+  
+**************************************************************************/
+
+.overview--user-pic {
+    padding: 3px;
+}
+
+/**************************************************************************
+  
+  LEGEND
+  
+**************************************************************************/
+
+/* TODO: rename to header or legend or something else, but remove overview prefix */
+
+.overview-header legend p {
+    display: inline-block;
+    color: #516310;
+    font-weight: 100;
+    vertical-align: middle;
+    margin: 0;
+}
+
+.overview-header .selector {
+    float: right;
+    margin-left: 0.5em;
+}
+
+.selector button {
+    font-size: 14px;
+}
+
+.selector ul.dropdown-menu {
+    min-width: 105px;
+    font-size: 12px;
+}
+
+.selector ul.dropdown-menu {
+    max-height: 190px;
+    overflow-y: auto;
+}
+
+
+/**************************************************************************
+  
+  ALLOWING / REJECTING / etc. and application
+  
+**************************************************************************/
+
+#reject {
+    margin-top: 1em;
+    text-align:left;
+}
+
+.confirm-green {
+    border: 1px solid #D7D7D7;
+    /*    border: 1px solid #EAF2D3;*/
+    /*    background-color: #FFFFFF;*/
+    background-color: #EAF2D3;
+    padding: 1em 1em 1em 2.5em;
+    margin-top:1em;
+}
+
+.confirm-red {
+    border: 1px solid #E76757;
+    background-color: #FFE3E3;
+    padding: 1em 1em 1em 2.5em;
+    margin-top:1em;
+}
+
+/**************************************************************************
+  
+  ERROR PAGE
+  
+**************************************************************************/
+
+#errorpage-exception {
+    margin-top: 80px;  
+}
+
+#errorpage {
+    background-image: url("../images/errorpage.png");
+    background-repeat: no-repeat;
+    min-height: 550px;
+    margin-top: 80px;
+}
+
+#error-link {
+    text-decoration: none;
+    display: block;
+    width: 99px;
+    height: 44px;
+    position: absolute;
+    top: 41.5em;
+    left: 35.75em;
+}
+
+/**************************************************************************
+  
+  FORM
+  
+**************************************************************************/
+
+.form-textarea {
+    width: 96%;
+    min-height: 6em;
+}
+
 .form-select {
     width: 90%;
     height: auto;
@@ -531,44 +358,24 @@ select {
     margin-bottom: 0;
 }
 
-.actions .btn {
-    margin-top: 0.5em;
+.form-horizontal .control-label {
+    text-align: left;
 }
 
-.actions {
-    margin-top: 3em;
+.error {
+    color:#B94A48;
 }
 
-td.center, th.center {
-   text-align: center !important;  
-}
-
-tr.border-top {
-    border-top: 2px solid #D7D7D7
+input.error, textarea.error {
+    border-color: #B94A48;
 }
 
 
-/* sortable table
-*/
-.tablesorter th:hover {
-    cursor: pointer;
-}
-
-.overview-tbl th:hover {
-    cursor: default;
-}
-
-.tablesorter th, .tablesorter td {
-    border: 1px solid #D7D7D7;
-}
-
-th.tablesorter-headerDesc, th.tablesorter-headerAsc {
-   background-color: #99AF4C !important;
-}
-
-.centered-tbl td {
-    text-align: center;
-}
+/**************************************************************************
+  
+  DATEPICKER 
+  
+**************************************************************************/
 
 /* nice looking for public holidays in datepicker */
 td.notworkday a {
@@ -586,26 +393,16 @@ td.holiday a {
     background: #FFEDA0 !important;
 }
 
-.app-detail th {
-    text-align: left;
-}
-
-.td-img {
-    text-align: center;
-}
-
 /* vacation types like special leave, etc. should be highlighted */
 td.SPECIALLEAVE, td.UNPAIDLEAVE, td.OVERTIME {
     color: #C13A33;
 }
 
-.form-horizontal .control-label {
-    text-align: left;
-}
-
-button.btn, a.btn, input.btn {
-    font-size: 14px;
-}
+/**************************************************************************
+  
+  TODO: STUFF TO BE SORTED... 
+  
+**************************************************************************/
 
 div.vacation-data .control-label {
     width: 40%; 
@@ -637,7 +434,25 @@ tr.inactive td {
   color: lightgrey !important;
 }
 
-/* print css */
+b.waiting-icon {
+    font-size: 15px;
+}
+
+.dropdown-menu li a:hover b.waiting-icon {
+    color: #333333 !important;
+}
+
+legend .dropdown-menu {
+    font-size: 12px;
+}
+
+
+/**************************************************************************
+  
+  PRINT STYLING RULES
+  
+**************************************************************************/
+
 @media print {
     .btn, .btn-primary, .btn-danger, .btn-success { 
         display: none; 
@@ -656,7 +471,7 @@ tr.inactive td {
         display: none;
     }
     
-    #content {
+    .content {
         margin-top: 0;
     }
     
@@ -664,12 +479,16 @@ tr.inactive td {
         display: none;
     }
     
-    .td-action, .user-pic, .print-invisible {
+    .print-invisible {
         display: none !important;
     }
     
-    .print-visible {
+    .print--visible {
         display: block !important;
+    }
+    
+    .print--invisible {
+        display: none !important; 
     }
     
     div.print-box {
@@ -721,18 +540,33 @@ tr.inactive td {
     }
 }
 
-.print-visible {
+.print--visible {
     display: none;
 }
 
-b.waiting-icon {
-    font-size: 15px;
+/**************************************************************************
+  
+  RESPONSIVENESS
+  
+**************************************************************************/
+
+/* Narrow desktop */
+@media all and (max-width: 960px) {
+    
+    /* Ok */
 }
 
-.dropdown-menu li a:hover b.waiting-icon {
-    color: #333333 !important;
+/* Tablet */
+@media all and (max-width: 768px) {
+    
 }
 
-legend .dropdown-menu {
-    font-size: 12px;
+/* Small Tablet */
+@media all and (max-width: 600px) {
+    
+}
+
+/* Mobile */
+@media all and (max-width: 480px) {
+    
 }

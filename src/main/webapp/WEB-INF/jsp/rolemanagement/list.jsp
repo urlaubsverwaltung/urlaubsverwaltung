@@ -29,7 +29,7 @@
 
         <uv:menu />
 
-        <div id="content">
+        <div class="content">
             <div class="container_12">
 
                 <div class="grid_12">
@@ -53,22 +53,22 @@
                         </c:when>
 
                         <c:otherwise>
-                            <table id="staff-list" class="sortable-tbl tablesorter zebra-table" cellspacing="0">
+                            <table class="data-table sortable-tbl tablesorter zebra-table" cellspacing="0">
                                 <thead>
                                 <tr>
-                                    <th class="attributes" colspan="2"><spring:message code="login" /></th>
-                                    <th class="attributes"><spring:message code="firstname" /></th>
-                                    <th class="attributes"><spring:message code="name" /></th>
-                                    <th class="attributes"><spring:message code="email" /></th>
-                                    <th class="attributes"><spring:message code="role" /></th>
-                                    <th class="attributes"><spring:message code="user.state" /></th>
+                                    <th colspan="2"><spring:message code="login" /></th>
+                                    <th><spring:message code="firstname" /></th>
+                                    <th><spring:message code="name" /></th>
+                                    <th><spring:message code="email" /></th>
+                                    <th><spring:message code="role" /></th>
+                                    <th><spring:message code="user.state" /></th>
                                     <th><spring:message code="edit" /></th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <c:forEach items="${persons}" var="person" varStatus="loopStatus">
                                     <tr>
-                                        <td class="td-img"><img src="<c:out value='${gravatarUrls[person]}?s=20&d=mm'/>" /></td>
+                                        <td class="is-centered"><img src="<c:out value='${gravatarUrls[person]}?s=20&d=mm'/>" /></td>
                                         <td><c:out value="${person.loginName}"/></td>
                                         <td><c:out value="${person.firstName}"/></td>
                                         <td><c:out value="${person.lastName}"/></td>
@@ -88,7 +88,7 @@
                                                 </c:otherwise>
                                             </c:choose>
                                         </td>
-                                        <td class="td-action"><a href="${formUrlPrefix}/management/${person.id}"><img src="<spring:url value='/images/edit.png' />" /></a></td>
+                                        <td class="is-centered"><a href="${formUrlPrefix}/management/${person.id}"><img src="<spring:url value='/images/edit.png' />" /></a></td>
                                     </tr>    
                                 </c:forEach>
                                 </tbody>

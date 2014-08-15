@@ -41,7 +41,7 @@
 <spring:url var="formUrlPrefix" value="/web"/>
 
 
-<div id="content">
+<div class="content">
 <div class="container_12">
 
 <c:choose>

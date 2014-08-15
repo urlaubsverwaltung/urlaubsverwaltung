@@ -156,15 +156,15 @@
                 </c:when>
 
                 <c:otherwise>
-                    <table id="staff-list" cellspacing="0" class="sortable-tbl tablesorter zebra-table">
+                    <table cellspacing="0" class="data-table sortable-tbl tablesorter zebra-table">
                         <thead>
                         <tr>
-                            <th class="attributes"><spring:message code="firstname"/></th>
-                            <th class="attributes"><spring:message code="name"/></th>
-                            <th class="vac"><spring:message code='overview.entitlement.per.year' /></th>
-                            <th class="vac"><spring:message code='overview.actual.entitlement' /></th>
-                            <th class="vac"><spring:message code='overview.remaining.days.last.year' /></th>
-                            <th class="vac"><spring:message code="left"/></th>
+                            <th><spring:message code="firstname"/></th>
+                            <th><spring:message code="name"/></th>
+                            <th><spring:message code='overview.entitlement.per.year' /></th>
+                            <th><spring:message code='overview.actual.entitlement' /></th>
+                            <th><spring:message code='overview.remaining.days.last.year' /></th>
+                            <th><spring:message code="left"/></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -172,7 +172,7 @@
                             <tr>
                                 <td><c:out value="${person.firstName}"/></td>
                                 <td><c:out value="${person.lastName}"/></td>
-                                <td class="vac">
+                                <td class="is-centered">
                                     <c:choose>
                                         <c:when test="${accounts[person] != null}">
                                             <fmt:formatNumber maxFractionDigits="1"
@@ -183,7 +183,7 @@
                                         </c:otherwise>
                                     </c:choose>
                                 </td>
-                                <td class="vac">
+                                <td class="is-centered">
                                     <c:choose>
                                         <c:when test="${accounts[person] != null}">
                                             <fmt:formatNumber maxFractionDigits="1"
@@ -194,7 +194,7 @@
                                         </c:otherwise>
                                     </c:choose>
                                 </td>
-                                <td class="vac">
+                                <td class="is-centered">
                                     <c:choose>
                                         <c:when test="${accounts[person] != null}">
                                             <fmt:formatNumber maxFractionDigits="1"
@@ -205,7 +205,7 @@
                                         </c:otherwise>
                                     </c:choose>
                                 </td>
-                                <td class="vac">
+                                <td class="is-centered">
                                     <c:choose>
                                         <c:when test="${leftDays[person] != null && remLeftDays[person] != null}">
                                             <fmt:formatNumber maxFractionDigits="1" value="${leftDays[person]}"/>

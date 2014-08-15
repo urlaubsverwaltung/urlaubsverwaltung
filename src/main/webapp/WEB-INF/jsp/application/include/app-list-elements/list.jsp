@@ -24,7 +24,7 @@
     <c:otherwise>     
 
         <%-- has css class tablesorter only because of styling, no sorting here because date sorting behaves strange--%>
-        <table class="app-tbl centered-tbl zebra-table tablesorter sortable-tbl" cellspacing="0">
+        <table class="data-table centered-tbl zebra-table tablesorter sortable-tbl" cellspacing="0">
             <thead>
             <tr>
                 <th>

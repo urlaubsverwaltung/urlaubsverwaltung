@@ -17,17 +17,19 @@
 <c:choose>
 
     <c:when test="${empty sickNotes}">
-        <spring:message code="sicknotes.none" />
+        <p class="data-table--info">
+            <spring:message code="sicknotes.none" />
+        </p>
     </c:when>
 
     <c:otherwise>
-        <table class="app-tbl centered-tbl sortable-tbl tablesorter zebra-table" cellspacing="0">
+        <table class="data-table centered-tbl sortable-tbl tablesorter zebra-table" cellspacing="0">
             <thead>
             <tr>
                 <th><spring:message code="sicknotes.time" /></th>
                 <th><spring:message code="work.days" /></th>
                 <th><spring:message code="sicknotes.aub.short" /></th>
-                <th class="print-invisible"><spring:message code="app.date.overview" /></th>
+                <th class="print--invisible"><spring:message code="app.date.overview" /></th>
             </tr>
             </thead>
             <tbody>
@@ -50,7 +52,7 @@
                     <td>
                         <uv:date date="${sickNote.aubStartDate}" /> - <uv:date date="${sickNote.aubEndDate}" />
                     </td>
-                    <td class="print-invisible">
+                    <td class="print--invisible">
                         <uv:date date="${sickNote.lastEdited}" />
                     </td>
             </c:forEach>

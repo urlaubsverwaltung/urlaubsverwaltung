@@ -14,30 +14,30 @@
     <a class="btn btn-right" href="${formUrlPrefix}/staff/new"><i class="icon-plus"></i><i class="icon-user"></i>&nbsp;<spring:message code="table.new.person" /></a>
 </sec:authorize>
 
-<table id="staff-list" cellspacing="0" class="sortable-tbl tablesorter zebra-table">
+<table cellspacing="0" class="data-table sortable-tbl tablesorter zebra-table">
     <thead>
     <tr>
-        <th class="attributes" colspan="2"><spring:message code="login" /></th>
-        <th class="attributes"><spring:message code="firstname" /></th>
-        <th class="attributes"><spring:message code="name" /></th>
-        <th class="attributes"><spring:message code="email" /></th>
-        <th class="vac"><spring:message code="entitlement" /></th>
-        <th class="vac"><spring:message code="left" /></th>
+        <th colspan="2"><spring:message code="login" /></th>
+        <th><spring:message code="firstname" /></th>
+        <th><spring:message code="name" /></th>
+        <th><spring:message code="email" /></th>
+        <th class="is-centered"><spring:message code="entitlement" /></th>
+        <th class="is-centered"><spring:message code="left" /></th>
         <sec:authorize access="hasRole('OFFICE')">
-            <th><spring:message code="table.apply" /></th>
-            <th><spring:message code="edit" /></th>
+            <th class="print--invisible"><spring:message code="table.apply" /></th>
+            <th class="print--invisible"><spring:message code="edit" /></th>
         </sec:authorize>    
     </tr>
     </thead>
     <tbody>
     <c:forEach items="${persons}" var="person" varStatus="loopStatus">
         <tr onclick="navigate('${formUrlPrefix}/staff/${person.id}/overview');">
-            <td class="td-img"><img src="<c:out value='${gravatarUrls[person]}?s=20&d=mm'/>" /></td>
+            <td class="is-centered"><img class="print--invisible" src="<c:out value='${gravatarUrls[person]}?s=20&d=mm'/>" /></td>
             <td><c:out value="${person.loginName}"/></td>
             <td><c:out value="${person.firstName}"/></td>
             <td><c:out value="${person.lastName}"/></td>
             <td><a href="mailto:${person.email}"><c:out value="${person.email}"/></a></td>
-            <td class="vac">
+            <td class="is-centered">
                 <c:choose>
                     <c:when test="${accounts[person] != null}">
                         <fmt:formatNumber maxFractionDigits="1" value="${accounts[person].annualVacationDays}"/> +
@@ -48,7 +48,7 @@
                     </c:otherwise>    
                 </c:choose>
             </td>
-            <td class="vac">
+            <td class="is-centered">
                 <c:choose>
                     <c:when test="${leftDays[person] != null && remLeftDays[person] != null}">
                         <fmt:formatNumber maxFractionDigits="1" value="${leftDays[person]}"/>
@@ -63,8 +63,8 @@
                 </c:choose>
             </td>
             <sec:authorize access="hasRole('OFFICE')">
-            <td class="td-action"><a href="${formUrlPrefix}/${person.id}/application/new"><img src="<spring:url value='/images/new window.png' />" /></a></td>
-            <td class="td-action"><a href="${formUrlPrefix}/staff/${person.id}/edit"><img src="<spring:url value='/images/edit.png' />" /></a></td>
+            <td class="is-centered print--invisible"><a href="${formUrlPrefix}/${person.id}/application/new"><img src="<spring:url value='/images/new window.png' />" /></a></td>
+            <td class="is-centered print--invisible"><a href="${formUrlPrefix}/staff/${person.id}/edit"><img src="<spring:url value='/images/edit.png' />" /></a></td>
             </sec:authorize>
         </tr>    
     </c:forEach>

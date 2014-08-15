@@ -78,7 +78,7 @@
 
 <uv:menu />
 
-<div id="content">
+<div class="content">
     <div class="container_12">
 
         <div class="grid_12">
@@ -107,13 +107,13 @@
                             </c:forEach>
                         </ul>
                     </div>
-                    <a class="btn sicknote-button" href="${formUrlPrefix}/sicknote/new">
+                    <a class="btn btn-right" href="${formUrlPrefix}/sicknote/new">
                         <i class="icon-plus"></i>&nbsp;<spring:message code="sicknotes.new" />
                     </a>
                     <a class="btn btn-right" href="#" media="print" onclick="window.print(); return false;">
                         <i class="icon-print"></i>&nbsp;<spring:message code='Print' />
                     </a>
-                    <a href="#changeViewModal" role="button" class="btn sicknote-button" data-toggle="modal">
+                    <a href="#changeViewModal" role="button" class="btn btn-right" data-toggle="modal">
                         <i class="icon-filter"></i>&nbsp;<spring:message code="filter" />
                     </a>
                 </legend>
@@ -191,15 +191,15 @@
                 </c:when>
 
                 <c:otherwise>
-                    <table class="app-tbl centered-tbl sortable-tbl tablesorter zebra-table" cellspacing="0">
+                    <table class="data-table centered-tbl sortable-tbl tablesorter zebra-table" cellspacing="0">
                         <thead>
                         <tr>
                             <th><spring:message code="name" /></th>
                             <th><spring:message code="sicknotes.time" /></th>
                             <th><spring:message code="work.days" /></th>
                             <th><spring:message code="sicknotes.aub.short" /></th>
-                            <th class="print-invisible"><spring:message code="app.date.overview" /></th>
-                            <th class="print-invisible"><spring:message code="edit" /></th>
+                            <th class="print--invisible"><spring:message code="app.date.overview" /></th>
+                            <th class="print--invisible"><spring:message code="edit" /></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -225,10 +225,10 @@
                                 <td>
                                     <uv:date date="${sickNote.aubStartDate}" /> - <uv:date date="${sickNote.aubEndDate}" />
                                 </td>
-                                <td class="print-invisible">
+                                <td class="print--invisible">
                                     <uv:date date="${sickNote.lastEdited}" />
                                 </td>
-                                <td class="print-invisible">
+                                <td class="print--invisible">
                                     <c:if test="${sickNote.active}">
                                         <a href="${formUrlPrefix}/sicknote/${sickNote.id}/edit">
                                             <img src="<spring:url value='/images/edit.png' />" />

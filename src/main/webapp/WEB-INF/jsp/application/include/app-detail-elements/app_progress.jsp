@@ -12,7 +12,7 @@
 
 
 <!-- there are four possible status, so there are max. four lines -->
-<table class="app-detail tbl-margin-top" cellspacing="0" style="margin-bottom:2em;">
+<table class="app-detail" cellspacing="0" style="margin-top:2em; margin-bottom:2em;">
     <tr class="odd">
         <th colspan="2"><spring:message code="progress" /></th>
     </tr>

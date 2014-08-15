@@ -26,7 +26,7 @@
         <spring:url var="formUrlPrefix" value="/web" />
 
 
-        <div id="content">
+        <div class="content">
             <div class="container_12">
 
                 <form:form method="PUT" action="${formUrlPrefix}/management/${person.id}" modelAttribute="person"> 
