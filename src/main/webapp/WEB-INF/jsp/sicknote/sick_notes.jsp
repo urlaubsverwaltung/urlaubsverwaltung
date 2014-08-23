@@ -79,9 +79,9 @@
 <uv:menu />
 
 <div class="content">
-    <div class="container_12">
+    <div class="grid-container">
 
-        <div class="grid_12">
+        <div class="grid-100">
 
             <div class="overview-header">
 
@@ -92,7 +92,7 @@
                             <spring:message code="for" />&nbsp;<c:out value="${person.firstName}" />&nbsp;<c:out value="${person.lastName}" />
                         </c:if>
                     </p>
-                    <div class="btn-group btn-group-legend">
+                    <div class="btn-group btn-group-legend selector">
                         <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
                             <i class="icon-tasks"></i>&nbsp;<spring:message code='sicknotes.statistics.short' />
                             <span class="caret"></span>
@@ -169,7 +169,7 @@
 
         </div>
 
-        <div class="grid_12">
+        <div class="grid-100">
 
             <div class="second-legend">
                 <p style="float:left">
@@ -182,7 +182,7 @@
 
         </div>
 
-        <div class="grid_12">
+        <div class="grid-100">
 
             <c:choose>
 

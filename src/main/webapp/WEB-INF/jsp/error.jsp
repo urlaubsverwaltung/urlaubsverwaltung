@@ -19,15 +19,15 @@
         
         <uv:menu />
         
-        <div class="container_12">
+        <div class="grid-container">
             <c:choose>
                 <c:when test="${not empty exception.message}">
-                    <div class="grid_12" id="errorpage-exception">
+                    <div class="grid-100" id="errorpage-exception">
                         <p><c:out value="${exception.message}" /></p>
                     </div>
                 </c:when>
                 <c:otherwise>
-                    <div class="grid_12" id="errorpage">
+                    <div class="grid-100" id="errorpage">
                         <a href="${formUrlPrefix}/overview" id="error-link">&nbsp;</a>
                     </div>
                 </c:otherwise>

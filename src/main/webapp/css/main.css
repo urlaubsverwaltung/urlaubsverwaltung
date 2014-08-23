@@ -271,12 +271,12 @@ button.btn, a.btn, input.btn {
 }
 
 .selector ul.dropdown-menu {
-    min-width: 105px;
+    /*min-width: 105px;*/
     font-size: 12px;
 }
 
 .selector ul.dropdown-menu {
-    max-height: 190px;
+    max-height: 160px;
     overflow-y: auto;
 }
 

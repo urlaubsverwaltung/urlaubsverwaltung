@@ -32,7 +32,7 @@
 
 <spring:url var="formUrlPrefix" value="/web"/>
 
-    <div class="container_12" style="margin-top: 1em">
+    <div class="grid-container" style="margin-top: 1em">
 
         <a class="btn" href="${formUrlPrefix}/staff">
             <i class="icon-arrow-left"></i>&nbsp;<spring:message code="back" />
@@ -120,7 +120,7 @@
 
         </div>
         
-        <div class="grid_12">
+        <div class="grid-100">
 
             <c:choose>
                 <c:when test="${!empty param.year}">

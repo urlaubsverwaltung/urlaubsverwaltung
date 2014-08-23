@@ -19,11 +19,11 @@
 
 <div class="content">
 
-    <div class="container_12">
+    <div class="grid-container">
 
-        <div class="grid_12">
+        <div class="grid-100">
 
-            <div class="grid_6 print-box">
+            <div class="grid-50 print-box">
 
                 <div class="overview-header">
                     <legend>
@@ -123,7 +123,7 @@
               </table>  
             </div>
 
-            <div class="grid_6 print-box">
+            <div class="grid-50 print-box">
 
                 <div class="overview-header">
                     <legend>

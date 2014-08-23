@@ -42,9 +42,9 @@
 
         <div class="content">
 
-            <div class="container_12">
+            <div class="grid-container">
 
-                <div class="grid_12">
+                <div class="grid-100">
 
                     <%@include file="./include/app-list-elements/list-header.jsp" %> 
 

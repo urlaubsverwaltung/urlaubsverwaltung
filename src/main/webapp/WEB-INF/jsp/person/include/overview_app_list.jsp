@@ -6,7 +6,7 @@
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 
-<div class="grid_12">
+<div class="grid-100">
 
     <div class="overview-header">
 

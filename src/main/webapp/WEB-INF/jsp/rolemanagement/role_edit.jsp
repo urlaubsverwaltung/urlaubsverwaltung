@@ -27,11 +27,11 @@
 
 
         <div class="content">
-            <div class="container_12">
+            <div class="grid-container">
 
                 <form:form method="PUT" action="${formUrlPrefix}/management/${person.id}" modelAttribute="person"> 
 
-                    <div class="grid_8">
+                    <div class="grid-80">
 
                         <div class="overview-header">
 
@@ -72,10 +72,10 @@
                         
                     </div>
                     
-                    <div class="grid_12">&nbsp;</div>
-                    <div class="grid_12">&nbsp;</div>
+                    <div class="grid-100">&nbsp;</div>
+                    <div class="grid-100">&nbsp;</div>
                     
-                    <div class="grid_8">
+                    <div class="grid-80">
 
                         <div class="overview-header">
 
@@ -129,7 +129,7 @@
                         </div>
                     </div>
 
-                    <div class="grid_8">
+                    <div class="grid-80">
                         
                         <hr />
 

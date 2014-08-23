@@ -51,9 +51,9 @@
 
 <div class="content">
 
-    <div class="container_12">
+    <div class="grid-container">
 
-        <div class="grid_12">
+        <div class="grid-100">
 
             <div class="overview-header">
                 <legend>

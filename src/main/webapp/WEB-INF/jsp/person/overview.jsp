@@ -69,9 +69,9 @@
 
 <div class="content">
 
-    <div class="container_12">
+    <div class="grid-container">
 
-        <div class="grid_12">
+        <div class="grid-100">
 
             <c:choose>
                 <c:when test="${!empty param.year}">
@@ -95,22 +95,22 @@
 
         </div>
 
-        <div class="grid_7 print-box">
+        <div class="grid-60 print-box">
             <table class="app-detail" cellspacing="0">
                 <%@include file="../application/include/account_days.jsp" %>
             </table>
         </div>
         
-        <div class="grid_5 print-box">
+        <div class="grid-40 print-box">
             <table class="app-detail" cellspacing="0">
                 <%@include file="./include/used_days.jsp" %>
             </table>
         </div>
 
-        <div class="grid_12">&nbsp;</div>
-        <div class="grid_12">&nbsp;</div>
+        <div class="grid-100">&nbsp;</div>
+        <div class="grid-100">&nbsp;</div>
         
-        <div class="grid_12">
+        <div class="grid-100">
         
             <div id="datepicker"></div>
             
@@ -182,12 +182,12 @@
             });
         </script>
 
-        <div class="grid_12">&nbsp;</div>
-        <div class="grid_12">&nbsp;</div>
+        <div class="grid-100">&nbsp;</div>
+        <div class="grid-100">&nbsp;</div>
 
         <%@include file="./include/overview_app_list.jsp" %>
 
-        <div class="grid_12">
+        <div class="grid-100">
 
             <c:choose>
                 <c:when test="${person.id == loggedUser.id}">

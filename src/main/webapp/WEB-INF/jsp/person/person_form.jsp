@@ -42,7 +42,7 @@
 
 
 <div class="content">
-<div class="container_12">
+<div class="grid-container">
 
 <c:choose>
     <c:when test="${person.id == null}">
@@ -57,7 +57,7 @@
 
 <form:form method="${METHOD}" action="${ACTION}" modelAttribute="personForm" class="form-horizontal">
 
-<div class="grid_5 person-data">
+<div class="grid-40 person-data">
 
     <div class="overview-header">
 
@@ -178,7 +178,7 @@
 </div>
 
 
-<div class="grid_7 vacation-data">
+<div class="grid-60 vacation-data">
 
     <div class="overview-header">
 
@@ -277,11 +277,11 @@
 
 </div>
 
-<div class="grid_12">
+<div class="grid-100">
     <hr/>
 </div>
 
-<div class="grid_12">
+<div class="grid-100">
 
     <button class="btn" type="submit"><i class='icon-ok'></i>&nbsp;<spring:message code="save" /></button>
     <a class="btn" href="${formUrlPrefix}/staff"><i class='icon-remove'></i>&nbsp;<spring:message code='cancel'/></a>

@@ -10,10 +10,11 @@
 
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1"/>
         <title>Login</title>
         <link rel="shortcut icon" type="image/x-icon" href="<spring:url value='/favicon.ico?' />" />
-        <link rel="stylesheet" type="text/css" href="<spring:url value='/css/fluid_grid.css' />" />
         <link rel="stylesheet" type="text/css" href="<spring:url value='/css/bootstrap.css' />" />
+        <link rel="stylesheet" type="text/css" href="<spring:url value='/css/unsemantic-grid-responsive-tablet.css' />" />
         <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />" />
         <link rel="stylesheet" type="text/css" href="<spring:url value='/css/login.css' />" />
         <script src="<spring:url value='/jquery/js/jquery-1.9.1.js' />" type="text/javascript" ></script>
@@ -33,41 +34,47 @@
 
         <div class="navbar navbar-inverse navbar-fixed-top">
             <div class="navbar-inner">
-                <div class="container_12">
-                    <div class="grid_12">
+                <div class="grid-container">
+                    <div class="grid-100">
                         <a class="brand" href="#">Urlaubsverwaltung</a>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="content">
+        <div class="grid-container">
+            <div class="grid-100">
 
-            <div class="login">
+                <div class="content">
 
-                <form class="login--form" method="post" action="j_spring_security_check">
-                    <label for="j_username">Username</label>
-                    <input class="input-block-level" type="text" name="j_username" id="j_username" autofocus="autofocus">
+                    <div class="login">
 
-                    <label for="j_password">Passwort</label>
-                    <input class="input-block-level" type="password" name="j_password" id="j_password">
+                        <form class="login--form" method="post" action="j_spring_security_check">
+                            <label for="j_username">Username</label>
+                            <input class="input-block-level" type="text" name="j_username" id="j_username" autofocus="autofocus">
 
-                    <button class="btn btn-large btn-primary" type="submit">Login</button>
+                            <label for="j_password">Passwort</label>
+                            <input class="input-block-level" type="password" name="j_password" id="j_password">
 
-                    <div id="login--error" style="display:none">
-                        Der eingegebene Nutzername oder das Passwort ist falsch.
+                            <button class="btn btn-large btn-primary" type="submit">Login</button>
+
+                            <div id="login--error" style="display:none">
+                                Der eingegebene Nutzername oder das Passwort ist falsch.
+                            </div>
+                        </form>
+
                     </div>
-                </form>
+
+                </div>
 
             </div>
-
         </div>
 
     </body>
 
     <footer>
-        <div class="container_12">
-            <div class="grid_12">
+        <div class="grid-container">
+            <div class="grid-100">
                 <p title="Version ${project.version} - Commit ${git.commit.id.abbrev}">
                     synyx Urlaubsverwaltung Version ${project.version}  
                 </p>

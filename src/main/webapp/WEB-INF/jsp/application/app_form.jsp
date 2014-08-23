@@ -43,7 +43,7 @@
 
         <div class="content">
 
-            <div class="container_12">
+            <div class="grid-container">
 
                 <c:choose>
 
@@ -80,7 +80,7 @@
 
                         <form:form method="post" action="${actionUrl}" modelAttribute="appForm"> 
 
-                            <div class="grid_6" style="margin-bottom: 4em;">
+                            <div class="grid-50" style="margin-bottom: 4em;">
 
                             <div class="overview-header">
 
@@ -328,7 +328,7 @@
 
                             </div>
 
-                            <div class="grid_6">
+                            <div class="grid-50">
 
                                 <div class="overview-header">
 

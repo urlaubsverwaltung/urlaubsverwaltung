@@ -6,7 +6,8 @@
 
 <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="navbar-inner">
-        <div class="container_12">
+        <div class="grid-container">
+            <div class="grid-100">
             <a class="brand" href="${formUrlPrefix}/overview">Urlaubsverwaltung</a>
             <ul class="nav">
 
@@ -119,6 +120,7 @@
                 <li><a href="<spring:url value='/j_spring_security_logout' />"><i class="icon-off"></i>&nbsp;Logout</a></li>
 
             </ul>
+            </div>
         </div>
     </div>
 </div>

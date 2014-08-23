@@ -28,9 +28,9 @@
         <uv:menu />
 
         <div class="content">
-            <div class="container_12">
+            <div class="grid-container">
 
-                <div class="grid_12">
+                <div class="grid-100">
 
                     <div class="overview-header">
 
@@ -58,7 +58,7 @@
                     
                 </div>
 
-                <div class="grid_6 print-box">
+                <div class="grid-50 print-box">
                     
                     <%@include file="./include/app-detail-elements/app_info.jsp" %>
 
@@ -166,7 +166,7 @@
 
                 </div>
 
-                <div class="grid_6 print-box">
+                <div class="grid-50 print-box">
 
                     <table class="app-detail" cellspacing="0">
                         <tr class="odd">
