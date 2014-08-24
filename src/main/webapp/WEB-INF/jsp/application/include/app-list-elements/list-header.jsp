@@ -15,7 +15,7 @@
     </c:otherwise>
 </c:choose>
 
-<div class="overview-header">
+<div class="header">
 
     <legend>
         

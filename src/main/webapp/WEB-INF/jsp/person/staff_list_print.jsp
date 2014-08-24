@@ -14,7 +14,7 @@
     <script type="text/javascript">
         $(document).ready(function() {
 
-            $(".sortable-tbl").tablesorter({
+            $("table.sortable").tablesorter({
                 sortList: [[0,0]],
                 headers: {
                     2: { sorter: 'commaNumber' },
@@ -131,7 +131,7 @@
                 </c:otherwise>
             </c:choose>
 
-            <div class="overview-header">
+            <div class="header">
 
                 <legend style="margin-bottom: 17px">
 
@@ -139,7 +139,7 @@
                         <spring:message code="table.overview"/><c:out value="${displayYear}"/>
                     </p>
                     
-                    <p class="heading-date">
+                    <p style="font-size: 13px;float: right;">
                         <spring:message code="Effective"/>&nbsp;<uv:date date="${today}" />
                     </p>
 
@@ -156,7 +156,7 @@
                 </c:when>
 
                 <c:otherwise>
-                    <table cellspacing="0" class="data-table sortable-tbl tablesorter zebra-table">
+                    <table cellspacing="0" class="data-table sortable tablesorter zebra-table">
                         <thead>
                         <tr>
                             <th><spring:message code="firstname"/></th>

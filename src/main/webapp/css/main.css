@@ -32,6 +32,10 @@ a:hover {
     text-align: center;
 }
 
+[class^="icon-"], [class*=" icon-"] {
+    vertical-align: middle;
+}
+
 /**************************************************************************
   
   HEADER
@@ -88,6 +92,14 @@ ul.icons-on-top [class^="icon-"], ul.icons-on-top [class*=" icon-"] {
     vertical-align: top !important;
 }
 
+b.waiting-icon {
+    font-size: 15px;
+}
+
+.dropdown-menu li a:hover b.waiting-icon {
+    color: #333333 !important;
+}
+
 
 /**************************************************************************
   
@@ -134,16 +146,20 @@ tr.over td {
     background: #DEEFA4;
 }
 
+tr.active {
+    color: inherit;
+}
+
+tr.inactive td {
+    color: lightgrey !important;
+}
+
 .tablesorter th, .tablesorter td {
     border: 1px solid #d7d7d7;
 }
 
 th.tablesorter-headerDesc, th.tablesorter-headerAsc {
     background-color: #99AF4C !important;
-}
-
-.centered-tbl td {
-    text-align: center;
 }
 
 /* Info text if no data to display table */
@@ -214,21 +230,19 @@ button.btn, a.btn, input.btn {
   
 **************************************************************************/
 
-/* TODO: rename everywhere to detail-table */
-
-.app-detail td, .app-detail th {
+.detail-table td, .detail-table th {
     padding: 0.55em;
 }
 
-.app-detail th {
+.detail-table th {
     text-align: left;
 }
 
-.app-detail td {
+.detail-table td {
     width: 30%;
 }
 
-.app-detail {
+.detail-table {
     width: 100%;
     border: 1px solid #EAF2D3;
     font-size: 1.05em;
@@ -251,9 +265,7 @@ button.btn, a.btn, input.btn {
   
 **************************************************************************/
 
-/* TODO: rename to header or legend or something else, but remove overview prefix */
-
-.overview-header legend p {
+.header legend p {
     display: inline-block;
     color: #516310;
     font-weight: 100;
@@ -261,7 +273,11 @@ button.btn, a.btn, input.btn {
     margin: 0;
 }
 
-.overview-header .selector {
+legend .dropdown-menu {
+    font-size: 12px;
+}
+
+.header .selector {
     float: right;
     margin-left: 0.5em;
 }
@@ -283,19 +299,12 @@ button.btn, a.btn, input.btn {
 
 /**************************************************************************
   
-  ALLOWING / REJECTING / etc. and application
+  ALLOWING / REJECTING / etc. an application
   
 **************************************************************************/
 
-#reject {
-    margin-top: 1em;
-    text-align:left;
-}
-
 .confirm-green {
     border: 1px solid #D7D7D7;
-    /*    border: 1px solid #EAF2D3;*/
-    /*    background-color: #FFFFFF;*/
     background-color: #EAF2D3;
     padding: 1em 1em 1em 2.5em;
     margin-top:1em;
@@ -362,6 +371,18 @@ select {
     text-align: left;
 }
 
+.form-horizontal .controls {
+    margin-left: 180px;
+}
+
+.form-horizontal.large .control-label {
+    width: 390px;
+}
+
+.form-horizontal.large .controls input.hasDatepicker {
+    height: 28px;
+}
+
 .error {
     color:#B94A48;
 }
@@ -369,83 +390,6 @@ select {
 input.error, textarea.error {
     border-color: #B94A48;
 }
-
-
-/**************************************************************************
-  
-  DATEPICKER 
-  
-**************************************************************************/
-
-/* nice looking for public holidays in datepicker */
-td.notworkday a {
-    color: #31A354 !important;
-    background: #E5F5E0 !important;
-}
-
-td.halfworkday a {
-    color: #31A354 !important;
-    background: linear-gradient(-45deg, #E5F5E0 50%, #FFF 50%) !important;
-}
-
-td.holiday a {
-    color: #F8B851 !important;
-    background: #FFEDA0 !important;
-}
-
-/* vacation types like special leave, etc. should be highlighted */
-td.SPECIALLEAVE, td.UNPAIDLEAVE, td.OVERTIME {
-    color: #C13A33;
-}
-
-/**************************************************************************
-  
-  TODO: STUFF TO BE SORTED... 
-  
-**************************************************************************/
-
-div.vacation-data .control-label {
-    width: 40%; 
-}
-
-[class^="icon-"], [class*=" icon-"] {
-    vertical-align: middle;
-}
-
-p.heading-date {
-    font-size: 13px;
-    float: right;
-}
-
-/* styling for sick note form */
-.form-sicknote .control-label {
-    width: 30em !important;
-}
-
-.form-sicknote input[type="text"] {
-    height: 28px !important;
-}
-
-tr.active {
-  color: inherit;  
-}
-
-tr.inactive td {
-  color: lightgrey !important;
-}
-
-b.waiting-icon {
-    font-size: 15px;
-}
-
-.dropdown-menu li a:hover b.waiting-icon {
-    color: #333333 !important;
-}
-
-legend .dropdown-menu {
-    font-size: 12px;
-}
-
 
 /**************************************************************************
   

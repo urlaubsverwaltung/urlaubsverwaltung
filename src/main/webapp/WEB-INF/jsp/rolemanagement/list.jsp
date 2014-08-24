@@ -15,7 +15,7 @@
         <script type="text/javascript">
             $(document).ready(function() {
 
-                $(".sortable-tbl").tablesorter({
+                $("table.sortable").tablesorter({
                     sortList: [[2,0]]
                 });
 
@@ -34,7 +34,7 @@
 
                 <div class="grid-100">
 
-                    <div class="overview-header">
+                    <div class="header">
 
                         <legend>
                             <p>
@@ -53,7 +53,7 @@
                         </c:when>
 
                         <c:otherwise>
-                            <table class="data-table sortable-tbl tablesorter zebra-table" cellspacing="0">
+                            <table class="data-table sortable tablesorter zebra-table" cellspacing="0">
                                 <thead>
                                 <tr>
                                     <th colspan="2"><spring:message code="login" /></th>

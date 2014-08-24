@@ -55,7 +55,7 @@
 
         <div class="grid-100">
 
-            <div class="overview-header">
+            <div class="header">
                 <legend>
                     <p>
                         <c:choose>
@@ -81,7 +81,7 @@
                 </c:otherwise>
             </c:choose>
             
-            <form:form method="${METHOD}" action="${ACTION}" modelAttribute="sickNote" class="form-horizontal form-sicknote">
+            <form:form method="${METHOD}" action="${ACTION}" modelAttribute="sickNote" class="form-horizontal large">
 
                 <div class="control-group">
                     <label class="control-label" for="employee"><spring:message code='staff'/></label>

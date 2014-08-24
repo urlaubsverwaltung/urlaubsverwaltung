@@ -23,8 +23,7 @@
 
     <c:otherwise>     
 
-        <%-- has css class tablesorter only because of styling, no sorting here because date sorting behaves strange--%>
-        <table class="data-table centered-tbl zebra-table tablesorter sortable-tbl" cellspacing="0">
+        <table class="data-table is-centered zebra-table tablesorter sortable" cellspacing="0">
             <thead>
             <tr>
                 <th>

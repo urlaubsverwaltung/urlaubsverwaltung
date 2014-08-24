@@ -57,9 +57,9 @@
 
 <form:form method="${METHOD}" action="${ACTION}" modelAttribute="personForm" class="form-horizontal">
 
-<div class="grid-40 person-data">
+<div class="grid-40">
 
-    <div class="overview-header">
+    <div class="header">
 
         <legend>
             <p>
@@ -178,9 +178,9 @@
 </div>
 
 
-<div class="grid-60 vacation-data">
+<div class="grid-60">
 
-    <div class="overview-header">
+    <div class="header">
 
         <legend>
             <p>

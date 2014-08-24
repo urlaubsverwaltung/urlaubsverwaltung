@@ -20,7 +20,7 @@
         <script type="text/javascript">
             $(document).ready(function() {
 
-                $(".sortable-tbl").tablesorter({
+                $("table.sortable").tablesorter({
                     sortList: [[1,1]],
                     headers: {
                         1: { sorter: 'germanDate' },

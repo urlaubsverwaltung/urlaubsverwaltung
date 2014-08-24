@@ -11,12 +11,6 @@
 
     <head>
         <uv:head />
-        <style type="text/css">
-            .app-detail .td-name {
-                width: 20%;
-                padding-right: 1.5em;
-            }
-        </style>
     </head>
 
     <body>
@@ -33,7 +27,7 @@
 
                     <div class="grid-80">
 
-                        <div class="overview-header">
+                        <div class="header">
 
                             <legend>
                                 <p>
@@ -43,7 +37,7 @@
 
                         </div>
 
-                        <table class="app-detail" cellspacing="0">
+                        <table class="detail-table" cellspacing="0">
                             <tr class="odd">
                                 <td class="td-name"><spring:message code='login' />:</td>
                                 <td colspan="2">
@@ -77,7 +71,7 @@
                     
                     <div class="grid-80">
 
-                        <div class="overview-header">
+                        <div class="header">
 
                             <legend>
                                 <p>

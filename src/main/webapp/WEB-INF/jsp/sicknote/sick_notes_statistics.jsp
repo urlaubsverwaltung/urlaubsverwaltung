@@ -28,7 +28,7 @@
 
         <div class="grid-100">
 
-            <div class="overview-header">
+            <div class="header">
 
                 <legend style="margin-bottom: 0">
                     <p>

@@ -11,7 +11,6 @@
 
 <head>
     <uv:head />
-    <link rel="stylesheet" href="<spring:url value='/css/calendar.css' />">
     <script type="text/javascript">
         /**
          * @param {string|{}} data
@@ -45,21 +44,6 @@
             return deferred.promise();
         }
     </script>
-    <style type="text/css">
-        .app-detail td {
-            width: auto;
-        }
-        a.ui-state-default {
-            border: 1px solid #CCCCCC !important;
-            color: #1C94C4 !important;
-        }
-        
-        td.ui-datepicker-today a {
-            color: #2C7FB8 !important;
-            background: #9ECAE1 !important;
-        }
-        
-    </style>
 </head>
 
 <body>
@@ -96,13 +80,13 @@
         </div>
 
         <div class="grid-60 print-box">
-            <table class="app-detail" cellspacing="0">
+            <table class="detail-table" cellspacing="0">
                 <%@include file="../application/include/account_days.jsp" %>
             </table>
         </div>
         
         <div class="grid-40 print-box">
-            <table class="app-detail" cellspacing="0">
+            <table class="detail-table" cellspacing="0">
                 <%@include file="./include/used_days.jsp" %>
             </table>
         </div>

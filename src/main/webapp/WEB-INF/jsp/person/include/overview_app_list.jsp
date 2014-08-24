@@ -8,7 +8,7 @@
 
 <div class="grid-100">
 
-    <div class="overview-header">
+    <div class="header">
 
         <legend>
             <p>
@@ -56,7 +56,7 @@
         <c:otherwise>
 
             <%-- has css class tablesorter only because of styling, is not sortable --%>
-            <table class="data-table centered-tbl tablesorter overview-tbl zebra-table" cellspacing="0">
+            <table class="data-table is-centered tablesorter overview-tbl zebra-table" cellspacing="0">
                 <tr>
                     <th>
                         <spring:message code="state" />

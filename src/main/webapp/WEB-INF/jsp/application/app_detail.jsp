@@ -32,7 +32,7 @@
 
                 <div class="grid-100">
 
-                    <div class="overview-header">
+                    <div class="header">
 
                         <legend>
                             <p>
@@ -168,7 +168,7 @@
 
                 <div class="grid-50 print-box">
 
-                    <table class="app-detail" cellspacing="0">
+                    <table class="detail-table" cellspacing="0">
                         <tr class="odd">
                             <th><c:out value="${application.person.firstName} ${application.person.lastName}" /></th>
                             <td><c:out value="${application.person.email}" /></td>

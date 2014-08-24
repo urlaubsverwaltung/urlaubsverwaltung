@@ -32,7 +32,7 @@
         <script type="text/javascript">
             $(document).ready(function() {
 
-                $(".sortable-tbl").tablesorter({
+                $("table.sortable").tablesorter({
                     sortList: [[2,0]],
                     headers: {
                       5: { sorter: 'commaNumber' }, 
@@ -69,7 +69,7 @@
 
                 <div class="grid-100">
 
-                    <div class="overview-header">
+                    <div class="header">
 
                         <legend style="margin-bottom: 17px">
                             

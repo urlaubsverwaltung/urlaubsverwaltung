@@ -17,22 +17,6 @@
         <%@include file="./include/app-form-elements/datepicker.jsp" %>
         <%@include file="./include/app-form-elements/day-length-selector.jsp" %>
 
-        <script type="text/javascript">
-            $(document).ready(function() {
-                $('#error-div').show();
-            });
-        </script>
-        <style type="text/css">
-            .app-detail th {
-                width: 36%;
-            }
-            td.ui-datepicker-today a {
-                color: #2C7FB8 !important;
-                background: #9ECAE1 !important;
-                border: 0 none !important;
-            }
-        </style>
-
     </head>
 
     <body>
@@ -82,7 +66,7 @@
 
                             <div class="grid-50" style="margin-bottom: 4em;">
 
-                            <div class="overview-header">
+                            <div class="header">
 
                                 <legend>
                                     <p>
@@ -124,7 +108,7 @@
                                     </div>
                                 </c:if>
 
-                                <table class="app-detail" cellspacing="0">
+                                <table class="detail-table" cellspacing="0">
                                     <tr class="odd">
                                         <th>
                                             <spring:message code="app.apply" />
@@ -330,7 +314,7 @@
 
                             <div class="grid-50">
 
-                                <div class="overview-header">
+                                <div class="header">
 
                                     <legend>
                                         <p>
@@ -340,7 +324,7 @@
 
                                 </div>
 
-                                <table class="app-detail" cellspacing="0">
+                                <table class="detail-table" cellspacing="0">
                                     <tr class="odd">
                                         <c:choose>
                                             <c:when test="${appliesAsRep == true}">

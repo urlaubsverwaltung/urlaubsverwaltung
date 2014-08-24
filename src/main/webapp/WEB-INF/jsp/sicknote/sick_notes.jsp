@@ -22,7 +22,7 @@
 
             createDatepickerInstanceForSickNote(regional, "from", "to");
 
-            $(".sortable-tbl").tablesorter({
+            $("table.sortable").tablesorter({
                 sortList: [[1,0]], 
                 headers: { 
                     1: { sorter:'germanDate' },
@@ -83,7 +83,7 @@
 
         <div class="grid-100">
 
-            <div class="overview-header">
+            <div class="header">
 
                 <legend style="margin-bottom: 0">
                     <p>
@@ -191,7 +191,7 @@
                 </c:when>
 
                 <c:otherwise>
-                    <table class="data-table centered-tbl sortable-tbl tablesorter zebra-table" cellspacing="0">
+                    <table class="data-table is-centered sortable tablesorter zebra-table" cellspacing="0">
                         <thead>
                         <tr>
                             <th><spring:message code="name" /></th>

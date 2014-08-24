@@ -171,3 +171,23 @@
     border-right-color: #92AA3E;
     border-bottom-color: #92AA3E;
 }
+
+td.notworkday a {
+    color: #31A354 !important;
+    background: #E5F5E0 !important;
+}
+
+td.halfworkday a {
+    color: #31A354 !important;
+    background: linear-gradient(-45deg, #E5F5E0 50%, #FFF 50%) !important;
+}
+
+td.holiday a {
+    color: #F8B851 !important;
+    background: #FFEDA0 !important;
+}
+
+/* vacation types like special leave, etc. should be highlighted */
+td.SPECIALLEAVE, td.UNPAIDLEAVE, td.OVERTIME {
+    color: #C13A33;
+}

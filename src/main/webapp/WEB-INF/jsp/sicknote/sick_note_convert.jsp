@@ -34,7 +34,7 @@
         <div class="grid-100">
 
             <div class="grid-50">
-                <div class="overview-header">
+                <div class="header">
                     <legend>
                         <p>
                             <spring:message code="sicknotes.convert.vacation" />
@@ -107,7 +107,7 @@
 
             <div class="grid-50">
 
-                <div class="overview-header">
+                <div class="header">
                     <legend>
                         <p><spring:message code="sicknote" /></p>
                     </legend>

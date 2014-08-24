@@ -4,7 +4,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 
-<div class="overview-header">
+<div class="header">
 
     <legend id="sickNotes">
         <p>
@@ -23,7 +23,7 @@
     </c:when>
 
     <c:otherwise>
-        <table class="data-table centered-tbl sortable-tbl tablesorter zebra-table" cellspacing="0">
+        <table class="data-table is-centered sortable tablesorter zebra-table" cellspacing="0">
             <thead>
             <tr>
                 <th><spring:message code="sicknotes.time" /></th>

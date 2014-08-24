@@ -25,7 +25,7 @@
 
             <div class="grid-50 print-box">
 
-                <div class="overview-header">
+                <div class="header">
                     <legend>
                         <p><spring:message code="sicknote" /></p>
                         <sec:authorize access="hasRole('OFFICE')">
@@ -80,7 +80,7 @@
                 </div>
                 </form:form>
                 
-              <table class="app-detail">
+              <table class="detail-table">
                   <tbody>
                       <tr class="odd">
                           <td><spring:message code="name" /></td>
@@ -125,7 +125,7 @@
 
             <div class="grid-50 print-box">
 
-                <div class="overview-header">
+                <div class="header">
                     <legend>
                         <p><spring:message code="progress" /></p>
                         <sec:authorize access="hasRole('OFFICE')">
@@ -136,7 +136,7 @@
                     </legend>
                 </div>
                 
-                <table class="app-detail">
+                <table class="detail-table">
                     <tbody>
                         <c:forEach items="${sickNote.comments}" var="comment" varStatus="loopStatus">
                             <tr class="${loopStatus.index % 2 == 0 ? 'odd' : 'even'}">
