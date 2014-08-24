@@ -76,7 +76,7 @@
                     </sec:authorize>
                 </c:otherwise>
             </c:choose>
-
+            
         </div>
 
         <div class="grid-60 print-box">

@@ -23,7 +23,7 @@
             createDatepickerInstanceForSickNote(regional, "from", "to");
 
             $("table.sortable").tablesorter({
-                sortList: [[1,0]], 
+                sortList: [[2,0]],
                 headers: { 
                     1: { sorter:'germanDate' },
                     3: { sorter:'germanDate' },
@@ -194,7 +194,8 @@
                     <table class="data-table is-centered sortable tablesorter zebra-table" cellspacing="0">
                         <thead>
                         <tr>
-                            <th><spring:message code="name" /></th>
+                            <th><spring:message code="firstname" /></th>
+                            <th><spring:message code="lastname" /></th>
                             <th><spring:message code="sicknotes.time" /></th>
                             <th><spring:message code="work.days" /></th>
                             <th><spring:message code="sicknotes.aub.short" /></th>
@@ -214,7 +215,10 @@
                             </c:choose>
                             <tr class="${CSS_CLASS}" onclick="navigate('${formUrlPrefix}/sicknote/${sickNote.id}');">
                                 <td>
-                                    <c:out value="${sickNote.person.firstName}" />&nbsp;<c:out value="${sickNote.person.lastName}" />
+                                    <c:out value="${sickNote.person.firstName}" />
+                                </td>
+                                <td>
+                                    <c:out value="${sickNote.person.lastName}" />
                                 </td>
                                 <td>
                                     <uv:date date="${sickNote.startDate}" /> - <uv:date date="${sickNote.endDate}" />

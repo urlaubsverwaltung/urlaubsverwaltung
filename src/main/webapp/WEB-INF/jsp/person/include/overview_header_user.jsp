@@ -15,6 +15,7 @@
             code="table.overview"/><c:out value="${displayYear}"/>
         </p>
         <uv:year-selector year="${year}" />
+        <uv:print />
     </legend>
     
 </div>

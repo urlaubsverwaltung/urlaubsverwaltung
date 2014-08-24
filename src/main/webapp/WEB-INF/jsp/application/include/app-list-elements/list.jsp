@@ -33,7 +33,10 @@
                     <spring:message code="${touchedDate}" />
                 </th>
                 <th>
-                    <spring:message code="staff" />
+                    <spring:message code="firstname" />
+                </th>
+                <th>
+                    <spring:message code="lastname" />
                 </th>
                 <th>
                     <spring:message code="type" />
@@ -51,7 +54,28 @@
             <c:forEach items="${applications}" var="app" varStatus="loopStatus">
                 <tr onclick="navigate('${formUrlPrefix}/application/${app.id}');">
                     <td>
+                    <span class="print--visible">
                         <spring:message code="${app.status.state}" />
+                    </span>
+                    <span class="print--invisible">
+                        <c:choose>
+                            <c:when test="${app.status.state == 'state.waiting'}">
+                                <b style="font-size: 15px">?</b>
+                            </c:when>
+                            <c:when test="${app.status.state == 'state.allowed'}">
+                                <i class="icon-ok"></i>
+                            </c:when>
+                            <c:when test="${app.status.state == 'state.rejected'}">
+                                <i class="icon-ban-circle"></i>
+                            </c:when>
+                            <c:when test="${app.status.state == 'state.cancelled'}">
+                                <i class="icon-trash"></i>
+                            </c:when>
+                            <c:otherwise>
+                                &nbsp;
+                            </c:otherwise>
+                        </c:choose>
+                    </span>
                     </td>
                     <td>
                     
@@ -73,7 +97,10 @@
                     <uv:date date="${appTouched}" />
                     </td>
                     <td>
-                        <c:out value="${app.person.firstName}" />&nbsp;<c:out value="${app.person.lastName}" />
+                        <c:out value="${app.person.firstName}" />
+                    </td>
+                    <td>
+                        <c:out value="${app.person.lastName}" />
                     </td>
                     <td class="${app.vacationType}">
                         <spring:message code="${app.vacationType.vacationTypeName}"/>

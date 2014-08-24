@@ -46,16 +46,10 @@
                 
                 if(path.indexOf("inactive") != -1) {
                     $("div#active-state button").html('<img src="<spring:url value='/images/offline.png' />" />&nbsp;<spring:message code="table.inactive" />&nbsp;<span class="caret"></span>');
-                    active = "false";
                 } else {
                     $("div#active-state button").html('<img src="<spring:url value='/images/online.png' />" />&nbsp;<spring:message code="table.active" />&nbsp;<span class="caret"></span>');
-                    active = "true";
                 }
 
-                var href = "${formUrlPrefix}/staff/print?year=${displayYear}&active=" + active;
-                
-                $("a.print-view").attr("href", href);
-                
             });
         </script>
     </head>
@@ -100,6 +94,8 @@
                                 </ul>
 
                             </div>
+
+                            <uv:print />
                             
                         </legend>
 

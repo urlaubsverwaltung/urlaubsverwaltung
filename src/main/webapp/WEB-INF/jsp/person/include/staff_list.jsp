@@ -5,24 +5,19 @@
 
 <spring:url var="formUrlPrefix" value="/web" />
 
-<%-- href is set by javascript: see staff_view.jsp --%>
 <sec:authorize access="hasRole('OFFICE')">
-    <a class="btn btn-right print-view" href="#">
-        <i class="icon-print"></i>&nbsp;<spring:message code='print.preview' />
-    </a>
-
     <a class="btn btn-right" href="${formUrlPrefix}/staff/new"><i class="icon-plus"></i><i class="icon-user"></i>&nbsp;<spring:message code="table.new.person" /></a>
 </sec:authorize>
 
 <table cellspacing="0" class="data-table sortable tablesorter zebra-table">
     <thead>
     <tr>
-        <th colspan="2"><spring:message code="login" /></th>
-        <th><spring:message code="firstname" /></th>
+        <th colspan="2"><spring:message code="firstname" /></th>
         <th><spring:message code="name" /></th>
-        <th><spring:message code="email" /></th>
-        <th class="is-centered"><spring:message code="entitlement" /></th>
-        <th class="is-centered"><spring:message code="left" /></th>
+        <th class="is-centered"><spring:message code='overview.entitlement.per.year' /></th>
+        <th class="is-centered"><spring:message code='overview.actual.entitlement' /></th>
+        <th class="is-centered"><spring:message code='overview.remaining.days.last.year' /></th>
+        <th class="is-centered"><spring:message code="left"/></th>
         <sec:authorize access="hasRole('OFFICE')">
             <th class="print--invisible"><spring:message code="table.apply" /></th>
             <th class="print--invisible"><spring:message code="edit" /></th>
@@ -33,19 +28,39 @@
     <c:forEach items="${persons}" var="person" varStatus="loopStatus">
         <tr onclick="navigate('${formUrlPrefix}/staff/${person.id}/overview');">
             <td class="is-centered"><img class="print--invisible" src="<c:out value='${gravatarUrls[person]}?s=20&d=mm'/>" /></td>
-            <td><c:out value="${person.loginName}"/></td>
             <td><c:out value="${person.firstName}"/></td>
             <td><c:out value="${person.lastName}"/></td>
-            <td><a href="mailto:${person.email}"><c:out value="${person.email}"/></a></td>
             <td class="is-centered">
                 <c:choose>
                     <c:when test="${accounts[person] != null}">
-                        <fmt:formatNumber maxFractionDigits="1" value="${accounts[person].annualVacationDays}"/> +
-                        <fmt:formatNumber maxFractionDigits="1" value="${accounts[person].remainingVacationDays}"/>
+                        <fmt:formatNumber maxFractionDigits="1"
+                                          value="${accounts[person].annualVacationDays}"/>
                     </c:when>
                     <c:otherwise>
-                        <spring:message code='not.specified' />
-                    </c:otherwise>    
+                        <spring:message code='not.specified'/>
+                    </c:otherwise>
+                </c:choose>
+            </td>
+            <td class="is-centered">
+                <c:choose>
+                    <c:when test="${accounts[person] != null}">
+                        <fmt:formatNumber maxFractionDigits="1"
+                                          value="${accounts[person].vacationDays}"/>
+                    </c:when>
+                    <c:otherwise>
+                        <spring:message code='not.specified'/>
+                    </c:otherwise>
+                </c:choose>
+            </td>
+            <td class="is-centered">
+                <c:choose>
+                    <c:when test="${accounts[person] != null}">
+                        <fmt:formatNumber maxFractionDigits="1"
+                                          value="${accounts[person].remainingVacationDays}"/>
+                    </c:when>
+                    <c:otherwise>
+                        <spring:message code='not.specified'/>
+                    </c:otherwise>
                 </c:choose>
             </td>
             <td class="is-centered">
@@ -58,8 +73,8 @@
                         </c:if>
                     </c:when>
                     <c:otherwise>
-                        <spring:message code='not.specified' />
-                    </c:otherwise>    
+                        <spring:message code='not.specified'/>
+                    </c:otherwise>
                 </c:choose>
             </td>
             <sec:authorize access="hasRole('OFFICE')">

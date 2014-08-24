@@ -40,6 +40,8 @@
         
         <a href="${formUrlPrefix}/staff/${person.id}/edit" class="btn btn-right"><i class="icon-pencil"></i> Edit</a>
 
+        <uv:print />
+
     </legend>
     
 </div>

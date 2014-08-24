@@ -17,10 +17,6 @@
             
             <div class="btn-group-legend">
 
-                <a class="btn btn-right" href="#" media="print" onclick="window.print(); return false;">
-                    <i class="icon-print"></i>&nbsp;<spring:message code='overview' />&nbsp;<spring:message code='print' />
-                </a>
-                
                 <c:choose>
                     <c:when test="${person.id == loggedUser.id}">
                         <a class="btn btn-right" href="${formUrlPrefix}/application/new">

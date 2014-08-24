@@ -48,7 +48,7 @@
                                 </sec:authorize>
 
                                 <sec:authorize access="hasRole('USER')">
-                                <%@include file="./include/app-detail-elements/actions/print.jsp" %>
+                                    <uv:print />
                                 </sec:authorize>
 
                             </div>    

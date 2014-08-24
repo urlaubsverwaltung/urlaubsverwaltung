@@ -159,36 +159,6 @@ public class PersonController {
     }
 
 
-    @RequestMapping(value = "/staff/print", params = { ControllerConstants.YEAR, "active" }, method = RequestMethod.GET)
-    public String showPrintStaffList(@RequestParam(ControllerConstants.YEAR) int year,
-        @RequestParam("active") boolean active, Model model) {
-
-        if (sessionService.isOffice()) {
-            sessionService.setLoggedUser(model);
-
-            List<Person> persons;
-
-            if (active) {
-                persons = personService.getAllPersons();
-            } else {
-                persons = personService.getInactivePersons();
-            }
-
-            if (persons.isEmpty()) {
-                model.addAttribute(PersonConstants.NOTEXISTENT, true);
-                model.addAttribute(ControllerConstants.YEAR, DateMidnight.now().getYear());
-            } else {
-                prepareStaffView(persons, year, model);
-                model.addAttribute("today", DateMidnight.now());
-            }
-
-            return "person/staff_list_print";
-        } else {
-            return ControllerConstants.ERROR_JSP;
-        }
-    }
-
-
     /**
      * prepares view of staffs; preparing is for both views (list and detail) identic.
      *

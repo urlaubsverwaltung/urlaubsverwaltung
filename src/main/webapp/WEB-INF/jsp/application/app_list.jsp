@@ -24,8 +24,8 @@
                     sortList: [[1,1]],
                     headers: {
                         1: { sorter: 'germanDate' },
-                        4: { sorter: 'germanDate' },
-                        5: { sorter: 'commaNumber' }
+                        5: { sorter: 'germanDate' },
+                        6: { sorter: 'commaNumber' }
                     }
                 });
 
