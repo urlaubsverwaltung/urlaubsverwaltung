@@ -13,7 +13,7 @@
     <thead>
     <tr>
         <th colspan="2"><spring:message code="firstname" /></th>
-        <th><spring:message code="name" /></th>
+        <th><spring:message code="lastname" /></th>
         <th class="is-centered"><spring:message code='overview.entitlement.per.year' /></th>
         <th class="is-centered"><spring:message code='overview.actual.entitlement' /></th>
         <th class="is-centered"><spring:message code='overview.remaining.days.last.year' /></th>
