@@ -262,3 +262,39 @@ function isValidDate(s) {
         return false;
     }
 }
+
+// set expandable behavior on text areas
+$(document).ready(function()
+    {
+        var standardNumberOfRows = 1;
+        var expandedNumberOfRows = 4;
+
+        $("textarea").focus(function() {
+            this.rows = expandedNumberOfRows;
+        });
+
+        $("textarea").blur(function() {
+
+            if(this.value == "") {
+                this.rows = standardNumberOfRows;
+            }
+        });
+
+    }
+);
+
+// toggling of full/half day in app form
+$(document).ready(function()
+    {
+        $(".dayLength-full").click(function() {
+            $('.full-day').show();
+            $('.half-day').hide();
+        });
+
+        $(".dayLength-half").click(function() {
+            $('.full-day').hide();
+            $('.half-day').show();
+        });
+
+    }
+);

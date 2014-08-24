@@ -113,7 +113,7 @@
                     </legend>
                 </div>
 
-                <table class="app-detail">
+                <table class="detail-table">
                     <tbody>
                     <tr class="odd">
                         <td><spring:message code="name" /></td>

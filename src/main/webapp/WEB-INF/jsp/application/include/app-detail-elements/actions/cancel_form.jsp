@@ -44,7 +44,7 @@
         </script>
     </if>
     
-    <form:form method="put" action="${formUrlPrefix}/application/${application.id}/cancel" modelAttribute="comment">
+    <form:form class="stretched" method="put" action="${formUrlPrefix}/application/${application.id}/cancel" modelAttribute="comment">
         <c:if test="${!empty errors}">
             <div id="reject-error">
                 <spring:message code="error.reason" />
@@ -55,7 +55,7 @@
         <spring:message code='comment' />, <spring:message code="optional" /> 
         : (<span id="text-cancel"></span><spring:message code="max.chars" />)        
         <br />
-        <form:textarea path="reason" cssClass="form-textarea" onkeyup="count(this.value, 'text-cancel');" onkeydown="maxChars(this,200); count(this.value, 'text-cancel');" />
+        <form:textarea rows="1" path="reason" onkeyup="count(this.value, 'text-cancel');" onkeydown="maxChars(this,200); count(this.value, 'text-cancel');" />
         <br /><br />
         <button type="submit" class="btn">
             <i class="icon-remove-circle"></i>&nbsp;<spring:message code='delete' />

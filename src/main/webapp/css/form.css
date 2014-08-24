@@ -1,0 +1,85 @@
+select {
+    margin-bottom: 0;
+}
+
+/**************************************************************************
+
+  HORIZONTAL FORM
+
+**************************************************************************/
+
+.form-horizontal .control-label {
+    text-align: left;
+    width: 30%
+}
+
+.form-horizontal .controls {
+    width: 60%;
+    margin-left: 40%;
+}
+
+.form-horizontal.stretched textarea,
+form.stretched textarea {
+    width: 90%;
+}
+
+.form-horizontal.stretched select {
+    width: 83%;
+    height: auto;
+    margin-bottom: 0;
+}
+
+.form-horizontal.stretched input[type="text"] {
+    width: 80%;
+}
+
+.form-horizontal .controls.radiobuttons label {
+    display: inline-block;
+    width: 25%;
+}
+
+/**************************************************************************
+
+  FORM VALIDATION ERRORS
+
+**************************************************************************/
+
+
+.error {
+    color:#B94A48;
+}
+
+input.error,
+textarea.error {
+    border-color: #B94A48;
+}
+
+.info {
+    color: #3A87AD;
+}
+
+/**************************************************************************
+
+  RESPONSIVENESS
+
+**************************************************************************/
+
+/* Narrow desktop */
+@media all and (max-width: 960px) {
+    /* Ok */
+}
+
+/* Tablet */
+@media all and (max-width: 768px) {
+    /* Ok */
+}
+
+/* Small Tablet */
+@media all and (max-width: 600px) {
+    /* Ok */
+}
+
+/* Mobile */
+@media all and (max-width: 480px) {
+    /* Ok */
+}

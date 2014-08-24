@@ -4,7 +4,7 @@
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
-<form:form method="put" action="${formUrlPrefix}/application/${application.id}/reject" modelAttribute="comment">
+<form:form class="stretched" method="put" action="${formUrlPrefix}/application/${application.id}/reject" modelAttribute="comment">
     <div id="reject" class="confirm-red" style="display: none">
 
         <if test="${!empty errors}">
@@ -29,7 +29,7 @@
         <br /><br />
         <spring:message code='reason' />, <spring:message code="obligat" />: (<span id="text-reject"></span><spring:message code="max.chars" />)
         <br />
-        <form:textarea path="reason" cssErrorClass="error" cssClass="form-textarea" onkeyup="count(this.value, 'text-reject');" onkeydown="maxChars(this,200); count(this.value, 'text-reject');" />
+        <form:textarea rows="1" path="reason" cssErrorClass="error" onkeyup="count(this.value, 'text-reject');" onkeydown="maxChars(this,200); count(this.value, 'text-reject');" />
         <br />
 
             <button type="submit" class="btn">

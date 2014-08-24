@@ -1,0 +1,96 @@
+/**************************************************************************
+
+  PRINT STYLING RULES
+
+**************************************************************************/
+
+@media print {
+    .btn, .btn-primary, .btn-danger, .btn-success {
+        display: none;
+    }
+
+    .navbar, .navbar-inverse, .navbar-inner, .nav, .brand {
+        display: none;
+    }
+
+    .overview-header td {
+        color: black;
+        font-weight: bold;
+    }
+
+    div#datepicker {
+        display: none;
+    }
+
+    .content {
+        margin-top: 0;
+    }
+
+    select {
+        display: none;
+    }
+
+    .print-invisible {
+        display: none !important;
+    }
+
+    .print--visible {
+        display: block !important;
+    }
+
+    .print--invisible {
+        display: none !important;
+    }
+
+    div.print-box {
+        width: 100% !important;
+        margin-bottom: 2em;
+    }
+
+    div.print-box table {
+        border: none;
+    }
+
+    div.print-box table tr {
+        border-bottom: 1px solid lightgrey;
+    }
+
+    div.print-box table tr:first-child {
+        border-top: 1px solid #E5E5E5;
+    }
+
+    div.print-box table td.center,
+    div.print-box table th.center {
+        text-align: left !important;
+    }
+
+    div.print-box legend {
+        border: none;
+        margin-bottom: 0;
+    }
+
+    div.print-box form {
+        display: none;
+    }
+
+    .overview-header legend p {
+        color: black;
+        font-weight: bold;
+    }
+
+    i.icon-ok {
+        display: block;
+    }
+
+    tr.inactive {
+        display: none;
+    }
+
+    div.btn-group, .dropdown-menu {
+        display: none !important;
+    }
+}
+
+.print--visible {
+    display: none;
+}

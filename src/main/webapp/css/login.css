@@ -43,6 +43,7 @@ body {
 
 .login--form button {
     margin-top: 6px;
+    width: 50%
 }
 
 #login--error {

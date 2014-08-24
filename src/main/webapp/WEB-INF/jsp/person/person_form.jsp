@@ -14,11 +14,6 @@
 <head>
     <uv:head />
     <script type="text/javascript">
-        $(document).ready(function () {
-            $('#error-div').show('drop', 500);
-        });
-    </script>
-    <script type="text/javascript">
         function change(year) {
             var url = "?year=" + year;
             window.location.href = url;
@@ -57,7 +52,7 @@
 
 <form:form method="${METHOD}" action="${ACTION}" modelAttribute="personForm" class="form-horizontal">
 
-<div class="grid-40">
+<div class="grid-50">
 
     <div class="header">
 
@@ -178,7 +173,7 @@
 </div>
 
 
-<div class="grid-60">
+<div class="grid-50">
 
     <div class="header">
 
@@ -223,7 +218,19 @@
 
     <div class="control-group">
         <label class="control-label">
-            <spring:message code='time'/>
+            <spring:message code='From'/>
+        </label>
+
+        <div class="controls">
+            <person:day-dropdown path="dayFrom" selected="${personForm.dayFrom}" />
+            &nbsp;
+            <person:month-dropdown path="monthFrom" selected="${personForm.monthFrom}" />
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">
+            <spring:message code='To'/>
             <c:if test="${not empty errors}">
                 <br />
                 <span><form:errors cssClass="error"/></span>
@@ -231,15 +238,9 @@
         </label>
 
         <div class="controls">
-            
-            <person:day-dropdown path="dayFrom" selected="${personForm.dayFrom}" />
-            <person:month-dropdown path="monthFrom" selected="${personForm.monthFrom}" />
-            
-            <spring:message code='to'/>
-
             <person:day-dropdown path="dayTo" selected="${personForm.dayTo}" />
+            &nbsp;
             <person:month-dropdown path="monthTo" selected="${personForm.monthTo}" />
-            
         </div>
     </div>
 
@@ -268,10 +269,11 @@
             <spring:message code='person.expire'/>
         </label>
 
-        <div class="controls" style="padding-top: 5px;">
-            <spring:message code='yes'/>&nbsp;<form:radiobutton path="remainingVacationDaysExpire" value="true"/>
-            &nbsp;&nbsp;&nbsp;
-            <spring:message code='no'/>&nbsp;<form:radiobutton path="remainingVacationDaysExpire" value="false"/>
+        <div class="controls radiobuttons">
+            <form:radiobutton id="expireYes" path="remainingVacationDaysExpire" value="true"/>
+            <label for="expireYes"><spring:message code='yes'/></label>
+            <form:radiobutton id="expireNo" path="remainingVacationDaysExpire" value="false"/>
+            <label for="expireNo"><spring:message code='no'/></label>
         </div>
     </div>
 
@@ -283,8 +285,8 @@
 
 <div class="grid-100">
 
-    <button class="btn" type="submit"><i class='icon-ok'></i>&nbsp;<spring:message code="save" /></button>
-    <a class="btn" href="${formUrlPrefix}/staff"><i class='icon-remove'></i>&nbsp;<spring:message code='cancel'/></a>
+    <button class="btn btn-large btn-success" type="submit"><i class='icon-ok icon-white'></i>&nbsp;<spring:message code="save" /></button>
+    <a class="btn btn-large" href="${formUrlPrefix}/staff"><i class='icon-remove'></i>&nbsp;<spring:message code='cancel'/></a>
 
 </div>
 

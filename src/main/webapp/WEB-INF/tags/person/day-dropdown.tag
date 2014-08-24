@@ -4,7 +4,7 @@
 <%@attribute name="path" type="java.lang.String" required="true" %>
 <%@attribute name="selected" type="java.lang.String" required="true" %>
 
-<form:select path="${path}" size="1">
+<form:select class="input-mini" path="${path}" size="1">
     <c:forEach begin="1" end="31" step="1" var="day">
         <c:choose>
             <c:when test="${selected == day}">

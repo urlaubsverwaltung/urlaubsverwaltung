@@ -8,6 +8,12 @@
 <head>
     <uv:head />
 
+    <style type="text/css">
+        input.hasDatepicker {
+            height: 28px;
+        }
+    </style>
+
     <script src="<spring:url value='/js/datepicker.js' />" type="text/javascript" ></script>
 
     <script type="text/javascript">
@@ -70,6 +76,8 @@
                 </legend>
             </div>
 
+        </div>
+
             <c:choose>
                 <c:when test="${sickNote.id == null}">
                     <c:set var="METHOD" value="POST" />
@@ -80,8 +88,10 @@
                     <c:set var="ACTION" value="${formUrlPrefix}/sicknote/${sickNote.id}/edit" />
                 </c:otherwise>
             </c:choose>
-            
-            <form:form method="${METHOD}" action="${ACTION}" modelAttribute="sickNote" class="form-horizontal large">
+
+            <form:form method="${METHOD}" action="${ACTION}" modelAttribute="sickNote" class="form-horizontal">
+
+            <div class="grid-70">
 
                 <div class="control-group">
                     <label class="control-label" for="employee"><spring:message code='staff'/></label>
@@ -111,7 +121,7 @@
                     <div class="controls">
                         <spring:message code="From" />
                         <br />
-                        <form:input id="from" path="startDate" cssClass="input-medium" cssErrorClass="error input-medium" />
+                        <form:input id="from" path="startDate" cssErrorClass="error" />
                         <span class="help-inline"><form:errors path="startDate" cssClass="error"/></span>
                     </div>
                 </div>
@@ -122,16 +132,18 @@
                     <div class="controls">
                         <spring:message code="To" />
                         <br />
-                        <form:input id="to" path="endDate" cssClass="input-medium" cssErrorClass="error input-medium" />
+                        <form:input id="to" path="endDate" cssErrorClass="error" />
                         <span class="help-inline"><form:errors path="endDate" cssClass="error"/></span>
                     </div>
                 </div>
                 
                 <div class="control-group">
                     <label class="control-label"><spring:message code='sicknotes.aub'/></label>
-                    <div class="controls">
-                        <form:radiobutton path="aubPresent" value="true" onclick="showAUFields();" />&nbsp;<spring:message code='yes' />&nbsp;&nbsp;
-                        <form:radiobutton path="aubPresent" value="false" onclick="hideAUFields();" />&nbsp;<spring:message code='no' />
+                    <div class="controls radiobuttons">
+                        <form:radiobutton id="aubPresent" path="aubPresent" value="true" onclick="showAUFields();" />
+                        <label for="aubPresent"><spring:message code='yes' /></label>
+                        <form:radiobutton id="aubNotPresent" path="aubPresent" value="false" onclick="hideAUFields();" />
+                        <label for="aubNotPresent"><spring:message code='no' /></label>
                         <span class="help-inline"><form:errors path="aubPresent" cssClass="error"/></span>
                     </div>
                 </div>
@@ -146,7 +158,7 @@
                     <div class="controls">
                         <spring:message code="From" />
                         <br />
-                        <form:input id="aubFrom" path="aubStartDate" cssClass="input-medium" cssErrorClass="error input-medium" />
+                        <form:input id="aubFrom" path="aubStartDate" cssErrorClass="error" />
                         <span class="help-inline"><form:errors path="aubStartDate" cssClass="error"/></span>
                     </div>
                 </div>
@@ -157,10 +169,14 @@
                     <div class="controls">
                         <spring:message code="To" />
                         <br />
-                        <form:input id="aubTo" path="aubEndDate" cssClass="input-medium" cssErrorClass="error input-medium" />
+                        <form:input id="aubTo" path="aubEndDate" cssErrorClass="error" />
                         <span class="help-inline"><form:errors path="aubEndDate" cssClass="error"/></span>
                     </div>
                 </div>
+
+            </div>
+
+            <div class="grid-100">
                 
                 <hr/>
                 
@@ -168,11 +184,11 @@
                     <button class="btn" type="submit"><i class='icon-ok'></i>&nbsp;<spring:message code="save" /></button>
                     <a class="btn" href="${formUrlPrefix}/sicknote"><i class='icon-remove'></i>&nbsp;<spring:message code='cancel'/></a>
                 </div>
-            
+
+            </div>
+
             </form:form>
             
-        </div>
-        
     </div>
     
 </div>    
