@@ -85,7 +85,7 @@
 
             <div class="header">
 
-                <legend style="margin-bottom: 0">
+                <legend class="sticky">
                     <p>
                         <spring:message code="sicknotes" />
                         <c:if test="${person != null}">
@@ -167,10 +167,6 @@
                 </form:form>
             </div>
 
-        </div>
-
-        <div class="grid-100">
-
             <div class="second-legend">
                 <p style="float:left">
                     <spring:message code="time"/>:&nbsp;<uv:date date="${from}" /> - <uv:date date="${to}" />
@@ -179,10 +175,6 @@
                     <spring:message code="Effective"/> <uv:date date="${today}" />
                 </p>
             </div>
-
-        </div>
-
-        <div class="grid-100">
 
             <c:choose>
 

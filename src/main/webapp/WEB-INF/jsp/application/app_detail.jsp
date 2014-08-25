@@ -114,13 +114,11 @@
 
                     </div>
                     
-                </div>
-
                 <div class="grid-50 print-box">
                     
                     <%@include file="./include/app-detail-elements/app_info.jsp" %>
 
-                    <div class="actions" style="margin-bottom: 8em">
+                    <div class="actions">
 
                         <%-- permission dependant forms to the buttons above START --%>
 
@@ -174,6 +172,8 @@
                     </table>
 
                     <%@include file="./include/app-detail-elements/app_progress.jsp" %>
+
+                </div>
 
                 </div>
 

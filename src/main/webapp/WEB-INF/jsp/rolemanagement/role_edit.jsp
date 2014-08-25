@@ -66,9 +66,6 @@
                         
                     </div>
                     
-                    <div class="grid-100">&nbsp;</div>
-                    <div class="grid-100">&nbsp;</div>
-                    
                     <div class="grid-80">
 
                         <div class="header">

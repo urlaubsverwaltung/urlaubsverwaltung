@@ -60,10 +60,6 @@
         </div>
         
         <div class="grid-100">
-            &nbsp;
-        </div>
-
-        <div class="grid-100">
             
             <table class="table">
                 <tr>

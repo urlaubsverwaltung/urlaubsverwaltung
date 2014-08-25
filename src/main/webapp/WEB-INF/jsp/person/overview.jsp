@@ -77,8 +77,6 @@
                 </c:otherwise>
             </c:choose>
             
-        </div>
-
         <div class="grid-60 print-box">
             <table class="detail-table" cellspacing="0">
                 <%@include file="../application/include/account_days.jsp" %>
@@ -91,9 +89,6 @@
             </table>
         </div>
 
-        <div class="grid-100">&nbsp;</div>
-        <div class="grid-100">&nbsp;</div>
-        
         <div class="grid-100">
         
             <div id="datepicker"></div>
@@ -166,26 +161,20 @@
             });
         </script>
 
-        <div class="grid-100">&nbsp;</div>
-        <div class="grid-100">&nbsp;</div>
-
         <%@include file="./include/overview_app_list.jsp" %>
 
-        <div class="grid-100">
-
-            <c:choose>
-                <c:when test="${person.id == loggedUser.id}">
+        <c:choose>
+            <c:when test="${person.id == loggedUser.id}">
+                <%@include file="./include/sick_notes.jsp" %>
+            </c:when>
+            <c:otherwise>
+                <sec:authorize access="hasRole('OFFICE')">
                     <%@include file="./include/sick_notes.jsp" %>
-                </c:when>
-                <c:otherwise>
-                    <sec:authorize access="hasRole('OFFICE')">
-                        <%@include file="./include/sick_notes.jsp" %>
-                    </sec:authorize>
-                </c:otherwise>
-            </c:choose>
-            
-        </div>
+                </sec:authorize>
+            </c:otherwise>
+        </c:choose>
 
+        </div>
 
     </div>
 </div>

@@ -90,15 +90,15 @@
                         <div class="controls">
                             <span id="count-chars"></span><spring:message code="max.chars" />
                             <br />
-                            <form:textarea id="reason" path="reason" cssErrorClass="error" rows="4" onkeyup="count(this.value, 'count-chars');" onkeydown="maxChars(this,200); count(this.value, 'count-chars');" />
+                            <form:textarea id="reason" path="reason" cssErrorClass="error" rows="1" onkeyup="count(this.value, 'count-chars');" onkeydown="maxChars(this,200); count(this.value, 'count-chars');" />
                         </div>
                     </div>
 
                     <hr/>
                     
                     <div class="control-group">
-                        <button class="btn" type="submit"><i class='icon-ok'></i>&nbsp;<spring:message code="save" /></button>
-                        <a class="btn" href="${formUrlPrefix}/sicknote/${sickNote.id}"><i class='icon-remove'></i>&nbsp;<spring:message code='cancel'/></a>
+                        <button class="btn btn-large btn-success" type="submit"><i class='icon-ok icon-white'></i>&nbsp;<spring:message code="save" /></button>
+                        <a class="btn btn-large" href="${formUrlPrefix}/sicknote/${sickNote.id}"><i class='icon-remove'></i>&nbsp;<spring:message code='cancel'/></a>
                     </div>
                 
                 </form:form>

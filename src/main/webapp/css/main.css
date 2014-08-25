@@ -17,7 +17,7 @@ footer {
 }
 
 .content {
-    margin-top: 7em;
+    margin-top: 72px;
 }
 
 a {
@@ -36,11 +36,19 @@ a:hover {
     vertical-align: middle;
 }
 
+[class^="grid-"], [class*=" grid-"] {
+    margin-bottom: 30px;
+}
+
 /**************************************************************************
   
   HEADER
   
 **************************************************************************/
+
+.navbar [class^="grid-"], [class*=" grid-"] {
+    margin-bottom: 0;
+}
 
 .navbar .nav {
     float: right;
@@ -111,7 +119,6 @@ b.waiting-icon {
     width: 100%;
     border: 1px solid #EAF2D3;
     font-size: 13px;
-    margin-bottom: 30px;
 }
 
 .data-table tr:hover {
@@ -160,11 +167,6 @@ tr.inactive td {
 
 th.tablesorter-headerDesc, th.tablesorter-headerAsc {
     background-color: #99AF4C !important;
-}
-
-/* Info text if no data to display table */
-.data-table--info {
-    margin-bottom: 30px;  
 }
 
 /**************************************************************************
@@ -228,6 +230,10 @@ button.btn, a.btn, input.btn {
   LEGEND
   
 **************************************************************************/
+
+legend.sticky {
+    margin-bottom: 12px;
+}
 
 .header legend p {
     display: inline-block;
