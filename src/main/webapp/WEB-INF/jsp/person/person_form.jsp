@@ -52,6 +52,8 @@
 
 <form:form method="${METHOD}" action="${ACTION}" modelAttribute="personForm" class="form-horizontal">
 
+<div class="grid-100 sticky">
+
 <div class="grid-50">
 
     <div class="header">
@@ -108,70 +110,49 @@
         </div>
     </div>
     
-    <c:if test="${fn:length(workingTimes) > 1}">
+</div>
 
-    <div class="control-group">
-        <label class="control-label"><spring:message code='working.times'/></label>
+<div class="grid-50">
 
-        <div class="controls">
-            <c:forEach items="${workingTimes}" var="time">
-                <spring:message code="working.time.valid.from" />
-                <uv:date date="${time.validFrom}" />
-                <br />
-                <c:if test="${time.monday.duration > 0}">
-                    <spring:message code="monday" />
-                </c:if>
-                <c:if test="${time.tuesday.duration > 0}">
-                    <spring:message code="tuesday" />
-                </c:if>
-                <c:if test="${time.wednesday.duration > 0}">
-                    <spring:message code="wednesday" />
-                </c:if>
-                <c:if test="${time.thursday.duration > 0}">
-                    <spring:message code="thursday" />
-                </c:if>
-                <c:if test="${time.friday.duration > 0}">
-                    <spring:message code="friday" />
-                </c:if>
-                <c:if test="${time.saturday.duration > 0}">
-                    <spring:message code="saturday" />
-                </c:if>
-                <c:if test="${time.sunday.duration > 0}">
-                    <spring:message code="sunday" />
-                </c:if>
-                <br />
-                <br />
-            </c:forEach>
-        </div>
+    <div class="header">
+
+        <legend>
+            <p>
+                <spring:message code="role"/>
+            </p>
+        </legend>
+
     </div>
 
-    </c:if>
+    <div class="control-group no-label">
 
-    <div class="control-group">
-        <label class="control-label">
-            <spring:message code='working.time'/>
-            <br />
-            <form:errors path="validFrom" cssClass="error" />
+        <span class="help-inline"><form:errors path="permissions" cssClass="error"/></span>
+
+        <label class="checkbox">
+            <form:checkbox path="permissions" value="INACTIVE"/>&nbsp;<b><spring:message code="role.inactive"/></b>:
+            <spring:message code="role.inactive.dsc"/>
+        </label>
+        <label class="checkbox">
+            <form:checkbox path="permissions" value="USER"/>&nbsp;<b><spring:message code="role.user"/></b>:
+            <spring:message code="role.user.dsc"/>
+        </label>
+        <label class="checkbox">
+            <form:checkbox path="permissions" value="BOSS"/>&nbsp;<b><spring:message code="role.boss"/></b>:
+            <spring:message code="role.boss.dsc"/>
+        </label>
+        <label class="checkbox">
+            <form:checkbox path="permissions" value="OFFICE"/>&nbsp;<b><spring:message code="role.office"/></b>:
+            <spring:message code="role.office.dsc"/>
         </label>
 
-        <div class="controls">
-
-            <spring:message code="working.time.valid.from" />&nbsp;
-            <c:set var="VALID_FROM"><uv:date date="${personForm.validFrom}" /></c:set>
-            <form:input id="validFrom" path="validFrom" value="${VALID_FROM}" cssErrorClass="error input-medium" cssClass="input-medium" />
-
-            <c:forEach items="${weekDays}" var="weekDay">
-                <label class="checkbox" for="${weekDay.name}">
-                    <form:checkbox id="${weekDay.name}" path="workingDays" value="${weekDay.dayOfWeek}" />
-                    &nbsp;<spring:message code='${weekDay.name}'/>
-                </label> 
-            </c:forEach>
-            
-        </div>
     </div>
 
 </div>
 
+</div>
+
+
+<div class="grid-100 sticky">
 
 <div class="grid-50">
 
@@ -278,6 +259,47 @@
     </div>
 
 </div>
+
+<div class="grid-50">
+
+    <div class="header">
+
+        <legend>
+            <p>
+                <spring:message code="working.times"/>
+            </p>
+        </legend>
+
+    </div>
+
+    <div class="control-group control-group">
+        <label class="control-label">
+            <spring:message code="working.time.valid.from" />
+        </label>
+        <div class="controls">
+            <c:set var="VALID_FROM"><uv:date date="${personForm.validFrom}" /></c:set>
+            <form:input id="validFrom" path="validFrom" value="${VALID_FROM}" cssErrorClass="error" />
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">
+            <spring:message code="working.time.days" />
+        </label>
+        <div class="controls">
+            <c:forEach items="${weekDays}" var="weekDay">
+                <label class="checkbox" for="${weekDay.name}">
+                    <form:checkbox id="${weekDay.name}" path="workingDays" value="${weekDay.dayOfWeek}" />
+                    &nbsp;<spring:message code='${weekDay.name}'/>
+                </label>
+            </c:forEach>
+        </div>
+    </div>
+
+</div>
+
+</div>
+
 
 <div class="grid-100">
 

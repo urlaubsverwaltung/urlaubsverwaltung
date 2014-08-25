@@ -5,5 +5,6 @@
 
     <include file="dbchangelogs/changelog-0.1-initial-schema-creation.xml"/>
     <include file="dbchangelogs/changelog-0.2-insert-test-user-for-demo.xml"/>
+    <include file="dbchangelogs/changelog-0.3-delete-admin-role.xml"/>
 
 </databaseChangeLog>

@@ -38,6 +38,10 @@ form.stretched textarea {
     width: 25%;
 }
 
+.control-group.no-label {
+    padding-right: 78px;
+}
+
 /**************************************************************************
 
   FORM VALIDATION ERRORS

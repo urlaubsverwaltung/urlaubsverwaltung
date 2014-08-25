@@ -17,10 +17,12 @@ import org.springframework.validation.Validator;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.util.NumberUtil;
 import org.synyx.urlaubsverwaltung.core.util.PropertiesUtil;
+import org.synyx.urlaubsverwaltung.security.Role;
 import org.synyx.urlaubsverwaltung.web.person.PersonForm;
 
 import java.math.BigDecimal;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -51,6 +53,7 @@ public class PersonValidator implements Validator {
     private static final String REMAINING_VACATION_DAYS = "remainingVacationDays";
     private static final String YEAR = "year";
     private static final String EMAIL = "email";
+    private static final String PERMISSIONS = "permissions";
 
     // a regex for email addresses that are valid, but may be "strange looking" (e.g. tomr$2@example.com)
     // original from: http://www.markussipila.info/pub/emailvalidator.php?action=validate
@@ -344,6 +347,34 @@ public class PersonValidator implements Validator {
             return false;
         } else {
             return true;
+        }
+    }
+
+    public void validatePermissions(PersonForm personForm, Errors errors) {
+
+        List<Role> roles = personForm.getPermissions();
+
+        if (roles == null || roles.isEmpty()) {
+            errors.rejectValue(PERMISSIONS, "role.error.least");
+        } else {
+            // if role inactive set, then only this role may be selected
+            // else this is an error
+
+            boolean roleInactiveSet = false;
+
+            for (Role r : roles) {
+                if (r == Role.INACTIVE) {
+                    roleInactiveSet = true;
+                }
+            }
+
+            if (roleInactiveSet) {
+                // validate that there is only role inactive set
+                // this means size of role collection must have size 1
+                if (roles.size() != 1) {
+                    errors.rejectValue(PERMISSIONS, "role.error.inactive");
+                }
+            }
         }
     }
 }

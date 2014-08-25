@@ -96,11 +96,6 @@ class PersonServiceImpl implements PersonService {
                 mailService.sendKeyGeneratingErrorNotification(personForm.getLoginName());
             }
 
-            person.setActive(true);
-
-            Collection<Role> perms = new ArrayList<Role>();
-            perms.add(Role.USER);
-            person.setPermissions(perms);
         }
 
         // set person information from PersonForm object on person that is updated
@@ -145,44 +140,6 @@ class PersonServiceImpl implements PersonService {
                 + " wurde editiert.");
         }
     }
-
-
-    /**
-     * @see  PersonService#editPermissions(Person, java.util.Collection)
-     */
-    @Override
-    public void editPermissions(Person person, Collection<Role> permissions) {
-
-        if (personShouldBeSetToInactive(permissions)) {
-            person.setActive(false);
-
-            List<Role> onlyInactive = new ArrayList<Role>();
-            onlyInactive.add(Role.INACTIVE);
-            person.setPermissions(onlyInactive);
-        } else {
-            person.setActive(true);
-            person.setPermissions(permissions);
-        }
-
-        save(person);
-    }
-
-
-    private boolean personShouldBeSetToInactive(Collection<Role> permissions) {
-
-        boolean inactive = false;
-
-        if (permissions.size() == 1) {
-            for (Role r : permissions) {
-                if (r.equals(Role.INACTIVE)) {
-                    inactive = true;
-                }
-            }
-        }
-
-        return inactive;
-    }
-
 
     /**
      * @see  PersonService#deactivate(Person)

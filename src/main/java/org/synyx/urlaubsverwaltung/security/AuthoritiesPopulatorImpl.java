@@ -54,11 +54,11 @@ public class AuthoritiesPopulatorImpl implements LdapAuthoritiesPopulator {
             List<Role> permissions = new ArrayList<Role>();
             permissions.add(Role.USER);
 
-            // there has to be at least one user with admin role to be able to set rights to users
-            // so the first person that logins, will be admin
+            // there has to be at least one user with office role to be able to set rights to users
+            // so the first person that logins, will be office
             // TODO: think about a different solution...
-            if (personService.getPersonsByRole(Role.ADMIN).size() == 0) {
-                permissions.add(Role.ADMIN);
+            if (personService.getPersonsByRole(Role.OFFICE).size() == 0) {
+                permissions.add(Role.OFFICE);
             }
 
             person.setPermissions(permissions);

@@ -11,8 +11,7 @@ public enum Role {
     USER("role.user"),
     BOSS("role.boss"),
     OFFICE("role.office"),
-    INACTIVE("role.inactive"),
-    ADMIN("role.admin");
+    INACTIVE("role.inactive");
 
     private String propertyKey;
 

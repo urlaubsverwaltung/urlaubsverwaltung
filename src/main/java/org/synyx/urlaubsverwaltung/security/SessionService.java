@@ -69,15 +69,6 @@ public class SessionService {
     }
 
 
-    public boolean isAdmin() {
-
-        if (getLoggedUser().hasRole(Role.ADMIN)) {
-            return true;
-        }
-
-        return false;
-    }
-
 
     public boolean isInactive() {
 

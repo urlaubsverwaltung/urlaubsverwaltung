@@ -16,7 +16,6 @@
         <security:intercept-url pattern="/web/staff/**" access="hasAnyRole('BOSS', 'OFFICE')"/>
         <!-- more concrete security rules for sick notes are located in SickNoteController -->
         <security:intercept-url pattern="/web/sicknote/**" access="isAuthenticated()"/>
-        <security:intercept-url pattern="/web/management/**" access="hasRole('ADMIN')"/>
         <security:intercept-url pattern="/login.jsp" access="permitAll"/>
         <security:intercept-url pattern="/messages.properties" access="permitAll"/>
         <security:intercept-url pattern="/messages_en.properties" access="permitAll"/>
@@ -45,7 +44,7 @@
     </bean>
 
     <security:user-service id="userDetailsService">
-        <security:user name="test" password="secret" authorities="USER, ADMIN, BOSS, OFFICE"/>
+        <security:user name="test" password="secret" authorities="USER, BOSS, OFFICE"/>
     </security:user-service>
 
     <security:authentication-manager alias="authenticationManager">

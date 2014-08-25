@@ -113,10 +113,6 @@
 
                 </sec:authorize>
 
-                <sec:authorize access="hasRole('ADMIN')">
-                    <li><a href="${formUrlPrefix}/management"><i class="icon-wrench"></i>&nbsp;<spring:message code="role.management" /></a></li>
-                </sec:authorize>
-
                 <li><a href="<spring:url value='/j_spring_security_logout' />"><i class="icon-off"></i>&nbsp;Logout</a></li>
 
             </ul>

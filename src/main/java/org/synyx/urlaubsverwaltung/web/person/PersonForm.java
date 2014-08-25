@@ -8,8 +8,10 @@ import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.calendar.Day;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.security.Role;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 
@@ -48,14 +50,17 @@ public class PersonForm {
 
     private DateMidnight validFrom;
 
-    private List<Integer> workingDays;
+    private List<Integer> workingDays = new ArrayList<>();
+
+    private List<Role> permissions = new ArrayList<>();
 
     public PersonForm() {
+        /* Ok */
     }
 
 
     public PersonForm(Person person, String year, Account account, String annualVacationDays,
-        String remainingVacationDays, boolean remainingVacationDaysExpire, WorkingTime workingTime) {
+        String remainingVacationDays, boolean remainingVacationDaysExpire, WorkingTime workingTime, Collection<Role> roles) {
 
         this.loginName = person.getLoginName();
         this.lastName = person.getLastName();
@@ -79,7 +84,7 @@ public class PersonForm {
             this.monthTo = String.valueOf(12);
         }
 
-        this.workingDays = new ArrayList<Integer>();
+        this.workingDays = new ArrayList<>();
 
         if (workingTime != null) {
             for (Day day : Day.values()) {
@@ -94,6 +99,8 @@ public class PersonForm {
 
             this.validFrom = workingTime.getValidFrom();
         }
+
+        this.permissions = new ArrayList<>(roles);
     }
 
     public void setDefaultValuesForValidity() {
@@ -285,6 +292,13 @@ public class PersonForm {
         this.validFrom = validFrom;
     }
 
+    public List<Role> getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(List<Role> permissions) {
+        this.permissions = permissions;
+    }
 
     public Person fillPersonObject(Person person) {
 
@@ -292,8 +306,34 @@ public class PersonForm {
         person.setLastName(this.lastName);
         person.setFirstName(this.firstName);
         person.setEmail(this.email);
-        person.setActive(this.active);
+
+        if (personShouldBeSetToInactive(this.permissions)) {
+            person.setActive(false);
+
+            List<Role> onlyInactive = new ArrayList<Role>();
+            onlyInactive.add(Role.INACTIVE);
+            person.setPermissions(onlyInactive);
+        } else {
+            person.setActive(true);
+            person.setPermissions(permissions);
+        }
+
 
         return person;
+    }
+
+    private boolean personShouldBeSetToInactive(Collection<Role> permissions) {
+
+        boolean inactive = false;
+
+        if (permissions.size() == 1) {
+            for (Role r : permissions) {
+                if (r.equals(Role.INACTIVE)) {
+                    inactive = true;
+                }
+            }
+        }
+
+        return inactive;
     }
 }

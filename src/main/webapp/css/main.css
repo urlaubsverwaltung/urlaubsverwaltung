@@ -40,6 +40,10 @@ a:hover {
     margin-bottom: 30px;
 }
 
+[class^="grid-"].sticky, [class*=" grid-"].sticky {
+    margin-bottom: 0;
+}
+
 /**************************************************************************
   
   HEADER

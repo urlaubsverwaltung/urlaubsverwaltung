@@ -29,6 +29,7 @@ import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.util.NumberUtil;
+import org.synyx.urlaubsverwaltung.security.Role;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.util.DateMidnightPropertyEditor;
@@ -36,6 +37,7 @@ import org.synyx.urlaubsverwaltung.web.validator.PersonValidator;
 
 import java.math.BigDecimal;
 
+import java.util.Collection;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
@@ -176,7 +178,7 @@ public class PersonManagementController {
         WorkingTime workingTime = workingTimeService.getCurrentOne(person);
 
         return new PersonForm(person, String.valueOf(year), account, ann, rem, remainingVacationDaysExpire,
-                workingTime);
+                workingTime, person.getPermissions());
     }
 
 
@@ -257,18 +259,15 @@ public class PersonManagementController {
 
         validator.validate(personForm, errors); // validates the name fields, the email field and the year field
 
+        validator.validateAnnualVacation(personForm, errors, locale); // validates holiday entitlement's
+
+        validator.validateRemainingVacationDays(personForm, errors, locale); // validates remaining vacation days
+
+        validator.validatePermissions(personForm, errors);
+
         if (errors.hasGlobalErrors()) {
             model.addAttribute("errors", errors);
         }
-
-        validator.validateAnnualVacation(personForm, errors, locale); // validates holiday entitlement's
-
-        // vacation days
-
-        validator.validateRemainingVacationDays(personForm, errors, locale); // validates holiday
-
-        // entitlement's remaining
-        // vacation days
 
         if (errors.hasErrors()) {
             addModelAttributesForPersonForm(personToUpdate, personForm, model);
