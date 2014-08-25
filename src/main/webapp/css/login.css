@@ -6,7 +6,7 @@ body {
 }
 
 .content {
-    margin-top: 17em; 
+    margin-top: 15em;
 }
 
 /**************************************************************************
@@ -81,11 +81,11 @@ body {
 /* Mobile */
 @media all and (max-width: 480px) {
 
-    #content {
+    .content {
         margin-top: 10em;
     }
-    
-    .btn-large {
+
+    .login--form button {
         width: 100%;
     }
     

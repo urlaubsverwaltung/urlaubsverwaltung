@@ -76,7 +76,7 @@
         <div class="grid-container">
             <div class="grid-100">
                 <p title="Version ${project.version} - Commit ${git.commit.id.abbrev}">
-                    synyx Urlaubsverwaltung Version ${project.version}  
+                    synyx Urlaubsverwaltung Version ${project.version}
                 </p>
             </div>
         </div>

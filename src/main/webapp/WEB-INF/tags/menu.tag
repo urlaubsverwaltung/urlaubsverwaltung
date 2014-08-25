@@ -8,7 +8,7 @@
     <div class="navbar-inner">
         <div class="grid-container">
             <div class="grid-100">
-            <a class="brand" href="${formUrlPrefix}/overview">Urlaubsverwaltung</a>
+            <a class="brand" href="${formUrlPrefix}/overview"><spring:message code="title" /></a>
             <ul class="nav">
 
                 <sec:authorize access="hasRole('USER')">
