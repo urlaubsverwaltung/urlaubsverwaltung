@@ -33,7 +33,7 @@ form.stretched textarea {
     width: 80%;
 }
 
-.form-horizontal .controls.radiobuttons label {
+.controls.radiobuttons label {
     display: inline-block;
     width: 25%;
 }

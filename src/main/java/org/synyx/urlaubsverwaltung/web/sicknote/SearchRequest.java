@@ -7,42 +7,29 @@ public class SearchRequest {
 
     private Integer personId;
 
-    private String from;
+    private Period period;
 
-    private String to;
+    public enum Period {
+        YEAR,
+        QUARTAL,
+        MONTH;
+    }
 
     public Integer getPersonId() {
 
         return personId;
     }
 
-
     public void setPersonId(Integer personId) {
 
         this.personId = personId;
     }
 
-
-    public String getFrom() {
-
-        return from;
+    public Period getPeriod() {
+        return period;
     }
 
-
-    public void setFrom(String from) {
-
-        this.from = from;
-    }
-
-
-    public String getTo() {
-
-        return to;
-    }
-
-
-    public void setTo(String to) {
-
-        this.to = to;
+    public void setPeriod(Period period) {
+        this.period = period;
     }
 }

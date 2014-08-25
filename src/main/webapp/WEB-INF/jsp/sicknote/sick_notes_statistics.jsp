@@ -48,7 +48,7 @@
 
         <div class="grid-100">
 
-            <div class="second-legend">
+            <div>
                 <p style="float:left">
                     <spring:message code="sicknotes.statistics" />&nbsp;${statistics.year}
                 </p>

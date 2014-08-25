@@ -33,42 +33,6 @@
             
         });
         
-        function validate() {
-
-            $("span#from-error").empty();
-            $("span#from-to").empty(); 
-            
-            var from = $("input#from").val();
-            var to = $("input#to").val();
-            
-            var error = 0;
-            
-            if(from == "") {
-               $("span#from-error").html("darf nicht leer sein");
-               error = 1;
-            } else {
-              if(!isValidDate(from)) {
-                  $("span#from-error").html("ungültige Eingabe");
-                  error = 1;  
-              }  
-            } 
-            
-            if(to == "") {
-                $("span#to-error").html("darf nicht leer sein"); 
-                error = 1;
-            } else {
-                if(!isValidDate(to)) {
-                    $("span#to-error").html("ungültige Eingabe");
-                    error = 1;
-                }
-            } 
-            
-            if(error == 0) {
-                $("form#searchRequest-form").submit(); 
-            }
-            
-        }
-        
     </script>
 </head>
 
@@ -107,11 +71,9 @@
                             </c:forEach>
                         </ul>
                     </div>
+                    <uv:print />
                     <a class="btn btn-right" href="${formUrlPrefix}/sicknote/new">
                         <i class="icon-plus"></i>&nbsp;<spring:message code="sicknotes.new" />
-                    </a>
-                    <a class="btn btn-right" href="#" media="print" onclick="window.print(); return false;">
-                        <i class="icon-print"></i>&nbsp;<spring:message code='Print' />
                     </a>
                     <a href="#changeViewModal" role="button" class="btn btn-right" data-toggle="modal">
                         <i class="icon-filter"></i>&nbsp;<spring:message code="filter" />
@@ -125,7 +87,7 @@
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                     <h3 id="myModalLabel"><spring:message code="filter" /></h3>
                 </div>
-                <form:form method="POST" id="searchRequest-form" action="${formUrlPrefix}/sicknote/filter" modelAttribute="searchRequest" class="form-horizontal">
+                <form:form method="POST" id="searchRequest-form" action="${formUrlPrefix}/sicknote/filter" modelAttribute="searchRequest" class="form-horizontal stretched">
                 <div class="modal-body">
 
                     <div class="control-group">
@@ -140,38 +102,34 @@
                             </form:select>
                         </div>
                     </div>
-
-                    <div class="control-group">
-                        <label class="control-label" for="from"><spring:message code="From" /></label>
-
-                        <div class="controls">
-                            <form:input path="from" id="from" cssClass="input-medium" />
-                            <span class="help-inline error" id="from-error"></span>
-                        </div>
-                    </div>
-
-                    <div class="control-group">
-                        <label class="control-label" for="to"><spring:message code="To" /></label>
-
-                        <div class="controls">
-                            <form:input path="to" id="to" cssClass="input-medium" />
-                            <span class="help-inline error" id="to-error"></span>
-                        </div>
-                    </div>
                     
+                    <div class="control-group">
+                        <label class="control-label">
+                            <spring:message code="time" />
+                        </label>
+                        <div class="controls radiobuttons">
+                            <form:radiobutton id="periodYear" path="period" value="YEAR" checked="checked" />
+                            <label for="periodYear"><spring:message code="period.year" /></label>
+                            <form:radiobutton id="periodQuartal" path="period" value="QUARTAL" />
+                            <label for="periodQuartal"><spring:message code="period.quartal" /></label>
+                            <form:radiobutton id="periodMonth" path="period" value="MONTH" />
+                            <label for="periodMonth"><spring:message code="period.month" /></label>
+                        </div>
+                    </div>
+
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-primary" type="button" onclick="validate();"><spring:message code="go" /></button>
+                    <button class="btn btn-primary" type="submit"><spring:message code="go" /></button>
                     <button class="btn" data-dismiss="modal" aria-hidden="true"><spring:message code="cancel" /></button>
                 </div>
                 </form:form>
             </div>
 
-            <div class="second-legend">
-                <p style="float:left">
+            <div>
+                <p style="display:inline-block">
                     <spring:message code="time"/>:&nbsp;<uv:date date="${from}" /> - <uv:date date="${to}" />
                 </p>
-                <p style="float:right">
+                <p style="float:right;">
                     <spring:message code="Effective"/> <uv:date date="${today}" />
                 </p>
             </div>
@@ -179,7 +137,9 @@
             <c:choose>
 
                 <c:when test="${empty sickNotes}">
-                    <spring:message code="sicknotes.none" />
+                    <div>
+                        <spring:message code="sicknotes.none" />
+                    </div>
                 </c:when>
 
                 <c:otherwise>

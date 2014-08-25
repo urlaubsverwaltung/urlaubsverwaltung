@@ -92,16 +92,17 @@ public class SickNoteController {
     }
 
 
-    @RequestMapping(value = "/sicknote", method = RequestMethod.GET)
-    public String allSickNotes() {
+    @RequestMapping(value = "/sicknote/quartal", method = RequestMethod.GET)
+    public String quartalSickNotes() {
 
         if (sessionService.isOffice()) {
             DateMidnight now = DateMidnight.now();
-            DateMidnight startDate = now.dayOfMonth().withMinimumValue();
-            DateMidnight endDate = now.dayOfMonth().withMaximumValue();
 
-            return "redirect:/web/sicknote?from=" + startDate.toString(DateFormat.PATTERN) + "&to="
-                + endDate.toString(DateFormat.PATTERN);
+            DateMidnight from = now.dayOfMonth().withMinimumValue().minusMonths(2);
+            DateMidnight to = now.dayOfMonth().withMaximumValue();
+
+            return "redirect:/web/sicknote?from=" + from.toString(DateFormat.PATTERN) + "&to="
+                    + to.toString(DateFormat.PATTERN);
         }
 
         return ControllerConstants.ERROR_JSP;
@@ -114,11 +115,27 @@ public class SickNoteController {
         if (sessionService.isOffice()) {
             Person person = personService.getPersonByID(searchRequest.getPersonId());
 
+            DateMidnight now = DateMidnight.now();
+            DateMidnight from = now;
+            DateMidnight to = now;
+
+            if(searchRequest.getPeriod().equals(SearchRequest.Period.YEAR)) {
+                from = now.dayOfYear().withMinimumValue();
+                to = now.dayOfYear().withMaximumValue();
+            } else if(searchRequest.getPeriod().equals(SearchRequest.Period.QUARTAL)) {
+                from = now.dayOfMonth().withMinimumValue().minusMonths(2);
+                to = now.dayOfMonth().withMaximumValue();
+            } else if (searchRequest.getPeriod().equals(SearchRequest.Period.MONTH)) {
+                from = now.dayOfMonth().withMinimumValue();
+                to = now.dayOfMonth().withMaximumValue();
+            }
+
             if (person != null) {
-                return "redirect:/web/sicknote?staff=" + person.getId() + "&from=" + searchRequest.getFrom() + "&to="
-                    + searchRequest.getTo();
+
+                return "redirect:/web/sicknote?staff=" + person.getId() + "&from=" + from.toString(DateFormat.PATTERN) + "&to="
+                    + to.toString(DateFormat.PATTERN);
             } else {
-                return "redirect:/web/sicknote?from=" + searchRequest.getFrom() + "&to=" + searchRequest.getTo();
+                return "redirect:/web/sicknote?from=" + from.toString(DateFormat.PATTERN) + "&to=" + to.toString(DateFormat.PATTERN);
             }
         }
 
@@ -165,40 +182,6 @@ public class SickNoteController {
             fillModel(model, sickNoteList, fromDate, toDate);
 
             return "sicknote/sick_notes";
-        }
-
-        return ControllerConstants.ERROR_JSP;
-    }
-
-
-    @RequestMapping(value = "/sicknote/quartal", method = RequestMethod.GET)
-    public String quartalSickNotes() {
-
-        if (sessionService.isOffice()) {
-            DateMidnight now = DateMidnight.now();
-
-            DateMidnight from = now.dayOfMonth().withMinimumValue().minusMonths(2);
-            DateMidnight to = now.dayOfMonth().withMaximumValue();
-
-            return "redirect:/web/sicknote?from=" + from.toString(DateFormat.PATTERN) + "&to="
-                + to.toString(DateFormat.PATTERN);
-        }
-
-        return ControllerConstants.ERROR_JSP;
-    }
-
-
-    @RequestMapping(value = "/sicknote/year", method = RequestMethod.GET)
-    public String yearSickNotes() {
-
-        if (sessionService.isOffice()) {
-            DateMidnight now = DateMidnight.now();
-
-            DateMidnight from = now.dayOfYear().withMinimumValue();
-            DateMidnight to = now.dayOfYear().withMaximumValue();
-
-            return "redirect:/web/sicknote?from=" + from.toString(DateFormat.PATTERN) + "&to="
-                + to.toString(DateFormat.PATTERN);
         }
 
         return ControllerConstants.ERROR_JSP;
