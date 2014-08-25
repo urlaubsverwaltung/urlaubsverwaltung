@@ -175,21 +175,16 @@ th.tablesorter-headerDesc, th.tablesorter-headerAsc {
 
 .btn-right {
     float: right;
-    margin-bottom: 1em;
-    margin-left: 0.5em;
 }
 
 .btn-left {
     float: left;
-    margin-bottom: 1em;
-    margin-left: 0.5em;
 }
 
-div.btn-group-legend {
-    float: right;
-    margin-bottom: 1em;
-    margin-left: 0.5em;
-    font-size: 13px;
+.btn-right,
+.btn-left {
+    margin-left: 6px;
+    margin-bottom: 6px;
 }
 
 button.btn, a.btn, input.btn {
@@ -237,34 +232,17 @@ button.btn, a.btn, input.btn {
 .header legend p {
     display: inline-block;
     color: #516310;
-    font-weight: 100;
-    vertical-align: middle;
-    margin: 0;
+}
+
+legend .btn {
+    margin-top: 6px;
 }
 
 legend .dropdown-menu {
     font-size: 12px;
-}
-
-.header .selector {
-    float: right;
-    margin-left: 0.5em;
-}
-
-.selector button {
-    font-size: 14px;
-}
-
-.selector ul.dropdown-menu {
-    /*min-width: 105px;*/
-    font-size: 12px;
-}
-
-.selector ul.dropdown-menu {
     max-height: 160px;
     overflow-y: auto;
 }
-
 
 /**************************************************************************
   
@@ -272,18 +250,9 @@ legend .dropdown-menu {
   
 **************************************************************************/
 
-.confirm-green {
-    border: 1px solid #D7D7D7;
-    background-color: #EAF2D3;
+.confirm {
     padding: 1em 1em 1em 2.5em;
-    margin-top:1em;
-}
-
-.confirm-red {
-    border: 1px solid #E76757;
-    background-color: #FFE3E3;
-    padding: 1em 1em 1em 2.5em;
-    margin-top:1em;
+    margin-top: 1em;
 }
 
 /**************************************************************************

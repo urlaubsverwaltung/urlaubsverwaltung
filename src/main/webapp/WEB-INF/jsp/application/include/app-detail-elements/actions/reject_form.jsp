@@ -5,7 +5,7 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <form:form class="stretched" method="put" action="${formUrlPrefix}/application/${application.id}/reject" modelAttribute="comment">
-    <div id="reject" class="confirm-red" style="display: none">
+    <div id="reject" class="confirm alert alert-danger" style="display: none">
 
         <if test="${!empty errors}">
             <script type="text/javascript">
@@ -32,8 +32,8 @@
         <form:textarea rows="1" path="reason" cssErrorClass="error" onkeyup="count(this.value, 'text-reject');" onkeydown="maxChars(this,200); count(this.value, 'text-reject');" />
         <br />
 
-            <button type="submit" class="btn">
-                <i class="icon-ban-circle"></i>&nbsp;<spring:message code='app.state.no.short' />
+            <button type="submit" class="btn btn-danger">
+                <i class="icon-ban-circle icon-white"></i>&nbsp;<spring:message code='app.state.no.short' />
             </button>
             <button type="button" class="btn" onclick="$('#reject').hide();">
                 <i class="icon-remove"></i>&nbsp;<spring:message code='cancel' />

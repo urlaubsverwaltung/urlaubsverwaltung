@@ -27,7 +27,7 @@
                 });
             </script>
         </c:if>
-        <button type="button" class="btn" onclick="this.form.submit();">
+        <button type="button" class="btn btn-right" onclick="this.form.submit();">
             <i class="icon-bell"></i>&nbsp;<spring:message code='remind.chef' />
         </button>
     </form:form>

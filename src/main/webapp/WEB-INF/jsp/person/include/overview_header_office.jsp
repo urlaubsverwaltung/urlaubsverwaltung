@@ -13,11 +13,9 @@
             <img class="overview--user-pic print--invisible" src="<c:out value='${gravatar}?d=mm&s=40'/>"/>&nbsp;
             <c:out value="${person.firstName}"/>&nbsp;<c:out value="${person.lastName}"/>&nbsp;&ndash;&nbsp;<spring:message
                 code="table.overview"/><c:out value="${displayYear}"/>
-        </p>
-        
         <uv:year-selector year="${year}" />
 
-        <div class="btn-group selector">
+        <div class="btn-group btn-right">
 
             <button class="btn dropdown-toggle" data-toggle="dropdown">
                 <i class="icon-user"></i>
@@ -41,6 +39,8 @@
         <a href="${formUrlPrefix}/staff/${person.id}/edit" class="btn btn-right"><i class="icon-pencil"></i> Edit</a>
 
         <uv:print />
+
+        </p>
 
     </legend>
     

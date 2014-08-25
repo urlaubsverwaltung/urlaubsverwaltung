@@ -73,7 +73,7 @@
 
                             <uv:year-selector year="${year}" />
 
-                            <div id="active-state" class="btn-group selector">
+                            <div id="active-state" class="btn-group btn-right">
 
                                 <button class="btn dropdown-toggle" data-toggle="dropdown">
                                 </button>

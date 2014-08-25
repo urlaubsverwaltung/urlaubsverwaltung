@@ -5,7 +5,7 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <form:form method="put" action="${formUrlPrefix}/application/${application.id}/refer" modelAttribute="modelPerson">
-    <div id="refer" style="display: none" class="confirm-green">
+    <div id="refer" style="display: none" class="confirm alert alert-info">
         <b><spring:message code="please.refer" /></b>
         <br /><br />
         <form:select path="loginName">
@@ -14,8 +14,8 @@
             </c:forEach>
         </form:select>
         &nbsp;
-        <button type="submit" class="btn" style="margin-top: 0">
-            <i class="icon-share"></i>&nbsp;<spring:message code='app.state.refer.short' />
+        <button type="submit" class="btn btn-info" style="margin-top: 0">
+            <i class="icon-share icon-white"></i>&nbsp;<spring:message code='app.state.refer.short' />
         </button>
         <button type="button" class="btn" style="margin-top: 0" onclick="$('#refer').hide();">
             <i class="icon-remove"></i>&nbsp;<spring:message code='cancel' />

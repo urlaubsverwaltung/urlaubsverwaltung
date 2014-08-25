@@ -15,8 +15,6 @@
                 <spring:message code="apps.vac" />
             </p>
             
-            <div class="btn-group-legend">
-
                 <c:choose>
                     <c:when test="${person.id == loggedUser.id}">
                         <a class="btn btn-right" href="${formUrlPrefix}/application/new">
@@ -36,7 +34,6 @@
                     </c:otherwise>
                 </c:choose>
 
-            </div>
         </legend>
 
     </div>

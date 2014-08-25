@@ -34,7 +34,7 @@
     </tr>
 </c:if>
 
-<div id="cancel" class="confirm-red" style="display: none">
+<div id="cancel" class="confirm alert alert-danger" style="display: none">
 
     <if test="${!empty errors}">
         <script type="text/javascript">
@@ -57,8 +57,8 @@
         <br />
         <form:textarea rows="1" path="reason" onkeyup="count(this.value, 'text-cancel');" onkeydown="maxChars(this,200); count(this.value, 'text-cancel');" />
         <br /><br />
-        <button type="submit" class="btn">
-            <i class="icon-remove-circle"></i>&nbsp;<spring:message code='delete' />
+        <button type="submit" class="btn btn-danger">
+            <i class="icon-remove-circle icon-white"></i>&nbsp;<spring:message code='delete' />
         </button>
         <button type="button" class="btn" onclick="$('#cancel').hide();">
             <i class="icon-remove"></i>&nbsp;<spring:message code='cancel' />

@@ -92,7 +92,7 @@
                             <spring:message code="for" />&nbsp;<c:out value="${person.firstName}" />&nbsp;<c:out value="${person.lastName}" />
                         </c:if>
                     </p>
-                    <div class="btn-group btn-group-legend selector">
+                    <div class="btn-group btn-group-legend btn-right">
                         <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
                             <i class="icon-tasks"></i>&nbsp;<spring:message code='sicknotes.statistics.short' />
                             <span class="caret"></span>

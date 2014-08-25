@@ -3,7 +3,7 @@
 
 <%@attribute name="year" type="java.lang.Integer" required="true" %>
 
-<div class="btn-group selector">
+<div class="btn-group btn-right">
 
     <button class="btn dropdown-toggle" data-toggle="dropdown">
         <i class="icon-time"></i>
