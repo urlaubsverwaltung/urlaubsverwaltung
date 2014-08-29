@@ -172,7 +172,7 @@ $(document).ready(function()
         });
         
         // bind start and end order events
-        $(".sortable-tbl")
+        $("table.sortable")
             .bind("sortStart", function() {
                 // if sorting start remove striping
                 $(".zebra-table tr:even").removeClass("alt");
