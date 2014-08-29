@@ -11,11 +11,15 @@
     <legend>
         <p>
             <img class="overview--user-pic print--invisible" src="<c:out value='${gravatar}?d=mm&s=40'/>"/>&nbsp;
-            <c:out value="${person.firstName}"/>&nbsp;<c:out value="${person.lastName}"/>&nbsp;&ndash;&nbsp;<spring:message
-            code="table.overview"/><c:out value="${displayYear}"/>
+            <c:out value="${person.firstName}"/>&nbsp;<c:out value="${person.lastName}"/>
+            <span class="hide-on-mobile">&nbsp;&ndash;&nbsp;<spring:message code="table.overview"/><c:out value="${displayYear}"/></span>
         </p>
-        <uv:year-selector year="${year}" />
-        <uv:print />
+        <span class="hide-on-mobile">
+            <uv:year-selector year="${year}" />
+        </span>
+        <span class="hide-on-tablet hide-on-mobile">
+            <uv:print />
+        </span>
     </legend>
     
 </div>

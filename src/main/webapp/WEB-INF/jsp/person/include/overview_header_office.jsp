@@ -13,34 +13,39 @@
             <img class="overview--user-pic print--invisible" src="<c:out value='${gravatar}?d=mm&s=40'/>"/>&nbsp;
             <c:out value="${person.firstName}"/>&nbsp;<c:out value="${person.lastName}"/>&nbsp;&ndash;&nbsp;<spring:message
                 code="table.overview"/><c:out value="${displayYear}"/>
-        <uv:year-selector year="${year}" />
 
-        <div class="btn-group btn-right">
+            <span class="hide-on-mobile">
+                <uv:year-selector year="${year}" />
+            </span>
 
-            <button class="btn dropdown-toggle" data-toggle="dropdown">
-                <i class="icon-user"></i>
-                <spring:message code="ov.header.person" />&nbsp;<span class="caret"></span>
-            </button>
+            <div class="btn-group btn-right">
 
-            <ul class="dropdown-menu">
+                <button class="btn dropdown-toggle" data-toggle="dropdown">
+                    <i class="icon-user"></i>
+                    <spring:message code="ov.header.person" />&nbsp;<span class="caret"></span>
+                </button>
 
-                <c:forEach items="${persons}" var="person">
-                    <li>
-                        <a href="${formUrlPrefix}/staff/<c:out value='${person.id}' />/overview">
-                            <c:out value="${person.niceName}"/>
-                        </a>
-                    </li>
-                </c:forEach>
+                <ul class="dropdown-menu">
 
-            </ul>
+                    <c:forEach items="${persons}" var="person">
+                        <li>
+                            <a href="${formUrlPrefix}/staff/<c:out value='${person.id}' />/overview">
+                                <c:out value="${person.niceName}"/>
+                            </a>
+                        </li>
+                    </c:forEach>
 
-        </div>
+                </ul>
 
-        <sec:authorize access="hasRole('OFFICE')">
-            <a href="${formUrlPrefix}/staff/${person.id}/edit" class="btn btn-right"><i class="icon-pencil"></i> Edit</a>
-        </sec:authorize>
+            </div>
 
-        <uv:print />
+            <sec:authorize access="hasRole('OFFICE')">
+                <a href="${formUrlPrefix}/staff/${person.id}/edit" class="btn btn-right"><i class="icon-pencil"></i> Edit</a>
+            </sec:authorize>
+
+            <span class="hide-on-tablet hide-on-mobile">
+                <uv:print />
+            </span>
 
         </p>
 
