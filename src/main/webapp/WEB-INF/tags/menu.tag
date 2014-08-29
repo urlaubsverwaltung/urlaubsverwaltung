@@ -4,14 +4,33 @@
 
 <spring:url var="formUrlPrefix" value="/web" />
 
+<script type="text/javascript">
+    $(document).ready(function(){
+
+        /* toggle nav */
+        $("#menu-icon").on("click", function(){
+
+            $(".content").toggleClass("mobile-menu-active");
+            $("#menu-icon").toggleClass("active");
+
+            $(".nav").toggle();
+
+            return false;
+
+        });
+
+    });
+</script>
+
 <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="navbar-inner">
         <div class="grid-container">
             <div class="grid-100">
-            <a class="brand" href="${formUrlPrefix}/overview">
-                <img src="<spring:url value='/images/synyx-logo-2.jpg' />" />
-                <spring:message code="title" />
-            </a>
+                <span class="brand">
+                    <img src="<spring:url value='/images/synyx-logo-2.jpg' />" />
+                    <spring:message code="title" />
+                   <button type="button" class="btn btn-right" id="menu-icon" href="#"><i class="icon-align-justify"></i></button>
+                </span>
             <ul class="nav">
 
                 <sec:authorize access="hasRole('USER')">
