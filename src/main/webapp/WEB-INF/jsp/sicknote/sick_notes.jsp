@@ -23,11 +23,11 @@
             createDatepickerInstanceForSickNote(regional, "from", "to");
 
             $("table.sortable").tablesorter({
-                sortList: [[2,0]],
+                sortList: [[0,0]],
                 headers: { 
-                    1: { sorter:'germanDate' },
+                    0: { sorter:'germanDate' },
                     3: { sorter:'germanDate' },
-                    4: { sorter:'germanDate' }
+                    5: { sorter:'germanDate' }
                 }
             });
             
@@ -146,12 +146,12 @@
                     <table class="data-table is-centered sortable tablesorter zebra-table" cellspacing="0">
                         <thead>
                         <tr>
+                            <th class="print--invisible"><spring:message code="app.date.overview" /></th>
                             <th><spring:message code="firstname" /></th>
                             <th><spring:message code="lastname" /></th>
                             <th><spring:message code="sicknotes.time" /></th>
                             <th><spring:message code="work.days" /></th>
                             <th><spring:message code="sicknotes.aub.short" /></th>
-                            <th class="print--invisible"><spring:message code="app.date.overview" /></th>
                             <th class="print--invisible"><spring:message code="edit" /></th>
                         </tr>
                         </thead>
@@ -166,6 +166,9 @@
                                 </c:otherwise>
                             </c:choose>
                             <tr class="${CSS_CLASS}" onclick="navigate('${formUrlPrefix}/sicknote/${sickNote.id}');">
+                                <td class="print--invisible">
+                                    <uv:date date="${sickNote.lastEdited}" />
+                                </td>
                                 <td>
                                     <c:out value="${sickNote.person.firstName}" />
                                 </td>
@@ -180,9 +183,6 @@
                                 </td>
                                 <td>
                                     <uv:date date="${sickNote.aubStartDate}" /> - <uv:date date="${sickNote.aubEndDate}" />
-                                </td>
-                                <td class="print--invisible">
-                                    <uv:date date="${sickNote.lastEdited}" />
                                 </td>
                                 <td class="print--invisible">
                                     <c:if test="${sickNote.active}">

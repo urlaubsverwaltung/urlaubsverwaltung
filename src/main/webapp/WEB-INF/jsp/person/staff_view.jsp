@@ -33,7 +33,7 @@
             $(document).ready(function() {
 
                 $("table.sortable").tablesorter({
-                    sortList: [[2,0]],
+                    sortList: [[0,0]],
                     headers: {
                       5: { sorter: 'commaNumber' }, 
                       6: { sorter: 'commaNumber' }
