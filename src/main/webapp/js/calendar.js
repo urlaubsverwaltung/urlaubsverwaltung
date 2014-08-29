@@ -280,7 +280,11 @@ $(function() {
             var placeForDatePickerMonths = datePickerWidth - datePickerElementsWidth;
             
             var numberOfMonths = Math.floor(placeForDatePickerMonths / datePickerMonthWidth);
-            
+
+            if(numberOfMonths === 0) {
+                return numberOfMonths;
+            }
+
             var totalWidth = (numberOfMonths * datePickerMonthWidth) + datePickerElementsWidth;
             
             if(totalWidth > datePickerWidth) {
@@ -298,7 +302,13 @@ $(function() {
 
             var date = moment();
             // 0 index
-            var monthsToShow = calculateNumberOfMonths() - 1;
+            var calculatedNumberOfMonths = calculateNumberOfMonths();
+
+            var monthsToShow = 0;
+
+            if(calculatedNumberOfMonths > 1) {
+                monthsToShow = calculatedNumberOfMonths - 1;
+            }
 
             return render(TMPL.container, {
 
