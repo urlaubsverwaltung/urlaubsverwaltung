@@ -62,7 +62,7 @@ a:hover {
 .navbar .nav > li > a {
     color: #555555;
     text-shadow: none;
-    padding: 15px 18px 11px;
+    padding: 12px;
     text-align: right;
     font-size: 1.1em;
 }
@@ -74,15 +74,13 @@ a:hover {
 
 .navbar .brand {
     color: #516310;
-    background: url("../images/synyx-logo-2.jpg") no-repeat 10% 50%;
-    padding: 12px 50px 12px;
     font-size: 1.75em;
 }
 
 .navbar-inner {
     background-image: none;
     background-color: #F8F8F8;
-    min-height: 45px;
+    height: 45px;
 }
 
 .navbar .dropdown-menu:after, .navbar .dropdown-menu:before {
@@ -300,12 +298,73 @@ legend .dropdown-menu {
 
 /* Narrow desktop */
 @media all and (max-width: 960px) {
-    /* Ok */
+
+    .navbar-fixed-top {
+        position: absolute;
+    }
+
+    .navbar {
+        text-align: center;
+    }
+
+    .navbar .brand,
+    .navbar .nav {
+        float: none;
+    }
+
+    .navbar-inner {
+        height: 100px;
+    }
+
+    .navbar .nav > li,
+    .navbar .nav > li > a {
+        display: inline-block;
+        float: none;
+    }
+
+    .content {
+        margin-top: 120px;
+    }
 }
 
 /* Tablet */
 @media all and (max-width: 768px) {
-    /* Ok */
+
+    .navbar-inner [class^="grid-"],
+    .navbar-inner [class*=" grid-"] {
+        padding: 0;
+    }
+
+    .navbar-inner {
+        height: 45px;
+    }
+
+    .navbar .brand {
+        padding-left: 30px;
+        text-align: left;
+    }
+
+    .navbar .nav {
+        background-color: #F1F1F1;
+    }
+
+    .navbar .nav > li,
+    .navbar .nav > li > a {
+        display: block;
+        text-align: left;
+    }
+
+    .navbar .nav > li {
+        border-top: 1px solid #DDDDDD;
+    }
+
+    .navbar .nav > li:last-child {
+        border-bottom: 1px solid #DDDDDD;
+    }
+
+    .content {
+        margin-top: 330px;
+    }
 }
 
 /* Small Tablet */

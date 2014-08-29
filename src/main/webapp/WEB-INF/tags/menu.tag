@@ -8,7 +8,10 @@
     <div class="navbar-inner">
         <div class="grid-container">
             <div class="grid-100">
-            <a class="brand" href="${formUrlPrefix}/overview"><spring:message code="title" /></a>
+            <a class="brand" href="${formUrlPrefix}/overview">
+                <img src="<spring:url value='/images/synyx-logo-2.jpg' />" />
+                <spring:message code="title" />
+            </a>
             <ul class="nav">
 
                 <sec:authorize access="hasRole('USER')">
