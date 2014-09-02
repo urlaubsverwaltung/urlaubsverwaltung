@@ -2,9 +2,6 @@
 
 Die Urlaubsverwaltung ist eine Web-Anwendung, die es ermöglicht, Urlaubsanträge von Mitarbeitern elektronisch zu verwalten. Mitarbeiter stellen Urlaubsanträge, die von den jeweils Berechtigten genehmigt oder abgelehnt werden. Die Anwendung bietet Übersicht über die bestehenden Urlaubsanträge und ermöglicht außerdem Überblick und Pflege von Urlaubsanspruch und Anzahl verbleibender Urlaubstage der Mitarbeiter.
 
-Die Anwendung entstand als [synyx](http://www.synyx.de/) Azubi Projekt, an dem ich Java, das Spring Framework uvm. kennenlernte.
-Seit Anfang 2012 wird die Urlaubsverwaltung bei [synyx](http://www.synyx.de/) produktiv eingesetzt. Weiterentwicklung der Anwendung erfolgt im Moment nur noch sporadisch. 
- 
 Weitere Informationen zur Urlaubsverwaltung findet man im [synyx Blog](http://blog.synyx.de):
 * [Stand November 2011](http://blog.synyx.de/2011/11/elektronische-urlaubsverwaltung-made-by-youngsters/)
 * [Stand November 2012](http://blog.synyx.de/2012/11/urlaubsverwaltung-was-hat-sich-getan/) 
@@ -41,23 +38,18 @@ Im Browser lässt sich die Anwendung dann über `http://localhost:8080/urlaubsve
 Es gibt bisher zwei Authentifizierungsmethoden: LDAP und Demo.
 
 Bei der Authentifizierungsmethode Demo gibt es einen Testbenutzer mit Benutzernamen "test" und Passwort "secret".
-Möchte man diese Authentifizierungsmethode nutzen, muss das Liquibase Skript, das den erwähnten Testuser anlegt, durchlaufen. 
-Dazu muss die Anwendung mit einer Property gestartet werden, nämlich folgendermaßen:
+Möchte man besagten Testbenutzer über Liquibase anlegen lassen, muss die Anwendung im Kontext Demo gestartet werden, dies funktioniert folgendermaßen:
 <pre>  mvn tomcat:run -Dliquibase.context=demo</pre>
 
   
 Bei der Authentifizierungsmethode LDAP wird die LDAP-URL aus `src/main/resources/config.properties` genutzt. 
-Ist die Authentifizierung erfolgreich und der Benutzer noch nicht im System der Urlaubsverwaltung eingepflegt, wird die Person automatisch angelegt. Dem ersten Benutzer, der auf diese Weise im System angelegt wird, wird die Rolle Admin zugewiesen (ermöglicht Rechteverwaltung). Alle anderen Benutzer, die automatisch beim Einloggen im System angelegt werden, erhalten die Rolle User (was dann selbstverständlich über die Rechteverwaltung von Benutzern mit der Rolle Admin angepasst werden kann)
-Für diese Authentifizierungsmethode kann die Anwendung ganz normal mit
-<pre>  mvn tomcat:run</pre>
-gestartet werden.
+Ist die Authentifizierung erfolgreich und der Benutzer noch nicht im System der Urlaubsverwaltung eingepflegt, wird die Person automatisch angelegt. Dem ersten Benutzer, der auf diese Weise im System angelegt wird, wird die Rolle Office zugewiesen (ermöglicht Rechteverwaltung). Alle anderen Benutzer, die automatisch beim Einloggen im System angelegt werden, erhalten initial die Rolle User.
 
 Ein User hat immer eine oder mehrere folgender Berechtigungen inne:
 * **inaktiv**: hat keinen Zugang mehr zur Urlaubsverwaltung (bestehende Daten des Benutzers bleiben zur Archivierung bestehen)
 * **User**: darf Urlaub für sich selbst beantragen
 * **Boss**:	darf Urlaubsanträge von Mitarbeitern einsehen, genehmigen und ablehnen
 * **Office**: darf Mitarbeiterdaten verwalten, Urlaub für Mitarbeiter beantragen und Urlaubsanträge stornieren
-* **Admin**: darf Rechte verwalten 
 
 ## Development
 
