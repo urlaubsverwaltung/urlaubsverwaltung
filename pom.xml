@@ -406,7 +406,7 @@
                     <failOnError>true</failOnError>
                     <template>classpath:org/synyx/jenkins/jobs/template.xml</template>
                     <propertiesBase>classpath:org/synyx/jenkins/jobs/properties/</propertiesBase>
-                    <url>http://jenkins-vm:8080/</url>
+                    <url>https://jenkins.synyx.de</url>
                     <majorVersion>trunk</majorVersion>
                 </configuration>
                 <dependencies>
