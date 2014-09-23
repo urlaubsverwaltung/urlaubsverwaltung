@@ -64,14 +64,6 @@
         </repository>
     </repositories>
 
-    <pluginRepositories>
-        <pluginRepository>
-            <id>nexus.synyx.de</id>
-            <name>Synyx OpenSource Repository</name>
-            <url>http://repo.synyx.org</url>
-        </pluginRepository>
-    </pluginRepositories>
-
     <dependencies>
 
         <!-- UTIL DEPENDENCIES -->
