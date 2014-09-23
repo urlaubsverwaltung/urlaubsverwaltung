@@ -81,6 +81,7 @@ footer {
 .data-table th {
     background-color: #ABC452;
     padding: 6px;
+    text-align: center;
 }
 
 .data-table td {
