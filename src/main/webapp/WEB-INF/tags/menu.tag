@@ -4,35 +4,25 @@
 
 <spring:url var="formUrlPrefix" value="/web" />
 
-<script type="text/javascript">
-    $(document).ready(function(){
+<nav class="navbar navbar-default" role="navigation">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">
+                <img src="<spring:url value='/images/synyx-logo-2.jpg' />" height="23" width="11" />
+                <spring:message code="title" />
+            </a>
+        </div>
 
-        /* toggle nav */
-        $("#menu-icon").on("click", function(){
-
-            $(".content").toggleClass("mobile-menu-active");
-            $("#menu-icon").toggleClass("active");
-
-            $(".nav").toggle();
-
-            return false;
-
-        });
-
-    });
-</script>
-
-<div class="navbar navbar-inverse navbar-fixed-top">
-    <div class="navbar-inner">
-        <div class="grid-container">
-            <div class="grid-100">
-                <span class="brand">
-                    <img src="<spring:url value='/images/synyx-logo-2.jpg' />" />
-                    <spring:message code="title" />
-                   <button type="button" class="btn btn-right" id="menu-icon" href="#"><i class="icon-align-justify"></i></button>
-                </span>
-            <ul class="nav">
-
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="navbar-collapse">
+            <ul class="nav navbar-nav navbar-right">
                 <sec:authorize access="hasRole('USER')">
                     <li>
                         <a href="${formUrlPrefix}/overview">
@@ -57,9 +47,7 @@
 
                 <sec:authorize access="hasRole('OFFICE')">
                     <li>
-                        <a href="${formUrlPrefix}/sicknote/quartal">
-                            <img src="<spring:url value='/images/agt_virus-off.png' />" />&nbsp;<spring:message code="sicknotes" />
-                        </a>
+                        <a href="${formUrlPrefix}/sicknote/quartal"><i class="icon-th-list"></i>&nbsp;<spring:message code="sicknotes" /></a>
                     </li>
                 </sec:authorize>
 
@@ -72,9 +60,7 @@
                 </sec:authorize>
 
                 <li><a href="<spring:url value='/j_spring_security_logout' />"><i class="icon-off"></i>&nbsp;Logout</a></li>
-
             </ul>
-            </div>
-        </div>
-    </div>
-</div>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>

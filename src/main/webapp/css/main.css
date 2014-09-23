@@ -51,70 +51,11 @@ a:hover {
   
 **************************************************************************/
 
-.navbar [class^="grid-"], [class*=" grid-"] {
-    margin-bottom: 0;
-}
-
-#menu-icon {
-    display: none;
-}
-
-.navbar .nav {
-    float: right;
-    margin:0;
-}
-
-.navbar .nav > li > a {
-    color: #555555;
-    text-shadow: none;
-    padding: 12px;
-    text-align: right;
-    font-size: 1.1em;
-}
-
-.navbar .nav > li > a:hover {
-    color: #0083CC;
-    cursor: pointer;
-}
-
-.navbar .brand {
-    color: #516310;
-    font-size: 1.75em;
-}
-
-.navbar-inner {
+.navbar {
+    font-size: 14px;
     background-image: none;
     background-color: #F8F8F8;
-    height: 45px;
 }
-
-.navbar .dropdown-menu:after, .navbar .dropdown-menu:before {
-    left: 20px;
-}
-
-.navbar .dropdown.open .caret, .navbar .dropdown .caret {
-    border-bottom-color: #555555 !important;
-    border-top-color: #555555 !important;
-}
-
-.navbar .dropdown .caret:hover, .navbar .dropdown:hover .caret {
-    border-bottom-color: #0083CC !important;
-    border-top-color: #0083CC !important;
-}
-
-ul.icons-on-top [class^="icon-"], ul.icons-on-top [class*=" icon-"] {
-    vertical-align: top !important;
-    vertical-align: top !important;
-}
-
-b.waiting-icon {
-    font-size: 15px;
-}
-
-.dropdown-menu li a:hover b.waiting-icon {
-    color: #333333 !important;
-}
-
 
 /**************************************************************************
   
@@ -304,71 +245,7 @@ legend .dropdown-menu {
 /* Narrow desktop */
 @media all and (max-width: 960px) {
 
-    .navbar-fixed-top {
-        position: absolute;
-        height: auto;
-    }
-
-    #menu-icon {
-        display: inline-block;
-    }
-
-    .content.mobile-menu-active {
-        margin-top: 330px;
-    }
-
-    .navbar {
-        text-align: center;
-    }
-
-    .navbar .brand,
-    .navbar .nav {
-        float: none;
-    }
-
-    .navbar-inner {
-        height: 100px;
-    }
-
-    .navbar .nav > li,
-    .navbar .nav > li > a {
-        display: inline-block;
-        float: none;
-    }
-
-    .navbar-inner [class^="grid-"],
-    .navbar-inner [class*=" grid-"] {
-        padding: 0;
-    }
-
-    .navbar-inner {
-        height: 45px;
-    }
-
-    .navbar .brand {
-        padding-left: 30px;
-        text-align: left;
-    }
-
-    .navbar .nav {
-        display: none;
-        background-color: #F1F1F1;
-    }
-
-    .navbar .nav > li,
-    .navbar .nav > li > a {
-        display: block;
-        text-align: left;
-    }
-
-    .navbar .nav > li {
-        border-top: 1px solid #DDDDDD;
-    }
-
-    .navbar .nav > li:last-child {
-        border-bottom: 1px solid #DDDDDD;
-    }
-
+    /* Ok */
 }
 
 /* Tablet */
