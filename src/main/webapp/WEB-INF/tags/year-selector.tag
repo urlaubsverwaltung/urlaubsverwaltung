@@ -3,9 +3,9 @@
 
 <%@attribute name="year" type="java.lang.Integer" required="true" %>
 
-<div class="btn-group btn-right">
+<div class="btn-group pull-right">
 
-    <button class="btn dropdown-toggle" data-toggle="dropdown">
+    <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
         <i class="icon-time"></i>
         <spring:message code="ov.header.year" />&nbsp;<span class="caret"></span>
     </button>

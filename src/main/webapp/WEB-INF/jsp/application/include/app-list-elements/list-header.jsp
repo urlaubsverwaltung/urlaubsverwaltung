@@ -22,12 +22,12 @@
         <p>
             <spring:message code="${titleApp}"/>&nbsp;&ndash;&nbsp;<c:out value="${displayYear}"/>
         </p>
-        
-        <uv:year-selector year="${year}" />
-        
-        <div class="btn-group btn-right">
 
-            <button class="btn dropdown-toggle" data-toggle="dropdown">
+        <uv:year-selector year="${year}" />
+
+        <div class="btn-group pull-right">
+
+            <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                 <i class="icon-filter"></i>
                 <spring:message code="status.app"/>&nbsp;<span class="caret"></span>
             </button>

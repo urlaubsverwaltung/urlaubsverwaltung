@@ -60,7 +60,7 @@
         <button type="submit" class="btn btn-danger">
             <i class="icon-remove-circle icon-white"></i>&nbsp;<spring:message code='delete' />
         </button>
-        <button type="button" class="btn" onclick="$('#cancel').hide();">
+        <button type="button" class="btn btn-default" onclick="$('#cancel').hide();">
             <i class="icon-remove"></i>&nbsp;<spring:message code='cancel' />
         </button>
     </form:form>

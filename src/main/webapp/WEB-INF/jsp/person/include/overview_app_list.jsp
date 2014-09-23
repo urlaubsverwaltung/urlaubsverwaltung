@@ -17,14 +17,14 @@
             
                 <c:choose>
                     <c:when test="${person.id == loggedUser.id}">
-                        <a class="btn btn-right" href="${formUrlPrefix}/application/new">
+                        <a class="btn btn-default pull-right" href="${formUrlPrefix}/application/new">
                             <i class="icon-pencil"></i>&nbsp;<spring:message code="ov.apply"/>
                         </a>
                     </c:when>
                     <c:otherwise>
                         <sec:authorize access="hasRole('OFFICE')">
                             <c:if test="${person.id != loggedUser.id}">
-                                <a class="btn"
+                                <a class="btn btn-default"
                                    href="${formUrlPrefix}/${person.id}/application/new">
                                     <c:set var="staff" value="${person.firstName} ${person.lastName}"/>
                                     <i class="icon-pencil"></i>&nbsp;<spring:message code="ov.apply"/>

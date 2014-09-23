@@ -6,7 +6,7 @@
 <spring:url var="formUrlPrefix" value="/web" />
 
 <sec:authorize access="hasRole('OFFICE')">
-    <a class="btn btn-right" href="${formUrlPrefix}/staff/new"><i class="icon-plus"></i><i class="icon-user"></i>&nbsp;<spring:message code="table.new.person" /></a>
+    <a class="btn btn-default pull-right" href="${formUrlPrefix}/staff/new"><i class="icon-plus"></i><i class="icon-user"></i>&nbsp;<spring:message code="table.new.person" /></a>
 </sec:authorize>
 
 <table cellspacing="0" class="data-table sortable tablesorter zebra-table">

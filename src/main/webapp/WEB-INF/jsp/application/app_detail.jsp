@@ -81,7 +81,7 @@
 
                                 <sec:authorize access="hasRole('BOSS')">
                                     <c:if test="${application.person.id != loggedUser.id && application.status.number == 0}">
-                                        <div class="btn-group btn-right">
+                                        <div class="btn-group pull-right">
                                             <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
                                                 <i class="icon-asterisk icon-white"></i>
                                                 <spring:message code="process" />

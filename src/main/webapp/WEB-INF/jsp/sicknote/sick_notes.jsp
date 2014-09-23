@@ -56,8 +56,8 @@
                             <spring:message code="for" />&nbsp;<c:out value="${person.firstName}" />&nbsp;<c:out value="${person.lastName}" />
                         </c:if>
                     </p>
-                    <div class="btn-group btn-group-legend btn-right">
-                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                    <div class="btn-group btn-group-legend pull-right">
+                        <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#">
                             <i class="icon-tasks"></i>&nbsp;<spring:message code='sicknotes.statistics.short' />
                             <span class="caret"></span>
                         </a>
@@ -72,10 +72,10 @@
                         </ul>
                     </div>
                     <uv:print />
-                    <a class="btn btn-right" href="${formUrlPrefix}/sicknote/new">
+                    <a class="btn btn-default pull-right" href="${formUrlPrefix}/sicknote/new">
                         <i class="icon-plus"></i>&nbsp;<spring:message code="sicknotes.new" />
                     </a>
-                    <a href="#changeViewModal" role="button" class="btn btn-right" data-toggle="modal">
+                    <a href="#changeViewModal" role="button" class="btn btn-default pull-right" data-toggle="modal">
                         <i class="icon-filter"></i>&nbsp;<spring:message code="filter" />
                     </a>
                 </legend>
@@ -120,7 +120,7 @@
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-primary" type="submit"><spring:message code="go" /></button>
-                    <button class="btn" data-dismiss="modal" aria-hidden="true"><spring:message code="cancel" /></button>
+                    <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><spring:message code="cancel" /></button>
                 </div>
                 </form:form>
             </div>

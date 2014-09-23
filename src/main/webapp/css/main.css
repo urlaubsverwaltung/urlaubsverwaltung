@@ -16,10 +16,6 @@ footer {
     text-align: center;
 }
 
-.content {
-    margin-top: 72px;
-}
-
 a {
     color: black;
 }
@@ -123,24 +119,10 @@ th.tablesorter-headerDesc, th.tablesorter-headerAsc {
   
 **************************************************************************/
 
-.btn-right {
-    float: right;
-}
-
-.btn-left {
-    float: left;
-}
-
-.btn-right,
-.btn-left {
+.btn,
+.btn-group {
     margin-left: 6px;
-    margin-bottom: 6px;
 }
-
-button.btn, a.btn, input.btn {
-    font-size: 14px;
-}
-
 
 /**************************************************************************
   
@@ -186,16 +168,6 @@ legend.sticky {
 .header legend p {
     display: inline-block;
     color: #516310;
-}
-
-legend .btn {
-    margin-top: 6px;
-}
-
-legend .dropdown-menu {
-    font-size: 12px;
-    max-height: 160px;
-    overflow-y: auto;
 }
 
 /**************************************************************************
@@ -244,22 +216,17 @@ legend .dropdown-menu {
 
 /* Narrow desktop */
 @media all and (max-width: 960px) {
-
     /* Ok */
 }
 
 /* Tablet */
 @media all and (max-width: 768px) {
-
     /* Ok */
-
 }
 
 /* Small Tablet */
 @media all and (max-width: 600px) {
-
     /* Ok */
-
 }
 
 /* Mobile */

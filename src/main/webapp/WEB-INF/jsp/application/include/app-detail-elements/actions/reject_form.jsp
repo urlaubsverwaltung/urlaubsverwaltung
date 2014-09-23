@@ -35,7 +35,7 @@
             <button type="submit" class="btn btn-danger">
                 <i class="icon-ban-circle icon-white"></i>&nbsp;<spring:message code='app.state.no.short' />
             </button>
-            <button type="button" class="btn" onclick="$('#reject').hide();">
+            <button type="button" class="btn btn-default" onclick="$('#reject').hide();">
                 <i class="icon-remove"></i>&nbsp;<spring:message code='cancel' />
             </button>    
             

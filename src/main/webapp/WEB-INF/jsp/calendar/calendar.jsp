@@ -10,6 +10,6 @@
         <h1>Choose an action for Google Calendar Urlaubsverwaltung</h1>
         <a class="btn btn-primary" href="/urlaubsverwaltung/web/calendar/setup">Setup</a>
         <a class="btn btn-primary" href="/urlaubsverwaltung/web/calendar/event">Neues Event</a>
-        <a class="btn" href="/urlaubsverwaltung/web/overview">Zurück zur Übersicht</a>
+        <a class="btn btn-default" href="/urlaubsverwaltung/web/overview">Zurück zur Übersicht</a>
     </body>
 </html>

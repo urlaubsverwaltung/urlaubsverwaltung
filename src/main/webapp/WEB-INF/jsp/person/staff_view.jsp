@@ -73,9 +73,9 @@
 
                             <uv:year-selector year="${year}" />
 
-                            <div id="active-state" class="btn-group btn-right">
+                            <div id="active-state" class="btn-group pull-right">
 
-                                <button class="btn dropdown-toggle" data-toggle="dropdown">
+                                <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                                 </button>
 
                                 <ul class="dropdown-menu">

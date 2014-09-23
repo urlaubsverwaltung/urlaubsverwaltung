@@ -15,7 +15,7 @@
         <button type="submit" class="btn btn-success">
             <i class="icon-check icon-white"></i>&nbsp;<spring:message code='app.state.ok.short' />
         </button>
-        <button type="button" class="btn" onclick="$('#confirm').hide();">
+        <button type="button" class="btn btn-default" onclick="$('#confirm').hide();">
             <i class="icon-remove"></i>&nbsp;<spring:message code='cancel' />
         </button>
     </div>

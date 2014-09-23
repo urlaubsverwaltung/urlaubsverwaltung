@@ -187,7 +187,7 @@
             <p><spring:message code='special.leave.explanation'/></p>
         </div>
         <div class="modal-footer">
-            <button class="btn" data-dismiss="modal" aria-hidden="true"><spring:message code='close'/></button>
+            <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><spring:message code='close'/></button>
         </div>
     </div>
 
@@ -358,7 +358,7 @@
 
     <hr/>
 
-    <button type="submit" class="btn btn-large btn-success btn-left">
+    <button type="submit" class="btn btn-large btn-success pull-left">
         <i class='icon-ok icon-white'></i>&nbsp;<spring:message code='apply'/>
     </button>
 

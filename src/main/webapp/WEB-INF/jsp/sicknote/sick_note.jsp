@@ -30,8 +30,8 @@
                         <p><spring:message code="sicknote" /></p>
                         <sec:authorize access="hasRole('OFFICE')">
                             <c:if test="${sickNote.active}">
-                                <div class="btn-group btn-right">
-                                    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                                <div class="btn-group pull-right">
+                                    <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#">
                                         <i class="icon-asterisk"></i>
                                         <spring:message code="action" />
                                         <span class="caret"></span>
@@ -75,7 +75,7 @@
                         </div>
                         <div class="modal-footer">
                             <button class="btn btn-danger" type="submit"><i class="icon-trash icon-white"></i>&nbsp;<spring:message code="delete" /></button>
-                            <button class="btn" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i>&nbsp;<spring:message code="cancel" /></button>
+                            <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i>&nbsp;<spring:message code="cancel" /></button>
                         </div>
                 </div>
                 </form:form>
@@ -129,7 +129,7 @@
                     <legend>
                         <p><spring:message code="progress" /></p>
                         <sec:authorize access="hasRole('OFFICE')">
-                            <button class="btn" style="float:right;" onclick="$('div#comment-form').show();">
+                            <button class="btn btn-default pull-right" onclick="$('div#comment-form').show();">
                                 <i class="icon-comment"></i>&nbsp;Neuer Kommentar
                             </button>
                         </sec:authorize>
@@ -176,10 +176,10 @@
                             <span id="text-comment"></span><spring:message code="max.chars" />
                             <form:textarea rows="4" path="text" cssErrorClass="error" onkeyup="count(this.value, 'text-comment');" onkeydown="maxChars(this,200); count(this.value, 'text-comment');" />
                             <br />
-                            <button class="btn" type="submit">
+                            <button class="btn btn-default" type="submit">
                                 <i class="icon-ok"></i>&nbsp;<spring:message code="save" />
                             </button>
-                            <button class="btn" type="button" onclick="$('div#comment-form').hide();">
+                            <button class="btn btn-default" type="button" onclick="$('div#comment-form').hide();">
                                 <i class="icon-remove"></i>&nbsp;<spring:message code="cancel" />
                             </button>
                         </form:form> 
