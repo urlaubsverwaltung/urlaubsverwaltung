@@ -132,6 +132,11 @@
     </c:if>
 
 <div class="form-group">
+    <i class="fa fa-question-circle fa-action" id="special-leave-info" style="vertical-align: middle; line-height: 32px"
+       data-placement="bottom" data-toggle="popover" data-html="true"
+       data-original-title="<spring:message code='special.leave.title.short' />"
+       data-content="<spring:message code='special.leave.explanation' />" data-trigger="hover"></i>
+
     <label class="control-label col-sm-4" for="vacationType">
         <spring:message code='app.type' />
     </label>
@@ -160,10 +165,6 @@
                 </c:otherwise>
             </c:choose>
         </form:select>
-        <i class="fa fa-question-circle fa-action" id="special-leave-info"
-           data-placement="bottom" data-toggle="popover"
-           data-original-title="<spring:message code='special.leave.title.short' />"
-           data-content="<spring:message code='special.leave.explanation' />" data-trigger="hover"></i>
     </div>
 
     <script type="text/javascript">
