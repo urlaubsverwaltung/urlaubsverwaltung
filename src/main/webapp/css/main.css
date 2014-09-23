@@ -119,9 +119,8 @@ th.tablesorter-headerDesc, th.tablesorter-headerAsc {
   
 **************************************************************************/
 
-.btn,
-.btn-group {
-    margin-left: 6px;
+.btn {
+    margin-right: 6px;
 }
 
 /**************************************************************************
