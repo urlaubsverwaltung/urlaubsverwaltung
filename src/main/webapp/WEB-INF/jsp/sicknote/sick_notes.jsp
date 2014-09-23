@@ -58,7 +58,7 @@
                     </p>
                     <div class="btn-group btn-group-legend pull-right">
                         <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#">
-                            <i class="icon-tasks"></i>&nbsp;<spring:message code='sicknotes.statistics.short' />
+                            <i class="fa fa-bar-chart"></i>&nbsp;<spring:message code='sicknotes.statistics.short' />
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
@@ -73,10 +73,10 @@
                     </div>
                     <uv:print />
                     <a class="btn btn-default pull-right" href="${formUrlPrefix}/sicknote/new">
-                        <i class="icon-plus"></i>&nbsp;<spring:message code="sicknotes.new" />
+                        <i class="fa fa-plus"></i>&nbsp;<spring:message code="sicknotes.new" />
                     </a>
                     <a href="#changeViewModal" role="button" class="btn btn-default pull-right" data-toggle="modal">
-                        <i class="icon-filter"></i>&nbsp;<spring:message code="filter" />
+                        <i class="fa fa-filter"></i>&nbsp;<spring:message code="filter" />
                     </a>
                 </legend>
 
@@ -187,7 +187,7 @@
                                 <td class="print--invisible">
                                     <c:if test="${sickNote.active}">
                                         <a href="${formUrlPrefix}/sicknote/${sickNote.id}/edit">
-                                            <img src="<spring:url value='/images/edit.png' />" />
+                                            <i class="fa fa-pencil fa-action"></i>
                                         </a>
                                     </c:if>
                                 </td>

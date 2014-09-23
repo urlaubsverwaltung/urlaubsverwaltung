@@ -32,29 +32,30 @@
                             <c:if test="${sickNote.active}">
                                 <div class="btn-group pull-right">
                                     <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#">
-                                        <i class="icon-asterisk"></i>
+                                        <%--<i class="fa fa-chevron-down"></i>--%>
+                                        <i class="fa fa-edit"></i>
                                         <spring:message code="action" />
                                         <span class="caret"></span>
                                     </a>
                                     <ul class="dropdown-menu">
                                         <li>
                                             <a href="#" media="print" onclick="window.print(); return false;">
-                                                <i class="icon-print"></i>&nbsp;&nbsp;<spring:message code='Print' />
+                                                <i class="fa fa-print"></i>&nbsp;&nbsp;<spring:message code='Print' />
                                             </a>
                                         </li>
                                         <li>
                                             <a href="${formUrlPrefix}/sicknote/${sickNote.id}/edit">
-                                                <i class="icon-pencil"></i>&nbsp;&nbsp;<spring:message code="edit" />
+                                                <i class="fa fa-pencil"></i>&nbsp;&nbsp;<spring:message code="edit" />
                                             </a>
                                         </li>
                                         <li>
                                             <a href="${formUrlPrefix}/sicknote/${sickNote.id}/convert">
-                                                <i class="icon-random"></i>&nbsp;&nbsp;<spring:message code="sicknotes.convert.vacation.short" />
+                                                <i class="fa fa-retweet"></i>&nbsp;&nbsp;<spring:message code="sicknotes.convert.vacation.short" />
                                             </a>
                                         </li>
                                         <li>
                                             <a href="#modal-cancel" role="button" data-toggle="modal">
-                                                <i class="icon-trash"></i>&nbsp;&nbsp;<spring:message code="delete" />
+                                                <i class="fa fa-trash"></i>&nbsp;&nbsp;<spring:message code="delete" />
                                             </a>
                                         </li>
                                     </ul>
@@ -74,8 +75,8 @@
                             <spring:message code="sicknote.cancel" />
                         </div>
                         <div class="modal-footer">
-                            <button class="btn btn-danger" type="submit"><i class="icon-trash icon-white"></i>&nbsp;<spring:message code="delete" /></button>
-                            <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i>&nbsp;<spring:message code="cancel" /></button>
+                            <button class="btn btn-danger" type="submit"><i class="fa fa-trash"></i>&nbsp;<spring:message code="delete" /></button>
+                            <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i>&nbsp;<spring:message code="cancel" /></button>
                         </div>
                 </div>
                 </form:form>
@@ -101,10 +102,10 @@
                           <td>
                               <c:choose>
                                   <c:when test="${sickNote.aubPresent}">
-                                    <i class="icon-ok"></i> 
+                                    <i class="fa fa-check"></i>
                                   </c:when>
                                   <c:otherwise>
-                                    <i class="icon-remove"></i>
+                                    <i class="fa fa-remove"></i>
                                   </c:otherwise>
                               </c:choose>
                           </td>
@@ -130,7 +131,7 @@
                         <p><spring:message code="progress" /></p>
                         <sec:authorize access="hasRole('OFFICE')">
                             <button class="btn btn-default pull-right" onclick="$('div#comment-form').show();">
-                                <i class="icon-comment"></i>&nbsp;Neuer Kommentar
+                                <i class="fa fa-comment"></i>&nbsp;Neuer Kommentar
                             </button>
                         </sec:authorize>
                     </legend>
@@ -177,10 +178,10 @@
                             <form:textarea rows="4" path="text" cssErrorClass="error" onkeyup="count(this.value, 'text-comment');" onkeydown="maxChars(this,200); count(this.value, 'text-comment');" />
                             <br />
                             <button class="btn btn-default" type="submit">
-                                <i class="icon-ok"></i>&nbsp;<spring:message code="save" />
+                                <i class="fa fa-check"></i>&nbsp;<spring:message code="save" />
                             </button>
                             <button class="btn btn-default" type="button" onclick="$('div#comment-form').hide();">
-                                <i class="icon-remove"></i>&nbsp;<spring:message code="cancel" />
+                                <i class="fa fa-remove"></i>&nbsp;<spring:message code="cancel" />
                             </button>
                         </form:form> 
                     </div>

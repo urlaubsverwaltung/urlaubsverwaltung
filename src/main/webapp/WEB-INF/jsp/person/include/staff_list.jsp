@@ -6,7 +6,7 @@
 <spring:url var="formUrlPrefix" value="/web" />
 
 <sec:authorize access="hasRole('OFFICE')">
-    <a class="btn btn-default pull-right" href="${formUrlPrefix}/staff/new"><i class="icon-plus"></i><i class="icon-user"></i>&nbsp;<spring:message code="table.new.person" /></a>
+    <a class="btn btn-default pull-right" href="${formUrlPrefix}/staff/new"><i class="fa fa-plus"></i>&nbsp;<spring:message code="table.new.person" /></a>
 </sec:authorize>
 
 <table cellspacing="0" class="data-table sortable tablesorter zebra-table">
@@ -19,7 +19,6 @@
         <th class="is-centered"><spring:message code='overview.remaining.days.last.year' /></th>
         <th class="is-centered"><spring:message code="left"/></th>
         <sec:authorize access="hasRole('OFFICE')">
-            <th class="print--invisible"><spring:message code="table.apply" /></th>
             <th class="print--invisible"><spring:message code="edit" /></th>
         </sec:authorize>    
     </tr>
@@ -78,8 +77,7 @@
                 </c:choose>
             </td>
             <sec:authorize access="hasRole('OFFICE')">
-            <td class="is-centered print--invisible"><a href="${formUrlPrefix}/${person.id}/application/new"><img src="<spring:url value='/images/new window.png' />" /></a></td>
-            <td class="is-centered print--invisible"><a href="${formUrlPrefix}/staff/${person.id}/edit"><img src="<spring:url value='/images/edit.png' />" /></a></td>
+            <td class="is-centered print--invisible"><a href="${formUrlPrefix}/staff/${person.id}/edit"><i class="fa fa-pencil fa-action" /></a></td>
             </sec:authorize>
         </tr>    
     </c:forEach>

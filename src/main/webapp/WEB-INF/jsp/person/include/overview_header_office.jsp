@@ -21,7 +21,7 @@
             <div class="btn-group pull-right">
 
                 <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                    <i class="icon-user"></i>
+                    <i class="fa fa-user"></i>
                     <spring:message code="ov.header.person" />&nbsp;<span class="caret"></span>
                 </button>
 
@@ -40,7 +40,7 @@
             </div>
 
             <sec:authorize access="hasRole('OFFICE')">
-                <a href="${formUrlPrefix}/staff/${person.id}/edit" class="btn btn-default pull-right"><i class="icon-pencil"></i> Edit</a>
+                <a href="${formUrlPrefix}/staff/${person.id}/edit" class="btn btn-default pull-right"><i class="fa fa-pencil"></i> Edit</a>
             </sec:authorize>
 
             <span class="hide-on-tablet hide-on-mobile">

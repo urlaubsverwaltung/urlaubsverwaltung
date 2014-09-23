@@ -60,16 +60,16 @@
                     <span class="print--invisible">
                         <c:choose>
                             <c:when test="${app.status.state == 'state.waiting'}">
-                                <b style="font-size: 15px">?</b>
+                                <i class="fa fa-question"></i>
                             </c:when>
                             <c:when test="${app.status.state == 'state.allowed'}">
-                                <i class="icon-ok"></i>
+                                <i class="fa fa-check"></i>
                             </c:when>
                             <c:when test="${app.status.state == 'state.rejected'}">
-                                <i class="icon-ban-circle"></i>
+                                <i class="fa fa-ban"></i>
                             </c:when>
                             <c:when test="${app.status.state == 'state.cancelled'}">
-                                <i class="icon-trash"></i>
+                                <i class="fa fa-trash"></i>
                             </c:when>
                             <c:otherwise>
                                 &nbsp;

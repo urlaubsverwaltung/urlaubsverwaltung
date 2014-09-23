@@ -5,5 +5,5 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <a class="btn btn-default pull-right" href="${formUrlPrefix}/staff/${application.person.id}/overview" />
-<i class="icon-user"></i>&nbsp;<spring:message code="staff.back" />
+<i class="fa fa-user"></i>&nbsp;<spring:message code="staff.back" />
 </a>

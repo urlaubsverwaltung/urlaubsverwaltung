@@ -18,7 +18,7 @@
                 <c:choose>
                     <c:when test="${person.id == loggedUser.id}">
                         <a class="btn btn-default pull-right" href="${formUrlPrefix}/application/new">
-                            <i class="icon-pencil"></i>&nbsp;<spring:message code="ov.apply"/>
+                            <i class="fa fa-pencil"></i>&nbsp;<spring:message code="ov.apply"/>
                         </a>
                     </c:when>
                     <c:otherwise>
@@ -27,7 +27,7 @@
                                 <a class="btn btn-default"
                                    href="${formUrlPrefix}/${person.id}/application/new">
                                     <c:set var="staff" value="${person.firstName} ${person.lastName}"/>
-                                    <i class="icon-pencil"></i>&nbsp;<spring:message code="ov.apply"/>
+                                    <i class="fa fa-pencil"></i>&nbsp;<spring:message code="ov.apply"/>
                                 </a>
                             </c:if>
                         </sec:authorize>
@@ -82,16 +82,16 @@
                             <span class="print--invisible">
                                  <c:choose>
                                      <c:when test="${app.status.state == 'state.waiting'}">
-                                         <b style="font-size: 15px">?</b>
+                                         <i class="fa fa-question"></i>
                                      </c:when>
                                      <c:when test="${app.status.state == 'state.allowed'}">
-                                         <i class="icon-ok"></i>
+                                         <i class="fa fa-check"></i>
                                      </c:when>
                                      <c:when test="${app.status.state == 'state.rejected'}">
-                                         <i class="icon-ban-circle"></i>
+                                         <i class="fa fa-ban"></i>
                                      </c:when>
                                      <c:when test="${app.status.state == 'state.cancelled'}">
-                                         <i class="icon-trash"></i>
+                                         <i class="fa fa-trash"></i>
                                      </c:when>
                                      <c:otherwise>
                                          &nbsp;

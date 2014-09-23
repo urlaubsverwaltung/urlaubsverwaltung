@@ -162,10 +162,10 @@
                 </c:otherwise>
             </c:choose>
         </form:select>
-        <img id="special-leave-info" src="<spring:url value='/images/info.png' />" style="vertical-align: middle"
+        <i class="fa fa-question-circle fa-action" id="special-leave-info"
              data-placement="bottom" data-toggle="popover"
              data-original-title="<spring:message code='special.leave.title.short' />"
-             data-content="<spring:message code='special.leave.explanation' />" data-trigger="hover"/>
+             data-content="<spring:message code='special.leave.explanation' />" data-trigger="hover"></i>
     </div>
 
     <script type="text/javascript">
@@ -359,7 +359,7 @@
     <hr/>
 
     <button type="submit" class="btn btn-large btn-success pull-left">
-        <i class='icon-ok icon-white'></i>&nbsp;<spring:message code='apply'/>
+        <i class='fa fa-check'></i>&nbsp;<spring:message code='apply'/>
     </button>
 
     </div>

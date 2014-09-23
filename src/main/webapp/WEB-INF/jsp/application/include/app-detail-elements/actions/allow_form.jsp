@@ -13,10 +13,10 @@
         <form:textarea rows="1" path="reason" onkeyup="count(this.value, 'text-confirm');" onkeydown="maxChars(this,200); count(this.value, 'text-confirm');" />
         <br />
         <button type="submit" class="btn btn-success">
-            <i class="icon-check icon-white"></i>&nbsp;<spring:message code='app.state.ok.short' />
+            <i class="fa fa-check"></i>&nbsp;<spring:message code='app.state.ok.short' />
         </button>
         <button type="button" class="btn btn-default" onclick="$('#confirm').hide();">
-            <i class="icon-remove"></i>&nbsp;<spring:message code='cancel' />
+            <i class="fa fa-remove"></i>&nbsp;<spring:message code='cancel' />
         </button>
     </div>
 </form:form>

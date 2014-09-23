@@ -15,10 +15,10 @@
         </form:select>
         &nbsp;
         <button type="submit" class="btn btn-info" style="margin-top: 0">
-            <i class="icon-share icon-white"></i>&nbsp;<spring:message code='app.state.refer.short' />
+            <i class="fa fa-mail-forward"></i>&nbsp;<spring:message code='app.state.refer.short' />
         </button>
         <button type="button" class="btn btn-default" style="margin-top: 0" onclick="$('#refer').hide();">
-            <i class="icon-remove"></i>&nbsp;<spring:message code='cancel' />
+            <i class="fa fa-remove"></i>&nbsp;<spring:message code='cancel' />
         </button>
     </div>
 </form:form>

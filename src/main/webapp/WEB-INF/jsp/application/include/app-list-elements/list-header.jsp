@@ -28,7 +28,7 @@
         <div class="btn-group pull-right">
 
             <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                <i class="icon-filter"></i>
+                <i class="fa fa-filter"></i>
                 <spring:message code="status.app"/>&nbsp;<span class="caret"></span>
             </button>
 
@@ -36,27 +36,27 @@
 
                 <li>
                     <a href="${linkPrefix}/all">
-                        <i class="icon-th-list"></i>&nbsp;<spring:message code="all.app" />
+                        <i class="fa fa-calendar"></i>&nbsp;<spring:message code="all.app" />
                     </a>
                 </li>
                 <li>
                     <a href="${linkPrefix}/waiting">
-                        &nbsp;<b class="waiting-icon">?</b>&nbsp;<spring:message code="waiting.app" />
+                        <i class="fa fa-question"></i>&nbsp;<spring:message code="waiting.app" />
                     </a>
                 </li>
                 <li>
                     <a href="${linkPrefix}/allowed">
-                        <i class="icon-ok"></i>&nbsp;<spring:message code="allow.app" />
+                        <i class="fa fa-check"></i>&nbsp;<spring:message code="allow.app" />
                     </a>
                 </li>
                 <li>
                     <a href="${linkPrefix}/rejected">
-                        <i class="icon-ban-circle"></i>&nbsp;<spring:message code="reject.app" />
+                        <i class="fa fa-ban"></i>&nbsp;<spring:message code="reject.app" />
                     </a>
                 </li>
                 <li>
                     <a href="${linkPrefix}/cancelled">
-                        <i class="icon-trash"></i>&nbsp;<spring:message code="cancel.app" />
+                        <i class="fa fa-trash"></i>&nbsp;<spring:message code="cancel.app" />
                     </a>
                 </li>
 

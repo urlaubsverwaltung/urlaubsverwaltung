@@ -6,7 +6,7 @@
 <div class="btn-group pull-right">
 
     <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-        <i class="icon-time"></i>
+        <i class="fa fa-clock-o"></i>
         <spring:message code="ov.header.year" />&nbsp;<span class="caret"></span>
     </button>
 

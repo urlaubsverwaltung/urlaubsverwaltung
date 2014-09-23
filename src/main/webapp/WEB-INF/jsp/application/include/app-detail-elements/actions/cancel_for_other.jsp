@@ -6,7 +6,7 @@
 
 
 <button type="button" class="btn pull-right btn-danger" onclick="$('#reject').hide(); $('#confirm').hide(); $('#refer').hide(); $('#cancel').show();">
-    <i class="icon-trash icon-white"></i>&nbsp;<spring:message code='delete' />
+    <i class="fa fa-trash"></i>&nbsp;<spring:message code='delete' />
 </button> 
 
 

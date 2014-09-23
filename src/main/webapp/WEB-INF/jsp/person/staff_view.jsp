@@ -45,9 +45,9 @@
                 var active;
                 
                 if(path.indexOf("inactive") != -1) {
-                    $("div#active-state button").html('<img src="<spring:url value='/images/offline.png' />" />&nbsp;<spring:message code="table.inactive" />&nbsp;<span class="caret"></span>');
+                    $("div#active-state button").html('<i class="fa fa-toggle-off"></i>&nbsp;<spring:message code="table.inactive" />&nbsp;<span class="caret"></span>');
                 } else {
-                    $("div#active-state button").html('<img src="<spring:url value='/images/online.png' />" />&nbsp;<spring:message code="table.active" />&nbsp;<span class="caret"></span>');
+                    $("div#active-state button").html('<i class="fa fa-toggle-on"></i>&nbsp;<spring:message code="table.active" />&nbsp;<span class="caret"></span>');
                 }
 
             });
@@ -81,13 +81,13 @@
                                 <ul class="dropdown-menu">
                                     <li>
                                         <a href="${formUrlPrefix}/staff">
-                                            <img src="<spring:url value='/images/online.png' />" />
+                                            <i class="fa fa-toggle-on"></i>
                                             <spring:message code="table.active" />
                                         </a>
                                     </li>
                                     <li>
                                         <a href="${formUrlPrefix}/staff/inactive">
-                                            <img src="<spring:url value='/images/offline.png' />" />
+                                            <i class="fa fa-toggle-off"></i>
                                             <spring:message code="table.inactive" />
                                         </a>
                                     </li>

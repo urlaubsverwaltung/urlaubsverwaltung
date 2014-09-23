@@ -16,13 +16,17 @@ footer {
     text-align: center;
 }
 
-a {
-    color: black;
+.fa-action {
+    color: #1896DB;
 }
 
-a:hover {
-    color: #0083CC;
+.fa-action:hover {
+    color: #0083CC !important;
     text-decoration: none;
+}
+
+.fa-action {
+    font-size: 16px;
 }
 
 .is-centered {
@@ -51,6 +55,11 @@ a:hover {
     font-size: 14px;
     background-image: none;
     background-color: #F8F8F8;
+}
+
+.navbar a:hover {
+    color: #0083CC !important;
+    text-decoration: none;
 }
 
 /**************************************************************************

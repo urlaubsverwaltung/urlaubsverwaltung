@@ -15,6 +15,7 @@
         <link rel="shortcut icon" type="image/x-icon" href="<spring:url value='/favicon.ico?' />" />
         <link rel="stylesheet" type="text/css" href="<spring:url value='/css/bootstrap.min.css' />" />
         <link rel="stylesheet" type="text/css" href="<spring:url value='/css/bootstrap-theme.min.css' />" />
+        <link rel="stylesheet" type="text/css" href="<spring:url value='/css/font-awesome.min.css' />" />
         <link rel="stylesheet" type="text/css" href="<spring:url value='/css/unsemantic-grid-responsive-tablet.css' />" />
         <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />" />
         <link rel="stylesheet" type="text/css" href="<spring:url value='/css/login.css' />" />

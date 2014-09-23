@@ -33,10 +33,10 @@
         <br />
 
             <button type="submit" class="btn btn-danger">
-                <i class="icon-ban-circle icon-white"></i>&nbsp;<spring:message code='app.state.no.short' />
+                <i class="fa fa-ban"></i>&nbsp;<spring:message code='app.state.no.short' />
             </button>
             <button type="button" class="btn btn-default" onclick="$('#reject').hide();">
-                <i class="icon-remove"></i>&nbsp;<spring:message code='cancel' />
+                <i class="fa fa-remove"></i>&nbsp;<spring:message code='cancel' />
             </button>    
             
     </div>
