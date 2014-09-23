@@ -133,6 +133,10 @@ th.tablesorter-headerDesc, th.tablesorter-headerAsc {
     margin-right: 6px;
 }
 
+.btn-default {
+    background-color: #F8F8F8;
+}
+
 /**************************************************************************
   
   DETAILS TABLE
