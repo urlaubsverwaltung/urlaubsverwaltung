@@ -6,7 +6,7 @@ body {
 }
 
 .content {
-    margin-top: 15em;
+    margin-top: 10em;
 }
 
 /**************************************************************************
@@ -20,8 +20,8 @@ body {
 }
 
 .login--form {
-    max-width: 300px;
-    padding: 18px 30px 30px;
+    max-width: 400px;
+    padding: 24px;
     margin: 0 auto 30px;
     background-color: #fff;
     border: 1px solid #e5e5e5;
@@ -31,19 +31,6 @@ body {
     -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
     -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
     box-shadow: 0 1px 2px rgba(0,0,0,.05);
-}
-
-.login--form input[type="text"],
-.login--form input[type="password"] {
-    font-size: 16px;
-    height: auto;
-    margin-bottom: 18px;
-    padding: 6px 12px;
-}
-
-.login--form button {
-    margin-top: 6px;
-    width: 50%
 }
 
 #login--error {
@@ -82,24 +69,7 @@ body {
 @media all and (max-width: 480px) {
 
     .content {
-        margin-top: 10em;
-    }
-
-    .login--form button {
-        width: 100%;
-    }
-    
-    .login {
-        margin-top: 10em;
-    }
-    
-    .login--form {
-        width: auto;
-        margin: 0 auto 30px;
-        padding: 0;
-        background: none;
-        border: none;
-        box-shadow: none;
+        margin-top: 5em;
     }
 
 }

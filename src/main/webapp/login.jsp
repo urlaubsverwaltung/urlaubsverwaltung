@@ -33,31 +33,42 @@
 
     <body>
 
-        <div class="navbar navbar-inverse navbar-fixed-top">
-            <div class="navbar-inner">
-                <div class="grid-container">
-                    <div class="grid-100">
-                        <a class="brand" href="#">Urlaubsverwaltung</a>
-                    </div>
+        <nav class="navbar navbar-default" role="navigation">
+            <div class="container-fluid">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">
+                        <img src="<spring:url value='/images/synyx-logo-2.jpg' />" height="23" width="11" />
+                        Urlaubsverwaltung
+                    </a>
                 </div>
-            </div>
-        </div>
+            </div><!-- /.container-fluid -->
+        </nav>
 
-        <div class="grid-container">
-            <div class="grid-100">
+        <div class="row">
+
+            <div class="col-xs-12">
 
                 <div class="content">
 
                     <div class="login">
 
-                        <form class="login--form" method="post" action="j_spring_security_check">
-                            <label for="j_username">Username</label>
-                            <input class="input-block-level" type="text" name="j_username" id="j_username" autofocus="autofocus">
+                        <form method="post" class="login--form" action="j_spring_security_check">
+                            <div class="form-group">
+                                <label for="j_username">Username</label>
+                                <input class="form-control" type="text" name="j_username" id="j_username" autofocus="autofocus">
+                            </div>
 
-                            <label for="j_password">Passwort</label>
-                            <input class="input-block-level" type="password" name="j_password" id="j_password">
+                            <div class="form-group">
+                                <label for="j_password">Passwort</label>
+                                <input class="form-control" type="password" name="j_password" id="j_password">
+                            </div>
 
-                            <button class="btn btn-large btn-primary" type="submit">Login</button>
+                            <div class="form-group">
+                                <button class="btn btn-large btn-primary btn-block" type="submit">
+                                    <i class="fa fa-sign-in"></i> Login
+                                </button>
+                            </div>
 
                             <div id="login--error" style="display:none">
                                 Der eingegebene Nutzername oder das Passwort ist falsch.
