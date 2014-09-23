@@ -13,7 +13,8 @@
         <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1"/>
         <title>Login</title>
         <link rel="shortcut icon" type="image/x-icon" href="<spring:url value='/favicon.ico?' />" />
-        <link rel="stylesheet" type="text/css" href="<spring:url value='/css/bootstrap.css' />" />
+        <link rel="stylesheet" type="text/css" href="<spring:url value='/css/bootstrap.min.css' />" />
+        <link rel="stylesheet" type="text/css" href="<spring:url value='/css/bootstrap-theme.min.css' />" />
         <link rel="stylesheet" type="text/css" href="<spring:url value='/css/unsemantic-grid-responsive-tablet.css' />" />
         <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />" />
         <link rel="stylesheet" type="text/css" href="<spring:url value='/css/login.css' />" />
