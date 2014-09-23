@@ -3,8 +3,9 @@ package org.synyx.urlaubsverwaltung.restapi;
 import org.apache.commons.io.IOUtils;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -30,12 +31,12 @@ public class BasicAuthenticationIntegrationTest {
     private static final String USER_NAME = "";
     private static final String PASSWORD = "";
 
-    private DefaultHttpClient httpClient;
+    private HttpClient httpClient;
 
     @Before
     public void setUp() {
 
-        httpClient = new DefaultHttpClient();
+        httpClient = HttpClientBuilder.create().build();
     }
 
 

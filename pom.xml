@@ -36,7 +36,6 @@
 
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
         <buildTime>${maven.build.timestamp}</buildTime>
-
     </properties>
 
     <scm>
@@ -63,15 +62,6 @@
             <name>Synyx OpenSource Repository</name>
             <url>http://nexus.synyx.de/content/groups/synyx/</url>
         </repository>
-        <repository>
-            <id>gdata-mvn</id>
-            <name>Nicht offizielles Google API Repository</name>
-            <url>http://mandubian-mvn.googlecode.com/svn/trunk/mandubian-mvn/repository</url>
-        </repository>
-        <repository>
-            <id>google-api-services</id>
-            <url>http://google-api-client-libraries.appspot.com/mavenrepo</url>
-        </repository>
     </repositories>
 
     <pluginRepositories>
@@ -80,14 +70,11 @@
             <name>Synyx OpenSource Repository</name>
             <url>http://repo.synyx.org</url>
         </pluginRepository>
-        <pluginRepository>
-            <id>maven.jenkins-ci.org</id>
-            <name>Jenkins Repo</name>
-            <url>http://kuali-nexus-lb-287160402.us-east-1.elb.amazonaws.com/content/groups/public/</url>
-        </pluginRepository>
     </pluginRepositories>
 
     <dependencies>
+
+        <!-- UTIL DEPENDENCIES -->
 
         <dependency>
             <groupId>commons-io</groupId>
@@ -96,60 +83,17 @@
         </dependency>
 
         <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>18.0</version>
+        </dependency>
+
+        <!-- REST API DEPENDENCIES -->
+
+        <dependency>
             <groupId>com.mangofactory</groupId>
             <artifactId>swagger-springmvc</artifactId>
             <version>0.8.4</version>
-        </dependency>
-
-
-        <!-- DEPENDENCIES FOR GOOGLE CALENDAR -->
-
-        <dependency>
-            <groupId>com.google.http-client</groupId>
-            <artifactId>google-http-client</artifactId>
-            <version>1.13.1-beta</version>
-            <type>jar</type>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.api-client</groupId>
-            <artifactId>google-api-client</artifactId>
-            <version>1.6.0-beta</version>
-            <type>jar</type>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.apis</groupId>
-            <artifactId>google-api-services-calendar</artifactId>
-            <version>v3-rev24-1.13.2-beta</version>
-            <type>jar</type>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.http-client</groupId>
-            <artifactId>google-http-client-jackson</artifactId>
-            <version>1.13.1-beta</version>
-            <type>jar</type>
-        </dependency>
-
-        <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-mapper-asl</artifactId>
-            <version>1.8.4</version>
-            <type>jar</type>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.gdata</groupId>
-            <artifactId>gdata-calendar-2.0</artifactId>
-            <version>1.41.5</version>
-            <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <artifactId>google-collections</artifactId>
-                    <groupId>com.google.collections</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- DEPENDENCIES FOR JSON -->
@@ -159,6 +103,13 @@
             <artifactId>gson</artifactId>
             <version>2.2.2</version>
             <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+            <version>1.8.4</version>
+            <type>jar</type>
         </dependency>
 
         <!-- DEPENDENCIES FOR CALENDAR -->
@@ -312,21 +263,6 @@
         <!-- DEPENDENCIES FOR TESTING -->
 
         <dependency>
-            <groupId>org.dbunit</groupId>
-            <artifactId>dbunit</artifactId>
-            <version>2.4.7</version>
-            <scope>test</scope>
-            <type>jar</type>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <version>1.9.0-rc1</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.jvnet.mock-javamail</groupId>
             <artifactId>mock-javamail</artifactId>
             <version>1.9</version>
@@ -338,13 +274,6 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.8.2</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <version>${spring.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -382,7 +311,23 @@
             <artifactId>jsr250-api</artifactId>
             <version>1.0</version>
         </dependency>
-        
+
+        <!--DEPENDENCIES FOR HTTP COMPONENTS -->
+
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+            <version>4.3.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.3.5</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
