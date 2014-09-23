@@ -175,17 +175,21 @@
     </script>
 
     <!-- Modal -->
-    <div id="special-leave-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    <div id="special-leave-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
          aria-hidden="true">
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h3 id="myModalLabel"><spring:message code='special.leave.title.long'/></h3>
-        </div>
-        <div class="modal-body">
-            <p><spring:message code='special.leave.explanation'/></p>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><spring:message code='close'/></button>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 id="myModalLabel" class="modal-title"><spring:message code='special.leave.title.long'/></h4>
+                </div>
+                <div class="modal-body">
+                    <p><spring:message code='special.leave.explanation'/></p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><spring:message code='close'/></button>
+                </div>
+            </div>
         </div>
     </div>
 

@@ -82,47 +82,57 @@
 
             </div>
 
-            <div id="changeViewModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <h3 id="myModalLabel"><spring:message code="filter" /></h3>
-                </div>
-                <form:form method="POST" id="searchRequest-form" action="${formUrlPrefix}/sicknote/filter" modelAttribute="searchRequest" class="form-horizontal">
-                <div class="modal-body">
-
-                    <div class="control-group">
-                        <label class="control-label" for="employee"><spring:message code="staff" /></label>
-
-                        <div class="controls">
-                            <form:select path="personId" id="employee" cssErrorClass="error">
-                                <form:option value="-1"><spring:message code="staff.all" /></form:option>
-                                <c:forEach items="${persons}" var="person">
-                                    <form:option value="${person.id}">${person.niceName}</form:option>
-                                </c:forEach>
-                            </form:select>
+            <div id="changeViewModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                            <h4 id="myModalLabel" class="modal-title"><spring:message code="filter" /></h4>
                         </div>
-                    </div>
-                    
-                    <div class="control-group">
-                        <label class="control-label">
-                            <spring:message code="time" />
-                        </label>
-                        <div class="controls radiobuttons">
-                            <form:radiobutton id="periodYear" path="period" value="YEAR" checked="checked" />
-                            <label for="periodYear"><spring:message code="period.year" /></label>
-                            <form:radiobutton id="periodQuartal" path="period" value="QUARTAL" />
-                            <label for="periodQuartal"><spring:message code="period.quartal" /></label>
-                            <form:radiobutton id="periodMonth" path="period" value="MONTH" />
-                            <label for="periodMonth"><spring:message code="period.month" /></label>
-                        </div>
-                    </div>
+                        <form:form method="POST" id="searchRequest-form" action="${formUrlPrefix}/sicknote/filter" modelAttribute="searchRequest" class="form-horizontal">
+                            <div class="modal-body">
 
+                                <div class="form-group">
+                                    <label class="control-label col-sm-4" for="employee"><spring:message code="staff" /></label>
+
+                                    <div class="col-sm-7">
+                                        <form:select path="personId" id="employee" cssClass="form-control" cssErrorClass="form-control error">
+                                            <form:option value="-1"><spring:message code="staff.all" /></form:option>
+                                            <c:forEach items="${persons}" var="person">
+                                                <form:option value="${person.id}">${person.niceName}</form:option>
+                                            </c:forEach>
+                                        </form:select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-sm-4">
+                                        <spring:message code="time" />
+                                    </label>
+                                    <div class="col-sm-7 radio">
+                                        <label>
+                                            <form:radiobutton id="periodYear" path="period" value="YEAR" checked="checked" />
+                                            <spring:message code="period.year" />
+                                        </label>
+                                        <label>
+                                            <form:radiobutton id="periodQuartal" path="period" value="QUARTAL" />
+                                            <spring:message code="period.quartal" />
+                                        </label>
+                                        <label>
+                                            <form:radiobutton id="periodMonth" path="period" value="MONTH" />
+                                            <spring:message code="period.month" />
+                                        </label>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-primary" type="submit"><spring:message code="go" /></button>
+                                <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><spring:message code="cancel" /></button>
+                            </div>
+                        </form:form>
+                    </div>
                 </div>
-                <div class="modal-footer">
-                    <button class="btn btn-primary" type="submit"><spring:message code="go" /></button>
-                    <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><spring:message code="cancel" /></button>
-                </div>
-                </form:form>
             </div>
 
             <div>

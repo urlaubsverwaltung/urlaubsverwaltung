@@ -66,19 +66,23 @@
                 </div>
 
                 <form:form method="POST" action="${formUrlPrefix}/sicknote/${sickNote.id}/cancel">
-                <div id="modal-cancel" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                        <h3 id="myModalLabel"><spring:message code="sicknote" />&nbsp;<spring:message code="delete" />?</h3>
+                <div id="modal-cancel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                <h4 id="myModalLabel" class="modal-title"><spring:message code="sicknote" />&nbsp;<spring:message code="delete" />?</h4>
+                            </div>
+                            <div class="modal-body">
+                                <spring:message code="sicknote.cancel" />
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-danger" type="submit"><i class="fa fa-trash"></i>&nbsp;<spring:message code="delete" /></button>
+                                <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i>&nbsp;<spring:message code="cancel" /></button>
+                            </div>
+                        </div>
+                        </div>
                     </div>
-                        <div class="modal-body">
-                            <spring:message code="sicknote.cancel" />
-                        </div>
-                        <div class="modal-footer">
-                            <button class="btn btn-danger" type="submit"><i class="fa fa-trash"></i>&nbsp;<spring:message code="delete" /></button>
-                            <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i>&nbsp;<spring:message code="cancel" /></button>
-                        </div>
-                </div>
                 </form:form>
                 
               <table class="detail-table">
