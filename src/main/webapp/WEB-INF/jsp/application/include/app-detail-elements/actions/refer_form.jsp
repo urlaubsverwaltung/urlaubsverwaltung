@@ -8,7 +8,7 @@
     <div id="refer" style="display: none" class="confirm alert alert-info">
         <b><spring:message code="please.refer" /></b>
         <br /><br />
-        <form:select path="loginName">
+        <form:select path="loginName" cssClass="form-control">
             <c:forEach items="${vips}" var="p">
                 <option value="${p.loginName}"><c:out value="${p.firstName} ${p.lastName}" /></option>
             </c:forEach>

@@ -66,13 +66,13 @@
 
     </div>
     
-    <div class="control-group">
-        <label class="control-label" for="login"><spring:message code='login'/></label>
+    <div class="form-group">
+        <label class="control-label col-sm-4" for="login"><spring:message code='login'/></label>
 
-        <div class="controls">
+        <div class="col-sm-7">
             <c:choose>
                 <c:when test="${person.id == null}">
-                    <form:input id="login" path="loginName" cssErrorClass="error"/>
+                    <form:input id="login" path="loginName" class="form-control" cssErrorClass="form-control error"/>
                     <span class="help-inline"><form:errors path="loginName" cssClass="error"/></span>
                 </c:when>
                 <c:otherwise>
@@ -83,29 +83,29 @@
         </div>
     </div>
 
-    <div class="control-group">
-        <label class="control-label" for="firstName"><spring:message code='firstname'/></label>
+    <div class="form-group">
+        <label class="control-label col-sm-4" for="firstName"><spring:message code='firstname'/></label>
 
-        <div class="controls">
-            <form:input id="firstName" path="firstName" cssErrorClass="error"/>
+        <div class="col-sm-7">
+            <form:input id="firstName" path="firstName" class="form-control" cssErrorClass="form-control error" />
             <span class="help-inline"><form:errors path="firstName" cssClass="error"/></span>
         </div>
     </div>
 
-    <div class="control-group">
-        <label class="control-label" for="lastName"><spring:message code='lastname'/></label>
+    <div class="form-group">
+        <label class="control-label col-sm-4" for="lastName"><spring:message code='lastname'/></label>
 
-        <div class="controls">
-            <form:input id="lastName" path="lastName" cssErrorClass="error"/>
+        <div class="col-sm-7">
+            <form:input id="lastName" path="lastName" class="form-control" cssErrorClass="form-control error" />
             <span class="help-inline"><form:errors path="lastName" cssClass="error"/></span>
         </div>
     </div>
 
-    <div class="control-group">
-        <label class="control-label" for="email"><spring:message code='email'/></label>
+    <div class="form-group">
+        <label class="control-label col-sm-4" for="email"><spring:message code='email'/></label>
 
-        <div class="controls">
-            <form:input id="email" path="email" cssErrorClass="error"/>
+        <div class="col-sm-7">
+            <form:input id="email" path="email" class="form-control" cssErrorClass="form-control error" />
             <span class="help-inline"><form:errors path="email" cssClass="error"/></span>
         </div>
     </div>
@@ -124,26 +124,30 @@
 
     </div>
 
-    <div class="control-group no-label">
+    <div class="form-group">
 
         <span class="help-inline"><form:errors path="permissions" cssClass="error"/></span>
 
-        <label class="checkbox">
-            <form:checkbox path="permissions" value="INACTIVE"/>&nbsp;<b><spring:message code="role.inactive"/></b>:
-            <spring:message code="role.inactive.dsc"/>
-        </label>
-        <label class="checkbox">
-            <form:checkbox path="permissions" value="USER"/>&nbsp;<b><spring:message code="role.user"/></b>:
-            <spring:message code="role.user.dsc"/>
-        </label>
-        <label class="checkbox">
-            <form:checkbox path="permissions" value="BOSS"/>&nbsp;<b><spring:message code="role.boss"/></b>:
-            <spring:message code="role.boss.dsc"/>
-        </label>
-        <label class="checkbox">
-            <form:checkbox path="permissions" value="OFFICE"/>&nbsp;<b><spring:message code="role.office"/></b>:
-            <spring:message code="role.office.dsc"/>
-        </label>
+        <div class="col-sm-11 checkbox">
+
+            <label class="checkbox">
+                <form:checkbox path="permissions" value="INACTIVE"/><b><spring:message code="role.inactive"/></b>:
+                <spring:message code="role.inactive.dsc"/>
+            </label>
+            <label class="checkbox">
+                <form:checkbox path="permissions" value="USER"/><b><spring:message code="role.user"/></b>:
+                <spring:message code="role.user.dsc"/>
+            </label>
+            <label class="checkbox">
+                <form:checkbox path="permissions" value="BOSS"/><b><spring:message code="role.boss"/></b>:
+                <spring:message code="role.boss.dsc"/>
+            </label>
+            <label class="checkbox">
+                <form:checkbox path="permissions" value="OFFICE"/><b><spring:message code="role.office"/></b>:
+                <spring:message code="role.office.dsc"/>
+            </label>
+
+        </div>
 
     </div>
 
@@ -166,14 +170,14 @@
 
     </div>
     
-    <div class="control-group">
-        <label class="control-label" for="year-dropdown"><spring:message code='year'/></label>
+    <div class="form-group">
+        <label class="control-label col-sm-4" for="year-dropdown"><spring:message code='year'/></label>
 
-        <div class="controls">
+        <div class="col-sm-7">
 
             <c:choose>
                 <c:when test="${person.id == null}">
-                    <form:select path="year" size="1" id="year-dropdown">
+                    <form:select path="year" size="1" id="year-dropdown" class="form-control">
                         <form:option value="${currentYear - 1}"><c:out value="${currentYear - 1}"/></form:option>
                         <form:option value="${currentYear}" selected="selected"><c:out
                                 value="${currentYear}"/></form:option>
@@ -183,7 +187,7 @@
                 </c:when>
                 <c:otherwise>
                     <form:select path="year" size="1" onchange="change(this.options[this.selectedIndex].value);"
-                                 id="year-dropdown">
+                                 id="year-dropdown" class="form-control">
                         <form:option value="${currentYear - 1}"><c:out value="${currentYear - 1}"/></form:option>
                         <form:option value="${currentYear}"><c:out value="${currentYear}"/></form:option>
                         <form:option value="${currentYear + 1}"><c:out value="${currentYear + 1}"/></form:option>
@@ -197,20 +201,22 @@
         </div>
     </div>
 
-    <div class="control-group">
-        <label class="control-label">
+    <div class="form-group">
+        <label class="control-label col-sm-4">
             <spring:message code='From'/>
         </label>
 
-        <div class="controls">
+        <div class="col-sm-2">
             <person:day-dropdown path="dayFrom" selected="${personForm.dayFrom}" />
-            &nbsp;
+        </div>
+
+        <div class="col-sm-5">
             <person:month-dropdown path="monthFrom" selected="${personForm.monthFrom}" />
         </div>
     </div>
 
-    <div class="control-group">
-        <label class="control-label">
+    <div class="form-group">
+        <label class="control-label col-sm-4">
             <spring:message code='To'/>
             <c:if test="${not empty errors}">
                 <br />
@@ -218,43 +224,51 @@
             </c:if>
         </label>
 
-        <div class="controls">
-            <person:day-dropdown path="dayTo" selected="${personForm.dayTo}" />
-            &nbsp;
-            <person:month-dropdown path="monthTo" selected="${personForm.monthTo}" />
+        <div class="col-sm-2">
+            <person:day-dropdown path="dayFrom" selected="${personForm.dayTo}" />
         </div>
+
+        <div class="col-sm-5">
+            <person:month-dropdown path="monthFrom" selected="${personForm.monthTo}" />
+        </div>
+
     </div>
 
-    <div class="control-group">
-        <label class="control-label" for="annualVacationDays"><spring:message code='person.annual.vacation'/></label>
+    <div class="form-group">
+        <label class="control-label col-sm-4" for="annualVacationDays"><spring:message code='person.annual.vacation'/></label>
 
-        <div class="controls">
-            <form:input path="annualVacationDays" cssErrorClass="error" size="1" id="annualVacationDays"/>
+        <div class="col-sm-7">
+            <form:input path="annualVacationDays" class="form-control" cssErrorClass="form-control error" size="1" id="annualVacationDays"/>
             <span class="help-inline"><form:errors path="annualVacationDays" cssClass="error"/></span>
         </div>
     </div>
 
-    <div class="control-group">
-        <label class="control-label" for="remainingVacationDays">
+    <div class="form-group">
+        <label class="control-label col-sm-4" for="remainingVacationDays">
             <spring:message code="remaining"/>&nbsp;<spring:message code="last.year"/>
         </label>
 
-        <div class="controls">
-            <form:input path="remainingVacationDays" cssErrorClass="error" size="1" id="remainingVacationDays"/>
+        <div class="col-sm-7">
+            <form:input path="remainingVacationDays" class="form-control" cssErrorClass="form-control error" size="1" id="remainingVacationDays"/>
             <span class="help-inline"><form:errors path="remainingVacationDays" cssClass="error"/></span>
         </div>
     </div>
 
-    <div class="control-group">
-        <label class="control-label">
+    <div class="form-group">
+        <label class="control-label col-sm-4">
             <spring:message code='person.expire'/>
         </label>
 
-        <div class="controls radiobuttons">
-            <form:radiobutton id="expireYes" path="remainingVacationDaysExpire" value="true"/>
-            <label for="expireYes"><spring:message code='yes'/></label>
-            <form:radiobutton id="expireNo" path="remainingVacationDaysExpire" value="false"/>
-            <label for="expireNo"><spring:message code='no'/></label>
+        <div class="col-sm-7 radio">
+            <label class="radio-inline">
+                <form:radiobutton id="expireYes" path="remainingVacationDaysExpire" value="true"/>
+                <spring:message code='yes'/>
+            </label>
+
+            <label class="radio-inline">
+                <form:radiobutton id="expireNo" path="remainingVacationDaysExpire" value="false"/>
+                <spring:message code='no'/>
+            </label>
         </div>
     </div>
 
@@ -272,21 +286,21 @@
 
     </div>
 
-    <div class="control-group control-group">
-        <label class="control-label">
+    <div class="form-group form-group">
+        <label class="control-label col-sm-4">
             <spring:message code="working.time.valid.from" />
         </label>
-        <div class="controls">
+        <div class="col-sm-7">
             <c:set var="VALID_FROM"><uv:date date="${personForm.validFrom}" /></c:set>
-            <form:input id="validFrom" path="validFrom" value="${VALID_FROM}" cssErrorClass="error" />
+            <form:input id="validFrom" path="validFrom" value="${VALID_FROM}" class="form-control" cssErrorClass="form-control error" />
         </div>
     </div>
 
-    <div class="control-group">
-        <label class="control-label">
+    <div class="form-group">
+        <label class="control-label col-sm-4">
             <spring:message code="working.time.days" />
         </label>
-        <div class="controls">
+        <div class="col-sm-7 checkbox">
             <c:forEach items="${weekDays}" var="weekDay">
                 <label class="checkbox" for="${weekDay.name}">
                     <form:checkbox id="${weekDay.name}" path="workingDays" value="${weekDay.dayOfWeek}" />

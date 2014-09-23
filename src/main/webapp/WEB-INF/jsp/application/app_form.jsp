@@ -61,12 +61,11 @@
     </c:otherwise>
 </c:choose>
 
-<form:form method="POST" action="${actionUrl}" modelAttribute="appForm" class="form-horizontal stretched">
+<form:form method="POST" action="${actionUrl}" modelAttribute="appForm" class="form-horizontal" role="form">
 
 <c:if test="${not empty errors || timeError != null}">
 
-    <div class="grid-100 alert alert-block alert-error">
-        <strong>
+    <div class="grid-100 alert alert-danger">
             <c:if test="${empty errors}">
                 <spring:message code="${timeError}"/>
             </c:if>
@@ -91,7 +90,6 @@
                 </c:choose>
                 <spring:message code="${msg2}" arguments="${numberOfDays}"/>
             </c:if>
-        </strong>
     </div>
 </c:if>
 
@@ -110,12 +108,12 @@
     <c:if test="${appliesAsRep == true}">
         <%-- office applies for a user --%>
 
-        <div class="control-group">
-            <label class="control-label">
+        <div class="form-group">
+            <label class="control-label col-sm-4">
                 <spring:message code="name"/>
             </label>
-            <div class="controls">
-                <select id="person-select" onchange="window.location.href=this.options
+            <div class="col-sm-9">
+                <select id="person-select" class="form-control" onchange="window.location.href=this.options
                                                         [this.selectedIndex].value">
                     <option value="${formUrlPrefix}/${person.id}/application/new" selected="selected">
                         <c:out value="${person.niceName}"/>
@@ -133,13 +131,13 @@
 
     </c:if>
 
-<div class="control-group">
-    <label class="control-label" for="vacationType">
+<div class="form-group">
+    <label class="control-label col-sm-4" for="vacationType">
         <spring:message code='app.type' />
     </label>
 
-    <div class="controls">
-        <form:select path="vacationType" size="1" id="vacationType" onchange="checkSonderurlaub(value);">
+    <div class="col-sm-7">
+        <form:select path="vacationType" size="1" id="vacationType" class="form-control" onchange="checkSonderurlaub(value);">
             <c:choose>
                 <c:when test="${appForm.vacationType == null}">
                     <c:forEach items="${vacTypes}" var="vacType">
@@ -163,9 +161,9 @@
             </c:choose>
         </form:select>
         <i class="fa fa-question-circle fa-action" id="special-leave-info"
-             data-placement="bottom" data-toggle="popover"
-             data-original-title="<spring:message code='special.leave.title.short' />"
-             data-content="<spring:message code='special.leave.explanation' />" data-trigger="hover"></i>
+           data-placement="bottom" data-toggle="popover"
+           data-original-title="<spring:message code='special.leave.title.short' />"
+           data-content="<spring:message code='special.leave.explanation' />" data-trigger="hover"></i>
     </div>
 
     <script type="text/javascript">
@@ -193,62 +191,68 @@
 
 </div>
 
-<div class="control-group">
-    <label class="control-label">
+<div class="form-group">
+    <label class="control-label col-sm-4">
         <spring:message code="time"/>
     </label>
 
-    <div class="controls radiobuttons">
+    <div class="col-sm-7 radio">
 
-        <form:radiobutton id="fullDay" class="dayLength-full" path="howLong" checked="checked" value="${full}" />
-        <label for="fullDay"><spring:message code='${full.dayLength}'/></label>
+        <label>
+            <form:radiobutton id="fullDay" class="dayLength-full" path="howLong" checked="checked" value="${full}" />
+            <spring:message code='${full.dayLength}'/>
+        </label>
 
-        <form:radiobutton id="morning" class="dayLength-half" path="howLong" value="${morning}" />
-        <label for="morning"><spring:message code='${morning.dayLength}'/></label>
+        <label>
+            <form:radiobutton id="morning" class="dayLength-half" path="howLong" value="${morning}" />
+            <spring:message code='${morning.dayLength}'/>
+        </label>
 
-        <form:radiobutton id="noon" class="dayLength-half" path="howLong" value="${noon}" />
-        <label for="noon"><spring:message code='${noon.dayLength}'/></label>
+        <label>
+            <form:radiobutton id="noon" class="dayLength-half" path="howLong" value="${noon}" />
+            <spring:message code='${noon.dayLength}'/>
+        </label>
 
     </div>
 
 </div>
 
-<div class="control-group full-day">
-    <label class="control-label" for="from">
+    <div class="form-group full-day">
+    <label class="col-sm-4 control-label" for="from">
         <spring:message code="From" />:
     </label>
-    <div class="controls">
-        <form:input id="from" path="startDate" cssErrorClass="error" />
+    <div class="col-sm-7">
+        <form:input id="from" path="startDate" class="form-control" cssErrorClass="form-control error" />
     </div>
 </div>
 
-<div class="control-group full-day">
-    <label class="control-label" for="to">
+<div class="form-group full-day">
+    <label class="control-label col-sm-4" for="to">
         <spring:message code="To" />:
     </label>
-    <div class="controls">
-        <form:input id="to" path="endDate" cssErrorClass="error" />
+    <div class="col-sm-7">
+        <form:input id="to" path="endDate" class="form-control" cssErrorClass="form-control error" />
         <span class="help-block info days"></span>
     </div>
 </div>
 
-<div class="control-group half-day">
-    <label class="control-label" for="at">
+<div class="form-group half-day">
+    <label class="control-label col-sm-4" for="at">
         <spring:message code="At" />:
     </label>
-    <div class="controls">
-        <form:input id="at" path="startDateHalf" cssErrorClass="error" />
+    <div class="col-sm-7">
+        <form:input id="at" path="startDateHalf" class="form-control" cssErrorClass="form-control error" />
         <span class="help-block info days"></span>
     </div>
 </div>
 
-<div class="control-group">
-    <label class="control-label" for="rep">
+<div class="form-group">
+    <label class="control-label col-sm-4" for="rep">
         <spring:message code="app.rep"/>
     </label>
 
-    <div class="controls">
-        <form:select path="rep" id="rep" size="1">
+    <div class="col-sm-7">
+        <form:select path="rep" id="rep" size="1" class="form-control">
             <c:choose>
                 <c:when test="${appForm.rep == null}">
                     <option value="-1"><spring:message code='app.no.rep'/></option>
@@ -276,17 +280,22 @@
 
 </div>
 
-<div class="control-group">
-    <label class="control-label">
+<div class="form-group">
+    <label class="control-label col-sm-4">
         <spring:message code='app.team'/>
     </label>
 
-    <div class="controls radiobuttons">
-        <form:radiobutton id="teamInformed" path="teamInformed" value="true"/>
-        <label for="teamInformed"><spring:message code='yes'/></label>
+    <div class="col-sm-7 radio">
 
-        <form:radiobutton id="teamNotInformed" path="teamInformed" value="false"/>
-        <label for="teamNotInformed"><spring:message code='no'/></label>
+        <label>
+            <form:radiobutton id="teamInformed" path="teamInformed" value="true"/>
+            <spring:message code='yes'/>
+        </label>
+
+        <label>
+            <form:radiobutton id="teamNotInformed" path="teamInformed" value="false"/>
+            <spring:message code='no'/>
+        </label>
 
         <form:errors path="teamInformed" cssClass="error"/>
     </div>
@@ -307,14 +316,14 @@
 
     </div>
 
-    <div class="control-group">
-        <label class="control-label" for="reason">
+    <div class="form-group">
+        <label class="control-label col-sm-4" for="reason">
             <spring:message code="reason"/>
         </label>
 
-        <div class="controls">
+        <div class="col-sm-7">
             <span id="text-reason"></span><spring:message code='max.chars'/>
-            <form:textarea id="reason" rows="1" path="reason" cssErrorClass="error"
+            <form:textarea id="reason" rows="1" path="reason" class="form-control" cssErrorClass="form-control error"
                            onkeyup="count(this.value, 'text-reason');"
                            onkeydown="maxChars(this,200); count(this.value, 'text-reason');"/>
             <form:errors path="reason" cssClass="error"/>
@@ -322,14 +331,14 @@
 
     </div>
 
-    <div class="control-group">
-        <label class="control-label" for="address">
+    <div class="form-group">
+        <label class="control-label col-sm-4" for="address">
             <spring:message code='app.address'/>:
         </label>
 
-        <div class="controls">
+        <div class="col-sm-7">
             <span id="text-address"></span><spring:message code="max.chars"/>
-            <form:textarea id="address" rows="1" path="address" cssErrorClass="error"
+            <form:textarea id="address" rows="1" path="address" class="form-control" cssErrorClass="form-control error"
                            onkeyup="count(this.value, 'text-address');"
                            onkeydown="maxChars(this,200); count(this.value, 'text-address');"/>
             <form:errors path="address" cssClass="error"/>
@@ -337,14 +346,14 @@
 
     </div>
 
-    <div class="control-group">
-        <label class="control-label" for="comment">
+    <div class="form-group">
+        <label class="control-label col-sm-4" for="comment">
             <spring:message code='app.form.comment'/>:
         </label>
 
-        <div class="controls">
+        <div class="col-sm-7">
             <span id="text-comment"></span><spring:message code="max.chars"/>
-            <form:textarea id="comment" rows="1" path="comment" cssErrorClass="error"
+            <form:textarea id="comment" rows="1" path="comment" class="form-control" cssErrorClass="form-control error"
                            onkeyup="count(this.value, 'text-comment');"
                            onkeydown="maxChars(this,200); count(this.value, 'text-comment');"/>
             <form:errors path="comment" cssClass="error"/>

@@ -23,12 +23,7 @@
         </script>
     </if>
     
-    <form:form class="stretched" method="put" action="${formUrlPrefix}/application/${application.id}/cancel" modelAttribute="comment">
-        <c:if test="${!empty errors}">
-            <div id="reject-error">
-                <spring:message code="error.reason" />
-            </div>
-        </c:if>
+    <form:form method="put" action="${formUrlPrefix}/application/${application.id}/cancel" modelAttribute="comment">
         <b><spring:message code='cancel.confirm' /></b>
         <br /><br />
         <spring:message code='comment' />, 
@@ -44,8 +39,13 @@
         </c:choose>
         : (<span id="text-cancel"></span><spring:message code="max.chars" />)        
         <br />
-        <form:textarea rows="1" path="reason" onkeyup="count(this.value, 'text-cancel');" onkeydown="maxChars(this,200); count(this.value, 'text-cancel');" />
-        <br /><br />
+        <form:textarea rows="1" path="reason" cssClass="form-control" cssErrorClass="form-control error" onkeyup="count(this.value, 'text-cancel');" onkeydown="maxChars(this,200); count(this.value, 'text-cancel');" />
+        <c:if test="${!empty errors}">
+            <div id="reject-error" class="help-block error">
+                <spring:message code="error.reason" />
+            </div>
+        </c:if>
+        <br />
         <button type="submit" class="btn btn-danger">
             <i class="fa fa-trash"></i>&nbsp;<spring:message code='delete' />
         </button>

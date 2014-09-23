@@ -4,13 +4,13 @@
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
-<form:form class="stretched" method="put" action="${formUrlPrefix}/application/${application.id}/allow" modelAttribute="comment">
+<form:form method="put" action="${formUrlPrefix}/application/${application.id}/allow" modelAttribute="comment">
     <div id="confirm" style="display:none" class="confirm alert alert-success">
         <b><spring:message code='allow.confirm' /></b>
         <br /><br />
         <spring:message code='comment' />, <spring:message code="optional" />: (<span id="text-confirm"></span><spring:message code="max.chars" />)
         <br />
-        <form:textarea rows="1" path="reason" onkeyup="count(this.value, 'text-confirm');" onkeydown="maxChars(this,200); count(this.value, 'text-confirm');" />
+        <form:textarea rows="1" cssClass="form-control" cssErrorClass="form-control error" path="reason" onkeyup="count(this.value, 'text-confirm');" onkeydown="maxChars(this,200); count(this.value, 'text-confirm');" />
         <br />
         <button type="submit" class="btn btn-success">
             <i class="fa fa-check"></i>&nbsp;<spring:message code='app.state.ok.short' />

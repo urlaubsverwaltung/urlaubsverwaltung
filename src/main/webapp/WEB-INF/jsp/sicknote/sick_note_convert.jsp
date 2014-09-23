@@ -9,17 +9,6 @@
 <html>
 <head>
     <uv:head />
-
-    <style type="text/css">
-        form.form-horizontal .control-label {
-            width: 20em !important;
-        }
-
-        form.form-horizontal input[type="text"] {
-            height: 28px !important; 
-        }
-    </style>
-    
 </head>
 <body>
 
@@ -47,23 +36,23 @@
                 
                 <form:form method="${METHOD}" action="${ACTION}" modelAttribute="appForm" class="form-horizontal">
     
-                    <div class="control-group">
-                        <label class="control-label"><spring:message code='staff'/></label>
+                    <div class="form-group">
+                        <label class="control-label col-sm-4"><spring:message code='staff'/></label>
     
-                        <div class="controls">
+                        <div class="col-sm-7">
                             <c:out value="${sickNote.person.firstName}" />&nbsp;<c:out value="${sickNote.person.lastName}" />
                         </div>
                     </div>
 
-                    <div class="control-group">
-                        <label class="control-label">
+                    <div class="form-group">
+                        <label class="control-label col-sm-4">
                             <spring:message code="vac.type" />
                             <br />
                             <span class="help-inline"><form:errors path="vacationType" cssClass="error"/></span>
                         </label>
 
-                        <div class="controls">
-                            <form:select path="vacationType" size="1" cssClass="input-medium" cssErrorClass="input-medium error">
+                        <div class="col-sm-7">
+                            <form:select path="vacationType" size="1" cssClass="form-control" cssErrorClass="form-control error">
                                 <c:forEach items="${vacTypes}" var="vacType">
                                     <option value="${vacType}">
                                         <spring:message code='${vacType.vacationTypeName}' />
@@ -73,30 +62,31 @@
                         </div>
                     </div>
     
-                    <div class="control-group">
-                        <label class="control-label"><spring:message code="time" /></label>
+                    <div class="form-group">
+                        <label class="control-label col-sm-4"><spring:message code="time" /></label>
     
-                        <div class="controls">
+                        <div class="col-sm-7">
                             <uv:date date="${sickNote.startDate}" /> - <uv:date date="${sickNote.endDate}" />
                         </div>
                     </div>
     
-                    <div class="control-group">
-                        <label class="control-label">
-                            <label class="control-label" for="reason"><spring:message code="reason" /></label>
-                            <span class="help-inline"><form:errors path="reason" cssClass="error"/></span>
+                    <div class="form-group">
+                        <label class="control-label col-sm-4">
+                            <spring:message code="reason" />
                         </label>
 
-                        <div class="controls">
+                        <div class="col-sm-7">
                             <span id="count-chars"></span><spring:message code="max.chars" />
                             <br />
-                            <form:textarea id="reason" path="reason" cssErrorClass="error" rows="1" onkeyup="count(this.value, 'count-chars');" onkeydown="maxChars(this,200); count(this.value, 'count-chars');" />
+                            <form:textarea id="reason" path="reason" cssClass="form-control" cssErrorClass="form-control error" rows="1" onkeyup="count(this.value, 'count-chars');" onkeydown="maxChars(this,200); count(this.value, 'count-chars');" />
                         </div>
+
+                        <span class="help-inline"><form:errors path="reason" cssClass="error"/></span>
                     </div>
 
                     <hr/>
                     
-                    <div class="control-group">
+                    <div class="form-group">
                         <button class="btn btn-large btn-success" type="submit"><i class='fa fa-check'></i>&nbsp;<spring:message code="save" /></button>
                         <a class="btn btn-default btn-large" href="${formUrlPrefix}/sicknote/${sickNote.id}"><i class='fa fa-remove'></i>&nbsp;<spring:message code='cancel'/></a>
                     </div>

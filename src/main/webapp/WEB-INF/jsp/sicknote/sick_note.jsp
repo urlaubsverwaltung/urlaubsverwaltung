@@ -175,7 +175,7 @@
                         <form:form method="POST" action="${formUrlPrefix}/sicknote/${sickNote.id}" modelAttribute="comment">
                             <form:errors path="text" cssClass="error" /><br />
                             <span id="text-comment"></span><spring:message code="max.chars" />
-                            <form:textarea rows="4" path="text" cssErrorClass="error" onkeyup="count(this.value, 'text-comment');" onkeydown="maxChars(this,200); count(this.value, 'text-comment');" />
+                            <form:textarea rows="4" path="text" cssClass="form-control" cssErrorClass="form-control error" onkeyup="count(this.value, 'text-comment');" onkeydown="maxChars(this,200); count(this.value, 'text-comment');" />
                             <br />
                             <button class="btn btn-default" type="submit">
                                 <i class="fa fa-check"></i>&nbsp;<spring:message code="save" />
