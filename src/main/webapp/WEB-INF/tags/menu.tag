@@ -15,7 +15,7 @@
                 <span class="icon-bar"></span>
             </button>
             <a class="navbar-brand" href="#">
-                <img src="<spring:url value='/images/synyx-logo-2.jpg' />" height="23" width="11" />
+                <img src="<spring:url value='/images/synyx-logo-transparent.png' />" height="24" width="15" />
                 <spring:message code="title" />
             </a>
         </div>
