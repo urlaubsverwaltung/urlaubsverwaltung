@@ -54,12 +54,23 @@ footer {
 .navbar {
     font-size: 14px;
     background-image: none;
-    background-color: #F8F8F8;
+}
+
+.navbar a {
+    color: #3D3D3D !important;
+}
+
+.navbar a.navbar-brand {
+    color: #516310 !important;
 }
 
 .navbar a:hover {
     color: #0083CC !important;
     text-decoration: none;
+}
+
+.navbar li:hover {
+    background-color: #E6E6E6;
 }
 
 /**************************************************************************
