@@ -10,6 +10,7 @@
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 
 <!DOCTYPE html>
@@ -59,9 +60,11 @@
         <uv:menu />
 
         <div class="content">
-            <div class="grid-container">
+            <div class="container-fluid">
 
-                <div class="grid-100">
+                <div class="row">
+
+                    <div class="col-xs-12">
 
                     <div class="header">
 
@@ -96,6 +99,10 @@
                             </div>
 
                             <uv:print />
+
+                            <sec:authorize access="hasRole('OFFICE')">
+                                <a class="btn btn-default pull-right" href="${formUrlPrefix}/staff/new"><i class="fa fa-plus"></i>&nbsp;<spring:message code="table.new.person" /></a>
+                            </sec:authorize>
                             
                         </legend>
 
@@ -115,6 +122,7 @@
 
                     </c:choose>
 
+                    </div>
                 </div>
             </div> 
         </div>        

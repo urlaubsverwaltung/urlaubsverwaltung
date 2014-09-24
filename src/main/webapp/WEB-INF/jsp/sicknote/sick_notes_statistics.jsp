@@ -24,9 +24,11 @@
 <spring:url var="formUrlPrefix" value="/web" />
 
 <div class="content">
-    <div class="grid-container">
+    <div class="container-fluid">
 
-        <div class="grid-100">
+        <div class="row">
+
+            <div class="col-xs-12">
 
             <div class="header">
 
@@ -44,11 +46,13 @@
 
             </div>
 
+            </div>
+
         </div>
 
-        <div class="grid-100">
+        <div class="row">
 
-            <div>
+            <div class="col-xs-12">
                 <p style="float:left">
                     <spring:message code="sicknotes.statistics" />&nbsp;${statistics.year}
                 </p>
@@ -59,7 +63,9 @@
 
         </div>
         
-        <div class="grid-100">
+        <div class="row">
+
+            <div class="col-xs-12">
             
             <table class="table">
                 <tr>
@@ -95,6 +101,8 @@
                     </td>
                 </tr>
             </table>
+
+            </div>
             
         </div>
     </div>

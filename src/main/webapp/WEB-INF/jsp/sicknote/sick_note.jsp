@@ -19,11 +19,11 @@
 
 <div class="content">
 
-    <div class="grid-container">
+    <div class="container-fluid">
 
-        <div class="grid-100">
+        <div class="row">
 
-            <div class="grid-50 print-box">
+            <div class="col-xs-12 col-sm-6 print-box">
 
                 <div class="header">
                     <legend>
@@ -128,7 +128,7 @@
               </table>  
             </div>
 
-            <div class="grid-50 print-box">
+            <div class="col-xs-12 col-sm-6 print-box">
 
                 <div class="header">
                     <legend>

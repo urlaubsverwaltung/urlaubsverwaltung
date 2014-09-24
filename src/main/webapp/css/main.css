@@ -10,6 +10,14 @@ body {
     margin: 0;
 }
 
+.content {
+    margin: 18px;
+}
+
+.row {
+    margin-bottom: 18px;
+}
+
 footer {
     color: #aaa;
     font-size: 11px;
@@ -31,18 +39,6 @@ footer {
 
 .is-centered {
     text-align: center;
-}
-
-[class^="icon-"], [class*=" icon-"] {
-    vertical-align: middle;
-}
-
-[class^="grid-"], [class*=" grid-"] {
-    margin-bottom: 30px;
-}
-
-[class^="grid-"].sticky, [class*=" grid-"].sticky {
-    margin-bottom: 0;
 }
 
 /**************************************************************************

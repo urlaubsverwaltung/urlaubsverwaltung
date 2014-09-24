@@ -18,11 +18,16 @@
 
 <div class="content">
 
-    <div class="grid-container">
+    <c:set var="METHOD" value="POST" />
+    <c:set var="ACTION" value="${formUrlPrefix}/sicknote/${sickNote.id}/convert" />
 
-        <div class="grid-100">
+    <form:form method="${METHOD}" action="${ACTION}" modelAttribute="appForm" class="form-horizontal">
 
-            <div class="grid-50">
+    <div class="container-fluid">
+
+        <div class="row">
+
+            <div class="col-xs-12 col-sm-6">
                 <div class="header">
                     <legend>
                         <p>
@@ -30,11 +35,6 @@
                         </p>
                     </legend>
                 </div>
-    
-                <c:set var="METHOD" value="POST" />
-                <c:set var="ACTION" value="${formUrlPrefix}/sicknote/${sickNote.id}/convert" />
-                
-                <form:form method="${METHOD}" action="${ACTION}" modelAttribute="appForm" class="form-horizontal">
     
                     <div class="form-group">
                         <label class="control-label col-sm-4"><spring:message code='staff'/></label>
@@ -84,18 +84,9 @@
                         <span class="help-inline"><form:errors path="reason" cssClass="error"/></span>
                     </div>
 
-                    <hr/>
-                    
-                    <div class="form-group">
-                        <button class="btn btn-large btn-success" type="submit"><i class='fa fa-check'></i>&nbsp;<spring:message code="save" /></button>
-                        <a class="btn btn-default btn-large" href="${formUrlPrefix}/sicknote/${sickNote.id}"><i class='fa fa-remove'></i>&nbsp;<spring:message code='cancel'/></a>
-                    </div>
-                
-                </form:form>
-                
             </div>
 
-            <div class="grid-50">
+            <div class="col-xs-12 col-sm-6">
 
                 <div class="header">
                     <legend>
@@ -143,9 +134,24 @@
             </div>
             
         </div>
+
+        <div class="row">
+
+            <div class="col-xs-12">
+
+                <hr/>
+
+                <button class="btn btn-large btn-success col-xs-12 col-sm-2" type="submit"><i class='fa fa-check'></i>&nbsp;<spring:message code="save" /></button>
+                <a class="btn btn-default btn-large col-xs-12 col-sm-2" href="${formUrlPrefix}/sicknote/${sickNote.id}"><i class='fa fa-remove'></i>&nbsp;<spring:message code='cancel'/></a>
+
+
+            </div>
+
+        </div>
         
     </div>
-    
+
+</form:form>
 </div>    
 
 </body>

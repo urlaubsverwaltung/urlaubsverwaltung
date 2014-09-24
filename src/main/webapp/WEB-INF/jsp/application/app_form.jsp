@@ -27,7 +27,7 @@
 
 <div class="content">
 
-<div class="grid-container">
+<div class="container-fluid">
 
 <c:choose>
 
@@ -65,7 +65,9 @@
 
 <c:if test="${not empty errors || timeError != null}">
 
-    <div class="grid-100 alert alert-danger">
+    <div class="row">
+
+    <div class="col-xs-12 alert alert-danger">
             <c:if test="${empty errors}">
                 <spring:message code="${timeError}"/>
             </c:if>
@@ -91,9 +93,13 @@
                 <spring:message code="${msg2}" arguments="${numberOfDays}"/>
             </c:if>
     </div>
+
+    </div>
 </c:if>
 
-<div class="grid-50">
+<div class="row">
+
+<div class="col-xs-12 col-sm-6">
 
 <div class="header">
 
@@ -132,7 +138,7 @@
     </c:if>
 
 <div class="form-group">
-    <i class="fa fa-question-circle fa-action" id="special-leave-info" style="vertical-align: middle; line-height: 32px"
+    <i class="fa fa-question-circle fa-action hidden-sm hidden-xs" id="special-leave-info" style="vertical-align: middle; line-height: 32px"
        data-placement="bottom" data-toggle="popover" data-html="true"
        data-original-title="<spring:message code='special.leave.title.short' />"
        data-content="<spring:message code='special.leave.explanation' />" data-trigger="hover"></i>
@@ -309,7 +315,7 @@
 
 </div>
 
-<div class="grid-50">
+<div class="col-xs-12 col-sm-6">
 
     <div class="header">
 
@@ -368,15 +374,21 @@
 
 </div>
 
-<div class="grid-100">
+</div>
 
-    <hr/>
+<div class="row">
 
-    <button type="submit" class="btn btn-large btn-success pull-left">
-        <i class='fa fa-check'></i>&nbsp;<spring:message code='apply'/>
-    </button>
+    <div class="col-xs-12">
+
+        <hr/>
+
+        <button type="submit" class="btn btn-large btn-success pull-left col-xs-12 col-sm-2">
+            <i class='fa fa-check'></i>&nbsp;<spring:message code='apply'/>
+        </button>
 
     </div>
+
+</div>
 
 </div>
 

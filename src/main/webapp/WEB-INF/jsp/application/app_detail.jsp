@@ -28,9 +28,11 @@
         <uv:menu />
 
         <div class="content">
-            <div class="grid-container">
+            <div class="container-fluid">
 
-                <div class="grid-100">
+                <div class="row">
+
+                <div class="col-xs-12">
 
                     <div class="header">
 
@@ -113,8 +115,14 @@
                         </legend>
 
                     </div>
+
+                </div>
+
+                </div><!-- end of first row -->
+
+                <div class="row">
                     
-                <div class="grid-50 print-box">
+                <div class="col-xs-12 col-sm-6 print-box">
                     
                     <%@include file="./include/app-detail-elements/app_info.jsp" %>
 
@@ -161,7 +169,7 @@
 
                 </div>
 
-                <div class="grid-50 print-box">
+                <div class="col-xs-12 col-sm-6 print-box">
 
                     <table class="detail-table" cellspacing="0">
                         <tr class="odd">
@@ -176,6 +184,8 @@
                 </div>
 
                 </div>
+
+            </div><!-- End of second row -->
 
             </div> <!-- end of grid container -->
 

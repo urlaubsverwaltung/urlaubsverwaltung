@@ -53,51 +53,53 @@
 
 <div class="content">
 
-    <div class="grid-container">
+    <div class="container-fluid">
 
-        <div class="grid-100">
+        <div class="row">
 
-            <c:choose>
-                <c:when test="${!empty param.year}">
-                    <c:set var="displayYear" value="${param.year}"/>
-                </c:when>
-                <c:otherwise>
-                    <c:set var="displayYear" value="${year}"/>
-                </c:otherwise>
-            </c:choose>
+            <div class="col-xs-12">
+                <c:choose>
+                    <c:when test="${!empty param.year}">
+                        <c:set var="displayYear" value="${param.year}"/>
+                    </c:when>
+                    <c:otherwise>
+                        <c:set var="displayYear" value="${year}"/>
+                    </c:otherwise>
+                </c:choose>
 
-            <c:choose>
-                <c:when test="${person.id == loggedUser.id}">
-                    <%@include file="./include/overview_header_user.jsp" %>
-                </c:when>
-                <c:otherwise>
-                    <sec:authorize access="hasAnyRole('OFFICE', 'BOSS')">
-                        <%@include file="./include/overview_header_office.jsp" %>
-                    </sec:authorize>
-                </c:otherwise>
-            </c:choose>
-            
-        <div class="grid-60 print-box">
-            <table class="detail-table" cellspacing="0">
-                <%@include file="../application/include/account_days.jsp" %>
-            </table>
-        </div>
-        
-        <div class="grid-40 print-box">
-            <table class="detail-table" cellspacing="0">
-                <%@include file="./include/used_days.jsp" %>
-            </table>
-        </div>
+                <c:choose>
+                    <c:when test="${person.id == loggedUser.id}">
+                        <%@include file="./include/overview_header_user.jsp" %>
+                    </c:when>
+                    <c:otherwise>
+                        <sec:authorize access="hasAnyRole('OFFICE', 'BOSS')">
+                            <%@include file="./include/overview_header_office.jsp" %>
+                        </sec:authorize>
+                    </c:otherwise>
+                </c:choose>
+            </div>
 
-        <div class="grid-100">
-        
-            <div id="datepicker"></div>
-            
+             <div class="col-xs-12 col-sm-7 print-box">
+                 <table class="detail-table" cellspacing="0">
+                     <%@include file="../application/include/account_days.jsp" %>
+                 </table>
+             </div>
+
+            <div class="col-xs-12 col-sm-5 print-box">
+                <table class="detail-table" cellspacing="0">
+                    <%@include file="./include/used_days.jsp" %>
+                </table>
+            </div>
+
         </div>
 
-        <%--<script src="<spring:url value='/js/datepicker.js' />" type="text/javascript" ></script>--%>
+        <div class="row">
+            <div class="col-xs-12">
+                <div id="datepicker"></div>
+            </div>
+        </div>
+
         <script src="<spring:url value='/js/calendar.js' />" type="text/javascript" ></script>
-        <%--<script src="<spring:url value='/js/moment.lang.de.js' />" type="text/javascript" ></script>--%>
         <script>
             $(function() {
 
@@ -161,19 +163,25 @@
             });
         </script>
 
-        <%@include file="./include/overview_app_list.jsp" %>
+        <div class="row">
+            <div class="col-xs-12">
+                <%@include file="./include/overview_app_list.jsp" %>
+            </div>
+        </div>
 
-        <c:choose>
-            <c:when test="${person.id == loggedUser.id}">
-                <%@include file="./include/sick_notes.jsp" %>
-            </c:when>
-            <c:otherwise>
-                <sec:authorize access="hasRole('OFFICE')">
-                    <%@include file="./include/sick_notes.jsp" %>
-                </sec:authorize>
-            </c:otherwise>
-        </c:choose>
-
+        <div class="row">
+            <div class="col-xs-12">
+                <c:choose>
+                    <c:when test="${person.id == loggedUser.id}">
+                        <%@include file="./include/sick_notes.jsp" %>
+                    </c:when>
+                    <c:otherwise>
+                        <sec:authorize access="hasRole('OFFICE')">
+                            <%@include file="./include/sick_notes.jsp" %>
+                        </sec:authorize>
+                    </c:otherwise>
+                </c:choose>
+            </div>
         </div>
 
     </div>

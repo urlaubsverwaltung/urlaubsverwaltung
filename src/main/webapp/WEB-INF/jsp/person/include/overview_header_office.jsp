@@ -14,7 +14,7 @@
             <c:out value="${person.firstName}"/>&nbsp;<c:out value="${person.lastName}"/>&nbsp;&ndash;&nbsp;<spring:message
                 code="table.overview"/><c:out value="${displayYear}"/>
 
-            <span class="hide-on-mobile">
+            <span class="hidden-xs">
                 <uv:year-selector year="${year}" />
             </span>
 
@@ -43,7 +43,7 @@
                 <a href="${formUrlPrefix}/staff/${person.id}/edit" class="btn btn-default pull-right"><i class="fa fa-pencil"></i> Edit</a>
             </sec:authorize>
 
-            <span class="hide-on-tablet hide-on-mobile">
+            <span class="hidden-sm hidden-xs">
                 <uv:print />
             </span>
 

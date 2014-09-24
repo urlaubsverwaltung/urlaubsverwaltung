@@ -42,13 +42,17 @@
 
         <div class="content">
 
-            <div class="grid-container">
+            <div class="container-fluid">
 
-                <div class="grid-100">
+                <div class="row">
 
-                    <%@include file="./include/app-list-elements/list-header.jsp" %> 
+                    <div class="col-xs-12">
 
-                    <%@include file="./include/app-list-elements/list.jsp" %> 
+                        <%@include file="./include/app-list-elements/list-header.jsp" %>
+
+                        <%@include file="./include/app-list-elements/list.jsp" %>
+
+                    </div>
 
                 </div>
             </div>

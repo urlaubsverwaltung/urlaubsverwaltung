@@ -19,19 +19,21 @@
         
         <uv:menu />
         
-        <div class="grid-container">
-            <c:choose>
-                <c:when test="${not empty exception.message}">
-                    <div class="grid-100" id="errorpage-exception">
-                        <p><c:out value="${exception.message}" /></p>
-                    </div>
-                </c:when>
-                <c:otherwise>
-                    <div class="grid-100" id="errorpage">
-                        <a href="${formUrlPrefix}/overview" id="error-link">&nbsp;</a>
-                    </div>
-                </c:otherwise>
-            </c:choose> 
+        <div class="container-fluid">
+            <div class="row">
+                <c:choose>
+                    <c:when test="${not empty exception.message}">
+                        <div class="col-xs-12" id="errorpage-exception">
+                            <p><c:out value="${exception.message}" /></p>
+                        </div>
+                    </c:when>
+                    <c:otherwise>
+                        <div class="col-xs-12" id="errorpage">
+                            <a href="${formUrlPrefix}/overview" id="error-link">&nbsp;</a>
+                        </div>
+                    </c:otherwise>
+                </c:choose>
+            </div>
         </div>
     </body>
     

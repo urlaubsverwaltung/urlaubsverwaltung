@@ -37,7 +37,7 @@
 
 
 <div class="content">
-<div class="grid-container">
+<div class="container-fluid">
 
 <c:choose>
     <c:when test="${person.id == null}">
@@ -52,9 +52,9 @@
 
 <form:form method="${METHOD}" action="${ACTION}" modelAttribute="personForm" class="form-horizontal">
 
-<div class="grid-100 sticky">
+<div class="row">
 
-<div class="grid-50">
+<div class="col-xs-12 col-sm-6">
 
     <div class="header">
 
@@ -112,7 +112,7 @@
     
 </div>
 
-<div class="grid-50">
+<div class="col-xs-12 col-sm-6">
 
     <div class="header">
 
@@ -156,9 +156,9 @@
 </div>
 
 
-<div class="grid-100 sticky">
+<div class="row">
 
-<div class="grid-50">
+<div class="col-xs-12 col-sm-6">
 
     <div class="header">
 
@@ -274,7 +274,7 @@
 
 </div>
 
-<div class="grid-50">
+<div class="col-xs-12 col-sm-6">
 
     <div class="header">
 
@@ -315,7 +315,7 @@
 </div>
 
 
-<div class="grid-100">
+<div class="col-xs-12">
 
     <hr/>
 

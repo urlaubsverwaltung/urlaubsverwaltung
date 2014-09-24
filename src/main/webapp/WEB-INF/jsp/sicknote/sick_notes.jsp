@@ -43,9 +43,11 @@
 <uv:menu />
 
 <div class="content">
-    <div class="grid-container">
+    <div class="container-fluid">
 
-        <div class="grid-100">
+        <div class="row">
+
+            <div class="col-xs-12">
 
             <div class="header">
 
@@ -207,7 +209,7 @@
                 </c:otherwise>
 
             </c:choose>
-
+            </div>
         </div>
     </div>
 </div>

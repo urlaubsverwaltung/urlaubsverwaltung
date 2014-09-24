@@ -6,8 +6,6 @@
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 
-<div class="grid-100">
-
     <div class="header">
 
         <legend>
@@ -140,4 +138,3 @@
             </c:otherwise>
 
         </c:choose>
-    </div>

@@ -51,26 +51,32 @@
 
 <div class="content">
 
-    <div class="grid-container">
+    <div class="container-fluid">
 
-        <div class="grid-100">
+        <div class="row">
 
-            <div class="header">
-                <legend>
-                    <p>
-                        <c:choose>
-                            <c:when test="${sickNote.id == null}">
-                                <spring:message code="sicknotes.new" /> 
-                            </c:when>
-                            <c:otherwise>
-                                <spring:message code="sicknotes.edit" /> 
-                            </c:otherwise>
-                        </c:choose>
-                    </p>
-                </legend>
+            <div class="col-xs-12">
+
+                <div class="header">
+                    <legend>
+                        <p>
+                            <c:choose>
+                                <c:when test="${sickNote.id == null}">
+                                    <spring:message code="sicknotes.new" />
+                                </c:when>
+                                <c:otherwise>
+                                    <spring:message code="sicknotes.edit" />
+                                </c:otherwise>
+                            </c:choose>
+                        </p>
+                    </legend>
+                </div>
+
             </div>
 
         </div>
+
+        <div class="row">
 
             <c:choose>
                 <c:when test="${sickNote.id == null}">
@@ -85,7 +91,7 @@
 
             <form:form method="${METHOD}" action="${ACTION}" modelAttribute="sickNote" class="form-horizontal">
 
-            <div class="grid-70">
+            <div class="col-xs-12 col-sm-8">
 
                 <div class="form-group">
                     <label class="control-label col-sm-5" for="employee"><spring:message code='staff'/></label>
@@ -176,16 +182,22 @@
 
             </div>
 
-            <div class="grid-100">
+        </div>
+
+        <div class="row">
+
+            <div class="col-xs-12">
                 
                 <hr/>
                 
                 <div class="form-group">
-                    <button class="btn btn-large btn-success" type="submit"><i class='fa fa-check'></i>&nbsp;<spring:message code="save" /></button>
-                    <a class="btn btn-default btn-large" href="${formUrlPrefix}/sicknote"><i class='fa fa-remove'></i>&nbsp;<spring:message code='cancel'/></a>
+                    <button class="btn btn-large btn-success col-xs-12 col-sm-2" type="submit"><i class='fa fa-check'></i>&nbsp;<spring:message code="save" /></button>
+                    <a class="btn btn-default btn-large col-xs-12 col-sm-2" href="${formUrlPrefix}/sicknote"><i class='fa fa-remove'></i>&nbsp;<spring:message code='cancel'/></a>
                 </div>
 
             </div>
+
+        </div>
 
             </form:form>
             

@@ -4,8 +4,6 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 
-<div class="grid-100">
-
 <div class="header">
 
     <legend id="sickNotes">
@@ -63,5 +61,3 @@
     </c:otherwise>
 
 </c:choose>
-
-</div>
