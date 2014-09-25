@@ -12,6 +12,7 @@ body {
 
 .content {
     margin: 18px;
+    margin-top: 32px;
 }
 
 .row {
@@ -41,6 +42,39 @@ footer {
     text-align: center;
 }
 
+.person-box {
+    /*OK*/
+}
+
+.person-box {
+    border-radius: 0;
+}
+
+.person-box .panel-heading,
+.person-box .panel-body {
+    padding: 0;
+}
+
+.person-box .list-group {
+    margin: 0;
+}
+
+.person-box .list-group li {
+    border: 0 0 1px 0 solid #DDDDDD;
+    border-radius: 0;
+}
+
+.person-box--content {
+    height: 80px;
+    padding-right: 24px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.content-title {
+    color: #516310;
+}
+
 /**************************************************************************
   
   HEADER
@@ -50,14 +84,21 @@ footer {
 .navbar {
     font-size: 14px;
     background-image: none;
+    background-color: #95bd28;
+    /*background-color: #56aa38;*/
+    /*background-color: #8fbc2b;*/
+    border-radius: 0;
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
 }
 
 .navbar a {
-    color: #3D3D3D !important;
+    color: #1B2A05 !important;
 }
 
 .navbar a.navbar-brand {
-    color: #516310 !important;
+    color: #1B2A05 !important;
 }
 
 .navbar a:hover {
@@ -74,6 +115,45 @@ footer {
   TABLES
   
 **************************************************************************/
+
+.list-table {
+    width: 100%;
+    border-left: 1px solid #DDDDDD;
+    border-right: 1px solid #DDDDDD;
+    font-size: 12px;
+}
+
+.list-table td {
+    vertical-align: middle !important;
+    /*background-color: #FFF;*/
+    background-color: #F8F8F8;
+    padding: 12px;
+    border-top: 1px solid #DDDDDD;
+}
+
+.list-table tr:last-child td {
+    border-bottom: 1px solid #DDDDDD;
+}
+
+.list-table td.WAITING {
+    color: #31708F;
+    background-color: #D9EDF7;
+}
+
+.list-table td.ALLOWED {
+    color: #3C763D;
+    background-color: #DFF0D8;
+}
+
+.list-table td.REJECTED {
+    color: #A94442;
+    background-color: #F2DEDE !important;
+}
+
+.list-table td.CANCELLED {
+    color: #777777;
+    background-color: #E6E6E6 !important;
+}
 
 .data-table {
     width: 100%;
@@ -138,6 +218,11 @@ th.tablesorter-headerDesc, th.tablesorter-headerAsc {
 
 .btn {
     margin-right: 6px;
+    margin-bottom: 6px;
+}
+
+.btn-compound {
+    margin-right: 0;
 }
 
 .btn-default {
@@ -187,7 +272,7 @@ legend.sticky {
 
 .header legend p {
     display: inline-block;
-    color: #516310;
+    color: #1B2A05;
 }
 
 /**************************************************************************

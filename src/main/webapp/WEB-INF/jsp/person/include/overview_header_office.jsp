@@ -10,19 +10,16 @@
     <legend>
         
         <p>
-            <img class="overview--user-pic print--invisible" src="<c:out value='${gravatar}?d=mm&s=40'/>"/>&nbsp;
-            <c:out value="${person.firstName}"/>&nbsp;<c:out value="${person.lastName}"/>&nbsp;&ndash;&nbsp;<spring:message
-                code="table.overview"/><c:out value="${displayYear}"/>
-
             <span class="hidden-xs">
                 <uv:year-selector year="${year}" />
             </span>
 
-            <div class="btn-group pull-right">
+            <div class="btn-group pull-left">
 
-                <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                <button type="button" class="btn btn-default btn-compound"><c:out value="${person.niceName}" /></button>
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                     <i class="fa fa-user"></i>
-                    <spring:message code="ov.header.person" />&nbsp;<span class="caret"></span>
+                    <span class="caret"></span>
                 </button>
 
                 <ul class="dropdown-menu">

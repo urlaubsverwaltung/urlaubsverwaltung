@@ -15,9 +15,9 @@
     align-items: stretch;
     justify-content: space-between;
     cursor: default;
-    background: linear-gradient( 0deg, #EEE 75%, #FFF);
+    background: #F8F8F8;
     border: 1px solid #DDD;
-    border-radius: 0.3em;
+    border-radius: 0;
 }
 
 .datepicker-months-container {
@@ -39,9 +39,6 @@
     border-spacing: 0;
     border-collapse: collapse;
     font-size: 1em;
-    width: 95%;
-    /* margin left is half of difference of 100% - 95% table width */
-    margin-left: 2.5%;
 }
 
 .datepicker-table th, .datepicker-table td {
@@ -72,6 +69,7 @@
 .datepicker-month {
     width: 230px;
     float: left;
+    border: 1px solid #DDD;
 }
 
 .datepicker-month-next {
@@ -79,12 +77,11 @@
 }
 
 .datepicker-month h3 {
-    margin : 0 0 3px 0;
+    margin : 0;
     padding: 8px 0;
     font-size: 12px;
     text-align: center;
-    background-color: #ABC452;
-    border-right: 1px solid #d7d7d7;
+    background-color: #D8E47F;
 }
 
 .datepicker-day {
@@ -101,7 +98,7 @@
 /* must be the first special day, so other special days are overriding this */
 .datepicker-day-past {
     border-color: #F5F5F5;
-    background-color: #F5F5F5;
+    background-color: #E6E6E6;
 }
 .datepicker-day-past.datepicker-day-public-holiday,
 .datepicker-day-past.datepicker-day-weekend {
@@ -182,9 +179,4 @@ td.halfworkday a {
 td.holiday a {
     color: #F8B851 !important;
     background: #FFEDA0 !important;
-}
-
-/* vacation types like special leave, etc. should be highlighted */
-td.SPECIALLEAVE, td.UNPAIDLEAVE, td.OVERTIME {
-    color: #C13A33;
 }

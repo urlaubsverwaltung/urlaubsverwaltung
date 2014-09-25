@@ -79,24 +79,49 @@
                 </c:choose>
             </div>
 
-             <div class="col-xs-12 col-sm-7 print-box">
-                 <table class="detail-table" cellspacing="0">
-                     <%@include file="../application/include/account_days.jsp" %>
+             <div class="col-xs-12 col-sm-4 print-box">
+
+                 <table class="list-table">
+                     <tbody>
+                     <tr>
+                         <td><img class="print--invisible" src="<c:out value='${gravatar}?d=mm&s=80'/>"/></td>
+                         <td>
+                             <p>@muster</p>
+                             <h4><c:out value="${person.niceName}"/></h4>
+                             <p><i class="fa fa-envelope"></i> <c:out value="${person.email}"/></p>
+                         </td>
+                     </tr>
+                     </tbody>
                  </table>
+
              </div>
 
-            <div class="col-xs-12 col-sm-5 print-box">
-                <table class="detail-table" cellspacing="0">
-                    <%@include file="./include/used_days.jsp" %>
+            <div class="col-xs-12 col-sm-4">
+                <table class="list-table">
+                <tbody>
+                <tr>
+                <td>
+                    <h1 class="pull-left"><i class="fa fa-calendar"></i>&nbsp;</h1>
+                    Es wurden verplant <h4>19 Urlaubstage</h4> (davon sind 20 Tage genehmigt <i class="fa fa-check"></i>)
+                </td>
+                </tr>
+                </tbody>
                 </table>
             </div>
 
-        </div>
-
-        <div class="row">
-            <div class="col-xs-12">
-                <div id="datepicker"></div>
+            <div class="col-xs-12 col-sm-4">
+                <table class="list-table">
+                    <tbody>
+                    <tr>
+                        <td>
+                            <h1 class="pull-left"><i class="fa fa-medkit"></i>&nbsp;</h1>
+                            Es bestehen <h4>5 Krankheitstage</h4> (davon sind 2 Tage Kind-Krankheitstage <i class="fa fa-child"></i>)
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
+
         </div>
 
         <script src="<spring:url value='/js/calendar.js' />" type="text/javascript" ></script>
@@ -165,7 +190,69 @@
 
         <div class="row">
             <div class="col-xs-12">
+
+                <div class="header">
+
+                    <legend id="sickNotes">
+                        <p>
+                            <spring:message code="apps.vac" />
+                        </p>
+                        <c:choose>
+                            <c:when test="${person.id == loggedUser.id}">
+                                <a class="btn btn-default pull-right" href="${formUrlPrefix}/application/new">
+                                    <i class="fa fa-pencil"></i>&nbsp;<spring:message code="ov.apply"/>
+                                </a>
+                            </c:when>
+                            <c:otherwise>
+                                <sec:authorize access="hasRole('OFFICE')">
+                                    <c:if test="${person.id != loggedUser.id}">
+                                        <a class="btn btn-default"
+                                           href="${formUrlPrefix}/${person.id}/application/new">
+                                            <c:set var="staff" value="${person.firstName} ${person.lastName}"/>
+                                            <i class="fa fa-pencil"></i>&nbsp;<spring:message code="ov.apply"/>
+                                        </a>
+                                    </c:if>
+                                </sec:authorize>
+                            </c:otherwise>
+                        </c:choose>
+                    </legend>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+
+            <div class="col-xs-12 col-sm-6">
                 <%@include file="./include/overview_app_list.jsp" %>
+            </div>
+
+            <div class="col-xs-12 col-sm-3">
+                <table class="list-table">
+                    <tbody>
+                    <tr>
+                        <td>
+                            <h1 class="pull-left"><i class="fa fa-calendar-o"></i>&nbsp;</h1>
+                            <p>Es besteht ein <b>Anspruch</b> von <h4>19 Urlaubstagen</h4> (davon sind 4 Tage Resturlaub)</p>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-xs-12 col-sm-3">
+                <table class="list-table">
+                    <tbody>
+                    <tr>
+                        <td>
+                            <h1 class="pull-left"><i class="fa fa-tasks"></i>&nbsp;</h1>
+                            <p>Es <b>verbleiben</b> <h4>15 Urlaubstage</h4> (davon sind 0 Tage Resturlaub)</p>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-xs-12 col-sm-6">
+                <div id="datepicker"></div>
             </div>
         </div>
 

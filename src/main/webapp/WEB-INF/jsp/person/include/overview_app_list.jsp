@@ -6,36 +6,6 @@
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 
-    <div class="header">
-
-        <legend>
-            <p>
-                <spring:message code="apps.vac" />
-            </p>
-            
-                <c:choose>
-                    <c:when test="${person.id == loggedUser.id}">
-                        <a class="btn btn-default pull-right" href="${formUrlPrefix}/application/new">
-                            <i class="fa fa-pencil"></i>&nbsp;<spring:message code="ov.apply"/>
-                        </a>
-                    </c:when>
-                    <c:otherwise>
-                        <sec:authorize access="hasRole('OFFICE')">
-                            <c:if test="${person.id != loggedUser.id}">
-                                <a class="btn btn-default"
-                                   href="${formUrlPrefix}/${person.id}/application/new">
-                                    <c:set var="staff" value="${person.firstName} ${person.lastName}"/>
-                                    <i class="fa fa-pencil"></i>&nbsp;<spring:message code="ov.apply"/>
-                                </a>
-                            </c:if>
-                        </sec:authorize>
-                    </c:otherwise>
-                </c:choose>
-
-        </legend>
-
-    </div>
-
         <c:choose>
 
             <c:when test="${empty applications}">
@@ -46,23 +16,27 @@
 
             <c:otherwise>
 
-                <%-- has css class tablesorter only because of styling, is not sortable --%>
-                <table class="data-table is-centered tablesorter overview-tbl zebra-table" cellspacing="0">
-                    <tr>
-                        <th>
-                            <spring:message code="state" />
-                        </th>
-                        <th>
-                            <spring:message code="type" />
-                        </th>
-                        <th>
-                            <spring:message code="time" />
-                        </th>
-                        <th>
-                            <spring:message code="days.vac" />
-                        </th>
-                    </tr>
-
+                <table class="list-table">
+                    <%--<thead>--%>
+                        <%--<tr>--%>
+                            <%--<th>--%>
+                                <%--<a href="#">--%>
+                                    <%--<spring:message code="type" />--%>
+                                <%--</a>--%>
+                            <%--</th>--%>
+                            <%--<th>--%>
+                                <%--<a href="#">--%>
+                                    <%--<spring:message code="days.vac" />--%>
+                                <%--</a>--%>
+                            <%--</th>--%>
+                            <%--<th>--%>
+                                <%--<a href="#">--%>
+                                    <%--<spring:message code="state" />--%>
+                                <%--</a>--%>
+                            <%--</th>--%>
+                        <%--</tr>--%>
+                    <%--</thead>--%>
+                    <tbody>
                     <c:forEach items="${applications}" var="app" varStatus="loopStatus">
                         <c:choose>
                             <c:when test="${app.status.state == 'state.cancelled' || app.status.state == 'state.rejected'}">
@@ -72,23 +46,23 @@
                                 <c:set var="CSS_CLASS" value="active" />
                             </c:otherwise>
                         </c:choose>
-                        <tr class="${CSS_CLASS}" onclick="navigate('${formUrlPrefix}/application/${app.id}');">
-                            <td>
+                        <tr class="${CSS_CLASS}">
+                            <td class="is-centered ${app.status}">
                             <span class="print--visible">
                                 <spring:message code="${app.status.state}" />
                             </span>
                             <span class="print--invisible">
                                  <c:choose>
-                                     <c:when test="${app.status.state == 'state.waiting'}">
+                                     <c:when test="${app.status == 'WAITING'}">
                                          <i class="fa fa-question"></i>
                                      </c:when>
-                                     <c:when test="${app.status.state == 'state.allowed'}">
+                                     <c:when test="${app.status == 'ALLOWED'}">
                                          <i class="fa fa-check"></i>
                                      </c:when>
-                                     <c:when test="${app.status.state == 'state.rejected'}">
+                                     <c:when test="${app.status == 'REJECTED'}">
                                          <i class="fa fa-ban"></i>
                                      </c:when>
-                                     <c:when test="${app.status.state == 'state.cancelled'}">
+                                     <c:when test="${app.status == 'CANCELLED'}">
                                          <i class="fa fa-trash"></i>
                                      </c:when>
                                      <c:otherwise>
@@ -97,20 +71,25 @@
                                  </c:choose>
                             </span>
                             </td>
-                            <td class="${app.vacationType}">
-                                <spring:message code="${app.vacationType.vacationTypeName}"/>
-                            </td>
                             <td>
-                                <c:choose>
-                                    <c:when test="${app.startDate == app.endDate}">
-                                        <uv:date date="${app.startDate}" />, <spring:message code="${app.howLong.dayLength}" />
-                                    </c:when>
-                                    <c:otherwise>
-                                        <uv:date date="${app.startDate}" /> - <uv:date date="${app.endDate}" />
-                                    </c:otherwise>
-                                </c:choose>
+                                <a href="${formUrlPrefix}/application/${app.id}"><h4><spring:message code="${app.vacationType.vacationTypeName}"/></h4></a>
+                                <p>
+                                    <c:choose>
+                                        <c:when test="${app.startDate == app.endDate}">
+                                            <uv:date date="${app.startDate}" />, <spring:message code="${app.howLong.dayLength}" />
+                                        </c:when>
+                                        <c:otherwise>
+                                            <uv:date date="${app.startDate}" /> - <uv:date date="${app.endDate}" />
+                                        </c:otherwise>
+                                    </c:choose>
+                                </p>
                             </td>
-                            <td class="days-${loopStatus.index}">
+                            <td class="is-centered">
+
+                                <span class="days-${loopStatus.index}">
+                                    <%--is filled by javascript--%>
+                                </span>
+                                <span>Tage</span>
 
                                 <script type="text/javascript">
 
@@ -131,8 +110,12 @@
 
                                 </script>
                             </td>
+                            <td class="is-centered">
+                                <i class="fa fa-clock-o"></i> beantragt am 12.03.2014
+                            </td>
                         </tr>
                     </c:forEach>
+                    </tbody>
                 </table>
 
             </c:otherwise>

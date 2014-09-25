@@ -10,13 +10,8 @@
 
     <legend>
         <p>
-            <img class="overview--user-pic print--invisible" src="<c:out value='${gravatar}?d=mm&s=40'/>"/>&nbsp;
-            <c:out value="${person.firstName}"/>&nbsp;<c:out value="${person.lastName}"/>
-            <span class="hidden-xs">&nbsp;&ndash;&nbsp;<spring:message code="table.overview"/><c:out value="${displayYear}"/></span>
+            <span class="hidden-xs"><uv:year-selector year="${year}" /></span>
         </p>
-        <span class="hidden-xs">
-            <uv:year-selector year="${year}" />
-        </span>
         <span class="hidden-sm hidden-xs">
             <uv:print />
         </span>
