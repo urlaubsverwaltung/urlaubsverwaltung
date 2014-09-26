@@ -225,11 +225,11 @@
         </label>
 
         <div class="col-sm-2">
-            <person:day-dropdown path="dayFrom" selected="${personForm.dayTo}" />
+            <person:day-dropdown path="dayTo" selected="${personForm.dayTo}" />
         </div>
 
         <div class="col-sm-5">
-            <person:month-dropdown path="monthFrom" selected="${personForm.monthTo}" />
+            <person:month-dropdown path="monthTo" selected="${personForm.monthTo}" />
         </div>
 
     </div>
