@@ -320,6 +320,14 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- H2 DB for Local Development -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <!-- NOTE: 2014-07-16, later versions of h2 avoid usage of DbVisualizer with h2 database -->
+            <version>1.4.177</version>
+        </dependency>
+
     </dependencies>
 
     <build>
