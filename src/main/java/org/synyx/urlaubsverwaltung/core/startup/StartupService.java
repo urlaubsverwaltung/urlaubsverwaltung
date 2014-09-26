@@ -20,10 +20,10 @@ public class StartupService {
 
     private static final Logger LOG = Logger.getLogger(StartupService.class);
 
-    @Value("${username}")
+    @Value("${db.username}")
     private String dbUser;
 
-    @Value("${url}")
+    @Value("${db.url}")
     private String dbUrl;
 
     @Value("${email.boss}")
