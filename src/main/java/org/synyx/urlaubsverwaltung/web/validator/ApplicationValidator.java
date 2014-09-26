@@ -54,8 +54,8 @@ public class ApplicationValidator implements Validator {
     private static final String ADDRESS = "address";
     private static final String TEXT = "reason";
 
-    private static final String CUSTOM_PROPERTIES_FILE = "custom.properties";
-    private Properties customProperties;
+    private static final String BUSINESS_PROPERTIES_FILE = "business.properties";
+    private Properties businessProperties;
     private PropertiesValidator propValidator;
 
     @Autowired
@@ -64,7 +64,7 @@ public class ApplicationValidator implements Validator {
         this.propValidator = propValidator;
 
         try {
-            this.customProperties = PropertiesUtil.load(CUSTOM_PROPERTIES_FILE);
+            this.businessProperties = PropertiesUtil.load(BUSINESS_PROPERTIES_FILE);
         } catch (Exception ex) {
             LOG.error("No properties file found.");
             LOG.error(ex.getMessage(), ex);
@@ -119,7 +119,7 @@ public class ApplicationValidator implements Validator {
                     errors.reject(ERROR_PERIOD);
                 } else {
                     // applying for leave maximum permissible x months in advance
-                    propValidator.validateMaximumVacationProperty(customProperties, app, errors);
+                    propValidator.validateMaximumVacationProperty(businessProperties, app, errors);
                 }
             }
         } else {

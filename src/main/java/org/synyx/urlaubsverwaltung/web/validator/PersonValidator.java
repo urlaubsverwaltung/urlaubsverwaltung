@@ -63,13 +63,13 @@ public class PersonValidator implements Validator {
 
     private static final String MAX_DAYS = "annual.vacation.max";
 
-    private static final String CUSTOM_PROPERTIES_FILE = "custom.properties";
+    private static final String BUSINESS_PROPERTIES_FILE = "business.properties";
 
     private Pattern pattern;
     private Matcher matcher;
 
     private PropertiesValidator propValidator;
-    private Properties customProperties;
+    private Properties businessProperties;
     private PersonService personService;
 
     @Autowired
@@ -79,7 +79,7 @@ public class PersonValidator implements Validator {
         this.personService = personService;
 
         try {
-            this.customProperties = PropertiesUtil.load(CUSTOM_PROPERTIES_FILE);
+            this.businessProperties = PropertiesUtil.load(BUSINESS_PROPERTIES_FILE);
         } catch (Exception ex) {
             LOG.error("No properties file found.");
             LOG.error(ex.getMessage(), ex);
@@ -247,7 +247,7 @@ public class PersonValidator implements Validator {
     public void validateAnnualVacation(PersonForm form, Errors errors, Locale locale) {
 
         // only achieved if invalid property values are precluded by method validateProperties
-        String propValue = customProperties.getProperty(MAX_DAYS);
+        String propValue = businessProperties.getProperty(MAX_DAYS);
         double max = Double.parseDouble(propValue);
 
         if (StringUtils.hasText(form.getAnnualVacationDays())) {
@@ -272,7 +272,7 @@ public class PersonValidator implements Validator {
      */
     public void validateProperties(PersonForm form, Errors errors) {
 
-        propValidator.validateAnnualVacationProperty(customProperties, errors);
+        propValidator.validateAnnualVacationProperty(businessProperties, errors);
     }
 
 
@@ -287,7 +287,7 @@ public class PersonValidator implements Validator {
     public void validateRemainingVacationDays(PersonForm form, Errors errors, Locale locale) {
 
         // only achieved if invalid property values are precluded by method validateProperties
-        String propValue = customProperties.getProperty(MAX_DAYS);
+        String propValue = businessProperties.getProperty(MAX_DAYS);
         double max = Double.parseDouble(propValue);
 
         if (StringUtils.hasText(form.getRemainingVacationDays())) {
@@ -349,6 +349,7 @@ public class PersonValidator implements Validator {
             return true;
         }
     }
+
 
     public void validatePermissions(PersonForm personForm, Errors errors) {
 

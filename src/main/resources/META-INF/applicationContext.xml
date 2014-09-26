@@ -12,6 +12,7 @@
                            http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
                            http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd">
 
+    <!-- SPRING MAGIC -->
     <mvc:annotation-driven/>
 
     <context:component-scan base-package="org.synyx.urlaubsverwaltung">
@@ -20,19 +21,104 @@
     
     <context:annotation-config/>
 
-    <!-- remove comment to use jmx demo -->
-    <!--<import resource="jmxContext.xml"/>-->
-
-    <import resource="infrastructure.xml"/>
-    <import resource="security.xml"/>
-    <import resource="spring-mail.xml"/>
-
     <repository:repositories base-package="org.synyx.urlaubsverwaltung"/>
+    <!-- END:SPRING MAGIC -->
 
-    <!-- Scheduling config -->
+    <!-- PROPERTIES -->
+    <bean id="placeholderConfig" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="ignoreResourceNotFound">
+            <value>true</value>
+        </property>
+        <property name="ignoreUnresolvablePlaceholders">
+            <value>true</value>
+        </property>
+        <property name="systemPropertiesModeName">
+            <value>SYSTEM_PROPERTIES_MODE_OVERRIDE</value>
+        </property>
+        <property name="locations">
+            <list>
+                <!-- NOTE: Properties are overloaded, last one set rules. -->
+                <value>classpath:config.properties</value>
+                <value>classpath:db.properties</value>
+                <value>classpath:mail.properties</value>
+                <value>classpath:business.properties</value>
+            </list>
+        </property>
+    </bean>
+
+    <!-- END:PROPERTIES -->
+
+    <!-- SCHEDULING -->
     <task:annotation-driven executor="executor" scheduler="scheduler"/>
     <task:executor id="executor" pool-size="5"/>
     <task:scheduler id="scheduler" pool-size="10"/>
+    <!-- END:SCHEDULING -->
+
+    <!-- JMX -->
+    <!-- remove comment to use jmx demo -->
+    <!--<import resource="jmxContext.xml"/>-->
+    <!-- END:JMX -->
+
+    <!-- LOGIN -->
+    <import resource="spring-security.xml"/>
+    <!-- END:LOGIN -->
+
+    <!-- MAIL -->
+    <import resource="spring-mail.xml"/>
+    <!-- END:MAIL -->
+
+    <!-- DATABASE -->
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName">
+            <value>${db.driver}</value>
+        </property>
+        <property name="url">
+            <value>${db.url}</value>
+        </property>
+        <property name="username">
+            <value>${db.username}</value>
+        </property>
+        <property name="password">
+            <value>${db.pwd}</value>
+        </property>
+        <property name="validationQuery" value="SELECT 1"/>
+        <property name="testOnBorrow" value="true"/>
+    </bean>
+
+    <bean id="liquibase" class="liquibase.integration.spring.SpringLiquibase">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="changeLog" value="classpath:dbchangelogs/changelogmaster.xml"/>
+        <property name="contexts" value="${liquibase.context}"/>
+    </bean>
+
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
+          depends-on="liquibase">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+                <property name="generateDdl" value="false"/>
+                <property name="showSql" value="false"/>
+                <property name="databasePlatform" value="org.hibernate.dialect.MySQL5InnoDBDialect"/>
+            </bean>
+        </property>
+        <property name="jpaPropertyMap">
+            <map>
+                <entry key="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect"/>
+                <entry key="hibernate.hbm2ddl.auto" value="verify"/>
+                <entry key="hibernate.show_sql" value="false"/>
+                <entry key="hibernate.format_sql" value="false"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+    </bean>
+
+    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
+    <bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
+
+    <!-- END:DATABASE -->
 
 </beans>
 
