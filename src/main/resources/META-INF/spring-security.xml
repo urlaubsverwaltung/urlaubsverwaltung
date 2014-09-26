@@ -43,6 +43,7 @@
         </constructor-arg>
     </bean>
 
+    <!-- TODO: this is a potential security leak... -->
     <security:user-service id="userDetailsService">
         <security:user name="test" password="secret" authorities="USER, BOSS, OFFICE"/>
     </security:user-service>

@@ -2,16 +2,12 @@ package org.synyx.urlaubsverwaltung.core.person;
 
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
-
 import org.springframework.data.jpa.domain.AbstractPersistable;
-
 import org.springframework.util.StringUtils;
-
 import org.synyx.urlaubsverwaltung.security.Role;
 
-import java.util.Collection;
-
 import javax.persistence.*;
+import java.util.Collection;
 
 
 /**
@@ -51,6 +47,17 @@ public class Person extends AbstractPersistable<Integer> {
     private Collection<Role> permissions;
 
     private boolean active;
+
+    public Person() {
+        /* OK */
+    }
+
+    public Person(String loginName, String lastName, String firstName, String email) {
+        this.loginName = loginName;
+        this.lastName = lastName;
+        this.firstName = firstName;
+        this.email = email;
+    }
 
     public boolean isActive() {
 
