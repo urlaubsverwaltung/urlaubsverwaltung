@@ -77,6 +77,10 @@ public class TestDataCreationService {
 
         String dbType = System.getProperties().getProperty("db");
 
+        if (dbType == null) {
+            dbType = "h2";
+        }
+
         LOG.info("Using database type = " + dbType);
 
         if (dbType.equals(IN_MEMORY_DATABASE)) {
