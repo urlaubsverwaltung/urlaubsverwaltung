@@ -26,6 +26,11 @@
                 </td>
                 <td>
                     <spring:message code="by" /> <c:out value="${c.nameOfCommentingPerson}" />
+                    <c:if test="${c.reason != null && not empty c.reason}">
+                        <spring:message code="app.comment" />
+                        <br />
+                        <i><c:out value="${c.reason}" /></i>
+                    </c:if>
                 </td>
             </c:if>
 
