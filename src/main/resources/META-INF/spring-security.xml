@@ -43,14 +43,13 @@
         </constructor-arg>
     </bean>
 
-    <!-- TODO: this is a potential security leak... -->
-    <security:user-service id="userDetailsService">
-        <security:user name="test" password="secret" authorities="USER, BOSS, OFFICE"/>
-    </security:user-service>
+    <bean id="devUserDetailsService" class="org.synyx.urlaubsverwaltung.security.TestUserDetailsService">
+        <constructor-arg ref="personDAO"></constructor-arg>
+    </bean>
 
     <security:authentication-manager alias="authenticationManager">
         <security:authentication-provider ref="ldapAuthProvider"/>
-        <security:authentication-provider user-service-ref="userDetailsService"/>
+        <security:authentication-provider user-service-ref="devUserDetailsService"/>
     </security:authentication-manager>
 
     <bean id="delegatingAuthenticationEntryPoint"
