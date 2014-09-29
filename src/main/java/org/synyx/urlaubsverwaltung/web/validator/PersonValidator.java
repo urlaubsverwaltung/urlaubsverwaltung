@@ -68,14 +68,12 @@ public class PersonValidator implements Validator {
     private Pattern pattern;
     private Matcher matcher;
 
-    private PropertiesValidator propValidator;
     private Properties businessProperties;
     private PersonService personService;
 
     @Autowired
-    public PersonValidator(PropertiesValidator propValidator, PersonService personService) {
+    public PersonValidator(PersonService personService) {
 
-        this.propValidator = propValidator;
         this.personService = personService;
 
         try {
@@ -262,19 +260,6 @@ public class PersonValidator implements Validator {
         } else {
             errors.rejectValue(ANNUAL_VACATION_DAYS, MANDATORY_FIELD);
         }
-    }
-
-
-    /**
-     * This method checks if the value of property with key 'annual.vacation.max' is valid. If it's not, the tool
-     * manager is notified and editing the person is not possible.
-     *
-     * @param  form
-     * @param  errors
-     */
-    public void validateProperties(PersonForm form, Errors errors) {
-
-        propValidator.validateAnnualVacationProperty(businessProperties, errors);
     }
 
 

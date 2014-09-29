@@ -226,15 +226,6 @@ public class PersonManagementController {
 
         Person personToUpdate = personService.getPersonByID(personId);
 
-        // TODO: instead of validating this each time a person is created/edited, do this validation on application start
-        validator.validateProperties(personForm, errors); // validates if the set value of the property key is valid
-
-        if (errors.hasErrors()) {
-            addModelAttributesForPersonForm(personToUpdate, personForm, model);
-
-            return PersonConstants.PERSON_FORM_JSP;
-        }
-
         validator.validate(personForm, errors);
 
         if (errors.hasGlobalErrors()) {
@@ -260,14 +251,6 @@ public class PersonManagementController {
         Locale locale = RequestContextUtils.getLocale(request);
 
         Person person = new Person();
-
-        validator.validateProperties(personForm, errors); // validates if the set value of the property key is valid
-
-        if (errors.hasErrors()) {
-            addModelAttributesForPersonForm(person, personForm, model);
-
-            return PersonConstants.PERSON_FORM_JSP;
-        }
 
         // validate login name
         validator.validateLogin(personForm.getLoginName(), errors);

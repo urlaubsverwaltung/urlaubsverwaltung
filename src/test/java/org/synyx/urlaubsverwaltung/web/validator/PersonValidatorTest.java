@@ -32,15 +32,14 @@ public class PersonValidatorTest {
 
     private PersonValidator instance;
     private PersonForm form;
-    Errors errors = Mockito.mock(Errors.class);
+    private Errors errors = Mockito.mock(Errors.class);
 
-    private PropertiesValidator propValidator = Mockito.mock(PropertiesValidator.class);
     private PersonService personService = Mockito.mock(PersonService.class);
 
     @Before
     public void setUp() {
 
-        instance = new PersonValidator(propValidator, personService);
+        instance = new PersonValidator(personService);
         form = new PersonForm(Locale.GERMAN);
     }
 

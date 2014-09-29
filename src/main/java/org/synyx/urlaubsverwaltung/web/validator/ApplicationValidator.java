@@ -45,6 +45,7 @@ public class ApplicationValidator implements Validator {
     private static final String ERROR_PERIOD = "error.period";
     private static final String ERROR_PAST = "error.period.past";
     private static final String ERROR_LENGTH = "error.length";
+    private static final String ERROR_TOO_LONG = "error.too.long";
 
     // names of fields
     private static final String START_DATE = "startDate";
@@ -55,13 +56,13 @@ public class ApplicationValidator implements Validator {
     private static final String TEXT = "reason";
 
     private static final String BUSINESS_PROPERTIES_FILE = "business.properties";
+
+    private static final String MAX_MONTHS = "maximum.months";
+
     private Properties businessProperties;
-    private PropertiesValidator propValidator;
 
     @Autowired
-    public ApplicationValidator(PropertiesValidator propValidator) {
-
-        this.propValidator = propValidator;
+    public ApplicationValidator() {
 
         try {
             this.businessProperties = PropertiesUtil.load(BUSINESS_PROPERTIES_FILE);
@@ -118,8 +119,14 @@ public class ApplicationValidator implements Validator {
                 if (app.getStartDate().isAfter(app.getEndDate())) {
                     errors.reject(ERROR_PERIOD);
                 } else {
-                    // applying for leave maximum permissible x months in advance
-                    propValidator.validateMaximumVacationProperty(businessProperties, app, errors);
+                    String maximumMonthsProperty = businessProperties.getProperty(MAX_MONTHS);
+                    int maximumMonths = Integer.parseInt(maximumMonthsProperty);
+
+                    DateMidnight future = DateMidnight.now().plusMonths(maximumMonths);
+
+                    if (app.getEndDate().isAfter(future)) {
+                        errors.reject(ERROR_TOO_LONG);
+                    }
                 }
             }
         } else {
