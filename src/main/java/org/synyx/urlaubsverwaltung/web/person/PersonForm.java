@@ -60,8 +60,11 @@ public class PersonForm {
 
     private List<Role> permissions = new ArrayList<>();
 
-    public PersonForm() {
+    private Locale locale;
 
+    public PersonForm(Locale locale) {
+
+        this.locale = locale;
         setDefaultValuesForValidity();
     }
 
@@ -74,6 +77,7 @@ public class PersonForm {
         this.firstName = person.getFirstName();
         this.email = person.getEmail();
         this.year = year;
+        this.locale = locale;
 
         if (account != null) {
             this.dayFrom = String.valueOf(account.getValidFrom().getDayOfMonth());
@@ -305,6 +309,18 @@ public class PersonForm {
     public void setPermissions(List<Role> permissions) {
 
         this.permissions = permissions;
+    }
+
+
+    public Locale getLocale() {
+
+        return locale;
+    }
+
+
+    public void setLocale(Locale locale) {
+
+        this.locale = locale;
     }
 
 

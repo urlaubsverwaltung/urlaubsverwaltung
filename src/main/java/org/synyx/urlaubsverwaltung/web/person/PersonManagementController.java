@@ -188,12 +188,14 @@ public class PersonManagementController {
      * @return
      */
     @RequestMapping(value = NEW_LINK, method = RequestMethod.GET)
-    public String newPersonForm(Model model) {
+    public String newPersonForm(HttpServletRequest request, Model model) {
 
         if (sessionService.isOffice()) {
             Person person = new Person();
 
-            PersonForm personForm = new PersonForm();
+            Locale locale = RequestContextUtils.getLocale(request);
+
+            PersonForm personForm = new PersonForm(locale);
             addModelAttributesForPersonForm(person, personForm, model);
 
             return PersonConstants.PERSON_FORM_JSP;
@@ -233,14 +235,7 @@ public class PersonManagementController {
             return PersonConstants.PERSON_FORM_JSP;
         }
 
-        // TODO: It would be nice if only one validation call could be here...
-        validator.validate(personForm, errors); // validates the name fields, the email field and the year field
-
-        validator.validateAnnualVacation(personForm, errors, locale); // validates holiday entitlement's
-
-        validator.validateRemainingVacationDays(personForm, errors, locale); // validates remaining vacation days
-
-        validator.validatePermissions(personForm, errors);
+        validator.validate(personForm, errors);
 
         if (errors.hasGlobalErrors()) {
             model.addAttribute("errors", errors);
@@ -274,23 +269,14 @@ public class PersonManagementController {
             return PersonConstants.PERSON_FORM_JSP;
         }
 
+        // validate login name
+        validator.validateLogin(personForm.getLoginName(), errors);
+
         validator.validate(personForm, errors); // validates the name fields, the email field and the year field
 
         if (errors.hasGlobalErrors()) {
             model.addAttribute("errors", errors);
         }
-
-        // validate login name
-        validator.validateLogin(personForm.getLoginName(), errors);
-
-        validator.validateAnnualVacation(personForm, errors, locale); // validates holiday entitlement's
-
-        // vacation days
-
-        validator.validateRemainingVacationDays(personForm, errors, locale); // validates holiday
-
-        // entitlement's remaining
-        // vacation days
 
         if (errors.hasErrors()) {
             addModelAttributesForPersonForm(person, personForm, model);

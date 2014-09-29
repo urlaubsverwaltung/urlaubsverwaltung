@@ -98,16 +98,12 @@ public class PersonValidator implements Validator {
 
         PersonForm form = (PersonForm) target;
 
-        // field first name
         validateName(form.getFirstName(), FIRST_NAME, errors);
 
-        // field last name
         validateName(form.getLastName(), LAST_NAME, errors);
 
-        // field email address
         validateEmail(form.getEmail(), errors);
 
-        // field year
         validateYear(form.getYear(), errors);
 
         validatePeriod(form, errors);
@@ -115,6 +111,12 @@ public class PersonValidator implements Validator {
         if (form.getValidFrom() == null) {
             errors.rejectValue("validFrom", MANDATORY_FIELD);
         }
+
+        validateAnnualVacation(form, errors, form.getLocale());
+
+        validateRemainingVacationDays(form, errors, form.getLocale());
+
+        validatePermissions(form, errors);
     }
 
 
@@ -244,7 +246,7 @@ public class PersonValidator implements Validator {
      * @param  errors
      * @param  locale
      */
-    public void validateAnnualVacation(PersonForm form, Errors errors, Locale locale) {
+    protected void validateAnnualVacation(PersonForm form, Errors errors, Locale locale) {
 
         // only achieved if invalid property values are precluded by method validateProperties
         String propValue = businessProperties.getProperty(MAX_DAYS);
@@ -284,7 +286,7 @@ public class PersonValidator implements Validator {
      * @param  errors
      * @param  locale
      */
-    public void validateRemainingVacationDays(PersonForm form, Errors errors, Locale locale) {
+    protected void validateRemainingVacationDays(PersonForm form, Errors errors, Locale locale) {
 
         // only achieved if invalid property values are precluded by method validateProperties
         String propValue = businessProperties.getProperty(MAX_DAYS);
@@ -351,7 +353,7 @@ public class PersonValidator implements Validator {
     }
 
 
-    public void validatePermissions(PersonForm personForm, Errors errors) {
+    protected void validatePermissions(PersonForm personForm, Errors errors) {
 
         List<Role> roles = personForm.getPermissions();
 

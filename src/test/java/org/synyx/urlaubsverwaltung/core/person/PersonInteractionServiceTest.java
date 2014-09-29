@@ -45,7 +45,7 @@ public class PersonInteractionServiceTest {
 
         service = new PersonInteractionServiceImpl(personService, workingTimeService, accountService, mailService);
 
-        examplePersonForm = new PersonForm();
+        examplePersonForm = new PersonForm(Locale.GERMAN);
         examplePersonForm.setLoginName("muster");
         examplePersonForm.setLastName("Muster");
         examplePersonForm.setFirstName("Marlene");
