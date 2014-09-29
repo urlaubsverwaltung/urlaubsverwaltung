@@ -9,9 +9,6 @@ import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 
-import java.util.List;
-import java.util.Map;
-
 
 /**
  * This service provides sending notification emails.
@@ -21,14 +18,6 @@ import java.util.Map;
  */
 
 public interface MailService {
-
-    /**
-     * sends an email to all persons of the given list that their remaining vacation days are going to expire soon.
-     *
-     * @param  persons  the list of persons which should receive the email
-     */
-    void sendExpireNotification(List<Person> persons);
-
 
     /**
      * sends an email to the applicant that the application has been made successfully.
@@ -99,16 +88,7 @@ public interface MailService {
      *
      * @param  apps
      */
-    void sendRemindingBossAboutWaitingApplicationsNotification(List<Application> apps);
-
-
-    /**
-     * this method sends a newsletter mentioning all person that are on holiday.
-     *
-     * @param  persons  persons on vacation this week
-     */
-    void sendWeeklyVacationForecast(Map<String, Person> persons);
-
+//    void sendRemindingBossAboutWaitingApplicationsNotification(List<Application> apps);
 
     /**
      * This method sends an email if an application got cancelled. If the application had the status allowed and was
@@ -140,15 +120,6 @@ public interface MailService {
      * @param  exception
      */
     void sendSignErrorNotification(Integer applicationId, String exception);
-
-
-    /**
-     * this method sends an email to the tool's manager to inform if an error occured because of invalid defined
-     * property value (e.g. "maximum.months")
-     *
-     * @param  propertyName  of the concerned property key
-     */
-    void sendPropertiesErrorNotification(String propertyName);
 
 
     /**

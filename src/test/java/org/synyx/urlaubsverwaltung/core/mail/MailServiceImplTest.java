@@ -5,7 +5,10 @@
 package org.synyx.urlaubsverwaltung.core.mail;
 
 import org.apache.velocity.app.VelocityEngine;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -16,13 +19,9 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -41,19 +40,6 @@ public class MailServiceImplTest {
     private Person person;
     private Application application;
 
-    public MailServiceImplTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-
     @Before
     public void setUp() throws Exception {
 
@@ -71,44 +57,6 @@ public class MailServiceImplTest {
     public void tearDown() {
 
         Mailbox.clearAll();
-    }
-
-
-    /**
-     * Test of sendExpireNotification method, of class MailServiceImpl.
-     */
-    @Test
-    public void testSendExpireNotification() throws MessagingException, IOException {
-
-        person.setLastName("Test");
-        person.setFirstName("Günther");
-        person.setEmail("guentherklein@test.com");
-
-        List<Person> persons = new ArrayList<Person>();
-        persons.add(person);
-
-        mailService.sendExpireNotification(persons);
-
-        // was email sent?
-        List<Message> inbox = Mailbox.get("guentherklein@test.com");
-        assertTrue(inbox.size() > 0);
-
-        // get email
-        Message msg = inbox.get(0);
-
-        // check subject
-        assertEquals("Erinnerung Resturlaub", msg.getSubject());
-        assertNotSame("subject", msg.getSubject());
-
-        // check from and recipient
-        assertEquals(new InternetAddress("guentherklein@test.com"), msg.getAllRecipients()[0]);
-
-        // check content of email
-        String content = (String) msg.getContent();
-//        assertTrue(content.contains("Günther")); commented out because of mvn problems
-        assertTrue(content.contains("Test"));
-        assertTrue(content.contains("Kalenderjahr"));
-        assertFalse(content.contains("Mist"));
     }
 
 
@@ -274,57 +222,6 @@ public class MailServiceImplTest {
 
 
     /**
-     * Test of sendWeeklyVacationForecast method, of class MailServiceImpl.
-     */
-    @Test
-    public void testSendWeeklyVacationForecast() throws MessagingException, IOException {
-
-        person.setLastName("Test");
-        person.setFirstName("Heinz");
-        person.setLoginName("heinz");
-
-        Person newPerson = new Person();
-        newPerson.setLastName("Dingsda");
-        newPerson.setFirstName("Aha");
-        newPerson.setLoginName("dings");
-
-        Map<String, Person> persons = new HashMap<String, Person>();
-        persons.put(person.getLoginName(), person);
-        persons.put(newPerson.getLoginName(), newPerson);
-
-        mailService.emailAll = "all@net.org";
-        mailService.sendWeeklyVacationForecast(persons);
-
-        // was email sent?
-        List<Message> inbox = Mailbox.get("all@net.org");
-        assertTrue(inbox.size() > 0);
-
-        Message msg = inbox.get(0);
-
-        // check subject
-        assertEquals("Diese Woche im Urlaub", msg.getSubject());
-        assertNotSame("subject", msg.getSubject());
-
-        // check from and recipient
-        assertEquals(new InternetAddress("all@net.org"), msg.getAllRecipients()[0]);
-
-        // check content of email
-        String content = (String) msg.getContent();
-        assertTrue(content.contains("Sternchen"));
-
-        // there are so many comments because: test doesn't work, but email does (email body contains names of the persons)
-
-//        assertTrue(content.contains("Dingsda"));
-//        assertTrue(content.contains("Aha"));
-//        assertTrue(content.contains("Test"));
-//        assertTrue(content.contains("Heinz"));
-//        assertFalse(content.contains("Hunz"));
-        assertTrue(content.contains("folgende Mitarbeiter sind diese Woche im Urlaub"));
-//        assertFalse(content.contains("Mist"));
-    }
-
-
-    /**
      * Test of sendCancelledNotification method, of class MailServiceImpl.
      */
     @Test
@@ -399,7 +296,7 @@ public class MailServiceImplTest {
      * Test of sendKeyGeneratingErrorNotification method, of class MailServiceImpl.
      */
     @Test
-    public void testSendKeyGeneratingErrorNotification() throws AddressException, MessagingException, IOException {
+    public void testSendKeyGeneratingErrorNotification() throws MessagingException, IOException {
 
         mailService.emailManager = "manager@uv.de";
         mailService.sendKeyGeneratingErrorNotification("horscht");
@@ -422,7 +319,7 @@ public class MailServiceImplTest {
      * Test of sendSignErrorNotification method, of class MailServiceImpl.
      */
     @Test
-    public void testSendSignErrorNotification() throws AddressException, MessagingException, IOException {
+    public void testSendSignErrorNotification() throws MessagingException, IOException {
 
         mailService.emailManager = "manager@uv.de";
         mailService.sendSignErrorNotification(5, "test exception message");
@@ -444,7 +341,7 @@ public class MailServiceImplTest {
      * Test of sendAppliedForLeaveByOfficeNotification method, of class MailServiceImpl.
      */
     @Test
-    public void testSendAppliedForLeaveByOfficeNotification() throws AddressException, MessagingException, IOException {
+    public void testSendAppliedForLeaveByOfficeNotification() throws MessagingException, IOException {
 
         person.setLastName("Müller");
         person.setFirstName("Günther");
