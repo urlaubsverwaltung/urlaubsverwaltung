@@ -32,9 +32,6 @@ public class WorkingTimeService {
     }
 
 
-    public WorkingTimeService() {
-    }
-
     public void touch(List<Integer> workingDays, DateMidnight validFrom, Person person) {
 
         WorkingTime workingTime = workingTimeDAO.findByPersonAndValidityDate(person, validFrom.toDate());

@@ -677,7 +677,7 @@ public class ApplicationController {
 
     public void prepareForm(Person person, AppForm appForm, Model model) {
 
-        List<Person> persons = personService.getAllPersonsExceptOne(person.getId());
+        List<Person> persons = personService.getAllPersonsExcept(person);
 
         Account account = accountService.getHolidaysAccount(DateMidnight.now(GregorianChronology.getInstance())
                 .getYear(), person);
@@ -965,8 +965,6 @@ public class ApplicationController {
         Comment comment = commentService.getCommentByApplicationAndStatus(application, application.getStatus());
 
         if (comment != null) {
-            // use this later maybe
-            // Locale locale = RequestContextUtils.getLocale(request);
             model.addAttribute(ApplicationConstants.COMMENT, comment);
         } else {
             model.addAttribute(ApplicationConstants.COMMENT, new Comment());

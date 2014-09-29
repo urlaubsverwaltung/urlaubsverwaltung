@@ -1,13 +1,8 @@
 package org.synyx.urlaubsverwaltung.core.person;
 
-import org.joda.time.DateMidnight;
-
 import org.synyx.urlaubsverwaltung.security.Role;
-import org.synyx.urlaubsverwaltung.web.person.PersonForm;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 
 
 /**
@@ -25,35 +20,6 @@ public interface PersonService {
      * @param  person {@link Person}
      */
     void save(Person person);
-
-
-    /**
-     * Creates or updates a {@link Person} with the values of the given {@link PersonForm} incl. creating/updating
-     * {@link org.synyx.urlaubsverwaltung.core.account.Account} information.
-     *
-     * @param  person {@link Person}
-     * @param  personForm {@link PersonForm}
-     */
-    void createOrUpdate(Person person, PersonForm personForm, Locale locale);
-
-
-    /**
-     * use this to deactivate someones profile, i.e. this person has no right to login, to apply for leave, etc. but
-     * information about the person remains for office. Notice: only person is deactivated, his active entitlement and
-     * account won't be deactivated!
-     *
-     * @param  person {@link Person}
-     */
-    void deactivate(Person person);
-
-
-    /**
-     * use this to activate someones profile (e.g. after unintended deactivating of a person), i.e. this person has once
-     * again his user rights)
-     *
-     * @param  person {@link Person}
-     */
-    void activate(Person person);
 
 
     /**
@@ -107,21 +73,5 @@ public interface PersonService {
      *
      * @return  returns all persons in a list
      */
-    List<Person> getAllPersonsExceptOne(Integer id);
-
-
-    /**
-     * this method get all persons with remainingVacationDaysExpire == true to be able to send a reminder email to these
-     * persons.
-     */
-    List<Person> getPersonsWithExpiringRemainingVacationDays();
-
-
-    /**
-     * get all persons that have days off this week.
-     *
-     * @param  startDate
-     * @param  endDate
-     */
-    void getAllPersonsOnHolidayForThisWeekAndPutItInAnEmail(DateMidnight startDate, DateMidnight endDate);
+    List<Person> getAllPersonsExcept(Person person);
 }

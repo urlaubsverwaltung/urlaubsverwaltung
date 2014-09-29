@@ -160,7 +160,7 @@ class AccountServiceImpl implements AccountService {
             unroundedVacationDays += (months * account.getAnnualVacationDays().doubleValue()) / 12;
         }
 
-        return roundItTheSpecialWay(unroundedVacationDays);
+        return round(unroundedVacationDays);
     }
 
 
@@ -177,7 +177,7 @@ class AccountServiceImpl implements AccountService {
      *
      * @return  {@link BigDecimal} rounded value
      */
-    private BigDecimal roundItTheSpecialWay(double unroundedVacationDays) {
+    private BigDecimal round(double unroundedVacationDays) {
 
         BigDecimal bd = new BigDecimal(unroundedVacationDays).setScale(2, RoundingMode.HALF_UP);
 
