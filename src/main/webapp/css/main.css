@@ -1,3 +1,9 @@
+@import "navbar.css";
+@import "calendar.css";
+@import "form.css";
+@import "box.css";
+@import "print.css";
+
 /**************************************************************************
   
   COMMON STYLING
@@ -8,6 +14,7 @@ body {
     font-family: Verdana,sans-serif;
     font-size: 12px;
     margin: 0;
+    background-color: #F6F6F6;
 }
 
 .content {
@@ -77,41 +84,6 @@ footer {
 
 /**************************************************************************
   
-  HEADER
-  
-**************************************************************************/
-
-.navbar {
-    font-size: 14px;
-    background-image: none;
-    background-color: #95bd28;
-    /*background-color: #56aa38;*/
-    /*background-color: #8fbc2b;*/
-    border-radius: 0;
-    border-top: 0;
-    border-left: 0;
-    border-right: 0;
-}
-
-.navbar a {
-    color: #1B2A05 !important;
-}
-
-.navbar a.navbar-brand {
-    color: #1B2A05 !important;
-}
-
-.navbar a:hover {
-    color: #0083CC !important;
-    text-decoration: none;
-}
-
-.navbar li:hover {
-    background-color: #E6E6E6;
-}
-
-/**************************************************************************
-  
   TABLES
   
 **************************************************************************/
@@ -125,8 +97,8 @@ footer {
 
 .list-table td {
     vertical-align: middle !important;
-    /*background-color: #FFF;*/
-    background-color: #F8F8F8;
+    background-color: #FFF;
+    /*background-color: #F8F8F8;*/
     padding: 12px;
     border-top: 1px solid #DDDDDD;
 }
@@ -136,22 +108,30 @@ footer {
 }
 
 .list-table td.WAITING {
-    color: #31708F;
-    background-color: #D9EDF7;
+    /*color: #31708F;*/
+    color: #FFF;
+    background-color: #52B9E9;
+    /*background-color: #75B9E6;*/
+    /*background-color: #D9EDF7;*/
 }
 
 .list-table td.ALLOWED {
-    color: #3C763D;
-    background-color: #DFF0D8;
+    /*color: #3C763D;*/
+    color: #FFF;
+    /*background-color: #DFF0D8;*/
+    /*background-color: #60CE8C;*/
+    background-color: #43C83C;
 }
 
 .list-table td.REJECTED {
     color: #A94442;
-    background-color: #F2DEDE !important;
+    background-color: #FA3031 !important;
+    /*background-color: #F2DEDE !important;*/
 }
 
 .list-table td.CANCELLED {
-    color: #777777;
+    color: #fff;
+    /*color: #777777;*/
     background-color: #E6E6E6 !important;
 }
 
@@ -226,7 +206,7 @@ th.tablesorter-headerDesc, th.tablesorter-headerAsc {
 }
 
 .btn-default {
-    background-color: #F8F8F8;
+    /*background-color: #F8F8F8;*/
 }
 
 /**************************************************************************

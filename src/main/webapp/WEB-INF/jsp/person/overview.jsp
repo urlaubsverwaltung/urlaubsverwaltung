@@ -79,47 +79,27 @@
                 </c:choose>
             </div>
 
-             <div class="col-xs-12 col-sm-4 print-box">
-
-                 <table class="list-table">
-                     <tbody>
-                     <tr>
-                         <td><img class="print--invisible" src="<c:out value='${gravatar}?d=mm&s=80'/>"/></td>
-                         <td>
-                             <p>@muster</p>
-                             <h4><c:out value="${person.niceName}"/></h4>
-                             <p><i class="fa fa-envelope"></i> <c:out value="${person.email}"/></p>
-                         </td>
-                     </tr>
-                     </tbody>
-                 </table>
-
-             </div>
-
             <div class="col-xs-12 col-sm-4">
-                <table class="list-table">
-                <tbody>
-                <tr>
-                <td>
-                    <h1 class="pull-left"><i class="fa fa-calendar"></i>&nbsp;</h1>
-                    Es wurden verplant <h4>19 Urlaubstage</h4> (davon sind 20 Tage genehmigt <i class="fa fa-check"></i>)
-                </td>
-                </tr>
-                </tbody>
-                </table>
+                <div class="box">
+                    <img class="box-image img-circle print--invisible" src="<c:out value='${gravatar}?d=mm&s=80'/>"/>
+                    @<c:out value="${person.loginName}"/>
+                    <h4><c:out value="${person.niceName}"/></h4>
+                    <i class="fa fa-envelope"></i> <c:out value="${person.email}"/>
+                </div>
             </div>
 
             <div class="col-xs-12 col-sm-4">
-                <table class="list-table">
-                    <tbody>
-                    <tr>
-                        <td>
-                            <h1 class="pull-left"><i class="fa fa-medkit"></i>&nbsp;</h1>
-                            Es bestehen <h4>5 Krankheitstage</h4> (davon sind 2 Tage Kind-Krankheitstage <i class="fa fa-child"></i>)
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+                <div class="box">
+                    <span class="box-icon bg-green"><i class="fa fa-calendar"></i></span>
+                    Es wurden verplant <h4>19 Urlaubstage</h4> (davon sind 20 Tage genehmigt <i class="fa fa-check"></i>)
+                </div>
+            </div>
+            
+            <div class="col-xs-12 col-sm-4">
+                <div class="box">
+                    <span class="box-icon bg-red"><i class="fa fa-medkit"></i></span>
+                    Es bestehen <h4>5 Krankheitstage</h4> (davon sind 2 Tage Kind-Krankheitstage <i class="fa fa-child"></i>)
+                </div>
             </div>
 
         </div>
@@ -193,7 +173,7 @@
 
                 <div class="header">
 
-                    <legend id="sickNotes">
+                    <legend id="vacation">
                         <p>
                             <spring:message code="apps.vac" />
                         </p>
@@ -224,36 +204,26 @@
         <div class="row">
 
             <div class="col-xs-12 col-sm-6">
-                <%@include file="./include/overview_app_list.jsp" %>
+                <div id="datepicker"></div>
             </div>
 
             <div class="col-xs-12 col-sm-3">
-                <table class="list-table">
-                    <tbody>
-                    <tr>
-                        <td>
-                            <h1 class="pull-left"><i class="fa fa-calendar-o"></i>&nbsp;</h1>
-                            <p>Es besteht ein <b>Anspruch</b> von <h4>19 Urlaubstagen</h4> (davon sind 4 Tage Resturlaub)</p>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+                <div class="box">
+                    <span class="box-icon bg-blue"><i class="fa fa-calendar-o"></i></span>
+                    Es besteht ein <b>Anspruch</b> von <h4>19 Urlaubstagen</h4> (davon sind 4 Tage Resturlaub)
+                </div>
             </div>
             <div class="col-xs-12 col-sm-3">
-                <table class="list-table">
-                    <tbody>
-                    <tr>
-                        <td>
-                            <h1 class="pull-left"><i class="fa fa-tasks"></i>&nbsp;</h1>
-                            <p>Es <b>verbleiben</b> <h4>15 Urlaubstage</h4> (davon sind 0 Tage Resturlaub)</p>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+                <div class="box">
+                    <span class="box-icon bg-yellow"><i class="fa fa-tasks"></i></span>
+                    Es <b>verbleiben</b> <h4>15 Urlaubstage</h4> (davon sind 0 Tage Resturlaub)
+                </div>
             </div>
-            <div class="col-xs-12 col-sm-6">
-                <div id="datepicker"></div>
+            
+            <div class="col-xs-12">
+                <%@include file="./include/overview_app_list.jsp" %>
             </div>
+
         </div>
 
         <div class="row">

@@ -8,9 +8,6 @@
 <link rel="stylesheet" type="text/css" href="<spring:url value='/css/bootstrap.min.css' />" />
 <link rel="stylesheet" type="text/css" href="<spring:url value='/css/font-awesome.min.css' />" />
 <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />" />
-<link rel="stylesheet" type="text/css" href="<spring:url value='/css/form.css' />" />
-<link rel="stylesheet" type="text/css" href="<spring:url value='/css/print.css' />" />
-<link rel="stylesheet" type="text/css" href="<spring:url value='/css/calendar.css' />">
 <script src="<spring:url value='/jquery/js/jquery-1.9.1.js' />" type="text/javascript" ></script>
 <script src="<spring:url value='/jquery/js/jquery-ui-1.10.3.custom.js' />" type="text/javascript" ></script>
 <script src="<spring:url value='/jquery/js/jquery.tablesorter.js' />" type="text/javascript" ></script>

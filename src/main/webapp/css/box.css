@@ -1,0 +1,52 @@
+.box {
+    min-height: 105px;
+    padding: 20px;
+    border: 1px solid #DDDDDD;
+    font-size: 12px;
+    background-color: #FFF;
+}
+
+.box-image {
+    height: 80px;
+    width: 80px;
+    float: left;
+    margin: 0 10px 10px 0;
+}
+
+.box-icon {
+    border-radius: 50%;
+    display: block;
+    float: left;
+    font-size: 35px;
+    margin: 0 10px 10px 0;
+    text-align: center;
+    vertical-align: middle;
+    height: 65px;
+    width: 65px;
+}
+
+.box-icon,
+.box-icon .fa {
+    line-height: 65px; 
+}
+
+.box-icon.bg-green {
+    /*background-color: #23AE89;*/
+    background-color: #59AB02;
+    color: white;
+}
+
+.box-icon.bg-red {
+    background-color: #E94B3B;
+    color: white;
+}
+
+.box-icon.bg-blue {
+    background-color: #2EC1CC;
+    color: white;
+}
+
+.box-icon.bg-yellow {
+    background-color: #FFB61C;
+    color: white;
+}
