@@ -8,30 +8,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
-import org.synyx.urlaubsverwaltung.core.account.Account;
-import org.synyx.urlaubsverwaltung.core.account.AccountDAO;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationInteractionService;
-import org.synyx.urlaubsverwaltung.core.application.service.CommentService;
 import org.synyx.urlaubsverwaltung.core.calendar.Day;
-import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.person.PersonDAO;
+import org.synyx.urlaubsverwaltung.core.person.PersonInteractionService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteStatus;
-import org.synyx.urlaubsverwaltung.security.CryptoUtil;
 import org.synyx.urlaubsverwaltung.security.Role;
+import org.synyx.urlaubsverwaltung.web.person.PersonForm;
 
-import java.math.BigDecimal;
-
-import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 
 import java.util.Arrays;
+import java.util.Locale;
 
 import javax.annotation.PostConstruct;
 
@@ -51,22 +45,13 @@ public class TestDataCreationService {
     private static final Boolean INACTIVE = false;
 
     @Autowired
-    private PersonDAO personDAO;
-
-    @Autowired
-    private AccountDAO accountDAO;
+    private PersonInteractionService personInteractionService;
 
     @Autowired
     private ApplicationInteractionService applicationInteractionService;
 
     @Autowired
-    private WorkingTimeService workingTimeService;
-
-    @Autowired
     private SickNoteService sickNoteService;
-
-    @Autowired
-    private CommentService commentService;
 
     private Person user;
     private Person boss;
@@ -88,43 +73,17 @@ public class TestDataCreationService {
 
             user = createTestPerson(USER, "Marlene", "Muster", "mmuster@muster.de", ACTIVE, Role.USER, Role.BOSS,
                     Role.OFFICE);
+
             boss = createTestPerson("max", "Max", "Mustermann", "maxMuster@muster.de", ACTIVE, Role.USER, Role.BOSS);
+
             office = createTestPerson("klaus", "Klaus", "Müller", "müller@muster.de", ACTIVE, Role.USER, Role.BOSS,
                     Role.OFFICE);
 
-            Person inactivePerson = createTestPerson("horst", "Horst", "Dieter", "hdieter@muster.de", INACTIVE,
-                    Role.INACTIVE);
+            createTestPerson("horst", "Horst", "Dieter", "hdieter@muster.de", INACTIVE, Role.INACTIVE);
 
-            personDAO.save(user);
-            personDAO.save(boss);
-            personDAO.save(office);
-            personDAO.save(inactivePerson);
-
-            accountDAO.save(createTestAccount(user, true));
-            accountDAO.save(createTestAccount(boss, false));
-            accountDAO.save(createTestAccount(office, true));
-            accountDAO.save(createTestAccount(inactivePerson, true));
-
-            createTestWorkingTime(user);
-
-            DateMidnight now = DateMidnight.now();
-
-            // FUTURE
-            createWaitingApplication(user, VacationType.HOLIDAY, DayLength.FULL, now.plusDays(10), now.plusDays(16));
-            createWaitingApplication(user, VacationType.OVERTIME, DayLength.FULL, now.plusDays(1), now.plusDays(2));
-            createWaitingApplication(user, VacationType.SPECIALLEAVE, DayLength.FULL, now.plusDays(4), now.plusDays(6));
-
-            // PAST
-            createAllowedApplication(user, VacationType.HOLIDAY, DayLength.FULL, now.minusDays(20), now.minusDays(13));
-            createAllowedApplication(user, VacationType.HOLIDAY, DayLength.MORNING, now.minusDays(5), now.minusDays(5));
-
-            createRejectedApplication(user, VacationType.HOLIDAY, DayLength.FULL, now.minusDays(33), now.minusDays(30));
-
-            createCancelledApplication(user, VacationType.HOLIDAY, DayLength.FULL, now.minusDays(11),
-                now.minusDays(10));
-
-            createSickNote(user, now.minusDays(10), now.minusDays(10));
-            createSickNote(user, now.minusDays(30), now.minusDays(25));
+            createTestData(user);
+            createTestData(boss);
+            createTestData(office);
         } else {
             LOG.info("No test data is created.");
         }
@@ -134,40 +93,52 @@ public class TestDataCreationService {
     private Person createTestPerson(String login, String firstName, String lastName, String email, boolean active,
         Role... roles) throws NoSuchAlgorithmException {
 
-        Person person = new Person(login, firstName, lastName, email);
-        person.setActive(active);
-        person.setPermissions(Arrays.asList(roles));
+        Person person = new Person();
 
-        KeyPair keyPair = CryptoUtil.generateKeyPair();
+        int currentYear = DateMidnight.now().getYear();
+        Locale locale = Locale.GERMAN;
 
-        person.setPrivateKey(keyPair.getPrivate().getEncoded());
-        person.setPublicKey(keyPair.getPublic().getEncoded());
+        PersonForm personForm = new PersonForm();
+        personForm.setLoginName(login);
+        personForm.setLastName(lastName);
+        personForm.setFirstName(firstName);
+        personForm.setEmail(email);
+        personForm.setActive(active);
+        personForm.setYear(String.valueOf(currentYear));
+        personForm.setAnnualVacationDays("28");
+        personForm.setRemainingVacationDays("5");
+        personForm.setRemainingVacationDaysExpire(true);
+        personForm.setValidFrom(new DateMidnight(currentYear, 1, 1));
+        personForm.setWorkingDays(Arrays.asList(Day.MONDAY.getDayOfWeek(), Day.TUESDAY.getDayOfWeek(),
+                Day.WEDNESDAY.getDayOfWeek(), Day.THURSDAY.getDayOfWeek(), Day.FRIDAY.getDayOfWeek()));
+        personForm.setPermissions(Arrays.asList(roles));
+
+        personInteractionService.createOrUpdate(person, personForm, locale);
 
         return person;
     }
 
 
-    private Account createTestAccount(Person person, boolean remainingVacationDaysExpire) {
+    private void createTestData(Person person) {
 
-        int year = DateMidnight.now().getYear();
+        DateMidnight now = DateMidnight.now();
 
-        DateMidnight firstDayOfYear = new DateMidnight(year, 1, 1);
-        DateMidnight lastDayOfYear = new DateMidnight(year, 12, 31);
+        // FUTURE APPLICATIONS FOR LEAVE
+        createWaitingApplication(person, VacationType.HOLIDAY, DayLength.FULL, now.plusDays(10), now.plusDays(16));
+        createWaitingApplication(person, VacationType.OVERTIME, DayLength.FULL, now.plusDays(1), now.plusDays(2));
+        createWaitingApplication(person, VacationType.SPECIALLEAVE, DayLength.FULL, now.plusDays(4), now.plusDays(6));
 
-        Account account = new Account(person, firstDayOfYear.toDate(), lastDayOfYear.toDate(), new BigDecimal("28"),
-                new BigDecimal("5"), remainingVacationDaysExpire);
+        // PAST APPLICATIONS FOR LEAVE
+        createAllowedApplication(person, VacationType.HOLIDAY, DayLength.FULL, now.minusDays(20), now.minusDays(13));
+        createAllowedApplication(person, VacationType.HOLIDAY, DayLength.MORNING, now.minusDays(5), now.minusDays(5));
 
-        account.setVacationDays(new BigDecimal("28"));
+        createRejectedApplication(person, VacationType.HOLIDAY, DayLength.FULL, now.minusDays(33), now.minusDays(30));
 
-        return account;
-    }
+        createCancelledApplication(person, VacationType.HOLIDAY, DayLength.FULL, now.minusDays(11), now.minusDays(10));
 
-
-    private void createTestWorkingTime(Person person) {
-
-        workingTimeService.touch(Arrays.asList(Day.MONDAY.getDayOfWeek(), Day.TUESDAY.getDayOfWeek(),
-                Day.WEDNESDAY.getDayOfWeek(), Day.TUESDAY.getDayOfWeek(), Day.FRIDAY.getDayOfWeek()),
-            new DateMidnight(DateMidnight.now().getYear(), 1, 1), person);
+        // SICK NOTES
+        createSickNote(person, now.minusDays(10), now.minusDays(10));
+        createSickNote(person, now.minusDays(30), now.minusDays(25));
     }
 
 
@@ -235,6 +206,7 @@ public class TestDataCreationService {
         sickNote.setPerson(person);
         sickNote.setStartDate(startDate);
         sickNote.setEndDate(endDate);
+        sickNote.setActive(ACTIVE);
 
         sickNoteService.touch(sickNote, SickNoteStatus.CREATED, office);
 

@@ -144,12 +144,6 @@ public class SickNoteService {
     }
 
 
-    public List<SickNote> getAllActiveByPeriod(DateMidnight from, DateMidnight to) {
-
-        return sickNoteDAO.findAllActiveByPeriod(from.toDate(), to.toDate());
-    }
-
-
     public void convertSickNoteToVacation(AppForm appForm, SickNote sickNote, Person loggedUser) {
 
         appForm.setHowLong(DayLength.FULL);
@@ -167,7 +161,7 @@ public class SickNoteService {
         application.setDays(workDays);
 
         application.setStatus(ApplicationStatus.ALLOWED);
-        application.setEditedDate(DateMidnight.now());
+        application.setApplicationDate(DateMidnight.now());
 
         signService.signApplicationByUser(application, loggedUser);
         applicationService.save(application);

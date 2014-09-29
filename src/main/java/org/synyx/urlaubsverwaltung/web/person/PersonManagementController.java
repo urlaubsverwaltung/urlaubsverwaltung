@@ -195,7 +195,7 @@ public class PersonManagementController {
 
             Locale locale = RequestContextUtils.getLocale(request);
 
-            PersonForm personForm = new PersonForm(locale);
+            PersonForm personForm = new PersonForm();
             addModelAttributesForPersonForm(person, personForm, model);
 
             return PersonConstants.PERSON_FORM_JSP;
@@ -226,6 +226,7 @@ public class PersonManagementController {
 
         Person personToUpdate = personService.getPersonByID(personId);
 
+        personForm.setLocale(locale); // needed for number parsing
         validator.validate(personForm, errors);
 
         if (errors.hasGlobalErrors()) {
@@ -255,7 +256,8 @@ public class PersonManagementController {
         // validate login name
         validator.validateLogin(personForm.getLoginName(), errors);
 
-        validator.validate(personForm, errors); // validates the name fields, the email field and the year field
+        personForm.setLocale(locale); // needed for number parsing
+        validator.validate(personForm, errors);
 
         if (errors.hasGlobalErrors()) {
             model.addAttribute("errors", errors);

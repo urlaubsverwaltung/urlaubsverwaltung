@@ -62,9 +62,8 @@ public class PersonForm {
 
     private Locale locale;
 
-    public PersonForm(Locale locale) {
+    public PersonForm() {
 
-        this.locale = locale;
         setDefaultValuesForValidity();
     }
 
