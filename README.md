@@ -32,6 +32,11 @@ Möchte man auch lokal eine MySQL-Datenbank nutzen, muss man die `db` Property a
 
 Im Browser lässt sich die Anwendung dann über `http://localhost:8080/urlaubsverwaltung` ansteuern.
 
+### Testdaten
+
+Startet man die Anwendung mit der H2-Datenbank werden für Entwicklungszwecke Benutzer, Urlaubsanträge und Krankmeldungen angelegt. 
+Man kann sich in dieser Umgebung ebenfalls mit dem Testbenutzer `test/secret` anmelden.
+
 ## Konfiguration
 
 Die Anwendung besitzt im Verzeichnis `src/main/resources` mehrere Properties Dateien, die zur Konfiguration genutzt werden.
