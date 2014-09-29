@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.person;
 
+import com.google.common.base.MoreObjects;
+
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -51,6 +53,20 @@ public class Person extends AbstractPersistable<Integer> {
     private Collection<Role> permissions;
 
     private boolean active;
+
+    public Person() {
+
+        /* OK */
+    }
+
+
+    public Person(String loginName, String lastName, String firstName, String email) {
+
+        this.loginName = loginName;
+        this.lastName = lastName;
+        this.firstName = firstName;
+        this.email = email;
+    }
 
     public boolean isActive() {
 
@@ -167,5 +183,21 @@ public class Person extends AbstractPersistable<Integer> {
         }
 
         return this.loginName;
+    }
+
+
+    @Override
+    public String toString() {
+
+        MoreObjects.ToStringHelper toStringHelper = MoreObjects.toStringHelper(this);
+
+        toStringHelper.add("id", getId());
+        toStringHelper.add("loginName", getLoginName());
+        toStringHelper.add("lastName", getLastName());
+        toStringHelper.add("firstName", getFirstName());
+        toStringHelper.add("email", getEmail());
+        toStringHelper.add("permissions", getPermissions());
+
+        return toStringHelper.toString();
     }
 }

@@ -1,22 +1,15 @@
 package org.synyx.urlaubsverwaltung.core.mail;
 
 import org.apache.log4j.Logger;
-
 import org.apache.velocity.app.VelocityEngine;
-
 import org.joda.time.DateMidnight;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
-
 import org.springframework.stereotype.Service;
-
 import org.springframework.ui.velocity.VelocityEngineUtils;
-
 import org.synyx.urlaubsverwaltung.DateFormat;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
@@ -24,16 +17,10 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.util.PropertiesUtil;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.StringTokenizer;
-
 import javax.mail.Message;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.util.*;
 
 
 /**
@@ -49,31 +36,15 @@ class MailServiceImpl implements MailService {
 
     private static final String PATH = "/email/";
     private static final String PROPERTIES_FILE = "messages.properties"; // general properties
-    private static final String MAIL_PROPERTIES_FILE = "mail.properties"; // custom configuration like email
+    private static final String TYPE = ".vm";
 
-    // addresses, etc.
+    // MODEL NAMES
     private static final String APPLICATION = "application";
     private static final String PERSON = "person";
-    private static final String PERSONS = "persons";
 
-    // File names
-    private static final String TYPE = ".vm";
-    private static final String FILE_ALLOWED_OFFICE = "allowed_office" + TYPE;
-    private static final String FILE_ALLOWED_USER = "allowed_user" + TYPE;
-    private static final String FILE_CANCELLED = "cancelled" + TYPE;
-    private static final String FILE_CANCELLED_BY_OFFICE = "cancelled_by_office" + TYPE;
-    private static final String FILE_CONFIRM = "confirm" + TYPE;
-    private static final String FILE_EXPIRE = "expire" + TYPE;
-    private static final String FILE_NEW_BY_OFFICE = "new_application_by_office" + TYPE;
-    private static final String FILE_NEW = "newapplications" + TYPE;
-    private static final String FILE_REJECTED = "rejected" + TYPE;
-    private static final String FILE_REFER = "refer" + TYPE;
-    private static final String FILE_REMIND = "remind" + TYPE;
-    private static final String FILE_WEEKLY = "weekly" + TYPE;
     private JavaMailSender mailSender;
     private VelocityEngine velocityEngine;
     private Properties properties;
-    private Properties mailProperties;
 
     @Value("${email.boss}")
     protected String emailBoss;
@@ -98,7 +69,6 @@ class MailServiceImpl implements MailService {
 
         try {
             this.properties = PropertiesUtil.load(PROPERTIES_FILE);
-            this.mailProperties = PropertiesUtil.load(MAIL_PROPERTIES_FILE);
         } catch (Exception ex) {
             LOG.error(DateMidnight.now().toString(DateFormat.PATTERN) + "No properties file found.");
             LOG.error(ex.getMessage(), ex);
@@ -161,7 +131,7 @@ class MailServiceImpl implements MailService {
 
                 mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(recipient));
 
-                mimeMessage.setSubject(mailProperties.getProperty(subject));
+                mimeMessage.setSubject(properties.getProperty(subject));
                 mimeMessage.setText(text);
             }
         };
@@ -170,23 +140,9 @@ class MailServiceImpl implements MailService {
             this.mailSender.send(prep);
         } catch (MailException ex) {
             LOG.error(DateMidnight.now().toString(DateFormat.PATTERN) + ": Sending the email with following subject '"
-                + mailProperties.getProperty(subject)
+                + properties.getProperty(subject)
                 + "' to " + recipient + " failed.");
             LOG.error(ex.getMessage(), ex);
-        }
-    }
-
-
-    /**
-     * @see  MailService#sendExpireNotification(java.util.List)
-     */
-    @Override
-    public void sendExpireNotification(List<Person> persons) {
-
-        for (Person person : persons) {
-            String text = prepareMessage(person, PERSON, FILE_EXPIRE, null, null, null);
-
-            sendEmail(person.getEmail(), "subject.expire", text);
         }
     }
 
@@ -197,7 +153,7 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendNewApplicationNotification(Application application) {
 
-        String text = prepareMessage(application, APPLICATION, FILE_NEW, null, null, null);
+        String text = prepareMessage(application, APPLICATION, "newapplications" + TYPE, null, null, null);
 
         sendEmailToMultipleRecipients(emailBoss, "subject.new", text);
     }
@@ -209,7 +165,7 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendRemindBossNotification(Application a) {
 
-        String text = prepareMessage(a, APPLICATION, FILE_REMIND, null, null, null);
+        String text = prepareMessage(a, APPLICATION, "remind" + TYPE, null, null, null);
 
         sendEmailToMultipleRecipients(emailBoss, "subject.remind", text);
     }
@@ -247,7 +203,7 @@ class MailServiceImpl implements MailService {
 
                 mimeMessage.setRecipients(Message.RecipientType.TO, addressTo);
 
-                mimeMessage.setSubject(mailProperties.getProperty(subject));
+                mimeMessage.setSubject(properties.getProperty(subject));
                 mimeMessage.setText(text);
             }
         };
@@ -256,7 +212,7 @@ class MailServiceImpl implements MailService {
             this.mailSender.send(prep);
         } catch (MailException ex) {
             LOG.error(DateMidnight.now().toString(DateFormat.PATTERN) + ": Sending the email with following subject '"
-                + mailProperties.getProperty(subject)
+                + properties.getProperty(subject)
                 + "' to following recipients " + " failed.");
             LOG.error(ex.getMessage(), ex);
         }
@@ -273,11 +229,11 @@ class MailServiceImpl implements MailService {
         // the applicant gets an email and the office gets an email
 
         // email to office
-        String textOffice = prepareMessage(application, APPLICATION, FILE_ALLOWED_OFFICE, null, null, comment);
+        String textOffice = prepareMessage(application, APPLICATION, "allowed_office" + TYPE, null, null, comment);
         sendEmail(emailOffice, "subject.allowed.office", textOffice);
 
         // email to applicant
-        String textUser = prepareMessage(application, APPLICATION, FILE_ALLOWED_USER, null, null, comment);
+        String textUser = prepareMessage(application, APPLICATION, "allowed_user" + TYPE, null, null, comment);
         sendEmail(application.getPerson().getEmail(), "subject.allowed.user", textUser);
     }
 
@@ -288,7 +244,7 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendRejectedNotification(Application application, Comment comment) {
 
-        String text = prepareMessage(application, APPLICATION, FILE_REJECTED, null, null, comment);
+        String text = prepareMessage(application, APPLICATION, "rejected" + TYPE, null, null, comment);
         sendEmail(application.getPerson().getEmail(), "subject.rejected", text);
     }
 
@@ -300,7 +256,7 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendReferApplicationNotification(Application a, Person recipient, String sender) {
 
-        String text = prepareMessage(a, APPLICATION, FILE_REFER, recipient.getFirstName(), sender, null);
+        String text = prepareMessage(a, APPLICATION, "refer" + TYPE, recipient.getFirstName(), sender, null);
         sendEmail(recipient.getEmail(), "subject.refer", text);
     }
 
@@ -311,7 +267,7 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendConfirmation(Application application) {
 
-        String text = prepareMessage(application, APPLICATION, FILE_CONFIRM, null, null, null);
+        String text = prepareMessage(application, APPLICATION, "confirm" + TYPE, null, null, null);
         sendEmail(application.getPerson().getEmail(), "subject.confirm", text);
     }
 
@@ -322,23 +278,8 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendAppliedForLeaveByOfficeNotification(Application application) {
 
-        String text = prepareMessage(application, APPLICATION, FILE_NEW_BY_OFFICE, null, null, null);
+        String text = prepareMessage(application, APPLICATION, "new_application_by_office" + TYPE, null, null, null);
         sendEmail(application.getPerson().getEmail(), "subject.new.app.by.office", text);
-    }
-
-
-    /**
-     * @see  MailService#sendWeeklyVacationForecast(java.util.Map)
-     */
-    @Override
-    public void sendWeeklyVacationForecast(Map<String, Person> persons) {
-
-        Map<String, Object> model = new HashMap();
-        model.put("persons", persons);
-
-        String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, PATH + FILE_WEEKLY, model);
-
-        sendEmail(emailAll, "subject.weekly", text);
     }
 
 
@@ -354,13 +295,13 @@ class MailServiceImpl implements MailService {
         if (cancelledByOffice) {
             // mail to applicant anyway
             // not only if application was allowed before cancelling
-            text = prepareMessage(application, APPLICATION, FILE_CANCELLED_BY_OFFICE, null, null, comment);
+            text = prepareMessage(application, APPLICATION, "cancelled_by_office" + TYPE, null, null, comment);
             sendEmail(application.getPerson().getEmail(), "subject.cancelled.by.office", text);
         } else {
             // application was allowed before cancelling
             // only then office and bosses get an email
 
-            text = prepareMessage(application, APPLICATION, FILE_CANCELLED, null, null, comment);
+            text = prepareMessage(application, APPLICATION, "cancelled" + TYPE, null, null, comment);
 
             // mail to office
             sendEmail(emailOffice, "subject.cancelled", text);
@@ -391,33 +332,6 @@ class MailServiceImpl implements MailService {
         String text = "An error occured while signing the application with id " + applicationId + "\n" + exception;
 
         sendEmail(emailManager, "subject.sign.error", text);
-    }
-
-
-    /**
-     * @see  MailService#sendPropertiesErrorNotification(String)
-     */
-    @Override
-    public void sendPropertiesErrorNotification(String propertyName) {
-
-        String text = "The value of the property key '" + propertyName
-            + "' seems to be invalid. Please control and correct it if necessary.";
-        sendEmail(emailManager, "subject.prop.error", text);
-    }
-
-
-    /**
-     * @see  MailService#sendRemindingBossAboutWaitingApplicationsNotification(java.util.List)
-     */
-    @Override
-    public void sendRemindingBossAboutWaitingApplicationsNotification(List<Application> apps) {
-
-        Map<String, Object> model = new HashMap();
-        model.put("applications", apps);
-
-        String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, PATH + "jmx_remind_boss.vm", model);
-
-        sendEmail(emailManager, "subject.remind.boss", text);
     }
 
 

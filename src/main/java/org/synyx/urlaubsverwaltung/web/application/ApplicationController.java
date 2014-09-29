@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import org.synyx.urlaubsverwaltung.DateFormat;
 import org.synyx.urlaubsverwaltung.core.account.Account;
 import org.synyx.urlaubsverwaltung.core.account.AccountService;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
@@ -31,6 +30,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.OverlapCase;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
+import org.synyx.urlaubsverwaltung.core.application.service.ApplicationInteractionService;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.application.service.CalculationService;
 import org.synyx.urlaubsverwaltung.core.application.service.CommentService;
@@ -106,6 +106,9 @@ public class ApplicationController {
 
     @Autowired
     private PersonService personService;
+
+    @Autowired
+    private ApplicationInteractionService applicationInteractionService;
 
     @Autowired
     private ApplicationService applicationService;
@@ -430,8 +433,7 @@ public class ApplicationController {
     }
 
 
-    public String newApplication(Person person, int force, AppForm appForm, boolean isOffice, Errors errors,
-        Model model) {
+    public String newApplication(Person person, AppForm appForm, boolean isOffice, Errors errors, Model model) {
 
         Person loggedUser = sessionService.getLoggedUser();
 
@@ -457,7 +459,7 @@ public class ApplicationController {
 
         validator.validatePast(appForm, errors, model);
 
-        if (force != 1 && model.containsAttribute("timeError")) {
+        if (model.containsAttribute("timeError")) {
             prepareForm(personForForm, appForm, model);
 
             if (errors.hasGlobalErrors()) {
@@ -469,40 +471,34 @@ public class ApplicationController {
 
         if (checkAndSaveApplicationForm(appForm, personForForm, isOffice, errors, model)) {
             int id = applicationService.getIdOfLatestApplication(personForForm, ApplicationStatus.WAITING);
-            Application application = applicationService.getApplicationById(id);
-
-            commentService.saveComment(new Comment(), loggedUser, application);
 
             return "redirect:/web/application/" + id;
         } else {
-            model.addAttribute("setForce", 0);
+            prepareForm(personForForm, appForm, model);
+
+            if (errors.hasGlobalErrors()) {
+                model.addAttribute("errors", errors);
+            }
+
+            return ApplicationConstants.APP_FORM_JSP;
         }
-
-        prepareForm(personForForm, appForm, model);
-
-        if (errors.hasGlobalErrors()) {
-            model.addAttribute("errors", errors);
-        }
-
-        return ApplicationConstants.APP_FORM_JSP;
     }
 
 
     /**
      * use this to save an application (will be in "waiting" state).
      *
-     * @param  force  is 0 to check if application's period is in the past, after reconfirming is application saved
      * @param  appForm {@link AppForm}
      * @param  errors
      * @param  model
      *
      * @return  if success returns the detail view of the new applied application
      */
-    @RequestMapping(value = NEW_APP, params = "force", method = RequestMethod.POST)
-    public String newApplicationByUser(@RequestParam("force") int force,
-        @ModelAttribute(ApplicationConstants.APPFORM) AppForm appForm, Errors errors, Model model) {
+    @RequestMapping(value = NEW_APP, method = RequestMethod.POST)
+    public String newApplicationByUser(@ModelAttribute(ApplicationConstants.APPFORM) AppForm appForm, Errors errors,
+        Model model) {
 
-        return newApplication(sessionService.getLoggedUser(), force, appForm, false, errors, model);
+        return newApplication(sessionService.getLoggedUser(), appForm, false, errors, model);
     }
 
 
@@ -522,9 +518,7 @@ public class ApplicationController {
 
         Application application = appForm.createApplicationObject();
 
-        application = applicationService.apply(application, person, sessionService.getLoggedUser());
-
-        BigDecimal days = application.getDays();
+        BigDecimal days = applicationInteractionService.getNumberOfVacationDays(application);
 
         // check if the vacation would have more than 0 days
         if (days.compareTo(BigDecimal.ZERO) == 0) {
@@ -556,38 +550,7 @@ public class ApplicationController {
 
             // enough days to apply for leave
             if (enoughDays || (application.getVacationType() != VacationType.HOLIDAY)) {
-                // save the application
-                applicationService.save(application);
-
-                // if office applies for leave on behalf of a user
-                if (isOffice == true) {
-                    // application is signed by office's key
-                    applicationService.signApplicationByUser(application, sessionService.getLoggedUser());
-
-                    LOG.info(" ID: " + application.getId()
-                        + " Es wurde ein neuer Antrag von " + sessionService.getLoggedUser().getFirstName() + " "
-                        + sessionService.getLoggedUser().getLastName() + " für " + person.getFirstName() + " "
-                        + person.getLastName()
-                        + " angelegt.");
-
-                    // mail to loggedUser of application that office has made an application for him/her
-                    mailService.sendAppliedForLeaveByOfficeNotification(application);
-                } else {
-                    // if user himself applies for leave
-
-                    // application is signed by user's key
-                    applicationService.signApplicationByUser(application, person);
-
-                    LOG.info(" ID: " + application.getId()
-                        + " Es wurde ein neuer Antrag von " + person.getFirstName() + " " + person.getLastName()
-                        + " angelegt.");
-
-                    // mail to applicant
-                    mailService.sendConfirmation(application);
-                }
-
-                // mail to boss
-                mailService.sendNewApplicationNotification(application);
+                applicationInteractionService.apply(application, sessionService.getLoggedUser());
 
                 return true;
             } else {
@@ -651,7 +614,6 @@ public class ApplicationController {
     /**
      * This method saves an application that is applied by the office on behalf of an user.
      *
-     * @param  force  is 0 to check if application's period is in the past, after reconfirming is application saved
      * @param  personId  person on behalf application is applied
      * @param  appForm {@link AppForm}
      * @param  errors
@@ -659,9 +621,8 @@ public class ApplicationController {
      *
      * @return  if success returns the detail view of the new applied application
      */
-    @RequestMapping(value = NEW_APP_OFFICE, params = "force", method = RequestMethod.POST)
-    public String newApplicationByOffice(@RequestParam("force") int force,
-        @PathVariable(ApplicationConstants.PERSON_ID) Integer personId,
+    @RequestMapping(value = NEW_APP_OFFICE, method = RequestMethod.POST)
+    public String newApplicationByOffice(@PathVariable(ApplicationConstants.PERSON_ID) Integer personId,
         @ModelAttribute(ApplicationConstants.APPFORM) AppForm appForm, Errors errors, Model model) {
 
         List<Person> persons = personService.getAllPersons(); // get all active persons
@@ -671,13 +632,13 @@ public class ApplicationController {
 
         Person person = personService.getPersonByID(personId);
 
-        return newApplication(person, force, appForm, true, errors, model);
+        return newApplication(person, appForm, true, errors, model);
     }
 
 
     public void prepareForm(Person person, AppForm appForm, Model model) {
 
-        List<Person> persons = personService.getAllPersonsExceptOne(person.getId());
+        List<Person> persons = personService.getAllPersonsExcept(person);
 
         Account account = accountService.getHolidaysAccount(DateMidnight.now(GregorianChronology.getInstance())
                 .getYear(), person);
@@ -735,22 +696,17 @@ public class ApplicationController {
 
 
     /**
-     * used if you want to allow an existing request (boss only).
-     *
-     * @param  model
-     *
-     * @return
+     * Allow a not yet allowed application for leave (Boss only!).
      */
     @RequestMapping(value = ALLOW_APP, method = RequestMethod.PUT)
     public String allowApplication(@PathVariable(ApplicationConstants.APPLICATION_ID) Integer applicationId,
-        @ModelAttribute(ApplicationConstants.COMMENT) Comment comment, Errors errors, Model model) {
+        @ModelAttribute(ApplicationConstants.COMMENT) Comment comment) {
 
         Person boss = sessionService.getLoggedUser();
         Application application = applicationService.getApplicationById(applicationId);
 
-        // only boss is able to allow an application but only if this application isn't his own one
-        if (sessionService.isBoss() && !application.getPerson().equals(boss)) {
-            applicationService.allow(application, boss, comment);
+        if (sessionService.isBoss()) {
+            applicationInteractionService.allow(application, boss, comment);
 
             return "redirect:/web/application/" + applicationId;
         } else {
@@ -783,12 +739,7 @@ public class ApplicationController {
 
 
     /**
-     * used if you want to reject a request (boss only).
-     *
-     * @param  applicationId  the id of the to declining request
-     * @param  model
-     *
-     * @return
+     * Reject an application for leave (Boss only!).
      */
     @RequestMapping(value = REJECT_APP, method = RequestMethod.PUT)
     public String rejectApplication(@PathVariable(ApplicationConstants.APPLICATION_ID) Integer applicationId,
@@ -807,19 +758,7 @@ public class ApplicationController {
 
                 return ApplicationConstants.SHOW_APP_DETAIL_JSP;
             } else {
-                applicationService.reject(application, boss);
-
-                commentService.saveComment(comment, boss, application);
-
-                String bossName = comment.getNameOfCommentingPerson();
-
-                LOG.info(application.getApplicationDate() + " ID: " + application.getId() + " Der Antrag von "
-                    + application.getPerson().getFirstName() + " " + application.getPerson().getLastName()
-                    + " wurde am " + DateMidnight.now().toString(DateFormat.PATTERN) + " von " + bossName
-                    + " abgelehnt.");
-
-                // mail to applicant
-                mailService.sendRejectedNotification(application, comment);
+                applicationInteractionService.reject(application, boss, comment);
 
                 return "redirect:/web/application/" + applicationId;
             }
@@ -904,37 +843,7 @@ public class ApplicationController {
                 return ApplicationConstants.SHOW_APP_DETAIL_JSP;
             }
 
-            boolean allowed = false;
-
-            // if application had status allowed set field formerlyAllowed to true
-            if (status == ApplicationStatus.ALLOWED) {
-                allowed = true;
-                application.setFormerlyAllowed(true);
-            }
-
-            application.setCanceller(loggedUser);
-            applicationService.cancel(application);
-
-            commentService.saveComment(comment, loggedUser, application);
-
-            if (allowed) {
-                // if application has status ALLOWED, office and bosses get an email
-                mailService.sendCancelledNotification(application, false, comment);
-            }
-
-            // user has cancelled his own application
-            if (loggedUser.equals(application.getPerson())) {
-                LOG.info("Antrag-ID: " + application.getId() + " Der Antrag wurde von (" + loggedUser.getFirstName()
-                    + " " + loggedUser.getLastName()
-                    + ") storniert.");
-            } else {
-                // application has been cancelled by office
-                // applicant gets an mail regardless of which application status
-                mailService.sendCancelledNotification(application, true, comment);
-                LOG.info("Antrag-ID: " + application.getId() + " Der Antrag wurde vom Office ("
-                    + loggedUser.getFirstName() + " " + loggedUser.getLastName()
-                    + ") storniert.");
-            }
+            applicationInteractionService.cancel(application, loggedUser, comment);
 
             return "redirect:/web/application/" + applicationId;
         } else {
@@ -965,8 +874,6 @@ public class ApplicationController {
         Comment comment = commentService.getCommentByApplicationAndStatus(application, application.getStatus());
 
         if (comment != null) {
-            // use this later maybe
-            // Locale locale = RequestContextUtils.getLocale(request);
             model.addAttribute(ApplicationConstants.COMMENT, comment);
         } else {
             model.addAttribute(ApplicationConstants.COMMENT, new Comment());

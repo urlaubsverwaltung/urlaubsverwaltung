@@ -102,7 +102,7 @@ public class SickNoteController {
             DateMidnight to = now.dayOfMonth().withMaximumValue();
 
             return "redirect:/web/sicknote?from=" + from.toString(DateFormat.PATTERN) + "&to="
-                    + to.toString(DateFormat.PATTERN);
+                + to.toString(DateFormat.PATTERN);
         }
 
         return ControllerConstants.ERROR_JSP;
@@ -119,10 +119,10 @@ public class SickNoteController {
             DateMidnight from = now;
             DateMidnight to = now;
 
-            if(searchRequest.getPeriod().equals(SearchRequest.Period.YEAR)) {
+            if (searchRequest.getPeriod().equals(SearchRequest.Period.YEAR)) {
                 from = now.dayOfYear().withMinimumValue();
                 to = now.dayOfYear().withMaximumValue();
-            } else if(searchRequest.getPeriod().equals(SearchRequest.Period.QUARTAL)) {
+            } else if (searchRequest.getPeriod().equals(SearchRequest.Period.QUARTAL)) {
                 from = now.dayOfMonth().withMinimumValue().minusMonths(2);
                 to = now.dayOfMonth().withMaximumValue();
             } else if (searchRequest.getPeriod().equals(SearchRequest.Period.MONTH)) {
@@ -131,11 +131,11 @@ public class SickNoteController {
             }
 
             if (person != null) {
-
-                return "redirect:/web/sicknote?staff=" + person.getId() + "&from=" + from.toString(DateFormat.PATTERN) + "&to="
-                    + to.toString(DateFormat.PATTERN);
+                return "redirect:/web/sicknote?staff=" + person.getId() + "&from=" + from.toString(DateFormat.PATTERN)
+                    + "&to=" + to.toString(DateFormat.PATTERN);
             } else {
-                return "redirect:/web/sicknote?from=" + from.toString(DateFormat.PATTERN) + "&to=" + to.toString(DateFormat.PATTERN);
+                return "redirect:/web/sicknote?from=" + from.toString(DateFormat.PATTERN) + "&to="
+                    + to.toString(DateFormat.PATTERN);
             }
         }
 

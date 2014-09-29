@@ -44,22 +44,16 @@ public class AuthoritiesPopulatorImpl implements LdapAuthoritiesPopulator {
     public Collection<GrantedAuthority> getGrantedAuthorities(DirContextOperations dco, String string) {
 
         Person person = personService.getPersonByLogin(string);
-        Collection<GrantedAuthority> output = new ArrayList<GrantedAuthority>();
 
-        if (person == null) {
-            // if person isn't a member of the tool yet, a new person is created
+        // TODO: maybe think about a different solution
+        if (person == null && personService.getAllPersons().size() == 0) {
+            // if the system has no user yet, the first person that successfully signs in is created as user with office role
             person = new Person();
             person.setLoginName(string);
 
             List<Role> permissions = new ArrayList<Role>();
             permissions.add(Role.USER);
-
-            // there has to be at least one user with office role to be able to set rights to users
-            // so the first person that logins, will be office
-            // TODO: think about a different solution...
-            if (personService.getPersonsByRole(Role.OFFICE).size() == 0) {
-                permissions.add(Role.OFFICE);
-            }
+            permissions.add(Role.OFFICE);
 
             person.setPermissions(permissions);
             person.setActive(true);
@@ -75,11 +69,13 @@ public class AuthoritiesPopulatorImpl implements LdapAuthoritiesPopulator {
             personService.save(person);
         }
 
+        Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+
         for (Role role : person.getPermissions()) {
-            output.add(new GrantedAuthorityImpl(role.toString()));
+            grantedAuthorities.add(new GrantedAuthorityImpl(role.toString()));
         }
 
-        return output;
+        return grantedAuthorities;
     }
 
 

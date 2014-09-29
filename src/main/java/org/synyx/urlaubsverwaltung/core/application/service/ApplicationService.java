@@ -4,14 +4,14 @@ import org.joda.time.DateMidnight;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.util.List;
 
 
 /**
- * This service provides access to the {@link Application}s for leave, i.e. save, allow, reject or cancel.
+ * This service provides read-only access to the {@link Application}s for leave. Interactions occur in
+ * {@link org.synyx.urlaubsverwaltung.core.application.service.ApplicationInteractionService}.
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
@@ -44,60 +44,6 @@ public interface ApplicationService {
      * @param  application {@link Application} the application to be saved
      */
     void save(Application application);
-
-
-    /**
-     * Sets {@link Application}'s state to waiting and calculates the number of vacation days.
-     *
-     * @param  application {@link Application}
-     * @param  person {@link Person} person for that the application for leave is
-     * @param  applier {@link Person} the person that applied this application
-     */
-    Application apply(Application application, Person person, Person applier);
-
-
-    /**
-     * Sets an {@link Application}'s state to allowed (only by boss).
-     *
-     * @param  application {@link Application}
-     * @param  boss {@link Person}
-     * @param  comment {@link Comment}
-     */
-    void allow(Application application, Person boss, Comment comment);
-
-
-    /**
-     * Sets an {@link Application}'s state to rejected (only by boss).
-     *
-     * @param  application {@link Application}
-     */
-    void reject(Application application, Person boss);
-
-
-    /**
-     * Sets an {@link Application}'s state to cancelled.
-     *
-     * @param  application {@link Application}
-     */
-    void cancel(Application application);
-
-
-    /**
-     * Signs an {@link Application} with the private key of the signing user (applicant).
-     *
-     * @param  application {@link Application}
-     * @param  user {@link Person}
-     */
-    void signApplicationByUser(Application application, Person user);
-
-
-    /**
-     * Signs an {@link Application} with the private key of the signing boss.
-     *
-     * @param  application {@link Application}
-     * @param  boss {@link Person}
-     */
-    void signApplicationByBoss(Application application, Person boss);
 
 
     /**

@@ -15,6 +15,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.application.service.CommentService;
+import org.synyx.urlaubsverwaltung.core.application.service.SignService;
 import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -41,6 +42,7 @@ public class SickNoteService {
     private SickNoteCommentDAO commentDAO;
     private OwnCalendarService calendarService;
     private ApplicationService applicationService;
+    private SignService signService;
     private CommentService commentService;
     private MailService mailService;
 
@@ -52,12 +54,14 @@ public class SickNoteService {
 
     @Autowired
     public SickNoteService(SickNoteDAO sickNoteDAO, SickNoteCommentDAO commentDAO, OwnCalendarService calendarService,
-        ApplicationService applicationService, CommentService commentService, MailService mailService) {
+        ApplicationService applicationService, SignService signService, CommentService commentService,
+        MailService mailService) {
 
         this.sickNoteDAO = sickNoteDAO;
         this.commentDAO = commentDAO;
         this.calendarService = calendarService;
         this.applicationService = applicationService;
+        this.signService = signService;
         this.commentService = commentService;
         this.mailService = mailService;
     }
@@ -140,12 +144,6 @@ public class SickNoteService {
     }
 
 
-    public List<SickNote> getAllActiveByPeriod(DateMidnight from, DateMidnight to) {
-
-        return sickNoteDAO.findAllActiveByPeriod(from.toDate(), to.toDate());
-    }
-
-
     public void convertSickNoteToVacation(AppForm appForm, SickNote sickNote, Person loggedUser) {
 
         appForm.setHowLong(DayLength.FULL);
@@ -154,12 +152,18 @@ public class SickNoteService {
 
         Application application = appForm.createApplicationObject();
 
-        applicationService.apply(application, sickNote.getPerson(), loggedUser);
+        Person person = sickNote.getPerson();
+        BigDecimal workDays = calendarService.getWorkDays(application.getHowLong(), application.getStartDate(),
+                application.getEndDate(), person);
+
+        application.setPerson(person);
+        application.setApplier(loggedUser);
+        application.setDays(workDays);
 
         application.setStatus(ApplicationStatus.ALLOWED);
-        application.setEditedDate(DateMidnight.now());
+        application.setApplicationDate(DateMidnight.now());
 
-        applicationService.signApplicationByUser(application, loggedUser);
+        signService.signApplicationByUser(application, loggedUser);
         applicationService.save(application);
 
         commentService.saveComment(new Comment(), loggedUser, application);

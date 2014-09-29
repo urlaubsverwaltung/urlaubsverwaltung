@@ -8,8 +8,6 @@ import org.apache.log4j.Logger;
 
 import org.joda.time.DateMidnight;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Component;
 
 import org.springframework.ui.Model;
@@ -45,6 +43,7 @@ public class ApplicationValidator implements Validator {
     private static final String ERROR_PERIOD = "error.period";
     private static final String ERROR_PAST = "error.period.past";
     private static final String ERROR_LENGTH = "error.length";
+    private static final String ERROR_TOO_LONG = "error.too.long";
 
     // names of fields
     private static final String START_DATE = "startDate";
@@ -54,17 +53,16 @@ public class ApplicationValidator implements Validator {
     private static final String ADDRESS = "address";
     private static final String TEXT = "reason";
 
-    private static final String CUSTOM_PROPERTIES_FILE = "custom.properties";
-    private Properties customProperties;
-    private PropertiesValidator propValidator;
+    private static final String BUSINESS_PROPERTIES_FILE = "business.properties";
 
-    @Autowired
-    public ApplicationValidator(PropertiesValidator propValidator) {
+    private static final String MAX_MONTHS = "maximum.months";
 
-        this.propValidator = propValidator;
+    private Properties businessProperties;
+
+    public ApplicationValidator() {
 
         try {
-            this.customProperties = PropertiesUtil.load(CUSTOM_PROPERTIES_FILE);
+            this.businessProperties = PropertiesUtil.load(BUSINESS_PROPERTIES_FILE);
         } catch (Exception ex) {
             LOG.error("No properties file found.");
             LOG.error(ex.getMessage(), ex);
@@ -118,8 +116,14 @@ public class ApplicationValidator implements Validator {
                 if (app.getStartDate().isAfter(app.getEndDate())) {
                     errors.reject(ERROR_PERIOD);
                 } else {
-                    // applying for leave maximum permissible x months in advance
-                    propValidator.validateMaximumVacationProperty(customProperties, app, errors);
+                    String maximumMonthsProperty = businessProperties.getProperty(MAX_MONTHS);
+                    int maximumMonths = Integer.parseInt(maximumMonthsProperty);
+
+                    DateMidnight future = DateMidnight.now().plusMonths(maximumMonths);
+
+                    if (app.getEndDate().isAfter(future)) {
+                        errors.reject(ERROR_TOO_LONG);
+                    }
                 }
             }
         } else {
@@ -133,8 +137,7 @@ public class ApplicationValidator implements Validator {
 
 
     /**
-     * Check if application's period is in the past; to be able to display a warning message. ("Period is in the past.
-     * Are you sure?")
+     * Check if application's period is too long in the past.
      *
      * @param  target
      * @param  errors
@@ -152,18 +155,8 @@ public class ApplicationValidator implements Validator {
         }
 
         if (startDate != null) {
-            DateMidnight now = DateMidnight.now();
-
-            DateMidnight todaysMidnight = new DateMidnight(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth());
-
-            if (startDate.isBefore(todaysMidnight)) {
-                if (startDate.isBefore(DateMidnight.now().minusYears(1))) {
-                    model.addAttribute("setForce", 0);
-                    model.addAttribute("timeError", "error.period.past.wide");
-                } else {
-                    model.addAttribute("timeError", ERROR_PAST);
-                    model.addAttribute("setForce", 1);
-                }
+            if (startDate.isBefore(DateMidnight.now().minusYears(1))) {
+                model.addAttribute("timeError", ERROR_PAST);
             }
         }
     }

@@ -14,19 +14,9 @@ import java.util.List;
  */
 public interface PersonDAO extends JpaRepository<Person, Integer> {
 
-    // get Person by login name (from LDAP account)
-    @Query("select x from Person x where x.loginName = ?")
-    Person getPersonByLogin(String loginName);
-
-
-    @Query("select x from Person x where x.active = true order by x.firstName")
-    List<Person> getPersonsOrderedByLastName();
-
+    Person findByLoginName(String loginName);
 
     @Query("select x from Person x where x.active = false order by x.firstName")
-    List<Person> getInactivePersons();
+    List<Person> findInactive();
 
-
-    @Query("select x from Person x where x.id != ?1 and x.active = true order by x.firstName")
-    List<Person> getAllPersonsExceptOne(Integer id);
 }

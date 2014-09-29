@@ -63,23 +63,21 @@ public class PersonValidator implements Validator {
 
     private static final String MAX_DAYS = "annual.vacation.max";
 
-    private static final String CUSTOM_PROPERTIES_FILE = "custom.properties";
+    private static final String BUSINESS_PROPERTIES_FILE = "business.properties";
 
     private Pattern pattern;
     private Matcher matcher;
 
-    private PropertiesValidator propValidator;
-    private Properties customProperties;
+    private Properties businessProperties;
     private PersonService personService;
 
     @Autowired
-    public PersonValidator(PropertiesValidator propValidator, PersonService personService) {
+    public PersonValidator(PersonService personService) {
 
-        this.propValidator = propValidator;
         this.personService = personService;
 
         try {
-            this.customProperties = PropertiesUtil.load(CUSTOM_PROPERTIES_FILE);
+            this.businessProperties = PropertiesUtil.load(BUSINESS_PROPERTIES_FILE);
         } catch (Exception ex) {
             LOG.error("No properties file found.");
             LOG.error(ex.getMessage(), ex);
@@ -98,16 +96,12 @@ public class PersonValidator implements Validator {
 
         PersonForm form = (PersonForm) target;
 
-        // field first name
         validateName(form.getFirstName(), FIRST_NAME, errors);
 
-        // field last name
         validateName(form.getLastName(), LAST_NAME, errors);
 
-        // field email address
         validateEmail(form.getEmail(), errors);
 
-        // field year
         validateYear(form.getYear(), errors);
 
         validatePeriod(form, errors);
@@ -115,6 +109,12 @@ public class PersonValidator implements Validator {
         if (form.getValidFrom() == null) {
             errors.rejectValue("validFrom", MANDATORY_FIELD);
         }
+
+        validateAnnualVacation(form, errors, form.getLocale());
+
+        validateRemainingVacationDays(form, errors, form.getLocale());
+
+        validatePermissions(form, errors);
     }
 
 
@@ -244,10 +244,10 @@ public class PersonValidator implements Validator {
      * @param  errors
      * @param  locale
      */
-    public void validateAnnualVacation(PersonForm form, Errors errors, Locale locale) {
+    protected void validateAnnualVacation(PersonForm form, Errors errors, Locale locale) {
 
         // only achieved if invalid property values are precluded by method validateProperties
-        String propValue = customProperties.getProperty(MAX_DAYS);
+        String propValue = businessProperties.getProperty(MAX_DAYS);
         double max = Double.parseDouble(propValue);
 
         if (StringUtils.hasText(form.getAnnualVacationDays())) {
@@ -264,19 +264,6 @@ public class PersonValidator implements Validator {
 
 
     /**
-     * This method checks if the value of property with key 'annual.vacation.max' is valid. If it's not, the tool
-     * manager is notified and editing the person is not possible.
-     *
-     * @param  form
-     * @param  errors
-     */
-    public void validateProperties(PersonForm form, Errors errors) {
-
-        propValidator.validateAnnualVacationProperty(customProperties, errors);
-    }
-
-
-    /**
      * This method gets the property value for maximal number of days and notifies Tool-Manager if necessary (false
      * property value) or validate the number of entitlement's remaining vacation days with method validateNumberOfDays.
      *
@@ -284,10 +271,10 @@ public class PersonValidator implements Validator {
      * @param  errors
      * @param  locale
      */
-    public void validateRemainingVacationDays(PersonForm form, Errors errors, Locale locale) {
+    protected void validateRemainingVacationDays(PersonForm form, Errors errors, Locale locale) {
 
         // only achieved if invalid property values are precluded by method validateProperties
-        String propValue = customProperties.getProperty(MAX_DAYS);
+        String propValue = businessProperties.getProperty(MAX_DAYS);
         double max = Double.parseDouble(propValue);
 
         if (StringUtils.hasText(form.getRemainingVacationDays())) {
@@ -350,7 +337,8 @@ public class PersonValidator implements Validator {
         }
     }
 
-    public void validatePermissions(PersonForm personForm, Errors errors) {
+
+    protected void validatePermissions(PersonForm personForm, Errors errors) {
 
         List<Role> roles = personForm.getPermissions();
 

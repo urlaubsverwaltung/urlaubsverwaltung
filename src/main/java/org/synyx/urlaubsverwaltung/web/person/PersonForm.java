@@ -1,6 +1,10 @@
 
 package org.synyx.urlaubsverwaltung.web.person;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+
 import org.joda.time.DateMidnight;
 
 import org.synyx.urlaubsverwaltung.core.account.Account;
@@ -8,11 +12,13 @@ import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.calendar.Day;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.util.NumberUtil;
 import org.synyx.urlaubsverwaltung.security.Role;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 
 /**
@@ -54,34 +60,34 @@ public class PersonForm {
 
     private List<Role> permissions = new ArrayList<>();
 
+    private Locale locale;
+
     public PersonForm() {
-        /* Ok */
+
+        setDefaultValuesForValidity();
     }
 
 
-    public PersonForm(Person person, String year, Account account, String annualVacationDays,
-        String remainingVacationDays, boolean remainingVacationDaysExpire, WorkingTime workingTime, Collection<Role> roles) {
+    public PersonForm(Person person, String year, Account account, WorkingTime workingTime, Collection<Role> roles,
+        Locale locale) {
 
         this.loginName = person.getLoginName();
         this.lastName = person.getLastName();
         this.firstName = person.getFirstName();
         this.email = person.getEmail();
         this.year = year;
+        this.locale = locale;
 
         if (account != null) {
             this.dayFrom = String.valueOf(account.getValidFrom().getDayOfMonth());
             this.monthFrom = String.valueOf(account.getValidFrom().getMonthOfYear());
             this.dayTo = String.valueOf(account.getValidTo().getDayOfMonth());
             this.monthTo = String.valueOf(account.getValidTo().getMonthOfYear());
-            this.annualVacationDays = annualVacationDays;
-            this.remainingVacationDays = remainingVacationDays;
-            this.remainingVacationDaysExpire = remainingVacationDaysExpire;
+            this.annualVacationDays = NumberUtil.formatNumber(account.getAnnualVacationDays(), locale);
+            this.remainingVacationDays = NumberUtil.formatNumber(account.getRemainingVacationDays(), locale);
+            this.remainingVacationDaysExpire = account.isRemainingVacationDaysExpire();
         } else {
-            // default values for validFrom and validTo: 1.1. - 31.12.
-            this.dayFrom = String.valueOf(1);
-            this.monthFrom = String.valueOf(1);
-            this.dayTo = String.valueOf(31);
-            this.monthTo = String.valueOf(12);
+            setDefaultValuesForValidity();
         }
 
         this.workingDays = new ArrayList<>();
@@ -292,48 +298,62 @@ public class PersonForm {
         this.validFrom = validFrom;
     }
 
+
     public List<Role> getPermissions() {
+
         return permissions;
     }
 
+
     public void setPermissions(List<Role> permissions) {
+
         this.permissions = permissions;
     }
 
-    public Person fillPersonObject(Person person) {
 
-        person.setLoginName(this.loginName);
-        person.setLastName(this.lastName);
-        person.setFirstName(this.firstName);
-        person.setEmail(this.email);
+    public Locale getLocale() {
 
-        if (personShouldBeSetToInactive(this.permissions)) {
+        return locale;
+    }
+
+
+    public void setLocale(Locale locale) {
+
+        this.locale = locale;
+    }
+
+
+    public void fillPersonAttributes(Person person) {
+
+        person.setLoginName(loginName);
+        person.setLastName(lastName);
+        person.setFirstName(firstName);
+        person.setEmail(email);
+
+        if (personShouldBeSetToInactive(permissions)) {
             person.setActive(false);
 
-            List<Role> onlyInactive = new ArrayList<Role>();
+            List<Role> onlyInactive = new ArrayList<>();
             onlyInactive.add(Role.INACTIVE);
             person.setPermissions(onlyInactive);
         } else {
             person.setActive(true);
             person.setPermissions(permissions);
         }
-
-
-        return person;
     }
+
 
     private boolean personShouldBeSetToInactive(Collection<Role> permissions) {
 
-        boolean inactive = false;
+        Optional<Role> shouldBeInactiveOptional = Iterables.tryFind(permissions, new Predicate<Role>() {
 
-        if (permissions.size() == 1) {
-            for (Role r : permissions) {
-                if (r.equals(Role.INACTIVE)) {
-                    inactive = true;
-                }
-            }
-        }
+                    @Override
+                    public boolean apply(Role role) {
 
-        return inactive;
+                        return role.equals(Role.INACTIVE);
+                    }
+                });
+
+        return shouldBeInactiveOptional.isPresent();
     }
 }

@@ -82,7 +82,7 @@
                                 </sec:authorize>
 
                                 <sec:authorize access="hasRole('BOSS')">
-                                    <c:if test="${application.person.id != loggedUser.id && application.status.number == 0}">
+                                    <c:if test="${application.status.number == 0}">
                                         <div class="btn-group pull-right">
                                             <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
                                                 <i class="fa fa-edit"></i>
@@ -150,7 +150,7 @@
                         </sec:authorize>
 
                         <sec:authorize access="hasRole('BOSS')">
-                                <c:if test="${application.person.id != loggedUser.id && application.status.number == 0}">
+                                <c:if test="${application.status.number == 0}">
                                     <%@include file="./include/app-detail-elements/actions/allow_form.jsp" %>
                                     <%@include file="./include/app-detail-elements/actions/reject_form.jsp" %>
                                     <%@include file="./include/app-detail-elements/actions/refer_form.jsp" %>

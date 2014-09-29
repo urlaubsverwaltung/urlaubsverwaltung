@@ -27,17 +27,13 @@ import org.synyx.urlaubsverwaltung.core.calendar.Day;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.person.PersonInteractionService;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
-import org.synyx.urlaubsverwaltung.core.util.NumberUtil;
-import org.synyx.urlaubsverwaltung.security.Role;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.util.DateMidnightPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.validator.PersonValidator;
 
-import java.math.BigDecimal;
-
-import java.util.Collection;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
@@ -54,6 +50,9 @@ public class PersonManagementController {
     private static final String EDIT_LINK = ACTIVE_LINK + "/{" + PersonConstants.PERSON_ID + "}/edit";
     private static final String DEACTIVATE_LINK = ACTIVE_LINK + "/{" + PersonConstants.PERSON_ID + "}/deactivate";
     private static final String ACTIVATE_LINK = ACTIVE_LINK + "/{" + PersonConstants.PERSON_ID + "}/activate";
+
+    @Autowired
+    private PersonInteractionService personInteractionService;
 
     @Autowired
     private PersonService personService;
@@ -154,31 +153,9 @@ public class PersonManagementController {
 
         Account account = accountService.getHolidaysAccount(year, person);
 
-        BigDecimal annualVacationDays = null;
-        BigDecimal remainingVacationDays = null;
-        boolean remainingVacationDaysExpire = true;
-
-        if (account != null) {
-            annualVacationDays = account.getAnnualVacationDays();
-            remainingVacationDays = account.getRemainingVacationDays();
-            remainingVacationDaysExpire = account.isRemainingVacationDaysExpire();
-        }
-
-        String ann = "";
-        String rem = "";
-
-        if (annualVacationDays != null) {
-            ann = NumberUtil.formatNumber(annualVacationDays, locale);
-        }
-
-        if (remainingVacationDays != null) {
-            rem = NumberUtil.formatNumber(remainingVacationDays, locale);
-        }
-
         WorkingTime workingTime = workingTimeService.getCurrentOne(person);
 
-        return new PersonForm(person, String.valueOf(year), account, ann, rem, remainingVacationDaysExpire,
-                workingTime, person.getPermissions());
+        return new PersonForm(person, String.valueOf(year), account, workingTime, person.getPermissions(), locale);
     }
 
 
@@ -206,7 +183,6 @@ public class PersonManagementController {
     /**
      * Prepares the view object PersonForm and returns jsp with form to touch a new user.
      *
-     * @param  request
      * @param  model
      *
      * @return
@@ -217,8 +193,9 @@ public class PersonManagementController {
         if (sessionService.isOffice()) {
             Person person = new Person();
 
+            Locale locale = RequestContextUtils.getLocale(request);
+
             PersonForm personForm = new PersonForm();
-            personForm.setDefaultValuesForValidity();
             addModelAttributesForPersonForm(person, personForm, model);
 
             return PersonConstants.PERSON_FORM_JSP;
@@ -229,7 +206,7 @@ public class PersonManagementController {
 
 
     /**
-     * Gets informations out of view object PersonForm and edits the concerning person and their entitlement to holidays
+     * Gets information out of view object PersonForm and edits the concerning person and their entitlement to holidays
      * account.
      *
      * @param  request
@@ -249,21 +226,8 @@ public class PersonManagementController {
 
         Person personToUpdate = personService.getPersonByID(personId);
 
-        validator.validateProperties(personForm, errors); // validates if the set value of the property key is valid
-
-        if (errors.hasErrors()) {
-            addModelAttributesForPersonForm(personToUpdate, personForm, model);
-
-            return PersonConstants.PERSON_FORM_JSP;
-        }
-
-        validator.validate(personForm, errors); // validates the name fields, the email field and the year field
-
-        validator.validateAnnualVacation(personForm, errors, locale); // validates holiday entitlement's
-
-        validator.validateRemainingVacationDays(personForm, errors, locale); // validates remaining vacation days
-
-        validator.validatePermissions(personForm, errors);
+        personForm.setLocale(locale); // needed for number parsing
+        validator.validate(personForm, errors);
 
         if (errors.hasGlobalErrors()) {
             model.addAttribute("errors", errors);
@@ -275,7 +239,7 @@ public class PersonManagementController {
             return PersonConstants.PERSON_FORM_JSP;
         }
 
-        personService.createOrUpdate(personToUpdate, personForm, locale);
+        personInteractionService.createOrUpdate(personToUpdate, personForm, locale);
 
         return "redirect:/web/staff/" + personToUpdate.getId() + "/overview";
     }
@@ -289,39 +253,23 @@ public class PersonManagementController {
 
         Person person = new Person();
 
-        validator.validateProperties(personForm, errors); // validates if the set value of the property key is valid
+        // validate login name
+        validator.validateLogin(personForm.getLoginName(), errors);
 
-        if (errors.hasErrors()) {
-            addModelAttributesForPersonForm(person, personForm, model);
-
-            return PersonConstants.PERSON_FORM_JSP;
-        }
-
-        validator.validate(personForm, errors); // validates the name fields, the email field and the year field
+        personForm.setLocale(locale); // needed for number parsing
+        validator.validate(personForm, errors);
 
         if (errors.hasGlobalErrors()) {
             model.addAttribute("errors", errors);
         }
 
-        // validate login name
-        validator.validateLogin(personForm.getLoginName(), errors);
-
-        validator.validateAnnualVacation(personForm, errors, locale); // validates holiday entitlement's
-
-        // vacation days
-
-        validator.validateRemainingVacationDays(personForm, errors, locale); // validates holiday
-
-        // entitlement's remaining
-        // vacation days
-
         if (errors.hasErrors()) {
             addModelAttributesForPersonForm(person, personForm, model);
 
             return PersonConstants.PERSON_FORM_JSP;
         }
 
-        personService.createOrUpdate(person, personForm, locale);
+        personInteractionService.createOrUpdate(person, personForm, locale);
 
         return "redirect:/web/staff/" + person.getId() + "/overview";
     }
@@ -340,8 +288,7 @@ public class PersonManagementController {
 
         Person person = personService.getPersonByID(personId);
 
-        personService.deactivate(person);
-        personService.save(person);
+        personInteractionService.deactivate(person);
 
         return "redirect:/web" + ACTIVE_LINK;
     }
@@ -360,8 +307,7 @@ public class PersonManagementController {
 
         Person person = personService.getPersonByID(personId);
 
-        personService.activate(person);
-        personService.save(person);
+        personInteractionService.activate(person);
 
         return "redirect:/web" + ACTIVE_LINK;
     }

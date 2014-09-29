@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.application.domain;
 
+import com.google.common.base.MoreObjects;
+
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 
@@ -427,5 +429,35 @@ public class Application extends AbstractPersistable<Integer> {
     public void setTeamInformed(boolean teamInformed) {
 
         this.teamInformed = teamInformed;
+    }
+
+
+    @Override
+    public String toString() {
+
+        MoreObjects.ToStringHelper toStringHelper = MoreObjects.toStringHelper(this);
+
+        toStringHelper.add("id", getId());
+        toStringHelper.add("startDate", getStartDate());
+        toStringHelper.add("endDate", getEndDate());
+        toStringHelper.add("vacationType", getVacationType());
+        toStringHelper.add("dayLength", getHowLong());
+
+        if (getPerson() != null && getApplier() != null && getPerson().equals(getApplier())) {
+            toStringHelper.add("person", getPerson());
+        } else {
+            toStringHelper.add("person", getPerson());
+            toStringHelper.add("applier", getApplier());
+        }
+
+        if (getBoss() != null) {
+            toStringHelper.add("boss", getBoss());
+        }
+
+        if (getCanceller() != null) {
+            toStringHelper.add("canceller", getCanceller());
+        }
+
+        return toStringHelper.toString();
     }
 }

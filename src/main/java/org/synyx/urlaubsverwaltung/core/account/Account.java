@@ -2,18 +2,14 @@ package org.synyx.urlaubsverwaltung.core.account;
 
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
-
 import org.springframework.data.jpa.domain.AbstractPersistable;
-
 import org.synyx.urlaubsverwaltung.core.person.Person;
-
-import java.math.BigDecimal;
-
-import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
+import java.math.BigDecimal;
+import java.util.Date;
 
 
 /**
@@ -46,6 +42,7 @@ public class Account extends AbstractPersistable<Integer> {
     private boolean remainingVacationDaysExpire;
 
     public Account() {
+        /* OK */
     }
 
 
