@@ -40,7 +40,7 @@ public class PersonValidatorTest {
     public void setUp() {
 
         instance = new PersonValidator(personService);
-        form = new PersonForm(Locale.GERMAN);
+        form = new PersonForm();
     }
 
 
