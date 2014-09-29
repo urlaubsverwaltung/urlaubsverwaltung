@@ -10,9 +10,9 @@ import org.junit.Test;
 
 import org.mockito.Mockito;
 
-import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.application.service.CommentService;
+import org.synyx.urlaubsverwaltung.core.application.service.SignService;
 import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteCommentDAO;
@@ -32,11 +32,9 @@ public class SickNoteServiceTest {
     private SickNoteCommentDAO commentDAO;
     private OwnCalendarService calendarService;
     private ApplicationService applicationService;
+    private SignService signService;
     private CommentService commentService;
     private MailService mailService;
-
-    private SickNote sickNote;
-    private Application application;
 
     @Before
     public void setup() {
@@ -45,19 +43,19 @@ public class SickNoteServiceTest {
         commentDAO = Mockito.mock(SickNoteCommentDAO.class);
         calendarService = Mockito.mock(OwnCalendarService.class);
         applicationService = Mockito.mock(ApplicationService.class);
+        signService = Mockito.mock(SignService.class);
         commentService = Mockito.mock(CommentService.class);
         mailService = Mockito.mock(MailService.class);
 
-        service = new SickNoteService(sickNoteDAO, commentDAO, calendarService, applicationService, commentService,
-                mailService);
-
-        sickNote = new SickNote();
-        application = new Application();
+        service = new SickNoteService(sickNoteDAO, commentDAO, calendarService, applicationService, signService,
+                commentService, mailService);
     }
 
 
     @Test
     public void testAdjustSickNoteIdenticalRange() {
+
+        SickNote sickNote = new SickNote();
 
         sickNote.setStartDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 18));
         sickNote.setEndDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 22));

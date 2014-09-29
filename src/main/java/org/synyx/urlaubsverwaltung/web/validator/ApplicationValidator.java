@@ -8,8 +8,6 @@ import org.apache.log4j.Logger;
 
 import org.joda.time.DateMidnight;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Component;
 
 import org.springframework.ui.Model;
@@ -61,7 +59,6 @@ public class ApplicationValidator implements Validator {
 
     private Properties businessProperties;
 
-    @Autowired
     public ApplicationValidator() {
 
         try {
@@ -140,8 +137,7 @@ public class ApplicationValidator implements Validator {
 
 
     /**
-     * Check if application's period is in the past; to be able to display a warning message. ("Period is in the past.
-     * Are you sure?")
+     * Check if application's period is too long in the past.
      *
      * @param  target
      * @param  errors
@@ -159,18 +155,8 @@ public class ApplicationValidator implements Validator {
         }
 
         if (startDate != null) {
-            DateMidnight now = DateMidnight.now();
-
-            DateMidnight todaysMidnight = new DateMidnight(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth());
-
-            if (startDate.isBefore(todaysMidnight)) {
-                if (startDate.isBefore(DateMidnight.now().minusYears(1))) {
-                    model.addAttribute("setForce", 0);
-                    model.addAttribute("timeError", "error.period.past.wide");
-                } else {
-                    model.addAttribute("timeError", ERROR_PAST);
-                    model.addAttribute("setForce", 1);
-                }
+            if (startDate.isBefore(DateMidnight.now().minusYears(1))) {
+                model.addAttribute("timeError", ERROR_PAST);
             }
         }
     }

@@ -40,28 +40,20 @@
 <c:otherwise>
 
 <c:choose>
-    <c:when test="${setForce != null}">
-        <c:set var="forcy" value="${setForce}"/>
-    </c:when>
-    <c:otherwise>
-        <c:set var="forcy" value="0"/>
-    </c:otherwise>
-</c:choose>
-
-<c:choose>
     <c:when test="${person.id == loggedUser.id}">
         <c:set var="appliesAsRep" value="false"/>
-        <c:set var="actionUrl" value="${formUrlPrefix}/application/new?force=${forcy}"/>
+        <c:set var="actionUrl" value="${formUrlPrefix}/application/new"/>
     </c:when>
     <c:otherwise>
         <sec:authorize access="hasRole('OFFICE')">
             <c:set var="appliesAsRep" value="true"/>
-            <c:set var="actionUrl" value="${formUrlPrefix}/${person.id}/application/new?force=${forcy}"/>
+            <c:set var="actionUrl" value="${formUrlPrefix}/${person.id}/application/new"/>
         </sec:authorize>
     </c:otherwise>
 </c:choose>
 
 <form:form method="POST" action="${actionUrl}" modelAttribute="appForm" class="form-horizontal" role="form">
+<form:hidden path="person" value="${person.id}" />
 
 <c:if test="${not empty errors || timeError != null}">
 

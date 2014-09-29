@@ -103,7 +103,10 @@ public class CalculationService {
 
         BigDecimal vacationDays = calculateTotalLeftVacationDays(account);
 
-        if (vacationDays.compareTo(application.getDays()) >= 0) {
+        BigDecimal workDays = calendarService.getWorkDays(application.getHowLong(), application.getStartDate(),
+                application.getEndDate(), application.getPerson());
+
+        if (vacationDays.compareTo(workDays) >= 0) {
             return true;
         }
 
@@ -174,7 +177,7 @@ public class CalculationService {
         BigDecimal daysBeforeApril = getDaysBeforeApril(account);
         BigDecimal daysAfterApril = getDaysAfterApril(account);
 
-        if(daysBeforeApril.equals(BigDecimal.ZERO) && daysAfterApril.equals(BigDecimal.ZERO)) {
+        if (daysBeforeApril.equals(BigDecimal.ZERO) && daysAfterApril.equals(BigDecimal.ZERO)) {
             return vacationDays;
         }
 

@@ -19,6 +19,9 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
  */
 public class AppForm {
 
+    // person of the application for leave
+    private Person person;
+
     private DateMidnight startDate;
 
     private DateMidnight startDateHalf;
@@ -46,6 +49,18 @@ public class AppForm {
     private boolean teamInformed;
 
     private String comment;
+
+    public Person getPerson() {
+
+        return person;
+    }
+
+
+    public void setPerson(Person person) {
+
+        this.person = person;
+    }
+
 
     public String getAddress() {
 
@@ -183,22 +198,23 @@ public class AppForm {
 
         Application app = new Application();
 
-        app.setAddress(this.address);
-        app.setVacationType(this.vacationType);
-        app.setHowLong(this.howLong);
-        app.setReason(this.reason);
-        app.setRep(this.rep);
-        app.setAddress(this.address);
-        app.setApplicationDate(this.applicationDate);
-        app.setTeamInformed(this.teamInformed);
-        app.setComment(this.comment);
+        app.setPerson(person);
+        app.setAddress(address);
+        app.setVacationType(vacationType);
+        app.setHowLong(howLong);
+        app.setReason(reason);
+        app.setRep(rep);
+        app.setAddress(address);
+        app.setApplicationDate(applicationDate);
+        app.setTeamInformed(teamInformed);
+        app.setComment(comment);
 
-        if (this.howLong == DayLength.FULL) {
-            app.setStartDate(this.startDate);
-            app.setEndDate(this.endDate);
+        if (howLong == DayLength.FULL) {
+            app.setStartDate(startDate);
+            app.setEndDate(endDate);
         } else {
-            app.setStartDate(this.startDateHalf);
-            app.setEndDate(this.startDateHalf);
+            app.setStartDate(startDateHalf);
+            app.setEndDate(startDateHalf);
         }
 
         return app;

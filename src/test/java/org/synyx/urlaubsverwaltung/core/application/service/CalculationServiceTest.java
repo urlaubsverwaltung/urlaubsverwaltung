@@ -157,12 +157,12 @@ public class CalculationServiceTest {
 
         Application n = new Application();
         n.setStartDate(new DateMidnight(2012, DateTimeConstants.AUGUST, 20));
-        n.setEndDate(new DateMidnight(2012, DateTimeConstants.AUGUST, 22));
+        n.setEndDate(new DateMidnight(2012, DateTimeConstants.AUGUST, 21));
         n.setDays(BigDecimal.valueOf(2));
         n.setPerson(person);
         n.setHowLong(DayLength.FULL);
 
-        Assert.assertTrue(service.checkApplication(n));
+        Assert.assertTrue("Should be enough vacation days to apply for leave", service.checkApplication(n));
 
         // set days to little so it can't be true
         account = new Account(person, new DateMidnight(2012, DateTimeConstants.JANUARY, 1).toDate(),
@@ -175,7 +175,7 @@ public class CalculationServiceTest {
         Mockito.when(accountService.getHolidaysAccount(2012, person)).thenReturn(account);
         Mockito.when(accountService.getOrCreateNewAccount(2012, person)).thenReturn(account);
 
-        Assert.assertFalse(service.checkApplication(n));
+        Assert.assertFalse("Should NOT be enough vacation days to apply for leave", service.checkApplication(n));
 
         // set days so that sum is exact zero - so check is true
         account = new Account(person, new DateMidnight(2012, DateTimeConstants.JANUARY, 1).toDate(),
@@ -188,7 +188,7 @@ public class CalculationServiceTest {
         Mockito.when(accountService.getHolidaysAccount(2012, person)).thenReturn(account);
         Mockito.when(accountService.getOrCreateNewAccount(2012, person)).thenReturn(account);
 
-        Assert.assertTrue(service.checkApplication(n));
+        Assert.assertTrue("Should be enough vacation days to apply for leave", service.checkApplication(n));
 
         // remaining vacation days do not expire so it can be done
         account = new Account(person, new DateMidnight(2012, DateTimeConstants.JANUARY, 1).toDate(),
@@ -201,7 +201,7 @@ public class CalculationServiceTest {
         Mockito.when(accountService.getHolidaysAccount(2012, person)).thenReturn(account);
         Mockito.when(accountService.getOrCreateNewAccount(2012, person)).thenReturn(account);
 
-        Assert.assertTrue(service.checkApplication(n));
+        Assert.assertTrue("Should be enough vacation days to apply for leave", service.checkApplication(n));
     }
 
 
@@ -620,6 +620,7 @@ public class CalculationServiceTest {
         Assert.assertEquals(new BigDecimal("0"), remainingVacationDays);
     }
 
+
     @Test
     public void testCalculateLeftVacationDaysWhenNoVacationYetAndRemainingVacationDaysDoNotExpire() {
 
@@ -636,8 +637,8 @@ public class CalculationServiceTest {
 
         Assert.assertEquals(new BigDecimal("28"), vacationDays);
         Assert.assertEquals(new BigDecimal("4"), remainingVacationDays);
-
     }
+
 
     @Test
     public void testCalculateLeftVacationDaysWhenNoVacationYetAndRemainingVacationDaysDoExpire() {
@@ -655,8 +656,8 @@ public class CalculationServiceTest {
 
         Assert.assertEquals(new BigDecimal("28"), vacationDays);
         Assert.assertEquals(new BigDecimal("4"), remainingVacationDays);
-
     }
+
 
     private void initCustomService(final String daysBeforeApril, final String daysAfterApril) {
 

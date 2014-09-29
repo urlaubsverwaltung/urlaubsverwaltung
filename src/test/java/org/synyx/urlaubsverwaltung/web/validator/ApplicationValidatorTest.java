@@ -229,99 +229,6 @@ public class ApplicationValidatorTest {
 
 
     @Test
-    public void testValidateAppForTodayFullDay() {
-
-        Model model = Mockito.mock(Model.class);
-
-        DateMidnight today = DateMidnight.now();
-
-        app.setHowLong(DayLength.FULL);
-        app.setStartDate(today);
-
-        instance.validatePast(app, errors, model);
-        Mockito.verifyZeroInteractions(model);
-    }
-
-
-    @Test
-    public void testValidateAppForYesterdayFullDay() {
-
-        Model model = Mockito.mock(Model.class);
-
-        DateMidnight yesterday = DateMidnight.now().minusDays(1);
-
-        app.setHowLong(DayLength.FULL);
-        app.setStartDate(yesterday);
-
-        instance.validatePast(app, errors, model);
-        Mockito.verify(model).addAttribute("timeError", "error.period.past");
-        Mockito.verify(model).addAttribute("setForce", 1);
-    }
-
-
-    @Test
-    public void testValidateAppForTodayMorning() {
-
-        Model model = Mockito.mock(Model.class);
-
-        DateMidnight today = DateMidnight.now();
-
-        app.setHowLong(DayLength.MORNING);
-        app.setStartDateHalf(today);
-
-        instance.validatePast(app, errors, model);
-        Mockito.verifyZeroInteractions(model);
-    }
-
-
-    @Test
-    public void testValidateAppForTodayAfternoon() {
-
-        Model model = Mockito.mock(Model.class);
-
-        DateMidnight today = DateMidnight.now();
-
-        app.setHowLong(DayLength.MORNING);
-        app.setStartDateHalf(today);
-
-        instance.validatePast(app, errors, model);
-        Mockito.verifyZeroInteractions(model);
-    }
-
-
-    @Test
-    public void testValidateAppForYesterdayMorning() {
-
-        Model model = Mockito.mock(Model.class);
-
-        DateMidnight yesterday = DateMidnight.now().minusDays(1);
-
-        app.setHowLong(DayLength.MORNING);
-        app.setStartDateHalf(yesterday);
-
-        instance.validatePast(app, errors, model);
-        Mockito.verify(model).addAttribute("timeError", "error.period.past");
-        Mockito.verify(model).addAttribute("setForce", 1);
-    }
-
-
-    @Test
-    public void testValidateAppForYesterdayAfternoon() {
-
-        Model model = Mockito.mock(Model.class);
-
-        DateMidnight yesterday = DateMidnight.now().minusDays(1);
-
-        app.setHowLong(DayLength.MORNING);
-        app.setStartDateHalf(yesterday);
-
-        instance.validatePast(app, errors, model);
-        Mockito.verify(model).addAttribute("timeError", "error.period.past");
-        Mockito.verify(model).addAttribute("setForce", 1);
-    }
-
-
-    @Test
     public void testValidateAppForVeryPastDate() {
 
         Model model = Mockito.mock(Model.class);
@@ -332,8 +239,7 @@ public class ApplicationValidatorTest {
         app.setStartDate(date);
 
         instance.validatePast(app, errors, model);
-        Mockito.verify(model).addAttribute("timeError", "error.period.past.wide");
-        Mockito.verify(model).addAttribute("setForce", 0);
+        Mockito.verify(model).addAttribute("timeError", "error.period.past");
     }
 
 
