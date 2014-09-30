@@ -1,9 +1,30 @@
 .box {
-    min-height: 105px;
+    min-height: 120px;
     padding: 20px;
-    border: 1px solid #DDDDDD;
+    border: 1px solid #D5D5D5;
     font-size: 12px;
     background-color: #FFF;
+    /*background-color: #fafafa;*/
+}
+
+.box .one {
+    vertical-align: middle;
+    line-height: 80px; 
+}
+
+.box .halves {
+    vertical-align: middle;
+    line-height: 40px; 
+}
+
+.box .thirds {
+    vertical-align: middle;
+    line-height: 20px;
+}
+
+.box .quarter {
+    vertical-align: middle;
+    line-height: 20px; 
 }
 
 .box-image {
@@ -14,39 +35,21 @@
 }
 
 .box-icon {
+    height: 60px;
+    width: 60px;
+    float: left;
+    margin: 10px 20px 0px 0;
+}
+
+.box-icon {
     border-radius: 50%;
     display: block;
-    float: left;
     font-size: 35px;
-    margin: 0 10px 10px 0;
     text-align: center;
     vertical-align: middle;
-    height: 65px;
-    width: 65px;
 }
 
 .box-icon,
 .box-icon .fa {
-    line-height: 65px; 
-}
-
-.box-icon.bg-green {
-    /*background-color: #23AE89;*/
-    background-color: #59AB02;
-    color: white;
-}
-
-.box-icon.bg-red {
-    background-color: #E94B3B;
-    color: white;
-}
-
-.box-icon.bg-blue {
-    background-color: #2EC1CC;
-    color: white;
-}
-
-.box-icon.bg-yellow {
-    background-color: #FFB61C;
-    color: white;
+    line-height: 60px;
 }

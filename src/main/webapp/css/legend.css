@@ -1,0 +1,23 @@
+/**************************************************************************
+  
+  LEGEND
+  
+**************************************************************************/
+
+ /* TODO: remove this */
+legend.sticky {
+    margin-bottom: 12px;
+}
+
+legend {
+    border-color: #D5D5D5;
+    margin-bottom: 0;
+}
+
+.header legend p {
+    font-family: PF Handbook Pro, sans-serif;
+    font-size: 30px;
+    color: #516310;
+    display: inline-block;
+    margin-bottom: 0;
+}

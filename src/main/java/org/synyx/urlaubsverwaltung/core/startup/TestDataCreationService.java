@@ -83,7 +83,6 @@ public class TestDataCreationService {
 
             createTestData(user);
             createTestData(boss);
-            createTestData(office);
         } else {
             LOG.info("No test data is created.");
         }
@@ -137,8 +136,8 @@ public class TestDataCreationService {
         createCancelledApplication(person, VacationType.HOLIDAY, DayLength.FULL, now.minusDays(11), now.minusDays(10));
 
         // SICK NOTES
-        createSickNote(person, now.minusDays(10), now.minusDays(10));
-        createSickNote(person, now.minusDays(30), now.minusDays(25));
+        createSickNote(person, now.minusDays(10), now.minusDays(10), false);
+        createSickNote(person, now.minusDays(30), now.minusDays(25), true);
     }
 
 
@@ -200,13 +199,19 @@ public class TestDataCreationService {
     }
 
 
-    private SickNote createSickNote(Person person, DateMidnight startDate, DateMidnight endDate) {
+    private SickNote createSickNote(Person person, DateMidnight startDate, DateMidnight endDate, boolean withAUB) {
 
         SickNote sickNote = new SickNote();
         sickNote.setPerson(person);
         sickNote.setStartDate(startDate);
         sickNote.setEndDate(endDate);
         sickNote.setActive(ACTIVE);
+
+        if (withAUB) {
+            sickNote.setAubPresent(true);
+            sickNote.setAubStartDate(startDate);
+            sickNote.setAubEndDate(endDate);
+        }
 
         sickNoteService.touch(sickNote, SickNoteStatus.CREATED, office);
 

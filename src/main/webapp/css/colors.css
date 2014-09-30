@@ -1,0 +1,20 @@
+.bg-green {
+    /*background-color: #23AE89;*/
+    background-color: #59AB02;
+    color: white;
+}
+
+.bg-red {
+    background-color: #E94B3B;
+    color: white;
+}
+
+.bg-blue {
+    background-color: #2EC1CC;
+    color: white;
+}
+
+.bg-yellow {
+    background-color: #FFB61C;
+    color: white;
+}

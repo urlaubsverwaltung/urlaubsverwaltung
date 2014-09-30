@@ -27,7 +27,7 @@
 
 <div class="content">
 
-<div class="container-fluid">
+<div class="container">
 
 <c:choose>
 

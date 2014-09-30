@@ -1,0 +1,107 @@
+/**************************************************************************
+  
+  TABLES
+  
+**************************************************************************/
+
+.list-table {
+    width: 100%;
+    border-left: 1px solid #DDDDDD;
+    border-right: 1px solid #DDDDDD;
+    font-size: 12px;
+}
+
+.list-table td {
+    vertical-align: middle !important;
+    background-color: #FFF;
+    /*background-color: #F8F8F8;*/
+    padding: 12px;
+    border-top: 1px solid #DDDDDD;
+}
+
+.list-table tr:last-child td {
+    border-bottom: 1px solid #DDDDDD;
+}
+
+.list-table td.WAITING {
+    /*color: #31708F;*/
+    color: #FFF;
+    background-color: #52B9E9;
+    /*background-color: #75B9E6;*/
+    /*background-color: #D9EDF7;*/
+}
+
+.list-table td.ALLOWED {
+    /*color: #3C763D;*/
+    color: #FFF;
+    /*background-color: #DFF0D8;*/
+    /*background-color: #60CE8C;*/
+    background-color: #43C83C;
+}
+
+.list-table td.REJECTED {
+    color: #A94442;
+    background-color: #FA3031 !important;
+    /*background-color: #F2DEDE !important;*/
+}
+
+.list-table td.CANCELLED {
+    color: #fff;
+    /*color: #777777;*/
+    background-color: #E6E6E6 !important;
+}
+
+.data-table {
+    width: 100%;
+    border: 1px solid #EAF2D3;
+    font-size: 13px;
+}
+
+.data-table tr:hover {
+    cursor: pointer;
+}
+
+.data-table th {
+    background-color: #ABC452;
+    padding: 6px;
+    text-align: center;
+}
+
+.data-table td {
+    padding: 6px;
+}
+
+/* zebra table with for each loop status */
+tr.odd {
+    background-color: #EAF2D3
+}
+
+tr.even {
+    background-color: #FFFFFF
+}
+
+/* zebra table with jquery */
+tr.alt td {
+    background: #EAF2D3
+}
+
+/* mouse over rows */
+tr.over td {
+    background: #DEEFA4;
+}
+
+tr.active {
+    color: inherit;
+}
+
+tr.inactive td {
+    color: lightgrey !important;
+}
+
+.tablesorter th, .tablesorter td {
+    border: 1px solid #d7d7d7;
+}
+
+th.tablesorter-headerDesc, th.tablesorter-headerAsc {
+    background-color: #99AF4C !important;
+}

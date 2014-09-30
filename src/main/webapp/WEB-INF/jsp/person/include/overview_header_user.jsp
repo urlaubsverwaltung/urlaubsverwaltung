@@ -10,8 +10,11 @@
 
     <legend>
         <p>
-            <span class="hidden-xs"><uv:year-selector year="${year}" /></span>
+            <spring:message code="table.overview"/> <c:out value="${displayYear}"/>
         </p>
+        <span class="hidden-xs">
+            <uv:year-selector year="${year}" />
+        </span>
         <span class="hidden-sm hidden-xs">
             <uv:print />
         </span>

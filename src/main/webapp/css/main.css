@@ -1,7 +1,11 @@
+@import "colors.css";
 @import "navbar.css";
 @import "calendar.css";
 @import "form.css";
+@import "button.css";
 @import "box.css";
+@import "legend.css";
+@import "table.css";
 @import "print.css";
 
 /**************************************************************************
@@ -14,16 +18,19 @@ body {
     font-family: Verdana,sans-serif;
     font-size: 12px;
     margin: 0;
-    background-color: #F6F6F6;
 }
 
 .content {
-    margin: 18px;
-    margin-top: 32px;
+    /* = height of navbar (50px) plus margin-bottom of row (27px) */
+    margin-top: 77px;
+}
+
+hr {
+    border-color: #D5D5D5;
 }
 
 .row {
-    margin-bottom: 18px;
+    margin-bottom: 27px;
 }
 
 footer {
@@ -49,166 +56,7 @@ footer {
     text-align: center;
 }
 
-.person-box {
-    /*OK*/
-}
-
-.person-box {
-    border-radius: 0;
-}
-
-.person-box .panel-heading,
-.person-box .panel-body {
-    padding: 0;
-}
-
-.person-box .list-group {
-    margin: 0;
-}
-
-.person-box .list-group li {
-    border: 0 0 1px 0 solid #DDDDDD;
-    border-radius: 0;
-}
-
-.person-box--content {
-    height: 80px;
-    padding-right: 24px;
-    display: inline-block;
-    vertical-align: middle;
-}
-
-.content-title {
-    color: #516310;
-}
-
-/**************************************************************************
-  
-  TABLES
-  
-**************************************************************************/
-
-.list-table {
-    width: 100%;
-    border-left: 1px solid #DDDDDD;
-    border-right: 1px solid #DDDDDD;
-    font-size: 12px;
-}
-
-.list-table td {
-    vertical-align: middle !important;
-    background-color: #FFF;
-    /*background-color: #F8F8F8;*/
-    padding: 12px;
-    border-top: 1px solid #DDDDDD;
-}
-
-.list-table tr:last-child td {
-    border-bottom: 1px solid #DDDDDD;
-}
-
-.list-table td.WAITING {
-    /*color: #31708F;*/
-    color: #FFF;
-    background-color: #52B9E9;
-    /*background-color: #75B9E6;*/
-    /*background-color: #D9EDF7;*/
-}
-
-.list-table td.ALLOWED {
-    /*color: #3C763D;*/
-    color: #FFF;
-    /*background-color: #DFF0D8;*/
-    /*background-color: #60CE8C;*/
-    background-color: #43C83C;
-}
-
-.list-table td.REJECTED {
-    color: #A94442;
-    background-color: #FA3031 !important;
-    /*background-color: #F2DEDE !important;*/
-}
-
-.list-table td.CANCELLED {
-    color: #fff;
-    /*color: #777777;*/
-    background-color: #E6E6E6 !important;
-}
-
-.data-table {
-    width: 100%;
-    border: 1px solid #EAF2D3;
-    font-size: 13px;
-}
-
-.data-table tr:hover {
-    cursor: pointer;
-}
-
-.data-table th {
-    background-color: #ABC452;
-    padding: 6px;
-    text-align: center;
-}
-
-.data-table td {
-    padding: 6px; 
-}
-
-/* zebra table with for each loop status */
-tr.odd {
-    background-color: #EAF2D3
-}
-
-tr.even {
-    background-color: #FFFFFF
-}
-
-/* zebra table with jquery */
-tr.alt td {
-    background: #EAF2D3
-}
-
-/* mouse over rows */
-tr.over td {
-    background: #DEEFA4;
-}
-
-tr.active {
-    color: inherit;
-}
-
-tr.inactive td {
-    color: lightgrey !important;
-}
-
-.tablesorter th, .tablesorter td {
-    border: 1px solid #d7d7d7;
-}
-
-th.tablesorter-headerDesc, th.tablesorter-headerAsc {
-    background-color: #99AF4C !important;
-}
-
-/**************************************************************************
-  
-  BUTTONS
-  
-**************************************************************************/
-
-.btn {
-    margin-right: 6px;
-    margin-bottom: 6px;
-}
-
-.btn-compound {
-    margin-right: 0;
-}
-
-.btn-default {
-    /*background-color: #F8F8F8;*/
-}
-
+/* TODO: remove this */
 /**************************************************************************
   
   DETAILS TABLE
@@ -228,31 +76,6 @@ th.tablesorter-headerDesc, th.tablesorter-headerAsc {
     border: 1px solid #EAF2D3;
     font-size: 1.05em;
     margin-right:1em;
-}
-
-/**************************************************************************
-  
-  OVERVIEW SPECIFIC STYLING RULES
-  
-**************************************************************************/
-
-.overview--user-pic {
-    padding: 3px;
-}
-
-/**************************************************************************
-  
-  LEGEND
-  
-**************************************************************************/
-
-legend.sticky {
-    margin-bottom: 12px;
-}
-
-.header legend p {
-    display: inline-block;
-    color: #1B2A05;
 }
 
 /**************************************************************************

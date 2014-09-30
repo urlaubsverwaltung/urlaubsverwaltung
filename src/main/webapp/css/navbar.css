@@ -1,78 +1,30 @@
 /**************************************************************************
   
-  HEADER
+  NAVIGATION BAR
   
 **************************************************************************/
 
 .navbar {
     font-size: 14px;
     background-image: none;
-    /*background-color: #95bd28;*/
-    /*background-color: #56aa38;*/
-    /*background-color: #8fbc2b;*/
-    /*border-radius: 0;*/
+    background-color: #F5F5F5;
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
     border-radius: 0;
-    background-color: #fff;
     border-top: 0;
     border-left: 0;
     border-right: 0;
 }
 
 .navbar a {
-    color: #1B2A05 !important;
+    color: #4d5258 !important;
 }
 
 .navbar a.navbar-brand {
-    color: #1B2A05 !important;
+    font-family: PF Handbook Pro, sans-serif;
+    font-size: 25px;
+    color: #516310 !important;
 }
 
-/*.navbar a:hover {*/
-    /*color: #0083CC !important;*/
-    /*text-decoration: none;*/
-/*}*/
-
-.navbar li:hover {
-    /*background-color: #E6E6E6;*/
-}
-
-.navbar .icon {
-    /*border: 3px solid #56bc94;*/
-    border: 3px solid #59AB02;
-    /*border: 3px solid #B2C900;*/
-    border-radius: 50%;
-    display: block;
-    float: left;
-    font-size: 35px;
-    margin: 0 10px 10px 0;
-    text-align: center;
-    vertical-align: middle;
-    height: 65px;
-    width: 65px;
-    transition: transform 0.2s ease-out 0s, background 0.2s ease 0s;
-}
-
-.navbar .icon .fa {
-    color: #59AB02;
-    /*color: #56bc94;*/
-    /*color: #B2C900;*/
-    font-size: 35px;
-    text-align: center;
-    vertical-align: middle;
-}
-
-.navbar .icon,
-.navbar .icon .fa {
-    line-height: 65px;
-}
-
-.navbar .icon:hover {
-    /*background-color: #B2C900;*/
-    /*background-color: #D8E47F;*/
-    /*background-color: #56bc94;*/
-    background-color: #59AB02;
-}
-
-.navbar .icon:hover .fa {
-    color: white;
+.navbar a:hover {
+    color: #59AB02 !important;
 }

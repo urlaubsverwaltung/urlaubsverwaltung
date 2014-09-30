@@ -17,25 +17,6 @@
             <c:otherwise>
 
                 <table class="list-table">
-                    <%--<thead>--%>
-                        <%--<tr>--%>
-                            <%--<th>--%>
-                                <%--<a href="#">--%>
-                                    <%--<spring:message code="type" />--%>
-                                <%--</a>--%>
-                            <%--</th>--%>
-                            <%--<th>--%>
-                                <%--<a href="#">--%>
-                                    <%--<spring:message code="days.vac" />--%>
-                                <%--</a>--%>
-                            <%--</th>--%>
-                            <%--<th>--%>
-                                <%--<a href="#">--%>
-                                    <%--<spring:message code="state" />--%>
-                                <%--</a>--%>
-                            <%--</th>--%>
-                        <%--</tr>--%>
-                    <%--</thead>--%>
                     <tbody>
                     <c:forEach items="${applications}" var="app" varStatus="loopStatus">
                         <c:choose>
@@ -51,7 +32,7 @@
                             <span class="print--visible">
                                 <spring:message code="${app.status.state}" />
                             </span>
-                            <span class="print--invisible">
+                            <span class="print--invisible box-icon">
                                  <c:choose>
                                      <c:when test="${app.status == 'WAITING'}">
                                          <i class="fa fa-question"></i>

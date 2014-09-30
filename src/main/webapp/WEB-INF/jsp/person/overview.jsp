@@ -53,7 +53,7 @@
 
 <div class="content">
 
-    <div class="container-fluid">
+    <div class="container">
 
         <div class="row">
 
@@ -78,27 +78,59 @@
                     </c:otherwise>
                 </c:choose>
             </div>
-
-            <div class="col-xs-12 col-sm-4">
-                <div class="box">
-                    <img class="box-image img-circle print--invisible" src="<c:out value='${gravatar}?d=mm&s=80'/>"/>
-                    @<c:out value="${person.loginName}"/>
-                    <h4><c:out value="${person.niceName}"/></h4>
-                    <i class="fa fa-envelope"></i> <c:out value="${person.email}"/>
-                </div>
-            </div>
-
-            <div class="col-xs-12 col-sm-4">
-                <div class="box">
-                    <span class="box-icon bg-green"><i class="fa fa-calendar"></i></span>
-                    Es wurden verplant <h4>19 Urlaubstage</h4> (davon sind 20 Tage genehmigt <i class="fa fa-check"></i>)
-                </div>
-            </div>
             
+        </div>
+        
+        <div class="row">
+
             <div class="col-xs-12 col-sm-4">
                 <div class="box">
-                    <span class="box-icon bg-red"><i class="fa fa-medkit"></i></span>
-                    Es bestehen <h4>5 Krankheitstage</h4> (davon sind 2 Tage Kind-Krankheitstage <i class="fa fa-child"></i>)
+                    <span class="thirds">
+                        <img class="box-image img-circle print--invisible" src="<c:out value='${gravatar}?d=mm&s=80'/>"/>
+                        @<c:out value="${person.loginName}"/>
+                        <h4><c:out value="${person.niceName}"/></h4>
+                        <i class="fa fa-envelope"></i> <c:out value="${person.email}"/>
+                    </span>
+                </div>
+            </div>
+
+            <div class="col-xs-12 col-sm-4">
+                <div class="box">
+                    <span class="box-icon bg-blue"><i class="fa fa-calendar"></i></span>
+                    <c:choose>
+                        <c:when test="${account != null}">
+                            <span class="thirds">
+                                <spring:message code="overview.vacation.entitlement" arguments="${account.vacationDays},${account.remainingVacationDays}" argumentSeparator="," />
+                            </span>
+                        </c:when>
+                        <c:otherwise>
+                            <span class="one"><spring:message code='not.specified'/></span>
+                        </c:otherwise>
+                    </c:choose>
+                </div>
+            </div>
+
+            <div class="col-xs-12 col-sm-4">
+                <div class="box">
+                    <span class="box-icon bg-yellow"><i class="fa fa-tasks"></i></span>
+                    <c:choose>
+                        <c:when test="${account != null}">
+                            <span class="thirds">
+                                <spring:message code="overview.vacation.left" arguments="${leftDays}" />
+                                <c:choose>
+                                    <c:when test="${beforeApril || !account.remainingVacationDaysExpire}">
+                                        <spring:message code="overview.vacation.left.remaining" arguments="${remLeftDays}" />
+                                    </c:when>
+                                    <c:otherwise>
+                                        <spring:message code="overview.vacation.left.remaining.expired" />
+                                    </c:otherwise>
+                                </c:choose>
+                            </span>
+                        </c:when>
+                        <c:otherwise>
+                            <span class="one"><spring:message code='not.specified'/></span>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
             </div>
 
@@ -203,29 +235,54 @@
 
         <div class="row">
 
-            <div class="col-xs-12 col-sm-6">
+            <div class="col-xs-12 col-sm-4">
+                <div class="box">
+                    <span class="box-icon"><i class="fa fa-calendar"></i></span>
+                    Es wurden verplant <h4>19 Urlaubstage</h4> (davon sind 20 Tage genehmigt <i class="fa fa-check"></i>)
+                </div>
+            </div>
+
+            <div class="col-xs-12 col-sm-8">
                 <div id="datepicker"></div>
             </div>
 
-            <div class="col-xs-12 col-sm-3">
-                <div class="box">
-                    <span class="box-icon bg-blue"><i class="fa fa-calendar-o"></i></span>
-                    Es besteht ein <b>Anspruch</b> von <h4>19 Urlaubstagen</h4> (davon sind 4 Tage Resturlaub)
-                </div>
-            </div>
-            <div class="col-xs-12 col-sm-3">
-                <div class="box">
-                    <span class="box-icon bg-yellow"><i class="fa fa-tasks"></i></span>
-                    Es <b>verbleiben</b> <h4>15 Urlaubstage</h4> (davon sind 0 Tage Resturlaub)
-                </div>
-            </div>
-            
+        </div>
+        
+        <div class="row">
+
             <div class="col-xs-12">
                 <%@include file="./include/overview_app_list.jsp" %>
             </div>
 
         </div>
 
+        <div class="row">
+
+            <div class="col-xs-12">
+
+                <div class="header">
+
+                    <legend id="sickNotes">
+                        <p>
+                            <spring:message code="sicknotes" />
+                        </p>
+                    </legend>
+
+                </div>
+                
+            </div>
+            
+        </div>
+        
+        <div class="row">
+            <div class="col-xs-12 col-sm-4">
+                <div class="box">
+                    <span class="box-icon bg-red"><i class="fa fa-medkit"></i></span>
+                    Es bestehen <h4>5 Krankheitstage</h4> (davon sind 2 Tage Kind-Krankheitstage <i class="fa fa-child"></i>)
+                </div>
+            </div>
+        </div>
+        
         <div class="row">
             <div class="col-xs-12">
                 <c:choose>

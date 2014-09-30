@@ -2,7 +2,7 @@
 
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1"/>
-<title><spring:message code="title"/></title>
+<title><spring:message code="nav.title"/></title>
 <link rel="shortcut icon" type="image/x-icon" href="<spring:url value='/favicon.ico?' />" />
 <link rel="stylesheet" type="text/css" href="<spring:url value='/jquery/css/ui-lightness/jquery-ui-1.10.3.custom.css' />" />
 <link rel="stylesheet" type="text/css" href="<spring:url value='/css/bootstrap.min.css' />" />
