@@ -3,8 +3,8 @@
     padding: 20px;
     border: 1px solid #D5D5D5;
     font-size: 12px;
-    background-color: #FFF;
-    /*background-color: #fafafa;*/
+    background-color: #FAFAFA;
+    /*box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);*/
 }
 
 .box .one {

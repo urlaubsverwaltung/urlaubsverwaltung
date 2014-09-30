@@ -13,10 +13,10 @@ tr.active {
 }
 
 tr.inactive td {
-    color: #777777 !important;
+    /*color: #777777 !important;*/
 }
 
-tr.inactive a {
+tr.inactive td > * {
     opacity: 0.6;
 }
 
@@ -33,7 +33,7 @@ tr.inactive a {
 
 .list-table td {
     vertical-align: middle !important;
-    background-color: #FFF;
+    background-color: #FAFAFA;
     padding: 12px;
     border-top: 1px solid #DDDDDD;
 }
@@ -58,11 +58,6 @@ tr.inactive a {
 
 .list-table .state {
     font-size: 25px;
-}
-
-.list-table .state.REJECTED,
-.list-table .state.CANCELLED {
-    opacity: 0.5;
 }
 
 /**************************************************************************
