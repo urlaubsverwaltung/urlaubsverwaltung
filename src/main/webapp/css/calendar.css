@@ -18,15 +18,54 @@
     border-radius: 0;
 }
 
+/* BUTTONS */
+
+.datepicker-prev,
+.datepicker-next {
+    margin: 6px;
+    border: none;
+    padding: 6px;
+    cursor: pointer;
+    background-color: transparent;
+    font-size: 20px;
+    color: #1896DB;
+}
+
+.datepicker-prev:hover,
+.datepicker-next:hover {
+    color: #59AB02
+}
+
+/* MONTHS */
+
 .datepicker-months-container {
     position: relative;
-
     /* months outside this div should not be visible */
     overflow: hidden;
-
     width: auto;
     height: auto;
     border: 1px solid #DDD;
+}
+
+/* MONTH */
+
+.datepicker-month {
+    width: auto;
+    float: left;
+    background-color: #FAFAFA;
+}
+
+.datepicker-month-next {
+    display: none;
+}
+
+.datepicker-month h3 {
+    margin : 0;
+    padding: 8px;
+    font-size: 12px;
+    text-align: center;
+    background-color: #7B7B7B;
+    color: #FAFAFA;
 }
 
 .datepicker-table {
@@ -46,41 +85,6 @@
 
 .datepicker-table thead tr th {
     padding: .5em;
-}
-
-.datepicker-prev,
-.datepicker-next {
-    margin: 6px;
-    border: none;
-    padding: 6px;
-    cursor: pointer;
-    background-color: transparent;
-    font-size: 20px;
-    color: #1896DB;
-}
-
-.datepicker-prev:hover,
-.datepicker-next:hover {
-    color: #59AB02
-}
-
-.datepicker-month {
-    width: auto;
-    float: left;
-    background-color: #FAFAFA;
-}
-
-.datepicker-month-next {
-    display: none;
-}
-
-.datepicker-month h3 {
-    margin : 0;
-    padding: 8px;
-    font-size: 12px;
-    text-align: center;
-    background-color: #7B7B7B;
-    color: #FAFAFA;
 }
 
 .datepicker-day {
@@ -110,7 +114,6 @@
     border-bottom-color: #E5F5E0;
 }
 
-
 .datepicker-day-public-holiday {
     color: #31A354;
     background-color: #E5F5E0;
@@ -125,7 +128,6 @@
     color: #31A354;
     background: linear-gradient(-45deg, #E5F5E0 50%, #FFF 50%);
 }
-
 
 .datepicker-day:not([data-datepicker-selectable=false]) {
     cursor: pointer;
@@ -163,19 +165,4 @@
     background: linear-gradient(-45deg, #E5F5E0 50%, #ABC452 50%) !important;
     border-right-color: #92AA3E;
     border-bottom-color: #92AA3E;
-}
-
-td.notworkday a {
-    color: #31A354 !important;
-    background: #E5F5E0 !important;
-}
-
-td.halfworkday a {
-    color: #31A354 !important;
-    background: linear-gradient(-45deg, #E5F5E0 50%, #FFF 50%) !important;
-}
-
-td.holiday a {
-    color: #F8B851 !important;
-    background: #FFEDA0 !important;
 }
