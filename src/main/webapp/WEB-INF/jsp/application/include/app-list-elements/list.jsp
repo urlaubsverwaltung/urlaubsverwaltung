@@ -70,14 +70,20 @@
                             </c:choose>
                         </p>
                     </td>
-                    <td class="is-centered">
+                    <td class="is-centered hidden-xs">
                         <span><fmt:formatNumber maxFractionDigits="1" value="${app.days}" /> Tage</span>
                     </td>
                     <td>
-                        <img class="box-image img-circle print--invisible" src="<c:out value='${gravatarUrls[app]}?d=mm&s=80'/>"/>
-                        <i class="fa fa-at"></i> <c:out value="${app.person.loginName}"/>
-                        <h4><c:out value="${app.person.niceName}"/></h4>
-                        <i class="fa fa-envelope"></i> <c:out value="${app.person.email}"/>
+                        <span class="hidden-xs hidden-sm">
+                            <img class="box-image img-circle print--invisible" src="<c:out value='${gravatarUrls[app]}?d=mm&s=80'/>"/>
+                            <i class="fa fa-at"></i> <c:out value="${app.person.loginName}"/>
+                            <h4><c:out value="${app.person.niceName}"/></h4>
+                            <i class="fa fa-envelope"></i> <c:out value="${app.person.email}"/>
+                        </span>
+                        <span class="visible-xs visible-sm">
+                            <img class="box-image img-circle print--invisible" src="<c:out value='${gravatarUrls[app]}?d=mm&s=60'/>"/>
+                            <span><c:out value="${app.person.niceName}"/></span>
+                        </span>
                     </td>
 
                 </tr>
