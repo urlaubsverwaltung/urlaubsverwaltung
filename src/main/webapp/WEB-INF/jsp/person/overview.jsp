@@ -87,7 +87,7 @@
                 <div class="box">
                     <span class="thirds">
                         <img class="box-image img-circle print--invisible" src="<c:out value='${gravatar}?d=mm&s=80'/>"/>
-                        @<c:out value="${person.loginName}"/>
+                        <i class="fa fa-at"></i> <c:out value="${person.loginName}"/>
                         <h4><c:out value="${person.niceName}"/></h4>
                         <i class="fa fa-envelope"></i> <c:out value="${person.email}"/>
                     </span>
@@ -113,7 +113,7 @@
 
             <div class="col-xs-12 col-sm-4">
                 <div class="box">
-                    <span class="box-icon bg-blue"><i class="fa fa-tasks"></i></span>
+                    <span class="box-icon bg-green"><i class="fa fa-bar-chart"></i></span>
                     <c:choose>
                         <c:when test="${account != null}">
                             <span class="thirds">
@@ -276,7 +276,7 @@
                 <div class="box">
                     <span class="box-icon bg-yellow"><i class="fa fa-sun-o"></i></span>
                     <spring:message code="overview.vacations.holidayLeave" arguments="${holidayLeave}" />
-                    <i class="fa fa-check state ALLOWED"></i> <spring:message code="overview.vacations.holidayLeaveAllowed" arguments="${holidayLeaveAllowed}" />
+                    <i class="fa fa-check check"></i> <spring:message code="overview.vacations.holidayLeaveAllowed" arguments="${holidayLeaveAllowed}" />
                 </div>
             </div>
 
@@ -315,12 +315,41 @@
             </div>
             
         </div>
+
+
+
+        <c:set var="sickNotesDays" value="0" />
+        <c:set var="numberOfSickNotesAUB" value="0" />
+        <c:set var="sickNotesDaysChild" value="0" />
+        <c:set var="numberOfSickNotesChildAUB" value="0" />
+
+        <c:forEach items="${sickNotes}" var="sickNote">
+
+            <c:set var="sickNotesDays" value="${sickNotesDays + sickNote.workDays}" />
+
+            <c:if test="${sickNote.aubPresent}">
+                <c:set var="numberOfSickNotesAUB" value="${numberOfSickNotesAUB + 1}" />
+            </c:if>
+
+        </c:forEach>
         
         <div class="row">
-            <div class="col-xs-12 col-sm-4">
+            <div class="col-xs-12 col-sm-6">
                 <div class="box">
-                    <span class="box-icon bg-red"><i class="fa fa-medkit"></i></span>
-                    Es bestehen <h4>5 Krankheitstage</h4> (davon sind 2 Tage Kind-Krankheitstage <i class="fa fa-child"></i>)
+                    <span class="thirds">
+                       <span class="box-icon bg-red"><i class="fa fa-medkit"></i></span>
+                        <spring:message code="overview.sicknotes.sickdays" arguments="${sickNotesDays}" />
+                        <i class="fa fa-check state ALLOWED"></i> <spring:message code="overview.sicknotes.sickdays.aub" arguments="${numberOfSickNotesAUB}" />
+                    </span>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-6">
+                <div class="box">
+                    <span class="thirds">
+                       <span class="box-icon bg-red"><i class="fa fa-child"></i></span>
+                        <spring:message code="overview.sicknotes.sickdays.child" arguments="${sickNotesDaysChild}" />
+                        <i class="fa fa-check state ALLOWED"></i> <spring:message code="overview.sicknotes.sickdays.aub" arguments="${numberOfSickNotesChildAUB}" />
+                    </span>
                 </div>
             </div>
         </div>
