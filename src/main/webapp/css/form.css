@@ -8,6 +8,14 @@
     text-align: left;
 }
 
+.form-horizontal .halves {
+    width: 45%
+}
+
+.form-horizontal .thirds {
+    width: 30%;
+}
+
 /**************************************************************************
 
   FORM VALIDATION ERRORS

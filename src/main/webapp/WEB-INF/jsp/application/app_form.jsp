@@ -201,17 +201,17 @@
 
     <div class="col-sm-7 radio">
 
-        <label>
+        <label class="thirds">
             <form:radiobutton id="fullDay" class="dayLength-full" path="howLong" checked="checked" value="${full}" />
             <spring:message code='${full.dayLength}'/>
         </label>
 
-        <label>
+        <label class="thirds">
             <form:radiobutton id="morning" class="dayLength-half" path="howLong" value="${morning}" />
             <spring:message code='${morning.dayLength}'/>
         </label>
 
-        <label>
+        <label class="thirds">
             <form:radiobutton id="noon" class="dayLength-half" path="howLong" value="${noon}" />
             <spring:message code='${noon.dayLength}'/>
         </label>
@@ -290,12 +290,12 @@
 
     <div class="col-sm-7 radio">
 
-        <label>
+        <label class="halves">
             <form:radiobutton id="teamInformed" path="teamInformed" value="true"/>
             <spring:message code='yes'/>
         </label>
 
-        <label>
+        <label class="halves">
             <form:radiobutton id="teamNotInformed" path="teamInformed" value="false"/>
             <spring:message code='no'/>
         </label>

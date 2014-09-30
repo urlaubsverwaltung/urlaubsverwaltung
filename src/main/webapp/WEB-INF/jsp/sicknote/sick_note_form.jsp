@@ -140,12 +140,12 @@
                 <div class="form-group">
                     <label class="control-label col-sm-5"><spring:message code='sicknotes.aub'/></label>
                     <div class="col-sm-4 radio">
-                        <label>
+                        <label class="halves">
                             <form:radiobutton id="aubPresent" path="aubPresent" value="true" onclick="showAUFields();" />
                             <spring:message code='yes' />
                         </label>
 
-                        <label>
+                        <label class="halves">
                             <form:radiobutton id="aubNotPresent" path="aubPresent" value="false" onclick="hideAUFields();" />
                             <spring:message code='no' />
                         </label>

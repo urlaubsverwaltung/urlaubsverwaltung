@@ -260,12 +260,12 @@
         </label>
 
         <div class="col-sm-7 radio">
-            <label class="radio-inline">
+            <label class="halves">
                 <form:radiobutton id="expireYes" path="remainingVacationDaysExpire" value="true"/>
                 <spring:message code='yes'/>
             </label>
 
-            <label class="radio-inline">
+            <label class="halves">
                 <form:radiobutton id="expireNo" path="remainingVacationDaysExpire" value="false"/>
                 <spring:message code='no'/>
             </label>
