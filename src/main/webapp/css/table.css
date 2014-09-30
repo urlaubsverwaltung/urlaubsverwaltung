@@ -4,6 +4,26 @@
   
 **************************************************************************/
 
+/**************************************************************************
+  ACTIVE/INACTIVE ROWS
+**************************************************************************/
+
+tr.active {
+    color: inherit;
+}
+
+tr.inactive td {
+    color: #777777 !important;
+}
+
+tr.inactive a {
+    opacity: 0.6;
+}
+
+/**************************************************************************
+  LIST TABLE
+**************************************************************************/
+
 .list-table {
     width: 100%;
     border-left: 1px solid #DDDDDD;
@@ -14,7 +34,6 @@
 .list-table td {
     vertical-align: middle !important;
     background-color: #FFF;
-    /*background-color: #F8F8F8;*/
     padding: 12px;
     border-top: 1px solid #DDDDDD;
 }
@@ -23,33 +42,36 @@
     border-bottom: 1px solid #DDDDDD;
 }
 
-.list-table td.WAITING {
-    /*color: #31708F;*/
-    color: #FFF;
-    background-color: #52B9E9;
-    /*background-color: #75B9E6;*/
-    /*background-color: #D9EDF7;*/
+/* STATES IN LIST TABLE */
+
+.list-table td.state {
+    font-size: 25px;
 }
 
-.list-table td.ALLOWED {
-    /*color: #3C763D;*/
-    color: #FFF;
-    /*background-color: #DFF0D8;*/
-    /*background-color: #60CE8C;*/
-    background-color: #43C83C;
+.list-table td.state.WAITING {
+    color: #52B9E9 !important;
 }
 
-.list-table td.REJECTED {
-    color: #A94442;
-    background-color: #FA3031 !important;
-    /*background-color: #F2DEDE !important;*/
+.list-table td.state.ALLOWED {
+    color: #43C83C !important;
 }
 
-.list-table td.CANCELLED {
-    color: #fff;
-    /*color: #777777;*/
-    background-color: #E6E6E6 !important;
+.list-table td.state.REJECTED {
+    color: #FA3031 !important;
 }
+
+.list-table td.state.CANCELLED {
+    color: #3B3B3B !important;
+}
+
+.list-table td.state.REJECTED,
+.list-table td.state.CANCELLED {
+    opacity: 0.5;
+}
+
+/**************************************************************************
+  DATA TABLE
+**************************************************************************/
 
 .data-table {
     width: 100%;
@@ -71,6 +93,10 @@
     padding: 6px;
 }
 
+/**************************************************************************
+  ZEBRA TABLE
+**************************************************************************/
+
 /* zebra table with for each loop status */
 tr.odd {
     background-color: #EAF2D3
@@ -90,13 +116,9 @@ tr.over td {
     background: #DEEFA4;
 }
 
-tr.active {
-    color: inherit;
-}
-
-tr.inactive td {
-    color: lightgrey !important;
-}
+/**************************************************************************
+  TABLE SORTER
+**************************************************************************/
 
 .tablesorter th, .tablesorter td {
     border: 1px solid #d7d7d7;

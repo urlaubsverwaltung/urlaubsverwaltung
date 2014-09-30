@@ -213,15 +213,9 @@ public class PersonalOverviewController {
                 }
             }
 
-            if (applications.isEmpty()) {
-                model.addAttribute(PersonConstants.NO_APPS, true);
-            } else {
                 model.addAttribute(ControllerConstants.APPLICATIONS, applications);
-            }
         }
 
-        model.addAttribute("ALLOWED", ApplicationStatus.ALLOWED);
-        model.addAttribute("WAITING", ApplicationStatus.WAITING);
     }
 
 

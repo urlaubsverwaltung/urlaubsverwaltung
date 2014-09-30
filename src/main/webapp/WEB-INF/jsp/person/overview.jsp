@@ -100,7 +100,8 @@
                     <c:choose>
                         <c:when test="${account != null}">
                             <span class="thirds">
-                                <spring:message code="overview.vacation.entitlement" arguments="${account.vacationDays},${account.remainingVacationDays}" argumentSeparator="," />
+                                <spring:message code="overview.vacation.entitlement" arguments="${account.vacationDays}" />
+                                <spring:message code="overview.vacation.entitlement.remaining" arguments="${account.remainingVacationDays}" />
                             </span>
                         </c:when>
                         <c:otherwise>
