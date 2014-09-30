@@ -10,63 +10,51 @@
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
+<div class="box">
+    <span class="thirds">
+       <span class="box-icon bg-yellow"><i class="fa fa-sun-o"></i></span>
+        <spring:message code="app.apply" /> <h4><spring:message code="${application.vacationType.vacationTypeName}" /></h4>
+
+        <c:choose>
+            <c:when test="${application.startDate == application.endDate}">
+                <spring:message code="at" /> <h4 class="is-inline-block"><uv:date date="${application.startDate}" />, <spring:message code="${application.howLong.dayLength}" /></h4>
+            </c:when>
+            <c:otherwise>
+                <spring:message code="from" /> <h4 class="is-inline-block"><uv:date date="${application.startDate}" /></h4> <spring:message code="to" /> <h4 class="is-inline-block"><uv:date date="${application.endDate}" /></h4>
+            </c:otherwise>
+        </c:choose>
+
+        <c:if test="${application.startDate.year != application.endDate.year}">
+            <p class="days">
+                <%-- filled by javascript --%>
+                <fmt:formatNumber maxFractionDigits="1" value="${application.days}"/> Tage
+            </p>
+            <script type="text/javascript">
+
+                $(document).ready(function() {
+
+                    var dayLength = '<c:out value="${application.howLong}" />';
+                    var personId = '<c:out value="${application.person.id}" />';
+
+                    var startDate= "<joda:format pattern='yyyy/MM/dd' value='${application.startDate}' />";
+                    var endDate = "<joda:format pattern='yyyy/MM/dd' value='${application.endDate}' />";
+
+                    var from = new Date(startDate);
+                    var to = new Date(endDate);
+
+                    sendGetDaysRequest("<spring:url value='/api' />", from, to, dayLength, personId, ".days", true);
+
+                });
+
+            </script>
+
+        </c:if>
+
+    </span>
+</div>
 
 <table class="detail-table" cellspacing="0">
-    <tr class="odd">
-        <td>
-            <spring:message code="app.apply" />
-        </td>
-        <td class="${application.vacationType}">
-            <b><spring:message code="${application.vacationType.vacationTypeName}" /></b>
-        </td>
-    </tr>
-    <tr class="even">
-        <td>
-            <c:choose>
-                <c:when test="${application.startDate == application.endDate}">
-                    <spring:message code="at" /> <b><uv:date date="${application.startDate}" /></b>, <spring:message code="${application.howLong.dayLength}" />
-                </c:when>
-                <c:otherwise>
-                    <spring:message code="from" /> <b><uv:date date="${application.startDate}" /></b> <spring:message code="to" /> <b><uv:date date="${application.endDate}" /></b>
-                </c:otherwise>    
-            </c:choose>
-        </td>
-        <td class="days">
-            = <fmt:formatNumber maxFractionDigits="1" value="${application.days}"/> 
-            <c:choose>
-                <c:when test="${application.days > 0.50 && application.days <= 1.00}">
-                    <spring:message code="day.vac" />
-                </c:when>
-                <c:otherwise>
-                    <spring:message code="days.vac" />
-                </c:otherwise>
-            </c:choose>
-            
-            <c:if test="${application.startDate.year != application.endDate.year}">
 
-                <script type="text/javascript">
-
-                    $(document).ready(function() {
-
-                        var dayLength = '<c:out value="${application.howLong}" />';
-                        var personId = '<c:out value="${application.person.id}" />';
-
-                        var startDate= "<joda:format pattern='yyyy/MM/dd' value='${application.startDate}' />";
-                        var endDate = "<joda:format pattern='yyyy/MM/dd' value='${application.endDate}' />";
-
-                        var from = new Date(startDate);
-                        var to = new Date(endDate);
-
-                        sendGetDaysRequest("<spring:url value='/api' />", from, to, dayLength, personId, ".days", true);
-
-                    });
-
-                </script> 
-                
-            </c:if>
-            
-</td>
-</tr>
 <tr class="odd">
     <td>
         <spring:message code='reason' />

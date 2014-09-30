@@ -32,7 +32,7 @@
 
                 <div class="row">
 
-                <div class="col-xs-12">
+                <div class="col-xs-12 col-sm-6">
 
                     <div class="header">
 
@@ -41,91 +41,81 @@
                                 <spring:message code="app.title" />
                             </p>
 
-                            <div style="float: right; display: inline-block">
-
-                                <sec:authorize access="hasAnyRole('BOSS', 'OFFICE')">
-                                    <c:if test="${application.person.id != loggedUser.id}">
-                                        <%@include file="./include/app-detail-elements/actions/back_to_member.jsp" %>
-                                    </c:if>
-                                </sec:authorize>
-
-                                <sec:authorize access="hasRole('USER')">
-                                    <uv:print />
-                                </sec:authorize>
-
-                                <sec:authorize access="hasRole('USER')">
-                                    <c:if test="${application.person.id == loggedUser.id && application.status.number == 0}">
-                                        <%@include file="./include/app-detail-elements/actions/remind.jsp" %>
-                                    </c:if>
-
-                                    <%-- if role is office then allowed applications for leave may be cancelled --%>
-
-                                    <c:choose>
-                                        <c:when test="${isOffice}">
-                                            <c:if test="${application.person.id == loggedUser.id && (application.status.number == 0 || application.status.number == 1)}">
-                                                <%@include file="./include/app-detail-elements/actions/cancel.jsp" %>
-                                            </c:if>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <c:if test="${application.person.id == loggedUser.id && application.status.number == 0}">
-                                                <%@include file="./include/app-detail-elements/actions/cancel.jsp" %>
-                                            </c:if>
-                                        </c:otherwise>
-                                    </c:choose>
-
-                                </sec:authorize>
-
-                                <sec:authorize access="hasRole('OFFICE')">
-                                    <c:if test="${application.person.id != loggedUser.id && (application.status.number == 0 || application.status.number == 1)}">
-                                        <%@include file="./include/app-detail-elements/actions/cancel_for_other.jsp" %>
-                                    </c:if>
-                                </sec:authorize>
-
-                                <sec:authorize access="hasRole('BOSS')">
-                                    <c:if test="${application.status.number == 0}">
-                                        <div class="btn-group pull-right">
-                                            <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
-                                                <i class="fa fa-edit"></i>
-                                                <spring:message code="process" />
-                                                <span class="caret"></span>
-                                            </a>
-                                            <ul class="dropdown-menu">
-                                                <li>
-                                                    <a href="#" onclick="$('#reject').hide(); $('#refer').hide();  $('#cancel').hide(); $('#confirm').show();">
-                                                        <i class="fa fa-check"></i>&nbsp;<spring:message code='app.state.ok.short' />
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#" onclick="$('#refer').hide(); $('#confirm').hide();  $('#cancel').hide(); $('#reject').show();">
-                                                        <i class="fa fa-ban"></i>&nbsp;<spring:message code='app.state.no.short' />
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#" onclick="$('#reject').hide(); $('#confirm').hide(); $('#cancel').hide(); $('#refer').show();">
-                                                        <i class="fa fa-mail-forward"></i>&nbsp;<spring:message code='app.state.refer.short' />
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </c:if>
-                                </sec:authorize>
-
-                            </div>
-
                         </legend>
 
                     </div>
 
-                </div>
+                    <div class="action-buttons">
 
-                </div><!-- end of first row -->
+                        <sec:authorize access="hasAnyRole('BOSS', 'OFFICE')">
+                            <c:if test="${application.person.id != loggedUser.id}">
+                                <%@include file="./include/app-detail-elements/actions/back_to_member.jsp" %>
+                            </c:if>
+                        </sec:authorize>
 
-                <div class="row">
+                        <sec:authorize access="hasRole('USER')">
+                            <uv:print />
+                        </sec:authorize>
+
+                        <sec:authorize access="hasRole('USER')">
+                            <c:if test="${application.person.id == loggedUser.id && application.status.number == 0}">
+                                <%@include file="./include/app-detail-elements/actions/remind.jsp" %>
+                            </c:if>
+
+                            <%-- if role is office then allowed applications for leave may be cancelled --%>
+
+                            <c:choose>
+                                <c:when test="${isOffice}">
+                                    <c:if test="${application.person.id == loggedUser.id && (application.status.number == 0 || application.status.number == 1)}">
+                                        <%@include file="./include/app-detail-elements/actions/cancel.jsp" %>
+                                    </c:if>
+                                </c:when>
+                                <c:otherwise>
+                                    <c:if test="${application.person.id == loggedUser.id && application.status.number == 0}">
+                                        <%@include file="./include/app-detail-elements/actions/cancel.jsp" %>
+                                    </c:if>
+                                </c:otherwise>
+                            </c:choose>
+
+                        </sec:authorize>
+
+                        <sec:authorize access="hasRole('OFFICE')">
+                            <c:if test="${application.person.id != loggedUser.id && (application.status.number == 0 || application.status.number == 1)}">
+                                <%@include file="./include/app-detail-elements/actions/cancel_for_other.jsp" %>
+                            </c:if>
+                        </sec:authorize>
+
+                        <sec:authorize access="hasRole('BOSS')">
+                            <c:if test="${application.status.number == 0}">
+                                <div class="btn-group pull-right">
+                                    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
+                                        <i class="fa fa-edit"></i>
+                                        <spring:message code="process" />
+                                        <span class="caret"></span>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <a href="#" onclick="$('#reject').hide(); $('#refer').hide();  $('#cancel').hide(); $('#confirm').show();">
+                                                <i class="fa fa-check"></i>&nbsp;<spring:message code='app.state.ok.short' />
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#" onclick="$('#refer').hide(); $('#confirm').hide();  $('#cancel').hide(); $('#reject').show();">
+                                                <i class="fa fa-ban"></i>&nbsp;<spring:message code='app.state.no.short' />
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#" onclick="$('#reject').hide(); $('#confirm').hide(); $('#cancel').hide(); $('#refer').show();">
+                                                <i class="fa fa-mail-forward"></i>&nbsp;<spring:message code='app.state.refer.short' />
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </c:if>
+                        </sec:authorize>
+
+                    </div>
                     
-                <div class="col-xs-12 col-sm-6 print-box">
-                    
-                    <%@include file="./include/app-detail-elements/app_info.jsp" %>
-
                     <div class="actions">
 
                         <%-- permission dependant forms to the buttons above START --%>
@@ -167,25 +157,74 @@
 
                     </div>
 
-                </div>
-
-                <div class="col-xs-12 col-sm-6 print-box">
-
-                    <table class="detail-table" cellspacing="0">
-                        <tr class="odd">
-                            <th><c:out value="${application.person.firstName} ${application.person.lastName}" /></th>
-                            <td><c:out value="${application.person.email}" /></td>
-                        </tr>
-                        <%@include file="./include/account_days_for_app_view.jsp" %>
-                    </table>
+                    <%@include file="./include/app-detail-elements/app_info.jsp" %>
 
                     <%@include file="./include/app-detail-elements/app_progress.jsp" %>
 
-                </div>
+                </div><%--End of first column--%>
 
-                </div>
+                <div class="col-xs-12 col-sm-6 print-box">
 
-            </div><!-- End of second row -->
+                    <div class="header">
+
+                        <legend>
+                            <p>
+                                <spring:message code="staff" />
+                            </p>
+
+                        </legend>
+
+                    </div>
+
+                    <div class="box">
+                    <span class="thirds">
+                        <img class="box-image img-circle print--invisible" src="<c:out value='${gravatar}?d=mm&s=80'/>"/>
+                        <i class="fa fa-at"></i> <c:out value="${application.person.loginName}"/>
+                        <h4><c:out value="${application.person.niceName}"/></h4>
+                        <i class="fa fa-envelope"></i> <c:out value="${application.person.email}"/>
+                    </span>
+                    </div>
+
+                    <div class="box">
+                        <span class="box-icon bg-green"><i class="fa fa-calendar"></i></span>
+                        <c:choose>
+                            <c:when test="${account != null}">
+                            <span class="thirds">
+                                <spring:message code="overview.vacation.entitlement" arguments="${account.vacationDays}" />
+                                <spring:message code="overview.vacation.entitlement.remaining" arguments="${account.remainingVacationDays}" />
+                            </span>
+                            </c:when>
+                            <c:otherwise>
+                                <span class="one"><spring:message code='not.specified'/></span>
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
+
+                    <div class="box">
+                        <span class="box-icon bg-green"><i class="fa fa-bar-chart"></i></span>
+                        <c:choose>
+                            <c:when test="${account != null}">
+                            <span class="thirds">
+                                <spring:message code="overview.vacation.left" arguments="${leftDays}" />
+                                <c:choose>
+                                    <c:when test="${beforeApril || !account.remainingVacationDaysExpire}">
+                                        <spring:message code="overview.vacation.left.remaining" arguments="${remLeftDays}" />
+                                    </c:when>
+                                    <c:otherwise>
+                                        <spring:message code="overview.vacation.left.remaining.expired" />
+                                    </c:otherwise>
+                                </c:choose>
+                            </span>
+                            </c:when>
+                            <c:otherwise>
+                                <span class="one"><spring:message code='not.specified'/></span>
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
+
+                </div><!-- End of second column -->
+
+            </div><!-- End of row -->
 
             </div> <!-- end of grid container -->
 

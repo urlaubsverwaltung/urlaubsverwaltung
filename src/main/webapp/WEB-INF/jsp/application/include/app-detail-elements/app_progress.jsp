@@ -4,67 +4,47 @@
     Author     : Aljona Murygina - murygina@synyx.de
 --%>
 
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
+<table class="list-table">
+    <tbody>
 
-<!-- there are four possible status, so there are max. four lines -->
-<table class="detail-table" cellspacing="0" style="margin-top:2em; margin-bottom:2em;">
-    <tr class="odd">
-        <th colspan="2"><spring:message code="progress" /></th>
-    </tr>
-    <c:forEach items="${comments}" var="c" varStatus="loopStatus">
-        <tr class="${loopStatus.index % 2 == 0 ? 'even' : 'odd'}">
+    <c:forEach items="${comments}" var="comment">
+        <tr>
+            <td>
+                TODO: GRAVATAR
+                <img class="box-image img-circle print--invisible" src="<c:out value='${gravatar}?d=mm&s=60'/>"/>
+            </td>
+            <td>
+                <c:out value="${comment.nameOfCommentingPerson}"/>
+            </td>
+            <td>
+                <c:choose>
+                    <c:when test="${comment.status == 'WAITING'}">
+                        <spring:message code="${comment.progress}"/> <uv:date date="${application.applicationDate}"/>
+                    </c:when>
+                    <c:when test="${comment.status == 'ALLOWED'}">
+                        <spring:message code="${comment.progress}"/> <uv:date date="${application.editedDate}"/>
+                    </c:when>
+                    <c:when test="${comment.status == 'REJECTED'}">
+                        <spring:message code="${comment.progress}"/> <uv:date date="${application.editedDate}"/>
+                    </c:when>
+                    <c:when test="${comment.status == 'CANCELLED'}">
+                        <spring:message code="${comment.progress}"/> <uv:date date="${application.cancelDate}"/>
+                    </c:when>
+                </c:choose>
 
-            <!-- application is waiting -->
-            <c:if test="${c.status.number == 0}">
-                <td>
-                    <spring:message code="${c.progress}" /> <uv:date date="${application.applicationDate}" />  
-                </td>
-                <td>
-                    <spring:message code="by" /> <c:out value="${c.nameOfCommentingPerson}" />
-                    <c:if test="${c.reason != null && not empty c.reason}">
-                        <spring:message code="app.comment" />
-                        <br />
-                        <i><c:out value="${c.reason}" /></i>
-                    </c:if>
-                </td>
-            </c:if>
-
-            <!-- application is allowed or rejected -->
-            <c:if test="${c.status.number == 1 || c.status.number == 2}">
-                <td>
-                    <spring:message code="${c.progress}" /> <uv:date date="${application.editedDate}" />  
-                </td>
-                <td>
-                    <spring:message code="by" /> <c:out value="${c.nameOfCommentingPerson}" />
-                    <c:if test="${c.reason != null && not empty c.reason}">
-                        <spring:message code="app.comment" />
-                        <br />
-                        <i><c:out value="${c.reason}" /></i>
-                    </c:if>
-                </td>
-            </c:if>
-
-            <!-- application is cancelled -->
-            <c:if test="${c.status.number == 3}">
-                <td>
-                    <spring:message code="${c.progress}" /> <uv:date date="${application.cancelDate}" />
-                </td>
-                <td>
-                    <spring:message code="by" /> <c:out value="${c.nameOfCommentingPerson}" />
-                    <c:if test="${c.reason != null && not empty c.reason}">
-                        <spring:message code="app.comment" />
-                        <br />
-                        <i><c:out value="${c.reason}" /></i>
-                    </c:if>
-                </td>
-            </c:if>
-
+                <c:if test="${comment.reason != null && not empty comment.reason}">
+                    <spring:message code="app.comment"/>
+                    <br/>
+                    <i><c:out value="${comment.reason}"/></i>
+                </c:if>
+            </td>
         </tr>
     </c:forEach>
+    </tbody>
 </table>
-
