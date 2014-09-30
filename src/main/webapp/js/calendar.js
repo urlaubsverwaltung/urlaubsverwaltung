@@ -312,8 +312,8 @@ $(function() {
 
             return render(TMPL.container, {
 
-                prevBtn   : renderButton ( CSS.prev, '&lt;&lt;'),
-                nextBtn   : renderButton ( CSS.next, '&gt;&gt;'),
+                prevBtn   : renderButton ( CSS.prev, '<i class="fa fa-chevron-left"></i>'),
+                nextBtn   : renderButton ( CSS.next, '<i class="fa fa-chevron-right"></i>'),
                 prevMonth : renderMonth  ( moment(date).add('M', -1), CSS.monthPrev ),
                 nextMonth : renderMonth  ( moment(date).add('M', monthsToShow) , CSS.monthNext ),
 

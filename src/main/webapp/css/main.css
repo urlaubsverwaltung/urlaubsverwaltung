@@ -42,15 +42,12 @@ footer {
 
 .fa-action {
     color: #1896DB;
+    font-size: 20px;
 }
 
 .fa-action:hover {
-    color: #0083CC !important;
+    color: #59AB02 !important;
     text-decoration: none;
-}
-
-.fa-action {
-    font-size: 16px;
 }
 
 .is-centered {

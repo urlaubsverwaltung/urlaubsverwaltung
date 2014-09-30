@@ -15,23 +15,18 @@
     align-items: stretch;
     justify-content: space-between;
     cursor: default;
-    background: #FFF;
-    border: 1px solid #DDD;
     border-radius: 0;
 }
 
 .datepicker-months-container {
-    /* months are positioned absolute with 'left' property  */
-    /* to enable smooth scrooling when user cicks prev/next */
     position: relative;
 
-    /* months outside his div should not be visible */
+    /* months outside this div should not be visible */
     overflow: hidden;
 
     width: auto;
     height: auto;
-    margin-top: 6px;
-    margin-bottom: 6px;
+    border: 1px solid #DDD;
 }
 
 .datepicker-table {
@@ -39,11 +34,14 @@
     border-spacing: 0;
     border-collapse: collapse;
     font-size: 1em;
+    margin-right: 3px;
+    margin-left: 3px;
 }
 
 .datepicker-table th, .datepicker-table td {
     padding: 0;
     margin: 0;
+    color: #7B7B7B;
 }
 
 .datepicker-table thead tr th {
@@ -56,20 +54,20 @@
     border: none;
     padding: 6px;
     cursor: pointer;
-    border-radius: .2em;
     background-color: transparent;
-    transition: background-color .2s;
+    font-size: 20px;
+    color: #1896DB;
 }
 
 .datepicker-prev:hover,
 .datepicker-next:hover {
-    background-color: #DDD;
+    color: #59AB02
 }
 
 .datepicker-month {
-    width: 230px;
+    width: auto;
     float: left;
-    border: 1px solid #DDD;
+    background-color: #FAFAFA;
 }
 
 .datepicker-month-next {
@@ -78,16 +76,17 @@
 
 .datepicker-month h3 {
     margin : 0;
-    padding: 8px 0;
+    padding: 8px;
     font-size: 12px;
     text-align: center;
-    background-color: #D8E47F;
+    background-color: #7B7B7B;
+    color: #FAFAFA;
 }
 
 .datepicker-day {
     display: block;
     padding: .2em .6em;
-    background-color: #FFF;
+    background-color: #F1F1F1;
     cursor: default;
 
     border: 1px solid #FFF;
@@ -98,7 +97,7 @@
 /* must be the first special day, so other special days are overriding this */
 .datepicker-day-past {
     border-color: #F5F5F5;
-    background-color: #E6E6E6;
+    background-color: #E5E5E5;
 }
 .datepicker-day-past.datepicker-day-public-holiday,
 .datepicker-day-past.datepicker-day-weekend {
