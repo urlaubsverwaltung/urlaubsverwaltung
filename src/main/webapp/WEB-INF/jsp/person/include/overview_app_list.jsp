@@ -81,7 +81,7 @@
                 </span>
                 <span>Tage</span>
             </td>
-            <td class="is-centered">
+            <td class="is-centered hidden-xs">
                 <i class="fa fa-clock-o"></i>
                 <span>
                     <c:choose>

@@ -39,7 +39,7 @@
         <td class="is-centered">
             <fmt:formatNumber maxFractionDigits="1" value="${sickNote.workDays}"/> Tage
         </td>
-        <td class="print--invisible is-centered">
+        <td class="print--invisible is-centered hidden-xs">
             <i class="fa fa-clock-o"></i> <spring:message code="sicknote.lastEdited" /> <uv:date date="${sickNote.lastEdited}"/>
         </td>
         </c:forEach>
