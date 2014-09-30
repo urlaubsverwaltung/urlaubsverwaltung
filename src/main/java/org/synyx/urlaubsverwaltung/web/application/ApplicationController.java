@@ -200,7 +200,7 @@ public class ApplicationController {
         model.addAttribute(ControllerConstants.APPLICATIONS, applications);
         model.addAttribute(PersonConstants.GRAVATAR_URLS, gravatarUrls);
         sessionService.setLoggedUser(model);
-        model.addAttribute(ApplicationConstants.TITLE_APP, "all.app");
+        model.addAttribute(ApplicationConstants.TITLE_APP, "applications.all");
         model.addAttribute(ApplicationConstants.TOUCHED_DATE, ApplicationConstants.DATE_OVERVIEW);
         model.addAttribute(ControllerConstants.YEAR, DateMidnight.now().getYear());
 

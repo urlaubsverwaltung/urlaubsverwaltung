@@ -124,8 +124,6 @@ function buildUrl(urlPrefix, startDate, endDate, dayLength, personId) {
 // sortable tables
 $(document).ready(function()
     {
-        // set initial striping
-        $(".zebra-table tr:even").addClass("alt");
 
         $.tablesorter.addParser({
             id: 'germanDate',
@@ -170,35 +168,9 @@ $(document).ready(function()
             },
             type: 'numeric'
         });
-        
-        // bind start and end order events
-        $("table.sortable")
-            .bind("sortStart", function() {
-                // if sorting start remove striping
-                $(".zebra-table tr:even").removeClass("alt");
-            })
-            .bind("sortEnd", function() {
-                // if sorting done set striping
-                $(".zebra-table tr:even").addClass("alt");
-            });
 
     }
 );
-    
-// mouseover effects: rows highlighted
-$(document).ready(function()
-    {
-        $(".zebra-table tr").mouseover(function() {
-            $(this).addClass("over");
-        });
-
-        $(".zebra-table tr").mouseout(function() {
-            $(this).removeClass("over");
-        });
-
-    }
-);
-
 
 function checkSonderurlaub(value) {
 
@@ -232,35 +204,6 @@ function getUrlParam(name)
         return "";
     else
         return results[1];
-}
-
-function isValidDate(s) {
-    // format D(D)/M(M)/(YY)YY
-    var dateFormat = /^\d{1,4}[\.|.|-]\d{1,2}[\.|.|-]\d{1,4}$/;
-
-    if (dateFormat.test(s)) {
-        // remove any leading zeros from date values
-        s = s.replace(/0*(\d*)/gi,"$1");
-        var dateArray = s.split(/[\.|\/|-]/);
-
-        // correct month value
-        dateArray[1] = dateArray[1]-1;
-
-        // correct year value
-        if (dateArray[2].length<4) {
-            // correct year value
-            dateArray[2] = (parseInt(dateArray[2]) < 50) ? 2000 + parseInt(dateArray[2]) : 1900 + parseInt(dateArray[2]);
-        }
-
-        var testDate = new Date(dateArray[2], dateArray[1], dateArray[0]);
-        if (testDate.getDate()!=dateArray[0] || testDate.getMonth()!=dateArray[1] || testDate.getFullYear()!=dateArray[2]) {
-            return false;
-        } else {
-            return true;
-        }
-    } else {
-        return false;
-    }
 }
 
 // set expandable behavior on text areas

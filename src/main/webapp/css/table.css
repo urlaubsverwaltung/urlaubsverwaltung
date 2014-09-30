@@ -89,29 +89,6 @@ tr.inactive td > * {
 }
 
 /**************************************************************************
-  ZEBRA TABLE
-**************************************************************************/
-
-/* zebra table with for each loop status */
-tr.odd {
-    background-color: #EAF2D3
-}
-
-tr.even {
-    background-color: #FFFFFF
-}
-
-/* zebra table with jquery */
-tr.alt td {
-    background: #EAF2D3
-}
-
-/* mouse over rows */
-tr.over td {
-    background: #DEEFA4;
-}
-
-/**************************************************************************
   TABLE SORTER
 **************************************************************************/
 

@@ -29,34 +29,34 @@
 
             <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                 <i class="fa fa-filter"></i>
-                <spring:message code="status.app"/>&nbsp;<span class="caret"></span>
+                <spring:message code="applications.action.status"/>&nbsp;<span class="caret"></span>
             </button>
 
             <ul class="dropdown-menu icons-on-top">
 
                 <li>
                     <a href="${linkPrefix}/all">
-                        <i class="fa fa-calendar"></i>&nbsp;<spring:message code="all.app" />
+                        <i class="fa fa-calendar"></i>&nbsp;<spring:message code="applications.all" />
                     </a>
                 </li>
                 <li>
                     <a href="${linkPrefix}/waiting">
-                        <i class="fa fa-question"></i>&nbsp;<spring:message code="waiting.app" />
+                        <i class="fa fa-question"></i>&nbsp;<spring:message code="applications.waiting" />
                     </a>
                 </li>
                 <li>
                     <a href="${linkPrefix}/allowed">
-                        <i class="fa fa-check"></i>&nbsp;<spring:message code="allow.app" />
+                        <i class="fa fa-check"></i>&nbsp;<spring:message code="applications.allowed" />
                     </a>
                 </li>
                 <li>
                     <a href="${linkPrefix}/rejected">
-                        <i class="fa fa-ban"></i>&nbsp;<spring:message code="reject.app" />
+                        <i class="fa fa-ban"></i>&nbsp;<spring:message code="applications.rejected" />
                     </a>
                 </li>
                 <li>
                     <a href="${linkPrefix}/cancelled">
-                        <i class="fa fa-trash"></i>&nbsp;<spring:message code="cancel.app" />
+                        <i class="fa fa-trash"></i>&nbsp;<spring:message code="applications.cancelled" />
                     </a>
                 </li>
 

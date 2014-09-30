@@ -34,10 +34,10 @@ public class ApplicationConstants {
     // applications' status
     // title in list jsp
     public static final String TITLE_APP = "titleApp";
-    public static final String TITLE_WAITING = "waiting.app";
-    public static final String TITLE_ALLOWED = "allow.app";
-    public static final String TITLE_REJECTED = "reject.app";
-    public static final String TITLE_CANCELLED = "cancel.app";
+    public static final String TITLE_WAITING = "applications.waiting";
+    public static final String TITLE_ALLOWED = "applications.allowed";
+    public static final String TITLE_REJECTED = "applications.rejected";
+    public static final String TITLE_CANCELLED = "applications.cancelled";
     public static final String TOUCHED_DATE = "touchedDate";
     public static final String DATE_OVERVIEW = "app.date.overview";
     public static final String DATE_APPLIED = "app.date.applied";

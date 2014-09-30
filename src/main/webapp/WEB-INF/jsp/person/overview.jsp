@@ -208,7 +208,7 @@
 
                     <legend id="vacation">
                         <p>
-                            <spring:message code="apps.vac" />
+                            <spring:message code="applications" />
                         </p>
                         <c:choose>
                             <c:when test="${person.id == loggedUser.id}">
