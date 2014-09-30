@@ -21,11 +21,11 @@
             $(document).ready(function() {
 
                 $("table.sortable").tablesorter({
-                    sortList: [[1,1]],
+//                    sortList: [[2,1]],
                     headers: {
-                        1: { sorter: 'germanDate' },
-                        5: { sorter: 'germanDate' },
-                        6: { sorter: 'commaNumber' }
+//                        1: { sorter: 'germanDate' },
+//                        2: { sorter: 'germanDate' },
+//                        2: { sorter: 'commaNumber' }
                     }
                 });
 

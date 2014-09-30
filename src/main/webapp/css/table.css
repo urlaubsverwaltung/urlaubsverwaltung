@@ -26,10 +26,13 @@ tr.inactive td > * {
 
 .list-table {
     width: 100%;
-    border-left: 1px solid #DDDDDD;
-    border-right: 1px solid #DDDDDD;
     font-size: 12px;
     margin-bottom: 27px;
+}
+
+.list-table tbody {
+    border-left: 1px solid #DDDDDD;
+    border-right: 1px solid #DDDDDD;
 }
 
 .list-table td {
@@ -111,10 +114,6 @@ tr.over td {
 /**************************************************************************
   TABLE SORTER
 **************************************************************************/
-
-.tablesorter th, .tablesorter td {
-    border: 1px solid #d7d7d7;
-}
 
 th.tablesorter-headerDesc, th.tablesorter-headerAsc {
     background-color: #99AF4C !important;

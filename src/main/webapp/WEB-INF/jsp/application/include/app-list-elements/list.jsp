@@ -1,10 +1,4 @@
-<%-- 
-    Document   : wartend
-    Created on : 26.10.2011, 15:03:30
-    Author     : aljona
---%>
-
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
@@ -17,112 +11,79 @@
 
     <c:when test="${empty applications}">
 
-        <spring:message code="no.apps" />
+        <spring:message code="no.apps"/>
 
     </c:when>
 
-    <c:otherwise>     
+    <c:otherwise>
 
-        <table class="data-table is-centered zebra-table tablesorter sortable" cellspacing="0">
-            <thead>
-            <tr>
-                <th>
-                    <spring:message code="state" />
-                </th>
-                <th>
-                    <spring:message code="${touchedDate}" />
-                </th>
-                <th>
-                    <spring:message code="firstname" />
-                </th>
-                <th>
-                    <spring:message code="lastname" />
-                </th>
-                <th>
-                    <spring:message code="type" />
-                </th>
-                <th>
-                    <spring:message code="time" />
-                </th>
-                <th>
-                    <spring:message code="days.vac" />
-                </th>
-            </tr>
-            </thead>
-
+        <table class="list-table" cellspacing="0">
             <tbody>
             <c:forEach items="${applications}" var="app" varStatus="loopStatus">
-                <tr onclick="navigate('${formUrlPrefix}/application/${app.id}');">
-                    <td>
-                    <span class="print--visible">
-                        <spring:message code="${app.status.state}" />
-                    </span>
-                    <span class="print--invisible">
-                        <c:choose>
-                            <c:when test="${app.status.state == 'state.waiting'}">
-                                <i class="fa fa-question"></i>
-                            </c:when>
-                            <c:when test="${app.status.state == 'state.allowed'}">
-                                <i class="fa fa-check"></i>
-                            </c:when>
-                            <c:when test="${app.status.state == 'state.rejected'}">
-                                <i class="fa fa-ban"></i>
-                            </c:when>
-                            <c:when test="${app.status.state == 'state.cancelled'}">
-                                <i class="fa fa-trash"></i>
-                            </c:when>
-                            <c:otherwise>
-                                &nbsp;
-                            </c:otherwise>
-                        </c:choose>
-                    </span>
+                <c:choose>
+                    <c:when test="${app.status.state == 'state.cancelled' || app.status.state == 'state.rejected'}">
+                        <c:set var="CSS_CLASS" value="inactive"/>
+                    </c:when>
+                    <c:otherwise>
+                        <c:set var="CSS_CLASS" value="active"/>
+                    </c:otherwise>
+                </c:choose>
+                <tr class="${CSS_CLASS}">
+                    <td class="is-centered state ${app.status}">
+                        <span class="print--visible">
+                            <spring:message code="${app.status.state}"/>
+                        </span>
+                        <span class="print--invisible">
+                             <c:choose>
+                                 <c:when test="${app.status == 'WAITING'}">
+                                     <i class="fa fa-question"></i>
+                                 </c:when>
+                                 <c:when test="${app.status == 'ALLOWED'}">
+                                     <i class="fa fa-check"></i>
+                                 </c:when>
+                                 <c:when test="${app.status == 'REJECTED'}">
+                                     <i class="fa fa-ban"></i>
+                                 </c:when>
+                                 <c:when test="${app.status == 'CANCELLED'}">
+                                     <i class="fa fa-trash"></i>
+                                 </c:when>
+                                 <c:otherwise>
+                                     &nbsp;
+                                 </c:otherwise>
+                             </c:choose>
+                        </span>
                     </td>
                     <td>
-                    
-                    <%-- 0 : applications are waiting --%>
-                    <c:if test="${app.status.number == 0}">
-                        <c:set var="appTouched" value="${app.applicationDate}" />
-                    </c:if>        
+                        <a class="vacation ${app.vacationType}" href="${formUrlPrefix}/application/${app.id}">
+                            <h4><spring:message code="${app.vacationType.vacationTypeName}"/></h4>
+                        </a>
 
-                    <%-- 1 and 2 : applications are allowed or rejected --%>
-                    <c:if test="${app.status.number == 1 || app.status.number == 2}">
-                        <c:set var="appTouched" value="${app.editedDate}" />
-                    </c:if>
-
-                    <%-- 3 : applications are cancelled --%>
-                    <c:if test="${app.status.number == 3}">
-                        <c:set var="appTouched" value="${app.cancelDate}" />
-                    </c:if>
-                   
-                    <uv:date date="${appTouched}" />
+                        <p>
+                            <c:choose>
+                                <c:when test="${app.startDate == app.endDate}">
+                                    <uv:date date="${app.startDate}"/>, <spring:message
+                                        code="${app.howLong.dayLength}"/>
+                                </c:when>
+                                <c:otherwise>
+                                    <uv:date date="${app.startDate}"/> - <uv:date date="${app.endDate}"/>
+                                </c:otherwise>
+                            </c:choose>
+                        </p>
+                    </td>
+                    <td class="is-centered">
+                        <span><fmt:formatNumber maxFractionDigits="1" value="${app.days}" /> Tage</span>
                     </td>
                     <td>
-                        <c:out value="${app.person.firstName}" />
-                    </td>
-                    <td>
-                        <c:out value="${app.person.lastName}" />
-                    </td>
-                    <td class="${app.vacationType}">
-                        <spring:message code="${app.vacationType.vacationTypeName}"/>
-                    </td>
-                    <td>
-                        <c:choose>
-                            <c:when test="${app.startDate == app.endDate}">
-                                <uv:date date="${app.startDate}" />, <spring:message code="${app.howLong.dayLength}" />
-                            </c:when>
-                            <c:otherwise>
-                                <uv:date date="${app.startDate}" /> - <uv:date date="${app.endDate}" />
-                            </c:otherwise>    
-                        </c:choose>
-                    </td>
-                    <td>
-                        <fmt:formatNumber maxFractionDigits="1" value="${app.days}" />
+                        <img class="box-image img-circle print--invisible" src="<c:out value='${gravatarUrls[app]}?d=mm&s=80'/>"/>
+                        <i class="fa fa-at"></i> <c:out value="${app.person.loginName}"/>
+                        <h4><c:out value="${app.person.niceName}"/></h4>
+                        <i class="fa fa-envelope"></i> <c:out value="${app.person.email}"/>
                     </td>
 
                 </tr>
             </c:forEach>
             </tbody>
         </table>
-    </c:otherwise> 
+    </c:otherwise>
 </c:choose>  
 

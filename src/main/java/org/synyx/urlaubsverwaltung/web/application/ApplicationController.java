@@ -174,21 +174,31 @@ public class ApplicationController {
         DateMidnight firstDay = new DateMidnight(year, DateTimeConstants.JANUARY, 1);
         DateMidnight lastDay = new DateMidnight(year, DateTimeConstants.DECEMBER, 31);
 
+        Map<Application, String> gravatarUrls = new HashMap<>();
         List<Application> apps = applicationService.getApplicationsForACertainPeriod(firstDay, lastDay);
 
         List<Application> applications = new ArrayList<Application>();
 
         for (Application a : apps) {
-            if (a.getStatus() != ApplicationStatus.CANCELLED) {
+
+            boolean isNotCancelled = a.getStatus() != ApplicationStatus.CANCELLED;
+            boolean isCancelledButWasAllowed = a.getStatus() == ApplicationStatus.CANCELLED && a.isFormerlyAllowed();
+
+            if(isNotCancelled || isCancelledButWasAllowed) {
                 applications.add(a);
-            } else {
-                if (a.isFormerlyAllowed() == true) {
-                    applications.add(a);
+
+                String gravatarUrl = GravatarUtil.createImgURL(a.getPerson().getEmail());
+
+                if (gravatarUrl != null) {
+                    gravatarUrls.put(a, gravatarUrl);
                 }
+
             }
+
         }
 
         model.addAttribute(ControllerConstants.APPLICATIONS, applications);
+        model.addAttribute(PersonConstants.GRAVATAR_URLS, gravatarUrls);
         sessionService.setLoggedUser(model);
         model.addAttribute(ApplicationConstants.TITLE_APP, "all.app");
         model.addAttribute(ApplicationConstants.TOUCHED_DATE, ApplicationConstants.DATE_OVERVIEW);
@@ -277,6 +287,17 @@ public class ApplicationController {
                 applications = applicationService.getApplicationsByStateAndYear(state, year);
             }
 
+            Map<Application, String>  gravatarUrls = new HashMap<>();
+
+            for(Application app : applications) {
+                String gravatarUrl = GravatarUtil.createImgURL(app.getPerson().getEmail());
+
+                if (gravatarUrl != null) {
+                    gravatarUrls.put(app, gravatarUrl);
+                }
+            }
+
+            model.addAttribute(PersonConstants.GRAVATAR_URLS, gravatarUrls);
             model.addAttribute(ControllerConstants.APPLICATIONS, applications);
             sessionService.setLoggedUser(model);
             model.addAttribute(ApplicationConstants.TITLE_APP, title);

@@ -20,7 +20,7 @@
     <legend>
         
         <p>
-            <spring:message code="${titleApp}"/>&nbsp;&ndash;&nbsp;<c:out value="${displayYear}"/>
+            <spring:message code="${titleApp}"/> <spring:message code="in.year" /> <c:out value="${displayYear}"/>
         </p>
 
         <uv:year-selector year="${year}" />
