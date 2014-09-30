@@ -37,7 +37,7 @@
 
 
 <div class="content">
-<div class="container-fluid">
+<div class="container">
 
 <c:choose>
     <c:when test="${person.id == null}">

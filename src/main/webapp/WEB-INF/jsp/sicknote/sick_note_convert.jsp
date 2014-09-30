@@ -23,7 +23,7 @@
 
     <form:form method="${METHOD}" action="${ACTION}" modelAttribute="appForm" class="form-horizontal">
 
-    <div class="container-fluid">
+    <div class="container">
 
         <div class="row">
 

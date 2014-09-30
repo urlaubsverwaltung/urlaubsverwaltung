@@ -60,7 +60,7 @@
         <uv:menu />
 
         <div class="content">
-            <div class="container-fluid">
+            <div class="container">
 
                 <div class="row">
 

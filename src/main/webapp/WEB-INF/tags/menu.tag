@@ -62,5 +62,5 @@
                 <li><a href="<spring:url value='/j_spring_security_logout' />"><i class="fa fa-sign-out"></i>&nbsp;<spring:message code="nav.signout" /></a></li>
             </ul>
         </div><!-- /.navbar-collapse -->
-    </div><!-- /.container-fluid -->
+    </div><!-- /.container -->
 </nav>

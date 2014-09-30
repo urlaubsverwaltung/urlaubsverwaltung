@@ -19,7 +19,7 @@
         
         <uv:menu />
         
-        <div class="container-fluid">
+        <div class="container">
             <div class="row">
                 <c:choose>
                     <c:when test="${not empty exception.message}">

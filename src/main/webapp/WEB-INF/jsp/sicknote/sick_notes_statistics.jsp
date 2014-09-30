@@ -24,7 +24,7 @@
 <spring:url var="formUrlPrefix" value="/web" />
 
 <div class="content">
-    <div class="container-fluid">
+    <div class="container">
 
         <div class="row">
 
