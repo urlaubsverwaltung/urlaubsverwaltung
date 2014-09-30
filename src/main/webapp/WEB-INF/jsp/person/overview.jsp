@@ -96,7 +96,7 @@
 
             <div class="col-xs-12 col-sm-4">
                 <div class="box">
-                    <span class="box-icon bg-blue"><i class="fa fa-calendar"></i></span>
+                    <span class="box-icon bg-green"><i class="fa fa-calendar"></i></span>
                     <c:choose>
                         <c:when test="${account != null}">
                             <span class="thirds">
@@ -113,7 +113,7 @@
 
             <div class="col-xs-12 col-sm-4">
                 <div class="box">
-                    <span class="box-icon bg-yellow"><i class="fa fa-tasks"></i></span>
+                    <span class="box-icon bg-blue"><i class="fa fa-tasks"></i></span>
                     <c:choose>
                         <c:when test="${account != null}">
                             <span class="thirds">
@@ -235,20 +235,61 @@
         </div>
 
         <div class="row">
+            <div class="col-xs-12">
+                <div id="datepicker"></div>
+            </div>
+        </div>
 
-            <div class="col-xs-12 col-sm-4">
+        <div class="row">
+
+            <c:set var="holidayLeave" value="0" />
+            <c:set var="holidayLeaveAllowed" value="0" />
+            <c:set var="otherLeave" value="0" />
+            <c:set var="otherLeaveAllowed" value="0" />
+
+            <c:forEach items="${applications}" var="app">
+
+                <c:choose>
+                    <c:when test="${app.vacationType == 'HOLIDAY'}">
+                        <c:if test="${app.status == 'WAITING'}">
+                           <c:set var="holidayLeave" value="${holidayLeave + app.days}" />
+                        </c:if>
+                        <c:if test="${app.status == 'ALLOWED'}">
+                            <c:set var="holidayLeave" value="${holidayLeave + app.days}" />
+                            <c:set var="holidayLeaveAllowed" value="${holidayLeaveAllowed + app.days}" />
+                        </c:if>
+                    </c:when>
+                    <c:otherwise>
+                        <c:if test="${app.status == 'WAITING'}">
+                            <c:set var="otherLeave" value="${otherLeave + app.days}" />
+                        </c:if>
+                        <c:if test="${app.status == 'ALLOWED'}">
+                            <c:set var="otherLeave" value="${otherLeave + app.days}" />
+                            <c:set var="otherLeaveAllowed" value="${otherLeaveAllowed + app.days}" />
+                        </c:if>
+                    </c:otherwise>
+                </c:choose>
+
+            </c:forEach>
+
+            <div class="col-xs-12 col-sm-6">
                 <div class="box">
-                    <span class="box-icon"><i class="fa fa-calendar"></i></span>
-                    Es wurden verplant <h4>19 Urlaubstage</h4> (davon sind 20 Tage genehmigt <i class="fa fa-check"></i>)
+                    <span class="box-icon bg-yellow"><i class="fa fa-sun-o"></i></span>
+                    <spring:message code="overview.vacations.holidayLeave" arguments="${holidayLeave}" />
+                    <i class="fa fa-check state ALLOWED"></i> <spring:message code="overview.vacations.holidayLeaveAllowed" arguments="${holidayLeaveAllowed}" />
                 </div>
             </div>
 
-            <div class="col-xs-12 col-sm-8">
-                <div id="datepicker"></div>
+            <div class="col-xs-12 col-sm-6">
+                <div class="box">
+                    <span class="box-icon bg-orange"><i class="fa fa-flag-o"></i></span>
+                    <spring:message code="overview.vacations.otherLeave" arguments="${otherLeave}" />
+                    <i class="fa fa-check state ALLOWED"></i> <spring:message code="overview.vacations.otherLeaveAllowed" arguments="${otherLeaveAllowed}" />
+                </div>
             </div>
 
         </div>
-        
+
         <div class="row">
 
             <div class="col-xs-12">

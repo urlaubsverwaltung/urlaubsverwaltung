@@ -104,7 +104,7 @@ public class TestDataCreationService {
         personForm.setEmail(email);
         personForm.setActive(active);
         personForm.setYear(String.valueOf(currentYear));
-        personForm.setAnnualVacationDays("28");
+        personForm.setAnnualVacationDays("28.5");
         personForm.setRemainingVacationDays("5");
         personForm.setRemainingVacationDaysExpire(true);
         personForm.setValidFrom(new DateMidnight(currentYear, 1, 1));

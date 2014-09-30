@@ -32,7 +32,6 @@ import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
-import org.synyx.urlaubsverwaltung.web.application.UsedDaysOverview;
 import org.synyx.urlaubsverwaltung.web.util.GravatarUtil;
 
 import java.math.BigDecimal;
@@ -202,9 +201,6 @@ public class PersonalOverviewController {
 
         if (!apps.isEmpty()) {
             List<Application> applications = new ArrayList<Application>();
-
-            UsedDaysOverview usedDaysOverview = new UsedDaysOverview(apps, year, calendarService);
-            model.addAttribute("usedDaysOverview", usedDaysOverview);
 
             for (Application a : apps) {
                 if ((a.getStatus() != ApplicationStatus.CANCELLED)

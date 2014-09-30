@@ -1,5 +1,8 @@
+/**************************************************************************
+  BACKGROUNDS
+**************************************************************************/
+
 .bg-green {
-    /*background-color: #23AE89;*/
     background-color: #59AB02;
     color: white;
 }
@@ -10,11 +13,36 @@
 }
 
 .bg-blue {
-    background-color: #2EC1CC;
+    background-color: #449DD5;
+    color: white;
+}
+
+.bg-orange {
+    background-color: #F98E33;
     color: white;
 }
 
 .bg-yellow {
-    background-color: #FFB61C;
+    background-color: #FFCE55;
     color: white;
+}
+
+/**************************************************************************
+  COLORS FOR APPLICATION FOR LEAVE STATES
+**************************************************************************/
+
+.state.WAITING {
+    color: #6BAFBD !important;
+}
+
+.state.ALLOWED {
+    color: #43C83C !important;
+}
+
+.state.REJECTED {
+    color: #FA3031 !important;
+}
+
+.state.CANCELLED {
+    color: #3B3B3B !important;
 }

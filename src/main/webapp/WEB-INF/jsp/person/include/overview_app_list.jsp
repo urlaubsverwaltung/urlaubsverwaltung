@@ -42,7 +42,7 @@
                 </span>
             </td>
             <td>
-                <a href="${formUrlPrefix}/application/${app.id}">
+                <a class="vacation ${app.vacationType}" href="${formUrlPrefix}/application/${app.id}">
                     <h4><spring:message code="${app.vacationType.vacationTypeName}"/></h4>
                 </a>
 

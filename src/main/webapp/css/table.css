@@ -42,30 +42,26 @@ tr.inactive a {
     border-bottom: 1px solid #DDDDDD;
 }
 
-/* STATES IN LIST TABLE */
+/* VACATION TYPES IN TABLE */
 
-.list-table td.state {
+.list-table .HOLIDAY {
+    /* OK */
+}
+
+.list-table .SPECIALLEAVE,
+.list-table .UNPAIDLEAVE,
+.list-table .OVERTIME {
+    font-style: italic;
+}
+
+/* VACATION AND SICK NOTE STATES IN LIST TABLE */
+
+.list-table .state {
     font-size: 25px;
 }
 
-.list-table td.state.WAITING {
-    color: #52B9E9 !important;
-}
-
-.list-table td.state.ALLOWED {
-    color: #43C83C !important;
-}
-
-.list-table td.state.REJECTED {
-    color: #FA3031 !important;
-}
-
-.list-table td.state.CANCELLED {
-    color: #3B3B3B !important;
-}
-
-.list-table td.state.REJECTED,
-.list-table td.state.CANCELLED {
+.list-table .state.REJECTED,
+.list-table .state.CANCELLED {
     opacity: 0.5;
 }
 
