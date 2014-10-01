@@ -35,27 +35,27 @@
             <ul class="dropdown-menu icons-on-top">
 
                 <li>
-                    <a href="${linkPrefix}/all">
+                    <a href="${linkPrefix}/all?year=${displayYear}">
                         <i class="fa fa-calendar"></i>&nbsp;<spring:message code="applications.all" />
                     </a>
                 </li>
                 <li>
-                    <a href="${linkPrefix}/waiting">
+                    <a href="${linkPrefix}/waiting?year=${displayYear}">
                         <i class="fa fa-question"></i>&nbsp;<spring:message code="applications.waiting" />
                     </a>
                 </li>
                 <li>
-                    <a href="${linkPrefix}/allowed">
+                    <a href="${linkPrefix}/allowed?year=${displayYear}">
                         <i class="fa fa-check"></i>&nbsp;<spring:message code="applications.allowed" />
                     </a>
                 </li>
                 <li>
-                    <a href="${linkPrefix}/rejected">
+                    <a href="${linkPrefix}/rejected?year=${displayYear}">
                         <i class="fa fa-ban"></i>&nbsp;<spring:message code="applications.rejected" />
                     </a>
                 </li>
                 <li>
-                    <a href="${linkPrefix}/cancelled">
+                    <a href="${linkPrefix}/cancelled?year=${displayYear}">
                         <i class="fa fa-trash"></i>&nbsp;<spring:message code="applications.cancelled" />
                     </a>
                 </li>
