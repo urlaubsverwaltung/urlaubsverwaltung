@@ -219,7 +219,7 @@
                             <c:otherwise>
                                 <sec:authorize access="hasRole('OFFICE')">
                                     <c:if test="${person.id != loggedUser.id}">
-                                        <a class="btn btn-default"
+                                        <a class="btn btn-default pull-right"
                                            href="${formUrlPrefix}/${person.id}/application/new">
                                             <c:set var="staff" value="${person.firstName} ${person.lastName}"/>
                                             <i class="fa fa-pencil"></i>&nbsp;<spring:message code="ov.apply"/>

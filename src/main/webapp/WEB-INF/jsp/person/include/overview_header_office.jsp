@@ -8,45 +8,43 @@
 <div class="header">
 
     <legend>
-        
-        <p>
-            <spring:message code="table.overview"/> <c:out value="${displayYear}"/>
+
+        <p><spring:message code="table.overview"/> <c:out value="${displayYear}"/></p>
 
             <span class="hidden-xs">
-                <uv:year-selector year="${year}" />
+                <uv:year-selector year="${year}"/>
             </span>
 
-            <div class="btn-group pull-right">
+        <div class="btn-group pull-right hidden-xs">
 
-                <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                    <i class="fa fa-user"></i>
-                    <spring:message code="ov.header.person" />&nbsp;<span class="caret"></span>
-                </button>
+            <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                <i class="fa fa-user"></i>
+                <spring:message code="ov.header.person"/>&nbsp;<span class="caret"></span>
+            </button>
 
-                <ul class="dropdown-menu">
+            <ul class="dropdown-menu">
 
-                    <c:forEach items="${persons}" var="person">
-                        <li>
-                            <a href="${formUrlPrefix}/staff/<c:out value='${person.id}' />/overview">
-                                <c:out value="${person.niceName}"/>
-                            </a>
-                        </li>
-                    </c:forEach>
+                <c:forEach items="${persons}" var="person">
+                    <li>
+                        <a href="${formUrlPrefix}/staff/<c:out value='${person.id}' />/overview">
+                            <c:out value="${person.niceName}"/>
+                        </a>
+                    </li>
+                </c:forEach>
 
-                </ul>
+            </ul>
 
-            </div>
+        </div>
 
-            <sec:authorize access="hasRole('OFFICE')">
-                <a href="${formUrlPrefix}/staff/${person.id}/edit" class="btn btn-default pull-right"><i class="fa fa-pencil"></i> Edit</a>
-            </sec:authorize>
+        <sec:authorize access="hasRole('OFFICE')">
+            <a href="${formUrlPrefix}/staff/${person.id}/edit" class="btn btn-default pull-right"><i
+                    class="fa fa-pencil"></i> Edit</a>
+        </sec:authorize>
 
             <span class="hidden-sm hidden-xs">
-                <uv:print />
+                <uv:print/>
             </span>
 
-        </p>
-
     </legend>
-    
+
 </div>
