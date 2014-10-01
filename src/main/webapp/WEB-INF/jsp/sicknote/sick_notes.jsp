@@ -112,15 +112,15 @@
                                         <spring:message code="time" />
                                     </label>
                                     <div class="col-sm-7 radio">
-                                        <label>
+                                        <label class="thirds">
                                             <form:radiobutton id="periodYear" path="period" value="YEAR" checked="checked" />
                                             <spring:message code="period.year" />
                                         </label>
-                                        <label>
+                                        <label class="thirds">
                                             <form:radiobutton id="periodQuartal" path="period" value="QUARTAL" />
                                             <spring:message code="period.quartal" />
                                         </label>
-                                        <label>
+                                        <label class="thirds">
                                             <form:radiobutton id="periodMonth" path="period" value="MONTH" />
                                             <spring:message code="period.month" />
                                         </label>
@@ -129,8 +129,8 @@
 
                             </div>
                             <div class="modal-footer">
-                                <button class="btn btn-primary" type="submit"><spring:message code="go" /></button>
-                                <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><spring:message code="cancel" /></button>
+                                <button class="btn btn-primary is-sticky" type="submit"><i class="fa fa-check"></i> <spring:message code="go" /></button>
+                                <button class="btn btn-default is-sticky" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i> <spring:message code="cancel" /></button>
                             </div>
                         </form:form>
                     </div>
