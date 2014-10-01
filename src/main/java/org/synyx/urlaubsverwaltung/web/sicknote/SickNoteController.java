@@ -91,6 +91,18 @@ public class SickNoteController {
         return ControllerConstants.ERROR_JSP;
     }
 
+    @RequestMapping(value = "/sicknote", method = RequestMethod.GET)
+    public String defaultSickNotes() {
+
+        DateMidnight now = DateMidnight.now();
+        DateMidnight from = now.dayOfYear().withMinimumValue();
+        DateMidnight to = now.dayOfYear().withMaximumValue();
+
+        return "redirect:/web/sicknote?from=" + from.toString(DateFormat.PATTERN) + "&to="
+                + to.toString(DateFormat.PATTERN);
+
+    }
+
 
     @RequestMapping(value = "/sicknote/quartal", method = RequestMethod.GET)
     public String quartalSickNotes() {
