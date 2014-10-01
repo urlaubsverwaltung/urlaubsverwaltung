@@ -83,10 +83,10 @@
         
         <div class="row">
 
-            <div class="col-xs-12 col-sm-4">
+            <div class="col-xs-12 col-sm-12 col-md-4">
                 <div class="box">
                     <span class="thirds">
-                        <img class="box-image img-circle print--invisible" src="<c:out value='${gravatar}?d=mm&s=80'/>"/>
+                        <img class="box-image img-circle hidden-print" src="<c:out value='${gravatar}?d=mm&s=80'/>"/>
                         <i class="fa fa-at"></i> <c:out value="${person.loginName}"/>
                         <h4><c:out value="${person.niceName}"/></h4>
                         <i class="fa fa-envelope"></i> <c:out value="${person.email}"/>
@@ -94,7 +94,7 @@
                 </div>
             </div>
 
-            <div class="col-xs-12 col-sm-4">
+            <div class="col-xs-12 col-sm-12 col-md-4">
                 <div class="box">
                     <span class="box-icon bg-green"><i class="fa fa-calendar"></i></span>
                     <c:choose>
@@ -111,7 +111,7 @@
                 </div>
             </div>
 
-            <div class="col-xs-12 col-sm-4">
+            <div class="col-xs-12 col-sm-12 col-md-4">
                 <div class="box">
                     <span class="box-icon bg-green"><i class="fa fa-bar-chart"></i></span>
                     <c:choose>
@@ -272,7 +272,7 @@
 
             </c:forEach>
 
-            <div class="col-xs-12 col-sm-6">
+            <div class="col-xs-12 col-sm-12 col-md-6">
                 <div class="box">
                     <span class="box-icon bg-yellow"><i class="fa fa-sun-o"></i></span>
                     <spring:message code="overview.vacations.holidayLeave" arguments="${holidayLeave}" />
@@ -280,7 +280,7 @@
                 </div>
             </div>
 
-            <div class="col-xs-12 col-sm-6">
+            <div class="col-xs-12 col-sm-12 col-md-6">
                 <div class="box">
                     <span class="box-icon bg-orange"><i class="fa fa-flag-o"></i></span>
                     <spring:message code="overview.vacations.otherLeave" arguments="${otherLeave}" />
@@ -334,7 +334,7 @@
         </c:forEach>
         
         <div class="row">
-            <div class="col-xs-12 col-sm-6">
+            <div class="col-xs-12 col-sm-12 col-md-6">
                 <div class="box">
                     <span class="thirds">
                        <span class="box-icon bg-red"><i class="fa fa-medkit"></i></span>
@@ -343,7 +343,7 @@
                     </span>
                 </div>
             </div>
-            <div class="col-xs-12 col-sm-6">
+            <div class="col-xs-12 col-sm-12 col-md-6">
                 <div class="box">
                     <span class="thirds">
                        <span class="box-icon bg-red"><i class="fa fa-child"></i></span>

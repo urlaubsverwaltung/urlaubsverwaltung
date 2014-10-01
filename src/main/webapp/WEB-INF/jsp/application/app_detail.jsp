@@ -179,7 +179,7 @@
 
                     <div class="box">
                     <span class="thirds">
-                        <img class="box-image img-circle print--invisible" src="<c:out value='${gravatar}?d=mm&s=80'/>"/>
+                        <img class="box-image img-circle" src="<c:out value='${gravatar}?d=mm&s=80'/>"/>
                         <i class="fa fa-at"></i> <c:out value="${application.person.loginName}"/>
                         <h4><c:out value="${application.person.niceName}"/></h4>
                         <i class="fa fa-envelope"></i> <c:out value="${application.person.email}"/>

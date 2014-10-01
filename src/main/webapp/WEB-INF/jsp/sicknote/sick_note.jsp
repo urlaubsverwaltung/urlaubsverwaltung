@@ -23,7 +23,7 @@
 
         <div class="row">
 
-            <div class="col-xs-12 col-sm-6 print-box">
+            <div class="col-xs-12 col-sm-6">
 
                 <div class="header">
                     <legend>
@@ -128,7 +128,7 @@
               </table>  
             </div>
 
-            <div class="col-xs-12 col-sm-6 print-box">
+            <div class="col-xs-12 col-sm-6">
 
                 <div class="header">
                     <legend>

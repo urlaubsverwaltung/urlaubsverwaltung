@@ -29,34 +29,36 @@
                     </c:otherwise>
                 </c:choose>
                 <tr class="${CSS_CLASS}">
-                    <td class="is-centered state ${app.status}">
-                        <span class="print--visible">
-                            <spring:message code="${app.status.state}"/>
-                        </span>
-                        <span class="print--invisible">
-                             <c:choose>
-                                 <c:when test="${app.status == 'WAITING'}">
-                                     <i class="fa fa-question"></i>
-                                 </c:when>
-                                 <c:when test="${app.status == 'ALLOWED'}">
-                                     <i class="fa fa-check"></i>
-                                 </c:when>
-                                 <c:when test="${app.status == 'REJECTED'}">
-                                     <i class="fa fa-ban"></i>
-                                 </c:when>
-                                 <c:when test="${app.status == 'CANCELLED'}">
-                                     <i class="fa fa-trash"></i>
-                                 </c:when>
-                                 <c:otherwise>
-                                     &nbsp;
-                                 </c:otherwise>
-                             </c:choose>
-                        </span>
+                    <td class="visible-print">
+                        <spring:message code="${app.status.state}"/>
+                    </td>
+                    <td class="is-centered state ${app.status} hidden-print">
+                        <c:choose>
+                            <c:when test="${app.status == 'WAITING'}">
+                                <i class="fa fa-question"></i>
+                            </c:when>
+                            <c:when test="${app.status == 'ALLOWED'}">
+                                <i class="fa fa-check"></i>
+                            </c:when>
+                            <c:when test="${app.status == 'REJECTED'}">
+                                <i class="fa fa-ban"></i>
+                            </c:when>
+                            <c:when test="${app.status == 'CANCELLED'}">
+                                <i class="fa fa-trash"></i>
+                            </c:when>
+                            <c:otherwise>
+                                &nbsp;
+                            </c:otherwise>
+                        </c:choose>
                     </td>
                     <td>
-                        <a class="vacation ${app.vacationType}" href="${formUrlPrefix}/application/${app.id}">
+                        <a class="vacation ${app.vacationType} hidden-print" href="${formUrlPrefix}/application/${app.id}">
                             <h4><spring:message code="${app.vacationType.vacationTypeName}"/></h4>
                         </a>
+
+                        <h4 class="visible-print">
+                            <spring:message code="${app.vacationType.vacationTypeName}"/>
+                        </h4>
 
                         <p>
                             <c:choose>
@@ -73,19 +75,11 @@
                     <td class="is-centered hidden-xs">
                         <span><fmt:formatNumber maxFractionDigits="1" value="${app.days}" /> Tage</span>
                     </td>
-                    <td>
-                        <span class="hidden-xs hidden-sm">
-                            <img class="box-image img-circle print--invisible" src="<c:out value='${gravatarUrls[app]}?d=mm&s=80'/>"/>
-                            <i class="fa fa-at"></i> <c:out value="${app.person.loginName}"/>
-                            <h4><c:out value="${app.person.niceName}"/></h4>
-                            <i class="fa fa-envelope"></i> <c:out value="${app.person.email}"/>
-                        </span>
-                        <span class="visible-xs visible-sm">
-                            <img class="box-image img-circle print--invisible" src="<c:out value='${gravatarUrls[app]}?d=mm&s=60'/>"/>
-                            <span><c:out value="${app.person.niceName}"/></span>
-                        </span>
+                    <td style="width: 30%;">
+                        <img class="is-inline-block img-circle hidden-print" src="<c:out value='${gravatarUrls[app]}?d=mm&s=60'/>"/>
+                        <h4 class="is-inline-block hidden-print"><c:out value="${app.person.niceName}"/></h4>
+                        <p class="visible-print"><c:out value="${app.person.niceName}"/></p>
                     </td>
-
                 </tr>
             </c:forEach>
             </tbody>

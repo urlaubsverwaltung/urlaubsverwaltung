@@ -158,13 +158,13 @@
                     <table class="data-table is-centered sortable tablesorter zebra-table" cellspacing="0">
                         <thead>
                         <tr>
-                            <th class="print--invisible"><spring:message code="app.date.overview" /></th>
+                            <th class="hidden-print"><spring:message code="app.date.overview" /></th>
                             <th><spring:message code="firstname" /></th>
                             <th><spring:message code="lastname" /></th>
                             <th><spring:message code="sicknotes.time" /></th>
                             <th><spring:message code="work.days" /></th>
                             <th><spring:message code="sicknotes.aub.short" /></th>
-                            <th class="print--invisible"><spring:message code="edit" /></th>
+                            <th class="hidden-print"><spring:message code="edit" /></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -178,7 +178,7 @@
                                 </c:otherwise>
                             </c:choose>
                             <tr class="${CSS_CLASS}" onclick="navigate('${formUrlPrefix}/sicknote/${sickNote.id}');">
-                                <td class="print--invisible">
+                                <td class="hidden-print">
                                     <uv:date date="${sickNote.lastEdited}" />
                                 </td>
                                 <td>
@@ -196,7 +196,7 @@
                                 <td>
                                     <uv:date date="${sickNote.aubStartDate}" /> - <uv:date date="${sickNote.aubEndDate}" />
                                 </td>
-                                <td class="print--invisible">
+                                <td class="hidden-print">
                                     <c:if test="${sickNote.active}">
                                         <a href="${formUrlPrefix}/sicknote/${sickNote.id}/edit">
                                             <i class="fa fa-pencil fa-action"></i>

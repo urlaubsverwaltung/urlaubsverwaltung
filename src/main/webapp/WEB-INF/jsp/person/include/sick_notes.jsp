@@ -17,16 +17,20 @@
     </c:choose>
     <tr class="${CSS_CLASS}" onclick="navigate('${formUrlPrefix}/sicknote/${sickNote.id}');">
         <td class="is-centered state SICKNOTE">
-            <span class="print--invisible">
+            <span class="hidden-print">
                 <i class="fa fa-medkit"></i>
             </span>
         </td>
         <td>
-            <a href="${formUrlPrefix}/sicknote/${sickNote.id}">
+            <a href="${formUrlPrefix}/sicknote/${sickNote.id}" class="hidden-print">
                 <h4>
                     <spring:message code="sicknote" />
                 </h4>
             </a>
+
+            <h4 class="visible-print">
+                <spring:message code="sicknote" />
+            </h4>
 
             <p>
                 <uv:date date="${sickNote.startDate}"/> - <uv:date date="${sickNote.endDate}"/>
@@ -39,7 +43,7 @@
         <td class="is-centered">
             <fmt:formatNumber maxFractionDigits="1" value="${sickNote.workDays}"/> Tage
         </td>
-        <td class="print--invisible is-centered hidden-xs">
+        <td class="hidden-print is-centered hidden-xs">
             <i class="fa fa-clock-o"></i> <spring:message code="sicknote.lastEdited" /> <uv:date date="${sickNote.lastEdited}"/>
         </td>
         </c:forEach>

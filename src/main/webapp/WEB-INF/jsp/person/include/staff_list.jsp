@@ -15,14 +15,14 @@
         <th class="is-centered"><spring:message code='overview.remaining.days.last.year' /></th>
         <th class="is-centered"><spring:message code="left"/></th>
         <sec:authorize access="hasRole('OFFICE')">
-            <th class="print--invisible"><spring:message code="edit" /></th>
+            <th class="hidden-print"><spring:message code="edit" /></th>
         </sec:authorize>    
     </tr>
     </thead>
     <tbody>
     <c:forEach items="${persons}" var="person" varStatus="loopStatus">
         <tr onclick="navigate('${formUrlPrefix}/staff/${person.id}/overview');">
-            <td class="is-centered"><img class="print--invisible" src="<c:out value='${gravatarUrls[person]}?s=20&d=mm'/>" /></td>
+            <td class="is-centered"><img class="hidden-print" src="<c:out value='${gravatarUrls[person]}?s=20&d=mm'/>" /></td>
             <td><c:out value="${person.firstName}"/></td>
             <td><c:out value="${person.lastName}"/></td>
             <td class="is-centered">
@@ -73,7 +73,7 @@
                 </c:choose>
             </td>
             <sec:authorize access="hasRole('OFFICE')">
-            <td class="is-centered print--invisible"><a href="${formUrlPrefix}/staff/${person.id}/edit"><i class="fa fa-pencil fa-action" /></a></td>
+            <td class="is-centered hidden-print"><a href="${formUrlPrefix}/staff/${person.id}/edit"><i class="fa fa-pencil fa-action" /></a></td>
             </sec:authorize>
         </tr>    
     </c:forEach>

@@ -17,11 +17,13 @@
             </c:otherwise>
         </c:choose>
         <tr class="${CSS_CLASS}">
-            <td class="is-centered state ${app.status}">
-                <span class="print--visible">
+            <td class="visible-print">
+                <span>
                     <spring:message code="${app.status.state}"/>
                 </span>
-                <span class="print--invisible">
+            </td>
+            <td class="is-centered state ${app.status} hidden-print">
+                <span>
                      <c:choose>
                          <c:when test="${app.status == 'WAITING'}">
                              <i class="fa fa-question"></i>
@@ -42,7 +44,10 @@
                 </span>
             </td>
             <td>
-                <a class="vacation ${app.vacationType}" href="${formUrlPrefix}/application/${app.id}">
+                <h4 class="visible-print">
+                    <spring:message code="${app.vacationType.vacationTypeName}"/>
+                </h4>
+                <a class="hidden-print vacation ${app.vacationType}" href="${formUrlPrefix}/application/${app.id}">
                     <h4><spring:message code="${app.vacationType.vacationTypeName}"/></h4>
                 </a>
 
@@ -81,7 +86,7 @@
                 </span>
                 <span>Tage</span>
             </td>
-            <td class="is-centered hidden-xs">
+            <td class="is-centered hidden-xs hidden-print">
                 <i class="fa fa-clock-o"></i>
                 <span>
                     <c:choose>
