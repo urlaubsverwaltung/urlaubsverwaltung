@@ -55,10 +55,10 @@
                     <p>
                         <spring:message code="sicknotes" />
                         <c:if test="${person != null}">
-                            <spring:message code="for" />&nbsp;<c:out value="${person.firstName}" />&nbsp;<c:out value="${person.lastName}" />
+                            <spring:message code="for" />&nbsp;<c:out value="${person.niceName}" />
                         </c:if>
                     </p>
-                    <div class="btn-group btn-group-legend pull-right">
+                    <div class="btn-group btn-group-legend pull-right hidden-xs hidden-sm">
                         <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#">
                             <i class="fa fa-bar-chart"></i>&nbsp;<spring:message code='sicknotes.statistics.short' />
                             <span class="caret"></span>
@@ -77,7 +77,7 @@
                     <a class="btn btn-default pull-right" href="${formUrlPrefix}/sicknote/new">
                         <i class="fa fa-plus"></i>&nbsp;<spring:message code="sicknotes.new" />
                     </a>
-                    <a href="#changeViewModal" role="button" class="btn btn-default pull-right" data-toggle="modal">
+                    <a href="#changeViewModal" role="button" class="btn btn-default pull-right hidden-xs hidden-sm" data-toggle="modal">
                         <i class="fa fa-filter"></i>&nbsp;<spring:message code="filter" />
                     </a>
                 </legend>
@@ -138,10 +138,10 @@
             </div>
 
             <div>
-                <p style="display:inline-block">
+                <p class="is-inline-block">
                     <spring:message code="time"/>:&nbsp;<uv:date date="${from}" /> - <uv:date date="${to}" />
                 </p>
-                <p style="float:right;">
+                <p class="pull-right visible-print">
                     <spring:message code="Effective"/> <uv:date date="${today}" />
                 </p>
             </div>
@@ -155,16 +155,16 @@
                 </c:when>
 
                 <c:otherwise>
-                    <table class="data-table is-centered sortable tablesorter zebra-table" cellspacing="0">
-                        <thead>
+                    <table class="list-table selectable-table sortable tablesorter" cellspacing="0">
+                        <thead class="hidden-xs hidden-sm">
                         <tr>
-                            <th class="hidden-print"><spring:message code="app.date.overview" /></th>
-                            <th><spring:message code="firstname" /></th>
-                            <th><spring:message code="lastname" /></th>
-                            <th><spring:message code="sicknotes.time" /></th>
-                            <th><spring:message code="work.days" /></th>
-                            <th><spring:message code="sicknotes.aub.short" /></th>
-                            <th class="hidden-print"><spring:message code="edit" /></th>
+                            <th class="hidden-print sortable-field"><spring:message code="app.date.overview" /></th>
+                            <th class="sortable-field"><spring:message code="firstname" /></th>
+                            <th class="sortable-field"><spring:message code="lastname" /></th>
+                            <th class="sortable-field"><spring:message code="sicknotes.time" /></th>
+                            <th class="sortable-field"><spring:message code="work.days" /></th>
+                            <th class="sortable-field"><spring:message code="sicknotes.aub.short" /></th>
+                            <th></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -178,7 +178,7 @@
                                 </c:otherwise>
                             </c:choose>
                             <tr class="${CSS_CLASS}" onclick="navigate('${formUrlPrefix}/sicknote/${sickNote.id}');">
-                                <td class="hidden-print">
+                                <td class="hidden-print hidden-xs">
                                     <uv:date date="${sickNote.lastEdited}" />
                                 </td>
                                 <td>
@@ -190,13 +190,13 @@
                                 <td>
                                     <uv:date date="${sickNote.startDate}" /> - <uv:date date="${sickNote.endDate}" />
                                 </td>
-                                <td>
+                                <td class="hidden-xs">
                                     <fmt:formatNumber maxFractionDigits="1" value="${sickNote.workDays}" />
                                 </td>
-                                <td>
+                                <td class="hidden-xs">
                                     <uv:date date="${sickNote.aubStartDate}" /> - <uv:date date="${sickNote.aubEndDate}" />
                                 </td>
-                                <td class="hidden-print">
+                                <td class="hidden-print hidden-xs">
                                     <c:if test="${sickNote.active}">
                                         <a href="${formUrlPrefix}/sicknote/${sickNote.id}/edit">
                                             <i class="fa fa-pencil fa-action"></i>
