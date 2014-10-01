@@ -4,6 +4,16 @@
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
+<script type="text/javascript">
+    $(document).ready(function() {
+        <c:if test="${action == 'allow'}">
+        $("#allow").show();
+        </c:if>
+    });
+</script>
+
+<spring:url var="formUrlPrefix" value="/web" />
+
 <form:form method="put" action="${formUrlPrefix}/application/${application.id}/allow" modelAttribute="comment">
     <div id="confirm" style="display:none" class="confirm alert alert-success">
         <b><spring:message code='allow.confirm' /></b>

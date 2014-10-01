@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.core.account.Account;
 import org.synyx.urlaubsverwaltung.core.account.AccountService;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
@@ -721,13 +722,15 @@ public class ApplicationController {
      */
     @RequestMapping(value = ALLOW_APP, method = RequestMethod.PUT)
     public String allowApplication(@PathVariable(ApplicationConstants.APPLICATION_ID) Integer applicationId,
-        @ModelAttribute(ApplicationConstants.COMMENT) Comment comment) {
+        @ModelAttribute(ApplicationConstants.COMMENT) Comment comment, RedirectAttributes redirectAttributes) {
 
         Person boss = sessionService.getLoggedUser();
         Application application = applicationService.getApplicationById(applicationId);
 
         if (sessionService.isBoss()) {
             applicationInteractionService.allow(application, boss, comment);
+
+            redirectAttributes.addFlashAttribute("allowSuccess", true);
 
             return "redirect:/web/application/" + applicationId;
         } else {
@@ -746,7 +749,7 @@ public class ApplicationController {
      */
     @RequestMapping(value = REFER_APP, method = RequestMethod.PUT)
     public String referApplication(@PathVariable(ApplicationConstants.APPLICATION_ID) Integer applicationId,
-        @ModelAttribute("modelPerson") Person p) {
+        @ModelAttribute("modelPerson") Person p, RedirectAttributes redirectAttributes) {
 
         Application application = applicationService.getApplicationById(applicationId);
 
@@ -754,6 +757,8 @@ public class ApplicationController {
         String senderName = sender.getFirstName() + " " + sender.getLastName();
         Person recipient = personService.getPersonByLogin(p.getLoginName());
         mailService.sendReferApplicationNotification(application, recipient, senderName);
+
+        redirectAttributes.addFlashAttribute("referSuccess", true);
 
         return "redirect:/web/application/" + applicationId;
     }
@@ -764,7 +769,7 @@ public class ApplicationController {
      */
     @RequestMapping(value = REJECT_APP, method = RequestMethod.PUT)
     public String rejectApplication(@PathVariable(ApplicationConstants.APPLICATION_ID) Integer applicationId,
-        @ModelAttribute(ApplicationConstants.COMMENT) Comment comment, Errors errors, Model model) {
+        @ModelAttribute(ApplicationConstants.COMMENT) Comment comment, Errors errors, RedirectAttributes redirectAttributes) {
 
         Person boss = sessionService.getLoggedUser();
 
@@ -774,56 +779,18 @@ public class ApplicationController {
             validator.validateComment(comment, errors, true);
 
             if (errors.hasErrors()) {
-                prepareDetailView(application, ApplicationConstants.WAITING, model);
-                model.addAttribute("errors", errors);
-
-                return ApplicationConstants.SHOW_APP_DETAIL_JSP;
+                redirectAttributes.addFlashAttribute("errors", errors);
+                redirectAttributes.addFlashAttribute("action", "reject");
             } else {
                 applicationInteractionService.reject(application, boss, comment);
-
-                return "redirect:/web/application/" + applicationId;
+                redirectAttributes.addFlashAttribute("rejectSuccess", true);
             }
+
+            return "redirect:/web/application/" + applicationId;
         } else {
             return ControllerConstants.ERROR_JSP;
         }
     }
-
-
-    /**
-     * This method shows a confirm page with details about the application that user wants to cancel; the user has to
-     * confirm that he really wants to cancel this application.
-     *
-     * @param  applicationId
-     * @param  model
-     *
-     * @return
-     */
-    @RequestMapping(value = CANCEL_APP, method = RequestMethod.GET)
-    public String cancelApplicationConfirm(@PathVariable(ApplicationConstants.APPLICATION_ID) Integer applicationId,
-        Model model) {
-
-        Application application = applicationService.getApplicationById(applicationId);
-        model.addAttribute(ApplicationConstants.STATE_NUMBER, ApplicationConstants.TO_CANCEL);
-
-        Person loggedUser = sessionService.getLoggedUser();
-
-        // office may cancel waiting or allowed applications of other users
-        if (sessionService.isOffice()) {
-            prepareDetailView(application, ApplicationConstants.TO_CANCEL, model);
-
-            return ApplicationConstants.SHOW_APP_DETAIL_JSP;
-        } else {
-            // user and boss may cancel only the own waiting applications
-            if (loggedUser.equals(application.getPerson()) && application.getStatus() == ApplicationStatus.WAITING) {
-                prepareDetailView(application, ApplicationConstants.TO_CANCEL, model);
-
-                return ApplicationConstants.SHOW_APP_DETAIL_JSP;
-            } else {
-                return ControllerConstants.ERROR_JSP;
-            }
-        }
-    }
-
 
     /**
      * After confirming by user: this method set an application to cancelled.
@@ -834,7 +801,7 @@ public class ApplicationController {
      */
     @RequestMapping(value = CANCEL_APP, method = RequestMethod.PUT)
     public String cancelApplication(@PathVariable(ApplicationConstants.APPLICATION_ID) Integer applicationId,
-        @ModelAttribute(ApplicationConstants.COMMENT) Comment comment, Errors errors, Model model) {
+        @ModelAttribute(ApplicationConstants.COMMENT) Comment comment, Errors errors, RedirectAttributes redirectAttributes) {
 
         Application application = applicationService.getApplicationById(applicationId);
         Person loggedUser = sessionService.getLoggedUser();
@@ -858,13 +825,11 @@ public class ApplicationController {
             }
 
             if (errors.hasErrors()) {
-                prepareDetailView(application, ApplicationConstants.WAITING, model);
-                model.addAttribute("errors", errors);
-
-                return ApplicationConstants.SHOW_APP_DETAIL_JSP;
+                redirectAttributes.addFlashAttribute("errors", errors);
+                redirectAttributes.addFlashAttribute("action", "cancel");
+            } else {
+                applicationInteractionService.cancel(application, loggedUser, comment);
             }
-
-            applicationInteractionService.cancel(application, loggedUser, comment);
 
             return "redirect:/web/application/" + applicationId;
         } else {
@@ -892,13 +857,7 @@ public class ApplicationController {
 
     private void prepareDetailView(Application application, int stateNumber, Model model) {
 
-        Comment comment = commentService.getCommentByApplicationAndStatus(application, application.getStatus());
-
-        if (comment != null) {
-            model.addAttribute(ApplicationConstants.COMMENT, comment);
-        } else {
-            model.addAttribute(ApplicationConstants.COMMENT, new Comment());
-        }
+        model.addAttribute(ApplicationConstants.COMMENT, new Comment());
 
         List<Comment> comments = commentService.getCommentsByApplication(application);
 
@@ -937,14 +896,14 @@ public class ApplicationController {
 
 
     @RequestMapping(value = REMIND, method = RequestMethod.PUT)
-    public String remindBoss(@PathVariable(ApplicationConstants.APPLICATION_ID) Integer applicationId, Model model) {
+    public String remindBoss(@PathVariable(ApplicationConstants.APPLICATION_ID) Integer applicationId, RedirectAttributes redirectAttributes) {
 
         Application application = applicationService.getApplicationById(applicationId);
         DateMidnight remindDate = application.getRemindDate();
 
         if (remindDate != null) {
             if (remindDate.equals(DateMidnight.now())) {
-                model.addAttribute("alreadySent", true);
+                redirectAttributes.addFlashAttribute("remindAlreadySent", true);
             }
         } else {
             long applicationDate = application.getApplicationDate().getMillis();
@@ -957,14 +916,12 @@ public class ApplicationController {
                 mailService.sendRemindBossNotification(application);
                 application.setRemindDate(DateMidnight.now());
                 applicationService.save(application);
-                model.addAttribute("isSent", true);
+                redirectAttributes.addFlashAttribute("remindIsSent", true);
             } else {
-                model.addAttribute("noWay", true);
+                redirectAttributes.addFlashAttribute("remindNoWay", true);
             }
         }
 
-        prepareDetailView(application, ApplicationConstants.WAITING, model);
-
-        return ApplicationConstants.SHOW_APP_DETAIL_JSP;
+        return "redirect:/web/application/" + applicationId;
     }
 }

@@ -180,17 +180,6 @@ function checkSonderurlaub(value) {
 
 }
 
-function showErrorDivIfAction(action) {
-
-    var path = window.location.pathname;
-
-    if(path.indexOf(action) != -1) {
-        $("div#" + action).attr("style", "display: block")
-    } 
-    
-}
-
-
 // thanks to http://www.jaqe.de/2009/01/16/url-parameter-mit-javascript-auslesen/
 function getUrlParam(name)
 {

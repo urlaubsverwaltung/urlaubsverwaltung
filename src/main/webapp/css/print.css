@@ -9,7 +9,8 @@
     .btn-group,
     .navbar,
     #datepicker,
-    tr.inactive {
+    tr.inactive,
+    .alert {
         display: none;
     }
 

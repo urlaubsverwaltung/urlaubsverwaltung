@@ -16,15 +16,8 @@
 
     <body>
 
-    <c:set var="isOffice" value="false" />
-    <c:forEach var="item" items="${loggedUser.permissions}">
-        <c:if test="${item eq 'OFFICE'}">
-            <c:set var="isOffice" value="true" />
-        </c:if>
-    </c:forEach>
+    <spring:url var="formUrlPrefix" value="/web"/>
     
-        <spring:url var="formUrlPrefix" value="/web" />
-
         <uv:menu />
 
         <div class="content">
@@ -40,122 +33,59 @@
                             <p>
                                 <spring:message code="app.title" />
                             </p>
-
+                            <jsp:include page="./include/app-detail-elements/action-buttons.jsp" />
                         </legend>
 
                     </div>
 
-                    <div class="action-buttons">
-
-                        <sec:authorize access="hasAnyRole('BOSS', 'OFFICE')">
-                            <c:if test="${application.person.id != loggedUser.id}">
-                                <%@include file="./include/app-detail-elements/actions/back_to_member.jsp" %>
-                            </c:if>
-                        </sec:authorize>
-
-                        <sec:authorize access="hasRole('USER')">
-                            <uv:print />
-                        </sec:authorize>
-
-                        <sec:authorize access="hasRole('USER')">
-                            <c:if test="${application.person.id == loggedUser.id && application.status.number == 0}">
-                                <%@include file="./include/app-detail-elements/actions/remind.jsp" %>
-                            </c:if>
-
-                            <%-- if role is office then allowed applications for leave may be cancelled --%>
-
-                            <c:choose>
-                                <c:when test="${isOffice}">
-                                    <c:if test="${application.person.id == loggedUser.id && (application.status.number == 0 || application.status.number == 1)}">
-                                        <%@include file="./include/app-detail-elements/actions/cancel.jsp" %>
-                                    </c:if>
-                                </c:when>
-                                <c:otherwise>
-                                    <c:if test="${application.person.id == loggedUser.id && application.status.number == 0}">
-                                        <%@include file="./include/app-detail-elements/actions/cancel.jsp" %>
-                                    </c:if>
-                                </c:otherwise>
-                            </c:choose>
-
-                        </sec:authorize>
-
-                        <sec:authorize access="hasRole('OFFICE')">
-                            <c:if test="${application.person.id != loggedUser.id && (application.status.number == 0 || application.status.number == 1)}">
-                                <%@include file="./include/app-detail-elements/actions/cancel_for_other.jsp" %>
-                            </c:if>
-                        </sec:authorize>
-
-                        <sec:authorize access="hasRole('BOSS')">
-                            <c:if test="${application.status.number == 0}">
-                                <div class="btn-group pull-right">
-                                    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
-                                        <i class="fa fa-edit"></i>
-                                        <spring:message code="process" />
-                                        <span class="caret"></span>
-                                    </a>
-                                    <ul class="dropdown-menu">
-                                        <li>
-                                            <a href="#" onclick="$('#reject').hide(); $('#refer').hide();  $('#cancel').hide(); $('#confirm').show();">
-                                                <i class="fa fa-check"></i>&nbsp;<spring:message code='app.state.ok.short' />
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#" onclick="$('#refer').hide(); $('#confirm').hide();  $('#cancel').hide(); $('#reject').show();">
-                                                <i class="fa fa-ban"></i>&nbsp;<spring:message code='app.state.no.short' />
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#" onclick="$('#reject').hide(); $('#confirm').hide(); $('#cancel').hide(); $('#refer').show();">
-                                                <i class="fa fa-mail-forward"></i>&nbsp;<spring:message code='app.state.refer.short' />
-                                            </a>
-                                        </li>
-                                    </ul>
+                    <div id="results">
+                        <c:choose>
+                            <c:when test="${remindAlreadySent == true}">
+                            <div class="alert alert-danger">
+                                <spring:message code='application.action.remind.error.alreadySent' />
+                            </div>
+                            </c:when>
+                            <c:when test="${remindNoWay == true}">
+                                <div class="alert alert-danger">
+                                    <spring:message code='application.action.remind.error.impatient' />
                                 </div>
-                            </c:if>
-                        </sec:authorize>
-
+                            </c:when>
+                            <c:when test="${remindIsSent == true}">
+                                <div class="alert alert-success">
+                                    <spring:message code='application.action.remind.success'/>
+                                </div>
+                            </c:when>
+                            <c:when test="${!empty errors}">
+                                <div class="alert alert-danger">
+                                    <spring:message code="application.action.reason.error" />
+                                </div>
+                            </c:when>
+                            <c:when test="${allowSuccess == true}">
+                                <div class="alert alert-success">
+                                    <spring:message code="application.action.allow.success" />
+                                </div>
+                            </c:when>
+                            <c:when test="${rejectSuccess == true}">
+                                <div class="alert alert-success">
+                                    <spring:message code="application.action.reject.success" />
+                                </div>
+                            </c:when>
+                            <c:when test="${referSuccess == true}">
+                                <div class="alert alert-success">
+                                    <spring:message code="application.action.refer.success" />
+                                </div>
+                            </c:when>
+                            <c:when test="${cancelSuccess == true}">
+                                <div class="alert alert-success">
+                                    <spring:message code="application.action.cancel.success" />
+                                </div>
+                            </c:when>
+                        </c:choose>
                     </div>
-                    
+
                     <div class="actions">
-
-                        <%-- permission dependant forms to the buttons above START --%>
-
-                        <sec:authorize access="hasRole('USER')">
-
-                            <%-- if role is office then allowed applications for leave may be cancelled --%>
-
-                            <c:choose>
-                                <c:when test="${isOffice}">
-                                    <c:if test="${application.person.id == loggedUser.id && (application.status.number == 0 || application.status.number == 1)}">
-                                        <%@include file="./include/app-detail-elements/actions/cancel_form.jsp" %>
-                                    </c:if>
-                                </c:when>
-                                <c:otherwise>
-                                    <c:if test="${application.person.id == loggedUser.id && application.status.number == 0}">
-                                        <%@include file="./include/app-detail-elements/actions/cancel_form.jsp" %>
-                                    </c:if>
-                                </c:otherwise>
-                            </c:choose>
-
-                        </sec:authorize>
-
-                        <sec:authorize access="hasRole('BOSS')">
-                                <c:if test="${application.status.number == 0}">
-                                    <%@include file="./include/app-detail-elements/actions/allow_form.jsp" %>
-                                    <%@include file="./include/app-detail-elements/actions/reject_form.jsp" %>
-                                    <%@include file="./include/app-detail-elements/actions/refer_form.jsp" %>
-                                </c:if>
-                        </sec:authorize>
-
-                        <sec:authorize access="hasRole('OFFICE')">
-                                <c:if test="${application.person.id != loggedUser.id && (application.status.number == 0 || application.status.number == 1)}">
-                                    <%@include file="./include/app-detail-elements/actions/cancel_for_other_form.jsp" %>
-                                </c:if>
-                        </sec:authorize>    
-
-                        <%-- permission dependant forms to the buttons above END --%>
-
-                    </div><%--End of actions --%>
+                        <jsp:include page="./include/app-detail-elements/actions.jsp" />
+                    </div>
 
                     <%@include file="./include/app-detail-elements/app_info.jsp" %>
 
@@ -174,6 +104,13 @@
                     <div class="header">
                         <legend>
                             <p><spring:message code="staff" /></p>
+                            <sec:authorize access="hasAnyRole('BOSS', 'OFFICE')">
+                                <c:if test="${application.person.id != loggedUser.id}">
+                                    <a class="btn btn-default pull-right" href="${formUrlPrefix}/staff/${application.person.id}/overview" />
+                                        <i class="fa fa-user"></i>&nbsp;<spring:message code="staff.back" />
+                                    </a>
+                                </c:if>
+                            </sec:authorize>
                         </legend>
                     </div>
 

@@ -4,6 +4,8 @@
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
+<spring:url var="formUrlPrefix" value="/web"/>
+
 <form:form method="put" action="${formUrlPrefix}/application/${application.id}/refer" modelAttribute="modelPerson">
     <div id="refer" style="display: none" class="confirm alert alert-info">
         <b><spring:message code="please.refer" /></b>
