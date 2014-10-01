@@ -1,0 +1,26 @@
+/**************************************************************************
+
+  ERROR PAGE
+
+**************************************************************************/
+
+#errorpage-exception {
+    margin-top: 80px;
+}
+
+#errorpage {
+    background-image: url("../images/errorpage.png");
+    background-repeat: no-repeat;
+    min-height: 550px;
+    margin-top: 80px;
+}
+
+#error-link {
+    text-decoration: none;
+    display: block;
+    width: 99px;
+    height: 44px;
+    position: absolute;
+    top: 41.5em;
+    left: 35.75em;
+}

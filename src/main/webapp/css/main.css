@@ -8,6 +8,7 @@
 @import "table.css";
 @import "states.css";
 @import "print.css";
+@import "error.css";
 
 /**************************************************************************
   
@@ -57,94 +58,4 @@ footer {
 
 .is-sticky {
     margin:  0;
-}
-
-/* TODO: remove this */
-/**************************************************************************
-  
-  DETAILS TABLE
-  
-**************************************************************************/
-
-.detail-table td, .detail-table th {
-    padding: 0.55em;
-}
-
-.detail-table th {
-    text-align: left;
-}
-
-.detail-table {
-    width: 100%;
-    border: 1px solid #EAF2D3;
-    font-size: 1.05em;
-    margin-right:1em;
-}
-
-/**************************************************************************
-  
-  ALLOWING / REJECTING / etc. an application
-  
-**************************************************************************/
-
-.action-buttons {
-    display: inline-block;
-}
-
-.confirm {
-    padding: 1em 1em 1em 2.5em;
-    margin-top: 1em;
-}
-
-/**************************************************************************
-  
-  ERROR PAGE
-  
-**************************************************************************/
-
-#errorpage-exception {
-    margin-top: 80px;  
-}
-
-#errorpage {
-    background-image: url("../images/errorpage.png");
-    background-repeat: no-repeat;
-    min-height: 550px;
-    margin-top: 80px;
-}
-
-#error-link {
-    text-decoration: none;
-    display: block;
-    width: 99px;
-    height: 44px;
-    position: absolute;
-    top: 41.5em;
-    left: 35.75em;
-}
-
-/**************************************************************************
-  
-  RESPONSIVENESS
-  
-**************************************************************************/
-
-/* Narrow desktop */
-@media all and (max-width: 960px) {
-    /* Ok */
-}
-
-/* Tablet */
-@media all and (max-width: 768px) {
-    /* Ok */
-}
-
-/* Small Tablet */
-@media all and (max-width: 600px) {
-    /* Ok */
-}
-
-/* Mobile */
-@media all and (max-width: 480px) {
-    /* Ok */
 }

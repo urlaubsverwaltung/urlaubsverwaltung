@@ -13,3 +13,22 @@
 .btn-default {
     background-color: #F8F8F8;
 }
+
+.btn.halves {
+    width: 45%;
+}
+
+.btn.halves:last-child {
+    float: right;
+    margin-right: 0;
+}
+
+/* STYLING FOR XS SCREENS */
+@media (max-width: 767px) {
+    .btn.halves {
+        width: 98%;
+    }
+    .btn.halves:last-child {
+        float: none;
+    }
+}

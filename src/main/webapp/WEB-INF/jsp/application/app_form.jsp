@@ -91,7 +91,7 @@
 
 <div class="row">
 
-<div class="col-xs-12 col-sm-6">
+<div class="col-xs-12 col-sm-12 col-md-6">
 
 <div class="header">
 
@@ -107,10 +107,10 @@
         <%-- office applies for a user --%>
 
         <div class="form-group">
-            <label class="control-label col-sm-4">
+            <label class="control-label col-md-4">
                 <spring:message code="name"/>
             </label>
-            <div class="col-sm-9">
+            <div class="col-md-9">
                 <select id="person-select" class="form-control" onchange="window.location.href=this.options
                                                         [this.selectedIndex].value">
                     <option value="${formUrlPrefix}/${person.id}/application/new" selected="selected">
@@ -135,11 +135,11 @@
        data-original-title="<spring:message code='special.leave.title.short' />"
        data-content="<spring:message code='special.leave.explanation' />" data-trigger="hover"></i>
 
-    <label class="control-label col-sm-4" for="vacationType">
+    <label class="control-label col-md-4" for="vacationType">
         <spring:message code='app.type' />
     </label>
 
-    <div class="col-sm-7">
+    <div class="col-md-7">
         <form:select path="vacationType" size="1" id="vacationType" class="form-control" onchange="checkSonderurlaub(value);">
             <c:choose>
                 <c:when test="${appForm.vacationType == null}">
@@ -195,11 +195,11 @@
 </div>
 
 <div class="form-group">
-    <label class="control-label col-sm-4">
+    <label class="control-label col-md-4">
         <spring:message code="time"/>
     </label>
 
-    <div class="col-sm-7 radio">
+    <div class="col-md-7 radio">
 
         <label class="thirds">
             <form:radiobutton id="fullDay" class="dayLength-full" path="howLong" checked="checked" value="${full}" />
@@ -221,40 +221,40 @@
 </div>
 
     <div class="form-group full-day">
-    <label class="col-sm-4 control-label" for="from">
+    <label class="col-md-4 control-label" for="from">
         <spring:message code="From" />:
     </label>
-    <div class="col-sm-7">
+    <div class="col-md-7">
         <form:input id="from" path="startDate" class="form-control" cssErrorClass="form-control error" />
     </div>
 </div>
 
 <div class="form-group full-day">
-    <label class="control-label col-sm-4" for="to">
+    <label class="control-label col-md-4" for="to">
         <spring:message code="To" />:
     </label>
-    <div class="col-sm-7">
+    <div class="col-md-7">
         <form:input id="to" path="endDate" class="form-control" cssErrorClass="form-control error" />
         <span class="help-block info days"></span>
     </div>
 </div>
 
 <div class="form-group half-day">
-    <label class="control-label col-sm-4" for="at">
+    <label class="control-label col-md-4" for="at">
         <spring:message code="At" />:
     </label>
-    <div class="col-sm-7">
+    <div class="col-md-7">
         <form:input id="at" path="startDateHalf" class="form-control" cssErrorClass="form-control error" />
         <span class="help-block info days"></span>
     </div>
 </div>
 
 <div class="form-group">
-    <label class="control-label col-sm-4" for="rep">
+    <label class="control-label col-md-4" for="rep">
         <spring:message code="app.rep"/>
     </label>
 
-    <div class="col-sm-7">
+    <div class="col-md-7">
         <form:select path="rep" id="rep" size="1" class="form-control">
             <c:choose>
                 <c:when test="${appForm.rep == null}">
@@ -284,11 +284,11 @@
 </div>
 
 <div class="form-group">
-    <label class="control-label col-sm-4">
+    <label class="control-label col-md-4">
         <spring:message code='app.team'/>
     </label>
 
-    <div class="col-sm-7 radio">
+    <div class="col-md-7 radio">
 
         <label class="halves">
             <form:radiobutton id="teamInformed" path="teamInformed" value="true"/>
@@ -307,7 +307,7 @@
 
 </div>
 
-<div class="col-xs-12 col-sm-6">
+<div class="col-xs-12 col-md-6">
 
     <div class="header">
 
@@ -320,11 +320,11 @@
     </div>
 
     <div class="form-group">
-        <label class="control-label col-sm-4" for="reason">
+        <label class="control-label col-md-4" for="reason">
             <spring:message code="reason"/>
         </label>
 
-        <div class="col-sm-7">
+        <div class="col-md-7">
             <span id="text-reason"></span><spring:message code='max.chars'/>
             <form:textarea id="reason" rows="1" path="reason" class="form-control" cssErrorClass="form-control error"
                            onkeyup="count(this.value, 'text-reason');"
@@ -335,11 +335,11 @@
     </div>
 
     <div class="form-group">
-        <label class="control-label col-sm-4" for="address">
+        <label class="control-label col-md-4" for="address">
             <spring:message code='app.address'/>:
         </label>
 
-        <div class="col-sm-7">
+        <div class="col-md-7">
             <span id="text-address"></span><spring:message code="max.chars"/>
             <form:textarea id="address" rows="1" path="address" class="form-control" cssErrorClass="form-control error"
                            onkeyup="count(this.value, 'text-address');"
@@ -350,11 +350,11 @@
     </div>
 
     <div class="form-group">
-        <label class="control-label col-sm-4" for="comment">
+        <label class="control-label col-md-4" for="comment">
             <spring:message code='app.form.comment'/>:
         </label>
 
-        <div class="col-sm-7">
+        <div class="col-md-7">
             <span id="text-comment"></span><spring:message code="max.chars"/>
             <form:textarea id="comment" rows="1" path="comment" class="form-control" cssErrorClass="form-control error"
                            onkeyup="count(this.value, 'text-comment');"
@@ -374,7 +374,7 @@
 
         <hr/>
 
-        <button type="submit" class="btn btn-large btn-success pull-left col-xs-12 col-sm-2">
+        <button type="submit" class="btn btn-large btn-success pull-left col-xs-12 col-md-3">
             <i class='fa fa-check'></i>&nbsp;<spring:message code='apply'/>
         </button>
 

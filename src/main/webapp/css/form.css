@@ -38,26 +38,11 @@ textarea.error {
 
 /**************************************************************************
 
-  RESPONSIVENESS
+  APPLICATION FOR LEAVE DETAILS FORM
 
 **************************************************************************/
 
-/* Narrow desktop */
-@media all and (max-width: 960px) {
-    /* Ok */
-}
-
-/* Tablet */
-@media all and (max-width: 768px) {
-    /* Ok */
-}
-
-/* Small Tablet */
-@media all and (max-width: 600px) {
-    /* Ok */
-}
-
-/* Mobile */
-@media all and (max-width: 480px) {
-    /* Ok */
+.action-form {
+    /* will be displayed when needed by javascript */
+    display: none;
 }
