@@ -38,7 +38,7 @@
 
                     </div>
 
-                    <div id="results">
+                    <div class="feedback">
                         <c:choose>
                             <c:when test="${remindAlreadySent == true}">
                             <div class="alert alert-danger">

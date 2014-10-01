@@ -230,3 +230,16 @@ $(document).ready(function()
 
     }
 );
+
+// hide every feedback after a certain time
+$(document).ready(function()
+    {
+        setInterval(hideFeedback, 5000);
+    }
+);
+
+function hideFeedback() {
+
+    $(".feedback").slideUp();
+
+}
