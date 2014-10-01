@@ -5,7 +5,7 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
-<table class="list-table">
+<table class="list-table bordered-table">
     <tbody>
     <c:forEach items="${applications}" var="app" varStatus="loopStatus">
         <c:choose>
