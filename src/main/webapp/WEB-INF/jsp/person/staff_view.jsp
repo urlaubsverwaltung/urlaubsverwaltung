@@ -68,10 +68,12 @@
                     <div class="header">
 
                         <legend class="sticky">
-                            
+
                             <p>
-                                <spring:message code="table.overview" /> <c:out value="${displayYear}" />
+                                <spring:message code="table.overview"/> <c:out value="${displayYear}"/>
                             </p>
+
+                            <span class="pull-right visible-print"><uv:date date="${now}"/></span>
 
                             <span class="hidden-xs">
                                 <uv:year-selector year="${year}" />

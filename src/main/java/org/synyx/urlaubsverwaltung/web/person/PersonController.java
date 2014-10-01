@@ -206,5 +206,6 @@ public class PersonController {
         model.addAttribute(PersonConstants.REM_LEFT_DAYS, remLeftDays);
         model.addAttribute(PersonConstants.BEFORE_APRIL, DateUtil.isBeforeApril(DateMidnight.now()));
         model.addAttribute(ControllerConstants.YEAR, DateMidnight.now().getYear());
+        model.addAttribute("now", DateMidnight.now());
     }
 }
