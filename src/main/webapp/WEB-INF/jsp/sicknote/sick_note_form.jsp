@@ -185,7 +185,7 @@
                 
                 <div class="form-group">
                     <button class="btn btn-large btn-success col-xs-12 col-md-3" type="submit"><i class='fa fa-check'></i>&nbsp;<spring:message code="save" /></button>
-                    <a class="btn btn-default btn-large col-xs-12 col-md-3" href="${formUrlPrefix}/sicknote"><i class='fa fa-remove'></i>&nbsp;<spring:message code='cancel'/></a>
+                    <a class="btn btn-default btn-large col-xs-12 col-md-3" href="${formUrlPrefix}/sicknote/${sickNote.id}"><i class='fa fa-remove'></i>&nbsp;<spring:message code='cancel'/></a>
                 </div>
 
             </div>
