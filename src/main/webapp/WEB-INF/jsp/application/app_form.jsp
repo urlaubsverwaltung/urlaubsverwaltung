@@ -130,10 +130,8 @@
     </c:if>
 
 <div class="form-group">
-    <i class="fa fa-question-circle fa-action hidden-sm hidden-xs" id="special-leave-info" style="vertical-align: middle; line-height: 32px"
-       data-placement="bottom" data-toggle="popover" data-html="true"
-       data-original-title="<spring:message code='special.leave.title.short' />"
-       data-content="<spring:message code='special.leave.explanation' />" data-trigger="hover"></i>
+
+    <i class="fa fa-question-circle fa-action hidden-sm hidden-xs special-leave--info-modal" data-toggle="modal" data-target="#special-leave-modal"></i>
 
     <label class="control-label col-md-4" for="vacationType">
         <spring:message code='app.type' />
@@ -186,7 +184,7 @@
                     <p><spring:message code='special.leave.explanation'/></p>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><spring:message code='close'/></button>
+                    <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i> <spring:message code='close'/></button>
                 </div>
             </div>
         </div>

@@ -38,6 +38,21 @@ textarea.error {
 
 /**************************************************************************
 
+  APPLICATION FOR LEAVE FORM
+
+**************************************************************************/
+
+.special-leave--info-modal {
+    vertical-align: middle;
+    line-height: 32px
+}
+
+.special-leave--info-modal:hover {
+    cursor: pointer;
+}
+
+/**************************************************************************
+
   APPLICATION FOR LEAVE DETAILS FORM
 
 **************************************************************************/
