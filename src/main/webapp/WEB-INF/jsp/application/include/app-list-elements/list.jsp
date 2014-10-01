@@ -75,9 +75,9 @@
                     <td class="is-centered hidden-xs">
                         <span><fmt:formatNumber maxFractionDigits="1" value="${app.days}" /> Tage</span>
                     </td>
-                    <td style="width: 30%;">
-                        <img class="is-inline-block img-circle hidden-print" src="<c:out value='${gravatarUrls[app]}?d=mm&s=60'/>"/>
-                        <h4 class="is-inline-block hidden-print"><c:out value="${app.person.niceName}"/></h4>
+                    <td>
+                        <img class="box-image img-circle hidden-print" src="<c:out value='${gravatarUrls[app]}?d=mm&s=60'/>"/>
+                        <h4 class="is-inline-block hidden-print hidden-xs"><c:out value="${app.person.niceName}"/></h4>
                         <p class="visible-print"><c:out value="${app.person.niceName}"/></p>
                     </td>
                 </tr>

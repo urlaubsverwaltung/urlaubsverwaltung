@@ -150,12 +150,10 @@ public class ApplicationController {
      * @param  model
      */
     @RequestMapping(value = APP_LIST, method = RequestMethod.GET)
-    public String showDefault(Model model) {
+    public String showDefault() {
 
-        if (sessionService.isBoss()) {
+        if (sessionService.isBoss() || sessionService.isOffice()) {
             return "redirect:/web" + WAITING_APPS;
-        } else if (sessionService.isOffice()) {
-            return "redirect:/web" + ALL_APPS;
         } else {
             return ControllerConstants.ERROR_JSP;
         }

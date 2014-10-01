@@ -39,7 +39,7 @@
 
                 <sec:authorize access="hasAnyRole('BOSS', 'OFFICE')">
                     <li>
-                        <a href="${formUrlPrefix}/application/all">
+                        <a href="${formUrlPrefix}/application/waiting">
                             <i class="fa fa-calendar"></i>&nbsp;<spring:message code="nav.vacations"/>
                         </a>
                     </li>
