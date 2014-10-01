@@ -9,7 +9,7 @@
     <h4><spring:message code="print.info.landscape" /></h4>
 </div>
 
-<table cellspacing="0" class="list-table striped-table selectable-table sortable tablesorter print--only-landscape">
+<table cellspacing="0" class="list-table selectable-table sortable tablesorter print--only-landscape">
     <thead class="hidden-xs hidden-sm">
     <tr>
         <th></th>

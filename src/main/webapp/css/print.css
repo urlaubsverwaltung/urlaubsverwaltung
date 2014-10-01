@@ -11,7 +11,7 @@
     #datepicker,
     tr.inactive,
     .alert {
-        display: none;
+        display: none !important;
     }
 
     .content {
@@ -37,6 +37,19 @@
          display: block;
     }
     .print--only-landscape {
+        display: none;
+    }
+}
+
+.print-info--only-portrait {
+    display: none;
+}
+
+@media print and (orientation:landscape) {
+    .print-info--only-portrait {
+        display: block;
+    }
+    .print--only-portrait {
         display: none;
     }
 }

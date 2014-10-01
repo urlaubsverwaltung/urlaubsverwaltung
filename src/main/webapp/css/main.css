@@ -39,12 +39,20 @@ footer {
 }
 
 .fa-action {
-    color: #1896DB;
     font-size: 25px;
 }
 
+a,
+.fa-action {
+    color: #2A6496;
+}
+
+a:not(.btn):hover,
 .fa-action:hover {
     color: #59AB02 !important;
+}
+
+.fa-action:hover {
     text-decoration: none;
 }
 

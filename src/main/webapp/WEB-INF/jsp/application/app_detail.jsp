@@ -20,7 +20,11 @@
     
         <uv:menu />
 
-        <div class="content">
+        <div class="print-info--only-portrait">
+            <h4><spring:message code="print.info.portrait" /></h4>
+        </div>
+
+        <div class="content print--only-portrait">
             <div class="container">
 
                 <div class="row">
@@ -104,13 +108,6 @@
                     <div class="header">
                         <legend>
                             <p><spring:message code="staff" /></p>
-                            <sec:authorize access="hasAnyRole('BOSS', 'OFFICE')">
-                                <c:if test="${application.person.id != loggedUser.id}">
-                                    <a class="btn btn-default pull-right" href="${formUrlPrefix}/staff/${application.person.id}/overview" />
-                                        <i class="fa fa-user"></i>&nbsp;<spring:message code="staff.back" />
-                                    </a>
-                                </c:if>
-                            </sec:authorize>
                         </legend>
                     </div>
 
@@ -118,7 +115,11 @@
                     <span class="thirds">
                         <img class="box-image img-circle" src="<c:out value='${gravatar}?d=mm&s=80'/>"/>
                         <i class="fa fa-at"></i> <c:out value="${application.person.loginName}"/>
-                        <h4><c:out value="${application.person.niceName}"/></h4>
+                        <h4>
+                            <a href="${formUrlPrefix}/staff/${application.person.id}/overview">
+                                <c:out value="${application.person.niceName}"/>
+                            </a>
+                        </h4>
                         <i class="fa fa-envelope"></i> <c:out value="${application.person.email}"/>
                     </span>
                     </div>

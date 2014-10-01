@@ -4,7 +4,7 @@
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
-<table class="list-table striped-table">
+<table class="list-table striped-table bordered-table">
     <tbody>
 
     <c:forEach items="${comments}" var="comment">

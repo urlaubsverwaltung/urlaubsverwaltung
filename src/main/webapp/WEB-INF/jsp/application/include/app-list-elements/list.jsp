@@ -77,7 +77,11 @@
                     </td>
                     <td>
                         <img class="img-circle hidden-print" src="<c:out value='${gravatarUrls[app]}?d=mm&s=60'/>"/>&nbsp;
-                        <h5 class="is-inline-block hidden-xs" style="line-height: 60px; vertical-align: middle"><c:out value="${app.person.niceName}"/></h5>
+                        <h5 class="is-inline-block hidden-xs" style="line-height: 60px; vertical-align: middle">
+                            <a href="${formUrlPrefix}/staff/${app.person.id}/overview">
+                                <c:out value="${app.person.niceName}"/>
+                            </a>
+                        </h5>
                     </td>
                 </tr>
             </c:forEach>

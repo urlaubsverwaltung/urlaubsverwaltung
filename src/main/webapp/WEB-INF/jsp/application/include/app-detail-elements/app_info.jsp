@@ -44,7 +44,7 @@
     </span>
 </div>
 
-<table class="list-table striped-table" cellspacing="0">
+<table class="list-table striped-table bordered-table" cellspacing="0">
 
     <tr>
         <td><spring:message code="app.time" /></td>

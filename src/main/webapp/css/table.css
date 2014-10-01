@@ -26,14 +26,8 @@ tr.inactive td > * {
     margin-bottom: 27px;
 }
 
-.list-table tbody {
-    border-left: 1px solid #DDDDDD;
-    border-right: 1px solid #DDDDDD;
-}
-
 .list-table td {
     vertical-align: middle !important;
-    background-color: #FAFAFA;
     padding: 12px;
     border-top: 1px solid #DDDDDD;
 }
@@ -54,6 +48,19 @@ tr.inactive td > * {
 }
 
 /**************************************************************************
+  BORDERED TABLE
+**************************************************************************/
+
+.bordered-table tbody {
+    border-left: 1px solid #DDDDDD;
+    border-right: 1px solid #DDDDDD;
+}
+
+.bordered-table td {
+    background-color: #FAFAFA;
+}
+
+/**************************************************************************
   SELECTABLE TABLE
 **************************************************************************/
 
@@ -67,7 +74,8 @@ tr.inactive td > * {
 **************************************************************************/
 
 .tablesorter-header {
-    color: #1896DB;
+    color: #2A6496;
+    font-weight: normal;
 }
 
 .tablesorter-header:hover {
