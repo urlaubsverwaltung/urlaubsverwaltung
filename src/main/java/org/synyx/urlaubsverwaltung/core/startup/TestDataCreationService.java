@@ -150,6 +150,7 @@ public class TestDataCreationService {
         application.setEndDate(endDate);
         application.setVacationType(vacationType);
         application.setHowLong(dayLength);
+        application.setComment("Ich hätte gerne Urlaub");
 
         applicationInteractionService.apply(application, person);
 

@@ -9,8 +9,8 @@
         <b><spring:message code="please.refer" /></b>
         <br /><br />
         <form:select path="loginName" cssClass="form-control">
-            <c:forEach items="${vips}" var="p">
-                <option value="${p.loginName}"><c:out value="${p.firstName} ${p.lastName}" /></option>
+            <c:forEach items="${bosses}" var="boss">
+                <option value="${boss.loginName}"><c:out value="${boss.firstName} ${boss.lastName}" /></option>
             </c:forEach>
         </form:select>
         &nbsp;

@@ -6,6 +6,7 @@
 @import "box.css";
 @import "legend.css";
 @import "table.css";
+@import "states.css";
 @import "print.css";
 
 /**************************************************************************
@@ -52,6 +53,10 @@ footer {
 
 .is-inline-block {
     display: inline-block;
+}
+
+.is-sticky {
+    margin:  0;
 }
 
 /* TODO: remove this */

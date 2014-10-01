@@ -1,0 +1,54 @@
+/**************************************************************************
+  TEXT COLORS
+**************************************************************************/
+
+.check {
+    color: #43C83C !important;
+}
+
+/**************************************************************************
+  VACATION TYPES FOR APPLICATION FOR LEAVE STATES
+**************************************************************************/
+
+.HOLIDAY {
+    /* OK */
+}
+
+.SPECIALLEAVE,
+.UNPAIDLEAVE,
+.OVERTIME {
+    font-style: italic;
+}
+
+/**************************************************************************
+  COLORS FOR APPLICATION FOR LEAVE STATES
+**************************************************************************/
+
+.state {
+    font-size: 25px;
+}
+
+.state.WAITING {
+    color: #34495E !important;
+}
+
+.state.ALLOWED {
+    color: #43C83C !important;
+}
+
+.state.REJECTED {
+    color: #FA3031 !important;
+}
+
+.state.CANCELLED {
+    color: #3B3B3B !important;
+}
+
+/**************************************************************************
+  COLORS FOR SICK NOTE STATES
+**************************************************************************/
+
+.state.SICKNOTE,
+.state.SICKNOTECHILD {
+    color: #34495E;
+}

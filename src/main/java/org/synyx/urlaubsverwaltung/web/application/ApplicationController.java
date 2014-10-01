@@ -906,8 +906,8 @@ public class ApplicationController {
 
         if (application.getStatus() == ApplicationStatus.WAITING && sessionService.isBoss()) {
             // get all persons that have the Boss Role
-            List<Person> vips = personService.getPersonsByRole(Role.BOSS);
-            model.addAttribute("vips", vips);
+            List<Person> bosses = personService.getPersonsByRole(Role.BOSS);
+            model.addAttribute("bosses", bosses);
             model.addAttribute("modelPerson", new Person());
         }
 

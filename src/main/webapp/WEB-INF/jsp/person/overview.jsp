@@ -284,7 +284,7 @@
                 <div class="box">
                     <span class="box-icon bg-orange"><i class="fa fa-flag-o"></i></span>
                     <spring:message code="overview.vacations.otherLeave" arguments="${otherLeave}" />
-                    <i class="fa fa-check state ALLOWED"></i> <spring:message code="overview.vacations.otherLeaveAllowed" arguments="${otherLeaveAllowed}" />
+                    <i class="fa fa-check check"></i> <spring:message code="overview.vacations.otherLeaveAllowed" arguments="${otherLeaveAllowed}" />
                 </div>
             </div>
 
@@ -339,7 +339,7 @@
                     <span class="thirds">
                        <span class="box-icon bg-red"><i class="fa fa-medkit"></i></span>
                         <spring:message code="overview.sicknotes.sickdays" arguments="${sickNotesDays}" />
-                        <i class="fa fa-check state ALLOWED"></i> <spring:message code="overview.sicknotes.sickdays.aub" arguments="${numberOfSickNotesAUB}" />
+                        <i class="fa fa-check check"></i> <spring:message code="overview.sicknotes.sickdays.aub" arguments="${numberOfSickNotesAUB}" />
                     </span>
                 </div>
             </div>
@@ -348,7 +348,7 @@
                     <span class="thirds">
                        <span class="box-icon bg-red"><i class="fa fa-child"></i></span>
                         <spring:message code="overview.sicknotes.sickdays.child" arguments="${sickNotesDaysChild}" />
-                        <i class="fa fa-check state ALLOWED"></i> <spring:message code="overview.sicknotes.sickdays.aub" arguments="${numberOfSickNotesChildAUB}" />
+                        <i class="fa fa-check check"></i> <spring:message code="overview.sicknotes.sickdays.aub" arguments="${numberOfSickNotesChildAUB}" />
                     </span>
                 </div>
             </div>

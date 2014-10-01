@@ -32,7 +32,7 @@
 
                 <div class="row">
 
-                <div class="col-xs-12 col-sm-6">
+                <div class="col-xs-12 col-sm-12 col-md-6">
 
                     <div class="header">
 
@@ -155,25 +155,26 @@
 
                         <%-- permission dependant forms to the buttons above END --%>
 
-                    </div>
+                    </div><%--End of actions --%>
 
                     <%@include file="./include/app-detail-elements/app_info.jsp" %>
+
+                    <div class="header">
+                        <legend>
+                            <p><spring:message code="progress" /></p>
+                        </legend>
+                    </div>
 
                     <%@include file="./include/app-detail-elements/app_progress.jsp" %>
 
                 </div><%--End of first column--%>
 
-                <div class="col-xs-12 col-sm-6 print-box">
+                <div class="col-xs-12 col-sm-12 col-md-6 hidden-print">
 
                     <div class="header">
-
                         <legend>
-                            <p>
-                                <spring:message code="staff" />
-                            </p>
-
+                            <p><spring:message code="staff" /></p>
                         </legend>
-
                     </div>
 
                     <div class="box">

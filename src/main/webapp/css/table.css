@@ -9,11 +9,7 @@
 **************************************************************************/
 
 tr.active {
-    color: inherit;
-}
-
-tr.inactive td {
-    /*color: #777777 !important;*/
+    /* OK */
 }
 
 tr.inactive td > * {
@@ -46,46 +42,12 @@ tr.inactive td > * {
     border-bottom: 1px solid #DDDDDD;
 }
 
-/* VACATION TYPES IN TABLE */
-
-.list-table .HOLIDAY {
-    /* OK */
-}
-
-.list-table .SPECIALLEAVE,
-.list-table .UNPAIDLEAVE,
-.list-table .OVERTIME {
-    font-style: italic;
-}
-
-/* VACATION AND SICK NOTE STATES IN LIST TABLE */
-
-.list-table .state {
-    font-size: 25px;
-}
-
 /**************************************************************************
-  DATA TABLE
+  STRIPED TABLE
 **************************************************************************/
 
-.data-table {
-    width: 100%;
-    border: 1px solid #EAF2D3;
-    font-size: 13px;
-}
-
-.data-table tr:hover {
-    cursor: pointer;
-}
-
-.data-table th {
-    background-color: #ABC452;
-    padding: 6px;
-    text-align: center;
-}
-
-.data-table td {
-    padding: 6px;
+.striped-table tr:nth-child(even) td {
+    background-color: #DFDFDF;
 }
 
 /**************************************************************************

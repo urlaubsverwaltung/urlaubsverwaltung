@@ -1,9 +1,3 @@
-<%-- 
-    Document   : cancel
-    Created on : 06.09.2012, 13:44:58
-    Author     : Aljona Murygina - murygina@synyx.de
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
@@ -17,21 +11,6 @@
             $('#cancel').show();
         });
     </script>
-</c:if>
-
-<script type="text/javascript">
-    $(document).ready(function() {
-        var errors = "${errors}";
-        console.log(errors);
-    });
-</script>
-
-<c:set var="cancelErrors"><form:errors path="domainName"/></c:set>
-<c:if test="${not empty domainNameErrors}">
-    <tr>
-        <td>&nbsp;</td>
-        <td>${domainNameErrors}</td>
-    </tr>
 </c:if>
 
 <div id="cancel" class="confirm alert alert-danger" style="display: none">
