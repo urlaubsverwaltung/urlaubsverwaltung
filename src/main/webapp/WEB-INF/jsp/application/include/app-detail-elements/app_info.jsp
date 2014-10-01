@@ -7,7 +7,7 @@
 <div class="box">
     <span class="thirds">
        <span class="box-icon bg-yellow"><i class="fa fa-sun-o"></i></span>
-       <span class="box-icon state ${application.status} pull-right hidden-print" title="<spring:message code='${application.status.state}' />">
+       <span class="box-icon state ${application.status} pull-right hidden-print hidden-xs" title="<spring:message code='${application.status.state}' />">
             <c:choose>
                 <c:when test="${application.status == 'WAITING'}">
                     <i class="fa fa-question"></i>
@@ -26,18 +26,17 @@
                 </c:otherwise>
             </c:choose>
         </span>
-
-       <spring:message code="app.apply"/> <h4><spring:message code="${application.vacationType.vacationTypeName}"/></h4>
+       <h5 class="is-inline-block is-sticky"><c:out value="${application.person.niceName}" /></h5> <spring:message code="app.apply" /> <h4><spring:message code="${application.vacationType.vacationTypeName}"/></h4>
 
         <c:choose>
             <c:when test="${application.startDate == application.endDate}">
-                <spring:message code="at"/> <h4 class="is-inline-block is-sticky"><uv:date date="${application.startDate}"/>,
-                <spring:message code="${application.howLong.dayLength}"/></h4>
+                <spring:message code="at"/> <h5 class="is-inline-block is-sticky"><uv:date date="${application.startDate}"/>,
+                <spring:message code="${application.howLong.dayLength}"/></h5>
             </c:when>
             <c:otherwise>
-                <spring:message code="from"/> <h4 class="is-inline-block is-sticky"><uv:date
-                    date="${application.startDate}"/></h4> <spring:message code="to"/> <h4 class="is-inline-block is-sticky">
-                <uv:date date="${application.endDate}"/></h4>
+                <spring:message code="from"/> <h5 class="is-inline-block is-sticky"><uv:date
+                    date="${application.startDate}"/></h5> <spring:message code="to"/> <h5 class="is-inline-block is-sticky">
+                <uv:date date="${application.endDate}"/></h5>
             </c:otherwise>
         </c:choose>
 
@@ -47,7 +46,7 @@
 <table class="list-table striped-table bordered-table" cellspacing="0">
 
     <tr>
-        <td><spring:message code="app.time" /></td>
+        <td><spring:message code="days.time" /></td>
         <td>
             <b class="days">
                 <%-- filled by javascript --%>
@@ -73,13 +72,10 @@
         </td>
     </tr>
     <tr class="visible-print">
-        <td><spring:message code="staff" /></td>
-        <td><b><c:out value="${application.person.niceName}" /></b></td>
-    </tr>
-    <tr class="visible-print">
         <td><spring:message code="state" /></td>
         <td><spring:message code="${application.status.state}" /></td>
     </tr>
+    <tr><%-- needed for correct altering of table rows: there is a problem because the only in print visible row is altered too --%></tr>
     <tr>
         <td>
             <spring:message code='reason'/>

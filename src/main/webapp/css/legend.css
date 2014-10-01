@@ -27,4 +27,7 @@ legend {
     .header legend p {
         font-size: 25px;
     }
+    h4 {
+        font-size: 16px;
+    }
 }

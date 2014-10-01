@@ -37,8 +37,9 @@
         </div>
 
         <sec:authorize access="hasRole('OFFICE')">
-            <a href="${formUrlPrefix}/staff/${person.id}/edit" class="btn btn-default pull-right"><i
-                    class="fa fa-pencil"></i> Edit</a>
+            <a href="${formUrlPrefix}/staff/${person.id}/edit" class="btn btn-default pull-right">
+                <i class="fa fa-pencil"></i> <span class="hidden-xs">Edit</span>
+            </a>
         </sec:authorize>
 
             <span class="hidden-sm hidden-xs">

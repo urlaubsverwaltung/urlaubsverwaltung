@@ -75,7 +75,7 @@
                     </div>
                     <uv:print />
                     <a class="btn btn-default pull-right" href="${formUrlPrefix}/sicknote/new">
-                        <i class="fa fa-plus"></i>&nbsp;<spring:message code="sicknotes.new" />
+                        <i class="fa fa-plus"></i> <span class="hidden-xs"><spring:message code="sicknotes.new" /></span>
                     </a>
                     <a href="#changeViewModal" role="button" class="btn btn-default pull-right hidden-xs hidden-sm" data-toggle="modal">
                         <i class="fa fa-filter"></i>&nbsp;<spring:message code="filter" />

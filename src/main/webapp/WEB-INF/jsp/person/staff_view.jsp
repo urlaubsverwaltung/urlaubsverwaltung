@@ -75,9 +75,7 @@
 
                             <span class="pull-right visible-print"><uv:date date="${now}"/></span>
 
-                            <span class="hidden-xs">
-                                <uv:year-selector year="${year}" />
-                            </span>
+                            <uv:year-selector year="${year}" />
 
                             <div id="active-state" class="btn-group pull-right hidden-xs">
 
@@ -104,7 +102,9 @@
                             <uv:print />
 
                             <sec:authorize access="hasRole('OFFICE')">
-                                <a class="btn btn-default pull-right hidden-xs" href="${formUrlPrefix}/staff/new"><i class="fa fa-plus"></i>&nbsp;<spring:message code="table.new.person" /></a>
+                                <a class="btn btn-default pull-right" href="${formUrlPrefix}/staff/new">
+                                    <i class="fa fa-plus"></i> <span class="hidden-xs"><spring:message code="table.new.person" /></span>
+                                </a>
                             </sec:authorize>
                             
                         </legend>

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.DateFormat;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -34,7 +35,9 @@ import org.synyx.urlaubsverwaltung.security.Role;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.application.AppForm;
+import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
 import org.synyx.urlaubsverwaltung.web.util.DateMidnightPropertyEditor;
+import org.synyx.urlaubsverwaltung.web.util.GravatarUtil;
 import org.synyx.urlaubsverwaltung.web.validator.ApplicationValidator;
 import org.synyx.urlaubsverwaltung.web.validator.SickNoteValidator;
 
@@ -221,6 +224,7 @@ public class SickNoteController {
         if (loggedUser.hasRole(Role.OFFICE) || sickNote.getPerson().equals(loggedUser)) {
             model.addAttribute("sickNote", sickNoteService.getById(id));
             model.addAttribute("comment", new SickNoteComment());
+            model.addAttribute(PersonConstants.GRAVATAR, GravatarUtil.createImgURL(sickNote.getPerson().getEmail()));
 
             return "sicknote/sick_note";
         }
@@ -298,9 +302,11 @@ public class SickNoteController {
             validator.validateComment(comment, errors);
 
             if (errors.hasErrors()) {
-                model.addAttribute("sickNote", sickNoteService.getById(id));
+                SickNote sickNote = sickNoteService.getById(id);
+                model.addAttribute("sickNote", sickNote);
                 model.addAttribute("comment", comment);
                 model.addAttribute("error", true);
+                model.addAttribute(PersonConstants.GRAVATAR, GravatarUtil.createImgURL(sickNote.getPerson().getEmail()));
 
                 return "sicknote/sick_note";
             }

@@ -7,7 +7,7 @@
 
     <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
         <i class="fa fa-clock-o"></i>
-        <spring:message code="ov.header.year" />&nbsp;<span class="caret"></span>
+        <span class="hidden-xs"><spring:message code="ov.header.year" /></span> <span class="caret"></span>
     </button>
 
     <ul class="dropdown-menu">

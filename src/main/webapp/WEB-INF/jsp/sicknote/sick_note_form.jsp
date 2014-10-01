@@ -120,18 +120,14 @@
 
                     <div class="col-md-4">
                         <spring:message code="From" />
-                        <br />
                         <form:input id="from" path="startDate" class="form-control" cssErrorClass="form-control error" />
                         <span class="help-inline"><form:errors path="startDate" cssClass="error"/></span>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label col-md-5" for="to">&nbsp;</label>
-
-                    <div class="col-md-4">
+                    <div class="col-md-4 col-md-offset-5">
                         <spring:message code="To" />
-                        <br />
                         <form:input id="to" path="endDate" class="form-control" cssErrorClass="form-control error" />
                         <span class="help-inline"><form:errors path="endDate" cssClass="error"/></span>
                     </div>
@@ -163,16 +159,13 @@
 
                     <div class="col-md-4">
                         <spring:message code="From" />
-                        <br />
                         <form:input id="aubFrom" path="aubStartDate" class="form-control" cssErrorClass="form-control error" />
                         <span class="help-inline"><form:errors path="aubStartDate" cssClass="error"/></span>
                     </div>
                 </div>
 
                 <div class="form-group AU">
-                    <label class="control-label col-md-5" for="aubTo">&nbsp;</label>
-
-                    <div class="col-md-4">
+                    <div class="col-md-4 col-md-offset-5">
                         <spring:message code="To" />
                         <br />
                         <form:input id="aubTo" path="aubEndDate" class="form-control" cssErrorClass="form-control error" />

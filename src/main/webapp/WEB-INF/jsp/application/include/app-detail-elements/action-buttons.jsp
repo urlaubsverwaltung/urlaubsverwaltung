@@ -17,7 +17,9 @@
     <div class="btn-group pull-right">
         <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#">
             <i class="fa fa-edit"></i>
-            <spring:message code="action"/>
+            <span class="hidden-xs">
+               <spring:message code="action"/>
+            </span>
             <span class="caret"></span>
         </a>
         <ul class="dropdown-menu">

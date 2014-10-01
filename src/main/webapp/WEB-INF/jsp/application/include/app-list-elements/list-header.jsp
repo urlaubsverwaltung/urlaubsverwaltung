@@ -20,7 +20,7 @@
     <legend>
         
         <p>
-            <spring:message code="${titleApp}"/> <spring:message code="in.year" /> <c:out value="${displayYear}"/>
+            <spring:message code="${titleApp}"/> <span class="hidden-xs"><spring:message code="in.year" /> <c:out value="${displayYear}"/></span>
         </p>
 
         <uv:year-selector year="${year}" />
@@ -29,7 +29,7 @@
 
             <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                 <i class="fa fa-filter"></i>
-                <spring:message code="applications.action.status"/>&nbsp;<span class="caret"></span>
+                <span class="hidden-xs"><spring:message code="applications.action.status"/></span> <span class="caret"></span>
             </button>
 
             <ul class="dropdown-menu icons-on-top">
