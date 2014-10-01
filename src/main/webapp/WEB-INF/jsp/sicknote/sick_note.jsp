@@ -196,13 +196,13 @@
                 
                 </sec:authorize>
 
-                <div class="header">
+                <div class="header hidden-print">
                     <legend>
                         <p><spring:message code="staff" /></p>
                     </legend>
                 </div>
 
-                <div class="box">
+                <div class="box hidden-print">
                     <span class="thirds">
                         <img class="box-image img-circle" src="<c:out value='${gravatar}?d=mm&s=80'/>"/>
                         <i class="fa fa-at"></i> <c:out value="${sickNote.person.loginName}"/>
