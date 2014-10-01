@@ -5,27 +5,34 @@
 
 <spring:url var="formUrlPrefix" value="/web" />
 
-<table cellspacing="0" class="data-table sortable tablesorter zebra-table">
-    <thead>
+<div class="print-info--only-landscape">
+    <h4><spring:message code="print.info.landscape" /></h4>
+</div>
+
+<table cellspacing="0" class="list-table striped-table selectable-table sortable tablesorter print--only-landscape">
+    <thead class="hidden-xs hidden-sm">
     <tr>
-        <th colspan="2"><spring:message code="firstname" /></th>
-        <th><spring:message code="lastname" /></th>
-        <th class="is-centered"><spring:message code='overview.entitlement.per.year' /></th>
-        <th class="is-centered"><spring:message code='overview.actual.entitlement' /></th>
-        <th class="is-centered"><spring:message code='overview.remaining.days.last.year' /></th>
-        <th class="is-centered"><spring:message code="left"/></th>
+        <th></th>
+        <th class="sortable-field"><spring:message code="firstname" /></th>
+        <th class="sortable-field"><spring:message code="lastname" /></th>
+        <th class="sortable-field is-centered"><spring:message code='overview.entitlement.per.year' /></th>
+        <th class="sortable-field is-centered"><spring:message code='overview.actual.entitlement' /></th>
+        <th class="sortable-field is-centered"><spring:message code='overview.remaining.days.last.year' /></th>
+        <th class="sortable-field is-centered"><spring:message code="left"/></th>
         <sec:authorize access="hasRole('OFFICE')">
-            <th class="hidden-print"><spring:message code="edit" /></th>
+            <th></th>
         </sec:authorize>    
     </tr>
     </thead>
     <tbody>
     <c:forEach items="${persons}" var="person" varStatus="loopStatus">
         <tr onclick="navigate('${formUrlPrefix}/staff/${person.id}/overview');">
-            <td class="is-centered"><img class="hidden-print" src="<c:out value='${gravatarUrls[person]}?s=20&d=mm'/>" /></td>
+            <td class="is-centered">
+                <img class="img-circle hidden-print" src="<c:out value='${gravatarUrls[person]}?d=mm&s=60'/>"/>
+            </td>
             <td><c:out value="${person.firstName}"/></td>
             <td><c:out value="${person.lastName}"/></td>
-            <td class="is-centered">
+            <td class="is-centered hidden-xs hidden-sm">
                 <c:choose>
                     <c:when test="${accounts[person] != null}">
                         <fmt:formatNumber maxFractionDigits="1"
@@ -36,7 +43,7 @@
                     </c:otherwise>
                 </c:choose>
             </td>
-            <td class="is-centered">
+            <td class="is-centered hidden-xs hidden-sm">
                 <c:choose>
                     <c:when test="${accounts[person] != null}">
                         <fmt:formatNumber maxFractionDigits="1"
@@ -47,7 +54,7 @@
                     </c:otherwise>
                 </c:choose>
             </td>
-            <td class="is-centered">
+            <td class="is-centered hidden-xs hidden-sm">
                 <c:choose>
                     <c:when test="${accounts[person] != null}">
                         <fmt:formatNumber maxFractionDigits="1"
@@ -58,7 +65,7 @@
                     </c:otherwise>
                 </c:choose>
             </td>
-            <td class="is-centered">
+            <td class="is-centered hidden-xs hidden-sm">
                 <c:choose>
                     <c:when test="${leftDays[person] != null && remLeftDays[person] != null}">
                         <fmt:formatNumber maxFractionDigits="1" value="${leftDays[person]}"/>

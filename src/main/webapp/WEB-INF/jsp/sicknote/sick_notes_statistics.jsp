@@ -37,7 +37,7 @@
                         <spring:message code="sicknotes" />
                     </p>
                     <a class="btn btn-default pull-right" href="#" media="print" onclick="window.print(); return false;">
-                        <i class="fa fa-print"></i>&nbsp;<spring:message code='Print' />
+                        <i class="fa fa-print"></i>&nbsp;<spring:message code='print' />
                     </a>
                     <a class="btn btn-default pull-right" href="${formUrlPrefix}/sicknote/">
                         <i class="fa fa-arrow-circle-left"></i>&nbsp;<spring:message code='back' />

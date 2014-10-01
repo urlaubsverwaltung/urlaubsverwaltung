@@ -41,6 +41,9 @@ tr.inactive td > * {
 .list-table tr:last-child td {
     border-bottom: 1px solid #DDDDDD;
 }
+.list-table th {
+    padding: 8px;
+}
 
 /**************************************************************************
   STRIPED TABLE
@@ -51,9 +54,41 @@ tr.inactive td > * {
 }
 
 /**************************************************************************
+  SELECTABLE TABLE
+**************************************************************************/
+
+.selectable-table tr:hover td {
+    cursor: pointer;
+    background-color: #DEEFA4;
+}
+
+/**************************************************************************
   TABLE SORTER
 **************************************************************************/
 
-th.tablesorter-headerDesc, th.tablesorter-headerAsc {
-    background-color: #99AF4C !important;
+.tablesorter-header {
+    color: #1896DB;
+}
+
+.tablesorter-header:hover {
+    cursor: pointer;
+    color: #59AB02;
+}
+
+th.sortable-field .tablesorter-header-inner:after {
+    font-family: FontAwesome;
+    content: " \f0dc";
+}
+
+th.tablesorter-headerDesc .tablesorter-header-inner:after,
+th.tablesorter-headerAsc .tablesorter-header-inner:after {
+    font-family: FontAwesome;
+}
+
+th.tablesorter-headerDesc .tablesorter-header-inner:after {
+    content: " \f0dd";
+}
+
+th.tablesorter-headerAsc .tablesorter-header-inner:after {
+    content: " \f0de";
 }

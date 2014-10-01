@@ -40,7 +40,7 @@
                                     <ul class="dropdown-menu">
                                         <li>
                                             <a href="#" media="print" onclick="window.print(); return false;">
-                                                <i class="fa fa-print"></i>&nbsp;&nbsp;<spring:message code='Print' />
+                                                <i class="fa fa-print"></i>&nbsp;&nbsp;<spring:message code='print' />
                                             </a>
                                         </li>
                                         <li>

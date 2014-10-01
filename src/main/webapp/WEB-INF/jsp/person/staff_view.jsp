@@ -34,9 +34,8 @@
             $(document).ready(function() {
 
                 $("table.sortable").tablesorter({
-                    sortList: [[0,0]],
+                    sortList: [[1,0]],
                     headers: {
-                      5: { sorter: 'commaNumber' }, 
                       6: { sorter: 'commaNumber' }
                     }
                 });
@@ -71,12 +70,14 @@
                         <legend class="sticky">
                             
                             <p>
-                                <spring:message code="table.overview" /><c:out value="${displayYear}" />
+                                <spring:message code="table.overview" /> <c:out value="${displayYear}" />
                             </p>
 
-                            <uv:year-selector year="${year}" />
+                            <span class="hidden-xs">
+                                <uv:year-selector year="${year}" />
+                            </span>
 
-                            <div id="active-state" class="btn-group pull-right">
+                            <div id="active-state" class="btn-group pull-right hidden-xs">
 
                                 <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                                 </button>
@@ -101,7 +102,7 @@
                             <uv:print />
 
                             <sec:authorize access="hasRole('OFFICE')">
-                                <a class="btn btn-default pull-right" href="${formUrlPrefix}/staff/new"><i class="fa fa-plus"></i>&nbsp;<spring:message code="table.new.person" /></a>
+                                <a class="btn btn-default pull-right hidden-xs" href="${formUrlPrefix}/staff/new"><i class="fa fa-plus"></i>&nbsp;<spring:message code="table.new.person" /></a>
                             </sec:authorize>
                             
                         </legend>

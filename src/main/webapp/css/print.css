@@ -21,4 +21,22 @@
     .fa {
         color: black !important;
     }
+
+    /* Do not show sort icons in tables */
+    th.sortable-field .tablesorter-header-inner:after {
+        content: "";
+    }
+}
+
+.print-info--only-landscape {
+    display: none;
+}
+
+@media print and (orientation:portrait) {
+    .print-info--only-landscape {
+         display: block;
+    }
+    .print--only-landscape {
+        display: none;
+    }
 }

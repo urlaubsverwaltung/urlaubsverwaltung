@@ -17,20 +17,6 @@
 
     <head>
         <uv:head />
-        <script type="text/javascript">
-            $(document).ready(function() {
-
-                $("table.sortable").tablesorter({
-//                    sortList: [[2,1]],
-                    headers: {
-//                        1: { sorter: 'germanDate' },
-//                        2: { sorter: 'germanDate' },
-//                        2: { sorter: 'commaNumber' }
-                    }
-                });
-
-            });
-        </script>
     </head>
 
     <body>
