@@ -143,34 +143,38 @@ function getDatesOfPublicHolidays(data) {
 
 function colorizeDate(date, publicHolidays, vacation) {
 
-    // 24.12.xx and 31.12.xx are half workdays
-    function isHalfWorkday(date) {
-        var d;
-        return date && date.getMonth() === 11 && (d = date.getDate()) && (d === 24 || d === 31);
-    }
-
     // if day is saturday or sunday, highlight it
     if (date.getDay() == 6 || date.getDay() == 0) {
         return [true, "notworkday"];
-    } else if (isHalfWorkday(date)) {
-        return [true, 'halfworkday'];
     } else {
-        // if date is a work day, check if it is a public holiday
-        // if so highlight it
-
         var dateString = $.datepicker.formatDate("yy-mm-dd", date);
 
-        if($.inArray(dateString, publicHolidays) != -1) {
-//            console.log(dateString + " is a public holiday");
-            return [true, "notworkday"];
-        } else if($.inArray(dateString, vacation) != -1) {
-//            console.log(dateString + " is vacation");
-            return [true, "holiday"];
-        } else {
-            return [true, ""];
+        var isPublicHoliday = $.inArray(dateString, publicHolidays) != -1;
+        var isHalfWorkDay = isHalfWorkday(date);
+        var isPersonalWorkDay = $.inArray(dateString, vacation) != -1;
+
+        var cssClass = "";
+
+        if(isPublicHoliday) {
+            cssClass += " notworkday";
         }
+
+        if(isHalfWorkDay) {
+            cssClass += " halfworkday";
+        }
+
+        if(isPersonalWorkDay) {
+            cssClass += " holiday";
+        }
+
+        return [true, cssClass];
 
     }
 
 }
-    
+
+// 24.12.xx and 31.12.xx are half workdays
+function isHalfWorkday(date) {
+    var d;
+    return date && date.getMonth() === 11 && (d = date.getDate()) && (d === 24 || d === 31);
+}

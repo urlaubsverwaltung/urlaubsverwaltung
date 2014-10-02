@@ -132,7 +132,11 @@
 
 .datepicker-day-half-holiday {
     color: #31A354;
-    background: linear-gradient(-45deg, #C9F5BB 50%, #F5F5F5 50%);
+    background: linear-gradient(-36deg, #C9F5BB 50%, #F5F5F5 50%);
+}
+
+.datepicker-day-personal-holiday.datepicker-day-half-holiday {
+    background: linear-gradient(-36deg, #C9F5BB 50%, #FFEDA0 50%);
 }
 
 .datepicker-day:not([data-datepicker-selectable=false]) {
@@ -179,6 +183,11 @@
 
 **************************************************************************/
 
+td.holiday a {
+    color: #F8B851 !important;
+    background: #FFEDA0 !important;
+}
+
 td.notworkday a {
     color: #31A354 !important;
     background: #C9F5BB !important;
@@ -189,7 +198,7 @@ td.halfworkday a {
     background: linear-gradient(-45deg, #C9F5BB 50%, #FAFAFA 50%) !important;
 }
 
-td.holiday a {
-    color: #F8B851 !important;
-    background: #FFEDA0 !important;
+td.halfworkday.holiday a {
+    color: #31A354 !important;
+    background: linear-gradient(-45deg, #C9F5BB 50%, #FFEDA0 50%) !important;
 }
