@@ -10,17 +10,21 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
+import org.mockito.Mockito;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.person.PersonService;
+import org.synyx.urlaubsverwaltung.security.Role;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -36,6 +40,7 @@ public class MailServiceImplTest {
     private MailServiceImpl mailService;
     private JavaMailSender mailSender = new JavaMailSenderImpl();
     private VelocityEngine velocityEngine = new VelocityEngine();
+    private PersonService personService;
 
     private Person person;
     private Application application;
@@ -43,7 +48,9 @@ public class MailServiceImplTest {
     @Before
     public void setUp() throws Exception {
 
-        mailService = new MailServiceImpl(mailSender, velocityEngine);
+        personService = Mockito.mock(PersonService.class);
+
+        mailService = new MailServiceImpl(mailSender, velocityEngine, personService);
 
         person = new Person();
         application = new Application();
@@ -60,24 +67,22 @@ public class MailServiceImplTest {
     }
 
 
-    /**
-     * Test of sendNewApplicationNotification method, of class MailServiceImpl.
-     */
-    // TO DO
-    // if there is enough time, this test should be modified eventually
     @Test
-    @Ignore
-    public void testSendNewApplicationNotification() throws MessagingException, IOException {
+    public void ensureNotificationAboutNewApplicationIsSentToBosses() throws MessagingException, IOException {
 
         person.setLastName("Antragsteller");
         person.setFirstName("Horst");
         person.setEmail("misterhorst@test.com");
 
-        mailService.emailBoss = "boss@boss.de";
+        String bossEmailAddress = "boss@boss.de";
+        Person boss = new Person("boss", "Muster", "Max", bossEmailAddress);
+
+        Mockito.when(personService.getPersonsByRole(Role.BOSS)).thenReturn(Arrays.asList(boss));
+
         mailService.sendNewApplicationNotification(application);
 
         // was email sent?
-        List<Message> inbox = Mailbox.get("boss@boss.de");
+        List<Message> inbox = Mailbox.get(bossEmailAddress);
         assertTrue(inbox.size() > 0);
 
         // get email
@@ -88,7 +93,7 @@ public class MailServiceImplTest {
         assertNotSame("subject", msg.getSubject());
 
         // check from and recipient
-        assertEquals(new InternetAddress("boss@boss.de"), msg.getAllRecipients()[0]);
+        assertEquals(new InternetAddress(bossEmailAddress), msg.getAllRecipients()[0]);
 
         // check content of email
         String content = (String) msg.getContent();
@@ -99,21 +104,22 @@ public class MailServiceImplTest {
     }
 
 
-    /**
-     * Test of sendAllowedNotification method, of class MailServiceImpl.
-     */
     @Test
-    public void testSendAllowedNotification() throws MessagingException, IOException {
+    public void ensureNotificationAboutAllowedApplicationIsSentToOfficeAndThePerson() throws MessagingException, IOException {
 
         person.setLastName("Test");
         person.setFirstName("Bernd");
         person.setEmail("berndo@test.com");
 
-        mailService.emailOffice = "office@synyx.de";
+        String officeEmailAddress = "office@synyx.de";
+        Person office = new Person("office", "Muster", "Max", officeEmailAddress);
+
+        Mockito.when(personService.getPersonsByRole(Role.OFFICE)).thenReturn(Arrays.asList(office));
+
         mailService.sendAllowedNotification(application, null);
 
         // were both emails sent?
-        List<Message> inboxOffice = Mailbox.get("office@synyx.de");
+        List<Message> inboxOffice = Mailbox.get(officeEmailAddress);
         assertTrue(inboxOffice.size() > 0);
 
         List<Message> inboxUser = Mailbox.get("berndo@test.com");
@@ -144,7 +150,7 @@ public class MailServiceImplTest {
         assertNotSame("subject", msgOffice.getSubject());
 
         // check from and recipient
-        assertEquals(new InternetAddress("office@synyx.de"), msgOffice.getAllRecipients()[0]);
+        assertEquals(new InternetAddress(officeEmailAddress), msgOffice.getAllRecipients()[0]);
 
         // check content of email
         String contentOfficeMail = (String) msgOffice.getContent();
@@ -155,11 +161,8 @@ public class MailServiceImplTest {
     }
 
 
-    /**
-     * Test of sendRejectedNotification method, of class MailServiceImpl.
-     */
     @Test
-    public void testSendRejectedNotification() throws MessagingException, IOException {
+    public void ensureNotificationAboutRejectedApplicationIsSentToPerson() throws MessagingException, IOException {
 
         person.setLastName("Test");
         person.setFirstName("Franz");
@@ -188,11 +191,8 @@ public class MailServiceImplTest {
     }
 
 
-    /**
-     * Test of sendConfirmation method, of class MailServiceImpl.
-     */
     @Test
-    public void testSendConfirmation() throws MessagingException, IOException {
+    public void ensureAfterApplyingForLeaveAConfirmationNotificationIsSentToPerson() throws MessagingException, IOException {
 
         person.setLastName("Test");
         person.setFirstName("Hildegard");
@@ -221,44 +221,8 @@ public class MailServiceImplTest {
     }
 
 
-    /**
-     * Test of sendCancelledNotification method, of class MailServiceImpl.
-     */
     @Test
-    public void testSendCancelledNotification() throws MessagingException, IOException {
-
-        person.setLastName("Test");
-        person.setFirstName("Heinrich");
-
-        // test for cancelledByOffice == false
-        // i.e. office gets a mail
-
-        mailService.emailOffice = "office@synyx.de";
-        mailService.emailBoss = "boss@boss.org";
-
-        mailService.sendCancelledNotification(application, false, null);
-
-        // was email sent?
-        List<Message> inboxOffice = Mailbox.get("office@synyx.de");
-        assertTrue(inboxOffice.size() > 0);
-
-        Message msg = inboxOffice.get(0);
-
-        // check subject
-        assertEquals("Ein Antrag wurde storniert", msg.getSubject());
-        assertNotSame("subject", msg.getSubject());
-
-        // check from and recipient
-        assertEquals(new InternetAddress("office@synyx.de"), msg.getAllRecipients()[0]);
-
-        // check content of email
-        String content = (String) msg.getContent();
-        assertTrue(content.contains("Der Urlaubsantrag von Heinrich Test"));
-        assertTrue(content.contains("wurde storniert"));
-        assertFalse(content.contains("Mist"));
-
-        // test for cancelledByOffice == true
-        // i.e. applicant gets a mail
+    public void ensurePersonGetsANotificationIfOfficeCancelledOneOfHisApplications() throws MessagingException, IOException {
 
         person.setLastName("Mann");
         person.setFirstName("Muster");
@@ -269,13 +233,15 @@ public class MailServiceImplTest {
         office.setFirstName("Magdalena");
 
         application.setCanceller(office);
-        mailService.sendCancelledNotification(application, true, null);
+
+        boolean cancelledByOffice = true;
+        mailService.sendCancelledNotification(application, cancelledByOffice, null);
 
         // was email sent?
         List<Message> inboxApplicant = Mailbox.get("muster@mann.de");
         assertTrue(inboxApplicant.size() > 0);
 
-        msg = inboxApplicant.get(0);
+        Message msg = inboxApplicant.get(0);
 
         // check subject
         assertEquals("Dein Antrag wurde storniert", msg.getSubject());
@@ -285,18 +251,68 @@ public class MailServiceImplTest {
         assertEquals(new InternetAddress("muster@mann.de"), msg.getAllRecipients()[0]);
 
         // check content of email
-        content = (String) msg.getContent();
+        String content = (String) msg.getContent();
         assertTrue(content.contains("dein Urlaubsantrag wurde von Magdalena"));
         assertTrue(content.contains("wende dich bitte direkt an Magdalena"));
         assertFalse(content.contains("Mist"));
     }
 
-
-    /**
-     * Test of sendKeyGeneratingErrorNotification method, of class MailServiceImpl.
-     */
     @Test
-    public void testSendKeyGeneratingErrorNotification() throws MessagingException, IOException {
+    public void ensureBossesAndOfficeMembersGetsANotificationIfAPersonCancelsAnAllowedApplication() throws MessagingException, IOException {
+
+        person.setLastName("Test");
+        person.setFirstName("Heinrich");
+
+        String bossEmailAddress = "boss@boss.de";
+        Person boss = new Person("boss", "Boss", "Max", bossEmailAddress);
+
+        Mockito.when(personService.getPersonsByRole(Role.BOSS)).thenReturn(Arrays.asList(boss));
+
+        String officeEmailAddress = "office@office.de";
+        Person office = new Person("office", "Office", "Marlene", officeEmailAddress);
+
+        Mockito.when(personService.getPersonsByRole(Role.OFFICE)).thenReturn(Arrays.asList(office));
+
+        boolean cancelledByOffice = false;
+        mailService.sendCancelledNotification(application, cancelledByOffice, null);
+
+        // ENSURE OFFICE MEMBERS HAVE GOT CORRECT EMAIL
+        List<Message> inboxOffice = Mailbox.get(officeEmailAddress);
+        assertTrue(inboxOffice.size() > 0);
+
+        Message msg = inboxOffice.get(0);
+
+        assertEquals("Ein Antrag wurde storniert", msg.getSubject());
+        assertNotSame("subject", msg.getSubject());
+
+        assertEquals(new InternetAddress(officeEmailAddress), msg.getAllRecipients()[0]);
+
+        String content = (String) msg.getContent();
+        assertTrue(content.contains("Der Urlaubsantrag von Heinrich Test"));
+        assertTrue(content.contains("wurde storniert"));
+        assertFalse(content.contains("Mist"));
+
+        // ENSURE BOSSES HAVE GOT CORRECT EMAIL
+        List<Message> inboxBoss = Mailbox.get(bossEmailAddress);
+        assertTrue(inboxBoss.size() > 0);
+
+        Message bossEmail = inboxBoss.get(0);
+
+        assertEquals("Ein Antrag wurde storniert", bossEmail.getSubject());
+        assertNotSame("subject", bossEmail.getSubject());
+
+        assertEquals(new InternetAddress(bossEmailAddress), bossEmail.getAllRecipients()[0]);
+
+        String bossEmailContent = (String) bossEmail.getContent();
+        assertTrue(bossEmailContent.contains("Der Urlaubsantrag von Heinrich Test"));
+        assertTrue(bossEmailContent.contains("wurde storniert"));
+        assertFalse(bossEmailContent.contains("Mist"));
+
+    }
+
+
+    @Test
+    public void ensureTechnicalManagerGetsANotificationIfAKeyGeneratingErrorOccurred() throws MessagingException, IOException {
 
         mailService.emailManager = "manager@uv.de";
         mailService.sendKeyGeneratingErrorNotification("horscht");
@@ -315,11 +331,8 @@ public class MailServiceImplTest {
     }
 
 
-    /**
-     * Test of sendSignErrorNotification method, of class MailServiceImpl.
-     */
     @Test
-    public void testSendSignErrorNotification() throws MessagingException, IOException {
+    public void ensureTechnicalManagerGetsANotificationIfASignErrorOccurred() throws MessagingException, IOException {
 
         mailService.emailManager = "manager@uv.de";
         mailService.sendSignErrorNotification(5, "test exception message");
@@ -337,11 +350,8 @@ public class MailServiceImplTest {
     }
 
 
-    /**
-     * Test of sendAppliedForLeaveByOfficeNotification method, of class MailServiceImpl.
-     */
     @Test
-    public void testSendAppliedForLeaveByOfficeNotification() throws MessagingException, IOException {
+    public void ensurePersonGetsANotificationIfAnOfficeMemberAppliedForLeaveForThisPerson() throws MessagingException, IOException {
 
         person.setLastName("Müller");
         person.setFirstName("Günther");

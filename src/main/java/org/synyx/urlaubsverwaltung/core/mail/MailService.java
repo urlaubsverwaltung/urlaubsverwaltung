@@ -83,14 +83,6 @@ public interface MailService {
 
 
     /**
-     * Needed for jmx demo: send a notification to remind boss about waiting applications that have to be allowed or
-     * rejected.
-     *
-     * @param  apps
-     */
-//    void sendRemindingBossAboutWaitingApplicationsNotification(List<Application> apps);
-
-    /**
      * This method sends an email if an application got cancelled. If the application had the status allowed and was
      * cancelled by the applicant, the office gets an email. If the application was cancelled by the office (regardless
      * of which status), the applicant gets an email.
@@ -153,4 +145,5 @@ public interface MailService {
      * @param  application
      */
     void notifyRepresentative(Application application);
+
 }
