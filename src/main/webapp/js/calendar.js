@@ -534,13 +534,15 @@ $(function() {
             },
 
             click: function() {
-                
+
                 var dateFrom = selectionFrom();
                 var dateTo   = selectionTo  ();
 
                 var dateThis = getDateFromEl(this);
 
-                if (sameOrBetween(dateThis, dateFrom, dateTo)) {
+                var isSelectable = $(this).attr("data-datepicker-selectable");
+
+                if (isSelectable === "true" && sameOrBetween(dateThis, dateFrom, dateTo)) {
                     holidayService.bookHoliday(dateFrom, dateTo);
                 }
             },
