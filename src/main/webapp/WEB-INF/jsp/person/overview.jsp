@@ -319,42 +319,13 @@
             
         </div>
 
-
-
-        <c:set var="sickNotesDays" value="0" />
-        <c:set var="numberOfSickNotesAUB" value="0" />
-        <c:set var="sickNotesDaysChild" value="0" />
-        <c:set var="numberOfSickNotesChildAUB" value="0" />
-
-        <c:forEach items="${sickNotes}" var="sickNote">
-
-            <c:choose>
-
-                <c:when test="${sickNote.type == 'SICK_NOTE_CHILD'}">
-                    <c:set var="sickNotesDaysChild" value="${sickNotesDaysChild + sickNote.workDays}" />
-                    <c:if test="${sickNote.aubPresent}">
-                        <c:set var="numberOfSickNotesChildAUB" value="${numberOfSickNotesChildAUB + 1}" />
-                    </c:if>
-                </c:when>
-
-                <c:otherwise>
-                    <c:set var="sickNotesDays" value="${sickNotesDays + sickNote.workDays}" />
-                    <c:if test="${sickNote.aubPresent}">
-                        <c:set var="numberOfSickNotesAUB" value="${numberOfSickNotesAUB + 1}" />
-                    </c:if>
-                </c:otherwise>
-
-            </c:choose>
-
-        </c:forEach>
-        
         <div class="row">
             <div class="col-xs-12 col-sm-12 col-md-6">
                 <div class="box">
                     <span class="thirds">
                        <span class="box-icon bg-red"><i class="fa fa-medkit"></i></span>
-                        <spring:message code="overview.sicknotes.sickdays" arguments="${sickNotesDays}" />
-                        <i class="fa fa-check check"></i> <spring:message code="overview.sicknotes.sickdays.aub" arguments="${numberOfSickNotesAUB}" />
+                        <spring:message code="overview.sicknotes.sickdays" arguments="${sickDays}" />
+                        <i class="fa fa-check check"></i> <spring:message code="overview.sicknotes.sickdays.aub" arguments="${sickDaysWithAUB}" />
                     </span>
                 </div>
             </div>
@@ -362,8 +333,8 @@
                 <div class="box">
                     <span class="thirds">
                        <span class="box-icon bg-red"><i class="fa fa-child"></i></span>
-                        <spring:message code="overview.sicknotes.sickdays.child" arguments="${sickNotesDaysChild}" />
-                        <i class="fa fa-check check"></i> <spring:message code="overview.sicknotes.sickdays.aub" arguments="${numberOfSickNotesChildAUB}" />
+                        <spring:message code="overview.sicknotes.sickdays.child" arguments="${childSickDays}" />
+                        <i class="fa fa-check check"></i> <spring:message code="overview.sicknotes.sickdays.aub" arguments="${childSickDaysWithAUB}" />
                     </span>
                 </div>
             </div>
