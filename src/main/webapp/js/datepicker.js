@@ -53,15 +53,22 @@ function getHighlighted(url, callback) {
     
 }
 
-function createDatepickerInstances(regional, urlPrefix, personId) {
+function createDatepickerInstances(selectors, regional, urlPrefix, getPerson, onSelect) {
 
     var highlighted;
     var highlightedVacation;
-    
+
+    var selector = selectors.join(",");
+
     $.datepicker.setDefaults($.datepicker.regional[regional]);
-    $("#from, #to, #at").datepicker({
+    $(selector).datepicker({
         numberOfMonths: 1,
-        beforeShow: function(input) {
+        beforeShow: function(input, inst) {
+
+            var calendrier = inst.dpDiv;
+            var top  = $(this).offset().top + $(this).outerHeight();
+            var left = $(this).offset().left;
+            setTimeout(function(){ calendrier.css({'top' : top, 'left': left}); },10);
 
             var date;
             
@@ -78,6 +85,7 @@ function createDatepickerInstances(regional, urlPrefix, personId) {
                 highlighted = getDatesOfPublicHolidays(data);
             });
 
+            var personId = getPerson();
             getHighlighted(urlPrefix + "/vacation/application-info?year=" + year + "&month=" + month + "&person=" + personId, function(data) {
 
                 highlightedVacation = new Array();
@@ -98,6 +106,7 @@ function createDatepickerInstances(regional, urlPrefix, personId) {
                 highlighted = getDatesOfPublicHolidays(data);
             });
 
+            var personId = getPerson();
             getHighlighted(urlPrefix + "/vacation/application-info?year=" + year + "&month=" + month + "&person=" + personId, function(data) {
                 highlightedVacation = new Array();
 
@@ -115,33 +124,7 @@ function createDatepickerInstances(regional, urlPrefix, personId) {
             return colorizeDate(date, highlighted, highlightedVacation);
 
         },
-        onSelect: function (selectedDate) {
-            instance = $(this).data("datepicker"),
-                date = $.datepicker.parseDate(
-                    instance.settings.dateFormat ||
-                        $.datepicker._defaults.dateFormat,
-                    selectedDate, instance.settings);
-
-            if (this.id == "from") {
-                $("#to").datepicker("setDate", selectedDate);
-            }
-
-
-            var dayLength = $('input:radio[name=howLong]:checked').val();
-            var startDate = "";
-            var toDate = "";
-
-            if (dayLength === "FULL") {
-                startDate = $("#from").datepicker("getDate");
-                toDate = $("#to").datepicker("getDate");
-            } else {
-                startDate = $("#at").datepicker("getDate");
-                toDate = $("#at").datepicker("getDate");
-            }
-            
-            sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, ".days", true);
-
-        }
+        onSelect: onSelect
     });
 }
 
@@ -189,39 +172,5 @@ function colorizeDate(date, publicHolidays, vacation) {
 
     }
 
-}
-
-
-function createDatepickerInstanceForSickNote(regional, from, to) {
-
-    $.datepicker.setDefaults($.datepicker.regional[regional]);
-
-    var selector = "#" + from + ", #" + to;
-    
-    $(selector).datepicker({
-        numberOfMonths: 1,
-        beforeShow: function(input, inst){
-            var calendrier = inst.dpDiv;
-            var top  = $(this).offset().top + $(this).outerHeight();
-            var left = $(this).offset().left;
-            setTimeout(function(){ calendrier.css({'top' : top, 'left': left}); },10);
-        },
-        onSelect: function(date) {
-            if (this.id == from) {
-                $("#" + to).datepicker("setDate", date);
-            }
-        },
-        beforeShowDay: function (date) {
-
-            // if day is saturday or sunday, highlight it
-            if (date.getDay() == 6 || date.getDay() == 0) {
-                return [true, "notworkday"];
-            } else {
-                return [true, ""];
-            }
-
-        }
-    });
-    
 }
     

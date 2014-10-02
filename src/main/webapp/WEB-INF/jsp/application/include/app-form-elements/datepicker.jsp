@@ -1,9 +1,3 @@
-<%-- 
-    Document   : datepicker
-    Created on : 06.09.2012, 17:15:21
-    Author     : Aljona Murygina - murygina@synyx.de
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
@@ -19,8 +13,44 @@
         var urlPrefix = "<spring:url value='/api' />";
 
         var personId = '<c:out value="${person.id}" />';
-        
-        createDatepickerInstances(datepickerLocale, urlPrefix, personId);
+
+        var getPersonId = function() {
+            return personId;
+        }
+
+        var onSelect = function(selectedDate) {
+
+            instance = $(this).data("datepicker"),
+                    date = $.datepicker.parseDate(
+                            instance.settings.dateFormat ||
+                                    $.datepicker._defaults.dateFormat,
+                            selectedDate, instance.settings);
+
+            if (this.id == "from") {
+                $("#to").datepicker("setDate", selectedDate);
+            }
+
+
+            var dayLength = $('input:radio[name=howLong]:checked').val();
+            var startDate = "";
+            var toDate = "";
+
+            if (dayLength === "FULL") {
+                startDate = $("#from").datepicker("getDate");
+                toDate = $("#to").datepicker("getDate");
+            } else {
+                startDate = $("#at").datepicker("getDate");
+                toDate = $("#at").datepicker("getDate");
+            }
+
+            var id = getPersonId();
+            sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, id, ".days", true);
+
+        }
+
+        var selectors = ["#from", "#to", "#at"];
+
+        createDatepickerInstances(selectors, datepickerLocale, urlPrefix, getPersonId, onSelect);
         
     });
 </script>

@@ -13,12 +13,42 @@
     <script type="text/javascript">
         $(document).ready(function() {
 
-            var regional = "${pageContext.request.locale.language}";
+            <%-- DATEPICKER --%>
 
-            createDatepickerInstanceForSickNote(regional, "from", "to");
+            var datepickerLocale = "${pageContext.request.locale.language}";
+            var urlPrefix = "<spring:url value='/api' />";
 
-            createDatepickerInstanceForSickNote(regional, "aubFrom", "aubTo");
-            
+            <c:choose>
+            <c:when test="${sickNote.id == null}">
+                var getPersonId = function() {
+                    return $("#employee option:selected").val();
+                }
+            </c:when>
+            <c:otherwise>
+                var getPersonId = function() {
+                    var personId = "<c:out value="${sickNote.person.id}" />";
+                    return personId;
+                }
+            </c:otherwise>
+            </c:choose>
+
+            var onSelect = function(selectedDate) {
+                if (this.id == "from") {
+                    $("#to").datepicker("setDate", selectedDate);
+                }
+            };
+
+            var onSelectAUB = function(selectedDate) {
+                if (this.id == "aubFrom") {
+                    $("#aubTo").datepicker("setDate", selectedDate);
+                }
+            };
+
+            createDatepickerInstances(["#from", "#to"], datepickerLocale, urlPrefix, getPersonId, onSelect);
+            createDatepickerInstances(["#aubFrom", "#aubTo"], datepickerLocale, urlPrefix, getPersonId, onSelectAUB);
+
+            <%-- DATEPICKER END --%>
+
             <c:choose>
                 <c:when test="${sickNote.aubPresent}">
                     showAUFields();

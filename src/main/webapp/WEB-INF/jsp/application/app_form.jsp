@@ -110,7 +110,7 @@
             <label class="control-label col-md-4">
                 <spring:message code="name"/>
             </label>
-            <div class="col-md-9">
+            <div class="col-md-7">
                 <select id="person-select" class="form-control" onchange="window.location.href=this.options
                                                         [this.selectedIndex].value">
                     <option value="${formUrlPrefix}/${person.id}/application/new" selected="selected">

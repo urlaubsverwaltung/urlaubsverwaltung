@@ -13,14 +13,10 @@
 
 <head>
     <uv:head />
-    <script src="<spring:url value='/js/datepicker.js' />" type="text/javascript" ></script>
-
     <script type="text/javascript">
         $(document).ready(function() {
 
             var regional = "${pageContext.request.locale.language}";
-
-            createDatepickerInstanceForSickNote(regional, "from", "to");
 
             $("table.sortable").tablesorter({
                 sortList: [[0,0]],
