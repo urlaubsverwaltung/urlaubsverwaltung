@@ -26,6 +26,10 @@
     th.sortable-field .tablesorter-header-inner:after {
         content: "";
     }
+
+    th {
+        font-weight: bold !important;
+    }
 }
 
 .print-info--only-landscape {
