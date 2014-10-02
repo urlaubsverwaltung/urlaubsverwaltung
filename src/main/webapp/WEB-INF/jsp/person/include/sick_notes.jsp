@@ -15,7 +15,7 @@
             <c:set var="CSS_CLASS" value="inactive"/>
         </c:otherwise>
     </c:choose>
-    <tr class="${CSS_CLASS}" onclick="navigate('${formUrlPrefix}/sicknote/${sickNote.id}');">
+    <tr class="${CSS_CLASS}">
         <td class="is-centered state">
             <span class="hidden-print">
                 <c:choose>
