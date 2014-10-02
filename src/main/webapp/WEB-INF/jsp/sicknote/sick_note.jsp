@@ -84,8 +84,28 @@
 
                 <div class="box">
                     <span class="thirds">
-                       <span class="box-icon bg-red"><i class="fa fa-medkit"></i></span>
-                        <h5 class="is-inline-block is-sticky"><c:out value="${sickNote.person.niceName}"/></h5> <spring:message code="sicknotes.details.title" />
+                        <span class="box-icon bg-red">
+                            <c:choose>
+                                <c:when test="${sickNote.type == 'SICK_NOTE_CHILD'}">
+                                    <i class="fa fa-child"></i>
+                                </c:when>
+                                <c:otherwise>
+                                    <i class="fa fa-medkit"></i>
+                                </c:otherwise>
+                            </c:choose>
+                        </span>
+
+                        <h5 class="is-inline-block is-sticky"><c:out value="${sickNote.person.niceName}"/></h5>
+
+                        <c:choose>
+                            <c:when test="${sickNote.type == 'SICK_NOTE_CHILD'}">
+                                <spring:message code="sicknotes.details.title.child" />
+                            </c:when>
+                            <c:otherwise>
+                                <spring:message code="sicknotes.details.title" />
+                            </c:otherwise>
+                        </c:choose>
+
                         <c:choose>
                             <c:when test="${sickNote.startDate == sickNote.endDate}">
                                 <spring:message code="at"/> <h5 class="is-inline-block is-sticky"><uv:date date="${sickNote.startDate}"/></h5>
@@ -108,6 +128,9 @@
                         <td>
                             = <fmt:formatNumber maxFractionDigits="1" value="${sickNote.workDays}"/> <spring:message
                                 code="work.days"/>
+                            <c:if test="${sickNote.active == false}">
+                                <span><spring:message code="sicknotes.details.inactive" /></span>
+                            </c:if>
                         </td>
                     </tr>
                     <tr>
@@ -180,7 +203,7 @@
                     </c:choose>
                     
                     <div id="comment-form" style="${STYLE}">
-                        <form:form method="POST" action="${formUrlPrefix}/sicknote/${sickNote.id}" modelAttribute="comment">
+                        <form:form method="POST" action="${formUrlPrefix}/sicknote/${sickNote.id}/comment" modelAttribute="comment">
                             <form:errors path="text" cssClass="error" /><br />
                             <span id="text-comment"></span><spring:message code="max.chars" />
                             <form:textarea rows="4" path="text" cssClass="form-control" cssErrorClass="form-control error" onkeyup="count(this.value, 'text-comment');" onkeydown="maxChars(this,200); count(this.value, 'text-comment');" />

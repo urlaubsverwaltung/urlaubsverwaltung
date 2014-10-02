@@ -131,7 +131,14 @@
                             <c:when test="${sickNote.id == null}">
                                 <form:select path="person" id="employee" class="form-control" cssErrorClass="form-control error">
                                     <c:forEach items="${persons}" var="person">
-                                        <form:option value="${person.id}">${person.niceName}</form:option>
+                                        <c:choose>
+                                            <c:when test="${sickNote.person.id == person.id}">
+                                                <form:option value="${person.id}" selected="selected">${person.niceName}</form:option>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <form:option value="${person.id}">${person.niceName}</form:option>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </c:forEach>
                                 </form:select>
                                 <span class="help-inline"><form:errors path="person" cssClass="error"/></span>
@@ -142,6 +149,19 @@
                                 <c:out value="${sickNote.person.niceName}" />
                             </c:otherwise>
                         </c:choose>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-md-5" for="sickNoteType"><spring:message code='type'/></label>
+
+                    <div class="col-md-4">
+                        <form:select path="type" id="sickNoteType" class="form-control" cssErrorClass="form-control error">
+                            <c:forEach items="${sickNoteTypes}" var="type">
+                                <form:option value="${type}"><spring:message code="sicknote.type.${type}" /></form:option>
+                            </c:forEach>
+                        </form:select>
+                        <span class="help-inline"><form:errors path="person" cssClass="error"/></span>
                     </div>
                 </div>
 

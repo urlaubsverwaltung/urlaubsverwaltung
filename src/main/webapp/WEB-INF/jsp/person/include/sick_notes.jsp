@@ -16,9 +16,16 @@
         </c:otherwise>
     </c:choose>
     <tr class="${CSS_CLASS}" onclick="navigate('${formUrlPrefix}/sicknote/${sickNote.id}');">
-        <td class="is-centered state SICKNOTE">
+        <td class="is-centered state">
             <span class="hidden-print">
-                <i class="fa fa-medkit"></i>
+                <c:choose>
+                    <c:when test="${sickNote.type == 'SICK_NOTE_CHILD'}">
+                        <i class="fa fa-child"></i>
+                    </c:when>
+                    <c:otherwise>
+                        <i class="fa fa-medkit"></i>
+                    </c:otherwise>
+                </c:choose>
             </span>
         </td>
         <td>
@@ -41,10 +48,10 @@
             </p>
         </td>
         <td class="is-centered">
-            <fmt:formatNumber maxFractionDigits="1" value="${sickNote.workDays}"/> Tage
+            <span><fmt:formatNumber maxFractionDigits="1" value="${sickNote.workDays}"/> Tage</span>
         </td>
         <td class="hidden-print is-centered hidden-xs">
-            <i class="fa fa-clock-o"></i> <spring:message code="sicknote.lastEdited" /> <uv:date date="${sickNote.lastEdited}"/>
+            <i class="fa fa-clock-o"></i> <span><spring:message code="sicknote.lastEdited" /> <uv:date date="${sickNote.lastEdited}"/></span>
         </td>
         </c:forEach>
     </tbody>

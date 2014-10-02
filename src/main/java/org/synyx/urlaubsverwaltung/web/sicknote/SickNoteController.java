@@ -27,6 +27,7 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteService;
+import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteComment;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.core.sicknote.statistics.SickNoteStatistics;
@@ -80,19 +81,6 @@ public class SickNoteController {
         binder.registerCustomEditor(Person.class, new PersonPropertyEditor(personService));
     }
 
-
-    @RequestMapping(value = "/sicknote/new", method = RequestMethod.GET)
-    public String newSickNote(Model model) {
-
-        if (sessionService.isOffice()) {
-            model.addAttribute("sickNote", new SickNote());
-            model.addAttribute("persons", personService.getAllPersons());
-
-            return "sicknote/sick_note_form";
-        }
-
-        return ControllerConstants.ERROR_JSP;
-    }
 
     @RequestMapping(value = "/sicknote", method = RequestMethod.GET)
     public String defaultSickNotes() {
@@ -233,6 +221,21 @@ public class SickNoteController {
     }
 
 
+    @RequestMapping(value = "/sicknote/new", method = RequestMethod.GET)
+    public String newSickNote(Model model) {
+
+        if (sessionService.isOffice()) {
+            model.addAttribute("sickNote", new SickNote());
+            model.addAttribute("persons", personService.getAllPersons());
+            model.addAttribute("sickNoteTypes", SickNoteType.values());
+
+            return "sicknote/sick_note_form";
+        }
+
+        return ControllerConstants.ERROR_JSP;
+    }
+
+
     @RequestMapping(value = "/sicknote", method = RequestMethod.POST)
     public String newSickNote(@ModelAttribute("sickNote") SickNote sickNote, Errors errors, Model model) {
 
@@ -242,6 +245,7 @@ public class SickNoteController {
             if (errors.hasErrors()) {
                 model.addAttribute("sickNote", sickNote);
                 model.addAttribute("persons", personService.getAllPersons());
+                model.addAttribute("sickNoteTypes", SickNoteType.values());
 
                 return "sicknote/sick_note_form";
             }
@@ -262,6 +266,7 @@ public class SickNoteController {
 
         if (sickNote.isActive() && sessionService.isOffice()) {
             model.addAttribute("sickNote", sickNote);
+            model.addAttribute("sickNoteTypes", SickNoteType.values());
 
             return "sicknote/sick_note_form";
         }
@@ -279,6 +284,7 @@ public class SickNoteController {
 
             if (errors.hasErrors()) {
                 model.addAttribute("sickNote", sickNote);
+                model.addAttribute("sickNoteTypes", SickNoteType.values());
 
                 return "sicknote/sick_note_form";
             }
@@ -294,7 +300,7 @@ public class SickNoteController {
     }
 
 
-    @RequestMapping(value = "/sicknote/{id}", method = RequestMethod.POST)
+    @RequestMapping(value = "/sicknote/{id}/comment", method = RequestMethod.POST)
     public String addComment(@PathVariable("id") Integer id,
         @ModelAttribute("comment") SickNoteComment comment, Errors errors, Model model) {
 

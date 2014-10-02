@@ -18,6 +18,7 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonInteractionService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteService;
+import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.security.Role;
 import org.synyx.urlaubsverwaltung.web.person.PersonForm;
@@ -132,14 +133,17 @@ public class TestDataCreationService {
         // PAST APPLICATIONS FOR LEAVE
         createAllowedApplication(person, VacationType.HOLIDAY, DayLength.FULL, now.minusDays(20), now.minusDays(13));
         createAllowedApplication(person, VacationType.HOLIDAY, DayLength.MORNING, now.minusDays(5), now.minusDays(5));
+        createAllowedApplication(person, VacationType.SPECIALLEAVE, DayLength.MORNING, now.minusDays(9), now.minusDays(9));
 
         createRejectedApplication(person, VacationType.HOLIDAY, DayLength.FULL, now.minusDays(33), now.minusDays(30));
 
         createCancelledApplication(person, VacationType.HOLIDAY, DayLength.FULL, now.minusDays(11), now.minusDays(10));
 
         // SICK NOTES
-        createSickNote(person, now.minusDays(10), now.minusDays(10), false);
-        createSickNote(person, now.minusDays(30), now.minusDays(25), true);
+        createSickNote(person, now.minusDays(10), now.minusDays(10), SickNoteType.SICK_NOTE, false);
+        createSickNote(person, now.minusDays(30), now.minusDays(25), SickNoteType.SICK_NOTE, true);
+        createSickNote(person, now.minusDays(60), now.minusDays(55), SickNoteType.SICK_NOTE_CHILD, true);
+        createSickNote(person, now.minusDays(44), now.minusDays(44), SickNoteType.SICK_NOTE_CHILD, false);
     }
 
 
@@ -202,13 +206,14 @@ public class TestDataCreationService {
     }
 
 
-    private SickNote createSickNote(Person person, DateMidnight startDate, DateMidnight endDate, boolean withAUB) {
+    private SickNote createSickNote(Person person, DateMidnight startDate, DateMidnight endDate, SickNoteType type, boolean withAUB) {
 
         SickNote sickNote = new SickNote();
         sickNote.setPerson(person);
         sickNote.setStartDate(startDate);
         sickNote.setEndDate(endDate);
         sickNote.setActive(ACTIVE);
+        sickNote.setType(type);
 
         if (withAUB) {
             sickNote.setAubPresent(true);

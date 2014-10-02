@@ -328,11 +328,23 @@
 
         <c:forEach items="${sickNotes}" var="sickNote">
 
-            <c:set var="sickNotesDays" value="${sickNotesDays + sickNote.workDays}" />
+            <c:choose>
 
-            <c:if test="${sickNote.aubPresent}">
-                <c:set var="numberOfSickNotesAUB" value="${numberOfSickNotesAUB + 1}" />
-            </c:if>
+                <c:when test="${sickNote.type == 'SICK_NOTE_CHILD'}">
+                    <c:set var="sickNotesDaysChild" value="${sickNotesDaysChild + sickNote.workDays}" />
+                    <c:if test="${sickNote.aubPresent}">
+                        <c:set var="numberOfSickNotesChildAUB" value="${numberOfSickNotesChildAUB + 1}" />
+                    </c:if>
+                </c:when>
+
+                <c:otherwise>
+                    <c:set var="sickNotesDays" value="${sickNotesDays + sickNote.workDays}" />
+                    <c:if test="${sickNote.aubPresent}">
+                        <c:set var="numberOfSickNotesAUB" value="${numberOfSickNotesAUB + 1}" />
+                    </c:if>
+                </c:otherwise>
+
+            </c:choose>
 
         </c:forEach>
         
