@@ -16,15 +16,8 @@
     <script type="text/javascript">
         $(document).ready(function() {
 
-            var regional = "${pageContext.request.locale.language}";
-
             $("table.sortable").tablesorter({
-                sortList: [[0,0]],
-                headers: { 
-                    0: { sorter:'germanDate' },
-                    3: { sorter:'germanDate' },
-                    5: { sorter:'germanDate' }
-                }
+                sortList: [[1,0]]
             });
             
         });
@@ -38,7 +31,11 @@
 
 <uv:menu />
 
-<div class="content">
+<div class="print-info--only-landscape">
+    <h4><spring:message code="print.info.landscape" /></h4>
+</div>
+
+<div class="content print--only-landscape">
     <div class="container">
 
         <div class="row">
@@ -91,19 +88,6 @@
                             <div class="modal-body">
 
                                 <div class="form-group">
-                                    <label class="control-label col-sm-4" for="employee"><spring:message code="staff" /></label>
-
-                                    <div class="col-sm-7">
-                                        <form:select path="personId" id="employee" cssClass="form-control" cssErrorClass="form-control error">
-                                            <form:option value="-1"><spring:message code="staff.all" /></form:option>
-                                            <c:forEach items="${persons}" var="person">
-                                                <form:option value="${person.id}">${person.niceName}</form:option>
-                                            </c:forEach>
-                                        </form:select>
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
                                     <label class="control-label col-sm-4">
                                         <spring:message code="time" />
                                     </label>
@@ -141,70 +125,51 @@
                     <spring:message code="Effective"/> <uv:date date="${today}" />
                 </p>
             </div>
-
-            <c:choose>
-
-                <c:when test="${empty sickNotes}">
-                    <div>
-                        <spring:message code="sicknotes.none" />
-                    </div>
-                </c:when>
-
-                <c:otherwise>
-                    <table class="list-table selectable-table sortable tablesorter" cellspacing="0">
-                        <thead class="hidden-xs hidden-sm">
-                        <tr>
-                            <th class="hidden-print sortable-field"><spring:message code="app.date.overview" /></th>
-                            <th class="sortable-field"><spring:message code="firstname" /></th>
-                            <th class="sortable-field"><spring:message code="lastname" /></th>
-                            <th class="sortable-field"><spring:message code="sicknotes.time" /></th>
-                            <th class="sortable-field"><spring:message code="work.days" /></th>
-                            <th class="sortable-field"><spring:message code="sicknotes.aub.short" /></th>
-                            <th></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <c:forEach items="${sickNotes}" var="sickNote" varStatus="loopStatus">
-                            <c:choose>
-                                <c:when test="${sickNote.active}">
-                                    <c:set var="CSS_CLASS" value="active" />
-                                </c:when>
-                                <c:otherwise>
-                                    <c:set var="CSS_CLASS" value="inactive" />
-                                </c:otherwise>
-                            </c:choose>
-                            <tr class="${CSS_CLASS}" onclick="navigate('${formUrlPrefix}/sicknote/${sickNote.id}');">
-                                <td class="hidden-print hidden-xs">
-                                    <uv:date date="${sickNote.lastEdited}" />
-                                </td>
-                                <td>
-                                    <c:out value="${sickNote.person.firstName}" />
-                                </td>
-                                <td>
-                                    <c:out value="${sickNote.person.lastName}" />
-                                </td>
-                                <td>
-                                    <uv:date date="${sickNote.startDate}" /> - <uv:date date="${sickNote.endDate}" />
-                                </td>
-                                <td class="hidden-xs">
-                                    <fmt:formatNumber maxFractionDigits="1" value="${sickNote.workDays}" />
-                                </td>
-                                <td class="hidden-xs">
-                                    <uv:date date="${sickNote.aubStartDate}" /> - <uv:date date="${sickNote.aubEndDate}" />
-                                </td>
-                                <td class="hidden-print hidden-xs">
-                                    <c:if test="${sickNote.active}">
-                                        <a href="${formUrlPrefix}/sicknote/${sickNote.id}/edit">
-                                            <i class="fa fa-pencil fa-action"></i>
-                                        </a>
-                                    </c:if>
-                                </td>
+                <table class="list-table selectable-table sortable tablesorter" cellspacing="0">
+                    <thead class="hidden-xs hidden-sm">
+                    <tr>
+                        <th class="hidden-print"></th>
+                        <th class="sortable-field"><spring:message code="firstname"/></th>
+                        <th class="sortable-field"><spring:message code="lastname"/></th>
+                        <th class="sortable-field"><spring:message code="sicknotes.days.number"/></th>
+                        <th class="sortable-field"><spring:message code="sicknotes.child.days.number"/></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <c:forEach items="${persons}" var="person">
+                    <tr onclick="navigate('${formUrlPrefix}/staff/${person.id}/overview');">
+                        <td class="is-centered hidden-print">
+                            <img class="img-circle hidden-print" src="<c:out value='${gravatars[person]}?d=mm&s=60'/>"/>
+                        </td>
+                        <td>
+                            <h5><c:out value="${person.firstName}"/></h5>
+                        </td>
+                        <td>
+                            <h5><c:out value="${person.lastName}"/></h5>
+                        </td>
+                        <td>
+                            <i class="fa fa-medkit hidden-print"></i>
+                            <h5 class="is-inline-block"><fmt:formatNumber value="${sickDays[person]}"/> <spring:message
+                                    code="sicknotes.days"/></h5>
+                            <c:if test="${sickDaysWithAUB[person] > 0}">
+                                <p><i class="fa fa-check check"></i> <spring:message
+                                        code="overview.sicknotes.sickdays.aub" arguments="${sickDaysWithAUB[person]}"/>
+                                </p>
+                            </c:if>
+                        </td>
+                        <td>
+                            <i class="fa fa-child hidden-print"></i>
+                            <h5 class="is-inline-block"><fmt:formatNumber value="${childSickDays[person]}"/>
+                                <spring:message code="sicknotes.child.days"/></h5>
+                            <c:if test="${childSickDaysWithAUB[person] > 0}">
+                                <p><i class="fa fa-check check"></i> <spring:message
+                                        code="overview.sicknotes.sickdays.aub"
+                                        arguments="${childSickDaysWithAUB[person]}"/></p>
+                            </c:if>
+                        </td>
                         </c:forEach>
-                        </tbody>
-                    </table>
-                </c:otherwise>
-
-            </c:choose>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

@@ -22,7 +22,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.DateFormat;
+import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
+import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
@@ -32,6 +34,7 @@ import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteComment;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.core.sicknote.statistics.SickNoteStatistics;
 import org.synyx.urlaubsverwaltung.core.sicknote.statistics.SickNoteStatisticsService;
+import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.security.Role;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
@@ -42,8 +45,11 @@ import org.synyx.urlaubsverwaltung.web.util.GravatarUtil;
 import org.synyx.urlaubsverwaltung.web.validator.ApplicationValidator;
 import org.synyx.urlaubsverwaltung.web.validator.SickNoteValidator;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -61,6 +67,9 @@ public class SickNoteController {
 
     @Autowired
     private PersonService personService;
+
+    @Autowired
+    private OwnCalendarService calendarService;
 
     @Autowired
     private SickNoteValidator validator;
@@ -116,7 +125,6 @@ public class SickNoteController {
     public String filterSickNotes(@ModelAttribute("searchRequest") SearchRequest searchRequest) {
 
         if (sessionService.isOffice()) {
-            Person person = personService.getPersonByID(searchRequest.getPersonId());
 
             DateMidnight now = DateMidnight.now();
             DateMidnight from = now;
@@ -133,13 +141,8 @@ public class SickNoteController {
                 to = now.dayOfMonth().withMaximumValue();
             }
 
-            if (person != null) {
-                return "redirect:/web/sicknote?staff=" + person.getId() + "&from=" + from.toString(DateFormat.PATTERN)
-                    + "&to=" + to.toString(DateFormat.PATTERN);
-            } else {
-                return "redirect:/web/sicknote?from=" + from.toString(DateFormat.PATTERN) + "&to="
+            return "redirect:/web/sicknote?from=" + from.toString(DateFormat.PATTERN) + "&to="
                     + to.toString(DateFormat.PATTERN);
-            }
         }
 
         return ControllerConstants.ERROR_JSP;
@@ -166,39 +169,72 @@ public class SickNoteController {
     }
 
 
-    @RequestMapping(value = "/sicknote", method = RequestMethod.GET, params = { "staff", "from", "to" })
-    public String personsSickNotes(@RequestParam("staff") Integer personId,
-        @RequestParam("from") String from,
-        @RequestParam("to") String to, Model model) {
+    private void fillModel(Model model, List<SickNote> sickNotes, DateMidnight fromDate, DateMidnight toDate) {
 
-        if (sessionService.isOffice()) {
-            List<SickNote> sickNoteList;
-
-            DateTimeFormatter formatter = DateTimeFormat.forPattern(DateFormat.PATTERN);
-            DateMidnight fromDate = DateMidnight.parse(from, formatter);
-            DateMidnight toDate = DateMidnight.parse(to, formatter);
-
-            Person person = personService.getPersonByID(personId);
-            sickNoteList = sickNoteService.getByPersonAndPeriod(person, fromDate, toDate);
-
-            model.addAttribute("person", person);
-            fillModel(model, sickNoteList, fromDate, toDate);
-
-            return "sicknote/sick_notes";
-        }
-
-        return ControllerConstants.ERROR_JSP;
-    }
-
-
-    private void fillModel(Model model, List<SickNote> sickNoteList, DateMidnight fromDate, DateMidnight toDate) {
-
-        model.addAttribute("sickNotes", sickNoteList);
         model.addAttribute("today", DateMidnight.now());
         model.addAttribute("from", fromDate);
         model.addAttribute("to", toDate);
         model.addAttribute("searchRequest", new SearchRequest());
-        model.addAttribute("persons", personService.getAllPersons());
+
+        List<Person> persons = personService.getAllPersons();
+
+        Map<Person, BigDecimal> sickDays = new HashMap<>();
+        Map<Person, BigDecimal> sickDaysWithAUB = new HashMap<>();
+        Map<Person, BigDecimal> childSickDays = new HashMap<>();
+        Map<Person, BigDecimal> childSickDaysWithAUB = new HashMap<>();
+
+        Map<Person, String> gravatars = new HashMap<>();
+
+        for (Person person : persons) {
+            sickDays.put(person, BigDecimal.ZERO);
+            sickDaysWithAUB.put(person, BigDecimal.ZERO);
+            childSickDays.put(person, BigDecimal.ZERO);
+            childSickDaysWithAUB.put(person, BigDecimal.ZERO);
+
+            gravatars.put(person, GravatarUtil.createImgURL(person.getEmail()));
+        }
+
+        for (SickNote sickNote : sickNotes) {
+
+            Person person = sickNote.getPerson();
+
+            if(sickNote.getType().equals(SickNoteType.SICK_NOTE_CHILD)) {
+
+                BigDecimal currentChildSickDays = childSickDays.get(person);
+                childSickDays.put(person, currentChildSickDays.add(sickNote.getWorkDays()));
+
+                if(sickNote.isAubPresent()) {
+                    BigDecimal workDays = calendarService.getWorkDays(DayLength.FULL, sickNote.getAubStartDate(), sickNote.getAubEndDate(), person);
+
+                    BigDecimal currentChildSickDaysWithAUB = childSickDaysWithAUB.get(person);
+                    childSickDaysWithAUB.put(person, currentChildSickDaysWithAUB.add(workDays));
+                }
+
+            } else {
+
+                BigDecimal currentSickDays = sickDays.get(person);
+                sickDays.put(person, currentSickDays.add(sickNote.getWorkDays()));
+
+                if(sickNote.isAubPresent()) {
+                    BigDecimal workDays = calendarService.getWorkDays(DayLength.FULL, sickNote.getAubStartDate(), sickNote.getAubEndDate(), person);
+
+                    BigDecimal currentSickDaysWithAUB = sickDaysWithAUB.get(person);
+                    sickDaysWithAUB.put(person, currentSickDaysWithAUB.add(workDays));
+                }
+
+            }
+        }
+
+        model.addAttribute("sickDays", sickDays);
+        model.addAttribute("sickDaysWithAUB", sickDaysWithAUB);
+        model.addAttribute("childSickDays", childSickDays);
+        model.addAttribute("childSickDaysWithAUB", childSickDaysWithAUB);
+
+        model.addAttribute("persons", persons);
+        model.addAttribute("gravatars", gravatars);
+
+
+
     }
 
 

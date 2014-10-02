@@ -5,24 +5,12 @@ package org.synyx.urlaubsverwaltung.web.sicknote;
  */
 public class SearchRequest {
 
-    private Integer personId;
-
     private Period period;
 
     public enum Period {
         YEAR,
         QUARTAL,
         MONTH;
-    }
-
-    public Integer getPersonId() {
-
-        return personId;
-    }
-
-    public void setPersonId(Integer personId) {
-
-        this.personId = personId;
     }
 
     public Period getPeriod() {

@@ -47,7 +47,7 @@
 
                 <sec:authorize access="hasRole('OFFICE')">
                     <li>
-                        <a href="${formUrlPrefix}/sicknote/quartal"><i class="fa fa-medkit"></i>&nbsp;<spring:message code="nav.sicknotes" /></a>
+                        <a href="${formUrlPrefix}/sicknote/"><i class="fa fa-medkit"></i>&nbsp;<spring:message code="nav.sicknotes" /></a>
                     </li>
                 </sec:authorize>
 
