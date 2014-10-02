@@ -269,8 +269,6 @@ class MailServiceImpl implements MailService {
             // mail to office
             sendEmail(getOfficeMembers(), "subject.cancelled", text);
 
-            // mail to bosses
-            sendEmail(getBosses(), "subject.cancelled", text);
         }
     }
 

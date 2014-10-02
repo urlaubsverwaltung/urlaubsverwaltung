@@ -258,15 +258,10 @@ public class MailServiceImplTest {
     }
 
     @Test
-    public void ensureBossesAndOfficeMembersGetsANotificationIfAPersonCancelsAnAllowedApplication() throws MessagingException, IOException {
+    public void ensureOfficeMembersGetANotificationIfAPersonCancelsAnAllowedApplication() throws MessagingException, IOException {
 
         person.setLastName("Test");
         person.setFirstName("Heinrich");
-
-        String bossEmailAddress = "boss@boss.de";
-        Person boss = new Person("boss", "Boss", "Max", bossEmailAddress);
-
-        Mockito.when(personService.getPersonsByRole(Role.BOSS)).thenReturn(Arrays.asList(boss));
 
         String officeEmailAddress = "office@office.de";
         Person office = new Person("office", "Office", "Marlene", officeEmailAddress);
@@ -291,22 +286,6 @@ public class MailServiceImplTest {
         assertTrue(content.contains("Der Urlaubsantrag von Heinrich Test"));
         assertTrue(content.contains("wurde storniert"));
         assertFalse(content.contains("Mist"));
-
-        // ENSURE BOSSES HAVE GOT CORRECT EMAIL
-        List<Message> inboxBoss = Mailbox.get(bossEmailAddress);
-        assertTrue(inboxBoss.size() > 0);
-
-        Message bossEmail = inboxBoss.get(0);
-
-        assertEquals("Ein Antrag wurde storniert", bossEmail.getSubject());
-        assertNotSame("subject", bossEmail.getSubject());
-
-        assertEquals(new InternetAddress(bossEmailAddress), bossEmail.getAllRecipients()[0]);
-
-        String bossEmailContent = (String) bossEmail.getContent();
-        assertTrue(bossEmailContent.contains("Der Urlaubsantrag von Heinrich Test"));
-        assertTrue(bossEmailContent.contains("wurde storniert"));
-        assertFalse(bossEmailContent.contains("Mist"));
 
     }
 
