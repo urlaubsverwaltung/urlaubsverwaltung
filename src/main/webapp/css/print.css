@@ -10,7 +10,8 @@
     .navbar,
     #datepicker,
     tr.inactive,
-    .alert {
+    .alert,
+    form {
         display: none !important;
     }
 
