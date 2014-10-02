@@ -33,13 +33,13 @@
             </c:choose>
 
             var onSelect = function(selectedDate) {
-                if (this.id == "from") {
+                if (this.id == "from" && $("#to").val() === "") {
                     $("#to").datepicker("setDate", selectedDate);
                 }
             };
 
             var onSelectAUB = function(selectedDate) {
-                if (this.id == "aubFrom") {
+                if (this.id == "aubFrom" && $("#aubTo").val() === "") {
                     $("#aubTo").datepicker("setDate", selectedDate);
                 }
             };

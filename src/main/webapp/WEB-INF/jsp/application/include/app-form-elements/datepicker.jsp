@@ -26,7 +26,7 @@
                                     $.datepicker._defaults.dateFormat,
                             selectedDate, instance.settings);
 
-            if (this.id == "from") {
+            if (this.id == "from" && $("#to").val() === "") {
                 $("#to").datepicker("setDate", selectedDate);
             }
 
