@@ -128,6 +128,8 @@ class MailServiceImpl implements MailService {
 
     private void sendEmail(final List<Person> recipients, final String subject, final String text) {
 
+        final String internationalizedSubject = properties.getProperty(subject);
+
         MimeMessagePreparator prep = new MimeMessagePreparator() {
 
             @Override
@@ -143,13 +145,18 @@ class MailServiceImpl implements MailService {
 
                 mimeMessage.setRecipients(Message.RecipientType.TO, addressTo);
 
-                mimeMessage.setSubject(properties.getProperty(subject));
+                mimeMessage.setSubject(internationalizedSubject);
                 mimeMessage.setText(text);
             }
         };
 
         try {
             this.mailSender.send(prep);
+
+            for (Person recipient : recipients) {
+                LOG.info("Sent email to " + recipient.getEmail() + " with subject '" + internationalizedSubject + "'");
+            }
+
         } catch (MailException ex) {
             LOG.error("Sending email to " + emailManager + " failed", ex);
         }
