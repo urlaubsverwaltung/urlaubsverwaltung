@@ -114,15 +114,15 @@
     border-color: #E5F5E0;
 }
 .datepicker-day-past.datepicker-day-half-holiday {
-    background: linear-gradient(-45deg, #E5F5E0 50%, #F5F5F5 50%);
+    background: linear-gradient(-45deg, #C9F5BB 50%, #F5F5F5 50%);
     border-color: #F5F5F5;
-    border-right-color: #E5F5E0;
-    border-bottom-color: #E5F5E0;
+    border-right-color: #C9F5BB;
+    border-bottom-color: #C9F5BB;
 }
 
 .datepicker-day-public-holiday {
     color: #31A354;
-    background-color: #E5F5E0;
+    background-color: #C9F5BB;
 }
 
 .datepicker-day-personal-holiday {
@@ -132,7 +132,7 @@
 
 .datepicker-day-half-holiday {
     color: #31A354;
-    background: linear-gradient(-45deg, #E5F5E0 50%, #FFF 50%);
+    background: linear-gradient(-45deg, #C9F5BB 50%, #F5F5F5 50%);
 }
 
 .datepicker-day:not([data-datepicker-selectable=false]) {
@@ -144,12 +144,12 @@
 }
 
 .datepicker-day-half-holiday:not(.datepicker-day-past):hover {
-    background: linear-gradient(-45deg, #E5F5E0 50%, #FDF5CE 50%);
+    background: linear-gradient(-45deg, #C9F5BB 50%, #FDF5CE 50%);
 }
 
 .datepicker-day-weekend {
     color: #31A354;
-    background-color: #E5F5E0;
+    background-color: #C9F5BB;
 }
 
 .datepicker-day-today {
@@ -168,7 +168,7 @@
 
 .datepicker-day-selected.datepicker-day-half-holiday {
     /* !important to override :hover */
-    background: linear-gradient(-45deg, #E5F5E0 50%, #ABC452 50%) !important;
+    background: linear-gradient(-45deg, #C9F5BB 50%, #ABC452 50%) !important;
     border-right-color: #92AA3E;
     border-bottom-color: #92AA3E;
 }
@@ -181,12 +181,12 @@
 
 td.notworkday a {
     color: #31A354 !important;
-    background: #E5F5E0 !important;
+    background: #C9F5BB !important;
 }
 
 td.halfworkday a {
     color: #31A354 !important;
-    background: linear-gradient(-45deg, #E5F5E0 50%, #FFF 50%) !important;
+    background: linear-gradient(-45deg, #C9F5BB 50%, #FAFAFA 50%) !important;
 }
 
 td.holiday a {
