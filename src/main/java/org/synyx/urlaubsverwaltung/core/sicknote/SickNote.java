@@ -36,6 +36,8 @@ public class SickNote extends AbstractPersistable<Integer> {
     @ManyToOne
     private Person person;
 
+    private SickNoteType type;
+
     // period of the illness
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date startDate;
@@ -75,6 +77,13 @@ public class SickNote extends AbstractPersistable<Integer> {
         this.person = person;
     }
 
+    public SickNoteType getType() {
+        return type;
+    }
+
+    public void setType(SickNoteType type) {
+        this.type = type;
+    }
 
     public DateMidnight getStartDate() {
 
