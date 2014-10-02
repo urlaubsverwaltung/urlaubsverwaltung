@@ -40,8 +40,9 @@
                 <!-- NOTE: Properties are overloaded, last one set rules -->
                 <value>classpath:config.properties</value>
                 <value>classpath:mail.properties</value>
+                <value>classpath:mail.${env}.properties</value>
                 <value>classpath:db.properties</value>
-                <value>classpath:db.${db}.properties</value>
+                <value>classpath:db.${env}.properties</value>
                 <value>classpath:business.properties</value>
             </list>
         </property>

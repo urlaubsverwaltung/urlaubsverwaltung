@@ -38,7 +38,9 @@ public class TestDataCreationService {
 
     private static final Logger LOG = Logger.getLogger(TestDataCreationService.class);
 
-    private static final String IN_MEMORY_DATABASE = "h2";
+    private static final String ENVIRONMENT_PROPERTY = "env";
+    private static final String DEV_ENVIRONMENT = "dev";
+
     private static final String USER = "test";
 
     private static final Boolean ACTIVE = true;
@@ -60,15 +62,15 @@ public class TestDataCreationService {
     @PostConstruct
     public void createTestData() throws NoSuchAlgorithmException {
 
-        String dbType = System.getProperties().getProperty("db");
+        String environment = System.getProperties().getProperty(ENVIRONMENT_PROPERTY);
 
-        if (dbType == null) {
-            dbType = "h2";
+        if (environment == null) {
+            environment = DEV_ENVIRONMENT;
         }
 
-        LOG.info("Using database type = " + dbType);
+        LOG.info("ENVIRONMENT=" + environment);
 
-        if (dbType.equals(IN_MEMORY_DATABASE)) {
+        if (environment.equals(DEV_ENVIRONMENT)) {
             LOG.info("Test data will be created...");
 
             user = createTestPerson(USER, "Marlene", "Muster", "mmuster@muster.de", ACTIVE, Role.USER, Role.BOSS,
