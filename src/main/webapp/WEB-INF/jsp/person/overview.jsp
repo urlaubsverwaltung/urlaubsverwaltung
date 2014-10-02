@@ -216,22 +216,21 @@
                         </p>
                         <c:choose>
                             <c:when test="${person.id == loggedUser.id}">
-                                <a class="btn btn-default pull-right" href="${formUrlPrefix}/application/new">
-                                    <i class="fa fa-pencil"></i>&nbsp;<spring:message code="ov.apply"/>
-                                </a>
+                                <c:set var="NEW_APPLICATION_URL" value ="${formUrlPrefix}/application/new" />
                             </c:when>
                             <c:otherwise>
                                 <sec:authorize access="hasRole('OFFICE')">
                                     <c:if test="${person.id != loggedUser.id}">
-                                        <a class="btn btn-default pull-right"
-                                           href="${formUrlPrefix}/${person.id}/application/new">
-                                            <c:set var="staff" value="${person.firstName} ${person.lastName}"/>
-                                            <i class="fa fa-pencil"></i>&nbsp;<spring:message code="ov.apply"/>
-                                        </a>
+                                        <c:set var="NEW_APPLICATION_URL" value ="${formUrlPrefix}/${person.id}/application/new" />
                                     </c:if>
                                 </sec:authorize>
                             </c:otherwise>
                         </c:choose>
+                        <a class="btn btn-default pull-right" href="${NEW_APPLICATION_URL}">
+                            <i class="fa fa-pencil"></i> <span class="hidden-xs"><spring:message code="ov.apply"/></span>
+                        </a>
+
+
                     </legend>
 
                 </div>

@@ -75,7 +75,9 @@
 
                             <span class="pull-right visible-print"><uv:date date="${now}"/></span>
 
-                            <uv:year-selector year="${year}" />
+                            <span class="hidden-xs hidden-sm">
+                               <uv:year-selector year="${year}" />
+                            </span>
 
                             <div id="active-state" class="btn-group pull-right hidden-xs">
 

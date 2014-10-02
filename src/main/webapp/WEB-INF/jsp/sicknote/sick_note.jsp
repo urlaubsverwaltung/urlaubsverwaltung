@@ -207,7 +207,7 @@
                         <img class="box-image img-circle" src="<c:out value='${gravatar}?d=mm&s=80'/>"/>
                         <i class="fa fa-at"></i> <c:out value="${sickNote.person.loginName}"/>
                         <h4>
-                            <a href="${formUrlPrefix}/staff/${application.person.id}/overview">
+                            <a href="${formUrlPrefix}/staff/${sickNote.person.id}/overview">
                                 <c:out value="${sickNote.person.niceName}"/>
                             </a>
                         </h4>

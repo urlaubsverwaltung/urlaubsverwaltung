@@ -18,9 +18,13 @@
 <div class="header">
 
     <legend>
-        
-        <p>
-            <spring:message code="${titleApp}"/> <span class="hidden-xs"><spring:message code="in.year" /> <c:out value="${displayYear}"/></span>
+
+        <p class="hidden-xs">
+            <spring:message code="${titleApp}"/> <spring:message code="in.year" /> <c:out value="${displayYear}"/>
+        </p>
+
+        <p class="visible-xs-inline-block">
+            <spring:message code="${titleApp}.short"/> <c:out value="${displayYear}"/>
         </p>
 
         <uv:year-selector year="${year}" />
