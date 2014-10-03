@@ -79,9 +79,9 @@
                             <span id="count-chars"></span><spring:message code="max.chars" />
                             <br />
                             <form:textarea id="reason" path="reason" cssClass="form-control" cssErrorClass="form-control error" rows="1" onkeyup="count(this.value, 'count-chars');" onkeydown="maxChars(this,200); count(this.value, 'count-chars');" />
+                            <span class="help-inline"><form:errors path="reason" cssClass="error"/></span>
                         </div>
 
-                        <span class="help-inline"><form:errors path="reason" cssClass="error"/></span>
                     </div>
 
             </div>
