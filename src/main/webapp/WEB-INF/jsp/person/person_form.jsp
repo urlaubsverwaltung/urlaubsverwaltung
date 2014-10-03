@@ -169,6 +169,10 @@
         </legend>
 
     </div>
+
+    <c:if test="${not empty errors}">
+        <div class="col-md-11 alert alert-danger"><form:errors cssClass="error"/></div>
+    </c:if>
     
     <div class="form-group">
         <label class="control-label col-md-4" for="year-dropdown"><spring:message code='year'/></label>
@@ -218,10 +222,6 @@
     <div class="form-group">
         <label class="control-label col-md-4">
             <spring:message code='To'/>
-            <c:if test="${not empty errors}">
-                <br />
-                <span><form:errors cssClass="error"/></span>
-            </c:if>
         </label>
 
         <div class="col-md-2">
