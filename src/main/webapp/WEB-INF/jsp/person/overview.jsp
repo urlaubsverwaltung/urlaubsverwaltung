@@ -311,6 +311,11 @@
                         <p>
                             <spring:message code="sicknotes" />
                         </p>
+                        <sec:authorize access="hasRole('OFFICE')">
+                            <a class="btn btn-default pull-right" href="${formUrlPrefix}/sicknote/new?person=${person.id}">
+                                <i class="fa fa-plus"></i> <span class="hidden-xs"><spring:message code="sicknotes.new" /></span>
+                            </a>
+                        </sec:authorize>
                     </legend>
 
                 </div>

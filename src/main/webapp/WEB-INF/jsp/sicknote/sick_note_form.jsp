@@ -13,6 +13,9 @@
     <script type="text/javascript">
         $(document).ready(function() {
 
+            var person = '${param.person}';
+            $("#employee").val(person)
+
             <%-- DATEPICKER --%>
 
             var datepickerLocale = "${pageContext.request.locale.language}";
