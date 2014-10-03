@@ -17,7 +17,6 @@
 .SPECIALLEAVE,
 .UNPAIDLEAVE,
 .OVERTIME {
-    font-style: italic;
     color: #DF771B;
 }
 
