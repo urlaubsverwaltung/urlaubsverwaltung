@@ -4,7 +4,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 
-<table class="list-table bordered-table" cellspacing="0">
+<table class="list-table bordered-table selectable-table" cellspacing="0">
     <tbody>
     <c:forEach items="${sickNotes}" var="sickNote" varStatus="loopStatus">
     <c:choose>
@@ -15,7 +15,7 @@
             <c:set var="CSS_CLASS" value="inactive"/>
         </c:otherwise>
     </c:choose>
-    <tr class="${CSS_CLASS}">
+    <tr class="${CSS_CLASS}" onclick="navigate('${formUrlPrefix}/sicknote/${sickNote.id}');">
         <td class="is-centered state">
             <span class="hidden-print">
                 <c:choose>
@@ -43,7 +43,9 @@
                 <uv:date date="${sickNote.startDate}"/> - <uv:date date="${sickNote.endDate}"/>
 
                 <c:if test="${sickNote.aubPresent == true}">
-                    (<i class="fa fa-check check"></i> <spring:message code="sicknotes.aub.short" />)
+                    <span class="visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block">
+                       (<i class="fa fa-check check"></i> <spring:message code="sicknotes.aub.short" />)
+                    </span>
                 </c:if>
             </p>
         </td>

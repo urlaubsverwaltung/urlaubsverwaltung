@@ -307,7 +307,7 @@
 
                 <div class="header">
 
-                    <legend id="sickNotes">
+                    <legend id="anchorSickNotes">
                         <p>
                             <spring:message code="sicknotes" />
                         </p>

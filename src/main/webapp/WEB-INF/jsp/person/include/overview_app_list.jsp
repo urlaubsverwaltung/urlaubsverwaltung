@@ -5,7 +5,7 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
-<table class="list-table bordered-table">
+<table class="list-table bordered-table selectable-table">
     <tbody>
     <c:forEach items="${applications}" var="app" varStatus="loopStatus">
         <c:choose>
@@ -16,7 +16,7 @@
                 <c:set var="CSS_CLASS" value="active"/>
             </c:otherwise>
         </c:choose>
-        <tr class="${CSS_CLASS}">
+        <tr class="${CSS_CLASS}" onclick="navigate('${formUrlPrefix}/application/${app.id}');">
             <td class="visible-print">
                 <span>
                     <spring:message code="${app.status.state}"/>

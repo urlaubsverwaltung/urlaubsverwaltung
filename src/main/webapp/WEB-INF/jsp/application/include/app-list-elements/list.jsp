@@ -17,7 +17,7 @@
 
     <c:otherwise>
 
-        <table class="list-table" cellspacing="0">
+        <table class="list-table selectable-table" cellspacing="0">
             <tbody>
             <c:forEach items="${applications}" var="app" varStatus="loopStatus">
                 <c:choose>
@@ -28,7 +28,7 @@
                         <c:set var="CSS_CLASS" value="active"/>
                     </c:otherwise>
                 </c:choose>
-                <tr class="${CSS_CLASS}">
+                <tr class="${CSS_CLASS}" onclick="navigate('${formUrlPrefix}/application/${app.id}');">
                     <td class="visible-print">
                         <spring:message code="${app.status.state}"/>
                     </td>

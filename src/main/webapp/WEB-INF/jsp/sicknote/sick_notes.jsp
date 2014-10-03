@@ -137,17 +137,20 @@
                     </thead>
                     <tbody>
                     <c:forEach items="${persons}" var="person">
-                    <tr onclick="navigate('${formUrlPrefix}/staff/${person.id}/overview');">
+                    <tr onclick="navigate('${formUrlPrefix}/staff/${person.id}/overview#anchorSickNotes');">
                         <td class="is-centered hidden-print">
                             <img class="img-circle hidden-print" src="<c:out value='${gravatars[person]}?d=mm&s=60'/>"/>
                         </td>
-                        <td>
+                        <td class="hidden-xs">
                             <h5><c:out value="${person.firstName}"/></h5>
                         </td>
-                        <td>
+                        <td class="hidden-xs">
                             <h5><c:out value="${person.lastName}"/></h5>
                         </td>
-                        <td>
+                        <td class="visible-xs">
+                            <p><c:out value="${person.firstName}"/> <c:out value="${person.lastName}"/></p>
+                        </td>
+                        <td class="hidden-xs">
                             <i class="fa fa-medkit hidden-print"></i>
                             <h5 class="is-inline-block"><fmt:formatNumber value="${sickDays[person]}"/> <spring:message
                                     code="sicknotes.days"/></h5>
@@ -157,7 +160,7 @@
                                 </p>
                             </c:if>
                         </td>
-                        <td>
+                        <td class="hidden-xs">
                             <i class="fa fa-child hidden-print"></i>
                             <h5 class="is-inline-block"><fmt:formatNumber value="${childSickDays[person]}"/>
                                 <spring:message code="sicknotes.child.days"/></h5>
@@ -166,6 +169,12 @@
                                         code="overview.sicknotes.sickdays.aub"
                                         arguments="${childSickDaysWithAUB[person]}"/></p>
                             </c:if>
+                        </td>
+                        <td class="visible-xs">
+                            <p>
+                                <i class="fa fa-medkit hidden-print"></i> <fmt:formatNumber value="${sickDays[person]}"/>
+                                <i class="fa fa-child hidden-print"></i> <fmt:formatNumber value="${childSickDays[person]}"/>
+                            </p>
                         </td>
                         </c:forEach>
                     </tbody>
