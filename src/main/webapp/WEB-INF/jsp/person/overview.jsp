@@ -285,7 +285,7 @@
 
             <div class="col-xs-12 col-sm-12 col-md-6">
                 <div class="box">
-                    <span class="box-icon bg-orange"><i class="fa fa-flag-o"></i></span>
+                    <span class="box-icon bg-yellow"><i class="fa fa-flag-o"></i></span>
                     <spring:message code="overview.vacations.otherLeave" arguments="${otherLeave}" />
                     <i class="fa fa-check check"></i> <spring:message code="overview.vacations.otherLeaveAllowed" arguments="${otherLeaveAllowed}" />
                 </div>
