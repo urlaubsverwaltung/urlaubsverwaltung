@@ -34,6 +34,10 @@ public class TestUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
 
+        if(!s.equals(TEST_USER_NAME)) {
+            throw new UsernameNotFoundException("No authentication possible for user with name " + s);
+        }
+
         Person testUser = personDAO.findByLoginName(TEST_USER_NAME);
 
         if (testUser != null) {
