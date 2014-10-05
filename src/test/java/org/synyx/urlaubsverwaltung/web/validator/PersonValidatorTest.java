@@ -372,6 +372,25 @@ public class PersonValidatorTest {
     }
 
     @Test
+    public void ensurePeriodMustHaveValidFromAndTo() {
+
+        // invalid date: 31.2.2013
+
+        form.setYear("2013");
+
+        form.setDayFrom("31");
+        form.setMonthFrom("2");
+
+        form.setDayTo("1");
+        form.setMonthTo("3");
+
+        validator.validatePeriod(form, errors);
+
+        Mockito.verify(errors).reject("error.period");
+
+    }
+
+    @Test
     public void ensureValidPeriodHasNoValidationError() {
 
         Mockito.reset(errors);

@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 
 import org.joda.time.DateMidnight;
 
+import org.joda.time.IllegalFieldValueException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Component;
@@ -225,15 +226,24 @@ public class PersonValidator implements Validator {
      */
     protected void validatePeriod(PersonForm form, Errors errors) {
 
-        DateMidnight from = new DateMidnight(Integer.parseInt(form.getYear()), Integer.parseInt(form.getMonthFrom()),
-                Integer.parseInt(form.getDayFrom()));
+        try {
 
-        DateMidnight to = new DateMidnight(Integer.parseInt(form.getYear()), Integer.parseInt(form.getMonthTo()),
-                Integer.parseInt(form.getDayTo()));
+            DateMidnight from = new DateMidnight(Integer.parseInt(form.getYear()), Integer.parseInt(form.getMonthFrom()),
+                    Integer.parseInt(form.getDayFrom()));
 
-        if (!from.isBefore(to)) {
+            DateMidnight to = new DateMidnight(Integer.parseInt(form.getYear()), Integer.parseInt(form.getMonthTo()),
+                    Integer.parseInt(form.getDayTo()));
+
+            if (!from.isBefore(to)) {
+                errors.reject("error.period");
+            }
+
+        } catch(IllegalFieldValueException ex) {
+
             errors.reject("error.period");
+
         }
+
     }
 
 
