@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/olle/urlaubsverwaltung.png)](https://travis-ci.org/olle/urlaubsverwaltung)
+
 # Urlaubsverwaltung
 
 Die Urlaubsverwaltung ist eine Web-Anwendung, die es ermöglicht, Urlaubsanträge von Mitarbeitern elektronisch zu verwalten. Mitarbeiter stellen Urlaubsanträge, die von den jeweils Berechtigten genehmigt oder abgelehnt werden. Die Anwendung bietet Übersicht über die bestehenden Urlaubsanträge und ermöglicht außerdem Überblick und Pflege von Urlaubsanspruch und Anzahl verbleibender Urlaubstage der Mitarbeiter.

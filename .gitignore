@@ -12,3 +12,5 @@ logs
 # Ignore IntelliJ IDEA project files
 .idea
 *.iml
+.classpath
+.project
