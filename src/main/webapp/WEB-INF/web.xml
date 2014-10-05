@@ -111,6 +111,11 @@
         <location>/404.jsp</location>
     </error-page>
 
+    <error-page>
+        <error-code>400</error-code>
+        <location>/404.jsp</location>
+    </error-page>
+
     <session-config>
         <!--  set session timeout to 12 hours -->
         <session-timeout>720</session-timeout>
