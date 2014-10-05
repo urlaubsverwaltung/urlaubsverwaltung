@@ -142,39 +142,40 @@
                             <img class="img-circle hidden-print" src="<c:out value='${gravatars[person]}?d=mm&s=60'/>"/>
                         </td>
                         <td class="hidden-xs">
-                            <h5><c:out value="${person.firstName}"/></h5>
+                            <c:out value="${person.firstName}"/>
                         </td>
                         <td class="hidden-xs">
-                            <h5><c:out value="${person.lastName}"/></h5>
+                            <c:out value="${person.lastName}"/>
                         </td>
                         <td class="visible-xs">
-                            <p><c:out value="${person.firstName}"/> <c:out value="${person.lastName}"/></p>
+                            <c:out value="${person.firstName}"/> <c:out value="${person.lastName}"/>
                         </td>
                         <td class="hidden-xs">
                             <i class="fa fa-medkit hidden-print"></i>
-                            <h5 class="is-inline-block"><fmt:formatNumber value="${sickDays[person]}"/> <spring:message
-                                    code="sicknotes.days"/></h5>
+                            <fmt:formatNumber value="${sickDays[person]}"/> <spring:message
+                                    code="sicknotes.days"/>
                             <c:if test="${sickDaysWithAUB[person] > 0}">
-                                <p><i class="fa fa-check check"></i> <spring:message
+                                <p class="list-table--second-row">
+                                    <i class="fa fa-check check"></i> <spring:message
                                         code="overview.sicknotes.sickdays.aub" arguments="${sickDaysWithAUB[person]}"/>
                                 </p>
                             </c:if>
                         </td>
                         <td class="hidden-xs">
-                            <i class="fa fa-child hidden-print"></i>
-                            <h5 class="is-inline-block"><fmt:formatNumber value="${childSickDays[person]}"/>
-                                <spring:message code="sicknotes.child.days"/></h5>
+                            <i class="fa fa-child hidden-print"></i> <fmt:formatNumber value="${childSickDays[person]}"/>
+                                <spring:message code="sicknotes.child.days"/>
                             <c:if test="${childSickDaysWithAUB[person] > 0}">
-                                <p><i class="fa fa-check check"></i> <spring:message
-                                        code="overview.sicknotes.sickdays.aub"
-                                        arguments="${childSickDaysWithAUB[person]}"/></p>
+                                <p class="list-table--second-row">
+                                    <i class="fa fa-check check"></i> <spring:message
+                                            code="overview.sicknotes.sickdays.aub"
+                                            arguments="${childSickDaysWithAUB[person]}"/>
+                                </p>
                             </c:if>
                         </td>
                         <td class="visible-xs">
-                            <p>
-                                <i class="fa fa-medkit hidden-print"></i> <fmt:formatNumber value="${sickDays[person]}"/>
-                                <i class="fa fa-child hidden-print"></i> <fmt:formatNumber value="${childSickDays[person]}"/>
-                            </p>
+                            <i class="fa fa-medkit hidden-print"></i> <fmt:formatNumber value="${sickDays[person]}"/>
+                            <i class="fa fa-child hidden-print"></i> <fmt:formatNumber
+                                value="${childSickDays[person]}"/>
                         </td>
                         </c:forEach>
                     </tbody>

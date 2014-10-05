@@ -22,7 +22,7 @@ tr.inactive td > * {
 
 .list-table {
     width: 100%;
-    font-size: 12px;
+    font-size: 13px;
     margin-bottom: 27px;
 }
 
@@ -37,6 +37,10 @@ tr.inactive td > * {
 }
 .list-table th {
     padding: 8px;
+}
+
+.list-table--second-row {
+    margin: 10px 0 0 0;
 }
 
 /**************************************************************************
