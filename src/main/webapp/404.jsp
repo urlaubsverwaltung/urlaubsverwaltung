@@ -33,7 +33,7 @@
             </div>
             <div class="row">
                 <div class="col-xs-12">
-                    <a href="${formUrlPrefix}/overview" class="error-btn btn btn-primary btn-lg col-xs-12 col-sm-8 col-sm-offset-2 col-md-4 col-md-offset-4"><i class="fa fa-home"></i> Zurück zur Homepage</a>
+                    <a href="${formUrlPrefix}/overview" class="error-btn btn btn-primary btn-lg col-xs-12 col-sm-8 col-sm-offset-2 col-md-4 col-md-offset-4"><i class="fa fa-home"></i> Zurück zur Übersicht</a>
                 </div>
             </div>
         </div>
