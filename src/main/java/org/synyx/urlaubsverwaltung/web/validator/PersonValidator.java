@@ -300,7 +300,7 @@ public class PersonValidator implements Validator {
      * @param  maximumDays
      * @param  errors
      */
-    protected void validateNumberOfDays(BigDecimal days, String field, double maximumDays, Errors errors) {
+    private void validateNumberOfDays(BigDecimal days, String field, double maximumDays, Errors errors) {
 
         // is field filled?
         if (days == null) {
