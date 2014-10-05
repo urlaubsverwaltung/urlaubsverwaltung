@@ -2,11 +2,7 @@
 /* OVERWRITE COMMON STYLING */
 
 body {
-    background-color: #f5f5f5;
-}
-
-.content {
-    margin-top: 10em;
+    background-color: #FAFAFA;
 }
 
 /**************************************************************************
@@ -26,46 +22,3 @@ body {
     background-color: #fff;
     border: 1px solid #e5e5e5;
 }
-
-#login--error {
-    border: 1px solid #E76757;
-    background: url("../images/alarm_16.png") no-repeat 1% 40%;
-    background-color: #FFE3E3;
-    padding: 6px 6px 6px 30px;
-    margin-top: 18px;
-}
-
-
-
-/**************************************************************************
-  
-  RESPONSIVENESS 
-  
-**************************************************************************/
-
-/* Narrow desktop */
-@media all and (max-width: 960px) {
-    /* Ok */
-}
-
-/* Tablet */
-@media all and (max-width: 768px) {
-    /* Ok */
-    
-}
-
-/* Small Tablet */
-@media all and (max-width: 600px) {
-    /* Ok */
-}
-
-/* Mobile */
-@media all and (max-width: 480px) {
-
-    .content {
-        margin-top: 5em;
-    }
-
-}
-
-
