@@ -284,27 +284,22 @@
 
     <div class="col-md-7">
         <form:select path="rep" id="rep" size="1" class="form-control">
-            <c:choose>
-                <c:when test="${appForm.rep == null}">
-                    <option value="-1"><spring:message code='app.no.rep'/></option>
-                    <c:forEach items="${persons}" var="staff">
-                        <option value="${staff.id}">
-                            <c:out value="${staff.niceName}"/>
-                        </option>
-                    </c:forEach>
-                </c:when>
-                <c:otherwise>
-                    <option value="${appForm.rep}" selected="selected">
-                        <c:out value="${appForm.rep.niceName}"/>
-                    </option>
-                    <option value="-1"><spring:message code='app.no.rep'/></option>
-                    <c:forEach items="${persons}" var="staff">
-                        <option value="${staff.id}">
-                            <c:out value="${staff.niceName}"/>
-                        </option>
-                    </c:forEach>
-                </c:otherwise>
-            </c:choose>
+            <option value="-1"><spring:message code='app.no.rep'/></option>
+            <c:forEach items="${persons}" var="person">
+
+               <c:choose>
+                   <c:when test="${appForm.rep.id == person.id}">
+                       <form:option value="${person.id}" selected="selected">
+                           <c:out value="${person.niceName}" />
+                       </form:option>
+                   </c:when>
+                   <c:otherwise>
+                       <form:option value="${person.id}">
+                           <c:out value="${person.niceName}" />
+                       </form:option>
+                   </c:otherwise>
+               </c:choose>
+            </c:forEach>
         </form:select>
         <form:errors path="rep" cssClass="error"/>
     </div>
