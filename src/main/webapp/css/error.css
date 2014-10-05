@@ -1,5 +1,35 @@
 /**************************************************************************
 
+  404 PAGE
+
+**************************************************************************/
+
+.error-container {
+    padding: 0;
+}
+
+.error-code,
+.error-description,
+.error-btn {
+    font-family: PF Handbook Pro, sans-serif;
+    text-align: center;
+}
+
+.error-code {
+    font-size: 200px;
+    background-color: #B2C900;
+}
+
+.error-description {
+    font-size: 40px;
+}
+
+.error-btn {
+    margin-top: 48px;
+}
+
+/**************************************************************************
+
   ERROR PAGE
 
 **************************************************************************/
