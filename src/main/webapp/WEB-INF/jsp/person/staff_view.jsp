@@ -73,8 +73,6 @@
                                 <spring:message code="table.overview"/> <c:out value="${displayYear}"/>
                             </p>
 
-                            <span class="pull-right visible-print"><uv:date date="${now}"/></span>
-
                             <span class="hidden-xs hidden-sm">
                                <uv:year-selector year="${year}" />
                             </span>

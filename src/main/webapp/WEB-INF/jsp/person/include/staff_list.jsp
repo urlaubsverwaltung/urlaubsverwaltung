@@ -9,6 +9,10 @@
     <h4><spring:message code="print.info.landscape" /></h4>
 </div>
 
+<p class="pull-right visible-print">
+    <spring:message code="Effective"/> <uv:date date="${now}" />
+</p>
+
 <table cellspacing="0" class="list-table selectable-table sortable tablesorter print--only-landscape">
     <thead class="hidden-xs hidden-sm">
     <tr>
