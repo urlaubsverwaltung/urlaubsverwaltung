@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/olle/urlaubsverwaltung.png)](https://travis-ci.org/olle/urlaubsverwaltung)
+[![Build Status](https://travis-ci.org/synyx/urlaubsverwaltung.png)](https://travis-ci.org/synyx/urlaubsverwaltung)
 
 # Urlaubsverwaltung
 
