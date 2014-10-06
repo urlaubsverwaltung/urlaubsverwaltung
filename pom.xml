@@ -335,7 +335,17 @@
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                </includes>
                 <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>**/*.properties</exclude>
+                </excludes>
+                <filtering>false</filtering>
             </resource>
         </resources>
 
@@ -401,6 +411,12 @@
                         <resource>
                             <directory>src/main/webapp</directory>
                             <filtering>true</filtering>
+                            <includes>
+                                <include>**/*.jsp</include>
+                            </includes>
+                            <excludes>
+                                <exclude>**/*.ico</exclude>
+                            </excludes>
                         </resource>
                     </webResources>
                 </configuration>
