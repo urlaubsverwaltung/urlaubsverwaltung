@@ -26,15 +26,6 @@ public class StartupService {
     @Value("${db.url}")
     private String dbUrl;
 
-    @Value("${email.boss}")
-    private String emailBoss;
-
-    @Value("${email.office}")
-    private String emailOffice;
-
-    @Value("${email.all}")
-    private String emailAll;
-
     @Value("${email.manager}")
     private String emailManager;
 
@@ -42,11 +33,6 @@ public class StartupService {
     public void logStartupInfo() {
 
         LOG.info("Using database " + dbUrl + " with user " + dbUser);
-
-        LOG.info("Using following email addresses for notification:");
-        LOG.info("Email boss: " + emailBoss);
-        LOG.info("Email office: " + emailOffice);
-        LOG.info("Email all: " + emailAll);
-        LOG.info("Email manager: " + emailManager);
+        LOG.info("Using following email address for technical notification: " + emailManager);
     }
 }
