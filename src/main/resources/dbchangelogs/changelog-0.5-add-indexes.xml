@@ -16,6 +16,36 @@
 
     </changeSet>
 
+    <changeSet author="murygina" id="add_indexes_for_workingTime">
+
+        <preConditions>
+            <tableExists tableName="WorkingTime"/>
+            <columnExists tableName="WorkingTime" columnName="person_id"/>
+            <columnExists tableName="WorkingTime" columnName="validFrom"/>
+        </preConditions>
+
+        <createIndex tableName="WorkingTime" indexName="Index_WorkingTime_person_validFrom">
+            <column name="person_id"/>
+            <column name="validFrom"/>
+        </createIndex>
+
+    </changeSet>
+
+    <changeSet author="murygina" id="add_indexes_for_account">
+
+        <preConditions>
+            <tableExists tableName="Account"/>
+            <columnExists tableName="Account" columnName="person_id"/>
+            <columnExists tableName="Account" columnName="year"/>
+        </preConditions>
+
+        <createIndex tableName="Account" indexName="Index_Account_person_year">
+            <column name="person_id"/>
+            <column name="year"/>
+        </createIndex>
+
+    </changeSet>
+
     <changeSet author="murygina" id="add_indexes_for_application">
 
         <preConditions>
