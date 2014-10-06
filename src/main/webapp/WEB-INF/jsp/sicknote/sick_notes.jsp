@@ -44,7 +44,7 @@
 
             <div class="header">
 
-                <legend class="sticky">
+                <legend class="is-sticky">
                     <p>
                         <spring:message code="sicknotes" />
                         <c:if test="${person != null}">

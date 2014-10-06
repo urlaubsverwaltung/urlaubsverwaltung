@@ -67,7 +67,7 @@
 
                     <div class="header">
 
-                        <legend class="sticky">
+                        <legend>
 
                             <p>
                                 <spring:message code="table.overview"/> <c:out value="${displayYear}"/>
