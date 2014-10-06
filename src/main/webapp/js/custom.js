@@ -79,8 +79,13 @@ function sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, e
                     daysTotal += parseFloat(data);
                     daysAfter = formatNumber(data);
 
-                    if(long) {
-                        text = "= " + formatNumber(daysTotal) + " Urlaubstag(e)";
+                    if (long) {
+
+                        if (daysTotal == 1) {
+                            text = formatNumber(daysTotal) + " Tag";
+                        } else {
+                            text = formatNumber(daysTotal) + " Tage";
+                        }
                     } else {
                         text = formatNumber(daysTotal);
                     }
@@ -101,7 +106,13 @@ function sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, e
         } else {
 
             if(long) {
-                text = "= " + formatNumber(data) + " Urlaubstag(e)";
+
+                if (data == 1) {
+                    text = formatNumber(data) + " Tag";
+                } else {
+                    text = formatNumber(data) + " Tage";
+                }
+
             } else {
                 text = formatNumber(data);
             }

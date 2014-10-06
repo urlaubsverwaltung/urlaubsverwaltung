@@ -78,13 +78,12 @@
                             var from = new Date(startDate);
                             var to = new Date(endDate);
 
-                            sendGetDaysRequest("<spring:url value='/api' />", from, to, dayLength, personId, ".days-${loopStatus.index}");
+                            sendGetDaysRequest("<spring:url value='/api' />", from, to, dayLength, personId, ".days-${loopStatus.index}", true);
 
                         });
 
                     </script>
                 </span>
-                <span>Tage</span>
             </td>
             <td class="is-centered hidden-xs hidden-print">
                 <i class="fa fa-clock-o"></i>
