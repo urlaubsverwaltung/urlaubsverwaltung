@@ -71,8 +71,10 @@ public class AuthoritiesPopulatorImpl implements LdapAuthoritiesPopulator {
 
         Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 
-        for (Role role : person.getPermissions()) {
-            grantedAuthorities.add(new GrantedAuthorityImpl(role.toString()));
+        if (person != null) {
+            for (Role role : person.getPermissions()) {
+                grantedAuthorities.add(new GrantedAuthorityImpl(role.toString()));
+            }
         }
 
         return grantedAuthorities;
