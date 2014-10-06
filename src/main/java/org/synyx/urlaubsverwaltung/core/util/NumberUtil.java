@@ -5,10 +5,9 @@
 package org.synyx.urlaubsverwaltung.core.util;
 
 import java.math.BigDecimal;
-
+import java.math.RoundingMode;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
-
 import java.util.Locale;
 
 
@@ -30,7 +29,7 @@ public class NumberUtil {
         NumberFormat n = NumberFormat.getNumberInstance(locale);
         n.setMaximumFractionDigits(1);
 
-        return n.format(numberToFormat.doubleValue());
+        return n.format(numberToFormat.setScale(1, RoundingMode.HALF_UP).doubleValue());
     }
 
 
