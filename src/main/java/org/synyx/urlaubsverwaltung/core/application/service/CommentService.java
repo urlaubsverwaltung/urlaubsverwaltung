@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.core.application.service;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
-import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
@@ -23,17 +22,6 @@ public interface CommentService {
      * @param  application {@link Application}
      */
     void saveComment(Comment comment, Person person, Application application);
-
-
-    /**
-     * Gets the {@link Comment} for the given {@link Application} and {@link ApplicationStatus}.
-     *
-     * @param  application {@link Application}
-     * @param  status {@link ApplicationStatus}
-     *
-     * @return  {@link Comment} for the given {@link Application} and {@link ApplicationStatus}
-     */
-    Comment getCommentByApplicationAndStatus(Application application, ApplicationStatus status);
 
 
     /**

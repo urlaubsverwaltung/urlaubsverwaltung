@@ -89,17 +89,6 @@ class CommentServiceImpl implements CommentService {
 
 
     /**
-     * @see  CommentService#getCommentByApplicationAndStatus(org.synyx.urlaubsverwaltung.core.application.domain.Application,
-     *       org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus)
-     */
-    @Override
-    public Comment getCommentByApplicationAndStatus(Application a, ApplicationStatus status) {
-
-        return commentDAO.getCommentByApplicationAndStatus(a, status);
-    }
-
-
-    /**
      * @see  CommentService#getCommentsByApplication(org.synyx.urlaubsverwaltung.core.application.domain.Application)
      */
     @Override
