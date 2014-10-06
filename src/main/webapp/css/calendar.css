@@ -202,3 +202,17 @@ td.halfworkday.holiday a {
     color: #31A354 !important;
     background: linear-gradient(-45deg, #C9F5BB 50%, #FFEDA0 50%) !important;
 }
+
+/**************************************************************************
+
+  RESPONSIVNESS
+
+**************************************************************************/
+
+@media (max-width: 359px) {
+
+    #datepicker {
+        display: none;
+    }
+
+}
