@@ -47,12 +47,12 @@
         <repository>
             <id>releases.nexus.synyx.de</id>
             <name>Synyx Nexus: Releases</name>
-            <url>http://nexus.synyx.de/content/repositories/releases</url>
+            <url>https://nexus.synyx.de/content/repositories/releases</url>
         </repository>
         <snapshotRepository>
             <id>snapshots.nexus.synyx.de</id>
             <name>Synyx Nexus: Snapshots</name>
-            <url>http://nexus.synyx.de/content/repositories/snapshots</url>
+            <url>https://nexus.synyx.de/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
 
