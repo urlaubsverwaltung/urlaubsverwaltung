@@ -62,6 +62,13 @@ class PersonServiceImpl implements PersonService {
 
 
     @Override
+    public List<Person> getActivePersons() {
+
+        return personDAO.findActive();
+    }
+
+
+    @Override
     public List<Person> getAllPersonsExcept(final Person person) {
 
         return Lists.newArrayList(Iterables.filter(getAllPersons(), new Predicate<Person>() {

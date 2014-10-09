@@ -53,17 +53,25 @@ public interface PersonService {
 
 
     /**
-     * returns all active persons ordered by last name.
+     * returns all persons.
      *
-     * @return  returns all active persons in a list
+     * @return  returns all persons
      */
     List<Person> getAllPersons();
 
 
     /**
-     * returns all inactive persons ordered by last name.
+     * returns all active persons ordered by first name.
      *
-     * @return  returns all inactive persons in a list
+     * @return  returns all active persons
+     */
+    List<Person> getActivePersons();
+
+
+    /**
+     * returns all inactive persons ordered by first name.
+     *
+     * @return  returns all inactive persons
      */
     List<Person> getInactivePersons();
 

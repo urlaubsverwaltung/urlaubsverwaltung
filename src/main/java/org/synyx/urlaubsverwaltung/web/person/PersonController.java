@@ -95,7 +95,7 @@ public class PersonController {
         if (sessionService.isOffice() || sessionService.isBoss()) {
             sessionService.setLoggedUser(model);
 
-            List<Person> persons = personService.getAllPersons();
+            List<Person> persons = personService.getActivePersons();
             prepareStaffView(persons, DateMidnight.now().getYear(), model);
 
             return PersonConstants.STAFF_JSP;
@@ -149,7 +149,7 @@ public class PersonController {
         if (sessionService.isOffice() || sessionService.isBoss()) {
             sessionService.setLoggedUser(model);
 
-            List<Person> persons = personService.getAllPersons();
+            List<Person> persons = personService.getActivePersons();
             prepareStaffView(persons, year, model);
 
             return PersonConstants.STAFF_JSP;
