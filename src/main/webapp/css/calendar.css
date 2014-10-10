@@ -183,6 +183,12 @@
 
 **************************************************************************/
 
+td.ui-datepicker-today a.ui-state-highlight {
+    color: #2C7FB8;
+    background: #9ECAE1 !important;
+    border-color: #9ECAE1; 
+}
+
 td.holiday a {
     color: #F8B851 !important;
     background: #FFEDA0 !important;
