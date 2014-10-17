@@ -176,7 +176,7 @@ public class SickNoteController {
         model.addAttribute("to", toDate);
         model.addAttribute("searchRequest", new SearchRequest());
 
-        List<Person> persons = personService.getAllPersons();
+        List<Person> persons = personService.getActivePersons();
 
         Map<Person, BigDecimal> sickDays = new HashMap<>();
         Map<Person, BigDecimal> sickDaysWithAUB = new HashMap<>();
@@ -262,7 +262,7 @@ public class SickNoteController {
 
         if (sessionService.isOffice()) {
             model.addAttribute("sickNote", new SickNote());
-            model.addAttribute("persons", personService.getAllPersons());
+            model.addAttribute("persons", personService.getActivePersons());
             model.addAttribute("sickNoteTypes", SickNoteType.values());
 
             return "sicknote/sick_note_form";
@@ -280,7 +280,7 @@ public class SickNoteController {
 
             if (errors.hasErrors()) {
                 model.addAttribute("sickNote", sickNote);
-                model.addAttribute("persons", personService.getAllPersons());
+                model.addAttribute("persons", personService.getActivePersons());
                 model.addAttribute("sickNoteTypes", SickNoteType.values());
 
                 return "sicknote/sick_note_form";

@@ -121,7 +121,7 @@ public class PersonalOverviewController {
             List<Person> persons;
 
             if (person.isActive()) {
-                persons = personService.getAllPersons();
+                persons = personService.getActivePersons();
             } else {
                 persons = personService.getInactivePersons();
             }

@@ -46,7 +46,7 @@ public class AuthoritiesPopulatorImpl implements LdapAuthoritiesPopulator {
         Person person = personService.getPersonByLogin(string);
 
         // TODO: maybe think about a different solution
-        if (person == null && personService.getAllPersons().size() == 0) {
+        if (person == null && personService.getActivePersons().size() == 0) {
             // if the system has no user yet, the first person that successfully signs in is created as user with office role
             person = new Person();
             person.setLoginName(string);

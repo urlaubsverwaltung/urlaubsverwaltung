@@ -55,13 +55,6 @@ class PersonServiceImpl implements PersonService {
 
 
     @Override
-    public List<Person> getAllPersons() {
-
-        return personDAO.findAll();
-    }
-
-
-    @Override
     public List<Person> getActivePersons() {
 
         return personDAO.findActive();
@@ -71,7 +64,7 @@ class PersonServiceImpl implements PersonService {
     @Override
     public List<Person> getAllPersonsExcept(final Person person) {
 
-        return Lists.newArrayList(Iterables.filter(getAllPersons(), new Predicate<Person>() {
+        return Lists.newArrayList(Iterables.filter(getActivePersons(), new Predicate<Person>() {
 
                         @Override
                         public boolean apply(Person p) {
@@ -92,7 +85,7 @@ class PersonServiceImpl implements PersonService {
     @Override
     public List<Person> getPersonsByRole(final Role role) {
 
-        return Lists.newArrayList(Iterables.filter(getAllPersons(), new Predicate<Person>() {
+        return Lists.newArrayList(Iterables.filter(getActivePersons(), new Predicate<Person>() {
 
                         @Override
                         public boolean apply(Person person) {

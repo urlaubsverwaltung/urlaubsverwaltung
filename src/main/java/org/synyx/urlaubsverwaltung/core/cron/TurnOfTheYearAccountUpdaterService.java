@@ -61,7 +61,7 @@ public class TurnOfTheYearAccountUpdaterService {
         int year = DateMidnight.now().getYear();
 
         // get all persons
-        List<Person> persons = personService.getAllPersons();
+        List<Person> persons = personService.getActivePersons();
 
         int counter = 0;
 

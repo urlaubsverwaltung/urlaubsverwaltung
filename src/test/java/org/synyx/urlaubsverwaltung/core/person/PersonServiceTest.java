@@ -60,10 +60,10 @@ public class PersonServiceTest {
 
 
     @Test
-    public void ensureGetAllPersonsCallsCorrectDaoMethod() {
+    public void ensureGetActivePersonsCallsCorrectDaoMethod() {
 
-        service.getAllPersons();
-        Mockito.verify(personDAO).findAll();
+        service.getActivePersons();
+        Mockito.verify(personDAO).findActive();
     }
 
 
@@ -84,7 +84,7 @@ public class PersonServiceTest {
 
         List<Person> allPersons = Arrays.asList(hansPeter, horstDieter, berndMeier);
 
-        Mockito.when(personDAO.findAll()).thenReturn(allPersons);
+        Mockito.when(personDAO.findActive()).thenReturn(allPersons);
 
         List<Person> filteredList = service.getAllPersonsExcept(horstDieter);
 
@@ -109,7 +109,7 @@ public class PersonServiceTest {
 
         List<Person> allPersons = Arrays.asList(user, boss, office);
 
-        Mockito.when(personDAO.findAll()).thenReturn(allPersons);
+        Mockito.when(personDAO.findActive()).thenReturn(allPersons);
 
         List<Person> filteredList = service.getPersonsByRole(Role.BOSS);
 

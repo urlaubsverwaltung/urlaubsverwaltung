@@ -35,7 +35,7 @@ public class PersonController {
     @Autowired
     private PersonService personService;
 
-    @ApiOperation(value = "Get persons of the application", notes = "Get persons of the application")
+    @ApiOperation(value = "Get all active persons of the application", notes = "Get all active persons of the application")
     @RequestMapping(value = ROOT_URL, method = RequestMethod.GET)
     @ModelAttribute("response")
     public PersonListResponse persons(
@@ -46,7 +46,7 @@ public class PersonController {
         List<Person> persons = new ArrayList<Person>();
 
         if (ldapName == null) {
-            persons = personService.getAllPersons();
+            persons = personService.getActivePersons();
         } else {
             Person person = personService.getPersonByLogin(ldapName);
 

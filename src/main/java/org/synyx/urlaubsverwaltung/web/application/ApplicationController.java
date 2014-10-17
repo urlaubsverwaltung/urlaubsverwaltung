@@ -147,7 +147,6 @@ public class ApplicationController {
      * shows the default list, dependent on user role: if boss show waiting applications, if office show all
      * applications
      *
-     * @param  model
      */
     @RequestMapping(value = APP_LIST, method = RequestMethod.GET)
     public String showDefault() {
@@ -619,7 +618,7 @@ public class ApplicationController {
                 } else {
                     prepareForm(person, new AppForm(), model);
 
-                    List<Person> persons = personService.getAllPersons(); // get all active persons
+                    List<Person> persons = personService.getActivePersons(); // get all active persons
                     model.addAttribute(ApplicationConstants.PERSON_LIST, persons);
                 }
             }
@@ -645,7 +644,7 @@ public class ApplicationController {
     public String newApplicationByOffice(@PathVariable(ApplicationConstants.PERSON_ID) Integer personId,
         @ModelAttribute(ApplicationConstants.APPFORM) AppForm appForm, Errors errors, Model model) {
 
-        List<Person> persons = personService.getAllPersons(); // get all active persons
+        List<Person> persons = personService.getActivePersons(); // get all active persons
         model.addAttribute(ApplicationConstants.PERSON_LIST, persons);
 
         prepareAccountsMap(persons, model);

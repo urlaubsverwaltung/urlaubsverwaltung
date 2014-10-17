@@ -53,14 +53,6 @@ public interface PersonService {
 
 
     /**
-     * returns all persons.
-     *
-     * @return  returns all persons
-     */
-    List<Person> getAllPersons();
-
-
-    /**
      * returns all active persons ordered by first name.
      *
      * @return  returns all active persons
