@@ -13,10 +13,26 @@
     <spring:message code="Effective"/> <uv:date date="${now}" />
 </p>
 
+<script type="text/javascript">
+    $(document).ready(function() {
+
+        $("table.sortable").tablesorter({
+            sortList: [[1,0]],
+            headers: {
+                3: { sorter: 'commaNumber' },
+                4: { sorter: 'commaNumber' },
+                5: { sorter: 'commaNumber' },
+                6: { sorter: 'commaNumber' }
+            }
+        });
+
+    });
+</script>
+
 <table cellspacing="0" class="list-table selectable-table sortable tablesorter print--only-landscape">
     <thead class="hidden-xs hidden-sm">
     <tr>
-        <th></th>
+        <th><%-- placeholder to ensure correct number of th --%></th>
         <th class="sortable-field"><spring:message code="firstname" /></th>
         <th class="sortable-field"><spring:message code="lastname" /></th>
         <th class="sortable-field is-centered"><spring:message code='overview.entitlement.per.year' /></th>
@@ -24,7 +40,7 @@
         <th class="sortable-field is-centered"><spring:message code='overview.remaining.days.last.year' /></th>
         <th class="sortable-field is-centered"><spring:message code="left"/></th>
         <sec:authorize access="hasRole('OFFICE')">
-            <th></th>
+            <th><%-- placeholder to ensure correct number of th --%></th>
         </sec:authorize>    
     </tr>
     </thead>

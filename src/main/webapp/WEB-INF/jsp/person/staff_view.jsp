@@ -33,13 +33,6 @@
         <script type="text/javascript">
             $(document).ready(function() {
 
-                $("table.sortable").tablesorter({
-                    sortList: [[1,0]],
-                    headers: {
-                      6: { sorter: 'commaNumber' }
-                    }
-                });
-                
                 var path = window.location.pathname;
 
                 var active;

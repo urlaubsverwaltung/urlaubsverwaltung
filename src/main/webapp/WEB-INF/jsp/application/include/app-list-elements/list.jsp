@@ -17,7 +17,40 @@
 
     <c:otherwise>
 
-        <table class="list-table selectable-table" cellspacing="0">
+        <script type="text/javascript">
+            $(document).ready(function() {
+
+                $("table.sortable").tablesorter({
+                    sortList: [[2,0]],
+                    headers: {
+                        2: { sorter: 'germanDate' },
+                        3: { sorter: 'commaNumber' }
+                    },
+                    textExtraction: function(node) {
+
+                        var sortable = $(node).find(".sortable");
+
+                        if(sortable.length > 0) {
+                            return sortable[0].innerHTML;
+                        }
+
+                        return node.innerHTML;
+                    }
+                });
+
+            });
+        </script>
+
+        <table class="list-table selectable-table sortable tablesorter" cellspacing="0">
+            <thead class="hidden-xs hidden-sm">
+            <tr>
+                <th class="visible-print"><%-- placeholder to ensure correct number of th --%></th>
+                <th><%-- placeholder to ensure correct number of th --%></th>
+                <th class="sortable-field"><spring:message code="time" /></th>
+                <th class="sortable-field"><spring:message code="days.vac" /></th>
+                <th class="sortable-field"><spring:message code="staff" /></th>
+            </tr>
+            </thead>
             <tbody>
             <c:forEach items="${applications}" var="app" varStatus="loopStatus">
                 <c:choose>
@@ -60,7 +93,7 @@
                             <spring:message code="${app.vacationType.vacationTypeName}"/>
                         </h4>
 
-                        <p>
+                        <p class="sortable">
                             <c:choose>
                                 <c:when test="${app.startDate == app.endDate}">
                                     <uv:date date="${app.startDate}"/>, <spring:message
@@ -73,12 +106,12 @@
                         </p>
                     </td>
                     <td class="is-centered hidden-xs">
-                        <span><fmt:formatNumber maxFractionDigits="1" value="${app.days}" /> Tage</span>
+                        <span class="sortable"><fmt:formatNumber maxFractionDigits="1" value="${app.days}" /></span> Tage
                     </td>
                     <td>
                         <img class="img-circle hidden-print" src="<c:out value='${gravatarUrls[app]}?d=mm&s=60'/>"/>&nbsp;
                         <h5 class="is-inline-block hidden-xs hidden-print" style="line-height: 60px; vertical-align: middle">
-                            <a href="${formUrlPrefix}/staff/${app.person.id}/overview">
+                            <a class="sortable" href="${formUrlPrefix}/staff/${app.person.id}/overview">
                                 <c:out value="${app.person.niceName}"/>
                             </a>
                         </h5>
