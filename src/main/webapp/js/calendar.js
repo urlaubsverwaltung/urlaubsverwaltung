@@ -420,14 +420,13 @@ $(function() {
 
             function isSelectable() {
                 var isPast = assert.isPast(date);
-                var isFutureHalf = assert.isHalfHoliday(date) && !isPast
 
-                return isFutureHalf || !(
-                    isPast ||
-                    assert.isWeekend(date) ||
-                    assert.isPublicHoliday(date) ||
-                    assert.isPersonalHoliday(date)
-                );
+                if(isPast || assert.isWeekend(date) || assert.isPublicHoliday(date) || assert.isPersonalHoliday(date)) {
+                  return false;
+                }
+
+                return true;
+
             }
 
             return render(TMPL.day, {
