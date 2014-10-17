@@ -162,6 +162,7 @@ public class SickNoteService {
 
         application.setStatus(ApplicationStatus.ALLOWED);
         application.setApplicationDate(DateMidnight.now());
+        application.setEditedDate(DateMidnight.now());
 
         signService.signApplicationByUser(application, loggedUser);
         applicationService.save(application);
