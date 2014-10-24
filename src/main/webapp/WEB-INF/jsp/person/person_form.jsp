@@ -322,7 +322,7 @@
             <spring:message code="working.time.valid.from" />
         </label>
         <div class="col-md-7">
-            <form:input id="validFrom" path="validFrom" class="form-control" cssErrorClass="form-control error" />
+            <form:input id="validFrom" path="validFrom" class="form-control" cssErrorClass="form-control error" placeholder="dd.MM.yyyy" />
             <span class="help-inline"><form:errors path="validFrom" cssClass="error"/></span>
         </div>
     </div>
