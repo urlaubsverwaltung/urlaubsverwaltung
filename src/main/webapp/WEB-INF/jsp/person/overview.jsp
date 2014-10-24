@@ -127,7 +127,7 @@
                                         <spring:message code="overview.vacation.left.remaining" arguments="${remLeftDays}" />
                                     </c:when>
                                     <c:otherwise>
-                                        <spring:message code="overview.vacation.left.remaining.expired" />
+                                        <spring:message code="overview.vacation.left.remaining.expired" arguments="${remLeftDays}" />
                                     </c:otherwise>
                                 </c:choose>
                             </span>
