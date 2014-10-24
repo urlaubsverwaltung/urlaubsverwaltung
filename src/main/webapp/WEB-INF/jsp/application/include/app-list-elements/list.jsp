@@ -106,7 +106,9 @@
                         </p>
                     </td>
                     <td class="is-centered hidden-xs">
-                        <span class="sortable"><uv:number number="${app.days}" /></span> Tage
+                        <span>
+                            <span class="sortable"><uv:number number="${app.days}" /></span> Tage
+                        </span>
                     </td>
                     <td>
                         <img class="img-circle hidden-print" src="<c:out value='${gravatarUrls[app]}?d=mm&s=60'/>"/>&nbsp;
