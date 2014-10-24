@@ -36,7 +36,8 @@
      </bean>
 
      <bean id="localeResolver"
-         class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
+         class="org.springframework.web.servlet.i18n.FixedLocaleResolver">
+         <property name="defaultLocale" value="de" />
      </bean>
 
     

@@ -9,9 +9,7 @@
 <script type="text/javascript">
     $(document).ready(function() {
 
-        // TODO: this should be really no solution for eternity... Internationalize the app instead!
-        <%--var datepickerLocale = "${pageContext.request.locale.language}";--%>
-        var datepickerLocale = "de";
+        var datepickerLocale = "${pageContext.response.locale.language}";
         var urlPrefix = "<spring:url value='/api' />";
 
         var personId = '<c:out value="${person.id}" />';

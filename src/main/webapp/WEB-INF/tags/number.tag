@@ -3,6 +3,4 @@
 
 <%@attribute name="number" type="java.math.BigDecimal" required="true" %>
 
-<%-- TODO: This is sooo dirty... :( --%>
 <fmt:formatNumber maxFractionDigits="1" value="${number}" var="formatted" />
-${fn:replace(formatted, ".", ",")}

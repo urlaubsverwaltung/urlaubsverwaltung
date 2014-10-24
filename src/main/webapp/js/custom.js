@@ -15,15 +15,10 @@ function navigate(url) {
 
 function formatNumber(number) {
 
-    var num = new Number(number).toFixed(1);
-
-    var nArr = num.split(".");
-    
-    if(nArr[1] == 0) {
-        num = new Number(number).toFixed(0);
-    }
-    
-    return num.replace('.', ',');
+    return new Number(number).toLocaleString("de", {
+      maximumFractionDigits: 1,
+      minimumFractionDigits: 0
+    });
 }
 
 function sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, el, long) {

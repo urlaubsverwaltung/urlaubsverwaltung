@@ -145,9 +145,7 @@
         <script>
             $(function() {
 
-                // TODO: this should be really no solution for eternity... Internationalize the app instead!
-                <%--var datepickerLocale = "${pageContext.request.locale.language}";--%>
-                var datepickerLocale = "de";
+                var datepickerLocale = "${pageContext.response.locale.language}";
                 var personId = '<c:out value="${person.id}" />';
                 var webPrefix = "<spring:url value='/web' />";
                 var apiPrefix = "<spring:url value='/api' />";
