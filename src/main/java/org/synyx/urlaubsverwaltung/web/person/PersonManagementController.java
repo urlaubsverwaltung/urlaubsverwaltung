@@ -241,7 +241,7 @@ public class PersonManagementController {
 
         personInteractionService.createOrUpdate(personToUpdate, personForm, locale);
 
-        return "redirect:/web/staff/" + personToUpdate.getId() + "/overview";
+        return "redirect:/web/staff/";
     }
 
 
@@ -271,7 +271,7 @@ public class PersonManagementController {
 
         personInteractionService.createOrUpdate(person, personForm, locale);
 
-        return "redirect:/web/staff/" + person.getId() + "/overview";
+        return "redirect:/web/staff/";
     }
 
 
