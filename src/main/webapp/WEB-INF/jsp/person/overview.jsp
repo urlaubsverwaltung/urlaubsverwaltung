@@ -245,35 +245,10 @@
 
         <div class="row">
 
-            <c:set var="holidayLeave" value="0" />
-            <c:set var="holidayLeaveAllowed" value="0" />
-            <c:set var="otherLeave" value="0" />
-            <c:set var="otherLeaveAllowed" value="0" />
-
-            <c:forEach items="${applications}" var="app">
-
-                <c:choose>
-                    <c:when test="${app.vacationType == 'HOLIDAY'}">
-                        <c:if test="${app.status == 'WAITING'}">
-                           <c:set var="holidayLeave" value="${holidayLeave + app.days}" />
-                        </c:if>
-                        <c:if test="${app.status == 'ALLOWED'}">
-                            <c:set var="holidayLeave" value="${holidayLeave + app.days}" />
-                            <c:set var="holidayLeaveAllowed" value="${holidayLeaveAllowed + app.days}" />
-                        </c:if>
-                    </c:when>
-                    <c:otherwise>
-                        <c:if test="${app.status == 'WAITING'}">
-                            <c:set var="otherLeave" value="${otherLeave + app.days}" />
-                        </c:if>
-                        <c:if test="${app.status == 'ALLOWED'}">
-                            <c:set var="otherLeave" value="${otherLeave + app.days}" />
-                            <c:set var="otherLeaveAllowed" value="${otherLeaveAllowed + app.days}" />
-                        </c:if>
-                    </c:otherwise>
-                </c:choose>
-
-            </c:forEach>
+            <c:set var="holidayLeave" value="${usedDaysOverview.holidayDays.days['WAITING'] + usedDaysOverview.holidayDays.days['ALLOWED']}" />
+            <c:set var="holidayLeaveAllowed" value="${usedDaysOverview.holidayDays.days['ALLOWED']}" />
+            <c:set var="otherLeave" value="${usedDaysOverview.otherDays.days['WAITING'] + usedDaysOverview.otherDays.days['ALLOWED']}" />
+            <c:set var="otherLeaveAllowed" value="${usedDaysOverview.otherDays.days['ALLOWED']}" />
 
             <div class="col-xs-12 col-sm-12 col-md-6">
                 <div class="box">

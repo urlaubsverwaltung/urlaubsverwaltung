@@ -34,12 +34,15 @@ import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
+import org.synyx.urlaubsverwaltung.web.application.UsedDaysOverview;
 import org.synyx.urlaubsverwaltung.web.util.GravatarUtil;
 
 import java.math.BigDecimal;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -238,7 +241,11 @@ public class PersonalOverviewController {
                 }
             }
 
-                model.addAttribute(ControllerConstants.APPLICATIONS, applications);
+            model.addAttribute(ControllerConstants.APPLICATIONS, applications);
+
+            UsedDaysOverview usedDaysOverview = new UsedDaysOverview(applications, year, calendarService);
+            model.addAttribute("usedDaysOverview", usedDaysOverview);
+
         }
 
     }
