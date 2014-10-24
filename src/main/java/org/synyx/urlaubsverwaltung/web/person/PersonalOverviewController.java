@@ -1,5 +1,9 @@
 package org.synyx.urlaubsverwaltung.web.person;
 
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Ordering;
 import org.apache.log4j.Logger;
 
 import org.joda.time.DateMidnight;
@@ -39,10 +43,7 @@ import org.synyx.urlaubsverwaltung.web.util.GravatarUtil;
 
 import java.math.BigDecimal;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -218,6 +219,15 @@ public class PersonalOverviewController {
             }
         }
 
+        Collections.sort(sickNotes, new Comparator<SickNote>() {
+            @Override
+            public int compare(SickNote o1, SickNote o2) {
+
+                // show latest sick notes at first
+                return o2.getStartDate().compareTo(o1.getStartDate());
+            }
+        });
+
         model.addAttribute("sickDays", sickDays);
         model.addAttribute("sickDaysWithAUB", sickDaysWithAUB);
         model.addAttribute("childSickDays", childSickDays);
@@ -240,6 +250,15 @@ public class PersonalOverviewController {
                     applications.add(a);
                 }
             }
+
+            Collections.sort(applications, new Comparator<Application>() {
+                @Override
+                public int compare(Application o1, Application o2) {
+
+                    // show latest applications at first
+                    return o2.getStartDate().compareTo(o1.getStartDate());
+                }
+            });
 
             model.addAttribute(ControllerConstants.APPLICATIONS, applications);
 
