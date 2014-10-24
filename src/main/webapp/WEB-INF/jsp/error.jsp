@@ -17,8 +17,6 @@
         
         <spring:url var="formUrlPrefix" value="/web" />
         
-        <uv:menu />
-
         <div class="error-container container-fluid">
             <div class="content">
                 <div class="row">
