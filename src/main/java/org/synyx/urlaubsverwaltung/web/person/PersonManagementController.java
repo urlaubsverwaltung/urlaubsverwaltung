@@ -48,8 +48,6 @@ public class PersonManagementController {
     private static final String ACTIVE_LINK = "/staff";
     private static final String NEW_LINK = ACTIVE_LINK + "/new";
     private static final String EDIT_LINK = ACTIVE_LINK + "/{" + PersonConstants.PERSON_ID + "}/edit";
-    private static final String DEACTIVATE_LINK = ACTIVE_LINK + "/{" + PersonConstants.PERSON_ID + "}/deactivate";
-    private static final String ACTIVATE_LINK = ACTIVE_LINK + "/{" + PersonConstants.PERSON_ID + "}/activate";
 
     @Autowired
     private PersonInteractionService personInteractionService;
@@ -274,41 +272,4 @@ public class PersonManagementController {
         return "redirect:/web/staff/";
     }
 
-
-    /**
-     * This method deactivates a person, i.e. information about a deactivated person remains, but he/she has no right to
-     * login, to apply for leave, etc.
-     *
-     * @param  personId
-     *
-     * @return
-     */
-    @RequestMapping(value = DEACTIVATE_LINK, method = RequestMethod.PUT)
-    public String deactivatePerson(@PathVariable(PersonConstants.PERSON_ID) Integer personId) {
-
-        Person person = personService.getPersonByID(personId);
-
-        personInteractionService.deactivate(person);
-
-        return "redirect:/web" + ACTIVE_LINK;
-    }
-
-
-    /**
-     * This method activates a person (e.g. after unintended deactivating of a person), i.e. this person has once again
-     * his user rights)
-     *
-     * @param  personId
-     *
-     * @return
-     */
-    @RequestMapping(value = ACTIVATE_LINK, method = RequestMethod.PUT)
-    public String activatePerson(@PathVariable(PersonConstants.PERSON_ID) Integer personId) {
-
-        Person person = personService.getPersonByID(personId);
-
-        personInteractionService.activate(person);
-
-        return "redirect:/web" + ACTIVE_LINK;
-    }
 }

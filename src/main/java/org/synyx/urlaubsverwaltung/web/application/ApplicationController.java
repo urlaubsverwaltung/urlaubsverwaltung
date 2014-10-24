@@ -347,8 +347,6 @@ public class ApplicationController {
     @RequestMapping(value = ALLOWED_APPS, params = ControllerConstants.YEAR, method = RequestMethod.GET)
     public String showAllowedByYear(@RequestParam(ControllerConstants.YEAR) int year, Model model) {
 
-        model.addAttribute(ApplicationConstants.CHECKBOXES, true);
-
         return prepareAppListView(ApplicationStatus.ALLOWED, year, model);
     }
 
@@ -362,8 +360,6 @@ public class ApplicationController {
      */
     @RequestMapping(value = ALLOWED_APPS, method = RequestMethod.GET)
     public String showAllowed(Model model) {
-
-        model.addAttribute(ApplicationConstants.CHECKBOXES, true);
 
         return prepareAppListView(ApplicationStatus.ALLOWED, DateMidnight.now().getYear(), model);
     }
@@ -869,7 +865,6 @@ public class ApplicationController {
 
         sessionService.setLoggedUser(model);
         model.addAttribute(ControllerConstants.APPLICATION, application);
-        model.addAttribute(ApplicationConstants.STATE_NUMBER, stateNumber);
 
         int year = application.getStartDate().getYear();
 
