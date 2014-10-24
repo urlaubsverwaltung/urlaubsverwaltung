@@ -19,14 +19,6 @@
             window.location.href = url;
         }
     </script>
-    <script src="<spring:url value='/js/datepicker.js' />" type="text/javascript" ></script>
-    <script type="text/javascript">
-        $(document).ready(function() {
-            var regional = "${pageContext.request.locale.language}";
-            $.datepicker.setDefaults($.datepicker.regional[regional]);
-            $("#validFrom").datepicker();
-        });
-    </script>
 </head>
 
 <body>
@@ -286,13 +278,51 @@
 
     </div>
 
-    <div class="form-group form-group">
+    <c:if test="${fn:length(workingTimes) > 1}">
+
+        <div class="form-group">
+            <label class="control-label col-md-4"><spring:message code='working.times'/></label>
+
+            <div class="controls col-md-7">
+                <c:forEach items="${workingTimes}" var="time">
+                    <spring:message code="working.time.valid.from" />
+                    <uv:date date="${time.validFrom}" />
+                    <br />
+                    <c:if test="${time.monday.duration > 0}">
+                        <spring:message code="monday" />
+                    </c:if>
+                    <c:if test="${time.tuesday.duration > 0}">
+                        <spring:message code="tuesday" />
+                    </c:if>
+                    <c:if test="${time.wednesday.duration > 0}">
+                        <spring:message code="wednesday" />
+                    </c:if>
+                    <c:if test="${time.thursday.duration > 0}">
+                        <spring:message code="thursday" />
+                    </c:if>
+                    <c:if test="${time.friday.duration > 0}">
+                        <spring:message code="friday" />
+                    </c:if>
+                    <c:if test="${time.saturday.duration > 0}">
+                        <spring:message code="saturday" />
+                    </c:if>
+                    <c:if test="${time.sunday.duration > 0}">
+                        <spring:message code="sunday" />
+                    </c:if>
+                    <br />
+                    <br />
+                </c:forEach>
+            </div>
+        </div>
+
+    </c:if>
+
+    <div class="form-group">
         <label class="control-label col-md-4">
             <spring:message code="working.time.valid.from" />
         </label>
         <div class="col-md-7">
-            <c:set var="VALID_FROM"><uv:date date="${personForm.validFrom}" /></c:set>
-            <form:input id="validFrom" path="validFrom" value="${VALID_FROM}" class="form-control" cssErrorClass="form-control error" />
+            <form:input id="validFrom" path="validFrom" class="form-control" cssErrorClass="form-control error" />
             <span class="help-inline"><form:errors path="validFrom" cssClass="error"/></span>
         </div>
     </div>
