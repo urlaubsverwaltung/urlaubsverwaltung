@@ -3,7 +3,6 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
-<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
@@ -126,7 +125,7 @@
                             <spring:message code="days.time"/>
                         </td>
                         <td>
-                            = <fmt:formatNumber maxFractionDigits="1" value="${sickNote.workDays}"/> <spring:message
+                            = <uv:number number="${sickNote.workDays}"/> <spring:message
                                 code="work.days"/>
                             <c:if test="${sickNote.active == false}">
                                 <span><spring:message code="sicknotes.details.inactive" /></span>

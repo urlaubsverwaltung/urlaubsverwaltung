@@ -4,7 +4,6 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
 
@@ -154,7 +153,7 @@
                         </td>
                         <td class="hidden-xs">
                             <i class="fa fa-medkit hidden-print"></i>
-                            <span class="sortable"><fmt:formatNumber value="${sickDays[person]}"/></span>
+                            <span class="sortable"><uv:number number="${sickDays[person]}"/></span>
                             <spring:message code="sicknotes.days"/>
                             <c:if test="${sickDaysWithAUB[person] > 0}">
                                 <p class="list-table--second-row">
@@ -164,7 +163,7 @@
                             </c:if>
                         </td>
                         <td class="hidden-xs">
-                            <i class="fa fa-child hidden-print"></i> <fmt:formatNumber value="${childSickDays[person]}"/>
+                            <i class="fa fa-child hidden-print"></i> <uv:number number="${childSickDays[person]}"/>
                                 <spring:message code="sicknotes.child.days"/>
                             <c:if test="${childSickDaysWithAUB[person] > 0}">
                                 <p class="list-table--second-row">
@@ -175,9 +174,8 @@
                             </c:if>
                         </td>
                         <td class="visible-xs">
-                            <i class="fa fa-medkit hidden-print"></i> <fmt:formatNumber value="${sickDays[person]}"/>
-                            <i class="fa fa-child hidden-print"></i> <fmt:formatNumber
-                                value="${childSickDays[person]}"/>
+                            <i class="fa fa-medkit hidden-print"></i> <uv:number number="${sickDays[person]}"/>
+                            <i class="fa fa-child hidden-print"></i> <uv:number number="${childSickDays[person]}"/>
                         </td>
                         </c:forEach>
                     </tbody>

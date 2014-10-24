@@ -4,7 +4,6 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
 
@@ -74,7 +73,7 @@
                         <spring:message code="sicknotes.days.number" />
                     </td>
                     <td>
-                        <fmt:formatNumber maxFractionDigits="1" value="${statistics.totalNumberOfSickDays}" />
+                        <uv:number number="${statistics.totalNumberOfSickDays}" />
                     </td>
                 </tr>
                 <tr>
@@ -90,7 +89,7 @@
                         <spring:message code="sicknotes.staff.average" />
                     </td>
                     <td>
-                        <fmt:formatNumber maxFractionDigits="1" value="${statistics.averageDurationOfDiseasePerPerson}" />
+                        <uv:number number="${statistics.averageDurationOfDiseasePerPerson}" />
                     </td>
                 </tr>
                 </tbody>

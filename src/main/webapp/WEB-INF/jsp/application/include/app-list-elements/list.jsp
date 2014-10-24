@@ -3,8 +3,8 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
 
 <c:choose>
@@ -106,7 +106,7 @@
                         </p>
                     </td>
                     <td class="is-centered hidden-xs">
-                        <span class="sortable"><fmt:formatNumber maxFractionDigits="1" value="${app.days}" /></span> Tage
+                        <span class="sortable"><uv:number number="${app.days}" /></span> Tage
                     </td>
                     <td>
                         <img class="img-circle hidden-print" src="<c:out value='${gravatarUrls[app]}?d=mm&s=60'/>"/>&nbsp;

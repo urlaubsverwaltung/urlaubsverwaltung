@@ -1,8 +1,8 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
+<%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
 <table class="list-table bordered-table selectable-table" cellspacing="0">
     <tbody>
@@ -50,7 +50,7 @@
             </p>
         </td>
         <td class="is-centered">
-            <span><fmt:formatNumber maxFractionDigits="1" value="${sickNote.workDays}"/> Tage</span>
+            <span><uv:number number="${sickNote.workDays}"/> Tage</span>
         </td>
         <td class="hidden-print is-centered hidden-xs">
             <i class="fa fa-clock-o"></i> <span><spring:message code="sicknote.lastEdited" /> <uv:date date="${sickNote.lastEdited}"/></span>

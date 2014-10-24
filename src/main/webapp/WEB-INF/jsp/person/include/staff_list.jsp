@@ -1,7 +1,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
 <spring:url var="formUrlPrefix" value="/web" />
 
@@ -55,8 +55,7 @@
             <td class="is-centered hidden-xs hidden-sm">
                 <c:choose>
                     <c:when test="${accounts[person] != null}">
-                        <fmt:formatNumber maxFractionDigits="1"
-                                          value="${accounts[person].annualVacationDays}"/>
+                        <uv:number number="${accounts[person].annualVacationDays}"/>
                     </c:when>
                     <c:otherwise>
                         <spring:message code='not.specified'/>
@@ -66,8 +65,7 @@
             <td class="is-centered hidden-xs hidden-sm">
                 <c:choose>
                     <c:when test="${accounts[person] != null}">
-                        <fmt:formatNumber maxFractionDigits="1"
-                                          value="${accounts[person].vacationDays}"/>
+                        <uv:number number="${accounts[person].vacationDays}"/>
                     </c:when>
                     <c:otherwise>
                         <spring:message code='not.specified'/>
@@ -77,8 +75,7 @@
             <td class="is-centered hidden-xs hidden-sm">
                 <c:choose>
                     <c:when test="${accounts[person] != null}">
-                        <fmt:formatNumber maxFractionDigits="1"
-                                          value="${accounts[person].remainingVacationDays}"/>
+                        <uv:number number="${accounts[person].remainingVacationDays}"/>
                     </c:when>
                     <c:otherwise>
                         <spring:message code='not.specified'/>
@@ -88,10 +85,10 @@
             <td class="is-centered hidden-xs hidden-sm">
                 <c:choose>
                     <c:when test="${leftDays[person] != null && remLeftDays[person] != null}">
-                        <fmt:formatNumber maxFractionDigits="1" value="${leftDays[person]}"/>
+                        <uv:number number="${leftDays[person]}"/>
                         <c:if test="${beforeApril || !accounts[person].remainingVacationDaysExpire}">
                             +
-                            <fmt:formatNumber maxFractionDigits="1" value="${remLeftDays[person]}"/>
+                            <uv:number number="${remLeftDays[person]}"/>
                         </c:if>
                     </c:when>
                     <c:otherwise>
