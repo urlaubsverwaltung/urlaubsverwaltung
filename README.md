@@ -85,7 +85,7 @@ Ein User hat immer eine oder mehrere folgender Berechtigungen inne:
 
 ## Development
 
-Die Anwendung basiert auf dem [Spring](http://www.springsource.org/) MVC Framework. Zur Ermittlung von Feiertagen wird das Framework [Jollyday](http://jollyday.sourceforge.net/) benutzt. Das Frontend beinhaltet Elemente von [Bootstrap](http://twitter.github.io/bootstrap/) gewürzt mit einer Prise [jquery](http://jquery.com/).
+Die Anwendung basiert auf dem [Spring](http://www.springsource.org/) MVC Framework. Zur Ermittlung von Feiertagen wird das Framework [Jollyday](http://jollyday.sourceforge.net/) benutzt. Das Frontend beinhaltet Elemente von [Bootstrap](http://getbootstrap.com/) gewürzt mit einer Prise [jQuery](http://jquery.com/) und [Font Awesome](http://fontawesome.io/).
 
 ## License
 
