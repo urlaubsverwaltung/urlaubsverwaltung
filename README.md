@@ -7,6 +7,7 @@ Die Urlaubsverwaltung ist eine Web-Anwendung, die es ermöglicht, Urlaubsanträg
 Weitere Informationen zur Urlaubsverwaltung findet man im [synyx Blog](http://blog.synyx.de):
 * [Stand November 2011](http://blog.synyx.de/2011/11/elektronische-urlaubsverwaltung-made-by-youngsters/)
 * [Stand November 2012](http://blog.synyx.de/2012/11/urlaubsverwaltung-was-hat-sich-getan/)
+* [Stand Oktober 2014](http://blog.synyx.de/2014/10/urlaubsverwaltung-goes-mobile/)
 
 ## Demo System
 
