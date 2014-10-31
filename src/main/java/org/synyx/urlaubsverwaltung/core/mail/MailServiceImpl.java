@@ -1,5 +1,9 @@
 package org.synyx.urlaubsverwaltung.core.mail;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import org.apache.log4j.Logger;
 import org.apache.velocity.app.VelocityEngine;
 import org.joda.time.DateMidnight;
@@ -10,6 +14,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.velocity.VelocityEngineUtils;
+import org.springframework.util.StringUtils;
 import org.synyx.urlaubsverwaltung.DateFormat;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
@@ -126,40 +131,55 @@ class MailServiceImpl implements MailService {
 
     }
 
-    private void sendEmail(final List<Person> recipients, final String subject, final String text) {
+    protected void sendEmail(final List<Person> recipients, final String subject, final String text) {
 
         final String internationalizedSubject = properties.getProperty(subject);
 
-        MimeMessagePreparator prep = new MimeMessagePreparator() {
-
+        final List<Person> recipientsWithMailAddress = Lists.newArrayList(Iterables.filter(recipients, new Predicate<Person>() {
             @Override
-            public void prepare(MimeMessage mimeMessage) throws javax.mail.MessagingException {
+            public boolean apply(Person person) {
 
-                int numberOfRecipients = recipients.size();
-
-                InternetAddress[] addressTo = new InternetAddress[numberOfRecipients];
-
-                for (int i = 0; i < numberOfRecipients; i++) {
-                    addressTo[i] = new InternetAddress(recipients.get(i).getEmail());
+                if (StringUtils.hasText(person.getEmail())) {
+                    return true;
                 }
 
-                mimeMessage.setRecipients(Message.RecipientType.TO, addressTo);
-
-                mimeMessage.setSubject(internationalizedSubject);
-                mimeMessage.setText(text);
+                return false;
             }
-        };
+        }));
 
-        try {
-            this.mailSender.send(prep);
+        if(recipientsWithMailAddress.size() > 0) {
 
-            for (Person recipient : recipients) {
-                LOG.info("Sent email to " + recipient.getEmail() + " with subject '" + internationalizedSubject + "'");
+            MimeMessagePreparator prep = new MimeMessagePreparator() {
+
+                @Override
+                public void prepare(MimeMessage mimeMessage) throws javax.mail.MessagingException {
+
+                    InternetAddress[] addressTo = new InternetAddress[recipientsWithMailAddress.size()];
+
+                    for (int i = 0; i < recipientsWithMailAddress.size(); i++) {
+                        Person recipient = recipientsWithMailAddress.get(i);
+                        addressTo[i] = new InternetAddress(recipient.getEmail());
+                    }
+
+                    mimeMessage.setRecipients(Message.RecipientType.TO, addressTo);
+                    mimeMessage.setSubject(internationalizedSubject);
+                    mimeMessage.setText(text);
+                }
+            };
+
+            try {
+                this.mailSender.send(prep);
+
+                for (Person recipient : recipientsWithMailAddress) {
+                    LOG.info("Sent email to " + recipient.getEmail() + " with subject '" + internationalizedSubject + "'");
+                }
+
+            } catch (MailException ex) {
+                LOG.error("Sending email to " + recipientsWithMailAddress + " failed", ex);
             }
 
-        } catch (MailException ex) {
-            LOG.error("Sending email to " + emailManager + " failed", ex);
         }
+
     }
 
 

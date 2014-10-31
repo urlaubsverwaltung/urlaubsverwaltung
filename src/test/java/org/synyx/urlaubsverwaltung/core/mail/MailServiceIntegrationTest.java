@@ -1,13 +1,9 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package org.synyx.urlaubsverwaltung.core.mail;
 
 import org.apache.velocity.app.VelocityEngine;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
 import org.mockito.Mockito;
@@ -31,15 +27,13 @@ import static org.junit.Assert.*;
 
 
 /**
- * This is a test for MailService implementation for the properties file: messages.properties.
- *
  * @author  Aljona Murygina
  */
-public class MailServiceImplTest {
+public class MailServiceIntegrationTest {
 
     private MailServiceImpl mailService;
-    private JavaMailSender mailSender = new JavaMailSenderImpl();
-    private VelocityEngine velocityEngine = new VelocityEngine();
+    private JavaMailSender mailSender;
+    private VelocityEngine velocityEngine;
     private PersonService personService;
 
     private Person person;
@@ -48,6 +42,8 @@ public class MailServiceImplTest {
     @Before
     public void setUp() throws Exception {
 
+        velocityEngine = new VelocityEngine();
+        mailSender = new JavaMailSenderImpl();
         personService = Mockito.mock(PersonService.class);
 
         mailService = new MailServiceImpl(mailSender, velocityEngine, personService);
@@ -358,7 +354,6 @@ public class MailServiceImplTest {
 
         // check content of email
         String content = (String) msg.getContent();
-//        assertTrue(content.contains("Hallo Günther")); commented out because of maven problems
         assertTrue(content.contains("Hans Wurst hat einen Urlaubsantrag"));
         assertFalse(content.contains("Mist"));
     }
