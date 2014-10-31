@@ -14,6 +14,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationInteractionService;
 import org.synyx.urlaubsverwaltung.core.calendar.Day;
+import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonInteractionService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
@@ -25,7 +26,9 @@ import org.synyx.urlaubsverwaltung.web.person.PersonForm;
 
 import java.security.NoSuchAlgorithmException;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 import javax.annotation.PostConstruct;
@@ -114,6 +117,20 @@ public class TestDataCreationService {
         personForm.setWorkingDays(Arrays.asList(Day.MONDAY.getDayOfWeek(), Day.TUESDAY.getDayOfWeek(),
                 Day.WEDNESDAY.getDayOfWeek(), Day.THURSDAY.getDayOfWeek(), Day.FRIDAY.getDayOfWeek()));
         personForm.setPermissions(Arrays.asList(roles));
+
+        List<MailNotification> notifications = new ArrayList<>();
+
+        notifications.add(MailNotification.NOTIFICATION_USER);
+
+        if(personForm.getPermissions().contains(Role.BOSS)) {
+            notifications.add(MailNotification.NOTIFICATION_BOSS);
+        }
+
+        if(personForm.getPermissions().contains(Role.OFFICE)) {
+            notifications.add(MailNotification.NOTIFICATION_OFFICE);
+        }
+
+        personForm.setNotifications(notifications);
 
         personInteractionService.createOrUpdate(person, personForm, locale);
 
