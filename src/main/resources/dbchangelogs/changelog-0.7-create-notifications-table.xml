@@ -9,20 +9,29 @@
             <column name="person_id" type="INT(10)">
                 <constraints nullable="false"/>
             </column>
-            <column name="notification" type="VARCHAR(255)"/>
+            <column name="notifications" type="VARCHAR(255)"/>
         </createTable>
 
-        <sql>
+        <addForeignKeyConstraint
+                baseColumnNames="Person_id"
+                baseTableName="Person_notifications"
+                constraintName="FK_Person_notifications"
+                deferrable="false"
+                initiallyDeferred="false"
+                onDelete="NO ACTION"
+                onUpdate="NO ACTION"
+                referencedColumnNames="id"
+                referencedTableName="Person"/>
 
-            INSERT INTO Person_notifications(person_id, notification)
+        <sql>
+            INSERT INTO Person_notifications(person_id, notifications)
             SELECT Person_id, 'NOTIFICATION_USER' FROM Person_permissions perm WHERE perm.permissions = 'USER';
 
-            INSERT INTO Person_notifications(person_id, notification)
+            INSERT INTO Person_notifications(person_id, notifications)
             SELECT Person_id, 'NOTIFICATION_BOSS' FROM Person_permissions perm WHERE perm.permissions = 'BOSS';
 
-            INSERT INTO Person_notifications(person_id, notification)
+            INSERT INTO Person_notifications(person_id, notifications)
             SELECT Person_id, 'NOTIFICATION_OFFICE' FROM Person_permissions perm WHERE perm.permissions = 'OFFICE';
-
         </sql>
 
     </changeSet>
