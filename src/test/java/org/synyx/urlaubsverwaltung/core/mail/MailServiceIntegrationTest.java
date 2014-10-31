@@ -73,7 +73,7 @@ public class MailServiceIntegrationTest {
         String bossEmailAddress = "boss@boss.de";
         Person boss = new Person("boss", "Muster", "Max", bossEmailAddress);
 
-        Mockito.when(personService.getPersonsByRole(Role.BOSS)).thenReturn(Arrays.asList(boss));
+        Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS)).thenReturn(Arrays.asList(boss));
 
         mailService.sendNewApplicationNotification(application);
 
@@ -110,7 +110,7 @@ public class MailServiceIntegrationTest {
         String officeEmailAddress = "office@synyx.de";
         Person office = new Person("office", "Muster", "Max", officeEmailAddress);
 
-        Mockito.when(personService.getPersonsByRole(Role.OFFICE)).thenReturn(Arrays.asList(office));
+        Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_OFFICE)).thenReturn(Arrays.asList(office));
 
         mailService.sendAllowedNotification(application, null);
 
@@ -262,7 +262,7 @@ public class MailServiceIntegrationTest {
         String officeEmailAddress = "office@office.de";
         Person office = new Person("office", "Office", "Marlene", officeEmailAddress);
 
-        Mockito.when(personService.getPersonsByRole(Role.OFFICE)).thenReturn(Arrays.asList(office));
+        Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_OFFICE)).thenReturn(Arrays.asList(office));
 
         boolean cancelledByOffice = false;
         mailService.sendCancelledNotification(application, cancelledByOffice, null);

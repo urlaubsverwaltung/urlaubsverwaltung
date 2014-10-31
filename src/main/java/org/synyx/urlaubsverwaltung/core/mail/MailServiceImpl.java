@@ -127,7 +127,7 @@ class MailServiceImpl implements MailService {
 
     private List<Person> getBosses() {
 
-        return personService.getPersonsByRole(Role.BOSS);
+        return personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS);
 
     }
 
@@ -216,7 +216,7 @@ class MailServiceImpl implements MailService {
 
     private List<Person> getOfficeMembers() {
 
-        return personService.getPersonsByRole(Role.OFFICE);
+        return personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_OFFICE);
 
     }
 

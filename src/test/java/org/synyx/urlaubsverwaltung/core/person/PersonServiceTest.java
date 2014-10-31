@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import org.mockito.Mockito;
 
+import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
 import org.synyx.urlaubsverwaltung.security.Role;
 
 import java.util.Arrays;
@@ -112,6 +113,30 @@ public class PersonServiceTest {
         Mockito.when(personDAO.findActive()).thenReturn(allPersons);
 
         List<Person> filteredList = service.getPersonsByRole(Role.BOSS);
+
+        Assert.assertEquals("Wrong number of persons", 2, filteredList.size());
+
+        Assert.assertTrue("Missing person", filteredList.contains(boss));
+        Assert.assertTrue("Missing person", filteredList.contains(office));
+    }
+
+    @Test
+    public void ensureGetPersonsByNotificationTypeReturnsOnlyPersonsWithTheGivenNotificationType() {
+
+        Person user = new Person();
+        user.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER));
+
+        Person boss = new Person();
+        boss.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS));
+
+        Person office = new Person();
+        office.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS, MailNotification.NOTIFICATION_OFFICE));
+
+        List<Person> allPersons = Arrays.asList(user, boss, office);
+
+        Mockito.when(personDAO.findActive()).thenReturn(allPersons);
+
+        List<Person> filteredList = service.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS);
 
         Assert.assertEquals("Wrong number of persons", 2, filteredList.size());
 

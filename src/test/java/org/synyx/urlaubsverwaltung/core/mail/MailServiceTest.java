@@ -7,6 +7,9 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
+import org.synyx.urlaubsverwaltung.core.application.domain.Application;
+import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
+import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 
@@ -22,6 +25,9 @@ public class MailServiceTest {
     private VelocityEngine velocityEngine;
     private PersonService personService;
 
+    private Person person;
+    private Application application;
+
     @Before
     public void setUp() throws Exception {
 
@@ -30,6 +36,12 @@ public class MailServiceTest {
         personService = Mockito.mock(PersonService.class);
 
         mailService = new MailServiceImpl(mailSender, velocityEngine, personService);
+
+        person = new Person();
+        application = new Application();
+        application.setPerson(person);
+        application.setVacationType(VacationType.HOLIDAY);
+        application.setHowLong(DayLength.FULL);
 
     }
 
@@ -55,4 +67,30 @@ public class MailServiceTest {
 
     }
 
+    @Test
+    public void ensureSendsNewApplicationNotificationToBosses() {
+
+        mailService.sendNewApplicationNotification(application);
+
+        Mockito.verify(personService).getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS);
+
+    }
+
+    @Test
+    public void ensureSendsRemindNotificationToBosses() {
+
+        mailService.sendRemindBossNotification(application);
+
+        Mockito.verify(personService).getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS);
+
+    }
+
+    @Test
+    public void ensureSendsAllowedNotificationToOffice() {
+
+        mailService.sendAllowedNotification(application, null);
+
+        Mockito.verify(personService).getPersonsWithNotificationType(MailNotification.NOTIFICATION_OFFICE);
+
+    }
 }

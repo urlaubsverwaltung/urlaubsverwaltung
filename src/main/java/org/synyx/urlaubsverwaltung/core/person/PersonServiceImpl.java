@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
 import org.synyx.urlaubsverwaltung.security.Role;
 
 import java.util.List;
@@ -93,5 +94,18 @@ class PersonServiceImpl implements PersonService {
                             return person.hasRole(role);
                         }
                     }));
+    }
+
+    @Override
+    public List<Person> getPersonsWithNotificationType(final MailNotification notification) {
+
+        return Lists.newArrayList(Iterables.filter(getActivePersons(), new Predicate<Person>() {
+
+            @Override
+            public boolean apply(Person person) {
+
+                return person.hasNotificationType(notification);
+            }
+        }));
     }
 }

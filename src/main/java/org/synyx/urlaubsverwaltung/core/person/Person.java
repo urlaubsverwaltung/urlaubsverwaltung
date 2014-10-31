@@ -2,6 +2,9 @@ package org.synyx.urlaubsverwaltung.core.person;
 
 import com.google.common.base.MoreObjects;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -170,15 +173,16 @@ public class Person extends AbstractPersistable<Integer> {
     }
 
 
-    public boolean hasRole(Role role) {
+    public boolean hasRole(final Role role) {
 
-        for (Role r : getPermissions()) {
-            if (r.equals(role)) {
-                return true;
+        Optional<Role> hasRole = Iterables.tryFind(getPermissions(), new Predicate<Role>() {
+            @Override
+            public boolean apply(Role input) {
+                return input.equals(role);
             }
-        }
+        });
 
-        return false;
+        return hasRole.isPresent();
     }
 
     public Collection<MailNotification> getNotifications() {
@@ -190,6 +194,19 @@ public class Person extends AbstractPersistable<Integer> {
     public void setNotifications(Collection<MailNotification> notifications) {
 
         this.notifications = notifications;
+    }
+
+    public boolean hasNotificationType(final MailNotification notification) {
+
+        Optional<MailNotification> hasNotificationType = Iterables.tryFind(getNotifications(), new Predicate<MailNotification>() {
+            @Override
+            public boolean apply(MailNotification input) {
+                return input.equals(notification);
+            }
+        });
+
+        return hasNotificationType.isPresent();
+
     }
 
     public String getNiceName() {
