@@ -11,12 +11,16 @@ import org.mockito.Mockito;
 import org.springframework.validation.Errors;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
+import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
+import org.synyx.urlaubsverwaltung.security.Role;
 import org.synyx.urlaubsverwaltung.web.person.PersonForm;
 
 import java.math.BigDecimal;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Locale;
 
 import static org.junit.Assert.assertFalse;
@@ -393,8 +397,6 @@ public class PersonValidatorTest {
     @Test
     public void ensureValidPeriodHasNoValidationError() {
 
-        Mockito.reset(errors);
-
         // valid period: 1.5.2013 - 5.5.2013
 
         form.setYear("2013");
@@ -409,4 +411,79 @@ public class PersonValidatorTest {
 
         Mockito.verifyZeroInteractions(errors);
     }
+
+    // VALIDATION OF PERMISSIONS
+
+    @Test
+    public void ensureAtLeastOneRoleMustBeSelected() {
+
+        form.setPermissions(new ArrayList<Role>());
+
+        validator.validatePermissions(form, errors);
+
+        Mockito.verify(errors).rejectValue("permissions", "role.error.least");
+
+    }
+
+    @Test
+    public void ensureIfSelectedInactiveAsRoleNoOtherRoleCanBeSelected() {
+
+        form.setPermissions(Arrays.asList(Role.INACTIVE, Role.USER));
+
+        validator.validatePermissions(form, errors);
+
+        Mockito.verify(errors).rejectValue("permissions", "role.error.inactive");
+
+    }
+
+    @Test
+    public void ensureValidRoleSelectionHasNoValidationError() {
+
+        form.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
+
+        validator.validatePermissions(form, errors);
+
+        Mockito.verifyZeroInteractions(errors);
+
+    }
+
+
+    // VALIDATION OF MAIL NOTIFICATIONS
+
+    @Test
+    public void ensureBossMailNotificationIsOnlyValidIfBossRoleSelected() {
+
+        form.setPermissions(Arrays.asList(Role.USER));
+        form.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS));
+
+        validator.validateNotifications(form, errors);
+
+        Mockito.verify(errors).rejectValue("notifications", "notification.error");
+
+    }
+
+    @Test
+    public void ensureOfficeMailNotificationIsOnlyValidIfOfficeRoleSelected() {
+
+        form.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
+        form.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS, MailNotification.NOTIFICATION_OFFICE));
+
+        validator.validateNotifications(form, errors);
+
+        Mockito.verify(errors).rejectValue("notifications", "notification.error");
+
+    }
+
+    @Test
+    public void ensureValidNotificationSelectionHasNoValidationError() {
+
+        form.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
+        form.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS));
+
+        validator.validatePermissions(form, errors);
+
+        Mockito.verifyZeroInteractions(errors);
+
+    }
+
 }

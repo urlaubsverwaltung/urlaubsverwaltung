@@ -120,7 +120,10 @@
 
         <div class="col-md-11 checkbox">
 
-            <span class="help-inline"><form:errors path="permissions" cssClass="error"/></span>
+            <span class="help-inline">
+                <form:errors path="permissions" cssClass="error"/>
+                <form:errors path="notifications" cssClass="error"/>
+            </span>
 
             <div class="person--role">
                 <label class="checkbox">

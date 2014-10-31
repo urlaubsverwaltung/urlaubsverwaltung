@@ -15,6 +15,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.util.NumberUtil;
 import org.synyx.urlaubsverwaltung.core.util.PropertiesUtil;
@@ -116,6 +117,8 @@ public class PersonValidator implements Validator {
         validateRemainingVacationDays(form, errors, form.getLocale());
 
         validatePermissions(form, errors);
+
+        validateNotifications(form, errors);
     }
 
 
@@ -374,5 +377,19 @@ public class PersonValidator implements Validator {
                 }
             }
         }
+    }
+
+    protected void validateNotifications(PersonForm personForm, Errors errors) {
+
+        List<Role> roles = personForm.getPermissions();
+        List<MailNotification> notifications = personForm.getNotifications();
+
+        if(roles != null) {
+            if((notifications.contains(MailNotification.NOTIFICATION_BOSS) && !roles.contains(Role.BOSS)) ||
+                    (notifications.contains(MailNotification.NOTIFICATION_OFFICE) && !roles.contains(Role.OFFICE))) {
+                errors.rejectValue("notifications", "notification.error");
+            }
+        }
+
     }
 }
