@@ -122,22 +122,45 @@
 
             <span class="help-inline"><form:errors path="permissions" cssClass="error"/></span>
 
-            <label class="checkbox">
-                <form:checkbox path="permissions" value="INACTIVE"/><b><spring:message code="role.inactive"/></b>:
-                <spring:message code="role.inactive.dsc"/>
-            </label>
-            <label class="checkbox">
-                <form:checkbox path="permissions" value="USER"/><b><spring:message code="role.user"/></b>:
-                <spring:message code="role.user.dsc"/>
-            </label>
-            <label class="checkbox">
-                <form:checkbox path="permissions" value="BOSS"/><b><spring:message code="role.boss"/></b>:
-                <spring:message code="role.boss.dsc"/>
-            </label>
-            <label class="checkbox">
-                <form:checkbox path="permissions" value="OFFICE"/><b><spring:message code="role.office"/></b>:
-                <spring:message code="role.office.dsc"/>
-            </label>
+            <div class="person--role">
+                <label class="checkbox">
+                    <form:checkbox path="permissions" value="INACTIVE"/><b><spring:message code="role.inactive"/></b>:
+                    <spring:message code="role.inactive.dsc"/>
+                </label>
+            </div>
+
+            <div class="person--role">
+                <label class="checkbox">
+                    <form:checkbox path="permissions" value="USER"/><b><spring:message code="role.user"/></b>:
+                    <spring:message code="role.user.dsc"/>
+                </label>
+                <label class="checkbox person--mail-notification">
+                    <form:checkbox path="notifications" value="NOTIFICATION_USER"/>
+                    <spring:message code="notification.user"/>
+                </label>
+            </div>
+
+            <div class="person--role">
+                <label class="checkbox">
+                    <form:checkbox path="permissions" value="BOSS"/><b><spring:message code="role.boss"/></b>:
+                    <spring:message code="role.boss.dsc"/>
+                </label>
+                <label class="checkbox person--mail-notification">
+                    <form:checkbox path="notifications" value="NOTIFICATION_BOSS"/>
+                    <spring:message code="notification.boss"/>
+                </label>
+            </div>
+
+            <div class="person--role">
+                <label class="checkbox">
+                    <form:checkbox path="permissions" value="OFFICE"/><b><spring:message code="role.office"/></b>:
+                    <spring:message code="role.office.dsc"/>
+                </label>
+                <label class="checkbox person--mail-notification">
+                    <form:checkbox path="notifications" value="NOTIFICATION_OFFICE"/>
+                    <spring:message code="notification.office"/>
+                </label>
+            </div>
 
         </div>
 

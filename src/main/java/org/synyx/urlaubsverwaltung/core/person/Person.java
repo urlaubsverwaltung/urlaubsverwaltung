@@ -15,6 +15,7 @@ import org.springframework.util.StringUtils;
 import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
 import org.synyx.urlaubsverwaltung.security.Role;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.persistence.*;
@@ -186,6 +187,10 @@ public class Person extends AbstractPersistable<Integer> {
     }
 
     public Collection<MailNotification> getNotifications() {
+
+        if(notifications == null) {
+            notifications = new ArrayList<>();
+        }
 
         return notifications;
     }

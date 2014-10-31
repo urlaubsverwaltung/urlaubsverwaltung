@@ -153,7 +153,7 @@ public class PersonManagementController {
 
         WorkingTime workingTime = workingTimeService.getCurrentOne(person);
 
-        return new PersonForm(person, String.valueOf(year), account, workingTime, person.getPermissions(), locale);
+        return new PersonForm(person, String.valueOf(year), account, workingTime, person.getPermissions(), person.getNotifications(), locale);
     }
 
 

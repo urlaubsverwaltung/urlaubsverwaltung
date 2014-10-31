@@ -11,6 +11,7 @@ import org.synyx.urlaubsverwaltung.core.account.Account;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.calendar.Day;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;
+import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.util.NumberUtil;
 import org.synyx.urlaubsverwaltung.security.Role;
@@ -60,6 +61,8 @@ public class PersonForm {
 
     private List<Role> permissions = new ArrayList<>();
 
+    private List<MailNotification> notifications = new ArrayList<>();
+
     private Locale locale;
 
     public PersonForm() {
@@ -68,7 +71,7 @@ public class PersonForm {
     }
 
 
-    public PersonForm(Person person, String year, Account account, WorkingTime workingTime, Collection<Role> roles,
+    public PersonForm(Person person, String year, Account account, WorkingTime workingTime, Collection<Role> roles, Collection<MailNotification> notifications,
         Locale locale) {
 
         this.loginName = person.getLoginName();
@@ -107,6 +110,8 @@ public class PersonForm {
         }
 
         this.permissions = new ArrayList<>(roles);
+        this.notifications = new ArrayList<>(notifications);
+
     }
 
     public void setDefaultValuesForValidity() {
@@ -311,6 +316,18 @@ public class PersonForm {
     }
 
 
+    public List<MailNotification> getNotifications() {
+
+        return notifications;
+    }
+
+
+    public void setNotifications(List<MailNotification> notifications) {
+
+        this.notifications = notifications;
+    }
+
+
     public Locale getLocale() {
 
         return locale;
@@ -329,6 +346,8 @@ public class PersonForm {
         person.setLastName(lastName);
         person.setFirstName(firstName);
         person.setEmail(email);
+
+        person.setNotifications(notifications);
 
         if (personShouldBeSetToInactive(permissions)) {
             person.setActive(false);
