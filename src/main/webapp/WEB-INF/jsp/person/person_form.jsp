@@ -134,10 +134,8 @@
                     <form:checkbox path="permissions" value="USER"/><b><spring:message code="role.user"/></b>:
                     <spring:message code="role.user.dsc"/>
                 </label>
-                <label class="checkbox person--mail-notification">
-                    <form:checkbox path="notifications" value="NOTIFICATION_USER"/>
-                    <spring:message code="notification.user"/>
-                </label>
+                <%-- It's obligatory for now that users get mail notifications about progress of their own applications for leave --%>
+                <form:hidden path="notifications" value="NOTIFICATION_USER" />
             </div>
 
             <div class="person--role">
