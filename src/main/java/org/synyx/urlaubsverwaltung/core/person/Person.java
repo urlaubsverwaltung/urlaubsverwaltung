@@ -9,6 +9,7 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import org.springframework.util.StringUtils;
 
+import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
 import org.synyx.urlaubsverwaltung.security.Role;
 
 import java.util.Collection;
@@ -51,6 +52,11 @@ public class Person extends AbstractPersistable<Integer> {
     @LazyCollection(LazyCollectionOption.FALSE)
     @Enumerated(EnumType.STRING)
     private Collection<Role> permissions;
+
+    @ElementCollection
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @Enumerated(EnumType.STRING)
+    private Collection<MailNotification> notifications;
 
     private boolean active;
 
@@ -175,6 +181,16 @@ public class Person extends AbstractPersistable<Integer> {
         return false;
     }
 
+    public Collection<MailNotification> getNotifications() {
+
+        return notifications;
+    }
+
+
+    public void setNotifications(Collection<MailNotification> notifications) {
+
+        this.notifications = notifications;
+    }
 
     public String getNiceName() {
 
