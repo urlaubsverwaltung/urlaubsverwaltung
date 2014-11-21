@@ -123,8 +123,6 @@ function getPersonalHolidays(data) {
     }
   }
 
-  console.log(personalHolidays);
-
   return personalHolidays;
 
 }
@@ -138,9 +136,7 @@ function getPublicHolidays(data) {
         publicHolidayDates.push(value);
     }
 
-    console.log(publicHolidayDates);
-
-    return publicHolidayDates; 
+    return publicHolidayDates;
     
 }
 

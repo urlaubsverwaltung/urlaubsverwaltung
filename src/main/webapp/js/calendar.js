@@ -72,6 +72,9 @@ $(function() {
             },
             title: function(date) {
               return holidayService.getDescription(date);
+            },
+            applicationId: function(date) {
+              return holidayService.getApplicationId(date);
             }
         };
 
@@ -215,6 +218,25 @@ $(function() {
 
             },
 
+            getApplicationId: function (date) {
+
+              var year = date.year();
+              var formattedDate = date.format('YYYY-MM-DD');
+
+              if(_CACHE['holiday'][year]) {
+
+                var holiday = _.findWhere(_CACHE['holiday'][year], {date: formattedDate});
+
+                if(holiday) {
+                  return holiday.applicationId;
+                }
+
+              }
+
+              return '-1';
+
+            },
+
             /**
              *
              * @param {moment} from
@@ -228,6 +250,12 @@ $(function() {
                 };
 
                 document.location.href = webPrefix + '/application/new' + paramize( params );
+            },
+
+            navigateToApplicationForLeave: function(applicationId) {
+
+              document.location.href = webPrefix + '/application/' + applicationId;
+
             },
 
             /**
@@ -302,7 +330,7 @@ $(function() {
             // <tr><td>{{0}}</td>......<td>{{6}}</td></tr>
             week: '<tr><td>{{' + [0,1,2,3,4,5,6].join('}}</td><td>{{') + '}}</td></tr>',
 
-            day: '<span class="datepicker-day {{css}}" title="{{title}}" data-datepicker-date="{{date}}" data-datepicker-selectable="{{selectable}}">{{day}}</span>'
+            day: '<span class="datepicker-day {{css}}" title="{{title}}" data-datepicker-application-id={{applicationId}} data-datepicker-date="{{date}}" data-datepicker-selectable="{{selectable}}">{{day}}</span>'
         };
 
         function render(tmpl, data) {
@@ -480,6 +508,12 @@ $(function() {
 
                 // NOTE: Order is important here!
 
+                var isPersonalHoliday = assert.isPersonalHoliday(date);
+
+                if(isPersonalHoliday) {
+                  return true;
+                }
+
                 var isPast = assert.isPast(date);
                 var isWeekend = assert.isWeekend(date);
 
@@ -494,9 +528,8 @@ $(function() {
                 }
 
                 var isPublicHoliday = assert.isPublicHoliday(date);
-                var isPersonalHoliday = assert.isPersonalHoliday(date);
 
-                if(isPublicHoliday || isPersonalHoliday) {
+                if(isPublicHoliday) {
                   return false;
                 }
 
@@ -509,7 +542,8 @@ $(function() {
                 day : date.format('DD'),
                 css : classes(),
                 selectable: isSelectable(),
-                title: assert.title(date)
+                title: assert.title(date),
+                applicationId: assert.applicationId(date)
             });
         }
 
@@ -616,10 +650,14 @@ $(function() {
                 var dateThis = getDateFromEl(this);
 
                 var isSelectable = $(this).attr("data-datepicker-selectable");
+                var applicationId = $(this).attr('data-datepicker-application-id');
 
-                if (isSelectable === "true" && sameOrBetween(dateThis, dateFrom, dateTo)) {
+                if(isSelectable === "true" && applicationId !== '-1') {
+                    holidayService.navigateToApplicationForLeave(applicationId);
+                } else if(isSelectable === "true" && sameOrBetween(dateThis, dateFrom, dateTo)) {
                     holidayService.bookHoliday(dateFrom, dateTo);
                 }
+
             },
 
             clickNext: function() {
