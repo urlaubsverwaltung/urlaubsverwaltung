@@ -82,40 +82,24 @@ function createDatepickerInstances(selectors, regional, urlPrefix, getPerson, on
             var month = date.getMonth() + 1;
             
             getHighlighted(urlPrefix + "/public-holiday?year=" + year + "&month=" + month, function(data) {
-                highlighted = getDatesOfPublicHolidays(data);
+                highlighted = getPublicHolidays(data);
             });
 
             var personId = getPerson();
             getHighlighted(urlPrefix + "/vacation/application-info?year=" + year + "&month=" + month + "&person=" + personId, function(data) {
-
-                highlightedVacation = new Array();
-                
-                for(var i = 0; i < data.length; i++) {
-                    var value = data[i].date;
-                    if($.inArray(value, highlightedVacation) == -1) {
-                        highlightedVacation.push(value);
-                    }
-                }
-                
+                highlightedVacation = getPersonalHolidays(data);
             });
 
         },
         onChangeMonthYear: function(year, month) {
 
             getHighlighted(urlPrefix + "/public-holiday?year=" + year + "&month=" + month, function(data) {
-                highlighted = getDatesOfPublicHolidays(data);
+                highlighted = getPublicHolidays(data);
             });
 
             var personId = getPerson();
             getHighlighted(urlPrefix + "/vacation/application-info?year=" + year + "&month=" + month + "&person=" + personId, function(data) {
-                highlightedVacation = new Array();
-
-                for(var i = 0; i < data.length; i++) {
-                    var value = data[i].date;
-                    if($.inArray(value, highlightedVacation) == -1) {
-                        highlightedVacation.push(value);
-                    }
-                }
+                highlightedVacation = getPersonalHolidays(data);
             });
             
         },
@@ -128,14 +112,33 @@ function createDatepickerInstances(selectors, regional, urlPrefix, getPerson, on
     });
 }
 
-function getDatesOfPublicHolidays(data) {
+function getPersonalHolidays(data) {
+
+  var personalHolidays = new Array();
+
+  for(var i = 0; i < data.length; i++) {
+    var value = data[i];
+    if($.inArray(value, personalHolidays) == -1) {
+      personalHolidays.push(value);
+    }
+  }
+
+  console.log(personalHolidays);
+
+  return personalHolidays;
+
+}
+
+function getPublicHolidays(data) {
 
     var publicHolidayDates = new Array();
 
     for(var i = 0; i < data.response.publicHolidays.length; i++) {
-        var value = data.response.publicHolidays[i].date;
+        var value = data.response.publicHolidays[i];
         publicHolidayDates.push(value);
     }
+
+    console.log(publicHolidayDates);
 
     return publicHolidayDates; 
     
@@ -149,9 +152,9 @@ function colorizeDate(date, publicHolidays, vacation) {
     } else {
         var dateString = $.datepicker.formatDate("yy-mm-dd", date);
 
-        var isPublicHoliday = $.inArray(dateString, publicHolidays) != -1;
-        var isHalfWorkDay = isHalfWorkday(date);
-        var isPersonalWorkDay = $.inArray(dateString, vacation) != -1;
+      var isPublicHoliday = isHoliday(dateString, publicHolidays);
+      var isPersonalWorkDay = isHoliday(dateString, vacation);
+      var isHalfWorkDay = isHalfWorkday(dateString, publicHolidays) || isHalfWorkday(dateString, vacation);
 
         var cssClass = "";
 
@@ -173,8 +176,14 @@ function colorizeDate(date, publicHolidays, vacation) {
 
 }
 
-// 24.12.xx and 31.12.xx are half workdays
-function isHalfWorkday(date) {
-    var d;
-    return date && date.getMonth() === 11 && (d = date.getDate()) && (d === 24 || d === 31);
+function isHoliday(formattedDate, holidays) {
+
+  return _.findWhere(holidays, {date: formattedDate}) !== undefined;
+
+}
+
+function isHalfWorkday(formattedDate, holidays) {
+
+    return _.findWhere(holidays, {date: formattedDate, dayLength: 0.5}) !== undefined;
+
 }

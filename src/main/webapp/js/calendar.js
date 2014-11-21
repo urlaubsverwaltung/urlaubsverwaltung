@@ -18,20 +18,22 @@ $(function() {
     };
 
     var CSS = {
-        day                : 'datepicker-day',
-        daySelected        : 'datepicker-day-selected',
-        dayToday           : 'datepicker-day-today',
-        dayWeekend         : 'datepicker-day-weekend',
-        dayPast            : 'datepicker-day-past',
-        dayPublicHoliday   : 'datepicker-day-public-holiday',
-        dayPersonalHoliday : 'datepicker-day-personal-holiday',
-        dayHalfHoliday     : 'datepicker-day-half-holiday',
-        next               : 'datepicker-next',
-        prev               : 'datepicker-prev',
-        month              : 'datepicker-month',
-        monthNext          : 'datepicker-month-next',
-        monthPrev          : 'datepicker-month-prev',
-        mousedown          : 'mousedown'
+        day                   : 'datepicker-day',
+        daySelected           : 'datepicker-day-selected',
+        dayToday              : 'datepicker-day-today',
+        dayWeekend            : 'datepicker-day-weekend',
+        dayPast               : 'datepicker-day-past',
+        dayHalf               : 'datepicker-day-half',
+        dayPublicHoliday      : 'datepicker-day-public-holiday',
+        dayHalfPublicHoliday  : 'datepicker-day-half-public-holiday',
+        dayPersonalHoliday    : 'datepicker-day-personal-holiday',
+        dayHalfPersonalHoliday: 'datepicker-day-half-personal-holiday',
+        next                  : 'datepicker-next',
+        prev                  : 'datepicker-prev',
+        month                 : 'datepicker-month',
+        monthNext             : 'datepicker-month-next',
+        monthPrev             : 'datepicker-month-prev',
+        mousedown             : 'mousedown'
     };
 
     var DATA = {
@@ -65,10 +67,8 @@ $(function() {
             isPersonalHoliday: function(date) {
                 return holidayService.isPersonalHoliday(date);
             },
-            isHalfHoliday: function(date) {
-                // TODO check booked holidays from user
-                // hardcoded 24.12. and 31.12. ... don't know...
-                return date.month() === 11 && (date.date() === 24 || date.date() === 31);
+            isHalfDay: function(date) {
+              return holidayService.isHalfDay(date);
             }
         };
 
@@ -124,7 +124,7 @@ $(function() {
                 var date = data.date;
                 var y = date.match(/\d{0,4}/)[0];
                 c[y] = c[y] || [];
-                c[y].push(date);
+                c[y].push(data);
             });
         }
 
@@ -136,19 +136,27 @@ $(function() {
                 
                 $.each(publicHolidays, function(idx, publicHoliday) {
                     var date = publicHoliday.date;
-                    var description = publicHoliday.description;
                     var y = date.match(/\d{0,4}/)[0];
                     c[y] = c[y] || [];
-                    c[y].push(date);
+                    c[y].push(publicHoliday);
                 });
             }
         }
 
         function isHoliday(type) {
-            return function(date) {
-                var y = date.year();
-                return _CACHE[type][y] && _CACHE[type][y].indexOf( date.format('YYYY-MM-DD') ) > -1;
-            };
+          return function (date) {
+
+            var year = date.year();
+            var formattedDate = date.format('YYYY-MM-DD');
+
+            if(_CACHE[type][year]) {
+
+              return _.findWhere(_CACHE[type][year], {date: formattedDate}) !== undefined;
+
+            }
+
+            return false;
+          };
         }
 
         var HolidayService = {
@@ -156,6 +164,34 @@ $(function() {
             isPersonalHoliday: isHoliday('holiday'),
 
             isPublicHoliday: isHoliday('publicHoliday'),
+
+            isHalfDay: function (date) {
+
+              var year = date.year();
+              var formattedDate = date.format('YYYY-MM-DD');
+
+              if(_CACHE['publicHoliday'][year]) {
+
+                var publicHoliday = _.findWhere(_CACHE['publicHoliday'][year], {date: formattedDate});
+
+                if(publicHoliday && publicHoliday.dayLength === 0.5) {
+                  return true;
+                }
+
+              }
+
+              if(_CACHE['holiday'][year]) {
+
+                var personalHoliday = _.findWhere(_CACHE['holiday'][year], {date: formattedDate});
+
+                if(personalHoliday && personalHoliday.dayLength === 0.5) {
+                  return true;
+                }
+
+              }
+
+              return false;
+            },
 
             /**
              *
@@ -414,14 +450,31 @@ $(function() {
                     assert.isPast            (date) ? CSS.dayPast            : '',
                     assert.isPublicHoliday   (date) ? CSS.dayPublicHoliday   : '',
                     assert.isPersonalHoliday (date) ? CSS.dayPersonalHoliday : '',
-                    assert.isHalfHoliday     (date) ? CSS.dayHalfHoliday     : ''
+                    assert.isHalfDay         (date) ? CSS.dayHalf            : ''
                 ].join(' ');
             }
 
             function isSelectable() {
-                var isPast = assert.isPast(date);
 
-                if(isPast || assert.isWeekend(date) || assert.isPublicHoliday(date) || assert.isPersonalHoliday(date)) {
+                // NOTE: Order is important here!
+
+                var isPast = assert.isPast(date);
+                var isWeekend = assert.isWeekend(date);
+
+                if(isPast || isWeekend) {
+                  return false;
+                }
+
+                var isHalfDay = assert.isHalfDay(date);
+
+                if(isHalfDay) {
+                  return true;
+                }
+
+                var isPublicHoliday = assert.isPublicHoliday(date);
+                var isPersonalHoliday = assert.isPersonalHoliday(date);
+
+                if(isPublicHoliday || isPersonalHoliday) {
                   return false;
                 }
 

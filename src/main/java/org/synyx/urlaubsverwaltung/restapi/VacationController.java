@@ -192,7 +192,7 @@ public class VacationController {
 
                     while (!day.isAfter(endDate)) {
                         vacationDateList.add(new VacationDate(day.toString(RestApiDateFormat.PATTERN), app.getId(),
-                                app.getStatus().name()));
+                                app.getStatus().name(), app.getHowLong().getDuration()));
 
                         day = day.plusDays(1);
                     }
@@ -214,18 +214,20 @@ public class VacationController {
         private String date;
         private Integer applicationId;
         private String status;
+        private BigDecimal dayLength;
 
-        public VacationDate(String date, Integer applicationId, String status) {
+        public VacationDate(String date, Integer applicationId, String status, BigDecimal dayLength) {
 
             this.date = date;
             this.applicationId = applicationId;
             this.status = status;
+            this.dayLength = dayLength;
         }
 
         @Override
         public String toString() {
 
-            return "date = " + this.date + ", href = " + this.applicationId + ", status = " + status;
+            return "date = " + this.date + ", href = " + this.applicationId + ", status = " + status + ", dayLength = " + dayLength;
         }
     }
 }

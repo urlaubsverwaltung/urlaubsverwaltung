@@ -105,6 +105,8 @@
     border-bottom-color: #DDD;
 }
 
+/* NOTE: Order of the day classes is very important because of css classes overloading! */
+
 /* must be the first special day, so other special days are overriding this */
 .datepicker-day-past {
     border-color: #F5F5F5;
@@ -112,31 +114,31 @@
     opacity: 0.8;
 }
 
-.datepicker-day-past.datepicker-day-half-holiday {
-    background: linear-gradient(-45deg, #C9F5BB 50%, #E5E5E5 50%);
+.datepicker-day-public-holiday.datepicker-day-half {
+    background: linear-gradient(-36deg, #C9F5BB 50%, #F5F5F5 50%);
+}
+
+.datepicker-day-public-holiday.datepicker-day-half:hover {
+    background: none;
+    background-color: #DEEFA4;
+}
+
+.datepicker-day-public-holiday.datepicker-day-half.datepicker-day-past {
+    background: linear-gradient(-36deg, #C9F5BB 50%, #E5E5E5 50%);
     border-color: #F5F5F5;
     border-right-color: #C9F5BB;
     border-bottom-color: #C9F5BB;
 }
 
-.datepicker-day-public-holiday,
-.datepicker-day-weekend {
-    color: #31A354;
-    background-color: #C9F5BB;
+.datepicker-day-personal-holiday.datepicker-day-half {
+    background: linear-gradient(-36deg, #FFEDA0 50%, #F5F5F5 50%);
 }
 
-.datepicker-day-personal-holiday {
-    color: #F98E33;
-    background-color: #FFEDA0;
-}
-
-.datepicker-day-half-holiday {
-    color: #31A354;
-    background: linear-gradient(-36deg, #C9F5BB 50%, #F5F5F5 50%);
-}
-
-.datepicker-day-personal-holiday.datepicker-day-half-holiday {
-    background: linear-gradient(-36deg, #C9F5BB 50%, #FFEDA0 50%);
+.datepicker-day-personal-holiday.datepicker-day-half.datepicker-day-past {
+    background: linear-gradient(-36deg, #FFEDA0 50%, #E5E5E5 50%);
+    border-color: #F5F5F5;
+    border-right-color: #C9F5BB;
+    border-bottom-color: #C9F5BB;
 }
 
 .datepicker-day:not([data-datepicker-selectable=false]) {
@@ -147,30 +149,31 @@
     background-color: #DEEFA4;
 }
 
-.datepicker-day-half-holiday:not([data-datepicker-selectable=false]):hover {
-    background: linear-gradient(-45deg, #C9F5BB 50%, #DEEFA4 50%);
-}
-
 .datepicker-day-today {
     color: #2C7FB8;
     background-color: #9ECAE1;
     border-color: #9ECAE1;
 }
 
-.datepicker-day-selected {
+.datepicker-day-selected,
+.datepicker-day-selected.datepicker-day-half {
     /* !important to override :hover */
+    background: none;
     background-color: #ABC452 !important;
     color: #fafafa;
     border-right-color: #92AA3E;
     border-bottom-color: #92AA3E;
 }
 
-.datepicker-day-selected.datepicker-day-half-holiday {
-    /* !important to override :hover */
-    background: linear-gradient(-45deg, #C9F5BB 50%, #ABC452 50%) !important;
+.datepicker-day-personal-holiday {
+    color: #F98E33;
+    background-color: #FFEDA0;
+}
+
+.datepicker-day-public-holiday,
+.datepicker-day-weekend {
     color: #31A354;
-    border-right-color: #92AA3E;
-    border-bottom-color: #92AA3E;
+    background-color: #C9F5BB;
 }
 
 /**************************************************************************
@@ -195,14 +198,14 @@ td.notworkday a {
     background: #C9F5BB !important;
 }
 
-td.halfworkday a {
+td.notworkday.halfworkday a {
     color: #31A354 !important;
     background: linear-gradient(-45deg, #C9F5BB 50%, #FAFAFA 50%) !important;
 }
 
-td.halfworkday.holiday a {
-    color: #31A354 !important;
-    background: linear-gradient(-45deg, #C9F5BB 50%, #FFEDA0 50%) !important;
+td.holiday.halfworkday a {
+    color: #F8B851 !important;
+    background: linear-gradient(-45deg, #FFEDA0 50%, #FAFAFA 50%) !important;
 }
 
 /**************************************************************************
