@@ -69,6 +69,9 @@ $(function() {
             },
             isHalfDay: function(date) {
               return holidayService.isHalfDay(date);
+            },
+            title: function(date) {
+              return holidayService.getDescription(date);
             }
         };
 
@@ -193,6 +196,25 @@ $(function() {
               return false;
             },
 
+            getDescription: function (date) {
+
+              var year = date.year();
+              var formattedDate = date.format('YYYY-MM-DD');
+
+              if(_CACHE['publicHoliday'][year]) {
+
+                var publicHoliday = _.findWhere(_CACHE['publicHoliday'][year], {date: formattedDate});
+
+                if(publicHoliday) {
+                  return publicHoliday.description;
+                }
+
+              }
+
+              return '';
+
+            },
+
             /**
              *
              * @param {moment} from
@@ -280,7 +302,7 @@ $(function() {
             // <tr><td>{{0}}</td>......<td>{{6}}</td></tr>
             week: '<tr><td>{{' + [0,1,2,3,4,5,6].join('}}</td><td>{{') + '}}</td></tr>',
 
-            day: '<span class="datepicker-day {{css}}" data-datepicker-date="{{date}}" data-datepicker-selectable="{{selectable}}">{{day}}</span>'
+            day: '<span class="datepicker-day {{css}}" title="{{title}}" data-datepicker-date="{{date}}" data-datepicker-selectable="{{selectable}}">{{day}}</span>'
         };
 
         function render(tmpl, data) {
@@ -486,7 +508,8 @@ $(function() {
                 date: date.format('YYYY-MM-DD'),
                 day : date.format('DD'),
                 css : classes(),
-                selectable: isSelectable()
+                selectable: isSelectable(),
+                title: assert.title(date)
             });
         }
 
