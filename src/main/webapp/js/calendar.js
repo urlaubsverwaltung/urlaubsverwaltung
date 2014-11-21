@@ -59,7 +59,8 @@ $(function() {
                 return date.day() === 0 || date.day() === 6;
             },
             isPast: function(date) {
-                return date.isBefore( moment() );
+                /* NOTE: Today is not in the past! */
+                return date.isBefore( moment(), 'day' );
             },
             isPublicHoliday: function(date) {
                 return holidayService.isPublicHoliday(date);

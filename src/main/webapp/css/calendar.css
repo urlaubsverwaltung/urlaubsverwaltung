@@ -161,14 +161,20 @@
     border-color: #9ECAE1;
 }
 
+.datepicker-day-today.datepicker-day:not([data-datepicker-selectable=false]):hover,
+.datepicker-day-today.datepicker-day-selected {
+    color: #2C7FB8;
+    background-color: #6FBADF;
+    border-color: #9ECAE1;
+}
+
 .datepicker-day-selected,
 .datepicker-day-selected.datepicker-day-half {
     /* !important to override :hover */
     background: none;
-    background-color: #ABC452;
-    color: #fafafa;
-    border-right-color: #92AA3E;
-    border-bottom-color: #92AA3E;
+    background-color: #D5EF77;
+    border-right-color: #D5EF77;
+    border-bottom-color: #D5EF77;
 }
 
 .datepicker-day-personal-holiday {
