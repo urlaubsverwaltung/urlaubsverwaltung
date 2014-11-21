@@ -10,6 +10,7 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 
 import org.joda.time.DateMidnight;
+import org.joda.time.DateTimeConstants;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -32,6 +33,7 @@ import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
+import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 
 import java.math.BigDecimal;
 
@@ -75,7 +77,7 @@ public class VacationController {
         DateMidnight startDate = formatter.parseDateTime(from).toDateMidnight();
         DateMidnight endDate = formatter.parseDateTime(to).toDateMidnight();
 
-        List<Application> applications = applicationService.getAllowedApplicationsForACertainPeriod(startDate, endDate);
+        List<Application> applications = applicationService.getApplicationsForACertainPeriodAndState(startDate, endDate, ApplicationStatus.ALLOWED);
 
         List<AbsenceResponse> vacationResponses = Lists.transform(applications,
                 new Function<Application, AbsenceResponse>() {
@@ -167,11 +169,18 @@ public class VacationController {
                     return "N/A";
                 }
 
-                List<Application> applications = hasMonth
-                    ? applicationService.getAllAllowedApplicationsOfAPersonForAMonth(person, Integer.parseInt(month),
-                        Integer.parseInt(year))
-                    : applicationService.getAllApplicationsByPersonAndYearAndState(person, Integer.parseInt(year),
-                        ApplicationStatus.ALLOWED);
+                DateMidnight periodStart;
+                DateMidnight periodEnd;
+
+                if(hasMonth) {
+                    periodStart = DateUtil.getFirstDayOfMonth(Integer.parseInt(year), Integer.parseInt(month));
+                    periodEnd = DateUtil.getLastDayOfMonth(Integer.parseInt(year), Integer.parseInt(month));
+                } else {
+                    periodStart = DateUtil.getFirstDayOfYear(Integer.parseInt(year));
+                    periodEnd = DateUtil.getLastDayOfYear(Integer.parseInt(year));
+                }
+
+                List<Application> applications = applicationService.getApplicationsForACertainPeriodAndPersonAndState(periodStart, periodEnd, person, ApplicationStatus.ALLOWED);
 
                 List<VacationDate> vacationDateList = new ArrayList<>();
 

@@ -68,4 +68,19 @@ public class DateUtil {
 
         return new DateMidnight(year, DateTimeConstants.DECEMBER, 31);
     }
+
+
+    public static DateMidnight getFirstDayOfMonth(int year, int month) {
+
+        DateMidnight monthOfYear = DateMidnight.now().withYear(year).withMonthOfYear(month);
+
+        return monthOfYear.dayOfMonth().withMinimumValue();
+    }
+
+    public static DateMidnight getLastDayOfMonth(int year, int month) {
+
+        DateMidnight monthOfYear = DateMidnight.now().withYear(year).withMonthOfYear(month);
+
+        return monthOfYear.dayOfMonth().withMaximumValue();
+    }
 }

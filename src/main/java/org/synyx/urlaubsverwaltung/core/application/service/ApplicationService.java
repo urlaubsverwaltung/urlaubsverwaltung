@@ -93,17 +93,6 @@ public interface ApplicationService {
 
 
     /**
-     * Gets all allowed {@link Application}s with vacation time between startDate x and endDate y.
-     *
-     * @param  startDate {@link DateMidnight}
-     * @param  endDate {@link DateMidnight}
-     *
-     * @return  all allowed {@link Application}s with vacation time between startDate x and endDate y
-     */
-    List<Application> getAllowedApplicationsForACertainPeriod(DateMidnight startDate, DateMidnight endDate);
-
-
-    /**
      * Gets all {@link Application}s with vacation time between startDate x and endDate y.
      *
      * @param  startDate {@link DateMidnight}
@@ -115,13 +104,39 @@ public interface ApplicationService {
 
 
     /**
-     * Gets all application for the given month and person.
+     * Gets all {@link Application}s with vacation time between startDate x and endDate y for the given person.
      *
-     * @param  person
-     * @param  month
-     * @param  year
+     * @param  startDate {@link DateMidnight}
+     * @param  endDate {@link DateMidnight}
+     * @param  person {@link Person}
      *
-     * @return  all person's applications that lie in the given month
+     * @return  all {@link Application}s of the given person with vacation time between startDate x and endDate y
      */
-    List<Application> getAllAllowedApplicationsOfAPersonForAMonth(Person person, int month, int year);
+    List<Application> getApplicationsForACertainPeriodAndPerson(DateMidnight startDate, DateMidnight endDate, Person person);
+
+
+    /**
+     * Gets all {@link Application}s with vacation time between startDate x and endDate y for the given state.
+     *
+     * @param  startDate {@link DateMidnight}
+     * @param  endDate {@link DateMidnight}
+     * @param  status {@link org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus}
+     *
+     * @return  all {@link Application}s with the given state and vacation time between startDate x and endDate y
+     */
+    List<Application> getApplicationsForACertainPeriodAndState(DateMidnight startDate, DateMidnight endDate, ApplicationStatus status);
+
+
+    /**
+     * Gets all {@link Application}s with vacation time between startDate x and endDate y for the given person and state.
+     *
+     * @param  startDate {@link DateMidnight}
+     * @param  endDate {@link DateMidnight}
+     * @param  person {@link Person}
+     * @param  status {@link org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus}
+     *
+     * @return  all {@link Application}s of the given person with vacation time between startDate x and endDate y and with a certain state
+     */
+    List<Application> getApplicationsForACertainPeriodAndPersonAndState(DateMidnight startDate, DateMidnight endDate, Person person, ApplicationStatus status);
+
 }
