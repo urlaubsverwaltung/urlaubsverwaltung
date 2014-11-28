@@ -44,11 +44,12 @@
         <table class="list-table selectable-table sortable tablesorter" cellspacing="0">
             <thead class="hidden-xs hidden-sm">
             <tr>
-                <th class="visible-print"><%-- placeholder to ensure correct number of th --%></th>
                 <th><%-- placeholder to ensure correct number of th --%></th>
+                <th class="sortable-field"><spring:message code="staff" /></th>
                 <th class="sortable-field"><spring:message code="time" /></th>
                 <th class="sortable-field"><spring:message code="days.vac" /></th>
-                <th class="sortable-field"><spring:message code="staff" /></th>
+                <th class="visible-print"><%-- placeholder to ensure correct number of th --%></th>
+                <th><%-- placeholder to ensure correct number of th --%></th>
             </tr>
             </thead>
             <tbody>
@@ -62,27 +63,16 @@
                     </c:otherwise>
                 </c:choose>
                 <tr class="${CSS_CLASS}" onclick="navigate('${URL_PREFIX}/application/${app.id}');">
-                    <td class="visible-print">
-                        <spring:message code="${app.status.state}"/>
+                    <td class="is-centered">
+                        <img class="img-circle hidden-print" src="<c:out value='${gravatarUrls[app]}?d=mm&s=60'/>"/>&nbsp;
                     </td>
-                    <td class="is-centered state ${app.status} hidden-print">
-                        <c:choose>
-                            <c:when test="${app.status == 'WAITING'}">
-                                <i class="fa fa-question"></i>
-                            </c:when>
-                            <c:when test="${app.status == 'ALLOWED'}">
-                                <i class="fa fa-check"></i>
-                            </c:when>
-                            <c:when test="${app.status == 'REJECTED'}">
-                                <i class="fa fa-ban"></i>
-                            </c:when>
-                            <c:when test="${app.status == 'CANCELLED'}">
-                                <i class="fa fa-trash"></i>
-                            </c:when>
-                            <c:otherwise>
-                                &nbsp;
-                            </c:otherwise>
-                        </c:choose>
+                    <td>
+                        <h5 class="is-inline-block hidden-xs hidden-print" style="line-height: 60px; vertical-align: middle">
+                            <a class="sortable" href="${URL_PREFIX}/staff/${app.person.id}/overview">
+                                <c:out value="${app.person.niceName}"/>
+                            </a>
+                        </h5>
+                        <p class="visible-print is-centered"><c:out value="${app.person.niceName}"/></p>
                     </td>
                     <td>
                         <a class="vacation ${app.vacationType} hidden-print" href="${URL_PREFIX}/application/${app.id}">
@@ -105,19 +95,32 @@
                             </c:choose>
                         </p>
                     </td>
-                    <td class="is-centered hidden-xs">
+                    <td class="hidden-xs">
                         <span>
                             <span class="sortable"><uv:number number="${app.days}" /></span> Tage
                         </span>
                     </td>
-                    <td>
-                        <img class="img-circle hidden-print" src="<c:out value='${gravatarUrls[app]}?d=mm&s=60'/>"/>&nbsp;
-                        <h5 class="is-inline-block hidden-xs hidden-print" style="line-height: 60px; vertical-align: middle">
-                            <a class="sortable" href="${URL_PREFIX}/staff/${app.person.id}/overview">
-                                <c:out value="${app.person.niceName}"/>
-                            </a>
-                        </h5>
-                        <p class="visible-print is-centered"><c:out value="${app.person.niceName}"/></p>
+                    <td class="visible-print">
+                        <spring:message code="${app.status.state}"/>
+                    </td>
+                    <td class="is-centered state ${app.status} hidden-print">
+                        <c:choose>
+                            <c:when test="${app.status == 'WAITING'}">
+                                <i class="fa fa-question"></i>
+                            </c:when>
+                            <c:when test="${app.status == 'ALLOWED'}">
+                                <i class="fa fa-check"></i>
+                            </c:when>
+                            <c:when test="${app.status == 'REJECTED'}">
+                                <i class="fa fa-ban"></i>
+                            </c:when>
+                            <c:when test="${app.status == 'CANCELLED'}">
+                                <i class="fa fa-trash"></i>
+                            </c:when>
+                            <c:otherwise>
+                                &nbsp;
+                            </c:otherwise>
+                        </c:choose>
                     </td>
                 </tr>
             </c:forEach>
