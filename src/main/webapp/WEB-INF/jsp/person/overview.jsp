@@ -177,9 +177,14 @@
 
                     var holidayService = Urlaubsverwaltung.HolidayService.create(webPrefix, apiPrefix, +personId);
 
+                    var yearToFetchFor = date.year();
+
+                    // TODO: it's not nice at all to fetch holidays for two years...would be better if the methods to fetch holidays get a date instead of a year
                     $.when(
-                        holidayService.fetchPublic   ( date.year() ),
-                        holidayService.fetchPersonal ( date.year() )
+                        holidayService.fetchPublic   ( yearToFetchFor ),
+                        holidayService.fetchPublic   ( yearToFetchFor+1 ),
+                        holidayService.fetchPersonal ( yearToFetchFor ),
+                        holidayService.fetchPersonal ( yearToFetchFor+1 )
                     ).always(function() {
                         Urlaubsverwaltung.Calendar.init(holidayService);
                     });
