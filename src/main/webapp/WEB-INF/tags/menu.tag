@@ -14,7 +14,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="${URL_PREFIX}/overview">
                 <img src="<spring:url value='/images/synyx-logo-transparent.png' />" height="24" width="15" />
                 <spring:message code="nav.title" />
             </a>
