@@ -93,7 +93,7 @@
                         <img class="box-image img-circle hidden-print" src="<c:out value='${gravatar}?d=mm&s=80'/>"/>
                         <i class="fa fa-at"></i> <c:out value="${person.loginName}"/>
                         <h4><c:out value="${person.niceName}"/></h4>
-                        <i class="fa fa-envelope"></i> <c:out value="${person.email}"/>
+                        <i class="fa fa-envelope"></i> <a href="mailto:<c:out value='${person.email}'/>"><c:out value="${person.email}"/></a>
                     </span>
                 </div>
             </div>
