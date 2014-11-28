@@ -12,7 +12,7 @@
 </head>
 <body>
 
-<spring:url var="formUrlPrefix" value="/web"/>
+<spring:url var="URL_PREFIX" value="/web"/>
 
 <uv:menu />
 
@@ -40,12 +40,12 @@
                                     </a>
                                     <ul class="dropdown-menu">
                                         <li>
-                                            <a href="${formUrlPrefix}/sicknote/${sickNote.id}/edit">
+                                            <a href="${URL_PREFIX}/sicknote/${sickNote.id}/edit">
                                                 <i class="fa fa-pencil"></i>&nbsp;&nbsp;<spring:message code="edit" />
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="${formUrlPrefix}/sicknote/${sickNote.id}/convert">
+                                            <a href="${URL_PREFIX}/sicknote/${sickNote.id}/convert">
                                                 <i class="fa fa-retweet"></i>&nbsp;&nbsp;<spring:message code="sicknotes.convert.vacation.short" />
                                             </a>
                                         </li>
@@ -61,7 +61,7 @@
                     </legend>
                 </div>
 
-                <form:form method="POST" action="${formUrlPrefix}/sicknote/${sickNote.id}/cancel">
+                <form:form method="POST" action="${URL_PREFIX}/sicknote/${sickNote.id}/cancel">
                 <div id="modal-cancel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -202,7 +202,7 @@
                     </c:choose>
                     
                     <div id="comment-form" style="${STYLE}">
-                        <form:form method="POST" action="${formUrlPrefix}/sicknote/${sickNote.id}/comment" modelAttribute="comment">
+                        <form:form method="POST" action="${URL_PREFIX}/sicknote/${sickNote.id}/comment" modelAttribute="comment">
                             <form:errors path="text" cssClass="error" /><br />
                             <span id="text-comment"></span><spring:message code="max.chars" />
                             <form:textarea rows="4" path="text" cssClass="form-control" cssErrorClass="form-control error" onkeyup="count(this.value, 'text-comment');" onkeydown="maxChars(this,200); count(this.value, 'text-comment');" />
@@ -229,7 +229,7 @@
                         <img class="box-image img-circle" src="<c:out value='${gravatar}?d=mm&s=80'/>"/>
                         <i class="fa fa-at"></i> <c:out value="${sickNote.person.loginName}"/>
                         <h4>
-                            <a href="${formUrlPrefix}/staff/${sickNote.person.id}/overview">
+                            <a href="${URL_PREFIX}/staff/${sickNote.person.id}/overview">
                                 <c:out value="${sickNote.person.niceName}"/>
                             </a>
                         </h4>

@@ -16,7 +16,7 @@
 
     <body>
 
-    <spring:url var="formUrlPrefix" value="/web"/>
+    <spring:url var="URL_PREFIX" value="/web"/>
     
         <uv:menu />
 
@@ -116,7 +116,7 @@
                         <img class="box-image img-circle" src="<c:out value='${gravatar}?d=mm&s=80'/>"/>
                         <i class="fa fa-at"></i> <c:out value="${application.person.loginName}"/>
                         <h4>
-                            <a href="${formUrlPrefix}/staff/${application.person.id}/overview">
+                            <a href="${URL_PREFIX}/staff/${application.person.id}/overview">
                                 <c:out value="${application.person.niceName}"/>
                             </a>
                         </h4>

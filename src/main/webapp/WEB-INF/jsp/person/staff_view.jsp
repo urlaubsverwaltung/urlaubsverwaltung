@@ -19,7 +19,7 @@
     <head>
         <uv:head />
 
-        <spring:url var="formUrlPrefix" value="/web" />
+        <spring:url var="URL_PREFIX" value="/web" />
 
         <c:choose>
             <c:when test="${!empty param.year}">
@@ -77,13 +77,13 @@
 
                                 <ul class="dropdown-menu">
                                     <li>
-                                        <a href="${formUrlPrefix}/staff">
+                                        <a href="${URL_PREFIX}/staff">
                                             <i class="fa fa-toggle-on"></i>
                                             <spring:message code="table.active" />
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="${formUrlPrefix}/staff/inactive">
+                                        <a href="${URL_PREFIX}/staff/inactive">
                                             <i class="fa fa-toggle-off"></i>
                                             <spring:message code="table.inactive" />
                                         </a>
@@ -95,7 +95,7 @@
                             <uv:print />
 
                             <sec:authorize access="hasRole('OFFICE')">
-                                <a class="btn btn-default pull-right" href="${formUrlPrefix}/staff/new">
+                                <a class="btn btn-default pull-right" href="${URL_PREFIX}/staff/new">
                                     <i class="fa fa-plus"></i> <span class="hidden-xs"><spring:message code="table.new.person" /></span>
                                 </a>
                             </sec:authorize>

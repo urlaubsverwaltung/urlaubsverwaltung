@@ -59,7 +59,7 @@
 
 <body>
 
-<spring:url var="formUrlPrefix" value="/web"/>
+<spring:url var="URL_PREFIX" value="/web"/>
 
 <uv:menu/>
 
@@ -80,12 +80,12 @@
 <c:choose>
     <c:when test="${person.id == loggedUser.id}">
         <c:set var="appliesAsRep" value="false"/>
-        <c:set var="actionUrl" value="${formUrlPrefix}/application/new"/>
+        <c:set var="actionUrl" value="${URL_PREFIX}/application/new"/>
     </c:when>
     <c:otherwise>
         <sec:authorize access="hasRole('OFFICE')">
             <c:set var="appliesAsRep" value="true"/>
-            <c:set var="actionUrl" value="${formUrlPrefix}/${person.id}/application/new"/>
+            <c:set var="actionUrl" value="${URL_PREFIX}/${person.id}/application/new"/>
         </sec:authorize>
     </c:otherwise>
 </c:choose>
@@ -151,12 +151,12 @@
             <div class="col-md-7">
                 <select id="person-select" class="form-control" onchange="window.location.href=this.options
                                                         [this.selectedIndex].value">
-                    <option value="${formUrlPrefix}/${person.id}/application/new" selected="selected">
+                    <option value="${URL_PREFIX}/${person.id}/application/new" selected="selected">
                         <c:out value="${person.niceName}"/>
                     </option>
                     <c:forEach items="${personList}" var="p">
                         <c:if test="${person.id != p.id}">
-                            <option value="${formUrlPrefix}/${p.id}/application/new">
+                            <option value="${URL_PREFIX}/${p.id}/application/new">
                                 <c:out value="${p.niceName}"/>
                             </option>
                         </c:if>

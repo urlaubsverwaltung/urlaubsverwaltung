@@ -3,7 +3,7 @@
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
-<spring:url var="formUrlPrefix" value="/web" />
+<spring:url var="URL_PREFIX" value="/web" />
 
 <div class="print-info--only-landscape">
     <h4><spring:message code="print.info.landscape" /></h4>
@@ -46,7 +46,7 @@
     </thead>
     <tbody>
     <c:forEach items="${persons}" var="person" varStatus="loopStatus">
-        <tr onclick="navigate('${formUrlPrefix}/staff/${person.id}/overview');">
+        <tr onclick="navigate('${URL_PREFIX}/staff/${person.id}/overview');">
             <td class="is-centered">
                 <img class="img-circle hidden-print" src="<c:out value='${gravatarUrls[person]}?d=mm&s=60'/>"/>
             </td>
@@ -97,7 +97,7 @@
                 </c:choose>
             </td>
             <sec:authorize access="hasRole('OFFICE')">
-            <td class="is-centered hidden-print"><a href="${formUrlPrefix}/staff/${person.id}/edit"><i class="fa fa-pencil fa-action" /></a></td>
+            <td class="is-centered hidden-print"><a href="${URL_PREFIX}/staff/${person.id}/edit"><i class="fa fa-pencil fa-action" /></a></td>
             </sec:authorize>
         </tr>    
     </c:forEach>

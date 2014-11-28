@@ -26,7 +26,7 @@
 
                 <c:forEach items="${persons}" var="person">
                     <li>
-                        <a href="${formUrlPrefix}/staff/<c:out value='${person.id}' />/overview">
+                        <a href="${URL_PREFIX}/staff/<c:out value='${person.id}' />/overview">
                             <c:out value="${person.niceName}"/>
                         </a>
                     </li>
@@ -37,7 +37,7 @@
         </div>
 
         <sec:authorize access="hasRole('OFFICE')">
-            <a href="${formUrlPrefix}/staff/${person.id}/edit" class="btn btn-default pull-right">
+            <a href="${URL_PREFIX}/staff/${person.id}/edit" class="btn btn-default pull-right">
                 <i class="fa fa-pencil"></i> <span class="hidden-xs">Edit</span>
             </a>
         </sec:authorize>

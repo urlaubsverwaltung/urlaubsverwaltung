@@ -2,7 +2,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
-<spring:url var="formUrlPrefix" value="/web" />
+<spring:url var="URL_PREFIX" value="/web" />
 
 <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
     <div class="container">
@@ -25,12 +25,12 @@
             <ul class="nav navbar-nav navbar-right">
                 <sec:authorize access="hasRole('USER')">
                     <li>
-                        <a href="${formUrlPrefix}/overview">
+                        <a href="${URL_PREFIX}/overview">
                             <i class="fa fa-home"></i>&nbsp;<spring:message code="nav.overview"/>
                         </a>
                     </li>
                     <li>
-                        <a href="${formUrlPrefix}/application/new">
+                        <a href="${URL_PREFIX}/application/new">
                             <i class="fa fa-pencil"></i>&nbsp;<spring:message code="nav.apply"/>
                         </a>
                     </li>
@@ -39,7 +39,7 @@
 
                 <sec:authorize access="hasAnyRole('BOSS', 'OFFICE')">
                     <li>
-                        <a href="${formUrlPrefix}/application/waiting">
+                        <a href="${URL_PREFIX}/application/waiting">
                             <i class="fa fa-calendar"></i>&nbsp;<spring:message code="nav.vacations"/>
                         </a>
                     </li>
@@ -47,14 +47,14 @@
 
                 <sec:authorize access="hasRole('OFFICE')">
                     <li>
-                        <a href="${formUrlPrefix}/sicknote/"><i class="fa fa-medkit"></i>&nbsp;<spring:message code="nav.sicknotes" /></a>
+                        <a href="${URL_PREFIX}/sicknote/"><i class="fa fa-medkit"></i>&nbsp;<spring:message code="nav.sicknotes" /></a>
                     </li>
                 </sec:authorize>
 
                 <sec:authorize access="hasAnyRole('BOSS', 'OFFICE')">
 
                     <li>
-                        <a href="${formUrlPrefix}/staff"><i class="fa fa-user"></i>&nbsp;<spring:message code="nav.staff" /></a>
+                        <a href="${URL_PREFIX}/staff"><i class="fa fa-user"></i>&nbsp;<spring:message code="nav.staff" /></a>
                     </li>
 
                 </sec:authorize>

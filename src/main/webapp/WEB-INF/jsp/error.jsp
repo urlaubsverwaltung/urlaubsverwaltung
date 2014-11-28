@@ -15,7 +15,7 @@
     
     <body>
         
-        <spring:url var="formUrlPrefix" value="/web" />
+        <spring:url var="URL_PREFIX" value="/web" />
         
         <div class="error-container container-fluid">
             <div class="content">
@@ -31,7 +31,7 @@
                 </div>
                 <div class="row">
                     <div class="col-xs-12">
-                        <a href="${formUrlPrefix}/overview" class="error-btn btn btn-primary btn-lg col-xs-12 col-sm-8 col-sm-offset-2 col-md-4 col-md-offset-4"><i class="fa fa-home"></i> Zurück zur Übersicht</a>
+                        <a href="${URL_PREFIX}/overview" class="error-btn btn btn-primary btn-lg col-xs-12 col-sm-8 col-sm-offset-2 col-md-4 col-md-offset-4"><i class="fa fa-home"></i> Zurück zur Übersicht</a>
                     </div>
                 </div>
             </div>

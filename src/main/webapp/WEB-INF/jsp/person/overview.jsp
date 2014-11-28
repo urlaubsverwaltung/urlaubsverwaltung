@@ -47,7 +47,7 @@
 </head>
 
 <body>
-<spring:url var="formUrlPrefix" value="/web"/>
+<spring:url var="URL_PREFIX" value="/web"/>
 
 <uv:menu />
 
@@ -216,12 +216,12 @@
                         </p>
                         <c:choose>
                             <c:when test="${person.id == loggedUser.id}">
-                                <c:set var="NEW_APPLICATION_URL" value ="${formUrlPrefix}/application/new" />
+                                <c:set var="NEW_APPLICATION_URL" value ="${URL_PREFIX}/application/new" />
                             </c:when>
                             <c:otherwise>
                                 <sec:authorize access="hasRole('OFFICE')">
                                     <c:if test="${person.id != loggedUser.id}">
-                                        <c:set var="NEW_APPLICATION_URL" value ="${formUrlPrefix}/${person.id}/application/new" />
+                                        <c:set var="NEW_APPLICATION_URL" value ="${URL_PREFIX}/${person.id}/application/new" />
                                     </c:if>
                                 </sec:authorize>
                             </c:otherwise>
@@ -287,7 +287,7 @@
                             <spring:message code="sicknotes" />
                         </p>
                         <sec:authorize access="hasRole('OFFICE')">
-                            <a class="btn btn-default pull-right" href="${formUrlPrefix}/sicknote/new?person=${person.id}">
+                            <a class="btn btn-default pull-right" href="${URL_PREFIX}/sicknote/new?person=${person.id}">
                                 <i class="fa fa-plus"></i> <span class="hidden-xs"><spring:message code="sicknotes.new" /></span>
                             </a>
                         </sec:authorize>

@@ -25,7 +25,7 @@
 
 <uv:menu />
 
-<spring:url var="formUrlPrefix" value="/web"/>
+<spring:url var="URL_PREFIX" value="/web"/>
 
 
 <div class="content">
@@ -34,11 +34,11 @@
 <c:choose>
     <c:when test="${person.id == null}">
         <c:set var="METHOD" value="POST"/>
-        <c:set var="ACTION" value="${formUrlPrefix}/staff/new"/>
+        <c:set var="ACTION" value="${URL_PREFIX}/staff/new"/>
     </c:when>
     <c:otherwise>
         <c:set var="METHOD" value="PUT"/>
-        <c:set var="ACTION" value="${formUrlPrefix}/staff/${person.id}/edit"/>
+        <c:set var="ACTION" value="${URL_PREFIX}/staff/${person.id}/edit"/>
     </c:otherwise>
 </c:choose>
 
@@ -375,7 +375,7 @@
         <hr/>
 
         <button class="btn btn-large btn-success col-xs-12 col-md-3" type="submit"><i class='fa fa-check'></i>&nbsp;<spring:message code="save" /></button>
-        <a class="btn btn-default btn-large col-xs-12 col-md-3" href="${formUrlPrefix}/staff"><i class='fa fa-remove'></i>&nbsp;<spring:message code='cancel'/></a>
+        <a class="btn btn-default btn-large col-xs-12 col-md-3" href="${URL_PREFIX}/staff"><i class='fa fa-remove'></i>&nbsp;<spring:message code='cancel'/></a>
 
     </div>
 </div>

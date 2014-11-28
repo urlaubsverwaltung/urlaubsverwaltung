@@ -21,8 +21,8 @@
 
     <body>
 
-        <spring:url var="formUrlPrefix" value="/web" />
-        <c:set var="linkPrefix" value="${formUrlPrefix}/application" />
+        <spring:url var="URL_PREFIX" value="/web" />
+        <c:set var="linkPrefix" value="${URL_PREFIX}/application" />
 
         <uv:menu />
 

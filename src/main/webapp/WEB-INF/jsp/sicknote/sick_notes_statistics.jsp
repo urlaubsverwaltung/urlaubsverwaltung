@@ -16,11 +16,9 @@
 
 <body>
 
-<spring:url var="formUrlPrefix" value="/web" />
+<spring:url var="URL_PREFIX" value="/web" />
 
 <uv:menu />
-
-<spring:url var="formUrlPrefix" value="/web" />
 
 <div class="content">
     <div class="container">

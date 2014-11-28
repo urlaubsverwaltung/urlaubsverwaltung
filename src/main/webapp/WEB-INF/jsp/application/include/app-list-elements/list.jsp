@@ -61,7 +61,7 @@
                         <c:set var="CSS_CLASS" value="active"/>
                     </c:otherwise>
                 </c:choose>
-                <tr class="${CSS_CLASS}" onclick="navigate('${formUrlPrefix}/application/${app.id}');">
+                <tr class="${CSS_CLASS}" onclick="navigate('${URL_PREFIX}/application/${app.id}');">
                     <td class="visible-print">
                         <spring:message code="${app.status.state}"/>
                     </td>
@@ -85,7 +85,7 @@
                         </c:choose>
                     </td>
                     <td>
-                        <a class="vacation ${app.vacationType} hidden-print" href="${formUrlPrefix}/application/${app.id}">
+                        <a class="vacation ${app.vacationType} hidden-print" href="${URL_PREFIX}/application/${app.id}">
                             <h4><spring:message code="${app.vacationType.vacationTypeName}"/></h4>
                         </a>
 
@@ -113,7 +113,7 @@
                     <td>
                         <img class="img-circle hidden-print" src="<c:out value='${gravatarUrls[app]}?d=mm&s=60'/>"/>&nbsp;
                         <h5 class="is-inline-block hidden-xs hidden-print" style="line-height: 60px; vertical-align: middle">
-                            <a class="sortable" href="${formUrlPrefix}/staff/${app.person.id}/overview">
+                            <a class="sortable" href="${URL_PREFIX}/staff/${app.person.id}/overview">
                                 <c:out value="${app.person.niceName}"/>
                             </a>
                         </h5>

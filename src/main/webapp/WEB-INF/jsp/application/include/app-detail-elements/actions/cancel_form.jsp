@@ -13,10 +13,10 @@
     });
 </script>
 
-<spring:url var="formUrlPrefix" value="/web"/>
+<spring:url var="URL_PREFIX" value="/web"/>
 
 <form:form id="cancel" cssClass="form action-form confirm alert alert-danger" method="PUT"
-           action="${formUrlPrefix}/application/${application.id}/cancel" modelAttribute="comment">
+           action="${URL_PREFIX}/application/${application.id}/cancel" modelAttribute="comment">
 
     <div class="form-group">
         <div class="control-label">

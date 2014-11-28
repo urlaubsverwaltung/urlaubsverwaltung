@@ -11,14 +11,14 @@
 </head>
 <body>
 
-<spring:url var="formUrlPrefix" value="/web"/>
+<spring:url var="URL_PREFIX" value="/web"/>
 
 <uv:menu />
 
 <div class="content">
 
     <c:set var="METHOD" value="POST" />
-    <c:set var="ACTION" value="${formUrlPrefix}/sicknote/${sickNote.id}/convert" />
+    <c:set var="ACTION" value="${URL_PREFIX}/sicknote/${sickNote.id}/convert" />
 
     <form:form method="${METHOD}" action="${ACTION}" modelAttribute="appForm" class="form-horizontal">
 
@@ -170,7 +170,7 @@
                 <hr/>
 
                 <button class="btn btn-large btn-success col-xs-12 col-sm-12 col-md-3" type="submit"><i class='fa fa-check'></i>&nbsp;<spring:message code="save" /></button>
-                <a class="btn btn-default btn-large col-xs-12 col-sm-12 col-md-3" href="${formUrlPrefix}/sicknote/${sickNote.id}"><i class='fa fa-remove'></i>&nbsp;<spring:message code='cancel'/></a>
+                <a class="btn btn-default btn-large col-xs-12 col-sm-12 col-md-3" href="${URL_PREFIX}/sicknote/${sickNote.id}"><i class='fa fa-remove'></i>&nbsp;<spring:message code='cancel'/></a>
 
 
             </div>

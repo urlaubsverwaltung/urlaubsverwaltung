@@ -15,7 +15,7 @@
             <c:set var="CSS_CLASS" value="inactive"/>
         </c:otherwise>
     </c:choose>
-    <tr class="${CSS_CLASS}" onclick="navigate('${formUrlPrefix}/sicknote/${sickNote.id}');">
+    <tr class="${CSS_CLASS}" onclick="navigate('${URL_PREFIX}/sicknote/${sickNote.id}');">
         <td class="is-centered state">
             <span class="hidden-print">
                 <c:choose>
@@ -29,7 +29,7 @@
             </span>
         </td>
         <td>
-            <a href="${formUrlPrefix}/sicknote/${sickNote.id}" class="hidden-print">
+            <a href="${URL_PREFIX}/sicknote/${sickNote.id}" class="hidden-print">
                 <h4>
                     <spring:message code="sicknote" />
                 </h4>

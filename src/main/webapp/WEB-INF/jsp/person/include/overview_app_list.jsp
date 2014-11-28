@@ -16,7 +16,7 @@
                 <c:set var="CSS_CLASS" value="active"/>
             </c:otherwise>
         </c:choose>
-        <tr class="${CSS_CLASS}" onclick="navigate('${formUrlPrefix}/application/${app.id}');">
+        <tr class="${CSS_CLASS}" onclick="navigate('${URL_PREFIX}/application/${app.id}');">
             <td class="visible-print">
                 <span>
                     <spring:message code="${app.status.state}"/>
@@ -47,7 +47,7 @@
                 <h4 class="visible-print">
                     <spring:message code="${app.vacationType.vacationTypeName}"/>
                 </h4>
-                <a class="hidden-print vacation ${app.vacationType}" href="${formUrlPrefix}/application/${app.id}">
+                <a class="hidden-print vacation ${app.vacationType}" href="${URL_PREFIX}/application/${app.id}">
                     <h4><spring:message code="${app.vacationType.vacationTypeName}"/></h4>
                 </a>
 

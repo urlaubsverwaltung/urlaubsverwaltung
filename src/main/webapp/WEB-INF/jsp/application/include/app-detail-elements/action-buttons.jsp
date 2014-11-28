@@ -7,7 +7,7 @@
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
-<spring:url var="formUrlPrefix" value="/web"/>
+<spring:url var="URL_PREFIX" value="/web"/>
 
 <sec:authorize access="hasRole('USER')">
     <uv:print/>

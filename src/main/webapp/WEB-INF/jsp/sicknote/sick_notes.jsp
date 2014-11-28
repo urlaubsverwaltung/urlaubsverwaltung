@@ -26,7 +26,7 @@
 
 <body>
 
-<spring:url var="formUrlPrefix" value="/web" />
+<spring:url var="URL_PREFIX" value="/web" />
 
 <uv:menu />
 
@@ -58,7 +58,7 @@
                         <ul class="dropdown-menu">
                             <c:forEach begin="0" end="10" varStatus="counter">
                                 <li>
-                                    <a href="${formUrlPrefix}/sicknote/statistics?year=${today.year - counter.index}">
+                                    <a href="${URL_PREFIX}/sicknote/statistics?year=${today.year - counter.index}">
                                         <c:out value="${today.year - counter.index}" />
                                     </a>
                                 </li> 
@@ -66,7 +66,7 @@
                         </ul>
                     </div>
                     <uv:print />
-                    <a class="btn btn-default pull-right" href="${formUrlPrefix}/sicknote/new">
+                    <a class="btn btn-default pull-right" href="${URL_PREFIX}/sicknote/new">
                         <i class="fa fa-plus"></i> <span class="hidden-xs"><spring:message code="sicknotes.new" /></span>
                     </a>
                     <a href="#changeViewModal" role="button" class="btn btn-default pull-right hidden-xs hidden-sm" data-toggle="modal">
@@ -83,7 +83,7 @@
                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                             <h4 id="myModalLabel" class="modal-title"><spring:message code="filter" /></h4>
                         </div>
-                        <form:form method="POST" id="searchRequest-form" action="${formUrlPrefix}/sicknote/filter" modelAttribute="searchRequest" class="form-horizontal">
+                        <form:form method="POST" id="searchRequest-form" action="${URL_PREFIX}/sicknote/filter" modelAttribute="searchRequest" class="form-horizontal">
                             <div class="modal-body">
 
                                 <div class="form-group">
@@ -138,7 +138,7 @@
                     </thead>
                     <tbody>
                     <c:forEach items="${persons}" var="person">
-                    <tr onclick="navigate('${formUrlPrefix}/staff/${person.id}/overview#anchorSickNotes');">
+                    <tr onclick="navigate('${URL_PREFIX}/staff/${person.id}/overview#anchorSickNotes');">
                         <td class="is-centered hidden-print">
                             <img class="img-circle hidden-print" src="<c:out value='${gravatars[person]}?d=mm&s=60'/>"/>
                         </td>

@@ -4,8 +4,8 @@
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
-<spring:url var="formUrlPrefix" value="/web" />
+<spring:url var="URL_PREFIX" value="/web" />
 
-<form:form method="PUT" id="remind" action="${formUrlPrefix}/application/${application.id}/remind" style="display:inline;"></form:form>
+<form:form method="PUT" id="remind" action="${URL_PREFIX}/application/${application.id}/remind" style="display:inline;"></form:form>
 
         
