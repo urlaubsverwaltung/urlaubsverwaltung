@@ -111,12 +111,11 @@ public class ActiveDirectoryLdapAuthenticationProviderCustom extends AbstractLda
     /**
      * @param domain the domain name (may be null or empty)
      * @param url an LDAP url (or multiple URLs)
-     * @param authoritiesPopulator 
+     * @param authoritiesPopulator
      */
     public ActiveDirectoryLdapAuthenticationProviderCustom(String domain, String url, LdapAuthoritiesPopulator authoritiesPopulator) {
         Assert.isTrue(StringUtils.hasText(url), "Url cannot be empty");
         this.domain = StringUtils.hasText(domain) ? domain.toLowerCase() : null;
-        //this.url = StringUtils.hasText(url) ? url : null;
         this.url = url;
         rootDn = this.domain == null ? null : rootDnFromDomain(this.domain);
         this.authoritiesPopulator = authoritiesPopulator;
