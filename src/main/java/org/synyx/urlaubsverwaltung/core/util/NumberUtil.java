@@ -6,8 +6,10 @@ package org.synyx.urlaubsverwaltung.core.util;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
+
 import java.util.Locale;
 
 
@@ -15,6 +17,11 @@ import java.util.Locale;
  * @author  Aljona Murygina
  */
 public class NumberUtil {
+
+    private NumberUtil() {
+
+        // Hide constructor for util classes
+    }
 
     /**
      * This method parses the BigDecimal to the desired number format.
@@ -46,8 +53,8 @@ public class NumberUtil {
         DecimalFormatSymbols dfs = new DecimalFormatSymbols(locale);
         char sep = dfs.getDecimalSeparator();
 
-        numberToParse = numberToParse.replace(sep, '.');
+        String normalizedNumberToParse = numberToParse.replace(sep, '.');
 
-        return new BigDecimal(numberToParse);
+        return new BigDecimal(normalizedNumberToParse);
     }
 }

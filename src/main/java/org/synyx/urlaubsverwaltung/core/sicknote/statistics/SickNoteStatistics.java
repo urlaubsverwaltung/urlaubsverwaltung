@@ -21,15 +21,15 @@ import java.util.List;
  */
 public class SickNoteStatistics {
 
-    private DateMidnight created;
+    private final DateMidnight created;
 
-    private int year;
+    private final int year;
 
-    private int totalNumberOfSickNotes;
+    private final int totalNumberOfSickNotes;
 
-    private BigDecimal totalNumberOfSickDays;
+    private final BigDecimal totalNumberOfSickDays;
 
-    private Long numberOfPersonsWithMinimumOneSickNote;
+    private final Long numberOfPersonsWithMinimumOneSickNote;
 
     public SickNoteStatistics(int year, SickNoteDAO sickNoteDAO, OwnCalendarService calendarService) {
 

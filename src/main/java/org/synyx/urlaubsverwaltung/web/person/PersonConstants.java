@@ -24,4 +24,9 @@ public class PersonConstants {
     public static final String NOTEXISTENT = "notexistent"; // are there any persons to show?
     public static final String NO_APPS = "noapps"; // are there any applications to show?
     public static final String PERSON_ID = "personId";
+
+    private PersonConstants() {
+
+        // Hide constructor for util classes
+    }
 }

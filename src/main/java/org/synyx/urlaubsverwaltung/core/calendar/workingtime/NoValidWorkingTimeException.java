@@ -7,7 +7,7 @@ package org.synyx.urlaubsverwaltung.core.calendar.workingtime;
  */
 public class NoValidWorkingTimeException extends RuntimeException {
 
-    private String message;
+    private final String message;
 
     public NoValidWorkingTimeException(String message) {
 

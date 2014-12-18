@@ -23,4 +23,9 @@ public class ControllerConstants {
     public static final String ACCOUNTS = "accounts";
 
     public static final String ERROR_JSP = "error";
+
+    private ControllerConstants() {
+
+        // Hide constructor for util classes
+    }
 }

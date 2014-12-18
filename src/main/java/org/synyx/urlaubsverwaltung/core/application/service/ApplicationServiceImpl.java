@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import org.springframework.util.Assert;
+
 import org.synyx.urlaubsverwaltung.core.application.dao.ApplicationDAO;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
@@ -25,7 +26,7 @@ import java.util.List;
 @Service
 class ApplicationServiceImpl implements ApplicationService {
 
-    private ApplicationDAO applicationDAO;
+    private final ApplicationDAO applicationDAO;
 
     @Autowired
     public ApplicationServiceImpl(ApplicationDAO applicationDAO) {
@@ -74,32 +75,31 @@ class ApplicationServiceImpl implements ApplicationService {
 
 
     @Override
-    public List<Application> getApplicationsForACertainPeriodAndPerson(DateMidnight startDate, DateMidnight endDate, Person person) {
+    public List<Application> getApplicationsForACertainPeriodAndPerson(DateMidnight startDate, DateMidnight endDate,
+        Person person) {
 
-        return applicationDAO.getApplicationsForACertainTimeAndPerson(startDate.toDate(), endDate.toDate(),
-                person);
+        return applicationDAO.getApplicationsForACertainTimeAndPerson(startDate.toDate(), endDate.toDate(), person);
     }
 
 
     @Override
-    public List<Application> getApplicationsForACertainPeriodAndState(DateMidnight startDate, DateMidnight endDate, ApplicationStatus status) {
+    public List<Application> getApplicationsForACertainPeriodAndState(DateMidnight startDate, DateMidnight endDate,
+        ApplicationStatus status) {
 
-        return applicationDAO.getApplicationsForACertainTimeAndState(startDate.toDate(), endDate.toDate(),
-                status);
+        return applicationDAO.getApplicationsForACertainTimeAndState(startDate.toDate(), endDate.toDate(), status);
     }
 
 
     @Override
-    public List<Application> getApplicationsForACertainPeriodAndPersonAndState(DateMidnight startDate, DateMidnight endDate, Person person, ApplicationStatus status) {
+    public List<Application> getApplicationsForACertainPeriodAndPersonAndState(DateMidnight startDate,
+        DateMidnight endDate, Person person, ApplicationStatus status) {
 
-        List<Application> applications = applicationDAO.getApplicationsForACertainTimeAndPersonAndState(startDate.toDate(), endDate.toDate(),
-                person, status);
+        List<Application> applications = applicationDAO.getApplicationsForACertainTimeAndPersonAndState(
+                startDate.toDate(), endDate.toDate(), person, status);
 
         for (Application application : applications) {
-
             Assert.isTrue(status.equals(application.getStatus()), "WHAT THE FUCK!!!!");
         }
-
 
         return applications;
     }

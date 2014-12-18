@@ -22,8 +22,8 @@ import java.util.List;
 @Service
 public class CronMailService {
 
-    private SickNoteService sickNoteService;
-    private MailService mailService;
+    private final SickNoteService sickNoteService;
+    private final MailService mailService;
 
     @Autowired
     public CronMailService(SickNoteService sickNoteService, MailService mailService) {
@@ -37,8 +37,6 @@ public class CronMailService {
     void sendEndOfSickPayNotification() {
 
         List<SickNote> sickNotes = sickNoteService.getSickNotesReachingEndOfSickPay();
-
-        System.out.println(sickNotes.size());
 
         for (SickNote sickNote : sickNotes) {
             mailService.sendEndOfSickPayNotification(sickNote);

@@ -31,9 +31,9 @@ import java.util.List;
 @Service
 public class CalculationService {
 
-    private ApplicationDAO applicationDAO;
-    private AccountService accountService;
-    private OwnCalendarService calendarService;
+    private final ApplicationDAO applicationDAO;
+    private final AccountService accountService;
+    private final OwnCalendarService calendarService;
 
     @Autowired
     public CalculationService(ApplicationDAO applicationDAO, AccountService accountService,

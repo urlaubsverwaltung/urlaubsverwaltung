@@ -24,7 +24,7 @@ public class TestUserDetailsService implements UserDetailsService {
     private static final String TEST_USER_NAME = "test";
     private static final String TEST_USER_PASSWORD = "secret";
 
-    private PersonDAO personDAO;
+    private final PersonDAO personDAO;
 
     public TestUserDetailsService(PersonDAO personDAO) {
 
@@ -34,7 +34,7 @@ public class TestUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
 
-        if(!s.equals(TEST_USER_NAME)) {
+        if (!s.equals(TEST_USER_NAME)) {
             throw new UsernameNotFoundException("No authentication possible for user with name " + s);
         }
 

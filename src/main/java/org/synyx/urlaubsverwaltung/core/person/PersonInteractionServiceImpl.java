@@ -32,10 +32,10 @@ public class PersonInteractionServiceImpl implements PersonInteractionService {
 
     private static final Logger LOG = Logger.getLogger(PersonInteractionServiceImpl.class);
 
-    private PersonService personService;
-    private WorkingTimeService workingTimeService;
-    private AccountService accountService;
-    private MailService mailService;
+    private final PersonService personService;
+    private final WorkingTimeService workingTimeService;
+    private final AccountService accountService;
+    private final MailService mailService;
 
     @Autowired
     public PersonInteractionServiceImpl(PersonService personService, WorkingTimeService workingTimeService,

@@ -6,4 +6,9 @@ package org.synyx.urlaubsverwaltung.restapi;
 class RestApiDateFormat {
 
     static final String PATTERN = "yyyy-MM-dd";
+
+    private RestApiDateFormat() {
+
+        // Hide constructor for util classes
+    }
 }

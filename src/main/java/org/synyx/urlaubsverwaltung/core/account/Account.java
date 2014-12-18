@@ -2,14 +2,18 @@ package org.synyx.urlaubsverwaltung.core.account;
 
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
+
 import org.springframework.data.jpa.domain.AbstractPersistable;
+
 import org.synyx.urlaubsverwaltung.core.person.Person;
+
+import java.math.BigDecimal;
+
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
-import java.math.BigDecimal;
-import java.util.Date;
 
 
 /**
@@ -22,12 +26,17 @@ import java.util.Date;
 public class Account extends AbstractPersistable<Integer> {
 
     private static final long serialVersionUID = 890434378423784389L;
+
     @ManyToOne
     private Person person;
+
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date validFrom;
+
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date validTo;
+
+    // TODO: Can this be removed?
     private int year;
 
     // theoretical number of vacation days a person has, i.e. it's the annual entitlement, but it is possible that
@@ -42,6 +51,7 @@ public class Account extends AbstractPersistable<Integer> {
     private boolean remainingVacationDaysExpire;
 
     public Account() {
+
         /* OK */
     }
 

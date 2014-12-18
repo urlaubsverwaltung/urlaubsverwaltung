@@ -4,6 +4,7 @@ import org.apache.commons.collections.CollectionUtils;
 
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
@@ -109,6 +110,12 @@ public class WorkingTime extends AbstractPersistable<Integer> {
     }
 
 
+    public Person getPerson() {
+
+        return person;
+    }
+
+
     public void setPerson(Person person) {
 
         this.person = person;
@@ -118,25 +125,25 @@ public class WorkingTime extends AbstractPersistable<Integer> {
     public DayLength getDayLengthForWeekDay(int weekDay) {
 
         switch (weekDay) {
-            case 1:
+            case DateTimeConstants.MONDAY:
                 return this.monday;
 
-            case 2:
+            case DateTimeConstants.TUESDAY:
                 return this.tuesday;
 
-            case 3:
+            case DateTimeConstants.WEDNESDAY:
                 return this.wednesday;
 
-            case 4:
+            case DateTimeConstants.THURSDAY:
                 return this.thursday;
 
-            case 5:
+            case DateTimeConstants.FRIDAY:
                 return this.friday;
 
-            case 6:
+            case DateTimeConstants.SATURDAY:
                 return this.saturday;
 
-            case 7:
+            case DateTimeConstants.SUNDAY:
                 return this.sunday;
 
             default:
@@ -148,32 +155,35 @@ public class WorkingTime extends AbstractPersistable<Integer> {
     public void setDayLengthForWeekDay(int weekDay, DayLength dayLength) {
 
         switch (weekDay) {
-            case 1:
+            case DateTimeConstants.MONDAY:
                 this.monday = dayLength;
                 break;
 
-            case 2:
+            case DateTimeConstants.TUESDAY:
                 this.tuesday = dayLength;
                 break;
 
-            case 3:
+            case DateTimeConstants.WEDNESDAY:
                 this.wednesday = dayLength;
                 break;
 
-            case 4:
+            case DateTimeConstants.THURSDAY:
                 this.thursday = dayLength;
                 break;
 
-            case 5:
+            case DateTimeConstants.FRIDAY:
                 this.friday = dayLength;
                 break;
 
-            case 6:
+            case DateTimeConstants.SATURDAY:
                 this.saturday = dayLength;
                 break;
 
-            case 7:
+            case DateTimeConstants.SUNDAY:
                 this.sunday = dayLength;
+                break;
+
+            default:
                 break;
         }
     }

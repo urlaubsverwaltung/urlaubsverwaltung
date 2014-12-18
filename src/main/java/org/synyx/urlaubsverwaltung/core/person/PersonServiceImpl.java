@@ -26,7 +26,7 @@ import java.util.List;
 @Transactional
 class PersonServiceImpl implements PersonService {
 
-    private PersonDAO personDAO;
+    private final PersonDAO personDAO;
 
     @Autowired
     public PersonServiceImpl(PersonDAO personDAO) {
@@ -96,16 +96,17 @@ class PersonServiceImpl implements PersonService {
                     }));
     }
 
+
     @Override
     public List<Person> getPersonsWithNotificationType(final MailNotification notification) {
 
         return Lists.newArrayList(Iterables.filter(getActivePersons(), new Predicate<Person>() {
 
-            @Override
-            public boolean apply(Person person) {
+                        @Override
+                        public boolean apply(Person person) {
 
-                return person.hasNotificationType(notification);
-            }
-        }));
+                            return person.hasNotificationType(notification);
+                        }
+                    }));
     }
 }

@@ -40,7 +40,7 @@ public class JollydayCalendar {
     private static final double HALF_DAY = 0.5;
     private static final double FULL_DAY = 1.0;
 
-    private HolidayManager manager;
+    private final HolidayManager manager;
 
     public JollydayCalendar() {
 

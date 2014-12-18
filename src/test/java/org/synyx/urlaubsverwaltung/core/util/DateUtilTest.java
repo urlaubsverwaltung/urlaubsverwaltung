@@ -46,8 +46,8 @@ public class DateUtilTest {
 
         DateMidnight firstDayOfMonth = new DateMidnight(year, month, 1);
 
-        Assert.assertEquals("Not the correct first day of month", firstDayOfMonth, DateUtil.getFirstDayOfMonth(year, month));
-
+        Assert.assertEquals("Not the correct first day of month", firstDayOfMonth,
+            DateUtil.getFirstDayOfMonth(year, month));
     }
 
 
@@ -59,8 +59,8 @@ public class DateUtilTest {
 
         DateMidnight lastDayOfMonth = new DateMidnight(year, month, 30);
 
-        Assert.assertEquals("Not the correct last day of month", lastDayOfMonth, DateUtil.getLastDayOfMonth(year, month));
-
+        Assert.assertEquals("Not the correct last day of month", lastDayOfMonth,
+            DateUtil.getLastDayOfMonth(year, month));
     }
 
 
@@ -72,8 +72,8 @@ public class DateUtilTest {
 
         DateMidnight lastDayOfMonth = new DateMidnight(year, month, 28);
 
-        Assert.assertEquals("Not the correct last day of month", lastDayOfMonth, DateUtil.getLastDayOfMonth(year, month));
-
+        Assert.assertEquals("Not the correct last day of month", lastDayOfMonth,
+            DateUtil.getLastDayOfMonth(year, month));
     }
 
 
@@ -85,7 +85,6 @@ public class DateUtilTest {
         DateMidnight firstDayOfYear = new DateMidnight(year, 1, 1);
 
         Assert.assertEquals("Not the correct first day of year", firstDayOfYear, DateUtil.getFirstDayOfYear(year));
-
     }
 
 
@@ -97,6 +96,38 @@ public class DateUtilTest {
         DateMidnight lastDayOfYear = new DateMidnight(year, 12, 31);
 
         Assert.assertEquals("Not the correct last day of year", lastDayOfYear, DateUtil.getLastDayOfYear(year));
+    }
 
+
+    @Test
+    public void ensureReturnsTrueForChristmasEve() {
+
+        DateMidnight date = new DateMidnight(2011, 12, 24);
+
+        boolean returnValue = DateUtil.isChristmasEveOrNewYearsEve(date);
+
+        Assert.assertTrue("Should return true for 24th December", returnValue);
+    }
+
+
+    @Test
+    public void ensureReturnsTrueForNewYearsEve() {
+
+        DateMidnight date = new DateMidnight(2014, 12, 31);
+
+        boolean returnValue = DateUtil.isChristmasEveOrNewYearsEve(date);
+
+        Assert.assertTrue("Should return true for 31st December", returnValue);
+    }
+
+
+    @Test
+    public void ensureReturnsFalseForNeitherChristmasEveNorNewYearsEve() {
+
+        DateMidnight date = new DateMidnight(2014, 12, 21);
+
+        boolean returnValue = DateUtil.isChristmasEveOrNewYearsEve(date);
+
+        Assert.assertFalse("Should return false if date is neither on 24th nor on 31st December", returnValue);
     }
 }

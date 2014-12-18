@@ -13,23 +13,23 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.math.BigDecimal;
 
-import java.util.*;
+import java.util.List;
 
 
 /**
  * Object to abstract how many days have been used in a year.
  *
- * @author Aljona Murygina - murygina@synyx.de
+ * @author  Aljona Murygina - murygina@synyx.de
  */
 public class UsedDaysOverview {
 
-    private int year;
+    private final int year;
 
     // used days for vacation type HOLIDAY
-    private UsedDays holidayDays;
+    private final UsedDays holidayDays;
 
     // used days for all the other vacation types except HOLIDAY
-    private UsedDays otherDays;
+    private final UsedDays otherDays;
 
     public UsedDaysOverview(List<Application> applications, int year, OwnCalendarService calendarService) {
 
@@ -47,7 +47,7 @@ public class UsedDaysOverview {
                 int yearOfEndDate = application.getEndDate().getYear();
 
                 Assert.isTrue(yearOfStartDate == this.year || yearOfEndDate == this.year,
-                        "Either start date or end date must be in the given year.");
+                    "Either start date or end date must be in the given year.");
 
                 if (yearOfStartDate != yearOfEndDate) {
                     DateMidnight startDate = getStartDateForCalculation(application);
@@ -65,7 +65,6 @@ public class UsedDaysOverview {
                 } else {
                     this.otherDays.addDays(status, days);
                 }
-
             }
         }
     }
@@ -75,10 +74,12 @@ public class UsedDaysOverview {
         return holidayDays;
     }
 
+
     public UsedDays getOtherDays() {
 
         return otherDays;
     }
+
 
     private DateMidnight getStartDateForCalculation(Application application) {
 

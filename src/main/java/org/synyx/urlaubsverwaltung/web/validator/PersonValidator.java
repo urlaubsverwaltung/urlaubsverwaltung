@@ -4,8 +4,8 @@ package org.synyx.urlaubsverwaltung.web.validator;
 import org.apache.log4j.Logger;
 
 import org.joda.time.DateMidnight;
-
 import org.joda.time.IllegalFieldValueException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Component;
@@ -21,6 +21,8 @@ import org.synyx.urlaubsverwaltung.core.util.NumberUtil;
 import org.synyx.urlaubsverwaltung.core.util.PropertiesUtil;
 import org.synyx.urlaubsverwaltung.security.Role;
 import org.synyx.urlaubsverwaltung.web.person.PersonForm;
+
+import java.io.IOException;
 
 import java.math.BigDecimal;
 
@@ -67,11 +69,9 @@ public class PersonValidator implements Validator {
 
     private static final String BUSINESS_PROPERTIES_FILE = "business.properties";
 
-    private Pattern pattern;
-    private Matcher matcher;
-
     private Properties businessProperties;
-    private PersonService personService;
+
+    private final PersonService personService;
 
     @Autowired
     public PersonValidator(PersonService personService) {
@@ -80,7 +80,7 @@ public class PersonValidator implements Validator {
 
         try {
             this.businessProperties = PropertiesUtil.load(BUSINESS_PROPERTIES_FILE);
-        } catch (Exception ex) {
+        } catch (IOException ex) {
             LOG.error("No properties file found.");
             LOG.error(ex.getMessage(), ex);
         }
@@ -124,8 +124,8 @@ public class PersonValidator implements Validator {
 
     private boolean matchPattern(String nameOfPattern, String matchSequence) {
 
-        pattern = Pattern.compile(nameOfPattern);
-        matcher = pattern.matcher(matchSequence);
+        Pattern pattern = Pattern.compile(nameOfPattern);
+        Matcher matcher = pattern.matcher(matchSequence);
 
         return matcher.matches();
     }
@@ -184,9 +184,9 @@ public class PersonValidator implements Validator {
             }
 
             // validation with regex
-            email = email.trim().toLowerCase();
+            String normalizedEmail = email.trim().toLowerCase();
 
-            if (!matchPattern(EMAIL_PATTERN, email)) {
+            if (!matchPattern(EMAIL_PATTERN, normalizedEmail)) {
                 errors.rejectValue(EMAIL, ERROR_EMAIL);
             }
         }
@@ -230,9 +230,8 @@ public class PersonValidator implements Validator {
     protected void validatePeriod(PersonForm form, Errors errors) {
 
         try {
-
-            DateMidnight from = new DateMidnight(Integer.parseInt(form.getYear()), Integer.parseInt(form.getMonthFrom()),
-                    Integer.parseInt(form.getDayFrom()));
+            DateMidnight from = new DateMidnight(Integer.parseInt(form.getYear()),
+                    Integer.parseInt(form.getMonthFrom()), Integer.parseInt(form.getDayFrom()));
 
             DateMidnight to = new DateMidnight(Integer.parseInt(form.getYear()), Integer.parseInt(form.getMonthTo()),
                     Integer.parseInt(form.getDayTo()));
@@ -240,13 +239,9 @@ public class PersonValidator implements Validator {
             if (!from.isBefore(to)) {
                 errors.reject("error.period");
             }
-
-        } catch(IllegalFieldValueException ex) {
-
+        } catch (IllegalFieldValueException ex) {
             errors.reject("error.period");
-
         }
-
     }
 
 
@@ -343,11 +338,7 @@ public class PersonValidator implements Validator {
      */
     protected boolean validateStringLength(String string) {
 
-        if (string.length() > 50) {
-            return false;
-        } else {
-            return true;
-        }
+        return string.length() <= 50;
     }
 
 
@@ -379,17 +370,17 @@ public class PersonValidator implements Validator {
         }
     }
 
+
     protected void validateNotifications(PersonForm personForm, Errors errors) {
 
         List<Role> roles = personForm.getPermissions();
         List<MailNotification> notifications = personForm.getNotifications();
 
-        if(roles != null) {
-            if((notifications.contains(MailNotification.NOTIFICATION_BOSS) && !roles.contains(Role.BOSS)) ||
-                    (notifications.contains(MailNotification.NOTIFICATION_OFFICE) && !roles.contains(Role.OFFICE))) {
+        if (roles != null) {
+            if ((notifications.contains(MailNotification.NOTIFICATION_BOSS) && !roles.contains(Role.BOSS))
+                    || (notifications.contains(MailNotification.NOTIFICATION_OFFICE) && !roles.contains(Role.OFFICE))) {
                 errors.rejectValue("notifications", "notification.error");
             }
         }
-
     }
 }

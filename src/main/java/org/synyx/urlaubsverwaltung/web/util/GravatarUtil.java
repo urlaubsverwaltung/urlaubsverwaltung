@@ -21,6 +21,11 @@ public class GravatarUtil {
 
     private static final String BASE_URL = "http://www.gravatar.com/avatar/";
 
+    private GravatarUtil() {
+
+        // Hide constructor for util classes
+    }
+
     /**
      * This method generates the complete gravatar's url by the given email address.
      *
@@ -30,12 +35,7 @@ public class GravatarUtil {
      */
     public static String createImgURL(String email) {
 
-        if (email == null) {
-            // set email to empty String so that no NullpointerException occurs, but a default image can be set
-            email = "";
-        }
-
-        String hash = createHash(email);
+        String hash = createHash(email == null ? "" : email);
 
         return BASE_URL + hash;
     }
@@ -52,11 +52,11 @@ public class GravatarUtil {
 
         String encryptEmail = null;
 
-        email = email.trim().toLowerCase();
+        String normalizedEmail = email.trim().toLowerCase();
 
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
-            byte[] updatedData = md.digest(email.getBytes());
+            byte[] updatedData = md.digest(normalizedEmail.getBytes());
             encryptEmail = convertToHex(updatedData);
         } catch (NoSuchAlgorithmException ex) {
             LOG.error("Creation of MessageDigest failed.", ex);
@@ -79,7 +79,7 @@ public class GravatarUtil {
 
         for (int i = 0; i < data.length; i++) {
             int halfbyte = (data[i] >>> 4) & 0x0F;
-            int two_halfs = 0;
+            int twoHalfs = 0;
 
             do {
                 if ((0 <= halfbyte) && (halfbyte <= 9)) {
@@ -89,7 +89,7 @@ public class GravatarUtil {
                 }
 
                 halfbyte = data[i] & 0x0F;
-            } while (two_halfs++ < 1);
+            } while (twoHalfs++ < 1);
         }
 
         return buf.toString();

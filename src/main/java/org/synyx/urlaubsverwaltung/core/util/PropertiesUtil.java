@@ -16,6 +16,11 @@ import java.util.Properties;
  */
 public class PropertiesUtil {
 
+    private PropertiesUtil() {
+
+        // Hide constructor for util classes
+    }
+
     /**
      * Load a properties file from the classpath. Thanks to: http://www.rgagnon.com/javadetails/java-0434.html
      *

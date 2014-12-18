@@ -30,8 +30,8 @@ public class JmxDemo implements NotificationPublisherAware {
 
     private NotificationPublisher notificationPublisher;
 
-    private JmxApplicationService applicationService;
-    private MailService mailService;
+    private final JmxApplicationService applicationService;
+    private final MailService mailService; // NOSONAR
 
     public JmxDemo(JmxApplicationService applicationService, MailService mailService) {
 
@@ -58,9 +58,7 @@ public class JmxDemo implements NotificationPublisherAware {
     )
     public long countApplicationsInStatus(String state) throws IllegalArgumentException {
 
-        state = state.toUpperCase();
-
-        ApplicationStatus status = ApplicationStatus.valueOf(state);
+        ApplicationStatus status = ApplicationStatus.valueOf(state.toUpperCase());
 
         return applicationService.countApplicationsInStatus(status);
     }

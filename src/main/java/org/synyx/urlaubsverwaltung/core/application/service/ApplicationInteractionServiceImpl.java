@@ -26,11 +26,11 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
     private static final Logger LOG = Logger.getLogger(ApplicationInteractionServiceImpl.class);
 
-    private ApplicationService applicationService;
-    private OwnCalendarService calendarService;
-    private SignService signService;
-    private CommentService commentService;
-    private MailService mailService;
+    private final ApplicationService applicationService;
+    private final OwnCalendarService calendarService;
+    private final SignService signService;
+    private final CommentService commentService;
+    private final MailService mailService;
 
     @Autowired
     public ApplicationInteractionServiceImpl(ApplicationService applicationService, OwnCalendarService calendarService,

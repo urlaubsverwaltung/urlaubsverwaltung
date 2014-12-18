@@ -33,10 +33,10 @@ public class TurnOfTheYearAccountUpdaterService {
 
     private static final Logger LOG = Logger.getLogger(TurnOfTheYearAccountUpdaterService.class);
 
-    private PersonService personService;
-    private AccountService accountService;
-    private CalculationService calculationService;
-    private MailService mailService;
+    private final PersonService personService;
+    private final AccountService accountService;
+    private final CalculationService calculationService;
+    private final MailService mailService;
 
     @Autowired
     public TurnOfTheYearAccountUpdaterService(PersonService personService, AccountService accountService,

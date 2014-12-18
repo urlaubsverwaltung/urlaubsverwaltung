@@ -1,20 +1,28 @@
 package org.synyx.urlaubsverwaltung.core.mail;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+
 import org.apache.log4j.Logger;
+
 import org.apache.velocity.app.VelocityEngine;
+
 import org.joda.time.DateMidnight;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
+
 import org.springframework.stereotype.Service;
+
 import org.springframework.ui.velocity.VelocityEngineUtils;
+
 import org.springframework.util.StringUtils;
+
 import org.synyx.urlaubsverwaltung.DateFormat;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
@@ -22,12 +30,18 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.util.PropertiesUtil;
-import org.synyx.urlaubsverwaltung.security.Role;
+
+import java.io.IOException;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import javax.mail.Message;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.util.*;
 
 
 /**
@@ -48,17 +62,17 @@ class MailServiceImpl implements MailService {
     // MODEL NAMES
     private static final String APPLICATION = "application";
 
-    private JavaMailSender mailSender;
-    private VelocityEngine velocityEngine;
-    private PersonService personService;
-
-    private Properties properties;
-
     @Value("${email.manager}")
     protected String emailManager;
 
     @Value("${application.url}")
-    protected String applicationUrl;
+    private String applicationUrl;
+
+    private final JavaMailSender mailSender;
+    private final VelocityEngine velocityEngine;
+    private final PersonService personService;
+
+    private Properties properties;
 
     @Autowired
     public MailServiceImpl(JavaMailSender mailSender, VelocityEngine velocityEngine, PersonService personService) {
@@ -69,12 +83,11 @@ class MailServiceImpl implements MailService {
 
         try {
             this.properties = PropertiesUtil.load(PROPERTIES_FILE);
-        } catch (Exception ex) {
+        } catch (IOException ex) {
             LOG.error(DateMidnight.now().toString(DateFormat.PATTERN) + "No properties file found.");
             LOG.error(ex.getMessage(), ex);
         }
     }
-
 
     /**
      * @see  MailService#sendNewApplicationNotification(org.synyx.urlaubsverwaltung.core.application.domain.Application)
@@ -84,20 +97,20 @@ class MailServiceImpl implements MailService {
 
         String text = prepareMessage(application, APPLICATION, "newapplications" + TYPE, null, null, null);
         sendEmail(getBosses(), "subject.new", text);
-
     }
+
 
     /**
      * Prepares an email.
      *
      * @param  object  e.g. person or application that should be put in a model object
-     * @param  modelName of the model where the given object is put within
+     * @param  modelName  of the model where the given object is put within
      * @param  fileName  name of the email's template file
      *
      * @return  String text that must be put in the email as text (sending is done by method sendEmail)
      */
     private String prepareMessage(Object object, String modelName, String fileName, String recipient, String sender,
-                                  Comment comment) {
+        Comment comment) {
 
         Map model = new HashMap();
         model.put(modelName, object);
@@ -125,30 +138,32 @@ class MailServiceImpl implements MailService {
         return text;
     }
 
+
     private List<Person> getBosses() {
 
         return personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS);
-
     }
+
 
     protected void sendEmail(final List<Person> recipients, final String subject, final String text) {
 
         final String internationalizedSubject = properties.getProperty(subject);
 
-        final List<Person> recipientsWithMailAddress = Lists.newArrayList(Iterables.filter(recipients, new Predicate<Person>() {
-            @Override
-            public boolean apply(Person person) {
+        final List<Person> recipientsWithMailAddress = Lists.newArrayList(Iterables.filter(recipients,
+                    new Predicate<Person>() {
 
-                if (StringUtils.hasText(person.getEmail())) {
-                    return true;
-                }
+                        @Override
+                        public boolean apply(Person person) {
 
-                return false;
-            }
-        }));
+                            if (StringUtils.hasText(person.getEmail())) {
+                                return true;
+                            }
 
-        if(recipientsWithMailAddress.size() > 0) {
+                            return false;
+                        }
+                    }));
 
+        if (recipientsWithMailAddress.size() > 0) {
             MimeMessagePreparator prep = new MimeMessagePreparator() {
 
                 @Override
@@ -171,15 +186,13 @@ class MailServiceImpl implements MailService {
                 this.mailSender.send(prep);
 
                 for (Person recipient : recipientsWithMailAddress) {
-                    LOG.info("Sent email to " + recipient.getEmail() + " with subject '" + internationalizedSubject + "'");
+                    LOG.info("Sent email to " + recipient.getEmail() + " with subject '" + internationalizedSubject
+                        + "'");
                 }
-
             } catch (MailException ex) {
                 LOG.error("Sending email to " + recipientsWithMailAddress + " failed", ex);
             }
-
         }
-
     }
 
 
@@ -191,7 +204,6 @@ class MailServiceImpl implements MailService {
 
         String text = prepareMessage(a, APPLICATION, "remind" + TYPE, null, null, null);
         sendEmail(getBosses(), "subject.remind", text);
-
     }
 
 
@@ -214,10 +226,10 @@ class MailServiceImpl implements MailService {
         sendEmail(Arrays.asList(application.getPerson()), "subject.allowed.user", textUser);
     }
 
+
     private List<Person> getOfficeMembers() {
 
         return personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_OFFICE);
-
     }
 
 
@@ -288,7 +300,6 @@ class MailServiceImpl implements MailService {
 
             // mail to office
             sendEmail(getOfficeMembers(), "subject.cancelled", text);
-
         }
     }
 
@@ -304,11 +315,12 @@ class MailServiceImpl implements MailService {
         sendTechnicalNotification("subject.key.error", text);
     }
 
+
     /**
      * Sends an email to the manager of the application to inform about a technical event, e.g. if an error occurred.
      *
-     * @param subject of the email
-     * @param text of the body of the email
+     * @param  subject  of the email
+     * @param  text  of the body of the email
      */
     private void sendTechnicalNotification(final String subject, final String text) {
 
@@ -329,7 +341,6 @@ class MailServiceImpl implements MailService {
         } catch (MailException ex) {
             LOG.error("Sending email to " + emailManager + " failed", ex);
         }
-
     }
 
 
@@ -341,7 +352,6 @@ class MailServiceImpl implements MailService {
 
         String text = "An error occured while signing the application with id " + applicationId + "\n" + exception;
         sendTechnicalNotification("subject.sign.error", text);
-
     }
 
 

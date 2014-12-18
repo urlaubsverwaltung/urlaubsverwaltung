@@ -23,6 +23,8 @@ import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.util.PropertiesUtil;
 import org.synyx.urlaubsverwaltung.web.application.AppForm;
 
+import java.io.IOException;
+
 import java.util.Properties;
 
 
@@ -63,7 +65,7 @@ public class ApplicationValidator implements Validator {
 
         try {
             this.businessProperties = PropertiesUtil.load(BUSINESS_PROPERTIES_FILE);
-        } catch (Exception ex) {
+        } catch (IOException ex) {
             LOG.error("No properties file found.");
             LOG.error(ex.getMessage(), ex);
         }
@@ -224,11 +226,7 @@ public class ApplicationValidator implements Validator {
      */
     protected boolean validateStringLength(String string, int length) {
 
-        if (string.length() > length) {
-            return false;
-        } else {
-            return true;
-        }
+        return string.length() <= length;
     }
 
 

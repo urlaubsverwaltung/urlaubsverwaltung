@@ -23,7 +23,7 @@ import java.util.List;
  */
 public class JmxApplicationService {
 
-    private ApplicationDAO applicationDAO;
+    private final ApplicationDAO applicationDAO;
 
     @Autowired
     public JmxApplicationService(ApplicationDAO applicationDAO) {

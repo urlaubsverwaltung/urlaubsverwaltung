@@ -16,6 +16,11 @@ import java.util.List;
  */
 public class JmxViewUtil {
 
+    private JmxViewUtil() {
+
+        // Hide constructor for util classes
+    }
+
     public static List<String> generateReturnList(List<Application> applications) {
 
         List<String> result = new ArrayList<String>();

@@ -34,9 +34,8 @@ class CommentServiceImpl implements CommentService {
     private static final String ALLOWED = "progress.allowed";
     private static final String REJECTED = "progress.rejected";
     private static final String CANCELLED = "progress.cancelled";
-    private static final String FORCED = "progress.forced";
 
-    private CommentDAO commentDAO;
+    private final CommentDAO commentDAO;
 
     @Autowired
     public CommentServiceImpl(CommentDAO commentDAO) {

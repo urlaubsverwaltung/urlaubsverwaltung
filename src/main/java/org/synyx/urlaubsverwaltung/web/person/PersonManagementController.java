@@ -153,7 +153,8 @@ public class PersonManagementController {
 
         WorkingTime workingTime = workingTimeService.getCurrentOne(person);
 
-        return new PersonForm(person, String.valueOf(year), account, workingTime, person.getPermissions(), person.getNotifications(), locale);
+        return new PersonForm(person, String.valueOf(year), account, workingTime, person.getPermissions(),
+                person.getNotifications(), locale);
     }
 
 
@@ -186,12 +187,10 @@ public class PersonManagementController {
      * @return
      */
     @RequestMapping(value = NEW_LINK, method = RequestMethod.GET)
-    public String newPersonForm(HttpServletRequest request, Model model) {
+    public String newPersonForm(Model model) {
 
         if (sessionService.isOffice()) {
             Person person = new Person();
-
-            Locale locale = RequestContextUtils.getLocale(request);
 
             PersonForm personForm = new PersonForm();
             addModelAttributesForPersonForm(person, personForm, model);
@@ -271,5 +270,4 @@ public class PersonManagementController {
 
         return "redirect:/web/staff/";
     }
-
 }

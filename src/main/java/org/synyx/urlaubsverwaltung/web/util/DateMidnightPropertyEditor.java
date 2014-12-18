@@ -23,9 +23,9 @@ import java.util.Locale;
  */
 public class DateMidnightPropertyEditor extends PropertyEditorSupport {
 
-    private DateTimeFormatter formatter = null;
+    private final DateTimeFormatter formatter;
 
-    public DateMidnightPropertyEditor(Locale locale) {
+    public DateMidnightPropertyEditor(Locale locale) { // NOSONAR - Locale should stay here for the future
 
         // TODO: not so nice....
         this.formatter = DateTimeFormat.forPattern(DateFormat.PATTERN);

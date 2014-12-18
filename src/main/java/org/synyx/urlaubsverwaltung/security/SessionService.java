@@ -19,7 +19,7 @@ import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
 @Service
 public class SessionService {
 
-    private PersonService personService;
+    private final PersonService personService;
 
     @Autowired
     public SessionService(PersonService personService) {
@@ -67,7 +67,6 @@ public class SessionService {
 
         return false;
     }
-
 
 
     public boolean isInactive() {

@@ -26,12 +26,12 @@ import javax.annotation.PostConstruct;
 @Component
 public class BusinessPropertiesValidator {
 
+    protected static final String MAX_DAYS = "annual.vacation.max";
+    protected static final String MAX_MONTHS = "maximum.months";
+
     private static final Logger LOG = Logger.getLogger(BusinessPropertiesValidator.class);
 
     private static final String BUSINESS_PROPERTIES_FILE = "business.properties";
-
-    protected static final String MAX_DAYS = "annual.vacation.max";
-    protected static final String MAX_MONTHS = "maximum.months";
 
     private final Runnable onError;
 

@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.DateFormat;
 import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -31,8 +32,11 @@ class AccountServiceImpl implements AccountService {
 
     private static final Logger LOG = Logger.getLogger(AccountServiceImpl.class);
 
-    private AccountDAO accountDAO;
-    private OwnCalendarService calendarService;
+    private static final double MONTHS_PER_YEAR = 12.0;
+    private static final double WEEKDAYS_PER_MONTH = 21.0;
+
+    private final AccountDAO accountDAO;
+    private final OwnCalendarService calendarService;
 
     @Autowired
     AccountServiceImpl(AccountDAO accountDAO, OwnCalendarService calendarService) {
@@ -129,8 +133,8 @@ class AccountServiceImpl implements AccountService {
              */
 
             double entitlementPerYear = account.getAnnualVacationDays().doubleValue();
-            double entitlementPerMonth = entitlementPerYear / 12.0;
-            double entitlementPerDay = entitlementPerMonth / 21.0;
+            double entitlementPerMonth = entitlementPerYear / MONTHS_PER_YEAR;
+            double entitlementPerDay = entitlementPerMonth / WEEKDAYS_PER_MONTH;
             double workDays = 0.0;
 
             DateMidnight startForMonthCalc = start;
@@ -217,18 +221,16 @@ class AccountServiceImpl implements AccountService {
             Account lastYearsAccount = getHolidaysAccount(year - 1, person);
 
             if (lastYearsAccount != null) {
-                createHolidaysAccount(person, new DateMidnight(year, DateTimeConstants.JANUARY, 1),
-                    new DateMidnight(year, DateTimeConstants.DECEMBER, 31), lastYearsAccount.getAnnualVacationDays(),
-                    BigDecimal.ZERO, true);
+                createHolidaysAccount(person, DateUtil.getFirstDayOfYear(year), DateUtil.getLastDayOfYear(year),
+                    lastYearsAccount.getAnnualVacationDays(), BigDecimal.ZERO, true);
             } else {
                 // maybe user tries to apply for leave for past year --> no account information
                 // in this case just touch an account for this year with the data of the current year's account
                 // if a user is able to apply for leave, it's for sure that there is a current year's account
                 Account currentYearAccount = getHolidaysAccount(DateMidnight.now().getYear(), person);
 
-                createHolidaysAccount(person, new DateMidnight(year, DateTimeConstants.JANUARY, 1),
-                    new DateMidnight(year, DateTimeConstants.DECEMBER, 31), currentYearAccount.getAnnualVacationDays(),
-                    BigDecimal.ZERO, true);
+                createHolidaysAccount(person, DateUtil.getFirstDayOfYear(year), DateUtil.getLastDayOfYear(year),
+                    currentYearAccount.getAnnualVacationDays(), BigDecimal.ZERO, true);
             }
 
             account = getHolidaysAccount(year, person);

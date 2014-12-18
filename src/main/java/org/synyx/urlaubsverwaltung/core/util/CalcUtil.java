@@ -14,6 +14,11 @@ import java.math.BigDecimal;
  */
 public class CalcUtil {
 
+    private CalcUtil() {
+
+        // Hide constructor for util classes
+    }
+
     /*
      * function signum() of BigDecimal checks if a BigDecimal is negative, zero or positive.
      *

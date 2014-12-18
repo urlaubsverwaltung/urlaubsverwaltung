@@ -27,7 +27,8 @@ import java.security.spec.InvalidKeySpecException;
 public class SignService {
 
     private static final Logger LOG = Logger.getLogger(SignService.class);
-    private MailService mailService;
+
+    private final MailService mailService;
 
     @Autowired
     public SignService(MailService mailService) {

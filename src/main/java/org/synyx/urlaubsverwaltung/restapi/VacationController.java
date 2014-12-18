@@ -10,7 +10,6 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 
 import org.joda.time.DateMidnight;
-import org.joda.time.DateTimeConstants;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -77,7 +76,8 @@ public class VacationController {
         DateMidnight startDate = formatter.parseDateTime(from).toDateMidnight();
         DateMidnight endDate = formatter.parseDateTime(to).toDateMidnight();
 
-        List<Application> applications = applicationService.getApplicationsForACertainPeriodAndState(startDate, endDate, ApplicationStatus.ALLOWED);
+        List<Application> applications = applicationService.getApplicationsForACertainPeriodAndState(startDate, endDate,
+                ApplicationStatus.ALLOWED);
 
         List<AbsenceResponse> vacationResponses = Lists.transform(applications,
                 new Function<Application, AbsenceResponse>() {
@@ -172,7 +172,7 @@ public class VacationController {
                 DateMidnight periodStart;
                 DateMidnight periodEnd;
 
-                if(hasMonth) {
+                if (hasMonth) {
                     periodStart = DateUtil.getFirstDayOfMonth(Integer.parseInt(year), Integer.parseInt(month));
                     periodEnd = DateUtil.getLastDayOfMonth(Integer.parseInt(year), Integer.parseInt(month));
                 } else {
@@ -180,7 +180,8 @@ public class VacationController {
                     periodEnd = DateUtil.getLastDayOfYear(Integer.parseInt(year));
                 }
 
-                List<Application> applications = applicationService.getApplicationsForACertainPeriodAndPersonAndState(periodStart, periodEnd, person, ApplicationStatus.ALLOWED);
+                List<Application> applications = applicationService.getApplicationsForACertainPeriodAndPersonAndState(
+                        periodStart, periodEnd, person, ApplicationStatus.ALLOWED);
 
                 List<VacationDate> vacationDateList = new ArrayList<>();
 
@@ -211,10 +212,10 @@ public class VacationController {
 
     private class VacationDate {
 
-        private String date;
-        private Integer applicationId;
-        private String status;
-        private BigDecimal dayLength;
+        private final String date;
+        private final Integer applicationId;
+        private final String status;
+        private final BigDecimal dayLength;
 
         public VacationDate(String date, Integer applicationId, String status, BigDecimal dayLength) {
 
@@ -227,7 +228,8 @@ public class VacationController {
         @Override
         public String toString() {
 
-            return "date = " + this.date + ", href = " + this.applicationId + ", status = " + status + ", dayLength = " + dayLength;
+            return "date = " + this.date + ", href = " + this.applicationId + ", status = " + status + ", dayLength = "
+                + dayLength;
         }
     }
 }

@@ -13,7 +13,7 @@ import java.beans.PropertyEditorSupport;
  */
 public class PersonPropertyEditor extends PropertyEditorSupport {
 
-    private PersonService personService;
+    private final PersonService personService;
 
     public PersonPropertyEditor(PersonService personService) {
 

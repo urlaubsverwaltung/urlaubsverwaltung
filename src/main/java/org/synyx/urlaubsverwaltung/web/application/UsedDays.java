@@ -11,11 +11,11 @@ import java.util.Map;
 /**
  * Represents number of days for specific application states.
  *
- * @author Aljona Murygina - murygina@synyx.de
+ * @author  Aljona Murygina - murygina@synyx.de
  */
 public class UsedDays {
 
-    private Map<String, BigDecimal> days;
+    private final Map<String, BigDecimal> days;
 
     public UsedDays(ApplicationStatus... status) {
 
@@ -31,6 +31,7 @@ public class UsedDays {
         return days;
     }
 
+
     public void addDays(ApplicationStatus status, BigDecimal days) {
 
         String statusAsString = status.name();
@@ -42,6 +43,5 @@ public class UsedDays {
 
         BigDecimal addedDays = this.days.get(statusAsString).add(days);
         this.days.put(statusAsString, addedDays);
-
     }
 }

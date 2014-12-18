@@ -23,14 +23,13 @@ import java.util.List;
 @Transactional
 public class WorkingTimeService {
 
-    private WorkingTimeDAO workingTimeDAO;
+    private final WorkingTimeDAO workingTimeDAO;
 
     @Autowired
     public WorkingTimeService(WorkingTimeDAO workingTimeDAO) {
 
         this.workingTimeDAO = workingTimeDAO;
     }
-
 
     public void touch(List<Integer> workingDays, DateMidnight validFrom, Person person) {
 

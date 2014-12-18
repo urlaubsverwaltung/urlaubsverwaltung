@@ -122,11 +122,11 @@ public class TestDataCreationService {
 
         notifications.add(MailNotification.NOTIFICATION_USER);
 
-        if(personForm.getPermissions().contains(Role.BOSS)) {
+        if (personForm.getPermissions().contains(Role.BOSS)) {
             notifications.add(MailNotification.NOTIFICATION_BOSS);
         }
 
-        if(personForm.getPermissions().contains(Role.OFFICE)) {
+        if (personForm.getPermissions().contains(Role.OFFICE)) {
             notifications.add(MailNotification.NOTIFICATION_OFFICE);
         }
 
@@ -143,24 +143,25 @@ public class TestDataCreationService {
         DateMidnight now = DateMidnight.now();
 
         // FUTURE APPLICATIONS FOR LEAVE
-        createWaitingApplication(person, VacationType.HOLIDAY, DayLength.FULL, now.plusDays(10), now.plusDays(16));
-        createWaitingApplication(person, VacationType.OVERTIME, DayLength.FULL, now.plusDays(1), now.plusDays(2));
-        createWaitingApplication(person, VacationType.SPECIALLEAVE, DayLength.FULL, now.plusDays(4), now.plusDays(6));
+        createWaitingApplication(person, VacationType.HOLIDAY, DayLength.FULL, now.plusDays(10), now.plusDays(16)); // NOSONAR
+        createWaitingApplication(person, VacationType.OVERTIME, DayLength.FULL, now.plusDays(1), now.plusDays(2)); // NOSONAR
+        createWaitingApplication(person, VacationType.SPECIALLEAVE, DayLength.FULL, now.plusDays(4), now.plusDays(6)); // NOSONAR
 
         // PAST APPLICATIONS FOR LEAVE
-        createAllowedApplication(person, VacationType.HOLIDAY, DayLength.FULL, now.minusDays(20), now.minusDays(13));
-        createAllowedApplication(person, VacationType.HOLIDAY, DayLength.MORNING, now.minusDays(5), now.minusDays(5));
-        createAllowedApplication(person, VacationType.SPECIALLEAVE, DayLength.MORNING, now.minusDays(9), now.minusDays(9));
+        createAllowedApplication(person, VacationType.HOLIDAY, DayLength.FULL, now.minusDays(20), now.minusDays(13)); // NOSONAR
+        createAllowedApplication(person, VacationType.HOLIDAY, DayLength.MORNING, now.minusDays(5), now.minusDays(5)); // NOSONAR
+        createAllowedApplication(person, VacationType.SPECIALLEAVE, DayLength.MORNING, now.minusDays(9),
+            now.minusDays(9)); // NOSONAR
 
-        createRejectedApplication(person, VacationType.HOLIDAY, DayLength.FULL, now.minusDays(33), now.minusDays(30));
+        createRejectedApplication(person, VacationType.HOLIDAY, DayLength.FULL, now.minusDays(33), now.minusDays(30)); // NOSONAR
 
-        createCancelledApplication(person, VacationType.HOLIDAY, DayLength.FULL, now.minusDays(11), now.minusDays(10));
+        createCancelledApplication(person, VacationType.HOLIDAY, DayLength.FULL, now.minusDays(11), now.minusDays(10)); // NOSONAR
 
         // SICK NOTES
-        createSickNote(person, now.minusDays(10), now.minusDays(10), SickNoteType.SICK_NOTE, false);
-        createSickNote(person, now.minusDays(30), now.minusDays(25), SickNoteType.SICK_NOTE, true);
-        createSickNote(person, now.minusDays(60), now.minusDays(55), SickNoteType.SICK_NOTE_CHILD, true);
-        createSickNote(person, now.minusDays(44), now.minusDays(44), SickNoteType.SICK_NOTE_CHILD, false);
+        createSickNote(person, now.minusDays(10), now.minusDays(10), SickNoteType.SICK_NOTE, false); // NOSONAR
+        createSickNote(person, now.minusDays(30), now.minusDays(25), SickNoteType.SICK_NOTE, true); // NOSONAR
+        createSickNote(person, now.minusDays(60), now.minusDays(55), SickNoteType.SICK_NOTE_CHILD, true); // NOSONAR
+        createSickNote(person, now.minusDays(44), now.minusDays(44), SickNoteType.SICK_NOTE_CHILD, false); // NOSONAR
     }
 
 
@@ -223,7 +224,8 @@ public class TestDataCreationService {
     }
 
 
-    private SickNote createSickNote(Person person, DateMidnight startDate, DateMidnight endDate, SickNoteType type, boolean withAUB) {
+    private SickNote createSickNote(Person person, DateMidnight startDate, DateMidnight endDate, SickNoteType type,
+        boolean withAUB) {
 
         SickNote sickNote = new SickNote();
         sickNote.setPerson(person);

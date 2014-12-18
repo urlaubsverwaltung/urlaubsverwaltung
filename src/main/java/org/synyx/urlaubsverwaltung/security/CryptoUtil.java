@@ -24,6 +24,11 @@ public class CryptoUtil {
 
     private static final int KEYSIZE = 2048;
 
+    private CryptoUtil() {
+
+        // Hide constructor for util classes
+    }
+
     /**
      * generates a key pair (private key, public key).
      *

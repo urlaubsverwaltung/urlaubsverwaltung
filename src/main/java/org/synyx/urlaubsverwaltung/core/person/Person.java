@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.core.person;
 
 import com.google.common.base.MoreObjects;
-
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -177,18 +177,21 @@ public class Person extends AbstractPersistable<Integer> {
     public boolean hasRole(final Role role) {
 
         Optional<Role> hasRole = Iterables.tryFind(getPermissions(), new Predicate<Role>() {
-            @Override
-            public boolean apply(Role input) {
-                return input.equals(role);
-            }
-        });
+
+                    @Override
+                    public boolean apply(Role input) {
+
+                        return input.equals(role);
+                    }
+                });
 
         return hasRole.isPresent();
     }
 
+
     public Collection<MailNotification> getNotifications() {
 
-        if(notifications == null) {
+        if (notifications == null) {
             notifications = new ArrayList<>();
         }
 
@@ -201,18 +204,22 @@ public class Person extends AbstractPersistable<Integer> {
         this.notifications = notifications;
     }
 
+
     public boolean hasNotificationType(final MailNotification notification) {
 
-        Optional<MailNotification> hasNotificationType = Iterables.tryFind(getNotifications(), new Predicate<MailNotification>() {
-            @Override
-            public boolean apply(MailNotification input) {
-                return input.equals(notification);
-            }
-        });
+        Optional<MailNotification> hasNotificationType = Iterables.tryFind(getNotifications(),
+                new Predicate<MailNotification>() {
+
+                    @Override
+                    public boolean apply(MailNotification input) {
+
+                        return input.equals(notification);
+                    }
+                });
 
         return hasNotificationType.isPresent();
-
     }
+
 
     public String getNiceName() {
 

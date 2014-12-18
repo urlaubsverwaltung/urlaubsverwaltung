@@ -25,7 +25,7 @@ import java.util.List;
 @Service
 public class OverlapService {
 
-    private ApplicationDAO applicationDAO;
+    private final ApplicationDAO applicationDAO;
 
     @Autowired
     public OverlapService(ApplicationDAO applicationDAO) {
@@ -272,11 +272,10 @@ public class OverlapService {
     private boolean intervalsHaveGap(Interval i1, Interval i2) {
 
         // test if end of interval is equals resp. one day plus of start of other interval
-        if (!(i1.getEnd().toDateMidnight().equals(i2.getStart().toDateMidnight())
-                    || i1.getEnd().toDateMidnight().plusDays(1).equals(i2.getStart().toDateMidnight()))) {
-            return true;
-        } else {
-            return false;
-        }
+        DateMidnight endOfFirstInterval = i1.getEnd().toDateMidnight();
+        DateMidnight startOfSecondInterval = i2.getStart().toDateMidnight();
+
+        return !(endOfFirstInterval.equals(startOfSecondInterval)
+                || endOfFirstInterval.plusDays(1).equals(startOfSecondInterval));
     }
 }

@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.web.application;
 
-import org.apache.log4j.Logger;
-
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.chrono.GregorianChronology;
@@ -21,8 +19,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import org.synyx.urlaubsverwaltung.core.account.Account;
 import org.synyx.urlaubsverwaltung.core.account.AccountService;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
@@ -65,8 +63,6 @@ import java.util.Map;
  */
 @Controller
 public class ApplicationController {
-
-    private static final Logger LOG = Logger.getLogger(ApplicationController.class);
 
     // links start with...
     private static final String SHORT_PATH_APPLICATION = "/" + ControllerConstants.APPLICATION;
@@ -146,7 +142,6 @@ public class ApplicationController {
     /**
      * shows the default list, dependent on user role: if boss show waiting applications, if office show all
      * applications
-     *
      */
     @RequestMapping(value = APP_LIST, method = RequestMethod.GET)
     public String showDefault() {
@@ -169,8 +164,8 @@ public class ApplicationController {
      */
     private Model prepareModelForShowAllMethods(int year, Model model) {
 
-        DateMidnight firstDay = new DateMidnight(year, DateTimeConstants.JANUARY, 1);
-        DateMidnight lastDay = new DateMidnight(year, DateTimeConstants.DECEMBER, 31);
+        DateMidnight firstDay = DateUtil.getFirstDayOfYear(year);
+        DateMidnight lastDay = DateUtil.getLastDayOfYear(year);
 
         Map<Application, String> gravatarUrls = new HashMap<>();
         List<Application> apps = applicationService.getApplicationsForACertainPeriod(firstDay, lastDay);
@@ -178,11 +173,10 @@ public class ApplicationController {
         List<Application> applications = new ArrayList<Application>();
 
         for (Application a : apps) {
-
             boolean isNotCancelled = a.getStatus() != ApplicationStatus.CANCELLED;
             boolean isCancelledButWasAllowed = a.getStatus() == ApplicationStatus.CANCELLED && a.isFormerlyAllowed();
 
-            if(isNotCancelled || isCancelledButWasAllowed) {
+            if (isNotCancelled || isCancelledButWasAllowed) {
                 applications.add(a);
 
                 String gravatarUrl = GravatarUtil.createImgURL(a.getPerson().getEmail());
@@ -190,9 +184,7 @@ public class ApplicationController {
                 if (gravatarUrl != null) {
                     gravatarUrls.put(a, gravatarUrl);
                 }
-
             }
-
         }
 
         model.addAttribute(ControllerConstants.APPLICATIONS, applications);
@@ -285,9 +277,9 @@ public class ApplicationController {
                 applications = applicationService.getApplicationsByStateAndYear(state, year);
             }
 
-            Map<Application, String>  gravatarUrls = new HashMap<>();
+            Map<Application, String> gravatarUrls = new HashMap<>();
 
-            for(Application app : applications) {
+            for (Application app : applications) {
                 String gravatarUrl = GravatarUtil.createImgURL(app.getPerson().getEmail());
 
                 if (gravatarUrl != null) {
@@ -484,7 +476,7 @@ public class ApplicationController {
             return ApplicationConstants.APP_FORM_JSP;
         }
 
-        if (checkAndSaveApplicationForm(appForm, personForForm, isOffice, errors, model)) {
+        if (checkAndSaveApplicationForm(appForm, isOffice, errors, model)) {
             int id = applicationService.getIdOfLatestApplication(personForForm, ApplicationStatus.WAITING);
 
             return "redirect:/web/application/" + id;
@@ -528,8 +520,7 @@ public class ApplicationController {
      *
      * @return  true if everything is alright and application can be saved, else false
      */
-    private boolean checkAndSaveApplicationForm(AppForm appForm, Person person, boolean isOffice, Errors errors,
-        Model model) {
+    private boolean checkAndSaveApplicationForm(AppForm appForm, boolean isOffice, Errors errors, Model model) {
 
         Application application = appForm.createApplicationObject();
 
@@ -762,7 +753,8 @@ public class ApplicationController {
      */
     @RequestMapping(value = REJECT_APP, method = RequestMethod.PUT)
     public String rejectApplication(@PathVariable(ApplicationConstants.APPLICATION_ID) Integer applicationId,
-        @ModelAttribute(ApplicationConstants.COMMENT) Comment comment, Errors errors, RedirectAttributes redirectAttributes) {
+        @ModelAttribute(ApplicationConstants.COMMENT) Comment comment, Errors errors,
+        RedirectAttributes redirectAttributes) {
 
         Person boss = sessionService.getLoggedUser();
 
@@ -785,6 +777,7 @@ public class ApplicationController {
         }
     }
 
+
     /**
      * After confirming by user: this method set an application to cancelled.
      *
@@ -794,7 +787,8 @@ public class ApplicationController {
      */
     @RequestMapping(value = CANCEL_APP, method = RequestMethod.PUT)
     public String cancelApplication(@PathVariable(ApplicationConstants.APPLICATION_ID) Integer applicationId,
-        @ModelAttribute(ApplicationConstants.COMMENT) Comment comment, Errors errors, RedirectAttributes redirectAttributes) {
+        @ModelAttribute(ApplicationConstants.COMMENT) Comment comment, Errors errors,
+        RedirectAttributes redirectAttributes) {
 
         Application application = applicationService.getApplicationById(applicationId);
         Person loggedUser = sessionService.getLoggedUser();
@@ -888,7 +882,8 @@ public class ApplicationController {
 
 
     @RequestMapping(value = REMIND, method = RequestMethod.PUT)
-    public String remindBoss(@PathVariable(ApplicationConstants.APPLICATION_ID) Integer applicationId, RedirectAttributes redirectAttributes) {
+    public String remindBoss(@PathVariable(ApplicationConstants.APPLICATION_ID) Integer applicationId,
+        RedirectAttributes redirectAttributes) {
 
         Application application = applicationService.getApplicationById(applicationId);
         DateMidnight remindDate = application.getRemindDate();

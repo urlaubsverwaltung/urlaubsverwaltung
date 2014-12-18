@@ -26,8 +26,8 @@ import java.math.BigDecimal;
 @Service
 public class OwnCalendarService {
 
-    private JollydayCalendar jollydayCalendar;
-    private WorkingTimeService workingTimeService;
+    private final JollydayCalendar jollydayCalendar;
+    private final WorkingTimeService workingTimeService;
 
     @Autowired
     public OwnCalendarService(JollydayCalendar jollydayCalendar, WorkingTimeService workingTimeService) {

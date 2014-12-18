@@ -28,6 +28,8 @@ public class SickNoteCommentService {
 
 
     public SickNoteCommentService() {
+
+        // OK
     }
 
     public void save(SickNoteComment comment) {

@@ -39,4 +39,9 @@ public class ApplicationConstants {
     public static final String DATE_ALLOWED = "app.date.allowed";
     public static final String DATE_REJECTED = "app.date.rejected";
     public static final String DATE_CANCELLED = "app.date.cancelled";
+
+    private ApplicationConstants() {
+
+        // Hide constructor for util classes
+    }
 }

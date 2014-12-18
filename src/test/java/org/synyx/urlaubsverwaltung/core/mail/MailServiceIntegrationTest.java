@@ -2,26 +2,36 @@
 package org.synyx.urlaubsverwaltung.core.mail;
 
 import org.apache.velocity.app.VelocityEngine;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
 import org.jvnet.mock_javamail.Mailbox;
+
 import org.mockito.Mockito;
+
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+
+import org.springframework.util.ReflectionUtils;
+
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
-import org.synyx.urlaubsverwaltung.security.Role;
+
+import java.io.IOException;
+
+import java.lang.reflect.Field;
+
+import java.util.Arrays;
+import java.util.List;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -73,7 +83,8 @@ public class MailServiceIntegrationTest {
         String bossEmailAddress = "boss@boss.de";
         Person boss = new Person("boss", "Muster", "Max", bossEmailAddress);
 
-        Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS)).thenReturn(Arrays.asList(boss));
+        Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS)).thenReturn(Arrays
+            .asList(boss));
 
         mailService.sendNewApplicationNotification(application);
 
@@ -101,7 +112,8 @@ public class MailServiceIntegrationTest {
 
 
     @Test
-    public void ensureNotificationAboutAllowedApplicationIsSentToOfficeAndThePerson() throws MessagingException, IOException {
+    public void ensureNotificationAboutAllowedApplicationIsSentToOfficeAndThePerson() throws MessagingException,
+        IOException {
 
         person.setLastName("Test");
         person.setFirstName("Bernd");
@@ -110,7 +122,8 @@ public class MailServiceIntegrationTest {
         String officeEmailAddress = "office@synyx.de";
         Person office = new Person("office", "Muster", "Max", officeEmailAddress);
 
-        Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_OFFICE)).thenReturn(Arrays.asList(office));
+        Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_OFFICE)).thenReturn(
+            Arrays.asList(office));
 
         mailService.sendAllowedNotification(application, null);
 
@@ -188,7 +201,8 @@ public class MailServiceIntegrationTest {
 
 
     @Test
-    public void ensureAfterApplyingForLeaveAConfirmationNotificationIsSentToPerson() throws MessagingException, IOException {
+    public void ensureAfterApplyingForLeaveAConfirmationNotificationIsSentToPerson() throws MessagingException,
+        IOException {
 
         person.setLastName("Test");
         person.setFirstName("Hildegard");
@@ -218,7 +232,8 @@ public class MailServiceIntegrationTest {
 
 
     @Test
-    public void ensurePersonGetsANotificationIfOfficeCancelledOneOfHisApplications() throws MessagingException, IOException {
+    public void ensurePersonGetsANotificationIfOfficeCancelledOneOfHisApplications() throws MessagingException,
+        IOException {
 
         person.setLastName("Mann");
         person.setFirstName("Muster");
@@ -253,8 +268,10 @@ public class MailServiceIntegrationTest {
         assertFalse(content.contains("Mist"));
     }
 
+
     @Test
-    public void ensureOfficeMembersGetANotificationIfAPersonCancelsAnAllowedApplication() throws MessagingException, IOException {
+    public void ensureOfficeMembersGetANotificationIfAPersonCancelsAnAllowedApplication() throws MessagingException,
+        IOException {
 
         person.setLastName("Test");
         person.setFirstName("Heinrich");
@@ -262,7 +279,8 @@ public class MailServiceIntegrationTest {
         String officeEmailAddress = "office@office.de";
         Person office = new Person("office", "Office", "Marlene", officeEmailAddress);
 
-        Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_OFFICE)).thenReturn(Arrays.asList(office));
+        Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_OFFICE)).thenReturn(
+            Arrays.asList(office));
 
         boolean cancelledByOffice = false;
         mailService.sendCancelledNotification(application, cancelledByOffice, null);
@@ -282,12 +300,12 @@ public class MailServiceIntegrationTest {
         assertTrue(content.contains("Der Urlaubsantrag von Heinrich Test"));
         assertTrue(content.contains("wurde storniert"));
         assertFalse(content.contains("Mist"));
-
     }
 
 
     @Test
-    public void ensureTechnicalManagerGetsANotificationIfAKeyGeneratingErrorOccurred() throws MessagingException, IOException {
+    public void ensureTechnicalManagerGetsANotificationIfAKeyGeneratingErrorOccurred() throws MessagingException,
+        IOException {
 
         mailService.emailManager = "manager@uv.de";
         mailService.sendKeyGeneratingErrorNotification("horscht");
@@ -326,7 +344,8 @@ public class MailServiceIntegrationTest {
 
 
     @Test
-    public void ensurePersonGetsANotificationIfAnOfficeMemberAppliedForLeaveForThisPerson() throws MessagingException, IOException {
+    public void ensurePersonGetsANotificationIfAnOfficeMemberAppliedForLeaveForThisPerson() throws MessagingException,
+        IOException {
 
         person.setLastName("Müller");
         person.setFirstName("Günther");

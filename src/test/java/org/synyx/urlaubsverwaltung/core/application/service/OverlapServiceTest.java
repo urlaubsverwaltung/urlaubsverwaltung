@@ -29,7 +29,7 @@ import static org.junit.Assert.assertNotNull;
  */
 public class OverlapServiceTest {
 
-    private OverlapService instance;
+    private OverlapService service;
     private ApplicationDAO applicationDAO;
     private Person person;
 
@@ -37,7 +37,8 @@ public class OverlapServiceTest {
     public void setup() {
 
         applicationDAO = Mockito.mock(ApplicationDAO.class);
-        instance = new OverlapService(applicationDAO);
+        service = new OverlapService(applicationDAO);
+        person = new Person();
     }
 
 
@@ -56,7 +57,7 @@ public class OverlapServiceTest {
         app.setEndDate(new DateMidnight(2012, 1, 30));
         app.setPerson(person);
 
-        instance.checkOverlap(app);
+        service.checkOverlap(app);
         Mockito.verify(applicationDAO).getRelevantActiveApplicationsByPeriodForEveryDayLength(app.getStartDate()
             .toDate(), app.getEndDate().toDate(), person);
 
@@ -65,7 +66,7 @@ public class OverlapServiceTest {
         app.setStartDate(new DateMidnight(2012, 1, 25));
         app.setEndDate(new DateMidnight(2012, 1, 25));
 
-        instance.checkOverlap(app);
+        service.checkOverlap(app);
         Mockito.verify(applicationDAO).getRelevantActiveApplicationsByPeriodAndDayLength(app.getStartDate().toDate(),
             app.getEndDate().toDate(), person, DayLength.MORNING);
 
@@ -74,7 +75,7 @@ public class OverlapServiceTest {
         app.setStartDate(new DateMidnight(2012, 1, 25));
         app.setEndDate(new DateMidnight(2012, 1, 25));
 
-        instance.checkOverlap(app);
+        service.checkOverlap(app);
         Mockito.verify(applicationDAO).getRelevantActiveApplicationsByPeriodAndDayLength(app.getStartDate().toDate(),
             app.getEndDate().toDate(), person, DayLength.NOON);
     }
@@ -104,7 +105,7 @@ public class OverlapServiceTest {
         Mockito.when(applicationDAO.getRelevantActiveApplicationsByPeriodForEveryDayLength(aNew.getStartDate().toDate(),
                 aNew.getEndDate().toDate(), aNew.getPerson())).thenReturn(new ArrayList<Application>());
 
-        OverlapCase returnValue = instance.checkOverlap(aNew);
+        OverlapCase returnValue = service.checkOverlap(aNew);
 
         assertNotNull(returnValue);
         assertEquals(OverlapCase.NO_OVERLAPPING, returnValue);
@@ -128,7 +129,7 @@ public class OverlapServiceTest {
         Mockito.when(applicationDAO.getRelevantActiveApplicationsByPeriodForEveryDayLength(aNew.getStartDate().toDate(),
                 aNew.getEndDate().toDate(), aNew.getPerson())).thenReturn(new ArrayList<Application>());
 
-        returnValue = instance.checkOverlap(aNew);
+        returnValue = service.checkOverlap(aNew);
 
         assertNotNull(returnValue);
         assertEquals(OverlapCase.NO_OVERLAPPING, returnValue);
@@ -154,7 +155,7 @@ public class OverlapServiceTest {
         Mockito.when(applicationDAO.getRelevantActiveApplicationsByPeriodForEveryDayLength(aNew.getStartDate().toDate(),
                 aNew.getEndDate().toDate(), aNew.getPerson())).thenReturn(list);
 
-        returnValue = instance.checkOverlap(aNew);
+        returnValue = service.checkOverlap(aNew);
 
         assertNotNull(returnValue);
         assertEquals(OverlapCase.FULLY_OVERLAPPING, returnValue);
@@ -180,7 +181,7 @@ public class OverlapServiceTest {
         Mockito.when(applicationDAO.getRelevantActiveApplicationsByPeriodForEveryDayLength(aNew.getStartDate().toDate(),
                 aNew.getEndDate().toDate(), aNew.getPerson())).thenReturn(list);
 
-        returnValue = instance.checkOverlap(aNew);
+        returnValue = service.checkOverlap(aNew);
 
         assertNotNull(returnValue);
         assertEquals(OverlapCase.PARTLY_OVERLAPPING, returnValue);
@@ -206,7 +207,7 @@ public class OverlapServiceTest {
         Mockito.when(applicationDAO.getRelevantActiveApplicationsByPeriodForEveryDayLength(aNew.getStartDate().toDate(),
                 aNew.getEndDate().toDate(), aNew.getPerson())).thenReturn(list);
 
-        returnValue = instance.checkOverlap(aNew);
+        returnValue = service.checkOverlap(aNew);
 
         assertNotNull(returnValue);
         assertEquals(OverlapCase.PARTLY_OVERLAPPING, returnValue);
@@ -239,7 +240,7 @@ public class OverlapServiceTest {
         Mockito.when(applicationDAO.getRelevantActiveApplicationsByPeriodForEveryDayLength(aNew.getStartDate().toDate(),
                 aNew.getEndDate().toDate(), aNew.getPerson())).thenReturn(list);
 
-        returnValue = instance.checkOverlap(aNew);
+        returnValue = service.checkOverlap(aNew);
 
         assertNotNull(returnValue);
         assertEquals(OverlapCase.PARTLY_OVERLAPPING, returnValue);
@@ -272,7 +273,7 @@ public class OverlapServiceTest {
         Mockito.when(applicationDAO.getRelevantActiveApplicationsByPeriodForEveryDayLength(aNew.getStartDate().toDate(),
                 aNew.getEndDate().toDate(), aNew.getPerson())).thenReturn(list);
 
-        returnValue = instance.checkOverlap(aNew);
+        returnValue = service.checkOverlap(aNew);
 
         assertNotNull(returnValue);
         assertEquals(OverlapCase.FULLY_OVERLAPPING, returnValue);
@@ -296,7 +297,7 @@ public class OverlapServiceTest {
         Mockito.when(applicationDAO.getRelevantActiveApplicationsByPeriodForEveryDayLength(aNew.getStartDate().toDate(),
                 aNew.getEndDate().toDate(), aNew.getPerson())).thenReturn(list);
 
-        returnValue = instance.checkOverlap(aNew);
+        returnValue = service.checkOverlap(aNew);
 
         assertNotNull(returnValue);
         assertEquals(OverlapCase.PARTLY_OVERLAPPING, returnValue);
@@ -320,7 +321,7 @@ public class OverlapServiceTest {
         Mockito.when(applicationDAO.getRelevantActiveApplicationsByPeriodForEveryDayLength(aNew.getStartDate().toDate(),
                 aNew.getEndDate().toDate(), aNew.getPerson())).thenReturn(list);
 
-        returnValue = instance.checkOverlap(aNew);
+        returnValue = service.checkOverlap(aNew);
 
         assertNotNull(returnValue);
         assertEquals(OverlapCase.FULLY_OVERLAPPING, returnValue);
@@ -358,7 +359,7 @@ public class OverlapServiceTest {
         Mockito.when(applicationDAO.getRelevantActiveApplicationsByPeriodAndDayLength(aNew.getStartDate().toDate(),
                 aNew.getEndDate().toDate(), aNew.getPerson(), DayLength.FULL)).thenReturn(list);
 
-        returnValue = instance.checkOverlapForHalfDay(aNew, aNew.getHowLong());
+        returnValue = service.checkOverlapForHalfDay(aNew, aNew.getHowLong());
 
         assertEquals(OverlapCase.FULLY_OVERLAPPING, returnValue);
 
@@ -369,7 +370,7 @@ public class OverlapServiceTest {
         Mockito.when(applicationDAO.getRelevantActiveApplicationsByPeriodAndDayLength(aNew.getStartDate().toDate(),
                 aNew.getEndDate().toDate(), aNew.getPerson(), DayLength.FULL)).thenReturn(list);
 
-        returnValue = instance.checkOverlapForHalfDay(aNew, aNew.getHowLong());
+        returnValue = service.checkOverlapForHalfDay(aNew, aNew.getHowLong());
 
         assertEquals(OverlapCase.FULLY_OVERLAPPING, returnValue);
 
@@ -381,7 +382,7 @@ public class OverlapServiceTest {
         Mockito.when(applicationDAO.getRelevantActiveApplicationsByPeriodAndDayLength(aNew.getStartDate().toDate(),
                 aNew.getEndDate().toDate(), aNew.getPerson(), DayLength.FULL)).thenReturn(list);
 
-        returnValue = instance.checkOverlapForHalfDay(aNew, aNew.getHowLong());
+        returnValue = service.checkOverlapForHalfDay(aNew, aNew.getHowLong());
 
         assertEquals(OverlapCase.FULLY_OVERLAPPING, returnValue);
 
@@ -397,7 +398,7 @@ public class OverlapServiceTest {
                 aNew.getEndDate().toDate(), aNew.getPerson(), DayLength.MORNING)).thenReturn(
             new ArrayList<Application>()); // no overlap because of different dates
 
-        returnValue = instance.checkOverlapForHalfDay(aNew, aNew.getHowLong());
+        returnValue = service.checkOverlapForHalfDay(aNew, aNew.getHowLong());
 
         assertEquals(OverlapCase.NO_OVERLAPPING, returnValue);
 
@@ -423,7 +424,7 @@ public class OverlapServiceTest {
         Mockito.when(applicationDAO.getRelevantActiveApplicationsByPeriodAndDayLength(aNew.getStartDate().toDate(),
                 aNew.getEndDate().toDate(), aNew.getPerson(), DayLength.MORNING)).thenReturn(list);
 
-        returnValue = instance.checkOverlapForHalfDay(aNew, aNew.getHowLong());
+        returnValue = service.checkOverlapForHalfDay(aNew, aNew.getHowLong());
 
         assertEquals(OverlapCase.FULLY_OVERLAPPING, returnValue);
 
@@ -437,7 +438,7 @@ public class OverlapServiceTest {
                 aNew.getEndDate().toDate(), aNew.getPerson(), DayLength.MORNING)).thenReturn(
             new ArrayList<Application>());
 
-        returnValue = instance.checkOverlapForHalfDay(aNew, aNew.getHowLong());
+        returnValue = service.checkOverlapForHalfDay(aNew, aNew.getHowLong());
 
         assertEquals(OverlapCase.NO_OVERLAPPING, returnValue);
     }
@@ -474,7 +475,7 @@ public class OverlapServiceTest {
         Mockito.when(applicationDAO.getRelevantActiveApplicationsByPeriodAndDayLength(aNew.getStartDate().toDate(),
                 aNew.getEndDate().toDate(), aNew.getPerson(), DayLength.FULL)).thenReturn(list);
 
-        returnValue = instance.checkOverlapForHalfDay(aNew, aNew.getHowLong());
+        returnValue = service.checkOverlapForHalfDay(aNew, aNew.getHowLong());
 
         assertEquals(OverlapCase.FULLY_OVERLAPPING, returnValue);
 
@@ -485,7 +486,7 @@ public class OverlapServiceTest {
         Mockito.when(applicationDAO.getRelevantActiveApplicationsByPeriodAndDayLength(aNew.getStartDate().toDate(),
                 aNew.getEndDate().toDate(), aNew.getPerson(), DayLength.FULL)).thenReturn(list);
 
-        returnValue = instance.checkOverlapForHalfDay(aNew, aNew.getHowLong());
+        returnValue = service.checkOverlapForHalfDay(aNew, aNew.getHowLong());
 
         assertEquals(OverlapCase.FULLY_OVERLAPPING, returnValue);
 
@@ -497,7 +498,7 @@ public class OverlapServiceTest {
         Mockito.when(applicationDAO.getRelevantActiveApplicationsByPeriodAndDayLength(aNew.getStartDate().toDate(),
                 aNew.getEndDate().toDate(), aNew.getPerson(), DayLength.FULL)).thenReturn(list);
 
-        returnValue = instance.checkOverlapForHalfDay(aNew, aNew.getHowLong());
+        returnValue = service.checkOverlapForHalfDay(aNew, aNew.getHowLong());
 
         assertEquals(OverlapCase.FULLY_OVERLAPPING, returnValue);
 
@@ -512,7 +513,7 @@ public class OverlapServiceTest {
         Mockito.when(applicationDAO.getRelevantActiveApplicationsByPeriodAndDayLength(aNew.getStartDate().toDate(),
                 aNew.getEndDate().toDate(), aNew.getPerson(), DayLength.NOON)).thenReturn(new ArrayList<Application>()); // no overlap because of different dates
 
-        returnValue = instance.checkOverlapForHalfDay(aNew, aNew.getHowLong());
+        returnValue = service.checkOverlapForHalfDay(aNew, aNew.getHowLong());
 
         assertEquals(OverlapCase.NO_OVERLAPPING, returnValue);
 
@@ -538,7 +539,7 @@ public class OverlapServiceTest {
         Mockito.when(applicationDAO.getRelevantActiveApplicationsByPeriodAndDayLength(aNew.getStartDate().toDate(),
                 aNew.getEndDate().toDate(), aNew.getPerson(), DayLength.NOON)).thenReturn(list);
 
-        returnValue = instance.checkOverlapForHalfDay(aNew, aNew.getHowLong());
+        returnValue = service.checkOverlapForHalfDay(aNew, aNew.getHowLong());
 
         assertEquals(OverlapCase.FULLY_OVERLAPPING, returnValue);
 
@@ -552,7 +553,7 @@ public class OverlapServiceTest {
         Mockito.when(applicationDAO.getRelevantActiveApplicationsByPeriodAndDayLength(aNew.getStartDate().toDate(),
                 aNew.getEndDate().toDate(), aNew.getPerson(), DayLength.NOON)).thenReturn(new ArrayList<Application>());
 
-        returnValue = instance.checkOverlapForHalfDay(aNew, aNew.getHowLong());
+        returnValue = service.checkOverlapForHalfDay(aNew, aNew.getHowLong());
 
         assertEquals(OverlapCase.NO_OVERLAPPING, returnValue);
     }

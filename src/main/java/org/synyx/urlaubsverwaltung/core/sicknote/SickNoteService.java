@@ -38,6 +38,12 @@ import java.util.List;
 @Transactional
 public class SickNoteService {
 
+    @Value("${sicknote.sickPay.limit}")
+    private int sickPayLimit;
+
+    @Value("${sicknote.sickPay.notification}")
+    private int sickPayNotificationTime;
+
     private SickNoteDAO sickNoteDAO;
     private SickNoteCommentDAO commentDAO;
     private OwnCalendarService calendarService;
@@ -45,12 +51,6 @@ public class SickNoteService {
     private SignService signService;
     private CommentService commentService;
     private MailService mailService;
-
-    @Value("${sicknote.sickPay.limit}")
-    protected int sickPayLimit;
-
-    @Value("${sicknote.sickPay.notification}")
-    protected int sickPayNotificationTime;
 
     @Autowired
     public SickNoteService(SickNoteDAO sickNoteDAO, SickNoteCommentDAO commentDAO, OwnCalendarService calendarService,
