@@ -12,7 +12,6 @@ import org.springframework.ui.Model;
 
 import org.springframework.validation.Errors;
 
-import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -28,231 +27,198 @@ import static org.junit.Assert.assertTrue;
  */
 public class ApplicationValidatorTest {
 
-    private ApplicationValidator instance;
-    private AppForm app;
-    private Errors errors = Mockito.mock(Errors.class);
+    private ApplicationValidator validator;
+    private Errors errors;
+
+    private AppForm appForm;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
 
-        instance = new ApplicationValidator();
-        app = new AppForm();
-        Mockito.reset(errors);
+        validator = new ApplicationValidator();
+        errors = Mockito.mock(Errors.class);
+
+        appForm = new AppForm();
+
+        appForm.setVacationType(VacationType.HOLIDAY);
+        appForm.setHowLong(DayLength.FULL);
+        appForm.setStartDate(DateMidnight.now());
+        appForm.setEndDate(DateMidnight.now().plusDays(2));
     }
 
 
-    /**
-     * Test of supports method, of class ApplicationValidator.
-     */
     @Test
-    public void testSupports() {
+    public void ensureSupportsAppFormClass() {
 
-        boolean returnValue;
-
-        returnValue = instance.supports(null);
-        assertFalse(returnValue);
-
-        returnValue = instance.supports(Person.class);
-        assertFalse(returnValue);
-
-        returnValue = instance.supports(AppForm.class);
-        assertTrue(returnValue);
+        assertTrue(validator.supports(AppForm.class));
     }
 
 
-    /**
-     * Test of validate method, of class ApplicationValidator.
-     */
     @Test
-    public void testValidate() {
+    public void ensureDoesNotSupportNull() {
 
-        app.setVacationType(VacationType.HOLIDAY);
-        app.setHowLong(DayLength.FULL);
+        assertFalse(validator.supports(null));
+    }
 
-        // if mandatory fields are empty
 
-        // if date fields are null
-        app.setEndDate(null);
-        instance.validate(app, errors);
-        Mockito.verify(errors).rejectValue("endDate", "error.mandatory.field");
-        Mockito.reset(errors);
+    @Test
+    public void ensureDoesNotSupportOtherClass() {
 
-        app.setStartDate(null);
-        instance.validate(app, errors);
+        assertFalse(validator.supports(Person.class));
+    }
+
+
+    @Test
+    public void ensureStartDateIsMandatory() {
+
+        appForm.setHowLong(DayLength.FULL);
+        appForm.setStartDate(null);
+
+        validator.validate(appForm, errors);
+
         Mockito.verify(errors).rejectValue("startDate", "error.mandatory.field");
         Mockito.reset(errors);
+    }
 
-        app.setHowLong(DayLength.MORNING);
-        app.setStartDateHalf(null);
-        instance.validate(app, errors);
-        Mockito.verify(errors).rejectValue("startDateHalf", "error.mandatory.field");
+
+    @Test
+    public void ensureEndDateIsMandatory() {
+
+        appForm.setHowLong(DayLength.FULL);
+        appForm.setEndDate(null);
+
+        validator.validate(appForm, errors);
+
+        Mockito.verify(errors).rejectValue("endDate", "error.mandatory.field");
         Mockito.reset(errors);
+    }
 
-        // if field reason is empty
 
-        app.setVacationType(VacationType.OVERTIME);
-        app.setReason(null);
-        instance.validate(app, errors);
-        Mockito.verify(errors).rejectValue("reason", "error.mandatory.field");
-        Mockito.reset(errors);
+    @Test
+    public void ensureStartDateIsNotMandatoryForHalfDays() {
 
-        app.setReason("");
-        instance.validate(app, errors);
-        Mockito.verify(errors).rejectValue("reason", "error.mandatory.field");
-        Mockito.reset(errors);
+        appForm.setHowLong(DayLength.MORNING);
+        appForm.setStartDate(null);
 
-        // if from > to
-        app.setHowLong(DayLength.FULL);
-        app.setStartDate(new DateMidnight(2012, 1, 17));
-        app.setEndDate(new DateMidnight(2012, 1, 12));
-        instance.validate(app, errors);
-        Mockito.verify(errors).reject("error.period");
-        Mockito.reset(errors);
+        validator.validate(appForm, errors);
 
-        // if application's year is later than maximum permissible date
-        // is tested in PropertiesValidatorTest: test for method validateMaximumVacationProperty
+        assertTrue(errors.getFieldErrors("startDate").isEmpty());
+    }
 
-        // test if everything is ok
-        app.setStartDate(new DateMidnight(2012, 1, 17));
-        app.setEndDate(new DateMidnight(2012, 1, 20));
-        app.setVacationType(VacationType.SPECIALLEAVE);
-        app.setReason("Hochzeit");
-        instance.validate(app, errors);
+
+    @Test
+    public void ensureStartDateHalfIsNotMandatoryForFullDays() {
+
+        appForm.setHowLong(DayLength.FULL);
+        appForm.setStartDateHalf(null);
+
+        validator.validate(appForm, errors);
+
         Mockito.verifyZeroInteractions(errors);
+        Mockito.reset(errors);
+    }
 
-        // String length
 
-        app.setAddress(
-            "Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. ");
-        instance.validate(app, errors);
+    @Test
+    public void ensureReasonIsNotMandatoryForHoliday() {
+
+        appForm.setVacationType(VacationType.HOLIDAY);
+        appForm.setReason("");
+
+        validator.validate(appForm, errors);
+
+        Mockito.verifyZeroInteractions(errors);
+        Mockito.reset(errors);
+    }
+
+
+    @Test
+    public void ensureReasonIsMandatoryForOtherVacationTypeThanHoliday() {
+
+        appForm.setVacationType(VacationType.OVERTIME);
+        appForm.setReason("");
+
+        validator.validate(appForm, errors);
+
+        Mockito.verify(errors).rejectValue("reason", "error.mandatory.field");
+        Mockito.reset(errors);
+    }
+
+
+    @Test
+    public void ensureThereIsAMaximumCharLength() {
+
+        appForm.setAddress(
+            "Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt"
+            + " ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud "
+            + "exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. ");
+
+        validator.validate(appForm, errors);
+
         Mockito.verify(errors).rejectValue("address", "error.length");
         Mockito.reset(errors);
-
-        app.setAddress("normale Adresse");
-        instance.validate(app, errors);
-        Mockito.verifyZeroInteractions(errors);
-        Mockito.reset(errors);
-
-        app.setReason(
-            "Freilebende Gummibärchen gibt es nicht. Man kauft sie in Packungen an der Kinokasse. Dieser Kauf ist der Beginn einer fast erotischen und sehr ambivalenten Beziehung Gummibärchen-Mensch. Zuerst gen...toller Text ist das, einfach wow!");
-        instance.validate(app, errors);
-        Mockito.verify(errors).rejectValue("reason", "error.length");
-        Mockito.reset(errors);
-
-        app.setReason("normaler Grund");
-        instance.validate(app, errors);
-        Mockito.verifyZeroInteractions(errors);
-        Mockito.reset(errors);
-
-        app.setComment("kleiner Kommentar");
-        instance.validate(app, errors);
-        Mockito.verifyZeroInteractions(errors);
-        Mockito.reset(errors);
-
-        app.setComment(
-            "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis");
-        instance.validate(app, errors);
-        Mockito.verify(errors).rejectValue("comment", "error.length");
-        Mockito.reset(errors);
-    }
-
-
-    /**
-     * Test of validateComment method, of class ApplicationValidator.
-     */
-    @Test
-    public void testValidateComment() {
-
-        Comment comment = new Comment();
-
-        comment.setReason(null);
-        instance.validateComment(comment, errors, true);
-        Mockito.verify(errors).rejectValue("reason", "error.reason");
-        Mockito.reset(errors);
-
-        comment.setReason("");
-        instance.validateComment(comment, errors, true);
-        Mockito.verify(errors).rejectValue("reason", "error.reason");
-        Mockito.reset(errors);
-
-        comment.setReason("Aus gutem Grund");
-        instance.validateComment(comment, errors, true);
-        Mockito.verifyZeroInteractions(errors);
-        Mockito.reset(errors);
-
-        comment.setReason(
-            "Freilebende Gummibärchen gibt es nicht. Man kauft sie in Packungen an der Kinokasse. Dieser Kauf ist der Beginn einer fast erotischen und sehr ambivalenten Beziehung Gummibärchen-Mensch. Zuerst gen...toller Text ist das, einfach wow!");
-        instance.validateComment(comment, errors, true);
-        Mockito.verify(errors).rejectValue("reason", "error.length");
     }
 
 
     @Test
-    public void testValidateCommentMayBeEmptyIfNotMandatory() {
+    public void ensureValidatingStringLengthReturnsTrueForValidString() {
 
-        Comment comment = new Comment();
-
-        comment.setReason(null);
-        instance.validateComment(comment, errors, false);
-        Mockito.verifyZeroInteractions(errors);
-        Mockito.reset(errors);
-
-        comment.setReason("");
-        instance.validateComment(comment, errors, false);
-        Mockito.verifyZeroInteractions(errors);
-        Mockito.reset(errors);
-
-        // has error if text is too long
-        comment.setReason(
-            "Freilebende Gummibärchen gibt es nicht. Man kauft sie in Packungen an der Kinokasse. Dieser Kauf ist der Beginn einer fast erotischen und sehr ambivalenten Beziehung Gummibärchen-Mensch. Zuerst gen...toller Text ist das, einfach wow!");
-        instance.validateComment(comment, errors, false);
-        Mockito.verify(errors).rejectValue("reason", "error.length");
-    }
-
-
-    /**
-     * Test of validateStringLength method, of class ApplicationValidator.
-     */
-    @Test
-    public void testValidateStringLength() {
-
-        String text = "riesengroße begründung, die kein mensch braucht, so ein Quatsch!";
-        boolean returnValue = instance.validateStringLength(text, 50);
-        assertNotNull(returnValue);
-        assertFalse(returnValue);
-
-        text = "kurze knackige Begründung";
-        returnValue = instance.validateStringLength(text, 50);
-        assertNotNull(returnValue);
-        assertTrue(returnValue);
+        boolean isValid = validator.validateStringLength("kurze knackige Begründung", 50);
+        assertNotNull(isValid);
+        assertTrue(isValid);
     }
 
 
     @Test
-    public void testValidateAppForVeryPastDate() {
+    public void ensureValidatingStringLengthReturnsFalseForInvalidString() {
+
+        String text =
+            "Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt";
+
+        boolean isValid = validator.validateStringLength(text, 50);
+        assertNotNull(isValid);
+        assertFalse(isValid);
+    }
+
+
+    @Test
+    public void ensureStartDateMustBeBeforeEndDate() {
+
+        appForm.setHowLong(DayLength.FULL);
+        appForm.setStartDate(new DateMidnight(2012, 1, 17));
+        appForm.setEndDate(new DateMidnight(2012, 1, 12));
+
+        validator.validate(appForm, errors);
+
+        Mockito.verify(errors).reject("error.period");
+        Mockito.reset(errors);
+    }
+
+
+    @Test
+    public void ensureVeryPastDateIsNotValid() {
 
         Model model = Mockito.mock(Model.class);
 
-        DateMidnight date = new DateMidnight(2011, DateTimeConstants.SEPTEMBER, 1);
+        appForm.setHowLong(DayLength.FULL);
+        appForm.setStartDate(new DateMidnight(2011, DateTimeConstants.SEPTEMBER, 1));
 
-        app.setHowLong(DayLength.FULL);
-        app.setStartDate(date);
+        validator.validatePast(appForm, errors, model);
 
-        instance.validatePast(app, errors, model);
         Mockito.verify(model).addAttribute("timeError", "error.period.past");
     }
 
 
     @Test
-    public void testValidateAppForVeryFutureDate() {
+    public void ensureVeryFutureDateIsNotValid() {
 
-        DateMidnight futureDate = DateMidnight.now().plusYears(5);
+        DateMidnight futureDate = DateMidnight.now().plusYears(10);
 
-        app.setHowLong(DayLength.FULL);
-        app.setStartDate(futureDate);
-        app.setEndDate(futureDate.plusDays(1));
+        appForm.setHowLong(DayLength.FULL);
+        appForm.setStartDate(futureDate);
+        appForm.setEndDate(futureDate.plusDays(1));
 
-        instance.validate(app, errors);
+        validator.validate(appForm, errors);
 
         Mockito.verify(errors).reject("error.too.long");
         Mockito.reset(errors);

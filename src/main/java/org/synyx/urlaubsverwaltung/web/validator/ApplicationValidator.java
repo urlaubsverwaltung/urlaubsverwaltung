@@ -98,18 +98,8 @@ public class ApplicationValidator implements Validator {
     private void validateDateFields(AppForm app, Errors errors) {
 
         if (app.getHowLong() == DayLength.FULL) {
-            // check if date fields are not filled
-            if (app.getStartDate() == null) {
-                if (errors.getFieldErrors(START_DATE).isEmpty()) {
-                    errors.rejectValue(START_DATE, MANDATORY_FIELD);
-                }
-            }
-
-            if (app.getEndDate() == null) {
-                if (errors.getFieldErrors(END_DATE).isEmpty()) {
-                    errors.rejectValue(END_DATE, MANDATORY_FIELD);
-                }
-            }
+            validateNotNull(app.getStartDate(), START_DATE, errors);
+            validateNotNull(app.getEndDate(), END_DATE, errors);
 
             if (app.getStartDate() != null && app.getEndDate() != null) {
                 // check if from < to
@@ -127,10 +117,17 @@ public class ApplicationValidator implements Validator {
                 }
             }
         } else {
-            if (app.getStartDateHalf() == null) {
-                if (errors.getFieldErrors(START_DATE_HALF).isEmpty()) {
-                    errors.rejectValue(START_DATE_HALF, MANDATORY_FIELD);
-                }
+            validateNotNull(app.getStartDateHalf(), START_DATE_HALF, errors);
+        }
+    }
+
+
+    private void validateNotNull(DateMidnight date, String field, Errors errors) {
+
+        if (date == null) {
+            // may be that date field is null because of cast exception, than there is already a field error
+            if (errors.getFieldErrors(field).isEmpty()) {
+                errors.rejectValue(field, MANDATORY_FIELD);
             }
         }
     }
