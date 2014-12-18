@@ -42,10 +42,15 @@ public class SickNoteValidatorTest {
 
 
     @Test
-    public void testValidateStartDate() {
+    public void ensureValidDatesHaveNoErrors() {
 
         validator.validate(sickNote, errors);
         Mockito.verifyZeroInteractions(errors);
+    }
+
+
+    @Test
+    public void ensureStartDateMayNotBeNull() {
 
         sickNote.setStartDate(null);
         validator.validate(sickNote, errors);
@@ -55,10 +60,7 @@ public class SickNoteValidatorTest {
 
 
     @Test
-    public void testValidateEndDate() {
-
-        validator.validate(sickNote, errors);
-        Mockito.verifyZeroInteractions(errors);
+    public void ensureEndDateMayNotBeNull() {
 
         sickNote.setEndDate(null);
         validator.validate(sickNote, errors);
@@ -68,10 +70,7 @@ public class SickNoteValidatorTest {
 
 
     @Test
-    public void testValidatePeriod() {
-
-        validator.validate(sickNote, errors);
-        Mockito.verifyZeroInteractions(errors);
+    public void ensureStartDateMustBeBeforeEndDateToHaveAValidPeriod() {
 
         sickNote.setStartDate(new DateMidnight(2013, DateTimeConstants.DECEMBER, 1));
         sickNote.setEndDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 19));
@@ -82,21 +81,34 @@ public class SickNoteValidatorTest {
 
 
     @Test
-    public void testValidateComment() {
+    public void ensureCommentMayNotBeNull() {
 
-        SickNoteComment comment = new SickNoteComment();
-
-        validator.validateComment(comment, errors);
+        validator.validateComment(new SickNoteComment(), errors);
         validator.validate(sickNote, errors);
         Mockito.verify(errors).rejectValue("text", "error.mandatory.field");
         Mockito.reset(errors);
+    }
 
-        comment.setText(
-            "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores bla bla");
+
+    @Test
+    public void ensureTooLongCommentIsNotValid() {
+
+        SickNoteComment comment = new SickNoteComment();
+
+        comment.setText("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, "
+            + "sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, "
+            + "sed diam voluptua. At vero eos et accusam et justo duo dolores bla bla");
         validator.validateComment(comment, errors);
         validator.validate(sickNote, errors);
         Mockito.verify(errors).rejectValue("text", "error.length");
         Mockito.reset(errors);
+    }
+
+
+    @Test
+    public void ensureValidCommentHasNoErrors() {
+
+        SickNoteComment comment = new SickNoteComment();
 
         comment.setText("I am a fluffy little comment");
         validator.validateComment(comment, errors);
@@ -106,7 +118,7 @@ public class SickNoteValidatorTest {
 
 
     @Test
-    public void testValidateAUPeriod() {
+    public void ensureAUStartAndEndDateMayNotBeNullIfAUBIsPresent() {
 
         sickNote.setAubPresent(true);
 
@@ -115,6 +127,26 @@ public class SickNoteValidatorTest {
         Mockito.verify(errors).rejectValue("aubStartDate", "error.mandatory.field");
         Mockito.verify(errors).rejectValue("aubEndDate", "error.mandatory.field");
         Mockito.reset(errors);
+    }
+
+
+    @Test
+    public void ensureAUStartDateMustBeBeforeAUEndDateToHaveAValidPeriod() {
+
+        sickNote.setAubPresent(true);
+
+        sickNote.setAubStartDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 20));
+        sickNote.setAubEndDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 19));
+        validator.validate(sickNote, errors);
+        Mockito.verify(errors).rejectValue("aubEndDate", "error.period");
+        Mockito.reset(errors);
+    }
+
+
+    @Test
+    public void ensureValidAUPeriodHasNoErrors() {
+
+        sickNote.setAubPresent(true);
 
         sickNote.setAubStartDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 19));
         sickNote.setAubEndDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 20));
@@ -124,7 +156,7 @@ public class SickNoteValidatorTest {
 
 
     @Test
-    public void testValidateAUPeriodNotInSickNotePeriod() {
+    public void ensureAUPeriodMustBeWithinSickNotePeriod() {
 
         sickNote.setAubPresent(true);
 

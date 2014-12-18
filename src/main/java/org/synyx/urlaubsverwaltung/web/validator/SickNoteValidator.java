@@ -47,6 +47,16 @@ public class SickNoteValidator implements Validator {
 
         SickNote sickNote = (SickNote) target;
 
+        validateSickNotePeriod(sickNote, errors);
+
+        if (sickNote.isAubPresent()) {
+            validateAUPeriod(sickNote, errors);
+        }
+    }
+
+
+    private void validateSickNotePeriod(SickNote sickNote, Errors errors) {
+
         DateMidnight startDate = sickNote.getStartDate();
         DateMidnight endDate = sickNote.getEndDate();
 
@@ -56,23 +66,29 @@ public class SickNoteValidator implements Validator {
         if (startDate != null && endDate != null) {
             validatePeriod(startDate, endDate, END_DATE, errors);
         }
+    }
 
-        startDate = sickNote.getAubStartDate();
-        endDate = sickNote.getAubEndDate();
 
-        // not valid if one field is null and the other not
-        if ((startDate == null && endDate != null) || (startDate != null && endDate == null)) {
-            errors.rejectValue(AUB_END_DATE, ERROR_PERIOD);
-        }
+    private void validateAUPeriod(SickNote sickNote, Errors errors) {
 
-        if (sickNote.isAubPresent()) {
-            // if the AU is present, there must be a period given
-            if (startDate != null && endDate != null) {
-                validatePeriod(startDate, endDate, AUB_END_DATE, errors);
-                validateAUPeriod(sickNote, errors);
-            } else {
-                validateNotNull(startDate, AUB_START_DATE, errors);
-                validateNotNull(endDate, AUB_END_DATE, errors);
+        DateMidnight aubStartDate = sickNote.getAubStartDate();
+        DateMidnight aubEndDate = sickNote.getAubEndDate();
+
+        validateNotNull(aubStartDate, AUB_START_DATE, errors);
+        validateNotNull(aubEndDate, AUB_END_DATE, errors);
+
+        if (aubStartDate != null && aubEndDate != null) {
+            validatePeriod(aubStartDate, aubEndDate, AUB_END_DATE, errors);
+
+            // Intervals are inclusive of the start instant and exclusive of the end, i.e. add one day at the end
+            Interval interval = new Interval(sickNote.getStartDate(), sickNote.getEndDate().plusDays(1));
+
+            if (!interval.contains(aubStartDate)) {
+                errors.rejectValue(AUB_START_DATE, ERROR_PERIOD_SICKNOTE);
+            }
+
+            if (!interval.contains(aubEndDate)) {
+                errors.rejectValue(AUB_END_DATE, ERROR_PERIOD_SICKNOTE);
             }
         }
     }
@@ -101,21 +117,6 @@ public class SickNoteValidator implements Validator {
 
         if (startDate.isAfter(endDate)) {
             errors.rejectValue(field, ERROR_PERIOD);
-        }
-    }
-
-
-    private void validateAUPeriod(SickNote sickNote, Errors errors) {
-
-        // Intervals are inclusive of the start instant and exclusive of the end, i.e. add one day at the end
-        Interval interval = new Interval(sickNote.getStartDate(), sickNote.getEndDate().plusDays(1));
-
-        if (!interval.contains(sickNote.getAubStartDate())) {
-            errors.rejectValue(AUB_START_DATE, ERROR_PERIOD_SICKNOTE);
-        }
-
-        if (!interval.contains(sickNote.getAubEndDate())) {
-            errors.rejectValue(AUB_END_DATE, ERROR_PERIOD_SICKNOTE);
         }
     }
 
