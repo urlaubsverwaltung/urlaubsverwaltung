@@ -16,6 +16,7 @@ import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
 import org.synyx.urlaubsverwaltung.security.Role;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 import javax.persistence.*;
@@ -140,25 +141,33 @@ public class Person extends AbstractPersistable<Integer> {
 
     public byte[] getPrivateKey() {
 
-        return privateKey;
+        return privateKey == null ? null : Arrays.copyOf(privateKey, privateKey.length);
     }
 
 
     public void setPrivateKey(byte[] privateKey) {
 
-        this.privateKey = privateKey;
+        if (privateKey != null) {
+            this.privateKey = Arrays.copyOf(privateKey, privateKey.length);
+        } else {
+            this.privateKey = null;
+        }
     }
 
 
     public byte[] getPublicKey() {
 
-        return publicKey;
+        return publicKey == null ? null : Arrays.copyOf(publicKey, publicKey.length);
     }
 
 
     public void setPublicKey(byte[] publicKey) {
 
-        this.publicKey = publicKey;
+        if (publicKey != null) {
+            this.publicKey = Arrays.copyOf(publicKey, publicKey.length);
+        } else {
+            this.publicKey = null;
+        }
     }
 
 

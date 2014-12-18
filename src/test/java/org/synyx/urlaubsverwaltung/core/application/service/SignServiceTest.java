@@ -49,7 +49,7 @@ public class SignServiceTest {
 
         // signature of person should be filled, signature of boss not
         Assert.assertNotNull(application.getSignaturePerson());
-        Assert.assertEquals(null, application.getSignatureBoss());
+        Assert.assertNull(application.getSignatureBoss());
     }
 
 
@@ -71,6 +71,6 @@ public class SignServiceTest {
 
         // signature of boss should be filled, signature of person not
         Assert.assertNotNull(application.getSignatureBoss());
-        Assert.assertEquals(null, application.getSignaturePerson());
+        Assert.assertNull(application.getSignaturePerson());
     }
 }

@@ -11,6 +11,7 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.math.BigDecimal;
 
+import java.util.Arrays;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -310,25 +311,33 @@ public class Application extends AbstractPersistable<Integer> {
 
     public byte[] getSignatureBoss() {
 
-        return signatureBoss;
+        return signatureBoss == null ? null : Arrays.copyOf(signatureBoss, signatureBoss.length);
     }
 
 
     public void setSignatureBoss(byte[] signatureBoss) {
 
-        this.signatureBoss = signatureBoss;
+        if (signatureBoss != null) {
+            this.signatureBoss = Arrays.copyOf(signatureBoss, signatureBoss.length);
+        } else {
+            this.signatureBoss = null;
+        }
     }
 
 
     public byte[] getSignaturePerson() {
 
-        return signaturePerson;
+        return signaturePerson == null ? null : Arrays.copyOf(signaturePerson, signaturePerson.length);
     }
 
 
     public void setSignaturePerson(byte[] signaturePerson) {
 
-        this.signaturePerson = signaturePerson;
+        if (signaturePerson != null) {
+            this.signaturePerson = Arrays.copyOf(signaturePerson, signaturePerson.length);
+        } else {
+            this.signaturePerson = null;
+        }
     }
 
 
