@@ -14,10 +14,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.Temporal;
+import javax.persistence.*;
 
 
 /**
@@ -36,19 +33,19 @@ public class Application extends AbstractPersistable<Integer> {
     @ManyToOne
     private Person person;
 
-    // The person that applied the application: might be user himself or office
+    // The person that applied the application
     @ManyToOne
     private Person applier;
 
-    // The person that allowed/rejected the application: might never be user himself
+    // The person that allowed/rejected the application
     @ManyToOne
     private Person boss;
 
-    // The person that cancelled the application: might be user himself or office
+    // The person that cancelled the application
     @ManyToOne
     private Person canceller;
 
-    // Number of days that is subtract from HolidayAccount
+    // Number of days the application for leave 'costs'
     private BigDecimal days;
 
     // Period of holiday
@@ -59,13 +56,14 @@ public class Application extends AbstractPersistable<Integer> {
     private Date endDate;
 
     // Type of holiday, e.g. holiday, special leave, etc.
+    @Enumerated(EnumType.STRING)
     private VacationType vacationType;
 
     // length of day: contains time of day (morning, noon or full day) and value (1.0 or 0.5 - as BigDecimal)
+    @Enumerated(EnumType.STRING)
     private DayLength howLong;
 
     // For special and unpaid leave a reason is required
-    // for holiday default = "Erholung"
     private String reason;
 
     // Representative person of employee during his/her holiday
@@ -75,15 +73,15 @@ public class Application extends AbstractPersistable<Integer> {
     // Address and phone number during holiday
     private String address;
 
-    // Date of application (applied by user himself or by office)
+    // Date of applying application for leave
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date applicationDate;
 
-    // Date of cancelling an application (cancelled by user himself or by office)
+    // Date of cancelling an application for leave
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date cancelDate;
 
-    // Date of editing (allow or reject) an application by a boss
+    // Date of editing (allow or reject) an application for leave
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date editedDate;
 
@@ -92,6 +90,7 @@ public class Application extends AbstractPersistable<Integer> {
     private Date remindDate;
 
     // State of application (e.g. waiting, allowed, ...)
+    @Enumerated(EnumType.STRING)
     private ApplicationStatus status;
 
     // if application has been cancelled during status allowed: formerlyAllowed is true
