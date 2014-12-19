@@ -625,6 +625,18 @@ public class ApplicationController {
 
         model.addAttribute("comments", comments);
 
+        Map<Comment, String> gravatarUrls = new HashMap<>();
+
+        for (Comment comment : comments) {
+            String gravatarUrl = GravatarUtil.createImgURL(comment.getPerson().getEmail());
+
+            if (gravatarUrl != null) {
+                gravatarUrls.put(comment, gravatarUrl);
+            }
+        }
+
+        model.addAttribute(PersonConstants.GRAVATAR_URLS, gravatarUrls);
+
         if (application.getStatus() == ApplicationStatus.WAITING && sessionService.isBoss()) {
             // get all persons that have the Boss Role
             List<Person> bosses = personService.getPersonsByRole(Role.BOSS);

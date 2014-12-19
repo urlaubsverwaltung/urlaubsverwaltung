@@ -171,7 +171,10 @@
                         <c:forEach items="${sickNote.comments}" var="comment" varStatus="loopStatus">
                             <tr>
                                 <td>
-                                    <c:out value="${comment.person.firstName}" />&nbsp;<c:out value="${comment.person.lastName}" />
+                                    <img class="img-circle hidden-print center-block" src="<c:out value='${gravatarUrls[comment]}?d=mm&s=40'/>"/>
+                                </td>
+                                <td>
+                                    <c:out value="${comment.person.niceName}" />
                                 </td>
                                 <td>
                                     <uv:date date="${comment.date}" />:

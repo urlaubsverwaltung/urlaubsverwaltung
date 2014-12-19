@@ -19,9 +19,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import org.synyx.urlaubsverwaltung.DateFormat;
+import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
@@ -46,6 +47,7 @@ import org.synyx.urlaubsverwaltung.web.validator.ApplicationValidator;
 import org.synyx.urlaubsverwaltung.web.validator.SickNoteValidator;
 
 import java.math.BigDecimal;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -99,8 +101,7 @@ public class SickNoteController {
         DateMidnight to = now.dayOfYear().withMaximumValue();
 
         return "redirect:/web/sicknote?from=" + from.toString(DateFormat.PATTERN) + "&to="
-                + to.toString(DateFormat.PATTERN);
-
+            + to.toString(DateFormat.PATTERN);
     }
 
 
@@ -125,7 +126,6 @@ public class SickNoteController {
     public String filterSickNotes(@ModelAttribute("searchRequest") SearchRequest searchRequest) {
 
         if (sessionService.isOffice()) {
-
             DateMidnight now = DateMidnight.now();
             DateMidnight from = now;
             DateMidnight to = now;
@@ -142,7 +142,7 @@ public class SickNoteController {
             }
 
             return "redirect:/web/sicknote?from=" + from.toString(DateFormat.PATTERN) + "&to="
-                    + to.toString(DateFormat.PATTERN);
+                + to.toString(DateFormat.PATTERN);
         }
 
         return ControllerConstants.ERROR_JSP;
@@ -195,33 +195,30 @@ public class SickNoteController {
         }
 
         for (SickNote sickNote : sickNotes) {
-
             Person person = sickNote.getPerson();
 
-            if(sickNote.getType().equals(SickNoteType.SICK_NOTE_CHILD)) {
-
+            if (sickNote.getType().equals(SickNoteType.SICK_NOTE_CHILD)) {
                 BigDecimal currentChildSickDays = childSickDays.get(person);
                 childSickDays.put(person, currentChildSickDays.add(sickNote.getWorkDays()));
 
-                if(sickNote.isAubPresent()) {
-                    BigDecimal workDays = calendarService.getWorkDays(DayLength.FULL, sickNote.getAubStartDate(), sickNote.getAubEndDate(), person);
+                if (sickNote.isAubPresent()) {
+                    BigDecimal workDays = calendarService.getWorkDays(DayLength.FULL, sickNote.getAubStartDate(),
+                            sickNote.getAubEndDate(), person);
 
                     BigDecimal currentChildSickDaysWithAUB = childSickDaysWithAUB.get(person);
                     childSickDaysWithAUB.put(person, currentChildSickDaysWithAUB.add(workDays));
                 }
-
             } else {
-
                 BigDecimal currentSickDays = sickDays.get(person);
                 sickDays.put(person, currentSickDays.add(sickNote.getWorkDays()));
 
-                if(sickNote.isAubPresent()) {
-                    BigDecimal workDays = calendarService.getWorkDays(DayLength.FULL, sickNote.getAubStartDate(), sickNote.getAubEndDate(), person);
+                if (sickNote.isAubPresent()) {
+                    BigDecimal workDays = calendarService.getWorkDays(DayLength.FULL, sickNote.getAubStartDate(),
+                            sickNote.getAubEndDate(), person);
 
                     BigDecimal currentSickDaysWithAUB = sickDaysWithAUB.get(person);
                     sickDaysWithAUB.put(person, currentSickDaysWithAUB.add(workDays));
                 }
-
             }
         }
 
@@ -232,9 +229,6 @@ public class SickNoteController {
 
         model.addAttribute("persons", persons);
         model.addAttribute("gravatars", gravatars);
-
-
-
     }
 
 
@@ -249,6 +243,18 @@ public class SickNoteController {
             model.addAttribute("sickNote", sickNoteService.getById(id));
             model.addAttribute("comment", new SickNoteComment());
             model.addAttribute(PersonConstants.GRAVATAR, GravatarUtil.createImgURL(sickNote.getPerson().getEmail()));
+
+            Map<SickNoteComment, String> gravatarUrls = new HashMap<>();
+
+            for (SickNoteComment comment : sickNote.getComments()) {
+                String gravatarUrl = GravatarUtil.createImgURL(comment.getPerson().getEmail());
+
+                if (gravatarUrl != null) {
+                    gravatarUrls.put(comment, gravatarUrl);
+                }
+            }
+
+            model.addAttribute(PersonConstants.GRAVATAR_URLS, gravatarUrls);
 
             return "sicknote/sick_note";
         }
@@ -348,7 +354,8 @@ public class SickNoteController {
                 model.addAttribute("sickNote", sickNote);
                 model.addAttribute("comment", comment);
                 model.addAttribute("error", true);
-                model.addAttribute(PersonConstants.GRAVATAR, GravatarUtil.createImgURL(sickNote.getPerson().getEmail()));
+                model.addAttribute(PersonConstants.GRAVATAR,
+                    GravatarUtil.createImgURL(sickNote.getPerson().getEmail()));
 
                 return "sicknote/sick_note";
             }
