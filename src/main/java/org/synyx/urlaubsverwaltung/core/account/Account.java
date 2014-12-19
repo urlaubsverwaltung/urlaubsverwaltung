@@ -36,9 +36,6 @@ public class Account extends AbstractPersistable<Integer> {
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date validTo;
 
-    // TODO: Can this be removed?
-    private int year;
-
     // theoretical number of vacation days a person has, i.e. it's the annual entitlement, but it is possible that
     // person e.g. will quit soon the company so he has not the full holidays entitlement; the actual number of vacation
     // days for a year describes the field vacationDays
@@ -62,7 +59,6 @@ public class Account extends AbstractPersistable<Integer> {
         this.person = person;
         this.validFrom = validFrom;
         this.validTo = validTo;
-        this.year = new DateTime(this.validFrom).toDateMidnight().getYear();
         this.annualVacationDays = annualVacationDays;
         this.remainingVacationDays = remainingVacationDays;
         this.remainingVacationDaysExpire = remainingVacationDaysExpire;

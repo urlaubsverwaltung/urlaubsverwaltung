@@ -10,5 +10,6 @@
     <include file="dbchangelogs/changelog-0.5-add-indexes.xml"/>
     <include file="dbchangelogs/changelog-0.6-add-index-for-workingTime.xml"/>
     <include file="dbchangelogs/changelog-0.7-create-notifications-table.xml"/>
+    <include file="dbchangelogs/changelog-0.8-clean-up-of-tables.xml"/>
 
 </databaseChangeLog>
