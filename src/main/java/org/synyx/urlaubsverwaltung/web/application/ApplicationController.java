@@ -1,5 +1,9 @@
 package org.synyx.urlaubsverwaltung.web.application;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+
 import org.joda.time.DateMidnight;
 import org.joda.time.chrono.GregorianChronology;
 
@@ -48,7 +52,6 @@ import org.synyx.urlaubsverwaltung.web.validator.ApplicationValidator;
 
 import java.math.BigDecimal;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -56,7 +59,7 @@ import java.util.Map;
 
 
 /**
- * Controller for management of {@link Application} entities.
+ * Controller for management of {@link Application}s.
  *
  * @author  Aljona Murygina
  */
@@ -103,8 +106,9 @@ public class ApplicationController {
 
 
     /**
-     * shows the default list, dependent on user role: if boss show waiting applications, if office show all
-     * applications
+     * Show waiting applications for leave on default.
+     *
+     * @return  waiting applications for leave page or error page if not boss or office
      */
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String showDefault() {
@@ -118,292 +122,301 @@ public class ApplicationController {
 
 
     /**
-     * Prepares the model object for the showAll or showAllByYear methods.
+     * Show all applications for leave, not dependent on their status.
      *
-     * @param  year
+     * @param  year  if not given, the current year is used to display applications for leave for
      * @param  model
      *
-     * @return
+     * @return  all applications for leave for the given year or for the current year if no year is given
      */
-    private Model prepareModelForShowAllMethods(int year, Model model) {
+    @RequestMapping(value = "/all", method = RequestMethod.GET)
+    public String showAll(@RequestParam(value = ControllerConstants.YEAR, required = false) Integer year, Model model) {
+
+        if (sessionService.isBoss() || sessionService.isOffice()) {
+            int yearToDisplay = year == null ? DateMidnight.now().getYear() : year;
+
+            List<Application> applicationsForLeave = getAllRelevantApplicationsForLeave(yearToDisplay);
+
+            model.addAttribute(ControllerConstants.APPLICATIONS, applicationsForLeave);
+            model.addAttribute(PersonConstants.GRAVATAR_URLS, getAllRelevantGravatarUrls(applicationsForLeave));
+            model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
+            model.addAttribute("titleApp", "applications.all");
+            model.addAttribute(ControllerConstants.YEAR, DateMidnight.now().getYear());
+
+            return ControllerConstants.APPLICATION + "/app_list";
+        } else {
+            return ControllerConstants.ERROR_JSP;
+        }
+    }
+
+
+    /**
+     * Get all relevant applications for leave, i.e. not cancelled applications for leave and cancelled but formerly
+     * allowed applications for leave.
+     *
+     * @param  year  to get applications for leave for
+     *
+     * @return  all relevant applications for leave
+     */
+    private List<Application> getAllRelevantApplicationsForLeave(int year) {
 
         DateMidnight firstDay = DateUtil.getFirstDayOfYear(year);
         DateMidnight lastDay = DateUtil.getLastDayOfYear(year);
 
+        List<Application> applications = applicationService.getApplicationsForACertainPeriod(firstDay, lastDay);
+
+        List<Application> filteredApplications = Lists.newArrayList(Iterables.filter(applications,
+                    new Predicate<Application>() {
+
+                        @Override
+                        public boolean apply(Application application) {
+
+                            boolean isNotCancelled = !application.hasStatus(ApplicationStatus.CANCELLED);
+                            boolean isCancelledButWasAllowed = application.hasStatus(ApplicationStatus.CANCELLED)
+                                && application.isFormerlyAllowed();
+
+                            return isNotCancelled || isCancelledButWasAllowed;
+                        }
+                    }));
+
+        return filteredApplications;
+    }
+
+
+    /**
+     * Get all gravatar urls for the persons of the given applications for leave.
+     *
+     * @param  applications  of the persons for that gravatar urls should be fetched for
+     *
+     * @return  gravatar urls mapped to applications for leave
+     */
+    private Map<Application, String> getAllRelevantGravatarUrls(List<Application> applications) {
+
         Map<Application, String> gravatarUrls = new HashMap<>();
-        List<Application> apps = applicationService.getApplicationsForACertainPeriod(firstDay, lastDay);
 
-        List<Application> applications = new ArrayList<>();
+        for (Application application : applications) {
+            String gravatarUrl = GravatarUtil.createImgURL(application.getPerson().getEmail());
 
-        for (Application a : apps) {
-            boolean isNotCancelled = a.getStatus() != ApplicationStatus.CANCELLED;
-            boolean isCancelledButWasAllowed = a.getStatus() == ApplicationStatus.CANCELLED && a.isFormerlyAllowed();
-
-            if (isNotCancelled || isCancelledButWasAllowed) {
-                applications.add(a);
-
-                String gravatarUrl = GravatarUtil.createImgURL(a.getPerson().getEmail());
-
-                if (gravatarUrl != null) {
-                    gravatarUrls.put(a, gravatarUrl);
-                }
+            if (gravatarUrl != null) {
+                gravatarUrls.put(application, gravatarUrl);
             }
         }
 
-        model.addAttribute(ControllerConstants.APPLICATIONS, applications);
-        model.addAttribute(PersonConstants.GRAVATAR_URLS, gravatarUrls);
-        sessionService.setLoggedUser(model);
-        model.addAttribute(ApplicationConstants.TITLE_APP, "applications.all");
-        model.addAttribute(ApplicationConstants.TOUCHED_DATE, ApplicationConstants.DATE_OVERVIEW);
-        model.addAttribute(ControllerConstants.YEAR, DateMidnight.now().getYear());
-
-        return model;
+        return gravatarUrls;
     }
 
 
     /**
-     * show a list of all {@link Application} for the current year not dependent on {@link ApplicationStatus}.
+     * Show waiting applications for leave.
      *
+     * @param  year  if not given, the current year is used to display applications for leave for
      * @param  model
      *
-     * @return
-     */
-    @RequestMapping(value = "/all", method = RequestMethod.GET)
-    public String showAll(Model model) {
-
-        if (sessionService.isBoss() || sessionService.isOffice()) {
-            int year = DateMidnight.now().getYear();
-            prepareModelForShowAllMethods(year, model);
-
-            return ApplicationConstants.APP_LIST_JSP;
-        } else {
-            return ControllerConstants.ERROR_JSP;
-        }
-    }
-
-
-    /**
-     * show a list of all {@link Application} for the given year not dependent on {@link ApplicationStatus}.
-     *
-     * @param  year
-     * @param  model
-     *
-     * @return
-     */
-    @RequestMapping(value = "/all", params = ControllerConstants.YEAR, method = RequestMethod.GET)
-    public String showAllByYear(@RequestParam(ControllerConstants.YEAR) int year, Model model) {
-
-        if (sessionService.isBoss() || sessionService.isOffice()) {
-            prepareModelForShowAllMethods(year, model);
-
-            return ApplicationConstants.APP_LIST_JSP;
-        } else {
-            return ControllerConstants.ERROR_JSP;
-        }
-    }
-
-
-    /**
-     * This method prepares applications list view by the given ApplicationStatus.
-     *
-     * @param  state
-     * @param  year
-     * @param  model
-     *
-     * @return
-     */
-    private String prepareAppListView(ApplicationStatus state, int year, Model model) {
-
-        String title = "";
-        String touchedDate = "";
-
-        if (state == ApplicationStatus.WAITING) {
-            title = ApplicationConstants.TITLE_WAITING;
-            touchedDate = ApplicationConstants.DATE_APPLIED;
-        } else if (state == ApplicationStatus.ALLOWED) {
-            title = ApplicationConstants.TITLE_ALLOWED;
-            touchedDate = ApplicationConstants.DATE_ALLOWED;
-        } else if (state == ApplicationStatus.CANCELLED) {
-            title = ApplicationConstants.TITLE_CANCELLED;
-            touchedDate = ApplicationConstants.DATE_CANCELLED;
-        } else if (state == ApplicationStatus.REJECTED) {
-            title = ApplicationConstants.TITLE_REJECTED;
-            touchedDate = ApplicationConstants.DATE_REJECTED;
-        }
-
-        if (sessionService.isBoss() || sessionService.isOffice()) {
-            List<Application> applications;
-
-            if (state == ApplicationStatus.CANCELLED) {
-                applications = applicationService.getCancelledApplicationsByYearFormerlyAllowed(year);
-            } else {
-                applications = applicationService.getApplicationsByStateAndYear(state, year);
-            }
-
-            Map<Application, String> gravatarUrls = new HashMap<>();
-
-            for (Application app : applications) {
-                String gravatarUrl = GravatarUtil.createImgURL(app.getPerson().getEmail());
-
-                if (gravatarUrl != null) {
-                    gravatarUrls.put(app, gravatarUrl);
-                }
-            }
-
-            model.addAttribute(PersonConstants.GRAVATAR_URLS, gravatarUrls);
-            model.addAttribute(ControllerConstants.APPLICATIONS, applications);
-            sessionService.setLoggedUser(model);
-            model.addAttribute(ApplicationConstants.TITLE_APP, title);
-            model.addAttribute(ApplicationConstants.TOUCHED_DATE, touchedDate);
-            model.addAttribute(ControllerConstants.YEAR, DateMidnight.now().getYear());
-
-            return ApplicationConstants.APP_LIST_JSP;
-        } else {
-            return ControllerConstants.ERROR_JSP;
-        }
-    }
-
-
-    /**
-     * used if you want to see all waiting applications of the given year.
-     *
-     * @param  model
-     *
-     * @return
-     */
-    @RequestMapping(value = "/waiting", params = ControllerConstants.YEAR, method = RequestMethod.GET)
-    public String showWaitingByYear(@RequestParam(ControllerConstants.YEAR) int year, Model model) {
-
-        return prepareAppListView(ApplicationStatus.WAITING, year, model);
-    }
-
-
-    /**
-     * used if you want to see all waiting applications.
-     *
-     * @param  model
-     *
-     * @return
+     * @return  waiting applications for leave for the given year or for the current year if no year is given
      */
     @RequestMapping(value = "/waiting", method = RequestMethod.GET)
-    public String showWaiting(Model model) {
+    public String showWaiting(@RequestParam(value = ControllerConstants.YEAR, required = false) Integer year,
+        Model model) {
 
-        return prepareAppListView(ApplicationStatus.WAITING, DateMidnight.now().getYear(), model);
+        if (sessionService.isBoss() || sessionService.isOffice()) {
+            int yearToDisplay = year == null ? DateMidnight.now().getYear() : year;
+
+            return prepareRelevantApplicationsForLeave(ApplicationStatus.WAITING, yearToDisplay, model);
+        } else {
+            return ControllerConstants.ERROR_JSP;
+        }
+    }
+
+
+    private String prepareRelevantApplicationsForLeave(ApplicationStatus status, int year, Model model) {
+
+        String title = "";
+
+        if (status == ApplicationStatus.WAITING) {
+            title = "applications.waiting";
+        } else if (status == ApplicationStatus.ALLOWED) {
+            title = "applications.allowed";
+        } else if (status == ApplicationStatus.CANCELLED) {
+            title = "applications.cancelled";
+        } else if (status == ApplicationStatus.REJECTED) {
+            title = "applications.rejected";
+        }
+
+        DateMidnight firstDay = DateUtil.getFirstDayOfYear(year);
+        DateMidnight lastDay = DateUtil.getLastDayOfYear(year);
+
+        List<Application> applicationsToBeShown;
+
+        List<Application> applications = applicationService.getApplicationsForACertainPeriodAndState(firstDay, lastDay,
+                status);
+
+        // only formerly allowed applications for leave are relevant for cancelled status
+        if (status == ApplicationStatus.CANCELLED) {
+            applicationsToBeShown = Lists.newArrayList(Iterables.filter(applications, new Predicate<Application>() {
+
+                            @Override
+                            public boolean apply(Application application) {
+
+                                return application.isFormerlyAllowed();
+                            }
+                        }));
+        } else {
+            applicationsToBeShown = applications;
+        }
+
+        Map<Application, String> gravatarUrls = getAllRelevantGravatarUrls(applicationsToBeShown);
+
+        model.addAttribute(PersonConstants.GRAVATAR_URLS, gravatarUrls);
+        model.addAttribute(ControllerConstants.APPLICATIONS, applicationsToBeShown);
+        model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
+        model.addAttribute("titleApp", title);
+        model.addAttribute(ControllerConstants.YEAR, DateMidnight.now().getYear());
+
+        return ControllerConstants.APPLICATION + "/app_list";
     }
 
 
     /**
-     * used if you want to see all allowed applications of the given year.
+     * Show allowed applications for leave.
      *
+     * @param  year  if not given, the current year is used to display applications for leave for
      * @param  model
      *
-     * @return
-     */
-    @RequestMapping(value = "/allowed", params = ControllerConstants.YEAR, method = RequestMethod.GET)
-    public String showAllowedByYear(@RequestParam(ControllerConstants.YEAR) int year, Model model) {
-
-        return prepareAppListView(ApplicationStatus.ALLOWED, year, model);
-    }
-
-
-    /**
-     * used if you want to see all allowed applications.
-     *
-     * @param  model
-     *
-     * @return
+     * @return  allowed applications for leave for the given year or for the current year if no year is given
      */
     @RequestMapping(value = "/allowed", method = RequestMethod.GET)
-    public String showAllowed(Model model) {
+    public String showAllowed(@RequestParam(value = ControllerConstants.YEAR, required = false) Integer year,
+        Model model) {
 
-        return prepareAppListView(ApplicationStatus.ALLOWED, DateMidnight.now().getYear(), model);
+        if (sessionService.isBoss() || sessionService.isOffice()) {
+            int yearToDisplay = year == null ? DateMidnight.now().getYear() : year;
+
+            return prepareRelevantApplicationsForLeave(ApplicationStatus.ALLOWED, yearToDisplay, model);
+        } else {
+            return ControllerConstants.ERROR_JSP;
+        }
     }
 
 
     /**
-     * used if you want to see all cancelled applications of the given year.
+     * Show cancelled applications for leave.
      *
+     * @param  year  if not given, the current year is used to display applications for leave for
      * @param  model
      *
-     * @return
-     */
-    @RequestMapping(value = "/cancelled", params = ControllerConstants.YEAR, method = RequestMethod.GET)
-    public String showCancelledByYear(@RequestParam(ControllerConstants.YEAR) int year, Model model) {
-
-        return prepareAppListView(ApplicationStatus.CANCELLED, year, model);
-    }
-
-
-    /**
-     * used if you want to see all cancelled applications.
-     *
-     * @param  model
-     *
-     * @return
+     * @return  cancelled applications for leave for the given year or for the current year if no year is given
      */
     @RequestMapping(value = "/cancelled", method = RequestMethod.GET)
-    public String showCancelled(Model model) {
+    public String showCancelled(@RequestParam(value = ControllerConstants.YEAR, required = false) Integer year,
+        Model model) {
 
-        return prepareAppListView(ApplicationStatus.CANCELLED, DateMidnight.now().getYear(), model);
+        if (sessionService.isBoss() || sessionService.isOffice()) {
+            int yearToDisplay = year == null ? DateMidnight.now().getYear() : year;
+
+            return prepareRelevantApplicationsForLeave(ApplicationStatus.CANCELLED, yearToDisplay, model);
+        } else {
+            return ControllerConstants.ERROR_JSP;
+        }
     }
 
 
     /**
-     * show all rejected applications of the given year.
+     * Show rejected applications for leave.
      *
-     * @param  year
+     * @param  year  if not given, the current year is used to display applications for leave for
      * @param  model
      *
-     * @return
-     */
-    @RequestMapping(value = "/rejected", params = ControllerConstants.YEAR, method = RequestMethod.GET)
-    public String showRejectedByYear(@RequestParam(ControllerConstants.YEAR) int year, Model model) {
-
-        return prepareAppListView(ApplicationStatus.REJECTED, year, model);
-    }
-
-
-    /**
-     * show all rejected applications.
-     *
-     * @param  model
-     *
-     * @return
+     * @return  rejected applications for leave for the given year or for the current year if no year is given
      */
     @RequestMapping(value = "/rejected", method = RequestMethod.GET)
-    public String showRejected(Model model) {
+    public String showRejected(@RequestParam(value = ControllerConstants.YEAR, required = false) Integer year,
+        Model model) {
 
-        return prepareAppListView(ApplicationStatus.REJECTED, DateMidnight.now().getYear(), model);
+        if (sessionService.isBoss() || sessionService.isOffice()) {
+            int yearToDisplay = year == null ? DateMidnight.now().getYear() : year;
+
+            return prepareRelevantApplicationsForLeave(ApplicationStatus.REJECTED, yearToDisplay, model);
+        } else {
+            return ControllerConstants.ERROR_JSP;
+        }
     }
 
 
     /**
-     * used if you want to apply an application for leave (shows formular).
+     * Show form to apply an application for leave.
      *
-     * @param  model  the datamodel
+     * @param  model
      *
-     * @return
+     * @return  form to apply an application for leave
      */
     @RequestMapping(value = "/new", method = RequestMethod.GET)
     public String newApplicationForm(Model model) {
 
         if (sessionService.isInactive()) {
-            return ControllerConstants.LOGIN_LINK;
+            return ControllerConstants.ERROR_JSP;
         } else {
             Person person = sessionService.getLoggedUser();
+            Account holidaysAccount = accountService.getHolidaysAccount(DateMidnight.now().getYear(), person);
 
-            if (accountService.getHolidaysAccount(DateMidnight.now().getYear(), person) == null) {
-                model.addAttribute(ApplicationConstants.NOTPOSSIBLE, true);
+            if (holidaysAccount == null) {
+                model.addAttribute("notpossible", true);
             } else {
-                prepareForm(person, new AppForm(), model);
+                prepareApplicationForLeaveForm(person, new AppForm(), model);
             }
 
-            return ApplicationConstants.APP_FORM_JSP;
+            return ControllerConstants.APPLICATION + "/app_form";
         }
     }
 
 
-    public String newApplication(Person person, AppForm appForm, boolean isOffice, Errors errors, Model model) {
+    private void prepareApplicationForLeaveForm(Person person, AppForm appForm, Model model) {
+
+        List<Person> persons = personService.getAllPersonsExcept(person);
+
+        Account account = accountService.getHolidaysAccount(DateMidnight.now(GregorianChronology.getInstance())
+                .getYear(), person);
+
+        if (account != null) {
+            BigDecimal vacationDaysLeft = calculationService.calculateLeftVacationDays(account);
+            BigDecimal remainingVacationDaysLeft = calculationService.calculateLeftRemainingVacationDays(account);
+            model.addAttribute(PersonConstants.LEFT_DAYS, vacationDaysLeft);
+            model.addAttribute(PersonConstants.REM_LEFT_DAYS, remainingVacationDaysLeft);
+            model.addAttribute(PersonConstants.BEFORE_APRIL, DateUtil.isBeforeApril(DateMidnight.now()));
+        }
+
+        model.addAttribute(ControllerConstants.PERSON, person);
+        model.addAttribute(ControllerConstants.PERSONS, persons);
+        model.addAttribute("date", DateMidnight.now(GregorianChronology.getInstance()));
+        model.addAttribute(ControllerConstants.YEAR, DateMidnight.now(GregorianChronology.getInstance()).getYear());
+        model.addAttribute("appForm", appForm);
+        model.addAttribute(ControllerConstants.ACCOUNT, account);
+        model.addAttribute("vacTypes", VacationType.values());
+        model.addAttribute("full", DayLength.FULL);
+        model.addAttribute("morning", DayLength.MORNING);
+        model.addAttribute("noon", DayLength.NOON);
+        model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
+    }
+
+
+    /**
+     * Apply an application for leave. The application will have waiting state after applying. If applying was
+     * successful the details to the created application for leave will be displayed.
+     *
+     * @param  appForm
+     * @param  errors
+     * @param  model
+     *
+     * @return  the details page of the created application for leave if everything was successful or the validated
+     *          application for leave form
+     */
+    @RequestMapping(value = "/new", method = RequestMethod.POST)
+    public String newApplicationByUser(@ModelAttribute("appForm") AppForm appForm, Errors errors, Model model) {
+
+        return newApplication(sessionService.getLoggedUser(), appForm, false, errors, model);
+    }
+
+
+    private String newApplication(Person person, AppForm appForm, boolean isOffice, Errors errors, Model model) {
 
         Person loggedUser = sessionService.getLoggedUser();
 
@@ -418,25 +431,25 @@ public class ApplicationController {
         validator.validate(appForm, errors);
 
         if (errors.hasErrors()) {
-            prepareForm(personForForm, appForm, model);
+            prepareApplicationForLeaveForm(personForForm, appForm, model);
 
             if (errors.hasGlobalErrors()) {
                 model.addAttribute("errors", errors);
             }
 
-            return ApplicationConstants.APP_FORM_JSP;
+            return ControllerConstants.APPLICATION + "/app_form";
         }
 
         validator.validatePast(appForm, errors, model);
 
         if (model.containsAttribute("timeError")) {
-            prepareForm(personForForm, appForm, model);
+            prepareApplicationForLeaveForm(personForForm, appForm, model);
 
             if (errors.hasGlobalErrors()) {
                 model.addAttribute("errors", errors);
             }
 
-            return ApplicationConstants.APP_FORM_JSP;
+            return ControllerConstants.APPLICATION + "/app_form";
         }
 
         if (checkAndSaveApplicationForm(appForm, isOffice, errors, model)) {
@@ -444,31 +457,14 @@ public class ApplicationController {
 
             return "redirect:/web/application/" + id;
         } else {
-            prepareForm(personForForm, appForm, model);
+            prepareApplicationForLeaveForm(personForForm, appForm, model);
 
             if (errors.hasGlobalErrors()) {
                 model.addAttribute("errors", errors);
             }
 
-            return ApplicationConstants.APP_FORM_JSP;
+            return ControllerConstants.APPLICATION + "/app_form";
         }
-    }
-
-
-    /**
-     * use this to save an application (will be in "waiting" state).
-     *
-     * @param  appForm {@link AppForm}
-     * @param  errors
-     * @param  model
-     *
-     * @return  if success returns the detail view of the new applied application
-     */
-    @RequestMapping(value = "/new", method = RequestMethod.POST)
-    public String newApplicationByUser(@ModelAttribute(ApplicationConstants.APPFORM) AppForm appForm, Errors errors,
-        Model model) {
-
-        return newApplication(sessionService.getLoggedUser(), appForm, false, errors, model);
     }
 
 
@@ -542,10 +538,10 @@ public class ApplicationController {
 
 
     /**
-     * This method is analogial to application form for user, but office is able to apply for leave on behalf of other
-     * users.
+     * This method is analogue to application for leave form for user, but office is able to apply for leave on behalf
+     * of other users.
      *
-     * @param  personId
+     * @param  personId  to apply leave for
      * @param  model
      *
      * @return
@@ -557,22 +553,22 @@ public class ApplicationController {
         if (sessionService.isOffice()) {
             Person person = personService.getPersonByID(personId);
 
-            // check if the loggedUser is active
+            // check if the logged user is active
             if (sessionService.isInactive()) {
                 model.addAttribute("notpossible", true);
             } else {
-                // check if the loggedUser has a current/valid holidays account
+                // check if the logged user has a current/valid holidays account
                 if (accountService.getHolidaysAccount(DateMidnight.now().getYear(), person) == null) {
-                    model.addAttribute(ApplicationConstants.NOTPOSSIBLE, true); // not possible to apply for leave
+                    model.addAttribute("notpossible", true);
                 } else {
-                    prepareForm(person, new AppForm(), model);
+                    prepareApplicationForLeaveForm(person, new AppForm(), model);
 
-                    List<Person> persons = personService.getActivePersons(); // get all active persons
-                    model.addAttribute(ApplicationConstants.PERSON_LIST, persons);
+                    List<Person> persons = personService.getActivePersons();
+                    model.addAttribute("personList", persons);
                 }
             }
 
-            return ApplicationConstants.APP_FORM_JSP;
+            return ControllerConstants.APPLICATION + "/app_form";
         } else {
             return ControllerConstants.ERROR_JSP;
         }
@@ -580,22 +576,23 @@ public class ApplicationController {
 
 
     /**
-     * This method saves an application that is applied by the office on behalf of an user.
+     * Apply an application for leave on behalf of an user. The application will have waiting state after applying. If
+     * applying was successful the details to the created application for leave will be displayed.
+     *
+     * <p>NOTE: Can not use 'person' as param, must be 'personId' to differ from field
+     * {@link org.synyx.urlaubsverwaltung.web.application.AppForm#person}. Else you get errors in property binding.</p>
      *
      * @param  personId  person on behalf application is applied
-     * @param  appForm {@link AppForm}
+     * @param  appForm
      * @param  errors
      * @param  model
      *
-     * @return  if success returns the detail view of the new applied application
-     *
-     *          <p>NOTE: Can not use 'person' as param, must be 'personId' to differ from field
-     *          {@link org.synyx.urlaubsverwaltung.web.application.AppForm#person}. Else you get errors in property
-     *          binding.</p>
+     * @return  the details page of the created application for leave if everything was successful or the validated
+     *          application for leave form*
      */
     @RequestMapping(value = "/new", params = "personId", method = RequestMethod.POST)
     public String newApplicationByOffice(@RequestParam("personId") Integer personId,
-        @ModelAttribute(ApplicationConstants.APPFORM) AppForm appForm, Errors errors, Model model) {
+        @ModelAttribute("appForm") AppForm appForm, Errors errors, Model model) {
 
         Person person = personService.getPersonByID(personId);
 
@@ -603,12 +600,56 @@ public class ApplicationController {
     }
 
 
-    private void prepareForm(Person person, AppForm appForm, Model model) {
+    /**
+     * Show detailled information to an application for leave.
+     *
+     * @param  applicationId  of the application for leave to show information for
+     * @param  model
+     *
+     * @return  details page of the specific application for leave
+     */
+    @RequestMapping(value = "/{applicationId}", method = RequestMethod.GET)
+    public String showApplicationDetail(@PathVariable("applicationId") Integer applicationId, Model model) {
 
-        List<Person> persons = personService.getAllPersonsExcept(person);
+        Person loggedUser = sessionService.getLoggedUser();
 
-        Account account = accountService.getHolidaysAccount(DateMidnight.now(GregorianChronology.getInstance())
-                .getYear(), person);
+        Application application = applicationService.getApplicationById(applicationId);
+
+        if (sessionService.isBoss() || sessionService.isOffice()) {
+            prepareDetailView(application, model);
+
+            return ControllerConstants.APPLICATION + "/app_detail";
+        } else if (loggedUser.equals(application.getPerson())) {
+            prepareDetailView(application, model);
+
+            return ControllerConstants.APPLICATION + "/app_detail";
+        } else {
+            return ControllerConstants.ERROR_JSP;
+        }
+    }
+
+
+    private void prepareDetailView(Application application, Model model) {
+
+        model.addAttribute("comment", new Comment());
+
+        List<Comment> comments = commentService.getCommentsByApplication(application);
+
+        model.addAttribute("comments", comments);
+
+        if (application.getStatus() == ApplicationStatus.WAITING && sessionService.isBoss()) {
+            // get all persons that have the Boss Role
+            List<Person> bosses = personService.getPersonsByRole(Role.BOSS);
+            model.addAttribute("bosses", bosses);
+            model.addAttribute("modelPerson", new Person());
+        }
+
+        model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
+        model.addAttribute("application", application);
+
+        int year = application.getStartDate().getYear();
+
+        Account account = accountService.getHolidaysAccount(year, application.getPerson());
 
         if (account != null) {
             BigDecimal vacationDaysLeft = calculationService.calculateLeftVacationDays(account);
@@ -618,47 +659,12 @@ public class ApplicationController {
             model.addAttribute(PersonConstants.BEFORE_APRIL, DateUtil.isBeforeApril(DateMidnight.now()));
         }
 
-        model.addAttribute(ControllerConstants.PERSON, person);
-        model.addAttribute(ControllerConstants.PERSONS, persons);
-        model.addAttribute("date", DateMidnight.now(GregorianChronology.getInstance()));
-        model.addAttribute(ControllerConstants.YEAR, DateMidnight.now(GregorianChronology.getInstance()).getYear());
-        model.addAttribute(ApplicationConstants.APPFORM, appForm);
         model.addAttribute(ControllerConstants.ACCOUNT, account);
-        model.addAttribute("vacTypes", VacationType.values());
-        model.addAttribute("full", DayLength.FULL);
-        model.addAttribute("morning", DayLength.MORNING);
-        model.addAttribute("noon", DayLength.NOON);
-        sessionService.setLoggedUser(model);
-    }
+        model.addAttribute(ControllerConstants.YEAR, year);
 
-
-    /**
-     * application detail view for office; link in.
-     *
-     * @param  applicationId
-     * @param  model
-     *
-     * @return
-     */
-    @RequestMapping(value = "/{applicationId}", method = RequestMethod.GET)
-    public String showApplicationDetail(@PathVariable(ApplicationConstants.APPLICATION_ID) Integer applicationId,
-        Model model) {
-
-        Person loggedUser = sessionService.getLoggedUser();
-
-        Application application = applicationService.getApplicationById(applicationId);
-
-        if (sessionService.isBoss() || sessionService.isOffice()) {
-            prepareDetailView(application, -1, model);
-
-            return ApplicationConstants.SHOW_APP_DETAIL_JSP;
-        } else if (loggedUser.equals(application.getPerson())) {
-            prepareDetailView(application, -1, model);
-
-            return ApplicationConstants.SHOW_APP_DETAIL_JSP;
-        } else {
-            return ControllerConstants.ERROR_JSP;
-        }
+        // get url of loggedUser's gravatar image
+        String url = GravatarUtil.createImgURL(application.getPerson().getEmail());
+        model.addAttribute("gravatar", url);
     }
 
 
@@ -666,8 +672,8 @@ public class ApplicationController {
      * Allow a not yet allowed application for leave (Boss only!).
      */
     @RequestMapping(value = "/{applicationId}/allow", method = RequestMethod.PUT)
-    public String allowApplication(@PathVariable(ApplicationConstants.APPLICATION_ID) Integer applicationId,
-        @ModelAttribute(ApplicationConstants.COMMENT) Comment comment, RedirectAttributes redirectAttributes) {
+    public String allowApplication(@PathVariable("applicationId") Integer applicationId,
+        @ModelAttribute("comment") Comment comment, RedirectAttributes redirectAttributes) {
 
         Person boss = sessionService.getLoggedUser();
         Application application = applicationService.getApplicationById(applicationId);
@@ -693,7 +699,7 @@ public class ApplicationController {
      * @return
      */
     @RequestMapping(value = "/{applicationId}/refer", method = RequestMethod.PUT)
-    public String referApplication(@PathVariable(ApplicationConstants.APPLICATION_ID) Integer applicationId,
+    public String referApplication(@PathVariable("applicationId") Integer applicationId,
         @ModelAttribute("modelPerson") Person p, RedirectAttributes redirectAttributes) {
 
         Application application = applicationService.getApplicationById(applicationId);
@@ -713,9 +719,8 @@ public class ApplicationController {
      * Reject an application for leave (Boss only!).
      */
     @RequestMapping(value = "/{applicationId}/reject", method = RequestMethod.PUT)
-    public String rejectApplication(@PathVariable(ApplicationConstants.APPLICATION_ID) Integer applicationId,
-        @ModelAttribute(ApplicationConstants.COMMENT) Comment comment, Errors errors,
-        RedirectAttributes redirectAttributes) {
+    public String rejectApplication(@PathVariable("applicationId") Integer applicationId,
+        @ModelAttribute("comment") Comment comment, Errors errors, RedirectAttributes redirectAttributes) {
 
         Person boss = sessionService.getLoggedUser();
 
@@ -747,9 +752,8 @@ public class ApplicationController {
      * @return
      */
     @RequestMapping(value = "/{applicationId}/cancel", method = RequestMethod.PUT)
-    public String cancelApplication(@PathVariable(ApplicationConstants.APPLICATION_ID) Integer applicationId,
-        @ModelAttribute(ApplicationConstants.COMMENT) Comment comment, Errors errors,
-        RedirectAttributes redirectAttributes) {
+    public String cancelApplication(@PathVariable("applicationId") Integer applicationId,
+        @ModelAttribute("comment") Comment comment, Errors errors, RedirectAttributes redirectAttributes) {
 
         Application application = applicationService.getApplicationById(applicationId);
         Person loggedUser = sessionService.getLoggedUser();
@@ -786,65 +790,11 @@ public class ApplicationController {
     }
 
 
-    private void prepareAccountsMap(List<Person> persons, Model model) {
-
-        Map<Person, Account> accounts = new HashMap<Person, Account>();
-        Account account;
-
-        for (Person person : persons) {
-            account = accountService.getHolidaysAccount(DateMidnight.now().getYear(), person);
-
-            if (account != null) {
-                accounts.put(person, account);
-            }
-        }
-
-        model.addAttribute(ControllerConstants.ACCOUNTS, accounts);
-    }
-
-
-    private void prepareDetailView(Application application, int stateNumber, Model model) {
-
-        model.addAttribute(ApplicationConstants.COMMENT, new Comment());
-
-        List<Comment> comments = commentService.getCommentsByApplication(application);
-
-        model.addAttribute("comments", comments);
-
-        if (application.getStatus() == ApplicationStatus.WAITING && sessionService.isBoss()) {
-            // get all persons that have the Boss Role
-            List<Person> bosses = personService.getPersonsByRole(Role.BOSS);
-            model.addAttribute("bosses", bosses);
-            model.addAttribute("modelPerson", new Person());
-        }
-
-        sessionService.setLoggedUser(model);
-        model.addAttribute("application", application);
-
-        int year = application.getStartDate().getYear();
-
-        Account account = accountService.getHolidaysAccount(year, application.getPerson());
-
-        if (account != null) {
-            BigDecimal vacationDaysLeft = calculationService.calculateLeftVacationDays(account);
-            BigDecimal remainingVacationDaysLeft = calculationService.calculateLeftRemainingVacationDays(account);
-            model.addAttribute(PersonConstants.LEFT_DAYS, vacationDaysLeft);
-            model.addAttribute(PersonConstants.REM_LEFT_DAYS, remainingVacationDaysLeft);
-            model.addAttribute(PersonConstants.BEFORE_APRIL, DateUtil.isBeforeApril(DateMidnight.now()));
-        }
-
-        model.addAttribute(ControllerConstants.ACCOUNT, account);
-        model.addAttribute(ControllerConstants.YEAR, year);
-
-        // get url of loggedUser's gravatar image
-        String url = GravatarUtil.createImgURL(application.getPerson().getEmail());
-        model.addAttribute("gravatar", url);
-    }
-
-
     @RequestMapping(value = "/{applicationId}/remind", method = RequestMethod.PUT)
-    public String remindBoss(@PathVariable(ApplicationConstants.APPLICATION_ID) Integer applicationId,
+    public String remindBoss(@PathVariable("applicationId") Integer applicationId,
         RedirectAttributes redirectAttributes) {
+
+        // TODO: move this to a service method
 
         Application application = applicationService.getApplicationById(applicationId);
         DateMidnight remindDate = application.getRemindDate();

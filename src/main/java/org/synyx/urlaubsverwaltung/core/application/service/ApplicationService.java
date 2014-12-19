@@ -47,52 +47,6 @@ public interface ApplicationService {
 
 
     /**
-     * Gets all {@link Application}s by {@link Person} and year (all {@link Application}s no matter which
-     * {@link ApplicationStatus} they have).
-     *
-     * @param  person {@link Person}
-     * @param  year  int
-     *
-     * @return  {@link List} of {@link Application}s of the given {@link Person} and year
-     */
-    List<Application> getAllApplicationsByPersonAndYear(Person person, int year);
-
-
-    /**
-     * Gets all {@link Application}s by {@link Person}, year and {@link ApplicationStatus}.
-     *
-     * @param  person
-     * @param  year
-     * @param  state
-     *
-     * @return  {@link List} of {@link Application}s
-     */
-    List<Application> getAllApplicationsByPersonAndYearAndState(Person person, int year, ApplicationStatus state);
-
-
-    /**
-     * Gets all {@link Application}s by a certain {@link ApplicationStatus} and year.
-     *
-     * @param  state {@link ApplicationStatus}
-     * @param  year  int
-     *
-     * @return  all {@link Application}s by a certain {@link ApplicationStatus} and year
-     */
-    List<Application> getApplicationsByStateAndYear(ApplicationStatus state, int year);
-
-
-    /**
-     * Gets all cancelled {@link Application}s that have have been allowed sometime (i.e. formerlyAllowed = true) by a
-     * certain year
-     *
-     * @param  year  int
-     *
-     * @return  all cancelled {@link Application}s that have have been allowed sometime by a certain year
-     */
-    List<Application> getCancelledApplicationsByYearFormerlyAllowed(int year);
-
-
-    /**
      * Gets all {@link Application}s with vacation time between startDate x and endDate y.
      *
      * @param  startDate {@link DateMidnight}
@@ -112,7 +66,8 @@ public interface ApplicationService {
      *
      * @return  all {@link Application}s of the given person with vacation time between startDate x and endDate y
      */
-    List<Application> getApplicationsForACertainPeriodAndPerson(DateMidnight startDate, DateMidnight endDate, Person person);
+    List<Application> getApplicationsForACertainPeriodAndPerson(DateMidnight startDate, DateMidnight endDate,
+        Person person);
 
 
     /**
@@ -124,19 +79,22 @@ public interface ApplicationService {
      *
      * @return  all {@link Application}s with the given state and vacation time between startDate x and endDate y
      */
-    List<Application> getApplicationsForACertainPeriodAndState(DateMidnight startDate, DateMidnight endDate, ApplicationStatus status);
+    List<Application> getApplicationsForACertainPeriodAndState(DateMidnight startDate, DateMidnight endDate,
+        ApplicationStatus status);
 
 
     /**
-     * Gets all {@link Application}s with vacation time between startDate x and endDate y for the given person and state.
+     * Gets all {@link Application}s with vacation time between startDate x and endDate y for the given person and
+     * state.
      *
      * @param  startDate {@link DateMidnight}
      * @param  endDate {@link DateMidnight}
      * @param  person {@link Person}
      * @param  status {@link org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus}
      *
-     * @return  all {@link Application}s of the given person with vacation time between startDate x and endDate y and with a certain state
+     * @return  all {@link Application}s of the given person with vacation time between startDate x and endDate y and
+     *          with a certain state
      */
-    List<Application> getApplicationsForACertainPeriodAndPersonAndState(DateMidnight startDate, DateMidnight endDate, Person person, ApplicationStatus status);
-
+    List<Application> getApplicationsForACertainPeriodAndPersonAndState(DateMidnight startDate, DateMidnight endDate,
+        Person person, ApplicationStatus status);
 }

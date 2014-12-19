@@ -167,7 +167,7 @@ public class PersonManagementController {
      */
     private void addModelAttributesForPersonForm(Person person, PersonForm personForm, Model model) {
 
-        sessionService.setLoggedUser(model);
+        model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
         model.addAttribute(ControllerConstants.PERSON, person);
         model.addAttribute(PersonConstants.PERSONFORM, personForm);
         model.addAttribute("currentYear", DateMidnight.now().getYear());

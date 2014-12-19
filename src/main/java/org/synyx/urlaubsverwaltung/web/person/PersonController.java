@@ -64,7 +64,7 @@ public class PersonController {
     public String showInactiveStaff(Model model) {
 
         if (sessionService.isOffice() || sessionService.isBoss()) {
-            sessionService.setLoggedUser(model);
+            model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
 
             List<Person> persons = personService.getInactivePersons();
 
@@ -93,7 +93,7 @@ public class PersonController {
     public String showActiveStaff(Model model) {
 
         if (sessionService.isOffice() || sessionService.isBoss()) {
-            sessionService.setLoggedUser(model);
+            model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
 
             List<Person> persons = personService.getActivePersons();
             prepareStaffView(persons, DateMidnight.now().getYear(), model);
@@ -117,7 +117,7 @@ public class PersonController {
     public String showInactiveStaffByYear(@RequestParam(ControllerConstants.YEAR) int year, Model model) {
 
         if (sessionService.isOffice() || sessionService.isBoss()) {
-            sessionService.setLoggedUser(model);
+            model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
 
             List<Person> persons = personService.getInactivePersons();
 
@@ -147,7 +147,7 @@ public class PersonController {
     public String showActiveStaffByYear(@RequestParam(ControllerConstants.YEAR) int year, Model model) {
 
         if (sessionService.isOffice() || sessionService.isBoss()) {
-            sessionService.setLoggedUser(model);
+            model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
 
             List<Person> persons = personService.getActivePersons();
             prepareStaffView(persons, year, model);

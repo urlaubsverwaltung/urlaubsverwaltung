@@ -1,9 +1,5 @@
 package org.synyx.urlaubsverwaltung.web.person;
 
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Ordering;
 import org.apache.log4j.Logger;
 
 import org.joda.time.DateMidnight;
@@ -56,9 +52,6 @@ public class PersonalOverviewController {
 
     private static final Logger LOG = Logger.getLogger(PersonalOverviewController.class);
 
-    private static final String OVERVIEW_LINK = "/overview"; // personal overview
-    private static final String OVERVIEW_STAFF_LINK = "/staff/{" + PersonConstants.PERSON_ID + "}/overview"; // overview of other person
-
     @Autowired
     private PersonService personService;
 
@@ -89,7 +82,7 @@ public class PersonalOverviewController {
      *
      * @return
      */
-    @RequestMapping(value = OVERVIEW_LINK, method = RequestMethod.GET)
+    @RequestMapping(value = "/overview", method = RequestMethod.GET)
     public String showPersonalOverview(@RequestParam(value = ControllerConstants.YEAR, required = false) String year,
         Model model) {
 
@@ -98,7 +91,7 @@ public class PersonalOverviewController {
         } else {
             Person person = sessionService.getLoggedUser();
             prepareOverview(person, parseYearParameter(year), model);
-            sessionService.setLoggedUser(model);
+            model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
 
             return PersonConstants.OVERVIEW_JSP;
         }
@@ -116,7 +109,7 @@ public class PersonalOverviewController {
      *
      * @return
      */
-    @RequestMapping(value = OVERVIEW_STAFF_LINK, method = RequestMethod.GET)
+    @RequestMapping(value = "/staff/{" + PersonConstants.PERSON_ID + "}/overview", method = RequestMethod.GET)
     public String showStaffOverview(@PathVariable(PersonConstants.PERSON_ID) Integer personId,
         @RequestParam(value = ControllerConstants.YEAR, required = false) String year, Model model) {
 
@@ -134,7 +127,7 @@ public class PersonalOverviewController {
 
             prepareOverview(person, parseYearParameter(year), model);
 
-            sessionService.setLoggedUser(model);
+            model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
 
             return PersonConstants.OVERVIEW_JSP;
         }
@@ -180,7 +173,7 @@ public class PersonalOverviewController {
 
         prepareHolidayAccounts(person, year, model);
 
-        sessionService.setLoggedUser(model);
+        model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
         model.addAttribute(ControllerConstants.PERSON, person);
         model.addAttribute(ControllerConstants.YEAR, DateMidnight.now().getYear());
 
@@ -202,31 +195,34 @@ public class PersonalOverviewController {
         BigDecimal childSickDaysWithAUB = BigDecimal.ZERO;
 
         for (SickNote sickNote : sickNotes) {
-            if(sickNote.getType().equals(SickNoteType.SICK_NOTE_CHILD)) {
+            if (sickNote.getType().equals(SickNoteType.SICK_NOTE_CHILD)) {
                 childSickDays = childSickDays.add(sickNote.getWorkDays());
 
-                if(sickNote.isAubPresent()) {
-                    BigDecimal workDays = calendarService.getWorkDays(DayLength.FULL, sickNote.getAubStartDate(), sickNote.getAubEndDate(), person);
+                if (sickNote.isAubPresent()) {
+                    BigDecimal workDays = calendarService.getWorkDays(DayLength.FULL, sickNote.getAubStartDate(),
+                            sickNote.getAubEndDate(), person);
                     childSickDaysWithAUB = childSickDaysWithAUB.add(workDays);
                 }
             } else {
                 sickDays = sickDays.add(sickNote.getWorkDays());
 
-                if(sickNote.isAubPresent()) {
-                    BigDecimal workDays = calendarService.getWorkDays(DayLength.FULL, sickNote.getAubStartDate(), sickNote.getAubEndDate(), person);
+                if (sickNote.isAubPresent()) {
+                    BigDecimal workDays = calendarService.getWorkDays(DayLength.FULL, sickNote.getAubStartDate(),
+                            sickNote.getAubEndDate(), person);
                     sickDaysWithAUB = sickDaysWithAUB.add(workDays);
                 }
             }
         }
 
         Collections.sort(sickNotes, new Comparator<SickNote>() {
-            @Override
-            public int compare(SickNote o1, SickNote o2) {
 
-                // show latest sick notes at first
-                return o2.getStartDate().compareTo(o1.getStartDate());
-            }
-        });
+                @Override
+                public int compare(SickNote o1, SickNote o2) {
+
+                    // show latest sick notes at first
+                    return o2.getStartDate().compareTo(o1.getStartDate());
+                }
+            });
 
         model.addAttribute("sickDays", sickDays);
         model.addAttribute("sickDaysWithAUB", sickDaysWithAUB);
@@ -239,7 +235,8 @@ public class PersonalOverviewController {
     private void prepareApplications(Person person, int year, Model model) {
 
         // get the person's applications for the given year
-        List<Application> apps = applicationService.getAllApplicationsByPersonAndYear(person, year);
+        List<Application> apps = applicationService.getApplicationsForACertainPeriodAndPerson(DateUtil
+                .getFirstDayOfYear(year), DateUtil.getLastDayOfYear(year), person);
 
         if (!apps.isEmpty()) {
             List<Application> applications = new ArrayList<Application>();
@@ -252,21 +249,20 @@ public class PersonalOverviewController {
             }
 
             Collections.sort(applications, new Comparator<Application>() {
-                @Override
-                public int compare(Application o1, Application o2) {
 
-                    // show latest applications at first
-                    return o2.getStartDate().compareTo(o1.getStartDate());
-                }
-            });
+                    @Override
+                    public int compare(Application o1, Application o2) {
+
+                        // show latest applications at first
+                        return o2.getStartDate().compareTo(o1.getStartDate());
+                    }
+                });
 
             model.addAttribute(ControllerConstants.APPLICATIONS, applications);
 
             UsedDaysOverview usedDaysOverview = new UsedDaysOverview(applications, year, calendarService);
             model.addAttribute("usedDaysOverview", usedDaysOverview);
-
         }
-
     }
 
 

@@ -477,4 +477,17 @@ public class Application extends AbstractPersistable<Integer> {
 
         return toStringHelper.toString();
     }
+
+
+    /**
+     * Checks if the application for leave has the given status.
+     *
+     * @param  status  to be checked
+     *
+     * @return  {@code true} if the application for leave has the given status, else {@code false}
+     */
+    public boolean hasStatus(ApplicationStatus status) {
+
+        return getStatus() == status;
+    }
 }

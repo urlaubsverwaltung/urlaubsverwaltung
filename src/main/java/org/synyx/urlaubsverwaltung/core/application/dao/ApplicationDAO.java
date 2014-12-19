@@ -25,56 +25,38 @@ public interface ApplicationDAO extends JpaRepository<Application, Integer> {
 
 
     @Query(
-        "select x from Application x where x.person = ?1 and ((x.startDate between ?2 and ?3) or (x.endDate between ?2 and ?3)) order by x.startDate"
-    )
-    List<Application> getAllApplicationsByPersonAndYear(Person person, Date firstDayOfYear, Date lastDayOfYear);
-
-
-    @Query(
-        "select x from Application x where (x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) or (x.startDate < ?1 and x.endDate > ?2) order by x.startDate"
+        "select x from Application x where (x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) or (x.startDate < ?1 and x.endDate > ?2) "
+        + "order by x.startDate"
     )
     List<Application> getApplicationsForACertainTime(Date startDate, Date endDate);
 
 
     @Query(
-            "select x from Application x "
-                    + "where x.status = ?3 and ((x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) "
-                    + "or (x.startDate < ?1 and x.endDate > ?2)) "
-                    + "order by x.startDate"
+        "select x from Application x "
+        + "where x.status = ?3 and ((x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) "
+        + "or (x.startDate < ?1 and x.endDate > ?2)) "
+        + "order by x.startDate"
     )
-    List<Application> getApplicationsForACertainTimeAndState(Date startDate, Date endDate,
-                                                             ApplicationStatus status);
+    List<Application> getApplicationsForACertainTimeAndState(Date startDate, Date endDate, ApplicationStatus status);
 
 
     @Query(
-            "select x from Application x "
-                    + "where x.person = ?3 and ((x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) "
-                    + "or (x.startDate < ?1 and x.endDate > ?2)) "
-                    + "order by x.startDate"
+        "select x from Application x "
+        + "where x.person = ?3 and ((x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) "
+        + "or (x.startDate < ?1 and x.endDate > ?2)) "
+        + "order by x.startDate"
     )
     List<Application> getApplicationsForACertainTimeAndPerson(Date startDate, Date endDate, Person person);
 
 
     @Query(
-            "select x from Application x "
-                    + "where x.person = ?3 and x.status = ?4 and ((x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) "
-                    + "or (x.startDate < ?1 and x.endDate > ?2)) "
-                    + "order by x.startDate"
+        "select x from Application x "
+        + "where x.person = ?3 and x.status = ?4 and ((x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) "
+        + "or (x.startDate < ?1 and x.endDate > ?2)) "
+        + "order by x.startDate"
     )
-    List<Application> getApplicationsForACertainTimeAndPersonAndState(Date startDate, Date endDate, Person person, ApplicationStatus status);
-
-
-    @Query(
-        "select x from Application x where x.status = ?1 and ((x.startDate between ?2 and ?3) or (x.endDate between ?2 and ?3)) order by x.startDate"
-    )
-    List<Application> getApplicationsByStateAndYear(ApplicationStatus state, Date firstDayOfYear, Date lastDayOfYear);
-
-
-    @Query(
-        "select x from Application x where x.status = ?1 and x.formerlyAllowed = true and ((x.startDate between ?2 and ?3) or (x.endDate between ?2 and ?3)) order by x.startDate"
-    )
-    List<Application> getCancelledApplicationsByYearThatHaveBeenAllowedFormerly(ApplicationStatus state,
-        Date firstDayOfYear, Date lastDayOfYear);
+    List<Application> getApplicationsForACertainTimeAndPersonAndState(Date startDate, Date endDate, Person person,
+        ApplicationStatus status);
 
 
     @Query(
@@ -127,14 +109,17 @@ public interface ApplicationDAO extends JpaRepository<Application, Integer> {
 
 
     // ONLY FOR JMX
+
     @Query(
-        "select count(x) from Application x where x.status = ?1 and ((x.startDate between ?2 and ?3) or (x.endDate between ?2 and ?3)) order by x.startDate"
+        "select count(x) from Application x where x.status = ?1 and ((x.startDate between ?2 and ?3) or (x.endDate between ?2 and ?3)) "
+        + "order by x.startDate"
     )
     long countApplicationsInStateAndYear(ApplicationStatus state, Date firstDayOfYear, Date lastDayOfYear);
 
 
     @Query(
-        "SELECT x FROM Application x WHERE x.person = ?1 AND (YEAR(x.startDate) = ?2 OR YEAR(x.endDate) = ?2) AND x.status = ?3 ORDER BY x.startDate"
+        "select x from Application x where x.status = ?1 and ((x.startDate between ?2 and ?3) or (x.endDate between ?2 and ?3)) "
+        + "order by x.startDate"
     )
-    List<Application> getApplicationsByPersonAndYearAndState(Person person, int year, ApplicationStatus status);
+    List<Application> getApplicationsByStateAndYear(ApplicationStatus state, Date firstDayOfYear, Date lastDayOfYear);
 }
