@@ -72,10 +72,6 @@ public class Application extends AbstractPersistable<Integer> {
     @ManyToOne
     private Person rep;
 
-    // old field before refactoring and using Person object as rep field
-    @Column(name = "rep")
-    private String repDeprecated;
-
     // Address and phone number during holiday
     private String address;
 
@@ -300,12 +296,6 @@ public class Application extends AbstractPersistable<Integer> {
     public void setRep(Person rep) {
 
         this.rep = rep;
-    }
-
-
-    public String getRepDeprecated() {
-
-        return repDeprecated;
     }
 
 

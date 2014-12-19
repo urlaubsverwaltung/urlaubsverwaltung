@@ -98,18 +98,11 @@
         </td>
         <td>
             <c:choose>
-                <c:when test="${application.repDeprecated != null}">
-                    <c:out value="${application.repDeprecated}"/>
+                <c:when test="${application.rep != null}">
+                    <c:out value="${application.rep.niceName}"/>
                 </c:when>
                 <c:otherwise>
-                    <c:choose>
-                        <c:when test="${application.rep != null}">
-                            <c:out value="${application.rep.niceName}"/>
-                        </c:when>
-                        <c:otherwise>
-                            <spring:message code="not.stated"/>
-                        </c:otherwise>
-                    </c:choose>
+                    <spring:message code="not.stated"/>
                 </c:otherwise>
             </c:choose>
         </td>

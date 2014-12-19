@@ -23,4 +23,15 @@
 
     </changeSet>
 
+    <changeSet author="murygina" id="remove_deprecated_rep_column_from_application">
+
+        <preConditions>
+            <tableExists tableName="Application"/>
+            <columnExists tableName="Application" columnName="rep"/>
+        </preConditions>
+
+        <dropColumn tableName="Application" columnName="rep"/>
+
+    </changeSet>
+
 </databaseChangeLog>
