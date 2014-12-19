@@ -13,7 +13,7 @@
                 <%-- TODO: here should be shown a gravatar--%>
             <%--</td>--%>
             <td>
-                <c:out value="${comment.nameOfCommentingPerson}"/>
+                <c:out value="${comment.person.niceName}"/>
             </td>
             <td>
                 <spring:message code="progress.${comment.status}"/>

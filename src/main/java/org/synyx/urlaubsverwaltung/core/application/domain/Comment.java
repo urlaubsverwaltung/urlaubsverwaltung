@@ -28,8 +28,8 @@ public class Comment extends AbstractPersistable<Integer> {
     @ManyToOne
     private Application application;
 
-    // TODO: use person reference instead of string
-    private String nameOfCommentingPerson;
+    @ManyToOne
+    private Person person;
 
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateOfComment;
@@ -50,7 +50,7 @@ public class Comment extends AbstractPersistable<Integer> {
 
     public Comment(Person person) {
 
-        this.nameOfCommentingPerson = person.getNiceName();
+        this.person = person;
     }
 
     public Application getApplication() {
@@ -77,15 +77,15 @@ public class Comment extends AbstractPersistable<Integer> {
     }
 
 
-    public String getNameOfCommentingPerson() {
+    public Person getPerson() {
 
-        return nameOfCommentingPerson;
+        return person;
     }
 
 
-    public void setNameOfCommentingPerson(String nameOfCommentingPerson) {
+    public void setPerson(Person person) {
 
-        this.nameOfCommentingPerson = nameOfCommentingPerson;
+        this.person = person;
     }
 
 

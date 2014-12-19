@@ -46,7 +46,7 @@ class CommentServiceImpl implements CommentService {
     public void saveComment(Comment comment, Person person, Application application) {
 
         comment.setStatus(application.getStatus());
-        comment.setNameOfCommentingPerson(person.getNiceName());
+        comment.setPerson(person);
         comment.setApplication(application);
         comment.setDateOfComment(DateMidnight.now());
 

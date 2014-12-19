@@ -22,7 +22,7 @@ public class CommentTest {
 
         Comment comment = new Comment(commentingPerson);
 
-        Assert.assertNotNull("Name of commenting person should be set", comment.getNameOfCommentingPerson());
-        Assert.assertEquals("Wrong name of commenting person", "Aljona Mu", comment.getNameOfCommentingPerson());
+        Assert.assertNotNull("Commenting person should be set", comment.getPerson());
+        Assert.assertEquals("Wrong commenting person", commentingPerson, comment.getPerson());
     }
 }
