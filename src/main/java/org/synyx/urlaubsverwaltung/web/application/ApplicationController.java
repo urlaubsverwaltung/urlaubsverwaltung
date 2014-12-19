@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.web.application;
 
 import org.joda.time.DateMidnight;
-import org.joda.time.DateTimeConstants;
 import org.joda.time.chrono.GregorianChronology;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,45 +60,9 @@ import java.util.Map;
  *
  * @author  Aljona Murygina
  */
+@RequestMapping("/application")
 @Controller
 public class ApplicationController {
-
-    // links start with...
-    private static final String SHORT_PATH_APPLICATION = "/" + ControllerConstants.APPLICATION;
-
-    private static final String LONG_PATH_APPLICATION = "/" + ControllerConstants.APPLICATION + "/{";
-
-    // list of applications by state
-    private static final String APP_LIST = SHORT_PATH_APPLICATION;
-    private static final String ALL_APPS = SHORT_PATH_APPLICATION + "/all";
-    private static final String WAITING_APPS = SHORT_PATH_APPLICATION + "/waiting";
-    private static final String ALLOWED_APPS = SHORT_PATH_APPLICATION + "/allowed";
-    private static final String CANCELLED_APPS = SHORT_PATH_APPLICATION + "/cancelled";
-
-    private static final String REJECTED_APPS = SHORT_PATH_APPLICATION + "/rejected";
-
-    // form to apply vacation
-    private static final String NEW_APP = SHORT_PATH_APPLICATION + "/new"; // form for user
-
-    private static final String NEW_APP_OFFICE = "/{" + ApplicationConstants.PERSON_ID + "}/application/new"; // form for office
-
-    // for user: the only way editing an application for user is to cancel it
-    // (application may have state waiting or allowed)
-    private static final String CANCEL_APP = LONG_PATH_APPLICATION + ApplicationConstants.APPLICATION_ID + "}/cancel";
-
-    // detailed view of application
-    private static final String SHOW_APP = LONG_PATH_APPLICATION + ApplicationConstants.APPLICATION_ID + "}";
-
-    // allow or reject application
-    private static final String ALLOW_APP = LONG_PATH_APPLICATION + ApplicationConstants.APPLICATION_ID + "}/allow";
-
-    private static final String REJECT_APP = LONG_PATH_APPLICATION + ApplicationConstants.APPLICATION_ID + "}/reject";
-
-    // refer application to other boss
-    private static final String REFER_APP = LONG_PATH_APPLICATION + ApplicationConstants.APPLICATION_ID + "}/refer";
-
-    // remind boss to decide about application
-    private static final String REMIND = LONG_PATH_APPLICATION + ApplicationConstants.APPLICATION_ID + "}/remind";
 
     @Autowired
     private PersonService personService;
@@ -143,11 +106,11 @@ public class ApplicationController {
      * shows the default list, dependent on user role: if boss show waiting applications, if office show all
      * applications
      */
-    @RequestMapping(value = APP_LIST, method = RequestMethod.GET)
+    @RequestMapping(value = "/", method = RequestMethod.GET)
     public String showDefault() {
 
         if (sessionService.isBoss() || sessionService.isOffice()) {
-            return "redirect:/web" + WAITING_APPS;
+            return "redirect:/web" + "/" + "application" + "/waiting";
         } else {
             return ControllerConstants.ERROR_JSP;
         }
@@ -170,7 +133,7 @@ public class ApplicationController {
         Map<Application, String> gravatarUrls = new HashMap<>();
         List<Application> apps = applicationService.getApplicationsForACertainPeriod(firstDay, lastDay);
 
-        List<Application> applications = new ArrayList<Application>();
+        List<Application> applications = new ArrayList<>();
 
         for (Application a : apps) {
             boolean isNotCancelled = a.getStatus() != ApplicationStatus.CANCELLED;
@@ -205,7 +168,7 @@ public class ApplicationController {
      *
      * @return
      */
-    @RequestMapping(value = ALL_APPS, method = RequestMethod.GET)
+    @RequestMapping(value = "/all", method = RequestMethod.GET)
     public String showAll(Model model) {
 
         if (sessionService.isBoss() || sessionService.isOffice()) {
@@ -227,7 +190,7 @@ public class ApplicationController {
      *
      * @return
      */
-    @RequestMapping(value = ALL_APPS, params = ControllerConstants.YEAR, method = RequestMethod.GET)
+    @RequestMapping(value = "/all", params = ControllerConstants.YEAR, method = RequestMethod.GET)
     public String showAllByYear(@RequestParam(ControllerConstants.YEAR) int year, Model model) {
 
         if (sessionService.isBoss() || sessionService.isOffice()) {
@@ -308,7 +271,7 @@ public class ApplicationController {
      *
      * @return
      */
-    @RequestMapping(value = WAITING_APPS, params = ControllerConstants.YEAR, method = RequestMethod.GET)
+    @RequestMapping(value = "/waiting", params = ControllerConstants.YEAR, method = RequestMethod.GET)
     public String showWaitingByYear(@RequestParam(ControllerConstants.YEAR) int year, Model model) {
 
         return prepareAppListView(ApplicationStatus.WAITING, year, model);
@@ -322,7 +285,7 @@ public class ApplicationController {
      *
      * @return
      */
-    @RequestMapping(value = WAITING_APPS, method = RequestMethod.GET)
+    @RequestMapping(value = "/waiting", method = RequestMethod.GET)
     public String showWaiting(Model model) {
 
         return prepareAppListView(ApplicationStatus.WAITING, DateMidnight.now().getYear(), model);
@@ -336,7 +299,7 @@ public class ApplicationController {
      *
      * @return
      */
-    @RequestMapping(value = ALLOWED_APPS, params = ControllerConstants.YEAR, method = RequestMethod.GET)
+    @RequestMapping(value = "/allowed", params = ControllerConstants.YEAR, method = RequestMethod.GET)
     public String showAllowedByYear(@RequestParam(ControllerConstants.YEAR) int year, Model model) {
 
         return prepareAppListView(ApplicationStatus.ALLOWED, year, model);
@@ -350,7 +313,7 @@ public class ApplicationController {
      *
      * @return
      */
-    @RequestMapping(value = ALLOWED_APPS, method = RequestMethod.GET)
+    @RequestMapping(value = "/allowed", method = RequestMethod.GET)
     public String showAllowed(Model model) {
 
         return prepareAppListView(ApplicationStatus.ALLOWED, DateMidnight.now().getYear(), model);
@@ -364,7 +327,7 @@ public class ApplicationController {
      *
      * @return
      */
-    @RequestMapping(value = CANCELLED_APPS, params = ControllerConstants.YEAR, method = RequestMethod.GET)
+    @RequestMapping(value = "/cancelled", params = ControllerConstants.YEAR, method = RequestMethod.GET)
     public String showCancelledByYear(@RequestParam(ControllerConstants.YEAR) int year, Model model) {
 
         return prepareAppListView(ApplicationStatus.CANCELLED, year, model);
@@ -378,7 +341,7 @@ public class ApplicationController {
      *
      * @return
      */
-    @RequestMapping(value = CANCELLED_APPS, method = RequestMethod.GET)
+    @RequestMapping(value = "/cancelled", method = RequestMethod.GET)
     public String showCancelled(Model model) {
 
         return prepareAppListView(ApplicationStatus.CANCELLED, DateMidnight.now().getYear(), model);
@@ -393,7 +356,7 @@ public class ApplicationController {
      *
      * @return
      */
-    @RequestMapping(value = REJECTED_APPS, params = ControllerConstants.YEAR, method = RequestMethod.GET)
+    @RequestMapping(value = "/rejected", params = ControllerConstants.YEAR, method = RequestMethod.GET)
     public String showRejectedByYear(@RequestParam(ControllerConstants.YEAR) int year, Model model) {
 
         return prepareAppListView(ApplicationStatus.REJECTED, year, model);
@@ -407,7 +370,7 @@ public class ApplicationController {
      *
      * @return
      */
-    @RequestMapping(value = REJECTED_APPS, method = RequestMethod.GET)
+    @RequestMapping(value = "/rejected", method = RequestMethod.GET)
     public String showRejected(Model model) {
 
         return prepareAppListView(ApplicationStatus.REJECTED, DateMidnight.now().getYear(), model);
@@ -421,7 +384,7 @@ public class ApplicationController {
      *
      * @return
      */
-    @RequestMapping(value = NEW_APP, method = RequestMethod.GET)
+    @RequestMapping(value = "/new", method = RequestMethod.GET)
     public String newApplicationForm(Model model) {
 
         if (sessionService.isInactive()) {
@@ -501,7 +464,7 @@ public class ApplicationController {
      *
      * @return  if success returns the detail view of the new applied application
      */
-    @RequestMapping(value = NEW_APP, method = RequestMethod.POST)
+    @RequestMapping(value = "/new", method = RequestMethod.POST)
     public String newApplicationByUser(@ModelAttribute(ApplicationConstants.APPFORM) AppForm appForm, Errors errors,
         Model model) {
 
@@ -587,13 +550,12 @@ public class ApplicationController {
      *
      * @return
      */
-    @RequestMapping(value = NEW_APP_OFFICE, method = RequestMethod.GET)
-    public String newApplicationFormForOffice(@PathVariable(ApplicationConstants.PERSON_ID) Integer personId,
-        Model model) {
+    @RequestMapping(value = "/new", params = "personId", method = RequestMethod.GET)
+    public String newApplicationFormForOffice(@RequestParam("personId") Integer personId, Model model) {
 
         // only office may apply for leave on behalf of other users
         if (sessionService.isOffice()) {
-            Person person = personService.getPersonByID(personId); // get loggedUser
+            Person person = personService.getPersonByID(personId);
 
             // check if the loggedUser is active
             if (sessionService.isInactive()) {
@@ -626,15 +588,14 @@ public class ApplicationController {
      * @param  model
      *
      * @return  if success returns the detail view of the new applied application
+     *
+     *          <p>NOTE: Can not use 'person' as param, must be 'personId' to differ from field
+     *          {@link org.synyx.urlaubsverwaltung.web.application.AppForm#person}. Else you get errors in property
+     *          binding.</p>
      */
-    @RequestMapping(value = NEW_APP_OFFICE, method = RequestMethod.POST)
-    public String newApplicationByOffice(@PathVariable(ApplicationConstants.PERSON_ID) Integer personId,
+    @RequestMapping(value = "/new", params = "personId", method = RequestMethod.POST)
+    public String newApplicationByOffice(@RequestParam("personId") Integer personId,
         @ModelAttribute(ApplicationConstants.APPFORM) AppForm appForm, Errors errors, Model model) {
-
-        List<Person> persons = personService.getActivePersons(); // get all active persons
-        model.addAttribute(ApplicationConstants.PERSON_LIST, persons);
-
-        prepareAccountsMap(persons, model);
 
         Person person = personService.getPersonByID(personId);
 
@@ -642,7 +603,7 @@ public class ApplicationController {
     }
 
 
-    public void prepareForm(Person person, AppForm appForm, Model model) {
+    private void prepareForm(Person person, AppForm appForm, Model model) {
 
         List<Person> persons = personService.getAllPersonsExcept(person);
 
@@ -679,7 +640,7 @@ public class ApplicationController {
      *
      * @return
      */
-    @RequestMapping(value = SHOW_APP, method = RequestMethod.GET)
+    @RequestMapping(value = "/{applicationId}", method = RequestMethod.GET)
     public String showApplicationDetail(@PathVariable(ApplicationConstants.APPLICATION_ID) Integer applicationId,
         Model model) {
 
@@ -704,7 +665,7 @@ public class ApplicationController {
     /**
      * Allow a not yet allowed application for leave (Boss only!).
      */
-    @RequestMapping(value = ALLOW_APP, method = RequestMethod.PUT)
+    @RequestMapping(value = "/{applicationId}/allow", method = RequestMethod.PUT)
     public String allowApplication(@PathVariable(ApplicationConstants.APPLICATION_ID) Integer applicationId,
         @ModelAttribute(ApplicationConstants.COMMENT) Comment comment, RedirectAttributes redirectAttributes) {
 
@@ -731,7 +692,7 @@ public class ApplicationController {
      *
      * @return
      */
-    @RequestMapping(value = REFER_APP, method = RequestMethod.PUT)
+    @RequestMapping(value = "/{applicationId}/refer", method = RequestMethod.PUT)
     public String referApplication(@PathVariable(ApplicationConstants.APPLICATION_ID) Integer applicationId,
         @ModelAttribute("modelPerson") Person p, RedirectAttributes redirectAttributes) {
 
@@ -751,7 +712,7 @@ public class ApplicationController {
     /**
      * Reject an application for leave (Boss only!).
      */
-    @RequestMapping(value = REJECT_APP, method = RequestMethod.PUT)
+    @RequestMapping(value = "/{applicationId}/reject", method = RequestMethod.PUT)
     public String rejectApplication(@PathVariable(ApplicationConstants.APPLICATION_ID) Integer applicationId,
         @ModelAttribute(ApplicationConstants.COMMENT) Comment comment, Errors errors,
         RedirectAttributes redirectAttributes) {
@@ -785,7 +746,7 @@ public class ApplicationController {
      *
      * @return
      */
-    @RequestMapping(value = CANCEL_APP, method = RequestMethod.PUT)
+    @RequestMapping(value = "/{applicationId}/cancel", method = RequestMethod.PUT)
     public String cancelApplication(@PathVariable(ApplicationConstants.APPLICATION_ID) Integer applicationId,
         @ModelAttribute(ApplicationConstants.COMMENT) Comment comment, Errors errors,
         RedirectAttributes redirectAttributes) {
@@ -858,7 +819,7 @@ public class ApplicationController {
         }
 
         sessionService.setLoggedUser(model);
-        model.addAttribute(ControllerConstants.APPLICATION, application);
+        model.addAttribute("application", application);
 
         int year = application.getStartDate().getYear();
 
@@ -881,7 +842,7 @@ public class ApplicationController {
     }
 
 
-    @RequestMapping(value = REMIND, method = RequestMethod.PUT)
+    @RequestMapping(value = "/{applicationId}/remind", method = RequestMethod.PUT)
     public String remindBoss(@PathVariable(ApplicationConstants.APPLICATION_ID) Integer applicationId,
         RedirectAttributes redirectAttributes) {
 

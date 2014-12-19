@@ -226,7 +226,7 @@
                             <c:otherwise>
                                 <sec:authorize access="hasRole('OFFICE')">
                                     <c:if test="${person.id != loggedUser.id}">
-                                        <c:set var="NEW_APPLICATION_URL" value ="${URL_PREFIX}/${person.id}/application/new" />
+                                        <c:set var="NEW_APPLICATION_URL" value ="${URL_PREFIX}/application/new?personId=${person.id}" />
                                     </c:if>
                                 </sec:authorize>
                             </c:otherwise>

@@ -85,7 +85,7 @@
     <c:otherwise>
         <sec:authorize access="hasRole('OFFICE')">
             <c:set var="appliesAsRep" value="true"/>
-            <c:set var="actionUrl" value="${URL_PREFIX}/${person.id}/application/new"/>
+            <c:set var="actionUrl" value="${URL_PREFIX}/application/new?personId=${person.id}"/>
         </sec:authorize>
     </c:otherwise>
 </c:choose>
