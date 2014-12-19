@@ -7,7 +7,7 @@
 <div class="box">
     <span class="thirds">
        <span class="box-icon bg-yellow"><i class="fa fa-sun-o"></i></span>
-       <span class="box-icon state ${application.status} pull-right hidden-print hidden-xs" title="<spring:message code='${application.status.state}' />">
+       <span class="box-icon state ${application.status} pull-right hidden-print hidden-xs" title="<spring:message code='${application.status}' />">
             <c:choose>
                 <c:when test="${application.status == 'WAITING'}">
                     <i class="fa fa-question"></i>
@@ -26,12 +26,12 @@
                 </c:otherwise>
             </c:choose>
         </span>
-       <h5 class="is-inline-block is-sticky"><c:out value="${application.person.niceName}" /></h5> <spring:message code="app.apply" /> <h4><spring:message code="${application.vacationType.vacationTypeName}"/></h4>
+       <h5 class="is-inline-block is-sticky"><c:out value="${application.person.niceName}" /></h5> <spring:message code="app.apply" /> <h4><spring:message code="${application.vacationType}"/></h4>
 
         <c:choose>
             <c:when test="${application.startDate == application.endDate}">
                 <spring:message code="at"/> <h5 class="is-inline-block is-sticky"><uv:date date="${application.startDate}"/>,
-                <spring:message code="${application.howLong.dayLength}"/></h5>
+                <spring:message code="${application.howLong}"/></h5>
             </c:when>
             <c:otherwise>
                 <spring:message code="from"/> <h5 class="is-inline-block is-sticky"><uv:date
@@ -73,7 +73,7 @@
     </tr>
     <tr class="visible-print">
         <td><spring:message code="state" /></td>
-        <td><spring:message code="${application.status.state}" /></td>
+        <td><spring:message code="${application.status}" /></td>
     </tr>
     <tr><%-- needed for correct altering of table rows: there is a problem because the only in print visible row is altered too --%></tr>
     <tr>

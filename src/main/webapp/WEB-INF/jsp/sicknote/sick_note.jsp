@@ -178,7 +178,7 @@
                                     <br />
                                     <c:choose>
                                         <c:when test="${empty comment.text}">
-                                            <spring:message code="${comment.status.messageKey}" /> 
+                                            <spring:message code="sicknote.${comment.status}" /> 
                                         </c:when>
                                         <c:otherwise>
                                             <c:out value="${comment.text}" />

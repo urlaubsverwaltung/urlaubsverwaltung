@@ -357,9 +357,9 @@
         </label>
         <div class="col-md-7 checkbox">
             <c:forEach items="${weekDays}" var="weekDay">
-                <label class="checkbox" for="${weekDay.name}">
-                    <form:checkbox id="${weekDay.name}" path="workingDays" value="${weekDay.dayOfWeek}" />
-                    &nbsp;<spring:message code='${weekDay.name}'/>
+                <label class="checkbox" for="${weekDay}">
+                    <form:checkbox id="${weekDay}" path="workingDays" value="${weekDay.dayOfWeek}" />
+                    &nbsp;<spring:message code='${weekDay}'/>
                 </label>
             </c:forEach>
         </div>

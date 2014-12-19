@@ -8,31 +8,23 @@ import org.joda.time.DateTimeConstants;
  */
 public enum Day {
 
-    MONDAY(DateTimeConstants.MONDAY, "monday"),
-    TUESDAY(DateTimeConstants.TUESDAY, "tuesday"),
-    WEDNESDAY(DateTimeConstants.WEDNESDAY, "wednesday"),
-    THURSDAY(DateTimeConstants.THURSDAY, "thursday"),
-    FRIDAY(DateTimeConstants.FRIDAY, "friday"),
-    SATURDAY(DateTimeConstants.SATURDAY, "saturday"),
-    SUNDAY(DateTimeConstants.SUNDAY, "sunday");
+    MONDAY(DateTimeConstants.MONDAY),
+    TUESDAY(DateTimeConstants.TUESDAY),
+    WEDNESDAY(DateTimeConstants.WEDNESDAY),
+    THURSDAY(DateTimeConstants.THURSDAY),
+    FRIDAY(DateTimeConstants.FRIDAY),
+    SATURDAY(DateTimeConstants.SATURDAY),
+    SUNDAY(DateTimeConstants.SUNDAY);
 
     private Integer dayOfWeek;
-    private String name;
 
-    private Day(Integer dayOfWeek, String name) {
+    private Day(Integer dayOfWeek) {
 
         this.dayOfWeek = dayOfWeek;
-        this.name = name;
     }
 
     public Integer getDayOfWeek() {
 
         return dayOfWeek;
-    }
-
-
-    public String getName() {
-
-        return name;
     }
 }

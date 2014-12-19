@@ -29,7 +29,6 @@ import org.synyx.urlaubsverwaltung.core.account.AccountService;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
-import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.OverlapCase;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationInteractionService;
@@ -395,9 +394,6 @@ public class ApplicationController {
         model.addAttribute("appForm", appForm);
         model.addAttribute(ControllerConstants.ACCOUNT, account);
         model.addAttribute("vacTypes", VacationType.values());
-        model.addAttribute("full", DayLength.FULL);
-        model.addAttribute("morning", DayLength.MORNING);
-        model.addAttribute("noon", DayLength.NOON);
         model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
     }
 

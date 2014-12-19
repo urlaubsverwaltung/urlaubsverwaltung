@@ -55,7 +55,7 @@
             <tbody>
             <c:forEach items="${applications}" var="app" varStatus="loopStatus">
                 <c:choose>
-                    <c:when test="${app.status.state == 'state.cancelled' || app.status.state == 'state.rejected'}">
+                    <c:when test="${app.status == 'CANCELLED' || app.status == 'REJECTED'}">
                         <c:set var="CSS_CLASS" value="inactive"/>
                     </c:when>
                     <c:otherwise>
@@ -76,18 +76,18 @@
                     </td>
                     <td>
                         <a class="vacation ${app.vacationType} hidden-print" href="${URL_PREFIX}/application/${app.id}">
-                            <h4><spring:message code="${app.vacationType.vacationTypeName}"/></h4>
+                            <h4><spring:message code="${app.vacationType}"/></h4>
                         </a>
 
                         <h4 class="visible-print">
-                            <spring:message code="${app.vacationType.vacationTypeName}"/>
+                            <spring:message code="${app.vacationType}"/>
                         </h4>
 
                         <p class="sortable">
                             <c:choose>
                                 <c:when test="${app.startDate == app.endDate}">
                                     <uv:date date="${app.startDate}"/>, <spring:message
-                                        code="${app.howLong.dayLength}"/>
+                                        code="${app.howLong}"/>
                                 </c:when>
                                 <c:otherwise>
                                     <uv:date date="${app.startDate}"/> - <uv:date date="${app.endDate}"/>
@@ -101,7 +101,7 @@
                         </span>
                     </td>
                     <td class="visible-print">
-                        <spring:message code="${app.status.state}"/>
+                        <spring:message code="${app.status}"/>
                     </td>
                     <td class="is-centered state ${app.status} hidden-print">
                         <c:choose>

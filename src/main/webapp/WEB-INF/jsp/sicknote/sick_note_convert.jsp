@@ -54,7 +54,7 @@
                             <form:select path="vacationType" size="1" cssClass="form-control" cssErrorClass="form-control error">
                                 <c:forEach items="${vacTypes}" var="vacType">
                                     <option value="${vacType}">
-                                        <spring:message code='${vacType.vacationTypeName}' />
+                                        <spring:message code='${vacType}' />
                                     </option>
                                 </c:forEach>
                             </form:select>

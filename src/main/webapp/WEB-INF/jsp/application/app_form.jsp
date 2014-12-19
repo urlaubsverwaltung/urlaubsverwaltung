@@ -181,18 +181,18 @@
                 <c:when test="${appForm.vacationType == null}">
                     <c:forEach items="${vacTypes}" var="vacType">
                         <option value="${vacType}">
-                            <spring:message code='${vacType.vacationTypeName}'/>
+                            <spring:message code='${vacType}'/>
                         </option>
                     </c:forEach>
                 </c:when>
                 <c:otherwise>
                     <option value="${appForm.vacationType}" selected="selected">
-                        <spring:message code='${appForm.vacationType.vacationTypeName}'/>
+                        <spring:message code='${appForm.vacationType}'/>
                     </option>
                     <c:forEach items="${vacTypes}" var="vacType">
                         <c:if test="${vacType != appForm.vacationType}">
                             <option value="${vacType}">
-                                <spring:message code='${vacType.vacationTypeName}'/>
+                                <spring:message code='${vacType}'/>
                             </option>
                         </c:if>
                     </c:forEach>
@@ -230,18 +230,18 @@
     <div class="col-md-7 radio">
 
         <label class="thirds">
-            <form:radiobutton id="fullDay" class="dayLength-full" path="howLong" checked="checked" value="${full}" />
-            <spring:message code='${full.dayLength}'/>
+            <form:radiobutton id="fullDay" class="dayLength-full" path="howLong" checked="checked" value="FULL" />
+            <spring:message code='FULL'/>
         </label>
 
         <label class="thirds">
-            <form:radiobutton id="morning" class="dayLength-half" path="howLong" value="${morning}" />
-            <spring:message code='${morning.dayLength}'/>
+            <form:radiobutton id="morning" class="dayLength-half" path="howLong" value="MORNING" />
+            <spring:message code='MORNING'/>
         </label>
 
         <label class="thirds">
-            <form:radiobutton id="noon" class="dayLength-half" path="howLong" value="${noon}" />
-            <spring:message code='${noon.dayLength}'/>
+            <form:radiobutton id="noon" class="dayLength-half" path="howLong" value="NOON" />
+            <spring:message code='NOON'/>
         </label>
 
     </div>

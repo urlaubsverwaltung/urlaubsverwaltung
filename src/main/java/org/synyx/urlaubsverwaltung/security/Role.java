@@ -8,20 +8,8 @@ package org.synyx.urlaubsverwaltung.security;
  */
 public enum Role {
 
-    USER("role.user"),
-    BOSS("role.boss"),
-    OFFICE("role.office"),
-    INACTIVE("role.inactive");
-
-    private String propertyKey;
-
-    private Role(String propertyKey) {
-
-        this.propertyKey = propertyKey;
-    }
-
-    public String getPropertyKey() {
-
-        return propertyKey;
-    }
+    USER,
+    BOSS,
+    OFFICE,
+    INACTIVE;
 }

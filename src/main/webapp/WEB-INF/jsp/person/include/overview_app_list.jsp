@@ -9,7 +9,7 @@
     <tbody>
     <c:forEach items="${applications}" var="app" varStatus="loopStatus">
         <c:choose>
-            <c:when test="${app.status.state == 'state.cancelled' || app.status.state == 'state.rejected'}">
+            <c:when test="${app.status == 'CANCELLED' || app.status == 'REJECTED'}">
                 <c:set var="CSS_CLASS" value="inactive"/>
             </c:when>
             <c:otherwise>
@@ -19,7 +19,7 @@
         <tr class="${CSS_CLASS}" onclick="navigate('${URL_PREFIX}/application/${app.id}');">
             <td class="visible-print">
                 <span>
-                    <spring:message code="${app.status.state}"/>
+                    <spring:message code="${app.status}"/>
                 </span>
             </td>
             <td class="is-centered state ${app.status} hidden-print">
@@ -45,16 +45,16 @@
             </td>
             <td>
                 <h4 class="visible-print">
-                    <spring:message code="${app.vacationType.vacationTypeName}"/>
+                    <spring:message code="${app.vacationType}"/>
                 </h4>
                 <a class="hidden-print vacation ${app.vacationType}" href="${URL_PREFIX}/application/${app.id}">
-                    <h4><spring:message code="${app.vacationType.vacationTypeName}"/></h4>
+                    <h4><spring:message code="${app.vacationType}"/></h4>
                 </a>
 
                 <p>
                     <c:choose>
                         <c:when test="${app.startDate == app.endDate}">
-                            <uv:date date="${app.startDate}"/>, <spring:message code="${app.howLong.dayLength}"/>
+                            <uv:date date="${app.startDate}"/>, <spring:message code="${app.howLong}"/>
                         </c:when>
                         <c:otherwise>
                             <uv:date date="${app.startDate}"/> - <uv:date date="${app.endDate}"/>

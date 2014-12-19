@@ -149,6 +149,7 @@ public class MailServiceIntegrationTest {
         assertTrue(content.contains("Bernd"));
         assertTrue(content.contains("gestellter Antrag wurde von"));
         assertTrue(content.contains("genehmigt"));
+        assertTrue(content.contains("ganztägig"));
         assertFalse(content.contains("Mist"));
 
         // get email office
@@ -166,6 +167,7 @@ public class MailServiceIntegrationTest {
         assertTrue(contentOfficeMail.contains("Bernd"));
         assertTrue(contentOfficeMail.contains("Office"));
         assertTrue(contentOfficeMail.contains("es liegt ein neuer genehmigter Antrag vor"));
+        assertTrue(contentOfficeMail.contains("Erholungsurlaub"));
         assertFalse(contentOfficeMail.contains("Mist"));
     }
 

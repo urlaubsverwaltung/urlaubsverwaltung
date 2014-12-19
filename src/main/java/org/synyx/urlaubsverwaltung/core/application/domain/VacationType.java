@@ -8,20 +8,8 @@ package org.synyx.urlaubsverwaltung.core.application.domain;
  */
 public enum VacationType {
 
-    HOLIDAY("vac.holiday"),
-    SPECIALLEAVE("vac.special"),
-    UNPAIDLEAVE("vac.unpaid"),
-    OVERTIME("vac.overtime");
-
-    private String vacationTypeName;
-
-    private VacationType(String vacationTypeName) {
-
-        this.vacationTypeName = vacationTypeName;
-    }
-
-    public String getVacationTypeName() {
-
-        return this.vacationTypeName;
-    }
+    HOLIDAY,
+    SPECIALLEAVE,
+    UNPAIDLEAVE,
+    OVERTIME;
 }

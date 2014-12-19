@@ -126,8 +126,8 @@ class MailServiceImpl implements MailService {
 
         if (object.getClass().equals(Application.class)) {
             Application a = (Application) object;
-            String vacType = a.getVacationType().getVacationTypeName();
-            String length = a.getHowLong().getDayLength();
+            String vacType = a.getVacationType().name();
+            String length = a.getHowLong().name();
             model.put("vacationType", properties.getProperty(vacType));
             model.put("dayLength", properties.getProperty(length));
             model.put("link", applicationUrl + "web/application/" + a.getId());
@@ -412,7 +412,7 @@ class MailServiceImpl implements MailService {
 
         Map<String, Object> model = new HashMap();
         model.put("application", application);
-        model.put("dayLength", properties.getProperty(application.getHowLong().getDayLength()));
+        model.put("dayLength", properties.getProperty(application.getHowLong().name()));
 
         String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, PATH + "rep.vm", model);
 

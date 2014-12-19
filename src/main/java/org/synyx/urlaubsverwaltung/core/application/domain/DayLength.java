@@ -8,25 +8,17 @@ import java.math.BigDecimal;
  */
 public enum DayLength {
 
-    FULL("full", BigDecimal.valueOf(1.0)),
-    MORNING("half.morning", BigDecimal.valueOf(0.5)),
-    NOON("half.noon", BigDecimal.valueOf(0.5)),
-    ZERO("zero", BigDecimal.ZERO);
+    FULL(BigDecimal.valueOf(1.0)),
+    MORNING(BigDecimal.valueOf(0.5)),
+    NOON(BigDecimal.valueOf(0.5)),
+    ZERO(BigDecimal.ZERO);
 
-    private String dayLength;
     private BigDecimal duration;
 
-    private DayLength(String dayLength, BigDecimal duration) {
+    private DayLength(BigDecimal duration) {
 
-        this.dayLength = dayLength;
         this.duration = duration;
     }
-
-    public String getDayLength() {
-
-        return this.dayLength;
-    }
-
 
     public BigDecimal getDuration() {
 
