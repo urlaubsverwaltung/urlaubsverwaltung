@@ -311,7 +311,11 @@ public class Application extends AbstractPersistable<Integer> {
 
     public byte[] getSignatureBoss() {
 
-        return signatureBoss == null ? null : Arrays.copyOf(signatureBoss, signatureBoss.length);
+        if (signatureBoss == null) {
+            return null;
+        }
+
+        return Arrays.copyOf(signatureBoss, signatureBoss.length);
     }
 
 
@@ -327,7 +331,11 @@ public class Application extends AbstractPersistable<Integer> {
 
     public byte[] getSignaturePerson() {
 
-        return signaturePerson == null ? null : Arrays.copyOf(signaturePerson, signaturePerson.length);
+        if (signaturePerson == null) {
+            return null;
+        }
+
+        return Arrays.copyOf(signaturePerson, signaturePerson.length);
     }
 
 

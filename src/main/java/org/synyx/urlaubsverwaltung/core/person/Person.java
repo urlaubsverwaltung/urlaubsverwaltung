@@ -141,7 +141,11 @@ public class Person extends AbstractPersistable<Integer> {
 
     public byte[] getPrivateKey() {
 
-        return privateKey == null ? null : Arrays.copyOf(privateKey, privateKey.length);
+        if (privateKey == null) {
+            return null;
+        }
+
+        return Arrays.copyOf(privateKey, privateKey.length);
     }
 
 
@@ -157,7 +161,11 @@ public class Person extends AbstractPersistable<Integer> {
 
     public byte[] getPublicKey() {
 
-        return publicKey == null ? null : Arrays.copyOf(publicKey, publicKey.length);
+        if (publicKey == null) {
+            return null;
+        }
+
+        return Arrays.copyOf(publicKey, publicKey.length);
     }
 
 
