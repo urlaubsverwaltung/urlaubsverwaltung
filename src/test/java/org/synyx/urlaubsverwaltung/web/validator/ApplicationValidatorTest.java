@@ -98,6 +98,8 @@ public class ApplicationValidatorTest {
     public void ensureStartDateIsNotMandatoryForHalfDays() {
 
         appForm.setHowLong(DayLength.MORNING);
+        appForm.setStartDateHalf(DateMidnight.now());
+
         appForm.setStartDate(null);
 
         validator.validate(appForm, errors);
@@ -161,27 +163,6 @@ public class ApplicationValidatorTest {
 
 
     @Test
-    public void ensureValidatingStringLengthReturnsTrueForValidString() {
-
-        boolean isValid = validator.validateStringLength("kurze knackige Begründung", 50);
-        assertNotNull(isValid);
-        assertTrue(isValid);
-    }
-
-
-    @Test
-    public void ensureValidatingStringLengthReturnsFalseForInvalidString() {
-
-        String text =
-            "Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt";
-
-        boolean isValid = validator.validateStringLength(text, 50);
-        assertNotNull(isValid);
-        assertFalse(isValid);
-    }
-
-
-    @Test
     public void ensureStartDateMustBeBeforeEndDate() {
 
         appForm.setHowLong(DayLength.FULL);
@@ -198,14 +179,16 @@ public class ApplicationValidatorTest {
     @Test
     public void ensureVeryPastDateIsNotValid() {
 
-        Model model = Mockito.mock(Model.class);
+        DateMidnight pastDate = DateMidnight.now().minusYears(10);
 
         appForm.setHowLong(DayLength.FULL);
-        appForm.setStartDate(new DateMidnight(2011, DateTimeConstants.SEPTEMBER, 1));
+        appForm.setStartDate(pastDate);
+        appForm.setEndDate(pastDate.plusDays(1));
 
-        validator.validatePast(appForm, errors, model);
+        validator.validate(appForm, errors);
 
-        Mockito.verify(model).addAttribute("timeError", "error.period.past");
+        Mockito.verify(errors).reject("error.period.past");
+        Mockito.reset(errors);
     }
 
 
@@ -217,6 +200,36 @@ public class ApplicationValidatorTest {
         appForm.setHowLong(DayLength.FULL);
         appForm.setStartDate(futureDate);
         appForm.setEndDate(futureDate.plusDays(1));
+
+        validator.validate(appForm, errors);
+
+        Mockito.verify(errors).reject("error.too.long");
+        Mockito.reset(errors);
+    }
+
+
+    @Test
+    public void ensureVeryPastDateForHalfDayIsNotValid() {
+
+        DateMidnight pastDate = DateMidnight.now().minusYears(10);
+
+        appForm.setHowLong(DayLength.MORNING);
+        appForm.setStartDateHalf(pastDate);
+
+        validator.validate(appForm, errors);
+
+        Mockito.verify(errors).reject("error.period.past");
+        Mockito.reset(errors);
+    }
+
+
+    @Test
+    public void ensureVeryFutureDateForHalfDayIsNotValid() {
+
+        DateMidnight futureDate = DateMidnight.now().plusYears(10);
+
+        appForm.setHowLong(DayLength.NOON);
+        appForm.setStartDateHalf(futureDate);
 
         validator.validate(appForm, errors);
 

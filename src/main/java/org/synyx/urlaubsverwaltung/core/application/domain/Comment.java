@@ -5,11 +5,14 @@ import org.joda.time.DateTime;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
+import org.synyx.urlaubsverwaltung.core.person.Person;
+
 import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
 
 
 /**
@@ -25,18 +28,36 @@ public class Comment extends AbstractPersistable<Integer> {
 
     private String reason;
 
+    // TODO: add an enum for progress instead of string
     private String progress;
 
     @ManyToOne
     private Application application;
 
+    // TODO: use person reference instead of string
     private String nameOfCommentingPerson;
 
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateOfComment;
 
+    // TODO: use string representation of enum instead of number
     // each application may only have one comment to each ApplicationStatus
     private ApplicationStatus status;
+
+    // Do not persist this information!
+    @Transient
+    private boolean isMandatory;
+
+    public Comment() {
+
+        // TODO: Should be replaced later, only constructor with person given should be used
+    }
+
+
+    public Comment(Person person) {
+
+        this.nameOfCommentingPerson = person.getNiceName();
+    }
 
     public Application getApplication() {
 
@@ -107,5 +128,17 @@ public class Comment extends AbstractPersistable<Integer> {
     public void setProgress(String progress) {
 
         this.progress = progress;
+    }
+
+
+    public boolean isMandatory() {
+
+        return isMandatory;
+    }
+
+
+    public void setMandatory(boolean isMandatory) {
+
+        this.isMandatory = isMandatory;
     }
 }

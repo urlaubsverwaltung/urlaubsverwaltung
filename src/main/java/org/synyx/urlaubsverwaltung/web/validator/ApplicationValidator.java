@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.synyx.urlaubsverwaltung.web.validator;
 
 import org.apache.log4j.Logger;
@@ -10,14 +6,11 @@ import org.joda.time.DateMidnight;
 
 import org.springframework.stereotype.Component;
 
-import org.springframework.ui.Model;
-
 import org.springframework.util.StringUtils;
 
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.util.PropertiesUtil;
@@ -39,25 +32,22 @@ public class ApplicationValidator implements Validator {
 
     private static final Logger LOG = Logger.getLogger(ApplicationValidator.class);
 
-    // errors' properties keys
-    private static final String MANDATORY_FIELD = "error.mandatory.field";
-    private static final String ERROR_REASON = "error.reason";
+    private static final int MAX_CHARS = 200;
+
+    private static final String ERROR_MANDATORY_FIELD = "error.mandatory.field";
     private static final String ERROR_PERIOD = "error.period";
     private static final String ERROR_PAST = "error.period.past";
     private static final String ERROR_LENGTH = "error.length";
     private static final String ERROR_TOO_LONG = "error.too.long";
 
-    // names of fields
-    private static final String START_DATE = "startDate";
-    private static final String END_DATE = "endDate";
-    private static final String START_DATE_HALF = "startDateHalf";
-    private static final String REASON = "reason";
-    private static final String ADDRESS = "address";
-    private static final String TEXT = "reason";
+    private static final String FIELD_START_DATE = "startDate";
+    private static final String FIELD_END_DATE = "endDate";
+    private static final String FIELD_START_DATE_HALF = "startDateHalf";
+    private static final String FIELD_REASON = "reason";
+    private static final String FIELD_ADDRESS = "address";
 
     private static final String BUSINESS_PROPERTIES_FILE = "business.properties";
-
-    private static final String MAX_MONTHS = "maximum.months";
+    private static final String MAX_MONTHS_PROPERTY = "maximum.months";
 
     private Properties businessProperties;
 
@@ -89,37 +79,33 @@ public class ApplicationValidator implements Validator {
         // check if reason is not filled
         if (app.getVacationType() != VacationType.HOLIDAY) {
             if (!StringUtils.hasText(app.getReason())) {
-                errors.rejectValue(REASON, MANDATORY_FIELD);
+                errors.rejectValue(FIELD_REASON, ERROR_MANDATORY_FIELD);
             }
         }
 
-        validateStringFields(app, errors);
+        validateStringLength(app.getReason(), FIELD_REASON, errors);
+        validateStringLength(app.getAddress(), FIELD_ADDRESS, errors);
+        validateStringLength(app.getComment(), "comment", errors);
     }
 
 
-    private void validateDateFields(AppForm app, Errors errors) {
+    private void validateDateFields(AppForm applicationForLeave, Errors errors) {
 
-        if (app.getHowLong() == DayLength.FULL) {
-            validateNotNull(app.getStartDate(), START_DATE, errors);
-            validateNotNull(app.getEndDate(), END_DATE, errors);
+        if (applicationForLeave.getHowLong() == DayLength.FULL) {
+            DateMidnight startDate = applicationForLeave.getStartDate();
+            DateMidnight endDate = applicationForLeave.getEndDate();
 
-            if (app.getStartDate() != null && app.getEndDate() != null) {
-                // check if from < to
-                if (app.getStartDate().isAfter(app.getEndDate())) {
-                    errors.reject(ERROR_PERIOD);
-                } else {
-                    String maximumMonthsProperty = businessProperties.getProperty(MAX_MONTHS);
-                    int maximumMonths = Integer.parseInt(maximumMonthsProperty);
+            validateNotNull(startDate, FIELD_START_DATE, errors);
+            validateNotNull(endDate, FIELD_END_DATE, errors);
 
-                    DateMidnight future = DateMidnight.now().plusMonths(maximumMonths);
-
-                    if (app.getEndDate().isAfter(future)) {
-                        errors.reject(ERROR_TOO_LONG);
-                    }
-                }
+            if (startDate != null && endDate != null) {
+                validatePeriod(startDate, endDate, errors);
             }
         } else {
-            validateNotNull(app.getStartDateHalf(), START_DATE_HALF, errors);
+            DateMidnight date = applicationForLeave.getStartDateHalf();
+
+            validateNotNull(date, FIELD_START_DATE_HALF, errors);
+            validatePeriod(date, date, errors);
         }
     }
 
@@ -129,104 +115,57 @@ public class ApplicationValidator implements Validator {
         if (date == null) {
             // may be that date field is null because of cast exception, than there is already a field error
             if (errors.getFieldErrors(field).isEmpty()) {
-                errors.rejectValue(field, MANDATORY_FIELD);
+                errors.rejectValue(field, ERROR_MANDATORY_FIELD);
             }
         }
     }
 
 
-    /**
-     * Check if application's period is too long in the past.
-     *
-     * @param  target
-     * @param  errors
-     */
-    public void validatePast(Object target, Errors errors, Model model) {
+    private void validatePeriod(DateMidnight startDate, DateMidnight endDate, Errors errors) {
 
-        AppForm app = (AppForm) target;
-
-        DateMidnight startDate;
-
-        if (app.getHowLong() == DayLength.FULL) {
-            startDate = app.getStartDate();
+        // ensure that startDate < endDate
+        if (startDate.isAfter(endDate)) {
+            errors.reject(ERROR_PERIOD);
         } else {
-            startDate = app.getStartDateHalf();
-        }
-
-        if (startDate != null) {
-            if (startDate.isBefore(DateMidnight.now().minusYears(1))) {
-                model.addAttribute("timeError", ERROR_PAST);
-            }
+            validateNotTooFarInTheFuture(endDate, errors);
+            validateNotTooFarInThePast(startDate, errors);
         }
     }
 
 
-    /**
-     * Validates if comment field is filled (mandatory if application is rejected by boss).
-     *
-     * @param  target
-     * @param  errors
-     * @param  mandatory  (true e.g. if application is rejected by boss, false e.g. if user cancels his own application)
-     */
-    public void validateComment(Object target, Errors errors, boolean mandatory) {
+    private void validateNotTooFarInTheFuture(DateMidnight date, Errors errors) {
 
-        Comment comment = (Comment) target;
+        String maximumMonthsProperty = businessProperties.getProperty(MAX_MONTHS_PROPERTY);
+        int maximumMonths = Integer.parseInt(maximumMonthsProperty);
 
-        if (StringUtils.hasText(comment.getReason())) {
-            if (!validateStringLength(comment.getReason(), 200)) {
-                errors.rejectValue(TEXT, ERROR_LENGTH);
-            }
-        } else {
-            if (mandatory) {
-                errors.rejectValue(TEXT, ERROR_REASON);
-            }
+        DateMidnight future = DateMidnight.now().plusMonths(maximumMonths);
+
+        if (date.isAfter(future)) {
+            errors.reject(ERROR_TOO_LONG);
         }
     }
 
 
-    /**
-     * Check if String fields of application form have a valid length.
-     *
-     * @param  app
-     * @param  errors
-     */
-    private void validateStringFields(AppForm app, Errors errors) {
+    private void validateNotTooFarInThePast(DateMidnight date, Errors errors) {
 
-        validateStringField(app.getReason(), REASON, errors);
+        String maximumMonthsProperty = businessProperties.getProperty(MAX_MONTHS_PROPERTY);
+        int maximumMonths = Integer.parseInt(maximumMonthsProperty);
 
-        validateStringField(app.getAddress(), ADDRESS, errors);
+        DateMidnight past = DateMidnight.now().minusMonths(maximumMonths);
 
-        validateStringField(app.getComment(), "comment", errors);
+        if (date.isBefore(past)) {
+            errors.reject(ERROR_PAST);
+        }
     }
 
 
-    /**
-     * Ensure that string field is not empty and has not more than 200 chars.
-     *
-     * @param  text
-     * @param  field
-     * @param  errors
-     */
-    private void validateStringField(String text, String field, Errors errors) {
+    private void validateStringLength(String text, String field, Errors errors) {
 
         if (StringUtils.hasText(text)) {
-            if (!validateStringLength(text, 200)) {
+            if (text.length() > MAX_CHARS) {
                 errors.rejectValue(field, ERROR_LENGTH);
             }
         }
-    }
-
-
-    /**
-     * Checks if a String has a valid length.
-     *
-     * @param  string
-     *
-     * @return
-     */
-    protected boolean validateStringLength(String string, int length) {
-
-        return string.length() <= length;
     }
 
 
@@ -239,9 +178,9 @@ public class ApplicationValidator implements Validator {
     public void validatedShortenedAppForm(AppForm app, Errors errors) {
 
         if (!StringUtils.hasText(app.getReason())) {
-            errors.rejectValue(REASON, MANDATORY_FIELD);
+            errors.rejectValue(FIELD_REASON, ERROR_MANDATORY_FIELD);
         } else {
-            validateStringField(app.getReason(), REASON, errors);
+            validateStringLength(app.getReason(), FIELD_REASON, errors);
         }
     }
 }

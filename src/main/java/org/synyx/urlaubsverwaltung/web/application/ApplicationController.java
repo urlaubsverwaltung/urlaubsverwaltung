@@ -49,6 +49,7 @@ import org.synyx.urlaubsverwaltung.web.sicknote.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.util.DateMidnightPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.util.GravatarUtil;
 import org.synyx.urlaubsverwaltung.web.validator.ApplicationValidator;
+import org.synyx.urlaubsverwaltung.web.validator.CommentValidator;
 
 import java.math.BigDecimal;
 
@@ -89,7 +90,10 @@ public class ApplicationController {
     private CommentService commentService;
 
     @Autowired
-    private ApplicationValidator validator;
+    private ApplicationValidator applicationValidator;
+
+    @Autowired
+    private CommentValidator commentValidator;
 
     @Autowired
     private MailService mailService;
@@ -428,21 +432,9 @@ public class ApplicationController {
             personForForm = loggedUser;
         }
 
-        validator.validate(appForm, errors);
+        applicationValidator.validate(appForm, errors);
 
         if (errors.hasErrors()) {
-            prepareApplicationForLeaveForm(personForForm, appForm, model);
-
-            if (errors.hasGlobalErrors()) {
-                model.addAttribute("errors", errors);
-            }
-
-            return ControllerConstants.APPLICATION + "/app_form";
-        }
-
-        validator.validatePast(appForm, errors, model);
-
-        if (model.containsAttribute("timeError")) {
             prepareApplicationForLeaveForm(personForForm, appForm, model);
 
             if (errors.hasGlobalErrors()) {
@@ -673,15 +665,22 @@ public class ApplicationController {
      */
     @RequestMapping(value = "/{applicationId}/allow", method = RequestMethod.PUT)
     public String allowApplication(@PathVariable("applicationId") Integer applicationId,
-        @ModelAttribute("comment") Comment comment, RedirectAttributes redirectAttributes) {
+        @ModelAttribute("comment") Comment comment, Errors errors, RedirectAttributes redirectAttributes) {
 
         Person boss = sessionService.getLoggedUser();
         Application application = applicationService.getApplicationById(applicationId);
 
         if (sessionService.isBoss()) {
-            applicationInteractionService.allow(application, boss, comment);
+            comment.setMandatory(false);
+            commentValidator.validate(comment, errors);
 
-            redirectAttributes.addFlashAttribute("allowSuccess", true);
+            if (errors.hasErrors()) {
+                redirectAttributes.addFlashAttribute("errors", errors);
+                redirectAttributes.addFlashAttribute("action", "allow");
+            } else {
+                applicationInteractionService.allow(application, boss, comment);
+                redirectAttributes.addFlashAttribute("allowSuccess", true);
+            }
 
             return "redirect:/web/application/" + applicationId;
         } else {
@@ -727,7 +726,8 @@ public class ApplicationController {
         if (sessionService.isBoss()) {
             Application application = applicationService.getApplicationById(applicationId);
 
-            validator.validateComment(comment, errors, true);
+            comment.setMandatory(true);
+            commentValidator.validate(comment, errors);
 
             if (errors.hasErrors()) {
                 redirectAttributes.addFlashAttribute("errors", errors);
@@ -769,12 +769,14 @@ public class ApplicationController {
         if (officeIsCancelling || userIsCancelling) {
             // user can cancel only his own waiting applications, so the comment is NOT mandatory
             if (userIsCancelling) {
-                validator.validateComment(comment, errors, false);
+                comment.setMandatory(false);
             }
             // office cancels application of other users, state can be waiting or allowed, so the comment is mandatory
             else if (officeIsCancelling) {
-                validator.validateComment(comment, errors, true);
+                comment.setMandatory(true);
             }
+
+            commentValidator.validate(comment, errors);
 
             if (errors.hasErrors()) {
                 redirectAttributes.addFlashAttribute("errors", errors);
