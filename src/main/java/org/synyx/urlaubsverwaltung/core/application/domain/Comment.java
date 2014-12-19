@@ -9,10 +9,7 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.util.Date;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 
 /**
@@ -40,8 +37,8 @@ public class Comment extends AbstractPersistable<Integer> {
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateOfComment;
 
-    // TODO: use string representation of enum instead of number
     // each application may only have one comment to each ApplicationStatus
+    @Enumerated(EnumType.STRING)
     private ApplicationStatus status;
 
     // Do not persist this information!

@@ -66,4 +66,22 @@
 
     </changeSet>
 
+    <changeSet author="murygina" id="convert_enum_numbers_to_string_in_comment">
+
+        <preConditions>
+            <tableExists tableName="Comment"/>
+            <columnExists tableName="Comment" columnName="status"/>
+        </preConditions>
+
+        <modifyDataType tableName="Comment" columnName="status" newDataType="VARCHAR(20)"/>
+
+        <sql>
+            UPDATE Comment SET status = 'WAITING' WHERE status = '0';
+            UPDATE Comment SET status = 'ALLOWED' WHERE status = '1';
+            UPDATE Comment SET status = 'REJECTED' WHERE status = '2';
+            UPDATE Comment SET status = 'CANCELLED' WHERE status = '3';
+        </sql>
+
+    </changeSet>
+
 </databaseChangeLog>

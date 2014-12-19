@@ -17,7 +17,7 @@ import javax.persistence.Temporal;
 
 
 /**
- * Comment to a sick note containing detailled information like date of comment or commenting person.
+ * Comment to a sick note containing detailed information like date of comment or commenting person.
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
