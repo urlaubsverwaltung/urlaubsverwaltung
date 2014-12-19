@@ -84,4 +84,15 @@
 
     </changeSet>
 
+    <changeSet author="murygina" id="remove_progress_column_from_comment">
+
+        <preConditions>
+            <tableExists tableName="Comment"/>
+            <columnExists tableName="Comment" columnName="progress"/>
+        </preConditions>
+
+        <dropColumn tableName="Comment" columnName="progress"/>
+
+    </changeSet>
+
 </databaseChangeLog>

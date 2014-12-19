@@ -90,16 +90,16 @@
                 <span>
                     <c:choose>
                         <c:when test="${app.status == 'WAITING'}">
-                            <spring:message code="progress.applied" /> <uv:date date="${app.applicationDate}" />
+                            <spring:message code="progress.WAITING" /> <uv:date date="${app.applicationDate}" />
                         </c:when>
                         <c:when test="${app.status == 'ALLOWED'}">
-                            <spring:message code="progress.allowed" /> <uv:date date="${app.editedDate}" />
+                            <spring:message code="progress.ALLOWED" /> <uv:date date="${app.editedDate}" />
                         </c:when>
                         <c:when test="${app.status == 'REJECTED'}">
-                            <spring:message code="progress.rejected" /> <uv:date date="${app.editedDate}" />
+                            <spring:message code="progress.REJECTED" /> <uv:date date="${app.editedDate}" />
                         </c:when>
                         <c:when test="${app.status == 'CANCELLED'}">
-                            <spring:message code="progress.cancelled" /> <uv:date date="${app.cancelDate}" />
+                            <spring:message code="progress.CANCELLED" /> <uv:date date="${app.cancelDate}" />
                         </c:when>
                         <c:otherwise>
                             &nbsp;

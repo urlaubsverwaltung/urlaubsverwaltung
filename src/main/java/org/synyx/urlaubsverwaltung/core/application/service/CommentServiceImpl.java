@@ -30,11 +30,6 @@ import java.util.List;
 @Transactional
 class CommentServiceImpl implements CommentService {
 
-    private static final String APPLIED = "progress.applied";
-    private static final String ALLOWED = "progress.allowed";
-    private static final String REJECTED = "progress.rejected";
-    private static final String CANCELLED = "progress.cancelled";
-
     private final CommentDAO commentDAO;
 
     @Autowired
@@ -50,40 +45,12 @@ class CommentServiceImpl implements CommentService {
     @Override
     public void saveComment(Comment comment, Person person, Application application) {
 
-        ApplicationStatus status = application.getStatus();
-        setProgressOfComment(comment, status);
-        comment.setStatus(status);
-
+        comment.setStatus(application.getStatus());
         comment.setNameOfCommentingPerson(person.getNiceName());
         comment.setApplication(application);
         comment.setDateOfComment(DateMidnight.now());
+
         commentDAO.save(comment);
-    }
-
-
-    /**
-     * dependent on {@link ApplicationStatus} the {@link Comment} gets its progress describing String.
-     *
-     * @param  comment {@link Comment}
-     * @param  status {@link ApplicationStatus}
-     */
-    private void setProgressOfComment(Comment comment, ApplicationStatus status) {
-
-        if (status == ApplicationStatus.WAITING) {
-            comment.setProgress(APPLIED);
-        }
-
-        if (status == ApplicationStatus.ALLOWED) {
-            comment.setProgress(ALLOWED);
-        }
-
-        if (status == ApplicationStatus.REJECTED) {
-            comment.setProgress(REJECTED);
-        }
-
-        if (status == ApplicationStatus.CANCELLED) {
-            comment.setProgress(CANCELLED);
-        }
     }
 
 

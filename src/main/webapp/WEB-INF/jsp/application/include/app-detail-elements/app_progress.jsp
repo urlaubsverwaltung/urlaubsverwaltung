@@ -16,7 +16,7 @@
                 <c:out value="${comment.nameOfCommentingPerson}"/>
             </td>
             <td>
-                <spring:message code="${comment.progress}"/>
+                <spring:message code="progress.${comment.status}"/>
 
                 <c:choose>
                     <c:when test="${comment.status == 'WAITING'}">

@@ -25,9 +25,6 @@ public class Comment extends AbstractPersistable<Integer> {
 
     private String reason;
 
-    // TODO: add an enum for progress instead of string
-    private String progress;
-
     @ManyToOne
     private Application application;
 
@@ -113,18 +110,6 @@ public class Comment extends AbstractPersistable<Integer> {
     public void setStatus(ApplicationStatus status) {
 
         this.status = status;
-    }
-
-
-    public String getProgress() {
-
-        return progress;
-    }
-
-
-    public void setProgress(String progress) {
-
-        this.progress = progress;
     }
 
 
