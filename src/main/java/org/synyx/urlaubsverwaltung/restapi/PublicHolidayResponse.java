@@ -17,18 +17,11 @@ class PublicHolidayResponse {
     private String description;
     private BigDecimal dayLength;
 
-    PublicHolidayResponse(Holiday holiday) {
+    PublicHolidayResponse(Holiday holiday, BigDecimal dayLength) {
 
         this.date = holiday.getDate().toString();
         this.description = holiday.getDescription(Locale.GERMAN);
-
-        // TODO: This is not nice, but unfortunately their is no way to persist this information in Jollyday configuration
-        if("NEW_YEARS_EVE".equals(holiday.getPropertiesKey()) || "CHRISTMAS_EVE".equals(holiday.getPropertiesKey())) {
-            dayLength = DayLength.MORNING.getDuration();
-        } else {
-            dayLength = DayLength.FULL.getDuration();
-        }
-
+        this.dayLength = dayLength;
     }
 
     public String getDate() {

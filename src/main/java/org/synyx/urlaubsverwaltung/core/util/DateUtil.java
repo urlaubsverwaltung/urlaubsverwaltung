@@ -48,13 +48,29 @@ public class DateUtil {
      * @return  true if date is on Christmas Eve or on New Year's Eve, else false
      */
     public static boolean isChristmasEveOrNewYearsEve(DateMidnight date) {
+        return (isChristmasEve(date) || isNewYearsEve(date));
+    }
 
-        if ((date.getDayOfMonth() == CHRISTMAS_EVE && date.getMonthOfYear() == DateTimeConstants.DECEMBER)
-                || (date.getDayOfMonth() == LAST_DAY_OF_MONTH && date.getMonthOfYear() == DateTimeConstants.DECEMBER)) {
-            return true;
-        } else {
-            return false;
-        }
+    /**
+     * This method checks if a given date is on Christmas Eve.
+     *
+     * @param date
+     *
+     * @return  True if date is on Christmas Eve, else false
+     */
+    public static boolean isChristmasEve(DateMidnight date) {
+        return (date.getDayOfMonth() == CHRISTMAS_EVE && date.getMonthOfYear() == DateTimeConstants.DECEMBER);
+    }
+
+    /**
+     * This method checks if a given date is on New Year's Eve.
+     *
+     * @param date
+     *
+     * @return  True if date is on New Year's Eve, else false
+     */
+    public static boolean isNewYearsEve(DateMidnight date) {
+        return (date.getDayOfMonth() == LAST_DAY_OF_MONTH && date.getMonthOfYear() == DateTimeConstants.DECEMBER);
     }
 
 
