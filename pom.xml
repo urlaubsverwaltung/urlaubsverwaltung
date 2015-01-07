@@ -27,13 +27,6 @@
         <spring.security.version>3.1.3.RELEASE</spring.security.version>
         <netbeans.hint.deploy.server>Tomcat</netbeans.hint.deploy.server>
 
-        <jenkins.job.goals>clean install</jenkins.job.goals>
-        <jenkins.maven.name>Maven3</jenkins.maven.name>
-        <jenkins.jdk.name>Java7</jenkins.jdk.name>
-        <jenkins.job.project.redmine>https://project.synyx.de/</jenkins.job.project.redmine>
-        <jenkins.job.project.name>urlaubsverwaltung</jenkins.job.project.name>
-        <jenkins.job.reporters.email>murygina@synyx.de</jenkins.job.reporters.email>
-
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
         <buildTime>${maven.build.timestamp}</buildTime>
     </properties>
@@ -350,28 +343,6 @@
         </resources>
 
         <plugins>
-            <plugin>
-                <groupId>org.synyx.maven.plugins</groupId>
-                <artifactId>jenkins-maven-plugin</artifactId>
-                <version>1.0.0</version>
-                <configuration>
-                    <jobTypes>build</jobTypes>
-                    <types>build</types>
-                    <names>build</names>
-                    <failOnError>true</failOnError>
-                    <template>classpath:org/synyx/jenkins/jobs/template.xml</template>
-                    <propertiesBase>classpath:org/synyx/jenkins/jobs/properties/</propertiesBase>
-                    <url>https://jenkins.synyx.de</url>
-                    <majorVersion>trunk</majorVersion>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.synyx.jenkins</groupId>
-                        <artifactId>jenkins-config</artifactId>
-                        <version>0.4</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
 
             <plugin>
                 <groupId>org.apache.tomcat.maven</groupId>
