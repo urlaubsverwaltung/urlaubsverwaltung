@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
+import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
@@ -35,7 +36,7 @@ import javax.annotation.PostConstruct;
 
 
 /**
- * @author  Aljona Murygina - murygina@synyx.de
+ * @author Aljona Murygina - murygina@synyx.de
  */
 @Service
 public class TestDataCreationService {
@@ -96,7 +97,7 @@ public class TestDataCreationService {
 
 
     private Person createTestPerson(String login, String firstName, String lastName, String email, boolean active,
-        Role... roles) throws NoSuchAlgorithmException {
+                                    Role... roles) throws NoSuchAlgorithmException {
 
         Person person = new Person();
 
@@ -151,7 +152,7 @@ public class TestDataCreationService {
         createAllowedApplication(person, VacationType.HOLIDAY, DayLength.FULL, now.minusDays(20), now.minusDays(13)); // NOSONAR
         createAllowedApplication(person, VacationType.HOLIDAY, DayLength.MORNING, now.minusDays(5), now.minusDays(5)); // NOSONAR
         createAllowedApplication(person, VacationType.SPECIALLEAVE, DayLength.MORNING, now.minusDays(9),
-            now.minusDays(9)); // NOSONAR
+                now.minusDays(9)); // NOSONAR
 
         createRejectedApplication(person, VacationType.HOLIDAY, DayLength.FULL, now.minusDays(33), now.minusDays(30)); // NOSONAR
 
@@ -166,81 +167,113 @@ public class TestDataCreationService {
 
 
     private Application createWaitingApplication(Person person, VacationType vacationType, DayLength dayLength,
-        DateMidnight startDate, DateMidnight endDate) {
+                                                 DateMidnight startDate, DateMidnight endDate) {
 
-        Application application = new Application();
-        application.setPerson(person);
-        application.setStartDate(startDate);
-        application.setEndDate(endDate);
-        application.setVacationType(vacationType);
-        application.setHowLong(dayLength);
-        application.setComment("Ich hätte gerne Urlaub");
+        Application application = null;
 
-        applicationInteractionService.apply(application, person);
+        if (startAndEndDatesAreInCurrentYear(startDate, endDate)) {
+
+            application = new Application();
+            application.setPerson(person);
+            application.setStartDate(startDate);
+            application.setEndDate(endDate);
+            application.setVacationType(vacationType);
+            application.setHowLong(dayLength);
+            application.setComment("Ich hätte gerne Urlaub");
+
+            applicationInteractionService.apply(application, person);
+
+        }
 
         return application;
     }
 
+    private boolean startAndEndDatesAreInCurrentYear(DateMidnight start, DateMidnight end) {
+
+        int currentYear = DateMidnight.now().getYear();
+
+        return start.getYear() == currentYear && end.getYear() == currentYear;
+
+    }
+
 
     private Application createAllowedApplication(Person person, VacationType vacationType, DayLength dayLength,
-        DateMidnight startDate, DateMidnight endDate) {
+                                                 DateMidnight startDate, DateMidnight endDate) {
 
         Application application = createWaitingApplication(person, vacationType, dayLength, startDate, endDate);
 
-        Comment comment = new Comment();
-        comment.setReason("Ist ok");
+        if (application != null) {
 
-        applicationInteractionService.allow(application, boss, comment);
+            Comment comment = new Comment();
+            comment.setReason("Ist ok");
+
+            applicationInteractionService.allow(application, boss, comment);
+
+        }
 
         return application;
     }
 
 
     private Application createRejectedApplication(Person person, VacationType vacationType, DayLength dayLength,
-        DateMidnight startDate, DateMidnight endDate) {
+                                                  DateMidnight startDate, DateMidnight endDate) {
 
         Application application = createWaitingApplication(person, vacationType, dayLength, startDate, endDate);
 
-        Comment comment = new Comment();
-        comment.setReason("Leider nicht möglich");
+        if (application != null) {
 
-        applicationInteractionService.reject(application, boss, comment);
+            Comment comment = new Comment();
+            comment.setReason("Leider nicht möglich");
+
+            applicationInteractionService.reject(application, boss, comment);
+
+        }
 
         return application;
     }
 
 
     private Application createCancelledApplication(Person person, VacationType vacationType, DayLength dayLength,
-        DateMidnight startDate, DateMidnight endDate) {
+                                                   DateMidnight startDate, DateMidnight endDate) {
 
         Application application = createAllowedApplication(person, vacationType, dayLength, startDate, endDate);
 
-        Comment comment = new Comment();
-        comment.setReason("Urlaub wurde doch nicht genommen");
+        if (application != null) {
 
-        applicationInteractionService.cancel(application, office, comment);
+            Comment comment = new Comment();
+            comment.setReason("Urlaub wurde doch nicht genommen");
+
+            applicationInteractionService.cancel(application, office, comment);
+
+        }
 
         return application;
     }
 
 
     private SickNote createSickNote(Person person, DateMidnight startDate, DateMidnight endDate, SickNoteType type,
-        boolean withAUB) {
+                                    boolean withAUB) {
 
-        SickNote sickNote = new SickNote();
-        sickNote.setPerson(person);
-        sickNote.setStartDate(startDate);
-        sickNote.setEndDate(endDate);
-        sickNote.setActive(ACTIVE);
-        sickNote.setType(type);
+        SickNote sickNote = null;
 
-        if (withAUB) {
-            sickNote.setAubPresent(true);
-            sickNote.setAubStartDate(startDate);
-            sickNote.setAubEndDate(endDate);
+        if (startAndEndDatesAreInCurrentYear(startDate, endDate)) {
+
+            sickNote = new SickNote();
+            sickNote.setPerson(person);
+            sickNote.setStartDate(startDate);
+            sickNote.setEndDate(endDate);
+            sickNote.setActive(ACTIVE);
+            sickNote.setType(type);
+
+            if (withAUB) {
+                sickNote.setAubPresent(true);
+                sickNote.setAubStartDate(startDate);
+                sickNote.setAubEndDate(endDate);
+            }
+
+            sickNoteService.touch(sickNote, SickNoteStatus.CREATED, office);
+
         }
-
-        sickNoteService.touch(sickNote, SickNoteStatus.CREATED, office);
 
         return sickNote;
     }
