@@ -174,7 +174,9 @@ function colorizeDate(date, publicHolidays, vacation) {
 
 function isHoliday(formattedDate, holidays) {
 
-  return _.findWhere(holidays, {date: formattedDate}) !== undefined;
+  var holiday = _.findWhere(holidays, {date: formattedDate});
+
+  return holiday !== undefined && holiday.dayLength < 1;
 
 }
 

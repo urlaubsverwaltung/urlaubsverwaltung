@@ -158,7 +158,13 @@ $(function() {
 
             if(_CACHE[type][year]) {
 
-              return _.findWhere(_CACHE[type][year], {date: formattedDate}) !== undefined;
+              var holiday = _.findWhere(_CACHE[type][year], {date: formattedDate});
+
+              if (type === 'publicHoliday') {
+                return holiday !== undefined && holiday.dayLength < 1;
+              } else {
+                return holiday !== undefined;
+              }
 
             }
 
