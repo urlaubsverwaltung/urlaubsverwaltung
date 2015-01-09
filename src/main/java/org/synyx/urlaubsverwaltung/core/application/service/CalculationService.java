@@ -181,25 +181,29 @@ public class CalculationService {
             return vacationDays;
         }
 
-        BigDecimal result;
-
-        BigDecimal interimResult = remainingVacationDays.subtract(daysBeforeApril);
-
-        if (CalcUtil.isNegative(interimResult)) {
-            // result is negative so that you add it to vacation days instead of subtract it
-            result = vacationDays.add(interimResult).subtract(daysAfterApril);
-        } else {
-            if (account.isRemainingVacationDaysExpire() || CalcUtil.isZero(interimResult)) {
-                result = vacationDays.subtract(daysAfterApril);
+        // If the remaining vacations days do not expire we substract all used vacation days from the remaining vacation days
+        // and if the result is negative we substract theses days from the available vacation days.
+        if (!account.isRemainingVacationDaysExpire()) {
+            BigDecimal allDays = daysBeforeApril.add(daysAfterApril);
+            BigDecimal unusedRemainingVacationDays = remainingVacationDays.subtract(allDays);
+            if (CalcUtil.isNegative(unusedRemainingVacationDays)) {
+                return vacationDays.add(unusedRemainingVacationDays);
             } else {
-                BigDecimal interimResult2 = interimResult.subtract(daysAfterApril);
-
-                if (CalcUtil.isNegative(interimResult2)) {
-                    result = vacationDays.add(interimResult2);
-                } else {
-                    result = vacationDays.subtract(interimResult2);
-                }
+                return vacationDays;
             }
+        }
+
+        BigDecimal result;
+        BigDecimal unusedRemainingVacationDays = remainingVacationDays.subtract(daysBeforeApril);
+
+        if (CalcUtil.isNegative(unusedRemainingVacationDays)) {
+            // If more remaining vacation days were used than available we substract the difference from the vacation days
+            // and also substract the used vacation days after the remaining vacation days expired.
+            result = vacationDays.add(unusedRemainingVacationDays).subtract(daysAfterApril);
+        } else {
+            // If not all remaining vacation days were used we only need to substract the days
+            // after the remaining vacations days were expired.
+            result = vacationDays.subtract(daysAfterApril);
         }
 
         return result;
