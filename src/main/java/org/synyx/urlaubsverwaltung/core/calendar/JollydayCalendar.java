@@ -26,7 +26,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
+import org.apache.log4j.Logger;
+import org.synyx.urlaubsverwaltung.core.util.PropertiesUtil;
+import org.synyx.urlaubsverwaltung.web.validator.PersonValidator;
 
 
 /**
@@ -37,10 +41,16 @@ import java.util.Set;
 @Component
 public class JollydayCalendar {
 
+    private static final Logger LOG = Logger.getLogger(JollydayCalendar.class);
+
     private static final double HALF_DAY = 0.5;
     private static final double FULL_DAY = 1.0;
 
-    private final HolidayManager manager;
+    private HolidayManager manager;
+    private Properties businessProperties;
+
+    private static final String BUSINESS_PROPERTIES_FILE = "business.properties";
+    private static final String VACATION_DAY_COUNT_CONFIGURATION = "holiday.%s.vacationDay";
 
     public JollydayCalendar() {
 
@@ -48,6 +58,13 @@ public class JollydayCalendar {
         URL url = cl.getResource("Holidays_custom.xml");
 
         manager = HolidayManager.getInstance(url);
+
+        try {
+            this.businessProperties = PropertiesUtil.load(BUSINESS_PROPERTIES_FILE);
+        } catch (Exception ex) {
+            LOG.error("No properties file found.");
+            LOG.error(ex.getMessage(), ex);
+        }
     }
 
     /**
@@ -98,11 +115,13 @@ public class JollydayCalendar {
      * @return  working duration as BigDecimal: 1.0 for a non public holiday, 0.5 for Christmas Eve or New Year's Eve,
      *          0.0 for a public holiday
      */
-    BigDecimal getWorkingDurationOfDate(DateMidnight date) {
+    public BigDecimal getWorkingDurationOfDate(DateMidnight date) {
 
         if (isPublicHoliday(date)) {
-            if (DateUtil.isChristmasEveOrNewYearsEve(date)) {
-                return new BigDecimal("0.5");
+            if (DateUtil.isChristmasEve(date)) {
+                return BigDecimal.valueOf(1 - getConfiguredVacationDayCountForHoliday("CHRISTMAS_EVE"));
+            } else if (DateUtil.isNewYearsEve(date)) {
+                return BigDecimal.valueOf(1 - getConfiguredVacationDayCountForHoliday("NEW_YEARS_EVE"));
             } else {
                 return BigDecimal.ZERO;
             }
@@ -249,10 +268,12 @@ public class JollydayCalendar {
         for (Holiday holiday : holidaysOnWeekdays) {
             // check if given date is a public holiday
             if (date.isEqual(holiday.getDate().toDateMidnight())) {
-                // check if given date is Christmas Eve or New Year's Eve
-                // because these ones are counted as 0.5 days
-                if (DateUtil.isChristmasEveOrNewYearsEve(holiday.getDate().toDateMidnight())) {
-                    publicHolidays += HALF_DAY;
+                // check if given date is Christmas Eve or New Year's Eve because
+                // these ones are counted with a configurable amount of time.
+                if (DateUtil.isChristmasEve(holiday.getDate().toDateMidnight())) {
+                    publicHolidays += getConfiguredVacationDayCountForHoliday("CHRISTMAS_EVE");
+                } else if (DateUtil.isNewYearsEve(holiday.getDate().toDateMidnight())) {
+                    publicHolidays += getConfiguredVacationDayCountForHoliday("NEW_YEARS_EVE");
                 } else {
                     // else 1.0 days are counted
                     publicHolidays += FULL_DAY;
@@ -261,5 +282,30 @@ public class JollydayCalendar {
         }
 
         return publicHolidays;
+    }
+
+    /**
+     * Returns the number of days that should be calculated for the given holiday.
+     */
+    private double getConfiguredVacationDayCountForHoliday(String holidayName) {
+
+        double vacationDayCount = HALF_DAY;
+
+        String propertyName = String.format(VACATION_DAY_COUNT_CONFIGURATION, holidayName);
+        String vacationDayCountConfig = businessProperties.getProperty(propertyName);
+
+        switch (vacationDayCountConfig) {
+            case "FULL":
+                vacationDayCount = FULL_DAY;
+                break;
+            case "HALF":
+                vacationDayCount = HALF_DAY;
+                break;
+            case "NONE":
+                vacationDayCount = 0.0;
+                break;
+        }
+
+        return vacationDayCount;
     }
 }

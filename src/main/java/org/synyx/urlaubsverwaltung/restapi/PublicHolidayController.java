@@ -8,6 +8,7 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 
 import de.jollyday.Holiday;
+import java.math.BigDecimal;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -81,8 +82,8 @@ public class PublicHolidayController {
 
                     @Override
                     public PublicHolidayResponse apply(Holiday holiday) {
-
-                        return new PublicHolidayResponse(holiday);
+                        BigDecimal duration = jollydayCalendar.getWorkingDurationOfDate(holiday.getDate().toDateMidnight());
+                        return new PublicHolidayResponse(holiday, duration);
                     }
                 });
 
