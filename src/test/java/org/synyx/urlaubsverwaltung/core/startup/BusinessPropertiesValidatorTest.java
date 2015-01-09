@@ -10,6 +10,8 @@ import org.junit.Test;
 
 import org.mockito.Mockito;
 
+import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
+
 import java.util.Properties;
 
 
@@ -168,5 +170,75 @@ public class BusinessPropertiesValidatorTest {
 
         Assert.assertTrue("Valid value for maximum months to apply for leave in advance property must return true",
             propertiesValidator.isAnnualVacationPropertyValid());
+    }
+
+
+    /* END: Validation of maximum months to apply for leave in advance property */
+
+    /* Validation of working durations for Christmas Eve and New Year's Eve */
+
+    @Test
+    public void ensureReturnsTrueIfWorkingDurationPropertyIsFullDay() {
+
+        properties.setProperty(BusinessPropertiesValidator.CHRISTMAS_EVE_PROPERTY_KEY, DayLength.FULL.name());
+        properties.setProperty(BusinessPropertiesValidator.NEW_YEARS_EVE_PROPERTY_KEY, DayLength.FULL.name());
+
+        Assert.assertTrue("Property is valid for full day length",
+            propertiesValidator.isWorkingDurationPropertyValid());
+    }
+
+
+    @Test
+    public void ensureReturnsTrueIfWorkingDurationPropertyIsMorning() {
+
+        properties.setProperty(BusinessPropertiesValidator.CHRISTMAS_EVE_PROPERTY_KEY, DayLength.MORNING.name());
+        properties.setProperty(BusinessPropertiesValidator.NEW_YEARS_EVE_PROPERTY_KEY, DayLength.MORNING.name());
+
+        Assert.assertTrue("Property is valid for morning day length",
+            propertiesValidator.isWorkingDurationPropertyValid());
+    }
+
+
+    @Test
+    public void ensureReturnsTrueIfWorkingDurationPropertyIsNoon() {
+
+        properties.setProperty(BusinessPropertiesValidator.CHRISTMAS_EVE_PROPERTY_KEY, DayLength.NOON.name());
+        properties.setProperty(BusinessPropertiesValidator.NEW_YEARS_EVE_PROPERTY_KEY, DayLength.NOON.name());
+
+        Assert.assertTrue("Property is valid for noon day length",
+            propertiesValidator.isWorkingDurationPropertyValid());
+    }
+
+
+    @Test
+    public void ensureReturnsTrueIfWorkingDurationPropertyIsZero() {
+
+        properties.setProperty(BusinessPropertiesValidator.CHRISTMAS_EVE_PROPERTY_KEY, DayLength.ZERO.name());
+        properties.setProperty(BusinessPropertiesValidator.NEW_YEARS_EVE_PROPERTY_KEY, DayLength.ZERO.name());
+
+        Assert.assertTrue("Property is valid for zero day length",
+            propertiesValidator.isWorkingDurationPropertyValid());
+    }
+
+
+    @Test
+    public void ensureReturnsFalseIfWorkingDurationPropertyForChristmasEveIsInvalid() {
+
+        properties.setProperty(BusinessPropertiesValidator.CHRISTMAS_EVE_PROPERTY_KEY, "foo");
+        properties.setProperty(BusinessPropertiesValidator.NEW_YEARS_EVE_PROPERTY_KEY, DayLength.ZERO.name());
+
+        Assert.assertFalse("Property is invalid if no value of day length enum can be matched",
+            propertiesValidator.isWorkingDurationPropertyValid());
+    }
+
+
+    @Test
+    public void ensureReturnsFalseIfWorkingDurationPropertyForNewYearsEveIsInvalid() {
+
+        properties.setProperty(BusinessPropertiesValidator.CHRISTMAS_EVE_PROPERTY_KEY, DayLength.FULL.name());
+        properties.setProperty(BusinessPropertiesValidator.NEW_YEARS_EVE_PROPERTY_KEY, "bar");
+
+        Assert.assertFalse("Property is invalid if no value of day length enum can be matched",
+            propertiesValidator.isWorkingDurationPropertyValid());
     }
 }

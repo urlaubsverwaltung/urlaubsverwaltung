@@ -4,10 +4,15 @@
  */
 package org.synyx.urlaubsverwaltung.core.startup;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterables;
+
 import org.apache.log4j.Logger;
 
 import org.springframework.stereotype.Component;
 
+import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.util.PropertiesUtil;
 
 import java.io.IOException;
@@ -26,8 +31,10 @@ import javax.annotation.PostConstruct;
 @Component
 public class BusinessPropertiesValidator {
 
-    protected static final String MAX_DAYS = "annual.vacation.max";
-    protected static final String MAX_MONTHS = "maximum.months";
+    static final String MAX_DAYS = "annual.vacation.max";
+    static final String MAX_MONTHS = "maximum.months";
+    static final String CHRISTMAS_EVE_PROPERTY_KEY = "holiday.CHRISTMAS_EVE.vacationDay";
+    static final String NEW_YEARS_EVE_PROPERTY_KEY = "holiday.NEW_YEARS_EVE.vacationDay";
 
     private static final Logger LOG = Logger.getLogger(BusinessPropertiesValidator.class);
 
@@ -53,7 +60,7 @@ public class BusinessPropertiesValidator {
     }
 
 
-    protected BusinessPropertiesValidator(Runnable onError, Properties properties) {
+    BusinessPropertiesValidator(Runnable onError, Properties properties) {
 
         this.onError = onError;
         this.properties = properties;
@@ -63,13 +70,14 @@ public class BusinessPropertiesValidator {
     @PostConstruct
     public void validateBusinessProperties() {
 
-        if (!isAnnualVacationPropertyValid() || !isMaximumMonthsToApplyForLeaveInAdvancePropertyValid()) {
+        if (!isAnnualVacationPropertyValid() || !isMaximumMonthsToApplyForLeaveInAdvancePropertyValid()
+                || !isWorkingDurationPropertyValid()) {
             onError.run();
         }
     }
 
 
-    protected boolean isAnnualVacationPropertyValid() {
+    boolean isAnnualVacationPropertyValid() {
 
         String annualVacationProperty = properties.getProperty(MAX_DAYS);
 
@@ -87,7 +95,7 @@ public class BusinessPropertiesValidator {
     }
 
 
-    protected boolean isMaximumMonthsToApplyForLeaveInAdvancePropertyValid() {
+    boolean isMaximumMonthsToApplyForLeaveInAdvancePropertyValid() {
 
         String maximumMonthsToApplyForLeaveInAdvanceProperty = properties.getProperty(MAX_MONTHS);
 
@@ -104,4 +112,28 @@ public class BusinessPropertiesValidator {
 
         return false;
     }
+
+
+    boolean isWorkingDurationPropertyValid() {
+
+        String christmasEveWorkingDurationProperty = properties.getProperty(CHRISTMAS_EVE_PROPERTY_KEY);
+
+        try {
+            DayLength.valueOf(christmasEveWorkingDurationProperty);
+        } catch (IllegalArgumentException ex) {
+            return false;
+        }
+
+        String newYearsEveWorkingDurationProperty = properties.getProperty(NEW_YEARS_EVE_PROPERTY_KEY);
+
+        try {
+            DayLength.valueOf(newYearsEveWorkingDurationProperty);
+        } catch (IllegalArgumentException ex) {
+            return false;
+        }
+
+        return true;
+    }
+
+    // TODO: Validate values for working duration of Christmas Eve and New Years Eve
 }
