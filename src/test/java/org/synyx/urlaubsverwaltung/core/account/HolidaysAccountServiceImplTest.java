@@ -15,6 +15,8 @@ import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
+import java.io.IOException;
+
 import java.math.BigDecimal;
 
 
@@ -32,7 +34,7 @@ public class HolidaysAccountServiceImplTest {
     private Person person;
 
     @Before
-    public void setup() {
+    public void setup() throws IOException {
 
         accountDAO = Mockito.mock(AccountDAO.class);
 

@@ -15,6 +15,8 @@ import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
+import java.io.IOException;
+
 import java.math.BigDecimal;
 
 import java.util.Arrays;
@@ -39,7 +41,7 @@ public class OwnCalendarServiceTest {
     private Person person;
 
     @Before
-    public void setUp() {
+    public void setUp() throws IOException {
 
         jollydayCalendar = new JollydayCalendar();
         workingTimeService = Mockito.mock(WorkingTimeService.class);

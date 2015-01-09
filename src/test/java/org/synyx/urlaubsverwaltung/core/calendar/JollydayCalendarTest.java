@@ -8,9 +8,14 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
+
+import java.io.IOException;
+
 import java.math.BigDecimal;
 
 import java.util.List;
+import java.util.Properties;
 
 
 /**
@@ -20,218 +25,206 @@ import java.util.List;
  */
 public class JollydayCalendarTest {
 
-    private JollydayCalendar instance;
+    private JollydayCalendar jollydayCalendar;
 
     @Before
-    public void setUp() {
+    public void setUp() throws IOException {
 
-        instance = new JollydayCalendar();
-    }
-
-
-    /**
-     * Test of getNumberOfPublicHolidays method, of class JollydayCalendar.
-     */
-    @Test
-    public void testGetPublicHolidays() {
-
-        // statutory holidays (at the weekend)
-        // 23th is Friday, 27th is Tuesday
-        // this means: only one statutory holiday (Monday, the 26th) should be detected
-        // the others are not on weekdays
-        DateMidnight startDate = new DateMidnight(2011, 12, 23);
-        DateMidnight endDate = new DateMidnight(2011, 12, 27);
-
-        double returnValue = instance.getNumberOfPublicHolidays(startDate, endDate);
-        Assert.assertNotNull(returnValue);
-        Assert.assertEquals(1.0, returnValue, 0.0);
-
-        // here:
-        // 24.12. is a Friday
-        // 21.12 is a Tuesday
-        // i.e.: it should be detected a half day as holiday
-        startDate = new DateMidnight(2010, 12, 23);
-        endDate = new DateMidnight(2010, 12, 24);
-
-        returnValue = instance.getNumberOfPublicHolidays(startDate, endDate);
-        Assert.assertNotNull(returnValue);
-        Assert.assertEquals(0.5, returnValue, 0.0);
-
-        // 25.12.2009 - 31.12.2009
-        // a total of statutory holidays: 2.5
-        // because of weekend real holidays: 1.5
-        startDate = new DateMidnight(2009, 12, 25);
-        endDate = new DateMidnight(2009, 12, 31);
-
-        returnValue = instance.getNumberOfPublicHolidays(startDate, endDate);
-        Assert.assertNotNull(returnValue);
-        Assert.assertEquals(1.5, returnValue, 0.0);
-    }
-
-
-    /**
-     * Test if adding (countBetweenDays) works correctly.
-     */
-    @Test
-    public void testPlusDays() {
-
-        DateMidnight startDate = new DateMidnight(2011, 11, 23);
-        DateMidnight endDate = new DateMidnight(2011, 11, 26);
-
-        int dings = 0;
-
-        while (!(startDate.equals(endDate))) {
-            dings++;
-            startDate = startDate.plusDays(1);
-        }
-
-        Assert.assertSame(3, dings);
+        jollydayCalendar = new JollydayCalendar();
     }
 
 
     @Test
-    public void testCorpusChristiProblem() {
-
-        DateMidnight startDate = new DateMidnight(2013, 5, 29);
-        DateMidnight endDate = new DateMidnight(2013, 6, 6);
-
-        double returnValue = instance.getNumberOfPublicHolidays(startDate, endDate);
-
-        // expected that Corpus Christi is found as one and only public holiday in this period
-        Assert.assertEquals(1, returnValue, 0);
-    }
-
-
-    @Test
-    public void testCorpusChristiProblem2() {
-
-        DateMidnight startDate = new DateMidnight(2014, 6, 19);
-        DateMidnight endDate = new DateMidnight(2014, 6, 19);
-
-        double returnValue = instance.getNumberOfPublicHolidays(startDate, endDate);
-
-        // expected that Corpus Christi is found as one and only public holiday in this period
-        Assert.assertEquals(1, returnValue, 0);
-    }
-
-
-    @Test
-    public void testGetPublicHolidaysFoo() {
-
-        List<String> holidays = instance.getPublicHolidays(2013, 10);
-
-        // 3.10.2013
-        Assert.assertEquals(holidays.size(), 1);
-        Assert.assertEquals(holidays.get(0).toString(), "2013-10-03");
-    }
-
-
-    @Test
-    public void testIsPublicHoliday() {
+    public void ensureCheckForPublicHolidayReturnsTrueForPublicHoliday() {
 
         DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 25);
 
-        boolean returnValue = instance.isPublicHoliday(testDate);
+        boolean isPublicHoliday = jollydayCalendar.isPublicHoliday(testDate);
 
-        Assert.assertEquals(true, returnValue);
+        Assert.assertTrue("Christmas should be recognized as public holiday", isPublicHoliday);
     }
 
 
     @Test
-    public void testIsNotPublicHoliday() {
+    public void ensureCheckForPublicHolidayReturnsFalseForWorkDay() {
 
         DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 20);
 
-        boolean returnValue = instance.isPublicHoliday(testDate);
+        boolean isPublicHoliday = jollydayCalendar.isPublicHoliday(testDate);
 
-        Assert.assertEquals(false, returnValue);
+        Assert.assertFalse("Work day should not be recognized as public holiday", isPublicHoliday);
     }
 
 
     @Test
-    public void testCorpusChristiIsPublicHoliday() {
+    public void ensureCorpusChristiIsRecognizedAsPublicHoliday() {
 
         DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.MAY, 30);
 
-        boolean returnValue = instance.isPublicHoliday(testDate);
+        boolean isPublicHoliday = jollydayCalendar.isPublicHoliday(testDate);
 
-        Assert.assertEquals(true, returnValue);
+        Assert.assertTrue("Corpus Christi should be recognized as public holiday", isPublicHoliday);
     }
 
 
     @Test
-    public void testChristmasEveIsPublicHoliday() {
+    public void ensureChristmasEveIsRecognizedAsPublicHoliday() {
 
         DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 24);
 
-        boolean returnValue = instance.isPublicHoliday(testDate);
+        boolean isPublicHoliday = jollydayCalendar.isPublicHoliday(testDate);
 
-        Assert.assertEquals(true, returnValue);
+        Assert.assertTrue("Christmas Eve should be recognized as public holiday", isPublicHoliday);
     }
 
 
     @Test
-    public void testNewYearsEveIsPublicHoliday() {
+    public void ensureNewYearsEveIsRecognizedAsPublicHoliday() {
 
         DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 31);
 
-        boolean returnValue = instance.isPublicHoliday(testDate);
+        boolean isPublicHoliday = jollydayCalendar.isPublicHoliday(testDate);
 
-        Assert.assertEquals(true, returnValue);
+        Assert.assertTrue("New Years Eve should be recognized as public holiday", isPublicHoliday);
     }
 
 
     @Test
-    public void testEasterIsPublicHoliday() {
-
-        DateMidnight testDate = new DateMidnight(2012, DateTimeConstants.APRIL, 8);
-
-        boolean returnValue = instance.isPublicHoliday(testDate);
-
-        Assert.assertEquals(true, returnValue);
-    }
-
-
-    @Test
-    public void testGetWorkingDurationOfDateNoHoliday() {
+    public void ensureCorrectWorkingDurationForWorkDay() {
 
         DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.NOVEMBER, 27);
 
-        BigDecimal returnValue = instance.getWorkingDurationOfDate(testDate);
+        BigDecimal workingDuration = jollydayCalendar.getWorkingDurationOfDate(testDate);
 
-        Assert.assertEquals(BigDecimal.ONE, returnValue);
+        Assert.assertEquals("Wrong working duration", BigDecimal.ONE.setScale(1), workingDuration);
     }
 
 
     @Test
-    public void testGetWorkingDurationOfDateIsHoliday() {
+    public void ensureCorrectWorkingDurationForPublicHoliday() {
 
         DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 25);
 
-        BigDecimal returnValue = instance.getWorkingDurationOfDate(testDate);
+        BigDecimal workingDuration = jollydayCalendar.getWorkingDurationOfDate(testDate);
 
-        Assert.assertEquals(BigDecimal.ZERO, returnValue);
+        Assert.assertEquals("Wrong working duration", BigDecimal.ZERO, workingDuration);
     }
 
 
     @Test
-    public void testGetWorkingDurationOfDateIsChristmasEve() {
+    public void ensureCorrectWorkingDurationForChristmasEve() {
 
         DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 24);
 
-        BigDecimal returnValue = instance.getWorkingDurationOfDate(testDate);
+        BigDecimal workingDuration = jollydayCalendar.getWorkingDurationOfDate(testDate);
 
-        Assert.assertEquals(new BigDecimal("0.5"), returnValue);
+        Assert.assertEquals("Wrong working duration", new BigDecimal("0.5"), workingDuration);
     }
 
 
     @Test
-    public void testGetWorkingDurationOfDateIsNewYearsEve() {
+    public void ensureCorrectWorkingDurationForNewYearsEve() {
 
         DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 31);
 
-        BigDecimal returnValue = instance.getWorkingDurationOfDate(testDate);
+        BigDecimal workingDuration = jollydayCalendar.getWorkingDurationOfDate(testDate);
 
-        Assert.assertEquals(new BigDecimal("0.5"), returnValue);
+        Assert.assertEquals("Wrong working duration", new BigDecimal("0.5"), workingDuration);
+    }
+
+
+    @Test
+    public void ensureWorkingDurationForChristmasEveCanBeConfiguredToAWorkingDurationOfFullDay() {
+
+        Properties properties = new Properties();
+        properties.put("holiday.CHRISTMAS_EVE.vacationDay", DayLength.FULL.name());
+
+        jollydayCalendar = new JollydayCalendar(properties);
+
+        DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 24);
+
+        BigDecimal workingDuration = jollydayCalendar.getWorkingDurationOfDate(testDate);
+
+        Assert.assertEquals("Wrong working duration", BigDecimal.ONE.setScale(1), workingDuration);
+    }
+
+
+    @Test
+    public void ensureWorkingDurationForNewYearsEveCanBeConfiguredToAWorkingDurationOfFullDay() {
+
+        Properties properties = new Properties();
+        properties.put("holiday.NEW_YEARS_EVE.vacationDay", DayLength.FULL.name());
+
+        jollydayCalendar = new JollydayCalendar(properties);
+
+        DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 31);
+
+        BigDecimal workingDuration = jollydayCalendar.getWorkingDurationOfDate(testDate);
+
+        Assert.assertEquals("Wrong working duration", BigDecimal.ONE.setScale(1), workingDuration);
+    }
+
+
+    @Test
+    public void ensureWorkingDurationForChristmasEveCanBeConfiguredToAWorkingDurationOfMorning() {
+
+        Properties properties = new Properties();
+        properties.put("holiday.CHRISTMAS_EVE.vacationDay", DayLength.MORNING.name());
+
+        jollydayCalendar = new JollydayCalendar(properties);
+
+        DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 24);
+
+        BigDecimal workingDuration = jollydayCalendar.getWorkingDurationOfDate(testDate);
+
+        Assert.assertEquals("Wrong working duration", new BigDecimal("0.5"), workingDuration);
+    }
+
+
+    @Test
+    public void ensureWorkingDurationForNewYearsEveCanBeConfiguredToAWorkingDurationOfNoon() {
+
+        Properties properties = new Properties();
+        properties.put("holiday.NEW_YEARS_EVE.vacationDay", DayLength.NOON.name());
+
+        jollydayCalendar = new JollydayCalendar(properties);
+
+        DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 31);
+
+        BigDecimal workingDuration = jollydayCalendar.getWorkingDurationOfDate(testDate);
+
+        Assert.assertEquals("Wrong working duration", new BigDecimal("0.5"), workingDuration);
+    }
+
+
+    @Test
+    public void ensureWorkingDurationForChristmasEveCanBeConfiguredToAWorkingDurationOfZero() {
+
+        Properties properties = new Properties();
+        properties.put("holiday.CHRISTMAS_EVE.vacationDay", DayLength.ZERO.name());
+
+        jollydayCalendar = new JollydayCalendar(properties);
+
+        DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 24);
+
+        BigDecimal workingDuration = jollydayCalendar.getWorkingDurationOfDate(testDate);
+
+        Assert.assertEquals("Wrong working duration", BigDecimal.ZERO, workingDuration);
+    }
+
+
+    @Test
+    public void ensureWorkingDurationForNewYearsEveCanBeConfiguredToAWorkingDurationOfZero() {
+
+        Properties properties = new Properties();
+        properties.put("holiday.NEW_YEARS_EVE.vacationDay", DayLength.ZERO.name());
+
+        jollydayCalendar = new JollydayCalendar(properties);
+
+        DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 31);
+
+        BigDecimal workingDuration = jollydayCalendar.getWorkingDurationOfDate(testDate);
+
+        Assert.assertEquals("Wrong working duration", BigDecimal.ZERO, workingDuration);
     }
 }

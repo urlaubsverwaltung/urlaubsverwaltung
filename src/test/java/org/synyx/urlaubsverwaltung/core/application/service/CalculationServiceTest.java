@@ -23,6 +23,8 @@ import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
+import java.io.IOException;
+
 import java.math.BigDecimal;
 
 import java.util.ArrayList;
@@ -43,7 +45,7 @@ public class CalculationServiceTest {
     private OwnCalendarService calendarService;
 
     @Before
-    public void setUp() {
+    public void setUp() throws IOException {
 
         applicationDAO = Mockito.mock(ApplicationDAO.class);
         accountService = Mockito.mock(AccountService.class);
@@ -638,6 +640,7 @@ public class CalculationServiceTest {
         Assert.assertEquals(new BigDecimal("28"), vacationDays);
         Assert.assertEquals(new BigDecimal("4"), remainingVacationDays);
     }
+
 
     @Test
     public void testCalculateLeftVacationsDaysWhenNoVacationAfterAprilAndRemainingVacationDaysDoNotExpire() {

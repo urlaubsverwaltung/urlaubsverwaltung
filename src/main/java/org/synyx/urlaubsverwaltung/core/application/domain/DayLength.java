@@ -8,9 +8,9 @@ import java.math.BigDecimal;
  */
 public enum DayLength {
 
-    FULL(BigDecimal.valueOf(1.0)),
-    MORNING(BigDecimal.valueOf(0.5)),
-    NOON(BigDecimal.valueOf(0.5)),
+    FULL(new BigDecimal("1.0")),
+    MORNING(new BigDecimal("0.5")),
+    NOON(new BigDecimal("0.5")),
     ZERO(BigDecimal.ZERO);
 
     private BigDecimal duration;
