@@ -12,7 +12,9 @@
             <columnExists tableName="Account" columnName="validFrom"/>
         </preConditions>
 
-        <dropIndex tableName="Account" indexName="Index_Account_person_year"/>
+        <!-- TODO: Results in an error -->
+        <!-- Error executing SQL DROP INDEX 'Index_Account_person_validFrom' Cannot drop index needed in a foreign key constraint -->
+        <!--<dropIndex tableName="Account" indexName="Index_Account_person_year"/>-->
 
         <createIndex tableName="Account" indexName="Index_Account_person_validFrom">
             <column name="person_id"/>
