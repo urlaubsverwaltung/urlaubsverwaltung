@@ -42,13 +42,21 @@
             <bean class="org.synyx.urlaubsverwaltung.security.AuthoritiesPopulatorImpl"/>
         </constructor-arg>
     </bean>
+    
+    <bean id="activeDirectoryAuthProvider" class="org.synyx.urlaubsverwaltung.security.ActiveDirectoryLdapAuthenticationProviderCustom">
+        <constructor-arg value="${activeDirectory.domain}" />
+        <constructor-arg value="${activeDirectory.domainControllerUrl}" />
+        <constructor-arg>
+            <bean class="org.synyx.urlaubsverwaltung.security.AuthoritiesPopulatorImpl"/>
+        </constructor-arg>
+    </bean>
 
     <bean id="devUserDetailsService" class="org.synyx.urlaubsverwaltung.security.TestUserDetailsService">
         <constructor-arg ref="personDAO"></constructor-arg>
     </bean>
 
     <security:authentication-manager alias="authenticationManager">
-        <security:authentication-provider ref="ldapAuthProvider"/>
+        <security:authentication-provider ref="${authentication.providerId}"/>
         <security:authentication-provider user-service-ref="devUserDetailsService"/>
     </security:authentication-manager>
 

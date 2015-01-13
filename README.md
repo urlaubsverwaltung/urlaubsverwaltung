@@ -84,6 +84,21 @@ Ein User hat immer eine oder mehrere folgender Berechtigungen inne:
 * **Boss**:	darf Urlaubsanträge von Mitarbeitern einsehen, genehmigen und ablehnen
 * **Office**: darf Mitarbeiterdaten verwalten, Urlaub für Mitarbeiter beantragen und Urlaubsanträge stornieren
 
+### Active Directory
+
+Um Die Anbindung an ein Active Directory Server zu ermöglichen, muss der Verwendete Authentifizierungs-Provider geändert werden.
+Dazu muss die Umgebungsvariable `AUTHENTICATION_PROVIDER` auf den Wert `activeDirectoryAuthProvider` gesetzt werden.
+
+Die erforderlichen Optionen für die Konfiguration der Active Directory Authentifizierung sind:
+
+* `AD_DOMAIN` - Der Name der Active Directory Domain, z.B: mydomain.tld
+* `AD_DOMAINCONTROLLER_URL` - Die URL zum LDAP Server / Domaincontroller, z.B: ldap://domaincontroller.mydomain.tld/
+
+Die Konfiguration der Authentifizierung kann in folgenden Dateien gefunden werden:
+
+* `src/main/resources/config.properties`
+* `src/main/resources/META-INF/spring-security.xml`
+
 ## Development
 
 Die Anwendung basiert auf dem [Spring](http://www.springsource.org/) MVC Framework. Zur Ermittlung von Feiertagen wird das Framework [Jollyday](http://jollyday.sourceforge.net/) benutzt. Das Frontend beinhaltet Elemente von [Bootstrap](http://getbootstrap.com/) gewürzt mit einer Prise [jQuery](http://jquery.com/) und [Font Awesome](http://fontawesome.io/).
