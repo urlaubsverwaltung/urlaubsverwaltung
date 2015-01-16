@@ -85,27 +85,9 @@ public class DevUserDetailsServiceTest {
         Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
 
         Assert.assertEquals("Wrong number of authorities", 2, authorities.size());
-        Assert.assertTrue("No authority for user role found", authorityForRoleExists(authorities, Role.USER));
-        Assert.assertTrue("No authority for office role found", authorityForRoleExists(authorities, Role.OFFICE));
-    }
-
-
-    private boolean authorityForRoleExists(Collection<? extends GrantedAuthority> authorities, final Role role) {
-
-        Optional<? extends GrantedAuthority> authorityForRoleExistsOptional = Iterables.tryFind(authorities,
-                new Predicate<GrantedAuthority>() {
-
-                    @Override
-                    public boolean apply(GrantedAuthority input) {
-
-                        if (input.getAuthority().equals(role.name())) {
-                            return true;
-                        }
-
-                        return false;
-                    }
-                });
-
-        return authorityForRoleExistsOptional.isPresent();
+        Assert.assertTrue("No authority for user role found",
+            SecurityTestUtil.authorityForRoleExists(authorities, Role.USER));
+        Assert.assertTrue("No authority for office role found",
+            SecurityTestUtil.authorityForRoleExists(authorities, Role.OFFICE));
     }
 }

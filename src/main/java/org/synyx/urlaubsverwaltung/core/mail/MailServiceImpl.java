@@ -50,7 +50,7 @@ import javax.mail.internet.MimeMessage;
  * @author  Johannes Reuter
  * @author  Aljona Murygina
  */
-@Service
+@Service("mailService")
 class MailServiceImpl implements MailService {
 
     private static final Logger LOG = Logger.getLogger(MailServiceImpl.class);
