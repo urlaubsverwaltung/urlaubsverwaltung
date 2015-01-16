@@ -21,6 +21,10 @@ Zum Ausprobieren der Anwendung gibt es ein [Demo System](http://urlaubsverwaltun
 
 <pre>  git clone git@github.com:synyx/urlaubsverwaltung.git</pre>
 
+### WAR Datei bauen
+
+<pre>  mvn clean install</pre>
+
 ### Anwendung starten
 
 Man kann die Anwendung mit dem Maven Tomcat Plugin starten. Ohne weitere Angabe wird das Development-Environment genutzt, d.h. es wird eine H2-Datenbank verwendet und es werden keine E-Mails versendet.
@@ -67,16 +71,47 @@ Globale Variablen können bspw. in der `.bashrc` überschrieben werden:
 
 ## Authentifizierung
 
-Es gibt bisher zwei Authentifizierungsmethoden: LDAP und Demo.
+Es gibt drei mögliche Authentifizierungsmethoden:
+* Authentifizierung für lokale Entwicklungsumgebung
+* Authentifizierung via LDAP
+* Authentifizierung via Active Directory
 
-Bei der Authentifizierungsmethode Demo gibt es einen Testbenutzer mit Benutzernamen "test" und Passwort "secret".
-Möchte man besagten Testbenutzer über Liquibase anlegen lassen, muss die Anwendung im Kontext Demo gestartet werden, dies funktioniert folgendermaßen:
-<pre>  mvn tomcat:run -Dliquibase.context=demo</pre>
+### Authentifizierung für lokale Entwicklungsumgebung
 
-Hinweis: Lokal zu Entwicklungszwecken ist dies nicht notwendig, da das Development-Environment dafür sorgt, dass beim Start der Anwendung in der H2-Datenbank Testbenutzer und Testdaten angelegt werden.
+Möchte man die Anwendung lokal bei sich laufen lassen und sich Testdaten generieren lassen, reicht es
+<pre>  mvn tomcat:run</pre>
+auszuführen.
+Ohne Angabe des Parameters `spring.profiles.active` kann man sich nun mit dem Testbenutzer `test/secret` anmelden.
 
-Bei der Authentifizierungsmethode LDAP wird die LDAP-URL aus `src/main/resources/config.properties` genutzt.
-Ist die Authentifizierung erfolgreich und der Benutzer noch nicht im System der Urlaubsverwaltung eingepflegt, wird die Person automatisch angelegt. Dem ersten Benutzer, der auf diese Weise im System angelegt wird, wird die Rolle Office zugewiesen (ermöglicht Rechteverwaltung). Alle anderen Benutzer, die automatisch beim Einloggen im System angelegt werden, erhalten initial die Rolle User.
+Hinweis: Dazu muss dieser Testbenutzer angelegt sein. Dies ist jedoch gegeben, wenn man den Parameter `env` nicht überschreibt.
+
+### Authentifizierung via LDAP
+
+Es müssen die LDAP URL, die LDAP Base und LDAP User DN Patterns konfiguriert sein, damit eine Authentifizierung via LDAP möglich ist.
+Die Properties sind unter `src/main/resources/config.properties` zu finden bzw. es können selbstverständlich auch die globalen Variablen exportiert werden.
+(siehe oben beschriebene Punkte "Properties Dateien" bzw. "Überschreiben der Properties")
+
+Außerdem muss die Anwendung mit dem Parameter `-Dspring.profiles.active=ldap` gestartet werden:
+<pre>  mvn tomcat:run -Dspring.profiles.active=ldap</pre>
+
+Bzw. wenn man zusätzlich noch die Produktiveinstellungen haben möchte:
+<pre>  mvn tomcat:run -Denv=prod -Dspring.profiles.active=ldap</pre>
+
+### Authentifizierung via Active Directory
+
+Es müssen die Active Directory Domain und LDAP URL konfiguriert sein, damit eine Authentifizierung via Active Directory möglich ist.
+Die Properties sind unter `src/main/resources/config.properties` zu finden bzw. es können selbstverständlich auch die globalen Variablen exportiert werden.
+(siehe oben beschriebene Punkte "Properties Dateien" bzw. "Überschreiben der Properties")
+
+Außerdem muss die Anwendung mit dem Parameter `-Dspring.profiles.active=activeDirectory` gestartet werden:
+<pre>  mvn tomcat:run -Dspring.profiles.active=activeDirectory</pre>
+
+Bzw. wenn man zusätzlich noch die Produktiveinstellungen haben möchte:
+<pre>  mvn tomcat:run -Denv=prod -Dspring.profiles.active=activeDirectory</pre>
+
+### Berechtigungen
+
+Ist die Authentifizierung erfolgreich und der Benutzer noch nicht im System der Urlaubsverwaltung eingepflegt, wird die Person automatisch angelegt. Dem ersten Benutzer, der auf diese Weise im System angelegt wird, wird die Rolle Office zugewiesen (ermöglicht Rechteverwaltung).
 
 Ein User hat immer eine oder mehrere folgender Berechtigungen inne:
 * **inaktiv**: hat keinen Zugang mehr zur Urlaubsverwaltung (bestehende Daten des Benutzers bleiben zur Archivierung bestehen)
