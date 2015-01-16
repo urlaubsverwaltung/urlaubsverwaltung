@@ -9,10 +9,6 @@
         <property name="port" value="${mail.port}"/>
     </bean>
 
-    <bean id="mailService" class="org.synyx.urlaubsverwaltung.core.mail.MailServiceImpl">
-        <constructor-arg ref="mailSender"/>
-    </bean>
-
     <bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
         <property name="velocityProperties">
             <value>

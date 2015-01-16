@@ -7,10 +7,10 @@
        xmlns:mvc="http://www.springframework.org/schema/mvc"
 
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-	                   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
-                           http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd
+	                   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+                           http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.0.xsd
                            http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
-                           http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd">
+                           http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
 
     <!-- SPRING MAGIC -->
     <mvc:annotation-driven/>
@@ -18,7 +18,7 @@
     <context:component-scan base-package="org.synyx.urlaubsverwaltung">
         <context:exclude-filter type="regex" expression="org\.synyx\.urlaubsverwaltung\.restapi.*"/>
     </context:component-scan>
-    
+
     <context:annotation-config/>
 
     <repository:repositories base-package="org.synyx.urlaubsverwaltung"/>
