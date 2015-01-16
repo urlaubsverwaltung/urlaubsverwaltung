@@ -43,8 +43,8 @@
         </constructor-arg>
     </bean>
 
-    <bean id="devUserDetailsService" class="org.synyx.urlaubsverwaltung.security.TestUserDetailsService">
-        <constructor-arg ref="personDAO"></constructor-arg>
+    <bean id="devUserDetailsService" class="org.synyx.urlaubsverwaltung.security.DevUserDetailsService">
+        <constructor-arg ref="personService" />
     </bean>
 
     <security:authentication-manager alias="authenticationManager">

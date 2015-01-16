@@ -1,14 +1,13 @@
 package org.synyx.urlaubsverwaltung.security;
 
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.person.PersonDAO;
+import org.synyx.urlaubsverwaltung.core.person.PersonService;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,16 +18,16 @@ import java.util.Collection;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public class TestUserDetailsService implements UserDetailsService {
+public class DevUserDetailsService implements UserDetailsService {
 
-    private static final String TEST_USER_NAME = "test";
-    private static final String TEST_USER_PASSWORD = "secret";
+    static final String TEST_USER_NAME = "test";
+    static final String TEST_USER_PASSWORD = "secret";
 
-    private final PersonDAO personDAO;
+    private final PersonService personService;
 
-    public TestUserDetailsService(PersonDAO personDAO) {
+    public DevUserDetailsService(PersonService personService) {
 
-        this.personDAO = personDAO;
+        this.personService = personService;
     }
 
     @Override
@@ -38,13 +37,23 @@ public class TestUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("No authentication possible for user with name " + s);
         }
 
-        Person testUser = personDAO.findByLoginName(TEST_USER_NAME);
+        Person testUser = personService.getPersonByLogin(TEST_USER_NAME);
 
         if (testUser != null) {
             Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-            grantedAuthorities.add(new GrantedAuthorityImpl(Role.USER.toString()));
-            grantedAuthorities.add(new GrantedAuthorityImpl(Role.BOSS.toString()));
-            grantedAuthorities.add(new GrantedAuthorityImpl(Role.OFFICE.toString()));
+
+            Collection<Role> roles = testUser.getPermissions();
+
+            for (final Role role : roles) {
+                grantedAuthorities.add(new GrantedAuthority() {
+
+                        @Override
+                        public String getAuthority() {
+
+                            return role.name();
+                        }
+                    });
+            }
 
             return new User(TEST_USER_NAME, TEST_USER_PASSWORD, grantedAuthorities);
         }

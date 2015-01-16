@@ -22,7 +22,7 @@ import java.util.List;
  * @author  Aljona Murygina
  * @author  Johannes Reuter
  */
-@Service
+@Service("personService")
 @Transactional
 class PersonServiceImpl implements PersonService {
 
