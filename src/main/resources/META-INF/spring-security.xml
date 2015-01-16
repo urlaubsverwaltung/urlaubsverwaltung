@@ -25,44 +25,11 @@
         <security:logout logout-success-url="/login.jsp"/>
     </security:http>
 
-    <security:ldap-server id="ldapAuthServer" url="${ldap.url}/${ldap.base}"/>
+    <import resource="spring-security-default.xml"/>
+    <import resource="spring-security-ldap.xml"/>
+    <import resource="spring-security-activeDirectory.xml"/>
 
-    <bean id="personContextMapper" class="org.synyx.urlaubsverwaltung.security.PersonContextMapper">
-        <constructor-arg ref="personService"/>
-        <constructor-arg ref="mailService"/>
-    </bean>
-
-    <bean id="ldapAuthProvider" class="org.springframework.security.ldap.authentication.LdapAuthenticationProvider">
-        <constructor-arg>
-            <bean class="org.springframework.security.ldap.authentication.BindAuthenticator">
-                <constructor-arg ref="ldapAuthServer"/>
-                <property name="userDnPatterns">
-                    <list>
-                        <value>${ldap.userDnPatterns}</value>
-                    </list>
-                </property>
-            </bean>
-        </constructor-arg>
-        <property name="userDetailsContextMapper" ref="personContextMapper"/>
-    </bean>
-
-    <bean id="activeDirectoryAuthenticationProvider"
-          class="org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider">
-        <constructor-arg value="${ldap.activeDirectory.domain}"/>
-        <constructor-arg value="${ldap.activeDirectory.ldapUrl}"/>
-        <property name="userDetailsContextMapper" ref="personContextMapper"/>
-    </bean>
-
-    <bean id="devUserDetailsService" class="org.synyx.urlaubsverwaltung.security.DevUserDetailsService">
-        <constructor-arg ref="personService"/>
-    </bean>
-
-    <security:authentication-manager alias="authenticationManager">
-        <security:authentication-provider ref="ldapAuthProvider"/>
-        <security:authentication-provider ref="activeDirectoryAuthenticationProvider"/>
-        <security:authentication-provider user-service-ref="devUserDetailsService"/>
-    </security:authentication-manager>
-
+    <!-- BASIC AUTHENTICATION CONFIG -->
     <bean id="delegatingAuthenticationEntryPoint"
           class="org.springframework.security.web.authentication.DelegatingAuthenticationEntryPoint">
         <constructor-arg>

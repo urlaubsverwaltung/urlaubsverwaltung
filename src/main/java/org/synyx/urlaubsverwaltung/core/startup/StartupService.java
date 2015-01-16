@@ -20,6 +20,11 @@ public class StartupService {
 
     private static final Logger LOG = Logger.getLogger(StartupService.class);
 
+    private static final String SPRING_PROFILE_ACTIVE = "spring.profiles.active";
+    private static final String PROFILE_LDAP = "ldap";
+    private static final String PROFILE_ACTIVE_DIRECTORY = "activeDirectory";
+    private static final String PROFILE_DEFAULT = "default";
+
     @Value("${db.username}")
     private String dbUser;
 
@@ -32,7 +37,19 @@ public class StartupService {
     @PostConstruct
     public void logStartupInfo() {
 
-        LOG.info("Using database " + dbUrl + " with user " + dbUser);
-        LOG.info("Using following email address for technical notification: " + emailManager);
+        LOG.info("DATABASE = " + dbUrl);
+        LOG.info("DATABASE USER = " + dbUser);
+        LOG.info("APPLICATION MANAGER EMAIL = " + emailManager);
+
+        // Ensure that the given Spring profile is valid
+        String activeSpringProfile = System.getProperty(SPRING_PROFILE_ACTIVE);
+
+        if (activeSpringProfile != null && !activeSpringProfile.equals(PROFILE_DEFAULT)
+                && !activeSpringProfile.equals(PROFILE_LDAP) && !activeSpringProfile.equals(PROFILE_ACTIVE_DIRECTORY)) {
+            LOG.error("INVALID VALUE FOR '" + SPRING_PROFILE_ACTIVE + "' = " + activeSpringProfile);
+            System.exit(1);
+        }
+
+        LOG.info("ACTIVE SPRING PROFILE=" + activeSpringProfile);
     }
 }
