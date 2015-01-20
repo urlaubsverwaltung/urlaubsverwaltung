@@ -71,8 +71,8 @@ public class PersonForm {
     }
 
 
-    public PersonForm(Person person, String year, Account account, WorkingTime workingTime, Collection<Role> roles, Collection<MailNotification> notifications,
-        Locale locale) {
+    public PersonForm(Person person, String year, Account account, WorkingTime workingTime, Collection<Role> roles,
+        Collection<MailNotification> notifications, Locale locale) {
 
         this.loginName = person.getLoginName();
         this.lastName = person.getLastName();
@@ -111,10 +111,9 @@ public class PersonForm {
 
         this.permissions = new ArrayList<>(roles);
         this.notifications = new ArrayList<>(notifications);
-
     }
 
-    public void setDefaultValuesForValidity() {
+    private void setDefaultValuesForValidity() {
 
         // default values for validFrom and validTo: 1.1. - 31.12.
         this.dayFrom = String.valueOf(1);

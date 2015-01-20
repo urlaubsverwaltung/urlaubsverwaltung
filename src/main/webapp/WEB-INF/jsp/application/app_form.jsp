@@ -93,37 +93,11 @@
 <form:form method="POST" action="${actionUrl}" modelAttribute="appForm" class="form-horizontal" role="form">
 <form:hidden path="person" value="${person.id}" />
 
-<c:if test="${not empty errors || timeError != null}">
-
+<c:if test="${not empty errors}">
     <div class="row">
-
-    <div class="col-xs-12 alert alert-danger">
-            <c:if test="${empty errors}">
-                <spring:message code="${timeError}"/>
-            </c:if>
+        <div class="col-xs-12 alert alert-danger">
             <form:errors />
-            <c:if test="${daysApp != null}">
-                <c:choose>
-                    <c:when test="${daysApp <= 1.00 && daysApp > 0.50}">
-                        <c:set var="msg1" value="error.days.start.sing"/>
-                    </c:when>
-                    <c:otherwise>
-                        <c:set var="msg1" value="error.days.start.plural"/>
-                    </c:otherwise>
-                </c:choose>
-                <c:set var="numberOfDays" value="${leftDays}"/>
-                <c:choose>
-                    <c:when test="${numberOfDays <= 1.00 && numberOfDays > 0.50}">
-                        <c:set var="msg2" value="error.days.end.sing"/>
-                    </c:when>
-                    <c:otherwise>
-                        <c:set var="msg2" value="error.days.end.plural"/>
-                    </c:otherwise>
-                </c:choose>
-                <spring:message code="${msg2}" arguments="${numberOfDays}"/>
-            </c:if>
-    </div>
-
+        </div>
     </div>
 </c:if>
 

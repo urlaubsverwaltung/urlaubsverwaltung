@@ -377,8 +377,12 @@ public class PersonValidator implements Validator {
         List<MailNotification> notifications = personForm.getNotifications();
 
         if (roles != null) {
-            if ((notifications.contains(MailNotification.NOTIFICATION_BOSS) && !roles.contains(Role.BOSS))
-                    || (notifications.contains(MailNotification.NOTIFICATION_OFFICE) && !roles.contains(Role.OFFICE))) {
+            boolean bossNotificationsSelectedButNotBossRole = notifications.contains(MailNotification.NOTIFICATION_BOSS)
+                && !roles.contains(Role.BOSS);
+            boolean officeNotificationsSelectedButNotOfficeRole = notifications.contains(
+                    MailNotification.NOTIFICATION_OFFICE) && !roles.contains(Role.OFFICE);
+
+            if (bossNotificationsSelectedButNotBossRole || officeNotificationsSelectedButNotOfficeRole) {
                 errors.rejectValue("notifications", "notification.error");
             }
         }

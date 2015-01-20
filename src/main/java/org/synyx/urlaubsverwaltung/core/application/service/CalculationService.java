@@ -16,6 +16,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.util.CalcUtil;
+import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 
 import java.math.BigDecimal;
 
@@ -60,23 +61,24 @@ public class CalculationService {
             Person person = application.getPerson();
             int startYear = application.getStartDate().getYear();
             int endYear = application.getEndDate().getYear();
+            DateMidnight lastDayOfOldYear = DateUtil.getLastDayOfYear(application.getStartDate().getYear());
+            DateMidnight firstDayOfNewYear = DateUtil.getFirstDayOfYear(endYear);
 
             Application tmp1 = new Application();
             tmp1.setStartDate(application.getStartDate());
-            tmp1.setEndDate(new DateMidnight(startYear, DateTimeConstants.DECEMBER, 31));
+            tmp1.setEndDate(lastDayOfOldYear);
             tmp1.setPerson(person);
             tmp1.setHowLong(application.getHowLong());
-            tmp1.setDays(calendarService.getWorkDays(tmp1.getHowLong(), application.getStartDate(),
-                    new DateMidnight(startYear, DateTimeConstants.DECEMBER, 31), application.getPerson()));
+            tmp1.setDays(calendarService.getWorkDays(tmp1.getHowLong(), application.getStartDate(), lastDayOfOldYear,
+                    application.getPerson()));
 
             Application tmp2 = new Application();
-            tmp2.setStartDate(new DateMidnight(endYear, DateTimeConstants.JANUARY, 1));
+            tmp2.setStartDate(firstDayOfNewYear);
             tmp2.setEndDate(application.getEndDate());
             tmp2.setPerson(person);
             tmp2.setHowLong(application.getHowLong());
-            tmp2.setDays(calendarService.getWorkDays(application.getHowLong(),
-                    new DateMidnight(endYear, DateTimeConstants.JANUARY, 1), application.getEndDate(),
-                    application.getPerson()));
+            tmp2.setDays(calendarService.getWorkDays(application.getHowLong(), firstDayOfNewYear,
+                    application.getEndDate(), application.getPerson()));
 
             if (accountService.getHolidaysAccount(startYear, person) == null) {
                 // this may happen if someone applies for leave for the past year and there is set no account information
@@ -186,6 +188,7 @@ public class CalculationService {
         if (!account.isRemainingVacationDaysExpire()) {
             BigDecimal allDays = daysBeforeApril.add(daysAfterApril);
             BigDecimal unusedRemainingVacationDays = remainingVacationDays.subtract(allDays);
+
             if (CalcUtil.isNegative(unusedRemainingVacationDays)) {
                 return vacationDays.add(unusedRemainingVacationDays);
             } else {

@@ -39,7 +39,9 @@ import org.synyx.urlaubsverwaltung.core.application.service.OverlapService;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
+import org.synyx.urlaubsverwaltung.core.util.CalcUtil;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
+import org.synyx.urlaubsverwaltung.core.util.NumberUtil;
 import org.synyx.urlaubsverwaltung.security.Role;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
@@ -473,8 +475,8 @@ public class ApplicationController {
 
         BigDecimal days = applicationInteractionService.getNumberOfVacationDays(application);
 
-        // check if the vacation would have more than 0 days
-        if (days.compareTo(BigDecimal.ZERO) == 0) {
+        // ensure that no one applies for leave for a vacation of 0 days
+        if (CalcUtil.isZero(days)) {
             errors.reject("check.zero");
 
             return false;
@@ -489,35 +491,37 @@ public class ApplicationController {
 
         OverlapCase overlap = overlapService.checkOverlap(application);
 
-        if (overlap == OverlapCase.FULLY_OVERLAPPING || overlap == OverlapCase.PARTLY_OVERLAPPING) {
+        boolean isOverlapping = overlap == OverlapCase.FULLY_OVERLAPPING || overlap == OverlapCase.PARTLY_OVERLAPPING;
+
+        if (isOverlapping) {
             // in this version, these two cases are handled equal
             errors.reject("check.overlap");
-        } else if (overlap == OverlapCase.NO_OVERLAPPING) {
+
+            return false;
+        }
+
+        if (overlap == OverlapCase.NO_OVERLAPPING) {
             // if there is no overlap go to next check but only if vacation type is holiday, else you don't have to
             // check if there are enough days on user's holidays account
             boolean enoughDays = false;
 
-            if (application.getVacationType() == VacationType.HOLIDAY) {
+            boolean isHoliday = application.getVacationType() == VacationType.HOLIDAY;
+
+            if (isHoliday) {
                 enoughDays = calculationService.checkApplication(application);
             }
 
-            // enough days to apply for leave
-            if (enoughDays || (application.getVacationType() != VacationType.HOLIDAY)) {
+            // / enough days to apply for leave
+            if (enoughDays || !isHoliday) {
                 applicationInteractionService.apply(application, sessionService.getLoggedUser());
 
                 return true;
-            } else {
-                if (isOffice == true) {
-                    errors.reject("check.enough.office");
-                } else {
-                    errors.reject("check.enough");
-                }
+            }
 
-                if (application.getStartDate().getYear() != application.getEndDate().getYear()) {
-                    model.addAttribute("daysApp", null);
-                } else {
-                    model.addAttribute("daysApp", days);
-                }
+            if (isOffice) {
+                errors.reject("check.enough.office");
+            } else {
+                errors.reject("check.enough");
             }
         }
 
@@ -810,17 +814,15 @@ public class ApplicationController {
         DateMidnight remindDate = application.getRemindDate();
 
         if (remindDate != null) {
-            if (remindDate.equals(DateMidnight.now())) {
+            if (remindDate.isEqualNow()) {
                 redirectAttributes.addFlashAttribute("remindAlreadySent", true);
             }
         } else {
-            long applicationDate = application.getApplicationDate().getMillis();
-            long now = DateMidnight.now().getMillis();
+            int minDaysToWait = 2;
 
-            // minimal difference should be two days
-            long minDifference = 2 * 24 * 60 * 60 * 1000;
+            DateMidnight minDateForNotification = application.getApplicationDate().plusDays(minDaysToWait);
 
-            if (now - applicationDate > minDifference) {
+            if (minDateForNotification.isAfterNow()) {
                 mailService.sendRemindBossNotification(application);
                 application.setRemindDate(DateMidnight.now());
                 applicationService.save(application);

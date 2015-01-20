@@ -208,7 +208,8 @@ class MailServiceImpl implements MailService {
 
 
     /**
-     * @see  MailService#sendAllowedNotification(org.synyx.urlaubsverwaltung.core.application.domain.Application, org.synyx.urlaubsverwaltung.core.application.domain.Comment)
+     * @see  MailService#sendAllowedNotification(org.synyx.urlaubsverwaltung.core.application.domain.Application,
+     *       org.synyx.urlaubsverwaltung.core.application.domain.Comment)
      */
     @Override
     public void sendAllowedNotification(Application application, Comment comment) {
@@ -234,7 +235,8 @@ class MailServiceImpl implements MailService {
 
 
     /**
-     * @see  MailService#sendRejectedNotification(org.synyx.urlaubsverwaltung.core.application.domain.Application, org.synyx.urlaubsverwaltung.core.application.domain.Comment)
+     * @see  MailService#sendRejectedNotification(org.synyx.urlaubsverwaltung.core.application.domain.Application,
+     *       org.synyx.urlaubsverwaltung.core.application.domain.Comment)
      */
     @Override
     public void sendRejectedNotification(Application application, Comment comment) {
@@ -245,7 +247,8 @@ class MailServiceImpl implements MailService {
 
 
     /**
-     * @see  MailService#sendReferApplicationNotification(org.synyx.urlaubsverwaltung.core.application.domain.Application,
+     * @see  MailService#sendReferApplicationNotification(
+     *       org.synyx.urlaubsverwaltung.core.application.domain.Application,
      *       org.synyx.urlaubsverwaltung.core.person.Person, String)
      */
     @Override
@@ -268,7 +271,8 @@ class MailServiceImpl implements MailService {
 
 
     /**
-     * @see  MailService#sendAppliedForLeaveByOfficeNotification(org.synyx.urlaubsverwaltung.core.application.domain.Application)
+     * @see  MailService#sendAppliedForLeaveByOfficeNotification(
+     *       org.synyx.urlaubsverwaltung.core.application.domain.Application)
      */
     @Override
     public void sendAppliedForLeaveByOfficeNotification(Application application) {
@@ -279,8 +283,8 @@ class MailServiceImpl implements MailService {
 
 
     /**
-     * @see  MailService#sendCancelledNotification(org.synyx.urlaubsverwaltung.core.application.domain.Application, boolean,
-     *       org.synyx.urlaubsverwaltung.core.application.domain.Comment)
+     * @see  MailService#sendCancelledNotification(org.synyx.urlaubsverwaltung.core.application.domain.Application,
+     *       boolean, org.synyx.urlaubsverwaltung.core.application.domain.Comment)
      */
     @Override
     public void sendCancelledNotification(Application application, boolean cancelledByOffice, Comment comment) {
@@ -310,7 +314,7 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendKeyGeneratingErrorNotification(String loginName) {
 
-        String text = "An error occured during key generation for person with login " + loginName + " failed.";
+        String text = "An error occurred during key generation for person with login " + loginName + " failed.";
 
         sendTechnicalNotification("subject.key.error", text);
     }

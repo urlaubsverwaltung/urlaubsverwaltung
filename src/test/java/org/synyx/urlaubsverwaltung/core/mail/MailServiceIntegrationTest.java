@@ -322,7 +322,7 @@ public class MailServiceIntegrationTest {
         String content = (String) msg.getContent();
 
         assertTrue(content.contentEquals(
-                "An error occured during key generation for person with login horscht failed."));
+                "An error occurred during key generation for person with login horscht failed."));
     }
 
 

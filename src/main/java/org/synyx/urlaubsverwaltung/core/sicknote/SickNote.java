@@ -73,13 +73,18 @@ public class SickNote extends AbstractPersistable<Integer> {
         this.person = person;
     }
 
+
     public SickNoteType getType() {
+
         return type;
     }
 
+
     public void setType(SickNoteType type) {
+
         this.type = type;
     }
+
 
     public DateMidnight getStartDate() {
 

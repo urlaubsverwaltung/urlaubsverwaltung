@@ -32,8 +32,8 @@ class AccountServiceImpl implements AccountService {
 
     private static final Logger LOG = Logger.getLogger(AccountServiceImpl.class);
 
-    private static final double MONTHS_PER_YEAR = 12.0;
-    private static final double WEEKDAYS_PER_MONTH = 21.0;
+    private static final int MONTHS_PER_YEAR = 12;
+    private static final int WEEKDAYS_PER_MONTH = 21;
 
     private final AccountDAO accountDAO;
     private final OwnCalendarService calendarService;
@@ -155,13 +155,13 @@ class AccountServiceImpl implements AccountService {
             int fullMonths = getNumberOfMonthsForPeriod(startForMonthCalc, endForMonthCalc);
 
             if (fullMonths > 1) {
-                fullMonths = (fullMonths * account.getAnnualVacationDays().intValue()) / 12;
+                fullMonths = (fullMonths * account.getAnnualVacationDays().intValue()) / MONTHS_PER_YEAR;
                 unroundedVacationDays += fullMonths;
             }
         } else {
             // that's the simple case
             int months = getNumberOfMonthsForPeriod(start, end);
-            unroundedVacationDays += (months * account.getAnnualVacationDays().doubleValue()) / 12;
+            unroundedVacationDays += (months * account.getAnnualVacationDays().doubleValue()) / MONTHS_PER_YEAR;
         }
 
         return round(unroundedVacationDays);
