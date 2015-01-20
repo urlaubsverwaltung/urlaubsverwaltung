@@ -107,19 +107,4 @@ public interface ApplicationDAO extends JpaRepository<Application, Integer> {
     List<Application> getRelevantActiveApplicationsByPeriodForEveryDayLength(Date startDate, Date endDate,
         Person person);
 
-
-    // ONLY FOR JMX
-
-    @Query(
-        "select count(x) from Application x where x.status = ?1 and ((x.startDate between ?2 and ?3) or (x.endDate between ?2 and ?3)) "
-        + "order by x.startDate"
-    )
-    long countApplicationsInStateAndYear(ApplicationStatus state, Date firstDayOfYear, Date lastDayOfYear);
-
-
-    @Query(
-        "select x from Application x where x.status = ?1 and ((x.startDate between ?2 and ?3) or (x.endDate between ?2 and ?3)) "
-        + "order by x.startDate"
-    )
-    List<Application> getApplicationsByStateAndYear(ApplicationStatus state, Date firstDayOfYear, Date lastDayOfYear);
 }

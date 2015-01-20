@@ -56,11 +56,6 @@
     <task:scheduler id="scheduler" pool-size="10"/>
     <!-- END:SCHEDULING -->
 
-    <!-- JMX -->
-    <!-- remove comment to use jmx demo -->
-    <!--<import resource="jmxContext.xml"/>-->
-    <!-- END:JMX -->
-
     <!-- LOGIN -->
     <import resource="spring-security.xml"/>
     <!-- END:LOGIN -->
