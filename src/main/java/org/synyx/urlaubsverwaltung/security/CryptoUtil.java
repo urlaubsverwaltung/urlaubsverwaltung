@@ -20,7 +20,7 @@ import java.security.spec.PKCS8EncodedKeySpec;
  *
  * @author  Aljona Murygina
  */
-public class CryptoUtil {
+public final class CryptoUtil {
 
     private static final int KEYSIZE = 2048;
 

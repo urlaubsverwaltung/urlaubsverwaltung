@@ -15,7 +15,7 @@ import java.security.NoSuchAlgorithmException;
  *
  * @author  Aljona Murygina
  */
-public class GravatarUtil {
+public final class GravatarUtil {
 
     private static final Logger LOG = Logger.getLogger(GravatarUtil.class);
 

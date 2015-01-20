@@ -6,7 +6,7 @@ package org.synyx.urlaubsverwaltung.web.person;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public class PersonConstants {
+public final class PersonConstants {
 
     // jsps
     public static final String OVERVIEW_JSP = "person/overview"; // jsp for personal overview

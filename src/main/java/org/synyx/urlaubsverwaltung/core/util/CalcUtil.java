@@ -12,7 +12,7 @@ import java.math.BigDecimal;
  *
  *          <p>This class contains auxiliary functions for handling BigDecimals.</p>
  */
-public class CalcUtil {
+public final class CalcUtil {
 
     private CalcUtil() {
 

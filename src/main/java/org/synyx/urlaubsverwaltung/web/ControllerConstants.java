@@ -7,7 +7,7 @@ package org.synyx.urlaubsverwaltung.web;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public class ControllerConstants {
+public final class ControllerConstants {
 
     public static final String LOGIN_LINK = "redirect:/login.jsp?login_error=1";
 

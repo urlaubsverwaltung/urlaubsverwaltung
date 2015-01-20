@@ -16,7 +16,7 @@ import java.util.Locale;
 /**
  * @author  Aljona Murygina
  */
-public class NumberUtil {
+public final class NumberUtil {
 
     private NumberUtil() {
 

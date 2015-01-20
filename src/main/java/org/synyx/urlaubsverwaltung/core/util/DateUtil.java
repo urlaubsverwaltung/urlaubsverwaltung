@@ -7,7 +7,7 @@ import org.joda.time.DateTimeConstants;
 /**
  * @author  Aljona Murygina
  */
-public class DateUtil {
+public final class DateUtil {
 
     private static final int FIRST_DAY_OF_MONTH = 1;
     private static final int LAST_DAY_OF_MONTH = 31;
