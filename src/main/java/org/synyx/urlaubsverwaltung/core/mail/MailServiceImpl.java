@@ -62,7 +62,7 @@ class MailServiceImpl implements MailService {
     private static final String PROPERTIES_FILE = "messages.properties";
     private static final String TYPE = ".vm";
 
-    @Value("${email.manager}")
+    @Value("${mail.manager}")
     protected String emailManager;
 
     @Value("${application.url}")

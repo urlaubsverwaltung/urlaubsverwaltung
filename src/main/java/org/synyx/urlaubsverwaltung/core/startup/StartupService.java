@@ -37,7 +37,7 @@ public class StartupService {
     @Value("${db.url}")
     private String dbUrl;
 
-    @Value("${email.manager}")
+    @Value("${mail.manager}")
     private String emailManager;
 
     @PostConstruct
