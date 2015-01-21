@@ -41,7 +41,6 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.util.CalcUtil;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
-import org.synyx.urlaubsverwaltung.core.util.NumberUtil;
 import org.synyx.urlaubsverwaltung.security.Role;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
@@ -420,14 +419,12 @@ public class ApplicationController {
 
     private String newApplication(Person person, AppForm appForm, boolean isOffice, Errors errors, Model model) {
 
-        Person loggedUser = sessionService.getLoggedUser();
-
         Person personForForm;
 
         if (isOffice) {
             personForForm = person;
         } else {
-            personForForm = loggedUser;
+            personForForm = sessionService.getLoggedUser();
         }
 
         applicationValidator.validate(appForm, errors);
@@ -442,7 +439,7 @@ public class ApplicationController {
             return ControllerConstants.APPLICATION + "/app_form";
         }
 
-        if (checkAndSaveApplicationForm(appForm, isOffice, errors, model)) {
+        if (checkAndSaveApplicationForm(appForm, errors)) {
             int id = applicationService.getIdOfLatestApplication(personForForm, ApplicationStatus.WAITING);
 
             return "redirect:/web/application/" + id;
@@ -463,13 +460,11 @@ public class ApplicationController {
      * leave.
      *
      * @param  appForm
-     * @param  isOffice
      * @param  errors
-     * @param  model
      *
      * @return  true if everything is alright and application can be saved, else false
      */
-    private boolean checkAndSaveApplicationForm(AppForm appForm, boolean isOffice, Errors errors, Model model) {
+    private boolean checkAndSaveApplicationForm(AppForm appForm, Errors errors) {
 
         Application application = appForm.createApplicationObject();
 
@@ -500,32 +495,26 @@ public class ApplicationController {
             return false;
         }
 
-        if (overlap == OverlapCase.NO_OVERLAPPING) {
-            // if there is no overlap go to next check but only if vacation type is holiday, else you don't have to
-            // check if there are enough days on user's holidays account
-            boolean enoughDays = false;
+        // if there is no overlap go to next check but only if vacation type is holiday, else you don't have to
+        // check if there are enough days on user's holidays account
+        boolean enoughDays = false;
+        boolean isHoliday = application.getVacationType() == VacationType.HOLIDAY;
 
-            boolean isHoliday = application.getVacationType() == VacationType.HOLIDAY;
-
-            if (isHoliday) {
-                enoughDays = calculationService.checkApplication(application);
-            }
-
-            // / enough days to apply for leave
-            if (enoughDays || !isHoliday) {
-                applicationInteractionService.apply(application, sessionService.getLoggedUser());
-
-                return true;
-            }
-
-            if (isOffice) {
-                errors.reject("check.enough.office");
-            } else {
-                errors.reject("check.enough");
-            }
+        if (isHoliday) {
+            enoughDays = calculationService.checkApplication(application);
         }
 
-        return false;
+        boolean mayApplyForLeave = (isHoliday && enoughDays) || !isHoliday;
+
+        if (mayApplyForLeave) {
+            applicationInteractionService.apply(application, sessionService.getLoggedUser());
+
+            return true;
+        } else {
+            errors.reject("check.enough");
+
+            return false;
+        }
     }
 
 
@@ -771,12 +760,14 @@ public class ApplicationController {
         Person loggedUser = sessionService.getLoggedUser();
         ApplicationStatus status = application.getStatus();
 
+        boolean isWaiting = status == ApplicationStatus.WAITING;
+        boolean isAllowed = status == ApplicationStatus.ALLOWED;
+
         // security check: only two cases where cancelling is possible
         // 1: office can cancel all applications for leave that has the state waiting or allowed, even for other persons
         // 2: user can cancel his own applications for leave if they have the state waiting
-        boolean officeIsCancelling = sessionService.isOffice()
-            && (status == ApplicationStatus.WAITING || status == ApplicationStatus.ALLOWED);
-        boolean userIsCancelling = loggedUser.equals(application.getPerson()) && status == ApplicationStatus.WAITING;
+        boolean officeIsCancelling = sessionService.isOffice() && (isWaiting || isAllowed);
+        boolean userIsCancelling = loggedUser.equals(application.getPerson()) && isWaiting;
 
         if (officeIsCancelling || userIsCancelling) {
             // user can cancel only his own waiting applications, so the comment is NOT mandatory

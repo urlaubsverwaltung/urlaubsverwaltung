@@ -38,10 +38,6 @@ class CommentServiceImpl implements CommentService {
         this.commentDAO = commentDAO;
     }
 
-    /**
-     * @see  CommentService#saveComment(org.synyx.urlaubsverwaltung.core.application.domain.Comment, org.synyx.urlaubsverwaltung.core.person.Person,
-     *       org.synyx.urlaubsverwaltung.core.application.domain.Application)
-     */
     @Override
     public void saveComment(Comment comment, Person person, Application application) {
 
@@ -54,9 +50,6 @@ class CommentServiceImpl implements CommentService {
     }
 
 
-    /**
-     * @see  CommentService#getCommentsByApplication(org.synyx.urlaubsverwaltung.core.application.domain.Application)
-     */
     @Override
     public List<Comment> getCommentsByApplication(Application a) {
 

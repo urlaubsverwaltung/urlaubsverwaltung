@@ -81,8 +81,10 @@ public class CalculationService {
                     application.getEndDate(), application.getPerson()));
 
             if (accountService.getHolidaysAccount(startYear, person) == null) {
-                // this may happen if someone applies for leave for the past year and there is set no account information
-                // in this case just check if there are enough vacation days for this year
+                /**
+                 * NOTE: This may happen if someone applies for leave for the past year and there is no account.
+                 * In this case just check if there are enough vacation days for this year.
+                 */
                 return checkIfThereAreEnoughVacationDays(tmp2);
             } else {
                 // this is the normal case: someone applies for leave for the next year
@@ -140,7 +142,9 @@ public class CalculationService {
             remainingVacationDays = result;
         } else if (result.compareTo(BigDecimal.ZERO) < 0) {
             remainingVacationDays = BigDecimal.ZERO;
-            vacationDays = vacationDays.add(result); // result is negative so that you add it to vacation days instead of subtract it
+
+            // result is negative so that you add it to vacation days instead of subtract it
+            vacationDays = vacationDays.add(result);
         }
 
         // if the remaining vacation days do not expire or it is before April
@@ -183,8 +187,11 @@ public class CalculationService {
             return vacationDays;
         }
 
-        // If the remaining vacations days do not expire we substract all used vacation days from the remaining vacation days
-        // and if the result is negative we substract theses days from the available vacation days.
+        /**
+         * NOTE: If the remaining vacations days do not expire we subtract all used vacation days from the
+         * remaining vacation days and if the result is negative we subtract theses days from the available
+         * vacation days.
+         */
         if (!account.isRemainingVacationDaysExpire()) {
             BigDecimal allDays = daysBeforeApril.add(daysAfterApril);
             BigDecimal unusedRemainingVacationDays = remainingVacationDays.subtract(allDays);
@@ -200,12 +207,16 @@ public class CalculationService {
         BigDecimal unusedRemainingVacationDays = remainingVacationDays.subtract(daysBeforeApril);
 
         if (CalcUtil.isNegative(unusedRemainingVacationDays)) {
-            // If more remaining vacation days were used than available we substract the difference from the vacation days
-            // and also substract the used vacation days after the remaining vacation days expired.
+            /**
+             * NOTE: If more remaining vacation days were used than available we subtract the difference from the
+             * vacation days and also subtract the used vacation days after the remaining vacation days expired.
+             */
             result = vacationDays.add(unusedRemainingVacationDays).subtract(daysAfterApril);
         } else {
-            // If not all remaining vacation days were used we only need to substract the days
-            // after the remaining vacations days were expired.
+            /**
+             * NOTE: If not all remaining vacation days were used we only need to subtract the days
+             * after the remaining vacations days were expired.
+             */
             result = vacationDays.subtract(daysAfterApril);
         }
 

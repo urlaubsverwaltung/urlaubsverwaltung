@@ -63,9 +63,11 @@ public class PersonValidator implements Validator {
     // original from: http://www.markussipila.info/pub/emailvalidator.php?action=validate
     // modified by adding following characters: äöüß
     private static final String EMAIL_PATTERN =
-        "^[a-zäöüß0-9,!#\\$%&'\\*\\+/=\\?\\^_`\\{\\|}~-]+(\\.[a-zäöüß0-9,!#\\$%&'\\*\\+/=\\?\\^_`\\{\\|}~-]+)*@[a-zäöüß0-9-]+(\\.[a-zäöüß0-9-]+)*\\.([a-z]{2,})$";
+        "^[a-zäöüß0-9,!#\\$%&'\\*\\+/=\\?\\^_`\\{\\|}~-]+(\\.[a-zäöüß0-9,!#\\$%&'\\*\\+/=\\?\\^_`\\{\\|}~-]+)*@"
+        + "[a-zäöüß0-9-]+(\\.[a-zäöüß0-9-]+)*\\.([a-z]{2,})$";
 
     private static final String MAX_DAYS = "annual.vacation.max";
+    private static final int MAX_LIMIT_OF_YEARS = 10;
 
     private static final String BUSINESS_PROPERTIES_FILE = "business.properties";
 
@@ -211,7 +213,7 @@ public class PersonValidator implements Validator {
 
                 int now = DateMidnight.now().getYear();
 
-                if (year < (now - 11) || year > (now + 10)) {
+                if (year < (now - MAX_LIMIT_OF_YEARS + 1) || year > (now + MAX_LIMIT_OF_YEARS)) {
                     errors.rejectValue(YEAR, ERROR_ENTRY);
                 }
             } catch (NumberFormatException ex) {

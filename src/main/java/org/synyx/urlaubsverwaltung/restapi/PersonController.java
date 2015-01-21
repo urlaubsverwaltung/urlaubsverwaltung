@@ -35,7 +35,9 @@ public class PersonController {
     @Autowired
     private PersonService personService;
 
-    @ApiOperation(value = "Get all active persons of the application", notes = "Get all active persons of the application")
+    @ApiOperation(
+        value = "Get all active persons of the application", notes = "Get all active persons of the application"
+    )
     @RequestMapping(value = ROOT_URL, method = RequestMethod.GET)
     @ModelAttribute("response")
     public PersonListResponse persons(

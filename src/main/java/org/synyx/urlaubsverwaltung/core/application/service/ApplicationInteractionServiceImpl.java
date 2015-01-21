@@ -165,7 +165,8 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         }
 
         if (!application.getPerson().equals(canceller)) {
-            // if application has been cancelled for someone on behalf, the person gets an email regardless of application status
+            // if application has been cancelled for someone on behalf,
+            // the person gets an email regardless of application status
             mailService.sendCancelledNotification(application, true, comment);
         }
     }

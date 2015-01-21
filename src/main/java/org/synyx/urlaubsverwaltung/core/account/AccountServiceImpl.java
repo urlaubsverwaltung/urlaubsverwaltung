@@ -45,9 +45,6 @@ class AccountServiceImpl implements AccountService {
         this.calendarService = calendarService;
     }
 
-    /**
-     * @see  AccountService#getHolidaysAccount(int, org.synyx.urlaubsverwaltung.core.person.Person)
-     */
     @Override
     public Account getHolidaysAccount(int year, Person person) {
 
@@ -55,10 +52,6 @@ class AccountServiceImpl implements AccountService {
     }
 
 
-    /**
-     * @see  AccountService#createHolidaysAccount(org.synyx.urlaubsverwaltung.core.person.Person, org.joda.time.DateMidnight,
-     *       org.joda.time.DateMidnight, java.math.BigDecimal, java.math.BigDecimal, boolean)
-     */
     @Override
     public void createHolidaysAccount(Person person, DateMidnight validFrom, DateMidnight validTo, BigDecimal days,
         BigDecimal remaining, boolean remainingDaysExpire) {
@@ -76,10 +69,6 @@ class AccountServiceImpl implements AccountService {
     }
 
 
-    /**
-     * @see  AccountService#editHolidaysAccount(Account, org.joda.time.DateMidnight, org.joda.time.DateMidnight,
-     *       java.math.BigDecimal, java.math.BigDecimal, boolean)
-     */
     @Override
     public void editHolidaysAccount(Account account, DateMidnight validFrom, DateMidnight validTo, BigDecimal days,
         BigDecimal remaining, boolean remainingDaysExpire) {
@@ -103,9 +92,6 @@ class AccountServiceImpl implements AccountService {
     }
 
 
-    /**
-     * @see  AccountService#calculateActualVacationDays(Account)
-     */
     @Override
     public BigDecimal calculateActualVacationDays(Account account) {
 
@@ -115,13 +101,16 @@ class AccountServiceImpl implements AccountService {
         DateMidnight firstDayOfStartDatesMonth = start.dayOfMonth().withMinimumValue();
         DateMidnight lastDayOfEndDatesMonth = end.dayOfMonth().withMaximumValue();
 
-        /*
-         * Method to calculate the actual vacation days: (months * annual vacation days) / months per year e.g.: (5 months *
-         * 28 days)/12 = 11.6666 = 12
+        /**
+         * NOTE: The actual vacation days are calculated the following way:
+         *
+         * (months * annual vacation days) / months per year
+         *
+         * Example:
+         * (5 months * 28 days)/12 = 11.6666 = 12
          *
          * Please notice following rounding rules: 11.1 --> 11.0 11.3 --> 11.5 11.6 --> 12.0
          */
-
         double unroundedVacationDays = 0.0;
 
         // if validity period is not from 1st to last day of month, e.g. 15. May - 31. December
@@ -209,9 +198,6 @@ class AccountServiceImpl implements AccountService {
     }
 
 
-    /**
-     * @see  AccountService#getOrCreateNewAccount(int, org.synyx.urlaubsverwaltung.core.person.Person)
-     */
     @Override
     public Account getOrCreateNewAccount(int year, Person person) {
 
@@ -240,9 +226,6 @@ class AccountServiceImpl implements AccountService {
     }
 
 
-    /**
-     * @see  AccountService#save(Account)
-     */
     @Override
     public void save(Account account) {
 

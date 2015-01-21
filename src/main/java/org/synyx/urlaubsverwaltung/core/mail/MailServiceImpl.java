@@ -89,9 +89,6 @@ class MailServiceImpl implements MailService {
         }
     }
 
-    /**
-     * @see  MailService#sendNewApplicationNotification(org.synyx.urlaubsverwaltung.core.application.domain.Application)
-     */
     @Override
     public void sendNewApplicationNotification(Application application) {
 
@@ -196,9 +193,6 @@ class MailServiceImpl implements MailService {
     }
 
 
-    /**
-     * @see  MailService#sendRemindBossNotification(org.synyx.urlaubsverwaltung.core.application.domain.Application)
-     */
     @Override
     public void sendRemindBossNotification(Application a) {
 
@@ -207,10 +201,6 @@ class MailServiceImpl implements MailService {
     }
 
 
-    /**
-     * @see  MailService#sendAllowedNotification(org.synyx.urlaubsverwaltung.core.application.domain.Application,
-     *       org.synyx.urlaubsverwaltung.core.application.domain.Comment)
-     */
     @Override
     public void sendAllowedNotification(Application application, Comment comment) {
 
@@ -234,10 +224,6 @@ class MailServiceImpl implements MailService {
     }
 
 
-    /**
-     * @see  MailService#sendRejectedNotification(org.synyx.urlaubsverwaltung.core.application.domain.Application,
-     *       org.synyx.urlaubsverwaltung.core.application.domain.Comment)
-     */
     @Override
     public void sendRejectedNotification(Application application, Comment comment) {
 
@@ -246,11 +232,6 @@ class MailServiceImpl implements MailService {
     }
 
 
-    /**
-     * @see  MailService#sendReferApplicationNotification(
-     *       org.synyx.urlaubsverwaltung.core.application.domain.Application,
-     *       org.synyx.urlaubsverwaltung.core.person.Person, String)
-     */
     @Override
     public void sendReferApplicationNotification(Application a, Person recipient, String sender) {
 
@@ -259,9 +240,6 @@ class MailServiceImpl implements MailService {
     }
 
 
-    /**
-     * @see  MailService#sendConfirmation(org.synyx.urlaubsverwaltung.core.application.domain.Application)
-     */
     @Override
     public void sendConfirmation(Application application) {
 
@@ -270,10 +248,6 @@ class MailServiceImpl implements MailService {
     }
 
 
-    /**
-     * @see  MailService#sendAppliedForLeaveByOfficeNotification(
-     *       org.synyx.urlaubsverwaltung.core.application.domain.Application)
-     */
     @Override
     public void sendAppliedForLeaveByOfficeNotification(Application application) {
 
@@ -282,10 +256,6 @@ class MailServiceImpl implements MailService {
     }
 
 
-    /**
-     * @see  MailService#sendCancelledNotification(org.synyx.urlaubsverwaltung.core.application.domain.Application,
-     *       boolean, org.synyx.urlaubsverwaltung.core.application.domain.Comment)
-     */
     @Override
     public void sendCancelledNotification(Application application, boolean cancelledByOffice, Comment comment) {
 
@@ -308,9 +278,6 @@ class MailServiceImpl implements MailService {
     }
 
 
-    /**
-     * @see  MailService#sendKeyGeneratingErrorNotification(String)
-     */
     @Override
     public void sendKeyGeneratingErrorNotification(String loginName) {
 
@@ -348,9 +315,6 @@ class MailServiceImpl implements MailService {
     }
 
 
-    /**
-     * @see  MailService#sendSignErrorNotification(Integer, String)
-     */
     @Override
     public void sendSignErrorNotification(Integer applicationId, String exception) {
 
@@ -359,9 +323,6 @@ class MailServiceImpl implements MailService {
     }
 
 
-    /**
-     * @see  MailService#sendSuccessfullyUpdatedAccounts(String)
-     */
     @Override
     public void sendSuccessfullyUpdatedAccounts(String content) {
 
@@ -377,9 +338,6 @@ class MailServiceImpl implements MailService {
     }
 
 
-    /**
-     * @see  org.synyx.urlaubsverwaltung.core.mail.MailService#sendSickNoteConvertedToVacationNotification(Application)
-     */
     @Override
     public void sendSickNoteConvertedToVacationNotification(Application application) {
 
@@ -394,9 +352,6 @@ class MailServiceImpl implements MailService {
     }
 
 
-    /**
-     * @see  MailService#sendEndOfSickPayNotification(org.synyx.urlaubsverwaltung.core.sicknote.SickNote)
-     */
     @Override
     public void sendEndOfSickPayNotification(SickNote sickNote) {
 

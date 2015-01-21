@@ -86,7 +86,7 @@ public class OverlapService {
 
 
     /**
-     * Method to check if the given {@link Application} with {@link DayLength.FULL} may be applied or not. (are there
+     * Method to check if the given {@link Application} with {@link DayLength#FULL} may be applied or not. (are there
      * existent {@link Application}s for this period or not?)
      *
      * @param  application {@link Application}
@@ -103,7 +103,7 @@ public class OverlapService {
 
 
     /**
-     * Method to check if the given {@link Application} with {@link DayLength.MORNING} or {@link DayLength.NOON} may be
+     * Method to check if the given {@link Application} with {@link DayLength#MORNING} or {@link DayLength#NOON} may be
      * applied or not. (are there existent {@link Application}s for this period or not?)
      *
      * @param  application {@link Application}
@@ -114,7 +114,8 @@ public class OverlapService {
 
         // check if there are overlaps with full day periods
         if (checkOverlapForFullDay(application) == OverlapCase.NO_OVERLAPPING) {
-            // if there are no overlaps with full day periods, you have to check if there are overlaps with half day periods
+            // if there are no overlaps with full day periods,
+            // you have to check if there are overlaps with half day periods
             List<Application> apps = getApplicationsByPeriodAndDayLength(application, dayLength);
 
             return getCaseOfOverlap(application, apps);

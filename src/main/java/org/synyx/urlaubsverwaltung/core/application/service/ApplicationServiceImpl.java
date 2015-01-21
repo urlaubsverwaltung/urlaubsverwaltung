@@ -34,9 +34,6 @@ class ApplicationServiceImpl implements ApplicationService {
         this.applicationDAO = applicationDAO;
     }
 
-    /**
-     * @see  ApplicationService#getIdOfLatestApplication(org.synyx.urlaubsverwaltung.core.person.Person, org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus)
-     */
     @Override
     public int getIdOfLatestApplication(Person person, ApplicationStatus status) {
 
@@ -44,9 +41,6 @@ class ApplicationServiceImpl implements ApplicationService {
     }
 
 
-    /**
-     * @see  ApplicationService#getApplicationById(Integer)
-     */
     @Override
     public Application getApplicationById(Integer id) {
 
@@ -54,9 +48,6 @@ class ApplicationServiceImpl implements ApplicationService {
     }
 
 
-    /**
-     * @see  ApplicationService#save(org.synyx.urlaubsverwaltung.core.application.domain.Application)
-     */
     @Override
     public void save(Application application) {
 
@@ -64,9 +55,6 @@ class ApplicationServiceImpl implements ApplicationService {
     }
 
 
-    /**
-     * @see  ApplicationService#getApplicationsForACertainPeriod(org.joda.time.DateMidnight, org.joda.time.DateMidnight)
-     */
     @Override
     public List<Application> getApplicationsForACertainPeriod(DateMidnight startDate, DateMidnight endDate) {
 
@@ -94,13 +82,7 @@ class ApplicationServiceImpl implements ApplicationService {
     public List<Application> getApplicationsForACertainPeriodAndPersonAndState(DateMidnight startDate,
         DateMidnight endDate, Person person, ApplicationStatus status) {
 
-        List<Application> applications = applicationDAO.getApplicationsForACertainTimeAndPersonAndState(
-                startDate.toDate(), endDate.toDate(), person, status);
-
-        for (Application application : applications) {
-            Assert.isTrue(status.equals(application.getStatus()), "WHAT THE FUCK!!!!");
-        }
-
-        return applications;
+        return applicationDAO.getApplicationsForACertainTimeAndPersonAndState(startDate.toDate(), endDate.toDate(),
+                person, status);
     }
 }

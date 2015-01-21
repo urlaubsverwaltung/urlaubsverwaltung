@@ -1,17 +1,18 @@
 package org.synyx.urlaubsverwaltung.core.mail;
 
-import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 
-import javax.mail.internet.MimeMessage;
 import java.io.InputStream;
+
+import javax.mail.internet.MimeMessage;
+
 
 /**
  * Mock mail sender without any functionality for development.
  *
- * @author Aljona Murygina - murygina@synyx.de
+ * @author  Aljona Murygina - murygina@synyx.de
  */
 public class MockMailSender implements JavaMailSender {
 
@@ -19,58 +20,81 @@ public class MockMailSender implements JavaMailSender {
     private int port;
 
     public String getHost() {
+
         return host;
     }
 
+
     public void setHost(String host) {
+
         this.host = host;
     }
 
+
     public int getPort() {
+
         return port;
     }
 
+
     public void setPort(int port) {
+
         this.port = port;
     }
 
+
     @Override
     public MimeMessage createMimeMessage() {
+
         return null;
     }
 
+
     @Override
-    public MimeMessage createMimeMessage(InputStream inputStream) throws MailException {
+    public MimeMessage createMimeMessage(InputStream inputStream) {
+
         return null;
     }
 
+
     @Override
-    public void send(MimeMessage mimeMessage) throws MailException {
+    public void send(MimeMessage mimeMessage) {
+
         /* OK */
     }
 
+
     @Override
-    public void send(MimeMessage[] mimeMessages) throws MailException {
+    public void send(MimeMessage[] mimeMessages) {
+
         /* OK */
     }
 
-    @Override
-    public void send(MimeMessagePreparator mimeMessagePreparator) throws MailException {
-       /* OK */
-    }
 
     @Override
-    public void send(MimeMessagePreparator[] mimeMessagePreparators) throws MailException {
-       /* OK */
-    }
+    public void send(MimeMessagePreparator mimeMessagePreparator) {
 
-    @Override
-    public void send(SimpleMailMessage simpleMailMessage) throws MailException {
         /* OK */
     }
 
+
     @Override
-    public void send(SimpleMailMessage[] simpleMailMessages) throws MailException {
-       /* OK */
+    public void send(MimeMessagePreparator[] mimeMessagePreparators) {
+
+        /* OK */
+    }
+
+
+    @Override
+    public void send(SimpleMailMessage simpleMailMessage) {
+
+        /* OK */
+    }
+
+
+    @Override
+    public void send(SimpleMailMessage[] simpleMailMessages) {
+
+        /* OK */
     }
 }

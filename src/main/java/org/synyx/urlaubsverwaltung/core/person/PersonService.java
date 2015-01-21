@@ -54,11 +54,12 @@ public interface PersonService {
 
 
     /**
-     * returns all {@link Person}s that have the given {@link org.synyx.urlaubsverwaltung.core.mail.MailNotification} type.
+     * returns all {@link Person}s that have the given {@link org.synyx.urlaubsverwaltung.core.mail.MailNotification}
+     * type.
      *
-     * @param notification by which the persons are filtered
+     * @param  notification  by which the persons are filtered
      *
-     * @return list of persons with the given notification type
+     * @return  list of persons with the given notification type
      */
     List<Person> getPersonsWithNotificationType(MailNotification notification);
 

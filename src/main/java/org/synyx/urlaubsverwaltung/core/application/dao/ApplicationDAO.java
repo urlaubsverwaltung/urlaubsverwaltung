@@ -25,8 +25,8 @@ public interface ApplicationDAO extends JpaRepository<Application, Integer> {
 
 
     @Query(
-        "select x from Application x where (x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) or (x.startDate < ?1 and x.endDate > ?2) "
-        + "order by x.startDate"
+        "select x from Application x where (x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2)"
+        + " or (x.startDate < ?1 and x.endDate > ?2) order by x.startDate"
     )
     List<Application> getApplicationsForACertainTime(Date startDate, Date endDate);
 
@@ -93,7 +93,8 @@ public interface ApplicationDAO extends JpaRepository<Application, Integer> {
 
 
     @Query(
-        "select x from Application x where ((x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) or (x.startDate < ?1 and x.endDate > ?2)) "
+        "select x from Application x where "
+        + "((x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) or (x.startDate < ?1 and x.endDate > ?2)) "
         + "and x.person = ?3 and (x.status = 'WAITING' or x.status = 'ALLOWED') and x.howLong = ?4 order by x.startDate"
     )
     List<Application> getRelevantActiveApplicationsByPeriodAndDayLength(Date startDate, Date endDate, Person person,
@@ -101,10 +102,11 @@ public interface ApplicationDAO extends JpaRepository<Application, Integer> {
 
 
     @Query(
-        "select x from Application x where ((x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) or (x.startDate < ?1 and x.endDate > ?2)) "
+        "select x from Application x "
+        + "where ((x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) or "
+        + "(x.startDate < ?1 and x.endDate > ?2)) "
         + "and x.person = ?3 and (x.status = 'WAITING' or x.status = 'ALLOWED') order by x.startDate"
     )
     List<Application> getRelevantActiveApplicationsByPeriodForEveryDayLength(Date startDate, Date endDate,
         Person person);
-
 }

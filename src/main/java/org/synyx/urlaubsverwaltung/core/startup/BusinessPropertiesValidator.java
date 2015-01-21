@@ -40,6 +40,11 @@ public class BusinessPropertiesValidator {
 
     private static final String BUSINESS_PROPERTIES_FILE = "business.properties";
 
+    private static final int MAX_LIMIT_ANNUAL_VACATION_DAYS = 366;
+    private static final int MIN_LIMIT_ANNUAL_VACATION_DAYS = 1;
+
+    private static final int MAX_MONTHS_APPLY_FOR_LEAVE_IN_ADVANCE = 36;
+
     private final Runnable onError;
 
     private final Properties properties;
@@ -84,7 +89,8 @@ public class BusinessPropertiesValidator {
         try {
             int annualVacationDays = Integer.parseInt(annualVacationProperty);
 
-            if (annualVacationDays >= 1 && annualVacationDays <= 366) {
+            if (annualVacationDays >= MIN_LIMIT_ANNUAL_VACATION_DAYS
+                    && annualVacationDays <= MAX_LIMIT_ANNUAL_VACATION_DAYS) {
                 return true;
             }
         } catch (NumberFormatException ex) {
@@ -102,7 +108,8 @@ public class BusinessPropertiesValidator {
         try {
             int maximumMonthsToApplyForLeaveInAdvance = Integer.parseInt(maximumMonthsToApplyForLeaveInAdvanceProperty);
 
-            if (maximumMonthsToApplyForLeaveInAdvance > 0 && maximumMonthsToApplyForLeaveInAdvance < 37) {
+            if (maximumMonthsToApplyForLeaveInAdvance > 0
+                    && maximumMonthsToApplyForLeaveInAdvance <= MAX_MONTHS_APPLY_FOR_LEAVE_IN_ADVANCE) {
                 return true;
             }
         } catch (NumberFormatException ex) {

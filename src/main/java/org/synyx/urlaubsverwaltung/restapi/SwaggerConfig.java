@@ -50,8 +50,8 @@ public class SwaggerConfig {
         public ProjectApiInfo() {
 
             super("Urlaubsverwaltung API: " + version,
-                "This Rest API provides the possibility to fetch information about the persons and their vacation and sick notes of the application.",
-                null, "murygina@synyx.de", null, null);
+                "This Rest API provides the possibility to fetch information about the persons "
+                + "and their vacation and sick notes.", null, "murygina@synyx.de", null, null);
         }
     }
 }

@@ -45,7 +45,7 @@ public class DateMidnightPropertyEditor extends PropertyEditorSupport {
 
     // String to Date
     @Override
-    public void setAsText(String text) throws IllegalArgumentException {
+    public void setAsText(String text) {
 
         if (!StringUtils.hasText(text)) {
             this.setValue(null);

@@ -8,7 +8,6 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 
 import de.jollyday.Holiday;
-import java.math.BigDecimal;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -22,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import org.synyx.urlaubsverwaltung.core.calendar.JollydayCalendar;
+
+import java.math.BigDecimal;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -82,7 +83,10 @@ public class PublicHolidayController {
 
                     @Override
                     public PublicHolidayResponse apply(Holiday holiday) {
-                        BigDecimal duration = jollydayCalendar.getWorkingDurationOfDate(holiday.getDate().toDateMidnight());
+
+                        BigDecimal duration = jollydayCalendar.getWorkingDurationOfDate(
+                                holiday.getDate().toDateMidnight());
+
                         return new PublicHolidayResponse(holiday, duration);
                     }
                 });

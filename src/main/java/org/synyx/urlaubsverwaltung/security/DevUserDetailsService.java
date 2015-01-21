@@ -31,7 +31,7 @@ public class DevUserDetailsService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String s) {
 
         if (!s.equals(TEST_USER_NAME)) {
             throw new UsernameNotFoundException("No authentication possible for user with name " + s);
