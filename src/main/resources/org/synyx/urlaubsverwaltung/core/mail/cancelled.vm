@@ -1,10 +1,12 @@
-Information:
+Hallo Office,
 
-Der Urlaubsantrag von ${application.person.firstName} ${application.person.lastName} für den
+zur Information:
+
+Der Urlaubsantrag von ${application.person.niceName} für den
 Zeitraum von ${application.startDate.toString("dd.MM.yyyy")} bis ${application.endDate.toString("dd.MM.yyyy")} (${dayLength}) wurde storniert.
 
 #if($comment.reason && $comment.reason != "")
-Kommentar von ${comment.nameOfCommentingPerson}: ${comment.reason}
+Kommentar von ${comment.person.niceName}: ${comment.reason}
 #end 
 
 Link zum Antrag: ${link}

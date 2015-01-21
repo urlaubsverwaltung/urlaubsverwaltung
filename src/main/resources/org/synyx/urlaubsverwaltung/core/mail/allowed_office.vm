@@ -1,8 +1,11 @@
-Hallo ${application.person.firstName},
+Hallo Office,
 
-${application.applier.firstName} ${application.applier.lastName} hat einen Urlaubsantrag für dich gestellt, der in Kürze von einem der Chefs bearbeitet werden sollte.
+es liegt ein neuer genehmigter Antrag vor: ${link}
 
-Link zum Antrag: ${link}
+Mitarbeiter: ${application.person.niceName}
+
+Antragsteller: ${application.applier.niceName}
+Genehmigender: ${application.boss.niceName}
 
 Antragsdatum: ${application.applicationDate.toString("dd.MM.yyyy")}
 Zeitraum des beantragten Urlaubs: ${application.startDate.toString("dd.MM.yyyy")} bis ${application.endDate.toString("dd.MM.yyyy")}, ${dayLength}
@@ -18,4 +21,8 @@ Anschrift/Telefon während des Urlaubs: ${application.address}
 #end
 #if($application.comment && $application.comment != "")
 Kommentar: ${application.comment}
+#end
+
+#if($comment.reason && $comment.reason != "")
+Kommentar von ${comment.person.niceName} zum Antrag: ${comment.reason}
 #end

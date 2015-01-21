@@ -1,8 +1,11 @@
 package org.synyx.urlaubsverwaltung.core.mail;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+
+import org.apache.commons.lang.CharEncoding;
 
 import org.apache.log4j.Logger;
 
@@ -55,12 +58,9 @@ class MailServiceImpl implements MailService {
 
     private static final Logger LOG = Logger.getLogger(MailServiceImpl.class);
 
-    private static final String PATH = "/email/";
+    private static final String PATH = "/org/synyx/urlaubsverwaltung/core/mail/";
     private static final String PROPERTIES_FILE = "messages.properties";
     private static final String TYPE = ".vm";
-
-    // MODEL NAMES
-    private static final String APPLICATION = "application";
 
     @Value("${email.manager}")
     protected String emailManager;
@@ -92,7 +92,7 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendNewApplicationNotification(Application application) {
 
-        String text = prepareMessage(application, APPLICATION, "newapplications" + TYPE, null, null, null);
+        String text = prepareMessage(application, "newapplications" + TYPE, Optional.<Comment>absent());
         sendEmail(getBosses(), "subject.new", text);
     }
 
@@ -100,39 +100,28 @@ class MailServiceImpl implements MailService {
     /**
      * Prepares an email.
      *
-     * @param  object  e.g. person or application that should be put in a model object
-     * @param  modelName  of the model where the given object is put within
+     * @param  application  that should be put in the model
      * @param  fileName  name of the email's template file
+     * @param  optionalComment  that should be put in the model if present
      *
      * @return  String text that must be put in the email as text (sending is done by method sendEmail)
      */
-    private String prepareMessage(Object object, String modelName, String fileName, String recipient, String sender,
-        Comment comment) {
+    private String prepareMessage(Application application, String fileName, Optional<Comment> optionalComment) {
 
-        Map model = new HashMap();
-        model.put(modelName, object);
+        Map<String, Object> model = new HashMap<>();
+        model.put("application", application);
 
-        if (recipient != null && sender != null) {
-            model.put("recipient", recipient);
-            model.put("sender", sender);
+        String vacType = application.getVacationType().name();
+        String length = application.getHowLong().name();
+        model.put("vacationType", properties.getProperty(vacType));
+        model.put("dayLength", properties.getProperty(length));
+        model.put("link", applicationUrl + "web/application/" + application.getId());
+
+        if (optionalComment.isPresent()) {
+            model.put("comment", optionalComment.get());
         }
 
-        if (comment != null) {
-            model.put("comment", comment);
-        }
-
-        if (object.getClass().equals(Application.class)) {
-            Application a = (Application) object;
-            String vacType = a.getVacationType().name();
-            String length = a.getHowLong().name();
-            model.put("vacationType", properties.getProperty(vacType));
-            model.put("dayLength", properties.getProperty(length));
-            model.put("link", applicationUrl + "web/application/" + a.getId());
-        }
-
-        String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, PATH + fileName, model);
-
-        return text;
+        return VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, PATH + fileName, CharEncoding.UTF_8, model);
     }
 
 
@@ -194,9 +183,9 @@ class MailServiceImpl implements MailService {
 
 
     @Override
-    public void sendRemindBossNotification(Application a) {
+    public void sendRemindBossNotification(Application application) {
 
-        String text = prepareMessage(a, APPLICATION, "remind" + TYPE, null, null, null);
+        String text = prepareMessage(application, "remind" + TYPE, Optional.<Comment>absent());
         sendEmail(getBosses(), "subject.remind", text);
     }
 
@@ -208,12 +197,12 @@ class MailServiceImpl implements MailService {
         // the applicant gets an email and the office gets an email
 
         // email to office
-        String textOffice = prepareMessage(application, APPLICATION, "allowed_office" + TYPE, null, null, comment);
+        String textOffice = prepareMessage(application, "allowed_office" + TYPE, Optional.fromNullable(comment));
 
         sendEmail(getOfficeMembers(), "subject.allowed.office", textOffice);
 
         // email to applicant
-        String textUser = prepareMessage(application, APPLICATION, "allowed_user" + TYPE, null, null, comment);
+        String textUser = prepareMessage(application, "allowed_user" + TYPE, Optional.fromNullable(comment));
         sendEmail(Arrays.asList(application.getPerson()), "subject.allowed.user", textUser);
     }
 
@@ -227,15 +216,22 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendRejectedNotification(Application application, Comment comment) {
 
-        String text = prepareMessage(application, APPLICATION, "rejected" + TYPE, null, null, comment);
+        String text = prepareMessage(application, "rejected" + TYPE, Optional.fromNullable(comment));
         sendEmail(Arrays.asList(application.getPerson()), "subject.rejected", text);
     }
 
 
     @Override
-    public void sendReferApplicationNotification(Application a, Person recipient, String sender) {
+    public void sendReferApplicationNotification(Application application, Person recipient, Person sender) {
 
-        String text = prepareMessage(a, APPLICATION, "refer" + TYPE, recipient.getFirstName(), sender, null);
+        Map<String, Object> model = new HashMap<>();
+        model.put("application", application);
+        model.put("link", applicationUrl + "web/application/" + application.getId());
+        model.put("recipient", recipient);
+        model.put("sender", sender);
+
+        String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, PATH + "refer" + TYPE,
+                CharEncoding.UTF_8, model);
         sendEmail(Arrays.asList(recipient), "subject.refer", text);
     }
 
@@ -243,7 +239,7 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendConfirmation(Application application) {
 
-        String text = prepareMessage(application, APPLICATION, "confirm" + TYPE, null, null, null);
+        String text = prepareMessage(application, "confirm" + TYPE, Optional.<Comment>absent());
         sendEmail(Arrays.asList(application.getPerson()), "subject.confirm", text);
     }
 
@@ -251,7 +247,7 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendAppliedForLeaveByOfficeNotification(Application application) {
 
-        String text = prepareMessage(application, APPLICATION, "new_application_by_office" + TYPE, null, null, null);
+        String text = prepareMessage(application, "new_application_by_office" + TYPE, Optional.<Comment>absent());
         sendEmail(Arrays.asList(application.getPerson()), "subject.new.app.by.office", text);
     }
 
@@ -264,13 +260,13 @@ class MailServiceImpl implements MailService {
         if (cancelledByOffice) {
             // mail to applicant anyway
             // not only if application was allowed before cancelling
-            text = prepareMessage(application, APPLICATION, "cancelled_by_office" + TYPE, null, null, comment);
+            text = prepareMessage(application, "cancelled_by_office" + TYPE, Optional.fromNullable(comment));
             sendEmail(Arrays.asList(application.getPerson()), "subject.cancelled.by.office", text);
         } else {
             // application was allowed before cancelling
-            // only then office and bosses get an email
+            // only then office gets an email
 
-            text = prepareMessage(application, APPLICATION, "cancelled" + TYPE, null, null, comment);
+            text = prepareMessage(application, "cancelled" + TYPE, Optional.fromNullable(comment));
 
             // mail to office
             sendEmail(getOfficeMembers(), "subject.cancelled", text);
@@ -318,7 +314,7 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendSignErrorNotification(Integer applicationId, String exception) {
 
-        String text = "An error occured while signing the application with id " + applicationId + "\n" + exception;
+        String text = "An error occurred while signing the application with id " + applicationId + "\n" + exception;
         sendTechnicalNotification("subject.sign.error", text);
     }
 
@@ -341,12 +337,12 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendSickNoteConvertedToVacationNotification(Application application) {
 
-        Map<String, Object> model = new HashMap();
+        Map<String, Object> model = new HashMap<>();
         model.put("application", application);
         model.put("link", applicationUrl + "web/application/" + application.getId());
 
-        String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, PATH + "sicknote_converted.vm",
-                model);
+        String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, PATH + "sicknote_converted" + TYPE,
+                CharEncoding.UTF_8, model);
 
         sendEmail(Arrays.asList(application.getPerson()), "subject.sicknote.converted", text);
     }
@@ -355,11 +351,11 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendEndOfSickPayNotification(SickNote sickNote) {
 
-        Map<String, Object> model = new HashMap();
+        Map<String, Object> model = new HashMap<>();
         model.put("sickNote", sickNote);
 
-        String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, PATH + "sicknote_end_of_sick_pay.vm",
-                model);
+        String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine,
+                PATH + "sicknote_end_of_sick_pay" + TYPE, CharEncoding.UTF_8, model);
 
         sendEmail(Arrays.asList(sickNote.getPerson()), "subject.sicknote.endOfSickPay", text);
         sendEmail(getOfficeMembers(), "subject.sicknote.endOfSickPay", text);
@@ -369,11 +365,12 @@ class MailServiceImpl implements MailService {
     @Override
     public void notifyRepresentative(Application application) {
 
-        Map<String, Object> model = new HashMap();
+        Map<String, Object> model = new HashMap<>();
         model.put("application", application);
         model.put("dayLength", properties.getProperty(application.getHowLong().name()));
 
-        String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, PATH + "rep.vm", model);
+        String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, PATH + "rep" + TYPE,
+                CharEncoding.UTF_8, model);
 
         sendEmail(Arrays.asList(application.getRep()), "subject.rep", text);
     }

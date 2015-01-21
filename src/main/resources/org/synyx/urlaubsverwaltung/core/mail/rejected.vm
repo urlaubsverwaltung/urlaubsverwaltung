@@ -1,0 +1,8 @@
+Hallo ${application.person.niceName},
+
+dein am ${application.applicationDate.toString("dd.MM.yyyy")} gestellter Antrag wurde leider von ${comment.person.niceName} abgelehnt
+mit folgender Begründung:
+
+${comment.reason}
+
+Link zum Antrag: ${link}

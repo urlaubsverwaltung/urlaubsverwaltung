@@ -1,11 +1,13 @@
-Hallo Office,
+Hallo ${application.person.niceName},
 
-es liegt ein neuer genehmigter Antrag vor: ${link}
+dein Urlaubsantrag wurde von ${application.canceller.niceName} für dich storniert.
+Falls Klärungsbedarf bestehen sollte, wende dich bitte direkt an ${application.canceller.niceName}.
 
-Mitarbeiter: ${application.person.firstName} ${application.person.lastName} 
+#if($comment.reason && $comment.reason != "")
+Kommentar zur Stornierung von ${comment.person.niceName} zum Antrag: ${comment.reason}
+#end 
 
-Antragsteller: ${application.applier.firstName} ${application.applier.lastName}
-Genehmigender: ${application.boss.firstName} ${application.boss.lastName} 
+Es handelt sich um folgenden Urlaubsantrag: ${link}
 
 Antragsdatum: ${application.applicationDate.toString("dd.MM.yyyy")}
 Zeitraum des beantragten Urlaubs: ${application.startDate.toString("dd.MM.yyyy")} bis ${application.endDate.toString("dd.MM.yyyy")}, ${dayLength}
@@ -21,8 +23,4 @@ Anschrift/Telefon während des Urlaubs: ${application.address}
 #end
 #if($application.comment && $application.comment != "")
 Kommentar: ${application.comment}
-#end
-
-#if($comment.reason && $comment.reason != "")
-Kommentar von ${comment.nameOfCommentingPerson} zum Antrag: ${comment.reason}
 #end

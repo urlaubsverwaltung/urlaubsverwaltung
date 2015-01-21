@@ -82,7 +82,7 @@ public class TestDataCreationService {
 
             boss = createTestPerson("max", "Max", "Mustermann", "maxMuster@muster.de", ACTIVE, Role.USER, Role.BOSS);
 
-            office = createTestPerson("klaus", "Klaus", "Müller", "müller@muster.de", ACTIVE, Role.USER, Role.BOSS,
+            office = createTestPerson("klaus", "Klaus", "Müller", "mueller@muster.de", ACTIVE, Role.USER, Role.BOSS,
                     Role.OFFICE);
 
             createTestPerson("hdampf", "Hans", "Dampf", "dampf@foo.bar", true, Role.USER, Role.OFFICE);

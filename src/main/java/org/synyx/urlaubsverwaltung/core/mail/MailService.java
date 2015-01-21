@@ -70,7 +70,7 @@ public interface MailService {
      * @param  recipient
      * @param  sender
      */
-    void sendReferApplicationNotification(Application application, Person recipient, String sender);
+    void sendReferApplicationNotification(Application application, Person recipient, Person sender);
 
 
     /**
@@ -96,7 +96,7 @@ public interface MailService {
 
 
     /**
-     * this method sends an email to the tool's manager to inform if an error occured while generating private and
+     * this method sends an email to the tool's manager to inform if an error occurred while generating private and
      * public key for a new user with the given login name.
      *
      * @param  loginName
@@ -105,7 +105,7 @@ public interface MailService {
 
 
     /**
-     * this method sends an email to the tool's manager to inform if an error occured while signing an application with
+     * this method sends an email to the tool's manager to inform if an error occurred while signing an application with
      * the given id.
      *
      * @param  applicationId
@@ -145,5 +145,4 @@ public interface MailService {
      * @param  application
      */
     void notifyRepresentative(Application application);
-
 }

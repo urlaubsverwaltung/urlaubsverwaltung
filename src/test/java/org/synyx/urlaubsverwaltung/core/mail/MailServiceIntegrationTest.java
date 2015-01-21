@@ -28,6 +28,7 @@ import java.lang.reflect.Field;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -42,20 +43,23 @@ import static org.junit.Assert.*;
 public class MailServiceIntegrationTest {
 
     private MailServiceImpl mailService;
-    private JavaMailSender mailSender;
-    private VelocityEngine velocityEngine;
     private PersonService personService;
 
     private Person person;
     private Application application;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
 
-        velocityEngine = new VelocityEngine();
-        mailSender = new JavaMailSenderImpl();
+        Properties velocityProperties = new Properties();
+        velocityProperties.put("resource.loader", "class");
+        velocityProperties.put("class.resource.loader.class",
+            "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+
+        VelocityEngine velocityEngine = new VelocityEngine(velocityProperties);
+        JavaMailSender mailSender = new JavaMailSenderImpl();
+
         personService = Mockito.mock(PersonService.class);
-
         mailService = new MailServiceImpl(mailSender, velocityEngine, personService);
 
         person = new Person();
@@ -247,8 +251,7 @@ public class MailServiceIntegrationTest {
 
         application.setCanceller(office);
 
-        boolean cancelledByOffice = true;
-        mailService.sendCancelledNotification(application, cancelledByOffice, null);
+        mailService.sendCancelledNotification(application, true, null);
 
         // was email sent?
         List<Message> inboxApplicant = Mailbox.get("muster@mann.de");
@@ -284,8 +287,7 @@ public class MailServiceIntegrationTest {
         Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_OFFICE)).thenReturn(
             Arrays.asList(office));
 
-        boolean cancelledByOffice = false;
-        mailService.sendCancelledNotification(application, cancelledByOffice, null);
+        mailService.sendCancelledNotification(application, false, null);
 
         // ENSURE OFFICE MEMBERS HAVE GOT CORRECT EMAIL
         List<Message> inboxOffice = Mailbox.get(officeEmailAddress);
@@ -341,7 +343,7 @@ public class MailServiceIntegrationTest {
 
         String content = (String) msg.getContent();
 
-        assertTrue(content.contains("An error occured while signing the application with id 5"));
+        assertTrue(content.contains("An error occurred while signing the application with id 5"));
     }
 
 

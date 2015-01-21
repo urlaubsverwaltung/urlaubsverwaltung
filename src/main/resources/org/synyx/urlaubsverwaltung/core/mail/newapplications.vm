@@ -1,15 +1,11 @@
-Hallo Office,
+Hallo Chefs,
 
-es liegt ein neuer genehmigter Antrag vor: ${link}
+es liegt ein neuer zu genehmigender Antrag vor: ${link}
 
-Mitarbeiter: ${application.person.firstName} ${application.person.lastName} 
-
-Antragsteller: ${application.applier.firstName} ${application.applier.lastName}
-Genehmigender: ${application.boss.firstName} ${application.boss.lastName} 
-
-Antragsdatum: ${application.applicationDate.toString("dd.MM.yyyy")}
+Mitarbeiter: ${application.person.niceName}
+Datum der Antragsstellung: ${application.applicationDate.toString("dd.MM.yyyy")}
 Zeitraum des beantragten Urlaubs: ${application.startDate.toString("dd.MM.yyyy")} bis ${application.endDate.toString("dd.MM.yyyy")}, ${dayLength}
-Art des Urlaubs: ${vacationType} 
+Art des Urlaubs: ${vacationType}
 #if($application.reason && $application.reason != "")
 Grund: ${application.reason}
 #end
@@ -21,8 +17,4 @@ Anschrift/Telefon während des Urlaubs: ${application.address}
 #end
 #if($application.comment && $application.comment != "")
 Kommentar: ${application.comment}
-#end
-
-#if($comment.reason && $comment.reason != "")
-Kommentar von ${comment.nameOfCommentingPerson} zum Antrag: ${comment.reason}
 #end

@@ -705,9 +705,8 @@ public class ApplicationController {
         Application application = applicationService.getApplicationById(applicationId);
 
         Person sender = sessionService.getLoggedUser();
-        String senderName = sender.getFirstName() + " " + sender.getLastName();
         Person recipient = personService.getPersonByLogin(p.getLoginName());
-        mailService.sendReferApplicationNotification(application, recipient, senderName);
+        mailService.sendReferApplicationNotification(application, recipient, sender);
 
         redirectAttributes.addFlashAttribute("referSuccess", true);
 

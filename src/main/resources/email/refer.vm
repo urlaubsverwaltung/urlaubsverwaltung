@@ -1,7 +1,0 @@
-Hallo ${recipient},
-
-${sender} bittet dich um Hilfe bei der Entscheidung über einen Urlaubsantrag von ${application.person.firstName} ${application.person.lastName}.
-Es handelt sich um den Zeitraum vom ${application.startDate.toString("dd.MM.yyyy")} bis ${application.endDate.toString("dd.MM.yyyy")}, ${dayLength}.
-Den Urlaubsantrag findest du hier: ${link}
-Bitte kümmere dich um die Entscheidung dieses Antrags oder halte ggf. nochmals Rücksprache mit ${sender}.
-
