@@ -4,10 +4,6 @@
  */
 package org.synyx.urlaubsverwaltung.core.startup;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Iterables;
-
 import org.apache.log4j.Logger;
 
 import org.springframework.stereotype.Component;
@@ -56,10 +52,9 @@ public class BusinessPropertiesValidator {
                 @Override
                 public void run() {
 
-                    LOG.error(" >>> Business properties failure");
-                    LOG.error(" >>> Shutting down with system exit!");
-                    LOG.error(" >>> Check your business properties in file: " + BUSINESS_PROPERTIES_FILE);
-                    System.exit(1);
+                    LOG.error("Check your business properties in file: " + BUSINESS_PROPERTIES_FILE);
+
+                    throw new RuntimeException("Business properties failure");
                 }
             }, PropertiesUtil.load(BUSINESS_PROPERTIES_FILE));
     }

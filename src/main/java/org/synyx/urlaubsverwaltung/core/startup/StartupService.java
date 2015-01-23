@@ -8,6 +8,7 @@ import com.google.common.collect.Iterables;
 
 import org.apache.log4j.Logger;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.stereotype.Service;
@@ -19,7 +20,8 @@ import javax.annotation.PostConstruct;
 
 
 /**
- * This service is executed every time the application is started.
+ * This service is executed every time the application is started to log information about the application configuration
+ * like database user and url.
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
@@ -31,23 +33,20 @@ public class StartupService {
     private static final String SPRING_PROFILE_ACTIVE = "spring.profiles.active";
     private static final List<String> POSSIBLE_PROFILES = Arrays.asList("ldap", "activeDirectory", "default");
 
-    @Value("${db.username}")
-    private String dbUser;
+    private final String dbUser;
+    private final String dbUrl;
+    private final String emailManager;
+    private final String activeSpringProfile;
 
-    @Value("${db.url}")
-    private String dbUrl;
+    @Autowired
+    public StartupService(@Value("${db.username}") String dbUser,
+        @Value("${db.url}") String dbUrl,
+        @Value("${mail.manager}") String emailManager) {
 
-    @Value("${mail.manager}")
-    private String emailManager;
-
-    @PostConstruct
-    public void logStartupInfo() {
-
-        LOG.info("DATABASE = " + dbUrl);
-        LOG.info("DATABASE USER = " + dbUser);
-        LOG.info("APPLICATION MANAGER EMAIL = " + emailManager);
-
-        final String activeSpringProfile = System.getProperty(SPRING_PROFILE_ACTIVE);
+        this.dbUser = dbUser;
+        this.dbUrl = dbUrl;
+        this.emailManager = emailManager;
+        this.activeSpringProfile = System.getProperty(SPRING_PROFILE_ACTIVE);
 
         // Ensure that the given Spring profile is valid
         if (activeSpringProfile != null) {
@@ -61,11 +60,18 @@ public class StartupService {
                     });
 
             if (!validProfile.isPresent()) {
-                LOG.error("INVALID VALUE FOR '" + SPRING_PROFILE_ACTIVE + "' = " + activeSpringProfile);
-                System.exit(1);
+                throw new RuntimeException("INVALID VALUE FOR '" + SPRING_PROFILE_ACTIVE + "' = "
+                    + activeSpringProfile);
             }
         }
+    }
 
-        LOG.info("ACTIVE SPRING PROFILE=" + activeSpringProfile);
+    @PostConstruct
+    public void logStartupInfo() {
+
+        LOG.info("DATABASE = " + dbUrl);
+        LOG.info("DATABASE USER = " + dbUser);
+        LOG.info("APPLICATION MANAGER EMAIL = " + emailManager);
+        LOG.info("ACTIVE SPRING PROFILE = " + activeSpringProfile);
     }
 }
