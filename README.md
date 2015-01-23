@@ -66,7 +66,7 @@ Die vorhandenen Properties können direkt innerhalb der oben genannten Dateien a
 
 Globale Variablen können bspw. in der `.bashrc` überschrieben werden:
 
-<pre>  export DATABASE_URL=jdbc:mysql://127.0.0.1:3306/urlaub</pre>
+<pre>  export UV_DATABASE_URL=jdbc:mysql://127.0.0.1:3306/urlaub</pre>
 
 
 ## Authentifizierung
