@@ -20,6 +20,7 @@ import org.synyx.urlaubsverwaltung.core.person.PersonService;
 
 import java.math.BigDecimal;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -63,35 +64,31 @@ public class TurnOfTheYearAccountUpdaterService {
         // get all persons
         List<Person> persons = personService.getActivePersons();
 
-        int counter = 0;
-
-        StringBuilder builder = new StringBuilder();
+        List<Account> updatedAccounts = new ArrayList<>();
 
         // get all their accounts and calculate the remaining vacation days for the new year
-        for (Person p : persons) {
-            LOG.info("Updating account of " + p.getLoginName());
+        for (Person person : persons) {
+            LOG.info("Updating account of " + person.getLoginName());
 
-            Account accountLastYear = accountService.getHolidaysAccount(year - 1, p);
+            Account accountLastYear = accountService.getHolidaysAccount(year - 1, person);
 
             if (accountLastYear != null && accountLastYear.getAnnualVacationDays() != null) {
                 BigDecimal leftDays = calculationService.calculateTotalLeftVacationDays(accountLastYear);
 
-                Account accountNewYear = accountService.getOrCreateNewAccount(year, p);
+                Account accountNewYear = accountService.getOrCreateNewAccount(year, person);
 
                 // setting new year's remaining vacation days to number of left days of the last year
                 accountNewYear.setRemainingVacationDays(leftDays);
-                LOG.info("Setting remaining vacation days of " + p.getLoginName() + " to " + leftDays + " for " + year);
+                LOG.info("Setting remaining vacation days of " + person.getLoginName() + " to " + leftDays + " for "
+                    + year);
 
                 accountService.save(accountNewYear);
 
-                counter++;
-
-                builder.append(p.getFirstName()).append(" ").append(p.getLastName());
-                builder.append(": ").append(leftDays).append("\n");
+                updatedAccounts.add(accountNewYear);
             }
         }
 
-        LOG.info("Successfully updated holidays accounts: " + counter + "/" + persons.size());
-        mailService.sendSuccessfullyUpdatedAccounts(builder.toString());
+        LOG.info("Successfully updated holidays accounts: " + updatedAccounts.size() + "/" + persons.size());
+        mailService.sendSuccessfullyUpdatedAccounts(updatedAccounts);
     }
 }

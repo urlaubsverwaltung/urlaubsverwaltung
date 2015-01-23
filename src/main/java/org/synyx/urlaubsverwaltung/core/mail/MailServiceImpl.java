@@ -27,6 +27,7 @@ import org.springframework.ui.velocity.VelocityEngineUtils;
 import org.springframework.util.StringUtils;
 
 import org.synyx.urlaubsverwaltung.DateFormat;
+import org.synyx.urlaubsverwaltung.core.account.Account;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -299,9 +300,13 @@ class MailServiceImpl implements MailService {
 
 
     @Override
-    public void sendKeyGeneratingErrorNotification(String loginName) {
+    public void sendKeyGeneratingErrorNotification(String loginName, String exception) {
 
-        String text = "An error occurred during key generation for person with login " + loginName + " failed.";
+        Map<String, Object> model = new HashMap<>();
+        model.put("loginName", loginName);
+        model.put("exception", exception);
+
+        String text = buildMailBody("error_key_generation", model);
 
         sendTechnicalNotification("subject.key.error", text);
     }
@@ -333,17 +338,24 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendSignErrorNotification(Integer applicationId, String exception) {
 
-        String text = "An error occurred while signing the application with id " + applicationId + "\n" + exception;
+        Map<String, Object> model = new HashMap<>();
+        model.put("applicationId", applicationId);
+        model.put("exception", exception);
+
+        String text = buildMailBody("error_sign_application", model);
+
         sendTechnicalNotification("subject.sign.error", text);
     }
 
 
     @Override
-    public void sendSuccessfullyUpdatedAccounts(String content) {
+    public void sendSuccessfullyUpdatedAccounts(List<Account> updatedAccounts) {
 
-        // TODO: oje...hard coded text...
-        String text = "Stand Resturlaubstage zum 1. Januar " + DateMidnight.now().getYear()
-            + " (mitgenommene Resturlaubstage aus dem Vorjahr)" + "\n\n" + content;
+        Map<String, Object> model = new HashMap<>();
+        model.put("accounts", updatedAccounts);
+        model.put("year", DateMidnight.now().getYear());
+
+        String text = buildMailBody("updated_accounts", model);
 
         // send email to office for printing statistic
         sendEmail(getOfficeMembers(), "subject.account.update", text);

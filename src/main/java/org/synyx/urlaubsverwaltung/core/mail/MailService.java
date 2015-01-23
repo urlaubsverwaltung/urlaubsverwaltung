@@ -4,10 +4,13 @@
  */
 package org.synyx.urlaubsverwaltung.core.mail;
 
+import org.synyx.urlaubsverwaltung.core.account.Account;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
+
+import java.util.List;
 
 
 /**
@@ -100,8 +103,9 @@ public interface MailService {
      * public key for a new user with the given login name.
      *
      * @param  loginName
+     * @param  exception
      */
-    void sendKeyGeneratingErrorNotification(String loginName);
+    void sendKeyGeneratingErrorNotification(String loginName, String exception);
 
 
     /**
@@ -118,9 +122,9 @@ public interface MailService {
      * Sends mail to the tool's manager if holidays accounts were updated successfully on 1st January of a year.
      * (setting remaining vacation days)
      *
-     * @param  content  content for email
+     * @param  updatedAccounts  that have been successfully updated
      */
-    void sendSuccessfullyUpdatedAccounts(String content);
+    void sendSuccessfullyUpdatedAccounts(List<Account> updatedAccounts);
 
 
     /**

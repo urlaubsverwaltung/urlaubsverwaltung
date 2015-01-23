@@ -100,7 +100,7 @@ public class PersonContextMapper implements UserDetailsContextMapper {
             person.setPublicKey(keyPair.getPublic().getEncoded());
         } catch (NoSuchAlgorithmException ex) {
             LOG.error("An error occurred while trying to create key pair for user with login " + login, ex);
-            mailService.sendKeyGeneratingErrorNotification(login);
+            mailService.sendKeyGeneratingErrorNotification(login, ex.getMessage());
         }
 
         personService.save(person);

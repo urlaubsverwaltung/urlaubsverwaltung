@@ -62,7 +62,7 @@ public class PersonInteractionServiceImpl implements PersonInteractionService {
             } catch (NoSuchAlgorithmException ex) {
                 LOG.error("An error occurred while trying to generate a key pair for the person " + person.toString(),
                     ex);
-                mailService.sendKeyGeneratingErrorNotification(personForm.getLoginName());
+                mailService.sendKeyGeneratingErrorNotification(personForm.getLoginName(), ex.getMessage());
             }
         } else {
             action = "Updated";

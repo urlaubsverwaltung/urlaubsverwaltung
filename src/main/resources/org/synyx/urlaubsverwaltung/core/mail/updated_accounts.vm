@@ -1,0 +1,5 @@
+Stand Resturlaubstage zum 1. Januar ${year} (mitgenommene Resturlaubstage aus dem Vorjahr)
+
+#foreach( $account in $accounts )
+${account.person.niceName}: ${account.remainingVacationDays}
+#end

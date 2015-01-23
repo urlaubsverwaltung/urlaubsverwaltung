@@ -3,6 +3,8 @@ package org.synyx.urlaubsverwaltung.core.mail;
 
 import org.apache.velocity.app.VelocityEngine;
 
+import org.joda.time.DateMidnight;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -15,6 +17,7 @@ import org.mockito.Mockito;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
+import org.synyx.urlaubsverwaltung.core.account.Account;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
@@ -23,6 +26,8 @@ import org.synyx.urlaubsverwaltung.core.person.PersonService;
 
 import java.io.IOException;
 
+import java.math.BigDecimal;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -30,9 +35,11 @@ import java.util.Properties;
 import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 
 /**
@@ -306,7 +313,7 @@ public class MailServiceIntegrationTest {
     public void ensureTechnicalManagerGetsANotificationIfAKeyGeneratingErrorOccurred() throws MessagingException,
         IOException {
 
-        mailService.sendKeyGeneratingErrorNotification("horscht");
+        mailService.sendKeyGeneratingErrorNotification("horscht", "Message of exception");
 
         List<Message> inbox = Mailbox.get(emailManager);
         assertTrue(inbox.size() > 0);
@@ -317,15 +324,16 @@ public class MailServiceIntegrationTest {
 
         String content = (String) msg.getContent();
 
-        assertTrue(content.contentEquals(
-                "An error occurred during key generation for person with login horscht failed."));
+        assertTrue(content.contains(
+                "Beim Versuch für den Benutzer mit dem Benutzernamen 'horscht' ein Schlüsselpaar anzulegen, ist ein Fehler aufgetreten."));
+        assertTrue(content.contains("Message of exception"));
     }
 
 
     @Test
     public void ensureTechnicalManagerGetsANotificationIfASignErrorOccurred() throws MessagingException, IOException {
 
-        mailService.sendSignErrorNotification(5, "test exception message");
+        mailService.sendSignErrorNotification(5, "Message of exception");
 
         List<Message> inbox = Mailbox.get(emailManager);
         assertTrue(inbox.size() > 0);
@@ -336,7 +344,9 @@ public class MailServiceIntegrationTest {
 
         String content = (String) msg.getContent();
 
-        assertTrue(content.contains("An error occurred while signing the application with id 5"));
+        assertTrue(content.contains(
+                "Beim Versuch den Urlaubsantrag mit der ID '5' zu signieren, ist ein Fehler aufgetreten."));
+        assertTrue(content.contains("Message of exception"));
     }
 
 
@@ -392,5 +402,46 @@ public class MailServiceIntegrationTest {
         Assert.assertNotNull("From must be set", from);
         Assert.assertEquals("From must be only one email address", 1, from.length);
         Assert.assertEquals("Wrong from", emailFrom, from[0].toString());
+    }
+
+
+    @Test
+    public void ensureOfficeGetsNotificationAfterAccountUpdating() throws MessagingException, IOException {
+
+        Account accountOne = new Account();
+        accountOne.setRemainingVacationDays(new BigDecimal("3"));
+        accountOne.setPerson(new Person("muster", "Muster", "Marlene", ""));
+
+        Account accountTwo = new Account();
+        accountTwo.setRemainingVacationDays(new BigDecimal("5.5"));
+        accountTwo.setPerson(new Person("mustermann", "Mustermann", "Max", ""));
+
+        Account accountThree = new Account();
+        accountThree.setRemainingVacationDays(new BigDecimal("-1"));
+        accountThree.setPerson(new Person("horst", "Horst", "Dieter", ""));
+
+        String officeEmailAddress = "office@office.de";
+        Person office = new Person("", "", "", officeEmailAddress);
+
+        Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_OFFICE)).thenReturn(
+            Arrays.asList(office));
+
+        mailService.sendSuccessfullyUpdatedAccounts(Arrays.asList(accountOne, accountTwo, accountThree));
+
+        // ENSURE OFFICE MEMBERS HAVE GOT CORRECT EMAIL
+        List<Message> inboxOffice = Mailbox.get(officeEmailAddress);
+        assertTrue(inboxOffice.size() > 0);
+
+        Message mail = inboxOffice.get(0);
+
+        // check subject
+        assertEquals("Wrong subject", "Auswertung Resturlaubstage", mail.getSubject());
+
+        // check content
+        String content = (String) mail.getContent();
+        assertTrue(content.contains("Stand Resturlaubstage zum 1. Januar " + DateMidnight.now().getYear()));
+        assertTrue(content.contains("Marlene Muster: 3"));
+        assertTrue(content.contains("Max Mustermann: 5"));
+        assertTrue(content.contains("Dieter Horst: -1"));
     }
 }
