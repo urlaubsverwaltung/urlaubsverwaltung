@@ -103,7 +103,6 @@ public class MailServiceIntegrationTest {
 
         // check subject
         assertEquals("Neuer Urlaubsantrag", msg.getSubject());
-        assertNotSame("subject", msg.getSubject());
 
         // check from and recipient
         assertEquals(new InternetAddress(bossEmailAddress), msg.getAllRecipients()[0]);
@@ -145,7 +144,6 @@ public class MailServiceIntegrationTest {
 
         // check subject
         assertEquals("Dein Urlaubsantrag wurde bewilligt", msg.getSubject());
-        assertNotSame("subject", msg.getSubject());
 
         // check from and recipient
         assertEquals(new InternetAddress("berndo@test.com"), msg.getAllRecipients()[0]);
@@ -163,7 +161,6 @@ public class MailServiceIntegrationTest {
 
         // check subject
         assertEquals("Neuer bewilligter Antrag", msgOffice.getSubject());
-        assertNotSame("subject", msgOffice.getSubject());
 
         // check from and recipient
         assertEquals(new InternetAddress(officeEmailAddress), msgOffice.getAllRecipients()[0]);
@@ -195,7 +192,6 @@ public class MailServiceIntegrationTest {
 
         // check subject
         assertEquals("Dein Urlaubsantrag wurde abgelehnt", msg.getSubject());
-        assertNotSame("subject", msg.getSubject());
 
         // check from and recipient
         assertEquals(new InternetAddress("franzi@test.com"), msg.getAllRecipients()[0]);
@@ -226,7 +222,6 @@ public class MailServiceIntegrationTest {
 
         // check subject
         assertTrue(msg.getSubject().contains("Antragsstellung"));
-        assertNotSame("subject", msg.getSubject());
 
         // check from and recipient
         assertEquals(new InternetAddress("hilde@test.com"), msg.getAllRecipients()[0]);
@@ -263,7 +258,6 @@ public class MailServiceIntegrationTest {
 
         // check subject
         assertEquals("Dein Antrag wurde storniert", msg.getSubject());
-        assertNotSame("subject", msg.getSubject());
 
         // check from and recipient
         assertEquals(new InternetAddress("muster@mann.de"), msg.getAllRecipients()[0]);
@@ -298,7 +292,6 @@ public class MailServiceIntegrationTest {
         Message msg = inboxOffice.get(0);
 
         assertEquals("Ein Antrag wurde storniert", msg.getSubject());
-        assertNotSame("subject", msg.getSubject());
 
         assertEquals(new InternetAddress(officeEmailAddress), msg.getAllRecipients()[0]);
 
@@ -370,7 +363,6 @@ public class MailServiceIntegrationTest {
 
         // check subject
         assertTrue(msg.getSubject().contains("dich wurde ein Urlaubsantrag eingereicht"));
-        assertNotSame("subject", msg.getSubject());
 
         // check from and recipient
         assertEquals(new InternetAddress("bla@test.com"), msg.getAllRecipients()[0]);

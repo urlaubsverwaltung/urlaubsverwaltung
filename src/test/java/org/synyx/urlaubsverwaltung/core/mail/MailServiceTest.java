@@ -6,10 +6,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessagePreparator;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
@@ -51,13 +52,26 @@ public class MailServiceTest {
 
 
     @Test
-    public void ensureMailIsSentToAllRecipients() {
+    public void ensureMailIsSentToAllRecipientsThatHaveAnEmailAddress() {
 
         Person person = new Person("muster", "Muster", "Max", "max@muster.de");
+        Person anotherPerson = new Person("mmuster", "Muster", "Marlene", "marlene@muster.de");
+        Person personWithoutMailAddress = new Person("nomail", "Mail", "No", null);
 
-        mailService.sendEmail(Arrays.asList(person), "Mail Subject", "Mail Body");
+        ArgumentCaptor<SimpleMailMessage> mailMessageArgumentCaptor = ArgumentCaptor.forClass(SimpleMailMessage.class);
 
-        Mockito.verify(mailSender).send(Mockito.any(MimeMessagePreparator.class));
+        String subject = "subject.new";
+        String body = "Mail Body";
+        mailService.sendEmail(Arrays.asList(person, anotherPerson, personWithoutMailAddress), subject, body);
+
+        Mockito.verify(mailSender).send(mailMessageArgumentCaptor.capture());
+
+        SimpleMailMessage mailMessage = mailMessageArgumentCaptor.getValue();
+
+        Assert.assertNotNull("There must be recipients", mailMessage.getTo());
+        Assert.assertEquals("Wrong number of recipients", 2, mailMessage.getTo().length);
+        Assert.assertEquals("Wrong subject", "Neuer Urlaubsantrag", mailMessage.getSubject());
+        Assert.assertEquals("Wrong body", body, mailMessage.getText());
     }
 
 
