@@ -4,6 +4,7 @@ package org.synyx.urlaubsverwaltung.core.mail;
 import org.apache.velocity.app.VelocityEngine;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -14,8 +15,6 @@ import org.mockito.Mockito;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
-import org.springframework.util.ReflectionUtils;
-
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
@@ -24,12 +23,11 @@ import org.synyx.urlaubsverwaltung.core.person.PersonService;
 
 import java.io.IOException;
 
-import java.lang.reflect.Field;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
+import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
@@ -49,6 +47,7 @@ public class MailServiceIntegrationTest {
     private Application application;
 
     private String emailManager = "manager@uv.de";
+    private String emailFrom = "from@uv.de";
 
     @Before
     public void setUp() {
@@ -62,7 +61,8 @@ public class MailServiceIntegrationTest {
         JavaMailSender mailSender = new JavaMailSenderImpl();
 
         personService = Mockito.mock(PersonService.class);
-        mailService = new MailServiceImpl(mailSender, velocityEngine, personService, emailManager, "LinkToApplication");
+        mailService = new MailServiceImpl(mailSender, velocityEngine, personService, emailFrom, emailManager,
+                "LinkToApplication");
 
         person = new Person();
         application = new Application();
@@ -379,5 +379,26 @@ public class MailServiceIntegrationTest {
         String content = (String) msg.getContent();
         assertTrue(content.contains("Hans Wurst hat einen Urlaubsantrag"));
         assertFalse(content.contains("Mist"));
+    }
+
+
+    @Test
+    public void ensureCorrectFrom() throws MessagingException, IOException {
+
+        person.setLastName("Test");
+        person.setFirstName("Hildegard");
+        person.setEmail("hilde@test.com");
+
+        mailService.sendConfirmation(application);
+
+        List<Message> inbox = Mailbox.get("hilde@test.com");
+        assertTrue(inbox.size() > 0);
+
+        Message msg = inbox.get(0);
+
+        Address[] from = msg.getFrom();
+        Assert.assertNotNull("From must be set", from);
+        Assert.assertEquals("From must be only one email address", 1, from.length);
+        Assert.assertEquals("Wrong from", emailFrom, from[0].toString());
     }
 }

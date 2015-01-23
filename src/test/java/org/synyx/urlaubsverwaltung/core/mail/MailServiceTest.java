@@ -40,7 +40,7 @@ public class MailServiceTest {
         mailSender = Mockito.mock(JavaMailSender.class);
         personService = Mockito.mock(PersonService.class);
 
-        mailService = new MailServiceImpl(mailSender, velocityEngine, personService, "", "");
+        mailService = new MailServiceImpl(mailSender, velocityEngine, personService, "", "", "");
 
         person = new Person();
         application = new Application();

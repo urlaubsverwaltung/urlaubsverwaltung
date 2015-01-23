@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
+import org.springframework.web.context.ServletContextAware;
+
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
@@ -32,6 +34,8 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.annotation.PostConstruct;
+
+import javax.servlet.ServletContext;
 
 
 /**

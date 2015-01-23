@@ -66,6 +66,7 @@ class MailServiceImpl implements MailService {
     private final VelocityEngine velocityEngine;
     private final PersonService personService;
 
+    private String emailFrom;
     private String emailManager;
     private String applicationUrl;
 
@@ -73,6 +74,7 @@ class MailServiceImpl implements MailService {
 
     @Autowired
     public MailServiceImpl(JavaMailSender mailSender, VelocityEngine velocityEngine, PersonService personService,
+        @Value("${mail.from}") String emailFrom,
         @Value("${mail.manager}") String emailManager,
         @Value("${application.url}") String applicationUrl) {
 
@@ -80,6 +82,7 @@ class MailServiceImpl implements MailService {
         this.velocityEngine = velocityEngine;
         this.personService = personService;
 
+        this.emailFrom = emailFrom;
         this.emailManager = emailManager;
         this.applicationUrl = applicationUrl;
 
@@ -164,6 +167,7 @@ class MailServiceImpl implements MailService {
                         addressTo[i] = new InternetAddress(recipient.getEmail());
                     }
 
+                    mimeMessage.setFrom(new InternetAddress(emailFrom));
                     mimeMessage.setRecipients(Message.RecipientType.TO, addressTo);
                     mimeMessage.setSubject(internationalizedSubject);
                     mimeMessage.setText(text);
