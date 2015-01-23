@@ -72,11 +72,11 @@ public class StartupServiceTest {
             Assert.assertEquals("Wrong log level", Level.INFO, loggingEvent.getLevel());
         }
 
-        Assert.assertEquals("Wrong log message", "DATABASE = myDbUrl", loggingEvents.get(0).getRenderedMessage());
-        Assert.assertEquals("Wrong log message", "DATABASE USER = myDbUser", loggingEvents.get(1).getRenderedMessage());
-        Assert.assertEquals("Wrong log message", "APPLICATION MANAGER EMAIL = manager@uv.de",
+        Assert.assertEquals("Wrong log message", "DATABASE=myDbUrl", loggingEvents.get(0).getRenderedMessage());
+        Assert.assertEquals("Wrong log message", "DATABASE USER=myDbUser", loggingEvents.get(1).getRenderedMessage());
+        Assert.assertEquals("Wrong log message", "APPLICATION MANAGER EMAIL=manager@uv.de",
             loggingEvents.get(2).getRenderedMessage());
-        Assert.assertEquals("Wrong log message", "ACTIVE SPRING PROFILE = ldap",
+        Assert.assertEquals("Wrong log message", "ACTIVE SPRING PROFILE=ldap",
             loggingEvents.get(3).getRenderedMessage());
     }
 }

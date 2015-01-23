@@ -60,8 +60,7 @@ public class StartupService {
                     });
 
             if (!validProfile.isPresent()) {
-                throw new RuntimeException("INVALID VALUE FOR '" + SPRING_PROFILE_ACTIVE + "' = "
-                    + activeSpringProfile);
+                throw new RuntimeException("INVALID VALUE FOR '" + SPRING_PROFILE_ACTIVE + "'=" + activeSpringProfile);
             }
         }
     }
@@ -69,9 +68,9 @@ public class StartupService {
     @PostConstruct
     public void logStartupInfo() {
 
-        LOG.info("DATABASE = " + dbUrl);
-        LOG.info("DATABASE USER = " + dbUser);
-        LOG.info("APPLICATION MANAGER EMAIL = " + emailManager);
-        LOG.info("ACTIVE SPRING PROFILE = " + activeSpringProfile);
+        LOG.info("DATABASE=" + dbUrl);
+        LOG.info("DATABASE USER=" + dbUser);
+        LOG.info("APPLICATION MANAGER EMAIL=" + emailManager);
+        LOG.info("ACTIVE SPRING PROFILE=" + activeSpringProfile);
     }
 }

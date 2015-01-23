@@ -96,7 +96,7 @@ public class TestDataCreationService {
             createTestData(user);
             createTestData(boss);
         } else {
-            LOG.info("No test data is created.");
+            LOG.info("No test data will be created.");
         }
     }
 

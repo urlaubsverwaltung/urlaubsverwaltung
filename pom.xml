@@ -352,6 +352,10 @@
             </plugin>
 
             <!-- TODO: Use jetty plugin instead of tomcat plugin when found out how to configure jetty to support HTTP PUT -->
+            <!--NOTE:
+                    If there is a validation error in a form, e.g. edit person form, you get following error:
+                    JSPs only permit GET POST or HEAD
+            -->
             <!--<plugin>-->
             <!--<groupId>org.eclipse.jetty</groupId>-->
             <!--<artifactId>jetty-maven-plugin</artifactId>-->

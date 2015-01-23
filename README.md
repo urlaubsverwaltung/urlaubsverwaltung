@@ -56,8 +56,8 @@ Möchte man ein anderes Environment nutzen, muss man beim Starten des Tomcats di
 Die Anwendung besitzt im Verzeichnis `src/main/resources` mehrere Properties Dateien, die zur Konfiguration genutzt werden.
 
 * `config.properties` u.a. Konfiguration von LDAP
-* `db.properties` Konfiguration der Datenbank
-* `mail.properties` Konfiguration des Mail-Hosts und -Ports
+* `db.properties` Konfiguration der Datenbank (im `prod` Environment wird die Datei `db.prod.properties` herangezogen)
+* `mail.properties` Konfiguration zum Mailversand (im `prod` Environment wird die Datei `mail.prod.properties` herangezogen)
 * `business.properties` Individuelle Regelungen wie bspw. maximal möglicher Jahresurlaub
 
 ### Überschreiben der Properties
