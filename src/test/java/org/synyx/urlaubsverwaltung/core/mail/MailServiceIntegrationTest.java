@@ -48,6 +48,8 @@ public class MailServiceIntegrationTest {
     private Person person;
     private Application application;
 
+    private String emailManager = "manager@uv.de";
+
     @Before
     public void setUp() {
 
@@ -60,7 +62,7 @@ public class MailServiceIntegrationTest {
         JavaMailSender mailSender = new JavaMailSenderImpl();
 
         personService = Mockito.mock(PersonService.class);
-        mailService = new MailServiceImpl(mailSender, velocityEngine, personService);
+        mailService = new MailServiceImpl(mailSender, velocityEngine, personService, emailManager, "LinkToApplication");
 
         person = new Person();
         application = new Application();
@@ -311,10 +313,9 @@ public class MailServiceIntegrationTest {
     public void ensureTechnicalManagerGetsANotificationIfAKeyGeneratingErrorOccurred() throws MessagingException,
         IOException {
 
-        mailService.emailManager = "manager@uv.de";
         mailService.sendKeyGeneratingErrorNotification("horscht");
 
-        List<Message> inbox = Mailbox.get("manager@uv.de");
+        List<Message> inbox = Mailbox.get(emailManager);
         assertTrue(inbox.size() > 0);
 
         Message msg = inbox.get(0);
@@ -331,10 +332,9 @@ public class MailServiceIntegrationTest {
     @Test
     public void ensureTechnicalManagerGetsANotificationIfASignErrorOccurred() throws MessagingException, IOException {
 
-        mailService.emailManager = "manager@uv.de";
         mailService.sendSignErrorNotification(5, "test exception message");
 
-        List<Message> inbox = Mailbox.get("manager@uv.de");
+        List<Message> inbox = Mailbox.get(emailManager);
         assertTrue(inbox.size() > 0);
 
         Message msg = inbox.get(0);

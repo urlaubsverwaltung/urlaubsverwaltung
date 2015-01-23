@@ -62,24 +62,26 @@ class MailServiceImpl implements MailService {
     private static final String PROPERTIES_FILE = "messages.properties";
     private static final String TYPE = ".vm";
 
-    @Value("${mail.manager}")
-    protected String emailManager;
-
-    @Value("${application.url}")
-    private String applicationUrl;
-
     private final JavaMailSender mailSender;
     private final VelocityEngine velocityEngine;
     private final PersonService personService;
 
+    private String emailManager;
+    private String applicationUrl;
+
     private Properties properties;
 
     @Autowired
-    public MailServiceImpl(JavaMailSender mailSender, VelocityEngine velocityEngine, PersonService personService) {
+    public MailServiceImpl(JavaMailSender mailSender, VelocityEngine velocityEngine, PersonService personService,
+        @Value("${mail.manager}") String emailManager,
+        @Value("${application.url}") String applicationUrl) {
 
         this.mailSender = mailSender;
         this.velocityEngine = velocityEngine;
         this.personService = personService;
+
+        this.emailManager = emailManager;
+        this.applicationUrl = applicationUrl;
 
         try {
             this.properties = PropertiesUtil.load(PROPERTIES_FILE);
