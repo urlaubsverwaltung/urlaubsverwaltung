@@ -88,9 +88,7 @@
     <footer>
         <div class="row">
             <div class="col-xs-12">
-                <p title="Version ${project.version} - Commit ${git.commit.id.abbrev}">
-                    synyx Urlaubsverwaltung Version ${project.version}
-                </p>
+                <p>synyx Urlaubsverwaltung Version ${project.version}</p>
             </div>
         </div>
     </footer>

@@ -22,7 +22,7 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScan(basePackages = { "org.synyx.urlaubsverwaltung.restapi" })
 public class SwaggerConfig {
 
-    @Value(value = "${application.version.short}")
+    @Value(value = "${application.version}")
     private String version;
 
     private SpringSwaggerConfig springSwaggerConfig;
