@@ -13,7 +13,20 @@
     <uv:print/>
 </sec:authorize>
 
-<c:if test="${application.status == 'WAITING' || application.status == 'ALLOWED'}">
+<sec:authorize access="hasRole('USER')">
+    <c:set var="IS_USER" value="${true}"/>
+</sec:authorize>
+
+<sec:authorize access="hasRole('BOSS')">
+    <c:set var="IS_BOSS" value="${true}"/>
+</sec:authorize>
+
+<sec:authorize access="hasRole('OFFICE')">
+    <c:set var="IS_OFFICE" value="${true}"/>
+</sec:authorize>
+
+
+<c:if test="${application.status == 'WAITING' || (application.status == 'ALLOWED' && IS_OFFICE)}">
     <div class="btn-group pull-right">
         <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#">
             <i class="fa fa-edit"></i>
@@ -24,16 +37,14 @@
         </a>
         <ul class="dropdown-menu">
             <c:if test="${application.status == 'WAITING'}">
-                <sec:authorize access="hasRole('USER')">
-                    <c:if test="${application.person.id == loggedUser.id && application.status == 'WAITING'}">
-                        <li>
-                            <a href="#" onclick="$('form#remind').submit();">
-                                <i class="fa fa-bell"></i>&nbsp;<spring:message code='remind.chef'/>
-                            </a>
-                        </li>
-                    </c:if>
-                </sec:authorize>
-                <sec:authorize access="hasRole('BOSS')">
+                <c:if test="${IS_USER && application.person.id == loggedUser.id}">
+                    <li>
+                        <a href="#" onclick="$('form#remind').submit();">
+                            <i class="fa fa-bell"></i>&nbsp;<spring:message code='remind.chef'/>
+                        </a>
+                    </li>
+                </c:if>
+                <c:if test="${IS_BOSS}">
                     <li>
                         <a href="#"
                            onclick="$('#reject').hide(); $('#refer').hide(); $('#cancel').hide(); $('#confirm').show();">
@@ -52,25 +63,23 @@
                             <i class="fa fa-mail-forward"></i>&nbsp;<spring:message code='app.state.refer.short'/>
                         </a>
                     </li>
-                </sec:authorize>
-                <sec:authorize access="hasRole('USER')">
+                </c:if>
+                <c:if test="${(IS_USER && application.person.id == loggedUser.id) || IS_OFFICE}">
                     <li>
                         <a href="#"
                            onclick="$('#reject').hide(); $('#confirm').hide(); $('#refer').hide(); $('#cancel').show();">
                             <i class="fa fa-trash"></i>&nbsp;<spring:message code='app.state.cancel'/>
                         </a>
                     </li>
-                </sec:authorize>
+                </c:if>
             </c:if>
-            <c:if test="${application.status == 'ALLOWED'}">
-                <sec:authorize access="hasRole('OFFICE')">
+            <c:if test="${application.status == 'ALLOWED' && IS_OFFICE}">
                     <li>
                         <a href="#"
                            onclick="$('#reject').hide(); $('#confirm').hide(); $('#refer').hide(); $('#cancel').show();">
                             <i class="fa fa-trash"></i>&nbsp;<spring:message code='app.state.cancel'/>
                         </a>
                     </li>
-                </sec:authorize>
             </c:if>
         </ul>
     </div>
