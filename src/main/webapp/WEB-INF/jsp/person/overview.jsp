@@ -71,16 +71,7 @@
                     </c:otherwise>
                 </c:choose>
 
-                <c:choose>
-                    <c:when test="${person.id == loggedUser.id}">
-                        <%@include file="./include/overview_header_user.jsp" %>
-                    </c:when>
-                    <c:otherwise>
-                        <sec:authorize access="hasAnyRole('OFFICE', 'BOSS')">
-                            <%@include file="./include/overview_header_office.jsp" %>
-                        </sec:authorize>
-                    </c:otherwise>
-                </c:choose>
+                <%@include file="./include/overview_header.jsp" %>
             </div>
             
         </div>
