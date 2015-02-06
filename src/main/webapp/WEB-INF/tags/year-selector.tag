@@ -3,38 +3,30 @@
 
 <%@attribute name="year" type="java.lang.Integer" required="true" %>
 
-<div class="btn-group pull-right">
+<script type="text/javascript">
 
-    <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-        <i class="fa fa-clock-o"></i>
-        <span class="hidden-xs"><spring:message code="action.change.year" /></span> <span class="caret"></span>
-    </button>
+    $(function () {
 
-    <ul class="dropdown-menu">
-        
-        <%-- next year --%>
-        <li>
-            <a href="?year=${year + 1}">
-                <c:out value="${year + 1}" />
-            </a>
-        </li>
-            
-        <%-- current year --%>
-            <li>
-                <a href="?year=${year}">
-                    <c:out value="${year}" />
-                </a>
-            </li>    
-            
-        <%-- last ten years --%>
-       <c:forEach var="count" begin="1" end="10">
-           <li>
-               <a href="?year=${year - count}">
-                   <c:out value="${year - count}"/>
-               </a>
-           </li>
-       </c:forEach>
+        var currentYear = new Date().getFullYear();
 
-    </ul>
+        var $dropdown = $('#year-selection').find('.dropdown-menu');
 
+        $dropdown.append('<li><a href="?year=' + (currentYear + 1) + '">' + (currentYear + 1) + '</a></li>');
+        $dropdown.append('<li><a href="?year=' + currentYear + '">' + currentYear + '</a></li>');
+
+        for (var i = 1; i < 10; i++) {
+            $dropdown.append('<li><a href="?year=' + (currentYear - i) + '">' + (currentYear - i) + '</a></li>');
+        }
+
+    });
+
+</script>
+
+<div id="year-selection" class="legend-dropdown dropdown">
+    <a id="dropdownLabel" data-target="#" href="#" data-toggle="dropdown"
+       aria-haspopup="true" role="button" aria-expanded="false">
+        <c:out value="${year}" /><span class="caret"></span>
+    </a>
+
+    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownLabel"></ul>
 </div>

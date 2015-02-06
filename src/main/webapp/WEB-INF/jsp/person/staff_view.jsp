@@ -1,9 +1,3 @@
-<%-- 
-    Document   : staff_view
-    Created on : 17.01.2012, 11:09:37
-    Author     : Aljona Murygina
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
@@ -63,14 +57,12 @@
                         <legend>
 
                             <p>
-                                <spring:message code="table.overview"/> <c:out value="${displayYear}"/>
+                                <spring:message code="table.overview"/>
                             </p>
 
-                            <uv:print />
+                            <uv:year-selector year="${displayYear}" />
 
-                            <span class="hidden-xs hidden-sm">
-                               <uv:year-selector year="${year}" />
-                            </span>
+                            <uv:print />
 
                             <div id="active-state" class="btn-group pull-right hidden-xs">
 

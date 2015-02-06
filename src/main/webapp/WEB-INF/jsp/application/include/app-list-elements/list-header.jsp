@@ -19,25 +19,12 @@
 
     <legend>
 
-        <p class="hidden-xs">
-            <spring:message code="${titleApp}"/> <spring:message code="in.year" /> <c:out value="${displayYear}"/>
-        </p>
-
-        <p class="visible-xs-inline-block">
-            <spring:message code="${titleApp}.short"/> <c:out value="${displayYear}"/>
-        </p>
-
-        <uv:year-selector year="${year}" />
-
-        <div class="btn-group pull-right">
-
-            <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                <i class="fa fa-filter"></i>
-                <span class="hidden-xs"><spring:message code="applications.action.status"/></span> <span class="caret"></span>
-            </button>
-
-            <ul class="dropdown-menu icons-on-top">
-
+        <div class="legend-dropdown dropdown">
+            <a id="dropdownLabel" data-target="#" href="#" data-toggle="dropdown"
+               aria-haspopup="true" role="button" aria-expanded="false">
+                <spring:message code="${titleApp}"/><span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownLabel">
                 <li>
                     <a href="${linkPrefix}/all?year=${displayYear}">
                         <i class="fa fa-calendar"></i>&nbsp;<spring:message code="applications.all" />
@@ -63,11 +50,15 @@
                         <i class="fa fa-trash"></i>&nbsp;<spring:message code="applications.cancelled" />
                     </a>
                 </li>
-
             </ul>
-
         </div>
-        
+
+        <p class="hidden-xs">
+            <spring:message code="in.year" />
+        </p>
+
+        <uv:year-selector year="${displayYear}" />
+
     </legend>
     
 </div>

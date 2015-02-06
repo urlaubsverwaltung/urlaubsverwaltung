@@ -10,16 +10,12 @@
 
     <legend>
 
-        <p>
-            <spring:message code="table.overview"/> <c:out value="${displayYear}"/>
-        </p>
+        <p><spring:message code="table.overview"/></p>
+
+        <uv:year-selector year="${displayYear}"/>
 
         <span class="hidden-sm hidden-xs">
             <uv:print/>
-        </span>
-
-        <span class="hidden-xs">
-            <uv:year-selector year="${year}"/>
         </span>
 
         <sec:authorize access="hasRole('OFFICE')">
