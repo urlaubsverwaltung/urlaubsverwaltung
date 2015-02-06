@@ -96,7 +96,7 @@
 
                             <sec:authorize access="hasRole('OFFICE')">
                                 <a class="btn btn-default pull-right" href="${URL_PREFIX}/staff/new">
-                                    <i class="fa fa-plus"></i> <span class="hidden-xs"><spring:message code="table.new.person" /></span>
+                                    <i class="fa fa-user-plus"></i> <span class="hidden-xs"><spring:message code="table.new.person" /></span>
                                 </a>
                             </sec:authorize>
                             
