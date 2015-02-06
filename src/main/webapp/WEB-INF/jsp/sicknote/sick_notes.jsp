@@ -73,45 +73,7 @@
 
             </div>
 
-            <div id="filterModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                            <h4 id="filterModalLabel" class="modal-title"><spring:message code="filter" /></h4>
-                        </div>
-                        <form:form method="POST" id="searchRequest-form" action="${URL_PREFIX}/sicknote/filter" modelAttribute="searchRequest" class="form-horizontal">
-                            <div class="modal-body">
-
-                                <div class="form-group">
-                                    <label class="control-label col-sm-4">
-                                        <spring:message code="time" />
-                                    </label>
-                                    <div class="col-sm-7 radio">
-                                        <label class="thirds">
-                                            <form:radiobutton id="periodYear" path="period" value="YEAR" checked="checked" />
-                                            <spring:message code="period.year" />
-                                        </label>
-                                        <label class="thirds">
-                                            <form:radiobutton id="periodQuartal" path="period" value="QUARTAL" />
-                                            <spring:message code="period.quartal" />
-                                        </label>
-                                        <label class="thirds">
-                                            <form:radiobutton id="periodMonth" path="period" value="MONTH" />
-                                            <spring:message code="period.month" />
-                                        </label>
-                                    </div>
-                                </div>
-
-                            </div>
-                            <div class="modal-footer">
-                                <button class="btn btn-primary is-sticky" type="submit"><i class="fa fa-check"></i> <spring:message code="action.confirm" /></button>
-                                <button class="btn btn-default is-sticky" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i> <spring:message code="action.cancel" /></button>
-                            </div>
-                        </form:form>
-                    </div>
-                </div>
-            </div>
+            <uv:filter-modal id="filterModal" actionUrl="${URL_PREFIX}/sicknote/filter" />
 
             <div>
                 <p class="is-inline-block">

@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import org.synyx.urlaubsverwaltung.DateFormat;
-import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
@@ -35,7 +34,6 @@ import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteComment;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.core.sicknote.statistics.SickNoteStatistics;
 import org.synyx.urlaubsverwaltung.core.sicknote.statistics.SickNoteStatisticsService;
-import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.security.Role;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
@@ -123,20 +121,20 @@ public class SickNoteController {
 
 
     @RequestMapping(value = "/sicknote/filter", method = RequestMethod.POST)
-    public String filterSickNotes(@ModelAttribute("searchRequest") SearchRequest searchRequest) {
+    public String filterSickNotes(@ModelAttribute("filterRequest") FilterRequest filterRequest) {
 
         if (sessionService.isOffice()) {
             DateMidnight now = DateMidnight.now();
             DateMidnight from = now;
             DateMidnight to = now;
 
-            if (searchRequest.getPeriod().equals(SearchRequest.Period.YEAR)) {
+            if (filterRequest.getPeriod().equals(FilterRequest.Period.YEAR)) {
                 from = now.dayOfYear().withMinimumValue();
                 to = now.dayOfYear().withMaximumValue();
-            } else if (searchRequest.getPeriod().equals(SearchRequest.Period.QUARTAL)) {
+            } else if (filterRequest.getPeriod().equals(FilterRequest.Period.QUARTAL)) {
                 from = now.dayOfMonth().withMinimumValue().minusMonths(2);
                 to = now.dayOfMonth().withMaximumValue();
-            } else if (searchRequest.getPeriod().equals(SearchRequest.Period.MONTH)) {
+            } else if (filterRequest.getPeriod().equals(FilterRequest.Period.MONTH)) {
                 from = now.dayOfMonth().withMinimumValue();
                 to = now.dayOfMonth().withMaximumValue();
             }
@@ -174,7 +172,7 @@ public class SickNoteController {
         model.addAttribute("today", DateMidnight.now());
         model.addAttribute("from", fromDate);
         model.addAttribute("to", toDate);
-        model.addAttribute("searchRequest", new SearchRequest());
+        model.addAttribute("filterRequest", new FilterRequest());
 
         List<Person> persons = personService.getActivePersons();
 
