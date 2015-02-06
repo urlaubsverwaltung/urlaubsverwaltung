@@ -813,12 +813,12 @@ public class ApplicationController {
             DateMidnight minDateForNotification = application.getApplicationDate().plusDays(minDaysToWait);
 
             if (minDateForNotification.isAfterNow()) {
+                redirectAttributes.addFlashAttribute("remindNoWay", true);
+            } else {
                 mailService.sendRemindBossNotification(application);
                 application.setRemindDate(DateMidnight.now());
                 applicationService.save(application);
                 redirectAttributes.addFlashAttribute("remindIsSent", true);
-            } else {
-                redirectAttributes.addFlashAttribute("remindNoWay", true);
             }
         }
 
