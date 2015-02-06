@@ -53,8 +53,8 @@
             </ul>
         </div>
 
-        <p class="hidden-xs">
-            <spring:message code="in.year" />
+        <p>
+            <spring:message code="for" />
         </p>
 
         <uv:year-selector year="${displayYear}" />

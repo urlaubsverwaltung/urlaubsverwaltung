@@ -32,9 +32,9 @@
                 var active;
                 
                 if(path.indexOf("inactive") != -1) {
-                    $("div#active-state button").html('<i class="fa fa-toggle-off"></i>&nbsp;<spring:message code="table.inactive" />&nbsp;<span class="caret"></span>');
+                    $('#active-state').html('<spring:message code="table.inactive" /><span class="caret"></span>');
                 } else {
-                    $("div#active-state button").html('<i class="fa fa-toggle-on"></i>&nbsp;<spring:message code="table.active" />&nbsp;<span class="caret"></span>');
+                    $('#active-state').html('<spring:message code="table.active" /><span class="caret"></span>');
                 }
 
             });
@@ -56,20 +56,12 @@
 
                         <legend>
 
-                            <p>
-                                <spring:message code="table.overview"/>
-                            </p>
-
-                            <uv:year-selector year="${displayYear}" />
-
-                            <uv:print />
-
-                            <div id="active-state" class="btn-group pull-right hidden-xs">
-
-                                <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                                </button>
-
-                                <ul class="dropdown-menu">
+                            <div class="legend-dropdown dropdown">
+                                <a id="active-state" data-target="#" href="#" data-toggle="dropdown"
+                                   aria-haspopup="true" role="button" aria-expanded="false">
+                                    <%-- Filled by javascript --%>
+                                </a>
+                                <ul class="dropdown-menu" role="menu" aria-labelledby="active-state">
                                     <li>
                                         <a href="${URL_PREFIX}/staff">
                                             <i class="fa fa-toggle-on"></i>
@@ -83,8 +75,15 @@
                                         </a>
                                     </li>
                                 </ul>
-
                             </div>
+
+                            <p>
+                                <spring:message code="for" />
+                            </p>
+
+                            <uv:year-selector year="${displayYear}" />
+
+                            <uv:print />
 
                             <sec:authorize access="hasRole('OFFICE')">
                                 <a class="btn btn-default pull-right" href="${URL_PREFIX}/staff/new">
