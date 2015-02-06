@@ -66,6 +66,8 @@
                                 <spring:message code="table.overview"/> <c:out value="${displayYear}"/>
                             </p>
 
+                            <uv:print />
+
                             <span class="hidden-xs hidden-sm">
                                <uv:year-selector year="${year}" />
                             </span>
@@ -91,8 +93,6 @@
                                 </ul>
 
                             </div>
-
-                            <uv:print />
 
                             <sec:authorize access="hasRole('OFFICE')">
                                 <a class="btn btn-default pull-right" href="${URL_PREFIX}/staff/new">

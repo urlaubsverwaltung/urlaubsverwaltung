@@ -44,12 +44,13 @@
             <div class="header">
 
                 <legend class="is-sticky">
+
                     <p>
                         <spring:message code="sicknotes" />
-                        <c:if test="${person != null}">
-                            <spring:message code="for" />&nbsp;<c:out value="${person.niceName}" />
-                        </c:if>
                     </p>
+
+                    <uv:print />
+
                     <div class="btn-group btn-group-legend pull-right hidden-xs hidden-sm">
                         <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#">
                             <i class="fa fa-bar-chart"></i>&nbsp;<spring:message code='sicknotes.statistics.short' />
@@ -65,23 +66,19 @@
                             </c:forEach>
                         </ul>
                     </div>
-                    <uv:print />
                     <a class="btn btn-default pull-right" href="${URL_PREFIX}/sicknote/new">
-                        <i class="fa fa-plus"></i> <span class="hidden-xs"><spring:message code="sicknotes.new" /></span>
-                    </a>
-                    <a href="#changeViewModal" role="button" class="btn btn-default pull-right hidden-xs hidden-sm" data-toggle="modal">
-                        <i class="fa fa-filter"></i>&nbsp;<spring:message code="filter" />
+                        <i class="fa fa-pencil"></i> <span class="hidden-xs"><spring:message code="action.apply.sicknote" /></span>
                     </a>
                 </legend>
 
             </div>
 
-            <div id="changeViewModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div id="filterModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                            <h4 id="myModalLabel" class="modal-title"><spring:message code="filter" /></h4>
+                            <h4 id="filterModalLabel" class="modal-title"><spring:message code="filter" /></h4>
                         </div>
                         <form:form method="POST" id="searchRequest-form" action="${URL_PREFIX}/sicknote/filter" modelAttribute="searchRequest" class="form-horizontal">
                             <div class="modal-body">
@@ -108,8 +105,8 @@
 
                             </div>
                             <div class="modal-footer">
-                                <button class="btn btn-primary is-sticky" type="submit"><i class="fa fa-check"></i> <spring:message code="go" /></button>
-                                <button class="btn btn-default is-sticky" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i> <spring:message code="cancel" /></button>
+                                <button class="btn btn-primary is-sticky" type="submit"><i class="fa fa-check"></i> <spring:message code="action.confirm" /></button>
+                                <button class="btn btn-default is-sticky" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i> <spring:message code="action.cancel" /></button>
                             </div>
                         </form:form>
                     </div>
@@ -118,7 +115,9 @@
 
             <div>
                 <p class="is-inline-block">
-                    <spring:message code="time"/>:&nbsp;<uv:date date="${from}" /> - <uv:date date="${to}" />
+                    <a href="#filterModal" data-toggle="modal">
+                        <spring:message code="time"/>:&nbsp;<uv:date date="${from}"/> - <uv:date date="${to}"/>
+                    </a>
                 </p>
                 <p class="pull-right visible-print">
                     <spring:message code="Effective"/> <uv:date date="${today}" />

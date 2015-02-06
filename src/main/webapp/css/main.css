@@ -28,6 +28,10 @@ body {
     margin-top: 77px;
 }
 
+.modal-dialog {
+  margin-top: 77px;
+}
+
 hr {
     border-color: #D5D5D5;
 }
@@ -54,6 +58,10 @@ a:not(.btn):hover,
 
 .fa-action:hover {
     text-decoration: none;
+}
+
+td .fa-action {
+  padding: 12px;
 }
 
 .is-centered {

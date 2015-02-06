@@ -33,9 +33,7 @@
                     <p>
                         <spring:message code="sicknotes" />
                     </p>
-                    <a class="btn btn-default pull-right" href="#" media="print" onclick="window.print(); return false;">
-                        <i class="fa fa-print"></i>&nbsp;<spring:message code='print' />
-                    </a>
+                    <uv:print />
                 </legend>
 
             </div>

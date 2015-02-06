@@ -39,17 +39,17 @@
             </c:choose>
             : (<span id="text-cancel"></span><spring:message code="max.chars"/>)
         </div>
-        <form:textarea rows="1" path="reason" cssClass="form-control" cssErrorClass="form-control error"
+        <form:textarea rows="2" path="reason" cssClass="form-control" cssErrorClass="form-control error"
                        onkeyup="count(this.value, 'text-cancel');"
                        onkeydown="maxChars(this,200); count(this.value, 'text-cancel');"/>
     </div>
 
-    <div class="form-group is-sticky">
-        <button type="submit" class="btn btn-danger halves">
-            <i class="fa fa-trash"></i>&nbsp;<spring:message code='delete'/>
+    <div class="form-group is-sticky row">
+        <button type="submit" class="btn btn-danger col-xs-12 col-sm-5">
+            <i class="fa fa-trash"></i>&nbsp;<spring:message code='action.delete'/>
         </button>
-        <button type="button" class="btn btn-default halves" onclick="$('#cancel').hide();">
-            <i class="fa fa-remove"></i>&nbsp;<spring:message code='cancel'/>
+        <button type="button" class="btn btn-default col-xs-12 col-sm-5 pull-right" onclick="$('#cancel').hide();">
+            <i class="fa fa-remove"></i>&nbsp;<spring:message code="action.cancel"/>
         </button>
     </div>
 

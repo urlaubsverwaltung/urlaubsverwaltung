@@ -31,7 +31,7 @@
                     </li>
                     <li>
                         <a href="${URL_PREFIX}/application/new">
-                            <i class="fa fa-pencil"></i>&nbsp;<spring:message code="nav.apply"/>
+                            <i class="fa fa-pencil"></i>&nbsp;<spring:message code="nav.apply.vacation"/>
                         </a>
                     </li>
                     </li>

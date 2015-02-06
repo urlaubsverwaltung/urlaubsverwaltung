@@ -374,8 +374,8 @@
 
         <hr/>
 
-        <button class="btn btn-large btn-success col-xs-12 col-md-3" type="submit"><i class='fa fa-check'></i>&nbsp;<spring:message code="save" /></button>
-        <a class="btn btn-default btn-large col-xs-12 col-md-3" href="${URL_PREFIX}/staff"><i class='fa fa-remove'></i>&nbsp;<spring:message code='cancel'/></a>
+        <button class="btn btn-success col-xs-12 col-sm-5 col-md-2" type="submit"><i class='fa fa-check'></i>&nbsp;<spring:message code="action.save" /></button>
+        <a class="btn btn-default col-xs-12 col-sm-5 col-md-2 pull-right" href="${URL_PREFIX}/staff"><i class='fa fa-remove'></i>&nbsp;<spring:message code="action.cancel"/></a>
 
     </div>
 </div>

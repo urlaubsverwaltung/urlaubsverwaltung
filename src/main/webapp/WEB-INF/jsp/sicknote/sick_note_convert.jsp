@@ -77,7 +77,7 @@
                         <div class="col-md-7">
                             <span id="count-chars"></span><spring:message code="max.chars" />
                             <br />
-                            <form:textarea id="reason" path="reason" cssClass="form-control" cssErrorClass="form-control error" rows="1" onkeyup="count(this.value, 'count-chars');" onkeydown="maxChars(this,200); count(this.value, 'count-chars');" />
+                            <form:textarea id="reason" path="reason" cssClass="form-control" cssErrorClass="form-control error" rows="2" onkeyup="count(this.value, 'count-chars');" onkeydown="maxChars(this,200); count(this.value, 'count-chars');" />
                             <span class="help-inline"><form:errors path="reason" cssClass="error"/></span>
                         </div>
 
@@ -169,8 +169,8 @@
 
                 <hr/>
 
-                <button class="btn btn-large btn-success col-xs-12 col-sm-12 col-md-3" type="submit"><i class='fa fa-check'></i>&nbsp;<spring:message code="save" /></button>
-                <a class="btn btn-default btn-large col-xs-12 col-sm-12 col-md-3" href="${URL_PREFIX}/sicknote/${sickNote.id}"><i class='fa fa-remove'></i>&nbsp;<spring:message code='cancel'/></a>
+                <button class="btn btn-success col-xs-12 col-sm-5 col-md-2" type="submit"><i class='fa fa-check'></i>&nbsp;<spring:message code="action.save" /></button>
+                <a class="btn btn-default col-xs-12 col-sm-5 col-md-2 pull-right" href="${URL_PREFIX}/sicknote/${sickNote.id}"><i class='fa fa-remove'></i>&nbsp;<spring:message code="action.cancel"/></a>
 
 
             </div>

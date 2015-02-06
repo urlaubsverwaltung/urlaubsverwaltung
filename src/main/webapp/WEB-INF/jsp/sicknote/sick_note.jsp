@@ -41,7 +41,7 @@
                                     <ul class="dropdown-menu">
                                         <li>
                                             <a href="${URL_PREFIX}/sicknote/${sickNote.id}/edit">
-                                                <i class="fa fa-pencil"></i>&nbsp;&nbsp;<spring:message code="edit" />
+                                                <i class="fa fa-pencil"></i>&nbsp;&nbsp;<spring:message code="action.edit" />
                                             </a>
                                         </li>
                                         <li>
@@ -51,7 +51,7 @@
                                         </li>
                                         <li>
                                             <a href="#modal-cancel" role="button" data-toggle="modal">
-                                                <i class="fa fa-trash"></i>&nbsp;&nbsp;<spring:message code="delete" />
+                                                <i class="fa fa-trash"></i>&nbsp;&nbsp;<spring:message code="action.delete" />
                                             </a>
                                         </li>
                                     </ul>
@@ -67,14 +67,14 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                                <h4 id="myModalLabel" class="modal-title"><spring:message code="delete" />?</h4>
+                                <h4 id="myModalLabel" class="modal-title"><spring:message code="action.delete" />?</h4>
                             </div>
                             <div class="modal-body">
                                 <spring:message code="sicknote.cancel" />
                             </div>
                             <div class="modal-footer">
-                                <button class="btn btn-danger is-sticky" type="submit"><i class="fa fa-trash"></i>&nbsp;<spring:message code="delete" /></button>
-                                <button class="btn btn-default is-sticky" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i>&nbsp;<spring:message code="cancel" /></button>
+                                <button class="btn btn-danger is-sticky" type="submit"><i class="fa fa-trash"></i>&nbsp;<spring:message code="action.delete" /></button>
+                                <button class="btn btn-default is-sticky" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i>&nbsp;<spring:message code="action.cancel" /></button>
                             </div>
                         </div>
                         </div>
@@ -214,11 +214,11 @@
                             <span id="text-comment"></span><spring:message code="max.chars" />
                             <form:textarea rows="2" path="text" cssClass="form-control" cssErrorClass="form-control error" onkeyup="count(this.value, 'text-comment');" onkeydown="maxChars(this,200); count(this.value, 'text-comment');" />
                             <br />
-                            <button class="btn btn-success halves" type="submit">
-                                <i class="fa fa-check"></i>&nbsp;<spring:message code="save" />
+                            <button class="btn btn-success col-xs-12 col-sm-5" type="submit">
+                                <i class="fa fa-check"></i>&nbsp;<spring:message code="action.save" />
                             </button>
-                            <button class="btn btn-default halves" type="button" onclick="$('div#comment-form').hide();">
-                                <i class="fa fa-remove"></i>&nbsp;<spring:message code="cancel" />
+                            <button class="btn btn-default col-xs-12 col-sm-5 pull-right" type="button" onclick="$('div#comment-form').hide();">
+                                <i class="fa fa-remove"></i>&nbsp;<spring:message code="action.cancel" />
                             </button>
                         </form:form> 
                     </div>

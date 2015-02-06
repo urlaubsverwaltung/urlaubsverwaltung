@@ -28,17 +28,17 @@
             <spring:message code='comment'/>, <spring:message code="optional"/>: (<span
                 id="text-confirm"></span><spring:message code="max.chars"/>)
         </div>
-        <form:textarea rows="1" cssClass="form-control" cssErrorClass="form-control error" path="reason"
+        <form:textarea rows="2" cssClass="form-control" cssErrorClass="form-control error" path="reason"
                        onkeyup="count(this.value, 'text-confirm');"
                        onkeydown="maxChars(this,200); count(this.value, 'text-confirm');"/>
     </div>
 
-    <div class="form-group is-sticky">
-        <button type="submit" class="btn btn-success btn-large halves">
+    <div class="form-group is-sticky row">
+        <button type="submit" class="btn btn-success col-xs-12 col-sm-5">
             <i class="fa fa-check"></i>&nbsp;<spring:message code='app.state.ok.short'/>
         </button>
-        <button type="button" class="btn btn-default btn-large halves" onclick="$('#confirm').hide();">
-            <i class="fa fa-remove"></i>&nbsp;<spring:message code='cancel'/>
+        <button type="button" class="btn btn-default col-xs-12 col-sm-5 pull-right" onclick="$('#confirm').hide();">
+            <i class="fa fa-remove"></i>&nbsp;<spring:message code="action.cancel"/>
         </button>
     </div>
 

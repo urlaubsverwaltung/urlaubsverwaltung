@@ -15,3 +15,4 @@
 <script type="text/javascript" src="<spring:url value='/js/date-de-DE.js' />"></script>
 <script src="<spring:url value='/js/bootstrap.min.js' />" type="text/javascript" ></script>
 <script src="<spring:url value='/js/custom.js' />" type="text/javascript" ></script>
+<script src="<spring:url value='/js/back-button.js' />" type="text/javascript" ></script>

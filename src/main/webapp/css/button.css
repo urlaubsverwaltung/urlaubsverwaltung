@@ -14,21 +14,18 @@
     background-color: #F8F8F8;
 }
 
-.btn.halves {
-    width: 45%;
-}
-
-.btn.halves:last-child {
-    float: right;
+*[class*="col-"].btn.pull-right {
     margin-right: 0;
 }
 
-/* STYLING FOR XS SCREENS */
-@media (max-width: 767px) {
-    .btn.halves {
-        width: 98%;
-    }
-    .btn.halves:last-child {
-        float: none;
+*[class*="col-"].btn.pull-left {
+    margin-left: 0;
+}
+
+/* STYLING FOR SM SCREENS */
+@media (max-width: 991px) {
+    .btn.pull-right,
+    .btn.pull-left {
+      float: none;
     }
 }

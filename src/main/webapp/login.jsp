@@ -69,7 +69,7 @@
                             </div>
 
                             <div class="form-group">
-                                <button class="btn btn-large btn-primary btn-block" type="submit">
+                                <button class="btn btn-primary btn-block" type="submit">
                                     <i class="fa fa-sign-in"></i> Login
                                 </button>
                             </div>

@@ -107,10 +107,6 @@
 
             </div>
 
-        </div>
-
-        <div class="row">
-
             <c:choose>
                 <c:when test="${sickNote.id == null}">
                     <c:set var="METHOD" value="POST" />
@@ -124,12 +120,12 @@
 
             <form:form method="${METHOD}" action="${ACTION}" modelAttribute="sickNote" class="form-horizontal">
 
-            <div class="col-xs-12 col-md-8">
+            <div class="col-xs-12 col-md-6">
 
                 <div class="form-group">
-                    <label class="control-label col-md-5" for="employee"><spring:message code='staff'/></label>
+                    <label class="control-label col-md-4" for="employee"><spring:message code='staff'/></label>
 
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <c:choose>
                             <c:when test="${sickNote.id == null}">
                                 <form:select path="person" id="employee" class="form-control" cssErrorClass="form-control error">
@@ -156,9 +152,9 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label col-md-5" for="sickNoteType"><spring:message code='type'/></label>
+                    <label class="control-label col-md-4" for="sickNoteType"><spring:message code='type'/></label>
 
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <form:select path="type" id="sickNoteType" class="form-control" cssErrorClass="form-control error">
                             <c:forEach items="${sickNoteTypes}" var="type">
                                 <form:option value="${type}"><spring:message code="sicknote.type.${type}" /></form:option>
@@ -169,26 +165,26 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label col-md-5" for="from"><spring:message code="sicknotes.time" /></label>
+                    <label class="control-label col-md-4" for="from"><spring:message code="sicknotes.time" /></label>
 
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <spring:message code="From" />
                         <form:input id="from" path="startDate" class="form-control" cssErrorClass="form-control error" />
                         <span class="help-inline"><form:errors path="startDate" cssClass="error"/></span>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <div class="col-md-4 col-md-offset-5">
+                        <br />
                         <spring:message code="To" />
                         <form:input id="to" path="endDate" class="form-control" cssErrorClass="form-control error" />
                         <span class="help-inline"><form:errors path="endDate" cssClass="error"/></span>
                     </div>
                 </div>
-                
+
+            </div>
+
+            <div class="col-xs-12 col-md-6">
+
                 <div class="form-group">
-                    <label class="control-label col-md-5"><spring:message code='sicknotes.aub'/></label>
-                    <div class="col-md-4 radio">
+                    <label class="control-label col-md-6"><spring:message code='sicknotes.aub'/></label>
+                    <div class="col-md-6 radio">
                         <label class="halves">
                             <form:radiobutton id="aubPresent" path="aubPresent" value="true" onclick="showAUFields();" />
                             <spring:message code='yes' />
@@ -199,26 +195,21 @@
                             <spring:message code='no' />
                         </label>
 
-                        <span class="help-inline"><form:errors path="aubPresent" cssClass="error"/></span>
+                        <span class="help-block"><form:errors path="aubPresent" cssClass="error"/></span>
                     </div>
                 </div>
 
                 <div class="form-group AU">
-                    <label class="control-label col-md-5" for="aubFrom">
+                    <label class="control-label col-md-6" for="aubFrom">
                         <spring:message code="sicknotes.aub.time" />
-                        <br />
-                        <spring:message code="sicknotes.aub.time.note" />
+                        <small class="help-inline"><spring:message code="sicknotes.aub.time.note" /></small>
                     </label>
 
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <spring:message code="From" />
                         <form:input id="aubFrom" path="aubStartDate" class="form-control" cssErrorClass="form-control error" />
                         <span class="help-inline"><form:errors path="aubStartDate" cssClass="error"/></span>
-                    </div>
-                </div>
-
-                <div class="form-group AU">
-                    <div class="col-md-4 col-md-offset-5">
+                        <br />
                         <spring:message code="To" />
                         <br />
                         <form:input id="aubTo" path="aubEndDate" class="form-control" cssErrorClass="form-control error" />
@@ -228,24 +219,23 @@
 
             </div>
 
-        </div>
-
-        <div class="row">
-
             <div class="col-xs-12">
-                
+
                 <hr/>
+
+                <button class="btn btn-success col-xs-12 col-sm-5 col-md-2" type="submit">
+                    <i class='fa fa-check'></i>&nbsp;<spring:message code="action.save"/>
+                </button>
                 
-                <div class="form-group">
-                    <button class="btn btn-large btn-success col-xs-12 col-md-3" type="submit"><i class='fa fa-check'></i>&nbsp;<spring:message code="save" /></button>
-                    <a class="btn btn-default btn-large col-xs-12 col-md-3" href="${URL_PREFIX}/sicknote/${sickNote.id}"><i class='fa fa-remove'></i>&nbsp;<spring:message code='cancel'/></a>
-                </div>
+                <button class="btn btn-default back col-xs-12 col-sm-5 col-md-2 pull-right" type="button">
+                    <i class='fa fa-remove'></i>&nbsp;<spring:message code="action.cancel"/>
+                </button>
 
             </div>
 
         </div>
 
-            </form:form>
+      </form:form>
             
     </div>
     

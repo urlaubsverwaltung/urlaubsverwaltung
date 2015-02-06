@@ -28,17 +28,17 @@
             <spring:message code='reason'/>, <spring:message code="obligat"/>: (<span
                 id="text-reject"></span><spring:message code="max.chars"/>)
         </div>
-        <form:textarea rows="1" path="reason" cssClass="form-control" cssErrorClass="form-control error"
+        <form:textarea rows="2" path="reason" cssClass="form-control" cssErrorClass="form-control error"
                        onkeyup="count(this.value, 'text-reject');"
                        onkeydown="maxChars(this,200); count(this.value, 'text-reject');"/>
     </div>
 
-    <div class="form-group is-sticky">
-        <button type="submit" class="btn btn-danger halves">
+    <div class="form-group is-sticky row">
+        <button type="submit" class="btn btn-danger col-xs-12 col-sm-5">
             <i class="fa fa-ban"></i>&nbsp;<spring:message code='app.state.no.short'/>
         </button>
-        <button type="button" class="btn btn-default halves" onclick="$('#reject').hide();">
-            <i class="fa fa-remove"></i>&nbsp;<spring:message code='cancel'/>
+        <button type="button" class="btn btn-default col-xs-12 col-sm-5 pull-right" onclick="$('#reject').hide();">
+            <i class="fa fa-remove"></i>&nbsp;<spring:message code="action.cancel"/>
         </button>
     </div>
 

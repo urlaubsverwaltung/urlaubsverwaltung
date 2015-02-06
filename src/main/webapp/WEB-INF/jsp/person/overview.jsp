@@ -223,7 +223,7 @@
                             </c:otherwise>
                         </c:choose>
                         <a class="btn btn-default pull-right" href="${NEW_APPLICATION_URL}">
-                            <i class="fa fa-pencil"></i> <span class="hidden-xs"><spring:message code="ov.apply"/></span>
+                            <i class="fa fa-pencil"></i> <span class="hidden-xs"><spring:message code="action.apply.vacation"/></span>
                         </a>
 
 
@@ -284,7 +284,7 @@
                         </p>
                         <sec:authorize access="hasRole('OFFICE')">
                             <a class="btn btn-default pull-right" href="${URL_PREFIX}/sicknote/new?person=${person.id}">
-                                <i class="fa fa-plus"></i> <span class="hidden-xs"><spring:message code="sicknotes.new" /></span>
+                                <i class="fa fa-pencil"></i> <span class="hidden-xs"><spring:message code="action.apply.sicknote" /></span>
                             </a>
                         </sec:authorize>
                     </legend>

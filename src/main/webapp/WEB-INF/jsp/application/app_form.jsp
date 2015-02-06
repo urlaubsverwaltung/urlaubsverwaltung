@@ -371,8 +371,12 @@
 
         <hr/>
 
-        <button type="submit" class="btn btn-large btn-success pull-left col-xs-12 col-md-3">
-            <i class='fa fa-check'></i>&nbsp;<spring:message code='apply'/>
+        <button type="submit" class="btn btn-success pull-left col-xs-12 col-sm-5 col-md-2">
+            <i class='fa fa-check'></i>&nbsp;<spring:message code='action.apply.vacation'/>
+        </button>
+
+        <button type="button" class="btn btn-default back col-xs-12 col-sm-5 col-md-2 pull-right">
+            <i class='fa fa-remove'></i>&nbsp;<spring:message code='action.cancel'/>
         </button>
 
     </div>
