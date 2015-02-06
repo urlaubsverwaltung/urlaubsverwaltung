@@ -146,10 +146,10 @@ function colorizeDate(date, publicHolidays, vacation) {
     if (date.getDay() == 6 || date.getDay() == 0) {
         return [true, "notworkday"];
     } else {
-        var dateString = $.datepicker.formatDate("yy-mm-dd", date);
+      var dateString = $.datepicker.formatDate("yy-mm-dd", date);
 
       var isPublicHoliday = isHoliday(dateString, publicHolidays);
-      var isPersonalWorkDay = isHoliday(dateString, vacation);
+      var isPersonalHoliday = isHoliday(dateString, vacation);
       var isHalfWorkDay = isHalfWorkday(dateString, publicHolidays) || isHalfWorkday(dateString, vacation);
 
         var cssClass = "";
@@ -162,7 +162,7 @@ function colorizeDate(date, publicHolidays, vacation) {
             cssClass += " halfworkday";
         }
 
-        if(isPersonalWorkDay) {
+        if(isPersonalHoliday) {
             cssClass += " holiday";
         }
 
@@ -176,7 +176,7 @@ function isHoliday(formattedDate, holidays) {
 
   var holiday = _.findWhere(holidays, {date: formattedDate});
 
-  return holiday !== undefined && holiday.dayLength < 1;
+  return holiday !== undefined && holiday.dayLength <= 1;
 
 }
 
