@@ -6,6 +6,8 @@ import com.google.common.collect.Lists;
 
 import org.joda.time.DateMidnight;
 import org.joda.time.chrono.GregorianChronology;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import org.synyx.urlaubsverwaltung.DateFormat;
 import org.synyx.urlaubsverwaltung.core.account.Account;
 import org.synyx.urlaubsverwaltung.core.account.AccountService;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
@@ -39,12 +42,15 @@ import org.synyx.urlaubsverwaltung.core.application.service.OverlapService;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
+import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.core.sicknote.statistics.SickNoteStatistics;
 import org.synyx.urlaubsverwaltung.core.util.CalcUtil;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.security.Role;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
+import org.synyx.urlaubsverwaltung.web.sicknote.FilterRequest;
 import org.synyx.urlaubsverwaltung.web.sicknote.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.util.DateMidnightPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.util.GravatarUtil;
@@ -146,6 +152,7 @@ public class ApplicationController {
             model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
             model.addAttribute("titleApp", "applications.all");
             model.addAttribute(ControllerConstants.YEAR, DateMidnight.now().getYear());
+            model.addAttribute("filterRequest", new FilterRequest());
 
             return ControllerConstants.APPLICATION + "/app_list";
         } else {
@@ -275,6 +282,7 @@ public class ApplicationController {
         model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
         model.addAttribute("titleApp", title);
         model.addAttribute(ControllerConstants.YEAR, DateMidnight.now().getYear());
+        model.addAttribute("filterRequest", new FilterRequest());
 
         return ControllerConstants.APPLICATION + "/app_list";
     }
@@ -823,5 +831,111 @@ public class ApplicationController {
         }
 
         return "redirect:/web/application/" + applicationId;
+    }
+
+
+    @RequestMapping(value = "/statistics", method = RequestMethod.POST)
+    public String applicationForLeaveStatistics(@ModelAttribute("filterRequest") FilterRequest filterRequest) {
+
+        if (sessionService.isOffice()) {
+            DateMidnight now = DateMidnight.now();
+            DateMidnight from = now;
+            DateMidnight to = now;
+
+            if (filterRequest.getPeriod().equals(FilterRequest.Period.YEAR)) {
+                from = now.dayOfYear().withMinimumValue();
+                to = now.dayOfYear().withMaximumValue();
+            } else if (filterRequest.getPeriod().equals(FilterRequest.Period.QUARTAL)) {
+                from = now.dayOfMonth().withMinimumValue().minusMonths(2);
+
+                // TODO: This is quickfix...
+                if (from.getYear() != now.getYear()) {
+                    from = now.dayOfYear().withMinimumValue();
+                }
+
+                to = now.dayOfMonth().withMaximumValue();
+            } else if (filterRequest.getPeriod().equals(FilterRequest.Period.MONTH)) {
+                from = now.dayOfMonth().withMinimumValue();
+                to = now.dayOfMonth().withMaximumValue();
+            }
+
+            return "redirect:/web/application/statistics?from=" + from.toString(DateFormat.PATTERN) + "&to="
+                + to.toString(DateFormat.PATTERN);
+        }
+
+        return ControllerConstants.ERROR_JSP;
+    }
+
+
+    @RequestMapping(value = "/statistics", method = RequestMethod.GET, params = { "from", "to" })
+    public String applicationForLeaveStatistics(@RequestParam("from") String from,
+        @RequestParam("to") String to, Model model) {
+
+        if (sessionService.isOffice()) {
+            DateTimeFormatter formatter = DateTimeFormat.forPattern(DateFormat.PATTERN);
+            DateMidnight fromDate = DateMidnight.parse(from, formatter);
+            DateMidnight toDate = DateMidnight.parse(to, formatter);
+
+            List<Person> persons = personService.getActivePersons();
+
+            Map<Person, String> gravatarUrls = new HashMap<>();
+
+            Map<Person, BigDecimal> waitingVacationDays = new HashMap<>();
+            Map<Person, BigDecimal> allowedVacationDays = new HashMap<>();
+
+            Map<Person, BigDecimal> leftVacationDays = new HashMap<>();
+
+            for (Person person : persons) {
+                String gravatarUrl = GravatarUtil.createImgURL(person.getEmail());
+
+                if (gravatarUrl != null) {
+                    gravatarUrls.put(person, gravatarUrl);
+                }
+
+                Account account = accountService.getHolidaysAccount(fromDate.getYear(), person);
+
+                if (account != null) {
+                    BigDecimal vacationDaysLeft = calculationService.calculateTotalLeftVacationDays(account);
+                    leftVacationDays.put(person, vacationDaysLeft);
+                }
+
+                List<Application> waitingApplications =
+                    applicationService.getApplicationsForACertainPeriodAndPersonAndState(fromDate, toDate, person,
+                        ApplicationStatus.WAITING);
+
+                BigDecimal numberOfWaitingDays = BigDecimal.ZERO;
+
+                for (Application waitingApplication : waitingApplications) {
+                    // TODO: It's not so easy....days of application are not correct if the application spans two years
+                    numberOfWaitingDays = numberOfWaitingDays.add(waitingApplication.getDays());
+                }
+
+                List<Application> allowedApplications =
+                    applicationService.getApplicationsForACertainPeriodAndPersonAndState(fromDate, toDate, person,
+                        ApplicationStatus.ALLOWED);
+
+                BigDecimal numberOfAllowedDays = BigDecimal.ZERO;
+
+                for (Application allowedApplication : allowedApplications) {
+                    numberOfAllowedDays = numberOfAllowedDays.add(allowedApplication.getDays());
+                }
+
+                waitingVacationDays.put(person, numberOfWaitingDays);
+                allowedVacationDays.put(person, numberOfAllowedDays);
+            }
+
+            model.addAttribute("from", fromDate);
+            model.addAttribute("to", toDate);
+            model.addAttribute(ControllerConstants.PERSONS, persons);
+            model.addAttribute(PersonConstants.GRAVATAR_URLS, gravatarUrls);
+            model.addAttribute(PersonConstants.LEFT_DAYS, leftVacationDays);
+            model.addAttribute("waitingDays", waitingVacationDays);
+            model.addAttribute("allowedDays", allowedVacationDays);
+            model.addAttribute("filterRequest", new FilterRequest());
+
+            return ControllerConstants.APPLICATION + "/app_statistics";
+        }
+
+        return ControllerConstants.ERROR_JSP;
     }
 }
