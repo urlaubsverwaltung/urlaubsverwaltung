@@ -196,8 +196,13 @@
                 <sec:authorize access="hasRole('OFFICE')">
                 
                     <c:choose>
-                        <c:when test="${error}">
-                           <c:set var="STYLE" value="display: block" /> 
+                        <c:when test="${not empty errors}">
+                           <c:set var="STYLE" value="display: block" />
+                            <div class="feedback">
+                                <div class="alert alert-danger">
+                                    <spring:message code="application.action.reason.error" />
+                                </div>
+                            </div>
                         </c:when>
                         <c:otherwise>
                             <c:set var="STYLE" value="display: none" /> 
@@ -206,9 +211,8 @@
                     
                     <div id="comment-form" style="${STYLE}">
                         <form:form method="POST" action="${URL_PREFIX}/sicknote/${sickNote.id}/comment" modelAttribute="comment">
-                            <form:errors path="text" cssClass="error" /><br />
                             <span id="text-comment"></span><spring:message code="max.chars" />
-                            <form:textarea rows="4" path="text" cssClass="form-control" cssErrorClass="form-control error" onkeyup="count(this.value, 'text-comment');" onkeydown="maxChars(this,200); count(this.value, 'text-comment');" />
+                            <form:textarea rows="2" path="text" cssClass="form-control" cssErrorClass="form-control error" onkeyup="count(this.value, 'text-comment');" onkeydown="maxChars(this,200); count(this.value, 'text-comment');" />
                             <br />
                             <button class="btn btn-success halves" type="submit">
                                 <i class="fa fa-check"></i>&nbsp;<spring:message code="save" />

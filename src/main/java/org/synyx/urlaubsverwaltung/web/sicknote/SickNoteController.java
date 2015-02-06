@@ -344,23 +344,16 @@ public class SickNoteController {
 
     @RequestMapping(value = "/sicknote/{id}/comment", method = RequestMethod.POST)
     public String addComment(@PathVariable("id") Integer id,
-        @ModelAttribute("comment") SickNoteComment comment, Errors errors, Model model) {
+        @ModelAttribute("comment") SickNoteComment comment, RedirectAttributes redirectAttributes, Errors errors) {
 
         if (sessionService.isOffice()) {
             validator.validateComment(comment, errors);
 
             if (errors.hasErrors()) {
-                SickNote sickNote = sickNoteService.getById(id);
-                model.addAttribute("sickNote", sickNote);
-                model.addAttribute("comment", comment);
-                model.addAttribute("error", true);
-                model.addAttribute(PersonConstants.GRAVATAR,
-                    GravatarUtil.createImgURL(sickNote.getPerson().getEmail()));
-
-                return "sicknote/sick_note";
+                redirectAttributes.addFlashAttribute("errors", errors);
+            } else {
+                sickNoteService.addComment(id, comment, SickNoteStatus.COMMENTED, sessionService.getLoggedUser());
             }
-
-            sickNoteService.addComment(id, comment, SickNoteStatus.COMMENTED, sessionService.getLoggedUser());
 
             return "redirect:/web/sicknote/" + id;
         }
