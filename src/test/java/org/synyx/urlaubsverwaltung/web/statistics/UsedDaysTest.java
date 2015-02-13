@@ -2,17 +2,19 @@ package org.synyx.urlaubsverwaltung.web.statistics;
 
 import org.junit.Assert;
 import org.junit.Test;
+
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.web.statistics.UsedDays;
 
 import java.math.BigDecimal;
+
 import java.util.Map;
 
 
 /**
  * Unit test for {@link org.synyx.urlaubsverwaltung.web.statistics.UsedDays}.
  *
- * @author Aljona Murygina - murygina@synyx.de
+ * @author  Aljona Murygina - murygina@synyx.de
  */
 public class UsedDaysTest {
 
@@ -23,11 +25,12 @@ public class UsedDaysTest {
 
         Map<String, BigDecimal> daysMap = usedDays.getDays();
 
-        Assert.assertEquals("Number of map elements should match the number of the given application states", 1, daysMap.size());
+        Assert.assertEquals("Number of map elements should match the number of the given application states", 1,
+            daysMap.size());
 
         Assert.assertEquals("Days should be initialized with 0", BigDecimal.ZERO, daysMap.get("ALLOWED"));
-
     }
+
 
     @Test(expected = UnsupportedOperationException.class)
     public void ensureThrowsIfTryingToAddDaysForAnApplicationStateThatHasNotBeenSet() {
@@ -35,8 +38,8 @@ public class UsedDaysTest {
         UsedDays usedDays = new UsedDays(ApplicationStatus.ALLOWED);
 
         usedDays.addDays(ApplicationStatus.WAITING, BigDecimal.ONE);
-
     }
+
 
     @Test
     public void ensureCanAddDaysPerApplicationStatusCorrectly() {
@@ -50,8 +53,9 @@ public class UsedDaysTest {
         usedDays.addDays(ApplicationStatus.WAITING, BigDecimal.ONE);
         usedDays.addDays(ApplicationStatus.WAITING, BigDecimal.ONE);
 
-        Assert.assertEquals("Allowed state should have correct number of days", BigDecimal.valueOf(2), usedDays.getDays().get("ALLOWED"));
-        Assert.assertEquals("Waiting state should have correct number of days", BigDecimal.valueOf(3), usedDays.getDays().get("WAITING"));
-
+        Assert.assertEquals("Allowed state should have correct number of days", BigDecimal.valueOf(2),
+            usedDays.getDays().get("ALLOWED"));
+        Assert.assertEquals("Waiting state should have correct number of days", BigDecimal.valueOf(3),
+            usedDays.getDays().get("WAITING"));
     }
 }

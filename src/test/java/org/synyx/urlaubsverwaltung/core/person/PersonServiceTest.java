@@ -120,6 +120,7 @@ public class PersonServiceTest {
         Assert.assertTrue("Missing person", filteredList.contains(office));
     }
 
+
     @Test
     public void ensureGetPersonsByNotificationTypeReturnsOnlyPersonsWithTheGivenNotificationType() {
 
@@ -130,7 +131,8 @@ public class PersonServiceTest {
         boss.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS));
 
         Person office = new Person();
-        office.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS, MailNotification.NOTIFICATION_OFFICE));
+        office.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS,
+                MailNotification.NOTIFICATION_OFFICE));
 
         List<Person> allPersons = Arrays.asList(user, boss, office);
 

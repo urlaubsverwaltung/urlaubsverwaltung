@@ -40,8 +40,8 @@ public interface AccountService {
      * @param  person {@link Person}
      * @param  validFrom {@link DateMidnight}, e.g. 1.1.2012
      * @param  validTo {@link DateMidnight}, e.g. 31.12.2012
-     * @param  days {@link BigDecimal} number of annual vacation days (method calculates the actual vacation days using
-     *               the validity period)
+     * @param  days {@link BigDecimal}   number of annual vacation days (method calculates the actual vacation days
+     *               using the validity period)
      * @param  remaining {@link BigDecimal} number of remaining vacation days
      * @param  remainingDaysExpire  boolean true if remaining vacation days expire on 1st April, else false
      */
@@ -69,8 +69,8 @@ public interface AccountService {
      * @param  account {@link Account} to be edited
      * @param  validFrom {@link DateMidnight}, e.g. 1.1.2012
      * @param  validTo {@link DateMidnight}, e.g. 31.12.2012
-     * @param  days {@link BigDecimal}   number of annual vacation days (method calculates the actual vacation days
-     *               using the validity period)
+     * @param  days {@link BigDecimal} number of annual vacation days (method calculates the actual vacation days using
+     *               the validity period)
      * @param  remaining {@link BigDecimal} number of remaining vacation days
      * @param  remainingDaysExpire  boolean true if remaining vacation days expire on 1st April, else false
      */

@@ -16,10 +16,13 @@ class PublicHolidayListResponse {
     }
 
     public List<PublicHolidayResponse> getPublicHolidays() {
+
         return publicHolidays;
     }
 
+
     public void setPublicHolidays(List<PublicHolidayResponse> publicHolidays) {
+
         this.publicHolidays = publicHolidays;
     }
 }
