@@ -80,8 +80,8 @@
 
             <div class="col-xs-12 col-sm-12 col-md-4">
                 <div class="box">
-                    <span class="thirds">
-                        <img class="box-image img-circle hidden-print" src="<c:out value='${gravatar}?d=mm&s=80'/>"/>
+                    <img class="box-image img-circle hidden-print" src="<c:out value='${gravatar}?d=mm&s=60'/>"/>
+                    <span class="box-text">
                         <i class="fa fa-at"></i> <c:out value="${person.loginName}"/>
                         <h4><c:out value="${person.niceName}"/></h4>
                         <i class="fa fa-envelope"></i> <a href="mailto:<c:out value='${person.email}'/>"><c:out value="${person.email}"/></a>
@@ -92,26 +92,26 @@
             <div class="col-xs-12 col-sm-12 col-md-4">
                 <div class="box">
                     <span class="box-icon bg-green"><i class="fa fa-calendar"></i></span>
-                    <c:choose>
-                        <c:when test="${account != null}">
-                            <span class="thirds">
+                    <span class="box-text">
+                        <c:choose>
+                            <c:when test="${account != null}">
                                 <spring:message code="overview.vacation.entitlement" arguments="${account.vacationDays}" />
                                 <spring:message code="overview.vacation.entitlement.remaining" arguments="${account.remainingVacationDays}" />
-                            </span>
-                        </c:when>
-                        <c:otherwise>
-                            <span class="one"><spring:message code='not.specified'/></span>
-                        </c:otherwise>
-                    </c:choose>
+                            </c:when>
+                            <c:otherwise>
+                                <spring:message code='not.specified'/>
+                            </c:otherwise>
+                        </c:choose>
+                    </span>
                 </div>
             </div>
 
             <div class="col-xs-12 col-sm-12 col-md-4">
                 <div class="box">
                     <span class="box-icon bg-green"><i class="fa fa-bar-chart"></i></span>
-                    <c:choose>
-                        <c:when test="${account != null}">
-                            <span class="thirds">
+                    <span class="box-text">
+                        <c:choose>
+                            <c:when test="${account != null}">
                                 <spring:message code="overview.vacation.left" arguments="${leftDays}" />
                                 <c:choose>
                                     <c:when test="${beforeApril || !account.remainingVacationDaysExpire}">
@@ -121,12 +121,12 @@
                                         <spring:message code="overview.vacation.left.remaining.expired" arguments="${remLeftDays}" />
                                     </c:otherwise>
                                 </c:choose>
-                            </span>
-                        </c:when>
-                        <c:otherwise>
-                            <span class="one"><spring:message code='not.specified'/></span>
-                        </c:otherwise>
-                    </c:choose>
+                            </c:when>
+                            <c:otherwise>
+                                <spring:message code='not.specified'/>
+                            </c:otherwise>
+                        </c:choose>
+                    </span>
                 </div>
             </div>
 
@@ -249,16 +249,20 @@
             <div class="col-xs-12 col-sm-12 col-md-6">
                 <div class="box">
                     <span class="box-icon bg-yellow"><i class="fa fa-sun-o"></i></span>
-                    <spring:message code="overview.vacations.holidayLeave" arguments="${holidayLeave}" />
-                    <i class="fa fa-check check"></i> <spring:message code="overview.vacations.holidayLeaveAllowed" arguments="${holidayLeaveAllowed}" />
+                    <span class="box-text">
+                        <spring:message code="overview.vacations.holidayLeave" arguments="${holidayLeave}" />
+                        <i class="fa fa-check check"></i> <spring:message code="overview.vacations.holidayLeaveAllowed" arguments="${holidayLeaveAllowed}" />
+                    </span>
                 </div>
             </div>
 
             <div class="col-xs-12 col-sm-12 col-md-6">
                 <div class="box">
                     <span class="box-icon bg-yellow"><i class="fa fa-flag-o"></i></span>
-                    <spring:message code="overview.vacations.otherLeave" arguments="${otherLeave}" />
-                    <i class="fa fa-check check"></i> <spring:message code="overview.vacations.otherLeaveAllowed" arguments="${otherLeaveAllowed}" />
+                    <span class="box-text">
+                        <spring:message code="overview.vacations.otherLeave" arguments="${otherLeave}" />
+                        <i class="fa fa-check check"></i> <spring:message code="overview.vacations.otherLeaveAllowed" arguments="${otherLeaveAllowed}" />
+                    </span>
                 </div>
             </div>
 
@@ -298,8 +302,8 @@
         <div class="row">
             <div class="col-xs-12 col-sm-12 col-md-6">
                 <div class="box">
-                    <span class="thirds">
-                       <span class="box-icon bg-red"><i class="fa fa-medkit"></i></span>
+                    <span class="box-icon bg-red"><i class="fa fa-medkit"></i></span>
+                    <span class="box-text">
                         <spring:message code="overview.sicknotes.sickdays" arguments="${sickDays}" />
                         <i class="fa fa-check check"></i> <spring:message code="overview.sicknotes.sickdays.aub" arguments="${sickDaysWithAUB}" />
                     </span>
@@ -307,8 +311,8 @@
             </div>
             <div class="col-xs-12 col-sm-12 col-md-6">
                 <div class="box">
-                    <span class="thirds">
-                       <span class="box-icon bg-red"><i class="fa fa-child"></i></span>
+                    <span class="box-icon bg-red"><i class="fa fa-child"></i></span>
+                    <span class="box-text">
                         <spring:message code="overview.sicknotes.sickdays.child" arguments="${childSickDays}" />
                         <i class="fa fa-check check"></i> <spring:message code="overview.sicknotes.sickdays.aub" arguments="${childSickDaysWithAUB}" />
                     </span>

@@ -82,20 +82,18 @@
                 </form:form>
 
                 <div class="box">
-                    <span class="thirds">
-                        <span class="box-icon bg-red">
-                            <c:choose>
-                                <c:when test="${sickNote.type == 'SICK_NOTE_CHILD'}">
-                                    <i class="fa fa-child"></i>
-                                </c:when>
-                                <c:otherwise>
-                                    <i class="fa fa-medkit"></i>
-                                </c:otherwise>
-                            </c:choose>
-                        </span>
-
+                    <span class="box-icon bg-red">
+                        <c:choose>
+                            <c:when test="${sickNote.type == 'SICK_NOTE_CHILD'}">
+                                <i class="fa fa-child"></i>
+                            </c:when>
+                            <c:otherwise>
+                                <i class="fa fa-medkit"></i>
+                            </c:otherwise>
+                        </c:choose>
+                    </span>
+                    <span class="box-text">
                         <h5 class="is-inline-block is-sticky"><c:out value="${sickNote.person.niceName}"/></h5>
-
                         <c:choose>
                             <c:when test="${sickNote.type == 'SICK_NOTE_CHILD'}">
                                 <spring:message code="sicknotes.details.title.child" />
@@ -232,8 +230,8 @@
                 </div>
 
                 <div class="box hidden-print">
-                    <span class="thirds">
-                        <img class="box-image img-circle" src="<c:out value='${gravatar}?d=mm&s=80'/>"/>
+                    <img class="box-image img-circle" src="<c:out value='${gravatar}?d=mm&s=60'/>"/>
+                    <span class="box-text">
                         <i class="fa fa-at"></i> <c:out value="${sickNote.person.loginName}"/>
                         <h4>
                             <a href="${URL_PREFIX}/staff/${sickNote.person.id}/overview">

@@ -34,7 +34,7 @@ import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
-import org.synyx.urlaubsverwaltung.web.application.UsedDaysOverview;
+import org.synyx.urlaubsverwaltung.web.statistics.UsedDaysOverview;
 import org.synyx.urlaubsverwaltung.web.util.GravatarUtil;
 
 import java.math.BigDecimal;

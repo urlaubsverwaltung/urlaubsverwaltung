@@ -44,11 +44,11 @@
         <table class="list-table selectable-table sortable tablesorter" cellspacing="0">
             <thead class="hidden-xs hidden-sm">
             <tr>
-                <th><%-- placeholder to ensure correct number of th --%></th>
+                <th class="hidden-print"><%-- placeholder to ensure correct number of th --%></th>
                 <th class="sortable-field"><spring:message code="staff" /></th>
                 <th class="sortable-field"><spring:message code="time" /></th>
                 <th class="sortable-field"><spring:message code="days.vac" /></th>
-                <th class="visible-print"><%-- placeholder to ensure correct number of th --%></th>
+                <th class="visible-print"><spring:message code="state" /></th>
                 <th><%-- placeholder to ensure correct number of th --%></th>
             </tr>
             </thead>
@@ -63,25 +63,25 @@
                     </c:otherwise>
                 </c:choose>
                 <tr class="${CSS_CLASS}" onclick="navigate('${URL_PREFIX}/application/${app.id}');">
-                    <td class="is-centered">
-                        <img class="img-circle hidden-print" src="<c:out value='${gravatarUrls[app]}?d=mm&s=60'/>"/>&nbsp;
+                    <td class="hidden-print is-centered">
+                        <img class="img-circle" src="<c:out value='${gravatarUrls[app]}?d=mm&s=60'/>"/>&nbsp;
                     </td>
-                    <td>
-                        <h5 class="is-inline-block hidden-xs hidden-print" style="line-height: 60px; vertical-align: middle">
+                    <td class="hidden-xs">
+                        <h5 class="is-inline-block hidden-print" style="line-height: 60px; vertical-align: middle">
                             <a class="sortable" href="${URL_PREFIX}/staff/${app.person.id}/overview">
                                 <c:out value="${app.person.niceName}"/>
                             </a>
                         </h5>
-                        <p class="visible-print is-centered"><c:out value="${app.person.niceName}"/></p>
+                        <p class="visible-print"><c:out value="${app.person.niceName}"/></p>
                     </td>
                     <td>
                         <a class="vacation ${app.vacationType} hidden-print" href="${URL_PREFIX}/application/${app.id}">
                             <h4><spring:message code="${app.vacationType}"/></h4>
                         </a>
 
-                        <h4 class="visible-print">
+                        <p class="visible-print">
                             <spring:message code="${app.vacationType}"/>
-                        </h4>
+                        </p>
 
                         <p class="sortable">
                             <c:choose>
@@ -103,7 +103,7 @@
                     <td class="visible-print">
                         <spring:message code="${app.status}"/>
                     </td>
-                    <td class="is-centered state ${app.status} hidden-print">
+                    <td class="is-centered state ${app.status} hidden-xs hidden-print">
                         <c:choose>
                             <c:when test="${app.status == 'WAITING'}">
                                 <i class="fa fa-question"></i>

@@ -52,6 +52,8 @@ import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
 import org.synyx.urlaubsverwaltung.web.sicknote.FilterRequest;
 import org.synyx.urlaubsverwaltung.web.sicknote.PersonPropertyEditor;
+import org.synyx.urlaubsverwaltung.web.statistics.ApplicationForLeaveStatistics;
+import org.synyx.urlaubsverwaltung.web.statistics.ApplicationForLeaveStatisticsBuilder;
 import org.synyx.urlaubsverwaltung.web.util.DateMidnightPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.util.GravatarUtil;
 import org.synyx.urlaubsverwaltung.web.validator.ApplicationValidator;
@@ -59,10 +61,7 @@ import org.synyx.urlaubsverwaltung.web.validator.CommentValidator;
 
 import java.math.BigDecimal;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -106,6 +105,9 @@ public class ApplicationController {
 
     @Autowired
     private SessionService sessionService;
+
+    @Autowired
+    private ApplicationForLeaveStatisticsBuilder applicationForLeaveStatisticsBuilder;
 
     @InitBinder
     public void initBinder(DataBinder binder, Locale locale) {
@@ -876,61 +878,23 @@ public class ApplicationController {
             DateMidnight fromDate = DateMidnight.parse(from, formatter);
             DateMidnight toDate = DateMidnight.parse(to, formatter);
 
-            List<Person> persons = personService.getActivePersons();
+            // NOTE: Not supported at the moment
+            if (fromDate.getYear() != toDate.getYear()) {
+                model.addAttribute("filterRequest", new FilterRequest());
+                model.addAttribute("errors", "INVALID_PERIOD");
 
-            Map<Person, String> gravatarUrls = new HashMap<>();
+                return ControllerConstants.APPLICATION + "/app_statistics";
+            }
 
-            Map<Person, BigDecimal> waitingVacationDays = new HashMap<>();
-            Map<Person, BigDecimal> allowedVacationDays = new HashMap<>();
+            List<ApplicationForLeaveStatistics> statistics = new ArrayList<>();
 
-            Map<Person, BigDecimal> leftVacationDays = new HashMap<>();
-
-            for (Person person : persons) {
-                String gravatarUrl = GravatarUtil.createImgURL(person.getEmail());
-
-                if (gravatarUrl != null) {
-                    gravatarUrls.put(person, gravatarUrl);
-                }
-
-                Account account = accountService.getHolidaysAccount(fromDate.getYear(), person);
-
-                if (account != null) {
-                    BigDecimal vacationDaysLeft = calculationService.calculateTotalLeftVacationDays(account);
-                    leftVacationDays.put(person, vacationDaysLeft);
-                }
-
-                List<Application> waitingApplications =
-                    applicationService.getApplicationsForACertainPeriodAndPersonAndState(fromDate, toDate, person,
-                        ApplicationStatus.WAITING);
-
-                BigDecimal numberOfWaitingDays = BigDecimal.ZERO;
-
-                for (Application waitingApplication : waitingApplications) {
-                    // TODO: It's not so easy....days of application are not correct if the application spans two years
-                    numberOfWaitingDays = numberOfWaitingDays.add(waitingApplication.getDays());
-                }
-
-                List<Application> allowedApplications =
-                    applicationService.getApplicationsForACertainPeriodAndPersonAndState(fromDate, toDate, person,
-                        ApplicationStatus.ALLOWED);
-
-                BigDecimal numberOfAllowedDays = BigDecimal.ZERO;
-
-                for (Application allowedApplication : allowedApplications) {
-                    numberOfAllowedDays = numberOfAllowedDays.add(allowedApplication.getDays());
-                }
-
-                waitingVacationDays.put(person, numberOfWaitingDays);
-                allowedVacationDays.put(person, numberOfAllowedDays);
+            for (Person person : personService.getActivePersons()) {
+                statistics.add(applicationForLeaveStatisticsBuilder.build(person, fromDate, toDate));
             }
 
             model.addAttribute("from", fromDate);
             model.addAttribute("to", toDate);
-            model.addAttribute(ControllerConstants.PERSONS, persons);
-            model.addAttribute(PersonConstants.GRAVATAR_URLS, gravatarUrls);
-            model.addAttribute(PersonConstants.LEFT_DAYS, leftVacationDays);
-            model.addAttribute("waitingDays", waitingVacationDays);
-            model.addAttribute("allowedDays", allowedVacationDays);
+            model.addAttribute("statistics", statistics);
             model.addAttribute("filterRequest", new FilterRequest());
 
             return ControllerConstants.APPLICATION + "/app_statistics";

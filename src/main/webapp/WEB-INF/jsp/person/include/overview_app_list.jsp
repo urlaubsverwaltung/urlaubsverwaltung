@@ -62,7 +62,7 @@
                     </c:choose>
                 </p>
             </td>
-            <td class="is-centered">
+            <td class="is-centered hidden-xs">
                 <span class="days-${loopStatus.index}">
                     <%--is filled by javascript--%>
                     <script type="text/javascript">
