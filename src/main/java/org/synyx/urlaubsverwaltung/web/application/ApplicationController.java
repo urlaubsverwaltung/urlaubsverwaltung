@@ -765,40 +765,33 @@ public class ApplicationController {
 
         Application application = applicationService.getApplicationById(applicationId);
         Person loggedUser = sessionService.getLoggedUser();
-        ApplicationStatus status = application.getStatus();
 
-        boolean isWaiting = status == ApplicationStatus.WAITING;
-        boolean isAllowed = status == ApplicationStatus.ALLOWED;
+        boolean isWaiting = application.hasStatus(ApplicationStatus.WAITING);
+        boolean isAllowed = application.hasStatus(ApplicationStatus.ALLOWED);
 
         // security check: only two cases where cancelling is possible
-        // 1: office can cancel all applications for leave that has the state waiting or allowed, even for other persons
-        // 2: user can cancel his own applications for leave if they have the state waiting
-        boolean officeIsCancelling = sessionService.isOffice() && (isWaiting || isAllowed);
-        boolean userIsCancelling = loggedUser.equals(application.getPerson()) && isWaiting;
-
-        if (officeIsCancelling || userIsCancelling) {
+        // 1: user can cancel his own applications for leave if they have the state waiting
+        // 2: office can cancel all applications for leave that has the state waiting or allowed, even for other persons
+        if (loggedUser.equals(application.getPerson()) && isWaiting) {
             // user can cancel only his own waiting applications, so the comment is NOT mandatory
-            if (userIsCancelling) {
-                comment.setMandatory(false);
-            }
+            comment.setMandatory(false);
+        } else if (sessionService.isOffice() && (isWaiting || isAllowed)) {
             // office cancels application of other users, state can be waiting or allowed, so the comment is mandatory
-            else if (officeIsCancelling) {
-                comment.setMandatory(true);
-            }
-
-            commentValidator.validate(comment, errors);
-
-            if (errors.hasErrors()) {
-                redirectAttributes.addFlashAttribute("errors", errors);
-                redirectAttributes.addFlashAttribute("action", "cancel");
-            } else {
-                applicationInteractionService.cancel(application, loggedUser, comment);
-            }
-
-            return "redirect:/web/application/" + applicationId;
+            comment.setMandatory(true);
         } else {
             return ControllerConstants.ERROR_JSP;
         }
+
+        commentValidator.validate(comment, errors);
+
+        if (errors.hasErrors()) {
+            redirectAttributes.addFlashAttribute("errors", errors);
+            redirectAttributes.addFlashAttribute("action", "cancel");
+        } else {
+            applicationInteractionService.cancel(application, loggedUser, comment);
+        }
+
+        return "redirect:/web/application/" + applicationId;
     }
 
 
