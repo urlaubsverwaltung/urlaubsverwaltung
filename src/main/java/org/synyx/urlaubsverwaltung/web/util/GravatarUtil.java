@@ -78,17 +78,17 @@ public final class GravatarUtil {
         StringBuffer buf = new StringBuffer();
 
         for (int i = 0; i < data.length; i++) {
-            int halfbyte = (data[i] >>> 4) & 0x0F;
+            int halfbyte = (data[i] >>> 4) & 0x0F; // NOSONAR
             int twoHalfs = 0;
 
             do {
-                if ((0 <= halfbyte) && (halfbyte <= 9)) {
+                if ((0 <= halfbyte) && (halfbyte <= 9)) { // NOSONAR
                     buf.append((char) ('0' + halfbyte));
                 } else {
-                    buf.append((char) ('a' + (halfbyte - 10)));
+                    buf.append((char) ('a' + (halfbyte - 10))); // NOSONAR
                 }
 
-                halfbyte = data[i] & 0x0F;
+                halfbyte = data[i] & 0x0F; // NOSONAR
             } while (twoHalfs++ < 1);
         }
 

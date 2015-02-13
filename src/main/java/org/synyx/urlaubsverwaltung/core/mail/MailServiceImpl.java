@@ -63,9 +63,9 @@ class MailServiceImpl implements MailService {
     private final VelocityEngine velocityEngine;
     private final PersonService personService;
 
-    private String emailFrom;
-    private String emailManager;
-    private String applicationUrl;
+    private final String emailFrom;
+    private final String emailManager;
+    private final String applicationUrl;
 
     private Properties properties;
 

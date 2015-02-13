@@ -257,23 +257,19 @@ public class CalculationService {
 
     protected BigDecimal getDaysBeforeApril(Account account) {
 
-        DateMidnight firstOfJanuary = new DateMidnight(account.getYear(), DateTimeConstants.JANUARY, 1);
-        DateMidnight lastOfMarch = new DateMidnight(account.getYear(), DateTimeConstants.MARCH, 31);
+        DateMidnight firstOfJanuary = DateUtil.getFirstDayOfMonth(account.getYear(), DateTimeConstants.JANUARY);
+        DateMidnight lastOfMarch = DateUtil.getLastDayOfMonth(account.getYear(), DateTimeConstants.MARCH);
 
-        BigDecimal daysBeforeApril = getDaysBetweenTwoMilestones(account.getPerson(), firstOfJanuary, lastOfMarch);
-
-        return daysBeforeApril;
+        return getDaysBetweenTwoMilestones(account.getPerson(), firstOfJanuary, lastOfMarch);
     }
 
 
     protected BigDecimal getDaysAfterApril(Account account) {
 
-        DateMidnight firstOfApril = new DateMidnight(account.getYear(), DateTimeConstants.APRIL, 1);
-        DateMidnight lastOfDecember = new DateMidnight(account.getYear(), DateTimeConstants.DECEMBER, 31);
+        DateMidnight firstOfApril = DateUtil.getFirstDayOfMonth(account.getYear(), DateTimeConstants.APRIL);
+        DateMidnight lastOfDecember = DateUtil.getLastDayOfMonth(account.getYear(), DateTimeConstants.DECEMBER);
 
-        BigDecimal daysAfterApril = getDaysBetweenTwoMilestones(account.getPerson(), firstOfApril, lastOfDecember);
-
-        return daysAfterApril;
+        return getDaysBetweenTwoMilestones(account.getPerson(), firstOfApril, lastOfDecember);
     }
 
 

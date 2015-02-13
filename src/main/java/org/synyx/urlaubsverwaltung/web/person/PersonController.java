@@ -72,7 +72,7 @@ public class PersonController {
             List<Person> persons = personService.getInactivePersons();
 
             if (persons.isEmpty()) {
-                model.addAttribute(PersonConstants.NOTEXISTENT, true);
+                model.addAttribute("notexistent", true);
                 model.addAttribute(ControllerConstants.YEAR, DateMidnight.now().getYear());
             } else {
                 prepareStaffView(persons, DateMidnight.now().getYear(), model);
@@ -125,7 +125,7 @@ public class PersonController {
             List<Person> persons = personService.getInactivePersons();
 
             if (persons.isEmpty()) {
-                model.addAttribute(PersonConstants.NOTEXISTENT, true);
+                model.addAttribute("notexistent", true);
                 model.addAttribute(ControllerConstants.YEAR, DateMidnight.now().getYear());
             } else {
                 prepareStaffView(persons, year, model);

@@ -47,7 +47,7 @@ public class PersonManagementController {
 
     private static final String ACTIVE_LINK = "/staff";
     private static final String NEW_LINK = ACTIVE_LINK + "/new";
-    private static final String EDIT_LINK = ACTIVE_LINK + "/{" + PersonConstants.PERSON_ID + "}/edit";
+    private static final String EDIT_LINK = ACTIVE_LINK + "/{personId}/edit";
 
     @Autowired
     private PersonInteractionService personInteractionService;
@@ -85,7 +85,7 @@ public class PersonManagementController {
      */
     @RequestMapping(value = EDIT_LINK, method = RequestMethod.GET)
     public String editPersonForm(HttpServletRequest request,
-        @PathVariable(PersonConstants.PERSON_ID) Integer personId, Model model) {
+        @PathVariable("personId") Integer personId, Model model) {
 
         if (sessionService.isOffice()) {
             Person person = personService.getPersonByID(personId);
@@ -117,7 +117,7 @@ public class PersonManagementController {
     @RequestMapping(value = EDIT_LINK, params = ControllerConstants.YEAR, method = RequestMethod.GET)
     public String editPersonFormForYear(HttpServletRequest request,
         @RequestParam(ControllerConstants.YEAR) int year,
-        @PathVariable(PersonConstants.PERSON_ID) Integer personId, Model model) {
+        @PathVariable("personId") Integer personId, Model model) {
 
         int currentYear = DateMidnight.now().getYear();
 
@@ -169,7 +169,7 @@ public class PersonManagementController {
 
         model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
         model.addAttribute(ControllerConstants.PERSON, person);
-        model.addAttribute(PersonConstants.PERSONFORM, personForm);
+        model.addAttribute("personForm", personForm);
         model.addAttribute("currentYear", DateMidnight.now().getYear());
         model.addAttribute("weekDays", Day.values());
 
@@ -216,8 +216,8 @@ public class PersonManagementController {
      */
     @RequestMapping(value = EDIT_LINK, method = RequestMethod.PUT)
     public String editPerson(HttpServletRequest request,
-        @PathVariable(PersonConstants.PERSON_ID) Integer personId,
-        @ModelAttribute(PersonConstants.PERSONFORM) PersonForm personForm, Errors errors, Model model) {
+        @PathVariable("personId") Integer personId,
+        @ModelAttribute("personForm") PersonForm personForm, Errors errors, Model model) {
 
         Locale locale = RequestContextUtils.getLocale(request);
 
@@ -244,7 +244,7 @@ public class PersonManagementController {
 
     @RequestMapping(value = NEW_LINK, method = RequestMethod.POST)
     public String newPerson(HttpServletRequest request,
-        @ModelAttribute(PersonConstants.PERSONFORM) PersonForm personForm, Errors errors, Model model) {
+        @ModelAttribute("personForm") PersonForm personForm, Errors errors, Model model) {
 
         Locale locale = RequestContextUtils.getLocale(request);
 

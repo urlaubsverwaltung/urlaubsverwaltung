@@ -240,7 +240,7 @@ public class SickNoteController {
         if (loggedUser.hasRole(Role.OFFICE) || sickNote.getPerson().equals(loggedUser)) {
             model.addAttribute("sickNote", sickNoteService.getById(id));
             model.addAttribute("comment", new SickNoteComment());
-            model.addAttribute(PersonConstants.GRAVATAR, GravatarUtil.createImgURL(sickNote.getPerson().getEmail()));
+            model.addAttribute("gravatar", GravatarUtil.createImgURL(sickNote.getPerson().getEmail()));
 
             Map<SickNoteComment, String> gravatarUrls = new HashMap<>();
 

@@ -183,15 +183,20 @@ class AccountServiceImpl implements AccountService {
         // please notice: bd.intValue() is an Integer, e.g. 11
         int bdIntValue = bd.intValue();
 
-        if (referenceValue > 0 && referenceValue < 30) {
+        int lowerBound = 30;
+        int upperBound = 50;
+
+        if (referenceValue > 0 && referenceValue < lowerBound) {
             days = new BigDecimal(bdIntValue);
-        } else if (referenceValue >= 30 && referenceValue < 50) {
-            days = new BigDecimal(bdIntValue + 0.5);
-        } else if (referenceValue > 50) {
-            days = new BigDecimal(bdIntValue + 1);
         } else {
-            // default fallback because I'm a chicken
-            days = new BigDecimal(unroundedVacationDays).setScale(2);
+            if (referenceValue >= lowerBound && referenceValue < upperBound) {
+                days = new BigDecimal(bdIntValue + 0.5);
+            } else if (referenceValue > upperBound) {
+                days = new BigDecimal(bdIntValue + 1);
+            } else {
+                // default fallback because I'm a chicken
+                days = new BigDecimal(unroundedVacationDays).setScale(2);
+            }
         }
 
         return days;

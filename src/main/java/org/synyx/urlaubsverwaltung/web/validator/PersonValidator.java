@@ -68,6 +68,7 @@ public class PersonValidator implements Validator {
 
     private static final String MAX_DAYS = "annual.vacation.max";
     private static final int MAX_LIMIT_OF_YEARS = 10;
+    private static final int MAX_CHARS = 50;
 
     private static final String BUSINESS_PROPERTIES_FILE = "business.properties";
 
@@ -340,7 +341,7 @@ public class PersonValidator implements Validator {
      */
     protected boolean validateStringLength(String string) {
 
-        return string.length() <= 50;
+        return string.length() <= MAX_CHARS;
     }
 
 

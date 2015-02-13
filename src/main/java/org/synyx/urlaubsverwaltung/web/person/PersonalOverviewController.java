@@ -93,7 +93,7 @@ public class PersonalOverviewController {
             prepareOverview(person, parseYearParameter(year), model);
             model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
 
-            return PersonConstants.OVERVIEW_JSP;
+            return "person/overview";
         }
     }
 
@@ -109,8 +109,8 @@ public class PersonalOverviewController {
      *
      * @return
      */
-    @RequestMapping(value = "/staff/{" + PersonConstants.PERSON_ID + "}/overview", method = RequestMethod.GET)
-    public String showStaffOverview(@PathVariable(PersonConstants.PERSON_ID) Integer personId,
+    @RequestMapping(value = "/staff/{personId}/overview", method = RequestMethod.GET)
+    public String showStaffOverview(@PathVariable("personId") Integer personId,
         @RequestParam(value = ControllerConstants.YEAR, required = false) String year, Model model) {
 
         if (sessionService.isOffice() || sessionService.isBoss()) {
@@ -129,7 +129,7 @@ public class PersonalOverviewController {
 
             model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
 
-            return PersonConstants.OVERVIEW_JSP;
+            return "person/overview";
         }
 
         return ControllerConstants.ERROR_JSP;
@@ -178,7 +178,7 @@ public class PersonalOverviewController {
         model.addAttribute(ControllerConstants.YEAR, DateMidnight.now().getYear());
 
         String url = GravatarUtil.createImgURL(person.getEmail());
-        model.addAttribute(PersonConstants.GRAVATAR, url);
+        model.addAttribute("gravatar", url);
 
         prepareSickNoteList(person, year, model);
     }
