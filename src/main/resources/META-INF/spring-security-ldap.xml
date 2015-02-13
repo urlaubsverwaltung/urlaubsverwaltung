@@ -11,6 +11,7 @@
     <bean id="personContextMapper" class="org.synyx.urlaubsverwaltung.security.PersonContextMapper">
         <constructor-arg ref="personService"/>
         <constructor-arg ref="mailService"/>
+        <constructor-arg value="${person.createOnLogin}"/>
     </bean>
 
     <security:ldap-server id="ldapAuthServer" url="${ldap.url}/${ldap.base}"/>
