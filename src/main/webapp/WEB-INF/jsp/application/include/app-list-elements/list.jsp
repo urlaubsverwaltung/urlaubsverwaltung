@@ -21,10 +21,10 @@
             $(document).ready(function() {
 
                 $("table.sortable").tablesorter({
-                    sortList: [[2,0]],
+                    sortList: [[3,0]],
                     headers: {
-                        2: { sorter: 'germanDate' },
-                        3: { sorter: 'commaNumber' }
+                        3: { sorter: 'germanDate' },
+                        4: { sorter: 'commaNumber' }
                     },
                     textExtraction: function(node) {
 
@@ -45,7 +45,8 @@
             <thead class="hidden-xs hidden-sm">
             <tr>
                 <th class="hidden-print"><%-- placeholder to ensure correct number of th --%></th>
-                <th class="sortable-field"><spring:message code="staff" /></th>
+                <th class="sortable-field"><spring:message code="firstname" /></th>
+                <th class="sortable-field"><spring:message code="lastname" /></th>
                 <th class="sortable-field"><spring:message code="time" /></th>
                 <th class="sortable-field"><spring:message code="days.vac" /></th>
                 <th class="visible-print"><spring:message code="state" /></th>
@@ -67,12 +68,10 @@
                         <img class="img-circle" src="<c:out value='${gravatarUrls[app]}?d=mm&s=60'/>"/>&nbsp;
                     </td>
                     <td class="hidden-xs">
-                        <h5 class="is-inline-block hidden-print" style="line-height: 60px; vertical-align: middle">
-                            <a class="sortable" href="${URL_PREFIX}/staff/${app.person.id}/overview">
-                                <c:out value="${app.person.niceName}"/>
-                            </a>
-                        </h5>
-                        <p class="visible-print"><c:out value="${app.person.niceName}"/></p>
+                        <p><c:out value="${app.person.firstName}"/></p>
+                    </td>
+                    <td class="hidden-xs">
+                        <p><c:out value="${app.person.lastName}"/></p>
                     </td>
                     <td>
                         <a class="vacation ${app.vacationType} hidden-print" href="${URL_PREFIX}/application/${app.id}">
