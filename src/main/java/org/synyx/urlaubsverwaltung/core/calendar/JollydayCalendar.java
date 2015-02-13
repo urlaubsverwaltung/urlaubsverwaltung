@@ -11,17 +11,13 @@ import com.google.common.collect.Sets;
 import de.jollyday.Holiday;
 import de.jollyday.HolidayManager;
 
-import org.apache.log4j.Logger;
-
 import org.joda.time.DateMidnight;
-import org.joda.time.chrono.GregorianChronology;
 
 import org.springframework.stereotype.Component;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.core.util.PropertiesUtil;
-import org.synyx.urlaubsverwaltung.web.validator.PersonValidator;
 
 import java.io.IOException;
 
@@ -29,10 +25,6 @@ import java.math.BigDecimal;
 
 import java.net.URL;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 

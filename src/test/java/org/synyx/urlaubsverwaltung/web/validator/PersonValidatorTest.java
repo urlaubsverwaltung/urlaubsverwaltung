@@ -17,8 +17,6 @@ import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.security.Role;
 import org.synyx.urlaubsverwaltung.web.person.PersonForm;
 
-import java.math.BigDecimal;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
@@ -334,6 +332,7 @@ public class PersonValidatorTest {
         validator.validateLogin("foo", errors);
         Mockito.verify(errors, Mockito.never()).rejectValue(Mockito.anyString(), Mockito.anyString());
     }
+
 
     // VALIDATION OF PERIOD
 

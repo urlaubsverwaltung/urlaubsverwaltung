@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.core.account;
 import org.apache.log4j.Logger;
 
 import org.joda.time.DateMidnight;
-import org.joda.time.DateTimeConstants;
 import org.joda.time.Months;
 
 import org.springframework.beans.factory.annotation.Autowired;

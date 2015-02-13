@@ -35,11 +35,9 @@ import java.util.Properties;
 import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
 
 
 /**

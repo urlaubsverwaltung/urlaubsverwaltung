@@ -14,8 +14,6 @@ import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.web.statistics.UsedDays;
-import org.synyx.urlaubsverwaltung.web.statistics.UsedDaysOverview;
 
 import java.math.BigDecimal;
 

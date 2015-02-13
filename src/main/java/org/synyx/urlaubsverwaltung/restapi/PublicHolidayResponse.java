@@ -2,12 +2,6 @@ package org.synyx.urlaubsverwaltung.restapi;
 
 import de.jollyday.Holiday;
 
-import org.joda.time.LocalDate;
-
-import org.json4s.ext._LocalDate;
-
-import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
-
 import java.math.BigDecimal;
 
 import java.util.Locale;

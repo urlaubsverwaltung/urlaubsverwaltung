@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.core.startup;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
-import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 
 import org.apache.log4j.Logger;

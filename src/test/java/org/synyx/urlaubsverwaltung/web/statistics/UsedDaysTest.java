@@ -4,7 +4,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.web.statistics.UsedDays;
 
 import java.math.BigDecimal;
 

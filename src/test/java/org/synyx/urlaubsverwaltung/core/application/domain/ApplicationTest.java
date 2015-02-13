@@ -3,8 +3,6 @@ package org.synyx.urlaubsverwaltung.core.application.domain;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 
 /**
  * Unit test for {@link org.synyx.urlaubsverwaltung.core.application.domain.Application}.

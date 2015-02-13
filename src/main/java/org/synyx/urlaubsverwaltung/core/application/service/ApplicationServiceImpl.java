@@ -2,13 +2,10 @@
 package org.synyx.urlaubsverwaltung.core.application.service;
 
 import org.joda.time.DateMidnight;
-import org.joda.time.DateTimeConstants;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
-
-import org.springframework.util.Assert;
 
 import org.synyx.urlaubsverwaltung.core.application.dao.ApplicationDAO;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;

@@ -1,14 +1,11 @@
 package org.synyx.urlaubsverwaltung.web.validator;
 
 import org.joda.time.DateMidnight;
-import org.joda.time.DateTimeConstants;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import org.mockito.Mockito;
-
-import org.springframework.ui.Model;
 
 import org.springframework.validation.Errors;
 
@@ -18,7 +15,6 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.web.application.AppForm;
 
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 
