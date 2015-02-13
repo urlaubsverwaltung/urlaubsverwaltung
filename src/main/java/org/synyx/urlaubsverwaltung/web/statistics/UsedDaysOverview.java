@@ -10,6 +10,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 
 import java.math.BigDecimal;
 
@@ -40,25 +41,8 @@ public class UsedDaysOverview {
         for (Application application : applications) {
             ApplicationStatus status = application.getStatus();
 
-            if (ApplicationStatus.WAITING.equals(status) || ApplicationStatus.ALLOWED.equals(status)) {
-                BigDecimal days;
-
-                int yearOfStartDate = application.getStartDate().getYear();
-                int yearOfEndDate = application.getEndDate().getYear();
-
-                Assert.isTrue(yearOfStartDate == this.year || yearOfEndDate == this.year,
-                    "Either start date or end date must be in the given year.");
-
-                if (yearOfStartDate != yearOfEndDate) {
-                    DateMidnight startDate = getStartDateForCalculation(application);
-                    DateMidnight endDate = getEndDateForCalculation(application);
-                    DayLength dayLength = application.getHowLong();
-                    Person person = application.getPerson();
-
-                    days = calendarService.getWorkDays(dayLength, startDate, endDate, person);
-                } else {
-                    days = application.getDays();
-                }
+            if (application.hasStatus(ApplicationStatus.WAITING) || application.hasStatus(ApplicationStatus.ALLOWED)) {
+                BigDecimal days = getVacationDays(application, calendarService);
 
                 if (VacationType.HOLIDAY.equals(application.getVacationType())) {
                     this.holidayDays.addDays(status, days);
@@ -81,22 +65,43 @@ public class UsedDaysOverview {
     }
 
 
+    private BigDecimal getVacationDays(Application application, OwnCalendarService calendarService) {
+
+        int yearOfStartDate = application.getStartDate().getYear();
+        int yearOfEndDate = application.getEndDate().getYear();
+
+        Assert.isTrue(yearOfStartDate == this.year || yearOfEndDate == this.year,
+            "Either start date or end date must be in the given year.");
+
+        if (yearOfStartDate != yearOfEndDate) {
+            DateMidnight startDate = getStartDateForCalculation(application);
+            DateMidnight endDate = getEndDateForCalculation(application);
+            DayLength dayLength = application.getHowLong();
+            Person person = application.getPerson();
+
+            return calendarService.getWorkDays(dayLength, startDate, endDate, person);
+        }
+
+        return application.getDays();
+    }
+
+
     private DateMidnight getStartDateForCalculation(Application application) {
 
-        if (application.getStartDate().getYear() == this.year) {
-            return application.getStartDate();
-        } else {
-            return application.getEndDate().dayOfYear().withMinimumValue(); // 1st January
+        if (application.getStartDate().getYear() != this.year) {
+            return DateUtil.getFirstDayOfYear(application.getEndDate().getYear());
         }
+
+        return application.getStartDate();
     }
 
 
     private DateMidnight getEndDateForCalculation(Application application) {
 
-        if (application.getEndDate().getYear() == this.year) {
-            return application.getEndDate();
-        } else {
-            return application.getStartDate().dayOfYear().withMaximumValue(); // 31st December
+        if (application.getEndDate().getYear() != this.year) {
+            return DateUtil.getLastDayOfYear(application.getStartDate().getYear());
         }
+
+        return application.getEndDate();
     }
 }

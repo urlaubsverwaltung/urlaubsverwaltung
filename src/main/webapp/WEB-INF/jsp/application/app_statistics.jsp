@@ -36,9 +36,18 @@
                 </div>
 
                 <p class="is-inline-block">
-                    <a href="#filterModal" data-toggle="modal">
-                        <spring:message code="time"/>:&nbsp;<uv:date date="${from}"/> - <uv:date date="${to}"/>
-                    </a>
+                    <c:choose>
+                        <c:when test="${not empty errors}">
+                            <a href="#filterModal" data-toggle="modal">
+                                <spring:message code="applications.statistics.error.period" />
+                            </a>
+                        </c:when>
+                        <c:otherwise>
+                            <a href="#filterModal" data-toggle="modal">
+                                <spring:message code="time"/>:&nbsp;<uv:date date="${from}"/> - <uv:date date="${to}"/>
+                            </a>
+                        </c:otherwise>
+                    </c:choose>
                 </p>
 
                 <uv:filter-modal id="filterModal" actionUrl="${linkPrefix}/statistics"/>
@@ -58,26 +67,26 @@
                                 <th><spring:message code="lastname"/></th>
                                 <th class="is-centered"><spring:message code="applications.statistics.allowed"/></th>
                                 <th class="is-centered"><spring:message code="applications.statistics.waiting"/></th>
-                                <th class="is-centered"><spring:message code="applications.statistics.left"/></th>
+                                <th class="is-centered"><spring:message code="applications.statistics.left"/> (<c:out value="${from.year}" />)</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <c:forEach items="${persons}" var="person">
+                            <c:forEach items="${statistics}" var="statistic">
                                 <tr>
                                     <td class="is-centered">
                                         <img class="img-circle hidden-print"
-                                             src="<c:out value='${gravatarUrls[person]}?d=mm&s=60'/>"/>
+                                             src="<c:out value='${statistic.gravatarUrl}?d=mm&s=60'/>"/>
                                     </td>
-                                    <td><c:out value="${person.firstName}"/></td>
-                                    <td><c:out value="${person.lastName}"/></td>
+                                    <td><c:out value="${statistic.person.firstName}"/></td>
+                                    <td><c:out value="${statistic.person.lastName}"/></td>
                                     <td class="is-centered">
-                                        <uv:number number="${allowedDays[person]}"/>
-                                    </td>
-                                    <td class="is-centered">
-                                        <uv:number number="${waitingDays[person]}"/>
+                                        <uv:number number="${statistic.allowedVacationDays}"/>
                                     </td>
                                     <td class="is-centered">
-                                        <uv:number number="${leftDays[person]}"/>
+                                        <uv:number number="${statistic.waitingVacationDays}"/>
+                                    </td>
+                                    <td class="is-centered">
+                                        <uv:number number="${statistic.leftVacationDays}"/>
                                     </td>
                                 </tr>
                             </c:forEach>

@@ -59,9 +59,9 @@
 
         <uv:year-selector year="${displayYear}" />
 
-        <%--<a class="btn btn-default pull-right" data-toggle="modal" href="#filterModal">--%>
-            <%--<i class="fa fa-bar-chart"></i> <spring:message code="applications.statistics.create" />--%>
-        <%--</a>--%>
+        <a class="btn btn-default pull-right" data-toggle="modal" href="#filterModal">
+            <i class="fa fa-bar-chart"></i> <spring:message code="applications.statistics.create" />
+        </a>
 
     </legend>
 
