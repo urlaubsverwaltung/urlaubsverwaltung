@@ -97,7 +97,7 @@
                 </c:choose>
             </td>
             <sec:authorize access="hasRole('OFFICE')">
-            <td class="is-centered hidden-print"><a href="${URL_PREFIX}/staff/${person.id}/edit"><i class="fa fa-pencil fa-action" /></a></td>
+            <td class="is-centered hidden-print hidden-xs"><a href="${URL_PREFIX}/staff/${person.id}/edit"><i class="fa fa-pencil fa-action" /></a></td>
             </sec:authorize>
         </tr>    
     </c:forEach>
