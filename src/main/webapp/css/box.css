@@ -5,56 +5,46 @@
 **************************************************************************/
 
 .box {
+    width: 100%;
     min-height: 120px;
     padding: 20px;
     border: 1px solid #D5D5D5;
     font-size: 12px;
     background-color: #FAFAFA;
-    /*box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);*/
+    display: table;
     margin-bottom: 27px;
 }
 
-.box .one {
-    vertical-align: middle;
-    line-height: 80px; 
-}
-
-.box .halves {
-    vertical-align: middle;
-    line-height: 40px; 
-}
-
-.box .thirds {
-    vertical-align: middle;
-    line-height: 20px;
-}
-
-.box .quarter {
-    vertical-align: middle;
-    line-height: 20px; 
-}
-
-.box-image {
-    float: left;
-    margin: 0 10px 10px 0;
+.box-text {
+  display: table-cell;
+  width: 80%;
+  vertical-align: top;
 }
 
 .box-icon {
-    height: 60px;
-    width: 60px;
-    float: left;
-    margin: 10px 20px 0px 0;
-}
-
-.box-icon {
-    border-radius: 50%;
-    display: block;
-    font-size: 35px;
-    text-align: center;
-    vertical-align: middle;
+  height: 60px;
+  width: 60px;
+  border-radius: 50%;
+  font-size: 35px;
+  text-align: center;
 }
 
 .box-icon,
 .box-icon .fa {
-    line-height: 60px;
+  line-height: 60px;
+}
+
+.box-icon,
+.box-image {
+  float: left;
+  margin: 10px 30px 10px 10px;
+}
+
+/* STYLING FOR XS SCREENS */
+@media (max-width: 767px) {
+  .box-icon,
+  .box-image {
+    float: left;
+    margin: 10px 20px 0 0;
+  }
 }

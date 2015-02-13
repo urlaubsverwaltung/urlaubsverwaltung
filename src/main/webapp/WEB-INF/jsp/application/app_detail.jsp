@@ -112,53 +112,53 @@
                     </div>
 
                     <div class="box">
-                    <span class="thirds">
-                        <img class="box-image img-circle" src="<c:out value='${gravatar}?d=mm&s=80'/>"/>
-                        <i class="fa fa-at"></i> <c:out value="${application.person.loginName}"/>
-                        <h4>
-                            <a href="${URL_PREFIX}/staff/${application.person.id}/overview">
-                                <c:out value="${application.person.niceName}"/>
-                            </a>
-                        </h4>
-                        <i class="fa fa-envelope"></i> <c:out value="${application.person.email}"/>
-                    </span>
+                        <img class="box-image img-circle" src="<c:out value='${gravatar}?d=mm&s=60'/>"/>
+                        <span class="box-text">
+                            <i class="fa fa-at"></i> <c:out value="${application.person.loginName}"/>
+                            <h4>
+                                <a href="${URL_PREFIX}/staff/${application.person.id}/overview">
+                                    <c:out value="${application.person.niceName}"/>
+                                </a>
+                            </h4>
+                            <i class="fa fa-envelope"></i> <c:out value="${application.person.email}"/>
+                        </span>
                     </div>
 
                     <div class="box">
                         <span class="box-icon bg-green"><i class="fa fa-calendar"></i></span>
-                        <c:choose>
-                            <c:when test="${account != null}">
-                            <span class="thirds">
-                                <spring:message code="overview.vacation.entitlement" arguments="${account.vacationDays}" />
-                                <spring:message code="overview.vacation.entitlement.remaining" arguments="${account.remainingVacationDays}" />
-                            </span>
-                            </c:when>
-                            <c:otherwise>
-                                <span class="one"><spring:message code='not.specified'/></span>
-                            </c:otherwise>
-                        </c:choose>
+                        <span class="box-text">
+                            <c:choose>
+                                <c:when test="${account != null}">
+                                    <spring:message code="overview.vacation.entitlement" arguments="${account.vacationDays}" />
+                                    <spring:message code="overview.vacation.entitlement.remaining" arguments="${account.remainingVacationDays}" />
+                                </c:when>
+                                <c:otherwise>
+                                    <spring:message code='not.specified'/>
+                                </c:otherwise>
+                            </c:choose>
+                        </span>
                     </div>
 
                     <div class="box">
                         <span class="box-icon bg-green"><i class="fa fa-bar-chart"></i></span>
-                        <c:choose>
-                            <c:when test="${account != null}">
-                            <span class="thirds">
-                                <spring:message code="overview.vacation.left" arguments="${leftDays}" />
-                                <c:choose>
-                                    <c:when test="${beforeApril || !account.remainingVacationDaysExpire}">
-                                        <spring:message code="overview.vacation.left.remaining" arguments="${remLeftDays}" />
-                                    </c:when>
-                                    <c:otherwise>
-                                        <spring:message code="overview.vacation.left.remaining.expired" arguments="${remLeftDays}" />
-                                    </c:otherwise>
-                                </c:choose>
-                            </span>
-                            </c:when>
-                            <c:otherwise>
-                                <span class="one"><spring:message code='not.specified'/></span>
-                            </c:otherwise>
-                        </c:choose>
+                        <span class="box-text">
+                            <c:choose>
+                                <c:when test="${account != null}">
+                                    <spring:message code="overview.vacation.left" arguments="${leftDays}" />
+                                    <c:choose>
+                                        <c:when test="${beforeApril || !account.remainingVacationDaysExpire}">
+                                            <spring:message code="overview.vacation.left.remaining" arguments="${remLeftDays}" />
+                                        </c:when>
+                                        <c:otherwise>
+                                            <spring:message code="overview.vacation.left.remaining.expired" arguments="${remLeftDays}" />
+                                        </c:otherwise>
+                                    </c:choose>
+                                </c:when>
+                                <c:otherwise>
+                                    <spring:message code='not.specified'/>
+                                </c:otherwise>
+                            </c:choose>
+                        </span>
                     </div>
 
                 </div><!-- End of second column -->

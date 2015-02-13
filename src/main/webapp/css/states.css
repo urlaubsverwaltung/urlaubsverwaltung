@@ -28,6 +28,10 @@
     font-size: 25px;
 }
 
+.state.pull-right {
+  margin-right: 20px;
+}
+
 .state.WAITING {
     color: #34495E !important;
 }

@@ -5,9 +5,12 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <div class="box">
-    <span class="thirds">
-       <span class="box-icon bg-yellow"><i class="fa fa-sun-o"></i></span>
-       <span class="box-icon state ${application.status} pull-right hidden-print hidden-xs" title="<spring:message code='${application.status}' />">
+    <span class="box-icon bg-yellow"><i class="fa fa-sun-o"></i></span>
+    <span class="box-text">
+        <h5 class="is-inline-block is-sticky"><c:out value="${application.person.niceName}" /></h5> <spring:message code="app.apply" />
+        <h4>
+            <spring:message code="${application.vacationType}"/>
+            <span class="state ${application.status} pull-right hidden-print hidden-xs" title="<spring:message code='${application.status}' />">
             <c:choose>
                 <c:when test="${application.status == 'WAITING'}">
                     <i class="fa fa-question"></i>
@@ -26,7 +29,7 @@
                 </c:otherwise>
             </c:choose>
         </span>
-       <h5 class="is-inline-block is-sticky"><c:out value="${application.person.niceName}" /></h5> <spring:message code="app.apply" /> <h4><spring:message code="${application.vacationType}"/></h4>
+        </h4>
 
         <c:choose>
             <c:when test="${application.startDate == application.endDate}">
@@ -39,7 +42,6 @@
                 <uv:date date="${application.endDate}"/></h5>
             </c:otherwise>
         </c:choose>
-
     </span>
 </div>
 

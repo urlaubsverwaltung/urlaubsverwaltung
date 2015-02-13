@@ -49,7 +49,7 @@
                 </c:if>
             </p>
         </td>
-        <td class="is-centered">
+        <td class="is-centered hidden-xs">
             <span><uv:number number="${sickNote.workDays}"/> Tage</span>
         </td>
         <td class="hidden-print is-centered hidden-xs">
