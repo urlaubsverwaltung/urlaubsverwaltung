@@ -11,6 +11,20 @@
 
 <head>
     <uv:head/>
+    <script type="text/javascript">
+        $(document).ready(function() {
+
+            $("table.sortable").tablesorter({
+                sortList: [[1,0]],
+                headers: {
+                    3: { sorter: 'commaNumber' },
+                    4: { sorter: 'commaNumber' },
+                    5: { sorter: 'commaNumber' }
+                }
+            });
+
+        });
+    </script>
 </head>
 
 <body>
@@ -59,15 +73,15 @@
                         </div>
                     </c:when>
                     <c:otherwise>
-                        <table cellspacing="0" class="list-table">
+                        <table cellspacing="0" class="list-table sortable tablesorter">
                             <thead class="hidden-xs hidden-sm">
                             <tr>
                                 <th><%-- placeholder to ensure correct number of th --%></th>
-                                <th><spring:message code="firstname"/></th>
-                                <th><spring:message code="lastname"/></th>
-                                <th class="is-centered"><spring:message code="applications.statistics.allowed"/></th>
-                                <th class="is-centered"><spring:message code="applications.statistics.waiting"/></th>
-                                <th class="is-centered"><spring:message code="applications.statistics.left"/> (<c:out value="${from.year}" />)</th>
+                                <th class="sortable-field"><spring:message code="firstname"/></th>
+                                <th class="sortable-field"><spring:message code="lastname"/></th>
+                                <th class="sortable-field is-centered"><spring:message code="applications.statistics.allowed"/></th>
+                                <th class="sortable-field is-centered"><spring:message code="applications.statistics.waiting"/></th>
+                                <th class="sortable-field is-centered"><spring:message code="applications.statistics.left"/> (<c:out value="${from.year}" />)</th>
                             </tr>
                             </thead>
                             <tbody>
