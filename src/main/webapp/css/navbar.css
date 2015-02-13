@@ -20,7 +20,7 @@
 }
 
 .navbar a.navbar-brand {
-    font-family: PF Handbook Pro, sans-serif;
+    font-family: synyx, Verdana,sans-serif;
     font-size: 25px;
     color: #516310 !important;
 }
@@ -60,11 +60,11 @@
 }
 
 /* STYLING FOR XS SCREENS */
-@media (max-width: 767px) {
+/*@media (max-width: 767px) {*/
 
-    .navbar a.navbar-brand {
-        font-family: Verdana, sans-serif;
-        font-size: 20px;
-    }
+    /*.navbar a.navbar-brand {*/
+        /*font-family: Verdana, sans-serif;*/
+        /*font-size: 20px;*/
+    /*}*/
 
-}
+/*}*/

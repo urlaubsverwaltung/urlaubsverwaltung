@@ -17,14 +17,14 @@ legend {
 .header legend p,
 .legend-dropdown > a
 {
-    font-family: PF Handbook Pro, sans-serif;
+    font-family: synyx, Verdana,sans-serif;
     font-size: 30px;
     color: #516310;
     margin-bottom: 0;
 }
 
 .legend-dropdown .caret {
-  opacity: 0.5;
+  opacity: 0.7;
 }
 
 /* STYLING FOR XS SCREENS */
