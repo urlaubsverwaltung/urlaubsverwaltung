@@ -1,15 +1,16 @@
-package org.synyx.urlaubsverwaltung.web.application;
+package org.synyx.urlaubsverwaltung.web.statistics;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.web.statistics.UsedDays;
 
 import java.math.BigDecimal;
 import java.util.Map;
 
 
 /**
- * Unit test for {@link UsedDays}.
+ * Unit test for {@link org.synyx.urlaubsverwaltung.web.statistics.UsedDays}.
  *
  * @author Aljona Murygina - murygina@synyx.de
  */
@@ -32,7 +33,7 @@ public class UsedDaysTest {
     public void ensureThrowsIfTryingToAddDaysForAnApplicationStateThatHasNotBeenSet() {
 
         UsedDays usedDays = new UsedDays(ApplicationStatus.ALLOWED);
-        
+
         usedDays.addDays(ApplicationStatus.WAITING, BigDecimal.ONE);
 
     }

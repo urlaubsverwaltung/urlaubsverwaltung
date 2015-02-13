@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.application;
+package org.synyx.urlaubsverwaltung.web.statistics;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 

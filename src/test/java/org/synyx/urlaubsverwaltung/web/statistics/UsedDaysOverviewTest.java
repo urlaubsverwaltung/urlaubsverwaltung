@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.application;
+package org.synyx.urlaubsverwaltung.web.statistics;
 
 import org.joda.time.DateMidnight;
 import org.junit.Assert;
@@ -11,15 +11,15 @@ import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.web.statistics.UsedDays;
+import org.synyx.urlaubsverwaltung.web.statistics.UsedDaysOverview;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.*;
-
 /**
- * Unit test for {@link org.synyx.urlaubsverwaltung.web.application.UsedDaysOverview}.
+ * Unit test for {@link org.synyx.urlaubsverwaltung.web.statistics.UsedDaysOverview}.
  *
  * @author Aljona Murygina - murygina@synyx.de
  */
