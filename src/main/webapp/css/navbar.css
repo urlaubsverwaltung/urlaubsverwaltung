@@ -23,6 +23,13 @@
     font-family: synyx, Verdana,sans-serif;
     font-size: 25px;
     color: #516310 !important;
+    line-height: 24px; /* height of the brand logo */
+    vertical-align: middle;
+}
+
+.navbar a.navbar-brand img {
+    float: left;
+    margin-right: 12px;
 }
 
 .navbar a:hover {
@@ -58,13 +65,3 @@
         padding-bottom: 10px;
     }
 }
-
-/* STYLING FOR XS SCREENS */
-/*@media (max-width: 767px) {*/
-
-    /*.navbar a.navbar-brand {*/
-        /*font-family: Verdana, sans-serif;*/
-        /*font-size: 20px;*/
-    /*}*/
-
-/*}*/
