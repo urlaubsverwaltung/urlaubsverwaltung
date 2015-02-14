@@ -96,9 +96,9 @@ auf `prod` setzen:
 Die Anwendung verfügt über drei verschiedene Environment-Möglichkeiten. Standardmäßig (ohne Angabe) wird die
 Anwendung in der `dev` Umgebung gestartet.
 
-* dev: nutzt eine H2-Datenbank, legt Testdaten an, nutzt als Mail-Sender einen Dummy (verschickt also keine E-Mails)
-* test: nutzt eine MySQL-Datenbank, legt keine Testdaten an, nutzt als Mail-Sender einen Dummy (verschickt also keine E-Mails)
-* prod: nutzt eine MySQL-Datenbank, legt keine Testdaten an, nutzt den Java-Mail-Sender von
+* `dev` nutzt eine H2-Datenbank, legt Testdaten an, nutzt als Mail-Sender einen Dummy (verschickt also keine E-Mails)
+* `test` nutzt eine MySQL-Datenbank, legt keine Testdaten an, nutzt als Mail-Sender einen Dummy (verschickt also keine E-Mails)
+* `prod` nutzt eine MySQL-Datenbank, legt keine Testdaten an, nutzt den Java-Mail-Sender von
 [Spring](http://www.springsource.org/) (kann also E-Mails verschicken)
 
 ### Authentifizierung
@@ -156,9 +156,9 @@ Im Browser lässt sich die Anwendung dann über `http://localhost:8080/urlaubsve
 
 Die Anwendung verfügt über drei verschiedene Environment-Möglichkeiten:
 
-* dev: nutzt eine H2-Datenbank, legt Testdaten an, nutzt als Mail-Sender einen Dummy (verschickt also keine E-Mails)
-* test: nutzt eine MySQL-Datenbank, legt keine Testdaten an, nutzt als Mail-Sender einen Dummy (verschickt also keine E-Mails)
-* prod: nutzt eine MySQL-Datenbank, legt keine Testdaten an, nutzt den Java-Mail-Sender von 
+* `dev` nutzt eine H2-Datenbank, legt Testdaten an, nutzt als Mail-Sender einen Dummy (verschickt also keine E-Mails)
+* `test` nutzt eine MySQL-Datenbank, legt keine Testdaten an, nutzt als Mail-Sender einen Dummy (verschickt also keine E-Mails)
+* `prod` nutzt eine MySQL-Datenbank, legt keine Testdaten an, nutzt den Java-Mail-Sender von
 [Spring](http://www.springsource.org/) (kann also E-Mails verschicken)
 
 Standardmäßig ohne jegliche Angabe wird als Environment `dev` genutzt.
