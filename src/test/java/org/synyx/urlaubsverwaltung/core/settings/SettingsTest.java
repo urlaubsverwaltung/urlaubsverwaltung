@@ -32,4 +32,136 @@ public class SettingsTest {
         Assert.assertEquals("Wrong default value", DayLength.MORNING, settings.getWorkingDurationForChristmasEve());
         Assert.assertEquals("Wrong default value", DayLength.MORNING, settings.getWorkingDurationForNewYearsEve());
     }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfSettingMaximumAnnualVacationDaysToNull() {
+
+        new Settings().setMaximumAnnualVacationDays(null);
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfSettingMaximumAnnualVacationDaysToNegativeValue() {
+
+        new Settings().setMaximumAnnualVacationDays(-1);
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfSettingMaximumAnnualVacationDaysToZero() {
+
+        new Settings().setMaximumAnnualVacationDays(0);
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfSettingMaximumAnnualVacationDaysToValueGreaterThanNumberOfDaysInOneYear() {
+
+        new Settings().setMaximumAnnualVacationDays(367);
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfSettingMaximumMonthsToApplyForLeaveInAdvanceToNull() {
+
+        new Settings().setMaximumMonthsToApplyForLeaveInAdvance(null);
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfSettingMaximumMonthsToApplyForLeaveInAdvanceToNegativeValue() {
+
+        new Settings().setMaximumMonthsToApplyForLeaveInAdvance(-1);
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfSettingMaximumMonthsToApplyForLeaveInAdvanceToZero() {
+
+        new Settings().setMaximumMonthsToApplyForLeaveInAdvance(0);
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfSettingMaximumSickPayDaysToNegativeNull() {
+
+        new Settings().setMaximumSickPayDays(null);
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfSettingMaximumSickPayDaysToNegativeValue() {
+
+        new Settings().setMaximumSickPayDays(-1);
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfSettingMaximumSickPayDaysToZero() {
+
+        new Settings().setMaximumSickPayDays(0);
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfSettingDaysBeforeEndOfSickPayNotificationToNull() {
+
+        new Settings().setDaysBeforeEndOfSickPayNotification(null);
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfSettingDaysBeforeEndOfSickPayNotificationToNegativeValue() {
+
+        new Settings().setDaysBeforeEndOfSickPayNotification(-1);
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfSettingDaysBeforeEndOfSickPayNotificationToZero() {
+
+        new Settings().setDaysBeforeEndOfSickPayNotification(0);
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfSettingDaysBeforeEndOfSickPayNotificationWithoutToHaveDefinedMaximumSickPayDays() {
+
+        Settings settings = new Settings();
+        settings.setMaximumSickPayDays(null);
+        settings.setDaysBeforeEndOfSickPayNotification(7);
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfSettingDaysBeforeEndOfSickPayNotificationToGreaterValueThanMaximumSickPayDays() {
+
+        Settings settings = new Settings();
+        settings.setMaximumSickPayDays(42);
+        settings.setDaysBeforeEndOfSickPayNotification(43);
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfSettingDaysBeforeEndOfSickPayNotificationToEqualValueOfMaximumSickPayDays() {
+
+        Settings settings = new Settings();
+        settings.setMaximumSickPayDays(42);
+        settings.setDaysBeforeEndOfSickPayNotification(42);
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfSettingWorkingDurationForChristmasEveToNull() {
+
+        new Settings().setWorkingDurationForChristmasEve(null);
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfSettingWorkingDurationForNewYearsEveToNull() {
+
+        new Settings().setWorkingDurationForNewYearsEve(null);
+    }
 }
