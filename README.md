@@ -2,6 +2,14 @@
 
 # Urlaubsverwaltung
 
+* [Übersicht](https://github.com/synyx/urlaubsverwaltung#übersicht)
+* [Installation](https://github.com/synyx/urlaubsverwaltung#installation)
+* [Entwicklung](https://github.com/synyx/urlaubsverwaltung#entwicklung)
+* [Technologien](https://github.com/synyx/urlaubsverwaltung#technologien)
+* [Lizenz](https://github.com/synyx/urlaubsverwaltung#lizenz)
+
+# Übersicht
+
 Die Urlaubsverwaltung ist eine Web-Anwendung, die es ermöglicht, Urlaubsanträge von Mitarbeitern elektronisch zu
 verwalten. Mitarbeiter stellen Urlaubsanträge, die von den jeweils Berechtigten genehmigt oder abgelehnt werden.
 Die Anwendung bietet eine Übersicht über die bestehenden Urlaubsanträge und ermöglicht außerdem Überblick und Pflege von
@@ -201,14 +209,14 @@ Die Anwendung mit dem Parameter `-Dspring.profiles.active=activeDirectory` start
 
 <pre>mvn tomcat:run -Dspring.profiles.active=activeDirectory</pre>
 
-## Dependencies
+# Technologien
 
 Die Anwendung basiert auf dem [Spring](http://www.springsource.org/) MVC Framework.
 Zur Ermittlung von Feiertagen wird das Framework [Jollyday](http://jollyday.sourceforge.net/) benutzt.
 Das Frontend beinhaltet Elemente von [Bootstrap](http://getbootstrap.com/) gewürzt mit einer Prise
 [jQuery](http://jquery.com/) und [Font Awesome](http://fontawesome.io/).
 
-## License
+# Lizenz
 
 [synyx/urlaubsverwaltung](http://github.com/synyx/urlaubsverwaltung) is licensed under the
 [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0)
