@@ -33,10 +33,13 @@ public class PersonContextMapper implements UserDetailsContextMapper {
     private final PersonService personService;
     private final MailService mailService;
 
-    public PersonContextMapper(PersonService personService, MailService mailService) {
+    private final boolean createOnLogin;
+
+    public PersonContextMapper(PersonService personService, MailService mailService, boolean createOnLogin) {
 
         this.personService = personService;
         this.mailService = mailService;
+        this.createOnLogin = createOnLogin;
     }
 
     @Override
@@ -49,10 +52,10 @@ public class PersonContextMapper implements UserDetailsContextMapper {
          * NOTE: If the system has no user yet, the first person that successfully signs in
          * is created as user with {@link Role#OFFICE}
          */
-        boolean noActivePersonExistsYet = person == null && personService.getActivePersons().size() == 0;
+        boolean noActivePersonExistsYet = personService.getActivePersons().size() == 0;
 
-        if (noActivePersonExistsYet) {
-            person = createFirstPerson(username);
+        if (person == null && (noActivePersonExistsYet || this.createOnLogin)) {
+            person = createPerson(username, noActivePersonExistsYet);
         }
 
         org.springframework.security.ldap.userdetails.Person.Essence p =
@@ -72,7 +75,7 @@ public class PersonContextMapper implements UserDetailsContextMapper {
      *
      * @return  the created person
      */
-    Person createFirstPerson(String login) {
+    Person createPerson(String login, boolean isFirst) {
 
         Person person = new Person();
         person.setLoginName(login);
@@ -80,7 +83,13 @@ public class PersonContextMapper implements UserDetailsContextMapper {
 
         List<Role> permissions = new ArrayList<>();
         permissions.add(Role.USER);
-        permissions.add(Role.OFFICE);
+
+        /**
+         * NOTE: the first created person should be able to manage persons and their roles in the application
+         */
+        if (isFirst) {
+            permissions.add(Role.OFFICE);
+        }
 
         /**
          * NOTE: Do not change this to
@@ -105,7 +114,7 @@ public class PersonContextMapper implements UserDetailsContextMapper {
 
         personService.save(person);
 
-        LOG.info("Successfully created first person: " + person.toString());
+        LOG.info("Successfully auto-created person: " + person.toString());
 
         return person;
     }

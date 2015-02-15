@@ -34,7 +34,7 @@ public class PersonContextMapperTest {
         personService = Mockito.mock(PersonService.class);
         mailService = Mockito.mock(MailService.class);
 
-        personContextMapper = new PersonContextMapper(personService, mailService);
+        personContextMapper = new PersonContextMapper(personService, mailService, false);
     }
 
 
@@ -65,9 +65,9 @@ public class PersonContextMapperTest {
 
 
     @Test
-    public void ensureCreatedPersonHasTheCorrectRoles() {
+    public void ensureFirstCreatedPersonHasTheCorrectRoles() {
 
-        Person person = personContextMapper.createFirstPerson("murygina");
+        Person person = personContextMapper.createPerson("murygina", true);
 
         Collection<Role> roles = person.getPermissions();
 
@@ -78,11 +78,24 @@ public class PersonContextMapperTest {
         Assert.assertTrue("Should be active", person.isActive());
     }
 
+    @Test
+    public void ensureFurtherCreatedPersonHasTheCorrectRoles() {
+
+        Person person = personContextMapper.createPerson("murygina2", false);
+
+        Collection<Role> roles = person.getPermissions();
+
+        Assert.assertEquals("Wrong number of roles", 1, roles.size());
+        Assert.assertTrue("Does not contain user role", roles.contains(Role.USER));
+
+        Assert.assertTrue("Should be active", person.isActive());
+    }
+
 
     @Test
     public void ensureCreatedPersonIsSaved() {
 
-        personContextMapper.createFirstPerson("murygina");
+        personContextMapper.createPerson("murygina", true);
 
         Mockito.verify(personService).save(Mockito.any(Person.class));
     }
