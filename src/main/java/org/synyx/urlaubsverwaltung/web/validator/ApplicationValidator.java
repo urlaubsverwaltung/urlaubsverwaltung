@@ -1,8 +1,8 @@
 package org.synyx.urlaubsverwaltung.web.validator;
 
-import org.apache.log4j.Logger;
-
 import org.joda.time.DateMidnight;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Component;
 
@@ -14,12 +14,8 @@ import org.springframework.validation.Validator;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
-import org.synyx.urlaubsverwaltung.core.util.PropertiesUtil;
+import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.web.application.AppForm;
-
-import java.io.IOException;
-
-import java.util.Properties;
 
 
 /**
@@ -45,11 +41,12 @@ public class ApplicationValidator implements Validator {
     private static final String FIELD_REASON = "reason";
     private static final String FIELD_ADDRESS = "address";
 
-    private final Settings settings;
+    private final SettingsService settingsService;
 
-    public ApplicationValidator() {
+    @Autowired
+    public ApplicationValidator(SettingsService settingsService) {
 
-        this.settings = new Settings();
+        this.settingsService = settingsService;
     }
 
     @Override
@@ -126,6 +123,8 @@ public class ApplicationValidator implements Validator {
 
     private void validateNotTooFarInTheFuture(DateMidnight date, Errors errors) {
 
+        Settings settings = settingsService.getSettings();
+
         Integer maximumMonths = settings.getMaximumMonthsToApplyForLeaveInAdvance();
         DateMidnight future = DateMidnight.now().plusMonths(maximumMonths);
 
@@ -136,6 +135,8 @@ public class ApplicationValidator implements Validator {
 
 
     private void validateNotTooFarInThePast(DateMidnight date, Errors errors) {
+
+        Settings settings = settingsService.getSettings();
 
         Integer maximumMonths = settings.getMaximumMonthsToApplyForLeaveInAdvance();
         DateMidnight past = DateMidnight.now().minusMonths(maximumMonths);

@@ -14,6 +14,8 @@ import org.synyx.urlaubsverwaltung.core.calendar.JollydayCalendar;
 import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.settings.Settings;
+import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 
 import java.io.IOException;
 
@@ -39,7 +41,10 @@ public class HolidaysAccountServiceImplTest {
         accountDAO = Mockito.mock(AccountDAO.class);
 
         WorkingTimeService workingTimeService = Mockito.mock(WorkingTimeService.class);
-        calendarService = new OwnCalendarService(new JollydayCalendar(), workingTimeService);
+        SettingsService settingsService = Mockito.mock(SettingsService.class);
+        Mockito.when(settingsService.getSettings()).thenReturn(new Settings());
+
+        calendarService = new OwnCalendarService(new JollydayCalendar(settingsService), workingTimeService);
         service = new AccountServiceImpl(accountDAO, calendarService);
 
         person = new Person();

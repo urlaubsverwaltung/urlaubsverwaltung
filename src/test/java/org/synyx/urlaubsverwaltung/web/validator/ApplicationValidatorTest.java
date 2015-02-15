@@ -12,6 +12,8 @@ import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.settings.Settings;
+import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.web.application.AppForm;
 
 import static org.junit.Assert.assertFalse;
@@ -27,11 +29,16 @@ public class ApplicationValidatorTest {
     private Errors errors;
 
     private AppForm appForm;
+    private SettingsService settingsService;
 
     @Before
     public void setUp() {
 
-        validator = new ApplicationValidator();
+        settingsService = Mockito.mock(SettingsService.class);
+        Mockito.when(settingsService.getSettings()).thenReturn(new Settings());
+
+        validator = new ApplicationValidator(settingsService);
+
         errors = Mockito.mock(Errors.class);
 
         appForm = new AppForm();

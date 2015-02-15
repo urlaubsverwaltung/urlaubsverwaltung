@@ -13,10 +13,13 @@ import de.jollyday.HolidayManager;
 
 import org.joda.time.DateMidnight;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Component;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
+import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 
 import java.math.BigDecimal;
@@ -36,18 +39,13 @@ public class JollydayCalendar {
 
     private static final String HOLIDAY_DEFINITION_FILE = "Holidays_custom.xml";
 
-    private HolidayManager manager;
-    private Settings settings;
+    private final HolidayManager manager;
+    private final SettingsService settingsService;
 
-    public JollydayCalendar() {
+    @Autowired
+    public JollydayCalendar(SettingsService settingsService) {
 
-        this(new Settings());
-    }
-
-
-    protected JollydayCalendar(Settings settings) {
-
-        this.settings = settings;
+        this.settingsService = settingsService;
 
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         URL url = cl.getResource(HOLIDAY_DEFINITION_FILE);
@@ -82,6 +80,8 @@ public class JollydayCalendar {
      * @return  working duration of the given date
      */
     public BigDecimal getWorkingDurationOfDate(DateMidnight date) {
+
+        Settings settings = settingsService.getSettings();
 
         if (isPublicHoliday(date)) {
             if (DateUtil.isChristmasEve(date)) {

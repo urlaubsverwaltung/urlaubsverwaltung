@@ -8,8 +8,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import org.mockito.Mockito;
+
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
+import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 
 import java.io.IOException;
 
@@ -26,11 +29,13 @@ import java.util.Properties;
 public class JollydayCalendarTest {
 
     private JollydayCalendar jollydayCalendar;
+    private SettingsService settingsService;
 
     @Before
     public void setUp() throws IOException {
 
-        jollydayCalendar = new JollydayCalendar();
+        settingsService = Mockito.mock(SettingsService.class);
+        jollydayCalendar = new JollydayCalendar(settingsService);
     }
 
 
@@ -112,34 +117,12 @@ public class JollydayCalendarTest {
 
 
     @Test
-    public void ensureCorrectWorkingDurationForChristmasEve() {
-
-        DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 24);
-
-        BigDecimal workingDuration = jollydayCalendar.getWorkingDurationOfDate(testDate);
-
-        Assert.assertEquals("Wrong working duration", new BigDecimal("0.5"), workingDuration);
-    }
-
-
-    @Test
-    public void ensureCorrectWorkingDurationForNewYearsEve() {
-
-        DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 31);
-
-        BigDecimal workingDuration = jollydayCalendar.getWorkingDurationOfDate(testDate);
-
-        Assert.assertEquals("Wrong working duration", new BigDecimal("0.5"), workingDuration);
-    }
-
-
-    @Test
     public void ensureWorkingDurationForChristmasEveCanBeConfiguredToAWorkingDurationOfFullDay() {
 
         Settings settings = new Settings();
         settings.setWorkingDurationForChristmasEve(DayLength.FULL);
 
-        jollydayCalendar = new JollydayCalendar(settings);
+        Mockito.when(settingsService.getSettings()).thenReturn(settings);
 
         DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 24);
 
@@ -155,7 +138,7 @@ public class JollydayCalendarTest {
         Settings settings = new Settings();
         settings.setWorkingDurationForNewYearsEve(DayLength.FULL);
 
-        jollydayCalendar = new JollydayCalendar(settings);
+        Mockito.when(settingsService.getSettings()).thenReturn(settings);
 
         DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 31);
 
@@ -171,7 +154,7 @@ public class JollydayCalendarTest {
         Settings settings = new Settings();
         settings.setWorkingDurationForChristmasEve(DayLength.MORNING);
 
-        jollydayCalendar = new JollydayCalendar(settings);
+        Mockito.when(settingsService.getSettings()).thenReturn(settings);
 
         DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 24);
 
@@ -187,7 +170,7 @@ public class JollydayCalendarTest {
         Settings settings = new Settings();
         settings.setWorkingDurationForNewYearsEve(DayLength.NOON);
 
-        jollydayCalendar = new JollydayCalendar(settings);
+        Mockito.when(settingsService.getSettings()).thenReturn(settings);
 
         DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 31);
 
@@ -203,7 +186,7 @@ public class JollydayCalendarTest {
         Settings settings = new Settings();
         settings.setWorkingDurationForChristmasEve(DayLength.ZERO);
 
-        jollydayCalendar = new JollydayCalendar(settings);
+        Mockito.when(settingsService.getSettings()).thenReturn(settings);
 
         DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 24);
 
@@ -219,7 +202,7 @@ public class JollydayCalendarTest {
         Settings settings = new Settings();
         settings.setWorkingDurationForNewYearsEve(DayLength.ZERO);
 
-        jollydayCalendar = new JollydayCalendar(settings);
+        Mockito.when(settingsService.getSettings()).thenReturn(settings);
 
         DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 31);
 

@@ -1,8 +1,6 @@
 
 package org.synyx.urlaubsverwaltung.web.validator;
 
-import org.apache.log4j.Logger;
-
 import org.joda.time.DateMidnight;
 import org.joda.time.IllegalFieldValueException;
 
@@ -18,18 +16,15 @@ import org.springframework.validation.Validator;
 import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
+import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.util.NumberUtil;
-import org.synyx.urlaubsverwaltung.core.util.PropertiesUtil;
 import org.synyx.urlaubsverwaltung.security.Role;
 import org.synyx.urlaubsverwaltung.web.person.PersonForm;
-
-import java.io.IOException;
 
 import java.math.BigDecimal;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -65,19 +60,17 @@ public class PersonValidator implements Validator {
         "^[a-zäöüß0-9,!#\\$%&'\\*\\+/=\\?\\^_`\\{\\|}~-]+(\\.[a-zäöüß0-9,!#\\$%&'\\*\\+/=\\?\\^_`\\{\\|}~-]+)*@"
         + "[a-zäöüß0-9-]+(\\.[a-zäöüß0-9-]+)*\\.([a-z]{2,})$";
 
-    private static final String MAX_DAYS = "annual.vacation.max";
     private static final int MAX_LIMIT_OF_YEARS = 10;
     private static final int MAX_CHARS = 50;
 
-    private final Settings settings;
-
     private final PersonService personService;
+    private final SettingsService settingsService;
 
     @Autowired
-    public PersonValidator(PersonService personService) {
+    public PersonValidator(PersonService personService, SettingsService settingsService) {
 
         this.personService = personService;
-        this.settings = new Settings();
+        this.settingsService = settingsService;
     }
 
     @Override
@@ -248,6 +241,8 @@ public class PersonValidator implements Validator {
      */
     protected void validateAnnualVacation(PersonForm form, Errors errors, Locale locale) {
 
+        Settings settings = settingsService.getSettings();
+
         if (StringUtils.hasText(form.getAnnualVacationDays())) {
             try {
                 validateNumberOfDays(NumberUtil.parseNumber(form.getAnnualVacationDays(), locale), ANNUAL_VACATION_DAYS,
@@ -270,6 +265,8 @@ public class PersonValidator implements Validator {
      * @param  locale
      */
     protected void validateRemainingVacationDays(PersonForm form, Errors errors, Locale locale) {
+
+        Settings settings = settingsService.getSettings();
 
         if (StringUtils.hasText(form.getRemainingVacationDays())) {
             try {

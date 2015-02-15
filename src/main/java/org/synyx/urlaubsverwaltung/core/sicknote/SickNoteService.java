@@ -20,6 +20,7 @@ import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
+import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteComment;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteCommentDAO;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteStatus;
@@ -46,11 +47,12 @@ public class SickNoteService {
     private SignService signService;
     private CommentService commentService;
     private MailService mailService;
+    private SettingsService settingsService;
 
     @Autowired
     public SickNoteService(SickNoteDAO sickNoteDAO, SickNoteCommentDAO commentDAO, OwnCalendarService calendarService,
         ApplicationService applicationService, SignService signService, CommentService commentService,
-        MailService mailService) {
+        MailService mailService, SettingsService settingsService) {
 
         this.sickNoteDAO = sickNoteDAO;
         this.commentDAO = commentDAO;
@@ -59,6 +61,7 @@ public class SickNoteService {
         this.signService = signService;
         this.commentService = commentService;
         this.mailService = mailService;
+        this.settingsService = settingsService;
     }
 
 
@@ -194,7 +197,7 @@ public class SickNoteService {
 
     public List<SickNote> getSickNotesReachingEndOfSickPay() {
 
-        Settings settings = new Settings();
+        Settings settings = settingsService.getSettings();
 
         DateMidnight endDate = DateMidnight.now().plusDays(settings.getDaysBeforeEndOfSickPayNotification());
 
