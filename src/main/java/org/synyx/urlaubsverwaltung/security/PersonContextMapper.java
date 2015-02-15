@@ -33,7 +33,7 @@ public class PersonContextMapper implements UserDetailsContextMapper {
     private final PersonService personService;
     private final MailService mailService;
 
-    private boolean createOnLogin;
+    private final boolean createOnLogin;
 
     public PersonContextMapper(PersonService personService, MailService mailService, boolean createOnLogin) {
 
@@ -84,6 +84,9 @@ public class PersonContextMapper implements UserDetailsContextMapper {
         List<Role> permissions = new ArrayList<>();
         permissions.add(Role.USER);
 
+        /**
+         * NOTE: the first created person should be able to manage persons and their roles in the application
+         */
         if (isFirst) {
             permissions.add(Role.OFFICE);
         }
@@ -111,7 +114,7 @@ public class PersonContextMapper implements UserDetailsContextMapper {
 
         personService.save(person);
 
-        LOG.info("Successfully created first person: " + person.toString());
+        LOG.info("Successfully auto-created person: " + person.toString());
 
         return person;
     }
