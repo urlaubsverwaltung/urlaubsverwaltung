@@ -43,6 +43,11 @@ public class Settings {
     private DayLength workingDurationForChristmasEve = DayLength.MORNING;
     private DayLength workingDurationForNewYearsEve = DayLength.MORNING;
 
+    /**
+     * Defines the federal state of Germany to be able to check correctly if a day is a public holiday or not.
+     */
+    private FederalState federalState = FederalState.BADEN_WUERTTEMBERG;
+
     public Integer getMaximumAnnualVacationDays() {
 
         return maximumAnnualVacationDays;
@@ -76,6 +81,12 @@ public class Settings {
     public DayLength getWorkingDurationForNewYearsEve() {
 
         return workingDurationForNewYearsEve;
+    }
+
+
+    public FederalState getFederalState() {
+
+        return federalState;
     }
 
 
@@ -135,5 +146,13 @@ public class Settings {
         Assert.notNull(workingDurationForNewYearsEve, "Working duration for New Years Eve must not be null");
 
         this.workingDurationForNewYearsEve = workingDurationForNewYearsEve;
+    }
+
+
+    public void setFederalState(FederalState federalState) {
+
+        Assert.notNull(federalState, "Federal state must not be null");
+
+        this.federalState = federalState;
     }
 }

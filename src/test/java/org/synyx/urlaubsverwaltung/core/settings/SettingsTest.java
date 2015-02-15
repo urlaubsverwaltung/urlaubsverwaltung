@@ -24,6 +24,7 @@ public class SettingsTest {
         Assert.assertNotNull("Should not be null", settings.getDaysBeforeEndOfSickPayNotification());
         Assert.assertNotNull("Should not be null", settings.getWorkingDurationForChristmasEve());
         Assert.assertNotNull("Should not be null", settings.getWorkingDurationForNewYearsEve());
+        Assert.assertNotNull("Should not be null", settings.getFederalState());
 
         Assert.assertEquals("Wrong default value", (Integer) 40, settings.getMaximumAnnualVacationDays());
         Assert.assertEquals("Wrong default value", (Integer) 12, settings.getMaximumMonthsToApplyForLeaveInAdvance());
@@ -31,6 +32,7 @@ public class SettingsTest {
         Assert.assertEquals("Wrong default value", (Integer) 7, settings.getDaysBeforeEndOfSickPayNotification());
         Assert.assertEquals("Wrong default value", DayLength.MORNING, settings.getWorkingDurationForChristmasEve());
         Assert.assertEquals("Wrong default value", DayLength.MORNING, settings.getWorkingDurationForNewYearsEve());
+        Assert.assertEquals("Wrong default value", FederalState.BADEN_WUERTTEMBERG, settings.getFederalState());
     }
 
 
@@ -163,5 +165,12 @@ public class SettingsTest {
     public void ensureThrowsIfSettingWorkingDurationForNewYearsEveToNull() {
 
         new Settings().setWorkingDurationForNewYearsEve(null);
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfSettingFederalStateToNull() {
+
+        new Settings().setFederalState(null);
     }
 }
