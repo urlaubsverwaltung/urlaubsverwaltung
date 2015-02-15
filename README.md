@@ -209,6 +209,14 @@ Die Anwendung mit dem Parameter `-Dspring.profiles.active=activeDirectory` start
 
 <pre>mvn tomcat:run -Dspring.profiles.active=activeDirectory</pre>
 
+# Hinweise zu Versionen
+
+## Version 2.2.1
+
+Wenn man die Urlaubsverwaltung schon länger nutzt und auf Version 2.2.1 oder höher updaten möchte, muss sichergestellt
+sein, dass in der Datenbank keine Person mit gleichem Vor- und Nachnamen existiert. Dies führt ansonsten zu einem
+Problem beim Update des Datenbankschemas und die Anwendung kann nicht starten.
+
 # Technologien
 
 Die Anwendung basiert auf dem [Spring](http://www.springsource.org/) MVC Framework.
