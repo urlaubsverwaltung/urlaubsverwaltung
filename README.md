@@ -5,6 +5,7 @@
 * [Übersicht](https://github.com/synyx/urlaubsverwaltung#übersicht)
 * [Installation](https://github.com/synyx/urlaubsverwaltung#installation)
 * [Entwicklung](https://github.com/synyx/urlaubsverwaltung#entwicklung)
+* [Hinweise zu Versionen](https://github.com/synyx/urlaubsverwaltung#hinweise-zu-versionen)
 * [Technologien](https://github.com/synyx/urlaubsverwaltung#technologien)
 * [Lizenz](https://github.com/synyx/urlaubsverwaltung#lizenz)
 
