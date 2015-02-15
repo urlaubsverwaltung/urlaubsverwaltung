@@ -17,6 +17,7 @@ import org.springframework.validation.Validator;
 
 import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
+import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.util.NumberUtil;
 import org.synyx.urlaubsverwaltung.core.util.PropertiesUtil;
 import org.synyx.urlaubsverwaltung.security.Role;
@@ -41,8 +42,6 @@ import java.util.regex.Pattern;
  */
 @Component
 public class PersonValidator implements Validator {
-
-    private static final Logger LOG = Logger.getLogger(PersonValidator.class);
 
     private static final String MANDATORY_FIELD = "error.mandatory.field";
     private static final String ERROR_ENTRY = "error.entry";
@@ -70,9 +69,7 @@ public class PersonValidator implements Validator {
     private static final int MAX_LIMIT_OF_YEARS = 10;
     private static final int MAX_CHARS = 50;
 
-    private static final String BUSINESS_PROPERTIES_FILE = "business.properties";
-
-    private Properties businessProperties;
+    private final Settings settings;
 
     private final PersonService personService;
 
@@ -80,13 +77,7 @@ public class PersonValidator implements Validator {
     public PersonValidator(PersonService personService) {
 
         this.personService = personService;
-
-        try {
-            this.businessProperties = PropertiesUtil.load(BUSINESS_PROPERTIES_FILE);
-        } catch (IOException ex) {
-            LOG.error("No properties file found.");
-            LOG.error(ex.getMessage(), ex);
-        }
+        this.settings = new Settings();
     }
 
     @Override
@@ -257,14 +248,10 @@ public class PersonValidator implements Validator {
      */
     protected void validateAnnualVacation(PersonForm form, Errors errors, Locale locale) {
 
-        // only achieved if invalid property values are precluded by method validateProperties
-        String propValue = businessProperties.getProperty(MAX_DAYS);
-        double max = Double.parseDouble(propValue);
-
         if (StringUtils.hasText(form.getAnnualVacationDays())) {
             try {
                 validateNumberOfDays(NumberUtil.parseNumber(form.getAnnualVacationDays(), locale), ANNUAL_VACATION_DAYS,
-                    max, errors);
+                    BigDecimal.valueOf(settings.getMaximumAnnualVacationDays()), errors);
             } catch (NumberFormatException ex) {
                 errors.rejectValue(ANNUAL_VACATION_DAYS, ERROR_ENTRY);
             }
@@ -284,15 +271,11 @@ public class PersonValidator implements Validator {
      */
     protected void validateRemainingVacationDays(PersonForm form, Errors errors, Locale locale) {
 
-        // only achieved if invalid property values are precluded by method validateProperties
-        String propValue = businessProperties.getProperty(MAX_DAYS);
-        double max = Double.parseDouble(propValue);
-
         if (StringUtils.hasText(form.getRemainingVacationDays())) {
             try {
                 // field entitlement's remaining vacation days
                 validateNumberOfDays(NumberUtil.parseNumber(form.getRemainingVacationDays(), locale),
-                    REMAINING_VACATION_DAYS, max, errors);
+                    REMAINING_VACATION_DAYS, BigDecimal.valueOf(settings.getMaximumAnnualVacationDays()), errors);
             } catch (NumberFormatException ex) {
                 errors.rejectValue(REMAINING_VACATION_DAYS, ERROR_ENTRY);
             }
@@ -311,7 +294,7 @@ public class PersonValidator implements Validator {
      * @param  maximumDays
      * @param  errors
      */
-    private void validateNumberOfDays(BigDecimal days, String field, double maximumDays, Errors errors) {
+    private void validateNumberOfDays(BigDecimal days, String field, BigDecimal maximumDays, Errors errors) {
 
         // is field filled?
         if (days == null) {
@@ -325,7 +308,7 @@ public class PersonValidator implements Validator {
             }
 
             // is number of days unrealistic?
-            if (days.compareTo(BigDecimal.valueOf(maximumDays)) == 1) {
+            if (days.compareTo(maximumDays) == 1) {
                 errors.rejectValue(field, ERROR_ENTRY);
             }
         }

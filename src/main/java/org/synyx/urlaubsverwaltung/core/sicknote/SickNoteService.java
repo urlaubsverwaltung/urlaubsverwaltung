@@ -19,6 +19,7 @@ import org.synyx.urlaubsverwaltung.core.application.service.SignService;
 import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteComment;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteCommentDAO;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteStatus;
@@ -37,12 +38,6 @@ import java.util.List;
 @Service
 @Transactional
 public class SickNoteService {
-
-    @Value("${sicknote.sickPay.limit}")
-    private int sickPayLimit;
-
-    @Value("${sicknote.sickPay.notification}")
-    private int sickPayNotificationTime;
 
     private SickNoteDAO sickNoteDAO;
     private SickNoteCommentDAO commentDAO;
@@ -199,8 +194,10 @@ public class SickNoteService {
 
     public List<SickNote> getSickNotesReachingEndOfSickPay() {
 
-        DateMidnight endDate = DateMidnight.now().plusDays(sickPayNotificationTime);
+        Settings settings = new Settings();
 
-        return sickNoteDAO.findSickNotesByMinimumLengthAndEndDate(sickPayLimit, endDate.toDate());
+        DateMidnight endDate = DateMidnight.now().plusDays(settings.getDaysBeforeEndOfSickPayNotification());
+
+        return sickNoteDAO.findSickNotesByMinimumLengthAndEndDate(settings.getMaximumSickPayDays(), endDate.toDate());
     }
 }

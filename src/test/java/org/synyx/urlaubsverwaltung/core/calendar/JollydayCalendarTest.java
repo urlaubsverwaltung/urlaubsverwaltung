@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
+import org.synyx.urlaubsverwaltung.core.settings.Settings;
 
 import java.io.IOException;
 
@@ -135,10 +136,10 @@ public class JollydayCalendarTest {
     @Test
     public void ensureWorkingDurationForChristmasEveCanBeConfiguredToAWorkingDurationOfFullDay() {
 
-        Properties properties = new Properties();
-        properties.put("holiday.CHRISTMAS_EVE.vacationDay", DayLength.FULL.name());
+        Settings settings = new Settings();
+        settings.setWorkingDurationForChristmasEve(DayLength.FULL);
 
-        jollydayCalendar = new JollydayCalendar(properties);
+        jollydayCalendar = new JollydayCalendar(settings);
 
         DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 24);
 
@@ -151,10 +152,10 @@ public class JollydayCalendarTest {
     @Test
     public void ensureWorkingDurationForNewYearsEveCanBeConfiguredToAWorkingDurationOfFullDay() {
 
-        Properties properties = new Properties();
-        properties.put("holiday.NEW_YEARS_EVE.vacationDay", DayLength.FULL.name());
+        Settings settings = new Settings();
+        settings.setWorkingDurationForNewYearsEve(DayLength.FULL);
 
-        jollydayCalendar = new JollydayCalendar(properties);
+        jollydayCalendar = new JollydayCalendar(settings);
 
         DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 31);
 
@@ -167,10 +168,10 @@ public class JollydayCalendarTest {
     @Test
     public void ensureWorkingDurationForChristmasEveCanBeConfiguredToAWorkingDurationOfMorning() {
 
-        Properties properties = new Properties();
-        properties.put("holiday.CHRISTMAS_EVE.vacationDay", DayLength.MORNING.name());
+        Settings settings = new Settings();
+        settings.setWorkingDurationForChristmasEve(DayLength.MORNING);
 
-        jollydayCalendar = new JollydayCalendar(properties);
+        jollydayCalendar = new JollydayCalendar(settings);
 
         DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 24);
 
@@ -183,10 +184,10 @@ public class JollydayCalendarTest {
     @Test
     public void ensureWorkingDurationForNewYearsEveCanBeConfiguredToAWorkingDurationOfNoon() {
 
-        Properties properties = new Properties();
-        properties.put("holiday.NEW_YEARS_EVE.vacationDay", DayLength.NOON.name());
+        Settings settings = new Settings();
+        settings.setWorkingDurationForNewYearsEve(DayLength.NOON);
 
-        jollydayCalendar = new JollydayCalendar(properties);
+        jollydayCalendar = new JollydayCalendar(settings);
 
         DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 31);
 
@@ -199,10 +200,10 @@ public class JollydayCalendarTest {
     @Test
     public void ensureWorkingDurationForChristmasEveCanBeConfiguredToAWorkingDurationOfZero() {
 
-        Properties properties = new Properties();
-        properties.put("holiday.CHRISTMAS_EVE.vacationDay", DayLength.ZERO.name());
+        Settings settings = new Settings();
+        settings.setWorkingDurationForChristmasEve(DayLength.ZERO);
 
-        jollydayCalendar = new JollydayCalendar(properties);
+        jollydayCalendar = new JollydayCalendar(settings);
 
         DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 24);
 
@@ -215,10 +216,10 @@ public class JollydayCalendarTest {
     @Test
     public void ensureWorkingDurationForNewYearsEveCanBeConfiguredToAWorkingDurationOfZero() {
 
-        Properties properties = new Properties();
-        properties.put("holiday.NEW_YEARS_EVE.vacationDay", DayLength.ZERO.name());
+        Settings settings = new Settings();
+        settings.setWorkingDurationForNewYearsEve(DayLength.ZERO);
 
-        jollydayCalendar = new JollydayCalendar(properties);
+        jollydayCalendar = new JollydayCalendar(settings);
 
         DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 31);
 

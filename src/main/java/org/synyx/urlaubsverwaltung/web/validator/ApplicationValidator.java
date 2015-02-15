@@ -13,6 +13,7 @@ import org.springframework.validation.Validator;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
+import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.util.PropertiesUtil;
 import org.synyx.urlaubsverwaltung.web.application.AppForm;
 
@@ -30,8 +31,6 @@ import java.util.Properties;
 @Component
 public class ApplicationValidator implements Validator {
 
-    private static final Logger LOG = Logger.getLogger(ApplicationValidator.class);
-
     private static final int MAX_CHARS = 200;
 
     private static final String ERROR_MANDATORY_FIELD = "error.mandatory.field";
@@ -46,19 +45,11 @@ public class ApplicationValidator implements Validator {
     private static final String FIELD_REASON = "reason";
     private static final String FIELD_ADDRESS = "address";
 
-    private static final String BUSINESS_PROPERTIES_FILE = "business.properties";
-    private static final String MAX_MONTHS_PROPERTY = "maximum.months";
-
-    private Properties businessProperties;
+    private final Settings settings;
 
     public ApplicationValidator() {
 
-        try {
-            this.businessProperties = PropertiesUtil.load(BUSINESS_PROPERTIES_FILE);
-        } catch (IOException ex) {
-            LOG.error("No properties file found.");
-            LOG.error(ex.getMessage(), ex);
-        }
+        this.settings = new Settings();
     }
 
     @Override
@@ -135,9 +126,7 @@ public class ApplicationValidator implements Validator {
 
     private void validateNotTooFarInTheFuture(DateMidnight date, Errors errors) {
 
-        String maximumMonthsProperty = businessProperties.getProperty(MAX_MONTHS_PROPERTY);
-        int maximumMonths = Integer.parseInt(maximumMonthsProperty);
-
+        Integer maximumMonths = settings.getMaximumMonthsToApplyForLeaveInAdvance();
         DateMidnight future = DateMidnight.now().plusMonths(maximumMonths);
 
         if (date.isAfter(future)) {
@@ -148,9 +137,7 @@ public class ApplicationValidator implements Validator {
 
     private void validateNotTooFarInThePast(DateMidnight date, Errors errors) {
 
-        String maximumMonthsProperty = businessProperties.getProperty(MAX_MONTHS_PROPERTY);
-        int maximumMonths = Integer.parseInt(maximumMonthsProperty);
-
+        Integer maximumMonths = settings.getMaximumMonthsToApplyForLeaveInAdvance();
         DateMidnight past = DateMidnight.now().minusMonths(maximumMonths);
 
         if (date.isBefore(past)) {
