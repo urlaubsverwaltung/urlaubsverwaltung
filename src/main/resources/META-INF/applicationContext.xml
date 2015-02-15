@@ -41,6 +41,7 @@
                 <value>classpath:application.properties</value>
                 <value>classpath:application.${env}.properties</value>
                 <value>classpath:business.properties</value>
+                <value>file:///${configFile}</value>
             </list>
         </property>
     </bean>
