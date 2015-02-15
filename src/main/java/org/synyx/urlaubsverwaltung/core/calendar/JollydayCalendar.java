@@ -37,7 +37,7 @@ import java.util.Set;
 @Component
 public class JollydayCalendar {
 
-    private static final String HOLIDAY_DEFINITION_FILE = "Holidays_custom.xml";
+    private static final String HOLIDAY_DEFINITION_FILE = "Holidays_de.xml";
 
     private final HolidayManager manager;
     private final SettingsService settingsService;
@@ -50,7 +50,7 @@ public class JollydayCalendar {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         URL url = cl.getResource(HOLIDAY_DEFINITION_FILE);
 
-        manager = HolidayManager.getInstance(url);
+        this.manager = HolidayManager.getInstance(url);
     }
 
     /**
@@ -62,7 +62,9 @@ public class JollydayCalendar {
      */
     boolean isPublicHoliday(DateMidnight date) {
 
-        if (manager.isHoliday(date.toLocalDate())) {
+        Settings settings = settingsService.getSettings();
+
+        if (manager.isHoliday(date.toLocalDate(), settings.getFederalState().getCodes())) {
             return true;
         }
 
@@ -99,7 +101,9 @@ public class JollydayCalendar {
 
     public Set<Holiday> getHolidays(int year) {
 
-        return manager.getHolidays(year);
+        Settings settings = settingsService.getSettings();
+
+        return manager.getHolidays(year, settings.getFederalState().getCodes());
     }
 
 

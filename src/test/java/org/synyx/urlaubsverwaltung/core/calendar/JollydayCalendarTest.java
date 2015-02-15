@@ -1,6 +1,8 @@
 
 package org.synyx.urlaubsverwaltung.core.calendar;
 
+import de.jollyday.Holiday;
+
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
 
@@ -11,6 +13,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
+import org.synyx.urlaubsverwaltung.core.settings.FederalState;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 
@@ -19,6 +22,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 
 import java.util.Properties;
+import java.util.Set;
 
 
 /**
@@ -36,6 +40,8 @@ public class JollydayCalendarTest {
 
         settingsService = Mockito.mock(SettingsService.class);
         jollydayCalendar = new JollydayCalendar(settingsService);
+
+        Mockito.when(settingsService.getSettings()).thenReturn(new Settings());
     }
 
 
@@ -207,6 +213,96 @@ public class JollydayCalendarTest {
         DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 31);
 
         BigDecimal workingDuration = jollydayCalendar.getWorkingDurationOfDate(testDate);
+
+        Assert.assertEquals("Wrong working duration", BigDecimal.ZERO, workingDuration);
+    }
+
+
+    @Test
+    public void ensureAssumptionDayIsAPublicHolidayForBayernMuenchen() {
+
+        Settings settings = new Settings();
+        settings.setFederalState(FederalState.BAYERN_MUENCHEN);
+
+        Mockito.when(settingsService.getSettings()).thenReturn(settings);
+
+        boolean isPublicHoliday = jollydayCalendar.isPublicHoliday(new DateMidnight(2015, DateTimeConstants.AUGUST,
+                    15));
+
+        Assert.assertTrue("Assumption Day should be recognized as public holiday", isPublicHoliday);
+    }
+
+
+    @Test
+    public void ensureAssumptionDayIsNoPublicHolidayForBerlin() {
+
+        Settings settings = new Settings();
+        settings.setFederalState(FederalState.BERLIN);
+
+        Mockito.when(settingsService.getSettings()).thenReturn(settings);
+
+        boolean isPublicHoliday = jollydayCalendar.isPublicHoliday(new DateMidnight(2015, DateTimeConstants.AUGUST,
+                    15));
+
+        Assert.assertFalse("Assumption Day should not be recognized as public holiday", isPublicHoliday);
+    }
+
+
+    @Test
+    public void ensureAssumptionDayIsNoPublicHolidayForBadenWuerttemberg() {
+
+        Settings settings = new Settings();
+        settings.setFederalState(FederalState.BADEN_WUERTTEMBERG);
+
+        Mockito.when(settingsService.getSettings()).thenReturn(settings);
+
+        boolean isPublicHoliday = jollydayCalendar.isPublicHoliday(new DateMidnight(2015, DateTimeConstants.AUGUST,
+                    15));
+
+        Assert.assertFalse("Assumption Day should not be recognized as public holiday", isPublicHoliday);
+    }
+
+
+    @Test
+    public void ensureCorrectWorkingDurationForAssumptionDayForBerlin() {
+
+        Settings settings = new Settings();
+        settings.setFederalState(FederalState.BERLIN);
+
+        Mockito.when(settingsService.getSettings()).thenReturn(settings);
+
+        BigDecimal workingDuration = jollydayCalendar.getWorkingDurationOfDate(new DateMidnight(2015,
+                    DateTimeConstants.AUGUST, 15));
+
+        Assert.assertEquals("Wrong working duration", BigDecimal.ONE.setScale(1), workingDuration);
+    }
+
+
+    @Test
+    public void ensureCorrectWorkingDurationForAssumptionDayForBadenWuerttemberg() {
+
+        Settings settings = new Settings();
+        settings.setFederalState(FederalState.BADEN_WUERTTEMBERG);
+
+        Mockito.when(settingsService.getSettings()).thenReturn(settings);
+
+        BigDecimal workingDuration = jollydayCalendar.getWorkingDurationOfDate(new DateMidnight(2015,
+                    DateTimeConstants.AUGUST, 15));
+
+        Assert.assertEquals("Wrong working duration", BigDecimal.ONE.setScale(1), workingDuration);
+    }
+
+
+    @Test
+    public void ensureCorrectWorkingDurationForAssumptionDayForBayernMuenchen() {
+
+        Settings settings = new Settings();
+        settings.setFederalState(FederalState.BAYERN_MUENCHEN);
+
+        Mockito.when(settingsService.getSettings()).thenReturn(settings);
+
+        BigDecimal workingDuration = jollydayCalendar.getWorkingDurationOfDate(new DateMidnight(2015,
+                    DateTimeConstants.AUGUST, 15));
 
         Assert.assertEquals("Wrong working duration", BigDecimal.ZERO, workingDuration);
     }

@@ -9,25 +9,37 @@ package org.synyx.urlaubsverwaltung.core.settings;
  */
 public enum FederalState {
 
-    BADEN_WUERTTEMBERG,
-    BAYERN,
-    BAYERN_MUENCHEN,
-    BAYERN_AUGSBURG,
-    BAYERN_WUERZBURG,
-    BAYERN_REGENSBURG,
-    BAYERN_INGOLSTADT,
+    BADEN_WUERTTEMBERG("bw"),
+    BAYERN("by"),
+    BAYERN_MUENCHEN("by", "mu"),
+    BAYERN_AUGSBURG("by", "ag"),
+    BAYERN_WUERZBURG("by", "wu"),
+    BAYERN_REGENSBURG("by", "re"),
+    BAYERN_INGOLSTADT("by", "in"),
     BERLIN,
-    BRANDENBURG,
+    BRANDENBURG("bb"),
     BREMEN,
     HAMBURG,
-    HESSEN,
-    MECKLENBURG_VORPOMMERN,
+    HESSEN("he"),
+    MECKLENBURG_VORPOMMERN("mv"),
     NIEDERSACHSEN,
-    NORDRHEIN_WESTFALEN,
-    RHEINLAND_PFALZ,
-    SAARLAND,
-    SACHSEN,
-    SACHSEN_ANHALT,
+    NORDRHEIN_WESTFALEN("nw"),
+    RHEINLAND_PFALZ("rp"),
+    SAARLAND("sl"),
+    SACHSEN("sn"),
+    SACHSEN_ANHALT("st"),
     SCHLESWIG_HOLSTEIN,
-    THUERINGEN
+    THUERINGEN("th");
+
+    private String[] codes;
+
+    FederalState(String... codes) {
+
+        this.codes = codes;
+    }
+
+    public String[] getCodes() {
+
+        return codes;
+    }
 }
