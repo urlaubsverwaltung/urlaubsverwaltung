@@ -252,6 +252,7 @@ $(function() {
             bookHoliday: function(from, to) {
 
                 var params = {
+                    personId: personId,
                     from :      from.format('YYYY-MM-DD'),
                     to   : to ? to  .format('YYYY-MM-DD') : undefined
                 };
