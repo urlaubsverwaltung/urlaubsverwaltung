@@ -39,7 +39,10 @@ import org.synyx.urlaubsverwaltung.web.util.GravatarUtil;
 
 import java.math.BigDecimal;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 
 /**
@@ -48,9 +51,9 @@ import java.util.*;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Controller
-public class PersonalOverviewController {
+public class PersonOverviewController {
 
-    private static final Logger LOG = Logger.getLogger(PersonalOverviewController.class);
+    private static final Logger LOG = Logger.getLogger(PersonOverviewController.class);
 
     @Autowired
     private PersonService personService;
@@ -115,18 +118,7 @@ public class PersonalOverviewController {
 
         if (sessionService.isOffice() || sessionService.isBoss()) {
             Person person = personService.getPersonByID(personId);
-            List<Person> persons;
-
-            if (person.isActive()) {
-                persons = personService.getActivePersons();
-            } else {
-                persons = personService.getInactivePersons();
-            }
-
-            model.addAttribute(ControllerConstants.PERSONS, persons);
-
             prepareOverview(person, parseYearParameter(year), model);
-
             model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
 
             return "person/overview";
