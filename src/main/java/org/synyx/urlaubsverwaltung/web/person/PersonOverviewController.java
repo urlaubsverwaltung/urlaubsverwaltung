@@ -76,50 +76,41 @@ public class PersonOverviewController {
     @Autowired
     private SickNoteService sickNoteService;
 
-    /**
-     * Default personal overview for user: information about one's leave accounts, entitlement of holidays, list of
-     * applications, etc. If there is no parameter set for year, take current year for view.
-     *
-     * @param  year
-     * @param  model
-     *
-     * @return
-     */
     @RequestMapping(value = "/overview", method = RequestMethod.GET)
-    public String showPersonalOverview(@RequestParam(value = ControllerConstants.YEAR, required = false) String year,
-        Model model) {
+    public String showOverview(@RequestParam(value = ControllerConstants.YEAR, required = false) String year) {
 
         if (sessionService.isInactive()) {
-            return ControllerConstants.LOGIN_LINK;
-        } else {
-            Person person = sessionService.getLoggedUser();
-            prepareOverview(person, parseYearParameter(year), model);
-            model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
-
-            return "person/overview";
+            return ControllerConstants.ERROR_JSP;
         }
+
+        Person user = sessionService.getLoggedUser();
+
+        if (StringUtils.hasText(year)) {
+            return "redirect:/web/staff/" + user.getId() + "/overview?year=" + year;
+        }
+
+        return "redirect:/web/staff/" + user.getId() + "/overview";
     }
 
 
-    /**
-     * The office is able to see overviews of staff with information about this person's leave accounts, entitlement of
-     * holidays, list of applications, etc. The default overview of a staff member (no parameter set for year) is for
-     * the current year.
-     *
-     * @param  personId
-     * @param  year
-     * @param  model
-     *
-     * @return
-     */
     @RequestMapping(value = "/staff/{personId}/overview", method = RequestMethod.GET)
-    public String showStaffOverview(@PathVariable("personId") Integer personId,
+    public String showOverview(@PathVariable("personId") Integer personId,
         @RequestParam(value = ControllerConstants.YEAR, required = false) String year, Model model) {
 
         if (sessionService.isOffice() || sessionService.isBoss()) {
             Person person = personService.getPersonByID(personId);
-            prepareOverview(person, parseYearParameter(year), model);
             model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
+            model.addAttribute(ControllerConstants.PERSON, person);
+
+            String url = GravatarUtil.createImgURL(person.getEmail());
+            model.addAttribute("gravatar", url);
+
+            Integer yearToShow = parseYearParameter(year);
+            prepareApplications(person, yearToShow, model);
+            prepareHolidayAccounts(person, yearToShow, model);
+            prepareSickNoteList(person, yearToShow, model);
+
+            model.addAttribute(ControllerConstants.YEAR, DateMidnight.now().getYear());
 
             return "person/overview";
         }
@@ -149,30 +140,6 @@ public class PersonOverviewController {
         }
 
         return year;
-    }
-
-
-    /**
-     * Prepares model for overview with given person and year.
-     *
-     * @param  person
-     * @param  year
-     * @param  model
-     */
-    private void prepareOverview(Person person, int year, Model model) {
-
-        prepareApplications(person, year, model);
-
-        prepareHolidayAccounts(person, year, model);
-
-        model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
-        model.addAttribute(ControllerConstants.PERSON, person);
-        model.addAttribute(ControllerConstants.YEAR, DateMidnight.now().getYear());
-
-        String url = GravatarUtil.createImgURL(person.getEmail());
-        model.addAttribute("gravatar", url);
-
-        prepareSickNoteList(person, year, model);
     }
 
 
