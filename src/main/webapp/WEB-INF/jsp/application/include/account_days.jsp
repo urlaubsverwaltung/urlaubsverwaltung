@@ -1,9 +1,3 @@
-<%-- 
-    Document   : account_days
-    Created on : 08.02.2012, 18:31:36
-    Author     : Aljona Murygina
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
@@ -11,7 +5,6 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <p>
-    <%--<spring:message code='overview.actual.entitlement'/>--%>
     Anspruch:
     <c:choose>
 
