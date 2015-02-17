@@ -168,16 +168,20 @@
 
                     var holidayService = Urlaubsverwaltung.HolidayService.create(webPrefix, apiPrefix, +personId);
 
-                    var yearToFetchFor = date.year();
+                    // NOTE: All moments are mutable!
+                    var startDateToCalculate = date.clone();
+                    var endDateToCalculate = date.clone();
+                    var startDate = startDateToCalculate.subtract(6, 'months');
+                    var endDate = endDateToCalculate.add(6, 'months');
 
                     // TODO: it's not nice at all to fetch holidays for two years...would be better if the methods to fetch holidays get a date instead of a year
                     $.when(
-                        holidayService.fetchPublic   ( yearToFetchFor ),
-                        holidayService.fetchPublic   ( yearToFetchFor+1 ),
-                        holidayService.fetchPersonal ( yearToFetchFor ),
-                        holidayService.fetchPersonal ( yearToFetchFor+1 )
+                        holidayService.fetchPublic   ( startDate.year() ),
+                        holidayService.fetchPublic   ( endDate.year() ),
+                        holidayService.fetchPersonal ( startDate.year() ),
+                        holidayService.fetchPersonal ( endDate.year() )
                     ).always(function() {
-                        Urlaubsverwaltung.Calendar.init(holidayService);
+                        Urlaubsverwaltung.Calendar.init(holidayService, date);
                     });
                 }
 

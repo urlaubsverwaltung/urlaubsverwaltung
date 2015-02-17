@@ -392,9 +392,8 @@ $(function() {
 
         }
 
-        function renderCalendar() {
+        function renderCalendar(date) {
 
-            var date = moment();
             // 0 index
             var calculatedNumberOfMonths = calculateNumberOfMonths();
 
@@ -557,8 +556,8 @@ $(function() {
 
         var View = {
             
-            display: function() {
-                $datepicker.html( renderCalendar()).addClass('unselectable');
+            display: function(date) {
+                $datepicker.html( renderCalendar(date)).addClass('unselectable');
             },
 
             displayNext: function() {
@@ -796,19 +795,22 @@ $(function() {
     var Calendar = {
         
         view: null,
+        date: null,
         
-        init: function(holidayService) {
+        init: function(holidayService, referenceDate) {
+
+            date = referenceDate;
 
             var a = Assertion.create (holidayService);
             view = View.create(a);
             var c = Controller.create(holidayService, view);
 
-            view.display();
+            view.display(date);
             c.bind();
         },
         
         reRender: function() {
-            view.display();
+            view.display(date);
             
         } 
     };
