@@ -1,42 +1,57 @@
-<%-- 
-    Document   : day-length-selector
-    Created on : 06.09.2012, 17:17:29
-    Author     : Aljona Murygina - murygina@synyx.de
---%>
-
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
-<style type="text/css">
+<script type="text/javascript">
+    $(document).ready(function () {
 
-    .half-day {
-        display: none;
-    }
+        var dayLength = $('input[name="howLong"]:checked').val();
 
-</style>
+        var $fullDay = $('.full-day');
+        var $halfDay = $('.half-day');
 
-<c:if test="${appForm.howLong != null}">
-    <script type="text/javascript">
-        $(document).ready(function() {
-                    
-            var dayLength = "<c:out value='${appForm.howLong}' />";
-            
-            if(dayLength.indexOf("FULL") != -1) {
-                $('.full-day').show(); $('.half-day').hide();
-            } 
-                
-            if(dayLength.indexOf("MORNING") != -1) {
-                $('.half-day').show(); $('.full-day').hide();
+        if (dayLength === 'FULL') {
+            $fullDay.show();
+            $halfDay.hide();
+        }
+
+        if (dayLength === 'MORNING') {
+            $halfDay.show();
+            $fullDay.hide();
+        }
+
+        if (dayLength === 'NOON') {
+            $halfDay.show();
+            $fullDay.hide();
+        }
+
+
+        // re-calculate vacation days when changing the day length
+
+        var urlPrefix = '<spring:url value="/api" />';
+        var personId = '<c:out value="${person.id}" />';
+
+        $('input[name="howLong"]').on('change', function () {
+
+            var dayLength = this.value;
+            var startDate;
+            var toDate;
+
+            if (dayLength === 'FULL') {
+                startDate = $('input#from').datepicker("getDate");
+                toDate = $('input#to').datepicker("getDate");
+            } else {
+                var atDate = $('input#at').datepicker("getDate");
+                startDate = atDate;
+                toDate = atDate;
             }
-                
-            if(dayLength.indexOf("NOON") != -1) {
-                $('.half-day').show(); $('.full-day').hide();
-            }
+
+            sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, ".days", true);
 
         });
 
-    </script>
-</c:if>
+    });
+
+</script>

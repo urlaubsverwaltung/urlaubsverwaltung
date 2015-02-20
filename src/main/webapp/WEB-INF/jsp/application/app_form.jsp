@@ -45,6 +45,7 @@
             if (from) {
                 preset('#from', from);
                 preset('#to'  , to || from);
+                preset('#at', from);
 
                 sendGetDaysRequest("<spring:url value='/api' />",
                         $("#from").datepicker("getDate"),
