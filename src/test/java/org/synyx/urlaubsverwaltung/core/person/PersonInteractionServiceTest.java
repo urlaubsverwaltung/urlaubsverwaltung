@@ -53,7 +53,7 @@ public class PersonInteractionServiceTest {
         examplePersonForm.setYear("2014");
         examplePersonForm.setAnnualVacationDays("28");
         examplePersonForm.setRemainingVacationDays("4");
-        examplePersonForm.setRemainingVacationDaysExpire(true);
+        examplePersonForm.setRemainingVacationDaysNotExpiring("3");
         examplePersonForm.setValidFrom(DateMidnight.now());
         examplePersonForm.setWorkingDays(Arrays.asList(Day.MONDAY.getDayOfWeek(), Day.TUESDAY.getDayOfWeek()));
         examplePersonForm.setPermissions(Arrays.asList(Role.USER));
@@ -125,6 +125,6 @@ public class PersonInteractionServiceTest {
             Mockito.eq(person));
         Mockito.verify(accountService).createHolidaysAccount(Mockito.eq(person),
             Mockito.eq(new DateMidnight(2014, 1, 1)), Mockito.eq(new DateMidnight(2014, 12, 31)),
-            Mockito.eq(new BigDecimal("28")), Mockito.eq(new BigDecimal("4")), Mockito.eq(true));
+            Mockito.eq(new BigDecimal("28")), Mockito.eq(new BigDecimal("4")), Mockito.eq(new BigDecimal("3")));
     }
 }

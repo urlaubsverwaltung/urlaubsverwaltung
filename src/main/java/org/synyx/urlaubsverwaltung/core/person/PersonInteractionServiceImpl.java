@@ -99,17 +99,18 @@ public class PersonInteractionServiceImpl implements PersonInteractionService {
 
         BigDecimal annualVacationDays = NumberUtil.parseNumber(personForm.getAnnualVacationDays(), locale);
         BigDecimal remainingVacationDays = NumberUtil.parseNumber(personForm.getRemainingVacationDays(), locale);
-        boolean expiring = personForm.isRemainingVacationDaysExpire();
+        BigDecimal remainingVacationDaysNotExpiring = NumberUtil.parseNumber(
+                personForm.getRemainingVacationDaysNotExpiring(), locale);
 
         // check if there is an existing account
         Account account = accountService.getHolidaysAccount(year, person);
 
         if (account == null) {
             accountService.createHolidaysAccount(person, validFrom, validTo, annualVacationDays, remainingVacationDays,
-                expiring);
+                remainingVacationDaysNotExpiring);
         } else {
             accountService.editHolidaysAccount(account, validFrom, validTo, annualVacationDays, remainingVacationDays,
-                expiring);
+                remainingVacationDaysNotExpiring);
         }
     }
 

@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import org.synyx.urlaubsverwaltung.DateFormat;
 import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
@@ -53,41 +52,34 @@ class AccountServiceImpl implements AccountService {
 
     @Override
     public void createHolidaysAccount(Person person, DateMidnight validFrom, DateMidnight validTo, BigDecimal days,
-        BigDecimal remaining, boolean remainingDaysExpire) {
+        BigDecimal remainingDays, BigDecimal remainingDaysNotExpiring) {
 
-        Account account = new Account(person, validFrom.toDate(), validTo.toDate(), days, remaining,
-                remainingDaysExpire);
+        Account account = new Account(person, validFrom.toDate(), validTo.toDate(), days, remainingDays,
+                remainingDaysNotExpiring);
         BigDecimal vacationDays = calculateActualVacationDays(account);
         account.setVacationDays(vacationDays);
         accountDAO.save(account);
 
-        LOG.info("Created holidays account for " + person.getLoginName() + " with following values: " + "{validFrom: "
-            + validFrom.toString(DateFormat.PATTERN) + ", validTo: " + validTo.toString(DateFormat.PATTERN)
-            + ", annualVacationDays: " + days + ", remainingDays: " + remaining + ", remainingDaysExpiring: "
-            + remainingDaysExpire + "}");
+        LOG.info("Created holidays account: " + account);
     }
 
 
     @Override
     public void editHolidaysAccount(Account account, DateMidnight validFrom, DateMidnight validTo, BigDecimal days,
-        BigDecimal remaining, boolean remainingDaysExpire) {
+        BigDecimal remainingDays, BigDecimal remainingDaysNotExpiring) {
 
         account.setValidFrom(validFrom);
         account.setValidTo(validTo);
         account.setAnnualVacationDays(days);
-        account.setRemainingVacationDays(remaining);
-        account.setRemainingVacationDaysExpire(remainingDaysExpire);
+        account.setRemainingVacationDays(remainingDays);
+        account.setRemainingVacationDaysNotExpiring(remainingDaysNotExpiring);
 
         BigDecimal vacationDays = calculateActualVacationDays(account);
         account.setVacationDays(vacationDays);
 
         accountDAO.save(account);
 
-        LOG.info("Edited holidays account of " + account.getPerson().getLoginName() + " with following values: "
-            + "{validFrom: " + validFrom.toString(DateFormat.PATTERN) + ", validTo: "
-            + validTo.toString(DateFormat.PATTERN)
-            + ", annualVacationDays: " + days + ", remainingDays: " + remaining + ", remainingDaysExpiring: "
-            + remainingDaysExpire + "}");
+        LOG.info("Edited holidays account: " + account);
     }
 
 
@@ -212,7 +204,7 @@ class AccountServiceImpl implements AccountService {
 
             if (lastYearsAccount != null) {
                 createHolidaysAccount(person, DateUtil.getFirstDayOfYear(year), DateUtil.getLastDayOfYear(year),
-                    lastYearsAccount.getAnnualVacationDays(), BigDecimal.ZERO, true);
+                    lastYearsAccount.getAnnualVacationDays(), BigDecimal.ZERO, BigDecimal.ZERO);
             } else {
                 // maybe user tries to apply for leave for past year --> no account information
                 // in this case just touch an account for this year with the data of the current year's account
@@ -220,7 +212,7 @@ class AccountServiceImpl implements AccountService {
                 Account currentYearAccount = getHolidaysAccount(DateMidnight.now().getYear(), person);
 
                 createHolidaysAccount(person, DateUtil.getFirstDayOfYear(year), DateUtil.getLastDayOfYear(year),
-                    currentYearAccount.getAnnualVacationDays(), BigDecimal.ZERO, true);
+                    currentYearAccount.getAnnualVacationDays(), BigDecimal.ZERO, BigDecimal.ZERO);
             }
 
             account = getHolidaysAccount(year, person);

@@ -42,11 +42,12 @@ public interface AccountService {
      * @param  validTo {@link DateMidnight}, e.g. 31.12.2012
      * @param  days {@link BigDecimal}   number of annual vacation days (method calculates the actual vacation days
      *               using the validity period)
-     * @param  remaining {@link BigDecimal} number of remaining vacation days
-     * @param  remainingDaysExpire  boolean true if remaining vacation days expire on 1st April, else false
+     * @param  remainingDays {@link BigDecimal} number of remaining vacation days
+     * @param  remainingDaysNotExpiring {@link BigDecimal} number of remaining vacation days that do not expire on 1st
+     *                                   April
      */
     void createHolidaysAccount(Person person, DateMidnight validFrom, DateMidnight validTo, BigDecimal days,
-        BigDecimal remaining, boolean remainingDaysExpire);
+        BigDecimal remainingDays, BigDecimal remainingDaysNotExpiring);
 
 
     /**
@@ -71,11 +72,12 @@ public interface AccountService {
      * @param  validTo {@link DateMidnight}, e.g. 31.12.2012
      * @param  days {@link BigDecimal} number of annual vacation days (method calculates the actual vacation days using
      *               the validity period)
-     * @param  remaining {@link BigDecimal} number of remaining vacation days
-     * @param  remainingDaysExpire  boolean true if remaining vacation days expire on 1st April, else false
+     * @param  remainingDays {@link BigDecimal} number of remaining vacation days
+     * @param  remainingDaysNotExpiring {@link BigDecimal} number of remaining vacation days that do not expire on 1st
+     *                                   April
      */
     void editHolidaysAccount(Account account, DateMidnight validFrom, DateMidnight validTo, BigDecimal days,
-        BigDecimal remaining, boolean remainingDaysExpire);
+        BigDecimal remainingDays, BigDecimal remainingDaysNotExpiring);
 
 
     /**

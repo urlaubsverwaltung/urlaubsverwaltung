@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.account;
 
+import com.google.common.base.MoreObjects;
+
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 
@@ -41,11 +43,11 @@ public class Account extends AbstractPersistable<Integer> {
     // days for a year describes the field vacationDays
     private BigDecimal annualVacationDays;
     private BigDecimal vacationDays;
-    private BigDecimal remainingVacationDays;
 
-    // if true: remaining vacation days expire on 1st Apr.
-    // if false: remaining vacation days don't expire and may be used even after Apr. (until Dec.)
-    private boolean remainingVacationDaysExpire;
+    // remaining vacation days from the last year, if it's after 1st April, only the not expiring remaining vacation
+    // days may be used
+    private BigDecimal remainingVacationDays;
+    private BigDecimal remainingVacationDaysNotExpiring;
 
     public Account() {
 
@@ -54,14 +56,14 @@ public class Account extends AbstractPersistable<Integer> {
 
 
     public Account(Person person, Date validFrom, Date validTo, BigDecimal annualVacationDays,
-        BigDecimal remainingVacationDays, boolean remainingVacationDaysExpire) {
+        BigDecimal remainingVacationDays, BigDecimal remainingVacationDaysNotExpiring) {
 
         this.person = person;
         this.validFrom = validFrom;
         this.validTo = validTo;
         this.annualVacationDays = annualVacationDays;
         this.remainingVacationDays = remainingVacationDays;
-        this.remainingVacationDaysExpire = remainingVacationDaysExpire;
+        this.remainingVacationDaysNotExpiring = remainingVacationDaysNotExpiring;
     }
 
     public Person getPerson() {
@@ -100,15 +102,15 @@ public class Account extends AbstractPersistable<Integer> {
     }
 
 
-    public boolean isRemainingVacationDaysExpire() {
+    public BigDecimal getRemainingVacationDaysNotExpiring() {
 
-        return remainingVacationDaysExpire;
+        return remainingVacationDaysNotExpiring;
     }
 
 
-    public void setRemainingVacationDaysExpire(boolean remainingVacationDaysExpire) {
+    public void setRemainingVacationDaysNotExpiring(BigDecimal remainingVacationDaysNotExpiring) {
 
-        this.remainingVacationDaysExpire = remainingVacationDaysExpire;
+        this.remainingVacationDaysNotExpiring = remainingVacationDaysNotExpiring;
     }
 
 
@@ -167,5 +169,22 @@ public class Account extends AbstractPersistable<Integer> {
     public int getYear() {
 
         return new DateTime(this.validFrom).toDateMidnight().getYear();
+    }
+
+
+    @Override
+    public String toString() {
+
+        MoreObjects.ToStringHelper toStringHelper = MoreObjects.toStringHelper(this);
+
+        toStringHelper.add("person", getPerson().getLoginName());
+        toStringHelper.add("validFrom", getValidFrom());
+        toStringHelper.add("validTo", getValidTo());
+        toStringHelper.add("annualVacationDays", getAnnualVacationDays());
+        toStringHelper.add("vacationDays", getVacationDays());
+        toStringHelper.add("remainingVacationDays", getRemainingVacationDays());
+        toStringHelper.add("remainingVacationDaysNotExpiring", getRemainingVacationDaysNotExpiring());
+
+        return toStringHelper.toString();
     }
 }

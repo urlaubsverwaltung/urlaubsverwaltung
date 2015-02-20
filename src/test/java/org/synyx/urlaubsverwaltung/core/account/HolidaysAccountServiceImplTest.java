@@ -29,8 +29,7 @@ public class HolidaysAccountServiceImplTest {
 
     private AccountServiceImpl service;
     private AccountDAO accountDAO;
-    private OwnCalendarService calendarService;
-    private Account account;
+
     private Person person;
 
     @Before
@@ -39,23 +38,18 @@ public class HolidaysAccountServiceImplTest {
         accountDAO = Mockito.mock(AccountDAO.class);
 
         WorkingTimeService workingTimeService = Mockito.mock(WorkingTimeService.class);
-        calendarService = new OwnCalendarService(new JollydayCalendar(), workingTimeService);
+        OwnCalendarService calendarService = new OwnCalendarService(new JollydayCalendar(), workingTimeService);
         service = new AccountServiceImpl(accountDAO, calendarService);
 
         person = new Person();
         person.setLoginName("horscht");
-
-        DateMidnight validFrom = new DateMidnight(2012, DateTimeConstants.JANUARY, 1);
-        DateMidnight validTo = new DateMidnight(2012, DateTimeConstants.DECEMBER, 31);
-
-        account = new Account(person, validFrom.toDate(), validTo.toDate(), BigDecimal.valueOf(28),
-                BigDecimal.valueOf(5), true);
     }
 
 
     @Test
     public void testGetAccount() {
 
+        Account account = new Account();
         Mockito.when(accountDAO.getHolidaysAccountByYearAndPerson(2012, person)).thenReturn(account);
 
         Account result = service.getHolidaysAccount(2012, person);
@@ -71,8 +65,8 @@ public class HolidaysAccountServiceImplTest {
         DateMidnight startDate = new DateMidnight(2012, DateTimeConstants.AUGUST, 1);
         DateMidnight endDate = new DateMidnight(2012, DateTimeConstants.DECEMBER, 31);
 
-        account = new Account(person, startDate.toDate(), endDate.toDate(), BigDecimal.valueOf(28), BigDecimal.ZERO,
-                true);
+        Account account = new Account(person, startDate.toDate(), endDate.toDate(), BigDecimal.valueOf(28),
+                BigDecimal.ZERO, BigDecimal.ZERO);
 
         BigDecimal result = service.calculateActualVacationDays(account);
 
@@ -86,8 +80,8 @@ public class HolidaysAccountServiceImplTest {
         DateMidnight startDate = new DateMidnight(2012, DateTimeConstants.SEPTEMBER, 1);
         DateMidnight endDate = new DateMidnight(2012, DateTimeConstants.DECEMBER, 31);
 
-        account = new Account(person, startDate.toDate(), endDate.toDate(), BigDecimal.valueOf(28), BigDecimal.ZERO,
-                true);
+        Account account = new Account(person, startDate.toDate(), endDate.toDate(), BigDecimal.valueOf(28),
+                BigDecimal.ZERO, BigDecimal.ZERO);
 
         BigDecimal result = service.calculateActualVacationDays(account);
 
@@ -101,8 +95,8 @@ public class HolidaysAccountServiceImplTest {
         DateMidnight startDate = new DateMidnight(2012, DateTimeConstants.SEPTEMBER, 1);
         DateMidnight endDate = new DateMidnight(2012, DateTimeConstants.DECEMBER, 31);
 
-        account = new Account(person, startDate.toDate(), endDate.toDate(), BigDecimal.valueOf(33.3), BigDecimal.ZERO,
-                true);
+        Account account = new Account(person, startDate.toDate(), endDate.toDate(), BigDecimal.valueOf(33.3),
+                BigDecimal.ZERO, BigDecimal.ZERO);
 
         BigDecimal result = service.calculateActualVacationDays(account);
 
@@ -116,8 +110,8 @@ public class HolidaysAccountServiceImplTest {
         DateMidnight startDate = new DateMidnight(2013, DateTimeConstants.MAY, 15);
         DateMidnight endDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 31);
 
-        account = new Account(person, startDate.toDate(), endDate.toDate(), BigDecimal.valueOf(28), BigDecimal.ZERO,
-                true);
+        Account account = new Account(person, startDate.toDate(), endDate.toDate(), BigDecimal.valueOf(28),
+                BigDecimal.ZERO, BigDecimal.ZERO);
 
         BigDecimal result = service.calculateActualVacationDays(account);
 
@@ -131,8 +125,8 @@ public class HolidaysAccountServiceImplTest {
         DateMidnight startDate = new DateMidnight(2013, DateTimeConstants.MAY, 14);
         DateMidnight endDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 31);
 
-        account = new Account(person, startDate.toDate(), endDate.toDate(), BigDecimal.valueOf(28), BigDecimal.ZERO,
-                true);
+        Account account = new Account(person, startDate.toDate(), endDate.toDate(), BigDecimal.valueOf(28),
+                BigDecimal.ZERO, BigDecimal.ZERO);
 
         BigDecimal result = service.calculateActualVacationDays(account);
 
@@ -146,8 +140,8 @@ public class HolidaysAccountServiceImplTest {
         DateMidnight startDate = new DateMidnight(2013, DateTimeConstants.NOVEMBER, 1);
         DateMidnight endDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 31);
 
-        account = new Account(person, startDate.toDate(), endDate.toDate(), BigDecimal.valueOf(30), BigDecimal.ZERO,
-                true);
+        Account account = new Account(person, startDate.toDate(), endDate.toDate(), BigDecimal.valueOf(30),
+                BigDecimal.ZERO, BigDecimal.ZERO);
 
         BigDecimal result = service.calculateActualVacationDays(account);
 
@@ -161,8 +155,8 @@ public class HolidaysAccountServiceImplTest {
         DateMidnight startDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 1);
         DateMidnight endDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 31);
 
-        account = new Account(person, startDate.toDate(), endDate.toDate(), BigDecimal.valueOf(30), BigDecimal.ZERO,
-                true);
+        Account account = new Account(person, startDate.toDate(), endDate.toDate(), BigDecimal.valueOf(30),
+                BigDecimal.ZERO, BigDecimal.ZERO);
 
         BigDecimal result = service.calculateActualVacationDays(account);
 
@@ -176,8 +170,8 @@ public class HolidaysAccountServiceImplTest {
         DateMidnight startDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 15);
         DateMidnight endDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 31);
 
-        account = new Account(person, startDate.toDate(), endDate.toDate(), BigDecimal.valueOf(30), BigDecimal.ZERO,
-                true);
+        Account account = new Account(person, startDate.toDate(), endDate.toDate(), BigDecimal.valueOf(30),
+                BigDecimal.ZERO, BigDecimal.ZERO);
 
         BigDecimal result = service.calculateActualVacationDays(account);
 
@@ -191,8 +185,8 @@ public class HolidaysAccountServiceImplTest {
         DateMidnight startDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 1);
         DateMidnight endDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 16);
 
-        account = new Account(person, startDate.toDate(), endDate.toDate(), BigDecimal.valueOf(30), BigDecimal.ZERO,
-                true);
+        Account account = new Account(person, startDate.toDate(), endDate.toDate(), BigDecimal.valueOf(30),
+                BigDecimal.ZERO, BigDecimal.ZERO);
 
         BigDecimal result = service.calculateActualVacationDays(account);
 
@@ -203,11 +197,11 @@ public class HolidaysAccountServiceImplTest {
     @Test
     public void testGetOrCreateAccount() {
 
-        Account a = new Account(person, new DateMidnight(2012, DateTimeConstants.JANUARY, 1).toDate(),
+        Account account = new Account(person, new DateMidnight(2012, DateTimeConstants.JANUARY, 1).toDate(),
                 new DateMidnight(2012, DateTimeConstants.DECEMBER, 31).toDate(), BigDecimal.valueOf(28),
-                BigDecimal.valueOf(5), true);
+                BigDecimal.valueOf(5), BigDecimal.ZERO);
 
-        Mockito.when(accountDAO.getHolidaysAccountByYearAndPerson(2012, person)).thenReturn(a);
+        Mockito.when(accountDAO.getHolidaysAccountByYearAndPerson(2012, person)).thenReturn(account);
 
         service.getOrCreateNewAccount(2013, person);
 

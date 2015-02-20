@@ -53,7 +53,7 @@ public class PersonForm {
 
     private String remainingVacationDays;
 
-    private boolean remainingVacationDaysExpire;
+    private String remainingVacationDaysNotExpiring;
 
     private DateMidnight validFrom;
 
@@ -88,7 +88,8 @@ public class PersonForm {
             this.monthTo = String.valueOf(account.getValidTo().getMonthOfYear());
             this.annualVacationDays = NumberUtil.formatNumber(account.getAnnualVacationDays(), locale);
             this.remainingVacationDays = NumberUtil.formatNumber(account.getRemainingVacationDays(), locale);
-            this.remainingVacationDaysExpire = account.isRemainingVacationDaysExpire();
+            this.remainingVacationDaysNotExpiring = NumberUtil.formatNumber(
+                    account.getRemainingVacationDaysNotExpiring(), locale);
         } else {
             setDefaultValuesForValidity();
         }
@@ -243,15 +244,15 @@ public class PersonForm {
     }
 
 
-    public boolean isRemainingVacationDaysExpire() {
+    public String getRemainingVacationDaysNotExpiring() {
 
-        return remainingVacationDaysExpire;
+        return remainingVacationDaysNotExpiring;
     }
 
 
-    public void setRemainingVacationDaysExpire(boolean remainingVacationDaysExpire) {
+    public void setRemainingVacationDaysNotExpiring(String remainingVacationDaysNotExpiring) {
 
-        this.remainingVacationDaysExpire = remainingVacationDaysExpire;
+        this.remainingVacationDaysNotExpiring = remainingVacationDaysNotExpiring;
     }
 
 
