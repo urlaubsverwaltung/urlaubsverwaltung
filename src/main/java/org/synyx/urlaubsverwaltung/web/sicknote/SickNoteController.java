@@ -193,6 +193,10 @@ public class SickNoteController {
         }
 
         for (SickNote sickNote : sickNotes) {
+            if (!sickNote.isActive()) {
+                continue;
+            }
+
             Person person = sickNote.getPerson();
 
             if (sickNote.getType().equals(SickNoteType.SICK_NOTE_CHILD)) {

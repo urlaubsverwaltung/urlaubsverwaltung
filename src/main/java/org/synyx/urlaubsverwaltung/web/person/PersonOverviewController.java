@@ -154,6 +154,10 @@ public class PersonOverviewController {
         BigDecimal childSickDaysWithAUB = BigDecimal.ZERO;
 
         for (SickNote sickNote : sickNotes) {
+            if (!sickNote.isActive()) {
+                continue;
+            }
+
             if (sickNote.getType().equals(SickNoteType.SICK_NOTE_CHILD)) {
                 childSickDays = childSickDays.add(sickNote.getWorkDays());
 
