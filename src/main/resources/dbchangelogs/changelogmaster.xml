@@ -12,5 +12,6 @@
     <include file="dbchangelogs/changelog-0.7-create-notifications-table.xml"/>
     <include file="dbchangelogs/changelog-0.8-clean-up-of-tables.xml"/>
     <include file="dbchangelogs/changelog-0.9-add-person-reference-to-comment-table.xml"/>
+    <include file="dbchangelogs/changelog-2.4.1-add-not-expiring-remaining-vacation-days.xml"/>
 
 </databaseChangeLog>
