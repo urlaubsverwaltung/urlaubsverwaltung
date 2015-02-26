@@ -105,7 +105,10 @@ public class ApplicationValidator implements Validator {
             DateMidnight date = applicationForLeave.getStartDateHalf();
 
             validateNotNull(date, FIELD_START_DATE_HALF, errors);
-            validatePeriod(date, date, errors);
+
+            if (date != null) {
+                validatePeriod(date, date, errors);
+            }
         }
     }
 

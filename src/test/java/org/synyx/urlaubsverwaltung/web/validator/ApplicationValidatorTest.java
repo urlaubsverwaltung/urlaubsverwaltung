@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.web.validator;
 
 import org.joda.time.DateMidnight;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -114,6 +115,50 @@ public class ApplicationValidatorTest {
 
         Mockito.verifyZeroInteractions(errors);
         Mockito.reset(errors);
+    }
+
+
+    @Test
+    public void ensureDoesNotCheckPeriodIfStartDateIsNull() {
+
+        appForm.setHowLong(DayLength.FULL);
+        appForm.setStartDate(null);
+        appForm.setEndDate(new DateMidnight(2012, 1, 12));
+
+        try {
+            validator.validate(appForm, errors);
+        } catch (NullPointerException ex) {
+            Assert.fail("Should not try to check the period if the date is null");
+        }
+    }
+
+
+    @Test
+    public void ensureDoesNotCheckPeriodIfEndDateIsNull() {
+
+        appForm.setHowLong(DayLength.FULL);
+        appForm.setStartDate(new DateMidnight(2012, 1, 12));
+        appForm.setEndDate(null);
+
+        try {
+            validator.validate(appForm, errors);
+        } catch (NullPointerException ex) {
+            Assert.fail("Should not try to check the period if the date is null");
+        }
+    }
+
+
+    @Test
+    public void ensureDoesNotCheckPeriodIfStartDateHalfIsNull() {
+
+        appForm.setHowLong(DayLength.MORNING);
+        appForm.setStartDateHalf(null);
+
+        try {
+            validator.validate(appForm, errors);
+        } catch (NullPointerException ex) {
+            Assert.fail("Should not try to check the period if the date is null");
+        }
     }
 
 
