@@ -49,7 +49,7 @@ public class ApplicationForLeaveStatisticsController {
     @RequestMapping(value = "/statistics", method = RequestMethod.POST)
     public String applicationForLeaveStatistics(@ModelAttribute("filterRequest") FilterRequest filterRequest) {
 
-        if (sessionService.isOffice()) {
+        if (sessionService.isBoss()) {
             DateMidnight now = DateMidnight.now();
             DateMidnight from = now;
             DateMidnight to = now;
@@ -83,7 +83,7 @@ public class ApplicationForLeaveStatisticsController {
     public String applicationForLeaveStatistics(@RequestParam("from") String from,
         @RequestParam("to") String to, Model model) {
 
-        if (sessionService.isOffice()) {
+        if (sessionService.isBoss()) {
             DateTimeFormatter formatter = DateTimeFormat.forPattern(DateFormat.PATTERN);
             DateMidnight fromDate = DateMidnight.parse(from, formatter);
             DateMidnight toDate = DateMidnight.parse(to, formatter);
