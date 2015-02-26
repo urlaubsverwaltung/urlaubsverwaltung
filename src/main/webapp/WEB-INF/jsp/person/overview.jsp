@@ -216,20 +216,18 @@
                         </p>
                         <c:choose>
                             <c:when test="${person.id == loggedUser.id}">
-                                <c:set var="NEW_APPLICATION_URL" value ="${URL_PREFIX}/application/new" />
+                                <a class="btn btn-default pull-right" href="${URL_PREFIX}/application/new">
+                                    <i class="fa fa-pencil"></i> <span class="hidden-xs"><spring:message code="action.apply.vacation"/></span>
+                                </a>
                             </c:when>
                             <c:otherwise>
                                 <sec:authorize access="hasRole('OFFICE')">
-                                    <c:if test="${person.id != loggedUser.id}">
-                                        <c:set var="NEW_APPLICATION_URL" value ="${URL_PREFIX}/application/new?personId=${person.id}" />
-                                    </c:if>
+                                    <a class="btn btn-default pull-right" href="${URL_PREFIX}/application/new?personId=${person.id}">
+                                        <i class="fa fa-pencil"></i> <span class="hidden-xs"><spring:message code="action.apply.vacation"/></span>
+                                    </a>
                                 </sec:authorize>
                             </c:otherwise>
                         </c:choose>
-                        <a class="btn btn-default pull-right" href="${NEW_APPLICATION_URL}">
-                            <i class="fa fa-pencil"></i> <span class="hidden-xs"><spring:message code="action.apply.vacation"/></span>
-                        </a>
-
 
                     </legend>
 

@@ -126,12 +126,12 @@
             <div class="col-md-7">
                 <select id="person-select" class="form-control" onchange="window.location.href=this.options
                                                         [this.selectedIndex].value">
-                    <option value="${URL_PREFIX}/${person.id}/application/new" selected="selected">
+                    <option value="${URL_PREFIX}/application/new?personId=${person.id}" selected="selected">
                         <c:out value="${person.niceName}"/>
                     </option>
-                    <c:forEach items="${personList}" var="p">
+                    <c:forEach items="${persons}" var="p">
                         <c:if test="${person.id != p.id}">
-                            <option value="${URL_PREFIX}/${p.id}/application/new">
+                            <option value="${URL_PREFIX}/application/new?personId=${p.id}">
                                 <c:out value="${p.niceName}"/>
                             </option>
                         </c:if>
@@ -260,18 +260,20 @@
     <div class="col-md-7">
         <form:select path="rep" id="rep" size="1" class="form-control">
             <option value="-1"><spring:message code='app.no.rep'/></option>
-            <c:forEach items="${persons}" var="person">
+            <c:forEach items="${persons}" var="representant">
 
                <c:choose>
-                   <c:when test="${appForm.rep.id == person.id}">
-                       <form:option value="${person.id}" selected="selected">
-                           <c:out value="${person.niceName}" />
+                   <c:when test="${appForm.rep.id == representant.id}">
+                       <form:option value="${representant.id}" selected="selected">
+                           <c:out value="${representant.niceName}" />
                        </form:option>
                    </c:when>
                    <c:otherwise>
-                       <form:option value="${person.id}">
-                           <c:out value="${person.niceName}" />
-                       </form:option>
+                       <c:if test="${person.id != representant.id}">
+                           <form:option value="${representant.id}">
+                               <c:out value="${representant.niceName}" />
+                           </form:option>
+                       </c:if>
                    </c:otherwise>
                </c:choose>
             </c:forEach>

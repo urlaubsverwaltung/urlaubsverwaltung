@@ -77,26 +77,6 @@ public class PersonServiceTest {
 
 
     @Test
-    public void ensureGetAllPersonsExceptAGivenOneReturnsAllPersonsExceptTheGivenOne() {
-
-        Person hansPeter = new Person("hpeter", "Peter", "Hans", "hpeter@foo.de");
-        Person horstDieter = new Person("hdieter", "Horst", "Dieter", "hdieter@foo.de");
-        Person berndMeier = new Person("bmeier", "Meier", "Bernd", "bmeier@foo.de");
-
-        List<Person> allPersons = Arrays.asList(hansPeter, horstDieter, berndMeier);
-
-        Mockito.when(personDAO.findActive()).thenReturn(allPersons);
-
-        List<Person> filteredList = service.getAllPersonsExcept(horstDieter);
-
-        Assert.assertEquals("Wrong number of persons", 2, filteredList.size());
-
-        Assert.assertTrue("Missing person", filteredList.contains(hansPeter));
-        Assert.assertTrue("Missing person", filteredList.contains(berndMeier));
-    }
-
-
-    @Test
     public void ensureGetPersonsByRoleReturnsOnlyPersonsWithTheGivenRole() {
 
         Person user = new Person();

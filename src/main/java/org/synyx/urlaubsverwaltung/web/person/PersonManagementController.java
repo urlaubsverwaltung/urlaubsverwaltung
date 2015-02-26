@@ -45,9 +45,8 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 public class PersonManagementController {
 
-    private static final String ACTIVE_LINK = "/staff";
-    private static final String NEW_LINK = ACTIVE_LINK + "/new";
-    private static final String EDIT_LINK = ACTIVE_LINK + "/{personId}/edit";
+    private static final String NEW_LINK = "/staff/new";
+    private static final String EDIT_LINK = "/staff/{personId}/edit";
 
     @Autowired
     private PersonInteractionService personInteractionService;

@@ -78,12 +78,4 @@ public interface PersonService {
      * @return  returns all inactive persons
      */
     List<Person> getInactivePersons();
-
-
-    /**
-     * returns all persons except that one that has the given id.
-     *
-     * @return  returns all persons in a list
-     */
-    List<Person> getAllPersonsExcept(Person person);
 }
