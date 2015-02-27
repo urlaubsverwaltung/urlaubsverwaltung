@@ -101,12 +101,11 @@ public class TestDataCreationService {
 
         int currentYear = DateMidnight.now().getYear();
 
-        PersonForm personForm = new PersonForm();
+        PersonForm personForm = new PersonForm(DateMidnight.now().getYear());
         personForm.setLoginName(login);
         personForm.setLastName(lastName);
         personForm.setFirstName(firstName);
         personForm.setEmail(email);
-        personForm.setYear(String.valueOf(currentYear));
         personForm.setAnnualVacationDays(new BigDecimal("28.5"));
         personForm.setRemainingVacationDays(new BigDecimal("5"));
         personForm.setRemainingVacationDaysExpire(true);

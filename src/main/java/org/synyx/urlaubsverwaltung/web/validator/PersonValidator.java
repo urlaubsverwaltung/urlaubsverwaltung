@@ -4,7 +4,6 @@ package org.synyx.urlaubsverwaltung.web.validator;
 import org.apache.log4j.Logger;
 
 import org.joda.time.DateMidnight;
-import org.joda.time.IllegalFieldValueException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -65,7 +64,6 @@ public class PersonValidator implements Validator {
         + "[a-zäöüß0-9-]+(\\.[a-zäöüß0-9-]+)*\\.([a-z]{2,})$";
 
     private static final String MAX_DAYS = "annual.vacation.max";
-    private static final int MAX_LIMIT_OF_YEARS = 10;
     private static final int MAX_CHARS = 50;
 
     private static final String BUSINESS_PROPERTIES_FILE = "business.properties";
@@ -104,8 +102,6 @@ public class PersonValidator implements Validator {
         validateName(form.getLastName(), LAST_NAME, errors);
 
         validateEmail(form.getEmail(), errors);
-
-        validateYear(form.getYear(), errors);
 
         validatePeriod(form, errors);
 
@@ -192,54 +188,34 @@ public class PersonValidator implements Validator {
     }
 
 
-    /**
-     * This method checks if the field year is filled and if it is filled, it checks if the year entry makes sense (at
-     * the moment: from 2010 - 2030 alright)
-     *
-     * @param  yearForm
-     * @param  errors
-     */
-    protected void validateYear(String yearForm, Errors errors) {
-
-        // is year field filled?
-        if (!StringUtils.hasText(yearForm)) {
-            errors.rejectValue(YEAR, ERROR_MANDATORY_FIELD);
-        } else {
-            try {
-                int year = Integer.parseInt(yearForm);
-
-                int now = DateMidnight.now().getYear();
-
-                if (year < (now - MAX_LIMIT_OF_YEARS + 1) || year > (now + MAX_LIMIT_OF_YEARS)) {
-                    errors.rejectValue(YEAR, ERROR_ENTRY);
-                }
-            } catch (NumberFormatException ex) {
-                errors.rejectValue(YEAR, ERROR_ENTRY);
-            }
-        }
-    }
-
-
-    /**
-     * Validates that from date is before to date, i.e. is a valid period.
-     *
-     * @param  form  PersonForm
-     * @param  errors  Errors
-     */
     protected void validatePeriod(PersonForm form, Errors errors) {
 
-        try {
-            DateMidnight from = new DateMidnight(Integer.parseInt(form.getYear()),
-                    Integer.parseInt(form.getMonthFrom()), Integer.parseInt(form.getDayFrom()));
+        DateMidnight holidaysAccountValidFrom = form.getHolidaysAccountValidFrom();
+        DateMidnight holidaysAccountValidTo = form.getHolidaysAccountValidTo();
 
-            DateMidnight to = new DateMidnight(Integer.parseInt(form.getYear()), Integer.parseInt(form.getMonthTo()),
-                    Integer.parseInt(form.getDayTo()));
+        if (holidaysAccountValidFrom == null) {
+            // may be that date field is null because of cast exception, than there is already a field error
+            if (errors.getFieldErrors("holidaysAccountValidFrom").isEmpty()) {
+                errors.rejectValue("holidaysAccountValidFrom", ERROR_MANDATORY_FIELD);
+            }
+        }
 
-            if (!from.isBefore(to)) {
+        if (holidaysAccountValidTo == null) {
+            // may be that date field is null because of cast exception, than there is already a field error
+            if (errors.getFieldErrors("holidaysAccountValidTo").isEmpty()) {
+                errors.rejectValue("holidaysAccountValidTo", ERROR_MANDATORY_FIELD);
+            }
+        }
+
+        if (holidaysAccountValidFrom != null && holidaysAccountValidTo != null) {
+            boolean periodIsNotWithinOneYear = holidaysAccountValidFrom.getYear() != form.getHolidaysAccountYear()
+                || holidaysAccountValidTo.getYear() != form.getHolidaysAccountYear();
+            boolean periodIsOnlyOneDay = holidaysAccountValidFrom.equals(holidaysAccountValidTo);
+            boolean beginOfPeriodIsAfterEndOfPeriod = holidaysAccountValidFrom.isAfter(holidaysAccountValidTo);
+
+            if (periodIsNotWithinOneYear || periodIsOnlyOneDay || beginOfPeriodIsAfterEndOfPeriod) {
                 errors.reject("error.period");
             }
-        } catch (IllegalFieldValueException ex) {
-            errors.reject("error.period");
         }
     }
 

@@ -2,8 +2,7 @@
 package org.synyx.urlaubsverwaltung.web;
 
 /**
- * Constants concerning all controllers: {@link org.synyx.urlaubsverwaltung.web.person.PersonController} and
- * {@link org.synyx.urlaubsverwaltung.web.application.ApplicationController}.
+ * Constants concerning all controllers.
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */

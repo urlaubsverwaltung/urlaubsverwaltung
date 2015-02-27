@@ -85,21 +85,15 @@ public class PersonInteractionServiceImpl implements PersonInteractionService {
 
     private void touchAccount(Person person, PersonForm personForm) {
 
-        int year = Integer.parseInt(personForm.getYear());
-        int dayFrom = Integer.parseInt(personForm.getDayFrom());
-        int monthFrom = Integer.parseInt(personForm.getMonthFrom());
-        int dayTo = Integer.parseInt(personForm.getDayTo());
-        int monthTo = Integer.parseInt(personForm.getMonthTo());
-
-        DateMidnight validFrom = new DateMidnight(year, monthFrom, dayFrom);
-        DateMidnight validTo = new DateMidnight(year, monthTo, dayTo);
+        DateMidnight validFrom = personForm.getHolidaysAccountValidFrom();
+        DateMidnight validTo = personForm.getHolidaysAccountValidTo();
 
         BigDecimal annualVacationDays = personForm.getAnnualVacationDays();
         BigDecimal remainingVacationDays = personForm.getRemainingVacationDays();
         boolean expiring = personForm.isRemainingVacationDaysExpire();
 
         // check if there is an existing account
-        Account account = accountService.getHolidaysAccount(year, person);
+        Account account = accountService.getHolidaysAccount(validFrom.getYear(), person);
 
         if (account == null) {
             accountService.createHolidaysAccount(person, validFrom, validTo, annualVacationDays, remainingVacationDays,

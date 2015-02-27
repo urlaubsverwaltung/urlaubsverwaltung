@@ -13,12 +13,6 @@
 
 <head>
     <uv:head />
-    <script type="text/javascript">
-        function change(year) {
-            var url = "?year=" + year;
-            window.location.href = url;
-        }
-    </script>
 </head>
 
 <body>
@@ -34,7 +28,7 @@
 <c:choose>
     <c:when test="${person.id == null}">
         <c:set var="METHOD" value="POST"/>
-        <c:set var="ACTION" value="${URL_PREFIX}/staff"/>
+        <c:set var="ACTION" value="${URL_PREFIX}/staff/new"/>
     </c:when>
     <c:otherwise>
         <c:set var="METHOD" value="PUT"/>
@@ -179,8 +173,17 @@
     <div class="header">
 
         <legend>
+            <p><spring:message code="entitlement"/></p>
+            <p><spring:message code="for"/></p>
             <p>
-                <spring:message code="entitlement"/>
+                <c:choose>
+                    <c:when test="${person.id == null}">
+                        <c:out value="${personForm.holidaysAccountYear}" />
+                    </c:when>
+                    <c:otherwise>
+                        <uv:year-selector year="${personForm.holidaysAccountYear}"/>
+                    </c:otherwise>
+                </c:choose>
             </p>
         </legend>
 
@@ -190,64 +193,30 @@
         <div class="col-md-11 alert alert-danger"><form:errors cssClass="error"/></div>
     </c:if>
     
+    <form:hidden path="holidaysAccountYear" />
+
     <div class="form-group">
-        <label class="control-label col-md-4" for="year-dropdown"><spring:message code='year'/></label>
+        <label for="holidaysAccountValidFrom" class="control-label col-md-4">
+            <spring:message code="From"/>
+        </label>
 
         <div class="col-md-7">
-
-            <c:choose>
-                <c:when test="${person.id == null}">
-                    <form:select path="year" size="1" id="year-dropdown" class="form-control">
-                        <form:option value="${currentYear - 1}"><c:out value="${currentYear - 1}"/></form:option>
-                        <form:option value="${currentYear}" selected="selected"><c:out
-                                value="${currentYear}"/></form:option>
-                        <form:option value="${currentYear + 1}"><c:out value="${currentYear + 1}"/></form:option>
-                        <form:option value="${currentYear + 2}"><c:out value="${currentYear + 2}"/></form:option>
-                    </form:select>
-                </c:when>
-                <c:otherwise>
-                    <form:select path="year" size="1" onchange="change(this.options[this.selectedIndex].value);"
-                                 id="year-dropdown" class="form-control">
-                        <form:option value="${currentYear - 1}"><c:out value="${currentYear - 1}"/></form:option>
-                        <form:option value="${currentYear}"><c:out value="${currentYear}"/></form:option>
-                        <form:option value="${currentYear + 1}"><c:out value="${currentYear + 1}"/></form:option>
-                        <form:option value="${currentYear + 2}"><c:out value="${currentYear + 2}"/></form:option>
-                    </form:select>
-                </c:otherwise>
-            </c:choose>
-
-            <span class="help-inline"><form:errors path="year" cssClass="error"/></span>
-
+            <form:input id="holidaysAccountValidFrom" path="holidaysAccountValidFrom" class="form-control"
+                        cssErrorClass="form-control error" placeholder="dd.MM.yyyy"/>
+            <span class="help-inline"><form:errors path="holidaysAccountValidFrom" cssClass="error"/></span>
         </div>
     </div>
 
     <div class="form-group">
-        <label class="control-label col-md-4">
-            <spring:message code='From'/>
+        <label for="holidaysAccountValidTo" class="control-label col-md-4">
+            <spring:message code="To"/>
         </label>
 
-        <div class="col-md-2">
-            <person:day-dropdown path="dayFrom" selected="${personForm.dayFrom}" />
+        <div class="col-md-7">
+            <form:input id="holidaysAccountValidTo" path="holidaysAccountValidTo" class="form-control"
+                        cssErrorClass="form-control error" placeholder="dd.MM.yyyy"/>
+            <span class="help-inline"><form:errors path="holidaysAccountValidTo" cssClass="error"/></span>
         </div>
-
-        <div class="col-md-5">
-            <person:month-dropdown path="monthFrom" selected="${personForm.monthFrom}" />
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label class="control-label col-md-4">
-            <spring:message code='To'/>
-        </label>
-
-        <div class="col-md-2">
-            <person:day-dropdown path="dayTo" selected="${personForm.dayTo}" />
-        </div>
-
-        <div class="col-md-5">
-            <person:month-dropdown path="monthTo" selected="${personForm.monthTo}" />
-        </div>
-
     </div>
 
     <div class="form-group">

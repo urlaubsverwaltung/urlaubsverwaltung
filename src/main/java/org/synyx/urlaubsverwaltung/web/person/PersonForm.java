@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.core.calendar.Day;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.security.Role;
 
 import java.math.BigDecimal;
@@ -37,15 +38,11 @@ public class PersonForm {
 
     private String email;
 
-    private String dayFrom;
+    private int holidaysAccountYear;
 
-    private String monthFrom;
+    private DateMidnight holidaysAccountValidFrom;
 
-    private String dayTo;
-
-    private String monthTo;
-
-    private String year;
+    private DateMidnight holidaysAccountValidTo;
 
     private BigDecimal annualVacationDays;
 
@@ -63,34 +60,44 @@ public class PersonForm {
 
     public PersonForm() {
 
-        setDefaultValuesForValidity();
+        this(DateMidnight.now().getYear());
     }
 
 
-    public PersonForm(Person person, String year, Account account, WorkingTime workingTime, Collection<Role> roles,
-        Collection<MailNotification> notifications) {
+    public PersonForm(int year) {
+
+        this.holidaysAccountYear = year;
+        this.holidaysAccountValidFrom = DateUtil.getFirstDayOfYear(year);
+        this.holidaysAccountValidTo = DateUtil.getLastDayOfYear(year);
+    }
+
+
+    public PersonForm(Person person, int year, Optional<Account> holidaysAccountOptional,
+        Optional<WorkingTime> workingTimeOptional, Collection<Role> roles, Collection<MailNotification> notifications) {
 
         this.loginName = person.getLoginName();
         this.lastName = person.getLastName();
         this.firstName = person.getFirstName();
         this.email = person.getEmail();
-        this.year = year;
 
-        if (account != null) {
-            this.dayFrom = String.valueOf(account.getValidFrom().getDayOfMonth());
-            this.monthFrom = String.valueOf(account.getValidFrom().getMonthOfYear());
-            this.dayTo = String.valueOf(account.getValidTo().getDayOfMonth());
-            this.monthTo = String.valueOf(account.getValidTo().getMonthOfYear());
-            this.annualVacationDays = account.getAnnualVacationDays();
-            this.remainingVacationDays = account.getRemainingVacationDays();
-            this.remainingVacationDaysExpire = account.isRemainingVacationDaysExpire();
+        if (holidaysAccountOptional.isPresent()) {
+            Account holidaysAccount = holidaysAccountOptional.get();
+
+            this.holidaysAccountYear = holidaysAccount.getValidFrom().getYear();
+            this.holidaysAccountValidFrom = holidaysAccount.getValidFrom();
+            this.holidaysAccountValidTo = holidaysAccount.getValidTo();
+            this.annualVacationDays = holidaysAccount.getAnnualVacationDays();
+            this.remainingVacationDays = holidaysAccount.getRemainingVacationDays();
+            this.remainingVacationDaysExpire = holidaysAccount.isRemainingVacationDaysExpire();
         } else {
-            setDefaultValuesForValidity();
+            this.holidaysAccountYear = year;
+            this.holidaysAccountValidFrom = DateUtil.getFirstDayOfYear(year);
+            this.holidaysAccountValidTo = DateUtil.getLastDayOfYear(year);
         }
 
-        this.workingDays = new ArrayList<>();
+        if (workingTimeOptional.isPresent()) {
+            WorkingTime workingTime = workingTimeOptional.get();
 
-        if (workingTime != null) {
             for (Day day : Day.values()) {
                 Integer dayOfWeek = day.getDayOfWeek();
 
@@ -108,13 +115,15 @@ public class PersonForm {
         this.notifications = new ArrayList<>(notifications);
     }
 
-    private void setDefaultValuesForValidity() {
+    public int getHolidaysAccountYear() {
 
-        // default values for validFrom and validTo: 1.1. - 31.12.
-        this.dayFrom = String.valueOf(1);
-        this.monthFrom = String.valueOf(1);
-        this.dayTo = String.valueOf(31);
-        this.monthTo = String.valueOf(12);
+        return holidaysAccountYear;
+    }
+
+
+    public void setHolidaysAccountYear(int holidaysAccountYear) {
+
+        this.holidaysAccountYear = holidaysAccountYear;
     }
 
 
@@ -130,27 +139,27 @@ public class PersonForm {
     }
 
 
-    public String getDayFrom() {
+    public DateMidnight getHolidaysAccountValidFrom() {
 
-        return dayFrom;
+        return holidaysAccountValidFrom;
     }
 
 
-    public void setDayFrom(String dayFrom) {
+    public void setHolidaysAccountValidFrom(DateMidnight holidaysAccountValidFrom) {
 
-        this.dayFrom = dayFrom;
+        this.holidaysAccountValidFrom = holidaysAccountValidFrom;
     }
 
 
-    public String getDayTo() {
+    public DateMidnight getHolidaysAccountValidTo() {
 
-        return dayTo;
+        return holidaysAccountValidTo;
     }
 
 
-    public void setDayTo(String dayTo) {
+    public void setHolidaysAccountValidTo(DateMidnight holidaysAccountValidTo) {
 
-        this.dayTo = dayTo;
+        this.holidaysAccountValidTo = holidaysAccountValidTo;
     }
 
 
@@ -190,30 +199,6 @@ public class PersonForm {
     }
 
 
-    public String getMonthFrom() {
-
-        return monthFrom;
-    }
-
-
-    public void setMonthFrom(String monthFrom) {
-
-        this.monthFrom = monthFrom;
-    }
-
-
-    public String getMonthTo() {
-
-        return monthTo;
-    }
-
-
-    public void setMonthTo(String monthTo) {
-
-        this.monthTo = monthTo;
-    }
-
-
     public BigDecimal getRemainingVacationDays() {
 
         return remainingVacationDays;
@@ -235,18 +220,6 @@ public class PersonForm {
     public void setRemainingVacationDaysExpire(boolean remainingVacationDaysExpire) {
 
         this.remainingVacationDaysExpire = remainingVacationDaysExpire;
-    }
-
-
-    public String getYear() {
-
-        return year;
-    }
-
-
-    public void setYear(String year) {
-
-        this.year = year;
     }
 
 

@@ -44,12 +44,11 @@ public class PersonInteractionServiceTest {
 
         service = new PersonInteractionServiceImpl(personService, workingTimeService, accountService, mailService);
 
-        examplePersonForm = new PersonForm();
+        examplePersonForm = new PersonForm(2014);
         examplePersonForm.setLoginName("muster");
         examplePersonForm.setLastName("Muster");
         examplePersonForm.setFirstName("Marlene");
         examplePersonForm.setEmail("muster@synyx.de");
-        examplePersonForm.setYear("2014");
         examplePersonForm.setAnnualVacationDays(new BigDecimal("28"));
         examplePersonForm.setRemainingVacationDays(new BigDecimal("4"));
         examplePersonForm.setRemainingVacationDaysExpire(true);

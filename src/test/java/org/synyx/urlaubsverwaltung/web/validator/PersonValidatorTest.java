@@ -21,7 +21,6 @@ import java.math.BigDecimal;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Locale;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -44,7 +43,7 @@ public class PersonValidatorTest {
     public void setUp() {
 
         validator = new PersonValidator(personService);
-        form = new PersonForm();
+        form = new PersonForm(2013);
 
         Mockito.reset(errors);
     }
@@ -169,59 +168,6 @@ public class PersonValidatorTest {
     }
 
 
-    // VALIDATION OF YEAR FIELD
-
-    @Test
-    public void ensureYearMustNotBeNull() {
-
-        validator.validateYear(null, errors);
-        Mockito.verify(errors).rejectValue("year", "error.mandatory.field");
-    }
-
-
-    @Test
-    public void ensureYearMustNotBeEmpty() {
-
-        validator.validateYear("", errors);
-        Mockito.verify(errors).rejectValue("year", "error.mandatory.field");
-    }
-
-
-    @Test
-    public void ensureYearMustNotBeLiterals() {
-
-        validator.validateYear("abc", errors);
-        Mockito.verify(errors).rejectValue("year", "error.entry");
-    }
-
-
-    @Test
-    public void ensureYearMustNotBeGreaterThanPlusTenYearsFromNow() {
-
-        String year = String.valueOf(DateMidnight.now().getYear() + 11);
-        validator.validateYear(year, errors);
-        Mockito.verify(errors).rejectValue("year", "error.entry");
-    }
-
-
-    @Test
-    public void ensureYearMustNotBeLessThanMinusTenYearsFromNow() {
-
-        String year = String.valueOf(DateMidnight.now().getYear() - 12);
-        validator.validateYear(year, errors);
-        Mockito.verify(errors).rejectValue("year", "error.entry");
-    }
-
-
-    @Test
-    public void ensureValidYearHasNoValidationError() {
-
-        String year = String.valueOf(DateMidnight.now().getYear());
-        validator.validateYear(year, errors);
-        Mockito.verifyZeroInteractions(errors);
-    }
-
-
     // VALIDATION OF ANNUAL VACATION FIELD
 
     @Test
@@ -303,17 +249,34 @@ public class PersonValidatorTest {
     // VALIDATION OF PERIOD
 
     @Test
+    public void ensureHolidaysAccountValidFromMustNotBeNull() {
+
+        form.setHolidaysAccountValidFrom(null);
+
+        validator.validatePeriod(form, errors);
+
+        Mockito.verify(errors).rejectValue("holidaysAccountValidFrom", "error.mandatory.field");
+    }
+
+
+    @Test
+    public void ensureHolidaysAccountValidToMustNotBeNull() {
+
+        form.setHolidaysAccountValidTo(null);
+
+        validator.validatePeriod(form, errors);
+
+        Mockito.verify(errors).rejectValue("holidaysAccountValidTo", "error.mandatory.field");
+    }
+
+
+    @Test
     public void ensureFromOfPeriodMustBeBeforeTo() {
 
         // invalid period: 1.5.2013 - 1.1.2013
 
-        form.setYear("2013");
-
-        form.setDayFrom("1");
-        form.setMonthFrom("5");
-
-        form.setDayTo("1");
-        form.setMonthTo("1");
+        form.setHolidaysAccountValidFrom(new DateMidnight(2013, 5, 1));
+        form.setHolidaysAccountValidTo(new DateMidnight(2013, 1, 1));
 
         validator.validatePeriod(form, errors);
 
@@ -326,13 +289,8 @@ public class PersonValidatorTest {
 
         // invalid period: 5.1.2013 - 5.1.2013
 
-        form.setYear("2013");
-
-        form.setDayFrom("5");
-        form.setMonthFrom("1");
-
-        form.setDayTo("5");
-        form.setMonthTo("1");
+        form.setHolidaysAccountValidFrom(new DateMidnight(2013, 5, 1));
+        form.setHolidaysAccountValidTo(new DateMidnight(2013, 5, 1));
 
         validator.validatePeriod(form, errors);
 
@@ -341,17 +299,12 @@ public class PersonValidatorTest {
 
 
     @Test
-    public void ensurePeriodMustHaveValidFromAndTo() {
+    public void ensurePeriodMustBeWithinTheProvidedYear() {
 
-        // invalid date: 31.2.2013
+        form = new PersonForm(2014);
 
-        form.setYear("2013");
-
-        form.setDayFrom("31");
-        form.setMonthFrom("2");
-
-        form.setDayTo("1");
-        form.setMonthTo("3");
+        form.setHolidaysAccountValidFrom(new DateMidnight(2013, 1, 1));
+        form.setHolidaysAccountValidTo(new DateMidnight(2013, 5, 1));
 
         validator.validatePeriod(form, errors);
 
@@ -364,13 +317,8 @@ public class PersonValidatorTest {
 
         // valid period: 1.5.2013 - 5.5.2013
 
-        form.setYear("2013");
-
-        form.setDayFrom("1");
-        form.setMonthFrom("5");
-
-        form.setDayTo("5");
-        form.setMonthTo("5");
+        form.setHolidaysAccountValidFrom(new DateMidnight(2013, 5, 1));
+        form.setHolidaysAccountValidTo(new DateMidnight(2013, 5, 5));
 
         validator.validatePeriod(form, errors);
 

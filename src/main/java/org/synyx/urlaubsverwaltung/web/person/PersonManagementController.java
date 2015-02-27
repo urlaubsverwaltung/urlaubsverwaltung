@@ -1,6 +1,8 @@
 
 package org.synyx.urlaubsverwaltung.web.person;
 
+import com.google.common.base.Optional;
+
 import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,21 +75,25 @@ public class PersonManagementController {
     @RequestMapping(value = "/staff/new", method = RequestMethod.GET)
     public String newPersonForm(Model model) {
 
-        if (sessionService.isOffice()) {
-            Person person = new Person();
-
-            PersonForm personForm = new PersonForm();
-            addModelAttributesForPersonForm(person, personForm, model);
-
-            return PersonConstants.PERSON_FORM_JSP;
-        } else {
+        if (!sessionService.isOffice()) {
             return ControllerConstants.ERROR_JSP;
         }
+
+        Person person = new Person();
+
+        PersonForm personForm = new PersonForm();
+        addModelAttributesForPersonForm(person, personForm, model);
+
+        return PersonConstants.PERSON_FORM_JSP;
     }
 
 
-    @RequestMapping(value = "/staff", method = RequestMethod.POST)
+    @RequestMapping(value = "/staff/new", method = RequestMethod.POST)
     public String newPerson(@ModelAttribute("personForm") PersonForm personForm, Errors errors, Model model) {
+
+        if (!sessionService.isOffice()) {
+            return ControllerConstants.ERROR_JSP;
+        }
 
         Person person = new Person();
 
@@ -115,29 +121,24 @@ public class PersonManagementController {
     public String editPersonForm(@PathVariable("personId") Integer personId,
         @RequestParam(value = ControllerConstants.YEAR, required = false) Integer year, Model model) {
 
-        int currentYear = DateMidnight.now().getYear();
+        if (!sessionService.isOffice()) {
+            return ControllerConstants.ERROR_JSP;
+        }
+
         int yearOfHolidaysAccount;
 
         if (year != null) {
             yearOfHolidaysAccount = year;
-
-            if (yearOfHolidaysAccount - currentYear > 2 || currentYear - yearOfHolidaysAccount > 2) {
-                return ControllerConstants.ERROR_JSP;
-            }
         } else {
-            yearOfHolidaysAccount = currentYear;
+            yearOfHolidaysAccount = DateMidnight.now().getYear();
         }
 
-        if (sessionService.isOffice()) {
-            Person person = personService.getPersonByID(personId);
+        Person person = personService.getPersonByID(personId);
 
-            PersonForm personForm = preparePersonForm(yearOfHolidaysAccount, person);
-            addModelAttributesForPersonForm(person, personForm, model);
+        PersonForm personForm = preparePersonForm(yearOfHolidaysAccount, person);
+        addModelAttributesForPersonForm(person, personForm, model);
 
-            return PersonConstants.PERSON_FORM_JSP;
-        } else {
-            return ControllerConstants.ERROR_JSP;
-        }
+        return PersonConstants.PERSON_FORM_JSP;
     }
 
 
@@ -147,8 +148,8 @@ public class PersonManagementController {
 
         WorkingTime workingTime = workingTimeService.getCurrentOne(person);
 
-        return new PersonForm(person, String.valueOf(year), account, workingTime, person.getPermissions(),
-                person.getNotifications());
+        return new PersonForm(person, year, Optional.fromNullable(account), Optional.fromNullable(workingTime),
+                person.getPermissions(), person.getNotifications());
     }
 
 
@@ -157,7 +158,6 @@ public class PersonManagementController {
         model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
         model.addAttribute(ControllerConstants.PERSON, person);
         model.addAttribute("personForm", personForm);
-        model.addAttribute("currentYear", DateMidnight.now().getYear());
         model.addAttribute("weekDays", Day.values());
 
         if (person.getId() != null) {
@@ -169,6 +169,10 @@ public class PersonManagementController {
     @RequestMapping(value = "/staff/{personId}/edit", method = RequestMethod.PUT)
     public String editPerson(@PathVariable("personId") Integer personId,
         @ModelAttribute("personForm") PersonForm personForm, Errors errors, Model model) {
+
+        if (!sessionService.isOffice()) {
+            return ControllerConstants.ERROR_JSP;
+        }
 
         Person personToUpdate = personService.getPersonByID(personId);
 
