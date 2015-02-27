@@ -244,22 +244,4 @@ public class ApplicationValidator implements Validator {
             }
         }
     }
-
-
-    /**
-     * Validation for converting sick note to vacation:
-     * {@link org.synyx.urlaubsverwaltung.web.application.ApplicationForLeaveForm} only reason and vacation type must be
-     * validated.
-     *
-     * @param  app
-     * @param  errors
-     */
-    public void validatedShortenedAppForm(ApplicationForLeaveForm app, Errors errors) {
-
-        if (!StringUtils.hasText(app.getReason())) {
-            errors.rejectValue(FIELD_REASON, ERROR_MANDATORY_FIELD);
-        } else {
-            validateStringLength(app.getReason(), FIELD_REASON, errors);
-        }
-    }
 }

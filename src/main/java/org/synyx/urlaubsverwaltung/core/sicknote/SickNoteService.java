@@ -23,6 +23,7 @@ import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteComment;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteCommentDAO;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.web.application.ApplicationForLeaveForm;
+import org.synyx.urlaubsverwaltung.web.sicknote.SickNoteConvertForm;
 
 import java.math.BigDecimal;
 
@@ -144,30 +145,31 @@ public class SickNoteService {
     }
 
 
-    public void convertSickNoteToVacation(ApplicationForLeaveForm appForm, SickNote sickNote, Person loggedUser) {
+    public void convertSickNoteToVacation(SickNoteConvertForm sickNoteConvertForm, SickNote sickNote,
+        Person loggedUser) {
 
-        appForm.setHowLong(DayLength.FULL);
-        appForm.setStartDate(sickNote.getStartDate());
-        appForm.setEndDate(sickNote.getEndDate());
+        Application applicationForLeave = new Application();
 
-        Application application = appForm.createApplicationObject();
+        applicationForLeave.setPerson(sickNoteConvertForm.getPerson());
+        applicationForLeave.setApplier(loggedUser);
 
-        Person person = sickNote.getPerson();
-        BigDecimal workDays = calendarService.getWorkDays(application.getHowLong(), application.getStartDate(),
-                application.getEndDate(), person);
+        applicationForLeave.setHowLong(DayLength.FULL);
+        applicationForLeave.setVacationType(sickNoteConvertForm.getVacationType());
+        applicationForLeave.setStartDate(sickNoteConvertForm.getStartDate());
+        applicationForLeave.setEndDate(sickNoteConvertForm.getEndDate());
 
-        application.setPerson(person);
-        application.setApplier(loggedUser);
-        application.setDays(workDays);
+        applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
+        applicationForLeave.setApplicationDate(DateMidnight.now());
+        applicationForLeave.setEditedDate(DateMidnight.now());
 
-        application.setStatus(ApplicationStatus.ALLOWED);
-        application.setApplicationDate(DateMidnight.now());
-        application.setEditedDate(DateMidnight.now());
+        BigDecimal workDays = calendarService.getWorkDays(applicationForLeave.getHowLong(),
+                applicationForLeave.getStartDate(), applicationForLeave.getEndDate(), applicationForLeave.getPerson());
+        applicationForLeave.setDays(workDays);
 
-        signService.signApplicationByUser(application, loggedUser);
-        applicationService.save(application);
+        signService.signApplicationByUser(applicationForLeave, loggedUser);
+        applicationService.save(applicationForLeave);
 
-        commentService.saveComment(new Comment(), loggedUser, application);
+        commentService.saveComment(new Comment(), loggedUser, applicationForLeave);
 
         setSickNoteInactive(sickNote);
 
@@ -176,7 +178,7 @@ public class SickNoteService {
         SickNoteComment sickNoteComment = new SickNoteComment();
         addComment(sickNote.getId(), sickNoteComment, SickNoteStatus.CONVERTED_TO_VACATION, loggedUser);
 
-        mailService.sendSickNoteConvertedToVacationNotification(application);
+        mailService.sendSickNoteConvertedToVacationNotification(applicationForLeave);
     }
 
 
