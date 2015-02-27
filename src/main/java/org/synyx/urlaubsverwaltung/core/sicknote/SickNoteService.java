@@ -148,25 +148,15 @@ public class SickNoteService {
     public void convertSickNoteToVacation(SickNoteConvertForm sickNoteConvertForm, SickNote sickNote,
         Person loggedUser) {
 
-        Application applicationForLeave = new Application();
-
-        applicationForLeave.setPerson(sickNoteConvertForm.getPerson());
+        Application applicationForLeave = sickNoteConvertForm.generateApplicationForLeave();
         applicationForLeave.setApplier(loggedUser);
-
-        applicationForLeave.setHowLong(DayLength.FULL);
-        applicationForLeave.setVacationType(sickNoteConvertForm.getVacationType());
-        applicationForLeave.setStartDate(sickNoteConvertForm.getStartDate());
-        applicationForLeave.setEndDate(sickNoteConvertForm.getEndDate());
-
-        applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
-        applicationForLeave.setApplicationDate(DateMidnight.now());
-        applicationForLeave.setEditedDate(DateMidnight.now());
 
         BigDecimal workDays = calendarService.getWorkDays(applicationForLeave.getHowLong(),
                 applicationForLeave.getStartDate(), applicationForLeave.getEndDate(), applicationForLeave.getPerson());
         applicationForLeave.setDays(workDays);
 
         signService.signApplicationByUser(applicationForLeave, loggedUser);
+
         applicationService.save(applicationForLeave);
 
         commentService.saveComment(new Comment(), loggedUser, applicationForLeave);

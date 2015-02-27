@@ -2,9 +2,14 @@ package org.synyx.urlaubsverwaltung.web.sicknote;
 
 import org.joda.time.DateMidnight;
 
+import org.synyx.urlaubsverwaltung.core.application.domain.Application;
+import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
+
+import java.math.BigDecimal;
 
 
 /**
@@ -94,5 +99,25 @@ public class SickNoteConvertForm {
     public void setReason(String reason) {
 
         this.reason = reason;
+    }
+
+
+    public Application generateApplicationForLeave() {
+
+        Application applicationForLeave = new Application();
+
+        applicationForLeave.setPerson(person);
+
+        applicationForLeave.setVacationType(vacationType);
+
+        applicationForLeave.setHowLong(DayLength.FULL);
+        applicationForLeave.setStartDate(startDate);
+        applicationForLeave.setEndDate(endDate);
+
+        applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
+        applicationForLeave.setApplicationDate(DateMidnight.now());
+        applicationForLeave.setEditedDate(DateMidnight.now());
+
+        return applicationForLeave;
     }
 }

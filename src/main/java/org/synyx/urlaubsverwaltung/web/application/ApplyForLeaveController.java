@@ -19,7 +19,6 @@ import org.synyx.urlaubsverwaltung.core.account.AccountService;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationInteractionService;
-import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.application.service.CalculationService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
@@ -168,7 +167,7 @@ public class ApplyForLeaveController {
             return ControllerConstants.APPLICATION + "/app_form";
         }
 
-        Application application = appForm.createApplicationObject();
+        Application application = appForm.generateApplicationForLeave();
 
         Application savedApplicationForLeave = applicationInteractionService.apply(application, applier);
 

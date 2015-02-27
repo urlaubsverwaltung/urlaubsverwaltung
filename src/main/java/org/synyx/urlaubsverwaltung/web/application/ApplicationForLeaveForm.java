@@ -179,7 +179,7 @@ public class ApplicationForLeaveForm {
     }
 
 
-    public Application createApplicationObject() {
+    public Application generateApplicationForLeave() {
 
         Application applicationForLeave = new Application();
 

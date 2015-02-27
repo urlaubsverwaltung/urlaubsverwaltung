@@ -218,7 +218,7 @@ public class ApplicationValidator implements Validator {
         /**
          * Ensure that there is no application for leave in the same period
          */
-        OverlapCase overlap = overlapService.checkOverlap(applicationForm.createApplicationObject());
+        OverlapCase overlap = overlapService.checkOverlap(applicationForm.generateApplicationForLeave());
 
         boolean isOverlapping = overlap == OverlapCase.FULLY_OVERLAPPING || overlap == OverlapCase.PARTLY_OVERLAPPING;
 
@@ -237,7 +237,7 @@ public class ApplicationValidator implements Validator {
 
         if (isHoliday) {
             boolean enoughVacationDaysLeft = calculationService.checkApplication(
-                    applicationForm.createApplicationObject());
+                    applicationForm.generateApplicationForLeave());
 
             if (!enoughVacationDaysLeft) {
                 errors.reject(ERROR_NOT_ENOUGH_DAYS);
