@@ -21,7 +21,6 @@ import org.synyx.urlaubsverwaltung.web.ControllerConstants;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-@RequestMapping("/sicknote")
 @Controller
 public class SickNoteStatisticsController {
 

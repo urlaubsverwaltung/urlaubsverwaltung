@@ -40,7 +40,6 @@ import java.util.Map;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-@RequestMapping("/sicknote")
 @Controller
 public class SickDaysOverviewController {
 
@@ -56,7 +55,7 @@ public class SickDaysOverviewController {
     @Autowired
     private OwnCalendarService calendarService;
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @RequestMapping(value = "/sicknote", method = RequestMethod.GET)
     public String defaultSickNotes() {
 
         DateMidnight now = DateMidnight.now();
@@ -68,7 +67,7 @@ public class SickDaysOverviewController {
     }
 
 
-    @RequestMapping(value = "/quartal", method = RequestMethod.GET)
+    @RequestMapping(value = "/sicknote/quartal", method = RequestMethod.GET)
     public String quartalSickNotes() {
 
         if (sessionService.isOffice()) {
@@ -85,7 +84,7 @@ public class SickDaysOverviewController {
     }
 
 
-    @RequestMapping(value = "/filter", method = RequestMethod.POST)
+    @RequestMapping(value = "/sicknote/filter", method = RequestMethod.POST)
     public String filterSickNotes(@ModelAttribute("filterRequest") FilterRequest filterRequest) {
 
         if (sessionService.isOffice()) {

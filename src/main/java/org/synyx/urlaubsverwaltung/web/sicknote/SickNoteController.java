@@ -29,10 +29,10 @@ import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.security.Role;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
+import org.synyx.urlaubsverwaltung.web.DateMidnightPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.application.AppForm;
 import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
-import org.synyx.urlaubsverwaltung.web.DateMidnightPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.util.GravatarUtil;
 import org.synyx.urlaubsverwaltung.web.validator.ApplicationValidator;
 import org.synyx.urlaubsverwaltung.web.validator.SickNoteValidator;
@@ -49,7 +49,6 @@ import javax.annotation.security.RolesAllowed;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-@RequestMapping("/sicknote")
 @Controller
 public class SickNoteController {
 
@@ -76,7 +75,7 @@ public class SickNoteController {
     }
 
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/sicknote/{id}", method = RequestMethod.GET)
     @RolesAllowed({ "USER", "OFFICE" })
     public String sickNoteDetails(@PathVariable("id") Integer id, Model model) {
 
@@ -107,7 +106,7 @@ public class SickNoteController {
     }
 
 
-    @RequestMapping(value = "/new", method = RequestMethod.GET)
+    @RequestMapping(value = "/sicknote/new", method = RequestMethod.GET)
     public String newSickNote(Model model) {
 
         if (sessionService.isOffice()) {
@@ -122,7 +121,7 @@ public class SickNoteController {
     }
 
 
-    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @RequestMapping(value = "/sicknote", method = RequestMethod.POST)
     public String newSickNote(@ModelAttribute("sickNote") SickNote sickNote, Errors errors, Model model) {
 
         if (sessionService.isOffice()) {
@@ -145,7 +144,7 @@ public class SickNoteController {
     }
 
 
-    @RequestMapping(value = "/{id}/edit", method = RequestMethod.GET)
+    @RequestMapping(value = "/sicknote/{id}/edit", method = RequestMethod.GET)
     public String editSickNote(@PathVariable("id") Integer id, Model model) {
 
         SickNote sickNote = sickNoteService.getById(id);
@@ -161,7 +160,7 @@ public class SickNoteController {
     }
 
 
-    @RequestMapping(value = "/{id}/edit", method = RequestMethod.PUT)
+    @RequestMapping(value = "/sicknote/{id}/edit", method = RequestMethod.PUT)
     public String editSickNote(@PathVariable("id") Integer id,
         @ModelAttribute("sickNote") SickNote sickNote, Errors errors, Model model) {
 
@@ -179,14 +178,14 @@ public class SickNoteController {
             sickNote.setComments(sickNoteService.getById(id).getComments());
             sickNoteService.touch(sickNote, SickNoteStatus.EDITED, sessionService.getLoggedUser());
 
-            return "redirect:/web/" + id;
+            return "redirect:/web/sicknote/" + id;
         }
 
         return ControllerConstants.ERROR_JSP;
     }
 
 
-    @RequestMapping(value = "/{id}/comment", method = RequestMethod.POST)
+    @RequestMapping(value = "/sicknote/{id}/comment", method = RequestMethod.POST)
     public String addComment(@PathVariable("id") Integer id,
         @ModelAttribute("comment") SickNoteComment comment, RedirectAttributes redirectAttributes, Errors errors) {
 
@@ -199,14 +198,14 @@ public class SickNoteController {
                 sickNoteService.addComment(id, comment, SickNoteStatus.COMMENTED, sessionService.getLoggedUser());
             }
 
-            return "redirect:/web/" + id;
+            return "redirect:/web/sicknote/" + id;
         }
 
         return ControllerConstants.ERROR_JSP;
     }
 
 
-    @RequestMapping(value = "/{id}/convert", method = RequestMethod.GET)
+    @RequestMapping(value = "/sicknote/{id}/convert", method = RequestMethod.GET)
     public String convertSickNoteToVacation(@PathVariable("id") Integer id, Model model) {
 
         SickNote sickNote = sickNoteService.getById(id);
@@ -223,7 +222,7 @@ public class SickNoteController {
     }
 
 
-    @RequestMapping(value = "/{id}/convert", method = RequestMethod.POST)
+    @RequestMapping(value = "/sicknote/{id}/convert", method = RequestMethod.POST)
     public String convertSickNoteToVacation(@PathVariable("id") Integer id,
         @ModelAttribute("appForm") AppForm appForm, Errors errors, Model model) {
 
@@ -249,7 +248,7 @@ public class SickNoteController {
     }
 
 
-    @RequestMapping(value = "/{id}/cancel", method = RequestMethod.POST)
+    @RequestMapping(value = "/sicknote/{id}/cancel", method = RequestMethod.POST)
     public String cancelSickNote(@PathVariable("id") Integer id) {
 
         if (sessionService.isOffice()) {
