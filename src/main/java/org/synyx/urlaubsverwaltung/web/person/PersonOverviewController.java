@@ -210,11 +210,10 @@ public class PersonOverviewController {
                 .getFirstDayOfYear(year), DateUtil.getLastDayOfYear(year), person);
 
         if (!apps.isEmpty()) {
-            List<Application> applications = new ArrayList<Application>();
+            List<Application> applications = new ArrayList<>();
 
             for (Application a : apps) {
-                if ((a.getStatus() != ApplicationStatus.CANCELLED)
-                        || (a.getStatus() == ApplicationStatus.CANCELLED && a.isFormerlyAllowed())) {
+                if ((a.getStatus() != ApplicationStatus.CANCELLED) || (a.isFormerlyAllowed())) {
                     applications.add(a);
                 }
             }

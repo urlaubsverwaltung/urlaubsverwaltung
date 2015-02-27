@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import org.synyx.urlaubsverwaltung.core.account.Account;
 import org.synyx.urlaubsverwaltung.core.account.AccountService;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
-import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationInteractionService;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
@@ -35,7 +34,6 @@ import org.synyx.urlaubsverwaltung.web.validator.ApplicationValidator;
 import java.math.BigDecimal;
 
 import java.util.List;
-import java.util.Locale;
 
 
 /**
@@ -115,14 +113,14 @@ public class ApplyForLeaveController {
         if (holidaysAccount == null) {
             model.addAttribute("notpossible", true);
         } else {
-            prepareApplicationForLeaveForm(person, new AppForm(), model);
+            prepareApplicationForLeaveForm(person, new ApplicationForLeaveForm(), model);
         }
 
         return ControllerConstants.APPLICATION + "/app_form";
     }
 
 
-    private void prepareApplicationForLeaveForm(Person person, AppForm appForm, Model model) {
+    private void prepareApplicationForLeaveForm(Person person, ApplicationForLeaveForm appForm, Model model) {
 
         List<Person> persons = personService.getActivePersons();
 
@@ -150,7 +148,7 @@ public class ApplyForLeaveController {
 
     @RequestMapping(value = "/new", method = RequestMethod.POST)
     public String newApplication(@RequestParam(value = "personId", required = false) Integer personId,
-        @ModelAttribute("appForm") AppForm appForm, Errors errors, Model model) {
+        @ModelAttribute("appForm") ApplicationForLeaveForm appForm, Errors errors, Model model) {
 
         Person applier = sessionService.getLoggedUser();
         Person personToApplyForLeave;

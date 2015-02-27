@@ -31,14 +31,13 @@ import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.DateMidnightPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.PersonPropertyEditor;
-import org.synyx.urlaubsverwaltung.web.application.AppForm;
+import org.synyx.urlaubsverwaltung.web.application.ApplicationForLeaveForm;
 import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
 import org.synyx.urlaubsverwaltung.web.util.GravatarUtil;
 import org.synyx.urlaubsverwaltung.web.validator.ApplicationValidator;
 import org.synyx.urlaubsverwaltung.web.validator.SickNoteValidator;
 
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.security.RolesAllowed;
@@ -212,7 +211,7 @@ public class SickNoteController {
 
         if (sickNote.isActive() && sessionService.isOffice()) {
             model.addAttribute("sickNote", sickNote);
-            model.addAttribute("appForm", new AppForm());
+            model.addAttribute("appForm", new ApplicationForLeaveForm());
             model.addAttribute("vacTypes", VacationType.values());
 
             return "sicknote/sick_note_convert";
@@ -224,7 +223,7 @@ public class SickNoteController {
 
     @RequestMapping(value = "/sicknote/{id}/convert", method = RequestMethod.POST)
     public String convertSickNoteToVacation(@PathVariable("id") Integer id,
-        @ModelAttribute("appForm") AppForm appForm, Errors errors, Model model) {
+        @ModelAttribute("appForm") ApplicationForLeaveForm appForm, Errors errors, Model model) {
 
         if (sessionService.isOffice()) {
             SickNote sickNote = sickNoteService.getById(id);

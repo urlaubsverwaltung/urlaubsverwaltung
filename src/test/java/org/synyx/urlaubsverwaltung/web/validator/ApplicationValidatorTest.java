@@ -18,7 +18,7 @@ import org.synyx.urlaubsverwaltung.core.application.service.CalculationService;
 import org.synyx.urlaubsverwaltung.core.application.service.OverlapService;
 import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.web.application.AppForm;
+import org.synyx.urlaubsverwaltung.web.application.ApplicationForLeaveForm;
 
 import java.math.BigDecimal;
 
@@ -39,7 +39,7 @@ public class ApplicationValidatorTest {
     private CalculationService calculationService;
 
     private Errors errors;
-    private AppForm appForm;
+    private ApplicationForLeaveForm appForm;
 
     @Before
     public void setUp() {
@@ -51,7 +51,7 @@ public class ApplicationValidatorTest {
         validator = new ApplicationValidator(calendarService, overlapService, calculationService);
         errors = Mockito.mock(Errors.class);
 
-        appForm = new AppForm();
+        appForm = new ApplicationForLeaveForm();
 
         appForm.setVacationType(VacationType.HOLIDAY);
         appForm.setHowLong(DayLength.FULL);
@@ -66,7 +66,7 @@ public class ApplicationValidatorTest {
     @Test
     public void ensureSupportsAppFormClass() {
 
-        assertTrue(validator.supports(AppForm.class));
+        assertTrue(validator.supports(ApplicationForLeaveForm.class));
     }
 
 

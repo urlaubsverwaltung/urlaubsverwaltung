@@ -22,7 +22,7 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteComment;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteCommentDAO;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteStatus;
-import org.synyx.urlaubsverwaltung.web.application.AppForm;
+import org.synyx.urlaubsverwaltung.web.application.ApplicationForLeaveForm;
 
 import java.math.BigDecimal;
 
@@ -144,7 +144,7 @@ public class SickNoteService {
     }
 
 
-    public void convertSickNoteToVacation(AppForm appForm, SickNote sickNote, Person loggedUser) {
+    public void convertSickNoteToVacation(ApplicationForLeaveForm appForm, SickNote sickNote, Person loggedUser) {
 
         appForm.setHowLong(DayLength.FULL);
         appForm.setStartDate(sickNote.getStartDate());

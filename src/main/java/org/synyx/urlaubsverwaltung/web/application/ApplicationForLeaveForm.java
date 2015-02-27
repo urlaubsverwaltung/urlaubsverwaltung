@@ -17,7 +17,7 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
  *
  * @author  Aljona Murygina
  */
-public class AppForm {
+public class ApplicationForLeaveForm {
 
     // person of the application for leave
     private Person person;

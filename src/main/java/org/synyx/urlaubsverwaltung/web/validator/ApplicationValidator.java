@@ -21,7 +21,7 @@ import org.synyx.urlaubsverwaltung.core.application.service.OverlapService;
 import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.util.CalcUtil;
 import org.synyx.urlaubsverwaltung.core.util.PropertiesUtil;
-import org.synyx.urlaubsverwaltung.web.application.AppForm;
+import org.synyx.urlaubsverwaltung.web.application.ApplicationForLeaveForm;
 
 import java.io.IOException;
 
@@ -31,8 +31,8 @@ import java.util.Properties;
 
 
 /**
- * This class validate if an {@link AppForm} is filled correctly by the user, else it saves error messages in errors
- * object.
+ * This class validate if an {@link org.synyx.urlaubsverwaltung.web.application.ApplicationForLeaveForm} is filled
+ * correctly by the user, else it saves error messages in errors object.
  *
  * @author  Aljona Murygina
  */
@@ -86,14 +86,14 @@ public class ApplicationValidator implements Validator {
     @Override
     public boolean supports(Class<?> clazz) {
 
-        return AppForm.class.equals(clazz);
+        return ApplicationForLeaveForm.class.equals(clazz);
     }
 
 
     @Override
     public void validate(Object target, Errors errors) {
 
-        AppForm applicationForm = (AppForm) target;
+        ApplicationForLeaveForm applicationForm = (ApplicationForLeaveForm) target;
 
         // check if date fields are valid
         validateDateFields(applicationForm, errors);
@@ -118,7 +118,7 @@ public class ApplicationValidator implements Validator {
     }
 
 
-    private void validateDateFields(AppForm applicationForLeave, Errors errors) {
+    private void validateDateFields(ApplicationForLeaveForm applicationForLeave, Errors errors) {
 
         if (applicationForLeave.getHowLong() == DayLength.FULL) {
             DateMidnight startDate = applicationForLeave.getStartDate();
@@ -201,7 +201,7 @@ public class ApplicationValidator implements Validator {
     }
 
 
-    private void validateIfApplyingForLeaveIsPossible(AppForm applicationForm, Errors errors) {
+    private void validateIfApplyingForLeaveIsPossible(ApplicationForLeaveForm applicationForm, Errors errors) {
 
         BigDecimal days = calendarService.getWorkDays(applicationForm.getHowLong(), applicationForm.getStartDate(),
                 applicationForm.getEndDate(), applicationForm.getPerson());
@@ -247,12 +247,14 @@ public class ApplicationValidator implements Validator {
 
 
     /**
-     * Validation for converting sick note to vacation: {@link AppForm} only reason and vacation type must be validated.
+     * Validation for converting sick note to vacation:
+     * {@link org.synyx.urlaubsverwaltung.web.application.ApplicationForLeaveForm} only reason and vacation type must be
+     * validated.
      *
      * @param  app
      * @param  errors
      */
-    public void validatedShortenedAppForm(AppForm app, Errors errors) {
+    public void validatedShortenedAppForm(ApplicationForLeaveForm app, Errors errors) {
 
         if (!StringUtils.hasText(app.getReason())) {
             errors.rejectValue(FIELD_REASON, ERROR_MANDATORY_FIELD);
