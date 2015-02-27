@@ -27,9 +27,9 @@ import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
-import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
-import org.synyx.urlaubsverwaltung.web.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.DateMidnightPropertyEditor;
+import org.synyx.urlaubsverwaltung.web.PersonPropertyEditor;
+import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
 import org.synyx.urlaubsverwaltung.web.validator.ApplicationValidator;
 
 import java.math.BigDecimal;
@@ -175,9 +175,8 @@ public class ApplyForLeaveController {
 
         Application application = appForm.createApplicationObject();
 
-        applicationInteractionService.apply(application, applier);
+        Application savedApplicationForLeave = applicationInteractionService.apply(application, applier);
 
-        return "redirect:/web/application/"
-            + applicationService.getIdOfLatestApplication(personToApplyForLeave, ApplicationStatus.WAITING);
+        return "redirect:/web/application/" + savedApplicationForLeave.getId();
     }
 }

@@ -22,8 +22,8 @@ import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
-import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
 import org.synyx.urlaubsverwaltung.web.FilterRequest;
+import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
 import org.synyx.urlaubsverwaltung.web.util.GravatarUtil;
 
 import java.util.HashMap;
@@ -55,7 +55,7 @@ public class ApplicationForLeaveController {
     public String showDefault() {
 
         if (sessionService.isBoss() || sessionService.isOffice()) {
-            return "redirect:/web" + "/" + "application" + "/waiting";
+            return "redirect:/web/application/waiting";
         } else {
             return ControllerConstants.ERROR_JSP;
         }

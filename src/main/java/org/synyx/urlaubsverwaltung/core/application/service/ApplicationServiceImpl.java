@@ -32,13 +32,6 @@ class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public int getIdOfLatestApplication(Person person, ApplicationStatus status) {
-
-        return applicationDAO.getIdOfLatestApplication(person, status);
-    }
-
-
-    @Override
     public Application getApplicationById(Integer id) {
 
         return applicationDAO.findOne(id);
@@ -46,9 +39,9 @@ class ApplicationServiceImpl implements ApplicationService {
 
 
     @Override
-    public void save(Application application) {
+    public Application save(Application application) {
 
-        applicationDAO.save(application);
+        return applicationDAO.save(application);
     }
 
 

@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
@@ -22,6 +24,7 @@ import java.math.BigDecimal;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Service
+@Transactional
 public class ApplicationInteractionServiceImpl implements ApplicationInteractionService {
 
     private static final Logger LOG = Logger.getLogger(ApplicationInteractionServiceImpl.class);
@@ -44,7 +47,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
     }
 
     @Override
-    public void apply(Application application, Person applier) {
+    public Application apply(Application application, Person applier) {
 
         Person person = application.getPerson();
 
@@ -58,7 +61,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         signService.signApplicationByUser(application, applier);
 
-        applicationService.save(application);
+        Application savedApplication = applicationService.save(application);
 
         LOG.info("Created application for leave: " + application.toString());
 
@@ -87,11 +90,13 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         // bosses gets email that a new application for leave has been created
         mailService.sendNewApplicationNotification(application);
+
+        return savedApplication;
     }
 
 
     @Override
-    public void allow(Application application, Person boss, Comment comment) {
+    public Application allow(Application application, Person boss, Comment comment) {
 
         application.setStatus(ApplicationStatus.ALLOWED);
         application.setBoss(boss);
@@ -99,7 +104,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         signService.signApplicationByBoss(application, boss);
 
-        applicationService.save(application);
+        Application allowedApplication = applicationService.save(application);
 
         LOG.info("Allowed application for leave: " + application.toString());
 
@@ -110,11 +115,13 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         if (application.getRep() != null) {
             mailService.notifyRepresentative(application);
         }
+
+        return allowedApplication;
     }
 
 
     @Override
-    public void reject(Application application, Person boss, Comment comment) {
+    public Application reject(Application application, Person boss, Comment comment) {
 
         application.setStatus(ApplicationStatus.REJECTED);
         application.setBoss(boss);
@@ -122,18 +129,20 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         signService.signApplicationByBoss(application, boss);
 
-        applicationService.save(application);
+        Application rejectedApplication = applicationService.save(application);
 
         LOG.info("Rejected application for leave: " + application.toString());
 
         commentService.saveComment(comment, boss, application);
 
         mailService.sendRejectedNotification(application, comment);
+
+        return rejectedApplication;
     }
 
 
     @Override
-    public void cancel(Application application, Person canceller, Comment comment) {
+    public Application cancel(Application application, Person canceller, Comment comment) {
 
         boolean cancellingAllowedApplication = application.getStatus().equals(ApplicationStatus.ALLOWED);
 
@@ -145,7 +154,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
             application.setFormerlyAllowed(true);
         }
 
-        applicationService.save(application);
+        Application cancelledApplication = applicationService.save(application);
 
         LOG.info("Cancelled application for leave: " + application);
 
@@ -161,5 +170,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
             // the person gets an email regardless of application status
             mailService.sendCancelledNotification(application, true, comment);
         }
+
+        return cancelledApplication;
     }
 }

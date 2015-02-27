@@ -19,8 +19,10 @@ public interface ApplicationInteractionService {
      *
      * @param  application  for leave
      * @param  applier  of the application
+     *
+     * @return  the saved application for leave
      */
-    void apply(Application application, Person applier);
+    Application apply(Application application, Person applier);
 
 
     /**
@@ -30,8 +32,10 @@ public interface ApplicationInteractionService {
      * @param  application  for leave
      * @param  boss  that allowed the application for leave
      * @param  comment  giving further information to allowing of application for leave
+     *
+     * @return  the allowed application for leave
      */
-    void allow(Application application, Person boss, Comment comment);
+    Application allow(Application application, Person boss, Comment comment);
 
 
     /**
@@ -41,8 +45,10 @@ public interface ApplicationInteractionService {
      * @param  application  for leave
      * @param  boss  that rejected the application for leave
      * @param  comment  giving further information to rejecting of application for leave
+     *
+     * @return  the rejected application for leave
      */
-    void reject(Application application, Person boss, Comment comment);
+    Application reject(Application application, Person boss, Comment comment);
 
 
     /**
@@ -51,6 +57,8 @@ public interface ApplicationInteractionService {
      * @param  application  for leave
      * @param  canceller  executes the application's cancellation
      * @param  comment  giving further information to cancellation of application for leave
+     *
+     * @return  the cancelled application for leave
      */
-    void cancel(Application application, Person canceller, Comment comment);
+    Application cancel(Application application, Person canceller, Comment comment);
 }

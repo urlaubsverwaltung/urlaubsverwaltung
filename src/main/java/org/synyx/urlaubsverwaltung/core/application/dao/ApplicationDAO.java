@@ -20,10 +20,6 @@ import java.util.List;
  */
 public interface ApplicationDAO extends JpaRepository<Application, Integer> {
 
-    @Query("select max(id) from Application x where x.person = ?1 and x.status = ?2")
-    int getIdOfLatestApplication(Person person, ApplicationStatus status);
-
-
     @Query(
         "select x from Application x where (x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2)"
         + " or (x.startDate < ?1 and x.endDate > ?2) order by x.startDate"
