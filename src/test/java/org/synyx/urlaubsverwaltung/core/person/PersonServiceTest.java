@@ -20,7 +20,6 @@ import java.util.List;
 public class PersonServiceTest {
 
     private PersonService service;
-
     private PersonDAO personDAO;
 
     @Before
@@ -61,18 +60,58 @@ public class PersonServiceTest {
 
 
     @Test
-    public void ensureGetActivePersonsCallsCorrectDaoMethod() {
+    public void ensureGetActivePersonsReturnsOnlyPersonsThatHaveNotInactiveRole() {
 
-        service.getActivePersons();
-        Mockito.verify(personDAO).findActive();
+        Person inactive = new Person();
+        inactive.setPermissions(Arrays.asList(Role.INACTIVE));
+
+        Person user = new Person();
+        user.setPermissions(Arrays.asList(Role.USER));
+
+        Person boss = new Person();
+        boss.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
+
+        Person office = new Person();
+        office.setPermissions(Arrays.asList(Role.USER, Role.BOSS, Role.OFFICE));
+
+        List<Person> allPersons = Arrays.asList(inactive, user, boss, office);
+
+        Mockito.when(personDAO.findAll()).thenReturn(allPersons);
+
+        List<Person> activePersons = service.getActivePersons();
+
+        Assert.assertEquals("Wrong number of persons", 3, activePersons.size());
+
+        Assert.assertTrue("Missing person", activePersons.contains(user));
+        Assert.assertTrue("Missing person", activePersons.contains(boss));
+        Assert.assertTrue("Missing person", activePersons.contains(office));
     }
 
 
     @Test
-    public void ensureGetInactivePersonsCallsCorrectDaoMethod() {
+    public void ensureGetInactivePersonsReturnsOnlyPersonsThatHaveInactiveRole() {
 
-        service.getInactivePersons();
-        Mockito.verify(personDAO).findInactive();
+        Person inactive = new Person();
+        inactive.setPermissions(Arrays.asList(Role.INACTIVE));
+
+        Person user = new Person();
+        user.setPermissions(Arrays.asList(Role.USER));
+
+        Person boss = new Person();
+        boss.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
+
+        Person office = new Person();
+        office.setPermissions(Arrays.asList(Role.USER, Role.BOSS, Role.OFFICE));
+
+        List<Person> allPersons = Arrays.asList(inactive, user, boss, office);
+
+        Mockito.when(personDAO.findAll()).thenReturn(allPersons);
+
+        List<Person> inactivePersons = service.getInactivePersons();
+
+        Assert.assertEquals("Wrong number of persons", 1, inactivePersons.size());
+
+        Assert.assertTrue("Missing person", inactivePersons.contains(inactive));
     }
 
 
@@ -90,7 +129,7 @@ public class PersonServiceTest {
 
         List<Person> allPersons = Arrays.asList(user, boss, office);
 
-        Mockito.when(personDAO.findActive()).thenReturn(allPersons);
+        Mockito.when(personDAO.findAll()).thenReturn(allPersons);
 
         List<Person> filteredList = service.getPersonsByRole(Role.BOSS);
 
@@ -105,18 +144,21 @@ public class PersonServiceTest {
     public void ensureGetPersonsByNotificationTypeReturnsOnlyPersonsWithTheGivenNotificationType() {
 
         Person user = new Person();
+        user.setPermissions(Arrays.asList(Role.USER));
         user.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER));
 
         Person boss = new Person();
+        boss.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
         boss.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS));
 
         Person office = new Person();
+        office.setPermissions(Arrays.asList(Role.USER, Role.BOSS, Role.OFFICE));
         office.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS,
                 MailNotification.NOTIFICATION_OFFICE));
 
         List<Person> allPersons = Arrays.asList(user, boss, office);
 
-        Mockito.when(personDAO.findActive()).thenReturn(allPersons);
+        Mockito.when(personDAO.findAll()).thenReturn(allPersons);
 
         List<Person> filteredList = service.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS);
 

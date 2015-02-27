@@ -357,8 +357,8 @@ public class PersonValidator implements Validator {
 
             boolean roleInactiveSet = false;
 
-            for (Role r : roles) {
-                if (r == Role.INACTIVE) {
+            for (Role role : roles) {
+                if (role == Role.INACTIVE) {
                     roleInactiveSet = true;
                 }
             }

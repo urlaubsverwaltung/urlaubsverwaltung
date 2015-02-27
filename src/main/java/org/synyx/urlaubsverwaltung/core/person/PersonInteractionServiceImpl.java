@@ -112,20 +112,4 @@ public class PersonInteractionServiceImpl implements PersonInteractionService {
                 expiring);
         }
     }
-
-
-    @Override
-    public void deactivate(Person person) {
-
-        person.setActive(false);
-        personService.save(person);
-    }
-
-
-    @Override
-    public void activate(Person person) {
-
-        person.setActive(true);
-        personService.save(person);
-    }
 }

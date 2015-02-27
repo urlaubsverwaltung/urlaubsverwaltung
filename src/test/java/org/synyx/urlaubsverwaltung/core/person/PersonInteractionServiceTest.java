@@ -61,34 +61,6 @@ public class PersonInteractionServiceTest {
 
 
     @Test
-    public void ensurePersonIsActiveAfterActivating() {
-
-        Person person = new Person();
-        person.setActive(false);
-
-        service.activate(person);
-
-        Assert.assertTrue("Should be active", person.isActive());
-
-        Mockito.verify(personService).save(person);
-    }
-
-
-    @Test
-    public void ensurePersonIsInactiveAfterDeactivating() {
-
-        Person person = new Person();
-        person.setActive(true);
-
-        service.deactivate(person);
-
-        Assert.assertFalse("Should be inactive", person.isActive());
-
-        Mockito.verify(personService).save(person);
-    }
-
-
-    @Test
     public void ensurePersonHasKeyPairAfterCreating() {
 
         Person person = new Person();

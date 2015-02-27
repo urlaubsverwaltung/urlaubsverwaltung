@@ -34,11 +34,11 @@
 <c:choose>
     <c:when test="${person.id == null}">
         <c:set var="METHOD" value="POST"/>
-        <c:set var="ACTION" value="${URL_PREFIX}/staff/new"/>
+        <c:set var="ACTION" value="${URL_PREFIX}/staff"/>
     </c:when>
     <c:otherwise>
         <c:set var="METHOD" value="PUT"/>
-        <c:set var="ACTION" value="${URL_PREFIX}/staff/${person.id}/edit"/>
+        <c:set var="ACTION" value="${URL_PREFIX}/staff/${person.id}"/>
     </c:otherwise>
 </c:choose>
 

@@ -37,8 +37,6 @@ public class PersonForm {
 
     private String email;
 
-    private boolean active = true;
-
     private String dayFrom;
 
     private String monthFrom;
@@ -120,18 +118,6 @@ public class PersonForm {
         this.monthFrom = String.valueOf(1);
         this.dayTo = String.valueOf(31);
         this.monthTo = String.valueOf(12);
-    }
-
-
-    public boolean isActive() {
-
-        return active;
-    }
-
-
-    public void setActive(boolean active) {
-
-        this.active = active;
     }
 
 
@@ -349,13 +335,10 @@ public class PersonForm {
         person.setNotifications(notifications);
 
         if (personShouldBeSetToInactive(permissions)) {
-            person.setActive(false);
-
             List<Role> onlyInactive = new ArrayList<>();
             onlyInactive.add(Role.INACTIVE);
             person.setPermissions(onlyInactive);
         } else {
-            person.setActive(true);
             person.setPermissions(permissions);
         }
     }

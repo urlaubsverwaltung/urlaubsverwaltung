@@ -110,7 +110,6 @@ public class TestDataCreationService {
         personForm.setLastName(lastName);
         personForm.setFirstName(firstName);
         personForm.setEmail(email);
-        personForm.setActive(active);
         personForm.setYear(String.valueOf(currentYear));
         personForm.setAnnualVacationDays("28.5");
         personForm.setRemainingVacationDays("5");

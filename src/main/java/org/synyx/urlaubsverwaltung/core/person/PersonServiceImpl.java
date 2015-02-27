@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.person;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
@@ -58,14 +59,28 @@ class PersonServiceImpl implements PersonService {
     @Override
     public List<Person> getActivePersons() {
 
-        return personDAO.findActive();
+        return FluentIterable.from(personDAO.findAll()).filter(new Predicate<Person>() {
+
+                    @Override
+                    public boolean apply(Person person) {
+
+                        return !person.hasRole(Role.INACTIVE);
+                    }
+                }).toList();
     }
 
 
     @Override
     public List<Person> getInactivePersons() {
 
-        return personDAO.findInactive();
+        return FluentIterable.from(personDAO.findAll()).filter(new Predicate<Person>() {
+
+                    @Override
+                    public boolean apply(Person person) {
+
+                        return person.hasRole(Role.INACTIVE);
+                    }
+                }).toList();
     }
 
 

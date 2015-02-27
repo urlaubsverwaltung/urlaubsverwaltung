@@ -24,22 +24,4 @@ public interface PersonInteractionService {
      * @param  locale  for number formatting
      */
     void createOrUpdate(Person person, PersonForm personForm, Locale locale);
-
-
-    /**
-     * Sets a {@link Person} to inactive, i.e. this {@link Person} has no right to login, to apply for leave, etc. but
-     * information about the person remains for archiving.
-     *
-     * @param  person  to be set to inactive
-     */
-    void deactivate(Person person);
-
-
-    /**
-     * Sets a {@link Person} to active (e.g. after unintended deactivating of a person), i.e. this {@link Person} has
-     * once again his user rights.
-     *
-     * @param  person  to be set to active
-     */
-    void activate(Person person);
 }
