@@ -61,7 +61,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         signService.signApplicationByUser(application, applier);
 
-        Application savedApplication = applicationService.save(application);
+        applicationService.save(application);
 
         LOG.info("Created application for leave: " + application.toString());
 
@@ -91,7 +91,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         // bosses gets email that a new application for leave has been created
         mailService.sendNewApplicationNotification(application);
 
-        return savedApplication;
+        return application;
     }
 
 
@@ -104,7 +104,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         signService.signApplicationByBoss(application, boss);
 
-        Application allowedApplication = applicationService.save(application);
+        applicationService.save(application);
 
         LOG.info("Allowed application for leave: " + application.toString());
 
@@ -116,7 +116,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
             mailService.notifyRepresentative(application);
         }
 
-        return allowedApplication;
+        return application;
     }
 
 
@@ -129,7 +129,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         signService.signApplicationByBoss(application, boss);
 
-        Application rejectedApplication = applicationService.save(application);
+        applicationService.save(application);
 
         LOG.info("Rejected application for leave: " + application.toString());
 
@@ -137,7 +137,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         mailService.sendRejectedNotification(application, comment);
 
-        return rejectedApplication;
+        return application;
     }
 
 
@@ -154,7 +154,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
             application.setFormerlyAllowed(true);
         }
 
-        Application cancelledApplication = applicationService.save(application);
+        applicationService.save(application);
 
         LOG.info("Cancelled application for leave: " + application);
 
@@ -171,6 +171,6 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
             mailService.sendCancelledNotification(application, true, comment);
         }
 
-        return cancelledApplication;
+        return application;
     }
 }

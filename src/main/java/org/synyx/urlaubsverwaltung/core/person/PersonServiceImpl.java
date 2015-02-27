@@ -33,9 +33,9 @@ class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public Person save(Person person) {
+    public void save(Person person) {
 
-        return personDAO.save(person);
+        personDAO.save(person);
     }
 
 

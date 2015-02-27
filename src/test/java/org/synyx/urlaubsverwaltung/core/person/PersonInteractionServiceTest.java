@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.core.person;
 
 import org.joda.time.DateMidnight;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -58,9 +59,17 @@ public class PersonInteractionServiceTest {
 
 
     @Test
-    public void ensurePersonIsPersistedOnCreating() {
+    public void ensurePersonHasKeyPairAfterCreating() {
 
-        Mockito.when(personService.save(Mockito.any(Person.class))).thenReturn(new Person());
+        Person person = service.create(examplePersonForm);
+
+        Assert.assertNotNull(person.getPrivateKey());
+        Assert.assertNotNull(person.getPublicKey());
+    }
+
+
+    @Test
+    public void ensurePersonIsPersistedOnCreating() {
 
         service.create(examplePersonForm);
 
@@ -70,8 +79,6 @@ public class PersonInteractionServiceTest {
 
     @Test
     public void ensurePersonHasValidWorkingTimeAndAccountAfterCreating() {
-
-        Mockito.when(personService.save(Mockito.any(Person.class))).thenReturn(new Person());
 
         Person person = service.create(examplePersonForm);
 

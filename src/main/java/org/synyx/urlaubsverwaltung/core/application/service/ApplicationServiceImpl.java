@@ -39,9 +39,9 @@ class ApplicationServiceImpl implements ApplicationService {
 
 
     @Override
-    public Application save(Application application) {
+    public void save(Application application) {
 
-        return applicationDAO.save(application);
+        applicationDAO.save(application);
     }
 
 

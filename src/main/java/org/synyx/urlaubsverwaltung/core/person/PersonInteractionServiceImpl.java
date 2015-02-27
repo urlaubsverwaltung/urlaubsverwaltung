@@ -61,15 +61,15 @@ public class PersonInteractionServiceImpl implements PersonInteractionService {
             mailService.sendKeyGeneratingErrorNotification(personForm.getLoginName(), ex.getMessage());
         }
 
-        Person savedPerson = personService.save(person);
+        personService.save(person);
 
-        touchWorkingTime(savedPerson, personForm);
+        touchWorkingTime(person, personForm);
 
-        touchAccount(savedPerson, personForm);
+        touchAccount(person, personForm);
 
-        LOG.info("Created: " + savedPerson.toString());
+        LOG.info("Created: " + person.toString());
 
-        return savedPerson;
+        return person;
     }
 
 
@@ -108,14 +108,14 @@ public class PersonInteractionServiceImpl implements PersonInteractionService {
 
         personForm.fillPersonAttributes(personToUpdate);
 
-        Person updatedPerson = personService.save(personToUpdate);
+        personService.save(personToUpdate);
 
-        touchWorkingTime(updatedPerson, personForm);
+        touchWorkingTime(personToUpdate, personForm);
 
-        touchAccount(updatedPerson, personForm);
+        touchAccount(personToUpdate, personForm);
 
-        LOG.info("Updated " + updatedPerson.toString());
+        LOG.info("Updated " + personToUpdate.toString());
 
-        return updatedPerson;
+        return personToUpdate;
     }
 }

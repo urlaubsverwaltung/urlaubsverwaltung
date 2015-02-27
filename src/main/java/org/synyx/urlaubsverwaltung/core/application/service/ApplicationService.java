@@ -32,10 +32,8 @@ public interface ApplicationService {
      * Saves a new {@link Application}.
      *
      * @param  application  to be saved
-     *
-     * @return  the saved {@link Application}
      */
-    Application save(Application application);
+    void save(Application application);
 
 
     /**
