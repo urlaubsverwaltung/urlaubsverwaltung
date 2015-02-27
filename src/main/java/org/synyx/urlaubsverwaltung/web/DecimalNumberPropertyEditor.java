@@ -43,7 +43,7 @@ public class DecimalNumberPropertyEditor extends PropertyEditorSupport {
 
             return numberFormat.format(number.setScale(1, RoundingMode.HALF_UP).doubleValue());
         } catch (ClassCastException ex) {
-            throw new IllegalArgumentException("The provided value is of invalid type");
+            throw new IllegalArgumentException("The provided value is of invalid type", ex);
         }
     }
 
