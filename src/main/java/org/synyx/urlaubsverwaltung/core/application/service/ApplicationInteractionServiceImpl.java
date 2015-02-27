@@ -44,14 +44,6 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
     }
 
     @Override
-    public BigDecimal getNumberOfVacationDays(Application application) {
-
-        return calendarService.getWorkDays(application.getHowLong(), application.getStartDate(),
-                application.getEndDate(), application.getPerson());
-    }
-
-
-    @Override
     public void apply(Application application, Person applier) {
 
         Person person = application.getPerson();

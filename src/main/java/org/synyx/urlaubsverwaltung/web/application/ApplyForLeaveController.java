@@ -18,15 +18,12 @@ import org.synyx.urlaubsverwaltung.core.account.Account;
 import org.synyx.urlaubsverwaltung.core.account.AccountService;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.core.application.domain.OverlapCase;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationInteractionService;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.application.service.CalculationService;
-import org.synyx.urlaubsverwaltung.core.application.service.OverlapService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
-import org.synyx.urlaubsverwaltung.core.util.CalcUtil;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
@@ -60,9 +57,6 @@ public class ApplyForLeaveController {
     private AccountService accountService;
 
     @Autowired
-    private ApplicationValidator applicationValidator;
-
-    @Autowired
     private ApplicationService applicationService;
 
     @Autowired
@@ -72,7 +66,7 @@ public class ApplyForLeaveController {
     private CalculationService calculationService;
 
     @Autowired
-    private OverlapService overlapService;
+    private ApplicationValidator applicationValidator;
 
     @InitBinder
     public void initBinder(DataBinder binder, Locale locale) {
@@ -83,12 +77,12 @@ public class ApplyForLeaveController {
 
 
     /**
-     * Show form to apply an application for leave.
+     * Show form to apply for leave.
      *
-     * @param  personId
-     * @param  model
+     * @param  personId  of the person that applies for leave
+     * @param  model  to be filled
      *
-     * @return  form to apply an application for leave
+     * @return  form to apply for leave
      */
     @RequestMapping(value = "/new", method = RequestMethod.GET)
     public String newApplicationForm(@RequestParam(value = "personId", required = false) Integer personId,
@@ -99,17 +93,17 @@ public class ApplyForLeaveController {
         }
 
         Person person;
-        Person applicant;
+        Person applier;
 
         if (personId == null) {
             person = sessionService.getLoggedUser();
-            applicant = person;
+            applier = person;
         } else {
             person = personService.getPersonByID(personId);
-            applicant = sessionService.getLoggedUser();
+            applier = sessionService.getLoggedUser();
         }
 
-        boolean isApplyingForOneSelf = person.equals(applicant);
+        boolean isApplyingForOneSelf = person.equals(applier);
 
         // only office may apply for leave on behalf of other users
         if (!isApplyingForOneSelf && !sessionService.isOffice()) {
@@ -158,32 +152,19 @@ public class ApplyForLeaveController {
     public String newApplication(@RequestParam(value = "personId", required = false) Integer personId,
         @ModelAttribute("appForm") AppForm appForm, Errors errors, Model model) {
 
-        Person person;
+        Person applier = sessionService.getLoggedUser();
+        Person personToApplyForLeave;
 
         if (personId == null) {
-            person = sessionService.getLoggedUser();
+            personToApplyForLeave = applier;
         } else {
-            person = personService.getPersonByID(personId);
-        }
-
-        return newApplication(person, appForm, true, errors, model);
-    }
-
-
-    private String newApplication(Person person, AppForm appForm, boolean isOffice, Errors errors, Model model) {
-
-        Person personForForm;
-
-        if (isOffice) {
-            personForForm = person;
-        } else {
-            personForForm = sessionService.getLoggedUser();
+            personToApplyForLeave = personService.getPersonByID(personId);
         }
 
         applicationValidator.validate(appForm, errors);
 
         if (errors.hasErrors()) {
-            prepareApplicationForLeaveForm(personForForm, appForm, model);
+            prepareApplicationForLeaveForm(personToApplyForLeave, appForm, model);
 
             if (errors.hasGlobalErrors()) {
                 model.addAttribute("errors", errors);
@@ -191,82 +172,12 @@ public class ApplyForLeaveController {
 
             return ControllerConstants.APPLICATION + "/app_form";
         }
-
-        if (checkAndSaveApplicationForm(appForm, errors)) {
-            int id = applicationService.getIdOfLatestApplication(personForForm, ApplicationStatus.WAITING);
-
-            return "redirect:/web/application/" + id;
-        } else {
-            prepareApplicationForLeaveForm(personForForm, appForm, model);
-
-            if (errors.hasGlobalErrors()) {
-                model.addAttribute("errors", errors);
-            }
-
-            return ControllerConstants.APPLICATION + "/app_form";
-        }
-    }
-
-
-    /**
-     * This method checks if there are overlapping applications and if the user has enough vacation days to apply for
-     * leave.
-     *
-     * @param  appForm
-     * @param  errors
-     *
-     * @return  true if everything is alright and application can be saved, else false
-     */
-    private boolean checkAndSaveApplicationForm(AppForm appForm, Errors errors) {
 
         Application application = appForm.createApplicationObject();
 
-        BigDecimal days = applicationInteractionService.getNumberOfVacationDays(application);
+        applicationInteractionService.apply(application, applier);
 
-        // ensure that no one applies for leave for a vacation of 0 days
-        if (CalcUtil.isZero(days)) {
-            errors.reject("check.zero");
-
-            return false;
-        }
-
-        // check at first if there are existent application for the same period
-
-        // checkOverlap
-        // case 1: ok
-        // case 2: new application is fully part of existent applications, useless to apply it
-        // case 3: gaps in between - feature in later version, now only error message
-
-        OverlapCase overlap = overlapService.checkOverlap(application);
-
-        boolean isOverlapping = overlap == OverlapCase.FULLY_OVERLAPPING || overlap == OverlapCase.PARTLY_OVERLAPPING;
-
-        if (isOverlapping) {
-            // in this version, these two cases are handled equal
-            errors.reject("check.overlap");
-
-            return false;
-        }
-
-        // if there is no overlap go to next check but only if vacation type is holiday, else you don't have to
-        // check if there are enough days on user's holidays account
-        boolean enoughDays = false;
-        boolean isHoliday = application.getVacationType() == VacationType.HOLIDAY;
-
-        if (isHoliday) {
-            enoughDays = calculationService.checkApplication(application);
-        }
-
-        boolean mayApplyForLeave = (isHoliday && enoughDays) || !isHoliday;
-
-        if (mayApplyForLeave) {
-            applicationInteractionService.apply(application, sessionService.getLoggedUser());
-
-            return true;
-        } else {
-            errors.reject("check.enough");
-
-            return false;
-        }
+        return "redirect:/web/application/"
+            + applicationService.getIdOfLatestApplication(personToApplyForLeave, ApplicationStatus.WAITING);
     }
 }
