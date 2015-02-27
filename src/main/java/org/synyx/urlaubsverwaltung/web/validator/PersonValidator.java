@@ -17,7 +17,6 @@ import org.springframework.validation.Validator;
 
 import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
-import org.synyx.urlaubsverwaltung.core.util.NumberUtil;
 import org.synyx.urlaubsverwaltung.core.util.PropertiesUtil;
 import org.synyx.urlaubsverwaltung.security.Role;
 import org.synyx.urlaubsverwaltung.web.person.PersonForm;
@@ -27,7 +26,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -44,7 +42,7 @@ public class PersonValidator implements Validator {
 
     private static final Logger LOG = Logger.getLogger(PersonValidator.class);
 
-    private static final String MANDATORY_FIELD = "error.mandatory.field";
+    private static final String ERROR_MANDATORY_FIELD = "error.mandatory.field";
     private static final String ERROR_ENTRY = "error.entry";
     private static final String ERROR_EMAIL = "error.email";
     private static final String ERROR_LENGTH = "error.length";
@@ -111,13 +109,11 @@ public class PersonValidator implements Validator {
 
         validatePeriod(form, errors);
 
-        if (form.getValidFrom() == null) {
-            errors.rejectValue("validFrom", MANDATORY_FIELD);
-        }
+        validateValidFrom(form, errors);
 
-        validateAnnualVacation(form, errors, form.getLocale());
+        validateAnnualVacation(form, errors);
 
-        validateRemainingVacationDays(form, errors, form.getLocale());
+        validateRemainingVacationDays(form, errors);
 
         validatePermissions(form, errors);
 
@@ -146,7 +142,7 @@ public class PersonValidator implements Validator {
 
         // is the name field null/empty?
         if (!StringUtils.hasText(name)) {
-            errors.rejectValue(field, MANDATORY_FIELD);
+            errors.rejectValue(field, ERROR_MANDATORY_FIELD);
         } else {
             // is String length alright?
             if (!validateStringLength(name)) {
@@ -179,7 +175,7 @@ public class PersonValidator implements Validator {
 
         // is email field null or empty
         if (!StringUtils.hasText(email)) {
-            errors.rejectValue(EMAIL, MANDATORY_FIELD);
+            errors.rejectValue(EMAIL, ERROR_MANDATORY_FIELD);
         } else {
             // String length alright?
             if (!validateStringLength(email)) {
@@ -207,7 +203,7 @@ public class PersonValidator implements Validator {
 
         // is year field filled?
         if (!StringUtils.hasText(yearForm)) {
-            errors.rejectValue(YEAR, MANDATORY_FIELD);
+            errors.rejectValue(YEAR, ERROR_MANDATORY_FIELD);
         } else {
             try {
                 int year = Integer.parseInt(yearForm);
@@ -248,56 +244,60 @@ public class PersonValidator implements Validator {
     }
 
 
-    /**
-     * This method validates if mandatory field annual vacation days is filled and if the entry is valid.
-     *
-     * @param  form
-     * @param  errors
-     * @param  locale
-     */
-    protected void validateAnnualVacation(PersonForm form, Errors errors, Locale locale) {
+    private void validateValidFrom(PersonForm form, Errors errors) {
 
-        // only achieved if invalid property values are precluded by method validateProperties
-        String propValue = businessProperties.getProperty(MAX_DAYS);
-        double max = Double.parseDouble(propValue);
-
-        if (StringUtils.hasText(form.getAnnualVacationDays())) {
-            try {
-                validateNumberOfDays(NumberUtil.parseNumber(form.getAnnualVacationDays(), locale), ANNUAL_VACATION_DAYS,
-                    max, errors);
-            } catch (NumberFormatException ex) {
-                errors.rejectValue(ANNUAL_VACATION_DAYS, ERROR_ENTRY);
+        if (form.getValidFrom() == null) {
+            // may be that date field is null because of cast exception, than there is already a field error
+            if (errors.getFieldErrors("validFrom").isEmpty()) {
+                errors.rejectValue("validFrom", ERROR_MANDATORY_FIELD);
             }
-        } else {
-            errors.rejectValue(ANNUAL_VACATION_DAYS, MANDATORY_FIELD);
         }
     }
 
 
-    /**
-     * This method gets the property value for maximal number of days and notifies Tool-Manager if necessary (false
-     * property value) or validate the number of entitlement's remaining vacation days with method validateNumberOfDays.
-     *
-     * @param  form
-     * @param  errors
-     * @param  locale
-     */
-    protected void validateRemainingVacationDays(PersonForm form, Errors errors, Locale locale) {
+    protected void validateAnnualVacation(PersonForm form, Errors errors) {
 
         // only achieved if invalid property values are precluded by method validateProperties
         String propValue = businessProperties.getProperty(MAX_DAYS);
         double max = Double.parseDouble(propValue);
 
-        if (StringUtils.hasText(form.getRemainingVacationDays())) {
+        BigDecimal annualVacationDays = form.getAnnualVacationDays();
+
+        if (annualVacationDays != null) {
+            try {
+                validateNumberOfDays(annualVacationDays, ANNUAL_VACATION_DAYS, max, errors);
+            } catch (NumberFormatException ex) {
+                errors.rejectValue(ANNUAL_VACATION_DAYS, ERROR_ENTRY);
+            }
+        } else {
+            // may be that number field is null because of cast exception, than there is already a field error
+            if (errors.getFieldErrors(ANNUAL_VACATION_DAYS).isEmpty()) {
+                errors.rejectValue(ANNUAL_VACATION_DAYS, ERROR_MANDATORY_FIELD);
+            }
+        }
+    }
+
+
+    protected void validateRemainingVacationDays(PersonForm form, Errors errors) {
+
+        // only achieved if invalid property values are precluded by method validateProperties
+        String propValue = businessProperties.getProperty(MAX_DAYS);
+        double max = Double.parseDouble(propValue);
+
+        BigDecimal remainingVacationDays = form.getRemainingVacationDays();
+
+        if (remainingVacationDays != null) {
             try {
                 // field entitlement's remaining vacation days
-                validateNumberOfDays(NumberUtil.parseNumber(form.getRemainingVacationDays(), locale),
-                    REMAINING_VACATION_DAYS, max, errors);
+                validateNumberOfDays(remainingVacationDays, REMAINING_VACATION_DAYS, max, errors);
             } catch (NumberFormatException ex) {
                 errors.rejectValue(REMAINING_VACATION_DAYS, ERROR_ENTRY);
             }
         } else {
-            errors.rejectValue(REMAINING_VACATION_DAYS, MANDATORY_FIELD);
+            // may be that number field is null because of cast exception, than there is already a field error
+            if (errors.getFieldErrors(REMAINING_VACATION_DAYS).isEmpty()) {
+                errors.rejectValue(REMAINING_VACATION_DAYS, ERROR_MANDATORY_FIELD);
+            }
         }
     }
 
@@ -316,7 +316,7 @@ public class PersonValidator implements Validator {
         // is field filled?
         if (days == null) {
             if (errors.getFieldErrors(field).isEmpty()) {
-                errors.rejectValue(field, MANDATORY_FIELD);
+                errors.rejectValue(field, ERROR_MANDATORY_FIELD);
             }
         } else {
             // is number of days < 0 ?

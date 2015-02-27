@@ -18,7 +18,6 @@ import org.synyx.urlaubsverwaltung.web.person.PersonForm;
 import java.math.BigDecimal;
 
 import java.util.Arrays;
-import java.util.Locale;
 
 
 /**
@@ -51,8 +50,8 @@ public class PersonInteractionServiceTest {
         examplePersonForm.setFirstName("Marlene");
         examplePersonForm.setEmail("muster@synyx.de");
         examplePersonForm.setYear("2014");
-        examplePersonForm.setAnnualVacationDays("28");
-        examplePersonForm.setRemainingVacationDays("4");
+        examplePersonForm.setAnnualVacationDays(new BigDecimal("28"));
+        examplePersonForm.setRemainingVacationDays(new BigDecimal("4"));
         examplePersonForm.setRemainingVacationDaysExpire(true);
         examplePersonForm.setValidFrom(DateMidnight.now());
         examplePersonForm.setWorkingDays(Arrays.asList(Day.MONDAY.getDayOfWeek(), Day.TUESDAY.getDayOfWeek()));
@@ -68,7 +67,7 @@ public class PersonInteractionServiceTest {
         Assert.assertNull(person.getPrivateKey());
         Assert.assertNull(person.getPublicKey());
 
-        service.createOrUpdate(person, examplePersonForm, Locale.GERMAN);
+        service.createOrUpdate(person, examplePersonForm);
 
         Assert.assertNotNull(person.getPrivateKey());
         Assert.assertNotNull(person.getPublicKey());
@@ -80,7 +79,7 @@ public class PersonInteractionServiceTest {
 
         Person person = new Person();
 
-        service.createOrUpdate(person, examplePersonForm, Locale.GERMAN);
+        service.createOrUpdate(person, examplePersonForm);
 
         Mockito.verify(personService).save(person);
     }
@@ -91,7 +90,7 @@ public class PersonInteractionServiceTest {
 
         Person person = new Person();
 
-        service.createOrUpdate(person, examplePersonForm, Locale.GERMAN);
+        service.createOrUpdate(person, examplePersonForm);
 
         Mockito.verify(workingTimeService).touch(Mockito.anyListOf(Integer.class), Mockito.any(DateMidnight.class),
             Mockito.eq(person));

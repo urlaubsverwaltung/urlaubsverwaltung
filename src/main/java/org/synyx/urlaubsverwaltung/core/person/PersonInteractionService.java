@@ -21,7 +21,6 @@ public interface PersonInteractionService {
      * @param  person  that will be updated and persisted
      * @param  personForm  contains information about person attributes and working time and holidays account
      *                     information
-     * @param  locale  for number formatting
      */
-    void createOrUpdate(Person person, PersonForm personForm, Locale locale);
+    void createOrUpdate(Person person, PersonForm personForm);
 }

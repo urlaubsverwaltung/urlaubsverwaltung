@@ -12,7 +12,6 @@ import org.synyx.urlaubsverwaltung.core.account.Account;
 import org.synyx.urlaubsverwaltung.core.account.AccountService;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
-import org.synyx.urlaubsverwaltung.core.util.NumberUtil;
 import org.synyx.urlaubsverwaltung.security.CryptoUtil;
 import org.synyx.urlaubsverwaltung.web.person.PersonForm;
 
@@ -20,8 +19,6 @@ import java.math.BigDecimal;
 
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
-
-import java.util.Locale;
 
 
 /**
@@ -48,7 +45,7 @@ public class PersonInteractionServiceImpl implements PersonInteractionService {
     }
 
     @Override
-    public void createOrUpdate(Person person, PersonForm personForm, Locale locale) {
+    public void createOrUpdate(Person person, PersonForm personForm) {
 
         String action;
 
@@ -74,7 +71,7 @@ public class PersonInteractionServiceImpl implements PersonInteractionService {
 
         touchWorkingTime(person, personForm);
 
-        touchAccount(person, personForm, locale);
+        touchAccount(person, personForm);
 
         LOG.info(action + " " + person.toString());
     }
@@ -86,7 +83,7 @@ public class PersonInteractionServiceImpl implements PersonInteractionService {
     }
 
 
-    private void touchAccount(Person person, PersonForm personForm, Locale locale) {
+    private void touchAccount(Person person, PersonForm personForm) {
 
         int year = Integer.parseInt(personForm.getYear());
         int dayFrom = Integer.parseInt(personForm.getDayFrom());
@@ -97,8 +94,8 @@ public class PersonInteractionServiceImpl implements PersonInteractionService {
         DateMidnight validFrom = new DateMidnight(year, monthFrom, dayFrom);
         DateMidnight validTo = new DateMidnight(year, monthTo, dayTo);
 
-        BigDecimal annualVacationDays = NumberUtil.parseNumber(personForm.getAnnualVacationDays(), locale);
-        BigDecimal remainingVacationDays = NumberUtil.parseNumber(personForm.getRemainingVacationDays(), locale);
+        BigDecimal annualVacationDays = personForm.getAnnualVacationDays();
+        BigDecimal remainingVacationDays = personForm.getRemainingVacationDays();
         boolean expiring = personForm.isRemainingVacationDaysExpire();
 
         // check if there is an existing account

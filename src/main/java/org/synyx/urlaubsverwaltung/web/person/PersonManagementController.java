@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.support.RequestContextUtils;
 
 import org.synyx.urlaubsverwaltung.core.account.Account;
 import org.synyx.urlaubsverwaltung.core.account.AccountService;
@@ -31,11 +30,12 @@ import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.DateMidnightPropertyEditor;
+import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.validator.PersonValidator;
 
-import java.util.Locale;
+import java.math.BigDecimal;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.Locale;
 
 
 /**
@@ -63,9 +63,10 @@ public class PersonManagementController {
     private WorkingTimeService workingTimeService;
 
     @InitBinder
-    public void initBinder(DataBinder binder) {
+    public void initBinder(DataBinder binder, Locale locale) {
 
         binder.registerCustomEditor(DateMidnight.class, new DateMidnightPropertyEditor());
+        binder.registerCustomEditor(BigDecimal.class, new DecimalNumberPropertyEditor(locale));
     }
 
 
@@ -86,17 +87,12 @@ public class PersonManagementController {
 
 
     @RequestMapping(value = "/staff", method = RequestMethod.POST)
-    public String newPerson(HttpServletRequest request,
-        @ModelAttribute("personForm") PersonForm personForm, Errors errors, Model model) {
-
-        Locale locale = RequestContextUtils.getLocale(request);
+    public String newPerson(@ModelAttribute("personForm") PersonForm personForm, Errors errors, Model model) {
 
         Person person = new Person();
 
         // validate login name
         validator.validateLogin(personForm.getLoginName(), errors);
-
-        personForm.setLocale(locale); // needed for number parsing
         validator.validate(personForm, errors);
 
         if (errors.hasGlobalErrors()) {
@@ -109,15 +105,14 @@ public class PersonManagementController {
             return PersonConstants.PERSON_FORM_JSP;
         }
 
-        personInteractionService.createOrUpdate(person, personForm, locale);
+        personInteractionService.createOrUpdate(person, personForm);
 
         return "redirect:/web/staff/";
     }
 
 
     @RequestMapping(value = "/staff/{personId}/edit", method = RequestMethod.GET)
-    public String editPersonForm(HttpServletRequest request,
-        @PathVariable("personId") Integer personId,
+    public String editPersonForm(@PathVariable("personId") Integer personId,
         @RequestParam(value = ControllerConstants.YEAR, required = false) Integer year, Model model) {
 
         int currentYear = DateMidnight.now().getYear();
@@ -136,9 +131,7 @@ public class PersonManagementController {
         if (sessionService.isOffice()) {
             Person person = personService.getPersonByID(personId);
 
-            Locale locale = RequestContextUtils.getLocale(request);
-
-            PersonForm personForm = preparePersonForm(yearOfHolidaysAccount, person, locale);
+            PersonForm personForm = preparePersonForm(yearOfHolidaysAccount, person);
             addModelAttributesForPersonForm(person, personForm, model);
 
             return PersonConstants.PERSON_FORM_JSP;
@@ -148,14 +141,14 @@ public class PersonManagementController {
     }
 
 
-    private PersonForm preparePersonForm(int year, Person person, Locale locale) {
+    private PersonForm preparePersonForm(int year, Person person) {
 
         Account account = accountService.getHolidaysAccount(year, person);
 
         WorkingTime workingTime = workingTimeService.getCurrentOne(person);
 
         return new PersonForm(person, String.valueOf(year), account, workingTime, person.getPermissions(),
-                person.getNotifications(), locale);
+                person.getNotifications());
     }
 
 
@@ -173,16 +166,12 @@ public class PersonManagementController {
     }
 
 
-    @RequestMapping(value = "/staff/{personId}", method = RequestMethod.PUT)
-    public String editPerson(HttpServletRequest request,
-        @PathVariable("personId") Integer personId,
+    @RequestMapping(value = "/staff/{personId}/edit", method = RequestMethod.PUT)
+    public String editPerson(@PathVariable("personId") Integer personId,
         @ModelAttribute("personForm") PersonForm personForm, Errors errors, Model model) {
-
-        Locale locale = RequestContextUtils.getLocale(request);
 
         Person personToUpdate = personService.getPersonByID(personId);
 
-        personForm.setLocale(locale); // needed for number parsing
         validator.validate(personForm, errors);
 
         if (errors.hasGlobalErrors()) {
@@ -195,7 +184,7 @@ public class PersonManagementController {
             return PersonConstants.PERSON_FORM_JSP;
         }
 
-        personInteractionService.createOrUpdate(personToUpdate, personForm, locale);
+        personInteractionService.createOrUpdate(personToUpdate, personForm);
 
         return "redirect:/web/staff/";
     }

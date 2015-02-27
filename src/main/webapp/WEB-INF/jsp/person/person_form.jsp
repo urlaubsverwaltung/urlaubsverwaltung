@@ -38,7 +38,7 @@
     </c:when>
     <c:otherwise>
         <c:set var="METHOD" value="PUT"/>
-        <c:set var="ACTION" value="${URL_PREFIX}/staff/${person.id}"/>
+        <c:set var="ACTION" value="${URL_PREFIX}/staff/${person.id}/edit"/>
     </c:otherwise>
 </c:choose>
 

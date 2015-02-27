@@ -13,17 +13,17 @@ import org.synyx.urlaubsverwaltung.core.calendar.Day;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.util.NumberUtil;
 import org.synyx.urlaubsverwaltung.security.Role;
+
+import java.math.BigDecimal;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 
 
 /**
- * View class representing a person and its account.
+ * View class representing a person with a holidays account.
  *
  * @author  Aljona Murygina
  */
@@ -47,9 +47,9 @@ public class PersonForm {
 
     private String year;
 
-    private String annualVacationDays;
+    private BigDecimal annualVacationDays;
 
-    private String remainingVacationDays;
+    private BigDecimal remainingVacationDays;
 
     private boolean remainingVacationDaysExpire;
 
@@ -61,8 +61,6 @@ public class PersonForm {
 
     private List<MailNotification> notifications = new ArrayList<>();
 
-    private Locale locale;
-
     public PersonForm() {
 
         setDefaultValuesForValidity();
@@ -70,22 +68,21 @@ public class PersonForm {
 
 
     public PersonForm(Person person, String year, Account account, WorkingTime workingTime, Collection<Role> roles,
-        Collection<MailNotification> notifications, Locale locale) {
+        Collection<MailNotification> notifications) {
 
         this.loginName = person.getLoginName();
         this.lastName = person.getLastName();
         this.firstName = person.getFirstName();
         this.email = person.getEmail();
         this.year = year;
-        this.locale = locale;
 
         if (account != null) {
             this.dayFrom = String.valueOf(account.getValidFrom().getDayOfMonth());
             this.monthFrom = String.valueOf(account.getValidFrom().getMonthOfYear());
             this.dayTo = String.valueOf(account.getValidTo().getDayOfMonth());
             this.monthTo = String.valueOf(account.getValidTo().getMonthOfYear());
-            this.annualVacationDays = NumberUtil.formatNumber(account.getAnnualVacationDays(), locale);
-            this.remainingVacationDays = NumberUtil.formatNumber(account.getRemainingVacationDays(), locale);
+            this.annualVacationDays = account.getAnnualVacationDays();
+            this.remainingVacationDays = account.getRemainingVacationDays();
             this.remainingVacationDaysExpire = account.isRemainingVacationDaysExpire();
         } else {
             setDefaultValuesForValidity();
@@ -121,13 +118,13 @@ public class PersonForm {
     }
 
 
-    public String getAnnualVacationDays() {
+    public BigDecimal getAnnualVacationDays() {
 
         return annualVacationDays;
     }
 
 
-    public void setAnnualVacationDays(String annualVacationDays) {
+    public void setAnnualVacationDays(BigDecimal annualVacationDays) {
 
         this.annualVacationDays = annualVacationDays;
     }
@@ -217,13 +214,13 @@ public class PersonForm {
     }
 
 
-    public String getRemainingVacationDays() {
+    public BigDecimal getRemainingVacationDays() {
 
         return remainingVacationDays;
     }
 
 
-    public void setRemainingVacationDays(String remainingVacationDays) {
+    public void setRemainingVacationDays(BigDecimal remainingVacationDays) {
 
         this.remainingVacationDays = remainingVacationDays;
     }
@@ -310,18 +307,6 @@ public class PersonForm {
     public void setNotifications(List<MailNotification> notifications) {
 
         this.notifications = notifications;
-    }
-
-
-    public Locale getLocale() {
-
-        return locale;
-    }
-
-
-    public void setLocale(Locale locale) {
-
-        this.locale = locale;
     }
 
 

@@ -17,6 +17,8 @@ import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.security.Role;
 import org.synyx.urlaubsverwaltung.web.person.PersonForm;
 
+import java.math.BigDecimal;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
@@ -226,34 +228,16 @@ public class PersonValidatorTest {
     public void ensureAnnualVacationMustNotBeNull() {
 
         form.setAnnualVacationDays(null);
-        validator.validateAnnualVacation(form, errors, Locale.GERMAN);
+        validator.validateAnnualVacation(form, errors);
         Mockito.verify(errors).rejectValue("annualVacationDays", "error.mandatory.field");
-    }
-
-
-    @Test
-    public void ensureAnnualVacationMustNotBeEmpty() {
-
-        form.setAnnualVacationDays("");
-        validator.validateAnnualVacation(form, errors, Locale.GERMAN);
-        Mockito.verify(errors).rejectValue("annualVacationDays", "error.mandatory.field");
-    }
-
-
-    @Test
-    public void ensureAnnualVacationMustNotBeLiterals() {
-
-        form.setAnnualVacationDays("a");
-        validator.validateAnnualVacation(form, errors, Locale.GERMAN);
-        Mockito.verify(errors).rejectValue("annualVacationDays", "error.entry");
     }
 
 
     @Test
     public void ensureAnnualVacationMustNotBeGreaterThanOneYear() {
 
-        form.setAnnualVacationDays("367");
-        validator.validateAnnualVacation(form, errors, Locale.GERMAN);
+        form.setAnnualVacationDays(new BigDecimal("367"));
+        validator.validateAnnualVacation(form, errors);
         Mockito.verify(errors).rejectValue("annualVacationDays", "error.entry");
     }
 
@@ -261,8 +245,8 @@ public class PersonValidatorTest {
     @Test
     public void ensureValidAnnualVacationHasNoValidationError() {
 
-        form.setAnnualVacationDays("28");
-        validator.validateAnnualVacation(form, errors, Locale.GERMAN);
+        form.setAnnualVacationDays(new BigDecimal("28"));
+        validator.validateAnnualVacation(form, errors);
         Mockito.verifyZeroInteractions(errors);
     }
 
@@ -273,34 +257,16 @@ public class PersonValidatorTest {
     public void ensureRemainingVacationDaysMustNotBeNull() {
 
         form.setRemainingVacationDays(null);
-        validator.validateRemainingVacationDays(form, errors, Locale.GERMAN);
+        validator.validateRemainingVacationDays(form, errors);
         Mockito.verify(errors).rejectValue("remainingVacationDays", "error.mandatory.field");
-    }
-
-
-    @Test
-    public void ensureRemainingVacationDaysMustNotBeEmpty() {
-
-        form.setRemainingVacationDays("");
-        validator.validateRemainingVacationDays(form, errors, Locale.GERMAN);
-        Mockito.verify(errors).rejectValue("remainingVacationDays", "error.mandatory.field");
-    }
-
-
-    @Test
-    public void ensureRemainingVacationDaysMustNotBeLiterals() {
-
-        form.setRemainingVacationDays("a");
-        validator.validateRemainingVacationDays(form, errors, Locale.GERMAN);
-        Mockito.verify(errors).rejectValue("remainingVacationDays", "error.entry");
     }
 
 
     @Test
     public void ensureRemainingVacationDaysMustNotBeGreaterThanOneYear() {
 
-        form.setRemainingVacationDays("367");
-        validator.validateRemainingVacationDays(form, errors, Locale.GERMAN);
+        form.setRemainingVacationDays(new BigDecimal("367"));
+        validator.validateRemainingVacationDays(form, errors);
         Mockito.verify(errors).rejectValue("remainingVacationDays", "error.entry");
     }
 
@@ -308,8 +274,8 @@ public class PersonValidatorTest {
     @Test
     public void ensureValidRemainingVacationDaysHaveNoValidationError() {
 
-        form.setRemainingVacationDays("5");
-        validator.validateRemainingVacationDays(form, errors, Locale.GERMAN);
+        form.setRemainingVacationDays(new BigDecimal("5"));
+        validator.validateRemainingVacationDays(form, errors);
         Mockito.verifyZeroInteractions(errors);
     }
 
