@@ -59,6 +59,7 @@ import javax.annotation.security.RolesAllowed;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
+@RequestMapping("/sicknote")
 @Controller
 public class SickNoteController {
 
@@ -69,9 +70,6 @@ public class SickNoteController {
     private PersonService personService;
 
     @Autowired
-    private OwnCalendarService calendarService;
-
-    @Autowired
     private SickNoteValidator validator;
 
     @Autowired
@@ -79,9 +77,6 @@ public class SickNoteController {
 
     @Autowired
     private ApplicationValidator applicationValidator;
-
-    @Autowired
-    private SickNoteStatisticsService statisticsService;
 
     @InitBinder
     public void initBinder(DataBinder binder, Locale locale) {
@@ -91,150 +86,7 @@ public class SickNoteController {
     }
 
 
-    @RequestMapping(value = "/sicknote", method = RequestMethod.GET)
-    public String defaultSickNotes() {
-
-        DateMidnight now = DateMidnight.now();
-        DateMidnight from = now.dayOfYear().withMinimumValue();
-        DateMidnight to = now.dayOfYear().withMaximumValue();
-
-        return "redirect:/web/sicknote?from=" + from.toString(DateFormat.PATTERN) + "&to="
-            + to.toString(DateFormat.PATTERN);
-    }
-
-
-    @RequestMapping(value = "/sicknote/quartal", method = RequestMethod.GET)
-    public String quartalSickNotes() {
-
-        if (sessionService.isOffice()) {
-            DateMidnight now = DateMidnight.now();
-
-            DateMidnight from = now.dayOfMonth().withMinimumValue().minusMonths(2);
-            DateMidnight to = now.dayOfMonth().withMaximumValue();
-
-            return "redirect:/web/sicknote?from=" + from.toString(DateFormat.PATTERN) + "&to="
-                + to.toString(DateFormat.PATTERN);
-        }
-
-        return ControllerConstants.ERROR_JSP;
-    }
-
-
-    @RequestMapping(value = "/sicknote/filter", method = RequestMethod.POST)
-    public String filterSickNotes(@ModelAttribute("filterRequest") FilterRequest filterRequest) {
-
-        if (sessionService.isOffice()) {
-            DateMidnight now = DateMidnight.now();
-            DateMidnight from = now;
-            DateMidnight to = now;
-
-            if (filterRequest.getPeriod().equals(FilterRequest.Period.YEAR)) {
-                from = now.dayOfYear().withMinimumValue();
-                to = now.dayOfYear().withMaximumValue();
-            } else if (filterRequest.getPeriod().equals(FilterRequest.Period.QUARTAL)) {
-                from = now.dayOfMonth().withMinimumValue().minusMonths(2);
-                to = now.dayOfMonth().withMaximumValue();
-            } else if (filterRequest.getPeriod().equals(FilterRequest.Period.MONTH)) {
-                from = now.dayOfMonth().withMinimumValue();
-                to = now.dayOfMonth().withMaximumValue();
-            }
-
-            return "redirect:/web/sicknote?from=" + from.toString(DateFormat.PATTERN) + "&to="
-                + to.toString(DateFormat.PATTERN);
-        }
-
-        return ControllerConstants.ERROR_JSP;
-    }
-
-
-    @RequestMapping(value = "/sicknote", method = RequestMethod.GET, params = { "from", "to" })
-    public String periodsSickNotes(@RequestParam("from") String from,
-        @RequestParam("to") String to, Model model) {
-
-        if (sessionService.isOffice()) {
-            DateTimeFormatter formatter = DateTimeFormat.forPattern(DateFormat.PATTERN);
-            DateMidnight fromDate = DateMidnight.parse(from, formatter);
-            DateMidnight toDate = DateMidnight.parse(to, formatter);
-
-            List<SickNote> sickNoteList = sickNoteService.getByPeriod(fromDate, toDate);
-
-            fillModel(model, sickNoteList, fromDate, toDate);
-
-            return "sicknote/sick_notes";
-        }
-
-        return ControllerConstants.ERROR_JSP;
-    }
-
-
-    private void fillModel(Model model, List<SickNote> sickNotes, DateMidnight fromDate, DateMidnight toDate) {
-
-        model.addAttribute("today", DateMidnight.now());
-        model.addAttribute("from", fromDate);
-        model.addAttribute("to", toDate);
-        model.addAttribute("filterRequest", new FilterRequest());
-
-        List<Person> persons = personService.getActivePersons();
-
-        Map<Person, BigDecimal> sickDays = new HashMap<>();
-        Map<Person, BigDecimal> sickDaysWithAUB = new HashMap<>();
-        Map<Person, BigDecimal> childSickDays = new HashMap<>();
-        Map<Person, BigDecimal> childSickDaysWithAUB = new HashMap<>();
-
-        Map<Person, String> gravatars = new HashMap<>();
-
-        for (Person person : persons) {
-            sickDays.put(person, BigDecimal.ZERO);
-            sickDaysWithAUB.put(person, BigDecimal.ZERO);
-            childSickDays.put(person, BigDecimal.ZERO);
-            childSickDaysWithAUB.put(person, BigDecimal.ZERO);
-
-            gravatars.put(person, GravatarUtil.createImgURL(person.getEmail()));
-        }
-
-        for (SickNote sickNote : sickNotes) {
-            if (!sickNote.isActive()) {
-                continue;
-            }
-
-            Person person = sickNote.getPerson();
-
-            if (sickNote.getType().equals(SickNoteType.SICK_NOTE_CHILD)) {
-                BigDecimal currentChildSickDays = childSickDays.get(person);
-                childSickDays.put(person, currentChildSickDays.add(sickNote.getWorkDays()));
-
-                if (sickNote.isAubPresent()) {
-                    BigDecimal workDays = calendarService.getWorkDays(DayLength.FULL, sickNote.getAubStartDate(),
-                            sickNote.getAubEndDate(), person);
-
-                    BigDecimal currentChildSickDaysWithAUB = childSickDaysWithAUB.get(person);
-                    childSickDaysWithAUB.put(person, currentChildSickDaysWithAUB.add(workDays));
-                }
-            } else {
-                BigDecimal currentSickDays = sickDays.get(person);
-                sickDays.put(person, currentSickDays.add(sickNote.getWorkDays()));
-
-                if (sickNote.isAubPresent()) {
-                    BigDecimal workDays = calendarService.getWorkDays(DayLength.FULL, sickNote.getAubStartDate(),
-                            sickNote.getAubEndDate(), person);
-
-                    BigDecimal currentSickDaysWithAUB = sickDaysWithAUB.get(person);
-                    sickDaysWithAUB.put(person, currentSickDaysWithAUB.add(workDays));
-                }
-            }
-        }
-
-        model.addAttribute("sickDays", sickDays);
-        model.addAttribute("sickDaysWithAUB", sickDaysWithAUB);
-        model.addAttribute("childSickDays", childSickDays);
-        model.addAttribute("childSickDaysWithAUB", childSickDaysWithAUB);
-
-        model.addAttribute("persons", persons);
-        model.addAttribute("gravatars", gravatars);
-    }
-
-
-    @RequestMapping(value = "/sicknote/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @RolesAllowed({ "USER", "OFFICE" })
     public String sickNoteDetails(@PathVariable("id") Integer id, Model model) {
 
@@ -265,7 +117,7 @@ public class SickNoteController {
     }
 
 
-    @RequestMapping(value = "/sicknote/new", method = RequestMethod.GET)
+    @RequestMapping(value = "/new", method = RequestMethod.GET)
     public String newSickNote(Model model) {
 
         if (sessionService.isOffice()) {
@@ -280,7 +132,7 @@ public class SickNoteController {
     }
 
 
-    @RequestMapping(value = "/sicknote", method = RequestMethod.POST)
+    @RequestMapping(value = "/", method = RequestMethod.POST)
     public String newSickNote(@ModelAttribute("sickNote") SickNote sickNote, Errors errors, Model model) {
 
         if (sessionService.isOffice()) {
@@ -303,7 +155,7 @@ public class SickNoteController {
     }
 
 
-    @RequestMapping(value = "/sicknote/{id}/edit", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}/edit", method = RequestMethod.GET)
     public String editSickNote(@PathVariable("id") Integer id, Model model) {
 
         SickNote sickNote = sickNoteService.getById(id);
@@ -319,7 +171,7 @@ public class SickNoteController {
     }
 
 
-    @RequestMapping(value = "/sicknote/{id}/edit", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{id}/edit", method = RequestMethod.PUT)
     public String editSickNote(@PathVariable("id") Integer id,
         @ModelAttribute("sickNote") SickNote sickNote, Errors errors, Model model) {
 
@@ -333,18 +185,18 @@ public class SickNoteController {
                 return "sicknote/sick_note_form";
             }
 
-            // this step is necessary because collections can not be binded with form:hidden
+            // this step is necessary because collections can not be bind with form:hidden
             sickNote.setComments(sickNoteService.getById(id).getComments());
             sickNoteService.touch(sickNote, SickNoteStatus.EDITED, sessionService.getLoggedUser());
 
-            return "redirect:/web/sicknote/" + id;
+            return "redirect:/web/" + id;
         }
 
         return ControllerConstants.ERROR_JSP;
     }
 
 
-    @RequestMapping(value = "/sicknote/{id}/comment", method = RequestMethod.POST)
+    @RequestMapping(value = "/{id}/comment", method = RequestMethod.POST)
     public String addComment(@PathVariable("id") Integer id,
         @ModelAttribute("comment") SickNoteComment comment, RedirectAttributes redirectAttributes, Errors errors) {
 
@@ -357,14 +209,14 @@ public class SickNoteController {
                 sickNoteService.addComment(id, comment, SickNoteStatus.COMMENTED, sessionService.getLoggedUser());
             }
 
-            return "redirect:/web/sicknote/" + id;
+            return "redirect:/web/" + id;
         }
 
         return ControllerConstants.ERROR_JSP;
     }
 
 
-    @RequestMapping(value = "/sicknote/{id}/convert", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}/convert", method = RequestMethod.GET)
     public String convertSickNoteToVacation(@PathVariable("id") Integer id, Model model) {
 
         SickNote sickNote = sickNoteService.getById(id);
@@ -381,7 +233,7 @@ public class SickNoteController {
     }
 
 
-    @RequestMapping(value = "/sicknote/{id}/convert", method = RequestMethod.POST)
+    @RequestMapping(value = "/{id}/convert", method = RequestMethod.POST)
     public String convertSickNoteToVacation(@PathVariable("id") Integer id,
         @ModelAttribute("appForm") AppForm appForm, Errors errors, Model model) {
 
@@ -407,8 +259,8 @@ public class SickNoteController {
     }
 
 
-    @RequestMapping(value = "/sicknote/{id}/cancel", method = RequestMethod.POST)
-    public String cancelSickNote(@PathVariable("id") Integer id, Model model) {
+    @RequestMapping(value = "/{id}/cancel", method = RequestMethod.POST)
+    public String cancelSickNote(@PathVariable("id") Integer id) {
 
         if (sessionService.isOffice()) {
             SickNote sickNote = sickNoteService.getById(id);
@@ -416,21 +268,6 @@ public class SickNoteController {
             sickNoteService.cancel(sickNote, sessionService.getLoggedUser());
 
             return "redirect:/web/sicknote/" + id;
-        }
-
-        return ControllerConstants.ERROR_JSP;
-    }
-
-
-    @RequestMapping(value = "/sicknote/statistics", method = RequestMethod.GET, params = "year")
-    public String sickNotesStatistics(@RequestParam("year") Integer year, Model model) {
-
-        if (sessionService.isOffice()) {
-            SickNoteStatistics statistics = statisticsService.createStatistics(year);
-
-            model.addAttribute("statistics", statistics);
-
-            return "sicknote/sick_notes_statistics";
         }
 
         return ControllerConstants.ERROR_JSP;
