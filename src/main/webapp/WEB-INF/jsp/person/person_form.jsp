@@ -313,25 +313,25 @@
                     <uv:date date="${time.validFrom}" />
                     <br />
                     <c:if test="${time.monday.duration > 0}">
-                        <spring:message code="monday" />
+                        <spring:message code="MONDAY" />
                     </c:if>
                     <c:if test="${time.tuesday.duration > 0}">
-                        <spring:message code="tuesday" />
+                        <spring:message code="TUESDAY" />
                     </c:if>
                     <c:if test="${time.wednesday.duration > 0}">
-                        <spring:message code="wednesday" />
+                        <spring:message code="WEDNESDAY" />
                     </c:if>
                     <c:if test="${time.thursday.duration > 0}">
-                        <spring:message code="thursday" />
+                        <spring:message code="THURSDAY" />
                     </c:if>
                     <c:if test="${time.friday.duration > 0}">
-                        <spring:message code="friday" />
+                        <spring:message code="FRIDAY" />
                     </c:if>
                     <c:if test="${time.saturday.duration > 0}">
-                        <spring:message code="saturday" />
+                        <spring:message code="SATURDAY" />
                     </c:if>
                     <c:if test="${time.sunday.duration > 0}">
-                        <spring:message code="sunday" />
+                        <spring:message code="SUNDAY" />
                     </c:if>
                     <br />
                     <br />
