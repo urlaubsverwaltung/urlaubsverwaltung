@@ -55,9 +55,6 @@ public class ApplyForLeaveController {
     private AccountService accountService;
 
     @Autowired
-    private ApplicationService applicationService;
-
-    @Autowired
     private ApplicationInteractionService applicationInteractionService;
 
     @Autowired

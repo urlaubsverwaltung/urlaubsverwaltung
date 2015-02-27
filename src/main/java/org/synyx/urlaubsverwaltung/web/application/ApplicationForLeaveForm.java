@@ -43,8 +43,6 @@ public class ApplicationForLeaveForm {
     // Address and phone number during holiday
     private String address;
 
-    private DateMidnight applicationDate;
-
     private boolean teamInformed;
 
     private String comment;
@@ -70,18 +68,6 @@ public class ApplicationForLeaveForm {
     public void setAddress(String address) {
 
         this.address = address;
-    }
-
-
-    public DateMidnight getApplicationDate() {
-
-        return applicationDate;
-    }
-
-
-    public void setApplicationDate(DateMidnight applicationDate) {
-
-        this.applicationDate = applicationDate;
     }
 
 
@@ -195,27 +181,26 @@ public class ApplicationForLeaveForm {
 
     public Application createApplicationObject() {
 
-        Application app = new Application();
+        Application applicationForLeave = new Application();
 
-        app.setPerson(person);
-        app.setAddress(address);
-        app.setVacationType(vacationType);
-        app.setHowLong(howLong);
-        app.setReason(reason);
-        app.setHolidayReplacement(holidayReplacement);
-        app.setAddress(address);
-        app.setApplicationDate(applicationDate);
-        app.setTeamInformed(teamInformed);
-        app.setComment(comment);
+        applicationForLeave.setPerson(person);
+        applicationForLeave.setAddress(address);
+        applicationForLeave.setVacationType(vacationType);
+        applicationForLeave.setHowLong(howLong);
+        applicationForLeave.setReason(reason);
+        applicationForLeave.setHolidayReplacement(holidayReplacement);
+        applicationForLeave.setAddress(address);
+        applicationForLeave.setTeamInformed(teamInformed);
+        applicationForLeave.setComment(comment);
 
         if (howLong == DayLength.FULL) {
-            app.setStartDate(startDate);
-            app.setEndDate(endDate);
+            applicationForLeave.setStartDate(startDate);
+            applicationForLeave.setEndDate(endDate);
         } else {
-            app.setStartDate(startDateHalf);
-            app.setEndDate(startDateHalf);
+            applicationForLeave.setStartDate(startDateHalf);
+            applicationForLeave.setEndDate(startDateHalf);
         }
 
-        return app;
+        return applicationForLeave;
     }
 }
