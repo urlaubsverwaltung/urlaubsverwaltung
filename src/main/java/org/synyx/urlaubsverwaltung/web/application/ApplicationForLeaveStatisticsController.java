@@ -20,7 +20,7 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
-import org.synyx.urlaubsverwaltung.web.sicknote.FilterRequest;
+import org.synyx.urlaubsverwaltung.web.FilterRequest;
 import org.synyx.urlaubsverwaltung.web.statistics.ApplicationForLeaveStatistics;
 import org.synyx.urlaubsverwaltung.web.statistics.ApplicationForLeaveStatisticsBuilder;
 

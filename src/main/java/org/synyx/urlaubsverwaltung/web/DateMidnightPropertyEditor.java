@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.synyx.urlaubsverwaltung.web.util;
+package org.synyx.urlaubsverwaltung.web;
 
 import org.joda.time.DateTime;
 import org.joda.time.ReadableInstant;
@@ -15,8 +15,6 @@ import org.synyx.urlaubsverwaltung.DateFormat;
 
 import java.beans.PropertyEditorSupport;
 
-import java.util.Locale;
-
 
 /**
  * @author  Aljona Murygina
@@ -25,9 +23,9 @@ public class DateMidnightPropertyEditor extends PropertyEditorSupport {
 
     private final DateTimeFormatter formatter;
 
-    public DateMidnightPropertyEditor(Locale locale) { // NOSONAR - Locale should stay here for the future
+    public DateMidnightPropertyEditor() {
 
-        // TODO: not so nice....
+        // TODO: For now only German language and certain date pattern is supported
         this.formatter = DateTimeFormat.forPattern(DateFormat.PATTERN);
     }
 

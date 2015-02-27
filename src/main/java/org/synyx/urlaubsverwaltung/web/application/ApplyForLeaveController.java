@@ -28,8 +28,8 @@ import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
-import org.synyx.urlaubsverwaltung.web.sicknote.PersonPropertyEditor;
-import org.synyx.urlaubsverwaltung.web.util.DateMidnightPropertyEditor;
+import org.synyx.urlaubsverwaltung.web.PersonPropertyEditor;
+import org.synyx.urlaubsverwaltung.web.DateMidnightPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.validator.ApplicationValidator;
 
 import java.math.BigDecimal;
@@ -69,9 +69,9 @@ public class ApplyForLeaveController {
     private ApplicationValidator applicationValidator;
 
     @InitBinder
-    public void initBinder(DataBinder binder, Locale locale) {
+    public void initBinder(DataBinder binder) {
 
-        binder.registerCustomEditor(DateMidnight.class, new DateMidnightPropertyEditor(locale));
+        binder.registerCustomEditor(DateMidnight.class, new DateMidnightPropertyEditor());
         binder.registerCustomEditor(Person.class, new PersonPropertyEditor(personService));
     }
 

@@ -31,7 +31,7 @@ import org.synyx.urlaubsverwaltung.core.person.PersonInteractionService;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
-import org.synyx.urlaubsverwaltung.web.util.DateMidnightPropertyEditor;
+import org.synyx.urlaubsverwaltung.web.DateMidnightPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.validator.PersonValidator;
 
 import java.util.Locale;
@@ -69,7 +69,7 @@ public class PersonManagementController {
     @InitBinder
     public void initBinder(DataBinder binder, Locale locale) {
 
-        binder.registerCustomEditor(DateMidnight.class, new DateMidnightPropertyEditor(locale));
+        binder.registerCustomEditor(DateMidnight.class, new DateMidnightPropertyEditor());
     }
 
 
