@@ -66,14 +66,14 @@ public class Application extends AbstractPersistable<Integer> {
     // For special and unpaid leave a reason is required
     private String reason;
 
-    // Representative person of employee during his/her holiday
+    // Holiday replacement: stands in while the person is on holiday
     @ManyToOne
-    private Person rep;
+    private Person holidayReplacement;
 
     // Address and phone number during holiday
     private String address;
 
-    // Date of applying application for leave
+    // Date of applying for leave
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date applicationDate;
 
@@ -286,15 +286,15 @@ public class Application extends AbstractPersistable<Integer> {
     }
 
 
-    public Person getRep() {
+    public Person getHolidayReplacement() {
 
-        return rep;
+        return holidayReplacement;
     }
 
 
-    public void setRep(Person rep) {
+    public void setHolidayReplacement(Person holidayReplacement) {
 
-        this.rep = rep;
+        this.holidayReplacement = holidayReplacement;
     }
 
 

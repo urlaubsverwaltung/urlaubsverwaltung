@@ -399,6 +399,6 @@ class MailServiceImpl implements MailService {
 
         String text = buildMailBody("notify_representative", model);
 
-        sendEmail(Arrays.asList(application.getRep()), "subject.rep", text);
+        sendEmail(Arrays.asList(application.getHolidayReplacement()), "subject.holidayReplacement", text);
     }
 }

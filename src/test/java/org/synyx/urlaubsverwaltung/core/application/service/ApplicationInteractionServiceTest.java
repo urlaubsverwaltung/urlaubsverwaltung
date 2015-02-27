@@ -175,7 +175,7 @@ public class ApplicationInteractionServiceTest {
 
         Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
-        applicationForLeave.setRep(rep);
+        applicationForLeave.setHolidayReplacement(rep);
 
         service.allow(applicationForLeave, boss, comment);
 

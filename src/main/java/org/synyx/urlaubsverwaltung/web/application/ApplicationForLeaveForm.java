@@ -37,8 +37,8 @@ public class ApplicationForLeaveForm {
     // For special and unpaid leave a reason is required
     private String reason;
 
-    // Representative of employee during his/her holiday
-    private Person rep;
+    // Stands in while the person is on holiday
+    private Person holidayReplacement;
 
     // Address and phone number during holiday
     private String address;
@@ -121,15 +121,15 @@ public class ApplicationForLeaveForm {
     }
 
 
-    public Person getRep() {
+    public Person getHolidayReplacement() {
 
-        return rep;
+        return holidayReplacement;
     }
 
 
-    public void setRep(Person rep) {
+    public void setHolidayReplacement(Person holidayReplacement) {
 
-        this.rep = rep;
+        this.holidayReplacement = holidayReplacement;
     }
 
 
@@ -202,7 +202,7 @@ public class ApplicationForLeaveForm {
         app.setVacationType(vacationType);
         app.setHowLong(howLong);
         app.setReason(reason);
-        app.setRep(rep);
+        app.setHolidayReplacement(holidayReplacement);
         app.setAddress(address);
         app.setApplicationDate(applicationDate);
         app.setTeamInformed(teamInformed);

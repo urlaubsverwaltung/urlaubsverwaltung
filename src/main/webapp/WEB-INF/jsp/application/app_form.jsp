@@ -80,12 +80,12 @@
 
 <c:choose>
     <c:when test="${person.id == loggedUser.id}">
-        <c:set var="appliesAsRep" value="false"/>
+        <c:set var="appliesOnOnesBehalf" value="false"/>
         <c:set var="actionUrl" value="${URL_PREFIX}/application/new"/>
     </c:when>
     <c:otherwise>
         <sec:authorize access="hasRole('OFFICE')">
-            <c:set var="appliesAsRep" value="true"/>
+            <c:set var="appliesOnOnesBehalf" value="true"/>
             <c:set var="actionUrl" value="${URL_PREFIX}/application/new?personId=${person.id}"/>
         </sec:authorize>
     </c:otherwise>
@@ -116,7 +116,7 @@
 
 </div>
 
-    <c:if test="${appliesAsRep == true}">
+    <c:if test="${appliesOnOnesBehalf == true}">
         <%-- office applies for a user --%>
 
         <div class="form-group">
@@ -253,32 +253,32 @@
 </div>
 
 <div class="form-group">
-    <label class="control-label col-md-4" for="rep">
-        <spring:message code="app.rep"/>
+    <label class="control-label col-md-4" for="holidayReplacement">
+        <spring:message code="app.holidayReplacement"/>
     </label>
 
     <div class="col-md-7">
-        <form:select path="rep" id="rep" size="1" class="form-control">
-            <option value="-1"><spring:message code='app.no.rep'/></option>
-            <c:forEach items="${persons}" var="representant">
+        <form:select path="holidayReplacement" id="holidayReplacement" size="1" class="form-control">
+            <option value="-1"><spring:message code='app.no.holidayReplacement'/></option>
+            <c:forEach items="${persons}" var="holidayReplacement">
 
                <c:choose>
-                   <c:when test="${appForm.rep.id == representant.id}">
-                       <form:option value="${representant.id}" selected="selected">
-                           <c:out value="${representant.niceName}" />
+                   <c:when test="${appForm.holidayReplacement.id == holidayReplacement.id}">
+                       <form:option value="${holidayReplacement.id}" selected="selected">
+                           <c:out value="${holidayReplacement.niceName}" />
                        </form:option>
                    </c:when>
                    <c:otherwise>
-                       <c:if test="${person.id != representant.id}">
-                           <form:option value="${representant.id}">
-                               <c:out value="${representant.niceName}" />
+                       <c:if test="${person.id != holidayReplacement.id}">
+                           <form:option value="${holidayReplacement.id}">
+                               <c:out value="${holidayReplacement.niceName}" />
                            </form:option>
                        </c:if>
                    </c:otherwise>
                </c:choose>
             </c:forEach>
         </form:select>
-        <form:errors path="rep" cssClass="error"/>
+        <form:errors path="holidayReplacement" cssClass="error"/>
     </div>
 
 </div>
