@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.core.person;
 
 import org.joda.time.DateMidnight;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -30,7 +29,6 @@ public class PersonInteractionServiceTest {
     private PersonService personService;
     private WorkingTimeService workingTimeService;
     private AccountService accountService;
-    private MailService mailService;
 
     private PersonForm examplePersonForm;
 
@@ -40,7 +38,8 @@ public class PersonInteractionServiceTest {
         personService = Mockito.mock(PersonService.class);
         workingTimeService = Mockito.mock(WorkingTimeService.class);
         accountService = Mockito.mock(AccountService.class);
-        mailService = Mockito.mock(MailService.class);
+
+        MailService mailService = Mockito.mock(MailService.class);
 
         service = new PersonInteractionServiceImpl(personService, workingTimeService, accountService, mailService);
 
@@ -59,37 +58,22 @@ public class PersonInteractionServiceTest {
 
 
     @Test
-    public void ensurePersonHasKeyPairAfterCreating() {
-
-        Person person = new Person();
-
-        Assert.assertNull(person.getPrivateKey());
-        Assert.assertNull(person.getPublicKey());
-
-        service.createOrUpdate(person, examplePersonForm);
-
-        Assert.assertNotNull(person.getPrivateKey());
-        Assert.assertNotNull(person.getPublicKey());
-    }
-
-
-    @Test
     public void ensurePersonIsPersistedOnCreating() {
 
-        Person person = new Person();
+        Mockito.when(personService.save(Mockito.any(Person.class))).thenReturn(new Person());
 
-        service.createOrUpdate(person, examplePersonForm);
+        service.create(examplePersonForm);
 
-        Mockito.verify(personService).save(person);
+        Mockito.verify(personService).save(Mockito.any(Person.class));
     }
 
 
     @Test
     public void ensurePersonHasValidWorkingTimeAndAccountAfterCreating() {
 
-        Person person = new Person();
+        Mockito.when(personService.save(Mockito.any(Person.class))).thenReturn(new Person());
 
-        service.createOrUpdate(person, examplePersonForm);
+        Person person = service.create(examplePersonForm);
 
         Mockito.verify(workingTimeService).touch(Mockito.anyListOf(Integer.class), Mockito.any(DateMidnight.class),
             Mockito.eq(person));

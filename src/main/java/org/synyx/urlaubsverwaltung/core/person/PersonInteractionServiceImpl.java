@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import org.synyx.urlaubsverwaltung.core.account.Account;
 import org.synyx.urlaubsverwaltung.core.account.AccountService;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
@@ -25,6 +27,7 @@ import java.security.NoSuchAlgorithmException;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Service
+@Transactional
 public class PersonInteractionServiceImpl implements PersonInteractionService {
 
     private static final Logger LOG = Logger.getLogger(PersonInteractionServiceImpl.class);
@@ -45,35 +48,28 @@ public class PersonInteractionServiceImpl implements PersonInteractionService {
     }
 
     @Override
-    public void createOrUpdate(Person person, PersonForm personForm) {
+    public Person create(PersonForm personForm) {
 
-        String action;
+        Person person = personForm.generatePerson();
 
-        if (person.isNew()) {
-            action = "Created";
-
-            try {
-                KeyPair keyPair = CryptoUtil.generateKeyPair();
-                person.setPrivateKey(keyPair.getPrivate().getEncoded());
-                person.setPublicKey(keyPair.getPublic().getEncoded());
-            } catch (NoSuchAlgorithmException ex) {
-                LOG.error("An error occurred while trying to generate a key pair for the person " + person.toString(),
-                    ex);
-                mailService.sendKeyGeneratingErrorNotification(personForm.getLoginName(), ex.getMessage());
-            }
-        } else {
-            action = "Updated";
+        try {
+            KeyPair keyPair = CryptoUtil.generateKeyPair();
+            person.setPrivateKey(keyPair.getPrivate().getEncoded());
+            person.setPublicKey(keyPair.getPublic().getEncoded());
+        } catch (NoSuchAlgorithmException ex) {
+            LOG.error("An error occurred while trying to generate a key pair for the person " + person.toString(), ex);
+            mailService.sendKeyGeneratingErrorNotification(personForm.getLoginName(), ex.getMessage());
         }
 
-        personForm.fillPersonAttributes(person);
+        Person savedPerson = personService.save(person);
 
-        personService.save(person);
+        touchWorkingTime(savedPerson, personForm);
 
-        touchWorkingTime(person, personForm);
+        touchAccount(savedPerson, personForm);
 
-        touchAccount(person, personForm);
+        LOG.info("Created: " + savedPerson.toString());
 
-        LOG.info(action + " " + person.toString());
+        return savedPerson;
     }
 
 
@@ -102,5 +98,24 @@ public class PersonInteractionServiceImpl implements PersonInteractionService {
             accountService.editHolidaysAccount(account, validFrom, validTo, annualVacationDays, remainingVacationDays,
                 expiring);
         }
+    }
+
+
+    @Override
+    public Person update(PersonForm personForm) {
+
+        Person personToUpdate = personService.getPersonByID(personForm.getId());
+
+        personForm.fillPersonAttributes(personToUpdate);
+
+        Person updatedPerson = personService.save(personToUpdate);
+
+        touchWorkingTime(updatedPerson, personForm);
+
+        touchAccount(updatedPerson, personForm);
+
+        LOG.info("Updated " + updatedPerson.toString());
+
+        return updatedPerson;
     }
 }

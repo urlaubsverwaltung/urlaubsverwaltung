@@ -79,10 +79,9 @@ public class PersonManagementController {
             return ControllerConstants.ERROR_JSP;
         }
 
-        Person person = new Person();
-
-        PersonForm personForm = new PersonForm();
-        addModelAttributesForPersonForm(person, personForm, model);
+        model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
+        model.addAttribute("personForm", new PersonForm());
+        model.addAttribute("weekDays", Day.values());
 
         return PersonConstants.PERSON_FORM_JSP;
     }
@@ -95,8 +94,6 @@ public class PersonManagementController {
             return ControllerConstants.ERROR_JSP;
         }
 
-        Person person = new Person();
-
         // validate login name
         validator.validateLogin(personForm.getLoginName(), errors);
         validator.validate(personForm, errors);
@@ -106,12 +103,14 @@ public class PersonManagementController {
         }
 
         if (errors.hasErrors()) {
-            addModelAttributesForPersonForm(person, personForm, model);
+            model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
+            model.addAttribute("personForm", personForm);
+            model.addAttribute("weekDays", Day.values());
 
             return PersonConstants.PERSON_FORM_JSP;
         }
 
-        personInteractionService.createOrUpdate(person, personForm);
+        personInteractionService.create(personForm);
 
         return "redirect:/web/staff/";
     }
@@ -135,34 +134,23 @@ public class PersonManagementController {
 
         Person person = personService.getPersonByID(personId);
 
-        PersonForm personForm = preparePersonForm(yearOfHolidaysAccount, person);
-        addModelAttributesForPersonForm(person, personForm, model);
+        if (person == null) {
+            return ControllerConstants.ERROR_JSP;
+        }
 
-        return PersonConstants.PERSON_FORM_JSP;
-    }
-
-
-    private PersonForm preparePersonForm(int year, Person person) {
-
-        Account account = accountService.getHolidaysAccount(year, person);
+        Account account = accountService.getHolidaysAccount(yearOfHolidaysAccount, person);
 
         WorkingTime workingTime = workingTimeService.getCurrentOne(person);
 
-        return new PersonForm(person, year, Optional.fromNullable(account), Optional.fromNullable(workingTime),
-                person.getPermissions(), person.getNotifications());
-    }
-
-
-    private void addModelAttributesForPersonForm(Person person, PersonForm personForm, Model model) {
+        PersonForm personForm = new PersonForm(person, yearOfHolidaysAccount, Optional.fromNullable(account),
+                Optional.fromNullable(workingTime), person.getPermissions(), person.getNotifications());
 
         model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
-        model.addAttribute(ControllerConstants.PERSON, person);
         model.addAttribute("personForm", personForm);
         model.addAttribute("weekDays", Day.values());
+        model.addAttribute("workingTimes", workingTimeService.getByPerson(person));
 
-        if (person.getId() != null) {
-            model.addAttribute("workingTimes", workingTimeService.getByPerson(person));
-        }
+        return PersonConstants.PERSON_FORM_JSP;
     }
 
 
@@ -183,12 +171,15 @@ public class PersonManagementController {
         }
 
         if (errors.hasErrors()) {
-            addModelAttributesForPersonForm(personToUpdate, personForm, model);
+            model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
+            model.addAttribute("personForm", personForm);
+            model.addAttribute("weekDays", Day.values());
+            model.addAttribute("workingTimes", workingTimeService.getByPerson(personToUpdate));
 
             return PersonConstants.PERSON_FORM_JSP;
         }
 
-        personInteractionService.createOrUpdate(personToUpdate, personForm);
+        personInteractionService.update(personForm);
 
         return "redirect:/web/staff/";
     }

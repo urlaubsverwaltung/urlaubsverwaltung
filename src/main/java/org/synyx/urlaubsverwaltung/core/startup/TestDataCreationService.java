@@ -97,8 +97,6 @@ public class TestDataCreationService {
     private Person createTestPerson(String login, String firstName, String lastName, String email, Role... roles)
         throws NoSuchAlgorithmException {
 
-        Person person = new Person();
-
         int currentYear = DateMidnight.now().getYear();
 
         PersonForm personForm = new PersonForm(DateMidnight.now().getYear());
@@ -128,9 +126,7 @@ public class TestDataCreationService {
 
         personForm.setNotifications(notifications);
 
-        personInteractionService.createOrUpdate(person, personForm);
-
-        return person;
+        return personInteractionService.create(personForm);
     }
 
 

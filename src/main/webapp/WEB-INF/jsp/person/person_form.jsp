@@ -26,17 +26,18 @@
 <div class="container">
 
 <c:choose>
-    <c:when test="${person.id == null}">
+    <c:when test="${personForm.id == null}">
         <c:set var="METHOD" value="POST"/>
         <c:set var="ACTION" value="${URL_PREFIX}/staff/new"/>
     </c:when>
     <c:otherwise>
         <c:set var="METHOD" value="PUT"/>
-        <c:set var="ACTION" value="${URL_PREFIX}/staff/${person.id}/edit"/>
+        <c:set var="ACTION" value="${URL_PREFIX}/staff/${personForm.id}/edit"/>
     </c:otherwise>
 </c:choose>
 
 <form:form method="${METHOD}" action="${ACTION}" modelAttribute="personForm" class="form-horizontal">
+<form:hidden path="id" />
 
 <div class="row">
 
@@ -57,13 +58,13 @@
 
         <div class="col-md-7">
             <c:choose>
-                <c:when test="${person.id == null}">
+                <c:when test="${personForm.id == null}">
                     <form:input id="login" path="loginName" class="form-control" cssErrorClass="form-control error"/>
                     <span class="help-inline"><form:errors path="loginName" cssClass="error"/></span>
                 </c:when>
                 <c:otherwise>
-                    <c:out value="${person.loginName}"/>
-                    <form:hidden path="loginName" value="${person.loginName}"/>
+                    <c:out value="${personForm.loginName}"/>
+                    <form:hidden path="loginName" value="${personForm.loginName}"/>
                 </c:otherwise>
             </c:choose>
         </div>
@@ -177,7 +178,7 @@
             <p><spring:message code="for"/></p>
             <p>
                 <c:choose>
-                    <c:when test="${person.id == null}">
+                    <c:when test="${personForm.id == null}">
                         <c:out value="${personForm.holidaysAccountYear}" />
                     </c:when>
                     <c:otherwise>

@@ -13,14 +13,23 @@ import java.util.Locale;
 public interface PersonInteractionService {
 
     /**
-     * Creates/Updates a {@link Person} with the values of the given
-     * {@link org.synyx.urlaubsverwaltung.web.person.PersonForm} incl. creating/updating
-     * {@link org.synyx.urlaubsverwaltung.core.account.Account} and
+     * Creates a {@link Person} with the values of the given {@link org.synyx.urlaubsverwaltung.web.person.PersonForm}
+     * incl. creating/updating {@link org.synyx.urlaubsverwaltung.core.account.Account} and
      * {@link org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime}.
      *
-     * @param  person  that will be updated and persisted
      * @param  personForm  contains information about person attributes and working time and holidays account
      *                     information
      */
-    void createOrUpdate(Person person, PersonForm personForm);
+    Person create(PersonForm personForm);
+
+
+    /**
+     * Updates a person with the values of the given {@link org.synyx.urlaubsverwaltung.web.person.PersonForm} incl.
+     * creating/updating {@link org.synyx.urlaubsverwaltung.core.account.Account} and
+     * {@link org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime}.
+     *
+     * @param  personForm  contains information about person attributes and working time and holidays account
+     *                     information
+     */
+    Person update(PersonForm personForm);
 }

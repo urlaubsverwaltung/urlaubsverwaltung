@@ -19,8 +19,10 @@ public interface PersonService {
      * saves a {@link Person}.
      *
      * @param  person {@link Person}
+     *
+     * @return  the saved person
      */
-    void save(Person person);
+    Person save(Person person);
 
 
     /**

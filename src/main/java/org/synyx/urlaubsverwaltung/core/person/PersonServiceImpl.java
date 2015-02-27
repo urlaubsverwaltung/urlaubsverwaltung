@@ -9,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
-import org.springframework.transaction.annotation.Transactional;
-
 import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
 import org.synyx.urlaubsverwaltung.security.Role;
 
@@ -24,7 +22,6 @@ import java.util.List;
  * @author  Johannes Reuter
  */
 @Service("personService")
-@Transactional
 class PersonServiceImpl implements PersonService {
 
     private final PersonDAO personDAO;
@@ -36,9 +33,9 @@ class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public void save(Person person) {
+    public Person save(Person person) {
 
-        personDAO.save(person);
+        return personDAO.save(person);
     }
 
 

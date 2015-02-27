@@ -7,6 +7,8 @@ import com.google.common.collect.Iterables;
 
 import org.joda.time.DateMidnight;
 
+import org.springframework.util.Assert;
+
 import org.synyx.urlaubsverwaltung.core.account.Account;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.calendar.Day;
@@ -29,6 +31,8 @@ import java.util.List;
  * @author  Aljona Murygina
  */
 public class PersonForm {
+
+    private Integer id;
 
     private String loginName;
 
@@ -75,6 +79,9 @@ public class PersonForm {
     public PersonForm(Person person, int year, Optional<Account> holidaysAccountOptional,
         Optional<WorkingTime> workingTimeOptional, Collection<Role> roles, Collection<MailNotification> notifications) {
 
+        Assert.notNull(person, "Person must not be null");
+
+        this.id = person.getId();
         this.loginName = person.getLoginName();
         this.lastName = person.getLastName();
         this.firstName = person.getFirstName();
@@ -114,6 +121,18 @@ public class PersonForm {
         this.permissions = new ArrayList<>(roles);
         this.notifications = new ArrayList<>(notifications);
     }
+
+    public Integer getId() {
+
+        return id;
+    }
+
+
+    public void setId(Integer id) {
+
+        this.id = id;
+    }
+
 
     public int getHolidaysAccountYear() {
 
@@ -280,6 +299,15 @@ public class PersonForm {
     public void setNotifications(List<MailNotification> notifications) {
 
         this.notifications = notifications;
+    }
+
+
+    public Person generatePerson() {
+
+        Person person = new Person();
+        fillPersonAttributes(person);
+
+        return person;
     }
 
 
