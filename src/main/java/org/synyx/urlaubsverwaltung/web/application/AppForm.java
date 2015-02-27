@@ -35,7 +35,6 @@ public class AppForm {
     private DayLength howLong;
 
     // For special and unpaid leave a reason is required
-    // for holiday default = "Erholung"
     private String reason;
 
     // Representative of employee during his/her holiday
