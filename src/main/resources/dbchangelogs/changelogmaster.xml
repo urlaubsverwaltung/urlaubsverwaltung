@@ -12,7 +12,6 @@
     <include file="dbchangelogs/changelog-0.7-create-notifications-table.xml"/>
     <include file="dbchangelogs/changelog-0.8-clean-up-of-tables.xml"/>
     <include file="dbchangelogs/changelog-0.9-add-person-reference-to-comment-table.xml"/>
-    <include file="dbchangelogs/changelog-0.10-rename-rep-column-in-application-table.xml"/>
     <include file="dbchangelogs/changelog-0.11-remove-active-column-from-person-table.xml"/>
 
 </databaseChangeLog>

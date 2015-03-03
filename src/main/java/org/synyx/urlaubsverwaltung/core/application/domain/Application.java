@@ -68,6 +68,7 @@ public class Application extends AbstractPersistable<Integer> {
 
     // Holiday replacement: stands in while the person is on holiday
     @ManyToOne
+    @JoinColumn(name = "rep_id")
     private Person holidayReplacement;
 
     // Address and phone number during holiday
