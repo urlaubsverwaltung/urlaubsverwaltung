@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.application.domain;
 
+import org.synyx.urlaubsverwaltung.core.util.CalcUtil;
+
 import java.math.BigDecimal;
 
 
@@ -10,25 +12,16 @@ import java.math.BigDecimal;
  */
 public class VacationDaysLeft {
 
-    private BigDecimal annualVacationDays;
-    private BigDecimal remainingVacationDays;
-    private BigDecimal remainingVacationDaysNotExpiring;
-    private BigDecimal usedDaysBeforeApril;
-    private BigDecimal usedDaysAfterApril;
+    private final BigDecimal vacationDays;
+    private final BigDecimal remainingVacationDays;
+    private final BigDecimal remainingVacationDaysNotExpiring;
 
-    public VacationDaysLeft() {
+    private VacationDaysLeft(BigDecimal vacationDays, BigDecimal remainingVacationDays,
+        BigDecimal remainingVacationDaysNotExpiring) {
 
-        // OK
-    }
-
-
-    private VacationDaysLeft(Builder builder) {
-
-        this.annualVacationDays = builder.annualVacationDays;
-        this.remainingVacationDays = builder.remainingVacationDays;
-        this.remainingVacationDaysNotExpiring = builder.remainingVacationDaysNotExpiring;
-        this.usedDaysBeforeApril = builder.usedDaysBeforeApril;
-        this.usedDaysAfterApril = builder.usedDaysAfterApril;
+        this.vacationDays = vacationDays;
+        this.remainingVacationDays = remainingVacationDays;
+        this.remainingVacationDaysNotExpiring = remainingVacationDaysNotExpiring;
     }
 
     public static Builder builder() {
@@ -39,25 +32,19 @@ public class VacationDaysLeft {
 
     public BigDecimal getVacationDays() {
 
-        // TODO: Calculate left vacation days
-
-        return null;
+        return vacationDays;
     }
 
 
     public BigDecimal getRemainingVacationDays() {
 
-        // TODO: Calculate
-
-        return null;
+        return remainingVacationDays;
     }
 
 
     public BigDecimal getRemainingVacationDaysNotExpiring() {
 
-        // TODO: Calculate
-
-        return null;
+        return remainingVacationDaysNotExpiring;
     }
 
 
@@ -66,12 +53,6 @@ public class VacationDaysLeft {
         // TODO: Calculate, depends on current date (before or after April)
 
         return null;
-    }
-
-
-    boolean isBeforeApril() {
-
-        return false;
     }
 
     /**
@@ -132,7 +113,64 @@ public class VacationDaysLeft {
 
         public VacationDaysLeft get() {
 
-            return new VacationDaysLeft(this);
+            BigDecimal leftVacationDays = annualVacationDays;
+            BigDecimal leftRemainingVacationDays = remainingVacationDays;
+            BigDecimal leftRemainingVacationDaysNotExpiring = remainingVacationDaysNotExpiring;
+
+            leftRemainingVacationDays = leftRemainingVacationDays.subtract(usedDaysBeforeApril);
+
+            if (CalcUtil.isGreaterThanZero(leftRemainingVacationDays)) {
+                // remaining vacation days are enough for the days before April
+
+                if (leftRemainingVacationDays.compareTo(leftRemainingVacationDaysNotExpiring) < 1) {
+                    // left remaining vacation days are equal or less than not expiring remaining vacation days,
+                    // so set the left not expiring remaining vacation days to the value of the remaining vacation days
+
+                    leftRemainingVacationDaysNotExpiring = leftRemainingVacationDays;
+                }
+
+                leftRemainingVacationDaysNotExpiring = leftRemainingVacationDaysNotExpiring.subtract(
+                        usedDaysAfterApril);
+
+                if (CalcUtil.isNegative(leftRemainingVacationDaysNotExpiring)) {
+                    // not expiring remaining vacation days are not enough for the days after April
+
+                    // subtract the difference from the annual vacation days
+                    leftVacationDays = leftVacationDays.subtract(leftRemainingVacationDaysNotExpiring.abs());
+
+                    // set not expiring remaining vacation days to 0, because they are not enough
+                    leftRemainingVacationDaysNotExpiring = BigDecimal.ZERO;
+
+                    // subtract all the not expiring remaining vacation days from remaining vacation days,
+                    // because they have been used completely
+                    leftRemainingVacationDays = leftRemainingVacationDays.subtract(remainingVacationDaysNotExpiring);
+
+                    if (CalcUtil.isNegative(leftRemainingVacationDays)) {
+                        // if subtracting the difference leads to a negative number of left remaining vacation days,
+                        // set them to 0
+                        leftRemainingVacationDays = BigDecimal.ZERO;
+                    }
+                } else {
+                    // not expiring remaining vacation days are enough for the days after April
+
+                    // subtract all the days after April from remaining vacation days,
+                    // because they have been used by the not expiring remaining vacation days
+                    leftRemainingVacationDays = leftRemainingVacationDays.subtract(usedDaysAfterApril);
+                }
+            } else {
+                // remaining vacation days are not enough for the days before April
+
+                // subtract the difference from the annual vacation days
+                leftVacationDays = leftVacationDays.subtract(leftRemainingVacationDays.abs());
+                leftVacationDays = leftVacationDays.subtract(usedDaysAfterApril);
+
+                // set remaining vacation days and not expiring remaining vacation days to 0
+                leftRemainingVacationDays = BigDecimal.ZERO;
+                leftRemainingVacationDaysNotExpiring = BigDecimal.ZERO;
+            }
+
+            return new VacationDaysLeft(leftVacationDays, leftRemainingVacationDays,
+                    leftRemainingVacationDaysNotExpiring);
         }
     }
 }
