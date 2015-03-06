@@ -13,8 +13,6 @@ public final class PersonConstants {
 
     // attribute names
     public static final String LOGGED_USER = "loggedUser";
-    public static final String LEFT_DAYS = "leftDays";
-    public static final String REM_LEFT_DAYS = "remLeftDays";
     public static final String BEFORE_APRIL = "beforeApril";
     public static final String GRAVATAR_URLS = "gravatarUrls";
 

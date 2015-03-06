@@ -21,7 +21,10 @@ import org.synyx.urlaubsverwaltung.core.account.AccountService;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
-import org.synyx.urlaubsverwaltung.core.application.service.*;
+import org.synyx.urlaubsverwaltung.core.application.service.ApplicationInteractionService;
+import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
+import org.synyx.urlaubsverwaltung.core.application.service.CalculationService;
+import org.synyx.urlaubsverwaltung.core.application.service.CommentService;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
@@ -32,8 +35,6 @@ import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
 import org.synyx.urlaubsverwaltung.web.util.GravatarUtil;
 import org.synyx.urlaubsverwaltung.web.validator.CommentValidator;
-
-import java.math.BigDecimal;
 
 import java.util.HashMap;
 import java.util.List;
@@ -128,10 +129,7 @@ public class ApplicationForLeaveDetailsController {
         Account account = accountService.getHolidaysAccount(year, application.getPerson());
 
         if (account != null) {
-            BigDecimal vacationDaysLeft = calculationService.calculateLeftVacationDays(account);
-            BigDecimal remainingVacationDaysLeft = calculationService.calculateLeftRemainingVacationDays(account);
-            model.addAttribute(PersonConstants.LEFT_DAYS, vacationDaysLeft);
-            model.addAttribute(PersonConstants.REM_LEFT_DAYS, remainingVacationDaysLeft);
+            model.addAttribute("vacationDaysLeft", calculationService.getVacationDaysLeft(account));
             model.addAttribute(PersonConstants.BEFORE_APRIL, DateUtil.isBeforeApril(DateMidnight.now()));
         }
 

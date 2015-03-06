@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import org.synyx.urlaubsverwaltung.core.account.Account;
 import org.synyx.urlaubsverwaltung.core.account.AccountService;
+import org.synyx.urlaubsverwaltung.core.application.domain.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.core.application.service.CalculationService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
@@ -21,8 +22,6 @@ import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.util.GravatarUtil;
-
-import java.math.BigDecimal;
 
 import java.util.HashMap;
 import java.util.List;
@@ -159,51 +158,33 @@ public class PersonController {
     }
 
 
-    /**
-     * prepares view of staffs; preparing is for both views (list and detail) identic.
-     *
-     * @param  persons
-     * @param  year
-     * @param  model
-     */
     private void prepareStaffView(List<Person> persons, int year, Model model) {
 
-        Map<Person, String> gravatarUrls = new HashMap<Person, String>();
-        String url;
-
-        Map<Person, Account> accounts = new HashMap<Person, Account>();
-        Account account;
-
-        Map<Person, BigDecimal> leftDays = new HashMap<Person, BigDecimal>();
-        Map<Person, BigDecimal> remLeftDays = new HashMap<Person, BigDecimal>();
+        Map<Person, String> gravatarUrls = new HashMap<>();
+        Map<Person, Account> accounts = new HashMap<>();
+        Map<Person, VacationDaysLeft> vacationDaysLeftMap = new HashMap<>();
 
         for (Person person : persons) {
             // get url of person's gravatar image
-            url = GravatarUtil.createImgURL(person.getEmail());
+            String url = GravatarUtil.createImgURL(person.getEmail());
 
             if (url != null) {
                 gravatarUrls.put(person, url);
             }
 
             // get person's account
-            account = accountService.getHolidaysAccount(year, person);
+            Account account = accountService.getHolidaysAccount(year, person);
 
             if (account != null) {
                 accounts.put(person, account);
-
-                BigDecimal vacationDaysLeft = calculationService.calculateLeftVacationDays(account);
-                leftDays.put(person, vacationDaysLeft);
-
-                BigDecimal remVacationDaysLeft = calculationService.calculateLeftRemainingVacationDays(account);
-                remLeftDays.put(person, remVacationDaysLeft);
+                vacationDaysLeftMap.put(person, calculationService.getVacationDaysLeft(account));
             }
         }
 
         model.addAttribute(ControllerConstants.PERSONS, persons);
         model.addAttribute(PersonConstants.GRAVATAR_URLS, gravatarUrls);
         model.addAttribute(ControllerConstants.ACCOUNTS, accounts);
-        model.addAttribute(PersonConstants.LEFT_DAYS, leftDays);
-        model.addAttribute(PersonConstants.REM_LEFT_DAYS, remLeftDays);
+        model.addAttribute("vacationDaysLeftMap", vacationDaysLeftMap);
         model.addAttribute(PersonConstants.BEFORE_APRIL, DateUtil.isBeforeApril(DateMidnight.now()));
         model.addAttribute(ControllerConstants.YEAR, DateMidnight.now().getYear());
         model.addAttribute("now", DateMidnight.now());

@@ -144,13 +144,13 @@
                         <span class="box-text">
                             <c:choose>
                                 <c:when test="${account != null}">
-                                    <spring:message code="overview.vacation.left" arguments="${leftDays}" />
+                                    <spring:message code="overview.vacation.left" arguments="${vacationDaysLeft.vacationDays}" />
                                     <c:choose>
-                                        <c:when test="${beforeApril || !account.remainingVacationDaysExpire}">
-                                            <spring:message code="overview.vacation.left.remaining" arguments="${remLeftDays}" />
+                                        <c:when test="${beforeApril}">
+                                            <spring:message code="overview.vacation.left.remaining" arguments="${vacationDaysLeft.remainingVacationDays}" />
                                         </c:when>
                                         <c:otherwise>
-                                            <spring:message code="overview.vacation.left.remaining.expired" arguments="${remLeftDays}" />
+                                            <spring:message code="overview.vacation.left.remaining.expired" arguments="${vacationDaysLeft.remainingVacationDaysNotExpiring}" />
                                         </c:otherwise>
                                     </c:choose>
                                 </c:when>

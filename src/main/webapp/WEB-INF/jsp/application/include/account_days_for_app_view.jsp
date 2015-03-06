@@ -1,9 +1,3 @@
-<%-- 
-    Document   : account_days
-    Created on : 08.02.2012, 18:31:36
-    Author     : Aljona Murygina
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
@@ -121,7 +115,7 @@
         <c:choose>
 
             <c:when test="${account != null}">
-                <c:set var ="left" value="${leftDays}" />
+                <c:set var ="left" value="${vacationDaysLeft.vacationDays}" />
                 <c:choose>
                     <c:when test="${left <= 1.00 && left > 0.50}">
                         <c:set var="numberOfDays" value="day" />
@@ -131,9 +125,9 @@
                     </c:otherwise>
                 </c:choose>
                 <spring:message code="${numberOfDays}" arguments="${left}" />
-                <c:if test="${beforeApril || !account.remainingVacationDaysExpire}">
+                <c:if test="${beforeApril}">
                 +
-                <c:set var="remLeftDays" value="${remLeftDays}" />
+                <c:set var="remLeftDays" value="${vacationDaysLeft.remainingVacationDays}" />
                 <c:choose>
                     <c:when test="${remLeftDays <= 1.00 && remLeftDays > 0.50}">
                         <c:set var="numberOfDays" value="day"/>
@@ -142,7 +136,7 @@
                         <c:set var="numberOfDays" value="days"/>
                     </c:otherwise>
                 </c:choose>
-                <spring:message code="${numberOfDays}" arguments="${remLeftDays}" />&nbsp;<spring:message code="remaining" />
+                <spring:message code="${numberOfDays}" arguments="${vacationDaysLeft.remainingVacationDaysNotExpiring}" />&nbsp;<spring:message code="remaining" />
                 </c:if>
             </c:when>
 

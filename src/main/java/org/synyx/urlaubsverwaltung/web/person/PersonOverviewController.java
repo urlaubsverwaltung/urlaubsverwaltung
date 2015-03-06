@@ -242,10 +242,7 @@ public class PersonOverviewController {
         Account account = accountService.getHolidaysAccount(year, person);
 
         if (account != null) {
-            BigDecimal vacationDaysLeft = calculationService.calculateLeftVacationDays(account);
-            BigDecimal remainingVacationDaysLeft = calculationService.calculateLeftRemainingVacationDays(account);
-            model.addAttribute(PersonConstants.LEFT_DAYS, vacationDaysLeft);
-            model.addAttribute(PersonConstants.REM_LEFT_DAYS, remainingVacationDaysLeft);
+            model.addAttribute("vacationDaysLeft", calculationService.getVacationDaysLeft(account));
             model.addAttribute(PersonConstants.BEFORE_APRIL, DateUtil.isBeforeApril(DateMidnight.now()));
         }
 

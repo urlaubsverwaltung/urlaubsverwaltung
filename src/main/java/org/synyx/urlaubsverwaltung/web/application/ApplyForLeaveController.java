@@ -12,7 +12,11 @@ import org.springframework.ui.Model;
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
 
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import org.synyx.urlaubsverwaltung.core.account.Account;
 import org.synyx.urlaubsverwaltung.core.account.AccountService;
@@ -29,8 +33,6 @@ import org.synyx.urlaubsverwaltung.web.DateMidnightPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
 import org.synyx.urlaubsverwaltung.web.validator.ApplicationValidator;
-
-import java.math.BigDecimal;
 
 import java.util.List;
 
@@ -124,10 +126,7 @@ public class ApplyForLeaveController {
                 .getYear(), person);
 
         if (account != null) {
-            BigDecimal vacationDaysLeft = calculationService.calculateLeftVacationDays(account);
-            BigDecimal remainingVacationDaysLeft = calculationService.calculateLeftRemainingVacationDays(account);
-            model.addAttribute(PersonConstants.LEFT_DAYS, vacationDaysLeft);
-            model.addAttribute(PersonConstants.REM_LEFT_DAYS, remainingVacationDaysLeft);
+            model.addAttribute("vacationDaysLeft", calculationService.getVacationDaysLeft(account));
             model.addAttribute(PersonConstants.BEFORE_APRIL, DateUtil.isBeforeApril(DateMidnight.now()));
         }
 

@@ -17,6 +17,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationDaysLeft;
+import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
@@ -122,16 +123,7 @@ public class CalculationService {
      */
     public BigDecimal calculateTotalLeftVacationDays(Account account) {
 
-        BigDecimal daysBeforeApril = getUsedDaysBeforeApril(account);
-        BigDecimal daysAfterApril = getUsedDaysAfterApril(account);
-
-        BigDecimal vacationDays = account.getVacationDays();
-        BigDecimal remainingVacationDays = account.getRemainingVacationDays();
-        BigDecimal remainingVacationDaysNotExpiring = account.getRemainingVacationDaysNotExpiring();
-
-        VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder().withAnnualVacation(vacationDays)
-            .withRemainingVacation(remainingVacationDays).notExpiring(remainingVacationDaysNotExpiring)
-            .forUsedDaysBeforeApril(daysBeforeApril).forUsedDaysAfterApril(daysAfterApril).get();
+        VacationDaysLeft vacationDaysLeft = getVacationDaysLeft(account);
 
         // it's before April - the left remaining vacation days must be used
         if (DateUtil.isBeforeApril(DateMidnight.now())) {
@@ -143,14 +135,7 @@ public class CalculationService {
     }
 
 
-    /**
-     * Returns the number of left vacation days (without remaining vacation days: for displaying)
-     *
-     * @param  account {@link Account}
-     *
-     * @return  number of left vacation days (without remaining vacation days)
-     */
-    public BigDecimal calculateLeftVacationDays(Account account) {
+    public VacationDaysLeft getVacationDaysLeft(Account account) {
 
         BigDecimal vacationDays = account.getVacationDays();
         BigDecimal remainingVacationDays = account.getRemainingVacationDays();
@@ -159,39 +144,13 @@ public class CalculationService {
         BigDecimal daysBeforeApril = getUsedDaysBeforeApril(account);
         BigDecimal daysAfterApril = getUsedDaysAfterApril(account);
 
-        VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder().withAnnualVacation(vacationDays)
-            .withRemainingVacation(remainingVacationDays).notExpiring(remainingVacationDaysNotExpiring)
-            .forUsedDaysBeforeApril(daysBeforeApril).forUsedDaysAfterApril(daysAfterApril).get();
-
-        return vacationDaysLeft.getVacationDays();
+        return VacationDaysLeft.builder().withAnnualVacation(vacationDays).withRemainingVacation(remainingVacationDays)
+            .notExpiring(remainingVacationDaysNotExpiring).forUsedDaysBeforeApril(daysBeforeApril)
+            .forUsedDaysAfterApril(daysAfterApril).get();
     }
 
 
-    /**
-     * Returns the number of left remaining vacation days.
-     *
-     * @param  account {@link Account}
-     *
-     * @return  number of left remaining vacation days
-     */
-    public BigDecimal calculateLeftRemainingVacationDays(Account account) {
-
-        BigDecimal vacationDays = account.getVacationDays();
-        BigDecimal remainingVacationDays = account.getRemainingVacationDays();
-        BigDecimal remainingVacationDaysNotExpiring = account.getRemainingVacationDaysNotExpiring();
-
-        BigDecimal daysBeforeApril = getUsedDaysBeforeApril(account);
-        BigDecimal daysAfterApril = getUsedDaysAfterApril(account);
-
-        VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder().withAnnualVacation(vacationDays)
-            .withRemainingVacation(remainingVacationDays).notExpiring(remainingVacationDaysNotExpiring)
-            .forUsedDaysBeforeApril(daysBeforeApril).forUsedDaysAfterApril(daysAfterApril).get();
-
-        return vacationDaysLeft.getRemainingVacationDays();
-    }
-
-
-    protected BigDecimal getUsedDaysBeforeApril(Account account) {
+    BigDecimal getUsedDaysBeforeApril(Account account) {
 
         DateMidnight firstOfJanuary = DateUtil.getFirstDayOfMonth(account.getYear(), DateTimeConstants.JANUARY);
         DateMidnight lastOfMarch = DateUtil.getLastDayOfMonth(account.getYear(), DateTimeConstants.MARCH);
@@ -215,14 +174,16 @@ public class CalculationService {
         List<Application> allApplicationsForLeave = applicationDAO.getApplicationsForACertainTimeAndPerson(
                 firstMilestone.toDate(), lastMilestone.toDate(), person);
 
-        // filter them since only waiting and allowed applications for leave are relevant
+        // filter them since only waiting and allowed applications for leave of type holiday are relevant
         List<Application> applicationsForLeave = FluentIterable.from(allApplicationsForLeave).filter(
                 new Predicate<Application>() {
 
                     @Override
                     public boolean apply(Application input) {
 
-                        return input.hasStatus(ApplicationStatus.WAITING) || input.hasStatus(ApplicationStatus.ALLOWED);
+                        return input.getVacationType() == VacationType.HOLIDAY
+                            && (input.hasStatus(ApplicationStatus.WAITING)
+                                || input.hasStatus(ApplicationStatus.ALLOWED));
                     }
                 }).toList();
 
