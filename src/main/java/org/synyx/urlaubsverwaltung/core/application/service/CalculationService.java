@@ -12,10 +12,10 @@ import org.synyx.urlaubsverwaltung.core.account.AccountService;
 import org.synyx.urlaubsverwaltung.core.application.dao.ApplicationDAO;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.core.application.domain.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.util.CalcUtil;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 
 import java.math.BigDecimal;
@@ -118,42 +118,33 @@ public class CalculationService {
      * Calculates how many days the {@link Person} may apply for leave, i.e. how many vacation days + remaining vacation
      * days can be used for applying for leave.
      *
+     * <p>NOTE: The calculation depends on the current date. If it's before April, the left remaining vacation days are
+     * used, if it's after April, only the not expiring remaining vacation days are relevant for calculation.</p>
+     *
      * @param  account {@link Account}
      *
-     * @return  left vacation days
+     * @return  total left vacation days
      */
     public BigDecimal calculateTotalLeftVacationDays(Account account) {
-
-        BigDecimal vacationDays = account.getVacationDays();
-        BigDecimal remainingVacationDays = account.getRemainingVacationDays();
 
         BigDecimal daysBeforeApril = getDaysBeforeApril(account);
         BigDecimal daysAfterApril = getDaysAfterApril(account);
 
-        BigDecimal result = remainingVacationDays.subtract(daysBeforeApril);
+        BigDecimal vacationDays = account.getVacationDays();
+        BigDecimal remainingVacationDays = account.getRemainingVacationDays();
+        BigDecimal remainingVacationDaysNotExpiring = account.getRemainingVacationDaysNotExpiring();
 
-        if (result.compareTo(BigDecimal.ZERO) == 0) {
-            remainingVacationDays = BigDecimal.ZERO;
-        } else if (result.compareTo(BigDecimal.ZERO) > 0) {
-            remainingVacationDays = result;
-        } else if (result.compareTo(BigDecimal.ZERO) < 0) {
-            remainingVacationDays = BigDecimal.ZERO;
+        VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder().withAnnualVacation(vacationDays)
+            .withRemainingVacation(remainingVacationDays).notExpiring(remainingVacationDaysNotExpiring)
+            .forUsedDaysBeforeApril(daysBeforeApril).forUsedDaysAfterApril(daysAfterApril).get();
 
-            // result is negative so that you add it to vacation days instead of subtract it
-            vacationDays = vacationDays.add(result);
-        }
-
-        // it's after April - add only the not expiring remaining vacation days
-        if (DateMidnight.now().getMonthOfYear() >= DateTimeConstants.APRIL) {
-            vacationDays = vacationDays.add(account.getRemainingVacationDaysNotExpiring());
+        // it's before April - the left remaining vacation days must be used
+        if (DateUtil.isBeforeApril(DateMidnight.now())) {
+            return vacationDaysLeft.getVacationDays().add(vacationDaysLeft.getRemainingVacationDays());
         } else {
-            // it's before April - add all the remaining vacation days
-            vacationDays = vacationDays.add(remainingVacationDays);
+            // it's after April - only the left not expiring remaining vacation days must be used
+            return vacationDaysLeft.getVacationDays().add(vacationDaysLeft.getRemainingVacationDaysNotExpiring());
         }
-
-        vacationDays = vacationDays.subtract(daysAfterApril);
-
-        return vacationDays;
     }
 
 
@@ -168,58 +159,16 @@ public class CalculationService {
 
         BigDecimal vacationDays = account.getVacationDays();
         BigDecimal remainingVacationDays = account.getRemainingVacationDays();
+        BigDecimal remainingVacationDaysNotExpiring = account.getRemainingVacationDaysNotExpiring();
 
         BigDecimal daysBeforeApril = getDaysBeforeApril(account);
         BigDecimal daysAfterApril = getDaysAfterApril(account);
 
-        if (daysBeforeApril.equals(BigDecimal.ZERO) && daysAfterApril.equals(BigDecimal.ZERO)) {
-            return vacationDays;
-        }
+        VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder().withAnnualVacation(vacationDays)
+            .withRemainingVacation(remainingVacationDays).notExpiring(remainingVacationDaysNotExpiring)
+            .forUsedDaysBeforeApril(daysBeforeApril).forUsedDaysAfterApril(daysAfterApril).get();
 
-        /**
-         * NOTE: If the remaining vacations days do not expire at all we subtract all used vacation days from the
-         * remaining vacation days and if the result is negative we subtract theses days from the available
-         * vacation days.
-         */
-        if (account.getRemainingVacationDays().compareTo(account.getRemainingVacationDaysNotExpiring()) == 0) {
-            BigDecimal allDays = daysBeforeApril.add(daysAfterApril);
-            BigDecimal unusedRemainingVacationDays = remainingVacationDays.subtract(allDays);
-
-            if (CalcUtil.isNegative(unusedRemainingVacationDays)) {
-                return vacationDays.add(unusedRemainingVacationDays);
-            } else {
-                return vacationDays;
-            }
-        }
-
-        BigDecimal result;
-        BigDecimal unusedRemainingVacationDays = remainingVacationDays.subtract(daysBeforeApril);
-
-        if (CalcUtil.isNegative(unusedRemainingVacationDays)) {
-            /**
-             * NOTE: If more remaining vacation days were used than available we subtract the difference from the
-             * vacation days and also subtract the used vacation days after the remaining vacation days expired.
-             */
-            result = vacationDays.add(unusedRemainingVacationDays).subtract(daysAfterApril);
-        } else {
-            // get the left remaining vacation days that can be used for the days after april
-            BigDecimal remainingVacationDaysNotExpiring = account.getRemainingVacationDaysNotExpiring();
-
-            // 5 rest tage, 3 dürfen mit
-            // 1 rest tag, 3 dürfen mit
-            // 3 rest tage, 3 dürfen mit
-            // use only not expiring remaining vacation days if unused remaining vacation days > not expiring days
-            if (unusedRemainingVacationDays.compareTo(remainingVacationDaysNotExpiring) > 0) {
-            }
-
-            /**
-             * NOTE: If not all remaining vacation days were used we only need to subtract the days
-             * after the remaining vacations days were expired.
-             */
-            result = vacationDays.subtract(daysAfterApril);
-        }
-
-        return result;
+        return vacationDaysLeft.getVacationDays();
     }
 
 
@@ -232,46 +181,18 @@ public class CalculationService {
      */
     public BigDecimal calculateLeftRemainingVacationDays(Account account) {
 
+        BigDecimal vacationDays = account.getVacationDays();
         BigDecimal remainingVacationDays = account.getRemainingVacationDays();
+        BigDecimal remainingVacationDaysNotExpiring = account.getRemainingVacationDaysNotExpiring();
 
         BigDecimal daysBeforeApril = getDaysBeforeApril(account);
         BigDecimal daysAfterApril = getDaysAfterApril(account);
 
-        // subtract days before April in every case
-        BigDecimal result = remainingVacationDays.subtract(daysBeforeApril);
+        VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder().withAnnualVacation(vacationDays)
+            .withRemainingVacation(remainingVacationDays).notExpiring(remainingVacationDaysNotExpiring)
+            .forUsedDaysBeforeApril(daysBeforeApril).forUsedDaysAfterApril(daysAfterApril).get();
 
-        if (CalcUtil.isZero(result)) {
-            return BigDecimal.ZERO;
-        }
-
-        // use only not expiring remaining vacation days if unused remaining vacation days > not expiring days
-        BigDecimal remainingVacationDaysNotExpiring = account.getRemainingVacationDaysNotExpiring();
-
-        if (result.compareTo(remainingVacationDaysNotExpiring) > 0) {
-            BigDecimal leftDays = remainingVacationDaysNotExpiring.subtract(daysAfterApril);
-
-            if (CalcUtil.isNegative(result)) {
-                return BigDecimal.ZERO;
-            } else {
-                return leftDays;
-            }
-        }
-
-        // unused remaining vacation days <= not expiring days, so just calculate with unused remaining days
-        result = result.subtract(daysAfterApril);
-
-        // if result is negative
-        if (CalcUtil.isNegative(result)) {
-            return BigDecimal.ZERO;
-        }
-
-        return result;
-    }
-
-
-    protected boolean isAfterApril() {
-
-        return DateMidnight.now().getMonthOfYear() >= DateTimeConstants.APRIL;
+        return vacationDaysLeft.getRemainingVacationDays();
     }
 
 

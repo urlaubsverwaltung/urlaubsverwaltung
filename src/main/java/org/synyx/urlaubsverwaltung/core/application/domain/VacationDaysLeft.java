@@ -47,14 +47,6 @@ public class VacationDaysLeft {
         return remainingVacationDaysNotExpiring;
     }
 
-
-    public BigDecimal getTotalVacationDays() {
-
-        // TODO: Calculate, depends on current date (before or after April)
-
-        return null;
-    }
-
     /**
      * Builds information object about left vacation days.
      */
