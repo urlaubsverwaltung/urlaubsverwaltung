@@ -1,5 +1,8 @@
 package org.synyx.urlaubsverwaltung.core.application.service;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.FluentIterable;
+
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
 
@@ -14,7 +17,6 @@ import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationDaysLeft;
-import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
@@ -120,8 +122,8 @@ public class CalculationService {
      */
     public BigDecimal calculateTotalLeftVacationDays(Account account) {
 
-        BigDecimal daysBeforeApril = getDaysBeforeApril(account);
-        BigDecimal daysAfterApril = getDaysAfterApril(account);
+        BigDecimal daysBeforeApril = getUsedDaysBeforeApril(account);
+        BigDecimal daysAfterApril = getUsedDaysAfterApril(account);
 
         BigDecimal vacationDays = account.getVacationDays();
         BigDecimal remainingVacationDays = account.getRemainingVacationDays();
@@ -154,8 +156,8 @@ public class CalculationService {
         BigDecimal remainingVacationDays = account.getRemainingVacationDays();
         BigDecimal remainingVacationDaysNotExpiring = account.getRemainingVacationDaysNotExpiring();
 
-        BigDecimal daysBeforeApril = getDaysBeforeApril(account);
-        BigDecimal daysAfterApril = getDaysAfterApril(account);
+        BigDecimal daysBeforeApril = getUsedDaysBeforeApril(account);
+        BigDecimal daysAfterApril = getUsedDaysAfterApril(account);
 
         VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder().withAnnualVacation(vacationDays)
             .withRemainingVacation(remainingVacationDays).notExpiring(remainingVacationDaysNotExpiring)
@@ -178,8 +180,8 @@ public class CalculationService {
         BigDecimal remainingVacationDays = account.getRemainingVacationDays();
         BigDecimal remainingVacationDaysNotExpiring = account.getRemainingVacationDaysNotExpiring();
 
-        BigDecimal daysBeforeApril = getDaysBeforeApril(account);
-        BigDecimal daysAfterApril = getDaysAfterApril(account);
+        BigDecimal daysBeforeApril = getUsedDaysBeforeApril(account);
+        BigDecimal daysAfterApril = getUsedDaysAfterApril(account);
 
         VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder().withAnnualVacation(vacationDays)
             .withRemainingVacation(remainingVacationDays).notExpiring(remainingVacationDaysNotExpiring)
@@ -189,53 +191,59 @@ public class CalculationService {
     }
 
 
-    protected BigDecimal getDaysBeforeApril(Account account) {
+    protected BigDecimal getUsedDaysBeforeApril(Account account) {
 
         DateMidnight firstOfJanuary = DateUtil.getFirstDayOfMonth(account.getYear(), DateTimeConstants.JANUARY);
         DateMidnight lastOfMarch = DateUtil.getLastDayOfMonth(account.getYear(), DateTimeConstants.MARCH);
 
-        return getDaysBetweenTwoMilestones(account.getPerson(), firstOfJanuary, lastOfMarch);
+        return getUsedDaysBetweenTwoMilestones(account.getPerson(), firstOfJanuary, lastOfMarch);
     }
 
 
-    protected BigDecimal getDaysAfterApril(Account account) {
+    BigDecimal getUsedDaysAfterApril(Account account) {
 
         DateMidnight firstOfApril = DateUtil.getFirstDayOfMonth(account.getYear(), DateTimeConstants.APRIL);
         DateMidnight lastOfDecember = DateUtil.getLastDayOfMonth(account.getYear(), DateTimeConstants.DECEMBER);
 
-        return getDaysBetweenTwoMilestones(account.getPerson(), firstOfApril, lastOfDecember);
+        return getUsedDaysBetweenTwoMilestones(account.getPerson(), firstOfApril, lastOfDecember);
     }
 
 
-    protected BigDecimal getDaysBetweenTwoMilestones(Person person, DateMidnight firstMilestone,
-        DateMidnight lastMilestone) {
+    BigDecimal getUsedDaysBetweenTwoMilestones(Person person, DateMidnight firstMilestone, DateMidnight lastMilestone) {
 
-        List<Application> applicationsBetweenMilestones = applicationDAO.getApplicationsBetweenTwoMilestones(person,
-                firstMilestone.toDate(), lastMilestone.toDate(), VacationType.HOLIDAY, ApplicationStatus.WAITING,
-                ApplicationStatus.ALLOWED);
+        // get all applications for leave
+        List<Application> allApplicationsForLeave = applicationDAO.getApplicationsForACertainTimeAndPerson(
+                firstMilestone.toDate(), lastMilestone.toDate(), person);
 
-        List<Application> applicationsBetweenMilestonesSpanningFirstMilestone =
-            applicationDAO.getApplicationsBeforeFirstMilestone(person, firstMilestone.toDate(), lastMilestone.toDate(),
-                VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED);
-        List<Application> applicationsBetweenMilestonesSpanningLastMilestone =
-            applicationDAO.getApplicationsAfterLastMilestone(person, firstMilestone.toDate(), lastMilestone.toDate(),
-                VacationType.HOLIDAY, ApplicationStatus.WAITING, ApplicationStatus.ALLOWED);
+        // filter them since only waiting and allowed applications for leave are relevant
+        List<Application> applicationsForLeave = FluentIterable.from(allApplicationsForLeave).filter(
+                new Predicate<Application>() {
 
-        BigDecimal days = BigDecimal.ZERO;
+                    @Override
+                    public boolean apply(Application input) {
 
-        for (Application a : applicationsBetweenMilestones) {
-            days = days.add(a.getDays());
+                        return input.hasStatus(ApplicationStatus.WAITING) || input.hasStatus(ApplicationStatus.ALLOWED);
+                    }
+                }).toList();
+
+        BigDecimal usedDays = BigDecimal.ZERO;
+
+        for (Application applicationForLeave : applicationsForLeave) {
+            DateMidnight startDate = applicationForLeave.getStartDate();
+            DateMidnight endDate = applicationForLeave.getEndDate();
+
+            if (startDate.isBefore(firstMilestone)) {
+                startDate = firstMilestone;
+            }
+
+            if (endDate.isAfter(lastMilestone)) {
+                endDate = lastMilestone;
+            }
+
+            usedDays = usedDays.add(calendarService.getWorkDays(applicationForLeave.getHowLong(), startDate, endDate,
+                        person));
         }
 
-        for (Application a : applicationsBetweenMilestonesSpanningFirstMilestone) {
-            days = days.add(calendarService.getWorkDays(a.getHowLong(), firstMilestone, a.getEndDate(), a.getPerson()));
-        }
-
-        for (Application a : applicationsBetweenMilestonesSpanningLastMilestone) {
-            days = days.add(calendarService.getWorkDays(a.getHowLong(), a.getStartDate(), lastMilestone,
-                        a.getPerson()));
-        }
-
-        return days;
+        return usedDays;
     }
 }
