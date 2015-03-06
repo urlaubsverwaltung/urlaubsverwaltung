@@ -27,6 +27,14 @@
                 <div class="row">
                     <div class="col-xs-12">
                         <h2 class="error-description">Hier hat sich ein Fehler eingeschlichen...</h2>
+
+                        <p>
+                            <c:if test="${not empty exception.message}">
+                                <div class="col-xs-6 col-xs-offset-3">
+                                    <p><c:out value="${exception.message}"/></p>
+                                </div>
+                            </c:if>
+                        </p>
                     </div>
                 </div>
                 <div class="row">

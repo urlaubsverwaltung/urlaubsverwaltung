@@ -7,27 +7,32 @@ import com.google.common.collect.Iterables;
 
 import org.joda.time.DateMidnight;
 
+import org.springframework.util.Assert;
+
 import org.synyx.urlaubsverwaltung.core.account.Account;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.calendar.Day;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.util.NumberUtil;
+import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.security.Role;
+
+import java.math.BigDecimal;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 
 
 /**
- * View class representing a person and its account.
+ * View class representing a person with a holidays account.
  *
  * @author  Aljona Murygina
  */
 public class PersonForm {
+
+    private Integer id;
 
     private String loginName;
 
@@ -37,23 +42,17 @@ public class PersonForm {
 
     private String email;
 
-    private boolean active = true;
+    private int holidaysAccountYear;
 
-    private String dayFrom;
+    private DateMidnight holidaysAccountValidFrom;
 
-    private String monthFrom;
+    private DateMidnight holidaysAccountValidTo;
 
-    private String dayTo;
+    private BigDecimal annualVacationDays;
 
-    private String monthTo;
+    private BigDecimal remainingVacationDays;
 
-    private String year;
-
-    private String annualVacationDays;
-
-    private String remainingVacationDays;
-
-    private String remainingVacationDaysNotExpiring;
+    private BigDecimal remainingVacationDaysNotExpiring;
 
     private DateMidnight validFrom;
 
@@ -63,40 +62,49 @@ public class PersonForm {
 
     private List<MailNotification> notifications = new ArrayList<>();
 
-    private Locale locale;
-
     public PersonForm() {
 
-        setDefaultValuesForValidity();
+        this(DateMidnight.now().getYear());
     }
 
 
-    public PersonForm(Person person, String year, Account account, WorkingTime workingTime, Collection<Role> roles,
-        Collection<MailNotification> notifications, Locale locale) {
+    public PersonForm(int year) {
 
+        this.holidaysAccountYear = year;
+        this.holidaysAccountValidFrom = DateUtil.getFirstDayOfYear(year);
+        this.holidaysAccountValidTo = DateUtil.getLastDayOfYear(year);
+    }
+
+
+    public PersonForm(Person person, int year, Optional<Account> holidaysAccountOptional,
+        Optional<WorkingTime> workingTimeOptional, Collection<Role> roles, Collection<MailNotification> notifications) {
+
+        Assert.notNull(person, "Person must not be null");
+
+        this.id = person.getId();
         this.loginName = person.getLoginName();
         this.lastName = person.getLastName();
         this.firstName = person.getFirstName();
         this.email = person.getEmail();
-        this.year = year;
-        this.locale = locale;
 
-        if (account != null) {
-            this.dayFrom = String.valueOf(account.getValidFrom().getDayOfMonth());
-            this.monthFrom = String.valueOf(account.getValidFrom().getMonthOfYear());
-            this.dayTo = String.valueOf(account.getValidTo().getDayOfMonth());
-            this.monthTo = String.valueOf(account.getValidTo().getMonthOfYear());
-            this.annualVacationDays = NumberUtil.formatNumber(account.getAnnualVacationDays(), locale);
-            this.remainingVacationDays = NumberUtil.formatNumber(account.getRemainingVacationDays(), locale);
-            this.remainingVacationDaysNotExpiring = NumberUtil.formatNumber(
-                    account.getRemainingVacationDaysNotExpiring(), locale);
+        if (holidaysAccountOptional.isPresent()) {
+            Account holidaysAccount = holidaysAccountOptional.get();
+
+            this.holidaysAccountYear = holidaysAccount.getValidFrom().getYear();
+            this.holidaysAccountValidFrom = holidaysAccount.getValidFrom();
+            this.holidaysAccountValidTo = holidaysAccount.getValidTo();
+            this.annualVacationDays = holidaysAccount.getAnnualVacationDays();
+            this.remainingVacationDays = holidaysAccount.getRemainingVacationDays();
+            this.remainingVacationDaysNotExpiring = holidaysAccount.getRemainingVacationDaysNotExpiring();
         } else {
-            setDefaultValuesForValidity();
+            this.holidaysAccountYear = year;
+            this.holidaysAccountValidFrom = DateUtil.getFirstDayOfYear(year);
+            this.holidaysAccountValidTo = DateUtil.getLastDayOfYear(year);
         }
 
-        this.workingDays = new ArrayList<>();
+        if (workingTimeOptional.isPresent()) {
+            WorkingTime workingTime = workingTimeOptional.get();
 
-        if (workingTime != null) {
             for (Day day : Day.values()) {
                 Integer dayOfWeek = day.getDayOfWeek();
 
@@ -114,61 +122,63 @@ public class PersonForm {
         this.notifications = new ArrayList<>(notifications);
     }
 
-    private void setDefaultValuesForValidity() {
+    public Integer getId() {
 
-        // default values for validFrom and validTo: 1.1. - 31.12.
-        this.dayFrom = String.valueOf(1);
-        this.monthFrom = String.valueOf(1);
-        this.dayTo = String.valueOf(31);
-        this.monthTo = String.valueOf(12);
+        return id;
     }
 
 
-    public boolean isActive() {
+    public void setId(Integer id) {
 
-        return active;
+        this.id = id;
     }
 
 
-    public void setActive(boolean active) {
+    public int getHolidaysAccountYear() {
 
-        this.active = active;
+        return holidaysAccountYear;
     }
 
 
-    public String getAnnualVacationDays() {
+    public void setHolidaysAccountYear(int holidaysAccountYear) {
+
+        this.holidaysAccountYear = holidaysAccountYear;
+    }
+
+
+    public BigDecimal getAnnualVacationDays() {
 
         return annualVacationDays;
     }
 
 
-    public void setAnnualVacationDays(String annualVacationDays) {
+    public void setAnnualVacationDays(BigDecimal annualVacationDays) {
 
         this.annualVacationDays = annualVacationDays;
     }
 
 
-    public String getDayFrom() {
+    public DateMidnight getHolidaysAccountValidFrom() {
 
-        return dayFrom;
+        return holidaysAccountValidFrom;
     }
 
 
-    public void setDayFrom(String dayFrom) {
+    public void setHolidaysAccountValidFrom(DateMidnight holidaysAccountValidFrom) {
 
-        this.dayFrom = dayFrom;
+        this.holidaysAccountValidFrom = holidaysAccountValidFrom;
     }
 
 
-    public String getDayTo() {
+    public DateMidnight getHolidaysAccountValidTo() {
 
-        return dayTo;
+        return holidaysAccountValidTo;
     }
 
 
-    public void setDayTo(String dayTo) {
+    public void setHolidaysAccountValidTo(DateMidnight holidaysAccountValidTo) {
 
-        this.dayTo = dayTo;
+        this.holidaysAccountValidTo = holidaysAccountValidTo;
     }
 
 
@@ -208,63 +218,27 @@ public class PersonForm {
     }
 
 
-    public String getMonthFrom() {
-
-        return monthFrom;
-    }
-
-
-    public void setMonthFrom(String monthFrom) {
-
-        this.monthFrom = monthFrom;
-    }
-
-
-    public String getMonthTo() {
-
-        return monthTo;
-    }
-
-
-    public void setMonthTo(String monthTo) {
-
-        this.monthTo = monthTo;
-    }
-
-
-    public String getRemainingVacationDays() {
+    public BigDecimal getRemainingVacationDays() {
 
         return remainingVacationDays;
     }
 
 
-    public void setRemainingVacationDays(String remainingVacationDays) {
+    public void setRemainingVacationDays(BigDecimal remainingVacationDays) {
 
         this.remainingVacationDays = remainingVacationDays;
     }
 
 
-    public String getRemainingVacationDaysNotExpiring() {
+    public BigDecimal getRemainingVacationDaysNotExpiring() {
 
         return remainingVacationDaysNotExpiring;
     }
 
 
-    public void setRemainingVacationDaysNotExpiring(String remainingVacationDaysNotExpiring) {
+    public void setRemainingVacationDaysNotExpiring(BigDecimal remainingVacationDaysNotExpiring) {
 
         this.remainingVacationDaysNotExpiring = remainingVacationDaysNotExpiring;
-    }
-
-
-    public String getYear() {
-
-        return year;
-    }
-
-
-    public void setYear(String year) {
-
-        this.year = year;
     }
 
 
@@ -328,15 +302,12 @@ public class PersonForm {
     }
 
 
-    public Locale getLocale() {
+    public Person generatePerson() {
 
-        return locale;
-    }
+        Person person = new Person();
+        fillPersonAttributes(person);
 
-
-    public void setLocale(Locale locale) {
-
-        this.locale = locale;
+        return person;
     }
 
 
@@ -350,13 +321,10 @@ public class PersonForm {
         person.setNotifications(notifications);
 
         if (personShouldBeSetToInactive(permissions)) {
-            person.setActive(false);
-
             List<Role> onlyInactive = new ArrayList<>();
             onlyInactive.add(Role.INACTIVE);
             person.setPermissions(onlyInactive);
         } else {
-            person.setActive(true);
             person.setPermissions(permissions);
         }
     }

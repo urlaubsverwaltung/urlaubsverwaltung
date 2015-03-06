@@ -97,25 +97,33 @@ public class PersonOverviewController {
     public String showOverview(@PathVariable("personId") Integer personId,
         @RequestParam(value = ControllerConstants.YEAR, required = false) String year, Model model) {
 
-        if (sessionService.isOffice() || sessionService.isBoss()) {
-            Person person = personService.getPersonByID(personId);
-            model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
-            model.addAttribute(ControllerConstants.PERSON, person);
-
-            String url = GravatarUtil.createImgURL(person.getEmail());
-            model.addAttribute("gravatar", url);
-
-            Integer yearToShow = parseYearParameter(year);
-            prepareApplications(person, yearToShow, model);
-            prepareHolidayAccounts(person, yearToShow, model);
-            prepareSickNoteList(person, yearToShow, model);
-
-            model.addAttribute(ControllerConstants.YEAR, DateMidnight.now().getYear());
-
-            return "person/overview";
+        if (sessionService.isInactive()) {
+            return ControllerConstants.ERROR_JSP;
         }
 
-        return ControllerConstants.ERROR_JSP;
+        Person person = personService.getPersonByID(personId);
+        Person loggedUser = sessionService.getLoggedUser();
+
+        boolean isOwnOverviewPage = person.getId().equals(loggedUser.getId());
+
+        if (!isOwnOverviewPage && !sessionService.isOffice() && !sessionService.isBoss()) {
+            return ControllerConstants.ERROR_JSP;
+        }
+
+        model.addAttribute(PersonConstants.LOGGED_USER, loggedUser);
+        model.addAttribute(ControllerConstants.PERSON, person);
+
+        String url = GravatarUtil.createImgURL(person.getEmail());
+        model.addAttribute("gravatar", url);
+
+        Integer yearToShow = parseYearParameter(year);
+        prepareApplications(person, yearToShow, model);
+        prepareHolidayAccounts(person, yearToShow, model);
+        prepareSickNoteList(person, yearToShow, model);
+
+        model.addAttribute(ControllerConstants.YEAR, DateMidnight.now().getYear());
+
+        return "person/overview";
     }
 
 
@@ -202,11 +210,10 @@ public class PersonOverviewController {
                 .getFirstDayOfYear(year), DateUtil.getLastDayOfYear(year), person);
 
         if (!apps.isEmpty()) {
-            List<Application> applications = new ArrayList<Application>();
+            List<Application> applications = new ArrayList<>();
 
             for (Application a : apps) {
-                if ((a.getStatus() != ApplicationStatus.CANCELLED)
-                        || (a.getStatus() == ApplicationStatus.CANCELLED && a.isFormerlyAllowed())) {
+                if ((a.getStatus() != ApplicationStatus.CANCELLED) || (a.isFormerlyAllowed())) {
                     applications.add(a);
                 }
             }

@@ -24,17 +24,14 @@ import java.util.Collection;
 public class PersonContextMapperTest {
 
     private PersonContextMapper personContextMapper;
-
     private PersonService personService;
-    private MailService mailService;
 
     @Before
     public void setUp() {
 
         personService = Mockito.mock(PersonService.class);
-        mailService = Mockito.mock(MailService.class);
 
-        personContextMapper = new PersonContextMapper(personService, mailService, false);
+        personContextMapper = new PersonContextMapper(personService, Mockito.mock(MailService.class), false);
     }
 
 
@@ -74,9 +71,8 @@ public class PersonContextMapperTest {
         Assert.assertEquals("Wrong number of roles", 2, roles.size());
         Assert.assertTrue("Does not contain user role", roles.contains(Role.USER));
         Assert.assertTrue("Does not contain office role", roles.contains(Role.OFFICE));
-
-        Assert.assertTrue("Should be active", person.isActive());
     }
+
 
     @Test
     public void ensureFurtherCreatedPersonHasTheCorrectRoles() {
@@ -87,8 +83,6 @@ public class PersonContextMapperTest {
 
         Assert.assertEquals("Wrong number of roles", 1, roles.size());
         Assert.assertTrue("Does not contain user role", roles.contains(Role.USER));
-
-        Assert.assertTrue("Should be active", person.isActive());
     }
 
 

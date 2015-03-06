@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
@@ -22,6 +24,7 @@ import java.math.BigDecimal;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Service
+@Transactional
 public class ApplicationInteractionServiceImpl implements ApplicationInteractionService {
 
     private static final Logger LOG = Logger.getLogger(ApplicationInteractionServiceImpl.class);
@@ -44,15 +47,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
     }
 
     @Override
-    public BigDecimal getNumberOfVacationDays(Application application) {
-
-        return calendarService.getWorkDays(application.getHowLong(), application.getStartDate(),
-                application.getEndDate(), application.getPerson());
-    }
-
-
-    @Override
-    public void apply(Application application, Person applier) {
+    public Application apply(Application application, Person applier) {
 
         Person person = application.getPerson();
 
@@ -95,11 +90,13 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         // bosses gets email that a new application for leave has been created
         mailService.sendNewApplicationNotification(application);
+
+        return application;
     }
 
 
     @Override
-    public void allow(Application application, Person boss, Comment comment) {
+    public Application allow(Application application, Person boss, Comment comment) {
 
         application.setStatus(ApplicationStatus.ALLOWED);
         application.setBoss(boss);
@@ -115,14 +112,16 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         mailService.sendAllowedNotification(application, comment);
 
-        if (application.getRep() != null) {
+        if (application.getHolidayReplacement() != null) {
             mailService.notifyRepresentative(application);
         }
+
+        return application;
     }
 
 
     @Override
-    public void reject(Application application, Person boss, Comment comment) {
+    public Application reject(Application application, Person boss, Comment comment) {
 
         application.setStatus(ApplicationStatus.REJECTED);
         application.setBoss(boss);
@@ -137,11 +136,13 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         commentService.saveComment(comment, boss, application);
 
         mailService.sendRejectedNotification(application, comment);
+
+        return application;
     }
 
 
     @Override
-    public void cancel(Application application, Person canceller, Comment comment) {
+    public Application cancel(Application application, Person canceller, Comment comment) {
 
         boolean cancellingAllowedApplication = application.getStatus().equals(ApplicationStatus.ALLOWED);
 
@@ -169,5 +170,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
             // the person gets an email regardless of application status
             mailService.sendCancelledNotification(application, true, comment);
         }
+
+        return application;
     }
 }

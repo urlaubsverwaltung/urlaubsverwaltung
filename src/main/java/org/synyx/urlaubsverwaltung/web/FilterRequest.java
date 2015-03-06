@@ -1,7 +1,7 @@
-package org.synyx.urlaubsverwaltung.web.sicknote;
+package org.synyx.urlaubsverwaltung.web;
 
 /**
- * Represents a request to filter something by {@link org.synyx.urlaubsverwaltung.web.sicknote.FilterRequest.Period}.
+ * Represents a request to filter something by {@link FilterRequest.Period}.
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */

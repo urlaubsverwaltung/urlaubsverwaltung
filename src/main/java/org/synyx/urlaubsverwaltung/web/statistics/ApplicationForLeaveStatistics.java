@@ -14,8 +14,9 @@ import java.math.BigDecimal;
  */
 public class ApplicationForLeaveStatistics {
 
-    private Person person;
-    private String gravatarUrl;
+    private final Person person;
+    private final String gravatarUrl;
+
     private BigDecimal waitingVacationDays = BigDecimal.ZERO;
     private BigDecimal allowedVacationDays = BigDecimal.ZERO;
     private BigDecimal leftVacationDays = BigDecimal.ZERO;

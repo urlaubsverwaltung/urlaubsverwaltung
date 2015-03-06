@@ -4,6 +4,8 @@ import org.apache.log4j.Logger;
 
 import org.joda.time.DateMidnight;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Component;
 
 import org.springframework.util.StringUtils;
@@ -12,18 +14,25 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
+import org.synyx.urlaubsverwaltung.core.application.domain.OverlapCase;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
+import org.synyx.urlaubsverwaltung.core.application.service.CalculationService;
+import org.synyx.urlaubsverwaltung.core.application.service.OverlapService;
+import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
+import org.synyx.urlaubsverwaltung.core.util.CalcUtil;
 import org.synyx.urlaubsverwaltung.core.util.PropertiesUtil;
-import org.synyx.urlaubsverwaltung.web.application.AppForm;
+import org.synyx.urlaubsverwaltung.web.application.ApplicationForLeaveForm;
 
 import java.io.IOException;
+
+import java.math.BigDecimal;
 
 import java.util.Properties;
 
 
 /**
- * This class validate if an {@link AppForm} is filled correctly by the user, else it saves error messages in errors
- * object.
+ * This class validate if an {@link org.synyx.urlaubsverwaltung.web.application.ApplicationForLeaveForm} is filled
+ * correctly by the user, else it saves error messages in errors object.
  *
  * @author  Aljona Murygina
  */
@@ -39,6 +48,9 @@ public class ApplicationValidator implements Validator {
     private static final String ERROR_PAST = "error.period.past";
     private static final String ERROR_LENGTH = "error.length";
     private static final String ERROR_TOO_LONG = "error.too.long";
+    private static final String ERROR_ZERO_DAYS = "error.zero.days";
+    private static final String ERROR_OVERLAP = "error.overlap";
+    private static final String ERROR_NOT_ENOUGH_DAYS = "error.not.enough.days";
 
     private static final String FIELD_START_DATE = "startDate";
     private static final String FIELD_END_DATE = "endDate";
@@ -51,7 +63,17 @@ public class ApplicationValidator implements Validator {
 
     private Properties businessProperties;
 
-    public ApplicationValidator() {
+    private final OwnCalendarService calendarService;
+    private final OverlapService overlapService;
+    private final CalculationService calculationService;
+
+    @Autowired
+    public ApplicationValidator(OwnCalendarService calendarService, OverlapService overlapService,
+        CalculationService calculationService) {
+
+        this.calendarService = calendarService;
+        this.overlapService = overlapService;
+        this.calculationService = calculationService;
 
         try {
             this.businessProperties = PropertiesUtil.load(BUSINESS_PROPERTIES_FILE);
@@ -64,32 +86,39 @@ public class ApplicationValidator implements Validator {
     @Override
     public boolean supports(Class<?> clazz) {
 
-        return AppForm.class.equals(clazz);
+        return ApplicationForLeaveForm.class.equals(clazz);
     }
 
 
     @Override
     public void validate(Object target, Errors errors) {
 
-        AppForm app = (AppForm) target;
+        ApplicationForLeaveForm applicationForm = (ApplicationForLeaveForm) target;
 
         // check if date fields are valid
-        validateDateFields(app, errors);
+        validateDateFields(applicationForm, errors);
 
         // check if reason is not filled
-        if (app.getVacationType() != VacationType.HOLIDAY) {
-            if (!StringUtils.hasText(app.getReason())) {
+        if (applicationForm.getVacationType() != VacationType.HOLIDAY) {
+            if (!StringUtils.hasText(applicationForm.getReason())) {
                 errors.rejectValue(FIELD_REASON, ERROR_MANDATORY_FIELD);
             }
         }
 
-        validateStringLength(app.getReason(), FIELD_REASON, errors);
-        validateStringLength(app.getAddress(), FIELD_ADDRESS, errors);
-        validateStringLength(app.getComment(), "comment", errors);
+        // validate length of texts
+        validateStringLength(applicationForm.getReason(), FIELD_REASON, errors);
+        validateStringLength(applicationForm.getAddress(), FIELD_ADDRESS, errors);
+        validateStringLength(applicationForm.getComment(), "comment", errors);
+
+        if (!errors.hasErrors()) {
+            // validate if applying for leave is possible
+            // (check overlapping applications for leave, vacation days of the person etc.)
+            validateIfApplyingForLeaveIsPossible(applicationForm, errors);
+        }
     }
 
 
-    private void validateDateFields(AppForm applicationForLeave, Errors errors) {
+    private void validateDateFields(ApplicationForLeaveForm applicationForLeave, Errors errors) {
 
         if (applicationForLeave.getHowLong() == DayLength.FULL) {
             DateMidnight startDate = applicationForLeave.getStartDate();
@@ -105,7 +134,10 @@ public class ApplicationValidator implements Validator {
             DateMidnight date = applicationForLeave.getStartDateHalf();
 
             validateNotNull(date, FIELD_START_DATE_HALF, errors);
-            validatePeriod(date, date, errors);
+
+            if (date != null) {
+                validatePeriod(date, date, errors);
+            }
         }
     }
 
@@ -169,18 +201,47 @@ public class ApplicationValidator implements Validator {
     }
 
 
-    /**
-     * Validation for converting sick note to vacation: {@link AppForm} only reason and vacation type must be validated.
-     *
-     * @param  app
-     * @param  errors
-     */
-    public void validatedShortenedAppForm(AppForm app, Errors errors) {
+    private void validateIfApplyingForLeaveIsPossible(ApplicationForLeaveForm applicationForm, Errors errors) {
 
-        if (!StringUtils.hasText(app.getReason())) {
-            errors.rejectValue(FIELD_REASON, ERROR_MANDATORY_FIELD);
-        } else {
-            validateStringLength(app.getReason(), FIELD_REASON, errors);
+        BigDecimal days = calendarService.getWorkDays(applicationForm.getHowLong(), applicationForm.getStartDate(),
+                applicationForm.getEndDate(), applicationForm.getPerson());
+
+        /**
+         * Ensure that no one applies for leave for a vacation of 0 days
+         */
+        if (CalcUtil.isZero(days)) {
+            errors.reject(ERROR_ZERO_DAYS);
+
+            return;
+        }
+
+        /**
+         * Ensure that there is no application for leave in the same period
+         */
+        OverlapCase overlap = overlapService.checkOverlap(applicationForm.generateApplicationForLeave());
+
+        boolean isOverlapping = overlap == OverlapCase.FULLY_OVERLAPPING || overlap == OverlapCase.PARTLY_OVERLAPPING;
+
+        if (isOverlapping) {
+            errors.reject(ERROR_OVERLAP);
+
+            return;
+        }
+
+        /**
+         * Ensure that the person has enough vacation days left if the vacation type is
+         * {@link org.synyx.urlaubsverwaltung.core.application.domain.VacationType.HOLIDAY}
+         */
+
+        boolean isHoliday = applicationForm.getVacationType() == VacationType.HOLIDAY;
+
+        if (isHoliday) {
+            boolean enoughVacationDaysLeft = calculationService.checkApplication(
+                    applicationForm.generateApplicationForLeave());
+
+            if (!enoughVacationDaysLeft) {
+                errors.reject(ERROR_NOT_ENOUGH_DAYS);
+            }
         }
     }
 }

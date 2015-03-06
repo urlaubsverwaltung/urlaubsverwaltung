@@ -24,12 +24,13 @@ import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.security.Role;
 import org.synyx.urlaubsverwaltung.web.person.PersonForm;
 
+import java.math.BigDecimal;
+
 import java.security.NoSuchAlgorithmException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 import javax.annotation.PostConstruct;
 
@@ -46,9 +47,6 @@ public class TestDataCreationService {
     private static final String DEV_ENVIRONMENT = "dev";
 
     private static final String USER = "test";
-
-    private static final Boolean ACTIVE = true;
-    private static final Boolean INACTIVE = false;
 
     @Autowired
     private PersonInteractionService personInteractionService;
@@ -77,17 +75,16 @@ public class TestDataCreationService {
         if (environment.equals(DEV_ENVIRONMENT)) {
             LOG.info("Test data will be created...");
 
-            user = createTestPerson(USER, "Marlene", "Muster", "mmuster@muster.de", ACTIVE, Role.USER, Role.BOSS,
+            user = createTestPerson(USER, "Marlene", "Muster", "mmuster@muster.de", Role.USER, Role.BOSS, Role.OFFICE);
+
+            boss = createTestPerson("max", "Max", "Mustermann", "maxMuster@muster.de", Role.USER, Role.BOSS);
+
+            office = createTestPerson("klaus", "Klaus", "Müller", "mueller@muster.de", Role.USER, Role.BOSS,
                     Role.OFFICE);
 
-            boss = createTestPerson("max", "Max", "Mustermann", "maxMuster@muster.de", ACTIVE, Role.USER, Role.BOSS);
+            createTestPerson("hdampf", "Hans", "Dampf", "dampf@foo.bar", Role.USER, Role.OFFICE);
 
-            office = createTestPerson("klaus", "Klaus", "Müller", "mueller@muster.de", ACTIVE, Role.USER, Role.BOSS,
-                    Role.OFFICE);
-
-            createTestPerson("hdampf", "Hans", "Dampf", "dampf@foo.bar", true, Role.USER, Role.OFFICE);
-
-            createTestPerson("horst", "Horst", "Dieter", "hdieter@muster.de", INACTIVE, Role.INACTIVE);
+            createTestPerson("horst", "Horst", "Dieter", "hdieter@muster.de", Role.INACTIVE);
 
             createTestData(user);
             createTestData(boss);
@@ -97,27 +94,25 @@ public class TestDataCreationService {
     }
 
 
-    private Person createTestPerson(String login, String firstName, String lastName, String email, boolean active,
-        Role... roles) throws NoSuchAlgorithmException {
-
-        Person person = new Person();
+    private Person createTestPerson(String login, String firstName, String lastName, String email, Role... roles)
+        throws NoSuchAlgorithmException {
 
         int currentYear = DateMidnight.now().getYear();
-        Locale locale = Locale.GERMAN;
 
-        PersonForm personForm = new PersonForm();
+        PersonForm personForm = new PersonForm(DateMidnight.now().getYear());
         personForm.setLoginName(login);
         personForm.setLastName(lastName);
         personForm.setFirstName(firstName);
         personForm.setEmail(email);
-        personForm.setActive(active);
-        personForm.setYear(String.valueOf(currentYear));
-        personForm.setAnnualVacationDays("28.5");
-        personForm.setRemainingVacationDays("5");
-        personForm.setRemainingVacationDaysNotExpiring("0");
+
+        personForm.setAnnualVacationDays(new BigDecimal("28.5"));
+        personForm.setRemainingVacationDays(new BigDecimal("5"));
+        personForm.setRemainingVacationDaysNotExpiring(BigDecimal.ZERO);
         personForm.setValidFrom(new DateMidnight(currentYear, 1, 1));
+
         personForm.setWorkingDays(Arrays.asList(Day.MONDAY.getDayOfWeek(), Day.TUESDAY.getDayOfWeek(),
                 Day.WEDNESDAY.getDayOfWeek(), Day.THURSDAY.getDayOfWeek(), Day.FRIDAY.getDayOfWeek()));
+
         personForm.setPermissions(Arrays.asList(roles));
 
         List<MailNotification> notifications = new ArrayList<>();
@@ -134,9 +129,7 @@ public class TestDataCreationService {
 
         personForm.setNotifications(notifications);
 
-        personInteractionService.createOrUpdate(person, personForm, locale);
-
-        return person;
+        return personInteractionService.create(personForm);
     }
 
 
@@ -254,7 +247,7 @@ public class TestDataCreationService {
             sickNote.setPerson(person);
             sickNote.setStartDate(startDate);
             sickNote.setEndDate(endDate);
-            sickNote.setActive(ACTIVE);
+            sickNote.setActive(true);
             sickNote.setType(type);
 
             if (withAUB) {

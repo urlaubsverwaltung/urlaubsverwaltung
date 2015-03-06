@@ -17,7 +17,7 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
  *
  * @author  Aljona Murygina
  */
-public class AppForm {
+public class ApplicationForLeaveForm {
 
     // person of the application for leave
     private Person person;
@@ -35,16 +35,13 @@ public class AppForm {
     private DayLength howLong;
 
     // For special and unpaid leave a reason is required
-    // for holiday default = "Erholung"
     private String reason;
 
-    // Representative of employee during his/her holiday
-    private Person rep;
+    // Stands in while the person is on holiday
+    private Person holidayReplacement;
 
     // Address and phone number during holiday
     private String address;
-
-    private DateMidnight applicationDate;
 
     private boolean teamInformed;
 
@@ -71,18 +68,6 @@ public class AppForm {
     public void setAddress(String address) {
 
         this.address = address;
-    }
-
-
-    public DateMidnight getApplicationDate() {
-
-        return applicationDate;
-    }
-
-
-    public void setApplicationDate(DateMidnight applicationDate) {
-
-        this.applicationDate = applicationDate;
     }
 
 
@@ -122,15 +107,15 @@ public class AppForm {
     }
 
 
-    public Person getRep() {
+    public Person getHolidayReplacement() {
 
-        return rep;
+        return holidayReplacement;
     }
 
 
-    public void setRep(Person rep) {
+    public void setHolidayReplacement(Person holidayReplacement) {
 
-        this.rep = rep;
+        this.holidayReplacement = holidayReplacement;
     }
 
 
@@ -194,29 +179,28 @@ public class AppForm {
     }
 
 
-    public Application createApplicationObject() {
+    public Application generateApplicationForLeave() {
 
-        Application app = new Application();
+        Application applicationForLeave = new Application();
 
-        app.setPerson(person);
-        app.setAddress(address);
-        app.setVacationType(vacationType);
-        app.setHowLong(howLong);
-        app.setReason(reason);
-        app.setRep(rep);
-        app.setAddress(address);
-        app.setApplicationDate(applicationDate);
-        app.setTeamInformed(teamInformed);
-        app.setComment(comment);
+        applicationForLeave.setPerson(person);
+        applicationForLeave.setAddress(address);
+        applicationForLeave.setVacationType(vacationType);
+        applicationForLeave.setHowLong(howLong);
+        applicationForLeave.setReason(reason);
+        applicationForLeave.setHolidayReplacement(holidayReplacement);
+        applicationForLeave.setAddress(address);
+        applicationForLeave.setTeamInformed(teamInformed);
+        applicationForLeave.setComment(comment);
 
         if (howLong == DayLength.FULL) {
-            app.setStartDate(startDate);
-            app.setEndDate(endDate);
+            applicationForLeave.setStartDate(startDate);
+            applicationForLeave.setEndDate(endDate);
         } else {
-            app.setStartDate(startDateHalf);
-            app.setEndDate(startDateHalf);
+            applicationForLeave.setStartDate(startDateHalf);
+            applicationForLeave.setEndDate(startDateHalf);
         }
 
-        return app;
+        return applicationForLeave;
     }
 }

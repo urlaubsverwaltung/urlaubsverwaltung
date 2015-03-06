@@ -111,7 +111,7 @@ public class VacationDaysLeft {
 
             leftRemainingVacationDays = leftRemainingVacationDays.subtract(usedDaysBeforeApril);
 
-            if (CalcUtil.isGreaterThanZero(leftRemainingVacationDays)) {
+            if (CalcUtil.isPositive(leftRemainingVacationDays)) {
                 // remaining vacation days are enough for the days before April
 
                 if (leftRemainingVacationDays.compareTo(leftRemainingVacationDaysNotExpiring) < 1) {

@@ -20,7 +20,7 @@
     <c:set var="METHOD" value="POST" />
     <c:set var="ACTION" value="${URL_PREFIX}/sicknote/${sickNote.id}/convert" />
 
-    <form:form method="${METHOD}" action="${ACTION}" modelAttribute="appForm" class="form-horizontal">
+    <form:form method="${METHOD}" action="${ACTION}" modelAttribute="sickNoteConvertForm" class="form-horizontal">
 
     <div class="container">
 
@@ -36,10 +36,11 @@
                 </div>
     
                     <div class="form-group">
+                        <form:hidden path="person" value="${sickNoteConvertForm.person.id}" />
                         <label class="control-label col-sm-12 col-md-4"><spring:message code='staff'/></label>
     
                         <div class="col-md-7">
-                            <c:out value="${sickNote.person.firstName}" />&nbsp;<c:out value="${sickNote.person.lastName}" />
+                            <c:out value="${sickNoteConvertForm.person.niceName}" />
                         </div>
                     </div>
 
@@ -52,9 +53,9 @@
 
                         <div class="col-md-7">
                             <form:select path="vacationType" size="1" cssClass="form-control" cssErrorClass="form-control error">
-                                <c:forEach items="${vacTypes}" var="vacType">
-                                    <option value="${vacType}">
-                                        <spring:message code='${vacType}' />
+                                <c:forEach items="${vacationTypes}" var="vacationType">
+                                    <option value="${vacationType}">
+                                        <spring:message code='${vacationType}' />
                                     </option>
                                 </c:forEach>
                             </form:select>
@@ -62,10 +63,13 @@
                     </div>
     
                     <div class="form-group">
+                        <form:hidden path="startDate" />
+                        <form:hidden path="endDate" />
+                        
                         <label class="control-label col-md-4"><spring:message code="time" /></label>
     
                         <div class="col-md-7">
-                            <uv:date date="${sickNote.startDate}" /> - <uv:date date="${sickNote.endDate}" />
+                            <uv:date date="${sickNoteConvertForm.startDate}" /> - <uv:date date="${sickNoteConvertForm.endDate}" />
                         </div>
                     </div>
     

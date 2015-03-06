@@ -22,7 +22,8 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteComment;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteCommentDAO;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteStatus;
-import org.synyx.urlaubsverwaltung.web.application.AppForm;
+import org.synyx.urlaubsverwaltung.web.application.ApplicationForLeaveForm;
+import org.synyx.urlaubsverwaltung.web.sicknote.SickNoteConvertForm;
 
 import java.math.BigDecimal;
 
@@ -144,30 +145,21 @@ public class SickNoteService {
     }
 
 
-    public void convertSickNoteToVacation(AppForm appForm, SickNote sickNote, Person loggedUser) {
+    public void convertSickNoteToVacation(SickNoteConvertForm sickNoteConvertForm, SickNote sickNote,
+        Person loggedUser) {
 
-        appForm.setHowLong(DayLength.FULL);
-        appForm.setStartDate(sickNote.getStartDate());
-        appForm.setEndDate(sickNote.getEndDate());
+        Application applicationForLeave = sickNoteConvertForm.generateApplicationForLeave();
+        applicationForLeave.setApplier(loggedUser);
 
-        Application application = appForm.createApplicationObject();
+        BigDecimal workDays = calendarService.getWorkDays(applicationForLeave.getHowLong(),
+                applicationForLeave.getStartDate(), applicationForLeave.getEndDate(), applicationForLeave.getPerson());
+        applicationForLeave.setDays(workDays);
 
-        Person person = sickNote.getPerson();
-        BigDecimal workDays = calendarService.getWorkDays(application.getHowLong(), application.getStartDate(),
-                application.getEndDate(), person);
+        signService.signApplicationByUser(applicationForLeave, loggedUser);
 
-        application.setPerson(person);
-        application.setApplier(loggedUser);
-        application.setDays(workDays);
+        applicationService.save(applicationForLeave);
 
-        application.setStatus(ApplicationStatus.ALLOWED);
-        application.setApplicationDate(DateMidnight.now());
-        application.setEditedDate(DateMidnight.now());
-
-        signService.signApplicationByUser(application, loggedUser);
-        applicationService.save(application);
-
-        commentService.saveComment(new Comment(), loggedUser, application);
+        commentService.saveComment(new Comment(), loggedUser, applicationForLeave);
 
         setSickNoteInactive(sickNote);
 
@@ -176,7 +168,7 @@ public class SickNoteService {
         SickNoteComment sickNoteComment = new SickNoteComment();
         addComment(sickNote.getId(), sickNoteComment, SickNoteStatus.CONVERTED_TO_VACATION, loggedUser);
 
-        mailService.sendSickNoteConvertedToVacationNotification(application);
+        mailService.sendSickNoteConvertedToVacationNotification(applicationForLeave);
     }
 
 

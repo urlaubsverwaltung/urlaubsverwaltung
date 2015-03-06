@@ -12,7 +12,7 @@
         <security:intercept-url pattern="/api/sicknotes/**" access="hasRole('OFFICE')"/>
         <security:intercept-url pattern="/web/overview" access="isAuthenticated()"/>
         <security:intercept-url pattern="/web/application/**" access="isAuthenticated()"/>
-        <security:intercept-url pattern="/web/staff/**" access="hasAnyRole('BOSS', 'OFFICE')"/>
+        <security:intercept-url pattern="/web/staff/**" access="isAuthenticated()"/>
         <!-- more concrete security rules for sick notes are located in SickNoteController -->
         <security:intercept-url pattern="/web/sicknote/**" access="isAuthenticated()"/>
         <security:intercept-url pattern="/login.jsp" access="permitAll"/>

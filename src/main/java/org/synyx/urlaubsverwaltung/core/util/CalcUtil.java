@@ -1,16 +1,12 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.synyx.urlaubsverwaltung.core.util;
 
 import java.math.BigDecimal;
 
 
 /**
- * @author  Aljona Murygina
+ * Contains helper methods for handling {@link java.math.BigDecimal}s.
  *
- *          <p>This class contains auxiliary functions for handling BigDecimals.</p>
+ * @author  Aljona Murygina
  */
 public final class CalcUtil {
 
@@ -19,14 +15,14 @@ public final class CalcUtil {
         // Hide constructor for util classes
     }
 
-    /*
-     * function signum() of BigDecimal checks if a BigDecimal is negative, zero or positive.
-     *
-     * if negative: -1 if zero: 0 if positive: 1
-     */
-
     public static boolean isZero(BigDecimal number) {
 
+        /**
+         * NOTE: {@link java.math.BigDecimal#signum()} returns:
+         * -1 if the number is negative,
+         * 0 if the number is zero,
+         * 1 if the number is positive
+         */
         return number.signum() == 0;
     }
 
@@ -37,14 +33,8 @@ public final class CalcUtil {
     }
 
 
-    public static boolean isGreaterThanZero(BigDecimal number) {
+    public static boolean isPositive(BigDecimal number) {
 
         return number.signum() == 1;
-    }
-
-
-    public static boolean isEqualOrGreaterThanZero(BigDecimal number) {
-
-        return ((number.signum() == 0) || (number.signum() == 1));
     }
 }

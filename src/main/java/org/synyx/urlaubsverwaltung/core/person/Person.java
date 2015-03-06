@@ -63,8 +63,6 @@ public class Person extends AbstractPersistable<Integer> {
     @Enumerated(EnumType.STRING)
     private Collection<MailNotification> notifications;
 
-    private boolean active;
-
     public Person() {
 
         /* OK */
@@ -78,18 +76,6 @@ public class Person extends AbstractPersistable<Integer> {
         this.firstName = firstName;
         this.email = email;
     }
-
-    public boolean isActive() {
-
-        return active;
-    }
-
-
-    public void setActive(boolean active) {
-
-        this.active = active;
-    }
-
 
     public String getEmail() {
 

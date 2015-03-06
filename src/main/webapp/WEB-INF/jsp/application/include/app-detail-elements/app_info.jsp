@@ -96,12 +96,12 @@
 
     <tr>
         <td>
-            <spring:message code='app.rep'/>
+            <spring:message code='app.holidayReplacement'/>
         </td>
         <td>
             <c:choose>
-                <c:when test="${application.rep != null}">
-                    <c:out value="${application.rep.niceName}"/>
+                <c:when test="${application.holidayReplacement != null}">
+                    <c:out value="${application.holidayReplacement.niceName}"/>
                 </c:when>
                 <c:otherwise>
                     <spring:message code="not.stated"/>

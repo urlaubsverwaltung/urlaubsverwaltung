@@ -79,7 +79,6 @@ public class PersonContextMapper implements UserDetailsContextMapper {
 
         Person person = new Person();
         person.setLoginName(login);
-        person.setActive(true);
 
         List<Role> permissions = new ArrayList<>();
         permissions.add(Role.USER);

@@ -80,12 +80,12 @@
 
 <c:choose>
     <c:when test="${person.id == loggedUser.id}">
-        <c:set var="appliesAsRep" value="false"/>
+        <c:set var="appliesOnOnesBehalf" value="false"/>
         <c:set var="actionUrl" value="${URL_PREFIX}/application/new"/>
     </c:when>
     <c:otherwise>
         <sec:authorize access="hasRole('OFFICE')">
-            <c:set var="appliesAsRep" value="true"/>
+            <c:set var="appliesOnOnesBehalf" value="true"/>
             <c:set var="actionUrl" value="${URL_PREFIX}/application/new?personId=${person.id}"/>
         </sec:authorize>
     </c:otherwise>
@@ -116,7 +116,7 @@
 
 </div>
 
-    <c:if test="${appliesAsRep == true}">
+    <c:if test="${appliesOnOnesBehalf == true}">
         <%-- office applies for a user --%>
 
         <div class="form-group">
@@ -126,12 +126,12 @@
             <div class="col-md-7">
                 <select id="person-select" class="form-control" onchange="window.location.href=this.options
                                                         [this.selectedIndex].value">
-                    <option value="${URL_PREFIX}/${person.id}/application/new" selected="selected">
+                    <option value="${URL_PREFIX}/application/new?personId=${person.id}" selected="selected">
                         <c:out value="${person.niceName}"/>
                     </option>
-                    <c:forEach items="${personList}" var="p">
+                    <c:forEach items="${persons}" var="p">
                         <c:if test="${person.id != p.id}">
-                            <option value="${URL_PREFIX}/${p.id}/application/new">
+                            <option value="${URL_PREFIX}/application/new?personId=${p.id}">
                                 <c:out value="${p.niceName}"/>
                             </option>
                         </c:if>
@@ -253,30 +253,32 @@
 </div>
 
 <div class="form-group">
-    <label class="control-label col-md-4" for="rep">
-        <spring:message code="app.rep"/>
+    <label class="control-label col-md-4" for="holidayReplacement">
+        <spring:message code="app.holidayReplacement"/>
     </label>
 
     <div class="col-md-7">
-        <form:select path="rep" id="rep" size="1" class="form-control">
-            <option value="-1"><spring:message code='app.no.rep'/></option>
-            <c:forEach items="${persons}" var="person">
+        <form:select path="holidayReplacement" id="holidayReplacement" size="1" class="form-control">
+            <option value="-1"><spring:message code='app.no.holidayReplacement'/></option>
+            <c:forEach items="${persons}" var="holidayReplacement">
 
                <c:choose>
-                   <c:when test="${appForm.rep.id == person.id}">
-                       <form:option value="${person.id}" selected="selected">
-                           <c:out value="${person.niceName}" />
+                   <c:when test="${appForm.holidayReplacement.id == holidayReplacement.id}">
+                       <form:option value="${holidayReplacement.id}" selected="selected">
+                           <c:out value="${holidayReplacement.niceName}" />
                        </form:option>
                    </c:when>
                    <c:otherwise>
-                       <form:option value="${person.id}">
-                           <c:out value="${person.niceName}" />
-                       </form:option>
+                       <c:if test="${person.id != holidayReplacement.id}">
+                           <form:option value="${holidayReplacement.id}">
+                               <c:out value="${holidayReplacement.niceName}" />
+                           </form:option>
+                       </c:if>
                    </c:otherwise>
                </c:choose>
             </c:forEach>
         </form:select>
-        <form:errors path="rep" cssClass="error"/>
+        <form:errors path="holidayReplacement" cssClass="error"/>
     </div>
 
 </div>
