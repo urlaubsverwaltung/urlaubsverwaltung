@@ -245,16 +245,9 @@
             <spring:message code='person.expire'/>
         </label>
 
-        <div class="col-md-7 radio">
-            <label class="halves">
-                <form:radiobutton id="expireYes" path="remainingVacationDaysExpire" value="true"/>
-                <spring:message code='yes'/>
-            </label>
-
-            <label class="halves">
-                <form:radiobutton id="expireNo" path="remainingVacationDaysExpire" value="false"/>
-                <spring:message code='no'/>
-            </label>
+        <div class="col-md-7">
+          <form:input path="remainingVacationDaysNotExpiring" class="form-control" cssErrorClass="form-control error" size="1" id="remainingVacationDaysNotExpiring"/>
+          <span class="help-inline"><form:errors path="remainingVacationDaysNotExpiring" cssClass="error"/></span>
         </div>
     </div>
 

@@ -221,8 +221,30 @@ public class PersonValidatorTest {
     public void ensureValidRemainingVacationDaysHaveNoValidationError() {
 
         form.setRemainingVacationDays(new BigDecimal("5"));
+        form.setRemainingVacationDaysNotExpiring(new BigDecimal("5"));
         validator.validateRemainingVacationDays(form, errors);
         Mockito.verifyZeroInteractions(errors);
+    }
+
+
+    // VALIDATION OF REMAINING VACATION DAYS NOT EXPIRING FIELD
+
+    @Test
+    public void ensureRemainingVacationDaysNotExpiringMustNotBeNull() {
+
+        form.setRemainingVacationDaysNotExpiring(null);
+        validator.validateRemainingVacationDays(form, errors);
+        Mockito.verify(errors).rejectValue("remainingVacationDaysNotExpiring", "error.mandatory.field");
+    }
+
+
+    @Test
+    public void ensureRemainingVacationDaysNotExpiringMustNotBeGreaterThanRemainingVacationDays() {
+
+        form.setRemainingVacationDays(new BigDecimal("6"));
+        form.setRemainingVacationDaysNotExpiring(new BigDecimal("7"));
+        validator.validateRemainingVacationDays(form, errors);
+        Mockito.verify(errors).rejectValue("remainingVacationDaysNotExpiring", "error.entry");
     }
 
 

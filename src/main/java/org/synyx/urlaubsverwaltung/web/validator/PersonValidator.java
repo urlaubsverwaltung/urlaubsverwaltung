@@ -52,6 +52,7 @@ public class PersonValidator implements Validator {
     private static final String LAST_NAME = "lastName";
     private static final String ANNUAL_VACATION_DAYS = "annualVacationDays";
     private static final String REMAINING_VACATION_DAYS = "remainingVacationDays";
+    private static final String REMAINING_VACATION_DAYS_NOT_EXPIRING = "remainingVacationDaysNotExpiring";
     private static final String EMAIL = "email";
     private static final String PERMISSIONS = "permissions";
 
@@ -259,12 +260,19 @@ public class PersonValidator implements Validator {
         double max = Double.parseDouble(propValue);
 
         BigDecimal remainingVacationDays = form.getRemainingVacationDays();
+        BigDecimal remainingVacationDaysNotExpiring = form.getRemainingVacationDaysNotExpiring();
 
         validateNumberNotNull(remainingVacationDays, REMAINING_VACATION_DAYS, errors);
+        validateNumberNotNull(remainingVacationDaysNotExpiring, REMAINING_VACATION_DAYS_NOT_EXPIRING, errors);
 
         if (remainingVacationDays != null) {
             // field entitlement's remaining vacation days
             validateNumberOfDays(remainingVacationDays, REMAINING_VACATION_DAYS, max, errors);
+
+            if (remainingVacationDaysNotExpiring != null) {
+                validateNumberOfDays(remainingVacationDaysNotExpiring, REMAINING_VACATION_DAYS_NOT_EXPIRING,
+                    remainingVacationDays.doubleValue(), errors);
+            }
         }
     }
 
