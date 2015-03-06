@@ -192,20 +192,4 @@ public class HolidaysAccountServiceImplTest {
 
         Assert.assertEquals(new BigDecimal("1.5"), result);
     }
-
-
-    @Test
-    public void testGetOrCreateAccount() {
-
-        Account account = new Account(person, new DateMidnight(2012, DateTimeConstants.JANUARY, 1).toDate(),
-                new DateMidnight(2012, DateTimeConstants.DECEMBER, 31).toDate(), BigDecimal.valueOf(28),
-                BigDecimal.valueOf(5), BigDecimal.ZERO);
-
-        Mockito.when(accountDAO.getHolidaysAccountByYearAndPerson(2012, person)).thenReturn(account);
-
-        service.getOrCreateNewAccount(2013, person);
-
-        // show that a new account is created by verifying that save method was called
-        Mockito.verify(accountDAO).save(Mockito.any(Account.class));
-    }
 }

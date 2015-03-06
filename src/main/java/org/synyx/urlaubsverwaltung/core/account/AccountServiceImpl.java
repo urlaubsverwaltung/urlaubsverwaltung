@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -51,7 +50,7 @@ class AccountServiceImpl implements AccountService {
 
 
     @Override
-    public void createHolidaysAccount(Person person, DateMidnight validFrom, DateMidnight validTo, BigDecimal days,
+    public Account createHolidaysAccount(Person person, DateMidnight validFrom, DateMidnight validTo, BigDecimal days,
         BigDecimal remainingDays, BigDecimal remainingDaysNotExpiring) {
 
         Account account = new Account(person, validFrom.toDate(), validTo.toDate(), days, remainingDays,
@@ -61,11 +60,13 @@ class AccountServiceImpl implements AccountService {
         accountDAO.save(account);
 
         LOG.info("Created holidays account: " + account);
+
+        return account;
     }
 
 
     @Override
-    public void editHolidaysAccount(Account account, DateMidnight validFrom, DateMidnight validTo, BigDecimal days,
+    public Account editHolidaysAccount(Account account, DateMidnight validFrom, DateMidnight validTo, BigDecimal days,
         BigDecimal remainingDays, BigDecimal remainingDaysNotExpiring) {
 
         account.setValidFrom(validFrom);
@@ -80,11 +81,12 @@ class AccountServiceImpl implements AccountService {
         accountDAO.save(account);
 
         LOG.info("Edited holidays account: " + account);
+
+        return account;
     }
 
 
-    @Override
-    public BigDecimal calculateActualVacationDays(Account account) {
+    BigDecimal calculateActualVacationDays(Account account) {
 
         DateMidnight start = account.getValidFrom();
         DateMidnight end = account.getValidTo();
@@ -191,34 +193,6 @@ class AccountServiceImpl implements AccountService {
         }
 
         return days;
-    }
-
-
-    @Override
-    public Account getOrCreateNewAccount(int year, Person person) {
-
-        Account account = getHolidaysAccount(year, person);
-
-        if (account == null) {
-            Account lastYearsAccount = getHolidaysAccount(year - 1, person);
-
-            if (lastYearsAccount != null) {
-                createHolidaysAccount(person, DateUtil.getFirstDayOfYear(year), DateUtil.getLastDayOfYear(year),
-                    lastYearsAccount.getAnnualVacationDays(), BigDecimal.ZERO, BigDecimal.ZERO);
-            } else {
-                // maybe user tries to apply for leave for past year --> no account information
-                // in this case just touch an account for this year with the data of the current year's account
-                // if a user is able to apply for leave, it's for sure that there is a current year's account
-                Account currentYearAccount = getHolidaysAccount(DateMidnight.now().getYear(), person);
-
-                createHolidaysAccount(person, DateUtil.getFirstDayOfYear(year), DateUtil.getLastDayOfYear(year),
-                    currentYearAccount.getAnnualVacationDays(), BigDecimal.ZERO, BigDecimal.ZERO);
-            }
-
-            account = getHolidaysAccount(year, person);
-        }
-
-        return account;
     }
 
 

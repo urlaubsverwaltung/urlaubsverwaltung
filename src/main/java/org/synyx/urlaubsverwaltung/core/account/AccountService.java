@@ -18,7 +18,7 @@ public interface AccountService {
     /**
      * Just saves the given {@link Account}.
      *
-     * @param  account {@link Account}
+     * @param  account  to be saved
      */
     void save(Account account);
 
@@ -26,68 +26,44 @@ public interface AccountService {
     /**
      * Gets the {@link Account} for the given year and person.
      *
-     * @param  year  int
-     * @param  person {@link Person}
+     * @param  year  to get the holidays account for
+     * @param  person  to get the holidays account for
      *
-     * @return  {@link Account} for the given params
+     * @return  {@link Account} that matches the given parameters
      */
     Account getHolidaysAccount(int year, Person person);
 
 
     /**
-     * Creates a {@link Account} with the given params.
+     * Creates a {@link Account} with the given parameters.
      *
-     * @param  person {@link Person}
-     * @param  validFrom {@link DateMidnight}, e.g. 1.1.2012
-     * @param  validTo {@link DateMidnight}, e.g. 31.12.2012
-     * @param  days {@link BigDecimal}   number of annual vacation days (method calculates the actual vacation days
-     *               using the validity period)
-     * @param  remainingDays {@link BigDecimal} number of remaining vacation days
-     * @param  remainingDaysNotExpiring {@link BigDecimal} number of remaining vacation days that do not expire on 1st
-     *                                   April
+     * @param  person  defines the owner of the holidays account
+     * @param  validFrom  defines the start of the validity period, e.g. 1.1.2012
+     * @param  validTo  defines the end of the validity period, e.g. 31.12.2012
+     * @param  days  defines number of annual vacation days (the actual vacation days are calculated using the validity
+     *               period)
+     * @param  remainingDays  defines the number of remaining vacation days from the last year
+     * @param  remainingDaysNotExpiring  defines the number of remaining vacation days that do not expire on 1st April
+     *
+     * @return  the created holidays account
      */
-    void createHolidaysAccount(Person person, DateMidnight validFrom, DateMidnight validTo, BigDecimal days,
+    Account createHolidaysAccount(Person person, DateMidnight validFrom, DateMidnight validTo, BigDecimal days,
         BigDecimal remainingDays, BigDecimal remainingDaysNotExpiring);
-
-
-    /**
-     * Try to get the {@link Account} for the given year and person, if it doesn't exist, try to touch a new
-     * {@link Account} with the information of the {@link Account} of the last year. (@param year - 1) If a new account
-     * is created, the attribute remainingVacationDaysExpire is set to true. (was desired by the office as default
-     * value)
-     *
-     * @param  year  int
-     * @param  person {@link Person}
-     *
-     * @return  {@link Account} for the given year and person, if not existing yet touch it at first
-     */
-    Account getOrCreateNewAccount(int year, Person person);
 
 
     /**
      * Edits the given {@link Account} with the given params.
      *
-     * @param  account {@link Account} to be edited
-     * @param  validFrom {@link DateMidnight}, e.g. 1.1.2012
-     * @param  validTo {@link DateMidnight}, e.g. 31.12.2012
-     * @param  days {@link BigDecimal} number of annual vacation days (method calculates the actual vacation days using
-     *               the validity period)
-     * @param  remainingDays {@link BigDecimal} number of remaining vacation days
-     * @param  remainingDaysNotExpiring {@link BigDecimal} number of remaining vacation days that do not expire on 1st
-     *                                   April
+     * @param  account  to be edited
+     * @param  validFrom  defines the start of the validity period, e.g. 1.1.2012
+     * @param  validTo  defines the end of the validity period, e.g. 31.12.2012
+     * @param  days  defines number of annual vacation days (the actual vacation days are calculated using the validity
+     *               period)
+     * @param  remainingDays  defines the number of remaining vacation days from the last year
+     * @param  remainingDaysNotExpiring  defines the number of remaining vacation days that do not expire on 1st April
+     *
+     * @return  the updated holidays account
      */
-    void editHolidaysAccount(Account account, DateMidnight validFrom, DateMidnight validTo, BigDecimal days,
+    Account editHolidaysAccount(Account account, DateMidnight validFrom, DateMidnight validTo, BigDecimal days,
         BigDecimal remainingDays, BigDecimal remainingDaysNotExpiring);
-
-
-    /**
-     * Method to calculate the actual vacation days of an {@link Account}: (months * annual vacation days) / months per
-     * year e.g.: (5 months * 28 days)/12 = 11.6666 = 12 Please notice following rounding rules: 11.1 --> 11.0 11.3 -->
-     * 11.5 11.6 --> 12.0
-     *
-     * @param  account {@link Account}
-     *
-     * @return  {@link BigDecimal} the number of actual vacation days for the given {@link Account}
-     */
-    BigDecimal calculateActualVacationDays(Account account);
 }

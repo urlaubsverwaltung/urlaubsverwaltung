@@ -66,9 +66,6 @@ public class CalculationServiceTest {
     }
 
 
-    /**
-     * Test of checkApplication method, of class CalculationService.
-     */
     @Test
     public void testCheckApplication() {
 
@@ -151,11 +148,9 @@ public class CalculationServiceTest {
                 new DateMidnight(2012, DateTimeConstants.DECEMBER, 31).toDate(), BigDecimal.valueOf(28),
                 BigDecimal.valueOf(5), BigDecimal.ZERO);
 
-        Mockito.when(accountService.calculateActualVacationDays(account)).thenReturn(BigDecimal.valueOf(28));
         account.setVacationDays(BigDecimal.valueOf(28));
 
         Mockito.when(accountService.getHolidaysAccount(2012, person)).thenReturn(account);
-        Mockito.when(accountService.getOrCreateNewAccount(2012, person)).thenReturn(account);
 
         Application n = new Application();
         n.setStartDate(new DateMidnight(2012, DateTimeConstants.AUGUST, 20));
@@ -171,11 +166,9 @@ public class CalculationServiceTest {
                 new DateMidnight(2012, DateTimeConstants.DECEMBER, 31).toDate(), BigDecimal.valueOf(20),
                 BigDecimal.valueOf(4.5), BigDecimal.ZERO);
 
-        Mockito.when(accountService.calculateActualVacationDays(account)).thenReturn(BigDecimal.valueOf(20));
         account.setVacationDays(BigDecimal.valueOf(20));
 
         Mockito.when(accountService.getHolidaysAccount(2012, person)).thenReturn(account);
-        Mockito.when(accountService.getOrCreateNewAccount(2012, person)).thenReturn(account);
 
         Assert.assertFalse("Should NOT be enough vacation days to apply for leave", service.checkApplication(n));
 
@@ -184,11 +177,9 @@ public class CalculationServiceTest {
                 new DateMidnight(2012, DateTimeConstants.DECEMBER, 31).toDate(), BigDecimal.valueOf(20),
                 BigDecimal.valueOf(6.5), BigDecimal.ZERO);
 
-        Mockito.when(accountService.calculateActualVacationDays(account)).thenReturn(BigDecimal.valueOf(20));
         account.setVacationDays(BigDecimal.valueOf(20));
 
         Mockito.when(accountService.getHolidaysAccount(2012, person)).thenReturn(account);
-        Mockito.when(accountService.getOrCreateNewAccount(2012, person)).thenReturn(account);
 
         Assert.assertTrue("Should be enough vacation days to apply for leave", service.checkApplication(n));
 
@@ -197,11 +188,9 @@ public class CalculationServiceTest {
                 new DateMidnight(2012, DateTimeConstants.DECEMBER, 31).toDate(), BigDecimal.valueOf(5),
                 BigDecimal.valueOf(22), BigDecimal.valueOf(22));
 
-        Mockito.when(accountService.calculateActualVacationDays(account)).thenReturn(BigDecimal.valueOf(5));
         account.setVacationDays(BigDecimal.valueOf(5));
 
         Mockito.when(accountService.getHolidaysAccount(2012, person)).thenReturn(account);
-        Mockito.when(accountService.getOrCreateNewAccount(2012, person)).thenReturn(account);
 
         Assert.assertTrue("Should be enough vacation days to apply for leave", service.checkApplication(n));
     }
@@ -277,8 +266,12 @@ public class CalculationServiceTest {
                 new DateMidnight(2012, DateTimeConstants.DECEMBER, 31).toDate(), BigDecimal.valueOf(28),
                 BigDecimal.valueOf(5), BigDecimal.ZERO);
 
-        Mockito.when(accountService.calculateActualVacationDays(account)).thenReturn(BigDecimal.valueOf(28));
+        Account lastYearsAccount = new Account(person, new DateMidnight(2011, DateTimeConstants.JANUARY, 1).toDate(),
+                new DateMidnight(2012, DateTimeConstants.DECEMBER, 31).toDate(), BigDecimal.valueOf(28),
+                BigDecimal.valueOf(5), BigDecimal.ZERO);
+
         account.setVacationDays(BigDecimal.valueOf(28));
+        lastYearsAccount.setVacationDays(BigDecimal.valueOf(28));
 
         Application n = new Application();
         n.setStartDate(new DateMidnight(2011, DateTimeConstants.DECEMBER, 20));
@@ -289,7 +282,7 @@ public class CalculationServiceTest {
         // at all there are 8 + 2 days (but only the 2 days of the new year are part of the calculation)
 
         Mockito.when(accountService.getHolidaysAccount(2012, person)).thenReturn(account);
-        Mockito.when(accountService.getOrCreateNewAccount(2012, person)).thenReturn(account);
+        Mockito.when(accountService.getHolidaysAccount(2011, person)).thenReturn(lastYearsAccount);
 
         Assert.assertTrue(service.checkApplication(n));
 
@@ -297,11 +290,11 @@ public class CalculationServiceTest {
                 new DateMidnight(2012, DateTimeConstants.DECEMBER, 31).toDate(), BigDecimal.valueOf(10),
                 BigDecimal.valueOf(5), BigDecimal.ZERO);
 
-        Mockito.when(accountService.calculateActualVacationDays(account)).thenReturn(BigDecimal.valueOf(10));
         account.setVacationDays(BigDecimal.valueOf(10));
+        lastYearsAccount.setVacationDays(BigDecimal.valueOf(10));
 
         Mockito.when(accountService.getHolidaysAccount(2012, person)).thenReturn(account);
-        Mockito.when(accountService.getOrCreateNewAccount(2012, person)).thenReturn(account);
+        Mockito.when(accountService.getHolidaysAccount(2011, person)).thenReturn(lastYearsAccount);
 
         Assert.assertFalse(service.checkApplication(n));
     }

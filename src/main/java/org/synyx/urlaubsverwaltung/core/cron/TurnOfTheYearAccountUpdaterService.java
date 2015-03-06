@@ -17,6 +17,7 @@ import org.synyx.urlaubsverwaltung.core.application.service.CalculationService;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
+import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 
 import java.math.BigDecimal;
 
@@ -75,16 +76,14 @@ public class TurnOfTheYearAccountUpdaterService {
             if (accountLastYear != null && accountLastYear.getAnnualVacationDays() != null) {
                 BigDecimal leftDays = calculationService.calculateTotalLeftVacationDays(accountLastYear);
 
-                Account accountNewYear = accountService.getOrCreateNewAccount(year, person);
+                Account holidaysAccount = accountService.createHolidaysAccount(person, DateUtil.getFirstDayOfYear(year),
+                        DateUtil.getLastDayOfYear(year), accountLastYear.getAnnualVacationDays(), leftDays,
+                        BigDecimal.ZERO);
 
-                // setting new year's remaining vacation days to number of left days of the last year
-                accountNewYear.setRemainingVacationDays(leftDays);
                 LOG.info("Setting remaining vacation days of " + person.getLoginName() + " to " + leftDays + " for "
                     + year);
 
-                accountService.save(accountNewYear);
-
-                updatedAccounts.add(accountNewYear);
+                updatedAccounts.add(holidaysAccount);
             }
         }
 

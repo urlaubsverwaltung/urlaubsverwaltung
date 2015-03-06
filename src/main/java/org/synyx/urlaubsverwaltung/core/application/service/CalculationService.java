@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.core.account.AccountService;
 import org.synyx.urlaubsverwaltung.core.application.dao.ApplicationDAO;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
@@ -46,84 +47,76 @@ public class CalculationService {
     }
 
     /**
-     * Checks if the given {@link Application} is valid and may be send to boss to be allowed or rejected or if
-     * {@link Person}'s {@link Account} has too little residual number of vacation days, so that taking holiday isn't
-     * possible.
+     * Checks if applying for leave is possible, i.e. there are enough vacation days left to be used for the given
+     * {@link org.synyx.urlaubsverwaltung.core.application.domain.Application} for leave.
      *
-     * @param  application {@link Application}
+     * @param  application  for leave to check
      *
-     * @return  boolean: true if {@link Application} is okay, false if there are too little residual number of vacation
-     *          days
+     * @return  {@code true} if the {@link org.synyx.urlaubsverwaltung.core.application.domain.Application} for leave
+     *          may be saved because there are enough vacation days left, {@code false} else
      */
     public boolean checkApplication(Application application) {
 
-        if (application.getStartDate().getYear() != application.getEndDate().getYear()) {
-            Person person = application.getPerson();
-            int startYear = application.getStartDate().getYear();
-            int endYear = application.getEndDate().getYear();
-            DateMidnight lastDayOfOldYear = DateUtil.getLastDayOfYear(application.getStartDate().getYear());
-            DateMidnight firstDayOfNewYear = DateUtil.getFirstDayOfYear(endYear);
+        Person person = application.getPerson();
 
-            Application tmp1 = new Application();
-            tmp1.setStartDate(application.getStartDate());
-            tmp1.setEndDate(lastDayOfOldYear);
-            tmp1.setPerson(person);
-            tmp1.setHowLong(application.getHowLong());
-            tmp1.setDays(calendarService.getWorkDays(tmp1.getHowLong(), application.getStartDate(), lastDayOfOldYear,
-                    application.getPerson()));
+        DayLength dayLength = application.getHowLong();
 
-            Application tmp2 = new Application();
-            tmp2.setStartDate(firstDayOfNewYear);
-            tmp2.setEndDate(application.getEndDate());
-            tmp2.setPerson(person);
-            tmp2.setHowLong(application.getHowLong());
-            tmp2.setDays(calendarService.getWorkDays(application.getHowLong(), firstDayOfNewYear,
-                    application.getEndDate(), application.getPerson()));
+        DateMidnight startDate = application.getStartDate();
+        DateMidnight endDate = application.getEndDate();
+        int yearOfStartDate = startDate.getYear();
+        int yearOfEndDate = endDate.getYear();
 
-            if (accountService.getHolidaysAccount(startYear, person) == null) {
-                /**
-                 * NOTE: This may happen if someone applies for leave for the past year and there is no account.
-                 * In this case just check if there are enough vacation days for this year.
-                 */
-                return checkIfThereAreEnoughVacationDays(tmp2);
-            } else {
-                // this is the normal case: someone applies for leave for the next year
-                if (checkIfThereAreEnoughVacationDays(tmp1) && checkIfThereAreEnoughVacationDays(tmp2)) {
-                    return true;
-                }
-            }
+        if (yearOfStartDate == yearOfEndDate) {
+            BigDecimal workDays = calendarService.getWorkDays(dayLength, startDate, endDate, person);
+
+            Account holidaysAccount = getHolidaysAccount(yearOfStartDate, person);
+
+            return holidaysAccount != null && calculateTotalLeftVacationDays(holidaysAccount).compareTo(workDays) >= 0;
         } else {
-            return checkIfThereAreEnoughVacationDays(application);
-        }
+            // ensure that applying for leave for the period in the old year is possible
+            BigDecimal workDaysInOldYear = calendarService.getWorkDays(dayLength, startDate,
+                    DateUtil.getLastDayOfYear(yearOfStartDate), person);
 
-        return false;
+            // ensure that applying for leave for the period in the new year is possible
+            BigDecimal workDaysInNewYear = calendarService.getWorkDays(dayLength,
+                    DateUtil.getFirstDayOfYear(yearOfEndDate), endDate, person);
+
+            Account holidaysAccountForOldYear = getHolidaysAccount(yearOfStartDate, person);
+            Account holidaysAccountForNewYear = getHolidaysAccount(yearOfEndDate, person);
+
+            return holidaysAccountForOldYear != null && holidaysAccountForNewYear != null
+                && calculateTotalLeftVacationDays(holidaysAccountForOldYear).compareTo(workDaysInOldYear) >= 0
+                && calculateTotalLeftVacationDays(holidaysAccountForNewYear).compareTo(workDaysInNewYear) >= 0;
+        }
     }
 
 
-    private boolean checkIfThereAreEnoughVacationDays(Application application) {
+    private Account getHolidaysAccount(int year, Person person) {
 
-        Account account = accountService.getOrCreateNewAccount(application.getStartDate().getYear(),
-                application.getPerson());
+        Account holidaysAccount = accountService.getHolidaysAccount(year, person);
 
-        BigDecimal vacationDays = calculateTotalLeftVacationDays(account);
+        if (holidaysAccount == null) {
+            Account lastYearsHolidaysAccount = accountService.getHolidaysAccount(year - 1, person);
 
-        BigDecimal workDays = calendarService.getWorkDays(application.getHowLong(), application.getStartDate(),
-                application.getEndDate(), application.getPerson());
+            holidaysAccount = accountService.createHolidaysAccount(person, DateUtil.getFirstDayOfYear(year),
+                    DateUtil.getLastDayOfYear(year), lastYearsHolidaysAccount.getAnnualVacationDays(), BigDecimal.ZERO,
+                    BigDecimal.ZERO);
+        }
 
-        return vacationDays.compareTo(workDays) >= 0;
+        return holidaysAccount;
     }
 
 
     /**
-     * Calculates how many days the {@link Person} may apply for leave, i.e. how many vacation days + remaining vacation
-     * days can be used for applying for leave.
+     * Calculates the total number of days that are left to be used for applying for leave.
      *
      * <p>NOTE: The calculation depends on the current date. If it's before April, the left remaining vacation days are
-     * used, if it's after April, only the not expiring remaining vacation days are relevant for calculation.</p>
+     * relevant for calculation and if it's after April, only the not expiring remaining vacation days are relevant for
+     * calculation.</p>
      *
      * @param  account {@link Account}
      *
-     * @return  total left vacation days
+     * @return  total number of left vacation days
      */
     public BigDecimal calculateTotalLeftVacationDays(Account account) {
 
