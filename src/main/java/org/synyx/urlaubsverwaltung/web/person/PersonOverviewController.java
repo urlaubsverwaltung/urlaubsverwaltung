@@ -1,5 +1,10 @@
 package org.synyx.urlaubsverwaltung.web.person;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.ImmutableList;
+
 import org.apache.log4j.Logger;
 
 import org.joda.time.DateMidnight;
@@ -34,12 +39,12 @@ import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
+import org.synyx.urlaubsverwaltung.web.application.ApplicationForLeave;
 import org.synyx.urlaubsverwaltung.web.statistics.UsedDaysOverview;
 import org.synyx.urlaubsverwaltung.web.util.GravatarUtil;
 
 import java.math.BigDecimal;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -208,29 +213,41 @@ public class PersonOverviewController {
     private void prepareApplications(Person person, int year, Model model) {
 
         // get the person's applications for the given year
-        List<Application> apps = applicationService.getApplicationsForACertainPeriodAndPerson(DateUtil
-                .getFirstDayOfYear(year), DateUtil.getLastDayOfYear(year), person);
-
-        if (!apps.isEmpty()) {
-            List<Application> applications = new ArrayList<>();
-
-            for (Application a : apps) {
-                if ((a.getStatus() != ApplicationStatus.CANCELLED) || (a.isFormerlyAllowed())) {
-                    applications.add(a);
-                }
-            }
-
-            Collections.sort(applications, new Comparator<Application>() {
+        List<Application> applications = FluentIterable.from(
+                applicationService.getApplicationsForACertainPeriodAndPerson(DateUtil.getFirstDayOfYear(year),
+                    DateUtil.getLastDayOfYear(year), person)).filter(new Predicate<Application>() {
 
                     @Override
-                    public int compare(Application o1, Application o2) {
+                    public boolean apply(Application input) {
 
-                        // show latest applications at first
-                        return o2.getStartDate().compareTo(o1.getStartDate());
+                        boolean isNotCancelled = !input.hasStatus(ApplicationStatus.CANCELLED);
+                        boolean isCancelledButWasAllowed = input.hasStatus(ApplicationStatus.CANCELLED)
+                            && input.isFormerlyAllowed();
+
+                        return isNotCancelled || isCancelledButWasAllowed;
                     }
-                });
+                }).toList();
 
-            model.addAttribute("applications", applications);
+        if (!applications.isEmpty()) {
+            ImmutableList<ApplicationForLeave> applicationsForLeave = FluentIterable.from(applications).transform(
+                    new Function<Application, ApplicationForLeave>() {
+
+                        @Override
+                        public ApplicationForLeave apply(Application input) {
+
+                            return new ApplicationForLeave(input, calendarService);
+                        }
+                    }).toSortedList(new Comparator<ApplicationForLeave>() {
+
+                        @Override
+                        public int compare(ApplicationForLeave o1, ApplicationForLeave o2) {
+
+                            // show latest applications at first
+                            return o2.getStartDate().compareTo(o1.getStartDate());
+                        }
+                    });
+
+            model.addAttribute("applications", applicationsForLeave);
 
             UsedDaysOverview usedDaysOverview = new UsedDaysOverview(applications, year, calendarService);
             model.addAttribute("usedDaysOverview", usedDaysOverview);

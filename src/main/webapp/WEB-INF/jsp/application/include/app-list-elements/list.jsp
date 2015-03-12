@@ -96,7 +96,7 @@
                     </td>
                     <td class="hidden-xs">
                         <span>
-                            <span class="sortable"><uv:number number="${app.days}" /></span> Tage
+                            <span class="sortable"><uv:number number="${app.workDays}" /></span> Tage
                         </span>
                     </td>
                     <td class="visible-print">

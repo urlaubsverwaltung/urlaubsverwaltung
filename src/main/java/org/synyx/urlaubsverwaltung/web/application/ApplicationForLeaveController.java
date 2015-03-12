@@ -1,8 +1,8 @@
 package org.synyx.urlaubsverwaltung.web.application;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
+import com.google.common.collect.FluentIterable;
 
 import org.joda.time.DateMidnight;
 
@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
+import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
@@ -45,6 +46,9 @@ public class ApplicationForLeaveController {
 
     @Autowired
     private ApplicationService applicationService;
+
+    @Autowired
+    private OwnCalendarService calendarService;
 
     /**
      * Show waiting applications for leave on default.
@@ -76,7 +80,7 @@ public class ApplicationForLeaveController {
         if (sessionService.isBoss() || sessionService.isOffice()) {
             int yearToDisplay = year == null ? DateMidnight.now().getYear() : year;
 
-            List<Application> applicationsForLeave = getAllRelevantApplicationsForLeave(yearToDisplay);
+            List<ApplicationForLeave> applicationsForLeave = getAllRelevantApplicationsForLeave(yearToDisplay);
 
             model.addAttribute("applications", applicationsForLeave);
             model.addAttribute(PersonConstants.GRAVATAR_URLS, getAllRelevantGravatarUrls(applicationsForLeave));
@@ -100,28 +104,32 @@ public class ApplicationForLeaveController {
      *
      * @return  all relevant applications for leave
      */
-    private List<Application> getAllRelevantApplicationsForLeave(int year) {
+    private List<ApplicationForLeave> getAllRelevantApplicationsForLeave(int year) {
 
         DateMidnight firstDay = DateUtil.getFirstDayOfYear(year);
         DateMidnight lastDay = DateUtil.getLastDayOfYear(year);
 
         List<Application> applications = applicationService.getApplicationsForACertainPeriod(firstDay, lastDay);
 
-        List<Application> filteredApplications = Lists.newArrayList(Iterables.filter(applications,
-                    new Predicate<Application>() {
+        return FluentIterable.from(applications).filter(new Predicate<Application>() {
 
-                        @Override
-                        public boolean apply(Application application) {
+                    @Override
+                    public boolean apply(Application application) {
 
-                            boolean isNotCancelled = !application.hasStatus(ApplicationStatus.CANCELLED);
-                            boolean isCancelledButWasAllowed = application.hasStatus(ApplicationStatus.CANCELLED)
-                                && application.isFormerlyAllowed();
+                        boolean isNotCancelled = !application.hasStatus(ApplicationStatus.CANCELLED);
+                        boolean isCancelledButWasAllowed = application.hasStatus(ApplicationStatus.CANCELLED)
+                            && application.isFormerlyAllowed();
 
-                            return isNotCancelled || isCancelledButWasAllowed;
-                        }
-                    }));
+                        return isNotCancelled || isCancelledButWasAllowed;
+                    }
+                }).transform(new Function<Application, ApplicationForLeave>() {
 
-        return filteredApplications;
+                    @Override
+                    public ApplicationForLeave apply(Application input) {
+
+                        return new ApplicationForLeave(input, calendarService);
+                    }
+                }).toList();
     }
 
 
@@ -132,7 +140,7 @@ public class ApplicationForLeaveController {
      *
      * @return  gravatar urls mapped to applications for leave
      */
-    private Map<Application, String> getAllRelevantGravatarUrls(List<Application> applications) {
+    private Map<Application, String> getAllRelevantGravatarUrls(List<ApplicationForLeave> applications) {
 
         Map<Application, String> gravatarUrls = new HashMap<>();
 
@@ -187,24 +195,29 @@ public class ApplicationForLeaveController {
         DateMidnight firstDay = DateUtil.getFirstDayOfYear(year);
         DateMidnight lastDay = DateUtil.getLastDayOfYear(year);
 
-        List<Application> applicationsToBeShown;
-
         List<Application> applications = applicationService.getApplicationsForACertainPeriodAndState(firstDay, lastDay,
                 status);
 
-        // only formerly allowed applications for leave are relevant for cancelled status
-        if (status == ApplicationStatus.CANCELLED) {
-            applicationsToBeShown = Lists.newArrayList(Iterables.filter(applications, new Predicate<Application>() {
+        List<ApplicationForLeave> applicationsToBeShown = FluentIterable.from(applications).filter(
+                new Predicate<Application>() {
 
-                            @Override
-                            public boolean apply(Application application) {
+                    @Override
+                    public boolean apply(Application input) {
 
-                                return application.isFormerlyAllowed();
-                            }
-                        }));
-        } else {
-            applicationsToBeShown = applications;
-        }
+                        boolean isNotCancelled = !input.hasStatus(ApplicationStatus.CANCELLED);
+                        boolean isCancelledButWasAllowed = input.hasStatus(ApplicationStatus.CANCELLED)
+                            && input.isFormerlyAllowed();
+
+                        return isNotCancelled || isCancelledButWasAllowed;
+                    }
+                }).transform(new Function<Application, ApplicationForLeave>() {
+
+                    @Override
+                    public ApplicationForLeave apply(Application input) {
+
+                        return new ApplicationForLeave(input, calendarService);
+                    }
+                }).toList();
 
         Map<Application, String> gravatarUrls = getAllRelevantGravatarUrls(applicationsToBeShown);
 
