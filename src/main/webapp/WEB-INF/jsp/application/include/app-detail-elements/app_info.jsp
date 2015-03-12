@@ -50,12 +50,20 @@
     <tr>
         <td><spring:message code="days.time" /></td>
         <td>
+            <b>
+              <c:set var="workDays">
+                <uv:number number="${application.workDays}" />
+              </c:set>
+              <spring:message code="days" arguments="${workDays}" />
+            </b>
             <b class="days">
                 <%-- filled by javascript --%>
             </b>
             <script type="text/javascript">
 
                 $(document).ready(function () {
+
+                  <c:if test="${application.startDate.year != application.endDate.year}">
 
                     var dayLength = '<c:out value="${application.howLong}" />';
                     var personId = '<c:out value="${application.person.id}" />';
@@ -66,7 +74,9 @@
                     var from = new Date(startDate);
                     var to = new Date(endDate);
 
-                    sendGetDaysRequest("<spring:url value='/api' />", from, to, dayLength, personId, ".days");
+                    sendGetDaysRequestForTurnOfTheYear("<spring:url value='/api' />", from, to, dayLength, personId, ".days");
+
+                  </c:if>
 
                 });
 

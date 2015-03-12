@@ -25,6 +25,7 @@ import org.synyx.urlaubsverwaltung.core.application.service.ApplicationInteracti
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.application.service.CalculationService;
 import org.synyx.urlaubsverwaltung.core.application.service.CommentService;
+import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
@@ -70,6 +71,9 @@ public class ApplicationForLeaveDetailsController {
 
     @Autowired
     private CommentService commentService;
+
+    @Autowired
+    private OwnCalendarService calendarService;
 
     @Autowired
     private CommentValidator commentValidator;
@@ -122,7 +126,7 @@ public class ApplicationForLeaveDetailsController {
         }
 
         model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
-        model.addAttribute("application", application);
+        model.addAttribute("application", new ApplicationForLeave(application, calendarService));
 
         int year = application.getStartDate().getYear();
 

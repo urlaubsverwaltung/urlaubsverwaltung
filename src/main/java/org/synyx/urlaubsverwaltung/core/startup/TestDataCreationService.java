@@ -108,7 +108,7 @@ public class TestDataCreationService {
         personForm.setAnnualVacationDays(new BigDecimal("28.5"));
         personForm.setRemainingVacationDays(new BigDecimal("5"));
         personForm.setRemainingVacationDaysNotExpiring(BigDecimal.ZERO);
-        personForm.setValidFrom(new DateMidnight(currentYear, 1, 1));
+        personForm.setValidFrom(new DateMidnight(currentYear - 1, 1, 1));
 
         personForm.setWorkingDays(Arrays.asList(Day.MONDAY.getDayOfWeek(), Day.TUESDAY.getDayOfWeek(),
                 Day.WEDNESDAY.getDayOfWeek(), Day.THURSDAY.getDayOfWeek(), Day.FRIDAY.getDayOfWeek()));

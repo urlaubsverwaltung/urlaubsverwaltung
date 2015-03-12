@@ -62,12 +62,18 @@
                     </c:choose>
                 </p>
             </td>
-            <td class="is-centered hidden-xs">
-                <span class="days-${loopStatus.index}">
-                    <%--is filled by javascript--%>
-                    <script type="text/javascript">
+          <td class="is-centered hidden-xs">
+            <c:set var="workDays">
+              <uv:number number="${app.workDays}"/>
+            </c:set>
+            <spring:message code="days" arguments="${workDays}"/>
 
-                        $(document).ready(function () {
+            <c:if test="${app.startDate.year != app.endDate.year}">
+                    <span class="days-${loopStatus.index}">
+                        <%--is filled by javascript--%>
+                        <script type="text/javascript">
+
+                          $(document).ready(function () {
 
                             var dayLength = '<c:out value="${app.howLong}" />';
                             var personId = '<c:out value="${app.person.id}" />';
@@ -78,13 +84,14 @@
                             var from = new Date(startDate);
                             var to = new Date(endDate);
 
-                            sendGetDaysRequest("<spring:url value='/api' />", from, to, dayLength, personId, ".days-${loopStatus.index}");
+                            sendGetDaysRequestForTurnOfTheYear("<spring:url value='/api' />", from, to, dayLength, personId, ".days-${loopStatus.index}");
 
-                        });
+                          });
 
-                    </script>
-                </span>
-            </td>
+                        </script>
+                    </span>
+            </c:if>
+          </td>
             <td class="is-centered hidden-xs hidden-print">
                 <i class="fa fa-clock-o"></i>
                 <span>
