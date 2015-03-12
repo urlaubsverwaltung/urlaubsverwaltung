@@ -197,6 +197,12 @@ public class ApplicationValidatorTest {
     @Test
     public void ensureReasonIsNotMandatoryForHoliday() {
 
+        assertNoValidationErrorForEmptyReason(VacationType.HOLIDAY);
+    }
+
+
+    private void assertNoValidationErrorForEmptyReason(VacationType vacationType) {
+
         Mockito.when(errors.hasErrors()).thenReturn(Boolean.FALSE);
         Mockito.when(calendarService.getWorkDays(Mockito.any(DayLength.class), Mockito.any(DateMidnight.class),
                 Mockito.any(DateMidnight.class), Mockito.any(Person.class))).thenReturn(BigDecimal.ONE);
@@ -204,7 +210,7 @@ public class ApplicationValidatorTest {
             OverlapCase.NO_OVERLAPPING);
         Mockito.when(calculationService.checkApplication(Mockito.any(Application.class))).thenReturn(Boolean.TRUE);
 
-        appForm.setVacationType(VacationType.HOLIDAY);
+        appForm.setVacationType(vacationType);
         appForm.setReason("");
 
         validator.validate(appForm, errors);
@@ -215,9 +221,23 @@ public class ApplicationValidatorTest {
 
 
     @Test
-    public void ensureReasonIsMandatoryForOtherVacationTypeThanHoliday() {
+    public void ensureReasonIsNotMandatoryForUnpaidLeave() {
 
-        appForm.setVacationType(VacationType.OVERTIME);
+        assertNoValidationErrorForEmptyReason(VacationType.UNPAIDLEAVE);
+    }
+
+
+    @Test
+    public void ensureReasonIsNotMandatoryForOvertime() {
+
+        assertNoValidationErrorForEmptyReason(VacationType.OVERTIME);
+    }
+
+
+    @Test
+    public void ensureReasonIsMandatoryForSpecialLeave() {
+
+        appForm.setVacationType(VacationType.SPECIALLEAVE);
         appForm.setReason("");
 
         validator.validate(appForm, errors);

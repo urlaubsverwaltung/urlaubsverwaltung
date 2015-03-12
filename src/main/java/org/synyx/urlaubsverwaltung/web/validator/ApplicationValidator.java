@@ -58,6 +58,7 @@ public class ApplicationValidator implements Validator {
     private static final String FIELD_START_DATE_HALF = "startDateHalf";
     private static final String FIELD_REASON = "reason";
     private static final String FIELD_ADDRESS = "address";
+    private static final String FIELD_COMMENT = "comment";
 
     private static final String BUSINESS_PROPERTIES_FILE = "business.properties";
     private static final String MAX_MONTHS_PROPERTY = "maximum.months";
@@ -100,7 +101,7 @@ public class ApplicationValidator implements Validator {
         validateDateFields(applicationForm, errors);
 
         // check if reason is not filled
-        if (applicationForm.getVacationType() != VacationType.HOLIDAY) {
+        if (applicationForm.getVacationType() == VacationType.SPECIALLEAVE) {
             if (!StringUtils.hasText(applicationForm.getReason())) {
                 errors.rejectValue(FIELD_REASON, ERROR_MANDATORY_FIELD);
             }
@@ -109,7 +110,7 @@ public class ApplicationValidator implements Validator {
         // validate length of texts
         validateStringLength(applicationForm.getReason(), FIELD_REASON, errors);
         validateStringLength(applicationForm.getAddress(), FIELD_ADDRESS, errors);
-        validateStringLength(applicationForm.getComment(), "comment", errors);
+        validateStringLength(applicationForm.getComment(), FIELD_COMMENT, errors);
 
         if (!errors.hasErrors()) {
             // validate if applying for leave is possible
