@@ -40,12 +40,12 @@ import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.application.ApplicationForLeave;
+import org.synyx.urlaubsverwaltung.web.sicknote.ExtendedSickNote;
 import org.synyx.urlaubsverwaltung.web.statistics.UsedDaysOverview;
 import org.synyx.urlaubsverwaltung.web.util.GravatarUtil;
 
 import java.math.BigDecimal;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -161,6 +161,24 @@ public class PersonOverviewController {
         List<SickNote> sickNotes = sickNoteService.getByPersonAndPeriod(person, DateUtil.getFirstDayOfYear(year),
                 DateUtil.getLastDayOfYear(year));
 
+        List<ExtendedSickNote> extendedSickNotes = FluentIterable.from(sickNotes).transform(
+                new Function<SickNote, ExtendedSickNote>() {
+
+                    @Override
+                    public ExtendedSickNote apply(SickNote input) {
+
+                        return new ExtendedSickNote(input, calendarService);
+                    }
+                }).toSortedList(new Comparator<ExtendedSickNote>() {
+
+                    @Override
+                    public int compare(ExtendedSickNote o1, ExtendedSickNote o2) {
+
+                        // show latest sick notes at first
+                        return o2.getStartDate().compareTo(o1.getStartDate());
+                    }
+                });
+
         BigDecimal sickDays = BigDecimal.ZERO;
         BigDecimal sickDaysWithAUB = BigDecimal.ZERO;
         BigDecimal childSickDays = BigDecimal.ZERO;
@@ -192,21 +210,11 @@ public class PersonOverviewController {
             }
         }
 
-        Collections.sort(sickNotes, new Comparator<SickNote>() {
-
-                @Override
-                public int compare(SickNote o1, SickNote o2) {
-
-                    // show latest sick notes at first
-                    return o2.getStartDate().compareTo(o1.getStartDate());
-                }
-            });
-
         model.addAttribute("sickDays", sickDays);
         model.addAttribute("sickDaysWithAUB", sickDaysWithAUB);
         model.addAttribute("childSickDays", childSickDays);
         model.addAttribute("childSickDaysWithAUB", childSickDaysWithAUB);
-        model.addAttribute("sickNotes", sickNotes);
+        model.addAttribute("sickNotes", extendedSickNotes);
     }
 
 

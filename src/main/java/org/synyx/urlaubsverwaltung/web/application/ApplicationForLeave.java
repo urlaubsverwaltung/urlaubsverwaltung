@@ -23,6 +23,9 @@ public class ApplicationForLeave extends Application {
         // copy all the properties from the given application for leave
         BeanUtils.copyProperties(application, this);
 
+        // not copied, must be set explicitly
+        setId(application.getId());
+
         // calculate the work days
         this.workDays = calendarService.getWorkDays(getHowLong(), getStartDate(), getEndDate(), getPerson());
     }

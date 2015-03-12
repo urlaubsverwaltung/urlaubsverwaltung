@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
+import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
@@ -57,6 +58,9 @@ public class SickNoteController {
     private PersonService personService;
 
     @Autowired
+    private OwnCalendarService calendarService;
+
+    @Autowired
     private SickNoteValidator validator;
 
     @Autowired
@@ -81,7 +85,7 @@ public class SickNoteController {
         SickNote sickNote = sickNoteService.getById(id);
 
         if (loggedUser.hasRole(Role.OFFICE) || sickNote.getPerson().equals(loggedUser)) {
-            model.addAttribute("sickNote", sickNoteService.getById(id));
+            model.addAttribute("sickNote", new ExtendedSickNote(sickNote, calendarService));
             model.addAttribute("comment", new SickNoteComment());
             model.addAttribute("gravatar", GravatarUtil.createImgURL(sickNote.getPerson().getEmail()));
 
@@ -209,7 +213,7 @@ public class SickNoteController {
         SickNote sickNote = sickNoteService.getById(id);
 
         if (sickNote.isActive() && sessionService.isOffice()) {
-            model.addAttribute("sickNote", sickNote);
+            model.addAttribute("sickNote", new ExtendedSickNote(sickNote, calendarService));
             model.addAttribute("sickNoteConvertForm", new SickNoteConvertForm(sickNote));
             model.addAttribute("vacationTypes", VacationType.values());
 
@@ -229,7 +233,7 @@ public class SickNoteController {
             sickNoteConvertFormValidator.validate(sickNoteConvertForm, errors);
 
             if (errors.hasErrors()) {
-                model.addAttribute("sickNote", sickNote);
+                model.addAttribute("sickNote", new ExtendedSickNote(sickNote, calendarService));
                 model.addAttribute("sickNoteConvertForm", sickNoteConvertForm);
                 model.addAttribute("vacationTypes", VacationType.values());
 
