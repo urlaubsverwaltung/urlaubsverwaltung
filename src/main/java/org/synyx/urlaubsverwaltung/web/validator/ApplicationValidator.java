@@ -19,6 +19,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.CalculationService;
 import org.synyx.urlaubsverwaltung.core.application.service.OverlapService;
 import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
+import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.util.CalcUtil;
 import org.synyx.urlaubsverwaltung.core.util.PropertiesUtil;
 import org.synyx.urlaubsverwaltung.web.application.ApplicationForLeaveForm;
@@ -203,8 +204,18 @@ public class ApplicationValidator implements Validator {
 
     private void validateIfApplyingForLeaveIsPossible(ApplicationForLeaveForm applicationForm, Errors errors) {
 
-        BigDecimal days = calendarService.getWorkDays(applicationForm.getHowLong(), applicationForm.getStartDate(),
-                applicationForm.getEndDate(), applicationForm.getPerson());
+        DayLength dayLength = applicationForm.getHowLong();
+        Person person = applicationForm.getPerson();
+
+        BigDecimal days;
+
+        if (dayLength == DayLength.FULL) {
+            days = calendarService.getWorkDays(dayLength, applicationForm.getStartDate(), applicationForm.getEndDate(),
+                    person);
+        } else {
+            days = calendarService.getWorkDays(dayLength, applicationForm.getStartDateHalf(),
+                    applicationForm.getStartDateHalf(), person);
+        }
 
         /**
          * Ensure that no one applies for leave for a vacation of 0 days

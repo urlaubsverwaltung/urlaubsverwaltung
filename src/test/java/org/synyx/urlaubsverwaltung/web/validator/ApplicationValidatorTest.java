@@ -364,4 +364,27 @@ public class ApplicationValidatorTest {
 
         Mockito.verify(errors).reject("error.not.enough.days");
     }
+
+
+    @Test
+    public void ensureApplyingHalfDayForLeaveWithNotEnoughVacationDaysIsNotValid() {
+
+        appForm.setHowLong(DayLength.NOON);
+        appForm.setStartDateHalf(DateMidnight.now());
+
+        Mockito.when(errors.hasErrors()).thenReturn(Boolean.FALSE);
+
+        Mockito.when(calendarService.getWorkDays(Mockito.eq(appForm.getHowLong()),
+                Mockito.eq(appForm.getStartDateHalf()), Mockito.eq(appForm.getStartDateHalf()),
+                Mockito.eq(appForm.getPerson()))).thenReturn(BigDecimal.ONE);
+
+        Mockito.when(overlapService.checkOverlap(Mockito.any(Application.class))).thenReturn(
+            OverlapCase.NO_OVERLAPPING);
+
+        Mockito.when(calculationService.checkApplication(Mockito.any(Application.class))).thenReturn(Boolean.FALSE);
+
+        validator.validate(appForm, errors);
+
+        Mockito.verify(errors).reject("error.not.enough.days");
+    }
 }
