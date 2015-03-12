@@ -87,7 +87,7 @@ public class ApplicationForLeaveDetailsController {
         if (loggedUser.equals(application.getPerson()) || (sessionService.isBoss() || sessionService.isOffice())) {
             prepareDetailView(application, model);
 
-            return ControllerConstants.APPLICATION + "/app_detail";
+            return ControllerConstants.APPLICATIONS_URL + "/app_detail";
         }
 
         return ControllerConstants.ERROR_JSP;
@@ -133,7 +133,7 @@ public class ApplicationForLeaveDetailsController {
             model.addAttribute(PersonConstants.BEFORE_APRIL, DateUtil.isBeforeApril(DateMidnight.now()));
         }
 
-        model.addAttribute(ControllerConstants.ACCOUNT, account);
+        model.addAttribute("account", account);
         model.addAttribute(ControllerConstants.YEAR, year);
 
         // get url of loggedUser's gravatar image

@@ -111,7 +111,7 @@ public class PersonOverviewController {
         }
 
         model.addAttribute(PersonConstants.LOGGED_USER, loggedUser);
-        model.addAttribute(ControllerConstants.PERSON, person);
+        model.addAttribute("person", person);
 
         String url = GravatarUtil.createImgURL(person.getEmail());
         model.addAttribute("gravatar", url);
@@ -230,7 +230,7 @@ public class PersonOverviewController {
                     }
                 });
 
-            model.addAttribute(ControllerConstants.APPLICATIONS, applications);
+            model.addAttribute("applications", applications);
 
             UsedDaysOverview usedDaysOverview = new UsedDaysOverview(applications, year, calendarService);
             model.addAttribute("usedDaysOverview", usedDaysOverview);
@@ -248,6 +248,6 @@ public class PersonOverviewController {
             model.addAttribute(PersonConstants.BEFORE_APRIL, DateUtil.isBeforeApril(DateMidnight.now()));
         }
 
-        model.addAttribute(ControllerConstants.ACCOUNT, account);
+        model.addAttribute("account", account);
     }
 }

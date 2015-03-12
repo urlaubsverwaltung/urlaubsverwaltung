@@ -78,14 +78,14 @@ public class ApplicationForLeaveController {
 
             List<Application> applicationsForLeave = getAllRelevantApplicationsForLeave(yearToDisplay);
 
-            model.addAttribute(ControllerConstants.APPLICATIONS, applicationsForLeave);
+            model.addAttribute("applications", applicationsForLeave);
             model.addAttribute(PersonConstants.GRAVATAR_URLS, getAllRelevantGravatarUrls(applicationsForLeave));
             model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
             model.addAttribute("titleApp", "applications.all");
             model.addAttribute(ControllerConstants.YEAR, DateMidnight.now().getYear());
             model.addAttribute("filterRequest", new FilterRequest());
 
-            return ControllerConstants.APPLICATION + "/app_list";
+            return ControllerConstants.APPLICATIONS_URL + "/app_list";
         } else {
             return ControllerConstants.ERROR_JSP;
         }
@@ -209,13 +209,13 @@ public class ApplicationForLeaveController {
         Map<Application, String> gravatarUrls = getAllRelevantGravatarUrls(applicationsToBeShown);
 
         model.addAttribute(PersonConstants.GRAVATAR_URLS, gravatarUrls);
-        model.addAttribute(ControllerConstants.APPLICATIONS, applicationsToBeShown);
+        model.addAttribute("applications", applicationsToBeShown);
         model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
         model.addAttribute("titleApp", title);
         model.addAttribute(ControllerConstants.YEAR, DateMidnight.now().getYear());
         model.addAttribute("filterRequest", new FilterRequest());
 
-        return ControllerConstants.APPLICATION + "/app_list";
+        return ControllerConstants.APPLICATIONS_URL + "/app_list";
     }
 
 

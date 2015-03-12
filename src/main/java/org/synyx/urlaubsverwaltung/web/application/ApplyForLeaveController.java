@@ -117,7 +117,7 @@ public class ApplyForLeaveController {
             prepareApplicationForLeaveForm(person, new ApplicationForLeaveForm(), model);
         }
 
-        return ControllerConstants.APPLICATION + "/app_form";
+        return ControllerConstants.APPLICATIONS_URL + "/app_form";
     }
 
 
@@ -144,12 +144,12 @@ public class ApplyForLeaveController {
             model.addAttribute(PersonConstants.BEFORE_APRIL, DateUtil.isBeforeApril(DateMidnight.now()));
         }
 
-        model.addAttribute(ControllerConstants.PERSON, person);
-        model.addAttribute(ControllerConstants.PERSONS, persons);
+        model.addAttribute("person", person);
+        model.addAttribute("persons", persons);
         model.addAttribute("date", DateMidnight.now(GregorianChronology.getInstance()));
         model.addAttribute(ControllerConstants.YEAR, DateMidnight.now(GregorianChronology.getInstance()).getYear());
         model.addAttribute("appForm", appForm);
-        model.addAttribute(ControllerConstants.ACCOUNT, account);
+        model.addAttribute("account", account);
         model.addAttribute("vacTypes", VacationType.values());
         model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
     }
@@ -177,7 +177,7 @@ public class ApplyForLeaveController {
                 model.addAttribute("errors", errors);
             }
 
-            return ControllerConstants.APPLICATION + "/app_form";
+            return ControllerConstants.APPLICATIONS_URL + "/app_form";
         }
 
         Application application = appForm.generateApplicationForLeave();

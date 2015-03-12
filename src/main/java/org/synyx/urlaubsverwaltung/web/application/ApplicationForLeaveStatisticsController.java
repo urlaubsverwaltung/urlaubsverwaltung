@@ -93,7 +93,7 @@ public class ApplicationForLeaveStatisticsController {
                 model.addAttribute("filterRequest", new FilterRequest());
                 model.addAttribute("errors", "INVALID_PERIOD");
 
-                return ControllerConstants.APPLICATION + "/app_statistics";
+                return ControllerConstants.APPLICATIONS_URL + "/app_statistics";
             }
 
             List<ApplicationForLeaveStatistics> statistics = new ArrayList<>();
@@ -107,7 +107,7 @@ public class ApplicationForLeaveStatisticsController {
             model.addAttribute("statistics", statistics);
             model.addAttribute("filterRequest", new FilterRequest());
 
-            return ControllerConstants.APPLICATION + "/app_statistics";
+            return ControllerConstants.APPLICATIONS_URL + "/app_statistics";
         }
 
         return ControllerConstants.ERROR_JSP;

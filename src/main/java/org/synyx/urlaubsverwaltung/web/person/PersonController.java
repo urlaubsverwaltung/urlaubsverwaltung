@@ -181,9 +181,9 @@ public class PersonController {
             }
         }
 
-        model.addAttribute(ControllerConstants.PERSONS, persons);
+        model.addAttribute("persons", persons);
         model.addAttribute(PersonConstants.GRAVATAR_URLS, gravatarUrls);
-        model.addAttribute(ControllerConstants.ACCOUNTS, accounts);
+        model.addAttribute("accounts", accounts);
         model.addAttribute("vacationDaysLeftMap", vacationDaysLeftMap);
         model.addAttribute(PersonConstants.BEFORE_APRIL, DateUtil.isBeforeApril(DateMidnight.now()));
         model.addAttribute(ControllerConstants.YEAR, DateMidnight.now().getYear());
