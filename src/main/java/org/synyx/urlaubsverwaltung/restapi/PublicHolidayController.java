@@ -36,7 +36,7 @@ import java.util.Set;
 @Controller("restApiCalendarController")
 public class PublicHolidayController {
 
-    private static final String ROOT_URL = "/public-holiday";
+    private static final String ROOT_URL = "/holidays";
 
     @Autowired
     private JollydayCalendar jollydayCalendar;

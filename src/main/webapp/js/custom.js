@@ -30,7 +30,7 @@ function sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, e
     var startDateString = startDate.getFullYear() + '-' + (startDate.getMonth() + 1) + '-' + startDate.getDate();
     var toDateString = toDate.getFullYear() + '-' + (toDate.getMonth() + 1) + '-' + toDate.getDate();
 
-    var requestUrl = urlPrefix + "/vacation/calculate";    
+    var requestUrl = urlPrefix + "/workdays";
         
     var url = buildUrl(requestUrl, startDateString, toDateString, dayLength, personId);
         

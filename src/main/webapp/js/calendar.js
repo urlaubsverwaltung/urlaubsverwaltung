@@ -281,7 +281,7 @@ $(function() {
                     return deferred.resolve( _CACHE[year] );
                 }
                 else {
-                    return fetch('/public-holiday', {year: year}).success( cacheData('publicHoliday') );
+                    return fetch('/holidays', {year: year}).success( cacheData('publicHoliday') );
                 }
             },
 
@@ -301,7 +301,7 @@ $(function() {
                     return deferred.resolve( _CACHE[year] );
                 }
                 else {
-                    return fetch('/vacation/application-info', {person: personId, year: year}).success( cacheHoliday );
+                    return fetch('/vacations/days', {person: personId, year: year}).success( cacheHoliday );
                 }
             }
         };

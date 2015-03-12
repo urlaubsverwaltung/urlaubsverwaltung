@@ -27,9 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
-import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
@@ -47,16 +45,13 @@ import java.util.List;
 @Controller("restApiVacationController")
 public class VacationController {
 
-    private static final String ROOT_URL = "/vacation";
+    private static final String ROOT_URL = "/vacations";
 
     @Autowired
     private PersonService personService;
 
     @Autowired
     private ApplicationService applicationService;
-
-    @Autowired
-    private OwnCalendarService ownCalendarService;
 
     @ApiOperation(
         value = "Get all vacations for a certain period",
@@ -93,65 +88,17 @@ public class VacationController {
     }
 
 
-    /**
-     * Calculate number of vacation days for given period and person.
-     *
-     * @param  from  start date as String (e.g. 2013-3-21)
-     * @param  to  end date as String (e.g. 2013-3-21)
-     * @param  length  day length as String (FULL, MORNING or NOON)
-     * @param  personId  id of the person to calculate used days for
-     *
-     * @return  number of days as String for the given parameters or "N/A" if parameters are not valid in any way
-     */
     @ApiOperation(
-        value = "Calculate the hypothetical number of vacation days for a certain period and person",
-        notes = "Calculate the hypothetical number of vacation days for a certain period and person"
+        value = "Get all vacation days for a certain period and person",
+        notes = "Get all vacation days for a certain period and person"
     )
-    @RequestMapping(value = ROOT_URL + "/calculate", method = RequestMethod.GET)
-    @ResponseBody
-    public String numberOfVacationDays(
-        @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = "2014-01-01")
-        @RequestParam("from")
-        String from,
-        @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = "2014-01-08")
-        @RequestParam("to")
-        String to,
-        @ApiParam(value = "Day Length", defaultValue = "FULL")
-        @RequestParam("length")
-        String length,
-        @ApiParam(value = "ID of the person")
-        @RequestParam("person")
-        Integer personId) {
-
-        if (StringUtils.hasText(from) && StringUtils.hasText(to) && StringUtils.hasText(length)) {
-            DateTimeFormatter fmt = DateTimeFormat.forPattern(RestApiDateFormat.PATTERN);
-            DateMidnight startDate = DateMidnight.parse(from, fmt);
-            DateMidnight endDate = DateMidnight.parse(to, fmt);
-
-            if (startDate.isBefore(endDate) || startDate.isEqual(endDate)) {
-                DayLength howLong = DayLength.valueOf(length);
-                Person person = personService.getPersonByID(personId);
-                BigDecimal days = ownCalendarService.getWorkDays(howLong, startDate, endDate, person);
-
-                return days.toString();
-            }
-        }
-
-        return "N/A";
-    }
-
-
-    @ApiOperation(
-        value = "Get applications for leave information for a certain period and person",
-        notes = "Get applications for leave information for a certain period and person"
-    )
-    @RequestMapping(value = ROOT_URL + "/application-info", method = RequestMethod.GET)
+    @RequestMapping(value = ROOT_URL + "/days", method = RequestMethod.GET)
     @ResponseBody
     public String personsVacations(
-        @ApiParam(value = "Year to get the applications for leave for", defaultValue = "2014")
+        @ApiParam(value = "Year to get the vacation days for", defaultValue = "2014")
         @RequestParam("year")
         String year,
-        @ApiParam(value = "Month of year to get the applications for leave for")
+        @ApiParam(value = "Month of year to get the vacation days for")
         @RequestParam(value = "month", required = false)
         String month,
         @ApiParam(value = "ID of the person")
@@ -183,7 +130,7 @@ public class VacationController {
                 List<Application> applications = applicationService.getApplicationsForACertainPeriodAndPersonAndState(
                         periodStart, periodEnd, person, ApplicationStatus.ALLOWED);
 
-                List<VacationDate> vacationDateList = new ArrayList<>();
+                List<VacationDay> vacationDateList = new ArrayList<>();
 
                 for (Application app : applications) {
                     DateMidnight startDate = app.getStartDate();
@@ -192,16 +139,14 @@ public class VacationController {
                     DateMidnight day = startDate;
 
                     while (!day.isAfter(endDate)) {
-                        vacationDateList.add(new VacationDate(day.toString(RestApiDateFormat.PATTERN), app.getId(),
+                        vacationDateList.add(new VacationDay(day.toString(RestApiDateFormat.PATTERN), app.getId(),
                                 app.getStatus().name(), app.getHowLong().getDuration()));
 
                         day = day.plusDays(1);
                     }
                 }
 
-                String json = new Gson().toJson(vacationDateList);
-
-                return json;
+                return new Gson().toJson(vacationDateList);
             } catch (NumberFormatException ex) {
                 return "N/A";
             }
@@ -210,14 +155,14 @@ public class VacationController {
         return "N/A";
     }
 
-    private class VacationDate {
+    private class VacationDay {
 
         private final String date;
         private final Integer applicationId;
         private final String status;
         private final BigDecimal dayLength;
 
-        public VacationDate(String date, Integer applicationId, String status, BigDecimal dayLength) {
+        public VacationDay(String date, Integer applicationId, String status, BigDecimal dayLength) {
 
             this.date = date;
             this.applicationId = applicationId;
