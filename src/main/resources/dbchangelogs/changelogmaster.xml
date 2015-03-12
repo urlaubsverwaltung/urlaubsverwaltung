@@ -14,5 +14,6 @@
     <include file="dbchangelogs/changelog-0.9-add-person-reference-to-comment-table.xml"/>
     <include file="dbchangelogs/changelog-0.11-remove-active-column-from-person-table.xml"/>
     <include file="dbchangelogs/changelog-2.4.1-add-not-expiring-remaining-vacation-days.xml"/>
+    <include file="dbchangelogs/changelog-2.5.1-remove-persisted-work-days.xml"/>
 
 </databaseChangeLog>

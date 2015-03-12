@@ -8,8 +8,6 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteComment;
 
-import java.math.BigDecimal;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -47,8 +45,6 @@ public class SickNote extends AbstractPersistable<Integer> {
 
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date endDate;
-
-    private BigDecimal workDays;
 
     // aub = Arbeitsunfähigkeitsbescheinigung
     private boolean aubPresent;
@@ -133,12 +129,14 @@ public class SickNote extends AbstractPersistable<Integer> {
     }
 
 
+    // TODO: Get this information by checking if AUBStartDate and AUBEndDate are set
     public boolean isAubPresent() {
 
         return aubPresent;
     }
 
 
+    // TODO: Remove me!
     public void setAubPresent(boolean aubPresent) {
 
         this.aubPresent = aubPresent;
