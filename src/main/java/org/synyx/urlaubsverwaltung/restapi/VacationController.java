@@ -60,10 +60,10 @@ public class VacationController {
     @RequestMapping(value = ROOT_URL, method = RequestMethod.GET)
     @ModelAttribute("response")
     public VacationListResponse vacations(
-        @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = "2014-01-01")
+        @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = "2015-01-01")
         @RequestParam(value = "from", required = true)
         String from,
-        @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = "2014-12-31")
+        @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = "2015-12-31")
         @RequestParam(value = "to", required = true)
         String to) {
 
@@ -95,7 +95,7 @@ public class VacationController {
     @RequestMapping(value = ROOT_URL + "/days", method = RequestMethod.GET)
     @ResponseBody
     public String personsVacations(
-        @ApiParam(value = "Year to get the vacation days for", defaultValue = "2014")
+        @ApiParam(value = "Year to get the vacation days for", defaultValue = "2015")
         @RequestParam("year")
         String year,
         @ApiParam(value = "Month of year to get the vacation days for")

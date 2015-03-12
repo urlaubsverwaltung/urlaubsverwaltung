@@ -60,10 +60,10 @@ public class WorkDayController {
     @RequestMapping(value = ROOT_URL, method = RequestMethod.GET)
     @ResponseBody
     public String workDays(
-        @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = "2014-01-01")
+        @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = "2015-01-01")
         @RequestParam("from")
         String from,
-        @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = "2014-01-08")
+        @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = "2015-01-08")
         @RequestParam("to")
         String to,
         @ApiParam(value = "Day Length", defaultValue = "FULL")

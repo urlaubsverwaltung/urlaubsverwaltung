@@ -45,10 +45,10 @@ public class SickNoteController {
     @RequestMapping(value = ROOT_URL, method = RequestMethod.GET)
     @ModelAttribute("response")
     public SickNoteListResponse sickNotes(
-        @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = "2014-01-01")
+        @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = "2015-01-01")
         @RequestParam(value = "from", required = true)
         String from,
-        @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = "2014-12-31")
+        @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = "2015-12-31")
         @RequestParam(value = "to", required = true)
         String to) {
 
