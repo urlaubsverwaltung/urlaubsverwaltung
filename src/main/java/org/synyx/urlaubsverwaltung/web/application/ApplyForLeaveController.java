@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.web.application;
 
+import com.google.common.collect.FluentIterable;
+
 import org.joda.time.DateMidnight;
 import org.joda.time.chrono.GregorianChronology;
 
@@ -34,6 +36,7 @@ import org.synyx.urlaubsverwaltung.web.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
 import org.synyx.urlaubsverwaltung.web.validator.ApplicationValidator;
 
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -120,7 +123,18 @@ public class ApplyForLeaveController {
 
     private void prepareApplicationForLeaveForm(Person person, ApplicationForLeaveForm appForm, Model model) {
 
-        List<Person> persons = personService.getActivePersons();
+        List<Person> persons = FluentIterable.from(personService.getActivePersons()).toSortedList(
+                new Comparator<Person>() {
+
+                    @Override
+                    public int compare(Person p1, Person p2) {
+
+                        String niceName1 = p1.getNiceName();
+                        String niceName2 = p2.getNiceName();
+
+                        return niceName1.toLowerCase().compareTo(niceName2.toLowerCase());
+                    }
+                });
 
         Account account = accountService.getHolidaysAccount(DateMidnight.now(GregorianChronology.getInstance())
                 .getYear(), person);
