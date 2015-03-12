@@ -161,6 +161,10 @@ Man kann sich in dieser Umgebung ebenfalls mit dem Testbenutzer `test/secret` an
 
 Im Browser lässt sich die Anwendung dann über `http://localhost:8080/urlaubsverwaltung` ansteuern.
 
+### API
+
+Die Urlaubsverwaltung verfügt über eine API, die unter `http://localhost:8080/urlaubsverwaltung/api` erreichbar ist.
+
 ### Environments
 
 Die Anwendung verfügt über drei verschiedene Environment-Möglichkeiten:
