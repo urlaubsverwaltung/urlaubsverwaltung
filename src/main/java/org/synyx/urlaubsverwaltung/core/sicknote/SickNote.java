@@ -14,7 +14,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
 
 
 /**
@@ -213,18 +220,6 @@ public class SickNote extends AbstractPersistable<Integer> {
         } else {
             this.lastEdited = lastEdited.toDate();
         }
-    }
-
-
-    public BigDecimal getWorkDays() {
-
-        return workDays;
-    }
-
-
-    public void setWorkDays(BigDecimal workDays) {
-
-        this.workDays = workDays;
     }
 
 

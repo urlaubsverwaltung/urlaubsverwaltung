@@ -167,7 +167,8 @@ public class PersonOverviewController {
             }
 
             if (sickNote.getType().equals(SickNoteType.SICK_NOTE_CHILD)) {
-                childSickDays = childSickDays.add(sickNote.getWorkDays());
+                childSickDays = childSickDays.add(calendarService.getWorkDays(DayLength.FULL, sickNote.getStartDate(),
+                            sickNote.getEndDate(), person));
 
                 if (sickNote.isAubPresent()) {
                     BigDecimal workDays = calendarService.getWorkDays(DayLength.FULL, sickNote.getAubStartDate(),
@@ -175,7 +176,8 @@ public class PersonOverviewController {
                     childSickDaysWithAUB = childSickDaysWithAUB.add(workDays);
                 }
             } else {
-                sickDays = sickDays.add(sickNote.getWorkDays());
+                sickDays = sickDays.add(calendarService.getWorkDays(DayLength.FULL, sickNote.getStartDate(),
+                            sickNote.getEndDate(), person));
 
                 if (sickNote.isAubPresent()) {
                     BigDecimal workDays = calendarService.getWorkDays(DayLength.FULL, sickNote.getAubStartDate(),

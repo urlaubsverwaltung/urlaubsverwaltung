@@ -14,7 +14,13 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
 
 
 /**
@@ -216,18 +222,6 @@ public class Application extends AbstractPersistable<Integer> {
     public void setCanceller(Person canceller) {
 
         this.canceller = canceller;
-    }
-
-
-    public BigDecimal getDays() {
-
-        return days;
-    }
-
-
-    public void setDays(BigDecimal days) {
-
-        this.days = days;
     }
 
 

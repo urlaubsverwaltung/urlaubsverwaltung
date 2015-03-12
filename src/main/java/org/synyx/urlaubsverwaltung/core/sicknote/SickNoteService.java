@@ -10,22 +10,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
-import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
-import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.application.service.CommentService;
 import org.synyx.urlaubsverwaltung.core.application.service.SignService;
-import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteComment;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteCommentDAO;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteStatus;
-import org.synyx.urlaubsverwaltung.web.application.ApplicationForLeaveForm;
 import org.synyx.urlaubsverwaltung.web.sicknote.SickNoteConvertForm;
-
-import java.math.BigDecimal;
 
 import java.util.List;
 
@@ -47,20 +41,18 @@ public class SickNoteService {
 
     private SickNoteDAO sickNoteDAO;
     private SickNoteCommentDAO commentDAO;
-    private OwnCalendarService calendarService;
     private ApplicationService applicationService;
     private SignService signService;
     private CommentService commentService;
     private MailService mailService;
 
     @Autowired
-    public SickNoteService(SickNoteDAO sickNoteDAO, SickNoteCommentDAO commentDAO, OwnCalendarService calendarService,
+    public SickNoteService(SickNoteDAO sickNoteDAO, SickNoteCommentDAO commentDAO,
         ApplicationService applicationService, SignService signService, CommentService commentService,
         MailService mailService) {
 
         this.sickNoteDAO = sickNoteDAO;
         this.commentDAO = commentDAO;
-        this.calendarService = calendarService;
         this.applicationService = applicationService;
         this.signService = signService;
         this.commentService = commentService;
@@ -84,30 +76,11 @@ public class SickNoteService {
     public void touch(SickNote sickNote, SickNoteStatus status, Person loggedUser) {
 
         sickNote.setActive(true);
-        setWorkDays(sickNote);
+
         save(sickNote);
 
         SickNoteComment comment = new SickNoteComment();
         addComment(sickNote.getId(), comment, status, loggedUser);
-    }
-
-
-    private void setWorkDays(SickNote sickNote) {
-
-        BigDecimal workDays;
-
-        DateMidnight startDate = sickNote.getStartDate();
-        DateMidnight endDate = sickNote.getEndDate();
-
-        if (startDate != null && endDate != null) {
-            Person person = sickNote.getPerson();
-
-            workDays = calendarService.getWorkDays(DayLength.FULL, startDate, endDate, person);
-        } else {
-            workDays = BigDecimal.ZERO;
-        }
-
-        sickNote.setWorkDays(workDays);
     }
 
 
@@ -151,17 +124,13 @@ public class SickNoteService {
         Application applicationForLeave = sickNoteConvertForm.generateApplicationForLeave();
         applicationForLeave.setApplier(loggedUser);
 
-        BigDecimal workDays = calendarService.getWorkDays(applicationForLeave.getHowLong(),
-                applicationForLeave.getStartDate(), applicationForLeave.getEndDate(), applicationForLeave.getPerson());
-        applicationForLeave.setDays(workDays);
-
         signService.signApplicationByUser(applicationForLeave, loggedUser);
 
         applicationService.save(applicationForLeave);
 
         commentService.saveComment(new Comment(), loggedUser, applicationForLeave);
 
-        setSickNoteInactive(sickNote);
+        sickNote.setActive(false);
 
         save(sickNote);
 
@@ -174,18 +143,12 @@ public class SickNoteService {
 
     public void cancel(SickNote sickNote, Person loggedUser) {
 
-        setSickNoteInactive(sickNote);
+        sickNote.setActive(false);
+
         save(sickNote);
 
         SickNoteComment sickNoteComment = new SickNoteComment();
         addComment(sickNote.getId(), sickNoteComment, SickNoteStatus.CANCELLED, loggedUser);
-    }
-
-
-    void setSickNoteInactive(SickNote sickNote) {
-
-        sickNote.setWorkDays(BigDecimal.ZERO);
-        sickNote.setActive(false);
     }
 
 

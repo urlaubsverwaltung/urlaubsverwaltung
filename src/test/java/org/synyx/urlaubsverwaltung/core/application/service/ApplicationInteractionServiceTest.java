@@ -11,12 +11,8 @@ import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
-import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
-import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
-
-import java.math.BigDecimal;
 
 
 /**
@@ -27,7 +23,6 @@ public class ApplicationInteractionServiceTest {
     private ApplicationInteractionService service;
 
     private ApplicationService applicationService;
-    private OwnCalendarService calendarService;
     private SignService signService;
     private CommentService commentService;
     private MailService mailService;
@@ -36,13 +31,11 @@ public class ApplicationInteractionServiceTest {
     public void setUp() {
 
         applicationService = Mockito.mock(ApplicationService.class);
-        calendarService = Mockito.mock(OwnCalendarService.class);
         signService = Mockito.mock(SignService.class);
         commentService = Mockito.mock(CommentService.class);
         mailService = Mockito.mock(MailService.class);
 
-        service = new ApplicationInteractionServiceImpl(applicationService, calendarService, signService,
-                commentService, mailService);
+        service = new ApplicationInteractionServiceImpl(applicationService, signService, commentService, mailService);
     }
 
 
@@ -57,13 +50,9 @@ public class ApplicationInteractionServiceTest {
         Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
 
-        Mockito.when(calendarService.getWorkDays(Mockito.any(DayLength.class), Mockito.any(DateMidnight.class),
-                Mockito.any(DateMidnight.class), Mockito.any(Person.class))).thenReturn(BigDecimal.TEN);
-
         service.apply(applicationForLeave, applier);
 
         Assert.assertEquals("Wrong state", ApplicationStatus.WAITING, applicationForLeave.getStatus());
-        Assert.assertEquals("Wrong number of vacation days", BigDecimal.TEN, applicationForLeave.getDays());
         Assert.assertEquals("Wrong person", person, applicationForLeave.getPerson());
         Assert.assertEquals("Wrong applier", applier, applicationForLeave.getApplier());
         Assert.assertEquals("Wrong application date", DateMidnight.now(), applicationForLeave.getApplicationDate());
@@ -85,9 +74,6 @@ public class ApplicationInteractionServiceTest {
         Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
 
-        Mockito.when(calendarService.getWorkDays(Mockito.any(DayLength.class), Mockito.any(DateMidnight.class),
-                Mockito.any(DateMidnight.class), Mockito.any(Person.class))).thenReturn(BigDecimal.TEN);
-
         service.apply(applicationForLeave, person);
 
         Mockito.verify(mailService).sendConfirmation(Mockito.eq(applicationForLeave));
@@ -105,9 +91,6 @@ public class ApplicationInteractionServiceTest {
 
         Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
-
-        Mockito.when(calendarService.getWorkDays(Mockito.any(DayLength.class), Mockito.any(DateMidnight.class),
-                Mockito.any(DateMidnight.class), Mockito.any(Person.class))).thenReturn(BigDecimal.TEN);
 
         service.apply(applicationForLeave, applier);
 

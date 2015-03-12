@@ -165,7 +165,10 @@ public class SickDaysOverviewController {
 
             if (sickNote.getType().equals(SickNoteType.SICK_NOTE_CHILD)) {
                 BigDecimal currentChildSickDays = childSickDays.get(person);
-                childSickDays.put(person, currentChildSickDays.add(sickNote.getWorkDays()));
+                childSickDays.put(person,
+                    currentChildSickDays.add(
+                        calendarService.getWorkDays(DayLength.FULL, sickNote.getStartDate(), sickNote.getEndDate(),
+                            person)));
 
                 if (sickNote.isAubPresent()) {
                     BigDecimal workDays = calendarService.getWorkDays(DayLength.FULL, sickNote.getAubStartDate(),
@@ -176,7 +179,10 @@ public class SickDaysOverviewController {
                 }
             } else {
                 BigDecimal currentSickDays = sickDays.get(person);
-                sickDays.put(person, currentSickDays.add(sickNote.getWorkDays()));
+                sickDays.put(person,
+                    currentSickDays.add(
+                        calendarService.getWorkDays(DayLength.FULL, sickNote.getStartDate(), sickNote.getEndDate(),
+                            person)));
 
                 if (sickNote.isAubPresent()) {
                     BigDecimal workDays = calendarService.getWorkDays(DayLength.FULL, sickNote.getAubStartDate(),

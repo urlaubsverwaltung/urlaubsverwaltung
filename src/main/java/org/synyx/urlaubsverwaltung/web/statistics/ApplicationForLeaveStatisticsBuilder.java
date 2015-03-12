@@ -86,16 +86,17 @@ public class ApplicationForLeaveStatisticsBuilder {
         int yearOfStartDate = application.getStartDate().getYear();
         int yearOfEndDate = application.getEndDate().getYear();
 
+        DayLength dayLength = application.getHowLong();
+        Person person = application.getPerson();
+
         if (yearOfStartDate != yearOfEndDate) {
             DateMidnight startDate = getStartDateForCalculation(application, relevantYear);
             DateMidnight endDate = getEndDateForCalculation(application, relevantYear);
-            DayLength dayLength = application.getHowLong();
-            Person person = application.getPerson();
 
             return calendarService.getWorkDays(dayLength, startDate, endDate, person);
         }
 
-        return application.getDays();
+        return calendarService.getWorkDays(dayLength, application.getStartDate(), application.getEndDate(), person);
     }
 
 

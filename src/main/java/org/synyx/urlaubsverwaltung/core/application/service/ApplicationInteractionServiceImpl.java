@@ -13,11 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
-import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
-
-import java.math.BigDecimal;
 
 
 /**
@@ -30,17 +27,15 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
     private static final Logger LOG = Logger.getLogger(ApplicationInteractionServiceImpl.class);
 
     private final ApplicationService applicationService;
-    private final OwnCalendarService calendarService;
     private final SignService signService;
     private final CommentService commentService;
     private final MailService mailService;
 
     @Autowired
-    public ApplicationInteractionServiceImpl(ApplicationService applicationService, OwnCalendarService calendarService,
-        SignService signService, CommentService commentService, MailService mailService) {
+    public ApplicationInteractionServiceImpl(ApplicationService applicationService, SignService signService,
+        CommentService commentService, MailService mailService) {
 
         this.applicationService = applicationService;
-        this.calendarService = calendarService;
         this.signService = signService;
         this.commentService = commentService;
         this.mailService = mailService;
@@ -51,11 +46,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         Person person = application.getPerson();
 
-        BigDecimal days = calendarService.getWorkDays(application.getHowLong(), application.getStartDate(),
-                application.getEndDate(), person);
-
         application.setStatus(ApplicationStatus.WAITING);
-        application.setDays(days);
         application.setApplier(applier);
         application.setApplicationDate(DateMidnight.now());
 
