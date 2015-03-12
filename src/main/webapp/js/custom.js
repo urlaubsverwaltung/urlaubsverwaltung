@@ -21,7 +21,7 @@ function formatNumber(number) {
     });
 }
 
-function sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, el, long) {
+function sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, el) {
     
     $(el).empty();
     
@@ -71,48 +71,32 @@ function sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, e
                 url = buildUrl(requestUrl, startString, toString, dayLength, personId);
 
                 $.get(url, function(data) {
-                    daysTotal += parseFloat(data);
-                    daysAfter = formatNumber(data);
+                  daysTotal += parseFloat(data);
+                  daysAfter = formatNumber(data);
 
-                    if (long) {
+                  if (daysTotal == 1) {
+                    text = formatNumber(daysTotal) + " Tag";
+                  } else {
+                    text = formatNumber(daysTotal) + " Tage";
+                  }
 
-                        if (daysTotal == 1) {
-                            text = formatNumber(daysTotal) + " Tag";
-                        } else {
-                            text = formatNumber(daysTotal) + " Tage";
-                        }
-                    } else {
-                        text = formatNumber(daysTotal);
-                    }
-                    
-                    if(long) {
-                        text += "<br />(davon " + daysBefore + " in " + before.getFullYear()
-                            + " und " + daysAfter + " in " + after.getFullYear() + ")";  
-                    } else {
-                        text += "<br />(" + before.getFullYear() + ": " + daysBefore + ", " 
-                            + after.getFullYear() + ": " + daysAfter + ")";
-                    }
-                    
-                    $(el).html(text);
+                  text += "<br />(davon " + daysBefore + " in " + before.getFullYear()
+                    + " und " + daysAfter + " in " + after.getFullYear() + ")";
+
+                  $(el).html(text);
                 });
 
             });
 
         } else {
 
-            if(long) {
+          if (data == 1) {
+            text = formatNumber(data) + " Tag";
+          } else {
+            text = formatNumber(data) + " Tage";
+          }
 
-                if (data == 1) {
-                    text = formatNumber(data) + " Tag";
-                } else {
-                    text = formatNumber(data) + " Tage";
-                }
-
-            } else {
-                text = formatNumber(data);
-            }
-
-            $(el).html(text); 
+          $(el).html(text);
         }
 
     });

@@ -46,7 +46,7 @@
                 toDate = $at.datepicker("getDate");
             }
 
-            sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, getPersonId(), ".days", true);
+            sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, getPersonId(), ".days");
 
         };
 

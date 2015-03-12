@@ -51,7 +51,7 @@
                         $("#from").datepicker("getDate"),
                         $("#to").datepicker("getDate"),
                         $('input:radio[name=howLong]:checked').val(),
-                        '<c:out value="${person.id}" />', ".days", true);
+                        '<c:out value="${person.id}" />', ".days");
             }
         });
     </script>

@@ -48,7 +48,7 @@
                 toDate = atDate;
             }
 
-            sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, ".days", true);
+            sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, ".days");
 
         });
 

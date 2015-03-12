@@ -78,7 +78,7 @@
                             var from = new Date(startDate);
                             var to = new Date(endDate);
 
-                            sendGetDaysRequest("<spring:url value='/api' />", from, to, dayLength, personId, ".days-${loopStatus.index}", true);
+                            sendGetDaysRequest("<spring:url value='/api' />", from, to, dayLength, personId, ".days-${loopStatus.index}");
 
                         });
 
