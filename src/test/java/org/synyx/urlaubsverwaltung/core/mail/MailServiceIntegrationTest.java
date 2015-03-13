@@ -37,7 +37,9 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 
 /**
@@ -158,7 +160,6 @@ public class MailServiceIntegrationTest {
         assertTrue(content.contains("Bernd"));
         assertTrue(content.contains("gestellter Antrag wurde von"));
         assertTrue(content.contains("genehmigt"));
-        assertTrue(content.contains("ganztägig"));
         assertFalse(content.contains("Mist"));
 
         // get email office
@@ -322,8 +323,7 @@ public class MailServiceIntegrationTest {
 
         String content = (String) msg.getContent();
 
-        assertTrue(content.contains(
-                "Beim Versuch für den Benutzer mit dem Benutzernamen 'horscht' ein Schlüsselpaar anzulegen, ist ein Fehler aufgetreten."));
+        assertTrue(content.contains("ist ein Fehler aufgetreten"));
         assertTrue(content.contains("Message of exception"));
     }
 
