@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import org.synyx.urlaubsverwaltung.core.account.Account;
-import org.synyx.urlaubsverwaltung.core.account.AccountInteractionService;
+import org.synyx.urlaubsverwaltung.core.account.AccountService;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
@@ -60,7 +60,7 @@ public class ApplicationForLeaveDetailsController {
     private PersonService personService;
 
     @Autowired
-    private AccountInteractionService accountInteractionService;
+    private AccountService accountService;
 
     @Autowired
     private ApplicationService applicationService;
@@ -132,7 +132,7 @@ public class ApplicationForLeaveDetailsController {
 
         int year = application.getStartDate().getYear();
 
-        Account account = accountInteractionService.getHolidaysAccount(year, application.getPerson());
+        Account account = accountService.getHolidaysAccount(year, application.getPerson());
 
         if (account != null) {
             model.addAttribute("vacationDaysLeft", calculationService.getVacationDaysLeft(account));

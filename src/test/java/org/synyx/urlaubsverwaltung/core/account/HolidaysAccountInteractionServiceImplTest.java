@@ -30,7 +30,7 @@ public class HolidaysAccountInteractionServiceImplTest {
 
     private AccountInteractionServiceImpl service;
 
-    private AccountDAO accountDAO;
+    private AccountService accountService;
     private CalculationService calculationService;
 
     private Person person;
@@ -38,29 +38,16 @@ public class HolidaysAccountInteractionServiceImplTest {
     @Before
     public void setup() throws IOException {
 
-        accountDAO = Mockito.mock(AccountDAO.class);
+        accountService = Mockito.mock(AccountService.class);
 
         WorkingTimeService workingTimeService = Mockito.mock(WorkingTimeService.class);
         OwnCalendarService calendarService = new OwnCalendarService(new JollydayCalendar(), workingTimeService);
         calculationService = Mockito.mock(CalculationService.class);
 
-        service = new AccountInteractionServiceImpl(accountDAO, calendarService, calculationService);
+        service = new AccountInteractionServiceImpl(accountService, calendarService, calculationService);
 
         person = new Person();
         person.setLoginName("horscht");
-    }
-
-
-    @Test
-    public void testGetAccount() {
-
-        Account account = new Account();
-        Mockito.when(accountDAO.getHolidaysAccountByYearAndPerson(2012, person)).thenReturn(account);
-
-        Account result = service.getHolidaysAccount(2012, person);
-
-        Assert.assertNotNull(result);
-        Assert.assertEquals(account, result);
     }
 
 
@@ -214,9 +201,9 @@ public class HolidaysAccountInteractionServiceImplTest {
         Account account2014 = new Account(person, startDate.withYear(2014).toDate(), endDate.withYear(2014).toDate(),
                 BigDecimal.valueOf(30), BigDecimal.valueOf(8), BigDecimal.ZERO);
 
-        Mockito.when(accountDAO.getHolidaysAccountByYearAndPerson(2012, person)).thenReturn(account2012);
-        Mockito.when(accountDAO.getHolidaysAccountByYearAndPerson(2013, person)).thenReturn(account2013);
-        Mockito.when(accountDAO.getHolidaysAccountByYearAndPerson(2014, person)).thenReturn(account2014);
+        Mockito.when(accountService.getHolidaysAccount(2012, person)).thenReturn(account2012);
+        Mockito.when(accountService.getHolidaysAccount(2013, person)).thenReturn(account2013);
+        Mockito.when(accountService.getHolidaysAccount(2014, person)).thenReturn(account2014);
 
         Mockito.when(calculationService.calculateTotalLeftVacationDays(account2012)).thenReturn(BigDecimal.valueOf(6));
         Mockito.when(calculationService.calculateTotalLeftVacationDays(account2013)).thenReturn(BigDecimal.valueOf(2));
@@ -228,8 +215,8 @@ public class HolidaysAccountInteractionServiceImplTest {
         Mockito.verify(calculationService).calculateTotalLeftVacationDays(account2013);
         Mockito.verify(calculationService).calculateTotalLeftVacationDays(account2014);
 
-        Mockito.verify(accountDAO).save(account2012);
-        Mockito.verify(accountDAO).save(account2013);
-        Mockito.verify(accountDAO).save(account2014);
+        Mockito.verify(accountService).save(account2012);
+        Mockito.verify(accountService).save(account2013);
+        Mockito.verify(accountService).save(account2014);
     }
 }

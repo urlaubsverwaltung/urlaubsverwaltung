@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import org.synyx.urlaubsverwaltung.core.account.Account;
 import org.synyx.urlaubsverwaltung.core.account.AccountInteractionService;
+import org.synyx.urlaubsverwaltung.core.account.AccountService;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.security.CryptoUtil;
@@ -34,15 +35,17 @@ public class PersonInteractionServiceImpl implements PersonInteractionService {
 
     private final PersonService personService;
     private final WorkingTimeService workingTimeService;
+    private final AccountService accountService;
     private final AccountInteractionService accountInteractionService;
     private final MailService mailService;
 
     @Autowired
     public PersonInteractionServiceImpl(PersonService personService, WorkingTimeService workingTimeService,
-        AccountInteractionService accountInteractionService, MailService mailService) {
+        AccountService accountService, AccountInteractionService accountInteractionService, MailService mailService) {
 
         this.personService = personService;
         this.workingTimeService = workingTimeService;
+        this.accountService = accountService;
         this.accountInteractionService = accountInteractionService;
         this.mailService = mailService;
     }
@@ -89,7 +92,7 @@ public class PersonInteractionServiceImpl implements PersonInteractionService {
         BigDecimal remainingVacationDaysNotExpiring = personForm.getRemainingVacationDaysNotExpiring();
 
         // check if there is an existing account
-        Account account = accountInteractionService.getHolidaysAccount(validFrom.getYear(), person);
+        Account account = accountService.getHolidaysAccount(validFrom.getYear(), person);
 
         if (account == null) {
             accountInteractionService.createHolidaysAccount(person, validFrom, validTo, annualVacationDays,

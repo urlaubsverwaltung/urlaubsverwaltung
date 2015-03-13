@@ -33,25 +33,18 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
     private static final int MONTHS_PER_YEAR = 12;
     private static final int WEEKDAYS_PER_MONTH = 21;
 
-    private final AccountDAO accountDAO;
+    private final AccountService accountService;
     private final OwnCalendarService calendarService;
     private final CalculationService calculationService;
 
     @Autowired
-    AccountInteractionServiceImpl(AccountDAO accountDAO, OwnCalendarService calendarService,
+    AccountInteractionServiceImpl(AccountService accountService, OwnCalendarService calendarService,
         CalculationService calculationService) {
 
-        this.accountDAO = accountDAO;
+        this.accountService = accountService;
         this.calendarService = calendarService;
         this.calculationService = calculationService;
     }
-
-    @Override
-    public Account getHolidaysAccount(int year, Person person) {
-
-        return accountDAO.getHolidaysAccountByYearAndPerson(year, person);
-    }
-
 
     @Override
     public Account createHolidaysAccount(Person person, DateMidnight validFrom, DateMidnight validTo, BigDecimal days,
@@ -61,7 +54,8 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
                 remainingDaysNotExpiring);
         BigDecimal vacationDays = calculateActualVacationDays(account);
         account.setVacationDays(vacationDays);
-        accountDAO.save(account);
+
+        accountService.save(account);
 
         LOG.info("Created holidays account: " + account);
 
@@ -82,7 +76,7 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
         BigDecimal vacationDays = calculateActualVacationDays(account);
         account.setVacationDays(vacationDays);
 
-        accountDAO.save(account);
+        accountService.save(account);
 
         LOG.info("Edited holidays account: " + account);
 
@@ -207,7 +201,7 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
         int currentYear = DateMidnight.now().getYear();
 
         while (startYear <= currentYear) {
-            Account holidaysAccount = getHolidaysAccount(startYear, person);
+            Account holidaysAccount = accountService.getHolidaysAccount(startYear, person);
 
             if (holidaysAccount != null) {
                 BigDecimal leftVacationDays = calculationService.calculateTotalLeftVacationDays(holidaysAccount);
@@ -218,7 +212,7 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
                     holidaysAccount.setRemainingVacationDaysNotExpiring(leftVacationDays);
                 }
 
-                accountDAO.save(holidaysAccount);
+                accountService.save(holidaysAccount);
             }
 
             startYear++;

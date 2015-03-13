@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import org.synyx.urlaubsverwaltung.core.account.Account;
-import org.synyx.urlaubsverwaltung.core.account.AccountInteractionService;
+import org.synyx.urlaubsverwaltung.core.account.AccountService;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.core.application.service.CalculationService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -44,7 +44,7 @@ public class PersonController {
     private PersonService personService;
 
     @Autowired
-    private AccountInteractionService accountInteractionService;
+    private AccountService accountService;
 
     @Autowired
     private CalculationService calculationService;
@@ -173,7 +173,7 @@ public class PersonController {
             }
 
             // get person's account
-            Account account = accountInteractionService.getHolidaysAccount(year, person);
+            Account account = accountService.getHolidaysAccount(year, person);
 
             if (account != null) {
                 accounts.put(person, account);

@@ -16,17 +16,6 @@ import java.math.BigDecimal;
 public interface AccountInteractionService {
 
     /**
-     * Gets the {@link Account} for the given year and person.
-     *
-     * @param  year  to get the holidays account for
-     * @param  person  to get the holidays account for
-     *
-     * @return  {@link Account} that matches the given parameters
-     */
-    Account getHolidaysAccount(int year, Person person);
-
-
-    /**
      * Creates a {@link Account} with the given parameters.
      *
      * @param  person  defines the owner of the holidays account

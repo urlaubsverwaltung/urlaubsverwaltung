@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 import org.synyx.urlaubsverwaltung.core.account.Account;
 import org.synyx.urlaubsverwaltung.core.account.AccountInteractionService;
-import org.synyx.urlaubsverwaltung.core.application.dao.ApplicationDAO;
+import org.synyx.urlaubsverwaltung.core.account.AccountService;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
@@ -36,15 +36,17 @@ import java.util.List;
 @Service
 public class CalculationService {
 
-    private final ApplicationDAO applicationDAO;
+    private final ApplicationService applicationService;
     private final AccountInteractionService accountInteractionService;
+    private final AccountService accountService;
     private final OwnCalendarService calendarService;
 
     @Autowired
-    public CalculationService(ApplicationDAO applicationDAO, AccountInteractionService accountInteractionService,
-        OwnCalendarService calendarService) {
+    public CalculationService(ApplicationService applicationService, AccountService accountService,
+        AccountInteractionService accountInteractionService, OwnCalendarService calendarService) {
 
-        this.applicationDAO = applicationDAO;
+        this.applicationService = applicationService;
+        this.accountService = accountService;
         this.accountInteractionService = accountInteractionService;
         this.calendarService = calendarService;
     }
@@ -96,10 +98,10 @@ public class CalculationService {
 
     private Account getHolidaysAccount(int year, Person person) {
 
-        Account holidaysAccount = accountInteractionService.getHolidaysAccount(year, person);
+        Account holidaysAccount = accountService.getHolidaysAccount(year, person);
 
         if (holidaysAccount == null) {
-            Account lastYearsHolidaysAccount = accountInteractionService.getHolidaysAccount(year - 1, person);
+            Account lastYearsHolidaysAccount = accountService.getHolidaysAccount(year - 1, person);
 
             holidaysAccount = accountInteractionService.createHolidaysAccount(person, DateUtil.getFirstDayOfYear(year),
                     DateUtil.getLastDayOfYear(year), lastYearsHolidaysAccount.getAnnualVacationDays(), BigDecimal.ZERO,
@@ -171,8 +173,8 @@ public class CalculationService {
     BigDecimal getUsedDaysBetweenTwoMilestones(Person person, DateMidnight firstMilestone, DateMidnight lastMilestone) {
 
         // get all applications for leave
-        List<Application> allApplicationsForLeave = applicationDAO.getApplicationsForACertainTimeAndPerson(
-                firstMilestone.toDate(), lastMilestone.toDate(), person);
+        List<Application> allApplicationsForLeave = applicationService.getApplicationsForACertainPeriodAndPerson(
+                firstMilestone, lastMilestone, person);
 
         // filter them since only waiting and allowed applications for leave of type holiday are relevant
         List<Application> applicationsForLeave = FluentIterable.from(allApplicationsForLeave).filter(

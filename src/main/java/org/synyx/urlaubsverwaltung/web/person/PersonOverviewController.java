@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import org.synyx.urlaubsverwaltung.core.account.Account;
-import org.synyx.urlaubsverwaltung.core.account.AccountInteractionService;
+import org.synyx.urlaubsverwaltung.core.account.AccountService;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
@@ -64,7 +64,7 @@ public class PersonOverviewController {
     private PersonService personService;
 
     @Autowired
-    private AccountInteractionService accountInteractionService;
+    private AccountService accountService;
 
     @Autowired
     private CalculationService calculationService;
@@ -262,7 +262,7 @@ public class PersonOverviewController {
     private void prepareHolidayAccounts(Person person, int year, Model model) {
 
         // get person's holidays account and entitlement for the given year
-        Account account = accountInteractionService.getHolidaysAccount(year, person);
+        Account account = accountService.getHolidaysAccount(year, person);
 
         if (account != null) {
             model.addAttribute("vacationDaysLeft", calculationService.getVacationDaysLeft(account));

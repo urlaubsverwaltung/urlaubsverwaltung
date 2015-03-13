@@ -12,7 +12,7 @@ import org.mockito.Mockito;
 
 import org.synyx.urlaubsverwaltung.core.account.Account;
 import org.synyx.urlaubsverwaltung.core.account.AccountInteractionService;
-import org.synyx.urlaubsverwaltung.core.application.dao.ApplicationDAO;
+import org.synyx.urlaubsverwaltung.core.account.AccountService;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 
@@ -41,14 +40,16 @@ import java.util.List;
 public class CalculationServiceTest {
 
     private CalculationService service;
-    private ApplicationDAO applicationDAO;
+    private ApplicationService applicationService;
     private AccountInteractionService accountInteractionService;
+    private AccountService accountService;
     private OwnCalendarService calendarService;
 
     @Before
     public void setUp() throws IOException {
 
-        applicationDAO = Mockito.mock(ApplicationDAO.class);
+        applicationService = Mockito.mock(ApplicationService.class);
+        accountService = Mockito.mock(AccountService.class);
         accountInteractionService = Mockito.mock(AccountInteractionService.class);
 
         WorkingTimeService workingTimeService = Mockito.mock(WorkingTimeService.class);
@@ -63,7 +64,8 @@ public class CalculationServiceTest {
         Mockito.when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(Mockito.any(Person.class),
                 Mockito.any(DateMidnight.class))).thenReturn(workingTime);
 
-        service = new CalculationService(applicationDAO, accountInteractionService, calendarService);
+        service = new CalculationService(applicationService, accountService, accountInteractionService,
+                calendarService);
     }
 
 
@@ -84,7 +86,7 @@ public class CalculationServiceTest {
         Account account = new Account(person, new DateMidnight(2012, DateTimeConstants.JANUARY, 1).toDate(),
                 new DateMidnight(2012, DateTimeConstants.DECEMBER, 31).toDate(), BigDecimal.valueOf(28),
                 BigDecimal.valueOf(5), BigDecimal.ZERO);
-        Mockito.when(accountInteractionService.getHolidaysAccount(2012, person)).thenReturn(account);
+        Mockito.when(accountService.getHolidaysAccount(2012, person)).thenReturn(account);
 
         // vacation days would be left after this application for leave
         account.setVacationDays(BigDecimal.valueOf(28));
@@ -151,8 +153,8 @@ public class CalculationServiceTest {
         a4.setVacationType(VacationType.HOLIDAY);
         a4.setPerson(person);
 
-        Mockito.when(applicationDAO.getApplicationsForACertainTimeAndPerson(Mockito.any(Date.class),
-                Mockito.any(Date.class), Mockito.any(Person.class))).thenReturn(Arrays.asList(a1, a2, a3, a4));
+        Mockito.when(applicationService.getApplicationsForACertainPeriodAndPerson(Mockito.any(DateMidnight.class),
+                Mockito.any(DateMidnight.class), Mockito.any(Person.class))).thenReturn(Arrays.asList(a1, a2, a3, a4));
 
         BigDecimal days = service.getUsedDaysBetweenTwoMilestones(person, firstMilestone, lastMilestone);
         // must be: 2 + 5 + 4 + 2 = 13
@@ -198,8 +200,8 @@ public class CalculationServiceTest {
         a4.setStatus(ApplicationStatus.WAITING);
         a4.setVacationType(VacationType.HOLIDAY);
 
-        Mockito.when(applicationDAO.getApplicationsForACertainTimeAndPerson(Mockito.any(Date.class),
-                Mockito.any(Date.class), Mockito.any(Person.class))).thenReturn(Arrays.asList(a1, a2, a4));
+        Mockito.when(applicationService.getApplicationsForACertainPeriodAndPerson(Mockito.any(DateMidnight.class),
+                Mockito.any(DateMidnight.class), Mockito.any(Person.class))).thenReturn(Arrays.asList(a1, a2, a4));
 
         BigDecimal days = service.getUsedDaysBetweenTwoMilestones(person, firstMilestone, lastMilestone);
         // must be: 2.5 + 5 + 4 = 11.5
@@ -250,8 +252,8 @@ public class CalculationServiceTest {
         allowedOvertime.setVacationType(VacationType.OVERTIME);
         allowedOvertime.setStatus(ApplicationStatus.ALLOWED);
 
-        Mockito.when(applicationDAO.getApplicationsForACertainTimeAndPerson(Mockito.any(Date.class),
-                Mockito.any(Date.class), Mockito.any(Person.class))).thenReturn(Arrays.asList(cancelledHoliday,
+        Mockito.when(applicationService.getApplicationsForACertainPeriodAndPerson(Mockito.any(DateMidnight.class),
+                Mockito.any(DateMidnight.class), Mockito.any(Person.class))).thenReturn(Arrays.asList(cancelledHoliday,
                 rejectedHoliday, waitingSpecialLeave, allowedSpecialLeave, waitingUnpaidLeave, allowedUnpaidLeave,
                 waitingOvertime, allowedOvertime));
 
@@ -291,7 +293,8 @@ public class CalculationServiceTest {
 
     private void initCustomService(final String daysBeforeApril, final String daysAfterApril) {
 
-        service = new CalculationService(applicationDAO, accountInteractionService, calendarService) {
+        service = new CalculationService(applicationService, accountService, accountInteractionService,
+                calendarService) {
 
             @Override
             protected BigDecimal getUsedDaysBeforeApril(Account account) {

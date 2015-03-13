@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import org.synyx.urlaubsverwaltung.core.account.AccountInteractionService;
+import org.synyx.urlaubsverwaltung.core.account.AccountService;
 import org.synyx.urlaubsverwaltung.core.calendar.Day;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
@@ -29,6 +30,7 @@ public class PersonInteractionServiceTest {
 
     private PersonService personService;
     private WorkingTimeService workingTimeService;
+    private AccountService accountService;
     private AccountInteractionService accountInteractionService;
 
     private PersonForm examplePersonForm;
@@ -38,12 +40,13 @@ public class PersonInteractionServiceTest {
 
         personService = Mockito.mock(PersonService.class);
         workingTimeService = Mockito.mock(WorkingTimeService.class);
+        accountService = Mockito.mock(AccountService.class);
         accountInteractionService = Mockito.mock(AccountInteractionService.class);
 
         MailService mailService = Mockito.mock(MailService.class);
 
-        service = new PersonInteractionServiceImpl(personService, workingTimeService, accountInteractionService,
-                mailService);
+        service = new PersonInteractionServiceImpl(personService, workingTimeService, accountService,
+                accountInteractionService, mailService);
 
         examplePersonForm = new PersonForm(2014);
         examplePersonForm.setLoginName("muster");

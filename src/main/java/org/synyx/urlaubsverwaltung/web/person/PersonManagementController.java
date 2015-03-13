@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import org.synyx.urlaubsverwaltung.core.account.Account;
-import org.synyx.urlaubsverwaltung.core.account.AccountInteractionService;
+import org.synyx.urlaubsverwaltung.core.account.AccountService;
 import org.synyx.urlaubsverwaltung.core.calendar.Day;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
@@ -53,7 +53,7 @@ public class PersonManagementController {
     private PersonService personService;
 
     @Autowired
-    private AccountInteractionService accountInteractionService;
+    private AccountService accountService;
 
     @Autowired
     private PersonValidator validator;
@@ -138,7 +138,7 @@ public class PersonManagementController {
             return ControllerConstants.ERROR_JSP;
         }
 
-        Account account = accountInteractionService.getHolidaysAccount(yearOfHolidaysAccount, person);
+        Account account = accountService.getHolidaysAccount(yearOfHolidaysAccount, person);
 
         WorkingTime workingTime = workingTimeService.getCurrentOne(person);
 
