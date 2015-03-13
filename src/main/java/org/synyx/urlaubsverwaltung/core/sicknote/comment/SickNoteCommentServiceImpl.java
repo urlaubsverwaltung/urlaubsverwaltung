@@ -11,8 +11,6 @@ import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import java.util.List;
 
 
@@ -54,7 +52,6 @@ public class SickNoteCommentServiceImpl implements SickNoteCommentService {
     @Override
     public List<SickNoteComment> getCommentsBySickNote(SickNote sickNote) {
 
-        // TODO: To be implemented!
-        throw new NotImplementedException();
+        return commentDAO.getCommentsBySickNote(sickNote);
     }
 }
