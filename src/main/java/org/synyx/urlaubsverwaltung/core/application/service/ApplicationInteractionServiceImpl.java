@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.application.service;
 
+import com.google.common.base.Optional;
+
 import org.apache.log4j.Logger;
 
 import org.joda.time.DateMidnight;
@@ -64,7 +66,8 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
             comment.setReason(application.getComment());
         }
 
-        commentService.saveComment(comment, applier, application);
+        commentService.create(application, ApplicationStatus.WAITING, Optional.fromNullable(comment.getReason()),
+            applier);
 
         // EMAILS
 
@@ -99,7 +102,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         LOG.info("Allowed application for leave: " + application.toString());
 
-        commentService.saveComment(comment, boss, application);
+        commentService.create(application, ApplicationStatus.ALLOWED, Optional.fromNullable(comment.getReason()), boss);
 
         mailService.sendAllowedNotification(application, comment);
 
@@ -124,7 +127,8 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         LOG.info("Rejected application for leave: " + application.toString());
 
-        commentService.saveComment(comment, boss, application);
+        commentService.create(application, ApplicationStatus.REJECTED, Optional.fromNullable(comment.getReason()),
+            boss);
 
         mailService.sendRejectedNotification(application, comment);
 
@@ -149,7 +153,8 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         LOG.info("Cancelled application for leave: " + application);
 
-        commentService.saveComment(comment, canceller, application);
+        commentService.create(application, ApplicationStatus.CANCELLED, Optional.fromNullable(comment.getReason()),
+            canceller);
 
         if (cancellingAllowedApplication) {
             // if allowed application has been cancelled, office and bosses get an email

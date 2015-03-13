@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.application.service.CommentService;
 import org.synyx.urlaubsverwaltung.core.application.service.SignService;
@@ -86,7 +85,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
 
         signService.signApplicationByBoss(application, converter);
         applicationService.save(application);
-        applicationCommentService.saveComment(new Comment(), converter, application);
+        applicationCommentService.create(application, ApplicationStatus.ALLOWED, Optional.<String>absent(), converter);
         mailService.sendSickNoteConvertedToVacationNotification(application);
 
         // make sick note inactive

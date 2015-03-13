@@ -11,7 +11,6 @@ import org.mockito.Mockito;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.application.service.CommentService;
 import org.synyx.urlaubsverwaltung.core.application.service.SignService;
@@ -129,8 +128,8 @@ public class SickNoteInteractionServiceTest {
         // assert application for leave correctly created
 
         Mockito.verify(applicationService).save(applicationForLeave);
-        Mockito.verify(applicationCommentService).saveComment(Mockito.any(Comment.class), Mockito.eq(person),
-            Mockito.eq(applicationForLeave));
+        Mockito.verify(applicationCommentService).create(Mockito.eq(applicationForLeave),
+            Mockito.eq(ApplicationStatus.ALLOWED), Mockito.eq(Optional.<String>absent()), Mockito.eq(person));
         Mockito.verify(signService).signApplicationByBoss(Mockito.eq(applicationForLeave), Mockito.eq(person));
         Mockito.verify(mailService).sendSickNoteConvertedToVacationNotification(Mockito.eq(applicationForLeave));
 
