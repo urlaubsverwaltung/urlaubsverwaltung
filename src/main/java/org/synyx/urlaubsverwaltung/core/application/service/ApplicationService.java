@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.application.service;
 
+import com.google.common.base.Optional;
+
 import org.joda.time.DateMidnight;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
@@ -23,9 +25,9 @@ public interface ApplicationService {
      *
      * @param  id  to get the {@link Application} by.
      *
-     * @return  {@link Application} for the given id
+     * @return  optional {@link Application} for the given id
      */
-    Application getApplicationById(Integer id);
+    Optional<Application> getApplicationById(Integer id);
 
 
     /**

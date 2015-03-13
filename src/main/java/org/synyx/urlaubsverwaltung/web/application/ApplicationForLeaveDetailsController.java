@@ -88,10 +88,11 @@ public class ApplicationForLeaveDetailsController {
 
         Person loggedUser = sessionService.getLoggedUser();
 
-        Application application = applicationService.getApplicationById(applicationId);
+        Optional<Application> application = applicationService.getApplicationById(applicationId);
 
-        if (loggedUser.equals(application.getPerson()) || (sessionService.isBoss() || sessionService.isOffice())) {
-            prepareDetailView(application, model);
+        if (application.isPresent() && loggedUser.equals(application.get().getPerson())
+                || (sessionService.isBoss() || sessionService.isOffice())) {
+            prepareDetailView(application.get(), model);
 
             return ControllerConstants.APPLICATIONS_URL + "/app_detail";
         }
@@ -156,9 +157,9 @@ public class ApplicationForLeaveDetailsController {
         @ModelAttribute("comment") CommentForm comment, Errors errors, RedirectAttributes redirectAttributes) {
 
         Person boss = sessionService.getLoggedUser();
-        Application application = applicationService.getApplicationById(applicationId);
+        Optional<Application> application = applicationService.getApplicationById(applicationId);
 
-        if (sessionService.isBoss()) {
+        if (sessionService.isBoss() && application.isPresent()) {
             comment.setMandatory(false);
             commentValidator.validate(comment, errors);
 
@@ -166,7 +167,7 @@ public class ApplicationForLeaveDetailsController {
                 redirectAttributes.addFlashAttribute("errors", errors);
                 redirectAttributes.addFlashAttribute("action", "allow");
             } else {
-                applicationInteractionService.allow(application, boss, Optional.fromNullable(comment.getText()));
+                applicationInteractionService.allow(application.get(), boss, Optional.fromNullable(comment.getText()));
                 redirectAttributes.addFlashAttribute("allowSuccess", true);
             }
 
@@ -185,15 +186,19 @@ public class ApplicationForLeaveDetailsController {
     public String referApplication(@PathVariable("applicationId") Integer applicationId,
         @ModelAttribute("modelPerson") Person p, RedirectAttributes redirectAttributes) {
 
-        Application application = applicationService.getApplicationById(applicationId);
+        Optional<Application> application = applicationService.getApplicationById(applicationId);
 
-        Person sender = sessionService.getLoggedUser();
-        Person recipient = personService.getPersonByLogin(p.getLoginName());
-        mailService.sendReferApplicationNotification(application, recipient, sender);
+        if (sessionService.isBoss() && application.isPresent()) {
+            Person sender = sessionService.getLoggedUser();
+            Person recipient = personService.getPersonByLogin(p.getLoginName());
+            mailService.sendReferApplicationNotification(application.get(), recipient, sender);
 
-        redirectAttributes.addFlashAttribute("referSuccess", true);
+            redirectAttributes.addFlashAttribute("referSuccess", true);
 
-        return "redirect:/web/application/" + applicationId;
+            return "redirect:/web/application/" + applicationId;
+        }
+
+        return ControllerConstants.ERROR_JSP;
     }
 
 
@@ -204,10 +209,10 @@ public class ApplicationForLeaveDetailsController {
     public String rejectApplication(@PathVariable("applicationId") Integer applicationId,
         @ModelAttribute("comment") CommentForm comment, Errors errors, RedirectAttributes redirectAttributes) {
 
-        Person boss = sessionService.getLoggedUser();
+        Optional<Application> application = applicationService.getApplicationById(applicationId);
 
-        if (sessionService.isBoss()) {
-            Application application = applicationService.getApplicationById(applicationId);
+        if (sessionService.isBoss() && application.isPresent()) {
+            Person boss = sessionService.getLoggedUser();
 
             comment.setMandatory(true);
             commentValidator.validate(comment, errors);
@@ -216,14 +221,14 @@ public class ApplicationForLeaveDetailsController {
                 redirectAttributes.addFlashAttribute("errors", errors);
                 redirectAttributes.addFlashAttribute("action", "reject");
             } else {
-                applicationInteractionService.reject(application, boss, Optional.fromNullable(comment.getText()));
+                applicationInteractionService.reject(application.get(), boss, Optional.fromNullable(comment.getText()));
                 redirectAttributes.addFlashAttribute("rejectSuccess", true);
             }
 
             return "redirect:/web/application/" + applicationId;
-        } else {
-            return ControllerConstants.ERROR_JSP;
         }
+
+        return ControllerConstants.ERROR_JSP;
     }
 
 
@@ -235,8 +240,14 @@ public class ApplicationForLeaveDetailsController {
     public String cancelApplication(@PathVariable("applicationId") Integer applicationId,
         @ModelAttribute("comment") CommentForm comment, Errors errors, RedirectAttributes redirectAttributes) {
 
-        Application application = applicationService.getApplicationById(applicationId);
+        Optional<Application> optionalApplication = applicationService.getApplicationById(applicationId);
+
+        if (!optionalApplication.isPresent()) {
+            return ControllerConstants.ERROR_JSP;
+        }
+
         Person loggedUser = sessionService.getLoggedUser();
+        Application application = optionalApplication.get();
 
         boolean isWaiting = application.hasStatus(ApplicationStatus.WAITING);
         boolean isAllowed = application.hasStatus(ApplicationStatus.ALLOWED);
@@ -276,7 +287,13 @@ public class ApplicationForLeaveDetailsController {
 
         // TODO: move this to a service method
 
-        Application application = applicationService.getApplicationById(applicationId);
+        Optional<Application> optionalApplication = applicationService.getApplicationById(applicationId);
+
+        if (!sessionService.isBoss() && !optionalApplication.isPresent()) {
+            return ControllerConstants.ERROR_JSP;
+        }
+
+        Application application = optionalApplication.get();
         DateMidnight remindDate = application.getRemindDate();
 
         if (remindDate != null) {
