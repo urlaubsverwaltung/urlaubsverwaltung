@@ -1,12 +1,8 @@
 package org.synyx.urlaubsverwaltung.core.sicknote.comment;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.google.common.base.Optional;
 
-import org.springframework.stereotype.Service;
-
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
+import org.synyx.urlaubsverwaltung.core.person.Person;
 
 
 /**
@@ -14,38 +10,17 @@ import java.util.List;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-@Service
-@Transactional
-public class SickNoteCommentService {
+public interface SickNoteCommentService {
 
-    private SickNoteCommentDAO dao;
-
-    @Autowired
-    public SickNoteCommentService(SickNoteCommentDAO dao) {
-
-        this.dao = dao;
-    }
-
-
-    public SickNoteCommentService() {
-
-        // OK
-    }
-
-    public void save(SickNoteComment comment) {
-
-        dao.save(comment);
-    }
-
-
-    public List<SickNoteComment> getAll() {
-
-        return dao.findAll();
-    }
-
-
-    public SickNoteComment getById(Integer id) {
-
-        return dao.findOne(id);
-    }
+    /**
+     * Creates a comment for the given sick note with the given status. The given person defines the author of the
+     * comment.
+     *
+     * @param  status  describes the lifecycle status of the sick note that will be saved in the comment
+     * @param  text  of the comment (is optional)
+     * @param  author  of the comment
+     *
+     * @return  the created comment
+     */
+    SickNoteComment create(SickNoteStatus status, Optional<String> text, Person author);
 }
