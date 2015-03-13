@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import org.synyx.urlaubsverwaltung.core.application.service.CalculationService;
 import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
@@ -34,12 +35,15 @@ class AccountServiceImpl implements AccountService {
 
     private final AccountDAO accountDAO;
     private final OwnCalendarService calendarService;
+    private final CalculationService calculationService;
 
     @Autowired
-    AccountServiceImpl(AccountDAO accountDAO, OwnCalendarService calendarService) {
+    AccountServiceImpl(AccountDAO accountDAO, OwnCalendarService calendarService,
+        CalculationService calculationService) {
 
         this.accountDAO = accountDAO;
         this.calendarService = calendarService;
+        this.calculationService = calculationService;
     }
 
     @Override
@@ -193,5 +197,31 @@ class AccountServiceImpl implements AccountService {
         }
 
         return days;
+    }
+
+
+    @Override
+    public void updateRemainingVacationDays(int year, Person person) {
+
+        int startYear = year;
+        int currentYear = DateMidnight.now().getYear();
+
+        while (startYear <= currentYear) {
+            Account holidaysAccount = getHolidaysAccount(startYear, person);
+
+            if (holidaysAccount != null) {
+                BigDecimal leftVacationDays = calculationService.calculateTotalLeftVacationDays(holidaysAccount);
+                holidaysAccount.setRemainingVacationDays(leftVacationDays);
+
+                // number of not expiring remaining vacation days is greater than remaining vacation days
+                if (holidaysAccount.getRemainingVacationDaysNotExpiring().compareTo(leftVacationDays) == 1) {
+                    holidaysAccount.setRemainingVacationDaysNotExpiring(leftVacationDays);
+                }
+
+                accountDAO.save(holidaysAccount);
+            }
+
+            startYear++;
+        }
     }
 }

@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import org.mockito.Mockito;
 
+import org.synyx.urlaubsverwaltung.core.application.service.CalculationService;
 import org.synyx.urlaubsverwaltung.core.calendar.JollydayCalendar;
 import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
@@ -28,7 +29,9 @@ import java.math.BigDecimal;
 public class HolidaysAccountServiceImplTest {
 
     private AccountServiceImpl service;
+
     private AccountDAO accountDAO;
+    private CalculationService calculationService;
 
     private Person person;
 
@@ -39,7 +42,9 @@ public class HolidaysAccountServiceImplTest {
 
         WorkingTimeService workingTimeService = Mockito.mock(WorkingTimeService.class);
         OwnCalendarService calendarService = new OwnCalendarService(new JollydayCalendar(), workingTimeService);
-        service = new AccountServiceImpl(accountDAO, calendarService);
+        calculationService = Mockito.mock(CalculationService.class);
+
+        service = new AccountServiceImpl(accountDAO, calendarService, calculationService);
 
         person = new Person();
         person.setLoginName("horscht");
@@ -191,5 +196,40 @@ public class HolidaysAccountServiceImplTest {
         BigDecimal result = service.calculateActualVacationDays(account);
 
         Assert.assertEquals(new BigDecimal("1.5"), result);
+    }
+
+
+    @Test
+    public void testUpdateRemainingVacationDays() {
+
+        DateMidnight startDate = new DateMidnight(2012, DateTimeConstants.JANUARY, 1);
+        DateMidnight endDate = new DateMidnight(2012, DateTimeConstants.DECEMBER, 31);
+
+        Account account2012 = new Account(person, startDate.toDate(), endDate.toDate(), BigDecimal.valueOf(30),
+                BigDecimal.valueOf(5), BigDecimal.ZERO);
+
+        Account account2013 = new Account(person, startDate.withYear(2013).toDate(), endDate.withYear(2013).toDate(),
+                BigDecimal.valueOf(30), BigDecimal.valueOf(3), BigDecimal.ZERO);
+
+        Account account2014 = new Account(person, startDate.withYear(2014).toDate(), endDate.withYear(2014).toDate(),
+                BigDecimal.valueOf(30), BigDecimal.valueOf(8), BigDecimal.ZERO);
+
+        Mockito.when(accountDAO.getHolidaysAccountByYearAndPerson(2012, person)).thenReturn(account2012);
+        Mockito.when(accountDAO.getHolidaysAccountByYearAndPerson(2013, person)).thenReturn(account2013);
+        Mockito.when(accountDAO.getHolidaysAccountByYearAndPerson(2014, person)).thenReturn(account2014);
+
+        Mockito.when(calculationService.calculateTotalLeftVacationDays(account2012)).thenReturn(BigDecimal.valueOf(6));
+        Mockito.when(calculationService.calculateTotalLeftVacationDays(account2013)).thenReturn(BigDecimal.valueOf(2));
+        Mockito.when(calculationService.calculateTotalLeftVacationDays(account2014)).thenReturn(BigDecimal.valueOf(11));
+
+        service.updateRemainingVacationDays(2012, person);
+
+        Mockito.verify(calculationService).calculateTotalLeftVacationDays(account2012);
+        Mockito.verify(calculationService).calculateTotalLeftVacationDays(account2013);
+        Mockito.verify(calculationService).calculateTotalLeftVacationDays(account2014);
+
+        Mockito.verify(accountDAO).save(account2012);
+        Mockito.verify(accountDAO).save(account2013);
+        Mockito.verify(accountDAO).save(account2014);
     }
 }

@@ -58,4 +58,13 @@ public interface AccountService {
      */
     Account editHolidaysAccount(Account account, DateMidnight validFrom, DateMidnight validTo, BigDecimal days,
         BigDecimal remainingDays, BigDecimal remainingDaysNotExpiring);
+
+
+    /**
+     * Updates the remaining vacation days of all {@link Account}s of the given since the given year.
+     *
+     * @param  year  to start the update for, end with current year
+     * @param  person  to update the remaining vacation days for
+     */
+    void updateRemainingVacationDays(int year, Person person);
 }
