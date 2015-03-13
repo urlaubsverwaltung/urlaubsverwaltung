@@ -4,6 +4,10 @@ import com.google.common.base.Optional;
 
 import org.joda.time.DateMidnight;
 
+import org.springframework.stereotype.Service;
+
+import org.springframework.transaction.annotation.Transactional;
+
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
@@ -21,6 +25,8 @@ import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteStatus;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
+@Service
+@Transactional
 public class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
     private static final boolean ACTIVE = true;

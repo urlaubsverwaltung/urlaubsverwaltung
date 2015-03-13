@@ -18,9 +18,8 @@ import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonInteractionService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteService;
+import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteInteractionService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
-import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.security.Role;
 import org.synyx.urlaubsverwaltung.web.person.PersonForm;
 
@@ -55,7 +54,7 @@ public class TestDataCreationService {
     private ApplicationInteractionService applicationInteractionService;
 
     @Autowired
-    private SickNoteService sickNoteService;
+    private SickNoteInteractionService sickNoteInteractionService;
 
     private Person user;
     private Person boss;
@@ -256,7 +255,7 @@ public class TestDataCreationService {
                 sickNote.setAubEndDate(endDate);
             }
 
-            sickNoteService.touch(sickNote, SickNoteStatus.CREATED, office);
+            sickNoteInteractionService.create(sickNote, office);
         }
 
         return sickNote;

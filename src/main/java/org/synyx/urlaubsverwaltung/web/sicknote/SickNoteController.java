@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.web.sicknote;
 
+import com.google.common.base.Optional;
+
 import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +25,11 @@ import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteInteractionService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteComment;
+import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteCommentService;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.security.Role;
 import org.synyx.urlaubsverwaltung.security.SessionService;
@@ -53,6 +57,12 @@ public class SickNoteController {
 
     @Autowired
     private SickNoteService sickNoteService;
+
+    @Autowired
+    private SickNoteInteractionService sickNoteInteractionService;
+
+    @Autowired
+    private SickNoteCommentService sickNoteCommentService;
 
     @Autowired
     private PersonService personService;
@@ -137,7 +147,7 @@ public class SickNoteController {
                 return "sicknote/sick_note_form";
             }
 
-            sickNoteService.touch(sickNote, SickNoteStatus.CREATED, sessionService.getLoggedUser());
+            sickNoteInteractionService.create(sickNote, sessionService.getLoggedUser());
 
             return "redirect:/web/sicknote/" + sickNote.getId();
         }
@@ -178,7 +188,7 @@ public class SickNoteController {
 
             // this step is necessary because collections can not be bind with form:hidden
             sickNote.setComments(sickNoteService.getById(id).getComments());
-            sickNoteService.touch(sickNote, SickNoteStatus.EDITED, sessionService.getLoggedUser());
+            sickNoteInteractionService.update(sickNote, sessionService.getLoggedUser());
 
             return "redirect:/web/sicknote/" + id;
         }
@@ -197,7 +207,8 @@ public class SickNoteController {
             if (errors.hasErrors()) {
                 redirectAttributes.addFlashAttribute("errors", errors);
             } else {
-                sickNoteService.addComment(id, comment, SickNoteStatus.COMMENTED, sessionService.getLoggedUser());
+                sickNoteCommentService.create(SickNoteStatus.COMMENTED, Optional.fromNullable(comment.getText()),
+                    sessionService.getLoggedUser());
             }
 
             return "redirect:/web/sicknote/" + id;
@@ -240,7 +251,8 @@ public class SickNoteController {
                 return "sicknote/sick_note_convert";
             }
 
-            sickNoteService.convertSickNoteToVacation(sickNoteConvertForm, sickNote, sessionService.getLoggedUser());
+            sickNoteInteractionService.convert(sickNote, sickNoteConvertForm.generateApplicationForLeave(),
+                sessionService.getLoggedUser());
 
             return "redirect:/web/sicknote/" + id;
         }
@@ -255,7 +267,7 @@ public class SickNoteController {
         if (sessionService.isOffice()) {
             SickNote sickNote = sickNoteService.getById(id);
 
-            sickNoteService.cancel(sickNote, sessionService.getLoggedUser());
+            sickNoteInteractionService.cancel(sickNote, sessionService.getLoggedUser());
 
             return "redirect:/web/sicknote/" + id;
         }
