@@ -14,9 +14,8 @@
         </addColumn>
 
         <sql>
-            UPDATE SickNoteComment AS comment
-            INNER JOIN SickNote_SickNoteComment mapping ON comment.id = mapping.comments_id
-            SET comment.sickNote_id = mapping.SickNote_id;
+            UPDATE SickNoteComment comment SET comment.sickNote_id =
+            (SELECT mapping.SickNote_id FROM SickNote_SickNoteComment mapping WHERE mapping.comments_id = comment.id);
         </sql>
 
     </changeSet>
