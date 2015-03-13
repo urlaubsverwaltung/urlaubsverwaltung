@@ -66,7 +66,7 @@
             <c:set var="workDays">
               <uv:number number="${app.workDays}"/>
             </c:set>
-            <spring:message code="days" arguments="${workDays}"/>
+            <span><spring:message code="days" arguments="${workDays}"/></span>
 
             <c:if test="${app.startDate.year != app.endDate.year}">
                     <span class="days-${loopStatus.index}">
