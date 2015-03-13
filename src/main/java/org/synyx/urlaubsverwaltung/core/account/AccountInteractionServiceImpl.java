@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.account;
 
+import com.google.common.base.Optional;
+
 import org.apache.log4j.Logger;
 
 import org.joda.time.DateMidnight;
@@ -201,9 +203,10 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
         int currentYear = DateMidnight.now().getYear();
 
         while (startYear <= currentYear) {
-            Account holidaysAccount = accountService.getHolidaysAccount(startYear, person);
+            Optional<Account> holidaysAccountOptional = accountService.getHolidaysAccount(startYear, person);
 
-            if (holidaysAccount != null) {
+            if (holidaysAccountOptional.isPresent()) {
+                Account holidaysAccount = holidaysAccountOptional.get();
                 BigDecimal leftVacationDays = calculationService.calculateTotalLeftVacationDays(holidaysAccount);
                 holidaysAccount.setRemainingVacationDays(leftVacationDays);
 

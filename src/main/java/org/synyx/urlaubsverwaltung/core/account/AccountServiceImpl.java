@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.account;
 
+import com.google.common.base.Optional;
+
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
 
@@ -18,9 +20,9 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Account getHolidaysAccount(int year, Person person) {
+    public Optional<Account> getHolidaysAccount(int year, Person person) {
 
-        return accountDAO.getHolidaysAccountByYearAndPerson(year, person);
+        return Optional.fromNullable(accountDAO.getHolidaysAccountByYearAndPerson(year, person));
     }
 
 

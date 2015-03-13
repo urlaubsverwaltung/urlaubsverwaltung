@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.core.application.service;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 
@@ -74,9 +75,10 @@ public class CalculationService {
         if (yearOfStartDate == yearOfEndDate) {
             BigDecimal workDays = calendarService.getWorkDays(dayLength, startDate, endDate, person);
 
-            Account holidaysAccount = getHolidaysAccount(yearOfStartDate, person);
+            Optional<Account> holidaysAccount = getHolidaysAccount(yearOfStartDate, person);
 
-            return holidaysAccount != null && calculateTotalLeftVacationDays(holidaysAccount).compareTo(workDays) >= 0;
+            return holidaysAccount.isPresent()
+                && calculateTotalLeftVacationDays(holidaysAccount.get()).compareTo(workDays) >= 0;
         } else {
             // ensure that applying for leave for the period in the old year is possible
             BigDecimal workDaysInOldYear = calendarService.getWorkDays(dayLength, startDate,
@@ -86,29 +88,33 @@ public class CalculationService {
             BigDecimal workDaysInNewYear = calendarService.getWorkDays(dayLength,
                     DateUtil.getFirstDayOfYear(yearOfEndDate), endDate, person);
 
-            Account holidaysAccountForOldYear = getHolidaysAccount(yearOfStartDate, person);
-            Account holidaysAccountForNewYear = getHolidaysAccount(yearOfEndDate, person);
+            Optional<Account> holidaysAccountForOldYear = getHolidaysAccount(yearOfStartDate, person);
+            Optional<Account> holidaysAccountForNewYear = getHolidaysAccount(yearOfEndDate, person);
 
-            return holidaysAccountForOldYear != null && holidaysAccountForNewYear != null
-                && calculateTotalLeftVacationDays(holidaysAccountForOldYear).compareTo(workDaysInOldYear) >= 0
-                && calculateTotalLeftVacationDays(holidaysAccountForNewYear).compareTo(workDaysInNewYear) >= 0;
+            return holidaysAccountForOldYear.isPresent() && holidaysAccountForNewYear.isPresent()
+                && calculateTotalLeftVacationDays(holidaysAccountForOldYear.get()).compareTo(workDaysInOldYear) >= 0
+                && calculateTotalLeftVacationDays(holidaysAccountForNewYear.get()).compareTo(workDaysInNewYear) >= 0;
         }
     }
 
 
-    private Account getHolidaysAccount(int year, Person person) {
+    private Optional<Account> getHolidaysAccount(int year, Person person) {
 
-        Account holidaysAccount = accountService.getHolidaysAccount(year, person);
+        Optional<Account> holidaysAccount = accountService.getHolidaysAccount(year, person);
 
-        if (holidaysAccount == null) {
-            Account lastYearsHolidaysAccount = accountService.getHolidaysAccount(year - 1, person);
-
-            holidaysAccount = accountInteractionService.createHolidaysAccount(person, DateUtil.getFirstDayOfYear(year),
-                    DateUtil.getLastDayOfYear(year), lastYearsHolidaysAccount.getAnnualVacationDays(), BigDecimal.ZERO,
-                    BigDecimal.ZERO);
+        if (holidaysAccount.isPresent()) {
+            return holidaysAccount;
         }
 
-        return holidaysAccount;
+        Optional<Account> lastYearsHolidaysAccount = accountService.getHolidaysAccount(year - 1, person);
+
+        if (!lastYearsHolidaysAccount.isPresent()) {
+            return Optional.absent();
+        }
+
+        return Optional.of(accountInteractionService.createHolidaysAccount(person, DateUtil.getFirstDayOfYear(year),
+                    DateUtil.getLastDayOfYear(year), lastYearsHolidaysAccount.get().getAnnualVacationDays(),
+                    BigDecimal.ZERO, BigDecimal.ZERO));
     }
 
 

@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.person;
 
+import com.google.common.base.Optional;
+
 import org.apache.log4j.Logger;
 
 import org.joda.time.DateMidnight;
@@ -92,13 +94,13 @@ public class PersonInteractionServiceImpl implements PersonInteractionService {
         BigDecimal remainingVacationDaysNotExpiring = personForm.getRemainingVacationDaysNotExpiring();
 
         // check if there is an existing account
-        Account account = accountService.getHolidaysAccount(validFrom.getYear(), person);
+        Optional<Account> account = accountService.getHolidaysAccount(validFrom.getYear(), person);
 
-        if (account == null) {
-            accountInteractionService.createHolidaysAccount(person, validFrom, validTo, annualVacationDays,
+        if (account.isPresent()) {
+            accountInteractionService.editHolidaysAccount(account.get(), validFrom, validTo, annualVacationDays,
                 remainingVacationDays, remainingVacationDaysNotExpiring);
         } else {
-            accountInteractionService.editHolidaysAccount(account, validFrom, validTo, annualVacationDays,
+            accountInteractionService.createHolidaysAccount(person, validFrom, validTo, annualVacationDays,
                 remainingVacationDays, remainingVacationDaysNotExpiring);
         }
     }

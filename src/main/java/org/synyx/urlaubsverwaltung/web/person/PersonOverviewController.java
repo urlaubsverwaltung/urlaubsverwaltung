@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.web.person;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
@@ -262,10 +263,10 @@ public class PersonOverviewController {
     private void prepareHolidayAccounts(Person person, int year, Model model) {
 
         // get person's holidays account and entitlement for the given year
-        Account account = accountService.getHolidaysAccount(year, person);
+        Optional<Account> account = accountService.getHolidaysAccount(year, person);
 
-        if (account != null) {
-            model.addAttribute("vacationDaysLeft", calculationService.getVacationDaysLeft(account));
+        if (account.isPresent()) {
+            model.addAttribute("vacationDaysLeft", calculationService.getVacationDaysLeft(account.get()));
             model.addAttribute(PersonConstants.BEFORE_APRIL, DateUtil.isBeforeApril(DateMidnight.now()));
         }
 

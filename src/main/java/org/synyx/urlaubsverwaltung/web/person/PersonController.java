@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.web.person;
 
+import com.google.common.base.Optional;
+
 import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -173,11 +175,12 @@ public class PersonController {
             }
 
             // get person's account
-            Account account = accountService.getHolidaysAccount(year, person);
+            Optional<Account> account = accountService.getHolidaysAccount(year, person);
 
-            if (account != null) {
-                accounts.put(person, account);
-                vacationDaysLeftMap.put(person, calculationService.getVacationDaysLeft(account));
+            if (account.isPresent()) {
+                Account holidaysAccount = account.get();
+                accounts.put(person, holidaysAccount);
+                vacationDaysLeftMap.put(person, calculationService.getVacationDaysLeft(holidaysAccount));
             }
         }
 

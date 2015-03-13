@@ -1,6 +1,8 @@
 
 package org.synyx.urlaubsverwaltung.core.cron;
 
+import com.google.common.base.Optional;
+
 import org.apache.log4j.Logger;
 
 import org.joda.time.DateMidnight;
@@ -75,14 +77,14 @@ public class TurnOfTheYearAccountUpdaterService {
         for (Person person : persons) {
             LOG.info("Updating account of " + person.getLoginName());
 
-            Account accountLastYear = accountService.getHolidaysAccount(year - 1, person);
+            Optional<Account> accountLastYear = accountService.getHolidaysAccount(year - 1, person);
 
-            if (accountLastYear != null && accountLastYear.getAnnualVacationDays() != null) {
-                BigDecimal leftDays = calculationService.calculateTotalLeftVacationDays(accountLastYear);
+            if (accountLastYear.isPresent() && accountLastYear.get().getAnnualVacationDays() != null) {
+                BigDecimal leftDays = calculationService.calculateTotalLeftVacationDays(accountLastYear.get());
 
                 Account holidaysAccount = accountInteractionService.createHolidaysAccount(person,
                         DateUtil.getFirstDayOfYear(year), DateUtil.getLastDayOfYear(year),
-                        accountLastYear.getAnnualVacationDays(), leftDays, BigDecimal.ZERO);
+                        accountLastYear.get().getAnnualVacationDays(), leftDays, BigDecimal.ZERO);
 
                 LOG.info("Setting remaining vacation days of " + person.getLoginName() + " to " + leftDays + " for "
                     + year);

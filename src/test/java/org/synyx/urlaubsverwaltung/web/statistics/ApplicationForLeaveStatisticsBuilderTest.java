@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.web.statistics;
 
+import com.google.common.base.Optional;
+
 import org.joda.time.DateMidnight;
 
 import org.junit.Assert;
@@ -69,7 +71,7 @@ public class ApplicationForLeaveStatisticsBuilderTest {
         Account account = Mockito.mock(Account.class);
 
         Mockito.when(person.getEmail()).thenReturn("muster@muster.de");
-        Mockito.when(accountService.getHolidaysAccount(2014, person)).thenReturn(account);
+        Mockito.when(accountService.getHolidaysAccount(2014, person)).thenReturn(Optional.of(account));
         Mockito.when(calculationService.calculateTotalLeftVacationDays(Mockito.eq(account))).thenReturn(BigDecimal.TEN);
 
         Application holidayWaiting = new Application();
@@ -156,7 +158,7 @@ public class ApplicationForLeaveStatisticsBuilderTest {
         Account account = Mockito.mock(Account.class);
 
         Mockito.when(person.getEmail()).thenReturn("muster@muster.de");
-        Mockito.when(accountService.getHolidaysAccount(2015, person)).thenReturn(account);
+        Mockito.when(accountService.getHolidaysAccount(2015, person)).thenReturn(Optional.of(account));
         Mockito.when(calculationService.calculateTotalLeftVacationDays(Mockito.eq(account))).thenReturn(BigDecimal.TEN);
 
         Application holidayAllowed = new Application();

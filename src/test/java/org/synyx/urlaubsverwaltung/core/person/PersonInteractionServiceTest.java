@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.person;
 
+import com.google.common.base.Optional;
+
 import org.joda.time.DateMidnight;
 
 import org.junit.Assert;
@@ -8,6 +10,7 @@ import org.junit.Test;
 
 import org.mockito.Mockito;
 
+import org.synyx.urlaubsverwaltung.core.account.Account;
 import org.synyx.urlaubsverwaltung.core.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.core.account.AccountService;
 import org.synyx.urlaubsverwaltung.core.calendar.Day;
@@ -59,6 +62,9 @@ public class PersonInteractionServiceTest {
         examplePersonForm.setValidFrom(DateMidnight.now());
         examplePersonForm.setWorkingDays(Arrays.asList(Day.MONDAY.getDayOfWeek(), Day.TUESDAY.getDayOfWeek()));
         examplePersonForm.setPermissions(Arrays.asList(Role.USER));
+
+        Mockito.when(accountService.getHolidaysAccount(Mockito.anyInt(), Mockito.any(Person.class))).thenReturn(Optional
+            .<Account>absent());
     }
 
 

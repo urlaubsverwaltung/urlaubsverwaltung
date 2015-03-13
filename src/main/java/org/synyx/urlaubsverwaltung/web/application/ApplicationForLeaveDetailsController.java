@@ -132,10 +132,10 @@ public class ApplicationForLeaveDetailsController {
 
         int year = application.getStartDate().getYear();
 
-        Account account = accountService.getHolidaysAccount(year, application.getPerson());
+        Optional<Account> account = accountService.getHolidaysAccount(year, application.getPerson());
 
-        if (account != null) {
-            model.addAttribute("vacationDaysLeft", calculationService.getVacationDaysLeft(account));
+        if (account.isPresent()) {
+            model.addAttribute("vacationDaysLeft", calculationService.getVacationDaysLeft(account.get()));
             model.addAttribute(PersonConstants.BEFORE_APRIL, DateUtil.isBeforeApril(DateMidnight.now()));
         }
 

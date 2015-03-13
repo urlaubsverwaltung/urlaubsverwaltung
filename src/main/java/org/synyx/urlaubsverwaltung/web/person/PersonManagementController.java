@@ -138,11 +138,11 @@ public class PersonManagementController {
             return ControllerConstants.ERROR_JSP;
         }
 
-        Account account = accountService.getHolidaysAccount(yearOfHolidaysAccount, person);
+        Optional<Account> account = accountService.getHolidaysAccount(yearOfHolidaysAccount, person);
 
         WorkingTime workingTime = workingTimeService.getCurrentOne(person);
 
-        PersonForm personForm = new PersonForm(person, yearOfHolidaysAccount, Optional.fromNullable(account),
+        PersonForm personForm = new PersonForm(person, yearOfHolidaysAccount, account,
                 Optional.fromNullable(workingTime), person.getPermissions(), person.getNotifications());
 
         model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());

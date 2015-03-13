@@ -114,12 +114,12 @@ public class ApplyForLeaveController {
             return ControllerConstants.ERROR_JSP;
         }
 
-        Account holidaysAccount = accountService.getHolidaysAccount(DateMidnight.now().getYear(), person);
+        Optional<Account> holidaysAccount = accountService.getHolidaysAccount(DateMidnight.now().getYear(), person);
 
-        if (holidaysAccount == null) {
-            model.addAttribute("notpossible", true);
-        } else {
+        if (holidaysAccount.isPresent()) {
             prepareApplicationForLeaveForm(person, new ApplicationForLeaveForm(), model);
+        } else {
+            model.addAttribute("notpossible", true);
         }
 
         return ControllerConstants.APPLICATIONS_URL + "/app_form";
@@ -141,11 +141,11 @@ public class ApplyForLeaveController {
                     }
                 });
 
-        Account account = accountService.getHolidaysAccount(DateMidnight.now(GregorianChronology.getInstance())
-                .getYear(), person);
+        Optional<Account> account = accountService.getHolidaysAccount(DateMidnight.now(
+                    GregorianChronology.getInstance()).getYear(), person);
 
-        if (account != null) {
-            model.addAttribute("vacationDaysLeft", calculationService.getVacationDaysLeft(account));
+        if (account.isPresent()) {
+            model.addAttribute("vacationDaysLeft", calculationService.getVacationDaysLeft(account.get()));
             model.addAttribute(PersonConstants.BEFORE_APRIL, DateUtil.isBeforeApril(DateMidnight.now()));
         }
 

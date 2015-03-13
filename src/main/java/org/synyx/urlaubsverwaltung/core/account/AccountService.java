@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.account;
 
+import com.google.common.base.Optional;
+
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
 
@@ -16,9 +18,9 @@ public interface AccountService {
      * @param  year  to get the holidays account for
      * @param  person  to get the holidays account for
      *
-     * @return  {@link Account} that matches the given parameters
+     * @return  optional of {@link Account} that matches the given parameters
      */
-    Account getHolidaysAccount(int year, Person person);
+    Optional<Account> getHolidaysAccount(int year, Person person);
 
 
     /**

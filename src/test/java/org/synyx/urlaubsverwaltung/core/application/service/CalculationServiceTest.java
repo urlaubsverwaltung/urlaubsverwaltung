@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.application.service;
 
+import com.google.common.base.Optional;
+
 import junit.framework.Assert;
 
 import org.joda.time.DateMidnight;
@@ -86,7 +88,7 @@ public class CalculationServiceTest {
         Account account = new Account(person, new DateMidnight(2012, DateTimeConstants.JANUARY, 1).toDate(),
                 new DateMidnight(2012, DateTimeConstants.DECEMBER, 31).toDate(), BigDecimal.valueOf(28),
                 BigDecimal.valueOf(5), BigDecimal.ZERO);
-        Mockito.when(accountService.getHolidaysAccount(2012, person)).thenReturn(account);
+        Mockito.when(accountService.getHolidaysAccount(2012, person)).thenReturn(Optional.of(account));
 
         // vacation days would be left after this application for leave
         account.setVacationDays(BigDecimal.valueOf(28));

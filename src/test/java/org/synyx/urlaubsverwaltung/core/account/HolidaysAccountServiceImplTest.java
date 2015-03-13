@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.account;
 
+import com.google.common.base.Optional;
+
 import junit.framework.Assert;
 
 import org.junit.Before;
@@ -31,15 +33,29 @@ public class HolidaysAccountServiceImplTest {
 
 
     @Test
-    public void testGetAccount() {
+    public void ensureReturnsOptionalWithHolidaysAccountIfExists() {
 
         Person person = new Person();
         Account account = new Account();
         Mockito.when(accountDAO.getHolidaysAccountByYearAndPerson(2012, person)).thenReturn(account);
 
-        Account result = accountService.getHolidaysAccount(2012, person);
+        Optional<Account> optionalHolidaysAccount = accountService.getHolidaysAccount(2012, person);
 
-        Assert.assertNotNull(result);
-        Assert.assertEquals(account, result);
+        Assert.assertNotNull("Optional must not be null", optionalHolidaysAccount);
+        Assert.assertTrue("Holidays account should exist", optionalHolidaysAccount.isPresent());
+        Assert.assertEquals("Wrong holidays account", account, optionalHolidaysAccount.get());
+    }
+
+
+    @Test
+    public void ensureReturnsAbsentOptionalIfNoHolidaysAccountExists() {
+
+        Mockito.when(accountDAO.getHolidaysAccountByYearAndPerson(Mockito.anyInt(), Mockito.any(Person.class)))
+            .thenReturn(null);
+
+        Optional<Account> optionalHolidaysAccount = accountService.getHolidaysAccount(2012, Mockito.mock(Person.class));
+
+        Assert.assertNotNull("Optional must not be null", optionalHolidaysAccount);
+        Assert.assertFalse("Holidays account should not exist", optionalHolidaysAccount.isPresent());
     }
 }

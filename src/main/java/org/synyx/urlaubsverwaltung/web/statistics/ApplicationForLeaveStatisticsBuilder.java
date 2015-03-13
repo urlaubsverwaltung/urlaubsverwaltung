@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.web.statistics;
 
+import com.google.common.base.Optional;
+
 import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,10 +56,10 @@ public class ApplicationForLeaveStatisticsBuilder {
 
         ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person);
 
-        Account account = accountService.getHolidaysAccount(from.getYear(), person);
+        Optional<Account> account = accountService.getHolidaysAccount(from.getYear(), person);
 
-        if (account != null) {
-            BigDecimal vacationDaysLeft = calculationService.calculateTotalLeftVacationDays(account);
+        if (account.isPresent()) {
+            BigDecimal vacationDaysLeft = calculationService.calculateTotalLeftVacationDays(account.get());
             statistics.setLeftVacationDays(vacationDaysLeft);
         }
 
