@@ -101,6 +101,14 @@
 
             <form:form method="${METHOD}" action="${ACTION}" modelAttribute="sickNote" class="form-horizontal">
 
+            <div class="col-xs-12">
+              <c:if test="${not empty errors}">
+                <div class="alert alert-danger">
+                  <form:errors/>
+                </div>
+              </c:if>
+            </div>
+
             <div class="col-xs-12 col-md-6">
 
                 <div class="form-group">
@@ -141,7 +149,6 @@
                                 <form:option value="${type}"><spring:message code="sicknote.type.${type}" /></form:option>
                             </c:forEach>
                         </form:select>
-                        <span class="help-inline"><form:errors path="person" cssClass="error"/></span>
                     </div>
                 </div>
 

@@ -13,8 +13,8 @@ import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.core.application.dao.ApplicationDAO;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.OverlapCase;
+import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteDAO;
 
@@ -42,23 +42,18 @@ public class OverlapService {
     }
 
     /**
-     * Check if the given new {@link Application} is overlapping with an existent {@link Application}. There are three
-     * possible cases: (1) The period of the new application has no overlap at all with existent applications; i.e. you
-     * can calculate the normal way and save the application if there are enough vacation days on person's holidays
-     * account. (2) The period of the new application is element of an existent application's period; i.e. the new
-     * application is not necessary because there is already an existent application for this period. (3) The period of
-     * the new application is part of an existent application's period, but for a part of it you could apply new
-     * vacation; i.e. user must be asked if he wants to apply for leave for the not overlapping period of the new
-     * application.
+     * Check if there are any overlapping applications for leave or sick notes for the given period and person.
      *
-     * @param  application  for leave to check the overlap for
+     * @param  person  to get overlapping applications for leave and sick notes for
+     * @param  startDate  defines the start of the period to be checked
+     * @param  endDate  defines the end of the period to be checked
      *
      * @return  {@link OverlapCase} - none, partly, fully
      */
-    public OverlapCase checkOverlap(Application application) {
+    public OverlapCase checkOverlap(Person person, DateMidnight startDate, DateMidnight endDate) {
 
-        List<Application> applications = getRelevantApplicationsForLeave(application);
-        List<SickNote> sickNotes = getRelevantSickNotes(application);
+        List<Application> applications = getRelevantApplicationsForLeave(person, startDate, endDate);
+        List<SickNote> sickNotes = getRelevantSickNotes(person, startDate, endDate);
 
         // case (1): no overlap at all
         if (applications.isEmpty() && sickNotes.isEmpty()) {
@@ -66,21 +61,18 @@ public class OverlapService {
         } else {
             // case (2) or (3): overlap
 
-            List<Interval> listOfOverlaps = getListOfOverlaps(application, applications, sickNotes);
+            List<Interval> listOfOverlaps = getListOfOverlaps(startDate, endDate, applications, sickNotes);
+            List<Interval> listOfGaps = getListOfGaps(startDate, endDate, listOfOverlaps);
 
-            if (application.getHowLong() == DayLength.FULL) {
-                List<Interval> listOfGaps = getListOfGaps(application, listOfOverlaps);
-
-                // gaps between the intervals mean that you can apply vacation for this periods
-                // this is case (3)
-                if (listOfGaps.size() > 0) {
-                    /* (3) The period of the new application is part
-                     * of an existent application's period, but for a part of it you could apply new vacation; i.e. user
-                     * must be asked if he wants to apply for leave for the not overlapping period of the new
-                     * application.
-                     */
-                    return OverlapCase.PARTLY_OVERLAPPING;
-                }
+            // gaps between the intervals mean that you can apply vacation for this periods
+            // this is case (3)
+            if (listOfGaps.size() > 0) {
+                /* (3) The period of the new application is part
+                 * of an existent application's period, but for a part of it you could apply new vacation; i.e. user
+                 * must be asked if he wants to apply for leave for the not overlapping period of the new
+                 * application.
+                 */
+                return OverlapCase.PARTLY_OVERLAPPING;
             }
             // no gaps mean that period of application is element of other periods of applications
             // i.e. you have no free periods to apply vacation for
@@ -96,17 +88,20 @@ public class OverlapService {
 
 
     /**
-     * Get all active applications for leave that are in the period of the given application for leave.
+     * Get all active applications for leave of the given person that are in the given period.
      *
-     * @param  application  contains information about the period to be checked and the person
+     * @param  person  to get overlapping applications for leave for
+     * @param  startDate  defines the start of the period
+     * @param  endDate  defines the end of the period
      *
-     * @return  {@link List} of {@link Application}s overlapping with the period of the given {@link Application}
+     * @return  {@link List} of {@link Application}s overlapping with the period
      */
-    private List<Application> getRelevantApplicationsForLeave(Application application) {
+    private List<Application> getRelevantApplicationsForLeave(Person person, DateMidnight startDate,
+        DateMidnight endDate) {
 
         // get all applications for leave
         List<Application> applicationsForLeave = applicationDAO.getApplicationsForACertainTimeAndPerson(
-                application.getStartDate().toDate(), application.getEndDate().toDate(), application.getPerson());
+                startDate.toDate(), endDate.toDate(), person);
 
         // filter them since only waiting and allowed applications for leave are relevant
         return FluentIterable.from(applicationsForLeave).filter(new Predicate<Application>() {
@@ -121,17 +116,18 @@ public class OverlapService {
 
 
     /**
-     * Get all active sick notes that are in the period of the given application for leave.
+     * Get all active sick notes of the given person that are in the given period.
      *
-     * @param  application  contains information about the period to be checked and the person
+     * @param  person  to get overlapping sick notes for
+     * @param  startDate  defines the start of the period
+     * @param  endDate  defines the end of the period
      *
      * @return  {@link List} of {@link SickNote}s overlapping with the period of the given {@link Application}
      */
-    private List<SickNote> getRelevantSickNotes(Application application) {
+    private List<SickNote> getRelevantSickNotes(Person person, DateMidnight startDate, DateMidnight endDate) {
 
         // get all sick notes
-        List<SickNote> sickNotes = sickNoteDAO.findByPersonAndPeriod(application.getPerson(),
-                application.getStartDate().toDate(), application.getEndDate().toDate());
+        List<SickNote> sickNotes = sickNoteDAO.findByPersonAndPeriod(person, startDate.toDate(), endDate.toDate());
 
         // filter them since only active sick notes are relevant
         return FluentIterable.from(sickNotes).filter(new Predicate<SickNote>() {
@@ -148,17 +144,17 @@ public class OverlapService {
     /**
      * Get a list of intervals that overlap with the period of the given {@link Application} for leave.
      *
-     * @param  referenceApplicationForLeave  contains the period to get the overlaps for
+     * @param  startDate  defines the start of the period
+     * @param  endDate  defines the end of the period
      * @param  applicationsForLeave  overlapping the reference application for leave
      * @param  sickNotes  overlapping the reference application for leave
      *
      * @return  {@link List} of overlap intervals
      */
-    private List<Interval> getListOfOverlaps(Application referenceApplicationForLeave,
+    private List<Interval> getListOfOverlaps(DateMidnight startDate, DateMidnight endDate,
         List<Application> applicationsForLeave, List<SickNote> sickNotes) {
 
-        Interval interval = new Interval(referenceApplicationForLeave.getStartDate(),
-                referenceApplicationForLeave.getEndDate());
+        Interval interval = new Interval(startDate, endDate);
 
         List<Interval> overlappingIntervals = new ArrayList<>();
 
@@ -199,12 +195,13 @@ public class OverlapService {
     /**
      * Get a list of gaps within the given intervals.
      *
-     * @param  referenceApplicationForLeave  contains the period to be checked
+     * @param  startDate  defines the start of the period
+     * @param  endDate  defines the end of the period
      * @param  listOfOverlaps  list of overlaps
      *
      * @return  {@link List} of gaps
      */
-    private List<Interval> getListOfGaps(Application referenceApplicationForLeave, List<Interval> listOfOverlaps) {
+    private List<Interval> getListOfGaps(DateMidnight startDate, DateMidnight endDate, List<Interval> listOfOverlaps) {
 
         List<Interval> listOfGaps = new ArrayList<>();
 
@@ -217,14 +214,10 @@ public class OverlapService {
         DateMidnight firstOverlapStart = listOfOverlaps.get(0).getStart().toDateMidnight();
         DateMidnight lastOverlapEnd = listOfOverlaps.get(listOfOverlaps.size() - 1).getEnd().toDateMidnight();
 
-        DateMidnight startDate = referenceApplicationForLeave.getStartDate();
-
         if (startDate.isBefore(firstOverlapStart)) {
             Interval gapStart = new Interval(startDate, firstOverlapStart);
             listOfGaps.add(gapStart);
         }
-
-        DateMidnight endDate = referenceApplicationForLeave.getEndDate();
 
         if (endDate.isAfter(lastOverlapEnd)) {
             Interval gapEnd = new Interval(lastOverlapEnd, endDate);

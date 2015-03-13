@@ -114,8 +114,8 @@ public class ApplicationValidatorTest {
         Mockito.when(errors.hasErrors()).thenReturn(Boolean.FALSE);
         Mockito.when(calendarService.getWorkDays(Mockito.any(DayLength.class), Mockito.any(DateMidnight.class),
                 Mockito.any(DateMidnight.class), Mockito.any(Person.class))).thenReturn(BigDecimal.ONE);
-        Mockito.when(overlapService.checkOverlap(Mockito.any(Application.class))).thenReturn(
-            OverlapCase.NO_OVERLAPPING);
+        Mockito.when(overlapService.checkOverlap(Mockito.any(Person.class), Mockito.any(DateMidnight.class),
+                Mockito.any(DateMidnight.class))).thenReturn(OverlapCase.NO_OVERLAPPING);
         Mockito.when(calculationService.checkApplication(Mockito.any(Application.class))).thenReturn(Boolean.TRUE);
 
         appForm.setHowLong(DayLength.MORNING);
@@ -136,8 +136,8 @@ public class ApplicationValidatorTest {
         Mockito.when(errors.hasErrors()).thenReturn(Boolean.FALSE);
         Mockito.when(calendarService.getWorkDays(Mockito.any(DayLength.class), Mockito.any(DateMidnight.class),
                 Mockito.any(DateMidnight.class), Mockito.any(Person.class))).thenReturn(BigDecimal.ONE);
-        Mockito.when(overlapService.checkOverlap(Mockito.any(Application.class))).thenReturn(
-            OverlapCase.NO_OVERLAPPING);
+        Mockito.when(overlapService.checkOverlap(Mockito.any(Person.class), Mockito.any(DateMidnight.class),
+                Mockito.any(DateMidnight.class))).thenReturn(OverlapCase.NO_OVERLAPPING);
         Mockito.when(calculationService.checkApplication(Mockito.any(Application.class))).thenReturn(Boolean.TRUE);
 
         appForm.setHowLong(DayLength.FULL);
@@ -206,8 +206,8 @@ public class ApplicationValidatorTest {
         Mockito.when(errors.hasErrors()).thenReturn(Boolean.FALSE);
         Mockito.when(calendarService.getWorkDays(Mockito.any(DayLength.class), Mockito.any(DateMidnight.class),
                 Mockito.any(DateMidnight.class), Mockito.any(Person.class))).thenReturn(BigDecimal.ONE);
-        Mockito.when(overlapService.checkOverlap(Mockito.any(Application.class))).thenReturn(
-            OverlapCase.NO_OVERLAPPING);
+        Mockito.when(overlapService.checkOverlap(Mockito.any(Person.class), Mockito.any(DateMidnight.class),
+                Mockito.any(DateMidnight.class))).thenReturn(OverlapCase.NO_OVERLAPPING);
         Mockito.when(calculationService.checkApplication(Mockito.any(Application.class))).thenReturn(Boolean.TRUE);
 
         appForm.setVacationType(vacationType);
@@ -356,8 +356,8 @@ public class ApplicationValidatorTest {
         Mockito.when(calendarService.getWorkDays(Mockito.any(DayLength.class), Mockito.any(DateMidnight.class),
                 Mockito.any(DateMidnight.class), Mockito.any(Person.class))).thenReturn(BigDecimal.ONE);
 
-        Mockito.when(overlapService.checkOverlap(Mockito.any(Application.class))).thenReturn(
-            OverlapCase.FULLY_OVERLAPPING);
+        Mockito.when(overlapService.checkOverlap(Mockito.any(Person.class), Mockito.any(DateMidnight.class),
+                Mockito.any(DateMidnight.class))).thenReturn(OverlapCase.FULLY_OVERLAPPING);
 
         validator.validate(appForm, errors);
 
@@ -375,8 +375,8 @@ public class ApplicationValidatorTest {
         Mockito.when(calendarService.getWorkDays(Mockito.any(DayLength.class), Mockito.any(DateMidnight.class),
                 Mockito.any(DateMidnight.class), Mockito.any(Person.class))).thenReturn(BigDecimal.ONE);
 
-        Mockito.when(overlapService.checkOverlap(Mockito.any(Application.class))).thenReturn(
-            OverlapCase.NO_OVERLAPPING);
+        Mockito.when(overlapService.checkOverlap(Mockito.any(Person.class), Mockito.any(DateMidnight.class),
+                Mockito.any(DateMidnight.class))).thenReturn(OverlapCase.NO_OVERLAPPING);
 
         Mockito.when(calculationService.checkApplication(Mockito.any(Application.class))).thenReturn(Boolean.FALSE);
 
@@ -398,8 +398,8 @@ public class ApplicationValidatorTest {
                 Mockito.eq(appForm.getStartDateHalf()), Mockito.eq(appForm.getStartDateHalf()),
                 Mockito.eq(appForm.getPerson()))).thenReturn(BigDecimal.ONE);
 
-        Mockito.when(overlapService.checkOverlap(Mockito.any(Application.class))).thenReturn(
-            OverlapCase.NO_OVERLAPPING);
+        Mockito.when(overlapService.checkOverlap(Mockito.any(Person.class), Mockito.any(DateMidnight.class),
+                Mockito.any(DateMidnight.class))).thenReturn(OverlapCase.NO_OVERLAPPING);
 
         Mockito.when(calculationService.checkApplication(Mockito.any(Application.class))).thenReturn(Boolean.FALSE);
 

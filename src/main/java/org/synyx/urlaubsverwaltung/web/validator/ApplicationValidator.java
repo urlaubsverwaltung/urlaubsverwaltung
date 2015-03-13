@@ -13,6 +13,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.OverlapCase;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
@@ -228,9 +229,11 @@ public class ApplicationValidator implements Validator {
         }
 
         /**
-         * Ensure that there is no application for leave in the same period
+         * Ensure that there is no application for leave and no sick note in the same period
          */
-        OverlapCase overlap = overlapService.checkOverlap(applicationForm.generateApplicationForLeave());
+        Application application = applicationForm.generateApplicationForLeave();
+        OverlapCase overlap = overlapService.checkOverlap(application.getPerson(), application.getStartDate(),
+                application.getEndDate());
 
         boolean isOverlapping = overlap == OverlapCase.FULLY_OVERLAPPING || overlap == OverlapCase.PARTLY_OVERLAPPING;
 

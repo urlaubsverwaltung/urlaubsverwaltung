@@ -144,6 +144,7 @@ public class SickNoteController {
             validator.validate(sickNote, errors);
 
             if (errors.hasErrors()) {
+                model.addAttribute("errors", errors);
                 model.addAttribute("sickNote", sickNote);
                 model.addAttribute("persons", personService.getActivePersons());
                 model.addAttribute("sickNoteTypes", SickNoteType.values());
@@ -184,6 +185,7 @@ public class SickNoteController {
             validator.validate(sickNote, errors);
 
             if (errors.hasErrors()) {
+                model.addAttribute("errors", errors);
                 model.addAttribute("sickNote", sickNote);
                 model.addAttribute("sickNoteTypes", SickNoteType.values());
 
@@ -247,6 +249,7 @@ public class SickNoteController {
             sickNoteConvertFormValidator.validate(sickNoteConvertForm, errors);
 
             if (errors.hasErrors()) {
+                model.addAttribute("errors", errors);
                 model.addAttribute("sickNote", new ExtendedSickNote(sickNote, calendarService));
                 model.addAttribute("sickNoteConvertForm", sickNoteConvertForm);
                 model.addAttribute("vacationTypes", VacationType.values());

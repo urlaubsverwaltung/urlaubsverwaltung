@@ -10,6 +10,8 @@ import org.mockito.Mockito;
 
 import org.springframework.validation.Errors;
 
+import org.synyx.urlaubsverwaltung.core.application.domain.OverlapCase;
+import org.synyx.urlaubsverwaltung.core.application.service.OverlapService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteComment;
@@ -23,13 +25,18 @@ import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteComment;
 public class SickNoteValidatorTest {
 
     private SickNoteValidator validator;
+
+    private OverlapService overlapService;
+
     private SickNote sickNote;
     private Errors errors;
 
     @Before
     public void setUp() throws Exception {
 
-        validator = new SickNoteValidator();
+        overlapService = Mockito.mock(OverlapService.class);
+
+        validator = new SickNoteValidator(overlapService);
         sickNote = new SickNote();
         errors = Mockito.mock(Errors.class);
         Mockito.reset(errors);
@@ -54,7 +61,6 @@ public class SickNoteValidatorTest {
         sickNote.setStartDate(null);
         validator.validate(sickNote, errors);
         Mockito.verify(errors).rejectValue("startDate", "error.mandatory.field");
-        Mockito.reset(errors);
     }
 
 
@@ -64,7 +70,6 @@ public class SickNoteValidatorTest {
         sickNote.setEndDate(null);
         validator.validate(sickNote, errors);
         Mockito.verify(errors).rejectValue("endDate", "error.mandatory.field");
-        Mockito.reset(errors);
     }
 
 
@@ -75,7 +80,6 @@ public class SickNoteValidatorTest {
         sickNote.setEndDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 19));
         validator.validate(sickNote, errors);
         Mockito.verify(errors).rejectValue("endDate", "error.period");
-        Mockito.reset(errors);
     }
 
 
@@ -85,7 +89,6 @@ public class SickNoteValidatorTest {
         validator.validateComment(new SickNoteComment(), errors);
         validator.validate(sickNote, errors);
         Mockito.verify(errors).rejectValue("text", "error.mandatory.field");
-        Mockito.reset(errors);
     }
 
 
@@ -100,7 +103,6 @@ public class SickNoteValidatorTest {
         validator.validateComment(comment, errors);
         validator.validate(sickNote, errors);
         Mockito.verify(errors).rejectValue("text", "error.length");
-        Mockito.reset(errors);
     }
 
 
@@ -123,7 +125,6 @@ public class SickNoteValidatorTest {
         sickNote.setAubEndDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 19));
         validator.validate(sickNote, errors);
         Mockito.verify(errors).rejectValue("aubEndDate", "error.period");
-        Mockito.reset(errors);
     }
 
 
@@ -145,5 +146,20 @@ public class SickNoteValidatorTest {
         validator.validate(sickNote, errors);
         Mockito.verify(errors).rejectValue("aubStartDate", "error.period.sicknote");
         Mockito.verify(errors).rejectValue("aubEndDate", "error.period.sicknote");
+    }
+
+
+    @Test
+    public void ensureSickNoteMustNotHaveAnyOverlapping() {
+
+        sickNote.setStartDate(new DateMidnight(2015, DateTimeConstants.MARCH, 1));
+        sickNote.setEndDate(new DateMidnight(2015, DateTimeConstants.MARCH, 10));
+
+        Mockito.when(overlapService.checkOverlap(Mockito.any(Person.class), Mockito.any(DateMidnight.class),
+                Mockito.any(DateMidnight.class))).thenReturn(OverlapCase.FULLY_OVERLAPPING);
+
+        validator.validate(sickNote, errors);
+
+        Mockito.verify(errors).reject("error.overlap");
     }
 }
