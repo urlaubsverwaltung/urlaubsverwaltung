@@ -36,7 +36,7 @@
                     <c:when test="${comment.status == 'REJECTED'}">
                         <uv:date date="${application.editedDate}"/>
                     </c:when>
-                    <c:when test="${comment.status == 'CANCELLED'}">
+                    <c:when test="${comment.status == 'CANCELLED' || comment.status == 'REVOKED'}">
                         <uv:date date="${application.cancelDate}"/>
                     </c:when>
                 </c:choose>

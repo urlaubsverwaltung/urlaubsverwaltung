@@ -228,11 +228,7 @@ public class PersonOverviewController {
                     @Override
                     public boolean apply(Application input) {
 
-                        boolean isNotCancelled = !input.hasStatus(ApplicationStatus.CANCELLED);
-                        boolean isCancelledButWasAllowed = input.hasStatus(ApplicationStatus.CANCELLED)
-                            && input.isFormerlyAllowed();
-
-                        return isNotCancelled || isCancelledButWasAllowed;
+                        return !input.hasStatus(ApplicationStatus.REVOKED);
                     }
                 }).toList();
 

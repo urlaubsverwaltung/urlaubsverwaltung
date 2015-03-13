@@ -116,11 +116,7 @@ public class ApplicationForLeaveController {
                     @Override
                     public boolean apply(Application application) {
 
-                        boolean isNotCancelled = !application.hasStatus(ApplicationStatus.CANCELLED);
-                        boolean isCancelledButWasAllowed = application.hasStatus(ApplicationStatus.CANCELLED)
-                            && application.isFormerlyAllowed();
-
-                        return isNotCancelled || isCancelledButWasAllowed;
+                        return !application.hasStatus(ApplicationStatus.REVOKED);
                     }
                 }).transform(new Function<Application, ApplicationForLeave>() {
 
@@ -204,11 +200,7 @@ public class ApplicationForLeaveController {
                     @Override
                     public boolean apply(Application input) {
 
-                        boolean isNotCancelled = !input.hasStatus(ApplicationStatus.CANCELLED);
-                        boolean isCancelledButWasAllowed = input.hasStatus(ApplicationStatus.CANCELLED)
-                            && input.isFormerlyAllowed();
-
-                        return isNotCancelled || isCancelledButWasAllowed;
+                        return !input.hasStatus(ApplicationStatus.REVOKED);
                     }
                 }).transform(new Function<Application, ApplicationForLeave>() {
 
