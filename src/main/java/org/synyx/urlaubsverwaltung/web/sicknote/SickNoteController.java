@@ -209,8 +209,9 @@ public class SickNoteController {
             if (errors.hasErrors()) {
                 redirectAttributes.addFlashAttribute("errors", errors);
             } else {
-                sickNoteCommentService.create(SickNoteStatus.COMMENTED, Optional.fromNullable(comment.getText()),
-                    sessionService.getLoggedUser());
+                SickNote sickNote = sickNoteService.getById(id);
+                sickNoteCommentService.create(sickNote, SickNoteStatus.COMMENTED,
+                    Optional.fromNullable(comment.getText()), sessionService.getLoggedUser());
             }
 
             return "redirect:/web/sicknote/" + id;

@@ -60,7 +60,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
         sickNote.setLastEdited(DateMidnight.now());
 
         sickNoteService.save(sickNote);
-        sickNoteCommentService.create(SickNoteStatus.CREATED, Optional.<String>absent(), creator);
+        sickNoteCommentService.create(sickNote, SickNoteStatus.CREATED, Optional.<String>absent(), creator);
 
         return sickNote;
     }
@@ -73,7 +73,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
         sickNote.setLastEdited(DateMidnight.now());
 
         sickNoteService.save(sickNote);
-        sickNoteCommentService.create(SickNoteStatus.EDITED, Optional.<String>absent(), editor);
+        sickNoteCommentService.create(sickNote, SickNoteStatus.EDITED, Optional.<String>absent(), editor);
 
         return sickNote;
     }
@@ -96,7 +96,8 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
         sickNote.setLastEdited(DateMidnight.now());
 
         sickNoteService.save(sickNote);
-        sickNoteCommentService.create(SickNoteStatus.CONVERTED_TO_VACATION, Optional.<String>absent(), converter);
+        sickNoteCommentService.create(sickNote, SickNoteStatus.CONVERTED_TO_VACATION, Optional.<String>absent(),
+            converter);
 
         return sickNote;
     }
@@ -109,7 +110,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
         sickNote.setLastEdited(DateMidnight.now());
 
         sickNoteService.save(sickNote);
-        sickNoteCommentService.create(SickNoteStatus.CANCELLED, Optional.<String>absent(), canceller);
+        sickNoteCommentService.create(sickNote, SickNoteStatus.CANCELLED, Optional.<String>absent(), canceller);
 
         return sickNote;
     }

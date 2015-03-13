@@ -60,7 +60,8 @@ public class SickNoteInteractionServiceTest {
         SickNote createdSickNote = sickNoteInteractionService.create(sickNote, person);
 
         Mockito.verify(sickNoteService).save(sickNote);
-        Mockito.verify(sickNoteCommentService).create(SickNoteStatus.CREATED, Optional.<String>absent(), person);
+        Mockito.verify(sickNoteCommentService).create(sickNote, SickNoteStatus.CREATED, Optional.<String>absent(),
+            person);
 
         Assert.assertNotNull("Should not be null", createdSickNote);
 
@@ -78,7 +79,8 @@ public class SickNoteInteractionServiceTest {
         SickNote updatedSickNote = sickNoteInteractionService.update(sickNote, person);
 
         Mockito.verify(sickNoteService).save(sickNote);
-        Mockito.verify(sickNoteCommentService).create(SickNoteStatus.EDITED, Optional.<String>absent(), person);
+        Mockito.verify(sickNoteCommentService).create(sickNote, SickNoteStatus.EDITED, Optional.<String>absent(),
+            person);
 
         Assert.assertNotNull("Should not be null", updatedSickNote);
 
@@ -96,7 +98,8 @@ public class SickNoteInteractionServiceTest {
         SickNote cancelledSickNote = sickNoteInteractionService.cancel(sickNote, person);
 
         Mockito.verify(sickNoteService).save(sickNote);
-        Mockito.verify(sickNoteCommentService).create(SickNoteStatus.CANCELLED, Optional.<String>absent(), person);
+        Mockito.verify(sickNoteCommentService).create(sickNote, SickNoteStatus.CANCELLED, Optional.<String>absent(),
+            person);
 
         Assert.assertNotNull("Should not be null", cancelledSickNote);
 
@@ -117,8 +120,8 @@ public class SickNoteInteractionServiceTest {
         // assert sick note correctly updated
 
         Mockito.verify(sickNoteService).save(sickNote);
-        Mockito.verify(sickNoteCommentService).create(SickNoteStatus.CONVERTED_TO_VACATION, Optional.<String>absent(),
-            person);
+        Mockito.verify(sickNoteCommentService).create(sickNote, SickNoteStatus.CONVERTED_TO_VACATION,
+            Optional.<String>absent(), person);
 
         Assert.assertNotNull("Should not be null", convertedSickNote);
 

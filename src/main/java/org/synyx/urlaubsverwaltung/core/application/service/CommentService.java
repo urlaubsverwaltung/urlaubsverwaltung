@@ -26,7 +26,7 @@ public interface CommentService {
      * @param  text  of the comment (is optional)
      * @param  author  of the comment
      *
-     * @return
+     * @return  the created comment
      */
     Comment create(Application application, ApplicationStatus status, Optional<String> text, Person author);
 

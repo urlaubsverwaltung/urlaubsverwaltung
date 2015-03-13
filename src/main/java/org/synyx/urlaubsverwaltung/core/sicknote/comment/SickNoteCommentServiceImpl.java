@@ -31,10 +31,11 @@ public class SickNoteCommentServiceImpl implements SickNoteCommentService {
     }
 
     @Override
-    public SickNoteComment create(SickNoteStatus status, Optional<String> text, Person author) {
+    public SickNoteComment create(SickNote sickNote, SickNoteStatus status, Optional<String> text, Person author) {
 
         SickNoteComment comment = new SickNoteComment();
 
+        comment.setSickNote(sickNote);
         comment.setDate(DateMidnight.now());
         comment.setStatus(status);
         comment.setPerson(author);
