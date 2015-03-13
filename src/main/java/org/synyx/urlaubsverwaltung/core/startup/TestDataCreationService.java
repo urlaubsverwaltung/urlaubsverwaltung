@@ -243,7 +243,6 @@ public class TestDataCreationService {
             sickNote.setType(type);
 
             if (withAUB) {
-                sickNote.setAubPresent(true);
                 sickNote.setAubStartDate(startDate);
                 sickNote.setAubEndDate(endDate);
             }

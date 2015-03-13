@@ -46,9 +46,6 @@ public class SickNote extends AbstractPersistable<Integer> {
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date endDate;
 
-    // aub = Arbeitsunfähigkeitsbescheinigung
-    private boolean aubPresent;
-
     // period of the aub (Arbeitsunfähigkeitsbescheinigung)
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date aubStartDate;
@@ -129,17 +126,9 @@ public class SickNote extends AbstractPersistable<Integer> {
     }
 
 
-    // TODO: Get this information by checking if AUBStartDate and AUBEndDate are set
     public boolean isAubPresent() {
 
-        return aubPresent;
-    }
-
-
-    // TODO: Remove me!
-    public void setAubPresent(boolean aubPresent) {
-
-        this.aubPresent = aubPresent;
+        return getAubStartDate() != null && getAubEndDate() != null;
     }
 
 

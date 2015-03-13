@@ -18,5 +18,6 @@
     <include file="dbchangelogs/changelog-2.5.2-rename-comment-columns.xml"/>
     <include file="dbchangelogs/changelog-2.5.2-remove-comment-column-from-application.xml"/>
     <include file="dbchangelogs/changelog-2.5.2-remove-formerly-allowed-column-from-application.xml"/>
+    <include file="dbchangelogs/changelog-2.5.2-remove-aub-present-column-from-sick-note-table.xml"/>
 
 </databaseChangeLog>
