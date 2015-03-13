@@ -231,15 +231,15 @@ public class ApplicationInteractionServiceTest {
 
         service.cancel(applicationForLeave, person, comment);
 
-        Assert.assertEquals("Wrong state", ApplicationStatus.CANCELLED, applicationForLeave.getStatus());
+        Assert.assertEquals("Wrong state", ApplicationStatus.REVOKED, applicationForLeave.getStatus());
         Assert.assertEquals("Wrong person", person, applicationForLeave.getPerson());
         Assert.assertEquals("Wrong canceller", person, applicationForLeave.getCanceller());
         Assert.assertEquals("Wrong cancelled date", DateMidnight.now(), applicationForLeave.getCancelDate());
-        Assert.assertFalse("Must be not set to formerly allowed", applicationForLeave.isFormerlyAllowed());
+        Assert.assertFalse("Must not be formerly allowed", applicationForLeave.isFormerlyAllowed());
 
         Mockito.verify(applicationService).save(applicationForLeave);
 
-        Mockito.verify(commentService).create(Mockito.eq(applicationForLeave), Mockito.eq(ApplicationStatus.CANCELLED),
+        Mockito.verify(commentService).create(Mockito.eq(applicationForLeave), Mockito.eq(ApplicationStatus.REVOKED),
             Mockito.eq(comment), Mockito.eq(person));
 
         Mockito.verifyZeroInteractions(mailService);
@@ -263,7 +263,7 @@ public class ApplicationInteractionServiceTest {
         Assert.assertEquals("Wrong person", person, applicationForLeave.getPerson());
         Assert.assertEquals("Wrong canceller", canceller, applicationForLeave.getCanceller());
         Assert.assertEquals("Wrong cancelled date", DateMidnight.now(), applicationForLeave.getCancelDate());
-        Assert.assertTrue("Must be set to formerly allowed", applicationForLeave.isFormerlyAllowed());
+        Assert.assertTrue("Must be formerly allowed", applicationForLeave.isFormerlyAllowed());
 
         Mockito.verify(applicationService).save(applicationForLeave);
 
@@ -288,15 +288,15 @@ public class ApplicationInteractionServiceTest {
 
         service.cancel(applicationForLeave, canceller, comment);
 
-        Assert.assertEquals("Wrong state", ApplicationStatus.CANCELLED, applicationForLeave.getStatus());
+        Assert.assertEquals("Wrong state", ApplicationStatus.REVOKED, applicationForLeave.getStatus());
         Assert.assertEquals("Wrong person", person, applicationForLeave.getPerson());
         Assert.assertEquals("Wrong canceller", canceller, applicationForLeave.getCanceller());
         Assert.assertEquals("Wrong cancelled date", DateMidnight.now(), applicationForLeave.getCancelDate());
-        Assert.assertFalse("Must not be set to formerly allowed", applicationForLeave.isFormerlyAllowed());
+        Assert.assertFalse("Must not be formerly allowed", applicationForLeave.isFormerlyAllowed());
 
         Mockito.verify(applicationService).save(applicationForLeave);
 
-        Mockito.verify(commentService).create(Mockito.eq(applicationForLeave), Mockito.eq(ApplicationStatus.CANCELLED),
+        Mockito.verify(commentService).create(Mockito.eq(applicationForLeave), Mockito.eq(ApplicationStatus.REVOKED),
             Mockito.eq(comment), Mockito.eq(canceller));
 
         Mockito.verify(mailService).sendCancelledNotification(Mockito.eq(applicationForLeave), Mockito.eq(true),

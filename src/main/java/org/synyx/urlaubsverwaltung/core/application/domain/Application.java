@@ -370,18 +370,9 @@ public class Application extends AbstractPersistable<Integer> {
     }
 
 
-    // TODO: Replace this by a more intelligent check if formerly allowed
-    // Add a further status (REVOKED) that allows a distinction of different cancel states
     public boolean isFormerlyAllowed() {
 
-        return formerlyAllowed;
-    }
-
-
-    // TODO: Remove, set revoked state instead.
-    public void setFormerlyAllowed(boolean formerlyAllowed) {
-
-        this.formerlyAllowed = formerlyAllowed;
+        return hasStatus(ApplicationStatus.CANCELLED);
     }
 
 

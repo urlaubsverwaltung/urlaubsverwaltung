@@ -130,21 +130,22 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
     @Override
     public Application cancel(Application application, Person canceller, Optional<String> comment) {
 
-        boolean cancellingAllowedApplication = application.getStatus().equals(ApplicationStatus.ALLOWED);
+        boolean cancellingAllowedApplication = application.hasStatus(ApplicationStatus.ALLOWED);
 
-        application.setStatus(ApplicationStatus.CANCELLED);
         application.setCanceller(canceller);
         application.setCancelDate(DateMidnight.now());
 
         if (cancellingAllowedApplication) {
-            application.setFormerlyAllowed(true);
+            application.setStatus(ApplicationStatus.CANCELLED);
+        } else {
+            application.setStatus(ApplicationStatus.REVOKED);
         }
 
         applicationService.save(application);
 
         LOG.info("Cancelled application for leave: " + application);
 
-        Comment createdComment = commentService.create(application, ApplicationStatus.CANCELLED, comment, canceller);
+        Comment createdComment = commentService.create(application, application.getStatus(), comment, canceller);
 
         if (cancellingAllowedApplication) {
             // if allowed application has been cancelled, office and bosses get an email
