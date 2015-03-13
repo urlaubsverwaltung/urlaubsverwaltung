@@ -93,12 +93,6 @@
 
                     <%@include file="./include/app-detail-elements/app_info.jsp" %>
 
-                    <div class="header">
-                        <legend>
-                            <p><spring:message code="progress" /></p>
-                        </legend>
-                    </div>
-
                     <%@include file="./include/app-detail-elements/app_progress.jsp" %>
 
                 </div><%--End of first column--%>

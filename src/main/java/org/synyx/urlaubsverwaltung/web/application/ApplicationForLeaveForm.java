@@ -191,7 +191,6 @@ public class ApplicationForLeaveForm {
         applicationForLeave.setHolidayReplacement(holidayReplacement);
         applicationForLeave.setAddress(address);
         applicationForLeave.setTeamInformed(teamInformed);
-        applicationForLeave.setComment(comment);
 
         if (howLong == DayLength.FULL) {
             applicationForLeave.setStartDate(startDate);

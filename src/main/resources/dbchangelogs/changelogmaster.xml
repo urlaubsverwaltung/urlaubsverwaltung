@@ -16,5 +16,6 @@
     <include file="dbchangelogs/changelog-2.4.1-add-not-expiring-remaining-vacation-days.xml"/>
     <include file="dbchangelogs/changelog-2.5.1-remove-persisted-work-days.xml"/>
     <include file="dbchangelogs/changelog-2.5.2-rename-comment-columns.xml"/>
+    <include file="dbchangelogs/changelog-2.5.2-remove-comment-column-from-application.xml"/>
 
 </databaseChangeLog>

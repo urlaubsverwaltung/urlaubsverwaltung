@@ -110,8 +110,6 @@ public class Application extends AbstractPersistable<Integer> {
     // team informed about holidays?
     private boolean teamInformed;
 
-    private String comment;
-
     public String getAddress() {
 
         return address;
@@ -404,18 +402,6 @@ public class Application extends AbstractPersistable<Integer> {
         } else {
             this.remindDate = remindDate.toDate();
         }
-    }
-
-
-    public String getComment() {
-
-        return comment;
-    }
-
-
-    public void setComment(String comment) {
-
-        this.comment = comment;
     }
 
 

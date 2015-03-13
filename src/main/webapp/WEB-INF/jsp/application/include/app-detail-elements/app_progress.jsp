@@ -4,6 +4,14 @@
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
+<c:if test="${not empty comments}">
+
+<div class="header">
+  <legend>
+    <p><spring:message code="progress" /></p>
+  </legend>
+</div>
+
 <table class="list-table striped-table bordered-table">
     <tbody>
 
@@ -43,3 +51,4 @@
     </c:forEach>
     </tbody>
 </table>
+</c:if>
