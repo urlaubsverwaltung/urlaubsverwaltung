@@ -2,11 +2,6 @@ package org.synyx.urlaubsverwaltung.core.sicknote;
 
 import org.joda.time.DateMidnight;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-
-import org.springframework.stereotype.Service;
-
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.util.List;
@@ -17,51 +12,53 @@ import java.util.List;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-@Service
-public class SickNoteService {
+public interface SickNoteService {
 
-    @Value("${sicknote.sickPay.limit}")
-    private int sickPayLimit;
-
-    @Value("${sicknote.sickPay.notification}")
-    private int sickPayNotificationTime;
-
-    private SickNoteDAO sickNoteDAO;
-
-    @Autowired
-    public SickNoteService(SickNoteDAO sickNoteDAO) {
-
-        this.sickNoteDAO = sickNoteDAO;
-    }
-
-    public void save(SickNote sickNote) {
-
-        sickNoteDAO.save(sickNote);
-    }
+    /**
+     * Persists the given sick note.
+     *
+     * @param  sickNote  to be persisted
+     */
+    void save(SickNote sickNote);
 
 
-    public SickNote getById(Integer id) {
-
-        return sickNoteDAO.findOne(id);
-    }
-
-
-    public List<SickNote> getByPersonAndPeriod(Person person, DateMidnight from, DateMidnight to) {
-
-        return sickNoteDAO.findByPersonAndPeriod(person, from.toDate(), to.toDate());
-    }
+    /**
+     * Gets the sick note with the given id.
+     *
+     * @param  id  to search the sick note by
+     *
+     * @return  the sick note matching the given id
+     */
+    SickNote getById(Integer id);
 
 
-    public List<SickNote> getByPeriod(DateMidnight from, DateMidnight to) {
+    /**
+     * Get all the sick notes of the given person that are in the given period.
+     *
+     * @param  person  defines the owner of the sick notes
+     * @param  from  defines the start of the period
+     * @param  to  defines the end of the period
+     *
+     * @return  all the sick notes matching the given parameters
+     */
+    List<SickNote> getByPersonAndPeriod(Person person, DateMidnight from, DateMidnight to);
 
-        return sickNoteDAO.findByPeriod(from.toDate(), to.toDate());
-    }
+
+    /**
+     * Get all the sick notes that are in the given period.
+     *
+     * @param  from  defines the start of the period
+     * @param  to  defines the end of the period
+     *
+     * @return  all the sick notes matching the given parameters
+     */
+    List<SickNote> getByPeriod(DateMidnight from, DateMidnight to);
 
 
-    public List<SickNote> getSickNotesReachingEndOfSickPay() {
-
-        DateMidnight endDate = DateMidnight.now().plusDays(sickPayNotificationTime);
-
-        return sickNoteDAO.findSickNotesByMinimumLengthAndEndDate(sickPayLimit, endDate.toDate());
-    }
+    /**
+     * Get all the sick notes that are reaching the end of sick pay.
+     *
+     * @return  sick notes that are reaching the end of sick pay
+     */
+    List<SickNote> getSickNotesReachingEndOfSickPay();
 }
