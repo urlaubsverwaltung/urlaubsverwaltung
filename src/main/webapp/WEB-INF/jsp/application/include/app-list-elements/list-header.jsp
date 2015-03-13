@@ -4,7 +4,7 @@
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
-
+<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <c:choose>
     <c:when test="${!empty param.year}">
@@ -59,9 +59,11 @@
 
         <uv:year-selector year="${displayYear}" />
 
-        <a class="btn btn-default pull-right hidden-xs" data-toggle="modal" href="#filterModal">
+        <sec:authorize access="hasRole('BOSS')">
+          <a class="btn btn-default pull-right hidden-xs" data-toggle="modal" href="#filterModal">
             <i class="fa fa-bar-chart"></i> <spring:message code="applications.statistics.create" />
-        </a>
+          </a>
+        </sec:authorize>
 
     </legend>
 
