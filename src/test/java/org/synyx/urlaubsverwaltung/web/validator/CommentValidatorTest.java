@@ -88,7 +88,7 @@ public class CommentValidatorTest {
 
         validator.validate(comment, errors);
 
-        Mockito.verify(errors).rejectValue("reason", "error.reason");
+        Mockito.verify(errors).rejectValue("text", "error.mandatory.field");
     }
 
 
@@ -101,7 +101,7 @@ public class CommentValidatorTest {
 
         validator.validate(comment, errors);
 
-        Mockito.verify(errors).rejectValue("reason", "error.reason");
+        Mockito.verify(errors).rejectValue("text", "error.mandatory.field");
     }
 
 
@@ -117,6 +117,6 @@ public class CommentValidatorTest {
 
         validator.validate(comment, errors);
 
-        Mockito.verify(errors).rejectValue("reason", "error.length");
+        Mockito.verify(errors).rejectValue("text", "error.length");
     }
 }

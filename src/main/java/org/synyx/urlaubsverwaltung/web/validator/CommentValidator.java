@@ -20,9 +20,9 @@ public class CommentValidator implements Validator {
 
     private static final int MAX_CHARS = 200;
 
-    private static final String FIELD_REASON = "reason";
+    private static final String FIELD_TEXT = "text";
 
-    private static final String ERROR_REASON = "error.reason";
+    private static final String ERROR_REASON = "error.mandatory.field";
     private static final String ERROR_LENGTH = "error.length";
 
     @Override
@@ -41,11 +41,11 @@ public class CommentValidator implements Validator {
         boolean hasText = StringUtils.hasText(text);
 
         if (!hasText && comment.isMandatory()) {
-            errors.rejectValue(FIELD_REASON, ERROR_REASON);
+            errors.rejectValue(FIELD_TEXT, ERROR_REASON);
         }
 
         if (hasText && text.length() > MAX_CHARS) {
-            errors.rejectValue(FIELD_REASON, ERROR_LENGTH);
+            errors.rejectValue(FIELD_TEXT, ERROR_LENGTH);
         }
     }
 }
