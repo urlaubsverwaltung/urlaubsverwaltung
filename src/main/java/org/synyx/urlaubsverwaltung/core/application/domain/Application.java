@@ -95,10 +95,6 @@ public class Application extends AbstractPersistable<Integer> {
     @Enumerated(EnumType.STRING)
     private ApplicationStatus status;
 
-    // if application has been cancelled during status allowed: formerlyAllowed is true
-    // if application has been cancelled during status waiting: formerlyAllowed is false
-    private boolean formerlyAllowed;
-
     // Signature of applicant
     @Column(columnDefinition = "longblob")
     private byte[] signaturePerson;
