@@ -9,11 +9,11 @@ import java.math.BigDecimal;
 
 
 /**
- * Provides services related to {@link Account} entities.
+ * Provides interactions with {@link Account}s like creating or editing.
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public interface AccountService {
+public interface AccountInteractionService {
 
     /**
      * Gets the {@link Account} for the given year and person.

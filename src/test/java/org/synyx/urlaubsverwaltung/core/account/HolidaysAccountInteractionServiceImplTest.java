@@ -22,13 +22,13 @@ import java.math.BigDecimal;
 
 
 /**
- * Unit test for {@link AccountServiceImpl}.
+ * Unit test for {@link AccountInteractionServiceImpl}.
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public class HolidaysAccountServiceImplTest {
+public class HolidaysAccountInteractionServiceImplTest {
 
-    private AccountServiceImpl service;
+    private AccountInteractionServiceImpl service;
 
     private AccountDAO accountDAO;
     private CalculationService calculationService;
@@ -44,7 +44,7 @@ public class HolidaysAccountServiceImplTest {
         OwnCalendarService calendarService = new OwnCalendarService(new JollydayCalendar(), workingTimeService);
         calculationService = Mockito.mock(CalculationService.class);
 
-        service = new AccountServiceImpl(accountDAO, calendarService, calculationService);
+        service = new AccountInteractionServiceImpl(accountDAO, calendarService, calculationService);
 
         person = new Person();
         person.setLoginName("horscht");

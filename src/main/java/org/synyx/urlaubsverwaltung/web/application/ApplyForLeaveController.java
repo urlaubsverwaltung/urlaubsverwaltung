@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import org.synyx.urlaubsverwaltung.core.account.Account;
-import org.synyx.urlaubsverwaltung.core.account.AccountService;
+import org.synyx.urlaubsverwaltung.core.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationInteractionService;
@@ -57,7 +57,7 @@ public class ApplyForLeaveController {
     private PersonService personService;
 
     @Autowired
-    private AccountService accountService;
+    private AccountInteractionService accountInteractionService;
 
     @Autowired
     private ApplicationInteractionService applicationInteractionService;
@@ -110,7 +110,7 @@ public class ApplyForLeaveController {
             return ControllerConstants.ERROR_JSP;
         }
 
-        Account holidaysAccount = accountService.getHolidaysAccount(DateMidnight.now().getYear(), person);
+        Account holidaysAccount = accountInteractionService.getHolidaysAccount(DateMidnight.now().getYear(), person);
 
         if (holidaysAccount == null) {
             model.addAttribute("notpossible", true);
@@ -137,8 +137,8 @@ public class ApplyForLeaveController {
                     }
                 });
 
-        Account account = accountService.getHolidaysAccount(DateMidnight.now(GregorianChronology.getInstance())
-                .getYear(), person);
+        Account account = accountInteractionService.getHolidaysAccount(DateMidnight.now(
+                    GregorianChronology.getInstance()).getYear(), person);
 
         if (account != null) {
             model.addAttribute("vacationDaysLeft", calculationService.getVacationDaysLeft(account));

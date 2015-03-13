@@ -11,7 +11,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import org.synyx.urlaubsverwaltung.core.account.Account;
-import org.synyx.urlaubsverwaltung.core.account.AccountService;
+import org.synyx.urlaubsverwaltung.core.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.core.application.dao.ApplicationDAO;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
@@ -42,14 +42,14 @@ public class CalculationServiceTest {
 
     private CalculationService service;
     private ApplicationDAO applicationDAO;
-    private AccountService accountService;
+    private AccountInteractionService accountInteractionService;
     private OwnCalendarService calendarService;
 
     @Before
     public void setUp() throws IOException {
 
         applicationDAO = Mockito.mock(ApplicationDAO.class);
-        accountService = Mockito.mock(AccountService.class);
+        accountInteractionService = Mockito.mock(AccountInteractionService.class);
 
         WorkingTimeService workingTimeService = Mockito.mock(WorkingTimeService.class);
         calendarService = new OwnCalendarService(new JollydayCalendar(), workingTimeService);
@@ -63,7 +63,7 @@ public class CalculationServiceTest {
         Mockito.when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(Mockito.any(Person.class),
                 Mockito.any(DateMidnight.class))).thenReturn(workingTime);
 
-        service = new CalculationService(applicationDAO, accountService, calendarService);
+        service = new CalculationService(applicationDAO, accountInteractionService, calendarService);
     }
 
 
@@ -84,7 +84,7 @@ public class CalculationServiceTest {
         Account account = new Account(person, new DateMidnight(2012, DateTimeConstants.JANUARY, 1).toDate(),
                 new DateMidnight(2012, DateTimeConstants.DECEMBER, 31).toDate(), BigDecimal.valueOf(28),
                 BigDecimal.valueOf(5), BigDecimal.ZERO);
-        Mockito.when(accountService.getHolidaysAccount(2012, person)).thenReturn(account);
+        Mockito.when(accountInteractionService.getHolidaysAccount(2012, person)).thenReturn(account);
 
         // vacation days would be left after this application for leave
         account.setVacationDays(BigDecimal.valueOf(28));
@@ -291,7 +291,7 @@ public class CalculationServiceTest {
 
     private void initCustomService(final String daysBeforeApril, final String daysAfterApril) {
 
-        service = new CalculationService(applicationDAO, accountService, calendarService) {
+        service = new CalculationService(applicationDAO, accountInteractionService, calendarService) {
 
             @Override
             protected BigDecimal getUsedDaysBeforeApril(Account account) {

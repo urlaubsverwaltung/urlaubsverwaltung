@@ -20,15 +20,15 @@ import java.math.RoundingMode;
 
 
 /**
- * Implementation of interface {@link AccountService}.
+ * Implementation of interface {@link AccountInteractionService}.
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Service
 @Transactional
-class AccountServiceImpl implements AccountService {
+class AccountInteractionServiceImpl implements AccountInteractionService {
 
-    private static final Logger LOG = Logger.getLogger(AccountServiceImpl.class);
+    private static final Logger LOG = Logger.getLogger(AccountInteractionServiceImpl.class);
 
     private static final int MONTHS_PER_YEAR = 12;
     private static final int WEEKDAYS_PER_MONTH = 21;
@@ -38,7 +38,7 @@ class AccountServiceImpl implements AccountService {
     private final CalculationService calculationService;
 
     @Autowired
-    AccountServiceImpl(AccountDAO accountDAO, OwnCalendarService calendarService,
+    AccountInteractionServiceImpl(AccountDAO accountDAO, OwnCalendarService calendarService,
         CalculationService calculationService) {
 
         this.accountDAO = accountDAO;

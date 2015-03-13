@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import org.synyx.urlaubsverwaltung.core.account.Account;
-import org.synyx.urlaubsverwaltung.core.account.AccountService;
+import org.synyx.urlaubsverwaltung.core.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.core.application.dao.ApplicationDAO;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
@@ -37,15 +37,15 @@ import java.util.List;
 public class CalculationService {
 
     private final ApplicationDAO applicationDAO;
-    private final AccountService accountService;
+    private final AccountInteractionService accountInteractionService;
     private final OwnCalendarService calendarService;
 
     @Autowired
-    public CalculationService(ApplicationDAO applicationDAO, AccountService accountService,
+    public CalculationService(ApplicationDAO applicationDAO, AccountInteractionService accountInteractionService,
         OwnCalendarService calendarService) {
 
         this.applicationDAO = applicationDAO;
-        this.accountService = accountService;
+        this.accountInteractionService = accountInteractionService;
         this.calendarService = calendarService;
     }
 
@@ -96,12 +96,12 @@ public class CalculationService {
 
     private Account getHolidaysAccount(int year, Person person) {
 
-        Account holidaysAccount = accountService.getHolidaysAccount(year, person);
+        Account holidaysAccount = accountInteractionService.getHolidaysAccount(year, person);
 
         if (holidaysAccount == null) {
-            Account lastYearsHolidaysAccount = accountService.getHolidaysAccount(year - 1, person);
+            Account lastYearsHolidaysAccount = accountInteractionService.getHolidaysAccount(year - 1, person);
 
-            holidaysAccount = accountService.createHolidaysAccount(person, DateUtil.getFirstDayOfYear(year),
+            holidaysAccount = accountInteractionService.createHolidaysAccount(person, DateUtil.getFirstDayOfYear(year),
                     DateUtil.getLastDayOfYear(year), lastYearsHolidaysAccount.getAnnualVacationDays(), BigDecimal.ZERO,
                     BigDecimal.ZERO);
         }
