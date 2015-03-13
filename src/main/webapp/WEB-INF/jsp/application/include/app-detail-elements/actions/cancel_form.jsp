@@ -39,7 +39,7 @@
             </c:choose>
             : (<span id="text-cancel"></span><spring:message code="max.chars"/>)
         </div>
-        <form:textarea rows="2" path="reason" cssClass="form-control" cssErrorClass="form-control error"
+        <form:textarea rows="2" path="text" cssClass="form-control" cssErrorClass="form-control error"
                        onkeyup="count(this.value, 'text-cancel');"
                        onkeydown="maxChars(this,200); count(this.value, 'text-cancel');"/>
     </div>

@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.startup;
 
+import com.google.common.base.Optional;
+
 import org.apache.log4j.Logger;
 
 import org.joda.time.DateMidnight;
@@ -9,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
-import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationInteractionService;
@@ -171,9 +172,8 @@ public class TestDataCreationService {
             application.setEndDate(endDate);
             application.setVacationType(vacationType);
             application.setHowLong(dayLength);
-            application.setComment("Ich hätte gerne Urlaub");
 
-            applicationInteractionService.apply(application, person);
+            applicationInteractionService.apply(application, person, Optional.of("Ich hätte gerne Urlaub"));
         }
 
         return application;
@@ -194,10 +194,7 @@ public class TestDataCreationService {
         Application application = createWaitingApplication(person, vacationType, dayLength, startDate, endDate);
 
         if (application != null) {
-            Comment comment = new Comment();
-            comment.setReason("Ist ok");
-
-            applicationInteractionService.allow(application, boss, comment);
+            applicationInteractionService.allow(application, boss, Optional.of("Ist in Ordnung"));
         }
 
         return application;
@@ -210,10 +207,8 @@ public class TestDataCreationService {
         Application application = createWaitingApplication(person, vacationType, dayLength, startDate, endDate);
 
         if (application != null) {
-            Comment comment = new Comment();
-            comment.setReason("Leider nicht möglich");
-
-            applicationInteractionService.reject(application, boss, comment);
+            applicationInteractionService.reject(application, boss,
+                Optional.of("Aus organisatorischen Gründen leider nicht möglich"));
         }
 
         return application;
@@ -226,10 +221,8 @@ public class TestDataCreationService {
         Application application = createAllowedApplication(person, vacationType, dayLength, startDate, endDate);
 
         if (application != null) {
-            Comment comment = new Comment();
-            comment.setReason("Urlaub wurde doch nicht genommen");
-
-            applicationInteractionService.cancel(application, office, comment);
+            applicationInteractionService.cancel(application, office,
+                Optional.of("Urlaub wurde nicht genommen, daher storniert"));
         }
 
         return application;

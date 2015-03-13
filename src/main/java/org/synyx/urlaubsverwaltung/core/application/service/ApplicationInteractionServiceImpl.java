@@ -44,7 +44,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
     }
 
     @Override
-    public Application apply(Application application, Person applier) {
+    public Application apply(Application application, Person applier, Optional<String> comment) {
 
         Person person = application.getPerson();
 
@@ -59,15 +59,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         LOG.info("Created application for leave: " + application.toString());
 
         // COMMENT
-
-        Comment comment = new Comment();
-
-        if (application.getComment() != null) {
-            comment.setReason(application.getComment());
-        }
-
-        commentService.create(application, ApplicationStatus.WAITING, Optional.fromNullable(comment.getReason()),
-            applier);
+        commentService.create(application, ApplicationStatus.WAITING, comment, applier);
 
         // EMAILS
 
@@ -90,7 +82,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
 
     @Override
-    public Application allow(Application application, Person boss, Comment comment) {
+    public Application allow(Application application, Person boss, Optional<String> comment) {
 
         application.setStatus(ApplicationStatus.ALLOWED);
         application.setBoss(boss);
@@ -102,9 +94,9 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         LOG.info("Allowed application for leave: " + application.toString());
 
-        commentService.create(application, ApplicationStatus.ALLOWED, Optional.fromNullable(comment.getReason()), boss);
+        Comment createdComment = commentService.create(application, ApplicationStatus.ALLOWED, comment, boss);
 
-        mailService.sendAllowedNotification(application, comment);
+        mailService.sendAllowedNotification(application, createdComment);
 
         if (application.getHolidayReplacement() != null) {
             mailService.notifyRepresentative(application);
@@ -115,7 +107,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
 
     @Override
-    public Application reject(Application application, Person boss, Comment comment) {
+    public Application reject(Application application, Person boss, Optional<String> comment) {
 
         application.setStatus(ApplicationStatus.REJECTED);
         application.setBoss(boss);
@@ -127,17 +119,16 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         LOG.info("Rejected application for leave: " + application.toString());
 
-        commentService.create(application, ApplicationStatus.REJECTED, Optional.fromNullable(comment.getReason()),
-            boss);
+        Comment createdComment = commentService.create(application, ApplicationStatus.REJECTED, comment, boss);
 
-        mailService.sendRejectedNotification(application, comment);
+        mailService.sendRejectedNotification(application, createdComment);
 
         return application;
     }
 
 
     @Override
-    public Application cancel(Application application, Person canceller, Comment comment) {
+    public Application cancel(Application application, Person canceller, Optional<String> comment) {
 
         boolean cancellingAllowedApplication = application.getStatus().equals(ApplicationStatus.ALLOWED);
 
@@ -153,18 +144,17 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         LOG.info("Cancelled application for leave: " + application);
 
-        commentService.create(application, ApplicationStatus.CANCELLED, Optional.fromNullable(comment.getReason()),
-            canceller);
+        Comment createdComment = commentService.create(application, ApplicationStatus.CANCELLED, comment, canceller);
 
         if (cancellingAllowedApplication) {
             // if allowed application has been cancelled, office and bosses get an email
-            mailService.sendCancelledNotification(application, false, comment);
+            mailService.sendCancelledNotification(application, false, createdComment);
         }
 
         if (!application.getPerson().equals(canceller)) {
             // if application has been cancelled for someone on behalf,
             // the person gets an email regardless of application status
-            mailService.sendCancelledNotification(application, true, comment);
+            mailService.sendCancelledNotification(application, true, createdComment);
         }
 
         return application;

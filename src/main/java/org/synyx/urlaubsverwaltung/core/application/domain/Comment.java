@@ -9,7 +9,11 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.util.Date;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
 
 
 /**
@@ -37,10 +41,6 @@ public class Comment extends AbstractPersistable<Integer> {
     // each application may only have one comment to each ApplicationStatus
     @Enumerated(EnumType.STRING)
     private ApplicationStatus status;
-
-    // Do not persist this information!
-    @Transient
-    private boolean isMandatory;
 
     public Comment() {
 
@@ -110,17 +110,5 @@ public class Comment extends AbstractPersistable<Integer> {
     public void setStatus(ApplicationStatus status) {
 
         this.status = status;
-    }
-
-
-    public boolean isMandatory() {
-
-        return isMandatory;
-    }
-
-
-    public void setMandatory(boolean isMandatory) {
-
-        this.isMandatory = isMandatory;
     }
 }

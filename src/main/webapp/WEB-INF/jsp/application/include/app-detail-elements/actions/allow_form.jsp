@@ -28,7 +28,7 @@
             <spring:message code='comment'/>, <spring:message code="optional"/>: (<span
                 id="text-confirm"></span><spring:message code="max.chars"/>)
         </div>
-        <form:textarea rows="2" cssClass="form-control" cssErrorClass="form-control error" path="reason"
+        <form:textarea rows="2" cssClass="form-control" cssErrorClass="form-control error" path="text"
                        onkeyup="count(this.value, 'text-confirm');"
                        onkeydown="maxChars(this,200); count(this.value, 'text-confirm');"/>
     </div>

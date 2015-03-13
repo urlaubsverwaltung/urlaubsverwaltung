@@ -92,13 +92,7 @@ public class SignService {
             data = CryptoUtil.sign(privKey, data);
 
             return data;
-        } catch (InvalidKeyException ex) {
-            logSignException(application.getId(), ex);
-        } catch (SignatureException ex) {
-            logSignException(application.getId(), ex);
-        } catch (NoSuchAlgorithmException ex) {
-            logSignException(application.getId(), ex);
-        } catch (InvalidKeySpecException ex) {
+        } catch (InvalidKeyException | SignatureException | NoSuchAlgorithmException | InvalidKeySpecException ex) {
             logSignException(application.getId(), ex);
         }
 

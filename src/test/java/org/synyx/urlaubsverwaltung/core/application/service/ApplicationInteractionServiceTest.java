@@ -48,11 +48,12 @@ public class ApplicationInteractionServiceTest {
 
         Person person = new Person();
         Person applier = new Person();
+        Optional<String> comment = Optional.of("Foo");
 
         Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
 
-        service.apply(applicationForLeave, applier);
+        service.apply(applicationForLeave, applier, comment);
 
         Assert.assertEquals("Wrong state", ApplicationStatus.WAITING, applicationForLeave.getStatus());
         Assert.assertEquals("Wrong person", person, applicationForLeave.getPerson());
@@ -64,7 +65,7 @@ public class ApplicationInteractionServiceTest {
         Mockito.verify(signService).signApplicationByUser(Mockito.eq(applicationForLeave), Mockito.eq(applier));
 
         Mockito.verify(commentService).create(Mockito.eq(applicationForLeave), Mockito.eq(ApplicationStatus.WAITING),
-            Mockito.eq(Optional.<String>absent()), Mockito.eq(applier));
+            Mockito.eq(comment), Mockito.eq(applier));
     }
 
 
@@ -76,7 +77,7 @@ public class ApplicationInteractionServiceTest {
         Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
 
-        service.apply(applicationForLeave, person);
+        service.apply(applicationForLeave, person, Optional.of("Foo"));
 
         Mockito.verify(mailService).sendConfirmation(Mockito.eq(applicationForLeave));
         Mockito.verify(mailService, Mockito.never()).sendAppliedForLeaveByOfficeNotification(applicationForLeave);
@@ -94,7 +95,7 @@ public class ApplicationInteractionServiceTest {
         Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
 
-        service.apply(applicationForLeave, applier);
+        service.apply(applicationForLeave, applier, Optional.of("Foo"));
 
         Mockito.verify(mailService, Mockito.never()).sendConfirmation(Mockito.eq(applicationForLeave));
         Mockito.verify(mailService).sendAppliedForLeaveByOfficeNotification(applicationForLeave);
@@ -112,8 +113,7 @@ public class ApplicationInteractionServiceTest {
 
         Person person = new Person();
         Person boss = new Person();
-        Comment comment = new Comment();
-        comment.setReason("Foo");
+        Optional<String> comment = Optional.of("Foo");
 
         Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
@@ -131,7 +131,7 @@ public class ApplicationInteractionServiceTest {
         Mockito.verify(signService).signApplicationByBoss(Mockito.eq(applicationForLeave), Mockito.eq(boss));
 
         Mockito.verify(commentService).create(Mockito.eq(applicationForLeave), Mockito.eq(ApplicationStatus.ALLOWED),
-            Mockito.eq(Optional.fromNullable(comment.getReason())), Mockito.eq(boss));
+            Mockito.eq(comment), Mockito.eq(boss));
     }
 
 
@@ -140,14 +140,14 @@ public class ApplicationInteractionServiceTest {
 
         Person person = new Person();
         Person boss = new Person();
-        Comment comment = new Comment();
 
         Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
 
-        service.allow(applicationForLeave, boss, comment);
+        service.allow(applicationForLeave, boss, Optional.of("Foo"));
 
-        Mockito.verify(mailService).sendAllowedNotification(Mockito.eq(applicationForLeave), Mockito.eq(comment));
+        Mockito.verify(mailService).sendAllowedNotification(Mockito.eq(applicationForLeave),
+            Mockito.any(Comment.class));
     }
 
 
@@ -157,13 +157,12 @@ public class ApplicationInteractionServiceTest {
         Person person = new Person();
         Person rep = new Person();
         Person boss = new Person();
-        Comment comment = new Comment();
 
         Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
         applicationForLeave.setHolidayReplacement(rep);
 
-        service.allow(applicationForLeave, boss, comment);
+        service.allow(applicationForLeave, boss, Optional.of("Foo"));
 
         Mockito.verify(mailService).notifyRepresentative(Mockito.eq(applicationForLeave));
     }
@@ -178,8 +177,7 @@ public class ApplicationInteractionServiceTest {
 
         Person person = new Person();
         Person boss = new Person();
-        Comment comment = new Comment();
-        comment.setReason("Foo");
+        Optional<String> comment = Optional.of("Foo");
 
         Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
@@ -197,7 +195,7 @@ public class ApplicationInteractionServiceTest {
         Mockito.verify(signService).signApplicationByBoss(Mockito.eq(applicationForLeave), Mockito.eq(boss));
 
         Mockito.verify(commentService).create(Mockito.eq(applicationForLeave), Mockito.eq(ApplicationStatus.REJECTED),
-            Mockito.eq(Optional.fromNullable(comment.getReason())), Mockito.eq(boss));
+            Mockito.eq(comment), Mockito.eq(boss));
     }
 
 
@@ -206,14 +204,14 @@ public class ApplicationInteractionServiceTest {
 
         Person person = new Person();
         Person boss = new Person();
-        Comment comment = new Comment();
 
         Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
 
-        service.reject(applicationForLeave, boss, comment);
+        service.reject(applicationForLeave, boss, Optional.of("Foo"));
 
-        Mockito.verify(mailService).sendRejectedNotification(Mockito.eq(applicationForLeave), Mockito.eq(comment));
+        Mockito.verify(mailService).sendRejectedNotification(Mockito.eq(applicationForLeave),
+            Mockito.any(Comment.class));
     }
 
 
@@ -225,8 +223,7 @@ public class ApplicationInteractionServiceTest {
     public void ensureCancellingNotYetAllowedApplicationForLeaveChangesStateAndOtherAttributesButSendsNoEmail() {
 
         Person person = new Person();
-        Comment comment = new Comment();
-        comment.setReason("Bar");
+        Optional<String> comment = Optional.of("Foo");
 
         Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
@@ -243,7 +240,7 @@ public class ApplicationInteractionServiceTest {
         Mockito.verify(applicationService).save(applicationForLeave);
 
         Mockito.verify(commentService).create(Mockito.eq(applicationForLeave), Mockito.eq(ApplicationStatus.CANCELLED),
-            Mockito.eq(Optional.fromNullable(comment.getReason())), Mockito.eq(person));
+            Mockito.eq(comment), Mockito.eq(person));
 
         Mockito.verifyZeroInteractions(mailService);
     }
@@ -254,8 +251,7 @@ public class ApplicationInteractionServiceTest {
 
         Person person = new Person();
         Person canceller = new Person();
-        Comment comment = new Comment();
-        comment.setReason("Bla");
+        Optional<String> comment = Optional.of("Foo");
 
         Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
@@ -272,10 +268,10 @@ public class ApplicationInteractionServiceTest {
         Mockito.verify(applicationService).save(applicationForLeave);
 
         Mockito.verify(commentService).create(Mockito.eq(applicationForLeave), Mockito.eq(ApplicationStatus.CANCELLED),
-            Mockito.eq(Optional.fromNullable(comment.getReason())), Mockito.eq(canceller));
+            Mockito.eq(comment), Mockito.eq(canceller));
 
         Mockito.verify(mailService).sendCancelledNotification(Mockito.eq(applicationForLeave), Mockito.eq(false),
-            Mockito.eq(comment));
+            Mockito.any(Comment.class));
     }
 
 
@@ -284,8 +280,7 @@ public class ApplicationInteractionServiceTest {
 
         Person person = new Person();
         Person canceller = new Person();
-        Comment comment = new Comment();
-        comment.setReason("Bar");
+        Optional<String> comment = Optional.of("Foo");
 
         Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
@@ -302,10 +297,10 @@ public class ApplicationInteractionServiceTest {
         Mockito.verify(applicationService).save(applicationForLeave);
 
         Mockito.verify(commentService).create(Mockito.eq(applicationForLeave), Mockito.eq(ApplicationStatus.CANCELLED),
-            Mockito.eq(Optional.fromNullable(comment.getReason())), Mockito.eq(canceller));
+            Mockito.eq(comment), Mockito.eq(canceller));
 
         Mockito.verify(mailService).sendCancelledNotification(Mockito.eq(applicationForLeave), Mockito.eq(true),
-            Mockito.eq(comment));
+            Mockito.any(Comment.class));
     }
 
     // END: CANCEL

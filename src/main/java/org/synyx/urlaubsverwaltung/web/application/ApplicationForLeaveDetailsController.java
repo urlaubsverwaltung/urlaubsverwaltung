@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.web.application;
 
+import com.google.common.base.Optional;
+
 import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,7 +102,7 @@ public class ApplicationForLeaveDetailsController {
 
     private void prepareDetailView(Application application, Model model) {
 
-        model.addAttribute("comment", new Comment());
+        model.addAttribute("comment", new CommentForm());
 
         List<Comment> comments = commentService.getCommentsByApplication(application);
 
@@ -151,7 +153,7 @@ public class ApplicationForLeaveDetailsController {
      */
     @RequestMapping(value = "/{applicationId}/allow", method = RequestMethod.PUT)
     public String allowApplication(@PathVariable("applicationId") Integer applicationId,
-        @ModelAttribute("comment") Comment comment, Errors errors, RedirectAttributes redirectAttributes) {
+        @ModelAttribute("comment") CommentForm comment, Errors errors, RedirectAttributes redirectAttributes) {
 
         Person boss = sessionService.getLoggedUser();
         Application application = applicationService.getApplicationById(applicationId);
@@ -164,7 +166,7 @@ public class ApplicationForLeaveDetailsController {
                 redirectAttributes.addFlashAttribute("errors", errors);
                 redirectAttributes.addFlashAttribute("action", "allow");
             } else {
-                applicationInteractionService.allow(application, boss, comment);
+                applicationInteractionService.allow(application, boss, Optional.fromNullable(comment.getText()));
                 redirectAttributes.addFlashAttribute("allowSuccess", true);
             }
 
@@ -200,7 +202,7 @@ public class ApplicationForLeaveDetailsController {
      */
     @RequestMapping(value = "/{applicationId}/reject", method = RequestMethod.PUT)
     public String rejectApplication(@PathVariable("applicationId") Integer applicationId,
-        @ModelAttribute("comment") Comment comment, Errors errors, RedirectAttributes redirectAttributes) {
+        @ModelAttribute("comment") CommentForm comment, Errors errors, RedirectAttributes redirectAttributes) {
 
         Person boss = sessionService.getLoggedUser();
 
@@ -214,7 +216,7 @@ public class ApplicationForLeaveDetailsController {
                 redirectAttributes.addFlashAttribute("errors", errors);
                 redirectAttributes.addFlashAttribute("action", "reject");
             } else {
-                applicationInteractionService.reject(application, boss, comment);
+                applicationInteractionService.reject(application, boss, Optional.fromNullable(comment.getText()));
                 redirectAttributes.addFlashAttribute("rejectSuccess", true);
             }
 
@@ -231,7 +233,7 @@ public class ApplicationForLeaveDetailsController {
      */
     @RequestMapping(value = "/{applicationId}/cancel", method = RequestMethod.PUT)
     public String cancelApplication(@PathVariable("applicationId") Integer applicationId,
-        @ModelAttribute("comment") Comment comment, Errors errors, RedirectAttributes redirectAttributes) {
+        @ModelAttribute("comment") CommentForm comment, Errors errors, RedirectAttributes redirectAttributes) {
 
         Application application = applicationService.getApplicationById(applicationId);
         Person loggedUser = sessionService.getLoggedUser();
@@ -258,7 +260,7 @@ public class ApplicationForLeaveDetailsController {
             redirectAttributes.addFlashAttribute("errors", errors);
             redirectAttributes.addFlashAttribute("action", "cancel");
         } else {
-            applicationInteractionService.cancel(application, loggedUser, comment);
+            applicationInteractionService.cancel(application, loggedUser, Optional.fromNullable(comment.getText()));
         }
 
         return "redirect:/web/application/" + applicationId;

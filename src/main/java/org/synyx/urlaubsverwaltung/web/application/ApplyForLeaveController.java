@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.web.application;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.FluentIterable;
 
 import org.joda.time.DateMidnight;
@@ -182,7 +183,8 @@ public class ApplyForLeaveController {
 
         Application application = appForm.generateApplicationForLeave();
 
-        Application savedApplicationForLeave = applicationInteractionService.apply(application, applier);
+        Application savedApplicationForLeave = applicationInteractionService.apply(application, applier,
+                Optional.fromNullable(appForm.getComment()));
 
         return "redirect:/web/application/" + savedApplicationForLeave.getId();
     }
