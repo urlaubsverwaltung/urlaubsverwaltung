@@ -15,6 +15,8 @@ import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.OverlapCase;
+import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteDAO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,11 +32,13 @@ import java.util.List;
 public class OverlapService {
 
     private final ApplicationDAO applicationDAO;
+    private final SickNoteDAO sickNoteDAO;
 
     @Autowired
-    public OverlapService(ApplicationDAO applicationDAO) {
+    public OverlapService(ApplicationDAO applicationDAO, SickNoteDAO sickNoteDAO) {
 
         this.applicationDAO = applicationDAO;
+        this.sickNoteDAO = sickNoteDAO;
     }
 
     /**
@@ -54,14 +58,15 @@ public class OverlapService {
     public OverlapCase checkOverlap(Application application) {
 
         List<Application> applications = getRelevantApplicationsForLeave(application);
+        List<SickNote> sickNotes = getRelevantSickNotes(application);
 
         // case (1): no overlap at all
-        if (applications.isEmpty()) {
+        if (applications.isEmpty() && sickNotes.isEmpty()) {
             return OverlapCase.NO_OVERLAPPING;
         } else {
             // case (2) or (3): overlap
 
-            List<Interval> listOfOverlaps = getListOfOverlaps(application, applications);
+            List<Interval> listOfOverlaps = getListOfOverlaps(application, applications, sickNotes);
 
             if (application.getHowLong() == DayLength.FULL) {
                 List<Interval> listOfGaps = getListOfGaps(application, listOfOverlaps);
@@ -116,33 +121,68 @@ public class OverlapService {
 
 
     /**
+     * Get all active sick notes that are in the period of the given application for leave.
+     *
+     * @param  application  contains information about the period to be checked and the person
+     *
+     * @return  {@link List} of {@link SickNote}s overlapping with the period of the given {@link Application}
+     */
+    private List<SickNote> getRelevantSickNotes(Application application) {
+
+        // get all sick notes
+        List<SickNote> sickNotes = sickNoteDAO.findByPersonAndPeriod(application.getPerson(),
+                application.getStartDate().toDate(), application.getEndDate().toDate());
+
+        // filter them since only active sick notes are relevant
+        return FluentIterable.from(sickNotes).filter(new Predicate<SickNote>() {
+
+                    @Override
+                    public boolean apply(SickNote input) {
+
+                        return input.isActive();
+                    }
+                }).toList();
+    }
+
+
+    /**
      * Get a list of intervals that overlap with the period of the given {@link Application} for leave.
      *
      * @param  referenceApplicationForLeave  contains the period to get the overlaps for
      * @param  applicationsForLeave  overlapping the reference application for leave
+     * @param  sickNotes  overlapping the reference application for leave
      *
      * @return  {@link List} of overlap intervals
      */
     private List<Interval> getListOfOverlaps(Application referenceApplicationForLeave,
-        List<Application> applicationsForLeave) {
+        List<Application> applicationsForLeave, List<SickNote> sickNotes) {
 
         Interval interval = new Interval(referenceApplicationForLeave.getStartDate(),
                 referenceApplicationForLeave.getEndDate());
 
-        List<Interval> listOfOverlaps = new ArrayList<>();
+        List<Interval> overlappingIntervals = new ArrayList<>();
 
         for (Application application : applicationsForLeave) {
-            Interval inti = new Interval(application.getStartDate(), application.getEndDate());
-            Interval overlap = inti.overlap(interval);
+            overlappingIntervals.add(new Interval(application.getStartDate(), application.getEndDate()));
+        }
+
+        for (SickNote sickNote : sickNotes) {
+            overlappingIntervals.add(new Interval(sickNote.getStartDate(), sickNote.getEndDate()));
+        }
+
+        List<Interval> listOfOverlaps = new ArrayList<>();
+
+        for (Interval overlappingInterval : overlappingIntervals) {
+            Interval overlap = overlappingInterval.overlap(interval);
 
             // because intervals are inclusive of the start instant, but exclusive of the end instant
             // you have to check if end of interval a is start of interval b
 
-            if (inti.getEnd().equals(interval.getStart())) {
+            if (overlappingInterval.getEnd().equals(interval.getStart())) {
                 overlap = new Interval(interval.getStart(), interval.getStart());
             }
 
-            if (inti.getStart().equals(interval.getEnd())) {
+            if (overlappingInterval.getStart().equals(interval.getEnd())) {
                 overlap = new Interval(interval.getEnd(), interval.getEnd());
             }
 
