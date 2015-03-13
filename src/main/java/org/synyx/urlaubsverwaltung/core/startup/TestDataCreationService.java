@@ -46,7 +46,9 @@ public class TestDataCreationService {
     private static final String ENVIRONMENT_PROPERTY = "env";
     private static final String DEV_ENVIRONMENT = "dev";
 
-    private static final String USER = "test";
+    public static final String USER = "testUser";
+    public static final String BOSS_USER = "testBoss";
+    public static final String OFFICE_USER = "test";
 
     @Autowired
     private PersonInteractionService personInteractionService;
@@ -75,11 +77,9 @@ public class TestDataCreationService {
         if (environment.equals(DEV_ENVIRONMENT)) {
             LOG.info("Test data will be created...");
 
-            user = createTestPerson(USER, "Marlene", "Muster", "mmuster@muster.de", Role.USER, Role.BOSS, Role.OFFICE);
-
-            boss = createTestPerson("max", "Max", "Mustermann", "maxMuster@muster.de", Role.USER, Role.BOSS);
-
-            office = createTestPerson("klaus", "Klaus", "Müller", "mueller@muster.de", Role.USER, Role.BOSS,
+            user = createTestPerson(USER, "Klaus", "Müller", "mueller@muster.de", Role.USER);
+            boss = createTestPerson(BOSS_USER, "Max", "Mustermann", "maxMuster@muster.de", Role.USER, Role.BOSS);
+            office = createTestPerson(OFFICE_USER, "Marlene", "Muster", "mmuster@muster.de", Role.USER, Role.BOSS,
                     Role.OFFICE);
 
             createTestPerson("hdampf", "Hans", "Dampf", "dampf@foo.bar", Role.USER, Role.OFFICE);

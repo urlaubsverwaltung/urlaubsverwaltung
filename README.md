@@ -194,7 +194,11 @@ Befehl auszuführen:
 
 <pre>mvn tomcat:run</pre>
 
-Ohne Angabe des Parameters `spring.profiles.active` kann man sich nun mit dem Testbenutzer `test/secret` anmelden.
+Ohne Angabe des Parameters `spring.profiles.active` kann man sich nun mit verschiedenen Testbenutzern anmelden:
+
+* `testUser/secret`: Benutzer mit der User Rolle
+* `testBoss/secret`: Benutzer mit der Boss Rolle
+* `test/secret`: Benutzer mit der Office Rolle
 
 **Authentifizierung via LDAP:**
 
