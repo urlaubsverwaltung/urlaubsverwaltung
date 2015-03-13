@@ -4,6 +4,8 @@ import com.google.common.base.Optional;
 
 import org.joda.time.DateMidnight;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +40,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
     private final SignService signService;
     private final MailService mailService;
 
+    @Autowired
     public SickNoteInteractionServiceImpl(SickNoteService sickNoteService,
         SickNoteCommentService sickNoteCommentService, ApplicationService applicationService,
         CommentService applicationCommentService, SignService signService, MailService mailService) {

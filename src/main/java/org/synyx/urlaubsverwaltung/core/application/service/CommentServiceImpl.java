@@ -47,10 +47,10 @@ class CommentServiceImpl implements CommentService {
 
         comment.setStatus(status);
         comment.setApplication(application);
-        comment.setDateOfComment(DateMidnight.now());
+        comment.setDate(DateMidnight.now());
 
         if (text.isPresent()) {
-            comment.setReason(text.get());
+            comment.setText(text.get());
         }
 
         commentDAO.save(comment);

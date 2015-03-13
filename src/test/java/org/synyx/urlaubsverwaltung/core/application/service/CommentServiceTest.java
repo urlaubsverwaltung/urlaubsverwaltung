@@ -46,7 +46,7 @@ public class CommentServiceTest {
 
         Assert.assertNotNull("Should not be null", comment);
 
-        Assert.assertNotNull("Date should be set", comment.getDateOfComment());
+        Assert.assertNotNull("Date should be set", comment.getDate());
         Assert.assertNotNull("Status should be set", comment.getStatus());
         Assert.assertNotNull("Author should be set", comment.getPerson());
         Assert.assertNotNull("Application for leave should be set", comment.getApplication());
@@ -54,7 +54,7 @@ public class CommentServiceTest {
         Assert.assertEquals("Wrong status", ApplicationStatus.ALLOWED, comment.getStatus());
         Assert.assertEquals("Wrong author", author, comment.getPerson());
 
-        Assert.assertNull("Text should not be set", comment.getReason());
+        Assert.assertNull("Text should not be set", comment.getText());
 
         Mockito.verify(commentDAO).save(Mockito.eq(comment));
     }
@@ -70,14 +70,14 @@ public class CommentServiceTest {
 
         Assert.assertNotNull("Should not be null", comment);
 
-        Assert.assertNotNull("Date should be set", comment.getDateOfComment());
+        Assert.assertNotNull("Date should be set", comment.getDate());
         Assert.assertNotNull("Status should be set", comment.getStatus());
         Assert.assertNotNull("Author should be set", comment.getPerson());
-        Assert.assertNotNull("Text should be set", comment.getReason());
+        Assert.assertNotNull("Text should be set", comment.getText());
 
         Assert.assertEquals("Wrong status", ApplicationStatus.REJECTED, comment.getStatus());
         Assert.assertEquals("Wrong author", author, comment.getPerson());
-        Assert.assertEquals("Wrong text", "Foo", comment.getReason());
+        Assert.assertEquals("Wrong text", "Foo", comment.getText());
 
         Mockito.verify(commentDAO).save(Mockito.eq(comment));
     }

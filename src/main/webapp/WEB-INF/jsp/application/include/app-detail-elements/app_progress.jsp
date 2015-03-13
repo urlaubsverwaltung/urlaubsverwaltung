@@ -33,10 +33,10 @@
                     </c:when>
                 </c:choose>
 
-                <c:if test="${comment.reason != null && not empty comment.reason}">
+                <c:if test="${comment.text != null && not empty comment.text}">
                     <spring:message code="app.comment"/>
                     <br/>
-                    <i><c:out value="${comment.reason}"/></i>
+                    <i><c:out value="${comment.text}"/></i>
                 </c:if>
             </td>
         </tr>
