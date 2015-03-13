@@ -139,11 +139,10 @@ public class PersonManagementController {
         }
 
         Optional<Account> account = accountService.getHolidaysAccount(yearOfHolidaysAccount, person);
+        Optional<WorkingTime> workingTime = workingTimeService.getCurrentOne(person);
 
-        WorkingTime workingTime = workingTimeService.getCurrentOne(person);
-
-        PersonForm personForm = new PersonForm(person, yearOfHolidaysAccount, account,
-                Optional.fromNullable(workingTime), person.getPermissions(), person.getNotifications());
+        PersonForm personForm = new PersonForm(person, yearOfHolidaysAccount, account, workingTime,
+                person.getPermissions(), person.getNotifications());
 
         model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
         model.addAttribute("personForm", personForm);

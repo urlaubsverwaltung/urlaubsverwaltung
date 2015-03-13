@@ -1,6 +1,8 @@
 
 package org.synyx.urlaubsverwaltung.core.calendar;
 
+import com.google.common.base.Optional;
+
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
 
@@ -57,7 +59,7 @@ public class OwnCalendarServiceTest {
         workingTime.setWorkingDays(workingDays, DayLength.FULL);
 
         Mockito.when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(Mockito.eq(person),
-                Mockito.any(DateMidnight.class))).thenReturn(workingTime);
+                Mockito.any(DateMidnight.class))).thenReturn(Optional.of(workingTime));
     }
 
 

@@ -1,6 +1,8 @@
 
 package org.synyx.urlaubsverwaltung.core.calendar;
 
+import com.google.common.base.Optional;
+
 import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,9 +115,10 @@ public class OwnCalendarService {
      */
     public BigDecimal getWorkDays(DayLength dayLength, DateMidnight startDate, DateMidnight endDate, Person person) {
 
-        WorkingTime workingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(person, startDate);
+        Optional<WorkingTime> workingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(person,
+                startDate);
 
-        if (workingTime == null) {
+        if (!workingTime.isPresent()) {
             throw new NoValidWorkingTimeException("No working time found for User '" + person.getLoginName()
                 + "' in period " + startDate.toString(DateFormat.PATTERN) + " - " + endDate.toString(DateFormat.PATTERN)
                 + ". Please contact the application manager.");
@@ -130,7 +133,7 @@ public class OwnCalendarService {
             BigDecimal duration = jollydayCalendar.getWorkingDurationOfDate(day);
 
             int dayOfWeek = day.getDayOfWeek();
-            BigDecimal workingDuration = workingTime.getDayLengthForWeekDay(dayOfWeek).getDuration();
+            BigDecimal workingDuration = workingTime.get().getDayLengthForWeekDay(dayOfWeek).getDuration();
 
             BigDecimal result = duration.multiply(workingDuration);
 

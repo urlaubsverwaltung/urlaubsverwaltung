@@ -64,7 +64,7 @@ public class CalculationServiceTest {
         workingTime.setWorkingDays(workingDays, DayLength.FULL);
 
         Mockito.when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(Mockito.any(Person.class),
-                Mockito.any(DateMidnight.class))).thenReturn(workingTime);
+                Mockito.any(DateMidnight.class))).thenReturn(Optional.of(workingTime));
 
         service = new CalculationService(applicationService, accountService, accountInteractionService,
                 calendarService);
