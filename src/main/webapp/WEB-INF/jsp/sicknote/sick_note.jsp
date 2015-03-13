@@ -166,7 +166,7 @@
                 
                 <table class="list-table striped-table bordered-table">
                     <tbody>
-                        <c:forEach items="${sickNote.comments}" var="comment" varStatus="loopStatus">
+                        <c:forEach items="${comments}" var="comment" varStatus="loopStatus">
                             <tr>
                                 <td>
                                     <img class="img-circle hidden-print center-block" src="<c:out value='${gravatarUrls[comment]}?d=mm&s=40'/>"/>

@@ -42,6 +42,7 @@ import org.synyx.urlaubsverwaltung.web.validator.SickNoteConvertFormValidator;
 import org.synyx.urlaubsverwaltung.web.validator.SickNoteValidator;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.security.RolesAllowed;
@@ -99,9 +100,12 @@ public class SickNoteController {
             model.addAttribute("comment", new SickNoteComment());
             model.addAttribute("gravatar", GravatarUtil.createImgURL(sickNote.getPerson().getEmail()));
 
+            List<SickNoteComment> comments = sickNoteCommentService.getCommentsBySickNote(sickNote);
+            model.addAttribute("comments", comments);
+
             Map<SickNoteComment, String> gravatarUrls = new HashMap<>();
 
-            for (SickNoteComment comment : sickNote.getComments()) {
+            for (SickNoteComment comment : comments) {
                 String gravatarUrl = GravatarUtil.createImgURL(comment.getPerson().getEmail());
 
                 if (gravatarUrl != null) {
@@ -186,8 +190,6 @@ public class SickNoteController {
                 return "sicknote/sick_note_form";
             }
 
-            // this step is necessary because collections can not be bind with form:hidden
-            sickNote.setComments(sickNoteService.getById(id).getComments());
             sickNoteInteractionService.update(sickNote, sessionService.getLoggedUser());
 
             return "redirect:/web/sicknote/" + id;

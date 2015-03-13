@@ -3,6 +3,9 @@ package org.synyx.urlaubsverwaltung.core.sicknote.comment;
 import com.google.common.base.Optional;
 
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
+
+import java.util.List;
 
 
 /**
@@ -23,4 +26,14 @@ public interface SickNoteCommentService {
      * @return  the created comment
      */
     SickNoteComment create(SickNoteStatus status, Optional<String> text, Person author);
+
+
+    /**
+     * Gets all comments for the given sick note.
+     *
+     * @param  sickNote  to get the comments for
+     *
+     * @return  all comments for the given sick note.
+     */
+    List<SickNoteComment> getCommentsBySickNote(SickNote sickNote);
 }
