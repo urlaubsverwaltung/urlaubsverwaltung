@@ -194,11 +194,4 @@ class AccountServiceImpl implements AccountService {
 
         return days;
     }
-
-
-    @Override
-    public void save(Account account) {
-
-        accountDAO.save(account);
-    }
 }

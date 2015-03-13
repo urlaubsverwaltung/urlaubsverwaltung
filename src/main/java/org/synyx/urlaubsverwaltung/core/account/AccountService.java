@@ -16,14 +16,6 @@ import java.math.BigDecimal;
 public interface AccountService {
 
     /**
-     * Just saves the given {@link Account}.
-     *
-     * @param  account  to be saved
-     */
-    void save(Account account);
-
-
-    /**
      * Gets the {@link Account} for the given year and person.
      *
      * @param  year  to get the holidays account for
