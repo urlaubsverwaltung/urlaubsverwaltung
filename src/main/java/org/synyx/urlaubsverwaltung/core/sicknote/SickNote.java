@@ -57,7 +57,7 @@ public class SickNote extends AbstractPersistable<Integer> {
     private Date aubEndDate;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<SickNoteComment> comments = new ArrayList<SickNoteComment>();
+    private List<SickNoteComment> comments = new ArrayList<>();
 
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date lastEdited;

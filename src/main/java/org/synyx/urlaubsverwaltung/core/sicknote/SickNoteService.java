@@ -65,7 +65,7 @@ public class SickNoteService {
         /* needed by Spring */
     }
 
-    private void save(SickNote sickNote) {
+    public void save(SickNote sickNote) {
 
         sickNote.setLastEdited(DateMidnight.now());
 
