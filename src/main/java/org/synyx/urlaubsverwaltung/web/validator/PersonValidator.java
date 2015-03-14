@@ -154,7 +154,7 @@ public class PersonValidator implements Validator {
 
         if (!errors.hasFieldErrors(LOGIN_NAME)) {
             // validate unique login name
-            if (personService.getPersonByLogin(login) != null) {
+            if (personService.getPersonByLogin(login).isPresent()) {
                 errors.rejectValue(LOGIN_NAME, ERROR_LOGIN_UNIQUE);
             }
         }

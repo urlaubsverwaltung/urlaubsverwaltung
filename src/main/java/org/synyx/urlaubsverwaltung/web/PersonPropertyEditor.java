@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.web;
 
+import com.google.common.base.Optional;
+
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 
@@ -25,9 +27,9 @@ public class PersonPropertyEditor extends PropertyEditorSupport {
 
         Integer id = Integer.valueOf(text);
 
-        Person person = personService.getPersonByID(id);
+        Optional<Person> person = personService.getPersonByID(id);
 
-        if (person != null) {
+        if (person.isPresent()) {
             setValue(person);
         } else {
             setValue(null);

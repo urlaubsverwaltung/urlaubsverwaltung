@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.security;
 
+import com.google.common.base.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,7 +35,13 @@ public class SessionService {
 
         String user = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        return personService.getPersonByLogin(user);
+        Optional<Person> person = personService.getPersonByLogin(user);
+
+        if (!person.isPresent()) {
+            throw new IllegalStateException("Can not get the person for the signed in user with username = " + user);
+        }
+
+        return person.get();
     }
 
 

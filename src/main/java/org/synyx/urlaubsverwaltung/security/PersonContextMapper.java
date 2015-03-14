@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.security;
 
+import com.google.common.base.Optional;
+
 import org.apache.log4j.Logger;
 
 import org.springframework.ldap.core.DirContextAdapter;
@@ -46,7 +48,7 @@ public class PersonContextMapper implements UserDetailsContextMapper {
     public UserDetails mapUserFromContext(DirContextOperations ctx, String username,
         Collection<? extends GrantedAuthority> authorities) {
 
-        Person person = personService.getPersonByLogin(username);
+        Optional<Person> optionalPerson = personService.getPersonByLogin(username);
 
         /**
          * NOTE: If the system has no user yet, the first person that successfully signs in
@@ -54,8 +56,12 @@ public class PersonContextMapper implements UserDetailsContextMapper {
          */
         boolean noActivePersonExistsYet = personService.getActivePersons().size() == 0;
 
-        if (person == null && (noActivePersonExistsYet || this.createOnLogin)) {
+        Person person;
+
+        if (!optionalPerson.isPresent() && (noActivePersonExistsYet || this.createOnLogin)) {
             person = createPerson(username, noActivePersonExistsYet);
+        } else {
+            person = optionalPerson.get();
         }
 
         org.springframework.security.ldap.userdetails.Person.Essence p =

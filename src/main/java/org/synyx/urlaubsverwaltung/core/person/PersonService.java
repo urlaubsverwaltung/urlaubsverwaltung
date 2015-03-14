@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.person;
 
+import com.google.common.base.Optional;
+
 import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
 import org.synyx.urlaubsverwaltung.security.Role;
 
@@ -28,19 +30,19 @@ public interface PersonService {
      *
      * @param  id  Integer the id of the person
      *
-     * @return  {@link Person} for the given id
+     * @return  optional {@link Person} for the given id
      */
-    Person getPersonByID(Integer id);
+    Optional<Person> getPersonByID(Integer id);
 
 
     /**
      * finds a {@link Person} in the database by login name.
      *
-     * @param  loginName
+     * @param  loginName  of the person
      *
-     * @return  {@link Person} for the given login name
+     * @return  optional {@link Person} for the given login name
      */
-    Person getPersonByLogin(String loginName);
+    Optional<Person> getPersonByLogin(String loginName);
 
 
     /**

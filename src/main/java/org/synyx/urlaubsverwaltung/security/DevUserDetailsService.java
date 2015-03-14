@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.security;
 
+import com.google.common.base.Optional;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -38,12 +40,12 @@ public class DevUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("No authentication possible for user = " + username);
         }
 
-        Person testUser = personService.getPersonByLogin(username);
+        Optional<Person> testUser = personService.getPersonByLogin(username);
 
-        if (testUser != null) {
+        if (testUser.isPresent()) {
             Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 
-            Collection<Role> roles = testUser.getPermissions();
+            Collection<Role> roles = testUser.get().getPermissions();
 
             for (final Role role : roles) {
                 grantedAuthorities.add(new GrantedAuthority() {

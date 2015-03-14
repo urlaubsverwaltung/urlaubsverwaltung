@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.restapi;
 
+import com.google.common.base.Optional;
+
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
@@ -80,8 +82,13 @@ public class WorkDayController {
 
             if (startDate.isBefore(endDate) || startDate.isEqual(endDate)) {
                 DayLength howLong = DayLength.valueOf(length);
-                Person person = personService.getPersonByID(personId);
-                BigDecimal days = ownCalendarService.getWorkDays(howLong, startDate, endDate, person);
+                Optional<Person> person = personService.getPersonByID(personId);
+
+                if (!person.isPresent()) {
+                    return "N/A";
+                }
+
+                BigDecimal days = ownCalendarService.getWorkDays(howLong, startDate, endDate, person.get());
 
                 return days.toString();
             }

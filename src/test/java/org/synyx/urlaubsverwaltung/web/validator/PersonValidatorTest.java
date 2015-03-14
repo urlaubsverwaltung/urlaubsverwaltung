@@ -1,6 +1,8 @@
 
 package org.synyx.urlaubsverwaltung.web.validator;
 
+import com.google.common.base.Optional;
+
 import org.joda.time.DateMidnight;
 
 import org.junit.Before;
@@ -253,7 +255,7 @@ public class PersonValidatorTest {
     @Test
     public void ensureUsernameMustBeUnique() {
 
-        Mockito.when(personService.getPersonByLogin("foo")).thenReturn(new Person());
+        Mockito.when(personService.getPersonByLogin("foo")).thenReturn(Optional.of(new Person()));
         validator.validateLogin("foo", errors);
         Mockito.verify(errors).rejectValue("loginName", "error.login.unique");
     }
@@ -262,7 +264,7 @@ public class PersonValidatorTest {
     @Test
     public void ensureUniqueUsernameHasNoValidationError() {
 
-        Mockito.when(personService.getPersonByLogin("foo")).thenReturn(null);
+        Mockito.when(personService.getPersonByLogin("foo")).thenReturn(Optional.<Person>absent());
         validator.validateLogin("foo", errors);
         Mockito.verify(errors, Mockito.never()).rejectValue(Mockito.anyString(), Mockito.anyString());
     }

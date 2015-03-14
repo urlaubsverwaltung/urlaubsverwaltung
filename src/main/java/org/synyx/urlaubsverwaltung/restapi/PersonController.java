@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.restapi;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
 import com.wordnik.swagger.annotations.Api;
@@ -50,10 +51,10 @@ public class PersonController {
         if (ldapName == null) {
             persons = personService.getActivePersons();
         } else {
-            Person person = personService.getPersonByLogin(ldapName);
+            Optional<Person> person = personService.getPersonByLogin(ldapName);
 
-            if (person != null) {
-                persons.add(person);
+            if (person.isPresent()) {
+                persons.add(person.get());
             }
         }
 

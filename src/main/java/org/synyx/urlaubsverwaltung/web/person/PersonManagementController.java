@@ -132,12 +132,13 @@ public class PersonManagementController {
             yearOfHolidaysAccount = DateMidnight.now().getYear();
         }
 
-        Person person = personService.getPersonByID(personId);
+        Optional<Person> optionalPerson = personService.getPersonByID(personId);
 
-        if (person == null) {
+        if (!optionalPerson.isPresent()) {
             return ControllerConstants.ERROR_JSP;
         }
 
+        Person person = optionalPerson.get();
         Optional<Account> account = accountService.getHolidaysAccount(yearOfHolidaysAccount, person);
         Optional<WorkingTime> workingTime = workingTimeService.getCurrentOne(person);
 
@@ -157,11 +158,11 @@ public class PersonManagementController {
     public String editPerson(@PathVariable("personId") Integer personId,
         @ModelAttribute("personForm") PersonForm personForm, Errors errors, Model model) {
 
-        if (!sessionService.isOffice()) {
+        Optional<Person> personToUpdate = personService.getPersonByID(personId);
+
+        if (!sessionService.isOffice() || !personToUpdate.isPresent()) {
             return ControllerConstants.ERROR_JSP;
         }
-
-        Person personToUpdate = personService.getPersonByID(personId);
 
         validator.validate(personForm, errors);
 
@@ -173,7 +174,7 @@ public class PersonManagementController {
             model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
             model.addAttribute("personForm", personForm);
             model.addAttribute("weekDays", Day.values());
-            model.addAttribute("workingTimes", workingTimeService.getByPerson(personToUpdate));
+            model.addAttribute("workingTimes", workingTimeService.getByPerson(personToUpdate.get()));
 
             return PersonConstants.PERSON_FORM_JSP;
         }

@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.restapi;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
 import com.google.gson.Gson;
@@ -110,9 +111,9 @@ public class VacationController {
 
         if (hasYear && personId != null) {
             try {
-                Person person = personService.getPersonByID(personId);
+                Optional<Person> person = personService.getPersonByID(personId);
 
-                if (person == null) {
+                if (!person.isPresent()) {
                     return "N/A";
                 }
 
@@ -128,7 +129,7 @@ public class VacationController {
                 }
 
                 List<Application> applications = applicationService.getApplicationsForACertainPeriodAndPersonAndState(
-                        periodStart, periodEnd, person, ApplicationStatus.ALLOWED);
+                        periodStart, periodEnd, person.get(), ApplicationStatus.ALLOWED);
 
                 List<VacationDay> vacationDateList = new ArrayList<>();
 

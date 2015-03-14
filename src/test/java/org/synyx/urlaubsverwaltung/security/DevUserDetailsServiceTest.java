@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.security;
 
+import com.google.common.base.Optional;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,7 +51,7 @@ public class DevUserDetailsServiceTest {
 
         String login = TestDataCreationService.USER;
 
-        Mockito.when(personService.getPersonByLogin(login)).thenReturn(null);
+        Mockito.when(personService.getPersonByLogin(login)).thenReturn(Optional.<Person>absent());
 
         UserDetails userDetails = devUserDetailsService.loadUserByUsername(login);
 
@@ -67,7 +69,7 @@ public class DevUserDetailsServiceTest {
         Person user = new Person();
         user.setPermissions(Arrays.asList(Role.USER, Role.OFFICE));
 
-        Mockito.when(personService.getPersonByLogin(login)).thenReturn(user);
+        Mockito.when(personService.getPersonByLogin(login)).thenReturn(Optional.of(user));
 
         UserDetails userDetails = devUserDetailsService.loadUserByUsername(login);
 

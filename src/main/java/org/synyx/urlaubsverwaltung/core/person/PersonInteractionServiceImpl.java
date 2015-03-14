@@ -109,7 +109,13 @@ public class PersonInteractionServiceImpl implements PersonInteractionService {
     @Override
     public Person update(PersonForm personForm) {
 
-        Person personToUpdate = personService.getPersonByID(personForm.getId());
+        Optional<Person> optionalPersonToUpdate = personService.getPersonByID(personForm.getId());
+
+        if (!optionalPersonToUpdate.isPresent()) {
+            throw new IllegalArgumentException("Can not find a person for ID = " + personForm.getId());
+        }
+
+        Person personToUpdate = optionalPersonToUpdate.get();
 
         personForm.fillPersonAttributes(personToUpdate);
 
@@ -119,7 +125,7 @@ public class PersonInteractionServiceImpl implements PersonInteractionService {
 
         touchAccount(personToUpdate, personForm);
 
-        LOG.info("Updated " + personToUpdate.toString());
+        LOG.info("Updated " + optionalPersonToUpdate.toString());
 
         return personToUpdate;
     }

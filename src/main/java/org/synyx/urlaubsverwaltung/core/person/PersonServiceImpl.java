@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.core.person;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterables;
@@ -40,16 +41,16 @@ class PersonServiceImpl implements PersonService {
 
 
     @Override
-    public Person getPersonByID(Integer id) {
+    public Optional<Person> getPersonByID(Integer id) {
 
-        return personDAO.findOne(id);
+        return Optional.fromNullable(personDAO.findOne(id));
     }
 
 
     @Override
-    public Person getPersonByLogin(String loginName) {
+    public Optional<Person> getPersonByLogin(String loginName) {
 
-        return personDAO.findByLoginName(loginName);
+        return Optional.fromNullable(personDAO.findByLoginName(loginName));
     }
 
 

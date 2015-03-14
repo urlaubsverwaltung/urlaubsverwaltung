@@ -187,11 +187,11 @@ public class ApplicationForLeaveDetailsController {
         @ModelAttribute("modelPerson") Person p, RedirectAttributes redirectAttributes) {
 
         Optional<Application> application = applicationService.getApplicationById(applicationId);
+        Optional<Person> recipient = personService.getPersonByLogin(p.getLoginName());
 
-        if (sessionService.isBoss() && application.isPresent()) {
+        if (sessionService.isBoss() && application.isPresent() && recipient.isPresent()) {
             Person sender = sessionService.getLoggedUser();
-            Person recipient = personService.getPersonByLogin(p.getLoginName());
-            mailService.sendReferApplicationNotification(application.get(), recipient, sender);
+            mailService.sendReferApplicationNotification(application.get(), recipient.get(), sender);
 
             redirectAttributes.addFlashAttribute("referSuccess", true);
 
