@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.sicknote;
 
+import com.google.common.base.Optional;
+
 import org.joda.time.DateMidnight;
 
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -27,9 +29,9 @@ public interface SickNoteService {
      *
      * @param  id  to search the sick note by
      *
-     * @return  the sick note matching the given id
+     * @return  optional sick note matching the given id
      */
-    SickNote getById(Integer id);
+    Optional<SickNote> getById(Integer id);
 
 
     /**
