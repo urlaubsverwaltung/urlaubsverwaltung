@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.core.account;
+package org.synyx.urlaubsverwaltung.core.account.service;
 
 import com.google.common.base.Optional;
 
@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.application.service.CalculationService;
 import org.synyx.urlaubsverwaltung.core.calendar.NowService;
 import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;

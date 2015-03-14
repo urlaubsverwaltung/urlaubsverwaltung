@@ -9,7 +9,7 @@ import org.joda.time.DateMidnight;
 
 import org.springframework.util.Assert;
 
-import org.synyx.urlaubsverwaltung.core.account.Account;
+import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.calendar.Day;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;

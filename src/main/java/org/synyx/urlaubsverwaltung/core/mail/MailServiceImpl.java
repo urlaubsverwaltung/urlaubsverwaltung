@@ -27,7 +27,7 @@ import org.springframework.ui.velocity.VelocityEngineUtils;
 import org.springframework.util.StringUtils;
 
 import org.synyx.urlaubsverwaltung.DateFormat;
-import org.synyx.urlaubsverwaltung.core.account.Account;
+import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.person.Person;

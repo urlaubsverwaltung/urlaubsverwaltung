@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.core.account;
+package org.synyx.urlaubsverwaltung.core.account.service;
 
 import com.google.common.base.Optional;
 
@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import org.mockito.Mockito;
 
+import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.application.service.CalculationService;
 import org.synyx.urlaubsverwaltung.core.calendar.JollydayCalendar;
 import org.synyx.urlaubsverwaltung.core.calendar.NowService;
@@ -25,7 +26,7 @@ import java.math.BigDecimal;
 
 
 /**
- * Unit test for {@link AccountInteractionServiceImpl}.
+ * Unit test for {@link org.synyx.urlaubsverwaltung.core.account.service.AccountInteractionServiceImpl}.
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */

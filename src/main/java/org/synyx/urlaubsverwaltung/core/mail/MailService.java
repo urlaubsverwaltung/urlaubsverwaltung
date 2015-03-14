@@ -4,7 +4,7 @@
  */
 package org.synyx.urlaubsverwaltung.core.mail;
 
-import org.synyx.urlaubsverwaltung.core.account.Account;
+import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.person.Person;

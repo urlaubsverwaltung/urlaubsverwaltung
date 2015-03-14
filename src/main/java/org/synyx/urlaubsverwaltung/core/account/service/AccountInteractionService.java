@@ -1,22 +1,23 @@
 
-package org.synyx.urlaubsverwaltung.core.account;
+package org.synyx.urlaubsverwaltung.core.account.service;
 
 import org.joda.time.DateMidnight;
 
+import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.math.BigDecimal;
 
 
 /**
- * Provides interactions with {@link Account}s like creating or editing.
+ * Provides interactions with {@link org.synyx.urlaubsverwaltung.core.account.domain.Account}s like creating or editing.
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
 public interface AccountInteractionService {
 
     /**
-     * Creates a {@link Account} with the given parameters.
+     * Creates a {@link org.synyx.urlaubsverwaltung.core.account.domain.Account} with the given parameters.
      *
      * @param  person  defines the owner of the holidays account
      * @param  validFrom  defines the start of the validity period, e.g. 1.1.2012

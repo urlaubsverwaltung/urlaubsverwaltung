@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.core.account;
+package org.synyx.urlaubsverwaltung.core.account.domain;
 
 import com.google.common.base.MoreObjects;
 
