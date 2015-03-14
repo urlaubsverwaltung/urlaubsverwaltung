@@ -20,12 +20,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
+import org.synyx.urlaubsverwaltung.core.account.service.VacationDaysService;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationInteractionService;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
-import org.synyx.urlaubsverwaltung.core.application.service.CalculationService;
 import org.synyx.urlaubsverwaltung.core.application.service.CommentService;
 import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
@@ -69,7 +69,7 @@ public class ApplicationForLeaveDetailsController {
     private ApplicationInteractionService applicationInteractionService;
 
     @Autowired
-    private CalculationService calculationService;
+    private VacationDaysService vacationDaysService;
 
     @Autowired
     private CommentService commentService;
@@ -136,7 +136,7 @@ public class ApplicationForLeaveDetailsController {
         Optional<Account> account = accountService.getHolidaysAccount(year, application.getPerson());
 
         if (account.isPresent()) {
-            model.addAttribute("vacationDaysLeft", calculationService.getVacationDaysLeft(account.get()));
+            model.addAttribute("vacationDaysLeft", vacationDaysService.getVacationDaysLeft(account.get()));
             model.addAttribute(PersonConstants.BEFORE_APRIL, DateUtil.isBeforeApril(DateMidnight.now()));
         }
 

@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
-import org.synyx.urlaubsverwaltung.core.application.service.CalculationService;
 import org.synyx.urlaubsverwaltung.core.calendar.NowService;
 import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -39,16 +38,16 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
 
     private final AccountService accountService;
     private final OwnCalendarService calendarService;
-    private final CalculationService calculationService;
+    private final VacationDaysService vacationDaysService;
     private final NowService nowService;
 
     @Autowired
     AccountInteractionServiceImpl(AccountService accountService, OwnCalendarService calendarService,
-        CalculationService calculationService, NowService nowService) {
+        VacationDaysService vacationDaysService, NowService nowService) {
 
         this.accountService = accountService;
         this.calendarService = calendarService;
-        this.calculationService = calculationService;
+        this.vacationDaysService = vacationDaysService;
         this.nowService = nowService;
     }
 
@@ -211,7 +210,7 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
 
             if (holidaysAccountOptional.isPresent()) {
                 Account holidaysAccount = holidaysAccountOptional.get();
-                BigDecimal leftVacationDays = calculationService.calculateTotalLeftVacationDays(holidaysAccount);
+                BigDecimal leftVacationDays = vacationDaysService.calculateTotalLeftVacationDays(holidaysAccount);
                 holidaysAccount.setRemainingVacationDays(leftVacationDays);
 
                 // number of not expiring remaining vacation days is greater than remaining vacation days

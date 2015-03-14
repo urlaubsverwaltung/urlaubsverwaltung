@@ -13,7 +13,6 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
-import org.synyx.urlaubsverwaltung.core.application.service.CalculationService;
 import org.synyx.urlaubsverwaltung.core.calendar.JollydayCalendar;
 import org.synyx.urlaubsverwaltung.core.calendar.NowService;
 import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
@@ -35,7 +34,7 @@ public class HolidaysAccountInteractionServiceImplTest {
     private AccountInteractionServiceImpl service;
 
     private AccountService accountService;
-    private CalculationService calculationService;
+    private VacationDaysService vacationDaysService;
     private NowService nowService;
 
     private Person person;
@@ -48,9 +47,9 @@ public class HolidaysAccountInteractionServiceImplTest {
 
         WorkingTimeService workingTimeService = Mockito.mock(WorkingTimeService.class);
         OwnCalendarService calendarService = new OwnCalendarService(new JollydayCalendar(), workingTimeService);
-        calculationService = Mockito.mock(CalculationService.class);
+        vacationDaysService = Mockito.mock(VacationDaysService.class);
 
-        service = new AccountInteractionServiceImpl(accountService, calendarService, calculationService, nowService);
+        service = new AccountInteractionServiceImpl(accountService, calendarService, vacationDaysService, nowService);
 
         person = new Person();
         person.setLoginName("horscht");
@@ -213,15 +212,16 @@ public class HolidaysAccountInteractionServiceImplTest {
         Mockito.when(accountService.getHolidaysAccount(2013, person)).thenReturn(Optional.of(account2013));
         Mockito.when(accountService.getHolidaysAccount(2014, person)).thenReturn(Optional.of(account2014));
 
-        Mockito.when(calculationService.calculateTotalLeftVacationDays(account2012)).thenReturn(BigDecimal.valueOf(6));
-        Mockito.when(calculationService.calculateTotalLeftVacationDays(account2013)).thenReturn(BigDecimal.valueOf(2));
-        Mockito.when(calculationService.calculateTotalLeftVacationDays(account2014)).thenReturn(BigDecimal.valueOf(11));
+        Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(account2012)).thenReturn(BigDecimal.valueOf(6));
+        Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(account2013)).thenReturn(BigDecimal.valueOf(2));
+        Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(account2014)).thenReturn(BigDecimal.valueOf(
+                11));
 
         service.updateRemainingVacationDays(2012, person);
 
-        Mockito.verify(calculationService).calculateTotalLeftVacationDays(account2012);
-        Mockito.verify(calculationService).calculateTotalLeftVacationDays(account2013);
-        Mockito.verify(calculationService).calculateTotalLeftVacationDays(account2014);
+        Mockito.verify(vacationDaysService).calculateTotalLeftVacationDays(account2012);
+        Mockito.verify(vacationDaysService).calculateTotalLeftVacationDays(account2013);
+        Mockito.verify(vacationDaysService).calculateTotalLeftVacationDays(account2014);
 
         Mockito.verify(accountService).save(account2012);
         Mockito.verify(accountService).save(account2013);

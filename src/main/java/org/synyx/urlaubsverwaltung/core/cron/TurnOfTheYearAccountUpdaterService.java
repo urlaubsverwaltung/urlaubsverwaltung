@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
-import org.synyx.urlaubsverwaltung.core.application.service.CalculationService;
+import org.synyx.urlaubsverwaltung.core.account.service.VacationDaysService;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
@@ -41,18 +41,18 @@ public class TurnOfTheYearAccountUpdaterService {
     private final PersonService personService;
     private final AccountService accountService;
     private final AccountInteractionService accountInteractionService;
-    private final CalculationService calculationService;
+    private final VacationDaysService vacationDaysService;
     private final MailService mailService;
 
     @Autowired
     public TurnOfTheYearAccountUpdaterService(PersonService personService, AccountService accountService,
-        AccountInteractionService accountInteractionService, CalculationService calculationService,
+        AccountInteractionService accountInteractionService, VacationDaysService vacationDaysService,
         MailService mailService) {
 
         this.personService = personService;
         this.accountService = accountService;
         this.accountInteractionService = accountInteractionService;
-        this.calculationService = calculationService;
+        this.vacationDaysService = vacationDaysService;
         this.mailService = mailService;
     }
 
@@ -80,7 +80,7 @@ public class TurnOfTheYearAccountUpdaterService {
             Optional<Account> accountLastYear = accountService.getHolidaysAccount(year - 1, person);
 
             if (accountLastYear.isPresent() && accountLastYear.get().getAnnualVacationDays() != null) {
-                BigDecimal leftDays = calculationService.calculateTotalLeftVacationDays(accountLastYear.get());
+                BigDecimal leftDays = vacationDaysService.calculateTotalLeftVacationDays(accountLastYear.get());
 
                 Account holidaysAccount = accountInteractionService.createHolidaysAccount(person,
                         DateUtil.getFirstDayOfYear(year), DateUtil.getLastDayOfYear(year),

@@ -12,12 +12,12 @@ import org.mockito.Mockito;
 
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
+import org.synyx.urlaubsverwaltung.core.account.service.VacationDaysService;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
-import org.synyx.urlaubsverwaltung.core.application.service.CalculationService;
 import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
@@ -37,7 +37,7 @@ public class ApplicationForLeaveStatisticsBuilderTest {
     private AccountService accountService;
     private ApplicationService applicationService;
     private OwnCalendarService calendarService;
-    private CalculationService calculationService;
+    private VacationDaysService vacationDaysService;
 
     private ApplicationForLeaveStatisticsBuilder builder;
 
@@ -47,10 +47,10 @@ public class ApplicationForLeaveStatisticsBuilderTest {
         accountService = Mockito.mock(AccountService.class);
         applicationService = Mockito.mock(ApplicationService.class);
         calendarService = Mockito.mock(OwnCalendarService.class);
-        calculationService = Mockito.mock(CalculationService.class);
+        vacationDaysService = Mockito.mock(VacationDaysService.class);
 
         builder = new ApplicationForLeaveStatisticsBuilder(accountService, applicationService, calendarService,
-                calculationService);
+                vacationDaysService);
     }
 
 
@@ -72,7 +72,8 @@ public class ApplicationForLeaveStatisticsBuilderTest {
 
         Mockito.when(person.getEmail()).thenReturn("muster@muster.de");
         Mockito.when(accountService.getHolidaysAccount(2014, person)).thenReturn(Optional.of(account));
-        Mockito.when(calculationService.calculateTotalLeftVacationDays(Mockito.eq(account))).thenReturn(BigDecimal.TEN);
+        Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(Mockito.eq(account))).thenReturn(
+            BigDecimal.TEN);
 
         Application holidayWaiting = new Application();
         holidayWaiting.setVacationType(VacationType.HOLIDAY);
@@ -159,7 +160,8 @@ public class ApplicationForLeaveStatisticsBuilderTest {
 
         Mockito.when(person.getEmail()).thenReturn("muster@muster.de");
         Mockito.when(accountService.getHolidaysAccount(2015, person)).thenReturn(Optional.of(account));
-        Mockito.when(calculationService.calculateTotalLeftVacationDays(Mockito.eq(account))).thenReturn(BigDecimal.TEN);
+        Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(Mockito.eq(account))).thenReturn(
+            BigDecimal.TEN);
 
         Application holidayAllowed = new Application();
         holidayAllowed.setVacationType(VacationType.HOLIDAY);

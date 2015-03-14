@@ -12,11 +12,11 @@ import org.springframework.util.Assert;
 
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
+import org.synyx.urlaubsverwaltung.core.account.service.VacationDaysService;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
-import org.synyx.urlaubsverwaltung.core.application.service.CalculationService;
 import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
@@ -38,16 +38,16 @@ public class ApplicationForLeaveStatisticsBuilder {
     private final AccountService accountService;
     private final ApplicationService applicationService;
     private final OwnCalendarService calendarService;
-    private final CalculationService calculationService;
+    private final VacationDaysService vacationDaysService;
 
     @Autowired
     public ApplicationForLeaveStatisticsBuilder(AccountService accountService, ApplicationService applicationService,
-        OwnCalendarService calendarService, CalculationService calculationService) {
+        OwnCalendarService calendarService, VacationDaysService vacationDaysService) {
 
         this.accountService = accountService;
         this.applicationService = applicationService;
         this.calendarService = calendarService;
-        this.calculationService = calculationService;
+        this.vacationDaysService = vacationDaysService;
     }
 
     public ApplicationForLeaveStatistics build(Person person, DateMidnight from, DateMidnight to) {
@@ -59,7 +59,7 @@ public class ApplicationForLeaveStatisticsBuilder {
         Optional<Account> account = accountService.getHolidaysAccount(from.getYear(), person);
 
         if (account.isPresent()) {
-            BigDecimal vacationDaysLeft = calculationService.calculateTotalLeftVacationDays(account.get());
+            BigDecimal vacationDaysLeft = vacationDaysService.calculateTotalLeftVacationDays(account.get());
             statistics.setLeftVacationDays(vacationDaysLeft);
         }
 

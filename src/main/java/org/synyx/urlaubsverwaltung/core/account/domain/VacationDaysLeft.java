@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.core.application.domain;
+package org.synyx.urlaubsverwaltung.core.account.domain;
 
 import org.synyx.urlaubsverwaltung.core.util.CalcUtil;
 

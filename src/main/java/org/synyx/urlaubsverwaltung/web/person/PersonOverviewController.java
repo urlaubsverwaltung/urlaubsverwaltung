@@ -26,11 +26,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
+import org.synyx.urlaubsverwaltung.core.account.service.VacationDaysService;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
-import org.synyx.urlaubsverwaltung.core.application.service.CalculationService;
 import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
@@ -68,7 +68,7 @@ public class PersonOverviewController {
     private AccountService accountService;
 
     @Autowired
-    private CalculationService calculationService;
+    private VacationDaysService vacationDaysService;
 
     @Autowired
     private SessionService sessionService;
@@ -268,7 +268,7 @@ public class PersonOverviewController {
         Optional<Account> account = accountService.getHolidaysAccount(year, person);
 
         if (account.isPresent()) {
-            model.addAttribute("vacationDaysLeft", calculationService.getVacationDaysLeft(account.get()));
+            model.addAttribute("vacationDaysLeft", vacationDaysService.getVacationDaysLeft(account.get()));
             model.addAttribute(PersonConstants.BEFORE_APRIL, DateUtil.isBeforeApril(DateMidnight.now()));
         }
 
