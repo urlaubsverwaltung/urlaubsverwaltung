@@ -1,5 +1,5 @@
 
-package org.synyx.urlaubsverwaltung.core.application.service;
+package org.synyx.urlaubsverwaltung.core.calendar;
 
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
@@ -14,7 +14,6 @@ import org.synyx.urlaubsverwaltung.core.application.dao.ApplicationDAO;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
-import org.synyx.urlaubsverwaltung.core.application.domain.OverlapCase;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteDAO;
@@ -25,7 +24,7 @@ import java.util.Date;
 
 
 /**
- * Unit test for {@link OverlapService}.
+ * Unit test for {@link org.synyx.urlaubsverwaltung.core.calendar.OverlapService}.
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */

@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.core.application.service;
+package org.synyx.urlaubsverwaltung.core.calendar;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.core.application.dao.ApplicationDAO;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.core.application.domain.OverlapCase;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteDAO;
