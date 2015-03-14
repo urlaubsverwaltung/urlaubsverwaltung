@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.synyx.urlaubsverwaltung.core.application.service.CalculationService;
+import org.synyx.urlaubsverwaltung.core.calendar.NowService;
 import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
@@ -38,14 +39,16 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
     private final AccountService accountService;
     private final OwnCalendarService calendarService;
     private final CalculationService calculationService;
+    private final NowService nowService;
 
     @Autowired
     AccountInteractionServiceImpl(AccountService accountService, OwnCalendarService calendarService,
-        CalculationService calculationService) {
+        CalculationService calculationService, NowService nowService) {
 
         this.accountService = accountService;
         this.calendarService = calendarService;
         this.calculationService = calculationService;
+        this.nowService = nowService;
     }
 
     @Override
@@ -200,7 +203,7 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
     public void updateRemainingVacationDays(int year, Person person) {
 
         int startYear = year;
-        int currentYear = DateMidnight.now().getYear();
+        int currentYear = nowService.currentYear();
 
         while (startYear <= currentYear) {
             Optional<Account> holidaysAccountOptional = accountService.getHolidaysAccount(startYear, person);
