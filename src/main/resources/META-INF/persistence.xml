@@ -7,5 +7,8 @@
         <class>org.synyx.urlaubsverwaltung.core.application.domain.Application</class>
         <class>org.synyx.urlaubsverwaltung.core.account.domain.Account</class>
         <class>org.synyx.urlaubsverwaltung.core.person.Person</class>
+        <class>org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime</class>
+        <class>org.synyx.urlaubsverwaltung.core.sicknote.SickNote</class>
+        <class>org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteComment</class>
     </persistence-unit>
 </persistence>
