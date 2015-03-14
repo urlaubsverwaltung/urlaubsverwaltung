@@ -6,6 +6,8 @@ import com.google.common.collect.FluentIterable;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
@@ -34,6 +36,7 @@ public class VacationDaysService {
     private final OwnCalendarService calendarService;
     private final ApplicationService applicationService;
 
+    @Autowired
     public VacationDaysService(OwnCalendarService calendarService, ApplicationService applicationService) {
 
         this.calendarService = calendarService;

@@ -30,7 +30,7 @@ public class PersonPropertyEditor extends PropertyEditorSupport {
         Optional<Person> person = personService.getPersonByID(id);
 
         if (person.isPresent()) {
-            setValue(person);
+            setValue(person.get());
         } else {
             setValue(null);
         }

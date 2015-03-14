@@ -269,9 +269,8 @@ public class PersonOverviewController {
 
         if (account.isPresent()) {
             model.addAttribute("vacationDaysLeft", vacationDaysService.getVacationDaysLeft(account.get()));
+            model.addAttribute("account", account.get());
             model.addAttribute(PersonConstants.BEFORE_APRIL, DateUtil.isBeforeApril(DateMidnight.now()));
         }
-
-        model.addAttribute("account", account);
     }
 }

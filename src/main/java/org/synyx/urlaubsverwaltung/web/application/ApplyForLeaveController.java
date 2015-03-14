@@ -27,7 +27,6 @@ import org.synyx.urlaubsverwaltung.core.account.service.VacationDaysService;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationInteractionService;
-import org.synyx.urlaubsverwaltung.core.application.service.CalculationService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
@@ -65,9 +64,6 @@ public class ApplyForLeaveController {
 
     @Autowired
     private VacationDaysService vacationDaysService;
-
-    @Autowired
-    private CalculationService calculationService;
 
     @Autowired
     private ApplicationValidator applicationValidator;
