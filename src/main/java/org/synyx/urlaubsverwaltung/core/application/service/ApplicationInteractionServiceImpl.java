@@ -12,9 +12,11 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import org.synyx.urlaubsverwaltung.core.account.service.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
+import org.synyx.urlaubsverwaltung.core.calendar.NowService;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
@@ -29,18 +31,23 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
     private static final Logger LOG = Logger.getLogger(ApplicationInteractionServiceImpl.class);
 
     private final ApplicationService applicationService;
+    private final AccountInteractionService accountInteractionService;
     private final SignService signService;
     private final CommentService commentService;
     private final MailService mailService;
+    private final NowService nowService;
 
     @Autowired
-    public ApplicationInteractionServiceImpl(ApplicationService applicationService, SignService signService,
-        CommentService commentService, MailService mailService) {
+    public ApplicationInteractionServiceImpl(ApplicationService applicationService, CommentService commentService,
+        AccountInteractionService accountInteractionService, SignService signService, MailService mailService,
+        NowService nowService) {
 
         this.applicationService = applicationService;
-        this.signService = signService;
         this.commentService = commentService;
+        this.accountInteractionService = accountInteractionService;
+        this.signService = signService;
         this.mailService = mailService;
+        this.nowService = nowService;
     }
 
     @Override
@@ -152,10 +159,22 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
             mailService.sendCancelledNotification(application, false, createdComment);
         }
 
-        if (!application.getPerson().equals(canceller)) {
+        Person person = application.getPerson();
+
+        if (!person.equals(canceller)) {
             // if application has been cancelled for someone on behalf,
             // the person gets an email regardless of application status
             mailService.sendCancelledNotification(application, true, createdComment);
+        }
+
+        int currentYear = nowService.currentYear();
+
+        if (application.getStartDate().getYear() < currentYear) {
+            accountInteractionService.updateRemainingVacationDays(application.getStartDate().getYear(), person);
+        }
+
+        if (application.getEndDate().getYear() < currentYear) {
+            accountInteractionService.updateRemainingVacationDays(application.getEndDate().getYear(), person);
         }
 
         return application;
