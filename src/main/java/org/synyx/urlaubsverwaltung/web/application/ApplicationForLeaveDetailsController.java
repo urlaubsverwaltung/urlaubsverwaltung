@@ -131,7 +131,7 @@ public class ApplicationForLeaveDetailsController {
         model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
         model.addAttribute("application", new ApplicationForLeave(application, calendarService));
 
-        int year = application.getStartDate().getYear();
+        int year = application.getEndDate().getYear();
 
         Optional<Account> account = accountService.getHolidaysAccount(year, application.getPerson());
 

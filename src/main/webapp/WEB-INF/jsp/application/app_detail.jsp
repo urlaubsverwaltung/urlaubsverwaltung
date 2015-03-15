@@ -101,7 +101,8 @@
 
                     <div class="header">
                         <legend>
-                            <p><spring:message code="staff" /></p>
+                          <p><spring:message code="staff" /></p>
+                          <p class="pull-right"><c:out value="${account.year}" /></p>
                         </legend>
                     </div>
 
@@ -138,15 +139,15 @@
                         <span class="box-text">
                             <c:choose>
                                 <c:when test="${account != null}">
-                                    <spring:message code="overview.vacation.left" arguments="${vacationDaysLeft.vacationDays}" />
-                                    <c:choose>
-                                        <c:when test="${beforeApril}">
-                                            <spring:message code="overview.vacation.left.remaining" arguments="${vacationDaysLeft.remainingVacationDays}" />
-                                        </c:when>
-                                        <c:otherwise>
-                                            <spring:message code="overview.vacation.left.remaining.expired" arguments="${vacationDaysLeft.remainingVacationDaysNotExpiring}" />
-                                        </c:otherwise>
-                                    </c:choose>
+                                  <spring:message code="overview.vacation.left" arguments="${vacationDaysLeft.vacationDays}" />
+                                  <c:choose>
+                                    <c:when test="${beforeApril}">
+                                      <spring:message code="overview.vacation.left.remaining" arguments="${vacationDaysLeft.remainingVacationDays}" />
+                                    </c:when>
+                                    <c:otherwise>
+                                      <spring:message code="overview.vacation.left.remaining" arguments="${vacationDaysLeft.remainingVacationDaysNotExpiring}" />
+                                    </c:otherwise>
+                                  </c:choose>
                                 </c:when>
                                 <c:otherwise>
                                     <spring:message code='not.specified'/>
