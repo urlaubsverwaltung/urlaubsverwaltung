@@ -17,6 +17,16 @@
 
 .navbar a {
     color: #4d5258 !important;
+    transition: all 0.25s ease 0s;
+}
+
+.navbar a:hover {
+    color: #59AB02 !important;
+}
+
+.navbar a .caret {
+    margin: 0;
+    opacity: .65;
 }
 
 .navbar a.navbar-brand {
@@ -32,13 +42,21 @@
     margin-right: 12px;
 }
 
-.navbar a:hover {
-    color: #59AB02 !important;
+.navbar ul.dropdown-menu .fa {
+    padding-right: 25px;
 }
 
-/* SHOW MOBILE NAVBAR < 991 px SCREEN SIZE */
+/* MORE PLACE IN NAVBAR FOR SM DEVICES */
 
 @media (max-width: 991px) {
+    .navbar .container {
+        width: 100%;
+    }
+}
+
+/* SHOW MOBILE NAVBAR FOR XS DEVICES */
+
+@media (max-width: 768px) {
     .navbar-header {
         float: none;
     }
@@ -61,7 +79,22 @@
         float: none;
     }
     .navbar-nav > li > a {
+        border-top: 1px solid #e5e5e5 !important;
+    }
+    .navbar-nav > li:first-child > a {
+        border: none !important;
+    }
+    .navbar-nav > li > a {
         padding-top: 10px;
         padding-bottom: 10px;
+    }
+    .navbar a.dropdown-toggle {
+        text-transform: uppercase;
+    }
+    .navbar a.dropdown-toggle .fa {
+        display: none;
+    }
+    .navbar .dropdown-menu li.divider {
+        display: none;
     }
 }
