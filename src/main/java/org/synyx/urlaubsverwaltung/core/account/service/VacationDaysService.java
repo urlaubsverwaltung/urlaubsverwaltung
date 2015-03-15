@@ -16,6 +16,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
+import org.synyx.urlaubsverwaltung.core.calendar.NowService;
 import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
@@ -34,12 +35,15 @@ import java.util.List;
 public class VacationDaysService {
 
     private final OwnCalendarService calendarService;
+    private final NowService nowService;
     private final ApplicationService applicationService;
 
     @Autowired
-    public VacationDaysService(OwnCalendarService calendarService, ApplicationService applicationService) {
+    public VacationDaysService(OwnCalendarService calendarService, NowService nowService,
+        ApplicationService applicationService) {
 
         this.calendarService = calendarService;
+        this.nowService = nowService;
         this.applicationService = applicationService;
     }
 
@@ -59,7 +63,7 @@ public class VacationDaysService {
         VacationDaysLeft vacationDaysLeft = getVacationDaysLeft(account);
 
         // it's before April - the left remaining vacation days must be used
-        if (DateUtil.isBeforeApril(DateMidnight.now())) {
+        if (DateUtil.isBeforeApril(nowService.now()) && account.getYear() == nowService.currentYear()) {
             return vacationDaysLeft.getVacationDays().add(vacationDaysLeft.getRemainingVacationDays());
         } else {
             // it's after April - only the left not expiring remaining vacation days must be used

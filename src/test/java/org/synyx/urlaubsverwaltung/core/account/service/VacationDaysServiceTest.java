@@ -20,6 +20,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.calendar.JollydayCalendar;
+import org.synyx.urlaubsverwaltung.core.calendar.NowService;
 import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
@@ -43,11 +44,13 @@ public class VacationDaysServiceTest {
     private VacationDaysService vacationDaysService;
 
     private ApplicationService applicationService;
+    private NowService nowService;
 
     @Before
     public void setUp() throws IOException {
 
         applicationService = Mockito.mock(ApplicationService.class);
+        nowService = Mockito.mock(NowService.class);
 
         WorkingTimeService workingTimeService = Mockito.mock(WorkingTimeService.class);
 
@@ -62,7 +65,7 @@ public class VacationDaysServiceTest {
 
         OwnCalendarService calendarService = new OwnCalendarService(new JollydayCalendar(), workingTimeService);
 
-        vacationDaysService = new VacationDaysService(calendarService, applicationService);
+        vacationDaysService = new VacationDaysService(calendarService, nowService, applicationService);
     }
 
 
@@ -249,10 +252,82 @@ public class VacationDaysServiceTest {
     }
 
 
+    @Test
+    public void testGetTotalVacationDaysForPastYear() {
+
+        Mockito.when(nowService.now()).thenReturn(new DateMidnight(2015, 4, 2));
+
+        initCustomService("4", "1");
+
+        Account account = new Account();
+        account.setValidFrom(new DateMidnight(2014, 1, 1));
+        account.setAnnualVacationDays(new BigDecimal("30"));
+        account.setVacationDays(new BigDecimal("30"));
+        account.setRemainingVacationDays(new BigDecimal("6"));
+        account.setRemainingVacationDaysNotExpiring(new BigDecimal("2"));
+
+        BigDecimal leftDays = vacationDaysService.calculateTotalLeftVacationDays(account);
+
+        Assert.assertNotNull("Should not be null", leftDays);
+
+        // total number = left vacation days + left not expiring remaining vacation days
+        // 31 = 30 + 1
+        Assert.assertEquals("Wrong number of total vacation days", new BigDecimal("31"), leftDays);
+    }
+
+
+    @Test
+    public void testGetTotalVacationDaysForThisYearBeforeApril() {
+
+        Mockito.when(nowService.now()).thenReturn(new DateMidnight(2015, 3, 2));
+
+        initCustomService("4", "1");
+
+        Account account = new Account();
+        account.setValidFrom(new DateMidnight(2015, 1, 1));
+        account.setAnnualVacationDays(new BigDecimal("30"));
+        account.setVacationDays(new BigDecimal("30"));
+        account.setRemainingVacationDays(new BigDecimal("7"));
+        account.setRemainingVacationDaysNotExpiring(new BigDecimal("3"));
+
+        BigDecimal leftDays = vacationDaysService.calculateTotalLeftVacationDays(account);
+
+        Assert.assertNotNull("Should not be null", leftDays);
+
+        // total number = left vacation days + left remaining vacation days
+        // 32 = 30 + 2
+        Assert.assertEquals("Wrong number of total vacation days", new BigDecimal("32"), leftDays);
+    }
+
+
+    @Test
+    public void testGetTotalVacationDaysForThisYearAfterApril() {
+
+        Mockito.when(nowService.now()).thenReturn(new DateMidnight(2015, 4, 2));
+
+        initCustomService("4", "3");
+
+        Account account = new Account();
+        account.setValidFrom(new DateMidnight(2015, 1, 1));
+        account.setAnnualVacationDays(new BigDecimal("30"));
+        account.setVacationDays(new BigDecimal("30"));
+        account.setRemainingVacationDays(new BigDecimal("7"));
+        account.setRemainingVacationDaysNotExpiring(new BigDecimal("3"));
+
+        BigDecimal leftDays = vacationDaysService.calculateTotalLeftVacationDays(account);
+
+        Assert.assertNotNull("Should not be null", leftDays);
+
+        // total number = left vacation days + left not expiring remaining vacation days
+        // 30 = 30 + 0
+        Assert.assertEquals("Wrong number of total vacation days", new BigDecimal("30"), leftDays);
+    }
+
+
     private void initCustomService(final String daysBeforeApril, final String daysAfterApril) {
 
-        vacationDaysService = new VacationDaysService(Mockito.mock(OwnCalendarService.class),
-                Mockito.mock(ApplicationService.class)) {
+        vacationDaysService = new VacationDaysService(Mockito.mock(OwnCalendarService.class), nowService,
+                applicationService) {
 
             @Override
             protected BigDecimal getUsedDaysBeforeApril(Account account) {
