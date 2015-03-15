@@ -56,6 +56,8 @@ public class ApplicationInteractionServiceTest {
 
         Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
+        applicationForLeave.setStartDate(new DateMidnight(2013, 2, 1));
+        applicationForLeave.setEndDate(new DateMidnight(2013, 2, 5));
 
         service.apply(applicationForLeave, applier, comment);
 
@@ -80,6 +82,8 @@ public class ApplicationInteractionServiceTest {
 
         Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
+        applicationForLeave.setStartDate(new DateMidnight(2013, 2, 1));
+        applicationForLeave.setEndDate(new DateMidnight(2013, 2, 5));
 
         service.apply(applicationForLeave, person, Optional.of("Foo"));
 
@@ -98,6 +102,8 @@ public class ApplicationInteractionServiceTest {
 
         Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
+        applicationForLeave.setStartDate(new DateMidnight(2013, 2, 1));
+        applicationForLeave.setEndDate(new DateMidnight(2013, 2, 5));
 
         service.apply(applicationForLeave, applier, Optional.of("Foo"));
 
@@ -105,6 +111,24 @@ public class ApplicationInteractionServiceTest {
         Mockito.verify(mailService).sendAppliedForLeaveByOfficeNotification(applicationForLeave);
 
         Mockito.verify(mailService).sendNewApplicationNotification(Mockito.eq(applicationForLeave));
+    }
+
+
+    @Test
+    public void ensureApplyingForLeaveUpdatesTheRemainingVacationDays() {
+
+        Person person = new Person();
+        Person applier = new Person();
+        Optional<String> comment = Optional.of("Foo");
+
+        Application applicationForLeave = new Application();
+        applicationForLeave.setPerson(person);
+        applicationForLeave.setStartDate(new DateMidnight(2013, 2, 1));
+        applicationForLeave.setEndDate(new DateMidnight(2013, 2, 5));
+
+        service.apply(applicationForLeave, applier, comment);
+
+        Mockito.verify(accountInteractionService).updateRemainingVacationDays(2013, person);
     }
 
     // END: APPLY

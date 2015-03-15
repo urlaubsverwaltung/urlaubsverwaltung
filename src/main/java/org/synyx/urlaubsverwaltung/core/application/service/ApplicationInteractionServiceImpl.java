@@ -80,6 +80,9 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         // bosses gets email that a new application for leave has been created
         mailService.sendNewApplicationNotification(application);
 
+        // update remaining vacation days (if there is already a holidays account for next year)
+        accountInteractionService.updateRemainingVacationDays(application.getStartDate().getYear(), person);
+
         return application;
     }
 
