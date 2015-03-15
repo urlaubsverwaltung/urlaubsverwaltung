@@ -102,7 +102,9 @@
                     <div class="header">
                         <legend>
                           <p><spring:message code="staff" /></p>
-                          <p class="pull-right"><c:out value="${account.year}" /></p>
+                          <div class="pull-right">
+                            <uv:year-selector year="${year}" />
+                          </div>
                         </legend>
                     </div>
 

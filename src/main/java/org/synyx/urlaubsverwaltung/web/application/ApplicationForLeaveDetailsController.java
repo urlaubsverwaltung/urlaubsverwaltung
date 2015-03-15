@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
@@ -84,15 +85,22 @@ public class ApplicationForLeaveDetailsController {
     private MailService mailService;
 
     @RequestMapping(value = "/{applicationId}", method = RequestMethod.GET)
-    public String showApplicationDetail(@PathVariable("applicationId") Integer applicationId, Model model) {
+    public String showApplicationDetail(@PathVariable("applicationId") Integer applicationId,
+        @RequestParam(value = ControllerConstants.YEAR, required = false) Integer year, Model model) {
 
         Person loggedUser = sessionService.getLoggedUser();
 
-        Optional<Application> application = applicationService.getApplicationById(applicationId);
+        Optional<Application> applicationOptional = applicationService.getApplicationById(applicationId);
 
-        if (application.isPresent() && loggedUser.equals(application.get().getPerson())
+        if (applicationOptional.isPresent() && loggedUser.equals(applicationOptional.get().getPerson())
                 || (sessionService.isBoss() || sessionService.isOffice())) {
-            prepareDetailView(application.get(), model);
+            Application application = applicationOptional.get();
+
+            if (year == null) {
+                year = application.getEndDate().getYear();
+            }
+
+            prepareDetailView(application, year, model);
 
             return ControllerConstants.APPLICATIONS_URL + "/app_detail";
         }
@@ -101,7 +109,7 @@ public class ApplicationForLeaveDetailsController {
     }
 
 
-    private void prepareDetailView(Application application, Model model) {
+    private void prepareDetailView(Application application, int year, Model model) {
 
         model.addAttribute("comment", new CommentForm());
 
@@ -130,8 +138,6 @@ public class ApplicationForLeaveDetailsController {
 
         model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
         model.addAttribute("application", new ApplicationForLeave(application, calendarService));
-
-        int year = application.getEndDate().getYear();
 
         Optional<Account> account = accountService.getHolidaysAccount(year, application.getPerson());
 
