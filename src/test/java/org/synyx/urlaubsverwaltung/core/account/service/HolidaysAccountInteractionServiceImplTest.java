@@ -211,20 +211,26 @@ public class HolidaysAccountInteractionServiceImplTest {
         Mockito.when(accountService.getHolidaysAccount(2012, person)).thenReturn(Optional.of(account2012));
         Mockito.when(accountService.getHolidaysAccount(2013, person)).thenReturn(Optional.of(account2013));
         Mockito.when(accountService.getHolidaysAccount(2014, person)).thenReturn(Optional.of(account2014));
+        Mockito.when(accountService.getHolidaysAccount(2015, person)).thenReturn(Optional.<Account>absent());
 
         Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(account2012)).thenReturn(BigDecimal.valueOf(6));
         Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(account2013)).thenReturn(BigDecimal.valueOf(2));
-        Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(account2014)).thenReturn(BigDecimal.valueOf(
-                11));
 
         service.updateRemainingVacationDays(2012, person);
 
         Mockito.verify(vacationDaysService).calculateTotalLeftVacationDays(account2012);
         Mockito.verify(vacationDaysService).calculateTotalLeftVacationDays(account2013);
-        Mockito.verify(vacationDaysService).calculateTotalLeftVacationDays(account2014);
+        Mockito.verify(vacationDaysService, Mockito.never()).calculateTotalLeftVacationDays(account2014);
 
-        Mockito.verify(accountService).save(account2012);
+        Mockito.verify(accountService, Mockito.never()).save(account2012);
         Mockito.verify(accountService).save(account2013);
         Mockito.verify(accountService).save(account2014);
+
+        Assert.assertEquals("Wrong number of remaining vacation days for 2012", BigDecimal.valueOf(5),
+            account2012.getRemainingVacationDays());
+        Assert.assertEquals("Wrong number of remaining vacation days for 2013", BigDecimal.valueOf(6),
+            account2013.getRemainingVacationDays());
+        Assert.assertEquals("Wrong number of remaining vacation days for 2014", BigDecimal.valueOf(2),
+            account2014.getRemainingVacationDays());
     }
 }

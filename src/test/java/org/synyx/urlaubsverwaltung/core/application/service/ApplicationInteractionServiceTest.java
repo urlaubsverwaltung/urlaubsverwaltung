@@ -14,7 +14,6 @@ import org.synyx.urlaubsverwaltung.core.account.service.AccountInteractionServic
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
-import org.synyx.urlaubsverwaltung.core.calendar.NowService;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
@@ -31,7 +30,6 @@ public class ApplicationInteractionServiceTest {
     private AccountInteractionService accountInteractionService;
     private SignService signService;
     private MailService mailService;
-    private NowService nowService;
 
     @Before
     public void setUp() {
@@ -41,10 +39,9 @@ public class ApplicationInteractionServiceTest {
         accountInteractionService = Mockito.mock(AccountInteractionService.class);
         signService = Mockito.mock(SignService.class);
         mailService = Mockito.mock(MailService.class);
-        nowService = Mockito.mock(NowService.class);
 
         service = new ApplicationInteractionServiceImpl(applicationService, commentService, accountInteractionService,
-                signService, mailService, nowService);
+                signService, mailService);
     }
 
 
@@ -238,8 +235,6 @@ public class ApplicationInteractionServiceTest {
         applicationForLeave.setStartDate(new DateMidnight(2015, 3, 24));
         applicationForLeave.setEndDate(new DateMidnight(2015, 4, 2));
 
-        Mockito.when(nowService.currentYear()).thenReturn(2015);
-
         service.cancel(applicationForLeave, person, comment);
 
         Assert.assertEquals("Wrong state", ApplicationStatus.REVOKED, applicationForLeave.getStatus());
@@ -269,8 +264,6 @@ public class ApplicationInteractionServiceTest {
         applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
         applicationForLeave.setStartDate(new DateMidnight(2015, 3, 24));
         applicationForLeave.setEndDate(new DateMidnight(2015, 4, 2));
-
-        Mockito.when(nowService.currentYear()).thenReturn(2015);
 
         service.cancel(applicationForLeave, canceller, comment);
 
@@ -303,8 +296,6 @@ public class ApplicationInteractionServiceTest {
         applicationForLeave.setStartDate(new DateMidnight(2015, 3, 24));
         applicationForLeave.setEndDate(new DateMidnight(2015, 4, 2));
 
-        Mockito.when(nowService.currentYear()).thenReturn(2015);
-
         service.cancel(applicationForLeave, canceller, comment);
 
         Assert.assertEquals("Wrong state", ApplicationStatus.REVOKED, applicationForLeave.getStatus());
@@ -324,7 +315,7 @@ public class ApplicationInteractionServiceTest {
 
 
     @Test
-    public void ensureCancellingApplicationForLeaveOfPastYearUpdatesRemainingVacationDays() {
+    public void ensureCancellingApplicationForLeaveUpdatesRemainingVacationDaysWithTheYearOfTheStartDateAsStartYear() {
 
         Person person = new Person();
         Person canceller = new Person();
@@ -336,53 +327,9 @@ public class ApplicationInteractionServiceTest {
         applicationForLeave.setStartDate(new DateMidnight(2014, 12, 24));
         applicationForLeave.setEndDate(new DateMidnight(2015, 1, 7));
 
-        Mockito.when(nowService.currentYear()).thenReturn(2015);
-
         service.cancel(applicationForLeave, canceller, comment);
 
         Mockito.verify(accountInteractionService).updateRemainingVacationDays(2014, person);
-    }
-
-
-    @Test
-    public void ensureCancellingApplicationForLeaveOfCurrentYearDoesNotUpdateRemainingVacationDays() {
-
-        Person person = new Person();
-        Person canceller = new Person();
-        Optional<String> comment = Optional.of("Foo");
-
-        Application applicationForLeave = new Application();
-        applicationForLeave.setPerson(person);
-        applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
-        applicationForLeave.setStartDate(new DateMidnight(2015, 3, 24));
-        applicationForLeave.setEndDate(new DateMidnight(2015, 4, 7));
-
-        Mockito.when(nowService.currentYear()).thenReturn(2015);
-
-        service.cancel(applicationForLeave, canceller, comment);
-
-        Mockito.verifyZeroInteractions(accountInteractionService);
-    }
-
-
-    @Test
-    public void ensureCancellingApplicationForLeaveOfNextYearDoesNotUpdateRemainingVacationDays() {
-
-        Person person = new Person();
-        Person canceller = new Person();
-        Optional<String> comment = Optional.of("Foo");
-
-        Application applicationForLeave = new Application();
-        applicationForLeave.setPerson(person);
-        applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
-        applicationForLeave.setStartDate(new DateMidnight(2016, 4, 2));
-        applicationForLeave.setEndDate(new DateMidnight(2016, 4, 7));
-
-        Mockito.when(nowService.currentYear()).thenReturn(2015);
-
-        service.cancel(applicationForLeave, canceller, comment);
-
-        Mockito.verifyZeroInteractions(accountInteractionService);
     }
 
     // END: CANCEL

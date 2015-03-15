@@ -203,25 +203,32 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
     public void updateRemainingVacationDays(int year, Person person) {
 
         int startYear = year;
-        int currentYear = nowService.currentYear();
 
-        while (startYear <= currentYear) {
-            Optional<Account> holidaysAccountOptional = accountService.getHolidaysAccount(startYear, person);
+        boolean hasNextAccount = true;
 
-            if (holidaysAccountOptional.isPresent()) {
-                Account holidaysAccount = holidaysAccountOptional.get();
-                BigDecimal leftVacationDays = vacationDaysService.calculateTotalLeftVacationDays(holidaysAccount);
-                holidaysAccount.setRemainingVacationDays(leftVacationDays);
+        while (hasNextAccount) {
+            Optional<Account> nextYearsHolidaysAccountOptional = accountService.getHolidaysAccount(startYear + 1,
+                    person);
+
+            if (nextYearsHolidaysAccountOptional.isPresent()) {
+                Account changedHolidaysAccount = accountService.getHolidaysAccount(startYear, person).get();
+                Account nextYearsHolidaysAccount = nextYearsHolidaysAccountOptional.get();
+
+                BigDecimal leftVacationDays = vacationDaysService.calculateTotalLeftVacationDays(
+                        changedHolidaysAccount);
+                nextYearsHolidaysAccount.setRemainingVacationDays(leftVacationDays);
 
                 // number of not expiring remaining vacation days is greater than remaining vacation days
-                if (holidaysAccount.getRemainingVacationDaysNotExpiring().compareTo(leftVacationDays) == 1) {
-                    holidaysAccount.setRemainingVacationDaysNotExpiring(leftVacationDays);
+                if (nextYearsHolidaysAccount.getRemainingVacationDaysNotExpiring().compareTo(leftVacationDays) == 1) {
+                    nextYearsHolidaysAccount.setRemainingVacationDaysNotExpiring(leftVacationDays);
                 }
 
-                accountService.save(holidaysAccount);
-            }
+                accountService.save(nextYearsHolidaysAccount);
 
-            startYear++;
+                startYear++;
+            } else {
+                hasNextAccount = false;
+            }
         }
     }
 }
