@@ -14,9 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
-import org.synyx.urlaubsverwaltung.core.calendar.NowService;
 import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -39,16 +39,14 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
     private final AccountService accountService;
     private final OwnCalendarService calendarService;
     private final VacationDaysService vacationDaysService;
-    private final NowService nowService;
 
     @Autowired
     AccountInteractionServiceImpl(AccountService accountService, OwnCalendarService calendarService,
-        VacationDaysService vacationDaysService, NowService nowService) {
+        VacationDaysService vacationDaysService) {
 
         this.accountService = accountService;
         this.calendarService = calendarService;
         this.vacationDaysService = vacationDaysService;
-        this.nowService = nowService;
     }
 
     @Override
@@ -230,5 +228,18 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
                 hasNextAccount = false;
             }
         }
+    }
+
+
+    @Override
+    public Account autoCreateHolidaysAccount(Account referenceAccount) {
+
+        int nextYear = referenceAccount.getYear() + 1;
+
+        BigDecimal leftVacationDays = vacationDaysService.calculateTotalLeftVacationDays(referenceAccount);
+
+        return createHolidaysAccount(referenceAccount.getPerson(), DateUtil.getFirstDayOfYear(nextYear),
+                DateUtil.getLastDayOfYear(nextYear), referenceAccount.getAnnualVacationDays(), leftVacationDays,
+                BigDecimal.ZERO);
     }
 }

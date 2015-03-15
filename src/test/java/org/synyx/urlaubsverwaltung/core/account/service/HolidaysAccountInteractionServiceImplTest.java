@@ -14,7 +14,6 @@ import org.mockito.Mockito;
 
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.calendar.JollydayCalendar;
-import org.synyx.urlaubsverwaltung.core.calendar.NowService;
 import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -35,7 +34,6 @@ public class HolidaysAccountInteractionServiceImplTest {
 
     private AccountService accountService;
     private VacationDaysService vacationDaysService;
-    private NowService nowService;
 
     private Person person;
 
@@ -43,13 +41,12 @@ public class HolidaysAccountInteractionServiceImplTest {
     public void setup() throws IOException {
 
         accountService = Mockito.mock(AccountService.class);
-        nowService = Mockito.mock(NowService.class);
 
         WorkingTimeService workingTimeService = Mockito.mock(WorkingTimeService.class);
         OwnCalendarService calendarService = new OwnCalendarService(new JollydayCalendar(), workingTimeService);
         vacationDaysService = Mockito.mock(VacationDaysService.class);
 
-        service = new AccountInteractionServiceImpl(accountService, calendarService, vacationDaysService, nowService);
+        service = new AccountInteractionServiceImpl(accountService, calendarService, vacationDaysService);
 
         person = new Person();
         person.setLoginName("horscht");
@@ -194,8 +191,6 @@ public class HolidaysAccountInteractionServiceImplTest {
     @Test
     public void testUpdateRemainingVacationDays() {
 
-        Mockito.when(nowService.currentYear()).thenReturn(2014);
-
         DateMidnight startDate = new DateMidnight(2012, DateTimeConstants.JANUARY, 1);
         DateMidnight endDate = new DateMidnight(2012, DateTimeConstants.DECEMBER, 31);
 
@@ -232,5 +227,36 @@ public class HolidaysAccountInteractionServiceImplTest {
             account2013.getRemainingVacationDays());
         Assert.assertEquals("Wrong number of remaining vacation days for 2014", BigDecimal.valueOf(2),
             account2014.getRemainingVacationDays());
+    }
+
+
+    @Test
+    public void testAutoCreateHolidaysAccount() {
+
+        DateMidnight startDate = new DateMidnight(2012, DateTimeConstants.JANUARY, 1);
+        DateMidnight endDate = new DateMidnight(2012, DateTimeConstants.OCTOBER, 31);
+
+        Account referenceHolidaysAccount = new Account(person, startDate.withYear(2014).toDate(),
+                endDate.withYear(2014).toDate(), BigDecimal.valueOf(30), BigDecimal.valueOf(8), BigDecimal.valueOf(4));
+
+        BigDecimal leftDays = BigDecimal.ONE;
+
+        Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(referenceHolidaysAccount)).thenReturn(leftDays);
+
+        Account createdHolidaysAccount = service.autoCreateHolidaysAccount(referenceHolidaysAccount);
+
+        Assert.assertNotNull("Should not be null", createdHolidaysAccount);
+
+        Assert.assertEquals("Wrong person", person, createdHolidaysAccount.getPerson());
+        Assert.assertEquals("Wrong number of annual vacation days", referenceHolidaysAccount.getAnnualVacationDays(),
+            createdHolidaysAccount.getAnnualVacationDays());
+        Assert.assertEquals("Wrong number of remaining vacation days", leftDays,
+            createdHolidaysAccount.getRemainingVacationDays());
+        Assert.assertEquals("Wrong number of not expiring remaining vacation days", BigDecimal.ZERO,
+            createdHolidaysAccount.getRemainingVacationDaysNotExpiring());
+        Assert.assertEquals("Wrong validity start date", new DateMidnight(2015, 1, 1),
+            createdHolidaysAccount.getValidFrom());
+        Assert.assertEquals("Wrong validity end date", new DateMidnight(2015, 12, 31),
+            createdHolidaysAccount.getValidTo());
     }
 }

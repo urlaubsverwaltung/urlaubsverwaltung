@@ -107,8 +107,6 @@ public class CalculationService {
             return Optional.absent();
         }
 
-        return Optional.of(accountInteractionService.createHolidaysAccount(person, DateUtil.getFirstDayOfYear(year),
-                    DateUtil.getLastDayOfYear(year), lastYearsHolidaysAccount.get().getAnnualVacationDays(),
-                    BigDecimal.ZERO, BigDecimal.ZERO));
+        return Optional.of(accountInteractionService.autoCreateHolidaysAccount(lastYearsHolidaysAccount.get()));
     }
 }

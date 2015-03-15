@@ -51,9 +51,20 @@ public interface AccountInteractionService {
 
 
     /**
-     * Updates the remaining vacation days of all {@link Account}s of the given since the given year.
+     * Auto-creates a new {@link Account} based on the information of the given reference account.
      *
-     * @param  year  to start the update for, end with current year
+     * @param  referenceAccount  to get the information about annual vacation days, left vacation days etc.
+     *
+     * @return  the created holidays account
+     */
+    Account autoCreateHolidaysAccount(Account referenceAccount);
+
+
+    /**
+     * Updates the remaining vacation days of all {@link Account}s that follow the {@link Account} of the given year.
+     * Updating is stopped when there is no next year's {@link Account}.
+     *
+     * @param  year  to start the update for
      * @param  person  to update the remaining vacation days for
      */
     void updateRemainingVacationDays(int year, Person person);
