@@ -41,18 +41,83 @@ public class OverlapService {
     }
 
     /**
-     * Check if there are any overlapping applications for leave or sick notes for the given period and person.
+     * Check if there are any overlapping applications for leave or sick notes for the given application for leave.
      *
-     * @param  person  to get overlapping applications for leave and sick notes for
-     * @param  startDate  defines the start of the period to be checked
-     * @param  endDate  defines the end of the period to be checked
+     * @param  application  to be checked if there are any overlaps
      *
      * @return  {@link OverlapCase} - none, partly, fully
      */
-    public OverlapCase checkOverlap(Person person, DateMidnight startDate, DateMidnight endDate) {
+    public OverlapCase checkOverlap(final Application application) {
+
+        Person person = application.getPerson();
+        DateMidnight startDate = application.getStartDate();
+        DateMidnight endDate = application.getEndDate();
 
         List<Application> applications = getRelevantApplicationsForLeave(person, startDate, endDate);
+
+        if (!application.isNew()) {
+            applications = FluentIterable.from(applications).filter(new Predicate<Application>() {
+
+                        @Override
+                        public boolean apply(Application input) {
+
+                            // the same application for leave should not be recognized as overlapping
+                            return input.getId() != null && !input.getId().equals(application.getId());
+                        }
+                    }).toList();
+        }
+
         List<SickNote> sickNotes = getRelevantSickNotes(person, startDate, endDate);
+
+        return getOverlapCase(startDate, endDate, applications, sickNotes);
+    }
+
+
+    /**
+     * Check if there are any overlapping applications for leave or sick notes for the given sick note.
+     *
+     * @param  sickNote  to be checked if there are any overlaps
+     *
+     * @return  {@link OverlapCase} - none, partly, fully
+     */
+    public OverlapCase checkOverlap(final SickNote sickNote) {
+
+        Person person = sickNote.getPerson();
+        DateMidnight startDate = sickNote.getStartDate();
+        DateMidnight endDate = sickNote.getEndDate();
+
+        List<Application> applications = getRelevantApplicationsForLeave(person, startDate, endDate);
+
+        List<SickNote> sickNotes = getRelevantSickNotes(person, startDate, endDate);
+
+        if (!sickNote.isNew()) {
+            sickNotes = FluentIterable.from(sickNotes).filter(new Predicate<SickNote>() {
+
+                        @Override
+                        public boolean apply(SickNote input) {
+
+                            // the same sick note should not be recognized as overlapping
+                            return input.getId() != null && !input.getId().equals(sickNote.getId());
+                        }
+                    }).toList();
+        }
+
+        return getOverlapCase(startDate, endDate, applications, sickNotes);
+    }
+
+
+    /**
+     * Determine the case of overlap for the given period and overlapping applications for leave and sick notes.
+     *
+     * @param  startDate  defines the start of the period to be checked
+     * @param  endDate  defines the end of the period to be checked
+     * @param  applications  for leave that are overlapping in the given period
+     * @param  sickNotes  that are overlapping in the given period
+     *
+     * @return  {@link OverlapCase} - none, partly, fully
+     */
+    OverlapCase getOverlapCase(DateMidnight startDate, DateMidnight endDate, List<Application> applications,
+        List<SickNote> sickNotes) {
 
         // case (1): no overlap at all
         if (applications.isEmpty() && sickNotes.isEmpty()) {

@@ -155,8 +155,8 @@ public class SickNoteValidatorTest {
         sickNote.setStartDate(new DateMidnight(2015, DateTimeConstants.MARCH, 1));
         sickNote.setEndDate(new DateMidnight(2015, DateTimeConstants.MARCH, 10));
 
-        Mockito.when(overlapService.checkOverlap(Mockito.any(Person.class), Mockito.any(DateMidnight.class),
-                Mockito.any(DateMidnight.class))).thenReturn(OverlapCase.FULLY_OVERLAPPING);
+        Mockito.when(overlapService.checkOverlap(Mockito.any(SickNote.class))).thenReturn(
+            OverlapCase.FULLY_OVERLAPPING);
 
         validator.validate(sickNote, errors);
 
