@@ -232,8 +232,7 @@ public class ApplicationValidator implements Validator {
          * Ensure that there is no application for leave and no sick note in the same period
          */
         Application application = applicationForm.generateApplicationForLeave();
-        OverlapCase overlap = overlapService.checkOverlap(application.getPerson(), application.getStartDate(),
-                application.getEndDate());
+        OverlapCase overlap = overlapService.checkOverlap(application);
 
         boolean isOverlapping = overlap == OverlapCase.FULLY_OVERLAPPING || overlap == OverlapCase.PARTLY_OVERLAPPING;
 

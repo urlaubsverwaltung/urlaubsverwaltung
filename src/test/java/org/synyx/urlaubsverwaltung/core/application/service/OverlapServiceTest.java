@@ -66,7 +66,12 @@ public class OverlapServiceTest {
                 Mockito.any(Date.class), Mockito.any(Person.class))).thenReturn(Arrays.asList(cancelledApplication,
                 rejectedApplication));
 
-        OverlapCase overlapCase = service.checkOverlap(Mockito.mock(Person.class), startDate, endDate);
+        Application applicationToBeChecked = new Application();
+        applicationToBeChecked.setHowLong(DayLength.FULL);
+        applicationToBeChecked.setStartDate(startDate);
+        applicationToBeChecked.setEndDate(endDate);
+
+        OverlapCase overlapCase = service.checkOverlap(applicationToBeChecked);
 
         Assert.assertNotNull("Should not be null", overlapCase);
         Assert.assertEquals("Wrong overlap case", OverlapCase.NO_OVERLAPPING, overlapCase);
@@ -88,7 +93,7 @@ public class OverlapServiceTest {
         applicationToCheck.setStartDate(startDate);
         applicationToCheck.setEndDate(endDate);
 
-        OverlapCase overlapCase = service.checkOverlap(Mockito.mock(Person.class), startDate, endDate);
+        OverlapCase overlapCase = service.checkOverlap(applicationToCheck);
 
         Assert.assertNotNull("Should not be null", overlapCase);
         Assert.assertEquals("Wrong overlap case", OverlapCase.NO_OVERLAPPING, overlapCase);
@@ -117,9 +122,12 @@ public class OverlapServiceTest {
                 allowedApplication));
 
         // application for leave to check: 18.01. - 19.01.
-        OverlapCase overlapCase = service.checkOverlap(Mockito.mock(Person.class),
-                new DateMidnight(2012, DateTimeConstants.JANUARY, 18),
-                new DateMidnight(2012, DateTimeConstants.JANUARY, 19));
+        Application applicationToCheck = new Application();
+        applicationToCheck.setHowLong(DayLength.FULL);
+        applicationToCheck.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 18));
+        applicationToCheck.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 19));
+
+        OverlapCase overlapCase = service.checkOverlap(applicationToCheck);
 
         Assert.assertNotNull("Should not be null", overlapCase);
         Assert.assertEquals("Wrong overlap case", OverlapCase.FULLY_OVERLAPPING, overlapCase);
@@ -140,9 +148,12 @@ public class OverlapServiceTest {
                 Mockito.any(Date.class), Mockito.any(Person.class))).thenReturn(Arrays.asList(waitingApplication));
 
         // application for leave to check: 14.01. - 16.01.
-        OverlapCase overlapCase = service.checkOverlap(Mockito.mock(Person.class),
-                new DateMidnight(2012, DateTimeConstants.JANUARY, 14),
-                new DateMidnight(2012, DateTimeConstants.JANUARY, 16));
+        Application applicationToCheck = new Application();
+        applicationToCheck.setHowLong(DayLength.FULL);
+        applicationToCheck.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 14));
+        applicationToCheck.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 16));
+
+        OverlapCase overlapCase = service.checkOverlap(applicationToCheck);
 
         Assert.assertNotNull("Should not be null", overlapCase);
         Assert.assertEquals("Wrong overlap case", OverlapCase.PARTLY_OVERLAPPING, overlapCase);
@@ -163,9 +174,12 @@ public class OverlapServiceTest {
                 Mockito.any(Date.class), Mockito.any(Person.class))).thenReturn(Arrays.asList(allowedApplication));
 
         // application for leave to check: 18.01. - 20.01.
-        OverlapCase overlapCase = service.checkOverlap(Mockito.mock(Person.class),
-                new DateMidnight(2012, DateTimeConstants.JANUARY, 18),
-                new DateMidnight(2012, DateTimeConstants.JANUARY, 20));
+        Application applicationToCheck = new Application();
+        applicationToCheck.setHowLong(DayLength.FULL);
+        applicationToCheck.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 18));
+        applicationToCheck.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 20));
+
+        OverlapCase overlapCase = service.checkOverlap(applicationToCheck);
 
         Assert.assertNotNull("Should not be null", overlapCase);
         Assert.assertEquals("Wrong overlap case", OverlapCase.PARTLY_OVERLAPPING, overlapCase);
@@ -186,7 +200,12 @@ public class OverlapServiceTest {
         Mockito.when(sickNoteDAO.findByPersonAndPeriod(Mockito.any(Person.class), Mockito.any(Date.class),
                 Mockito.any(Date.class))).thenReturn(Arrays.asList(inactiveSickNote));
 
-        OverlapCase overlapCase = service.checkOverlap(Mockito.mock(Person.class), startDate, endDate);
+        // sick note to be checked: 16.01. - 18.01.
+        SickNote sickNote = new SickNote();
+        sickNote.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 16));
+        sickNote.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 18));
+
+        OverlapCase overlapCase = service.checkOverlap(sickNote);
 
         Assert.assertNotNull("Should not be null", overlapCase);
         Assert.assertEquals("Wrong overlap case", OverlapCase.NO_OVERLAPPING, overlapCase);
@@ -199,10 +218,12 @@ public class OverlapServiceTest {
         Mockito.when(sickNoteDAO.findByPersonAndPeriod(Mockito.any(Person.class), Mockito.any(Date.class),
                 Mockito.any(Date.class))).thenReturn(new ArrayList<SickNote>());
 
-        // application for leave to check: 16.01. - 18.01.
-        OverlapCase overlapCase = service.checkOverlap(Mockito.mock(Person.class),
-                new DateMidnight(2012, DateTimeConstants.JANUARY, 16),
-                new DateMidnight(2012, DateTimeConstants.JANUARY, 18));
+        // sick note to be checked: 16.01. - 18.01.
+        SickNote sickNote = new SickNote();
+        sickNote.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 16));
+        sickNote.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 18));
+
+        OverlapCase overlapCase = service.checkOverlap(sickNote);
 
         Assert.assertNotNull("Should not be null", overlapCase);
         Assert.assertEquals("Wrong overlap case", OverlapCase.NO_OVERLAPPING, overlapCase);
@@ -222,9 +243,12 @@ public class OverlapServiceTest {
                 Mockito.any(Date.class))).thenReturn(Arrays.asList(sickNote));
 
         // application for leave to check: 18.01. - 19.01.
-        OverlapCase overlapCase = service.checkOverlap(Mockito.mock(Person.class),
-                new DateMidnight(2012, DateTimeConstants.JANUARY, 18),
-                new DateMidnight(2012, DateTimeConstants.JANUARY, 19));
+        Application applicationToCheck = new Application();
+        applicationToCheck.setHowLong(DayLength.FULL);
+        applicationToCheck.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 18));
+        applicationToCheck.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 19));
+
+        OverlapCase overlapCase = service.checkOverlap(applicationToCheck);
 
         Assert.assertNotNull("Should not be null", overlapCase);
         Assert.assertEquals("Wrong overlap case", OverlapCase.FULLY_OVERLAPPING, overlapCase);
@@ -244,11 +268,42 @@ public class OverlapServiceTest {
                 Mockito.any(Date.class))).thenReturn(Arrays.asList(sickNote));
 
         // application for leave to check: 14.01. - 16.01.
-        OverlapCase overlapCase = service.checkOverlap(Mockito.mock(Person.class),
-                new DateMidnight(2012, DateTimeConstants.JANUARY, 14),
-                new DateMidnight(2012, DateTimeConstants.JANUARY, 16));
+        Application applicationToCheck = new Application();
+        applicationToCheck.setHowLong(DayLength.FULL);
+        applicationToCheck.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 14));
+        applicationToCheck.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 16));
+
+        OverlapCase overlapCase = service.checkOverlap(applicationToCheck);
 
         Assert.assertNotNull("Should not be null", overlapCase);
         Assert.assertEquals("Wrong overlap case", OverlapCase.PARTLY_OVERLAPPING, overlapCase);
+    }
+
+
+    @Test
+    public void ensureSickNoteCanBeEditedAndNoOverlappingErrorOccurs() {
+
+        // sick note: 16.03. - 16.03.
+        SickNote existentSickNote = new SickNote();
+        existentSickNote.setId(23);
+        existentSickNote.setStartDate(new DateMidnight(2015, DateTimeConstants.MARCH, 16));
+        existentSickNote.setEndDate(new DateMidnight(2015, DateTimeConstants.MARCH, 16));
+        existentSickNote.setActive(true);
+
+        Mockito.when(sickNoteDAO.findByPersonAndPeriod(Mockito.any(Person.class), Mockito.any(Date.class),
+                Mockito.any(Date.class))).thenReturn(Arrays.asList(existentSickNote));
+
+        // sick note should be edited to: 16.03. - 17.03.
+        SickNote sickNote = new SickNote();
+        sickNote.setId(23);
+        sickNote.setStartDate(new DateMidnight(2015, DateTimeConstants.MARCH, 16));
+        sickNote.setEndDate(new DateMidnight(2015, DateTimeConstants.MARCH, 17));
+        sickNote.setActive(true);
+
+        // edit sick note to: 16.03. - 17.03.
+        OverlapCase overlapCase = service.checkOverlap(sickNote);
+
+        Assert.assertNotNull("Should not be null", overlapCase);
+        Assert.assertEquals("Wrong overlap case", OverlapCase.NO_OVERLAPPING, overlapCase);
     }
 }

@@ -140,8 +140,7 @@ public class SickNoteValidator implements Validator {
         /**
          * Ensure that there is no application for leave and no sick note in the same period
          */
-        OverlapCase overlap = overlapService.checkOverlap(sickNote.getPerson(), sickNote.getStartDate(),
-                sickNote.getEndDate());
+        OverlapCase overlap = overlapService.checkOverlap(sickNote);
 
         boolean isOverlapping = overlap == OverlapCase.FULLY_OVERLAPPING || overlap == OverlapCase.PARTLY_OVERLAPPING;
 
