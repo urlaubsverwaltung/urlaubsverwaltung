@@ -59,15 +59,7 @@
 
         <uv:year-selector year="${displayYear}" />
 
-        <sec:authorize access="hasRole('BOSS')">
-          <a class="btn btn-default pull-right hidden-xs" data-toggle="modal" href="#filterModal">
-            <i class="fa fa-bar-chart"></i> <spring:message code="applications.statistics.create" />
-          </a>
-        </sec:authorize>
-
     </legend>
 
-    <uv:filter-modal id="filterModal" actionUrl="${URL_PREFIX}/application/statistics" />
-    
 </div>
 
