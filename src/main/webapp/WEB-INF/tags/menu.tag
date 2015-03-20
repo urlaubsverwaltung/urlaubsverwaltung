@@ -78,11 +78,14 @@
                   <i class="fa fa-fw fa-list"></i> <spring:message code="nav.vacation.overview"/>
                 </a>
               </li>
+
+              <sec:authorize access="hasRole('OFFICE')">
               <li>
                 <a href="${URL_PREFIX}/application/new?appliesOnOnesBehalf=true">
                   <i class="fa fa-fw fa-pencil"></i> <spring:message code="nav.vacation.apply"/>
                 </a>
               </li>
+              </sec:authorize>
               <li>
                 <a href="${URL_PREFIX}/application/statistics">
                   <i class="fa fa-fw fa-bar-chart"></i> <spring:message code="nav.vacation.statistics"/>
@@ -119,7 +122,16 @@
           </li>
         </sec:authorize>
 
-        <sec:authorize access="hasAnyRole('BOSS', 'OFFICE')">
+        <sec:authorize access="hasRole('BOSS') and !hasRole('OFFICE')">
+          <li>
+            <a href="${URL_PREFIX}/staff">
+              <i class="fa fa-user"></i>
+              <span class="nav-title"><spring:message code="nav.staff.title"/></span>
+            </a>
+          </li>
+        </sec:authorize>
+
+        <sec:authorize access="hasRole('OFFICE')">
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
               <i class="fa fa-user"></i>

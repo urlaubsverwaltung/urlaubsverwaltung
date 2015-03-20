@@ -50,7 +50,7 @@ public class ApplicationForLeaveStatisticsController {
     @RequestMapping(value = "/statistics", method = RequestMethod.POST)
     public String applicationForLeaveStatistics(@ModelAttribute("filterRequest") FilterRequest filterRequest) {
 
-        if (sessionService.isBoss()) {
+        if (sessionService.isBoss() || sessionService.isOffice()) {
             DateMidnight from = filterRequest.getStartDate();
             DateMidnight to = filterRequest.getEndDate();
 
@@ -66,7 +66,7 @@ public class ApplicationForLeaveStatisticsController {
     public String applicationForLeaveStatistics(@RequestParam(value = "from", required = false) String from,
         @RequestParam(value = "to", required = false) String to, Model model) {
 
-        if (sessionService.isBoss()) {
+        if (sessionService.isBoss() || sessionService.isOffice()) {
             DateMidnight fromDate;
             DateMidnight toDate;
 
