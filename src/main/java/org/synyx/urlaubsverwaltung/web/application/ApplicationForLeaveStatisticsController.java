@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.synyx.urlaubsverwaltung.DateFormat;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
+import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.FilterRequest;
@@ -79,14 +80,28 @@ public class ApplicationForLeaveStatisticsController {
     }
 
 
-    @RequestMapping(value = "/statistics", method = RequestMethod.GET, params = { "from", "to" })
-    public String applicationForLeaveStatistics(@RequestParam("from") String from,
-        @RequestParam("to") String to, Model model) {
+    @RequestMapping(value = "/statistics", method = RequestMethod.GET)
+    public String applicationForLeaveStatistics(@RequestParam(value = "from", required = false) String from,
+        @RequestParam(value = "to", required = false) String to, Model model) {
 
         if (sessionService.isBoss()) {
+            DateMidnight fromDate;
+            DateMidnight toDate;
+
             DateTimeFormatter formatter = DateTimeFormat.forPattern(DateFormat.PATTERN);
-            DateMidnight fromDate = DateMidnight.parse(from, formatter);
-            DateMidnight toDate = DateMidnight.parse(to, formatter);
+            int currentYear = DateMidnight.now().getYear();
+
+            if (from == null) {
+                fromDate = DateUtil.getFirstDayOfYear(currentYear);
+            } else {
+                fromDate = DateMidnight.parse(from, formatter);
+            }
+
+            if (to == null) {
+                toDate = DateUtil.getLastDayOfYear(currentYear);
+            } else {
+                toDate = DateMidnight.parse(to, formatter);
+            }
 
             // NOTE: Not supported at the moment
             if (fromDate.getYear() != toDate.getYear()) {
