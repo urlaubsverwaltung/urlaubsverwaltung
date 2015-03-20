@@ -134,7 +134,7 @@
               </li>
               <li>
                 <a href="${URL_PREFIX}/staff/new">
-                  <i class="fa fa-fw fa-pencil"></i> <spring:message code="nav.staff.create"/>
+                  <i class="fa fa-fw fa-user-plus"></i> <spring:message code="nav.staff.create"/>
                 </a>
               </li>
             </ul>

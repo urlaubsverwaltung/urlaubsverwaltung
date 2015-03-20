@@ -42,10 +42,6 @@
     margin-right: 12px;
 }
 
-.navbar ul.dropdown-menu .fa {
-    padding-right: 25px;
-}
-
 /* MORE PLACE IN NAVBAR FOR SM DEVICES */
 
 @media (max-width: 991px) {
