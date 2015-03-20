@@ -105,12 +105,10 @@
                 <div class="col-xs-12 col-sm-12 col-md-6 hidden-print">
 
                     <div class="header">
-                        <legend>
-                          <p><spring:message code="staff" /></p>
-                          <div class="pull-right">
-                            <uv:year-selector year="${year}" />
-                          </div>
-                        </legend>
+                      <legend>
+                        <p><spring:message code="person.annual.vacation.year"/></p>
+                        <uv:year-selector year="${year}"/>
+                      </legend>
                     </div>
 
                     <div class="box">

@@ -174,8 +174,7 @@
     <div class="header">
 
         <legend>
-            <p><spring:message code="entitlement"/></p>
-            <p><spring:message code="for"/></p>
+            <p><spring:message code="person.annual.vacation.year"/></p>
             <p>
                 <c:choose>
                     <c:when test="${personForm.id == null}">
