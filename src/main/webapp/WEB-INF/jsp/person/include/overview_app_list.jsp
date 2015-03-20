@@ -105,7 +105,7 @@
                         <c:when test="${app.status == 'REJECTED'}">
                             <spring:message code="progress.REJECTED" /> <uv:date date="${app.editedDate}" />
                         </c:when>
-                        <c:when test="${app.status == 'CANCELLED'}">
+                        <c:when test="${app.status == 'CANCELLED' || app.status == 'REVOKED'}">
                             <spring:message code="progress.CANCELLED" /> <uv:date date="${app.cancelDate}" />
                         </c:when>
                         <c:otherwise>

@@ -44,31 +44,8 @@
             <div class="header">
 
                 <legend class="is-sticky">
-
-                    <p>
-                        <spring:message code="sicknotes" />
-                    </p>
-
+                    <p><spring:message code="sicknotes" /></p>
                     <uv:print />
-
-                    <div class="btn-group btn-group-legend pull-right hidden-xs hidden-sm">
-                        <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#">
-                            <i class="fa fa-bar-chart"></i>&nbsp;<spring:message code='sicknotes.statistics.short' />
-                            <span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <c:forEach begin="0" end="10" varStatus="counter">
-                                <li>
-                                    <a href="${URL_PREFIX}/sicknote/statistics?year=${today.year - counter.index}">
-                                        <c:out value="${today.year - counter.index}" />
-                                    </a>
-                                </li> 
-                            </c:forEach>
-                        </ul>
-                    </div>
-                    <a class="btn btn-default pull-right" href="${URL_PREFIX}/sicknote/new">
-                        <i class="fa fa-pencil"></i> <span class="hidden-xs"><spring:message code="action.apply.sicknote" /></span>
-                    </a>
                 </legend>
 
             </div>

@@ -222,7 +222,7 @@
                             </c:when>
                             <c:otherwise>
                                 <sec:authorize access="hasRole('OFFICE')">
-                                    <a class="btn btn-default pull-right" href="${URL_PREFIX}/application/new?personId=${person.id}">
+                                    <a class="btn btn-default pull-right" href="${URL_PREFIX}/application/new?personId=${person.id}&appliesOnOnesBehalf=true">
                                         <i class="fa fa-pencil"></i> <span class="hidden-xs"><spring:message code="action.apply.vacation"/></span>
                                     </a>
                                 </sec:authorize>

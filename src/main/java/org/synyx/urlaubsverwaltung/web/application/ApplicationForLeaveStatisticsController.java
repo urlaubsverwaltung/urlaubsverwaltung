@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.synyx.urlaubsverwaltung.DateFormat;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
+import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.FilterRequest;
@@ -50,26 +51,8 @@ public class ApplicationForLeaveStatisticsController {
     public String applicationForLeaveStatistics(@ModelAttribute("filterRequest") FilterRequest filterRequest) {
 
         if (sessionService.isBoss()) {
-            DateMidnight now = DateMidnight.now();
-            DateMidnight from = now;
-            DateMidnight to = now;
-
-            if (filterRequest.getPeriod().equals(FilterRequest.Period.YEAR)) {
-                from = now.dayOfYear().withMinimumValue();
-                to = now.dayOfYear().withMaximumValue();
-            } else if (filterRequest.getPeriod().equals(FilterRequest.Period.QUARTAL)) {
-                from = now.dayOfMonth().withMinimumValue().minusMonths(2);
-
-                // TODO: This is quickfix...
-                if (from.getYear() != now.getYear()) {
-                    from = now.dayOfYear().withMinimumValue();
-                }
-
-                to = now.dayOfMonth().withMaximumValue();
-            } else if (filterRequest.getPeriod().equals(FilterRequest.Period.MONTH)) {
-                from = now.dayOfMonth().withMinimumValue();
-                to = now.dayOfMonth().withMaximumValue();
-            }
+            DateMidnight from = filterRequest.getStartDate();
+            DateMidnight to = filterRequest.getEndDate();
 
             return "redirect:/web/application/statistics?from=" + from.toString(DateFormat.PATTERN) + "&to="
                 + to.toString(DateFormat.PATTERN);
@@ -79,14 +62,28 @@ public class ApplicationForLeaveStatisticsController {
     }
 
 
-    @RequestMapping(value = "/statistics", method = RequestMethod.GET, params = { "from", "to" })
-    public String applicationForLeaveStatistics(@RequestParam("from") String from,
-        @RequestParam("to") String to, Model model) {
+    @RequestMapping(value = "/statistics", method = RequestMethod.GET)
+    public String applicationForLeaveStatistics(@RequestParam(value = "from", required = false) String from,
+        @RequestParam(value = "to", required = false) String to, Model model) {
 
         if (sessionService.isBoss()) {
+            DateMidnight fromDate;
+            DateMidnight toDate;
+
             DateTimeFormatter formatter = DateTimeFormat.forPattern(DateFormat.PATTERN);
-            DateMidnight fromDate = DateMidnight.parse(from, formatter);
-            DateMidnight toDate = DateMidnight.parse(to, formatter);
+            int currentYear = DateMidnight.now().getYear();
+
+            if (from == null) {
+                fromDate = DateUtil.getFirstDayOfYear(currentYear);
+            } else {
+                fromDate = DateMidnight.parse(from, formatter);
+            }
+
+            if (to == null) {
+                toDate = DateUtil.getLastDayOfYear(currentYear);
+            } else {
+                toDate = DateMidnight.parse(to, formatter);
+            }
 
             // NOTE: Not supported at the moment
             if (fromDate.getYear() != toDate.getYear()) {

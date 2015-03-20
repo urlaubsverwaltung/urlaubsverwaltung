@@ -9,13 +9,8 @@ import org.joda.time.DateTimeConstants;
  */
 public final class DateUtil {
 
-    private static final int FIRST_DAY_OF_MONTH = 1;
-    private static final int LAST_DAY_OF_MONTH = 31;
-
-    private static final int CHRISTMAS_EVE = 24;
-
-    private static final int SATURDAY = DateTimeConstants.SATURDAY;
-    private static final int SUNDAY = DateTimeConstants.SUNDAY;
+    private static final int DAY_OF_NEW_YEARS_EVE = 31;
+    private static final int DAY_OF_CHRISTMAS_EVE = 24;
 
     private DateUtil() {
 
@@ -23,24 +18,24 @@ public final class DateUtil {
     }
 
     /**
-     * checks if the given date is a work day.
+     * Check if the given date is a work day.
      *
-     * @param  date
+     * @param  date  to check
      *
-     * @return
+     * @return  {@code true} if the given date is a work day, else {@code false}
      */
     public static boolean isWorkDay(DateMidnight date) {
 
-        return !(date.getDayOfWeek() == SATURDAY || date.getDayOfWeek() == SUNDAY);
+        return !(date.getDayOfWeek() == DateTimeConstants.SATURDAY || date.getDayOfWeek() == DateTimeConstants.SUNDAY);
     }
 
 
     /**
-     * checks if given date is before April.
+     * Check if given date is before April.
      *
-     * @param  date
+     * @param  date  to check
      *
-     * @return
+     * @return  {@code true} if the given date is before April, {@code false} if it is after April
      */
     public static boolean isBeforeApril(DateMidnight date) {
 
@@ -49,56 +44,65 @@ public final class DateUtil {
 
 
     /**
-     * this method checks if a given date is on Christmas Eve or on New Year's Eve.
+     * Check if given date is on Christmas Eve.
      *
-     * @param  date
+     * @param  date  to check
      *
-     * @return  true if date is on Christmas Eve or on New Year's Eve, else false
-     */
-    public static boolean isChristmasEveOrNewYearsEve(DateMidnight date) {
-
-        return (isChristmasEve(date) || isNewYearsEve(date));
-    }
-
-
-    /**
-     * This method checks if a given date is on Christmas Eve.
-     *
-     * @param  date
-     *
-     * @return  True if date is on Christmas Eve, else false
+     * @return  {@code true} if the given date is on Christmas Eve, else {@code false}
      */
     public static boolean isChristmasEve(DateMidnight date) {
 
-        return (date.getDayOfMonth() == CHRISTMAS_EVE && date.getMonthOfYear() == DateTimeConstants.DECEMBER);
+        return (date.getDayOfMonth() == DAY_OF_CHRISTMAS_EVE && date.getMonthOfYear() == DateTimeConstants.DECEMBER);
     }
 
 
     /**
-     * This method checks if a given date is on New Year's Eve.
+     * Check if given date is on New Year's Eve.
      *
-     * @param  date
+     * @param  date  to check
      *
-     * @return  True if date is on New Year's Eve, else false
+     * @return  {@code true} if the given date is on New Year's Eve, else {@code false}
      */
     public static boolean isNewYearsEve(DateMidnight date) {
 
-        return (date.getDayOfMonth() == LAST_DAY_OF_MONTH && date.getMonthOfYear() == DateTimeConstants.DECEMBER);
+        return (date.getDayOfMonth() == DAY_OF_NEW_YEARS_EVE && date.getMonthOfYear() == DateTimeConstants.DECEMBER);
     }
 
 
+    /**
+     * Get the first day of the given year.
+     *
+     * @param  year  to get the first day of
+     *
+     * @return  the first day of the given year
+     */
     public static DateMidnight getFirstDayOfYear(int year) {
 
-        return new DateMidnight(year, DateTimeConstants.JANUARY, FIRST_DAY_OF_MONTH);
+        return getFirstDayOfMonth(year, DateTimeConstants.JANUARY);
     }
 
 
+    /**
+     * Get the last day of the given year.
+     *
+     * @param  year  to get the last day of
+     *
+     * @return  the last day of the given year
+     */
     public static DateMidnight getLastDayOfYear(int year) {
 
-        return new DateMidnight(year, DateTimeConstants.DECEMBER, LAST_DAY_OF_MONTH);
+        return getLastDayOfMonth(year, DateTimeConstants.DECEMBER);
     }
 
 
+    /**
+     * Get the first day of the given month in the given year.
+     *
+     * @param  year  of the month to get the first day of
+     * @param  month  to get the first day of
+     *
+     * @return  the first day of the given month in the given year
+     */
     public static DateMidnight getFirstDayOfMonth(int year, int month) {
 
         DateMidnight monthOfYear = DateMidnight.now().withYear(year).withMonthOfYear(month);
@@ -107,6 +111,14 @@ public final class DateUtil {
     }
 
 
+    /**
+     * Get the last day of the given month in the given year.
+     *
+     * @param  year  of the month to get the last day of
+     * @param  month  to get the first day of
+     *
+     * @return  the last day of the given month in the given year
+     */
     public static DateMidnight getLastDayOfMonth(int year, int month) {
 
         DateMidnight monthOfYear = DateMidnight.now().withYear(year).withMonthOfYear(month);
