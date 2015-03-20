@@ -3,9 +3,8 @@
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xmlns:beans="http://www.springframework.org/schema/beans"
              xmlns:context="http://www.springframework.org/schema/context"
-             xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+             xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.1.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <beans:bean id="placeholderConfig" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <beans:property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
@@ -39,7 +38,7 @@
 
         <beans:property name="defaultViews">
             <beans:list>
-                <beans:bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView"/>
+                <beans:bean class="org.springframework.web.servlet.view.json.MappingJackson2JsonView"/>
             </beans:list>
         </beans:property>
 
@@ -53,7 +52,7 @@
                 <beans:bean id="plaintextMessageConverter"
                             class="org.springframework.http.converter.StringHttpMessageConverter"/>
                 <beans:bean id="jsonMessageConverter"
-                            class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter"/>
+                            class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"/>
             </beans:list>
         </beans:property>
 
