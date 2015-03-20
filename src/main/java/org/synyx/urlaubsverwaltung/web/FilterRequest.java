@@ -24,7 +24,7 @@ public class FilterRequest {
 
     public FilterRequest() {
 
-        this.period = Period.YEAR;
+        this(Period.YEAR);
     }
 
 

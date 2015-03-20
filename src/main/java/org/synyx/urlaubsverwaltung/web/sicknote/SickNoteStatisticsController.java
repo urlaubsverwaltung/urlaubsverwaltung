@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.web.sicknote;
 
+import org.joda.time.DateMidnight;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Controller;
@@ -30,10 +32,14 @@ public class SickNoteStatisticsController {
     @Autowired
     private SickNoteStatisticsService statisticsService;
 
-    @RequestMapping(value = "/sicknote/statistics", method = RequestMethod.GET, params = "year")
-    public String sickNotesStatistics(@RequestParam("year") Integer year, Model model) {
+    @RequestMapping(value = "/sicknote/statistics", method = RequestMethod.GET)
+    public String sickNotesStatistics(@RequestParam(value = "year", required = false) Integer year, Model model) {
 
         if (sessionService.isOffice()) {
+            if (year == null) {
+                year = DateMidnight.now().getYear();
+            }
+
             SickNoteStatistics statistics = statisticsService.createStatistics(year);
 
             model.addAttribute("statistics", statistics);
