@@ -20,7 +20,7 @@
                         </label>
                         <div class="col-sm-7 radio">
                             <label class="thirds">
-                                <form:radiobutton id="periodYear" path="period" value="YEAR" checked="checked"/>
+                                <form:radiobutton id="periodYear" path="period" value="YEAR"/>
                                 <spring:message code="period.year"/>
                             </label>
                             <label class="thirds">

@@ -88,20 +88,8 @@ public class SickDaysOverviewController {
     public String filterSickNotes(@ModelAttribute("filterRequest") FilterRequest filterRequest) {
 
         if (sessionService.isOffice()) {
-            DateMidnight now = DateMidnight.now();
-            DateMidnight from = now;
-            DateMidnight to = now;
-
-            if (filterRequest.getPeriod().equals(FilterRequest.Period.YEAR)) {
-                from = now.dayOfYear().withMinimumValue();
-                to = now.dayOfYear().withMaximumValue();
-            } else if (filterRequest.getPeriod().equals(FilterRequest.Period.QUARTAL)) {
-                from = now.dayOfMonth().withMinimumValue().minusMonths(2);
-                to = now.dayOfMonth().withMaximumValue();
-            } else if (filterRequest.getPeriod().equals(FilterRequest.Period.MONTH)) {
-                from = now.dayOfMonth().withMinimumValue();
-                to = now.dayOfMonth().withMaximumValue();
-            }
+            DateMidnight from = filterRequest.getStartDate();
+            DateMidnight to = filterRequest.getEndDate();
 
             return "redirect:/web/sicknote?from=" + from.toString(DateFormat.PATTERN) + "&to="
                 + to.toString(DateFormat.PATTERN);
