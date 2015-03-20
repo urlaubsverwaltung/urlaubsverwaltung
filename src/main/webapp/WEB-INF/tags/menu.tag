@@ -79,7 +79,7 @@
                 </a>
               </li>
               <li>
-                <a href="${URL_PREFIX}/application/new">
+                <a href="${URL_PREFIX}/application/new?appliesOnOnesBehalf=true">
                   <i class="fa fa-fw fa-pencil"></i> <spring:message code="nav.vacation.apply"/>
                 </a>
               </li>

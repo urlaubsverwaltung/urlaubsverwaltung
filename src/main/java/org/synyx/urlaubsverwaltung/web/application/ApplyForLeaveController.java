@@ -80,13 +80,14 @@ public class ApplyForLeaveController {
      * Show form to apply for leave.
      *
      * @param  personId  of the person that applies for leave
+     * @param  applyingOnBehalfOfSomeOne  defines if applying for leave on behalf for somebody
      * @param  model  to be filled
      *
      * @return  form to apply for leave
      */
     @RequestMapping(value = "/new", method = RequestMethod.GET)
     public String newApplicationForm(@RequestParam(value = "personId", required = false) Integer personId,
-        Model model) {
+        @RequestParam(value = "appliesOnOnesBehalf", required = false) Boolean applyingOnBehalfOfSomeOne, Model model) {
 
         if (sessionService.isInactive()) {
             return ControllerConstants.ERROR_JSP;
@@ -122,6 +123,12 @@ public class ApplyForLeaveController {
             prepareApplicationForLeaveForm(person, new ApplicationForLeaveForm(), model);
         } else {
             model.addAttribute("notpossible", true);
+        }
+
+        if (applyingOnBehalfOfSomeOne != null) {
+            model.addAttribute("appliesOnOnesBehalf", true);
+        } else {
+            model.addAttribute("appliesOnOnesBehalf", false);
         }
 
         return ControllerConstants.APPLICATIONS_URL + "/app_form";
