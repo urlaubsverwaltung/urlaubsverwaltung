@@ -15,7 +15,7 @@ public class FilterRequest {
     public enum Period {
 
         YEAR,
-        QUARTAL,
+        QUARTER,
         MONTH
     }
 
@@ -52,7 +52,7 @@ public class FilterRequest {
             return DateUtil.getFirstDayOfYear(currentYear);
         } else if (Period.MONTH.equals(period)) {
             return DateUtil.getFirstDayOfMonth(currentYear, DateMidnight.now().getMonthOfYear());
-        } else if (Period.QUARTAL.equals(period)) {
+        } else if (Period.QUARTER.equals(period)) {
             DateMidnight firstDayOfQuarter = DateMidnight.now().minusMonths(2).dayOfMonth().withMinimumValue();
 
             if (firstDayOfQuarter.getYear() != currentYear) {
@@ -74,7 +74,7 @@ public class FilterRequest {
             return DateUtil.getLastDayOfYear(DateMidnight.now().getYear());
         } else if (Period.MONTH.equals(period)) {
             return DateUtil.getLastDayOfMonth(currentYear, DateMidnight.now().getMonthOfYear());
-        } else if (Period.QUARTAL.equals(period)) {
+        } else if (Period.QUARTER.equals(period)) {
             return DateMidnight.now().dayOfMonth().withMaximumValue();
         }
 

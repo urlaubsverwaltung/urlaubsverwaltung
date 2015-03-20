@@ -24,8 +24,8 @@
                                 <spring:message code="period.year"/>
                             </label>
                             <label class="thirds">
-                                <form:radiobutton id="periodQuartal" path="period" value="QUARTAL"/>
-                                <spring:message code="period.quartal"/>
+                                <form:radiobutton id="periodQuarter" path="period" value="QUARTER"/>
+                                <spring:message code="period.quarter"/>
                             </label>
                             <label class="thirds">
                                 <form:radiobutton id="periodMonth" path="period" value="MONTH"/>

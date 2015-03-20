@@ -70,10 +70,10 @@ public class FilterRequestTest {
     @Test
     public void ensureReturnsCorrectStartAndEndDateForQuarter() {
 
-        FilterRequest filterRequest = new FilterRequest(FilterRequest.Period.QUARTAL);
+        FilterRequest filterRequest = new FilterRequest(FilterRequest.Period.QUARTER);
 
         Assert.assertNotNull("Period must be set", filterRequest.getPeriod());
-        Assert.assertEquals("Wrong period", FilterRequest.Period.QUARTAL, filterRequest.getPeriod());
+        Assert.assertEquals("Wrong period", FilterRequest.Period.QUARTER, filterRequest.getPeriod());
 
         Assert.assertNotNull("Start date must not be null", filterRequest.getStartDate());
         Assert.assertNotNull("End date must not be null", filterRequest.getEndDate());
