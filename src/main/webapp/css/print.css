@@ -11,6 +11,7 @@
     #datepicker,
     tr.inactive,
     .alert,
+    .caret,
     form {
         display: none !important;
     }
