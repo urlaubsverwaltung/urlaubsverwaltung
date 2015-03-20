@@ -44,17 +44,22 @@
 
                     <div class="feedback">
                         <c:choose>
-                            <c:when test="${remindAlreadySent == true}">
-                            <div class="alert alert-danger">
-                                <spring:message code='application.action.remind.error.alreadySent' />
-                            </div>
+                            <c:when test="${applySuccess}">
+                              <div class="alert alert-success">
+                                <spring:message code='application.action.apply.success' />
+                              </div>
                             </c:when>
-                            <c:when test="${remindNoWay == true}">
+                            <c:when test="${remindAlreadySent}">
+                                <div class="alert alert-danger">
+                                    <spring:message code='application.action.remind.error.alreadySent' />
+                                </div>
+                            </c:when>
+                            <c:when test="${remindNoWay}">
                                 <div class="alert alert-danger">
                                     <spring:message code='application.action.remind.error.impatient' />
                                 </div>
                             </c:when>
-                            <c:when test="${remindIsSent == true}">
+                            <c:when test="${remindIsSent}">
                                 <div class="alert alert-success">
                                     <spring:message code='application.action.remind.success'/>
                                 </div>
@@ -64,22 +69,22 @@
                                     <spring:message code="application.action.reason.error" />
                                 </div>
                             </c:when>
-                            <c:when test="${allowSuccess == true}">
+                            <c:when test="${allowSuccess}">
                                 <div class="alert alert-success">
                                     <spring:message code="application.action.allow.success" />
                                 </div>
                             </c:when>
-                            <c:when test="${rejectSuccess == true}">
+                            <c:when test="${rejectSuccess}">
                                 <div class="alert alert-success">
                                     <spring:message code="application.action.reject.success" />
                                 </div>
                             </c:when>
-                            <c:when test="${referSuccess == true}">
+                            <c:when test="${referSuccess}">
                                 <div class="alert alert-success">
                                     <spring:message code="application.action.refer.success" />
                                 </div>
                             </c:when>
-                            <c:when test="${cancelSuccess == true}">
+                            <c:when test="${cancelSuccess}">
                                 <div class="alert alert-success">
                                     <spring:message code="application.action.cancel.success" />
                                 </div>

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
@@ -171,7 +172,8 @@ public class ApplyForLeaveController {
 
     @RequestMapping(value = "/new", method = RequestMethod.POST)
     public String newApplication(@RequestParam(value = "personId", required = false) Integer personId,
-        @ModelAttribute("appForm") ApplicationForLeaveForm appForm, Errors errors, Model model) {
+        @ModelAttribute("appForm") ApplicationForLeaveForm appForm, RedirectAttributes redirectAttributes,
+        Errors errors, Model model) {
 
         Person applier = sessionService.getLoggedUser();
         Person personToApplyForLeave;
@@ -204,6 +206,8 @@ public class ApplyForLeaveController {
 
         Application savedApplicationForLeave = applicationInteractionService.apply(application, applier,
                 Optional.fromNullable(appForm.getComment()));
+
+        redirectAttributes.addFlashAttribute("applySuccess", true);
 
         return "redirect:/web/application/" + savedApplicationForLeave.getId();
     }
