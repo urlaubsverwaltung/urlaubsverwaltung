@@ -103,7 +103,11 @@
                 </c:choose>
             </td>
             <sec:authorize access="hasRole('OFFICE')">
-            <td class="is-centered hidden-print hidden-xs"><a href="${URL_PREFIX}/staff/${person.id}/edit"><i class="fa fa-pencil fa-action" /></a></td>
+            <td class="hidden-print hidden-xs">
+              <a class="btn btn-default pull-right" href="${URL_PREFIX}/staff/${person.id}/edit">
+                <i class="fa fa-fw fa-pencil"></i> <spring:message code="action.edit" />
+              </a>
+            </td>
             </sec:authorize>
         </tr>    
     </c:forEach>
