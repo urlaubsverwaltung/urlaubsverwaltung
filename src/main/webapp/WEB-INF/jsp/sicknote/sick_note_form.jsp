@@ -102,7 +102,8 @@
             <form:form method="${METHOD}" action="${ACTION}" modelAttribute="sickNote" class="form-horizontal">
 
             <div class="col-xs-12">
-              <c:if test="${not empty errors}">
+              <c:set var="formErrors"><form:errors/></c:set>
+              <c:if test="${not empty errors && not empty formErrors}">
                 <div class="alert alert-danger">
                   <form:errors/>
                 </div>

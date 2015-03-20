@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.web.sicknote;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.FluentIterable;
 
 import org.joda.time.DateMidnight;
 
@@ -41,6 +42,7 @@ import org.synyx.urlaubsverwaltung.web.util.GravatarUtil;
 import org.synyx.urlaubsverwaltung.web.validator.SickNoteConvertFormValidator;
 import org.synyx.urlaubsverwaltung.web.validator.SickNoteValidator;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -128,13 +130,29 @@ public class SickNoteController {
 
         if (sessionService.isOffice()) {
             model.addAttribute("sickNote", new SickNote());
-            model.addAttribute("persons", personService.getActivePersons());
+            model.addAttribute("persons", getPersons());
             model.addAttribute("sickNoteTypes", SickNoteType.values());
 
             return "sicknote/sick_note_form";
         }
 
         return ControllerConstants.ERROR_JSP;
+    }
+
+
+    private List<Person> getPersons() {
+
+        return FluentIterable.from(personService.getActivePersons()).toSortedList(new Comparator<Person>() {
+
+                    @Override
+                    public int compare(Person p1, Person p2) {
+
+                        String niceName1 = p1.getNiceName();
+                        String niceName2 = p2.getNiceName();
+
+                        return niceName1.toLowerCase().compareTo(niceName2.toLowerCase());
+                    }
+                });
     }
 
 
@@ -147,7 +165,7 @@ public class SickNoteController {
             if (errors.hasErrors()) {
                 model.addAttribute("errors", errors);
                 model.addAttribute("sickNote", sickNote);
-                model.addAttribute("persons", personService.getActivePersons());
+                model.addAttribute("persons", getPersons());
                 model.addAttribute("sickNoteTypes", SickNoteType.values());
 
                 return "sicknote/sick_note_form";
@@ -168,7 +186,7 @@ public class SickNoteController {
         Optional<SickNote> sickNote = sickNoteService.getById(id);
 
         if (sickNote.isPresent() && sickNote.get().isActive() && sessionService.isOffice()) {
-            model.addAttribute("sickNote", sickNote);
+            model.addAttribute("sickNote", sickNote.get());
             model.addAttribute("sickNoteTypes", SickNoteType.values());
 
             return "sicknote/sick_note_form";
