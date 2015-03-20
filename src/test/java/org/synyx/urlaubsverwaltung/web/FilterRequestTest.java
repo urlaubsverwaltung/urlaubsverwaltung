@@ -96,4 +96,58 @@ public class FilterRequestTest {
         filterRequest.setPeriod(null);
         filterRequest.getEndDate();
     }
+
+
+    @Test
+    public void ensureReturnsCorrectQuarterStartDate() {
+
+        FilterRequest filterRequest = new FilterRequest();
+
+        DateMidnight startDateOfQuarter = filterRequest.getStartDateOfQuarter(new DateMidnight(2014, 2, 2));
+        Assert.assertNotNull("Should not be null", startDateOfQuarter);
+        Assert.assertEquals("Wrong start date of quarter", new DateMidnight(2014, 1, 1), startDateOfQuarter);
+
+        startDateOfQuarter = filterRequest.getStartDateOfQuarter(new DateMidnight(2014, 3, 12));
+        Assert.assertNotNull("Should not be null", startDateOfQuarter);
+        Assert.assertEquals("Wrong start date of quarter", new DateMidnight(2014, 1, 1), startDateOfQuarter);
+
+        startDateOfQuarter = filterRequest.getStartDateOfQuarter(new DateMidnight(2014, 6, 23));
+        Assert.assertNotNull("Should not be null", startDateOfQuarter);
+        Assert.assertEquals("Wrong start date of quarter", new DateMidnight(2014, 4, 1), startDateOfQuarter);
+
+        startDateOfQuarter = filterRequest.getStartDateOfQuarter(new DateMidnight(2014, 8, 23));
+        Assert.assertNotNull("Should not be null", startDateOfQuarter);
+        Assert.assertEquals("Wrong start date of quarter", new DateMidnight(2014, 7, 1), startDateOfQuarter);
+
+        startDateOfQuarter = filterRequest.getStartDateOfQuarter(new DateMidnight(2014, 11, 23));
+        Assert.assertNotNull("Should not be null", startDateOfQuarter);
+        Assert.assertEquals("Wrong start date of quarter", new DateMidnight(2014, 10, 1), startDateOfQuarter);
+    }
+
+
+    @Test
+    public void ensureReturnsCorrectQuarterEndDate() {
+
+        FilterRequest filterRequest = new FilterRequest();
+
+        DateMidnight endDateOfQuarter = filterRequest.getEndDateOfQuarter(new DateMidnight(2014, 2, 2));
+        Assert.assertNotNull("Should not be null", endDateOfQuarter);
+        Assert.assertEquals("Wrong end date of quarter", new DateMidnight(2014, 3, 31), endDateOfQuarter);
+
+        endDateOfQuarter = filterRequest.getEndDateOfQuarter(new DateMidnight(2014, 3, 12));
+        Assert.assertNotNull("Should not be null", endDateOfQuarter);
+        Assert.assertEquals("Wrong end date of quarter", new DateMidnight(2014, 3, 31), endDateOfQuarter);
+
+        endDateOfQuarter = filterRequest.getEndDateOfQuarter(new DateMidnight(2014, 6, 23));
+        Assert.assertNotNull("Should not be null", endDateOfQuarter);
+        Assert.assertEquals("Wrong end date of quarter", new DateMidnight(2014, 6, 30), endDateOfQuarter);
+
+        endDateOfQuarter = filterRequest.getEndDateOfQuarter(new DateMidnight(2014, 8, 23));
+        Assert.assertNotNull("Should not be null", endDateOfQuarter);
+        Assert.assertEquals("Wrong end date of quarter", new DateMidnight(2014, 9, 30), endDateOfQuarter);
+
+        endDateOfQuarter = filterRequest.getEndDateOfQuarter(new DateMidnight(2014, 11, 23));
+        Assert.assertNotNull("Should not be null", endDateOfQuarter);
+        Assert.assertEquals("Wrong end date of quarter", new DateMidnight(2014, 12, 31), endDateOfQuarter);
+    }
 }
