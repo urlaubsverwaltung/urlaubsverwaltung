@@ -192,7 +192,7 @@ public class ApplicationInteractionServiceTest {
 
         service.allow(applicationForLeave, boss, Optional.of("Foo"));
 
-        Mockito.verify(mailService).notifyRepresentative(Mockito.eq(applicationForLeave));
+        Mockito.verify(mailService).notifyHolidayReplacement(Mockito.eq(applicationForLeave));
     }
 
 

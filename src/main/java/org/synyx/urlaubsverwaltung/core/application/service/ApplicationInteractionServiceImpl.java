@@ -105,7 +105,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         mailService.sendAllowedNotification(application, createdComment);
 
         if (application.getHolidayReplacement() != null) {
-            mailService.notifyRepresentative(application);
+            mailService.notifyHolidayReplacement(application);
         }
 
         return application;

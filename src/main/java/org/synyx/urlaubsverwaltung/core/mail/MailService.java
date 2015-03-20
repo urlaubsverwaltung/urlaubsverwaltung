@@ -144,9 +144,10 @@ public interface MailService {
 
 
     /**
-     * Sends mail to person to inform that he/she has been selected as representative during someone's vacation.
+     * Sends mail to person to inform that he/she has been selected as holiday replacement that stands in while someone
+     * is on holiday.
      *
      * @param  application
      */
-    void notifyRepresentative(Application application);
+    void notifyHolidayReplacement(Application application);
 }

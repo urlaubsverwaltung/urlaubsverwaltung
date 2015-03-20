@@ -442,4 +442,31 @@ public class MailServiceIntegrationTest {
         assertTrue(content.contains("Max Mustermann: 5"));
         assertTrue(content.contains("Dieter Horst: -1"));
     }
+
+
+    @Test
+    public void ensureCorrectHolidayReplacementMailIsSent() throws MessagingException, IOException {
+
+        Person holidayReplacement = new Person("muster", "Muster", "Marlene", "mmuster@test.de");
+        application.setHolidayReplacement(holidayReplacement);
+
+        mailService.notifyHolidayReplacement(application);
+
+        // was email sent?
+        List<Message> inbox = Mailbox.get(holidayReplacement.getEmail());
+        assertTrue(inbox.size() > 0);
+
+        Message msg = inbox.get(0);
+
+        // check subject
+        assertTrue(msg.getSubject().contains("Urlaubsvertretung"));
+
+        // check from and recipient
+        assertEquals(new InternetAddress(holidayReplacement.getEmail()), msg.getAllRecipients()[0]);
+
+        // check content of email
+        String content = (String) msg.getContent();
+        assertTrue(content.contains("Hallo Marlene Muster"));
+        assertTrue(content.contains("Urlaubsvertretung"));
+    }
 }

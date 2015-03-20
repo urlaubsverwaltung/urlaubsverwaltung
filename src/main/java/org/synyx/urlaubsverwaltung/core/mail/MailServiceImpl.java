@@ -391,13 +391,13 @@ class MailServiceImpl implements MailService {
 
 
     @Override
-    public void notifyRepresentative(Application application) {
+    public void notifyHolidayReplacement(Application application) {
 
         Map<String, Object> model = new HashMap<>();
         model.put("application", application);
         model.put("dayLength", properties.getProperty(application.getHowLong().name()));
 
-        String text = buildMailBody("notify_representative", model);
+        String text = buildMailBody("notify_holiday_replacement", model);
 
         sendEmail(Arrays.asList(application.getHolidayReplacement()), "subject.holidayReplacement", text);
     }
