@@ -52,9 +52,9 @@ Die folgende Anleitung beschreibt die Installation der Urlaubsverwaltung auf ein
 
 ## Systemvoraussetzungen
 
-* Apache Tomcat Version 6
-* JDK 7
-* Maven 3
+* Apache Tomcat Version 7
+* JDK 8
+* Maven 3.3
 * MySQL Datenbank
 
 ## Download
