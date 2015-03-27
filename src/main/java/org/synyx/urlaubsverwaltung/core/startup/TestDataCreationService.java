@@ -88,6 +88,7 @@ public class TestDataCreationService {
 
             createTestData(user);
             createTestData(boss);
+            createTestData(office);
         } else {
             LOG.info("No test data will be created.");
         }
