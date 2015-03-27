@@ -1,4 +1,4 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page contentType="text/html" pageEncoding="UTF-8" isErrorPage="true" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
@@ -27,6 +27,14 @@
                 <div class="row">
                     <div class="col-xs-12">
                         <h2 class="error-description">Hier hat sich ein Fehler eingeschlichen...</h2>
+
+                        <p>
+                            <c:if test="${not empty exception.message}">
+                                <div class="col-xs-6 col-xs-offset-3">
+                                    <p><c:out value="${exception.message}"/></p>
+                                </div>
+                            </c:if>
+                        </p>
                     </div>
                 </div>
                 <div class="row">

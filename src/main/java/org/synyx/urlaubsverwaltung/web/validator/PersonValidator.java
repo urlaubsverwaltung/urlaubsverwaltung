@@ -2,7 +2,6 @@
 package org.synyx.urlaubsverwaltung.web.validator;
 
 import org.joda.time.DateMidnight;
-import org.joda.time.IllegalFieldValueException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -17,14 +16,12 @@ import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.core.util.NumberUtil;
 import org.synyx.urlaubsverwaltung.security.Role;
 import org.synyx.urlaubsverwaltung.web.person.PersonForm;
 
 import java.math.BigDecimal;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,7 +35,7 @@ import java.util.regex.Pattern;
 @Component
 public class PersonValidator implements Validator {
 
-    private static final String MANDATORY_FIELD = "error.mandatory.field";
+    private static final String ERROR_MANDATORY_FIELD = "error.mandatory.field";
     private static final String ERROR_ENTRY = "error.entry";
     private static final String ERROR_EMAIL = "error.email";
     private static final String ERROR_LENGTH = "error.length";
@@ -49,7 +46,7 @@ public class PersonValidator implements Validator {
     private static final String LAST_NAME = "lastName";
     private static final String ANNUAL_VACATION_DAYS = "annualVacationDays";
     private static final String REMAINING_VACATION_DAYS = "remainingVacationDays";
-    private static final String YEAR = "year";
+    private static final String REMAINING_VACATION_DAYS_NOT_EXPIRING = "remainingVacationDaysNotExpiring";
     private static final String EMAIL = "email";
     private static final String PERMISSIONS = "permissions";
 
@@ -60,7 +57,6 @@ public class PersonValidator implements Validator {
         "^[a-zäöüß0-9,!#\\$%&'\\*\\+/=\\?\\^_`\\{\\|}~-]+(\\.[a-zäöüß0-9,!#\\$%&'\\*\\+/=\\?\\^_`\\{\\|}~-]+)*@"
         + "[a-zäöüß0-9-]+(\\.[a-zäöüß0-9-]+)*\\.([a-z]{2,})$";
 
-    private static final int MAX_LIMIT_OF_YEARS = 10;
     private static final int MAX_CHARS = 50;
 
     private final PersonService personService;
@@ -91,17 +87,13 @@ public class PersonValidator implements Validator {
 
         validateEmail(form.getEmail(), errors);
 
-        validateYear(form.getYear(), errors);
-
         validatePeriod(form, errors);
 
-        if (form.getValidFrom() == null) {
-            errors.rejectValue("validFrom", MANDATORY_FIELD);
-        }
+        validateValidFrom(form, errors);
 
-        validateAnnualVacation(form, errors, form.getLocale());
+        validateAnnualVacation(form, errors);
 
-        validateRemainingVacationDays(form, errors, form.getLocale());
+        validateRemainingVacationDays(form, errors);
 
         validatePermissions(form, errors);
 
@@ -130,7 +122,7 @@ public class PersonValidator implements Validator {
 
         // is the name field null/empty?
         if (!StringUtils.hasText(name)) {
-            errors.rejectValue(field, MANDATORY_FIELD);
+            errors.rejectValue(field, ERROR_MANDATORY_FIELD);
         } else {
             // is String length alright?
             if (!validateStringLength(name)) {
@@ -146,7 +138,7 @@ public class PersonValidator implements Validator {
 
         if (!errors.hasFieldErrors(LOGIN_NAME)) {
             // validate unique login name
-            if (personService.getPersonByLogin(login) != null) {
+            if (personService.getPersonByLogin(login).isPresent()) {
                 errors.rejectValue(LOGIN_NAME, ERROR_LOGIN_UNIQUE);
             }
         }
@@ -163,7 +155,7 @@ public class PersonValidator implements Validator {
 
         // is email field null or empty
         if (!StringUtils.hasText(email)) {
-            errors.rejectValue(EMAIL, MANDATORY_FIELD);
+            errors.rejectValue(EMAIL, ERROR_MANDATORY_FIELD);
         } else {
             // String length alright?
             if (!validateStringLength(email)) {
@@ -180,104 +172,88 @@ public class PersonValidator implements Validator {
     }
 
 
-    /**
-     * This method checks if the field year is filled and if it is filled, it checks if the year entry makes sense (at
-     * the moment: from 2010 - 2030 alright)
-     *
-     * @param  yearForm
-     * @param  errors
-     */
-    protected void validateYear(String yearForm, Errors errors) {
-
-        // is year field filled?
-        if (!StringUtils.hasText(yearForm)) {
-            errors.rejectValue(YEAR, MANDATORY_FIELD);
-        } else {
-            try {
-                int year = Integer.parseInt(yearForm);
-
-                int now = DateMidnight.now().getYear();
-
-                if (year < (now - MAX_LIMIT_OF_YEARS + 1) || year > (now + MAX_LIMIT_OF_YEARS)) {
-                    errors.rejectValue(YEAR, ERROR_ENTRY);
-                }
-            } catch (NumberFormatException ex) {
-                errors.rejectValue(YEAR, ERROR_ENTRY);
-            }
-        }
-    }
-
-
-    /**
-     * Validates that from date is before to date, i.e. is a valid period.
-     *
-     * @param  form  PersonForm
-     * @param  errors  Errors
-     */
     protected void validatePeriod(PersonForm form, Errors errors) {
 
-        try {
-            DateMidnight from = new DateMidnight(Integer.parseInt(form.getYear()),
-                    Integer.parseInt(form.getMonthFrom()), Integer.parseInt(form.getDayFrom()));
+        DateMidnight holidaysAccountValidFrom = form.getHolidaysAccountValidFrom();
+        DateMidnight holidaysAccountValidTo = form.getHolidaysAccountValidTo();
 
-            DateMidnight to = new DateMidnight(Integer.parseInt(form.getYear()), Integer.parseInt(form.getMonthTo()),
-                    Integer.parseInt(form.getDayTo()));
+        validateDateNotNull(holidaysAccountValidFrom, "holidaysAccountValidFrom", errors);
+        validateDateNotNull(holidaysAccountValidTo, "holidaysAccountValidTo", errors);
 
-            if (!from.isBefore(to)) {
+        if (holidaysAccountValidFrom != null && holidaysAccountValidTo != null) {
+            boolean periodIsNotWithinOneYear = holidaysAccountValidFrom.getYear() != form.getHolidaysAccountYear()
+                || holidaysAccountValidTo.getYear() != form.getHolidaysAccountYear();
+            boolean periodIsOnlyOneDay = holidaysAccountValidFrom.equals(holidaysAccountValidTo);
+            boolean beginOfPeriodIsAfterEndOfPeriod = holidaysAccountValidFrom.isAfter(holidaysAccountValidTo);
+
+            if (periodIsNotWithinOneYear || periodIsOnlyOneDay || beginOfPeriodIsAfterEndOfPeriod) {
                 errors.reject("error.period");
             }
-        } catch (IllegalFieldValueException ex) {
-            errors.reject("error.period");
         }
     }
 
 
-    /**
-     * This method validates if mandatory field annual vacation days is filled and if the entry is valid.
-     *
-     * @param  form
-     * @param  errors
-     * @param  locale
-     */
-    protected void validateAnnualVacation(PersonForm form, Errors errors, Locale locale) {
+    private void validateDateNotNull(DateMidnight date, String field, Errors errors) {
 
-        Settings settings = settingsService.getSettings();
-
-        if (StringUtils.hasText(form.getAnnualVacationDays())) {
-            try {
-                validateNumberOfDays(NumberUtil.parseNumber(form.getAnnualVacationDays(), locale), ANNUAL_VACATION_DAYS,
-                    BigDecimal.valueOf(settings.getMaximumAnnualVacationDays()), errors);
-            } catch (NumberFormatException ex) {
-                errors.rejectValue(ANNUAL_VACATION_DAYS, ERROR_ENTRY);
+        if (date == null) {
+            // may be that date field is null because of cast exception, than there is already a field error
+            if (errors.getFieldErrors(field).isEmpty()) {
+                errors.rejectValue(field, ERROR_MANDATORY_FIELD);
             }
-        } else {
-            errors.rejectValue(ANNUAL_VACATION_DAYS, MANDATORY_FIELD);
         }
     }
 
 
-    /**
-     * This method gets the property value for maximal number of days and notifies Tool-Manager if necessary (false
-     * property value) or validate the number of entitlement's remaining vacation days with method validateNumberOfDays.
-     *
-     * @param  form
-     * @param  errors
-     * @param  locale
-     */
-    protected void validateRemainingVacationDays(PersonForm form, Errors errors, Locale locale) {
+    private void validateValidFrom(PersonForm form, Errors errors) {
+
+        validateDateNotNull(form.getValidFrom(), "validFrom", errors);
+    }
+
+
+    protected void validateAnnualVacation(PersonForm form, Errors errors) {
+
+        BigDecimal annualVacationDays = form.getAnnualVacationDays();
+        Settings settings = settingsService.getSettings();
+        BigDecimal maxDays = BigDecimal.valueOf(settings.getMaximumAnnualVacationDays());
+
+        validateNumberNotNull(annualVacationDays, ANNUAL_VACATION_DAYS, errors);
+
+        if (annualVacationDays != null) {
+            validateNumberOfDays(annualVacationDays, ANNUAL_VACATION_DAYS, maxDays, errors);
+        }
+    }
+
+
+    private void validateNumberNotNull(BigDecimal number, String field, Errors errors) {
+
+        if (number == null) {
+            // may be that number field is null because of cast exception, than there is already a field error
+            if (errors.getFieldErrors(field).isEmpty()) {
+                errors.rejectValue(field, ERROR_MANDATORY_FIELD);
+            }
+        }
+    }
+
+
+    protected void validateRemainingVacationDays(PersonForm form, Errors errors) {
 
         Settings settings = settingsService.getSettings();
+        BigDecimal maxDays = BigDecimal.valueOf(settings.getMaximumAnnualVacationDays());
 
-        if (StringUtils.hasText(form.getRemainingVacationDays())) {
-            try {
-                // field entitlement's remaining vacation days
-                validateNumberOfDays(NumberUtil.parseNumber(form.getRemainingVacationDays(), locale),
-                    REMAINING_VACATION_DAYS, BigDecimal.valueOf(settings.getMaximumAnnualVacationDays()), errors);
-            } catch (NumberFormatException ex) {
-                errors.rejectValue(REMAINING_VACATION_DAYS, ERROR_ENTRY);
+        BigDecimal remainingVacationDays = form.getRemainingVacationDays();
+        BigDecimal remainingVacationDaysNotExpiring = form.getRemainingVacationDaysNotExpiring();
+
+        validateNumberNotNull(remainingVacationDays, REMAINING_VACATION_DAYS, errors);
+        validateNumberNotNull(remainingVacationDaysNotExpiring, REMAINING_VACATION_DAYS_NOT_EXPIRING, errors);
+
+        if (remainingVacationDays != null) {
+            // field entitlement's remaining vacation days
+            validateNumberOfDays(remainingVacationDays, REMAINING_VACATION_DAYS, maxDays, errors);
+
+            if (remainingVacationDaysNotExpiring != null) {
+                validateNumberOfDays(remainingVacationDaysNotExpiring, REMAINING_VACATION_DAYS_NOT_EXPIRING,
+                    remainingVacationDays, errors);
             }
-        } else {
-            errors.rejectValue(REMAINING_VACATION_DAYS, MANDATORY_FIELD);
         }
     }
 
@@ -293,21 +269,14 @@ public class PersonValidator implements Validator {
      */
     private void validateNumberOfDays(BigDecimal days, String field, BigDecimal maximumDays, Errors errors) {
 
-        // is field filled?
-        if (days == null) {
-            if (errors.getFieldErrors(field).isEmpty()) {
-                errors.rejectValue(field, MANDATORY_FIELD);
-            }
-        } else {
-            // is number of days < 0 ?
-            if (days.compareTo(BigDecimal.ZERO) == -1) {
-                errors.rejectValue(field, ERROR_ENTRY);
-            }
+        // is number of days < 0 ?
+        if (days.compareTo(BigDecimal.ZERO) == -1) {
+            errors.rejectValue(field, ERROR_ENTRY);
+        }
 
-            // is number of days unrealistic?
-            if (days.compareTo(maximumDays) == 1) {
-                errors.rejectValue(field, ERROR_ENTRY);
-            }
+        // is number of days unrealistic?
+        if (days.compareTo(maximumDays) == 1) {
+            errors.rejectValue(field, ERROR_ENTRY);
         }
     }
 
@@ -337,8 +306,8 @@ public class PersonValidator implements Validator {
 
             boolean roleInactiveSet = false;
 
-            for (Role r : roles) {
-                if (r == Role.INACTIVE) {
+            for (Role role : roles) {
+                if (role == Role.INACTIVE) {
                     roleInactiveSet = true;
                 }
             }

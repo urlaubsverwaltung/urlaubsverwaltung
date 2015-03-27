@@ -84,12 +84,18 @@
             </td>
             <td class="is-centered hidden-xs hidden-sm">
                 <c:choose>
-                    <c:when test="${leftDays[person] != null && remLeftDays[person] != null}">
-                        <uv:number number="${leftDays[person]}"/>
-                        <c:if test="${beforeApril || !accounts[person].remainingVacationDaysExpire}">
+                    <c:when test="${vacationDaysLeftMap[person] != null}">
+                        <uv:number number="${vacationDaysLeftMap[person].vacationDays}"/>
+                        <c:choose>
+                          <c:when test="${beforeApril}">
                             +
-                            <uv:number number="${remLeftDays[person]}"/>
-                        </c:if>
+                            <uv:number number="${vacationDaysLeftMap[person].remainingVacationDays}"/>
+                          </c:when>
+                          <c:otherwise>
+                            +
+                            <uv:number number="${vacationDaysLeftMap[person].remainingVacationDaysNotExpiring}"/>
+                          </c:otherwise>
+                        </c:choose>
                     </c:when>
                     <c:otherwise>
                         <spring:message code='not.specified'/>
@@ -97,7 +103,11 @@
                 </c:choose>
             </td>
             <sec:authorize access="hasRole('OFFICE')">
-            <td class="is-centered hidden-print hidden-xs"><a href="${URL_PREFIX}/staff/${person.id}/edit"><i class="fa fa-pencil fa-action" /></a></td>
+            <td class="hidden-print hidden-xs">
+              <a class="btn btn-default pull-right" href="${URL_PREFIX}/staff/${person.id}/edit">
+                <i class="fa fa-fw fa-pencil"></i> <spring:message code="action.edit" />
+              </a>
+            </td>
             </sec:authorize>
         </tr>    
     </c:forEach>

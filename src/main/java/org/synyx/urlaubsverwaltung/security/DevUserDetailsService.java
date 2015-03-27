@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.security;
 
+import com.google.common.base.Optional;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,6 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
+import org.synyx.urlaubsverwaltung.core.startup.TestDataCreationService;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,7 +23,6 @@ import java.util.Collection;
  */
 public class DevUserDetailsService implements UserDetailsService {
 
-    static final String TEST_USER_NAME = "test";
     static final String TEST_USER_PASSWORD = "secret";
 
     private final PersonService personService;
@@ -31,18 +33,19 @@ public class DevUserDetailsService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String s) {
+    public UserDetails loadUserByUsername(String username) {
 
-        if (!s.equals(TEST_USER_NAME)) {
-            throw new UsernameNotFoundException("No authentication possible for user with name " + s);
+        if (!TestDataCreationService.USER.equals(username) && !TestDataCreationService.BOSS_USER.equals(username)
+                && !TestDataCreationService.OFFICE_USER.equals(username)) {
+            throw new UsernameNotFoundException("No authentication possible for user = " + username);
         }
 
-        Person testUser = personService.getPersonByLogin(TEST_USER_NAME);
+        Optional<Person> testUser = personService.getPersonByLogin(username);
 
-        if (testUser != null) {
+        if (testUser.isPresent()) {
             Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 
-            Collection<Role> roles = testUser.getPermissions();
+            Collection<Role> roles = testUser.get().getPermissions();
 
             for (final Role role : roles) {
                 grantedAuthorities.add(new GrantedAuthority() {
@@ -55,7 +58,7 @@ public class DevUserDetailsService implements UserDetailsService {
                     });
             }
 
-            return new User(TEST_USER_NAME, TEST_USER_PASSWORD, grantedAuthorities);
+            return new User(username, TEST_USER_PASSWORD, grantedAuthorities);
         }
 
         return null;

@@ -27,7 +27,7 @@ import org.springframework.ui.velocity.VelocityEngineUtils;
 import org.springframework.util.StringUtils;
 
 import org.synyx.urlaubsverwaltung.DateFormat;
-import org.synyx.urlaubsverwaltung.core.account.Account;
+import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -391,14 +391,14 @@ class MailServiceImpl implements MailService {
 
 
     @Override
-    public void notifyRepresentative(Application application) {
+    public void notifyHolidayReplacement(Application application) {
 
         Map<String, Object> model = new HashMap<>();
         model.put("application", application);
         model.put("dayLength", properties.getProperty(application.getHowLong().name()));
 
-        String text = buildMailBody("notify_representative", model);
+        String text = buildMailBody("notify_holiday_replacement", model);
 
-        sendEmail(Arrays.asList(application.getRep()), "subject.rep", text);
+        sendEmail(Arrays.asList(application.getHolidayReplacement()), "subject.holidayReplacement", text);
     }
 }

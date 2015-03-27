@@ -81,24 +81,24 @@ function createDatepickerInstances(selectors, regional, urlPrefix, getPerson, on
             var year = date.getFullYear();
             var month = date.getMonth() + 1;
             
-            getHighlighted(urlPrefix + "/public-holiday?year=" + year + "&month=" + month, function(data) {
+            getHighlighted(urlPrefix + "/holidays?year=" + year + "&month=" + month, function(data) {
                 highlighted = getPublicHolidays(data);
             });
 
             var personId = getPerson();
-            getHighlighted(urlPrefix + "/vacation/application-info?year=" + year + "&month=" + month + "&person=" + personId, function(data) {
+            getHighlighted(urlPrefix + "/vacations/days?year=" + year + "&month=" + month + "&person=" + personId, function(data) {
                 highlightedVacation = getPersonalHolidays(data);
             });
 
         },
         onChangeMonthYear: function(year, month) {
 
-            getHighlighted(urlPrefix + "/public-holiday?year=" + year + "&month=" + month, function(data) {
+            getHighlighted(urlPrefix + "/holidays?year=" + year + "&month=" + month, function(data) {
                 highlighted = getPublicHolidays(data);
             });
 
             var personId = getPerson();
-            getHighlighted(urlPrefix + "/vacation/application-info?year=" + year + "&month=" + month + "&person=" + personId, function(data) {
+            getHighlighted(urlPrefix + "/vacations/days?year=" + year + "&month=" + month + "&person=" + personId, function(data) {
                 highlightedVacation = getPersonalHolidays(data);
             });
             

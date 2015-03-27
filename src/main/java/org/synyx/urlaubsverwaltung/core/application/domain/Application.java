@@ -9,12 +9,16 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
-import java.math.BigDecimal;
-
 import java.util.Arrays;
 import java.util.Date;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
 
 
 /**
@@ -45,9 +49,6 @@ public class Application extends AbstractPersistable<Integer> {
     @ManyToOne
     private Person canceller;
 
-    // Number of days the application for leave 'costs'
-    private BigDecimal days;
-
     // Period of holiday
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date startDate;
@@ -66,14 +67,15 @@ public class Application extends AbstractPersistable<Integer> {
     // For special and unpaid leave a reason is required
     private String reason;
 
-    // Representative person of employee during his/her holiday
+    // Holiday replacement: stands in while the person is on holiday
     @ManyToOne
-    private Person rep;
+    @JoinColumn(name = "rep_id")
+    private Person holidayReplacement;
 
     // Address and phone number during holiday
     private String address;
 
-    // Date of applying application for leave
+    // Date of applying for leave
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date applicationDate;
 
@@ -93,10 +95,6 @@ public class Application extends AbstractPersistable<Integer> {
     @Enumerated(EnumType.STRING)
     private ApplicationStatus status;
 
-    // if application has been cancelled during status allowed: formerlyAllowed is true
-    // if application has been cancelled during status waiting: formerlyAllowed is false
-    private boolean formerlyAllowed;
-
     // Signature of applicant
     @Column(columnDefinition = "longblob")
     private byte[] signaturePerson;
@@ -107,8 +105,6 @@ public class Application extends AbstractPersistable<Integer> {
 
     // team informed about holidays?
     private boolean teamInformed;
-
-    private String comment;
 
     public String getAddress() {
 
@@ -218,18 +214,6 @@ public class Application extends AbstractPersistable<Integer> {
     }
 
 
-    public BigDecimal getDays() {
-
-        return days;
-    }
-
-
-    public void setDays(BigDecimal days) {
-
-        this.days = days;
-    }
-
-
     public DateMidnight getEndDate() {
 
         if (this.endDate == null) {
@@ -286,15 +270,15 @@ public class Application extends AbstractPersistable<Integer> {
     }
 
 
-    public Person getRep() {
+    public Person getHolidayReplacement() {
 
-        return rep;
+        return holidayReplacement;
     }
 
 
-    public void setRep(Person rep) {
+    public void setHolidayReplacement(Person holidayReplacement) {
 
-        this.rep = rep;
+        this.holidayReplacement = holidayReplacement;
     }
 
 
@@ -384,13 +368,7 @@ public class Application extends AbstractPersistable<Integer> {
 
     public boolean isFormerlyAllowed() {
 
-        return formerlyAllowed;
-    }
-
-
-    public void setFormerlyAllowed(boolean formerlyAllowed) {
-
-        this.formerlyAllowed = formerlyAllowed;
+        return hasStatus(ApplicationStatus.CANCELLED);
     }
 
 
@@ -411,18 +389,6 @@ public class Application extends AbstractPersistable<Integer> {
         } else {
             this.remindDate = remindDate.toDate();
         }
-    }
-
-
-    public String getComment() {
-
-        return comment;
-    }
-
-
-    public void setComment(String comment) {
-
-        this.comment = comment;
     }
 
 

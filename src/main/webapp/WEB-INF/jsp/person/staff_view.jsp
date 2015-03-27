@@ -84,12 +84,6 @@
                             <uv:year-selector year="${displayYear}" />
 
                             <uv:print />
-
-                            <sec:authorize access="hasRole('OFFICE')">
-                                <a class="btn btn-default pull-right" href="${URL_PREFIX}/staff/new">
-                                    <i class="fa fa-user-plus"></i> <span class="hidden-xs"><spring:message code="table.new.person" /></span>
-                                </a>
-                            </sec:authorize>
                             
                         </legend>
 

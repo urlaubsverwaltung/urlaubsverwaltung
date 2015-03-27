@@ -1,6 +1,8 @@
 
 package org.synyx.urlaubsverwaltung.core.cron;
 
+import com.google.common.base.Optional;
+
 import org.apache.log4j.Logger;
 
 import org.joda.time.DateMidnight;
@@ -11,14 +13,12 @@ import org.springframework.scheduling.annotation.Scheduled;
 
 import org.springframework.stereotype.Service;
 
-import org.synyx.urlaubsverwaltung.core.account.Account;
-import org.synyx.urlaubsverwaltung.core.account.AccountService;
-import org.synyx.urlaubsverwaltung.core.application.service.CalculationService;
+import org.synyx.urlaubsverwaltung.core.account.domain.Account;
+import org.synyx.urlaubsverwaltung.core.account.service.AccountInteractionService;
+import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
-
-import java.math.BigDecimal;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,16 +36,16 @@ public class TurnOfTheYearAccountUpdaterService {
 
     private final PersonService personService;
     private final AccountService accountService;
-    private final CalculationService calculationService;
+    private final AccountInteractionService accountInteractionService;
     private final MailService mailService;
 
     @Autowired
     public TurnOfTheYearAccountUpdaterService(PersonService personService, AccountService accountService,
-        CalculationService calculationService, MailService mailService) {
+        AccountInteractionService accountInteractionService, MailService mailService) {
 
         this.personService = personService;
         this.accountService = accountService;
-        this.calculationService = calculationService;
+        this.accountInteractionService = accountInteractionService;
         this.mailService = mailService;
     }
 
@@ -70,21 +70,15 @@ public class TurnOfTheYearAccountUpdaterService {
         for (Person person : persons) {
             LOG.info("Updating account of " + person.getLoginName());
 
-            Account accountLastYear = accountService.getHolidaysAccount(year - 1, person);
+            Optional<Account> accountLastYear = accountService.getHolidaysAccount(year - 1, person);
 
-            if (accountLastYear != null && accountLastYear.getAnnualVacationDays() != null) {
-                BigDecimal leftDays = calculationService.calculateTotalLeftVacationDays(accountLastYear);
+            if (accountLastYear.isPresent() && accountLastYear.get().getAnnualVacationDays() != null) {
+                Account holidaysAccount = accountInteractionService.autoCreateHolidaysAccount(accountLastYear.get());
 
-                Account accountNewYear = accountService.getOrCreateNewAccount(year, person);
+                LOG.info("Setting remaining vacation days of " + person.getLoginName() + " to "
+                    + holidaysAccount.getRemainingVacationDays() + " for " + year);
 
-                // setting new year's remaining vacation days to number of left days of the last year
-                accountNewYear.setRemainingVacationDays(leftDays);
-                LOG.info("Setting remaining vacation days of " + person.getLoginName() + " to " + leftDays + " for "
-                    + year);
-
-                accountService.save(accountNewYear);
-
-                updatedAccounts.add(accountNewYear);
+                updatedAccounts.add(holidaysAccount);
             }
         }
 

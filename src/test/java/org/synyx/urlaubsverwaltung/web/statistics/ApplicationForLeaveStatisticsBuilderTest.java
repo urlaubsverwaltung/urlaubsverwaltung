@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.web.statistics;
 
+import com.google.common.base.Optional;
+
 import org.joda.time.DateMidnight;
 
 import org.junit.Assert;
@@ -8,14 +10,14 @@ import org.junit.Test;
 
 import org.mockito.Mockito;
 
-import org.synyx.urlaubsverwaltung.core.account.Account;
-import org.synyx.urlaubsverwaltung.core.account.AccountService;
+import org.synyx.urlaubsverwaltung.core.account.domain.Account;
+import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
+import org.synyx.urlaubsverwaltung.core.account.service.VacationDaysService;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
-import org.synyx.urlaubsverwaltung.core.application.service.CalculationService;
 import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
@@ -35,7 +37,7 @@ public class ApplicationForLeaveStatisticsBuilderTest {
     private AccountService accountService;
     private ApplicationService applicationService;
     private OwnCalendarService calendarService;
-    private CalculationService calculationService;
+    private VacationDaysService vacationDaysService;
 
     private ApplicationForLeaveStatisticsBuilder builder;
 
@@ -45,10 +47,10 @@ public class ApplicationForLeaveStatisticsBuilderTest {
         accountService = Mockito.mock(AccountService.class);
         applicationService = Mockito.mock(ApplicationService.class);
         calendarService = Mockito.mock(OwnCalendarService.class);
-        calculationService = Mockito.mock(CalculationService.class);
+        vacationDaysService = Mockito.mock(VacationDaysService.class);
 
         builder = new ApplicationForLeaveStatisticsBuilder(accountService, applicationService, calendarService,
-                calculationService);
+                vacationDaysService);
     }
 
 
@@ -69,14 +71,14 @@ public class ApplicationForLeaveStatisticsBuilderTest {
         Account account = Mockito.mock(Account.class);
 
         Mockito.when(person.getEmail()).thenReturn("muster@muster.de");
-        Mockito.when(accountService.getHolidaysAccount(2014, person)).thenReturn(account);
-        Mockito.when(calculationService.calculateTotalLeftVacationDays(Mockito.eq(account))).thenReturn(BigDecimal.TEN);
+        Mockito.when(accountService.getHolidaysAccount(2014, person)).thenReturn(Optional.of(account));
+        Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(Mockito.eq(account))).thenReturn(
+            BigDecimal.TEN);
 
         Application holidayWaiting = new Application();
         holidayWaiting.setVacationType(VacationType.HOLIDAY);
         holidayWaiting.setStartDate(new DateMidnight(2014, 10, 13));
         holidayWaiting.setEndDate(new DateMidnight(2014, 10, 13));
-        holidayWaiting.setDays(BigDecimal.ONE);
         holidayWaiting.setStatus(ApplicationStatus.WAITING);
         holidayWaiting.setPerson(person);
 
@@ -84,7 +86,6 @@ public class ApplicationForLeaveStatisticsBuilderTest {
         holidayAllowed.setVacationType(VacationType.HOLIDAY);
         holidayAllowed.setStartDate(new DateMidnight(2014, 10, 14));
         holidayAllowed.setEndDate(new DateMidnight(2014, 10, 14));
-        holidayAllowed.setDays(BigDecimal.ONE);
         holidayAllowed.setStatus(ApplicationStatus.ALLOWED);
         holidayAllowed.setPerson(person);
 
@@ -92,7 +93,6 @@ public class ApplicationForLeaveStatisticsBuilderTest {
         holidayRejected.setVacationType(VacationType.HOLIDAY);
         holidayRejected.setStartDate(new DateMidnight(2014, 11, 6));
         holidayRejected.setEndDate(new DateMidnight(2014, 11, 6));
-        holidayRejected.setDays(BigDecimal.ONE);
         holidayRejected.setStatus(ApplicationStatus.REJECTED);
         holidayRejected.setPerson(person);
 
@@ -100,7 +100,6 @@ public class ApplicationForLeaveStatisticsBuilderTest {
         specialLeaveWaiting.setVacationType(VacationType.SPECIALLEAVE);
         specialLeaveWaiting.setStartDate(new DateMidnight(2014, 10, 15));
         specialLeaveWaiting.setEndDate(new DateMidnight(2014, 10, 15));
-        specialLeaveWaiting.setDays(BigDecimal.ONE);
         specialLeaveWaiting.setStatus(ApplicationStatus.WAITING);
         specialLeaveWaiting.setPerson(person);
 
@@ -108,7 +107,6 @@ public class ApplicationForLeaveStatisticsBuilderTest {
         unpaidLeaveAllowed.setVacationType(VacationType.UNPAIDLEAVE);
         unpaidLeaveAllowed.setStartDate(new DateMidnight(2014, 10, 16));
         unpaidLeaveAllowed.setEndDate(new DateMidnight(2014, 10, 16));
-        unpaidLeaveAllowed.setDays(BigDecimal.ONE);
         unpaidLeaveAllowed.setStatus(ApplicationStatus.ALLOWED);
         unpaidLeaveAllowed.setPerson(person);
 
@@ -116,7 +114,6 @@ public class ApplicationForLeaveStatisticsBuilderTest {
         overTimeWaiting.setVacationType(VacationType.OVERTIME);
         overTimeWaiting.setStartDate(new DateMidnight(2014, 11, 3));
         overTimeWaiting.setEndDate(new DateMidnight(2014, 11, 3));
-        overTimeWaiting.setDays(BigDecimal.ONE);
         overTimeWaiting.setStatus(ApplicationStatus.WAITING);
         overTimeWaiting.setPerson(person);
 
@@ -126,10 +123,11 @@ public class ApplicationForLeaveStatisticsBuilderTest {
         Mockito.when(applicationService.getApplicationsForACertainPeriodAndPerson(from, to, person)).thenReturn(
             applications);
 
-        ApplicationForLeaveStatistics statistics = builder.build(person, from, to);
+        // just return 1 day for each application for leave
+        Mockito.when(calendarService.getWorkDays(Mockito.any(DayLength.class), Mockito.any(DateMidnight.class),
+                Mockito.any(DateMidnight.class), Mockito.eq(person))).thenReturn(BigDecimal.ONE);
 
-        // no application spans two years, so calendar service is never called
-        Mockito.verifyZeroInteractions(calendarService);
+        ApplicationForLeaveStatistics statistics = builder.build(person, from, to);
 
         // PERSON
 
@@ -161,14 +159,14 @@ public class ApplicationForLeaveStatisticsBuilderTest {
         Account account = Mockito.mock(Account.class);
 
         Mockito.when(person.getEmail()).thenReturn("muster@muster.de");
-        Mockito.when(accountService.getHolidaysAccount(2015, person)).thenReturn(account);
-        Mockito.when(calculationService.calculateTotalLeftVacationDays(Mockito.eq(account))).thenReturn(BigDecimal.TEN);
+        Mockito.when(accountService.getHolidaysAccount(2015, person)).thenReturn(Optional.of(account));
+        Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(Mockito.eq(account))).thenReturn(
+            BigDecimal.TEN);
 
         Application holidayAllowed = new Application();
         holidayAllowed.setVacationType(VacationType.HOLIDAY);
         holidayAllowed.setStartDate(new DateMidnight(2014, 12, 29));
         holidayAllowed.setEndDate(new DateMidnight(2015, 1, 9));
-        holidayAllowed.setDays(null); // should be not relevant for this case
         holidayAllowed.setStatus(ApplicationStatus.ALLOWED);
         holidayAllowed.setHowLong(DayLength.FULL);
         holidayAllowed.setPerson(person);
@@ -177,7 +175,6 @@ public class ApplicationForLeaveStatisticsBuilderTest {
         holidayWaiting.setVacationType(VacationType.HOLIDAY);
         holidayWaiting.setStartDate(new DateMidnight(2015, 12, 21));
         holidayWaiting.setEndDate(new DateMidnight(2016, 1, 4));
-        holidayWaiting.setDays(null); // should be not relevant for this case
         holidayWaiting.setStatus(ApplicationStatus.WAITING);
         holidayWaiting.setHowLong(DayLength.FULL);
         holidayWaiting.setPerson(person);

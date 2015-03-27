@@ -11,12 +11,11 @@
 
         var datepickerLocale = "${pageContext.response.locale.language}";
         var urlPrefix = "<spring:url value='/api' />";
-
         var personId = '<c:out value="${person.id}" />';
 
         var getPersonId = function() {
             return personId;
-        }
+        };
 
         var onSelect = function(selectedDate) {
 
@@ -26,27 +25,30 @@
                                     $.datepicker._defaults.dateFormat,
                             selectedDate, instance.settings);
 
-            if (this.id == "from" && $("#to").val() === "") {
-                $("#to").datepicker("setDate", selectedDate);
-            }
 
+            var $from = $("#from");
+            var $to = $("#to");
+            var $at = $("#at");
+
+            if (this.id === "from" && $to.val() === "") {
+                $to.datepicker("setDate", selectedDate);
+            }
 
             var dayLength = $('input:radio[name=howLong]:checked').val();
             var startDate = "";
             var toDate = "";
 
             if (dayLength === "FULL") {
-                startDate = $("#from").datepicker("getDate");
-                toDate = $("#to").datepicker("getDate");
+                startDate = $from.datepicker("getDate");
+                toDate = $to.datepicker("getDate");
             } else {
-                startDate = $("#at").datepicker("getDate");
-                toDate = $("#at").datepicker("getDate");
+                startDate = $at.datepicker("getDate");
+                toDate = $at.datepicker("getDate");
             }
 
-            var id = getPersonId();
-            sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, id, ".days", true);
+            sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, getPersonId(), ".days");
 
-        }
+        };
 
         var selectors = ["#from", "#to", "#at"];
 

@@ -4,6 +4,8 @@
  */
 package org.synyx.urlaubsverwaltung.core.application.service;
 
+import com.google.common.base.Optional;
+
 import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import org.synyx.urlaubsverwaltung.core.application.dao.CommentDAO;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
+import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
@@ -38,20 +41,27 @@ class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void saveComment(Comment comment, Person person, Application application) {
+    public Comment create(Application application, ApplicationStatus status, Optional<String> text, Person author) {
 
-        comment.setStatus(application.getStatus());
-        comment.setPerson(person);
+        Comment comment = new Comment(author);
+
+        comment.setStatus(status);
         comment.setApplication(application);
-        comment.setDateOfComment(DateMidnight.now());
+        comment.setDate(DateMidnight.now());
+
+        if (text.isPresent()) {
+            comment.setText(text.get());
+        }
 
         commentDAO.save(comment);
+
+        return comment;
     }
 
 
     @Override
-    public List<Comment> getCommentsByApplication(Application a) {
+    public List<Comment> getCommentsByApplication(Application application) {
 
-        return commentDAO.getCommentsByApplication(a);
+        return commentDAO.getCommentsByApplication(application);
     }
 }

@@ -52,26 +52,7 @@
 
             <%-- DATEPICKER END --%>
 
-            <c:choose>
-                <c:when test="${sickNote.aubPresent}">
-                    showAUFields();
-                </c:when>
-                <c:otherwise>
-                    hideAUFields();
-                </c:otherwise>
-            </c:choose>
-            
         });
-        
-        function showAUFields() {
-           $("div.AU").show(); 
-        }
-        
-        function hideAUFields() {
-            $("div.AU").hide();
-            $("input#aubFrom").datepicker("setDate", null);
-            $("input#aubTo").datepicker("setDate", null);
-        }
         
     </script>
     
@@ -120,6 +101,15 @@
 
             <form:form method="${METHOD}" action="${ACTION}" modelAttribute="sickNote" class="form-horizontal">
 
+            <div class="col-xs-12">
+              <c:set var="formErrors"><form:errors/></c:set>
+              <c:if test="${not empty errors && not empty formErrors}">
+                <div class="alert alert-danger">
+                  <form:errors/>
+                </div>
+              </c:if>
+            </div>
+
             <div class="col-xs-12 col-md-6">
 
                 <div class="form-group">
@@ -160,7 +150,6 @@
                                 <form:option value="${type}"><spring:message code="sicknote.type.${type}" /></form:option>
                             </c:forEach>
                         </form:select>
-                        <span class="help-inline"><form:errors path="person" cssClass="error"/></span>
                     </div>
                 </div>
 
@@ -181,23 +170,6 @@
             </div>
 
             <div class="col-xs-12 col-md-6">
-
-                <div class="form-group">
-                    <label class="control-label col-md-6"><spring:message code='sicknotes.aub'/></label>
-                    <div class="col-md-6 radio">
-                        <label class="halves">
-                            <form:radiobutton id="aubPresent" path="aubPresent" value="true" onclick="showAUFields();" />
-                            <spring:message code='yes' />
-                        </label>
-
-                        <label class="halves">
-                            <form:radiobutton id="aubNotPresent" path="aubPresent" value="false" onclick="hideAUFields();" />
-                            <spring:message code='no' />
-                        </label>
-
-                        <span class="help-block"><form:errors path="aubPresent" cssClass="error"/></span>
-                    </div>
-                </div>
 
                 <div class="form-group AU">
                     <label class="control-label col-md-6" for="aubFrom">

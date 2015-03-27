@@ -6,15 +6,14 @@ import org.joda.time.DateTime;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteComment;
 
-import java.math.BigDecimal;
-
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
 
 
 /**
@@ -41,20 +40,12 @@ public class SickNote extends AbstractPersistable<Integer> {
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date endDate;
 
-    private BigDecimal workDays;
-
-    // aub = Arbeitsunfähigkeitsbescheinigung
-    private boolean aubPresent;
-
     // period of the aub (Arbeitsunfähigkeitsbescheinigung)
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date aubStartDate;
 
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date aubEndDate;
-
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<SickNoteComment> comments = new ArrayList<SickNoteComment>();
 
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date lastEdited;
@@ -128,13 +119,7 @@ public class SickNote extends AbstractPersistable<Integer> {
 
     public boolean isAubPresent() {
 
-        return aubPresent;
-    }
-
-
-    public void setAubPresent(boolean aubPresent) {
-
-        this.aubPresent = aubPresent;
+        return getAubStartDate() != null && getAubEndDate() != null;
     }
 
 
@@ -178,24 +163,6 @@ public class SickNote extends AbstractPersistable<Integer> {
     }
 
 
-    public List<SickNoteComment> getComments() {
-
-        return comments;
-    }
-
-
-    public void setComments(List<SickNoteComment> comments) {
-
-        this.comments = comments;
-    }
-
-
-    public void addComment(SickNoteComment comment) {
-
-        this.comments.add(comment);
-    }
-
-
     public DateMidnight getLastEdited() {
 
         if (this.lastEdited == null) {
@@ -213,18 +180,6 @@ public class SickNote extends AbstractPersistable<Integer> {
         } else {
             this.lastEdited = lastEdited.toDate();
         }
-    }
-
-
-    public BigDecimal getWorkDays() {
-
-        return workDays;
-    }
-
-
-    public void setWorkDays(BigDecimal workDays) {
-
-        this.workDays = workDays;
     }
 
 

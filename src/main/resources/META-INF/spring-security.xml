@@ -6,13 +6,13 @@
                             http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 
     <security:http auto-config="true" use-expressions="true">
-        <security:intercept-url pattern="/api/" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/api/**" access="isAuthenticated()"/>
         <security:intercept-url pattern="/api/vacation" access="hasAnyRole('BOSS', 'OFFICE')"/>
         <security:intercept-url pattern="/api/vacation/**" access="isAuthenticated()"/>
         <security:intercept-url pattern="/api/sicknotes/**" access="hasRole('OFFICE')"/>
         <security:intercept-url pattern="/web/overview" access="isAuthenticated()"/>
         <security:intercept-url pattern="/web/application/**" access="isAuthenticated()"/>
-        <security:intercept-url pattern="/web/staff/**" access="hasAnyRole('BOSS', 'OFFICE')"/>
+        <security:intercept-url pattern="/web/staff/**" access="isAuthenticated()"/>
         <!-- more concrete security rules for sick notes are located in SickNoteController -->
         <security:intercept-url pattern="/web/sicknote/**" access="isAuthenticated()"/>
         <security:intercept-url pattern="/login.jsp" access="permitAll"/>
@@ -24,9 +24,7 @@
         <security:logout logout-success-url="/login.jsp"/>
     </security:http>
 
-    <import resource="spring-security-default.xml"/>
-    <import resource="spring-security-ldap.xml"/>
-    <import resource="spring-security-activeDirectory.xml"/>
+    <import resource="spring-security-${auth}.xml"/>
 
     <!-- BASIC AUTHENTICATION CONFIG -->
     <bean id="delegatingAuthenticationEntryPoint"

@@ -7,11 +7,11 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
+import org.synyx.urlaubsverwaltung.web.application.CommentForm;
 
 
 /**
- * Validates the content of {@link org.synyx.urlaubsverwaltung.core.application.domain.Comment}s.
+ * Validates the content of {@link org.synyx.urlaubsverwaltung.web.application.CommentForm}s.
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
@@ -20,31 +20,32 @@ public class CommentValidator implements Validator {
 
     private static final int MAX_CHARS = 200;
 
-    private static final String FIELD_REASON = "reason";
+    private static final String FIELD_TEXT = "text";
 
-    private static final String ERROR_REASON = "error.reason";
+    private static final String ERROR_REASON = "error.mandatory.field";
     private static final String ERROR_LENGTH = "error.length";
 
     @Override
     public boolean supports(Class<?> clazz) {
 
-        return Comment.class.equals(clazz);
+        return CommentForm.class.equals(clazz);
     }
 
 
     @Override
     public void validate(Object target, Errors errors) {
 
-        Comment comment = (Comment) target;
+        CommentForm comment = (CommentForm) target;
 
-        boolean reasonIsGiven = StringUtils.hasText(comment.getReason());
+        String text = comment.getText();
+        boolean hasText = StringUtils.hasText(text);
 
-        if (!reasonIsGiven && comment.isMandatory()) {
-            errors.rejectValue(FIELD_REASON, ERROR_REASON);
+        if (!hasText && comment.isMandatory()) {
+            errors.rejectValue(FIELD_TEXT, ERROR_REASON);
         }
 
-        if (reasonIsGiven && comment.getReason().length() > MAX_CHARS) {
-            errors.rejectValue(FIELD_REASON, ERROR_LENGTH);
+        if (hasText && text.length() > MAX_CHARS) {
+            errors.rejectValue(FIELD_TEXT, ERROR_LENGTH);
         }
     }
 }

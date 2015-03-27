@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.application.service;
 
+import com.google.common.base.Optional;
+
 import org.joda.time.DateMidnight;
 
 import org.junit.Assert;
@@ -8,15 +10,12 @@ import org.junit.Test;
 
 import org.mockito.Mockito;
 
+import org.synyx.urlaubsverwaltung.core.account.service.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
-import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
-import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
-
-import java.math.BigDecimal;
 
 
 /**
@@ -27,22 +26,22 @@ public class ApplicationInteractionServiceTest {
     private ApplicationInteractionService service;
 
     private ApplicationService applicationService;
-    private OwnCalendarService calendarService;
-    private SignService signService;
     private CommentService commentService;
+    private AccountInteractionService accountInteractionService;
+    private SignService signService;
     private MailService mailService;
 
     @Before
     public void setUp() {
 
         applicationService = Mockito.mock(ApplicationService.class);
-        calendarService = Mockito.mock(OwnCalendarService.class);
-        signService = Mockito.mock(SignService.class);
         commentService = Mockito.mock(CommentService.class);
+        accountInteractionService = Mockito.mock(AccountInteractionService.class);
+        signService = Mockito.mock(SignService.class);
         mailService = Mockito.mock(MailService.class);
 
-        service = new ApplicationInteractionServiceImpl(applicationService, calendarService, signService,
-                commentService, mailService);
+        service = new ApplicationInteractionServiceImpl(applicationService, commentService, accountInteractionService,
+                signService, mailService);
     }
 
 
@@ -53,17 +52,16 @@ public class ApplicationInteractionServiceTest {
 
         Person person = new Person();
         Person applier = new Person();
+        Optional<String> comment = Optional.of("Foo");
 
         Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
+        applicationForLeave.setStartDate(new DateMidnight(2013, 2, 1));
+        applicationForLeave.setEndDate(new DateMidnight(2013, 2, 5));
 
-        Mockito.when(calendarService.getWorkDays(Mockito.any(DayLength.class), Mockito.any(DateMidnight.class),
-                Mockito.any(DateMidnight.class), Mockito.any(Person.class))).thenReturn(BigDecimal.TEN);
-
-        service.apply(applicationForLeave, applier);
+        service.apply(applicationForLeave, applier, comment);
 
         Assert.assertEquals("Wrong state", ApplicationStatus.WAITING, applicationForLeave.getStatus());
-        Assert.assertEquals("Wrong number of vacation days", BigDecimal.TEN, applicationForLeave.getDays());
         Assert.assertEquals("Wrong person", person, applicationForLeave.getPerson());
         Assert.assertEquals("Wrong applier", applier, applicationForLeave.getApplier());
         Assert.assertEquals("Wrong application date", DateMidnight.now(), applicationForLeave.getApplicationDate());
@@ -72,8 +70,8 @@ public class ApplicationInteractionServiceTest {
 
         Mockito.verify(signService).signApplicationByUser(Mockito.eq(applicationForLeave), Mockito.eq(applier));
 
-        Mockito.verify(commentService).saveComment(Mockito.any(Comment.class), Mockito.eq(applier),
-            Mockito.eq(applicationForLeave));
+        Mockito.verify(commentService).create(Mockito.eq(applicationForLeave), Mockito.eq(ApplicationStatus.WAITING),
+            Mockito.eq(comment), Mockito.eq(applier));
     }
 
 
@@ -84,11 +82,10 @@ public class ApplicationInteractionServiceTest {
 
         Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
+        applicationForLeave.setStartDate(new DateMidnight(2013, 2, 1));
+        applicationForLeave.setEndDate(new DateMidnight(2013, 2, 5));
 
-        Mockito.when(calendarService.getWorkDays(Mockito.any(DayLength.class), Mockito.any(DateMidnight.class),
-                Mockito.any(DateMidnight.class), Mockito.any(Person.class))).thenReturn(BigDecimal.TEN);
-
-        service.apply(applicationForLeave, person);
+        service.apply(applicationForLeave, person, Optional.of("Foo"));
 
         Mockito.verify(mailService).sendConfirmation(Mockito.eq(applicationForLeave));
         Mockito.verify(mailService, Mockito.never()).sendAppliedForLeaveByOfficeNotification(applicationForLeave);
@@ -105,16 +102,33 @@ public class ApplicationInteractionServiceTest {
 
         Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
+        applicationForLeave.setStartDate(new DateMidnight(2013, 2, 1));
+        applicationForLeave.setEndDate(new DateMidnight(2013, 2, 5));
 
-        Mockito.when(calendarService.getWorkDays(Mockito.any(DayLength.class), Mockito.any(DateMidnight.class),
-                Mockito.any(DateMidnight.class), Mockito.any(Person.class))).thenReturn(BigDecimal.TEN);
-
-        service.apply(applicationForLeave, applier);
+        service.apply(applicationForLeave, applier, Optional.of("Foo"));
 
         Mockito.verify(mailService, Mockito.never()).sendConfirmation(Mockito.eq(applicationForLeave));
         Mockito.verify(mailService).sendAppliedForLeaveByOfficeNotification(applicationForLeave);
 
         Mockito.verify(mailService).sendNewApplicationNotification(Mockito.eq(applicationForLeave));
+    }
+
+
+    @Test
+    public void ensureApplyingForLeaveUpdatesTheRemainingVacationDays() {
+
+        Person person = new Person();
+        Person applier = new Person();
+        Optional<String> comment = Optional.of("Foo");
+
+        Application applicationForLeave = new Application();
+        applicationForLeave.setPerson(person);
+        applicationForLeave.setStartDate(new DateMidnight(2013, 2, 1));
+        applicationForLeave.setEndDate(new DateMidnight(2013, 2, 5));
+
+        service.apply(applicationForLeave, applier, comment);
+
+        Mockito.verify(accountInteractionService).updateRemainingVacationDays(2013, person);
     }
 
     // END: APPLY
@@ -127,7 +141,7 @@ public class ApplicationInteractionServiceTest {
 
         Person person = new Person();
         Person boss = new Person();
-        Comment comment = new Comment();
+        Optional<String> comment = Optional.of("Foo");
 
         Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
@@ -144,8 +158,8 @@ public class ApplicationInteractionServiceTest {
 
         Mockito.verify(signService).signApplicationByBoss(Mockito.eq(applicationForLeave), Mockito.eq(boss));
 
-        Mockito.verify(commentService).saveComment(Mockito.eq(comment), Mockito.eq(boss),
-            Mockito.eq(applicationForLeave));
+        Mockito.verify(commentService).create(Mockito.eq(applicationForLeave), Mockito.eq(ApplicationStatus.ALLOWED),
+            Mockito.eq(comment), Mockito.eq(boss));
     }
 
 
@@ -154,14 +168,14 @@ public class ApplicationInteractionServiceTest {
 
         Person person = new Person();
         Person boss = new Person();
-        Comment comment = new Comment();
 
         Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
 
-        service.allow(applicationForLeave, boss, comment);
+        service.allow(applicationForLeave, boss, Optional.of("Foo"));
 
-        Mockito.verify(mailService).sendAllowedNotification(Mockito.eq(applicationForLeave), Mockito.eq(comment));
+        Mockito.verify(mailService).sendAllowedNotification(Mockito.eq(applicationForLeave),
+            Mockito.any(Comment.class));
     }
 
 
@@ -171,15 +185,14 @@ public class ApplicationInteractionServiceTest {
         Person person = new Person();
         Person rep = new Person();
         Person boss = new Person();
-        Comment comment = new Comment();
 
         Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
-        applicationForLeave.setRep(rep);
+        applicationForLeave.setHolidayReplacement(rep);
 
-        service.allow(applicationForLeave, boss, comment);
+        service.allow(applicationForLeave, boss, Optional.of("Foo"));
 
-        Mockito.verify(mailService).notifyRepresentative(Mockito.eq(applicationForLeave));
+        Mockito.verify(mailService).notifyHolidayReplacement(Mockito.eq(applicationForLeave));
     }
 
 
@@ -192,7 +205,7 @@ public class ApplicationInteractionServiceTest {
 
         Person person = new Person();
         Person boss = new Person();
-        Comment comment = new Comment();
+        Optional<String> comment = Optional.of("Foo");
 
         Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
@@ -209,8 +222,8 @@ public class ApplicationInteractionServiceTest {
 
         Mockito.verify(signService).signApplicationByBoss(Mockito.eq(applicationForLeave), Mockito.eq(boss));
 
-        Mockito.verify(commentService).saveComment(Mockito.eq(comment), Mockito.eq(boss),
-            Mockito.eq(applicationForLeave));
+        Mockito.verify(commentService).create(Mockito.eq(applicationForLeave), Mockito.eq(ApplicationStatus.REJECTED),
+            Mockito.eq(comment), Mockito.eq(boss));
     }
 
 
@@ -219,14 +232,14 @@ public class ApplicationInteractionServiceTest {
 
         Person person = new Person();
         Person boss = new Person();
-        Comment comment = new Comment();
 
         Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
 
-        service.reject(applicationForLeave, boss, comment);
+        service.reject(applicationForLeave, boss, Optional.of("Foo"));
 
-        Mockito.verify(mailService).sendRejectedNotification(Mockito.eq(applicationForLeave), Mockito.eq(comment));
+        Mockito.verify(mailService).sendRejectedNotification(Mockito.eq(applicationForLeave),
+            Mockito.any(Comment.class));
     }
 
 
@@ -238,24 +251,26 @@ public class ApplicationInteractionServiceTest {
     public void ensureCancellingNotYetAllowedApplicationForLeaveChangesStateAndOtherAttributesButSendsNoEmail() {
 
         Person person = new Person();
-        Comment comment = new Comment();
+        Optional<String> comment = Optional.of("Foo");
 
         Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
         applicationForLeave.setStatus(ApplicationStatus.WAITING);
+        applicationForLeave.setStartDate(new DateMidnight(2015, 3, 24));
+        applicationForLeave.setEndDate(new DateMidnight(2015, 4, 2));
 
         service.cancel(applicationForLeave, person, comment);
 
-        Assert.assertEquals("Wrong state", ApplicationStatus.CANCELLED, applicationForLeave.getStatus());
+        Assert.assertEquals("Wrong state", ApplicationStatus.REVOKED, applicationForLeave.getStatus());
         Assert.assertEquals("Wrong person", person, applicationForLeave.getPerson());
         Assert.assertEquals("Wrong canceller", person, applicationForLeave.getCanceller());
         Assert.assertEquals("Wrong cancelled date", DateMidnight.now(), applicationForLeave.getCancelDate());
-        Assert.assertFalse("Must be not set to formerly allowed", applicationForLeave.isFormerlyAllowed());
+        Assert.assertFalse("Must not be formerly allowed", applicationForLeave.isFormerlyAllowed());
 
         Mockito.verify(applicationService).save(applicationForLeave);
 
-        Mockito.verify(commentService).saveComment(Mockito.eq(comment), Mockito.eq(person),
-            Mockito.eq(applicationForLeave));
+        Mockito.verify(commentService).create(Mockito.eq(applicationForLeave), Mockito.eq(ApplicationStatus.REVOKED),
+            Mockito.eq(comment), Mockito.eq(person));
 
         Mockito.verifyZeroInteractions(mailService);
     }
@@ -266,11 +281,13 @@ public class ApplicationInteractionServiceTest {
 
         Person person = new Person();
         Person canceller = new Person();
-        Comment comment = new Comment();
+        Optional<String> comment = Optional.of("Foo");
 
         Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
         applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
+        applicationForLeave.setStartDate(new DateMidnight(2015, 3, 24));
+        applicationForLeave.setEndDate(new DateMidnight(2015, 4, 2));
 
         service.cancel(applicationForLeave, canceller, comment);
 
@@ -278,15 +295,15 @@ public class ApplicationInteractionServiceTest {
         Assert.assertEquals("Wrong person", person, applicationForLeave.getPerson());
         Assert.assertEquals("Wrong canceller", canceller, applicationForLeave.getCanceller());
         Assert.assertEquals("Wrong cancelled date", DateMidnight.now(), applicationForLeave.getCancelDate());
-        Assert.assertTrue("Must be set to formerly allowed", applicationForLeave.isFormerlyAllowed());
+        Assert.assertTrue("Must be formerly allowed", applicationForLeave.isFormerlyAllowed());
 
         Mockito.verify(applicationService).save(applicationForLeave);
 
-        Mockito.verify(commentService).saveComment(Mockito.eq(comment), Mockito.eq(canceller),
-            Mockito.eq(applicationForLeave));
+        Mockito.verify(commentService).create(Mockito.eq(applicationForLeave), Mockito.eq(ApplicationStatus.CANCELLED),
+            Mockito.eq(comment), Mockito.eq(canceller));
 
         Mockito.verify(mailService).sendCancelledNotification(Mockito.eq(applicationForLeave), Mockito.eq(false),
-            Mockito.eq(comment));
+            Mockito.any(Comment.class));
     }
 
 
@@ -295,27 +312,48 @@ public class ApplicationInteractionServiceTest {
 
         Person person = new Person();
         Person canceller = new Person();
-        Comment comment = new Comment();
+        Optional<String> comment = Optional.of("Foo");
 
         Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
         applicationForLeave.setStatus(ApplicationStatus.WAITING);
+        applicationForLeave.setStartDate(new DateMidnight(2015, 3, 24));
+        applicationForLeave.setEndDate(new DateMidnight(2015, 4, 2));
 
         service.cancel(applicationForLeave, canceller, comment);
 
-        Assert.assertEquals("Wrong state", ApplicationStatus.CANCELLED, applicationForLeave.getStatus());
+        Assert.assertEquals("Wrong state", ApplicationStatus.REVOKED, applicationForLeave.getStatus());
         Assert.assertEquals("Wrong person", person, applicationForLeave.getPerson());
         Assert.assertEquals("Wrong canceller", canceller, applicationForLeave.getCanceller());
         Assert.assertEquals("Wrong cancelled date", DateMidnight.now(), applicationForLeave.getCancelDate());
-        Assert.assertFalse("Must not be set to formerly allowed", applicationForLeave.isFormerlyAllowed());
+        Assert.assertFalse("Must not be formerly allowed", applicationForLeave.isFormerlyAllowed());
 
         Mockito.verify(applicationService).save(applicationForLeave);
 
-        Mockito.verify(commentService).saveComment(Mockito.eq(comment), Mockito.eq(canceller),
-            Mockito.eq(applicationForLeave));
+        Mockito.verify(commentService).create(Mockito.eq(applicationForLeave), Mockito.eq(ApplicationStatus.REVOKED),
+            Mockito.eq(comment), Mockito.eq(canceller));
 
         Mockito.verify(mailService).sendCancelledNotification(Mockito.eq(applicationForLeave), Mockito.eq(true),
-            Mockito.eq(comment));
+            Mockito.any(Comment.class));
+    }
+
+
+    @Test
+    public void ensureCancellingApplicationForLeaveUpdatesRemainingVacationDaysWithTheYearOfTheStartDateAsStartYear() {
+
+        Person person = new Person();
+        Person canceller = new Person();
+        Optional<String> comment = Optional.of("Foo");
+
+        Application applicationForLeave = new Application();
+        applicationForLeave.setPerson(person);
+        applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
+        applicationForLeave.setStartDate(new DateMidnight(2014, 12, 24));
+        applicationForLeave.setEndDate(new DateMidnight(2015, 1, 7));
+
+        service.cancel(applicationForLeave, canceller, comment);
+
+        Mockito.verify(accountInteractionService).updateRemainingVacationDays(2014, person);
     }
 
     // END: CANCEL

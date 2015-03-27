@@ -50,12 +50,17 @@
     <tr>
         <td><spring:message code="days.time" /></td>
         <td>
+            <b>
+              <uv:number number="${application.workDays}" /> <spring:message code="duration.days" />
+            </b>
             <b class="days">
                 <%-- filled by javascript --%>
             </b>
             <script type="text/javascript">
 
                 $(document).ready(function () {
+
+                  <c:if test="${application.startDate.year != application.endDate.year}">
 
                     var dayLength = '<c:out value="${application.howLong}" />';
                     var personId = '<c:out value="${application.person.id}" />';
@@ -66,7 +71,9 @@
                     var from = new Date(startDate);
                     var to = new Date(endDate);
 
-                    sendGetDaysRequest("<spring:url value='/api' />", from, to, dayLength, personId, ".days", true);
+                    sendGetDaysRequestForTurnOfTheYear("<spring:url value='/api' />", from, to, dayLength, personId, ".days");
+
+                  </c:if>
 
                 });
 
@@ -96,12 +103,12 @@
 
     <tr>
         <td>
-            <spring:message code='app.rep'/>
+            <spring:message code='app.holidayReplacement'/>
         </td>
         <td>
             <c:choose>
-                <c:when test="${application.rep != null}">
-                    <c:out value="${application.rep.niceName}"/>
+                <c:when test="${application.holidayReplacement != null}">
+                    <c:out value="${application.holidayReplacement.niceName}"/>
                 </c:when>
                 <c:otherwise>
                     <spring:message code="not.stated"/>

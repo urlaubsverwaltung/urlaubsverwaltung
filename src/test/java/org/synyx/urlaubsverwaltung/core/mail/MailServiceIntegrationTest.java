@@ -17,7 +17,7 @@ import org.mockito.Mockito;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
-import org.synyx.urlaubsverwaltung.core.account.Account;
+import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
@@ -37,7 +37,9 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 
 /**
@@ -158,7 +160,6 @@ public class MailServiceIntegrationTest {
         assertTrue(content.contains("Bernd"));
         assertTrue(content.contains("gestellter Antrag wurde von"));
         assertTrue(content.contains("genehmigt"));
-        assertTrue(content.contains("ganztägig"));
         assertFalse(content.contains("Mist"));
 
         // get email office
@@ -322,8 +323,7 @@ public class MailServiceIntegrationTest {
 
         String content = (String) msg.getContent();
 
-        assertTrue(content.contains(
-                "Beim Versuch für den Benutzer mit dem Benutzernamen 'horscht' ein Schlüsselpaar anzulegen, ist ein Fehler aufgetreten."));
+        assertTrue(content.contains("ist ein Fehler aufgetreten"));
         assertTrue(content.contains("Message of exception"));
     }
 
@@ -441,5 +441,32 @@ public class MailServiceIntegrationTest {
         assertTrue(content.contains("Marlene Muster: 3"));
         assertTrue(content.contains("Max Mustermann: 5"));
         assertTrue(content.contains("Dieter Horst: -1"));
+    }
+
+
+    @Test
+    public void ensureCorrectHolidayReplacementMailIsSent() throws MessagingException, IOException {
+
+        Person holidayReplacement = new Person("muster", "Muster", "Marlene", "mmuster@test.de");
+        application.setHolidayReplacement(holidayReplacement);
+
+        mailService.notifyHolidayReplacement(application);
+
+        // was email sent?
+        List<Message> inbox = Mailbox.get(holidayReplacement.getEmail());
+        assertTrue(inbox.size() > 0);
+
+        Message msg = inbox.get(0);
+
+        // check subject
+        assertTrue(msg.getSubject().contains("Urlaubsvertretung"));
+
+        // check from and recipient
+        assertEquals(new InternetAddress(holidayReplacement.getEmail()), msg.getAllRecipients()[0]);
+
+        // check content of email
+        String content = (String) msg.getContent();
+        assertTrue(content.contains("Hallo Marlene Muster"));
+        assertTrue(content.contains("Urlaubsvertretung"));
     }
 }

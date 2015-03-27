@@ -13,8 +13,8 @@ Art des Urlaubs: ${vacationType}
 #if($application.reason && $application.reason != "")
 Grund: ${application.reason}
 #end
-#if($application.rep.niceName && $application.rep.niceName != "")
-Vertreter: ${application.rep.niceName}
+#if($application.holidayReplacement.niceName && $application.holidayReplacement.niceName != "")
+Vertreter: ${application.holidayReplacement.niceName}
 #end
 #if($application.address && $application.address != "")
 Anschrift/Telefon während des Urlaubs: ${application.address}

@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.restapi;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Lists;
+import com.google.common.collect.FluentIterable;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -24,7 +24,6 @@ import org.synyx.urlaubsverwaltung.core.calendar.JollydayCalendar;
 
 import java.math.BigDecimal;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -37,7 +36,7 @@ import java.util.Set;
 @Controller("restApiCalendarController")
 public class PublicHolidayController {
 
-    private static final String ROOT_URL = "/public-holiday";
+    private static final String ROOT_URL = "/holidays";
 
     @Autowired
     private JollydayCalendar jollydayCalendar;
@@ -48,14 +47,14 @@ public class PublicHolidayController {
     @RequestMapping(value = ROOT_URL, method = RequestMethod.GET)
     @ModelAttribute("response")
     public PublicHolidayListResponse getPublicHolidays(
-        @ApiParam(value = "Year to get the public holidays for", defaultValue = "2014")
+        @ApiParam(value = "Year to get the public holidays for", defaultValue = "2015")
         @RequestParam("year")
         String year,
         @ApiParam(value = "Month of year to get the public holidays for")
         @RequestParam(value = "month", required = false)
         String month) {
 
-        PublicHolidayListResponse emptyResponse = new PublicHolidayListResponse(Collections.EMPTY_LIST);
+        PublicHolidayListResponse emptyResponse = new PublicHolidayListResponse();
 
         boolean hasYear = StringUtils.hasText(year);
         boolean hasMonth = StringUtils.hasText(month);
@@ -78,7 +77,7 @@ public class PublicHolidayController {
             }
         }
 
-        List<PublicHolidayResponse> publicHolidayResponses = Lists.transform(Lists.newArrayList(holidays),
+        List<PublicHolidayResponse> publicHolidayResponses = FluentIterable.from(holidays).transform(
                 new Function<Holiday, PublicHolidayResponse>() {
 
                     @Override
@@ -89,7 +88,7 @@ public class PublicHolidayController {
 
                         return new PublicHolidayResponse(holiday, duration);
                     }
-                });
+                }).toList();
 
         return new PublicHolidayListResponse(publicHolidayResponses);
     }

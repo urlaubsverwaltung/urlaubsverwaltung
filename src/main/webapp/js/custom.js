@@ -21,104 +21,93 @@ function formatNumber(number) {
     });
 }
 
-function sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, el, long) {
-    
-    $(el).empty();
-    
-    if(startDate !== undefined && toDate !== undefined && startDate !== null && toDate !== null) {
+function sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, el) {
+
+  $(el).empty();
+
+  if (startDate !== undefined && toDate !== undefined && startDate !== null && toDate !== null) {
 
     var startDateString = startDate.getFullYear() + '-' + (startDate.getMonth() + 1) + '-' + startDate.getDate();
     var toDateString = toDate.getFullYear() + '-' + (toDate.getMonth() + 1) + '-' + toDate.getDate();
 
-    var requestUrl = urlPrefix + "/vacation/calculate";    
-        
+    var requestUrl = urlPrefix + "/workdays";
+
     var url = buildUrl(requestUrl, startDateString, toDateString, dayLength, personId);
-        
-    $.get(url, function(data) {
 
-        var text;
+    $.get(url, function (data) {
 
-        if(startDate.getFullYear() != toDate.getFullYear()) {
+      var text;
 
-            var before;
-            var after;
+      if (data == 1) {
+        text = formatNumber(data) + " Tag";
+      } else {
+        text = formatNumber(data) + " Tage";
+      }
 
-            if(startDate.getFullYear() < toDate.getFullYear()) {
-                before = startDate;
-                after = toDate;
-            } else {
-                before = toDate;
-                after = startDate;
-            }
+      $(el).html(text);
 
-            // before - 31.12.
-            // 1.1.   - after
-
-            var daysBefore;
-            var daysAfter;
-            var daysTotal = 0;
-
-            var startString = before.getFullYear() + "-" + (before.getMonth() + 1) + '-' + before.getDate();
-            var toString = before.getFullYear() + '-12-31';
-            var url = buildUrl(requestUrl, startString, toString, dayLength, personId);
-
-            $.get(url, function(data) {
-                daysTotal += parseFloat(data);
-                daysBefore = formatNumber(data);
-
-                startString = after.getFullYear() + '-1-1';
-                toString = after.getFullYear() + "-" + (after.getMonth() + 1) + '-' + after.getDate();
-                url = buildUrl(requestUrl, startString, toString, dayLength, personId);
-
-                $.get(url, function(data) {
-                    daysTotal += parseFloat(data);
-                    daysAfter = formatNumber(data);
-
-                    if (long) {
-
-                        if (daysTotal == 1) {
-                            text = formatNumber(daysTotal) + " Tag";
-                        } else {
-                            text = formatNumber(daysTotal) + " Tage";
-                        }
-                    } else {
-                        text = formatNumber(daysTotal);
-                    }
-                    
-                    if(long) {
-                        text += "<br />(davon " + daysBefore + " in " + before.getFullYear()
-                            + " und " + daysAfter + " in " + after.getFullYear() + ")";  
-                    } else {
-                        text += "<br />(" + before.getFullYear() + ": " + daysBefore + ", " 
-                            + after.getFullYear() + ": " + daysAfter + ")";
-                    }
-                    
-                    $(el).html(text);
-                });
-
-            });
-
-        } else {
-
-            if(long) {
-
-                if (data == 1) {
-                    text = formatNumber(data) + " Tag";
-                } else {
-                    text = formatNumber(data) + " Tage";
-                }
-
-            } else {
-                text = formatNumber(data);
-            }
-
-            $(el).html(text); 
-        }
+      if (startDate.getFullYear() != toDate.getFullYear()) {
+        $(el).append('<span class="days-turn-of-the-year"></span>');
+        sendGetDaysRequestForTurnOfTheYear(urlPrefix, startDate, toDate, dayLength, personId, el + ' .days-turn-of-the-year');
+      }
 
     });
-        
+
+  }
+
+}
+
+function sendGetDaysRequestForTurnOfTheYear(urlPrefix, startDate, toDate, dayLength, personId, el) {
+
+  $(el).empty();
+
+  if (startDate !== undefined && toDate !== undefined && startDate !== null && toDate !== null) {
+
+    var requestUrl = urlPrefix + "/workdays";
+
+    var text;
+
+    var before;
+    var after;
+
+    if (startDate.getFullYear() < toDate.getFullYear()) {
+      before = startDate;
+      after = toDate;
+    } else {
+      before = toDate;
+      after = startDate;
     }
-    
+
+    // before - 31.12.
+    // 1.1.   - after
+
+    var daysBefore;
+    var daysAfter;
+
+    var startString = before.getFullYear() + "-" + (before.getMonth() + 1) + '-' + before.getDate();
+    var toString = before.getFullYear() + '-12-31';
+    var url = buildUrl(requestUrl, startString, toString, dayLength, personId);
+
+    $.get(url, function (data) {
+      daysBefore = formatNumber(data);
+
+      startString = after.getFullYear() + '-1-1';
+      toString = after.getFullYear() + "-" + (after.getMonth() + 1) + '-' + after.getDate();
+      url = buildUrl(requestUrl, startString, toString, dayLength, personId);
+
+      $.get(url, function (data) {
+        daysAfter = formatNumber(data);
+
+        text = "<br />(" + daysBefore + " in " + before.getFullYear()
+          + " und " + daysAfter + " in " + after.getFullYear() + ")";
+
+        $(el).html(text);
+      });
+
+    });
+
+  }
+
 }
 
 function buildUrl(urlPrefix, startDate, endDate, dayLength, personId) {

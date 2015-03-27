@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.restapi;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -9,6 +10,12 @@ import java.util.List;
 class PublicHolidayListResponse {
 
     private List<PublicHolidayResponse> publicHolidays;
+
+    PublicHolidayListResponse() {
+
+        this.publicHolidays = new ArrayList<>();
+    }
+
 
     PublicHolidayListResponse(List<PublicHolidayResponse> publicHolidays) {
 

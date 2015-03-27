@@ -1,6 +1,8 @@
 
 package org.synyx.urlaubsverwaltung.core.calendar;
 
+import com.google.common.base.Optional;
+
 import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,33 +74,6 @@ public class OwnCalendarService {
 
 
     /**
-     * Calculates the number of workdays considering the individual person's working time.
-     *
-     * @param  startDate
-     * @param  endDate
-     * @param  workingTime
-     *
-     * @return  number of workdays
-     */
-    protected BigDecimal getPersonalWorkDays(DateMidnight startDate, DateMidnight endDate, WorkingTime workingTime) {
-
-        BigDecimal workDays = BigDecimal.ZERO;
-
-        DateMidnight day = startDate;
-
-        while (!day.isAfter(endDate)) {
-            int dayOfWeek = day.getDayOfWeek();
-            DayLength dayLength = workingTime.getDayLengthForWeekDay(dayOfWeek);
-            workDays = workDays.add(dayLength.getDuration());
-
-            day = day.plusDays(1);
-        }
-
-        return workDays;
-    }
-
-
-    /**
      * This method calculates how many workdays are used in the stated period (from start date to end date) considering
      * the personal working time of the given person, getNumberOfPublicHolidays calculates the number of official
      * holidays within the personal workdays period. Number of workdays results from difference between personal
@@ -113,9 +88,10 @@ public class OwnCalendarService {
      */
     public BigDecimal getWorkDays(DayLength dayLength, DateMidnight startDate, DateMidnight endDate, Person person) {
 
-        WorkingTime workingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(person, startDate);
+        Optional<WorkingTime> workingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(person,
+                startDate);
 
-        if (workingTime == null) {
+        if (!workingTime.isPresent()) {
             throw new NoValidWorkingTimeException("No working time found for User '" + person.getLoginName()
                 + "' in period " + startDate.toString(DateFormat.PATTERN) + " - " + endDate.toString(DateFormat.PATTERN)
                 + ". Please contact the application manager.");
@@ -130,7 +106,7 @@ public class OwnCalendarService {
             BigDecimal duration = jollydayCalendar.getWorkingDurationOfDate(day);
 
             int dayOfWeek = day.getDayOfWeek();
-            BigDecimal workingDuration = workingTime.getDayLengthForWeekDay(dayOfWeek).getDuration();
+            BigDecimal workingDuration = workingTime.get().getDayLengthForWeekDay(dayOfWeek).getDuration();
 
             BigDecimal result = duration.multiply(workingDuration);
 

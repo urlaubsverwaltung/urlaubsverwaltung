@@ -18,7 +18,7 @@
 .box-text {
   display: table-cell;
   width: 80%;
-  vertical-align: top;
+  vertical-align: middle;
 }
 
 .box-icon {

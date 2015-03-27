@@ -25,10 +25,10 @@
 
     <div class="form-group">
         <div class="control-label">
-            <spring:message code='reason'/>, <spring:message code="obligat"/>: (<span
+            <spring:message code='comment'/>, <spring:message code="obligat"/>: (<span
                 id="text-reject"></span><spring:message code="max.chars"/>)
         </div>
-        <form:textarea rows="2" path="reason" cssClass="form-control" cssErrorClass="form-control error"
+        <form:textarea rows="2" path="text" cssClass="form-control" cssErrorClass="form-control error"
                        onkeyup="count(this.value, 'text-reject');"
                        onkeydown="maxChars(this,200); count(this.value, 'text-reject');"/>
     </div>

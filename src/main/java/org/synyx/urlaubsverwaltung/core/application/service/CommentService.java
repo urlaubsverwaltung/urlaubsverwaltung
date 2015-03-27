@@ -1,6 +1,9 @@
 package org.synyx.urlaubsverwaltung.core.application.service;
 
+import com.google.common.base.Optional;
+
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
+import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
@@ -15,13 +18,17 @@ import java.util.List;
 public interface CommentService {
 
     /**
-     * Saves the given {@link Comment}.
+     * Creates a comment for the given application for leave with the given status. The given person defines the author
+     * of the comment.
      *
-     * @param  comment {@link Comment}
-     * @param  person {@link Person}
-     * @param  application {@link Application}
+     * @param  application  to create the comment for
+     * @param  status  describes the lifecycle status of the application for leave
+     * @param  text  of the comment (is optional)
+     * @param  author  of the comment
+     *
+     * @return  the created comment
      */
-    void saveComment(Comment comment, Person person, Application application);
+    Comment create(Application application, ApplicationStatus status, Optional<String> text, Person author);
 
 
     /**

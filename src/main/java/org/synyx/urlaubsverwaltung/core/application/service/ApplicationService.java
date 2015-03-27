@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.application.service;
 
+import com.google.common.base.Optional;
+
 import org.joda.time.DateMidnight;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
@@ -10,7 +12,8 @@ import java.util.List;
 
 
 /**
- * This service provides read-only access to the {@link Application}s for leave. Interactions occur in
+ * This service provides access to the {@link Application} entities. Except for saving, the access is read-only.
+ * Business interactions are found in
  * {@link org.synyx.urlaubsverwaltung.core.application.service.ApplicationInteractionService}.
  *
  * @author  Aljona Murygina - murygina@synyx.de
@@ -18,30 +21,19 @@ import java.util.List;
 public interface ApplicationService {
 
     /**
-     * Returns the Id of the latest {@link Application} for the given {@link Person} and {@link ApplicationStatus}.
-     *
-     * @param  person {@link Person}
-     * @param  status {@link ApplicationStatus}
-     *
-     * @return  int Id (primary key of {@link Application})
-     */
-    int getIdOfLatestApplication(Person person, ApplicationStatus status);
-
-
-    /**
      * Gets an {@link Application} by its primary key.
      *
-     * @param  id  Integer
+     * @param  id  to get the {@link Application} by.
      *
-     * @return  {@link Application} for the given id
+     * @return  optional {@link Application} for the given id
      */
-    Application getApplicationById(Integer id);
+    Optional<Application> getApplicationById(Integer id);
 
 
     /**
      * Saves a new {@link Application}.
      *
-     * @param  application {@link Application} the application to be saved
+     * @param  application  to be saved
      */
     void save(Application application);
 

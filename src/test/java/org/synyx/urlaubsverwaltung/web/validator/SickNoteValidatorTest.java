@@ -10,6 +10,8 @@ import org.mockito.Mockito;
 
 import org.springframework.validation.Errors;
 
+import org.synyx.urlaubsverwaltung.core.calendar.OverlapCase;
+import org.synyx.urlaubsverwaltung.core.calendar.OverlapService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteComment;
@@ -23,13 +25,18 @@ import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteComment;
 public class SickNoteValidatorTest {
 
     private SickNoteValidator validator;
+
+    private OverlapService overlapService;
+
     private SickNote sickNote;
     private Errors errors;
 
     @Before
     public void setUp() throws Exception {
 
-        validator = new SickNoteValidator();
+        overlapService = Mockito.mock(OverlapService.class);
+
+        validator = new SickNoteValidator(overlapService);
         sickNote = new SickNote();
         errors = Mockito.mock(Errors.class);
         Mockito.reset(errors);
@@ -37,7 +44,6 @@ public class SickNoteValidatorTest {
         sickNote.setPerson(new Person());
         sickNote.setStartDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 19));
         sickNote.setEndDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 20));
-        sickNote.setAubPresent(false);
     }
 
 
@@ -55,7 +61,6 @@ public class SickNoteValidatorTest {
         sickNote.setStartDate(null);
         validator.validate(sickNote, errors);
         Mockito.verify(errors).rejectValue("startDate", "error.mandatory.field");
-        Mockito.reset(errors);
     }
 
 
@@ -65,7 +70,6 @@ public class SickNoteValidatorTest {
         sickNote.setEndDate(null);
         validator.validate(sickNote, errors);
         Mockito.verify(errors).rejectValue("endDate", "error.mandatory.field");
-        Mockito.reset(errors);
     }
 
 
@@ -76,7 +80,6 @@ public class SickNoteValidatorTest {
         sickNote.setEndDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 19));
         validator.validate(sickNote, errors);
         Mockito.verify(errors).rejectValue("endDate", "error.period");
-        Mockito.reset(errors);
     }
 
 
@@ -86,7 +89,6 @@ public class SickNoteValidatorTest {
         validator.validateComment(new SickNoteComment(), errors);
         validator.validate(sickNote, errors);
         Mockito.verify(errors).rejectValue("text", "error.mandatory.field");
-        Mockito.reset(errors);
     }
 
 
@@ -101,7 +103,6 @@ public class SickNoteValidatorTest {
         validator.validateComment(comment, errors);
         validator.validate(sickNote, errors);
         Mockito.verify(errors).rejectValue("text", "error.length");
-        Mockito.reset(errors);
     }
 
 
@@ -118,35 +119,17 @@ public class SickNoteValidatorTest {
 
 
     @Test
-    public void ensureAUStartAndEndDateMayNotBeNullIfAUBIsPresent() {
-
-        sickNote.setAubPresent(true);
-
-        // if there is an AU, there has to be a period set (aubStartDate and aubEndDate must not be empty)
-        validator.validate(sickNote, errors);
-        Mockito.verify(errors).rejectValue("aubStartDate", "error.mandatory.field");
-        Mockito.verify(errors).rejectValue("aubEndDate", "error.mandatory.field");
-        Mockito.reset(errors);
-    }
-
-
-    @Test
     public void ensureAUStartDateMustBeBeforeAUEndDateToHaveAValidPeriod() {
-
-        sickNote.setAubPresent(true);
 
         sickNote.setAubStartDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 20));
         sickNote.setAubEndDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 19));
         validator.validate(sickNote, errors);
         Mockito.verify(errors).rejectValue("aubEndDate", "error.period");
-        Mockito.reset(errors);
     }
 
 
     @Test
     public void ensureValidAUPeriodHasNoErrors() {
-
-        sickNote.setAubPresent(true);
 
         sickNote.setAubStartDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 19));
         sickNote.setAubEndDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 20));
@@ -158,12 +141,25 @@ public class SickNoteValidatorTest {
     @Test
     public void ensureAUPeriodMustBeWithinSickNotePeriod() {
 
-        sickNote.setAubPresent(true);
-
         sickNote.setAubStartDate(new DateMidnight(2013, DateTimeConstants.DECEMBER, 19));
         sickNote.setAubEndDate(new DateMidnight(2013, DateTimeConstants.DECEMBER, 20));
         validator.validate(sickNote, errors);
         Mockito.verify(errors).rejectValue("aubStartDate", "error.period.sicknote");
         Mockito.verify(errors).rejectValue("aubEndDate", "error.period.sicknote");
+    }
+
+
+    @Test
+    public void ensureSickNoteMustNotHaveAnyOverlapping() {
+
+        sickNote.setStartDate(new DateMidnight(2015, DateTimeConstants.MARCH, 1));
+        sickNote.setEndDate(new DateMidnight(2015, DateTimeConstants.MARCH, 10));
+
+        Mockito.when(overlapService.checkOverlap(Mockito.any(SickNote.class))).thenReturn(
+            OverlapCase.FULLY_OVERLAPPING);
+
+        validator.validate(sickNote, errors);
+
+        Mockito.verify(errors).reject("error.overlap");
     }
 }

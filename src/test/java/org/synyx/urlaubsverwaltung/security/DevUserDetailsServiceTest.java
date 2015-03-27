@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.security;
 
+import com.google.common.base.Optional;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,6 +14,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
+import org.synyx.urlaubsverwaltung.core.startup.TestDataCreationService;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -37,25 +40,18 @@ public class DevUserDetailsServiceTest {
 
 
     @Test(expected = UsernameNotFoundException.class)
-    public void ensureThrowsIfTheGivenUserNameDoesNotMatchTestUserName() {
+    public void ensureThrowsIfTheGivenUserNameDoesNotMatchOneOfTheTestUserNames() {
 
         devUserDetailsService.loadUserByUsername("foo");
-    }
-
-
-    @Test(expected = UsernameNotFoundException.class)
-    public void ensureThrowsIfTheGivenUserNameDoesNotMatchTestUserNameIgnoringCase() {
-
-        devUserDetailsService.loadUserByUsername(DevUserDetailsService.TEST_USER_NAME.toUpperCase());
     }
 
 
     @Test
     public void ensureReturnsNullIfUserCanNotBeFoundWithinDatabase() {
 
-        String login = DevUserDetailsService.TEST_USER_NAME;
+        String login = TestDataCreationService.USER;
 
-        Mockito.when(personService.getPersonByLogin(login)).thenReturn(null);
+        Mockito.when(personService.getPersonByLogin(login)).thenReturn(Optional.<Person>absent());
 
         UserDetails userDetails = devUserDetailsService.loadUserByUsername(login);
 
@@ -68,18 +64,18 @@ public class DevUserDetailsServiceTest {
     @Test
     public void ensureReturnsUserDetailsWithCorrectAuthorities() {
 
-        String login = DevUserDetailsService.TEST_USER_NAME;
+        String login = TestDataCreationService.USER;
 
         Person user = new Person();
         user.setPermissions(Arrays.asList(Role.USER, Role.OFFICE));
 
-        Mockito.when(personService.getPersonByLogin(login)).thenReturn(user);
+        Mockito.when(personService.getPersonByLogin(login)).thenReturn(Optional.of(user));
 
         UserDetails userDetails = devUserDetailsService.loadUserByUsername(login);
 
         Assert.assertNotNull("UserDetails should not be null", userDetails);
 
-        Assert.assertEquals("Wrong username", DevUserDetailsService.TEST_USER_NAME, userDetails.getUsername());
+        Assert.assertEquals("Wrong username", login, userDetails.getUsername());
         Assert.assertEquals("Wrong password", DevUserDetailsService.TEST_USER_PASSWORD, userDetails.getPassword());
 
         Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();

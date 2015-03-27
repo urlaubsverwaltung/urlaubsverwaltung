@@ -5,9 +5,8 @@ nbactions.xml
 /lib/~/
 *.dump.sql
 
-# Ignore log directory
-logs
-*.log
+# Ignore log
+velocity.log*
 
 # Ignore IntelliJ IDEA project files
 .idea

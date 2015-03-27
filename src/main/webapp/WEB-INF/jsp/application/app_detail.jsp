@@ -44,17 +44,22 @@
 
                     <div class="feedback">
                         <c:choose>
-                            <c:when test="${remindAlreadySent == true}">
-                            <div class="alert alert-danger">
-                                <spring:message code='application.action.remind.error.alreadySent' />
-                            </div>
+                            <c:when test="${applySuccess}">
+                              <div class="alert alert-success">
+                                <spring:message code='application.action.apply.success' />
+                              </div>
                             </c:when>
-                            <c:when test="${remindNoWay == true}">
+                            <c:when test="${remindAlreadySent}">
+                                <div class="alert alert-danger">
+                                    <spring:message code='application.action.remind.error.alreadySent' />
+                                </div>
+                            </c:when>
+                            <c:when test="${remindNoWay}">
                                 <div class="alert alert-danger">
                                     <spring:message code='application.action.remind.error.impatient' />
                                 </div>
                             </c:when>
-                            <c:when test="${remindIsSent == true}">
+                            <c:when test="${remindIsSent}">
                                 <div class="alert alert-success">
                                     <spring:message code='application.action.remind.success'/>
                                 </div>
@@ -64,22 +69,22 @@
                                     <spring:message code="application.action.reason.error" />
                                 </div>
                             </c:when>
-                            <c:when test="${allowSuccess == true}">
+                            <c:when test="${allowSuccess}">
                                 <div class="alert alert-success">
                                     <spring:message code="application.action.allow.success" />
                                 </div>
                             </c:when>
-                            <c:when test="${rejectSuccess == true}">
+                            <c:when test="${rejectSuccess}">
                                 <div class="alert alert-success">
                                     <spring:message code="application.action.reject.success" />
                                 </div>
                             </c:when>
-                            <c:when test="${referSuccess == true}">
+                            <c:when test="${referSuccess}">
                                 <div class="alert alert-success">
                                     <spring:message code="application.action.refer.success" />
                                 </div>
                             </c:when>
-                            <c:when test="${cancelSuccess == true}">
+                            <c:when test="${cancelSuccess}">
                                 <div class="alert alert-success">
                                     <spring:message code="application.action.cancel.success" />
                                 </div>
@@ -93,12 +98,6 @@
 
                     <%@include file="./include/app-detail-elements/app_info.jsp" %>
 
-                    <div class="header">
-                        <legend>
-                            <p><spring:message code="progress" /></p>
-                        </legend>
-                    </div>
-
                     <%@include file="./include/app-detail-elements/app_progress.jsp" %>
 
                 </div><%--End of first column--%>
@@ -106,9 +105,10 @@
                 <div class="col-xs-12 col-sm-12 col-md-6 hidden-print">
 
                     <div class="header">
-                        <legend>
-                            <p><spring:message code="staff" /></p>
-                        </legend>
+                      <legend>
+                        <p><spring:message code="person.annual.vacation.year"/></p>
+                        <uv:year-selector year="${year}"/>
+                      </legend>
                     </div>
 
                     <div class="box">
@@ -144,15 +144,15 @@
                         <span class="box-text">
                             <c:choose>
                                 <c:when test="${account != null}">
-                                    <spring:message code="overview.vacation.left" arguments="${leftDays}" />
-                                    <c:choose>
-                                        <c:when test="${beforeApril || !account.remainingVacationDaysExpire}">
-                                            <spring:message code="overview.vacation.left.remaining" arguments="${remLeftDays}" />
-                                        </c:when>
-                                        <c:otherwise>
-                                            <spring:message code="overview.vacation.left.remaining.expired" arguments="${remLeftDays}" />
-                                        </c:otherwise>
-                                    </c:choose>
+                                  <spring:message code="overview.vacation.left" arguments="${vacationDaysLeft.vacationDays}" />
+                                  <c:choose>
+                                    <c:when test="${beforeApril}">
+                                      <spring:message code="overview.vacation.left.remaining" arguments="${vacationDaysLeft.remainingVacationDays}" />
+                                    </c:when>
+                                    <c:otherwise>
+                                      <spring:message code="overview.vacation.left.remaining" arguments="${vacationDaysLeft.remainingVacationDaysNotExpiring}" />
+                                    </c:otherwise>
+                                  </c:choose>
                                 </c:when>
                                 <c:otherwise>
                                     <spring:message code='not.specified'/>

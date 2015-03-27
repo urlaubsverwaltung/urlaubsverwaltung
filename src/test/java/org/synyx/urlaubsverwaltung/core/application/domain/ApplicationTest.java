@@ -33,4 +33,26 @@ public class ApplicationTest {
         Assert.assertFalse("Should return false if it has the given status",
             application.hasStatus(ApplicationStatus.ALLOWED));
     }
+
+
+    @Test
+    public void ensureIsFormerlyAllowedReturnsFalseIfIsRevoked() {
+
+        Application application = new Application();
+
+        application.setStatus(ApplicationStatus.REVOKED);
+
+        Assert.assertFalse("Should not be formerly allowed", application.isFormerlyAllowed());
+    }
+
+
+    @Test
+    public void ensureIsFormerlyAllowedReturnsTrueIfIsCancelled() {
+
+        Application application = new Application();
+
+        application.setStatus(ApplicationStatus.CANCELLED);
+
+        Assert.assertTrue("Should be formerly allowed", application.isFormerlyAllowed());
+    }
 }

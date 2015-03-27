@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.startup;
 
+import com.google.common.base.Optional;
+
 import org.apache.log4j.Logger;
 
 import org.joda.time.DateMidnight;
@@ -9,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
-import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationInteractionService;
@@ -18,18 +19,18 @@ import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonInteractionService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteService;
+import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteInteractionService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
-import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.security.Role;
 import org.synyx.urlaubsverwaltung.web.person.PersonForm;
+
+import java.math.BigDecimal;
 
 import java.security.NoSuchAlgorithmException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 import javax.annotation.PostConstruct;
 
@@ -45,10 +46,9 @@ public class TestDataCreationService {
     private static final String ENVIRONMENT_PROPERTY = "env";
     private static final String DEV_ENVIRONMENT = "dev";
 
-    private static final String USER = "test";
-
-    private static final Boolean ACTIVE = true;
-    private static final Boolean INACTIVE = false;
+    public static final String USER = "testUser";
+    public static final String BOSS_USER = "testBoss";
+    public static final String OFFICE_USER = "test";
 
     @Autowired
     private PersonInteractionService personInteractionService;
@@ -57,7 +57,7 @@ public class TestDataCreationService {
     private ApplicationInteractionService applicationInteractionService;
 
     @Autowired
-    private SickNoteService sickNoteService;
+    private SickNoteInteractionService sickNoteInteractionService;
 
     private Person user;
     private Person boss;
@@ -68,56 +68,48 @@ public class TestDataCreationService {
 
         String environment = System.getProperties().getProperty(ENVIRONMENT_PROPERTY);
 
-        if (environment == null) {
-            environment = DEV_ENVIRONMENT;
-        }
-
         LOG.info("ENVIRONMENT=" + environment);
 
         if (environment.equals(DEV_ENVIRONMENT)) {
             LOG.info("Test data will be created...");
 
-            user = createTestPerson(USER, "Marlene", "Muster", "mmuster@muster.de", ACTIVE, Role.USER, Role.BOSS,
+            user = createTestPerson(USER, "Klaus", "Müller", "mueller@muster.de", Role.USER);
+            boss = createTestPerson(BOSS_USER, "Max", "Mustermann", "maxMuster@muster.de", Role.USER, Role.BOSS);
+            office = createTestPerson(OFFICE_USER, "Marlene", "Muster", "mmuster@muster.de", Role.USER, Role.BOSS,
                     Role.OFFICE);
 
-            boss = createTestPerson("max", "Max", "Mustermann", "maxMuster@muster.de", ACTIVE, Role.USER, Role.BOSS);
+            createTestPerson("hdampf", "Hans", "Dampf", "dampf@foo.bar", Role.USER, Role.OFFICE);
 
-            office = createTestPerson("klaus", "Klaus", "Müller", "mueller@muster.de", ACTIVE, Role.USER, Role.BOSS,
-                    Role.OFFICE);
-
-            createTestPerson("hdampf", "Hans", "Dampf", "dampf@foo.bar", true, Role.USER, Role.OFFICE);
-
-            createTestPerson("horst", "Horst", "Dieter", "hdieter@muster.de", INACTIVE, Role.INACTIVE);
+            createTestPerson("horst", "Horst", "Dieter", "hdieter@muster.de", Role.INACTIVE);
 
             createTestData(user);
             createTestData(boss);
+            createTestData(office);
         } else {
             LOG.info("No test data will be created.");
         }
     }
 
 
-    private Person createTestPerson(String login, String firstName, String lastName, String email, boolean active,
-        Role... roles) throws NoSuchAlgorithmException {
-
-        Person person = new Person();
+    private Person createTestPerson(String login, String firstName, String lastName, String email, Role... roles)
+        throws NoSuchAlgorithmException {
 
         int currentYear = DateMidnight.now().getYear();
-        Locale locale = Locale.GERMAN;
 
-        PersonForm personForm = new PersonForm();
+        PersonForm personForm = new PersonForm(DateMidnight.now().getYear());
         personForm.setLoginName(login);
         personForm.setLastName(lastName);
         personForm.setFirstName(firstName);
         personForm.setEmail(email);
-        personForm.setActive(active);
-        personForm.setYear(String.valueOf(currentYear));
-        personForm.setAnnualVacationDays("28.5");
-        personForm.setRemainingVacationDays("5");
-        personForm.setRemainingVacationDaysExpire(true);
-        personForm.setValidFrom(new DateMidnight(currentYear, 1, 1));
+
+        personForm.setAnnualVacationDays(new BigDecimal("28.5"));
+        personForm.setRemainingVacationDays(new BigDecimal("5"));
+        personForm.setRemainingVacationDaysNotExpiring(BigDecimal.ZERO);
+        personForm.setValidFrom(new DateMidnight(currentYear - 1, 1, 1));
+
         personForm.setWorkingDays(Arrays.asList(Day.MONDAY.getDayOfWeek(), Day.TUESDAY.getDayOfWeek(),
                 Day.WEDNESDAY.getDayOfWeek(), Day.THURSDAY.getDayOfWeek(), Day.FRIDAY.getDayOfWeek()));
+
         personForm.setPermissions(Arrays.asList(roles));
 
         List<MailNotification> notifications = new ArrayList<>();
@@ -134,9 +126,7 @@ public class TestDataCreationService {
 
         personForm.setNotifications(notifications);
 
-        personInteractionService.createOrUpdate(person, personForm, locale);
-
-        return person;
+        return personInteractionService.create(personForm);
     }
 
 
@@ -179,9 +169,8 @@ public class TestDataCreationService {
             application.setEndDate(endDate);
             application.setVacationType(vacationType);
             application.setHowLong(dayLength);
-            application.setComment("Ich hätte gerne Urlaub");
 
-            applicationInteractionService.apply(application, person);
+            applicationInteractionService.apply(application, person, Optional.of("Ich hätte gerne Urlaub"));
         }
 
         return application;
@@ -202,10 +191,7 @@ public class TestDataCreationService {
         Application application = createWaitingApplication(person, vacationType, dayLength, startDate, endDate);
 
         if (application != null) {
-            Comment comment = new Comment();
-            comment.setReason("Ist ok");
-
-            applicationInteractionService.allow(application, boss, comment);
+            applicationInteractionService.allow(application, boss, Optional.of("Ist in Ordnung"));
         }
 
         return application;
@@ -218,10 +204,8 @@ public class TestDataCreationService {
         Application application = createWaitingApplication(person, vacationType, dayLength, startDate, endDate);
 
         if (application != null) {
-            Comment comment = new Comment();
-            comment.setReason("Leider nicht möglich");
-
-            applicationInteractionService.reject(application, boss, comment);
+            applicationInteractionService.reject(application, boss,
+                Optional.of("Aus organisatorischen Gründen leider nicht möglich"));
         }
 
         return application;
@@ -234,10 +218,8 @@ public class TestDataCreationService {
         Application application = createAllowedApplication(person, vacationType, dayLength, startDate, endDate);
 
         if (application != null) {
-            Comment comment = new Comment();
-            comment.setReason("Urlaub wurde doch nicht genommen");
-
-            applicationInteractionService.cancel(application, office, comment);
+            applicationInteractionService.cancel(application, office,
+                Optional.of("Urlaub wurde nicht genommen, daher storniert"));
         }
 
         return application;
@@ -254,16 +236,15 @@ public class TestDataCreationService {
             sickNote.setPerson(person);
             sickNote.setStartDate(startDate);
             sickNote.setEndDate(endDate);
-            sickNote.setActive(ACTIVE);
+            sickNote.setActive(true);
             sickNote.setType(type);
 
             if (withAUB) {
-                sickNote.setAubPresent(true);
                 sickNote.setAubStartDate(startDate);
                 sickNote.setAubEndDate(endDate);
             }
 
-            sickNoteService.touch(sickNote, SickNoteStatus.CREATED, office);
+            sickNoteInteractionService.create(sickNote, office);
         }
 
         return sickNote;

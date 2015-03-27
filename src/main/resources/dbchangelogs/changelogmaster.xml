@@ -12,5 +12,13 @@
     <include file="dbchangelogs/changelog-0.7-create-notifications-table.xml"/>
     <include file="dbchangelogs/changelog-0.8-clean-up-of-tables.xml"/>
     <include file="dbchangelogs/changelog-0.9-add-person-reference-to-comment-table.xml"/>
+    <include file="dbchangelogs/changelog-0.11-remove-active-column-from-person-table.xml"/>
+    <include file="dbchangelogs/changelog-2.4.1-add-not-expiring-remaining-vacation-days.xml"/>
+    <include file="dbchangelogs/changelog-2.5.1-remove-persisted-work-days.xml"/>
+    <include file="dbchangelogs/changelog-2.5.2-rename-comment-columns.xml"/>
+    <include file="dbchangelogs/changelog-2.5.2-remove-comment-column-from-application.xml"/>
+    <include file="dbchangelogs/changelog-2.5.2-remove-formerly-allowed-column-from-application.xml"/>
+    <include file="dbchangelogs/changelog-2.5.2-remove-aub-present-column-from-sick-note-table.xml"/>
+    <include file="dbchangelogs/changelog-2.5.2-remove-sick-note-comment-mapping-table.xml"/>
 
 </databaseChangeLog>

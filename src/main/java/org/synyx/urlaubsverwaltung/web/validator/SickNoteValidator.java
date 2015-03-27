@@ -3,6 +3,8 @@ package org.synyx.urlaubsverwaltung.web.validator;
 import org.joda.time.DateMidnight;
 import org.joda.time.Interval;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Component;
 
 import org.springframework.util.StringUtils;
@@ -10,6 +12,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+import org.synyx.urlaubsverwaltung.core.calendar.OverlapCase;
+import org.synyx.urlaubsverwaltung.core.calendar.OverlapService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteComment;
 
@@ -24,8 +28,9 @@ public class SickNoteValidator implements Validator {
 
     private static final String MANDATORY_FIELD = "error.mandatory.field";
     private static final String ERROR_PERIOD = "error.period";
-    private static final String ERROR_PERIOD_SICKNOTE = "error.period.sicknote";
+    private static final String ERROR_PERIOD_SICK_NOTE = "error.period.sicknote";
     private static final String ERROR_LENGTH = "error.length";
+    private static final String ERROR_OVERLAP = "error.overlap";
 
     private static final String START_DATE = "startDate";
     private static final String END_DATE = "endDate";
@@ -34,6 +39,14 @@ public class SickNoteValidator implements Validator {
     private static final String COMMENT = "text";
 
     private static final int MAX_LENGTH = 200;
+
+    private final OverlapService overlapService;
+
+    @Autowired
+    public SickNoteValidator(OverlapService overlapService) {
+
+        this.overlapService = overlapService;
+    }
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -65,6 +78,7 @@ public class SickNoteValidator implements Validator {
 
         if (startDate != null && endDate != null) {
             validatePeriod(startDate, endDate, END_DATE, errors);
+            validateNoOverlapping(sickNote, errors);
         }
     }
 
@@ -84,11 +98,11 @@ public class SickNoteValidator implements Validator {
             Interval interval = new Interval(sickNote.getStartDate(), sickNote.getEndDate().plusDays(1));
 
             if (!interval.contains(aubStartDate)) {
-                errors.rejectValue(AUB_START_DATE, ERROR_PERIOD_SICKNOTE);
+                errors.rejectValue(AUB_START_DATE, ERROR_PERIOD_SICK_NOTE);
             }
 
             if (!interval.contains(aubEndDate)) {
-                errors.rejectValue(AUB_END_DATE, ERROR_PERIOD_SICKNOTE);
+                errors.rejectValue(AUB_END_DATE, ERROR_PERIOD_SICK_NOTE);
             }
         }
     }
@@ -117,6 +131,21 @@ public class SickNoteValidator implements Validator {
 
         if (startDate.isAfter(endDate)) {
             errors.rejectValue(field, ERROR_PERIOD);
+        }
+    }
+
+
+    private void validateNoOverlapping(SickNote sickNote, Errors errors) {
+
+        /**
+         * Ensure that there is no application for leave and no sick note in the same period
+         */
+        OverlapCase overlap = overlapService.checkOverlap(sickNote);
+
+        boolean isOverlapping = overlap == OverlapCase.FULLY_OVERLAPPING || overlap == OverlapCase.PARTLY_OVERLAPPING;
+
+        if (isOverlapping) {
+            errors.reject(ERROR_OVERLAP);
         }
     }
 

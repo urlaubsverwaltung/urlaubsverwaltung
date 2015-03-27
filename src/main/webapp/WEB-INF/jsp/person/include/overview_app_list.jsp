@@ -62,12 +62,17 @@
                     </c:choose>
                 </p>
             </td>
-            <td class="is-centered hidden-xs">
-                <span class="days-${loopStatus.index}">
-                    <%--is filled by javascript--%>
-                    <script type="text/javascript">
+          <td class="is-centered hidden-xs">
+            <span>
+              <uv:number number="${app.workDays}" /> <spring:message code="duration.days"/>
+            </span>
 
-                        $(document).ready(function () {
+            <c:if test="${app.startDate.year != app.endDate.year}">
+                    <span class="days-${loopStatus.index}">
+                        <%--is filled by javascript--%>
+                        <script type="text/javascript">
+
+                          $(document).ready(function () {
 
                             var dayLength = '<c:out value="${app.howLong}" />';
                             var personId = '<c:out value="${app.person.id}" />';
@@ -78,28 +83,29 @@
                             var from = new Date(startDate);
                             var to = new Date(endDate);
 
-                            sendGetDaysRequest("<spring:url value='/api' />", from, to, dayLength, personId, ".days-${loopStatus.index}", true);
+                            sendGetDaysRequestForTurnOfTheYear("<spring:url value='/api' />", from, to, dayLength, personId, ".days-${loopStatus.index}");
 
-                        });
+                          });
 
-                    </script>
-                </span>
-            </td>
+                        </script>
+                    </span>
+            </c:if>
+          </td>
             <td class="is-centered hidden-xs hidden-print">
                 <i class="fa fa-clock-o"></i>
                 <span>
                     <c:choose>
                         <c:when test="${app.status == 'WAITING'}">
-                            <spring:message code="progress.WAITING" /> <uv:date date="${app.applicationDate}" />
+                            <spring:message code="application.progress.WAITING" /> <uv:date date="${app.applicationDate}" />
                         </c:when>
                         <c:when test="${app.status == 'ALLOWED'}">
-                            <spring:message code="progress.ALLOWED" /> <uv:date date="${app.editedDate}" />
+                            <spring:message code="application.progress.ALLOWED" /> <uv:date date="${app.editedDate}" />
                         </c:when>
                         <c:when test="${app.status == 'REJECTED'}">
-                            <spring:message code="progress.REJECTED" /> <uv:date date="${app.editedDate}" />
+                            <spring:message code="application.progress.REJECTED" /> <uv:date date="${app.editedDate}" />
                         </c:when>
-                        <c:when test="${app.status == 'CANCELLED'}">
-                            <spring:message code="progress.CANCELLED" /> <uv:date date="${app.cancelDate}" />
+                        <c:when test="${app.status == 'CANCELLED' || app.status == 'REVOKED'}">
+                            <spring:message code="application.progress.CANCELLED" /> <uv:date date="${app.cancelDate}" />
                         </c:when>
                         <c:otherwise>
                             &nbsp;

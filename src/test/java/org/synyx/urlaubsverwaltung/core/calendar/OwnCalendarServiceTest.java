@@ -1,6 +1,8 @@
 
 package org.synyx.urlaubsverwaltung.core.calendar;
 
+import com.google.common.base.Optional;
+
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
 
@@ -62,7 +64,7 @@ public class OwnCalendarServiceTest {
         workingTime.setWorkingDays(workingDays, DayLength.FULL);
 
         Mockito.when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(Mockito.eq(person),
-                Mockito.any(DateMidnight.class))).thenReturn(workingTime);
+                Mockito.any(DateMidnight.class))).thenReturn(Optional.of(workingTime));
     }
 
 
@@ -70,7 +72,7 @@ public class OwnCalendarServiceTest {
      * Test of getWeekDays method, of class OwnCalendarService.
      */
     @Test
-    public void testGetWorkDays() {
+    public void testGetWeekDays() {
 
         DateMidnight start = new DateMidnight(2011, 11, 16);
         DateMidnight end = new DateMidnight(2011, 11, 28);
@@ -154,52 +156,6 @@ public class OwnCalendarServiceTest {
 
         assertNotNull(returnValue);
         assertEquals(BigDecimal.valueOf(1.5), returnValue);
-    }
-
-
-    @Test
-    public void testGetPersonalWorkDays() {
-
-        List<Integer> list = Arrays.asList(DateTimeConstants.MONDAY, DateTimeConstants.WEDNESDAY,
-                DateTimeConstants.FRIDAY, DateTimeConstants.SATURDAY);
-
-        WorkingTime workingTime = new WorkingTime();
-        workingTime.setWorkingDays(list, DayLength.FULL);
-
-        // 1 week (MON - SUN)
-        DateMidnight startDate = new DateMidnight(2013, DateTimeConstants.NOVEMBER, 25);
-        DateMidnight endDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 1);
-
-        BigDecimal returnValue = instance.getPersonalWorkDays(startDate, endDate, workingTime);
-
-        assertEquals(new BigDecimal("4.0"), returnValue);
-    }
-
-
-    @Test
-    public void testGetPersonalWorkDaysOneDay() {
-
-        List<Integer> list = Arrays.asList(DateTimeConstants.MONDAY, DateTimeConstants.WEDNESDAY,
-                DateTimeConstants.FRIDAY, DateTimeConstants.SATURDAY);
-
-        WorkingTime workingTime = new WorkingTime();
-        workingTime.setWorkingDays(list, DayLength.FULL);
-
-        // saturday
-        DateMidnight startDate = new DateMidnight(2013, DateTimeConstants.NOVEMBER, 30);
-        DateMidnight endDate = new DateMidnight(2013, DateTimeConstants.NOVEMBER, 30);
-
-        BigDecimal returnValue = instance.getPersonalWorkDays(startDate, endDate, workingTime);
-
-        assertEquals(BigDecimal.ONE, returnValue.setScale(0));
-
-        // tuesday
-        startDate = new DateMidnight(2013, DateTimeConstants.NOVEMBER, 26);
-        endDate = new DateMidnight(2013, DateTimeConstants.NOVEMBER, 26);
-
-        returnValue = instance.getPersonalWorkDays(startDate, endDate, workingTime);
-
-        assertEquals(BigDecimal.ZERO, returnValue);
     }
 
 

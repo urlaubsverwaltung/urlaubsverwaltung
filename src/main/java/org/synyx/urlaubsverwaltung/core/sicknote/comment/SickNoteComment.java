@@ -6,6 +6,7 @@ import org.joda.time.DateTime;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 
 import java.util.Date;
 
@@ -24,6 +25,9 @@ import javax.persistence.Temporal;
 @Entity
 public class SickNoteComment extends AbstractPersistable<Integer> {
 
+    @ManyToOne
+    private SickNote sickNote;
+
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date date;
 
@@ -34,6 +38,18 @@ public class SickNoteComment extends AbstractPersistable<Integer> {
 
     @Enumerated(EnumType.STRING)
     private SickNoteStatus status;
+
+    public SickNote getSickNote() {
+
+        return sickNote;
+    }
+
+
+    public void setSickNote(SickNote sickNote) {
+
+        this.sickNote = sickNote;
+    }
+
 
     public DateMidnight getDate() {
 

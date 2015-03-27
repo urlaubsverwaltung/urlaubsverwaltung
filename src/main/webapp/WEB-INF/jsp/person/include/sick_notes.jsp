@@ -50,7 +50,7 @@
             </p>
         </td>
         <td class="is-centered hidden-xs">
-            <span><uv:number number="${sickNote.workDays}"/> Tage</span>
+            <span><uv:number number="${sickNote.workDays}"/> <spring:message code="duration.days" /></span>
         </td>
         <td class="hidden-print is-centered hidden-xs">
             <i class="fa fa-clock-o"></i> <span><spring:message code="sicknote.lastEdited" /> <uv:date date="${sickNote.lastEdited}"/></span>

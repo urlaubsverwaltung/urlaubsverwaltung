@@ -73,16 +73,17 @@ public class UsedDaysOverview {
         Assert.isTrue(yearOfStartDate == this.year || yearOfEndDate == this.year,
             "Either start date or end date must be in the given year.");
 
+        DayLength dayLength = application.getHowLong();
+        Person person = application.getPerson();
+
         if (yearOfStartDate != yearOfEndDate) {
             DateMidnight startDate = getStartDateForCalculation(application);
             DateMidnight endDate = getEndDateForCalculation(application);
-            DayLength dayLength = application.getHowLong();
-            Person person = application.getPerson();
 
             return calendarService.getWorkDays(dayLength, startDate, endDate, person);
         }
 
-        return application.getDays();
+        return calendarService.getWorkDays(dayLength, application.getStartDate(), application.getEndDate(), person);
     }
 
 

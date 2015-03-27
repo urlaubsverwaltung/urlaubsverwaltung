@@ -112,13 +112,13 @@
                     <span class="box-text">
                         <c:choose>
                             <c:when test="${account != null}">
-                                <spring:message code="overview.vacation.left" arguments="${leftDays}" />
+                                <spring:message code="overview.vacation.left" arguments="${vacationDaysLeft.vacationDays}" />
                                 <c:choose>
-                                    <c:when test="${beforeApril || !account.remainingVacationDaysExpire}">
-                                        <spring:message code="overview.vacation.left.remaining" arguments="${remLeftDays}" />
+                                    <c:when test="${beforeApril}">
+                                        <spring:message code="overview.vacation.left.remaining" arguments="${vacationDaysLeft.remainingVacationDays}" />
                                     </c:when>
                                     <c:otherwise>
-                                        <spring:message code="overview.vacation.left.remaining.expired" arguments="${remLeftDays}" />
+                                        <spring:message code="overview.vacation.left.remaining" arguments="${vacationDaysLeft.remainingVacationDaysNotExpiring}" />
                                     </c:otherwise>
                                 </c:choose>
                             </c:when>
@@ -168,16 +168,20 @@
 
                     var holidayService = Urlaubsverwaltung.HolidayService.create(webPrefix, apiPrefix, +personId);
 
-                    var yearToFetchFor = date.year();
+                    // NOTE: All moments are mutable!
+                    var startDateToCalculate = date.clone();
+                    var endDateToCalculate = date.clone();
+                    var startDate = startDateToCalculate.subtract(6, 'months');
+                    var endDate = endDateToCalculate.add(6, 'months');
 
                     // TODO: it's not nice at all to fetch holidays for two years...would be better if the methods to fetch holidays get a date instead of a year
                     $.when(
-                        holidayService.fetchPublic   ( yearToFetchFor ),
-                        holidayService.fetchPublic   ( yearToFetchFor+1 ),
-                        holidayService.fetchPersonal ( yearToFetchFor ),
-                        holidayService.fetchPersonal ( yearToFetchFor+1 )
+                        holidayService.fetchPublic   ( startDate.year() ),
+                        holidayService.fetchPublic   ( endDate.year() ),
+                        holidayService.fetchPersonal ( startDate.year() ),
+                        holidayService.fetchPersonal ( endDate.year() )
                     ).always(function() {
-                        Urlaubsverwaltung.Calendar.init(holidayService);
+                        Urlaubsverwaltung.Calendar.init(holidayService, date);
                     });
                 }
 
@@ -212,20 +216,18 @@
                         </p>
                         <c:choose>
                             <c:when test="${person.id == loggedUser.id}">
-                                <c:set var="NEW_APPLICATION_URL" value ="${URL_PREFIX}/application/new" />
+                                <a class="btn btn-default pull-right" href="${URL_PREFIX}/application/new">
+                                    <i class="fa fa-pencil"></i> <span class="hidden-xs"><spring:message code="action.apply.vacation"/></span>
+                                </a>
                             </c:when>
                             <c:otherwise>
                                 <sec:authorize access="hasRole('OFFICE')">
-                                    <c:if test="${person.id != loggedUser.id}">
-                                        <c:set var="NEW_APPLICATION_URL" value ="${URL_PREFIX}/application/new?personId=${person.id}" />
-                                    </c:if>
+                                    <a class="btn btn-default pull-right" href="${URL_PREFIX}/application/new?personId=${person.id}&appliesOnOnesBehalf=true">
+                                        <i class="fa fa-pencil"></i> <span class="hidden-xs"><spring:message code="action.apply.vacation"/></span>
+                                    </a>
                                 </sec:authorize>
                             </c:otherwise>
                         </c:choose>
-                        <a class="btn btn-default pull-right" href="${NEW_APPLICATION_URL}">
-                            <i class="fa fa-pencil"></i> <span class="hidden-xs"><spring:message code="action.apply.vacation"/></span>
-                        </a>
-
 
                     </legend>
 

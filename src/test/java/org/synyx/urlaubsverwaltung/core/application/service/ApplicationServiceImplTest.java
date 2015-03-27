@@ -4,6 +4,10 @@
  */
 package org.synyx.urlaubsverwaltung.core.application.service;
 
+import com.google.common.base.Optional;
+
+import junit.framework.Assert;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -14,7 +18,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 
 
 /**
- * Unit test for serivce {@link ApplicationServiceImpl}.
+ * Unit test for {@link ApplicationServiceImpl}.
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
@@ -36,6 +40,16 @@ public class ApplicationServiceImplTest {
 
         applicationService.getApplicationById(1234);
         Mockito.verify(applicationDAO).findOne(1234);
+    }
+
+
+    @Test
+    public void ensureGetApplicationByIdReturnsAbsentOptionalIfNoOneExists() {
+
+        Optional<Application> optional = applicationService.getApplicationById(1234);
+
+        Assert.assertNotNull("Optional must not be null", optional);
+        Assert.assertFalse("No application for leave should exist", optional.isPresent());
     }
 
 

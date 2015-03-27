@@ -31,8 +31,9 @@
 
                 <legend>
                     <p>
-                        <spring:message code="sicknotes" />
+                      <spring:message code="sicknotes.statistics" />
                     </p>
+                    <uv:year-selector year="${statistics.year}" />
                     <uv:print />
                 </legend>
 
@@ -50,8 +51,7 @@
 
                 <thead>
                     <tr>
-                        <th><spring:message code="sicknotes.statistics" /> <c:out value="${statistics.year}" /></th>
-                        <th><spring:message code="Effective"/> <uv:date date="${statistics.created}" /></th>
+                        <th colspan="2" class="text-right"><spring:message code="Effective"/> <uv:date date="${statistics.created}" /></th>
                     </tr>
                 </thead>
 

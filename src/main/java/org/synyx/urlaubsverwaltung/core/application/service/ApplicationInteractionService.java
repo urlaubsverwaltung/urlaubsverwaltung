@@ -1,10 +1,9 @@
 package org.synyx.urlaubsverwaltung.core.application.service;
 
-import org.synyx.urlaubsverwaltung.core.application.domain.Application;
-import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
-import org.synyx.urlaubsverwaltung.core.person.Person;
+import com.google.common.base.Optional;
 
-import java.math.BigDecimal;
+import org.synyx.urlaubsverwaltung.core.application.domain.Application;
+import org.synyx.urlaubsverwaltung.core.person.Person;
 
 
 /**
@@ -15,24 +14,17 @@ import java.math.BigDecimal;
 public interface ApplicationInteractionService {
 
     /**
-     * Returns the calculated vacation days of the given application.
-     *
-     * @param  application  of which the vacation days are calculated
-     *
-     * @return  calculated vacation days of the given application
-     */
-    BigDecimal getNumberOfVacationDays(Application application);
-
-
-    /**
      * Sets the application's state to waiting and calculates the number of used vacation days. The bosses gets an email
      * that a new application for leave has been created and the person of the application for leave gets an email as
      * confirmation.
      *
      * @param  application  for leave
      * @param  applier  of the application
+     * @param  comment  giving further information (is optional)
+     *
+     * @return  the saved application for leave
      */
-    void apply(Application application, Person applier);
+    Application apply(Application application, Person applier, Optional<String> comment);
 
 
     /**
@@ -41,9 +33,11 @@ public interface ApplicationInteractionService {
      *
      * @param  application  for leave
      * @param  boss  that allowed the application for leave
-     * @param  comment  giving further information to allowing of application for leave
+     * @param  comment  giving further information to allowing of application for leave (is optional)
+     *
+     * @return  the allowed application for leave
      */
-    void allow(Application application, Person boss, Comment comment);
+    Application allow(Application application, Person boss, Optional<String> comment);
 
 
     /**
@@ -52,9 +46,11 @@ public interface ApplicationInteractionService {
      *
      * @param  application  for leave
      * @param  boss  that rejected the application for leave
-     * @param  comment  giving further information to rejectimg of application for leave
+     * @param  comment  giving further information to rejecting of application for leave (is optional)
+     *
+     * @return  the rejected application for leave
      */
-    void reject(Application application, Person boss, Comment comment);
+    Application reject(Application application, Person boss, Optional<String> comment);
 
 
     /**
@@ -62,7 +58,9 @@ public interface ApplicationInteractionService {
      *
      * @param  application  for leave
      * @param  canceller  executes the application's cancellation
-     * @param  comment  giving further information to cancellation of application for leave
+     * @param  comment  giving further information to cancellation of application for leave (is optional)
+     *
+     * @return  the cancelled application for leave
      */
-    void cancel(Application application, Person canceller, Comment comment);
+    Application cancel(Application application, Person canceller, Optional<String> comment);
 }

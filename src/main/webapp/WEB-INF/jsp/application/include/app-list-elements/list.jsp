@@ -3,7 +3,6 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
 
@@ -48,7 +47,7 @@
                 <th class="sortable-field"><spring:message code="firstname" /></th>
                 <th class="sortable-field"><spring:message code="lastname" /></th>
                 <th class="sortable-field"><spring:message code="time" /></th>
-                <th class="sortable-field"><spring:message code="days.vac" /></th>
+                <th class="sortable-field"><spring:message code="application.vacation.days" /></th>
                 <th class="visible-print"><spring:message code="state" /></th>
                 <th><%-- placeholder to ensure correct number of th --%></th>
             </tr>
@@ -96,7 +95,7 @@
                     </td>
                     <td class="hidden-xs">
                         <span>
-                            <span class="sortable"><uv:number number="${app.days}" /></span> Tage
+                            <span class="sortable"><uv:number number="${app.workDays}" /></span> <spring:message code="duration.days" />
                         </span>
                     </td>
                     <td class="visible-print">

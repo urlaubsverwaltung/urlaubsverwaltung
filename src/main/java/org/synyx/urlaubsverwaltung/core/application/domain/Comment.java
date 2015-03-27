@@ -9,7 +9,11 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.util.Date;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
 
 
 /**
@@ -23,7 +27,7 @@ public class Comment extends AbstractPersistable<Integer> {
 
     private static final long serialVersionUID = 8908423789423089L;
 
-    private String reason;
+    private String text;
 
     @ManyToOne
     private Application application;
@@ -32,19 +36,15 @@ public class Comment extends AbstractPersistable<Integer> {
     private Person person;
 
     @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateOfComment;
+    private Date date;
 
     // each application may only have one comment to each ApplicationStatus
     @Enumerated(EnumType.STRING)
     private ApplicationStatus status;
 
-    // Do not persist this information!
-    @Transient
-    private boolean isMandatory;
+    Comment() {
 
-    public Comment() {
-
-        // TODO: Should be replaced later, only constructor with person given should be used
+        // needed for Hibernate
     }
 
 
@@ -65,15 +65,15 @@ public class Comment extends AbstractPersistable<Integer> {
     }
 
 
-    public DateMidnight getDateOfComment() {
+    public DateMidnight getDate() {
 
-        return dateOfComment == null ? null : new DateTime(dateOfComment).toDateMidnight();
+        return date == null ? null : new DateTime(date).toDateMidnight();
     }
 
 
-    public void setDateOfComment(DateMidnight dateOfComment) {
+    public void setDate(DateMidnight date) {
 
-        this.dateOfComment = dateOfComment == null ? null : dateOfComment.toDate();
+        this.date = date == null ? null : date.toDate();
     }
 
 
@@ -89,15 +89,15 @@ public class Comment extends AbstractPersistable<Integer> {
     }
 
 
-    public String getReason() {
+    public String getText() {
 
-        return reason;
+        return text;
     }
 
 
-    public void setReason(String reason) {
+    public void setText(String text) {
 
-        this.reason = reason;
+        this.text = text;
     }
 
 
@@ -110,17 +110,5 @@ public class Comment extends AbstractPersistable<Integer> {
     public void setStatus(ApplicationStatus status) {
 
         this.status = status;
-    }
-
-
-    public boolean isMandatory() {
-
-        return isMandatory;
-    }
-
-
-    public void setMandatory(boolean isMandatory) {
-
-        this.isMandatory = isMandatory;
     }
 }

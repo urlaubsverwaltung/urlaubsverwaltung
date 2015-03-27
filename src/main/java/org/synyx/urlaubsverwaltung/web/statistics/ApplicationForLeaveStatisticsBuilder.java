@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.web.statistics;
 
+import com.google.common.base.Optional;
+
 import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,13 +10,13 @@ import org.springframework.stereotype.Component;
 
 import org.springframework.util.Assert;
 
-import org.synyx.urlaubsverwaltung.core.account.Account;
-import org.synyx.urlaubsverwaltung.core.account.AccountService;
+import org.synyx.urlaubsverwaltung.core.account.domain.Account;
+import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
+import org.synyx.urlaubsverwaltung.core.account.service.VacationDaysService;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
-import org.synyx.urlaubsverwaltung.core.application.service.CalculationService;
 import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
@@ -36,16 +38,16 @@ public class ApplicationForLeaveStatisticsBuilder {
     private final AccountService accountService;
     private final ApplicationService applicationService;
     private final OwnCalendarService calendarService;
-    private final CalculationService calculationService;
+    private final VacationDaysService vacationDaysService;
 
     @Autowired
     public ApplicationForLeaveStatisticsBuilder(AccountService accountService, ApplicationService applicationService,
-        OwnCalendarService calendarService, CalculationService calculationService) {
+        OwnCalendarService calendarService, VacationDaysService vacationDaysService) {
 
         this.accountService = accountService;
         this.applicationService = applicationService;
         this.calendarService = calendarService;
-        this.calculationService = calculationService;
+        this.vacationDaysService = vacationDaysService;
     }
 
     public ApplicationForLeaveStatistics build(Person person, DateMidnight from, DateMidnight to) {
@@ -54,10 +56,10 @@ public class ApplicationForLeaveStatisticsBuilder {
 
         ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person);
 
-        Account account = accountService.getHolidaysAccount(from.getYear(), person);
+        Optional<Account> account = accountService.getHolidaysAccount(from.getYear(), person);
 
-        if (account != null) {
-            BigDecimal vacationDaysLeft = calculationService.calculateTotalLeftVacationDays(account);
+        if (account.isPresent()) {
+            BigDecimal vacationDaysLeft = vacationDaysService.calculateTotalLeftVacationDays(account.get());
             statistics.setLeftVacationDays(vacationDaysLeft);
         }
 
@@ -86,16 +88,17 @@ public class ApplicationForLeaveStatisticsBuilder {
         int yearOfStartDate = application.getStartDate().getYear();
         int yearOfEndDate = application.getEndDate().getYear();
 
+        DayLength dayLength = application.getHowLong();
+        Person person = application.getPerson();
+
         if (yearOfStartDate != yearOfEndDate) {
             DateMidnight startDate = getStartDateForCalculation(application, relevantYear);
             DateMidnight endDate = getEndDateForCalculation(application, relevantYear);
-            DayLength dayLength = application.getHowLong();
-            Person person = application.getPerson();
 
             return calendarService.getWorkDays(dayLength, startDate, endDate, person);
         }
 
-        return application.getDays();
+        return calendarService.getWorkDays(dayLength, application.getStartDate(), application.getEndDate(), person);
     }
 
 
