@@ -302,10 +302,8 @@ public class ApplicationForLeaveDetailsController {
         Application application = optionalApplication.get();
         DateMidnight remindDate = application.getRemindDate();
 
-        if (remindDate != null) {
-            if (remindDate.isEqualNow()) {
-                redirectAttributes.addFlashAttribute("remindAlreadySent", true);
-            }
+        if (remindDate != null && remindDate.isEqual(DateMidnight.now())) {
+            redirectAttributes.addFlashAttribute("remindAlreadySent", true);
         } else {
             int minDaysToWait = 2;
 
