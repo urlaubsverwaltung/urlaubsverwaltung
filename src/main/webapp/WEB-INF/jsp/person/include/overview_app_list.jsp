@@ -63,10 +63,9 @@
                 </p>
             </td>
           <td class="is-centered hidden-xs">
-            <c:set var="workDays">
-              <uv:number number="${app.workDays}"/>
-            </c:set>
-            <span><spring:message code="days" arguments="${workDays}"/></span>
+            <span>
+              <uv:number number="${app.workDays}" /> <spring:message code="duration.days"/>
+            </span>
 
             <c:if test="${app.startDate.year != app.endDate.year}">
                     <span class="days-${loopStatus.index}">
@@ -97,16 +96,16 @@
                 <span>
                     <c:choose>
                         <c:when test="${app.status == 'WAITING'}">
-                            <spring:message code="progress.WAITING" /> <uv:date date="${app.applicationDate}" />
+                            <spring:message code="application.progress.WAITING" /> <uv:date date="${app.applicationDate}" />
                         </c:when>
                         <c:when test="${app.status == 'ALLOWED'}">
-                            <spring:message code="progress.ALLOWED" /> <uv:date date="${app.editedDate}" />
+                            <spring:message code="application.progress.ALLOWED" /> <uv:date date="${app.editedDate}" />
                         </c:when>
                         <c:when test="${app.status == 'REJECTED'}">
-                            <spring:message code="progress.REJECTED" /> <uv:date date="${app.editedDate}" />
+                            <spring:message code="application.progress.REJECTED" /> <uv:date date="${app.editedDate}" />
                         </c:when>
                         <c:when test="${app.status == 'CANCELLED' || app.status == 'REVOKED'}">
-                            <spring:message code="progress.CANCELLED" /> <uv:date date="${app.cancelDate}" />
+                            <spring:message code="application.progress.CANCELLED" /> <uv:date date="${app.cancelDate}" />
                         </c:when>
                         <c:otherwise>
                             &nbsp;

@@ -51,10 +51,7 @@
         <td><spring:message code="days.time" /></td>
         <td>
             <b>
-              <c:set var="workDays">
-                <uv:number number="${application.workDays}" />
-              </c:set>
-              <spring:message code="days" arguments="${workDays}" />
+              <uv:number number="${application.workDays}" /> <spring:message code="duration.days" />
             </b>
             <b class="days">
                 <%-- filled by javascript --%>
