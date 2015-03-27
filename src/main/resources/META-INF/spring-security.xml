@@ -24,9 +24,7 @@
         <security:logout logout-success-url="/login.jsp"/>
     </security:http>
 
-    <import resource="spring-security-default.xml"/>
-    <import resource="spring-security-ldap.xml"/>
-    <import resource="spring-security-activeDirectory.xml"/>
+    <import resource="spring-security-${auth}.xml"/>
 
     <!-- BASIC AUTHENTICATION CONFIG -->
     <bean id="delegatingAuthenticationEntryPoint"

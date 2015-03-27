@@ -119,18 +119,18 @@ Es kann gewählt werden zwischen Authentifizierung mittels LDAP und Authentifizi
 Voraussetzung: Es müssen die LDAP URL, die LDAP Base und LDAP User DN Patterns konfiguriert sein, damit eine Authentifizierung
 via LDAP möglich ist. Die Properties sind unter `src/main/resources/config.properties` zu finden.
 
-Die Anwendung mit dem Parameter `-Dspring.profiles.active=ldap` starten:
+Die Anwendung mit dem Parameter `-Dauth=ldap` starten:
 
-<pre>export CATALINA_OPTS=$CATALINA_OPTS -Denv=prod -Dspring.profiles.active=ldap</pre>
+<pre>export CATALINA_OPTS=$CATALINA_OPTS -Denv=prod -Dauth=ldap</pre>
 
 **Authentifizierung via Active Directory:**
 
 Voraussetzung: Es müssen die Active Directory Domain und LDAP URL konfiguriert sein, damit eine Authentifizierung via
 Active Directory möglich ist. Die Properties sind unter `src/main/resources/config.properties` zu finden.
 
-Die Anwendung mit dem Parameter `-Dspring.profiles.active=activeDirectory` starten:
+Die Anwendung mit dem Parameter `-Dauth=activeDirectory` starten:
 
-<pre>export CATALINA_OPTS=$CATALINA_OPTS -Denv=prod -Dspring.profiles.active=activeDirectory</pre>
+<pre>export CATALINA_OPTS=$CATALINA_OPTS -Denv=prod -Dauth=activeDirectory</pre>
 
 ## Getting started
 
@@ -151,72 +151,23 @@ Im Folgenden werden die durchzuführenden Schritte beschrieben, wenn man an der 
 ### Anwendung starten
 
 Man kann die Anwendung lokal mit dem Maven Tomcat Plugin starten.
-Ohne weitere Angabe wird das Development-Environment genutzt, d.h. es wird eine H2-Datenbank verwendet und es werden
+Es wird das Development-Environment genutzt, d.h. es wird eine H2-Datenbank mit Testdaten verwendet und es werden
 keine E-Mails versendet.
 
 <pre>mvn tomcat:run</pre>
 
-Im Development-Environment werden für Entwicklungszwecke Benutzer, Urlaubsanträge und Krankmeldungen angelegt.
-Man kann sich in dieser Umgebung ebenfalls mit dem Testbenutzer `test/secret` anmelden.
-
 Im Browser lässt sich die Anwendung dann über `http://localhost:8080/urlaubsverwaltung` ansteuern.
 
-### API
-
-Die Urlaubsverwaltung verfügt über eine API, die unter `http://localhost:8080/urlaubsverwaltung/api` erreichbar ist.
-
-### Environments
-
-Die Anwendung verfügt über drei verschiedene Environment-Möglichkeiten:
-
-* `dev` nutzt eine H2-Datenbank, legt Testdaten an, nutzt als Mail-Sender einen Dummy (verschickt also keine E-Mails)
-* `test` nutzt eine MySQL-Datenbank, legt keine Testdaten an, nutzt als Mail-Sender einen Dummy (verschickt also keine E-Mails)
-* `prod` nutzt eine MySQL-Datenbank, legt keine Testdaten an, nutzt den Java-Mail-Sender von
-[Spring](http://www.springsource.org/) (kann also E-Mails verschicken)
-
-Standardmäßig ohne jegliche Angabe wird als Environment `dev` genutzt.
-Möchte man ein anderes Environment nutzen, muss man beim Starten des Tomcats die `env` Property mitgeben, z.B.:
-
-<pre>mvn tomcat:run -Denv=test</pre>
-
-### Authentifizierung
-
-Es gibt drei mögliche Authentifizierungsmethoden:
-
-* Authentifizierung für lokale Entwicklungsumgebung
-* Authentifizierung via LDAP
-* Authentifizierung via Active Directory
-
-**Authentifizierung für lokale Entwicklungsumgebung:**
-
-Möchte man die Anwendung lokal bei sich laufen lassen und sich Testdaten generieren lassen, reicht es folgenden
-Befehl auszuführen:
-
-<pre>mvn tomcat:run</pre>
-
-Ohne Angabe des Parameters `spring.profiles.active` kann man sich nun mit verschiedenen Testbenutzern anmelden:
+Man kann sich nun mit verschiedenen Testbenutzern anmelden:
 
 * `testUser/secret`: Benutzer mit der User Rolle
 * `testBoss/secret`: Benutzer mit der Boss Rolle
 * `test/secret`: Benutzer mit der Office Rolle
 
-**Authentifizierung via LDAP:**
+### API
 
-Es müssen die LDAP URL, die LDAP Base und LDAP User DN Patterns konfiguriert sein, damit eine Authentifizierung via
-LDAP möglich ist. Die Properties sind unter `src/main/resources/config.properties` zu finden.
+Die Urlaubsverwaltung verfügt über eine API, die unter `http://localhost:8080/urlaubsverwaltung/api` erreichbar ist.
 
-Die Anwendung mit dem Parameter `-Dspring.profiles.active=ldap` starten:
-
-<pre>mvn tomcat:run -Dspring.profiles.active=ldap</pre>
-
-**Authentifizierung via Active Directory:**
-
-Es müssen die Active Directory Domain und LDAP URL konfiguriert sein, damit eine Authentifizierung via Active Directory
-möglich ist. Die Properties sind unter `src/main/resources/config.properties` zu finden.
-
-Die Anwendung mit dem Parameter `-Dspring.profiles.active=activeDirectory` starten:
-
-<pre>mvn tomcat:run -Dspring.profiles.active=activeDirectory</pre>
 
 # Hinweise zu Versionen
 

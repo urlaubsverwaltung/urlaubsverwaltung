@@ -387,21 +387,10 @@
                 <configuration>
                     <systemProperties>
                         <env>dev</env>
-                        <spring.profiles.active>default</spring.profiles.active>
+                        <auth>default</auth>
                     </systemProperties>
                 </configuration>
             </plugin>
-
-            <!-- TODO: Use jetty plugin instead of tomcat plugin when found out how to configure jetty to support HTTP PUT -->
-            <!--NOTE:
-                    If there is a validation error in a form, e.g. edit person form, you get following error:
-                    JSPs only permit GET POST or HEAD
-            -->
-            <!--<plugin>-->
-            <!--<groupId>org.eclipse.jetty</groupId>-->
-            <!--<artifactId>jetty-maven-plugin</artifactId>-->
-            <!--<version>9.2.2.v20140723</version>-->
-            <!--</plugin>-->
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
