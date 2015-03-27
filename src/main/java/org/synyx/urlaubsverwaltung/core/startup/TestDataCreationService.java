@@ -68,10 +68,6 @@ public class TestDataCreationService {
 
         String environment = System.getProperties().getProperty(ENVIRONMENT_PROPERTY);
 
-        if (environment == null) {
-            environment = DEV_ENVIRONMENT;
-        }
-
         LOG.info("ENVIRONMENT=" + environment);
 
         if (environment.equals(DEV_ENVIRONMENT)) {
