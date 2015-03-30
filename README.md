@@ -75,7 +75,7 @@ Die erstellte WAR-Datei kann nun im installierten Tomcat Server deployed werden.
 Dazu kopiert man die WAR-Datei in das Tomcat-Webapps-Verzeichnis.
 ([weiterführende Informationen zum Tomcat Deployment](http://tomcat.apache.org/tomcat-6.0-doc/deployer-howto.html))
 
-## Konfiguration
+## Konfiguration < Version 2.7.0
 
 ### Überschreiben der Properties
 
@@ -97,7 +97,7 @@ angepasst werden oder aber über durch Setzen der dort definierten globalen Vari
 
 Damit die Anwendung in der Produktivumgebung gestartet wird, muss man in den `CATALINA_OPTS` die System-Property `env`
 auf `prod` setzen:
- 
+
 <pre>export CATALINA_OPTS=$CATALINA_OPTS -Denv=prod</pre>
 
 **Hinweis:**
@@ -119,6 +119,61 @@ Es kann gewählt werden zwischen Authentifizierung mittels LDAP und Authentifizi
 Voraussetzung: Es müssen die LDAP URL, die LDAP Base und LDAP User DN Patterns konfiguriert sein, damit eine Authentifizierung
 via LDAP möglich ist. Die Properties sind unter `src/main/resources/config.properties` zu finden.
 
+Die Anwendung mit dem Parameter `-Dspring.profiles.active=ldap` starten:
+
+<pre>export CATALINA_OPTS=$CATALINA_OPTS -Denv=prod -Dspring.profiles.active=ldap</pre>
+
+**Authentifizierung via Active Directory:**
+
+Voraussetzung: Es müssen die Active Directory Domain und LDAP URL konfiguriert sein, damit eine Authentifizierung via
+Active Directory möglich ist. Die Properties sind unter `src/main/resources/config.properties` zu finden.
+
+Die Anwendung mit dem Parameter `-Dspring.profiles.active=activeDirectory` starten:
+
+<pre>export CATALINA_OPTS=$CATALINA_OPTS -Denv=prod -Dspring.profiles.active=activeDirectory</pre>
+
+## Konfiguration ab Version 2.7.0
+
+### Überschreiben der Properties
+
+Die Anwendung besitzt im Verzeichnis `src/main/resources` jeweils eine `application.properties` Datei pro Umgebung.
+
+* `application-dev.properties` zur lokalen Entwicklung mit einer H2 Datenbank
+* `application-test.properties` zum Testen der Anwendung mit einer MySQL Datenbank
+* `application-prod.properties` zum Ausführen der produktiven Anwendung
+
+Die vorhandenen Properties können  entweder vor dem Erstellen der WAR-Datei direkt innerhalb der oben genannten Dateien
+angepasst werden oder aber über durch Setzen der dort definierten globalen Variablen.
+
+**Beispiel:**
+
+<pre>export UV_DB_URL=jdbc:mysql://127.0.0.1:3306/urlaub</pre>
+
+### Produktivumgebung aktivieren
+
+Damit die Anwendung in der Produktivumgebung gestartet wird, muss man in den `CATALINA_OPTS` die System-Property `env`
+auf `prod` setzen:
+
+<pre>export CATALINA_OPTS=$CATALINA_OPTS -Denv=prod</pre>
+
+**Hinweis:**
+
+Die Anwendung verfügt über drei verschiedene Environment-Möglichkeiten:
+
+* `dev` nutzt eine H2-Datenbank, legt Testdaten an, nutzt als Mail-Sender einen Dummy (verschickt also keine E-Mails)
+* `test` nutzt eine MySQL-Datenbank, legt keine Testdaten an, nutzt als Mail-Sender einen Dummy (verschickt also keine E-Mails)
+* `prod` nutzt eine MySQL-Datenbank, legt keine Testdaten an, nutzt den Java-Mail-Sender von
+[Spring](http://www.springsource.org/) (kann also E-Mails verschicken)
+
+### Authentifizierung
+
+Es kann gewählt werden zwischen Authentifizierung mittels LDAP und Authentifizierung mittels Active Directory.
+
+**Authentifizierung via LDAP:**
+
+Voraussetzung: Es müssen die LDAP URL, die LDAP Base und LDAP User DN Patterns konfiguriert sein, damit eine Authentifizierung
+via LDAP möglich ist.
+
 Die Anwendung mit dem Parameter `-Dauth=ldap` starten:
 
 <pre>export CATALINA_OPTS=$CATALINA_OPTS -Denv=prod -Dauth=ldap</pre>
@@ -126,7 +181,7 @@ Die Anwendung mit dem Parameter `-Dauth=ldap` starten:
 **Authentifizierung via Active Directory:**
 
 Voraussetzung: Es müssen die Active Directory Domain und LDAP URL konfiguriert sein, damit eine Authentifizierung via
-Active Directory möglich ist. Die Properties sind unter `src/main/resources/config.properties` zu finden.
+Active Directory möglich ist.
 
 Die Anwendung mit dem Parameter `-Dauth=activeDirectory` starten:
 
@@ -138,7 +193,7 @@ Wenn die Anwendung im Tomcat beispielsweise im Verzeichnis `/home/user/tomcat/we
 wurde, ist sie erreichbar unter `<servername>:8080/urlaubsverwaltung`.
 
 Der erste Benutzer, der sich erfolgreich im System einloggt, wird in der Urlaubsverwaltung mit der Rolle Office angelegt.
-Dies ermöglicht Benutzer- und Rechteverwaltung innerhalb der Anwendung.
+Dies ermöglicht Benutzer- und Rechteverwaltung innerhalb der Anwendung und das Pflegen der Einstellungen für die Anwendung.
 
 # Entwicklung
 
@@ -203,7 +258,7 @@ Man kann man sich nun mit verschiedenen Testbenutzern anmelden:
 **Authentifizierung via LDAP:**
 
 Es müssen die LDAP URL, die LDAP Base und LDAP User DN Patterns konfiguriert sein, damit eine Authentifizierung via
-LDAP möglich ist. Die Properties sind unter `src/main/resources/config.properties` zu finden.
+LDAP möglich ist.
 
 Die Anwendung mit dem Parameter `-Dauth=ldap` starten:
 
@@ -212,7 +267,7 @@ Die Anwendung mit dem Parameter `-Dauth=ldap` starten:
 **Authentifizierung via Active Directory:**
 
 Es müssen die Active Directory Domain und LDAP URL konfiguriert sein, damit eine Authentifizierung via Active Directory
-möglich ist. Die Properties sind unter `src/main/resources/config.properties` zu finden.
+möglich ist.
 
 Die Anwendung mit dem Parameter `-Dauth=activeDirectory` starten:
 
@@ -232,12 +287,20 @@ Wenn man die Urlaubsverwaltung schon länger nutzt und auf Version 2.2.1 oder h�
 sein, dass in der Datenbank keine Person mit gleichem Vor- und Nachnamen existiert. Dies führt ansonsten zu einem
 Problem beim Update des Datenbankschemas und die Anwendung kann nicht starten.
 
+## Version 2.7.0
+
+Die Anwendung hat nicht mehr mehrere unterschiedliche Properties-Dateien, sondern je eine `application.properties` pro Umgebung.
+Außerdem heißt die System Property für die Authentifizierungsmethode nicht mehr `spring.profiles.active`, sondern `auth`.
+Die fachlichen Einstellungen werden nicht mehr in einer Properties-Datei gepflegt, sondern innerhalb der Anwendung selbst unter dem
+Menüpunkt "Einstellungen".
+
 # Technologien
 
 Die Anwendung basiert auf dem [Spring](http://www.springsource.org/) MVC Framework.
 Zur Ermittlung von Feiertagen wird das Framework [Jollyday](http://jollyday.sourceforge.net/) benutzt.
 Das Frontend beinhaltet Elemente von [Bootstrap](http://getbootstrap.com/) gewürzt mit einer Prise
 [jQuery](http://jquery.com/) und [Font Awesome](http://fontawesome.io/).
+Für die Darstellung der Benutzer Avatare wird [Gravatar](http://de.gravatar.com/) benutzt.
 
 # Lizenz
 
