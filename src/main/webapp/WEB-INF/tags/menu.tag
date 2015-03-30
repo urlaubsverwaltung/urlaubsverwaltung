@@ -74,7 +74,7 @@
             </a>
             <ul class="dropdown-menu" role="menu">
               <li>
-                <a href="${URL_PREFIX}/application/waiting">
+                <a href="${URL_PREFIX}/application">
                   <i class="fa fa-fw fa-list"></i> <spring:message code="nav.vacation.overview"/>
                 </a>
               </li>

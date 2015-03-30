@@ -1,10 +1,7 @@
 package org.synyx.urlaubsverwaltung.web.application;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
-
-import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -14,13 +11,11 @@ import org.springframework.ui.Model;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
-import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.FilterRequest;
@@ -37,7 +32,6 @@ import java.util.Map;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-@RequestMapping("/application")
 @Controller
 public class ApplicationForLeaveController {
 
@@ -51,43 +45,22 @@ public class ApplicationForLeaveController {
     private OwnCalendarService calendarService;
 
     /**
-     * Show waiting applications for leave on default.
+     * Show waiting applications for leave.
      *
      * @return  waiting applications for leave page or error page if not boss or office
      */
-    @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String showDefault() {
+    @RequestMapping(value = "/application", method = RequestMethod.GET)
+    public String showWaiting(Model model) {
 
         if (sessionService.isBoss() || sessionService.isOffice()) {
-            return "redirect:/web/application/waiting";
-        } else {
-            return ControllerConstants.ERROR_JSP;
-        }
-    }
-
-
-    /**
-     * Show all applications for leave, not dependent on their status.
-     *
-     * @param  year  if not given, the current year is used to display applications for leave for
-     * @param  model
-     *
-     * @return  all applications for leave for the given year or for the current year if no year is given
-     */
-    @RequestMapping(value = "/all", method = RequestMethod.GET)
-    public String showAll(@RequestParam(value = ControllerConstants.YEAR, required = false) Integer year, Model model) {
-
-        if (sessionService.isBoss() || sessionService.isOffice()) {
-            int yearToDisplay = year == null ? DateMidnight.now().getYear() : year;
-
-            List<ApplicationForLeave> applicationsForLeave = getAllRelevantApplicationsForLeave(yearToDisplay);
+            List<ApplicationForLeave> applicationsForLeave = getAllRelevantApplicationsForLeave();
 
             model.addAttribute("applications", applicationsForLeave);
-            model.addAttribute(PersonConstants.GRAVATAR_URLS, getAllRelevantGravatarUrls(applicationsForLeave));
             model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
-            model.addAttribute("titleApp", "applications.all");
-            model.addAttribute(ControllerConstants.YEAR, DateMidnight.now().getYear());
             model.addAttribute("filterRequest", new FilterRequest());
+
+            Map<Application, String> gravatarUrls = getAllRelevantGravatarUrls(applicationsForLeave);
+            model.addAttribute(PersonConstants.GRAVATAR_URLS, gravatarUrls);
 
             return ControllerConstants.APPLICATIONS_URL + "/app_list";
         } else {
@@ -96,29 +69,11 @@ public class ApplicationForLeaveController {
     }
 
 
-    /**
-     * Get all relevant applications for leave, i.e. not cancelled applications for leave and cancelled but formerly
-     * allowed applications for leave.
-     *
-     * @param  year  to get applications for leave for
-     *
-     * @return  all relevant applications for leave
-     */
-    private List<ApplicationForLeave> getAllRelevantApplicationsForLeave(int year) {
+    private List<ApplicationForLeave> getAllRelevantApplicationsForLeave() {
 
-        DateMidnight firstDay = DateUtil.getFirstDayOfYear(year);
-        DateMidnight lastDay = DateUtil.getLastDayOfYear(year);
+        List<Application> applications = applicationService.getApplicationsForACertainState(ApplicationStatus.WAITING);
 
-        List<Application> applications = applicationService.getApplicationsForACertainPeriod(firstDay, lastDay);
-
-        return FluentIterable.from(applications).filter(new Predicate<Application>() {
-
-                    @Override
-                    public boolean apply(Application application) {
-
-                        return !application.hasStatus(ApplicationStatus.REVOKED);
-                    }
-                }).transform(new Function<Application, ApplicationForLeave>() {
+        return FluentIterable.from(applications).transform(new Function<Application, ApplicationForLeave>() {
 
                     @Override
                     public ApplicationForLeave apply(Application input) {
@@ -149,143 +104,5 @@ public class ApplicationForLeaveController {
         }
 
         return gravatarUrls;
-    }
-
-
-    /**
-     * Show waiting applications for leave.
-     *
-     * @param  year  if not given, the current year is used to display applications for leave for
-     * @param  model
-     *
-     * @return  waiting applications for leave for the given year or for the current year if no year is given
-     */
-    @RequestMapping(value = "/waiting", method = RequestMethod.GET)
-    public String showWaiting(@RequestParam(value = ControllerConstants.YEAR, required = false) Integer year,
-        Model model) {
-
-        if (sessionService.isBoss() || sessionService.isOffice()) {
-            int yearToDisplay = year == null ? DateMidnight.now().getYear() : year;
-
-            return prepareRelevantApplicationsForLeave(ApplicationStatus.WAITING, yearToDisplay, model);
-        } else {
-            return ControllerConstants.ERROR_JSP;
-        }
-    }
-
-
-    private String prepareRelevantApplicationsForLeave(ApplicationStatus status, int year, Model model) {
-
-        String title = "";
-
-        if (status == ApplicationStatus.WAITING) {
-            title = "applications.waiting";
-        } else if (status == ApplicationStatus.ALLOWED) {
-            title = "applications.allowed";
-        } else if (status == ApplicationStatus.CANCELLED) {
-            title = "applications.cancelled";
-        } else if (status == ApplicationStatus.REJECTED) {
-            title = "applications.rejected";
-        }
-
-        DateMidnight firstDay = DateUtil.getFirstDayOfYear(year);
-        DateMidnight lastDay = DateUtil.getLastDayOfYear(year);
-
-        List<Application> applications = applicationService.getApplicationsForACertainPeriodAndState(firstDay, lastDay,
-                status);
-
-        List<ApplicationForLeave> applicationsToBeShown = FluentIterable.from(applications).filter(
-                new Predicate<Application>() {
-
-                    @Override
-                    public boolean apply(Application input) {
-
-                        return !input.hasStatus(ApplicationStatus.REVOKED);
-                    }
-                }).transform(new Function<Application, ApplicationForLeave>() {
-
-                    @Override
-                    public ApplicationForLeave apply(Application input) {
-
-                        return new ApplicationForLeave(input, calendarService);
-                    }
-                }).toList();
-
-        Map<Application, String> gravatarUrls = getAllRelevantGravatarUrls(applicationsToBeShown);
-
-        model.addAttribute(PersonConstants.GRAVATAR_URLS, gravatarUrls);
-        model.addAttribute("applications", applicationsToBeShown);
-        model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
-        model.addAttribute("titleApp", title);
-        model.addAttribute(ControllerConstants.YEAR, DateMidnight.now().getYear());
-        model.addAttribute("filterRequest", new FilterRequest());
-
-        return ControllerConstants.APPLICATIONS_URL + "/app_list";
-    }
-
-
-    /**
-     * Show allowed applications for leave.
-     *
-     * @param  year  if not given, the current year is used to display applications for leave for
-     * @param  model
-     *
-     * @return  allowed applications for leave for the given year or for the current year if no year is given
-     */
-    @RequestMapping(value = "/allowed", method = RequestMethod.GET)
-    public String showAllowed(@RequestParam(value = ControllerConstants.YEAR, required = false) Integer year,
-        Model model) {
-
-        if (sessionService.isBoss() || sessionService.isOffice()) {
-            int yearToDisplay = year == null ? DateMidnight.now().getYear() : year;
-
-            return prepareRelevantApplicationsForLeave(ApplicationStatus.ALLOWED, yearToDisplay, model);
-        } else {
-            return ControllerConstants.ERROR_JSP;
-        }
-    }
-
-
-    /**
-     * Show cancelled applications for leave.
-     *
-     * @param  year  if not given, the current year is used to display applications for leave for
-     * @param  model
-     *
-     * @return  cancelled applications for leave for the given year or for the current year if no year is given
-     */
-    @RequestMapping(value = "/cancelled", method = RequestMethod.GET)
-    public String showCancelled(@RequestParam(value = ControllerConstants.YEAR, required = false) Integer year,
-        Model model) {
-
-        if (sessionService.isBoss() || sessionService.isOffice()) {
-            int yearToDisplay = year == null ? DateMidnight.now().getYear() : year;
-
-            return prepareRelevantApplicationsForLeave(ApplicationStatus.CANCELLED, yearToDisplay, model);
-        } else {
-            return ControllerConstants.ERROR_JSP;
-        }
-    }
-
-
-    /**
-     * Show rejected applications for leave.
-     *
-     * @param  year  if not given, the current year is used to display applications for leave for
-     * @param  model
-     *
-     * @return  rejected applications for leave for the given year or for the current year if no year is given
-     */
-    @RequestMapping(value = "/rejected", method = RequestMethod.GET)
-    public String showRejected(@RequestParam(value = ControllerConstants.YEAR, required = false) Integer year,
-        Model model) {
-
-        if (sessionService.isBoss() || sessionService.isOffice()) {
-            int yearToDisplay = year == null ? DateMidnight.now().getYear() : year;
-
-            return prepareRelevantApplicationsForLeave(ApplicationStatus.REJECTED, yearToDisplay, model);
-        } else {
-            return ControllerConstants.ERROR_JSP;
-        }
     }
 }

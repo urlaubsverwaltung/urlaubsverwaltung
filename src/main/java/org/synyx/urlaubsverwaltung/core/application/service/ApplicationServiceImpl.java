@@ -48,9 +48,9 @@ class ApplicationServiceImpl implements ApplicationService {
 
 
     @Override
-    public List<Application> getApplicationsForACertainPeriod(DateMidnight startDate, DateMidnight endDate) {
+    public List<Application> getApplicationsForACertainState(ApplicationStatus state) {
 
-        return applicationDAO.getApplicationsForACertainTime(startDate.toDate(), endDate.toDate());
+        return applicationDAO.getApplicationsForACertainState(state);
     }
 
 
