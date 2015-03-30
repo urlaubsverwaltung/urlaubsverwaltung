@@ -33,8 +33,9 @@
             <list>
                 <!-- NOTE: Properties are overloaded, last one set rules -->
                 <value>classpath:application.properties</value>
-                <value>classpath:application.${env}.properties</value>
-                <value>file:///${configFile}</value>
+                <value>classpath:application-${env}.properties</value>
+                <value>${catalina.base}/conf/urlaubsverwaltung.properties</value>
+                <value>file:///${config}</value>
             </list>
         </property>
     </bean>

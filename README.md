@@ -142,12 +142,18 @@ Die Anwendung besitzt im Verzeichnis `src/main/resources` jeweils eine `applicat
 * `application-test.properties` zum Testen der Anwendung mit einer MySQL Datenbank
 * `application-prod.properties` zum Ausführen der produktiven Anwendung
 
-Die vorhandenen Properties können  entweder vor dem Erstellen der WAR-Datei direkt innerhalb der oben genannten Dateien
-angepasst werden oder aber über durch Setzen der dort definierten globalen Variablen.
+Diese beinhalten gewissen Grundeinstellungen Standardwerte, reichen alleine für die Produktivnahme der Anwendung noch nicht aus.
+Spezifische Konfigurationen wie z.B. die Datenbank Einstellungen werden durch eine eigene Properties-Datei hinterlegt.
+Dazu kann die in der Anwendung befindliche Beispieldatei `urlaubsverwaltung.properties` als Vorlage verwendet werden,
+um die gewünschten Einstellungen zu überschreiben.
 
-**Beispiel:**
+Damit die eigene Konfigurationsdatei benutzt wird, gibt es zwei Möglichkeiten:
 
-<pre>export UV_DB_URL=jdbc:mysql://127.0.0.1:3306/urlaub</pre>
+* Die erstellte Datei `urlaubsverwaltung.properties` nennen und in das `/conf` Verzeichnis unterhalb von `CATALINA_BASE`
+ablegen, z.B. `tomcat/conf/urlaubsverwaltung.properties`, und den Tomcat neu starten
+* Die erstellte Datei an einem beliebigen Ort ablegen und mithilfe der System Property `config` innerhalb der `CATALINA_OPTS`
+den absoluten Pfad der Konfigurationsdatei angeben:
+`export CATALINA_OPTS=$CATALINA_OPTS -Denv=prod -Dauth=activeDirectory -Dconfig=/home/urlaub/config/my.properties`
 
 ### Produktivumgebung aktivieren
 
