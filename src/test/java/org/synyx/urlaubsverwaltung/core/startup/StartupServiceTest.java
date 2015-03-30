@@ -41,19 +41,11 @@ public class StartupServiceTest {
     }
 
 
-    @Test(expected = RuntimeException.class)
-    public void ensureThrowsIfInvalidSpringProfileSet() {
-
-        System.getProperties().put("spring.profiles.active", "foo");
-
-        new StartupService("myDbUser", "myDbUrl", "manager@uv.de");
-    }
-
-
     @Test
     public void ensureSystemInformationIsLoggedCorrectly() {
 
-        System.getProperties().put("spring.profiles.active", "ldap");
+        System.getProperties().put("auth", "ldap");
+        System.getProperties().put("env", "test");
 
         StartupService startupService = new StartupService("myDbUser", "myDbUrl", "manager@uv.de");
 
@@ -61,12 +53,12 @@ public class StartupServiceTest {
 
         startupService.logStartupInfo();
 
-        Mockito.verify(mockedLogAppender, Mockito.times(4)).doAppend(loggingEventArgumentCaptor.capture());
+        Mockito.verify(mockedLogAppender, Mockito.times(5)).doAppend(loggingEventArgumentCaptor.capture());
 
         List<LoggingEvent> loggingEvents = loggingEventArgumentCaptor.getAllValues();
 
         Assert.assertNotNull("There should be logging events", loggingEvents);
-        Assert.assertEquals("Wrong number of logging events", 4, loggingEvents.size());
+        Assert.assertEquals("Wrong number of logging events", 5, loggingEvents.size());
 
         for (LoggingEvent loggingEvent : loggingEvents) {
             Assert.assertEquals("Wrong log level", Level.INFO, loggingEvent.getLevel());
@@ -76,7 +68,7 @@ public class StartupServiceTest {
         Assert.assertEquals("Wrong log message", "DATABASE USER=myDbUser", loggingEvents.get(1).getRenderedMessage());
         Assert.assertEquals("Wrong log message", "APPLICATION MANAGER EMAIL=manager@uv.de",
             loggingEvents.get(2).getRenderedMessage());
-        Assert.assertEquals("Wrong log message", "ACTIVE SPRING PROFILE=ldap",
-            loggingEvents.get(3).getRenderedMessage());
+        Assert.assertEquals("Wrong log message", "AUTHENTICATION=ldap", loggingEvents.get(3).getRenderedMessage());
+        Assert.assertEquals("Wrong log message", "ENVIRONMENT=test", loggingEvents.get(4).getRenderedMessage());
     }
 }
