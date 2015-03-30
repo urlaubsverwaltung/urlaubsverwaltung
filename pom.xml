@@ -33,6 +33,7 @@
         <slf4j.version>1.7.10</slf4j.version>
         <joda.time.version>2.7</joda.time.version>
         <guava.version>18.0</guava.version>
+        <jetty.version>9.0.7.v20131107</jetty.version>
 
         <netbeans.hint.deploy.server>Tomcat</netbeans.hint.deploy.server>
     </properties>
@@ -324,6 +325,13 @@
             <version>1.4.184</version>
         </dependency>
 
+        <!-- JETTY DEPENDENCIES -->
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-jsp</artifactId>
+            <version>${jetty.version}</version>
+        </dependency>
+
     </dependencies>
 
     <dependencyManagement>
@@ -381,17 +389,25 @@
         <plugins>
 
             <plugin>
-                <groupId>org.apache.tomcat.maven</groupId>
-                <artifactId>tomcat7-maven-plugin</artifactId>
-                <version>2.2</version>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>${jetty.version}</version>
                 <configuration>
                     <systemProperties>
-                        <env>dev</env>
-                        <auth>default</auth>
+                        <systemProperty>
+                            <name>env</name>
+                            <value>dev</value>
+                        </systemProperty>
+                        <systemProperty>
+                            <name>auth</name>
+                            <value>default</value>
+                        </systemProperty>
                     </systemProperties>
+                    <stopKey/>
+                    <stopPort/>
                 </configuration>
             </plugin>
-
+            
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

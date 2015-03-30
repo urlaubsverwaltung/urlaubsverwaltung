@@ -150,24 +150,79 @@ Im Folgenden werden die durchzuführenden Schritte beschrieben, wenn man an der 
 
 ### Anwendung starten
 
-Man kann die Anwendung lokal mit dem Maven Tomcat Plugin starten.
-Es wird das Development-Environment genutzt, d.h. es wird eine H2-Datenbank mit Testdaten verwendet und es werden
+Man kann die Anwendung lokal mit dem Maven Jetty Plugin starten.
+Ohne weitere Angabe wird das Development-Environment genutzt, d.h. es wird eine H2-Datenbank verwendet und es werden
 keine E-Mails versendet.
 
-<pre>mvn tomcat:run</pre>
+<pre>mvn jetty:run</pre>
 
-Im Browser lässt sich die Anwendung dann über `http://localhost:8080/urlaubsverwaltung` ansteuern.
+Im Development-Environment werden für Entwicklungszwecke Benutzer, Urlaubsanträge und Krankmeldungen angelegt.
+Man kann sich in dieser Umgebung ebenfalls mit dem Testbenutzer `test/secret` anmelden.
 
-Man kann sich nun mit verschiedenen Testbenutzern anmelden:
+Im Browser lässt sich die Anwendung dann über `http://localhost:8080/` ansteuern.
+
+### API
+
+Die Urlaubsverwaltung verfügt über eine API, die unter `http://localhost:8080/api` erreichbar ist.
+
+### Environments
+
+Die Anwendung verfügt über drei verschiedene Environment-Möglichkeiten:
+
+* `dev` nutzt eine H2-Datenbank, legt Testdaten an, nutzt als Mail-Sender einen Dummy (verschickt also keine E-Mails)
+* `test` nutzt eine MySQL-Datenbank, legt keine Testdaten an, nutzt als Mail-Sender einen Dummy (verschickt also keine E-Mails)
+* `prod` nutzt eine MySQL-Datenbank, legt keine Testdaten an, nutzt den Java-Mail-Sender von
+[Spring](http://www.springsource.org/) (kann also E-Mails verschicken)
+
+Standardmäßig ohne jegliche Angabe wird als Environment `dev` genutzt.
+Möchte man ein anderes Environment nutzen, muss man beim Starten des Maven Jetty Plugins die `env` Property mitgeben, z.B.:
+
+<pre>mvn jetty:run -Denv=test</pre>
+
+### Authentifizierung
+
+Es gibt drei mögliche Authentifizierungsmethoden:
+
+* Authentifizierung für lokale Entwicklungsumgebung
+* Authentifizierung via LDAP
+* Authentifizierung via Active Directory
+
+**Authentifizierung für lokale Entwicklungsumgebung:**
+
+Möchte man die Anwendung lokal mit generierten Testdaten bei sich laufen lassen, reicht es folgenden
+Befehl auszuführen:
+
+<pre>mvn jetty:run</pre>
+
+Man kann man sich nun mit verschiedenen Testbenutzern anmelden:
 
 * `testUser/secret`: Benutzer mit der User Rolle
 * `testBoss/secret`: Benutzer mit der Boss Rolle
 * `test/secret`: Benutzer mit der Office Rolle
 
-### API
+**Authentifizierung via LDAP:**
 
-Die Urlaubsverwaltung verfügt über eine API, die unter `http://localhost:8080/urlaubsverwaltung/api` erreichbar ist.
+Es müssen die LDAP URL, die LDAP Base und LDAP User DN Patterns konfiguriert sein, damit eine Authentifizierung via
+LDAP möglich ist. Die Properties sind unter `src/main/resources/config.properties` zu finden.
 
+Die Anwendung mit dem Parameter `-Dauth=ldap` starten:
+
+<pre>mvn jetty:run -Dauth=ldap</pre>
+
+**Authentifizierung via Active Directory:**
+
+Es müssen die Active Directory Domain und LDAP URL konfiguriert sein, damit eine Authentifizierung via Active Directory
+möglich ist. Die Properties sind unter `src/main/resources/config.properties` zu finden.
+
+Die Anwendung mit dem Parameter `-Dauth=activeDirectory` starten:
+
+<pre>mvn jetty:run -Dauth=activeDirectory</pre>
+
+**Kombination:**
+
+Selbstverständlich können beide Properties gleichzeitig gesetzt werden, zum Beispiel:
+
+<pre>mvn jetty:run -Denv=test -Dauth=ldap</pre>
 
 # Hinweise zu Versionen
 
