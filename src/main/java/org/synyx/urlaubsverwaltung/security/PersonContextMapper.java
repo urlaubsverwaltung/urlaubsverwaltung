@@ -35,13 +35,10 @@ public class PersonContextMapper implements UserDetailsContextMapper {
     private final PersonService personService;
     private final MailService mailService;
 
-    private final boolean createOnLogin;
-
-    public PersonContextMapper(PersonService personService, MailService mailService, boolean createOnLogin) {
+    public PersonContextMapper(PersonService personService, MailService mailService) {
 
         this.personService = personService;
         this.mailService = mailService;
-        this.createOnLogin = createOnLogin;
     }
 
     @Override
@@ -58,7 +55,7 @@ public class PersonContextMapper implements UserDetailsContextMapper {
 
         Person person;
 
-        if (!optionalPerson.isPresent() && (noActivePersonExistsYet || this.createOnLogin)) {
+        if (!optionalPerson.isPresent()) {
             person = createPerson(username, noActivePersonExistsYet);
         } else {
             person = optionalPerson.get();

@@ -31,7 +31,7 @@ public class PersonContextMapperTest {
 
         personService = Mockito.mock(PersonService.class);
 
-        personContextMapper = new PersonContextMapper(personService, Mockito.mock(MailService.class), false);
+        personContextMapper = new PersonContextMapper(personService, Mockito.mock(MailService.class));
     }
 
 
