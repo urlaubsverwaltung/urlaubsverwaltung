@@ -1,8 +1,13 @@
 package org.synyx.urlaubsverwaltung.core.settings;
 
+import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.springframework.util.Assert;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
+
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 
 
 /**
@@ -10,7 +15,8 @@ import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public class Settings {
+@Entity
+public class Settings extends AbstractPersistable<Integer> {
 
     /**
      * Specifies the maximal number of annual vacation days a person can have.
@@ -40,12 +46,16 @@ public class Settings {
      * {@link DayLength#NOON} means that only half of the day is counted as work day, {@link DayLength#ZERO} means that
      * the day is fully counted as public holiday</p>
      */
+    @Enumerated(EnumType.STRING)
     private DayLength workingDurationForChristmasEve = DayLength.MORNING;
+
+    @Enumerated(EnumType.STRING)
     private DayLength workingDurationForNewYearsEve = DayLength.MORNING;
 
     /**
      * Defines the federal state of Germany to be able to check correctly if a day is a public holiday or not.
      */
+    @Enumerated(EnumType.STRING)
     private FederalState federalState = FederalState.BADEN_WUERTTEMBERG;
 
     public Integer getMaximumAnnualVacationDays() {
