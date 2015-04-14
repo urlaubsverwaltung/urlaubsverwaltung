@@ -63,6 +63,8 @@ public class MailServiceIntegrationTest {
         velocityProperties.put("resource.loader", "class");
         velocityProperties.put("class.resource.loader.class",
             "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+        velocityProperties.put("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.Log4JLogChute");
+        velocityProperties.put("runtime.log.logsystem.log4j.logger", MailServiceIntegrationTest.class.getName());
 
         VelocityEngine velocityEngine = new VelocityEngine(velocityProperties);
         JavaMailSender mailSender = new JavaMailSenderImpl();
