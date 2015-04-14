@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.core.application.dao.ApplicationDAO;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteDAO;
@@ -53,7 +54,8 @@ public class OverlapService {
         DateMidnight startDate = application.getStartDate();
         DateMidnight endDate = application.getEndDate();
 
-        List<Application> applications = getRelevantApplicationsForLeave(person, startDate, endDate);
+        List<Application> applications = getRelevantApplicationsForLeave(person, startDate, endDate,
+                application.getHowLong());
 
         if (!application.isNew()) {
             applications = FluentIterable.from(applications).filter(new Predicate<Application>() {
@@ -86,7 +88,8 @@ public class OverlapService {
         DateMidnight startDate = sickNote.getStartDate();
         DateMidnight endDate = sickNote.getEndDate();
 
-        List<Application> applications = getRelevantApplicationsForLeave(person, startDate, endDate);
+        // NOTE: Sick notes are always for the full day
+        List<Application> applications = getRelevantApplicationsForLeave(person, startDate, endDate, DayLength.FULL);
 
         List<SickNote> sickNotes = getRelevantSickNotes(person, startDate, endDate);
 
@@ -157,23 +160,33 @@ public class OverlapService {
      * @param  person  to get overlapping applications for leave for
      * @param  startDate  defines the start of the period
      * @param  endDate  defines the end of the period
+     * @param  dayLength  defines the time of day of the period
      *
      * @return  {@link List} of {@link Application}s overlapping with the period
      */
     private List<Application> getRelevantApplicationsForLeave(Person person, DateMidnight startDate,
-        DateMidnight endDate) {
+        DateMidnight endDate, DayLength dayLength) {
 
         // get all applications for leave
         List<Application> applicationsForLeave = applicationDAO.getApplicationsForACertainTimeAndPerson(
                 startDate.toDate(), endDate.toDate(), person);
 
-        // filter them since only waiting and allowed applications for leave are relevant
+        // remove the non-relevant ones
         return FluentIterable.from(applicationsForLeave).filter(new Predicate<Application>() {
 
                     @Override
                     public boolean apply(Application input) {
 
-                        return input.hasStatus(ApplicationStatus.WAITING) || input.hasStatus(ApplicationStatus.ALLOWED);
+                        // only waiting and allowed applications for leave are relevant
+                        boolean isWaitingOrAllowed = input.hasStatus(ApplicationStatus.WAITING)
+                            || input.hasStatus(ApplicationStatus.ALLOWED);
+
+                        // if only half day, then only the same time of day is relevant
+                        if (!DayLength.FULL.equals(dayLength)) {
+                            return isWaitingOrAllowed && input.getHowLong().equals(dayLength);
+                        }
+
+                        return isWaitingOrAllowed;
                     }
                 }).toList();
     }

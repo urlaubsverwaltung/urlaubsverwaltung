@@ -81,7 +81,7 @@ public class OverlapServiceTest {
     public void ensureNoOverlappingIfNoActiveApplicationsForLeaveInThePeriod() {
 
         Mockito.when(applicationDAO.getApplicationsForACertainTimeAndPerson(Mockito.any(Date.class),
-                Mockito.any(Date.class), Mockito.any(Person.class))).thenReturn(new ArrayList<Application>());
+                Mockito.any(Date.class), Mockito.any(Person.class))).thenReturn(new ArrayList<>());
 
         DateMidnight startDate = new DateMidnight(2012, DateTimeConstants.JANUARY, 16);
         DateMidnight endDate = new DateMidnight(2012, DateTimeConstants.JANUARY, 18);
@@ -304,5 +304,109 @@ public class OverlapServiceTest {
 
         Assert.assertNotNull("Should not be null", overlapCase);
         Assert.assertEquals("Wrong overlap case", OverlapCase.NO_OVERLAPPING, overlapCase);
+    }
+
+
+    @Test
+    public void ensureNoOverlappingIfApplyingForTwoHalfDayVacationsOnTheSameDayButWithDifferentTimeOfDay() {
+
+        DateMidnight vacationDate = new DateMidnight(2012, DateTimeConstants.JANUARY, 16);
+
+        Application morningVacation = new Application();
+        morningVacation.setHowLong(DayLength.MORNING);
+        morningVacation.setStartDate(vacationDate);
+        morningVacation.setEndDate(vacationDate);
+        morningVacation.setStatus(ApplicationStatus.WAITING);
+
+        Mockito.when(applicationDAO.getApplicationsForACertainTimeAndPerson(Mockito.any(Date.class),
+                Mockito.any(Date.class), Mockito.any(Person.class))).thenReturn(Arrays.asList(morningVacation));
+
+        Application noonVacation = new Application();
+        noonVacation.setHowLong(DayLength.NOON);
+        noonVacation.setStartDate(vacationDate);
+        noonVacation.setEndDate(vacationDate);
+
+        OverlapCase overlapCase = service.checkOverlap(noonVacation);
+
+        Assert.assertNotNull("Should not be null", overlapCase);
+        Assert.assertEquals("Wrong overlap case", OverlapCase.NO_OVERLAPPING, overlapCase);
+    }
+
+
+    @Test
+    public void ensureFullyOverlappingIfApplyingForTwoHalfDayVacationsOnTheSameDayAndTimeOfDay() {
+
+        DateMidnight vacationDate = new DateMidnight(2012, DateTimeConstants.JANUARY, 16);
+
+        Application morningVacation = new Application();
+        morningVacation.setHowLong(DayLength.MORNING);
+        morningVacation.setStartDate(vacationDate);
+        morningVacation.setEndDate(vacationDate);
+        morningVacation.setStatus(ApplicationStatus.WAITING);
+
+        Mockito.when(applicationDAO.getApplicationsForACertainTimeAndPerson(Mockito.any(Date.class),
+                Mockito.any(Date.class), Mockito.any(Person.class))).thenReturn(Arrays.asList(morningVacation));
+
+        Application otherMorningVacation = new Application();
+        otherMorningVacation.setHowLong(DayLength.MORNING);
+        otherMorningVacation.setStartDate(vacationDate);
+        otherMorningVacation.setEndDate(vacationDate);
+
+        OverlapCase overlapCase = service.checkOverlap(otherMorningVacation);
+
+        Assert.assertNotNull("Should not be null", overlapCase);
+        Assert.assertEquals("Wrong overlap case", OverlapCase.FULLY_OVERLAPPING, overlapCase);
+    }
+
+
+    @Test
+    public void ensureFullyOverlappingIfApplyingForFullDayAlthoughThereIsAlreadyAHalfDayVacation() {
+
+        DateMidnight vacationDate = new DateMidnight(2012, DateTimeConstants.JANUARY, 16);
+
+        Application morningVacation = new Application();
+        morningVacation.setHowLong(DayLength.MORNING);
+        morningVacation.setStartDate(vacationDate);
+        morningVacation.setEndDate(vacationDate);
+        morningVacation.setStatus(ApplicationStatus.WAITING);
+
+        Mockito.when(applicationDAO.getApplicationsForACertainTimeAndPerson(Mockito.any(Date.class),
+                Mockito.any(Date.class), Mockito.any(Person.class))).thenReturn(Arrays.asList(morningVacation));
+
+        Application fullDayVacation = new Application();
+        fullDayVacation.setHowLong(DayLength.FULL);
+        fullDayVacation.setStartDate(vacationDate);
+        fullDayVacation.setEndDate(vacationDate);
+
+        OverlapCase overlapCase = service.checkOverlap(fullDayVacation);
+
+        Assert.assertNotNull("Should not be null", overlapCase);
+        Assert.assertEquals("Wrong overlap case", OverlapCase.FULLY_OVERLAPPING, overlapCase);
+    }
+
+
+    @Test
+    public void ensureFullyOverlappingIfCreatingSickNoteOnADayWithHalfDayVacation() {
+
+        DateMidnight vacationDate = new DateMidnight(2012, DateTimeConstants.JANUARY, 16);
+
+        Application morningVacation = new Application();
+        morningVacation.setHowLong(DayLength.MORNING);
+        morningVacation.setStartDate(vacationDate);
+        morningVacation.setEndDate(vacationDate);
+        morningVacation.setStatus(ApplicationStatus.ALLOWED);
+
+        Mockito.when(applicationDAO.getApplicationsForACertainTimeAndPerson(Mockito.any(Date.class),
+                Mockito.any(Date.class), Mockito.any(Person.class))).thenReturn(Arrays.asList(morningVacation));
+
+        SickNote sickNote = new SickNote();
+        sickNote.setStartDate(vacationDate);
+        sickNote.setEndDate(vacationDate);
+        sickNote.setActive(true);
+
+        OverlapCase overlapCase = service.checkOverlap(sickNote);
+
+        Assert.assertNotNull("Should not be null", overlapCase);
+        Assert.assertEquals("Wrong overlap case", OverlapCase.FULLY_OVERLAPPING, overlapCase);
     }
 }
