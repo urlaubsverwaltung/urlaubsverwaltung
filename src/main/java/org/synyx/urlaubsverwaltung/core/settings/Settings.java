@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.settings;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
+
 import org.springframework.util.Assert;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
@@ -164,5 +165,12 @@ public class Settings extends AbstractPersistable<Integer> {
         Assert.notNull(federalState, "Federal state must not be null");
 
         this.federalState = federalState;
+    }
+
+
+    @Override
+    public void setId(Integer id) {
+
+        super.setId(id);
     }
 }

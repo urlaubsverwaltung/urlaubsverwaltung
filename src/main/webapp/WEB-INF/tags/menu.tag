@@ -152,6 +152,15 @@
             </ul>
           </li>
         </sec:authorize>
+
+        <sec:authorize access="hasAnyRole('OFFICE')">
+          <li class="dropdown">
+            <a href="${URL_PREFIX}/settings">
+              <i class="fa fa-fw fa-cogs"></i>
+              <span class="nav-title"><spring:message code="nav.settings.title"/></span>
+            </a>
+          </li>
+        </sec:authorize>
       </ul>
     </div>
     <!-- /.navbar-collapse -->

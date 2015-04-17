@@ -18,6 +18,8 @@ import org.synyx.urlaubsverwaltung.core.calendar.Day;
 import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonInteractionService;
+import org.synyx.urlaubsverwaltung.core.settings.Settings;
+import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteInteractionService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
@@ -59,6 +61,9 @@ public class TestDataCreationService {
     @Autowired
     private SickNoteInteractionService sickNoteInteractionService;
 
+    @Autowired
+    private SettingsService settingsService;
+
     private Person user;
     private Person boss;
     private Person office;
@@ -70,6 +75,8 @@ public class TestDataCreationService {
 
         if (environment.equals(DEV_ENVIRONMENT)) {
             LOG.info("Test data will be created...");
+
+            createTestSettings();
 
             user = createTestPerson(USER, "Klaus", "Müller", "mueller@muster.de", Role.USER);
             boss = createTestPerson(BOSS_USER, "Max", "Mustermann", "maxMuster@muster.de", Role.USER, Role.BOSS);
@@ -86,6 +93,13 @@ public class TestDataCreationService {
         } else {
             LOG.info("No test data will be created.");
         }
+    }
+
+
+    private void createTestSettings() {
+
+        Settings settings = new Settings();
+        settingsService.save(settings);
     }
 
 

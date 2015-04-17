@@ -10,5 +10,6 @@
         <class>org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime</class>
         <class>org.synyx.urlaubsverwaltung.core.sicknote.SickNote</class>
         <class>org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteComment</class>
+        <class>org.synyx.urlaubsverwaltung.core.settings.Settings</class>
     </persistence-unit>
 </persistence>
