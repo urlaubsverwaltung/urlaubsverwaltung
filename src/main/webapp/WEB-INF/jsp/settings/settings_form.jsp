@@ -124,11 +124,7 @@
                 <button type="submit" class="btn btn-success pull-left col-xs-12 col-sm-5 col-md-2">
                     <i class='fa fa-check'></i>&nbsp;<spring:message code='action.save'/>
                 </button>
-        
-                <button type="button" class="btn btn-default back col-xs-12 col-sm-5 col-md-2 pull-right">
-                    <i class='fa fa-remove'></i>&nbsp;<spring:message code='action.cancel'/>
-                </button>
-        
+               
             </div>
         
         </div>
