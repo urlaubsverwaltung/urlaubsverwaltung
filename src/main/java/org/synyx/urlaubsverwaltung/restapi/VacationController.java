@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.restapi;
 
 import com.google.common.base.Function;
-import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
 import com.google.gson.Gson;
@@ -37,6 +36,7 @@ import java.math.BigDecimal;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 /**

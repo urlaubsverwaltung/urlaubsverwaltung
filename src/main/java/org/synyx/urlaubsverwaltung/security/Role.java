@@ -11,5 +11,5 @@ public enum Role {
     USER,
     BOSS,
     OFFICE,
-    INACTIVE;
+    INACTIVE
 }

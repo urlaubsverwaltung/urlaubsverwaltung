@@ -132,7 +132,7 @@ public class PersonManagementController {
             yearOfHolidaysAccount = DateMidnight.now().getYear();
         }
 
-        Optional<Person> optionalPerson = personService.getPersonByID(personId);
+        java.util.Optional<Person> optionalPerson = personService.getPersonByID(personId);
 
         if (!optionalPerson.isPresent()) {
             return ControllerConstants.ERROR_JSP;
@@ -158,7 +158,7 @@ public class PersonManagementController {
     public String editPerson(@PathVariable("personId") Integer personId,
         @ModelAttribute("personForm") PersonForm personForm, Errors errors, Model model) {
 
-        Optional<Person> personToUpdate = personService.getPersonByID(personId);
+        java.util.Optional<Person> personToUpdate = personService.getPersonByID(personId);
 
         if (!sessionService.isOffice() || !personToUpdate.isPresent()) {
             return ControllerConstants.ERROR_JSP;

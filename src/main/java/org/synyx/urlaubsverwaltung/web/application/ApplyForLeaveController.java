@@ -101,7 +101,7 @@ public class ApplyForLeaveController {
             person = sessionService.getLoggedUser();
             applier = person;
         } else {
-            Optional<Person> personByID = personService.getPersonByID(personId);
+            java.util.Optional<Person> personByID = personService.getPersonByID(personId);
 
             if (!personByID.isPresent()) {
                 return ControllerConstants.ERROR_JSP;
@@ -181,7 +181,7 @@ public class ApplyForLeaveController {
         if (personId == null) {
             personToApplyForLeave = applier;
         } else {
-            Optional<Person> optionalPerson = personService.getPersonByID(personId);
+            java.util.Optional<Person> optionalPerson = personService.getPersonByID(personId);
 
             if (!optionalPerson.isPresent()) {
                 return ControllerConstants.ERROR_JSP;

@@ -103,7 +103,7 @@ public class PersonOverviewController {
     public String showOverview(@PathVariable("personId") Integer personId,
         @RequestParam(value = ControllerConstants.YEAR, required = false) String year, Model model) {
 
-        Optional<Person> optionalPerson = personService.getPersonByID(personId);
+        java.util.Optional<Person> optionalPerson = personService.getPersonByID(personId);
 
         if (sessionService.isInactive() || !optionalPerson.isPresent()) {
             return ControllerConstants.ERROR_JSP;

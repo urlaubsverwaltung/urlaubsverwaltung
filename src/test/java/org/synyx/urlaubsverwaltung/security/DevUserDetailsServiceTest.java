@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.security;
 
-import com.google.common.base.Optional;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,6 +16,7 @@ import org.synyx.urlaubsverwaltung.core.startup.TestDataCreationService;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Optional;
 
 
 /**
@@ -51,7 +50,7 @@ public class DevUserDetailsServiceTest {
 
         String login = TestDataCreationService.USER;
 
-        Mockito.when(personService.getPersonByLogin(login)).thenReturn(Optional.<Person>absent());
+        Mockito.when(personService.getPersonByLogin(login)).thenReturn(Optional.<Person>empty());
 
         UserDetails userDetails = devUserDetailsService.loadUserByUsername(login);
 

@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.security;
 
-import com.google.common.base.Optional;
-
 import org.apache.log4j.Logger;
 
 import org.springframework.ldap.core.DirContextAdapter;
@@ -21,6 +19,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 
 /**
