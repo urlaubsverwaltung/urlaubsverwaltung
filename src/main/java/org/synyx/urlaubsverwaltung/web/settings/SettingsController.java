@@ -18,6 +18,7 @@ import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
+import org.synyx.urlaubsverwaltung.web.validator.SettingsValidator;
 
 
 /**
@@ -31,6 +32,9 @@ public class SettingsController {
 
     @Autowired
     private SessionService sessionService;
+
+    @Autowired
+    private SettingsValidator settingsValidator;
 
     @RequestMapping(value = "/settings", method = RequestMethod.GET)
     public String settingsDetails(Model model) {
@@ -51,9 +55,19 @@ public class SettingsController {
     public String settingsSaved(@ModelAttribute("settings") Settings settings, Errors errors, Model model) {
 
         if (sessionService.isOffice()) {
-            settingsService.save(settings);
+            settingsValidator.validate(settings, errors);
 
-            return "redirect:/web/settings";
+            if (!errors.hasErrors()) {
+                settingsService.save(settings);
+
+                return "redirect:/web/settings";
+            } else {
+                model.addAttribute("settings", settings);
+                model.addAttribute("federalStateTypes", FederalState.values());
+                model.addAttribute("dayLengthTypes", DayLength.values());
+
+                return "settings/settings_form";
+            }
         }
 
         return ControllerConstants.ERROR_JSP;
