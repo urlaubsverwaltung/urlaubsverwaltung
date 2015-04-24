@@ -1,8 +1,6 @@
 
 package org.synyx.urlaubsverwaltung.web.validator;
 
-import org.apache.log4j.Logger;
-
 import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,16 +14,14 @@ import org.springframework.validation.Validator;
 
 import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
-import org.synyx.urlaubsverwaltung.core.util.PropertiesUtil;
+import org.synyx.urlaubsverwaltung.core.settings.Settings;
+import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.security.Role;
 import org.synyx.urlaubsverwaltung.web.person.PersonForm;
-
-import java.io.IOException;
 
 import java.math.BigDecimal;
 
 import java.util.List;
-import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,8 +34,6 @@ import java.util.regex.Pattern;
  */
 @Component
 public class PersonValidator implements Validator {
-
-    private static final Logger LOG = Logger.getLogger(PersonValidator.class);
 
     private static final String ERROR_MANDATORY_FIELD = "error.mandatory.field";
     private static final String ERROR_ENTRY = "error.entry";
@@ -63,26 +57,16 @@ public class PersonValidator implements Validator {
         "^[a-zäöüß0-9,!#\\$%&'\\*\\+/=\\?\\^_`\\{\\|}~-]+(\\.[a-zäöüß0-9,!#\\$%&'\\*\\+/=\\?\\^_`\\{\\|}~-]+)*@"
         + "[a-zäöüß0-9-]+(\\.[a-zäöüß0-9-]+)*\\.([a-z]{2,})$";
 
-    private static final String MAX_DAYS = "annual.vacation.max";
     private static final int MAX_CHARS = 50;
 
-    private static final String BUSINESS_PROPERTIES_FILE = "business.properties";
-
-    private Properties businessProperties;
-
     private final PersonService personService;
+    private final SettingsService settingsService;
 
     @Autowired
-    public PersonValidator(PersonService personService) {
+    public PersonValidator(PersonService personService, SettingsService settingsService) {
 
         this.personService = personService;
-
-        try {
-            this.businessProperties = PropertiesUtil.load(BUSINESS_PROPERTIES_FILE);
-        } catch (IOException ex) {
-            LOG.error("No properties file found.");
-            LOG.error(ex.getMessage(), ex);
-        }
+        this.settingsService = settingsService;
     }
 
     @Override
@@ -228,16 +212,14 @@ public class PersonValidator implements Validator {
 
     protected void validateAnnualVacation(PersonForm form, Errors errors) {
 
-        // only achieved if invalid property values are precluded by method validateProperties
-        String propValue = businessProperties.getProperty(MAX_DAYS);
-        double max = Double.parseDouble(propValue);
-
         BigDecimal annualVacationDays = form.getAnnualVacationDays();
+        Settings settings = settingsService.getSettings();
+        BigDecimal maxDays = BigDecimal.valueOf(settings.getMaximumAnnualVacationDays());
 
         validateNumberNotNull(annualVacationDays, ANNUAL_VACATION_DAYS, errors);
 
         if (annualVacationDays != null) {
-            validateNumberOfDays(annualVacationDays, ANNUAL_VACATION_DAYS, max, errors);
+            validateNumberOfDays(annualVacationDays, ANNUAL_VACATION_DAYS, maxDays, errors);
         }
     }
 
@@ -255,9 +237,8 @@ public class PersonValidator implements Validator {
 
     protected void validateRemainingVacationDays(PersonForm form, Errors errors) {
 
-        // only achieved if invalid property values are precluded by method validateProperties
-        String propValue = businessProperties.getProperty(MAX_DAYS);
-        double max = Double.parseDouble(propValue);
+        Settings settings = settingsService.getSettings();
+        BigDecimal maxDays = BigDecimal.valueOf(settings.getMaximumAnnualVacationDays());
 
         BigDecimal remainingVacationDays = form.getRemainingVacationDays();
         BigDecimal remainingVacationDaysNotExpiring = form.getRemainingVacationDaysNotExpiring();
@@ -267,11 +248,11 @@ public class PersonValidator implements Validator {
 
         if (remainingVacationDays != null) {
             // field entitlement's remaining vacation days
-            validateNumberOfDays(remainingVacationDays, REMAINING_VACATION_DAYS, max, errors);
+            validateNumberOfDays(remainingVacationDays, REMAINING_VACATION_DAYS, maxDays, errors);
 
             if (remainingVacationDaysNotExpiring != null) {
                 validateNumberOfDays(remainingVacationDaysNotExpiring, REMAINING_VACATION_DAYS_NOT_EXPIRING,
-                    remainingVacationDays.doubleValue(), errors);
+                    remainingVacationDays, errors);
             }
         }
     }
@@ -286,7 +267,7 @@ public class PersonValidator implements Validator {
      * @param  maximumDays
      * @param  errors
      */
-    private void validateNumberOfDays(BigDecimal days, String field, double maximumDays, Errors errors) {
+    private void validateNumberOfDays(BigDecimal days, String field, BigDecimal maximumDays, Errors errors) {
 
         // is number of days < 0 ?
         if (days.compareTo(BigDecimal.ZERO) == -1) {
@@ -294,7 +275,7 @@ public class PersonValidator implements Validator {
         }
 
         // is number of days unrealistic?
-        if (days.compareTo(BigDecimal.valueOf(maximumDays)) == 1) {
+        if (days.compareTo(maximumDays) == 1) {
             errors.rejectValue(field, ERROR_ENTRY);
         }
     }

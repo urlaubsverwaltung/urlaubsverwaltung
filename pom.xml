@@ -325,6 +325,13 @@
             <version>1.4.184</version>
         </dependency>
 
+        <!-- JETTY DEPENDENCIES -->
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-jsp</artifactId>
+            <version>${jetty.version}</version>
+        </dependency>
+
     </dependencies>
 
     <dependencyManagement>

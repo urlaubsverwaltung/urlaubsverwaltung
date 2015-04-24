@@ -39,14 +39,13 @@ public interface ApplicationService {
 
 
     /**
-     * Gets all {@link Application}s with vacation time between startDate x and endDate y.
+     * Gets all {@link Application}s with the given state.
      *
-     * @param  startDate {@link DateMidnight}
-     * @param  endDate {@link DateMidnight}
+     * @param  state  of the {@link Application}s for leave to be fetched
      *
-     * @return  all {@link Application}s with vacation time between startDate x and endDate y
+     * @return  all {@link Application}s for leave with the given state
      */
-    List<Application> getApplicationsForACertainPeriod(DateMidnight startDate, DateMidnight endDate);
+    List<Application> getApplicationsForACertainState(ApplicationStatus state);
 
 
     /**

@@ -26,24 +26,16 @@
 
     <!-- PROPERTIES -->
     <bean id="placeholderConfig" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="ignoreResourceNotFound">
-            <value>true</value>
-        </property>
-        <property name="ignoreUnresolvablePlaceholders">
-            <value>true</value>
-        </property>
-        <property name="systemPropertiesModeName">
-            <value>SYSTEM_PROPERTIES_MODE_OVERRIDE</value>
-        </property>
+        <property name="ignoreResourceNotFound" value="true"/>
+        <property name="ignoreUnresolvablePlaceholders" value="true"/>
+        <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
         <property name="locations">
             <list>
                 <!-- NOTE: Properties are overloaded, last one set rules -->
-                <value>classpath:config.properties</value>
-                <value>classpath:mail.properties</value>
-                <value>classpath:mail.${env}.properties</value>
-                <value>classpath:db.properties</value>
-                <value>classpath:db.${env}.properties</value>
-                <value>classpath:business.properties</value>
+                <value>classpath:application.properties</value>
+                <value>classpath:application-${env}.properties</value>
+                <value>${catalina.base}/conf/urlaubsverwaltung.properties</value>
+                <value>file:///${config}</value>
             </list>
         </property>
     </bean>
@@ -66,18 +58,10 @@
 
     <!-- DATABASE -->
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
-        <property name="driverClassName">
-            <value>${db.driver}</value>
-        </property>
-        <property name="url">
-            <value>${db.url}</value>
-        </property>
-        <property name="username">
-            <value>${db.username}</value>
-        </property>
-        <property name="password">
-            <value>${db.pwd}</value>
-        </property>
+        <property name="driverClassName" value="${db.driver}"/>
+        <property name="url" value="${db.url}"/>
+        <property name="username" value="${db.username}"/>
+        <property name="password" value="${db.password}"/>
         <property name="validationQuery" value="SELECT 1"/>
         <property name="testOnBorrow" value="true"/>
     </bean>
@@ -114,6 +98,19 @@
 
     <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
     <bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
+
+    <bean id="h2Server" scope="singleton"
+          class="org.h2.tools.Server" factory-method="createTcpServer"
+          init-method="start" destroy-method="stop" depends-on="h2WebServer">
+        <constructor-arg
+                value="-tcp,-tcpAllowOthers,-tcpPort,9995"/>
+    </bean>
+    <bean id="h2WebServer" scope="singleton"
+          class="org.h2.tools.Server" factory-method="createWebServer"
+          init-method="start" destroy-method="stop">
+        <constructor-arg
+                value="-web,-webAllowOthers,-webPort,11115"/>
+    </bean>
 
     <!-- END:DATABASE -->
 

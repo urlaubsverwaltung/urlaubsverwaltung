@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.web.validator;
 
-import org.apache.log4j.Logger;
-
 import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,15 +19,12 @@ import org.synyx.urlaubsverwaltung.core.calendar.OverlapCase;
 import org.synyx.urlaubsverwaltung.core.calendar.OverlapService;
 import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.settings.Settings;
+import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.util.CalcUtil;
-import org.synyx.urlaubsverwaltung.core.util.PropertiesUtil;
 import org.synyx.urlaubsverwaltung.web.application.ApplicationForLeaveForm;
 
-import java.io.IOException;
-
 import java.math.BigDecimal;
-
-import java.util.Properties;
 
 
 /**
@@ -40,8 +35,6 @@ import java.util.Properties;
  */
 @Component
 public class ApplicationValidator implements Validator {
-
-    private static final Logger LOG = Logger.getLogger(ApplicationValidator.class);
 
     private static final int MAX_CHARS = 200;
 
@@ -61,29 +54,19 @@ public class ApplicationValidator implements Validator {
     private static final String FIELD_ADDRESS = "address";
     private static final String FIELD_COMMENT = "comment";
 
-    private static final String BUSINESS_PROPERTIES_FILE = "business.properties";
-    private static final String MAX_MONTHS_PROPERTY = "maximum.months";
-
-    private Properties businessProperties;
-
     private final OwnCalendarService calendarService;
     private final OverlapService overlapService;
     private final CalculationService calculationService;
+    private final SettingsService settingsService;
 
     @Autowired
     public ApplicationValidator(OwnCalendarService calendarService, OverlapService overlapService,
-        CalculationService calculationService) {
+        CalculationService calculationService, SettingsService settingsService) {
 
         this.calendarService = calendarService;
         this.overlapService = overlapService;
         this.calculationService = calculationService;
-
-        try {
-            this.businessProperties = PropertiesUtil.load(BUSINESS_PROPERTIES_FILE);
-        } catch (IOException ex) {
-            LOG.error("No properties file found.");
-            LOG.error(ex.getMessage(), ex);
-        }
+        this.settingsService = settingsService;
     }
 
     @Override
@@ -170,9 +153,9 @@ public class ApplicationValidator implements Validator {
 
     private void validateNotTooFarInTheFuture(DateMidnight date, Errors errors) {
 
-        String maximumMonthsProperty = businessProperties.getProperty(MAX_MONTHS_PROPERTY);
-        int maximumMonths = Integer.parseInt(maximumMonthsProperty);
+        Settings settings = settingsService.getSettings();
 
+        Integer maximumMonths = settings.getMaximumMonthsToApplyForLeaveInAdvance();
         DateMidnight future = DateMidnight.now().plusMonths(maximumMonths);
 
         if (date.isAfter(future)) {
@@ -183,9 +166,9 @@ public class ApplicationValidator implements Validator {
 
     private void validateNotTooFarInThePast(DateMidnight date, Errors errors) {
 
-        String maximumMonthsProperty = businessProperties.getProperty(MAX_MONTHS_PROPERTY);
-        int maximumMonths = Integer.parseInt(maximumMonthsProperty);
+        Settings settings = settingsService.getSettings();
 
+        Integer maximumMonths = settings.getMaximumMonthsToApplyForLeaveInAdvance();
         DateMidnight past = DateMidnight.now().minusMonths(maximumMonths);
 
         if (date.isBefore(past)) {

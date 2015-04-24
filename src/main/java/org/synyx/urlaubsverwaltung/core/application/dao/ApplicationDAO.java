@@ -18,11 +18,8 @@ import java.util.List;
  */
 public interface ApplicationDAO extends JpaRepository<Application, Integer> {
 
-    @Query(
-        "select x from Application x where (x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2)"
-        + " or (x.startDate < ?1 and x.endDate > ?2) order by x.startDate"
-    )
-    List<Application> getApplicationsForACertainTime(Date startDate, Date endDate);
+    @Query("select x from Application x where x.status = ?1")
+    List<Application> getApplicationsForACertainState(ApplicationStatus status);
 
 
     @Query(

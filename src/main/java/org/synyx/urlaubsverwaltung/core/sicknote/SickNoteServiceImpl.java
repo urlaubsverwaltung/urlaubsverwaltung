@@ -5,11 +5,12 @@ import com.google.common.base.Optional;
 import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.stereotype.Service;
 
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.settings.Settings;
+import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 
 import java.util.List;
 
@@ -22,18 +23,14 @@ import java.util.List;
 @Service
 public class SickNoteServiceImpl implements SickNoteService {
 
-    @Value("${sicknote.sickPay.limit}")
-    private int sickPayLimit;
-
-    @Value("${sicknote.sickPay.notification}")
-    private int sickPayNotificationTime;
-
-    private SickNoteDAO sickNoteDAO;
+    private final SickNoteDAO sickNoteDAO;
+    private final SettingsService settingsService;
 
     @Autowired
-    public SickNoteServiceImpl(SickNoteDAO sickNoteDAO) {
+    public SickNoteServiceImpl(SickNoteDAO sickNoteDAO, SettingsService settingsService) {
 
         this.sickNoteDAO = sickNoteDAO;
+        this.settingsService = settingsService;
     }
 
     @Override
@@ -67,8 +64,10 @@ public class SickNoteServiceImpl implements SickNoteService {
     @Override
     public List<SickNote> getSickNotesReachingEndOfSickPay() {
 
-        DateMidnight endDate = DateMidnight.now().plusDays(sickPayNotificationTime);
+        Settings settings = settingsService.getSettings();
 
-        return sickNoteDAO.findSickNotesByMinimumLengthAndEndDate(sickPayLimit, endDate.toDate());
+        DateMidnight endDate = DateMidnight.now().plusDays(settings.getDaysBeforeEndOfSickPayNotification());
+
+        return sickNoteDAO.findSickNotesByMinimumLengthAndEndDate(settings.getMaximumSickPayDays(), endDate.toDate());
     }
 }

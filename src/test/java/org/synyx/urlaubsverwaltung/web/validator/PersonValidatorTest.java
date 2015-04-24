@@ -16,6 +16,8 @@ import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
+import org.synyx.urlaubsverwaltung.core.settings.Settings;
+import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.security.Role;
 import org.synyx.urlaubsverwaltung.web.person.PersonForm;
 
@@ -40,11 +42,14 @@ public class PersonValidatorTest {
     private Errors errors = Mockito.mock(Errors.class);
 
     private PersonService personService = Mockito.mock(PersonService.class);
+    private SettingsService settingsService = Mockito.mock(SettingsService.class);
 
     @Before
     public void setUp() {
 
-        validator = new PersonValidator(personService);
+        Mockito.when(settingsService.getSettings()).thenReturn(new Settings());
+
+        validator = new PersonValidator(personService, settingsService);
         form = new PersonForm(2013);
 
         Mockito.reset(errors);
@@ -243,8 +248,8 @@ public class PersonValidatorTest {
     @Test
     public void ensureRemainingVacationDaysNotExpiringMustNotBeGreaterThanRemainingVacationDays() {
 
-        form.setRemainingVacationDays(new BigDecimal("6"));
-        form.setRemainingVacationDaysNotExpiring(new BigDecimal("7"));
+        form.setRemainingVacationDays(new BigDecimal("5"));
+        form.setRemainingVacationDaysNotExpiring(new BigDecimal("6"));
         validator.validateRemainingVacationDays(form, errors);
         Mockito.verify(errors).rejectValue("remainingVacationDaysNotExpiring", "error.entry");
     }

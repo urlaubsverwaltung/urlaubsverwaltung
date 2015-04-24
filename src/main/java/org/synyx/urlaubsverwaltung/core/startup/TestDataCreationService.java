@@ -18,6 +18,7 @@ import org.synyx.urlaubsverwaltung.core.calendar.Day;
 import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonInteractionService;
+import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteInteractionService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
@@ -58,6 +59,9 @@ public class TestDataCreationService {
 
     @Autowired
     private SickNoteInteractionService sickNoteInteractionService;
+
+    @Autowired
+    private SettingsService settingsService;
 
     private Person user;
     private Person boss;
