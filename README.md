@@ -4,6 +4,8 @@
 
 * [Übersicht](https://github.com/synyx/urlaubsverwaltung#übersicht)
 * [Installation](https://github.com/synyx/urlaubsverwaltung#installation)
+* [Konfiguration < Version 2.7.0](https://github.com/synyx/urlaubsverwaltung#konfiguration--version-270)
+* [Konfiguration ab Version 2.7.0](https://github.com/synyx/urlaubsverwaltung#konfiguration-ab-version-270)
 * [Entwicklung](https://github.com/synyx/urlaubsverwaltung#entwicklung)
 * [Hinweise zu Versionen](https://github.com/synyx/urlaubsverwaltung#hinweise-zu-versionen)
 * [Technologien](https://github.com/synyx/urlaubsverwaltung#technologien)
@@ -142,18 +144,18 @@ Die Anwendung besitzt im Verzeichnis `src/main/resources` jeweils eine `applicat
 * `application-test.properties` zum Testen der Anwendung mit einer MySQL Datenbank
 * `application-prod.properties` zum Ausführen der produktiven Anwendung
 
-Diese beinhalten gewissen Grundeinstellungen Standardwerte, reichen alleine für die Produktivnahme der Anwendung noch nicht aus.
-Spezifische Konfigurationen wie z.B. die Datenbank Einstellungen werden durch eine eigene Properties-Datei hinterlegt.
+Diese beinhalten gewisse Grundeinstellungen und Standardwerte. Diese allein reichen für die Produktivnahme der Anwendung allerdings noch nicht aus.
+Spezifische Konfigurationen wie z.B. die Datenbank Einstellungen müssen durch eine eigene Properties-Datei hinterlegt werden.
 Dazu kann die in der Anwendung befindliche Beispieldatei `urlaubsverwaltung.properties` als Vorlage verwendet werden,
 um die gewünschten Einstellungen zu überschreiben.
 
 Damit die eigene Konfigurationsdatei benutzt wird, gibt es zwei Möglichkeiten:
 
-* Die erstellte Datei `urlaubsverwaltung.properties` nennen und in das `/conf` Verzeichnis unterhalb von `CATALINA_BASE`
+* Eine eigene Properties-Datei erstellen und diese unter dem Namen `urlaubsverwaltung.properties` in das `/conf` Verzeichnis unterhalb von `CATALINA_BASE`
 ablegen, z.B. `tomcat/conf/urlaubsverwaltung.properties`, und den Tomcat neu starten
-* Die erstellte Datei an einem beliebigen Ort ablegen und mithilfe der System Property `config` innerhalb der `CATALINA_OPTS`
+* Die erstellte Properties-Datei an einem beliebigen Ort ablegen und mithilfe der System Property `config` innerhalb der `CATALINA_OPTS`
 den absoluten Pfad der Konfigurationsdatei angeben:
-`export CATALINA_OPTS=$CATALINA_OPTS -Denv=prod -Dauth=activeDirectory -Dconfig=/home/urlaub/config/my.properties`
+<pre>export CATALINA_OPTS=$CATALINA_OPTS -Denv=prod -Dauth=activeDirectory -Dconfig=/home/urlaub/config/my.properties</pre>
 
 ### Produktivumgebung aktivieren
 
