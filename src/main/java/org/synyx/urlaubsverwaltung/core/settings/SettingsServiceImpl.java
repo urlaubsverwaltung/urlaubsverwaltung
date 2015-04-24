@@ -32,6 +32,12 @@ public class SettingsServiceImpl implements SettingsService {
     public Settings getSettings() {
 
         // TODO: Maybe fixed in future for different settings (based on date,...)
-        return settingsDAO.findOne(1);
+        Settings result = settingsDAO.findOne(1);
+
+        if (result == null) {
+            throw new IllegalStateException("No settings in database found.");
+        }
+
+        return result;
     }
 }
