@@ -99,19 +99,7 @@
     <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
     <bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
 
-    <bean id="h2Server" scope="singleton"
-          class="org.h2.tools.Server" factory-method="createTcpServer"
-          init-method="start" destroy-method="stop" depends-on="h2WebServer">
-        <constructor-arg
-                value="-tcp,-tcpAllowOthers,-tcpPort,9995"/>
-    </bean>
-    <bean id="h2WebServer" scope="singleton"
-          class="org.h2.tools.Server" factory-method="createWebServer"
-          init-method="start" destroy-method="stop">
-        <constructor-arg
-                value="-web,-webAllowOthers,-webPort,11115"/>
-    </bean>
-
+    <import resource="dev.xml"/>
     <!-- END:DATABASE -->
 
 </beans>
