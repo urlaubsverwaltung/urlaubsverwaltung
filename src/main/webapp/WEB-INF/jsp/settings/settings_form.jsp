@@ -38,7 +38,7 @@
             <form:hidden path="id" />
             <div class="col-xs-12 col-md-6">                
                 
-                <div class="col-xs-12 form-group">
+                <div class="form-group">
                     <label class="control-label col-md-4" for="maximumAnnualVacationDays"><spring:message code='settings.maximumAnnualVacationDays'/></label>
                 
                     <div class="col-md-8">
@@ -47,7 +47,7 @@
                     </div>
                 </div>
                 
-                <div class="col-xs-12 form-group">
+                <div class="form-group">
                     <label class="control-label col-md-4" for="maximumMonthsToApplyForLeaveInAdvance"><spring:message code='settings.maximumMonthsToApplyForLeaveInAdvance'/></label>
                 
                     <div class="col-md-8">
@@ -56,7 +56,7 @@
                     </div>
                 </div>
                 
-                <div class="col-xs-12 form-group">
+                <div class="form-group">
                     <label class="control-label col-md-4" for="maximumSickPayDays"><spring:message code='settings.maximumSickPayDays'/></label>
                 
                     <div class="col-md-8">
@@ -65,7 +65,7 @@
                     </div>
                 </div>
                 
-                <div class="col-xs-12 form-group">
+                <div class="form-group">
                     <label class="control-label col-md-4" for="daysBeforeEndOfSickPayNotification"><spring:message code='settings.daysBeforeEndOfSickPayNotification'/></label>
                 
                     <div class="col-md-8">
@@ -75,9 +75,9 @@
                 </div>
                 
                 </div>
-                <div class="col-xs-12 col-md-6">
+            <div class="col-xs-12 col-md-6">
                                 
-                <div class="col-xs-12 form-group">
+                <div class="form-group">
                     <label class="control-label col-md-4" for="workingDurationForChristmasEve"><spring:message code='settings.workingDurationForChristmasEve'/></label>
                 
                     <div class="col-md-8">
@@ -89,7 +89,7 @@
                     </div>
                 </div>
                 
-                <div class="col-xs-12 form-group">
+                <div class="form-group">
                     <label class="control-label col-md-4" for="workingDurationForNewYearsEve"><spring:message code='settings.workingDurationForNewYearsEve'/></label>
                 
                     <div class="col-md-8">
@@ -101,7 +101,7 @@
                     </div>
                 </div>
                 
-                <div class="col-xs-12 form-group">
+                <div class="form-group">
                     <label class="control-label col-md-4" for="federalStateType"><spring:message code='settings.federalState'/></label>
                 
                     <div class="col-md-8">
@@ -115,19 +115,17 @@
             
         </div>        
 
-        <div class="row">
+      
+        <div class="col-xs-12">
         
-            <div class="col-xs-12">
+            <hr/>
         
-                <hr/>
-        
-                <button type="submit" class="btn btn-success pull-left col-xs-12 col-sm-5 col-md-2">
-                    <i class='fa fa-check'></i>&nbsp;<spring:message code='action.save'/>
-                </button>
-               
-            </div>
-        
+            <button type="submit" class="btn btn-success pull-left col-xs-12 col-sm-5 col-md-2">
+                <i class='fa fa-check'></i>&nbsp;<spring:message code='action.save'/>
+            </button>
+           
         </div>
+        
         
         </form:form>
         
