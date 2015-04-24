@@ -14,6 +14,9 @@ import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
 import org.synyx.urlaubsverwaltung.security.Role;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.synyx.urlaubsverwaltung.security.Role.*;
 
 
 /**
@@ -57,55 +60,36 @@ class PersonServiceImpl implements PersonService {
     @Override
     public List<Person> getActivePersons() {
 
-        return FluentIterable.from(personDAO.findAll()).filter(new Predicate<Person>() {
+        return personDAO.findAll().stream().
+                filter(person -> !person.hasRole(INACTIVE)).
+                collect(Collectors.toList());
 
-                    @Override
-                    public boolean apply(Person person) {
-
-                        return !person.hasRole(Role.INACTIVE);
-                    }
-                }).toList();
     }
 
 
     @Override
     public List<Person> getInactivePersons() {
 
-        return FluentIterable.from(personDAO.findAll()).filter(new Predicate<Person>() {
-
-                    @Override
-                    public boolean apply(Person person) {
-
-                        return person.hasRole(Role.INACTIVE);
-                    }
-                }).toList();
+        return personDAO.findAll().stream().
+                filter(person -> person.hasRole(INACTIVE)).
+                collect(Collectors.toList());
     }
 
 
     @Override
     public List<Person> getPersonsByRole(final Role role) {
 
-        return Lists.newArrayList(Iterables.filter(getActivePersons(), new Predicate<Person>() {
-
-                        @Override
-                        public boolean apply(Person person) {
-
-                            return person.hasRole(role);
-                        }
-                    }));
+        return getActivePersons().stream().
+                filter(person -> person.hasRole(role)).
+                collect(Collectors.toList());
     }
 
 
     @Override
     public List<Person> getPersonsWithNotificationType(final MailNotification notification) {
 
-        return Lists.newArrayList(Iterables.filter(getActivePersons(), new Predicate<Person>() {
-
-                        @Override
-                        public boolean apply(Person person) {
-
-                            return person.hasNotificationType(notification);
-                        }
-                    }));
+        return getActivePersons().stream().
+                filter(person -> person.hasNotificationType(notification)).
+                collect(Collectors.toList());
     }
 }
