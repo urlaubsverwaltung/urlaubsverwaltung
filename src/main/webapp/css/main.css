@@ -52,9 +52,12 @@ a,
     color: #2A6496;
 }
 
-a:not(.btn):hover,
-.fa-action:hover {
-    color: #59AB02 !important;
+.fa-action.negative:hover {
+    color: #E94B3B;
+}
+
+a:not(.btn):hover {
+    color: #59AB02;
 }
 
 .fa-action:hover {

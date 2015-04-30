@@ -47,19 +47,19 @@
                 <c:if test="${IS_BOSS}">
                     <li>
                         <a href="#"
-                           onclick="$('#reject').hide(); $('#refer').hide(); $('#cancel').hide(); $('#confirm').show();">
+                           onclick="$('#reject').hide(); $('#refer').hide(); $('#cancel').hide(); $('#allow').show();">
                             <i class="fa fa-check"></i>&nbsp;<spring:message code='app.state.ok.short'/>
                         </a>
                     </li>
                     <li>
                         <a href="#"
-                           onclick="$('#refer').hide(); $('#confirm').hide(); $('#cancel').hide(); $('#reject').show();">
+                           onclick="$('#refer').hide(); $('#allow').hide(); $('#cancel').hide(); $('#reject').show();">
                             <i class="fa fa-ban"></i>&nbsp;<spring:message code='app.state.no.short'/>
                         </a>
                     </li>
                     <li>
                         <a href="#"
-                           onclick="$('#reject').hide(); $('#confirm').hide(); $('#cancel').hide(); $('#refer').show();">
+                           onclick="$('#reject').hide(); $('#allow').hide(); $('#cancel').hide(); $('#refer').show();">
                             <i class="fa fa-mail-forward"></i>&nbsp;<spring:message code='app.state.refer.short'/>
                         </a>
                     </li>
@@ -67,7 +67,7 @@
                 <c:if test="${(IS_USER && application.person.id == loggedUser.id) || IS_OFFICE}">
                     <li>
                         <a href="#"
-                           onclick="$('#reject').hide(); $('#confirm').hide(); $('#refer').hide(); $('#cancel').show();">
+                           onclick="$('#reject').hide(); $('#allow').hide(); $('#refer').hide(); $('#cancel').show();">
                             <i class="fa fa-trash"></i>&nbsp;<spring:message code='app.state.cancel'/>
                         </a>
                     </li>
@@ -76,7 +76,7 @@
             <c:if test="${application.status == 'ALLOWED' && IS_OFFICE}">
                     <li>
                         <a href="#"
-                           onclick="$('#reject').hide(); $('#confirm').hide(); $('#refer').hide(); $('#cancel').show();">
+                           onclick="$('#reject').hide(); $('#allow').hide(); $('#refer').hide(); $('#cancel').show();">
                             <i class="fa fa-trash"></i>&nbsp;<spring:message code='app.state.cancel'/>
                         </a>
                     </li>

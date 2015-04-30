@@ -86,7 +86,8 @@ public class ApplicationForLeaveDetailsController {
 
     @RequestMapping(value = "/{applicationId}", method = RequestMethod.GET)
     public String showApplicationDetail(@PathVariable("applicationId") Integer applicationId,
-        @RequestParam(value = ControllerConstants.YEAR, required = false) Integer year, Model model) {
+        @RequestParam(value = ControllerConstants.YEAR, required = false) Integer year,
+        @RequestParam(value = "action", required = false) String action, Model model) {
 
         Person loggedUser = sessionService.getLoggedUser();
 
@@ -100,7 +101,7 @@ public class ApplicationForLeaveDetailsController {
                 year = application.getEndDate().getYear();
             }
 
-            prepareDetailView(application, year, model);
+            prepareDetailView(application, year, action, model);
 
             return ControllerConstants.APPLICATIONS_URL + "/app_detail";
         }
@@ -109,7 +110,7 @@ public class ApplicationForLeaveDetailsController {
     }
 
 
-    private void prepareDetailView(Application application, int year, Model model) {
+    private void prepareDetailView(Application application, int year, String action, Model model) {
 
         model.addAttribute("comment", new CommentForm());
 
@@ -152,6 +153,8 @@ public class ApplicationForLeaveDetailsController {
         // get url of loggedUser's gravatar image
         String url = GravatarUtil.createImgURL(application.getPerson().getEmail());
         model.addAttribute("gravatar", url);
+
+        model.addAttribute("action", action);
     }
 
 
@@ -171,11 +174,13 @@ public class ApplicationForLeaveDetailsController {
 
             if (errors.hasErrors()) {
                 redirectAttributes.addFlashAttribute("errors", errors);
-                redirectAttributes.addFlashAttribute("action", "allow");
-            } else {
-                applicationInteractionService.allow(application.get(), boss, Optional.fromNullable(comment.getText()));
-                redirectAttributes.addFlashAttribute("allowSuccess", true);
+
+                return "redirect:/web/application/" + applicationId + "?action=allow";
             }
+
+            applicationInteractionService.allow(application.get(), boss, Optional.fromNullable(comment.getText()));
+
+            redirectAttributes.addFlashAttribute("allowSuccess", true);
 
             return "redirect:/web/application/" + applicationId;
         } else {
@@ -225,11 +230,12 @@ public class ApplicationForLeaveDetailsController {
 
             if (errors.hasErrors()) {
                 redirectAttributes.addFlashAttribute("errors", errors);
-                redirectAttributes.addFlashAttribute("action", "reject");
-            } else {
-                applicationInteractionService.reject(application.get(), boss, Optional.fromNullable(comment.getText()));
-                redirectAttributes.addFlashAttribute("rejectSuccess", true);
+
+                return "redirect:/web/application/" + applicationId + "?action=reject";
             }
+
+            applicationInteractionService.reject(application.get(), boss, Optional.fromNullable(comment.getText()));
+            redirectAttributes.addFlashAttribute("rejectSuccess", true);
 
             return "redirect:/web/application/" + applicationId;
         }
@@ -275,10 +281,11 @@ public class ApplicationForLeaveDetailsController {
 
         if (errors.hasErrors()) {
             redirectAttributes.addFlashAttribute("errors", errors);
-            redirectAttributes.addFlashAttribute("action", "cancel");
-        } else {
-            applicationInteractionService.cancel(application, loggedUser, Optional.fromNullable(comment.getText()));
+
+            return "redirect:/web/application/" + applicationId + "?action=cancel";
         }
+
+        applicationInteractionService.cancel(application, loggedUser, Optional.fromNullable(comment.getText()));
 
         return "redirect:/web/application/" + applicationId;
     }

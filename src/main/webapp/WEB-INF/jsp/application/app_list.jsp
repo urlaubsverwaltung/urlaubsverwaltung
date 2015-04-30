@@ -56,9 +56,7 @@
                                     <img class="img-circle" src="<c:out value='${gravatarUrls[application]}?d=mm&s=60'/>"/>&nbsp;
                                   </td>
                                   <td>
-                                    <a href="${URL_PREFIX}/staff/${application.person.id}">
-                                      <h4><c:out value="${application.person.niceName}"/></h4>
-                                    </a>
+                                    <h4><c:out value="${application.person.niceName}"/></h4>
                                     <p><spring:message code="app.apply"/></p>
                                   </td>
                                   <td>
@@ -81,6 +79,14 @@
                                     <i class="fa fa-clock-o"></i>
                                     <spring:message code="application.progress.WAITING"/>
                                     <uv:date date="${application.applicationDate}"/>
+                                  </td>
+                                  <td>
+                                    <a class="fa-action" href="${URL_PREFIX}/application/${application.id}?action=allow">
+                                        <i class="fa fa-check"></i>
+                                    </a>
+                                    <a class="fa-action negative" href="${URL_PREFIX}/application/${application.id}?action=reject">
+                                        <i class="fa fa-ban"></i>
+                                    </a>
                                   </td>
                                 </tr>
                               </c:forEach>
