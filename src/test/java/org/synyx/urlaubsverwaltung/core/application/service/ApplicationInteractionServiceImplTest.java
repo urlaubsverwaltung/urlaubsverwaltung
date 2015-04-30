@@ -21,7 +21,7 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 /**
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public class ApplicationInteractionServiceTest {
+public class ApplicationInteractionServiceImplTest {
 
     private ApplicationInteractionService service;
 

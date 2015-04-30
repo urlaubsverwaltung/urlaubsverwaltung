@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.core.application.service;
+package org.synyx.urlaubsverwaltung.core.sicknote.comment;
 
 import com.google.common.base.Optional;
 
@@ -9,29 +9,27 @@ import org.junit.Test;
 
 import org.mockito.Mockito;
 
-import org.synyx.urlaubsverwaltung.core.application.dao.CommentDAO;
-import org.synyx.urlaubsverwaltung.core.application.domain.Application;
-import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 
 
 /**
- * Unit test for {@link org.synyx.urlaubsverwaltung.core.application.service.CommentServiceImpl}.
+ * Unit test for {@link org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteCommentServiceImpl}.
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public class CommentServiceTest {
+public class SickNoteCommentServiceImplTest {
 
-    private CommentService commentService;
+    private SickNoteCommentService sickNoteCommentService;
 
-    private CommentDAO commentDAO;
+    private SickNoteCommentDAO commentDAO;
 
     @Before
     public void setUp() {
 
-        commentDAO = Mockito.mock(CommentDAO.class);
-        commentService = new CommentServiceImpl(commentDAO);
+        commentDAO = Mockito.mock(SickNoteCommentDAO.class);
+
+        sickNoteCommentService = new SickNoteCommentServiceImpl(commentDAO);
     }
 
 
@@ -39,19 +37,20 @@ public class CommentServiceTest {
     public void ensureCreatesACommentAndPersistsIt() {
 
         Person author = new Person();
-        Application application = new Application();
+        SickNote sickNote = new SickNote();
 
-        Comment comment = commentService.create(application, ApplicationStatus.ALLOWED, Optional.<String>absent(),
-                author);
+        SickNoteComment comment = sickNoteCommentService.create(sickNote, SickNoteStatus.EDITED,
+                Optional.<String>absent(), author);
 
         Assert.assertNotNull("Should not be null", comment);
 
+        Assert.assertNotNull("Sick note should be set", comment.getSickNote());
         Assert.assertNotNull("Date should be set", comment.getDate());
         Assert.assertNotNull("Status should be set", comment.getStatus());
         Assert.assertNotNull("Author should be set", comment.getPerson());
-        Assert.assertNotNull("Application for leave should be set", comment.getApplication());
 
-        Assert.assertEquals("Wrong status", ApplicationStatus.ALLOWED, comment.getStatus());
+        Assert.assertEquals("Wrong sick note", sickNote, comment.getSickNote());
+        Assert.assertEquals("Wrong status", SickNoteStatus.EDITED, comment.getStatus());
         Assert.assertEquals("Wrong author", author, comment.getPerson());
 
         Assert.assertNull("Text should not be set", comment.getText());
@@ -64,18 +63,21 @@ public class CommentServiceTest {
     public void ensureCreationOfCommentWithTextWorks() {
 
         Person author = new Person();
-        Application application = new Application();
+        SickNote sickNote = new SickNote();
 
-        Comment comment = commentService.create(application, ApplicationStatus.REJECTED, Optional.of("Foo"), author);
+        SickNoteComment comment = sickNoteCommentService.create(sickNote, SickNoteStatus.CONVERTED_TO_VACATION,
+                Optional.of("Foo"), author);
 
         Assert.assertNotNull("Should not be null", comment);
 
+        Assert.assertNotNull("Sick note should be set", comment.getSickNote());
         Assert.assertNotNull("Date should be set", comment.getDate());
         Assert.assertNotNull("Status should be set", comment.getStatus());
         Assert.assertNotNull("Author should be set", comment.getPerson());
         Assert.assertNotNull("Text should be set", comment.getText());
 
-        Assert.assertEquals("Wrong status", ApplicationStatus.REJECTED, comment.getStatus());
+        Assert.assertEquals("Wrong sick note", sickNote, comment.getSickNote());
+        Assert.assertEquals("Wrong status", SickNoteStatus.CONVERTED_TO_VACATION, comment.getStatus());
         Assert.assertEquals("Wrong author", author, comment.getPerson());
         Assert.assertEquals("Wrong text", "Foo", comment.getText());
 

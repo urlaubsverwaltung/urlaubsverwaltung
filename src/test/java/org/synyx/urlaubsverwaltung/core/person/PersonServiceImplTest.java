@@ -1,113 +1,170 @@
 package org.synyx.urlaubsverwaltung.core.person;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 
-import org.mockito.Mock;
-
-import org.mockito.runners.MockitoJUnitRunner;
-
+import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
 import org.synyx.urlaubsverwaltung.security.Role;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.is;
 
-import static org.junit.Assert.assertThat;
-
-import static org.mockito.Mockito.when;
-
-import static org.synyx.urlaubsverwaltung.core.mail.MailNotification.NOTIFICATION_BOSS;
-import static org.synyx.urlaubsverwaltung.core.mail.MailNotification.NOTIFICATION_OFFICE;
-import static org.synyx.urlaubsverwaltung.security.Role.BOSS;
-
-import static java.util.Arrays.asList;
-
-
-@RunWith(MockitoJUnitRunner.class)
+/**
+ * @author  Aljona Murygina
+ * @author  Johannes Reuter
+ */
 public class PersonServiceImplTest {
 
-    private PersonServiceImpl sut;
-
-    @Mock
-    private PersonDAO personDAOMock;
-    private ArrayList<Person> persons;
-    private Person activeBoss;
+    private PersonService service;
+    private PersonDAO personDAO;
 
     @Before
     public void setUp() {
 
-        sut = new PersonServiceImpl(personDAOMock);
+        personDAO = Mockito.mock(PersonDAO.class);
 
-        activeBoss = new Person();
-        activeBoss.setFirstName("pete");
-        activeBoss.setPermissions(asList(BOSS));
-        activeBoss.setNotifications(asList(NOTIFICATION_BOSS));
-
-        Person activeUser = new Person();
-        activeUser.setPermissions(asList(Role.USER));
-        activeUser.setFirstName("bete");
-        activeUser.setNotifications(asList(NOTIFICATION_OFFICE));
-
-        Person notActivePerson = new Person();
-        notActivePerson.setFirstName("maria");
-        notActivePerson.setPermissions(asList(Role.INACTIVE));
-
-        persons = new ArrayList<>();
-        persons.add(activeBoss);
-        persons.add(activeUser);
-        persons.add(notActivePerson);
+        service = new PersonServiceImpl(personDAO);
     }
 
 
     @Test
-    public void getActivePersons() {
+    public void ensureSaveCallsCorrectDaoMethod() {
 
-        when(personDAOMock.findAll()).thenReturn(persons);
-
-        List<Person> activePersons = sut.getActivePersons();
-
-        assertThat(activePersons.size(), is(2));
-        assertThat(activePersons.get(0).getFirstName(), is("pete"));
-        assertThat(activePersons.get(1).getFirstName(), is("bete"));
+        Person personToSave = new Person();
+        service.save(personToSave);
+        Mockito.verify(personDAO).save(personToSave);
     }
 
 
     @Test
-    public void getInactivePersons() {
+    public void ensureGetPersonByIDCallsCorrectDaoMethod() {
 
-        when(personDAOMock.findAll()).thenReturn(persons);
-
-        List<Person> activePersons = sut.getInactivePersons();
-
-        assertThat(activePersons.size(), is(1));
-        assertThat(activePersons.get(0).getFirstName(), is("maria"));
+        service.getPersonByID(123);
+        Mockito.verify(personDAO).findOne(123);
     }
 
 
     @Test
-    public void getPersonsByRole() {
+    public void ensureGetPersonByLoginCallsCorrectDaoMethod() {
 
-        when(personDAOMock.findAll()).thenReturn(persons);
+        String login = "foo";
 
-        List<Person> bosses = sut.getPersonsByRole(BOSS);
+        service.getPersonByLogin(login);
 
-        assertThat(bosses.size(), is(1));
-        assertThat(bosses.get(0).getFirstName(), is("pete"));
+        Mockito.verify(personDAO).findByLoginName(login);
     }
 
 
     @Test
-    public void getPersonsWithNotificationType() {
+    public void ensureGetActivePersonsReturnsOnlyPersonsThatHaveNotInactiveRole() {
 
-        when(personDAOMock.findAll()).thenReturn(persons);
+        Person inactive = new Person();
+        inactive.setPermissions(Arrays.asList(Role.INACTIVE));
 
-        List<Person> bosses = sut.getPersonsWithNotificationType(NOTIFICATION_OFFICE);
+        Person user = new Person();
+        user.setPermissions(Arrays.asList(Role.USER));
 
-        assertThat(bosses.size(), is(1));
-        assertThat(bosses.get(0).getFirstName(), is("bete"));
+        Person boss = new Person();
+        boss.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
+
+        Person office = new Person();
+        office.setPermissions(Arrays.asList(Role.USER, Role.BOSS, Role.OFFICE));
+
+        List<Person> allPersons = Arrays.asList(inactive, user, boss, office);
+
+        Mockito.when(personDAO.findAll()).thenReturn(allPersons);
+
+        List<Person> activePersons = service.getActivePersons();
+
+        Assert.assertEquals("Wrong number of persons", 3, activePersons.size());
+
+        Assert.assertTrue("Missing person", activePersons.contains(user));
+        Assert.assertTrue("Missing person", activePersons.contains(boss));
+        Assert.assertTrue("Missing person", activePersons.contains(office));
+    }
+
+
+    @Test
+    public void ensureGetInactivePersonsReturnsOnlyPersonsThatHaveInactiveRole() {
+
+        Person inactive = new Person();
+        inactive.setPermissions(Arrays.asList(Role.INACTIVE));
+
+        Person user = new Person();
+        user.setPermissions(Arrays.asList(Role.USER));
+
+        Person boss = new Person();
+        boss.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
+
+        Person office = new Person();
+        office.setPermissions(Arrays.asList(Role.USER, Role.BOSS, Role.OFFICE));
+
+        List<Person> allPersons = Arrays.asList(inactive, user, boss, office);
+
+        Mockito.when(personDAO.findAll()).thenReturn(allPersons);
+
+        List<Person> inactivePersons = service.getInactivePersons();
+
+        Assert.assertEquals("Wrong number of persons", 1, inactivePersons.size());
+
+        Assert.assertTrue("Missing person", inactivePersons.contains(inactive));
+    }
+
+
+    @Test
+    public void ensureGetPersonsByRoleReturnsOnlyPersonsWithTheGivenRole() {
+
+        Person user = new Person();
+        user.setPermissions(Arrays.asList(Role.USER));
+
+        Person boss = new Person();
+        boss.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
+
+        Person office = new Person();
+        office.setPermissions(Arrays.asList(Role.USER, Role.BOSS, Role.OFFICE));
+
+        List<Person> allPersons = Arrays.asList(user, boss, office);
+
+        Mockito.when(personDAO.findAll()).thenReturn(allPersons);
+
+        List<Person> filteredList = service.getPersonsByRole(Role.BOSS);
+
+        Assert.assertEquals("Wrong number of persons", 2, filteredList.size());
+
+        Assert.assertTrue("Missing person", filteredList.contains(boss));
+        Assert.assertTrue("Missing person", filteredList.contains(office));
+    }
+
+
+    @Test
+    public void ensureGetPersonsByNotificationTypeReturnsOnlyPersonsWithTheGivenNotificationType() {
+
+        Person user = new Person();
+        user.setPermissions(Arrays.asList(Role.USER));
+        user.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER));
+
+        Person boss = new Person();
+        boss.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
+        boss.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS));
+
+        Person office = new Person();
+        office.setPermissions(Arrays.asList(Role.USER, Role.BOSS, Role.OFFICE));
+        office.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS,
+                MailNotification.NOTIFICATION_OFFICE));
+
+        List<Person> allPersons = Arrays.asList(user, boss, office);
+
+        Mockito.when(personDAO.findAll()).thenReturn(allPersons);
+
+        List<Person> filteredList = service.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS);
+
+        Assert.assertEquals("Wrong number of persons", 2, filteredList.size());
+
+        Assert.assertTrue("Missing person", filteredList.contains(boss));
+        Assert.assertTrue("Missing person", filteredList.contains(office));
     }
 }
