@@ -27,7 +27,7 @@ import java.util.Arrays;
 /**
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public class PersonInteractionServiceTest {
+public class PersonInteractionServiceImplTest {
 
     private PersonInteractionService service;
 

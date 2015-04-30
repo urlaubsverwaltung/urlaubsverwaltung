@@ -24,7 +24,7 @@ import java.util.Arrays;
 /**
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public class MailServiceTest {
+public class MailServiceImplTest {
 
     private MailServiceImpl mailService;
     private JavaMailSender mailSender;

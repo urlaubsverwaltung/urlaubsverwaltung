@@ -25,7 +25,7 @@ import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteStatus;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public class SickNoteInteractionServiceTest {
+public class SickNoteInteractionServiceImplTest {
 
     private SickNoteInteractionService sickNoteInteractionService;
 
