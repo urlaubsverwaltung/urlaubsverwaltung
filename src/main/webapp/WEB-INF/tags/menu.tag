@@ -154,7 +154,7 @@
         </sec:authorize>
 
         <sec:authorize access="hasAnyRole('OFFICE')">
-          <li class="dropdown">
+          <li>
             <a href="${URL_PREFIX}/settings">
               <i class="fa fa-fw fa-cogs"></i>
               <span class="nav-title"><spring:message code="nav.settings.title"/></span>

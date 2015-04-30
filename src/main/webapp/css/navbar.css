@@ -83,6 +83,10 @@
     .navbar-nav > li > a {
         padding-top: 10px;
         padding-bottom: 10px;
+        text-transform: uppercase;
+    }
+    .navbar-nav > li > a .fa {
+        display: none;
     }
     .navbar a.dropdown-toggle {
         text-transform: uppercase;
