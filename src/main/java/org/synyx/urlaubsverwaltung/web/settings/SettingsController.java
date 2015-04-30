@@ -11,6 +11,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.settings.FederalState;
@@ -52,13 +53,16 @@ public class SettingsController {
 
 
     @RequestMapping(value = "/settings", method = RequestMethod.PUT)
-    public String settingsSaved(@ModelAttribute("settings") Settings settings, Errors errors, Model model) {
+    public String settingsSaved(@ModelAttribute("settings") Settings settings, Errors errors, Model model,
+        RedirectAttributes redirectAttributes) {
 
         if (sessionService.isOffice()) {
             settingsValidator.validate(settings, errors);
 
             if (!errors.hasErrors()) {
                 settingsService.save(settings);
+
+                redirectAttributes.addFlashAttribute("referSuccess", true);
 
                 return "redirect:/web/settings";
             } else {

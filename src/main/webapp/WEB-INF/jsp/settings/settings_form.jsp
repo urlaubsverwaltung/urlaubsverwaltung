@@ -24,6 +24,13 @@
     <div class="container">
     
         <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 feedback">
+                <c:if test="${referSuccess}">
+                    <div class="alert alert-success">
+                        <spring:message code="settings.action.refer.success" />
+                    </div>
+                </c:if>
+            </div>
             <div class="col-xs-12 header">
             
                 <legend>
