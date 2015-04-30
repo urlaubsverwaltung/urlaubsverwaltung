@@ -62,7 +62,7 @@ public class SettingsController {
             if (!errors.hasErrors()) {
                 settingsService.save(settings);
 
-                redirectAttributes.addFlashAttribute("referSuccess", true);
+                redirectAttributes.addFlashAttribute("success", true);
 
                 return "redirect:/web/settings";
             } else {

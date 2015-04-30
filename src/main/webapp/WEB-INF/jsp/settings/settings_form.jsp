@@ -25,9 +25,9 @@
     
         <div class="row">
             <div class="col-xs-12 col-sm-12 col-md-12 feedback">
-                <c:if test="${referSuccess}">
+                <c:if test="${success}">
                     <div class="alert alert-success">
-                        <spring:message code="settings.action.refer.success" />
+                        <spring:message code="settings.action.success" />
                     </div>
                 </c:if>
             </div>
