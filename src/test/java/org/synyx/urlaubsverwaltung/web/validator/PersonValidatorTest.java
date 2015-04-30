@@ -1,8 +1,6 @@
 
 package org.synyx.urlaubsverwaltung.web.validator;
 
-import com.google.common.base.Optional;
-
 import org.joda.time.DateMidnight;
 
 import org.junit.Before;
@@ -25,6 +23,7 @@ import java.math.BigDecimal;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Optional;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -269,7 +268,7 @@ public class PersonValidatorTest {
     @Test
     public void ensureUniqueUsernameHasNoValidationError() {
 
-        Mockito.when(personService.getPersonByLogin("foo")).thenReturn(Optional.<Person>absent());
+        Mockito.when(personService.getPersonByLogin("foo")).thenReturn(Optional.<Person>empty());
         validator.validateLogin("foo", errors);
         Mockito.verify(errors, Mockito.never()).rejectValue(Mockito.anyString(), Mockito.anyString());
     }

@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.restapi;
 
-import com.google.common.base.Optional;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -27,6 +26,7 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 
 /**

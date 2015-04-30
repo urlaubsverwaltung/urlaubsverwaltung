@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.security;
 
-import com.google.common.base.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -10,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
+
+import java.util.Optional;
 
 
 /**

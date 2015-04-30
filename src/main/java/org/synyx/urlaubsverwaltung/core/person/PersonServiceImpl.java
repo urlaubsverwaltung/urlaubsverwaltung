@@ -1,11 +1,5 @@
 package org.synyx.urlaubsverwaltung.core.person;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
@@ -14,6 +8,10 @@ import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
 import org.synyx.urlaubsverwaltung.security.Role;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static org.synyx.urlaubsverwaltung.security.Role.*;
 
 
 /**
@@ -43,69 +41,50 @@ class PersonServiceImpl implements PersonService {
     @Override
     public Optional<Person> getPersonByID(Integer id) {
 
-        return Optional.fromNullable(personDAO.findOne(id));
+        return java.util.Optional.ofNullable(personDAO.findOne(id));
     }
 
 
     @Override
     public Optional<Person> getPersonByLogin(String loginName) {
 
-        return Optional.fromNullable(personDAO.findByLoginName(loginName));
+        return java.util.Optional.ofNullable(personDAO.findByLoginName(loginName));
     }
 
 
     @Override
     public List<Person> getActivePersons() {
 
-        return FluentIterable.from(personDAO.findAll()).filter(new Predicate<Person>() {
+        return personDAO.findAll().stream().
+                filter(person -> !person.hasRole(INACTIVE)).
+                collect(Collectors.toList());
 
-                    @Override
-                    public boolean apply(Person person) {
-
-                        return !person.hasRole(Role.INACTIVE);
-                    }
-                }).toList();
     }
 
 
     @Override
     public List<Person> getInactivePersons() {
 
-        return FluentIterable.from(personDAO.findAll()).filter(new Predicate<Person>() {
-
-                    @Override
-                    public boolean apply(Person person) {
-
-                        return person.hasRole(Role.INACTIVE);
-                    }
-                }).toList();
+        return personDAO.findAll().stream().
+                filter(person -> person.hasRole(INACTIVE)).
+                collect(Collectors.toList());
     }
 
 
     @Override
     public List<Person> getPersonsByRole(final Role role) {
 
-        return Lists.newArrayList(Iterables.filter(getActivePersons(), new Predicate<Person>() {
-
-                        @Override
-                        public boolean apply(Person person) {
-
-                            return person.hasRole(role);
-                        }
-                    }));
+        return getActivePersons().stream().
+                filter(person -> person.hasRole(role)).
+                collect(Collectors.toList());
     }
 
 
     @Override
     public List<Person> getPersonsWithNotificationType(final MailNotification notification) {
 
-        return Lists.newArrayList(Iterables.filter(getActivePersons(), new Predicate<Person>() {
-
-                        @Override
-                        public boolean apply(Person person) {
-
-                            return person.hasNotificationType(notification);
-                        }
-                    }));
+        return getActivePersons().stream().
+                filter(person -> person.hasNotificationType(notification)).
+                collect(Collectors.toList());
     }
 }

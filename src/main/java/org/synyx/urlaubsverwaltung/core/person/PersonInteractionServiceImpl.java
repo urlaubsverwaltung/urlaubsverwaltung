@@ -109,7 +109,7 @@ public class PersonInteractionServiceImpl implements PersonInteractionService {
     @Override
     public Person update(PersonForm personForm) {
 
-        Optional<Person> optionalPersonToUpdate = personService.getPersonByID(personForm.getId());
+        java.util.Optional<Person> optionalPersonToUpdate = personService.getPersonByID(personForm.getId());
 
         if (!optionalPersonToUpdate.isPresent()) {
             throw new IllegalArgumentException("Can not find a person for ID = " + personForm.getId());

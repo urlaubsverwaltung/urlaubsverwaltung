@@ -1,11 +1,10 @@
 package org.synyx.urlaubsverwaltung.core.person;
 
-import com.google.common.base.Optional;
-
 import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
 import org.synyx.urlaubsverwaltung.security.Role;
 
 import java.util.List;
+import java.util.Optional;
 
 
 /**

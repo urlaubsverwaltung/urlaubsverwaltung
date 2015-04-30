@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.security;
 
-import com.google.common.base.Optional;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,6 +12,7 @@ import org.synyx.urlaubsverwaltung.core.startup.TestDataCreationService;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 
 
 /**

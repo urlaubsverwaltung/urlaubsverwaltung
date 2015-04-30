@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.restapi;
 
 import com.google.common.base.Function;
-import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
 import com.wordnik.swagger.annotations.Api;
@@ -22,6 +21,7 @@ import org.synyx.urlaubsverwaltung.core.person.PersonService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 /**
