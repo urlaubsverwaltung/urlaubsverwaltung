@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.core.calendar.workingtime;
 
-import com.google.common.base.Optional;
-
 import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +12,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.util.List;
+import java.util.Optional;
 
 
 /**
@@ -63,13 +62,12 @@ public class WorkingTimeService {
 
     public Optional<WorkingTime> getByPersonAndValidityDateEqualsOrMinorDate(Person person, DateMidnight date) {
 
-        return Optional.fromNullable(workingTimeDAO.findByPersonAndValidityDateEqualsOrMinorDate(person,
-                    date.toDate()));
+        return Optional.ofNullable(workingTimeDAO.findByPersonAndValidityDateEqualsOrMinorDate(person, date.toDate()));
     }
 
 
     public Optional<WorkingTime> getCurrentOne(Person person) {
 
-        return Optional.fromNullable(workingTimeDAO.findLastOneByPerson(person));
+        return Optional.ofNullable(workingTimeDAO.findLastOneByPerson(person));
     }
 }

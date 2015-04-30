@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.web.statistics;
 
-import com.google.common.base.Optional;
-
 import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +22,7 @@ import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import java.math.BigDecimal;
 
 import java.util.List;
+import java.util.Optional;
 
 
 /**

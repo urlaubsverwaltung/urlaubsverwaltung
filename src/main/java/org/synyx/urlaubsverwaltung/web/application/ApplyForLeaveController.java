@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.web.application;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.FluentIterable;
 
 import org.joda.time.DateMidnight;
@@ -40,6 +39,7 @@ import org.synyx.urlaubsverwaltung.web.validator.ApplicationValidator;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 
 /**
@@ -205,7 +205,7 @@ public class ApplyForLeaveController {
         Application application = appForm.generateApplicationForLeave();
 
         Application savedApplicationForLeave = applicationInteractionService.apply(application, applier,
-                Optional.fromNullable(appForm.getComment()));
+                Optional.ofNullable(appForm.getComment()));
 
         redirectAttributes.addFlashAttribute("applySuccess", true);
 

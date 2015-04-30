@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.web.statistics;
 
-import com.google.common.base.Optional;
-
 import org.joda.time.DateMidnight;
 
 import org.junit.Assert;
@@ -25,6 +23,7 @@ import java.math.BigDecimal;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 
 /**

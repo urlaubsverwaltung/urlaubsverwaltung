@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.core.sicknote;
 
-import com.google.common.base.Optional;
-
 import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +11,7 @@ import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 
 import java.util.List;
+import java.util.Optional;
 
 
 /**
@@ -43,7 +42,7 @@ public class SickNoteServiceImpl implements SickNoteService {
     @Override
     public Optional<SickNote> getById(Integer id) {
 
-        return Optional.fromNullable(sickNoteDAO.findOne(id));
+        return Optional.ofNullable(sickNoteDAO.findOne(id));
     }
 
 

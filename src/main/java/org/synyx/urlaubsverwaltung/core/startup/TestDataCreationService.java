@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.core.startup;
 
-import com.google.common.base.Optional;
-
 import org.apache.log4j.Logger;
 
 import org.joda.time.DateMidnight;
@@ -32,6 +30,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 

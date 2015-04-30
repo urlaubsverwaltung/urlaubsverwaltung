@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.core.sicknote;
 
-import com.google.common.base.Optional;
-
 import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +17,8 @@ import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteCommentService;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteStatus;
+
+import java.util.Optional;
 
 
 /**
@@ -60,7 +60,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
         sickNote.setLastEdited(DateMidnight.now());
 
         sickNoteService.save(sickNote);
-        sickNoteCommentService.create(sickNote, SickNoteStatus.CREATED, Optional.<String>absent(), creator);
+        sickNoteCommentService.create(sickNote, SickNoteStatus.CREATED, Optional.<String>empty(), creator);
 
         return sickNote;
     }
@@ -73,7 +73,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
         sickNote.setLastEdited(DateMidnight.now());
 
         sickNoteService.save(sickNote);
-        sickNoteCommentService.create(sickNote, SickNoteStatus.EDITED, Optional.<String>absent(), editor);
+        sickNoteCommentService.create(sickNote, SickNoteStatus.EDITED, Optional.<String>empty(), editor);
 
         return sickNote;
     }
@@ -88,7 +88,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
 
         signService.signApplicationByBoss(application, converter);
         applicationService.save(application);
-        applicationCommentService.create(application, ApplicationStatus.ALLOWED, Optional.<String>absent(), converter);
+        applicationCommentService.create(application, ApplicationStatus.ALLOWED, Optional.<String>empty(), converter);
         mailService.sendSickNoteConvertedToVacationNotification(application);
 
         // make sick note inactive
@@ -96,7 +96,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
         sickNote.setLastEdited(DateMidnight.now());
 
         sickNoteService.save(sickNote);
-        sickNoteCommentService.create(sickNote, SickNoteStatus.CONVERTED_TO_VACATION, Optional.<String>absent(),
+        sickNoteCommentService.create(sickNote, SickNoteStatus.CONVERTED_TO_VACATION, Optional.<String>empty(),
             converter);
 
         return sickNote;
@@ -110,7 +110,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
         sickNote.setLastEdited(DateMidnight.now());
 
         sickNoteService.save(sickNote);
-        sickNoteCommentService.create(sickNote, SickNoteStatus.CANCELLED, Optional.<String>absent(), canceller);
+        sickNoteCommentService.create(sickNote, SickNoteStatus.CANCELLED, Optional.<String>empty(), canceller);
 
         return sickNote;
     }

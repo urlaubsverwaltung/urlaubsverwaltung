@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.core.application.service;
 
-import com.google.common.base.Optional;
-
 import junit.framework.Assert;
 
 import org.junit.Before;
@@ -14,6 +12,8 @@ import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+
+import java.util.Optional;
 
 
 /**
@@ -41,7 +41,7 @@ public class CommentServiceImplTest {
         Person author = new Person();
         Application application = new Application();
 
-        Comment comment = commentService.create(application, ApplicationStatus.ALLOWED, Optional.<String>absent(),
+        Comment comment = commentService.create(application, ApplicationStatus.ALLOWED, Optional.<String>empty(),
                 author);
 
         Assert.assertNotNull("Should not be null", comment);

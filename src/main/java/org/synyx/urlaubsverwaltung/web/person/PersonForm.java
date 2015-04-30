@@ -1,7 +1,6 @@
 
 package org.synyx.urlaubsverwaltung.web.person;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
@@ -23,6 +22,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
+
+import static org.synyx.urlaubsverwaltung.security.Role.INACTIVE;
 
 
 /**
@@ -322,7 +324,7 @@ public class PersonForm {
 
         if (personShouldBeSetToInactive(permissions)) {
             List<Role> onlyInactive = new ArrayList<>();
-            onlyInactive.add(Role.INACTIVE);
+            onlyInactive.add(INACTIVE);
             person.setPermissions(onlyInactive);
         } else {
             person.setPermissions(permissions);
@@ -332,15 +334,9 @@ public class PersonForm {
 
     private boolean personShouldBeSetToInactive(Collection<Role> permissions) {
 
-        Optional<Role> shouldBeInactiveOptional = Iterables.tryFind(permissions, new Predicate<Role>() {
-
-                    @Override
-                    public boolean apply(Role role) {
-
-                        return role.equals(Role.INACTIVE);
-                    }
-                });
-
-        return shouldBeInactiveOptional.isPresent();
+        return permissions.stream().
+                filter(permission -> permission.equals(INACTIVE)).
+                findFirst().
+                isPresent();
     }
 }

@@ -1,8 +1,6 @@
 
 package org.synyx.urlaubsverwaltung.core.calendar;
 
-import com.google.common.base.Optional;
-
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
 
@@ -25,6 +23,7 @@ import java.math.BigDecimal;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

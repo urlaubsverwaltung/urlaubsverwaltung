@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.core.application.service;
 
-import com.google.common.base.Optional;
-
 import org.joda.time.DateMidnight;
 
 import org.junit.Assert;
@@ -16,6 +14,8 @@ import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+
+import java.util.Optional;
 
 
 /**

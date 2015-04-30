@@ -1,8 +1,6 @@
 
 package org.synyx.urlaubsverwaltung.core.cron;
 
-import com.google.common.base.Optional;
-
 import org.apache.log4j.Logger;
 
 import org.joda.time.DateMidnight;
@@ -22,6 +20,7 @@ import org.synyx.urlaubsverwaltung.core.person.PersonService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 /**

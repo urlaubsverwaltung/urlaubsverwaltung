@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.core.person;
 
-import com.google.common.base.Optional;
-
 import org.apache.log4j.Logger;
 
 import org.joda.time.DateMidnight;
@@ -24,6 +22,8 @@ import java.math.BigDecimal;
 
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
+
+import java.util.Optional;
 
 
 /**

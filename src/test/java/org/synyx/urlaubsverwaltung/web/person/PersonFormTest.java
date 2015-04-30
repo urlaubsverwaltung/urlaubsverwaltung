@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.web.person;
 
-import com.google.common.base.Optional;
-
 import org.joda.time.DateMidnight;
 
 import org.junit.Assert;
@@ -9,10 +7,9 @@ import org.junit.Test;
 
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;
-import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
-import org.synyx.urlaubsverwaltung.security.Role;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 
 /**
@@ -25,8 +22,8 @@ public class PersonFormTest {
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsIfPersonIsNull() {
 
-        new PersonForm(null, 2014, Optional.<Account>absent(), Optional.<WorkingTime>absent(), new ArrayList<Role>(),
-            new ArrayList<MailNotification>());
+        new PersonForm(null, 2014, Optional.<Account>empty(), Optional.<WorkingTime>empty(), new ArrayList<>(),
+            new ArrayList<>());
     }
 
 

@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.core.sicknote.comment;
 
-import com.google.common.base.Optional;
-
 import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +10,7 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 
 import java.util.List;
+import java.util.Optional;
 
 
 /**
