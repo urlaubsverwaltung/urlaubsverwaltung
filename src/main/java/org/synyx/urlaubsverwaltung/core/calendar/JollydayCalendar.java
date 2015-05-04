@@ -4,9 +4,6 @@
  */
 package org.synyx.urlaubsverwaltung.core.calendar;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 
 import de.jollyday.Holiday;
 import de.jollyday.HolidayManager;
@@ -27,6 +24,8 @@ import java.math.BigDecimal;
 import java.net.URL;
 
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 
 /**
@@ -111,15 +110,13 @@ public class JollydayCalendar {
 
         Set<Holiday> holidays = getHolidays(year);
 
-        Iterable<Holiday> holidaysForMonth = Iterables.filter(holidays, new Predicate<Holiday>() {
+        return holidays.stream().
+                filter(byMonth(month)).
+                collect(Collectors.toSet());
 
-                    @Override
-                    public boolean apply(Holiday holiday) {
+    }
 
-                        return holiday.getDate().getMonthOfYear() == month;
-                    }
-                });
-
-        return Sets.newHashSet(holidaysForMonth);
+    private Predicate<Holiday> byMonth(int month) {
+        return holiday -> holiday.getDate().getMonthOfYear() == month;
     }
 }

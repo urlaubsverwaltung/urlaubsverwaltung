@@ -1,8 +1,6 @@
 
 package org.synyx.urlaubsverwaltung.web.person;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 
 import org.joda.time.DateMidnight;
 

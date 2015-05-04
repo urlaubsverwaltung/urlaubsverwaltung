@@ -1,8 +1,5 @@
 package org.synyx.urlaubsverwaltung.core.account.service;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.FluentIterable;
-
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
 
@@ -24,6 +21,7 @@ import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import java.math.BigDecimal;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -112,17 +110,11 @@ public class VacationDaysService {
                 firstMilestone, lastMilestone, person);
 
         // filter them since only waiting and allowed applications for leave of type holiday are relevant
-        List<Application> applicationsForLeave = FluentIterable.from(allApplicationsForLeave).filter(
-                new Predicate<Application>() {
-
-                    @Override
-                    public boolean apply(Application input) {
-
-                        return input.getVacationType() == VacationType.HOLIDAY
-                            && (input.hasStatus(ApplicationStatus.WAITING)
-                                || input.hasStatus(ApplicationStatus.ALLOWED));
-                    }
-                }).toList();
+        List<Application> applicationsForLeave = allApplicationsForLeave.stream().
+                filter(input -> input.getVacationType() == VacationType.HOLIDAY
+                        && (input.hasStatus(ApplicationStatus.WAITING)
+                        || input.hasStatus(ApplicationStatus.ALLOWED))).
+                collect(Collectors.toList());
 
         BigDecimal usedDays = BigDecimal.ZERO;
 

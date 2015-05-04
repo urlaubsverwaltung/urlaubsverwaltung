@@ -1,9 +1,5 @@
 package org.synyx.urlaubsverwaltung.core.mail;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-
 import org.apache.commons.lang.CharEncoding;
 
 import org.apache.log4j.Logger;
@@ -36,7 +32,13 @@ import org.synyx.urlaubsverwaltung.core.util.PropertiesUtil;
 
 import java.io.IOException;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Properties;
+import java.util.stream.Collectors;
 
 
 /**
@@ -154,15 +156,9 @@ class MailServiceImpl implements MailService {
 
         final String internationalizedSubject = properties.getProperty(subject);
 
-        final List<Person> recipientsWithMailAddress = Lists.newArrayList(Iterables.filter(recipients,
-                    new Predicate<Person>() {
-
-                        @Override
-                        public boolean apply(Person person) {
-
-                            return StringUtils.hasText(person.getEmail());
-                        }
-                    }));
+        final List<Person> recipientsWithMailAddress= recipients.stream().
+                filter(person -> StringUtils.hasText(person.getEmail())).
+                collect(Collectors.toList());
 
         if (recipientsWithMailAddress.size() > 0) {
             SimpleMailMessage mailMessage = new SimpleMailMessage();

@@ -1,8 +1,5 @@
 package org.synyx.urlaubsverwaltung.web.application;
 
-import com.google.common.base.Function;
-import com.google.common.collect.FluentIterable;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Controller;
@@ -25,6 +22,7 @@ import org.synyx.urlaubsverwaltung.web.util.GravatarUtil;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 /**
@@ -73,14 +71,10 @@ public class ApplicationForLeaveController {
 
         List<Application> applications = applicationService.getApplicationsForACertainState(ApplicationStatus.WAITING);
 
-        return FluentIterable.from(applications).transform(new Function<Application, ApplicationForLeave>() {
+        return applications.stream().
+                map(application -> new ApplicationForLeave(application, calendarService)).
+                collect(Collectors.toList());
 
-                    @Override
-                    public ApplicationForLeave apply(Application input) {
-
-                        return new ApplicationForLeave(input, calendarService);
-                    }
-                }).toList();
     }
 
 
