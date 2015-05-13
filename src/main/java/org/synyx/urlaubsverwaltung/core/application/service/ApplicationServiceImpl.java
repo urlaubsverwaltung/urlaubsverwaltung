@@ -1,8 +1,6 @@
 
 package org.synyx.urlaubsverwaltung.core.application.service;
 
-import com.google.common.base.Optional;
-
 import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +13,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.util.List;
+import java.util.Optional;
 
 
 /**
@@ -36,7 +35,7 @@ class ApplicationServiceImpl implements ApplicationService {
     @Override
     public Optional<Application> getApplicationById(Integer id) {
 
-        return Optional.fromNullable(applicationDAO.findOne(id));
+        return Optional.ofNullable(applicationDAO.findOne(id));
     }
 
 

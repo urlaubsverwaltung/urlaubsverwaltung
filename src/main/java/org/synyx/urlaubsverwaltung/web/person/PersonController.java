@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.web.person;
 
-import com.google.common.base.Optional;
-
 import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +26,7 @@ import org.synyx.urlaubsverwaltung.web.util.GravatarUtil;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 
 /**

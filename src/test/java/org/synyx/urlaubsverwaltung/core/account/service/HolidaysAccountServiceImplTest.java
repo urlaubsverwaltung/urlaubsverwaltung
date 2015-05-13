@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.core.account.service;
 
-import com.google.common.base.Optional;
-
 import junit.framework.Assert;
 
 import org.junit.Before;
@@ -12,6 +10,8 @@ import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.core.account.dao.AccountDAO;
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+
+import java.util.Optional;
 
 
 /**

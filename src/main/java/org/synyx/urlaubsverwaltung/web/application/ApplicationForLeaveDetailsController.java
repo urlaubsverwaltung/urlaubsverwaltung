@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.web.application;
 
-import com.google.common.base.Optional;
-
 import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +41,7 @@ import org.synyx.urlaubsverwaltung.web.validator.CommentValidator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 
 /**
@@ -173,7 +172,7 @@ public class ApplicationForLeaveDetailsController {
                 redirectAttributes.addFlashAttribute("errors", errors);
                 redirectAttributes.addFlashAttribute("action", "allow");
             } else {
-                applicationInteractionService.allow(application.get(), boss, Optional.fromNullable(comment.getText()));
+                applicationInteractionService.allow(application.get(), boss, Optional.ofNullable(comment.getText()));
                 redirectAttributes.addFlashAttribute("allowSuccess", true);
             }
 
@@ -227,7 +226,7 @@ public class ApplicationForLeaveDetailsController {
                 redirectAttributes.addFlashAttribute("errors", errors);
                 redirectAttributes.addFlashAttribute("action", "reject");
             } else {
-                applicationInteractionService.reject(application.get(), boss, Optional.fromNullable(comment.getText()));
+                applicationInteractionService.reject(application.get(), boss, Optional.ofNullable(comment.getText()));
                 redirectAttributes.addFlashAttribute("rejectSuccess", true);
             }
 
@@ -277,7 +276,7 @@ public class ApplicationForLeaveDetailsController {
             redirectAttributes.addFlashAttribute("errors", errors);
             redirectAttributes.addFlashAttribute("action", "cancel");
         } else {
-            applicationInteractionService.cancel(application, loggedUser, Optional.fromNullable(comment.getText()));
+            applicationInteractionService.cancel(application, loggedUser, Optional.ofNullable(comment.getText()));
         }
 
         return "redirect:/web/application/" + applicationId;

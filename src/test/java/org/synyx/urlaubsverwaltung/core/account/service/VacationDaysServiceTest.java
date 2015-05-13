@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.core.account.service;
 
-import com.google.common.base.Optional;
-
 import junit.framework.Assert;
 
 import org.joda.time.DateMidnight;
@@ -34,6 +32,7 @@ import java.math.BigDecimal;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 
 /**

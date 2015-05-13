@@ -1,8 +1,6 @@
 
 package org.synyx.urlaubsverwaltung.web.person;
 
-import com.google.common.base.Optional;
-
 import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +36,7 @@ import org.synyx.urlaubsverwaltung.web.validator.PersonValidator;
 import java.math.BigDecimal;
 
 import java.util.Locale;
+import java.util.Optional;
 
 
 /**

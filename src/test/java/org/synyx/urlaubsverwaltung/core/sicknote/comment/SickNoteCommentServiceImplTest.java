@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.core.sicknote.comment;
 
-import com.google.common.base.Optional;
-
 import junit.framework.Assert;
 
 import org.junit.Before;
@@ -11,6 +9,8 @@ import org.mockito.Mockito;
 
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
+
+import java.util.Optional;
 
 
 /**
@@ -40,7 +40,7 @@ public class SickNoteCommentServiceImplTest {
         SickNote sickNote = new SickNote();
 
         SickNoteComment comment = sickNoteCommentService.create(sickNote, SickNoteStatus.EDITED,
-                Optional.<String>absent(), author);
+                Optional.<String>empty(), author);
 
         Assert.assertNotNull("Should not be null", comment);
 

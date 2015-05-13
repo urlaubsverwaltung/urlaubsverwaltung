@@ -1,9 +1,6 @@
 package org.synyx.urlaubsverwaltung.core.person;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
@@ -18,6 +15,7 @@ import org.synyx.urlaubsverwaltung.security.Role;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Optional;
 
 import javax.persistence.*;
 
@@ -179,16 +177,11 @@ public class Person extends AbstractPersistable<Integer> {
 
     public boolean hasRole(final Role role) {
 
-        Optional<Role> hasRole = Iterables.tryFind(getPermissions(), new Predicate<Role>() {
+        return getPermissions().stream().
+                filter(permission -> permission.equals(role)).
+                findFirst().
+                isPresent();
 
-                    @Override
-                    public boolean apply(Role input) {
-
-                        return input.equals(role);
-                    }
-                });
-
-        return hasRole.isPresent();
     }
 
 
@@ -210,19 +203,12 @@ public class Person extends AbstractPersistable<Integer> {
 
     public boolean hasNotificationType(final MailNotification notification) {
 
-        Optional<MailNotification> hasNotificationType = Iterables.tryFind(getNotifications(),
-                new Predicate<MailNotification>() {
 
-                    @Override
-                    public boolean apply(MailNotification input) {
-
-                        return input.equals(notification);
-                    }
-                });
-
-        return hasNotificationType.isPresent();
+        return getNotifications().stream().
+                filter(element -> element.equals(notification)).
+                findFirst().
+                isPresent();
     }
-
 
     public String getNiceName() {
 

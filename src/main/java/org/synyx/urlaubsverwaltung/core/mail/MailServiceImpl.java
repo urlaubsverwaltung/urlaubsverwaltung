@@ -1,10 +1,5 @@
 package org.synyx.urlaubsverwaltung.core.mail;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-
 import org.apache.commons.lang.CharEncoding;
 
 import org.apache.log4j.Logger;
@@ -41,7 +36,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 
 /**
@@ -94,7 +91,7 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendNewApplicationNotification(Application application) {
 
-        Map<String, Object> model = createModelForApplicationStatusChangeMail(application, Optional.<Comment>absent());
+        Map<String, Object> model = createModelForApplicationStatusChangeMail(application, Optional.<Comment>empty());
         String text = buildMailBody("new_applications", model);
         sendEmail(getBosses(), "subject.new", text);
     }
@@ -159,15 +156,9 @@ class MailServiceImpl implements MailService {
 
         final String internationalizedSubject = properties.getProperty(subject);
 
-        final List<Person> recipientsWithMailAddress = Lists.newArrayList(Iterables.filter(recipients,
-                    new Predicate<Person>() {
-
-                        @Override
-                        public boolean apply(Person person) {
-
-                            return StringUtils.hasText(person.getEmail());
-                        }
-                    }));
+        final List<Person> recipientsWithMailAddress= recipients.stream().
+                filter(person -> StringUtils.hasText(person.getEmail())).
+                collect(Collectors.toList());
 
         if (recipientsWithMailAddress.size() > 0) {
             SimpleMailMessage mailMessage = new SimpleMailMessage();
@@ -201,7 +192,7 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendRemindBossNotification(Application application) {
 
-        Map<String, Object> model = createModelForApplicationStatusChangeMail(application, Optional.<Comment>absent());
+        Map<String, Object> model = createModelForApplicationStatusChangeMail(application, Optional.<Comment>empty());
         String text = buildMailBody("remind", model);
         sendEmail(getBosses(), "subject.remind", text);
     }
@@ -215,13 +206,13 @@ class MailServiceImpl implements MailService {
 
         // email to office
         Map<String, Object> modelForOffice = createModelForApplicationStatusChangeMail(application,
-                Optional.fromNullable(comment));
+                Optional.ofNullable(comment));
         String textOffice = buildMailBody("allowed_office", modelForOffice);
         sendEmail(getOfficeMembers(), "subject.allowed.office", textOffice);
 
         // email to applicant
         Map<String, Object> modelForUser = createModelForApplicationStatusChangeMail(application,
-                Optional.fromNullable(comment));
+                Optional.ofNullable(comment));
         String textUser = buildMailBody("allowed_user", modelForUser);
         sendEmail(Arrays.asList(application.getPerson()), "subject.allowed.user", textUser);
     }
@@ -237,7 +228,7 @@ class MailServiceImpl implements MailService {
     public void sendRejectedNotification(Application application, Comment comment) {
 
         Map<String, Object> model = createModelForApplicationStatusChangeMail(application,
-                Optional.fromNullable(comment));
+                Optional.ofNullable(comment));
         String text = buildMailBody("rejected", model);
         sendEmail(Arrays.asList(application.getPerson()), "subject.rejected", text);
     }
@@ -260,7 +251,7 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendConfirmation(Application application) {
 
-        Map<String, Object> model = createModelForApplicationStatusChangeMail(application, Optional.<Comment>absent());
+        Map<String, Object> model = createModelForApplicationStatusChangeMail(application, Optional.<Comment>empty());
         String text = buildMailBody("confirm", model);
         sendEmail(Arrays.asList(application.getPerson()), "subject.confirm", text);
     }
@@ -269,7 +260,7 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendAppliedForLeaveByOfficeNotification(Application application) {
 
-        Map<String, Object> model = createModelForApplicationStatusChangeMail(application, Optional.<Comment>absent());
+        Map<String, Object> model = createModelForApplicationStatusChangeMail(application, Optional.<Comment>empty());
         String text = buildMailBody("new_application_by_office", model);
         sendEmail(Arrays.asList(application.getPerson()), "subject.new.app.by.office", text);
     }
@@ -280,7 +271,7 @@ class MailServiceImpl implements MailService {
 
         String text;
         Map<String, Object> model = createModelForApplicationStatusChangeMail(application,
-                Optional.fromNullable(comment));
+                Optional.ofNullable(comment));
 
         if (cancelledByOffice) {
             // mail to applicant anyway

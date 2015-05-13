@@ -1,8 +1,5 @@
 package org.synyx.urlaubsverwaltung.restapi;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
-
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
@@ -22,6 +19,7 @@ import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 /**
@@ -46,7 +44,7 @@ public class PersonController {
         @RequestParam(value = "ldap", required = false)
         String ldapName) {
 
-        List<Person> persons = new ArrayList<Person>();
+        List<Person> persons = new ArrayList<>();
 
         if (ldapName == null) {
             persons = personService.getActivePersons();
@@ -57,15 +55,9 @@ public class PersonController {
                 persons.add(person.get());
             }
         }
-
-        List<PersonResponse> personResponses = Lists.transform(persons, new Function<Person, PersonResponse>() {
-
-                    @Override
-                    public PersonResponse apply(Person person) {
-
-                        return new PersonResponse(person);
-                    }
-                });
+        List<PersonResponse> personResponses = persons.stream().
+                map(PersonResponse::new).
+                collect(Collectors.toList());
 
         return new PersonListResponse(personResponses);
     }

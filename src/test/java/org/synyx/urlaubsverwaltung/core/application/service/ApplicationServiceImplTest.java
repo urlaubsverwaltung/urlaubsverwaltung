@@ -4,8 +4,6 @@
  */
 package org.synyx.urlaubsverwaltung.core.application.service;
 
-import com.google.common.base.Optional;
-
 import junit.framework.Assert;
 
 import org.junit.Before;
@@ -15,6 +13,8 @@ import org.mockito.Mockito;
 
 import org.synyx.urlaubsverwaltung.core.application.dao.ApplicationDAO;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
+
+import java.util.Optional;
 
 
 /**

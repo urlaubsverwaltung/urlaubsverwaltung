@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.web.sicknote;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.FluentIterable;
 
 import org.joda.time.DateMidnight;
@@ -46,6 +45,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -233,7 +233,7 @@ public class SickNoteController {
                 redirectAttributes.addFlashAttribute("errors", errors);
             } else {
                 sickNoteCommentService.create(sickNote.get(), SickNoteStatus.COMMENTED,
-                    Optional.fromNullable(comment.getText()), sessionService.getLoggedUser());
+                    Optional.ofNullable(comment.getText()), sessionService.getLoggedUser());
             }
 
             return "redirect:/web/sicknote/" + id;

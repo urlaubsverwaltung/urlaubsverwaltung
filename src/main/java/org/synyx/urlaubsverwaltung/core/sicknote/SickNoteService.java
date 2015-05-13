@@ -1,12 +1,11 @@
 package org.synyx.urlaubsverwaltung.core.sicknote;
 
-import com.google.common.base.Optional;
-
 import org.joda.time.DateMidnight;
 
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.util.List;
+import java.util.Optional;
 
 
 /**

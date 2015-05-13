@@ -1,8 +1,5 @@
 package org.synyx.urlaubsverwaltung.restapi;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
-
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
@@ -24,6 +21,7 @@ import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -58,15 +56,10 @@ public class SickNoteController {
 
         List<SickNote> sickNotes = sickNoteService.getByPeriod(startDate, endDate);
 
-        List<AbsenceResponse> sickNoteResponses = Lists.transform(sickNotes,
-                new Function<SickNote, AbsenceResponse>() {
 
-                    @Override
-                    public AbsenceResponse apply(SickNote sickNote) {
-
-                        return new AbsenceResponse(sickNote);
-                    }
-                });
+        List<AbsenceResponse> sickNoteResponses = sickNotes.stream().
+                map(AbsenceResponse::new).
+                collect(Collectors.toList());
 
         return new SickNoteListResponse(sickNoteResponses);
     }

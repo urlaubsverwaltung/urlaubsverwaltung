@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.core.sicknote;
 
-import com.google.common.base.Optional;
-
 import junit.framework.Assert;
 
 import org.junit.Before;
@@ -18,6 +16,8 @@ import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteCommentService;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteStatus;
+
+import java.util.Optional;
 
 
 /**
@@ -60,7 +60,7 @@ public class SickNoteInteractionServiceImplTest {
         SickNote createdSickNote = sickNoteInteractionService.create(sickNote, person);
 
         Mockito.verify(sickNoteService).save(sickNote);
-        Mockito.verify(sickNoteCommentService).create(sickNote, SickNoteStatus.CREATED, Optional.<String>absent(),
+        Mockito.verify(sickNoteCommentService).create(sickNote, SickNoteStatus.CREATED, Optional.<String>empty(),
             person);
 
         Assert.assertNotNull("Should not be null", createdSickNote);
@@ -79,7 +79,7 @@ public class SickNoteInteractionServiceImplTest {
         SickNote updatedSickNote = sickNoteInteractionService.update(sickNote, person);
 
         Mockito.verify(sickNoteService).save(sickNote);
-        Mockito.verify(sickNoteCommentService).create(sickNote, SickNoteStatus.EDITED, Optional.<String>absent(),
+        Mockito.verify(sickNoteCommentService).create(sickNote, SickNoteStatus.EDITED, Optional.<String>empty(),
             person);
 
         Assert.assertNotNull("Should not be null", updatedSickNote);
@@ -98,7 +98,7 @@ public class SickNoteInteractionServiceImplTest {
         SickNote cancelledSickNote = sickNoteInteractionService.cancel(sickNote, person);
 
         Mockito.verify(sickNoteService).save(sickNote);
-        Mockito.verify(sickNoteCommentService).create(sickNote, SickNoteStatus.CANCELLED, Optional.<String>absent(),
+        Mockito.verify(sickNoteCommentService).create(sickNote, SickNoteStatus.CANCELLED, Optional.<String>empty(),
             person);
 
         Assert.assertNotNull("Should not be null", cancelledSickNote);
@@ -121,7 +121,7 @@ public class SickNoteInteractionServiceImplTest {
 
         Mockito.verify(sickNoteService).save(sickNote);
         Mockito.verify(sickNoteCommentService).create(sickNote, SickNoteStatus.CONVERTED_TO_VACATION,
-            Optional.<String>absent(), person);
+            Optional.<String>empty(), person);
 
         Assert.assertNotNull("Should not be null", convertedSickNote);
 
@@ -132,7 +132,7 @@ public class SickNoteInteractionServiceImplTest {
 
         Mockito.verify(applicationService).save(applicationForLeave);
         Mockito.verify(applicationCommentService).create(Mockito.eq(applicationForLeave),
-            Mockito.eq(ApplicationStatus.ALLOWED), Mockito.eq(Optional.<String>absent()), Mockito.eq(person));
+            Mockito.eq(ApplicationStatus.ALLOWED), Mockito.eq(Optional.<String>empty()), Mockito.eq(person));
         Mockito.verify(signService).signApplicationByBoss(Mockito.eq(applicationForLeave), Mockito.eq(person));
         Mockito.verify(mailService).sendSickNoteConvertedToVacationNotification(Mockito.eq(applicationForLeave));
 

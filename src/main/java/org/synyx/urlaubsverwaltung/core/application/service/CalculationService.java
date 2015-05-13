@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.core.application.service;
 
-import com.google.common.base.Optional;
-
 import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +17,8 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 
 import java.math.BigDecimal;
+
+import java.util.Optional;
 
 
 /**
@@ -104,7 +104,7 @@ public class CalculationService {
         Optional<Account> lastYearsHolidaysAccount = accountService.getHolidaysAccount(year - 1, person);
 
         if (!lastYearsHolidaysAccount.isPresent()) {
-            return Optional.absent();
+            return Optional.empty();
         }
 
         return Optional.of(accountInteractionService.autoCreateHolidaysAccount(lastYearsHolidaysAccount.get()));

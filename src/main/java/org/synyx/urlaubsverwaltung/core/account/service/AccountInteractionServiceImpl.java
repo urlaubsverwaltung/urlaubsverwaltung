@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.core.account.service;
 
-import com.google.common.base.Optional;
-
 import org.apache.log4j.Logger;
 
 import org.joda.time.DateMidnight;
@@ -20,6 +18,8 @@ import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+
+import java.util.Optional;
 
 
 /**

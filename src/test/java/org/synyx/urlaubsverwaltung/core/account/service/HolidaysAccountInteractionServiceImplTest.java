@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.core.account.service;
 
-import com.google.common.base.Optional;
-
 import junit.framework.Assert;
 
 import org.joda.time.DateMidnight;
@@ -23,6 +21,8 @@ import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import java.io.IOException;
 
 import java.math.BigDecimal;
+
+import java.util.Optional;
 
 
 /**
@@ -212,7 +212,7 @@ public class HolidaysAccountInteractionServiceImplTest {
         Mockito.when(accountService.getHolidaysAccount(2012, person)).thenReturn(Optional.of(account2012));
         Mockito.when(accountService.getHolidaysAccount(2013, person)).thenReturn(Optional.of(account2013));
         Mockito.when(accountService.getHolidaysAccount(2014, person)).thenReturn(Optional.of(account2014));
-        Mockito.when(accountService.getHolidaysAccount(2015, person)).thenReturn(Optional.<Account>absent());
+        Mockito.when(accountService.getHolidaysAccount(2015, person)).thenReturn(Optional.<Account>empty());
 
         Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(account2012)).thenReturn(BigDecimal.valueOf(6));
         Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(account2013)).thenReturn(BigDecimal.valueOf(2));

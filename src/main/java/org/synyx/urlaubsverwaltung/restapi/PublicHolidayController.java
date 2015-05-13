@@ -1,8 +1,5 @@
 package org.synyx.urlaubsverwaltung.restapi;
 
-import com.google.common.base.Function;
-import com.google.common.collect.FluentIterable;
-
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
@@ -27,6 +24,7 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 /**
@@ -77,18 +75,9 @@ public class PublicHolidayController {
             }
         }
 
-        List<PublicHolidayResponse> publicHolidayResponses = FluentIterable.from(holidays).transform(
-                new Function<Holiday, PublicHolidayResponse>() {
-
-                    @Override
-                    public PublicHolidayResponse apply(Holiday holiday) {
-
-                        BigDecimal duration = jollydayCalendar.getWorkingDurationOfDate(
-                                holiday.getDate().toDateMidnight());
-
-                        return new PublicHolidayResponse(holiday, duration);
-                    }
-                }).toList();
+        List<PublicHolidayResponse> publicHolidayResponses = holidays.stream().
+                map(holiday -> new PublicHolidayResponse(holiday, jollydayCalendar.getWorkingDurationOfDate(holiday.getDate().toDateMidnight()))).
+                collect(Collectors.toList());
 
         return new PublicHolidayListResponse(publicHolidayResponses);
     }

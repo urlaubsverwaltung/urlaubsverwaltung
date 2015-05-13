@@ -1,9 +1,9 @@
 package org.synyx.urlaubsverwaltung.core.account.service;
 
-import com.google.common.base.Optional;
-
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+
+import java.util.Optional;
 
 
 /**
