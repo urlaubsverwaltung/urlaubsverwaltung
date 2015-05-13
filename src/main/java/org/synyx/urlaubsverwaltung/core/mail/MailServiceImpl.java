@@ -89,9 +89,10 @@ class MailServiceImpl implements MailService {
     }
 
     @Override
-    public void sendNewApplicationNotification(Application application) {
+    public void sendNewApplicationNotification(Application application, Comment comment) {
 
-        Map<String, Object> model = createModelForApplicationStatusChangeMail(application, Optional.<Comment>empty());
+        Map<String, Object> model = createModelForApplicationStatusChangeMail(application,
+                Optional.ofNullable(comment));
         String text = buildMailBody("new_applications", model);
         sendEmail(getBosses(), "subject.new", text);
     }
@@ -156,9 +157,8 @@ class MailServiceImpl implements MailService {
 
         final String internationalizedSubject = properties.getProperty(subject);
 
-        final List<Person> recipientsWithMailAddress= recipients.stream().
-                filter(person -> StringUtils.hasText(person.getEmail())).
-                collect(Collectors.toList());
+        final List<Person> recipientsWithMailAddress = recipients.stream().filter(person ->
+                    StringUtils.hasText(person.getEmail())).collect(Collectors.toList());
 
         if (recipientsWithMailAddress.size() > 0) {
             SimpleMailMessage mailMessage = new SimpleMailMessage();
@@ -249,18 +249,20 @@ class MailServiceImpl implements MailService {
 
 
     @Override
-    public void sendConfirmation(Application application) {
+    public void sendConfirmation(Application application, Comment comment) {
 
-        Map<String, Object> model = createModelForApplicationStatusChangeMail(application, Optional.<Comment>empty());
+        Map<String, Object> model = createModelForApplicationStatusChangeMail(application,
+                Optional.ofNullable(comment));
         String text = buildMailBody("confirm", model);
         sendEmail(Arrays.asList(application.getPerson()), "subject.confirm", text);
     }
 
 
     @Override
-    public void sendAppliedForLeaveByOfficeNotification(Application application) {
+    public void sendAppliedForLeaveByOfficeNotification(Application application, Comment comment) {
 
-        Map<String, Object> model = createModelForApplicationStatusChangeMail(application, Optional.<Comment>empty());
+        Map<String, Object> model = createModelForApplicationStatusChangeMail(application,
+                Optional.ofNullable(comment));
         String text = buildMailBody("new_application_by_office", model);
         sendEmail(Arrays.asList(application.getPerson()), "subject.new.app.by.office", text);
     }

@@ -62,23 +62,23 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         LOG.info("Created application for leave: " + application.toString());
 
         // COMMENT
-        commentService.create(application, ApplicationStatus.WAITING, comment, applier);
+        Comment createdComment = commentService.create(application, ApplicationStatus.WAITING, comment, applier);
 
         // EMAILS
 
         // person himself applies for leave
         if (person.equals(applier)) {
             // person gets a confirmation email with the data of the application for leave
-            mailService.sendConfirmation(application);
+            mailService.sendConfirmation(application, createdComment);
         }
         // someone else (normally the office) applies for leave on behalf of the person
         else {
             // person gets an email that someone else has applied for leave on behalf
-            mailService.sendAppliedForLeaveByOfficeNotification(application);
+            mailService.sendAppliedForLeaveByOfficeNotification(application, createdComment);
         }
 
         // bosses gets email that a new application for leave has been created
-        mailService.sendNewApplicationNotification(application);
+        mailService.sendNewApplicationNotification(application, createdComment);
 
         // update remaining vacation days (if there is already a holidays account for next year)
         accountInteractionService.updateRemainingVacationDays(application.getStartDate().getYear(), person);

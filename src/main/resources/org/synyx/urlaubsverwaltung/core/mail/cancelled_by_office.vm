@@ -3,24 +3,8 @@ Hallo ${application.person.niceName},
 dein Urlaubsantrag wurde von ${application.canceller.niceName} für dich storniert.
 Falls Klärungsbedarf bestehen sollte, wende dich bitte direkt an ${application.canceller.niceName}.
 
-#if($comment.reason && $comment.reason != "")
-Kommentar zur Stornierung von ${comment.person.niceName} zum Antrag: ${comment.reason}
+#if($comment.text && $comment.text != "")
+Kommentar zur Stornierung von ${comment.person.niceName} zum Antrag: ${comment.text}
 #end 
 
 Es handelt sich um folgenden Urlaubsantrag: ${link}
-
-Antragsdatum: ${application.applicationDate.toString("dd.MM.yyyy")}
-Zeitraum des beantragten Urlaubs: ${application.startDate.toString("dd.MM.yyyy")} bis ${application.endDate.toString("dd.MM.yyyy")}, ${dayLength}
-Art des Urlaubs: ${vacationType} 
-#if($application.reason && $application.reason != "")
-Grund: ${application.reason}
-#end
-#if($application.holidayReplacement.niceName && $application.holidayReplacement.niceName != "")
-Vertreter: ${application.holidayReplacement.niceName}
-#end
-#if($application.address && $application.address != "")
-Anschrift/Telefon während des Urlaubs: ${application.address}
-#end
-#if($application.comment && $application.comment != "")
-Kommentar: ${application.comment}
-#end

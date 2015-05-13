@@ -87,10 +87,12 @@ public class ApplicationInteractionServiceImplTest {
 
         service.apply(applicationForLeave, person, Optional.of("Foo"));
 
-        Mockito.verify(mailService).sendConfirmation(Mockito.eq(applicationForLeave));
-        Mockito.verify(mailService, Mockito.never()).sendAppliedForLeaveByOfficeNotification(applicationForLeave);
+        Mockito.verify(mailService).sendConfirmation(Mockito.eq(applicationForLeave), Mockito.any(Comment.class));
+        Mockito.verify(mailService, Mockito.never()).sendAppliedForLeaveByOfficeNotification(Mockito.eq(
+                applicationForLeave), Mockito.any(Comment.class));
 
-        Mockito.verify(mailService).sendNewApplicationNotification(Mockito.eq(applicationForLeave));
+        Mockito.verify(mailService).sendNewApplicationNotification(Mockito.eq(applicationForLeave),
+            Mockito.any(Comment.class));
     }
 
 
@@ -107,10 +109,13 @@ public class ApplicationInteractionServiceImplTest {
 
         service.apply(applicationForLeave, applier, Optional.of("Foo"));
 
-        Mockito.verify(mailService, Mockito.never()).sendConfirmation(Mockito.eq(applicationForLeave));
-        Mockito.verify(mailService).sendAppliedForLeaveByOfficeNotification(applicationForLeave);
+        Mockito.verify(mailService, Mockito.never()).sendConfirmation(Mockito.eq(applicationForLeave),
+            Mockito.any(Comment.class));
+        Mockito.verify(mailService).sendAppliedForLeaveByOfficeNotification(Mockito.eq(applicationForLeave),
+            Mockito.any(Comment.class));
 
-        Mockito.verify(mailService).sendNewApplicationNotification(Mockito.eq(applicationForLeave));
+        Mockito.verify(mailService).sendNewApplicationNotification(Mockito.eq(applicationForLeave),
+            Mockito.any(Comment.class));
     }
 
 

@@ -16,6 +16,6 @@ Vertreter: ${application.holidayReplacement.niceName}
 #if($application.address && $application.address != "")
 Anschrift/Telefon während des Urlaubs: ${application.address}
 #end
-#if($application.comment && $application.comment != "")
-Kommentar: ${application.comment}
+#if($comment.text && $comment.text != "")
+Kommentar: ${comment.text}
 #end

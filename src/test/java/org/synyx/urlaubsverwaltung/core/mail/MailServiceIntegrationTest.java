@@ -19,6 +19,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
+import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -38,7 +39,6 @@ import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 
@@ -101,7 +101,11 @@ public class MailServiceIntegrationTest {
         Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS)).thenReturn(Arrays
             .asList(boss));
 
-        mailService.sendNewApplicationNotification(application);
+        String commentMessage = "Das ist ein Kommentar.";
+        Comment comment = new Comment(person);
+        comment.setText(commentMessage);
+
+        mailService.sendNewApplicationNotification(application, comment);
 
         // was email sent?
         List<Message> inbox = Mailbox.get(bossEmailAddress);
@@ -121,7 +125,8 @@ public class MailServiceIntegrationTest {
         assertTrue(content.contains("Horst"));
         assertTrue(content.contains("Antragsteller"));
         assertTrue(content.contains("Antragsstellung"));
-        assertFalse(content.contains("Mist"));
+        assertTrue("No comment in mail content", content.contains(commentMessage));
+        assertTrue("Wrong comment author", content.contains(comment.getPerson().getNiceName()));
     }
 
 
@@ -136,10 +141,17 @@ public class MailServiceIntegrationTest {
         String officeEmailAddress = "office@synyx.de";
         Person office = new Person("office", "Muster", "Max", officeEmailAddress);
 
+        String bossEmailAddress = "boss@boss.de";
+        Person boss = new Person("boss", "Muster", "Max", bossEmailAddress);
+
         Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_OFFICE)).thenReturn(
             Arrays.asList(office));
 
-        mailService.sendAllowedNotification(application, null);
+        String commentMessage = "Das ist ein Kommentar.";
+        Comment comment = new Comment(boss);
+        comment.setText(commentMessage);
+
+        mailService.sendAllowedNotification(application, comment);
 
         // were both emails sent?
         List<Message> inboxOffice = Mailbox.get(officeEmailAddress);
@@ -157,12 +169,13 @@ public class MailServiceIntegrationTest {
         // check from and recipient
         assertEquals(new InternetAddress("berndo@test.com"), msg.getAllRecipients()[0]);
 
-        // check content of email
-        String content = (String) msg.getContent();
-        assertTrue(content.contains("Bernd"));
-        assertTrue(content.contains("gestellter Antrag wurde von"));
-        assertTrue(content.contains("genehmigt"));
-        assertFalse(content.contains("Mist"));
+        // check content of user email
+        String contentUser = (String) msg.getContent();
+        assertTrue(contentUser.contains("Bernd"));
+        assertTrue(contentUser.contains("gestellter Antrag wurde von"));
+        assertTrue(contentUser.contains("genehmigt"));
+        assertTrue("No comment in mail content", contentUser.contains(commentMessage));
+        assertTrue("Wrong comment author", contentUser.contains(comment.getPerson().getNiceName()));
 
         // get email office
         Message msgOffice = inboxOffice.get(0);
@@ -173,13 +186,14 @@ public class MailServiceIntegrationTest {
         // check from and recipient
         assertEquals(new InternetAddress(officeEmailAddress), msgOffice.getAllRecipients()[0]);
 
-        // check content of email
+        // check content of office email
         String contentOfficeMail = (String) msgOffice.getContent();
         assertTrue(contentOfficeMail.contains("Bernd"));
         assertTrue(contentOfficeMail.contains("Office"));
         assertTrue(contentOfficeMail.contains("es liegt ein neuer genehmigter Antrag vor"));
         assertTrue(contentOfficeMail.contains("Erholungsurlaub"));
-        assertFalse(contentOfficeMail.contains("Mist"));
+        assertTrue("No comment in mail content", contentOfficeMail.contains(commentMessage));
+        assertTrue("Wrong comment author", contentOfficeMail.contains(comment.getPerson().getNiceName()));
     }
 
 
@@ -190,7 +204,14 @@ public class MailServiceIntegrationTest {
         person.setFirstName("Franz");
         person.setEmail("franzi@test.com");
 
-        mailService.sendRejectedNotification(application, null);
+        String bossEmailAddress = "boss@boss.de";
+        Person boss = new Person("boss", "Muster", "Max", bossEmailAddress);
+
+        String commentMessage = "Das ist ein Kommentar.";
+        Comment comment = new Comment(boss);
+        comment.setText(commentMessage);
+
+        mailService.sendRejectedNotification(application, comment);
 
         // was email sent?
         List<Message> inbox = Mailbox.get("franzi@test.com");
@@ -208,7 +229,8 @@ public class MailServiceIntegrationTest {
         String content = (String) msg.getContent();
         assertTrue(content.contains("Franz"));
         assertTrue(content.contains("abgelehnt"));
-        assertFalse(content.contains("Mist"));
+        assertTrue("No comment in mail content", content.contains(commentMessage));
+        assertTrue("Wrong comment author", content.contains(comment.getPerson().getNiceName()));
     }
 
 
@@ -220,7 +242,11 @@ public class MailServiceIntegrationTest {
         person.setFirstName("Hildegard");
         person.setEmail("hilde@test.com");
 
-        mailService.sendConfirmation(application);
+        String commentMessage = "Das ist ein Kommentar.";
+        Comment comment = new Comment(person);
+        comment.setText(commentMessage);
+
+        mailService.sendConfirmation(application, comment);
 
         // was email sent?
         List<Message> inbox = Mailbox.get("hilde@test.com");
@@ -238,7 +264,8 @@ public class MailServiceIntegrationTest {
         String content = (String) msg.getContent();
         assertTrue(content.contains("Hildegard"));
         assertTrue(content.contains("dein Urlaubsantrag wurde erfolgreich eingereicht"));
-        assertFalse(content.contains("Mist"));
+        assertTrue("No comment in mail content", content.contains(commentMessage));
+        assertTrue("Wrong comment author", content.contains(comment.getPerson().getNiceName()));
     }
 
 
@@ -256,7 +283,11 @@ public class MailServiceIntegrationTest {
 
         application.setCanceller(office);
 
-        mailService.sendCancelledNotification(application, true, null);
+        String commentMessage = "Das ist ein Kommentar.";
+        Comment comment = new Comment(office);
+        comment.setText(commentMessage);
+
+        mailService.sendCancelledNotification(application, true, comment);
 
         // was email sent?
         List<Message> inboxApplicant = Mailbox.get("muster@mann.de");
@@ -274,7 +305,8 @@ public class MailServiceIntegrationTest {
         String content = (String) msg.getContent();
         assertTrue(content.contains("dein Urlaubsantrag wurde von Magdalena"));
         assertTrue(content.contains("wende dich bitte direkt an Magdalena"));
-        assertFalse(content.contains("Mist"));
+        assertTrue("No comment in mail content", content.contains(commentMessage));
+        assertTrue("Wrong comment author", content.contains(comment.getPerson().getNiceName()));
     }
 
 
@@ -291,7 +323,11 @@ public class MailServiceIntegrationTest {
         Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_OFFICE)).thenReturn(
             Arrays.asList(office));
 
-        mailService.sendCancelledNotification(application, false, null);
+        String commentMessage = "Das ist ein Kommentar.";
+        Comment comment = new Comment(person);
+        comment.setText(commentMessage);
+
+        mailService.sendCancelledNotification(application, false, comment);
 
         // ENSURE OFFICE MEMBERS HAVE GOT CORRECT EMAIL
         List<Message> inboxOffice = Mailbox.get(officeEmailAddress);
@@ -306,7 +342,8 @@ public class MailServiceIntegrationTest {
         String content = (String) msg.getContent();
         assertTrue(content.contains("Der Urlaubsantrag von Heinrich Test"));
         assertTrue(content.contains("wurde storniert"));
-        assertFalse(content.contains("Mist"));
+        assertTrue("No comment in mail content", content.contains(commentMessage));
+        assertTrue("Wrong comment author", content.contains(comment.getPerson().getNiceName()));
     }
 
 
@@ -358,12 +395,15 @@ public class MailServiceIntegrationTest {
         person.setFirstName("Günther");
         person.setEmail("bla@test.com");
 
-        Person applier = new Person();
-        applier.setFirstName("Hans");
-        applier.setLastName("Wurst");
+        String officeEmailAddress = "office@office.de";
+        Person office = new Person("office", "Office", "Marlene", officeEmailAddress);
 
-        application.setApplier(applier);
-        mailService.sendAppliedForLeaveByOfficeNotification(application);
+        String commentMessage = "Das ist ein Kommentar.";
+        Comment comment = new Comment(office);
+        comment.setText(commentMessage);
+
+        application.setApplier(office);
+        mailService.sendAppliedForLeaveByOfficeNotification(application, comment);
 
         // was email sent?
         List<Message> inbox = Mailbox.get("bla@test.com");
@@ -379,8 +419,9 @@ public class MailServiceIntegrationTest {
 
         // check content of email
         String content = (String) msg.getContent();
-        assertTrue(content.contains("Hans Wurst hat einen Urlaubsantrag"));
-        assertFalse(content.contains("Mist"));
+        assertTrue(content.contains("Marlene Office hat einen Urlaubsantrag"));
+        assertTrue("No comment in mail content", content.contains(commentMessage));
+        assertTrue("Wrong comment author", content.contains(comment.getPerson().getNiceName()));
     }
 
 
@@ -391,7 +432,7 @@ public class MailServiceIntegrationTest {
         person.setFirstName("Hildegard");
         person.setEmail("hilde@test.com");
 
-        mailService.sendConfirmation(application);
+        mailService.sendConfirmation(application, null);
 
         List<Message> inbox = Mailbox.get("hilde@test.com");
         assertTrue(inbox.size() > 0);

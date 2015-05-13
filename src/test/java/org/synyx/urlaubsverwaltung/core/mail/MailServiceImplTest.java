@@ -89,7 +89,7 @@ public class MailServiceImplTest {
     @Test
     public void ensureSendsNewApplicationNotificationToBosses() {
 
-        mailService.sendNewApplicationNotification(application);
+        mailService.sendNewApplicationNotification(application, null);
 
         Mockito.verify(personService).getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS);
     }

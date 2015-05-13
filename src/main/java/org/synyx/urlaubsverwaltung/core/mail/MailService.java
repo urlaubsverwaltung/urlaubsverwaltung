@@ -26,16 +26,18 @@ public interface MailService {
      * sends an email to the applicant that the application has been made successfully.
      *
      * @param  application
+     * @param  comment
      */
-    void sendConfirmation(Application application);
+    void sendConfirmation(Application application, Comment comment);
 
 
     /**
      * sends an email to the person of the given application that the office has applied for leave on behalf of himself.
      *
      * @param  application
+     * @param  comment
      */
-    void sendAppliedForLeaveByOfficeNotification(Application application);
+    void sendAppliedForLeaveByOfficeNotification(Application application, Comment comment);
 
 
     /**
@@ -43,8 +45,9 @@ public interface MailService {
      * rejected by a boss.
      *
      * @param  application
+     * @param  comment
      */
-    void sendNewApplicationNotification(Application application);
+    void sendNewApplicationNotification(Application application, Comment comment);
 
 
     /**

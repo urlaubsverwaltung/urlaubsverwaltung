@@ -5,8 +5,8 @@ zur Information:
 Der Urlaubsantrag von ${application.person.niceName} für den
 Zeitraum von ${application.startDate.toString("dd.MM.yyyy")} bis ${application.endDate.toString("dd.MM.yyyy")} (${dayLength}) wurde storniert.
 
-#if($comment.reason && $comment.reason != "")
-Kommentar von ${comment.person.niceName}: ${comment.reason}
+#if($comment.text && $comment.text != "")
+Kommentar von ${comment.person.niceName}: ${comment.text}
 #end 
 
 Link zum Antrag: ${link}
