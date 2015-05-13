@@ -87,7 +87,8 @@ public class ApplicationForLeaveDetailsController {
     @RequestMapping(value = "/{applicationId}", method = RequestMethod.GET)
     public String showApplicationDetail(@PathVariable("applicationId") Integer applicationId,
         @RequestParam(value = ControllerConstants.YEAR, required = false) Integer year,
-        @RequestParam(value = "action", required = false) String action, Model model) {
+        @RequestParam(value = "action", required = false) String action,
+        @RequestParam(value = "shortcut", required = false) boolean shortcut, Model model) {
 
         Person loggedUser = sessionService.getLoggedUser();
 
@@ -101,7 +102,7 @@ public class ApplicationForLeaveDetailsController {
                 year = application.getEndDate().getYear();
             }
 
-            prepareDetailView(application, year, action, model);
+            prepareDetailView(application, year, action, shortcut, model);
 
             return ControllerConstants.APPLICATIONS_URL + "/app_detail";
         }
@@ -110,7 +111,7 @@ public class ApplicationForLeaveDetailsController {
     }
 
 
-    private void prepareDetailView(Application application, int year, String action, Model model) {
+    private void prepareDetailView(Application application, int year, String action, boolean shortcut, Model model) {
 
         model.addAttribute("comment", new CommentForm());
 
@@ -155,6 +156,7 @@ public class ApplicationForLeaveDetailsController {
         model.addAttribute("gravatar", url);
 
         model.addAttribute("action", action);
+        model.addAttribute("shortcut", shortcut);
     }
 
 
@@ -163,7 +165,9 @@ public class ApplicationForLeaveDetailsController {
      */
     @RequestMapping(value = "/{applicationId}/allow", method = RequestMethod.PUT)
     public String allowApplication(@PathVariable("applicationId") Integer applicationId,
-        @ModelAttribute("comment") CommentForm comment, Errors errors, RedirectAttributes redirectAttributes) {
+        @ModelAttribute("comment") CommentForm comment,
+        @RequestParam(value = "redirect", required = false) String redirectUrl, Errors errors,
+        RedirectAttributes redirectAttributes) {
 
         Person boss = sessionService.getLoggedUser();
         Optional<Application> application = applicationService.getApplicationById(applicationId);
@@ -181,6 +185,10 @@ public class ApplicationForLeaveDetailsController {
             applicationInteractionService.allow(application.get(), boss, Optional.fromNullable(comment.getText()));
 
             redirectAttributes.addFlashAttribute("allowSuccess", true);
+
+            if (redirectUrl != null) {
+                return "redirect:" + redirectUrl;
+            }
 
             return "redirect:/web/application/" + applicationId;
         } else {
@@ -218,7 +226,9 @@ public class ApplicationForLeaveDetailsController {
      */
     @RequestMapping(value = "/{applicationId}/reject", method = RequestMethod.PUT)
     public String rejectApplication(@PathVariable("applicationId") Integer applicationId,
-        @ModelAttribute("comment") CommentForm comment, Errors errors, RedirectAttributes redirectAttributes) {
+        @ModelAttribute("comment") CommentForm comment,
+        @RequestParam(value = "redirect", required = false) String redirectUrl, Errors errors,
+        RedirectAttributes redirectAttributes) {
 
         Optional<Application> application = applicationService.getApplicationById(applicationId);
 
@@ -231,11 +241,19 @@ public class ApplicationForLeaveDetailsController {
             if (errors.hasErrors()) {
                 redirectAttributes.addFlashAttribute("errors", errors);
 
+                if (redirectUrl != null) {
+                    return "redirect:/web/application/" + applicationId + "?action=reject&shortcut=true";
+                }
+
                 return "redirect:/web/application/" + applicationId + "?action=reject";
             }
 
             applicationInteractionService.reject(application.get(), boss, Optional.fromNullable(comment.getText()));
             redirectAttributes.addFlashAttribute("rejectSuccess", true);
+
+            if (redirectUrl != null) {
+                return "redirect:" + redirectUrl;
+            }
 
             return "redirect:/web/application/" + applicationId;
         }

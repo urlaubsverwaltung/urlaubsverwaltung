@@ -38,6 +38,21 @@
   
                         </div>
 
+                        <div class="feedback">
+                            <c:choose>
+                                <c:when test="${allowSuccess}">
+                                    <div class="alert alert-success">
+                                        <spring:message code="application.action.allow.success" />
+                                    </div>
+                                </c:when>
+                                <c:when test="${rejectSuccess}">
+                                    <div class="alert alert-success">
+                                        <spring:message code="application.action.reject.success" />
+                                    </div>
+                                </c:when>
+                            </c:choose>
+                        </div>
+
                         <c:choose>
   
                           <c:when test="${empty applications}">
@@ -81,10 +96,10 @@
                                     <uv:date date="${application.applicationDate}"/>
                                   </td>
                                   <td>
-                                    <a class="fa-action" href="${URL_PREFIX}/application/${application.id}?action=allow">
+                                    <a class="fa-action" href="${URL_PREFIX}/application/${application.id}?action=allow&shortcut=true">
                                         <i class="fa fa-check"></i>
                                     </a>
-                                    <a class="fa-action negative" href="${URL_PREFIX}/application/${application.id}?action=reject">
+                                    <a class="fa-action negative" href="${URL_PREFIX}/application/${application.id}?action=reject&shortcut=true">
                                         <i class="fa fa-ban"></i>
                                     </a>
                                   </td>

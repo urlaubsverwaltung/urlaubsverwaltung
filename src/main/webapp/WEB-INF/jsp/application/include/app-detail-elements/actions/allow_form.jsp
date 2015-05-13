@@ -14,8 +14,22 @@
 
 <spring:url var="URL_PREFIX" value="/web"/>
 
+<c:if test="${shortcut == true}">
+    <c:set var="ACTION_URL" value="?redirect=/application/"/>
+</c:if>
+
+<c:choose>
+      <c:when test="${shortcut == true}">
+        <c:set var="ACTION_URL" value="${URL_PREFIX}/application/${application.id}/allow?redirect=/web/application/"/>
+      </c:when>
+
+      <c:otherwise>
+        <c:set var="ACTION_URL" value="${URL_PREFIX}/application/${application.id}/allow"/>
+      </c:otherwise>
+</c:choose>
+
 <form:form id="allow" cssClass="form action-form confirm alert alert-success" method="PUT"
-           action="${URL_PREFIX}/application/${application.id}/allow" modelAttribute="comment">
+           action="${ACTION_URL}" modelAttribute="comment">
 
     <div class="form-group">
         <div class="control-label">
