@@ -104,8 +104,9 @@
             </td>
             <sec:authorize access="hasRole('OFFICE')">
             <td class="hidden-print hidden-xs">
-              <a class="btn btn-default pull-right" href="${URL_PREFIX}/staff/${person.id}/edit">
-                <i class="fa fa-fw fa-pencil"></i> <spring:message code="action.edit" />
+              <a class="fa-action pull-right" href="${URL_PREFIX}/staff/${person.id}/edit"
+                  data-title="<spring:message code="action.edit" />">
+                <i class="fa fa-fw fa-pencil"></i>
               </a>
             </td>
             </sec:authorize>

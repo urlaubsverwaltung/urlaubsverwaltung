@@ -84,7 +84,7 @@
                     <span class="box-text">
                         <i class="fa fa-at"></i> <c:out value="${person.loginName}"/>
                         <h4><c:out value="${person.niceName}"/></h4>
-                        <i class="fa fa-envelope"></i> <a href="mailto:<c:out value='${person.email}'/>"><c:out value="${person.email}"/></a>
+                        <i class="fa fa-envelope-o"></i> <a href="mailto:<c:out value='${person.email}'/>"><c:out value="${person.email}"/></a>
                     </span>
                 </div>
             </div>
@@ -216,14 +216,15 @@
                         </p>
                         <c:choose>
                             <c:when test="${person.id == loggedUser.id}">
-                                <a class="btn btn-default pull-right" href="${URL_PREFIX}/application/new">
-                                    <i class="fa fa-pencil"></i> <span class="hidden-xs"><spring:message code="action.apply.vacation"/></span>
+                                <a class="fa-action pull-right" href="${URL_PREFIX}/application/new" data-title="<spring:message code="action.apply.vacation"/>">
+                                    <i class="fa fa-pencil"></i>
                                 </a>
                             </c:when>
                             <c:otherwise>
                                 <sec:authorize access="hasRole('OFFICE')">
-                                    <a class="btn btn-default pull-right" href="${URL_PREFIX}/application/new?personId=${person.id}&appliesOnOnesBehalf=true">
-                                        <i class="fa fa-pencil"></i> <span class="hidden-xs"><spring:message code="action.apply.vacation"/></span>
+                                    <a class="fa-action pull-right" href="${URL_PREFIX}/application/new?personId=${person.id}&appliesOnOnesBehalf=true"
+                                        data-title="<spring:message code="action.apply.vacation"/>">
+                                        <i class="fa fa-pencil"></i>
                                     </a>
                                 </sec:authorize>
                             </c:otherwise>
@@ -289,8 +290,9 @@
                             <spring:message code="sicknotes" />
                         </p>
                         <sec:authorize access="hasRole('OFFICE')">
-                            <a class="btn btn-default pull-right" href="${URL_PREFIX}/sicknote/new?person=${person.id}">
-                                <i class="fa fa-pencil"></i> <span class="hidden-xs"><spring:message code="action.apply.sicknote" /></span>
+                            <a class="fa-action pull-right" href="${URL_PREFIX}/sicknote/new?person=${person.id}"
+                                data-title="<spring:message code="action.apply.sicknote" />">
+                                <i class="fa fa-pencil"></i>
                             </a>
                         </sec:authorize>
                     </legend>

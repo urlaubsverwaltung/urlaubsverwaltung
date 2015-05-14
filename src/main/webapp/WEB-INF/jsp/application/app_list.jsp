@@ -96,11 +96,15 @@
                                     <uv:date date="${application.applicationDate}"/>
                                   </td>
                                   <td>
-                                    <a class="fa-action" href="${URL_PREFIX}/application/${application.id}?action=allow&shortcut=true">
+                                    <a class="fa-action positive" href="${URL_PREFIX}/application/${application.id}?action=allow&shortcut=true"
+                                        data-title="<spring:message code='app.state.ok.short'/>">
                                         <i class="fa fa-check"></i>
                                     </a>
-                                    <a class="fa-action negative" href="${URL_PREFIX}/application/${application.id}?action=reject&shortcut=true">
-                                        <i class="fa fa-ban"></i>
+                                  </td>
+                                  <td>
+                                    <a class="fa-action negative" href="${URL_PREFIX}/application/${application.id}?action=reject&shortcut=true"
+                                       data-title="<spring:message code='app.state.no.short'/>">
+                                      <i class="fa fa-ban"></i>
                                     </a>
                                   </td>
                                 </tr>

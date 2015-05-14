@@ -27,6 +27,15 @@ legend {
   opacity: 0.7;
 }
 
+legend,
+legend .fa-action .fa {
+    line-height: 42px;
+}
+
+legend .fa-action {
+    vertical-align: middle;
+}
+
 /* STYLING FOR XS SCREENS */
 @media (max-width: 767px) {
     .header legend p,

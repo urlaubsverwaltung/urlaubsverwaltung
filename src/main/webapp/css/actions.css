@@ -1,0 +1,28 @@
+/**************************************************************************
+  
+  ACTIONS
+  
+**************************************************************************/
+
+.fa-action {
+    color: #4d5258;
+    font-size: 18px;
+    margin-left: 12px;
+}
+
+.fa-action:hover {
+    text-decoration: none;
+    color: #6F6F6F;
+}
+
+.fa-action.positive:hover {
+    color: #5cb85c;
+}
+
+.fa-action.negative:hover {
+    color: #E94B3B;
+}
+
+td .fa-action {
+    padding: 12px;
+}

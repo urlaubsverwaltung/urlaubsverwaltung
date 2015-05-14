@@ -120,7 +120,7 @@
                                     <c:out value="${application.person.niceName}"/>
                                 </a>
                             </h4>
-                            <i class="fa fa-envelope"></i> <c:out value="${application.person.email}"/>
+                            <i class="fa fa-envelope-o"></i> <c:out value="${application.person.email}"/>
                         </span>
                     </div>
 
