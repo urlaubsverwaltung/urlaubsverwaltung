@@ -20,6 +20,11 @@
             <name>Aljona Murygina</name>
             <email>murygina@synyx.de</email>
         </developer>
+        <developer>
+            <id>honnel</id>
+            <name>Daniel Hammann</name>
+            <email>hammann@synyx.de</email>
+        </developer>
     </developers>
 
     <properties>
@@ -33,7 +38,7 @@
         <slf4j.version>1.7.10</slf4j.version>
         <joda.time.version>2.7</joda.time.version>
         <guava.version>18.0</guava.version>
-        <jetty.version>9.0.7.v20131107</jetty.version>
+        <jetty.version>9.2.9.v20150224</jetty.version>
 
         <netbeans.hint.deploy.server>Tomcat</netbeans.hint.deploy.server>
     </properties>
