@@ -14,8 +14,22 @@
 
 <spring:url var="URL_PREFIX" value="/web"/>
 
-<form:form id="confirm" cssClass="form action-form confirm alert alert-success" method="PUT"
-           action="${URL_PREFIX}/application/${application.id}/allow" modelAttribute="comment">
+<c:if test="${shortcut == true}">
+    <c:set var="ACTION_URL" value="?redirect=/application/"/>
+</c:if>
+
+<c:choose>
+      <c:when test="${shortcut == true}">
+        <c:set var="ACTION_URL" value="${URL_PREFIX}/application/${application.id}/allow?redirect=/web/application/"/>
+      </c:when>
+
+      <c:otherwise>
+        <c:set var="ACTION_URL" value="${URL_PREFIX}/application/${application.id}/allow"/>
+      </c:otherwise>
+</c:choose>
+
+<form:form id="allow" cssClass="form action-form confirm alert alert-success" method="PUT"
+           action="${ACTION_URL}" modelAttribute="comment">
 
     <div class="form-group">
         <div class="control-label">
@@ -35,9 +49,9 @@
 
     <div class="form-group is-sticky row">
         <button type="submit" class="btn btn-success col-xs-12 col-sm-5">
-            <i class="fa fa-check"></i>&nbsp;<spring:message code='app.state.ok.short'/>
+            <i class="fa fa-check"></i>&nbsp;<spring:message code='action.allow'/>
         </button>
-        <button type="button" class="btn btn-default col-xs-12 col-sm-5 pull-right" onclick="$('#confirm').hide();">
+        <button type="button" class="btn btn-default col-xs-12 col-sm-5 pull-right" onclick="$('#allow').hide();">
             <i class="fa fa-remove"></i>&nbsp;<spring:message code="action.cancel"/>
         </button>
     </div>

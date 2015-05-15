@@ -15,4 +15,10 @@
 <script type="text/javascript" src="<spring:url value='/js/date-de-DE.js' />"></script>
 <script src="<spring:url value='/js/bootstrap.min.js' />" type="text/javascript" ></script>
 <script src="<spring:url value='/js/custom.js' />" type="text/javascript" ></script>
+<script src="<spring:url value='/js/actions.js' />" type="text/javascript" ></script>
 <script src="<spring:url value='/js/back-button.js' />" type="text/javascript" ></script>
+<script src="<spring:url value='/js/feedback.js' />" type="text/javascript" ></script>
+<script src="<spring:url value='/js/sortable.js' />" type="text/javascript" ></script>
+<script src="<spring:url value='/js/textarea.js' />" type="text/javascript" ></script>
+<script src="<spring:url value='/js/popover.js' />" type="text/javascript" ></script>
+

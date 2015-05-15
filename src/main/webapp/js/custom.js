@@ -116,57 +116,6 @@ function buildUrl(urlPrefix, startDate, endDate, dayLength, personId) {
     
 }
 
-// sortable tables
-$(document).ready(function()
-    {
-
-        $.tablesorter.addParser({
-            id: 'germanDate',
-            is: function(s) {
-                return false;
-            },
-            format: function(s) {
-                var d;
-                if(s.length > 10) {
-                    d = s.substring(0, 10);
-                } else if(s.length == 10) {
-                    d = s;
-                } else {
-                    return -1;
-                }
-
-                var a = d.split('.');
-                a[1] = a[1].replace(/^[0]+/g,"");
-                return new Date(a.reverse().join("/")).getTime();
-            },
-            type: 'numeric'
-        });
-
-        $.tablesorter.addParser({
-            id: 'commaNumber',
-            is: function(s){
-                return false;
-            },
-            format: function(s) {
-
-                var reg = new RegExp("[0-9]+");
-                
-                if(reg.test(s)) {
-                    s = s.replace(/[\,\.]/g,'.');
-
-                    // possible that string is sth like that: 30 + 2
-                    return eval(s);  
-                } else {
-                    return -1;
-                }
-                
-            },
-            type: 'numeric'
-        });
-
-    }
-);
-
 function checkSonderurlaub(value) {
 
     if(value === "SPECIALLEAVE") {
@@ -190,26 +139,6 @@ function getUrlParam(name)
         return results[1];
 }
 
-// set expandable behavior on text areas
-$(document).ready(function()
-    {
-        var standardNumberOfRows = 1;
-        var expandedNumberOfRows = 4;
-
-        $("textarea").focus(function() {
-            this.rows = expandedNumberOfRows;
-        });
-
-        $("textarea").blur(function() {
-
-            if(this.value == "") {
-                this.rows = standardNumberOfRows;
-            }
-        });
-
-    }
-);
-
 // toggling of full/half day in app form
 $(document).ready(function()
     {
@@ -225,16 +154,3 @@ $(document).ready(function()
 
     }
 );
-
-// hide every feedback after a certain time
-$(document).ready(function()
-    {
-        setInterval(hideFeedback, 5000);
-    }
-);
-
-function hideFeedback() {
-
-    $(".feedback").slideUp();
-
-}

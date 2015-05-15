@@ -28,35 +28,21 @@
                     <legend>
                         <p><spring:message code="sicknote" /></p>
                         <sec:authorize access="hasRole('OFFICE')">
-                            <c:if test="${sickNote.active}">
-                                <uv:print />
-                                <div class="btn-group pull-right">
-                                    <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#">
-                                        <i class="fa fa-edit"></i>
-                                        <span class="hidden-xs">
-                                            <spring:message code="action" />
-                                        </span>
-                                        <span class="caret"></span>
-                                    </a>
-                                    <ul class="dropdown-menu">
-                                        <li>
-                                            <a href="${URL_PREFIX}/sicknote/${sickNote.id}/edit">
-                                                <i class="fa fa-pencil"></i>&nbsp;&nbsp;<spring:message code="action.edit" />
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="${URL_PREFIX}/sicknote/${sickNote.id}/convert">
-                                                <i class="fa fa-retweet"></i>&nbsp;&nbsp;<spring:message code="sicknotes.convert.vacation.short" />
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#modal-cancel" role="button" data-toggle="modal">
-                                                <i class="fa fa-trash"></i>&nbsp;&nbsp;<spring:message code="action.delete" />
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </c:if>
+                          <c:if test="${sickNote.active}">
+                            <uv:print/>
+                            <a href="#modal-cancel" role="button" data-toggle="modal" class="fa-action pull-right"
+                               data-title="<spring:message code="action.delete"/>">
+                              <i class="fa fa-trash"></i>
+                            </a>
+                            <a href="${URL_PREFIX}/sicknote/${sickNote.id}/convert" class="fa-action pull-right"
+                               data-title="<spring:message code="sicknotes.convert.vacation.short"/>">
+                              <i class="fa fa-retweet"></i>
+                            </a>
+                            <a href="${URL_PREFIX}/sicknote/${sickNote.id}/edit" class="fa-action pull-right"
+                               data-title="<spring:message code="action.edit"/>">
+                              <i class="fa fa-pencil"></i>
+                            </a>
+                          </c:if>
                         </sec:authorize>
                     </legend>
                 </div>
@@ -157,9 +143,10 @@
                     <legend>
                         <p><spring:message code="progress" /></p>
                         <sec:authorize access="hasRole('OFFICE')">
-                            <button class="btn btn-default pull-right" onclick="$('div#comment-form').show();">
-                                <i class="fa fa-comment"></i> <span class="hidden-xs"><spring:message code="sicknotes.comment.new" /></span>
-                            </button>
+                          <a href="#" class="fa-action pull-right" onclick="$('div#comment-form').show();"
+                             data-title="<spring:message code="sicknotes.comment.new" />">
+                            <i class="fa fa-comments"></i>
+                          </a>
                         </sec:authorize>
                     </legend>
                 </div>
@@ -238,7 +225,7 @@
                                 <c:out value="${sickNote.person.niceName}"/>
                             </a>
                         </h4>
-                        <i class="fa fa-envelope"></i> <c:out value="${sickNote.person.email}"/>
+                        <i class="fa fa-envelope-o"></i> <c:out value="${sickNote.person.email}"/>
                     </span>
                 </div>
                 

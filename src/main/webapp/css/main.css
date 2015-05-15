@@ -1,5 +1,6 @@
 @import "fonts.css";
 @import "colors.css";
+@import "actions.css";
 @import "navbar.css";
 @import "calendar.css";
 @import "form.css";
@@ -43,26 +44,8 @@ footer {
     text-align: center;
 }
 
-.fa-action {
-    font-size: 25px;
-}
-
-a,
-.fa-action {
+a {
     color: #2A6496;
-}
-
-a:not(.btn):hover,
-.fa-action:hover {
-    color: #59AB02 !important;
-}
-
-.fa-action:hover {
-    text-decoration: none;
-}
-
-td .fa-action {
-  padding: 12px;
 }
 
 .is-centered {

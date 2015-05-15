@@ -191,9 +191,6 @@
                 <div class="modal-body">
                     <p><spring:message code='special.leave.explanation'/></p>
                 </div>
-                <div class="modal-footer">
-                    <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i> <spring:message code='close'/></button>
-                </div>
             </div>
         </div>
     </div>

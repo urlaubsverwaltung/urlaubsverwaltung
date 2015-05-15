@@ -20,8 +20,9 @@
 
         <sec:authorize access="hasRole('OFFICE')">
             <span>
-                <a href="${URL_PREFIX}/staff/${person.id}/edit" class="btn btn-default pull-right">
-                    <i class="fa fa-pencil"></i> <span class="hidden-xs"><spring:message code="action.edit"/></span>
+                <a href="${URL_PREFIX}/staff/${person.id}/edit" class="fa-action pull-right"
+                    data-title="<spring:message code="action.edit"/>">
+                    <i class="fa fa-pencil"></i>
                 </a>
             </span>
         </sec:authorize>

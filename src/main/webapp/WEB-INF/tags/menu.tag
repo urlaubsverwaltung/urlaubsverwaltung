@@ -30,7 +30,9 @@
       </button>
       <a class="navbar-brand" href="${URL_PREFIX}/overview">
         <img src="<spring:url value='/images/synyx-logo-transparent.png' />" height="24" width="15"/>
-        <spring:message code="nav.title"/>
+        <span class="navbar-brand-title">
+          <spring:message code="nav.title"/>
+        </span>
       </a>
     </div>
 
@@ -38,128 +40,58 @@
     <div class="collapse navbar-collapse" id="navbar-collapse">
       <ul class="nav navbar-nav navbar-right">
         <sec:authorize access="hasRole('USER')">
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-              <i class="fa fa-fw fa-home"></i>
-              <span class="nav-title"><spring:message code="nav.home.title"/></span>
-              <span class="caret"></span>
+          <li>
+            <a href="${URL_PREFIX}/overview">
+              <i class="fa fa-fw fa-home"></i> <spring:message code="nav.home.title"/>
             </a>
-            <ul class="dropdown-menu" role="menu">
-              <li>
-                <a href="${URL_PREFIX}/overview">
-                  <i class="fa fa-fw fa-list"></i> <spring:message code="nav.home.overview"/>
-                </a>
-              </li>
-              <li>
-                <a href="${URL_PREFIX}/application/new">
-                  <i class="fa fa-fw fa-pencil"></i> <spring:message code="nav.home.apply"/>
-                </a>
-              </li>
-              <li class="divider"></li>
-              <li>
-                <a href="<spring:url value='/j_spring_security_logout' />">
-                  <i class="fa fa-fw fa-sign-out"></i> <spring:message code="nav.home.signout"/>
-                </a>
-              </li>
-            </ul>
+          </li>
+          <li>
+            <a href="${URL_PREFIX}/application/new">
+              <i class="fa fa-fw fa-plus-circle"></i> <spring:message code="nav.apply.title"/>
+            </a>
           </li>
         </sec:authorize>
 
         <sec:authorize access="hasAnyRole('BOSS', 'OFFICE')">
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-              <i class="fa fa-fw fa-calendar"></i>
-              <span class="nav-title"><spring:message code="nav.vacation.title"/></span>
-              <span class="caret"></span>
+          <li>
+            <a href="${URL_PREFIX}/application">
+              <i class="fa fa-fw fa-calendar"></i> <spring:message code="nav.vacation.title"/>
             </a>
-            <ul class="dropdown-menu" role="menu">
-              <li>
-                <a href="${URL_PREFIX}/application">
-                  <i class="fa fa-fw fa-list"></i> <spring:message code="nav.vacation.overview"/>
-                </a>
-              </li>
-
-              <sec:authorize access="hasRole('OFFICE')">
-              <li>
-                <a href="${URL_PREFIX}/application/new?appliesOnOnesBehalf=true">
-                  <i class="fa fa-fw fa-pencil"></i> <spring:message code="nav.vacation.apply"/>
-                </a>
-              </li>
-              </sec:authorize>
-              <li>
-                <a href="${URL_PREFIX}/application/statistics">
-                  <i class="fa fa-fw fa-bar-chart"></i> <spring:message code="nav.vacation.statistics"/>
-                </a>
-              </li>
-            </ul>
           </li>
         </sec:authorize>
 
         <sec:authorize access="hasRole('OFFICE')">
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-              <i class="fa fa-medkit"></i>
-              <span class="nav-title"><spring:message code="nav.sicknote.title"/></span>
-              <span class="caret"></span>
+          <li>
+            <a href="${URL_PREFIX}/sicknote/">
+              <i class="fa fa-fw fa-medkit"></i> <spring:message code="nav.sicknote.title"/>
             </a>
-            <ul class="dropdown-menu" role="menu">
-              <li>
-                <a href="${URL_PREFIX}/sicknote/">
-                  <i class="fa fa-fw fa-list"></i> <spring:message code="nav.sicknote.overview"/>
-                </a>
-              </li>
-              <li>
-                <a href="${URL_PREFIX}/sicknote/new">
-                  <i class="fa fa-fw fa-pencil"></i> <spring:message code="nav.sicknote.create"/>
-                </a>
-              </li>
-              <li>
-                <a href="${URL_PREFIX}/sicknote/statistics">
-                  <i class="fa fa-fw fa-bar-chart"></i> <spring:message code="nav.sicknote.statistics"/>
-                </a>
-              </li>
-            </ul>
           </li>
         </sec:authorize>
 
-        <sec:authorize access="hasRole('BOSS') and !hasRole('OFFICE')">
+        <sec:authorize access="hasAnyRole('BOSS', 'OFFICE')">
           <li>
             <a href="${URL_PREFIX}/staff">
               <i class="fa fa-user"></i>
-              <span class="nav-title"><spring:message code="nav.staff.title"/></span>
+              <spring:message code="nav.staff.title"/>
             </a>
           </li>
         </sec:authorize>
 
         <sec:authorize access="hasRole('OFFICE')">
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-              <i class="fa fa-user"></i>
-              <span class="nav-title"><spring:message code="nav.staff.title"/></span>
-              <span class="caret"></span>
+          <li>
+            <a href="${URL_PREFIX}/settings">
+              <i class="fa fa-fw fa-cog"></i>
+              <spring:message code="nav.settings.title"/>
             </a>
-            <ul class="dropdown-menu" role="menu">
-              <li>
-                <a href="${URL_PREFIX}/staff">
-                  <i class="fa fa-fw fa-list"></i> <spring:message code="nav.staff.overview"/>
-                </a>
-              </li>
-              <li>
-                <a href="${URL_PREFIX}/staff/new">
-                  <i class="fa fa-fw fa-user-plus"></i> <spring:message code="nav.staff.create"/>
-                </a>
-              </li>
-            </ul>
           </li>
         </sec:authorize>
 
-        <sec:authorize access="hasAnyRole('OFFICE')">
+        <sec:authorize access="hasRole('USER')">
           <li>
-            <a href="${URL_PREFIX}/settings">
-              <i class="fa fa-fw fa-cogs"></i>
-              <span class="nav-title"><spring:message code="nav.settings.title"/></span>
+            <a href="<spring:url value='/j_spring_security_logout' />">
+              <i class="fa fa-fw fa-sign-out"></i> <spring:message code="nav.signout.title"/>
             </a>
-          </li>
+          </li>        
         </sec:authorize>
       </ul>
     </div>

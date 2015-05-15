@@ -172,10 +172,12 @@
             <div class="col-xs-12 col-md-6">
 
                 <div class="form-group AU">
-                    <label class="control-label col-md-6" for="aubFrom">
+                    <div class="col-md-6">
+                      <label class="control-label" for="aubFrom">
                         <spring:message code="sicknotes.aub.time" />
-                        <small class="help-inline"><spring:message code="sicknotes.aub.time.note" /></small>
-                    </label>
+                      </label>
+                      <span class="help-block"><spring:message code="sicknotes.aub.time.note" /></span>
+                    </div>
 
                     <div class="col-md-6">
                         <spring:message code="From" />

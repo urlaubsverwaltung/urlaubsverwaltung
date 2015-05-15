@@ -25,7 +25,7 @@
 
     <div class="form-group is-sticky row">
         <button type="submit" class="btn btn-info col-xs-12 col-sm-5">
-            <i class="fa fa-mail-forward"></i>&nbsp;<spring:message code='app.state.refer.short'/>
+            <i class="fa fa-share-alt"></i>&nbsp;<spring:message code='action.refer'/>
         </button>
         <button type="button" class="btn btn-default col-xs-12 col-sm-5 pull-right" onclick="$('#refer').hide();">
             <i class="fa fa-remove"></i>&nbsp;<spring:message code="action.cancel"/>

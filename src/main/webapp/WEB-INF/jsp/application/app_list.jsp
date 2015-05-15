@@ -33,9 +33,34 @@
                           <legend>
   
                             <p><spring:message code="applications.waiting"/></p>
+
+                            <a href="${URL_PREFIX}/application/statistics" class="fa-action pull-right"
+                                data-title="<spring:message code="action.applications.statistics"/>">
+                              <i class="fa fa-fw fa-bar-chart"></i>
+                            </a>
+
+                            <a href="${URL_PREFIX}/application/new?appliesOnOnesBehalf=true" class="fa-action pull-right"
+                                data-title="<spring:message code="action.apply.vacation"/>">
+                              <i class="fa fa-fw fa-plus-circle"></i>
+                            </a>
   
                           </legend>
   
+                        </div>
+
+                        <div class="feedback">
+                            <c:choose>
+                                <c:when test="${allowSuccess}">
+                                    <div class="alert alert-success">
+                                        <spring:message code="application.action.allow.success" />
+                                    </div>
+                                </c:when>
+                                <c:when test="${rejectSuccess}">
+                                    <div class="alert alert-success">
+                                        <spring:message code="application.action.reject.success" />
+                                    </div>
+                                </c:when>
+                            </c:choose>
                         </div>
 
                         <c:choose>
@@ -56,9 +81,7 @@
                                     <img class="img-circle" src="<c:out value='${gravatarUrls[application]}?d=mm&s=60'/>"/>&nbsp;
                                   </td>
                                   <td>
-                                    <a href="${URL_PREFIX}/staff/${application.person.id}">
-                                      <h4><c:out value="${application.person.niceName}"/></h4>
-                                    </a>
+                                    <h4><c:out value="${application.person.niceName}"/></h4>
                                     <p><spring:message code="app.apply"/></p>
                                   </td>
                                   <td>
@@ -77,10 +100,37 @@
                                       </c:choose>
                                     </p>
                                   </td>
-                                  <td>
-                                    <i class="fa fa-clock-o"></i>
-                                    <spring:message code="application.progress.WAITING"/>
-                                    <uv:date date="${application.applicationDate}"/>
+                                  <td class="hidden-xs hidden-sm">
+                                    <p>
+                                       <c:choose>
+                                           <c:when test="${application.teamInformed == true}">
+                                               <i class="fa fa-check hidden-print"></i>
+                                               <spring:message code="app.list.team.yes" />
+                                           </c:when>
+                                           <c:otherwise>
+                                               <i class="fa fa-remove hidden-print"></i>
+                                               <spring:message code="app.list.team.no" />
+                                           </c:otherwise>
+                                       </c:choose>
+                                    </p>
+                                    <c:choose>
+                                        <c:when test="${application.reason != null && !empty application.reason}">
+                                            <div class="overflow" data-toggle="popover" data-trigger="hover" data-placement="right" title="<spring:message code='reason'/>" data-content="${application.reason}">                                    
+                                                <i class="fa fa-comments"></i>
+                                                ${application.reason}
+                                            </div>
+                                        </c:when>
+                                    </c:choose>
+                                  </td>
+                                  <td class="hidden-xs hidden-sm">
+                                    <a class="fa-action positive" href="${URL_PREFIX}/application/${application.id}?action=allow&shortcut=true"
+                                        data-title="<spring:message code='action.allow'/>">
+                                        <i class="fa fa-check"></i>
+                                    </a>
+                                    <a class="fa-action negative" href="${URL_PREFIX}/application/${application.id}?action=reject&shortcut=true"
+                                       data-title="<spring:message code='action.reject'/>">
+                                      <i class="fa fa-ban"></i>
+                                    </a>
                                   </td>
                                 </tr>
                               </c:forEach>
