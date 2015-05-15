@@ -40,16 +40,18 @@
          onclick="$('#reject').hide(); $('#allow').hide(); $('#cancel').hide(); $('#refer').show();">
         <i class="fa fa-share-alt"></i>
       </a>
-      <a href="#" class="fa-action negative pull-right" data-title="<spring:message code='action.reject'/>"
-         onclick="$('#refer').hide(); $('#allow').hide(); $('#cancel').hide(); $('#reject').show();">
+      <c:if test="${application.person.id != loggedUser.id}">
+        <a href="#" class="fa-action negative pull-right" data-title="<spring:message code='action.reject'/>"
+           onclick="$('#refer').hide(); $('#allow').hide(); $('#cancel').hide(); $('#reject').show();">
         <i class="fa fa-ban"></i>
+      </c:if>
       </a>
       <a href="#" class="fa-action positive pull-right" data-title="<spring:message code='action.allow'/>"
          onclick="$('#reject').hide(); $('#refer').hide(); $('#cancel').hide(); $('#allow').show();">
         <i class="fa fa-check"></i>
       </a>
     </c:if>
-    <c:if test="${IS_USER && application.person.id == loggedUser.id}">
+    <c:if test="${IS_USER && application.person.id == loggedUser.id && !IS_BOSS}">
       <a href="#" class="fa-action pull-right" data-title="<spring:message code='action.remind'/>"
          onclick="$('form#remind').submit();">
         <i class="fa fa-bullhorn"></i>
