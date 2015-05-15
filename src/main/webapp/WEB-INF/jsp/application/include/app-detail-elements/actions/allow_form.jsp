@@ -49,7 +49,7 @@
 
     <div class="form-group is-sticky row">
         <button type="submit" class="btn btn-success col-xs-12 col-sm-5">
-            <i class="fa fa-check"></i>&nbsp;<spring:message code='app.state.ok.short'/>
+            <i class="fa fa-check"></i>&nbsp;<spring:message code='action.allow'/>
         </button>
         <button type="button" class="btn btn-default col-xs-12 col-sm-5 pull-right" onclick="$('#allow').hide();">
             <i class="fa fa-remove"></i>&nbsp;<spring:message code="action.cancel"/>

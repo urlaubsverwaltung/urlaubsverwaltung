@@ -217,14 +217,14 @@
                         <c:choose>
                             <c:when test="${person.id == loggedUser.id}">
                                 <a class="fa-action pull-right" href="${URL_PREFIX}/application/new" data-title="<spring:message code="action.apply.vacation"/>">
-                                    <i class="fa fa-pencil"></i>
+                                    <i class="fa fa-plus-circle"></i>
                                 </a>
                             </c:when>
                             <c:otherwise>
                                 <sec:authorize access="hasRole('OFFICE')">
                                     <a class="fa-action pull-right" href="${URL_PREFIX}/application/new?personId=${person.id}&appliesOnOnesBehalf=true"
                                         data-title="<spring:message code="action.apply.vacation"/>">
-                                        <i class="fa fa-pencil"></i>
+                                        <i class="fa fa-plus-circle"></i>
                                     </a>
                                 </sec:authorize>
                             </c:otherwise>
@@ -292,7 +292,7 @@
                         <sec:authorize access="hasRole('OFFICE')">
                             <a class="fa-action pull-right" href="${URL_PREFIX}/sicknote/new?person=${person.id}"
                                 data-title="<spring:message code="action.apply.sicknote" />">
-                                <i class="fa fa-pencil"></i>
+                                <i class="fa fa-plus-circle"></i>
                             </a>
                         </sec:authorize>
                     </legend>

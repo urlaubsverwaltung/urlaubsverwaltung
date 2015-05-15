@@ -33,6 +33,16 @@
                           <legend>
   
                             <p><spring:message code="applications.waiting"/></p>
+
+                            <a href="${URL_PREFIX}/application/statistics" class="fa-action pull-right"
+                                data-title="<spring:message code="action.applications.statistics"/>">
+                              <i class="fa fa-fw fa-bar-chart"></i>
+                            </a>
+
+                            <a href="${URL_PREFIX}/application/new?appliesOnOnesBehalf=true" class="fa-action pull-right"
+                                data-title="<spring:message code="action.apply.vacation"/>">
+                              <i class="fa fa-fw fa-plus-circle"></i>
+                            </a>
   
                           </legend>
   
@@ -114,11 +124,11 @@
                                   </td>
                                   <td class="hidden-xs hidden-sm">
                                     <a class="fa-action positive" href="${URL_PREFIX}/application/${application.id}?action=allow&shortcut=true"
-                                        data-title="<spring:message code='app.state.ok.short'/>">
+                                        data-title="<spring:message code='action.allow'/>">
                                         <i class="fa fa-check"></i>
                                     </a>
                                     <a class="fa-action negative" href="${URL_PREFIX}/application/${application.id}?action=reject&shortcut=true"
-                                       data-title="<spring:message code='app.state.no.short'/>">
+                                       data-title="<spring:message code='action.reject'/>">
                                       <i class="fa fa-ban"></i>
                                     </a>
                                   </td>

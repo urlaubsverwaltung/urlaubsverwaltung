@@ -46,6 +46,14 @@
                 <legend class="is-sticky">
                     <p><spring:message code="sicknotes" /></p>
                     <uv:print />
+                    <a href="${URL_PREFIX}/sicknote/statistics" class="fa-action pull-right"
+                       data-title="<spring:message code="action.sicknotes.statistics"/>">
+                      <i class="fa fa-fw fa-bar-chart"></i>
+                    </a>
+                    <a href="${URL_PREFIX}/sicknote/new" class="fa-action pull-right"
+                       data-title="<spring:message code="action.apply.sicknote"/>">
+                      <i class="fa fa-fw fa-plus-circle"></i>
+                    </a>
                 </legend>
 
             </div>

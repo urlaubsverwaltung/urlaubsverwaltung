@@ -34,12 +34,12 @@
     cursor: pointer;
     background-color: transparent;
     font-size: 20px;
-    color: #1896DB;
+    color: #4d5258;
 }
 
 .datepicker-prev:hover,
 .datepicker-next:hover {
-    color: #59AB02
+    color: #1896db
 }
 
 /* MONTHS */

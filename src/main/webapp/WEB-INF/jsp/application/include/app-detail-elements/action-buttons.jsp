@@ -30,34 +30,34 @@
 
   <c:if test="${application.status == 'WAITING'}">
     <c:if test="${IS_BOSS}">
-      <a href="#" class="fa-action pull-right" data-title="<spring:message code='app.state.refer.short'/>"
+      <a href="#" class="fa-action pull-right" data-title="<spring:message code='action.refer'/>"
          onclick="$('#reject').hide(); $('#allow').hide(); $('#cancel').hide(); $('#refer').show();">
         <i class="fa fa-share-alt"></i>
       </a>
-      <a href="#" class="fa-action negative pull-right" data-title="<spring:message code='app.state.no.short'/>"
+      <a href="#" class="fa-action negative pull-right" data-title="<spring:message code='action.reject'/>"
          onclick="$('#refer').hide(); $('#allow').hide(); $('#cancel').hide(); $('#reject').show();">
         <i class="fa fa-ban"></i>
       </a>
-      <a href="#" class="fa-action positive pull-right" data-title="<spring:message code='app.state.ok.short'/>"
+      <a href="#" class="fa-action positive pull-right" data-title="<spring:message code='action.allow'/>"
          onclick="$('#reject').hide(); $('#refer').hide(); $('#cancel').hide(); $('#allow').show();">
         <i class="fa fa-check"></i>
       </a>
     </c:if>
     <c:if test="${(IS_USER && application.person.id == loggedUser.id) || IS_OFFICE}">
-      <a href="#" class="fa-action negative pull-right" data-title="<spring:message code='app.state.cancel'/>"
+      <a href="#" class="fa-action negative pull-right" data-title="<spring:message code='action.delete'/>"
          onclick="$('#reject').hide(); $('#allow').hide(); $('#refer').hide(); $('#cancel').show();">
         <i class="fa fa-trash"></i>
       </a>
     </c:if>
     <c:if test="${IS_USER && application.person.id == loggedUser.id}">
-      <a href="#" class="fa-action pull-right" data-title="<spring:message code='remind.chef'/>"
+      <a href="#" class="fa-action pull-right" data-title="<spring:message code='action.remind'/>"
          onclick="$('form#remind').submit();">
         <i class="fa fa-bullhorn"></i>
       </a>
     </c:if>
   </c:if>
   <c:if test="${application.status == 'ALLOWED' && IS_OFFICE}">
-    <a href="#" class="fa-action negative pull-right" data-title="<spring:message code='app.state.cancel'/>"
+    <a href="#" class="fa-action negative pull-right" data-title="<spring:message code='action.delete'/>"
        onclick="$('#reject').hide(); $('#allow').hide(); $('#refer').hide(); $('#cancel').show();">
       <i class="fa fa-trash"></i>
     </a>
