@@ -127,6 +127,8 @@
                                         data-title="<spring:message code='action.allow'/>">
                                         <i class="fa fa-check"></i>
                                     </a>
+                                  </td>
+                                  <td>
                                     <a class="fa-action negative" href="${URL_PREFIX}/application/${application.id}?action=reject&shortcut=true"
                                        data-title="<spring:message code='action.reject'/>">
                                       <i class="fa fa-ban"></i>
