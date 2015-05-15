@@ -90,18 +90,33 @@
                                       </c:choose>
                                     </p>
                                   </td>
-                                  <td>
-                                    <i class="fa fa-clock-o"></i>
-                                    <spring:message code="application.progress.WAITING"/>
-                                    <uv:date date="${application.applicationDate}"/>
+                                  <td class="hidden-xs hidden-sm">
+                                    <p>
+                                       <c:choose>
+                                           <c:when test="${application.teamInformed == true}">
+                                               <i class="fa fa-check hidden-print"></i>
+                                               <spring:message code="app.list.team.yes" />
+                                           </c:when>
+                                           <c:otherwise>
+                                               <i class="fa fa-remove hidden-print"></i>
+                                               <spring:message code="app.list.team.no" />
+                                           </c:otherwise>
+                                       </c:choose>
+                                    </p>
+                                    <c:choose>
+                                        <c:when test="${application.reason != null && !empty application.reason}">
+                                            <div class="overflow" data-toggle="popover" data-trigger="hover" data-placement="top" title="<spring:message code='reason'/>" data-content="${application.reason}">                                    
+                                                <i class="fa fa-comment"></i>
+                                                ${application.reason}
+                                            </div>
+                                        </c:when>
+                                    </c:choose>
                                   </td>
-                                  <td>
+                                  <td class="hidden-xs hidden-sm">
                                     <a class="fa-action positive" href="${URL_PREFIX}/application/${application.id}?action=allow&shortcut=true"
                                         data-title="<spring:message code='app.state.ok.short'/>">
                                         <i class="fa fa-check"></i>
                                     </a>
-                                  </td>
-                                  <td>
                                     <a class="fa-action negative" href="${URL_PREFIX}/application/${application.id}?action=reject&shortcut=true"
                                        data-title="<spring:message code='app.state.no.short'/>">
                                       <i class="fa fa-ban"></i>

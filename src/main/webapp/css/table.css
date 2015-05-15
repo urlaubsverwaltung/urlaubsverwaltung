@@ -104,3 +104,14 @@ th.tablesorter-headerDesc .tablesorter-header-inner:after {
 th.tablesorter-headerAsc .tablesorter-header-inner:after {
     content: " \f0de";
 }
+
+/**************************************************************************
+  TABLE OVERFLOW HANDLING
+**************************************************************************/
+.overflow {
+    white-space: nowrap;
+    max-width: 15em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+}
