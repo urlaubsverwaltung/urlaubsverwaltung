@@ -17,8 +17,6 @@ import static org.junit.Assert.assertTrue;
  */
 public class GravatarUtilTest {
 
-    private static final String BASE_URL = "http://www.gravatar.com/avatar/";
-
     /**
      * Test of createImgURL method, of class GravatarUtil.
      */
@@ -47,7 +45,7 @@ public class GravatarUtilTest {
         assertEquals(url2, url3);
 
         // show that the BASE_URL is part of the url
-        assertTrue(url1.contains(BASE_URL));
+        assertTrue(url1.contains(GravatarUtil.BASE_URL));
 
         // show that the given email is not part of the url but a hash
         assertFalse(url1.contains(email));

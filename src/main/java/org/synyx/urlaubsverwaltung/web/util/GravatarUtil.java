@@ -19,7 +19,7 @@ public final class GravatarUtil {
 
     private static final Logger LOG = Logger.getLogger(GravatarUtil.class);
 
-    private static final String BASE_URL = "https://www.gravatar.com/avatar/";
+    public static final String BASE_URL = "https://www.gravatar.com/avatar/";
 
     private GravatarUtil() {
 
