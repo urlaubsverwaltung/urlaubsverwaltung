@@ -116,7 +116,7 @@
                                     <c:choose>
                                         <c:when test="${application.reason != null && !empty application.reason}">
                                             <div class="overflow" data-toggle="popover" data-trigger="hover" data-placement="right" title="<spring:message code='reason'/>" data-content="${application.reason}">                                    
-                                                <i class="fa fa-comment"></i>
+                                                <i class="fa fa-comments"></i>
                                                 ${application.reason}
                                             </div>
                                         </c:when>
