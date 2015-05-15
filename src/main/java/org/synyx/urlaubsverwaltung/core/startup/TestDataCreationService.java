@@ -171,6 +171,8 @@ public class TestDataCreationService {
             application.setEndDate(endDate);
             application.setVacationType(vacationType);
             application.setHowLong(dayLength);
+            application.setReason(
+                "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores");
 
             applicationInteractionService.apply(application, person, Optional.of("Ich hätte gerne Urlaub"));
         }
