@@ -21,6 +21,12 @@ import java.math.BigDecimal;
 
 import java.util.Arrays;
 
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
+
+import static org.hamcrest.core.AnyOf.anyOf;
+import static org.hamcrest.core.Is.is;
+
 
 /**
  * @author  Aljona Murygina - murygina@synyx.de
@@ -61,8 +67,8 @@ public class PersonInteractionServiceImplTest {
         examplePersonForm.setWorkingDays(Arrays.asList(Day.MONDAY.getDayOfWeek(), Day.TUESDAY.getDayOfWeek()));
         examplePersonForm.setPermissions(Arrays.asList(Role.USER));
 
-        Mockito.when(accountService.getHolidaysAccount(Mockito.anyInt(), Mockito.any(Person.class))).thenReturn(
-            java.util.Optional.<Account>empty());
+        Mockito.when(accountService.getHolidaysAccount(Mockito.anyInt(), Mockito.any(Person.class)))
+            .thenReturn(java.util.Optional.<Account>empty());
     }
 
 
@@ -73,6 +79,15 @@ public class PersonInteractionServiceImplTest {
 
         Assert.assertNotNull(person.getPrivateKey());
         Assert.assertNotNull(person.getPublicKey());
+    }
+
+
+    @Test
+    public void ensureThatPersonHasPasswordAfterCreation() {
+
+        Person person = service.create(examplePersonForm);
+
+        Assert.assertThat(person.getPassword(), not(anyOf(nullValue(), is(""))));
     }
 
 
@@ -90,10 +105,11 @@ public class PersonInteractionServiceImplTest {
 
         Person person = service.create(examplePersonForm);
 
-        Mockito.verify(workingTimeService).touch(Mockito.anyListOf(Integer.class), Mockito.any(DateMidnight.class),
-            Mockito.eq(person));
-        Mockito.verify(accountInteractionService).createHolidaysAccount(Mockito.eq(person),
-            Mockito.eq(new DateMidnight(2014, 1, 1)), Mockito.eq(new DateMidnight(2014, 12, 31)),
-            Mockito.eq(new BigDecimal("28")), Mockito.eq(new BigDecimal("4")), Mockito.eq(new BigDecimal("3")));
+        Mockito.verify(workingTimeService)
+            .touch(Mockito.anyListOf(Integer.class), Mockito.any(DateMidnight.class), Mockito.eq(person));
+        Mockito.verify(accountInteractionService)
+            .createHolidaysAccount(Mockito.eq(person), Mockito.eq(new DateMidnight(2014, 1, 1)),
+                Mockito.eq(new DateMidnight(2014, 12, 31)), Mockito.eq(new BigDecimal("28")),
+                Mockito.eq(new BigDecimal("4")), Mockito.eq(new BigDecimal("3")));
     }
 }

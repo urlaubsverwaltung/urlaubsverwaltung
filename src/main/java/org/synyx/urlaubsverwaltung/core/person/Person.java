@@ -15,7 +15,6 @@ import org.synyx.urlaubsverwaltung.security.Role;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Optional;
 
 import javax.persistence.*;
 
@@ -33,6 +32,8 @@ public class Person extends AbstractPersistable<Integer> {
     private static final long serialVersionUID = 765672310978437L;
 
     private String loginName;
+
+    private String password;
 
     private String lastName;
 
@@ -123,6 +124,18 @@ public class Person extends AbstractPersistable<Integer> {
     }
 
 
+    public String getPassword() {
+
+        return password;
+    }
+
+
+    public void setPassword(String password) {
+
+        this.password = password;
+    }
+
+
     public byte[] getPrivateKey() {
 
         if (privateKey == null) {
@@ -177,11 +190,7 @@ public class Person extends AbstractPersistable<Integer> {
 
     public boolean hasRole(final Role role) {
 
-        return getPermissions().stream().
-                filter(permission -> permission.equals(role)).
-                findFirst().
-                isPresent();
-
+        return getPermissions().stream().filter(permission -> permission.equals(role)).findFirst().isPresent();
     }
 
 
@@ -203,12 +212,9 @@ public class Person extends AbstractPersistable<Integer> {
 
     public boolean hasNotificationType(final MailNotification notification) {
 
-
-        return getNotifications().stream().
-                filter(element -> element.equals(notification)).
-                findFirst().
-                isPresent();
+        return getNotifications().stream().filter(element -> element.equals(notification)).findFirst().isPresent();
     }
+
 
     public String getNiceName() {
 

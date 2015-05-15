@@ -57,6 +57,8 @@ public class PersonInteractionServiceImpl implements PersonInteractionService {
 
         Person person = personForm.generatePerson();
 
+        person.setPassword(CryptoUtil.generatePassword());
+
         try {
             KeyPair keyPair = CryptoUtil.generateKeyPair();
             person.setPrivateKey(keyPair.getPrivate().getEncoded());

@@ -39,25 +39,20 @@ public class DevUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("No authentication possible for user = " + username);
         }
 
-        Optional<Person> testUser = personService.getPersonByLogin(username);
+        Optional<Person> userOptional = personService.getPersonByLogin(username);
 
-        if (testUser.isPresent()) {
+        if (userOptional.isPresent()) {
+            Person user = userOptional.get();
+
             Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 
-            Collection<Role> roles = testUser.get().getPermissions();
+            Collection<Role> roles = user.getPermissions();
 
             for (final Role role : roles) {
-                grantedAuthorities.add(new GrantedAuthority() {
-
-                        @Override
-                        public String getAuthority() {
-
-                            return role.name();
-                        }
-                    });
+                grantedAuthorities.add(role::name);
             }
 
-            return new User(username, TEST_USER_PASSWORD, grantedAuthorities);
+            return new User(user.getLoginName(), user.getPassword(), grantedAuthorities);
         }
 
         return null;

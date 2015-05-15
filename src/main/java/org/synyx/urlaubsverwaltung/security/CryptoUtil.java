@@ -1,5 +1,8 @@
 package org.synyx.urlaubsverwaltung.security;
 
+import org.springframework.security.crypto.keygen.KeyGenerators;
+import org.springframework.security.crypto.keygen.StringKeyGenerator;
+
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -99,5 +102,13 @@ public final class CryptoUtil {
         PrivateKey privKey = keyFactory.generatePrivate(keySpec);
 
         return privKey;
+    }
+
+
+    public static String generatePassword() {
+
+        StringKeyGenerator generator = KeyGenerators.string();
+
+        return generator.generateKey();
     }
 }
