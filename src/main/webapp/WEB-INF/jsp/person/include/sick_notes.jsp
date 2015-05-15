@@ -16,7 +16,7 @@
         </c:otherwise>
     </c:choose>
     <tr class="${CSS_CLASS}" onclick="navigate('${URL_PREFIX}/sicknote/${sickNote.id}');">
-        <td class="is-centered state">
+        <td class="is-centered state ${sickNote.type}">
             <span class="hidden-print">
                 <c:choose>
                     <c:when test="${sickNote.type == 'SICK_NOTE_CHILD'}">
@@ -44,7 +44,7 @@
 
                 <c:if test="${sickNote.aubPresent == true}">
                     <span class="visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block">
-                       (<i class="fa fa-check check"></i> <spring:message code="sicknotes.aub.short" />)
+                       (<i class="fa fa-check positive"></i> <spring:message code="sicknotes.aub.short" />)
                     </span>
                 </c:if>
             </p>

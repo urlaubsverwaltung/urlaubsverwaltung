@@ -29,3 +29,9 @@
 td .fa-action {
     padding: 12px;
 }
+
+@media print {
+    .fa-action {
+        display: none;
+    }
+}

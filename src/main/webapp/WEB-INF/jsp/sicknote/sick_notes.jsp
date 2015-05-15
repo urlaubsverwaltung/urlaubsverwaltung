@@ -103,7 +103,7 @@
                             <spring:message code="sicknotes.days"/>
                             <c:if test="${sickDaysWithAUB[person] > 0}">
                                 <p class="list-table--second-row">
-                                    <i class="fa fa-check check"></i> <spring:message
+                                    <i class="fa fa-check positive"></i> <spring:message
                                         code="overview.sicknotes.sickdays.aub" arguments="${sickDaysWithAUB[person]}"/>
                                 </p>
                             </c:if>
@@ -113,7 +113,7 @@
                                 <spring:message code="sicknotes.child.days"/>
                             <c:if test="${childSickDaysWithAUB[person] > 0}">
                                 <p class="list-table--second-row">
-                                    <i class="fa fa-check check"></i> <spring:message
+                                    <i class="fa fa-check positive"></i> <spring:message
                                             code="overview.sicknotes.sickdays.aub"
                                             arguments="${childSickDaysWithAUB[person]}"/>
                                 </p>

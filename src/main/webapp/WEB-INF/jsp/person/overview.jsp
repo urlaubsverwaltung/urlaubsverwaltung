@@ -254,7 +254,7 @@
                     <span class="box-icon bg-yellow"><i class="fa fa-sun-o"></i></span>
                     <span class="box-text">
                         <spring:message code="overview.vacations.holidayLeave" arguments="${holidayLeave}" />
-                        <i class="fa fa-check check"></i> <spring:message code="overview.vacations.holidayLeaveAllowed" arguments="${holidayLeaveAllowed}" />
+                        <i class="fa fa-check positive"></i> <spring:message code="overview.vacations.holidayLeaveAllowed" arguments="${holidayLeaveAllowed}" />
                     </span>
                 </div>
             </div>
@@ -264,7 +264,7 @@
                     <span class="box-icon bg-yellow"><i class="fa fa-flag-o"></i></span>
                     <span class="box-text">
                         <spring:message code="overview.vacations.otherLeave" arguments="${otherLeave}" />
-                        <i class="fa fa-check check"></i> <spring:message code="overview.vacations.otherLeaveAllowed" arguments="${otherLeaveAllowed}" />
+                        <i class="fa fa-check positive"></i> <spring:message code="overview.vacations.otherLeaveAllowed" arguments="${otherLeaveAllowed}" />
                     </span>
                 </div>
             </div>
@@ -309,7 +309,7 @@
                     <span class="box-icon bg-red"><i class="fa fa-medkit"></i></span>
                     <span class="box-text">
                         <spring:message code="overview.sicknotes.sickdays" arguments="${sickDays}" />
-                        <i class="fa fa-check check"></i> <spring:message code="overview.sicknotes.sickdays.aub" arguments="${sickDaysWithAUB}" />
+                        <i class="fa fa-check positive"></i> <spring:message code="overview.sicknotes.sickdays.aub" arguments="${sickDaysWithAUB}" />
                     </span>
                 </div>
             </div>
@@ -318,7 +318,7 @@
                     <span class="box-icon bg-red"><i class="fa fa-child"></i></span>
                     <span class="box-text">
                         <spring:message code="overview.sicknotes.sickdays.child" arguments="${childSickDays}" />
-                        <i class="fa fa-check check"></i> <spring:message code="overview.sicknotes.sickdays.aub" arguments="${childSickDaysWithAUB}" />
+                        <i class="fa fa-check positive"></i> <spring:message code="overview.sicknotes.sickdays.aub" arguments="${childSickDaysWithAUB}" />
                     </span>
                 </div>
             </div>

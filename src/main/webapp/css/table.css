@@ -115,3 +115,11 @@ th.tablesorter-headerAsc .tablesorter-header-inner:after {
     text-overflow: ellipsis;
     display: inline-block;
 }
+
+/**************************************************************************
+  CONTROL HEIGHT OF TABLE CELL CONTENT
+**************************************************************************/
+
+td.halves h4 {
+    margin-top: 5px;
+}

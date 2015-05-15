@@ -138,7 +138,7 @@
         <td>
             <c:choose>
                 <c:when test="${application.teamInformed == true}">
-                    <i class="fa fa-check hidden-print"></i>
+                    <i class="fa fa-check positive hidden-print"></i>
                     <spring:message code='yes'/>
                 </c:when>
                 <c:otherwise>

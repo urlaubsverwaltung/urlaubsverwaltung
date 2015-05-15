@@ -2,8 +2,12 @@
   TEXT COLORS
 **************************************************************************/
 
-.check {
+.fa.positive {
     color: #43C83C !important;
+}
+
+.fa.negative {
+    color: #E94B3B !important;
 }
 
 /**************************************************************************
@@ -33,7 +37,7 @@
 }
 
 .state.WAITING {
-    color: #34495E !important;
+    color: #6F6F6F !important;
 }
 
 .state.ALLOWED {
@@ -52,7 +56,7 @@
   COLORS FOR SICK NOTE STATES
 **************************************************************************/
 
-.state.SICKNOTE,
-.state.SICKNOTECHILD {
-    color: #34495E;
+.state.SICK_NOTE,
+.state.SICK_NOTE_CHILD {
+    color: #6F6F6F;
 }

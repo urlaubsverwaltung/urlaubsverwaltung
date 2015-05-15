@@ -48,6 +48,11 @@ a {
     color: #2A6496;
 }
 
+a:hover,
+a:focus {
+    color: #1896db;
+}
+
 .is-centered {
     text-align: center;
 }

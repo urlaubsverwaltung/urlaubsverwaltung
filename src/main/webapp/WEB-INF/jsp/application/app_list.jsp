@@ -80,11 +80,11 @@
                                   <td class="hidden-print is-centered">
                                     <img class="img-circle" src="<c:out value='${gravatarUrls[application]}?d=mm&s=60'/>"/>&nbsp;
                                   </td>
-                                  <td>
-                                    <h4><c:out value="${application.person.niceName}"/></h4>
+                                  <td class="hidden-xs">
+                                    <h5><c:out value="${application.person.niceName}"/></h5>
                                     <p><spring:message code="app.apply"/></p>
                                   </td>
-                                  <td>
+                                  <td class="halves">
                                     <a class="vacation ${application.vacationType} hidden-print" href="${URL_PREFIX}/application/${application.id}">
                                       <h4><uv:number number="${application.workDays}" /> <spring:message code="duration.days" /> <spring:message code="${application.vacationType}"/></h4>
                                     </a>
@@ -100,7 +100,7 @@
                                       </c:choose>
                                     </p>
                                   </td>
-                                  <td class="hidden-xs hidden-sm">
+                                  <td class="hidden-print hidden-xs hidden-sm">
                                     <p>
                                        <c:choose>
                                            <c:when test="${application.teamInformed == true}">
@@ -128,7 +128,7 @@
                                         <i class="fa fa-check"></i>
                                     </a>
                                   </td>
-                                  <td>
+                                  <td class="hidden-xs hidden-sm">
                                     <a class="fa-action negative" href="${URL_PREFIX}/application/${application.id}?action=reject&shortcut=true"
                                        data-title="<spring:message code='action.reject'/>">
                                       <i class="fa fa-ban"></i>
