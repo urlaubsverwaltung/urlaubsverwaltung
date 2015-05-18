@@ -64,9 +64,11 @@ public class DevUserDetailsServiceTest {
     public void ensureReturnsUserDetailsWithCorrectAuthorities() {
 
         String login = TestDataCreationService.USER;
+        String password = DevUserDetailsService.TEST_USER_PASSWORD;
 
-        Person user = new Person();
+        Person user = new Person(login, "Max", "Muster", "max.muster@test.de");
         user.setPermissions(Arrays.asList(Role.USER, Role.OFFICE));
+        user.setPassword(DevUserDetailsService.TEST_USER_PASSWORD);
 
         Mockito.when(personService.getPersonByLogin(login)).thenReturn(Optional.of(user));
 
