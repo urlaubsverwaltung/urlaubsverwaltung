@@ -42,17 +42,17 @@ public class DevUserDetailsService implements UserDetailsService {
         Optional<Person> userOptional = personService.getPersonByLogin(username);
 
         if (userOptional.isPresent()) {
-            Person user = userOptional.get();
+            Person person = userOptional.get();
 
             Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 
-            Collection<Role> roles = user.getPermissions();
+            Collection<Role> roles = person.getPermissions();
 
             for (final Role role : roles) {
                 grantedAuthorities.add(role::name);
             }
 
-            return new User(user.getLoginName(), user.getPassword(), grantedAuthorities);
+            return new User(person.getLoginName(), person.getPassword(), grantedAuthorities);
         }
 
         return null;
