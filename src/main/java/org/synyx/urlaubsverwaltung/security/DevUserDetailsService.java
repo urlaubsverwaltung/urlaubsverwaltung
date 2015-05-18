@@ -8,7 +8,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
-import org.synyx.urlaubsverwaltung.core.startup.TestDataCreationService;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,14 +33,9 @@ public class DevUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) {
 
-        if (!TestDataCreationService.USER.equals(username) && !TestDataCreationService.BOSS_USER.equals(username)
-                && !TestDataCreationService.OFFICE_USER.equals(username)) {
-            throw new UsernameNotFoundException("No authentication possible for user = " + username);
-        }
-
         Optional<Person> userOptional = personService.getPersonByLogin(username);
 
-        if (userOptional.isPresent()) {
+        if (userOptional != null && userOptional.isPresent()) {
             Person person = userOptional.get();
 
             Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>();
@@ -53,8 +47,8 @@ public class DevUserDetailsService implements UserDetailsService {
             }
 
             return new User(person.getLoginName(), person.getPassword(), grantedAuthorities);
+        } else {
+            throw new UsernameNotFoundException("No authentication possible for user = " + username);
         }
-
-        return null;
     }
 }

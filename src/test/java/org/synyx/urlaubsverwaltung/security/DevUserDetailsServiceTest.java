@@ -39,22 +39,13 @@ public class DevUserDetailsServiceTest {
 
 
     @Test(expected = UsernameNotFoundException.class)
-    public void ensureThrowsIfTheGivenUserNameDoesNotMatchOneOfTheTestUserNames() {
-
-        devUserDetailsService.loadUserByUsername("foo");
-    }
-
-
-    @Test
-    public void ensureReturnsNullIfUserCanNotBeFoundWithinDatabase() {
+    public void ensureThatThrowsExceptionIfUserCanNotBeFoundWithinDatabase() {
 
         String login = TestDataCreationService.USER;
 
         Mockito.when(personService.getPersonByLogin(login)).thenReturn(Optional.<Person>empty());
 
         UserDetails userDetails = devUserDetailsService.loadUserByUsername(login);
-
-        Assert.assertNull("Can not return UserDetails if there is no user with given login in database", userDetails);
 
         Mockito.verify(personService).getPersonByLogin(login);
     }

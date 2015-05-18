@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.security;
 
 import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.security.crypto.keygen.StringKeyGenerator;
+import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
@@ -105,10 +106,30 @@ public final class CryptoUtil {
     }
 
 
+    /**
+     * Generates password with 16 characters length with spring standard key generator.
+     *
+     * @return  password with 16 characters
+     */
     public static String generatePassword() {
 
         StringKeyGenerator generator = KeyGenerators.string();
 
         return generator.generateKey();
+    }
+
+
+    /**
+     * Encodes a given raw password with random salt via Spring StandardPasswordEncoder.
+     *
+     * @param  rawPassword  plaintext password
+     *
+     * @return  encoded password
+     */
+    public static String encodePassword(String rawPassword) {
+
+        StandardPasswordEncoder encoder = new StandardPasswordEncoder();
+
+        return encoder.encode(rawPassword);
     }
 }

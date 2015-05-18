@@ -16,10 +16,12 @@ import org.synyx.urlaubsverwaltung.core.calendar.Day;
 import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonInteractionService;
+import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteInteractionService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
+import org.synyx.urlaubsverwaltung.security.CryptoUtil;
 import org.synyx.urlaubsverwaltung.security.Role;
 import org.synyx.urlaubsverwaltung.web.person.PersonForm;
 
@@ -51,6 +53,9 @@ public class TestDataCreationService {
     public static final String OFFICE_USER = "test";
 
     @Autowired
+    private PersonService personService;
+
+    @Autowired
     private PersonInteractionService personInteractionService;
 
     @Autowired
@@ -74,14 +79,15 @@ public class TestDataCreationService {
         if (environment.equals(DEV_ENVIRONMENT)) {
             LOG.info("Test data will be created...");
 
-            user = createTestPerson(USER, "Klaus", "Müller", "mueller@muster.de", Role.USER);
-            boss = createTestPerson(BOSS_USER, "Max", "Mustermann", "maxMuster@muster.de", Role.USER, Role.BOSS);
-            office = createTestPerson(OFFICE_USER, "Marlene", "Muster", "mmuster@muster.de", Role.USER, Role.BOSS,
-                    Role.OFFICE);
+            user = createTestPerson(USER, "Klaus", "Müller", "mueller@muster.de", "secret", Role.USER);
+            boss = createTestPerson(BOSS_USER, "Max", "Mustermann", "maxMuster@muster.de", "secret", Role.USER,
+                    Role.BOSS);
+            office = createTestPerson(OFFICE_USER, "Marlene", "Muster", "mmuster@muster.de", "secret", Role.USER,
+                    Role.BOSS, Role.OFFICE);
 
-            createTestPerson("hdampf", "Hans", "Dampf", "dampf@foo.bar", Role.USER, Role.OFFICE);
+            createTestPerson("hdampf", "Hans", "Dampf", "dampf@foo.bar", "secret", Role.USER, Role.OFFICE);
 
-            createTestPerson("horst", "Horst", "Dieter", "hdieter@muster.de", Role.INACTIVE);
+            createTestPerson("horst", "Horst", "Dieter", "hdieter@muster.de", "secret", Role.INACTIVE);
 
             createTestData(user);
             createTestData(boss);
@@ -92,8 +98,8 @@ public class TestDataCreationService {
     }
 
 
-    private Person createTestPerson(String login, String firstName, String lastName, String email, Role... roles)
-        throws NoSuchAlgorithmException {
+    private Person createTestPerson(String login, String firstName, String lastName, String email, String rawPassword,
+        Role... roles) throws NoSuchAlgorithmException {
 
         int currentYear = DateMidnight.now().getYear();
 
@@ -127,7 +133,13 @@ public class TestDataCreationService {
 
         personForm.setNotifications(notifications);
 
-        return personInteractionService.create(personForm);
+        Person result = personInteractionService.create(personForm);
+
+        // workaround for non generated password.
+        result.setPassword(CryptoUtil.encodePassword(rawPassword));
+        personService.save(result);
+
+        return result;
     }
 
 
