@@ -153,4 +153,13 @@ public interface MailService {
      * @param  application
      */
     void notifyHolidayReplacement(Application application);
+
+
+    /**
+     * Sends mail to person to inform that his/her account has been created.
+     *
+     * @param  person  New account owner
+     * @param  rawPassword  First time usage password
+     */
+    void sendUserCreationNotification(Person person, String rawPassword);
 }

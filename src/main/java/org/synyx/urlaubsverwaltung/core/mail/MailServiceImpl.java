@@ -394,4 +394,18 @@ class MailServiceImpl implements MailService {
 
         sendEmail(Arrays.asList(application.getHolidayReplacement()), "subject.holidayReplacement", text);
     }
+
+
+    @Override
+    public void sendUserCreationNotification(Person person, String rawPassword) {
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("person", person);
+        model.put("rawPassword", rawPassword);
+        model.put("applicationUrl", applicationUrl);
+
+        String text = buildMailBody("user_creation", model);
+
+        sendEmail(Arrays.asList(person), "subject.userCreation", text);
+    }
 }

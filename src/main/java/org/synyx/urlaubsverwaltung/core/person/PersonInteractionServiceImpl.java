@@ -77,6 +77,8 @@ public class PersonInteractionServiceImpl implements PersonInteractionService {
 
         LOG.info("Created: " + person.toString());
 
+        mailService.sendUserCreationNotification(person, rawPassword);
+
         return person;
     }
 
