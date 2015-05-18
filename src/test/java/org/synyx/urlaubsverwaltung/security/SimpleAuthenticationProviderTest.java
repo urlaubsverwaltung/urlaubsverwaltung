@@ -52,6 +52,7 @@ public class SimpleAuthenticationProviderTest {
         Authentication authToken = new UsernamePasswordAuthenticationToken(validUser.getUsername(), rawPassword,
                 validUser.getAuthorities());
         cot.authenticate(authToken);
+        Mockito.verify(userDetailsService).loadUserByUsername("valid");
     }
 
 
@@ -91,6 +92,4 @@ public class SimpleAuthenticationProviderTest {
         Authentication authToken = new UsernamePasswordAuthenticationToken("invalid", "foo", grantedAuthorities);
         cot.authenticate(authToken);
     }
-
-    // TODO: Test call of DevUserDetailsService
 }
