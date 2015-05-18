@@ -59,7 +59,7 @@ public class DevUserDetailsServiceTest {
 
         Person user = new Person(login, "Max", "Muster", "max.muster@test.de");
         user.setPermissions(Arrays.asList(Role.USER, Role.OFFICE));
-        user.setPassword(DevUserDetailsService.TEST_USER_PASSWORD);
+        user.setPassword(password);
 
         Mockito.when(personService.getPersonByLogin(login)).thenReturn(Optional.of(user));
 
