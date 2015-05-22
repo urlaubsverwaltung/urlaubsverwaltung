@@ -151,7 +151,7 @@ Die Anwendung verfügt über **drei** verschiedene Authentifizierungsmöglichkei
 
 Die Anwendung besitzt im Verzeichnis `src/main/resources` jeweils eine `.properties` Datei zur Konfiguration der jeweiligen [Umgebung](https://github.com/synyx/urlaubsverwaltung#umgebungen).
 
-* `application-dev.properties`
+* eine standardmäßige `application.properties`
 * `application-test.properties`
 * `application-prod.properties`
 
