@@ -13,13 +13,14 @@ import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationInteractionService;
 import org.synyx.urlaubsverwaltung.core.calendar.Day;
+import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
 import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonInteractionService;
-import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteInteractionService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
+import org.synyx.urlaubsverwaltung.core.util.CalcUtil;
 import org.synyx.urlaubsverwaltung.security.Role;
 import org.synyx.urlaubsverwaltung.web.person.PersonForm;
 
@@ -60,7 +61,7 @@ public class TestDataCreationService {
     private SickNoteInteractionService sickNoteInteractionService;
 
     @Autowired
-    private SettingsService settingsService;
+    private OwnCalendarService calendarService;
 
     private Person user;
     private Person boss;
@@ -163,7 +164,8 @@ public class TestDataCreationService {
 
         Application application = null;
 
-        if (startAndEndDatesAreInCurrentYear(startDate, endDate)) {
+        if (startAndEndDatesAreInCurrentYear(startDate, endDate)
+                && isMoreThanOneWorkDayDuration(startDate, endDate, person)) {
             application = new Application();
             application.setPerson(person);
             application.setStartDate(startDate);
@@ -185,6 +187,14 @@ public class TestDataCreationService {
         int currentYear = DateMidnight.now().getYear();
 
         return start.getYear() == currentYear && end.getYear() == currentYear;
+    }
+
+
+    private boolean isMoreThanOneWorkDayDuration(DateMidnight start, DateMidnight end, Person person) {
+
+        BigDecimal workDays = calendarService.getWorkDays(DayLength.FULL, start, end, person);
+
+        return CalcUtil.isPositive(workDays);
     }
 
 
@@ -234,7 +244,8 @@ public class TestDataCreationService {
 
         SickNote sickNote = null;
 
-        if (startAndEndDatesAreInCurrentYear(startDate, endDate)) {
+        if (startAndEndDatesAreInCurrentYear(startDate, endDate)
+                && isMoreThanOneWorkDayDuration(startDate, endDate, person)) {
             sickNote = new SickNote();
             sickNote.setPerson(person);
             sickNote.setStartDate(startDate);
