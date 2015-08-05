@@ -30,7 +30,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
-import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
+import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
@@ -77,7 +77,7 @@ public class PersonOverviewController {
     private ApplicationService applicationService;
 
     @Autowired
-    private OwnCalendarService calendarService;
+    private WorkDaysService calendarService;
 
     @Autowired
     private SickNoteService sickNoteService;

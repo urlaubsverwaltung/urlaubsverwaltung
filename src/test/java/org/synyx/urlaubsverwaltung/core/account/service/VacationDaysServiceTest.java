@@ -17,9 +17,9 @@ import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
-import org.synyx.urlaubsverwaltung.core.calendar.JollydayCalendar;
+import org.synyx.urlaubsverwaltung.core.calendar.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.core.calendar.NowService;
-import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
+import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -67,7 +67,7 @@ public class VacationDaysServiceTest {
         SettingsService settingsService = Mockito.mock(SettingsService.class);
         Mockito.when(settingsService.getSettings()).thenReturn(new Settings());
 
-        OwnCalendarService calendarService = new OwnCalendarService(new JollydayCalendar(settingsService),
+        WorkDaysService calendarService = new WorkDaysService(new PublicHolidaysService(settingsService),
                 workingTimeService);
 
         vacationDaysService = new VacationDaysService(calendarService, nowService, applicationService);
@@ -331,7 +331,7 @@ public class VacationDaysServiceTest {
 
     private void initCustomService(final String daysBeforeApril, final String daysAfterApril) {
 
-        vacationDaysService = new VacationDaysService(Mockito.mock(OwnCalendarService.class), nowService,
+        vacationDaysService = new VacationDaysService(Mockito.mock(WorkDaysService.class), nowService,
                 applicationService) {
 
             @Override

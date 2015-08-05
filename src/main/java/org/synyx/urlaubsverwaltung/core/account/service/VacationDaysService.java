@@ -14,7 +14,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.calendar.NowService;
-import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
+import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 
@@ -32,12 +32,12 @@ import java.util.stream.Collectors;
 @Service
 public class VacationDaysService {
 
-    private final OwnCalendarService calendarService;
+    private final WorkDaysService calendarService;
     private final NowService nowService;
     private final ApplicationService applicationService;
 
     @Autowired
-    public VacationDaysService(OwnCalendarService calendarService, NowService nowService,
+    public VacationDaysService(WorkDaysService calendarService, NowService nowService,
         ApplicationService applicationService) {
 
         this.calendarService = calendarService;

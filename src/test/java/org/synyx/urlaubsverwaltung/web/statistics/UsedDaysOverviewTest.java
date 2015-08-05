@@ -12,7 +12,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
-import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
+import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.math.BigDecimal;
@@ -28,12 +28,12 @@ import java.util.List;
  */
 public class UsedDaysOverviewTest {
 
-    private OwnCalendarService calendarService;
+    private WorkDaysService calendarService;
 
     @Before
     public void setUp() {
 
-        calendarService = Mockito.mock(OwnCalendarService.class);
+        calendarService = Mockito.mock(WorkDaysService.class);
     }
 
 

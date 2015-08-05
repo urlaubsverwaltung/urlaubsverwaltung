@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
-import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
+import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 
@@ -42,7 +42,7 @@ public class WorkDayController {
     private PersonService personService;
 
     @Autowired
-    private OwnCalendarService ownCalendarService;
+    private WorkDaysService workDaysService;
 
     /**
      * Calculate number of work days for the given period and person.
@@ -88,7 +88,7 @@ public class WorkDayController {
                     return "N/A";
                 }
 
-                BigDecimal days = ownCalendarService.getWorkDays(howLong, startDate, endDate, person.get());
+                BigDecimal days = workDaysService.getWorkDays(howLong, startDate, endDate, person.get());
 
                 return days.toString();
             }

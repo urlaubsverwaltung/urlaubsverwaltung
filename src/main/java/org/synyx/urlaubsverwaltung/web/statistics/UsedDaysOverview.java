@@ -8,7 +8,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
-import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
+import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 
@@ -32,7 +32,7 @@ public class UsedDaysOverview {
     // used days for all the other vacation types except HOLIDAY
     private final UsedDays otherDays;
 
-    public UsedDaysOverview(List<Application> applications, int year, OwnCalendarService calendarService) {
+    public UsedDaysOverview(List<Application> applications, int year, WorkDaysService calendarService) {
 
         this.year = year;
         this.holidayDays = new UsedDays(ApplicationStatus.WAITING, ApplicationStatus.ALLOWED);
@@ -65,7 +65,7 @@ public class UsedDaysOverview {
     }
 
 
-    private BigDecimal getVacationDays(Application application, OwnCalendarService calendarService) {
+    private BigDecimal getVacationDays(Application application, WorkDaysService calendarService) {
 
         int yearOfStartDate = application.getStartDate().getYear();
         int yearOfEndDate = application.getEndDate().getYear();

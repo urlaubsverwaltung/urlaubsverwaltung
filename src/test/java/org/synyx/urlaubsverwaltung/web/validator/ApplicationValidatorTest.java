@@ -16,7 +16,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.CalculationService;
 import org.synyx.urlaubsverwaltung.core.calendar.OverlapCase;
 import org.synyx.urlaubsverwaltung.core.calendar.OverlapService;
-import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
+import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
@@ -36,7 +36,7 @@ import static org.junit.Assert.assertTrue;
 public class ApplicationValidatorTest {
 
     private ApplicationValidator validator;
-    private OwnCalendarService calendarService;
+    private WorkDaysService calendarService;
     private OverlapService overlapService;
     private CalculationService calculationService;
     private SettingsService settingsService;
@@ -50,7 +50,7 @@ public class ApplicationValidatorTest {
         settingsService = Mockito.mock(SettingsService.class);
         Mockito.when(settingsService.getSettings()).thenReturn(new Settings());
 
-        calendarService = Mockito.mock(OwnCalendarService.class);
+        calendarService = Mockito.mock(WorkDaysService.class);
         overlapService = Mockito.mock(OverlapService.class);
         calculationService = Mockito.mock(CalculationService.class);
 

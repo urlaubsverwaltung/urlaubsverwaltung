@@ -26,7 +26,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationInteractionService;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.application.service.CommentService;
-import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
+import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
@@ -75,7 +75,7 @@ public class ApplicationForLeaveDetailsController {
     private CommentService commentService;
 
     @Autowired
-    private OwnCalendarService calendarService;
+    private WorkDaysService calendarService;
 
     @Autowired
     private CommentValidator commentValidator;
