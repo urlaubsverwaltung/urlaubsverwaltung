@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.sync;
 
+import com.google.common.base.MoreObjects;
+
 import org.springframework.util.Assert;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
@@ -93,5 +95,19 @@ public class Absence {
     public boolean isAllDay() {
 
         return isAllDay;
+    }
+
+
+    @Override
+    public String toString() {
+
+        MoreObjects.ToStringHelper toStringHelper = MoreObjects.toStringHelper(this);
+
+        toStringHelper.add("person", getPerson().getLoginName());
+        toStringHelper.add("startDate", getStartDate());
+        toStringHelper.add("endDate", getEndDate());
+        toStringHelper.add("isAllDay", isAllDay());
+
+        return toStringHelper.toString();
     }
 }

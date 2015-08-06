@@ -16,10 +16,13 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
+import org.springframework.context.annotation.Conditional;
+
 import org.springframework.stereotype.Service;
 
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.sync.condition.ExchangeCalendarCondition;
 
 import java.util.Optional;
 
@@ -31,6 +34,7 @@ import java.util.Optional;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Service("calendarSyncService")
+@Conditional(ExchangeCalendarCondition.class)
 public class ExchangeCalendarSyncService implements CalendarSyncService {
 
     private static final Logger LOG = Logger.getLogger(ExchangeCalendarSyncService.class);
@@ -120,6 +124,7 @@ public class ExchangeCalendarSyncService implements CalendarSyncService {
             mailService.sendCalendarSyncErrorNotification(calendarName, absence, ex.getMessage());
         }
 
+        // TODO: Do not return nulls!
         return null;
     }
 
