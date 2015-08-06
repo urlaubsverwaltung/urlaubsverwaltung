@@ -18,30 +18,41 @@ import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.stereotype.Service;
 
+import org.synyx.urlaubsverwaltung.core.mail.MailService;
+import org.synyx.urlaubsverwaltung.core.person.Person;
+
 
 /**
  * Provides sync of absences with exchange server calendar.
  *
- * <p>Daniel Hammann - <hammann@synyx.de>.</p>
+ * @author  Daniel Hammann - <hammann@synyx.de>
+ * @author  Aljona Murygina - murygina@synyx.de
  */
 @Service("calendarSyncService")
 public class ExchangeCalendarSyncService implements CalendarSyncService {
 
     private static final Logger LOG = Logger.getLogger(ExchangeCalendarSyncService.class);
 
-    private ExchangeService service;
+    private MailService mailService;
+    private ExchangeService exchangeService;
+
+    private String calendarName;
     private CalendarFolder calendarFolder;
 
     @Autowired
-    public ExchangeCalendarSyncService(@Value("${ews.email}") String emailAddress,
+    public ExchangeCalendarSyncService(MailService mailService,
+        @Value("${ews.email}") String emailAddress,
         @Value("${ews.password}") String password,
         @Value("${ews.calendar}") String calendarName) {
 
+        this.mailService = mailService;
+        this.calendarName = calendarName;
+
         try {
-            service = new ExchangeService();
-            service.setCredentials(new WebCredentials(emailAddress, password));
-            service.autodiscoverUrl(emailAddress, new RedirectionUrlCallback());
-            service.setTraceEnabled(true);
+            exchangeService = new ExchangeService();
+            exchangeService.setCredentials(new WebCredentials(emailAddress, password));
+            exchangeService.autodiscoverUrl(emailAddress, new RedirectionUrlCallback());
+            exchangeService.setTraceEnabled(true);
 
             calendarFolder = findCalendar(calendarName);
 
@@ -49,13 +60,14 @@ public class ExchangeCalendarSyncService implements CalendarSyncService {
                 calendarFolder = createCalendar(calendarName);
             }
         } catch (Exception e) {
+            // TODO
             e.printStackTrace();
         }
     }
 
     private CalendarFolder findCalendar(String searchedCalendarName) throws Exception {
 
-        FindFoldersResults calendarRoot = service.findFolders(WellKnownFolderName.Calendar,
+        FindFoldersResults calendarRoot = exchangeService.findFolders(WellKnownFolderName.Calendar,
                 new FolderView(Integer.MAX_VALUE));
 
         for (Folder folder : calendarRoot.getFolders()) {
@@ -70,13 +82,13 @@ public class ExchangeCalendarSyncService implements CalendarSyncService {
 
     private CalendarFolder createCalendar(String calendarName) throws Exception {
 
-        CalendarFolder folder = new CalendarFolder(service);
+        CalendarFolder folder = new CalendarFolder(exchangeService);
         folder.setDisplayName(calendarName);
         folder.save(WellKnownFolderName.Calendar);
 
         LOG.info(String.format("New calendar folder '%s' created.", folder.getDisplayName()));
 
-        return CalendarFolder.bind(service, folder.getId());
+        return CalendarFolder.bind(exchangeService, folder.getId());
     }
 
 
@@ -84,22 +96,24 @@ public class ExchangeCalendarSyncService implements CalendarSyncService {
     public String addAbsence(Absence absence) {
 
         try {
-            Appointment appointment = new Appointment(service);
+            Appointment appointment = new Appointment(exchangeService);
 
-            appointment.setSubject(String.format("Urlaub %s", absence.getPerson().getNiceName()));
+            Person person = absence.getPerson();
+
+            appointment.setSubject(String.format("Urlaub %s", person.getNiceName()));
             appointment.setStart(absence.getStartDate());
             appointment.setEnd(absence.getEndDate());
             appointment.setIsAllDayEvent(absence.isAllDay());
-            appointment.getRequiredAttendees().add(absence.getPerson().getEmail());
+            appointment.getRequiredAttendees().add(person.getEmail());
 
             appointment.save(calendarFolder.getId(), SendInvitationsMode.SendToAllAndSaveCopy);
 
             LOG.info(String.format("Appointment %s for %s added to exchange calendar '%s'.", appointment.getId(),
-                    absence.getPerson().getNiceName(), calendarFolder.getDisplayName()));
+                    person.getNiceName(), calendarFolder.getDisplayName()));
 
             return appointment.getId().getUniqueId();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            mailService.sendCalendarSyncErrorNotification(calendarName, absence, ex.getMessage());
         }
 
         return null;

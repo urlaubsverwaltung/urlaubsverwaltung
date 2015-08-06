@@ -15,6 +15,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.sync.Absence;
 import org.synyx.urlaubsverwaltung.core.sync.CalendarSyncService;
 
 import java.util.Optional;
@@ -201,6 +202,20 @@ public class ApplicationInteractionServiceImplTest {
         service.allow(applicationForLeave, boss, Optional.of("Foo"));
 
         Mockito.verify(mailService).notifyHolidayReplacement(Mockito.eq(applicationForLeave));
+    }
+
+
+    @Test
+    public void ensureAllowingApplicationForLeaveExecutesCalendarSync() {
+
+        Person person = new Person();
+        Person boss = new Person();
+
+        Application applicationForLeave = getDummyApplication(person);
+
+        service.allow(applicationForLeave, boss, Optional.of("Foo"));
+
+        Mockito.verify(calendarSyncService).addAbsence(Mockito.any(Absence.class));
     }
 
 

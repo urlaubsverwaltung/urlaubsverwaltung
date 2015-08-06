@@ -28,6 +28,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.core.sync.Absence;
 import org.synyx.urlaubsverwaltung.core.util.PropertiesUtil;
 
 import java.io.IOException;
@@ -338,6 +339,20 @@ class MailServiceImpl implements MailService {
         String text = buildMailBody("error_sign_application", model);
 
         sendTechnicalNotification("subject.sign.error", text);
+    }
+
+
+    @Override
+    public void sendCalendarSyncErrorNotification(String calendar, Absence absence, String exception) {
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("calendar", calendar);
+        model.put("absence", absence);
+        model.put("exception", exception);
+
+        String text = buildMailBody("error_calendar_sync", model);
+
+        sendTechnicalNotification("subject.calendar.error", text);
     }
 
 
