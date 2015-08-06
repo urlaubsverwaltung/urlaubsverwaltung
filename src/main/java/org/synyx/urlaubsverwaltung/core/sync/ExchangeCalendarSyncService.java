@@ -68,8 +68,13 @@ public class ExchangeCalendarSyncService implements CalendarSyncService {
                 calendarFolder = createCalendar(calendarName);
             }
         } catch (Exception e) {
-            // TODO
-            e.printStackTrace();
+            // NOTE: If an exception is thrown at this point, probably there is an error within the configuration
+
+            LOG.error("No connection could be established to the Exchange calendar.");
+            LOG.error("Please check your configuration!");
+            LOG.error("Shutting down with system exit...");
+
+            System.exit(1);
         }
     }
 
