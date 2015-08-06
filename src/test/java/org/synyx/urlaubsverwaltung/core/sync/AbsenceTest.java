@@ -11,6 +11,8 @@ import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 
+import java.util.Date;
+
 
 /**
  * Unit test for {@link Absence}.
@@ -38,6 +40,7 @@ public class AbsenceTest {
         application.setStartDate(start);
         application.setEndDate(end);
         application.setPerson(person);
+        application.setHowLong(DayLength.FULL);
 
         Absence absence = new Absence(application);
 
@@ -48,6 +51,48 @@ public class AbsenceTest {
         Assert.assertEquals("Wrong start date", start.toDate(), absence.getStartDate());
         Assert.assertEquals("Wrong end date", end.toDate(), absence.getEndDate());
         Assert.assertEquals("Wrong person", person, absence.getPerson());
+    }
+
+
+    @Test
+    public void ensureCorrectTimeForMorningAbsence() {
+
+        DateMidnight today = DateMidnight.now();
+
+        Date start = today.toDateTime().withHourOfDay(8).toDate();
+        Date end = today.toDateTime().withHourOfDay(12).toDate();
+
+        Application application = new Application();
+        application.setHowLong(DayLength.MORNING);
+        application.setPerson(person);
+        application.setStartDate(today);
+        application.setEndDate(today);
+
+        Absence absence = new Absence(application);
+
+        Assert.assertEquals("Should start at 8 am", start, absence.getStartDate());
+        Assert.assertEquals("Should end at 12 pm", end, absence.getEndDate());
+    }
+
+
+    @Test
+    public void ensureCorrectTimeForNoonAbsence() {
+
+        DateMidnight today = DateMidnight.now();
+
+        Date start = today.toDateTime().withHourOfDay(13).toDate();
+        Date end = today.toDateTime().withHourOfDay(17).toDate();
+
+        Application application = new Application();
+        application.setHowLong(DayLength.NOON);
+        application.setPerson(person);
+        application.setStartDate(today);
+        application.setEndDate(today);
+
+        Absence absence = new Absence(application);
+
+        Assert.assertEquals("Should start at 1 pm", start, absence.getStartDate());
+        Assert.assertEquals("Should end at 5 pm", end, absence.getEndDate());
     }
 
 
@@ -126,5 +171,35 @@ public class AbsenceTest {
         Assert.assertEquals("Wrong end date", end.toDate(), absence.getEndDate());
         Assert.assertEquals("Wrong person", person, absence.getPerson());
         Assert.assertTrue("Should be all day", absence.isAllDay());
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureExceptionOnNonSetHowLong() {
+
+        DateMidnight today = DateMidnight.now();
+
+        Application application = new Application();
+        application.setPerson(person);
+        application.setStartDate(today);
+        application.setEndDate(today);
+
+        new Absence(application);
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureExceptionOnZeroDayLength() {
+
+        DateMidnight today = DateMidnight.now();
+
+        Application application = new Application();
+        application.setPerson(person);
+        application.setStartDate(today);
+        application.setEndDate(today);
+
+        application.setHowLong(DayLength.ZERO);
+
+        new Absence(application);
     }
 }

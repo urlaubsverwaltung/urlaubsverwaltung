@@ -1,7 +1,8 @@
 package org.synyx.urlaubsverwaltung.core.sync;
 
+import org.springframework.util.Assert;
+
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
-import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 
@@ -15,6 +16,12 @@ import java.util.Date;
  */
 public class Absence {
 
+    private static final int HOURS_IN_MILLISECONDS = 60 * 60 * 1000;
+    private static final int NOON_START = 13 * HOURS_IN_MILLISECONDS;
+    private static final int NOON_END = 17 * HOURS_IN_MILLISECONDS;
+    private static final int MORNING_END = 12 * HOURS_IN_MILLISECONDS;
+    private static final int MORNING_START = 8 * HOURS_IN_MILLISECONDS;
+
     private Date startDate;
 
     private Date endDate;
@@ -25,12 +32,32 @@ public class Absence {
 
     public Absence(Application application) {
 
-        this.startDate = application.getStartDate().toDate();
-        this.endDate = application.getEndDate().toDate();
+        Assert.notNull(application.getHowLong(), "No day length set for application");
+
         this.person = application.getPerson();
 
-        if (DayLength.FULL.equals(application.getHowLong())) {
-            this.isAllDay = true;
+        Date applicationStart = application.getStartDate().toDate();
+        Date applicationEnd = application.getEndDate().toDate();
+
+        switch (application.getHowLong()) {
+            case FULL:
+                this.startDate = applicationStart;
+                this.endDate = applicationEnd;
+                this.isAllDay = true;
+                break;
+
+            case MORNING:
+                this.startDate = new Date(applicationStart.getTime() + MORNING_START);
+                this.endDate = new Date(applicationEnd.getTime() + MORNING_END);
+                break;
+
+            case NOON:
+                this.startDate = new Date(applicationStart.getTime() + NOON_START);
+                this.endDate = new Date(applicationEnd.getTime() + NOON_END);
+                break;
+
+            default:
+                throw new IllegalArgumentException("Invalid day length for application!");
         }
     }
 
