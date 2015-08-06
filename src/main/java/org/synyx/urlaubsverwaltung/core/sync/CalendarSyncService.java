@@ -11,6 +11,8 @@ public interface CalendarSyncService {
      * Add a person's absence to calendar.
      *
      * @param  absence  represents the absence of a person
+     *
+     * @return  id of added absence event.
      */
-    void addAbsence(Absence absence);
+    String addAbsence(Absence absence);
 }

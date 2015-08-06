@@ -16,6 +16,8 @@ import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.sync.Absence;
+import org.synyx.urlaubsverwaltung.core.sync.CalendarSyncService;
 
 import java.util.Optional;
 
@@ -34,16 +36,19 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
     private final SignService signService;
     private final CommentService commentService;
     private final MailService mailService;
+    private final CalendarSyncService calendarSyncService;
 
     @Autowired
     public ApplicationInteractionServiceImpl(ApplicationService applicationService, CommentService commentService,
-        AccountInteractionService accountInteractionService, SignService signService, MailService mailService) {
+        AccountInteractionService accountInteractionService, SignService signService, MailService mailService,
+        CalendarSyncService calendarSyncService) {
 
         this.applicationService = applicationService;
         this.commentService = commentService;
         this.accountInteractionService = accountInteractionService;
         this.signService = signService;
         this.mailService = mailService;
+        this.calendarSyncService = calendarSyncService;
     }
 
     @Override
@@ -107,6 +112,8 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         if (application.getHolidayReplacement() != null) {
             mailService.notifyHolidayReplacement(application);
         }
+
+        calendarSyncService.addAbsence(new Absence(application));
 
         return application;
     }
