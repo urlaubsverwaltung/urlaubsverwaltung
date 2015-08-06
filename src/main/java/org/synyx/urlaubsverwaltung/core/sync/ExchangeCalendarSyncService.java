@@ -21,6 +21,8 @@ import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
+import java.util.Optional;
+
 
 /**
  * Provides sync of absences with exchange server calendar.
@@ -54,9 +56,11 @@ public class ExchangeCalendarSyncService implements CalendarSyncService {
             exchangeService.autodiscoverUrl(emailAddress, new RedirectionUrlCallback());
             exchangeService.setTraceEnabled(true);
 
-            calendarFolder = findCalendar(calendarName);
+            Optional<CalendarFolder> calendarOptional = findCalendar(calendarName);
 
-            if (calendarFolder == null) {
+            if (calendarOptional.isPresent()) {
+                calendarFolder = calendarOptional.get();
+            } else {
                 calendarFolder = createCalendar(calendarName);
             }
         } catch (Exception e) {
@@ -65,18 +69,18 @@ public class ExchangeCalendarSyncService implements CalendarSyncService {
         }
     }
 
-    private CalendarFolder findCalendar(String searchedCalendarName) throws Exception {
+    private Optional<CalendarFolder> findCalendar(String calendarName) throws Exception {
 
         FindFoldersResults calendarRoot = exchangeService.findFolders(WellKnownFolderName.Calendar,
                 new FolderView(Integer.MAX_VALUE));
 
         for (Folder folder : calendarRoot.getFolders()) {
-            if (folder.getDisplayName().equals(searchedCalendarName)) {
-                return (CalendarFolder) folder;
+            if (folder.getDisplayName().equals(calendarName)) {
+                return Optional.of((CalendarFolder) folder);
             }
         }
 
-        return null;
+        return Optional.empty();
     }
 
 
@@ -108,7 +112,7 @@ public class ExchangeCalendarSyncService implements CalendarSyncService {
 
             appointment.save(calendarFolder.getId(), SendInvitationsMode.SendToAllAndSaveCopy);
 
-            LOG.info(String.format("Appointment %s for %s added to exchange calendar '%s'.", appointment.getId(),
+            LOG.info(String.format("Appointment %s for '%s' added to exchange calendar '%s'.", appointment.getId(),
                     person.getNiceName(), calendarFolder.getDisplayName()));
 
             return appointment.getId().getUniqueId();
