@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import org.synyx.urlaubsverwaltung.core.sync.condition.NoCalendarCondition;
 
+import java.util.Optional;
+
 
 /**
  * Dummy service if calendar sync is not activated.
@@ -21,10 +23,10 @@ public class DummyCalendarSyncService implements CalendarSyncService {
     private static final Logger LOG = Logger.getLogger(DummyCalendarSyncService.class);
 
     @Override
-    public String addAbsence(Absence absence) {
+    public Optional<String> addAbsence(Absence absence) {
 
         LOG.info(String.format("No calendar provider configured for syncing: %s", absence));
 
-        return "";
+        return Optional.empty();
     }
 }

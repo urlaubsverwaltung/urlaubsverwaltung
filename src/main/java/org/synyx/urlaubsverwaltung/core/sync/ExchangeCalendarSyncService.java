@@ -101,7 +101,7 @@ public class ExchangeCalendarSyncService implements CalendarSyncService {
 
 
     @Override
-    public String addAbsence(Absence absence) {
+    public Optional<String> addAbsence(Absence absence) {
 
         try {
             Appointment appointment = new Appointment(exchangeService);
@@ -119,13 +119,12 @@ public class ExchangeCalendarSyncService implements CalendarSyncService {
             LOG.info(String.format("Appointment %s for '%s' added to exchange calendar '%s'.", appointment.getId(),
                     person.getNiceName(), calendarFolder.getDisplayName()));
 
-            return appointment.getId().getUniqueId();
+            return Optional.ofNullable(appointment.getId().getUniqueId());
         } catch (Exception ex) {
             mailService.sendCalendarSyncErrorNotification(calendarName, absence, ex.getMessage());
         }
 
-        // TODO: Do not return nulls!
-        return null;
+        return Optional.empty();
     }
 
     private class RedirectionUrlCallback implements IAutodiscoverRedirectionUrl {

@@ -1,5 +1,8 @@
 package org.synyx.urlaubsverwaltung.core.sync;
 
+import java.util.Optional;
+
+
 /**
  * Syncs vacations and sick notes with calendar providers like Exchange or Google Calendar.
  *
@@ -12,7 +15,7 @@ public interface CalendarSyncService {
      *
      * @param  absence  represents the absence of a person
      *
-     * @return  id of added absence event.
+     * @return  id of added absence event, may be empty if an error occurred during the calendar sync
      */
-    String addAbsence(Absence absence);
+    Optional<String> addAbsence(Absence absence);
 }
