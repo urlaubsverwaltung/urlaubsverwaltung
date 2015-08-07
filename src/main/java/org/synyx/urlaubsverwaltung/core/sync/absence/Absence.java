@@ -35,6 +35,8 @@ public class Absence {
     public Absence(Application application) {
 
         Assert.notNull(application.getHowLong(), "No day length set for application");
+        Assert.notNull(application.getStartDate(), "No start date set for application");
+        Assert.notNull(application.getEndDate(), "No end date set for application");
 
         this.person = application.getPerson();
 
@@ -65,6 +67,9 @@ public class Absence {
 
 
     public Absence(SickNote sickNote) {
+
+        Assert.notNull(sickNote.getStartDate(), "No start date set for application");
+        Assert.notNull(sickNote.getEndDate(), "No end date set for application");
 
         this.startDate = sickNote.getStartDate().toDate();
         this.endDate = sickNote.getEndDate().toDate();

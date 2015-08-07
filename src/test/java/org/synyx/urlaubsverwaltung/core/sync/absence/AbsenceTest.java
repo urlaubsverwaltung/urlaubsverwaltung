@@ -202,4 +202,58 @@ public class AbsenceTest {
 
         new Absence(application);
     }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureExceptionOnNonSetApplicationStartDate() {
+
+        DateMidnight today = DateMidnight.now();
+
+        Application application = new Application();
+        application.setPerson(person);
+        application.setEndDate(today);
+        application.setHowLong(DayLength.FULL);
+
+        new Absence(application);
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureExceptionOnNonSetApplicationEndDate() {
+
+        DateMidnight today = DateMidnight.now();
+
+        Application application = new Application();
+        application.setPerson(person);
+        application.setStartDate(today);
+        application.setHowLong(DayLength.FULL);
+
+        new Absence(application);
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureExceptionOnNonSetSickNoteStartDate() {
+
+        DateMidnight today = DateMidnight.now();
+
+        SickNote sickNote = new SickNote();
+        sickNote.setEndDate(today);
+        sickNote.setPerson(person);
+
+        new Absence(sickNote);
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureExceptionOnNonSetSickNoteEndDate() {
+
+        DateMidnight today = DateMidnight.now();
+
+        SickNote sickNote = new SickNote();
+        sickNote.setStartDate(today);
+        sickNote.setPerson(person);
+
+        new Absence(sickNote);
+    }
 }
