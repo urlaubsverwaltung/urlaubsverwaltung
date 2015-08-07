@@ -17,11 +17,14 @@ import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sync.CalendarSyncService;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
+import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceMappingService;
+import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceType;
 
 import java.util.Optional;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 
@@ -52,6 +55,8 @@ public class ApplicationInteractionServiceImplTest {
         calendarSyncService = Mockito.mock(CalendarSyncService.class);
         absenceMappingService = Mockito.mock(AbsenceMappingService.class);
         Mockito.when(calendarSyncService.addAbsence(any())).thenReturn(Optional.of("42"));
+        Mockito.when(absenceMappingService.getAbsenceByIdAndType(anyInt(), any()))
+            .thenReturn(Optional.of(new AbsenceMapping(1, AbsenceType.VACATION, "42")));
 
         service = new ApplicationInteractionServiceImpl(applicationService, commentService, accountInteractionService,
                 signService, mailService, calendarSyncService, absenceMappingService);
