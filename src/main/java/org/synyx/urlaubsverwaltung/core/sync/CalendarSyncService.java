@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.sync;
 
+import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
+
 import java.util.Optional;
 
 
@@ -18,4 +20,12 @@ public interface CalendarSyncService {
      * @return  id of added absence event, may be empty if an error occurred during the calendar sync
      */
     Optional<String> addAbsence(Absence absence);
+
+
+    /**
+     * Deletes a person's absence in calendar.
+     *
+     * @param  eventId  id of absence event, which should be deleted.
+     */
+    void deleteAbsence(String eventId);
 }

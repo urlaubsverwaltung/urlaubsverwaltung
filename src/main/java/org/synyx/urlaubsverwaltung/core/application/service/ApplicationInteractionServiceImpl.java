@@ -16,8 +16,11 @@ import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.sync.Absence;
 import org.synyx.urlaubsverwaltung.core.sync.CalendarSyncService;
+import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
+import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceMapping;
+import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceMappingService;
+import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceType;
 
 import java.util.Optional;
 
@@ -37,11 +40,12 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
     private final CommentService commentService;
     private final MailService mailService;
     private final CalendarSyncService calendarSyncService;
+    private final AbsenceMappingService absenceMappingService;
 
     @Autowired
     public ApplicationInteractionServiceImpl(ApplicationService applicationService, CommentService commentService,
         AccountInteractionService accountInteractionService, SignService signService, MailService mailService,
-        CalendarSyncService calendarSyncService) {
+        CalendarSyncService calendarSyncService, AbsenceMappingService absenceMappingService) {
 
         this.applicationService = applicationService;
         this.commentService = commentService;
@@ -49,6 +53,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         this.signService = signService;
         this.mailService = mailService;
         this.calendarSyncService = calendarSyncService;
+        this.absenceMappingService = absenceMappingService;
     }
 
     @Override
@@ -113,7 +118,11 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
             mailService.notifyHolidayReplacement(application);
         }
 
-        calendarSyncService.addAbsence(new Absence(application));
+        Optional<String> eventId = calendarSyncService.addAbsence(new Absence(application));
+
+        if (eventId.isPresent()) {
+            absenceMappingService.create(application, eventId.get());
+        }
 
         return application;
     }
@@ -174,6 +183,13 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         }
 
         accountInteractionService.updateRemainingVacationDays(application.getStartDate().getYear(), person);
+
+        Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(application.getId(),
+                AbsenceType.VACATION);
+
+        if (absenceMapping.isPresent()) {
+            calendarSyncService.deleteAbsence(absenceMapping.get().getEventId());
+        }
 
         return application;
     }

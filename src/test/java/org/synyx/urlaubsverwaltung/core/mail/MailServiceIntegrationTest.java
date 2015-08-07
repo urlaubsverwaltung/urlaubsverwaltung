@@ -24,7 +24,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
-import org.synyx.urlaubsverwaltung.core.sync.Absence;
+import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 
 import java.io.IOException;
 
@@ -544,5 +544,36 @@ public class MailServiceIntegrationTest {
         assertTrue(content.contains("Kalendername"));
         assertTrue(content.contains("Calendar sync failed"));
         assertTrue(content.contains(person.getNiceName()));
+    }
+
+
+    @Test
+    public void ensureTechnicalManagerGetsANotificationIfAEventDeleteErrorOccurred() throws MessagingException,
+        IOException {
+
+        Person person = new Person("muster", "Muster", "Marlene", "marlene@muster.de");
+
+        Application application = new Application();
+        application.setHowLong(DayLength.FULL);
+        application.setStartDate(DateMidnight.now());
+        application.setEndDate(DateMidnight.now());
+        application.setPerson(person);
+
+        Absence absence = new Absence(application);
+
+        mailService.sendCalendarDeleteErrorNotification("Kalendername", "eventId", "event delete failed");
+
+        List<Message> inbox = Mailbox.get(emailManager);
+        assertTrue(inbox.size() > 0);
+
+        Message msg = inbox.get(0);
+
+        assertEquals("Fehler beim Löschen eines Kalendereintrags", msg.getSubject());
+
+        String content = (String) msg.getContent();
+
+        assertTrue(content.contains("Kalendername"));
+        assertTrue(content.contains("eventId"));
+        assertTrue(content.contains("event delete failed"));
     }
 }

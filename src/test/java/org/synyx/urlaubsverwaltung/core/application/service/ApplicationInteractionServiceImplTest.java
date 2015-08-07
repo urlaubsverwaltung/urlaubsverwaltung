@@ -15,10 +15,15 @@ import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.sync.Absence;
 import org.synyx.urlaubsverwaltung.core.sync.CalendarSyncService;
+import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
+import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceMappingService;
 
 import java.util.Optional;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 
 
 /**
@@ -34,6 +39,7 @@ public class ApplicationInteractionServiceImplTest {
     private SignService signService;
     private MailService mailService;
     private CalendarSyncService calendarSyncService;
+    private AbsenceMappingService absenceMappingService;
 
     @Before
     public void setUp() {
@@ -44,9 +50,11 @@ public class ApplicationInteractionServiceImplTest {
         signService = Mockito.mock(SignService.class);
         mailService = Mockito.mock(MailService.class);
         calendarSyncService = Mockito.mock(CalendarSyncService.class);
+        absenceMappingService = Mockito.mock(AbsenceMappingService.class);
+        Mockito.when(calendarSyncService.addAbsence(any())).thenReturn(Optional.of("42"));
 
         service = new ApplicationInteractionServiceImpl(applicationService, commentService, accountInteractionService,
-                signService, mailService, calendarSyncService);
+                signService, mailService, calendarSyncService, absenceMappingService);
     }
 
 
@@ -70,11 +78,10 @@ public class ApplicationInteractionServiceImplTest {
 
         Mockito.verify(applicationService).save(applicationForLeave);
 
-        Mockito.verify(signService).signApplicationByUser(Mockito.eq(applicationForLeave), Mockito.eq(applier));
+        Mockito.verify(signService).signApplicationByUser(eq(applicationForLeave), eq(applier));
 
         Mockito.verify(commentService)
-            .create(Mockito.eq(applicationForLeave), Mockito.eq(ApplicationStatus.WAITING), Mockito.eq(comment),
-                Mockito.eq(applier));
+            .create(eq(applicationForLeave), eq(ApplicationStatus.WAITING), eq(comment), eq(applier));
     }
 
 
@@ -99,12 +106,11 @@ public class ApplicationInteractionServiceImplTest {
 
         service.apply(applicationForLeave, person, Optional.of("Foo"));
 
-        Mockito.verify(mailService).sendConfirmation(Mockito.eq(applicationForLeave), Mockito.any(Comment.class));
+        Mockito.verify(mailService).sendConfirmation(eq(applicationForLeave), any(Comment.class));
         Mockito.verify(mailService, Mockito.never())
-            .sendAppliedForLeaveByOfficeNotification(Mockito.eq(applicationForLeave), Mockito.any(Comment.class));
+            .sendAppliedForLeaveByOfficeNotification(eq(applicationForLeave), any(Comment.class));
 
-        Mockito.verify(mailService)
-            .sendNewApplicationNotification(Mockito.eq(applicationForLeave), Mockito.any(Comment.class));
+        Mockito.verify(mailService).sendNewApplicationNotification(eq(applicationForLeave), any(Comment.class));
     }
 
 
@@ -118,13 +124,11 @@ public class ApplicationInteractionServiceImplTest {
 
         service.apply(applicationForLeave, applier, Optional.of("Foo"));
 
-        Mockito.verify(mailService, Mockito.never())
-            .sendConfirmation(Mockito.eq(applicationForLeave), Mockito.any(Comment.class));
+        Mockito.verify(mailService, Mockito.never()).sendConfirmation(eq(applicationForLeave), any(Comment.class));
         Mockito.verify(mailService)
-            .sendAppliedForLeaveByOfficeNotification(Mockito.eq(applicationForLeave), Mockito.any(Comment.class));
+            .sendAppliedForLeaveByOfficeNotification(eq(applicationForLeave), any(Comment.class));
 
-        Mockito.verify(mailService)
-            .sendNewApplicationNotification(Mockito.eq(applicationForLeave), Mockito.any(Comment.class));
+        Mockito.verify(mailService).sendNewApplicationNotification(eq(applicationForLeave), any(Comment.class));
     }
 
 
@@ -166,11 +170,10 @@ public class ApplicationInteractionServiceImplTest {
 
         Mockito.verify(applicationService).save(applicationForLeave);
 
-        Mockito.verify(signService).signApplicationByBoss(Mockito.eq(applicationForLeave), Mockito.eq(boss));
+        Mockito.verify(signService).signApplicationByBoss(eq(applicationForLeave), eq(boss));
 
         Mockito.verify(commentService)
-            .create(Mockito.eq(applicationForLeave), Mockito.eq(ApplicationStatus.ALLOWED), Mockito.eq(comment),
-                Mockito.eq(boss));
+            .create(eq(applicationForLeave), eq(ApplicationStatus.ALLOWED), eq(comment), eq(boss));
     }
 
 
@@ -184,8 +187,7 @@ public class ApplicationInteractionServiceImplTest {
 
         service.allow(applicationForLeave, boss, Optional.of("Foo"));
 
-        Mockito.verify(mailService)
-            .sendAllowedNotification(Mockito.eq(applicationForLeave), Mockito.any(Comment.class));
+        Mockito.verify(mailService).sendAllowedNotification(eq(applicationForLeave), any(Comment.class));
     }
 
 
@@ -201,7 +203,7 @@ public class ApplicationInteractionServiceImplTest {
 
         service.allow(applicationForLeave, boss, Optional.of("Foo"));
 
-        Mockito.verify(mailService).notifyHolidayReplacement(Mockito.eq(applicationForLeave));
+        Mockito.verify(mailService).notifyHolidayReplacement(eq(applicationForLeave));
     }
 
 
@@ -215,7 +217,8 @@ public class ApplicationInteractionServiceImplTest {
 
         service.allow(applicationForLeave, boss, Optional.of("Foo"));
 
-        Mockito.verify(calendarSyncService).addAbsence(Mockito.any(Absence.class));
+        Mockito.verify(calendarSyncService).addAbsence(any(Absence.class));
+        Mockito.verify(absenceMappingService).create(eq(applicationForLeave), anyString());
     }
 
 
@@ -242,11 +245,10 @@ public class ApplicationInteractionServiceImplTest {
 
         Mockito.verify(applicationService).save(applicationForLeave);
 
-        Mockito.verify(signService).signApplicationByBoss(Mockito.eq(applicationForLeave), Mockito.eq(boss));
+        Mockito.verify(signService).signApplicationByBoss(eq(applicationForLeave), eq(boss));
 
         Mockito.verify(commentService)
-            .create(Mockito.eq(applicationForLeave), Mockito.eq(ApplicationStatus.REJECTED), Mockito.eq(comment),
-                Mockito.eq(boss));
+            .create(eq(applicationForLeave), eq(ApplicationStatus.REJECTED), eq(comment), eq(boss));
     }
 
 
@@ -260,8 +262,7 @@ public class ApplicationInteractionServiceImplTest {
 
         service.reject(applicationForLeave, boss, Optional.of("Foo"));
 
-        Mockito.verify(mailService)
-            .sendRejectedNotification(Mockito.eq(applicationForLeave), Mockito.any(Comment.class));
+        Mockito.verify(mailService).sendRejectedNotification(eq(applicationForLeave), any(Comment.class));
     }
 
 
@@ -289,8 +290,7 @@ public class ApplicationInteractionServiceImplTest {
         Mockito.verify(applicationService).save(applicationForLeave);
 
         Mockito.verify(commentService)
-            .create(Mockito.eq(applicationForLeave), Mockito.eq(ApplicationStatus.REVOKED), Mockito.eq(comment),
-                Mockito.eq(person));
+            .create(eq(applicationForLeave), eq(ApplicationStatus.REVOKED), eq(comment), eq(person));
 
         Mockito.verifyZeroInteractions(mailService);
     }
@@ -317,11 +317,9 @@ public class ApplicationInteractionServiceImplTest {
         Mockito.verify(applicationService).save(applicationForLeave);
 
         Mockito.verify(commentService)
-            .create(Mockito.eq(applicationForLeave), Mockito.eq(ApplicationStatus.CANCELLED), Mockito.eq(comment),
-                Mockito.eq(canceller));
+            .create(eq(applicationForLeave), eq(ApplicationStatus.CANCELLED), eq(comment), eq(canceller));
 
-        Mockito.verify(mailService)
-            .sendCancelledNotification(Mockito.eq(applicationForLeave), Mockito.eq(false), Mockito.any(Comment.class));
+        Mockito.verify(mailService).sendCancelledNotification(eq(applicationForLeave), eq(false), any(Comment.class));
     }
 
 
@@ -346,11 +344,9 @@ public class ApplicationInteractionServiceImplTest {
         Mockito.verify(applicationService).save(applicationForLeave);
 
         Mockito.verify(commentService)
-            .create(Mockito.eq(applicationForLeave), Mockito.eq(ApplicationStatus.REVOKED), Mockito.eq(comment),
-                Mockito.eq(canceller));
+            .create(eq(applicationForLeave), eq(ApplicationStatus.REVOKED), eq(comment), eq(canceller));
 
-        Mockito.verify(mailService)
-            .sendCancelledNotification(Mockito.eq(applicationForLeave), Mockito.eq(true), Mockito.any(Comment.class));
+        Mockito.verify(mailService).sendCancelledNotification(eq(applicationForLeave), eq(true), any(Comment.class));
     }
 
 

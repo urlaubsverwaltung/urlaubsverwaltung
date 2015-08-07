@@ -28,7 +28,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.core.sync.Absence;
+import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 import org.synyx.urlaubsverwaltung.core.util.PropertiesUtil;
 
 import java.io.IOException;
@@ -353,6 +353,20 @@ class MailServiceImpl implements MailService {
         String text = buildMailBody("error_calendar_sync", model);
 
         sendTechnicalNotification("subject.calendar.error", text);
+    }
+
+
+    @Override
+    public void sendCalendarDeleteErrorNotification(String calendarName, String eventId, String exception) {
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("calendarName", calendarName);
+        model.put("eventId", eventId);
+        model.put("exception", exception);
+
+        String text = buildMailBody("error_calendar_delete", model);
+
+        sendTechnicalNotification("subject.calendar.errorOnDelete", text);
     }
 
 

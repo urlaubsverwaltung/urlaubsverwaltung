@@ -3,11 +3,14 @@ package org.synyx.urlaubsverwaltung.core.sync;
 import microsoft.exchange.webservices.data.autodiscover.IAutodiscoverRedirectionUrl;
 import microsoft.exchange.webservices.data.core.ExchangeService;
 import microsoft.exchange.webservices.data.core.enumeration.property.WellKnownFolderName;
+import microsoft.exchange.webservices.data.core.enumeration.service.DeleteMode;
+import microsoft.exchange.webservices.data.core.enumeration.service.SendCancellationsMode;
 import microsoft.exchange.webservices.data.core.enumeration.service.SendInvitationsMode;
 import microsoft.exchange.webservices.data.core.service.folder.CalendarFolder;
 import microsoft.exchange.webservices.data.core.service.folder.Folder;
 import microsoft.exchange.webservices.data.core.service.item.Appointment;
 import microsoft.exchange.webservices.data.credential.WebCredentials;
+import microsoft.exchange.webservices.data.property.complex.ItemId;
 import microsoft.exchange.webservices.data.search.FindFoldersResults;
 import microsoft.exchange.webservices.data.search.FolderView;
 
@@ -22,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 import org.synyx.urlaubsverwaltung.core.sync.condition.ExchangeCalendarCondition;
 
 import java.util.Optional;
@@ -130,6 +134,22 @@ public class ExchangeCalendarSyncService implements CalendarSyncService {
         }
 
         return Optional.empty();
+    }
+
+
+    @Override
+    public void deleteAbsence(String eventId) {
+
+        try {
+            Appointment appointment = Appointment.bind(exchangeService, new ItemId(eventId));
+
+            appointment.delete(DeleteMode.HardDelete, SendCancellationsMode.SendToAllAndSaveCopy);
+
+            LOG.info(String.format("Appointment %s has been deleted in exchange calendar '%s'.", appointment.getId(),
+                    calendarFolder.getDisplayName()));
+        } catch (Exception ex) {
+            mailService.sendCalendarDeleteErrorNotification(calendarName, eventId, ex.getMessage());
+        }
     }
 
     private class RedirectionUrlCallback implements IAutodiscoverRedirectionUrl {

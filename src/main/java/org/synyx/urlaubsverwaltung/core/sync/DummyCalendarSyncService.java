@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Conditional;
 
 import org.springframework.stereotype.Service;
 
+import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 import org.synyx.urlaubsverwaltung.core.sync.condition.NoCalendarCondition;
 
 import java.util.Optional;
@@ -28,5 +29,12 @@ public class DummyCalendarSyncService implements CalendarSyncService {
         LOG.info(String.format("No calendar provider configured for syncing: %s", absence));
 
         return Optional.empty();
+    }
+
+
+    @Override
+    public void deleteAbsence(String eventId) {
+
+        LOG.info(String.format("No calendar provider configured for deletion of event '%s'", eventId));
     }
 }
