@@ -61,14 +61,6 @@
         </snapshotRepository>
     </distributionManagement>
 
-    <repositories>
-        <repository>
-            <id>nexus.synyx.de</id>
-            <name>Synyx OpenSource Repository</name>
-            <url>http://nexus.synyx.de/content/groups/synyx/</url>
-        </repository>
-    </repositories>
-
     <dependencies>
 
         <!-- UTIL DEPENDENCIES -->
