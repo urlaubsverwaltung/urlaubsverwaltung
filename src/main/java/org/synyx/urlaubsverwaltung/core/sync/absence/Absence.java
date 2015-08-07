@@ -2,6 +2,8 @@ package org.synyx.urlaubsverwaltung.core.sync.absence;
 
 import com.google.common.base.MoreObjects;
 
+import org.joda.time.DateTimeZone;
+
 import org.springframework.util.Assert;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
@@ -9,6 +11,7 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -18,11 +21,12 @@ import java.util.Date;
  */
 public class Absence {
 
-    private static final int HOURS_IN_MILLISECONDS = 60 * 60 * 1000;
-    private static final int NOON_START = 13 * HOURS_IN_MILLISECONDS;
-    private static final int NOON_END = 17 * HOURS_IN_MILLISECONDS;
-    private static final int MORNING_END = 12 * HOURS_IN_MILLISECONDS;
-    private static final int MORNING_START = 8 * HOURS_IN_MILLISECONDS;
+    private static final int ONE_HOUR_IN_MILLISECONDS = 60 * 60 * 1000;
+
+    private static final int MORNING_START = 8 * ONE_HOUR_IN_MILLISECONDS;
+    private static final int MORNING_END = 12 * ONE_HOUR_IN_MILLISECONDS;
+    private static final int NOON_START = 13 * ONE_HOUR_IN_MILLISECONDS;
+    private static final int NOON_END = 17 * ONE_HOUR_IN_MILLISECONDS;
 
     private Date startDate;
 
@@ -40,24 +44,24 @@ public class Absence {
 
         this.person = application.getPerson();
 
-        Date applicationStart = application.getStartDate().toDate();
-        Date applicationEnd = application.getEndDate().toDate();
+        long startDateInMilliseconds = application.getStartDate().toDateTime(DateTimeZone.UTC).getMillis();
+        long endDateInMilliseconds = application.getEndDate().toDateTime(DateTimeZone.UTC).getMillis();
 
         switch (application.getHowLong()) {
             case FULL:
-                this.startDate = applicationStart;
-                this.endDate = applicationEnd;
+                this.startDate = new Date(startDateInMilliseconds);
+                this.endDate = new Date(endDateInMilliseconds + TimeUnit.DAYS.toMillis(1));
                 this.isAllDay = true;
                 break;
 
             case MORNING:
-                this.startDate = new Date(applicationStart.getTime() + MORNING_START);
-                this.endDate = new Date(applicationEnd.getTime() + MORNING_END);
+                this.startDate = new Date(startDateInMilliseconds + MORNING_START);
+                this.endDate = new Date(endDateInMilliseconds + MORNING_END);
                 break;
 
             case NOON:
-                this.startDate = new Date(applicationStart.getTime() + NOON_START);
-                this.endDate = new Date(applicationEnd.getTime() + NOON_END);
+                this.startDate = new Date(startDateInMilliseconds + NOON_START);
+                this.endDate = new Date(endDateInMilliseconds + NOON_END);
                 break;
 
             default:

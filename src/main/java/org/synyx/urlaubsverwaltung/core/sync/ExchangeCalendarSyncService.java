@@ -120,7 +120,6 @@ public class ExchangeCalendarSyncService implements CalendarSyncService {
             appointment.setSubject(String.format("Urlaub %s", person.getNiceName()));
             appointment.setStart(absence.getStartDate());
             appointment.setEnd(absence.getEndDate());
-            appointment.setIsAllDayEvent(absence.isAllDay());
             appointment.getRequiredAttendees().add(person.getEmail());
 
             appointment.save(calendarFolder.getId(), SendInvitationsMode.SendToAllAndSaveCopy);
@@ -130,6 +129,7 @@ public class ExchangeCalendarSyncService implements CalendarSyncService {
 
             return Optional.ofNullable(appointment.getId().getUniqueId());
         } catch (Exception ex) {
+            LOG.warn("An error occurred while trying to add appointment to Exchange calendar");
             mailService.sendCalendarSyncErrorNotification(calendarName, absence, ex.getMessage());
         }
 
