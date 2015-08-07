@@ -14,8 +14,8 @@
 
     <bean id="activeDirectoryAuthenticationProvider"
           class="org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider">
-        <constructor-arg value="${ldap.activeDirectory.domain}"/>
-        <constructor-arg value="${ldap.activeDirectory.ldapUrl}"/>
+        <constructor-arg value="${security.activeDirectory.domain}"/>
+        <constructor-arg value="${security.activeDirectory.url}"/>
         <property name="userDetailsContextMapper" ref="personContextMapper"/>
     </bean>
 
