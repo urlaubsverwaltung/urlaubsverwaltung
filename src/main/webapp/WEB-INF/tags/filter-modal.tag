@@ -35,8 +35,9 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-primary is-sticky" type="submit"><i class="fa fa-check"></i> <spring:message
-                            code="action.confirm"/></button>
+                    <button class="btn btn-primary is-sticky" type="submit">
+                        <spring:message code="action.confirm"/>
+                    </button>
                 </div>
             </form:form>
         </div>

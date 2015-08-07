@@ -128,7 +128,7 @@
             <hr/>
         
             <button type="submit" class="btn btn-success pull-left col-xs-12 col-sm-5 col-md-2">
-                <i class='fa fa-check'></i>&nbsp;<spring:message code='action.save'/>
+                <spring:message code='action.save'/>
             </button>
            
         </div>

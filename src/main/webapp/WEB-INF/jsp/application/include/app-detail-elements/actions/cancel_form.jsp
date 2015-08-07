@@ -46,10 +46,10 @@
 
     <div class="form-group is-sticky row">
         <button type="submit" class="btn btn-danger col-xs-12 col-sm-5">
-            <i class="fa fa-trash"></i>&nbsp;<spring:message code='action.delete'/>
+            <spring:message code='action.delete'/>
         </button>
         <button type="button" class="btn btn-default col-xs-12 col-sm-5 pull-right" onclick="$('#cancel').hide();">
-            <i class="fa fa-remove"></i>&nbsp;<spring:message code="action.cancel"/>
+            <spring:message code="action.cancel"/>
         </button>
     </div>
 

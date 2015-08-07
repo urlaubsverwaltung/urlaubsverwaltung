@@ -198,11 +198,11 @@
                 <hr/>
 
                 <button class="btn btn-success col-xs-12 col-sm-5 col-md-2" type="submit">
-                    <i class='fa fa-check'></i>&nbsp;<spring:message code="action.save"/>
+                    <spring:message code="action.save"/>
                 </button>
                 
                 <button class="btn btn-default back col-xs-12 col-sm-5 col-md-2 pull-right" type="button">
-                    <i class='fa fa-remove'></i>&nbsp;<spring:message code="action.cancel"/>
+                    <spring:message code="action.cancel"/>
                 </button>
 
             </div>

@@ -59,8 +59,8 @@
                                 <spring:message code="sicknote.cancel" />
                             </div>
                             <div class="modal-footer">
-                                <button class="btn btn-danger is-sticky" type="submit"><i class="fa fa-trash"></i>&nbsp;<spring:message code="action.delete" /></button>
-                                <button class="btn btn-default is-sticky" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i>&nbsp;<spring:message code="action.cancel" /></button>
+                                <button class="btn btn-danger is-sticky" type="submit"><spring:message code="action.delete" /></button>
+                                <button class="btn btn-default is-sticky" data-dismiss="modal" aria-hidden="true"><spring:message code="action.cancel" /></button>
                             </div>
                         </div>
                         </div>
@@ -200,10 +200,10 @@
                             <form:textarea rows="2" path="text" cssClass="form-control" cssErrorClass="form-control error" onkeyup="count(this.value, 'text-comment');" onkeydown="maxChars(this,200); count(this.value, 'text-comment');" />
                             <br />
                             <button class="btn btn-success col-xs-12 col-sm-5" type="submit">
-                                <i class="fa fa-check"></i>&nbsp;<spring:message code="action.save" />
+                                <spring:message code="action.save" />
                             </button>
                             <button class="btn btn-default col-xs-12 col-sm-5 pull-right" type="button" onclick="$('div#comment-form').hide();">
-                                <i class="fa fa-remove"></i>&nbsp;<spring:message code="action.cancel" />
+                                <spring:message code="action.cancel" />
                             </button>
                         </form:form> 
                     </div>

@@ -10,8 +10,7 @@
 
 .error-code,
 .error-description,
-.error-btn {
-    font-family: synyx, Verdana,sans-serif;
+.error-link {
     text-align: center;
 }
 
@@ -21,11 +20,12 @@
 }
 
 .error-description {
-    font-size: 40px;
+    font-size: 30px;
 }
 
-.error-btn {
+.error-link {
     margin-top: 48px;
+    font-size: 20px;
 }
 
 @media (max-width: 767px) {
@@ -36,5 +36,11 @@
 
     .error-description {
         font-size: 20px;
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .error-link {
+        font-size: 15px;
     }
 }

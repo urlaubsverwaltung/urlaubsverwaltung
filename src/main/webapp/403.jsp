@@ -29,11 +29,9 @@
                     <h2 class="error-description">
                         Dir fehlen die Berechtigungen für die angeforderte Seite.
                     </h2>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12">
-                    <a href="${LOGIN}" class="error-btn btn btn-primary btn-lg col-xs-12 col-sm-8 col-sm-offset-2 col-md-4 col-md-offset-4"><i class="fa fa-sign-in"></i> Zurück zur Login Seite</a>
+                    <p class="error-link">
+                        <a href="${URL_PREFIX}/overview">Zurück zur Übersicht</a>
+                    </p>
                 </div>
             </div>
         </div>

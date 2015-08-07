@@ -21,25 +21,15 @@
             <div class="content">
                 <div class="row">
                     <div class="col-xs-12">
-                        <h1 class="error-code">OOOPS!</h1>
+                        <h1 class="error-code"><i class="fa fa-frown-o"></i></h1>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-xs-12">
                         <h2 class="error-description">Hier hat sich ein Fehler eingeschlichen...</h2>
-
-                        <p>
-                            <c:if test="${not empty exception.message}">
-                                <div class="col-xs-6 col-xs-offset-3">
-                                    <p><c:out value="${exception.message}"/></p>
-                                </div>
-                            </c:if>
+                        <p class="error-link">
+                            <a href="${URL_PREFIX}/overview">Zurück zur Übersicht</a>
                         </p>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xs-12">
-                        <a href="${URL_PREFIX}/overview" class="error-btn btn btn-primary btn-lg col-xs-12 col-sm-8 col-sm-offset-2 col-md-4 col-md-offset-4"><i class="fa fa-home"></i> Zurück zur Übersicht</a>
                     </div>
                 </div>
             </div>
