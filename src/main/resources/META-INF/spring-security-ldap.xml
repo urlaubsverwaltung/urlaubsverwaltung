@@ -12,24 +12,16 @@
         <constructor-arg ref="mailService"/>
     </bean>
 
-    <security:ldap-server id="ldapAuthServer" url="${ldap.url}/${ldap.base}"/>
-
-    <bean id="ldapAuthProvider" class="org.springframework.security.ldap.authentication.LdapAuthenticationProvider">
-        <constructor-arg>
-            <bean class="org.springframework.security.ldap.authentication.BindAuthenticator">
-                <constructor-arg ref="ldapAuthServer"/>
-                <property name="userDnPatterns">
-                    <list>
-                        <value>${ldap.userDnPatterns}</value>
-                    </list>
-                </property>
-            </bean>
-        </constructor-arg>
-        <property name="userDetailsContextMapper" ref="personContextMapper"/>
-    </bean>
+    <security:ldap-server id="ldapAuthServer" url="${security.ldap.url}"/>
 
     <security:authentication-manager alias="authenticationManager">
-        <security:authentication-provider ref="ldapAuthProvider"/>
+
+        <security:ldap-authentication-provider
+                server-ref="ldapAuthServer"
+                user-context-mapper-ref="personContextMapper"
+                user-search-base="${security.ldap.userSearchBase}"
+                user-search-filter="${security.ldap.userSearchFilter}" />
+
     </security:authentication-manager>
 
 </beans>
