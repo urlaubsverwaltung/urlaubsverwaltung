@@ -5,7 +5,16 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <div class="box">
-    <span class="box-icon bg-yellow"><i class="fa fa-sun-o"></i></span>
+    <span class="box-icon bg-yellow">
+        <c:choose>
+            <c:when test="${application.vacationType == 'HOLIDAY'}">
+                <i class="fa fa-sun-o"></i>
+            </c:when>
+            <c:otherwise>
+                <i class="fa fa-flag-o"></i>
+            </c:otherwise>
+        </c:choose>
+    </span>
     <span class="box-text">
         <h5 class="is-inline-block is-sticky"><c:out value="${application.person.niceName}" /></h5> <spring:message code="app.apply" />
         <h4>
