@@ -15,6 +15,10 @@
     <!-- SPRING MAGIC -->
     <mvc:annotation-driven/>
 
+    <mvc:interceptors>
+        <bean class="org.synyx.urlaubsverwaltung.web.UserInterceptor" />
+    </mvc:interceptors>
+
     <context:component-scan base-package="org.synyx.urlaubsverwaltung">
         <context:exclude-filter type="regex" expression="org\.synyx\.urlaubsverwaltung\.restapi.*"/>
     </context:component-scan>

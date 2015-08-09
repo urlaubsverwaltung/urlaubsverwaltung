@@ -54,7 +54,6 @@ public class ApplicationForLeaveController {
             List<ApplicationForLeave> applicationsForLeave = getAllRelevantApplicationsForLeave();
 
             model.addAttribute("applications", applicationsForLeave);
-            model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
             model.addAttribute("filterRequest", new FilterRequest());
 
             Map<Application, String> gravatarUrls = getAllRelevantGravatarUrls(applicationsForLeave);

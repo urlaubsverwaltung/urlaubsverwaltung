@@ -156,7 +156,6 @@ public class ApplyForLeaveController {
         model.addAttribute("appForm", appForm);
         model.addAttribute("account", account);
         model.addAttribute("vacTypes", VacationType.values());
-        model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
     }
 
     private Comparator<Person> personComperator() {

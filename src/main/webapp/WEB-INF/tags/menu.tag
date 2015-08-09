@@ -28,23 +28,21 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="${URL_PREFIX}/overview">
-        <img src="<spring:url value='/images/synyx-logo-transparent.png' />" height="24" width="15"/>
-        <span class="navbar-brand-title">
-          <spring:message code="nav.title"/>
-        </span>
-      </a>
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="navbar-collapse">
-      <ul class="nav navbar-nav navbar-right">
+      <ul class="nav navbar-nav">
         <sec:authorize access="hasRole('USER')">
           <li>
             <a href="${URL_PREFIX}/overview">
-              <i class="fa fa-fw fa-home"></i> <spring:message code="nav.home.title"/>
+              <img class="img-circle hidden-print" src="<c:out value='${gravatar}?d=mm&s=20'/>"/> <spring:message code="nav.home.title"/>
             </a>
           </li>
+        </sec:authorize>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <sec:authorize access="hasRole('USER')">
           <li>
             <a href="${URL_PREFIX}/application/new">
               <i class="fa fa-fw fa-plus-circle"></i> <spring:message code="nav.apply.title"/>

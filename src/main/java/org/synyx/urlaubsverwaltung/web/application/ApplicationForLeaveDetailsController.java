@@ -137,7 +137,6 @@ public class ApplicationForLeaveDetailsController {
             model.addAttribute("modelPerson", new Person());
         }
 
-        model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
         model.addAttribute("application", new ApplicationForLeave(application, calendarService));
 
         Optional<Account> account = accountService.getHolidaysAccount(year, application.getPerson());
@@ -149,10 +148,6 @@ public class ApplicationForLeaveDetailsController {
         }
 
         model.addAttribute(ControllerConstants.YEAR, year);
-
-        // get url of loggedUser's gravatar image
-        String url = GravatarUtil.createImgURL(application.getPerson().getEmail());
-        model.addAttribute("gravatar", url);
 
         model.addAttribute("action", action);
         model.addAttribute("shortcut", shortcut);

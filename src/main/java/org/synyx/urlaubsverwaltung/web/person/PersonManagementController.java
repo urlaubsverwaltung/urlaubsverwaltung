@@ -78,7 +78,6 @@ public class PersonManagementController {
             return ControllerConstants.ERROR_JSP;
         }
 
-        model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
         model.addAttribute("personForm", new PersonForm());
         model.addAttribute("weekDays", Day.values());
 
@@ -102,7 +101,6 @@ public class PersonManagementController {
         }
 
         if (errors.hasErrors()) {
-            model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
             model.addAttribute("personForm", personForm);
             model.addAttribute("weekDays", Day.values());
 
@@ -144,7 +142,6 @@ public class PersonManagementController {
         PersonForm personForm = new PersonForm(person, yearOfHolidaysAccount, account, workingTime,
                 person.getPermissions(), person.getNotifications());
 
-        model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
         model.addAttribute("personForm", personForm);
         model.addAttribute("weekDays", Day.values());
         model.addAttribute("workingTimes", workingTimeService.getByPerson(person));
@@ -170,7 +167,6 @@ public class PersonManagementController {
         }
 
         if (errors.hasErrors()) {
-            model.addAttribute(PersonConstants.LOGGED_USER, sessionService.getLoggedUser());
             model.addAttribute("personForm", personForm);
             model.addAttribute("weekDays", Day.values());
             model.addAttribute("workingTimes", workingTimeService.getByPerson(personToUpdate.get()));
