@@ -38,11 +38,11 @@ import java.util.Optional;
  * @author  Daniel Hammann - <hammann@synyx.de>
  * @author  Aljona Murygina - murygina@synyx.de
  */
-@Service("calendarSyncService")
+@Service("calendarProviderService")
 @Conditional(ExchangeCalendarCondition.class)
-public class ExchangeCalendarSyncService implements CalendarSyncService {
+public class ExchangeCalendarProviderService implements CalendarProviderService {
 
-    private static final Logger LOG = Logger.getLogger(ExchangeCalendarSyncService.class);
+    private static final Logger LOG = Logger.getLogger(ExchangeCalendarProviderService.class);
 
     private MailService mailService;
     private ExchangeService exchangeService;
@@ -51,7 +51,7 @@ public class ExchangeCalendarSyncService implements CalendarSyncService {
     private CalendarFolder calendarFolder;
 
     @Autowired
-    public ExchangeCalendarSyncService(MailService mailService,
+    public ExchangeCalendarProviderService(MailService mailService,
         @Value("${ews.email}") String emailAddress,
         @Value("${ews.password}") String password,
         @Value("${ews.calendar}") String calendarName) {

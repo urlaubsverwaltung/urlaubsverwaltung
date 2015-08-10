@@ -17,11 +17,11 @@ import java.util.Optional;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-@Service("calendarSyncService")
+@Service("calendarProviderService")
 @Conditional(NoCalendarCondition.class)
-public class DummyCalendarSyncService implements CalendarSyncService {
+public class DummyCalendarProviderService implements CalendarProviderService {
 
-    private static final Logger LOG = Logger.getLogger(DummyCalendarSyncService.class);
+    private static final Logger LOG = Logger.getLogger(DummyCalendarProviderService.class);
 
     @Override
     public Optional<String> addAbsence(Absence absence) {

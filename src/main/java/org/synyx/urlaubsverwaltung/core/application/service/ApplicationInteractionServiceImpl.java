@@ -16,7 +16,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.sync.CalendarSyncService;
+import org.synyx.urlaubsverwaltung.core.sync.CalendarProviderService;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceMappingService;
@@ -39,20 +39,20 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
     private final SignService signService;
     private final CommentService commentService;
     private final MailService mailService;
-    private final CalendarSyncService calendarSyncService;
+    private final CalendarProviderService calendarProviderService;
     private final AbsenceMappingService absenceMappingService;
 
     @Autowired
     public ApplicationInteractionServiceImpl(ApplicationService applicationService, CommentService commentService,
         AccountInteractionService accountInteractionService, SignService signService, MailService mailService,
-        CalendarSyncService calendarSyncService, AbsenceMappingService absenceMappingService) {
+        CalendarProviderService calendarProviderService, AbsenceMappingService absenceMappingService) {
 
         this.applicationService = applicationService;
         this.commentService = commentService;
         this.accountInteractionService = accountInteractionService;
         this.signService = signService;
         this.mailService = mailService;
-        this.calendarSyncService = calendarSyncService;
+        this.calendarProviderService = calendarProviderService;
         this.absenceMappingService = absenceMappingService;
     }
 
@@ -93,7 +93,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         // update remaining vacation days (if there is already a holidays account for next year)
         accountInteractionService.updateRemainingVacationDays(application.getStartDate().getYear(), person);
 
-        Optional<String> eventId = calendarSyncService.addAbsence(new Absence(application));
+        Optional<String> eventId = calendarProviderService.addAbsence(new Absence(application));
 
         if (eventId.isPresent()) {
             absenceMappingService.create(application, eventId.get());
@@ -128,7 +128,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
                 AbsenceType.VACATION);
 
         if (absenceMapping.isPresent()) {
-            calendarSyncService.update(new Absence(application), absenceMapping.get().getEventId());
+            calendarProviderService.update(new Absence(application), absenceMapping.get().getEventId());
         }
 
         return application;
@@ -156,7 +156,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
                 AbsenceType.VACATION);
 
         if (absenceMapping.isPresent()) {
-            calendarSyncService.deleteAbsence(absenceMapping.get().getEventId());
+            calendarProviderService.deleteAbsence(absenceMapping.get().getEventId());
             absenceMappingService.delete(absenceMapping.get());
         }
 
@@ -203,7 +203,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
                 AbsenceType.VACATION);
 
         if (absenceMapping.isPresent()) {
-            calendarSyncService.deleteAbsence(absenceMapping.get().getEventId());
+            calendarProviderService.deleteAbsence(absenceMapping.get().getEventId());
             absenceMappingService.delete(absenceMapping.get());
         }
 
