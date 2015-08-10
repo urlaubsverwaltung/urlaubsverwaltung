@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.core.sync.absence;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -15,11 +16,14 @@ import javax.persistence.Enumerated;
 @Entity
 public class AbsenceMapping extends AbstractPersistable<Integer> {
 
+    @Column(nullable = false)
     private Integer absenceId;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private AbsenceType absenceType;
 
+    @Column(nullable = false)
     private String eventId;
 
     public AbsenceMapping() {

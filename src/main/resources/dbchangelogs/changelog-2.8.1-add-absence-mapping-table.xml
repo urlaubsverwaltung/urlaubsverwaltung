@@ -9,9 +9,15 @@
             <column autoIncrement="true" name="id" type="INT(10)">
                 <constraints primaryKey="true"/>
             </column>
-            <column name="absenceId" type="INT(10)"/>
-            <column name="absenceType" type="VARCHAR(255)"/>
-            <column name="eventId" type="VARCHAR(255)"/>
+            <column name="absenceId" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="absenceType" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="eventId" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
 
     </changeSet>
