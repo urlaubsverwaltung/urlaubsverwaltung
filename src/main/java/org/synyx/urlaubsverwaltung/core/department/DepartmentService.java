@@ -24,4 +24,12 @@ public interface DepartmentService {
      * @param  department
      */
     void save(Department department);
+
+
+    /**
+     * Updates a given department in repository.
+     *
+     * @param  department
+     */
+    void update(Department department);
 }

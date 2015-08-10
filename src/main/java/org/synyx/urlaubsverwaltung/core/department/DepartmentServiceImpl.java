@@ -33,4 +33,11 @@ public class DepartmentServiceImpl implements DepartmentService {
 
         departmentDAO.save(department);
     }
+
+
+    @Override
+    public void update(Department department) {
+
+        departmentDAO.save(department);
+    }
 }
