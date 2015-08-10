@@ -90,9 +90,6 @@ public class ApplicationInteractionServiceImplTest {
 
         Mockito.verify(commentService)
             .create(eq(applicationForLeave), eq(ApplicationStatus.WAITING), eq(comment), eq(applier));
-
-        Mockito.verify(calendarProviderService).addAbsence(any(Absence.class));
-        Mockito.verify(absenceMappingService).create(eq(applicationForLeave), anyString());
     }
 
 
@@ -105,6 +102,22 @@ public class ApplicationInteractionServiceImplTest {
         applicationForLeave.setHowLong(DayLength.FULL);
 
         return applicationForLeave;
+    }
+
+
+    @Test
+    public void ensureApplyingForLeaveAddsCalendarEvent() {
+
+        Person person = new Person();
+        Person applier = new Person();
+        Optional<String> comment = Optional.of("Foo");
+
+        Application applicationForLeave = getDummyApplication(person);
+
+        service.apply(applicationForLeave, applier, comment);
+
+        Mockito.verify(calendarProviderService).addAbsence(any(Absence.class));
+        Mockito.verify(absenceMappingService).create(eq(applicationForLeave), anyString());
     }
 
 
@@ -185,6 +198,20 @@ public class ApplicationInteractionServiceImplTest {
 
         Mockito.verify(commentService)
             .create(eq(applicationForLeave), eq(ApplicationStatus.ALLOWED), eq(comment), eq(boss));
+    }
+
+
+    @Test
+    public void ensureAllowingApplicationForLeaveUpdatesCalendarEvent() {
+
+        Person person = new Person();
+        Person boss = new Person();
+        Optional<String> comment = Optional.of("Foo");
+
+        Application applicationForLeave = getDummyApplication(person);
+        applicationForLeave.setStatus(ApplicationStatus.WAITING);
+
+        service.allow(applicationForLeave, boss, comment);
 
         Mockito.verify(calendarProviderService).update(any(Absence.class), anyString());
         Mockito.verify(absenceMappingService).getAbsenceByIdAndType(anyInt(), eq(AbsenceType.VACATION));
@@ -263,6 +290,20 @@ public class ApplicationInteractionServiceImplTest {
 
         Mockito.verify(commentService)
             .create(eq(applicationForLeave), eq(ApplicationStatus.REJECTED), eq(comment), eq(boss));
+    }
+
+
+    @Test
+    public void ensureRejectingApplicationForLeaveDeletesCalendarEvent() {
+
+        Person person = new Person();
+        Person boss = new Person();
+        Optional<String> comment = Optional.of("Foo");
+
+        Application applicationForLeave = getDummyApplication(person);
+        applicationForLeave.setStatus(ApplicationStatus.WAITING);
+
+        service.reject(applicationForLeave, boss, comment);
 
         Mockito.verify(calendarProviderService).deleteAbsence(anyString());
         Mockito.verify(absenceMappingService).delete(any(AbsenceMapping.class));
@@ -310,6 +351,19 @@ public class ApplicationInteractionServiceImplTest {
             .create(eq(applicationForLeave), eq(ApplicationStatus.REVOKED), eq(comment), eq(person));
 
         Mockito.verifyZeroInteractions(mailService);
+    }
+
+
+    @Test
+    public void ensureCancellingApplicationForLeaveDeletesCalendarEvent() {
+
+        Person person = new Person();
+        Optional<String> comment = Optional.of("Foo");
+
+        Application applicationForLeave = getDummyApplication(person);
+        applicationForLeave.setStatus(ApplicationStatus.WAITING);
+
+        service.cancel(applicationForLeave, person, comment);
 
         Mockito.verify(calendarProviderService).deleteAbsence(anyString());
         Mockito.verify(absenceMappingService).delete(any(AbsenceMapping.class));
