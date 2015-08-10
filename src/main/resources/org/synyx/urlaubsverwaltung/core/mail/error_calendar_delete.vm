@@ -1,3 +1,3 @@
-Der Termin (${eventId}) in Kalendar '${calendarName}' konnte nicht gelöscht werden:
+Der Termin (${eventId}) in Kalendar '${calendar}' konnte nicht gelöscht werden:
 
 ${exception}

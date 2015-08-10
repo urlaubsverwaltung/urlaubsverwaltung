@@ -123,13 +123,24 @@ public interface MailService {
 
 
     /**
-     * Send an email to the tool's manager if an error occurs during syncing of calendar.
+     * Send an email to the tool's manager if an error occurs during adding of calendar event.
      *
      * @param  calendar  that is used for syncing
      * @param  absence  represents the absence of a person
      * @param  exception  describes the error
      */
     void sendCalendarSyncErrorNotification(String calendar, Absence absence, String exception);
+
+
+    /**
+     * Send an email to the tool's manager if an error occurs during update of calendar event.
+     *
+     * @param  calendarName  that is used for syncing
+     * @param  absence  represents the absence of a person
+     * @param  eventId  unique calendar event id
+     * @param  exception  describes the error
+     */
+    void sendCalendarUpdateErrorNotification(String calendarName, Absence absence, String eventId, String exception);
 
 
     /**

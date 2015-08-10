@@ -162,8 +162,8 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
 
             LOG.info(String.format("Appointment %s has been updated in exchange calendar '%s'.", appointment.getId(),
                     calendarName));
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            mailService.sendCalendarUpdateErrorNotification(calendarName, absence, eventId, ex.getMessage());
         }
     }
 

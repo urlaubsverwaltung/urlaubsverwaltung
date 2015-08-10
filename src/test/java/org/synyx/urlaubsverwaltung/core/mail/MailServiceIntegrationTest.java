@@ -568,4 +568,37 @@ public class MailServiceIntegrationTest {
         assertTrue(content.contains("eventId"));
         assertTrue(content.contains("event delete failed"));
     }
+
+
+    @Test
+    public void ensureTechnicalManagerGetsANotificationIfAEventUpdateErrorOccurred() throws MessagingException,
+        IOException {
+
+        Person person = new Person("muster", "Muster", "Marlene", "marlene@muster.de");
+
+        Application application = new Application();
+        application.setHowLong(DayLength.FULL);
+        application.setStartDate(DateMidnight.now());
+        application.setEndDate(DateMidnight.now());
+        application.setPerson(person);
+        application.setStatus(ApplicationStatus.ALLOWED);
+
+        Absence absence = new Absence(application);
+
+        mailService.sendCalendarUpdateErrorNotification("Kalendername", absence, "eventId", "event update failed");
+
+        List<Message> inbox = Mailbox.get(emailManager);
+        assertTrue(inbox.size() > 0);
+
+        Message msg = inbox.get(0);
+
+        assertEquals("Fehler beim Aktualisieren eines Kalendereintrags", msg.getSubject());
+
+        String content = (String) msg.getContent();
+
+        assertTrue(content.contains("Kalendername"));
+        assertTrue(content.contains("eventId"));
+        assertTrue(content.contains("event update failed"));
+        assertTrue(content.contains(person.getNiceName()));
+    }
 }
