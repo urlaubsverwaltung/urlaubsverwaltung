@@ -1,0 +1,61 @@
+package org.synyx.urlaubsverwaltung.core.department;
+
+import org.springframework.data.jpa.domain.AbstractPersistable;
+
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Temporal;
+
+
+/**
+ * Daniel Hammann - <hammann@synyx.de>.
+ */
+
+@Entity
+public class Department extends AbstractPersistable<Integer> {
+
+    @Column(nullable = false)
+    private String name;
+
+    private String description;
+
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date lastModification;
+
+    public String getName() {
+
+        return name;
+    }
+
+
+    public void setName(String name) {
+
+        this.name = name;
+    }
+
+
+    public String getDescription() {
+
+        return description;
+    }
+
+
+    public void setDescription(String description) {
+
+        this.description = description;
+    }
+
+
+    public Date getLastModification() {
+
+        return lastModification;
+    }
+
+
+    public void setLastModification(Date lastModification) {
+
+        this.lastModification = lastModification;
+    }
+}
