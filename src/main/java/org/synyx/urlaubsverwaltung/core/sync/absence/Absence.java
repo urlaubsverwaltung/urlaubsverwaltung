@@ -22,13 +22,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class Absence {
 
-    private static final int ONE_HOUR_IN_MILLISECONDS = 60 * 60 * 1000;
-
-    private static final int MORNING_START = 8 * ONE_HOUR_IN_MILLISECONDS;
-    private static final int MORNING_END = 12 * ONE_HOUR_IN_MILLISECONDS;
-    private static final int NOON_START = 13 * ONE_HOUR_IN_MILLISECONDS;
-    private static final int NOON_END = 17 * ONE_HOUR_IN_MILLISECONDS;
-
     private Date startDate;
 
     private Date endDate;
@@ -39,7 +32,7 @@ public class Absence {
 
     private boolean isAllDay = false;
 
-    public Absence(Application application) {
+    public Absence(Application application, AbsenceTimeConfiguration absenceTimeConfiguration) {
 
         Assert.notNull(application.getHowLong(), "No day length set for application");
         Assert.notNull(application.getStartDate(), "No start date set for application");
@@ -71,13 +64,13 @@ public class Absence {
                 break;
 
             case MORNING:
-                this.startDate = new Date(startDateInMilliseconds + MORNING_START);
-                this.endDate = new Date(endDateInMilliseconds + MORNING_END);
+                this.startDate = new Date(startDateInMilliseconds + absenceTimeConfiguration.getMorningStart());
+                this.endDate = new Date(endDateInMilliseconds + absenceTimeConfiguration.getMorningEnd());
                 break;
 
             case NOON:
-                this.startDate = new Date(startDateInMilliseconds + NOON_START);
-                this.endDate = new Date(endDateInMilliseconds + NOON_END);
+                this.startDate = new Date(startDateInMilliseconds + absenceTimeConfiguration.getNoonStart());
+                this.endDate = new Date(endDateInMilliseconds + absenceTimeConfiguration.getNoonEnd());
                 break;
 
             default:

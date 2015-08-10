@@ -21,6 +21,7 @@ import org.synyx.urlaubsverwaltung.core.sync.CalendarProviderService;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceMappingService;
+import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceType;
 
 import java.util.Optional;
@@ -46,12 +47,14 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
     private final MailService mailService;
     private final CalendarProviderService calendarProviderService;
     private final AbsenceMappingService absenceMappingService;
+    private final AbsenceTimeConfiguration absenceTimeConfiguration;
 
     @Autowired
     public SickNoteInteractionServiceImpl(SickNoteService sickNoteService,
         SickNoteCommentService sickNoteCommentService, ApplicationService applicationService,
         CommentService applicationCommentService, SignService signService, MailService mailService,
-        CalendarProviderService calendarProviderService, AbsenceMappingService absenceMappingService) {
+        CalendarProviderService calendarProviderService, AbsenceMappingService absenceMappingService,
+        AbsenceTimeConfiguration absenceTimeConfiguration) {
 
         this.sickNoteService = sickNoteService;
         this.sickNoteCommentService = sickNoteCommentService;
@@ -61,6 +64,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
         this.mailService = mailService;
         this.calendarProviderService = calendarProviderService;
         this.absenceMappingService = absenceMappingService;
+        this.absenceTimeConfiguration = absenceTimeConfiguration;
     }
 
     @Override
@@ -127,7 +131,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
 
         if (absenceMapping.isPresent()) {
             String eventId = absenceMapping.get().getEventId();
-            calendarProviderService.update(new Absence(application), eventId);
+            calendarProviderService.update(new Absence(application, absenceTimeConfiguration), eventId);
             absenceMappingService.delete(absenceMapping.get());
             absenceMappingService.create(application, eventId);
         }

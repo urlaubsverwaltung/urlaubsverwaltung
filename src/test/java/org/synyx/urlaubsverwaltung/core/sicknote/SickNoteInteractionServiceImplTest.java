@@ -23,6 +23,7 @@ import org.synyx.urlaubsverwaltung.core.sync.CalendarProviderService;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceMappingService;
+import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceType;
 
 import java.util.Optional;
@@ -71,7 +72,7 @@ public class SickNoteInteractionServiceImplTest {
 
         sickNoteInteractionService = new SickNoteInteractionServiceImpl(sickNoteService, sickNoteCommentService,
                 applicationService, applicationCommentService, signService, mailService, calendarProviderService,
-                absenceMappingService);
+                absenceMappingService, new AbsenceTimeConfiguration(8, 12, 13, 17));
 
         sickNote = new SickNote();
         sickNote.setStartDate(DateMidnight.now());

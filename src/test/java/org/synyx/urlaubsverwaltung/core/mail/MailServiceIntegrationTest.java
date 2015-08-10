@@ -26,6 +26,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
+import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceTimeConfiguration;
 
 import java.io.IOException;
 
@@ -530,7 +531,7 @@ public class MailServiceIntegrationTest {
         application.setPerson(person);
         application.setStatus(ApplicationStatus.ALLOWED);
 
-        Absence absence = new Absence(application);
+        Absence absence = new Absence(application, new AbsenceTimeConfiguration(8, 12, 13, 17));
 
         mailService.sendCalendarSyncErrorNotification("Kalendername", absence, "Calendar sync failed");
 
@@ -583,7 +584,7 @@ public class MailServiceIntegrationTest {
         application.setPerson(person);
         application.setStatus(ApplicationStatus.ALLOWED);
 
-        Absence absence = new Absence(application);
+        Absence absence = new Absence(application, new AbsenceTimeConfiguration(8, 12, 13, 17));
 
         mailService.sendCalendarUpdateErrorNotification("Kalendername", absence, "eventId", "event update failed");
 

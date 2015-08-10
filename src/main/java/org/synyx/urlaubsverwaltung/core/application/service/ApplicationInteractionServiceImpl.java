@@ -20,6 +20,7 @@ import org.synyx.urlaubsverwaltung.core.sync.CalendarProviderService;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceMappingService;
+import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceType;
 
 import java.util.Optional;
@@ -41,11 +42,13 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
     private final MailService mailService;
     private final CalendarProviderService calendarProviderService;
     private final AbsenceMappingService absenceMappingService;
+    private final AbsenceTimeConfiguration absenceTimeConfiguration;
 
     @Autowired
     public ApplicationInteractionServiceImpl(ApplicationService applicationService, CommentService commentService,
         AccountInteractionService accountInteractionService, SignService signService, MailService mailService,
-        CalendarProviderService calendarProviderService, AbsenceMappingService absenceMappingService) {
+        CalendarProviderService calendarProviderService, AbsenceMappingService absenceMappingService,
+        AbsenceTimeConfiguration absenceTimeConfiguration) {
 
         this.applicationService = applicationService;
         this.commentService = commentService;
@@ -54,6 +57,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         this.mailService = mailService;
         this.calendarProviderService = calendarProviderService;
         this.absenceMappingService = absenceMappingService;
+        this.absenceTimeConfiguration = absenceTimeConfiguration;
     }
 
     @Override
@@ -93,7 +97,8 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         // update remaining vacation days (if there is already a holidays account for next year)
         accountInteractionService.updateRemainingVacationDays(application.getStartDate().getYear(), person);
 
-        Optional<String> eventId = calendarProviderService.addAbsence(new Absence(application));
+        Optional<String> eventId = calendarProviderService.addAbsence(new Absence(application,
+                    absenceTimeConfiguration));
 
         if (eventId.isPresent()) {
             absenceMappingService.create(application, eventId.get());
@@ -128,7 +133,8 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
                 AbsenceType.VACATION);
 
         if (absenceMapping.isPresent()) {
-            calendarProviderService.update(new Absence(application), absenceMapping.get().getEventId());
+            calendarProviderService.update(new Absence(application, absenceTimeConfiguration),
+                absenceMapping.get().getEventId());
         }
 
         return application;

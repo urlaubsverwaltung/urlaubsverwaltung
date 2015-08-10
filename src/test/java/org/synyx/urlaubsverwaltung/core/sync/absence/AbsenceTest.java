@@ -27,11 +27,13 @@ import static org.hamcrest.core.Is.is;
 public class AbsenceTest {
 
     private Person person;
+    private AbsenceTimeConfiguration timeConfiguration;
 
     @Before
     public void setUp() {
 
         person = new Person("foo", "Muster", "Marlene", "muster@muster.de");
+        timeConfiguration = new AbsenceTimeConfiguration(8, 12, 13, 17);
     }
 
 
@@ -48,7 +50,7 @@ public class AbsenceTest {
         application.setHowLong(DayLength.FULL);
         application.setStatus(ApplicationStatus.ALLOWED);
 
-        Absence absence = new Absence(application);
+        Absence absence = new Absence(application, timeConfiguration);
 
         Assert.assertNotNull("Start date must not be null", absence.getStartDate());
         Assert.assertNotNull("End date must not be null", absence.getEndDate());
@@ -75,7 +77,7 @@ public class AbsenceTest {
         application.setEndDate(today);
         application.setStatus(ApplicationStatus.ALLOWED);
 
-        Absence absence = new Absence(application);
+        Absence absence = new Absence(application, timeConfiguration);
 
         Assert.assertEquals("Should start at 8 am", start, absence.getStartDate());
         Assert.assertEquals("Should end at 12 pm", end, absence.getEndDate());
@@ -97,7 +99,7 @@ public class AbsenceTest {
         application.setEndDate(today);
         application.setStatus(ApplicationStatus.ALLOWED);
 
-        Absence absence = new Absence(application);
+        Absence absence = new Absence(application, timeConfiguration);
 
         Assert.assertEquals("Should start at 1 pm", start, absence.getStartDate());
         Assert.assertEquals("Should end at 5 pm", end, absence.getEndDate());
@@ -117,7 +119,7 @@ public class AbsenceTest {
         application.setPerson(person);
         application.setStatus(ApplicationStatus.ALLOWED);
 
-        Absence absence = new Absence(application);
+        Absence absence = new Absence(application, timeConfiguration);
 
         Assert.assertTrue("Should be all day", absence.isAllDay());
     }
@@ -136,7 +138,7 @@ public class AbsenceTest {
         application.setPerson(person);
         application.setStatus(ApplicationStatus.ALLOWED);
 
-        Absence absence = new Absence(application);
+        Absence absence = new Absence(application, timeConfiguration);
 
         Assert.assertFalse("Should be not all day", absence.isAllDay());
     }
@@ -155,7 +157,7 @@ public class AbsenceTest {
         application.setPerson(person);
         application.setStatus(ApplicationStatus.ALLOWED);
 
-        Absence absence = new Absence(application);
+        Absence absence = new Absence(application, timeConfiguration);
 
         Assert.assertFalse("Should be not all day", absence.isAllDay());
     }
@@ -196,7 +198,7 @@ public class AbsenceTest {
         application.setEndDate(today);
         application.setStatus(ApplicationStatus.ALLOWED);
 
-        new Absence(application);
+        new Absence(application, timeConfiguration);
     }
 
 
@@ -213,7 +215,7 @@ public class AbsenceTest {
 
         application.setHowLong(DayLength.ZERO);
 
-        new Absence(application);
+        new Absence(application, timeConfiguration);
     }
 
 
@@ -228,7 +230,7 @@ public class AbsenceTest {
         application.setHowLong(DayLength.FULL);
         application.setStatus(ApplicationStatus.ALLOWED);
 
-        new Absence(application);
+        new Absence(application, timeConfiguration);
     }
 
 
@@ -243,7 +245,7 @@ public class AbsenceTest {
         application.setHowLong(DayLength.FULL);
         application.setStatus(ApplicationStatus.ALLOWED);
 
-        new Absence(application);
+        new Absence(application, timeConfiguration);
     }
 
 
@@ -285,7 +287,7 @@ public class AbsenceTest {
         application.setHowLong(DayLength.FULL);
         application.setStatus(ApplicationStatus.WAITING);
 
-        Absence absence = new Absence(application);
+        Absence absence = new Absence(application, timeConfiguration);
 
         assertThat(absence.getEventType(), is(EventType.WAITING_APPLICATION));
         assertThat(absence.getEventSubject(), is("Antrag auf Urlaub Marlene Muster"));
@@ -304,7 +306,7 @@ public class AbsenceTest {
         application.setHowLong(DayLength.FULL);
         application.setStatus(ApplicationStatus.ALLOWED);
 
-        Absence absence = new Absence(application);
+        Absence absence = new Absence(application, timeConfiguration);
 
         assertThat(absence.getEventType(), is(EventType.ALLOWED_APPLICATION));
         assertThat(absence.getEventSubject(), is("Urlaub Marlene Muster"));
@@ -340,7 +342,7 @@ public class AbsenceTest {
         application.setHowLong(DayLength.FULL);
         application.setStatus(ApplicationStatus.CANCELLED);
 
-        new Absence(application);
+        new Absence(application, timeConfiguration);
     }
 
 
@@ -358,7 +360,7 @@ public class AbsenceTest {
         application.setPerson(person);
         application.setStatus(ApplicationStatus.ALLOWED);
 
-        Absence absence = new Absence(application);
+        Absence absence = new Absence(application, timeConfiguration);
 
         Date startDateInUTC = absence.getStartDate();
         Date endDateInUTC = absence.getEndDate();
