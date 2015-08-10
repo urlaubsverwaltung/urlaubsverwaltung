@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.core.sync;
 import microsoft.exchange.webservices.data.autodiscover.IAutodiscoverRedirectionUrl;
 import microsoft.exchange.webservices.data.core.ExchangeService;
 import microsoft.exchange.webservices.data.core.enumeration.property.WellKnownFolderName;
+import microsoft.exchange.webservices.data.core.enumeration.service.ConflictResolutionMode;
 import microsoft.exchange.webservices.data.core.enumeration.service.DeleteMode;
 import microsoft.exchange.webservices.data.core.enumeration.service.SendCancellationsMode;
 import microsoft.exchange.webservices.data.core.enumeration.service.SendInvitationsMode;
@@ -115,18 +116,12 @@ public class ExchangeCalendarSyncService implements CalendarSyncService {
         try {
             Appointment appointment = new Appointment(exchangeService);
 
-            Person person = absence.getPerson();
-
-            appointment.setSubject(absence.getEventSubject());
-
-            appointment.setStart(absence.getStartDate());
-            appointment.setEnd(absence.getEndDate());
-            appointment.getRequiredAttendees().add(person.getEmail());
+            fillAppointment(absence, appointment);
 
             appointment.save(calendarFolder.getId(), SendInvitationsMode.SendToAllAndSaveCopy);
 
             LOG.info(String.format("Appointment %s for '%s' added to exchange calendar '%s'.", appointment.getId(),
-                    person.getNiceName(), calendarFolder.getDisplayName()));
+                    absence.getPerson().getNiceName(), calendarFolder.getDisplayName()));
 
             return Optional.ofNullable(appointment.getId().getUniqueId());
         } catch (Exception ex) {
@@ -135,6 +130,36 @@ public class ExchangeCalendarSyncService implements CalendarSyncService {
         }
 
         return Optional.empty();
+    }
+
+
+    private void fillAppointment(Absence absence, Appointment appointment) throws Exception {
+
+        Person person = absence.getPerson();
+
+        appointment.setSubject(absence.getEventSubject());
+
+        appointment.setStart(absence.getStartDate());
+        appointment.setEnd(absence.getEndDate());
+        appointment.getRequiredAttendees().add(person.getEmail());
+    }
+
+
+    @Override
+    public void update(Absence absence, String eventId) {
+
+        try {
+            Appointment appointment = Appointment.bind(exchangeService, new ItemId(eventId));
+
+            fillAppointment(absence, appointment);
+
+            appointment.update(ConflictResolutionMode.AutoResolve);
+
+            LOG.info(String.format("Appointment %s has been updated in exchange calendar '%s'.", appointment.getId(),
+                    calendarFolder.getDisplayName()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 

@@ -87,6 +87,9 @@ public class ApplicationInteractionServiceImplTest {
 
         Mockito.verify(commentService)
             .create(eq(applicationForLeave), eq(ApplicationStatus.WAITING), eq(comment), eq(applier));
+
+        Mockito.verify(calendarSyncService).addAbsence(any(Absence.class));
+        Mockito.verify(absenceMappingService).create(eq(applicationForLeave), anyString());
     }
 
 
@@ -179,6 +182,9 @@ public class ApplicationInteractionServiceImplTest {
 
         Mockito.verify(commentService)
             .create(eq(applicationForLeave), eq(ApplicationStatus.ALLOWED), eq(comment), eq(boss));
+
+        Mockito.verify(calendarSyncService).update(any(Absence.class), anyString());
+        Mockito.verify(absenceMappingService).getAbsenceByIdAndType(anyInt(), eq(AbsenceType.VACATION));
     }
 
 
@@ -222,8 +228,8 @@ public class ApplicationInteractionServiceImplTest {
 
         service.allow(applicationForLeave, boss, Optional.of("Foo"));
 
-        Mockito.verify(calendarSyncService).addAbsence(any(Absence.class));
-        Mockito.verify(absenceMappingService).create(eq(applicationForLeave), anyString());
+        Mockito.verify(calendarSyncService).update(any(Absence.class), anyString());
+        Mockito.verify(absenceMappingService).getAbsenceByIdAndType(anyInt(), eq(AbsenceType.VACATION));
     }
 
 
@@ -254,6 +260,9 @@ public class ApplicationInteractionServiceImplTest {
 
         Mockito.verify(commentService)
             .create(eq(applicationForLeave), eq(ApplicationStatus.REJECTED), eq(comment), eq(boss));
+
+        Mockito.verify(calendarSyncService).deleteAbsence(anyString());
+        Mockito.verify(absenceMappingService).delete(any(AbsenceMapping.class));
     }
 
 
@@ -298,6 +307,9 @@ public class ApplicationInteractionServiceImplTest {
             .create(eq(applicationForLeave), eq(ApplicationStatus.REVOKED), eq(comment), eq(person));
 
         Mockito.verifyZeroInteractions(mailService);
+
+        Mockito.verify(calendarSyncService).deleteAbsence(anyString());
+        Mockito.verify(absenceMappingService).delete(any(AbsenceMapping.class));
     }
 
 

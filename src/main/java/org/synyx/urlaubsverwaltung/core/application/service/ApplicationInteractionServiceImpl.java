@@ -93,6 +93,12 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         // update remaining vacation days (if there is already a holidays account for next year)
         accountInteractionService.updateRemainingVacationDays(application.getStartDate().getYear(), person);
 
+        Optional<String> eventId = calendarSyncService.addAbsence(new Absence(application));
+
+        if (eventId.isPresent()) {
+            absenceMappingService.create(application, eventId.get());
+        }
+
         return application;
     }
 
@@ -118,10 +124,11 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
             mailService.notifyHolidayReplacement(application);
         }
 
-        Optional<String> eventId = calendarSyncService.addAbsence(new Absence(application));
+        Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(application.getId(),
+                AbsenceType.VACATION);
 
-        if (eventId.isPresent()) {
-            absenceMappingService.create(application, eventId.get());
+        if (absenceMapping.isPresent()) {
+            calendarSyncService.update(new Absence(application), absenceMapping.get().getEventId());
         }
 
         return application;
@@ -144,6 +151,14 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         Comment createdComment = commentService.create(application, ApplicationStatus.REJECTED, comment, boss);
 
         mailService.sendRejectedNotification(application, createdComment);
+
+        Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(application.getId(),
+                AbsenceType.VACATION);
+
+        if (absenceMapping.isPresent()) {
+            calendarSyncService.deleteAbsence(absenceMapping.get().getEventId());
+            absenceMappingService.delete(absenceMapping.get());
+        }
 
         return application;
     }
@@ -189,6 +204,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         if (absenceMapping.isPresent()) {
             calendarSyncService.deleteAbsence(absenceMapping.get().getEventId());
+            absenceMappingService.delete(absenceMapping.get());
         }
 
         return application;

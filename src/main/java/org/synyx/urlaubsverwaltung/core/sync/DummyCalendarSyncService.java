@@ -26,9 +26,17 @@ public class DummyCalendarSyncService implements CalendarSyncService {
     @Override
     public Optional<String> addAbsence(Absence absence) {
 
-        LOG.info(String.format("No calendar provider configured for syncing: %s", absence));
+        LOG.info(String.format("No calendar provider configured for adding of event: %s", absence));
 
         return Optional.empty();
+    }
+
+
+    @Override
+    public void update(Absence absence, String eventId) {
+
+        LOG.info(String.format("No calendar provider configured for updating of event: %s, eventId %s", absence,
+                eventId));
     }
 
 

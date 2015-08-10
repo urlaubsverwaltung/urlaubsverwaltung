@@ -23,6 +23,15 @@ public interface CalendarSyncService {
 
 
     /**
+     * Updates a given event with absence content.
+     *
+     * @param  absence  represents the updated absence
+     * @param  eventId  id of event to be updated
+     */
+    void update(Absence absence, String eventId);
+
+
+    /**
      * Deletes a person's absence in calendar.
      *
      * @param  eventId  id of absence event, which should be deleted.

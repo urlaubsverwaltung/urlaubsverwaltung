@@ -35,8 +35,21 @@ public interface AbsenceMappingService {
     AbsenceMapping create(SickNote sickNote, String eventId);
 
 
+    /**
+     * Deletes an absence mapping.
+     *
+     * @param  absenceMapping
+     */
     void delete(AbsenceMapping absenceMapping);
 
 
+    /**
+     * Returns an absence mapping between application id or sicknote id and event.
+     *
+     * @param  id  of application or id of sicknote
+     * @param  absenceType  type ob absence
+     *
+     * @return  mapping between absence and event
+     */
     Optional<AbsenceMapping> getAbsenceByIdAndType(Integer id, AbsenceType absenceType);
 }
