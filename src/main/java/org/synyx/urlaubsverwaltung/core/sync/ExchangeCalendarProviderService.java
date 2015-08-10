@@ -44,16 +44,15 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
 
     private static final Logger LOG = Logger.getLogger(ExchangeCalendarProviderService.class);
 
-    private MailService mailService;
+    private final String calendarName;
+    private final MailService mailService;
     private ExchangeService exchangeService;
-
-    private String calendarName;
 
     @Autowired
     public ExchangeCalendarProviderService(MailService mailService,
-        @Value("${ews.email}") String emailAddress,
-        @Value("${ews.password}") String password,
-        @Value("${ews.calendar}") String calendarName) {
+        @Value("${calendar.ews.email}") String emailAddress,
+        @Value("${calendar.ews.password}") String password,
+        @Value("${calendar.ews.calendar}") String calendarName) {
 
         this.mailService = mailService;
         this.calendarName = calendarName;
