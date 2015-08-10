@@ -54,8 +54,8 @@ public class ApplicationInteractionServiceImplTest {
         mailService = Mockito.mock(MailService.class);
         calendarSyncService = Mockito.mock(CalendarSyncService.class);
         absenceMappingService = Mockito.mock(AbsenceMappingService.class);
-        Mockito.when(calendarSyncService.addAbsence(any())).thenReturn(Optional.of("42"));
-        Mockito.when(absenceMappingService.getAbsenceByIdAndType(anyInt(), any()))
+        Mockito.when(calendarSyncService.addAbsence(any(Absence.class))).thenReturn(Optional.of("42"));
+        Mockito.when(absenceMappingService.getAbsenceByIdAndType(anyInt(), eq(AbsenceType.VACATION)))
             .thenReturn(Optional.of(new AbsenceMapping(1, AbsenceType.VACATION, "42")));
 
         service = new ApplicationInteractionServiceImpl(applicationService, commentService, accountInteractionService,

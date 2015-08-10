@@ -4,7 +4,6 @@ import org.joda.time.DateMidnight;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
@@ -180,7 +179,7 @@ public class AbsenceTest {
         Assert.assertNotNull("Person must not be null", absence.getPerson());
 
         Assert.assertEquals("Wrong start date", start.toDate(), absence.getStartDate());
-        Assert.assertEquals("Wrong end date", end.toDate(), absence.getEndDate());
+        Assert.assertEquals("Wrong end date", end.plusDays(1).toDate(), absence.getEndDate());
         Assert.assertEquals("Wrong person", person, absence.getPerson());
         Assert.assertTrue("Should be all day", absence.isAllDay());
     }
@@ -345,14 +344,12 @@ public class AbsenceTest {
     }
 
 
-    // TODO: Fix this test!
-    @Ignore
     @Test
-    public void ensureUTCDateForFullDay() {
+    public void ensureUTCDateForFullDayVacation() {
 
         DateMidnight date = new DateMidnight(2015, 11, 6);
-        long millisecondsOnStartOfDayInUTC = 1446760800000L;
-        long millisecondsOnEndOfDayInUTC = 1446847200000L;
+        long millisecondsOnStartOfDayInUTC = 1446764400000L;
+        long millisecondsOnEndOfDayInUTC = 1446850800000L;
 
         Application application = new Application();
         application.setStartDate(date);
@@ -362,6 +359,30 @@ public class AbsenceTest {
         application.setStatus(ApplicationStatus.ALLOWED);
 
         Absence absence = new Absence(application);
+
+        Date startDateInUTC = absence.getStartDate();
+        Date endDateInUTC = absence.getEndDate();
+
+        Assert.assertEquals("Wrong representation of start date in milliseconds", millisecondsOnStartOfDayInUTC,
+            startDateInUTC.getTime());
+        Assert.assertEquals("Wrong representation of end date in milliseconds", millisecondsOnEndOfDayInUTC,
+            endDateInUTC.getTime());
+    }
+
+
+    @Test
+    public void ensureUTCDateForSickNote() {
+
+        DateMidnight date = new DateMidnight(2015, 8, 10);
+        long millisecondsOnStartOfDayInUTC = 1439157600000L;
+        long millisecondsOnEndOfDayInUTC = 1439244000000L;
+
+        SickNote sickNote = new SickNote();
+        sickNote.setStartDate(date);
+        sickNote.setEndDate(date);
+        sickNote.setPerson(person);
+
+        Absence absence = new Absence(sickNote);
 
         Date startDateInUTC = absence.getStartDate();
         Date endDateInUTC = absence.getEndDate();

@@ -88,13 +88,17 @@ public class Absence {
 
     public Absence(SickNote sickNote) {
 
-        Assert.notNull(sickNote.getStartDate(), "No start date set for application");
-        Assert.notNull(sickNote.getEndDate(), "No end date set for application");
+        Assert.notNull(sickNote.getStartDate(), "No start date set for sick note");
+        Assert.notNull(sickNote.getEndDate(), "No end date set for sick note");
 
         this.eventType = EventType.SICKNOTE;
-        this.startDate = sickNote.getStartDate().toDate();
-        this.endDate = sickNote.getEndDate().toDate();
         this.person = sickNote.getPerson();
+
+        long startDateInMilliseconds = sickNote.getStartDate().toDateTime(DateTimeZone.UTC).getMillis();
+        long endDateInMilliseconds = sickNote.getEndDate().toDateTime(DateTimeZone.UTC).getMillis();
+
+        this.startDate = new Date(startDateInMilliseconds);
+        this.endDate = new Date(endDateInMilliseconds + TimeUnit.DAYS.toMillis(1));
 
         // TODO: at the moment sick notes have no day length
         this.isAllDay = true;
