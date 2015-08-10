@@ -26,15 +26,15 @@ import java.util.Optional;
  * @author  Aljona Murygina
  */
 @Service
-public class OwnCalendarService {
+public class WorkDaysService {
 
-    private final JollydayCalendar jollydayCalendar;
+    private final PublicHolidaysService publicHolidaysService;
     private final WorkingTimeService workingTimeService;
 
     @Autowired
-    public OwnCalendarService(JollydayCalendar jollydayCalendar, WorkingTimeService workingTimeService) {
+    public WorkDaysService(PublicHolidaysService publicHolidaysService, WorkingTimeService workingTimeService) {
 
-        this.jollydayCalendar = jollydayCalendar;
+        this.publicHolidaysService = publicHolidaysService;
         this.workingTimeService = workingTimeService;
     }
 
@@ -103,7 +103,7 @@ public class OwnCalendarService {
 
         while (!day.isAfter(endDate)) {
             // value may be 1 for public holiday, 0 for not public holiday or 0.5 for Christmas Eve or New Year's Eve
-            BigDecimal duration = jollydayCalendar.getWorkingDurationOfDate(day);
+            BigDecimal duration = publicHolidaysService.getWorkingDurationOfDate(day);
 
             int dayOfWeek = day.getDayOfWeek();
             BigDecimal workingDuration = workingTime.get().getDayLengthForWeekDay(dayOfWeek).getDuration();

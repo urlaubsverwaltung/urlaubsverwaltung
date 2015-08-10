@@ -13,7 +13,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationInteractionService;
 import org.synyx.urlaubsverwaltung.core.calendar.Day;
-import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
+import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonInteractionService;
@@ -61,7 +61,7 @@ public class TestDataCreationService {
     private SickNoteInteractionService sickNoteInteractionService;
 
     @Autowired
-    private OwnCalendarService calendarService;
+    private WorkDaysService calendarService;
 
     private Person user;
     private Person boss;

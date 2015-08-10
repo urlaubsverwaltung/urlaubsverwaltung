@@ -11,8 +11,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
-import org.synyx.urlaubsverwaltung.core.calendar.JollydayCalendar;
-import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
+import org.synyx.urlaubsverwaltung.core.calendar.PublicHolidaysService;
+import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
@@ -48,7 +48,7 @@ public class HolidaysAccountInteractionServiceImplTest {
         SettingsService settingsService = Mockito.mock(SettingsService.class);
         Mockito.when(settingsService.getSettings()).thenReturn(new Settings());
 
-        OwnCalendarService calendarService = new OwnCalendarService(new JollydayCalendar(settingsService),
+        WorkDaysService calendarService = new WorkDaysService(new PublicHolidaysService(settingsService),
                 workingTimeService);
         vacationDaysService = Mockito.mock(VacationDaysService.class);
 

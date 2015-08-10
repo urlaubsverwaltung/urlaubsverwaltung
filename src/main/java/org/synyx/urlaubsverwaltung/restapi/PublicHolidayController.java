@@ -17,9 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import org.synyx.urlaubsverwaltung.core.calendar.JollydayCalendar;
-
-import java.math.BigDecimal;
+import org.synyx.urlaubsverwaltung.core.calendar.PublicHolidaysService;
 
 import java.util.HashSet;
 import java.util.List;
@@ -37,7 +35,7 @@ public class PublicHolidayController {
     private static final String ROOT_URL = "/holidays";
 
     @Autowired
-    private JollydayCalendar jollydayCalendar;
+    private PublicHolidaysService publicHolidaysService;
 
     @ApiOperation(
         value = "Get all public holidays for a certain period", notes = "Get all public holidays for a certain period"
@@ -61,7 +59,7 @@ public class PublicHolidayController {
 
         if (hasYear && !hasMonth) {
             try {
-                holidays = jollydayCalendar.getHolidays(Integer.parseInt(year));
+                holidays = publicHolidaysService.getHolidays(Integer.parseInt(year));
             } catch (NumberFormatException ex) {
                 return emptyResponse;
             }
@@ -69,14 +67,14 @@ public class PublicHolidayController {
 
         if (hasYear && hasMonth) {
             try {
-                holidays = jollydayCalendar.getHolidays(Integer.parseInt(year), Integer.parseInt(month));
+                holidays = publicHolidaysService.getHolidays(Integer.parseInt(year), Integer.parseInt(month));
             } catch (NumberFormatException ex) {
                 return emptyResponse;
             }
         }
 
         List<PublicHolidayResponse> publicHolidayResponses = holidays.stream().
-                map(holiday -> new PublicHolidayResponse(holiday, jollydayCalendar.getWorkingDurationOfDate(holiday.getDate().toDateMidnight()))).
+                map(holiday -> new PublicHolidayResponse(holiday, publicHolidaysService.getWorkingDurationOfDate(holiday.getDate().toDateMidnight()))).
                 collect(Collectors.toList());
 
         return new PublicHolidayListResponse(publicHolidayResponses);

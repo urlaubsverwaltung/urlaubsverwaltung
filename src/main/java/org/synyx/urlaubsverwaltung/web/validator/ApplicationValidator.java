@@ -17,7 +17,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.CalculationService;
 import org.synyx.urlaubsverwaltung.core.calendar.OverlapCase;
 import org.synyx.urlaubsverwaltung.core.calendar.OverlapService;
-import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
+import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
@@ -54,13 +54,13 @@ public class ApplicationValidator implements Validator {
     private static final String FIELD_ADDRESS = "address";
     private static final String FIELD_COMMENT = "comment";
 
-    private final OwnCalendarService calendarService;
+    private final WorkDaysService calendarService;
     private final OverlapService overlapService;
     private final CalculationService calculationService;
     private final SettingsService settingsService;
 
     @Autowired
-    public ApplicationValidator(OwnCalendarService calendarService, OverlapService overlapService,
+    public ApplicationValidator(WorkDaysService calendarService, OverlapService overlapService,
         CalculationService calculationService, SettingsService settingsService) {
 
         this.calendarService = calendarService;

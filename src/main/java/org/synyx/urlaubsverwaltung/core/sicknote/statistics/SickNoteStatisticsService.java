@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
+import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteDAO;
 
 
@@ -20,10 +20,10 @@ import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteDAO;
 public class SickNoteStatisticsService {
 
     private SickNoteDAO sickNoteDAO;
-    private OwnCalendarService calendarService;
+    private WorkDaysService calendarService;
 
     @Autowired
-    public SickNoteStatisticsService(SickNoteDAO sickNoteDAO, OwnCalendarService calendarService) {
+    public SickNoteStatisticsService(SickNoteDAO sickNoteDAO, WorkDaysService calendarService) {
 
         this.sickNoteDAO = sickNoteDAO;
         this.calendarService = calendarService;

@@ -11,7 +11,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
-import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
+import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteDAO;
@@ -31,7 +31,7 @@ import java.util.List;
 public class SickNoteStatisticsTest {
 
     private SickNoteStatistics statistics;
-    private OwnCalendarService calendarService;
+    private WorkDaysService calendarService;
     private SickNoteDAO sickNoteDAO;
     private List<SickNote> sickNotes;
     private Person person;
@@ -39,7 +39,7 @@ public class SickNoteStatisticsTest {
     @Before
     public void setUp() throws Exception {
 
-        calendarService = Mockito.mock(OwnCalendarService.class);
+        calendarService = Mockito.mock(WorkDaysService.class);
         sickNoteDAO = Mockito.mock(SickNoteDAO.class);
         sickNotes = new ArrayList<SickNote>();
         person = new Person();

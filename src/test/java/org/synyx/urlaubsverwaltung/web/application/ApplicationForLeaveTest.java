@@ -9,7 +9,7 @@ import org.mockito.Mockito;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
-import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
+import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.math.BigDecimal;
@@ -25,7 +25,7 @@ public class ApplicationForLeaveTest {
     @Test
     public void ensureCreatesCorrectApplicationForLeave() {
 
-        OwnCalendarService calendarService = Mockito.mock(OwnCalendarService.class);
+        WorkDaysService calendarService = Mockito.mock(WorkDaysService.class);
 
         DateMidnight startDate = new DateMidnight(2015, 3, 3);
         DateMidnight endDate = new DateMidnight(2015, 3, 6);

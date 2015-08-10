@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
  * @author  Aljona Murygina
  */
 @Component
-public class JollydayCalendar {
+public class PublicHolidaysService {
 
     private static final String HOLIDAY_DEFINITION_FILE = "Holidays_de.xml";
 
@@ -42,7 +42,7 @@ public class JollydayCalendar {
     private final SettingsService settingsService;
 
     @Autowired
-    public JollydayCalendar(SettingsService settingsService) {
+    public PublicHolidaysService(SettingsService settingsService) {
 
         this.settingsService = settingsService;
 

@@ -5,7 +5,7 @@ import org.joda.time.DateMidnight;
 import org.springframework.util.Assert;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
-import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
+import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteDAO;
 
@@ -31,7 +31,7 @@ public class SickNoteStatistics {
 
     private final Long numberOfPersonsWithMinimumOneSickNote;
 
-    public SickNoteStatistics(int year, SickNoteDAO sickNoteDAO, OwnCalendarService calendarService) {
+    public SickNoteStatistics(int year, SickNoteDAO sickNoteDAO, WorkDaysService calendarService) {
 
         this.year = year;
         this.numberOfPersonsWithMinimumOneSickNote = sickNoteDAO.findNumberOfPersonsWithMinimumOneSickNote(year);
@@ -55,7 +55,7 @@ public class SickNoteStatistics {
     }
 
 
-    private BigDecimal calculateTotalNumberOfSickDays(OwnCalendarService calendarService, List<SickNote> sickNotes) {
+    private BigDecimal calculateTotalNumberOfSickDays(WorkDaysService calendarService, List<SickNote> sickNotes) {
 
         BigDecimal numberOfSickDays = BigDecimal.ZERO;
 

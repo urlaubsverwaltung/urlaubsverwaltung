@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
-import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
+import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 
@@ -37,11 +37,11 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
     private static final int WEEKDAYS_PER_MONTH = 21;
 
     private final AccountService accountService;
-    private final OwnCalendarService calendarService;
+    private final WorkDaysService calendarService;
     private final VacationDaysService vacationDaysService;
 
     @Autowired
-    AccountInteractionServiceImpl(AccountService accountService, OwnCalendarService calendarService,
+    AccountInteractionServiceImpl(AccountService accountService, WorkDaysService calendarService,
         VacationDaysService vacationDaysService) {
 
         this.accountService = accountService;

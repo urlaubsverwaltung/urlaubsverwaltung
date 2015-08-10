@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import org.synyx.urlaubsverwaltung.DateFormat;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
-import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
+import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
@@ -54,7 +54,7 @@ public class SickDaysOverviewController {
     private PersonService personService;
 
     @Autowired
-    private OwnCalendarService calendarService;
+    private WorkDaysService calendarService;
 
     @RequestMapping(value = "/sicknote/filter", method = RequestMethod.POST)
     public String filterSickNotes(@ModelAttribute("filterRequest") FilterRequest filterRequest) {

@@ -16,8 +16,8 @@ import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
 import org.synyx.urlaubsverwaltung.core.account.service.VacationDaysService;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
-import org.synyx.urlaubsverwaltung.core.calendar.JollydayCalendar;
-import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
+import org.synyx.urlaubsverwaltung.core.calendar.PublicHolidaysService;
+import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -44,7 +44,7 @@ public class CalculationServiceTest {
     private VacationDaysService vacationDaysService;
     private AccountInteractionService accountInteractionService;
     private AccountService accountService;
-    private OwnCalendarService calendarService;
+    private WorkDaysService calendarService;
 
     @Before
     public void setUp() throws IOException {
@@ -57,7 +57,7 @@ public class CalculationServiceTest {
         SettingsService settingsService = Mockito.mock(SettingsService.class);
         Mockito.when(settingsService.getSettings()).thenReturn(new Settings());
 
-        calendarService = new OwnCalendarService(new JollydayCalendar(settingsService), workingTimeService);
+        calendarService = new WorkDaysService(new PublicHolidaysService(settingsService), workingTimeService);
 
         // create working time object (MON-FRI)
         WorkingTime workingTime = new WorkingTime();

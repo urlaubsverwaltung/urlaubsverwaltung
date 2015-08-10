@@ -1,8 +1,6 @@
 
 package org.synyx.urlaubsverwaltung.core.calendar;
 
-import de.jollyday.Holiday;
-
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
 
@@ -21,25 +19,22 @@ import java.io.IOException;
 
 import java.math.BigDecimal;
 
-import java.util.Properties;
-import java.util.Set;
-
 
 /**
- * Unit test for {@link org.synyx.urlaubsverwaltung.core.calendar.JollydayCalendar}.
+ * Unit test for {@link org.synyx.urlaubsverwaltung.core.calendar.PublicHolidaysService}.
  *
  * @author  Aljona Murygina
  */
-public class JollydayCalendarTest {
+public class PublicHolidaysServiceTest {
 
-    private JollydayCalendar jollydayCalendar;
+    private PublicHolidaysService publicHolidaysService;
     private SettingsService settingsService;
 
     @Before
     public void setUp() throws IOException {
 
         settingsService = Mockito.mock(SettingsService.class);
-        jollydayCalendar = new JollydayCalendar(settingsService);
+        publicHolidaysService = new PublicHolidaysService(settingsService);
 
         Mockito.when(settingsService.getSettings()).thenReturn(new Settings());
     }
@@ -50,7 +45,7 @@ public class JollydayCalendarTest {
 
         DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 25);
 
-        boolean isPublicHoliday = jollydayCalendar.isPublicHoliday(testDate);
+        boolean isPublicHoliday = publicHolidaysService.isPublicHoliday(testDate);
 
         Assert.assertTrue("Christmas should be recognized as public holiday", isPublicHoliday);
     }
@@ -61,7 +56,7 @@ public class JollydayCalendarTest {
 
         DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 20);
 
-        boolean isPublicHoliday = jollydayCalendar.isPublicHoliday(testDate);
+        boolean isPublicHoliday = publicHolidaysService.isPublicHoliday(testDate);
 
         Assert.assertFalse("Work day should not be recognized as public holiday", isPublicHoliday);
     }
@@ -72,7 +67,7 @@ public class JollydayCalendarTest {
 
         DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.MAY, 30);
 
-        boolean isPublicHoliday = jollydayCalendar.isPublicHoliday(testDate);
+        boolean isPublicHoliday = publicHolidaysService.isPublicHoliday(testDate);
 
         Assert.assertTrue("Corpus Christi should be recognized as public holiday", isPublicHoliday);
     }
@@ -83,7 +78,7 @@ public class JollydayCalendarTest {
 
         DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 24);
 
-        boolean isPublicHoliday = jollydayCalendar.isPublicHoliday(testDate);
+        boolean isPublicHoliday = publicHolidaysService.isPublicHoliday(testDate);
 
         Assert.assertTrue("Christmas Eve should be recognized as public holiday", isPublicHoliday);
     }
@@ -94,7 +89,7 @@ public class JollydayCalendarTest {
 
         DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 31);
 
-        boolean isPublicHoliday = jollydayCalendar.isPublicHoliday(testDate);
+        boolean isPublicHoliday = publicHolidaysService.isPublicHoliday(testDate);
 
         Assert.assertTrue("New Years Eve should be recognized as public holiday", isPublicHoliday);
     }
@@ -105,7 +100,7 @@ public class JollydayCalendarTest {
 
         DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.NOVEMBER, 27);
 
-        BigDecimal workingDuration = jollydayCalendar.getWorkingDurationOfDate(testDate);
+        BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(testDate);
 
         Assert.assertEquals("Wrong working duration", BigDecimal.ONE.setScale(1), workingDuration);
     }
@@ -116,7 +111,7 @@ public class JollydayCalendarTest {
 
         DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 25);
 
-        BigDecimal workingDuration = jollydayCalendar.getWorkingDurationOfDate(testDate);
+        BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(testDate);
 
         Assert.assertEquals("Wrong working duration", BigDecimal.ZERO, workingDuration);
     }
@@ -132,7 +127,7 @@ public class JollydayCalendarTest {
 
         DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 24);
 
-        BigDecimal workingDuration = jollydayCalendar.getWorkingDurationOfDate(testDate);
+        BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(testDate);
 
         Assert.assertEquals("Wrong working duration", BigDecimal.ONE.setScale(1), workingDuration);
     }
@@ -148,7 +143,7 @@ public class JollydayCalendarTest {
 
         DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 31);
 
-        BigDecimal workingDuration = jollydayCalendar.getWorkingDurationOfDate(testDate);
+        BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(testDate);
 
         Assert.assertEquals("Wrong working duration", BigDecimal.ONE.setScale(1), workingDuration);
     }
@@ -164,7 +159,7 @@ public class JollydayCalendarTest {
 
         DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 24);
 
-        BigDecimal workingDuration = jollydayCalendar.getWorkingDurationOfDate(testDate);
+        BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(testDate);
 
         Assert.assertEquals("Wrong working duration", new BigDecimal("0.5"), workingDuration);
     }
@@ -180,7 +175,7 @@ public class JollydayCalendarTest {
 
         DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 31);
 
-        BigDecimal workingDuration = jollydayCalendar.getWorkingDurationOfDate(testDate);
+        BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(testDate);
 
         Assert.assertEquals("Wrong working duration", new BigDecimal("0.5"), workingDuration);
     }
@@ -196,7 +191,7 @@ public class JollydayCalendarTest {
 
         DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 24);
 
-        BigDecimal workingDuration = jollydayCalendar.getWorkingDurationOfDate(testDate);
+        BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(testDate);
 
         Assert.assertEquals("Wrong working duration", BigDecimal.ZERO, workingDuration);
     }
@@ -212,7 +207,7 @@ public class JollydayCalendarTest {
 
         DateMidnight testDate = new DateMidnight(2013, DateTimeConstants.DECEMBER, 31);
 
-        BigDecimal workingDuration = jollydayCalendar.getWorkingDurationOfDate(testDate);
+        BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(testDate);
 
         Assert.assertEquals("Wrong working duration", BigDecimal.ZERO, workingDuration);
     }
@@ -226,7 +221,7 @@ public class JollydayCalendarTest {
 
         Mockito.when(settingsService.getSettings()).thenReturn(settings);
 
-        boolean isPublicHoliday = jollydayCalendar.isPublicHoliday(new DateMidnight(2015, DateTimeConstants.AUGUST,
+        boolean isPublicHoliday = publicHolidaysService.isPublicHoliday(new DateMidnight(2015, DateTimeConstants.AUGUST,
                     15));
 
         Assert.assertTrue("Assumption Day should be recognized as public holiday", isPublicHoliday);
@@ -241,7 +236,7 @@ public class JollydayCalendarTest {
 
         Mockito.when(settingsService.getSettings()).thenReturn(settings);
 
-        boolean isPublicHoliday = jollydayCalendar.isPublicHoliday(new DateMidnight(2015, DateTimeConstants.AUGUST,
+        boolean isPublicHoliday = publicHolidaysService.isPublicHoliday(new DateMidnight(2015, DateTimeConstants.AUGUST,
                     15));
 
         Assert.assertFalse("Assumption Day should not be recognized as public holiday", isPublicHoliday);
@@ -256,7 +251,7 @@ public class JollydayCalendarTest {
 
         Mockito.when(settingsService.getSettings()).thenReturn(settings);
 
-        boolean isPublicHoliday = jollydayCalendar.isPublicHoliday(new DateMidnight(2015, DateTimeConstants.AUGUST,
+        boolean isPublicHoliday = publicHolidaysService.isPublicHoliday(new DateMidnight(2015, DateTimeConstants.AUGUST,
                     15));
 
         Assert.assertFalse("Assumption Day should not be recognized as public holiday", isPublicHoliday);
@@ -271,7 +266,7 @@ public class JollydayCalendarTest {
 
         Mockito.when(settingsService.getSettings()).thenReturn(settings);
 
-        BigDecimal workingDuration = jollydayCalendar.getWorkingDurationOfDate(new DateMidnight(2015,
+        BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(new DateMidnight(2015,
                     DateTimeConstants.AUGUST, 15));
 
         Assert.assertEquals("Wrong working duration", BigDecimal.ONE.setScale(1), workingDuration);
@@ -286,7 +281,7 @@ public class JollydayCalendarTest {
 
         Mockito.when(settingsService.getSettings()).thenReturn(settings);
 
-        BigDecimal workingDuration = jollydayCalendar.getWorkingDurationOfDate(new DateMidnight(2015,
+        BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(new DateMidnight(2015,
                     DateTimeConstants.AUGUST, 15));
 
         Assert.assertEquals("Wrong working duration", BigDecimal.ONE.setScale(1), workingDuration);
@@ -301,7 +296,7 @@ public class JollydayCalendarTest {
 
         Mockito.when(settingsService.getSettings()).thenReturn(settings);
 
-        BigDecimal workingDuration = jollydayCalendar.getWorkingDurationOfDate(new DateMidnight(2015,
+        BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(new DateMidnight(2015,
                     DateTimeConstants.AUGUST, 15));
 
         Assert.assertEquals("Wrong working duration", BigDecimal.ZERO, workingDuration);
