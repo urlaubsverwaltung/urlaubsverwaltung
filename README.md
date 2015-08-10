@@ -148,8 +148,9 @@ Die Anwendung verfügt über **drei** verschiedene Authentifizierungsmöglichkei
 
 #### Firmenkalender
 
-Ab Version 2.9.0 besteht die Möglichkeit, die Urlaubsverwaltung die Urlaubs- und Krankmeldungstermine mit einem Microsoft Exchange Firmenkalender synchroniseren zu lassen.
-Dazu müssen lediglich die `calendar.ews`-Properties, bestehend aus E-Mail-Adresse, Passwort und Name des Kalenders konfiguriert werden und die Anwendung mit einer zusätzlichen System Property `calendar=ews` gestartet werden.
+Ab Version 2.9.0 besteht die Möglichkeit, die Urlaubs- und Krankmeldungstermine mit einem Microsoft Exchange Firmenkalender synchroniseren zu lassen.
+Dazu müssen lediglich die `calendar.ews` Properties, bestehend aus E-Mail-Adresse, Passwort und Name des Kalenders konfiguriert werden.
+Außerdem muss die Anwendung mit dem zusätzlichen Parameter `-Dcalendar=ews` gestartet werden.
 
 <pre>export CATALINA_OPTS="$CATALINA_OPTS -Dcalendar=ews"</pre>
 
@@ -195,7 +196,7 @@ Um Active Directory zur Authentifizierung zu nutzen, zusätzlich den Parameter `
 
 ###### Microsoft Exchange Kalender
 
-Um einen Microsoft Exchange Kalender zur Synchronisierung der erstellten Urlaubs- und Krankmeldungstermine zu nutzen, zusätzlich den Paramter `-Dcalendar=ews` angeben:
+Um die erstellten Urlaubs- und Krankmeldungstermine mit einem Microsoft Exchange Kalender zu synchronisieren, zusätzlich den Parameter `-Dcalendar=ews` angeben:
 
 <pre>export CATALINA_OPTS="$CATALINA_OPTS -Denv=prod -Dauth=activeDirectory -Dcalendar=ews"</pre>
 
