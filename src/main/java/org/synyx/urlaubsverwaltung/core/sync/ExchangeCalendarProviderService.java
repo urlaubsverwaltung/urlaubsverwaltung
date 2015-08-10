@@ -48,7 +48,6 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
     private ExchangeService exchangeService;
 
     private String calendarName;
-    private CalendarFolder calendarFolder;
 
     @Autowired
     public ExchangeCalendarProviderService(MailService mailService,
@@ -64,14 +63,6 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
             exchangeService.setCredentials(new WebCredentials(emailAddress, password));
             exchangeService.autodiscoverUrl(emailAddress, new RedirectionUrlCallback());
             exchangeService.setTraceEnabled(true);
-
-            Optional<CalendarFolder> calendarOptional = findCalendar(calendarName);
-
-            if (calendarOptional.isPresent()) {
-                calendarFolder = calendarOptional.get();
-            } else {
-                calendarFolder = createCalendar(calendarName);
-            }
         } catch (Exception e) {
             // NOTE: If an exception is thrown at this point, probably there is an error within the configuration
 
@@ -82,6 +73,43 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
             System.exit(1);
         }
     }
+
+    @Override
+    public Optional<String> addAbsence(Absence absence) {
+
+        try {
+            CalendarFolder calendarFolder = findOrCreateCalendar(calendarName);
+
+            Appointment appointment = new Appointment(exchangeService);
+
+            fillAppointment(absence, appointment);
+
+            appointment.save(calendarFolder.getId(), SendInvitationsMode.SendToAllAndSaveCopy);
+
+            LOG.info(String.format("Appointment %s for '%s' added to exchange calendar '%s'.", appointment.getId(),
+                    absence.getPerson().getNiceName(), calendarFolder.getDisplayName()));
+
+            return Optional.ofNullable(appointment.getId().getUniqueId());
+        } catch (Exception ex) {
+            LOG.warn("An error occurred while trying to add appointment to Exchange calendar");
+            mailService.sendCalendarSyncErrorNotification(calendarName, absence, ex.getMessage());
+        }
+
+        return Optional.empty();
+    }
+
+
+    private CalendarFolder findOrCreateCalendar(String calendarName) throws Exception {
+
+        Optional<CalendarFolder> calendarOptional = findCalendar(calendarName);
+
+        if (calendarOptional.isPresent()) {
+            return calendarOptional.get();
+        } else {
+            return createCalendar(calendarName);
+        }
+    }
+
 
     private Optional<CalendarFolder> findCalendar(String calendarName) throws Exception {
 
@@ -110,29 +138,6 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
     }
 
 
-    @Override
-    public Optional<String> addAbsence(Absence absence) {
-
-        try {
-            Appointment appointment = new Appointment(exchangeService);
-
-            fillAppointment(absence, appointment);
-
-            appointment.save(calendarFolder.getId(), SendInvitationsMode.SendToAllAndSaveCopy);
-
-            LOG.info(String.format("Appointment %s for '%s' added to exchange calendar '%s'.", appointment.getId(),
-                    absence.getPerson().getNiceName(), calendarFolder.getDisplayName()));
-
-            return Optional.ofNullable(appointment.getId().getUniqueId());
-        } catch (Exception ex) {
-            LOG.warn("An error occurred while trying to add appointment to Exchange calendar");
-            mailService.sendCalendarSyncErrorNotification(calendarName, absence, ex.getMessage());
-        }
-
-        return Optional.empty();
-    }
-
-
     private void fillAppointment(Absence absence, Appointment appointment) throws Exception {
 
         Person person = absence.getPerson();
@@ -156,7 +161,7 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
             appointment.update(ConflictResolutionMode.AutoResolve);
 
             LOG.info(String.format("Appointment %s has been updated in exchange calendar '%s'.", appointment.getId(),
-                    calendarFolder.getDisplayName()));
+                    calendarName));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -172,7 +177,7 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
             appointment.delete(DeleteMode.HardDelete, SendCancellationsMode.SendToAllAndSaveCopy);
 
             LOG.info(String.format("Appointment %s has been deleted in exchange calendar '%s'.", appointment.getId(),
-                    calendarFolder.getDisplayName()));
+                    calendarName));
         } catch (Exception ex) {
             mailService.sendCalendarDeleteErrorNotification(calendarName, eventId, ex.getMessage());
         }
