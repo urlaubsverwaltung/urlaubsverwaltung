@@ -117,7 +117,8 @@ public class ExchangeCalendarSyncService implements CalendarSyncService {
 
             Person person = absence.getPerson();
 
-            appointment.setSubject(String.format("Urlaub %s", person.getNiceName()));
+            appointment.setSubject(absence.getEventSubject());
+
             appointment.setStart(absence.getStartDate());
             appointment.setEnd(absence.getEndDate());
             appointment.getRequiredAttendees().add(person.getEmail());

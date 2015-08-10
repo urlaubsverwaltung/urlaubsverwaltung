@@ -8,11 +8,16 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
+import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 
 import java.util.Date;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+
+import static org.hamcrest.core.Is.is;
 
 
 /**
@@ -42,6 +47,7 @@ public class AbsenceTest {
         application.setEndDate(end);
         application.setPerson(person);
         application.setHowLong(DayLength.FULL);
+        application.setStatus(ApplicationStatus.ALLOWED);
 
         Absence absence = new Absence(application);
 
@@ -68,6 +74,7 @@ public class AbsenceTest {
         application.setPerson(person);
         application.setStartDate(today);
         application.setEndDate(today);
+        application.setStatus(ApplicationStatus.ALLOWED);
 
         Absence absence = new Absence(application);
 
@@ -89,6 +96,7 @@ public class AbsenceTest {
         application.setPerson(person);
         application.setStartDate(today);
         application.setEndDate(today);
+        application.setStatus(ApplicationStatus.ALLOWED);
 
         Absence absence = new Absence(application);
 
@@ -108,6 +116,7 @@ public class AbsenceTest {
         application.setEndDate(end);
         application.setHowLong(DayLength.FULL);
         application.setPerson(person);
+        application.setStatus(ApplicationStatus.ALLOWED);
 
         Absence absence = new Absence(application);
 
@@ -126,6 +135,7 @@ public class AbsenceTest {
         application.setEndDate(end);
         application.setHowLong(DayLength.MORNING);
         application.setPerson(person);
+        application.setStatus(ApplicationStatus.ALLOWED);
 
         Absence absence = new Absence(application);
 
@@ -144,6 +154,7 @@ public class AbsenceTest {
         application.setEndDate(end);
         application.setHowLong(DayLength.NOON);
         application.setPerson(person);
+        application.setStatus(ApplicationStatus.ALLOWED);
 
         Absence absence = new Absence(application);
 
@@ -184,6 +195,7 @@ public class AbsenceTest {
         application.setPerson(person);
         application.setStartDate(today);
         application.setEndDate(today);
+        application.setStatus(ApplicationStatus.ALLOWED);
 
         new Absence(application);
     }
@@ -198,6 +210,7 @@ public class AbsenceTest {
         application.setPerson(person);
         application.setStartDate(today);
         application.setEndDate(today);
+        application.setStatus(ApplicationStatus.ALLOWED);
 
         application.setHowLong(DayLength.ZERO);
 
@@ -214,6 +227,7 @@ public class AbsenceTest {
         application.setPerson(person);
         application.setEndDate(today);
         application.setHowLong(DayLength.FULL);
+        application.setStatus(ApplicationStatus.ALLOWED);
 
         new Absence(application);
     }
@@ -228,6 +242,7 @@ public class AbsenceTest {
         application.setPerson(person);
         application.setStartDate(today);
         application.setHowLong(DayLength.FULL);
+        application.setStatus(ApplicationStatus.ALLOWED);
 
         new Absence(application);
     }
@@ -259,6 +274,77 @@ public class AbsenceTest {
     }
 
 
+    @Test
+    public void ensureThatEventTypeIsSetForWaitingApplication() {
+
+        DateMidnight today = DateMidnight.now();
+
+        Application application = new Application();
+        application.setPerson(person);
+        application.setStartDate(today);
+        application.setEndDate(today);
+        application.setHowLong(DayLength.FULL);
+        application.setStatus(ApplicationStatus.WAITING);
+
+        Absence absence = new Absence(application);
+
+        assertThat(absence.getEventType(), is(EventType.WAITING_APPLICATION));
+        assertThat(absence.getEventSubject(), is("Antrag auf Urlaub Marlene Muster"));
+    }
+
+
+    @Test
+    public void ensureThatEventTypeIsSetForAllowedApplication() {
+
+        DateMidnight today = DateMidnight.now();
+
+        Application application = new Application();
+        application.setPerson(person);
+        application.setStartDate(today);
+        application.setEndDate(today);
+        application.setHowLong(DayLength.FULL);
+        application.setStatus(ApplicationStatus.ALLOWED);
+
+        Absence absence = new Absence(application);
+
+        assertThat(absence.getEventType(), is(EventType.ALLOWED_APPLICATION));
+        assertThat(absence.getEventSubject(), is("Urlaub Marlene Muster"));
+    }
+
+
+    @Test
+    public void ensureThatEventTypeIsSetForSickNote() {
+
+        DateMidnight today = DateMidnight.now();
+
+        SickNote sickNote = new SickNote();
+        sickNote.setStartDate(today);
+        sickNote.setEndDate(today);
+        sickNote.setPerson(person);
+
+        Absence absence = new Absence(sickNote);
+
+        assertThat(absence.getEventType(), is(EventType.SICKNOTE));
+        assertThat(absence.getEventSubject(), is("Marlene Muster krank"));
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureExceptionOnNonExpectedApplicationStatus() {
+
+        DateMidnight today = DateMidnight.now();
+
+        Application application = new Application();
+        application.setPerson(person);
+        application.setStartDate(today);
+        application.setEndDate(today);
+        application.setHowLong(DayLength.FULL);
+        application.setStatus(ApplicationStatus.CANCELLED);
+
+        new Absence(application);
+    }
+
+
     // TODO: Fix this test!
     @Ignore
     @Test
@@ -273,6 +359,7 @@ public class AbsenceTest {
         application.setEndDate(date);
         application.setHowLong(DayLength.FULL);
         application.setPerson(person);
+        application.setStatus(ApplicationStatus.ALLOWED);
 
         Absence absence = new Absence(application);
 
