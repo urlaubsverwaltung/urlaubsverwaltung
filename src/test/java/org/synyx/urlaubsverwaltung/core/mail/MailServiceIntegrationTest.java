@@ -19,6 +19,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
+import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
@@ -527,6 +528,7 @@ public class MailServiceIntegrationTest {
         application.setStartDate(DateMidnight.now());
         application.setEndDate(DateMidnight.now());
         application.setPerson(person);
+        application.setStatus(ApplicationStatus.ALLOWED);
 
         Absence absence = new Absence(application);
 
@@ -550,16 +552,6 @@ public class MailServiceIntegrationTest {
     @Test
     public void ensureTechnicalManagerGetsANotificationIfAEventDeleteErrorOccurred() throws MessagingException,
         IOException {
-
-        Person person = new Person("muster", "Muster", "Marlene", "marlene@muster.de");
-
-        Application application = new Application();
-        application.setHowLong(DayLength.FULL);
-        application.setStartDate(DateMidnight.now());
-        application.setEndDate(DateMidnight.now());
-        application.setPerson(person);
-
-        Absence absence = new Absence(application);
 
         mailService.sendCalendarDeleteErrorNotification("Kalendername", "eventId", "event delete failed");
 
