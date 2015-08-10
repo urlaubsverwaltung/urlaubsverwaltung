@@ -12,7 +12,7 @@ import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
 import org.synyx.urlaubsverwaltung.core.account.service.VacationDaysService;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
-import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
+import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 
@@ -33,11 +33,11 @@ public class CalculationService {
     private final VacationDaysService vacationDaysService;
     private final AccountInteractionService accountInteractionService;
     private final AccountService accountService;
-    private final OwnCalendarService calendarService;
+    private final WorkDaysService calendarService;
 
     @Autowired
     public CalculationService(VacationDaysService vacationDaysService, AccountService accountService,
-        AccountInteractionService accountInteractionService, OwnCalendarService calendarService) {
+        AccountInteractionService accountInteractionService, WorkDaysService calendarService) {
 
         this.vacationDaysService = vacationDaysService;
         this.accountService = accountService;

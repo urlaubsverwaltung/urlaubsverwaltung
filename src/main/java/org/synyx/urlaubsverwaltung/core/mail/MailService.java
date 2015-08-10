@@ -9,6 +9,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 
 import java.util.List;
 
@@ -119,6 +120,37 @@ public interface MailService {
      * @param  exception
      */
     void sendSignErrorNotification(Integer applicationId, String exception);
+
+
+    /**
+     * Send an email to the tool's manager if an error occurs during adding of calendar event.
+     *
+     * @param  calendar  that is used for syncing
+     * @param  absence  represents the absence of a person
+     * @param  exception  describes the error
+     */
+    void sendCalendarSyncErrorNotification(String calendar, Absence absence, String exception);
+
+
+    /**
+     * Send an email to the tool's manager if an error occurs during update of calendar event.
+     *
+     * @param  calendarName  that is used for syncing
+     * @param  absence  represents the absence of a person
+     * @param  eventId  unique calendar event id
+     * @param  exception  describes the error
+     */
+    void sendCalendarUpdateErrorNotification(String calendarName, Absence absence, String eventId, String exception);
+
+
+    /**
+     * Send an email to the tool's manager if an error occurs during syncing delete action to calendar.
+     *
+     * @param  calendarName  name of calendar that is used for syncing
+     * @param  eventId  id of event which should be deleted
+     * @param  exception  describes the error
+     */
+    void sendCalendarDeleteErrorNotification(String calendarName, String eventId, String exception);
 
 
     /**

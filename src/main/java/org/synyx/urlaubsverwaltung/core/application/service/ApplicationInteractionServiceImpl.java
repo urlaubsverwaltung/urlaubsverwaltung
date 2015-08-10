@@ -16,6 +16,12 @@ import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.sync.CalendarProviderService;
+import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
+import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceMapping;
+import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceMappingService;
+import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceTimeConfiguration;
+import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceType;
 
 import java.util.Optional;
 
@@ -34,16 +40,24 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
     private final SignService signService;
     private final CommentService commentService;
     private final MailService mailService;
+    private final CalendarProviderService calendarProviderService;
+    private final AbsenceMappingService absenceMappingService;
+    private final AbsenceTimeConfiguration absenceTimeConfiguration;
 
     @Autowired
     public ApplicationInteractionServiceImpl(ApplicationService applicationService, CommentService commentService,
-        AccountInteractionService accountInteractionService, SignService signService, MailService mailService) {
+        AccountInteractionService accountInteractionService, SignService signService, MailService mailService,
+        CalendarProviderService calendarProviderService, AbsenceMappingService absenceMappingService,
+        AbsenceTimeConfiguration absenceTimeConfiguration) {
 
         this.applicationService = applicationService;
         this.commentService = commentService;
         this.accountInteractionService = accountInteractionService;
         this.signService = signService;
         this.mailService = mailService;
+        this.calendarProviderService = calendarProviderService;
+        this.absenceMappingService = absenceMappingService;
+        this.absenceTimeConfiguration = absenceTimeConfiguration;
     }
 
     @Override
@@ -83,6 +97,13 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         // update remaining vacation days (if there is already a holidays account for next year)
         accountInteractionService.updateRemainingVacationDays(application.getStartDate().getYear(), person);
 
+        Optional<String> eventId = calendarProviderService.addAbsence(new Absence(application,
+                    absenceTimeConfiguration));
+
+        if (eventId.isPresent()) {
+            absenceMappingService.create(application, eventId.get());
+        }
+
         return application;
     }
 
@@ -108,6 +129,14 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
             mailService.notifyHolidayReplacement(application);
         }
 
+        Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(application.getId(),
+                AbsenceType.VACATION);
+
+        if (absenceMapping.isPresent()) {
+            calendarProviderService.update(new Absence(application, absenceTimeConfiguration),
+                absenceMapping.get().getEventId());
+        }
+
         return application;
     }
 
@@ -128,6 +157,14 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         Comment createdComment = commentService.create(application, ApplicationStatus.REJECTED, comment, boss);
 
         mailService.sendRejectedNotification(application, createdComment);
+
+        Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(application.getId(),
+                AbsenceType.VACATION);
+
+        if (absenceMapping.isPresent()) {
+            calendarProviderService.deleteAbsence(absenceMapping.get().getEventId());
+            absenceMappingService.delete(absenceMapping.get());
+        }
 
         return application;
     }
@@ -167,6 +204,14 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         }
 
         accountInteractionService.updateRemainingVacationDays(application.getStartDate().getYear(), person);
+
+        Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(application.getId(),
+                AbsenceType.VACATION);
+
+        if (absenceMapping.isPresent()) {
+            calendarProviderService.deleteAbsence(absenceMapping.get().getEventId());
+            absenceMappingService.delete(absenceMapping.get());
+        }
 
         return application;
     }

@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.web.application;
 import org.springframework.beans.BeanUtils;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
-import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
+import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 
 import java.math.BigDecimal;
 
@@ -18,7 +18,7 @@ public class ApplicationForLeave extends Application {
 
     private BigDecimal workDays = BigDecimal.ZERO;
 
-    public ApplicationForLeave(Application application, OwnCalendarService calendarService) {
+    public ApplicationForLeave(Application application, WorkDaysService calendarService) {
 
         // copy all the properties from the given application for leave
         BeanUtils.copyProperties(application, this);

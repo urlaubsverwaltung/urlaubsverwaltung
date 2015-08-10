@@ -15,7 +15,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
-import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
+import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 
@@ -36,12 +36,12 @@ public class ApplicationForLeaveStatisticsBuilder {
 
     private final AccountService accountService;
     private final ApplicationService applicationService;
-    private final OwnCalendarService calendarService;
+    private final WorkDaysService calendarService;
     private final VacationDaysService vacationDaysService;
 
     @Autowired
     public ApplicationForLeaveStatisticsBuilder(AccountService accountService, ApplicationService applicationService,
-        OwnCalendarService calendarService, VacationDaysService vacationDaysService) {
+        WorkDaysService calendarService, VacationDaysService vacationDaysService) {
 
         this.accountService = accountService;
         this.applicationService = applicationService;

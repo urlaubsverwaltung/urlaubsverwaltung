@@ -19,11 +19,14 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
+import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
+import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
+import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceTimeConfiguration;
 
 import java.io.IOException;
 
@@ -98,8 +101,8 @@ public class MailServiceIntegrationTest {
         String bossEmailAddress = "boss@boss.de";
         Person boss = new Person("boss", "Muster", "Max", bossEmailAddress);
 
-        Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS)).thenReturn(Arrays
-            .asList(boss));
+        Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS))
+            .thenReturn(Arrays.asList(boss));
 
         String commentMessage = "Das ist ein Kommentar.";
         Comment comment = new Comment(person);
@@ -144,8 +147,8 @@ public class MailServiceIntegrationTest {
         String bossEmailAddress = "boss@boss.de";
         Person boss = new Person("boss", "Muster", "Max", bossEmailAddress);
 
-        Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_OFFICE)).thenReturn(
-            Arrays.asList(office));
+        Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_OFFICE))
+            .thenReturn(Arrays.asList(office));
 
         String commentMessage = "Das ist ein Kommentar.";
         Comment comment = new Comment(boss);
@@ -320,8 +323,8 @@ public class MailServiceIntegrationTest {
         String officeEmailAddress = "office@office.de";
         Person office = new Person("office", "Office", "Marlene", officeEmailAddress);
 
-        Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_OFFICE)).thenReturn(
-            Arrays.asList(office));
+        Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_OFFICE))
+            .thenReturn(Arrays.asList(office));
 
         String commentMessage = "Das ist ein Kommentar.";
         Comment comment = new Comment(person);
@@ -464,8 +467,8 @@ public class MailServiceIntegrationTest {
         String officeEmailAddress = "office@office.de";
         Person office = new Person("", "", "", officeEmailAddress);
 
-        Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_OFFICE)).thenReturn(
-            Arrays.asList(office));
+        Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_OFFICE))
+            .thenReturn(Arrays.asList(office));
 
         mailService.sendSuccessfullyUpdatedAccounts(Arrays.asList(accountOne, accountTwo, accountThree));
 
@@ -480,7 +483,8 @@ public class MailServiceIntegrationTest {
 
         // check content
         String content = (String) mail.getContent();
-        assertTrue(content.contains("Stand Resturlaubstage zum 1. Januar " + DateMidnight.now().getYear()));
+        assertTrue(content.contains("Stand Resturlaubstage zum 1. Januar " + DateMidnight
+                .now().getYear()));
         assertTrue(content.contains("Marlene Muster: 3"));
         assertTrue(content.contains("Max Mustermann: 5"));
         assertTrue(content.contains("Dieter Horst: -1"));
@@ -511,5 +515,91 @@ public class MailServiceIntegrationTest {
         String content = (String) msg.getContent();
         assertTrue(content.contains("Hallo Marlene Muster"));
         assertTrue(content.contains("Urlaubsvertretung"));
+    }
+
+
+    @Test
+    public void ensureTechnicalManagerGetsANotificationIfACalendarSyncErrorOccurred() throws MessagingException,
+        IOException {
+
+        Person person = new Person("muster", "Muster", "Marlene", "marlene@muster.de");
+
+        Application application = new Application();
+        application.setHowLong(DayLength.FULL);
+        application.setStartDate(DateMidnight.now());
+        application.setEndDate(DateMidnight.now());
+        application.setPerson(person);
+        application.setStatus(ApplicationStatus.ALLOWED);
+
+        Absence absence = new Absence(application, new AbsenceTimeConfiguration(8, 12, 13, 17));
+
+        mailService.sendCalendarSyncErrorNotification("Kalendername", absence, "Calendar sync failed");
+
+        List<Message> inbox = Mailbox.get(emailManager);
+        assertTrue(inbox.size() > 0);
+
+        Message msg = inbox.get(0);
+
+        assertEquals("Fehler beim Synchronisieren des Kalenders", msg.getSubject());
+
+        String content = (String) msg.getContent();
+
+        assertTrue(content.contains("Kalendername"));
+        assertTrue(content.contains("Calendar sync failed"));
+        assertTrue(content.contains(person.getNiceName()));
+    }
+
+
+    @Test
+    public void ensureTechnicalManagerGetsANotificationIfAEventDeleteErrorOccurred() throws MessagingException,
+        IOException {
+
+        mailService.sendCalendarDeleteErrorNotification("Kalendername", "eventId", "event delete failed");
+
+        List<Message> inbox = Mailbox.get(emailManager);
+        assertTrue(inbox.size() > 0);
+
+        Message msg = inbox.get(0);
+
+        assertEquals("Fehler beim Löschen eines Kalendereintrags", msg.getSubject());
+
+        String content = (String) msg.getContent();
+
+        assertTrue(content.contains("Kalendername"));
+        assertTrue(content.contains("eventId"));
+        assertTrue(content.contains("event delete failed"));
+    }
+
+
+    @Test
+    public void ensureTechnicalManagerGetsANotificationIfAEventUpdateErrorOccurred() throws MessagingException,
+        IOException {
+
+        Person person = new Person("muster", "Muster", "Marlene", "marlene@muster.de");
+
+        Application application = new Application();
+        application.setHowLong(DayLength.FULL);
+        application.setStartDate(DateMidnight.now());
+        application.setEndDate(DateMidnight.now());
+        application.setPerson(person);
+        application.setStatus(ApplicationStatus.ALLOWED);
+
+        Absence absence = new Absence(application, new AbsenceTimeConfiguration(8, 12, 13, 17));
+
+        mailService.sendCalendarUpdateErrorNotification("Kalendername", absence, "eventId", "event update failed");
+
+        List<Message> inbox = Mailbox.get(emailManager);
+        assertTrue(inbox.size() > 0);
+
+        Message msg = inbox.get(0);
+
+        assertEquals("Fehler beim Aktualisieren eines Kalendereintrags", msg.getSubject());
+
+        String content = (String) msg.getContent();
+
+        assertTrue(content.contains("Kalendername"));
+        assertTrue(content.contains("eventId"));
+        assertTrue(content.contains("event update failed"));
+        assertTrue(content.contains(person.getNiceName()));
     }
 }

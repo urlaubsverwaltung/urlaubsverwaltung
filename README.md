@@ -8,8 +8,9 @@
 * [Konfiguration](https://github.com/synyx/urlaubsverwaltung#konfiguration)
     * [Umgebungen](https://github.com/synyx/urlaubsverwaltung#umgebungen)
     * [Authentifizierung](https://github.com/synyx/urlaubsverwaltung#authentifizierung)
+    * [Firmenkalender](https://github.com/synyx/urlaubsverwaltung#firmenkalender)
     * [Konfiguration ab Version 2.7.0](https://github.com/synyx/urlaubsverwaltung#konfiguration-ab-version-270)
-    * [Konfiguration bis Version 2.6.4](https://github.com/synyx/urlaubsverwaltung#konfiguration--version-270)
+    * [Konfiguration bis Version 2.6.4](https://github.com/synyx/urlaubsverwaltung#konfiguration-bis-version-264)
 * [Entwicklung](https://github.com/synyx/urlaubsverwaltung#entwicklung)
 * [Hinweise zu Versionen](https://github.com/synyx/urlaubsverwaltung#hinweise-zu-versionen)
 * [Technologien](https://github.com/synyx/urlaubsverwaltung#technologien)
@@ -145,6 +146,13 @@ Die Anwendung verfügt über **drei** verschiedene Authentifizierungsmöglichkei
     * Authentifizierung via Active Directory
     * Es müssen die Active Directory Domain und LDAP URL konfiguriert sein, damit eine Authentifizierung via Active Directory möglich ist. Die Properties sind unter `src/main/resources/config.properties` zu finden.
 
+#### Firmenkalender
+
+Ab Version 2.9.0 besteht die Möglichkeit, die Urlaubsverwaltung die Urlaubs- und Krankmeldungstermine mit einem Microsoft Exchange Firmenkalender synchroniseren zu lassen.
+Dazu müssen lediglich die `calendar.ews`-Properties, bestehend aus E-Mail-Adresse, Passwort und Name des Kalenders konfiguriert werden und die Anwendung mit einer zusätzlichen System Property `calendar=ews` gestartet werden.
+
+<pre>export CATALINA_OPTS="$CATALINA_OPTS -Dcalendar=ews"</pre>
+
 #### Konfiguration ab Version 2.7.0
 
 ##### Überschreiben der Properties
@@ -173,19 +181,23 @@ Die Anwendung mit dem Parameter `-Denv=prod` starten:
 
 <pre>export CATALINA_OPTS="$CATALINA_OPTS -Denv=prod"</pre>
 
-##### Authentifizierung
-
 ###### LDAP
 
-Die Anwendung mit dem Parameter `-Dauth=ldap` starten:
+Um LDAP zur Authentifizierung zu nutzen, zusätzlich den Parameter `-Dauth=ldap` angeben:
 
-<pre>export CATALINA_OPTS="$CATALINA_OPTS -Dauth=ldap"</pre>
+<pre>export CATALINA_OPTS="$CATALINA_OPTS -Denv=prod -Dauth=ldap"</pre>
 
 ###### Active Directory
 
-Die Anwendung mit dem Parameter `-Dauth=activeDirectory` starten:
+Um Active Directory zur Authentifizierung zu nutzen, zusätzlich den Parameter `-Dauth=activeDirectory` angeben:
 
-<pre>export CATALINA_OPTS="$CATALINA_OPTS -Dauth=activeDirectory"</pre>
+<pre>export CATALINA_OPTS="$CATALINA_OPTS -Denv=prod -Dauth=activeDirectory"</pre>
+
+###### Microsoft Exchange Kalender
+
+Um einen Microsoft Exchange Kalender zur Synchronisierung der erstellten Urlaubs- und Krankmeldungstermine zu nutzen, zusätzlich den Paramter `-Dcalendar=ews` angeben:
+
+<pre>export CATALINA_OPTS="$CATALINA_OPTS -Denv=prod -Dauth=activeDirectory -Dcalendar=ews"</pre>
 
 #### Konfiguration bis Version 2.6.4
 
@@ -313,6 +325,7 @@ Zur Ermittlung von Feiertagen wird das Framework [Jollyday](http://jollyday.sour
 Das Frontend beinhaltet Elemente von [Bootstrap](http://getbootstrap.com/) gewürzt mit einer Prise
 [jQuery](http://jquery.com/) und [Font Awesome](http://fontawesome.io/).
 Für die Darstellung der Benutzer Avatare wird [Gravatar](http://de.gravatar.com/) benutzt.
+Zur Synchronisation der Urlaubs- und Krankmeldungstermine mit einem Microsoft Exchange Kalender wird die [EWS JAVA API](https://github.com/OfficeDev/ews-java-api) genutzt.
 
 ## Lizenz
 

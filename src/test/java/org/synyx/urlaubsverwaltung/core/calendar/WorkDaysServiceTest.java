@@ -30,14 +30,14 @@ import static org.junit.Assert.assertNotNull;
 
 
 /**
- * Unit test for {@link org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService}.
+ * Unit test for {@link org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService}.
  *
  * @author  Aljona Murygina
  */
-public class OwnCalendarServiceTest {
+public class WorkDaysServiceTest {
 
-    private OwnCalendarService instance;
-    private JollydayCalendar jollydayCalendar;
+    private WorkDaysService instance;
+    private PublicHolidaysService publicHolidaysService;
     private WorkingTimeService workingTimeService;
     private Application application;
     private WorkingTime workingTime;
@@ -49,10 +49,10 @@ public class OwnCalendarServiceTest {
         SettingsService settingsService = Mockito.mock(SettingsService.class);
         Mockito.when(settingsService.getSettings()).thenReturn(new Settings());
 
-        jollydayCalendar = new JollydayCalendar(settingsService);
+        publicHolidaysService = new PublicHolidaysService(settingsService);
         workingTimeService = Mockito.mock(WorkingTimeService.class);
 
-        instance = new OwnCalendarService(jollydayCalendar, workingTimeService);
+        instance = new WorkDaysService(publicHolidaysService, workingTimeService);
 
         application = new Application();
         person = new Person();

@@ -16,7 +16,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
-import org.synyx.urlaubsverwaltung.core.calendar.OwnCalendarService;
+import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.math.BigDecimal;
@@ -35,7 +35,7 @@ public class ApplicationForLeaveStatisticsBuilderTest {
 
     private AccountService accountService;
     private ApplicationService applicationService;
-    private OwnCalendarService calendarService;
+    private WorkDaysService calendarService;
     private VacationDaysService vacationDaysService;
 
     private ApplicationForLeaveStatisticsBuilder builder;
@@ -45,7 +45,7 @@ public class ApplicationForLeaveStatisticsBuilderTest {
 
         accountService = Mockito.mock(AccountService.class);
         applicationService = Mockito.mock(ApplicationService.class);
-        calendarService = Mockito.mock(OwnCalendarService.class);
+        calendarService = Mockito.mock(WorkDaysService.class);
         vacationDaysService = Mockito.mock(VacationDaysService.class);
 
         builder = new ApplicationForLeaveStatisticsBuilder(accountService, applicationService, calendarService,
