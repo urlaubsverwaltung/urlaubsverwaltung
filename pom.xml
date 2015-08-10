@@ -318,15 +318,13 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpcore</artifactId>
-            <version>4.3.3</version>
-            <scope>test</scope>
+            <version>4.4.1</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.3.6</version>
-            <scope>test</scope>
+            <version>4.5</version>
         </dependency>
 
         <!-- H2 DB for Local Development -->
@@ -334,6 +332,14 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>1.4.184</version>
+        </dependency>
+
+        <!-- calendar sync -->
+
+        <dependency>
+            <groupId>com.microsoft.ews-java-api</groupId>
+            <artifactId>ews-java-api</artifactId>
+            <version>2.0-SNAPSHOT</version>
         </dependency>
 
     </dependencies>
@@ -415,7 +421,7 @@
                     <stopPort/>
                 </configuration>
             </plugin>
-            
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
