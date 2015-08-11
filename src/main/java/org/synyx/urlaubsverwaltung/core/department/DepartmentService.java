@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.core.department;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -11,21 +12,19 @@ import java.util.Optional;
 public interface DepartmentService {
 
     /**
-     * returns a department by given name.
+     * @param  departmentId
      *
-     * @param  name  of a department
-     *
-     * @return  Optional department
+     * @return  department to given id
      */
-    Optional<Department> getDepartmentByName(String name);
+    Optional<Department> getDepartmentById(Integer departmentId);
 
 
     /**
-     * Saves the given department to repository.
+     * adds the given department to repository.
      *
      * @param  department
      */
-    void save(Department department);
+    void create(Department department);
 
 
     /**
@@ -34,4 +33,18 @@ public interface DepartmentService {
      * @param  department
      */
     void update(Department department);
+
+
+    /**
+     * Deletes department with given id.
+     *
+     * @param  departmenId
+     */
+    void delete(Integer departmenId);
+
+
+    /**
+     * @return  all departments of the application.
+     */
+    List<Department> getAllDepartments();
 }

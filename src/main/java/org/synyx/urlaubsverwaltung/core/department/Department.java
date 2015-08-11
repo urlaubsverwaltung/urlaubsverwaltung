@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.department;
 
+import org.joda.time.DateTime;
+
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import java.util.Date;
@@ -56,8 +58,15 @@ public class Department extends AbstractPersistable<Integer> {
     }
 
 
-    public void setLastModification(Date lastModification) {
+    public void setLastModification(DateTime lastModification) {
 
-        this.lastModification = lastModification;
+        this.lastModification = lastModification.toDate();
+    }
+
+
+    @Override
+    public void setId(Integer id) {
+
+        super.setId(id);
     }
 }

@@ -1,9 +1,12 @@
 package org.synyx.urlaubsverwaltung.core.department;
 
+import org.joda.time.DateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -24,14 +27,16 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public Optional<Department> getDepartmentByName(String name) {
+    public Optional<Department> getDepartmentById(Integer departmentId) {
 
-        return departmentDAO.findAbsenceMappingByName(name);
+        return Optional.ofNullable(departmentDAO.findOne(departmentId));
     }
 
 
     @Override
-    public void save(Department department) {
+    public void create(Department department) {
+
+        department.setLastModification(DateTime.now());
 
         departmentDAO.save(department);
     }
@@ -40,6 +45,26 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public void update(Department department) {
 
+        department.setLastModification(DateTime.now());
+
         departmentDAO.save(department);
+    }
+
+
+    @Override
+    public void delete(Integer departmenId) {
+
+        if (departmentDAO.getOne(departmenId) != null) {
+            departmentDAO.delete(departmenId);
+        } else {
+            throw new IllegalStateException("Repository does not contain a department with given id");
+        }
+    }
+
+
+    @Override
+    public List<Department> getAllDepartments() {
+
+        return departmentDAO.findAll();
     }
 }
