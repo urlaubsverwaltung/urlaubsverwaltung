@@ -40,8 +40,17 @@
         <c:forEach items="${departments}" var="department" varStatus="loopStatus">
             <tr>
                 <td><c:out value="${department.name}"/></td>
-                <td><c:out value="${department.description}"/></td>
-                <td><c:out value="${department.lastModification}"/></td>
+                <td>
+                    <div class="overflow"
+                         data-toggle="popover"
+                         data-trigger="hover"
+                         data-placement="right"
+                         title="<spring:message code='department.description'/>"
+                         data-content="${department.description}">
+                      ${department.description}
+                    </div>
+                </td>
+                <td><uv:dateTime dateTime="${department.lastModification}"/></td>
                 <sec:authorize access="hasRole('OFFICE')">
                 <td class="hidden-print hidden-xs">
                   <a class="fa-action pull-right" href="${URL_PREFIX}/department/${department.id}/edit"
