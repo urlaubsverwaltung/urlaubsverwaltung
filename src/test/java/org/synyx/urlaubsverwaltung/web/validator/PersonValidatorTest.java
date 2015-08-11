@@ -363,7 +363,7 @@ public class PersonValidatorTest {
 
         validator.validatePermissions(form, errors);
 
-        Mockito.verify(errors).rejectValue("permissions", "role.error.least");
+        Mockito.verify(errors).rejectValue("permissions", "person.form.permissions.error.mandatory");
     }
 
 
@@ -374,7 +374,7 @@ public class PersonValidatorTest {
 
         validator.validatePermissions(form, errors);
 
-        Mockito.verify(errors).rejectValue("permissions", "role.error.inactive");
+        Mockito.verify(errors).rejectValue("permissions", "person.form.permissions.error.inactive");
     }
 
 
@@ -399,7 +399,7 @@ public class PersonValidatorTest {
 
         validator.validateNotifications(form, errors);
 
-        Mockito.verify(errors).rejectValue("notifications", "notification.error");
+        Mockito.verify(errors).rejectValue("notifications", "person.form.notifications.error.combination");
     }
 
 
@@ -412,7 +412,7 @@ public class PersonValidatorTest {
 
         validator.validateNotifications(form, errors);
 
-        Mockito.verify(errors).rejectValue("notifications", "notification.error");
+        Mockito.verify(errors).rejectValue("notifications", "person.form.notifications.error.combination");
     }
 
 

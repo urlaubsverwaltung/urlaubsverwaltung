@@ -68,6 +68,15 @@ textarea.error {
 
 **************************************************************************/
 
+.person--form-part .form-group:last-child,
+.person--form-part .btn:last-child {
+  margin-bottom: 54px;
+}
+
+.person--form-part .help-block {
+  margin-top: 0;
+}
+
 .person--role {
     border-bottom: 1px dotted #d5d5d5;
 }

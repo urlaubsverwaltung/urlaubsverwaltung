@@ -104,7 +104,7 @@
 
                     <div class="header">
                       <legend>
-                        <spring:message code="person.annual.vacation.year"/>
+                        <spring:message code="overview.vacation.entitlementPerYear"/>
                         <uv:year-selector year="${year}"/>
                       </legend>
                     </div>

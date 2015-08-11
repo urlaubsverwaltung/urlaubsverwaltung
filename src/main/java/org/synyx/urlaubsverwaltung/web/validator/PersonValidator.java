@@ -299,7 +299,7 @@ public class PersonValidator implements Validator {
         List<Role> roles = personForm.getPermissions();
 
         if (roles == null || roles.isEmpty()) {
-            errors.rejectValue(PERMISSIONS, "role.error.least");
+            errors.rejectValue(PERMISSIONS, "person.form.permissions.error.mandatory");
         } else {
             // if role inactive set, then only this role may be selected
             // else this is an error
@@ -316,7 +316,7 @@ public class PersonValidator implements Validator {
                 // validate that there is only role inactive set
                 // this means size of role collection must have size 1
                 if (roles.size() != 1) {
-                    errors.rejectValue(PERMISSIONS, "role.error.inactive");
+                    errors.rejectValue(PERMISSIONS, "person.form.permissions.error.inactive");
                 }
             }
         }
@@ -335,7 +335,7 @@ public class PersonValidator implements Validator {
                     MailNotification.NOTIFICATION_OFFICE) && !roles.contains(Role.OFFICE);
 
             if (bossNotificationsSelectedButNotBossRole || officeNotificationsSelectedButNotOfficeRole) {
-                errors.rejectValue("notifications", "notification.error");
+                errors.rejectValue("notifications", "person.form.notifications.error.combination");
             }
         }
     }
