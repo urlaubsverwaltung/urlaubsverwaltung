@@ -30,7 +30,7 @@
 
                 <div class="header">
                     <legend>
-                        <p><spring:message code="sicknote" /></p>
+                        <spring:message code="sicknote" />
                         <sec:authorize access="hasRole('OFFICE')">
                           <c:if test="${sickNote.active}">
                             <uv:print/>
@@ -145,7 +145,7 @@
 
                 <div class="header">
                     <legend>
-                        <p><spring:message code="progress" /></p>
+                        <spring:message code="progress" />
                         <sec:authorize access="hasRole('OFFICE')">
                           <a href="#" class="fa-action pull-right" onclick="$('div#comment-form').show();"
                              data-title="<spring:message code="sicknotes.comment.new" />">
@@ -216,7 +216,7 @@
 
                 <div class="header hidden-print">
                     <legend>
-                        <p><spring:message code="staff" /></p>
+                        <spring:message code="staff" />
                     </legend>
                 </div>
 

@@ -10,7 +10,7 @@
 
     <legend>
 
-        <p><spring:message code="table.overview"/></p>
+        <spring:message code="table.overview"/>
 
         <uv:year-selector year="${displayYear}"/>
 

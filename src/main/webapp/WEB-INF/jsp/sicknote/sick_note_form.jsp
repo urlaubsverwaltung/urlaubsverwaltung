@@ -73,16 +73,14 @@
 
                 <div class="header">
                     <legend>
-                        <p>
-                            <c:choose>
-                                <c:when test="${sickNote.id == null}">
-                                    <spring:message code="sicknotes.new" />
-                                </c:when>
-                                <c:otherwise>
-                                    <spring:message code="sicknotes.edit" />
-                                </c:otherwise>
-                            </c:choose>
-                        </p>
+                        <c:choose>
+                            <c:when test="${sickNote.id == null}">
+                                <spring:message code="sicknotes.new" />
+                            </c:when>
+                            <c:otherwise>
+                                <spring:message code="sicknotes.edit" />
+                            </c:otherwise>
+                        </c:choose>
                     </legend>
                 </div>
 

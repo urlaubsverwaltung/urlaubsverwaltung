@@ -34,9 +34,7 @@
                     <div class="header">
 
                         <legend>
-                            <p>
-                                <spring:message code="app.title" />
-                            </p>
+                            <spring:message code="app.title" />
                             <jsp:include page="./include/app-detail-elements/action-buttons.jsp" />
                         </legend>
 
@@ -106,7 +104,7 @@
 
                     <div class="header">
                       <legend>
-                        <p><spring:message code="person.annual.vacation.year"/></p>
+                        <spring:message code="person.annual.vacation.year"/>
                         <uv:year-selector year="${year}"/>
                       </legend>
                     </div>

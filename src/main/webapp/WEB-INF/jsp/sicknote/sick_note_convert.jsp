@@ -29,9 +29,7 @@
             <div class="col-xs-12 col-sm-12 col-md-6">
                 <div class="header">
                     <legend>
-                        <p>
-                            <spring:message code="sicknotes.convert.vacation" />
-                        </p>
+                        <spring:message code="sicknotes.convert.vacation" />
                     </legend>
                 </div>
     
@@ -93,7 +91,7 @@
 
                 <div class="header">
                     <legend>
-                        <p><spring:message code="sicknote" /></p>
+                        <spring:message code="sicknote" />
                     </legend>
                 </div>
 

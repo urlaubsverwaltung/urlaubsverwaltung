@@ -77,9 +77,7 @@
                                 </ul>
                             </div>
 
-                            <p>
-                                <spring:message code="for" />
-                            </p>
+                            <spring:message code="for" />
 
                             <uv:year-selector year="${displayYear}" />
 

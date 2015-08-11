@@ -107,9 +107,7 @@
 <div class="header">
 
     <legend>
-        <p>
-            <spring:message code="app.title" />
-        </p>
+        <spring:message code="app.title" />
     </legend>
 
 </div>
@@ -312,9 +310,7 @@
     <div class="header">
 
         <legend>
-            <p>
-                <spring:message code="app.further.info"/>
-            </p>
+            <spring:message code="app.further.info"/>
         </legend>
 
     </div>

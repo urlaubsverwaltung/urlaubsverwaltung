@@ -8,7 +8,7 @@
 
 <div class="header">
   <legend>
-    <p><spring:message code="progress" /></p>
+    <spring:message code="progress" />
   </legend>
 </div>
 

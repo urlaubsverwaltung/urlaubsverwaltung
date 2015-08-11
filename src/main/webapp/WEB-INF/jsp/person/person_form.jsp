@@ -46,9 +46,7 @@
     <div class="header">
 
         <legend>
-            <p>
-                <spring:message code="person.data"/>
-            </p>
+            <spring:message code="person.data"/>
         </legend>
 
     </div>
@@ -104,9 +102,7 @@
     <div class="header">
 
         <legend>
-            <p>
-                <spring:message code="role"/>
-            </p>
+            <spring:message code="role"/>
         </legend>
 
     </div>
@@ -174,17 +170,15 @@
     <div class="header">
 
         <legend>
-            <p><spring:message code="person.annual.vacation.year"/></p>
-            <p>
-                <c:choose>
-                    <c:when test="${personForm.id == null}">
-                        <c:out value="${personForm.holidaysAccountYear}" />
-                    </c:when>
-                    <c:otherwise>
-                        <uv:year-selector year="${personForm.holidaysAccountYear}"/>
-                    </c:otherwise>
-                </c:choose>
-            </p>
+            <spring:message code="person.annual.vacation.year"/>
+            <c:choose>
+                <c:when test="${personForm.id == null}">
+                    <c:out value="${personForm.holidaysAccountYear}" />
+                </c:when>
+                <c:otherwise>
+                    <uv:year-selector year="${personForm.holidaysAccountYear}"/>
+                </c:otherwise>
+            </c:choose>
         </legend>
 
     </div>
@@ -257,9 +251,7 @@
     <div class="header">
 
         <legend>
-            <p>
-                <spring:message code="working.times"/>
-            </p>
+            <spring:message code="working.times"/>
         </legend>
 
     </div>

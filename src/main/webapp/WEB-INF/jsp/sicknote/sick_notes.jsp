@@ -44,7 +44,7 @@
             <div class="header">
 
                 <legend class="is-sticky">
-                    <p><spring:message code="sicknotes" /></p>
+                    <spring:message code="sicknotes" />
                     <uv:print />
                     <a href="${URL_PREFIX}/sicknote/statistics" class="fa-action pull-right"
                        data-title="<spring:message code="action.sicknotes.statistics"/>">

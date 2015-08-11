@@ -44,7 +44,7 @@
 
                 <div class="header">
                     <legend class="is-sticky">
-                        <p><spring:message code="applications.statistics"/></p>
+                        <spring:message code="applications.statistics"/>
                         <uv:print/>
                     </legend>
                 </div>

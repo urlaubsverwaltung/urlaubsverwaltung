@@ -34,9 +34,7 @@
             <div class="col-xs-12 header">
             
                 <legend>
-                    <p>
-                        <spring:message code="settings.title" />
-                    </p>
+                    <spring:message code="settings.title" />
                 </legend>
             
             </div>

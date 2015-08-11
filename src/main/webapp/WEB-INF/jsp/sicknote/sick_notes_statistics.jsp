@@ -30,9 +30,7 @@
             <div class="header">
 
                 <legend>
-                    <p>
-                      <spring:message code="sicknotes.statistics" />
-                    </p>
+                    <spring:message code="sicknotes.statistics" />
                     <uv:year-selector year="${statistics.year}" />
                     <uv:print />
                 </legend>

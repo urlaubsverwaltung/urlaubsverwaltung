@@ -211,9 +211,7 @@
                 <div class="header">
 
                     <legend id="vacation">
-                        <p>
-                            <spring:message code="applications" />
-                        </p>
+                        <spring:message code="applications" />
                         <c:choose>
                             <c:when test="${person.id == loggedUser.id}">
                                 <a class="fa-action pull-right" href="${URL_PREFIX}/application/new" data-title="<spring:message code="action.apply.vacation"/>">
@@ -286,9 +284,7 @@
                 <div class="header">
 
                     <legend id="anchorSickNotes">
-                        <p>
-                            <spring:message code="sicknotes" />
-                        </p>
+                        <spring:message code="sicknotes" />
                         <sec:authorize access="hasRole('OFFICE')">
                             <a class="fa-action pull-right" href="${URL_PREFIX}/sicknote/new?person=${person.id}"
                                 data-title="<spring:message code="action.apply.sicknote" />">

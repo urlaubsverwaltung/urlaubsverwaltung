@@ -32,7 +32,7 @@
   
                           <legend>
   
-                            <p><spring:message code="applications.waiting"/></p>
+                            <spring:message code="applications.waiting"/>
 
                             <a href="${URL_PREFIX}/application/statistics" class="fa-action pull-right"
                                 data-title="<spring:message code="action.applications.statistics"/>">
