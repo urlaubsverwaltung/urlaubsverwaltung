@@ -31,7 +31,8 @@ body {
 }
 
 .modal-dialog {
-  margin-top: 77px;
+    margin-top: 77px;
+    z-index: 2000;
 }
 
 hr {
