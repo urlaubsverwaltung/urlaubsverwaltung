@@ -9,10 +9,6 @@
     <h4><spring:message code="print.info.landscape" /></h4>
 </div>
 
-<p class="pull-right visible-print">
-    <spring:message code="Effective"/> <uv:date date="${now}" />
-</p>
-
 <script type="text/javascript">
     $(document).ready(function() {
 
@@ -29,7 +25,7 @@
     <spring:message code="no.departments"/>
   </c:when>
   <c:otherwise>
-    <table cellspacing="0" class="list-table selectable-table sortable tablesorter print--only-landscape">
+    <table cellspacing="0" class="list-table sortable tablesorter print--only-landscape">
         <thead class="hidden-xs hidden-sm">
         <tr>
             <th class="sortable-field"><spring:message code="department.name" /></th>
@@ -42,7 +38,7 @@
         </thead>
         <tbody>
         <c:forEach items="${departments}" var="department" varStatus="loopStatus">
-            <tr onclick="navigate('${URL_PREFIX}/department/${department.id}/overview');">
+            <tr>
                 <td><c:out value="${department.name}"/></td>
                 <td><c:out value="${department.description}"/></td>
                 <td><c:out value="${department.lastModification}"/></td>

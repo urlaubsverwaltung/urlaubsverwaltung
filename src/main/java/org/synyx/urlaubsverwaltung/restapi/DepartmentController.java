@@ -34,8 +34,6 @@ public class DepartmentController {
     @ModelAttribute("response")
     public List<Department> persons() {
 
-        List<Department> departments = departmentService.getAllDepartments();
-
-        return departments;
+        return departmentService.getAllDepartments();
     }
 }

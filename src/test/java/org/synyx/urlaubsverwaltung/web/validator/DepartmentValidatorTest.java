@@ -31,7 +31,7 @@ public class DepartmentValidatorTest {
 
 
     @Test
-    public void enshureSupportsOnlyDepartmentClass() throws Exception {
+    public void ensureSupportsOnlyDepartmentClass() throws Exception {
 
         assertFalse(sut.supports(null));
         assertFalse(sut.supports(Application.class));
