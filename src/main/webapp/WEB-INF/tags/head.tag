@@ -5,7 +5,7 @@
 <title>Urlaubsverwaltung</title>
 <link rel="shortcut icon" type="image/x-icon" href="<spring:url value='/favicon.ico?' />" />
 <link rel="stylesheet" type="text/css" href="<spring:url value='/jquery/css/ui-lightness/jquery-ui-1.10.3.custom.css' />" />
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" />
 <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />" />
 <script src="<spring:url value='/js/underscore-min.js' />" type="text/javascript" ></script>
