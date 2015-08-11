@@ -66,7 +66,7 @@ public class DepartmentController {
     }
 
 
-    @RequestMapping(value = "/department/new", method = RequestMethod.POST)
+    @RequestMapping(value = "/department", method = RequestMethod.POST)
     public String newDepartment(@ModelAttribute("department") Department department, Errors errors, Model model) {
 
         if (!sessionService.isOffice()) {
@@ -113,7 +113,7 @@ public class DepartmentController {
     }
 
 
-    @RequestMapping(value = "/department/{departmentId}/edit", method = RequestMethod.PUT)
+    @RequestMapping(value = "/department/{departmentId}", method = RequestMethod.PUT)
     public String updateDepartement(@PathVariable("departmentId") Integer departmentId,
         @ModelAttribute("department") Department department, Errors errors, Model model) {
 
@@ -141,7 +141,7 @@ public class DepartmentController {
     }
 
 
-    @RequestMapping(value = "/department/{departmentId}/delete", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/department/{departmentId}", method = RequestMethod.DELETE)
     public String deleteDepartment(@PathVariable("departmentId") Integer departmentId) {
 
         if (!sessionService.isOffice()) {

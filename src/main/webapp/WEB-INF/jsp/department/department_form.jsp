@@ -28,11 +28,11 @@
 <c:choose>
     <c:when test="${department.id == null}">
         <c:set var="METHOD" value="POST"/>
-        <c:set var="ACTION" value="${URL_PREFIX}/department/new"/>
+        <c:set var="ACTION" value="${URL_PREFIX}/department"/>
     </c:when>
     <c:otherwise>
         <c:set var="METHOD" value="PUT"/>
-        <c:set var="ACTION" value="${URL_PREFIX}/department/${department.id}/edit"/>
+        <c:set var="ACTION" value="${URL_PREFIX}/department/${department.id}"/>
     </c:otherwise>
 </c:choose>
 
@@ -98,7 +98,7 @@
 
 </form:form>
 
-    <form:form method="DELETE" action="${URL_PREFIX}/department/${department.id}/delete">
+    <form:form method="DELETE" action="${URL_PREFIX}/department/${department.id}">
         <div id="modal-cancel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
