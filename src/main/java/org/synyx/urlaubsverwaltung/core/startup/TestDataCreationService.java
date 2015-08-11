@@ -94,18 +94,20 @@ public class TestDataCreationService {
             createTestData(boss);
             createTestData(office);
 
-            createTestDepartments();
+            createTestDepartment("Admins", "Das sind die, die so Admin Sachen machen");
+            createTestDepartment("Marketing", "Das sind die, die so Marketing Sachen machen");
+            createTestDepartment("Geschäftsführung", "Das sind die, die so Geschäftsführung Sachen machen");
         } else {
             LOG.info("No test data will be created.");
         }
     }
 
 
-    private void createTestDepartments() {
+    private void createTestDepartment(String name, String description) {
 
         Department department = new Department();
-        department.setName("Foobar Team");
-        department.setDescription("Foobar Description");
+        department.setName(name);
+        department.setDescription(description);
         department.setLastModification(DateTime.now());
 
         departmentService.create(department);
