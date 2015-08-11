@@ -7,6 +7,9 @@ import org.junit.Test;
 
 import org.mockito.Mockito;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 import static org.mockito.Matchers.eq;
 
 
@@ -73,5 +76,58 @@ public class DepartmentServiceImplTest {
         sut.getAllDepartments();
 
         Mockito.verify(departmentDAO).findAll();
+    }
+
+
+    @Test(expected = IllegalStateException.class)
+    public void ensureExceptionOnDeletionOfNonPersistedId() throws Exception {
+
+        int id = 0;
+        Mockito.when(departmentDAO.findOne(id)).thenReturn(null);
+
+        sut.delete(id);
+    }
+
+
+    @Test
+    public void ensureDeleteCallFindOneAndDelete() throws Exception {
+
+        int id = 0;
+        Mockito.when(departmentDAO.getOne(id)).thenReturn(new Department());
+
+        sut.delete(id);
+
+        Mockito.verify(departmentDAO).getOne(eq(id));
+        Mockito.verify(departmentDAO).delete(eq(id));
+    }
+
+
+    @Test
+    public void ensureSetLastModificationOnCreate() throws Exception {
+
+        Department department = new Department();
+        department.setName("Test Department");
+        department.setDescription("Test Description");
+
+        assertNull(department.getLastModification());
+
+        sut.create(department);
+
+        assertNotNull(department.getLastModification());
+    }
+
+
+    @Test
+    public void ensureSetLastModificationOnUpdate() throws Exception {
+
+        Department department = new Department();
+        department.setName("Test Department");
+        department.setDescription("Test Description");
+
+        assertNull(department.getLastModification());
+
+        sut.update(department);
+
+        assertNotNull(department.getLastModification());
     }
 }
