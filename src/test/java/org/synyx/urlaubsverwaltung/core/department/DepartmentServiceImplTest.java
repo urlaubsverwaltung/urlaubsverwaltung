@@ -1,11 +1,11 @@
 package org.synyx.urlaubsverwaltung.core.department;
 
+import org.joda.time.DateTime;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import org.mockito.Mockito;
-
-import java.util.Date;
 
 import static org.mockito.Matchers.eq;
 
@@ -31,7 +31,7 @@ public class DepartmentServiceImplTest {
 
         Department dummyDepartment = createDummyDepartment();
 
-        sut.save(dummyDepartment);
+        sut.create(dummyDepartment);
 
         Mockito.verify(departmentDAO).save(eq(dummyDepartment));
     }
@@ -42,18 +42,17 @@ public class DepartmentServiceImplTest {
         Department department = new Department();
         department.setName("FooDepartment");
         department.setDescription("This is the foo department.");
-        department.setLastModification(new Date());
+        department.setLastModification(DateTime.now());
 
         return department;
     }
 
 
     @Test
-    public void ensureCallDepartmentDAOFind() throws Exception {
+    public void ensureCallDepartmentDAOFindOne() throws Exception {
 
-        String departmentName = "FooDepartment";
-        sut.getDepartmentByName(departmentName);
-        Mockito.verify(departmentDAO).findAbsenceMappingByName(eq(departmentName));
+        sut.getDepartmentById(42);
+        Mockito.verify(departmentDAO).findOne(eq(42));
     }
 
 
@@ -65,5 +64,14 @@ public class DepartmentServiceImplTest {
         sut.update(dummyDepartment);
 
         Mockito.verify(departmentDAO).save(eq(dummyDepartment));
+    }
+
+
+    @Test
+    public void ensureGetAllCallDepartmentDAOFindAll() throws Exception {
+
+        sut.getAllDepartments();
+
+        Mockito.verify(departmentDAO).findAll();
     }
 }

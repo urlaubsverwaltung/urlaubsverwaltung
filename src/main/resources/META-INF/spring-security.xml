@@ -14,6 +14,7 @@
         <security:intercept-url pattern="/web/overview" access="isAuthenticated()"/>
         <security:intercept-url pattern="/web/application/**" access="isAuthenticated()"/>
         <security:intercept-url pattern="/web/staff/**" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/web/department/**" access="isAuthenticated()"/>
         <security:intercept-url pattern="/web/settings/**" access="hasRole('OFFICE')"/>
         <!-- more concrete security rules for sick notes are located in SickNoteController -->
         <security:intercept-url pattern="/web/sicknote/**" access="isAuthenticated()"/>
