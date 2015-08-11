@@ -10,7 +10,9 @@ import javax.persistence.Temporal;
 
 
 /**
- * Daniel Hammann - <hammann@synyx.de>.
+ * Department represents an organisation unit of a company.
+ *
+ * @author  Daniel Hammann - <hammann@synyx.de>
  */
 
 @Entity

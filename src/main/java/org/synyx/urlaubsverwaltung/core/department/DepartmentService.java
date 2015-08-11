@@ -4,7 +4,9 @@ import java.util.Optional;
 
 
 /**
- * Daniel Hammann - <hammann@synyx.de>.
+ * Service for handling {@link Department}s.
+ *
+ * <p>Daniel Hammann - <hammann@synyx.de>.</p>
  */
 public interface DepartmentService {
 

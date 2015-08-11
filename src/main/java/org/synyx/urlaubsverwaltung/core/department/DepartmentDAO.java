@@ -6,7 +6,9 @@ import java.util.Optional;
 
 
 /**
- * Daniel Hammann - <hammann@synyx.de>.
+ * Repository for {@link Department} entities.
+ *
+ * @author  Daniel Hammann - <hammann@synyx.de>
  */
 public interface DepartmentDAO extends JpaRepository<Department, Integer> {
 

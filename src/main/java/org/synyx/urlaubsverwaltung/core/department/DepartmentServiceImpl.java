@@ -8,7 +8,9 @@ import java.util.Optional;
 
 
 /**
- * Daniel Hammann - <hammann@synyx.de>.
+ * Implementation for {@link DepartmentService}.
+ *
+ * @author  Daniel Hammann - <hammann@synyx.de>
  */
 @Service
 public class DepartmentServiceImpl implements DepartmentService {
