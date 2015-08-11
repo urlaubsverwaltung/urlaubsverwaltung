@@ -10,7 +10,7 @@
 </div>
 
 <p class="pull-right visible-print">
-    <spring:message code="Effective"/> <uv:date date="${now}" />
+    <spring:message code="statistics.effective"/> <uv:date date="${now}" />
 </p>
 
 <script type="text/javascript">
@@ -38,7 +38,7 @@
         <th class="sortable-field is-centered"><spring:message code='overview.entitlement.per.year' /></th>
         <th class="sortable-field is-centered"><spring:message code='overview.actual.entitlement' /></th>
         <th class="sortable-field is-centered"><spring:message code='overview.remaining.days.last.year' /></th>
-        <th class="sortable-field is-centered"><spring:message code="left"/></th>
+        <th class="sortable-field is-centered"><spring:message code="overview.left"/></th>
         <sec:authorize access="hasRole('OFFICE')">
             <th><%-- placeholder to ensure correct number of th --%></th>
         </sec:authorize>    

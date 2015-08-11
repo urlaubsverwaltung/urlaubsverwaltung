@@ -67,7 +67,7 @@
                     </a>
                 </p>
                 <p class="pull-right visible-print">
-                    <spring:message code="Effective"/> <uv:date date="${today}" />
+                    <spring:message code="statistics.effective"/> <uv:date date="${today}" />
                 </p>
             </div>
                 <table class="list-table selectable-table sortable tablesorter" cellspacing="0">
