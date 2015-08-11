@@ -358,6 +358,38 @@
 </div>
 
 <div class="person--form-part">
+
+    <div class="header col-xs-12">
+        <legend><spring:message code="person.form.departments.title"/></legend>
+    </div>
+
+    <div class="col-md-4 col-md-push-8">
+    <span class="help-block">
+        <i class="fa fa-fw fa-info-circle"></i>
+        <spring:message code="person.form.departments.description"/>
+    </span>
+    </div>
+
+    <div class="col-md-8 col-md-pull-4">
+        <div class="form-group">
+            <label class="control-label col-md-3">
+                <spring:message code="person.form.departments.assigned" />
+            </label>
+            <div class="col-md-8 checkbox">
+                <c:forEach items="${departments}" var="department">
+                    <label class="checkbox" for="${department.id}">
+                        <%-- TODO: Use form:checkbox here! --%>
+                        <input type="checkbox" value="${department.id}"/>
+                        <c:out value="${department.name}"/>: <c:out value="${department.description}"/>
+                    </label>
+                </c:forEach>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="person--form-part">
     <div class="col-xs-12">
         <hr/>
         <button class="btn btn-success col-xs-12 col-sm-5 col-md-2" type="submit"><spring:message code="action.save" /></button>

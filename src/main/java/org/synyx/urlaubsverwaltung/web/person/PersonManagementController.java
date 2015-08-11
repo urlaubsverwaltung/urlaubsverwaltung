@@ -24,6 +24,7 @@ import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
 import org.synyx.urlaubsverwaltung.core.calendar.Day;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonInteractionService;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
@@ -63,6 +64,9 @@ public class PersonManagementController {
     @Autowired
     private WorkingTimeService workingTimeService;
 
+    @Autowired
+    private DepartmentService departmentService;
+
     @InitBinder
     public void initBinder(DataBinder binder, Locale locale) {
 
@@ -80,6 +84,7 @@ public class PersonManagementController {
 
         model.addAttribute("personForm", new PersonForm());
         model.addAttribute("weekDays", Day.values());
+        model.addAttribute("departments", departmentService.getAllDepartments());
 
         return PersonConstants.PERSON_FORM_JSP;
     }
@@ -103,6 +108,7 @@ public class PersonManagementController {
         if (errors.hasErrors()) {
             model.addAttribute("personForm", personForm);
             model.addAttribute("weekDays", Day.values());
+            model.addAttribute("departments", departmentService.getAllDepartments());
 
             return PersonConstants.PERSON_FORM_JSP;
         }
@@ -145,6 +151,7 @@ public class PersonManagementController {
         model.addAttribute("personForm", personForm);
         model.addAttribute("weekDays", Day.values());
         model.addAttribute("workingTimes", workingTimeService.getByPerson(person));
+        model.addAttribute("departments", departmentService.getAllDepartments());
 
         return PersonConstants.PERSON_FORM_JSP;
     }
@@ -170,6 +177,7 @@ public class PersonManagementController {
             model.addAttribute("personForm", personForm);
             model.addAttribute("weekDays", Day.values());
             model.addAttribute("workingTimes", workingTimeService.getByPerson(personToUpdate.get()));
+            model.addAttribute("departments", departmentService.getAllDepartments());
 
             return PersonConstants.PERSON_FORM_JSP;
         }
