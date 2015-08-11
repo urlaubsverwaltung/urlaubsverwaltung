@@ -141,15 +141,15 @@ Die Anwendung verfügt über **drei** verschiedene Authentifizierungsmöglichkei
     * für lokale Entwicklungsumgebung
 * `ldap`
     * Authentifizierung via LDAP
-    * Es müssen die LDAP URL, die LDAP Base und LDAP User DN Patterns konfiguriert sein, damit eine Authentifizierung via LDAP möglich ist. Die Properties sind unter `src/main/resources/config.properties` zu finden.
+    * Es müssen die LDAP URL, die LDAP Base und LDAP User DN Patterns konfiguriert sein, damit eine Authentifizierung via LDAP möglich ist.
 * `activeDirectory`
     * Authentifizierung via Active Directory
-    * Es müssen die Active Directory Domain und LDAP URL konfiguriert sein, damit eine Authentifizierung via Active Directory möglich ist. Die Properties sind unter `src/main/resources/config.properties` zu finden.
+    * Es müssen die Active Directory Domain und LDAP URL konfiguriert sein, damit eine Authentifizierung via Active Directory möglich ist.
 
 #### Firmenkalender
 
 Ab Version 2.9.0 besteht die Möglichkeit, die Urlaubs- und Krankmeldungstermine mit einem Microsoft Exchange Firmenkalender synchroniseren zu lassen.
-Dazu müssen lediglich die `calendar.ews` Properties, bestehend aus E-Mail-Adresse, Passwort und Name des Kalenders konfiguriert werden.
+Dazu müssen lediglich die entsprechenden Properties, bestehend aus E-Mail-Adresse, Passwort und Name des Kalenders konfiguriert werden.
 Außerdem muss die Anwendung mit dem zusätzlichen Parameter `-Dcalendar=ews` gestartet werden.
 
 <pre>export CATALINA_OPTS="$CATALINA_OPTS -Dcalendar=ews"</pre>
