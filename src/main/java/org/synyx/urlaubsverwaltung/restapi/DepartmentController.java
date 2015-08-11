@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import org.synyx.urlaubsverwaltung.core.department.Department;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -32,8 +32,11 @@ public class DepartmentController {
     @ApiOperation(value = "Get all departments of the application", notes = "Get all departments of the application")
     @RequestMapping(value = ROOT_URL, method = RequestMethod.GET)
     @ModelAttribute("response")
-    public List<Department> persons() {
+    public List<DepartmentResponse> persons() {
 
-        return departmentService.getAllDepartments();
+        return departmentService.getAllDepartments()
+            .stream()
+            .map(department -> new DepartmentResponse(department))
+            .collect(Collectors.toList());
     }
 }
