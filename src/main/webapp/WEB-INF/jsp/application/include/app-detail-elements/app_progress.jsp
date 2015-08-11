@@ -8,7 +8,7 @@
 
 <div class="header">
   <legend>
-    <spring:message code="progress" />
+    <spring:message code="application.progress.title" />
   </legend>
 </div>
 
@@ -42,7 +42,7 @@
                 </c:choose>
 
                 <c:if test="${comment.text != null && not empty comment.text}">
-                    <spring:message code="app.comment"/>
+                    <spring:message code="application.progress.comment"/>
                     <br/>
                     <i><c:out value="${comment.text}"/></i>
                 </c:if>

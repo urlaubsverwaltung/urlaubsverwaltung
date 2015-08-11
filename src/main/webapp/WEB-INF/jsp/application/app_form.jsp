@@ -117,7 +117,7 @@
 
         <div class="form-group">
             <label class="control-label col-md-4">
-                <spring:message code="name"/>
+                <spring:message code="staff"/>
             </label>
             <div class="col-md-7">
                 <select id="person-select" class="form-control" onchange="window.location.href=this.options

@@ -65,13 +65,13 @@ public class SettingsValidatorTest {
 
         Errors mockError = Mockito.mock(Errors.class);
         settingsValidator.validate(settings, mockError);
-        Mockito.verify(mockError).rejectValue("federalState", "error.mandatory.field");
-        Mockito.verify(mockError).rejectValue("daysBeforeEndOfSickPayNotification", "error.mandatory.field");
-        Mockito.verify(mockError).rejectValue("maximumAnnualVacationDays", "error.mandatory.field");
-        Mockito.verify(mockError).rejectValue("maximumMonthsToApplyForLeaveInAdvance", "error.mandatory.field");
-        Mockito.verify(mockError).rejectValue("maximumSickPayDays", "error.mandatory.field");
-        Mockito.verify(mockError).rejectValue("workingDurationForChristmasEve", "error.mandatory.field");
-        Mockito.verify(mockError).rejectValue("workingDurationForNewYearsEve", "error.mandatory.field");
+        Mockito.verify(mockError).rejectValue("federalState", "error.entry.mandatory");
+        Mockito.verify(mockError).rejectValue("daysBeforeEndOfSickPayNotification", "error.entry.mandatory");
+        Mockito.verify(mockError).rejectValue("maximumAnnualVacationDays", "error.entry.mandatory");
+        Mockito.verify(mockError).rejectValue("maximumMonthsToApplyForLeaveInAdvance", "error.entry.mandatory");
+        Mockito.verify(mockError).rejectValue("maximumSickPayDays", "error.entry.mandatory");
+        Mockito.verify(mockError).rejectValue("workingDurationForChristmasEve", "error.entry.mandatory");
+        Mockito.verify(mockError).rejectValue("workingDurationForNewYearsEve", "error.entry.mandatory");
     }
 
 
@@ -86,10 +86,10 @@ public class SettingsValidatorTest {
 
         Errors mockError = Mockito.mock(Errors.class);
         settingsValidator.validate(settings, mockError);
-        Mockito.verify(mockError).rejectValue("daysBeforeEndOfSickPayNotification", "error.entry");
-        Mockito.verify(mockError).rejectValue("maximumAnnualVacationDays", "error.entry");
-        Mockito.verify(mockError).rejectValue("maximumMonthsToApplyForLeaveInAdvance", "error.entry");
-        Mockito.verify(mockError).rejectValue("maximumSickPayDays", "error.entry");
+        Mockito.verify(mockError).rejectValue("daysBeforeEndOfSickPayNotification", "error.entry.invalid");
+        Mockito.verify(mockError).rejectValue("maximumAnnualVacationDays", "error.entry.invalid");
+        Mockito.verify(mockError).rejectValue("maximumMonthsToApplyForLeaveInAdvance", "error.entry.invalid");
+        Mockito.verify(mockError).rejectValue("maximumSickPayDays", "error.entry.invalid");
     }
 
 
@@ -101,7 +101,7 @@ public class SettingsValidatorTest {
 
         Errors mockError = Mockito.mock(Errors.class);
         settingsValidator.validate(settings, mockError);
-        Mockito.verify(mockError).rejectValue("maximumMonthsToApplyForLeaveInAdvance", "error.entry");
+        Mockito.verify(mockError).rejectValue("maximumMonthsToApplyForLeaveInAdvance", "error.entry.invalid");
     }
 
 
@@ -113,7 +113,7 @@ public class SettingsValidatorTest {
 
         Errors mockError = Mockito.mock(Errors.class);
         settingsValidator.validate(settings, mockError);
-        Mockito.verify(mockError).rejectValue("maximumAnnualVacationDays", "error.entry");
+        Mockito.verify(mockError).rejectValue("maximumAnnualVacationDays", "error.entry.invalid");
     }
 
 
@@ -128,10 +128,10 @@ public class SettingsValidatorTest {
 
         Errors mockError = Mockito.mock(Errors.class);
         settingsValidator.validate(settings, mockError);
-        Mockito.verify(mockError).rejectValue("daysBeforeEndOfSickPayNotification", "error.entry");
-        Mockito.verify(mockError).rejectValue("maximumAnnualVacationDays", "error.entry");
-        Mockito.verify(mockError).rejectValue("maximumMonthsToApplyForLeaveInAdvance", "error.entry");
-        Mockito.verify(mockError).rejectValue("maximumSickPayDays", "error.entry");
+        Mockito.verify(mockError).rejectValue("daysBeforeEndOfSickPayNotification", "error.entry.invalid");
+        Mockito.verify(mockError).rejectValue("maximumAnnualVacationDays", "error.entry.invalid");
+        Mockito.verify(mockError).rejectValue("maximumMonthsToApplyForLeaveInAdvance", "error.entry.invalid");
+        Mockito.verify(mockError).rejectValue("maximumSickPayDays", "error.entry.invalid");
     }
 
 
@@ -144,7 +144,7 @@ public class SettingsValidatorTest {
 
         Errors mockError = Mockito.mock(Errors.class);
         settingsValidator.validate(settings, mockError);
-        Mockito.verify(mockError).rejectValue("daysBeforeEndOfSickPayNotification",
-            "settings.daysBeforeEndOfSickPayNotification.error");
+        Mockito.verify(mockError)
+            .rejectValue("daysBeforeEndOfSickPayNotification", "settings.daysBeforeEndOfSickPayNotification.error");
     }
 }

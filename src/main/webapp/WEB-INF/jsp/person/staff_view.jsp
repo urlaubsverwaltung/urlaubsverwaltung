@@ -32,9 +32,9 @@
                 var active;
                 
                 if(path.indexOf("inactive") != -1) {
-                    $('#active-state').html('<spring:message code="table.inactive" /><span class="caret"></span>');
+                    $('#active-state').html('<spring:message code="persons.inactive" /><span class="caret"></span>');
                 } else {
-                    $('#active-state').html('<spring:message code="table.active" /><span class="caret"></span>');
+                    $('#active-state').html('<spring:message code="persons.active" /><span class="caret"></span>');
                 }
 
             });
@@ -65,19 +65,17 @@
                                     <li>
                                         <a href="${URL_PREFIX}/staff">
                                             <i class="fa fa-toggle-on"></i>
-                                            <spring:message code="table.active" />
+                                            <spring:message code="persons.active" />
                                         </a>
                                     </li>
                                     <li>
                                         <a href="${URL_PREFIX}/staff/inactive">
                                             <i class="fa fa-toggle-off"></i>
-                                            <spring:message code="table.inactive" />
+                                            <spring:message code="persons.inactive" />
                                         </a>
                                     </li>
                                 </ul>
                             </div>
-
-                            <spring:message code="for" />
 
                             <uv:year-selector year="${displayYear}" />
 
@@ -96,7 +94,7 @@
 
                         <c:when test="${notexistent == true}">
 
-                            <spring:message code="table.empty" />
+                            <spring:message code="persons.none" />
 
                         </c:when>
 

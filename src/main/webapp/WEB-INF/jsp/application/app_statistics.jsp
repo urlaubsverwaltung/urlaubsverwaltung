@@ -77,8 +77,8 @@
                             <thead class="hidden-xs hidden-sm">
                             <tr>
                                 <th><%-- placeholder to ensure correct number of th --%></th>
-                                <th class="sortable-field"><spring:message code="firstname"/></th>
-                                <th class="sortable-field"><spring:message code="lastname"/></th>
+                                <th class="sortable-field"><spring:message code="person.data.firstName"/></th>
+                                <th class="sortable-field"><spring:message code="person.data.lastName"/></th>
                                 <th class="sortable-field is-centered"><spring:message code="applications.statistics.allowed"/></th>
                                 <th class="sortable-field is-centered"><spring:message code="applications.statistics.waiting"/></th>
                                 <th class="sortable-field is-centered"><spring:message code="applications.statistics.left"/> (<c:out value="${from.year}" />)</th>

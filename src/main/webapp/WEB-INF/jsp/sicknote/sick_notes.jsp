@@ -74,8 +74,8 @@
                     <thead class="hidden-xs hidden-sm">
                     <tr>
                         <th class="hidden-print"></th>
-                        <th class="sortable-field"><spring:message code="firstname"/></th>
-                        <th class="sortable-field"><spring:message code="lastname"/></th>
+                        <th class="sortable-field"><spring:message code="person.data.firstName"/></th>
+                        <th class="sortable-field"><spring:message code="person.data.lastName"/></th>
                         <th class="hidden"><%-- tablesorter placeholder for first name and last name column in xs screen --%></th>
                         <th class="sortable-field"><spring:message code="sicknotes.days.number"/></th>
                         <th class="sortable-field"><spring:message code="sicknotes.child.days.number"/></th>

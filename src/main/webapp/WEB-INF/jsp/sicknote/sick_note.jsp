@@ -145,7 +145,7 @@
 
                 <div class="header">
                     <legend>
-                        <spring:message code="progress" />
+                        <spring:message code="sicknote.progress.title" />
                         <sec:authorize access="hasRole('OFFICE')">
                           <a href="#" class="fa-action pull-right" onclick="$('div#comment-form').show();"
                              data-title="<spring:message code="sicknotes.comment.new" />">

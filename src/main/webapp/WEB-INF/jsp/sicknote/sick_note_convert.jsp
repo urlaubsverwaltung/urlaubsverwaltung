@@ -44,7 +44,7 @@
 
                     <div class="form-group">
                         <label class="control-label col-md-4">
-                            <spring:message code="vac.type" />
+                            <spring:message code="app.type" />
                             <br />
                             <span class="help-inline"><form:errors path="vacationType" cssClass="error"/></span>
                         </label>

@@ -39,7 +39,7 @@ public class SickNoteConvertFormValidatorTest {
 
         validator.validate(convertForm, errors);
 
-        Mockito.verify(errors).rejectValue("reason", "error.mandatory.field");
+        Mockito.verify(errors).rejectValue("reason", "error.entry.mandatory");
     }
 
 
@@ -52,7 +52,7 @@ public class SickNoteConvertFormValidatorTest {
 
         validator.validate(convertForm, errors);
 
-        Mockito.verify(errors).rejectValue("reason", "error.mandatory.field");
+        Mockito.verify(errors).rejectValue("reason", "error.entry.mandatory");
     }
 
 
@@ -68,6 +68,6 @@ public class SickNoteConvertFormValidatorTest {
 
         validator.validate(convertForm, errors);
 
-        Mockito.verify(errors).rejectValue("reason", "error.length");
+        Mockito.verify(errors).rejectValue("reason", "error.entry.tooManyChars");
     }
 }

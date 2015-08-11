@@ -18,8 +18,8 @@ import org.synyx.urlaubsverwaltung.web.sicknote.SickNoteConvertForm;
 @Component
 public class SickNoteConvertFormValidator implements Validator {
 
-    private static final String ERROR_MANDATORY_FIELD = "error.mandatory.field";
-    private static final String ERROR_LENGTH = "error.length";
+    private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
+    private static final String ERROR_LENGTH = "error.entry.tooManyChars";
 
     private static final int MAX_CHARS = 200;
 

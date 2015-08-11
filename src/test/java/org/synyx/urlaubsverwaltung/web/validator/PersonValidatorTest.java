@@ -79,7 +79,7 @@ public class PersonValidatorTest {
     public void ensureNameMustNotBeNull() {
 
         validator.validateName(null, "nameField", errors);
-        Mockito.verify(errors).rejectValue("nameField", "error.mandatory.field");
+        Mockito.verify(errors).rejectValue("nameField", "error.entry.mandatory");
     }
 
 
@@ -87,7 +87,7 @@ public class PersonValidatorTest {
     public void ensureNameMustNotBeEmpty() {
 
         validator.validateName("", "nameField", errors);
-        Mockito.verify(errors).rejectValue("nameField", "error.mandatory.field");
+        Mockito.verify(errors).rejectValue("nameField", "error.entry.mandatory");
     }
 
 
@@ -96,7 +96,7 @@ public class PersonValidatorTest {
 
         validator.validateName("AAAAAAAAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "nameField",
             errors);
-        Mockito.verify(errors).rejectValue("nameField", "error.length");
+        Mockito.verify(errors).rejectValue("nameField", "error.entry.tooManyChars");
     }
 
 
@@ -114,7 +114,7 @@ public class PersonValidatorTest {
     public void ensureEmailMustNotBeNull() {
 
         validator.validateEmail(null, errors);
-        Mockito.verify(errors).rejectValue("email", "error.mandatory.field");
+        Mockito.verify(errors).rejectValue("email", "error.entry.mandatory");
     }
 
 
@@ -122,7 +122,7 @@ public class PersonValidatorTest {
     public void ensureEmailMustNotBeEmpty() {
 
         validator.validateEmail("", errors);
-        Mockito.verify(errors).rejectValue("email", "error.mandatory.field");
+        Mockito.verify(errors).rejectValue("email", "error.entry.mandatory");
     }
 
 
@@ -130,7 +130,7 @@ public class PersonValidatorTest {
     public void ensureEmailWithoutAtIsInvalid() {
 
         validator.validateEmail("fraulyoner(at)verwaltung.de", errors);
-        Mockito.verify(errors).rejectValue("email", "error.email");
+        Mockito.verify(errors).rejectValue("email", "person.form.data.email.error");
     }
 
 
@@ -138,7 +138,7 @@ public class PersonValidatorTest {
     public void ensureEmailWithMoreThanOneAtIsInvalid() {
 
         validator.validateEmail("fraulyoner@verw@ltung.de", errors);
-        Mockito.verify(errors).rejectValue("email", "error.email");
+        Mockito.verify(errors).rejectValue("email", "person.form.data.email.error");
     }
 
 
@@ -146,7 +146,7 @@ public class PersonValidatorTest {
     public void ensureEmailWithAtOnInvalidPlaceIsInvalid() {
 
         validator.validateEmail("@fraulyonerverwaltung.de", errors);
-        Mockito.verify(errors).rejectValue("email", "error.email");
+        Mockito.verify(errors).rejectValue("email", "person.form.data.email.error");
     }
 
 
@@ -154,7 +154,7 @@ public class PersonValidatorTest {
     public void ensureEmailWithInvalidHostNameIsInvalid() {
 
         validator.validateEmail("fraulyoner@verwaltungde", errors);
-        Mockito.verify(errors).rejectValue("email", "error.email");
+        Mockito.verify(errors).rejectValue("email", "person.form.data.email.error");
     }
 
 
@@ -162,7 +162,7 @@ public class PersonValidatorTest {
     public void ensureEmailMustNotBeTooLong() {
 
         validator.validateEmail("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@net.de", errors);
-        Mockito.verify(errors).rejectValue("email", "error.length");
+        Mockito.verify(errors).rejectValue("email", "error.entry.tooManyChars");
     }
 
 
@@ -181,7 +181,7 @@ public class PersonValidatorTest {
 
         form.setAnnualVacationDays(null);
         validator.validateAnnualVacation(form, errors);
-        Mockito.verify(errors).rejectValue("annualVacationDays", "error.mandatory.field");
+        Mockito.verify(errors).rejectValue("annualVacationDays", "error.entry.mandatory");
     }
 
 
@@ -190,7 +190,7 @@ public class PersonValidatorTest {
 
         form.setAnnualVacationDays(new BigDecimal("367"));
         validator.validateAnnualVacation(form, errors);
-        Mockito.verify(errors).rejectValue("annualVacationDays", "error.entry");
+        Mockito.verify(errors).rejectValue("annualVacationDays", "error.entry.invalid");
     }
 
 
@@ -210,7 +210,7 @@ public class PersonValidatorTest {
 
         form.setRemainingVacationDays(null);
         validator.validateRemainingVacationDays(form, errors);
-        Mockito.verify(errors).rejectValue("remainingVacationDays", "error.mandatory.field");
+        Mockito.verify(errors).rejectValue("remainingVacationDays", "error.entry.mandatory");
     }
 
 
@@ -219,7 +219,7 @@ public class PersonValidatorTest {
 
         form.setRemainingVacationDays(new BigDecimal("367"));
         validator.validateRemainingVacationDays(form, errors);
-        Mockito.verify(errors).rejectValue("remainingVacationDays", "error.entry");
+        Mockito.verify(errors).rejectValue("remainingVacationDays", "error.entry.invalid");
     }
 
 
@@ -240,7 +240,7 @@ public class PersonValidatorTest {
 
         form.setRemainingVacationDaysNotExpiring(null);
         validator.validateRemainingVacationDays(form, errors);
-        Mockito.verify(errors).rejectValue("remainingVacationDaysNotExpiring", "error.mandatory.field");
+        Mockito.verify(errors).rejectValue("remainingVacationDaysNotExpiring", "error.entry.mandatory");
     }
 
 
@@ -250,7 +250,7 @@ public class PersonValidatorTest {
         form.setRemainingVacationDays(new BigDecimal("5"));
         form.setRemainingVacationDaysNotExpiring(new BigDecimal("6"));
         validator.validateRemainingVacationDays(form, errors);
-        Mockito.verify(errors).rejectValue("remainingVacationDaysNotExpiring", "error.entry");
+        Mockito.verify(errors).rejectValue("remainingVacationDaysNotExpiring", "error.entry.invalid");
     }
 
 
@@ -261,7 +261,7 @@ public class PersonValidatorTest {
 
         Mockito.when(personService.getPersonByLogin("foo")).thenReturn(Optional.of(new Person()));
         validator.validateLogin("foo", errors);
-        Mockito.verify(errors).rejectValue("loginName", "error.login.unique");
+        Mockito.verify(errors).rejectValue("loginName", "person.form.data.login.error");
     }
 
 
@@ -283,7 +283,7 @@ public class PersonValidatorTest {
 
         validator.validatePeriod(form, errors);
 
-        Mockito.verify(errors).rejectValue("holidaysAccountValidFrom", "error.mandatory.field");
+        Mockito.verify(errors).rejectValue("holidaysAccountValidFrom", "error.entry.mandatory");
     }
 
 
@@ -294,7 +294,7 @@ public class PersonValidatorTest {
 
         validator.validatePeriod(form, errors);
 
-        Mockito.verify(errors).rejectValue("holidaysAccountValidTo", "error.mandatory.field");
+        Mockito.verify(errors).rejectValue("holidaysAccountValidTo", "error.entry.mandatory");
     }
 
 
@@ -308,7 +308,7 @@ public class PersonValidatorTest {
 
         validator.validatePeriod(form, errors);
 
-        Mockito.verify(errors).reject("error.period");
+        Mockito.verify(errors).reject("error.entry.invalidPeriod");
     }
 
 
@@ -322,7 +322,7 @@ public class PersonValidatorTest {
 
         validator.validatePeriod(form, errors);
 
-        Mockito.verify(errors).reject("error.period");
+        Mockito.verify(errors).reject("error.entry.invalidPeriod");
     }
 
 
@@ -336,7 +336,7 @@ public class PersonValidatorTest {
 
         validator.validatePeriod(form, errors);
 
-        Mockito.verify(errors).reject("error.period");
+        Mockito.verify(errors).reject("error.entry.invalidPeriod");
     }
 
 

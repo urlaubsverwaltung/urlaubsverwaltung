@@ -16,8 +16,8 @@ import org.synyx.urlaubsverwaltung.core.settings.Settings;
 @Component
 public class SettingsValidator implements Validator {
 
-    private static final String ERROR_MANDATORY_FIELD = "error.mandatory.field";
-    private static final String ERROR_INVALID_ENTRY = "error.entry";
+    private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
+    private static final String ERROR_INVALID_ENTRY = "error.entry.invalid";
 
     @Override
     public boolean supports(Class<?> clazz) {

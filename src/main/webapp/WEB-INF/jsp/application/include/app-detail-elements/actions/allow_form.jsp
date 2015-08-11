@@ -33,7 +33,7 @@
 
     <div class="form-group">
         <div class="control-label">
-            <b><spring:message code='allow.confirm'/></b>
+            <b><spring:message code='action.allow.confirm'/></b>
         </div>
     </div>
 

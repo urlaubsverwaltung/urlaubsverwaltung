@@ -35,11 +35,11 @@ import java.util.regex.Pattern;
 @Component
 public class PersonValidator implements Validator {
 
-    private static final String ERROR_MANDATORY_FIELD = "error.mandatory.field";
-    private static final String ERROR_ENTRY = "error.entry";
-    private static final String ERROR_EMAIL = "error.email";
-    private static final String ERROR_LENGTH = "error.length";
-    private static final String ERROR_LOGIN_UNIQUE = "error.login.unique";
+    private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
+    private static final String ERROR_ENTRY = "error.entry.invalid";
+    private static final String ERROR_LENGTH = "error.entry.tooManyChars";
+    private static final String ERROR_EMAIL = "person.form.data.email.error";
+    private static final String ERROR_LOGIN_UNIQUE = "person.form.data.login.error";
 
     private static final String LOGIN_NAME = "loginName";
     private static final String FIRST_NAME = "firstName";
@@ -187,7 +187,7 @@ public class PersonValidator implements Validator {
             boolean beginOfPeriodIsAfterEndOfPeriod = holidaysAccountValidFrom.isAfter(holidaysAccountValidTo);
 
             if (periodIsNotWithinOneYear || periodIsOnlyOneDay || beginOfPeriodIsAfterEndOfPeriod) {
-                errors.reject("error.period");
+                errors.reject("error.entry.invalidPeriod");
             }
         }
     }

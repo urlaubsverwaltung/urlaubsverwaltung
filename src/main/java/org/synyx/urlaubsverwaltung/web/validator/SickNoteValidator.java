@@ -26,11 +26,11 @@ import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteComment;
 @Component
 public class SickNoteValidator implements Validator {
 
-    private static final String MANDATORY_FIELD = "error.mandatory.field";
-    private static final String ERROR_PERIOD = "error.period";
-    private static final String ERROR_PERIOD_SICK_NOTE = "error.period.sicknote";
-    private static final String ERROR_LENGTH = "error.length";
-    private static final String ERROR_OVERLAP = "error.overlap";
+    private static final String MANDATORY_FIELD = "error.entry.mandatory";
+    private static final String ERROR_PERIOD = "error.entry.invalidPeriod";
+    private static final String ERROR_LENGTH = "error.entry.tooManyChars";
+    private static final String ERROR_PERIOD_SICK_NOTE = "sicknote.error.aubInvalidPeriod";
+    private static final String ERROR_OVERLAP = "application.error.overlap";
 
     private static final String START_DATE = "startDate";
     private static final String END_DATE = "endDate";

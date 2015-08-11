@@ -88,7 +88,7 @@ public class CommentValidatorTest {
 
         validator.validate(comment, errors);
 
-        Mockito.verify(errors).rejectValue("text", "error.mandatory.field");
+        Mockito.verify(errors).rejectValue("text", "error.entry.mandatory");
     }
 
 
@@ -101,7 +101,7 @@ public class CommentValidatorTest {
 
         validator.validate(comment, errors);
 
-        Mockito.verify(errors).rejectValue("text", "error.mandatory.field");
+        Mockito.verify(errors).rejectValue("text", "error.entry.mandatory");
     }
 
 
@@ -117,6 +117,6 @@ public class CommentValidatorTest {
 
         validator.validate(comment, errors);
 
-        Mockito.verify(errors).rejectValue("text", "error.length");
+        Mockito.verify(errors).rejectValue("text", "error.entry.tooManyChars");
     }
 }

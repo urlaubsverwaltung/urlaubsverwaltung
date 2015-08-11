@@ -38,14 +38,14 @@ public class ApplicationValidator implements Validator {
 
     private static final int MAX_CHARS = 200;
 
-    private static final String ERROR_MANDATORY_FIELD = "error.mandatory.field";
-    private static final String ERROR_PERIOD = "error.period";
-    private static final String ERROR_PAST = "error.period.past";
-    private static final String ERROR_LENGTH = "error.length";
-    private static final String ERROR_TOO_LONG = "error.too.long";
-    private static final String ERROR_ZERO_DAYS = "error.zero.days";
-    private static final String ERROR_OVERLAP = "error.overlap";
-    private static final String ERROR_NOT_ENOUGH_DAYS = "error.not.enough.days";
+    private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
+    private static final String ERROR_LENGTH = "error.entry.tooManyChars";
+    private static final String ERROR_PERIOD = "error.entry.invalidPeriod";
+    private static final String ERROR_PAST = "application.error.tooFarInThePast";
+    private static final String ERROR_TOO_LONG = "application.error.tooFarInTheFuture";
+    private static final String ERROR_ZERO_DAYS = "application.error.zeroDays";
+    private static final String ERROR_OVERLAP = "application.error.overlap";
+    private static final String ERROR_NOT_ENOUGH_DAYS = "application.error.notEnoughVacationDays";
 
     private static final String FIELD_START_DATE = "startDate";
     private static final String FIELD_END_DATE = "endDate";

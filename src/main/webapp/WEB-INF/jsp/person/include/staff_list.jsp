@@ -33,8 +33,8 @@
     <thead class="hidden-xs hidden-sm">
     <tr>
         <th><%-- placeholder to ensure correct number of th --%></th>
-        <th class="sortable-field"><spring:message code="firstname" /></th>
-        <th class="sortable-field"><spring:message code="lastname" /></th>
+        <th class="sortable-field"><spring:message code="person.data.firstName" /></th>
+        <th class="sortable-field"><spring:message code="person.data.lastName" /></th>
         <th class="sortable-field is-centered"><spring:message code='overview.entitlement.per.year' /></th>
         <th class="sortable-field is-centered"><spring:message code='overview.actual.entitlement' /></th>
         <th class="sortable-field is-centered"><spring:message code='overview.remaining.days.last.year' /></th>
