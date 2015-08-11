@@ -75,6 +75,15 @@
           </li>
         </sec:authorize>
 
+        <sec:authorize access="hasAnyRole('BOSS', 'OFFICE')">
+          <li>
+            <a href="${URL_PREFIX}/department">
+              <i class="fa fa-fw fa-group"></i>
+              <spring:message code="nav.department.title"/>
+            </a>
+          </li>
+        </sec:authorize>
+
         <sec:authorize access="hasRole('OFFICE')">
           <li>
             <a href="${URL_PREFIX}/settings">
@@ -89,7 +98,7 @@
             <a href="<spring:url value='/j_spring_security_logout' />">
               <i class="fa fa-fw fa-sign-out"></i> <spring:message code="nav.signout.title"/>
             </a>
-          </li>        
+          </li>
         </sec:authorize>
       </ul>
     </div>

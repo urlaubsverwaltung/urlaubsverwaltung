@@ -23,5 +23,7 @@
     <include file="dbchangelogs/changelog-2.6.3-add-settings-table.xml"/>
     <include file="dbchangelogs/changelog-2.6.4-insert-default-settings.xml"/>
     <include file="dbchangelogs/changelog-2.8.1-add-absence-mapping-table.xml"/>
+    <include file="dbchangelogs/changelog-2.8.2-add-department-table.xml"/>
+
 
 </databaseChangeLog>
