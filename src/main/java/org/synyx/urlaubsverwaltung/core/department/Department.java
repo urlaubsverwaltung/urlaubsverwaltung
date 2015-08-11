@@ -4,6 +4,8 @@ import org.joda.time.DateTime;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
+import org.springframework.util.Assert;
+
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -52,14 +54,19 @@ public class Department extends AbstractPersistable<Integer> {
     }
 
 
-    public Date getLastModification() {
+    public DateTime getLastModification() {
 
-        return lastModification;
+        if (lastModification == null) {
+            return null; // because dateTime creates an DateTime.now() wenn new DateTime(null) is called.
+        } else {
+            return new DateTime(lastModification);
+        }
     }
 
 
     public void setLastModification(DateTime lastModification) {
 
+        Assert.notNull(lastModification);
         this.lastModification = lastModification.toDate();
     }
 
