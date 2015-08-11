@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.core.startup;
 import org.apache.log4j.Logger;
 
 import org.joda.time.DateMidnight;
+import org.joda.time.DateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -14,6 +15,8 @@ import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationInteractionService;
 import org.synyx.urlaubsverwaltung.core.calendar.Day;
 import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
+import org.synyx.urlaubsverwaltung.core.department.Department;
+import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonInteractionService;
@@ -63,6 +66,9 @@ public class TestDataCreationService {
     @Autowired
     private WorkDaysService calendarService;
 
+    @Autowired
+    private DepartmentService departmentService;
+
     private Person user;
     private Person boss;
     private Person office;
@@ -87,9 +93,22 @@ public class TestDataCreationService {
             createTestData(user);
             createTestData(boss);
             createTestData(office);
+
+            createTestDepartments();
         } else {
             LOG.info("No test data will be created.");
         }
+    }
+
+
+    private void createTestDepartments() {
+
+        Department department = new Department();
+        department.setName("Foobar Team");
+        department.setDescription("Foobar Description");
+        department.setLastModification(DateTime.now());
+
+        departmentService.create(department);
     }
 
 
