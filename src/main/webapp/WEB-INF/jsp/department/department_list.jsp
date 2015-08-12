@@ -99,7 +99,7 @@
                                                 </c:choose>
                                             </td>
                                             <td>
-                                                <c:out value="${fn:length(department.members)}"/>
+                                                <c:out value="${fn:length(department.members)}"/> <spring:message code="department.members"/>
                                             </td>
                                             <td><uv:dateTime dateTime="${department.lastModification}"/></td>
                                             <sec:authorize access="hasRole('OFFICE')">
