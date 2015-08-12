@@ -6,9 +6,15 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import org.springframework.util.Assert;
 
-import java.util.Date;
+import org.synyx.urlaubsverwaltung.core.person.Person;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Temporal;
 
@@ -29,6 +35,10 @@ public class Department extends AbstractPersistable<Integer> {
 
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date lastModification;
+
+    @ElementCollection
+    @CollectionTable(name = "DEPARTMENT_PERSON")
+    private List<Person> members = new ArrayList<>();
 
     public String getName() {
 
@@ -75,5 +85,11 @@ public class Department extends AbstractPersistable<Integer> {
     public void setId(Integer id) {
 
         super.setId(id);
+    }
+
+
+    public List<Person> getMembers() {
+
+        return members;
     }
 }

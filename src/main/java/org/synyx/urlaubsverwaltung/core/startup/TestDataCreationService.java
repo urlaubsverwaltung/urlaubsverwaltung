@@ -85,29 +85,33 @@ public class TestDataCreationService {
             office = createTestPerson(OFFICE_USER, "Marlene", "Muster", "mmuster@muster.de", Role.USER, Role.BOSS,
                     Role.OFFICE);
 
-            createTestPerson("hdampf", "Hans", "Dampf", "dampf@foo.bar", Role.USER, Role.OFFICE);
+            Person hans = createTestPerson("hdampf", "Hans", "Dampf", "dampf@foo.bar", Role.USER, Role.OFFICE);
 
-            createTestPerson("horst", "Horst", "Dieter", "hdieter@muster.de", Role.INACTIVE);
+            Person horst = createTestPerson("horst", "Horst", "Dieter", "hdieter@muster.de", Role.INACTIVE);
 
             createTestData(user);
             createTestData(boss);
             createTestData(office);
 
-            createTestDepartment("Admins", "Das sind die, die so Admin Sachen machen");
-            createTestDepartment("Marketing", "Das sind die, die so Marketing Sachen machen");
-            createTestDepartment("Geschäftsführung", "Das sind die, die so Geschäftsführung Sachen machen");
+            createTestDepartment("Admins", "Das sind die, die so Admin Sachen machen",
+                Arrays.asList(horst, hans, user));
+            createTestDepartment("Marketing", "Das sind die, die so Marketing Sachen machen",
+                Arrays.asList(office, user));
+            createTestDepartment("Geschäftsführung", "Das sind die, die so Geschäftsführung Sachen machen",
+                Arrays.asList(boss));
         } else {
             LOG.info("No test data will be created.");
         }
     }
 
 
-    private void createTestDepartment(String name, String description) {
+    private void createTestDepartment(String name, String description, List<Person> members) {
 
         Department department = new Department();
         department.setName(name);
         department.setDescription(description);
         department.setLastModification(DateTime.now());
+        department.getMembers().addAll(members);
 
         departmentService.create(department);
     }

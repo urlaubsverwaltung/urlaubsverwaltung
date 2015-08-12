@@ -16,6 +16,19 @@
             <column name="lastModification" type="date"/>
         </createTable>
 
+        <createTable tableName="DEPARTMENT_PERSON">
+            <column autoIncrement="true" name="id" type="INT(10)">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="Department_id" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="members_id" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+
     </changeSet>
 
 </databaseChangeLog>

@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
+import org.synyx.urlaubsverwaltung.core.person.Person;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -66,5 +68,12 @@ public class DepartmentServiceImpl implements DepartmentService {
     public List<Department> getAllDepartments() {
 
         return departmentDAO.findAll();
+    }
+
+
+    @Override
+    public List<Department> getAllDepartmentsWithMembership(Person person) {
+
+        return departmentDAO.getDepartmentsWithMembership(person.getId());
     }
 }
