@@ -105,21 +105,6 @@
 <div class="person--form-part">
 
     <div class="header col-xs-12">
-        <legend><spring:message code="person.form.departments.title"/></legend>
-    </div>
-
-    <div class="col-md-4 col-md-push-8">
-        <span class="help-block">
-            <i class="fa fa-fw fa-info-circle"></i>
-            <spring:message code="person.form.departments.description"/>
-        </span>
-    </div>
-
-</div>
-
-<div class="person--form-part">
-
-    <div class="header col-xs-12">
         <legend><spring:message code="person.form.permissions.title"/></legend>
     </div>
 

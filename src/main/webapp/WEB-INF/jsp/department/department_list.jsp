@@ -41,30 +41,66 @@
         <c:forEach items="${departments}" var="department" varStatus="loopStatus">
             <tr>
                 <td>
-                    <div class="overflow"
-                         data-toggle="popover"
-                         data-trigger="hover"
-                         data-placement="right"
-                         title="<spring:message code='department.data.description'/>"
-                         data-content="${department.description}">
-                      <c:out value="${department.name}"/>
-                    </div>
+                    <c:choose>
+                        <c:when test="${not empty department.description}" >
+                            <div class="overflow"
+                                 data-toggle="popover"
+                                 data-trigger="hover"
+                                 data-placement="right"
+                                 title="<spring:message code='department.data.description'/>"
+                                 data-content="${department.description}">
+                              <c:out value="${department.name}"/>
+                              <i class="fa fa-fw fa-info-circle"></i>
+                            </div>
+                        </c:when>
+                        <c:otherwise>
+                             <c:out value="${department.name}"/>
+                        </c:otherwise>
+                    </c:choose>
                 </td>
                 <td>
                     <c:out value="${fn:length(department.members)}"/>
                 </td>
                 <td><uv:dateTime dateTime="${department.lastModification}"/></td>
                 <sec:authorize access="hasRole('OFFICE')">
-                <td class="hidden-print hidden-xs">
-                  <a class="fa-action pull-right" href="${URL_PREFIX}/department/${department.id}/edit"
-                      data-title="<spring:message code="action.edit" />">
-                    <i class="fa fa-fw fa-pencil"></i>
-                  </a>
-                  </td>
+                    <td class="hidden-print hidden-xs">
+                        <form:form method="DELETE" action="${URL_PREFIX}/department/1">
+                            <div id="modal-cancel-${department.id}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
+                                            <h4 id="myModalLabel" class="modal-title"><spring:message code="action.department.delete" />?</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <spring:message code="action.department.delete.confirm" arguments="${department.name}" />
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button class="btn btn-danger is-sticky" type="submit"><spring:message code="action.department.delete" /></button>
+                                            <button class="btn btn-default is-sticky" data-dismiss="modal" aria-hidden="true"><spring:message code="action.cancel" /></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form:form>
+
+                        <a class="fa-action negative pull-right"
+                          href="#modal-cancel-${department.id}"
+                          data-toggle="modal"
+                          data-title="<spring:message code='action.department.delete' />">
+                          <i class="fa fa-fw fa-trash"></i>
+                        </a>
+
+                        <a class="fa-action pull-right" href="${URL_PREFIX}/department/${department.id}/edit"
+                            data-title="<spring:message code="action.edit" />">
+                          <i class="fa fa-fw fa-pencil"></i>
+                        </a>
+                    </td>
                 </sec:authorize>
             </tr>
         </c:forEach>
         </tbody>
     </table>
+
   </c:otherwise>
 </c:choose>

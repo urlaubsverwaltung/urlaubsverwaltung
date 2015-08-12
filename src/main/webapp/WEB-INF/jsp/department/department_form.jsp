@@ -99,41 +99,12 @@
         <hr/>
 
         <button class="btn btn-success col-xs-12 col-sm-5 col-md-2" type="submit"><spring:message code="action.save" /></button>
-
-        <c:choose>
-            <c:when test="${department.id != null}">
-                <a href="#modal-cancel" role="button" data-toggle="modal" class="btn btn-danger col-xs-12 col-sm-5 col-md-2">
-                   <spring:message code="action.department.delete" />
-                </a>
-            </c:when>
-        </c:choose>
-
         <a class="btn btn-default col-xs-12 col-sm-5 col-md-2 pull-right" href="${URL_PREFIX}/department"><spring:message code="action.cancel"/></a>
 
     </div>
 </div>
 
 </form:form>
-
-    <form:form method="DELETE" action="${URL_PREFIX}/department/${department.id}">
-        <div id="modal-cancel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
-                        <h4 id="myModalLabel" class="modal-title"><spring:message code="action.department.delete" />?</h4>
-                    </div>
-                    <div class="modal-body">
-                        <spring:message code="action.department.delete.confirm" />
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-danger is-sticky" type="submit"><spring:message code="action.department.delete" /></button>
-                        <button class="btn btn-default is-sticky" data-dismiss="modal" aria-hidden="true"><spring:message code="action.cancel" /></button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </form:form>
 
 </div>
 </div>
