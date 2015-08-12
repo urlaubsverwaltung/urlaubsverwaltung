@@ -11,6 +11,11 @@
 
 .ms-container .ms-selectable li.ms-hover,
 .ms-container .ms-selection li.ms-hover {
-  color: #444;
+  color: #555;
   background-color: #DEEFA4;
+}
+
+.ms-container .ms-selectable li.ms-elem-selectable,
+.ms-container .ms-selection li.ms-elem-selection {
+  padding: 6px 12px;
 }
