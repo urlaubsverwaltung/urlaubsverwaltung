@@ -32,32 +32,20 @@
 
                         <legend>
 
-                           <spring:message code="department.overview.title" />
+                           <spring:message code="departments.title" />
 
                            <uv:print />
 
                             <a href="${URL_PREFIX}/department/new" class="fa-action pull-right"
                                data-title="<spring:message code="action.department.create"/>">
-                              <i class="fa fa-fw fa-plus"></i>
+                              <i class="fa fa-fw fa-plus-circle"></i>
                             </a>
 
                         </legend>
 
                     </div>
 
-                    <c:choose>
-
-                        <c:when test="${notexistent == true}">
-
-                            <spring:message code="table.empty" />
-
-                        </c:when>
-
-                        <c:otherwise>
-                            <%@include file="./department_list.jsp" %>
-                        </c:otherwise>
-
-                    </c:choose>
+                    <%@include file="./department_list.jsp" %>
 
                     </div>
                 </div>

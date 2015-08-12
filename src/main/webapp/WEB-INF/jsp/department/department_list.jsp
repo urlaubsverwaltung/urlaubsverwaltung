@@ -22,15 +22,15 @@
 
 <c:choose>
   <c:when test="${empty departments}">
-    <spring:message code="no.departments"/>
+    <spring:message code="departments.none"/>
   </c:when>
   <c:otherwise>
     <table cellspacing="0" class="list-table sortable tablesorter print--only-landscape">
         <thead class="hidden-xs hidden-sm">
         <tr>
-            <th class="sortable-field"><spring:message code="department.name" /></th>
-            <th class="sortable-field"><spring:message code="department.description" /></th>
-            <th class="sortable-field"><spring:message code='department.lastModification' /></th>
+            <th class="sortable-field"><spring:message code="department.data.name" /></th>
+            <th class="sortable-field"><spring:message code="department.data.description" /></th>
+            <th class="sortable-field"><spring:message code='department.data.lastModification' /></th>
             <sec:authorize access="hasRole('OFFICE')">
                 <th><%-- placeholder to ensure correct number of th --%></th>
             </sec:authorize>
@@ -45,7 +45,7 @@
                          data-toggle="popover"
                          data-trigger="hover"
                          data-placement="right"
-                         title="<spring:message code='department.description'/>"
+                         title="<spring:message code='department.data.description'/>"
                          data-content="${department.description}">
                       ${department.description}
                     </div>

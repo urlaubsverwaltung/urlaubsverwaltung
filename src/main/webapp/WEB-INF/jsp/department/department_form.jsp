@@ -45,16 +45,12 @@
 
     <div class="header">
 
-        <legend>
-            <p>
-                <spring:message code="department.data"/>
-            </p>
-        </legend>
+        <legend><spring:message code="department.data"/></legend>
 
     </div>
 
     <div class="form-group">
-        <label class="control-label col-md-4" for="name"><spring:message code='department.name'/></label>
+        <label class="control-label col-md-4" for="name"><spring:message code='department.data.name'/></label>
 
         <div class="col-md-7">
             <form:input id="name" path="name" class="form-control" cssErrorClass="form-control error" />
@@ -63,7 +59,7 @@
     </div>
 
     <div class="form-group">
-        <label class="control-label col-md-4" for="description"><spring:message code='department.description'/></label>
+        <label class="control-label col-md-4" for="description"><spring:message code='department.data.description'/></label>
 
         <div class="col-md-7">
             <span id="text-description"></span><spring:message code='max.chars'/>
@@ -107,7 +103,7 @@
                         <h4 id="myModalLabel" class="modal-title"><spring:message code="action.department.delete" />?</h4>
                     </div>
                     <div class="modal-body">
-                        <spring:message code="department.modalDialog.delete" />
+                        <spring:message code="action.department.delete.confirm" />
                     </div>
                     <div class="modal-footer">
                         <button class="btn btn-danger is-sticky" type="submit"><spring:message code="action.department.delete" /></button>
