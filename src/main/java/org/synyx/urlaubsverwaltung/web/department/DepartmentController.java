@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import org.synyx.urlaubsverwaltung.core.department.Department;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
@@ -85,7 +86,7 @@ public class DepartmentController {
 
     @RequestMapping(value = "/department", method = RequestMethod.POST)
     public String newDepartment(@ModelAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE) Department department,
-        Errors errors, Model model) {
+        Errors errors, Model model, RedirectAttributes redirectAttributes) {
 
         if (!sessionService.isOffice()) {
             return ControllerConstants.ERROR_JSP;
@@ -106,6 +107,8 @@ public class DepartmentController {
         }
 
         departmentService.create(department);
+
+        redirectAttributes.addFlashAttribute("createdDepartment", department);
 
         return "redirect:/web/department/";
     }
@@ -135,7 +138,8 @@ public class DepartmentController {
 
     @RequestMapping(value = "/department/{departmentId}", method = RequestMethod.PUT)
     public String updateDepartment(@PathVariable("departmentId") Integer departmentId,
-        @ModelAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE) Department department, Errors errors, Model model) {
+        @ModelAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE) Department department, Errors errors, Model model,
+        RedirectAttributes redirectAttributes) {
 
         Optional<Department> departmentToUpdate = departmentService.getDepartmentById(departmentId);
 
@@ -158,18 +162,27 @@ public class DepartmentController {
 
         departmentService.update(department);
 
+        redirectAttributes.addFlashAttribute("updatedDepartment", department);
+
         return "redirect:/web/department/";
     }
 
 
     @RequestMapping(value = "/department/{departmentId}", method = RequestMethod.DELETE)
-    public String deleteDepartment(@PathVariable("departmentId") Integer departmentId) {
+    public String deleteDepartment(@PathVariable("departmentId") Integer departmentId,
+        RedirectAttributes redirectAttributes) {
 
         if (!sessionService.isOffice()) {
             return ControllerConstants.ERROR_JSP;
         }
 
+        Optional<Department> department = departmentService.getDepartmentById(departmentId);
+
         departmentService.delete(departmentId);
+
+        if (department.isPresent()) {
+            redirectAttributes.addFlashAttribute("deletedDepartment", department.get());
+        }
 
         return "redirect:/web/department/";
     }

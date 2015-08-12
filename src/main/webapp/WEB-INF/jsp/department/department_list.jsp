@@ -46,6 +46,26 @@
 
                     </div>
 
+                    <div class="feedback">
+                        <c:choose>
+                            <c:when test="${not empty createdDepartment}">
+                                <div class="alert alert-success">
+                                    <spring:message code="department.action.create.success" arguments="${createdDepartment.name}" />
+                                </div>
+                            </c:when>
+                            <c:when test="${not empty updatedDepartment}">
+                                <div class="alert alert-success">
+                                    <spring:message code="department.action.edit.success" arguments="${updatedDepartment.name}" />
+                                </div>
+                            </c:when>
+                            <c:when test="${not empty deletedDepartment}">
+                                <div class="alert alert-success">
+                                    <spring:message code="department.action.delete.success" arguments="${deletedDepartment.name}" />
+                                </div>
+                            </c:when>
+                        </c:choose>
+                    </div>
+
                     <div class="print-info--only-landscape">
                         <h4><spring:message code="print.info.landscape" /></h4>
                     </div>

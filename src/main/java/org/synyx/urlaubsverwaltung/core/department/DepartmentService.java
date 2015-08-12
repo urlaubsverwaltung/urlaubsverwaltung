@@ -40,9 +40,9 @@ public interface DepartmentService {
     /**
      * Deletes department with given id.
      *
-     * @param  departmenId
+     * @param  departmentId
      */
-    void delete(Integer departmenId);
+    void delete(Integer departmentId);
 
 
     /**
