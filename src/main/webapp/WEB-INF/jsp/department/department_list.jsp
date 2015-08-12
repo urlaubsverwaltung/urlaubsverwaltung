@@ -2,6 +2,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <spring:url var="URL_PREFIX" value="/web" />
 
@@ -29,7 +30,7 @@
         <thead class="hidden-xs hidden-sm">
         <tr>
             <th class="sortable-field"><spring:message code="department.data.name" /></th>
-            <th class="sortable-field"><spring:message code="department.data.description" /></th>
+            <th class="sortable-field"><spring:message code="department.data.countMembers" /></th>
             <th class="sortable-field"><spring:message code='department.data.lastModification' /></th>
             <sec:authorize access="hasRole('OFFICE')">
                 <th><%-- placeholder to ensure correct number of th --%></th>
@@ -39,7 +40,6 @@
         <tbody>
         <c:forEach items="${departments}" var="department" varStatus="loopStatus">
             <tr>
-                <td><c:out value="${department.name}"/></td>
                 <td>
                     <div class="overflow"
                          data-toggle="popover"
@@ -47,8 +47,11 @@
                          data-placement="right"
                          title="<spring:message code='department.data.description'/>"
                          data-content="${department.description}">
-                      ${department.description}
+                      <c:out value="${department.name}"/>
                     </div>
+                </td>
+                <td>
+                    <c:out value="${fn:length(department.members)}"/>
                 </td>
                 <td><uv:dateTime dateTime="${department.lastModification}"/></td>
                 <sec:authorize access="hasRole('OFFICE')">
