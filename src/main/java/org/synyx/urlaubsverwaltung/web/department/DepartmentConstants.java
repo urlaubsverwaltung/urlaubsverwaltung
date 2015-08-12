@@ -8,7 +8,8 @@ package org.synyx.urlaubsverwaltung.web.department;
  */
 public final class DepartmentConstants {
 
-    public static final String DEPARTMENT_JSP = "department/department_view";
+    // JSPs
+    public static final String DEPARTMENT_JSP = "department/department_list";
     public static final String DEPARTMENT_FORM_JSP = "department/department_form";
 
     private DepartmentConstants() {
