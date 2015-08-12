@@ -139,7 +139,7 @@ public class ApplyForLeaveController {
 
         List<Person> persons = personService.getActivePersons()
             .stream()
-            .sorted(personComperator())
+            .sorted(personComparator())
             .collect(Collectors.toList());
 
         Optional<Account> account = accountService.getHolidaysAccount(DateMidnight.now(
@@ -162,7 +162,7 @@ public class ApplyForLeaveController {
     }
 
 
-    private Comparator<Person> personComperator() {
+    private Comparator<Person> personComparator() {
 
         return (p1, p2) -> p1.getNiceName().toLowerCase().compareTo(p2.getNiceName().toLowerCase());
     }
