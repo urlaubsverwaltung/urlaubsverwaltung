@@ -53,7 +53,7 @@
             <spring:message code="person.form.data.description"/>
         </span>
     </div>
-    
+
     <div class="col-md-8 col-md-pull-4">
         <div class="form-group">
             <label class="control-label col-md-3" for="loginName"><spring:message code="person.form.data.login"/></label>
@@ -99,7 +99,7 @@
             </div>
         </div>
     </div>
-    
+
 </div>
 
 <div class="person--form-part">
@@ -113,25 +113,6 @@
             <i class="fa fa-fw fa-info-circle"></i>
             <spring:message code="person.form.departments.description"/>
         </span>
-    </div>
-
-    <div class="col-md-8 col-md-pull-4">
-        <div class="form-group">
-            <label class="control-label col-md-3">
-                <spring:message code="person.form.departments.assigned" />
-            </label>
-            <div class="col-md-9">
-                <c:forEach items="${departments}" var="department">
-                    <div class="checkbox">
-                        <label for="${department.id}">
-                                <%-- TODO: Use form:checkbox here! --%>
-                            <input type="checkbox" value="${department.id}"/>
-                            <c:out value="${department.name}"/>
-                        </label>
-                    </div>
-                </c:forEach>
-            </div>
-        </div>
     </div>
 
 </div>
