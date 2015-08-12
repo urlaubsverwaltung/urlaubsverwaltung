@@ -120,13 +120,15 @@
             <label class="control-label col-md-3">
                 <spring:message code="person.form.departments.assigned" />
             </label>
-            <div class="col-md-8 checkbox">
+            <div class="col-md-9">
                 <c:forEach items="${departments}" var="department">
-                    <label class="checkbox" for="${department.id}">
-                            <%-- TODO: Use form:checkbox here! --%>
-                        <input type="checkbox" value="${department.id}"/>
-                        <c:out value="${department.name}"/>
-                    </label>
+                    <div class="checkbox">
+                        <label for="${department.id}">
+                                <%-- TODO: Use form:checkbox here! --%>
+                            <input type="checkbox" value="${department.id}"/>
+                            <c:out value="${department.name}"/>
+                        </label>
+                    </div>
                 </c:forEach>
             </div>
         </div>
@@ -236,9 +238,9 @@
         <c:if test="${fn:length(workingTimes) > 1}">
 
             <div class="form-group">
-                <label class="control-label col-md-3"><spring:message code='person.form.workingTime.title'/></label>
+                <label class="col-md-3"><spring:message code='person.form.workingTime.title'/></label>
 
-                <div class="controls col-md-8">
+                <div class="col-md-9">
                     <c:forEach items="${workingTimes}" var="time">
                         <spring:message code="person.form.workingTime.validityPeriod" />
                         <uv:date date="${time.validFrom}" />
@@ -286,12 +288,14 @@
             <label class="control-label col-md-3">
                 <spring:message code="person.form.workingTime.weekDays" />
             </label>
-            <div class="col-md-8 checkbox">
+            <div class="col-md-9">
                 <c:forEach items="${weekDays}" var="weekDay">
-                    <label class="checkbox" for="${weekDay}">
-                        <form:checkbox id="${weekDay}" path="workingDays" value="${weekDay.dayOfWeek}" />
-                        <spring:message code='${weekDay}'/>
-                    </label>
+                    <div class="checkbox">
+                        <label for="${weekDay}">
+                            <form:checkbox id="${weekDay}" path="workingDays" value="${weekDay.dayOfWeek}" />
+                            <spring:message code='${weekDay}'/>
+                        </label>
+                    </div>
                 </c:forEach>
             </div>
         </div>
