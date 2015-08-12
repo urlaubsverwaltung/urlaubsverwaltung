@@ -24,8 +24,8 @@ public class DepartmentValidator implements Validator {
     private static final String FIELD_NAME = "name";
     private static final String FIELD_DESCRIPTION = "description";
 
-    private static final String ERROR_REASON = "error.mandatory.field";
-    private static final String ERROR_LENGTH = "error.length";
+    private static final String ERROR_REASON = "error.entry.mandatory";
+    private static final String ERROR_LENGTH = "error.entry.tooManyChars";
 
     @Override
     public boolean supports(Class<?> clazz) {

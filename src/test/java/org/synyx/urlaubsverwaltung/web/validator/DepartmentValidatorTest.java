@@ -43,7 +43,7 @@ public class DepartmentValidatorTest {
     public void ensureNameMustNotBeNull() throws Exception {
 
         sut.validate(new Department(), errors);
-        Mockito.verify(errors).rejectValue("name", "error.mandatory.field");
+        Mockito.verify(errors).rejectValue("name", "error.entry.mandatory");
     }
 
 
@@ -54,18 +54,18 @@ public class DepartmentValidatorTest {
         department.setName("");
 
         sut.validate(department, errors);
-        Mockito.verify(errors).rejectValue("name", "error.mandatory.field");
+        Mockito.verify(errors).rejectValue("name", "error.entry.mandatory");
     }
 
 
     @Test
-    public void ensureNameMustNotBeToLong() throws Exception {
+    public void ensureNameMustNotBeTooLong() throws Exception {
 
         Department department = new Department();
         department.setName("AAAAAAAAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 
         sut.validate(department, errors);
-        Mockito.verify(errors).rejectValue("name", "error.length");
+        Mockito.verify(errors).rejectValue("name", "error.entry.tooManyChars");
     }
 
 
@@ -81,7 +81,7 @@ public class DepartmentValidatorTest {
 
 
     @Test
-    public void ensureDescriptionMustNotBeToLong() throws Exception {
+    public void ensureDescriptionMustNotBeTooLong() throws Exception {
 
         Department department = new Department();
         department.setName("Foobar Department");
@@ -99,7 +99,7 @@ public class DepartmentValidatorTest {
 
         sut.validate(department, errors);
 
-        Mockito.verify(errors).rejectValue("description", "error.length");
+        Mockito.verify(errors).rejectValue("description", "error.entry.tooManyChars");
     }
 
 
