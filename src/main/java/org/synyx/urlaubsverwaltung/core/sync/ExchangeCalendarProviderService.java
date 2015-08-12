@@ -98,7 +98,7 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
     }
 
 
-    private CalendarFolder findOrCreateCalendar(String calendarName) throws Exception {
+    private CalendarFolder findOrCreateCalendar(String calendarName) {
 
         Optional<CalendarFolder> calendarOptional = findCalendar(calendarName);
 
@@ -110,30 +110,42 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
     }
 
 
-    private Optional<CalendarFolder> findCalendar(String calendarName) throws Exception {
+    private Optional<CalendarFolder> findCalendar(String calendarName) {
 
-        FindFoldersResults calendarRoot = exchangeService.findFolders(WellKnownFolderName.Calendar,
-                new FolderView(Integer.MAX_VALUE));
+        try {
+            FindFoldersResults calendarRoot = exchangeService.findFolders(WellKnownFolderName.Calendar,
+                    new FolderView(Integer.MAX_VALUE));
 
-        for (Folder folder : calendarRoot.getFolders()) {
-            if (folder.getDisplayName().equals(calendarName)) {
-                return Optional.of((CalendarFolder) folder);
+            for (Folder folder : calendarRoot.getFolders()) {
+                if (folder.getDisplayName().equals(calendarName)) {
+                    return Optional.of((CalendarFolder) folder);
+                }
             }
+        } catch (Exception ex) {
+            LOG.warn(String.format("No exchange calendar found with name '%s'", calendarName));
+            throw new CalendarNotFoundException(String.format("No calendar found with name '%s'", calendarName), ex);
         }
 
         return Optional.empty();
     }
 
 
-    private CalendarFolder createCalendar(String calendarName) throws Exception {
+    private CalendarFolder createCalendar(String calendarName) {
 
-        CalendarFolder folder = new CalendarFolder(exchangeService);
-        folder.setDisplayName(calendarName);
-        folder.save(WellKnownFolderName.Calendar);
+        try {
+            CalendarFolder folder = new CalendarFolder(exchangeService);
+            folder.setDisplayName(calendarName);
+            folder.save(WellKnownFolderName.Calendar);
 
-        LOG.info(String.format("New calendar folder '%s' created.", folder.getDisplayName()));
+            LOG.info(String.format("New calendar folder '%s' created.", calendarName));
 
-        return CalendarFolder.bind(exchangeService, folder.getId());
+            return CalendarFolder.bind(exchangeService, folder.getId());
+        } catch (Exception ex) {
+            LOG.warn(String.format("An error occurred during creation of exchange calendar with name '%s'",
+                    calendarName));
+            throw new CalendarNotCreatedException(String.format("Exchange calendar '%s' could not be created",
+                    calendarName), ex);
+        }
     }
 
 
@@ -159,9 +171,10 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
 
             appointment.update(ConflictResolutionMode.AutoResolve);
 
-            LOG.info(String.format("Appointment %s has been updated in exchange calendar '%s'.", appointment.getId(),
+            LOG.info(String.format("Appointment %s has been updated in exchange calendar '%s'.", eventId,
                     calendarName));
         } catch (Exception ex) {
+            LOG.warn(String.format("Could not update appointment %s in exchange calendar '%s'", eventId, calendarName));
             mailService.sendCalendarUpdateErrorNotification(calendarName, absence, eventId, ex.getMessage());
         }
     }
@@ -175,9 +188,10 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
 
             appointment.delete(DeleteMode.HardDelete, SendCancellationsMode.SendToAllAndSaveCopy);
 
-            LOG.info(String.format("Appointment %s has been deleted in exchange calendar '%s'.", appointment.getId(),
+            LOG.info(String.format("Appointment %s has been deleted in exchange calendar '%s'.", eventId,
                     calendarName));
         } catch (Exception ex) {
+            LOG.warn(String.format("Could not delete appointment %s in exchange calendar '%s'", eventId, calendarName));
             mailService.sendCalendarDeleteErrorNotification(calendarName, eventId, ex.getMessage());
         }
     }

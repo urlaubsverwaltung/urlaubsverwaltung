@@ -32,8 +32,7 @@ public class UserInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o)
-        throws Exception {
+    public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) {
 
         return true;
     }
@@ -41,7 +40,7 @@ public class UserInterceptor implements HandlerInterceptor {
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
-        ModelAndView modelAndView) throws Exception {
+        ModelAndView modelAndView) {
 
         if (modelAndView != null) {
             Person loggedUser = sessionService.getLoggedUser();
@@ -57,7 +56,7 @@ public class UserInterceptor implements HandlerInterceptor {
 
     @Override
     public void afterCompletion(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
-        Object o, Exception e) throws Exception {
+        Object o, Exception e) {
 
         // OK
     }
