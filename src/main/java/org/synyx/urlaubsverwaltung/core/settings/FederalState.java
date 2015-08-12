@@ -1,5 +1,8 @@
 package org.synyx.urlaubsverwaltung.core.settings;
 
+import java.util.Arrays;
+
+
 /**
  * Enum representing the federal states of Germany. The information about the federal state is needed to check if a day
  * is a public holiday. This is the reason why the enum contains multiple entries for Bayern (there are areas with
@@ -40,6 +43,10 @@ public enum FederalState {
 
     public String[] getCodes() {
 
-        return codes;
+        if (codes == null) {
+            return null;
+        }
+
+        return Arrays.copyOf(codes, codes.length);
     }
 }
