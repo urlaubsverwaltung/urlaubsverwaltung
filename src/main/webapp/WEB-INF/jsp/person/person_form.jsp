@@ -105,6 +105,38 @@
 <div class="person--form-part">
 
     <div class="header col-xs-12">
+        <legend><spring:message code="person.form.departments.title"/></legend>
+    </div>
+
+    <div class="col-md-4 col-md-push-8">
+        <span class="help-block">
+            <i class="fa fa-fw fa-info-circle"></i>
+            <spring:message code="person.form.departments.description"/>
+        </span>
+    </div>
+
+    <div class="col-md-8 col-md-pull-4">
+        <div class="form-group">
+            <label class="control-label col-md-3">
+                <spring:message code="person.form.departments.assigned" />
+            </label>
+            <div class="col-md-8 checkbox">
+                <c:forEach items="${departments}" var="department">
+                    <label class="checkbox" for="${department.id}">
+                            <%-- TODO: Use form:checkbox here! --%>
+                        <input type="checkbox" value="${department.id}"/>
+                        <c:out value="${department.name}"/>
+                    </label>
+                </c:forEach>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="person--form-part">
+
+    <div class="header col-xs-12">
         <legend><spring:message code="person.form.permissions.title"/></legend>
     </div>
 
@@ -190,104 +222,14 @@
 <div class="person--form-part">
 
     <div class="header col-xs-12">
-        <legend>
-            <spring:message code="person.form.annualVacation.title"/>
-            <c:choose>
-                <c:when test="${personForm.id == null}">
-                    <c:out value="${personForm.holidaysAccountYear}" />
-                </c:when>
-                <c:otherwise>
-                    <uv:year-selector year="${personForm.holidaysAccountYear}"/>
-                </c:otherwise>
-            </c:choose>
-        </legend>
-    </div>
-
-    <c:if test="${not empty errors}">
-        <div class="col-xs-12">
-            <div class="alert alert-danger"><form:errors cssClass="error"/></div>
-        </div>
-    </c:if>
-    
-    <form:hidden path="holidaysAccountYear" />
-
-    <div class="col-md-4 col-md-push-8">
-        <span class="help-block">
-            <i class="fa fa-fw fa-info-circle"></i>
-            <spring:message code="person.form.annualVacation.description"/>
-        </span>
-    </div>
-
-    <div class="col-md-8 col-md-pull-4">
-        <div class="form-group">
-            <label for="holidaysAccountValidFrom" class="control-label col-md-3">
-                <spring:message code="person.form.annualVacation.period.start"/>
-            </label>
-
-            <div class="col-md-9">
-                <form:input id="holidaysAccountValidFrom" path="holidaysAccountValidFrom" class="form-control"
-                            cssErrorClass="form-control error" placeholder="dd.MM.yyyy"/>
-                <span class="help-inline"><form:errors path="holidaysAccountValidFrom" cssClass="error"/></span>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label for="holidaysAccountValidTo" class="control-label col-md-3">
-                <spring:message code="person.form.annualVacation.period.end"/>
-            </label>
-
-            <div class="col-md-9">
-                <form:input id="holidaysAccountValidTo" path="holidaysAccountValidTo" class="form-control"
-                            cssErrorClass="form-control error" placeholder="dd.MM.yyyy"/>
-                <span class="help-inline"><form:errors path="holidaysAccountValidTo" cssClass="error"/></span>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="control-label col-md-3" for="annualVacationDays"><spring:message code='person.form.annualVacation.annualVacation'/></label>
-
-            <div class="col-md-9">
-                <form:input path="annualVacationDays" class="form-control" cssErrorClass="form-control error" size="1" id="annualVacationDays"/>
-                <span class="help-inline"><form:errors path="annualVacationDays" cssClass="error"/></span>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="control-label col-md-3" for="remainingVacationDays">
-                <spring:message code="person.form.annualVacation.remainingVacation"/>
-            </label>
-
-            <div class="col-md-9">
-                <form:input path="remainingVacationDays" class="form-control" cssErrorClass="form-control error" size="1" id="remainingVacationDays"/>
-                <span class="help-inline"><form:errors path="remainingVacationDays" cssClass="error"/></span>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="control-label col-md-3">
-                <spring:message code="person.form.annualVacation.remainingVacation.notExpiring"/>
-            </label>
-
-            <div class="col-md-9">
-                <form:input path="remainingVacationDaysNotExpiring" class="form-control" cssErrorClass="form-control error" size="1" id="remainingVacationDaysNotExpiring"/>
-                <span class="help-inline"><form:errors path="remainingVacationDaysNotExpiring" cssClass="error"/></span>
-            </div>
-        </div>
-    </div>
-
-</div>
-
-<div class="person--form-part">
-
-    <div class="header col-xs-12">
         <legend><spring:message code="person.form.workingTime.title"/></legend>
     </div>
 
     <div class="col-md-4 col-md-push-8">
-        <span class="help-block">
-            <i class="fa fa-fw fa-info-circle"></i>
-            <spring:message code="person.form.workingTime.description"/>
-        </span>
+    <span class="help-block">
+        <i class="fa fa-fw fa-info-circle"></i>
+        <spring:message code="person.form.workingTime.description"/>
+    </span>
     </div>
 
     <div class="col-md-8 col-md-pull-4">
@@ -360,29 +302,87 @@
 <div class="person--form-part">
 
     <div class="header col-xs-12">
-        <legend><spring:message code="person.form.departments.title"/></legend>
+        <legend>
+            <spring:message code="person.form.annualVacation.title"/>
+            <c:choose>
+                <c:when test="${personForm.id == null}">
+                    <c:out value="${personForm.holidaysAccountYear}" />
+                </c:when>
+                <c:otherwise>
+                    <uv:year-selector year="${personForm.holidaysAccountYear}"/>
+                </c:otherwise>
+            </c:choose>
+        </legend>
     </div>
 
+    <c:if test="${not empty errors}">
+        <div class="col-xs-12">
+            <div class="alert alert-danger"><form:errors cssClass="error"/></div>
+        </div>
+    </c:if>
+
+    <form:hidden path="holidaysAccountYear" />
+
     <div class="col-md-4 col-md-push-8">
-    <span class="help-block">
-        <i class="fa fa-fw fa-info-circle"></i>
-        <spring:message code="person.form.departments.description"/>
-    </span>
+        <span class="help-block">
+            <i class="fa fa-fw fa-info-circle"></i>
+            <spring:message code="person.form.annualVacation.description"/>
+        </span>
     </div>
 
     <div class="col-md-8 col-md-pull-4">
         <div class="form-group">
-            <label class="control-label col-md-3">
-                <spring:message code="person.form.departments.assigned" />
+            <label for="holidaysAccountValidFrom" class="control-label col-md-3">
+                <spring:message code="person.form.annualVacation.period.start"/>
             </label>
-            <div class="col-md-8 checkbox">
-                <c:forEach items="${departments}" var="department">
-                    <label class="checkbox" for="${department.id}">
-                        <%-- TODO: Use form:checkbox here! --%>
-                        <input type="checkbox" value="${department.id}"/>
-                        <c:out value="${department.name}"/>: <c:out value="${department.description}"/>
-                    </label>
-                </c:forEach>
+
+            <div class="col-md-9">
+                <form:input id="holidaysAccountValidFrom" path="holidaysAccountValidFrom" class="form-control"
+                            cssErrorClass="form-control error" placeholder="dd.MM.yyyy"/>
+                <span class="help-inline"><form:errors path="holidaysAccountValidFrom" cssClass="error"/></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="holidaysAccountValidTo" class="control-label col-md-3">
+                <spring:message code="person.form.annualVacation.period.end"/>
+            </label>
+
+            <div class="col-md-9">
+                <form:input id="holidaysAccountValidTo" path="holidaysAccountValidTo" class="form-control"
+                            cssErrorClass="form-control error" placeholder="dd.MM.yyyy"/>
+                <span class="help-inline"><form:errors path="holidaysAccountValidTo" cssClass="error"/></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3" for="annualVacationDays"><spring:message code='person.form.annualVacation.annualVacation'/></label>
+
+            <div class="col-md-9">
+                <form:input path="annualVacationDays" class="form-control" cssErrorClass="form-control error" size="1" id="annualVacationDays"/>
+                <span class="help-inline"><form:errors path="annualVacationDays" cssClass="error"/></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3" for="remainingVacationDays">
+                <spring:message code="person.form.annualVacation.remainingVacation"/>
+            </label>
+
+            <div class="col-md-9">
+                <form:input path="remainingVacationDays" class="form-control" cssErrorClass="form-control error" size="1" id="remainingVacationDays"/>
+                <span class="help-inline"><form:errors path="remainingVacationDays" cssClass="error"/></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">
+                <spring:message code="person.form.annualVacation.remainingVacation.notExpiring"/>
+            </label>
+
+            <div class="col-md-9">
+                <form:input path="remainingVacationDaysNotExpiring" class="form-control" cssErrorClass="form-control error" size="1" id="remainingVacationDaysNotExpiring"/>
+                <span class="help-inline"><form:errors path="remainingVacationDaysNotExpiring" cssClass="error"/></span>
             </div>
         </div>
     </div>
