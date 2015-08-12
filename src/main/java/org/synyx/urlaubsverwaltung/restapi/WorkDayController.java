@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.restapi;
 
-
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
@@ -26,6 +25,7 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 
 import java.math.BigDecimal;
+
 import java.util.Optional;
 
 
@@ -56,8 +56,7 @@ public class WorkDayController {
      */
     @ApiOperation(
         value = "Calculate the work days for a certain period and person",
-        notes =
-            "Calculate the work days for a certain period and person. The calculation depends on the working time of the person."
+        notes = "The calculation depends on the working time of the person."
     )
     @RequestMapping(value = ROOT_URL, method = RequestMethod.GET)
     @ResponseBody

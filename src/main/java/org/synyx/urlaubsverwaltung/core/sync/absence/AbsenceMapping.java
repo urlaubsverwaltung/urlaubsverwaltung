@@ -27,6 +27,8 @@ public class AbsenceMapping extends AbstractPersistable<Integer> {
     private String eventId;
 
     public AbsenceMapping() {
+
+        /* OK */
     }
 
 

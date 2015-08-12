@@ -69,7 +69,6 @@ public class TestDataCreationService {
     @Autowired
     private DepartmentService departmentService;
 
-    private Person user;
     private Person boss;
     private Person office;
 
@@ -81,7 +80,7 @@ public class TestDataCreationService {
         if (environment.equals(DEV_ENVIRONMENT)) {
             LOG.info("Test data will be created...");
 
-            user = createTestPerson(USER, "Klaus", "Müller", "mueller@muster.de", Role.USER);
+            Person user = createTestPerson(USER, "Klaus", "Müller", "mueller@muster.de", Role.USER);
             boss = createTestPerson(BOSS_USER, "Max", "Mustermann", "maxMuster@muster.de", Role.USER, Role.BOSS);
             office = createTestPerson(OFFICE_USER, "Marlene", "Muster", "mmuster@muster.de", Role.USER, Role.BOSS,
                     Role.OFFICE);
@@ -194,7 +193,9 @@ public class TestDataCreationService {
             application.setVacationType(vacationType);
             application.setHowLong(dayLength);
             application.setReason(
-                "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores");
+                "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt"
+                + "ut labore et dolore magna aliquyam erat, sed diam voluptua."
+                + "At vero eos et accusam et justo duo dolores");
 
             applicationInteractionService.apply(application, person, Optional.of("Ich hätte gerne Urlaub"));
         }
