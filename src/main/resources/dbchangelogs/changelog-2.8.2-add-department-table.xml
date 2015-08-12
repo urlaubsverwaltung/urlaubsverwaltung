@@ -16,7 +16,7 @@
             <column name="lastModification" type="date"/>
         </createTable>
 
-        <createTable tableName="DEPARTMENT_PERSON">
+        <createTable tableName="Department_Person">
             <column autoIncrement="true" name="id" type="INT(10)">
                 <constraints primaryKey="true"/>
             </column>

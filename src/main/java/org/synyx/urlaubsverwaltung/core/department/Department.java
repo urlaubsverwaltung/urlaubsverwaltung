@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -37,7 +36,6 @@ public class Department extends AbstractPersistable<Integer> {
     private Date lastModification;
 
     @ElementCollection
-    @CollectionTable(name = "DEPARTMENT_PERSON")
     private List<Person> members = new ArrayList<>();
 
     public String getName() {
