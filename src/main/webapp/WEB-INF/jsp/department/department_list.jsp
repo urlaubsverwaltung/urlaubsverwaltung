@@ -104,7 +104,7 @@
                                             <td><uv:dateTime dateTime="${department.lastModification}"/></td>
                                             <sec:authorize access="hasRole('OFFICE')">
                                                 <td class="hidden-print hidden-xs">
-                                                    <form:form method="DELETE" action="${URL_PREFIX}/department/1">
+                                                    <form:form method="DELETE" action="${URL_PREFIX}/department/${department.id}">
                                                         <div id="modal-cancel-${department.id}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                                                             <div class="modal-dialog">
                                                                 <div class="modal-content">
