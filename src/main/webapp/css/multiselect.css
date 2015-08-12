@@ -1,0 +1,16 @@
+/**************************************************************************
+
+  CUSTOM OVERRIDES FOR JQUERY MULTISELECT PLUGIN
+
+**************************************************************************/
+
+.ms-container {
+  width: 100%;
+  height: 100%;
+}
+
+.ms-container .ms-selectable li.ms-hover,
+.ms-container .ms-selection li.ms-hover {
+  color: #444;
+  background-color: #DEEFA4;
+}

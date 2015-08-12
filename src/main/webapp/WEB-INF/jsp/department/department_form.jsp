@@ -79,16 +79,9 @@
 
     </div>
 
-   <c:forEach items="${persons}" var="person">
-
-   <div class="checkbox">
-        <label>
-            <form:checkbox path="members" value="${person}" />
-            <c:out value="${person.niceName}"/>
-        </label>
-   </div>
-
-   </c:forEach>
+    <form:select path="members" multiple="multiple" cssClass="multiSelect">
+        <form:options items="${persons}" itemValue="id" itemLabel="niceName" />
+    </form:select>
 
 </div>
 
