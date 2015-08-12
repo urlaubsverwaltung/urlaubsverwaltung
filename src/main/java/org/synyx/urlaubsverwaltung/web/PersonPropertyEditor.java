@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.web;
 
-
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 
 import java.beans.PropertyEditorSupport;
+
 import java.util.Optional;
 
 
@@ -21,6 +21,17 @@ public class PersonPropertyEditor extends PropertyEditorSupport {
 
         this.personService = personService;
     }
+
+    @Override
+    public String getAsText() {
+
+        if (this.getValue() == null) {
+            return "";
+        }
+
+        return ((Person) this.getValue()).getId().toString();
+    }
+
 
     @Override
     public void setAsText(String text) {

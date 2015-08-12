@@ -6,8 +6,10 @@ import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
 
+import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
 
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,11 +17,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import org.synyx.urlaubsverwaltung.core.department.Department;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
+import org.synyx.urlaubsverwaltung.web.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.validator.DepartmentValidator;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 
@@ -36,7 +42,17 @@ public class DepartmentController {
     private SessionService sessionService;
 
     @Autowired
+    private PersonService personService;
+
+    @Autowired
     private DepartmentValidator validator;
+
+    @InitBinder
+    public void initBinder(DataBinder binder, Locale locale) {
+
+        binder.registerCustomEditor(Person.class, new PersonPropertyEditor(personService));
+    }
+
 
     @RequestMapping(value = "/department", method = RequestMethod.GET)
     public String showAllDepartments(Model model) {
@@ -61,6 +77,7 @@ public class DepartmentController {
         }
 
         model.addAttribute("department", new Department());
+        model.addAttribute("persons", personService.getActivePersons());
 
         return DepartmentConstants.DEPARTMENT_FORM_JSP;
     }
@@ -82,6 +99,7 @@ public class DepartmentController {
 
         if (errors.hasErrors()) {
             model.addAttribute("department", department);
+            model.addAttribute("persons", personService.getActivePersons());
 
             return DepartmentConstants.DEPARTMENT_FORM_JSP;
         }
@@ -108,6 +126,7 @@ public class DepartmentController {
         Department department = optionalDepartment.get();
 
         model.addAttribute("department", department);
+        model.addAttribute("persons", personService.getActivePersons());
 
         return DepartmentConstants.DEPARTMENT_FORM_JSP;
     }
@@ -131,6 +150,7 @@ public class DepartmentController {
 
         if (errors.hasErrors()) {
             model.addAttribute("department", department);
+            model.addAttribute("persons", personService.getActivePersons());
 
             return DepartmentConstants.DEPARTMENT_FORM_JSP;
         }

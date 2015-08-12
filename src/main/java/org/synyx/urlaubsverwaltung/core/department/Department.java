@@ -1,5 +1,8 @@
 package org.synyx.urlaubsverwaltung.core.department;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import org.joda.time.DateTime;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
@@ -36,6 +39,7 @@ public class Department extends AbstractPersistable<Integer> {
     private Date lastModification;
 
     @ElementCollection
+    @LazyCollection(LazyCollectionOption.FALSE)
     private List<Person> members = new ArrayList<>();
 
     public String getName() {
@@ -89,5 +93,11 @@ public class Department extends AbstractPersistable<Integer> {
     public List<Person> getMembers() {
 
         return members;
+    }
+
+
+    public void setMembers(List<Person> members) {
+
+        this.members = members;
     }
 }

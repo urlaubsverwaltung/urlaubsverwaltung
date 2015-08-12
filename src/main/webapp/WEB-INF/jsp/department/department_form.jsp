@@ -72,6 +72,27 @@
 
 </div>
 
+<div class="col-xs-12 col-md-6">
+
+    <div class="header">
+
+        <legend><spring:message code="department.members"/></legend>
+
+    </div>
+
+   <c:forEach items="${persons}" var="person">
+
+   <div class="checkbox">
+        <label>
+            <form:checkbox path="members" value="${person}" />
+            <c:out value="${person.niceName}"/>
+        </label>
+   </div>
+
+   </c:forEach>
+
+</div>
+
 <div class="row">
     <div class="col-xs-12">
 
