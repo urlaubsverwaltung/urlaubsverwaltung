@@ -62,7 +62,7 @@
 
         <div class="col-md-7">
             <span id="text-description"></span><spring:message code='max.chars'/>
-            <form:textarea id="description" rows="1" path="description" class="form-control" cssErrorClass="form-control error"
+            <form:textarea id="description" rows="3" path="description" class="form-control" cssErrorClass="form-control error"
                   onkeyup="count(this.value, 'text-description');"
                   onkeydown="maxChars(this,200); count(this.value, 'text-description');"/>
             <form:errors path="description" cssClass="error"/>
