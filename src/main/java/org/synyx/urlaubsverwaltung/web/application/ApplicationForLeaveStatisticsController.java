@@ -88,9 +88,9 @@ public class ApplicationForLeaveStatisticsController {
             // NOTE: Not supported at the moment
             if (fromDate.getYear() != toDate.getYear()) {
                 model.addAttribute("filterRequest", new FilterRequest());
-                model.addAttribute("errors", "INVALID_PERIOD");
+                model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, "INVALID_PERIOD");
 
-                return ControllerConstants.APPLICATIONS_URL + "/app_statistics";
+                return "application" + "/app_statistics";
             }
 
             List<ApplicationForLeaveStatistics> statistics = new ArrayList<>();
@@ -104,7 +104,7 @@ public class ApplicationForLeaveStatisticsController {
             model.addAttribute("statistics", statistics);
             model.addAttribute("filterRequest", new FilterRequest());
 
-            return ControllerConstants.APPLICATIONS_URL + "/app_statistics";
+            return "application" + "/app_statistics";
         }
 
         return ControllerConstants.ERROR_JSP;

@@ -82,7 +82,8 @@ public class PersonOverviewController {
     private SickNoteService sickNoteService;
 
     @RequestMapping(value = "/overview", method = RequestMethod.GET)
-    public String showOverview(@RequestParam(value = ControllerConstants.YEAR, required = false) String year) {
+    public String showOverview(
+        @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) String year) {
 
         if (sessionService.isInactive()) {
             return ControllerConstants.ERROR_JSP;
@@ -100,7 +101,7 @@ public class PersonOverviewController {
 
     @RequestMapping(value = "/staff/{personId}/overview", method = RequestMethod.GET)
     public String showOverview(@PathVariable("personId") Integer personId,
-        @RequestParam(value = ControllerConstants.YEAR, required = false) String year, Model model) {
+        @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) String year, Model model) {
 
         java.util.Optional<Person> optionalPerson = personService.getPersonByID(personId);
 
@@ -117,15 +118,14 @@ public class PersonOverviewController {
             return ControllerConstants.ERROR_JSP;
         }
 
-        model.addAttribute("person", person);
-
+        model.addAttribute(PersonConstants.PERSON_ATTRIBUTE, person);
 
         Integer yearToShow = parseYearParameter(year);
         prepareApplications(person, yearToShow, model);
         prepareHolidayAccounts(person, yearToShow, model);
         prepareSickNoteList(person, yearToShow, model);
 
-        model.addAttribute(ControllerConstants.YEAR, DateMidnight.now().getYear());
+        model.addAttribute(ControllerConstants.YEAR_ATTRIBUTE, DateMidnight.now().getYear());
 
         return "person/overview";
     }
@@ -160,15 +160,16 @@ public class PersonOverviewController {
         List<SickNote> sickNotes = sickNoteService.getByPersonAndPeriod(person, DateUtil.getFirstDayOfYear(year),
                 DateUtil.getLastDayOfYear(year));
 
-        List<ExtendedSickNote> extendedSickNotes = FluentIterable.from(sickNotes).transform(
-                new Function<SickNote, ExtendedSickNote>() {
+        List<ExtendedSickNote> extendedSickNotes = FluentIterable.from(sickNotes)
+            .transform(new Function<SickNote, ExtendedSickNote>() {
 
-                    @Override
-                    public ExtendedSickNote apply(SickNote input) {
+                        @Override
+                        public ExtendedSickNote apply(SickNote input) {
 
-                        return new ExtendedSickNote(input, calendarService);
-                    }
-                }).toSortedList(new Comparator<ExtendedSickNote>() {
+                            return new ExtendedSickNote(input, calendarService);
+                        }
+                    })
+            .toSortedList(new Comparator<ExtendedSickNote>() {
 
                     @Override
                     public int compare(ExtendedSickNote o1, ExtendedSickNote o2) {
@@ -221,26 +222,29 @@ public class PersonOverviewController {
 
         // get the person's applications for the given year
         List<Application> applications = FluentIterable.from(
-                applicationService.getApplicationsForACertainPeriodAndPerson(DateUtil.getFirstDayOfYear(year),
-                    DateUtil.getLastDayOfYear(year), person)).filter(new Predicate<Application>() {
-
-                    @Override
-                    public boolean apply(Application input) {
-
-                        return !input.hasStatus(ApplicationStatus.REVOKED);
-                    }
-                }).toList();
-
-        if (!applications.isEmpty()) {
-            ImmutableList<ApplicationForLeave> applicationsForLeave = FluentIterable.from(applications).transform(
-                    new Function<Application, ApplicationForLeave>() {
+                    applicationService.getApplicationsForACertainPeriodAndPerson(DateUtil.getFirstDayOfYear(year),
+                        DateUtil.getLastDayOfYear(year), person))
+            .filter(new Predicate<Application>() {
 
                         @Override
-                        public ApplicationForLeave apply(Application input) {
+                        public boolean apply(Application input) {
 
-                            return new ApplicationForLeave(input, calendarService);
+                            return !input.hasStatus(ApplicationStatus.REVOKED);
                         }
-                    }).toSortedList(new Comparator<ApplicationForLeave>() {
+                    })
+            .toList();
+
+        if (!applications.isEmpty()) {
+            ImmutableList<ApplicationForLeave> applicationsForLeave = FluentIterable.from(applications)
+                .transform(new Function<Application, ApplicationForLeave>() {
+
+                            @Override
+                            public ApplicationForLeave apply(Application input) {
+
+                                return new ApplicationForLeave(input, calendarService);
+                            }
+                        })
+                .toSortedList(new Comparator<ApplicationForLeave>() {
 
                         @Override
                         public int compare(ApplicationForLeave o1, ApplicationForLeave o2) {
@@ -266,7 +270,7 @@ public class PersonOverviewController {
         if (account.isPresent()) {
             model.addAttribute("vacationDaysLeft", vacationDaysService.getVacationDaysLeft(account.get()));
             model.addAttribute("account", account.get());
-            model.addAttribute(PersonConstants.BEFORE_APRIL, DateUtil.isBeforeApril(DateMidnight.now()));
+            model.addAttribute(PersonConstants.BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(DateMidnight.now()));
         }
     }
 }

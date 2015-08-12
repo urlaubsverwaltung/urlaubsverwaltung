@@ -57,9 +57,9 @@ public class ApplicationForLeaveController {
             model.addAttribute("filterRequest", new FilterRequest());
 
             Map<Application, String> gravatarUrls = getAllRelevantGravatarUrls(applicationsForLeave);
-            model.addAttribute(PersonConstants.GRAVATAR_URLS, gravatarUrls);
+            model.addAttribute(PersonConstants.GRAVATAR_URLS_ATTRIBUTE, gravatarUrls);
 
-            return ControllerConstants.APPLICATIONS_URL + "/app_list";
+            return "application" + "/app_list";
         } else {
             return ControllerConstants.ERROR_JSP;
         }
@@ -70,10 +70,9 @@ public class ApplicationForLeaveController {
 
         List<Application> applications = applicationService.getApplicationsForACertainState(ApplicationStatus.WAITING);
 
-        return applications.stream().
-                map(application -> new ApplicationForLeave(application, calendarService)).
-                collect(Collectors.toList());
-
+        return applications.stream()
+            .map(application -> new ApplicationForLeave(application, calendarService))
+            .collect(Collectors.toList());
     }
 
 

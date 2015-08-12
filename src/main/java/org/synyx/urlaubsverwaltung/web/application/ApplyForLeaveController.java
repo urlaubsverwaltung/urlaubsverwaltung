@@ -131,34 +131,39 @@ public class ApplyForLeaveController {
             model.addAttribute("appliesOnOnesBehalf", false);
         }
 
-        return ControllerConstants.APPLICATIONS_URL + "/app_form";
+        return "application" + "/app_form";
     }
 
 
     private void prepareApplicationForLeaveForm(Person person, ApplicationForLeaveForm appForm, Model model) {
 
-        List<Person> persons = personService.getActivePersons().stream().
-                sorted(personComperator()).
-                collect(Collectors.toList());
+        List<Person> persons = personService.getActivePersons()
+            .stream()
+            .sorted(personComperator())
+            .collect(Collectors.toList());
 
         Optional<Account> account = accountService.getHolidaysAccount(DateMidnight.now(
-                GregorianChronology.getInstance()).getYear(), person);
+                    GregorianChronology.getInstance())
+                .getYear(), person);
 
         if (account.isPresent()) {
             model.addAttribute("vacationDaysLeft", vacationDaysService.getVacationDaysLeft(account.get()));
-            model.addAttribute(PersonConstants.BEFORE_APRIL, DateUtil.isBeforeApril(DateMidnight.now()));
+            model.addAttribute(PersonConstants.BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(DateMidnight.now()));
         }
 
-        model.addAttribute("person", person);
-        model.addAttribute("persons", persons);
+        model.addAttribute(PersonConstants.PERSON_ATTRIBUTE, person);
+        model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, persons);
         model.addAttribute("date", DateMidnight.now(GregorianChronology.getInstance()));
-        model.addAttribute(ControllerConstants.YEAR, DateMidnight.now(GregorianChronology.getInstance()).getYear());
+        model.addAttribute(ControllerConstants.YEAR_ATTRIBUTE,
+            DateMidnight.now(GregorianChronology.getInstance()).getYear());
         model.addAttribute("appForm", appForm);
         model.addAttribute("account", account);
         model.addAttribute("vacTypes", VacationType.values());
     }
 
+
     private Comparator<Person> personComperator() {
+
         return (p1, p2) -> p1.getNiceName().toLowerCase().compareTo(p2.getNiceName().toLowerCase());
     }
 
@@ -189,10 +194,10 @@ public class ApplyForLeaveController {
             prepareApplicationForLeaveForm(personToApplyForLeave, appForm, model);
 
             if (errors.hasGlobalErrors()) {
-                model.addAttribute("errors", errors);
+                model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
             }
 
-            return ControllerConstants.APPLICATIONS_URL + "/app_form";
+            return "application" + "/app_form";
         }
 
         Application application = appForm.generateApplicationForLeave();

@@ -22,10 +22,10 @@ import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.PersonPropertyEditor;
+import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
 import org.synyx.urlaubsverwaltung.web.validator.DepartmentValidator;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 
@@ -48,7 +48,7 @@ public class DepartmentController {
     private DepartmentValidator validator;
 
     @InitBinder
-    public void initBinder(DataBinder binder, Locale locale) {
+    public void initBinder(DataBinder binder) {
 
         binder.registerCustomEditor(Person.class, new PersonPropertyEditor(personService));
     }
@@ -60,7 +60,7 @@ public class DepartmentController {
         if (sessionService.isOffice() || sessionService.isBoss()) {
             List<Department> departments = departmentService.getAllDepartments();
 
-            model.addAttribute("departments", departments);
+            model.addAttribute(DepartmentConstants.DEPARTMENTS_ATTRIBUTE, departments);
 
             return DepartmentConstants.DEPARTMENT_JSP;
         } else {
@@ -76,15 +76,16 @@ public class DepartmentController {
             return ControllerConstants.ERROR_JSP;
         }
 
-        model.addAttribute("department", new Department());
-        model.addAttribute("persons", personService.getActivePersons());
+        model.addAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE, new Department());
+        model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, personService.getActivePersons());
 
         return DepartmentConstants.DEPARTMENT_FORM_JSP;
     }
 
 
     @RequestMapping(value = "/department", method = RequestMethod.POST)
-    public String newDepartment(@ModelAttribute("department") Department department, Errors errors, Model model) {
+    public String newDepartment(@ModelAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE) Department department,
+        Errors errors, Model model) {
 
         if (!sessionService.isOffice()) {
             return ControllerConstants.ERROR_JSP;
@@ -94,12 +95,12 @@ public class DepartmentController {
         validator.validate(department, errors);
 
         if (errors.hasGlobalErrors()) {
-            model.addAttribute("errors", errors);
+            model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
         }
 
         if (errors.hasErrors()) {
-            model.addAttribute("department", department);
-            model.addAttribute("persons", personService.getActivePersons());
+            model.addAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE, department);
+            model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, personService.getActivePersons());
 
             return DepartmentConstants.DEPARTMENT_FORM_JSP;
         }
@@ -125,16 +126,16 @@ public class DepartmentController {
 
         Department department = optionalDepartment.get();
 
-        model.addAttribute("department", department);
-        model.addAttribute("persons", personService.getActivePersons());
+        model.addAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE, department);
+        model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, personService.getActivePersons());
 
         return DepartmentConstants.DEPARTMENT_FORM_JSP;
     }
 
 
     @RequestMapping(value = "/department/{departmentId}", method = RequestMethod.PUT)
-    public String updateDepartement(@PathVariable("departmentId") Integer departmentId,
-        @ModelAttribute("department") Department department, Errors errors, Model model) {
+    public String updateDepartment(@PathVariable("departmentId") Integer departmentId,
+        @ModelAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE) Department department, Errors errors, Model model) {
 
         Optional<Department> departmentToUpdate = departmentService.getDepartmentById(departmentId);
 
@@ -145,12 +146,12 @@ public class DepartmentController {
         validator.validate(department, errors);
 
         if (errors.hasGlobalErrors()) {
-            model.addAttribute("errors", errors);
+            model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
         }
 
         if (errors.hasErrors()) {
-            model.addAttribute("department", department);
-            model.addAttribute("persons", personService.getActivePersons());
+            model.addAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE, department);
+            model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, personService.getActivePersons());
 
             return DepartmentConstants.DEPARTMENT_FORM_JSP;
         }

@@ -27,6 +27,7 @@ import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.FilterRequest;
+import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
 import org.synyx.urlaubsverwaltung.web.util.GravatarUtil;
 
 import java.math.BigDecimal;
@@ -173,7 +174,7 @@ public class SickDaysOverviewController {
         model.addAttribute("childSickDays", childSickDays);
         model.addAttribute("childSickDaysWithAUB", childSickDaysWithAUB);
 
-        model.addAttribute("persons", persons);
+        model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, persons);
         model.addAttribute("gravatars", gravatars);
     }
 }

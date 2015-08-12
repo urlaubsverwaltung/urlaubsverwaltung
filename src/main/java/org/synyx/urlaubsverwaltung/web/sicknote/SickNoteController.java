@@ -116,7 +116,7 @@ public class SickNoteController {
                 }
             }
 
-            model.addAttribute(PersonConstants.GRAVATAR_URLS, gravatarUrls);
+            model.addAttribute(PersonConstants.GRAVATAR_URLS_ATTRIBUTE, gravatarUrls);
 
             return "sicknote/sick_note";
         }
@@ -130,7 +130,7 @@ public class SickNoteController {
 
         if (sessionService.isOffice()) {
             model.addAttribute("sickNote", new SickNote());
-            model.addAttribute("persons", getPersons());
+            model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, getPersons());
             model.addAttribute("sickNoteTypes", SickNoteType.values());
 
             return "sicknote/sick_note_form";
@@ -163,9 +163,9 @@ public class SickNoteController {
             validator.validate(sickNote, errors);
 
             if (errors.hasErrors()) {
-                model.addAttribute("errors", errors);
+                model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
                 model.addAttribute("sickNote", sickNote);
-                model.addAttribute("persons", getPersons());
+                model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, getPersons());
                 model.addAttribute("sickNoteTypes", SickNoteType.values());
 
                 return "sicknote/sick_note_form";
@@ -204,7 +204,7 @@ public class SickNoteController {
             validator.validate(sickNote, errors);
 
             if (errors.hasErrors()) {
-                model.addAttribute("errors", errors);
+                model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
                 model.addAttribute("sickNote", sickNote);
                 model.addAttribute("sickNoteTypes", SickNoteType.values());
 
@@ -230,7 +230,7 @@ public class SickNoteController {
             validator.validateComment(comment, errors);
 
             if (errors.hasErrors()) {
-                redirectAttributes.addFlashAttribute("errors", errors);
+                redirectAttributes.addFlashAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
             } else {
                 sickNoteCommentService.create(sickNote.get(), SickNoteStatus.COMMENTED,
                     Optional.ofNullable(comment.getText()), sessionService.getLoggedUser());
@@ -270,7 +270,7 @@ public class SickNoteController {
             sickNoteConvertFormValidator.validate(sickNoteConvertForm, errors);
 
             if (errors.hasErrors()) {
-                model.addAttribute("errors", errors);
+                model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
                 model.addAttribute("sickNote", new ExtendedSickNote(sickNote.get(), calendarService));
                 model.addAttribute("sickNoteConvertForm", sickNoteConvertForm);
                 model.addAttribute("vacationTypes", VacationType.values());

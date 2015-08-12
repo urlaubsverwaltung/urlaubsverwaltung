@@ -97,7 +97,7 @@ public class PersonManagementController {
         validator.validate(personForm, errors);
 
         if (errors.hasGlobalErrors()) {
-            model.addAttribute("errors", errors);
+            model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
         }
 
         if (errors.hasErrors()) {
@@ -115,7 +115,7 @@ public class PersonManagementController {
 
     @RequestMapping(value = "/staff/{personId}/edit", method = RequestMethod.GET)
     public String editPersonForm(@PathVariable("personId") Integer personId,
-        @RequestParam(value = ControllerConstants.YEAR, required = false) Integer year, Model model) {
+        @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Integer year, Model model) {
 
         if (!sessionService.isOffice()) {
             return ControllerConstants.ERROR_JSP;
@@ -163,7 +163,7 @@ public class PersonManagementController {
         validator.validate(personForm, errors);
 
         if (errors.hasGlobalErrors()) {
-            model.addAttribute("errors", errors);
+            model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
         }
 
         if (errors.hasErrors()) {

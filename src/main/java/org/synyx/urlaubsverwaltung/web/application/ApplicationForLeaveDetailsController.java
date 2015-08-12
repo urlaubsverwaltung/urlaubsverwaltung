@@ -85,7 +85,7 @@ public class ApplicationForLeaveDetailsController {
 
     @RequestMapping(value = "/{applicationId}", method = RequestMethod.GET)
     public String showApplicationDetail(@PathVariable("applicationId") Integer applicationId,
-        @RequestParam(value = ControllerConstants.YEAR, required = false) Integer requestedYear,
+        @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Integer requestedYear,
         @RequestParam(value = "action", required = false) String action,
         @RequestParam(value = "shortcut", required = false) boolean shortcut, Model model) {
 
@@ -101,7 +101,7 @@ public class ApplicationForLeaveDetailsController {
 
             prepareDetailView(application, year, action, shortcut, model);
 
-            return ControllerConstants.APPLICATIONS_URL + "/app_detail";
+            return "application" + "/app_detail";
         }
 
         return ControllerConstants.ERROR_JSP;
@@ -126,7 +126,7 @@ public class ApplicationForLeaveDetailsController {
             }
         }
 
-        model.addAttribute(PersonConstants.GRAVATAR_URLS, gravatarUrls);
+        model.addAttribute(PersonConstants.GRAVATAR_URLS_ATTRIBUTE, gravatarUrls);
 
         if (application.getStatus() == ApplicationStatus.WAITING && sessionService.isBoss()) {
             // get all persons that have the Boss Role
@@ -142,10 +142,10 @@ public class ApplicationForLeaveDetailsController {
         if (account.isPresent()) {
             model.addAttribute("vacationDaysLeft", vacationDaysService.getVacationDaysLeft(account.get()));
             model.addAttribute("account", account.get());
-            model.addAttribute(PersonConstants.BEFORE_APRIL, DateUtil.isBeforeApril(DateMidnight.now()));
+            model.addAttribute(PersonConstants.BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(DateMidnight.now()));
         }
 
-        model.addAttribute(ControllerConstants.YEAR, year);
+        model.addAttribute(ControllerConstants.YEAR_ATTRIBUTE, year);
 
         model.addAttribute("action", action);
         model.addAttribute("shortcut", shortcut);
@@ -169,7 +169,7 @@ public class ApplicationForLeaveDetailsController {
             commentValidator.validate(comment, errors);
 
             if (errors.hasErrors()) {
-                redirectAttributes.addFlashAttribute("errors", errors);
+                redirectAttributes.addFlashAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
 
                 return "redirect:/web/application/" + applicationId + "?action=allow";
             }
@@ -231,7 +231,7 @@ public class ApplicationForLeaveDetailsController {
             commentValidator.validate(comment, errors);
 
             if (errors.hasErrors()) {
-                redirectAttributes.addFlashAttribute("errors", errors);
+                redirectAttributes.addFlashAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
 
                 if (redirectUrl != null) {
                     return "redirect:/web/application/" + applicationId + "?action=reject&shortcut=true";
@@ -290,7 +290,7 @@ public class ApplicationForLeaveDetailsController {
         commentValidator.validate(comment, errors);
 
         if (errors.hasErrors()) {
-            redirectAttributes.addFlashAttribute("errors", errors);
+            redirectAttributes.addFlashAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
 
             return "redirect:/web/application/" + applicationId + "?action=cancel";
         }

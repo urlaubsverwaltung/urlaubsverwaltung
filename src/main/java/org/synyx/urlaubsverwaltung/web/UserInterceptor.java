@@ -9,7 +9,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.security.SessionService;
-import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
 import org.synyx.urlaubsverwaltung.web.util.GravatarUtil;
 
 import javax.servlet.http.HttpServletRequest;
@@ -48,7 +47,7 @@ public class UserInterceptor implements HandlerInterceptor {
 
             ModelMap modelMap = modelAndView.getModelMap();
 
-            modelMap.addAttribute(PersonConstants.LOGGED_USER, loggedUser);
+            modelMap.addAttribute("loggedUser", loggedUser);
             modelMap.addAttribute("gravatar", gravatar);
         }
     }

@@ -68,7 +68,7 @@ public class PersonController {
 
             if (persons.isEmpty()) {
                 model.addAttribute("notexistent", true);
-                model.addAttribute(ControllerConstants.YEAR, DateMidnight.now().getYear());
+                model.addAttribute(ControllerConstants.YEAR_ATTRIBUTE, DateMidnight.now().getYear());
             } else {
                 prepareStaffView(persons, DateMidnight.now().getYear(), model);
             }
@@ -109,15 +109,15 @@ public class PersonController {
      *
      * @return
      */
-    @RequestMapping(value = INACTIVE_LINK, params = ControllerConstants.YEAR, method = RequestMethod.GET)
-    public String showInactiveStaffByYear(@RequestParam(ControllerConstants.YEAR) int year, Model model) {
+    @RequestMapping(value = INACTIVE_LINK, params = ControllerConstants.YEAR_ATTRIBUTE, method = RequestMethod.GET)
+    public String showInactiveStaffByYear(@RequestParam(ControllerConstants.YEAR_ATTRIBUTE) int year, Model model) {
 
         if (sessionService.isOffice() || sessionService.isBoss()) {
             List<Person> persons = personService.getInactivePersons();
 
             if (persons.isEmpty()) {
                 model.addAttribute("notexistent", true);
-                model.addAttribute(ControllerConstants.YEAR, DateMidnight.now().getYear());
+                model.addAttribute(ControllerConstants.YEAR_ATTRIBUTE, DateMidnight.now().getYear());
             } else {
                 prepareStaffView(persons, year, model);
             }
@@ -137,8 +137,8 @@ public class PersonController {
      *
      * @return
      */
-    @RequestMapping(value = ACTIVE_LINK, params = ControllerConstants.YEAR, method = RequestMethod.GET)
-    public String showActiveStaffByYear(@RequestParam(ControllerConstants.YEAR) int year, Model model) {
+    @RequestMapping(value = ACTIVE_LINK, params = ControllerConstants.YEAR_ATTRIBUTE, method = RequestMethod.GET)
+    public String showActiveStaffByYear(@RequestParam(ControllerConstants.YEAR_ATTRIBUTE) int year, Model model) {
 
         if (sessionService.isOffice() || sessionService.isBoss()) {
             List<Person> persons = personService.getActivePersons();
@@ -175,12 +175,12 @@ public class PersonController {
             }
         }
 
-        model.addAttribute("persons", persons);
-        model.addAttribute(PersonConstants.GRAVATAR_URLS, gravatarUrls);
+        model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, persons);
+        model.addAttribute(PersonConstants.GRAVATAR_URLS_ATTRIBUTE, gravatarUrls);
         model.addAttribute("accounts", accounts);
         model.addAttribute("vacationDaysLeftMap", vacationDaysLeftMap);
-        model.addAttribute(PersonConstants.BEFORE_APRIL, DateUtil.isBeforeApril(DateMidnight.now()));
-        model.addAttribute(ControllerConstants.YEAR, DateMidnight.now().getYear());
+        model.addAttribute(PersonConstants.BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(DateMidnight.now()));
+        model.addAttribute(ControllerConstants.YEAR_ATTRIBUTE, DateMidnight.now().getYear());
         model.addAttribute("now", DateMidnight.now());
     }
 }

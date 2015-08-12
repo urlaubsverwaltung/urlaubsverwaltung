@@ -8,13 +8,15 @@ package org.synyx.urlaubsverwaltung.web.person;
  */
 public final class PersonConstants {
 
+    // JPSs
     public static final String STAFF_JSP = "person/staff_view";
     public static final String PERSON_FORM_JSP = "person/person_form";
 
-    // attribute names
-    public static final String LOGGED_USER = "loggedUser";
-    public static final String BEFORE_APRIL = "beforeApril";
-    public static final String GRAVATAR_URLS = "gravatarUrls";
+    // Attributes
+    public static final String PERSONS_ATTRIBUTE = "persons";
+    public static final String PERSON_ATTRIBUTE = "person";
+    public static final String BEFORE_APRIL_ATTRIBUTE = "beforeApril";
+    public static final String GRAVATAR_URLS_ATTRIBUTE = "gravatarUrls";
 
     private PersonConstants() {
 
