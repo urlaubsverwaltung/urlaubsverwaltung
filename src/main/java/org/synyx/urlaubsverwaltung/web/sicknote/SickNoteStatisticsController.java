@@ -33,12 +33,11 @@ public class SickNoteStatisticsController {
     private SickNoteStatisticsService statisticsService;
 
     @RequestMapping(value = "/sicknote/statistics", method = RequestMethod.GET)
-    public String sickNotesStatistics(@RequestParam(value = "year", required = false) Integer year, Model model) {
+    public String sickNotesStatistics(@RequestParam(value = "year", required = false) Integer requestedYear,
+        Model model) {
 
         if (sessionService.isOffice()) {
-            if (year == null) {
-                year = DateMidnight.now().getYear();
-            }
+            Integer year = requestedYear == null ? DateMidnight.now().getYear() : requestedYear;
 
             SickNoteStatistics statistics = statisticsService.createStatistics(year);
 

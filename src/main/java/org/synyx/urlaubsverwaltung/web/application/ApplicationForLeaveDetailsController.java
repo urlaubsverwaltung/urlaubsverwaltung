@@ -85,7 +85,7 @@ public class ApplicationForLeaveDetailsController {
 
     @RequestMapping(value = "/{applicationId}", method = RequestMethod.GET)
     public String showApplicationDetail(@PathVariable("applicationId") Integer applicationId,
-        @RequestParam(value = ControllerConstants.YEAR, required = false) Integer year,
+        @RequestParam(value = ControllerConstants.YEAR, required = false) Integer requestedYear,
         @RequestParam(value = "action", required = false) String action,
         @RequestParam(value = "shortcut", required = false) boolean shortcut, Model model) {
 
@@ -97,9 +97,7 @@ public class ApplicationForLeaveDetailsController {
                 || (sessionService.isBoss() || sessionService.isOffice())) {
             Application application = applicationOptional.get();
 
-            if (year == null) {
-                year = application.getEndDate().getYear();
-            }
+            Integer year = requestedYear == null ? application.getEndDate().getYear() : requestedYear;
 
             prepareDetailView(application, year, action, shortcut, model);
 
