@@ -80,7 +80,7 @@ public class FilterRequestTest {
     }
 
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsIfTryingToGetStartDateAndNoPeriodIsSet() {
 
         FilterRequest filterRequest = new FilterRequest();
@@ -89,7 +89,7 @@ public class FilterRequestTest {
     }
 
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsIfTryingToGetEndDateAndNoPeriodIsSet() {
 
         FilterRequest filterRequest = new FilterRequest();

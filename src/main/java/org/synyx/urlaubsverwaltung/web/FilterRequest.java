@@ -3,6 +3,8 @@ package org.synyx.urlaubsverwaltung.web;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
 
+import org.springframework.util.Assert;
+
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 
 
@@ -47,14 +49,19 @@ public class FilterRequest {
 
     public DateMidnight getStartDate() {
 
+        Assert.notNull(period, "Period must be set!");
+
         int currentYear = DateMidnight.now().getYear();
 
-        if (Period.YEAR.equals(period)) {
-            return DateUtil.getFirstDayOfYear(currentYear);
-        } else if (Period.MONTH.equals(period)) {
-            return DateUtil.getFirstDayOfMonth(currentYear, DateMidnight.now().getMonthOfYear());
-        } else if (Period.QUARTER.equals(period)) {
-            return getStartDateOfQuarter(DateMidnight.now());
+        switch (period) {
+            case YEAR:
+                return DateUtil.getFirstDayOfYear(currentYear);
+
+            case MONTH:
+                return DateUtil.getFirstDayOfMonth(currentYear, DateMidnight.now().getMonthOfYear());
+
+            case QUARTER:
+                return getStartDateOfQuarter(DateMidnight.now());
         }
 
         throw new IllegalStateException("Filter request has no valid period!");
@@ -63,14 +70,19 @@ public class FilterRequest {
 
     public DateMidnight getEndDate() {
 
+        Assert.notNull(period, "Period must be set!");
+
         int currentYear = DateMidnight.now().getYear();
 
-        if (Period.YEAR.equals(period)) {
-            return DateUtil.getLastDayOfYear(DateMidnight.now().getYear());
-        } else if (Period.MONTH.equals(period)) {
-            return DateUtil.getLastDayOfMonth(currentYear, DateMidnight.now().getMonthOfYear());
-        } else if (Period.QUARTER.equals(period)) {
-            return getEndDateOfQuarter(DateMidnight.now());
+        switch (period) {
+            case YEAR:
+                return DateUtil.getLastDayOfYear(DateMidnight.now().getYear());
+
+            case MONTH:
+                return DateUtil.getLastDayOfMonth(currentYear, DateMidnight.now().getMonthOfYear());
+
+            case QUARTER:
+                return getEndDateOfQuarter(DateMidnight.now());
         }
 
         throw new IllegalStateException("Filter request has no valid period!");

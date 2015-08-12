@@ -33,14 +33,33 @@ public class SettingsValidator implements Validator {
 
         Settings settings = (Settings) o;
 
-        Integer maximumAnnualVacationDays = settings.getMaximumAnnualVacationDays();
-        Integer maximumMonthsToApplyForLeaveInAdvance = settings.getMaximumMonthsToApplyForLeaveInAdvance();
-        Integer maximumSickPayDays = settings.getMaximumSickPayDays();
-        Integer daysBeforeEndOfSickPayNotification = settings.getDaysBeforeEndOfSickPayNotification();
+        validatePublicHolidaysSettings(settings, errors);
+
+        validateVacationSettings(settings, errors);
+
+        validateSickNoteSettings(settings, errors);
+    }
+
+
+    private void validatePublicHolidaysSettings(Settings settings, Errors errors) {
 
         if (settings.getFederalState() == null) {
             errors.rejectValue("federalState", ERROR_MANDATORY_FIELD);
         }
+
+        if (settings.getWorkingDurationForChristmasEve() == null) {
+            errors.rejectValue("workingDurationForChristmasEve", ERROR_MANDATORY_FIELD);
+        }
+
+        if (settings.getWorkingDurationForNewYearsEve() == null) {
+            errors.rejectValue("workingDurationForNewYearsEve", ERROR_MANDATORY_FIELD);
+        }
+    }
+
+
+    private void validateVacationSettings(Settings settings, Errors errors) {
+
+        Integer maximumAnnualVacationDays = settings.getMaximumAnnualVacationDays();
 
         if (maximumAnnualVacationDays == null) {
             errors.rejectValue("maximumAnnualVacationDays", ERROR_MANDATORY_FIELD);
@@ -48,11 +67,20 @@ public class SettingsValidator implements Validator {
             errors.rejectValue("maximumAnnualVacationDays", ERROR_INVALID_ENTRY);
         }
 
+        Integer maximumMonthsToApplyForLeaveInAdvance = settings.getMaximumMonthsToApplyForLeaveInAdvance();
+
         if (maximumMonthsToApplyForLeaveInAdvance == null) {
             errors.rejectValue("maximumMonthsToApplyForLeaveInAdvance", ERROR_MANDATORY_FIELD);
         } else if (maximumMonthsToApplyForLeaveInAdvance <= 0) {
             errors.rejectValue("maximumMonthsToApplyForLeaveInAdvance", ERROR_INVALID_ENTRY);
         }
+    }
+
+
+    private void validateSickNoteSettings(Settings settings, Errors errors) {
+
+        Integer maximumSickPayDays = settings.getMaximumSickPayDays();
+        Integer daysBeforeEndOfSickPayNotification = settings.getDaysBeforeEndOfSickPayNotification();
 
         if (maximumSickPayDays == null) {
             errors.rejectValue("maximumSickPayDays", ERROR_MANDATORY_FIELD);
@@ -70,14 +98,6 @@ public class SettingsValidator implements Validator {
                 && daysBeforeEndOfSickPayNotification > maximumSickPayDays) {
             errors.rejectValue("daysBeforeEndOfSickPayNotification",
                 "settings.daysBeforeEndOfSickPayNotification.error");
-        }
-
-        if (settings.getWorkingDurationForChristmasEve() == null) {
-            errors.rejectValue("workingDurationForChristmasEve", ERROR_MANDATORY_FIELD);
-        }
-
-        if (settings.getWorkingDurationForNewYearsEve() == null) {
-            errors.rejectValue("workingDurationForNewYearsEve", ERROR_MANDATORY_FIELD);
         }
     }
 }
