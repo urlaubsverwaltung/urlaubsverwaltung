@@ -87,14 +87,13 @@ public class TestDataCreationService {
 
             Person hans = createTestPerson("hdampf", "Hans", "Dampf", "dampf@foo.bar", Role.USER, Role.OFFICE);
 
-            Person horst = createTestPerson("horst", "Horst", "Dieter", "hdieter@muster.de", Role.INACTIVE);
+            createTestPerson("horst", "Horst", "Dieter", "hdieter@muster.de", Role.INACTIVE);
 
             createTestData(user);
             createTestData(boss);
             createTestData(office);
 
-            createTestDepartment("Admins", "Das sind die, die so Admin Sachen machen",
-                Arrays.asList(horst, hans, user));
+            createTestDepartment("Admins", "Das sind die, die so Admin Sachen machen", Arrays.asList(hans, user));
             createTestDepartment("Marketing", "Das sind die, die so Marketing Sachen machen",
                 Arrays.asList(office, user));
             createTestDepartment("Geschäftsführung", "Das sind die, die so Geschäftsführung Sachen machen",
