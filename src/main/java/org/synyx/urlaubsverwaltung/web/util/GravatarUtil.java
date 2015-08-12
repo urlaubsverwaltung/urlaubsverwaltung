@@ -17,9 +17,9 @@ import java.security.NoSuchAlgorithmException;
  */
 public final class GravatarUtil {
 
-    private static final Logger LOG = Logger.getLogger(GravatarUtil.class);
+    static final String BASE_URL = "https://www.gravatar.com/avatar/";
 
-    public static final String BASE_URL = "https://www.gravatar.com/avatar/";
+    private static final Logger LOG = Logger.getLogger(GravatarUtil.class);
 
     private GravatarUtil() {
 

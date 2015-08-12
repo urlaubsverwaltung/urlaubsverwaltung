@@ -45,14 +45,14 @@ import javax.annotation.PostConstruct;
 @Service
 public class TestDataCreationService {
 
-    private static final Logger LOG = Logger.getLogger(TestDataCreationService.class);
+    public static final String USER = "testUser";
+    public static final String BOSS_USER = "testBoss";
+    public static final String OFFICE_USER = "test";
 
     private static final String ENVIRONMENT_PROPERTY = "env";
     private static final String DEV_ENVIRONMENT = "dev";
 
-    public static final String USER = "testUser";
-    public static final String BOSS_USER = "testBoss";
-    public static final String OFFICE_USER = "test";
+    private static final Logger LOG = Logger.getLogger(TestDataCreationService.class);
 
     @Autowired
     private PersonInteractionService personInteractionService;
