@@ -16,7 +16,7 @@ import java.math.BigDecimal;
  */
 public class ApplicationForLeave extends Application {
 
-    private BigDecimal workDays = BigDecimal.ZERO;
+    private final BigDecimal workDays;
 
     public ApplicationForLeave(Application application, WorkDaysService calendarService) {
 

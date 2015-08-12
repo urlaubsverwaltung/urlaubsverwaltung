@@ -17,7 +17,7 @@ import java.math.BigDecimal;
  */
 public class ExtendedSickNote extends SickNote {
 
-    private BigDecimal workDays = BigDecimal.ZERO;
+    private final BigDecimal workDays;
 
     public ExtendedSickNote(SickNote sickNote, WorkDaysService calendarService) {
 

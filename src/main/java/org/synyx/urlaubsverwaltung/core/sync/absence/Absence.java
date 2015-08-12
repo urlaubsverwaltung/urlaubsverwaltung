@@ -22,15 +22,15 @@ import java.util.concurrent.TimeUnit;
  */
 public class Absence {
 
-    private Date startDate;
+    private final Date startDate;
 
-    private Date endDate;
+    private final Date endDate;
 
-    private Person person;
+    private final Person person;
 
-    private EventType eventType;
+    private final EventType eventType;
 
-    private boolean isAllDay = false;
+    private final boolean isAllDay;
 
     public Absence(Application application, AbsenceTimeConfiguration absenceTimeConfiguration) {
 
@@ -49,6 +49,9 @@ public class Absence {
             case WAITING:
                 eventType = EventType.WAITING_APPLICATION;
                 break;
+
+            default:
+                throw new IllegalStateException("Status of application is in an unexpected state.");
         }
 
         this.person = application.getPerson();
@@ -66,11 +69,13 @@ public class Absence {
             case MORNING:
                 this.startDate = new Date(startDateInMilliseconds + absenceTimeConfiguration.getMorningStart());
                 this.endDate = new Date(endDateInMilliseconds + absenceTimeConfiguration.getMorningEnd());
+                this.isAllDay = false;
                 break;
 
             case NOON:
                 this.startDate = new Date(startDateInMilliseconds + absenceTimeConfiguration.getNoonStart());
                 this.endDate = new Date(endDateInMilliseconds + absenceTimeConfiguration.getNoonEnd());
+                this.isAllDay = false;
                 break;
 
             default:

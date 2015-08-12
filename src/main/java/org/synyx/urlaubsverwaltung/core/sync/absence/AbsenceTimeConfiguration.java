@@ -16,10 +16,10 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class AbsenceTimeConfiguration {
 
-    private Integer morningStart;
-    private Integer morningEnd;
-    private Integer noonStart;
-    private Integer noonEnd;
+    private final Integer morningStart;
+    private final Integer morningEnd;
+    private final Integer noonStart;
+    private final Integer noonEnd;
 
     @Autowired
     public AbsenceTimeConfiguration(@Value("${calendar.time.morningStart}") Integer morningStart,
