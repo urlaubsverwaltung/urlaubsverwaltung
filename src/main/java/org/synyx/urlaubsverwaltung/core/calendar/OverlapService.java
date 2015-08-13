@@ -133,7 +133,7 @@ public class OverlapService {
 
             // gaps between the intervals mean that you can apply vacation for this periods
             // this is case (3)
-            if (listOfGaps.size() > 0) {
+            if (!listOfGaps.isEmpty()) {
                 /* (3) The period of the new application is part
                  * of an existent application's period, but for a part of it you could apply new vacation; i.e. user
                  * must be asked if he wants to apply for leave for the not overlapping period of the new

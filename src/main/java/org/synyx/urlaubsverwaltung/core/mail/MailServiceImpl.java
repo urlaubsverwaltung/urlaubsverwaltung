@@ -161,7 +161,7 @@ class MailServiceImpl implements MailService {
         final List<Person> recipientsWithMailAddress = recipients.stream().filter(person ->
                     StringUtils.hasText(person.getEmail())).collect(Collectors.toList());
 
-        if (recipientsWithMailAddress.size() > 0) {
+        if (!recipientsWithMailAddress.isEmpty()) {
             SimpleMailMessage mailMessage = new SimpleMailMessage();
 
             String[] addressTo = new String[recipientsWithMailAddress.size()];
