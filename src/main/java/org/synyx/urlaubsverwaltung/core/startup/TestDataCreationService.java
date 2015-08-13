@@ -45,10 +45,6 @@ import javax.annotation.PostConstruct;
 @Service
 public class TestDataCreationService {
 
-    public static final String USER = "testUser";
-    public static final String BOSS_USER = "testBoss";
-    public static final String OFFICE_USER = "test";
-
     private static final String ENVIRONMENT_PROPERTY = "env";
     private static final String DEV_ENVIRONMENT = "dev";
 
@@ -80,24 +76,36 @@ public class TestDataCreationService {
         if (environment.equals(DEV_ENVIRONMENT)) {
             LOG.info("Test data will be created...");
 
-            Person user = createTestPerson(USER, "Klaus", "Müller", "mueller@muster.de", Role.USER);
-            boss = createTestPerson(BOSS_USER, "Max", "Mustermann", "maxMuster@muster.de", Role.USER, Role.BOSS);
-            office = createTestPerson(OFFICE_USER, "Marlene", "Muster", "mmuster@muster.de", Role.USER, Role.BOSS,
-                    Role.OFFICE);
+            // Users to be able to sign in with
+            Person user = createTestPerson(TestUser.USER.getLogin(), "Klaus", "Müller", "mueller@muster.de",
+                    TestUser.USER.getRoles());
+            Person departmentHead = createTestPerson(TestUser.DEPARTMENT_HEAD.getLogin(), "Thorsten", "Krüger",
+                    "krueger@muster.de", TestUser.DEPARTMENT_HEAD.getRoles());
+            boss = createTestPerson(TestUser.BOSS.getLogin(), "Max", "Mustermann", "maxMuster@muster.de",
+                    TestUser.BOSS.getRoles());
+            office = createTestPerson(TestUser.OFFICE.getLogin(), "Marlene", "Muster", "mmuster@muster.de",
+                    TestUser.OFFICE.getRoles());
 
-            Person hans = createTestPerson("hdampf", "Hans", "Dampf", "dampf@foo.bar", Role.USER, Role.OFFICE);
+            // Users
+            Person hans = createTestPerson("hdampf", "Hans", "Dampf", "dampf@muster.de", Role.USER);
+            Person guenther = createTestPerson("gbaier", "Günther", "Baier", "baier@muster.de", Role.USER);
+            Person elena = createTestPerson("eschneider", "Elena", "Schneider", "schneider@muster.de", Role.USER);
+            Person brigitte = createTestPerson("bhaendel", "Brigitte", "Händel", "haendel@muster.de", Role.USER);
 
             createTestPerson("horst", "Horst", "Dieter", "hdieter@muster.de", Role.INACTIVE);
 
+            // Applications for leave and sick notes
             createTestData(user);
             createTestData(boss);
             createTestData(office);
 
-            createTestDepartment("Admins", "Das sind die, die so Admin Sachen machen", Arrays.asList(hans, user));
+            // Departments
+            createTestDepartment("Admins", "Das sind die, die so Admin Sachen machen",
+                Arrays.asList(hans, brigitte, departmentHead));
             createTestDepartment("Marketing", "Das sind die, die so Marketing Sachen machen",
-                Arrays.asList(office, user));
+                Arrays.asList(guenther, elena));
             createTestDepartment("Geschäftsführung", "Das sind die, die so Geschäftsführung Sachen machen",
-                Arrays.asList(boss));
+                Arrays.asList(boss, office));
         } else {
             LOG.info("No test data will be created.");
         }

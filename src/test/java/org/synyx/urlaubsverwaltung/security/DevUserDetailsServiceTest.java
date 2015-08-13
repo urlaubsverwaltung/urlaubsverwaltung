@@ -12,7 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
-import org.synyx.urlaubsverwaltung.core.startup.TestDataCreationService;
+import org.synyx.urlaubsverwaltung.core.startup.TestUser;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -35,6 +35,8 @@ public class DevUserDetailsServiceTest {
 
         personService = Mockito.mock(PersonService.class);
         devUserDetailsService = new DevUserDetailsService(personService);
+
+        Mockito.when(personService.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.<Person>empty());
     }
 
 
@@ -46,9 +48,61 @@ public class DevUserDetailsServiceTest {
 
 
     @Test
+    public void ensureDoesNotThrowForTestUser() {
+
+        String login = TestUser.USER.getLogin();
+
+        try {
+            devUserDetailsService.loadUserByUsername(login);
+        } catch (UsernameNotFoundException ex) {
+            Assert.fail("Should not throw for user with name: " + login);
+        }
+    }
+
+
+    @Test
+    public void ensureDoesNotThrowForTestDepartmentHead() {
+
+        String login = TestUser.DEPARTMENT_HEAD.getLogin();
+
+        try {
+            devUserDetailsService.loadUserByUsername(login);
+        } catch (UsernameNotFoundException ex) {
+            Assert.fail("Should not throw for user with name: " + login);
+        }
+    }
+
+
+    @Test
+    public void ensureDoesNotThrowForTestBoss() {
+
+        String login = TestUser.BOSS.getLogin();
+
+        try {
+            devUserDetailsService.loadUserByUsername(login);
+        } catch (UsernameNotFoundException ex) {
+            Assert.fail("Should not throw for user with name: " + login);
+        }
+    }
+
+
+    @Test
+    public void ensureDoesNotThrowForTestOffice() {
+
+        String login = TestUser.OFFICE.getLogin();
+
+        try {
+            devUserDetailsService.loadUserByUsername(login);
+        } catch (UsernameNotFoundException ex) {
+            Assert.fail("Should not throw for user with name: " + login);
+        }
+    }
+
+
+    @Test
     public void ensureReturnsNullIfUserCanNotBeFoundWithinDatabase() {
 
-        String login = TestDataCreationService.USER;
+        String login = TestUser.USER.getLogin();
 
         Mockito.when(personService.getPersonByLogin(login)).thenReturn(Optional.<Person>empty());
 
@@ -63,7 +117,7 @@ public class DevUserDetailsServiceTest {
     @Test
     public void ensureReturnsUserDetailsWithCorrectAuthorities() {
 
-        String login = TestDataCreationService.USER;
+        String login = TestUser.USER.getLogin();
 
         Person user = new Person();
         user.setPermissions(Arrays.asList(Role.USER, Role.OFFICE));

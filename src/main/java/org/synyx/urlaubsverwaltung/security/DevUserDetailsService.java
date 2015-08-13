@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
-import org.synyx.urlaubsverwaltung.core.startup.TestDataCreationService;
+import org.synyx.urlaubsverwaltung.core.startup.TestUser;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,8 +34,7 @@ public class DevUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) {
 
-        if (!TestDataCreationService.USER.equals(username) && !TestDataCreationService.BOSS_USER.equals(username)
-                && !TestDataCreationService.OFFICE_USER.equals(username)) {
+        if (!TestUser.hasUserWithLogin(username)) {
             throw new UsernameNotFoundException("No authentication possible for user = " + username);
         }
 
