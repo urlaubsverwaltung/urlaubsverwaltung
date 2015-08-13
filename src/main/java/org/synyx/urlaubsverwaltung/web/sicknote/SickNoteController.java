@@ -106,17 +106,17 @@ public class SickNoteController {
             List<SickNoteComment> comments = sickNoteCommentService.getCommentsBySickNote(sickNote.get());
             model.addAttribute("comments", comments);
 
-            Map<SickNoteComment, String> gravatarUrls = new HashMap<>();
+            Map<SickNoteComment, String> gravatarURLs = new HashMap<>();
 
             for (SickNoteComment comment : comments) {
                 String gravatarUrl = GravatarUtil.createImgURL(comment.getPerson().getEmail());
 
                 if (gravatarUrl != null) {
-                    gravatarUrls.put(comment, gravatarUrl);
+                    gravatarURLs.put(comment, gravatarUrl);
                 }
             }
 
-            model.addAttribute(PersonConstants.GRAVATAR_URLS_ATTRIBUTE, gravatarUrls);
+            model.addAttribute(PersonConstants.GRAVATAR_URLS_ATTRIBUTE, gravatarURLs);
 
             return "sicknote/sick_note";
         }

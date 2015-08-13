@@ -24,11 +24,9 @@ import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
-import org.synyx.urlaubsverwaltung.web.util.GravatarUtil;
 import org.synyx.urlaubsverwaltung.web.validator.DepartmentValidator;
 
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -83,7 +81,7 @@ public class DepartmentController {
         }
 
         List<Person> persons = getPersons();
-        Map<Person, String> gravatarUrls = getGravatarURLs(persons);
+        Map<Person, String> gravatarUrls = PersonConstants.getGravatarURLs(persons);
 
         model.addAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE, new Department());
         model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, persons);
@@ -102,22 +100,6 @@ public class DepartmentController {
     private Comparator<Person> personComparator() {
 
         return (p1, p2) -> p1.getNiceName().toLowerCase().compareTo(p2.getNiceName().toLowerCase());
-    }
-
-
-    private Map<Person, String> getGravatarURLs(List<Person> persons) {
-
-        Map<Person, String> gravatarUrls = new HashMap<>();
-
-        for (Person person : persons) {
-            String url = GravatarUtil.createImgURL(person.getEmail());
-
-            if (url != null) {
-                gravatarUrls.put(person, url);
-            }
-        }
-
-        return gravatarUrls;
     }
 
 
@@ -166,7 +148,7 @@ public class DepartmentController {
 
         Department department = optionalDepartment.get();
         List<Person> persons = getPersons();
-        Map<Person, String> gravatarUrls = getGravatarURLs(persons);
+        Map<Person, String> gravatarUrls = PersonConstants.getGravatarURLs(persons);
 
         model.addAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE, department);
         model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, persons);

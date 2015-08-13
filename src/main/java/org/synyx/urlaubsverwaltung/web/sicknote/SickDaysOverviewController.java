@@ -28,7 +28,6 @@ import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.FilterRequest;
 import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
-import org.synyx.urlaubsverwaltung.web.util.GravatarUtil;
 
 import java.math.BigDecimal;
 
@@ -114,21 +113,18 @@ public class SickDaysOverviewController {
         model.addAttribute("filterRequest", new FilterRequest());
 
         List<Person> persons = personService.getActivePersons();
+        Map<Person, String> gravatarURLs = PersonConstants.getGravatarURLs(persons);
 
         Map<Person, BigDecimal> sickDays = new HashMap<>();
         Map<Person, BigDecimal> sickDaysWithAUB = new HashMap<>();
         Map<Person, BigDecimal> childSickDays = new HashMap<>();
         Map<Person, BigDecimal> childSickDaysWithAUB = new HashMap<>();
 
-        Map<Person, String> gravatars = new HashMap<>();
-
         for (Person person : persons) {
             sickDays.put(person, BigDecimal.ZERO);
             sickDaysWithAUB.put(person, BigDecimal.ZERO);
             childSickDays.put(person, BigDecimal.ZERO);
             childSickDaysWithAUB.put(person, BigDecimal.ZERO);
-
-            gravatars.put(person, GravatarUtil.createImgURL(person.getEmail()));
         }
 
         for (SickNote sickNote : sickNotes) {
@@ -175,6 +171,6 @@ public class SickDaysOverviewController {
         model.addAttribute("childSickDaysWithAUB", childSickDaysWithAUB);
 
         model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, persons);
-        model.addAttribute("gravatars", gravatars);
+        model.addAttribute(PersonConstants.GRAVATAR_URLS_ATTRIBUTE, gravatarURLs);
     }
 }

@@ -21,7 +21,6 @@ import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
-import org.synyx.urlaubsverwaltung.web.util.GravatarUtil;
 
 import java.util.HashMap;
 import java.util.List;
@@ -153,18 +152,11 @@ public class PersonController {
 
     private void prepareStaffView(List<Person> persons, int year, Model model) {
 
-        Map<Person, String> gravatarUrls = new HashMap<>();
+        Map<Person, String> gravatarUrls = PersonConstants.getGravatarURLs(persons);
         Map<Person, Account> accounts = new HashMap<>();
         Map<Person, VacationDaysLeft> vacationDaysLeftMap = new HashMap<>();
 
         for (Person person : persons) {
-            // get url of person's gravatar image
-            String url = GravatarUtil.createImgURL(person.getEmail());
-
-            if (url != null) {
-                gravatarUrls.put(person, url);
-            }
-
             // get person's account
             Optional<Account> account = accountService.getHolidaysAccount(year, person);
 
