@@ -39,7 +39,7 @@ public final class DateUtil {
      */
     public static boolean isBeforeApril(DateMidnight date) {
 
-        return (date.getMonthOfYear() < DateTimeConstants.APRIL);
+        return date.getMonthOfYear() < DateTimeConstants.APRIL;
     }
 
 
@@ -52,7 +52,7 @@ public final class DateUtil {
      */
     public static boolean isChristmasEve(DateMidnight date) {
 
-        return (date.getDayOfMonth() == DAY_OF_CHRISTMAS_EVE && date.getMonthOfYear() == DateTimeConstants.DECEMBER);
+        return date.getDayOfMonth() == DAY_OF_CHRISTMAS_EVE && date.getMonthOfYear() == DateTimeConstants.DECEMBER;
     }
 
 
@@ -65,7 +65,7 @@ public final class DateUtil {
      */
     public static boolean isNewYearsEve(DateMidnight date) {
 
-        return (date.getDayOfMonth() == DAY_OF_NEW_YEARS_EVE && date.getMonthOfYear() == DateTimeConstants.DECEMBER);
+        return date.getDayOfMonth() == DAY_OF_NEW_YEARS_EVE && date.getMonthOfYear() == DateTimeConstants.DECEMBER;
     }
 
 
