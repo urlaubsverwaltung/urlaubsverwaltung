@@ -29,6 +29,7 @@ import org.synyx.urlaubsverwaltung.core.application.service.ApplicationInteracti
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.application.service.CommentService;
 import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
+import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
@@ -86,20 +87,29 @@ public class ApplicationForLeaveDetailsController {
     @Autowired
     private MailService mailService;
 
+    @Autowired
+    private DepartmentService departmentService;
+
     @RequestMapping(value = "/{applicationId}", method = RequestMethod.GET)
     public String showApplicationDetail(@PathVariable("applicationId") Integer applicationId,
         @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Integer requestedYear,
         @RequestParam(value = "action", required = false) String action,
         @RequestParam(value = "shortcut", required = false) boolean shortcut, Model model) {
 
-        Person signedInUser = sessionService.getSignedInUser();
-
         Optional<Application> applicationOptional = applicationService.getApplicationById(applicationId);
 
-        if (applicationOptional.isPresent() && signedInUser.equals(applicationOptional.get().getPerson())
-                || (signedInUser.hasRole(Role.BOSS) || signedInUser.hasRole(Role.OFFICE))) {
-            Application application = applicationOptional.get();
+        if (!applicationOptional.isPresent()) {
+            return ControllerConstants.ERROR_JSP;
+        }
 
+        Person signedInUser = sessionService.getSignedInUser();
+        Application application = applicationOptional.get();
+        Person person = application.getPerson();
+
+        boolean samePerson = signedInUser.equals(person);
+
+        if (samePerson || signedInUser.hasRole(Role.BOSS) || signedInUser.hasRole(Role.OFFICE)
+                || isDepartmentHeadOfThePerson(signedInUser, person)) {
             Integer year = requestedYear == null ? application.getEndDate().getYear() : requestedYear;
 
             prepareDetailView(application, year, action, shortcut, model);
@@ -108,6 +118,20 @@ public class ApplicationForLeaveDetailsController {
         }
 
         return ControllerConstants.ERROR_JSP;
+    }
+
+
+    private boolean isDepartmentHeadOfThePerson(Person signedInUser, Person personOfApplicationForLeave) {
+
+        if (signedInUser.hasRole(Role.DEPARTMENT_HEAD)) {
+            List<Person> members = departmentService.getAllMembersOfDepartmentsOfPerson(signedInUser);
+
+            if (members.contains(personOfApplicationForLeave)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 
@@ -131,12 +155,14 @@ public class ApplicationForLeaveDetailsController {
 
         model.addAttribute(PersonConstants.GRAVATAR_URLS_ATTRIBUTE, gravatarUrls);
 
+        Person signedInUser = sessionService.getSignedInUser();
+
         if (application.getStatus() == ApplicationStatus.WAITING
-                && sessionService.getSignedInUser().hasRole(Role.BOSS)) {
+                && (signedInUser.hasRole(Role.BOSS) || signedInUser.hasRole(Role.DEPARTMENT_HEAD))) {
             // get all persons that have the Boss Role
             List<Person> bosses = personService.getPersonsByRole(Role.BOSS);
             model.addAttribute("bosses", bosses);
-            model.addAttribute("modelPerson", new Person());
+            model.addAttribute("personToRefer", new Person());
         }
 
         model.addAttribute("application", new ApplicationForLeave(application, calendarService));
@@ -159,7 +185,7 @@ public class ApplicationForLeaveDetailsController {
     /**
      * Allow a not yet allowed application for leave (Boss only!).
      */
-    @PreAuthorize(SecurityRules.IS_BOSS)
+    @PreAuthorize(SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD)
     @RequestMapping(value = "/{applicationId}/allow", method = RequestMethod.PUT)
     public String allowApplication(@PathVariable("applicationId") Integer applicationId,
         @ModelAttribute("comment") CommentForm comment,
@@ -168,8 +194,14 @@ public class ApplicationForLeaveDetailsController {
 
         Optional<Application> application = applicationService.getApplicationById(applicationId);
 
-        if (application.isPresent()) {
-            Person boss = sessionService.getSignedInUser();
+        if (!application.isPresent()) {
+            return ControllerConstants.ERROR_JSP;
+        }
+
+        Person signedInUser = sessionService.getSignedInUser();
+        Person person = application.get().getPerson();
+
+        if (signedInUser.hasRole(Role.BOSS) || isDepartmentHeadOfThePerson(signedInUser, person)) {
             comment.setMandatory(false);
             commentValidator.validate(comment, errors);
 
@@ -179,38 +211,14 @@ public class ApplicationForLeaveDetailsController {
                 return "redirect:/web/application/" + applicationId + "?action=allow";
             }
 
-            applicationInteractionService.allow(application.get(), boss, Optional.ofNullable(comment.getText()));
+            applicationInteractionService.allow(application.get(), signedInUser,
+                Optional.ofNullable(comment.getText()));
 
             redirectAttributes.addFlashAttribute("allowSuccess", true);
 
             if (redirectUrl != null) {
                 return "redirect:" + redirectUrl;
             }
-
-            return "redirect:/web/application/" + applicationId;
-        } else {
-            return ControllerConstants.ERROR_JSP;
-        }
-    }
-
-
-    /**
-     * If a boss is not sure about the decision if an application should be allowed or rejected, he can ask another boss
-     * to decide about this application (an email is sent).
-     */
-    @PreAuthorize(SecurityRules.IS_BOSS)
-    @RequestMapping(value = "/{applicationId}/refer", method = RequestMethod.PUT)
-    public String referApplication(@PathVariable("applicationId") Integer applicationId,
-        @ModelAttribute("modelPerson") Person p, RedirectAttributes redirectAttributes) {
-
-        Optional<Application> application = applicationService.getApplicationById(applicationId);
-        java.util.Optional<Person> recipient = personService.getPersonByLogin(p.getLoginName());
-
-        if (application.isPresent() && recipient.isPresent()) {
-            Person sender = sessionService.getSignedInUser();
-            mailService.sendReferApplicationNotification(application.get(), recipient.get(), sender);
-
-            redirectAttributes.addFlashAttribute("referSuccess", true);
 
             return "redirect:/web/application/" + applicationId;
         }
@@ -220,9 +228,38 @@ public class ApplicationForLeaveDetailsController {
 
 
     /**
+     * If a boss is not sure about the decision if an application should be allowed or rejected, he can ask another boss
+     * to decide about this application (an email is sent).
+     */
+    @PreAuthorize(SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD)
+    @RequestMapping(value = "/{applicationId}/refer", method = RequestMethod.PUT)
+    public String referApplication(@PathVariable("applicationId") Integer applicationId,
+        @ModelAttribute("personToRefer") Person p, RedirectAttributes redirectAttributes) {
+
+        Optional<Application> application = applicationService.getApplicationById(applicationId);
+        java.util.Optional<Person> recipient = personService.getPersonByLogin(p.getLoginName());
+
+        if (application.isPresent() && recipient.isPresent()) {
+            Person sender = sessionService.getSignedInUser();
+            Person person = application.get().getPerson();
+
+            if (sender.hasRole(Role.BOSS) || isDepartmentHeadOfThePerson(sender, person)) {
+                mailService.sendReferApplicationNotification(application.get(), recipient.get(), sender);
+
+                redirectAttributes.addFlashAttribute("referSuccess", true);
+
+                return "redirect:/web/application/" + applicationId;
+            }
+        }
+
+        return ControllerConstants.ERROR_JSP;
+    }
+
+
+    /**
      * Reject an application for leave (Boss only!).
      */
-    @PreAuthorize(SecurityRules.IS_BOSS)
+    @PreAuthorize(SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD)
     @RequestMapping(value = "/{applicationId}/reject", method = RequestMethod.PUT)
     public String rejectApplication(@PathVariable("applicationId") Integer applicationId,
         @ModelAttribute("comment") CommentForm comment,
@@ -232,29 +269,33 @@ public class ApplicationForLeaveDetailsController {
         Optional<Application> application = applicationService.getApplicationById(applicationId);
 
         if (application.isPresent()) {
-            Person boss = sessionService.getSignedInUser();
+            Person person = application.get().getPerson();
+            Person signedInUser = sessionService.getSignedInUser();
 
-            comment.setMandatory(true);
-            commentValidator.validate(comment, errors);
+            if (signedInUser.hasRole(Role.BOSS) || isDepartmentHeadOfThePerson(signedInUser, person)) {
+                comment.setMandatory(true);
+                commentValidator.validate(comment, errors);
 
-            if (errors.hasErrors()) {
-                redirectAttributes.addFlashAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
+                if (errors.hasErrors()) {
+                    redirectAttributes.addFlashAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
 
-                if (redirectUrl != null) {
-                    return "redirect:/web/application/" + applicationId + "?action=reject&shortcut=true";
+                    if (redirectUrl != null) {
+                        return "redirect:/web/application/" + applicationId + "?action=reject&shortcut=true";
+                    }
+
+                    return "redirect:/web/application/" + applicationId + "?action=reject";
                 }
 
-                return "redirect:/web/application/" + applicationId + "?action=reject";
+                applicationInteractionService.reject(application.get(), signedInUser,
+                    Optional.ofNullable(comment.getText()));
+                redirectAttributes.addFlashAttribute("rejectSuccess", true);
+
+                if (redirectUrl != null) {
+                    return "redirect:" + redirectUrl;
+                }
+
+                return "redirect:/web/application/" + applicationId;
             }
-
-            applicationInteractionService.reject(application.get(), boss, Optional.ofNullable(comment.getText()));
-            redirectAttributes.addFlashAttribute("rejectSuccess", true);
-
-            if (redirectUrl != null) {
-                return "redirect:" + redirectUrl;
-            }
-
-            return "redirect:/web/application/" + applicationId;
         }
 
         return ControllerConstants.ERROR_JSP;

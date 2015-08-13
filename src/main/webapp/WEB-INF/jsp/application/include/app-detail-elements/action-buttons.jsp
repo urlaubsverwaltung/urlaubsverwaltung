@@ -17,7 +17,7 @@
   <c:set var="IS_USER" value="${true}"/>
 </sec:authorize>
 
-<sec:authorize access="hasRole('BOSS')">
+<sec:authorize access="hasAnyRole('DEPARTMENT_HEAD', 'BOSS')">
   <c:set var="IS_BOSS" value="${true}"/>
 </sec:authorize>
 

@@ -13,7 +13,7 @@
         <sec:authorize access="hasRole('USER')">
             <jsp:include page="./actions/remind_form.jsp"/>
         </sec:authorize>
-        <sec:authorize access="hasRole('BOSS')">
+        <sec:authorize access="hasAnyRole('DEPARTMENT_HEAD', 'BOSS')">
             <jsp:include page="./actions/allow_form.jsp"/>
             <jsp:include page="./actions/reject_form.jsp"/>
             <jsp:include page="./actions/refer_form.jsp"/>
