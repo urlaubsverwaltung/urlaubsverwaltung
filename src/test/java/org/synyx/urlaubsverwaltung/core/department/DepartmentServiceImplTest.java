@@ -2,10 +2,17 @@ package org.synyx.urlaubsverwaltung.core.department;
 
 import org.joda.time.DateTime;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import org.mockito.Mockito;
+
+import org.synyx.urlaubsverwaltung.core.person.Person;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -129,5 +136,97 @@ public class DepartmentServiceImplTest {
         sut.update(department);
 
         assertNotNull(department.getLastModification());
+    }
+
+
+    @Test
+    public void ensureReturnsAllMembersOfTheDepartmentsOfThePerson() {
+
+        Person person = Mockito.mock(Person.class);
+        Mockito.when(person.getId()).thenReturn(42);
+
+        Person admin1 = new Person("admin1", "", "", "");
+        Person admin2 = new Person("admin2", "", "", "");
+
+        Person marketing1 = new Person("marketing1", "", "", "");
+        Person marketing2 = new Person("marketing2", "", "", "");
+        Person marketing3 = new Person("marketing3", "", "", "");
+
+        Department admins = new Department();
+        admins.setMembers(Arrays.asList(admin1, admin2));
+
+        Department marketing = new Department();
+        marketing.setMembers(Arrays.asList(marketing1, marketing2, marketing3));
+
+        Mockito.when(departmentDAO.getDepartmentsWithMembership(Mockito.anyInt()))
+            .thenReturn(Arrays.asList(admins, marketing));
+
+        List<Person> members = sut.getAllMembersOfDepartmentsOfPerson(person);
+
+        Assert.assertNotNull("Should not be null", members);
+        Assert.assertEquals("Wrong number of members", 5, members.size());
+    }
+
+
+    @Test
+    public void ensureReturnsEmptyListIfPersonHasNoDepartmentAssigned() {
+
+        Person person = Mockito.mock(Person.class);
+        Mockito.when(person.getId()).thenReturn(42);
+
+        Mockito.when(departmentDAO.getDepartmentsWithMembership(Mockito.anyInt())).thenReturn(Collections.emptyList());
+
+        List<Person> members = sut.getAllMembersOfDepartmentsOfPerson(person);
+
+        Assert.assertNotNull("Should not be null", members);
+        Assert.assertTrue("Should be empty", members.isEmpty());
+    }
+
+
+    @Test
+    public void ensureReturnsEmptyListIfAssignedDepartmentsHaveNoMembers() {
+
+        Person person = Mockito.mock(Person.class);
+        Mockito.when(person.getId()).thenReturn(42);
+
+        Department admins = new Department();
+        Department marketing = new Department();
+
+        Mockito.when(departmentDAO.getDepartmentsWithMembership(Mockito.anyInt()))
+            .thenReturn(Arrays.asList(admins, marketing));
+
+        List<Person> members = sut.getAllMembersOfDepartmentsOfPerson(person);
+
+        Assert.assertNotNull("Should not be null", members);
+        Assert.assertTrue("Should be empty", members.isEmpty());
+    }
+
+
+    @Test
+    public void ensureReturnedMembersOfTheDepartmentsOfThePersonAreUnique() {
+
+        Person person = Mockito.mock(Person.class);
+        Mockito.when(person.getId()).thenReturn(42);
+
+        Person admin1 = new Person();
+
+        Person marketing1 = new Person();
+        Person marketing2 = new Person();
+
+        Person adminAndMarketing = new Person();
+
+        Department admins = new Department();
+        admins.setMembers(Arrays.asList(admin1, adminAndMarketing));
+
+        Department marketing = new Department();
+        marketing.setMembers(Arrays.asList(marketing1, marketing2, adminAndMarketing));
+
+        Mockito.when(departmentDAO.getDepartmentsWithMembership(Mockito.anyInt()))
+            .thenReturn(Arrays.asList(admins, marketing));
+
+        List<Person> members = sut.getAllMembersOfDepartmentsOfPerson(person);
+
+        Assert.assertNotNull("Should not be null", members);
+        Assert.assertEquals("Wrong number of members", 4, members.size());
     }
 }

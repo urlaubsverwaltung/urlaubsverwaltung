@@ -55,4 +55,10 @@ public class SessionService {
 
         return getSignedInUser().hasRole(Role.BOSS);
     }
+
+
+    public boolean isDepartmentHead() {
+
+        return getSignedInUser().hasRole(Role.DEPARTMENT_HEAD);
+    }
 }

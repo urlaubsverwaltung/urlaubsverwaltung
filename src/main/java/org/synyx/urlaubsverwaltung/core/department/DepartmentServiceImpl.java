@@ -8,8 +8,11 @@ import org.springframework.stereotype.Service;
 
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 
 /**
@@ -75,5 +78,20 @@ public class DepartmentServiceImpl implements DepartmentService {
     public List<Department> getAllDepartmentsWithMembership(Person person) {
 
         return departmentDAO.getDepartmentsWithMembership(person.getId());
+    }
+
+
+    @Override
+    public List<Person> getAllMembersOfDepartmentsOfPerson(Person person) {
+
+        Set<Person> relevantPersons = new HashSet<>();
+        List<Department> departments = getAllDepartmentsWithMembership(person);
+
+        for (Department department : departments) {
+            List<Person> members = department.getMembers();
+            relevantPersons.addAll(members);
+        }
+
+        return new ArrayList<>(relevantPersons);
     }
 }

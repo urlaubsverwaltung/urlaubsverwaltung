@@ -59,4 +59,14 @@ public interface DepartmentService {
      * @return  list of departments which given person is a member.
      */
     List<Department> getAllDepartmentsWithMembership(Person person);
+
+
+    /**
+     * Get all members of the departments that the given person is assigned to.
+     *
+     * @param  person  to get the departments of
+     *
+     * @return  all unique members of the departments of the given person
+     */
+    List<Person> getAllMembersOfDepartmentsOfPerson(Person person);
 }

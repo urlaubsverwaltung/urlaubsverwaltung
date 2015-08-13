@@ -11,4 +11,5 @@ public class SecurityRules {
     public static final String IS_OFFICE = "hasRole('OFFICE')";
     public static final String IS_BOSS = "hasRole('BOSS')";
     public static final String IS_BOSS_OR_OFFICE = "hasAnyRole('BOSS', 'OFFICE')";
+    public static final String IS_PRIVILEGED_USER = "hasAnyRole('DEPARTMENT_HEAD', 'BOSS', 'OFFICE')";
 }

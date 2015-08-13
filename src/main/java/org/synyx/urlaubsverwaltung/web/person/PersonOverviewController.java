@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.web.person;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 
@@ -45,7 +43,6 @@ import org.synyx.urlaubsverwaltung.web.statistics.UsedDaysOverview;
 
 import java.math.BigDecimal;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -156,24 +153,11 @@ public class PersonOverviewController {
         List<SickNote> sickNotes = sickNoteService.getByPersonAndPeriod(person, DateUtil.getFirstDayOfYear(year),
                 DateUtil.getLastDayOfYear(year));
 
-        List<ExtendedSickNote> extendedSickNotes = FluentIterable.from(sickNotes)
-            .transform(new Function<SickNote, ExtendedSickNote>() {
-
-                        @Override
-                        public ExtendedSickNote apply(SickNote input) {
-
-                            return new ExtendedSickNote(input, calendarService);
-                        }
-                    })
-            .toSortedList(new Comparator<ExtendedSickNote>() {
-
-                    @Override
-                    public int compare(ExtendedSickNote o1, ExtendedSickNote o2) {
-
-                        // show latest sick notes at first
-                        return o2.getStartDate().compareTo(o1.getStartDate());
-                    }
-                });
+        List<ExtendedSickNote> extendedSickNotes = FluentIterable.from(sickNotes).transform(input ->
+                        new ExtendedSickNote(input, calendarService)).toSortedList((o1, o2) -> {
+                // show latest sick notes at first
+                return o2.getStartDate().compareTo(o1.getStartDate());
+            });
 
         BigDecimal sickDays = BigDecimal.ZERO;
         BigDecimal sickDaysWithAUB = BigDecimal.ZERO;
@@ -220,35 +204,18 @@ public class PersonOverviewController {
         List<Application> applications = FluentIterable.from(
                     applicationService.getApplicationsForACertainPeriodAndPerson(DateUtil.getFirstDayOfYear(year),
                         DateUtil.getLastDayOfYear(year), person))
-            .filter(new Predicate<Application>() {
-
-                        @Override
-                        public boolean apply(Application input) {
-
-                            return !input.hasStatus(ApplicationStatus.REVOKED);
-                        }
-                    })
+            .filter(input ->
+                    !input.hasStatus(ApplicationStatus.REVOKED))
             .toList();
 
         if (!applications.isEmpty()) {
             ImmutableList<ApplicationForLeave> applicationsForLeave = FluentIterable.from(applications)
-                .transform(new Function<Application, ApplicationForLeave>() {
-
-                            @Override
-                            public ApplicationForLeave apply(Application input) {
-
-                                return new ApplicationForLeave(input, calendarService);
-                            }
-                        })
-                .toSortedList(new Comparator<ApplicationForLeave>() {
-
-                        @Override
-                        public int compare(ApplicationForLeave o1, ApplicationForLeave o2) {
-
-                            // show latest applications at first
-                            return o2.getStartDate().compareTo(o1.getStartDate());
-                        }
-                    });
+                .transform(input ->
+                            new ApplicationForLeave(input, calendarService))
+                .toSortedList((o1, o2) -> {
+                    // show latest applications at first
+                    return o2.getStartDate().compareTo(o1.getStartDate());
+                });
 
             model.addAttribute("applications", applicationsForLeave);
 
