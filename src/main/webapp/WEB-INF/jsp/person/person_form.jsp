@@ -160,6 +160,17 @@
 
                 <div class="person--role checkbox">
                     <label>
+                        <form:checkbox path="permissions" value="DEPARTMENT_HEAD"/><spring:message code="person.form.permissions.roles.departmentHead"/>:
+                        <spring:message code="person.form.permissions.roles.departmentHead.description"/>
+                    </label>
+                    <label class="person--mail-notification">
+                        <form:checkbox path="notifications" value="NOTIFICATION_DEPARTMENT_HEAD"/>
+                        <spring:message code="person.form.notifications.departmentHead"/>
+                    </label>
+                </div>
+
+                <div class="person--role checkbox">
+                    <label>
                         <form:checkbox path="permissions" value="BOSS"/><spring:message code="person.form.permissions.roles.boss"/>:
                         <spring:message code="person.form.permissions.roles.boss.description"/>
                     </label>

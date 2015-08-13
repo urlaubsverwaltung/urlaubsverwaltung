@@ -9,6 +9,7 @@ package org.synyx.urlaubsverwaltung.security;
 public enum Role {
 
     USER,
+    DEPARTMENT_HEAD,
     BOSS,
     OFFICE,
     INACTIVE

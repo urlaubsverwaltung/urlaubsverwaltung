@@ -8,6 +8,7 @@ package org.synyx.urlaubsverwaltung.core.mail;
 public enum MailNotification {
 
     NOTIFICATION_USER,
+    NOTIFICATION_DEPARTMENT_HEAD,
     NOTIFICATION_BOSS,
-    NOTIFICATION_OFFICE;
+    NOTIFICATION_OFFICE
 }
