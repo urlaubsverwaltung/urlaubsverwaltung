@@ -19,3 +19,17 @@
 .ms-container .ms-selection li.ms-elem-selection {
   padding: 6px 12px;
 }
+
+/* STYLING FOR XS SCREENS */
+@media (max-width: 767px) {
+
+  .ms-container .ms-selectable,
+  .ms-container .ms-selection {
+    width: 100%;
+  }
+
+  .ms-container .ms-selectable {
+    margin-bottom: 30px;
+  }
+
+}
