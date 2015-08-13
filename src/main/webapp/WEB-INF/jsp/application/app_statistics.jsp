@@ -79,6 +79,8 @@
                                 <th><%-- placeholder to ensure correct number of th --%></th>
                                 <th class="sortable-field"><spring:message code="person.data.firstName"/></th>
                                 <th class="sortable-field"><spring:message code="person.data.lastName"/></th>
+                                <th class="hidden"><%-- placeholder to ensure correct number of th --%></th>
+                                <th class="hidden"><%-- placeholder to ensure correct number of th --%></th>
                                 <th class="sortable-field is-centered"><spring:message code="applications.statistics.allowed"/></th>
                                 <th class="sortable-field is-centered"><spring:message code="applications.statistics.waiting"/></th>
                                 <th class="sortable-field is-centered"><spring:message code="applications.statistics.left"/> (<c:out value="${from.year}" />)</th>
@@ -91,15 +93,23 @@
                                         <img class="img-circle hidden-print"
                                              src="<c:out value='${statistic.gravatarUrl}?d=mm&s=60'/>"/>
                                     </td>
-                                    <td><c:out value="${statistic.person.firstName}"/></td>
-                                    <td><c:out value="${statistic.person.lastName}"/></td>
-                                    <td class="is-centered">
+                                    <td class="hidden-xs"><c:out value="${statistic.person.firstName}"/></td>
+                                    <td class="hidden-xs"><c:out value="${statistic.person.lastName}"/></td>
+                                    <td class="visible-xs hidden-print">
+                                        <c:out value="${statistic.person.niceName}"/>
+                                    </td>
+                                    <td class="visible-xs hidden-print">
+                                        <i class="fa fa-fw fa-check"></i><uv:number number="${statistic.allowedVacationDays}"/>
+                                        <br/>
+                                        <i class="fa fa-fw fa-question hidden-print"></i><uv:number number="${statistic.waitingVacationDays}"/>
+                                    </td>
+                                    <td class="is-centered hidden-xs">
                                         <uv:number number="${statistic.allowedVacationDays}"/>
                                     </td>
-                                    <td class="is-centered">
+                                    <td class="is-centered hidden-xs">
                                         <uv:number number="${statistic.waitingVacationDays}"/>
                                     </td>
-                                    <td class="is-centered">
+                                    <td class="is-centered hidden-xs">
                                         <uv:number number="${statistic.leftVacationDays}"/>
                                     </td>
                                 </tr>
