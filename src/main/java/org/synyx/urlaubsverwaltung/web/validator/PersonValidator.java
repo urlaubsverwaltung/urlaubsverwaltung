@@ -302,22 +302,12 @@ public class PersonValidator implements Validator {
             errors.rejectValue(ATTRIBUTE_PERMISSIONS, "person.form.permissions.error.mandatory");
         } else {
             // if role inactive set, then only this role may be selected
-            // else this is an error
-
-            boolean roleInactiveSet = false;
-
-            for (Role role : roles) {
-                if (role == Role.INACTIVE) {
-                    roleInactiveSet = true;
-                }
+            if (roles.contains(Role.INACTIVE) && roles.size() != 1) {
+                errors.rejectValue(ATTRIBUTE_PERMISSIONS, "person.form.permissions.error.inactive");
             }
 
-            if (roleInactiveSet) {
-                // validate that there is only role inactive set
-                // this means size of role collection must have size 1
-                if (roles.size() != 1) {
-                    errors.rejectValue(ATTRIBUTE_PERMISSIONS, "person.form.permissions.error.inactive");
-                }
+            if (roles.contains(Role.DEPARTMENT_HEAD) && roles.contains(Role.BOSS)) {
+                errors.rejectValue(ATTRIBUTE_PERMISSIONS, "person.form.permissions.error.departmentHead");
             }
         }
     }
@@ -329,12 +319,15 @@ public class PersonValidator implements Validator {
         List<MailNotification> notifications = personForm.getNotifications();
 
         if (roles != null) {
+            boolean departmentHeadNotificationsSelectedButNotDepartmentHeadRole = notifications.contains(
+                    MailNotification.NOTIFICATION_DEPARTMENT_HEAD) && !roles.contains(Role.DEPARTMENT_HEAD);
             boolean bossNotificationsSelectedButNotBossRole = notifications.contains(MailNotification.NOTIFICATION_BOSS)
                 && !roles.contains(Role.BOSS);
             boolean officeNotificationsSelectedButNotOfficeRole = notifications.contains(
                     MailNotification.NOTIFICATION_OFFICE) && !roles.contains(Role.OFFICE);
 
-            if (bossNotificationsSelectedButNotBossRole || officeNotificationsSelectedButNotOfficeRole) {
+            if (departmentHeadNotificationsSelectedButNotDepartmentHeadRole || bossNotificationsSelectedButNotBossRole
+                    || officeNotificationsSelectedButNotOfficeRole) {
                 errors.rejectValue("notifications", "person.form.notifications.error.combination");
             }
         }

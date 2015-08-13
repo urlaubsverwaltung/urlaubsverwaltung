@@ -359,7 +359,7 @@ public class PersonValidatorTest {
     @Test
     public void ensureAtLeastOneRoleMustBeSelected() {
 
-        form.setPermissions(new ArrayList<Role>());
+        form.setPermissions(new ArrayList<>());
 
         validator.validatePermissions(form, errors);
 
@@ -379,7 +379,18 @@ public class PersonValidatorTest {
 
 
     @Test
-    public void ensureValidRoleSelectionHasNoValidationError() {
+    public void ensureDepartmentHeadRoleAndBossRoleCanNotBeSelectedBoth() {
+
+        form.setPermissions(Arrays.asList(Role.BOSS, Role.DEPARTMENT_HEAD));
+
+        validator.validatePermissions(form, errors);
+
+        Mockito.verify(errors).rejectValue("permissions", "person.form.permissions.error.departmentHead");
+    }
+
+
+    @Test
+    public void ensureValidBossRoleSelectionHasNoValidationError() {
 
         form.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
 
@@ -389,7 +400,42 @@ public class PersonValidatorTest {
     }
 
 
+    @Test
+    public void ensureValidOfficeRoleSelectionHasNoValidationError() {
+
+        form.setPermissions(Arrays.asList(Role.USER, Role.OFFICE));
+
+        validator.validatePermissions(form, errors);
+
+        Mockito.verifyZeroInteractions(errors);
+    }
+
+
+    @Test
+    public void ensureValidBossAndOfficeRoleSelectionHasNoValidationError() {
+
+        form.setPermissions(Arrays.asList(Role.USER, Role.BOSS, Role.OFFICE));
+
+        validator.validatePermissions(form, errors);
+
+        Mockito.verifyZeroInteractions(errors);
+    }
+
+
     // VALIDATION OF MAIL NOTIFICATIONS
+
+    @Test
+    public void ensureDepartmentHeadMailNotificationIsOnlyValidIfDepartmentHeadRoleSelected() {
+
+        form.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
+        form.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER,
+                MailNotification.NOTIFICATION_DEPARTMENT_HEAD));
+
+        validator.validateNotifications(form, errors);
+
+        Mockito.verify(errors).rejectValue("notifications", "person.form.notifications.error.combination");
+    }
+
 
     @Test
     public void ensureBossMailNotificationIsOnlyValidIfBossRoleSelected() {
@@ -417,10 +463,35 @@ public class PersonValidatorTest {
 
 
     @Test
-    public void ensureValidNotificationSelectionHasNoValidationError() {
+    public void ensureValidNotificationSelectionForDepartmentHeadHasNoValidationError() {
+
+        form.setPermissions(Arrays.asList(Role.USER, Role.DEPARTMENT_HEAD));
+        form.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER,
+                MailNotification.NOTIFICATION_DEPARTMENT_HEAD));
+
+        validator.validatePermissions(form, errors);
+
+        Mockito.verifyZeroInteractions(errors);
+    }
+
+
+    @Test
+    public void ensureValidNotificationSelectionForBossHasNoValidationError() {
 
         form.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
         form.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS));
+
+        validator.validatePermissions(form, errors);
+
+        Mockito.verifyZeroInteractions(errors);
+    }
+
+
+    @Test
+    public void ensureValidNotificationSelectionForOfficeHasNoValidationError() {
+
+        form.setPermissions(Arrays.asList(Role.USER, Role.OFFICE));
+        form.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_OFFICE));
 
         validator.validatePermissions(form, errors);
 
