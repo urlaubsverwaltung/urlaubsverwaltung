@@ -213,7 +213,7 @@
                     <legend id="vacation">
                         <spring:message code="applications" />
                         <c:choose>
-                            <c:when test="${person.id == loggedUser.id}">
+                            <c:when test="${person.id == signedInUser.id}">
                                 <a class="fa-action pull-right" href="${URL_PREFIX}/application/new" data-title="<spring:message code="action.apply.vacation"/>">
                                     <i class="fa fa-plus-circle"></i>
                                 </a>
@@ -323,7 +323,7 @@
         <div class="row">
             <div class="col-xs-12">
                 <c:choose>
-                    <c:when test="${person.id == loggedUser.id}">
+                    <c:when test="${person.id == signedInUser.id}">
                         <%@include file="./include/sick_notes.jsp" %>
                     </c:when>
                     <c:otherwise>

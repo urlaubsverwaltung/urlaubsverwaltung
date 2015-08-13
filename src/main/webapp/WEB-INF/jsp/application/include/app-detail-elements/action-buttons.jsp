@@ -29,7 +29,7 @@
 <c:if test="${application.status == 'WAITING' || (application.status == 'ALLOWED' && IS_OFFICE)}">
 
   <c:if test="${application.status == 'WAITING'}">
-    <c:if test="${(IS_USER && application.person.id == loggedUser.id) || IS_OFFICE}">
+    <c:if test="${(IS_USER && application.person.id == signedInUser.id) || IS_OFFICE}">
       <a href="#" class="fa-action negative pull-right" data-title="<spring:message code='action.delete'/>"
          onclick="$('#reject').hide(); $('#allow').hide(); $('#refer').hide(); $('#cancel').show();">
         <i class="fa fa-trash"></i>
@@ -40,7 +40,7 @@
          onclick="$('#reject').hide(); $('#allow').hide(); $('#cancel').hide(); $('#refer').show();">
         <i class="fa fa-share-alt"></i>
       </a>
-      <c:if test="${application.person.id != loggedUser.id}">
+      <c:if test="${application.person.id != signedInUser.id}">
         <a href="#" class="fa-action negative pull-right" data-title="<spring:message code='action.reject'/>"
            onclick="$('#refer').hide(); $('#allow').hide(); $('#cancel').hide(); $('#reject').show();">
         <i class="fa fa-ban"></i>
@@ -51,7 +51,7 @@
         <i class="fa fa-check"></i>
       </a>
     </c:if>
-    <c:if test="${IS_USER && application.person.id == loggedUser.id && !IS_BOSS}">
+    <c:if test="${IS_USER && application.person.id == signedInUser.id && !IS_BOSS}">
       <a href="#" class="fa-action pull-right" data-title="<spring:message code='action.remind'/>"
          onclick="$('form#remind').submit();">
         <i class="fa fa-bullhorn"></i>

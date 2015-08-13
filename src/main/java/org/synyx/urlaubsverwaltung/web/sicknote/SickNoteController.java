@@ -94,7 +94,7 @@ public class SickNoteController {
     @RolesAllowed({ "USER", "OFFICE" })
     public String sickNoteDetails(@PathVariable("id") Integer id, Model model) {
 
-        Person loggedUser = sessionService.getLoggedUser();
+        Person loggedUser = sessionService.getSignedInUser();
         Optional<SickNote> sickNote = sickNoteService.getById(id);
 
         if (sickNote.isPresent()
@@ -171,7 +171,7 @@ public class SickNoteController {
                 return "sicknote/sick_note_form";
             }
 
-            sickNoteInteractionService.create(sickNote, sessionService.getLoggedUser());
+            sickNoteInteractionService.create(sickNote, sessionService.getSignedInUser());
 
             return "redirect:/web/sicknote/" + sickNote.getId();
         }
@@ -211,7 +211,7 @@ public class SickNoteController {
                 return "sicknote/sick_note_form";
             }
 
-            sickNoteInteractionService.update(sickNote, sessionService.getLoggedUser());
+            sickNoteInteractionService.update(sickNote, sessionService.getSignedInUser());
 
             return "redirect:/web/sicknote/" + id;
         }
@@ -233,7 +233,7 @@ public class SickNoteController {
                 redirectAttributes.addFlashAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
             } else {
                 sickNoteCommentService.create(sickNote.get(), SickNoteStatus.COMMENTED,
-                    Optional.ofNullable(comment.getText()), sessionService.getLoggedUser());
+                    Optional.ofNullable(comment.getText()), sessionService.getSignedInUser());
             }
 
             return "redirect:/web/sicknote/" + id;
@@ -279,7 +279,7 @@ public class SickNoteController {
             }
 
             sickNoteInteractionService.convert(sickNote.get(), sickNoteConvertForm.generateApplicationForLeave(),
-                sessionService.getLoggedUser());
+                sessionService.getSignedInUser());
 
             return "redirect:/web/sicknote/" + id;
         }
@@ -294,7 +294,7 @@ public class SickNoteController {
         Optional<SickNote> sickNote = sickNoteService.getById(id);
 
         if (sessionService.isOffice() && sickNote.isPresent()) {
-            sickNoteInteractionService.cancel(sickNote.get(), sessionService.getLoggedUser());
+            sickNoteInteractionService.cancel(sickNote.get(), sessionService.getSignedInUser());
 
             return "redirect:/web/sicknote/" + id;
         }

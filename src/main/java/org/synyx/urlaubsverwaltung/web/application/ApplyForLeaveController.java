@@ -93,7 +93,7 @@ public class ApplyForLeaveController {
         Person applier;
 
         if (personId == null) {
-            person = sessionService.getLoggedUser();
+            person = sessionService.getSignedInUser();
             applier = person;
         } else {
             java.util.Optional<Person> personByID = personService.getPersonByID(personId);
@@ -103,7 +103,7 @@ public class ApplyForLeaveController {
             }
 
             person = personByID.get();
-            applier = sessionService.getLoggedUser();
+            applier = sessionService.getSignedInUser();
         }
 
         boolean isApplyingForOneSelf = person.equals(applier);
@@ -169,7 +169,7 @@ public class ApplyForLeaveController {
         @ModelAttribute("appForm") ApplicationForLeaveForm appForm, RedirectAttributes redirectAttributes,
         Errors errors, Model model) {
 
-        Person applier = sessionService.getLoggedUser();
+        Person applier = sessionService.getSignedInUser();
         Person personToApplyForLeave;
 
         if (personId == null) {

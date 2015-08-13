@@ -31,7 +31,7 @@ public class SessionService {
      *
      * @return  Person that is logged in
      */
-    public Person getLoggedUser() {
+    public Person getSignedInUser() {
 
         String user = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -47,12 +47,12 @@ public class SessionService {
 
     public boolean isOffice() {
 
-        return getLoggedUser().hasRole(Role.OFFICE);
+        return getSignedInUser().hasRole(Role.OFFICE);
     }
 
 
     public boolean isBoss() {
 
-        return getLoggedUser().hasRole(Role.BOSS);
+        return getSignedInUser().hasRole(Role.BOSS);
     }
 }

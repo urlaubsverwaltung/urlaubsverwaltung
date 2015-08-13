@@ -89,7 +89,7 @@ public class ApplicationForLeaveDetailsController {
         @RequestParam(value = "action", required = false) String action,
         @RequestParam(value = "shortcut", required = false) boolean shortcut, Model model) {
 
-        Person loggedUser = sessionService.getLoggedUser();
+        Person loggedUser = sessionService.getSignedInUser();
 
         Optional<Application> applicationOptional = applicationService.getApplicationById(applicationId);
 
@@ -161,7 +161,7 @@ public class ApplicationForLeaveDetailsController {
         @RequestParam(value = "redirect", required = false) String redirectUrl, Errors errors,
         RedirectAttributes redirectAttributes) {
 
-        Person boss = sessionService.getLoggedUser();
+        Person boss = sessionService.getSignedInUser();
         Optional<Application> application = applicationService.getApplicationById(applicationId);
 
         if (sessionService.isBoss() && application.isPresent()) {
@@ -201,7 +201,7 @@ public class ApplicationForLeaveDetailsController {
         java.util.Optional<Person> recipient = personService.getPersonByLogin(p.getLoginName());
 
         if (sessionService.isBoss() && application.isPresent() && recipient.isPresent()) {
-            Person sender = sessionService.getLoggedUser();
+            Person sender = sessionService.getSignedInUser();
             mailService.sendReferApplicationNotification(application.get(), recipient.get(), sender);
 
             redirectAttributes.addFlashAttribute("referSuccess", true);
@@ -225,7 +225,7 @@ public class ApplicationForLeaveDetailsController {
         Optional<Application> application = applicationService.getApplicationById(applicationId);
 
         if (sessionService.isBoss() && application.isPresent()) {
-            Person boss = sessionService.getLoggedUser();
+            Person boss = sessionService.getSignedInUser();
 
             comment.setMandatory(true);
             commentValidator.validate(comment, errors);
@@ -268,7 +268,7 @@ public class ApplicationForLeaveDetailsController {
             return ControllerConstants.ERROR_JSP;
         }
 
-        Person loggedUser = sessionService.getLoggedUser();
+        Person loggedUser = sessionService.getSignedInUser();
         Application application = optionalApplication.get();
 
         boolean isWaiting = application.hasStatus(ApplicationStatus.WAITING);

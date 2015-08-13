@@ -85,7 +85,7 @@ public class PersonOverviewController {
     public String showOverview(
         @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) String year) {
 
-        Person user = sessionService.getLoggedUser();
+        Person user = sessionService.getSignedInUser();
 
         if (StringUtils.hasText(year)) {
             return "redirect:/web/staff/" + user.getId() + "/overview?year=" + year;
@@ -106,7 +106,7 @@ public class PersonOverviewController {
         }
 
         Person person = optionalPerson.get();
-        Person loggedUser = sessionService.getLoggedUser();
+        Person loggedUser = sessionService.getSignedInUser();
 
         boolean isOwnOverviewPage = person.getId().equals(loggedUser.getId());
 

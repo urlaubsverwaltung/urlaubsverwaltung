@@ -79,7 +79,7 @@
 <c:otherwise>
 
 <c:choose>
-    <c:when test="${person.id == loggedUser.id && !appliesOnOnesBehalf}">
+    <c:when test="${person.id == signedInUser.id && !appliesOnOnesBehalf}">
         <c:set var="appliesOnOnesBehalf" value="false"/>
     </c:when>
     <c:otherwise>

@@ -42,12 +42,12 @@ public class UserInterceptor implements HandlerInterceptor {
         ModelAndView modelAndView) {
 
         if (modelAndView != null) {
-            Person loggedUser = sessionService.getLoggedUser();
-            String gravatar = GravatarUtil.createImgURL(loggedUser.getEmail());
+            Person signedInUser = sessionService.getSignedInUser();
+            String gravatar = GravatarUtil.createImgURL(signedInUser.getEmail());
 
             ModelMap modelMap = modelAndView.getModelMap();
 
-            modelMap.addAttribute("loggedUser", loggedUser);
+            modelMap.addAttribute("signedInUser", signedInUser);
             modelMap.addAttribute("gravatar", gravatar);
         }
     }

@@ -29,7 +29,7 @@
             <spring:message code='comment'/>,
             <c:choose>
                 <%-- comment is obligat if it's not the own application or if the application is in status allowed --%>
-                <c:when test="${application.person.id != loggedUser.id || application.status == 'ALLOWED'}">
+                <c:when test="${application.person.id != signedInUser.id || application.status == 'ALLOWED'}">
                     <spring:message code="obligat"/>
                 </c:when>
                 <%-- otherwise comment is not obligat --%>
