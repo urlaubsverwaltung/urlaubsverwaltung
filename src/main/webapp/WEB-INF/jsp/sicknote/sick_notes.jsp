@@ -95,7 +95,7 @@
                             <c:out value="${person.lastName}"/>
                         </td>
                         <td class="visible-xs">
-                            <c:out value="${person.firstName}"/> <c:out value="${person.lastName}"/>
+                            <c:out value="${person.niceName}"/>
                         </td>
                         <td class="hidden-xs">
                             <i class="fa fa-medkit hidden-print"></i>

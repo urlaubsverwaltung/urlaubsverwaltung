@@ -85,15 +85,13 @@
 
 </div>
 
-<div class="row">
-    <div class="col-xs-12">
+<div class="col-xs-12">
 
-        <hr/>
+    <hr/>
 
-        <button class="btn btn-success col-xs-12 col-sm-5 col-md-2" type="submit"><spring:message code="action.save" /></button>
-        <a class="btn btn-default col-xs-12 col-sm-5 col-md-2 pull-right" href="${URL_PREFIX}/department"><spring:message code="action.cancel"/></a>
+    <button class="btn btn-success col-xs-12 col-sm-5 col-md-2" type="submit"><spring:message code="action.save" /></button>
+    <a class="btn btn-default col-xs-12 col-sm-5 col-md-2 pull-right" href="${URL_PREFIX}/department"><spring:message code="action.cancel"/></a>
 
-    </div>
 </div>
 
 </form:form>

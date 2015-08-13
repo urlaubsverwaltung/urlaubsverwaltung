@@ -110,7 +110,7 @@
                                                          title="<spring:message code='department.data.description'/>"
                                                          data-content="${department.description}">
                                                         <c:out value="${department.name}"/>
-                                                        <i class="fa fa-fw fa-info-circle"></i>
+                                                        <i class="fa fa-fw fa-info-circle hidden-print"></i>
                                                     </div>
                                                 </c:when>
                                                 <c:otherwise>
@@ -118,12 +118,14 @@
                                                 </c:otherwise>
                                             </c:choose>
                                         </td>
-                                        <td>
+                                        <td class="hidden-xs">
                                             <c:out value="${fn:length(department.members)}"/> <spring:message code="department.members"/>
                                         </td>
-                                        <td><uv:dateTime dateTime="${department.lastModification}"/></td>
+                                        <td class="hidden-xs">
+                                            <uv:dateTime dateTime="${department.lastModification}"/>
+                                        </td>
                                         <sec:authorize access="hasRole('OFFICE')">
-                                            <td class="hidden-print hidden-xs">
+                                            <td>
                                                 <form:form method="DELETE" action="${URL_PREFIX}/department/${department.id}">
                                                     <div id="modal-cancel-${department.id}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                                                         <div class="modal-dialog">
@@ -144,7 +146,7 @@
                                                     </div>
                                                 </form:form>
 
-                                                <a class="fa-action negative pull-right"
+                                                <a class="fa-action negative pull-right hidden-xs"
                                                    href="#modal-cancel-${department.id}"
                                                    data-toggle="modal"
                                                    data-title="<spring:message code='action.department.delete' />">
