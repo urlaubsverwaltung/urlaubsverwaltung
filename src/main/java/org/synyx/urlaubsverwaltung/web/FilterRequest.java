@@ -62,9 +62,11 @@ public class FilterRequest {
 
             case QUARTER:
                 return getStartDateOfQuarter(DateMidnight.now());
-        }
 
-        throw new IllegalStateException("Filter request has no valid period!");
+            default:
+
+                throw new IllegalStateException("Filter request has no valid period!");
+        }
     }
 
 
@@ -83,9 +85,11 @@ public class FilterRequest {
 
             case QUARTER:
                 return getEndDateOfQuarter(DateMidnight.now());
-        }
 
-        throw new IllegalStateException("Filter request has no valid period!");
+            default:
+
+                throw new IllegalStateException("Filter request has no valid period!");
+        }
     }
 
 
