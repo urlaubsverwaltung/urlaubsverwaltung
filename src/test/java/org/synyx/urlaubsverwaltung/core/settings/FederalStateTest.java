@@ -5,7 +5,7 @@ import org.junit.Test;
 
 
 /**
- * Don't forget the Java-Doc!
+ * Unit test for {@link FederalState}.
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
