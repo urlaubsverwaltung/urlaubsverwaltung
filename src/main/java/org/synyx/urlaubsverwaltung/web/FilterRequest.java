@@ -98,26 +98,57 @@ public class FilterRequest {
      */
     DateMidnight getStartDateOfQuarter(DateMidnight referenceDate) {
 
-        int month = referenceDate.getMonthOfYear();
         int year = referenceDate.getYear();
 
-        if (month >= DateTimeConstants.JANUARY && month <= DateTimeConstants.MARCH) {
+        if (isInFirstQuarter(referenceDate)) {
             return DateUtil.getFirstDayOfMonth(year, DateTimeConstants.JANUARY);
         }
 
-        if (month >= DateTimeConstants.APRIL && month <= DateTimeConstants.JUNE) {
+        if (isInSecondQuarter(referenceDate)) {
             return DateUtil.getFirstDayOfMonth(year, DateTimeConstants.APRIL);
         }
 
-        if (month >= DateTimeConstants.JULY && month <= DateTimeConstants.SEPTEMBER) {
+        if (isInThirdQuarter(referenceDate)) {
             return DateUtil.getFirstDayOfMonth(year, DateTimeConstants.JULY);
         }
 
-        if (month >= DateTimeConstants.OCTOBER && month <= DateTimeConstants.DECEMBER) {
+        if (isInFourthQuarter(referenceDate)) {
             return DateUtil.getFirstDayOfMonth(year, DateTimeConstants.OCTOBER);
         }
 
         throw new IllegalStateException("The given date has no valid month!");
+    }
+
+
+    private boolean isInFirstQuarter(DateMidnight date) {
+
+        int month = date.getMonthOfYear();
+
+        return month >= DateTimeConstants.JANUARY && month <= DateTimeConstants.MARCH;
+    }
+
+
+    private boolean isInSecondQuarter(DateMidnight date) {
+
+        int month = date.getMonthOfYear();
+
+        return month >= DateTimeConstants.APRIL && month <= DateTimeConstants.JUNE;
+    }
+
+
+    private boolean isInThirdQuarter(DateMidnight date) {
+
+        int month = date.getMonthOfYear();
+
+        return month >= DateTimeConstants.JULY && month <= DateTimeConstants.SEPTEMBER;
+    }
+
+
+    private boolean isInFourthQuarter(DateMidnight date) {
+
+        int month = date.getMonthOfYear();
+
+        return month >= DateTimeConstants.OCTOBER && month <= DateTimeConstants.DECEMBER;
     }
 
 
@@ -130,22 +161,21 @@ public class FilterRequest {
      */
     DateMidnight getEndDateOfQuarter(DateMidnight referenceDate) {
 
-        int month = referenceDate.getMonthOfYear();
         int year = referenceDate.getYear();
 
-        if (month >= DateTimeConstants.JANUARY && month <= DateTimeConstants.MARCH) {
+        if (isInFirstQuarter(referenceDate)) {
             return DateUtil.getLastDayOfMonth(year, DateTimeConstants.MARCH);
         }
 
-        if (month >= DateTimeConstants.APRIL && month <= DateTimeConstants.JUNE) {
+        if (isInSecondQuarter(referenceDate)) {
             return DateUtil.getLastDayOfMonth(year, DateTimeConstants.JUNE);
         }
 
-        if (month >= DateTimeConstants.JULY && month <= DateTimeConstants.SEPTEMBER) {
+        if (isInThirdQuarter(referenceDate)) {
             return DateUtil.getLastDayOfMonth(year, DateTimeConstants.SEPTEMBER);
         }
 
-        if (month >= DateTimeConstants.OCTOBER && month <= DateTimeConstants.DECEMBER) {
+        if (isInFourthQuarter(referenceDate)) {
             return DateUtil.getLastDayOfMonth(year, DateTimeConstants.DECEMBER);
         }
 
