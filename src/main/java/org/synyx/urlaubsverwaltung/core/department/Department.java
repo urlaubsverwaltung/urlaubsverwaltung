@@ -69,7 +69,8 @@ public class Department extends AbstractPersistable<Integer> {
     public DateTime getLastModification() {
 
         if (lastModification == null) {
-            return null; // because dateTime creates an DateTime.now() wenn new DateTime(null) is called.
+            // because DateTime creates DateTime.now() if new DateTime(null) is called
+            return null;
         } else {
             return new DateTime(lastModification);
         }
