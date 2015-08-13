@@ -20,7 +20,7 @@ public class CommentValidator implements Validator {
 
     private static final int MAX_CHARS = 200;
 
-    private static final String FIELD_TEXT = "text";
+    private static final String ATTRIBUTE_TEXT = "text";
 
     private static final String ERROR_REASON = "error.entry.mandatory";
     private static final String ERROR_LENGTH = "error.entry.tooManyChars";
@@ -41,11 +41,11 @@ public class CommentValidator implements Validator {
         boolean hasText = StringUtils.hasText(text);
 
         if (!hasText && comment.isMandatory()) {
-            errors.rejectValue(FIELD_TEXT, ERROR_REASON);
+            errors.rejectValue(ATTRIBUTE_TEXT, ERROR_REASON);
         }
 
         if (hasText && text.length() > MAX_CHARS) {
-            errors.rejectValue(FIELD_TEXT, ERROR_LENGTH);
+            errors.rejectValue(ATTRIBUTE_TEXT, ERROR_LENGTH);
         }
     }
 }

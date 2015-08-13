@@ -26,19 +26,19 @@ import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteComment;
 @Component
 public class SickNoteValidator implements Validator {
 
-    private static final String MANDATORY_FIELD = "error.entry.mandatory";
+    private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
     private static final String ERROR_PERIOD = "error.entry.invalidPeriod";
     private static final String ERROR_LENGTH = "error.entry.tooManyChars";
     private static final String ERROR_PERIOD_SICK_NOTE = "sicknote.error.aubInvalidPeriod";
     private static final String ERROR_OVERLAP = "application.error.overlap";
 
-    private static final String START_DATE = "startDate";
-    private static final String END_DATE = "endDate";
-    private static final String AUB_START_DATE = "aubStartDate";
-    private static final String AUB_END_DATE = "aubEndDate";
-    private static final String COMMENT = "text";
+    private static final String ATTRIBUTE_START_DATE = "startDate";
+    private static final String ATTRIBUTE_END_DATE = "endDate";
+    private static final String ATTRIBUTE_AUB_START_DATE = "aubStartDate";
+    private static final String ATTRIBUTE_AUB_END_DATE = "aubEndDate";
+    private static final String ATTRIBUTE_COMMENT = "text";
 
-    private static final int MAX_LENGTH = 200;
+    private static final int MAX_CHARS = 200;
 
     private final OverlapService overlapService;
 
@@ -73,11 +73,11 @@ public class SickNoteValidator implements Validator {
         DateMidnight startDate = sickNote.getStartDate();
         DateMidnight endDate = sickNote.getEndDate();
 
-        validateNotNull(startDate, START_DATE, errors);
-        validateNotNull(endDate, END_DATE, errors);
+        validateNotNull(startDate, ATTRIBUTE_START_DATE, errors);
+        validateNotNull(endDate, ATTRIBUTE_END_DATE, errors);
 
         if (startDate != null && endDate != null) {
-            validatePeriod(startDate, endDate, END_DATE, errors);
+            validatePeriod(startDate, endDate, ATTRIBUTE_END_DATE, errors);
             validateNoOverlapping(sickNote, errors);
         }
     }
@@ -88,21 +88,21 @@ public class SickNoteValidator implements Validator {
         DateMidnight aubStartDate = sickNote.getAubStartDate();
         DateMidnight aubEndDate = sickNote.getAubEndDate();
 
-        validateNotNull(aubStartDate, AUB_START_DATE, errors);
-        validateNotNull(aubEndDate, AUB_END_DATE, errors);
+        validateNotNull(aubStartDate, ATTRIBUTE_AUB_START_DATE, errors);
+        validateNotNull(aubEndDate, ATTRIBUTE_AUB_END_DATE, errors);
 
         if (aubStartDate != null && aubEndDate != null) {
-            validatePeriod(aubStartDate, aubEndDate, AUB_END_DATE, errors);
+            validatePeriod(aubStartDate, aubEndDate, ATTRIBUTE_AUB_END_DATE, errors);
 
             // Intervals are inclusive of the start instant and exclusive of the end, i.e. add one day at the end
             Interval interval = new Interval(sickNote.getStartDate(), sickNote.getEndDate().plusDays(1));
 
             if (!interval.contains(aubStartDate)) {
-                errors.rejectValue(AUB_START_DATE, ERROR_PERIOD_SICK_NOTE);
+                errors.rejectValue(ATTRIBUTE_AUB_START_DATE, ERROR_PERIOD_SICK_NOTE);
             }
 
             if (!interval.contains(aubEndDate)) {
-                errors.rejectValue(AUB_END_DATE, ERROR_PERIOD_SICK_NOTE);
+                errors.rejectValue(ATTRIBUTE_AUB_END_DATE, ERROR_PERIOD_SICK_NOTE);
             }
         }
     }
@@ -110,11 +110,9 @@ public class SickNoteValidator implements Validator {
 
     private void validateNotNull(DateMidnight date, String field, Errors errors) {
 
-        if (date == null) {
-            // may be that date field is null because of cast exception, than there is already a field error
-            if (errors.getFieldErrors(field).isEmpty()) {
-                errors.rejectValue(field, MANDATORY_FIELD);
-            }
+        // may be that date field is null because of cast exception, than there is already a field error
+        if (date == null && errors.getFieldErrors(field).isEmpty()) {
+            errors.rejectValue(field, ERROR_MANDATORY_FIELD);
         }
     }
 
@@ -155,11 +153,11 @@ public class SickNoteValidator implements Validator {
         String text = comment.getText();
 
         if (StringUtils.hasText(text)) {
-            if (text.length() > MAX_LENGTH) {
-                errors.rejectValue(COMMENT, ERROR_LENGTH);
+            if (text.length() > MAX_CHARS) {
+                errors.rejectValue(ATTRIBUTE_COMMENT, ERROR_LENGTH);
             }
         } else {
-            errors.rejectValue(COMMENT, MANDATORY_FIELD);
+            errors.rejectValue(ATTRIBUTE_COMMENT, ERROR_MANDATORY_FIELD);
         }
     }
 }

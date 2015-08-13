@@ -13,6 +13,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
+import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
@@ -22,6 +23,7 @@ import org.synyx.urlaubsverwaltung.web.person.PersonForm;
 import java.math.BigDecimal;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,14 +43,14 @@ public class PersonValidator implements Validator {
     private static final String ERROR_EMAIL = "person.form.data.email.error";
     private static final String ERROR_LOGIN_UNIQUE = "person.form.data.login.error";
 
-    private static final String LOGIN_NAME = "loginName";
-    private static final String FIRST_NAME = "firstName";
-    private static final String LAST_NAME = "lastName";
-    private static final String ANNUAL_VACATION_DAYS = "annualVacationDays";
-    private static final String REMAINING_VACATION_DAYS = "remainingVacationDays";
-    private static final String REMAINING_VACATION_DAYS_NOT_EXPIRING = "remainingVacationDaysNotExpiring";
-    private static final String EMAIL = "email";
-    private static final String PERMISSIONS = "permissions";
+    private static final String ATTRIBUTE_LOGIN_NAME = "loginName";
+    private static final String ATTRIBUTE_FIRST_NAME = "firstName";
+    private static final String ATTRIBUTE_LAST_NAME = "lastName";
+    private static final String ATTRIBUTE_ANNUAL_VACATION_DAYS = "annualVacationDays";
+    private static final String ATTRIBUTE_REMAINING_VACATION_DAYS = "remainingVacationDays";
+    private static final String ATTRIBUTE_REMAINING_VACATION_DAYS_NOT_EXPIRING = "remainingVacationDaysNotExpiring";
+    private static final String ATTRIBUTE_EMAIL = "email";
+    private static final String ATTRIBUTE_PERMISSIONS = "permissions";
 
     // a regex for email addresses that are valid, but may be "strange looking" (e.g. tomr$2@example.com)
     // original from: http://www.markussipila.info/pub/emailvalidator.php?action=validate
@@ -81,9 +83,9 @@ public class PersonValidator implements Validator {
 
         PersonForm form = (PersonForm) target;
 
-        validateName(form.getFirstName(), FIRST_NAME, errors);
+        validateName(form.getFirstName(), ATTRIBUTE_FIRST_NAME, errors);
 
-        validateName(form.getLastName(), LAST_NAME, errors);
+        validateName(form.getLastName(), ATTRIBUTE_LAST_NAME, errors);
 
         validateEmail(form.getEmail(), errors);
 
@@ -134,12 +136,14 @@ public class PersonValidator implements Validator {
 
     public void validateLogin(String login, Errors errors) {
 
-        validateName(login, LOGIN_NAME, errors);
+        validateName(login, ATTRIBUTE_LOGIN_NAME, errors);
 
-        if (!errors.hasFieldErrors(LOGIN_NAME)) {
+        if (!errors.hasFieldErrors(ATTRIBUTE_LOGIN_NAME)) {
             // validate unique login name
-            if (personService.getPersonByLogin(login).isPresent()) {
-                errors.rejectValue(LOGIN_NAME, ERROR_LOGIN_UNIQUE);
+            Optional<Person> person = personService.getPersonByLogin(login);
+
+            if (person.isPresent()) {
+                errors.rejectValue(ATTRIBUTE_LOGIN_NAME, ERROR_LOGIN_UNIQUE);
             }
         }
     }
@@ -155,18 +159,18 @@ public class PersonValidator implements Validator {
 
         // is email field null or empty
         if (!StringUtils.hasText(email)) {
-            errors.rejectValue(EMAIL, ERROR_MANDATORY_FIELD);
+            errors.rejectValue(ATTRIBUTE_EMAIL, ERROR_MANDATORY_FIELD);
         } else {
             // String length alright?
             if (!validateStringLength(email)) {
-                errors.rejectValue(EMAIL, ERROR_LENGTH);
+                errors.rejectValue(ATTRIBUTE_EMAIL, ERROR_LENGTH);
             }
 
             // validation with regex
             String normalizedEmail = email.trim().toLowerCase();
 
             if (!matchPattern(EMAIL_PATTERN, normalizedEmail)) {
-                errors.rejectValue(EMAIL, ERROR_EMAIL);
+                errors.rejectValue(ATTRIBUTE_EMAIL, ERROR_EMAIL);
             }
         }
     }
@@ -195,11 +199,9 @@ public class PersonValidator implements Validator {
 
     private void validateDateNotNull(DateMidnight date, String field, Errors errors) {
 
-        if (date == null) {
-            // may be that date field is null because of cast exception, than there is already a field error
-            if (errors.getFieldErrors(field).isEmpty()) {
-                errors.rejectValue(field, ERROR_MANDATORY_FIELD);
-            }
+        // may be that date field is null because of cast exception, than there is already a field error
+        if (date == null && errors.getFieldErrors(field).isEmpty()) {
+            errors.rejectValue(field, ERROR_MANDATORY_FIELD);
         }
     }
 
@@ -216,21 +218,19 @@ public class PersonValidator implements Validator {
         Settings settings = settingsService.getSettings();
         BigDecimal maxDays = BigDecimal.valueOf(settings.getMaximumAnnualVacationDays());
 
-        validateNumberNotNull(annualVacationDays, ANNUAL_VACATION_DAYS, errors);
+        validateNumberNotNull(annualVacationDays, ATTRIBUTE_ANNUAL_VACATION_DAYS, errors);
 
         if (annualVacationDays != null) {
-            validateNumberOfDays(annualVacationDays, ANNUAL_VACATION_DAYS, maxDays, errors);
+            validateNumberOfDays(annualVacationDays, ATTRIBUTE_ANNUAL_VACATION_DAYS, maxDays, errors);
         }
     }
 
 
     private void validateNumberNotNull(BigDecimal number, String field, Errors errors) {
 
-        if (number == null) {
-            // may be that number field is null because of cast exception, than there is already a field error
-            if (errors.getFieldErrors(field).isEmpty()) {
-                errors.rejectValue(field, ERROR_MANDATORY_FIELD);
-            }
+        // may be that number field is null because of cast exception, than there is already a field error
+        if (number == null && errors.getFieldErrors(field).isEmpty()) {
+            errors.rejectValue(field, ERROR_MANDATORY_FIELD);
         }
     }
 
@@ -243,15 +243,15 @@ public class PersonValidator implements Validator {
         BigDecimal remainingVacationDays = form.getRemainingVacationDays();
         BigDecimal remainingVacationDaysNotExpiring = form.getRemainingVacationDaysNotExpiring();
 
-        validateNumberNotNull(remainingVacationDays, REMAINING_VACATION_DAYS, errors);
-        validateNumberNotNull(remainingVacationDaysNotExpiring, REMAINING_VACATION_DAYS_NOT_EXPIRING, errors);
+        validateNumberNotNull(remainingVacationDays, ATTRIBUTE_REMAINING_VACATION_DAYS, errors);
+        validateNumberNotNull(remainingVacationDaysNotExpiring, ATTRIBUTE_REMAINING_VACATION_DAYS_NOT_EXPIRING, errors);
 
         if (remainingVacationDays != null) {
             // field entitlement's remaining vacation days
-            validateNumberOfDays(remainingVacationDays, REMAINING_VACATION_DAYS, maxDays, errors);
+            validateNumberOfDays(remainingVacationDays, ATTRIBUTE_REMAINING_VACATION_DAYS, maxDays, errors);
 
             if (remainingVacationDaysNotExpiring != null) {
-                validateNumberOfDays(remainingVacationDaysNotExpiring, REMAINING_VACATION_DAYS_NOT_EXPIRING,
+                validateNumberOfDays(remainingVacationDaysNotExpiring, ATTRIBUTE_REMAINING_VACATION_DAYS_NOT_EXPIRING,
                     remainingVacationDays, errors);
             }
         }
@@ -299,7 +299,7 @@ public class PersonValidator implements Validator {
         List<Role> roles = personForm.getPermissions();
 
         if (roles == null || roles.isEmpty()) {
-            errors.rejectValue(PERMISSIONS, "person.form.permissions.error.mandatory");
+            errors.rejectValue(ATTRIBUTE_PERMISSIONS, "person.form.permissions.error.mandatory");
         } else {
             // if role inactive set, then only this role may be selected
             // else this is an error
@@ -316,7 +316,7 @@ public class PersonValidator implements Validator {
                 // validate that there is only role inactive set
                 // this means size of role collection must have size 1
                 if (roles.size() != 1) {
-                    errors.rejectValue(PERMISSIONS, "person.form.permissions.error.inactive");
+                    errors.rejectValue(ATTRIBUTE_PERMISSIONS, "person.form.permissions.error.inactive");
                 }
             }
         }

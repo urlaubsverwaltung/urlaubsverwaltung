@@ -47,12 +47,12 @@ public class ApplicationValidator implements Validator {
     private static final String ERROR_OVERLAP = "application.error.overlap";
     private static final String ERROR_NOT_ENOUGH_DAYS = "application.error.notEnoughVacationDays";
 
-    private static final String FIELD_START_DATE = "startDate";
-    private static final String FIELD_END_DATE = "endDate";
-    private static final String FIELD_START_DATE_HALF = "startDateHalf";
-    private static final String FIELD_REASON = "reason";
-    private static final String FIELD_ADDRESS = "address";
-    private static final String FIELD_COMMENT = "comment";
+    private static final String ATTRIBUTE_START_DATE = "startDate";
+    private static final String ATTRIBUTE_END_DATE = "endDate";
+    private static final String ATTRIBUTE_START_DATE_HALF = "startDateHalf";
+    private static final String ATTRIBUTE_REASON = "reason";
+    private static final String ATTRIBUTE_ADDRESS = "address";
+    private static final String ATTRIBUTE_COMMENT = "comment";
 
     private final WorkDaysService calendarService;
     private final OverlapService overlapService;
@@ -85,16 +85,15 @@ public class ApplicationValidator implements Validator {
         validateDateFields(applicationForm, errors);
 
         // check if reason is not filled
-        if (applicationForm.getVacationType() == VacationType.SPECIALLEAVE) {
-            if (!StringUtils.hasText(applicationForm.getReason())) {
-                errors.rejectValue(FIELD_REASON, ERROR_MANDATORY_FIELD);
-            }
+        if (applicationForm.getVacationType() == VacationType.SPECIALLEAVE
+                && !StringUtils.hasText(applicationForm.getReason())) {
+            errors.rejectValue(ATTRIBUTE_REASON, ERROR_MANDATORY_FIELD);
         }
 
         // validate length of texts
-        validateStringLength(applicationForm.getReason(), FIELD_REASON, errors);
-        validateStringLength(applicationForm.getAddress(), FIELD_ADDRESS, errors);
-        validateStringLength(applicationForm.getComment(), FIELD_COMMENT, errors);
+        validateStringLength(applicationForm.getReason(), ATTRIBUTE_REASON, errors);
+        validateStringLength(applicationForm.getAddress(), ATTRIBUTE_ADDRESS, errors);
+        validateStringLength(applicationForm.getComment(), ATTRIBUTE_COMMENT, errors);
 
         if (!errors.hasErrors()) {
             // validate if applying for leave is possible
@@ -110,8 +109,8 @@ public class ApplicationValidator implements Validator {
             DateMidnight startDate = applicationForLeave.getStartDate();
             DateMidnight endDate = applicationForLeave.getEndDate();
 
-            validateNotNull(startDate, FIELD_START_DATE, errors);
-            validateNotNull(endDate, FIELD_END_DATE, errors);
+            validateNotNull(startDate, ATTRIBUTE_START_DATE, errors);
+            validateNotNull(endDate, ATTRIBUTE_END_DATE, errors);
 
             if (startDate != null && endDate != null) {
                 validatePeriod(startDate, endDate, errors);
@@ -119,7 +118,7 @@ public class ApplicationValidator implements Validator {
         } else {
             DateMidnight date = applicationForLeave.getStartDateHalf();
 
-            validateNotNull(date, FIELD_START_DATE_HALF, errors);
+            validateNotNull(date, ATTRIBUTE_START_DATE_HALF, errors);
 
             if (date != null) {
                 validatePeriod(date, date, errors);
@@ -130,11 +129,9 @@ public class ApplicationValidator implements Validator {
 
     private void validateNotNull(DateMidnight date, String field, Errors errors) {
 
-        if (date == null) {
-            // may be that date field is null because of cast exception, than there is already a field error
-            if (errors.getFieldErrors(field).isEmpty()) {
-                errors.rejectValue(field, ERROR_MANDATORY_FIELD);
-            }
+        // may be that date field is null because of cast exception, than there is already a field error
+        if (date == null && errors.getFieldErrors(field).isEmpty()) {
+            errors.rejectValue(field, ERROR_MANDATORY_FIELD);
         }
     }
 
@@ -179,10 +176,8 @@ public class ApplicationValidator implements Validator {
 
     private void validateStringLength(String text, String field, Errors errors) {
 
-        if (StringUtils.hasText(text)) {
-            if (text.length() > MAX_CHARS) {
-                errors.rejectValue(field, ERROR_LENGTH);
-            }
+        if (StringUtils.hasText(text) && text.length() > MAX_CHARS) {
+            errors.rejectValue(field, ERROR_LENGTH);
         }
     }
 

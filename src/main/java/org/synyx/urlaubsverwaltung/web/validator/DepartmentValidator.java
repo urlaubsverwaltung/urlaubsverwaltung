@@ -19,10 +19,10 @@ import org.synyx.urlaubsverwaltung.core.department.Department;
 public class DepartmentValidator implements Validator {
 
     private static final int MAX_CHARS_NAME = 50;
-    private static final int MAX_CHARS_DESC = 200;
+    private static final int MAX_CHARS_DESCRIPTION = 200;
 
-    private static final String FIELD_NAME = "name";
-    private static final String FIELD_DESCRIPTION = "description";
+    private static final String ATTRIBUTE_NAME = "name";
+    private static final String ATTRIBUTE_DESCRIPTION = "description";
 
     private static final String ERROR_REASON = "error.entry.mandatory";
     private static final String ERROR_LENGTH = "error.entry.tooManyChars";
@@ -35,7 +35,7 @@ public class DepartmentValidator implements Validator {
 
 
     /**
-     * Department name is mandantory Department name and description must have less than 200 characters.
+     * Department name is mandatory Department name and description must have less than 200 characters.
      *
      * @param  target
      * @param  errors
@@ -55,11 +55,11 @@ public class DepartmentValidator implements Validator {
         boolean hasText = StringUtils.hasText(text);
 
         if (!hasText) {
-            errors.rejectValue(FIELD_NAME, ERROR_REASON);
+            errors.rejectValue(ATTRIBUTE_NAME, ERROR_REASON);
         }
 
         if (hasText && text.length() > MAX_CHARS_NAME) {
-            errors.rejectValue(FIELD_NAME, ERROR_LENGTH);
+            errors.rejectValue(ATTRIBUTE_NAME, ERROR_LENGTH);
         }
     }
 
@@ -68,8 +68,8 @@ public class DepartmentValidator implements Validator {
 
         boolean hasText = StringUtils.hasText(description);
 
-        if (hasText && description.length() > MAX_CHARS_DESC) {
-            errors.rejectValue(FIELD_DESCRIPTION, ERROR_LENGTH);
+        if (hasText && description.length() > MAX_CHARS_DESCRIPTION) {
+            errors.rejectValue(ATTRIBUTE_DESCRIPTION, ERROR_LENGTH);
         }
     }
 }
