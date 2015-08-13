@@ -6,6 +6,8 @@ import org.joda.time.format.DateTimeFormatter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
@@ -19,7 +21,7 @@ import org.synyx.urlaubsverwaltung.DateFormat;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
-import org.synyx.urlaubsverwaltung.security.SessionService;
+import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.FilterRequest;
 import org.synyx.urlaubsverwaltung.web.statistics.ApplicationForLeaveStatistics;
@@ -39,74 +41,65 @@ import java.util.List;
 public class ApplicationForLeaveStatisticsController {
 
     @Autowired
-    private SessionService sessionService;
-
-    @Autowired
     private PersonService personService;
 
     @Autowired
     private ApplicationForLeaveStatisticsBuilder applicationForLeaveStatisticsBuilder;
 
+    @PreAuthorize(SecurityRules.IS_BOSS_OR_OFFICE)
     @RequestMapping(value = "/statistics", method = RequestMethod.POST)
     public String applicationForLeaveStatistics(@ModelAttribute("filterRequest") FilterRequest filterRequest) {
 
-        if (sessionService.isBoss() || sessionService.isOffice()) {
-            DateMidnight from = filterRequest.getStartDate();
-            DateMidnight to = filterRequest.getEndDate();
+        DateMidnight from = filterRequest.getStartDate();
+        DateMidnight to = filterRequest.getEndDate();
 
-            return "redirect:/web/application/statistics?from=" + from.toString(DateFormat.PATTERN) + "&to="
-                + to.toString(DateFormat.PATTERN);
-        }
-
-        return ControllerConstants.ERROR_JSP;
+        return "redirect:/web/application/statistics?from=" + from.toString(DateFormat.PATTERN) + "&to="
+            + to.toString(DateFormat.PATTERN);
     }
 
 
+    @PreAuthorize(SecurityRules.IS_BOSS_OR_OFFICE)
     @RequestMapping(value = "/statistics", method = RequestMethod.GET)
     public String applicationForLeaveStatistics(@RequestParam(value = "from", required = false) String from,
         @RequestParam(value = "to", required = false) String to, Model model) {
 
-        if (sessionService.isBoss() || sessionService.isOffice()) {
-            DateMidnight fromDate;
-            DateMidnight toDate;
+        DateMidnight fromDate;
+        DateMidnight toDate;
 
-            DateTimeFormatter formatter = DateTimeFormat.forPattern(DateFormat.PATTERN);
-            int currentYear = DateMidnight.now().getYear();
+        DateTimeFormatter formatter = DateTimeFormat.forPattern(DateFormat.PATTERN);
+        int currentYear = DateMidnight.now().getYear();
 
-            if (from == null) {
-                fromDate = DateUtil.getFirstDayOfYear(currentYear);
-            } else {
-                fromDate = DateMidnight.parse(from, formatter);
-            }
+        if (from == null) {
+            fromDate = DateUtil.getFirstDayOfYear(currentYear);
+        } else {
+            fromDate = DateMidnight.parse(from, formatter);
+        }
 
-            if (to == null) {
-                toDate = DateUtil.getLastDayOfYear(currentYear);
-            } else {
-                toDate = DateMidnight.parse(to, formatter);
-            }
+        if (to == null) {
+            toDate = DateUtil.getLastDayOfYear(currentYear);
+        } else {
+            toDate = DateMidnight.parse(to, formatter);
+        }
 
-            // NOTE: Not supported at the moment
-            if (fromDate.getYear() != toDate.getYear()) {
-                model.addAttribute("filterRequest", new FilterRequest());
-                model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, "INVALID_PERIOD");
-
-                return "application" + "/app_statistics";
-            }
-
-            List<ApplicationForLeaveStatistics> statistics = new ArrayList<>();
-
-            for (Person person : personService.getActivePersons()) {
-                statistics.add(applicationForLeaveStatisticsBuilder.build(person, fromDate, toDate));
-            }
-
-            model.addAttribute("from", fromDate);
-            model.addAttribute("to", toDate);
-            model.addAttribute("statistics", statistics);
+        // NOTE: Not supported at the moment
+        if (fromDate.getYear() != toDate.getYear()) {
             model.addAttribute("filterRequest", new FilterRequest());
+            model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, "INVALID_PERIOD");
 
             return "application" + "/app_statistics";
         }
 
-        return ControllerConstants.ERROR_JSP;
+        List<ApplicationForLeaveStatistics> statistics = new ArrayList<>();
+
+        for (Person person : personService.getActivePersons()) {
+            statistics.add(applicationForLeaveStatisticsBuilder.build(person, fromDate, toDate));
+        }
+
+        model.addAttribute("from", fromDate);
+        model.addAttribute("to", toDate);
+        model.addAttribute("statistics", statistics);
+        model.addAttribute("filterRequest", new FilterRequest());
+
+        return "application" + "/app_statistics";
     }
 }

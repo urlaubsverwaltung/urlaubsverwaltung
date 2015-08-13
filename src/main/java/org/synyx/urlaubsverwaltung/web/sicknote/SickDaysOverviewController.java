@@ -6,6 +6,8 @@ import org.joda.time.format.DateTimeFormatter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
@@ -24,8 +26,7 @@ import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
-import org.synyx.urlaubsverwaltung.security.SessionService;
-import org.synyx.urlaubsverwaltung.web.ControllerConstants;
+import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.web.FilterRequest;
 import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
 
@@ -45,9 +46,6 @@ import java.util.Map;
 public class SickDaysOverviewController {
 
     @Autowired
-    private SessionService sessionService;
-
-    @Autowired
     private SickNoteService sickNoteService;
 
     @Autowired
@@ -56,52 +54,46 @@ public class SickDaysOverviewController {
     @Autowired
     private WorkDaysService calendarService;
 
+    @PreAuthorize(SecurityRules.IS_OFFICE)
     @RequestMapping(value = "/sicknote/filter", method = RequestMethod.POST)
     public String filterSickNotes(@ModelAttribute("filterRequest") FilterRequest filterRequest) {
 
-        if (sessionService.isOffice()) {
-            DateMidnight from = filterRequest.getStartDate();
-            DateMidnight to = filterRequest.getEndDate();
+        DateMidnight from = filterRequest.getStartDate();
+        DateMidnight to = filterRequest.getEndDate();
 
-            return "redirect:/web/sicknote?from=" + from.toString(DateFormat.PATTERN) + "&to="
-                + to.toString(DateFormat.PATTERN);
-        }
-
-        return ControllerConstants.ERROR_JSP;
+        return "redirect:/web/sicknote?from=" + from.toString(DateFormat.PATTERN) + "&to="
+            + to.toString(DateFormat.PATTERN);
     }
 
 
+    @PreAuthorize(SecurityRules.IS_OFFICE)
     @RequestMapping(value = "/sicknote", method = RequestMethod.GET)
     public String periodsSickNotes(@RequestParam(value = "from", required = false) String from,
         @RequestParam(value = "to", required = false) String to, Model model) {
 
-        if (sessionService.isOffice()) {
-            DateTimeFormatter formatter = DateTimeFormat.forPattern(DateFormat.PATTERN);
-            int currentYear = DateMidnight.now().getYear();
+        DateTimeFormatter formatter = DateTimeFormat.forPattern(DateFormat.PATTERN);
+        int currentYear = DateMidnight.now().getYear();
 
-            DateMidnight fromDate;
-            DateMidnight toDate;
+        DateMidnight fromDate;
+        DateMidnight toDate;
 
-            if (from == null) {
-                fromDate = DateUtil.getFirstDayOfYear(currentYear);
-            } else {
-                fromDate = DateMidnight.parse(from, formatter);
-            }
-
-            if (to == null) {
-                toDate = DateUtil.getLastDayOfYear(currentYear);
-            } else {
-                toDate = DateMidnight.parse(to, formatter);
-            }
-
-            List<SickNote> sickNoteList = sickNoteService.getByPeriod(fromDate, toDate);
-
-            fillModel(model, sickNoteList, fromDate, toDate);
-
-            return "sicknote/sick_notes";
+        if (from == null) {
+            fromDate = DateUtil.getFirstDayOfYear(currentYear);
+        } else {
+            fromDate = DateMidnight.parse(from, formatter);
         }
 
-        return ControllerConstants.ERROR_JSP;
+        if (to == null) {
+            toDate = DateUtil.getLastDayOfYear(currentYear);
+        } else {
+            toDate = DateMidnight.parse(to, formatter);
+        }
+
+        List<SickNote> sickNoteList = sickNoteService.getByPeriod(fromDate, toDate);
+
+        fillModel(model, sickNoteList, fromDate, toDate);
+
+        return "sicknote/sick_notes";
     }
 
 

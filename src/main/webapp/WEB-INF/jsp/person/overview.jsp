@@ -277,63 +277,54 @@
 
         </div>
 
-        <div class="row">
+        <sec:authorize access="hasRole('OFFICE')">
+            <c:set var="IS_OFFICE" value="${true}"/>
+        </sec:authorize>
 
-            <div class="col-xs-12">
+        <c:if test="${person.id == signedInUser.id || IS_OFFICE}">
 
-                <div class="header">
-
-                    <legend id="anchorSickNotes">
-                        <spring:message code="sicknotes" />
-                        <sec:authorize access="hasRole('OFFICE')">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="header">
+                        <legend id="anchorSickNotes">
+                            <spring:message code="sicknotes" />
                             <a class="fa-action pull-right" href="${URL_PREFIX}/sicknote/new?person=${person.id}"
-                                data-title="<spring:message code="action.apply.sicknote" />">
+                               data-title="<spring:message code="action.apply.sicknote" />">
                                 <i class="fa fa-plus-circle"></i>
                             </a>
-                        </sec:authorize>
-                    </legend>
-
+                        </legend>
+                    </div>
                 </div>
-                
             </div>
             
-        </div>
-
-        <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-6">
-                <div class="box">
-                    <span class="box-icon bg-red"><i class="fa fa-medkit"></i></span>
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-6">
+                    <div class="box">
+                        <span class="box-icon bg-red"><i class="fa fa-medkit"></i></span>
                     <span class="box-text">
                         <spring:message code="overview.sicknotes.sickdays" arguments="${sickDays}" />
                         <i class="fa fa-check positive"></i> <spring:message code="overview.sicknotes.sickdays.aub" arguments="${sickDaysWithAUB}" />
                     </span>
+                    </div>
                 </div>
-            </div>
-            <div class="col-xs-12 col-sm-12 col-md-6">
-                <div class="box">
-                    <span class="box-icon bg-red"><i class="fa fa-child"></i></span>
+                <div class="col-xs-12 col-sm-12 col-md-6">
+                    <div class="box">
+                        <span class="box-icon bg-red"><i class="fa fa-child"></i></span>
                     <span class="box-text">
                         <spring:message code="overview.sicknotes.sickdays.child" arguments="${childSickDays}" />
                         <i class="fa fa-check positive"></i> <spring:message code="overview.sicknotes.sickdays.aub" arguments="${childSickDaysWithAUB}" />
                     </span>
+                    </div>
                 </div>
             </div>
-        </div>
-        
-        <div class="row">
-            <div class="col-xs-12">
-                <c:choose>
-                    <c:when test="${person.id == signedInUser.id}">
-                        <%@include file="./include/sick_notes.jsp" %>
-                    </c:when>
-                    <c:otherwise>
-                        <sec:authorize access="hasRole('OFFICE')">
-                            <%@include file="./include/sick_notes.jsp" %>
-                        </sec:authorize>
-                    </c:otherwise>
-                </c:choose>
+
+            <div class="row">
+                <div class="col-xs-12">
+                    <%@include file="./include/sick_notes.jsp" %>
+                </div>
             </div>
-        </div>
+
+        </c:if>
 
     </div>
 </div>

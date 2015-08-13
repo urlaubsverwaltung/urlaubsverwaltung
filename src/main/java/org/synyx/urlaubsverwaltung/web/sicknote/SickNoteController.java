@@ -6,6 +6,8 @@ import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
@@ -32,6 +34,7 @@ import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteComment;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteCommentService;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.security.Role;
+import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.DateMidnightPropertyEditor;
@@ -46,8 +49,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import javax.annotation.security.RolesAllowed;
 
 
 /**
@@ -91,14 +92,13 @@ public class SickNoteController {
 
 
     @RequestMapping(value = "/sicknote/{id}", method = RequestMethod.GET)
-    @RolesAllowed({ "USER", "OFFICE" })
     public String sickNoteDetails(@PathVariable("id") Integer id, Model model) {
 
-        Person loggedUser = sessionService.getSignedInUser();
+        Person signedInUser = sessionService.getSignedInUser();
         Optional<SickNote> sickNote = sickNoteService.getById(id);
 
         if (sickNote.isPresent()
-                && (loggedUser.hasRole(Role.OFFICE) || sickNote.get().getPerson().equals(loggedUser))) {
+                && (signedInUser.hasRole(Role.OFFICE) || sickNote.get().getPerson().equals(signedInUser))) {
             model.addAttribute("sickNote", new ExtendedSickNote(sickNote.get(), calendarService));
             model.addAttribute("comment", new SickNoteComment());
             model.addAttribute("gravatar", GravatarUtil.createImgURL(sickNote.get().getPerson().getEmail()));
@@ -125,18 +125,15 @@ public class SickNoteController {
     }
 
 
+    @PreAuthorize(SecurityRules.IS_OFFICE)
     @RequestMapping(value = "/sicknote/new", method = RequestMethod.GET)
     public String newSickNote(Model model) {
 
-        if (sessionService.isOffice()) {
-            model.addAttribute("sickNote", new SickNote());
-            model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, getPersons());
-            model.addAttribute("sickNoteTypes", SickNoteType.values());
+        model.addAttribute("sickNote", new SickNote());
+        model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, getPersons());
+        model.addAttribute("sickNoteTypes", SickNoteType.values());
 
-            return "sicknote/sick_note_form";
-        }
-
-        return ControllerConstants.ERROR_JSP;
+        return "sicknote/sick_note_form";
     }
 
 
@@ -156,36 +153,34 @@ public class SickNoteController {
     }
 
 
+    @PreAuthorize(SecurityRules.IS_OFFICE)
     @RequestMapping(value = "/sicknote", method = RequestMethod.POST)
     public String newSickNote(@ModelAttribute("sickNote") SickNote sickNote, Errors errors, Model model) {
 
-        if (sessionService.isOffice()) {
-            validator.validate(sickNote, errors);
+        validator.validate(sickNote, errors);
 
-            if (errors.hasErrors()) {
-                model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
-                model.addAttribute("sickNote", sickNote);
-                model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, getPersons());
-                model.addAttribute("sickNoteTypes", SickNoteType.values());
+        if (errors.hasErrors()) {
+            model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
+            model.addAttribute("sickNote", sickNote);
+            model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, getPersons());
+            model.addAttribute("sickNoteTypes", SickNoteType.values());
 
-                return "sicknote/sick_note_form";
-            }
-
-            sickNoteInteractionService.create(sickNote, sessionService.getSignedInUser());
-
-            return "redirect:/web/sicknote/" + sickNote.getId();
+            return "sicknote/sick_note_form";
         }
 
-        return ControllerConstants.ERROR_JSP;
+        sickNoteInteractionService.create(sickNote, sessionService.getSignedInUser());
+
+        return "redirect:/web/sicknote/" + sickNote.getId();
     }
 
 
+    @PreAuthorize(SecurityRules.IS_OFFICE)
     @RequestMapping(value = "/sicknote/{id}/edit", method = RequestMethod.GET)
     public String editSickNote(@PathVariable("id") Integer id, Model model) {
 
         Optional<SickNote> sickNote = sickNoteService.getById(id);
 
-        if (sickNote.isPresent() && sickNote.get().isActive() && sessionService.isOffice()) {
+        if (sickNote.isPresent() && sickNote.get().isActive()) {
             model.addAttribute("sickNote", sickNote.get());
             model.addAttribute("sickNoteTypes", SickNoteType.values());
 
@@ -196,37 +191,35 @@ public class SickNoteController {
     }
 
 
+    @PreAuthorize(SecurityRules.IS_OFFICE)
     @RequestMapping(value = "/sicknote/{id}/edit", method = RequestMethod.PUT)
     public String editSickNote(@PathVariable("id") Integer id,
         @ModelAttribute("sickNote") SickNote sickNote, Errors errors, Model model) {
 
-        if (sessionService.isOffice()) {
-            validator.validate(sickNote, errors);
+        validator.validate(sickNote, errors);
 
-            if (errors.hasErrors()) {
-                model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
-                model.addAttribute("sickNote", sickNote);
-                model.addAttribute("sickNoteTypes", SickNoteType.values());
+        if (errors.hasErrors()) {
+            model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
+            model.addAttribute("sickNote", sickNote);
+            model.addAttribute("sickNoteTypes", SickNoteType.values());
 
-                return "sicknote/sick_note_form";
-            }
-
-            sickNoteInteractionService.update(sickNote, sessionService.getSignedInUser());
-
-            return "redirect:/web/sicknote/" + id;
+            return "sicknote/sick_note_form";
         }
 
-        return ControllerConstants.ERROR_JSP;
+        sickNoteInteractionService.update(sickNote, sessionService.getSignedInUser());
+
+        return "redirect:/web/sicknote/" + id;
     }
 
 
+    @PreAuthorize(SecurityRules.IS_OFFICE)
     @RequestMapping(value = "/sicknote/{id}/comment", method = RequestMethod.POST)
     public String addComment(@PathVariable("id") Integer id,
         @ModelAttribute("comment") SickNoteComment comment, RedirectAttributes redirectAttributes, Errors errors) {
 
         Optional<SickNote> sickNote = sickNoteService.getById(id);
 
-        if (sessionService.isOffice() && sickNote.isPresent()) {
+        if (sickNote.isPresent()) {
             validator.validateComment(comment, errors);
 
             if (errors.hasErrors()) {
@@ -243,12 +236,13 @@ public class SickNoteController {
     }
 
 
+    @PreAuthorize(SecurityRules.IS_OFFICE)
     @RequestMapping(value = "/sicknote/{id}/convert", method = RequestMethod.GET)
     public String convertSickNoteToVacation(@PathVariable("id") Integer id, Model model) {
 
         Optional<SickNote> sickNote = sickNoteService.getById(id);
 
-        if (sickNote.isPresent() && sickNote.get().isActive() && sessionService.isOffice()) {
+        if (sickNote.isPresent() && sickNote.get().isActive()) {
             model.addAttribute("sickNote", new ExtendedSickNote(sickNote.get(), calendarService));
             model.addAttribute("sickNoteConvertForm", new SickNoteConvertForm(sickNote.get()));
             model.addAttribute("vacationTypes", VacationType.values());
@@ -260,13 +254,14 @@ public class SickNoteController {
     }
 
 
+    @PreAuthorize(SecurityRules.IS_OFFICE)
     @RequestMapping(value = "/sicknote/{id}/convert", method = RequestMethod.POST)
     public String convertSickNoteToVacation(@PathVariable("id") Integer id,
         @ModelAttribute("sickNoteConvertForm") SickNoteConvertForm sickNoteConvertForm, Errors errors, Model model) {
 
         Optional<SickNote> sickNote = sickNoteService.getById(id);
 
-        if (sessionService.isOffice() && sickNote.isPresent()) {
+        if (sickNote.isPresent()) {
             sickNoteConvertFormValidator.validate(sickNoteConvertForm, errors);
 
             if (errors.hasErrors()) {
@@ -288,12 +283,13 @@ public class SickNoteController {
     }
 
 
+    @PreAuthorize(SecurityRules.IS_OFFICE)
     @RequestMapping(value = "/sicknote/{id}/cancel", method = RequestMethod.POST)
     public String cancelSickNote(@PathVariable("id") Integer id) {
 
         Optional<SickNote> sickNote = sickNoteService.getById(id);
 
-        if (sessionService.isOffice() && sickNote.isPresent()) {
+        if (sickNote.isPresent()) {
             sickNoteInteractionService.cancel(sickNote.get(), sessionService.getSignedInUser());
 
             return "redirect:/web/sicknote/" + id;

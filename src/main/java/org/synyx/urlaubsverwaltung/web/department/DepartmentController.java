@@ -2,6 +2,8 @@ package org.synyx.urlaubsverwaltung.web.department;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
@@ -20,7 +22,7 @@ import org.synyx.urlaubsverwaltung.core.department.Department;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
-import org.synyx.urlaubsverwaltung.security.SessionService;
+import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
@@ -43,9 +45,6 @@ public class DepartmentController {
     private DepartmentService departmentService;
 
     @Autowired
-    private SessionService sessionService;
-
-    @Autowired
     private PersonService personService;
 
     @Autowired
@@ -58,27 +57,21 @@ public class DepartmentController {
     }
 
 
+    @PreAuthorize(SecurityRules.IS_BOSS_OR_OFFICE)
     @RequestMapping(value = "/department", method = RequestMethod.GET)
     public String showAllDepartments(Model model) {
 
-        if (sessionService.isOffice() || sessionService.isBoss()) {
-            List<Department> departments = departmentService.getAllDepartments();
+        List<Department> departments = departmentService.getAllDepartments();
 
-            model.addAttribute(DepartmentConstants.DEPARTMENTS_ATTRIBUTE, departments);
+        model.addAttribute(DepartmentConstants.DEPARTMENTS_ATTRIBUTE, departments);
 
-            return DepartmentConstants.DEPARTMENT_JSP;
-        } else {
-            return ControllerConstants.ERROR_JSP;
-        }
+        return DepartmentConstants.DEPARTMENT_JSP;
     }
 
 
+    @PreAuthorize(SecurityRules.IS_OFFICE)
     @RequestMapping(value = "/department/new", method = RequestMethod.GET)
     public String newDepartmentForm(Model model) {
-
-        if (!sessionService.isOffice()) {
-            return ControllerConstants.ERROR_JSP;
-        }
 
         List<Person> persons = getPersons();
         Map<Person, String> gravatarUrls = PersonConstants.getGravatarURLs(persons);
@@ -103,15 +96,11 @@ public class DepartmentController {
     }
 
 
+    @PreAuthorize(SecurityRules.IS_OFFICE)
     @RequestMapping(value = "/department", method = RequestMethod.POST)
     public String newDepartment(@ModelAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE) Department department,
         Errors errors, Model model, RedirectAttributes redirectAttributes) {
 
-        if (!sessionService.isOffice()) {
-            return ControllerConstants.ERROR_JSP;
-        }
-
-        // validate department
         validator.validate(department, errors);
 
         if (errors.hasGlobalErrors()) {
@@ -133,12 +122,9 @@ public class DepartmentController {
     }
 
 
+    @PreAuthorize(SecurityRules.IS_OFFICE)
     @RequestMapping(value = "/department/{departmentId}/edit", method = RequestMethod.GET)
     public String editDepartment(@PathVariable("departmentId") Integer departmentId, Model model) {
-
-        if (!sessionService.isOffice()) {
-            return ControllerConstants.ERROR_JSP;
-        }
 
         Optional<Department> optionalDepartment = departmentService.getDepartmentById(departmentId);
 
@@ -158,6 +144,7 @@ public class DepartmentController {
     }
 
 
+    @PreAuthorize(SecurityRules.IS_OFFICE)
     @RequestMapping(value = "/department/{departmentId}", method = RequestMethod.PUT)
     public String updateDepartment(@PathVariable("departmentId") Integer departmentId,
         @ModelAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE) Department department, Errors errors, Model model,
@@ -165,7 +152,7 @@ public class DepartmentController {
 
         Optional<Department> departmentToUpdate = departmentService.getDepartmentById(departmentId);
 
-        if (!sessionService.isOffice() || !departmentToUpdate.isPresent()) {
+        if (!departmentToUpdate.isPresent()) {
             return ControllerConstants.ERROR_JSP;
         }
 
@@ -190,13 +177,10 @@ public class DepartmentController {
     }
 
 
+    @PreAuthorize(SecurityRules.IS_OFFICE)
     @RequestMapping(value = "/department/{departmentId}", method = RequestMethod.DELETE)
     public String deleteDepartment(@PathVariable("departmentId") Integer departmentId,
         RedirectAttributes redirectAttributes) {
-
-        if (!sessionService.isOffice()) {
-            return ControllerConstants.ERROR_JSP;
-        }
 
         Optional<Department> department = departmentService.getDepartmentById(departmentId);
 

@@ -4,6 +4,8 @@ import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
@@ -32,6 +34,7 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.security.Role;
+import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
@@ -89,11 +92,11 @@ public class ApplicationForLeaveDetailsController {
         @RequestParam(value = "action", required = false) String action,
         @RequestParam(value = "shortcut", required = false) boolean shortcut, Model model) {
 
-        Person loggedUser = sessionService.getSignedInUser();
+        Person signedInUser = sessionService.getSignedInUser();
 
         Optional<Application> applicationOptional = applicationService.getApplicationById(applicationId);
 
-        if (applicationOptional.isPresent() && loggedUser.equals(applicationOptional.get().getPerson())
+        if (applicationOptional.isPresent() && signedInUser.equals(applicationOptional.get().getPerson())
                 || (sessionService.isBoss() || sessionService.isOffice())) {
             Application application = applicationOptional.get();
 
@@ -155,16 +158,17 @@ public class ApplicationForLeaveDetailsController {
     /**
      * Allow a not yet allowed application for leave (Boss only!).
      */
+    @PreAuthorize(SecurityRules.IS_BOSS)
     @RequestMapping(value = "/{applicationId}/allow", method = RequestMethod.PUT)
     public String allowApplication(@PathVariable("applicationId") Integer applicationId,
         @ModelAttribute("comment") CommentForm comment,
         @RequestParam(value = "redirect", required = false) String redirectUrl, Errors errors,
         RedirectAttributes redirectAttributes) {
 
-        Person boss = sessionService.getSignedInUser();
         Optional<Application> application = applicationService.getApplicationById(applicationId);
 
-        if (sessionService.isBoss() && application.isPresent()) {
+        if (application.isPresent()) {
+            Person boss = sessionService.getSignedInUser();
             comment.setMandatory(false);
             commentValidator.validate(comment, errors);
 
@@ -193,6 +197,7 @@ public class ApplicationForLeaveDetailsController {
      * If a boss is not sure about the decision if an application should be allowed or rejected, he can ask another boss
      * to decide about this application (an email is sent).
      */
+    @PreAuthorize(SecurityRules.IS_BOSS)
     @RequestMapping(value = "/{applicationId}/refer", method = RequestMethod.PUT)
     public String referApplication(@PathVariable("applicationId") Integer applicationId,
         @ModelAttribute("modelPerson") Person p, RedirectAttributes redirectAttributes) {
@@ -200,7 +205,7 @@ public class ApplicationForLeaveDetailsController {
         Optional<Application> application = applicationService.getApplicationById(applicationId);
         java.util.Optional<Person> recipient = personService.getPersonByLogin(p.getLoginName());
 
-        if (sessionService.isBoss() && application.isPresent() && recipient.isPresent()) {
+        if (application.isPresent() && recipient.isPresent()) {
             Person sender = sessionService.getSignedInUser();
             mailService.sendReferApplicationNotification(application.get(), recipient.get(), sender);
 
@@ -216,6 +221,7 @@ public class ApplicationForLeaveDetailsController {
     /**
      * Reject an application for leave (Boss only!).
      */
+    @PreAuthorize(SecurityRules.IS_BOSS)
     @RequestMapping(value = "/{applicationId}/reject", method = RequestMethod.PUT)
     public String rejectApplication(@PathVariable("applicationId") Integer applicationId,
         @ModelAttribute("comment") CommentForm comment,
@@ -224,7 +230,7 @@ public class ApplicationForLeaveDetailsController {
 
         Optional<Application> application = applicationService.getApplicationById(applicationId);
 
-        if (sessionService.isBoss() && application.isPresent()) {
+        if (application.isPresent()) {
             Person boss = sessionService.getSignedInUser();
 
             comment.setMandatory(true);
@@ -268,7 +274,7 @@ public class ApplicationForLeaveDetailsController {
             return ControllerConstants.ERROR_JSP;
         }
 
-        Person loggedUser = sessionService.getSignedInUser();
+        Person signedInUser = sessionService.getSignedInUser();
         Application application = optionalApplication.get();
 
         boolean isWaiting = application.hasStatus(ApplicationStatus.WAITING);
@@ -277,7 +283,7 @@ public class ApplicationForLeaveDetailsController {
         // security check: only two cases where cancelling is possible
         // 1: user can cancel his own applications for leave if they have the state waiting
         // 2: office can cancel all applications for leave that has the state waiting or allowed, even for other persons
-        if (loggedUser.equals(application.getPerson()) && isWaiting) {
+        if (signedInUser.equals(application.getPerson()) && isWaiting) {
             // user can cancel only his own waiting applications, so the comment is NOT mandatory
             comment.setMandatory(false);
         } else if (sessionService.isOffice() && (isWaiting || isAllowed)) {
@@ -295,7 +301,7 @@ public class ApplicationForLeaveDetailsController {
             return "redirect:/web/application/" + applicationId + "?action=cancel";
         }
 
-        applicationInteractionService.cancel(application, loggedUser, Optional.ofNullable(comment.getText()));
+        applicationInteractionService.cancel(application, signedInUser, Optional.ofNullable(comment.getText()));
 
         return "redirect:/web/application/" + applicationId;
     }
@@ -308,14 +314,13 @@ public class ApplicationForLeaveDetailsController {
     public String remindBoss(@PathVariable("applicationId") Integer applicationId,
         RedirectAttributes redirectAttributes) {
 
-        // TODO: move this to a service method
-
         Optional<Application> optionalApplication = applicationService.getApplicationById(applicationId);
 
-        if (!sessionService.isBoss() && !optionalApplication.isPresent()) {
+        if (!optionalApplication.isPresent()) {
             return ControllerConstants.ERROR_JSP;
         }
 
+        // TODO: move this to a service method
         Application application = optionalApplication.get();
         DateMidnight remindDate = application.getRemindDate();
 

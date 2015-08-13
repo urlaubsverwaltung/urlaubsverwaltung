@@ -70,9 +70,9 @@
 
 <c:choose>
 
-<c:when test="${notpossible == true}">
+<c:when test="${noHolidaysAccount}">
 
-    <spring:message code="app.not.possible"/>
+    <spring:message code="account.none"/>
 
 </c:when>
 
@@ -89,7 +89,7 @@
     </c:otherwise>
 </c:choose>
 
-<form:form method="POST" action="${URL_PREFIX}/application/new?personId=${person.id}" modelAttribute="appForm" class="form-horizontal" role="form">
+<form:form method="POST" action="${URL_PREFIX}/application/new?personId=${person.id}" modelAttribute="application" class="form-horizontal" role="form">
 <form:hidden path="person" value="${person.id}" />
 
 <c:if test="${not empty errors}">
@@ -153,27 +153,20 @@
 
     <div class="col-md-7">
         <form:select path="vacationType" size="1" id="vacationType" class="form-control" onchange="checkSonderurlaub(value);">
-            <c:choose>
-                <c:when test="${appForm.vacationType == null}">
-                    <c:forEach items="${vacTypes}" var="vacType">
-                        <option value="${vacType}">
-                            <spring:message code='${vacType}'/>
+            <c:forEach items="${vacationTypes}" var="vacationType">
+                <c:choose>
+                    <c:when test="${vacationType == application.vacationType}">
+                        <option value="${vacationType}" selected="selected">
+                            <spring:message code='${vacationType}'/>
                         </option>
-                    </c:forEach>
-                </c:when>
-                <c:otherwise>
-                    <option value="${appForm.vacationType}" selected="selected">
-                        <spring:message code='${appForm.vacationType}'/>
-                    </option>
-                    <c:forEach items="${vacTypes}" var="vacType">
-                        <c:if test="${vacType != appForm.vacationType}">
-                            <option value="${vacType}">
-                                <spring:message code='${vacType}'/>
-                            </option>
-                        </c:if>
-                    </c:forEach>
-                </c:otherwise>
-            </c:choose>
+                    </c:when>
+                    <c:otherwise>
+                        <option value="${vacationType}">
+                            <spring:message code='${vacationType}'/>
+                        </option>
+                    </c:otherwise>
+                </c:choose>
+            </c:forEach>
         </form:select>
     </div>
 
@@ -261,7 +254,7 @@
             <c:forEach items="${persons}" var="holidayReplacement">
 
                <c:choose>
-                   <c:when test="${appForm.holidayReplacement.id == holidayReplacement.id}">
+                   <c:when test="${application.holidayReplacement.id == holidayReplacement.id}">
                        <form:option value="${holidayReplacement.id}" selected="selected">
                            <c:out value="${holidayReplacement.niceName}" />
                        </form:option>

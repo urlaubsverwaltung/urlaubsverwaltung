@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.web.application;
 
 import org.joda.time.DateMidnight;
-import org.joda.time.chrono.GregorianChronology;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -21,13 +20,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
-import org.synyx.urlaubsverwaltung.core.account.service.VacationDaysService;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationInteractionService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
-import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.DateMidnightPropertyEditor;
@@ -61,9 +58,6 @@ public class ApplyForLeaveController {
 
     @Autowired
     private ApplicationInteractionService applicationInteractionService;
-
-    @Autowired
-    private VacationDaysService vacationDaysService;
 
     @Autowired
     private ApplicationValidator applicationValidator;
@@ -109,7 +103,8 @@ public class ApplyForLeaveController {
         boolean isApplyingForOneSelf = person.equals(applier);
 
         // only office may apply for leave on behalf of other users
-        if (!isApplyingForOneSelf && !sessionService.isOffice()) {
+        if ((!isApplyingForOneSelf && !sessionService.isOffice())
+                || (applyingOnBehalfOfSomeOne != null && !sessionService.isOffice())) {
             return ControllerConstants.ERROR_JSP;
         }
 
@@ -117,17 +112,12 @@ public class ApplyForLeaveController {
 
         if (holidaysAccount.isPresent()) {
             prepareApplicationForLeaveForm(person, new ApplicationForLeaveForm(), model);
-        } else {
-            model.addAttribute("notpossible", true);
         }
 
-        if (applyingOnBehalfOfSomeOne != null) {
-            model.addAttribute("appliesOnOnesBehalf", true);
-        } else {
-            model.addAttribute("appliesOnOnesBehalf", false);
-        }
+        model.addAttribute("noHolidaysAccount", !holidaysAccount.isPresent());
+        model.addAttribute("appliesOnOnesBehalf", applyingOnBehalfOfSomeOne);
 
-        return "application" + "/app_form";
+        return "application/app_form";
     }
 
 
@@ -138,23 +128,10 @@ public class ApplyForLeaveController {
             .sorted(personComparator())
             .collect(Collectors.toList());
 
-        Optional<Account> account = accountService.getHolidaysAccount(DateMidnight.now(
-                    GregorianChronology.getInstance())
-                .getYear(), person);
-
-        if (account.isPresent()) {
-            model.addAttribute("vacationDaysLeft", vacationDaysService.getVacationDaysLeft(account.get()));
-            model.addAttribute(PersonConstants.BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(DateMidnight.now()));
-        }
-
         model.addAttribute(PersonConstants.PERSON_ATTRIBUTE, person);
         model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, persons);
-        model.addAttribute("date", DateMidnight.now(GregorianChronology.getInstance()));
-        model.addAttribute(ControllerConstants.YEAR_ATTRIBUTE,
-            DateMidnight.now(GregorianChronology.getInstance()).getYear());
-        model.addAttribute("appForm", appForm);
-        model.addAttribute("account", account);
-        model.addAttribute("vacTypes", VacationType.values());
+        model.addAttribute("application", appForm);
+        model.addAttribute("vacationTypes", VacationType.values());
     }
 
 
@@ -166,7 +143,7 @@ public class ApplyForLeaveController {
 
     @RequestMapping(value = "/new", method = RequestMethod.POST)
     public String newApplication(@RequestParam(value = "personId", required = false) Integer personId,
-        @ModelAttribute("appForm") ApplicationForLeaveForm appForm, RedirectAttributes redirectAttributes,
+        @ModelAttribute("application") ApplicationForLeaveForm appForm, RedirectAttributes redirectAttributes,
         Errors errors, Model model) {
 
         Person applier = sessionService.getSignedInUser();
@@ -193,7 +170,7 @@ public class ApplyForLeaveController {
                 model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
             }
 
-            return "application" + "/app_form";
+            return "application/app_form";
         }
 
         Application application = appForm.generateApplicationForLeave();

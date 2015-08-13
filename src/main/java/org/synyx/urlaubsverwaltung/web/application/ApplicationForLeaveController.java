@@ -2,6 +2,8 @@ package org.synyx.urlaubsverwaltung.web.application;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
@@ -13,8 +15,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
-import org.synyx.urlaubsverwaltung.security.SessionService;
-import org.synyx.urlaubsverwaltung.web.ControllerConstants;
+import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.web.FilterRequest;
 import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
 import org.synyx.urlaubsverwaltung.web.util.GravatarUtil;
@@ -34,9 +35,6 @@ import java.util.stream.Collectors;
 public class ApplicationForLeaveController {
 
     @Autowired
-    private SessionService sessionService;
-
-    @Autowired
     private ApplicationService applicationService;
 
     @Autowired
@@ -47,22 +45,19 @@ public class ApplicationForLeaveController {
      *
      * @return  waiting applications for leave page or error page if not boss or office
      */
+    @PreAuthorize(SecurityRules.IS_BOSS_OR_OFFICE)
     @RequestMapping(value = "/application", method = RequestMethod.GET)
     public String showWaiting(Model model) {
 
-        if (sessionService.isBoss() || sessionService.isOffice()) {
-            List<ApplicationForLeave> applicationsForLeave = getAllRelevantApplicationsForLeave();
+        List<ApplicationForLeave> applicationsForLeave = getAllRelevantApplicationsForLeave();
 
-            model.addAttribute("applications", applicationsForLeave);
-            model.addAttribute("filterRequest", new FilterRequest());
+        model.addAttribute("applications", applicationsForLeave);
+        model.addAttribute("filterRequest", new FilterRequest());
 
-            Map<Application, String> gravatarUrls = getAllRelevantGravatarUrls(applicationsForLeave);
-            model.addAttribute(PersonConstants.GRAVATAR_URLS_ATTRIBUTE, gravatarUrls);
+        Map<Application, String> gravatarUrls = getAllRelevantGravatarUrls(applicationsForLeave);
+        model.addAttribute(PersonConstants.GRAVATAR_URLS_ATTRIBUTE, gravatarUrls);
 
-            return "application" + "/app_list";
-        } else {
-            return ControllerConstants.ERROR_JSP;
-        }
+        return "application" + "/app_list";
     }
 
 

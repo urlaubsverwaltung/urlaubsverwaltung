@@ -4,6 +4,8 @@ import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
@@ -19,7 +21,7 @@ import org.synyx.urlaubsverwaltung.core.account.service.VacationDaysService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
-import org.synyx.urlaubsverwaltung.security.SessionService;
+import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 
 import java.util.HashMap;
@@ -36,10 +38,6 @@ import java.util.Optional;
 @Controller
 public class PersonController {
 
-    // links
-    private static final String ACTIVE_LINK = "/staff";
-    private static final String INACTIVE_LINK = "/staff/inactive";
-
     @Autowired
     private PersonService personService;
 
@@ -49,104 +47,41 @@ public class PersonController {
     @Autowired
     private VacationDaysService vacationDaysService;
 
-    @Autowired
-    private SessionService sessionService;
+    @PreAuthorize(SecurityRules.IS_BOSS_OR_OFFICE)
+    @RequestMapping(value = "/staff/inactive", method = RequestMethod.GET)
+    public String showInactiveStaff() {
 
-    /**
-     * Shows list with inactive staff, default: for current year.
-     *
-     * @param  model
-     *
-     * @return
-     */
-    @RequestMapping(value = INACTIVE_LINK, method = RequestMethod.GET)
-    public String showInactiveStaff(Model model) {
-
-        if (sessionService.isOffice() || sessionService.isBoss()) {
-            List<Person> persons = personService.getInactivePersons();
-
-            if (persons.isEmpty()) {
-                model.addAttribute("notexistent", true);
-                model.addAttribute(ControllerConstants.YEAR_ATTRIBUTE, DateMidnight.now().getYear());
-            } else {
-                prepareStaffView(persons, DateMidnight.now().getYear(), model);
-            }
-
-            return PersonConstants.STAFF_JSP;
-        } else {
-            return ControllerConstants.ERROR_JSP;
-        }
+        return "redirect:/web/staff/inactive?year=" + DateMidnight.now().getYear();
     }
 
 
-    /**
-     * Shows list with active staff, default: for current year.
-     *
-     * @param  model
-     *
-     * @return
-     */
-    @RequestMapping(value = ACTIVE_LINK, method = RequestMethod.GET)
-    public String showActiveStaff(Model model) {
+    @PreAuthorize(SecurityRules.IS_BOSS_OR_OFFICE)
+    @RequestMapping(value = "/staff", method = RequestMethod.GET)
+    public String showActiveStaff() {
 
-        if (sessionService.isOffice() || sessionService.isBoss()) {
-            List<Person> persons = personService.getActivePersons();
-            prepareStaffView(persons, DateMidnight.now().getYear(), model);
-
-            return PersonConstants.STAFF_JSP;
-        } else {
-            return ControllerConstants.ERROR_JSP;
-        }
+        return "redirect:/web/staff?year=" + DateMidnight.now().getYear();
     }
 
 
-    /**
-     * Shows list with inactive staff for the given year.
-     *
-     * @param  year
-     * @param  model
-     *
-     * @return
-     */
-    @RequestMapping(value = INACTIVE_LINK, params = ControllerConstants.YEAR_ATTRIBUTE, method = RequestMethod.GET)
+    @PreAuthorize(SecurityRules.IS_BOSS_OR_OFFICE)
+    @RequestMapping(value = "/staff/inactive", params = ControllerConstants.YEAR_ATTRIBUTE, method = RequestMethod.GET)
     public String showInactiveStaffByYear(@RequestParam(ControllerConstants.YEAR_ATTRIBUTE) int year, Model model) {
 
-        if (sessionService.isOffice() || sessionService.isBoss()) {
-            List<Person> persons = personService.getInactivePersons();
+        List<Person> persons = personService.getInactivePersons();
+        prepareStaffView(persons, year, model);
 
-            if (persons.isEmpty()) {
-                model.addAttribute("notexistent", true);
-                model.addAttribute(ControllerConstants.YEAR_ATTRIBUTE, DateMidnight.now().getYear());
-            } else {
-                prepareStaffView(persons, year, model);
-            }
-
-            return PersonConstants.STAFF_JSP;
-        } else {
-            return ControllerConstants.ERROR_JSP;
-        }
+        return PersonConstants.STAFF_JSP;
     }
 
 
-    /**
-     * Shows list with active staff for the given year.
-     *
-     * @param  year
-     * @param  model
-     *
-     * @return
-     */
-    @RequestMapping(value = ACTIVE_LINK, params = ControllerConstants.YEAR_ATTRIBUTE, method = RequestMethod.GET)
+    @PreAuthorize(SecurityRules.IS_BOSS_OR_OFFICE)
+    @RequestMapping(value = "/staff", params = ControllerConstants.YEAR_ATTRIBUTE, method = RequestMethod.GET)
     public String showActiveStaffByYear(@RequestParam(ControllerConstants.YEAR_ATTRIBUTE) int year, Model model) {
 
-        if (sessionService.isOffice() || sessionService.isBoss()) {
-            List<Person> persons = personService.getActivePersons();
-            prepareStaffView(persons, year, model);
+        List<Person> persons = personService.getActivePersons();
+        prepareStaffView(persons, year, model);
 
-            return PersonConstants.STAFF_JSP;
-        } else {
-            return ControllerConstants.ERROR_JSP;
-        }
+        return PersonConstants.STAFF_JSP;
     }
 
 

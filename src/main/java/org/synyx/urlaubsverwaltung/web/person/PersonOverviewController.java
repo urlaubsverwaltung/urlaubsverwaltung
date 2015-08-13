@@ -106,9 +106,9 @@ public class PersonOverviewController {
         }
 
         Person person = optionalPerson.get();
-        Person loggedUser = sessionService.getSignedInUser();
+        Person signedInUser = sessionService.getSignedInUser();
 
-        boolean isOwnOverviewPage = person.getId().equals(loggedUser.getId());
+        boolean isOwnOverviewPage = person.getId().equals(signedInUser.getId());
 
         if (!isOwnOverviewPage && !sessionService.isOffice() && !sessionService.isBoss()) {
             return ControllerConstants.ERROR_JSP;

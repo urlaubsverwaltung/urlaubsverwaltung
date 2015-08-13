@@ -81,10 +81,12 @@
 
                             <uv:print />
 
-                            <a href="${URL_PREFIX}/staff/new" class="fa-action pull-right"
-                               data-title="<spring:message code="action.staff.create"/>">
-                              <i class="fa fa-fw fa-user-plus"></i>
-                            </a>
+                            <sec:authorize access="hasRole('OFFICE')">
+                                <a href="${URL_PREFIX}/staff/new" class="fa-action pull-right"
+                                   data-title="<spring:message code="action.staff.create"/>">
+                                    <i class="fa fa-fw fa-user-plus"></i>
+                                </a>
+                            </sec:authorize>
                             
                         </legend>
 
@@ -92,10 +94,8 @@
                     
                     <c:choose>
 
-                        <c:when test="${notexistent == true}">
-
-                            <spring:message code="persons.none" />
-
+                        <c:when test="${empty persons}">
+                            <spring:message code="persons.none"/>
                         </c:when>
 
                         <c:otherwise>

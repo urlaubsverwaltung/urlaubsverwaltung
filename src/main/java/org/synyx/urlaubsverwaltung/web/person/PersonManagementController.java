@@ -5,6 +5,8 @@ import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
@@ -27,7 +29,7 @@ import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonInteractionService;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
-import org.synyx.urlaubsverwaltung.security.SessionService;
+import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.DateMidnightPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
@@ -58,9 +60,6 @@ public class PersonManagementController {
     private PersonValidator validator;
 
     @Autowired
-    private SessionService sessionService;
-
-    @Autowired
     private WorkingTimeService workingTimeService;
 
     @InitBinder
@@ -71,12 +70,9 @@ public class PersonManagementController {
     }
 
 
+    @PreAuthorize(SecurityRules.IS_OFFICE)
     @RequestMapping(value = "/staff/new", method = RequestMethod.GET)
     public String newPersonForm(Model model) {
-
-        if (!sessionService.isOffice()) {
-            return ControllerConstants.ERROR_JSP;
-        }
 
         model.addAttribute("personForm", new PersonForm());
         model.addAttribute("weekDays", Day.values());
@@ -85,14 +81,10 @@ public class PersonManagementController {
     }
 
 
+    @PreAuthorize(SecurityRules.IS_OFFICE)
     @RequestMapping(value = "/staff/new", method = RequestMethod.POST)
     public String newPerson(@ModelAttribute("personForm") PersonForm personForm, Errors errors, Model model) {
 
-        if (!sessionService.isOffice()) {
-            return ControllerConstants.ERROR_JSP;
-        }
-
-        // validate login name
         validator.validateLogin(personForm.getLoginName(), errors);
         validator.validate(personForm, errors);
 
@@ -113,13 +105,10 @@ public class PersonManagementController {
     }
 
 
+    @PreAuthorize(SecurityRules.IS_OFFICE)
     @RequestMapping(value = "/staff/{personId}/edit", method = RequestMethod.GET)
     public String editPersonForm(@PathVariable("personId") Integer personId,
         @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Integer year, Model model) {
-
-        if (!sessionService.isOffice()) {
-            return ControllerConstants.ERROR_JSP;
-        }
 
         int yearOfHolidaysAccount;
 
@@ -150,13 +139,14 @@ public class PersonManagementController {
     }
 
 
+    @PreAuthorize(SecurityRules.IS_OFFICE)
     @RequestMapping(value = "/staff/{personId}/edit", method = RequestMethod.PUT)
     public String editPerson(@PathVariable("personId") Integer personId,
         @ModelAttribute("personForm") PersonForm personForm, Errors errors, Model model) {
 
         java.util.Optional<Person> personToUpdate = personService.getPersonByID(personId);
 
-        if (!sessionService.isOffice() || !personToUpdate.isPresent()) {
+        if (!personToUpdate.isPresent()) {
             return ControllerConstants.ERROR_JSP;
         }
 

@@ -4,6 +4,7 @@
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 
 <!DOCTYPE html>
@@ -39,10 +40,12 @@
                               <i class="fa fa-fw fa-bar-chart"></i>
                             </a>
 
+                            <sec:authorize access="hasRole('OFFICE')">
                             <a href="${URL_PREFIX}/application/new?appliesOnOnesBehalf=true" class="fa-action pull-right"
                                 data-title="<spring:message code="action.apply.vacation"/>">
                               <i class="fa fa-fw fa-plus-circle"></i>
                             </a>
+                            </sec:authorize>
   
                           </legend>
   
@@ -67,7 +70,7 @@
   
                           <c:when test="${empty applications}">
   
-                            <spring:message code="no.apps"/>
+                            <spring:message code="applications.none"/>
   
                           </c:when>
   

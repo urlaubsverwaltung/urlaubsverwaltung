@@ -4,6 +4,8 @@ import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
@@ -14,8 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import org.synyx.urlaubsverwaltung.core.sicknote.statistics.SickNoteStatistics;
 import org.synyx.urlaubsverwaltung.core.sicknote.statistics.SickNoteStatisticsService;
-import org.synyx.urlaubsverwaltung.security.SessionService;
-import org.synyx.urlaubsverwaltung.web.ControllerConstants;
+import org.synyx.urlaubsverwaltung.security.SecurityRules;
 
 
 /**
@@ -27,25 +28,19 @@ import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 public class SickNoteStatisticsController {
 
     @Autowired
-    private SessionService sessionService;
-
-    @Autowired
     private SickNoteStatisticsService statisticsService;
 
+    @PreAuthorize(SecurityRules.IS_OFFICE)
     @RequestMapping(value = "/sicknote/statistics", method = RequestMethod.GET)
     public String sickNotesStatistics(@RequestParam(value = "year", required = false) Integer requestedYear,
         Model model) {
 
-        if (sessionService.isOffice()) {
-            Integer year = requestedYear == null ? DateMidnight.now().getYear() : requestedYear;
+        Integer year = requestedYear == null ? DateMidnight.now().getYear() : requestedYear;
 
-            SickNoteStatistics statistics = statisticsService.createStatistics(year);
+        SickNoteStatistics statistics = statisticsService.createStatistics(year);
 
-            model.addAttribute("statistics", statistics);
+        model.addAttribute("statistics", statistics);
 
-            return "sicknote/sick_notes_statistics";
-        }
-
-        return ControllerConstants.ERROR_JSP;
+        return "sicknote/sick_notes_statistics";
     }
 }
