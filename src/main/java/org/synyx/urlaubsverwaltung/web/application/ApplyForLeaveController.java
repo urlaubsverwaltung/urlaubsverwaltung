@@ -25,6 +25,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationInteractionService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
+import org.synyx.urlaubsverwaltung.security.Role;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.DateMidnightPropertyEditor;
@@ -86,8 +87,10 @@ public class ApplyForLeaveController {
         Person person;
         Person applier;
 
+        Person signedInUser = sessionService.getSignedInUser();
+
         if (personId == null) {
-            person = sessionService.getSignedInUser();
+            person = signedInUser;
             applier = person;
         } else {
             java.util.Optional<Person> personByID = personService.getPersonByID(personId);
@@ -97,14 +100,14 @@ public class ApplyForLeaveController {
             }
 
             person = personByID.get();
-            applier = sessionService.getSignedInUser();
+            applier = signedInUser;
         }
 
         boolean isApplyingForOneSelf = person.equals(applier);
 
         // only office may apply for leave on behalf of other users
-        if ((!isApplyingForOneSelf && !sessionService.isOffice())
-                || (applyingOnBehalfOfSomeOne != null && !sessionService.isOffice())) {
+        if ((!isApplyingForOneSelf && !signedInUser.hasRole(Role.OFFICE))
+                || (applyingOnBehalfOfSomeOne != null && !signedInUser.hasRole(Role.OFFICE))) {
             return ControllerConstants.ERROR_JSP;
         }
 

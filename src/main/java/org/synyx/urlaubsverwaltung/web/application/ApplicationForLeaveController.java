@@ -17,6 +17,7 @@ import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.security.Role;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.FilterRequest;
@@ -74,7 +75,7 @@ public class ApplicationForLeaveController {
 
         List<Application> applications = applicationService.getApplicationsForACertainState(ApplicationStatus.WAITING);
 
-        if (sessionService.isDepartmentHead()) {
+        if (sessionService.getSignedInUser().hasRole(Role.DEPARTMENT_HEAD)) {
             List<Person> members = departmentService.getAllMembersOfDepartmentsOfPerson(
                     sessionService.getSignedInUser());
 

@@ -43,22 +43,4 @@ public class SessionService {
 
         return person.get();
     }
-
-
-    public boolean isOffice() {
-
-        return getSignedInUser().hasRole(Role.OFFICE);
-    }
-
-
-    public boolean isBoss() {
-
-        return getSignedInUser().hasRole(Role.BOSS);
-    }
-
-
-    public boolean isDepartmentHead() {
-
-        return getSignedInUser().hasRole(Role.DEPARTMENT_HEAD);
-    }
 }

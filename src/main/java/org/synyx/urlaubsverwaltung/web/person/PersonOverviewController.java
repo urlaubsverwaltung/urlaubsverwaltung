@@ -35,6 +35,7 @@ import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
+import org.synyx.urlaubsverwaltung.security.Role;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.application.ApplicationForLeave;
@@ -107,7 +108,7 @@ public class PersonOverviewController {
 
         boolean isOwnOverviewPage = person.getId().equals(signedInUser.getId());
 
-        if (!isOwnOverviewPage && !sessionService.isOffice() && !sessionService.isBoss()) {
+        if (!isOwnOverviewPage && !signedInUser.hasRole(Role.OFFICE) && !signedInUser.hasRole(Role.BOSS)) {
             return ControllerConstants.ERROR_JSP;
         }
 

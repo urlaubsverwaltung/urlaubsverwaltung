@@ -97,14 +97,14 @@ public class ApplicationForLeaveDetailsController {
         Optional<Application> applicationOptional = applicationService.getApplicationById(applicationId);
 
         if (applicationOptional.isPresent() && signedInUser.equals(applicationOptional.get().getPerson())
-                || (sessionService.isBoss() || sessionService.isOffice())) {
+                || (signedInUser.hasRole(Role.BOSS) || signedInUser.hasRole(Role.OFFICE))) {
             Application application = applicationOptional.get();
 
             Integer year = requestedYear == null ? application.getEndDate().getYear() : requestedYear;
 
             prepareDetailView(application, year, action, shortcut, model);
 
-            return "application" + "/app_detail";
+            return "application/app_detail";
         }
 
         return ControllerConstants.ERROR_JSP;
@@ -131,7 +131,8 @@ public class ApplicationForLeaveDetailsController {
 
         model.addAttribute(PersonConstants.GRAVATAR_URLS_ATTRIBUTE, gravatarUrls);
 
-        if (application.getStatus() == ApplicationStatus.WAITING && sessionService.isBoss()) {
+        if (application.getStatus() == ApplicationStatus.WAITING
+                && sessionService.getSignedInUser().hasRole(Role.BOSS)) {
             // get all persons that have the Boss Role
             List<Person> bosses = personService.getPersonsByRole(Role.BOSS);
             model.addAttribute("bosses", bosses);
@@ -286,7 +287,7 @@ public class ApplicationForLeaveDetailsController {
         if (signedInUser.equals(application.getPerson()) && isWaiting) {
             // user can cancel only his own waiting applications, so the comment is NOT mandatory
             comment.setMandatory(false);
-        } else if (sessionService.isOffice() && (isWaiting || isAllowed)) {
+        } else if (signedInUser.hasRole(Role.OFFICE) && (isWaiting || isAllowed)) {
             // office cancels application of other users, state can be waiting or allowed, so the comment is mandatory
             comment.setMandatory(true);
         } else {

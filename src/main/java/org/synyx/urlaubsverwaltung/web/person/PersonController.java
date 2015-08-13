@@ -89,7 +89,7 @@ public class PersonController {
         List<Person> persons = personService.getInactivePersons();
 
         // NOTE: If the signed in user is only department head, he wants to see only the persons of his departments
-        if (sessionService.isDepartmentHead()) {
+        if (sessionService.getSignedInUser().hasRole(Role.DEPARTMENT_HEAD)) {
             List<Person> members = departmentService.getAllMembersOfDepartmentsOfPerson(
                     sessionService.getSignedInUser());
 
@@ -144,7 +144,7 @@ public class PersonController {
         List<Person> persons = personService.getActivePersons();
 
         // NOTE: If the signed in user is only department head, he wants to see only the persons of his departments
-        if (sessionService.isDepartmentHead()) {
+        if (sessionService.getSignedInUser().hasRole(Role.DEPARTMENT_HEAD)) {
             List<Person> members = departmentService.getAllMembersOfDepartmentsOfPerson(
                     sessionService.getSignedInUser());
 
