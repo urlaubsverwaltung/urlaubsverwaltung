@@ -79,7 +79,7 @@ public class SignService {
     private byte[] signApplication(Application application, Person person) {
 
         try {
-            PrivateKey privKey = CryptoUtil.getPrivateKeyByBytes(person.getPrivateKey());
+            PrivateKey privateKey = CryptoUtil.getPrivateKeyByBytes(person.getPrivateKey());
 
             StringBuilder build = new StringBuilder();
 
@@ -89,14 +89,14 @@ public class SignService {
 
             byte[] data = build.toString().getBytes();
 
-            data = CryptoUtil.sign(privKey, data);
+            data = CryptoUtil.sign(privateKey, data);
 
             return data;
         } catch (InvalidKeyException | SignatureException | NoSuchAlgorithmException | InvalidKeySpecException ex) {
             logSignException(application.getId(), ex);
         }
 
-        return null;
+        return new byte[0];
     }
 
 
