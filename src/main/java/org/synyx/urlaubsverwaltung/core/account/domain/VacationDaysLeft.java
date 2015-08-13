@@ -10,7 +10,7 @@ import java.math.BigDecimal;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public class VacationDaysLeft {
+public final class VacationDaysLeft {
 
     private final BigDecimal vacationDays;
     private final BigDecimal remainingVacationDays;
@@ -57,11 +57,6 @@ public class VacationDaysLeft {
         private BigDecimal remainingVacationDaysNotExpiring;
         private BigDecimal usedDaysBeforeApril;
         private BigDecimal usedDaysAfterApril;
-
-        public Builder() {
-
-            // OK
-        }
 
         public Builder withAnnualVacation(BigDecimal annualVacation) {
 
