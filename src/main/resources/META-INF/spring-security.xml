@@ -6,22 +6,22 @@
                             http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 
     <security:http auto-config="true" use-expressions="true">
+        <!-- API -->
         <security:intercept-url pattern="/api/**" access="isAuthenticated()"/>
         <security:intercept-url pattern="/api/vacation" access="hasAnyRole('BOSS', 'OFFICE')"/>
         <security:intercept-url pattern="/api/vacation/**" access="isAuthenticated()"/>
         <security:intercept-url pattern="/api/sicknotes/**" access="hasRole('OFFICE')"/>
         <security:intercept-url pattern="/api/department/**" access="isAuthenticated()"/>
-        <security:intercept-url pattern="/web/overview" access="isAuthenticated()"/>
-        <security:intercept-url pattern="/web/application/**" access="isAuthenticated()"/>
-        <security:intercept-url pattern="/web/staff/**" access="isAuthenticated()"/>
-        <security:intercept-url pattern="/web/department/**" access="isAuthenticated()"/>
+        <!-- WEB -->
+        <security:intercept-url pattern="/web/overview" access="hasRole('USER')"/>
+        <security:intercept-url pattern="/web/application/**" access="hasRole('USER')"/>
+        <security:intercept-url pattern="/web/sicknote/**" access="hasRole('USER')"/>
+        <security:intercept-url pattern="/web/staff/**" access="hasRole('USER')"/>
+        <security:intercept-url pattern="/web/department/**" access="hasAnyRole('BOSS', 'OFFICE')"/>
         <security:intercept-url pattern="/web/settings/**" access="hasRole('OFFICE')"/>
-        <!-- more concrete security rules for sick notes are located in SickNoteController -->
-        <security:intercept-url pattern="/web/sicknote/**" access="isAuthenticated()"/>
+        <!-- OPEN -->
         <security:intercept-url pattern="/login.jsp" access="permitAll"/>
-        <security:intercept-url pattern="/messages.properties" access="permitAll"/>
-        <security:intercept-url pattern="/messages_en.properties" access="permitAll"/>
-        <security:intercept-url pattern="/images/synyx-logo-transp.jpg" access="permitAll"/>
+        <security:intercept-url pattern="/images/synyx-logo-transparent.png" access="permitAll"/>
         <security:form-login login-page="/login.jsp" always-use-default-target="false"
                              default-target-url="/web/overview" authentication-failure-url="/login.jsp?login_error=1"/>
         <security:logout logout-success-url="/login.jsp"/>

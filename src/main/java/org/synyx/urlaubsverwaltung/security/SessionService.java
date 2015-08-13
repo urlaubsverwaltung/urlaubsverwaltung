@@ -47,30 +47,12 @@ public class SessionService {
 
     public boolean isOffice() {
 
-        if (getLoggedUser().hasRole(Role.OFFICE)) {
-            return true;
-        }
-
-        return false;
+        return getLoggedUser().hasRole(Role.OFFICE);
     }
 
 
     public boolean isBoss() {
 
-        if (getLoggedUser().hasRole(Role.BOSS)) {
-            return true;
-        }
-
-        return false;
-    }
-
-
-    public boolean isInactive() {
-
-        if (getLoggedUser().hasRole(Role.INACTIVE)) {
-            return true;
-        }
-
-        return false;
+        return getLoggedUser().hasRole(Role.BOSS);
     }
 }

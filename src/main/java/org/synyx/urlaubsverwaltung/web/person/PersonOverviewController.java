@@ -85,10 +85,6 @@ public class PersonOverviewController {
     public String showOverview(
         @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) String year) {
 
-        if (sessionService.isInactive()) {
-            return ControllerConstants.ERROR_JSP;
-        }
-
         Person user = sessionService.getLoggedUser();
 
         if (StringUtils.hasText(year)) {
@@ -105,7 +101,7 @@ public class PersonOverviewController {
 
         java.util.Optional<Person> optionalPerson = personService.getPersonByID(personId);
 
-        if (sessionService.isInactive() || !optionalPerson.isPresent()) {
+        if (!optionalPerson.isPresent()) {
             return ControllerConstants.ERROR_JSP;
         }
 

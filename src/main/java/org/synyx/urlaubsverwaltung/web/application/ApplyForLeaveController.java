@@ -89,10 +89,6 @@ public class ApplyForLeaveController {
     public String newApplicationForm(@RequestParam(value = "personId", required = false) Integer personId,
         @RequestParam(value = "appliesOnOnesBehalf", required = false) Boolean applyingOnBehalfOfSomeOne, Model model) {
 
-        if (sessionService.isInactive()) {
-            return ControllerConstants.ERROR_JSP;
-        }
-
         Person person;
         Person applier;
 
