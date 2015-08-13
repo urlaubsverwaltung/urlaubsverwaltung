@@ -19,6 +19,8 @@ public class SettingsValidator implements Validator {
     private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
     private static final String ERROR_INVALID_ENTRY = "error.entry.invalid";
 
+    private static final int DAYS_PER_YEAR = 366;
+
     @Override
     public boolean supports(Class<?> clazz) {
 
@@ -63,7 +65,7 @@ public class SettingsValidator implements Validator {
 
         if (maximumAnnualVacationDays == null) {
             errors.rejectValue("maximumAnnualVacationDays", ERROR_MANDATORY_FIELD);
-        } else if (maximumAnnualVacationDays < 0 || maximumAnnualVacationDays >= 367) {
+        } else if (maximumAnnualVacationDays < 0 || maximumAnnualVacationDays > DAYS_PER_YEAR) {
             errors.rejectValue("maximumAnnualVacationDays", ERROR_INVALID_ENTRY);
         }
 

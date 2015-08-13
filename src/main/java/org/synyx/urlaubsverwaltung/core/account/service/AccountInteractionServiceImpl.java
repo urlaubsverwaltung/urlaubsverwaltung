@@ -35,6 +35,8 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
 
     private static final int MONTHS_PER_YEAR = 12;
     private static final int WEEKDAYS_PER_MONTH = 21;
+    private static final int ROUNDING_LOWER_BOUND = 30;
+    private static final int ROUNDING_UPPER_BOUND = 50;
 
     private final AccountService accountService;
     private final WorkDaysService calendarService;
@@ -160,13 +162,13 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
     /**
      * Rounds the given value in a special way, rounding rules are: 11.1 --> 11.0 11.3 --> 11.5 11.6 --> 12.0
      *
-     * @param  unroundedVacationDays  double
+     * @param  notRoundedVacationDays  double
      *
      * @return  {@link BigDecimal} rounded value
      */
-    private BigDecimal round(double unroundedVacationDays) {
+    private BigDecimal round(double notRoundedVacationDays) {
 
-        BigDecimal bd = new BigDecimal(unroundedVacationDays).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal bd = new BigDecimal(notRoundedVacationDays).setScale(2, RoundingMode.HALF_UP);
 
         String bdString = bd.toString();
         bdString = bdString.split("\\.")[1];
@@ -177,19 +179,16 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
         // please notice: bd.intValue() is an Integer, e.g. 11
         int bdIntValue = bd.intValue();
 
-        int lowerBound = 30;
-        int upperBound = 50;
-
-        if (referenceValue > 0 && referenceValue < lowerBound) {
+        if (referenceValue > 0 && referenceValue < ROUNDING_LOWER_BOUND) {
             days = new BigDecimal(bdIntValue);
         } else {
-            if (referenceValue >= lowerBound && referenceValue < upperBound) {
+            if (referenceValue >= ROUNDING_LOWER_BOUND && referenceValue < ROUNDING_UPPER_BOUND) {
                 days = new BigDecimal(bdIntValue + 0.5);
-            } else if (referenceValue > upperBound) {
+            } else if (referenceValue > ROUNDING_UPPER_BOUND) {
                 days = new BigDecimal(bdIntValue + 1);
             } else {
                 // default fallback because I'm a chicken
-                days = new BigDecimal(unroundedVacationDays).setScale(2);
+                days = new BigDecimal(notRoundedVacationDays).setScale(2);
             }
         }
 
