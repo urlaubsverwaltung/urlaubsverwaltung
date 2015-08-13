@@ -15,7 +15,10 @@ import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
+import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
+import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.FilterRequest;
 import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
 import org.synyx.urlaubsverwaltung.web.util.GravatarUtil;
@@ -40,12 +43,18 @@ public class ApplicationForLeaveController {
     @Autowired
     private WorkDaysService calendarService;
 
+    @Autowired
+    private DepartmentService departmentService;
+
+    @Autowired
+    private SessionService sessionService;
+
     /**
      * Show waiting applications for leave.
      *
      * @return  waiting applications for leave page or error page if not boss or office
      */
-    @PreAuthorize(SecurityRules.IS_BOSS_OR_OFFICE)
+    @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
     @RequestMapping(value = "/application", method = RequestMethod.GET)
     public String showWaiting(Model model) {
 
@@ -64,6 +73,16 @@ public class ApplicationForLeaveController {
     private List<ApplicationForLeave> getAllRelevantApplicationsForLeave() {
 
         List<Application> applications = applicationService.getApplicationsForACertainState(ApplicationStatus.WAITING);
+
+        if (sessionService.isDepartmentHead()) {
+            List<Person> members = departmentService.getAllMembersOfDepartmentsOfPerson(
+                    sessionService.getSignedInUser());
+
+            return applications.stream()
+                .filter(application -> members.contains(application.getPerson()))
+                .map(application -> new ApplicationForLeave(application, calendarService))
+                .collect(Collectors.toList());
+        }
 
         return applications.stream()
             .map(application -> new ApplicationForLeave(application, calendarService))

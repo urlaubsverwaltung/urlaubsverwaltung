@@ -98,6 +98,7 @@ public class TestDataCreationService {
             createTestData(user);
             createTestData(boss);
             createTestData(office);
+            createTestData(hans);
 
             // Departments
             createTestDepartment("Admins", "Das sind die, die so Admin Sachen machen",

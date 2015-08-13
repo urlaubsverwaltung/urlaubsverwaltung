@@ -50,7 +50,7 @@
           </li>
         </sec:authorize>
 
-        <sec:authorize access="hasAnyRole('BOSS', 'OFFICE')">
+        <sec:authorize access="hasAnyRole('DEPARTMENT_HEAD', 'BOSS', 'OFFICE')">
           <li>
             <a href="${URL_PREFIX}/application">
               <i class="fa fa-fw fa-calendar"></i> <spring:message code="nav.vacation.title"/>
