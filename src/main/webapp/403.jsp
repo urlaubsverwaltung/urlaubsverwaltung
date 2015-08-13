@@ -15,7 +15,7 @@
 
 <body>
 
-    <spring:url var="LOGIN" value="/login.jsp"/>
+    <spring:url var="URL_PREFIX" value="/web"/>
 
     <div class="error-container container-fluid">
         <div class="content">
