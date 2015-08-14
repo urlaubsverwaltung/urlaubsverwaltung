@@ -67,7 +67,7 @@ public class ApplicationForLeaveController {
         Map<Application, String> gravatarUrls = getAllRelevantGravatarUrls(applicationsForLeave);
         model.addAttribute(PersonConstants.GRAVATAR_URLS_ATTRIBUTE, gravatarUrls);
 
-        return "application" + "/app_list";
+        return "application/app_list";
     }
 
 

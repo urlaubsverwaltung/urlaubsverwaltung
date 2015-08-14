@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.security.Role;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,7 +22,8 @@ import static org.mockito.Matchers.eq;
 
 
 /**
- * Daniel Hammann - <hammann@synyx.de>.
+ * @author  Daniel Hammann - hammann@synyx.de
+ * @author  Aljona Murygina - murygina@synyx.de
  */
 public class DepartmentServiceImplTest {
 
@@ -142,41 +144,41 @@ public class DepartmentServiceImplTest {
     @Test
     public void ensureReturnsAllMembersOfTheDepartmentsOfThePerson() {
 
-        Person person = Mockito.mock(Person.class);
-        Mockito.when(person.getId()).thenReturn(42);
+        Person departmentHead = Mockito.mock(Person.class);
+        Mockito.when(departmentHead.getId()).thenReturn(42);
 
-        Person admin1 = new Person("admin1", "", "", "");
-        Person admin2 = new Person("admin2", "", "", "");
+        Person admin1 = new Person();
+        Person admin2 = new Person();
 
-        Person marketing1 = new Person("marketing1", "", "", "");
-        Person marketing2 = new Person("marketing2", "", "", "");
-        Person marketing3 = new Person("marketing3", "", "", "");
+        Person marketing1 = new Person();
+        Person marketing2 = new Person();
+        Person marketing3 = new Person();
 
         Department admins = new Department();
-        admins.setMembers(Arrays.asList(admin1, admin2));
+        admins.setMembers(Arrays.asList(admin1, admin2, departmentHead));
 
         Department marketing = new Department();
-        marketing.setMembers(Arrays.asList(marketing1, marketing2, marketing3));
+        marketing.setMembers(Arrays.asList(marketing1, marketing2, marketing3, departmentHead));
 
         Mockito.when(departmentDAO.getDepartmentsWithMembership(Mockito.anyInt()))
             .thenReturn(Arrays.asList(admins, marketing));
 
-        List<Person> members = sut.getAllMembersOfDepartmentsOfPerson(person);
+        List<Person> members = sut.getAllMembersOfDepartmentsOfPerson(departmentHead);
 
         Assert.assertNotNull("Should not be null", members);
-        Assert.assertEquals("Wrong number of members", 5, members.size());
+        Assert.assertEquals("Wrong number of members", 6, members.size());
     }
 
 
     @Test
     public void ensureReturnsEmptyListIfPersonHasNoDepartmentAssigned() {
 
-        Person person = Mockito.mock(Person.class);
-        Mockito.when(person.getId()).thenReturn(42);
+        Person departmentHead = Mockito.mock(Person.class);
+        Mockito.when(departmentHead.getId()).thenReturn(42);
 
         Mockito.when(departmentDAO.getDepartmentsWithMembership(Mockito.anyInt())).thenReturn(Collections.emptyList());
 
-        List<Person> members = sut.getAllMembersOfDepartmentsOfPerson(person);
+        List<Person> members = sut.getAllMembersOfDepartmentsOfPerson(departmentHead);
 
         Assert.assertNotNull("Should not be null", members);
         Assert.assertTrue("Should be empty", members.isEmpty());
@@ -184,49 +186,69 @@ public class DepartmentServiceImplTest {
 
 
     @Test
-    public void ensureReturnsEmptyListIfAssignedDepartmentsHaveNoMembers() {
+    public void ensureReturnsTrueIfIsDepartmentHeadOfTheGivenPerson() {
 
-        Person person = Mockito.mock(Person.class);
-        Mockito.when(person.getId()).thenReturn(42);
-
-        Department admins = new Department();
-        Department marketing = new Department();
-
-        Mockito.when(departmentDAO.getDepartmentsWithMembership(Mockito.anyInt()))
-            .thenReturn(Arrays.asList(admins, marketing));
-
-        List<Person> members = sut.getAllMembersOfDepartmentsOfPerson(person);
-
-        Assert.assertNotNull("Should not be null", members);
-        Assert.assertTrue("Should be empty", members.isEmpty());
-    }
-
-
-    @Test
-    public void ensureReturnedMembersOfTheDepartmentsOfThePersonAreUnique() {
-
-        Person person = Mockito.mock(Person.class);
-        Mockito.when(person.getId()).thenReturn(42);
+        Person departmentHead = Mockito.mock(Person.class);
+        Mockito.when(departmentHead.getId()).thenReturn(42);
+        Mockito.when(departmentHead.hasRole(Role.DEPARTMENT_HEAD)).thenReturn(true);
 
         Person admin1 = new Person();
-
-        Person marketing1 = new Person();
-        Person marketing2 = new Person();
-
-        Person adminAndMarketing = new Person();
+        Person admin2 = new Person();
 
         Department admins = new Department();
-        admins.setMembers(Arrays.asList(admin1, adminAndMarketing));
-
-        Department marketing = new Department();
-        marketing.setMembers(Arrays.asList(marketing1, marketing2, adminAndMarketing));
+        admins.setMembers(Arrays.asList(admin1, admin2, departmentHead));
 
         Mockito.when(departmentDAO.getDepartmentsWithMembership(Mockito.anyInt()))
-            .thenReturn(Arrays.asList(admins, marketing));
+            .thenReturn(Collections.singletonList(admins));
 
-        List<Person> members = sut.getAllMembersOfDepartmentsOfPerson(person);
+        boolean isDepartmentHead = sut.isDepartmentHeadOfThePerson(departmentHead, admin1);
 
-        Assert.assertNotNull("Should not be null", members);
-        Assert.assertEquals("Wrong number of members", 4, members.size());
+        Assert.assertTrue("Should be the department head of the given person", isDepartmentHead);
+    }
+
+
+    @Test
+    public void ensureReturnsFalseIfIsNotDepartmentHeadOfTheGivenPerson() {
+
+        Person departmentHead = Mockito.mock(Person.class);
+        Mockito.when(departmentHead.getId()).thenReturn(42);
+        Mockito.when(departmentHead.hasRole(Role.DEPARTMENT_HEAD)).thenReturn(true);
+
+        Person admin1 = new Person();
+        Person admin2 = new Person();
+
+        Department admins = new Department();
+        admins.setMembers(Arrays.asList(admin1, admin2, departmentHead));
+
+        Person marketing1 = new Person();
+
+        Mockito.when(departmentDAO.getDepartmentsWithMembership(Mockito.anyInt()))
+            .thenReturn(Collections.singletonList(admins));
+
+        boolean isDepartmentHead = sut.isDepartmentHeadOfThePerson(departmentHead, marketing1);
+
+        Assert.assertFalse("Should not be the department head of the given person", isDepartmentHead);
+    }
+
+
+    @Test
+    public void ensureReturnsFalseIfIsInTheSameDepartmentButHasNotDepartmentHeadRole() {
+
+        Person noDepartmentHead = Mockito.mock(Person.class);
+        Mockito.when(noDepartmentHead.getId()).thenReturn(42);
+        Mockito.when(noDepartmentHead.hasRole(Role.DEPARTMENT_HEAD)).thenReturn(false);
+
+        Person admin1 = new Person();
+        Person admin2 = new Person();
+
+        Department admins = new Department();
+        admins.setMembers(Arrays.asList(admin1, admin2, noDepartmentHead));
+
+        Mockito.when(departmentDAO.getDepartmentsWithMembership(Mockito.anyInt()))
+            .thenReturn(Collections.singletonList(admins));
+
+        boolean isDepartmentHead = sut.isDepartmentHeadOfThePerson(noDepartmentHead, admin1);
+
+        Assert.assertFalse("Should not be the department head of the given person", isDepartmentHead);
     }
 }

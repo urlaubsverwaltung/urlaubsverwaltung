@@ -9,7 +9,8 @@ import java.util.Optional;
 /**
  * Service for handling {@link Department}s.
  *
- * <p>Daniel Hammann - <hammann@synyx.de>.</p>
+ * @author  Daniel Hammann - <hammann@synyx.de>
+ * @author  Aljona Murygina - <murygina@synyx.de>
  */
 public interface DepartmentService {
 
@@ -52,16 +53,6 @@ public interface DepartmentService {
 
 
     /**
-     * Finds all departments with membership of given person.
-     *
-     * @param  person
-     *
-     * @return  list of departments which given person is a member.
-     */
-    List<Department> getAllDepartmentsWithMembership(Person person);
-
-
-    /**
      * Get all members of the departments that the given person is assigned to.
      *
      * @param  person  to get the departments of
@@ -69,4 +60,17 @@ public interface DepartmentService {
      * @return  all unique members of the departments of the given person
      */
     List<Person> getAllMembersOfDepartmentsOfPerson(Person person);
+
+
+    /**
+     * Check if the given department head manages a department that the given person is assigned to.
+     *
+     * @param  departmentHead  to be checked if he is the department head of a department that the given person is
+     *                         assigned to
+     * @param  person  to be checked if he is assigned to a department that has the given department head
+     *
+     * @return  {@code true} if the given department head manages a department that the given person is assigned to,
+     *          else {@code false}
+     */
+    boolean isDepartmentHeadOfThePerson(Person departmentHead, Person person);
 }

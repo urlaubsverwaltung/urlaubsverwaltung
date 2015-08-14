@@ -107,9 +107,11 @@ public class ApplicationForLeaveDetailsController {
         Person person = application.getPerson();
 
         boolean samePerson = signedInUser.equals(person);
+        boolean isBoss = signedInUser.hasRole(Role.BOSS);
+        boolean isOffice = signedInUser.hasRole(Role.OFFICE);
+        boolean isDepartmentHead = departmentService.isDepartmentHeadOfThePerson(signedInUser, person);
 
-        if (samePerson || signedInUser.hasRole(Role.BOSS) || signedInUser.hasRole(Role.OFFICE)
-                || isDepartmentHeadOfThePerson(signedInUser, person)) {
+        if (samePerson || isBoss || isOffice || isDepartmentHead) {
             Integer year = requestedYear == null ? application.getEndDate().getYear() : requestedYear;
 
             prepareDetailView(application, year, action, shortcut, model);
@@ -118,20 +120,6 @@ public class ApplicationForLeaveDetailsController {
         }
 
         return ControllerConstants.ERROR_JSP;
-    }
-
-
-    private boolean isDepartmentHeadOfThePerson(Person signedInUser, Person personOfApplicationForLeave) {
-
-        if (signedInUser.hasRole(Role.DEPARTMENT_HEAD)) {
-            List<Person> members = departmentService.getAllMembersOfDepartmentsOfPerson(signedInUser);
-
-            if (members.contains(personOfApplicationForLeave)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
 
@@ -201,7 +189,10 @@ public class ApplicationForLeaveDetailsController {
         Person signedInUser = sessionService.getSignedInUser();
         Person person = application.get().getPerson();
 
-        if (signedInUser.hasRole(Role.BOSS) || isDepartmentHeadOfThePerson(signedInUser, person)) {
+        boolean isBoss = signedInUser.hasRole(Role.BOSS);
+        boolean isDepartmentHead = departmentService.isDepartmentHeadOfThePerson(signedInUser, person);
+
+        if (isBoss || isDepartmentHead) {
             comment.setMandatory(false);
             commentValidator.validate(comment, errors);
 
@@ -243,7 +234,10 @@ public class ApplicationForLeaveDetailsController {
             Person sender = sessionService.getSignedInUser();
             Person person = application.get().getPerson();
 
-            if (sender.hasRole(Role.BOSS) || isDepartmentHeadOfThePerson(sender, person)) {
+            boolean isBoss = sender.hasRole(Role.BOSS);
+            boolean isDepartmentHead = departmentService.isDepartmentHeadOfThePerson(sender, person);
+
+            if (isBoss || isDepartmentHead) {
                 mailService.sendReferApplicationNotification(application.get(), recipient.get(), sender);
 
                 redirectAttributes.addFlashAttribute("referSuccess", true);
@@ -272,7 +266,10 @@ public class ApplicationForLeaveDetailsController {
             Person person = application.get().getPerson();
             Person signedInUser = sessionService.getSignedInUser();
 
-            if (signedInUser.hasRole(Role.BOSS) || isDepartmentHeadOfThePerson(signedInUser, person)) {
+            boolean isBoss = signedInUser.hasRole(Role.BOSS);
+            boolean isDepartmentHead = departmentService.isDepartmentHeadOfThePerson(signedInUser, person);
+
+            if (isBoss || isDepartmentHead) {
                 comment.setMandatory(true);
                 commentValidator.validate(comment, errors);
 
