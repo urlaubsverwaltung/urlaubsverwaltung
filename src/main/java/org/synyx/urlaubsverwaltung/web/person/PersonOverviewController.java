@@ -29,6 +29,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
+import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
@@ -79,6 +80,9 @@ public class PersonOverviewController {
     @Autowired
     private SickNoteService sickNoteService;
 
+    @Autowired
+    private DepartmentService departmentService;
+
     @RequestMapping(value = "/overview", method = RequestMethod.GET)
     public String showOverview(
         @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) String year) {
@@ -107,8 +111,11 @@ public class PersonOverviewController {
         Person signedInUser = sessionService.getSignedInUser();
 
         boolean isOwnOverviewPage = person.getId().equals(signedInUser.getId());
+        boolean isOffice = signedInUser.hasRole(Role.OFFICE);
+        boolean isBoss = signedInUser.hasRole(Role.BOSS);
+        boolean isDepartmentHead = departmentService.isDepartmentHeadOfThePerson(signedInUser, person);
 
-        if (!isOwnOverviewPage && !signedInUser.hasRole(Role.OFFICE) && !signedInUser.hasRole(Role.BOSS)) {
+        if (!isOwnOverviewPage && !isOffice && !isBoss && !isDepartmentHead) {
             return ControllerConstants.ERROR_JSP;
         }
 
