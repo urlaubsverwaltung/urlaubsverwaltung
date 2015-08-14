@@ -91,6 +91,7 @@ public class TestDataCreationService {
             Person guenther = createTestPerson("gbaier", "Günther", "Baier", "baier@muster.de", Role.USER);
             Person elena = createTestPerson("eschneider", "Elena", "Schneider", "schneider@muster.de", Role.USER);
             Person brigitte = createTestPerson("bhaendel", "Brigitte", "Händel", "haendel@muster.de", Role.USER);
+            Person niko = createTestPerson("nschmidt", "Niko", "Schmidt", "schmidt@muster.de", Role.USER);
 
             createTestPerson("horst", "Horst", "Dieter", "hdieter@muster.de", Role.INACTIVE);
 
@@ -99,10 +100,12 @@ public class TestDataCreationService {
             createTestData(boss);
             createTestData(office);
             createTestData(hans);
+            createTestData(niko);
 
             // Departments
             createTestDepartment("Admins", "Das sind die, die so Admin Sachen machen",
                 Arrays.asList(hans, brigitte, departmentHead));
+            createTestDepartment("Entwicklung", "Das sind die, die so entwickeln", Arrays.asList(niko, departmentHead));
             createTestDepartment("Marketing", "Das sind die, die so Marketing Sachen machen",
                 Arrays.asList(guenther, elena));
             createTestDepartment("Geschäftsführung", "Das sind die, die so Geschäftsführung Sachen machen",
