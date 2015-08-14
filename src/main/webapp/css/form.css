@@ -104,25 +104,33 @@ textarea.error {
   width: 100%;
 }
 
-.department--members .checkbox {
-  padding: 0;
-}
-
-.department--members .checkbox > label {
-  display: block;
-  padding: 12px 0 12px 36px;
+.department--member {
   border-bottom: 1px solid #DDD;
+  display: table;
+  width: 100%;
 }
 
-.department--members .checkbox > label:hover {
-  background-color: #F5F5F5;
+.department--member-image,
+.department--member-assignment {
+  padding: 12px;
+  display: table-cell;
+  vertical-align: middle;
 }
 
-.department--members .checkbox > label > img {
-  margin-left: 6px;
-  margin-right: 6px;
+.department--member-image {
+  width: 1px;
+  padding-left: 24px;
 }
 
-.department--members .checkbox:last-child > label {
-  border-bottom: none;
+.department--member-info {
+  font-size: 120%;
+  margin: 0;
+}
+
+.department--member-assignment > .checkbox > label {
+  display: block;
+}
+
+.department--member-assignment > .checkbox > label > input[type="checkbox"] {
+  margin-top: 2px;
 }

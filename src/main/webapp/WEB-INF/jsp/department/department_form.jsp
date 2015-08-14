@@ -77,15 +77,27 @@
 
     <div class="department--members">
         <c:forEach items="${persons}" var="person">
-            <div class="checkbox">
-                <label>
-                    <form:checkbox path="members" value="${person}"/>
-                    <img class="img-circle" src="<c:out value='${gravatarUrls[person]}?d=mm&s=20'/>"/>
-                    <c:out value="${person.niceName}"/>
-                    <c:if test="${fn:contains(person.permissions, 'DEPARTMENT_HEAD')}">
-                        (<spring:message code="department.data.members.departmentHead"/>)
-                    </c:if>
-                </label>
+            <div class="department--member">
+                <div class="department--member-image">
+                    <img class="img-circle" src="<c:out value='${gravatarUrls[person]}?d=mm&s=40'/>"/>
+                </div>
+                <div class="department--member-assignment">
+                    <p class="department--member-info">
+                        <c:out value="${person.niceName}"/>
+                    </p>
+                    <div class="checkbox">
+                        <label>
+                            <form:checkbox path="members" value="${person}"/>
+                            <spring:message code="department.data.members.assigned"/>
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox"/>
+                            <spring:message code="department.data.members.departmentHead"/>
+                        </label>
+                    </div>
+                </div>
             </div>
         </c:forEach>
     </div>
