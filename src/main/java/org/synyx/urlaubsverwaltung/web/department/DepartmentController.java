@@ -103,13 +103,13 @@ public class DepartmentController {
 
         validator.validate(department, errors);
 
-        if (errors.hasGlobalErrors()) {
-            model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
-        }
-
         if (errors.hasErrors()) {
+            List<Person> persons = getPersons();
+            Map<Person, String> gravatarUrls = PersonConstants.getGravatarURLs(persons);
+
             model.addAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE, department);
-            model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, getPersons());
+            model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, persons);
+            model.addAttribute(PersonConstants.GRAVATAR_URLS_ATTRIBUTE, gravatarUrls);
 
             return DepartmentConstants.DEPARTMENT_FORM_JSP;
         }
@@ -163,8 +163,12 @@ public class DepartmentController {
         }
 
         if (errors.hasErrors()) {
+            List<Person> persons = getPersons();
+            Map<Person, String> gravatarUrls = PersonConstants.getGravatarURLs(persons);
+
             model.addAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE, department);
-            model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, getPersons());
+            model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, persons);
+            model.addAttribute(PersonConstants.GRAVATAR_URLS_ATTRIBUTE, gravatarUrls);
 
             return DepartmentConstants.DEPARTMENT_FORM_JSP;
         }

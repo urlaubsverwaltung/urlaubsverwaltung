@@ -9,6 +9,10 @@ import org.springframework.validation.Errors;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.department.Department;
+import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.security.Role;
+
+import java.util.Collections;
 
 import static junit.framework.TestCase.assertFalse;
 
@@ -114,5 +118,69 @@ public class DepartmentValidatorTest {
         sut.validate(department, errors);
 
         Mockito.verifyZeroInteractions(errors);
+    }
+
+
+    @Test
+    public void ensureSettingNeitherMembersNorDepartmentHeadsHasNoValidationError() {
+
+        Department department = new Department();
+        department.setName("Admins");
+        department.setMembers(null);
+        department.setDepartmentHeads(null);
+
+        sut.validate(department, errors);
+
+        Mockito.verifyZeroInteractions(errors);
+    }
+
+
+    @Test
+    public void ensureCanNotSetAPersonAsDepartmentHeadWithoutSettingAnyMember() {
+
+        Person person = new Person();
+        person.setPermissions(Collections.singletonList(Role.DEPARTMENT_HEAD));
+
+        Department department = new Department();
+        department.setName("Admins");
+        department.setDepartmentHeads(Collections.singletonList(person));
+        department.setMembers(null);
+
+        sut.validate(department, errors);
+
+        Mockito.verify(errors).rejectValue("departmentHeads", "department.members.error.departmentHeadNotAssigned");
+    }
+
+
+    @Test
+    public void ensureCanNotSetAPersonAsDepartmentHeadWithoutSettingThePersonAsMember() {
+
+        Person person = new Person();
+        person.setPermissions(Collections.singletonList(Role.DEPARTMENT_HEAD));
+
+        Department department = new Department();
+        department.setName("Admins");
+        department.setDepartmentHeads(Collections.singletonList(person));
+        department.setMembers(Collections.singletonList(new Person()));
+
+        sut.validate(department, errors);
+
+        Mockito.verify(errors).rejectValue("departmentHeads", "department.members.error.departmentHeadNotAssigned");
+    }
+
+
+    @Test
+    public void ensureCanNotSetAPersonWithoutDepartmentHeadRoleAsDepartmentHead() {
+
+        Person person = new Person();
+        person.setPermissions(Collections.singletonList(Role.USER));
+
+        Department department = new Department();
+        department.setName("Admins");
+        department.setDepartmentHeads(Collections.singletonList(person));
+
+        sut.validate(department, errors);
+
+        Mockito.verify(errors).rejectValue("departmentHeads", "department.members.error.departmentHeadHasNoAccess");
     }
 }

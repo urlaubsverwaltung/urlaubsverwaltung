@@ -8,6 +8,10 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import org.synyx.urlaubsverwaltung.core.department.Department;
+import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.security.Role;
+
+import java.util.List;
 
 
 /**
@@ -23,9 +27,13 @@ public class DepartmentValidator implements Validator {
 
     private static final String ATTRIBUTE_NAME = "name";
     private static final String ATTRIBUTE_DESCRIPTION = "description";
+    private static final String ATTRIBUTE_DEPARTMENT_HEADS = "departmentHeads";
 
     private static final String ERROR_REASON = "error.entry.mandatory";
     private static final String ERROR_LENGTH = "error.entry.tooManyChars";
+    private static final String ERROR_DEPARTMENT_HEAD_NOT_ASSIGNED =
+        "department.members.error.departmentHeadNotAssigned";
+    private static final String ERROR_DEPARTMENT_HEAD_NO_ACCESS = "department.members.error.departmentHeadHasNoAccess";
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -47,6 +55,7 @@ public class DepartmentValidator implements Validator {
 
         validateName(errors, department.getName());
         validateDescription(errors, department.getDescription());
+        validateDepartmentHeads(errors, department.getMembers(), department.getDepartmentHeads());
     }
 
 
@@ -70,6 +79,22 @@ public class DepartmentValidator implements Validator {
 
         if (hasText && description.length() > MAX_CHARS_DESCRIPTION) {
             errors.rejectValue(ATTRIBUTE_DESCRIPTION, ERROR_LENGTH);
+        }
+    }
+
+
+    private void validateDepartmentHeads(Errors errors, List<Person> members, List<Person> departmentHeads) {
+
+        if (departmentHeads != null) {
+            for (Person departmentHead : departmentHeads) {
+                if (members == null || (members != null && !members.contains(departmentHead))) {
+                    errors.rejectValue(ATTRIBUTE_DEPARTMENT_HEADS, ERROR_DEPARTMENT_HEAD_NOT_ASSIGNED);
+                }
+
+                if (!departmentHead.hasRole(Role.DEPARTMENT_HEAD)) {
+                    errors.rejectValue(ATTRIBUTE_DEPARTMENT_HEADS, ERROR_DEPARTMENT_HEAD_NO_ACCESS);
+                }
+            }
         }
     }
 }

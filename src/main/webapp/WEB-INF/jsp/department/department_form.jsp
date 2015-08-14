@@ -77,6 +77,16 @@
         <legend><spring:message code="department.members"/></legend>
     </div>
 
+    <c:set var="departmentHeadsError">
+        <form:errors path="departmentHeads" cssClass="error"/>
+    </c:set>
+
+    <c:if test="${not empty departmentHeadsError}">
+        <div class="col-xs-12">
+            <div class="alert alert-danger">${departmentHeadsError}</div>
+        </div>
+    </c:if>
+
     <div class="col-md-4 col-md-push-8">
         <span class="help-block">
             <i class="fa fa-fw fa-info-circle"></i>
