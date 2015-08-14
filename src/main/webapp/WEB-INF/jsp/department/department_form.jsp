@@ -43,9 +43,7 @@
 <div class="col-xs-12 col-md-6">
 
     <div class="header">
-
         <legend><spring:message code="department.data"/></legend>
-
     </div>
 
     <div class="form-group">
@@ -74,14 +72,23 @@
 <div class="col-xs-12 col-md-6">
 
     <div class="header">
-
-        <legend><spring:message code="department.members"/></legend>
-
+        <legend><spring:message code="department.data.members"/></legend>
     </div>
 
-    <form:select path="members" multiple="multiple" cssClass="multiSelect">
-        <form:options items="${persons}" itemValue="id" itemLabel="niceName" />
-    </form:select>
+    <div class="department--members">
+        <c:forEach items="${persons}" var="person">
+            <div class="checkbox">
+                <label>
+                    <form:checkbox path="members" value="${person}"/>
+                    <img class="img-circle" src="<c:out value='${gravatarUrls[person]}?d=mm&s=20'/>"/>
+                    <c:out value="${person.niceName}"/>
+                    <c:if test="${fn:contains(person.permissions, 'DEPARTMENT_HEAD')}">
+                        (<spring:message code="department.data.members.departmentHead"/>)
+                    </c:if>
+                </label>
+            </div>
+        </c:forEach>
+    </div>
 
 </div>
 

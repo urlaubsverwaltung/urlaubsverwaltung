@@ -86,7 +86,7 @@
                                 <thead class="hidden-xs hidden-sm">
                                 <tr>
                                     <th class="sortable-field"><spring:message code="department.data.name" /></th>
-                                    <th class="sortable-field"><spring:message code="department.data.countMembers" /></th>
+                                    <th class="sortable-field"><spring:message code="department.data.members" /></th>
                                     <th class="sortable-field"><spring:message code='department.data.lastModification' /></th>
                                     <sec:authorize access="hasRole('OFFICE')">
                                         <th><%-- placeholder to ensure correct number of th --%></th>
@@ -115,7 +115,7 @@
                                             </c:choose>
                                         </td>
                                         <td class="hidden-xs">
-                                            <c:out value="${fn:length(department.members)}"/> <spring:message code="department.members"/>
+                                            <c:out value="${fn:length(department.members)}"/> <spring:message code="department.data.members"/>
                                         </td>
                                         <td class="hidden-xs">
                                             <uv:dateTime dateTime="${department.lastModification}"/>

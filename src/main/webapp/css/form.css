@@ -89,3 +89,40 @@ textarea.error {
     margin-left: 24px;
     padding-bottom: 6px;
 }
+
+/**************************************************************************
+
+  DEPARTMENT FORM
+
+**************************************************************************/
+
+.department--members {
+  border: 1px solid #DDD;
+  border-radius: 4px;
+  overflow: auto;
+  max-height: 200px;
+  width: 100%;
+}
+
+.department--members .checkbox {
+  padding: 0;
+}
+
+.department--members .checkbox > label {
+  display: block;
+  padding: 12px 0 12px 36px;
+  border-bottom: 1px solid #DDD;
+}
+
+.department--members .checkbox > label:hover {
+  background-color: #F5F5F5;
+}
+
+.department--members .checkbox > label > img {
+  margin-left: 6px;
+  margin-right: 6px;
+}
+
+.department--members .checkbox:last-child > label {
+  border-bottom: none;
+}
