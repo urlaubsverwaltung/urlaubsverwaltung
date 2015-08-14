@@ -25,6 +25,7 @@ import org.synyx.urlaubsverwaltung.DateFormat;
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
+import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
@@ -40,6 +41,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 /**
@@ -60,6 +62,7 @@ class MailServiceImpl implements MailService {
     private final JavaMailSender mailSender;
     private final VelocityEngine velocityEngine;
     private final PersonService personService;
+    private final DepartmentService departmentService;
 
     private final String emailFrom;
     private final String emailManager;
@@ -69,6 +72,7 @@ class MailServiceImpl implements MailService {
 
     @Autowired
     public MailServiceImpl(JavaMailSender mailSender, VelocityEngine velocityEngine, PersonService personService,
+        DepartmentService departmentService,
         @Value("${mail.from}") String emailFrom,
         @Value("${mail.manager}") String emailManager,
         @Value("${application.url}") String applicationUrl) {
@@ -76,6 +80,7 @@ class MailServiceImpl implements MailService {
         this.mailSender = mailSender;
         this.velocityEngine = velocityEngine;
         this.personService = personService;
+        this.departmentService = departmentService;
 
         this.emailFrom = emailFrom;
         this.emailManager = emailManager;
@@ -95,7 +100,7 @@ class MailServiceImpl implements MailService {
         Map<String, Object> model = createModelForApplicationStatusChangeMail(application,
                 Optional.ofNullable(comment));
         String text = buildMailBody("new_applications", model);
-        sendEmail(getBosses(), "subject.application.applied.boss", text);
+        sendEmail(getBossesAndDepartmentHeads(application), "subject.application.applied.boss", text);
     }
 
 
@@ -148,9 +153,27 @@ class MailServiceImpl implements MailService {
     }
 
 
-    private List<Person> getBosses() {
+    private List<Person> getBossesAndDepartmentHeads(Application application) {
 
-        return personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS);
+        List<Person> bosses = personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS);
+
+        List<Person> allDepartmentHeads = personService.getPersonsWithNotificationType(
+                MailNotification.NOTIFICATION_DEPARTMENT_HEAD);
+
+        List<Person> departmentHeads = allDepartmentHeads.stream()
+            .filter(person -> departmentService.isDepartmentHeadOfThePerson(person, application.getPerson()))
+            .collect(Collectors.toList());
+
+        /**
+         * NOTE:
+         *
+         * It's not possible that someone has both roles,
+         * {@link org.synyx.urlaubsverwaltung.security.Role.BOSS} and
+         * {@link org.synyx.urlaubsverwaltung.security.Role.DEPARTMENT_HEAD}.
+         *
+         * Thus no need to use a {@link java.util.Set} to avoid person duplicates within the returned list.
+         */
+        return Stream.concat(bosses.stream(), departmentHeads.stream()).collect(Collectors.toList());
     }
 
 
@@ -195,7 +218,7 @@ class MailServiceImpl implements MailService {
 
         Map<String, Object> model = createModelForApplicationStatusChangeMail(application, Optional.<Comment>empty());
         String text = buildMailBody("remind", model);
-        sendEmail(getBosses(), "subject.application.remind", text);
+        sendEmail(getBossesAndDepartmentHeads(application), "subject.application.remind", text);
     }
 
 

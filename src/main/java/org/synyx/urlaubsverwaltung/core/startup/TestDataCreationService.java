@@ -105,7 +105,8 @@ public class TestDataCreationService {
             // Departments
             createTestDepartment("Admins", "Das sind die, die so Admin Sachen machen",
                 Arrays.asList(hans, brigitte, departmentHead));
-            createTestDepartment("Entwicklung", "Das sind die, die so entwickeln", Arrays.asList(niko, departmentHead));
+            createTestDepartment("Entwicklung", "Das sind die, die so entwickeln",
+                Arrays.asList(user, niko, departmentHead));
             createTestDepartment("Marketing", "Das sind die, die so Marketing Sachen machen",
                 Arrays.asList(guenther, elena));
             createTestDepartment("Geschäftsführung", "Das sind die, die so Geschäftsführung Sachen machen",
@@ -152,6 +153,10 @@ public class TestDataCreationService {
         List<MailNotification> notifications = new ArrayList<>();
 
         notifications.add(MailNotification.NOTIFICATION_USER);
+
+        if (personForm.getPermissions().contains(Role.DEPARTMENT_HEAD)) {
+            notifications.add(MailNotification.NOTIFICATION_DEPARTMENT_HEAD);
+        }
 
         if (personForm.getPermissions().contains(Role.BOSS)) {
             notifications.add(MailNotification.NOTIFICATION_BOSS);

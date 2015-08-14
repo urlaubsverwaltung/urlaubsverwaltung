@@ -23,6 +23,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
+import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
@@ -33,6 +34,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
@@ -52,6 +54,7 @@ public class MailServiceIntegrationTest {
 
     private MailServiceImpl mailService;
     private PersonService personService;
+    private DepartmentService departmentService;
 
     private Person person;
     private Application application;
@@ -73,8 +76,9 @@ public class MailServiceIntegrationTest {
         JavaMailSender mailSender = new JavaMailSenderImpl();
 
         personService = Mockito.mock(PersonService.class);
-        mailService = new MailServiceImpl(mailSender, velocityEngine, personService, emailFrom, emailManager,
-                "LinkToApplication");
+        departmentService = Mockito.mock(DepartmentService.class);
+        mailService = new MailServiceImpl(mailSender, velocityEngine, personService, departmentService, emailFrom,
+                emailManager, "LinkToApplication");
 
         person = new Person();
         application = new Application();
@@ -92,7 +96,8 @@ public class MailServiceIntegrationTest {
 
 
     @Test
-    public void ensureNotificationAboutNewApplicationIsSentToBosses() throws MessagingException, IOException {
+    public void ensureNotificationAboutNewApplicationIsSentToBossesAndDepartmentHeads() throws MessagingException,
+        IOException {
 
         person.setLastName("Antragsteller");
         person.setFirstName("Horst");
@@ -101,8 +106,18 @@ public class MailServiceIntegrationTest {
         String bossEmailAddress = "boss@boss.de";
         Person boss = new Person("boss", "Muster", "Max", bossEmailAddress);
 
+        String departmentHeadEmailAddress = "head@muster.de";
+        Person departmentHead = new Person("head", "Muster", "Michel", departmentHeadEmailAddress);
+
         Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS))
-            .thenReturn(Arrays.asList(boss));
+            .thenReturn(Collections.singletonList(boss));
+
+        Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD))
+            .thenReturn(Collections.singletonList(departmentHead));
+
+        Mockito.when(departmentService.isDepartmentHeadOfThePerson(Mockito.eq(departmentHead),
+                    Mockito.any(Person.class)))
+            .thenReturn(true);
 
         String commentMessage = "Das ist ein Kommentar.";
         Comment comment = new Comment(person);
@@ -110,12 +125,16 @@ public class MailServiceIntegrationTest {
 
         mailService.sendNewApplicationNotification(application, comment);
 
-        // was email sent?
-        List<Message> inbox = Mailbox.get(bossEmailAddress);
-        assertTrue(inbox.size() > 0);
+        // was email sent to boss?
+        List<Message> inboxOfBoss = Mailbox.get(bossEmailAddress);
+        assertTrue("Boss should get the email", inboxOfBoss.size() > 0);
+
+        // was email sent to department head?
+        List<Message> inboxOfDepartmentHead = Mailbox.get(departmentHeadEmailAddress);
+        assertTrue("Department head should get the email", inboxOfDepartmentHead.size() > 0);
 
         // get email
-        Message msg = inbox.get(0);
+        Message msg = inboxOfDepartmentHead.get(0);
 
         // check subject
         assertEquals("Neuer Urlaubsantrag", msg.getSubject());
