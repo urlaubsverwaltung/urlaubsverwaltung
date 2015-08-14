@@ -20,7 +20,6 @@
 
 <spring:url var="URL_PREFIX" value="/web"/>
 
-
 <div class="content">
 <div class="container">
 
@@ -40,77 +39,89 @@
 
 <div class="row">
 
-<div class="col-xs-12 col-md-6">
-
-    <div class="header">
+    <div class="col-xs-12 header">
         <legend><spring:message code="department.data"/></legend>
     </div>
 
-    <div class="form-group">
-        <label class="control-label col-md-4" for="name"><spring:message code='department.data.name'/></label>
+    <div class="col-md-4 col-md-push-8">
+        <span class="help-block">
+            <i class="fa fa-fw fa-info-circle"></i>
+            <spring:message code="department.data.description"/>
+        </span>
+    </div>
 
-        <div class="col-md-7">
-            <form:input id="name" path="name" class="form-control" cssErrorClass="form-control error" />
-            <span class="help-inline"><form:errors path="name" cssClass="error"/></span>
+    <div class="col-md-8 col-md-pull-4">
+        <div class="form-group">
+            <label class="control-label col-md-3" for="name"><spring:message code='department.data.name'/></label>
+
+            <div class="col-md-9">
+                <form:input id="name" path="name" class="form-control" cssErrorClass="form-control error" />
+                <span class="help-inline"><form:errors path="name" cssClass="error"/></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3" for="description"><spring:message code='department.data.info'/></label>
+
+            <div class="col-md-9">
+                <span id="text-description"></span><spring:message code='max.chars'/>
+                <form:textarea id="description" rows="3" path="description" class="form-control" cssErrorClass="form-control error"
+                      onkeyup="count(this.value, 'text-description');"
+                      onkeydown="maxChars(this,200); count(this.value, 'text-description');"/>
+                <form:errors path="description" cssClass="error"/>
+            </div>
         </div>
     </div>
 
-    <div class="form-group">
-        <label class="control-label col-md-4" for="description"><spring:message code='department.data.description'/></label>
-
-        <div class="col-md-7">
-            <span id="text-description"></span><spring:message code='max.chars'/>
-            <form:textarea id="description" rows="3" path="description" class="form-control" cssErrorClass="form-control error"
-                  onkeyup="count(this.value, 'text-description');"
-                  onkeydown="maxChars(this,200); count(this.value, 'text-description');"/>
-            <form:errors path="description" cssClass="error"/>
-        </div>
+    <div class="col-xs-12 header">
+        <legend><spring:message code="department.members"/></legend>
     </div>
 
-</div>
-
-<div class="col-xs-12 col-md-6">
-
-    <div class="header">
-        <legend><spring:message code="department.data.members"/></legend>
+    <div class="col-md-4 col-md-push-8">
+        <span class="help-block">
+            <i class="fa fa-fw fa-info-circle"></i>
+            <spring:message code="department.members.description"/>
+        </span>
     </div>
 
-    <div class="department--members">
-        <c:forEach items="${persons}" var="person">
-            <div class="department--member">
-                <div class="department--member-image">
-                    <img class="img-circle" src="<c:out value='${gravatarUrls[person]}?d=mm&s=40'/>"/>
-                </div>
-                <div class="department--member-assignment">
-                    <p class="department--member-info">
-                        <c:out value="${person.niceName}"/>
-                    </p>
-                    <div class="checkbox">
-                        <label>
-                            <form:checkbox path="members" value="${person}"/>
-                            <spring:message code="department.data.members.assigned"/>
-                        </label>
-                    </div>
-                    <div class="checkbox">
-                        <label>
-                            <input type="checkbox"/>
-                            <spring:message code="department.data.members.departmentHead"/>
-                        </label>
-                    </div>
+    <div class="col-md-8 col-md-pull-4">
+        <div class="form-group">
+            <label class="control-label col-md-3" for="name"><spring:message code='department.members.staff'/></label>
+            <div class="col-md-9">
+                <div class="department--members">
+                    <c:forEach items="${persons}" var="person">
+                        <div class="department--member">
+                            <div class="department--member-image">
+                                <img class="img-circle" src="<c:out value='${gravatarUrls[person]}?d=mm&s=40'/>"/>
+                            </div>
+                            <div class="department--member-assignment">
+                                <p class="department--member-info">
+                                    <c:out value="${person.niceName}"/>
+                                </p>
+                                <div class="checkbox">
+                                    <label>
+                                        <form:checkbox path="members" value="${person}"/>
+                                        <spring:message code="department.members.assigned"/>
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox"/>
+                                        <spring:message code="department.members.departmentHead"/>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </c:forEach>
                 </div>
             </div>
-        </c:forEach>
+        </div>
     </div>
 
-</div>
-
 <div class="col-xs-12">
-
     <hr/>
-
     <button class="btn btn-success col-xs-12 col-sm-5 col-md-2" type="submit"><spring:message code="action.save" /></button>
     <a class="btn btn-default col-xs-12 col-sm-5 col-md-2 pull-right" href="${URL_PREFIX}/department"><spring:message code="action.cancel"/></a>
-
 </div>
 
 </form:form>

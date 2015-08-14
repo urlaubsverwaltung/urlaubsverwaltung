@@ -100,7 +100,7 @@ textarea.error {
   border: 1px solid #DDD;
   border-radius: 4px;
   overflow: auto;
-  max-height: 200px;
+  max-height: 400px;
   width: 100%;
 }
 
@@ -108,6 +108,10 @@ textarea.error {
   border-bottom: 1px solid #DDD;
   display: table;
   width: 100%;
+}
+
+.department--member:last-child {
+  border-bottom: none;
 }
 
 .department--member-image,

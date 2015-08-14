@@ -86,7 +86,7 @@
                                 <thead class="hidden-xs hidden-sm">
                                 <tr>
                                     <th class="sortable-field"><spring:message code="department.data.name" /></th>
-                                    <th class="sortable-field"><spring:message code="department.data.members" /></th>
+                                    <th class="sortable-field"><spring:message code="department.members" /></th>
                                     <th class="sortable-field"><spring:message code='department.data.lastModification' /></th>
                                     <sec:authorize access="hasRole('OFFICE')">
                                         <th><%-- placeholder to ensure correct number of th --%></th>
@@ -103,7 +103,7 @@
                                                          data-toggle="popover"
                                                          data-trigger="hover"
                                                          data-placement="right"
-                                                         title="<spring:message code='department.data.description'/>"
+                                                         title="<spring:message code='department.data.info'/>"
                                                          data-content="${department.description}">
                                                         <c:out value="${department.name}"/>
                                                         <i class="fa fa-fw fa-info-circle hidden-print"></i>
@@ -115,7 +115,7 @@
                                             </c:choose>
                                         </td>
                                         <td class="hidden-xs">
-                                            <c:out value="${fn:length(department.members)}"/> <spring:message code="department.data.members"/>
+                                            <c:out value="${fn:length(department.members)}"/> <spring:message code="department.members"/>
                                         </td>
                                         <td class="hidden-xs">
                                             <uv:dateTime dateTime="${department.lastModification}"/>
