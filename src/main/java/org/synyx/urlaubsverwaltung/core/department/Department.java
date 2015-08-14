@@ -15,10 +15,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.Temporal;
+import javax.persistence.*;
 
 
 /**
@@ -38,9 +35,15 @@ public class Department extends AbstractPersistable<Integer> {
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date lastModification;
 
+    @CollectionTable(name = "Department_Member")
     @ElementCollection
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<Person> members = new ArrayList<>();
+
+    @CollectionTable(name = "Department_DepartmentHead")
+    @ElementCollection
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private List<Person> departmentHeads = new ArrayList<>();
 
     public String getName() {
 
@@ -100,5 +103,17 @@ public class Department extends AbstractPersistable<Integer> {
     public void setMembers(List<Person> members) {
 
         this.members = members;
+    }
+
+
+    public List<Person> getDepartmentHeads() {
+
+        return departmentHeads;
+    }
+
+
+    public void setDepartmentHeads(List<Person> departmentHeads) {
+
+        this.departmentHeads = departmentHeads;
     }
 }

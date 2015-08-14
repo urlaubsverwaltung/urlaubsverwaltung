@@ -77,17 +77,17 @@ public class DepartmentServiceImpl implements DepartmentService {
 
 
     @Override
-    public List<Department> getDepartmentsOfPerson(Person person) {
+    public List<Department> getManagedDepartmentsOfDepartmentHead(Person departmentHead) {
 
-        return departmentDAO.getDepartmentsWithMembership(person.getId());
+        return departmentDAO.getManagedDepartments(departmentHead.getId());
     }
 
 
     @Override
-    public List<Person> getAllMembersOfDepartmentsOfPerson(Person person) {
+    public List<Person> getManagedMembersOfDepartmentHead(Person departmentHead) {
 
         Set<Person> relevantPersons = new HashSet<>();
-        List<Department> departments = departmentDAO.getDepartmentsWithMembership(person.getId());
+        List<Department> departments = departmentDAO.getManagedDepartments(departmentHead.getId());
 
         for (Department department : departments) {
             List<Person> members = department.getMembers();
@@ -99,10 +99,10 @@ public class DepartmentServiceImpl implements DepartmentService {
 
 
     @Override
-    public boolean isDepartmentHeadOfThePerson(Person departmentHead, Person person) {
+    public boolean isDepartmentHeadOfPerson(Person departmentHead, Person person) {
 
         if (departmentHead.hasRole(Role.DEPARTMENT_HEAD)) {
-            List<Person> members = getAllMembersOfDepartmentsOfPerson(departmentHead);
+            List<Person> members = getManagedMembersOfDepartmentHead(departmentHead);
 
             if (members.contains(person)) {
                 return true;

@@ -90,7 +90,7 @@ public class PersonController {
 
         // NOTE: If the signed in user is only department head, he wants to see only the persons of his departments
         if (sessionService.getSignedInUser().hasRole(Role.DEPARTMENT_HEAD)) {
-            List<Person> members = departmentService.getAllMembersOfDepartmentsOfPerson(
+            List<Person> members = departmentService.getManagedMembersOfDepartmentHead(
                     sessionService.getSignedInUser());
 
             // NOTE: Only persons with inactive role are relevant
@@ -145,7 +145,7 @@ public class PersonController {
 
         // NOTE: If the signed in user is only department head, he wants to see only the persons of his departments
         if (sessionService.getSignedInUser().hasRole(Role.DEPARTMENT_HEAD)) {
-            List<Person> members = departmentService.getAllMembersOfDepartmentsOfPerson(
+            List<Person> members = departmentService.getManagedMembersOfDepartmentHead(
                     sessionService.getSignedInUser());
 
             // NOTE: Only persons without inactive role are relevant

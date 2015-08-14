@@ -14,8 +14,11 @@ import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.core.department.Department;
+import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.security.CryptoUtil;
+import org.synyx.urlaubsverwaltung.security.Role;
 import org.synyx.urlaubsverwaltung.web.person.PersonForm;
 
 import java.math.BigDecimal;
@@ -23,7 +26,9 @@ import java.math.BigDecimal;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 /**
@@ -39,16 +44,19 @@ public class PersonInteractionServiceImpl implements PersonInteractionService {
     private final WorkingTimeService workingTimeService;
     private final AccountService accountService;
     private final AccountInteractionService accountInteractionService;
+    private final DepartmentService departmentService;
     private final MailService mailService;
 
     @Autowired
     public PersonInteractionServiceImpl(PersonService personService, WorkingTimeService workingTimeService,
-        AccountService accountService, AccountInteractionService accountInteractionService, MailService mailService) {
+        AccountService accountService, AccountInteractionService accountInteractionService,
+        DepartmentService departmentService, MailService mailService) {
 
         this.personService = personService;
         this.workingTimeService = workingTimeService;
         this.accountService = accountService;
         this.accountInteractionService = accountInteractionService;
+        this.departmentService = departmentService;
         this.mailService = mailService;
     }
 
@@ -125,8 +133,36 @@ public class PersonInteractionServiceImpl implements PersonInteractionService {
 
         touchAccount(personToUpdate, personForm);
 
+        touchDepartmentHeads(personToUpdate);
+
         LOG.info("Updated " + optionalPersonToUpdate.toString());
 
         return personToUpdate;
+    }
+
+
+    /**
+     * If the updated person loses department head role, all the department head mappings must be cleaned up.
+     *
+     * @param  person  to check lost department head role for
+     */
+    private void touchDepartmentHeads(Person person) {
+
+        if (!person.hasRole(Role.DEPARTMENT_HEAD)) {
+            List<Department> departments = departmentService.getManagedDepartmentsOfDepartmentHead(person);
+
+            for (Department department : departments) {
+                List<Person> departmentHeads = department.getDepartmentHeads();
+
+                List<Person> updatedDepartmentHeads = departmentHeads.stream().filter(departmentHead ->
+                            !departmentHead.equals(person)).collect(Collectors.toList());
+
+                if (departmentHeads.size() != updatedDepartmentHeads.size()) {
+                    department.setDepartmentHeads(updatedDepartmentHeads);
+
+                    departmentService.update(department);
+                }
+            }
+        }
     }
 }

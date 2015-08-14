@@ -53,23 +53,23 @@ public interface DepartmentService {
 
 
     /**
-     * Finds all departments the given person is assigned to.
+     * Finds all departments the given person is set as department head.
      *
-     * @param  person  to get the departments of
+     * @param  departmentHead  to get the departments of
      *
-     * @return  list of departments the person is assigned to
+     * @return  list of departments the department head manages
      */
-    List<Department> getDepartmentsOfPerson(Person person);
+    List<Department> getManagedDepartmentsOfDepartmentHead(Person departmentHead);
 
 
     /**
-     * Get all members of the departments that the given person is assigned to.
+     * Get all members of the departments where the given person is the department head.
      *
-     * @param  person  to get the departments of
+     * @param  departmentHead  manages the members to be fetched
      *
-     * @return  all unique members of the departments of the given person
+     * @return  all unique members of the departments where the given person is the department head
      */
-    List<Person> getAllMembersOfDepartmentsOfPerson(Person person);
+    List<Person> getManagedMembersOfDepartmentHead(Person departmentHead);
 
 
     /**
@@ -82,5 +82,5 @@ public interface DepartmentService {
      * @return  {@code true} if the given department head manages a department that the given person is assigned to,
      *          else {@code false}
      */
-    boolean isDepartmentHeadOfThePerson(Person departmentHead, Person person);
+    boolean isDepartmentHeadOfPerson(Person departmentHead, Person person);
 }

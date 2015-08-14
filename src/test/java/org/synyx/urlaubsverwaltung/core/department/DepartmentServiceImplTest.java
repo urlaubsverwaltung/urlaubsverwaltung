@@ -89,14 +89,14 @@ public class DepartmentServiceImplTest {
 
 
     @Test
-    public void ensureGetDepartmentsOfPersonCallCorrectDAOMethod() throws Exception {
+    public void ensureGetManagedDepartmentsOfDepartmentHeadCallCorrectDAOMethod() throws Exception {
 
         Person person = Mockito.mock(Person.class);
         Mockito.when(person.getId()).thenReturn(42);
 
-        sut.getDepartmentsOfPerson(person);
+        sut.getManagedDepartmentsOfDepartmentHead(person);
 
-        Mockito.verify(departmentDAO).getDepartmentsWithMembership(42);
+        Mockito.verify(departmentDAO).getManagedDepartments(42);
     }
 
 
@@ -172,10 +172,10 @@ public class DepartmentServiceImplTest {
         Department marketing = new Department();
         marketing.setMembers(Arrays.asList(marketing1, marketing2, marketing3, departmentHead));
 
-        Mockito.when(departmentDAO.getDepartmentsWithMembership(Mockito.anyInt()))
+        Mockito.when(departmentDAO.getManagedDepartments(Mockito.anyInt()))
             .thenReturn(Arrays.asList(admins, marketing));
 
-        List<Person> members = sut.getAllMembersOfDepartmentsOfPerson(departmentHead);
+        List<Person> members = sut.getManagedMembersOfDepartmentHead(departmentHead);
 
         Assert.assertNotNull("Should not be null", members);
         Assert.assertEquals("Wrong number of members", 6, members.size());
@@ -188,9 +188,9 @@ public class DepartmentServiceImplTest {
         Person departmentHead = Mockito.mock(Person.class);
         Mockito.when(departmentHead.getId()).thenReturn(42);
 
-        Mockito.when(departmentDAO.getDepartmentsWithMembership(Mockito.anyInt())).thenReturn(Collections.emptyList());
+        Mockito.when(departmentDAO.getManagedDepartments(Mockito.anyInt())).thenReturn(Collections.emptyList());
 
-        List<Person> members = sut.getAllMembersOfDepartmentsOfPerson(departmentHead);
+        List<Person> members = sut.getManagedMembersOfDepartmentHead(departmentHead);
 
         Assert.assertNotNull("Should not be null", members);
         Assert.assertTrue("Should be empty", members.isEmpty());
@@ -210,10 +210,10 @@ public class DepartmentServiceImplTest {
         Department admins = new Department();
         admins.setMembers(Arrays.asList(admin1, admin2, departmentHead));
 
-        Mockito.when(departmentDAO.getDepartmentsWithMembership(Mockito.anyInt()))
+        Mockito.when(departmentDAO.getManagedDepartments(Mockito.anyInt()))
             .thenReturn(Collections.singletonList(admins));
 
-        boolean isDepartmentHead = sut.isDepartmentHeadOfThePerson(departmentHead, admin1);
+        boolean isDepartmentHead = sut.isDepartmentHeadOfPerson(departmentHead, admin1);
 
         Assert.assertTrue("Should be the department head of the given person", isDepartmentHead);
     }
@@ -234,10 +234,10 @@ public class DepartmentServiceImplTest {
 
         Person marketing1 = new Person();
 
-        Mockito.when(departmentDAO.getDepartmentsWithMembership(Mockito.anyInt()))
+        Mockito.when(departmentDAO.getManagedDepartments(Mockito.anyInt()))
             .thenReturn(Collections.singletonList(admins));
 
-        boolean isDepartmentHead = sut.isDepartmentHeadOfThePerson(departmentHead, marketing1);
+        boolean isDepartmentHead = sut.isDepartmentHeadOfPerson(departmentHead, marketing1);
 
         Assert.assertFalse("Should not be the department head of the given person", isDepartmentHead);
     }
@@ -256,10 +256,10 @@ public class DepartmentServiceImplTest {
         Department admins = new Department();
         admins.setMembers(Arrays.asList(admin1, admin2, noDepartmentHead));
 
-        Mockito.when(departmentDAO.getDepartmentsWithMembership(Mockito.anyInt()))
+        Mockito.when(departmentDAO.getManagedDepartments(Mockito.anyInt()))
             .thenReturn(Collections.singletonList(admins));
 
-        boolean isDepartmentHead = sut.isDepartmentHeadOfThePerson(noDepartmentHead, admin1);
+        boolean isDepartmentHead = sut.isDepartmentHeadOfPerson(noDepartmentHead, admin1);
 
         Assert.assertFalse("Should not be the department head of the given person", isDepartmentHead);
     }

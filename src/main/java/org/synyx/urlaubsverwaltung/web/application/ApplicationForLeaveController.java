@@ -53,7 +53,7 @@ public class ApplicationForLeaveController {
     /**
      * Show waiting applications for leave.
      *
-     * @return  waiting applications for leave page or error page if not boss or office
+     * @return  waiting applications for leave page
      */
     @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
     @RequestMapping(value = "/application", method = RequestMethod.GET)
@@ -76,7 +76,7 @@ public class ApplicationForLeaveController {
         List<Application> applications = applicationService.getApplicationsForACertainState(ApplicationStatus.WAITING);
 
         if (sessionService.getSignedInUser().hasRole(Role.DEPARTMENT_HEAD)) {
-            List<Person> members = departmentService.getAllMembersOfDepartmentsOfPerson(
+            List<Person> members = departmentService.getManagedMembersOfDepartmentHead(
                     sessionService.getSignedInUser());
 
             return applications.stream()

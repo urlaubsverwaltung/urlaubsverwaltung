@@ -16,7 +16,7 @@
             <column name="lastModification" type="date"/>
         </createTable>
 
-        <createTable tableName="Department_Person">
+        <createTable tableName="Department_Member">
             <column autoIncrement="true" name="id" type="INT(10)">
                 <constraints primaryKey="true"/>
             </column>
@@ -26,7 +26,18 @@
             <column name="members_id" type="INT(10)">
                 <constraints nullable="false"/>
             </column>
+        </createTable>
 
+        <createTable tableName="Department_DepartmentHead">
+            <column autoIncrement="true" name="id" type="INT(10)">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="Department_id" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="departmentHeads_id" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
 
     </changeSet>

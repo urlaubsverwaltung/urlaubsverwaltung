@@ -115,7 +115,7 @@ public class MailServiceImplTest {
 
         Mockito.verify(personService).getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD);
         Mockito.verify(departmentService)
-            .isDepartmentHeadOfThePerson(Mockito.eq(departmentHead), Mockito.eq(application.getPerson()));
+            .isDepartmentHeadOfPerson(Mockito.eq(departmentHead), Mockito.eq(application.getPerson()));
     }
 
 
@@ -144,7 +144,7 @@ public class MailServiceImplTest {
 
         Mockito.verify(personService).getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD);
         Mockito.verify(departmentService)
-            .isDepartmentHeadOfThePerson(Mockito.eq(departmentHead), Mockito.eq(application.getPerson()));
+            .isDepartmentHeadOfPerson(Mockito.eq(departmentHead), Mockito.eq(application.getPerson()));
     }
 
 

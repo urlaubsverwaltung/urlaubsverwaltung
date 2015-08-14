@@ -109,7 +109,7 @@ public class ApplicationForLeaveDetailsController {
         boolean samePerson = signedInUser.equals(person);
         boolean isBoss = signedInUser.hasRole(Role.BOSS);
         boolean isOffice = signedInUser.hasRole(Role.OFFICE);
-        boolean isDepartmentHead = departmentService.isDepartmentHeadOfThePerson(signedInUser, person);
+        boolean isDepartmentHead = departmentService.isDepartmentHeadOfPerson(signedInUser, person);
 
         if (samePerson || isBoss || isOffice || isDepartmentHead) {
             Integer year = requestedYear == null ? application.getEndDate().getYear() : requestedYear;
@@ -190,7 +190,7 @@ public class ApplicationForLeaveDetailsController {
         Person person = application.get().getPerson();
 
         boolean isBoss = signedInUser.hasRole(Role.BOSS);
-        boolean isDepartmentHead = departmentService.isDepartmentHeadOfThePerson(signedInUser, person);
+        boolean isDepartmentHead = departmentService.isDepartmentHeadOfPerson(signedInUser, person);
 
         if (isBoss || isDepartmentHead) {
             comment.setMandatory(false);
@@ -235,7 +235,7 @@ public class ApplicationForLeaveDetailsController {
             Person person = application.get().getPerson();
 
             boolean isBoss = sender.hasRole(Role.BOSS);
-            boolean isDepartmentHead = departmentService.isDepartmentHeadOfThePerson(sender, person);
+            boolean isDepartmentHead = departmentService.isDepartmentHeadOfPerson(sender, person);
 
             if (isBoss || isDepartmentHead) {
                 mailService.sendReferApplicationNotification(application.get(), recipient.get(), sender);
@@ -267,7 +267,7 @@ public class ApplicationForLeaveDetailsController {
             Person signedInUser = sessionService.getSignedInUser();
 
             boolean isBoss = signedInUser.hasRole(Role.BOSS);
-            boolean isDepartmentHead = departmentService.isDepartmentHeadOfThePerson(signedInUser, person);
+            boolean isDepartmentHead = departmentService.isDepartmentHeadOfPerson(signedInUser, person);
 
             if (isBoss || isDepartmentHead) {
                 comment.setMandatory(true);

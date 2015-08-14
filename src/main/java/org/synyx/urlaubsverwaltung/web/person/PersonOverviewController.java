@@ -113,7 +113,7 @@ public class PersonOverviewController {
         boolean isOwnOverviewPage = person.getId().equals(signedInUser.getId());
         boolean isOffice = signedInUser.hasRole(Role.OFFICE);
         boolean isBoss = signedInUser.hasRole(Role.BOSS);
-        boolean isDepartmentHead = departmentService.isDepartmentHeadOfThePerson(signedInUser, person);
+        boolean isDepartmentHead = departmentService.isDepartmentHeadOfPerson(signedInUser, person);
 
         if (!isOwnOverviewPage && !isOffice && !isBoss && !isDepartmentHead) {
             return ControllerConstants.ERROR_JSP;

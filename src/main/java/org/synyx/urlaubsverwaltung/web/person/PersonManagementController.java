@@ -138,7 +138,7 @@ public class PersonManagementController {
         model.addAttribute("personForm", personForm);
         model.addAttribute("weekDays", Day.values());
         model.addAttribute("workingTimes", workingTimeService.getByPerson(person));
-        model.addAttribute("departments", departmentService.getDepartmentsOfPerson(person));
+        model.addAttribute("departments", departmentService.getManagedDepartmentsOfDepartmentHead(person));
 
         return PersonConstants.PERSON_FORM_JSP;
     }

@@ -13,6 +13,6 @@ import java.util.List;
  */
 public interface DepartmentDAO extends JpaRepository<Department, Integer> {
 
-    @Query("SELECT d FROM Department d, in (d.members) person WHERE person.id = ?1")
-    List<Department> getDepartmentsWithMembership(Integer personId);
+    @Query("SELECT d FROM Department d, in (d.departmentHeads) person WHERE person.id = ?1")
+    List<Department> getManagedDepartments(Integer personId);
 }

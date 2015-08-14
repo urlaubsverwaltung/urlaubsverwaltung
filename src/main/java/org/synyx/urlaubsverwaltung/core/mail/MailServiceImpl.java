@@ -161,7 +161,7 @@ class MailServiceImpl implements MailService {
                 MailNotification.NOTIFICATION_DEPARTMENT_HEAD);
 
         List<Person> departmentHeads = allDepartmentHeads.stream()
-            .filter(person -> departmentService.isDepartmentHeadOfThePerson(person, application.getPerson()))
+            .filter(person -> departmentService.isDepartmentHeadOfPerson(person, application.getPerson()))
             .collect(Collectors.toList());
 
         /**

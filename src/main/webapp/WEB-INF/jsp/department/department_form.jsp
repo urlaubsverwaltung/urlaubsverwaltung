@@ -104,12 +104,14 @@
                                         <spring:message code="department.members.assigned"/>
                                     </label>
                                 </div>
+                                <c:if test="${fn:contains(person.permissions, 'DEPARTMENT_HEAD')}">
                                 <div class="checkbox">
                                     <label>
-                                        <input type="checkbox"/>
+                                        <form:checkbox path="departmentHeads" value="${person}"/>
                                         <spring:message code="department.members.departmentHead"/>
                                     </label>
                                 </div>
+                                </c:if>
                             </div>
                         </div>
                     </c:forEach>

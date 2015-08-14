@@ -125,7 +125,7 @@ public class ApplicationForLeaveStatisticsController {
         Person signedInUser = sessionService.getSignedInUser();
 
         if (signedInUser.hasRole(Role.DEPARTMENT_HEAD)) {
-            return departmentService.getAllMembersOfDepartmentsOfPerson(signedInUser);
+            return departmentService.getManagedMembersOfDepartmentHead(signedInUser);
         }
 
         return personService.getActivePersons();

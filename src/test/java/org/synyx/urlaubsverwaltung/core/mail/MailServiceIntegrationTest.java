@@ -115,8 +115,7 @@ public class MailServiceIntegrationTest {
         Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_DEPARTMENT_HEAD))
             .thenReturn(Collections.singletonList(departmentHead));
 
-        Mockito.when(departmentService.isDepartmentHeadOfThePerson(Mockito.eq(departmentHead),
-                    Mockito.any(Person.class)))
+        Mockito.when(departmentService.isDepartmentHeadOfPerson(Mockito.eq(departmentHead), Mockito.any(Person.class)))
             .thenReturn(true);
 
         String commentMessage = "Das ist ein Kommentar.";
