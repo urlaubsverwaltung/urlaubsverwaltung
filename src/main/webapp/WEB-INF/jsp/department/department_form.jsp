@@ -90,7 +90,10 @@
             <div class="col-md-9">
                 <div class="department--members">
                     <c:forEach items="${persons}" var="person">
-                        <div class="department--member">
+                        <c:set var="IS_MEMBER" value="${fn:contains(department.members, person)}"/>
+                        <c:set var="MEMBER_CSS_CLASS" value="${IS_MEMBER ? 'is-assigned' : ''}"/>
+
+                        <div class="department--member ${MEMBER_CSS_CLASS}">
                             <div class="department--member-image">
                                 <img class="img-circle" src="<c:out value='${gravatarUrls[person]}?d=mm&s=40'/>"/>
                             </div>

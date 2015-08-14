@@ -110,6 +110,10 @@ textarea.error {
   width: 100%;
 }
 
+.department--member.is-assigned {
+  background-color: #E8EFD1;
+}
+
 .department--member:last-child {
   border-bottom: none;
 }
