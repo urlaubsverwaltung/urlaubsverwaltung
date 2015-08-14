@@ -60,7 +60,7 @@ public class MailServiceImplTest {
 
         ArgumentCaptor<SimpleMailMessage> mailMessageArgumentCaptor = ArgumentCaptor.forClass(SimpleMailMessage.class);
 
-        String subject = "subject.new";
+        String subject = "subject.application.applied.boss";
         String body = "Mail Body";
         mailService.sendEmail(Arrays.asList(person, anotherPerson, personWithoutMailAddress), subject, body);
 

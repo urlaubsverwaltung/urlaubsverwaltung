@@ -95,7 +95,7 @@ class MailServiceImpl implements MailService {
         Map<String, Object> model = createModelForApplicationStatusChangeMail(application,
                 Optional.ofNullable(comment));
         String text = buildMailBody("new_applications", model);
-        sendEmail(getBosses(), "subject.new", text);
+        sendEmail(getBosses(), "subject.application.applied.boss", text);
     }
 
 
@@ -195,7 +195,7 @@ class MailServiceImpl implements MailService {
 
         Map<String, Object> model = createModelForApplicationStatusChangeMail(application, Optional.<Comment>empty());
         String text = buildMailBody("remind", model);
-        sendEmail(getBosses(), "subject.remind", text);
+        sendEmail(getBosses(), "subject.application.remind", text);
     }
 
 
@@ -209,13 +209,13 @@ class MailServiceImpl implements MailService {
         Map<String, Object> modelForOffice = createModelForApplicationStatusChangeMail(application,
                 Optional.ofNullable(comment));
         String textOffice = buildMailBody("allowed_office", modelForOffice);
-        sendEmail(getOfficeMembers(), "subject.allowed.office", textOffice);
+        sendEmail(getOfficeMembers(), "subject.application.allowed.office", textOffice);
 
         // email to applicant
         Map<String, Object> modelForUser = createModelForApplicationStatusChangeMail(application,
                 Optional.ofNullable(comment));
         String textUser = buildMailBody("allowed_user", modelForUser);
-        sendEmail(Arrays.asList(application.getPerson()), "subject.allowed.user", textUser);
+        sendEmail(Arrays.asList(application.getPerson()), "subject.application.allowed.user", textUser);
     }
 
 
@@ -231,7 +231,7 @@ class MailServiceImpl implements MailService {
         Map<String, Object> model = createModelForApplicationStatusChangeMail(application,
                 Optional.ofNullable(comment));
         String text = buildMailBody("rejected", model);
-        sendEmail(Arrays.asList(application.getPerson()), "subject.rejected", text);
+        sendEmail(Arrays.asList(application.getPerson()), "subject.application.rejected", text);
     }
 
 
@@ -245,7 +245,7 @@ class MailServiceImpl implements MailService {
         model.put("sender", sender);
 
         String text = buildMailBody("refer", model);
-        sendEmail(Arrays.asList(recipient), "subject.refer", text);
+        sendEmail(Arrays.asList(recipient), "subject.application.refer", text);
     }
 
 
@@ -255,7 +255,7 @@ class MailServiceImpl implements MailService {
         Map<String, Object> model = createModelForApplicationStatusChangeMail(application,
                 Optional.ofNullable(comment));
         String text = buildMailBody("confirm", model);
-        sendEmail(Arrays.asList(application.getPerson()), "subject.confirm", text);
+        sendEmail(Arrays.asList(application.getPerson()), "subject.application.applied.user", text);
     }
 
 
@@ -265,7 +265,7 @@ class MailServiceImpl implements MailService {
         Map<String, Object> model = createModelForApplicationStatusChangeMail(application,
                 Optional.ofNullable(comment));
         String text = buildMailBody("new_application_by_office", model);
-        sendEmail(Arrays.asList(application.getPerson()), "subject.new.app.by.office", text);
+        sendEmail(Arrays.asList(application.getPerson()), "subject.application.appliedByOffice", text);
     }
 
 
@@ -281,14 +281,14 @@ class MailServiceImpl implements MailService {
             // not only if application was allowed before cancelling
             text = buildMailBody("cancelled_by_office", model);
 
-            sendEmail(Arrays.asList(application.getPerson()), "subject.cancelled.by.office", text);
+            sendEmail(Arrays.asList(application.getPerson()), "subject.application.cancelled.user", text);
         } else {
             // application was allowed before cancelling
             // only then office gets an email
             text = buildMailBody("cancelled", model);
 
             // mail to office
-            sendEmail(getOfficeMembers(), "subject.cancelled", text);
+            sendEmail(getOfficeMembers(), "subject.application.cancelled.office", text);
         }
     }
 
@@ -302,7 +302,7 @@ class MailServiceImpl implements MailService {
 
         String text = buildMailBody("error_key_generation", model);
 
-        sendTechnicalNotification("subject.key.error", text);
+        sendTechnicalNotification("subject.error.keys.generate", text);
     }
 
 
@@ -338,7 +338,7 @@ class MailServiceImpl implements MailService {
 
         String text = buildMailBody("error_sign_application", model);
 
-        sendTechnicalNotification("subject.sign.error", text);
+        sendTechnicalNotification("subject.error.keys.sign", text);
     }
 
 
@@ -352,7 +352,7 @@ class MailServiceImpl implements MailService {
 
         String text = buildMailBody("error_calendar_sync", model);
 
-        sendTechnicalNotification("subject.calendar.error", text);
+        sendTechnicalNotification("subject.error.calendar.sync", text);
     }
 
 
@@ -368,7 +368,7 @@ class MailServiceImpl implements MailService {
 
         String text = buildMailBody("error_calendar_update", model);
 
-        sendTechnicalNotification("subject.calendar.errorOnUpdate", text);
+        sendTechnicalNotification("subject.error.calendar.update", text);
     }
 
 
@@ -382,7 +382,7 @@ class MailServiceImpl implements MailService {
 
         String text = buildMailBody("error_calendar_delete", model);
 
-        sendTechnicalNotification("subject.calendar.errorOnDelete", text);
+        sendTechnicalNotification("subject.error.calendar.delete", text);
     }
 
 
@@ -396,10 +396,10 @@ class MailServiceImpl implements MailService {
         String text = buildMailBody("updated_accounts", model);
 
         // send email to office for printing statistic
-        sendEmail(getOfficeMembers(), "subject.account.update", text);
+        sendEmail(getOfficeMembers(), "subject.account.updatedRemainingDays", text);
 
         // send email to manager to notify about update of accounts
-        sendTechnicalNotification("subject.account.update", text);
+        sendTechnicalNotification("subject.account.updatedRemainingDays", text);
     }
 
 
@@ -437,6 +437,6 @@ class MailServiceImpl implements MailService {
 
         String text = buildMailBody("notify_holiday_replacement", model);
 
-        sendEmail(Arrays.asList(application.getHolidayReplacement()), "subject.holidayReplacement", text);
+        sendEmail(Arrays.asList(application.getHolidayReplacement()), "subject.application.holidayReplacement", text);
     }
 }
