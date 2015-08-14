@@ -77,6 +77,13 @@ public class DepartmentServiceImpl implements DepartmentService {
 
 
     @Override
+    public List<Department> getDepartmentsOfPerson(Person person) {
+
+        return departmentDAO.getDepartmentsWithMembership(person.getId());
+    }
+
+
+    @Override
     public List<Person> getAllMembersOfDepartmentsOfPerson(Person person) {
 
         Set<Person> relevantPersons = new HashSet<>();

@@ -167,6 +167,19 @@
                         <form:checkbox path="notifications" value="NOTIFICATION_DEPARTMENT_HEAD"/>
                         <spring:message code="person.form.notifications.departmentHead"/>
                     </label>
+                    <label>
+                        <c:choose>
+                            <c:when test="${empty departments}">
+                                <spring:message code="person.form.permissions.roles.departmentHead.departments.none"/>
+                            </c:when>
+                            <c:otherwise>
+                                <spring:message code="person.form.permissions.roles.departmentHead.departments"/>
+                                <c:forEach items="${departments}" var="department">
+                                    <c:out value="${department.name}"/>
+                                </c:forEach>
+                            </c:otherwise>
+                        </c:choose>
+                    </label>
                 </div>
 
                 <div class="person--role checkbox">
