@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.sicknote;
+package org.synyx.urlaubsverwaltung.web.statistics;
 
 import org.joda.time.DateMidnight;
 
