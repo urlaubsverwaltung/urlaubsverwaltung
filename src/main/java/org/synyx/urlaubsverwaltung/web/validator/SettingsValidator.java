@@ -99,7 +99,7 @@ public class SettingsValidator implements Validator {
         if (maximumSickPayDays != null && daysBeforeEndOfSickPayNotification != null
                 && daysBeforeEndOfSickPayNotification > maximumSickPayDays) {
             errors.rejectValue("daysBeforeEndOfSickPayNotification",
-                "settings.daysBeforeEndOfSickPayNotification.error");
+                "settings.sickDays.daysBeforeEndOfSickPayNotification.error");
         }
     }
 }

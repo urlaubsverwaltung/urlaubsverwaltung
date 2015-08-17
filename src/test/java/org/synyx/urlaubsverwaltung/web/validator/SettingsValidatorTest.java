@@ -145,6 +145,7 @@ public class SettingsValidatorTest {
         Errors mockError = Mockito.mock(Errors.class);
         settingsValidator.validate(settings, mockError);
         Mockito.verify(mockError)
-            .rejectValue("daysBeforeEndOfSickPayNotification", "settings.daysBeforeEndOfSickPayNotification.error");
+            .rejectValue("daysBeforeEndOfSickPayNotification",
+                "settings.sickDays.daysBeforeEndOfSickPayNotification.error");
     }
 }
