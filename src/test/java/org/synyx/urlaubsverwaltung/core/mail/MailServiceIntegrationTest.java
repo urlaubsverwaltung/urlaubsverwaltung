@@ -78,13 +78,18 @@ public class MailServiceIntegrationTest {
         personService = Mockito.mock(PersonService.class);
         departmentService = Mockito.mock(DepartmentService.class);
         mailService = new MailServiceImpl(mailSender, velocityEngine, personService, departmentService, emailFrom,
-                emailManager, "LinkToApplication");
+                emailManager, "localhorscht/");
+
+        DateMidnight now = DateMidnight.now();
 
         person = new Person();
         application = new Application();
         application.setPerson(person);
         application.setVacationType(VacationType.HOLIDAY);
         application.setHowLong(DayLength.FULL);
+        application.setApplicationDate(now);
+        application.setStartDate(now);
+        application.setEndDate(now);
     }
 
 
@@ -148,6 +153,51 @@ public class MailServiceIntegrationTest {
         assertTrue(content.contains("Antragsstellung"));
         assertTrue("No comment in mail content", content.contains(commentMessage));
         assertTrue("Wrong comment author", content.contains(comment.getPerson().getNiceName()));
+    }
+
+
+    @Test
+    public void ensureNotificationAboutNewApplicationContainsInformationAboutDepartmentVacations()
+        throws MessagingException, IOException {
+
+        person.setLastName("Antragsteller");
+        person.setFirstName("Horst");
+        person.setEmail("misterhorst@test.com");
+
+        String bossEmailAddress = "boss@boss.de";
+        Person boss = new Person("boss", "Muster", "Max", bossEmailAddress);
+
+        Person departmentMember = new Person("muster", "Muster", "Marlene", "");
+        Application departmentApplication = new Application();
+        departmentApplication.setStartDate(new DateMidnight(2015, 11, 5));
+        departmentApplication.setEndDate(new DateMidnight(2015, 11, 6));
+        departmentApplication.setHowLong(DayLength.FULL);
+        departmentApplication.setPerson(departmentMember);
+
+        Person otherDepartmentMember = new Person("schmidt", "Schmidt", "Niko", "");
+        Application otherDepartmentApplication = new Application();
+        otherDepartmentApplication.setStartDate(new DateMidnight(2015, 11, 4));
+        otherDepartmentApplication.setEndDate(new DateMidnight(2015, 11, 4));
+        otherDepartmentApplication.setHowLong(DayLength.MORNING);
+        otherDepartmentApplication.setPerson(otherDepartmentMember);
+
+        Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS))
+            .thenReturn(Collections.singletonList(boss));
+
+        Mockito.when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(Mockito.eq(person),
+                    Mockito.any(DateMidnight.class), Mockito.any(DateMidnight.class)))
+            .thenReturn(Arrays.asList(departmentApplication, otherDepartmentApplication));
+
+        mailService.sendNewApplicationNotification(application, null);
+
+        List<Message> inboxOfBoss = Mailbox.get(bossEmailAddress);
+        Message message = inboxOfBoss.get(0);
+
+        String content = (String) message.getContent();
+
+        System.out.println(content);
+        assertTrue(content.contains("Marlene Muster: 05.11.2015 bis 06.11.2015"));
+        assertTrue(content.contains("Niko Schmidt: 04.11.2015 bis 04.11.2015"));
     }
 
 

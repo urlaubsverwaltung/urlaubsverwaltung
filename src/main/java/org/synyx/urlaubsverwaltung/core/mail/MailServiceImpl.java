@@ -99,6 +99,10 @@ class MailServiceImpl implements MailService {
 
         Map<String, Object> model = createModelForApplicationStatusChangeMail(application,
                 Optional.ofNullable(comment));
+        model.put("departmentVacations",
+            departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(application.getPerson(),
+                application.getStartDate(), application.getEndDate()));
+
         String text = buildMailBody("new_applications", model);
         sendEmail(getBossesAndDepartmentHeads(application), "subject.application.applied.boss", text);
     }

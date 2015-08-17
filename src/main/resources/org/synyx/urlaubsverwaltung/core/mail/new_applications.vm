@@ -18,3 +18,12 @@ Anschrift/Telefon während des Urlaubs: ${application.address}
 #if($comment.text && $comment.text != "")
 Kommentar: ${comment.text}
 #end
+
+Überschneidende Anträge in der Abteilung des Antragsstellers:
+#if($departmentVacations.isEmpty())
+Keine
+#else
+#foreach( $vacation in $departmentVacations )
+${vacation.person.niceName}: ${vacation.startDate.toString("dd.MM.yyyy")} bis ${vacation.endDate.toString("dd.MM.yyyy")}
+#end
+#end
