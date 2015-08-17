@@ -33,6 +33,7 @@ import java.security.NoSuchAlgorithmException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -104,26 +105,31 @@ public class TestDataCreationService {
 
             // Departments
             createTestDepartment("Admins", "Das sind die, die so Admin Sachen machen",
-                Arrays.asList(hans, brigitte, departmentHead));
+                Arrays.asList(hans, brigitte, departmentHead), Arrays.asList(departmentHead));
             createTestDepartment("Entwicklung", "Das sind die, die so entwickeln",
-                Arrays.asList(user, niko, departmentHead));
+                Arrays.asList(user, niko, departmentHead), Collections.emptyList());
             createTestDepartment("Marketing", "Das sind die, die so Marketing Sachen machen",
-                Arrays.asList(guenther, elena));
+                Arrays.asList(guenther, elena), Collections.emptyList());
             createTestDepartment("Geschäftsführung", "Das sind die, die so Geschäftsführung Sachen machen",
-                Arrays.asList(boss, office));
+                Arrays.asList(boss, office), Collections.emptyList());
         } else {
             LOG.info("No test data will be created.");
         }
     }
 
 
-    private void createTestDepartment(String name, String description, List<Person> members) {
+    private void createTestDepartment(String name, String description, List<Person> members,
+        List<Person> departmentHeads) {
 
         Department department = new Department();
         department.setName(name);
         department.setDescription(description);
         department.setLastModification(DateTime.now());
         department.getMembers().addAll(members);
+
+        if (!departmentHeads.isEmpty()) {
+            department.getDepartmentHeads().addAll(departmentHeads);
+        }
 
         departmentService.create(department);
     }
