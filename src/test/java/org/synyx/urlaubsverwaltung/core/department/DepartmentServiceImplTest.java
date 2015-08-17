@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.core.department;
 
+import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 
 import org.junit.Assert;
@@ -8,6 +9,9 @@ import org.junit.Test;
 
 import org.mockito.Mockito;
 
+import org.synyx.urlaubsverwaltung.core.application.domain.Application;
+import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.security.Role;
 
@@ -28,13 +32,17 @@ import static org.mockito.Matchers.eq;
 public class DepartmentServiceImplTest {
 
     private DepartmentServiceImpl sut;
+
     private DepartmentDAO departmentDAO;
+    private ApplicationService applicationService;
 
     @Before
     public void setUp() throws Exception {
 
         departmentDAO = Mockito.mock(DepartmentDAO.class);
-        sut = new DepartmentServiceImpl(departmentDAO);
+        applicationService = Mockito.mock(ApplicationService.class);
+
+        sut = new DepartmentServiceImpl(departmentDAO, applicationService);
     }
 
 
@@ -96,17 +104,6 @@ public class DepartmentServiceImplTest {
         sut.getManagedDepartmentsOfDepartmentHead(person);
 
         Mockito.verify(departmentDAO).getManagedDepartments(person);
-    }
-
-
-    @Test
-    public void ensureGetAssignedDepartmentsOfMemberCallCorrectDAOMethod() throws Exception {
-
-        Person person = Mockito.mock(Person.class);
-
-        sut.getAssignedDepartmentsOfMember(person);
-
-        Mockito.verify(departmentDAO).getAssignedDepartments(person);
     }
 
 
@@ -268,9 +265,28 @@ public class DepartmentServiceImplTest {
 
 
     @Test
-    public void ensureReturnsAllMembersOfTheAssignedDepartmentsOfThePerson() {
+    public void ensureReturnsEmptyListOfDepartmentApplicationsIfPersonIsNotAssignedToAnyDepartment() {
 
         Person person = Mockito.mock(Person.class);
+        DateMidnight date = DateMidnight.now();
+
+        Mockito.when(departmentDAO.getAssignedDepartments(person)).thenReturn(Collections.emptyList());
+
+        List<Application> applications = sut.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, date, date);
+
+        Assert.assertNotNull("Should not be null", applications);
+        Assert.assertTrue("Should be empty", applications.isEmpty());
+
+        Mockito.verify(departmentDAO).getAssignedDepartments(person);
+        Mockito.verifyZeroInteractions(applicationService);
+    }
+
+
+    @Test
+    public void ensureReturnsEmptyListOfDepartmentApplicationsIfNoMatchingApplicationsForLeave() {
+
+        Person person = Mockito.mock(Person.class);
+        DateMidnight date = DateMidnight.now();
 
         Person admin1 = new Person();
         Person admin2 = new Person();
@@ -286,24 +302,80 @@ public class DepartmentServiceImplTest {
         marketing.setMembers(Arrays.asList(marketing1, marketing2, marketing3, person));
 
         Mockito.when(departmentDAO.getAssignedDepartments(person)).thenReturn(Arrays.asList(admins, marketing));
+        Mockito.when(applicationService.getApplicationsForACertainPeriodAndPerson(Mockito.any(DateMidnight.class),
+                    Mockito.any(DateMidnight.class), Mockito.any(Person.class)))
+            .thenReturn(Collections.emptyList());
 
-        List<Person> members = sut.getMembersOfAssignedDepartments(person);
+        List<Application> applications = sut.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, date, date);
 
-        Assert.assertNotNull("Should not be null", members);
-        Assert.assertEquals("Wrong number of members", 6, members.size());
+        // Ensure empty list
+        Assert.assertNotNull("Should not be null", applications);
+        Assert.assertTrue("Should be empty", applications.isEmpty());
+
+        // Ensure fetches departments of person
+        Mockito.verify(departmentDAO).getAssignedDepartments(person);
+
+        // Ensure fetches applications for leave for every department member
+        Mockito.verify(applicationService)
+            .getApplicationsForACertainPeriodAndPerson(Mockito.eq(date), Mockito.eq(date), Mockito.eq(admin1));
+        Mockito.verify(applicationService)
+            .getApplicationsForACertainPeriodAndPerson(Mockito.eq(date), Mockito.eq(date), Mockito.eq(admin2));
+        Mockito.verify(applicationService)
+            .getApplicationsForACertainPeriodAndPerson(Mockito.eq(date), Mockito.eq(date), Mockito.eq(marketing1));
+        Mockito.verify(applicationService)
+            .getApplicationsForACertainPeriodAndPerson(Mockito.eq(date), Mockito.eq(date), Mockito.eq(marketing2));
+        Mockito.verify(applicationService)
+            .getApplicationsForACertainPeriodAndPerson(Mockito.eq(date), Mockito.eq(date), Mockito.eq(marketing3));
+
+        // Ensure does not fetch applications for leave for the given person
+        Mockito.verify(applicationService, Mockito.never())
+            .getApplicationsForACertainPeriodAndPerson(Mockito.eq(date), Mockito.eq(date), Mockito.eq(person));
     }
 
 
     @Test
-    public void ensureReturnsEmptyListIfPersonHasNoDepartmentAssigned() {
+    public void ensureReturnsOnlyWaitingAndAllowedDepartmentApplicationsForLeave() {
 
         Person person = Mockito.mock(Person.class);
+        DateMidnight date = DateMidnight.now();
 
-        Mockito.when(departmentDAO.getAssignedDepartments(person)).thenReturn(Collections.emptyList());
+        Person admin1 = new Person();
+        Person marketing1 = new Person();
 
-        List<Person> members = sut.getMembersOfAssignedDepartments(person);
+        Department admins = new Department();
+        admins.setMembers(Arrays.asList(admin1, person));
 
-        Assert.assertNotNull("Should not be null", members);
-        Assert.assertTrue("Should be empty", members.isEmpty());
+        Department marketing = new Department();
+        marketing.setMembers(Arrays.asList(marketing1, person));
+
+        Application waitingApplication = Mockito.mock(Application.class);
+        Mockito.when(waitingApplication.hasStatus(ApplicationStatus.WAITING)).thenReturn(true);
+        Mockito.when(waitingApplication.hasStatus(ApplicationStatus.ALLOWED)).thenReturn(false);
+
+        Application allowedApplication = Mockito.mock(Application.class);
+        Mockito.when(allowedApplication.hasStatus(ApplicationStatus.WAITING)).thenReturn(false);
+        Mockito.when(allowedApplication.hasStatus(ApplicationStatus.ALLOWED)).thenReturn(true);
+
+        Application otherApplication = Mockito.mock(Application.class);
+        Mockito.when(otherApplication.hasStatus(ApplicationStatus.WAITING)).thenReturn(false);
+        Mockito.when(otherApplication.hasStatus(ApplicationStatus.ALLOWED)).thenReturn(false);
+
+        Mockito.when(departmentDAO.getAssignedDepartments(person)).thenReturn(Arrays.asList(admins, marketing));
+
+        Mockito.when(applicationService.getApplicationsForACertainPeriodAndPerson(Mockito.any(DateMidnight.class),
+                    Mockito.any(DateMidnight.class), Mockito.eq(admin1)))
+            .thenReturn(Arrays.asList(waitingApplication, otherApplication));
+
+        Mockito.when(applicationService.getApplicationsForACertainPeriodAndPerson(Mockito.any(DateMidnight.class),
+                    Mockito.any(DateMidnight.class), Mockito.eq(marketing1)))
+            .thenReturn(Collections.singletonList(allowedApplication));
+
+        List<Application> applications = sut.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, date, date);
+
+        Assert.assertEquals("Wrong number of applications", 2, applications.size());
+        Assert.assertTrue("Should contain the waiting application", applications.contains(waitingApplication));
+        Assert.assertTrue("Should contain the allowed application", applications.contains(allowedApplication));
+        Assert.assertFalse("Should not contain an application with other status",
+            applications.contains(otherApplication));
     }
 }

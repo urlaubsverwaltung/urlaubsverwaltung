@@ -1,11 +1,15 @@
 package org.synyx.urlaubsverwaltung.core.department;
 
+import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
+import org.synyx.urlaubsverwaltung.core.application.domain.Application;
+import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.security.Role;
 
@@ -14,6 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 /**
@@ -26,11 +31,13 @@ import java.util.Set;
 public class DepartmentServiceImpl implements DepartmentService {
 
     private final DepartmentDAO departmentDAO;
+    private final ApplicationService applicationService;
 
     @Autowired
-    public DepartmentServiceImpl(DepartmentDAO departmentDAO) {
+    public DepartmentServiceImpl(DepartmentDAO departmentDAO, ApplicationService applicationService) {
 
         this.departmentDAO = departmentDAO;
+        this.applicationService = applicationService;
     }
 
     @Override
@@ -84,53 +91,68 @@ public class DepartmentServiceImpl implements DepartmentService {
 
 
     @Override
-    public List<Department> getAssignedDepartmentsOfMember(Person member) {
+    public List<Application> getApplicationsForLeaveOfMembersInDepartmentsOfPerson(Person member,
+        DateMidnight startDate, DateMidnight endDate) {
 
-        return departmentDAO.getAssignedDepartments(member);
-    }
+        List<Person> departmentMembers = getMembersOfAssignedDepartments(member);
+        List<Application> departmentApplications = new ArrayList<>();
 
+        departmentMembers.stream()
+            .filter(departmentMember -> !departmentMember.equals(member))
+            .forEach(departmentMember ->
+                    departmentApplications.addAll(
+                        applicationService.getApplicationsForACertainPeriodAndPerson(startDate, endDate,
+                                departmentMember)
+                            .stream()
+                            .filter(application ->
+                                        application.hasStatus(ApplicationStatus.ALLOWED)
+                                        || application.hasStatus(ApplicationStatus.WAITING))
+                                .collect(Collectors.toList())));
 
-    @Override
-    public List<Person> getMembersOfAssignedDepartments(Person member) {
-
-        Set<Person> relevantPersons = new HashSet<>();
-        List<Department> departments = getAssignedDepartmentsOfMember(member);
-
-        for (Department department : departments) {
-            List<Person> members = department.getMembers();
-            relevantPersons.addAll(members);
+            return departmentApplications;
         }
 
-        return new ArrayList<>(relevantPersons);
-    }
 
+        private List<Person> getMembersOfAssignedDepartments(Person member) {
 
-    @Override
-    public List<Person> getManagedMembersOfDepartmentHead(Person departmentHead) {
+            Set<Person> relevantPersons = new HashSet<>();
+            List<Department> departments = departmentDAO.getAssignedDepartments(member);
 
-        Set<Person> relevantPersons = new HashSet<>();
-        List<Department> departments = getManagedDepartmentsOfDepartmentHead(departmentHead);
-
-        for (Department department : departments) {
-            List<Person> members = department.getMembers();
-            relevantPersons.addAll(members);
-        }
-
-        return new ArrayList<>(relevantPersons);
-    }
-
-
-    @Override
-    public boolean isDepartmentHeadOfPerson(Person departmentHead, Person person) {
-
-        if (departmentHead.hasRole(Role.DEPARTMENT_HEAD)) {
-            List<Person> members = getManagedMembersOfDepartmentHead(departmentHead);
-
-            if (members.contains(person)) {
-                return true;
+            for (Department department : departments) {
+                List<Person> members = department.getMembers();
+                relevantPersons.addAll(members);
             }
+
+            return new ArrayList<>(relevantPersons);
         }
 
-        return false;
+
+        @Override
+        public List<Person> getManagedMembersOfDepartmentHead(Person departmentHead) {
+
+            Set<Person> relevantPersons = new HashSet<>();
+            List<Department> departments = getManagedDepartmentsOfDepartmentHead(departmentHead);
+
+            for (Department department : departments) {
+                List<Person> members = department.getMembers();
+                relevantPersons.addAll(members);
+            }
+
+            return new ArrayList<>(relevantPersons);
+        }
+
+
+        @Override
+        public boolean isDepartmentHeadOfPerson(Person departmentHead, Person person) {
+
+            if (departmentHead.hasRole(Role.DEPARTMENT_HEAD)) {
+                List<Person> members = getManagedMembersOfDepartmentHead(departmentHead);
+
+                if (members.contains(person)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
-}

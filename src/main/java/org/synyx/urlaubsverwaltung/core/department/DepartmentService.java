@@ -1,5 +1,8 @@
 package org.synyx.urlaubsverwaltung.core.department;
 
+import org.joda.time.DateMidnight;
+
+import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.util.List;
@@ -63,23 +66,17 @@ public interface DepartmentService {
 
 
     /**
-     * Get all departments the given person is a member of.
+     * Get all active (waiting or allowed) applications for leave of the members of the departments of the given person
+     * for the provided period.
      *
-     * @param  member  to find the assigned departments for
+     * @param  member  to get the departments of
+     * @param  startDate  of the period
+     * @param  endDate  of the period
      *
-     * @return  list of departments the given person is a member of
+     * @return  list of waiting or allowed applications for leave of departments members
      */
-    List<Department> getAssignedDepartmentsOfMember(Person member);
-
-
-    /**
-     * Get all members (including the given person) of the departments where the given person is assigned to.
-     *
-     * @param  member  of the departments to get the persons for
-     *
-     * @return  list of persons that are in the departments where the given person is assigned to
-     */
-    List<Person> getMembersOfAssignedDepartments(Person member);
+    List<Application> getApplicationsForLeaveOfMembersInDepartmentsOfPerson(Person member, DateMidnight startDate,
+        DateMidnight endDate);
 
 
     /**
