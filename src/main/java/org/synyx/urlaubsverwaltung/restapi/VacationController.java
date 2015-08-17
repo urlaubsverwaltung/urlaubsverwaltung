@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.restapi;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 import com.google.gson.Gson;
@@ -55,8 +54,8 @@ public class VacationController {
     private ApplicationService applicationService;
 
     @ApiOperation(
-        value = "Get all vacations for a certain period",
-        notes = "Get all vacations for a certain period. Information only reachable for users with role boss or office."
+        value = "Get all allowed vacations for a certain period",
+        notes = "Get all allowed vacations for a certain period."
     )
     @RequestMapping(value = ROOT_URL, method = RequestMethod.GET)
     @ModelAttribute("response")
@@ -76,22 +75,15 @@ public class VacationController {
                 ApplicationStatus.ALLOWED);
 
         List<AbsenceResponse> vacationResponses = Lists.transform(applications,
-                new Function<Application, AbsenceResponse>() {
-
-                    @Override
-                    public AbsenceResponse apply(Application application) {
-
-                        return new AbsenceResponse(application);
-                    }
-                });
+                application -> new AbsenceResponse(application));
 
         return new VacationListResponse(vacationResponses);
     }
 
 
     @ApiOperation(
-        value = "Get all vacation days for a certain period and person",
-        notes = "Get all vacation days for a certain period and person"
+        value = "Get all allowed vacation days for a certain period and person",
+        notes = "Get all allowed vacation days for a certain period and person"
     )
     @RequestMapping(value = ROOT_URL + "/days", method = RequestMethod.GET)
     @ResponseBody

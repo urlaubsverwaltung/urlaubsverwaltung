@@ -16,6 +16,8 @@ class AbsenceResponse {
     private String to;
     private BigDecimal dayLength;
     private PersonResponse person;
+    private String type;
+    private String status;
 
     AbsenceResponse(Application application) {
 
@@ -23,6 +25,8 @@ class AbsenceResponse {
         this.to = application.getEndDate().toString(RestApiDateFormat.PATTERN);
         this.dayLength = application.getHowLong().getDuration();
         this.person = new PersonResponse(application.getPerson());
+        this.type = application.getVacationType().name();
+        this.status = application.getStatus().name();
     }
 
 
@@ -32,6 +36,8 @@ class AbsenceResponse {
         this.to = sickNote.getEndDate().toString(RestApiDateFormat.PATTERN);
         this.dayLength = DayLength.FULL.getDuration();
         this.person = new PersonResponse(sickNote.getPerson());
+        this.type = sickNote.getType().name();
+        this.status = sickNote.isActive() ? "ACTIVE" : "INACTIVE";
     }
 
     public String getFrom() {
@@ -79,5 +85,29 @@ class AbsenceResponse {
     public void setPerson(PersonResponse person) {
 
         this.person = person;
+    }
+
+
+    public String getType() {
+
+        return type;
+    }
+
+
+    public void setType(String type) {
+
+        this.type = type;
+    }
+
+
+    public String getStatus() {
+
+        return status;
+    }
+
+
+    public void setStatus(String status) {
+
+        this.status = status;
     }
 }
