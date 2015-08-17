@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
+import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
@@ -53,26 +54,56 @@ public class VacationController {
     @Autowired
     private ApplicationService applicationService;
 
+    @Autowired
+    private DepartmentService departmentService;
+
     @ApiOperation(
         value = "Get all allowed vacations for a certain period",
-        notes = "Get all allowed vacations for a certain period."
+        notes = "Get all allowed vacations for a certain period. "
+            + "If a person is specified, only the allowed vacations of the person are fetched. "
+            + "If a person and the department members flag is specified, "
+            + "then all the waiting and allowed vacations of the departments the person is assigned to, are fetched."
     )
     @RequestMapping(value = ROOT_URL, method = RequestMethod.GET)
     @ModelAttribute("response")
     public VacationListResponse vacations(
+        @ApiParam(value = "Get vacations for department members of person")
+        @RequestParam(value = "departmentMembers", required = false)
+        Boolean departmentMembers,
         @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = "2015-01-01")
         @RequestParam(value = "from", required = true)
         String from,
         @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = "2015-12-31")
         @RequestParam(value = "to", required = true)
-        String to) {
+        String to,
+        @ApiParam(value = "ID of the person")
+        @RequestParam(value = "person", required = false)
+        Integer personId) {
 
         DateTimeFormatter formatter = DateTimeFormat.forPattern(RestApiDateFormat.PATTERN);
         DateMidnight startDate = formatter.parseDateTime(from).toDateMidnight();
         DateMidnight endDate = formatter.parseDateTime(to).toDateMidnight();
 
-        List<Application> applications = applicationService.getApplicationsForACertainPeriodAndState(startDate, endDate,
-                ApplicationStatus.ALLOWED);
+        List<Application> applications = new ArrayList<>();
+
+        if (personId == null && departmentMembers == null) {
+            applications = applicationService.getApplicationsForACertainPeriodAndState(startDate, endDate,
+                    ApplicationStatus.ALLOWED);
+        }
+
+        if (personId != null) {
+            Optional<Person> person = personService.getPersonByID(personId);
+
+            if (person.isPresent()) {
+                if (departmentMembers == null || !departmentMembers) {
+                    applications = applicationService.getApplicationsForACertainPeriodAndPersonAndState(startDate,
+                            endDate, person.get(), ApplicationStatus.ALLOWED);
+                } else {
+                    applications = departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person.get(),
+                            startDate, endDate);
+                }
+            }
+        }
 
         List<AbsenceResponse> vacationResponses = Lists.transform(applications,
                 application -> new AbsenceResponse(application));
