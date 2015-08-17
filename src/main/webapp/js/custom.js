@@ -154,6 +154,11 @@ function sendGetDepartmentVacationsRequest(urlPrefix, startDate, endDate, person
         var person = vacation.person.niceName;
 
         $vacations.append("<br/>" + person + ": " + startDate + " - " + endDate);
+
+        if(vacation.status === "ALLOWED") {
+          $vacations.append(" <i class='fa fa-check positive'></i>");
+        }
+
       });
     } else {
       $vacations.append(" Keine");
