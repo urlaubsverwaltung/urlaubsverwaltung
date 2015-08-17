@@ -40,11 +40,18 @@
                 preset('#to'  , to || from);
                 preset('#at', from);
 
-                sendGetDaysRequest("<spring:url value='/api' />",
-                        $("#from").datepicker("getDate"),
-                        $("#to").datepicker("getDate"),
+                var urlPrefix = "<spring:url value='/api' />";
+                var personId = "<c:out value='${person.id}' />";
+                var startDate = $("#from").datepicker("getDate");
+                var endDate = $("#to").datepicker("getDate");
+
+                sendGetDaysRequest(urlPrefix,
+                        startDate,
+                        endDate,
                         $('input:radio[name=howLong]:checked').val(),
-                        '<c:out value="${person.id}" />', ".days");
+                        personId, ".days");
+
+                sendGetDepartmentVacationsRequest(urlPrefix, startDate, endDate, personId, "#departmentVacations");
             }
         });
     </script>
@@ -105,6 +112,7 @@
                 <i class="fa fa-fw fa-info-circle"></i>
                 <spring:message code="application.data.description"/>
             </span>
+            <span id="departmentVacations" class="help-block info"></span>
         </div>
 
         <div class="col-md-8 col-md-pull-4">

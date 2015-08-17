@@ -49,6 +49,7 @@
             }
 
             sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, ".days");
+            sendGetDepartmentVacationsRequest(urlPrefix, startDate, toDate, personId, "#departmentVacations");
 
         });
 

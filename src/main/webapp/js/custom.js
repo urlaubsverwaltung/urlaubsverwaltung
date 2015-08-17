@@ -131,6 +131,38 @@ function getUrlParam(name)
         return results[1];
 }
 
+function sendGetDepartmentVacationsRequest(urlPrefix, startDate, endDate, personId, el) {
+
+  var startDateString = startDate.getFullYear() + '-' + (startDate.getMonth() + 1) + '-' + startDate.getDate();
+  var toDateString = endDate.getFullYear() + '-' + (endDate.getMonth() + 1) + '-' + endDate.getDate();
+
+  var requestUrl = urlPrefix + "/vacations?departmentMembers=true&from=" + startDateString + "&to=" + toDateString
+    + "&person=" + personId;
+
+  $.get(requestUrl, function (data) {
+
+    var vacations = data.response.vacations;
+
+    var $vacations = $(el);
+
+    $vacations.html("&Uuml;berschneidende Antr&auml;ge:");
+
+    if(vacations.length > 0) {
+      $.each(vacations, function (idx, vacation) {
+        var startDate = moment(vacation.from).format("DD.MM.YYYY");
+        var endDate = moment(vacation.to).format("DD.MM.YYYY");
+        var person = vacation.person.niceName;
+
+        $vacations.append("<br/>" + person + ": " + startDate + " - " + endDate);
+      });
+    } else {
+      $vacations.append(" Keine");
+    }
+
+  });
+
+}
+
 // toggling of full/half day in app form
 $(document).ready(function()
     {
