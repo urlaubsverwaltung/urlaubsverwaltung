@@ -3,6 +3,8 @@ package org.synyx.urlaubsverwaltung.core.department;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import org.synyx.urlaubsverwaltung.core.person.Person;
+
 import java.util.List;
 
 
@@ -13,6 +15,6 @@ import java.util.List;
  */
 public interface DepartmentDAO extends JpaRepository<Department, Integer> {
 
-    @Query("SELECT d FROM Department d, in (d.departmentHeads) person WHERE person.id = ?1")
-    List<Department> getManagedDepartments(Integer personId);
+    @Query("SELECT d FROM Department d, in (d.departmentHeads) person WHERE person = ?1")
+    List<Department> getManagedDepartments(Person person);
 }
