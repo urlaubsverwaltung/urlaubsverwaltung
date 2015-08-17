@@ -175,41 +175,48 @@
                     </div>
                     <table class="list-table striped-table bordered-table">
                         <tbody>
-                        <c:forEach items="${departmentApplications}" var="application">
-                            <tr>
-                                <td>
-                                    <img class="img-circle hidden-print center-block" src="<c:out value='${applicationGravatarURLs[application]}?d=mm&s=40'/>"/>
-                                </td>
-                                <td>
-                                    <c:out value="${application.person.niceName}"/>
-                                </td>
-                                <td>
-                                    <c:choose>
-                                        <c:when test="${application.startDate == application.endDate}">
-                                            <c:set var="APPLICATION_DATE">
-                                                <uv:date date="${application.startDate}"/>
-                                            </c:set>
-                                            <c:set var="APPLICATION_DAY_LENGTH">
-                                                <spring:message code="${application.howLong}"/>
-                                            </c:set>
-                                            <spring:message code="absence.period.singleDay" arguments="${APPLICATION_DATE};${APPLICATION_DAY_LENGTH}" argumentSeparator=";"/>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <c:set var="APPLICATION_START_DATE">
-                                                <uv:date date="${application.startDate}"/>
-                                            </c:set>
-                                            <c:set var="APPLICATION_END_DATE">
-                                                <uv:date date="${application.endDate}"/>
-                                            </c:set>
-                                            <spring:message code="absence.period.multipleDays" arguments="${APPLICATION_START_DATE};${APPLICATION_END_DATE}" argumentSeparator=";"/>
-                                        </c:otherwise>
-                                    </c:choose>
-                                    <c:if test="${application.status == 'ALLOWED'}">
-                                        <i class="fa fa-check positive"></i>
-                                    </c:if>
-                                </td>
-                            </tr>
-                        </c:forEach>
+                        <c:choose>
+                            <c:when test="${empty departmentApplications}">
+                                <spring:message code="application.department.none"/>
+                            </c:when>
+                            <c:otherwise>
+                                <c:forEach items="${departmentApplications}" var="application">
+                                    <tr>
+                                        <td>
+                                            <img class="img-circle hidden-print center-block" src="<c:out value='${applicationGravatarURLs[application]}?d=mm&s=40'/>"/>
+                                        </td>
+                                        <td>
+                                            <c:out value="${application.person.niceName}"/>
+                                        </td>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="${application.startDate == application.endDate}">
+                                                    <c:set var="APPLICATION_DATE">
+                                                        <uv:date date="${application.startDate}"/>
+                                                    </c:set>
+                                                    <c:set var="APPLICATION_DAY_LENGTH">
+                                                        <spring:message code="${application.howLong}"/>
+                                                    </c:set>
+                                                    <spring:message code="absence.period.singleDay" arguments="${APPLICATION_DATE};${APPLICATION_DAY_LENGTH}" argumentSeparator=";"/>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <c:set var="APPLICATION_START_DATE">
+                                                        <uv:date date="${application.startDate}"/>
+                                                    </c:set>
+                                                    <c:set var="APPLICATION_END_DATE">
+                                                        <uv:date date="${application.endDate}"/>
+                                                    </c:set>
+                                                    <spring:message code="absence.period.multipleDays" arguments="${APPLICATION_START_DATE};${APPLICATION_END_DATE}" argumentSeparator=";"/>
+                                                </c:otherwise>
+                                            </c:choose>
+                                            <c:if test="${application.status == 'ALLOWED'}">
+                                                <i class="fa fa-check positive"></i>
+                                            </c:if>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                            </c:otherwise>
+                        </c:choose>
                         </tbody>
                     </table>
                 </div>
