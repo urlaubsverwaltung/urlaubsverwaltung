@@ -99,6 +99,17 @@ public class DepartmentServiceImplTest {
     }
 
 
+    @Test
+    public void ensureGetAssignedDepartmentsOfMemberCallCorrectDAOMethod() throws Exception {
+
+        Person person = Mockito.mock(Person.class);
+
+        sut.getAssignedDepartmentsOfMember(person);
+
+        Mockito.verify(departmentDAO).getAssignedDepartments(person);
+    }
+
+
     @Test(expected = IllegalStateException.class)
     public void ensureExceptionOnDeletionOfNonPersistedId() throws Exception {
 
@@ -153,7 +164,7 @@ public class DepartmentServiceImplTest {
 
 
     @Test
-    public void ensureReturnsAllMembersOfTheDepartmentsOfThePerson() {
+    public void ensureReturnsAllMembersOfTheManagedDepartmentsOfTheDepartmentHead() {
 
         Person departmentHead = Mockito.mock(Person.class);
 
@@ -180,7 +191,7 @@ public class DepartmentServiceImplTest {
 
 
     @Test
-    public void ensureReturnsEmptyListIfPersonHasNoDepartmentAssigned() {
+    public void ensureReturnsEmptyListIfPersonHasNoManagedDepartment() {
 
         Person departmentHead = Mockito.mock(Person.class);
 
@@ -253,5 +264,46 @@ public class DepartmentServiceImplTest {
         boolean isDepartmentHead = sut.isDepartmentHeadOfPerson(noDepartmentHead, admin1);
 
         Assert.assertFalse("Should not be the department head of the given person", isDepartmentHead);
+    }
+
+
+    @Test
+    public void ensureReturnsAllMembersOfTheAssignedDepartmentsOfThePerson() {
+
+        Person person = Mockito.mock(Person.class);
+
+        Person admin1 = new Person();
+        Person admin2 = new Person();
+
+        Person marketing1 = new Person();
+        Person marketing2 = new Person();
+        Person marketing3 = new Person();
+
+        Department admins = new Department();
+        admins.setMembers(Arrays.asList(admin1, admin2, person));
+
+        Department marketing = new Department();
+        marketing.setMembers(Arrays.asList(marketing1, marketing2, marketing3, person));
+
+        Mockito.when(departmentDAO.getAssignedDepartments(person)).thenReturn(Arrays.asList(admins, marketing));
+
+        List<Person> members = sut.getMembersOfAssignedDepartments(person);
+
+        Assert.assertNotNull("Should not be null", members);
+        Assert.assertEquals("Wrong number of members", 6, members.size());
+    }
+
+
+    @Test
+    public void ensureReturnsEmptyListIfPersonHasNoDepartmentAssigned() {
+
+        Person person = Mockito.mock(Person.class);
+
+        Mockito.when(departmentDAO.getAssignedDepartments(person)).thenReturn(Collections.emptyList());
+
+        List<Person> members = sut.getMembersOfAssignedDepartments(person);
+
+        Assert.assertNotNull("Should not be null", members);
+        Assert.assertTrue("Should be empty", members.isEmpty());
     }
 }

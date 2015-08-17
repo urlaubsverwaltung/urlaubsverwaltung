@@ -63,7 +63,27 @@ public interface DepartmentService {
 
 
     /**
-     * Get all members of the departments where the given person is the department head.
+     * Get all departments the given person is a member of.
+     *
+     * @param  member  to find the assigned departments for
+     *
+     * @return  list of departments the given person is a member of
+     */
+    List<Department> getAssignedDepartmentsOfMember(Person member);
+
+
+    /**
+     * Get all members (including the given person) of the departments where the given person is assigned to.
+     *
+     * @param  member  of the departments to get the persons for
+     *
+     * @return  list of persons that are in the departments where the given person is assigned to
+     */
+    List<Person> getMembersOfAssignedDepartments(Person member);
+
+
+    /**
+     * Get all members (including the given person) of the departments where the given person is the department head.
      *
      * @param  departmentHead  manages the members to be fetched
      *

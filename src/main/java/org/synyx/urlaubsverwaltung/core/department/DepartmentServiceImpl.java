@@ -84,6 +84,28 @@ public class DepartmentServiceImpl implements DepartmentService {
 
 
     @Override
+    public List<Department> getAssignedDepartmentsOfMember(Person member) {
+
+        return departmentDAO.getAssignedDepartments(member);
+    }
+
+
+    @Override
+    public List<Person> getMembersOfAssignedDepartments(Person member) {
+
+        Set<Person> relevantPersons = new HashSet<>();
+        List<Department> departments = getAssignedDepartmentsOfMember(member);
+
+        for (Department department : departments) {
+            List<Person> members = department.getMembers();
+            relevantPersons.addAll(members);
+        }
+
+        return new ArrayList<>(relevantPersons);
+    }
+
+
+    @Override
     public List<Person> getManagedMembersOfDepartmentHead(Person departmentHead) {
 
         Set<Person> relevantPersons = new HashSet<>();

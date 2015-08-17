@@ -18,7 +18,7 @@
     <c:forEach items="${comments}" var="comment">
         <tr>
             <td>
-                <img class="img-circle hidden-print center-block" src="<c:out value='${gravatarUrls[comment]}?d=mm&s=40'/>"/>
+                <img class="img-circle hidden-print center-block" src="<c:out value='${commentGravatarURLs[comment]}?d=mm&s=40'/>"/>
             </td>
             <td>
                 <c:out value="${comment.person.niceName}"/>
