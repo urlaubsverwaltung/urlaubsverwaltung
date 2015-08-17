@@ -11,7 +11,7 @@
 
     <div class="form-group">
         <div class="control-label">
-            <b><spring:message code='please.refer'/></b>
+            <b><spring:message code='action.refer.confirm'/></b>
         </div>
     </div>
 

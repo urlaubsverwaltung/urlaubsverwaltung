@@ -16,7 +16,7 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label class="control-label col-sm-4">
-                            <spring:message code="time"/>
+                            <spring:message code="filter.period"/>
                         </label>
                         <div class="col-sm-7 radio">
                             <label class="thirds">

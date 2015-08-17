@@ -58,7 +58,7 @@
                         </c:when>
                         <c:otherwise>
                             <a href="#filterModal" data-toggle="modal">
-                                <spring:message code="time"/>:&nbsp;<uv:date date="${from}"/> - <uv:date date="${to}"/>
+                                <spring:message code="filter.period"/>:&nbsp;<uv:date date="${from}"/> - <uv:date date="${to}"/>
                             </a>
                         </c:otherwise>
                     </c:choose>

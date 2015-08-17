@@ -65,7 +65,7 @@
 
 <c:when test="${noHolidaysAccount}">
 
-    <spring:message code="account.none"/>
+    <spring:message code="application.applier.account.none"/>
 
 </c:when>
 
@@ -97,13 +97,13 @@
 
     <div class="form-section">
         <div class="col-xs-12 header">
-            <legend><spring:message code="app.title" /></legend>
+            <legend><spring:message code="application.data.title" /></legend>
         </div>
 
         <div class="col-md-4 col-md-push-8">
             <span class="help-block">
                 <i class="fa fa-fw fa-info-circle"></i>
-                <spring:message code='special.leave.explanation'/>
+                <spring:message code="application.data.description"/>
             </span>
         </div>
 
@@ -112,7 +112,7 @@
                 <%-- office applies for a user --%>
                 <div class="form-group">
                     <label class="control-label col-md-3">
-                        <spring:message code="staff"/>
+                        <spring:message code="application.data.staff"/>
                     </label>
                     <div class="col-md-9">
                         <select id="person-select" class="form-control" onchange="window.location.href=this.options
@@ -139,7 +139,7 @@
 
             <div class="form-group">
                 <label class="control-label col-md-3" for="vacationType">
-                    <spring:message code='app.type' />
+                    <spring:message code="application.data.vacationType" />
                 </label>
                 <div class="col-md-9">
                     <form:select path="vacationType" size="1" id="vacationType" class="form-control">
@@ -147,12 +147,12 @@
                             <c:choose>
                                 <c:when test="${vacationType == application.vacationType}">
                                     <option value="${vacationType}" selected="selected">
-                                        <spring:message code='${vacationType}'/>
+                                        <spring:message code="${vacationType}"/>
                                     </option>
                                 </c:when>
                                 <c:otherwise>
                                     <option value="${vacationType}">
-                                        <spring:message code='${vacationType}'/>
+                                        <spring:message code="${vacationType}"/>
                                     </option>
                                 </c:otherwise>
                             </c:choose>
@@ -163,27 +163,27 @@
 
             <div class="form-group">
                 <label class="control-label col-md-3">
-                    <spring:message code="time"/>
+                    <spring:message code="absence.period"/>
                 </label>
                 <div class="col-md-9 radio">
                     <label class="thirds">
                         <form:radiobutton id="fullDay" class="dayLength-full" path="howLong" checked="checked" value="FULL" />
-                        <spring:message code='FULL'/>
+                        <spring:message code="FULL"/>
                     </label>
                     <label class="thirds">
                         <form:radiobutton id="morning" class="dayLength-half" path="howLong" value="MORNING" />
-                        <spring:message code='MORNING'/>
+                        <spring:message code="MORNING"/>
                     </label>
                     <label class="thirds">
                         <form:radiobutton id="noon" class="dayLength-half" path="howLong" value="NOON" />
-                        <spring:message code='NOON'/>
+                        <spring:message code="NOON"/>
                     </label>
                 </div>
             </div>
 
             <div class="form-group full-day">
                 <label class="col-md-3 control-label" for="from">
-                    <spring:message code="From" />:
+                    <spring:message code="absence.period.startDate" />:
                 </label>
                 <div class="col-md-9">
                     <form:input id="from" path="startDate" class="form-control" cssErrorClass="form-control error" />
@@ -192,7 +192,7 @@
 
             <div class="form-group full-day">
                 <label class="control-label col-md-3" for="to">
-                    <spring:message code="To" />:
+                    <spring:message code="absence.period.endDate" />:
                 </label>
                 <div class="col-md-9">
                     <form:input id="to" path="endDate" class="form-control" cssErrorClass="form-control error" />
@@ -202,7 +202,7 @@
 
             <div class="form-group half-day">
                 <label class="control-label col-md-3" for="at">
-                    <spring:message code="At" />:
+                    <spring:message code="absence.period.startAndEndDate" />:
                 </label>
                 <div class="col-md-9">
                     <form:input id="at" path="startDateHalf" class="form-control" cssErrorClass="form-control error" />
@@ -212,11 +212,11 @@
 
             <div class="form-group">
                 <label class="control-label col-md-3" for="holidayReplacement">
-                    <spring:message code="app.holidayReplacement"/>
+                    <spring:message code="application.data.holidayReplacement"/>
                 </label>
                 <div class="col-md-9">
                     <form:select path="holidayReplacement" id="holidayReplacement" size="1" class="form-control">
-                        <option value="-1"><spring:message code='app.no.holidayReplacement'/></option>
+                        <option value="-1"><spring:message code="application.data.holidayReplacement.none"/></option>
                         <c:forEach items="${persons}" var="holidayReplacement">
                             <c:choose>
                                 <c:when test="${application.holidayReplacement.id == holidayReplacement.id}">
@@ -240,16 +240,16 @@
 
             <div class="form-group">
                 <label class="control-label col-md-3">
-                    <spring:message code='app.team'/>
+                    <spring:message code="application.data.teamInformed"/>
                 </label>
                 <div class="col-md-9 radio">
                     <label class="halves">
                         <form:radiobutton id="teamInformed" path="teamInformed" value="true"/>
-                        <spring:message code='yes'/>
+                        <spring:message code="application.data.teamInformed.true"/>
                     </label>
                     <label class="halves">
                         <form:radiobutton id="teamNotInformed" path="teamInformed" value="false"/>
-                        <spring:message code='no'/>
+                        <spring:message code="application.data.teamInformed.false"/>
                     </label>
                     <form:errors path="teamInformed" cssClass="error"/>
                 </div>
@@ -259,21 +259,21 @@
 
     <div class="form-section">
         <div class="col-xs-12 header">
-            <legend><spring:message code="app.further.info" /></legend>
+            <legend><spring:message code="application.data.furtherInformation.title" /></legend>
         </div>
         <div class="col-md-4 col-md-push-8">
             <span class="help-block">
                 <i class="fa fa-fw fa-info-circle"></i>
-                INFO
+                <spring:message code="application.data.furtherInformation.description"/>
             </span>
         </div>
         <div class="col-md-8 col-md-pull-4">
             <div class="form-group">
                 <label class="control-label col-md-3" for="reason">
-                    <spring:message code="reason"/>
+                    <spring:message code="application.data.reason"/>
                 </label>
                 <div class="col-md-9">
-                    <span id="text-reason"></span><spring:message code='max.chars'/>
+                    <span id="text-reason"></span><spring:message code="action.comment.maxChars"/>
                     <form:textarea id="reason" rows="1" path="reason" class="form-control" cssErrorClass="form-control error"
                                    onkeyup="count(this.value, 'text-reason');"
                                    onkeydown="maxChars(this,200); count(this.value, 'text-reason');"/>
@@ -282,10 +282,10 @@
             </div>
             <div class="form-group">
                 <label class="control-label col-md-3" for="address">
-                    <spring:message code='app.address'/>:
+                    <spring:message code="application.data.furtherInformation.address"/>:
                 </label>
                 <div class="col-md-9">
-                    <span id="text-address"></span><spring:message code="max.chars"/>
+                    <span id="text-address"></span><spring:message code="action.comment.maxChars"/>
                     <form:textarea id="address" rows="1" path="address" class="form-control" cssErrorClass="form-control error"
                                    onkeyup="count(this.value, 'text-address');"
                                    onkeydown="maxChars(this,200); count(this.value, 'text-address');"/>
@@ -294,10 +294,10 @@
             </div>
             <div class="form-group">
                 <label class="control-label col-md-3" for="comment">
-                    <spring:message code='app.form.comment'/>:
+                    <spring:message code="application.data.furtherInformation.comment"/>:
                 </label>
                 <div class="col-md-9">
-                    <span id="text-comment"></span><spring:message code="max.chars"/>
+                    <span id="text-comment"></span><spring:message code="action.comment.maxChars"/>
                     <form:textarea id="comment" rows="1" path="comment" class="form-control" cssErrorClass="form-control error"
                                    onkeyup="count(this.value, 'text-comment');"
                                    onkeydown="maxChars(this,200); count(this.value, 'text-comment');"/>
@@ -311,10 +311,10 @@
         <div class="col-xs-12">
             <hr/>
             <button type="submit" class="btn btn-success pull-left col-xs-12 col-sm-5 col-md-2">
-                <spring:message code='action.apply.vacation'/>
+                <spring:message code="action.apply.vacation"/>
             </button>
             <button type="button" class="btn btn-default back col-xs-12 col-sm-5 col-md-2 pull-right">
-                <spring:message code='action.cancel'/>
+                <spring:message code="action.cancel"/>
             </button>
         </div>
     </div>

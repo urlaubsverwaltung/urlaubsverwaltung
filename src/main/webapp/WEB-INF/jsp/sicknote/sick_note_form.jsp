@@ -111,7 +111,7 @@
             <div class="col-xs-12 col-md-6">
 
                 <div class="form-group">
-                    <label class="control-label col-md-4" for="employee"><spring:message code='staff'/></label>
+                    <label class="control-label col-md-4" for="employee"><spring:message code='sicknote.data.staff'/></label>
 
                     <div class="col-md-6">
                         <c:choose>
@@ -140,7 +140,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label col-md-4" for="sickNoteType"><spring:message code='type'/></label>
+                    <label class="control-label col-md-4" for="sickNoteType"><spring:message code="sicknote.data.type"/></label>
 
                     <div class="col-md-6">
                         <form:select path="type" id="sickNoteType" class="form-control" cssErrorClass="form-control error">
@@ -155,11 +155,11 @@
                     <label class="control-label col-md-4" for="from"><spring:message code="sicknotes.time" /></label>
 
                     <div class="col-md-6">
-                        <spring:message code="From" />
+                        <spring:message code="absence.period.startDate" />
                         <form:input id="from" path="startDate" class="form-control" cssErrorClass="form-control error" />
                         <span class="help-inline"><form:errors path="startDate" cssClass="error"/></span>
                         <br />
-                        <spring:message code="To" />
+                        <spring:message code="absence.period.endDate" />
                         <form:input id="to" path="endDate" class="form-control" cssErrorClass="form-control error" />
                         <span class="help-inline"><form:errors path="endDate" cssClass="error"/></span>
                     </div>
@@ -178,11 +178,11 @@
                     </div>
 
                     <div class="col-md-6">
-                        <spring:message code="From" />
+                        <spring:message code="absence.period.startDate" />
                         <form:input id="aubFrom" path="aubStartDate" class="form-control" cssErrorClass="form-control error" />
                         <span class="help-inline"><form:errors path="aubStartDate" cssClass="error"/></span>
                         <br />
-                        <spring:message code="To" />
+                        <spring:message code="absence.period.endDate" />
                         <br />
                         <form:input id="aubTo" path="aubEndDate" class="form-control" cssErrorClass="form-control error" />
                         <span class="help-inline"><form:errors path="aubEndDate" cssClass="error"/></span>

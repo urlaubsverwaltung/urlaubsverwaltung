@@ -35,8 +35,8 @@
 
     <div class="form-group">
         <div class="control-label">
-            <spring:message code='comment'/>, <spring:message code="obligat"/>: (<span
-                id="text-reject"></span><spring:message code="max.chars"/>)
+            <spring:message code="action.comment.mandatory"/>: (<span
+                id="text-reject"></span><spring:message code="action.comment.maxChars"/>)
         </div>
         <form:textarea rows="2" path="text" cssClass="form-control" cssErrorClass="form-control error"
                        onkeyup="count(this.value, 'text-reject');"

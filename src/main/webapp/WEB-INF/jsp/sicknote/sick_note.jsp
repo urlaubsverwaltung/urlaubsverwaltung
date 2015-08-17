@@ -121,11 +121,11 @@
                     <tbody>
                     <tr>
                         <td>
-                            <spring:message code="days.time"/>
+                            <spring:message code="absence.period.duration"/>
                         </td>
                         <td>
                             = <uv:number number="${sickNote.workDays}"/> <spring:message
-                                code="work.days"/>
+                                code="duration.workDays"/>
                             <c:if test="${sickNote.active == false}">
                                 <span><spring:message code="sicknotes.details.inactive" /></span>
                             </c:if>
@@ -142,7 +142,7 @@
                                 </c:when>
                                 <c:otherwise>
                                     <i class="fa fa-remove hidden-print"></i>
-                                    <spring:message code="no"/>
+                                    <spring:message code="sicknote.data.aubNotPresent"/>
                                 </c:otherwise>
                             </c:choose>
                         </td>
@@ -181,7 +181,7 @@
                                     <br />
                                     <c:choose>
                                         <c:when test="${empty comment.text}">
-                                            <spring:message code="sicknote.${comment.status}" /> 
+                                            <spring:message code="sicknote.progress.${comment.status}" />
                                         </c:when>
                                         <c:otherwise>
                                             <c:out value="${comment.text}" />
@@ -211,7 +211,7 @@
                     
                     <div id="comment-form" style="${STYLE}">
                         <form:form method="POST" action="${URL_PREFIX}/sicknote/${sickNote.id}/comment" modelAttribute="comment">
-                            <span id="text-comment"></span><spring:message code="max.chars" />
+                            <span id="text-comment"></span><spring:message code="action.comment.maxChars" />
                             <form:textarea rows="2" path="text" cssClass="form-control" cssErrorClass="form-control error" onkeyup="count(this.value, 'text-comment');" onkeydown="maxChars(this,200); count(this.value, 'text-comment');" />
                             <br />
                             <button class="btn btn-success col-xs-12 col-sm-5" type="submit">
@@ -227,7 +227,7 @@
 
                 <div class="header hidden-print">
                     <legend>
-                        <spring:message code="staff" />
+                        <spring:message code="sicknote.data.staff" />
                     </legend>
                 </div>
 

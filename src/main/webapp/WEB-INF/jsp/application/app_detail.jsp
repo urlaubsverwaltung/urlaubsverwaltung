@@ -34,7 +34,7 @@
                     <div class="header">
 
                         <legend>
-                            <spring:message code="app.title" />
+                            <spring:message code="application.data.title" />
                             <jsp:include page="./include/app-detail-elements/action-buttons.jsp" />
                         </legend>
 
@@ -102,7 +102,7 @@
 
                     <div class="header">
                       <legend>
-                        <spring:message code="overview.vacation.entitlementPerYear"/>
+                        <spring:message code="application.applier.account.entitlement"/>
                         <uv:year-selector year="${year}"/>
                       </legend>
                     </div>
@@ -129,7 +129,7 @@
                                     <spring:message code="overview.vacation.entitlement.remaining" arguments="${account.remainingVacationDays}" />
                                 </c:when>
                                 <c:otherwise>
-                                    <spring:message code='not.specified'/>
+                                    <spring:message code='person.account.noInformation'/>
                                 </c:otherwise>
                             </c:choose>
                         </span>
@@ -151,7 +151,7 @@
                                   </c:choose>
                                 </c:when>
                                 <c:otherwise>
-                                    <spring:message code='not.specified'/>
+                                    <spring:message code='person.account.noInformation'/>
                                 </c:otherwise>
                             </c:choose>
                         </span>

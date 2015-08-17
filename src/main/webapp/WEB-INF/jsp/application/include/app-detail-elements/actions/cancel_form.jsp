@@ -26,18 +26,17 @@
 
     <div class="form-group">
         <div class="control-label">
-            <spring:message code='comment'/>,
             <c:choose>
                 <%-- comment is obligat if it's not the own application or if the application is in status allowed --%>
                 <c:when test="${application.person.id != signedInUser.id || application.status == 'ALLOWED'}">
-                    <spring:message code="obligat"/>
+                    <spring:message code="action.comment.mandatory"/>
                 </c:when>
                 <%-- otherwise comment is not obligat --%>
                 <c:otherwise>
-                    <spring:message code="optional"/>
+                    <spring:message code="action.comment.optional"/>
                 </c:otherwise>
             </c:choose>
-            : (<span id="text-cancel"></span><spring:message code="max.chars"/>)
+            : (<span id="text-cancel"></span><spring:message code="action.comment.maxChars"/>)
         </div>
         <form:textarea rows="2" path="text" cssClass="form-control" cssErrorClass="form-control error"
                        onkeyup="count(this.value, 'text-cancel');"

@@ -99,7 +99,7 @@
                                 <spring:message code="overview.vacation.entitlement.remaining" arguments="${account.remainingVacationDays}" />
                             </c:when>
                             <c:otherwise>
-                                <spring:message code='not.specified'/>
+                                <spring:message code='person.account.noInformation'/>
                             </c:otherwise>
                         </c:choose>
                     </span>
@@ -123,7 +123,7 @@
                                 </c:choose>
                             </c:when>
                             <c:otherwise>
-                                <spring:message code='not.specified'/>
+                                <spring:message code='person.account.noInformation'/>
                             </c:otherwise>
                         </c:choose>
                     </span>
@@ -211,7 +211,7 @@
                 <div class="header">
 
                     <legend id="vacation">
-                        <spring:message code="applications" />
+                        <spring:message code="applications.title" />
                         <c:choose>
                             <c:when test="${person.id == signedInUser.id}">
                                 <a class="fa-action pull-right" href="${URL_PREFIX}/application/new" data-title="<spring:message code="action.apply.vacation"/>">

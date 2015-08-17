@@ -85,7 +85,7 @@
                                   </td>
                                   <td class="hidden-xs">
                                     <h5><c:out value="${application.person.niceName}"/></h5>
-                                    <p><spring:message code="app.apply"/></p>
+                                    <p><spring:message code="application.applier.applied"/></p>
                                   </td>
                                   <td class="halves">
                                     <a class="vacation ${application.vacationType} hidden-print" href="${URL_PREFIX}/application/${application.id}">
@@ -119,17 +119,17 @@
                                        <c:choose>
                                            <c:when test="${application.teamInformed == true}">
                                                <i class="fa fa-check hidden-print"></i>
-                                               <spring:message code="app.list.team.yes" />
+                                               <spring:message code="applications.waiting.teamInformed.true" />
                                            </c:when>
                                            <c:otherwise>
                                                <i class="fa fa-remove hidden-print"></i>
-                                               <spring:message code="app.list.team.no" />
+                                               <spring:message code="applications.waiting.teamInformed.false" />
                                            </c:otherwise>
                                        </c:choose>
                                     </p>
                                     <c:choose>
                                         <c:when test="${application.reason != null && !empty application.reason}">
-                                            <div class="overflow" data-toggle="popover" data-trigger="hover" data-placement="right" title="<spring:message code='reason'/>" data-content="${application.reason}">                                    
+                                            <div class="overflow" data-toggle="popover" data-trigger="hover" data-placement="right" title="<spring:message code='application.data.reason'/>" data-content="${application.reason}">                                    
                                                 <i class="fa fa-comments"></i>
                                                 ${application.reason}
                                             </div>

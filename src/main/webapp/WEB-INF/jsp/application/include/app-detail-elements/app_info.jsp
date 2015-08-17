@@ -16,7 +16,7 @@
         </c:choose>
     </span>
     <span class="box-text">
-        <h5 class="is-inline-block is-sticky"><c:out value="${application.person.niceName}" /></h5> <spring:message code="app.apply" />
+        <h5 class="is-inline-block is-sticky"><c:out value="${application.person.niceName}" /></h5> <spring:message code="application.applier.applied" />
         <h4>
             <spring:message code="${application.vacationType}"/>
             <span class="state ${application.status} pull-right hidden-print hidden-xs" title="<spring:message code='${application.status}' />">
@@ -66,7 +66,7 @@
 <table class="list-table striped-table bordered-table" cellspacing="0">
 
     <tr>
-        <td><spring:message code="days.time" /></td>
+        <td><spring:message code="absence.period.duration" /></td>
         <td>
             <b>
               <uv:number number="${application.workDays}" /> <spring:message code="duration.days" />
@@ -99,13 +99,13 @@
         </td>
     </tr>
     <tr class="visible-print">
-        <td><spring:message code="state" /></td>
+        <td><spring:message code="application.data.status" /></td>
         <td><spring:message code="${application.status}" /></td>
     </tr>
     <tr><%-- needed for correct altering of table rows: there is a problem because the only in print visible row is altered too --%></tr>
     <tr>
         <td>
-            <spring:message code='reason'/>
+            <spring:message code='application.data.reason'/>
         </td>
         <td>
             <c:choose>
@@ -113,7 +113,7 @@
                     <c:out value="${application.reason}"/>
                 </c:when>
                 <c:otherwise>
-                    <spring:message code="not.stated"/>
+                    <spring:message code="application.data.furtherInformation.comment.none"/>
                 </c:otherwise>
             </c:choose>
         </td>
@@ -121,7 +121,7 @@
 
     <tr>
         <td>
-            <spring:message code='app.holidayReplacement'/>
+            <spring:message code='application.data.holidayReplacement'/>
         </td>
         <td>
             <c:choose>
@@ -129,14 +129,14 @@
                     <c:out value="${application.holidayReplacement.niceName}"/>
                 </c:when>
                 <c:otherwise>
-                    <spring:message code="not.stated"/>
+                    <spring:message code="application.data.furtherInformation.comment.none"/>
                 </c:otherwise>
             </c:choose>
         </td>
     </tr>
     <tr>
         <td>
-            <spring:message code='app.address'/>
+            <spring:message code="application.data.furtherInformation.address"/>
         </td>
         <td>
             <c:choose>
@@ -144,24 +144,24 @@
                     <c:out value="${application.address}"/>
                 </c:when>
                 <c:otherwise>
-                    <spring:message code="not.stated"/>
+                    <spring:message code="application.data.furtherInformation.comment.none"/>
                 </c:otherwise>
             </c:choose>
         </td>
     </tr>
     <tr>
         <td>
-            <spring:message code='app.team'/>
+            <spring:message code='application.data.teamInformed'/>
         </td>
         <td>
             <c:choose>
                 <c:when test="${application.teamInformed == true}">
                     <i class="fa fa-check positive hidden-print"></i>
-                    <spring:message code='yes'/>
+                    <spring:message code='application.data.teamInformed.true'/>
                 </c:when>
                 <c:otherwise>
                     <i class="fa fa-remove hidden-print"></i>
-                    <spring:message code='no'/>
+                    <spring:message code='application.data.teamInformed.false'/>
                 </c:otherwise>
             </c:choose>
         </td>

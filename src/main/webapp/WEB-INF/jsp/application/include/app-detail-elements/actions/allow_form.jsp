@@ -39,8 +39,8 @@
 
     <div class="form-group">
         <div class="control-label">
-            <spring:message code='comment'/>, <spring:message code="optional"/>: (<span
-                id="text-confirm"></span><spring:message code="max.chars"/>)
+            <spring:message code="action.comment.optional"/>: (<span
+                id="text-confirm"></span><spring:message code="action.comment.maxChars"/>)
         </div>
         <form:textarea rows="2" cssClass="form-control" cssErrorClass="form-control error" path="text"
                        onkeyup="count(this.value, 'text-confirm');"

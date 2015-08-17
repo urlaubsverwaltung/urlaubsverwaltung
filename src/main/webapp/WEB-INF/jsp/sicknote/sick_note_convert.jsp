@@ -35,7 +35,7 @@
     
                     <div class="form-group">
                         <form:hidden path="person" value="${sickNoteConvertForm.person.id}" />
-                        <label class="control-label col-sm-12 col-md-4"><spring:message code='staff'/></label>
+                        <label class="control-label col-sm-12 col-md-4"><spring:message code='sicknote.data.staff'/></label>
     
                         <div class="col-md-7">
                             <c:out value="${sickNoteConvertForm.person.niceName}" />
@@ -44,7 +44,7 @@
 
                     <div class="form-group">
                         <label class="control-label col-md-4">
-                            <spring:message code="app.type" />
+                            <spring:message code="application.data.vacationType" />
                             <br />
                             <span class="help-inline"><form:errors path="vacationType" cssClass="error"/></span>
                         </label>
@@ -64,7 +64,7 @@
                         <form:hidden path="startDate" />
                         <form:hidden path="endDate" />
                         
-                        <label class="control-label col-md-4"><spring:message code="time" /></label>
+                        <label class="control-label col-md-4"><spring:message code="absence.period" /></label>
     
                         <div class="col-md-7">
                             <uv:date date="${sickNoteConvertForm.startDate}" /> - <uv:date date="${sickNoteConvertForm.endDate}" />
@@ -73,11 +73,11 @@
     
                     <div class="form-group">
                         <label class="control-label col-md-4">
-                            <spring:message code="reason" />
+                            <spring:message code="application.data.reason" />
                         </label>
 
                         <div class="col-md-7">
-                            <span id="count-chars"></span><spring:message code="max.chars" />
+                            <span id="count-chars"></span><spring:message code="action.comment.maxChars" />
                             <br />
                             <form:textarea id="reason" path="reason" cssClass="form-control" cssErrorClass="form-control error" rows="2" onkeyup="count(this.value, 'count-chars');" onkeydown="maxChars(this,200); count(this.value, 'count-chars');" />
                             <span class="help-inline"><form:errors path="reason" cssClass="error"/></span>
@@ -146,11 +146,11 @@
                     <tbody>
                     <tr>
                         <td>
-                            <spring:message code="days.time"/>
+                            <spring:message code="absence.period.duration"/>
                         </td>
                         <td>
                             = <uv:number number="${sickNote.workDays}"/> <spring:message
-                                code="work.days"/>
+                                code="duration.workDays"/>
                         </td>
                     </tr>
                     <tr>
@@ -164,7 +164,7 @@
                                 </c:when>
                                 <c:otherwise>
                                     <i class="fa fa-remove hidden-print"></i>
-                                    <spring:message code="no"/>
+                                    <spring:message code="sicknote.data.aubNotPresent"/>
                                 </c:otherwise>
                             </c:choose>
                         </td>

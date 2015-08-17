@@ -63,11 +63,11 @@
             <div>
                 <p class="is-inline-block">
                     <a href="#filterModal" data-toggle="modal">
-                        <spring:message code="time"/>:&nbsp;<uv:date date="${from}"/> - <uv:date date="${to}"/>
+                        <spring:message code="filter.period"/>:&nbsp;<uv:date date="${from}"/> - <uv:date date="${to}"/>
                     </a>
                 </p>
                 <p class="pull-right visible-print">
-                    <spring:message code="statistics.effective"/> <uv:date date="${today}" />
+                    <spring:message code="filter.validity"/> <uv:date date="${today}" />
                 </p>
             </div>
                 <table class="list-table selectable-table sortable tablesorter" cellspacing="0">
