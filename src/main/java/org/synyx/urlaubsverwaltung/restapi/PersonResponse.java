@@ -16,12 +16,15 @@ class PersonResponse {
 
     private String lastName;
 
+    private String niceName;
+
     PersonResponse(Person person) {
 
         this.ldapName = person.getLoginName();
         this.email = person.getEmail();
         this.firstName = person.getFirstName();
         this.lastName = person.getLastName();
+        this.niceName = person.getNiceName();
     }
 
     public String getLdapName() {
@@ -69,5 +72,17 @@ class PersonResponse {
     public void setLastName(String lastName) {
 
         this.lastName = lastName;
+    }
+
+
+    public String getNiceName() {
+
+        return niceName;
+    }
+
+
+    public void setNiceName(String niceName) {
+
+        this.niceName = niceName;
     }
 }
