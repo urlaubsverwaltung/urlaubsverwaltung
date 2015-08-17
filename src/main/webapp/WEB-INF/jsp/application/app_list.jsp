@@ -94,11 +94,22 @@
                                     <p>
                                       <c:choose>
                                         <c:when test="${application.startDate == application.endDate}">
-                                          <spring:message code="at"/> <uv:date date="${application.startDate}"/>,
-                                          <spring:message code="${application.howLong}"/>
+                                            <c:set var="APPLICATION_DATE">
+                                                <uv:date date="${application.startDate}"/>
+                                            </c:set>
+                                            <c:set var="APPLICATION_DAY_LENGTH">
+                                                <spring:message code="${application.howLong}"/>
+                                            </c:set>
+                                            <spring:message code="absence.period.singleDay" arguments="${APPLICATION_DATE};${APPLICATION_DAY_LENGTH}" argumentSeparator=";"/>
                                         </c:when>
                                         <c:otherwise>
-                                          <spring:message code="from"/> <uv:date date="${application.startDate}"/> <spring:message code="to"/> <uv:date date="${application.endDate}"/>
+                                            <c:set var="APPLICATION_START_DATE">
+                                                <uv:date date="${application.startDate}"/>
+                                            </c:set>
+                                            <c:set var="APPLICATION_END_DATE">
+                                                <uv:date date="${application.endDate}"/>
+                                            </c:set>
+                                            <spring:message code="absence.period.multipleDays" arguments="${APPLICATION_START_DATE};${APPLICATION_END_DATE}" argumentSeparator=";"/>
                                         </c:otherwise>
                                       </c:choose>
                                     </p>

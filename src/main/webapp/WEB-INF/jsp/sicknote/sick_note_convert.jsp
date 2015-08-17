@@ -120,12 +120,23 @@
 
                         <c:choose>
                             <c:when test="${sickNote.startDate == sickNote.endDate}">
-                                <spring:message code="at"/> <h5 class="is-inline-block is-sticky"><uv:date date="${sickNote.startDate}"/></h5>
+                                <c:set var="SICK_NOTE_DATE">
+                                    <h5 class="is-inline-block is-sticky"><uv:date date="${sickNote.startDate}"/></h5>
+                                </c:set>
+                                <c:set var="SICK_NOTE_DAY_LENGTH">
+                                    <%-- TODO: will be variable in the future! --%>
+                                    <spring:message code="FULL"/>
+                                </c:set>
+                                <spring:message code="absence.period.singleDay" arguments="${SICK_NOTE_DATE};${SICK_NOTE_DAY_LENGTH}" argumentSeparator=";"/>
                             </c:when>
                             <c:otherwise>
-                                <spring:message code="from"/> <h5 class="is-inline-block is-sticky"><uv:date
-                                    date="${sickNote.startDate}"/></h5> <spring:message code="to"/> <h5 class="is-inline-block is-sticky">
-                                <uv:date date="${sickNote.endDate}"/></h5>
+                                <c:set var="SICK_NOTE_START_DATE">
+                                    <h5 class="is-inline-block is-sticky"><uv:date date="${sickNote.startDate}"/></h5>
+                                </c:set>
+                                <c:set var="SICK_NOTE_END_DATE">
+                                    <h5 class="is-inline-block is-sticky"><uv:date date="${sickNote.endDate}"/></h5>
+                                </c:set>
+                                <spring:message code="absence.period.multipleDays" arguments="${SICK_NOTE_START_DATE};${SICK_NOTE_END_DATE}" argumentSeparator=";"/>
                             </c:otherwise>
                         </c:choose>
                     </span>

@@ -192,7 +192,7 @@
                                             <c:set var="APPLICATION_DAY_LENGTH">
                                                 <spring:message code="${application.howLong}"/>
                                             </c:set>
-                                            <spring:message code="application.data.period.singleDay" arguments="${APPLICATION_DATE};${APPLICATION_DAY_LENGTH}" argumentSeparator=";"/>
+                                            <spring:message code="absence.period.singleDay" arguments="${APPLICATION_DATE};${APPLICATION_DAY_LENGTH}" argumentSeparator=";"/>
                                         </c:when>
                                         <c:otherwise>
                                             <c:set var="APPLICATION_START_DATE">
@@ -201,7 +201,7 @@
                                             <c:set var="APPLICATION_END_DATE">
                                                 <uv:date date="${application.endDate}"/>
                                             </c:set>
-                                            <spring:message code="application.data.period.multipleDays" arguments="${APPLICATION_START_DATE};${APPLICATION_END_DATE}" argumentSeparator=";"/>
+                                            <spring:message code="absence.period.multipleDays" arguments="${APPLICATION_START_DATE};${APPLICATION_END_DATE}" argumentSeparator=";"/>
                                         </c:otherwise>
                                     </c:choose>
                                     <c:if test="${application.status == 'ALLOWED'}">

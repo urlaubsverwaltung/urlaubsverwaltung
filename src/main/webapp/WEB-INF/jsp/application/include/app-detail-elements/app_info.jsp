@@ -42,13 +42,22 @@
 
         <c:choose>
             <c:when test="${application.startDate == application.endDate}">
-                <spring:message code="at"/> <h5 class="is-inline-block is-sticky"><uv:date date="${application.startDate}"/>,
-                <spring:message code="${application.howLong}"/></h5>
+                <c:set var="APPLICATION_DATE">
+                    <h5 class="is-inline-block is-sticky"><uv:date date="${application.startDate}"/></h5>
+                </c:set>
+                <c:set var="APPLICATION_DAY_LENGTH">
+                    <spring:message code="${application.howLong}"/>
+                </c:set>
+                <spring:message code="absence.period.singleDay" arguments="${APPLICATION_DATE};${APPLICATION_DAY_LENGTH}" argumentSeparator=";"/>
             </c:when>
             <c:otherwise>
-                <spring:message code="from"/> <h5 class="is-inline-block is-sticky"><uv:date
-                    date="${application.startDate}"/></h5> <spring:message code="to"/> <h5 class="is-inline-block is-sticky">
-                <uv:date date="${application.endDate}"/></h5>
+                <c:set var="APPLICATION_START_DATE">
+                    <h5 class="is-inline-block is-sticky"><uv:date date="${application.startDate}"/></h5>
+                </c:set>
+                <c:set var="APPLICATION_END_DATE">
+                    <h5 class="is-inline-block is-sticky"><uv:date date="${application.endDate}"/></h5>
+                </c:set>
+                <spring:message code="absence.period.multipleDays" arguments="${APPLICATION_START_DATE};${APPLICATION_END_DATE}" argumentSeparator=";"/>
             </c:otherwise>
         </c:choose>
     </span>
