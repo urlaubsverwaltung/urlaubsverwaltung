@@ -38,21 +38,6 @@ textarea.error {
 
 /**************************************************************************
 
-  APPLICATION FOR LEAVE FORM
-
-**************************************************************************/
-
-.special-leave--info-modal {
-    vertical-align: middle;
-    line-height: 32px
-}
-
-.special-leave--info-modal:hover {
-    cursor: pointer;
-}
-
-/**************************************************************************
-
   APPLICATION FOR LEAVE DETAILS FORM
 
 **************************************************************************/
@@ -64,18 +49,25 @@ textarea.error {
 
 /**************************************************************************
 
-  PERSON FORM
+  SINGLE COLUMN FORM
 
 **************************************************************************/
 
-.person--form-part .form-group:last-child,
-.person--form-part .btn:last-child {
-  margin-bottom: 54px;
+.form-section .form-group:last-child,
+.form-section .btn:last-child {
+  margin-bottom: 36px;
 }
 
-.person--form-part .help-block {
+.form-section .help-block {
   margin-top: 0;
 }
+
+
+/**************************************************************************
+
+  PERSON FORM
+
+**************************************************************************/
 
 .person--role {
     border-bottom: 1px dotted #d5d5d5;

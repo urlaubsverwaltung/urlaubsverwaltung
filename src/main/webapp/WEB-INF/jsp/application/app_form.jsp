@@ -102,230 +102,228 @@
 
 <div class="row">
 
-    <div class="col-xs-12 header">
-        <legend><spring:message code="app.title" /></legend>
-    </div>
+    <div class="form-section">
+        <div class="col-xs-12 header">
+            <legend><spring:message code="app.title" /></legend>
+        </div>
 
-    <div class="col-md-4 col-md-push-8">
-        <span class="help-block">
-            <i class="fa fa-fw fa-info-circle"></i>
-            <spring:message code='special.leave.explanation'/>
-        </span>
-    </div>
+        <div class="col-md-4 col-md-push-8">
+            <span class="help-block">
+                <i class="fa fa-fw fa-info-circle"></i>
+                <spring:message code='special.leave.explanation'/>
+            </span>
+        </div>
 
-    <div class="col-md-8 col-md-pull-4">
+        <div class="col-md-8 col-md-pull-4">
+            <c:if test="${appliesOnOnesBehalf}">
+                <%-- office applies for a user --%>
+                <div class="form-group">
+                    <label class="control-label col-md-3">
+                        <spring:message code="staff"/>
+                    </label>
+                    <div class="col-md-9">
+                        <select id="person-select" class="form-control" onchange="window.location.href=this.options
+                                                            [this.selectedIndex].value">
+                            <c:forEach items="${persons}" var="p">
+                                <c:choose>
+                                    <c:when test="${person.id == p.id}">
+                                        <option value="${URL_PREFIX}/application/new?personId=${person.id}&appliesOnOnesBehalf=true"
+                                                selected="selected">
+                                            <c:out value="${person.niceName}"/>
+                                        </option>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <option value="${URL_PREFIX}/application/new?personId=${p.id}&appliesOnOnesBehalf=true">
+                                            <c:out value="${p.niceName}"/>
+                                        </option>
+                                    </c:otherwise>
+                                </c:choose>
+                            </c:forEach>
+                        </select>
+                    </div>
+                </div>
+            </c:if>
 
-        <c:if test="${appliesOnOnesBehalf}">
-            <%-- office applies for a user --%>
             <div class="form-group">
-                <label class="control-label col-md-3">
-                    <spring:message code="staff"/>
+                <label class="control-label col-md-3" for="vacationType">
+                    <spring:message code='app.type' />
                 </label>
                 <div class="col-md-9">
-                    <select id="person-select" class="form-control" onchange="window.location.href=this.options
-                                                        [this.selectedIndex].value">
-                        <c:forEach items="${persons}" var="p">
+                    <form:select path="vacationType" size="1" id="vacationType" class="form-control" onchange="checkSonderurlaub(value);">
+                        <c:forEach items="${vacationTypes}" var="vacationType">
                             <c:choose>
-                                <c:when test="${person.id == p.id}">
-                                    <option value="${URL_PREFIX}/application/new?personId=${person.id}&appliesOnOnesBehalf=true"
-                                            selected="selected">
-                                        <c:out value="${person.niceName}"/>
+                                <c:when test="${vacationType == application.vacationType}">
+                                    <option value="${vacationType}" selected="selected">
+                                        <spring:message code='${vacationType}'/>
                                     </option>
                                 </c:when>
                                 <c:otherwise>
-                                    <option value="${URL_PREFIX}/application/new?personId=${p.id}&appliesOnOnesBehalf=true">
-                                        <c:out value="${p.niceName}"/>
+                                    <option value="${vacationType}">
+                                        <spring:message code='${vacationType}'/>
                                     </option>
                                 </c:otherwise>
                             </c:choose>
                         </c:forEach>
-                    </select>
+                    </form:select>
                 </div>
             </div>
-        </c:if>
 
-        <div class="form-group">
-            <label class="control-label col-md-3" for="vacationType">
-                <spring:message code='app.type' />
-            </label>
-            <div class="col-md-9">
-                <form:select path="vacationType" size="1" id="vacationType" class="form-control" onchange="checkSonderurlaub(value);">
-                    <c:forEach items="${vacationTypes}" var="vacationType">
-                        <c:choose>
-                            <c:when test="${vacationType == application.vacationType}">
-                                <option value="${vacationType}" selected="selected">
-                                    <spring:message code='${vacationType}'/>
-                                </option>
-                            </c:when>
-                            <c:otherwise>
-                                <option value="${vacationType}">
-                                    <spring:message code='${vacationType}'/>
-                                </option>
-                            </c:otherwise>
-                        </c:choose>
-                    </c:forEach>
-                </form:select>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="control-label col-md-3">
-                <spring:message code="time"/>
-            </label>
-            <div class="col-md-9 radio">
-                <label class="thirds">
-                    <form:radiobutton id="fullDay" class="dayLength-full" path="howLong" checked="checked" value="FULL" />
-                    <spring:message code='FULL'/>
+            <div class="form-group">
+                <label class="control-label col-md-3">
+                    <spring:message code="time"/>
                 </label>
-                <label class="thirds">
-                    <form:radiobutton id="morning" class="dayLength-half" path="howLong" value="MORNING" />
-                    <spring:message code='MORNING'/>
+                <div class="col-md-9 radio">
+                    <label class="thirds">
+                        <form:radiobutton id="fullDay" class="dayLength-full" path="howLong" checked="checked" value="FULL" />
+                        <spring:message code='FULL'/>
+                    </label>
+                    <label class="thirds">
+                        <form:radiobutton id="morning" class="dayLength-half" path="howLong" value="MORNING" />
+                        <spring:message code='MORNING'/>
+                    </label>
+                    <label class="thirds">
+                        <form:radiobutton id="noon" class="dayLength-half" path="howLong" value="NOON" />
+                        <spring:message code='NOON'/>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group full-day">
+                <label class="col-md-3 control-label" for="from">
+                    <spring:message code="From" />:
                 </label>
-                <label class="thirds">
-                    <form:radiobutton id="noon" class="dayLength-half" path="howLong" value="NOON" />
-                    <spring:message code='NOON'/>
+                <div class="col-md-9">
+                    <form:input id="from" path="startDate" class="form-control" cssErrorClass="form-control error" />
+                </div>
+            </div>
+
+            <div class="form-group full-day">
+                <label class="control-label col-md-3" for="to">
+                    <spring:message code="To" />:
                 </label>
+                <div class="col-md-9">
+                    <form:input id="to" path="endDate" class="form-control" cssErrorClass="form-control error" />
+                    <span class="help-block info days"></span>
+                </div>
             </div>
-        </div>
 
-        <div class="form-group full-day">
-            <label class="col-md-3 control-label" for="from">
-                <spring:message code="From" />:
-            </label>
-            <div class="col-md-9">
-                <form:input id="from" path="startDate" class="form-control" cssErrorClass="form-control error" />
+            <div class="form-group half-day">
+                <label class="control-label col-md-3" for="at">
+                    <spring:message code="At" />:
+                </label>
+                <div class="col-md-9">
+                    <form:input id="at" path="startDateHalf" class="form-control" cssErrorClass="form-control error" />
+                    <span class="help-block info days"></span>
+                </div>
             </div>
-        </div>
 
-        <div class="form-group full-day">
-            <label class="control-label col-md-3" for="to">
-                <spring:message code="To" />:
-            </label>
-            <div class="col-md-9">
-                <form:input id="to" path="endDate" class="form-control" cssErrorClass="form-control error" />
-                <span class="help-block info days"></span>
-            </div>
-        </div>
-
-        <div class="form-group half-day">
-            <label class="control-label col-md-3" for="at">
-                <spring:message code="At" />:
-            </label>
-            <div class="col-md-9">
-                <form:input id="at" path="startDateHalf" class="form-control" cssErrorClass="form-control error" />
-                <span class="help-block info days"></span>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="control-label col-md-3" for="holidayReplacement">
-                <spring:message code="app.holidayReplacement"/>
-            </label>
-            <div class="col-md-9">
-                <form:select path="holidayReplacement" id="holidayReplacement" size="1" class="form-control">
-                    <option value="-1"><spring:message code='app.no.holidayReplacement'/></option>
-                    <c:forEach items="${persons}" var="holidayReplacement">
-
-                        <c:choose>
-                            <c:when test="${application.holidayReplacement.id == holidayReplacement.id}">
-                                <form:option value="${holidayReplacement.id}" selected="selected">
-                                    <c:out value="${holidayReplacement.niceName}" />
-                                </form:option>
-                            </c:when>
-                            <c:otherwise>
-                                <c:if test="${person.id != holidayReplacement.id}">
-                                    <form:option value="${holidayReplacement.id}">
+            <div class="form-group">
+                <label class="control-label col-md-3" for="holidayReplacement">
+                    <spring:message code="app.holidayReplacement"/>
+                </label>
+                <div class="col-md-9">
+                    <form:select path="holidayReplacement" id="holidayReplacement" size="1" class="form-control">
+                        <option value="-1"><spring:message code='app.no.holidayReplacement'/></option>
+                        <c:forEach items="${persons}" var="holidayReplacement">
+                            <c:choose>
+                                <c:when test="${application.holidayReplacement.id == holidayReplacement.id}">
+                                    <form:option value="${holidayReplacement.id}" selected="selected">
                                         <c:out value="${holidayReplacement.niceName}" />
                                     </form:option>
-                                </c:if>
-                            </c:otherwise>
-                        </c:choose>
-                    </c:forEach>
-                </form:select>
-                <form:errors path="holidayReplacement" cssClass="error"/>
+                                </c:when>
+                                <c:otherwise>
+                                    <c:if test="${person.id != holidayReplacement.id}">
+                                        <form:option value="${holidayReplacement.id}">
+                                            <c:out value="${holidayReplacement.niceName}" />
+                                        </form:option>
+                                    </c:if>
+                                </c:otherwise>
+                            </c:choose>
+                        </c:forEach>
+                    </form:select>
+                    <form:errors path="holidayReplacement" cssClass="error"/>
+                </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            <label class="control-label col-md-3">
-                <spring:message code='app.team'/>
-            </label>
-            <div class="col-md-9 radio">
-                <label class="halves">
-                    <form:radiobutton id="teamInformed" path="teamInformed" value="true"/>
-                    <spring:message code='yes'/>
+            <div class="form-group">
+                <label class="control-label col-md-3">
+                    <spring:message code='app.team'/>
                 </label>
-                <label class="halves">
-                    <form:radiobutton id="teamNotInformed" path="teamInformed" value="false"/>
-                    <spring:message code='no'/>
+                <div class="col-md-9 radio">
+                    <label class="halves">
+                        <form:radiobutton id="teamInformed" path="teamInformed" value="true"/>
+                        <spring:message code='yes'/>
+                    </label>
+                    <label class="halves">
+                        <form:radiobutton id="teamNotInformed" path="teamInformed" value="false"/>
+                        <spring:message code='no'/>
+                    </label>
+                    <form:errors path="teamInformed" cssClass="error"/>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-section">
+        <div class="col-xs-12 header">
+            <legend><spring:message code="app.further.info" /></legend>
+        </div>
+        <div class="col-md-4 col-md-push-8">
+            <span class="help-block">
+                <i class="fa fa-fw fa-info-circle"></i>
+                INFO
+            </span>
+        </div>
+        <div class="col-md-8 col-md-pull-4">
+            <div class="form-group">
+                <label class="control-label col-md-3" for="reason">
+                    <spring:message code="reason"/>
                 </label>
-                <form:errors path="teamInformed" cssClass="error"/>
+                <div class="col-md-9">
+                    <span id="text-reason"></span><spring:message code='max.chars'/>
+                    <form:textarea id="reason" rows="1" path="reason" class="form-control" cssErrorClass="form-control error"
+                                   onkeyup="count(this.value, 'text-reason');"
+                                   onkeydown="maxChars(this,200); count(this.value, 'text-reason');"/>
+                    <form:errors path="reason" cssClass="error"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-3" for="address">
+                    <spring:message code='app.address'/>:
+                </label>
+                <div class="col-md-9">
+                    <span id="text-address"></span><spring:message code="max.chars"/>
+                    <form:textarea id="address" rows="1" path="address" class="form-control" cssErrorClass="form-control error"
+                                   onkeyup="count(this.value, 'text-address');"
+                                   onkeydown="maxChars(this,200); count(this.value, 'text-address');"/>
+                    <form:errors path="address" cssClass="error"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-3" for="comment">
+                    <spring:message code='app.form.comment'/>:
+                </label>
+                <div class="col-md-9">
+                    <span id="text-comment"></span><spring:message code="max.chars"/>
+                    <form:textarea id="comment" rows="1" path="comment" class="form-control" cssErrorClass="form-control error"
+                                   onkeyup="count(this.value, 'text-comment');"
+                                   onkeydown="maxChars(this,200); count(this.value, 'text-comment');"/>
+                    <form:errors path="comment" cssClass="error"/>
+                </div>
             </div>
         </div>
-
     </div>
 
-    <div class="col-xs-12 header">
-        <legend><spring:message code="app.further.info" /></legend>
-    </div>
-
-    <div class="col-md-4 col-md-push-8">
-        <span class="help-block">
-            <i class="fa fa-fw fa-info-circle"></i>
-            INFO
-        </span>
-    </div>
-
-    <div class="col-md-8 col-md-pull-4">
-        <div class="form-group">
-            <label class="control-label col-md-3" for="reason">
-                <spring:message code="reason"/>
-            </label>
-            <div class="col-md-9">
-                <span id="text-reason"></span><spring:message code='max.chars'/>
-                <form:textarea id="reason" rows="1" path="reason" class="form-control" cssErrorClass="form-control error"
-                               onkeyup="count(this.value, 'text-reason');"
-                               onkeydown="maxChars(this,200); count(this.value, 'text-reason');"/>
-                <form:errors path="reason" cssClass="error"/>
-            </div>
+    <div class="form-section">
+        <div class="col-xs-12">
+            <hr/>
+            <button type="submit" class="btn btn-success pull-left col-xs-12 col-sm-5 col-md-2">
+                <spring:message code='action.apply.vacation'/>
+            </button>
+            <button type="button" class="btn btn-default back col-xs-12 col-sm-5 col-md-2 pull-right">
+                <spring:message code='action.cancel'/>
+            </button>
         </div>
-
-        <div class="form-group">
-            <label class="control-label col-md-3" for="address">
-                <spring:message code='app.address'/>:
-            </label>
-            <div class="col-md-9">
-                <span id="text-address"></span><spring:message code="max.chars"/>
-                <form:textarea id="address" rows="1" path="address" class="form-control" cssErrorClass="form-control error"
-                               onkeyup="count(this.value, 'text-address');"
-                               onkeydown="maxChars(this,200); count(this.value, 'text-address');"/>
-                <form:errors path="address" cssClass="error"/>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="control-label col-md-3" for="comment">
-                <spring:message code='app.form.comment'/>:
-            </label>
-            <div class="col-md-9">
-                <span id="text-comment"></span><spring:message code="max.chars"/>
-                <form:textarea id="comment" rows="1" path="comment" class="form-control" cssErrorClass="form-control error"
-                               onkeyup="count(this.value, 'text-comment');"
-                               onkeydown="maxChars(this,200); count(this.value, 'text-comment');"/>
-                <form:errors path="comment" cssClass="error"/>
-            </div>
-        </div>
-
-    </div>
-
-    <div class="col-xs-12">
-        <hr/>
-        <button type="submit" class="btn btn-success pull-left col-xs-12 col-sm-5 col-md-2">
-            <spring:message code='action.apply.vacation'/>
-        </button>
-        <button type="button" class="btn btn-default back col-xs-12 col-sm-5 col-md-2 pull-right">
-            <spring:message code='action.cancel'/>
-        </button>
     </div>
 
 </div>
