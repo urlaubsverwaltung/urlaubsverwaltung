@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.restapi;
 
-import org.joda.time.DateTime;
-
 import org.synyx.urlaubsverwaltung.core.department.Department;
 
 
@@ -12,13 +10,13 @@ public class DepartmentResponse {
 
     private String name;
     private String description;
-    private DateTime lastModification;
+    private String lastModification;
 
     public DepartmentResponse(Department department) {
 
         this.name = department.getName();
         this.description = department.getName();
-        this.lastModification = department.getLastModification();
+        this.lastModification = department.getLastModification().toString(RestApiDateFormat.PATTERN);
     }
 
     public String getName() {
@@ -45,13 +43,13 @@ public class DepartmentResponse {
     }
 
 
-    public DateTime getLastModification() {
+    public String getLastModification() {
 
         return lastModification;
     }
 
 
-    public void setLastModification(DateTime lastModification) {
+    public void setLastModification(String lastModification) {
 
         this.lastModification = lastModification;
     }
