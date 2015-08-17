@@ -251,7 +251,7 @@ public class ApplicationValidatorTest {
 
         validator.validate(appForm, errors);
 
-        Mockito.verify(errors).rejectValue("reason", "error.entry.mandatory");
+        Mockito.verify(errors).rejectValue("reason", "application.error.missingReasonForSpecialLeave");
     }
 
 

@@ -41,6 +41,7 @@ public class ApplicationValidator implements Validator {
     private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
     private static final String ERROR_LENGTH = "error.entry.tooManyChars";
     private static final String ERROR_PERIOD = "error.entry.invalidPeriod";
+    private static final String ERROR_MISSING_REASON = "application.error.missingReasonForSpecialLeave";
     private static final String ERROR_PAST = "application.error.tooFarInThePast";
     private static final String ERROR_TOO_LONG = "application.error.tooFarInTheFuture";
     private static final String ERROR_ZERO_DAYS = "application.error.zeroDays";
@@ -87,7 +88,7 @@ public class ApplicationValidator implements Validator {
         // check if reason is not filled
         if (applicationForm.getVacationType() == VacationType.SPECIALLEAVE
                 && !StringUtils.hasText(applicationForm.getReason())) {
-            errors.rejectValue(ATTRIBUTE_REASON, ERROR_MANDATORY_FIELD);
+            errors.rejectValue(ATTRIBUTE_REASON, ERROR_MISSING_REASON);
         }
 
         // validate length of texts
