@@ -19,13 +19,6 @@
 
     <script type="text/javascript">
         $(function() {
-
-            <%-- SPECIAL LEAVE INFO --%>
-            $(document).ready(function () {
-                $('#special-leave-info').popover();
-            });
-
-
             <%-- CALENDAR: PRESET DATE IN APP FORM ON CLICKING DAY --%>
 
             function preset(id, dateString) {
@@ -149,7 +142,7 @@
                     <spring:message code='app.type' />
                 </label>
                 <div class="col-md-9">
-                    <form:select path="vacationType" size="1" id="vacationType" class="form-control" onchange="checkSonderurlaub(value);">
+                    <form:select path="vacationType" size="1" id="vacationType" class="form-control">
                         <c:forEach items="${vacationTypes}" var="vacationType">
                             <c:choose>
                                 <c:when test="${vacationType == application.vacationType}">

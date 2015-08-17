@@ -116,14 +116,6 @@ function buildUrl(urlPrefix, startDate, endDate, dayLength, personId) {
     
 }
 
-function checkSonderurlaub(value) {
-
-    if(value === "SPECIALLEAVE") {
-        $('#special-leave-modal').modal("toggle"); 
-    }
-
-}
-
 // thanks to http://www.jaqe.de/2009/01/16/url-parameter-mit-javascript-auslesen/
 function getUrlParam(name)
 {
