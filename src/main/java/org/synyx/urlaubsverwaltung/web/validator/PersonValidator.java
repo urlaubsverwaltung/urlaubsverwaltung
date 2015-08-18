@@ -100,6 +100,8 @@ public class PersonValidator implements Validator {
         validatePermissions(form, errors);
 
         validateNotifications(form, errors);
+
+        validateWorkingTimes(form, errors);
     }
 
 
@@ -330,6 +332,14 @@ public class PersonValidator implements Validator {
                     || officeNotificationsSelectedButNotOfficeRole) {
                 errors.rejectValue("notifications", "person.form.notifications.error.combination");
             }
+        }
+    }
+
+
+    protected void validateWorkingTimes(PersonForm personForm, Errors errors) {
+
+        if (personForm.getWorkingDays() == null || personForm.getWorkingDays().isEmpty()) {
+            errors.rejectValue("workingDays", "person.form.workingTime.error.mandatory");
         }
     }
 }

@@ -23,6 +23,7 @@ import java.math.BigDecimal;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.junit.Assert.assertFalse;
@@ -494,6 +495,41 @@ public class PersonValidatorTest {
         form.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_OFFICE));
 
         validator.validatePermissions(form, errors);
+
+        Mockito.verifyZeroInteractions(errors);
+    }
+
+
+    // VALIDATION OF WORKING TIMES
+
+    @Test
+    public void ensureWeekDaysCanNotBeNull() {
+
+        form.setWorkingDays(null);
+
+        validator.validateWorkingTimes(form, errors);
+
+        Mockito.verify(errors).rejectValue("workingDays", "person.form.workingTime.error.mandatory");
+    }
+
+
+    @Test
+    public void ensureAtLeastOneWeekDayMustBeSelectedAsWorkingTime() {
+
+        form.setWorkingDays(Collections.emptyList());
+
+        validator.validateWorkingTimes(form, errors);
+
+        Mockito.verify(errors).rejectValue("workingDays", "person.form.workingTime.error.mandatory");
+    }
+
+
+    @Test
+    public void ensureValidWeekDaySelectionHasNoValidationError() {
+
+        form.setWorkingDays(Arrays.asList(1, 2));
+
+        validator.validateWorkingTimes(form, errors);
 
         Mockito.verifyZeroInteractions(errors);
     }

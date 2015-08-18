@@ -217,6 +217,16 @@
         <legend><spring:message code="person.form.workingTime.title"/></legend>
     </div>
 
+    <c:set var="workingTimeError">
+        <form:errors path="workingDays" cssClass="error"/>
+    </c:set>
+
+    <c:if test="${not empty workingTimeError}">
+        <div class="col-xs-12">
+            <div class="alert alert-danger">${workingTimeError}</div>
+        </div>
+    </c:if>
+
     <div class="col-md-4 col-md-push-8">
     <span class="help-block">
         <i class="fa fa-fw fa-info-circle"></i>
