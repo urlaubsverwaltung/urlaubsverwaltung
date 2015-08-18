@@ -44,11 +44,14 @@ public class ApplicationValidatorTest {
     private Errors errors;
     private ApplicationForLeaveForm appForm;
 
+    private Settings settings;
+
     @Before
     public void setUp() {
 
         settingsService = Mockito.mock(SettingsService.class);
-        Mockito.when(settingsService.getSettings()).thenReturn(new Settings());
+        settings = new Settings();
+        Mockito.when(settingsService.getSettings()).thenReturn(settings);
 
         calendarService = Mockito.mock(WorkDaysService.class);
         overlapService = Mockito.mock(OverlapService.class);
@@ -308,7 +311,9 @@ public class ApplicationValidatorTest {
 
         validator.validate(appForm, errors);
 
-        Mockito.verify(errors).reject("application.error.tooFarInTheFuture");
+        Mockito.verify(errors)
+            .reject("application.error.tooFarInTheFuture",
+                new Object[] { settings.getMaximumMonthsToApplyForLeaveInAdvance().toString() }, null);
     }
 
 
@@ -336,7 +341,9 @@ public class ApplicationValidatorTest {
 
         validator.validate(appForm, errors);
 
-        Mockito.verify(errors).reject("application.error.tooFarInTheFuture");
+        Mockito.verify(errors)
+            .reject("application.error.tooFarInTheFuture",
+                new Object[] { settings.getMaximumMonthsToApplyForLeaveInAdvance().toString() }, null);
     }
 
 
