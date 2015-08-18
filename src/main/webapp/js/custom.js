@@ -145,7 +145,7 @@ function sendGetDepartmentVacationsRequest(urlPrefix, startDate, endDate, person
 
     var $vacations = $(el);
 
-    $vacations.html("&Uuml;berschneidende Antr&auml;ge:");
+    $vacations.html("Antr&auml;ge von Mitarbeitern:");
 
     if(vacations.length > 0) {
       $.each(vacations, function (idx, vacation) {
@@ -165,6 +165,19 @@ function sendGetDepartmentVacationsRequest(urlPrefix, startDate, endDate, person
     }
 
   });
+
+}
+
+function vacationTypeChanged(value) {
+
+  var $reason = $("#form-group--reason");
+  var isRequiredCssClass = "is-required";
+
+  if(value === "SPECIALLEAVE") {
+    $reason.addClass(isRequiredCssClass);
+  } else {
+    $reason.removeClass(isRequiredCssClass);
+  }
 
 }
 

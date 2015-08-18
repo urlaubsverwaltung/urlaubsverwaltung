@@ -55,8 +55,11 @@
     </div>
 
     <div class="col-md-8 col-md-pull-4">
-        <div class="form-group">
-            <label class="control-label col-md-3" for="loginName"><spring:message code="person.form.data.login"/></label>
+        <c:set var="LOGIN_IS_REQUIRED" value="${personForm.id == null ? 'is-required' : ''}"/>
+        <div class="form-group ${LOGIN_IS_REQUIRED}">
+            <label class="control-label col-md-3" for="loginName">
+                <spring:message code="person.form.data.login"/>:
+            </label>
 
             <div class="col-md-9">
                 <c:choose>
@@ -72,8 +75,10 @@
             </div>
         </div>
 
-        <div class="form-group">
-            <label class="control-label col-md-3" for="firstName"><spring:message code="person.form.data.firstName"/></label>
+        <div class="form-group is-required">
+            <label class="control-label col-md-3" for="firstName">
+                <spring:message code="person.form.data.firstName"/>:
+            </label>
 
             <div class="col-md-9">
                 <form:input id="firstName" path="firstName" class="form-control" cssErrorClass="form-control error" />
@@ -81,8 +86,10 @@
             </div>
         </div>
 
-        <div class="form-group">
-            <label class="control-label col-md-3" for="lastName"><spring:message code="person.form.data.lastName"/></label>
+        <div class="form-group is-required">
+            <label class="control-label col-md-3" for="lastName">
+                <spring:message code="person.form.data.lastName"/>:
+            </label>
 
             <div class="col-md-9">
                 <form:input id="lastName" path="lastName" class="form-control" cssErrorClass="form-control error" />
@@ -90,8 +97,10 @@
             </div>
         </div>
 
-        <div class="form-group">
-            <label class="control-label col-md-3" for="email"><spring:message code="person.form.data.email"/></label>
+        <div class="form-group is-required">
+            <label class="control-label col-md-3" for="email">
+                <spring:message code="person.form.data.email"/>:
+            </label>
 
             <div class="col-md-9">
                 <form:input id="email" path="email" class="form-control" cssErrorClass="form-control error" />
@@ -136,9 +145,11 @@
     </div>
 
     <div class="col-md-8 col-md-pull-4">
-        <div class="form-group">
+        <div class="form-group is-required">
 
-            <label class="control-label col-md-3"><spring:message code="person.form.permissions.roles"/></label>
+            <label class="control-label col-md-3">
+                <spring:message code="person.form.permissions.roles"/>:
+            </label>
 
             <div class="col-md-9">
 
@@ -238,7 +249,9 @@
         <c:if test="${fn:length(workingTimes) > 1}">
 
             <div class="form-group">
-                <label class="col-md-3"><spring:message code='person.form.workingTime.title'/></label>
+                <label class="col-md-3">
+                    <spring:message code='person.form.workingTime.title'/>:
+                </label>
 
                 <div class="col-md-9">
                     <c:forEach items="${workingTimes}" var="time">
@@ -274,9 +287,9 @@
 
         </c:if>
 
-        <div class="form-group">
+        <div class="form-group is-required">
             <label class="control-label col-md-3">
-                <spring:message code="person.form.workingTime.validityPeriod" />
+                <spring:message code="person.form.workingTime.validityPeriod" />:
             </label>
             <div class="col-md-9">
                 <form:input id="validFrom" path="validFrom" class="form-control" cssErrorClass="form-control error" placeholder="dd.MM.yyyy" />
@@ -284,9 +297,9 @@
             </div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group is-required">
             <label class="control-label col-md-3">
-                <spring:message code="person.form.workingTime.weekDays" />
+                <spring:message code="person.form.workingTime.weekDays" />:
             </label>
             <div class="col-md-9">
                 <c:forEach items="${weekDays}" var="weekDay">
@@ -335,9 +348,9 @@
     </div>
 
     <div class="col-md-8 col-md-pull-4">
-        <div class="form-group">
+        <div class="form-group is-required">
             <label for="holidaysAccountValidFrom" class="control-label col-md-3">
-                <spring:message code="person.form.annualVacation.period.start"/>
+                <spring:message code="person.form.annualVacation.period.start"/>:
             </label>
 
             <div class="col-md-9">
@@ -347,9 +360,9 @@
             </div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group is-required">
             <label for="holidaysAccountValidTo" class="control-label col-md-3">
-                <spring:message code="person.form.annualVacation.period.end"/>
+                <spring:message code="person.form.annualVacation.period.end"/>:
             </label>
 
             <div class="col-md-9">
@@ -359,8 +372,10 @@
             </div>
         </div>
 
-        <div class="form-group">
-            <label class="control-label col-md-3" for="annualVacationDays"><spring:message code='person.form.annualVacation.annualVacation'/></label>
+        <div class="form-group is-required">
+            <label class="control-label col-md-3" for="annualVacationDays">
+                <spring:message code='person.form.annualVacation.annualVacation'/>:
+            </label>
 
             <div class="col-md-9">
                 <form:input path="annualVacationDays" class="form-control" cssErrorClass="form-control error" size="1" id="annualVacationDays"/>
@@ -368,9 +383,9 @@
             </div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group is-required">
             <label class="control-label col-md-3" for="remainingVacationDays">
-                <spring:message code="person.form.annualVacation.remainingVacation"/>
+                <spring:message code="person.form.annualVacation.remainingVacation"/>:
             </label>
 
             <div class="col-md-9">
@@ -379,9 +394,9 @@
             </div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group is-required">
             <label class="control-label col-md-3">
-                <spring:message code="person.form.annualVacation.remainingVacation.notExpiring"/>
+                <spring:message code="person.form.annualVacation.remainingVacation.notExpiring"/>:
             </label>
 
             <div class="col-md-9">

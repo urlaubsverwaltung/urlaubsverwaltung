@@ -110,8 +110,10 @@
 
             <div class="col-xs-12 col-md-6">
 
-                <div class="form-group">
-                    <label class="control-label col-md-4" for="employee"><spring:message code='sicknote.data.staff'/></label>
+                <div class="form-group is-required">
+                    <label class="control-label col-md-4" for="employee">
+                        <spring:message code='sicknote.data.staff'/>:
+                    </label>
 
                     <div class="col-md-6">
                         <c:choose>
@@ -139,8 +141,10 @@
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label class="control-label col-md-4" for="sickNoteType"><spring:message code="sicknote.data.type"/></label>
+                <div class="form-group is-required">
+                    <label class="control-label col-md-4" for="sickNoteType">
+                        <spring:message code="sicknote.data.type"/>:
+                    </label>
 
                     <div class="col-md-6">
                         <form:select path="type" id="sickNoteType" class="form-control" cssErrorClass="form-control error">
@@ -151,8 +155,10 @@
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label class="control-label col-md-4" for="from"><spring:message code="sicknotes.time" /></label>
+                <div class="form-group is-required">
+                    <label class="control-label col-md-4" for="from">
+                        <spring:message code="sicknotes.time" />:
+                    </label>
 
                     <div class="col-md-6">
                         <spring:message code="absence.period.startDate" />

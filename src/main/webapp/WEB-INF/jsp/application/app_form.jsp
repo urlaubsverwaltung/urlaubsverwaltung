@@ -145,12 +145,12 @@
                 </div>
             </c:if>
 
-            <div class="form-group">
+            <div class="form-group is-required">
                 <label class="control-label col-md-3" for="vacationType">
-                    <spring:message code="application.data.vacationType" />
+                    <spring:message code="application.data.vacationType"/>:
                 </label>
                 <div class="col-md-9">
-                    <form:select path="vacationType" size="1" id="vacationType" class="form-control">
+                    <form:select path="vacationType" size="1" id="vacationType" class="form-control" onchange="vacationTypeChanged(value);">
                         <c:forEach items="${vacationTypes}" var="vacationType">
                             <c:choose>
                                 <c:when test="${vacationType == application.vacationType}">
@@ -169,9 +169,9 @@
                 </div>
             </div>
 
-            <div class="form-group">
+            <div class="form-group is-required">
                 <label class="control-label col-md-3">
-                    <spring:message code="absence.period"/>
+                    <spring:message code="absence.period"/>:
                 </label>
                 <div class="col-md-9 radio">
                     <label class="thirds">
@@ -189,7 +189,7 @@
                 </div>
             </div>
 
-            <div class="form-group full-day">
+            <div class="form-group is-required full-day">
                 <label class="col-md-3 control-label" for="from">
                     <spring:message code="absence.period.startDate" />:
                 </label>
@@ -198,7 +198,7 @@
                 </div>
             </div>
 
-            <div class="form-group full-day">
+            <div class="form-group is-required full-day">
                 <label class="control-label col-md-3" for="to">
                     <spring:message code="absence.period.endDate" />:
                 </label>
@@ -208,7 +208,7 @@
                 </div>
             </div>
 
-            <div class="form-group half-day">
+            <div class="form-group is-required half-day">
                 <label class="control-label col-md-3" for="at">
                     <spring:message code="absence.period.startAndEndDate" />:
                 </label>
@@ -220,7 +220,7 @@
 
             <div class="form-group">
                 <label class="control-label col-md-3" for="holidayReplacement">
-                    <spring:message code="application.data.holidayReplacement"/>
+                    <spring:message code="application.data.holidayReplacement"/>:
                 </label>
                 <div class="col-md-9">
                     <form:select path="holidayReplacement" id="holidayReplacement" size="1" class="form-control">
@@ -246,9 +246,9 @@
                 </div>
             </div>
 
-            <div class="form-group">
+            <div class="form-group is-required">
                 <label class="control-label col-md-3">
-                    <spring:message code="application.data.teamInformed"/>
+                    <spring:message code="application.data.teamInformed"/>:
                 </label>
                 <div class="col-md-9 radio">
                     <label class="halves">
@@ -276,9 +276,11 @@
             </span>
         </div>
         <div class="col-md-8 col-md-pull-4">
-            <div class="form-group">
+            <c:set var="REASON_IS_REQUIRED" value="${application.vacationType == 'SPECIALLEAVE' ? 'is-required' : ''}"/>
+
+            <div class="form-group ${REASON_IS_REQUIRED}" id="form-group--reason">
                 <label class="control-label col-md-3" for="reason">
-                    <spring:message code="application.data.reason"/>
+                    <spring:message code="application.data.reason"/>:
                 </label>
                 <div class="col-md-9">
                     <span id="text-reason"></span><spring:message code="action.comment.maxChars"/>

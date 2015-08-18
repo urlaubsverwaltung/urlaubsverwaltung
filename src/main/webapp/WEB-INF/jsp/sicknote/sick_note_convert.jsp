@@ -35,18 +35,18 @@
     
                     <div class="form-group">
                         <form:hidden path="person" value="${sickNoteConvertForm.person.id}" />
-                        <label class="control-label col-sm-12 col-md-4"><spring:message code='sicknote.data.staff'/></label>
+                        <label class="control-label col-sm-12 col-md-4">
+                            <spring:message code='sicknote.data.staff'/>:
+                        </label>
     
                         <div class="col-md-7">
                             <c:out value="${sickNoteConvertForm.person.niceName}" />
                         </div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group is-required">
                         <label class="control-label col-md-4">
-                            <spring:message code="application.data.vacationType" />
-                            <br />
-                            <span class="help-inline"><form:errors path="vacationType" cssClass="error"/></span>
+                            <spring:message code="application.data.vacationType" />:
                         </label>
 
                         <div class="col-md-7">
@@ -57,6 +57,7 @@
                                     </option>
                                 </c:forEach>
                             </form:select>
+                            <span class="help-inline"><form:errors path="vacationType" cssClass="error"/></span>
                         </div>
                     </div>
     
@@ -64,16 +65,18 @@
                         <form:hidden path="startDate" />
                         <form:hidden path="endDate" />
                         
-                        <label class="control-label col-md-4"><spring:message code="absence.period" /></label>
+                        <label class="control-label col-md-4">
+                            <spring:message code="absence.period" />:
+                        </label>
     
                         <div class="col-md-7">
                             <uv:date date="${sickNoteConvertForm.startDate}" /> - <uv:date date="${sickNoteConvertForm.endDate}" />
                         </div>
                     </div>
     
-                    <div class="form-group">
+                    <div class="form-group is-required">
                         <label class="control-label col-md-4">
-                            <spring:message code="application.data.reason" />
+                            <spring:message code="application.data.reason" />:
                         </label>
 
                         <div class="col-md-7">
