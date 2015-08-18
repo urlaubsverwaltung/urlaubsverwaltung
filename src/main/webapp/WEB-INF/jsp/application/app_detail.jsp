@@ -108,7 +108,7 @@
                     </div>
 
                     <div class="box">
-                        <img class="box-image img-circle" src="<c:out value='${gravatar}?d=mm&s=60'/>"/>
+                        <img class="box-image img-circle" src="<c:out value='${gravatarUrl}?d=mm&s=60'/>"/>
                         <span class="box-text">
                             <i class="fa fa-at"></i> <c:out value="${application.person.loginName}"/>
                             <h4>

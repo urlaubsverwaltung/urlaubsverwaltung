@@ -2,8 +2,6 @@ package org.synyx.urlaubsverwaltung.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.ui.ModelMap;
-
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -45,10 +43,8 @@ public class UserInterceptor implements HandlerInterceptor {
             Person signedInUser = sessionService.getSignedInUser();
             String gravatar = GravatarUtil.createImgURL(signedInUser.getEmail());
 
-            ModelMap modelMap = modelAndView.getModelMap();
-
-            modelMap.addAttribute("signedInUser", signedInUser);
-            modelMap.addAttribute("gravatar", gravatar);
+            modelAndView.addObject("signedInUser", signedInUser);
+            modelAndView.addObject("signedInUserGravatar", gravatar);
         }
     }
 

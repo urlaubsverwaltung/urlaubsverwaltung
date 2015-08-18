@@ -24,6 +24,7 @@ public final class PersonConstants {
     public static final String PERSONS_ATTRIBUTE = "persons";
     public static final String PERSON_ATTRIBUTE = "person";
     public static final String BEFORE_APRIL_ATTRIBUTE = "beforeApril";
+    public static final String GRAVATAR_URL_ATTRIBUTE = "gravatarUrl";
     public static final String GRAVATAR_URLS_ATTRIBUTE = "gravatarUrls";
 
     private PersonConstants() {

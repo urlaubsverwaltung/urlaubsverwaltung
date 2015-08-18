@@ -42,6 +42,7 @@ import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.application.ApplicationForLeave;
 import org.synyx.urlaubsverwaltung.web.sicknote.ExtendedSickNote;
 import org.synyx.urlaubsverwaltung.web.statistics.UsedDaysOverview;
+import org.synyx.urlaubsverwaltung.web.util.GravatarUtil;
 
 import java.math.BigDecimal;
 
@@ -120,6 +121,7 @@ public class PersonOverviewController {
         }
 
         model.addAttribute(PersonConstants.PERSON_ATTRIBUTE, person);
+        model.addAttribute(PersonConstants.GRAVATAR_URL_ATTRIBUTE, GravatarUtil.createImgURL(person.getEmail()));
 
         Integer yearToShow = parseYearParameter(year);
         prepareApplications(person, yearToShow, model);

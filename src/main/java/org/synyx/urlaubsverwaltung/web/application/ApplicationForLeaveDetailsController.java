@@ -151,6 +151,10 @@ public class ApplicationForLeaveDetailsController {
         model.addAttribute("departmentApplications", departmentApplications);
         model.addAttribute("applicationGravatarURLs", getGravatarURLsForDepartmentApplications(departmentApplications));
 
+        // PERSON'S GRAVATAR
+        model.addAttribute(PersonConstants.GRAVATAR_URL_ATTRIBUTE,
+            GravatarUtil.createImgURL(application.getPerson().getEmail()));
+
         // HOLIDAY ACCOUNT
         Optional<Account> account = accountService.getHolidaysAccount(year, application.getPerson());
 
