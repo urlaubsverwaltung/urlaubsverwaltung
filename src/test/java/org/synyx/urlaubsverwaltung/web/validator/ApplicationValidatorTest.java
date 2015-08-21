@@ -63,7 +63,7 @@ public class ApplicationValidatorTest {
         appForm = new ApplicationForLeaveForm();
 
         appForm.setVacationType(VacationType.HOLIDAY);
-        appForm.setHowLong(DayLength.FULL);
+        appForm.setDayLength(DayLength.FULL);
         appForm.setStartDate(DateMidnight.now());
         appForm.setEndDate(DateMidnight.now().plusDays(2));
 
@@ -96,7 +96,7 @@ public class ApplicationValidatorTest {
     @Test
     public void ensureStartDateIsMandatory() {
 
-        appForm.setHowLong(DayLength.FULL);
+        appForm.setDayLength(DayLength.FULL);
         appForm.setStartDate(null);
 
         validator.validate(appForm, errors);
@@ -108,7 +108,7 @@ public class ApplicationValidatorTest {
     @Test
     public void ensureEndDateIsMandatory() {
 
-        appForm.setHowLong(DayLength.FULL);
+        appForm.setDayLength(DayLength.FULL);
         appForm.setEndDate(null);
 
         validator.validate(appForm, errors);
@@ -128,7 +128,7 @@ public class ApplicationValidatorTest {
             .thenReturn(OverlapCase.NO_OVERLAPPING);
         Mockito.when(calculationService.checkApplication(Mockito.any(Application.class))).thenReturn(Boolean.TRUE);
 
-        appForm.setHowLong(DayLength.MORNING);
+        appForm.setDayLength(DayLength.MORNING);
         appForm.setStartDateHalf(DateMidnight.now());
 
         appForm.setStartDate(null);
@@ -151,7 +151,7 @@ public class ApplicationValidatorTest {
             .thenReturn(OverlapCase.NO_OVERLAPPING);
         Mockito.when(calculationService.checkApplication(Mockito.any(Application.class))).thenReturn(Boolean.TRUE);
 
-        appForm.setHowLong(DayLength.FULL);
+        appForm.setDayLength(DayLength.FULL);
         appForm.setStartDateHalf(null);
 
         validator.validate(appForm, errors);
@@ -164,7 +164,7 @@ public class ApplicationValidatorTest {
     @Test
     public void ensureDoesNotCheckPeriodIfStartDateIsNull() {
 
-        appForm.setHowLong(DayLength.FULL);
+        appForm.setDayLength(DayLength.FULL);
         appForm.setStartDate(null);
         appForm.setEndDate(new DateMidnight(2012, 1, 12));
 
@@ -179,7 +179,7 @@ public class ApplicationValidatorTest {
     @Test
     public void ensureDoesNotCheckPeriodIfEndDateIsNull() {
 
-        appForm.setHowLong(DayLength.FULL);
+        appForm.setDayLength(DayLength.FULL);
         appForm.setStartDate(new DateMidnight(2012, 1, 12));
         appForm.setEndDate(null);
 
@@ -194,7 +194,7 @@ public class ApplicationValidatorTest {
     @Test
     public void ensureDoesNotCheckPeriodIfStartDateHalfIsNull() {
 
-        appForm.setHowLong(DayLength.MORNING);
+        appForm.setDayLength(DayLength.MORNING);
         appForm.setStartDateHalf(null);
 
         try {
@@ -275,7 +275,7 @@ public class ApplicationValidatorTest {
     @Test
     public void ensureStartDateMustBeBeforeEndDate() {
 
-        appForm.setHowLong(DayLength.FULL);
+        appForm.setDayLength(DayLength.FULL);
         appForm.setStartDate(new DateMidnight(2012, 1, 17));
         appForm.setEndDate(new DateMidnight(2012, 1, 12));
 
@@ -290,7 +290,7 @@ public class ApplicationValidatorTest {
 
         DateMidnight pastDate = DateMidnight.now().minusYears(10);
 
-        appForm.setHowLong(DayLength.FULL);
+        appForm.setDayLength(DayLength.FULL);
         appForm.setStartDate(pastDate);
         appForm.setEndDate(pastDate.plusDays(1));
 
@@ -305,7 +305,7 @@ public class ApplicationValidatorTest {
 
         DateMidnight futureDate = DateMidnight.now().plusYears(10);
 
-        appForm.setHowLong(DayLength.FULL);
+        appForm.setDayLength(DayLength.FULL);
         appForm.setStartDate(futureDate);
         appForm.setEndDate(futureDate.plusDays(1));
 
@@ -322,7 +322,7 @@ public class ApplicationValidatorTest {
 
         DateMidnight pastDate = DateMidnight.now().minusYears(10);
 
-        appForm.setHowLong(DayLength.MORNING);
+        appForm.setDayLength(DayLength.MORNING);
         appForm.setStartDateHalf(pastDate);
 
         validator.validate(appForm, errors);
@@ -336,7 +336,7 @@ public class ApplicationValidatorTest {
 
         DateMidnight futureDate = DateMidnight.now().plusYears(10);
 
-        appForm.setHowLong(DayLength.NOON);
+        appForm.setDayLength(DayLength.NOON);
         appForm.setStartDateHalf(futureDate);
 
         validator.validate(appForm, errors);
@@ -408,12 +408,12 @@ public class ApplicationValidatorTest {
     @Test
     public void ensureApplyingHalfDayForLeaveWithNotEnoughVacationDaysIsNotValid() {
 
-        appForm.setHowLong(DayLength.NOON);
+        appForm.setDayLength(DayLength.NOON);
         appForm.setStartDateHalf(DateMidnight.now());
 
         Mockito.when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
-        Mockito.when(calendarService.getWorkDays(Mockito.eq(appForm.getHowLong()),
+        Mockito.when(calendarService.getWorkDays(Mockito.eq(appForm.getDayLength()),
                     Mockito.eq(appForm.getStartDateHalf()), Mockito.eq(appForm.getStartDateHalf()),
                     Mockito.eq(appForm.getPerson())))
             .thenReturn(BigDecimal.ONE);

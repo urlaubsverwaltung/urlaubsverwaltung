@@ -7,7 +7,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
 
-        var dayLength = $('input[name="howLong"]:checked').val();
+        var dayLength = $('input[name="dayLength"]:checked').val();
 
         var $fullDay = $('.full-day');
         var $halfDay = $('.half-day');
@@ -33,7 +33,7 @@
         var urlPrefix = '<spring:url value="/api" />';
         var personId = '<c:out value="${person.id}" />';
 
-        $('input[name="howLong"]').on('change', function () {
+        $('input[name="dayLength"]').on('change', function () {
 
             var dayLength = this.value;
             var startDate;

@@ -27,7 +27,7 @@ public class ApplicationForLeave extends Application {
         setId(application.getId());
 
         // calculate the work days
-        this.workDays = calendarService.getWorkDays(getHowLong(), getStartDate(), getEndDate(), getPerson());
+        this.workDays = calendarService.getWorkDays(getDayLength(), getStartDate(), getEndDate(), getPerson());
     }
 
     public BigDecimal getWorkDays() {

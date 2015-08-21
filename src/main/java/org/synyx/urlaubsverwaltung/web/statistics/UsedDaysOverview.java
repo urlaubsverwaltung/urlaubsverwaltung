@@ -73,7 +73,7 @@ public class UsedDaysOverview {
         Assert.isTrue(yearOfStartDate == this.year || yearOfEndDate == this.year,
             "Either start date or end date must be in the given year.");
 
-        DayLength dayLength = application.getHowLong();
+        DayLength dayLength = application.getDayLength();
         Person person = application.getPerson();
 
         if (yearOfStartDate != yearOfEndDate) {

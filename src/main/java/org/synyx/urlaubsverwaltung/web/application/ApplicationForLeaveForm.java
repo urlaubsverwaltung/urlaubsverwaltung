@@ -32,7 +32,7 @@ public class ApplicationForLeaveForm {
     private VacationType vacationType;
 
     // length of day: contains time of day (morning, noon or full day) and value (1.0 or 0.5 - as BigDecimal)
-    private DayLength howLong;
+    private DayLength dayLength;
 
     // For special and unpaid leave a reason is required
     private String reason;
@@ -83,15 +83,15 @@ public class ApplicationForLeaveForm {
     }
 
 
-    public DayLength getHowLong() {
+    public DayLength getDayLength() {
 
-        return howLong;
+        return dayLength;
     }
 
 
-    public void setHowLong(DayLength howLong) {
+    public void setDayLength(DayLength dayLength) {
 
-        this.howLong = howLong;
+        this.dayLength = dayLength;
     }
 
 
@@ -186,13 +186,13 @@ public class ApplicationForLeaveForm {
         applicationForLeave.setPerson(person);
         applicationForLeave.setAddress(address);
         applicationForLeave.setVacationType(vacationType);
-        applicationForLeave.setHowLong(howLong);
+        applicationForLeave.setDayLength(dayLength);
         applicationForLeave.setReason(reason);
         applicationForLeave.setHolidayReplacement(holidayReplacement);
         applicationForLeave.setAddress(address);
         applicationForLeave.setTeamInformed(teamInformed);
 
-        if (howLong == DayLength.FULL) {
+        if (dayLength == DayLength.FULL) {
             applicationForLeave.setStartDate(startDate);
             applicationForLeave.setEndDate(endDate);
         } else {

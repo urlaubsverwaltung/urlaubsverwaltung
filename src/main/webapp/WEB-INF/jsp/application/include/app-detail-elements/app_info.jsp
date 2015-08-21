@@ -46,7 +46,7 @@
                     <h5 class="is-inline-block is-sticky"><uv:date date="${application.startDate}"/></h5>
                 </c:set>
                 <c:set var="APPLICATION_DAY_LENGTH">
-                    <spring:message code="${application.howLong}"/>
+                    <spring:message code="${application.dayLength}"/>
                 </c:set>
                 <spring:message code="absence.period.singleDay" arguments="${APPLICATION_DATE};${APPLICATION_DAY_LENGTH}" argumentSeparator=";"/>
             </c:when>
@@ -80,7 +80,7 @@
 
                   <c:if test="${application.startDate.year != application.endDate.year}">
 
-                    var dayLength = '<c:out value="${application.howLong}" />';
+                    var dayLength = '<c:out value="${application.dayLength}" />';
                     var personId = '<c:out value="${application.person.id}" />';
 
                     var startDate = "<joda:format pattern='yyyy/MM/dd' value='${application.startDate}' />";

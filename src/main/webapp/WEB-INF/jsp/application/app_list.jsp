@@ -98,7 +98,7 @@
                                                 <uv:date date="${application.startDate}"/>
                                             </c:set>
                                             <c:set var="APPLICATION_DAY_LENGTH">
-                                                <spring:message code="${application.howLong}"/>
+                                                <spring:message code="${application.dayLength}"/>
                                             </c:set>
                                             <spring:message code="absence.period.singleDay" arguments="${APPLICATION_DATE};${APPLICATION_DAY_LENGTH}" argumentSeparator=";"/>
                                         </c:when>

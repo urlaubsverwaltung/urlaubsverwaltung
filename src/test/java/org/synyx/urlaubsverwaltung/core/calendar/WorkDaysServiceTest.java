@@ -63,7 +63,8 @@ public class WorkDaysServiceTest {
         workingTime.setWorkingDays(workingDays, DayLength.FULL);
 
         Mockito.when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(Mockito.eq(person),
-                Mockito.any(DateMidnight.class))).thenReturn(Optional.of(workingTime));
+                    Mockito.any(DateMidnight.class)))
+            .thenReturn(Optional.of(workingTime));
     }
 
 
@@ -90,7 +91,7 @@ public class WorkDaysServiceTest {
     public void testGetVacationDays() {
 
         // testing for full days
-        application.setHowLong(DayLength.FULL);
+        application.setDayLength(DayLength.FULL);
 
         // Testing for 2010: 17.12. is Friday, 31.12. is Friday
         // between these dates: 2 public holidays (25., 26.) plus 2*0.5 public holidays (24., 31.)
@@ -100,7 +101,7 @@ public class WorkDaysServiceTest {
         DateMidnight start = new DateMidnight(2010, 12, 17);
         DateMidnight end = new DateMidnight(2010, 12, 31);
 
-        BigDecimal returnValue = instance.getWorkDays(application.getHowLong(), start, end, person);
+        BigDecimal returnValue = instance.getWorkDays(application.getDayLength(), start, end, person);
 
         assertNotNull(returnValue);
         assertEquals(BigDecimal.valueOf(10.0), returnValue);
@@ -113,7 +114,7 @@ public class WorkDaysServiceTest {
         start = new DateMidnight(2009, 12, 17);
         end = new DateMidnight(2009, 12, 31);
 
-        returnValue = instance.getWorkDays(application.getHowLong(), start, end, person);
+        returnValue = instance.getWorkDays(application.getDayLength(), start, end, person);
 
         assertNotNull(returnValue);
         assertEquals(BigDecimal.valueOf(9.0), returnValue);
@@ -122,7 +123,7 @@ public class WorkDaysServiceTest {
         start = new DateMidnight(2011, 12, 26);
         end = new DateMidnight(2012, 1, 15);
 
-        returnValue = instance.getWorkDays(application.getHowLong(), start, end, person);
+        returnValue = instance.getWorkDays(application.getDayLength(), start, end, person);
 
         assertNotNull(returnValue);
         assertEquals(BigDecimal.valueOf(13.0), returnValue);
@@ -131,7 +132,7 @@ public class WorkDaysServiceTest {
         start = new DateMidnight(2009, 4, 27);
         end = new DateMidnight(2009, 5, 2);
 
-        returnValue = instance.getWorkDays(application.getHowLong(), start, end, person);
+        returnValue = instance.getWorkDays(application.getDayLength(), start, end, person);
 
         assertNotNull(returnValue);
         assertEquals(BigDecimal.valueOf(4.0), returnValue);
@@ -140,18 +141,18 @@ public class WorkDaysServiceTest {
         start = new DateMidnight(2011, 1, 2);
         end = new DateMidnight(2011, 1, 8);
 
-        returnValue = instance.getWorkDays(application.getHowLong(), start, end, person);
+        returnValue = instance.getWorkDays(application.getDayLength(), start, end, person);
 
         assertNotNull(returnValue);
         assertEquals(BigDecimal.valueOf(4.0), returnValue);
 
         // testing for half days
-        application.setHowLong(DayLength.MORNING);
+        application.setDayLength(DayLength.MORNING);
 
         start = new DateMidnight(2011, 1, 4);
         end = new DateMidnight(2011, 1, 8);
 
-        returnValue = instance.getWorkDays(application.getHowLong(), start, end, person);
+        returnValue = instance.getWorkDays(application.getDayLength(), start, end, person);
 
         assertNotNull(returnValue);
         assertEquals(BigDecimal.valueOf(1.5), returnValue);

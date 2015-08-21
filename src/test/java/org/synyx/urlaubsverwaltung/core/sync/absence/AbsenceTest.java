@@ -47,7 +47,7 @@ public class AbsenceTest {
         application.setStartDate(start);
         application.setEndDate(end);
         application.setPerson(person);
-        application.setHowLong(DayLength.FULL);
+        application.setDayLength(DayLength.FULL);
         application.setStatus(ApplicationStatus.ALLOWED);
 
         Absence absence = new Absence(application, timeConfiguration);
@@ -71,7 +71,7 @@ public class AbsenceTest {
         Date end = today.toDateTime().withHourOfDay(12).toDate();
 
         Application application = new Application();
-        application.setHowLong(DayLength.MORNING);
+        application.setDayLength(DayLength.MORNING);
         application.setPerson(person);
         application.setStartDate(today);
         application.setEndDate(today);
@@ -93,7 +93,7 @@ public class AbsenceTest {
         Date end = today.toDateTime().withHourOfDay(17).toDate();
 
         Application application = new Application();
-        application.setHowLong(DayLength.NOON);
+        application.setDayLength(DayLength.NOON);
         application.setPerson(person);
         application.setStartDate(today);
         application.setEndDate(today);
@@ -115,7 +115,7 @@ public class AbsenceTest {
         Application application = new Application();
         application.setStartDate(start);
         application.setEndDate(end);
-        application.setHowLong(DayLength.FULL);
+        application.setDayLength(DayLength.FULL);
         application.setPerson(person);
         application.setStatus(ApplicationStatus.ALLOWED);
 
@@ -134,7 +134,7 @@ public class AbsenceTest {
         Application application = new Application();
         application.setStartDate(start);
         application.setEndDate(end);
-        application.setHowLong(DayLength.MORNING);
+        application.setDayLength(DayLength.MORNING);
         application.setPerson(person);
         application.setStatus(ApplicationStatus.ALLOWED);
 
@@ -153,7 +153,7 @@ public class AbsenceTest {
         Application application = new Application();
         application.setStartDate(start);
         application.setEndDate(end);
-        application.setHowLong(DayLength.NOON);
+        application.setDayLength(DayLength.NOON);
         application.setPerson(person);
         application.setStatus(ApplicationStatus.ALLOWED);
 
@@ -213,7 +213,7 @@ public class AbsenceTest {
         application.setEndDate(today);
         application.setStatus(ApplicationStatus.ALLOWED);
 
-        application.setHowLong(DayLength.ZERO);
+        application.setDayLength(DayLength.ZERO);
 
         new Absence(application, timeConfiguration);
     }
@@ -227,7 +227,7 @@ public class AbsenceTest {
         Application application = new Application();
         application.setPerson(person);
         application.setEndDate(today);
-        application.setHowLong(DayLength.FULL);
+        application.setDayLength(DayLength.FULL);
         application.setStatus(ApplicationStatus.ALLOWED);
 
         new Absence(application, timeConfiguration);
@@ -242,7 +242,7 @@ public class AbsenceTest {
         Application application = new Application();
         application.setPerson(person);
         application.setStartDate(today);
-        application.setHowLong(DayLength.FULL);
+        application.setDayLength(DayLength.FULL);
         application.setStatus(ApplicationStatus.ALLOWED);
 
         new Absence(application, timeConfiguration);
@@ -284,7 +284,7 @@ public class AbsenceTest {
         application.setPerson(person);
         application.setStartDate(today);
         application.setEndDate(today);
-        application.setHowLong(DayLength.FULL);
+        application.setDayLength(DayLength.FULL);
         application.setStatus(ApplicationStatus.WAITING);
 
         Absence absence = new Absence(application, timeConfiguration);
@@ -303,7 +303,7 @@ public class AbsenceTest {
         application.setPerson(person);
         application.setStartDate(today);
         application.setEndDate(today);
-        application.setHowLong(DayLength.FULL);
+        application.setDayLength(DayLength.FULL);
         application.setStatus(ApplicationStatus.ALLOWED);
 
         Absence absence = new Absence(application, timeConfiguration);
@@ -339,7 +339,7 @@ public class AbsenceTest {
         application.setPerson(person);
         application.setStartDate(today);
         application.setEndDate(today);
-        application.setHowLong(DayLength.FULL);
+        application.setDayLength(DayLength.FULL);
         application.setStatus(ApplicationStatus.CANCELLED);
 
         new Absence(application, timeConfiguration);

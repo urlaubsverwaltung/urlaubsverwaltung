@@ -115,7 +115,7 @@ class MailServiceImpl implements MailService {
         model.put("application", application);
 
         String vacType = application.getVacationType().name();
-        String length = application.getHowLong().name();
+        String length = application.getDayLength().name();
         model.put("vacationType", properties.getProperty(vacType));
         model.put("dayLength", properties.getProperty(length));
         model.put("link", applicationUrl + "web/application/" + application.getId());
@@ -460,7 +460,7 @@ class MailServiceImpl implements MailService {
 
         Map<String, Object> model = new HashMap<>();
         model.put("application", application);
-        model.put("dayLength", properties.getProperty(application.getHowLong().name()));
+        model.put("dayLength", properties.getProperty(application.getDayLength().name()));
 
         String text = buildMailBody("notify_holiday_replacement", model);
 

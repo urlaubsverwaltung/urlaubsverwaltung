@@ -217,7 +217,7 @@ public class TestDataCreationService {
             application.setStartDate(startDate);
             application.setEndDate(endDate);
             application.setVacationType(vacationType);
-            application.setHowLong(dayLength);
+            application.setDayLength(dayLength);
             application.setReason(
                 "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt"
                 + "ut labore et dolore magna aliquyam erat, sed diam voluptua."

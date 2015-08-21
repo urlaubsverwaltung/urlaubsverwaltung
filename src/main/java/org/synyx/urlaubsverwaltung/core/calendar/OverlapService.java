@@ -55,18 +55,18 @@ public class OverlapService {
         DateMidnight endDate = application.getEndDate();
 
         List<Application> applications = getRelevantApplicationsForLeave(person, startDate, endDate,
-                application.getHowLong());
+                application.getDayLength());
 
         if (!application.isNew()) {
             applications = FluentIterable.from(applications).filter(new Predicate<Application>() {
 
-                        @Override
-                        public boolean apply(Application input) {
+                            @Override
+                            public boolean apply(Application input) {
 
-                            // the same application for leave should not be recognized as overlapping
-                            return input.getId() != null && !input.getId().equals(application.getId());
-                        }
-                    }).toList();
+                                // the same application for leave should not be recognized as overlapping
+                                return input.getId() != null && !input.getId().equals(application.getId());
+                            }
+                        }).toList();
         }
 
         List<SickNote> sickNotes = getRelevantSickNotes(person, startDate, endDate);
@@ -96,13 +96,13 @@ public class OverlapService {
         if (!sickNote.isNew()) {
             sickNotes = FluentIterable.from(sickNotes).filter(new Predicate<SickNote>() {
 
-                        @Override
-                        public boolean apply(SickNote input) {
+                            @Override
+                            public boolean apply(SickNote input) {
 
-                            // the same sick note should not be recognized as overlapping
-                            return input.getId() != null && !input.getId().equals(sickNote.getId());
-                        }
-                    }).toList();
+                                // the same sick note should not be recognized as overlapping
+                                return input.getId() != null && !input.getId().equals(sickNote.getId());
+                            }
+                        }).toList();
         }
 
         return getOverlapCase(startDate, endDate, applications, sickNotes);
@@ -174,21 +174,21 @@ public class OverlapService {
         // remove the non-relevant ones
         return FluentIterable.from(applicationsForLeave).filter(new Predicate<Application>() {
 
-                    @Override
-                    public boolean apply(Application input) {
+                        @Override
+                        public boolean apply(Application input) {
 
-                        // only waiting and allowed applications for leave are relevant
-                        boolean isWaitingOrAllowed = input.hasStatus(ApplicationStatus.WAITING)
-                            || input.hasStatus(ApplicationStatus.ALLOWED);
+                            // only waiting and allowed applications for leave are relevant
+                            boolean isWaitingOrAllowed = input.hasStatus(ApplicationStatus.WAITING)
+                                || input.hasStatus(ApplicationStatus.ALLOWED);
 
-                        // if only half day, then only the same time of day is relevant
-                        if (!DayLength.FULL.equals(dayLength)) {
-                            return isWaitingOrAllowed && input.getHowLong().equals(dayLength);
+                            // if only half day, then only the same time of day is relevant
+                            if (!DayLength.FULL.equals(dayLength)) {
+                                return isWaitingOrAllowed && input.getDayLength().equals(dayLength);
+                            }
+
+                            return isWaitingOrAllowed;
                         }
-
-                        return isWaitingOrAllowed;
-                    }
-                }).toList();
+                    }).toList();
     }
 
 
@@ -209,12 +209,12 @@ public class OverlapService {
         // filter them since only active sick notes are relevant
         return FluentIterable.from(sickNotes).filter(new Predicate<SickNote>() {
 
-                    @Override
-                    public boolean apply(SickNote input) {
+                        @Override
+                        public boolean apply(SickNote input) {
 
-                        return input.isActive();
-                    }
-                }).toList();
+                            return input.isActive();
+                        }
+                    }).toList();
     }
 
 

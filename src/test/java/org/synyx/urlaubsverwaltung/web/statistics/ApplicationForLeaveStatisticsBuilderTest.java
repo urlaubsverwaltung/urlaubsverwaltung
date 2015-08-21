@@ -71,8 +71,8 @@ public class ApplicationForLeaveStatisticsBuilderTest {
 
         Mockito.when(person.getEmail()).thenReturn("muster@muster.de");
         Mockito.when(accountService.getHolidaysAccount(2014, person)).thenReturn(Optional.of(account));
-        Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(Mockito.eq(account))).thenReturn(
-            BigDecimal.TEN);
+        Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(Mockito.eq(account)))
+            .thenReturn(BigDecimal.TEN);
 
         Application holidayWaiting = new Application();
         holidayWaiting.setVacationType(VacationType.HOLIDAY);
@@ -119,12 +119,13 @@ public class ApplicationForLeaveStatisticsBuilderTest {
         List<Application> applications = Arrays.asList(holidayWaiting, holidayAllowed, holidayRejected,
                 specialLeaveWaiting, unpaidLeaveAllowed, overTimeWaiting);
 
-        Mockito.when(applicationService.getApplicationsForACertainPeriodAndPerson(from, to, person)).thenReturn(
-            applications);
+        Mockito.when(applicationService.getApplicationsForACertainPeriodAndPerson(from, to, person))
+            .thenReturn(applications);
 
         // just return 1 day for each application for leave
         Mockito.when(calendarService.getWorkDays(Mockito.any(DayLength.class), Mockito.any(DateMidnight.class),
-                Mockito.any(DateMidnight.class), Mockito.eq(person))).thenReturn(BigDecimal.ONE);
+                    Mockito.any(DateMidnight.class), Mockito.eq(person)))
+            .thenReturn(BigDecimal.ONE);
 
         ApplicationForLeaveStatistics statistics = builder.build(person, from, to);
 
@@ -159,15 +160,15 @@ public class ApplicationForLeaveStatisticsBuilderTest {
 
         Mockito.when(person.getEmail()).thenReturn("muster@muster.de");
         Mockito.when(accountService.getHolidaysAccount(2015, person)).thenReturn(Optional.of(account));
-        Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(Mockito.eq(account))).thenReturn(
-            BigDecimal.TEN);
+        Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(Mockito.eq(account)))
+            .thenReturn(BigDecimal.TEN);
 
         Application holidayAllowed = new Application();
         holidayAllowed.setVacationType(VacationType.HOLIDAY);
         holidayAllowed.setStartDate(new DateMidnight(2014, 12, 29));
         holidayAllowed.setEndDate(new DateMidnight(2015, 1, 9));
         holidayAllowed.setStatus(ApplicationStatus.ALLOWED);
-        holidayAllowed.setHowLong(DayLength.FULL);
+        holidayAllowed.setDayLength(DayLength.FULL);
         holidayAllowed.setPerson(person);
 
         Application holidayWaiting = new Application();
@@ -175,18 +176,20 @@ public class ApplicationForLeaveStatisticsBuilderTest {
         holidayWaiting.setStartDate(new DateMidnight(2015, 12, 21));
         holidayWaiting.setEndDate(new DateMidnight(2016, 1, 4));
         holidayWaiting.setStatus(ApplicationStatus.WAITING);
-        holidayWaiting.setHowLong(DayLength.FULL);
+        holidayWaiting.setDayLength(DayLength.FULL);
         holidayWaiting.setPerson(person);
 
         List<Application> applications = Arrays.asList(holidayWaiting, holidayAllowed);
 
-        Mockito.when(applicationService.getApplicationsForACertainPeriodAndPerson(from, to, person)).thenReturn(
-            applications);
+        Mockito.when(applicationService.getApplicationsForACertainPeriodAndPerson(from, to, person))
+            .thenReturn(applications);
 
         Mockito.when(calendarService.getWorkDays(DayLength.FULL, new DateMidnight(2015, 1, 1),
-                new DateMidnight(2015, 1, 9), person)).thenReturn(new BigDecimal("5"));
+                    new DateMidnight(2015, 1, 9), person))
+            .thenReturn(new BigDecimal("5"));
         Mockito.when(calendarService.getWorkDays(DayLength.FULL, new DateMidnight(2015, 12, 21),
-                new DateMidnight(2015, 12, 31), person)).thenReturn(new BigDecimal("7"));
+                    new DateMidnight(2015, 12, 31), person))
+            .thenReturn(new BigDecimal("7"));
 
         ApplicationForLeaveStatistics statistics = builder.build(person, from, to);
 

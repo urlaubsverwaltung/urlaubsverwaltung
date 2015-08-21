@@ -62,7 +62,7 @@ public class Application extends AbstractPersistable<Integer> {
 
     // length of day: contains time of day (morning, noon or full day) and value (1.0 or 0.5 - as BigDecimal)
     @Enumerated(EnumType.STRING)
-    private DayLength howLong;
+    private DayLength dayLength;
 
     // For special and unpaid leave a reason is required
     private String reason;
@@ -234,15 +234,15 @@ public class Application extends AbstractPersistable<Integer> {
     }
 
 
-    public DayLength getHowLong() {
+    public DayLength getDayLength() {
 
-        return howLong;
+        return dayLength;
     }
 
 
-    public void setHowLong(DayLength howLong) {
+    public void setDayLength(DayLength dayLength) {
 
-        this.howLong = howLong;
+        this.dayLength = dayLength;
     }
 
 
@@ -413,7 +413,7 @@ public class Application extends AbstractPersistable<Integer> {
         toStringHelper.add("startDate", getStartDate());
         toStringHelper.add("endDate", getEndDate());
         toStringHelper.add("vacationType", getVacationType());
-        toStringHelper.add("dayLength", getHowLong());
+        toStringHelper.add("dayLength", getDayLength());
 
         if (getPerson() != null && getApplier() != null && getPerson().equals(getApplier())) {
             toStringHelper.add("person", getPerson());

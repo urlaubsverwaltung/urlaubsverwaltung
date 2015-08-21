@@ -106,7 +106,7 @@ public class ApplicationValidator implements Validator {
 
     private void validateDateFields(ApplicationForLeaveForm applicationForLeave, Errors errors) {
 
-        if (applicationForLeave.getHowLong() == DayLength.FULL) {
+        if (applicationForLeave.getDayLength() == DayLength.FULL) {
             DateMidnight startDate = applicationForLeave.getStartDate();
             DateMidnight endDate = applicationForLeave.getEndDate();
 
@@ -186,7 +186,7 @@ public class ApplicationValidator implements Validator {
 
     private void validateIfApplyingForLeaveIsPossible(ApplicationForLeaveForm applicationForm, Errors errors) {
 
-        DayLength dayLength = applicationForm.getHowLong();
+        DayLength dayLength = applicationForm.getDayLength();
         Person person = applicationForm.getPerson();
 
         BigDecimal days;

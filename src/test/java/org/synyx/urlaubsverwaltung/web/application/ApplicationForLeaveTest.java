@@ -34,20 +34,21 @@ public class ApplicationForLeaveTest {
         Application application = new Application();
         application.setStartDate(startDate);
         application.setEndDate(endDate);
-        application.setHowLong(dayLength);
+        application.setDayLength(dayLength);
 
         Mockito.when(calendarService.getWorkDays(Mockito.eq(dayLength), Mockito.eq(startDate), Mockito.eq(endDate),
-                Mockito.any(Person.class))).thenReturn(BigDecimal.TEN);
+                    Mockito.any(Person.class)))
+            .thenReturn(BigDecimal.TEN);
 
         ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, calendarService);
 
         Assert.assertNotNull("Should not be null", applicationForLeave.getStartDate());
         Assert.assertNotNull("Should not be null", applicationForLeave.getEndDate());
-        Assert.assertNotNull("Should not be null", applicationForLeave.getHowLong());
+        Assert.assertNotNull("Should not be null", applicationForLeave.getDayLength());
 
         Assert.assertEquals("Wrong start date", startDate, applicationForLeave.getStartDate());
         Assert.assertEquals("Wrong end date", endDate, applicationForLeave.getEndDate());
-        Assert.assertEquals("Wrong day length", dayLength, applicationForLeave.getHowLong());
+        Assert.assertEquals("Wrong day length", dayLength, applicationForLeave.getDayLength());
 
         Assert.assertNotNull("Should not be null", applicationForLeave.getWorkDays());
         Assert.assertEquals("Wrong number of work days", BigDecimal.TEN, applicationForLeave.getWorkDays());

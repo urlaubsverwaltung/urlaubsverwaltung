@@ -58,7 +58,7 @@ public class CalculationService {
 
         Person person = application.getPerson();
 
-        DayLength dayLength = application.getHowLong();
+        DayLength dayLength = application.getDayLength();
 
         DateMidnight startDate = application.getStartDate();
         DateMidnight endDate = application.getEndDate();
@@ -85,10 +85,10 @@ public class CalculationService {
             Optional<Account> holidaysAccountForNewYear = getHolidaysAccount(yearOfEndDate, person);
 
             return holidaysAccountForOldYear.isPresent() && holidaysAccountForNewYear.isPresent()
-                && vacationDaysService.calculateTotalLeftVacationDays(holidaysAccountForOldYear.get()).compareTo(
-                    workDaysInOldYear) >= 0
-                && vacationDaysService.calculateTotalLeftVacationDays(holidaysAccountForNewYear.get()).compareTo(
-                    workDaysInNewYear) >= 0;
+                && vacationDaysService.calculateTotalLeftVacationDays(holidaysAccountForOldYear.get())
+                .compareTo(workDaysInOldYear) >= 0
+                && vacationDaysService.calculateTotalLeftVacationDays(holidaysAccountForNewYear.get())
+                .compareTo(workDaysInNewYear) >= 0;
         }
     }
 

@@ -17,8 +17,8 @@ import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
-import org.synyx.urlaubsverwaltung.core.calendar.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.core.calendar.NowService;
+import org.synyx.urlaubsverwaltung.core.calendar.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
@@ -62,7 +62,8 @@ public class VacationDaysServiceTest {
         workingTime.setWorkingDays(workingDays, DayLength.FULL);
 
         Mockito.when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(Mockito.any(Person.class),
-                Mockito.any(DateMidnight.class))).thenReturn(Optional.of(workingTime));
+                    Mockito.any(DateMidnight.class)))
+            .thenReturn(Optional.of(workingTime));
 
         SettingsService settingsService = Mockito.mock(SettingsService.class);
         Mockito.when(settingsService.getSettings()).thenReturn(new Settings());
@@ -87,7 +88,7 @@ public class VacationDaysServiceTest {
         Application a1 = new Application();
         a1.setStartDate(new DateMidnight(2011, DateTimeConstants.DECEMBER, 29));
         a1.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 3));
-        a1.setHowLong(DayLength.FULL);
+        a1.setDayLength(DayLength.FULL);
         a1.setStatus(ApplicationStatus.ALLOWED);
         a1.setVacationType(VacationType.HOLIDAY);
         a1.setPerson(person);
@@ -96,7 +97,7 @@ public class VacationDaysServiceTest {
         Application a2 = new Application();
         a2.setStartDate(new DateMidnight(2012, DateTimeConstants.MARCH, 12));
         a2.setEndDate(new DateMidnight(2012, DateTimeConstants.MARCH, 16));
-        a2.setHowLong(DayLength.FULL);
+        a2.setDayLength(DayLength.FULL);
         a2.setStatus(ApplicationStatus.ALLOWED);
         a2.setVacationType(VacationType.HOLIDAY);
         a2.setPerson(person);
@@ -105,7 +106,7 @@ public class VacationDaysServiceTest {
         Application a3 = new Application();
         a3.setStartDate(new DateMidnight(2012, DateTimeConstants.FEBRUARY, 6));
         a3.setEndDate(new DateMidnight(2012, DateTimeConstants.FEBRUARY, 9));
-        a3.setHowLong(DayLength.FULL);
+        a3.setDayLength(DayLength.FULL);
         a3.setStatus(ApplicationStatus.WAITING);
         a3.setVacationType(VacationType.HOLIDAY);
         a3.setPerson(person);
@@ -114,13 +115,14 @@ public class VacationDaysServiceTest {
         Application a4 = new Application();
         a4.setStartDate(new DateMidnight(2012, DateTimeConstants.MARCH, 29));
         a4.setEndDate(new DateMidnight(2012, DateTimeConstants.APRIL, 5));
-        a4.setHowLong(DayLength.FULL);
+        a4.setDayLength(DayLength.FULL);
         a4.setStatus(ApplicationStatus.WAITING);
         a4.setVacationType(VacationType.HOLIDAY);
         a4.setPerson(person);
 
         Mockito.when(applicationService.getApplicationsForACertainPeriodAndPerson(Mockito.any(DateMidnight.class),
-                Mockito.any(DateMidnight.class), Mockito.any(Person.class))).thenReturn(Arrays.asList(a1, a2, a3, a4));
+                    Mockito.any(DateMidnight.class), Mockito.any(Person.class)))
+            .thenReturn(Arrays.asList(a1, a2, a3, a4));
 
         BigDecimal days = vacationDaysService.getUsedDaysBetweenTwoMilestones(person, firstMilestone, lastMilestone);
         // must be: 2 + 5 + 4 + 2 = 13
@@ -143,7 +145,7 @@ public class VacationDaysServiceTest {
         Application a1 = new Application();
         a1.setStartDate(new DateMidnight(2012, DateTimeConstants.DECEMBER, 27));
         a1.setEndDate(new DateMidnight(2013, DateTimeConstants.JANUARY, 3));
-        a1.setHowLong(DayLength.FULL);
+        a1.setDayLength(DayLength.FULL);
         a1.setPerson(person);
         a1.setStatus(ApplicationStatus.ALLOWED);
         a1.setVacationType(VacationType.HOLIDAY);
@@ -152,7 +154,7 @@ public class VacationDaysServiceTest {
         Application a2 = new Application();
         a2.setStartDate(new DateMidnight(2012, DateTimeConstants.SEPTEMBER, 3));
         a2.setEndDate(new DateMidnight(2012, DateTimeConstants.SEPTEMBER, 7));
-        a2.setHowLong(DayLength.FULL);
+        a2.setDayLength(DayLength.FULL);
         a2.setPerson(person);
         a2.setStatus(ApplicationStatus.ALLOWED);
         a2.setVacationType(VacationType.HOLIDAY);
@@ -161,13 +163,14 @@ public class VacationDaysServiceTest {
         Application a4 = new Application();
         a4.setStartDate(new DateMidnight(2012, DateTimeConstants.MARCH, 29));
         a4.setEndDate(new DateMidnight(2012, DateTimeConstants.APRIL, 5));
-        a4.setHowLong(DayLength.FULL);
+        a4.setDayLength(DayLength.FULL);
         a4.setPerson(person);
         a4.setStatus(ApplicationStatus.WAITING);
         a4.setVacationType(VacationType.HOLIDAY);
 
         Mockito.when(applicationService.getApplicationsForACertainPeriodAndPerson(Mockito.any(DateMidnight.class),
-                Mockito.any(DateMidnight.class), Mockito.any(Person.class))).thenReturn(Arrays.asList(a1, a2, a4));
+                    Mockito.any(DateMidnight.class), Mockito.any(Person.class)))
+            .thenReturn(Arrays.asList(a1, a2, a4));
 
         BigDecimal days = vacationDaysService.getUsedDaysBetweenTwoMilestones(person, firstMilestone, lastMilestone);
         // must be: 2.5 + 5 + 4 = 11.5
@@ -219,9 +222,9 @@ public class VacationDaysServiceTest {
         allowedOvertime.setStatus(ApplicationStatus.ALLOWED);
 
         Mockito.when(applicationService.getApplicationsForACertainPeriodAndPerson(Mockito.any(DateMidnight.class),
-                Mockito.any(DateMidnight.class), Mockito.any(Person.class))).thenReturn(Arrays.asList(cancelledHoliday,
-                rejectedHoliday, waitingSpecialLeave, allowedSpecialLeave, waitingUnpaidLeave, allowedUnpaidLeave,
-                waitingOvertime, allowedOvertime));
+                    Mockito.any(DateMidnight.class), Mockito.any(Person.class)))
+            .thenReturn(Arrays.asList(cancelledHoliday, rejectedHoliday, waitingSpecialLeave, allowedSpecialLeave,
+                    waitingUnpaidLeave, allowedUnpaidLeave, waitingOvertime, allowedOvertime));
 
         BigDecimal days = vacationDaysService.getUsedDaysBetweenTwoMilestones(person, firstMilestone, lastMilestone);
 

@@ -87,7 +87,7 @@ public class ApplicationForLeaveStatisticsBuilder {
         int yearOfStartDate = application.getStartDate().getYear();
         int yearOfEndDate = application.getEndDate().getYear();
 
-        DayLength dayLength = application.getHowLong();
+        DayLength dayLength = application.getDayLength();
         Person person = application.getPerson();
 
         if (yearOfStartDate != yearOfEndDate) {

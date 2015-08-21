@@ -9,8 +9,6 @@ import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 
-import java.math.BigDecimal;
-
 
 /**
  * Represents a form to convert a sick note to vacation.
@@ -110,7 +108,7 @@ public class SickNoteConvertForm {
 
         applicationForLeave.setVacationType(vacationType);
 
-        applicationForLeave.setHowLong(DayLength.FULL);
+        applicationForLeave.setDayLength(DayLength.FULL);
         applicationForLeave.setStartDate(startDate);
         applicationForLeave.setEndDate(endDate);
 

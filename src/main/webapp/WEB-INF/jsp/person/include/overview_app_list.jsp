@@ -54,7 +54,7 @@
                 <p>
                     <c:choose>
                         <c:when test="${app.startDate == app.endDate}">
-                            <uv:date date="${app.startDate}"/>, <spring:message code="${app.howLong}"/>
+                            <uv:date date="${app.startDate}"/>, <spring:message code="${app.dayLength}"/>
                         </c:when>
                         <c:otherwise>
                             <uv:date date="${app.startDate}"/> - <uv:date date="${app.endDate}"/>
@@ -74,7 +74,7 @@
 
                           $(document).ready(function () {
 
-                            var dayLength = '<c:out value="${app.howLong}" />';
+                            var dayLength = '<c:out value="${app.dayLength}" />';
                             var personId = '<c:out value="${app.person.id}" />';
 
                             var startDate = "<joda:format pattern='yyyy/MM/dd' value='${app.startDate}' />";

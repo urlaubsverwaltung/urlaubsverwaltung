@@ -86,7 +86,7 @@ public class MailServiceIntegrationTest {
         application = new Application();
         application.setPerson(person);
         application.setVacationType(VacationType.HOLIDAY);
-        application.setHowLong(DayLength.FULL);
+        application.setDayLength(DayLength.FULL);
         application.setApplicationDate(now);
         application.setStartDate(now);
         application.setEndDate(now);
@@ -171,14 +171,14 @@ public class MailServiceIntegrationTest {
         Application departmentApplication = new Application();
         departmentApplication.setStartDate(new DateMidnight(2015, 11, 5));
         departmentApplication.setEndDate(new DateMidnight(2015, 11, 6));
-        departmentApplication.setHowLong(DayLength.FULL);
+        departmentApplication.setDayLength(DayLength.FULL);
         departmentApplication.setPerson(departmentMember);
 
         Person otherDepartmentMember = new Person("schmidt", "Schmidt", "Niko", "");
         Application otherDepartmentApplication = new Application();
         otherDepartmentApplication.setStartDate(new DateMidnight(2015, 11, 4));
         otherDepartmentApplication.setEndDate(new DateMidnight(2015, 11, 4));
-        otherDepartmentApplication.setHowLong(DayLength.MORNING);
+        otherDepartmentApplication.setDayLength(DayLength.MORNING);
         otherDepartmentApplication.setPerson(otherDepartmentMember);
 
         Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS))
@@ -593,7 +593,7 @@ public class MailServiceIntegrationTest {
         Person person = new Person("muster", "Muster", "Marlene", "marlene@muster.de");
 
         Application application = new Application();
-        application.setHowLong(DayLength.FULL);
+        application.setDayLength(DayLength.FULL);
         application.setStartDate(DateMidnight.now());
         application.setEndDate(DateMidnight.now());
         application.setPerson(person);
@@ -646,7 +646,7 @@ public class MailServiceIntegrationTest {
         Person person = new Person("muster", "Muster", "Marlene", "marlene@muster.de");
 
         Application application = new Application();
-        application.setHowLong(DayLength.FULL);
+        application.setDayLength(DayLength.FULL);
         application.setStartDate(DateMidnight.now());
         application.setEndDate(DateMidnight.now());
         application.setPerson(person);

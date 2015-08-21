@@ -79,9 +79,13 @@ public class VacationDaysService {
         BigDecimal daysBeforeApril = getUsedDaysBeforeApril(account);
         BigDecimal daysAfterApril = getUsedDaysAfterApril(account);
 
-        return VacationDaysLeft.builder().withAnnualVacation(vacationDays).withRemainingVacation(remainingVacationDays)
-            .notExpiring(remainingVacationDaysNotExpiring).forUsedDaysBeforeApril(daysBeforeApril)
-            .forUsedDaysAfterApril(daysAfterApril).get();
+        return VacationDaysLeft.builder()
+            .withAnnualVacation(vacationDays)
+            .withRemainingVacation(remainingVacationDays)
+            .notExpiring(remainingVacationDaysNotExpiring)
+            .forUsedDaysBeforeApril(daysBeforeApril)
+            .forUsedDaysAfterApril(daysAfterApril)
+            .get();
     }
 
 
@@ -110,11 +114,11 @@ public class VacationDaysService {
                 firstMilestone, lastMilestone, person);
 
         // filter them since only waiting and allowed applications for leave of type holiday are relevant
-        List<Application> applicationsForLeave = allApplicationsForLeave.stream().
-                filter(input -> input.getVacationType() == VacationType.HOLIDAY
-                        && (input.hasStatus(ApplicationStatus.WAITING)
-                        || input.hasStatus(ApplicationStatus.ALLOWED))).
-                collect(Collectors.toList());
+        List<Application> applicationsForLeave = allApplicationsForLeave.stream()
+            .filter(input ->
+                        input.getVacationType() == VacationType.HOLIDAY
+                        && (input.hasStatus(ApplicationStatus.WAITING) || input.hasStatus(ApplicationStatus.ALLOWED)))
+            .collect(Collectors.toList());
 
         BigDecimal usedDays = BigDecimal.ZERO;
 
@@ -130,7 +134,7 @@ public class VacationDaysService {
                 endDate = lastMilestone;
             }
 
-            usedDays = usedDays.add(calendarService.getWorkDays(applicationForLeave.getHowLong(), startDate, endDate,
+            usedDays = usedDays.add(calendarService.getWorkDays(applicationForLeave.getDayLength(), startDate, endDate,
                         person));
         }
 

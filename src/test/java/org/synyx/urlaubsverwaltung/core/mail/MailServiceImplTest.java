@@ -51,7 +51,7 @@ public class MailServiceImplTest {
         application = new Application();
         application.setPerson(person);
         application.setVacationType(VacationType.HOLIDAY);
-        application.setHowLong(DayLength.FULL);
+        application.setDayLength(DayLength.FULL);
     }
 
 

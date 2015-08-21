@@ -36,7 +36,7 @@
                 $to.datepicker("setDate", selectedDate);
             }
 
-            var dayLength = $('input:radio[name=howLong]:checked').val();
+            var dayLength = $('input:radio[name=dayLength]:checked').val();
             var startDate = "";
             var toDate = "";
 

@@ -34,7 +34,7 @@ public class Absence {
 
     public Absence(Application application, AbsenceTimeConfiguration absenceTimeConfiguration) {
 
-        Assert.notNull(application.getHowLong(), "No day length set for application");
+        Assert.notNull(application.getDayLength(), "No day length set for application");
         Assert.notNull(application.getStartDate(), "No start date set for application");
         Assert.notNull(application.getEndDate(), "No end date set for application");
         Assert.isTrue(application.hasStatus(ApplicationStatus.ALLOWED)
@@ -59,7 +59,7 @@ public class Absence {
         long startDateInMilliseconds = application.getStartDate().toDateTime(DateTimeZone.UTC).getMillis();
         long endDateInMilliseconds = application.getEndDate().toDateTime(DateTimeZone.UTC).getMillis();
 
-        switch (application.getHowLong()) {
+        switch (application.getDayLength()) {
             case FULL:
                 this.startDate = new Date(startDateInMilliseconds);
                 this.endDate = new Date(endDateInMilliseconds + TimeUnit.DAYS.toMillis(1));

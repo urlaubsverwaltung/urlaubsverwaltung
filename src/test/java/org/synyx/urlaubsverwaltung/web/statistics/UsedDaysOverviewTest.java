@@ -106,7 +106,8 @@ public class UsedDaysOverviewTest {
 
         // just return 1 day for each application for leave
         Mockito.when(calendarService.getWorkDays(Mockito.any(DayLength.class), Mockito.any(DateMidnight.class),
-                Mockito.any(DateMidnight.class), Mockito.any(Person.class))).thenReturn(BigDecimal.ONE);
+                    Mockito.any(DateMidnight.class), Mockito.any(Person.class)))
+            .thenReturn(BigDecimal.ONE);
 
         UsedDaysOverview usedDaysOverview = new UsedDaysOverview(applications, 2014, calendarService);
 
@@ -146,10 +147,10 @@ public class UsedDaysOverviewTest {
         // sum is 5 days
         holiday.setStatus(ApplicationStatus.WAITING);
         holiday.setPerson(person);
-        holiday.setHowLong(fullDay);
+        holiday.setDayLength(fullDay);
 
-        Mockito.when(calendarService.getWorkDays(fullDay, new DateMidnight(2014, 1, 1), endDate, person)).thenReturn(
-            BigDecimal.valueOf(2));
+        Mockito.when(calendarService.getWorkDays(fullDay, new DateMidnight(2014, 1, 1), endDate, person))
+            .thenReturn(BigDecimal.valueOf(2));
 
         UsedDaysOverview usedDaysOverview = new UsedDaysOverview(Arrays.asList(holiday), 2014, calendarService);
 

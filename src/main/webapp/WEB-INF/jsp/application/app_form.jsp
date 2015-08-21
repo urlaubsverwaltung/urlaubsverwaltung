@@ -175,15 +175,15 @@
                 </label>
                 <div class="col-md-9 radio">
                     <label class="thirds">
-                        <form:radiobutton id="fullDay" class="dayLength-full" path="howLong" checked="checked" value="FULL" />
+                        <form:radiobutton id="fullDay" class="dayLength-full" path="dayLength" checked="checked" value="FULL" />
                         <spring:message code="FULL"/>
                     </label>
                     <label class="thirds">
-                        <form:radiobutton id="morning" class="dayLength-half" path="howLong" value="MORNING" />
+                        <form:radiobutton id="morning" class="dayLength-half" path="dayLength" value="MORNING" />
                         <spring:message code="MORNING"/>
                     </label>
                     <label class="thirds">
-                        <form:radiobutton id="noon" class="dayLength-half" path="howLong" value="NOON" />
+                        <form:radiobutton id="noon" class="dayLength-half" path="dayLength" value="NOON" />
                         <spring:message code="NOON"/>
                     </label>
                 </div>

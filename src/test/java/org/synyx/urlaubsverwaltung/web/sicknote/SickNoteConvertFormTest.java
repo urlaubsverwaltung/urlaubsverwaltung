@@ -71,14 +71,14 @@ public class SickNoteConvertFormTest {
         Assert.assertNotNull("Should not be null", applicationForLeave.getStartDate());
         Assert.assertNotNull("Should not be null", applicationForLeave.getEndDate());
         Assert.assertNotNull("Should not be null", applicationForLeave.getVacationType());
-        Assert.assertNotNull("Should not be null", applicationForLeave.getHowLong());
+        Assert.assertNotNull("Should not be null", applicationForLeave.getDayLength());
         Assert.assertNotNull("Should not be null", applicationForLeave.getApplicationDate());
         Assert.assertNotNull("Should not be null", applicationForLeave.getEditedDate());
 
         Assert.assertEquals("Wrong person", person, applicationForLeave.getPerson());
         Assert.assertEquals("Wrong start date", startDate, applicationForLeave.getStartDate());
         Assert.assertEquals("Wrong end date", endDate, applicationForLeave.getEndDate());
-        Assert.assertEquals("Wrong day length", DayLength.FULL, applicationForLeave.getHowLong());
+        Assert.assertEquals("Wrong day length", DayLength.FULL, applicationForLeave.getDayLength());
         Assert.assertEquals("Wrong vacation type", vacationType, applicationForLeave.getVacationType());
         Assert.assertEquals("Wrong status", ApplicationStatus.ALLOWED, applicationForLeave.getStatus());
     }

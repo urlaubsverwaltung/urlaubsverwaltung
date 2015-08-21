@@ -164,7 +164,7 @@ public class VacationController {
 
                     while (!day.isAfter(endDate)) {
                         vacationDateList.add(new VacationDay(day.toString(RestApiDateFormat.PATTERN), app.getId(),
-                                app.getStatus().name(), app.getHowLong().getDuration()));
+                                app.getStatus().name(), app.getDayLength().getDuration()));
 
                         day = day.plusDays(1);
                     }

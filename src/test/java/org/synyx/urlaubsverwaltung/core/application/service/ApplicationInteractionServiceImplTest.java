@@ -99,7 +99,7 @@ public class ApplicationInteractionServiceImplTest {
         applicationForLeave.setPerson(person);
         applicationForLeave.setStartDate(new DateMidnight(2013, 2, 1));
         applicationForLeave.setEndDate(new DateMidnight(2013, 2, 5));
-        applicationForLeave.setHowLong(DayLength.FULL);
+        applicationForLeave.setDayLength(DayLength.FULL);
 
         return applicationForLeave;
     }
@@ -436,7 +436,7 @@ public class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
         applicationForLeave.setStartDate(new DateMidnight(2014, 12, 24));
         applicationForLeave.setEndDate(new DateMidnight(2015, 1, 7));
-        applicationForLeave.setHowLong(DayLength.FULL);
+        applicationForLeave.setDayLength(DayLength.FULL);
 
         service.cancel(applicationForLeave, canceller, comment);
 

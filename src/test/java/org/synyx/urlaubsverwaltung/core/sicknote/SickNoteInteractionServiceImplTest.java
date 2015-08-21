@@ -168,7 +168,7 @@ public class SickNoteInteractionServiceImplTest {
         applicationForLeave.setStartDate(DateMidnight.now());
         applicationForLeave.setEndDate(DateMidnight.now());
         applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
-        applicationForLeave.setHowLong(DayLength.FULL);
+        applicationForLeave.setDayLength(DayLength.FULL);
 
         SickNote convertedSickNote = sickNoteInteractionService.convert(sickNote, applicationForLeave, person);
 
@@ -206,7 +206,7 @@ public class SickNoteInteractionServiceImplTest {
         applicationForLeave.setStartDate(DateMidnight.now());
         applicationForLeave.setEndDate(DateMidnight.now());
         applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
-        applicationForLeave.setHowLong(DayLength.FULL);
+        applicationForLeave.setDayLength(DayLength.FULL);
 
         AbsenceMapping absenceMapping = new AbsenceMapping();
         Mockito.when(absenceMappingService.getAbsenceByIdAndType(Mockito.anyInt(), Mockito.eq(AbsenceType.SICKNOTE)))

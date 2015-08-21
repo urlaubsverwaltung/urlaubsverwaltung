@@ -66,7 +66,8 @@ public class CalculationServiceTest {
         workingTime.setWorkingDays(workingDays, DayLength.FULL);
 
         Mockito.when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(Mockito.any(Person.class),
-                Mockito.any(DateMidnight.class))).thenReturn(Optional.of(workingTime));
+                    Mockito.any(DateMidnight.class)))
+            .thenReturn(Optional.of(workingTime));
 
         service = new CalculationService(vacationDaysService, accountService, accountInteractionService,
                 calendarService);
@@ -83,7 +84,7 @@ public class CalculationServiceTest {
         applicationForLeaveToCheck.setStartDate(new DateMidnight(2012, DateTimeConstants.AUGUST, 20));
         applicationForLeaveToCheck.setEndDate(new DateMidnight(2012, DateTimeConstants.AUGUST, 20));
         applicationForLeaveToCheck.setPerson(person);
-        applicationForLeaveToCheck.setHowLong(DayLength.FULL);
+        applicationForLeaveToCheck.setDayLength(DayLength.FULL);
 
         Account account = new Account();
         Mockito.when(accountService.getHolidaysAccount(2012, person)).thenReturn(Optional.of(account));
