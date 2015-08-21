@@ -107,6 +107,17 @@ public class DepartmentServiceImplTest {
     }
 
 
+    @Test
+    public void ensureGetAssignedDepartmentsOfMemberCallCorrectDAOMethod() throws Exception {
+
+        Person person = Mockito.mock(Person.class);
+
+        sut.getAssignedDepartmentsOfMember(person);
+
+        Mockito.verify(departmentDAO).getAssignedDepartments(person);
+    }
+
+
     @Test(expected = IllegalStateException.class)
     public void ensureExceptionOnDeletionOfNonPersistedId() throws Exception {
 

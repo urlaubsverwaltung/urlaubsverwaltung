@@ -84,6 +84,13 @@ public class DepartmentServiceImpl implements DepartmentService {
 
 
     @Override
+    public List<Department> getAssignedDepartmentsOfMember(Person member) {
+
+        return departmentDAO.getAssignedDepartments(member);
+    }
+
+
+    @Override
     public List<Department> getManagedDepartmentsOfDepartmentHead(Person departmentHead) {
 
         return departmentDAO.getManagedDepartments(departmentHead);
@@ -116,7 +123,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         private List<Person> getMembersOfAssignedDepartments(Person member) {
 
             Set<Person> relevantPersons = new HashSet<>();
-            List<Department> departments = departmentDAO.getAssignedDepartments(member);
+            List<Department> departments = getAssignedDepartmentsOfMember(member);
 
             for (Department department : departments) {
                 List<Person> members = department.getMembers();
