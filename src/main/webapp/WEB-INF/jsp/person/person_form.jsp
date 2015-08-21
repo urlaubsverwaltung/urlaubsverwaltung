@@ -28,11 +28,11 @@
 <c:choose>
     <c:when test="${personForm.id == null}">
         <c:set var="METHOD" value="POST"/>
-        <c:set var="ACTION" value="${URL_PREFIX}/staff/new"/>
+        <c:set var="ACTION" value="${URL_PREFIX}/staff"/>
     </c:when>
     <c:otherwise>
         <c:set var="METHOD" value="PUT"/>
-        <c:set var="ACTION" value="${URL_PREFIX}/staff/${personForm.id}/edit"/>
+        <c:set var="ACTION" value="${URL_PREFIX}/staff/${personForm.id}"/>
     </c:otherwise>
 </c:choose>
 
@@ -326,7 +326,7 @@
                     <c:out value="${personForm.holidaysAccountYear}" />
                 </c:when>
                 <c:otherwise>
-                    <uv:year-selector year="${personForm.holidaysAccountYear}"/>
+                    <uv:year-selector year="${personForm.holidaysAccountYear}" hrefPrefix="${URL_PREFIX}/staff/${personForm.id}/edit?year="/>
                 </c:otherwise>
             </c:choose>
         </legend>

@@ -58,29 +58,41 @@ public class PersonController {
     private SessionService sessionService;
 
     @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
-    @RequestMapping(value = "/staff/inactive", method = RequestMethod.GET)
-    public String showInactiveStaff() {
-
-        return "redirect:/web/staff/inactive?year=" + DateMidnight.now().getYear();
-    }
-
-
-    @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
     @RequestMapping(value = "/staff", method = RequestMethod.GET)
-    public String showActiveStaff() {
+    public String showStaff(@RequestParam(value = "active", required = true) Boolean active,
+        @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Integer requestedYear,
+        Model model) {
 
-        return "redirect:/web/staff?year=" + DateMidnight.now().getYear();
-    }
+        Integer year = requestedYear == null ? DateMidnight.now().getYear() : requestedYear;
 
+        List<Person> persons;
 
-    @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
-    @RequestMapping(value = "/staff/inactive", params = ControllerConstants.YEAR_ATTRIBUTE, method = RequestMethod.GET)
-    public String showInactiveStaffByYear(@RequestParam(ControllerConstants.YEAR_ATTRIBUTE) int year, Model model) {
+        if (active) {
+            persons = getRelevantActivePersons();
+        } else {
+            persons = getRelevantInactivePersons();
+        }
 
-        List<Person> persons = getRelevantInactivePersons();
         prepareStaffView(persons, year, model);
 
         return PersonConstants.STAFF_JSP;
+    }
+
+
+    private List<Person> getRelevantActivePersons() {
+
+        List<Person> persons = personService.getActivePersons();
+
+        // NOTE: If the signed in user is only department head, he wants to see only the persons of his departments
+        if (sessionService.getSignedInUser().hasRole(Role.DEPARTMENT_HEAD)) {
+            List<Person> members = departmentService.getManagedMembersOfDepartmentHead(
+                    sessionService.getSignedInUser());
+
+            // NOTE: Only persons without inactive role are relevant
+            return members.stream().filter(person -> !person.hasRole(Role.INACTIVE)).collect(Collectors.toList());
+        }
+
+        return persons;
     }
 
 
@@ -123,35 +135,7 @@ public class PersonController {
         model.addAttribute("accounts", accounts);
         model.addAttribute("vacationDaysLeftMap", vacationDaysLeftMap);
         model.addAttribute(PersonConstants.BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(DateMidnight.now()));
-        model.addAttribute(ControllerConstants.YEAR_ATTRIBUTE, DateMidnight.now().getYear());
+        model.addAttribute(ControllerConstants.YEAR_ATTRIBUTE, year);
         model.addAttribute("now", DateMidnight.now());
-    }
-
-
-    @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
-    @RequestMapping(value = "/staff", params = ControllerConstants.YEAR_ATTRIBUTE, method = RequestMethod.GET)
-    public String showActiveStaffByYear(@RequestParam(ControllerConstants.YEAR_ATTRIBUTE) int year, Model model) {
-
-        List<Person> persons = getRelevantActivePersons();
-        prepareStaffView(persons, year, model);
-
-        return PersonConstants.STAFF_JSP;
-    }
-
-
-    private List<Person> getRelevantActivePersons() {
-
-        List<Person> persons = personService.getActivePersons();
-
-        // NOTE: If the signed in user is only department head, he wants to see only the persons of his departments
-        if (sessionService.getSignedInUser().hasRole(Role.DEPARTMENT_HEAD)) {
-            List<Person> members = departmentService.getManagedMembersOfDepartmentHead(
-                    sessionService.getSignedInUser());
-
-            // NOTE: Only persons without inactive role are relevant
-            return members.stream().filter(person -> !person.hasRole(Role.INACTIVE)).collect(Collectors.toList());
-        }
-
-        return persons;
     }
 }

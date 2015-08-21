@@ -2,6 +2,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
 <%@attribute name="year" type="java.lang.Integer" required="true" %>
+<%@attribute name="hrefPrefix" type="java.lang.String" required="true" %>
 
 <script type="text/javascript">
 
@@ -11,11 +12,11 @@
 
         var $dropdown = $('#year-selection').find('.dropdown-menu');
 
-        $dropdown.append('<li><a href="?year=' + (currentYear + 1) + '">' + (currentYear + 1) + '</a></li>');
-        $dropdown.append('<li><a href="?year=' + currentYear + '">' + currentYear + '</a></li>');
+        $dropdown.append('<li><a href="${hrefPrefix}' + (currentYear + 1) + '">' + (currentYear + 1) + '</a></li>');
+        $dropdown.append('<li><a href="${hrefPrefix}' + currentYear + '">' + currentYear + '</a></li>');
 
         for (var i = 1; i < 10; i++) {
-            $dropdown.append('<li><a href="?year=' + (currentYear - i) + '">' + (currentYear - i) + '</a></li>');
+            $dropdown.append('<li><a href="${hrefPrefix}' + (currentYear - i) + '">' + (currentYear - i) + '</a></li>');
         }
 
     });

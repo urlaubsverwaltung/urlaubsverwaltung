@@ -68,7 +68,7 @@
 
         <sec:authorize access="hasAnyRole('DEPARTMENT_HEAD', 'BOSS', 'OFFICE')">
           <li>
-            <a href="${URL_PREFIX}/staff">
+            <a href="${URL_PREFIX}/staff?active=true">
               <i class="fa fa-fw fa-user"></i>
               <spring:message code="nav.staff.title"/>
             </a>

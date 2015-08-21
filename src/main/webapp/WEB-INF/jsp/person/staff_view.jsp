@@ -10,35 +10,10 @@
 <!DOCTYPE html>
 <html>
 
+    <spring:url var="URL_PREFIX" value="/web" />
+
     <head>
         <uv:head />
-
-        <spring:url var="URL_PREFIX" value="/web" />
-
-        <c:choose>
-            <c:when test="${!empty param.year}">
-                <c:set var="displayYear" value="${param.year}" />
-            </c:when>
-            <c:otherwise>
-                <c:set var="displayYear" value="${year}" />
-            </c:otherwise>
-        </c:choose>
-        
-        <script type="text/javascript">
-            $(document).ready(function() {
-
-                var path = window.location.pathname;
-
-                var active;
-                
-                if(path.indexOf("inactive") != -1) {
-                    $('#active-state').html('<spring:message code="persons.inactive" /><span class="caret"></span>');
-                } else {
-                    $('#active-state').html('<spring:message code="persons.active" /><span class="caret"></span>');
-                }
-
-            });
-        </script>
     </head>
 
     <body>
@@ -59,17 +34,24 @@
                             <div class="legend-dropdown dropdown">
                                 <a id="active-state" data-target="#" href="#" data-toggle="dropdown"
                                    aria-haspopup="true" role="button" aria-expanded="false">
-                                    <%-- Filled by javascript --%>
+                                    <c:choose>
+                                        <c:when test="${param.active}">
+                                            <spring:message code="persons.active" /><span class="caret"></span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <spring:message code="persons.inactive" /><span class="caret"></span>
+                                        </c:otherwise>
+                                    </c:choose>
                                 </a>
                                 <ul class="dropdown-menu" role="menu" aria-labelledby="active-state">
                                     <li>
-                                        <a href="${URL_PREFIX}/staff">
+                                        <a href="${URL_PREFIX}/staff?active=true&year=${year}">
                                             <i class="fa fa-toggle-on"></i>
                                             <spring:message code="persons.active" />
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="${URL_PREFIX}/staff/inactive">
+                                        <a href="${URL_PREFIX}/staff?active=false&year=${year}">
                                             <i class="fa fa-toggle-off"></i>
                                             <spring:message code="persons.inactive" />
                                         </a>
@@ -77,7 +59,7 @@
                                 </ul>
                             </div>
 
-                            <uv:year-selector year="${displayYear}" />
+                            <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/staff?active=${param.active}&year=" />
 
                             <uv:print />
 

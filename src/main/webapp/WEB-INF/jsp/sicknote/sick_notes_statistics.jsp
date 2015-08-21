@@ -31,7 +31,7 @@
 
                 <legend>
                     <spring:message code="sicknotes.statistics" />
-                    <uv:year-selector year="${statistics.year}" />
+                    <uv:year-selector year="${statistics.year}" hrefPrefix="${URL_PREFIX}/sicknote/statistics?year=" />
                     <uv:print />
                 </legend>
 

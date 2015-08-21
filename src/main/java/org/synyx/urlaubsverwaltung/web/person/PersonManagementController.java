@@ -86,7 +86,7 @@ public class PersonManagementController {
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @RequestMapping(value = "/staff/new", method = RequestMethod.POST)
+    @RequestMapping(value = "/staff", method = RequestMethod.POST)
     public String newPerson(@ModelAttribute("personForm") PersonForm personForm, Errors errors, Model model) {
 
         validator.validateLogin(personForm.getLoginName(), errors);
@@ -105,7 +105,7 @@ public class PersonManagementController {
 
         personInteractionService.create(personForm);
 
-        return "redirect:/web/staff/";
+        return "redirect:/web/staff?active=true";
     }
 
 
@@ -145,7 +145,7 @@ public class PersonManagementController {
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @RequestMapping(value = "/staff/{personId}/edit", method = RequestMethod.PUT)
+    @RequestMapping(value = "/staff/{personId}", method = RequestMethod.PUT)
     public String editPerson(@PathVariable("personId") Integer personId,
         @ModelAttribute("personForm") PersonForm personForm, Errors errors, Model model) {
 
@@ -171,6 +171,6 @@ public class PersonManagementController {
 
         personInteractionService.update(personForm);
 
-        return "redirect:/web/staff/";
+        return "redirect:/web/staff?active=true";
     }
 }

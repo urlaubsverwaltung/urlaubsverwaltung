@@ -103,7 +103,7 @@
                     <div class="header">
                       <legend>
                         <spring:message code="application.applier.account.entitlement"/>
-                        <uv:year-selector year="${year}"/>
+                        <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/application/${application.id}?year="/>
                       </legend>
                     </div>
 

@@ -12,7 +12,7 @@
 
         <spring:message code="overview.title"/>
 
-        <uv:year-selector year="${displayYear}"/>
+        <uv:year-selector year="${displayYear}" hrefPrefix="${URL_PREFIX}/staff/${person.id}/overview?year="/>
 
         <span class="hidden-sm hidden-xs">
             <uv:print/>
