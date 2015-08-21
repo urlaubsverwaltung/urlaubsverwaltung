@@ -102,7 +102,7 @@
 
                     <div class="header">
                       <legend>
-                        <spring:message code="application.applier.account.entitlement"/>
+                        <spring:message code="person.account.vacation.title"/>
                         <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/application/${application.id}?year="/>
                       </legend>
                     </div>
@@ -125,11 +125,11 @@
                         <span class="box-text">
                             <c:choose>
                                 <c:when test="${account != null}">
-                                    <spring:message code="overview.vacation.entitlement" arguments="${account.vacationDays}" />
-                                    <spring:message code="overview.vacation.entitlement.remaining" arguments="${account.remainingVacationDays}" />
+                                    <spring:message code="person.account.vacation.entitlement" arguments="${account.vacationDays}" />
+                                    <spring:message code="person.account.vacation.entitlement.remaining" arguments="${account.remainingVacationDays}" />
                                 </c:when>
                                 <c:otherwise>
-                                    <spring:message code='person.account.noInformation'/>
+                                    <spring:message code='person.account.vacation.noInformation'/>
                                 </c:otherwise>
                             </c:choose>
                         </span>
@@ -140,18 +140,18 @@
                         <span class="box-text">
                             <c:choose>
                                 <c:when test="${account != null}">
-                                  <spring:message code="overview.vacation.left" arguments="${vacationDaysLeft.vacationDays}" />
+                                  <spring:message code="person.account.vacation.left" arguments="${vacationDaysLeft.vacationDays}" />
                                   <c:choose>
                                     <c:when test="${beforeApril}">
-                                      <spring:message code="overview.vacation.left.remaining" arguments="${vacationDaysLeft.remainingVacationDays}" />
+                                      <spring:message code="person.account.vacation.left.remaining" arguments="${vacationDaysLeft.remainingVacationDays}" />
                                     </c:when>
                                     <c:otherwise>
-                                      <spring:message code="overview.vacation.left.remaining" arguments="${vacationDaysLeft.remainingVacationDaysNotExpiring}" />
+                                      <spring:message code="person.account.vacation.left.remaining" arguments="${vacationDaysLeft.remainingVacationDaysNotExpiring}" />
                                     </c:otherwise>
                                   </c:choose>
                                 </c:when>
                                 <c:otherwise>
-                                    <spring:message code='person.account.noInformation'/>
+                                    <spring:message code='person.account.vacation.noInformation'/>
                                 </c:otherwise>
                             </c:choose>
                         </span>
