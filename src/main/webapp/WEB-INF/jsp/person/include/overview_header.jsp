@@ -27,6 +27,13 @@
             </span>
         </sec:authorize>
 
+        <span>
+            <a href="${URL_PREFIX}/staff/${person.id}" class="fa-action pull-right" style="margin-top: 1px"
+               data-title="<spring:message code="action.details"/>">
+                <i class="fa fa-list-alt"></i>
+            </a>
+        </span>
+
     </legend>
 
 </div>
