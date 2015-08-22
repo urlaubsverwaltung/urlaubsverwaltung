@@ -48,7 +48,7 @@
                 sendGetDaysRequest(urlPrefix,
                         startDate,
                         endDate,
-                        $('input:radio[name=howLong]:checked').val(),
+                        $('input:radio[name=dayLength]:checked').val(),
                         personId, ".days");
 
                 sendGetDepartmentVacationsRequest(urlPrefix, startDate, endDate, personId, "#departmentVacations");
