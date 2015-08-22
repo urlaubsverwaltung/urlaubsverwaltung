@@ -200,6 +200,18 @@ Um die erstellten Urlaubs- und Krankmeldungstermine mit einem Microsoft Exchange
 
 <pre>export CATALINA_OPTS="$CATALINA_OPTS -Denv=prod -Dauth=activeDirectory -Dcalendar=ews"</pre>
 
+###### E-Mail-Konfiguration
+
+Durch Aktivieren der Produktivumgebung wird der Mail Sender automatisch so gesetzt, dass E-Mails verschickt werden können:
+<pre>mail.sender=org.springframework.mail.javamail.JavaMailSenderImpl</pre>
+
+Diese Einstellung erfordert, dass die Properties für Mail Host und Port korrekt konfiguriert sein müssen.
+
+Möchte man keine E-Mails verschicken und keinerlei E-Mail-Konfiguration vornehmen, kann man diese Property überschreiben:
+<pre>mail.sender=org.synyx.urlaubsverwaltung.core.mail.MockMailSender</pre>
+
+Dies hat zur Folge, dass keine E-Mails verschickt werden und folglich keine Konfiguration zum E-Mail-Versand vorgenommen werden muss.
+
 #### Konfiguration bis Version 2.6.4
 
 ##### Überschreiben der Properties
