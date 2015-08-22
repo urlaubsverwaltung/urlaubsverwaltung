@@ -28,6 +28,7 @@ $(function() {
         dayHalfPublicHoliday  : 'datepicker-day-half-public-holiday',
         dayPersonalHoliday    : 'datepicker-day-personal-holiday',
         dayHalfPersonalHoliday: 'datepicker-day-half-personal-holiday',
+        daySickDay            : 'datepicker-day-sick-note',
         next                  : 'datepicker-next',
         prev                  : 'datepicker-prev',
         month                 : 'datepicker-month',
@@ -68,14 +69,20 @@ $(function() {
             isPersonalHoliday: function(date) {
                 return holidayService.isPersonalHoliday(date);
             },
+            isSickDay: function(date) {
+                return holidayService.isSickDay(date);
+            },
             isHalfDay: function(date) {
               return holidayService.isHalfDay(date);
             },
             title: function(date) {
               return holidayService.getDescription(date);
             },
-            applicationId: function(date) {
-              return holidayService.getApplicationId(date);
+            absenceId: function(date) {
+              return holidayService.getAbsenceId(date);
+            },
+            absenceType: function(date) {
+                return holidayService.getAbsenceType(date);
             }
         };
 
@@ -123,7 +130,7 @@ $(function() {
             });
         }
 
-        function cacheHoliday(response) {
+        function cachePersonalHoliday(response) {
 
             var c = _CACHE['holiday'] = _CACHE['holiday'] || {};
 
@@ -135,7 +142,20 @@ $(function() {
             });
         }
 
-        function cacheData(type) {
+        function cacheSickDays(response) {
+
+            var c = _CACHE['sick'] = _CACHE['sick'] || {};
+
+            $.each(response, function(idx, data) {
+                var date = data.date;
+                var y = date.match(/\d{0,4}/)[0];
+                c[y] = c[y] || [];
+                c[y].push(data);
+            });
+
+        }
+
+        function cachePublicHoliday(type) {
             var c = _CACHE[type] = _CACHE[type] || {};
             return function(data) {
                 
@@ -150,7 +170,7 @@ $(function() {
             }
         }
 
-        function isHoliday(type) {
+        function isOfType(type) {
           return function (date) {
 
             var year = date.year();
@@ -174,9 +194,11 @@ $(function() {
 
         var HolidayService = {
 
-            isPersonalHoliday: isHoliday('holiday'),
+            isSickDay: isOfType('sick'),
 
-            isPublicHoliday: isHoliday('publicHoliday'),
+            isPersonalHoliday: isOfType('holiday'),
+
+            isPublicHoliday: isOfType('publicHoliday'),
 
             isHalfDay: function (date) {
 
@@ -203,6 +225,16 @@ $(function() {
 
               }
 
+              if(_CACHE['sick'][year]) {
+
+                  var sickDay = _.findWhere(_CACHE['sick'][year], {date: formattedDate});
+
+                  if(sickDay && sickDay.dayLength === 0.5) {
+                      return true;
+                  }
+
+              }
+
               return false;
             },
 
@@ -225,7 +257,7 @@ $(function() {
 
             },
 
-            getApplicationId: function (date) {
+            getAbsenceId: function (date) {
 
               var year = date.year();
               var formattedDate = date.format('YYYY-MM-DD');
@@ -235,12 +267,51 @@ $(function() {
                 var holiday = _.findWhere(_CACHE['holiday'][year], {date: formattedDate});
 
                 if(holiday) {
-                  return holiday.applicationId;
+                  return holiday.id;
                 }
 
               }
 
+              if(_CACHE['sick'][year]) {
+
+                  var sickDay = _.findWhere(_CACHE['sick'][year], {date: formattedDate});
+
+                  if(sickDay) {
+                      return sickDay.id;
+                  }
+
+              }
+
               return '-1';
+
+            },
+
+            getAbsenceType: function (date) {
+
+                var year = date.year();
+                var formattedDate = date.format('YYYY-MM-DD');
+
+                if(_CACHE['holiday'][year]) {
+
+                    var holiday = _.findWhere(_CACHE['holiday'][year], {date: formattedDate});
+
+                    if(holiday) {
+                        return holiday.type;
+                    }
+
+                }
+
+                if(_CACHE['sick'][year]) {
+
+                    var sickDay = _.findWhere(_CACHE['sick'][year], {date: formattedDate});
+
+                    if(sickDay) {
+                        return sickDay.type;
+                    }
+
+                }
+
+                return '';
 
             },
 
@@ -266,6 +337,12 @@ $(function() {
 
             },
 
+            navigateToSickNote: function(sickNoteId) {
+
+                document.location.href = webPrefix + '/sicknote/' + sickNoteId;
+
+            },
+
             /**
              *
              * @param {number} year
@@ -279,9 +356,8 @@ $(function() {
 
                 if (_CACHE['publicHoliday'][year]) {
                     return deferred.resolve( _CACHE[year] );
-                }
-                else {
-                    return fetch('/holidays', {year: year}).success( cacheData('publicHoliday') );
+                } else {
+                    return fetch('/holidays', {year: year}).success( cachePublicHoliday('publicHoliday') );
                 }
             },
 
@@ -299,9 +375,20 @@ $(function() {
 
                 if (_CACHE['holiday'][year]) {
                     return deferred.resolve( _CACHE[year] );
+                } else {
+                    return fetch('/absences', {person: personId, year: year, type: 'VACATION'}).success( cachePersonalHoliday );
                 }
-                else {
-                    return fetch('/vacations/days', {person: personId, year: year}).success( cacheHoliday );
+            },
+
+            fetchSickDays: function(year) {
+                var deferred = $.Deferred();
+
+                _CACHE['sick'] = _CACHE['sick'] || {};
+
+                if (_CACHE['sick'][year]) {
+                    return deferred.resolve( _CACHE[year] );
+                } else {
+                    return fetch('/absences', {person: personId, year: year, type: 'SICK_NOTE'}).success( cacheSickDays );
                 }
             }
         };
@@ -338,7 +425,7 @@ $(function() {
             // <tr><td>{{0}}</td>......<td>{{6}}</td></tr>
             week: '<tr><td>{{' + [0,1,2,3,4,5,6].join('}}</td><td>{{') + '}}</td></tr>',
 
-            day: '<span class="datepicker-day {{css}}" title="{{title}}" data-datepicker-application-id={{applicationId}} data-datepicker-date="{{date}}" data-datepicker-selectable="{{selectable}}">{{day}}</span>'
+            day: '<span class="datepicker-day {{css}}" title="{{title}}" data-datepicker-absence-id={{absenceId}} data-datepicker-absence-type="{{absenceType}}" data-datepicker-date="{{date}}" data-datepicker-selectable="{{selectable}}">{{day}}</span>'
         };
 
         function render(tmpl, data) {
@@ -507,6 +594,7 @@ $(function() {
                     assert.isPast            (date) ? CSS.dayPast            : '',
                     assert.isPublicHoliday   (date) ? CSS.dayPublicHoliday   : '',
                     assert.isPersonalHoliday (date) ? CSS.dayPersonalHoliday : '',
+                    assert.isSickDay         (date) ? CSS.daySickDay         : '',
                     assert.isHalfDay         (date) ? CSS.dayHalf            : ''
                 ].join(' ');
             }
@@ -516,8 +604,9 @@ $(function() {
                 // NOTE: Order is important here!
 
                 var isPersonalHoliday = assert.isPersonalHoliday(date);
+                var isSickDay = assert.isSickDay(date);
 
-                if(isPersonalHoliday) {
+                if(isPersonalHoliday || isSickDay) {
                   return true;
                 }
 
@@ -550,7 +639,8 @@ $(function() {
                 css : classes(),
                 selectable: isSelectable(),
                 title: assert.title(date),
-                applicationId: assert.applicationId(date)
+                absenceId: assert.absenceId(date),
+                absenceType: assert.absenceType(date)
             });
         }
 
@@ -657,10 +747,13 @@ $(function() {
                 var dateThis = getDateFromEl(this);
 
                 var isSelectable = $(this).attr("data-datepicker-selectable");
-                var applicationId = $(this).attr('data-datepicker-application-id');
+                var absenceId = $(this).attr('data-datepicker-absence-id');
+                var absenceType = $(this).attr('data-datepicker-absence-type');
 
-                if(isSelectable === "true" && applicationId !== '-1') {
-                    holidayService.navigateToApplicationForLeave(applicationId);
+                if(isSelectable === "true" && absenceType === "VACATION" && absenceId !== "-1") {
+                    holidayService.navigateToApplicationForLeave(absenceId);
+                } else if(isSelectable === "true" && absenceType === "SICK_NOTE" && absenceId !== "-1") {
+                    holidayService.navigateToSickNote(absenceId);
                 } else if(isSelectable === "true" && sameOrBetween(dateThis, dateFrom, dateTo)) {
                     holidayService.bookHoliday(dateFrom, dateTo);
                 }
@@ -679,7 +772,8 @@ $(function() {
 
                 $.when(
                     holidayService.fetchPublic   ( date.year() ),
-                    holidayService.fetchPersonal ( date.year() )
+                    holidayService.fetchPersonal ( date.year() ),
+                    holidayService.fetchSickDays ( date.year() )
                 ).then(view.displayNext);
             },
 
@@ -695,7 +789,8 @@ $(function() {
 
                 $.when(
                     holidayService.fetchPublic   ( date.year() ),
-                    holidayService.fetchPersonal ( date.year() )
+                    holidayService.fetchPersonal ( date.year() ),
+                    holidayService.fetchSickDays ( date.year() )
                 ).then(view.displayPrev);
             }
         };

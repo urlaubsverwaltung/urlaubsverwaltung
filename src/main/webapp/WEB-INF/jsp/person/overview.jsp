@@ -179,7 +179,9 @@
                         holidayService.fetchPublic   ( startDate.year() ),
                         holidayService.fetchPublic   ( endDate.year() ),
                         holidayService.fetchPersonal ( startDate.year() ),
-                        holidayService.fetchPersonal ( endDate.year() )
+                        holidayService.fetchPersonal ( endDate.year() ),
+                        holidayService.fetchSickDays ( startDate.year() ),
+                        holidayService.fetchSickDays ( endDate.year() )
                     ).always(function() {
                         Urlaubsverwaltung.Calendar.init(holidayService, date);
                     });

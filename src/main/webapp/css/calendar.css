@@ -202,6 +202,16 @@
     border-bottom-color: #FFDF5F;
 }
 
+.datepicker-day-sick-note {
+    color: #E94B3B;
+    background-color: #FFD4CF;
+}
+
+.datepicker-day:not([data-datepicker-selectable=false]).datepicker-day-sick-note:hover {
+    color: #E94B3B;
+    background-color: #FFB7AF;
+}
+
 /**************************************************************************
 
   DATEPICKER

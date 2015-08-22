@@ -67,7 +67,7 @@ public class WorkDayController {
         @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = "2015-01-08")
         @RequestParam("to")
         String to,
-        @ApiParam(value = "Day Length", defaultValue = "FULL")
+        @ApiParam(value = "Day Length", defaultValue = "FULL", allowableValues = "FULL, MORNING, NOON")
         @RequestParam("length")
         String length,
         @ApiParam(value = "ID of the person")

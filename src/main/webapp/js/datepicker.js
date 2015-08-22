@@ -86,7 +86,7 @@ function createDatepickerInstances(selectors, regional, urlPrefix, getPerson, on
             });
 
             var personId = getPerson();
-            getHighlighted(urlPrefix + "/vacations/days?year=" + year + "&month=" + month + "&person=" + personId, function(data) {
+            getHighlighted(urlPrefix + "/absences?type=VACATION&year=" + year + "&month=" + month + "&person=" + personId, function(data) {
                 highlightedVacation = getPersonalHolidays(data);
             });
 
@@ -98,7 +98,7 @@ function createDatepickerInstances(selectors, regional, urlPrefix, getPerson, on
             });
 
             var personId = getPerson();
-            getHighlighted(urlPrefix + "/vacations/days?year=" + year + "&month=" + month + "&person=" + personId, function(data) {
+            getHighlighted(urlPrefix + "/absences?type=VACATION&year=" + year + "&month=" + month + "&person=" + personId, function(data) {
                 highlightedVacation = getPersonalHolidays(data);
             });
             
