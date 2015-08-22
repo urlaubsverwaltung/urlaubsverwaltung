@@ -37,6 +37,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 /**
@@ -151,8 +152,13 @@ public class VacationController {
                     periodEnd = DateUtil.getLastDayOfYear(Integer.parseInt(year));
                 }
 
-                List<Application> applications = applicationService.getApplicationsForACertainPeriodAndPersonAndState(
-                        periodStart, periodEnd, person.get(), ApplicationStatus.ALLOWED);
+                List<Application> applications = applicationService.getApplicationsForACertainPeriodAndPerson(
+                            periodStart, periodEnd, person.get())
+                    .stream()
+                    .filter(application ->
+                                application.hasStatus(ApplicationStatus.WAITING)
+                                || application.hasStatus(ApplicationStatus.ALLOWED))
+                    .collect(Collectors.toList());
 
                 List<VacationDay> vacationDateList = new ArrayList<>();
 
