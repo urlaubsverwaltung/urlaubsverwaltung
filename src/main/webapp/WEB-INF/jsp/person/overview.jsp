@@ -209,6 +209,13 @@
 
         <div class="row">
             <div class="col-xs-12">
+                <hr/>
+                <div id="datepicker"></div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-12">
 
                 <div class="header">
 
@@ -233,12 +240,6 @@
                     </legend>
 
                 </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-xs-12">
-                <div id="datepicker"></div>
             </div>
         </div>
 
