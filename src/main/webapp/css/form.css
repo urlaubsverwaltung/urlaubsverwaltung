@@ -144,3 +144,13 @@ textarea.error {
 .department--member-assignment > .checkbox > label > input[type="checkbox"] {
   margin-top: 2px;
 }
+
+/**************************************************************************
+
+  SEARCH FIELD
+
+**************************************************************************/
+
+.search-field {
+  margin-bottom: 21px;
+}
