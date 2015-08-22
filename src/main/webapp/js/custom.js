@@ -38,7 +38,9 @@ function sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, e
 
       var text;
 
-      if (data == 1) {
+      if(isNaN(data)) {
+        text = "Ung&uuml;ltiger Zeitraum"
+      } else if (data == 1) {
         text = formatNumber(data) + " Tag";
       } else {
         text = formatNumber(data) + " Tage";
