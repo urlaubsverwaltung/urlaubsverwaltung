@@ -3,10 +3,12 @@ package org.synyx.urlaubsverwaltung.web.validator;
 import org.springframework.stereotype.Component;
 
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+import org.synyx.urlaubsverwaltung.core.settings.MailSettings;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 
 
@@ -18,8 +20,11 @@ public class SettingsValidator implements Validator {
 
     private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
     private static final String ERROR_INVALID_ENTRY = "error.entry.invalid";
+    private static final String ERROR_INVALID_EMAIL = "error.entry.mail";
+    private static final String ERROR_LENGTH = "error.entry.tooManyChars";
 
     private static final int DAYS_PER_YEAR = 366;
+    private static final int MAX_CHARS = 255;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -40,6 +45,8 @@ public class SettingsValidator implements Validator {
         validateVacationSettings(settings, errors);
 
         validateSickNoteSettings(settings, errors);
+
+        validateMailSettings(settings, errors);
     }
 
 
@@ -101,5 +108,81 @@ public class SettingsValidator implements Validator {
             errors.rejectValue("daysBeforeEndOfSickPayNotification",
                 "settings.sickDays.daysBeforeEndOfSickPayNotification.error");
         }
+    }
+
+
+    private void validateMailSettings(Settings settings, Errors errors) {
+
+        MailSettings mailSettings = settings.getMailSettings();
+
+        String hostAttribute = "mailSettings.host";
+        String host = mailSettings.getHost();
+
+        if (!StringUtils.hasText(host)) {
+            errors.rejectValue(hostAttribute, ERROR_MANDATORY_FIELD);
+        } else {
+            if (!validStringLength(host)) {
+                errors.rejectValue(hostAttribute, ERROR_LENGTH);
+            }
+        }
+
+        String portAttribute = "mailSettings.port";
+        Integer port = mailSettings.getPort();
+
+        if (port == null) {
+            errors.rejectValue(portAttribute, ERROR_MANDATORY_FIELD);
+        } else {
+            if (port <= 0) {
+                errors.rejectValue(portAttribute, ERROR_INVALID_ENTRY);
+            }
+        }
+
+        String username = mailSettings.getUsername();
+
+        if (username != null && !validStringLength(username)) {
+            errors.rejectValue("mailSettings.username", ERROR_LENGTH);
+        }
+
+        String password = mailSettings.getPassword();
+
+        if (password != null && !validStringLength(password)) {
+            errors.rejectValue("mailSettings.password", ERROR_LENGTH);
+        }
+
+        String fromAttribute = "mailSettings.from";
+        String from = mailSettings.getFrom();
+
+        if (!StringUtils.hasText(from)) {
+            errors.rejectValue(fromAttribute, ERROR_MANDATORY_FIELD);
+        } else {
+            if (!validStringLength(from)) {
+                errors.rejectValue(fromAttribute, ERROR_LENGTH);
+            }
+
+            if (!MailAddressValidationUtil.hasValidFormat(from)) {
+                errors.rejectValue(fromAttribute, ERROR_INVALID_EMAIL);
+            }
+        }
+
+        String administratorAttribute = "mailSettings.administrator";
+        String administrator = mailSettings.getAdministrator();
+
+        if (!StringUtils.hasText(administrator)) {
+            errors.rejectValue(administratorAttribute, ERROR_MANDATORY_FIELD);
+        } else {
+            if (!validStringLength(administrator)) {
+                errors.rejectValue(administratorAttribute, ERROR_LENGTH);
+            }
+
+            if (!MailAddressValidationUtil.hasValidFormat(administrator)) {
+                errors.rejectValue(administratorAttribute, ERROR_INVALID_EMAIL);
+            }
+        }
+    }
+
+
+    private boolean validStringLength(String string) {
+
+        return string.length() <= MAX_CHARS;
     }
 }

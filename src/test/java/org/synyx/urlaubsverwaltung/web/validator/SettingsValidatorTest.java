@@ -8,6 +8,7 @@ import org.mockito.Mockito;
 
 import org.springframework.validation.Errors;
 
+import org.synyx.urlaubsverwaltung.core.settings.MailSettings;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 
 import static org.junit.Assert.*;
@@ -147,5 +148,73 @@ public class SettingsValidatorTest {
         Mockito.verify(mockError)
             .rejectValue("daysBeforeEndOfSickPayNotification",
                 "settings.sickDays.daysBeforeEndOfSickPayNotification.error");
+    }
+
+
+    @Test
+    public void ensureMandatoryMailSettingsCanNotBeNull() {
+
+        Settings settings = new Settings();
+        MailSettings mailSettings = new MailSettings();
+        settings.setMailSettings(mailSettings);
+
+        mailSettings.setHost(null);
+        mailSettings.setPort(null);
+        mailSettings.setAdministrator(null);
+        mailSettings.setFrom(null);
+
+        Errors mockError = Mockito.mock(Errors.class);
+        settingsValidator.validate(settings, mockError);
+        Mockito.verify(mockError).rejectValue("mailSettings.host", "error.entry.mandatory");
+        Mockito.verify(mockError).rejectValue("mailSettings.port", "error.entry.mandatory");
+        Mockito.verify(mockError).rejectValue("mailSettings.administrator", "error.entry.mandatory");
+        Mockito.verify(mockError).rejectValue("mailSettings.from", "error.entry.mandatory");
+    }
+
+
+    @Test
+    public void ensureFromAndAdministratorMailAddressesMustBeValid() {
+
+        Settings settings = new Settings();
+        MailSettings mailSettings = new MailSettings();
+        settings.setMailSettings(mailSettings);
+
+        mailSettings.setAdministrator("foo");
+        mailSettings.setFrom("bar");
+
+        Errors mockError = Mockito.mock(Errors.class);
+        settingsValidator.validate(settings, mockError);
+        Mockito.verify(mockError).rejectValue("mailSettings.administrator", "error.entry.mail");
+        Mockito.verify(mockError).rejectValue("mailSettings.from", "error.entry.mail");
+    }
+
+
+    @Test
+    public void ensureMailPortMustBeNotNegative() {
+
+        Settings settings = new Settings();
+        MailSettings mailSettings = new MailSettings();
+        settings.setMailSettings(mailSettings);
+
+        mailSettings.setPort(-1);
+
+        Errors mockError = Mockito.mock(Errors.class);
+        settingsValidator.validate(settings, mockError);
+        Mockito.verify(mockError).rejectValue("mailSettings.port", "error.entry.invalid");
+    }
+
+
+    @Test
+    public void ensureMailPortMustBeGreaterThanZero() {
+
+        Settings settings = new Settings();
+        MailSettings mailSettings = new MailSettings();
+        settings.setMailSettings(mailSettings);
+
+        mailSettings.setPort(0);
+
+        Errors mockError = Mockito.mock(Errors.class);
+        settingsValidator.validate(settings, mockError);
+        Mockito.verify(mockError).rejectValue("mailSettings.port", "error.entry.invalid");
     }
 }

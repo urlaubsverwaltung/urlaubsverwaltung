@@ -24,8 +24,6 @@ import java.math.BigDecimal;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 /**
@@ -40,7 +38,7 @@ public class PersonValidator implements Validator {
     private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
     private static final String ERROR_ENTRY = "error.entry.invalid";
     private static final String ERROR_LENGTH = "error.entry.tooManyChars";
-    private static final String ERROR_EMAIL = "person.form.data.email.error";
+    private static final String ERROR_EMAIL = "error.entry.mail";
     private static final String ERROR_LOGIN_UNIQUE = "person.form.data.login.error";
 
     private static final String ATTRIBUTE_LOGIN_NAME = "loginName";
@@ -51,13 +49,6 @@ public class PersonValidator implements Validator {
     private static final String ATTRIBUTE_REMAINING_VACATION_DAYS_NOT_EXPIRING = "remainingVacationDaysNotExpiring";
     private static final String ATTRIBUTE_EMAIL = "email";
     private static final String ATTRIBUTE_PERMISSIONS = "permissions";
-
-    // a regex for email addresses that are valid, but may be "strange looking" (e.g. tomr$2@example.com)
-    // original from: http://www.markussipila.info/pub/emailvalidator.php?action=validate
-    // modified by adding following characters: äöüß
-    private static final String EMAIL_PATTERN =
-        "^[a-zäöüß0-9,!#\\$%&'\\*\\+/=\\?\\^_`\\{\\|}~-]+(\\.[a-zäöüß0-9,!#\\$%&'\\*\\+/=\\?\\^_`\\{\\|}~-]+)*@"
-        + "[a-zäöüß0-9-]+(\\.[a-zäöüß0-9-]+)*\\.([a-z]{2,})$";
 
     private static final int MAX_CHARS = 50;
 
@@ -102,15 +93,6 @@ public class PersonValidator implements Validator {
         validateNotifications(form, errors);
 
         validateWorkingTimes(form, errors);
-    }
-
-
-    private boolean matchPattern(String nameOfPattern, String matchSequence) {
-
-        Pattern pattern = Pattern.compile(nameOfPattern);
-        Matcher matcher = pattern.matcher(matchSequence);
-
-        return matcher.matches();
     }
 
 
@@ -168,10 +150,7 @@ public class PersonValidator implements Validator {
                 errors.rejectValue(ATTRIBUTE_EMAIL, ERROR_LENGTH);
             }
 
-            // validation with regex
-            String normalizedEmail = email.trim().toLowerCase();
-
-            if (!matchPattern(EMAIL_PATTERN, normalizedEmail)) {
+            if (!MailAddressValidationUtil.hasValidFormat(email)) {
                 errors.rejectValue(ATTRIBUTE_EMAIL, ERROR_EMAIL);
             }
         }
