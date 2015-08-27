@@ -26,6 +26,7 @@ public class MailSettingsTest {
         Assert.assertNotNull("Admin mail address should be set", mailSettings.getAdministrator());
         Assert.assertNotNull("From mail address should be set", mailSettings.getFrom());
 
+        Assert.assertFalse("Should be inactive", mailSettings.isActive());
         Assert.assertEquals("Wrong host", "localhost", mailSettings.getHost());
         Assert.assertEquals("Wrong port", (Integer) 25, mailSettings.getPort());
         Assert.assertEquals("Wrong admin mail address", "admin@uv.de", mailSettings.getAdministrator());

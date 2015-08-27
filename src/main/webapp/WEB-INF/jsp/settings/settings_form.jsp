@@ -164,6 +164,21 @@
                 </div>
                 <div class="col-md-8 col-md-pull-4">
                     <div class="form-group is-required">
+                        <label class="control-label col-md-4" for="mailSettings.active">
+                            <spring:message code='settings.mail.active'/>:
+                        </label>
+                        <div class="col-md-8 radio">
+                            <label class="halves">
+                                <form:radiobutton id="mailSettings.active" path="mailSettings.active" value="true"/>
+                                <spring:message code="settings.mail.active.true"/>
+                            </label>
+                            <label class="halves">
+                                <form:radiobutton id="mailSettings.active" path="mailSettings.active" value="false"/>
+                                <spring:message code="settings.mail.active.false"/>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group is-required">
                         <label class="control-label col-md-4" for="mailSettings.from">
                             <spring:message code='settings.mail.from'/>:
                         </label>

@@ -12,6 +12,9 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class MailSettings {
 
+    @Column(name = "mail_active")
+    private boolean active = false;
+
     @Column(name = "mail_host")
     private String host = "localhost";
 
@@ -29,6 +32,18 @@ public class MailSettings {
 
     @Column(name = "mail_administrator")
     private String administrator = "admin@uv.de";
+
+    public boolean isActive() {
+
+        return active;
+    }
+
+
+    public void setActive(boolean active) {
+
+        this.active = active;
+    }
+
 
     public String getHost() {
 
