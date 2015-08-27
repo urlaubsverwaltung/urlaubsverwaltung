@@ -82,6 +82,6 @@ public class TurnOfTheYearAccountUpdaterService {
         }
 
         LOG.info("Successfully updated holidays accounts: " + updatedAccounts.size() + "/" + persons.size());
-        mailService.sendSuccessfullyUpdatedAccounts(updatedAccounts);
+        mailService.sendSuccessfullyUpdatedAccountsNotification(updatedAccounts);
     }
 }

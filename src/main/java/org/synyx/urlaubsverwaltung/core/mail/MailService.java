@@ -8,6 +8,7 @@ import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 
@@ -159,7 +160,13 @@ public interface MailService {
      *
      * @param  updatedAccounts  that have been successfully updated
      */
-    void sendSuccessfullyUpdatedAccounts(List<Account> updatedAccounts);
+    void sendSuccessfullyUpdatedAccountsNotification(List<Account> updatedAccounts);
+
+
+    /**
+     * Sends mail to the tool's manager if settings has been updated to ensure that the mail configuration works.
+     */
+    void sendSuccessfullyUpdatedSettingsNotification(Settings settings);
 
 
     /**

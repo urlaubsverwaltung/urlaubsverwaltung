@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
+import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.settings.FederalState;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
@@ -31,6 +32,9 @@ public class SettingsController {
 
     @Autowired
     private SettingsService settingsService;
+
+    @Autowired
+    private MailService mailService;
 
     @Autowired
     private SettingsValidator settingsValidator;
@@ -56,6 +60,7 @@ public class SettingsController {
 
         if (!errors.hasErrors()) {
             settingsService.save(settings);
+            mailService.sendSuccessfullyUpdatedSettingsNotification(settings);
 
             redirectAttributes.addFlashAttribute("success", true);
 

@@ -543,7 +543,7 @@ public class MailServiceIntegrationTest {
         Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_OFFICE))
             .thenReturn(Arrays.asList(office));
 
-        mailService.sendSuccessfullyUpdatedAccounts(Arrays.asList(accountOne, accountTwo, accountThree));
+        mailService.sendSuccessfullyUpdatedAccountsNotification(Arrays.asList(accountOne, accountTwo, accountThree));
 
         // ENSURE OFFICE MEMBERS HAVE GOT CORRECT EMAIL
         List<Message> inboxOffice = Mailbox.get(officeEmailAddress);
@@ -674,5 +674,25 @@ public class MailServiceIntegrationTest {
         assertTrue(content.contains("eventId"));
         assertTrue(content.contains("event update failed"));
         assertTrue(content.contains(person.getNiceName()));
+    }
+
+
+    @Test
+    public void ensureTechnicalManagerGetsANotificationIfSettingsGetUpdated() throws MessagingException, IOException {
+
+        mailService.sendSuccessfullyUpdatedSettingsNotification(settings);
+
+        List<Message> inbox = Mailbox.get(settings.getMailSettings().getAdministrator());
+        assertTrue(inbox.size() > 0);
+
+        Message msg = inbox.get(0);
+
+        assertEquals("Einstellungen aktualisiert", msg.getSubject());
+
+        String content = (String) msg.getContent();
+
+        assertTrue(content.contains("Einstellungen"));
+        assertTrue(content.contains(settings.getMailSettings().getHost()));
+        assertTrue(content.contains(settings.getMailSettings().getPort().toString()));
     }
 }

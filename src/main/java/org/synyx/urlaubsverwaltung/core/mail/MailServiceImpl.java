@@ -30,6 +30,7 @@ import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.settings.MailSettings;
+import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
@@ -432,7 +433,7 @@ class MailServiceImpl implements MailService {
 
 
     @Override
-    public void sendSuccessfullyUpdatedAccounts(List<Account> updatedAccounts) {
+    public void sendSuccessfullyUpdatedAccountsNotification(List<Account> updatedAccounts) {
 
         Map<String, Object> model = new HashMap<>();
         model.put("accounts", updatedAccounts);
@@ -445,6 +446,17 @@ class MailServiceImpl implements MailService {
 
         // send email to manager to notify about update of accounts
         sendTechnicalNotification("subject.account.updatedRemainingDays", text);
+    }
+
+
+    @Override
+    public void sendSuccessfullyUpdatedSettingsNotification(Settings settings) {
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("settings", settings);
+
+        String text = buildMailBody("updated_settings", model);
+        sendTechnicalNotification("subject.settings.updated", text);
     }
 
 
