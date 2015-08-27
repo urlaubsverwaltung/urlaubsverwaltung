@@ -59,6 +59,8 @@ public class Settings extends AbstractPersistable<Integer> {
 
     private MailSettings mailSettings;
 
+    private CalendarSettings calendarSettings;
+
     public Integer getMaximumAnnualVacationDays() {
 
         return maximumAnnualVacationDays;
@@ -156,6 +158,22 @@ public class Settings extends AbstractPersistable<Integer> {
     public void setMailSettings(MailSettings mailSettings) {
 
         this.mailSettings = mailSettings;
+    }
+
+
+    public CalendarSettings getCalendarSettings() {
+
+        if (calendarSettings == null) {
+            calendarSettings = new CalendarSettings();
+        }
+
+        return calendarSettings;
+    }
+
+
+    public void setCalendarSettings(CalendarSettings calendarSettings) {
+
+        this.calendarSettings = calendarSettings;
     }
 
 

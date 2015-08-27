@@ -236,6 +236,94 @@
             </div>
 
             <div class="form-section">
+                <div> class="col-xs-12 header">
+                    <legend><spring:message code="settings.calendar.title" /></legend>
+                </div>
+                <div class="col-md-4 col-md-push-8">
+                    <span class="help-block">
+                        <i class="fa fa-fw fa-info-circle"></i>
+                        <spring:message code="settings.calendar.description"/>
+                    </span>
+                </div>
+                <div class="col-md-8 col-md-pull-4">
+                    <div class="form-group is-required">
+                        <label class="control-label col-md-4" for="calendarSettings.workDayBeginHour">
+                            <spring:message code='settings.calendar.workDay.begin'/>:
+                        </label>
+                        <div class="col-md-8">
+                            <form:input id="calendarSettings.workDayBeginHour" path="calendarSettings.workDayBeginHour" class="form-control" cssErrorClass="form-control error" />
+                            <span class="help-inline"><form:errors path="calendarSettings.workDayBeginHour" cssClass="error"/></span>
+                        </div>
+                    </div>
+                    <div class="form-group is-required">
+                        <label class="control-label col-md-4" for="calendarSettings.workDayEndHour">
+                            <spring:message code='settings.calendar.workDay.end'/>:
+                        </label>
+                        <div class="col-md-8">
+                            <form:input id="calendarSettings.workDayEndHour" path="calendarSettings.workDayEndHour" class="form-control" cssErrorClass="form-control error" />
+                            <span class="help-inline"><form:errors path="calendarSettings.workDayEndHour" cssClass="error"/></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="col-xs-12 header">
+                    <legend><spring:message code="settings.calendar.ews.title" /></legend>
+                </div>
+                <div class="col-md-4 col-md-push-8">
+                    <span class="help-block">
+                        <i class="fa fa-fw fa-info-circle"></i>
+                        <spring:message code="settings.calendar.ews.description"/>
+                    </span>
+                </div>
+                <div class="col-md-8 col-md-pull-4">
+                    <div class="form-group is-required">
+                        <label class="control-label col-md-4" for="calendarSettings.exchangeCalendarSettings.active">
+                            <spring:message code='settings.calendar.ews.active'/>:
+                        </label>
+                        <div class="col-md-8 radio">
+                            <label class="halves">
+                                <form:radiobutton id="calendarSettings.exchangeCalendarSettings.active" path="calendarSettings.exchangeCalendarSettings.active" value="true"/>
+                                <spring:message code="settings.calendar.ews.active.true"/>
+                            </label>
+                            <label class="halves">
+                                <form:radiobutton id="calendarSettings.exchangeCalendarSettings.active" path="calendarSettings.exchangeCalendarSettings.active" value="false"/>
+                                <spring:message code="settings.calendar.ews.active.false"/>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group is-required">
+                        <label class="control-label col-md-4" for="calendarSettings.exchangeCalendarSettings.email">
+                            <spring:message code='settings.calendar.ews.email'/>:
+                        </label>
+                        <div class="col-md-8">
+                            <form:input id="calendarSettings.exchangeCalendarSettings.email" path="calendarSettings.exchangeCalendarSettings.email" class="form-control" cssErrorClass="form-control error" />
+                            <span class="help-inline"><form:errors path="calendarSettings.exchangeCalendarSettings.email" cssClass="error"/></span>
+                        </div>
+                    </div>
+                    <div class="form-group is-required">
+                        <label class="control-label col-md-4" for="calendarSettings.exchangeCalendarSettings.password">
+                            <spring:message code='settings.calendar.ews.password'/>:
+                        </label>
+                        <div class="col-md-8">
+                            <form:input id="calendarSettings.exchangeCalendarSettings.password" path="calendarSettings.exchangeCalendarSettings.password" class="form-control" cssErrorClass="form-control error" />
+                            <span class="help-inline"><form:errors path="calendarSettings.exchangeCalendarSettings.password" cssClass="error"/></span>
+                        </div>
+                    </div>
+                    <div class="form-group is-required">
+                        <label class="control-label col-md-4" for="calendarSettings.exchangeCalendarSettings.calendar">
+                            <spring:message code='settings.calendar.ews.calendar'/>:
+                        </label>
+                        <div class="col-md-8">
+                            <form:input id="calendarSettings.exchangeCalendarSettings.calendar" path="calendarSettings.exchangeCalendarSettings.calendar" class="form-control" cssErrorClass="form-control error" />
+                            <span class="help-inline"><form:errors path="calendarSettings.exchangeCalendarSettings.calendar" cssClass="error"/></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
                 <div class="col-xs-12">
                     <hr/>
                     <button type="submit" class="btn btn-success pull-left col-xs-12 col-sm-5 col-md-2">

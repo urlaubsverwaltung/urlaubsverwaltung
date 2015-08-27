@@ -26,6 +26,7 @@
     <include file="dbchangelogs/changelog-2.8.2-add-department-table.xml"/>
     <include file="dbchangelogs/changelog-2.8.3-rename-column-howLong-to-dayLength.xml"/>
     <include file="dbchangelogs/changelog-2.9.1-add-mail-settings.xml"/>
+    <include file="dbchangelogs/changelog-2.9.2-add-ews-calendar-settings.xml"/>
 
 
 </databaseChangeLog>
