@@ -57,7 +57,7 @@ public class Settings extends AbstractPersistable<Integer> {
     @Enumerated(EnumType.STRING)
     private FederalState federalState = FederalState.BADEN_WUERTTEMBERG;
 
-    private MailSettings mailSettings = new MailSettings();
+    private MailSettings mailSettings;
 
     public Integer getMaximumAnnualVacationDays() {
 
@@ -144,6 +144,10 @@ public class Settings extends AbstractPersistable<Integer> {
 
 
     public MailSettings getMailSettings() {
+
+        if (mailSettings == null) {
+            mailSettings = new MailSettings();
+        }
 
         return mailSettings;
     }
