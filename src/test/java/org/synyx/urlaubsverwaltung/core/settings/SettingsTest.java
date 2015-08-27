@@ -25,6 +25,7 @@ public class SettingsTest {
         Assert.assertNotNull("Should not be null", settings.getWorkingDurationForChristmasEve());
         Assert.assertNotNull("Should not be null", settings.getWorkingDurationForNewYearsEve());
         Assert.assertNotNull("Should not be null", settings.getFederalState());
+        Assert.assertNotNull("Should not be null", settings.getMailSettings());
 
         Assert.assertEquals("Wrong default value", (Integer) 40, settings.getMaximumAnnualVacationDays());
         Assert.assertEquals("Wrong default value", (Integer) 12, settings.getMaximumMonthsToApplyForLeaveInAdvance());
