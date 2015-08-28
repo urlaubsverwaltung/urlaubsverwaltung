@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.settings;
 
+import java.util.Base64;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
@@ -53,13 +55,21 @@ public class ExchangeCalendarSettings {
 
     public String getPassword() {
 
-        return password;
+        if (password == null) {
+            return null;
+        }
+
+        return new String(Base64.getDecoder().decode(password));
     }
 
 
     public void setPassword(String password) {
 
-        this.password = password;
+        if (password == null) {
+            this.password = null;
+        } else {
+            this.password = Base64.getEncoder().encodeToString(password.getBytes());
+        }
     }
 
 
