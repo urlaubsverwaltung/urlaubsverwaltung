@@ -605,7 +605,7 @@ public class MailServiceIntegrationTest {
         application.setPerson(person);
         application.setStatus(ApplicationStatus.ALLOWED);
 
-        Absence absence = new Absence(application, new AbsenceTimeConfiguration(8, 12, 13, 17));
+        Absence absence = new Absence(application, new AbsenceTimeConfiguration(settings.getCalendarSettings()));
 
         mailService.sendCalendarSyncErrorNotification("Kalendername", absence, "Calendar sync failed");
 
@@ -658,7 +658,7 @@ public class MailServiceIntegrationTest {
         application.setPerson(person);
         application.setStatus(ApplicationStatus.ALLOWED);
 
-        Absence absence = new Absence(application, new AbsenceTimeConfiguration(8, 12, 13, 17));
+        Absence absence = new Absence(application, new AbsenceTimeConfiguration(settings.getCalendarSettings()));
 
         mailService.sendCalendarUpdateErrorNotification("Kalendername", absence, "eventId", "event update failed");
 

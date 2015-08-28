@@ -10,6 +10,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 
 import java.util.Date;
@@ -33,7 +34,12 @@ public class AbsenceTest {
     public void setUp() {
 
         person = new Person("foo", "Muster", "Marlene", "muster@muster.de");
-        timeConfiguration = new AbsenceTimeConfiguration(8, 12, 13, 17);
+
+        CalendarSettings calendarSettings = new CalendarSettings();
+        calendarSettings.setWorkDayBeginHour(8);
+        calendarSettings.setWorkDayEndHour(16);
+
+        timeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
     }
 
 
@@ -89,8 +95,8 @@ public class AbsenceTest {
 
         DateMidnight today = DateMidnight.now();
 
-        Date start = today.toDateTime().withHourOfDay(13).toDate();
-        Date end = today.toDateTime().withHourOfDay(17).toDate();
+        Date start = today.toDateTime().withHourOfDay(12).toDate();
+        Date end = today.toDateTime().withHourOfDay(16).toDate();
 
         Application application = new Application();
         application.setDayLength(DayLength.NOON);
@@ -101,8 +107,8 @@ public class AbsenceTest {
 
         Absence absence = new Absence(application, timeConfiguration);
 
-        Assert.assertEquals("Should start at 1 pm", start, absence.getStartDate());
-        Assert.assertEquals("Should end at 5 pm", end, absence.getEndDate());
+        Assert.assertEquals("Should start at 12 pm", start, absence.getStartDate());
+        Assert.assertEquals("Should end at 4 pm", end, absence.getEndDate());
     }
 
 

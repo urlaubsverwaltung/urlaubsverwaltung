@@ -15,11 +15,12 @@ import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.settings.Settings;
+import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.sync.CalendarSyncService;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceMappingService;
-import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceType;
 
 import java.util.Optional;
@@ -44,6 +45,7 @@ public class ApplicationInteractionServiceImplTest {
     private MailService mailService;
     private CalendarSyncService calendarSyncService;
     private AbsenceMappingService absenceMappingService;
+    private SettingsService settingsService;
 
     @Before
     public void setUp() {
@@ -55,14 +57,15 @@ public class ApplicationInteractionServiceImplTest {
         mailService = Mockito.mock(MailService.class);
         calendarSyncService = Mockito.mock(CalendarSyncService.class);
         absenceMappingService = Mockito.mock(AbsenceMappingService.class);
+        settingsService = Mockito.mock(SettingsService.class);
 
         Mockito.when(calendarSyncService.addAbsence(any(Absence.class))).thenReturn(Optional.of("42"));
         Mockito.when(absenceMappingService.getAbsenceByIdAndType(anyInt(), eq(AbsenceType.VACATION)))
             .thenReturn(Optional.of(new AbsenceMapping(1, AbsenceType.VACATION, "42")));
+        Mockito.when(settingsService.getSettings()).thenReturn(new Settings());
 
         service = new ApplicationInteractionServiceImpl(applicationService, commentService, accountInteractionService,
-                signService, mailService, calendarSyncService, absenceMappingService,
-                new AbsenceTimeConfiguration(8, 12, 13, 17));
+                signService, mailService, calendarSyncService, absenceMappingService, settingsService);
     }
 
 
