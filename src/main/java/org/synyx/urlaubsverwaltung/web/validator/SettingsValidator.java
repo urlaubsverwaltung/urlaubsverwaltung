@@ -8,6 +8,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+import org.synyx.urlaubsverwaltung.core.settings.CalendarSettings;
+import org.synyx.urlaubsverwaltung.core.settings.ExchangeCalendarSettings;
 import org.synyx.urlaubsverwaltung.core.settings.MailSettings;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 
@@ -47,6 +49,8 @@ public class SettingsValidator implements Validator {
         validateSickNoteSettings(settings, errors);
 
         validateMailSettings(settings, errors);
+
+        validateCalendarSettings(settings, errors);
     }
 
 
@@ -226,6 +230,104 @@ public class SettingsValidator implements Validator {
 
             if (!MailAddressValidationUtil.hasValidFormat(administrator)) {
                 errors.rejectValue(administratorAttribute, ERROR_INVALID_EMAIL);
+            }
+        }
+    }
+
+
+    private void validateCalendarSettings(Settings settings, Errors errors) {
+
+        CalendarSettings calendarSettings = settings.getCalendarSettings();
+
+        validateCalendarSettings(calendarSettings, errors);
+
+        validateExchangeCalendarSettings(calendarSettings.getExchangeCalendarSettings(), errors);
+    }
+
+
+    private void validateCalendarSettings(CalendarSettings calendarSettings, Errors errors) {
+
+        String workDayBeginHourAttribute = "calendarSettings.workDayBeginHour";
+        Integer workDayBeginHour = calendarSettings.getWorkDayBeginHour();
+        validateWorkDayHour(workDayBeginHour, workDayBeginHourAttribute, errors);
+
+        Integer workDayEndHour = calendarSettings.getWorkDayEndHour();
+        String workDayEndHourAttribute = "calendarSettings.workDayEndHour";
+        validateWorkDayHour(workDayEndHour, workDayEndHourAttribute, errors);
+
+        boolean beginHourValid = workDayBeginHour != null && isValidWorkDayHour(workDayBeginHour);
+        boolean endHourValid = workDayEndHour != null && isValidWorkDayHour(workDayEndHour);
+
+        if (beginHourValid && endHourValid
+                && (workDayBeginHour.equals(workDayEndHour) || workDayBeginHour > workDayEndHour)) {
+            errors.rejectValue(workDayBeginHourAttribute, ERROR_INVALID_ENTRY);
+            errors.rejectValue(workDayEndHourAttribute, ERROR_INVALID_ENTRY);
+        }
+    }
+
+
+    private boolean isValidWorkDayHour(int workDayHour) {
+
+        return workDayHour > 0 && workDayHour <= 24;
+    }
+
+
+    private void validateWorkDayHour(Integer workDayHour, String attribute, Errors errors) {
+
+        if (workDayHour == null) {
+            errors.rejectValue(attribute, ERROR_MANDATORY_FIELD);
+        } else {
+            if (!isValidWorkDayHour(workDayHour)) {
+                errors.rejectValue(attribute, ERROR_INVALID_ENTRY);
+            }
+        }
+    }
+
+
+    private void validateExchangeCalendarSettings(ExchangeCalendarSettings exchangeCalendarSettings, Errors errors) {
+
+        boolean isActive = exchangeCalendarSettings.isActive();
+
+        String emailAttribute = "calendarSettings.exchangeCalendarSettings.email";
+        String email = exchangeCalendarSettings.getEmail();
+
+        if (!StringUtils.hasText(email)) {
+            if (isActive) {
+                errors.rejectValue(emailAttribute, ERROR_MANDATORY_FIELD);
+            }
+        } else {
+            if (!validStringLength(email)) {
+                errors.rejectValue(emailAttribute, ERROR_LENGTH);
+            }
+
+            if (!MailAddressValidationUtil.hasValidFormat(email)) {
+                errors.rejectValue(emailAttribute, ERROR_INVALID_EMAIL);
+            }
+        }
+
+        String passwordAttribute = "calendarSettings.exchangeCalendarSettings.password";
+        String password = exchangeCalendarSettings.getPassword();
+
+        if (!StringUtils.hasText(password)) {
+            if (isActive) {
+                errors.rejectValue(passwordAttribute, ERROR_MANDATORY_FIELD);
+            }
+        } else {
+            if (!validStringLength(password)) {
+                errors.rejectValue(passwordAttribute, ERROR_LENGTH);
+            }
+        }
+
+        String calendarAttribute = "calendarSettings.exchangeCalendarSettings.calendar";
+        String calendar = exchangeCalendarSettings.getPassword();
+
+        if (!StringUtils.hasText(calendar)) {
+            if (isActive) {
+                errors.rejectValue(calendarAttribute, ERROR_MANDATORY_FIELD);
+            }
+        } else {
+            if (!validStringLength(calendar)) {
+                errors.rejectValue(calendarAttribute, ERROR_LENGTH);
             }
         }
     }
