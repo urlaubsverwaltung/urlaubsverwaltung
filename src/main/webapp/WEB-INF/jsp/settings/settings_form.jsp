@@ -178,7 +178,7 @@
                             </label>
                         </div>
                     </div>
-                    <div class="form-group is-required">
+                    <div class="form-group">
                         <label class="control-label col-md-4" for="mailSettings.from">
                             <spring:message code='settings.mail.from'/>:
                         </label>
@@ -187,7 +187,7 @@
                             <span class="help-inline"><form:errors path="mailSettings.from" cssClass="error"/></span>
                         </div>
                     </div>
-                    <div class="form-group is-required">
+                    <div class="form-group">
                         <label class="control-label col-md-4" for="mailSettings.administrator">
                             <spring:message code='settings.mail.administrator'/>:
                         </label>
@@ -196,7 +196,7 @@
                             <span class="help-inline"><form:errors path="mailSettings.administrator" cssClass="error"/></span>
                         </div>
                     </div>
-                    <div class="form-group is-required">
+                    <div class="form-group">
                         <label class="control-label col-md-4" for="mailSettings.host">
                             <spring:message code='settings.mail.host'/>:
                         </label>
@@ -205,7 +205,7 @@
                             <span class="help-inline"><form:errors path="mailSettings.host" cssClass="error"/></span>
                         </div>
                     </div>
-                    <div class="form-group is-required">
+                    <div class="form-group">
                         <label class="control-label col-md-4" for="mailSettings.port">
                             <spring:message code='settings.mail.port'/>:
                         </label>
@@ -236,7 +236,7 @@
             </div>
 
             <div class="form-section">
-                <div> class="col-xs-12 header">
+                <div class="col-xs-12 header">
                     <legend><spring:message code="settings.calendar.title" /></legend>
                 </div>
                 <div class="col-md-4 col-md-push-8">

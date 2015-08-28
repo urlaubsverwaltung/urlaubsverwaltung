@@ -115,45 +115,89 @@ public class SettingsValidator implements Validator {
 
         MailSettings mailSettings = settings.getMailSettings();
 
+        validateMailHost(mailSettings, errors);
+
+        validateMailPort(mailSettings, errors);
+
+        validateMailUsername(mailSettings, errors);
+
+        validateMailPassword(mailSettings, errors);
+
+        validateMailFrom(mailSettings, errors);
+
+        validateMailAdministrator(mailSettings, errors);
+    }
+
+
+    private void validateMailHost(MailSettings mailSettings, Errors errors) {
+
         String hostAttribute = "mailSettings.host";
         String host = mailSettings.getHost();
 
         if (!StringUtils.hasText(host)) {
-            errors.rejectValue(hostAttribute, ERROR_MANDATORY_FIELD);
+            if (mailSettings.isActive()) {
+                errors.rejectValue(hostAttribute, ERROR_MANDATORY_FIELD);
+            }
         } else {
             if (!validStringLength(host)) {
                 errors.rejectValue(hostAttribute, ERROR_LENGTH);
             }
         }
+    }
+
+
+    private boolean validStringLength(String string) {
+
+        return string.length() <= MAX_CHARS;
+    }
+
+
+    private void validateMailPort(MailSettings mailSettings, Errors errors) {
 
         String portAttribute = "mailSettings.port";
         Integer port = mailSettings.getPort();
 
         if (port == null) {
-            errors.rejectValue(portAttribute, ERROR_MANDATORY_FIELD);
+            if (mailSettings.isActive()) {
+                errors.rejectValue(portAttribute, ERROR_MANDATORY_FIELD);
+            }
         } else {
             if (port <= 0) {
                 errors.rejectValue(portAttribute, ERROR_INVALID_ENTRY);
             }
         }
+    }
+
+
+    private void validateMailUsername(MailSettings mailSettings, Errors errors) {
 
         String username = mailSettings.getUsername();
 
         if (username != null && !validStringLength(username)) {
             errors.rejectValue("mailSettings.username", ERROR_LENGTH);
         }
+    }
+
+
+    private void validateMailPassword(MailSettings mailSettings, Errors errors) {
 
         String password = mailSettings.getPassword();
 
         if (password != null && !validStringLength(password)) {
             errors.rejectValue("mailSettings.password", ERROR_LENGTH);
         }
+    }
+
+
+    private void validateMailFrom(MailSettings mailSettings, Errors errors) {
 
         String fromAttribute = "mailSettings.from";
         String from = mailSettings.getFrom();
 
         if (!StringUtils.hasText(from)) {
-            errors.rejectValue(fromAttribute, ERROR_MANDATORY_FIELD);
+            if (mailSettings.isActive()) {
+                errors.rejectValue(fromAttribute, ERROR_MANDATORY_FIELD);
+            }
         } else {
             if (!validStringLength(from)) {
                 errors.rejectValue(fromAttribute, ERROR_LENGTH);
@@ -163,12 +207,18 @@ public class SettingsValidator implements Validator {
                 errors.rejectValue(fromAttribute, ERROR_INVALID_EMAIL);
             }
         }
+    }
+
+
+    private void validateMailAdministrator(MailSettings mailSettings, Errors errors) {
 
         String administratorAttribute = "mailSettings.administrator";
         String administrator = mailSettings.getAdministrator();
 
         if (!StringUtils.hasText(administrator)) {
-            errors.rejectValue(administratorAttribute, ERROR_MANDATORY_FIELD);
+            if (mailSettings.isActive()) {
+                errors.rejectValue(administratorAttribute, ERROR_MANDATORY_FIELD);
+            }
         } else {
             if (!validStringLength(administrator)) {
                 errors.rejectValue(administratorAttribute, ERROR_LENGTH);
@@ -178,11 +228,5 @@ public class SettingsValidator implements Validator {
                 errors.rejectValue(administratorAttribute, ERROR_INVALID_EMAIL);
             }
         }
-    }
-
-
-    private boolean validStringLength(String string) {
-
-        return string.length() <= MAX_CHARS;
     }
 }

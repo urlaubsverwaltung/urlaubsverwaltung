@@ -152,12 +152,33 @@ public class SettingsValidatorTest {
 
 
     @Test
-    public void ensureMandatoryMailSettingsCanNotBeNull() {
+    public void ensureMailSettingsAreNotMandatoryIfDeactivated() {
 
         Settings settings = new Settings();
         MailSettings mailSettings = new MailSettings();
         settings.setMailSettings(mailSettings);
 
+        mailSettings.setActive(false);
+        mailSettings.setHost(null);
+        mailSettings.setPort(null);
+        mailSettings.setAdministrator(null);
+        mailSettings.setFrom(null);
+
+        Errors mockError = Mockito.mock(Errors.class);
+        settingsValidator.validate(settings, mockError);
+
+        Mockito.verifyZeroInteractions(mockError);
+    }
+
+
+    @Test
+    public void ensureMandatoryMailSettingsCanNotBeNullIfActivated() {
+
+        Settings settings = new Settings();
+        MailSettings mailSettings = new MailSettings();
+        settings.setMailSettings(mailSettings);
+
+        mailSettings.setActive(true);
         mailSettings.setHost(null);
         mailSettings.setPort(null);
         mailSettings.setAdministrator(null);
