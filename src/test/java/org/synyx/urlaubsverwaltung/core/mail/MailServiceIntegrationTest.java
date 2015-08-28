@@ -27,6 +27,7 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.core.sync.CalendarType;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceTimeConfiguration;
 
@@ -424,7 +425,7 @@ public class MailServiceIntegrationTest {
 
 
     @Test
-    public void ensureTechnicalManagerGetsANotificationIfAKeyGeneratingErrorOccurred() throws MessagingException,
+    public void ensureAdministratorGetsANotificationIfAKeyGeneratingErrorOccurred() throws MessagingException,
         IOException {
 
         mailService.sendKeyGeneratingErrorNotification("horscht", "Message of exception");
@@ -444,7 +445,7 @@ public class MailServiceIntegrationTest {
 
 
     @Test
-    public void ensureTechnicalManagerGetsANotificationIfASignErrorOccurred() throws MessagingException, IOException {
+    public void ensureAdministratorGetsANotificationIfASignErrorOccurred() throws MessagingException, IOException {
 
         mailService.sendSignErrorNotification(5, "Message of exception");
 
@@ -592,7 +593,7 @@ public class MailServiceIntegrationTest {
 
 
     @Test
-    public void ensureTechnicalManagerGetsANotificationIfACalendarSyncErrorOccurred() throws MessagingException,
+    public void ensureAdministratorGetsANotificationIfACalendarSyncErrorOccurred() throws MessagingException,
         IOException {
 
         Person person = new Person("muster", "Muster", "Marlene", "marlene@muster.de");
@@ -624,7 +625,7 @@ public class MailServiceIntegrationTest {
 
 
     @Test
-    public void ensureTechnicalManagerGetsANotificationIfAEventDeleteErrorOccurred() throws MessagingException,
+    public void ensureAdministratorGetsANotificationIfAEventDeleteErrorOccurred() throws MessagingException,
         IOException {
 
         mailService.sendCalendarDeleteErrorNotification("Kalendername", "eventId", "event delete failed");
@@ -645,7 +646,7 @@ public class MailServiceIntegrationTest {
 
 
     @Test
-    public void ensureTechnicalManagerGetsANotificationIfAEventUpdateErrorOccurred() throws MessagingException,
+    public void ensureAdministratorGetsANotificationIfAEventUpdateErrorOccurred() throws MessagingException,
         IOException {
 
         Person person = new Person("muster", "Muster", "Marlene", "marlene@muster.de");
@@ -678,7 +679,50 @@ public class MailServiceIntegrationTest {
 
 
     @Test
-    public void ensureTechnicalManagerGetsANotificationIfSettingsGetUpdated() throws MessagingException, IOException {
+    public void ensureAdministratorGetsANotificationIfConnectionToExchangeCalendarFailed() throws MessagingException,
+        IOException {
+
+        mailService.sendCalendarConnectionErrorNotification(CalendarType.EWS, "Kalendername", "exception description");
+
+        String administrator1 = settings.getMailSettings().getAdministrator();
+        List<Message> inbox = Mailbox.get(administrator1);
+        assertTrue(inbox.size() > 0);
+
+        Message msg = inbox.get(0);
+
+        assertEquals("Verbindung zum Kalender konnte nicht hergestellt werden", msg.getSubject());
+
+        String content = (String) msg.getContent();
+
+        assertTrue(content.contains("Verbindung zum Exchange Kalender 'Kalendername'"));
+        assertTrue(content.contains("exception description"));
+    }
+
+
+    @Test
+    public void ensureAdministratorGetsANotificationIfConnectionToGoogleCalendarFailed() throws MessagingException,
+        IOException {
+
+        mailService.sendCalendarConnectionErrorNotification(CalendarType.GOOGLE, "Kalendername",
+            "exception description");
+
+        String administrator1 = settings.getMailSettings().getAdministrator();
+        List<Message> inbox = Mailbox.get(administrator1);
+        assertTrue(inbox.size() > 0);
+
+        Message msg = inbox.get(0);
+
+        assertEquals("Verbindung zum Kalender konnte nicht hergestellt werden", msg.getSubject());
+
+        String content = (String) msg.getContent();
+
+        assertTrue(content.contains("Verbindung zum Google Kalender 'Kalendername'"));
+        assertTrue(content.contains("exception description"));
+    }
+
+
+    @Test
+    public void ensureAdministratorGetsANotificationIfSettingsGetUpdated() throws MessagingException, IOException {
 
         mailService.sendSuccessfullyUpdatedSettingsNotification(settings);
 

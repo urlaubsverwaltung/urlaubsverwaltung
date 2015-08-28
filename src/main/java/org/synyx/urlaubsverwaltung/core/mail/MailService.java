@@ -10,6 +10,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.core.sync.CalendarType;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 
 import java.util.List;
@@ -124,13 +125,23 @@ public interface MailService {
 
 
     /**
-     * Send an email to the tool's manager if an error occurs during adding of calendar event.
+     * Send an email to the tool's manager if connection to calendar could not be established.
      *
-     * @param  calendar  that is used for syncing
+     * @param  calendarType  describes the calendar provider
+     * @param  calendarName  of the calendar tried to connect to
+     * @param  exception  describes the error
+     */
+    void sendCalendarConnectionErrorNotification(CalendarType calendarType, String calendarName, String exception);
+
+
+    /**
+     * Send an email to the tool's manager if an error occurs during adding calendar event.
+     *
+     * @param  calendarName  that is used for syncing
      * @param  absence  represents the absence of a person
      * @param  exception  describes the error
      */
-    void sendCalendarSyncErrorNotification(String calendar, Absence absence, String exception);
+    void sendCalendarSyncErrorNotification(String calendarName, Absence absence, String exception);
 
 
     /**

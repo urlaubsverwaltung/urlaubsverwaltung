@@ -1,0 +1,3 @@
+Die Verbindung zum ${calendarType} Kalender '${calendar}' konnte nicht hergestellt werden.
+
+${exception}

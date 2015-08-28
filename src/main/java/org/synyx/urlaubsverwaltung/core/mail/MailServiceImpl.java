@@ -33,6 +33,7 @@ import org.synyx.urlaubsverwaltung.core.settings.MailSettings;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.core.sync.CalendarType;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 import org.synyx.urlaubsverwaltung.core.util.PropertiesUtil;
 
@@ -389,10 +390,25 @@ class MailServiceImpl implements MailService {
 
 
     @Override
-    public void sendCalendarSyncErrorNotification(String calendar, Absence absence, String exception) {
+    public void sendCalendarConnectionErrorNotification(CalendarType calendarType, String calendarName,
+        String exception) {
 
         Map<String, Object> model = new HashMap<>();
-        model.put("calendar", calendar);
+        model.put("calendar", calendarName);
+        model.put("calendarType", calendarType.getName());
+        model.put("exception", exception);
+
+        String text = buildMailBody("error_calendar_connection", model);
+
+        sendTechnicalNotification("subject.error.calendar.connection", text);
+    }
+
+
+    @Override
+    public void sendCalendarSyncErrorNotification(String calendarName, Absence absence, String exception) {
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("calendar", calendarName);
         model.put("absence", absence);
         model.put("exception", exception);
 
@@ -403,11 +419,11 @@ class MailServiceImpl implements MailService {
 
 
     @Override
-    public void sendCalendarUpdateErrorNotification(String calendar, Absence absence, String eventId,
+    public void sendCalendarUpdateErrorNotification(String calendarName, Absence absence, String eventId,
         String exception) {
 
         Map<String, Object> model = new HashMap<>();
-        model.put("calendar", calendar);
+        model.put("calendar", calendarName);
         model.put("absence", absence);
         model.put("eventId", eventId);
         model.put("exception", exception);
@@ -419,10 +435,10 @@ class MailServiceImpl implements MailService {
 
 
     @Override
-    public void sendCalendarDeleteErrorNotification(String calendar, String eventId, String exception) {
+    public void sendCalendarDeleteErrorNotification(String calendarName, String eventId, String exception) {
 
         Map<String, Object> model = new HashMap<>();
-        model.put("calendar", calendar);
+        model.put("calendar", calendarName);
         model.put("eventId", eventId);
         model.put("exception", exception);
 
