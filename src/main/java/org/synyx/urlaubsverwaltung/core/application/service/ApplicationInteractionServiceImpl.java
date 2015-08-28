@@ -16,7 +16,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.sync.CalendarProviderService;
+import org.synyx.urlaubsverwaltung.core.sync.CalendarSyncService;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceMappingService;
@@ -40,14 +40,14 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
     private final SignService signService;
     private final CommentService commentService;
     private final MailService mailService;
-    private final CalendarProviderService calendarProviderService;
+    private final CalendarSyncService calendarSyncService;
     private final AbsenceMappingService absenceMappingService;
     private final AbsenceTimeConfiguration absenceTimeConfiguration;
 
     @Autowired
     public ApplicationInteractionServiceImpl(ApplicationService applicationService, CommentService commentService,
         AccountInteractionService accountInteractionService, SignService signService, MailService mailService,
-        CalendarProviderService calendarProviderService, AbsenceMappingService absenceMappingService,
+        CalendarSyncService calendarSyncService, AbsenceMappingService absenceMappingService,
         AbsenceTimeConfiguration absenceTimeConfiguration) {
 
         this.applicationService = applicationService;
@@ -55,7 +55,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         this.accountInteractionService = accountInteractionService;
         this.signService = signService;
         this.mailService = mailService;
-        this.calendarProviderService = calendarProviderService;
+        this.calendarSyncService = calendarSyncService;
         this.absenceMappingService = absenceMappingService;
         this.absenceTimeConfiguration = absenceTimeConfiguration;
     }
@@ -97,8 +97,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         // update remaining vacation days (if there is already a holidays account for next year)
         accountInteractionService.updateRemainingVacationDays(application.getStartDate().getYear(), person);
 
-        Optional<String> eventId = calendarProviderService.addAbsence(new Absence(application,
-                    absenceTimeConfiguration));
+        Optional<String> eventId = calendarSyncService.addAbsence(new Absence(application, absenceTimeConfiguration));
 
         if (eventId.isPresent()) {
             absenceMappingService.create(application, eventId.get());
@@ -133,7 +132,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
                 AbsenceType.VACATION);
 
         if (absenceMapping.isPresent()) {
-            calendarProviderService.update(new Absence(application, absenceTimeConfiguration),
+            calendarSyncService.update(new Absence(application, absenceTimeConfiguration),
                 absenceMapping.get().getEventId());
         }
 
@@ -162,7 +161,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
                 AbsenceType.VACATION);
 
         if (absenceMapping.isPresent()) {
-            calendarProviderService.deleteAbsence(absenceMapping.get().getEventId());
+            calendarSyncService.deleteAbsence(absenceMapping.get().getEventId());
             absenceMappingService.delete(absenceMapping.get());
         }
 
@@ -209,7 +208,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
                 AbsenceType.VACATION);
 
         if (absenceMapping.isPresent()) {
-            calendarProviderService.deleteAbsence(absenceMapping.get().getEventId());
+            calendarSyncService.deleteAbsence(absenceMapping.get().getEventId());
             absenceMappingService.delete(absenceMapping.get());
         }
 

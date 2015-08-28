@@ -19,7 +19,7 @@ import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteCommentService;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteStatus;
-import org.synyx.urlaubsverwaltung.core.sync.CalendarProviderService;
+import org.synyx.urlaubsverwaltung.core.sync.CalendarSyncService;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceMappingService;
@@ -48,7 +48,7 @@ public class SickNoteInteractionServiceImplTest {
     private CommentService applicationCommentService;
     private SignService signService;
     private MailService mailService;
-    private CalendarProviderService calendarProviderService;
+    private CalendarSyncService calendarSyncService;
     private AbsenceMappingService absenceMappingService;
 
     private SickNote sickNote;
@@ -63,15 +63,15 @@ public class SickNoteInteractionServiceImplTest {
         applicationCommentService = Mockito.mock(CommentService.class);
         signService = Mockito.mock(SignService.class);
         mailService = Mockito.mock(MailService.class);
-        calendarProviderService = Mockito.mock(CalendarProviderService.class);
+        calendarSyncService = Mockito.mock(CalendarSyncService.class);
         absenceMappingService = Mockito.mock(AbsenceMappingService.class);
 
-        Mockito.when(calendarProviderService.addAbsence(any(Absence.class))).thenReturn(Optional.of("42"));
+        Mockito.when(calendarSyncService.addAbsence(any(Absence.class))).thenReturn(Optional.of("42"));
         Mockito.when(absenceMappingService.getAbsenceByIdAndType(anyInt(), eq(AbsenceType.SICKNOTE)))
             .thenReturn(Optional.of(new AbsenceMapping(1, AbsenceType.VACATION, "42")));
 
         sickNoteInteractionService = new SickNoteInteractionServiceImpl(sickNoteService, sickNoteCommentService,
-                applicationService, applicationCommentService, signService, mailService, calendarProviderService,
+                applicationService, applicationCommentService, signService, mailService, calendarSyncService,
                 absenceMappingService, new AbsenceTimeConfiguration(8, 12, 13, 17));
 
         sickNote = new SickNote();
@@ -103,7 +103,7 @@ public class SickNoteInteractionServiceImplTest {
 
         SickNote createdSickNote = sickNoteInteractionService.create(sickNote, person);
 
-        Mockito.verify(calendarProviderService).addAbsence(Mockito.any(Absence.class));
+        Mockito.verify(calendarSyncService).addAbsence(Mockito.any(Absence.class));
         Mockito.verify(absenceMappingService).create(eq(createdSickNote), Mockito.anyString());
     }
 
@@ -129,7 +129,7 @@ public class SickNoteInteractionServiceImplTest {
 
         sickNoteInteractionService.update(sickNote, person);
 
-        Mockito.verify(calendarProviderService).update(Mockito.any(Absence.class), Mockito.anyString());
+        Mockito.verify(calendarSyncService).update(Mockito.any(Absence.class), Mockito.anyString());
         Mockito.verify(absenceMappingService).getAbsenceByIdAndType(anyInt(), Mockito.eq(AbsenceType.SICKNOTE));
     }
 
@@ -156,7 +156,7 @@ public class SickNoteInteractionServiceImplTest {
         sickNoteInteractionService.cancel(sickNote, person);
 
         Mockito.verify(absenceMappingService).getAbsenceByIdAndType(Mockito.anyInt(), Mockito.eq(AbsenceType.SICKNOTE));
-        Mockito.verify(calendarProviderService).deleteAbsence(Mockito.anyString());
+        Mockito.verify(calendarSyncService).deleteAbsence(Mockito.anyString());
         Mockito.verify(absenceMappingService).delete(Mockito.any(AbsenceMapping.class));
     }
 
@@ -215,7 +215,7 @@ public class SickNoteInteractionServiceImplTest {
         sickNoteInteractionService.convert(sickNote, applicationForLeave, person);
 
         Mockito.verify(absenceMappingService).getAbsenceByIdAndType(Mockito.anyInt(), Mockito.eq(AbsenceType.SICKNOTE));
-        Mockito.verify(calendarProviderService).update(Mockito.any(Absence.class), Mockito.anyString());
+        Mockito.verify(calendarSyncService).update(Mockito.any(Absence.class), Mockito.anyString());
         Mockito.verify(absenceMappingService).delete(Mockito.eq(absenceMapping));
         Mockito.verify(absenceMappingService).create(Mockito.eq(applicationForLeave), Mockito.anyString());
     }

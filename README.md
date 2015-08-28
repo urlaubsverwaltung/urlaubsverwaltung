@@ -8,7 +8,6 @@
 * [Konfiguration](https://github.com/synyx/urlaubsverwaltung#konfiguration)
     * [Umgebungen](https://github.com/synyx/urlaubsverwaltung#umgebungen)
     * [Authentifizierung](https://github.com/synyx/urlaubsverwaltung#authentifizierung)
-    * [Firmenkalender](https://github.com/synyx/urlaubsverwaltung#firmenkalender)
     * [Konfiguration ab Version 2.7.0](https://github.com/synyx/urlaubsverwaltung#konfiguration-ab-version-270)
     * [Konfiguration bis Version 2.6.4](https://github.com/synyx/urlaubsverwaltung#konfiguration-bis-version-264)
 * [Entwicklung](https://github.com/synyx/urlaubsverwaltung#entwicklung)
@@ -142,14 +141,6 @@ Die Anwendung verfügt über **drei** verschiedene Authentifizierungsmöglichkei
 * `activeDirectory`
     * Authentifizierung via Active Directory
     * Es müssen die Active Directory Domain und LDAP URL konfiguriert sein, damit eine Authentifizierung via Active Directory möglich ist.
-
-#### Firmenkalender
-
-Ab Version 2.9.0 besteht die Möglichkeit, die Urlaubs- und Krankmeldungstermine mit einem Microsoft Exchange Firmenkalender synchroniseren zu lassen.
-Dazu müssen lediglich die entsprechenden Properties, bestehend aus E-Mail-Adresse, Passwort und Name des Kalenders konfiguriert werden.
-Außerdem muss die Anwendung mit dem zusätzlichen Parameter `-Dcalendar=ews` gestartet werden.
-
-<pre>export CATALINA_OPTS="$CATALINA_OPTS -Dcalendar=ews"</pre>
 
 #### Konfiguration ab Version 2.7.0
 

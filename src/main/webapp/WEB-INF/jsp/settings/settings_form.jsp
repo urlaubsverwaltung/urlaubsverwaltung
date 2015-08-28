@@ -293,7 +293,7 @@
                             </label>
                         </div>
                     </div>
-                    <div class="form-group is-required">
+                    <div class="form-group">
                         <label class="control-label col-md-4" for="calendarSettings.exchangeCalendarSettings.email">
                             <spring:message code='settings.calendar.ews.email'/>:
                         </label>
@@ -302,16 +302,16 @@
                             <span class="help-inline"><form:errors path="calendarSettings.exchangeCalendarSettings.email" cssClass="error"/></span>
                         </div>
                     </div>
-                    <div class="form-group is-required">
+                    <div class="form-group">
                         <label class="control-label col-md-4" for="calendarSettings.exchangeCalendarSettings.password">
                             <spring:message code='settings.calendar.ews.password'/>:
                         </label>
                         <div class="col-md-8">
-                            <form:input id="calendarSettings.exchangeCalendarSettings.password" path="calendarSettings.exchangeCalendarSettings.password" class="form-control" cssErrorClass="form-control error" />
+                            <form:password showPassword="true" id="calendarSettings.exchangeCalendarSettings.password" path="calendarSettings.exchangeCalendarSettings.password" class="form-control" cssErrorClass="form-control error" />
                             <span class="help-inline"><form:errors path="calendarSettings.exchangeCalendarSettings.password" cssClass="error"/></span>
                         </div>
                     </div>
-                    <div class="form-group is-required">
+                    <div class="form-group">
                         <label class="control-label col-md-4" for="calendarSettings.exchangeCalendarSettings.calendar">
                             <spring:message code='settings.calendar.ews.calendar'/>:
                         </label>
