@@ -18,7 +18,7 @@ public class CalendarSettings {
     private Integer workDayBeginHour = 8;
 
     @Column(name = "calendar_workDayEndHour")
-    private Integer workDayEndHour = 17;
+    private Integer workDayEndHour = 16;
 
     public ExchangeCalendarSettings getExchangeCalendarSettings() {
 

@@ -69,7 +69,13 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
 
             fillAppointment(absence, appointment);
 
-            appointment.save(calendarFolder.getId(), SendInvitationsMode.SendToAllAndSaveCopy);
+            SendInvitationsMode invitationsMode = SendInvitationsMode.SendToNone;
+
+            if (exchangeCalendarSettings.isSendInvitationActive()) {
+                invitationsMode = SendInvitationsMode.SendToAllAndSaveCopy;
+            }
+
+            appointment.save(calendarFolder.getId(), invitationsMode);
 
             LOG.info(String.format("Appointment %s for '%s' added to exchange calendar '%s'.", appointment.getId(),
                     absence.getPerson().getNiceName(), calendarFolder.getDisplayName()));
@@ -199,7 +205,13 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
         try {
             Appointment appointment = Appointment.bind(exchangeService, new ItemId(eventId));
 
-            appointment.delete(DeleteMode.HardDelete, SendCancellationsMode.SendToAllAndSaveCopy);
+            SendCancellationsMode notificationMode = SendCancellationsMode.SendToNone;
+
+            if (exchangeCalendarSettings.isSendInvitationActive()) {
+                notificationMode = SendCancellationsMode.SendToAllAndSaveCopy;
+            }
+
+            appointment.delete(DeleteMode.HardDelete, notificationMode);
 
             LOG.info(String.format("Appointment %s has been deleted in exchange calendar '%s'.", eventId,
                     calendarName));

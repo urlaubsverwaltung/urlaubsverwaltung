@@ -16,6 +16,7 @@
             <column name="calendar_ews_email" type="VARCHAR(255)"/>
             <column name="calendar_ews_password" type="VARCHAR(255)"/>
             <column name="calendar_ews_calendar" type="VARCHAR(255)"/>
+            <column name="calendar_ews_sendInvitationActive" type="BIT(1)"/>
         </addColumn>
 
     </changeSet>

@@ -24,6 +24,9 @@ public class ExchangeCalendarSettings {
     @Column(name = "calendar_ews_calendar")
     private String calendar = "Urlaubsverwaltung";
 
+    @Column(name = "calendar_ews_sendInvitationActive")
+    private boolean sendInvitationActive = false;
+
     public boolean isActive() {
 
         return active;
@@ -69,5 +72,17 @@ public class ExchangeCalendarSettings {
     public void setCalendar(String calendar) {
 
         this.calendar = calendar;
+    }
+
+
+    public boolean isSendInvitationActive() {
+
+        return sendInvitationActive;
+    }
+
+
+    public void setSendInvitationActive(boolean sendInvitationActive) {
+
+        this.sendInvitationActive = sendInvitationActive;
     }
 }

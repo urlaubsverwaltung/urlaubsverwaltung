@@ -320,6 +320,17 @@
                             <span class="help-inline"><form:errors path="calendarSettings.exchangeCalendarSettings.calendar" cssClass="error"/></span>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-4" for="calendarSettings.exchangeCalendarSettings.sendInvitationActive">
+                            <spring:message code='settings.calendar.ews.notification'/>:
+                        </label>
+                        <div class="col-md-8 checkbox">
+                            <label>
+                                <form:checkbox id="calendarSettings.exchangeCalendarSettings.sendInvitationActive" path="calendarSettings.exchangeCalendarSettings.sendInvitationActive" value="true"/>
+                                <spring:message code="settings.calendar.ews.notification.true"/>
+                            </label>
+                        </div>
+                    </div>
                 </div>
             </div>
 

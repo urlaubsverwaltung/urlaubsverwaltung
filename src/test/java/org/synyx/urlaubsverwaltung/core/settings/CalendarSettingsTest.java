@@ -21,6 +21,6 @@ public class CalendarSettingsTest {
         Assert.assertNotNull("Should not be null", calendarSettings.getWorkDayEndHour());
 
         Assert.assertEquals("Wrong begin of work day", (Integer) 8, calendarSettings.getWorkDayBeginHour());
-        Assert.assertEquals("Wrong end of work day", (Integer) 17, calendarSettings.getWorkDayEndHour());
+        Assert.assertEquals("Wrong end of work day", (Integer) 16, calendarSettings.getWorkDayEndHour());
     }
 }
