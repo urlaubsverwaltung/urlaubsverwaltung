@@ -27,10 +27,14 @@ Die Anwendung bietet eine Übersicht über die bestehenden Urlaubsanträge und e
 
 #### Demo System
 
-Zum Ausprobieren der Anwendung gibt es ein [Demo System](http://urlaubsverwaltung-demo.synyx.de) mit einem Testbenutzer.
+Zum Ausprobieren der Anwendung gibt es ein [Demo System](http://urlaubsverwaltung-demo.synyx.de) mit Testbenutzern für die unterschiedlichen Rollen:
 
-* Benutzername: test
-* Passwort: secret
+| Rolle             | Benutzername  | Passwort |
+| ----------------- | ------------- | -------- |
+| Office            | test          | secret   |
+| Chef              | testBoss      | secret   |
+| Abteilungsleiter  | testHead      | secret   |
+| Benutzer          | testUser      | secret   |
 
 #### Blogposts
 
@@ -44,10 +48,11 @@ Weitere Informationen zur Geschichte und Entwicklung der Urlaubsverwaltung finde
 
 In der Urlaubsverwaltung gibt es aktuell folgende Arten von Berechtigungen:
 
-* **inaktiv**: hat keinen Zugang mehr zur Urlaubsverwaltung (bestehende Daten des Benutzers bleiben zur Archivierung bestehen)
+* **inaktiv**: hat keinen Zugang mehr zur Urlaubsverwaltung (Daten des Benutzers bleiben zur Archivierung bestehen)
 * **User**: darf Urlaub für sich selbst beantragen
-* **Boss**: darf Urlaubsanträge von Mitarbeitern einsehen, genehmigen und ablehnen
-* **Office**: darf Mitarbeiterdaten verwalten, Urlaub für Mitarbeiter beantragen und Urlaubsanträge stornieren
+* **Abteilungsleiter**: darf Urlaubsanträge für die Benutzer seiner Abteilungen einsehen, genehmigen und ablehnen
+* **Chef**: darf Urlaubsanträge aller Benutzer einsehen, genehmigen und ablehnen
+* **Office**: darf Einstellungen zur Anwendung vornehmen, Mitarbeiter verwalten, Urlaub für Mitarbeiter beantragen/stornieren und Krankmeldungen pflegen
 
 Eine aktive Person kann eine oder mehrere Rollen innehaben.
 
@@ -295,9 +300,10 @@ Möchte man die Anwendung lokal mit generierten Testdaten bei sich laufen lassen
 
 Man kann man sich nun mit verschiedenen Testbenutzern anmelden:
 
-* `testUser/secret`: Benutzer mit der User Rolle
-* `testBoss/secret`: Benutzer mit der Boss Rolle
-* `test/secret`: Benutzer mit der Office Rolle
+* `testUser/secret`: Benutzer mit der Rolle `User`
+* `testBoss/secret`: Benutzer mit der Rolle `Boss`
+* `testHead/secret`: Benutzer mit der Rolle `DepartmentHead`
+* `test/secret`: Benutzer mit der Rolle `Office`
 
 ##### LDAP
 
