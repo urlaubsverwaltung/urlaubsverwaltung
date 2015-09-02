@@ -44,7 +44,9 @@ public class PersonContextMapper implements UserDetailsContextMapper {
     public UserDetails mapUserFromContext(DirContextOperations ctx, String username,
         Collection<? extends GrantedAuthority> authorities) {
 
-        Optional<Person> optionalPerson = personService.getPersonByLogin(username);
+        String login = ctx.getStringAttribute("uid") == null ? username : ctx.getStringAttribute("uid");
+
+        Optional<Person> optionalPerson = personService.getPersonByLogin(login);
 
         /**
          * NOTE: If the system has no user yet, the first person that successfully signs in
@@ -59,7 +61,7 @@ public class PersonContextMapper implements UserDetailsContextMapper {
             String firstName = ctx.getStringAttribute("givenName");
             String mailAddress = ctx.getStringAttribute("mail");
 
-            person = createPerson(username, firstName, lastName, mailAddress, noActivePersonExistsYet);
+            person = createPerson(login, firstName, lastName, mailAddress, noActivePersonExistsYet);
         } else {
             person = optionalPerson.get();
         }
@@ -67,7 +69,7 @@ public class PersonContextMapper implements UserDetailsContextMapper {
         org.springframework.security.ldap.userdetails.Person.Essence p =
             new org.springframework.security.ldap.userdetails.Person.Essence(ctx);
 
-        p.setUsername(username);
+        p.setUsername(login);
         p.setAuthorities(getGrantedAuthorities(person));
 
         return p.createUserDetails();
