@@ -29,7 +29,7 @@ public class GravatarUtilTest {
 
         String emailWithWhitespaces = " fraU.Lyoner@Net.de";
 
-        // show that given email is trimmed and lowercased
+        // show that given email is trimmed and lower cased
         // that means: every url is equals
 
         String url1 = GravatarUtil.createImgURL(email);
@@ -52,7 +52,6 @@ public class GravatarUtilTest {
 
         // if email is null
         String url = GravatarUtil.createImgURL(null);
-        // NullPointerException is catched by setting email to empty String (!= null)
 
         // if email is a empty string, same result as if email is null
         String urlEmpty = GravatarUtil.createImgURL("");

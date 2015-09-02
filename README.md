@@ -8,7 +8,6 @@
 * [Konfiguration](https://github.com/synyx/urlaubsverwaltung#konfiguration)
     * [Umgebungen](https://github.com/synyx/urlaubsverwaltung#umgebungen)
     * [Authentifizierung](https://github.com/synyx/urlaubsverwaltung#authentifizierung)
-    * [Firmenkalender](https://github.com/synyx/urlaubsverwaltung#firmenkalender)
     * [Konfiguration ab Version 2.7.0](https://github.com/synyx/urlaubsverwaltung#konfiguration-ab-version-270)
     * [Konfiguration bis Version 2.6.4](https://github.com/synyx/urlaubsverwaltung#konfiguration-bis-version-264)
 * [Entwicklung](https://github.com/synyx/urlaubsverwaltung#entwicklung)
@@ -120,17 +119,14 @@ Die Anwendung verfügt über **drei** verschiedene Umgebungsmöglichkeiten:
     * zum lokalen Entwickeln
     * nutzt eine H2-Datenbank
     * legt Testdaten an
-    * nutzt als Mail-Sender einen Dummy (verschickt keine E-Mails)
 * `test`
     * zum Testen der Anwendung
     * nutzt eine MySQL-Datenbank
     * legt keine Testdaten an
-    * nutzt als Mail-Sender einen Dummy (verschickt keine E-Mails)
 * `prod`
     * zum Ausführen der produktiven Anwendung
     * nutzt eine MySQL-Datenbank
     * legt keine Testdaten an
-    * nutzt den Java-Mail-Sender von [Spring](http://www.springsource.org/) (verschickt E-Mails)
 
 ##### Umgebung aktivieren
 
@@ -150,14 +146,6 @@ Die Anwendung verfügt über **drei** verschiedene Authentifizierungsmöglichkei
 * `activeDirectory`
     * Authentifizierung via Active Directory
     * Es müssen die Active Directory Domain und LDAP URL konfiguriert sein, damit eine Authentifizierung via Active Directory möglich ist.
-
-#### Firmenkalender
-
-Ab Version 2.9.0 besteht die Möglichkeit, die Urlaubs- und Krankmeldungstermine mit einem Microsoft Exchange Firmenkalender synchroniseren zu lassen.
-Dazu müssen lediglich die entsprechenden Properties, bestehend aus E-Mail-Adresse, Passwort und Name des Kalenders konfiguriert werden.
-Außerdem muss die Anwendung mit dem zusätzlichen Parameter `-Dcalendar=ews` gestartet werden.
-
-<pre>export CATALINA_OPTS="$CATALINA_OPTS -Dcalendar=ews"</pre>
 
 #### Konfiguration ab Version 2.7.0
 
@@ -204,18 +192,6 @@ Um Active Directory zur Authentifizierung zu nutzen, zusätzlich den Parameter `
 Um die erstellten Urlaubs- und Krankmeldungstermine mit einem Microsoft Exchange Kalender zu synchronisieren, zusätzlich den Parameter `-Dcalendar=ews` angeben:
 
 <pre>export CATALINA_OPTS="$CATALINA_OPTS -Denv=prod -Dauth=activeDirectory -Dcalendar=ews"</pre>
-
-###### E-Mail-Konfiguration
-
-Durch Aktivieren der Produktivumgebung wird der Mail Sender automatisch so gesetzt, dass E-Mails verschickt werden können:
-<pre>mail.sender=org.springframework.mail.javamail.JavaMailSenderImpl</pre>
-
-Diese Einstellung erfordert, dass die Properties für Mail Host und Port korrekt konfiguriert sein müssen.
-
-Möchte man keine E-Mails verschicken und keinerlei E-Mail-Konfiguration vornehmen, kann man diese Property überschreiben:
-<pre>mail.sender=org.synyx.urlaubsverwaltung.core.mail.MockMailSender</pre>
-
-Dies hat zur Folge, dass keine E-Mails verschickt werden und folglich keine Konfiguration zum E-Mail-Versand vorgenommen werden muss.
 
 #### Konfiguration bis Version 2.6.4
 
@@ -267,7 +243,7 @@ Im Folgenden werden die durchzuführenden Schritte beschrieben, wenn man an der 
 #### Anwendung starten
 
 Man kann die Anwendung lokal mit dem Maven Jetty Plugin starten.
-Ohne weitere Angabe wird das Development-Environment genutzt, d.h. es wird eine H2-Datenbank verwendet und es werden keine E-Mails versendet.
+Ohne weitere Angabe wird das Development-Environment genutzt, d.h. es wird eine H2-Datenbank verwendet.
 
 <pre>mvn jetty:run</pre>
 

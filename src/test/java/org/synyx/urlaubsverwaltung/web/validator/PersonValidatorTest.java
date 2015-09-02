@@ -131,7 +131,7 @@ public class PersonValidatorTest {
     public void ensureEmailWithoutAtIsInvalid() {
 
         validator.validateEmail("fraulyoner(at)verwaltung.de", errors);
-        Mockito.verify(errors).rejectValue("email", "person.form.data.email.error");
+        Mockito.verify(errors).rejectValue("email", "error.entry.mail");
     }
 
 
@@ -139,7 +139,7 @@ public class PersonValidatorTest {
     public void ensureEmailWithMoreThanOneAtIsInvalid() {
 
         validator.validateEmail("fraulyoner@verw@ltung.de", errors);
-        Mockito.verify(errors).rejectValue("email", "person.form.data.email.error");
+        Mockito.verify(errors).rejectValue("email", "error.entry.mail");
     }
 
 
@@ -147,7 +147,7 @@ public class PersonValidatorTest {
     public void ensureEmailWithAtOnInvalidPlaceIsInvalid() {
 
         validator.validateEmail("@fraulyonerverwaltung.de", errors);
-        Mockito.verify(errors).rejectValue("email", "person.form.data.email.error");
+        Mockito.verify(errors).rejectValue("email", "error.entry.mail");
     }
 
 
@@ -155,7 +155,7 @@ public class PersonValidatorTest {
     public void ensureEmailWithInvalidHostNameIsInvalid() {
 
         validator.validateEmail("fraulyoner@verwaltungde", errors);
-        Mockito.verify(errors).rejectValue("email", "person.form.data.email.error");
+        Mockito.verify(errors).rejectValue("email", "error.entry.mail");
     }
 
 

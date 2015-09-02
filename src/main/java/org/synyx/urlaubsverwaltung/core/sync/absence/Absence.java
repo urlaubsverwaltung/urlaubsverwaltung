@@ -67,14 +67,14 @@ public class Absence {
                 break;
 
             case MORNING:
-                this.startDate = new Date(startDateInMilliseconds + absenceTimeConfiguration.getMorningStart());
-                this.endDate = new Date(endDateInMilliseconds + absenceTimeConfiguration.getMorningEnd());
+                this.startDate = new Date(startDateInMilliseconds + absenceTimeConfiguration.getMorningStartAsMillis());
+                this.endDate = new Date(endDateInMilliseconds + absenceTimeConfiguration.getMorningEndAsMillis());
                 this.isAllDay = false;
                 break;
 
             case NOON:
-                this.startDate = new Date(startDateInMilliseconds + absenceTimeConfiguration.getNoonStart());
-                this.endDate = new Date(endDateInMilliseconds + absenceTimeConfiguration.getNoonEnd());
+                this.startDate = new Date(startDateInMilliseconds + absenceTimeConfiguration.getNoonStartAsMillis());
+                this.endDate = new Date(endDateInMilliseconds + absenceTimeConfiguration.getNoonEndAsMillis());
                 this.isAllDay = false;
                 break;
 

@@ -1,9 +1,6 @@
 package org.synyx.urlaubsverwaltung.core.sync.absence;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-
-import org.springframework.stereotype.Component;
+import org.synyx.urlaubsverwaltung.core.settings.CalendarSettings;
 
 import java.util.concurrent.TimeUnit;
 
@@ -13,46 +10,61 @@ import java.util.concurrent.TimeUnit;
  *
  * @author  Daniel Hammann - <hammann@synyx.de>
  */
-@Component
 public class AbsenceTimeConfiguration {
 
-    private final Integer morningStart;
-    private final Integer morningEnd;
-    private final Integer noonStart;
-    private final Integer noonEnd;
+    private CalendarSettings calendarSettings;
 
-    @Autowired
-    public AbsenceTimeConfiguration(@Value("${calendar.time.morningStart}") Integer morningStart,
-        @Value("${calendar.time.morningEnd}") Integer morningEnd,
-        @Value("${calendar.time.noonStart}") Integer noonStart,
-        @Value("${calendar.time.noonEnd}") Integer noonEnd) {
+    public AbsenceTimeConfiguration(CalendarSettings calendarSettings) {
 
-        this.morningStart = morningStart;
-        this.morningEnd = morningEnd;
-        this.noonStart = noonStart;
-        this.noonEnd = noonEnd;
+        this.calendarSettings = calendarSettings;
     }
 
-    public long getMorningStart() {
+    public Integer getMorningStart() {
 
-        return TimeUnit.HOURS.toMillis(morningStart);
+        return calendarSettings.getWorkDayBeginHour();
     }
 
 
-    public long getMorningEnd() {
+    public Integer getMorningEnd() {
 
-        return TimeUnit.HOURS.toMillis(morningEnd);
+        int halfWorkDay = (calendarSettings.getWorkDayEndHour() - calendarSettings.getWorkDayBeginHour()) / 2;
+
+        return calendarSettings.getWorkDayBeginHour() + halfWorkDay;
     }
 
 
-    public long getNoonStart() {
+    public Integer getNoonStart() {
 
-        return TimeUnit.HOURS.toMillis(noonStart);
+        return getMorningEnd();
     }
 
 
-    public long getNoonEnd() {
+    public Integer getNoonEnd() {
 
-        return TimeUnit.HOURS.toMillis(noonEnd);
+        return calendarSettings.getWorkDayEndHour();
+    }
+
+
+    public long getMorningStartAsMillis() {
+
+        return TimeUnit.HOURS.toMillis(getMorningStart());
+    }
+
+
+    public long getMorningEndAsMillis() {
+
+        return TimeUnit.HOURS.toMillis(getMorningEnd());
+    }
+
+
+    public long getNoonStartAsMillis() {
+
+        return TimeUnit.HOURS.toMillis(getNoonStart());
+    }
+
+
+    public long getNoonEndAsMillis() {
+
+        return TimeUnit.HOURS.toMillis(getNoonEnd());
     }
 }

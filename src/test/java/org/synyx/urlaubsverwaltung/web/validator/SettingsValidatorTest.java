@@ -8,6 +8,9 @@ import org.mockito.Mockito;
 
 import org.springframework.validation.Errors;
 
+import org.synyx.urlaubsverwaltung.core.settings.CalendarSettings;
+import org.synyx.urlaubsverwaltung.core.settings.ExchangeCalendarSettings;
+import org.synyx.urlaubsverwaltung.core.settings.MailSettings;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 
 import static org.junit.Assert.*;
@@ -147,5 +150,268 @@ public class SettingsValidatorTest {
         Mockito.verify(mockError)
             .rejectValue("daysBeforeEndOfSickPayNotification",
                 "settings.sickDays.daysBeforeEndOfSickPayNotification.error");
+    }
+
+
+    @Test
+    public void ensureMailSettingsAreNotMandatoryIfDeactivated() {
+
+        Settings settings = new Settings();
+        MailSettings mailSettings = new MailSettings();
+        settings.setMailSettings(mailSettings);
+
+        mailSettings.setActive(false);
+        mailSettings.setHost(null);
+        mailSettings.setPort(null);
+        mailSettings.setAdministrator(null);
+        mailSettings.setFrom(null);
+
+        Errors mockError = Mockito.mock(Errors.class);
+        settingsValidator.validate(settings, mockError);
+
+        Mockito.verifyZeroInteractions(mockError);
+    }
+
+
+    @Test
+    public void ensureMandatoryMailSettingsAreMandatoryIfActivated() {
+
+        Settings settings = new Settings();
+        MailSettings mailSettings = new MailSettings();
+        settings.setMailSettings(mailSettings);
+
+        mailSettings.setActive(true);
+        mailSettings.setHost(null);
+        mailSettings.setPort(null);
+        mailSettings.setAdministrator(null);
+        mailSettings.setFrom(null);
+
+        Errors mockError = Mockito.mock(Errors.class);
+        settingsValidator.validate(settings, mockError);
+        Mockito.verify(mockError).rejectValue("mailSettings.host", "error.entry.mandatory");
+        Mockito.verify(mockError).rejectValue("mailSettings.port", "error.entry.mandatory");
+        Mockito.verify(mockError).rejectValue("mailSettings.administrator", "error.entry.mandatory");
+        Mockito.verify(mockError).rejectValue("mailSettings.from", "error.entry.mandatory");
+    }
+
+
+    @Test
+    public void ensureFromAndAdministratorMailAddressesMustBeValid() {
+
+        Settings settings = new Settings();
+        MailSettings mailSettings = new MailSettings();
+        settings.setMailSettings(mailSettings);
+
+        mailSettings.setAdministrator("foo");
+        mailSettings.setFrom("bar");
+
+        Errors mockError = Mockito.mock(Errors.class);
+        settingsValidator.validate(settings, mockError);
+        Mockito.verify(mockError).rejectValue("mailSettings.administrator", "error.entry.mail");
+        Mockito.verify(mockError).rejectValue("mailSettings.from", "error.entry.mail");
+    }
+
+
+    @Test
+    public void ensureMailPortMustBeNotNegative() {
+
+        Settings settings = new Settings();
+        MailSettings mailSettings = new MailSettings();
+        settings.setMailSettings(mailSettings);
+
+        mailSettings.setPort(-1);
+
+        Errors mockError = Mockito.mock(Errors.class);
+        settingsValidator.validate(settings, mockError);
+        Mockito.verify(mockError).rejectValue("mailSettings.port", "error.entry.invalid");
+    }
+
+
+    @Test
+    public void ensureMailPortMustBeGreaterThanZero() {
+
+        Settings settings = new Settings();
+        MailSettings mailSettings = new MailSettings();
+        settings.setMailSettings(mailSettings);
+
+        mailSettings.setPort(0);
+
+        Errors mockError = Mockito.mock(Errors.class);
+        settingsValidator.validate(settings, mockError);
+        Mockito.verify(mockError).rejectValue("mailSettings.port", "error.entry.invalid");
+    }
+
+
+    @Test
+    public void ensureCalendarSettingsAreMandatory() {
+
+        Settings settings = new Settings();
+        CalendarSettings calendarSettings = settings.getCalendarSettings();
+
+        calendarSettings.setWorkDayBeginHour(null);
+        calendarSettings.setWorkDayEndHour(null);
+
+        Errors mockError = Mockito.mock(Errors.class);
+        settingsValidator.validate(settings, mockError);
+        Mockito.verify(mockError).rejectValue("calendarSettings.workDayBeginHour", "error.entry.mandatory");
+        Mockito.verify(mockError).rejectValue("calendarSettings.workDayEndHour", "error.entry.mandatory");
+    }
+
+
+    @Test
+    public void ensureCalendarSettingsAreInvalidIfWorkDayBeginAndEndHoursAreSame() {
+
+        Settings settings = new Settings();
+        CalendarSettings calendarSettings = settings.getCalendarSettings();
+
+        calendarSettings.setWorkDayBeginHour(8);
+        calendarSettings.setWorkDayEndHour(8);
+
+        Errors mockError = Mockito.mock(Errors.class);
+        settingsValidator.validate(settings, mockError);
+        Mockito.verify(mockError).rejectValue("calendarSettings.workDayBeginHour", "error.entry.invalid");
+        Mockito.verify(mockError).rejectValue("calendarSettings.workDayEndHour", "error.entry.invalid");
+    }
+
+
+    @Test
+    public void ensureCalendarSettingsAreInvalidIfWorkDayBeginHourIsGreaterThanEndHour() {
+
+        Settings settings = new Settings();
+        CalendarSettings calendarSettings = settings.getCalendarSettings();
+
+        calendarSettings.setWorkDayBeginHour(17);
+        calendarSettings.setWorkDayEndHour(8);
+
+        Errors mockError = Mockito.mock(Errors.class);
+        settingsValidator.validate(settings, mockError);
+        Mockito.verify(mockError).rejectValue("calendarSettings.workDayBeginHour", "error.entry.invalid");
+        Mockito.verify(mockError).rejectValue("calendarSettings.workDayEndHour", "error.entry.invalid");
+    }
+
+
+    @Test
+    public void ensureCalendarSettingsAreInvalidIfWorkDayBeginOrEndHoursAreNegative() {
+
+        Settings settings = new Settings();
+        CalendarSettings calendarSettings = settings.getCalendarSettings();
+
+        calendarSettings.setWorkDayBeginHour(-1);
+        calendarSettings.setWorkDayEndHour(-2);
+
+        Errors mockError = Mockito.mock(Errors.class);
+        settingsValidator.validate(settings, mockError);
+        Mockito.verify(mockError).rejectValue("calendarSettings.workDayBeginHour", "error.entry.invalid");
+        Mockito.verify(mockError).rejectValue("calendarSettings.workDayEndHour", "error.entry.invalid");
+    }
+
+
+    @Test
+    public void ensureCalendarSettingsAreInvalidIfWorkDayBeginOrEndHoursAreZero() {
+
+        Settings settings = new Settings();
+        CalendarSettings calendarSettings = settings.getCalendarSettings();
+
+        calendarSettings.setWorkDayBeginHour(0);
+        calendarSettings.setWorkDayEndHour(0);
+
+        Errors mockError = Mockito.mock(Errors.class);
+        settingsValidator.validate(settings, mockError);
+        Mockito.verify(mockError).rejectValue("calendarSettings.workDayBeginHour", "error.entry.invalid");
+        Mockito.verify(mockError).rejectValue("calendarSettings.workDayEndHour", "error.entry.invalid");
+    }
+
+
+    @Test
+    public void ensureCalendarSettingsAreInvalidIfWorkDayBeginOrEndHoursAreGreaterThan24() {
+
+        Settings settings = new Settings();
+        CalendarSettings calendarSettings = settings.getCalendarSettings();
+
+        calendarSettings.setWorkDayBeginHour(25);
+        calendarSettings.setWorkDayEndHour(42);
+
+        Errors mockError = Mockito.mock(Errors.class);
+        settingsValidator.validate(settings, mockError);
+        Mockito.verify(mockError).rejectValue("calendarSettings.workDayBeginHour", "error.entry.invalid");
+        Mockito.verify(mockError).rejectValue("calendarSettings.workDayEndHour", "error.entry.invalid");
+    }
+
+
+    @Test
+    public void ensureCalendarSettingsAreValidIfValidWorkDayBeginAndEndHours() {
+
+        Settings settings = new Settings();
+        CalendarSettings calendarSettings = settings.getCalendarSettings();
+
+        calendarSettings.setWorkDayBeginHour(10);
+        calendarSettings.setWorkDayEndHour(18);
+
+        Errors mockError = Mockito.mock(Errors.class);
+        settingsValidator.validate(settings, mockError);
+
+        Mockito.verifyZeroInteractions(mockError);
+    }
+
+
+    @Test
+    public void ensureExchangeCalendarSettingsAreNotMandatoryIfDeactivated() {
+
+        Settings settings = new Settings();
+        ExchangeCalendarSettings exchangeCalendarSettings = settings.getCalendarSettings()
+            .getExchangeCalendarSettings();
+
+        exchangeCalendarSettings.setActive(false);
+        exchangeCalendarSettings.setEmail(null);
+        exchangeCalendarSettings.setPassword(null);
+        exchangeCalendarSettings.setCalendar(null);
+
+        Errors mockError = Mockito.mock(Errors.class);
+        settingsValidator.validate(settings, mockError);
+
+        Mockito.verifyZeroInteractions(mockError);
+    }
+
+
+    @Test
+    public void ensureExchangeCalendarSettingsAreMandatoryIfActivated() {
+
+        Settings settings = new Settings();
+        ExchangeCalendarSettings exchangeCalendarSettings = settings.getCalendarSettings()
+            .getExchangeCalendarSettings();
+
+        exchangeCalendarSettings.setActive(true);
+        exchangeCalendarSettings.setEmail(null);
+        exchangeCalendarSettings.setPassword(null);
+        exchangeCalendarSettings.setCalendar(null);
+
+        Errors mockError = Mockito.mock(Errors.class);
+        settingsValidator.validate(settings, mockError);
+
+        Mockito.verify(mockError)
+            .rejectValue("calendarSettings.exchangeCalendarSettings.email", "error.entry.mandatory");
+        Mockito.verify(mockError)
+            .rejectValue("calendarSettings.exchangeCalendarSettings.password", "error.entry.mandatory");
+        Mockito.verify(mockError)
+            .rejectValue("calendarSettings.exchangeCalendarSettings.calendar", "error.entry.mandatory");
+    }
+
+
+    @Test
+    public void ensureExchangeCalendarSettingsHaveValidMailAddress() {
+
+        Settings settings = new Settings();
+        ExchangeCalendarSettings exchangeCalendarSettings = settings.getCalendarSettings()
+            .getExchangeCalendarSettings();
+
+        exchangeCalendarSettings.setActive(true);
+        exchangeCalendarSettings.setEmail("foo");
+        exchangeCalendarSettings.setPassword("bar");
+        exchangeCalendarSettings.setCalendar("calendar");
+
+        Errors mockError = Mockito.mock(Errors.class);
+        settingsValidator.validate(settings, mockError);
+
+        Mockito.verify(mockError).rejectValue("calendarSettings.exchangeCalendarSettings.email", "error.entry.mail");
     }
 }

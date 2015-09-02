@@ -3,10 +3,14 @@ package org.synyx.urlaubsverwaltung.web.validator;
 import org.springframework.stereotype.Component;
 
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+import org.synyx.urlaubsverwaltung.core.settings.CalendarSettings;
+import org.synyx.urlaubsverwaltung.core.settings.ExchangeCalendarSettings;
+import org.synyx.urlaubsverwaltung.core.settings.MailSettings;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 
 
@@ -18,8 +22,11 @@ public class SettingsValidator implements Validator {
 
     private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
     private static final String ERROR_INVALID_ENTRY = "error.entry.invalid";
+    private static final String ERROR_INVALID_EMAIL = "error.entry.mail";
+    private static final String ERROR_LENGTH = "error.entry.tooManyChars";
 
     private static final int DAYS_PER_YEAR = 366;
+    private static final int MAX_CHARS = 255;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -40,6 +47,10 @@ public class SettingsValidator implements Validator {
         validateVacationSettings(settings, errors);
 
         validateSickNoteSettings(settings, errors);
+
+        validateMailSettings(settings, errors);
+
+        validateCalendarSettings(settings, errors);
     }
 
 
@@ -100,6 +111,224 @@ public class SettingsValidator implements Validator {
                 && daysBeforeEndOfSickPayNotification > maximumSickPayDays) {
             errors.rejectValue("daysBeforeEndOfSickPayNotification",
                 "settings.sickDays.daysBeforeEndOfSickPayNotification.error");
+        }
+    }
+
+
+    private void validateMailSettings(Settings settings, Errors errors) {
+
+        MailSettings mailSettings = settings.getMailSettings();
+
+        validateMailHost(mailSettings, errors);
+
+        validateMailPort(mailSettings, errors);
+
+        validateMailUsername(mailSettings, errors);
+
+        validateMailPassword(mailSettings, errors);
+
+        validateMailFrom(mailSettings, errors);
+
+        validateMailAdministrator(mailSettings, errors);
+    }
+
+
+    private void validateMailHost(MailSettings mailSettings, Errors errors) {
+
+        String hostAttribute = "mailSettings.host";
+        String host = mailSettings.getHost();
+
+        if (!StringUtils.hasText(host)) {
+            if (mailSettings.isActive()) {
+                errors.rejectValue(hostAttribute, ERROR_MANDATORY_FIELD);
+            }
+        } else {
+            if (!validStringLength(host)) {
+                errors.rejectValue(hostAttribute, ERROR_LENGTH);
+            }
+        }
+    }
+
+
+    private boolean validStringLength(String string) {
+
+        return string.length() <= MAX_CHARS;
+    }
+
+
+    private void validateMailPort(MailSettings mailSettings, Errors errors) {
+
+        String portAttribute = "mailSettings.port";
+        Integer port = mailSettings.getPort();
+
+        if (port == null) {
+            if (mailSettings.isActive()) {
+                errors.rejectValue(portAttribute, ERROR_MANDATORY_FIELD);
+            }
+        } else {
+            if (port <= 0) {
+                errors.rejectValue(portAttribute, ERROR_INVALID_ENTRY);
+            }
+        }
+    }
+
+
+    private void validateMailUsername(MailSettings mailSettings, Errors errors) {
+
+        String username = mailSettings.getUsername();
+
+        if (username != null && !validStringLength(username)) {
+            errors.rejectValue("mailSettings.username", ERROR_LENGTH);
+        }
+    }
+
+
+    private void validateMailPassword(MailSettings mailSettings, Errors errors) {
+
+        String password = mailSettings.getPassword();
+
+        if (password != null && !validStringLength(password)) {
+            errors.rejectValue("mailSettings.password", ERROR_LENGTH);
+        }
+    }
+
+
+    private void validateMailFrom(MailSettings mailSettings, Errors errors) {
+
+        String fromAttribute = "mailSettings.from";
+        String from = mailSettings.getFrom();
+
+        if (!StringUtils.hasText(from)) {
+            if (mailSettings.isActive()) {
+                errors.rejectValue(fromAttribute, ERROR_MANDATORY_FIELD);
+            }
+        } else {
+            if (!validStringLength(from)) {
+                errors.rejectValue(fromAttribute, ERROR_LENGTH);
+            }
+
+            if (!MailAddressValidationUtil.hasValidFormat(from)) {
+                errors.rejectValue(fromAttribute, ERROR_INVALID_EMAIL);
+            }
+        }
+    }
+
+
+    private void validateMailAdministrator(MailSettings mailSettings, Errors errors) {
+
+        String administratorAttribute = "mailSettings.administrator";
+        String administrator = mailSettings.getAdministrator();
+
+        if (!StringUtils.hasText(administrator)) {
+            if (mailSettings.isActive()) {
+                errors.rejectValue(administratorAttribute, ERROR_MANDATORY_FIELD);
+            }
+        } else {
+            if (!validStringLength(administrator)) {
+                errors.rejectValue(administratorAttribute, ERROR_LENGTH);
+            }
+
+            if (!MailAddressValidationUtil.hasValidFormat(administrator)) {
+                errors.rejectValue(administratorAttribute, ERROR_INVALID_EMAIL);
+            }
+        }
+    }
+
+
+    private void validateCalendarSettings(Settings settings, Errors errors) {
+
+        CalendarSettings calendarSettings = settings.getCalendarSettings();
+
+        validateCalendarSettings(calendarSettings, errors);
+
+        validateExchangeCalendarSettings(calendarSettings.getExchangeCalendarSettings(), errors);
+    }
+
+
+    private void validateCalendarSettings(CalendarSettings calendarSettings, Errors errors) {
+
+        String workDayBeginHourAttribute = "calendarSettings.workDayBeginHour";
+        Integer workDayBeginHour = calendarSettings.getWorkDayBeginHour();
+        validateWorkDayHour(workDayBeginHour, workDayBeginHourAttribute, errors);
+
+        Integer workDayEndHour = calendarSettings.getWorkDayEndHour();
+        String workDayEndHourAttribute = "calendarSettings.workDayEndHour";
+        validateWorkDayHour(workDayEndHour, workDayEndHourAttribute, errors);
+
+        boolean beginHourValid = workDayBeginHour != null && isValidWorkDayHour(workDayBeginHour);
+        boolean endHourValid = workDayEndHour != null && isValidWorkDayHour(workDayEndHour);
+
+        if (beginHourValid && endHourValid
+                && (workDayBeginHour.equals(workDayEndHour) || workDayBeginHour > workDayEndHour)) {
+            errors.rejectValue(workDayBeginHourAttribute, ERROR_INVALID_ENTRY);
+            errors.rejectValue(workDayEndHourAttribute, ERROR_INVALID_ENTRY);
+        }
+    }
+
+
+    private boolean isValidWorkDayHour(int workDayHour) {
+
+        return workDayHour > 0 && workDayHour <= 24;
+    }
+
+
+    private void validateWorkDayHour(Integer workDayHour, String attribute, Errors errors) {
+
+        if (workDayHour == null) {
+            errors.rejectValue(attribute, ERROR_MANDATORY_FIELD);
+        } else {
+            if (!isValidWorkDayHour(workDayHour)) {
+                errors.rejectValue(attribute, ERROR_INVALID_ENTRY);
+            }
+        }
+    }
+
+
+    private void validateExchangeCalendarSettings(ExchangeCalendarSettings exchangeCalendarSettings, Errors errors) {
+
+        boolean isActive = exchangeCalendarSettings.isActive();
+
+        String emailAttribute = "calendarSettings.exchangeCalendarSettings.email";
+        String email = exchangeCalendarSettings.getEmail();
+
+        if (!StringUtils.hasText(email)) {
+            if (isActive) {
+                errors.rejectValue(emailAttribute, ERROR_MANDATORY_FIELD);
+            }
+        } else {
+            if (!validStringLength(email)) {
+                errors.rejectValue(emailAttribute, ERROR_LENGTH);
+            }
+
+            if (!MailAddressValidationUtil.hasValidFormat(email)) {
+                errors.rejectValue(emailAttribute, ERROR_INVALID_EMAIL);
+            }
+        }
+
+        String passwordAttribute = "calendarSettings.exchangeCalendarSettings.password";
+        String password = exchangeCalendarSettings.getPassword();
+
+        if (!StringUtils.hasText(password)) {
+            if (isActive) {
+                errors.rejectValue(passwordAttribute, ERROR_MANDATORY_FIELD);
+            }
+        } else {
+            if (!validStringLength(password)) {
+                errors.rejectValue(passwordAttribute, ERROR_LENGTH);
+            }
+        }
+
+        String calendarAttribute = "calendarSettings.exchangeCalendarSettings.calendar";
+        String calendar = exchangeCalendarSettings.getPassword();
+
+        if (!StringUtils.hasText(calendar)) {
+            if (isActive) {
+                errors.rejectValue(calendarAttribute, ERROR_MANDATORY_FIELD);
+            }
+        } else {
+            if (!validStringLength(calendar)) {
+                errors.rejectValue(calendarAttribute, ERROR_LENGTH);
+            }
         }
     }
 }

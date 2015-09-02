@@ -27,18 +27,15 @@ public class StartupService {
 
     private final String dbUser;
     private final String dbUrl;
-    private final String emailManager;
     private final String authentication;
     private final String environment;
 
     @Autowired
     public StartupService(@Value("${db.username}") String dbUser,
-        @Value("${db.url}") String dbUrl,
-        @Value("${mail.manager}") String emailManager) {
+        @Value("${db.url}") String dbUrl) {
 
         this.dbUser = dbUser;
         this.dbUrl = dbUrl;
-        this.emailManager = emailManager;
         this.authentication = System.getProperty(AUTHENTICATION);
         this.environment = System.getProperty(ENVIRONMENT);
     }
@@ -48,7 +45,6 @@ public class StartupService {
 
         LOG.info("DATABASE=" + dbUrl);
         LOG.info("DATABASE USER=" + dbUser);
-        LOG.info("APPLICATION MANAGER EMAIL=" + emailManager);
         LOG.info("AUTHENTICATION=" + authentication);
         LOG.info("ENVIRONMENT=" + environment);
     }

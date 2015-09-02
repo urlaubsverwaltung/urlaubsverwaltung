@@ -15,9 +15,11 @@ import org.synyx.urlaubsverwaltung.core.application.service.CommentService;
 import org.synyx.urlaubsverwaltung.core.application.service.SignService;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.settings.CalendarSettings;
+import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteCommentService;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteStatus;
-import org.synyx.urlaubsverwaltung.core.sync.CalendarProviderService;
+import org.synyx.urlaubsverwaltung.core.sync.CalendarSyncService;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceMappingService;
@@ -45,16 +47,16 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
     private final CommentService applicationCommentService;
     private final SignService signService;
     private final MailService mailService;
-    private final CalendarProviderService calendarProviderService;
+    private final CalendarSyncService calendarSyncService;
     private final AbsenceMappingService absenceMappingService;
-    private final AbsenceTimeConfiguration absenceTimeConfiguration;
+    private final SettingsService settingsService;
 
     @Autowired
     public SickNoteInteractionServiceImpl(SickNoteService sickNoteService,
         SickNoteCommentService sickNoteCommentService, ApplicationService applicationService,
         CommentService applicationCommentService, SignService signService, MailService mailService,
-        CalendarProviderService calendarProviderService, AbsenceMappingService absenceMappingService,
-        AbsenceTimeConfiguration absenceTimeConfiguration) {
+        CalendarSyncService calendarSyncService, AbsenceMappingService absenceMappingService,
+        SettingsService settingsService) {
 
         this.sickNoteService = sickNoteService;
         this.sickNoteCommentService = sickNoteCommentService;
@@ -62,9 +64,9 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
         this.applicationCommentService = applicationCommentService;
         this.signService = signService;
         this.mailService = mailService;
-        this.calendarProviderService = calendarProviderService;
+        this.calendarSyncService = calendarSyncService;
         this.absenceMappingService = absenceMappingService;
-        this.absenceTimeConfiguration = absenceTimeConfiguration;
+        this.settingsService = settingsService;
     }
 
     @Override
@@ -76,7 +78,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
         sickNoteService.save(sickNote);
         sickNoteCommentService.create(sickNote, SickNoteStatus.CREATED, Optional.<String>empty(), creator);
 
-        Optional<String> eventId = calendarProviderService.addAbsence(new Absence(sickNote));
+        Optional<String> eventId = calendarSyncService.addAbsence(new Absence(sickNote));
 
         if (eventId.isPresent()) {
             absenceMappingService.create(sickNote, eventId.get());
@@ -99,7 +101,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
                 AbsenceType.SICKNOTE);
 
         if (absenceMapping.isPresent()) {
-            calendarProviderService.update(new Absence(sickNote), absenceMapping.get().getEventId());
+            calendarSyncService.update(new Absence(sickNote), absenceMapping.get().getEventId());
         }
 
         return sickNote;
@@ -131,7 +133,10 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
 
         if (absenceMapping.isPresent()) {
             String eventId = absenceMapping.get().getEventId();
-            calendarProviderService.update(new Absence(application, absenceTimeConfiguration), eventId);
+            CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
+
+            calendarSyncService.update(new Absence(application, new AbsenceTimeConfiguration(calendarSettings)),
+                eventId);
             absenceMappingService.delete(absenceMapping.get());
             absenceMappingService.create(application, eventId);
         }
@@ -153,7 +158,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
                 AbsenceType.SICKNOTE);
 
         if (absenceMapping.isPresent()) {
-            calendarProviderService.deleteAbsence(absenceMapping.get().getEventId());
+            calendarSyncService.deleteAbsence(absenceMapping.get().getEventId());
             absenceMappingService.delete(absenceMapping.get());
         }
 

@@ -9,11 +9,12 @@ import org.apache.velocity.app.VelocityEngine;
 import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import org.springframework.stereotype.Service;
 
@@ -28,7 +29,11 @@ import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
+import org.synyx.urlaubsverwaltung.core.settings.MailSettings;
+import org.synyx.urlaubsverwaltung.core.settings.Settings;
+import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.core.sync.CalendarType;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 import org.synyx.urlaubsverwaltung.core.util.PropertiesUtil;
 
@@ -59,31 +64,29 @@ class MailServiceImpl implements MailService {
     private static final String TEMPLATE_TYPE = ".vm";
     private static final String PROPERTIES_FILE = "messages.properties";
 
-    private final JavaMailSender mailSender;
+    private final JavaMailSenderImpl mailSender;
     private final VelocityEngine velocityEngine;
+
     private final PersonService personService;
     private final DepartmentService departmentService;
+    private final SettingsService settingsService;
 
-    private final String emailFrom;
-    private final String emailManager;
     private final String applicationUrl;
 
     private Properties properties;
 
     @Autowired
-    public MailServiceImpl(JavaMailSender mailSender, VelocityEngine velocityEngine, PersonService personService,
-        DepartmentService departmentService,
-        @Value("${mail.from}") String emailFrom,
-        @Value("${mail.manager}") String emailManager,
+    public MailServiceImpl(@Qualifier("mailSender") JavaMailSenderImpl mailSender, VelocityEngine velocityEngine,
+        PersonService personService, DepartmentService departmentService, SettingsService settingsService,
         @Value("${application.url}") String applicationUrl) {
 
         this.mailSender = mailSender;
         this.velocityEngine = velocityEngine;
+
         this.personService = personService;
         this.departmentService = departmentService;
+        this.settingsService = settingsService;
 
-        this.emailFrom = emailFrom;
-        this.emailManager = emailManager;
         this.applicationUrl = applicationUrl;
 
         try {
@@ -198,20 +201,39 @@ class MailServiceImpl implements MailService {
                 addressTo[i] = recipient.getEmail();
             }
 
-            mailMessage.setFrom(emailFrom);
+            MailSettings mailSettings = settingsService.getSettings().getMailSettings();
+            mailMessage.setFrom(mailSettings.getFrom());
             mailMessage.setTo(addressTo);
             mailMessage.setSubject(internationalizedSubject);
             mailMessage.setText(text);
 
-            try {
-                this.mailSender.send(mailMessage);
+            sendMail(mailMessage, mailSettings);
+        }
+    }
 
-                for (Person recipient : recipientsWithMailAddress) {
-                    LOG.info("Sent email to " + recipient.getEmail() + " with subject '" + internationalizedSubject
-                        + "'");
+
+    private void sendMail(SimpleMailMessage message, MailSettings mailSettings) {
+
+        try {
+            if (mailSettings.isActive()) {
+                this.mailSender.setHost(mailSettings.getHost());
+                this.mailSender.setPort(mailSettings.getPort());
+                this.mailSender.setUsername(mailSettings.getUsername());
+                this.mailSender.setPassword(mailSettings.getPassword());
+
+                this.mailSender.send(message);
+
+                for (String recipient : message.getTo()) {
+                    LOG.info("Sent email to " + recipient);
                 }
-            } catch (MailException ex) {
-                LOG.error("Sending email to " + recipientsWithMailAddress + " failed", ex);
+            } else {
+                for (String recipient : message.getTo()) {
+                    LOG.info("No email configuration to send email to " + recipient);
+                }
+            }
+        } catch (MailException ex) {
+            for (String recipient : message.getTo()) {
+                LOG.error("Sending email to " + recipient + " failed", ex);
             }
         }
     }
@@ -341,18 +363,16 @@ class MailServiceImpl implements MailService {
      */
     private void sendTechnicalNotification(final String subject, final String text) {
 
+        MailSettings mailSettings = settingsService.getSettings().getMailSettings();
+
         SimpleMailMessage mailMessage = new SimpleMailMessage();
 
-        mailMessage.setFrom(emailFrom);
-        mailMessage.setTo(emailManager);
+        mailMessage.setFrom(mailSettings.getFrom());
+        mailMessage.setTo(mailSettings.getAdministrator());
         mailMessage.setSubject(properties.getProperty(subject));
         mailMessage.setText(text);
 
-        try {
-            this.mailSender.send(mailMessage);
-        } catch (MailException ex) {
-            LOG.error("Sending email to " + emailManager + " failed", ex);
-        }
+        sendMail(mailMessage, mailSettings);
     }
 
 
@@ -370,10 +390,25 @@ class MailServiceImpl implements MailService {
 
 
     @Override
-    public void sendCalendarSyncErrorNotification(String calendar, Absence absence, String exception) {
+    public void sendCalendarConnectionErrorNotification(CalendarType calendarType, String calendarName,
+        String exception) {
 
         Map<String, Object> model = new HashMap<>();
-        model.put("calendar", calendar);
+        model.put("calendar", calendarName);
+        model.put("calendarType", calendarType.getName());
+        model.put("exception", exception);
+
+        String text = buildMailBody("error_calendar_connection", model);
+
+        sendTechnicalNotification("subject.error.calendar.connection", text);
+    }
+
+
+    @Override
+    public void sendCalendarSyncErrorNotification(String calendarName, Absence absence, String exception) {
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("calendar", calendarName);
         model.put("absence", absence);
         model.put("exception", exception);
 
@@ -384,11 +419,11 @@ class MailServiceImpl implements MailService {
 
 
     @Override
-    public void sendCalendarUpdateErrorNotification(String calendar, Absence absence, String eventId,
+    public void sendCalendarUpdateErrorNotification(String calendarName, Absence absence, String eventId,
         String exception) {
 
         Map<String, Object> model = new HashMap<>();
-        model.put("calendar", calendar);
+        model.put("calendar", calendarName);
         model.put("absence", absence);
         model.put("eventId", eventId);
         model.put("exception", exception);
@@ -400,10 +435,10 @@ class MailServiceImpl implements MailService {
 
 
     @Override
-    public void sendCalendarDeleteErrorNotification(String calendar, String eventId, String exception) {
+    public void sendCalendarDeleteErrorNotification(String calendarName, String eventId, String exception) {
 
         Map<String, Object> model = new HashMap<>();
-        model.put("calendar", calendar);
+        model.put("calendar", calendarName);
         model.put("eventId", eventId);
         model.put("exception", exception);
 
@@ -414,7 +449,7 @@ class MailServiceImpl implements MailService {
 
 
     @Override
-    public void sendSuccessfullyUpdatedAccounts(List<Account> updatedAccounts) {
+    public void sendSuccessfullyUpdatedAccountsNotification(List<Account> updatedAccounts) {
 
         Map<String, Object> model = new HashMap<>();
         model.put("accounts", updatedAccounts);
@@ -427,6 +462,17 @@ class MailServiceImpl implements MailService {
 
         // send email to manager to notify about update of accounts
         sendTechnicalNotification("subject.account.updatedRemainingDays", text);
+    }
+
+
+    @Override
+    public void sendSuccessfullyUpdatedSettingsNotification(Settings settings) {
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("settings", settings);
+
+        String text = buildMailBody("updated_settings", model);
+        sendTechnicalNotification("subject.settings.updated", text);
     }
 
 

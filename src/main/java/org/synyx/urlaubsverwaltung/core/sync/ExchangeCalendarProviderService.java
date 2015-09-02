@@ -18,16 +18,14 @@ import microsoft.exchange.webservices.data.search.FolderView;
 import org.apache.log4j.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-
-import org.springframework.context.annotation.Conditional;
 
 import org.springframework.stereotype.Service;
 
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.settings.CalendarSettings;
+import org.synyx.urlaubsverwaltung.core.settings.ExchangeCalendarSettings;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
-import org.synyx.urlaubsverwaltung.core.sync.condition.ExchangeCalendarCondition;
 
 import java.util.Optional;
 
@@ -38,43 +36,31 @@ import java.util.Optional;
  * @author  Daniel Hammann - <hammann@synyx.de>
  * @author  Aljona Murygina - murygina@synyx.de
  */
-@Service("calendarProviderService")
-@Conditional(ExchangeCalendarCondition.class)
+@Service
 public class ExchangeCalendarProviderService implements CalendarProviderService {
 
     private static final Logger LOG = Logger.getLogger(ExchangeCalendarProviderService.class);
 
-    private final String calendarName;
     private final MailService mailService;
+
     private ExchangeService exchangeService;
 
+    private String credentialsMailAddress;
+    private String credentialsPassword;
+
     @Autowired
-    public ExchangeCalendarProviderService(MailService mailService,
-        @Value("${calendar.ews.email}") String emailAddress,
-        @Value("${calendar.ews.password}") String password,
-        @Value("${calendar.ews.calendar}") String calendarName) {
+    public ExchangeCalendarProviderService(MailService mailService) {
 
         this.mailService = mailService;
-        this.calendarName = calendarName;
-
-        try {
-            exchangeService = new ExchangeService();
-            exchangeService.setCredentials(new WebCredentials(emailAddress, password));
-            exchangeService.autodiscoverUrl(emailAddress, new RedirectionUrlCallback());
-            exchangeService.setTraceEnabled(true);
-        } catch (Exception e) {
-            // NOTE: If an exception is thrown at this point, probably there is an error within the configuration
-
-            LOG.error("No connection could be established to the Exchange calendar.");
-            LOG.error("Please check your configuration!");
-            LOG.error("Shutting down with system exit...");
-
-            System.exit(1);
-        }
+        this.exchangeService = new ExchangeService();
     }
 
     @Override
-    public Optional<String> addAbsence(Absence absence) {
+    public Optional<String> addAbsence(Absence absence, CalendarSettings calendarSettings) {
+
+        ExchangeCalendarSettings exchangeCalendarSettings = calendarSettings.getExchangeCalendarSettings();
+        String calendarName = exchangeCalendarSettings.getCalendar();
+        connectToExchange(exchangeCalendarSettings);
 
         try {
             CalendarFolder calendarFolder = findOrCreateCalendar(calendarName);
@@ -83,7 +69,13 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
 
             fillAppointment(absence, appointment);
 
-            appointment.save(calendarFolder.getId(), SendInvitationsMode.SendToAllAndSaveCopy);
+            SendInvitationsMode invitationsMode = SendInvitationsMode.SendToNone;
+
+            if (exchangeCalendarSettings.isSendInvitationActive()) {
+                invitationsMode = SendInvitationsMode.SendToAllAndSaveCopy;
+            }
+
+            appointment.save(calendarFolder.getId(), invitationsMode);
 
             LOG.info(String.format("Appointment %s for '%s' added to exchange calendar '%s'.", appointment.getId(),
                     absence.getPerson().getNiceName(), calendarFolder.getDisplayName()));
@@ -95,6 +87,25 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
         }
 
         return Optional.empty();
+    }
+
+
+    private void connectToExchange(ExchangeCalendarSettings settings) {
+
+        String emailAddress = settings.getEmail();
+        String password = settings.getPassword();
+
+        if (!emailAddress.equals(credentialsMailAddress) || !password.equals(credentialsPassword)) {
+            try {
+                exchangeService.setCredentials(new WebCredentials(emailAddress, password));
+                exchangeService.autodiscoverUrl(emailAddress, new RedirectionUrlCallback());
+                exchangeService.setTraceEnabled(true);
+                credentialsMailAddress = emailAddress;
+                credentialsPassword = password;
+            } catch (Exception ex) {
+                LOG.warn("No connection could be established to the Exchange calendar.", ex);
+            }
+        }
     }
 
 
@@ -162,7 +173,11 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
 
 
     @Override
-    public void update(Absence absence, String eventId) {
+    public void update(Absence absence, String eventId, CalendarSettings calendarSettings) {
+
+        ExchangeCalendarSettings exchangeCalendarSettings = calendarSettings.getExchangeCalendarSettings();
+        String calendarName = exchangeCalendarSettings.getCalendar();
+        connectToExchange(exchangeCalendarSettings);
 
         try {
             Appointment appointment = Appointment.bind(exchangeService, new ItemId(eventId));
@@ -181,12 +196,22 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
 
 
     @Override
-    public void deleteAbsence(String eventId) {
+    public void deleteAbsence(String eventId, CalendarSettings calendarSettings) {
+
+        ExchangeCalendarSettings exchangeCalendarSettings = calendarSettings.getExchangeCalendarSettings();
+        String calendarName = exchangeCalendarSettings.getCalendar();
+        connectToExchange(exchangeCalendarSettings);
 
         try {
             Appointment appointment = Appointment.bind(exchangeService, new ItemId(eventId));
 
-            appointment.delete(DeleteMode.HardDelete, SendCancellationsMode.SendToAllAndSaveCopy);
+            SendCancellationsMode notificationMode = SendCancellationsMode.SendToNone;
+
+            if (exchangeCalendarSettings.isSendInvitationActive()) {
+                notificationMode = SendCancellationsMode.SendToAllAndSaveCopy;
+            }
+
+            appointment.delete(DeleteMode.HardDelete, notificationMode);
 
             LOG.info(String.format("Appointment %s has been deleted in exchange calendar '%s'.", eventId,
                     calendarName));

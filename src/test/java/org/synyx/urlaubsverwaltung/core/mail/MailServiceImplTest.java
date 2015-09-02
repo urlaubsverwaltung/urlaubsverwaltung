@@ -10,7 +10,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
@@ -18,6 +18,9 @@ import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
+import org.synyx.urlaubsverwaltung.core.settings.MailSettings;
+import org.synyx.urlaubsverwaltung.core.settings.Settings;
+import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -30,21 +33,25 @@ public class MailServiceImplTest {
 
     private MailServiceImpl mailService;
 
-    private JavaMailSender mailSender;
+    private JavaMailSenderImpl mailSender;
     private PersonService personService;
     private DepartmentService departmentService;
 
     private Application application;
+    private Settings settings;
 
     @Before
     public void setUp() throws Exception {
 
         VelocityEngine velocityEngine = Mockito.mock(VelocityEngine.class);
-        mailSender = Mockito.mock(JavaMailSender.class);
+        mailSender = Mockito.mock(JavaMailSenderImpl.class);
         personService = Mockito.mock(PersonService.class);
         departmentService = Mockito.mock(DepartmentService.class);
 
-        mailService = new MailServiceImpl(mailSender, velocityEngine, personService, departmentService, "", "", "");
+        SettingsService settingsService = Mockito.mock(SettingsService.class);
+
+        mailService = new MailServiceImpl(mailSender, velocityEngine, personService, departmentService, settingsService,
+                "");
 
         Person person = new Person();
 
@@ -52,6 +59,40 @@ public class MailServiceImplTest {
         application.setPerson(person);
         application.setVacationType(VacationType.HOLIDAY);
         application.setDayLength(DayLength.FULL);
+
+        settings = new Settings();
+        settings.getMailSettings().setActive(true);
+
+        Mockito.when(settingsService.getSettings()).thenReturn(settings);
+    }
+
+
+    @Test
+    public void ensureNoMailSentIfSendingMailsIsDeactivated() {
+
+        settings.getMailSettings().setActive(false);
+
+        Person person = new Person("muster", "Muster", "Max", "max@muster.de");
+
+        mailService.sendEmail(Collections.singletonList(person), "subject", "text");
+
+        Mockito.verifyZeroInteractions(mailSender);
+    }
+
+
+    @Test
+    public void ensureMailSenderAttributesAreUpdatedWhenSendingMails() {
+
+        MailSettings mailSettings = settings.getMailSettings();
+
+        Person person = new Person("muster", "Muster", "Max", "max@muster.de");
+
+        mailService.sendEmail(Collections.singletonList(person), "subject", "text");
+
+        Mockito.verify(mailSender).setHost(mailSettings.getHost());
+        Mockito.verify(mailSender).setPort(mailSettings.getPort());
+        Mockito.verify(mailSender).setUsername(mailSettings.getUsername());
+        Mockito.verify(mailSender).setPassword(mailSettings.getPassword());
     }
 
 
@@ -84,7 +125,7 @@ public class MailServiceImplTest {
 
         Person person = new Person("muster", "Muster", "Max", null);
 
-        mailService.sendEmail(Arrays.asList(person), "Mail Subject", "Mail Body");
+        mailService.sendEmail(Collections.singletonList(person), "Mail Subject", "Mail Body");
 
         Mockito.verifyZeroInteractions(mailSender);
     }
