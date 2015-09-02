@@ -70,8 +70,19 @@
             <td class="is-centered">
                 <img class="img-circle hidden-print" src="<c:out value='${gravatarUrls[person]}?d=mm&s=60'/>"/>
             </td>
-            <td class="firstname"><c:out value="${person.firstName}"/></td>
-            <td class="lastname"><c:out value="${person.lastName}"/></td>
+            <td class="firstname">
+                <c:out value="${person.firstName}"/>
+            </td>
+            <td class="lastname">
+                <c:choose>
+                    <c:when test="${person.firstName == null && person.lastName == null}">
+                        <c:out value="${person.loginName}"/>
+                    </c:when>
+                    <c:otherwise>
+                        <c:out value="${person.lastName}"/>
+                    </c:otherwise>
+                </c:choose>
+            </td>
             <td class="is-centered hidden-xs hidden-sm">
                 <c:choose>
                     <c:when test="${accounts[person] != null}">
