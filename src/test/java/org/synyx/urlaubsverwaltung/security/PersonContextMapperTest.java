@@ -64,7 +64,7 @@ public class PersonContextMapperTest {
     @Test
     public void ensureFirstCreatedPersonHasTheCorrectRoles() {
 
-        Person person = personContextMapper.createPerson("murygina", true);
+        Person person = personContextMapper.createPerson("murygina", "Aljona", "Murygina", "murygina@synyx.de", true);
 
         Collection<Role> roles = person.getPermissions();
 
@@ -77,7 +77,7 @@ public class PersonContextMapperTest {
     @Test
     public void ensureFurtherCreatedPersonHasTheCorrectRoles() {
 
-        Person person = personContextMapper.createPerson("murygina2", false);
+        Person person = personContextMapper.createPerson("murygina", "Aljona", "Murygina", "murygina@synyx.de", false);
 
         Collection<Role> roles = person.getPermissions();
 
@@ -87,10 +87,22 @@ public class PersonContextMapperTest {
 
 
     @Test
+    public void ensureCreatedPersonHasCorrectAttributes() {
+
+        Person person = personContextMapper.createPerson("murygina", "Aljona", "Murygina", "murygina@synyx.de", true);
+
+        Assert.assertEquals("Wrong login name", "murygina", person.getLoginName());
+        Assert.assertEquals("Wrong first name", "Aljona", person.getFirstName());
+        Assert.assertEquals("Wrong last name", "Murygina", person.getLastName());
+        Assert.assertEquals("Wrong mail address", "murygina@synyx.de", person.getEmail());
+    }
+
+
+    @Test
     public void ensureCreatedPersonIsSaved() {
 
-        personContextMapper.createPerson("murygina", true);
+        Person person = personContextMapper.createPerson("murygina", "Aljona", "Murygina", "murygina@synyx.de", true);
 
-        Mockito.verify(personService).save(Mockito.any(Person.class));
+        Mockito.verify(personService).save(Mockito.eq(person));
     }
 }

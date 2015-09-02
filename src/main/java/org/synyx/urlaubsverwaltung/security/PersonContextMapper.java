@@ -55,7 +55,11 @@ public class PersonContextMapper implements UserDetailsContextMapper {
         Person person;
 
         if (!optionalPerson.isPresent()) {
-            person = createPerson(username, noActivePersonExistsYet);
+            String lastName = ctx.getStringAttribute("sn");
+            String firstName = ctx.getStringAttribute("givenName");
+            String mailAddress = ctx.getStringAttribute("mail");
+
+            person = createPerson(username, firstName, lastName, mailAddress, noActivePersonExistsYet);
         } else {
             person = optionalPerson.get();
         }
@@ -71,16 +75,25 @@ public class PersonContextMapper implements UserDetailsContextMapper {
 
 
     /**
-     * Creates a {@link Person} with the roles {@link Role#OFFICE} and {@link Role#USER}.
+     * Creates a {@link Person} with the role {@link Role#USER} resp. with the roles {@link Role#USER} and
+     * {@link Role#OFFICE} if this is the first person that is created.
      *
      * @param  login  of the person to be created
+     * @param  firstName  of the person to be created
+     * @param  lastName  of the person to be created
+     * @param  mailAddress  of the person to be created
+     * @param  isFirst  describes if this is the first person that is created, if {@code true} then the person gets the
+     *                  role {@link Role#OFFICE}
      *
      * @return  the created person
      */
-    Person createPerson(String login, boolean isFirst) {
+    Person createPerson(String login, String firstName, String lastName, String mailAddress, boolean isFirst) {
 
         Person person = new Person();
         person.setLoginName(login);
+        person.setFirstName(firstName);
+        person.setLastName(lastName);
+        person.setEmail(mailAddress);
 
         List<Role> permissions = new ArrayList<>();
         permissions.add(Role.USER);
