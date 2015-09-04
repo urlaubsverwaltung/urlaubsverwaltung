@@ -1,7 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package org.synyx.urlaubsverwaltung.core.mail;
 
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;

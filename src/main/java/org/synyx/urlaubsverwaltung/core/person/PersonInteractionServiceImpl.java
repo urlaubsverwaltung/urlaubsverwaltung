@@ -135,7 +135,7 @@ public class PersonInteractionServiceImpl implements PersonInteractionService {
 
         touchDepartmentHeads(personToUpdate);
 
-        LOG.info("Updated " + optionalPersonToUpdate.toString());
+        LOG.info("Updated " + personToUpdate.toString());
 
         return personToUpdate;
     }
