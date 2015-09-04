@@ -398,23 +398,4 @@ public class SettingsValidatorTest {
         Mockito.verify(mockError)
             .rejectValue("calendarSettings.exchangeCalendarSettings.calendar", "error.entry.mandatory");
     }
-
-
-    @Test
-    public void ensureExchangeCalendarSettingsHaveValidMailAddress() {
-
-        Settings settings = new Settings();
-        ExchangeCalendarSettings exchangeCalendarSettings = settings.getCalendarSettings()
-            .getExchangeCalendarSettings();
-
-        exchangeCalendarSettings.setActive(true);
-        exchangeCalendarSettings.setEmail("foo");
-        exchangeCalendarSettings.setPassword("bar");
-        exchangeCalendarSettings.setCalendar("calendar");
-
-        Errors mockError = Mockito.mock(Errors.class);
-        settingsValidator.validate(settings, mockError);
-
-        Mockito.verify(mockError).rejectValue("calendarSettings.exchangeCalendarSettings.email", "error.entry.mail");
-    }
 }

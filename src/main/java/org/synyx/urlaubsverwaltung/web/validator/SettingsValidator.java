@@ -288,7 +288,7 @@ public class SettingsValidator implements Validator {
     private void validateExchangeCalendarSettings(ExchangeCalendarSettings exchangeCalendarSettings, Errors errors) {
 
         validateExchangeDomain(exchangeCalendarSettings, errors);
-        validateExchangeEmail(exchangeCalendarSettings, errors);
+        validateExchangeEmailOrUserName(exchangeCalendarSettings, errors);
         validateExchangePassword(exchangeCalendarSettings, errors);
         validateExchangeCalendarName(exchangeCalendarSettings, errors);
     }
@@ -311,7 +311,7 @@ public class SettingsValidator implements Validator {
     }
 
 
-    private void validateExchangeEmail(ExchangeCalendarSettings exchangeCalendarSettings, Errors errors) {
+    private void validateExchangeEmailOrUserName(ExchangeCalendarSettings exchangeCalendarSettings, Errors errors) {
 
         String emailAttribute = "calendarSettings.exchangeCalendarSettings.email";
         String email = exchangeCalendarSettings.getEmail();
@@ -323,10 +323,6 @@ public class SettingsValidator implements Validator {
         } else {
             if (!validStringLength(email)) {
                 errors.rejectValue(emailAttribute, ERROR_LENGTH);
-            }
-
-            if (!MailAddressValidationUtil.hasValidFormat(email)) {
-                errors.rejectValue(emailAttribute, ERROR_INVALID_EMAIL);
             }
         }
     }
