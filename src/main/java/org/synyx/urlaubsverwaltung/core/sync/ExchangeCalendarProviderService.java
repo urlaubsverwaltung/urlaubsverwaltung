@@ -42,9 +42,9 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
     private static final Logger LOG = Logger.getLogger(ExchangeCalendarProviderService.class);
 
     private final MailService mailService;
+    private final ExchangeService exchangeService;
 
-    private ExchangeService exchangeService;
-
+    private String credentialsDomain;
     private String credentialsMailAddress;
     private String credentialsPassword;
 
@@ -92,14 +92,17 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
 
     private void connectToExchange(ExchangeCalendarSettings settings) {
 
+        String domain = settings.getDomain();
         String emailAddress = settings.getEmail();
         String password = settings.getPassword();
 
-        if (!emailAddress.equals(credentialsMailAddress) || !password.equals(credentialsPassword)) {
+        if (!domain.equals(credentialsDomain) || !emailAddress.equals(credentialsMailAddress)
+                || !password.equals(credentialsPassword)) {
             try {
-                exchangeService.setCredentials(new WebCredentials(emailAddress, password));
+                exchangeService.setCredentials(new WebCredentials(emailAddress, password, domain));
                 exchangeService.autodiscoverUrl(emailAddress, new RedirectionUrlCallback());
                 exchangeService.setTraceEnabled(true);
+                credentialsDomain = domain;
                 credentialsMailAddress = emailAddress;
                 credentialsPassword = password;
             } catch (Exception ex) {

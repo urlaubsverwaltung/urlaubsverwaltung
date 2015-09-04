@@ -288,6 +288,19 @@ public class SettingsValidator implements Validator {
 
         boolean isActive = exchangeCalendarSettings.isActive();
 
+        String domainAttribute = "calendarSettings.exchangeCalendarSettings.domain";
+        String domain = exchangeCalendarSettings.getDomain();
+
+        if (!StringUtils.hasText(domain)) {
+            if (isActive) {
+                errors.rejectValue(domainAttribute, ERROR_MANDATORY_FIELD);
+            }
+        } else {
+            if (!validStringLength(domain)) {
+                errors.rejectValue(domainAttribute, ERROR_LENGTH);
+            }
+        }
+
         String emailAttribute = "calendarSettings.exchangeCalendarSettings.email";
         String email = exchangeCalendarSettings.getEmail();
 

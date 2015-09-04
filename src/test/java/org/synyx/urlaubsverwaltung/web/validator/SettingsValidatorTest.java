@@ -381,6 +381,7 @@ public class SettingsValidatorTest {
             .getExchangeCalendarSettings();
 
         exchangeCalendarSettings.setActive(true);
+        exchangeCalendarSettings.setDomain(null);
         exchangeCalendarSettings.setEmail(null);
         exchangeCalendarSettings.setPassword(null);
         exchangeCalendarSettings.setCalendar(null);
@@ -388,6 +389,8 @@ public class SettingsValidatorTest {
         Errors mockError = Mockito.mock(Errors.class);
         settingsValidator.validate(settings, mockError);
 
+        Mockito.verify(mockError)
+            .rejectValue("calendarSettings.exchangeCalendarSettings.domain", "error.entry.mandatory");
         Mockito.verify(mockError)
             .rejectValue("calendarSettings.exchangeCalendarSettings.email", "error.entry.mandatory");
         Mockito.verify(mockError)
