@@ -286,13 +286,20 @@ public class SettingsValidator implements Validator {
 
     private void validateExchangeCalendarSettings(ExchangeCalendarSettings exchangeCalendarSettings, Errors errors) {
 
-        boolean isActive = exchangeCalendarSettings.isActive();
+        validateExchangeDomain(exchangeCalendarSettings, errors);
+        validateExchangeEmail(exchangeCalendarSettings, errors);
+        validateExchangePassword(exchangeCalendarSettings, errors);
+        validateExchangeCalendarName(exchangeCalendarSettings, errors);
+    }
+
+
+    private void validateExchangeDomain(ExchangeCalendarSettings exchangeCalendarSettings, Errors errors) {
 
         String domainAttribute = "calendarSettings.exchangeCalendarSettings.domain";
         String domain = exchangeCalendarSettings.getDomain();
 
         if (!StringUtils.hasText(domain)) {
-            if (isActive) {
+            if (exchangeCalendarSettings.isActive()) {
                 errors.rejectValue(domainAttribute, ERROR_MANDATORY_FIELD);
             }
         } else {
@@ -300,12 +307,16 @@ public class SettingsValidator implements Validator {
                 errors.rejectValue(domainAttribute, ERROR_LENGTH);
             }
         }
+    }
+
+
+    private void validateExchangeEmail(ExchangeCalendarSettings exchangeCalendarSettings, Errors errors) {
 
         String emailAttribute = "calendarSettings.exchangeCalendarSettings.email";
         String email = exchangeCalendarSettings.getEmail();
 
         if (!StringUtils.hasText(email)) {
-            if (isActive) {
+            if (exchangeCalendarSettings.isActive()) {
                 errors.rejectValue(emailAttribute, ERROR_MANDATORY_FIELD);
             }
         } else {
@@ -317,12 +328,16 @@ public class SettingsValidator implements Validator {
                 errors.rejectValue(emailAttribute, ERROR_INVALID_EMAIL);
             }
         }
+    }
+
+
+    private void validateExchangePassword(ExchangeCalendarSettings exchangeCalendarSettings, Errors errors) {
 
         String passwordAttribute = "calendarSettings.exchangeCalendarSettings.password";
         String password = exchangeCalendarSettings.getPassword();
 
         if (!StringUtils.hasText(password)) {
-            if (isActive) {
+            if (exchangeCalendarSettings.isActive()) {
                 errors.rejectValue(passwordAttribute, ERROR_MANDATORY_FIELD);
             }
         } else {
@@ -330,12 +345,16 @@ public class SettingsValidator implements Validator {
                 errors.rejectValue(passwordAttribute, ERROR_LENGTH);
             }
         }
+    }
+
+
+    private void validateExchangeCalendarName(ExchangeCalendarSettings exchangeCalendarSettings, Errors errors) {
 
         String calendarAttribute = "calendarSettings.exchangeCalendarSettings.calendar";
         String calendar = exchangeCalendarSettings.getPassword();
 
         if (!StringUtils.hasText(calendar)) {
-            if (isActive) {
+            if (exchangeCalendarSettings.isActive()) {
                 errors.rejectValue(calendarAttribute, ERROR_MANDATORY_FIELD);
             }
         } else {
