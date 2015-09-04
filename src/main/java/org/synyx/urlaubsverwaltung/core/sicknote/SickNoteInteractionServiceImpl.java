@@ -9,10 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
-import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
-import org.synyx.urlaubsverwaltung.core.application.service.CommentService;
-import org.synyx.urlaubsverwaltung.core.application.service.SignService;
+import org.synyx.urlaubsverwaltung.core.application.service.ApplicationInteractionService;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.CalendarSettings;
@@ -42,27 +39,22 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
     private static final boolean INACTIVE = false;
 
     private final SickNoteService sickNoteService;
-    private final SickNoteCommentService sickNoteCommentService;
-    private final ApplicationService applicationService;
-    private final CommentService applicationCommentService;
-    private final SignService signService;
+    private final SickNoteCommentService commentService;
+    private final ApplicationInteractionService applicationInteractionService;
     private final MailService mailService;
     private final CalendarSyncService calendarSyncService;
     private final AbsenceMappingService absenceMappingService;
     private final SettingsService settingsService;
 
     @Autowired
-    public SickNoteInteractionServiceImpl(SickNoteService sickNoteService,
-        SickNoteCommentService sickNoteCommentService, ApplicationService applicationService,
-        CommentService applicationCommentService, SignService signService, MailService mailService,
+    public SickNoteInteractionServiceImpl(SickNoteService sickNoteService, SickNoteCommentService commentService,
+        ApplicationInteractionService applicationInteractionService, MailService mailService,
         CalendarSyncService calendarSyncService, AbsenceMappingService absenceMappingService,
         SettingsService settingsService) {
 
         this.sickNoteService = sickNoteService;
-        this.sickNoteCommentService = sickNoteCommentService;
-        this.applicationService = applicationService;
-        this.applicationCommentService = applicationCommentService;
-        this.signService = signService;
+        this.commentService = commentService;
+        this.applicationInteractionService = applicationInteractionService;
         this.mailService = mailService;
         this.calendarSyncService = calendarSyncService;
         this.absenceMappingService = absenceMappingService;
@@ -76,7 +68,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
         sickNote.setLastEdited(DateMidnight.now());
 
         sickNoteService.save(sickNote);
-        sickNoteCommentService.create(sickNote, SickNoteStatus.CREATED, Optional.<String>empty(), creator);
+        commentService.create(sickNote, SickNoteStatus.CREATED, Optional.<String>empty(), creator);
 
         Optional<String> eventId = calendarSyncService.addAbsence(new Absence(sickNote));
 
@@ -95,7 +87,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
         sickNote.setLastEdited(DateMidnight.now());
 
         sickNoteService.save(sickNote);
-        sickNoteCommentService.create(sickNote, SickNoteStatus.EDITED, Optional.<String>empty(), editor);
+        commentService.create(sickNote, SickNoteStatus.EDITED, Optional.<String>empty(), editor);
 
         Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(sickNote.getId(),
                 AbsenceType.SICKNOTE);
@@ -111,22 +103,14 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
     @Override
     public SickNote convert(SickNote sickNote, Application application, Person converter) {
 
-        // create an application for leave that is allowed directly
-        application.setApplier(converter);
-        application.setStatus(ApplicationStatus.ALLOWED);
-
-        signService.signApplicationByBoss(application, converter);
-        applicationService.save(application);
-        applicationCommentService.create(application, ApplicationStatus.ALLOWED, Optional.<String>empty(), converter);
-        mailService.sendSickNoteConvertedToVacationNotification(application);
-
         // make sick note inactive
         sickNote.setActive(INACTIVE);
         sickNote.setLastEdited(DateMidnight.now());
 
         sickNoteService.save(sickNote);
-        sickNoteCommentService.create(sickNote, SickNoteStatus.CONVERTED_TO_VACATION, Optional.<String>empty(),
-            converter);
+        commentService.create(sickNote, SickNoteStatus.CONVERTED_TO_VACATION, Optional.<String>empty(), converter);
+
+        applicationInteractionService.createFromConvertedSickNote(application, converter);
 
         Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(sickNote.getId(),
                 AbsenceType.SICKNOTE);
@@ -152,7 +136,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
         sickNote.setLastEdited(DateMidnight.now());
 
         sickNoteService.save(sickNote);
-        sickNoteCommentService.create(sickNote, SickNoteStatus.CANCELLED, Optional.<String>empty(), canceller);
+        commentService.create(sickNote, SickNoteStatus.CANCELLED, Optional.<String>empty(), canceller);
 
         Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(sickNote.getId(),
                 AbsenceType.SICKNOTE);

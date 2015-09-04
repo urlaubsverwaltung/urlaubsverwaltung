@@ -446,5 +446,40 @@ public class ApplicationInteractionServiceImplTest {
         Mockito.verify(accountInteractionService).updateRemainingVacationDays(2014, person);
     }
 
+
     // END: CANCEL
+
+    // START: CREATE FROM CONVERTED SICK NOTE
+
+    @Test
+    public void ensureCreatedApplicationForLeaveFromConvertedSickNoteIsAllowedDirectly() {
+
+        Person person = new Person();
+        Person creator = new Person();
+
+        Application applicationForLeave = new Application();
+        applicationForLeave.setPerson(person);
+        applicationForLeave.setStatus(null);
+        applicationForLeave.setStartDate(new DateMidnight(2014, 12, 24));
+        applicationForLeave.setEndDate(new DateMidnight(2015, 1, 7));
+        applicationForLeave.setDayLength(DayLength.FULL);
+
+        service.createFromConvertedSickNote(applicationForLeave, creator);
+
+        Mockito.verify(applicationService).save(applicationForLeave);
+        Mockito.verify(commentService)
+            .create(eq(applicationForLeave), eq(ApplicationStatus.ALLOWED), eq(Optional.<String>empty()), eq(creator));
+        Mockito.verify(signService).signApplicationByBoss(eq(applicationForLeave), eq(creator));
+        Mockito.verify(mailService).sendSickNoteConvertedToVacationNotification(eq(applicationForLeave));
+
+        Assert.assertNotNull("Status should be set", applicationForLeave.getStatus());
+        Assert.assertNotNull("Applier should be set", applicationForLeave.getApplier());
+        Assert.assertNotNull("Person should be set", applicationForLeave.getPerson());
+
+        Assert.assertEquals("Wrong status", ApplicationStatus.ALLOWED, applicationForLeave.getStatus());
+        Assert.assertEquals("Wrong applier", creator, applicationForLeave.getApplier());
+        Assert.assertEquals("Wrong person", person, applicationForLeave.getPerson());
+    }
+
+    // END: CREATE FROM CONVERTED SICK NOTE
 }

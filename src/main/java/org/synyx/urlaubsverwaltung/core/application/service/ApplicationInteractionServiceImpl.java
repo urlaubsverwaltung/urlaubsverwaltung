@@ -220,4 +220,20 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         return application;
     }
+
+
+    @Override
+    public Application createFromConvertedSickNote(Application application, Person creator) {
+
+        // create an application for leave that is allowed directly
+        application.setApplier(creator);
+        application.setStatus(ApplicationStatus.ALLOWED);
+
+        signService.signApplicationByBoss(application, creator);
+        applicationService.save(application);
+        commentService.create(application, ApplicationStatus.ALLOWED, Optional.<String>empty(), creator);
+        mailService.sendSickNoteConvertedToVacationNotification(application);
+
+        return application;
+    }
 }

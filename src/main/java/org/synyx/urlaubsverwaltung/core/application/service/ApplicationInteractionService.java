@@ -63,4 +63,15 @@ public interface ApplicationInteractionService {
      * @return  the cancelled application for leave
      */
     Application cancel(Application application, Person canceller, Optional<String> comment);
+
+
+    /**
+     * Create a directly allowed application for leave due to a converted sick note.
+     *
+     * @param  application  to be created directly as allowed
+     * @param  creator  executes the creation
+     *
+     * @return  the created application for leave
+     */
+    Application createFromConvertedSickNote(Application application, Person creator);
 }
