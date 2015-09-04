@@ -17,6 +17,7 @@ import org.synyx.urlaubsverwaltung.core.person.PersonService;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Optional;
 
 import javax.naming.Name;
@@ -163,6 +164,77 @@ public class PersonContextMapperTest {
         Mockito.verify(ctx, Mockito.atLeastOnce()).getStringAttribute(MAIL_ADDRESS_ATTRIBUTE);
 
         Mockito.verify(personService).save(Mockito.any(Person.class));
+    }
+
+
+    @Test
+    public void ensureSyncsPersonDataUsingLDAPAttributes() {
+
+        Person person = new Person();
+        person.setPermissions(Collections.singletonList(Role.USER));
+
+        DirContextOperations ctx = Mockito.mock(DirContextOperations.class);
+        Mockito.when(ctx.getDn()).thenReturn(Mockito.mock(Name.class));
+        Mockito.when(ctx.getStringAttributes("cn")).thenReturn(new String[] { "First", "Last" });
+        Mockito.when(ctx.getStringAttribute(Mockito.anyString())).thenReturn("Foo");
+
+        Mockito.when(personService.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.of(person));
+
+        personContextMapper.mapUserFromContext(ctx, "murygina", null);
+
+        Mockito.verify(ctx, Mockito.atLeastOnce()).getStringAttribute(IDENTIFIER_ATTRIBUTE);
+        Mockito.verify(ctx, Mockito.atLeastOnce()).getStringAttribute(LAST_NAME_ATTRIBUTE);
+        Mockito.verify(ctx, Mockito.atLeastOnce()).getStringAttribute(FIRST_NAME_ATTRIBUTE);
+        Mockito.verify(ctx, Mockito.atLeastOnce()).getStringAttribute(MAIL_ADDRESS_ATTRIBUTE);
+
+        Mockito.verify(personService).save(Mockito.any(Person.class));
+    }
+
+
+    @Test
+    public void ensureSyncedPersonHasCorrectAttributes() {
+
+        Person person = new Person();
+        person.setFirstName("Marlene");
+        person.setLastName("Muster");
+        person.setEmail("marlene@muster.de");
+        person.setLoginName("muster");
+
+        Person syncedPerson = personContextMapper.syncPerson(person, Optional.of("Aljona"), Optional.of("Murygina"),
+                Optional.of("murygina@synyx.de"));
+
+        Mockito.verify(personService).save(Mockito.eq(person));
+
+        Assert.assertNotNull("Missing login name", syncedPerson.getLoginName());
+        Assert.assertNotNull("Missing first name", syncedPerson.getFirstName());
+        Assert.assertNotNull("Missing last name", syncedPerson.getLastName());
+        Assert.assertNotNull("Missing mail address", syncedPerson.getEmail());
+
+        Assert.assertEquals("Wrong login name", "muster", syncedPerson.getLoginName());
+        Assert.assertEquals("Wrong first name", "Aljona", syncedPerson.getFirstName());
+        Assert.assertEquals("Wrong last name", "Murygina", syncedPerson.getLastName());
+        Assert.assertEquals("Wrong mail address", "murygina@synyx.de", syncedPerson.getEmail());
+    }
+
+
+    @Test
+    public void ensureSyncDoesNotEmptyAttributes() {
+
+        Person person = new Person();
+        person.setFirstName("Marlene");
+        person.setLastName("Muster");
+        person.setEmail("marlene@muster.de");
+        person.setLoginName("muster");
+
+        Person syncedPerson = personContextMapper.syncPerson(person, Optional.empty(), Optional.empty(),
+                Optional.empty());
+
+        Mockito.verify(personService).save(Mockito.eq(person));
+
+        Assert.assertEquals("Wrong login name", "muster", syncedPerson.getLoginName());
+        Assert.assertEquals("Wrong first name", "Marlene", syncedPerson.getFirstName());
+        Assert.assertEquals("Wrong last name", "Muster", syncedPerson.getLastName());
+        Assert.assertEquals("Wrong mail address", "marlene@muster.de", syncedPerson.getEmail());
     }
 
 

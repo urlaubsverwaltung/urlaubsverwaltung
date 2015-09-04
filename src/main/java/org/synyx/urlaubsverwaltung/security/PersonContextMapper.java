@@ -73,17 +73,16 @@ public class PersonContextMapper implements UserDetailsContextMapper {
          */
         boolean noActivePersonExistsYet = personService.getActivePersons().isEmpty();
 
+        Optional<String> lastName = Optional.ofNullable(ctx.getStringAttribute(lastNameAttribute));
+        Optional<String> firstName = Optional.ofNullable(ctx.getStringAttribute(firstNameAttribute));
+        Optional<String> mailAddress = Optional.ofNullable(ctx.getStringAttribute(mailAddressAttribute));
+
         Person person;
 
         if (optionalPerson.isPresent()) {
-            person = optionalPerson.get();
+            person = syncPerson(optionalPerson.get(), firstName, lastName, mailAddress);
         } else {
-            String lastName = ctx.getStringAttribute(lastNameAttribute);
-            String firstName = ctx.getStringAttribute(firstNameAttribute);
-            String mailAddress = ctx.getStringAttribute(mailAddressAttribute);
-
-            person = createPerson(login, Optional.ofNullable(firstName), Optional.ofNullable(lastName),
-                    Optional.ofNullable(mailAddress), noActivePersonExistsYet);
+            person = createPerson(login, firstName, lastName, mailAddress, noActivePersonExistsYet);
         }
 
         org.springframework.security.ldap.userdetails.Person.Essence user =
@@ -93,6 +92,31 @@ public class PersonContextMapper implements UserDetailsContextMapper {
         user.setAuthorities(getGrantedAuthorities(person));
 
         return user.createUserDetails();
+    }
+
+
+    /**
+     * Sync the data of the given {@link Person}.
+     *
+     * @param  person  to update the attributes for
+     * @param  firstName  to be updated, is optional
+     * @param  lastName  to be updated, is optional
+     * @param  mailAddress  to be updated, is optional
+     *
+     * @return  the updated person
+     */
+    Person syncPerson(Person person, Optional<String> firstName, Optional<String> lastName,
+        Optional<String> mailAddress) {
+
+        firstName.ifPresent(person::setFirstName);
+        lastName.ifPresent(person::setLastName);
+        mailAddress.ifPresent(person::setEmail);
+
+        personService.save(person);
+
+        LOG.info("Successfully synced person data: " + person.toString());
+
+        return person;
     }
 
 
@@ -117,17 +141,9 @@ public class PersonContextMapper implements UserDetailsContextMapper {
         Person person = new Person();
         person.setLoginName(login);
 
-        if (firstName.isPresent()) {
-            person.setFirstName(firstName.get());
-        }
-
-        if (lastName.isPresent()) {
-            person.setLastName(lastName.get());
-        }
-
-        if (mailAddress.isPresent()) {
-            person.setEmail(mailAddress.get());
-        }
+        firstName.ifPresent(person::setFirstName);
+        lastName.ifPresent(person::setLastName);
+        mailAddress.ifPresent(person::setEmail);
 
         List<Role> permissions = new ArrayList<>();
         permissions.add(Role.USER);
@@ -180,7 +196,7 @@ public class PersonContextMapper implements UserDetailsContextMapper {
         Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 
         if (person != null) {
-            person.getPermissions().stream().forEach(role -> grantedAuthorities.add(() -> role.toString()));
+            person.getPermissions().stream().forEach(role -> grantedAuthorities.add(role::toString));
         }
 
         return grantedAuthorities;
