@@ -10,6 +10,10 @@
     <bean id="personContextMapper" class="org.synyx.urlaubsverwaltung.security.PersonContextMapper">
         <constructor-arg ref="personService"/>
         <constructor-arg ref="mailService"/>
+        <constructor-arg value="${security.identifier}"/>
+        <constructor-arg value="${security.firstName}"/>
+        <constructor-arg value="${security.lastName}"/>
+        <constructor-arg value="${security.mailAddress}"/>
     </bean>
 
     <bean id="activeDirectoryAuthenticationProvider"

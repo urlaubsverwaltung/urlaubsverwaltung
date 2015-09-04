@@ -2,8 +2,6 @@ package org.synyx.urlaubsverwaltung.security;
 
 import org.apache.log4j.Logger;
 
-import org.springframework.beans.factory.annotation.Value;
-
 import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
 
@@ -39,22 +37,19 @@ public class PersonContextMapper implements UserDetailsContextMapper {
     private final MailService mailService;
 
     private final String identifierAttribute;
-    private final String lastNameAttribute;
     private final String firstNameAttribute;
+    private final String lastNameAttribute;
     private final String mailAddressAttribute;
 
-    public PersonContextMapper(PersonService personService, MailService mailService,
-        @Value("security.identifier") String identifierAttribute,
-        @Value("security.lastName") String lastNameAttribute,
-        @Value("security.firstName") String firstNameAttribute,
-        @Value("security.mailAddress") String mailAddressAttribute) {
+    public PersonContextMapper(PersonService personService, MailService mailService, String identifierAttribute,
+        String firstNameAttribute, String lastNameAttribute, String mailAddressAttribute) {
 
         this.personService = personService;
         this.mailService = mailService;
 
         this.identifierAttribute = identifierAttribute;
-        this.lastNameAttribute = lastNameAttribute;
         this.firstNameAttribute = firstNameAttribute;
+        this.lastNameAttribute = lastNameAttribute;
         this.mailAddressAttribute = mailAddressAttribute;
     }
 
@@ -73,8 +68,8 @@ public class PersonContextMapper implements UserDetailsContextMapper {
          */
         boolean noActivePersonExistsYet = personService.getActivePersons().isEmpty();
 
-        Optional<String> lastName = Optional.ofNullable(ctx.getStringAttribute(lastNameAttribute));
         Optional<String> firstName = Optional.ofNullable(ctx.getStringAttribute(firstNameAttribute));
+        Optional<String> lastName = Optional.ofNullable(ctx.getStringAttribute(lastNameAttribute));
         Optional<String> mailAddress = Optional.ofNullable(ctx.getStringAttribute(mailAddressAttribute));
 
         Person person;
