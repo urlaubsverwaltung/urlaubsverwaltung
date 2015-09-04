@@ -31,8 +31,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- SPRING VERSIONS -->
-        <spring.version>4.1.5.RELEASE</spring.version>
-        <spring.security.version>3.2.6.RELEASE</spring.security.version>
+        <spring.version>4.1.7.RELEASE</spring.version>
+        <spring.security.version>3.2.8.RELEASE</spring.security.version>
         <spring.data.version>1.7.2.RELEASE</spring.data.version>
         <!-- OTHER DEPENDENCY VERSIONS -->
         <slf4j.version>1.7.10</slf4j.version>
