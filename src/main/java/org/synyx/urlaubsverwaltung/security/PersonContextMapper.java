@@ -2,12 +2,16 @@ package org.synyx.urlaubsverwaltung.security;
 
 import org.apache.log4j.Logger;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
+
+import org.springframework.util.Assert;
 
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -34,17 +38,32 @@ public class PersonContextMapper implements UserDetailsContextMapper {
     private final PersonService personService;
     private final MailService mailService;
 
-    public PersonContextMapper(PersonService personService, MailService mailService) {
+    private final String identifierAttribute;
+    private final String lastNameAttribute;
+    private final String firstNameAttribute;
+    private final String mailAddressAttribute;
+
+    public PersonContextMapper(PersonService personService, MailService mailService,
+        @Value("security.identifier") String identifierAttribute,
+        @Value("security.lastName") String lastNameAttribute,
+        @Value("security.firstName") String firstNameAttribute,
+        @Value("security.mailAddress") String mailAddressAttribute) {
 
         this.personService = personService;
         this.mailService = mailService;
+
+        this.identifierAttribute = identifierAttribute;
+        this.lastNameAttribute = lastNameAttribute;
+        this.firstNameAttribute = firstNameAttribute;
+        this.mailAddressAttribute = mailAddressAttribute;
     }
 
     @Override
     public UserDetails mapUserFromContext(DirContextOperations ctx, String username,
         Collection<? extends GrantedAuthority> authorities) {
 
-        String login = ctx.getStringAttribute("uid") == null ? username : ctx.getStringAttribute("uid");
+        String userIdentifier = ctx.getStringAttribute(identifierAttribute);
+        String login = userIdentifier == null ? username : userIdentifier;
 
         Optional<Person> optionalPerson = personService.getPersonByLogin(login);
 
@@ -52,27 +71,28 @@ public class PersonContextMapper implements UserDetailsContextMapper {
          * NOTE: If the system has no user yet, the first person that successfully signs in
          * is created as user with {@link Role#OFFICE}
          */
-        boolean noActivePersonExistsYet = personService.getActivePersons().size() == 0;
+        boolean noActivePersonExistsYet = personService.getActivePersons().isEmpty();
 
         Person person;
 
-        if (!optionalPerson.isPresent()) {
-            String lastName = ctx.getStringAttribute("sn");
-            String firstName = ctx.getStringAttribute("givenName");
-            String mailAddress = ctx.getStringAttribute("mail");
-
-            person = createPerson(login, firstName, lastName, mailAddress, noActivePersonExistsYet);
-        } else {
+        if (optionalPerson.isPresent()) {
             person = optionalPerson.get();
+        } else {
+            String lastName = ctx.getStringAttribute(lastNameAttribute);
+            String firstName = ctx.getStringAttribute(firstNameAttribute);
+            String mailAddress = ctx.getStringAttribute(mailAddressAttribute);
+
+            person = createPerson(login, Optional.ofNullable(firstName), Optional.ofNullable(lastName),
+                    Optional.ofNullable(mailAddress), noActivePersonExistsYet);
         }
 
-        org.springframework.security.ldap.userdetails.Person.Essence p =
+        org.springframework.security.ldap.userdetails.Person.Essence user =
             new org.springframework.security.ldap.userdetails.Person.Essence(ctx);
 
-        p.setUsername(login);
-        p.setAuthorities(getGrantedAuthorities(person));
+        user.setUsername(login);
+        user.setAuthorities(getGrantedAuthorities(person));
 
-        return p.createUserDetails();
+        return user.createUserDetails();
     }
 
 
@@ -80,22 +100,34 @@ public class PersonContextMapper implements UserDetailsContextMapper {
      * Creates a {@link Person} with the role {@link Role#USER} resp. with the roles {@link Role#USER} and
      * {@link Role#OFFICE} if this is the first person that is created.
      *
-     * @param  login  of the person to be created
-     * @param  firstName  of the person to be created
-     * @param  lastName  of the person to be created
-     * @param  mailAddress  of the person to be created
+     * @param  login  of the person to be created, is mandatory to create a person
+     * @param  firstName  of the person to be created, is optional
+     * @param  lastName  of the person to be created, is optional
+     * @param  mailAddress  of the person to be created, is optional
      * @param  isFirst  describes if this is the first person that is created, if {@code true} then the person gets the
      *                  role {@link Role#OFFICE}
      *
      * @return  the created person
      */
-    Person createPerson(String login, String firstName, String lastName, String mailAddress, boolean isFirst) {
+    Person createPerson(String login, Optional<String> firstName, Optional<String> lastName,
+        Optional<String> mailAddress, boolean isFirst) {
+
+        Assert.notNull(login, "Missing login name!");
 
         Person person = new Person();
         person.setLoginName(login);
-        person.setFirstName(firstName);
-        person.setLastName(lastName);
-        person.setEmail(mailAddress);
+
+        if (firstName.isPresent()) {
+            person.setFirstName(firstName.get());
+        }
+
+        if (lastName.isPresent()) {
+            person.setLastName(lastName.get());
+        }
+
+        if (mailAddress.isPresent()) {
+            person.setEmail(mailAddress.get());
+        }
 
         List<Role> permissions = new ArrayList<>();
         permissions.add(Role.USER);
@@ -148,16 +180,7 @@ public class PersonContextMapper implements UserDetailsContextMapper {
         Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 
         if (person != null) {
-            for (final Role role : person.getPermissions()) {
-                grantedAuthorities.add(new GrantedAuthority() {
-
-                        @Override
-                        public String getAuthority() {
-
-                            return role.toString();
-                        }
-                    });
-            }
+            person.getPermissions().stream().forEach(role -> grantedAuthorities.add(() -> role.toString()));
         }
 
         return grantedAuthorities;
