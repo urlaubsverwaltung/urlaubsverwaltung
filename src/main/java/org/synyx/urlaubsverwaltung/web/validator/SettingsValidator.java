@@ -26,6 +26,7 @@ public class SettingsValidator implements Validator {
     private static final String ERROR_LENGTH = "error.entry.tooManyChars";
 
     private static final int DAYS_PER_YEAR = 366;
+    private static final int HOURS_PER_DAY = 24;
     private static final int MAX_CHARS = 255;
 
     @Override
@@ -268,7 +269,7 @@ public class SettingsValidator implements Validator {
 
     private boolean isValidWorkDayHour(int workDayHour) {
 
-        return workDayHour > 0 && workDayHour <= 24;
+        return workDayHour > 0 && workDayHour <= HOURS_PER_DAY;
     }
 
 

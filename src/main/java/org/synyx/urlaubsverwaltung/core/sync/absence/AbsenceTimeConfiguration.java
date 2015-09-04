@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class AbsenceTimeConfiguration {
 
-    private CalendarSettings calendarSettings;
+    private final CalendarSettings calendarSettings;
 
     public AbsenceTimeConfiguration(CalendarSettings calendarSettings) {
 

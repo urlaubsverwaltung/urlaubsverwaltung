@@ -13,7 +13,7 @@ import java.security.NoSuchAlgorithmException;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public class EncryptionUtil {
+public final class EncryptionUtil {
 
     private static final Logger LOG = Logger.getLogger(GravatarUtil.class);
 

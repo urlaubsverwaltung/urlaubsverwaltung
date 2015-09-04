@@ -83,9 +83,8 @@ public class ApplicationForLeaveStatisticsController {
 
         List<Person> persons = getRelevantPersons();
 
-        List<ApplicationForLeaveStatistics> statistics = (persons.stream().map(person ->
-                            applicationForLeaveStatisticsBuilder.build(person, fromDate, toDate))
-                .collect(Collectors.toList()));
+        List<ApplicationForLeaveStatistics> statistics = persons.stream().map(person ->
+                    applicationForLeaveStatisticsBuilder.build(person, fromDate, toDate)).collect(Collectors.toList());
 
         model.addAttribute("from", fromDate);
         model.addAttribute("to", toDate);
