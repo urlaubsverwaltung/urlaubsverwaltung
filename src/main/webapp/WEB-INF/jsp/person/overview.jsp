@@ -84,7 +84,9 @@
                     <span class="box-text">
                         <i class="fa fa-at"></i> <c:out value="${person.loginName}"/>
                         <h4><c:out value="${person.niceName}"/></h4>
-                        <i class="fa fa-envelope-o"></i> <a href="mailto:<c:out value='${person.email}'/>"><c:out value="${person.email}"/></a>
+                        <c:if test="${person.email != null}">
+                            <i class="fa fa-envelope-o"></i> <a href="mailto:<c:out value='${person.email}'/>"><c:out value="${person.email}"/></a>
+                        </c:if>
                     </span>
                 </div>
             </div>
