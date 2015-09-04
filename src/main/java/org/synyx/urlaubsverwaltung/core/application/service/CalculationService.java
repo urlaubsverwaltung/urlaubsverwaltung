@@ -84,12 +84,16 @@ public class CalculationService {
             Optional<Account> holidaysAccountForOldYear = getHolidaysAccount(yearOfStartDate, person);
             Optional<Account> holidaysAccountForNewYear = getHolidaysAccount(yearOfEndDate, person);
 
-            return holidaysAccountForOldYear.isPresent() && holidaysAccountForNewYear.isPresent()
-                && vacationDaysService.calculateTotalLeftVacationDays(holidaysAccountForOldYear.get())
-                .compareTo(workDaysInOldYear) >= 0
-                && vacationDaysService.calculateTotalLeftVacationDays(holidaysAccountForNewYear.get())
-                .compareTo(workDaysInNewYear) >= 0;
+            return accountHasEnoughVacationDaysLeft(holidaysAccountForOldYear, workDaysInOldYear)
+                && accountHasEnoughVacationDaysLeft(holidaysAccountForNewYear, workDaysInNewYear);
         }
+    }
+
+
+    private boolean accountHasEnoughVacationDaysLeft(Optional<Account> account, BigDecimal workDays) {
+
+        return account.isPresent()
+            && vacationDaysService.calculateTotalLeftVacationDays(account.get()).compareTo(workDays) >= 0;
     }
 
 

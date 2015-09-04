@@ -107,11 +107,10 @@ public class ApplicationForLeaveDetailsController {
         Person person = application.getPerson();
 
         boolean samePerson = signedInUser.equals(person);
-        boolean isBoss = signedInUser.hasRole(Role.BOSS);
-        boolean isOffice = signedInUser.hasRole(Role.OFFICE);
+        boolean isBossOrOffice = signedInUser.hasRole(Role.BOSS) || signedInUser.hasRole(Role.OFFICE);
         boolean isDepartmentHead = departmentService.isDepartmentHeadOfPerson(signedInUser, person);
 
-        if (samePerson || isBoss || isOffice || isDepartmentHead) {
+        if (samePerson || isBossOrOffice || isDepartmentHead) {
             Integer year = requestedYear == null ? application.getEndDate().getYear() : requestedYear;
 
             prepareDetailView(application, year, action, shortcut, model);
