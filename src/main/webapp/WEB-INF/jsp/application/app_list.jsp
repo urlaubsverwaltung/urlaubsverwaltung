@@ -137,16 +137,20 @@
                                     </c:choose>
                                   </td>
                                   <td class="hidden-xs hidden-sm">
-                                    <a class="fa-action positive" href="${URL_PREFIX}/application/${application.id}?action=allow&shortcut=true"
-                                        data-title="<spring:message code='action.allow'/>">
-                                        <i class="fa fa-check"></i>
-                                    </a>
+                                      <sec:authorize access="hasAnyRole('DEPARTMENT_HEAD', 'BOSS')">
+                                          <a class="fa-action positive" href="${URL_PREFIX}/application/${application.id}?action=allow&shortcut=true"
+                                             data-title="<spring:message code='action.allow'/>">
+                                              <i class="fa fa-check"></i>
+                                          </a>
+                                      </sec:authorize>
                                   </td>
                                   <td class="hidden-xs hidden-sm">
-                                    <a class="fa-action negative" href="${URL_PREFIX}/application/${application.id}?action=reject&shortcut=true"
-                                       data-title="<spring:message code='action.reject'/>">
-                                      <i class="fa fa-ban"></i>
-                                    </a>
+                                      <sec:authorize access="hasAnyRole('DEPARTMENT_HEAD', 'BOSS')">
+                                          <a class="fa-action negative" href="${URL_PREFIX}/application/${application.id}?action=reject&shortcut=true"
+                                             data-title="<spring:message code='action.reject'/>">
+                                              <i class="fa fa-ban"></i>
+                                          </a>
+                                      </sec:authorize>
                                   </td>
                                 </tr>
                               </c:forEach>
