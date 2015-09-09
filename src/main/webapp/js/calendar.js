@@ -874,28 +874,29 @@ $(function() {
     }());
 
 
-    var Calendar = {
+    var Calendar = (function () {
 
-        view: null,
-        date: null,
+        var view;
+        var date;
 
-        init: function(holidayService, referenceDate) {
+        return {
+            init: function(holidayService, referenceDate) {
 
-            date = referenceDate;
+                date = referenceDate;
 
-            var a = Assertion.create (holidayService);
-            view = View.create(a);
-            var c = Controller.create(holidayService, view);
+                var a = Assertion.create (holidayService);
+                view = View.create(a);
+                var c = Controller.create(holidayService, view);
 
-            view.display(date);
-            c.bind();
-        },
+                view.display(date);
+                c.bind();
+            },
 
-        reRender: function() {
-            view.display(date);
-
+            reRender: function() {
+                view.display(date);
+            }
         }
-    };
+    })();
 
     /**
      * @export
