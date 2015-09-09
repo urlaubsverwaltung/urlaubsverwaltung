@@ -158,9 +158,9 @@ $(function() {
         function cachePublicHoliday(type) {
             var c = _CACHE[type] = _CACHE[type] || {};
             return function(data) {
-                
+
                 var publicHolidays = data.response.publicHolidays;
-                
+
                 $.each(publicHolidays, function(idx, publicHoliday) {
                     var date = publicHoliday.date;
                     var y = date.match(/\d{0,4}/)[0];
@@ -452,14 +452,14 @@ $(function() {
             var prevNextButtonsWidth = (2 * prevNextButtonWidth) + 2 * (prevNextButtonMargin * 2) + 2 * (prevNextButtonPadding * 2);
 
             var datePickerMonthWidth = 230;
-            
+
             var datePickerMonthsContainerMargin = 2 * minTick;
             var datePickerMonthsContainerBorder = 2 * 1;
-            
+
             var datePickerElementsWidth = prevNextButtonsWidth + datePickerMonthsContainerMargin + datePickerMonthsContainerBorder;
 
             var placeForDatePickerMonths = datePickerWidth - datePickerElementsWidth;
-            
+
             var numberOfMonths = Math.floor(placeForDatePickerMonths / datePickerMonthWidth);
 
             if(numberOfMonths === 0) {
@@ -467,10 +467,10 @@ $(function() {
             }
 
             var totalWidth = (numberOfMonths * datePickerMonthWidth) + datePickerElementsWidth;
-            
+
             if(totalWidth > datePickerWidth) {
-                numberOfMonths = 
-                    Math.floor(placeForDatePickerMonths / (datePickerMonthWidth + datePickerElementsWidth)); 
+                numberOfMonths =
+                    Math.floor(placeForDatePickerMonths / (datePickerMonthWidth + datePickerElementsWidth));
             }
 
             console.log("Displaying " + (numberOfMonths) + " months");
@@ -645,7 +645,7 @@ $(function() {
         }
 
         var View = {
-            
+
             display: function(date) {
                 $datepicker.html( renderCalendar(date)).addClass('unselectable');
             },
@@ -888,10 +888,10 @@ $(function() {
 
 
     var Calendar = {
-        
+
         view: null,
         date: null,
-        
+
         init: function(holidayService, referenceDate) {
 
             date = referenceDate;
@@ -903,11 +903,11 @@ $(function() {
             view.display(date);
             c.bind();
         },
-        
+
         reRender: function() {
             view.display(date);
-            
-        } 
+
+        }
     };
 
     /**
