@@ -576,7 +576,7 @@ $(function() {
 
                 var html = '&nbsp;';
 
-                if (+dayIdx === d.weekday() && m === d.month()) {
+                if (Number (dayIdx) === d.weekday() && m === d.month()) {
                     html = renderDay(d);
                     d.add('d', 1);
                 }
@@ -659,8 +659,8 @@ $(function() {
                 $(elements[1]).addClass(CSS.monthPrev);
 
                 var $lastMonth = $(elements[len - 1]);
-                var month = +$lastMonth.data(DATA.month);
-                var year  = +$lastMonth.data(DATA.year);
+                var month = Number ($lastMonth.data(DATA.month));
+                var year  = Number ($lastMonth.data(DATA.year));
 
                 var $nextMonth = $(renderMonth( moment().year(year).month(month).add('M', 1), CSS.monthNext ));
 
@@ -676,8 +676,8 @@ $(function() {
                 $(elements[len - 2]).addClass(CSS.monthNext);
 
                 var $firstMonth = $(elements[0]);
-                var month = +$firstMonth.data(DATA.month);
-                var year  = +$firstMonth.data(DATA.year);
+                var month = Number ($firstMonth.data(DATA.month));
+                var year  = Number ($firstMonth.data(DATA.year));
 
                 var $prevMonth = $(renderMonth( moment().year(year).month(month).subtract('M', 1), CSS.monthPrev ));
 
