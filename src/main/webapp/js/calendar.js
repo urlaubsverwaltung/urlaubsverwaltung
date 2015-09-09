@@ -614,23 +614,10 @@ $(function() {
                 var isWeekend = assert.isWeekend(date);
 
                 if(isPast || isWeekend) {
-                  return false;
+                    return false;
                 }
 
-                var isHalfDay = assert.isHalfDay(date);
-
-                if(isHalfDay) {
-                  return true;
-                }
-
-                var isPublicHoliday = assert.isPublicHoliday(date);
-
-                if(isPublicHoliday) {
-                  return false;
-                }
-
-                return true;
-
+                return assert.isHalfDay(date) || !assert.isPublicHoliday(date);
             }
 
             return render(TMPL.day, {
