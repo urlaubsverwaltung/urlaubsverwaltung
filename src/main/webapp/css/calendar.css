@@ -51,6 +51,8 @@
     width: auto;
     height: auto;
     border: 1px solid #DDD;
+    display: flex;
+    flex-direction: row;
 }
 
 /* MONTH */
@@ -59,10 +61,6 @@
     width: auto;
     float: left;
     background-color: #FAFAFA;
-}
-
-.datepicker-month-next {
-    display: none;
 }
 
 .datepicker-month h3 {

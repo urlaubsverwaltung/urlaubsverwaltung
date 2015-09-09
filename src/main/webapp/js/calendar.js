@@ -32,8 +32,7 @@ $(function() {
         next                  : 'datepicker-next',
         prev                  : 'datepicker-prev',
         month                 : 'datepicker-month',
-        monthNext             : 'datepicker-month-next',
-        monthPrev             : 'datepicker-month-prev',
+        month                 : 'datepicker-month',
         mousedown             : 'mousedown'
     };
 
@@ -411,7 +410,7 @@ $(function() {
 
         var TMPL = {
 
-            container: '{{prevBtn}}<div class="datepicker-months-container">{{prevMonth}}{{months}}{{nextMonth}}</div>{{nextBtn}}',
+            container: '{{prevBtn}}<div class="datepicker-months-container">{{months}}</div>{{nextBtn}}',
 
             button: '<button class="{{css}}">{{text}}</button>',
 
@@ -482,7 +481,7 @@ $(function() {
         function renderCalendar(date) {
 
             // 0 index
-            var calculatedNumberOfMonths = calculateNumberOfMonths();
+            var calculatedNumberOfMonths = calculateNumberOfMonths() + 2; // 1 hidden | calculated | 1 hidden
 
             var monthsToShow = 0;
 
@@ -494,12 +493,10 @@ $(function() {
 
                 prevBtn   : renderButton ( CSS.prev, '<i class="fa fa-chevron-left"></i>'),
                 nextBtn   : renderButton ( CSS.next, '<i class="fa fa-chevron-right"></i>'),
-                prevMonth : renderMonth  ( moment(date).add('M', -1), CSS.monthPrev ),
-                nextMonth : renderMonth  ( moment(date).add('M', monthsToShow) , CSS.monthNext ),
 
                 months: function() {
                     var html = '';
-                    var d = moment(date);
+                    var d = moment(date).subtract ('M', 1);
                     while(monthsToShow--) {
                         html += renderMonth(d);
                         d.add('M', 1);
@@ -643,15 +640,14 @@ $(function() {
                 var len      = elements.length;
 
                 $(elements[0]).remove();
-                $(elements[1]).addClass(CSS.monthPrev);
 
                 var $lastMonth = $(elements[len - 1]);
                 var month = Number ($lastMonth.data(DATA.month));
                 var year  = Number ($lastMonth.data(DATA.year));
 
-                var $nextMonth = $(renderMonth( moment().year(year).month(month).add('M', 1), CSS.monthNext ));
+                var $nextMonth = $(renderMonth( moment().year(year).month(month).add('M', 1)));
 
-                $lastMonth.after($nextMonth).removeClass(CSS.monthNext);
+                $lastMonth.after($nextMonth);
             },
 
             displayPrev: function() {
@@ -660,15 +656,14 @@ $(function() {
                 var len = elements.length;
 
                 $(elements[len - 1]).remove();
-                $(elements[len - 2]).addClass(CSS.monthNext);
 
                 var $firstMonth = $(elements[0]);
                 var month = Number ($firstMonth.data(DATA.month));
                 var year  = Number ($firstMonth.data(DATA.year));
 
-                var $prevMonth = $(renderMonth( moment().year(year).month(month).subtract('M', 1), CSS.monthPrev ));
+                var $prevMonth = $(renderMonth( moment().year(year).month(month).subtract('M', 1)));
 
-                $firstMonth.before($prevMonth).removeClass(CSS.monthPrev);
+                $firstMonth.before($prevMonth);
             }
         };
 
@@ -749,7 +744,7 @@ $(function() {
 
             clickNext: function() {
 
-                var $month = $( $datepicker.find('.' + CSS.monthNext)[0] );
+                var $month = $( $datepicker.find('.' + CSS.month)[0] );
 
                 // to load data for the new (invisible) prev month
                 var date = moment()
@@ -766,7 +761,8 @@ $(function() {
 
             clickPrev: function() {
 
-                var $month = $( $datepicker.find('.' + CSS.monthPrev)[0] );
+                var months = $datepicker.find('.' + CSS.month);
+                var $month = $( months[months.length-1] );
 
                 // to load data for the new (invisible) prev month
                 var date = moment()
