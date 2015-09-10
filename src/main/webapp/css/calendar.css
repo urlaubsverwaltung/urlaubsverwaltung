@@ -48,20 +48,31 @@
     position: relative;
     /* months outside this div should not be visible */
     overflow: hidden;
-    width: auto;
-    height: auto;
+    width: 100%;
+    height: 17em;
     border: 1px solid #DDD;
-    display: flex;
-    flex-direction: row;
 }
 
 /* MONTH */
 
 .datepicker-month {
-    width: auto;
-    float: left;
+    position: absolute;
+    width: 230px;
+    height: 100%;
     background-color: #FAFAFA;
+    transition: left 0.4s ease-in-out;
 }
+
+.datepicker-month:nth-child(1) { left: -690px; }
+.datepicker-month:nth-child(2) { left: -460px; }
+.datepicker-month:nth-child(3) { left: -230px; }
+.datepicker-month:nth-child(4) { left: 0px; }
+.datepicker-month:nth-child(5) { left: 230px; }
+.datepicker-month:nth-child(6) { left: 460px; }
+.datepicker-month:nth-child(7) { left: 690px; }
+.datepicker-month:nth-child(8) { left: 920px; }
+.datepicker-month:nth-child(9) { left: 1150px; }
+.datepicker-month:nth-child(10) { left: 1380px; }
 
 .datepicker-month h3 {
     margin : 0;
@@ -219,7 +230,7 @@
 td.ui-datepicker-today a.ui-state-highlight {
     color: #2C7FB8;
     background: #9ECAE1 !important;
-    border-color: #9ECAE1; 
+    border-color: #9ECAE1;
 }
 
 td.holiday a {

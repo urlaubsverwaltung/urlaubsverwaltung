@@ -439,55 +439,9 @@ $(function() {
             });
         }
 
-        function calculateNumberOfMonths() {
-
-            var minTick = 6;
-
-            var datePickerWidth = $("#datepicker").width();
-
-            var prevNextButtonWidth = 20;
-            var prevNextButtonMargin = minTick;
-            var prevNextButtonPadding = minTick;
-            var prevNextButtonsWidth = (2 * prevNextButtonWidth) + 2 * (prevNextButtonMargin * 2) + 2 * (prevNextButtonPadding * 2);
-
-            var datePickerMonthWidth = 230;
-
-            var datePickerMonthsContainerMargin = 2 * minTick;
-            var datePickerMonthsContainerBorder = 2 * 1;
-
-            var datePickerElementsWidth = prevNextButtonsWidth + datePickerMonthsContainerMargin + datePickerMonthsContainerBorder;
-
-            var placeForDatePickerMonths = datePickerWidth - datePickerElementsWidth;
-
-            var numberOfMonths = Math.floor(placeForDatePickerMonths / datePickerMonthWidth);
-
-            if(numberOfMonths === 0) {
-                return numberOfMonths;
-            }
-
-            var totalWidth = (numberOfMonths * datePickerMonthWidth) + datePickerElementsWidth;
-
-            if(totalWidth > datePickerWidth) {
-                numberOfMonths =
-                    Math.floor(placeForDatePickerMonths / (datePickerMonthWidth + datePickerElementsWidth));
-            }
-
-            console.log("Displaying " + (numberOfMonths) + " months");
-
-            return numberOfMonths;
-
-        }
-
         function renderCalendar(date) {
 
-            // 0 index
-            var calculatedNumberOfMonths = calculateNumberOfMonths() + 2; // 1 hidden | calculated | 1 hidden
-
-            var monthsToShow = 0;
-
-            if(calculatedNumberOfMonths > 1) {
-                monthsToShow = calculatedNumberOfMonths - 1;
-            }
+            var monthsToShow = 10;
 
             return render(TMPL.container, {
 
@@ -496,7 +450,7 @@ $(function() {
 
                 months: function() {
                     var html = '';
-                    var d = moment(date).subtract ('M', 1);
+                    var d = moment(date).subtract ('M', 4);
                     while(monthsToShow--) {
                         html += renderMonth(d);
                         d.add('M', 1);
