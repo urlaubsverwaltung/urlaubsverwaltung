@@ -7,6 +7,7 @@ import microsoft.exchange.webservices.data.core.enumeration.service.ConflictReso
 import microsoft.exchange.webservices.data.core.enumeration.service.DeleteMode;
 import microsoft.exchange.webservices.data.core.enumeration.service.SendCancellationsMode;
 import microsoft.exchange.webservices.data.core.enumeration.service.SendInvitationsMode;
+import microsoft.exchange.webservices.data.core.enumeration.service.SendInvitationsOrCancellationsMode;
 import microsoft.exchange.webservices.data.core.service.folder.CalendarFolder;
 import microsoft.exchange.webservices.data.core.service.folder.Folder;
 import microsoft.exchange.webservices.data.core.service.item.Appointment;
@@ -187,7 +188,13 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
 
             fillAppointment(absence, appointment);
 
-            appointment.update(ConflictResolutionMode.AutoResolve);
+            SendInvitationsOrCancellationsMode notificationMode = SendInvitationsOrCancellationsMode.SendToNone;
+
+            if (exchangeCalendarSettings.isSendInvitationActive()) {
+                notificationMode = SendInvitationsOrCancellationsMode.SendToAllAndSaveCopy;
+            }
+
+            appointment.update(ConflictResolutionMode.AutoResolve, notificationMode);
 
             LOG.info(String.format("Appointment %s has been updated in exchange calendar '%s'.", eventId,
                     calendarName));
