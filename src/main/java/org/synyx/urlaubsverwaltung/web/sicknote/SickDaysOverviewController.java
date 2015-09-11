@@ -35,6 +35,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 /**
@@ -107,6 +108,9 @@ public class SickDaysOverviewController {
         List<Person> persons = personService.getActivePersons();
         Map<Person, String> gravatarURLs = PersonConstants.getGravatarURLs(persons);
 
+        List<SickNote> sickNotesOfActivePersons = sickNotes.stream().filter(sickNote ->
+                    persons.contains(sickNote.getPerson()) && sickNote.isActive()).collect(Collectors.toList());
+
         Map<Person, BigDecimal> sickDays = new HashMap<>();
         Map<Person, BigDecimal> sickDaysWithAUB = new HashMap<>();
         Map<Person, BigDecimal> childSickDays = new HashMap<>();
@@ -119,11 +123,7 @@ public class SickDaysOverviewController {
             childSickDaysWithAUB.put(person, BigDecimal.ZERO);
         }
 
-        for (SickNote sickNote : sickNotes) {
-            if (!sickNote.isActive()) {
-                continue;
-            }
-
+        for (SickNote sickNote : sickNotesOfActivePersons) {
             Person person = sickNote.getPerson();
 
             if (sickNote.getType().equals(SickNoteType.SICK_NOTE_CHILD)) {
