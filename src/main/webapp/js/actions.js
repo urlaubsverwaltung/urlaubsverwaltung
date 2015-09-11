@@ -1,7 +1,7 @@
 $(function () {
 
   // show tooltip on hover
-  $('[data-title]').attr('data-placement', 'bottom').tooltip();
+  tooltip();
 
   // do avoid clickable table cell if there is an action within
   $('table.selectable-table td').click(function () {
@@ -15,4 +15,8 @@ $(function () {
   });
 
 });
+
+function tooltip() {
+  $('[data-title]').attr('data-placement', 'bottom').tooltip();
+}
 

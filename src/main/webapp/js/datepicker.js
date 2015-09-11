@@ -63,6 +63,8 @@ function createDatepickerInstances(selectors, regional, urlPrefix, getPerson, on
     $.datepicker.setDefaults($.datepicker.regional[regional]);
     $(selector).datepicker({
         numberOfMonths: 1,
+        showOtherMonths: true,
+        selectOtherMonths: false,
         beforeShow: function(input, inst) {
 
             var calendrier = inst.dpDiv;

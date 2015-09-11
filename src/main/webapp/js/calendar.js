@@ -32,7 +32,6 @@ $(function() {
         next                  : 'datepicker-next',
         prev                  : 'datepicker-prev',
         month                 : 'datepicker-month',
-        month                 : 'datepicker-month',
         mousedown             : 'mousedown'
     };
 
@@ -424,7 +423,7 @@ $(function() {
             // <tr><td>{{0}}</td>......<td>{{6}}</td></tr>
             week: '<tr><td>{{' + [0,1,2,3,4,5,6].join('}}</td><td>{{') + '}}</td></tr>',
 
-            day: '<span class="datepicker-day {{css}}" title="{{title}}" data-datepicker-absence-id={{absenceId}} data-datepicker-absence-type="{{absenceType}}" data-datepicker-date="{{date}}" data-datepicker-selectable="{{selectable}}">{{day}}</span>'
+            day: '<span class="datepicker-day {{css}}" data-title="{{title}}" data-datepicker-absence-id={{absenceId}} data-datepicker-absence-type="{{absenceType}}" data-datepicker-date="{{date}}" data-datepicker-selectable="{{selectable}}">{{day}}</span>'
         };
 
         function render(tmpl, data) {
@@ -586,6 +585,7 @@ $(function() {
 
             display: function(date) {
                 $datepicker.html( renderCalendar(date)).addClass('unselectable');
+                tooltip();
             },
 
             displayNext: function() {
@@ -602,6 +602,7 @@ $(function() {
                 var $nextMonth = $(renderMonth( moment().year(year).month(month).add('M', 1)));
 
                 $lastMonth.after($nextMonth);
+                tooltip();
             },
 
             displayPrev: function() {
@@ -618,6 +619,7 @@ $(function() {
                 var $prevMonth = $(renderMonth( moment().year(year).month(month).subtract('M', 1)));
 
                 $firstMonth.before($prevMonth);
+                tooltip();
             }
         };
 
