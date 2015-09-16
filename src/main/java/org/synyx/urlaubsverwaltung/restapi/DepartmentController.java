@@ -32,8 +32,13 @@ public class DepartmentController {
     @ApiOperation(value = "Get all departments of the application", notes = "Get all departments of the application")
     @RequestMapping(value = ROOT_URL, method = RequestMethod.GET)
     @ModelAttribute("response")
-    public List<DepartmentResponse> departments() {
+    public DepartmentListResponse departments() {
 
-        return departmentService.getAllDepartments().stream().map(DepartmentResponse::new).collect(Collectors.toList());
+        List<DepartmentResponse> departments = departmentService.getAllDepartments()
+            .stream()
+            .map(DepartmentResponse::new)
+            .collect(Collectors.toList());
+
+        return new DepartmentListResponse(departments);
     }
 }

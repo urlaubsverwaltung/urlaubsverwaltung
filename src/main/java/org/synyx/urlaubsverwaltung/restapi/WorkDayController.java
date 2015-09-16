@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 
 import org.springframework.util.StringUtils;
 
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -60,7 +61,8 @@ public class WorkDayController {
     )
     @RequestMapping(value = ROOT_URL, method = RequestMethod.GET)
     @ResponseBody
-    public String workDays(
+    @ModelAttribute("response")
+    public WorkDays workDays(
         @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = "2015-01-01")
         @RequestParam("from")
         String from,
@@ -84,15 +86,30 @@ public class WorkDayController {
                 Optional<Person> person = personService.getPersonByID(personId);
 
                 if (!person.isPresent()) {
-                    return "N/A";
+                    return new WorkDays("N/A");
                 }
 
                 BigDecimal days = workDaysService.getWorkDays(howLong, startDate, endDate, person.get());
 
-                return days.toString();
+                return new WorkDays(days.toString());
             }
         }
 
-        return "N/A";
+        return new WorkDays("N/A");
+    }
+
+    private class WorkDays {
+
+        private String workDays;
+
+        public WorkDays(String workDays) {
+
+            this.workDays = workDays;
+        }
+
+        public String getWorkDays() {
+
+            return workDays;
+        }
     }
 }

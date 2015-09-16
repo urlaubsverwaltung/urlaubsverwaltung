@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.restapi;
 
-import com.google.gson.Gson;
-
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
@@ -14,6 +12,7 @@ import org.springframework.stereotype.Controller;
 
 import org.springframework.util.StringUtils;
 
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,6 +31,7 @@ import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import java.math.BigDecimal;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -65,7 +65,8 @@ public class AbsenceController {
     )
     @RequestMapping(value = "/absences", method = RequestMethod.GET)
     @ResponseBody
-    public String personsVacations(
+    @ModelAttribute("response")
+    public AbsenceList personsVacations(
         @ApiParam(value = "Year to get the absences for", defaultValue = "2015")
         @RequestParam("year")
         String year,
@@ -87,7 +88,7 @@ public class AbsenceController {
                 Optional<Person> personOptional = personService.getPersonByID(personId);
 
                 if (!personOptional.isPresent()) {
-                    return "N/A";
+                    return new AbsenceList(Collections.emptyList());
                 }
 
                 DateMidnight periodStart;
@@ -151,13 +152,13 @@ public class AbsenceController {
                     }
                 }
 
-                return new Gson().toJson(absences);
+                return new AbsenceList(absences);
             } catch (NumberFormatException ex) {
-                return "N/A";
+                return new AbsenceList(Collections.emptyList());
             }
         }
 
-        return "N/A";
+        return new AbsenceList(Collections.emptyList());
     }
 
     private class Absence {
@@ -166,7 +167,7 @@ public class AbsenceController {
         private final BigDecimal dayLength;
         private final String type;
         private final String status;
-        private final Integer id;
+        private final String href;
 
         public Absence(DateMidnight date, DayLength dayLength, AbsenceType type, String status, Integer id) {
 
@@ -174,14 +175,51 @@ public class AbsenceController {
             this.dayLength = dayLength.getDuration();
             this.type = type.name();
             this.status = status;
-            this.id = id;
+            this.href = id.toString();
         }
 
-        @Override
-        public String toString() {
+        public String getDate() {
 
-            return "date = " + date + ", dayLength = " + dayLength + ", type =" + type + ", href = " + this.id
-                + ", status = " + status;
+            return date;
+        }
+
+
+        public BigDecimal getDayLength() {
+
+            return dayLength;
+        }
+
+
+        public String getType() {
+
+            return type;
+        }
+
+
+        public String getStatus() {
+
+            return status;
+        }
+
+
+        public String getHref() {
+
+            return href;
+        }
+    }
+
+    private class AbsenceList {
+
+        private List<Absence> absences;
+
+        public AbsenceList(List<Absence> absences) {
+
+            this.absences = absences;
+        }
+
+        public List<Absence> getAbsences() {
+
+            return absences;
         }
     }
 }

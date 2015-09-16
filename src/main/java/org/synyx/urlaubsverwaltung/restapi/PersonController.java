@@ -55,9 +55,8 @@ public class PersonController {
                 persons.add(person.get());
             }
         }
-        List<PersonResponse> personResponses = persons.stream().
-                map(PersonResponse::new).
-                collect(Collectors.toList());
+
+        List<PersonResponse> personResponses = persons.stream().map(PersonResponse::new).collect(Collectors.toList());
 
         return new PersonListResponse(personResponses);
     }

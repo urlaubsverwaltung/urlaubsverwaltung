@@ -36,14 +36,16 @@ function sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, e
 
     $.get(url, function (data) {
 
+      var workDays = data.response.workDays;
+
       var text;
 
-      if(isNaN(data)) {
+      if(isNaN(workDays)) {
         text = "Ung&uuml;ltiger Zeitraum"
-      } else if (data == 1) {
-        text = formatNumber(data) + " Tag";
+      } else if (workDays == 1) {
+        text = formatNumber(workDays) + " Tag";
       } else {
-        text = formatNumber(data) + " Tage";
+        text = formatNumber(workDays) + " Tage";
       }
 
       $(el).html(text);
@@ -91,14 +93,17 @@ function sendGetDaysRequestForTurnOfTheYear(urlPrefix, startDate, toDate, dayLen
     var url = buildUrl(requestUrl, startString, toString, dayLength, personId);
 
     $.get(url, function (data) {
-      daysBefore = formatNumber(data);
+      var workDaysBefore = data.response.workDays;
+
+      daysBefore = formatNumber(workDaysBefore);
 
       startString = after.getFullYear() + '-1-1';
       toString = after.getFullYear() + "-" + (after.getMonth() + 1) + '-' + after.getDate();
       url = buildUrl(requestUrl, startString, toString, dayLength, personId);
 
       $.get(url, function (data) {
-        daysAfter = formatNumber(data);
+        var workDaysAfter = data.response.workDays;
+        daysAfter = formatNumber(workDaysAfter);
 
         text = "<br />(" + daysBefore + " in " + before.getFullYear()
           + " und " + daysAfter + " in " + after.getFullYear() + ")";
