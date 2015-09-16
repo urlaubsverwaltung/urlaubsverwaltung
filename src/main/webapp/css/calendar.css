@@ -206,7 +206,7 @@
 
 **************************************************************************/
 
-/* Show only one month on small devices! */
+/* Show only current month on small devices! */
 @media (max-width: 767px) {
 
     .datepicker-day {
@@ -220,7 +220,7 @@
     .datepicker-month {
         display: none;
     }
-    .datepicker-month:nth-child(4) {
+    .datepicker-month:nth-child(5) {
         display: block;
         left: 0;
         width: 100%;
