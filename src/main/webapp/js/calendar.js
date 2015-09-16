@@ -7,6 +7,8 @@ $(function() {
 
     var $datepicker = $('#datepicker');
 
+    var numberOfMonths = 10;
+
     var keyCodes = {
         escape: 27
     };
@@ -128,43 +130,43 @@ $(function() {
             });
         }
 
-        function cachePersonalHoliday(response) {
-
-            var c = _CACHE['holiday'] = _CACHE['holiday'] || {};
-
-            $.each(response, function(idx, data) {
-                var date = data.date;
-                var y = date.match(/\d{0,4}/)[0];
-                c[y] = c[y] || [];
-                c[y].push(data);
-            });
-        }
-
-        function cacheSickDays(response) {
-
-            var c = _CACHE['sick'] = _CACHE['sick'] || {};
-
-            $.each(response, function(idx, data) {
-                var date = data.date;
-                var y = date.match(/\d{0,4}/)[0];
-                c[y] = c[y] || [];
-                c[y].push(data);
-            });
-
-        }
-
-        function cachePublicHoliday(type) {
+        function cacheAbsences(type, year) {
             var c = _CACHE[type] = _CACHE[type] || {};
+
+            return function(data) {
+
+                var absences = data.response.absences;
+
+                if(absences.length > 0) {
+                    $.each(absences, function(idx, absence) {
+                        c[year] = c[year] || [];
+                        c[year].push(absence);
+                    });
+                } else {
+                    c[year] = [];
+                }
+
+
+            }
+
+        }
+
+        function cachePublicHoliday(year) {
+            var c = _CACHE['publicHoliday'] = _CACHE['publicHoliday'] || {};
+
             return function(data) {
 
                 var publicHolidays = data.response.publicHolidays;
 
-                $.each(publicHolidays, function(idx, publicHoliday) {
-                    var date = publicHoliday.date;
-                    var y = date.match(/\d{0,4}/)[0];
-                    c[y] = c[y] || [];
-                    c[y].push(publicHoliday);
-                });
+                if(publicHolidays.length > 0) {
+                    $.each(publicHolidays, function(idx, publicHoliday) {
+                        c[year] = c[year] || [];
+                        c[year].push(publicHoliday);
+                    });
+                } else {
+                    c[year] = c[year] || [];
+                }
+
             }
         }
 
@@ -355,7 +357,7 @@ $(function() {
                 if (_CACHE['publicHoliday'][year]) {
                     return deferred.resolve( _CACHE[year] );
                 } else {
-                    return fetch('/holidays', {year: year}).success( cachePublicHoliday('publicHoliday') );
+                    return fetch('/holidays', {year: year}).success( cachePublicHoliday(year) );
                 }
             },
 
@@ -374,7 +376,7 @@ $(function() {
                 if (_CACHE['holiday'][year]) {
                     return deferred.resolve( _CACHE[year] );
                 } else {
-                    return fetch('/absences', {person: personId, year: year, type: 'VACATION'}).success( cachePersonalHoliday );
+                    return fetch('/absences', {person: personId, year: year, type: 'VACATION'}).success( cacheAbsences('holiday', year) );
                 }
             },
 
@@ -386,7 +388,7 @@ $(function() {
                 if (_CACHE['sick'][year]) {
                     return deferred.resolve( _CACHE[year] );
                 } else {
-                    return fetch('/absences', {person: personId, year: year, type: 'SICK_NOTE'}).success( cacheSickDays );
+                    return fetch('/absences', {person: personId, year: year, type: 'SICK_NOTE'}).success( cacheAbsences('sick', year) );
                 }
             }
         };
@@ -440,7 +442,7 @@ $(function() {
 
         function renderCalendar(date) {
 
-            var monthsToShow = 10;
+            var monthsToShow = numberOfMonths;
 
             return render(TMPL.container, {
 
@@ -700,7 +702,8 @@ $(function() {
 
             clickNext: function() {
 
-                var $month = $( $datepicker.find('.' + CSS.month)[0] );
+                // last month of calendar
+                var $month = $( $datepicker.find('.' + CSS.month)[numberOfMonths-1] );
 
                 // to load data for the new (invisible) prev month
                 var date = moment()
@@ -717,8 +720,8 @@ $(function() {
 
             clickPrev: function() {
 
-                var months = $datepicker.find('.' + CSS.month);
-                var $month = $( months[months.length-1] );
+                // first month of calendar
+                var $month = $( $datepicker.find('.' + CSS.month)[0] );
 
                 // to load data for the new (invisible) prev month
                 var date = moment()

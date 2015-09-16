@@ -173,17 +173,21 @@
                     // NOTE: All moments are mutable!
                     var startDateToCalculate = date.clone();
                     var endDateToCalculate = date.clone();
-                    var startDate = startDateToCalculate.subtract(6, 'months');
-                    var endDate = endDateToCalculate.add(6, 'months');
+                    var shownNumberOfMonths = 10;
+                    var startDate = startDateToCalculate.subtract(shownNumberOfMonths/2, 'months');
+                    var endDate = endDateToCalculate.add(shownNumberOfMonths/2, 'months');
 
-                    // TODO: it's not nice at all to fetch holidays for two years...would be better if the methods to fetch holidays get a date instead of a year
+                    var yearOfStartDate = startDate.year();
+                    var yearOfEndDate = endDate.year();
+
                     $.when(
-                        holidayService.fetchPublic   ( startDate.year() ),
-                        holidayService.fetchPublic   ( endDate.year() ),
-                        holidayService.fetchPersonal ( startDate.year() ),
-                        holidayService.fetchPersonal ( endDate.year() ),
-                        holidayService.fetchSickDays ( startDate.year() ),
-                        holidayService.fetchSickDays ( endDate.year() )
+                        holidayService.fetchPublic   ( yearOfStartDate ),
+                        holidayService.fetchPersonal ( yearOfStartDate ),
+                        holidayService.fetchSickDays ( yearOfStartDate ),
+
+                        holidayService.fetchPublic   ( yearOfEndDate ),
+                        holidayService.fetchPersonal ( yearOfEndDate ),
+                        holidayService.fetchSickDays ( yearOfEndDate )
                     ).always(function() {
                         Urlaubsverwaltung.Calendar.init(holidayService, date);
                     });
