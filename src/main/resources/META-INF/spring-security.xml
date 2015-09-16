@@ -9,8 +9,9 @@
 
     <security:http auto-config="true" use-expressions="true">
         <!-- API -->
-        <security:intercept-url pattern="/api/**" access="isAuthenticated()"/>
         <security:intercept-url pattern="/api/sicknotes/**" access="hasRole('OFFICE')"/>
+        <security:intercept-url pattern="/api/vacations/**" access="hasRole('OFFICE')"/>
+        <security:intercept-url pattern="/api/**" access="isAuthenticated()"/>
         <!-- WEB -->
         <security:intercept-url pattern="/web/overview" access="hasRole('USER')"/>
         <security:intercept-url pattern="/web/application/**" access="hasRole('USER')"/>
@@ -20,7 +21,6 @@
         <security:intercept-url pattern="/web/settings/**" access="hasRole('OFFICE')"/>
         <!-- OPEN -->
         <security:intercept-url pattern="/login.jsp" access="permitAll"/>
-        <security:intercept-url pattern="/images/synyx-logo-transparent.png" access="permitAll"/>
         <security:form-login login-page="/login.jsp" always-use-default-target="false"
                              default-target-url="/web/overview" authentication-failure-url="/login.jsp?login_error=1"/>
         <security:logout logout-success-url="/login.jsp"/>
