@@ -31,12 +31,12 @@
         <td>
             <a href="${URL_PREFIX}/sicknote/${sickNote.id}" class="hidden-print">
                 <h4>
-                    <spring:message code="sicknote" />
+                    <spring:message code="sicknote.title" />
                 </h4>
             </a>
 
             <h4 class="visible-print">
-                <spring:message code="sicknote" />
+                <spring:message code="sicknote.title" />
             </h4>
 
             <p>
@@ -44,7 +44,7 @@
 
                 <c:if test="${sickNote.aubPresent == true}">
                     <span class="visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block">
-                       (<i class="fa fa-check positive"></i> <spring:message code="sicknotes.aub.short" />)
+                       (<i class="fa fa-check positive"></i> <spring:message code="sicknote.data.aub.short" />)
                     </span>
                 </c:if>
             </p>
@@ -53,7 +53,7 @@
             <span><uv:number number="${sickNote.workDays}"/> <spring:message code="duration.days" /></span>
         </td>
         <td class="hidden-print is-centered hidden-xs">
-            <i class="fa fa-clock-o"></i> <span><spring:message code="sicknote.lastEdited" /> <uv:date date="${sickNote.lastEdited}"/></span>
+            <i class="fa fa-clock-o"></i> <span><spring:message code="sicknote.progress.lastEdited" /> <uv:date date="${sickNote.lastEdited}"/></span>
         </td>
         </c:forEach>
     </tbody>

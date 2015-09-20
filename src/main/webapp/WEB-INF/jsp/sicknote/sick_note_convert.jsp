@@ -29,7 +29,7 @@
             <div class="col-xs-12 col-sm-12 col-md-6">
                 <div class="header">
                     <legend>
-                        <spring:message code="sicknotes.convert.vacation" />
+                        <spring:message code="sicknote.convert.title" />
                     </legend>
                 </div>
     
@@ -94,7 +94,7 @@
 
                 <div class="header">
                     <legend>
-                        <spring:message code="sicknote" />
+                        <spring:message code="sicknote.title" />
                     </legend>
                 </div>
 
@@ -157,7 +157,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td><spring:message code="sicknotes.aub.short"/></td>
+                        <td><spring:message code="sicknote.data.aub.short"/></td>
                         <td>
                             <c:choose>
                                 <c:when test="${sickNote.aubPresent}">
@@ -167,7 +167,7 @@
                                 </c:when>
                                 <c:otherwise>
                                     <i class="fa fa-remove hidden-print"></i>
-                                    <spring:message code="sicknote.data.aubNotPresent"/>
+                                    <spring:message code="sicknote.data.aub.notPresent"/>
                                 </c:otherwise>
                             </c:choose>
                         </td>

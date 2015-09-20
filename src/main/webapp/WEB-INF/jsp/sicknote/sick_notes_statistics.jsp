@@ -30,7 +30,7 @@
             <div class="header">
 
                 <legend>
-                    <spring:message code="sicknotes.statistics" />
+                    <spring:message code="sicknotes.statistics.title" />
                     <uv:year-selector year="${statistics.year}" hrefPrefix="${URL_PREFIX}/sicknote/statistics?year=" />
                     <uv:print />
                 </legend>
@@ -56,7 +56,7 @@
                 <tbody>
                 <tr>
                     <td>
-                        <spring:message code="sicknotes.number" />
+                        <spring:message code="sicknotes.statistics.totalNumber" />
                     </td>
                     <td>
                         <c:out value="${statistics.totalNumberOfSickNotes}" />
@@ -64,7 +64,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <spring:message code="sicknotes.days.number" />
+                        <spring:message code="sicknotes.statistics.totalNumberOfDays" />
                     </td>
                     <td>
                         <uv:number number="${statistics.totalNumberOfSickDays}" />
@@ -72,7 +72,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <spring:message code="sicknotes.staff.number" />
+                        <spring:message code="sicknotes.statistics.staffWithSickNotes" />
                     </td>
                     <td>
                         <c:out value="${statistics.numberOfPersonsWithMinimumOneSickNote}" />
@@ -80,7 +80,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <spring:message code="sicknotes.staff.average" />
+                        <spring:message code="sicknotes.statistics.averageSickTime" />
                     </td>
                     <td>
                         <uv:number number="${statistics.averageDurationOfDiseasePerPerson}" />

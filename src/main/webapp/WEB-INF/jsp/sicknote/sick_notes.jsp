@@ -44,7 +44,7 @@
             <div class="header">
 
                 <legend class="is-sticky">
-                    <spring:message code="sicknotes" />
+                    <spring:message code="sicknotes.title" />
                     <uv:print />
                     <a href="${URL_PREFIX}/sicknote/statistics" class="fa-action pull-right"
                        data-title="<spring:message code="action.sicknotes.statistics"/>">
@@ -77,8 +77,8 @@
                         <th class="sortable-field"><spring:message code="person.data.firstName"/></th>
                         <th class="sortable-field"><spring:message code="person.data.lastName"/></th>
                         <th class="hidden"><%-- tablesorter placeholder for first name and last name column in xs screen --%></th>
-                        <th class="sortable-field"><spring:message code="sicknotes.days.number"/></th>
-                        <th class="sortable-field"><spring:message code="sicknotes.child.days.number"/></th>
+                        <th class="sortable-field"><spring:message code="sicknotes.daysOverview.sickDays.title"/></th>
+                        <th class="sortable-field"><spring:message code="sicknotes.daysOverview.sickDays.child.title"/></th>
                         <th class="hidden"><%-- tablesorter placeholder for sick days column in xs screen --%></th>
                     </tr>
                     </thead>
@@ -100,7 +100,7 @@
                         <td class="hidden-xs">
                             <i class="fa fa-medkit hidden-print"></i>
                             <span class="sortable"><uv:number number="${sickDays[person]}"/></span>
-                            <spring:message code="sicknotes.days"/>
+                            <spring:message code="sicknotes.daysOverview.sickDays.number"/>
                             <c:if test="${sickDaysWithAUB[person] > 0}">
                                 <p class="list-table--second-row">
                                     <i class="fa fa-check positive"></i> <spring:message
@@ -110,7 +110,7 @@
                         </td>
                         <td class="hidden-xs">
                             <i class="fa fa-child hidden-print"></i> <uv:number number="${childSickDays[person]}"/>
-                                <spring:message code="sicknotes.child.days"/>
+                                <spring:message code="sicknotes.daysOverview.sickDays.child.number"/>
                             <c:if test="${childSickDaysWithAUB[person] > 0}">
                                 <p class="list-table--second-row">
                                     <i class="fa fa-check positive"></i> <spring:message

@@ -30,7 +30,7 @@
 
                 <div class="header">
                     <legend>
-                        <spring:message code="sicknote" />
+                        <spring:message code="sicknote.title" />
                         <sec:authorize access="hasRole('OFFICE')">
                           <c:if test="${sickNote.active}">
                             <uv:print/>
@@ -39,7 +39,7 @@
                               <i class="fa fa-trash"></i>
                             </a>
                             <a href="${URL_PREFIX}/sicknote/${sickNote.id}/convert" class="fa-action pull-right"
-                               data-title="<spring:message code="sicknotes.convert.vacation.short"/>">
+                               data-title="<spring:message code="action.convert"/>">
                               <i class="fa fa-retweet"></i>
                             </a>
                             <a href="${URL_PREFIX}/sicknote/${sickNote.id}/edit" class="fa-action pull-right"
@@ -60,7 +60,7 @@
                                 <h4 id="myModalLabel" class="modal-title"><spring:message code="action.delete" />?</h4>
                             </div>
                             <div class="modal-body">
-                                <spring:message code="sicknote.cancel" />
+                                <spring:message code="action.sicknote.cancel.confirm" />
                             </div>
                             <div class="modal-footer">
                                 <button class="btn btn-danger is-sticky" type="submit"><spring:message code="action.delete" /></button>
@@ -127,12 +127,12 @@
                             = <uv:number number="${sickNote.workDays}"/> <spring:message
                                 code="duration.workDays"/>
                             <c:if test="${sickNote.active == false}">
-                                <span><spring:message code="sicknotes.details.inactive" /></span>
+                                <span><spring:message code="sicknote.data.inactive" /></span>
                             </c:if>
                         </td>
                     </tr>
                     <tr>
-                        <td><spring:message code="sicknotes.aub.short"/></td>
+                        <td><spring:message code="sicknote.data.aub.short"/></td>
                         <td>
                             <c:choose>
                                 <c:when test="${sickNote.aubPresent}">
@@ -142,7 +142,7 @@
                                 </c:when>
                                 <c:otherwise>
                                     <i class="fa fa-remove hidden-print"></i>
-                                    <spring:message code="sicknote.data.aubNotPresent"/>
+                                    <spring:message code="sicknote.data.aub.notPresent"/>
                                 </c:otherwise>
                             </c:choose>
                         </td>
@@ -159,7 +159,7 @@
                         <spring:message code="sicknote.progress.title" />
                         <sec:authorize access="hasRole('OFFICE')">
                           <a href="#" class="fa-action pull-right" onclick="$('div#comment-form').show();"
-                             data-title="<spring:message code="sicknotes.comment.new" />">
+                             data-title="<spring:message code="action.comment.new" />">
                             <i class="fa fa-comments"></i>
                           </a>
                         </sec:authorize>

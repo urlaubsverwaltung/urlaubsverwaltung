@@ -75,10 +75,10 @@
                     <legend>
                         <c:choose>
                             <c:when test="${sickNote.id == null}">
-                                <spring:message code="sicknotes.new" />
+                                <spring:message code="sicknote.create.title" />
                             </c:when>
                             <c:otherwise>
-                                <spring:message code="sicknotes.edit" />
+                                <spring:message code="sicknote.edit.title" />
                             </c:otherwise>
                         </c:choose>
                     </legend>
@@ -157,7 +157,7 @@
 
                 <div class="form-group is-required">
                     <label class="control-label col-md-4" for="from">
-                        <spring:message code="sicknotes.time" />:
+                        <spring:message code="sicknote.data.time" />:
                     </label>
 
                     <div class="col-md-6">
@@ -178,9 +178,9 @@
                 <div class="form-group AU">
                     <div class="col-md-6">
                       <label class="control-label" for="aubFrom">
-                        <spring:message code="sicknotes.aub.time" />
+                        <spring:message code="sicknote.data.aub.time" />:
                       </label>
-                      <span class="help-block"><spring:message code="sicknotes.aub.time.note" /></span>
+                      <span class="help-block"><spring:message code="sicknote.data.aub.time.note" /></span>
                     </div>
 
                     <div class="col-md-6">

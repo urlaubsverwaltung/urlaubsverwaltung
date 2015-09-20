@@ -296,7 +296,7 @@
                 <div class="col-xs-12">
                     <div class="header">
                         <legend id="anchorSickNotes">
-                            <spring:message code="sicknotes" />
+                            <spring:message code="sicknotes.title" />
                             <c:if test="${IS_OFFICE}">
                                 <a class="fa-action pull-right" href="${URL_PREFIX}/sicknote/new?person=${person.id}"
                                    data-title="<spring:message code="action.apply.sicknote" />">
