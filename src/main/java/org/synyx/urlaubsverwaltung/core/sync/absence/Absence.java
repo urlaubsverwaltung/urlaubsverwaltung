@@ -2,12 +2,14 @@ package org.synyx.urlaubsverwaltung.core.sync.absence;
 
 import com.google.common.base.MoreObjects;
 
+import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeZone;
 
 import org.springframework.util.Assert;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 
@@ -22,15 +24,15 @@ import java.util.concurrent.TimeUnit;
  */
 public class Absence {
 
-    private final Date startDate;
+    private Date startDate;
 
-    private final Date endDate;
+    private Date endDate;
 
     private final Person person;
 
     private final EventType eventType;
 
-    private final boolean isAllDay;
+    private boolean isAllDay;
 
     public Absence(Application application, AbsenceTimeConfiguration absenceTimeConfiguration) {
 
@@ -56,10 +58,30 @@ public class Absence {
 
         this.person = application.getPerson();
 
-        long startDateInMilliseconds = application.getStartDate().toDateTime(DateTimeZone.UTC).getMillis();
-        long endDateInMilliseconds = application.getEndDate().toDateTime(DateTimeZone.UTC).getMillis();
+        setPeriod(application.getStartDate(), application.getEndDate(), application.getDayLength(),
+            absenceTimeConfiguration);
+    }
 
-        switch (application.getDayLength()) {
+
+    public Absence(SickNote sickNote, AbsenceTimeConfiguration absenceTimeConfiguration) {
+
+        Assert.notNull(sickNote.getDayLength(), "No day length set for sick note");
+        Assert.notNull(sickNote.getStartDate(), "No start date set for sick note");
+        Assert.notNull(sickNote.getEndDate(), "No end date set for sick note");
+
+        this.eventType = EventType.SICKNOTE;
+        this.person = sickNote.getPerson();
+
+        setPeriod(sickNote.getStartDate(), sickNote.getEndDate(), sickNote.getDayLength(), absenceTimeConfiguration);
+    }
+
+    private void setPeriod(DateMidnight start, DateMidnight end, DayLength dayLength,
+        AbsenceTimeConfiguration timeConfiguration) {
+
+        long startDateInMilliseconds = start.toDateTime(DateTimeZone.UTC).getMillis();
+        long endDateInMilliseconds = end.toDateTime(DateTimeZone.UTC).getMillis();
+
+        switch (dayLength) {
             case FULL:
                 this.startDate = new Date(startDateInMilliseconds);
                 this.endDate = new Date(endDateInMilliseconds + TimeUnit.DAYS.toMillis(1));
@@ -67,40 +89,22 @@ public class Absence {
                 break;
 
             case MORNING:
-                this.startDate = new Date(startDateInMilliseconds + absenceTimeConfiguration.getMorningStartAsMillis());
-                this.endDate = new Date(endDateInMilliseconds + absenceTimeConfiguration.getMorningEndAsMillis());
+                this.startDate = new Date(startDateInMilliseconds + timeConfiguration.getMorningStartAsMillis());
+                this.endDate = new Date(endDateInMilliseconds + timeConfiguration.getMorningEndAsMillis());
                 this.isAllDay = false;
                 break;
 
             case NOON:
-                this.startDate = new Date(startDateInMilliseconds + absenceTimeConfiguration.getNoonStartAsMillis());
-                this.endDate = new Date(endDateInMilliseconds + absenceTimeConfiguration.getNoonEndAsMillis());
+                this.startDate = new Date(startDateInMilliseconds + timeConfiguration.getNoonStartAsMillis());
+                this.endDate = new Date(endDateInMilliseconds + timeConfiguration.getNoonEndAsMillis());
                 this.isAllDay = false;
                 break;
 
             default:
-                throw new IllegalArgumentException("Invalid day length for application!");
+                throw new IllegalArgumentException("Invalid day length!");
         }
     }
 
-
-    public Absence(SickNote sickNote) {
-
-        Assert.notNull(sickNote.getStartDate(), "No start date set for sick note");
-        Assert.notNull(sickNote.getEndDate(), "No end date set for sick note");
-
-        this.eventType = EventType.SICKNOTE;
-        this.person = sickNote.getPerson();
-
-        long startDateInMilliseconds = sickNote.getStartDate().toDateTime(DateTimeZone.UTC).getMillis();
-        long endDateInMilliseconds = sickNote.getEndDate().toDateTime(DateTimeZone.UTC).getMillis();
-
-        this.startDate = new Date(startDateInMilliseconds);
-        this.endDate = new Date(endDateInMilliseconds + TimeUnit.DAYS.toMillis(1));
-
-        // TODO: at the moment sick notes have no day length
-        this.isAllDay = true;
-    }
 
     public EventType getEventType() {
 

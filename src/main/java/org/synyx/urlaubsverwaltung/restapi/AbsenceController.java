@@ -143,8 +143,7 @@ public class AbsenceController {
                         DateMidnight day = startDate;
 
                         while (!day.isAfter(endDate)) {
-                            // TODO: When sick note gets day length, use it here!
-                            absences.add(new Absence(day, DayLength.FULL, AbsenceType.SICK_NOTE, "ACTIVE",
+                            absences.add(new Absence(day, sickNote.getDayLength(), AbsenceType.SICK_NOTE, "ACTIVE",
                                     sickNote.getId()));
 
                             day = day.plusDays(1);

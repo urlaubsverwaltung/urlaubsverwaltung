@@ -179,8 +179,9 @@ public class AbsenceTest {
         sickNote.setStartDate(start);
         sickNote.setEndDate(end);
         sickNote.setPerson(person);
+        sickNote.setDayLength(DayLength.FULL);
 
-        Absence absence = new Absence(sickNote);
+        Absence absence = new Absence(sickNote, timeConfiguration);
 
         Assert.assertNotNull("Start date must not be null", absence.getStartDate());
         Assert.assertNotNull("End date must not be null", absence.getEndDate());
@@ -193,8 +194,102 @@ public class AbsenceTest {
     }
 
 
+    @Test
+    public void ensureIsAllDayIfSickNoteIsFullDay() {
+
+        DateMidnight start = DateMidnight.now();
+        DateMidnight end = start.plusDays(2);
+
+        SickNote sickNote = new SickNote();
+        sickNote.setStartDate(start);
+        sickNote.setEndDate(end);
+        sickNote.setPerson(person);
+        sickNote.setDayLength(DayLength.FULL);
+
+        Absence absence = new Absence(sickNote, timeConfiguration);
+
+        Assert.assertTrue("Should be all day", absence.isAllDay());
+    }
+
+
+    @Test
+    public void ensureIsNotAllDayIfSickNoteIsInTheMorning() {
+
+        DateMidnight today = DateMidnight.now();
+
+        SickNote sickNote = new SickNote();
+        sickNote.setStartDate(today);
+        sickNote.setEndDate(today);
+        sickNote.setPerson(person);
+        sickNote.setDayLength(DayLength.MORNING);
+
+        Absence absence = new Absence(sickNote, timeConfiguration);
+
+        Assert.assertFalse("Should be not all day", absence.isAllDay());
+    }
+
+
+    @Test
+    public void ensureIsNotAllDayIfSickNoteIsAfternoons() {
+
+        DateMidnight today = DateMidnight.now();
+
+        SickNote sickNote = new SickNote();
+        sickNote.setStartDate(today);
+        sickNote.setEndDate(today);
+        sickNote.setPerson(person);
+        sickNote.setDayLength(DayLength.NOON);
+
+        Absence absence = new Absence(sickNote, timeConfiguration);
+
+        Assert.assertFalse("Should be not all day", absence.isAllDay());
+    }
+
+
+    @Test
+    public void ensureCorrectTimeForMorningAbsenceDueToSickNote() {
+
+        DateMidnight today = DateMidnight.now();
+
+        Date start = today.toDateTime().withHourOfDay(8).toDate();
+        Date end = today.toDateTime().withHourOfDay(12).toDate();
+
+        SickNote sickNote = new SickNote();
+        sickNote.setStartDate(today);
+        sickNote.setEndDate(today);
+        sickNote.setPerson(person);
+        sickNote.setDayLength(DayLength.MORNING);
+
+        Absence absence = new Absence(sickNote, timeConfiguration);
+
+        Assert.assertEquals("Should start at 8 am", start, absence.getStartDate());
+        Assert.assertEquals("Should end at 12 pm", end, absence.getEndDate());
+    }
+
+
+    @Test
+    public void ensureCorrectTimeForNoonAbsenceDueToSickNote() {
+
+        DateMidnight today = DateMidnight.now();
+
+        Date start = today.toDateTime().withHourOfDay(12).toDate();
+        Date end = today.toDateTime().withHourOfDay(16).toDate();
+
+        SickNote sickNote = new SickNote();
+        sickNote.setStartDate(today);
+        sickNote.setEndDate(today);
+        sickNote.setPerson(person);
+        sickNote.setDayLength(DayLength.NOON);
+
+        Absence absence = new Absence(sickNote, timeConfiguration);
+
+        Assert.assertEquals("Should start at 12 pm", start, absence.getStartDate());
+        Assert.assertEquals("Should end at 4 pm", end, absence.getEndDate());
+    }
+
+
     @Test(expected = IllegalArgumentException.class)
-    public void ensureExceptionOnNonSetHowLong() {
+    public void ensureExceptionOnNonSetDayLength() {
 
         DateMidnight today = DateMidnight.now();
 
@@ -256,6 +351,35 @@ public class AbsenceTest {
 
 
     @Test(expected = IllegalArgumentException.class)
+    public void ensureExceptionOnNonSetSickNoteDayLength() {
+
+        DateMidnight today = DateMidnight.now();
+
+        SickNote sickNote = new SickNote();
+        sickNote.setStartDate(today);
+        sickNote.setEndDate(today);
+        sickNote.setPerson(person);
+
+        new Absence(sickNote, timeConfiguration);
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureExceptionOnSickNoteZeroDayLength() {
+
+        DateMidnight today = DateMidnight.now();
+
+        SickNote sickNote = new SickNote();
+        sickNote.setStartDate(today);
+        sickNote.setEndDate(today);
+        sickNote.setPerson(person);
+        sickNote.setDayLength(DayLength.ZERO);
+
+        new Absence(sickNote, timeConfiguration);
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
     public void ensureExceptionOnNonSetSickNoteStartDate() {
 
         DateMidnight today = DateMidnight.now();
@@ -264,7 +388,7 @@ public class AbsenceTest {
         sickNote.setEndDate(today);
         sickNote.setPerson(person);
 
-        new Absence(sickNote);
+        new Absence(sickNote, timeConfiguration);
     }
 
 
@@ -277,7 +401,7 @@ public class AbsenceTest {
         sickNote.setStartDate(today);
         sickNote.setPerson(person);
 
-        new Absence(sickNote);
+        new Absence(sickNote, timeConfiguration);
     }
 
 
@@ -328,8 +452,9 @@ public class AbsenceTest {
         sickNote.setStartDate(today);
         sickNote.setEndDate(today);
         sickNote.setPerson(person);
+        sickNote.setDayLength(DayLength.FULL);
 
-        Absence absence = new Absence(sickNote);
+        Absence absence = new Absence(sickNote, timeConfiguration);
 
         assertThat(absence.getEventType(), is(EventType.SICKNOTE));
         assertThat(absence.getEventSubject(), is("Marlene Muster krank"));

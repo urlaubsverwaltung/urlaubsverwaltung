@@ -13,7 +13,6 @@ import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationInteractionService;
-import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
@@ -44,7 +43,6 @@ public class SickNoteInteractionServiceImplTest {
     private SickNoteService sickNoteService;
     private SickNoteCommentService commentService;
     private ApplicationInteractionService applicationInteractionService;
-    private MailService mailService;
     private CalendarSyncService calendarSyncService;
     private AbsenceMappingService absenceMappingService;
     private SettingsService settingsService;
@@ -58,7 +56,6 @@ public class SickNoteInteractionServiceImplTest {
         sickNoteService = Mockito.mock(SickNoteService.class);
         commentService = Mockito.mock(SickNoteCommentService.class);
         applicationInteractionService = Mockito.mock(ApplicationInteractionService.class);
-        mailService = Mockito.mock(MailService.class);
         calendarSyncService = Mockito.mock(CalendarSyncService.class);
         absenceMappingService = Mockito.mock(AbsenceMappingService.class);
         settingsService = Mockito.mock(SettingsService.class);
@@ -69,12 +66,12 @@ public class SickNoteInteractionServiceImplTest {
         Mockito.when(settingsService.getSettings()).thenReturn(new Settings());
 
         sickNoteInteractionService = new SickNoteInteractionServiceImpl(sickNoteService, commentService,
-                applicationInteractionService, mailService, calendarSyncService, absenceMappingService,
-                settingsService);
+                applicationInteractionService, calendarSyncService, absenceMappingService, settingsService);
 
         sickNote = new SickNote();
         sickNote.setStartDate(DateMidnight.now());
         sickNote.setEndDate(DateMidnight.now());
+        sickNote.setDayLength(DayLength.FULL);
 
         person = new Person();
     }
