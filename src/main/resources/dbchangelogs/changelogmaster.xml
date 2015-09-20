@@ -28,6 +28,7 @@
     <include file="dbchangelogs/changelog-2.9.1-add-mail-settings.xml"/>
     <include file="dbchangelogs/changelog-2.9.2-add-ews-calendar-settings.xml"/>
     <include file="dbchangelogs/changelog-2.9.3-add-domain-to-ews-calendar-settings.xml"/>
+    <include file="dbchangelogs/changelog-2.9.4-add-column-dayLength-to-sick-note.xml"/>
 
 
 </databaseChangeLog>

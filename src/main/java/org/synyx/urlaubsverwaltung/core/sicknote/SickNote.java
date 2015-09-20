@@ -5,6 +5,7 @@ import org.joda.time.DateTime;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
+import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.util.Date;
@@ -26,21 +27,35 @@ public class SickNote extends AbstractPersistable<Integer> {
 
     private static final long serialVersionUID = 8524575678589823089L;
 
-    // One person may have multiple sick notes
+    /**
+     * One person may have multiple sick notes.
+     */
     @ManyToOne
     private Person person;
 
     @Enumerated(EnumType.STRING)
     private SickNoteType type;
 
-    // period of the illness
+    /**
+     * Sick note period: start and end date of the period, the employee is sick.
+     */
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date startDate;
 
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date endDate;
 
-    // period of the aub (Arbeitsunfähigkeitsbescheinigung)
+    /**
+     * Time of day for the sick note: morning, noon or full day
+     *
+     * @since  2.9.4
+     */
+    @Enumerated(EnumType.STRING)
+    private DayLength dayLength;
+
+    /**
+     * Period of the AUB (Arbeitsunfähigkeitsbescheinigung), is optional.
+     */
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date aubStartDate;
 
@@ -50,7 +65,9 @@ public class SickNote extends AbstractPersistable<Integer> {
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date lastEdited;
 
-    // if sick note has been converted to vacation, it's not active
+    /**
+     * If a sick note has been converted to vacation or has been cancelled, the sick note is inactive.
+     */
     private boolean active;
 
     public Person getPerson() {
@@ -114,6 +131,18 @@ public class SickNote extends AbstractPersistable<Integer> {
         } else {
             this.endDate = endDate.toDate();
         }
+    }
+
+
+    public DayLength getDayLength() {
+
+        return dayLength;
+    }
+
+
+    public void setDayLength(DayLength dayLength) {
+
+        this.dayLength = dayLength;
     }
 
 

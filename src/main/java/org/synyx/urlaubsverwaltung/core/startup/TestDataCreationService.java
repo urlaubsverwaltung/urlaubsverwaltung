@@ -300,6 +300,7 @@ public class TestDataCreationService {
             sickNote.setEndDate(endDate);
             sickNote.setActive(true);
             sickNote.setType(type);
+            sickNote.setDayLength(DayLength.FULL);
 
             if (withAUB) {
                 sickNote.setAubStartDate(startDate);
