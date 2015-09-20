@@ -384,7 +384,7 @@ public class Application extends AbstractPersistable<Integer> {
 
     public void setRemindDate(DateMidnight remindDate) {
 
-        if (startDate == null) {
+        if (remindDate == null) {
             this.remindDate = null;
         } else {
             this.remindDate = remindDate.toDate();

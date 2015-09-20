@@ -13,6 +13,8 @@ import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
+import org.synyx.urlaubsverwaltung.core.application.service.exception.ImpatientAboutApplicationForLeaveProcessException;
+import org.synyx.urlaubsverwaltung.core.application.service.exception.RemindAlreadySentException;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
@@ -481,5 +483,79 @@ public class ApplicationInteractionServiceImplTest {
         Assert.assertEquals("Wrong person", person, applicationForLeave.getPerson());
     }
 
+
     // END: CREATE FROM CONVERTED SICK NOTE
+
+    // START: REMIND
+
+    @Test(expected = RemindAlreadySentException.class)
+    public void ensureThrowsIfAlreadySentRemindToday() throws RemindAlreadySentException,
+        ImpatientAboutApplicationForLeaveProcessException {
+
+        Application applicationForLeave = Mockito.mock(Application.class);
+        Mockito.when(applicationForLeave.getApplicationDate()).thenReturn(DateMidnight.now().minusDays(3));
+        Mockito.when(applicationForLeave.getRemindDate()).thenReturn(DateMidnight.now());
+
+        service.remind(applicationForLeave);
+
+        Mockito.verify(applicationForLeave, Mockito.never()).setRemindDate(Mockito.any(DateMidnight.class));
+        Mockito.verifyZeroInteractions(applicationService);
+        Mockito.verifyZeroInteractions(mailService);
+    }
+
+
+    @Test(expected = ImpatientAboutApplicationForLeaveProcessException.class)
+    public void ensureThrowsIfTryingToRemindTooEarly() throws RemindAlreadySentException,
+        ImpatientAboutApplicationForLeaveProcessException {
+
+        Application applicationForLeave = Mockito.mock(Application.class);
+        Mockito.when(applicationForLeave.getApplicationDate()).thenReturn(DateMidnight.now());
+        Mockito.when(applicationForLeave.getRemindDate()).thenReturn(null);
+
+        service.remind(applicationForLeave);
+
+        Mockito.verify(applicationForLeave, Mockito.never()).setRemindDate(Mockito.any(DateMidnight.class));
+        Mockito.verifyZeroInteractions(applicationService);
+        Mockito.verifyZeroInteractions(mailService);
+    }
+
+
+    @Test
+    public void ensureUpdatesRemindDateAndSendsMail() throws RemindAlreadySentException,
+        ImpatientAboutApplicationForLeaveProcessException {
+
+        Application applicationForLeave = new Application();
+        applicationForLeave.setPerson(new Person());
+        applicationForLeave.setApplicationDate(DateMidnight.now().minusDays(3));
+        applicationForLeave.setRemindDate(DateMidnight.now().minusDays(1));
+
+        service.remind(applicationForLeave);
+
+        Assert.assertNotNull("Remind date should be set", applicationForLeave.getRemindDate());
+        Assert.assertEquals("Wrong remind date", DateMidnight.now(), applicationForLeave.getRemindDate());
+
+        Mockito.verify(applicationService).save(Mockito.eq(applicationForLeave));
+        Mockito.verify(mailService).sendRemindBossNotification(Mockito.eq(applicationForLeave));
+    }
+
+
+    // END: REMIND
+
+    // START: REFER
+
+    @Test
+    public void ensureReferMailIsSent() {
+
+        Person recipient = new Person();
+        Person sender = new Person();
+
+        Application applicationForLeave = Mockito.mock(Application.class);
+        Mockito.when(applicationForLeave.getPerson()).thenReturn(new Person());
+
+        service.refer(applicationForLeave, recipient, sender);
+
+        Mockito.verify(mailService).sendReferApplicationNotification(applicationForLeave, recipient, sender);
+    }
+
+    // END: REFER
 }

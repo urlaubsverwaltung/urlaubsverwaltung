@@ -14,6 +14,8 @@ import org.synyx.urlaubsverwaltung.core.account.service.AccountInteractionServic
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
+import org.synyx.urlaubsverwaltung.core.application.service.exception.ImpatientAboutApplicationForLeaveProcessException;
+import org.synyx.urlaubsverwaltung.core.application.service.exception.RemindAlreadySentException;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.CalendarSettings;
@@ -36,6 +38,8 @@ import java.util.Optional;
 public class ApplicationInteractionServiceImpl implements ApplicationInteractionService {
 
     private static final Logger LOG = Logger.getLogger(ApplicationInteractionServiceImpl.class);
+
+    private static final int MIN_DAYS_LEFT_BEFORE_REMINDING_IS_POSSIBLE = 2;
 
     private final ApplicationService applicationService;
     private final AccountInteractionService accountInteractionService;
@@ -233,6 +237,43 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         applicationService.save(application);
         commentService.create(application, ApplicationStatus.ALLOWED, Optional.<String>empty(), creator);
         mailService.sendSickNoteConvertedToVacationNotification(application);
+
+        return application;
+    }
+
+
+    @Override
+    public Application remind(Application application) throws RemindAlreadySentException,
+        ImpatientAboutApplicationForLeaveProcessException {
+
+        DateMidnight remindDate = application.getRemindDate();
+
+        if (remindDate == null) {
+            DateMidnight minDateForNotification = application.getApplicationDate()
+                .plusDays(MIN_DAYS_LEFT_BEFORE_REMINDING_IS_POSSIBLE);
+
+            if (minDateForNotification.isAfterNow()) {
+                throw new ImpatientAboutApplicationForLeaveProcessException("It's too early to remind the bosses!");
+            }
+        }
+
+        if (remindDate != null && remindDate.isEqual(DateMidnight.now())) {
+            throw new RemindAlreadySentException("Reminding is possible maximum one time per day!");
+        }
+
+        mailService.sendRemindBossNotification(application);
+
+        application.setRemindDate(DateMidnight.now());
+        applicationService.save(application);
+
+        return application;
+    }
+
+
+    @Override
+    public Application refer(Application application, Person recipient, Person sender) {
+
+        mailService.sendReferApplicationNotification(application, recipient, sender);
 
         return application;
     }

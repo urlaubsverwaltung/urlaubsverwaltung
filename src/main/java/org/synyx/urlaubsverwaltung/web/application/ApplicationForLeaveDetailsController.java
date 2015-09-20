@@ -28,9 +28,10 @@ import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationInteractionService;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.application.service.CommentService;
+import org.synyx.urlaubsverwaltung.core.application.service.exception.ImpatientAboutApplicationForLeaveProcessException;
+import org.synyx.urlaubsverwaltung.core.application.service.exception.RemindAlreadySentException;
 import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
-import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
@@ -79,13 +80,10 @@ public class ApplicationForLeaveDetailsController {
     private CommentService commentService;
 
     @Autowired
-    private WorkDaysService calendarService;
+    private WorkDaysService workDaysService;
 
     @Autowired
     private CommentValidator commentValidator;
-
-    @Autowired
-    private MailService mailService;
 
     @Autowired
     private DepartmentService departmentService;
@@ -141,7 +139,7 @@ public class ApplicationForLeaveDetailsController {
         }
 
         // APPLICATION FOR LEAVE
-        model.addAttribute("application", new ApplicationForLeave(application, calendarService));
+        model.addAttribute("application", new ApplicationForLeave(application, workDaysService));
 
         // DEPARTMENT APPLICATIONS FOR LEAVE
         List<Application> departmentApplications =
@@ -258,20 +256,20 @@ public class ApplicationForLeaveDetailsController {
     @PreAuthorize(SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD)
     @RequestMapping(value = "/{applicationId}/refer", method = RequestMethod.PUT)
     public String referApplication(@PathVariable("applicationId") Integer applicationId,
-        @ModelAttribute("personToRefer") Person p, RedirectAttributes redirectAttributes) {
+        @ModelAttribute("personToRefer") Person personToRefer, RedirectAttributes redirectAttributes) {
 
         Optional<Application> application = applicationService.getApplicationById(applicationId);
-        java.util.Optional<Person> recipient = personService.getPersonByLogin(p.getLoginName());
+        java.util.Optional<Person> recipient = personService.getPersonByLogin(personToRefer.getLoginName());
 
         if (application.isPresent() && recipient.isPresent()) {
             Person sender = sessionService.getSignedInUser();
-            Person person = application.get().getPerson();
 
             boolean isBoss = sender.hasRole(Role.BOSS);
-            boolean isDepartmentHead = departmentService.isDepartmentHeadOfPerson(sender, person);
+            boolean isDepartmentHead = departmentService.isDepartmentHeadOfPerson(sender,
+                    application.get().getPerson());
 
             if (isBoss || isDepartmentHead) {
-                mailService.sendReferApplicationNotification(application.get(), recipient.get(), sender);
+                applicationInteractionService.refer(application.get(), recipient.get(), sender);
 
                 redirectAttributes.addFlashAttribute("referSuccess", true);
 
@@ -392,25 +390,15 @@ public class ApplicationForLeaveDetailsController {
             return ControllerConstants.ERROR_JSP;
         }
 
-        // TODO: move this to a service method
         Application application = optionalApplication.get();
-        DateMidnight remindDate = application.getRemindDate();
 
-        if (remindDate != null && remindDate.isEqual(DateMidnight.now())) {
+        try {
+            applicationInteractionService.remind(application);
+            redirectAttributes.addFlashAttribute("remindIsSent", true);
+        } catch (RemindAlreadySentException ex) {
             redirectAttributes.addFlashAttribute("remindAlreadySent", true);
-        } else {
-            int minDaysToWait = 2;
-
-            DateMidnight minDateForNotification = application.getApplicationDate().plusDays(minDaysToWait);
-
-            if (minDateForNotification.isAfterNow()) {
-                redirectAttributes.addFlashAttribute("remindNoWay", true);
-            } else {
-                mailService.sendRemindBossNotification(application);
-                application.setRemindDate(DateMidnight.now());
-                applicationService.save(application);
-                redirectAttributes.addFlashAttribute("remindIsSent", true);
-            }
+        } catch (ImpatientAboutApplicationForLeaveProcessException ex) {
+            redirectAttributes.addFlashAttribute("remindNoWay", true);
         }
 
         return "redirect:/web/application/" + applicationId;
