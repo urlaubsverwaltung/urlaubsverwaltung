@@ -1,8 +1,3 @@
-// TODO half holidays
-// TODO description of day colors
-// TODO selectedDays -> mouseover -> tooltip how many holidays are selected
-// TODO highlight selected days in red if remaining holidays are not enough
-
 $(function() {
 
     var $datepicker = $('#datepicker');

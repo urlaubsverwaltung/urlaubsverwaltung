@@ -25,7 +25,6 @@ public class DateMidnightPropertyEditor extends PropertyEditorSupport {
 
     public DateMidnightPropertyEditor() {
 
-        // TODO: For now only German language and certain date pattern is supported
         this.formatter = DateTimeFormat.forPattern(DateFormat.PATTERN);
     }
 
