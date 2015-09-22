@@ -9,5 +9,5 @@ public enum SickNoteStatus {
     EDITED,
     CONVERTED_TO_VACATION,
     CANCELLED,
-    COMMENTED;
+    COMMENTED
 }

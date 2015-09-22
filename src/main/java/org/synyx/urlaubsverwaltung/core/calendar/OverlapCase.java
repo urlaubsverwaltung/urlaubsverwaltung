@@ -20,5 +20,5 @@ public enum OverlapCase {
 
     NO_OVERLAPPING,
     FULLY_OVERLAPPING,
-    PARTLY_OVERLAPPING;
+    PARTLY_OVERLAPPING
 }
