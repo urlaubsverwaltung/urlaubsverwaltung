@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.web.sicknote;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.joda.time.DateMidnight;
 

@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.core.application.service;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
