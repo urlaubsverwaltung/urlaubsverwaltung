@@ -1,25 +1,18 @@
 package org.synyx.urlaubsverwaltung.core.calendar.workingtime;
 
+import lombok.Data;
 import org.apache.commons.collections.CollectionUtils;
-
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
-
 import org.springframework.data.jpa.domain.AbstractPersistable;
-
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.calendar.Day;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
+import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
-
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.OneToOne;
-import javax.persistence.Temporal;
 
 
 /**
@@ -28,6 +21,7 @@ import javax.persistence.Temporal;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Entity
+@Data
 public class WorkingTime extends AbstractPersistable<Integer> {
 
     @OneToOne
@@ -108,19 +102,6 @@ public class WorkingTime extends AbstractPersistable<Integer> {
         this.saturday = DayLength.ZERO;
         this.sunday = DayLength.ZERO;
     }
-
-
-    public Person getPerson() {
-
-        return person;
-    }
-
-
-    public void setPerson(Person person) {
-
-        this.person = person;
-    }
-
 
     public DayLength getDayLengthForWeekDay(int weekDay) {
 
@@ -206,47 +187,5 @@ public class WorkingTime extends AbstractPersistable<Integer> {
         } else {
             this.validFrom = validFrom.toDate();
         }
-    }
-
-
-    public DayLength getMonday() {
-
-        return monday;
-    }
-
-
-    public DayLength getTuesday() {
-
-        return tuesday;
-    }
-
-
-    public DayLength getWednesday() {
-
-        return wednesday;
-    }
-
-
-    public DayLength getThursday() {
-
-        return thursday;
-    }
-
-
-    public DayLength getFriday() {
-
-        return friday;
-    }
-
-
-    public DayLength getSaturday() {
-
-        return saturday;
-    }
-
-
-    public DayLength getSunday() {
-
-        return sunday;
     }
 }

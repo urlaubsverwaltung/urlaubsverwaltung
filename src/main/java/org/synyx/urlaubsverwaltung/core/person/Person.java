@@ -1,22 +1,17 @@
 package org.synyx.urlaubsverwaltung.core.person;
 
-import com.google.common.base.MoreObjects;
-
+import lombok.Data;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
-
 import org.springframework.data.jpa.domain.AbstractPersistable;
-
 import org.springframework.util.StringUtils;
-
 import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
 import org.synyx.urlaubsverwaltung.security.Role;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-
-import javax.persistence.*;
 
 
 /**
@@ -27,6 +22,7 @@ import javax.persistence.*;
  */
 
 @Entity
+@Data
 public class Person extends AbstractPersistable<Integer> {
 
     private static final long serialVersionUID = 765672310978437L;
@@ -74,53 +70,6 @@ public class Person extends AbstractPersistable<Integer> {
         this.email = email;
     }
 
-    public String getEmail() {
-
-        return email;
-    }
-
-
-    public void setEmail(String email) {
-
-        this.email = email;
-    }
-
-
-    public String getFirstName() {
-
-        return firstName;
-    }
-
-
-    public void setFirstName(String firstName) {
-
-        this.firstName = firstName;
-    }
-
-
-    public String getLastName() {
-
-        return lastName;
-    }
-
-
-    public void setLastName(String lastName) {
-
-        this.lastName = lastName;
-    }
-
-
-    public String getLoginName() {
-
-        return loginName;
-    }
-
-
-    public void setLoginName(String loginName) {
-
-        this.loginName = loginName;
-    }
-
 
     public byte[] getPrivateKey() {
 
@@ -161,19 +110,6 @@ public class Person extends AbstractPersistable<Integer> {
         }
     }
 
-
-    public void setPermissions(Collection<Role> permissions) {
-
-        this.permissions = permissions;
-    }
-
-
-    public Collection<Role> getPermissions() {
-
-        return permissions;
-    }
-
-
     public boolean hasRole(final Role role) {
 
         return getPermissions().stream().filter(permission -> permission.equals(role)).findFirst().isPresent();
@@ -196,12 +132,6 @@ public class Person extends AbstractPersistable<Integer> {
     }
 
 
-    public void setNotifications(Collection<MailNotification> notifications) {
-
-        this.notifications = notifications;
-    }
-
-
     public boolean hasNotificationType(final MailNotification notification) {
 
         return getNotifications().stream().filter(element -> element.equals(notification)).findFirst().isPresent();
@@ -215,21 +145,5 @@ public class Person extends AbstractPersistable<Integer> {
         }
 
         return this.loginName;
-    }
-
-
-    @Override
-    public String toString() {
-
-        MoreObjects.ToStringHelper toStringHelper = MoreObjects.toStringHelper(this);
-
-        toStringHelper.add("id", getId());
-        toStringHelper.add("loginName", getLoginName());
-        toStringHelper.add("lastName", getLastName());
-        toStringHelper.add("firstName", getFirstName());
-        toStringHelper.add("email", getEmail());
-        toStringHelper.add("permissions", getPermissions());
-
-        return toStringHelper.toString();
     }
 }

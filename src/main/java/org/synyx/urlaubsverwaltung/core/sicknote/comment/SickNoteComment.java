@@ -1,20 +1,14 @@
 package org.synyx.urlaubsverwaltung.core.sicknote.comment;
 
+import lombok.Data;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
-
 import org.springframework.data.jpa.domain.AbstractPersistable;
-
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 
+import javax.persistence.*;
 import java.util.Date;
-
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.ManyToOne;
-import javax.persistence.Temporal;
 
 
 /**
@@ -23,6 +17,7 @@ import javax.persistence.Temporal;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Entity
+@Data
 public class SickNoteComment extends AbstractPersistable<Integer> {
 
     @ManyToOne
@@ -38,18 +33,6 @@ public class SickNoteComment extends AbstractPersistable<Integer> {
 
     @Enumerated(EnumType.STRING)
     private SickNoteStatus status;
-
-    public SickNote getSickNote() {
-
-        return sickNote;
-    }
-
-
-    public void setSickNote(SickNote sickNote) {
-
-        this.sickNote = sickNote;
-    }
-
 
     public DateMidnight getDate() {
 
@@ -68,41 +51,5 @@ public class SickNoteComment extends AbstractPersistable<Integer> {
         } else {
             this.date = date.toDate();
         }
-    }
-
-
-    public Person getPerson() {
-
-        return person;
-    }
-
-
-    public void setPerson(Person person) {
-
-        this.person = person;
-    }
-
-
-    public SickNoteStatus getStatus() {
-
-        return status;
-    }
-
-
-    public void setStatus(SickNoteStatus status) {
-
-        this.status = status;
-    }
-
-
-    public String getText() {
-
-        return text;
-    }
-
-
-    public void setText(String text) {
-
-        this.text = text;
     }
 }
