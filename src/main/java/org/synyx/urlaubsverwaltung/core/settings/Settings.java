@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.settings;
 
+import lombok.Data;
 import org.springframework.data.jpa.domain.AbstractPersistable;
-
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 
 import javax.persistence.Entity;
@@ -15,6 +15,7 @@ import javax.persistence.Enumerated;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Entity
+@Data
 public class Settings extends AbstractPersistable<Integer> {
 
     /**
@@ -57,129 +58,7 @@ public class Settings extends AbstractPersistable<Integer> {
     @Enumerated(EnumType.STRING)
     private FederalState federalState = FederalState.BADEN_WUERTTEMBERG;
 
-    private MailSettings mailSettings;
+    private MailSettings mailSettings = new MailSettings();
 
-    private CalendarSettings calendarSettings;
-
-    public Integer getMaximumAnnualVacationDays() {
-
-        return maximumAnnualVacationDays;
-    }
-
-
-    public Integer getMaximumMonthsToApplyForLeaveInAdvance() {
-
-        return maximumMonthsToApplyForLeaveInAdvance;
-    }
-
-
-    public Integer getMaximumSickPayDays() {
-
-        return maximumSickPayDays;
-    }
-
-
-    public Integer getDaysBeforeEndOfSickPayNotification() {
-
-        return daysBeforeEndOfSickPayNotification;
-    }
-
-
-    public DayLength getWorkingDurationForChristmasEve() {
-
-        return workingDurationForChristmasEve;
-    }
-
-
-    public DayLength getWorkingDurationForNewYearsEve() {
-
-        return workingDurationForNewYearsEve;
-    }
-
-
-    public FederalState getFederalState() {
-
-        return federalState;
-    }
-
-
-    public void setMaximumAnnualVacationDays(Integer maximumAnnualVacationDays) {
-
-        this.maximumAnnualVacationDays = maximumAnnualVacationDays;
-    }
-
-
-    public void setMaximumMonthsToApplyForLeaveInAdvance(Integer maximumMonthsToApplyForLeaveInAdvance) {
-
-        this.maximumMonthsToApplyForLeaveInAdvance = maximumMonthsToApplyForLeaveInAdvance;
-    }
-
-
-    public void setMaximumSickPayDays(Integer maximumSickPayDays) {
-
-        this.maximumSickPayDays = maximumSickPayDays;
-    }
-
-
-    public void setDaysBeforeEndOfSickPayNotification(Integer daysBeforeEndOfSickPayNotification) {
-
-        this.daysBeforeEndOfSickPayNotification = daysBeforeEndOfSickPayNotification;
-    }
-
-
-    public void setWorkingDurationForChristmasEve(DayLength workingDurationForChristmasEve) {
-
-        this.workingDurationForChristmasEve = workingDurationForChristmasEve;
-    }
-
-
-    public void setWorkingDurationForNewYearsEve(DayLength workingDurationForNewYearsEve) {
-
-        this.workingDurationForNewYearsEve = workingDurationForNewYearsEve;
-    }
-
-
-    public void setFederalState(FederalState federalState) {
-
-        this.federalState = federalState;
-    }
-
-
-    public MailSettings getMailSettings() {
-
-        if (mailSettings == null) {
-            mailSettings = new MailSettings();
-        }
-
-        return mailSettings;
-    }
-
-
-    public void setMailSettings(MailSettings mailSettings) {
-
-        this.mailSettings = mailSettings;
-    }
-
-
-    public CalendarSettings getCalendarSettings() {
-
-        if (calendarSettings == null) {
-            calendarSettings = new CalendarSettings();
-        }
-
-        return calendarSettings;
-    }
-
-
-    public void setCalendarSettings(CalendarSettings calendarSettings) {
-
-        this.calendarSettings = calendarSettings;
-    }
-
-
-    @Override
-    public void setId(Integer id) {
-
-        super.setId(id);
-    }
+    private CalendarSettings calendarSettings = new CalendarSettings();
 }

@@ -15,7 +15,7 @@ public enum DayLength {
 
     private BigDecimal duration;
 
-    private DayLength(BigDecimal duration) {
+    DayLength(BigDecimal duration) {
 
         this.duration = duration;
     }
