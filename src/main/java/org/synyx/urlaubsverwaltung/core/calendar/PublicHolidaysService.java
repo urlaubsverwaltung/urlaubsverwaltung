@@ -63,11 +63,8 @@ public class PublicHolidaysService {
 
         Settings settings = settingsService.getSettings();
 
-        if (manager.isHoliday(date.toLocalDate(), settings.getFederalState().getCodes())) {
-            return true;
-        }
+        return manager.isHoliday(date.toLocalDate(), settings.getFederalState().getCodes());
 
-        return false;
     }
 
 

@@ -33,5 +33,5 @@ public enum ApplicationStatus {
      *
      * @since  2.5.2
      */
-    REVOKED;
+    REVOKED
 }
