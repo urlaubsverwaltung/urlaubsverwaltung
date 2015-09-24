@@ -1,5 +1,8 @@
 package org.synyx.urlaubsverwaltung.core.sync.absence;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import javax.persistence.Column;
@@ -14,6 +17,9 @@ import javax.persistence.Enumerated;
  * <p>Daniel Hammann - <hammann@synyx.de>.</p>
  */
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class AbsenceMapping extends AbstractPersistable<Integer> {
 
     @Column(nullable = false)
@@ -26,51 +32,4 @@ public class AbsenceMapping extends AbstractPersistable<Integer> {
     @Column(nullable = false)
     private String eventId;
 
-    public AbsenceMapping() {
-
-        /* OK */
-    }
-
-
-    public AbsenceMapping(Integer absenceId, AbsenceType absenceType, String eventId) {
-
-        this.absenceId = absenceId;
-        this.absenceType = absenceType;
-        this.eventId = eventId;
-    }
-
-    public Integer getAbsenceId() {
-
-        return absenceId;
-    }
-
-
-    public void setAbsenceId(Integer absenceId) {
-
-        this.absenceId = absenceId;
-    }
-
-
-    public AbsenceType getAbsenceType() {
-
-        return absenceType;
-    }
-
-
-    public void setAbsenceType(AbsenceType absenceType) {
-
-        this.absenceType = absenceType;
-    }
-
-
-    public String getEventId() {
-
-        return eventId;
-    }
-
-
-    public void setEventId(String eventId) {
-
-        this.eventId = eventId;
-    }
 }

@@ -1,10 +1,11 @@
 package org.synyx.urlaubsverwaltung.web;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
-
-import org.springframework.util.Assert;
-
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 
 
@@ -13,6 +14,9 @@ import org.synyx.urlaubsverwaltung.core.util.DateUtil;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class FilterRequest {
 
     public enum Period {
@@ -21,35 +25,11 @@ public class FilterRequest {
         QUARTER,
         MONTH
     }
-
-    private Period period;
-
-    public FilterRequest() {
-
-        this(Period.YEAR);
-    }
-
-
-    public FilterRequest(Period period) {
-
-        this.period = period;
-    }
-
-    public Period getPeriod() {
-
-        return period;
-    }
-
-
-    public void setPeriod(Period period) {
-
-        this.period = period;
-    }
-
+    
+    @NonNull
+    private Period period = Period.YEAR;
 
     public DateMidnight getStartDate() {
-
-        Assert.notNull(period, "Period must be set!");
 
         int currentYear = DateMidnight.now().getYear();
 
@@ -71,8 +51,6 @@ public class FilterRequest {
 
 
     public DateMidnight getEndDate() {
-
-        Assert.notNull(period, "Period must be set!");
 
         int currentYear = DateMidnight.now().getYear();
 

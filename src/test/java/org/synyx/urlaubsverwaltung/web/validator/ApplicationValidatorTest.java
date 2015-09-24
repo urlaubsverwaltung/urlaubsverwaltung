@@ -1,15 +1,10 @@
 package org.synyx.urlaubsverwaltung.web.validator;
 
 import org.joda.time.DateMidnight;
-
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mockito.Mockito;
-
 import org.springframework.validation.Errors;
-
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
@@ -168,11 +163,7 @@ public class ApplicationValidatorTest {
         appForm.setStartDate(null);
         appForm.setEndDate(new DateMidnight(2012, 1, 12));
 
-        try {
-            validator.validate(appForm, errors);
-        } catch (NullPointerException ex) {
-            Assert.fail("Should not try to check the period if the date is null");
-        }
+        validator.validate(appForm, errors);
     }
 
 
@@ -183,11 +174,7 @@ public class ApplicationValidatorTest {
         appForm.setStartDate(new DateMidnight(2012, 1, 12));
         appForm.setEndDate(null);
 
-        try {
-            validator.validate(appForm, errors);
-        } catch (NullPointerException ex) {
-            Assert.fail("Should not try to check the period if the date is null");
-        }
+        validator.validate(appForm, errors);
     }
 
 
@@ -197,11 +184,7 @@ public class ApplicationValidatorTest {
         appForm.setDayLength(DayLength.MORNING);
         appForm.setStartDateHalf(null);
 
-        try {
-            validator.validate(appForm, errors);
-        } catch (NullPointerException ex) {
-            Assert.fail("Should not try to check the period if the date is null");
-        }
+        validator.validate(appForm, errors);
     }
 
 
@@ -313,7 +296,7 @@ public class ApplicationValidatorTest {
 
         Mockito.verify(errors)
             .reject("application.error.tooFarInTheFuture",
-                new Object[] { settings.getMaximumMonthsToApplyForLeaveInAdvance().toString() }, null);
+                    new Object[]{settings.getMaximumMonthsToApplyForLeaveInAdvance().toString()}, null);
     }
 
 
@@ -343,7 +326,7 @@ public class ApplicationValidatorTest {
 
         Mockito.verify(errors)
             .reject("application.error.tooFarInTheFuture",
-                new Object[] { settings.getMaximumMonthsToApplyForLeaveInAdvance().toString() }, null);
+                    new Object[]{settings.getMaximumMonthsToApplyForLeaveInAdvance().toString()}, null);
     }
 
 

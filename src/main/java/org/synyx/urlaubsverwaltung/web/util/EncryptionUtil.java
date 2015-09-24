@@ -1,8 +1,9 @@
 package org.synyx.urlaubsverwaltung.web.util;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import org.apache.log4j.Logger;
-
-import org.springframework.util.Assert;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -13,16 +14,12 @@ import java.security.NoSuchAlgorithmException;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class EncryptionUtil {
 
     private static final Logger LOG = Logger.getLogger(GravatarUtil.class);
 
     private static final String DIGEST_ALGORITHM = "MD5";
-
-    private EncryptionUtil() {
-
-        // Hide constructor for util classes
-    }
 
     /**
      * This method creates a md5 hash of the given string.
@@ -31,9 +28,7 @@ public final class EncryptionUtil {
      *
      * @return  encrypted string
      */
-    public static String createHash(String string) {
-
-        Assert.notNull("String to be encrypted may not be null", string);
+    public static String createHash(@NonNull String string) {
 
         String encryptedString = null;
 

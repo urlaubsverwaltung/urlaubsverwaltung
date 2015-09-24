@@ -1,21 +1,18 @@
 package org.synyx.urlaubsverwaltung.core.department;
 
+import lombok.Data;
+import lombok.NonNull;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
-
 import org.joda.time.DateTime;
-
 import org.springframework.data.jpa.domain.AbstractPersistable;
-
 import org.springframework.util.Assert;
-
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import javax.persistence.*;
 
 
 /**
@@ -25,6 +22,7 @@ import javax.persistence.*;
  */
 
 @Entity
+@Data
 public class Department extends AbstractPersistable<Integer> {
 
     @Column(nullable = false)
@@ -45,30 +43,6 @@ public class Department extends AbstractPersistable<Integer> {
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<Person> departmentHeads = new ArrayList<>();
 
-    public String getName() {
-
-        return name;
-    }
-
-
-    public void setName(String name) {
-
-        this.name = name;
-    }
-
-
-    public String getDescription() {
-
-        return description;
-    }
-
-
-    public void setDescription(String description) {
-
-        this.description = description;
-    }
-
-
     public DateTime getLastModification() {
 
         if (lastModification == null) {
@@ -80,9 +54,8 @@ public class Department extends AbstractPersistable<Integer> {
     }
 
 
-    public void setLastModification(DateTime lastModification) {
+    public void setLastModification(@NonNull DateTime lastModification) {
 
-        Assert.notNull(lastModification);
         this.lastModification = lastModification.toDate();
     }
 
@@ -93,27 +66,4 @@ public class Department extends AbstractPersistable<Integer> {
         super.setId(id);
     }
 
-
-    public List<Person> getMembers() {
-
-        return members;
-    }
-
-
-    public void setMembers(List<Person> members) {
-
-        this.members = members;
-    }
-
-
-    public List<Person> getDepartmentHeads() {
-
-        return departmentHeads;
-    }
-
-
-    public void setDepartmentHeads(List<Person> departmentHeads) {
-
-        this.departmentHeads = departmentHeads;
-    }
 }
