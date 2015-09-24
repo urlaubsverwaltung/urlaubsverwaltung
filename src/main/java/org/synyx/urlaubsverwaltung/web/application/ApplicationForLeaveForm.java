@@ -4,6 +4,7 @@
  */
 package org.synyx.urlaubsverwaltung.web.application;
 
+import lombok.Data;
 import org.joda.time.DateMidnight;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
@@ -17,6 +18,7 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
  *
  * @author  Aljona Murygina
  */
+@Data
 public class ApplicationForLeaveForm {
 
     // person of the application for leave
@@ -46,137 +48,6 @@ public class ApplicationForLeaveForm {
     private boolean teamInformed;
 
     private String comment;
-
-    public Person getPerson() {
-
-        return person;
-    }
-
-
-    public void setPerson(Person person) {
-
-        this.person = person;
-    }
-
-
-    public String getAddress() {
-
-        return address;
-    }
-
-
-    public void setAddress(String address) {
-
-        this.address = address;
-    }
-
-
-    public DateMidnight getEndDate() {
-
-        return endDate;
-    }
-
-
-    public void setEndDate(DateMidnight endDate) {
-
-        this.endDate = endDate;
-    }
-
-
-    public DayLength getDayLength() {
-
-        return dayLength;
-    }
-
-
-    public void setDayLength(DayLength dayLength) {
-
-        this.dayLength = dayLength;
-    }
-
-
-    public String getReason() {
-
-        return reason;
-    }
-
-
-    public void setReason(String reason) {
-
-        this.reason = reason;
-    }
-
-
-    public Person getHolidayReplacement() {
-
-        return holidayReplacement;
-    }
-
-
-    public void setHolidayReplacement(Person holidayReplacement) {
-
-        this.holidayReplacement = holidayReplacement;
-    }
-
-
-    public DateMidnight getStartDate() {
-
-        return startDate;
-    }
-
-
-    public void setStartDate(DateMidnight startDate) {
-
-        this.startDate = startDate;
-    }
-
-
-    public DateMidnight getStartDateHalf() {
-
-        return startDateHalf;
-    }
-
-
-    public void setStartDateHalf(DateMidnight startDateHalf) {
-
-        this.startDateHalf = startDateHalf;
-    }
-
-
-    public VacationType getVacationType() {
-
-        return vacationType;
-    }
-
-
-    public void setVacationType(VacationType vacationType) {
-
-        this.vacationType = vacationType;
-    }
-
-
-    public String getComment() {
-
-        return comment;
-    }
-
-
-    public void setComment(String comment) {
-
-        this.comment = comment;
-    }
-
-
-    public boolean isTeamInformed() {
-
-        return teamInformed;
-    }
-
-
-    public void setTeamInformed(boolean teamInformed) {
-
-        this.teamInformed = teamInformed;
-    }
 
 
     public Application generateApplicationForLeave() {

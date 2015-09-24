@@ -1,19 +1,13 @@
 package org.synyx.urlaubsverwaltung.core.application.domain;
 
+import lombok.Data;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
-
 import org.springframework.data.jpa.domain.AbstractPersistable;
-
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
+import javax.persistence.*;
 import java.util.Date;
-
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.ManyToOne;
-import javax.persistence.Temporal;
 
 
 /**
@@ -23,6 +17,7 @@ import javax.persistence.Temporal;
  * @author  Aljona Murygina
  */
 @Entity
+@Data
 public class Comment extends AbstractPersistable<Integer> {
 
     private static final long serialVersionUID = 8908423789423089L;
@@ -42,6 +37,7 @@ public class Comment extends AbstractPersistable<Integer> {
     @Enumerated(EnumType.STRING)
     private ApplicationStatus status;
 
+
     Comment() {
 
         // needed for Hibernate
@@ -51,17 +47,6 @@ public class Comment extends AbstractPersistable<Integer> {
     public Comment(Person person) {
 
         this.person = person;
-    }
-
-    public Application getApplication() {
-
-        return application;
-    }
-
-
-    public void setApplication(Application application) {
-
-        this.application = application;
     }
 
 
@@ -76,39 +61,4 @@ public class Comment extends AbstractPersistable<Integer> {
         this.date = date == null ? null : date.toDate();
     }
 
-
-    public Person getPerson() {
-
-        return person;
-    }
-
-
-    public void setPerson(Person person) {
-
-        this.person = person;
-    }
-
-
-    public String getText() {
-
-        return text;
-    }
-
-
-    public void setText(String text) {
-
-        this.text = text;
-    }
-
-
-    public ApplicationStatus getStatus() {
-
-        return status;
-    }
-
-
-    public void setStatus(ApplicationStatus status) {
-
-        this.status = status;
-    }
 }

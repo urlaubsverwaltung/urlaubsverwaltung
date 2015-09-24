@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.web.sicknote;
 
+import lombok.Data;
 import org.springframework.beans.BeanUtils;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
@@ -15,6 +16,7 @@ import java.math.BigDecimal;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
+@Data
 public class ExtendedSickNote extends SickNote {
 
     private final BigDecimal workDays;
@@ -29,10 +31,5 @@ public class ExtendedSickNote extends SickNote {
 
         // calculate the work days
         this.workDays = calendarService.getWorkDays(DayLength.FULL, getStartDate(), getEndDate(), getPerson());
-    }
-
-    public BigDecimal getWorkDays() {
-
-        return workDays;
     }
 }

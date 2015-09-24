@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.web.sicknote;
 
+import lombok.Data;
 import org.joda.time.DateMidnight;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
@@ -15,6 +16,7 @@ import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
+@Data
 public class SickNoteConvertForm {
 
     private Person person;
@@ -39,66 +41,6 @@ public class SickNoteConvertForm {
         this.startDate = sickNote.getStartDate();
         this.endDate = sickNote.getEndDate();
     }
-
-    public Person getPerson() {
-
-        return person;
-    }
-
-
-    public void setPerson(Person person) {
-
-        this.person = person;
-    }
-
-
-    public DateMidnight getStartDate() {
-
-        return startDate;
-    }
-
-
-    public void setStartDate(DateMidnight startDate) {
-
-        this.startDate = startDate;
-    }
-
-
-    public DateMidnight getEndDate() {
-
-        return endDate;
-    }
-
-
-    public void setEndDate(DateMidnight endDate) {
-
-        this.endDate = endDate;
-    }
-
-
-    public VacationType getVacationType() {
-
-        return vacationType;
-    }
-
-
-    public void setVacationType(VacationType vacationType) {
-
-        this.vacationType = vacationType;
-    }
-
-
-    public String getReason() {
-
-        return reason;
-    }
-
-
-    public void setReason(String reason) {
-
-        this.reason = reason;
-    }
-
 
     public Application generateApplicationForLeave() {
 
