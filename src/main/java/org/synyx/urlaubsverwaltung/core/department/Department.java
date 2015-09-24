@@ -1,22 +1,18 @@
 package org.synyx.urlaubsverwaltung.core.department;
 
 import lombok.Data;
+import lombok.NonNull;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
-
 import org.joda.time.DateTime;
-
 import org.springframework.data.jpa.domain.AbstractPersistable;
-
 import org.springframework.util.Assert;
-
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import javax.persistence.*;
 
 
 /**
@@ -58,9 +54,8 @@ public class Department extends AbstractPersistable<Integer> {
     }
 
 
-    public void setLastModification(DateTime lastModification) {
+    public void setLastModification(@NonNull DateTime lastModification) {
 
-        Assert.notNull(lastModification);
         this.lastModification = lastModification.toDate();
     }
 

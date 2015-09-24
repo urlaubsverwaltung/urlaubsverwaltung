@@ -1,23 +1,18 @@
 package org.synyx.urlaubsverwaltung.security;
 
+import lombok.NonNull;
 import org.apache.log4j.Logger;
-
 import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
-
-import org.springframework.util.Assert;
-
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -128,10 +123,8 @@ public class PersonContextMapper implements UserDetailsContextMapper {
      *
      * @return  the created person
      */
-    Person createPerson(String login, Optional<String> firstName, Optional<String> lastName,
+    Person createPerson(@NonNull String login, Optional<String> firstName, Optional<String> lastName,
         Optional<String> mailAddress, boolean isFirst) {
-
-        Assert.notNull(login, "Missing login name!");
 
         Person person = new Person();
         person.setLoginName(login);

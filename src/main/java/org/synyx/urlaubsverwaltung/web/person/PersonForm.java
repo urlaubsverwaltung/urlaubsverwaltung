@@ -3,8 +3,8 @@ package org.synyx.urlaubsverwaltung.web.person;
 
 
 import lombok.Data;
+import lombok.NonNull;
 import org.joda.time.DateMidnight;
-import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.calendar.Day;
@@ -75,10 +75,8 @@ public class PersonForm {
     }
 
 
-    public PersonForm(Person person, int year, Optional<Account> holidaysAccountOptional,
+    public PersonForm(@NonNull Person person, int year, Optional<Account> holidaysAccountOptional,
         Optional<WorkingTime> workingTimeOptional, Collection<Role> roles, Collection<MailNotification> notifications) {
-
-        Assert.notNull(person, "Person must not be null");
 
         this.id = person.getId();
         this.loginName = person.getLoginName();

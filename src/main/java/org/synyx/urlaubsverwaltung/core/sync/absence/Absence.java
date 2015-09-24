@@ -1,11 +1,8 @@
 package org.synyx.urlaubsverwaltung.core.sync.absence;
 
 import com.google.common.base.MoreObjects;
-
 import org.joda.time.DateTimeZone;
-
 import org.springframework.util.Assert;
-
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.person.Person;

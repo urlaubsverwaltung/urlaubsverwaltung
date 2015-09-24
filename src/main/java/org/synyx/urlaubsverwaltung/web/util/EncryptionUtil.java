@@ -2,9 +2,8 @@ package org.synyx.urlaubsverwaltung.web.util;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import org.apache.log4j.Logger;
-
-import org.springframework.util.Assert;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -29,9 +28,7 @@ public final class EncryptionUtil {
      *
      * @return  encrypted string
      */
-    public static String createHash(String string) {
-
-        Assert.notNull("String to be encrypted may not be null", string);
+    public static String createHash(@NonNull String string) {
 
         String encryptedString = null;
 
