@@ -1,18 +1,17 @@
 package org.synyx.urlaubsverwaltung.web.util;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 /**
  * This class creates with given email address the url of the person's gravatar.
  *
  * @author  Aljona Murygina
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class GravatarUtil {
 
     static final String BASE_URL = "https://www.gravatar.com/avatar/";
-
-    private GravatarUtil() {
-
-        // Hide constructor for util classes
-    }
 
     /**
      * This method generates the complete Gravatar's url by the given email address.

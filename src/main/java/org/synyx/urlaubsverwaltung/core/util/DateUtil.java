@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.util;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
 
@@ -7,15 +9,11 @@ import org.joda.time.DateTimeConstants;
 /**
  * @author  Aljona Murygina
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class DateUtil {
 
     private static final int DAY_OF_NEW_YEARS_EVE = 31;
     private static final int DAY_OF_CHRISTMAS_EVE = 24;
-
-    private DateUtil() {
-
-        // Hide constructor for util classes
-    }
 
     /**
      * Check if the given date is a work day.

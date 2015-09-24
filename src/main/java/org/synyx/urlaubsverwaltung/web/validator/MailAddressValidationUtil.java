@@ -1,5 +1,8 @@
 package org.synyx.urlaubsverwaltung.web.validator;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -9,6 +12,7 @@ import java.util.regex.Pattern;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class MailAddressValidationUtil {
 
     // a regex for email addresses that are valid, but may be "strange looking" (e.g. tomr$2@example.com)
@@ -17,11 +21,6 @@ public final class MailAddressValidationUtil {
     private static final String EMAIL_PATTERN =
         "^[a-zäöüß0-9,!#\\$%&'\\*\\+/=\\?\\^_`\\{\\|}~-]+(\\.[a-zäöüß0-9,!#\\$%&'\\*\\+/=\\?\\^_`\\{\\|}~-]+)*@"
         + "[a-zäöüß0-9-]+(\\.[a-zäöüß0-9-]+)*\\.([a-z]{2,})$";
-
-    private MailAddressValidationUtil() {
-
-        // Hide constructor for util classes
-    }
 
     /**
      * Checks if the provided mail address has a valid format, for example `marlene@muster.de`.

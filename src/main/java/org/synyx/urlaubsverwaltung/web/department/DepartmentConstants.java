@@ -1,11 +1,15 @@
 
 package org.synyx.urlaubsverwaltung.web.department;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 /**
  * Constants concerning {@link DepartmentController}.
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class DepartmentConstants {
 
     // JSPs
@@ -15,9 +19,4 @@ public final class DepartmentConstants {
     // Attributes
     public static final String DEPARTMENTS_ATTRIBUTE = "departments";
     public static final String DEPARTMENT_ATTRIBUTE = "department";
-
-    private DepartmentConstants() {
-
-        // Hide constructor for util classes
-    }
 }

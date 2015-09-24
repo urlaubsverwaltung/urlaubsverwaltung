@@ -1,5 +1,8 @@
 package org.synyx.urlaubsverwaltung.security;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -20,14 +23,10 @@ import java.security.spec.PKCS8EncodedKeySpec;
  *
  * @author  Aljona Murygina
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class CryptoUtil {
 
     private static final int KEYSIZE = 2048;
-
-    private CryptoUtil() {
-
-        // Hide constructor for util classes
-    }
 
     /**
      * generates a key pair (private key, public key).

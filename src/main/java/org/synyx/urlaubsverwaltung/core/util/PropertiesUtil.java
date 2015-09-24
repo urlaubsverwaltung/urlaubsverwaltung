@@ -4,6 +4,9 @@
  */
 package org.synyx.urlaubsverwaltung.core.util;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 import java.io.IOException;
 
 import java.net.URL;
@@ -14,12 +17,8 @@ import java.util.Properties;
 /**
  * @author  Aljona Murygina
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class PropertiesUtil {
-
-    private PropertiesUtil() {
-
-        // Hide constructor for util classes
-    }
 
     /**
      * Load a properties file from the classpath. Thanks to: http://www.rgagnon.com/javadetails/java-0434.html

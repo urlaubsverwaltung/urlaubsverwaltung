@@ -1,6 +1,8 @@
 
 package org.synyx.urlaubsverwaltung.web.person;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.web.util.GravatarUtil;
 
@@ -14,6 +16,7 @@ import java.util.Map;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class PersonConstants {
 
     // JPSs
@@ -27,11 +30,6 @@ public final class PersonConstants {
     public static final String BEFORE_APRIL_ATTRIBUTE = "beforeApril";
     public static final String GRAVATAR_URL_ATTRIBUTE = "gravatarUrl";
     public static final String GRAVATAR_URLS_ATTRIBUTE = "gravatarUrls";
-
-    private PersonConstants() {
-
-        // Hide constructor for util classes
-    }
 
     /**
      * Get a map of Gravatar URLs for the given persons.

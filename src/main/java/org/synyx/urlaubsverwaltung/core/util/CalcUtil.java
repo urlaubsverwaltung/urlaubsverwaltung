@@ -1,5 +1,8 @@
 package org.synyx.urlaubsverwaltung.core.util;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 import java.math.BigDecimal;
 
 
@@ -8,12 +11,8 @@ import java.math.BigDecimal;
  *
  * @author  Aljona Murygina
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class CalcUtil {
-
-    private CalcUtil() {
-
-        // Hide constructor for util classes
-    }
 
     public static boolean isZero(BigDecimal number) {
 
