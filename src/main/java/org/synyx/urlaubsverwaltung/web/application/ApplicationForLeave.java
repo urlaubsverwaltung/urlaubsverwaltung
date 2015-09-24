@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.web.application;
 
+import lombok.Data;
 import org.springframework.beans.BeanUtils;
-
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 
@@ -14,6 +14,7 @@ import java.math.BigDecimal;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
+@Data
 public class ApplicationForLeave extends Application {
 
     private final BigDecimal workDays;
@@ -28,10 +29,5 @@ public class ApplicationForLeave extends Application {
 
         // calculate the work days
         this.workDays = calendarService.getWorkDays(getDayLength(), getStartDate(), getEndDate(), getPerson());
-    }
-
-    public BigDecimal getWorkDays() {
-
-        return workDays;
     }
 }

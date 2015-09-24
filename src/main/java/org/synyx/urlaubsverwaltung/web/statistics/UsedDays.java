@@ -1,9 +1,9 @@
 package org.synyx.urlaubsverwaltung.web.statistics;
 
+import lombok.Data;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 
 import java.math.BigDecimal;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,24 +13,16 @@ import java.util.Map;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
+@Data
 public class UsedDays {
 
-    private final Map<String, BigDecimal> days;
+    private final Map<String, BigDecimal> days = new HashMap<>();
 
     public UsedDays(ApplicationStatus... status) {
-
-        days = new HashMap<>();
-
         for (ApplicationStatus applicationStatus : status) {
             days.put(applicationStatus.name(), BigDecimal.ZERO);
         }
     }
-
-    public Map<String, BigDecimal> getDays() {
-
-        return days;
-    }
-
 
     public void addDays(ApplicationStatus status, BigDecimal days) {
 

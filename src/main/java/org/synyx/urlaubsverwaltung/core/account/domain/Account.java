@@ -1,21 +1,17 @@
 package org.synyx.urlaubsverwaltung.core.account.domain;
 
-import com.google.common.base.MoreObjects;
-
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
-
 import org.springframework.data.jpa.domain.AbstractPersistable;
-
 import org.synyx.urlaubsverwaltung.core.person.Person;
-
-import java.math.BigDecimal;
-
-import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
+import java.math.BigDecimal;
+import java.util.Date;
 
 
 /**
@@ -25,6 +21,8 @@ import javax.persistence.Temporal;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Entity
+@Data
+@NoArgsConstructor
 public class Account extends AbstractPersistable<Integer> {
 
     private static final long serialVersionUID = 890434378423784389L;
@@ -49,12 +47,6 @@ public class Account extends AbstractPersistable<Integer> {
     private BigDecimal remainingVacationDays;
     private BigDecimal remainingVacationDaysNotExpiring;
 
-    public Account() {
-
-        /* OK */
-    }
-
-
     public Account(Person person, Date validFrom, Date validTo, BigDecimal annualVacationDays,
         BigDecimal remainingVacationDays, BigDecimal remainingVacationDaysNotExpiring) {
 
@@ -64,65 +56,6 @@ public class Account extends AbstractPersistable<Integer> {
         this.annualVacationDays = annualVacationDays;
         this.remainingVacationDays = remainingVacationDays;
         this.remainingVacationDaysNotExpiring = remainingVacationDaysNotExpiring;
-    }
-
-    public Person getPerson() {
-
-        return person;
-    }
-
-
-    public void setPerson(Person person) {
-
-        this.person = person;
-    }
-
-
-    public BigDecimal getAnnualVacationDays() {
-
-        return annualVacationDays;
-    }
-
-
-    public void setAnnualVacationDays(BigDecimal annualVacationDays) {
-
-        this.annualVacationDays = annualVacationDays;
-    }
-
-
-    public BigDecimal getRemainingVacationDays() {
-
-        return remainingVacationDays;
-    }
-
-
-    public void setRemainingVacationDays(BigDecimal remainingVacationDays) {
-
-        this.remainingVacationDays = remainingVacationDays;
-    }
-
-
-    public BigDecimal getRemainingVacationDaysNotExpiring() {
-
-        return remainingVacationDaysNotExpiring;
-    }
-
-
-    public void setRemainingVacationDaysNotExpiring(BigDecimal remainingVacationDaysNotExpiring) {
-
-        this.remainingVacationDaysNotExpiring = remainingVacationDaysNotExpiring;
-    }
-
-
-    public BigDecimal getVacationDays() {
-
-        return vacationDays;
-    }
-
-
-    public void setVacationDays(BigDecimal vacationDays) {
-
-        this.vacationDays = vacationDays;
     }
 
 
@@ -171,20 +104,4 @@ public class Account extends AbstractPersistable<Integer> {
         return new DateTime(this.validFrom).toDateMidnight().getYear();
     }
 
-
-    @Override
-    public String toString() {
-
-        MoreObjects.ToStringHelper toStringHelper = MoreObjects.toStringHelper(this);
-
-        toStringHelper.add("person", getPerson().getLoginName());
-        toStringHelper.add("validFrom", getValidFrom());
-        toStringHelper.add("validTo", getValidTo());
-        toStringHelper.add("annualVacationDays", getAnnualVacationDays());
-        toStringHelper.add("vacationDays", getVacationDays());
-        toStringHelper.add("remainingVacationDays", getRemainingVacationDays());
-        toStringHelper.add("remainingVacationDaysNotExpiring", getRemainingVacationDaysNotExpiring());
-
-        return toStringHelper.toString();
-    }
 }

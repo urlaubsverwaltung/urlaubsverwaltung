@@ -2,10 +2,9 @@
 package org.synyx.urlaubsverwaltung.web.person;
 
 
+import lombok.Data;
 import org.joda.time.DateMidnight;
-
 import org.springframework.util.Assert;
-
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.calendar.Day;
@@ -16,7 +15,6 @@ import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.security.Role;
 
 import java.math.BigDecimal;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -30,6 +28,7 @@ import static org.synyx.urlaubsverwaltung.security.Role.INACTIVE;
  *
  * @author  Aljona Murygina
  */
+@Data
 public class PersonForm {
 
     private Integer id;
@@ -121,186 +120,6 @@ public class PersonForm {
         this.permissions = new ArrayList<>(roles);
         this.notifications = new ArrayList<>(notifications);
     }
-
-    public Integer getId() {
-
-        return id;
-    }
-
-
-    public void setId(Integer id) {
-
-        this.id = id;
-    }
-
-
-    public int getHolidaysAccountYear() {
-
-        return holidaysAccountYear;
-    }
-
-
-    public void setHolidaysAccountYear(int holidaysAccountYear) {
-
-        this.holidaysAccountYear = holidaysAccountYear;
-    }
-
-
-    public BigDecimal getAnnualVacationDays() {
-
-        return annualVacationDays;
-    }
-
-
-    public void setAnnualVacationDays(BigDecimal annualVacationDays) {
-
-        this.annualVacationDays = annualVacationDays;
-    }
-
-
-    public DateMidnight getHolidaysAccountValidFrom() {
-
-        return holidaysAccountValidFrom;
-    }
-
-
-    public void setHolidaysAccountValidFrom(DateMidnight holidaysAccountValidFrom) {
-
-        this.holidaysAccountValidFrom = holidaysAccountValidFrom;
-    }
-
-
-    public DateMidnight getHolidaysAccountValidTo() {
-
-        return holidaysAccountValidTo;
-    }
-
-
-    public void setHolidaysAccountValidTo(DateMidnight holidaysAccountValidTo) {
-
-        this.holidaysAccountValidTo = holidaysAccountValidTo;
-    }
-
-
-    public String getEmail() {
-
-        return email;
-    }
-
-
-    public void setEmail(String email) {
-
-        this.email = email;
-    }
-
-
-    public String getFirstName() {
-
-        return firstName;
-    }
-
-
-    public void setFirstName(String firstName) {
-
-        this.firstName = firstName;
-    }
-
-
-    public String getLastName() {
-
-        return lastName;
-    }
-
-
-    public void setLastName(String lastName) {
-
-        this.lastName = lastName;
-    }
-
-
-    public BigDecimal getRemainingVacationDays() {
-
-        return remainingVacationDays;
-    }
-
-
-    public void setRemainingVacationDays(BigDecimal remainingVacationDays) {
-
-        this.remainingVacationDays = remainingVacationDays;
-    }
-
-
-    public BigDecimal getRemainingVacationDaysNotExpiring() {
-
-        return remainingVacationDaysNotExpiring;
-    }
-
-
-    public void setRemainingVacationDaysNotExpiring(BigDecimal remainingVacationDaysNotExpiring) {
-
-        this.remainingVacationDaysNotExpiring = remainingVacationDaysNotExpiring;
-    }
-
-
-    public String getLoginName() {
-
-        return loginName;
-    }
-
-
-    public void setLoginName(String loginName) {
-
-        this.loginName = loginName;
-    }
-
-
-    public List<Integer> getWorkingDays() {
-
-        return workingDays;
-    }
-
-
-    public void setWorkingDays(List<Integer> workingDays) {
-
-        this.workingDays = workingDays;
-    }
-
-
-    public DateMidnight getValidFrom() {
-
-        return validFrom;
-    }
-
-
-    public void setValidFrom(DateMidnight validFrom) {
-
-        this.validFrom = validFrom;
-    }
-
-
-    public List<Role> getPermissions() {
-
-        return permissions;
-    }
-
-
-    public void setPermissions(List<Role> permissions) {
-
-        this.permissions = permissions;
-    }
-
-
-    public List<MailNotification> getNotifications() {
-
-        return notifications;
-    }
-
-
-    public void setNotifications(List<MailNotification> notifications) {
-
-        this.notifications = notifications;
-    }
-
 
     public Person generatePerson() {
 

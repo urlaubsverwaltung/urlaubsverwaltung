@@ -1,24 +1,15 @@
 package org.synyx.urlaubsverwaltung.core.application.domain;
 
 import com.google.common.base.MoreObjects;
-
+import lombok.Data;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
-
 import org.springframework.data.jpa.domain.AbstractPersistable;
-
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
+import javax.persistence.*;
 import java.util.Arrays;
 import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Temporal;
 
 
 /**
@@ -27,8 +18,8 @@ import javax.persistence.Temporal;
  * @author  Johannes Reuter
  * @author  Aljona Murygina
  */
-
 @Entity
+@Data
 public class Application extends AbstractPersistable<Integer> {
 
     private static final long serialVersionUID = 1234589209309L;
@@ -106,17 +97,6 @@ public class Application extends AbstractPersistable<Integer> {
     // team informed about holidays?
     private boolean teamInformed;
 
-    public String getAddress() {
-
-        return address;
-    }
-
-
-    public void setAddress(String address) {
-
-        this.address = address;
-    }
-
 
     public DateMidnight getApplicationDate() {
 
@@ -177,43 +157,6 @@ public class Application extends AbstractPersistable<Integer> {
         }
     }
 
-
-    public Person getApplier() {
-
-        return applier;
-    }
-
-
-    public void setApplier(Person applier) {
-
-        this.applier = applier;
-    }
-
-
-    public Person getBoss() {
-
-        return boss;
-    }
-
-
-    public void setBoss(Person boss) {
-
-        this.boss = boss;
-    }
-
-
-    public Person getCanceller() {
-
-        return canceller;
-    }
-
-
-    public void setCanceller(Person canceller) {
-
-        this.canceller = canceller;
-    }
-
-
     public DateMidnight getEndDate() {
 
         if (this.endDate == null) {
@@ -231,54 +174,6 @@ public class Application extends AbstractPersistable<Integer> {
         } else {
             this.endDate = endDate.toDate();
         }
-    }
-
-
-    public DayLength getDayLength() {
-
-        return dayLength;
-    }
-
-
-    public void setDayLength(DayLength dayLength) {
-
-        this.dayLength = dayLength;
-    }
-
-
-    public Person getPerson() {
-
-        return person;
-    }
-
-
-    public void setPerson(Person person) {
-
-        this.person = person;
-    }
-
-
-    public String getReason() {
-
-        return reason;
-    }
-
-
-    public void setReason(String reason) {
-
-        this.reason = reason;
-    }
-
-
-    public Person getHolidayReplacement() {
-
-        return holidayReplacement;
-    }
-
-
-    public void setHolidayReplacement(Person holidayReplacement) {
-
-        this.holidayReplacement = holidayReplacement;
     }
 
 
@@ -342,30 +237,6 @@ public class Application extends AbstractPersistable<Integer> {
     }
 
 
-    public ApplicationStatus getStatus() {
-
-        return status;
-    }
-
-
-    public void setStatus(ApplicationStatus status) {
-
-        this.status = status;
-    }
-
-
-    public VacationType getVacationType() {
-
-        return vacationType;
-    }
-
-
-    public void setVacationType(VacationType vacationType) {
-
-        this.vacationType = vacationType;
-    }
-
-
     public boolean isFormerlyAllowed() {
 
         return hasStatus(ApplicationStatus.CANCELLED);
@@ -389,48 +260,6 @@ public class Application extends AbstractPersistable<Integer> {
         } else {
             this.remindDate = remindDate.toDate();
         }
-    }
-
-
-    public boolean isTeamInformed() {
-
-        return teamInformed;
-    }
-
-
-    public void setTeamInformed(boolean teamInformed) {
-
-        this.teamInformed = teamInformed;
-    }
-
-
-    @Override
-    public String toString() {
-
-        MoreObjects.ToStringHelper toStringHelper = MoreObjects.toStringHelper(this);
-
-        toStringHelper.add("id", getId());
-        toStringHelper.add("startDate", getStartDate());
-        toStringHelper.add("endDate", getEndDate());
-        toStringHelper.add("vacationType", getVacationType());
-        toStringHelper.add("dayLength", getDayLength());
-
-        if (getPerson() != null && getApplier() != null && getPerson().equals(getApplier())) {
-            toStringHelper.add("person", getPerson());
-        } else {
-            toStringHelper.add("person", getPerson());
-            toStringHelper.add("applier", getApplier());
-        }
-
-        if (getBoss() != null) {
-            toStringHelper.add("boss", getBoss());
-        }
-
-        if (getCanceller() != null) {
-            toStringHelper.add("canceller", getCanceller());
-        }
-
-        return toStringHelper.toString();
     }
 
 

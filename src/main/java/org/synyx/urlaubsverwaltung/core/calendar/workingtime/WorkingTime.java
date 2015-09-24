@@ -1,25 +1,18 @@
 package org.synyx.urlaubsverwaltung.core.calendar.workingtime;
 
+import lombok.Data;
 import org.apache.commons.collections.CollectionUtils;
-
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
-
 import org.springframework.data.jpa.domain.AbstractPersistable;
-
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.calendar.Day;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
+import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
-
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.OneToOne;
-import javax.persistence.Temporal;
 
 
 /**
@@ -28,39 +21,35 @@ import javax.persistence.Temporal;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Entity
+@Data
 public class WorkingTime extends AbstractPersistable<Integer> {
 
     @OneToOne
     private Person person;
 
     @Enumerated(EnumType.STRING)
-    private DayLength monday;
+    private DayLength monday = DayLength.ZERO;
 
     @Enumerated(EnumType.STRING)
-    private DayLength tuesday;
+    private DayLength tuesday = DayLength.ZERO;
 
     @Enumerated(EnumType.STRING)
-    private DayLength wednesday;
+    private DayLength wednesday = DayLength.ZERO;
 
     @Enumerated(EnumType.STRING)
-    private DayLength thursday;
+    private DayLength thursday = DayLength.ZERO;
 
     @Enumerated(EnumType.STRING)
-    private DayLength friday;
+    private DayLength friday = DayLength.ZERO;
 
     @Enumerated(EnumType.STRING)
-    private DayLength saturday;
+    private DayLength saturday = DayLength.ZERO;
 
     @Enumerated(EnumType.STRING)
-    private DayLength sunday;
+    private DayLength sunday = DayLength.ZERO;
 
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date validFrom;
-
-    public WorkingTime() {
-
-        setAllDayLengthsToZero();
-    }
 
     public void setWorkingDays(List<Integer> workingDays, DayLength dayLength) {
 
@@ -107,18 +96,6 @@ public class WorkingTime extends AbstractPersistable<Integer> {
         this.friday = DayLength.ZERO;
         this.saturday = DayLength.ZERO;
         this.sunday = DayLength.ZERO;
-    }
-
-
-    public Person getPerson() {
-
-        return person;
-    }
-
-
-    public void setPerson(Person person) {
-
-        this.person = person;
     }
 
 
@@ -208,45 +185,4 @@ public class WorkingTime extends AbstractPersistable<Integer> {
         }
     }
 
-
-    public DayLength getMonday() {
-
-        return monday;
-    }
-
-
-    public DayLength getTuesday() {
-
-        return tuesday;
-    }
-
-
-    public DayLength getWednesday() {
-
-        return wednesday;
-    }
-
-
-    public DayLength getThursday() {
-
-        return thursday;
-    }
-
-
-    public DayLength getFriday() {
-
-        return friday;
-    }
-
-
-    public DayLength getSaturday() {
-
-        return saturday;
-    }
-
-
-    public DayLength getSunday() {
-
-        return sunday;
-    }
 }

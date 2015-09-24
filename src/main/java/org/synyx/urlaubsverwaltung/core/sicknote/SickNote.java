@@ -1,19 +1,13 @@
 package org.synyx.urlaubsverwaltung.core.sicknote;
 
+import lombok.Data;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
-
 import org.springframework.data.jpa.domain.AbstractPersistable;
-
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
+import javax.persistence.*;
 import java.util.Date;
-
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.ManyToOne;
-import javax.persistence.Temporal;
 
 
 /**
@@ -22,6 +16,7 @@ import javax.persistence.Temporal;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Entity
+@Data
 public class SickNote extends AbstractPersistable<Integer> {
 
     private static final long serialVersionUID = 8524575678589823089L;
@@ -52,29 +47,6 @@ public class SickNote extends AbstractPersistable<Integer> {
 
     // if sick note has been converted to vacation, it's not active
     private boolean active;
-
-    public Person getPerson() {
-
-        return person;
-    }
-
-
-    public void setPerson(Person person) {
-
-        this.person = person;
-    }
-
-
-    public SickNoteType getType() {
-
-        return type;
-    }
-
-
-    public void setType(SickNoteType type) {
-
-        this.type = type;
-    }
 
 
     public DateMidnight getStartDate() {
@@ -180,18 +152,6 @@ public class SickNote extends AbstractPersistable<Integer> {
         } else {
             this.lastEdited = lastEdited.toDate();
         }
-    }
-
-
-    public boolean isActive() {
-
-        return active;
-    }
-
-
-    public void setActive(boolean active) {
-
-        this.active = active;
     }
 
 
