@@ -262,7 +262,7 @@ $(function() {
                 var holiday = _.findWhere(_CACHE['holiday'][year], {date: formattedDate});
 
                 if(holiday) {
-                  return holiday.id;
+                  return holiday.href;
                 }
 
               }
@@ -272,7 +272,7 @@ $(function() {
                   var sickDay = _.findWhere(_CACHE['sick'][year], {date: formattedDate});
 
                   if(sickDay) {
-                      return sickDay.id;
+                      return sickDay.href;
                   }
 
               }
