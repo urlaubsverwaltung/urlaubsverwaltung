@@ -6,5 +6,5 @@ package org.synyx.urlaubsverwaltung.core.sicknote;
 public enum SickNoteType {
 
     SICK_NOTE,
-    SICK_NOTE_CHILD;
+    SICK_NOTE_CHILD
 }

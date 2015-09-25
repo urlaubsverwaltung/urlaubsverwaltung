@@ -18,7 +18,7 @@ public enum Day {
 
     private Integer dayOfWeek;
 
-    private Day(Integer dayOfWeek) {
+    Day(Integer dayOfWeek) {
 
         this.dayOfWeek = dayOfWeek;
     }

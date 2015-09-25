@@ -11,5 +11,5 @@ public enum VacationType {
     HOLIDAY,
     SPECIALLEAVE,
     UNPAIDLEAVE,
-    OVERTIME;
+    OVERTIME
 }
