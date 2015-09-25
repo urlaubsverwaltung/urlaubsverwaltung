@@ -69,35 +69,32 @@
 
         <div class="row">
 
-            <div class="col-xs-12">
+        <c:choose>
+            <c:when test="${sickNote.id == null}">
+                <c:set var="METHOD" value="POST" />
+                <c:set var="ACTION" value="${URL_PREFIX}/sicknote" />
+            </c:when>
+            <c:otherwise>
+                <c:set var="METHOD" value="PUT" />
+                <c:set var="ACTION" value="${URL_PREFIX}/sicknote/${sickNote.id}/edit" />
+            </c:otherwise>
+        </c:choose>
 
-                <div class="header">
-                    <legend>
-                        <c:choose>
-                            <c:when test="${sickNote.id == null}">
-                                <spring:message code="sicknote.create.title" />
-                            </c:when>
-                            <c:otherwise>
-                                <spring:message code="sicknote.edit.title" />
-                            </c:otherwise>
-                        </c:choose>
-                    </legend>
-                </div>
+        <form:form method="${METHOD}" action="${ACTION}" modelAttribute="sickNote" class="form-horizontal">
+        <div class="form-section">
 
+            <div class="col-xs-12 header">
+                <legend>
+                    <c:choose>
+                        <c:when test="${sickNote.id == null}">
+                            <spring:message code="sicknote.create.title" />
+                        </c:when>
+                        <c:otherwise>
+                            <spring:message code="sicknote.edit.title" />
+                        </c:otherwise>
+                    </c:choose>
+                </legend>
             </div>
-
-            <c:choose>
-                <c:when test="${sickNote.id == null}">
-                    <c:set var="METHOD" value="POST" />
-                    <c:set var="ACTION" value="${URL_PREFIX}/sicknote" />
-                </c:when>
-                <c:otherwise>
-                    <c:set var="METHOD" value="PUT" />
-                    <c:set var="ACTION" value="${URL_PREFIX}/sicknote/${sickNote.id}/edit" />
-                </c:otherwise>
-            </c:choose>
-
-            <form:form method="${METHOD}" action="${ACTION}" modelAttribute="sickNote" class="form-horizontal">
 
             <div class="col-xs-12">
               <c:set var="formErrors"><form:errors/></c:set>
@@ -108,14 +105,21 @@
               </c:if>
             </div>
 
-            <div class="col-xs-12 col-md-6">
+            <div class="col-md-4 col-md-push-8">
+                <span class="help-block">
+                    <i class="fa fa-fw fa-info-circle"></i>
+                    <spring:message code="sicknote.data.description" />
+                </span>
+            </div>
+
+            <div class="col-md-8 col-md-pull-4">
 
                 <div class="form-group is-required">
-                    <label class="control-label col-md-4" for="employee">
+                    <label class="control-label col-md-3" for="employee">
                         <spring:message code='sicknote.data.staff'/>:
                     </label>
 
-                    <div class="col-md-6">
+                    <div class="col-md-9">
                         <c:choose>
                             <c:when test="${sickNote.id == null}">
                                 <form:select path="person" id="employee" class="form-control" cssErrorClass="form-control error">
@@ -142,11 +146,11 @@
                 </div>
 
                 <div class="form-group is-required">
-                    <label class="control-label col-md-4" for="sickNoteType">
+                    <label class="control-label col-md-3" for="sickNoteType">
                         <spring:message code="sicknote.data.type"/>:
                     </label>
 
-                    <div class="col-md-6">
+                    <div class="col-md-9">
                         <form:select path="type" id="sickNoteType" class="form-control" cssErrorClass="form-control error">
                             <c:forEach items="${sickNoteTypes}" var="type">
                                 <form:option value="${type}"><spring:message code="sicknote.type.${type}" /></form:option>
@@ -156,14 +160,13 @@
                 </div>
 
                 <div class="form-group is-required">
-                    <label class="control-label col-md-4" for="from">
-                        <spring:message code="sicknote.data.time" />:
+                    <label class="control-label col-md-3" for="dayLength">
+                        <spring:message code="absence.period" />:
                     </label>
-
-                    <div class="col-md-6">
+                    <div class="col-md-9">
                         <div class="radio">
                             <label class="thirds">
-                                <form:radiobutton path="dayLength" value="FULL" />
+                                <form:radiobutton path="dayLength" value="FULL" checked="checked" />
                                 <spring:message code="FULL"/>
                             </label>
                             <label class="thirds">
@@ -176,12 +179,24 @@
                             </label>
                         </div>
                         <span class="help-inline"><form:errors path="dayLength" cssClass="error"/></span>
-                        <br />
-                        <spring:message code="absence.period.startDate" />
+                    </div>
+                </div>
+
+                <div class="form-group is-required">
+                    <label class="control-label col-md-3" for="from">
+                        <spring:message code="absence.period.startDate" />:
+                    </label>
+                    <div class="col-md-9">
                         <form:input id="from" path="startDate" class="form-control" cssErrorClass="form-control error" />
                         <span class="help-inline"><form:errors path="startDate" cssClass="error"/></span>
-                        <br />
-                        <spring:message code="absence.period.endDate" />
+                    </div>
+                </div>
+
+                <div class="form-group is-required">
+                    <label class="control-label col-md-3" for="to">
+                        <spring:message code="absence.period.endDate" />:
+                    </label>
+                    <div class="col-md-9">
                         <form:input id="to" path="endDate" class="form-control" cssErrorClass="form-control error" />
                         <span class="help-inline"><form:errors path="endDate" cssClass="error"/></span>
                     </div>
@@ -189,47 +204,59 @@
 
             </div>
 
-            <div class="col-xs-12 col-md-6">
+        </div>
 
+        <div class="form-section">
+            <div class="col-xs-12 header">
+                <legend>
+                    <spring:message code="sicknote.data.aub.short"/>
+                </legend>
+            </div>
+            <div class="col-md-4 col-md-push-8">
+                <span class="help-block">
+                    <i class="fa fa-fw fa-info-circle"></i>
+                    <spring:message code="sicknote.data.aub.description" />
+                </span>
+            </div>
+            <div class="col-md-8 col-md-pull-4">
                 <div class="form-group AU">
-                    <div class="col-md-6">
-                      <label class="control-label" for="aubFrom">
-                        <spring:message code="sicknote.data.aub.time" />:
-                      </label>
-                      <span class="help-block"><spring:message code="sicknote.data.aub.time.note" /></span>
-                    </div>
+                    <label class="control-label col-md-3" for="aubFrom">
+                        <spring:message code="absence.period.startDate" />:
+                    </label>
 
-                    <div class="col-md-6">
-                        <spring:message code="absence.period.startDate" />
+                    <div class="col-md-9">
                         <form:input id="aubFrom" path="aubStartDate" class="form-control" cssErrorClass="form-control error" />
                         <span class="help-inline"><form:errors path="aubStartDate" cssClass="error"/></span>
-                        <br />
+                    </div>
+                </div>
+                <div class="form-group AU">
+                    <label class="control-label col-md-3" for="aubTo">
                         <spring:message code="absence.period.endDate" />
-                        <br />
+                    </label>
+
+                    <div class="col-md-9">
                         <form:input id="aubTo" path="aubEndDate" class="form-control" cssErrorClass="form-control error" />
                         <span class="help-inline"><form:errors path="aubEndDate" cssClass="error"/></span>
                     </div>
                 </div>
-
             </div>
+        </div>
 
+        <div class="form-section">
             <div class="col-xs-12">
-
                 <hr/>
-
                 <button class="btn btn-success col-xs-12 col-sm-5 col-md-2" type="submit">
                     <spring:message code="action.save"/>
                 </button>
-                
                 <button class="btn btn-default back col-xs-12 col-sm-5 col-md-2 pull-right" type="button">
                     <spring:message code="action.cancel"/>
                 </button>
-
             </div>
-
         </div>
 
-      </form:form>
+        </form:form>
+
+        </div>
             
     </div>
     
