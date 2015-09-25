@@ -137,12 +137,12 @@ public class SickNoteValidator implements Validator {
     private void validatePeriod(DateMidnight startDate, DateMidnight endDate, DayLength dayLength, String field,
         Errors errors) {
 
-        if (dayLength == DayLength.FULL) {
-            if (startDate.isAfter(endDate)) {
-                errors.rejectValue(field, ERROR_PERIOD);
-            }
+        if (startDate.isAfter(endDate)) {
+            errors.rejectValue(field, ERROR_PERIOD);
         } else {
-            if (!startDate.isEqual(endDate)) {
+            boolean isHalfDay = dayLength == DayLength.MORNING || dayLength == DayLength.NOON;
+
+            if (isHalfDay && !startDate.isEqual(endDate)) {
                 errors.rejectValue(field, ERROR_HALF_DAY_PERIOD_SICK_NOTE);
             }
         }
