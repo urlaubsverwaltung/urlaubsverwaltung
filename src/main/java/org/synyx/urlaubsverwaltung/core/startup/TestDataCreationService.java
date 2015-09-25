@@ -199,7 +199,7 @@ public class TestDataCreationService {
 
         // SICK NOTES
         createSickNote(person, DayLength.NOON, now.minusDays(10), now.minusDays(10), SickNoteType.SICK_NOTE, false); // NOSONAR
-        createSickNote(person, DayLength.FULL, now.minusDays(9), now.minusDays(9), SickNoteType.SICK_NOTE, false); // NOSONAR
+        createSickNote(person, DayLength.FULL, now.minusDays(2), now.minusDays(2), SickNoteType.SICK_NOTE, false); // NOSONAR
         createSickNote(person, DayLength.FULL, now.minusDays(30), now.minusDays(25), SickNoteType.SICK_NOTE, true); // NOSONAR
         createSickNote(person, DayLength.FULL, now.minusDays(60), now.minusDays(55), SickNoteType.SICK_NOTE_CHILD,
             true); // NOSONAR
