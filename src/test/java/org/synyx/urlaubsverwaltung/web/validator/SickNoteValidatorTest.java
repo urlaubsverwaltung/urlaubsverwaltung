@@ -10,6 +10,7 @@ import org.mockito.Mockito;
 
 import org.springframework.validation.Errors;
 
+import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.calendar.OverlapCase;
 import org.synyx.urlaubsverwaltung.core.calendar.OverlapService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -42,6 +43,7 @@ public class SickNoteValidatorTest {
         Mockito.reset(errors);
 
         sickNote.setPerson(new Person());
+        sickNote.setDayLength(DayLength.FULL);
         sickNote.setStartDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 19));
         sickNote.setEndDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 20));
     }
@@ -52,6 +54,15 @@ public class SickNoteValidatorTest {
 
         validator.validate(sickNote, errors);
         Mockito.verifyZeroInteractions(errors);
+    }
+
+
+    @Test
+    public void ensureDayLengthMayNotBeNull() {
+
+        sickNote.setDayLength(null);
+        validator.validate(sickNote, errors);
+        Mockito.verify(errors).rejectValue("dayLength", "error.entry.mandatory");
     }
 
 
@@ -80,6 +91,28 @@ public class SickNoteValidatorTest {
         sickNote.setEndDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 19));
         validator.validate(sickNote, errors);
         Mockito.verify(errors).rejectValue("endDate", "error.entry.invalidPeriod");
+    }
+
+
+    @Test
+    public void ensureStartAndEndDateMustBeEqualsDatesForDayLengthNoon() {
+
+        sickNote.setDayLength(DayLength.NOON);
+        sickNote.setStartDate(new DateMidnight(2013, DateTimeConstants.DECEMBER, 1));
+        sickNote.setEndDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 19));
+        validator.validate(sickNote, errors);
+        Mockito.verify(errors).rejectValue("endDate", "sicknote.error.halfDayPeriod");
+    }
+
+
+    @Test
+    public void ensureStartAndEndDateMustBeEqualsDatesForDayLengthMorning() {
+
+        sickNote.setDayLength(DayLength.MORNING);
+        sickNote.setStartDate(new DateMidnight(2013, DateTimeConstants.DECEMBER, 1));
+        sickNote.setEndDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 19));
+        validator.validate(sickNote, errors);
+        Mockito.verify(errors).rejectValue("endDate", "sicknote.error.halfDayPeriod");
     }
 
 

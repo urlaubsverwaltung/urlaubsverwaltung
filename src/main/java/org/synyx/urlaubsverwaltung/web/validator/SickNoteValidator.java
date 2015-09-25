@@ -12,6 +12,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.calendar.OverlapCase;
 import org.synyx.urlaubsverwaltung.core.calendar.OverlapService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
@@ -30,8 +31,10 @@ public class SickNoteValidator implements Validator {
     private static final String ERROR_PERIOD = "error.entry.invalidPeriod";
     private static final String ERROR_LENGTH = "error.entry.tooManyChars";
     private static final String ERROR_PERIOD_SICK_NOTE = "sicknote.error.aubInvalidPeriod";
+    private static final String ERROR_HALF_DAY_PERIOD_SICK_NOTE = "sicknote.error.halfDayPeriod";
     private static final String ERROR_OVERLAP = "application.error.overlap";
 
+    private static final String ATTRIBUTE_DAY_LENGTH = "dayLength";
     private static final String ATTRIBUTE_START_DATE = "startDate";
     private static final String ATTRIBUTE_END_DATE = "endDate";
     private static final String ATTRIBUTE_AUB_START_DATE = "aubStartDate";
@@ -70,14 +73,19 @@ public class SickNoteValidator implements Validator {
 
     private void validateSickNotePeriod(SickNote sickNote, Errors errors) {
 
+        DayLength dayLength = sickNote.getDayLength();
         DateMidnight startDate = sickNote.getStartDate();
         DateMidnight endDate = sickNote.getEndDate();
 
         validateNotNull(startDate, ATTRIBUTE_START_DATE, errors);
         validateNotNull(endDate, ATTRIBUTE_END_DATE, errors);
 
-        if (startDate != null && endDate != null) {
-            validatePeriod(startDate, endDate, ATTRIBUTE_END_DATE, errors);
+        if (dayLength == null) {
+            errors.rejectValue(ATTRIBUTE_DAY_LENGTH, ERROR_MANDATORY_FIELD);
+        }
+
+        if (dayLength != null && startDate != null && endDate != null) {
+            validatePeriod(startDate, endDate, dayLength, ATTRIBUTE_END_DATE, errors);
             validateNoOverlapping(sickNote, errors);
         }
     }
@@ -85,6 +93,7 @@ public class SickNoteValidator implements Validator {
 
     private void validateAUPeriod(SickNote sickNote, Errors errors) {
 
+        DayLength dayLength = sickNote.getDayLength();
         DateMidnight aubStartDate = sickNote.getAubStartDate();
         DateMidnight aubEndDate = sickNote.getAubEndDate();
 
@@ -92,7 +101,7 @@ public class SickNoteValidator implements Validator {
         validateNotNull(aubEndDate, ATTRIBUTE_AUB_END_DATE, errors);
 
         if (aubStartDate != null && aubEndDate != null) {
-            validatePeriod(aubStartDate, aubEndDate, ATTRIBUTE_AUB_END_DATE, errors);
+            validatePeriod(aubStartDate, aubEndDate, dayLength, ATTRIBUTE_AUB_END_DATE, errors);
 
             // Intervals are inclusive of the start instant and exclusive of the end, i.e. add one day at the end
             Interval interval = new Interval(sickNote.getStartDate(), sickNote.getEndDate().plusDays(1));
@@ -125,10 +134,17 @@ public class SickNoteValidator implements Validator {
      * @param  field
      * @param  errors
      */
-    private void validatePeriod(DateMidnight startDate, DateMidnight endDate, String field, Errors errors) {
+    private void validatePeriod(DateMidnight startDate, DateMidnight endDate, DayLength dayLength, String field,
+        Errors errors) {
 
-        if (startDate.isAfter(endDate)) {
-            errors.rejectValue(field, ERROR_PERIOD);
+        if (dayLength == DayLength.FULL) {
+            if (startDate.isAfter(endDate)) {
+                errors.rejectValue(field, ERROR_PERIOD);
+            }
+        } else {
+            if (!startDate.isEqual(endDate)) {
+                errors.rejectValue(field, ERROR_HALF_DAY_PERIOD_SICK_NOTE);
+            }
         }
     }
 

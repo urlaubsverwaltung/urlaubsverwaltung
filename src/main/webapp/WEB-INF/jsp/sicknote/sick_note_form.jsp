@@ -175,6 +175,7 @@
                                 <spring:message code="NOON"/>
                             </label>
                         </div>
+                        <span class="help-inline"><form:errors path="dayLength" cssClass="error"/></span>
                         <br />
                         <spring:message code="absence.period.startDate" />
                         <form:input id="from" path="startDate" class="form-control" cssErrorClass="form-control error" />
