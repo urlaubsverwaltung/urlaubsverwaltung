@@ -1,9 +1,8 @@
 package org.synyx.urlaubsverwaltung.web.sicknote;
 
-import org.junit.Assert;
-
 import org.joda.time.DateMidnight;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import org.mockito.Mockito;
@@ -29,26 +28,32 @@ public class ExtendedSickNoteTest {
 
         WorkDaysService calendarService = Mockito.mock(WorkDaysService.class);
 
+        DayLength dayLength = DayLength.MORNING;
         DateMidnight startDate = new DateMidnight(2015, 3, 3);
         DateMidnight endDate = new DateMidnight(2015, 3, 6);
+        SickNoteType type = SickNoteType.SICK_NOTE_CHILD;
 
         SickNote sickNote = new SickNote();
+        sickNote.setDayLength(dayLength);
         sickNote.setStartDate(startDate);
         sickNote.setEndDate(endDate);
-        sickNote.setType(SickNoteType.SICK_NOTE_CHILD);
+        sickNote.setType(type);
 
-        Mockito.when(calendarService.getWorkDays(Mockito.eq(DayLength.FULL), Mockito.eq(startDate), Mockito.eq(endDate),
-                Mockito.any(Person.class))).thenReturn(BigDecimal.TEN);
+        Mockito.when(calendarService.getWorkDays(Mockito.eq(dayLength), Mockito.eq(startDate), Mockito.eq(endDate),
+                    Mockito.any(Person.class)))
+            .thenReturn(BigDecimal.TEN);
 
         ExtendedSickNote extendedSickNote = new ExtendedSickNote(sickNote, calendarService);
 
+        Assert.assertNotNull("Should not be null", extendedSickNote.getDayLength());
         Assert.assertNotNull("Should not be null", extendedSickNote.getStartDate());
         Assert.assertNotNull("Should not be null", extendedSickNote.getEndDate());
         Assert.assertNotNull("Should not be null", extendedSickNote.getType());
 
+        Assert.assertEquals("Wrong day length", dayLength, extendedSickNote.getDayLength());
         Assert.assertEquals("Wrong start date", startDate, extendedSickNote.getStartDate());
         Assert.assertEquals("Wrong end date", endDate, extendedSickNote.getEndDate());
-        Assert.assertEquals("Wrong day length", SickNoteType.SICK_NOTE_CHILD, extendedSickNote.getType());
+        Assert.assertEquals("Wrong type", type, extendedSickNote.getType());
 
         Assert.assertNotNull("Should not be null", extendedSickNote.getWorkDays());
         Assert.assertEquals("Wrong number of work days", BigDecimal.TEN, extendedSickNote.getWorkDays());

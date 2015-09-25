@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.web.sicknote;
 
 import org.springframework.beans.BeanUtils;
 
-import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 
@@ -28,7 +27,7 @@ public class ExtendedSickNote extends SickNote {
         setId(sickNote.getId());
 
         // calculate the work days
-        this.workDays = calendarService.getWorkDays(DayLength.FULL, getStartDate(), getEndDate(), getPerson());
+        this.workDays = calendarService.getWorkDays(getDayLength(), getStartDate(), getEndDate(), getPerson());
     }
 
     public BigDecimal getWorkDays() {

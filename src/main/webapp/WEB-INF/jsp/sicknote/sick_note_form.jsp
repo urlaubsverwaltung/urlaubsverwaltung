@@ -161,6 +161,21 @@
                     </label>
 
                     <div class="col-md-6">
+                        <div class="radio">
+                            <label class="thirds">
+                                <form:radiobutton path="dayLength" value="FULL" />
+                                <spring:message code="FULL"/>
+                            </label>
+                            <label class="thirds">
+                                <form:radiobutton path="dayLength" value="MORNING" />
+                                <spring:message code="MORNING"/>
+                            </label>
+                            <label class="thirds">
+                                <form:radiobutton path="dayLength" value="NOON" />
+                                <spring:message code="NOON"/>
+                            </label>
+                        </div>
+                        <br />
                         <spring:message code="absence.period.startDate" />
                         <form:input id="from" path="startDate" class="form-control" cssErrorClass="form-control error" />
                         <span class="help-inline"><form:errors path="startDate" cssClass="error"/></span>

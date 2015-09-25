@@ -88,8 +88,8 @@ public class OverlapService {
         DateMidnight startDate = sickNote.getStartDate();
         DateMidnight endDate = sickNote.getEndDate();
 
-        // NOTE: Sick notes are always for the full day
-        List<Application> applications = getRelevantApplicationsForLeave(person, startDate, endDate, DayLength.FULL);
+        List<Application> applications = getRelevantApplicationsForLeave(person, startDate, endDate,
+                sickNote.getDayLength());
 
         List<SickNote> sickNotes = getRelevantSickNotes(person, startDate, endDate);
 

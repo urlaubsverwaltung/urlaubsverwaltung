@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.restapi;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
-import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 
 import java.math.BigDecimal;
@@ -34,7 +33,7 @@ class AbsenceResponse {
 
         this.from = sickNote.getStartDate().toString(RestApiDateFormat.PATTERN);
         this.to = sickNote.getEndDate().toString(RestApiDateFormat.PATTERN);
-        this.dayLength = DayLength.FULL.getDuration();
+        this.dayLength = sickNote.getDayLength().getDuration();
         this.person = new PersonResponse(sickNote.getPerson());
         this.type = sickNote.getType().name();
         this.status = sickNote.isActive() ? "ACTIVE" : "INACTIVE";

@@ -4,7 +4,6 @@ import org.joda.time.DateMidnight;
 
 import org.springframework.util.Assert;
 
-import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteDAO;
@@ -81,7 +80,8 @@ public class SickNoteStatistics {
                 endDate = sickNoteStartDate.dayOfYear().withMaximumValue();
             }
 
-            BigDecimal workDays = calendarService.getWorkDays(DayLength.FULL, startDate, endDate, sickNote.getPerson());
+            BigDecimal workDays = calendarService.getWorkDays(sickNote.getDayLength(), startDate, endDate,
+                    sickNote.getPerson());
 
             numberOfSickDays = numberOfSickDays.add(workDays);
         }

@@ -99,8 +99,7 @@
                                     <h5 class="is-inline-block is-sticky"><uv:date date="${sickNote.startDate}"/></h5>
                                 </c:set>
                                 <c:set var="SICK_NOTE_DAY_LENGTH">
-                                    <%-- TODO: will be variable in the future! --%>
-                                    <spring:message code="FULL"/>
+                                    <spring:message code="${sickNote.dayLength}"/>
                                 </c:set>
                                 <spring:message code="absence.period.singleDay" arguments="${SICK_NOTE_DATE};${SICK_NOTE_DAY_LENGTH}" argumentSeparator=";"/>
                             </c:when>

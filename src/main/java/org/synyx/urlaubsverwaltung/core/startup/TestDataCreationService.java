@@ -198,10 +198,13 @@ public class TestDataCreationService {
         createCancelledApplication(person, VacationType.HOLIDAY, DayLength.FULL, now.minusDays(11), now.minusDays(10)); // NOSONAR
 
         // SICK NOTES
-        createSickNote(person, now.minusDays(10), now.minusDays(10), SickNoteType.SICK_NOTE, false); // NOSONAR
-        createSickNote(person, now.minusDays(30), now.minusDays(25), SickNoteType.SICK_NOTE, true); // NOSONAR
-        createSickNote(person, now.minusDays(60), now.minusDays(55), SickNoteType.SICK_NOTE_CHILD, true); // NOSONAR
-        createSickNote(person, now.minusDays(44), now.minusDays(44), SickNoteType.SICK_NOTE_CHILD, false); // NOSONAR
+        createSickNote(person, DayLength.NOON, now.minusDays(10), now.minusDays(10), SickNoteType.SICK_NOTE, false); // NOSONAR
+        createSickNote(person, DayLength.FULL, now.minusDays(9), now.minusDays(9), SickNoteType.SICK_NOTE, false); // NOSONAR
+        createSickNote(person, DayLength.FULL, now.minusDays(30), now.minusDays(25), SickNoteType.SICK_NOTE, true); // NOSONAR
+        createSickNote(person, DayLength.FULL, now.minusDays(60), now.minusDays(55), SickNoteType.SICK_NOTE_CHILD,
+            true); // NOSONAR
+        createSickNote(person, DayLength.FULL, now.minusDays(44), now.minusDays(44), SickNoteType.SICK_NOTE_CHILD,
+            false); // NOSONAR
     }
 
 
@@ -287,8 +290,8 @@ public class TestDataCreationService {
     }
 
 
-    private SickNote createSickNote(Person person, DateMidnight startDate, DateMidnight endDate, SickNoteType type,
-        boolean withAUB) {
+    private SickNote createSickNote(Person person, DayLength dayLength, DateMidnight startDate, DateMidnight endDate,
+        SickNoteType type, boolean withAUB) {
 
         SickNote sickNote = null;
 
@@ -300,7 +303,7 @@ public class TestDataCreationService {
             sickNote.setEndDate(endDate);
             sickNote.setActive(true);
             sickNote.setType(type);
-            sickNote.setDayLength(DayLength.FULL);
+            sickNote.setDayLength(dayLength);
 
             if (withAUB) {
                 sickNote.setAubStartDate(startDate);

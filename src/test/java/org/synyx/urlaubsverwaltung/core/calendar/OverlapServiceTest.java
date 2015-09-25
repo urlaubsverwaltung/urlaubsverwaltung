@@ -195,6 +195,7 @@ public class OverlapServiceTest {
         DateMidnight endDate = new DateMidnight(2012, DateTimeConstants.JANUARY, 18);
 
         SickNote inactiveSickNote = new SickNote();
+        inactiveSickNote.setDayLength(DayLength.FULL);
         inactiveSickNote.setStartDate(startDate);
         inactiveSickNote.setEndDate(endDate);
         inactiveSickNote.setActive(false);
@@ -205,6 +206,7 @@ public class OverlapServiceTest {
 
         // sick note to be checked: 16.01. - 18.01.
         SickNote sickNote = new SickNote();
+        sickNote.setDayLength(DayLength.FULL);
         sickNote.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 16));
         sickNote.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 18));
 
@@ -224,6 +226,7 @@ public class OverlapServiceTest {
 
         // sick note to be checked: 16.01. - 18.01.
         SickNote sickNote = new SickNote();
+        sickNote.setDayLength(DayLength.FULL);
         sickNote.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 16));
         sickNote.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 18));
 
@@ -239,6 +242,7 @@ public class OverlapServiceTest {
 
         // sick note: 16.01. - 19.01.
         SickNote sickNote = new SickNote();
+        sickNote.setDayLength(DayLength.FULL);
         sickNote.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 16));
         sickNote.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 19));
         sickNote.setActive(true);
@@ -265,6 +269,7 @@ public class OverlapServiceTest {
 
         // sick note: 16.01. - 18.01.
         SickNote sickNote = new SickNote();
+        sickNote.setDayLength(DayLength.FULL);
         sickNote.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 16));
         sickNote.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 18));
         sickNote.setActive(true);
@@ -292,6 +297,7 @@ public class OverlapServiceTest {
         // sick note: 16.03. - 16.03.
         SickNote existentSickNote = new SickNote();
         existentSickNote.setId(23);
+        existentSickNote.setDayLength(DayLength.FULL);
         existentSickNote.setStartDate(new DateMidnight(2015, DateTimeConstants.MARCH, 16));
         existentSickNote.setEndDate(new DateMidnight(2015, DateTimeConstants.MARCH, 16));
         existentSickNote.setActive(true);
@@ -303,6 +309,7 @@ public class OverlapServiceTest {
         // sick note should be edited to: 16.03. - 17.03.
         SickNote sickNote = new SickNote();
         sickNote.setId(23);
+        sickNote.setDayLength(DayLength.FULL);
         sickNote.setStartDate(new DateMidnight(2015, DateTimeConstants.MARCH, 16));
         sickNote.setEndDate(new DateMidnight(2015, DateTimeConstants.MARCH, 17));
         sickNote.setActive(true);
@@ -412,6 +419,7 @@ public class OverlapServiceTest {
             .thenReturn(Arrays.asList(morningVacation));
 
         SickNote sickNote = new SickNote();
+        sickNote.setDayLength(DayLength.FULL);
         sickNote.setStartDate(vacationDate);
         sickNote.setEndDate(vacationDate);
         sickNote.setActive(true);

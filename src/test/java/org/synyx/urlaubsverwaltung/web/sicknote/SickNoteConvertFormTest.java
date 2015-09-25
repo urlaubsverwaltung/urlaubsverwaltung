@@ -1,9 +1,8 @@
 package org.synyx.urlaubsverwaltung.web.sicknote;
 
-import org.junit.Assert;
-
 import org.joda.time.DateMidnight;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
@@ -30,16 +29,19 @@ public class SickNoteConvertFormTest {
 
         SickNote sickNote = new SickNote();
         sickNote.setPerson(person);
+        sickNote.setDayLength(DayLength.NOON);
         sickNote.setStartDate(startDate);
         sickNote.setEndDate(endDate);
 
         SickNoteConvertForm convertForm = new SickNoteConvertForm(sickNote);
 
         Assert.assertNotNull("Should not be null", convertForm.getPerson());
+        Assert.assertNotNull("Should not be null", convertForm.getDayLength());
         Assert.assertNotNull("Should not be null", convertForm.getStartDate());
         Assert.assertNotNull("Should not be null", convertForm.getEndDate());
 
         Assert.assertEquals("Wrong person", person, convertForm.getPerson());
+        Assert.assertEquals("Wrong day length", DayLength.NOON, convertForm.getDayLength());
         Assert.assertEquals("Wrong start date", startDate, convertForm.getStartDate());
         Assert.assertEquals("Wrong end date", endDate, convertForm.getEndDate());
     }
@@ -54,6 +56,7 @@ public class SickNoteConvertFormTest {
 
         SickNote sickNote = new SickNote();
         sickNote.setPerson(person);
+        sickNote.setDayLength(DayLength.FULL);
         sickNote.setStartDate(startDate);
         sickNote.setEndDate(endDate);
 

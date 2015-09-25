@@ -26,7 +26,6 @@ import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
 import org.synyx.urlaubsverwaltung.core.account.service.VacationDaysService;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
@@ -180,21 +179,21 @@ public class PersonOverviewController {
             }
 
             if (sickNote.getType().equals(SickNoteType.SICK_NOTE_CHILD)) {
-                childSickDays = childSickDays.add(calendarService.getWorkDays(DayLength.FULL, sickNote.getStartDate(),
-                            sickNote.getEndDate(), person));
+                childSickDays = childSickDays.add(calendarService.getWorkDays(sickNote.getDayLength(),
+                            sickNote.getStartDate(), sickNote.getEndDate(), person));
 
                 if (sickNote.isAubPresent()) {
-                    BigDecimal workDays = calendarService.getWorkDays(DayLength.FULL, sickNote.getAubStartDate(),
-                            sickNote.getAubEndDate(), person);
+                    BigDecimal workDays = calendarService.getWorkDays(sickNote.getDayLength(),
+                            sickNote.getAubStartDate(), sickNote.getAubEndDate(), person);
                     childSickDaysWithAUB = childSickDaysWithAUB.add(workDays);
                 }
             } else {
-                sickDays = sickDays.add(calendarService.getWorkDays(DayLength.FULL, sickNote.getStartDate(),
+                sickDays = sickDays.add(calendarService.getWorkDays(sickNote.getDayLength(), sickNote.getStartDate(),
                             sickNote.getEndDate(), person));
 
                 if (sickNote.isAubPresent()) {
-                    BigDecimal workDays = calendarService.getWorkDays(DayLength.FULL, sickNote.getAubStartDate(),
-                            sickNote.getAubEndDate(), person);
+                    BigDecimal workDays = calendarService.getWorkDays(sickNote.getDayLength(),
+                            sickNote.getAubStartDate(), sickNote.getAubEndDate(), person);
                     sickDaysWithAUB = sickDaysWithAUB.add(workDays);
                 }
             }
