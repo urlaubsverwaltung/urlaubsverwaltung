@@ -12,7 +12,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
-import org.synyx.urlaubsverwaltung.core.startup.TestDataCreationService;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -41,21 +40,19 @@ public class DevUserDetailsServiceTest {
     @Test(expected = UsernameNotFoundException.class)
     public void ensureThatThrowsExceptionIfUserCanNotBeFoundWithinDatabase() {
 
-        String login = TestDataCreationService.USER;
+        String login = "user";
 
         Mockito.when(personService.getPersonByLogin(login)).thenReturn(Optional.<Person>empty());
 
-        UserDetails userDetails = devUserDetailsService.loadUserByUsername(login);
-
-        Mockito.verify(personService).getPersonByLogin(login);
+        devUserDetailsService.loadUserByUsername(login);
     }
 
 
     @Test
     public void ensureReturnsUserDetailsWithCorrectAuthorities() {
 
-        String login = TestDataCreationService.USER;
-        String password = DevUserDetailsService.TEST_USER_PASSWORD;
+        String login = "user";
+        String password = "password";
 
         Person user = new Person(login, "Max", "Muster", "max.muster@test.de");
         user.setPermissions(Arrays.asList(Role.USER, Role.OFFICE));
@@ -65,10 +62,12 @@ public class DevUserDetailsServiceTest {
 
         UserDetails userDetails = devUserDetailsService.loadUserByUsername(login);
 
+        Mockito.verify(personService).getPersonByLogin(login);
+
         Assert.assertNotNull("UserDetails should not be null", userDetails);
 
         Assert.assertEquals("Wrong username", login, userDetails.getUsername());
-        Assert.assertEquals("Wrong password", DevUserDetailsService.TEST_USER_PASSWORD, userDetails.getPassword());
+        Assert.assertEquals("Wrong password", password, userDetails.getPassword());
 
         Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
 

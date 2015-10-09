@@ -48,9 +48,11 @@ public class TestDataCreationService {
     private static final String ENVIRONMENT_PROPERTY = "env";
     private static final String DEV_ENVIRONMENT = "dev";
 
-    public static final String USER = "testUser";
-    public static final String BOSS_USER = "testBoss";
-    public static final String OFFICE_USER = "test";
+    private static final String USER = "testUser";
+    private static final String BOSS_USER = "testBoss";
+    private static final String OFFICE_USER = "test";
+
+    private static final String PASSWORD = "secret";
 
     @Autowired
     private PersonService personService;
@@ -79,15 +81,15 @@ public class TestDataCreationService {
         if (environment.equals(DEV_ENVIRONMENT)) {
             LOG.info("Test data will be created...");
 
-            user = createTestPerson(USER, "Klaus", "Müller", "mueller@muster.de", "secret", Role.USER);
-            boss = createTestPerson(BOSS_USER, "Max", "Mustermann", "maxMuster@muster.de", "secret", Role.USER,
+            user = createTestPerson(USER, "Klaus", "Müller", "mueller@muster.de", PASSWORD, Role.USER);
+            boss = createTestPerson(BOSS_USER, "Max", "Mustermann", "maxMuster@muster.de", PASSWORD, Role.USER,
                     Role.BOSS);
-            office = createTestPerson(OFFICE_USER, "Marlene", "Muster", "mmuster@muster.de", "secret", Role.USER,
+            office = createTestPerson(OFFICE_USER, "Marlene", "Muster", "mmuster@muster.de", PASSWORD, Role.USER,
                     Role.BOSS, Role.OFFICE);
 
-            createTestPerson("hdampf", "Hans", "Dampf", "dampf@foo.bar", "secret", Role.USER, Role.OFFICE);
+            createTestPerson("hdampf", "Hans", "Dampf", "dampf@foo.bar", PASSWORD, Role.USER, Role.OFFICE);
 
-            createTestPerson("horst", "Horst", "Dieter", "hdieter@muster.de", "secret", Role.INACTIVE);
+            createTestPerson("horst", "Horst", "Dieter", "hdieter@muster.de", PASSWORD, Role.INACTIVE);
 
             createTestData(user);
             createTestData(boss);

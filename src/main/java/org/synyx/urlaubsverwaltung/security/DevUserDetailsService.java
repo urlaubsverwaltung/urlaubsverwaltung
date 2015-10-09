@@ -21,8 +21,6 @@ import java.util.Optional;
  */
 public class DevUserDetailsService implements UserDetailsService {
 
-    static final String TEST_USER_PASSWORD = "secret";
-
     private final PersonService personService;
 
     public DevUserDetailsService(PersonService personService) {
@@ -35,14 +33,12 @@ public class DevUserDetailsService implements UserDetailsService {
 
         Optional<Person> userOptional = personService.getPersonByLogin(username);
 
-        if (userOptional != null && userOptional.isPresent()) {
+        if (userOptional.isPresent()) {
             Person person = userOptional.get();
 
             Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 
-            Collection<Role> roles = person.getPermissions();
-
-            for (final Role role : roles) {
+            for (final Role role : person.getPermissions()) {
                 grantedAuthorities.add(role::name);
             }
 

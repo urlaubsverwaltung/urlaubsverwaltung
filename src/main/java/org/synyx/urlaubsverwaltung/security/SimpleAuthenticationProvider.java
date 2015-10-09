@@ -43,10 +43,7 @@ public class SimpleAuthenticationProvider implements AuthenticationProvider {
         }
 
         if (encoder.matches(rawPassword, user.getPassword())) {
-            Authentication auth = new UsernamePasswordAuthenticationToken(username, user.getPassword(),
-                    user.getAuthorities());
-
-            return auth;
+            return new UsernamePasswordAuthenticationToken(username, user.getPassword(), user.getAuthorities());
         } else {
             throw new BadCredentialsException("Bad password");
         }
