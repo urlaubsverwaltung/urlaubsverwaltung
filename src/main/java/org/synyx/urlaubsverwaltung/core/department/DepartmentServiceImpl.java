@@ -68,10 +68,10 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public void delete(Integer departmentId) {
 
-        if (departmentDAO.getOne(departmentId) != null) {
-            departmentDAO.delete(departmentId);
-        } else {
+        if (departmentDAO.getOne(departmentId) == null) {
             throw new IllegalStateException("Repository does not contain a department with given id");
+        } else {
+            departmentDAO.delete(departmentId);
         }
     }
 

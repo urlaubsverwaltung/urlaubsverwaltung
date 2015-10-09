@@ -1,9 +1,8 @@
 package org.synyx.urlaubsverwaltung.core.calendar.workingtime;
 
-import org.junit.Assert;
-
 import org.joda.time.DateTimeConstants;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
@@ -18,6 +17,21 @@ import java.util.List;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 public class WorkingTimeTest {
+
+    @Test
+    public void testDefaultValues() {
+
+        WorkingTime workingTime = new WorkingTime();
+
+        Assert.assertEquals("Wrong day length for monday", DayLength.ZERO, workingTime.getMonday());
+        Assert.assertEquals("Wrong day length for tuesday", DayLength.ZERO, workingTime.getTuesday());
+        Assert.assertEquals("Wrong day length for wednesday", DayLength.ZERO, workingTime.getWednesday());
+        Assert.assertEquals("Wrong day length for thursday", DayLength.ZERO, workingTime.getThursday());
+        Assert.assertEquals("Wrong day length for friday", DayLength.ZERO, workingTime.getFriday());
+        Assert.assertEquals("Wrong day length for saturday", DayLength.ZERO, workingTime.getSaturday());
+        Assert.assertEquals("Wrong day length for sunday", DayLength.ZERO, workingTime.getSunday());
+    }
+
 
     @Test
     public void testHasWorkingDaysIdentical() {

@@ -33,32 +33,32 @@ public class WorkingTime extends AbstractPersistable<Integer> {
     private Person person;
 
     @Enumerated(EnumType.STRING)
-    private DayLength monday;
+    private DayLength monday = DayLength.ZERO;
 
     @Enumerated(EnumType.STRING)
-    private DayLength tuesday;
+    private DayLength tuesday = DayLength.ZERO;
 
     @Enumerated(EnumType.STRING)
-    private DayLength wednesday;
+    private DayLength wednesday = DayLength.ZERO;
 
     @Enumerated(EnumType.STRING)
-    private DayLength thursday;
+    private DayLength thursday = DayLength.ZERO;
 
     @Enumerated(EnumType.STRING)
-    private DayLength friday;
+    private DayLength friday = DayLength.ZERO;
 
     @Enumerated(EnumType.STRING)
-    private DayLength saturday;
+    private DayLength saturday = DayLength.ZERO;
 
     @Enumerated(EnumType.STRING)
-    private DayLength sunday;
+    private DayLength sunday = DayLength.ZERO;
 
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date validFrom;
 
     public WorkingTime() {
 
-        setAllDayLengthsToZero();
+        // OK
     }
 
     public void setWorkingDays(List<Integer> workingDays, DayLength dayLength) {
