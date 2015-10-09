@@ -194,13 +194,6 @@ public class Person extends AbstractPersistable<Integer> {
     }
 
 
-    // TODO: REMOVE! UNUSED!
-    public boolean isPrivilegedUser() {
-
-        return hasRole(Role.DEPARTMENT_HEAD) || hasRole(Role.BOSS) || hasRole(Role.OFFICE);
-    }
-
-
     public Collection<MailNotification> getNotifications() {
 
         if (notifications == null) {
