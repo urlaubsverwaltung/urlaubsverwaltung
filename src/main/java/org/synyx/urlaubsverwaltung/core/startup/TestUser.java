@@ -49,23 +49,4 @@ public enum TestUser {
                 return new Role[] { Role.USER };
         }
     }
-
-
-    /**
-     * Check if there is a test user with the given login.
-     *
-     * @param  login  to check
-     *
-     * @return  {@code true} if there is a test user with the given login, else {@code false}
-     */
-    public static boolean hasUserWithLogin(String login) {
-
-        for (TestUser testUser : TestUser.values()) {
-            if (testUser.getLogin().equals(login)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
 }

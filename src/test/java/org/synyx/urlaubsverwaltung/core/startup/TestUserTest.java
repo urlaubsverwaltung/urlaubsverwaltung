@@ -14,26 +14,6 @@ import org.synyx.urlaubsverwaltung.security.Role;
 public class TestUserTest {
 
     @Test
-    public void ensureReturnsTrueIfHasUserWithGivenLogin() {
-
-        String login = TestUser.USER.getLogin();
-        boolean hasUser = TestUser.hasUserWithLogin(login);
-
-        Assert.assertTrue("Should have user with login " + login, hasUser);
-    }
-
-
-    @Test
-    public void ensureReturnsFalseIfHasNoUserWithGivenLogin() {
-
-        String login = "foo";
-        boolean hasUser = TestUser.hasUserWithLogin(login);
-
-        Assert.assertFalse("Should not have user with login " + login, hasUser);
-    }
-
-
-    @Test
     public void ensureReturnsCorrectRolesForTestUser() {
 
         Role[] roles = TestUser.USER.getRoles();

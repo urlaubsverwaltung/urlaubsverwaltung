@@ -1,7 +1,6 @@
 
 package org.synyx.urlaubsverwaltung.web.person;
 
-
 import org.joda.time.DateMidnight;
 
 import org.springframework.util.Assert;
@@ -332,9 +331,6 @@ public class PersonForm {
 
     private boolean personShouldBeSetToInactive(Collection<Role> permissions) {
 
-        return permissions.stream().
-                filter(permission -> permission.equals(INACTIVE)).
-                findFirst().
-                isPresent();
+        return permissions.stream().filter(permission -> permission.equals(INACTIVE)).findFirst().isPresent();
     }
 }

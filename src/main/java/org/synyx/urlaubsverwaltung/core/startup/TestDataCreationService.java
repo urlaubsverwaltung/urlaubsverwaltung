@@ -20,10 +20,12 @@ import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonInteractionService;
+import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteInteractionService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
 import org.synyx.urlaubsverwaltung.core.util.CalcUtil;
+import org.synyx.urlaubsverwaltung.security.CryptoUtil;
 import org.synyx.urlaubsverwaltung.security.Role;
 import org.synyx.urlaubsverwaltung.web.person.PersonForm;
 
@@ -49,7 +51,13 @@ public class TestDataCreationService {
     private static final String ENVIRONMENT_PROPERTY = "env";
     private static final String DEV_ENVIRONMENT = "dev";
 
+    private static final String PASSWORD = "secret";
+    private static final String NO_PASSWORD = "";
+
     private static final Logger LOG = Logger.getLogger(TestDataCreationService.class);
+
+    @Autowired
+    private PersonService personService;
 
     @Autowired
     private PersonInteractionService personInteractionService;
@@ -78,23 +86,25 @@ public class TestDataCreationService {
             LOG.info("Test data will be created...");
 
             // Users to be able to sign in with
-            Person user = createTestPerson(TestUser.USER.getLogin(), "Klaus", "Müller", "mueller@muster.de",
+            Person user = createTestPerson(TestUser.USER.getLogin(), PASSWORD, "Klaus", "Müller", "mueller@muster.de",
                     TestUser.USER.getRoles());
-            Person departmentHead = createTestPerson(TestUser.DEPARTMENT_HEAD.getLogin(), "Thorsten", "Krüger",
-                    "krueger@muster.de", TestUser.DEPARTMENT_HEAD.getRoles());
-            boss = createTestPerson(TestUser.BOSS.getLogin(), "Max", "Mustermann", "maxMuster@muster.de",
+            Person departmentHead = createTestPerson(TestUser.DEPARTMENT_HEAD.getLogin(), PASSWORD, "Thorsten",
+                    "Krüger", "krueger@muster.de", TestUser.DEPARTMENT_HEAD.getRoles());
+            boss = createTestPerson(TestUser.BOSS.getLogin(), PASSWORD, "Max", "Mustermann", "maxMuster@muster.de",
                     TestUser.BOSS.getRoles());
-            office = createTestPerson(TestUser.OFFICE.getLogin(), "Marlene", "Muster", "mmuster@muster.de",
+            office = createTestPerson(TestUser.OFFICE.getLogin(), PASSWORD, "Marlene", "Muster", "mmuster@muster.de",
                     TestUser.OFFICE.getRoles());
 
             // Users
-            Person hans = createTestPerson("hdampf", "Hans", "Dampf", "dampf@muster.de", Role.USER);
-            Person guenther = createTestPerson("gbaier", "Günther", "Baier", "baier@muster.de", Role.USER);
-            Person elena = createTestPerson("eschneider", "Elena", "Schneider", "schneider@muster.de", Role.USER);
-            Person brigitte = createTestPerson("bhaendel", "Brigitte", "Händel", "haendel@muster.de", Role.USER);
-            Person niko = createTestPerson("nschmidt", "Niko", "Schmidt", "schmidt@muster.de", Role.USER);
+            Person hans = createTestPerson("hdampf", NO_PASSWORD, "Hans", "Dampf", "dampf@muster.de", Role.USER);
+            Person guenther = createTestPerson("gbaier", NO_PASSWORD, "Günther", "Baier", "baier@muster.de", Role.USER);
+            Person elena = createTestPerson("eschneider", NO_PASSWORD, "Elena", "Schneider", "schneider@muster.de",
+                    Role.USER);
+            Person brigitte = createTestPerson("bhaendel", NO_PASSWORD, "Brigitte", "Händel", "haendel@muster.de",
+                    Role.USER);
+            Person niko = createTestPerson("nschmidt", NO_PASSWORD, "Niko", "Schmidt", "schmidt@muster.de", Role.USER);
 
-            createTestPerson("horst", "Horst", "Dieter", "hdieter@muster.de", Role.INACTIVE);
+            createTestPerson("horst", NO_PASSWORD, "Horst", "Dieter", "hdieter@muster.de", Role.INACTIVE);
 
             // Applications for leave and sick notes
             createTestData(user);
@@ -135,8 +145,8 @@ public class TestDataCreationService {
     }
 
 
-    private Person createTestPerson(String login, String firstName, String lastName, String email, Role... roles)
-        throws NoSuchAlgorithmException {
+    private Person createTestPerson(String login, String password, String firstName, String lastName, String email,
+        Role... roles) throws NoSuchAlgorithmException {
 
         int currentYear = DateMidnight.now().getYear();
 
@@ -174,7 +184,14 @@ public class TestDataCreationService {
 
         personForm.setNotifications(notifications);
 
-        return personInteractionService.create(personForm);
+        Person person = personInteractionService.create(personForm);
+
+        // TODO: Solve this in a better way!
+        // workaround for non generated password
+        person.setPassword(CryptoUtil.encodePassword(password));
+        personService.save(person);
+
+        return person;
     }
 
 

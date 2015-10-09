@@ -739,4 +739,31 @@ public class MailServiceIntegrationTest {
         assertTrue(content.contains(settings.getMailSettings().getHost()));
         assertTrue(content.contains(settings.getMailSettings().getPort().toString()));
     }
+
+
+    @Test
+    public void ensureThatSendUserCreationNotification() throws MessagingException, IOException {
+
+        Person person = new Person("muster", "Muster", "Marlene", "mmuster@test.de");
+        String rawPassword = "secret";
+
+        mailService.sendUserCreationNotification(person, rawPassword);
+
+        List<Message> inbox = Mailbox.get(person.getEmail());
+        assertTrue(inbox.size() > 0);
+
+        Message msg = inbox.get(0);
+
+        // check subject
+        assertTrue(msg.getSubject().contains("Account für Urlaubsverwaltung erstellt"));
+
+        // check from and recipient
+        assertEquals(new InternetAddress(person.getEmail()), msg.getAllRecipients()[0]);
+
+        // check content of email
+        String content = (String) msg.getContent();
+        assertTrue(content.contains("Hallo Marlene Muster"));
+        assertTrue(content.contains(person.getLoginName()));
+        assertTrue(content.contains(rawPassword));
+    }
 }

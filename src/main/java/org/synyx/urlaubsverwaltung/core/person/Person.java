@@ -33,6 +33,8 @@ public class Person extends AbstractPersistable<Integer> {
 
     private String loginName;
 
+    private String password;
+
     private String lastName;
 
     private String firstName;
@@ -122,6 +124,18 @@ public class Person extends AbstractPersistable<Integer> {
     }
 
 
+    public String getPassword() {
+
+        return password;
+    }
+
+
+    public void setPassword(String password) {
+
+        this.password = password;
+    }
+
+
     public byte[] getPrivateKey() {
 
         if (privateKey == null) {
@@ -180,6 +194,7 @@ public class Person extends AbstractPersistable<Integer> {
     }
 
 
+    // TODO: REMOVE! UNUSED!
     public boolean isPrivilegedUser() {
 
         return hasRole(Role.DEPARTMENT_HEAD) || hasRole(Role.BOSS) || hasRole(Role.OFFICE);

@@ -80,13 +80,13 @@ public class PersonContextMapper implements UserDetailsContextMapper {
             person = createPerson(login, firstName, lastName, mailAddress, noActivePersonExistsYet);
         }
 
-        org.springframework.security.ldap.userdetails.Person.Essence user =
+        org.springframework.security.ldap.userdetails.Person.Essence ldapUser =
             new org.springframework.security.ldap.userdetails.Person.Essence(ctx);
 
-        user.setUsername(login);
-        user.setAuthorities(getGrantedAuthorities(person));
+        ldapUser.setUsername(login);
+        ldapUser.setAuthorities(getGrantedAuthorities(person));
 
-        return user.createUserDetails();
+        return ldapUser.createUserDetails();
     }
 
 
@@ -191,7 +191,7 @@ public class PersonContextMapper implements UserDetailsContextMapper {
         Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 
         if (person != null) {
-            person.getPermissions().stream().forEach(role -> grantedAuthorities.add(role::toString));
+            person.getPermissions().stream().forEach(role -> grantedAuthorities.add(role::name));
         }
 
         return grantedAuthorities;
