@@ -100,7 +100,7 @@ public class WorkDayController {
 
     private class WorkDays {
 
-        private String workDays;
+        private final String workDays;
 
         public WorkDays(String workDays) {
 

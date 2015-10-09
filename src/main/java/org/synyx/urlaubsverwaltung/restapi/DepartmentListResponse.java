@@ -8,7 +8,7 @@ import java.util.List;
  */
 class DepartmentListResponse {
 
-    private List<DepartmentResponse> departments;
+    private final List<DepartmentResponse> departments;
 
     DepartmentListResponse(List<DepartmentResponse> departments) {
 

@@ -209,7 +209,7 @@ public class AbsenceController {
 
     private class AbsenceList {
 
-        private List<Absence> absences;
+        private final List<Absence> absences;
 
         public AbsenceList(List<Absence> absences) {
 
