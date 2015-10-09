@@ -9,7 +9,6 @@ import org.joda.time.DateTimeConstants;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
-import org.synyx.urlaubsverwaltung.core.calendar.Day;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.util.Date;

@@ -1,8 +1,5 @@
 package org.synyx.urlaubsverwaltung.core.person;
 
-import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
-import org.synyx.urlaubsverwaltung.security.Role;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -55,8 +52,7 @@ public interface PersonService {
 
 
     /**
-     * returns all {@link Person}s that have the given {@link org.synyx.urlaubsverwaltung.core.mail.MailNotification}
-     * type.
+     * returns all {@link Person}s that have the given {@link MailNotification} type.
      *
      * @param  notification  by which the persons are filtered
      *

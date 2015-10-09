@@ -1,5 +1,5 @@
 
-package org.synyx.urlaubsverwaltung.security;
+package org.synyx.urlaubsverwaltung.core.person;
 
 /**
  * Enum describing possible types of rights/roles a user may have.

@@ -4,6 +4,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.service.exception.ImpatientAboutApplicationForLeaveProcessException;
 import org.synyx.urlaubsverwaltung.core.application.service.exception.RemindAlreadySentException;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.person.Role;
 
 import java.util.Optional;
 
@@ -79,8 +80,7 @@ public interface ApplicationInteractionService {
 
 
     /**
-     * Remind the persons with role {@link org.synyx.urlaubsverwaltung.security.Role#BOSS} to decide about the
-     * application for leave (allow or reject it).
+     * Remind the persons with role {@link Role#BOSS} to decide about the application for leave (allow or reject it).
      *
      * @param  application  for leave to be checked
      *

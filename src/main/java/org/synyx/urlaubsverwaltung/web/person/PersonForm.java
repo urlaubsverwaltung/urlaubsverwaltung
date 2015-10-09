@@ -7,12 +7,12 @@ import org.springframework.util.Assert;
 
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
-import org.synyx.urlaubsverwaltung.core.calendar.Day;
+import org.synyx.urlaubsverwaltung.core.calendar.workingtime.Day;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;
-import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
+import org.synyx.urlaubsverwaltung.core.person.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.person.Role;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
-import org.synyx.urlaubsverwaltung.security.Role;
 
 import java.math.BigDecimal;
 
@@ -21,7 +21,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import static org.synyx.urlaubsverwaltung.security.Role.INACTIVE;
+import static org.synyx.urlaubsverwaltung.core.person.Role.INACTIVE;
 
 
 /**

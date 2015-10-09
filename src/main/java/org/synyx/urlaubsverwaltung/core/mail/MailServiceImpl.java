@@ -27,6 +27,7 @@ import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.core.person.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.settings.MailSettings;
@@ -175,8 +176,8 @@ class MailServiceImpl implements MailService {
          * NOTE:
          *
          * It's not possible that someone has both roles,
-         * {@link org.synyx.urlaubsverwaltung.security.Role.BOSS} and
-         * {@link org.synyx.urlaubsverwaltung.security.Role.DEPARTMENT_HEAD}.
+         * {@link Role.BOSS} and
+         * {@link Role.DEPARTMENT_HEAD}.
          *
          * Thus no need to use a {@link java.util.Set} to avoid person duplicates within the returned list.
          */

@@ -18,7 +18,6 @@ import org.synyx.urlaubsverwaltung.core.department.Department;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.security.CryptoUtil;
-import org.synyx.urlaubsverwaltung.security.Role;
 import org.synyx.urlaubsverwaltung.web.person.PersonForm;
 
 import java.math.BigDecimal;

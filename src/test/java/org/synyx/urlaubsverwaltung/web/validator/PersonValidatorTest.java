@@ -11,12 +11,12 @@ import org.mockito.Mockito;
 import org.springframework.validation.Errors;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
-import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
+import org.synyx.urlaubsverwaltung.core.person.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
+import org.synyx.urlaubsverwaltung.core.person.Role;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.security.Role;
 import org.synyx.urlaubsverwaltung.web.person.PersonForm;
 
 import java.math.BigDecimal;

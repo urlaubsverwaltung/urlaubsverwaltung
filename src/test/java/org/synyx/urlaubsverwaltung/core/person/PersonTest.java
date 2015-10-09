@@ -3,9 +3,6 @@ package org.synyx.urlaubsverwaltung.core.person;
 import org.junit.Assert;
 import org.junit.Test;
 
-import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
-import org.synyx.urlaubsverwaltung.security.Role;
-
 import java.util.Arrays;
 
 

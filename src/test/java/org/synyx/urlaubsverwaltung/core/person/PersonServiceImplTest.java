@@ -6,9 +6,6 @@ import org.junit.Test;
 
 import org.mockito.Mockito;
 
-import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
-import org.synyx.urlaubsverwaltung.security.Role;
-
 import java.util.Arrays;
 import java.util.List;
 

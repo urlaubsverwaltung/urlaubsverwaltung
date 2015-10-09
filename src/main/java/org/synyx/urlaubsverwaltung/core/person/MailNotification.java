@@ -1,7 +1,7 @@
-package org.synyx.urlaubsverwaltung.core.mail;
+package org.synyx.urlaubsverwaltung.core.person;
 
 /**
- * Describes which kind of mail notifications exist.
+ * Describes which kind of mail notifications a person can have.
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */

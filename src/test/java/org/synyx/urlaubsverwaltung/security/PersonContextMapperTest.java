@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
+import org.synyx.urlaubsverwaltung.core.person.Role;
 
 import java.util.Arrays;
 import java.util.Collection;

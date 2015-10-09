@@ -14,6 +14,7 @@ import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
+import org.synyx.urlaubsverwaltung.core.person.Role;
 
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
@@ -25,7 +26,7 @@ import java.util.Optional;
 
 
 /**
- * Map granted authorities to application roles described in {@link org.synyx.urlaubsverwaltung.security.Role}.
+ * Map granted authorities to application roles described in {@link Role}.
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */

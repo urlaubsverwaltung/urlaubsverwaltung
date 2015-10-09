@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.core.startup;
 import org.junit.Assert;
 import org.junit.Test;
 
-import org.synyx.urlaubsverwaltung.security.Role;
+import org.synyx.urlaubsverwaltung.core.person.Role;
 
 
 /**

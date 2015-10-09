@@ -4,14 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
-import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
-import org.synyx.urlaubsverwaltung.security.Role;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.synyx.urlaubsverwaltung.security.Role.*;
+import static org.synyx.urlaubsverwaltung.core.person.Role.INACTIVE;
 
 
 /**
@@ -55,36 +52,29 @@ class PersonServiceImpl implements PersonService {
     @Override
     public List<Person> getActivePersons() {
 
-        return personDAO.findAll().stream().
-                filter(person -> !person.hasRole(INACTIVE)).
-                collect(Collectors.toList());
-
+        return personDAO.findAll().stream().filter(person -> !person.hasRole(INACTIVE)).collect(Collectors.toList());
     }
 
 
     @Override
     public List<Person> getInactivePersons() {
 
-        return personDAO.findAll().stream().
-                filter(person -> person.hasRole(INACTIVE)).
-                collect(Collectors.toList());
+        return personDAO.findAll().stream().filter(person -> person.hasRole(INACTIVE)).collect(Collectors.toList());
     }
 
 
     @Override
     public List<Person> getPersonsByRole(final Role role) {
 
-        return getActivePersons().stream().
-                filter(person -> person.hasRole(role)).
-                collect(Collectors.toList());
+        return getActivePersons().stream().filter(person -> person.hasRole(role)).collect(Collectors.toList());
     }
 
 
     @Override
     public List<Person> getPersonsWithNotificationType(final MailNotification notification) {
 
-        return getActivePersons().stream().
-                filter(person -> person.hasNotificationType(notification)).
-                collect(Collectors.toList());
+        return getActivePersons().stream()
+            .filter(person -> person.hasNotificationType(notification))
+            .collect(Collectors.toList());
     }
 }

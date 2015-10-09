@@ -9,9 +9,6 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import org.springframework.util.StringUtils;
 
-import org.synyx.urlaubsverwaltung.core.mail.MailNotification;
-import org.synyx.urlaubsverwaltung.security.Role;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
