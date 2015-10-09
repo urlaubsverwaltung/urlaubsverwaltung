@@ -22,12 +22,12 @@ import java.util.Collection;
  */
 public class SimpleAuthenticationProviderTest {
 
-    private DevUserDetailsService userDetailsService;
+    private SimpleUserDetailsService userDetailsService;
 
     @Before
     public void setUp() {
 
-        userDetailsService = Mockito.mock(DevUserDetailsService.class);
+        userDetailsService = Mockito.mock(SimpleUserDetailsService.class);
     }
 
 

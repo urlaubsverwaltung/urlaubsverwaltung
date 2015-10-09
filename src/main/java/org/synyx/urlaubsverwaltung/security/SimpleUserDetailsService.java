@@ -15,21 +15,24 @@ import java.util.Optional;
 
 
 /**
- * Provides possibility to login with the system's test user - but only if this test user is persisted in the database.
+ * Load user specific data for successfully authenticated user from database.
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public class DevUserDetailsService implements UserDetailsService {
+public class SimpleUserDetailsService implements UserDetailsService {
 
     private final PersonService personService;
 
-    public DevUserDetailsService(PersonService personService) {
+    public SimpleUserDetailsService(PersonService personService) {
 
         this.personService = personService;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) {
+
+        // TODO: Think about what to do if no active person exists yet.
+        // boolean noActivePersonExistsYet = personService.getActivePersons().isEmpty();
 
         Optional<Person> userOptional = personService.getPersonByLogin(username);
 

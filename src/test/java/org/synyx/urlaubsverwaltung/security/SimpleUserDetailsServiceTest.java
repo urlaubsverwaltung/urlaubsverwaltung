@@ -19,13 +19,13 @@ import java.util.Optional;
 
 
 /**
- * Unit test for {@link org.synyx.urlaubsverwaltung.security.DevUserDetailsService}.
+ * Unit test for {@link SimpleUserDetailsService}.
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public class DevUserDetailsServiceTest {
+public class SimpleUserDetailsServiceTest {
 
-    private DevUserDetailsService devUserDetailsService;
+    private SimpleUserDetailsService simpleUserDetailsService;
 
     private PersonService personService;
 
@@ -33,7 +33,7 @@ public class DevUserDetailsServiceTest {
     public void setUp() {
 
         personService = Mockito.mock(PersonService.class);
-        devUserDetailsService = new DevUserDetailsService(personService);
+        simpleUserDetailsService = new SimpleUserDetailsService(personService);
     }
 
 
@@ -44,7 +44,7 @@ public class DevUserDetailsServiceTest {
 
         Mockito.when(personService.getPersonByLogin(login)).thenReturn(Optional.<Person>empty());
 
-        devUserDetailsService.loadUserByUsername(login);
+        simpleUserDetailsService.loadUserByUsername(login);
     }
 
 
@@ -60,7 +60,7 @@ public class DevUserDetailsServiceTest {
 
         Mockito.when(personService.getPersonByLogin(login)).thenReturn(Optional.of(user));
 
-        UserDetails userDetails = devUserDetailsService.loadUserByUsername(login);
+        UserDetails userDetails = simpleUserDetailsService.loadUserByUsername(login);
 
         Mockito.verify(personService).getPersonByLogin(login);
 

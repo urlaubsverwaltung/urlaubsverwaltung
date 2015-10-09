@@ -50,7 +50,7 @@ public class PersonContextMapper implements UserDetailsContextMapper {
          * NOTE: If the system has no user yet, the first person that successfully signs in
          * is created as user with {@link Role#OFFICE}
          */
-        boolean noActivePersonExistsYet = personService.getActivePersons().size() == 0;
+        boolean noActivePersonExistsYet = personService.getActivePersons().isEmpty();
 
         Person person;
 
@@ -60,13 +60,13 @@ public class PersonContextMapper implements UserDetailsContextMapper {
             person = optionalPerson.get();
         }
 
-        org.springframework.security.ldap.userdetails.Person.Essence p =
+        org.springframework.security.ldap.userdetails.Person.Essence ldapUser =
             new org.springframework.security.ldap.userdetails.Person.Essence(ctx);
 
-        p.setUsername(username);
-        p.setAuthorities(getGrantedAuthorities(person));
+        ldapUser.setUsername(username);
+        ldapUser.setAuthorities(getGrantedAuthorities(person));
 
-        return p.createUserDetails();
+        return ldapUser.createUserDetails();
     }
 
 
@@ -134,14 +134,7 @@ public class PersonContextMapper implements UserDetailsContextMapper {
 
         if (person != null) {
             for (final Role role : person.getPermissions()) {
-                grantedAuthorities.add(new GrantedAuthority() {
-
-                        @Override
-                        public String getAuthority() {
-
-                            return role.toString();
-                        }
-                    });
+                grantedAuthorities.add(() -> role.name());
             }
         }
 

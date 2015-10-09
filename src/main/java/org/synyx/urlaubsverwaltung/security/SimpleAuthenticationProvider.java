@@ -21,9 +21,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class SimpleAuthenticationProvider implements AuthenticationProvider {
 
-    private final DevUserDetailsService userDetailsService;
+    private final SimpleUserDetailsService userDetailsService;
 
-    public SimpleAuthenticationProvider(DevUserDetailsService userDetailsService) {
+    public SimpleAuthenticationProvider(SimpleUserDetailsService userDetailsService) {
 
         this.userDetailsService = userDetailsService;
     }
