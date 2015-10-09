@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.validator;
+package org.synyx.urlaubsverwaltung.web.application;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -8,14 +8,13 @@ import org.mockito.Mockito;
 import org.springframework.validation.Errors;
 
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteComment;
-import org.synyx.urlaubsverwaltung.web.application.CommentForm;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 
 /**
- * Unit test for {@link org.synyx.urlaubsverwaltung.web.validator.CommentValidator}.
+ * Unit test for {@link CommentValidator}.
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */

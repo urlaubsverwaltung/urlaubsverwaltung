@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.validator;
+package org.synyx.urlaubsverwaltung.web.settings;
 
 import org.springframework.stereotype.Component;
 
@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.core.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.core.settings.ExchangeCalendarSettings;
 import org.synyx.urlaubsverwaltung.core.settings.MailSettings;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
+import org.synyx.urlaubsverwaltung.web.validator.MailAddressValidationUtil;
 
 
 /**

@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.validator;
+package org.synyx.urlaubsverwaltung.web.settings;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -12,8 +12,6 @@ import org.synyx.urlaubsverwaltung.core.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.core.settings.ExchangeCalendarSettings;
 import org.synyx.urlaubsverwaltung.core.settings.MailSettings;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
-
-import static org.junit.Assert.*;
 
 
 /**

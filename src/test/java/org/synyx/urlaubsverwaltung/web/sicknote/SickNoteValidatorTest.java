@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.validator;
+package org.synyx.urlaubsverwaltung.web.sicknote;
 
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;

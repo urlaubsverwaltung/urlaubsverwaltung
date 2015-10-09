@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.validator;
+package org.synyx.urlaubsverwaltung.web.application;
 
 import org.joda.time.DateMidnight;
 
@@ -19,7 +19,6 @@ import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.web.application.ApplicationForLeaveForm;
 
 import java.math.BigDecimal;
 
@@ -28,7 +27,7 @@ import static org.junit.Assert.assertTrue;
 
 
 /**
- * Unit test for {@link org.synyx.urlaubsverwaltung.web.validator.ApplicationValidator}.
+ * Unit test for {@link ApplicationValidator}.
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */

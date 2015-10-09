@@ -41,8 +41,6 @@ import org.synyx.urlaubsverwaltung.web.DateMidnightPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
 import org.synyx.urlaubsverwaltung.web.util.GravatarUtil;
-import org.synyx.urlaubsverwaltung.web.validator.SickNoteConvertFormValidator;
-import org.synyx.urlaubsverwaltung.web.validator.SickNoteValidator;
 
 import java.util.Comparator;
 import java.util.HashMap;

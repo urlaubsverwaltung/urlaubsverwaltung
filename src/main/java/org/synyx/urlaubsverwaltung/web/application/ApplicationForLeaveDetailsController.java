@@ -41,7 +41,6 @@ import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
 import org.synyx.urlaubsverwaltung.web.util.GravatarUtil;
-import org.synyx.urlaubsverwaltung.web.validator.CommentValidator;
 
 import java.util.HashMap;
 import java.util.List;

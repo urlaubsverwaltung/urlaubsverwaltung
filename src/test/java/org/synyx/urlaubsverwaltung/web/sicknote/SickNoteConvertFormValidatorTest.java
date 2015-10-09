@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.validator;
+package org.synyx.urlaubsverwaltung.web.sicknote;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -8,11 +8,10 @@ import org.mockito.Mockito;
 import org.springframework.validation.Errors;
 
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.web.sicknote.SickNoteConvertForm;
 
 
 /**
- * Unit test for {@link org.synyx.urlaubsverwaltung.web.validator.SickNoteConvertFormValidator}.
+ * Unit test for {@link SickNoteConvertFormValidator}.
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */

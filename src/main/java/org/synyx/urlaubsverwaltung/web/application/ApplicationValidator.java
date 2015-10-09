@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.validator;
+package org.synyx.urlaubsverwaltung.web.application;
 
 import org.joda.time.DateMidnight;
 
@@ -22,7 +22,6 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.util.CalcUtil;
-import org.synyx.urlaubsverwaltung.web.application.ApplicationForLeaveForm;
 
 import java.math.BigDecimal;
 

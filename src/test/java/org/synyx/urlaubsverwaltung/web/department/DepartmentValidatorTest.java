@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.validator;
+package org.synyx.urlaubsverwaltung.web.department;
 
 import org.junit.Before;
 import org.junit.Test;

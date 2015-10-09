@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.validator;
+package org.synyx.urlaubsverwaltung.web.application;
 
 import org.springframework.stereotype.Component;
 
@@ -6,8 +6,6 @@ import org.springframework.util.StringUtils;
 
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-
-import org.synyx.urlaubsverwaltung.web.application.CommentForm;
 
 
 /**
