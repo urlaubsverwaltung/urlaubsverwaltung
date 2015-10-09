@@ -129,6 +129,16 @@ public final class CryptoUtil {
      */
     public static String encodePassword(String rawPassword) {
 
+        /**
+         * TODO: Think about to use a better password encoder
+         *
+         * Comment within StandardPasswordEncoder:
+         *
+         * If you are developing a new system,
+         * {@link org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder} is
+         * a better choice both in terms of security and interoperability with other languages.
+         */
+
         StandardPasswordEncoder encoder = new StandardPasswordEncoder();
 
         return encoder.encode(rawPassword);
