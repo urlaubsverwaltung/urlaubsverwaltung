@@ -21,12 +21,6 @@ import java.math.BigDecimal;
 
 import java.util.Arrays;
 
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
-
-import static org.hamcrest.core.AnyOf.anyOf;
-import static org.hamcrest.core.Is.is;
-
 
 /**
  * @author  Aljona Murygina - murygina@synyx.de
@@ -79,15 +73,6 @@ public class PersonInteractionServiceImplTest {
 
         Assert.assertNotNull(person.getPrivateKey());
         Assert.assertNotNull(person.getPublicKey());
-    }
-
-
-    @Test
-    public void ensureThatPersonHasPasswordAfterCreation() {
-
-        Person person = service.create(examplePersonForm);
-
-        Assert.assertThat(person.getPassword(), not(anyOf(nullValue(), is(""))));
     }
 
 

@@ -106,6 +106,7 @@ public final class CryptoUtil {
     }
 
 
+    // TODO: To be used as soon as all missing features for database authentication are implemented!
     /**
      * Generates password with 16 characters length with spring standard key generator.
      *

@@ -155,6 +155,7 @@ public interface MailService {
     void notifyHolidayReplacement(Application application);
 
 
+    // TODO: To be used as soon as all missing features for database authentication are implemented!
     /**
      * Sends mail to person to inform that his/her account has been created.
      *

@@ -56,9 +56,6 @@ public class PersonInteractionServiceImpl implements PersonInteractionService {
     public Person create(PersonForm personForm) {
 
         Person person = personForm.generatePerson();
-        String rawPassword = CryptoUtil.generatePassword();
-
-        person.setPassword(CryptoUtil.encodePassword(rawPassword));
 
         try {
             KeyPair keyPair = CryptoUtil.generateKeyPair();
@@ -76,8 +73,6 @@ public class PersonInteractionServiceImpl implements PersonInteractionService {
         touchAccount(person, personForm);
 
         LOG.info("Created: " + person.toString());
-
-        mailService.sendUserCreationNotification(person, rawPassword);
 
         return person;
     }
