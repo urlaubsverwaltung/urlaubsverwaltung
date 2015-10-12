@@ -1,5 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
 <html>
@@ -15,9 +16,10 @@
 <div class="content">
     <div class="container">
         <div class="row">
-            <form class="form-horizontal">
+            <form:form method="POST" action="${URL_PREFIX}/overtime" modelAttribute="overtime" cssClass="form-horizontal">
+                <form:hidden path="person" value="${overtime.person.id}" />
                 <div class="form-section">
-                    <div class="col-xs-12 header">
+                    <div class="col-xs-12">
                         <legend><spring:message code="overtime.data"/></legend>
                     </div>
                     <div class="col-md-4 col-md-push-8">
@@ -32,7 +34,7 @@
                                 <spring:message code="overtime.data.startDate"/>:
                             </label>
                             <div class="col-md-9">
-                                <input id="startDate" type="text" class="form-control"/>
+                                <form:input path="startDate" cssClass="form-control" cssErrorClass="form-control error"/>
                             </div>
                         </div><%-- End of start date form group --%>
                         <div class="form-group is-required">
@@ -40,15 +42,15 @@
                                 <spring:message code="overtime.data.endDate"/>:
                             </label>
                             <div class="col-md-9">
-                                <input id="endDate" type="text" class="form-control"/>
+                                <form:input path="endDate" cssClass="form-control" cssErrorClass="form-control error"/>
                             </div>
                         </div><%-- End of end date form group --%>
                         <div class="form-group is-required">
-                            <label class="control-label col-md-3" for="hours">
+                            <label class="control-label col-md-3" for="numberOfHours">
                                 <spring:message code="overtime.data.numberOfHours"/>:
                             </label>
                             <div class="col-md-9">
-                                <input id="hours" type="text" class="form-control"/>
+                                <form:input path="numberOfHours" cssClass="form-control" cssErrorClass="form-control error"/>
                             </div>
                         </div><%-- End of number of overtime form group --%>
                         <div class="form-group">
@@ -56,9 +58,9 @@
                                 <spring:message code="overtime.data.comment"/>:
                             </label>
                             <div class="col-md-9">
-                                <span id="text-comment"></span><spring:message code="action.comment.maxChars"/>
-                                <textarea id="comment" class="form-control" rows="2"
-                                          onkeydown="maxChars(this,200); count(this.value, 'text-comment');"></textarea>
+                                <span id="char-counter"></span><spring:message code="action.comment.maxChars"/>
+                                <form:textarea path="comment" cssClass="form-control" rows="2"
+                                          onkeydown="maxChars(this,200); count(this.value, 'char-counter');"/>
                             </div>
                         </div><%-- End of comment form group --%>
                     </div>
@@ -74,7 +76,7 @@
                         </button>
                     </div>
                 </div><%-- End of second form section --%>
-            </form>
+            </form:form>
         </div><%-- End of row --%>
     </div><%-- End of container --%>
 </div><%-- End of content --%>
