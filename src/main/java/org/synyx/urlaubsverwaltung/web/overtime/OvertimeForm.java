@@ -4,6 +4,7 @@ import org.joda.time.DateMidnight;
 
 import org.springframework.util.Assert;
 
+import org.synyx.urlaubsverwaltung.core.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.math.BigDecimal;
@@ -96,5 +97,11 @@ public class OvertimeForm {
     public void setComment(String comment) {
 
         this.comment = comment;
+    }
+
+
+    public Overtime generateOvertime() {
+
+        return new Overtime(getPerson(), getStartDate(), getEndDate(), getNumberOfHours());
     }
 }
