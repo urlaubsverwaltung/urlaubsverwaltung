@@ -1,19 +1,12 @@
 package org.synyx.urlaubsverwaltung.core.application.domain;
 
-import org.joda.time.DateMidnight;
-import org.joda.time.DateTime;
-
-import org.springframework.data.jpa.domain.AbstractPersistable;
-
+import org.synyx.urlaubsverwaltung.core.comment.AbstractComment;
 import org.synyx.urlaubsverwaltung.core.person.Person;
-
-import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
-import javax.persistence.Temporal;
 
 
 /**
@@ -23,20 +16,12 @@ import javax.persistence.Temporal;
  * @author  Aljona Murygina
  */
 @Entity
-public class ApplicationComment extends AbstractPersistable<Integer> {
+public class ApplicationComment extends AbstractComment {
 
     private static final long serialVersionUID = 8908423789423089L;
 
-    private String text;
-
     @ManyToOne
     private Application application;
-
-    @ManyToOne
-    private Person person;
-
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date date;
 
     // TODO: There should be something like ApplicationCommentStatus, take a look how it is solved for SickNoteComment
     // Will be needed for #12
@@ -52,7 +37,7 @@ public class ApplicationComment extends AbstractPersistable<Integer> {
 
     public ApplicationComment(Person person) {
 
-        this.person = person;
+        super.setPerson(person);
     }
 
     public Application getApplication() {
@@ -64,42 +49,6 @@ public class ApplicationComment extends AbstractPersistable<Integer> {
     public void setApplication(Application application) {
 
         this.application = application;
-    }
-
-
-    public DateMidnight getDate() {
-
-        return date == null ? null : new DateTime(date).toDateMidnight();
-    }
-
-
-    public void setDate(DateMidnight date) {
-
-        this.date = date == null ? null : date.toDate();
-    }
-
-
-    public Person getPerson() {
-
-        return person;
-    }
-
-
-    public void setPerson(Person person) {
-
-        this.person = person;
-    }
-
-
-    public String getText() {
-
-        return text;
-    }
-
-
-    public void setText(String text) {
-
-        this.text = text;
     }
 
 

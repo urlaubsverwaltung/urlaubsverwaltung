@@ -4,8 +4,6 @@
  */
 package org.synyx.urlaubsverwaltung.core.application.service;
 
-import org.joda.time.DateMidnight;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
@@ -47,7 +45,6 @@ class ApplicationCommentServiceImpl implements ApplicationCommentService {
 
         comment.setStatus(status);
         comment.setApplication(application);
-        comment.setDate(DateMidnight.now());
 
         if (text.isPresent()) {
             comment.setText(text.get());

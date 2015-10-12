@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.core.sicknote.comment;
 
-import org.joda.time.DateMidnight;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
@@ -36,7 +34,6 @@ public class SickNoteCommentServiceImpl implements SickNoteCommentService {
         SickNoteComment comment = new SickNoteComment();
 
         comment.setSickNote(sickNote);
-        comment.setDate(DateMidnight.now());
         comment.setStatus(status);
         comment.setPerson(author);
 
