@@ -38,6 +38,8 @@ public class ApplicationComment extends AbstractPersistable<Integer> {
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date date;
 
+    // TODO: There should be something like ApplicationCommentStatus, take a look how it is solved for SickNoteComment
+    // Will be needed for #12
     // each application may only have one comment to each ApplicationStatus
     @Enumerated(EnumType.STRING)
     private ApplicationStatus status;

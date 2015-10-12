@@ -27,7 +27,6 @@ import javax.persistence.Temporal;
  * @author  Johannes Reuter
  * @author  Aljona Murygina
  */
-
 @Entity
 public class Application extends AbstractPersistable<Integer> {
 
