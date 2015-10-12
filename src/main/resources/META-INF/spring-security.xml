@@ -17,6 +17,7 @@
         <security:intercept-url pattern="/web/application/**" access="hasRole('USER')"/>
         <security:intercept-url pattern="/web/sicknote/**" access="hasRole('USER')"/>
         <security:intercept-url pattern="/web/staff/**" access="hasRole('USER')"/>
+        <security:intercept-url pattern="/web/overtime/**" access="hasRole('USER')"/>
         <security:intercept-url pattern="/web/department/**" access="hasAnyRole('BOSS', 'OFFICE')"/>
         <security:intercept-url pattern="/web/settings/**" access="hasRole('OFFICE')"/>
         <!-- OPEN -->
