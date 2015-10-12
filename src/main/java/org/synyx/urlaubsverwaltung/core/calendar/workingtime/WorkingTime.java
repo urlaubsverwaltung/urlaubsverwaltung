@@ -56,11 +56,6 @@ public class WorkingTime extends AbstractPersistable<Integer> {
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date validFrom;
 
-    public WorkingTime() {
-
-        // OK
-    }
-
     public void setWorkingDays(List<Integer> workingDays, DayLength dayLength) {
 
         setAllDayLengthsToZero();
