@@ -30,6 +30,6 @@
     <include file="dbchangelogs/changelog-2.9.3-add-domain-to-ews-calendar-settings.xml"/>
     <include file="dbchangelogs/changelog-2.9.4-add-column-dayLength-to-sick-note.xml"/>
     <include file="dbchangelogs/changelog-2.10.0-add-password-column.xml"/>
-
+    <include file="dbchangelogs/changelog-2.11.0-add-overtime-table.xml"/>
 
 </databaseChangeLog>
