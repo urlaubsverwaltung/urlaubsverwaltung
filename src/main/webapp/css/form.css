@@ -63,7 +63,10 @@ textarea.error {
 
 **************************************************************************/
 
-.form-section .form-group:last-child,
+.form-section:not(:first-child) legend {
+  margin-top: 36px;
+}
+
 .form-section .btn:last-child {
   margin-bottom: 36px;
 }
