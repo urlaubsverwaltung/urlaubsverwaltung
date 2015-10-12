@@ -14,19 +14,19 @@ import static org.junit.Assert.assertTrue;
 
 
 /**
- * Unit test for {@link CommentValidator}.
+ * Unit test for {@link ApplicationCommentValidator}.
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public class CommentValidatorTest {
+public class ApplicationCommentValidatorTest {
 
-    private CommentValidator validator;
+    private ApplicationCommentValidator validator;
     private Errors errors;
 
     @Before
     public void setUp() {
 
-        validator = new CommentValidator();
+        validator = new ApplicationCommentValidator();
         errors = Mockito.mock(Errors.class);
     }
 
@@ -34,7 +34,7 @@ public class CommentValidatorTest {
     @Test
     public void ensureSupportsCommentClass() {
 
-        assertTrue(validator.supports(CommentForm.class));
+        assertTrue(validator.supports(ApplicationCommentForm.class));
     }
 
 
@@ -55,7 +55,7 @@ public class CommentValidatorTest {
     @Test
     public void ensureReasonCanBeNullIfNotMandatory() {
 
-        CommentForm comment = new CommentForm();
+        ApplicationCommentForm comment = new ApplicationCommentForm();
         comment.setMandatory(false);
         comment.setText(null);
 
@@ -68,7 +68,7 @@ public class CommentValidatorTest {
     @Test
     public void ensureReasonCanBeEmptyIfNotMandatory() {
 
-        CommentForm comment = new CommentForm();
+        ApplicationCommentForm comment = new ApplicationCommentForm();
         comment.setMandatory(false);
         comment.setText("");
 
@@ -81,7 +81,7 @@ public class CommentValidatorTest {
     @Test
     public void ensureReasonCanNotBeNullIfMandatory() {
 
-        CommentForm comment = new CommentForm();
+        ApplicationCommentForm comment = new ApplicationCommentForm();
         comment.setMandatory(true);
         comment.setText(null);
 
@@ -94,7 +94,7 @@ public class CommentValidatorTest {
     @Test
     public void ensureReasonCanNotBeEmptyIfMandatory() {
 
-        CommentForm comment = new CommentForm();
+        ApplicationCommentForm comment = new ApplicationCommentForm();
         comment.setMandatory(true);
         comment.setText("");
 
@@ -107,7 +107,7 @@ public class CommentValidatorTest {
     @Test
     public void ensureThereIsAMaximumCharLengthForReason() {
 
-        CommentForm comment = new CommentForm();
+        ApplicationCommentForm comment = new ApplicationCommentForm();
 
         comment.setText(
             "Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt"

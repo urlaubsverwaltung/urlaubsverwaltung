@@ -12,10 +12,10 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import org.synyx.urlaubsverwaltung.core.application.dao.CommentDAO;
+import org.synyx.urlaubsverwaltung.core.application.dao.ApplicationCommentDAO;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
+import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.util.List;
@@ -23,26 +23,27 @@ import java.util.Optional;
 
 
 /**
- * Implementation of interface {@link CommentService}.
+ * Implementation of interface {@link ApplicationCommentService}.
  *
  * @author  Aljona Murygina
  */
 @Service
 @Transactional
-class CommentServiceImpl implements CommentService {
+class ApplicationCommentServiceImpl implements ApplicationCommentService {
 
-    private final CommentDAO commentDAO;
+    private final ApplicationCommentDAO commentDAO;
 
     @Autowired
-    public CommentServiceImpl(CommentDAO commentDAO) {
+    public ApplicationCommentServiceImpl(ApplicationCommentDAO commentDAO) {
 
         this.commentDAO = commentDAO;
     }
 
     @Override
-    public Comment create(Application application, ApplicationStatus status, Optional<String> text, Person author) {
+    public ApplicationComment create(Application application, ApplicationStatus status, Optional<String> text,
+        Person author) {
 
-        Comment comment = new Comment(author);
+        ApplicationComment comment = new ApplicationComment(author);
 
         comment.setStatus(status);
         comment.setApplication(application);
@@ -59,7 +60,7 @@ class CommentServiceImpl implements CommentService {
 
 
     @Override
-    public List<Comment> getCommentsByApplication(Application application) {
+    public List<ApplicationComment> getCommentsByApplication(Application application) {
 
         return commentDAO.getCommentsByApplication(application);
     }

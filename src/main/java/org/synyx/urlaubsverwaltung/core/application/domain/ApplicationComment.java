@@ -23,7 +23,7 @@ import javax.persistence.Temporal;
  * @author  Aljona Murygina
  */
 @Entity
-public class Comment extends AbstractPersistable<Integer> {
+public class ApplicationComment extends AbstractPersistable<Integer> {
 
     private static final long serialVersionUID = 8908423789423089L;
 
@@ -42,13 +42,13 @@ public class Comment extends AbstractPersistable<Integer> {
     @Enumerated(EnumType.STRING)
     private ApplicationStatus status;
 
-    Comment() {
+    ApplicationComment() {
 
         // needed for Hibernate
     }
 
 
-    public Comment(Person person) {
+    public ApplicationComment(Person person) {
 
         this.person = person;
     }

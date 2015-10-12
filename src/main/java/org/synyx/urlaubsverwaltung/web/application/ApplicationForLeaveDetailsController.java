@@ -23,11 +23,11 @@ import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
 import org.synyx.urlaubsverwaltung.core.account.service.VacationDaysService;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
+import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
+import org.synyx.urlaubsverwaltung.core.application.service.ApplicationCommentService;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationInteractionService;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
-import org.synyx.urlaubsverwaltung.core.application.service.CommentService;
 import org.synyx.urlaubsverwaltung.core.application.service.exception.ImpatientAboutApplicationForLeaveProcessException;
 import org.synyx.urlaubsverwaltung.core.application.service.exception.RemindAlreadySentException;
 import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
@@ -76,13 +76,13 @@ public class ApplicationForLeaveDetailsController {
     private VacationDaysService vacationDaysService;
 
     @Autowired
-    private CommentService commentService;
+    private ApplicationCommentService commentService;
 
     @Autowired
     private WorkDaysService workDaysService;
 
     @Autowired
-    private CommentValidator commentValidator;
+    private ApplicationCommentValidator commentValidator;
 
     @Autowired
     private DepartmentService departmentService;
@@ -122,9 +122,9 @@ public class ApplicationForLeaveDetailsController {
     private void prepareDetailView(Application application, int year, String action, boolean shortcut, Model model) {
 
         // COMMENTS
-        List<Comment> comments = commentService.getCommentsByApplication(application);
+        List<ApplicationComment> comments = commentService.getCommentsByApplication(application);
 
-        model.addAttribute("comment", new CommentForm());
+        model.addAttribute("comment", new ApplicationCommentForm());
         model.addAttribute("comments", comments);
         model.addAttribute("commentGravatarURLs", getGravatarURLsForComments(comments));
 
@@ -167,11 +167,11 @@ public class ApplicationForLeaveDetailsController {
     }
 
 
-    private Map<Comment, String> getGravatarURLsForComments(List<Comment> comments) {
+    private Map<ApplicationComment, String> getGravatarURLsForComments(List<ApplicationComment> comments) {
 
-        Map<Comment, String> gravatarURLs = new HashMap<>();
+        Map<ApplicationComment, String> gravatarURLs = new HashMap<>();
 
-        for (Comment comment : comments) {
+        for (ApplicationComment comment : comments) {
             String gravatarUrl = GravatarUtil.createImgURL(comment.getPerson().getEmail());
 
             if (gravatarUrl != null) {
@@ -206,7 +206,7 @@ public class ApplicationForLeaveDetailsController {
     @PreAuthorize(SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD)
     @RequestMapping(value = "/{applicationId}/allow", method = RequestMethod.PUT)
     public String allowApplication(@PathVariable("applicationId") Integer applicationId,
-        @ModelAttribute("comment") CommentForm comment,
+        @ModelAttribute("comment") ApplicationCommentForm comment,
         @RequestParam(value = "redirect", required = false) String redirectUrl, Errors errors,
         RedirectAttributes redirectAttributes) {
 
@@ -286,7 +286,7 @@ public class ApplicationForLeaveDetailsController {
     @PreAuthorize(SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD)
     @RequestMapping(value = "/{applicationId}/reject", method = RequestMethod.PUT)
     public String rejectApplication(@PathVariable("applicationId") Integer applicationId,
-        @ModelAttribute("comment") CommentForm comment,
+        @ModelAttribute("comment") ApplicationCommentForm comment,
         @RequestParam(value = "redirect", required = false) String redirectUrl, Errors errors,
         RedirectAttributes redirectAttributes) {
 
@@ -335,7 +335,8 @@ public class ApplicationForLeaveDetailsController {
      */
     @RequestMapping(value = "/{applicationId}/cancel", method = RequestMethod.PUT)
     public String cancelApplication(@PathVariable("applicationId") Integer applicationId,
-        @ModelAttribute("comment") CommentForm comment, Errors errors, RedirectAttributes redirectAttributes) {
+        @ModelAttribute("comment") ApplicationCommentForm comment, Errors errors,
+        RedirectAttributes redirectAttributes) {
 
         Optional<Application> optionalApplication = applicationService.getApplicationById(applicationId);
 

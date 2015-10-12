@@ -18,8 +18,8 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
+import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
@@ -132,7 +132,7 @@ public class MailServiceIntegrationTest {
             .thenReturn(true);
 
         String commentMessage = "Das ist ein Kommentar.";
-        Comment comment = new Comment(person);
+        ApplicationComment comment = new ApplicationComment(person);
         comment.setText(commentMessage);
 
         mailService.sendNewApplicationNotification(application, comment);
@@ -226,7 +226,7 @@ public class MailServiceIntegrationTest {
             .thenReturn(Arrays.asList(office));
 
         String commentMessage = "Das ist ein Kommentar.";
-        Comment comment = new Comment(boss);
+        ApplicationComment comment = new ApplicationComment(boss);
         comment.setText(commentMessage);
 
         mailService.sendAllowedNotification(application, comment);
@@ -286,7 +286,7 @@ public class MailServiceIntegrationTest {
         Person boss = new Person("boss", "Muster", "Max", bossEmailAddress);
 
         String commentMessage = "Das ist ein Kommentar.";
-        Comment comment = new Comment(boss);
+        ApplicationComment comment = new ApplicationComment(boss);
         comment.setText(commentMessage);
 
         mailService.sendRejectedNotification(application, comment);
@@ -321,7 +321,7 @@ public class MailServiceIntegrationTest {
         person.setEmail("hilde@test.com");
 
         String commentMessage = "Das ist ein Kommentar.";
-        Comment comment = new Comment(person);
+        ApplicationComment comment = new ApplicationComment(person);
         comment.setText(commentMessage);
 
         mailService.sendConfirmation(application, comment);
@@ -362,7 +362,7 @@ public class MailServiceIntegrationTest {
         application.setCanceller(office);
 
         String commentMessage = "Das ist ein Kommentar.";
-        Comment comment = new Comment(office);
+        ApplicationComment comment = new ApplicationComment(office);
         comment.setText(commentMessage);
 
         mailService.sendCancelledNotification(application, true, comment);
@@ -402,7 +402,7 @@ public class MailServiceIntegrationTest {
             .thenReturn(Arrays.asList(office));
 
         String commentMessage = "Das ist ein Kommentar.";
-        Comment comment = new Comment(person);
+        ApplicationComment comment = new ApplicationComment(person);
         comment.setText(commentMessage);
 
         mailService.sendCancelledNotification(application, false, comment);
@@ -477,7 +477,7 @@ public class MailServiceIntegrationTest {
         Person office = new Person("office", "Office", "Marlene", officeEmailAddress);
 
         String commentMessage = "Das ist ein Kommentar.";
-        Comment comment = new Comment(office);
+        ApplicationComment comment = new ApplicationComment(office);
         comment.setText(commentMessage);
 
         application.setApplier(office);

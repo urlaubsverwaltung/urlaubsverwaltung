@@ -10,8 +10,8 @@ import org.mockito.Mockito;
 
 import org.synyx.urlaubsverwaltung.core.account.service.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
+import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.service.exception.ImpatientAboutApplicationForLeaveProcessException;
 import org.synyx.urlaubsverwaltung.core.application.service.exception.RemindAlreadySentException;
@@ -41,7 +41,7 @@ public class ApplicationInteractionServiceImplTest {
     private ApplicationInteractionService service;
 
     private ApplicationService applicationService;
-    private CommentService commentService;
+    private ApplicationCommentService commentService;
     private AccountInteractionService accountInteractionService;
     private SignService signService;
     private MailService mailService;
@@ -53,7 +53,7 @@ public class ApplicationInteractionServiceImplTest {
     public void setUp() {
 
         applicationService = Mockito.mock(ApplicationService.class);
-        commentService = Mockito.mock(CommentService.class);
+        commentService = Mockito.mock(ApplicationCommentService.class);
         accountInteractionService = Mockito.mock(AccountInteractionService.class);
         signService = Mockito.mock(SignService.class);
         mailService = Mockito.mock(MailService.class);
@@ -135,11 +135,12 @@ public class ApplicationInteractionServiceImplTest {
 
         service.apply(applicationForLeave, person, Optional.of("Foo"));
 
-        Mockito.verify(mailService).sendConfirmation(eq(applicationForLeave), any(Comment.class));
+        Mockito.verify(mailService).sendConfirmation(eq(applicationForLeave), any(ApplicationComment.class));
         Mockito.verify(mailService, Mockito.never())
-            .sendAppliedForLeaveByOfficeNotification(eq(applicationForLeave), any(Comment.class));
+            .sendAppliedForLeaveByOfficeNotification(eq(applicationForLeave), any(ApplicationComment.class));
 
-        Mockito.verify(mailService).sendNewApplicationNotification(eq(applicationForLeave), any(Comment.class));
+        Mockito.verify(mailService)
+            .sendNewApplicationNotification(eq(applicationForLeave), any(ApplicationComment.class));
     }
 
 
@@ -153,11 +154,13 @@ public class ApplicationInteractionServiceImplTest {
 
         service.apply(applicationForLeave, applier, Optional.of("Foo"));
 
-        Mockito.verify(mailService, Mockito.never()).sendConfirmation(eq(applicationForLeave), any(Comment.class));
+        Mockito.verify(mailService, Mockito.never())
+            .sendConfirmation(eq(applicationForLeave), any(ApplicationComment.class));
         Mockito.verify(mailService)
-            .sendAppliedForLeaveByOfficeNotification(eq(applicationForLeave), any(Comment.class));
+            .sendAppliedForLeaveByOfficeNotification(eq(applicationForLeave), any(ApplicationComment.class));
 
-        Mockito.verify(mailService).sendNewApplicationNotification(eq(applicationForLeave), any(Comment.class));
+        Mockito.verify(mailService)
+            .sendNewApplicationNotification(eq(applicationForLeave), any(ApplicationComment.class));
     }
 
 
@@ -233,7 +236,7 @@ public class ApplicationInteractionServiceImplTest {
 
         service.allow(applicationForLeave, boss, Optional.of("Foo"));
 
-        Mockito.verify(mailService).sendAllowedNotification(eq(applicationForLeave), any(Comment.class));
+        Mockito.verify(mailService).sendAllowedNotification(eq(applicationForLeave), any(ApplicationComment.class));
     }
 
 
@@ -325,7 +328,7 @@ public class ApplicationInteractionServiceImplTest {
 
         service.reject(applicationForLeave, boss, Optional.of("Foo"));
 
-        Mockito.verify(mailService).sendRejectedNotification(eq(applicationForLeave), any(Comment.class));
+        Mockito.verify(mailService).sendRejectedNotification(eq(applicationForLeave), any(ApplicationComment.class));
     }
 
 
@@ -398,7 +401,8 @@ public class ApplicationInteractionServiceImplTest {
         Mockito.verify(commentService)
             .create(eq(applicationForLeave), eq(ApplicationStatus.CANCELLED), eq(comment), eq(canceller));
 
-        Mockito.verify(mailService).sendCancelledNotification(eq(applicationForLeave), eq(false), any(Comment.class));
+        Mockito.verify(mailService)
+            .sendCancelledNotification(eq(applicationForLeave), eq(false), any(ApplicationComment.class));
     }
 
 
@@ -425,7 +429,8 @@ public class ApplicationInteractionServiceImplTest {
         Mockito.verify(commentService)
             .create(eq(applicationForLeave), eq(ApplicationStatus.REVOKED), eq(comment), eq(canceller));
 
-        Mockito.verify(mailService).sendCancelledNotification(eq(applicationForLeave), eq(true), any(Comment.class));
+        Mockito.verify(mailService)
+            .sendCancelledNotification(eq(applicationForLeave), eq(true), any(ApplicationComment.class));
     }
 
 

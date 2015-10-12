@@ -12,8 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import org.synyx.urlaubsverwaltung.core.account.service.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
+import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.application.service.exception.ImpatientAboutApplicationForLeaveProcessException;
 import org.synyx.urlaubsverwaltung.core.application.service.exception.RemindAlreadySentException;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
@@ -44,17 +44,17 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
     private final ApplicationService applicationService;
     private final AccountInteractionService accountInteractionService;
     private final SignService signService;
-    private final CommentService commentService;
+    private final ApplicationCommentService commentService;
     private final MailService mailService;
     private final CalendarSyncService calendarSyncService;
     private final AbsenceMappingService absenceMappingService;
     private final SettingsService settingsService;
 
     @Autowired
-    public ApplicationInteractionServiceImpl(ApplicationService applicationService, CommentService commentService,
-        AccountInteractionService accountInteractionService, SignService signService, MailService mailService,
-        CalendarSyncService calendarSyncService, AbsenceMappingService absenceMappingService,
-        SettingsService settingsService) {
+    public ApplicationInteractionServiceImpl(ApplicationService applicationService,
+        ApplicationCommentService commentService, AccountInteractionService accountInteractionService,
+        SignService signService, MailService mailService, CalendarSyncService calendarSyncService,
+        AbsenceMappingService absenceMappingService, SettingsService settingsService) {
 
         this.applicationService = applicationService;
         this.commentService = commentService;
@@ -82,7 +82,8 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         LOG.info("Created application for leave: " + application.toString());
 
         // COMMENT
-        Comment createdComment = commentService.create(application, ApplicationStatus.WAITING, comment, applier);
+        ApplicationComment createdComment = commentService.create(application, ApplicationStatus.WAITING, comment,
+                applier);
 
         // EMAILS
 
@@ -129,7 +130,8 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         LOG.info("Allowed application for leave: " + application.toString());
 
-        Comment createdComment = commentService.create(application, ApplicationStatus.ALLOWED, comment, boss);
+        ApplicationComment createdComment = commentService.create(application, ApplicationStatus.ALLOWED, comment,
+                boss);
 
         mailService.sendAllowedNotification(application, createdComment);
 
@@ -163,7 +165,8 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         LOG.info("Rejected application for leave: " + application.toString());
 
-        Comment createdComment = commentService.create(application, ApplicationStatus.REJECTED, comment, boss);
+        ApplicationComment createdComment = commentService.create(application, ApplicationStatus.REJECTED, comment,
+                boss);
 
         mailService.sendRejectedNotification(application, createdComment);
 
@@ -197,7 +200,8 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         LOG.info("Cancelled application for leave: " + application);
 
-        Comment createdComment = commentService.create(application, application.getStatus(), comment, canceller);
+        ApplicationComment createdComment = commentService.create(application, application.getStatus(), comment,
+                canceller);
 
         if (cancellingAllowedApplication) {
             // if allowed application has been cancelled, office and bosses get an email

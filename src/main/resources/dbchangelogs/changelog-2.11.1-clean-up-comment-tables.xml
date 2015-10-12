@@ -32,4 +32,12 @@
         <dropColumn tableName="SickNote" columnName="active"/>
     </changeSet>
 
+    <changeSet author="murygina" id="rename_application_comment_table">
+        <preConditions>
+            <tableExists tableName="Comment"/>
+        </preConditions>
+
+        <renameTable oldTableName="Comment" newTableName="ApplicationComment"/>
+    </changeSet>
+
 </databaseChangeLog>

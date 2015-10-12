@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.core.mail;
 
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
-import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
+import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
@@ -28,7 +28,7 @@ public interface MailService {
      * @param  application
      * @param  comment
      */
-    void sendConfirmation(Application application, Comment comment);
+    void sendConfirmation(Application application, ApplicationComment comment);
 
 
     /**
@@ -37,7 +37,7 @@ public interface MailService {
      * @param  application
      * @param  comment
      */
-    void sendAppliedForLeaveByOfficeNotification(Application application, Comment comment);
+    void sendAppliedForLeaveByOfficeNotification(Application application, ApplicationComment comment);
 
 
     /**
@@ -47,7 +47,7 @@ public interface MailService {
      * @param  application
      * @param  comment
      */
-    void sendNewApplicationNotification(Application application, Comment comment);
+    void sendNewApplicationNotification(Application application, ApplicationComment comment);
 
 
     /**
@@ -56,7 +56,7 @@ public interface MailService {
      * @param  application  the application which got allowed
      * @param  comment  made during allowing application
      */
-    void sendAllowedNotification(Application application, Comment comment);
+    void sendAllowedNotification(Application application, ApplicationComment comment);
 
 
     /**
@@ -65,7 +65,7 @@ public interface MailService {
      * @param  application  the application which got rejected
      * @param  comment  reason why application was rejected
      */
-    void sendRejectedNotification(Application application, Comment comment);
+    void sendRejectedNotification(Application application, ApplicationComment comment);
 
 
     /**
@@ -98,7 +98,7 @@ public interface MailService {
      *                            on application's state: waiting-chefs, allowed-office
      * @param  comment
      */
-    void sendCancelledNotification(Application application, boolean cancelledByOffice, Comment comment);
+    void sendCancelledNotification(Application application, boolean cancelledByOffice, ApplicationComment comment);
 
 
     /**

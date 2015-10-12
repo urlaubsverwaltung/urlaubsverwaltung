@@ -25,7 +25,7 @@ import org.springframework.util.StringUtils;
 import org.synyx.urlaubsverwaltung.DateFormat;
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
-import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
+import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.person.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -99,7 +99,7 @@ class MailServiceImpl implements MailService {
     }
 
     @Override
-    public void sendNewApplicationNotification(Application application, Comment comment) {
+    public void sendNewApplicationNotification(Application application, ApplicationComment comment) {
 
         Map<String, Object> model = createModelForApplicationStatusChangeMail(application,
                 Optional.ofNullable(comment));
@@ -113,7 +113,7 @@ class MailServiceImpl implements MailService {
 
 
     private Map<String, Object> createModelForApplicationStatusChangeMail(Application application,
-        Optional<Comment> optionalComment) {
+        Optional<ApplicationComment> optionalComment) {
 
         Map<String, Object> model = new HashMap<>();
         model.put("application", application);
@@ -243,14 +243,15 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendRemindBossNotification(Application application) {
 
-        Map<String, Object> model = createModelForApplicationStatusChangeMail(application, Optional.<Comment>empty());
+        Map<String, Object> model = createModelForApplicationStatusChangeMail(application,
+                Optional.<ApplicationComment>empty());
         String text = buildMailBody("remind", model);
         sendEmail(getBossesAndDepartmentHeads(application), "subject.application.remind", text);
     }
 
 
     @Override
-    public void sendAllowedNotification(Application application, Comment comment) {
+    public void sendAllowedNotification(Application application, ApplicationComment comment) {
 
         // if application has been allowed, two emails must be sent
         // the applicant gets an email and the office gets an email
@@ -276,7 +277,7 @@ class MailServiceImpl implements MailService {
 
 
     @Override
-    public void sendRejectedNotification(Application application, Comment comment) {
+    public void sendRejectedNotification(Application application, ApplicationComment comment) {
 
         Map<String, Object> model = createModelForApplicationStatusChangeMail(application,
                 Optional.ofNullable(comment));
@@ -300,7 +301,7 @@ class MailServiceImpl implements MailService {
 
 
     @Override
-    public void sendConfirmation(Application application, Comment comment) {
+    public void sendConfirmation(Application application, ApplicationComment comment) {
 
         Map<String, Object> model = createModelForApplicationStatusChangeMail(application,
                 Optional.ofNullable(comment));
@@ -310,7 +311,7 @@ class MailServiceImpl implements MailService {
 
 
     @Override
-    public void sendAppliedForLeaveByOfficeNotification(Application application, Comment comment) {
+    public void sendAppliedForLeaveByOfficeNotification(Application application, ApplicationComment comment) {
 
         Map<String, Object> model = createModelForApplicationStatusChangeMail(application,
                 Optional.ofNullable(comment));
@@ -320,7 +321,8 @@ class MailServiceImpl implements MailService {
 
 
     @Override
-    public void sendCancelledNotification(Application application, boolean cancelledByOffice, Comment comment) {
+    public void sendCancelledNotification(Application application, boolean cancelledByOffice,
+        ApplicationComment comment) {
 
         String text;
         Map<String, Object> model = createModelForApplicationStatusChangeMail(application,

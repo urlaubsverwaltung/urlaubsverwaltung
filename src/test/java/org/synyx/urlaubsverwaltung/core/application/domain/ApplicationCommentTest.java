@@ -7,11 +7,11 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 
 
 /**
- * Unit test for {@link org.synyx.urlaubsverwaltung.core.application.domain.Comment}.
+ * Unit test for {@link ApplicationComment}.
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public class CommentTest {
+public class ApplicationCommentTest {
 
     @Test
     public void ensureCanBeInitializedWithPerson() {
@@ -20,7 +20,7 @@ public class CommentTest {
         commentingPerson.setFirstName("Aljona");
         commentingPerson.setLastName("Mu");
 
-        Comment comment = new Comment(commentingPerson);
+        ApplicationComment comment = new ApplicationComment(commentingPerson);
 
         Assert.assertNotNull("Commenting person should be set", comment.getPerson());
         Assert.assertEquals("Wrong commenting person", commentingPerson, comment.getPerson());

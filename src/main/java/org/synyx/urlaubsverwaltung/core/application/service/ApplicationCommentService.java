@@ -1,8 +1,8 @@
 package org.synyx.urlaubsverwaltung.core.application.service;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
+import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.util.List;
@@ -10,11 +10,11 @@ import java.util.Optional;
 
 
 /**
- * This service provides access to the {@link Comment} entities.
+ * This service provides access to the {@link ApplicationComment} entities.
  *
  * @author  Aljona Murygina
  */
-public interface CommentService {
+public interface ApplicationCommentService {
 
     /**
      * Creates a comment for the given application for leave with the given status. The given person defines the author
@@ -27,15 +27,15 @@ public interface CommentService {
      *
      * @return  the created comment
      */
-    Comment create(Application application, ApplicationStatus status, Optional<String> text, Person author);
+    ApplicationComment create(Application application, ApplicationStatus status, Optional<String> text, Person author);
 
 
     /**
-     * Gets all {@link Comment}s for the given {@link Application}.
+     * Gets all {@link ApplicationComment}s for the given {@link Application}.
      *
      * @param  application {@link Application}
      *
-     * @return  all {@link Comment}s for the given {@link Application}
+     * @return  all {@link ApplicationComment}s for the given {@link Application}
      */
-    List<Comment> getCommentsByApplication(Application application);
+    List<ApplicationComment> getCommentsByApplication(Application application);
 }

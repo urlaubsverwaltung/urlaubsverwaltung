@@ -9,12 +9,12 @@ import org.springframework.validation.Validator;
 
 
 /**
- * Validates the content of {@link org.synyx.urlaubsverwaltung.web.application.CommentForm}s.
+ * Validates the content of {@link ApplicationCommentForm}s.
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Component
-public class CommentValidator implements Validator {
+public class ApplicationCommentValidator implements Validator {
 
     private static final int MAX_CHARS = 200;
 
@@ -26,14 +26,14 @@ public class CommentValidator implements Validator {
     @Override
     public boolean supports(Class<?> clazz) {
 
-        return CommentForm.class.equals(clazz);
+        return ApplicationCommentForm.class.equals(clazz);
     }
 
 
     @Override
     public void validate(Object target, Errors errors) {
 
-        CommentForm comment = (CommentForm) target;
+        ApplicationCommentForm comment = (ApplicationCommentForm) target;
 
         String text = comment.getText();
         boolean hasText = StringUtils.hasText(text);

@@ -5,7 +5,7 @@ package org.synyx.urlaubsverwaltung.web.application;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public class CommentForm {
+public class ApplicationCommentForm {
 
     private String text;
     private boolean isMandatory;

@@ -1,37 +1,36 @@
 package org.synyx.urlaubsverwaltung.core.application.service;
 
 import org.junit.Assert;
-
 import org.junit.Before;
 import org.junit.Test;
 
 import org.mockito.Mockito;
 
-import org.synyx.urlaubsverwaltung.core.application.dao.CommentDAO;
+import org.synyx.urlaubsverwaltung.core.application.dao.ApplicationCommentDAO;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
+import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.core.application.domain.Comment;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.util.Optional;
 
 
 /**
- * Unit test for {@link org.synyx.urlaubsverwaltung.core.application.service.CommentServiceImpl}.
+ * Unit test for {@link org.synyx.urlaubsverwaltung.core.application.service.ApplicationCommentServiceImpl}.
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public class CommentServiceImplTest {
+public class ApplicationCommentServiceImplTest {
 
-    private CommentService commentService;
+    private ApplicationCommentService commentService;
 
-    private CommentDAO commentDAO;
+    private ApplicationCommentDAO commentDAO;
 
     @Before
     public void setUp() {
 
-        commentDAO = Mockito.mock(CommentDAO.class);
-        commentService = new CommentServiceImpl(commentDAO);
+        commentDAO = Mockito.mock(ApplicationCommentDAO.class);
+        commentService = new ApplicationCommentServiceImpl(commentDAO);
     }
 
 
@@ -41,8 +40,8 @@ public class CommentServiceImplTest {
         Person author = new Person();
         Application application = new Application();
 
-        Comment comment = commentService.create(application, ApplicationStatus.ALLOWED, Optional.<String>empty(),
-                author);
+        ApplicationComment comment = commentService.create(application, ApplicationStatus.ALLOWED,
+                Optional.<String>empty(), author);
 
         Assert.assertNotNull("Should not be null", comment);
 
@@ -66,7 +65,8 @@ public class CommentServiceImplTest {
         Person author = new Person();
         Application application = new Application();
 
-        Comment comment = commentService.create(application, ApplicationStatus.REJECTED, Optional.of("Foo"), author);
+        ApplicationComment comment = commentService.create(application, ApplicationStatus.REJECTED, Optional.of("Foo"),
+                author);
 
         Assert.assertNotNull("Should not be null", comment);
 
