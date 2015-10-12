@@ -23,11 +23,8 @@ public class ApplicationComment extends AbstractComment {
     @ManyToOne
     private Application application;
 
-    // TODO: There should be something like ApplicationCommentStatus, take a look how it is solved for SickNoteComment
-    // Will be needed for #12
-    // each application may only have one comment to each ApplicationStatus
     @Enumerated(EnumType.STRING)
-    private ApplicationStatus status;
+    private ApplicationCommentStatus status;
 
     ApplicationComment() {
 
@@ -52,13 +49,13 @@ public class ApplicationComment extends AbstractComment {
     }
 
 
-    public ApplicationStatus getStatus() {
+    public ApplicationCommentStatus getStatus() {
 
         return status;
     }
 
 
-    public void setStatus(ApplicationStatus status) {
+    public void setStatus(ApplicationCommentStatus status) {
 
         this.status = status;
     }

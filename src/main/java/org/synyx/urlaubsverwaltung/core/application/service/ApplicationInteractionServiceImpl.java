@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationComment;
+import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationCommentStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.service.exception.ImpatientAboutApplicationForLeaveProcessException;
 import org.synyx.urlaubsverwaltung.core.application.service.exception.RemindAlreadySentException;
@@ -82,8 +83,8 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         LOG.info("Created application for leave: " + application.toString());
 
         // COMMENT
-        ApplicationComment createdComment = commentService.create(application, ApplicationStatus.WAITING, comment,
-                applier);
+        ApplicationComment createdComment = commentService.create(application, ApplicationCommentStatus.APPLIED,
+                comment, applier);
 
         // EMAILS
 
@@ -130,8 +131,8 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         LOG.info("Allowed application for leave: " + application.toString());
 
-        ApplicationComment createdComment = commentService.create(application, ApplicationStatus.ALLOWED, comment,
-                boss);
+        ApplicationComment createdComment = commentService.create(application, ApplicationCommentStatus.ALLOWED,
+                comment, boss);
 
         mailService.sendAllowedNotification(application, createdComment);
 
@@ -165,8 +166,8 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         LOG.info("Rejected application for leave: " + application.toString());
 
-        ApplicationComment createdComment = commentService.create(application, ApplicationStatus.REJECTED, comment,
-                boss);
+        ApplicationComment createdComment = commentService.create(application, ApplicationCommentStatus.REJECTED,
+                comment, boss);
 
         mailService.sendRejectedNotification(application, createdComment);
 
@@ -186,22 +187,24 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
     public Application cancel(Application application, Person canceller, Optional<String> comment) {
 
         boolean cancellingAllowedApplication = application.hasStatus(ApplicationStatus.ALLOWED);
+        ApplicationCommentStatus commentStatus;
 
         application.setCanceller(canceller);
         application.setCancelDate(DateMidnight.now());
 
         if (cancellingAllowedApplication) {
             application.setStatus(ApplicationStatus.CANCELLED);
+            commentStatus = ApplicationCommentStatus.CANCELLED;
         } else {
             application.setStatus(ApplicationStatus.REVOKED);
+            commentStatus = ApplicationCommentStatus.REVOKED;
         }
 
         applicationService.save(application);
 
         LOG.info("Cancelled application for leave: " + application);
 
-        ApplicationComment createdComment = commentService.create(application, application.getStatus(), comment,
-                canceller);
+        ApplicationComment createdComment = commentService.create(application, commentStatus, comment, canceller);
 
         if (cancellingAllowedApplication) {
             // if allowed application has been cancelled, office and bosses get an email
@@ -239,7 +242,8 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         signService.signApplicationByBoss(application, creator);
         applicationService.save(application);
-        commentService.create(application, ApplicationStatus.ALLOWED, Optional.<String>empty(), creator);
+
+        commentService.create(application, ApplicationCommentStatus.CONVERTED, Optional.<String>empty(), creator);
         mailService.sendSickNoteConvertedToVacationNotification(application);
 
         return application;

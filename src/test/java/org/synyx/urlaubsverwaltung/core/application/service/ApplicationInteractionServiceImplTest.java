@@ -11,6 +11,7 @@ import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationComment;
+import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationCommentStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.service.exception.ImpatientAboutApplicationForLeaveProcessException;
@@ -94,7 +95,7 @@ public class ApplicationInteractionServiceImplTest {
         Mockito.verify(signService).signApplicationByUser(eq(applicationForLeave), eq(applier));
 
         Mockito.verify(commentService)
-            .create(eq(applicationForLeave), eq(ApplicationStatus.WAITING), eq(comment), eq(applier));
+            .create(eq(applicationForLeave), eq(ApplicationCommentStatus.APPLIED), eq(comment), eq(applier));
     }
 
 
@@ -205,7 +206,7 @@ public class ApplicationInteractionServiceImplTest {
         Mockito.verify(signService).signApplicationByBoss(eq(applicationForLeave), eq(boss));
 
         Mockito.verify(commentService)
-            .create(eq(applicationForLeave), eq(ApplicationStatus.ALLOWED), eq(comment), eq(boss));
+            .create(eq(applicationForLeave), eq(ApplicationCommentStatus.ALLOWED), eq(comment), eq(boss));
     }
 
 
@@ -297,7 +298,7 @@ public class ApplicationInteractionServiceImplTest {
         Mockito.verify(signService).signApplicationByBoss(eq(applicationForLeave), eq(boss));
 
         Mockito.verify(commentService)
-            .create(eq(applicationForLeave), eq(ApplicationStatus.REJECTED), eq(comment), eq(boss));
+            .create(eq(applicationForLeave), eq(ApplicationCommentStatus.REJECTED), eq(comment), eq(boss));
     }
 
 
@@ -356,7 +357,7 @@ public class ApplicationInteractionServiceImplTest {
         Mockito.verify(applicationService).save(applicationForLeave);
 
         Mockito.verify(commentService)
-            .create(eq(applicationForLeave), eq(ApplicationStatus.REVOKED), eq(comment), eq(person));
+            .create(eq(applicationForLeave), eq(ApplicationCommentStatus.REVOKED), eq(comment), eq(person));
 
         Mockito.verifyZeroInteractions(mailService);
     }
@@ -399,7 +400,7 @@ public class ApplicationInteractionServiceImplTest {
         Mockito.verify(applicationService).save(applicationForLeave);
 
         Mockito.verify(commentService)
-            .create(eq(applicationForLeave), eq(ApplicationStatus.CANCELLED), eq(comment), eq(canceller));
+            .create(eq(applicationForLeave), eq(ApplicationCommentStatus.CANCELLED), eq(comment), eq(canceller));
 
         Mockito.verify(mailService)
             .sendCancelledNotification(eq(applicationForLeave), eq(false), any(ApplicationComment.class));
@@ -427,7 +428,7 @@ public class ApplicationInteractionServiceImplTest {
         Mockito.verify(applicationService).save(applicationForLeave);
 
         Mockito.verify(commentService)
-            .create(eq(applicationForLeave), eq(ApplicationStatus.REVOKED), eq(comment), eq(canceller));
+            .create(eq(applicationForLeave), eq(ApplicationCommentStatus.REVOKED), eq(comment), eq(canceller));
 
         Mockito.verify(mailService)
             .sendCancelledNotification(eq(applicationForLeave), eq(true), any(ApplicationComment.class));
@@ -475,7 +476,8 @@ public class ApplicationInteractionServiceImplTest {
 
         Mockito.verify(applicationService).save(applicationForLeave);
         Mockito.verify(commentService)
-            .create(eq(applicationForLeave), eq(ApplicationStatus.ALLOWED), eq(Optional.<String>empty()), eq(creator));
+            .create(eq(applicationForLeave), eq(ApplicationCommentStatus.CONVERTED), eq(Optional.<String>empty()),
+                eq(creator));
         Mockito.verify(signService).signApplicationByBoss(eq(applicationForLeave), eq(creator));
         Mockito.verify(mailService).sendSickNoteConvertedToVacationNotification(eq(applicationForLeave));
 

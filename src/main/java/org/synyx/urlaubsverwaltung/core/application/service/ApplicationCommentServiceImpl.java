@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.core.application.dao.ApplicationCommentDAO;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationComment;
-import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationCommentStatus;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.util.List;
@@ -38,7 +38,7 @@ class ApplicationCommentServiceImpl implements ApplicationCommentService {
     }
 
     @Override
-    public ApplicationComment create(Application application, ApplicationStatus status, Optional<String> text,
+    public ApplicationComment create(Application application, ApplicationCommentStatus status, Optional<String> text,
         Person author) {
 
         ApplicationComment comment = new ApplicationComment(author);

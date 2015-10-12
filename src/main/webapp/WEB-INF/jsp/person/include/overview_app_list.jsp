@@ -96,7 +96,7 @@
                 <span>
                     <c:choose>
                         <c:when test="${app.status == 'WAITING'}">
-                            <spring:message code="application.progress.WAITING" /> <uv:date date="${app.applicationDate}" />
+                            <spring:message code="application.progress.APPLIED" /> <uv:date date="${app.applicationDate}" />
                         </c:when>
                         <c:when test="${app.status == 'ALLOWED'}">
                             <spring:message code="application.progress.ALLOWED" /> <uv:date date="${app.editedDate}" />

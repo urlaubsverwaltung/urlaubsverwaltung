@@ -40,4 +40,14 @@
         <renameTable oldTableName="Comment" newTableName="ApplicationComment"/>
     </changeSet>
 
+    <changeSet author="murygina" id="update_application_comment_table">
+        <preConditions>
+            <tableExists tableName="ApplicationComment"/>
+        </preConditions>
+
+        <sql>
+            UPDATE ApplicationComment SET status = 'APPLIED' WHERE status = 'WAITING';
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>
