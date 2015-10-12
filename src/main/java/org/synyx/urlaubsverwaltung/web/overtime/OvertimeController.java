@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
 import org.springframework.validation.DataBinder;
+import org.springframework.validation.Errors;
 
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -20,7 +21,12 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.DateMidnightPropertyEditor;
+import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.PersonPropertyEditor;
+
+import java.math.BigDecimal;
+
+import java.util.Locale;
 
 
 /**
@@ -37,10 +43,14 @@ public class OvertimeController {
     @Autowired
     private SessionService sessionService;
 
+    @Autowired
+    private OvertimeValidator validator;
+
     @InitBinder
-    public void initBinder(DataBinder binder) {
+    public void initBinder(DataBinder binder, Locale locale) {
 
         binder.registerCustomEditor(DateMidnight.class, new DateMidnightPropertyEditor());
+        binder.registerCustomEditor(BigDecimal.class, new DecimalNumberPropertyEditor(locale));
         binder.registerCustomEditor(Person.class, new PersonPropertyEditor(personService));
     }
 
@@ -62,8 +72,16 @@ public class OvertimeController {
 
 
     @RequestMapping(value = "/overtime", method = RequestMethod.POST)
-    public String recordOvertime(@ModelAttribute("overtime") OvertimeForm overtimeForm,
+    public String recordOvertime(@ModelAttribute("overtime") OvertimeForm overtimeForm, Errors errors, Model model,
         RedirectAttributes redirectAttributes) {
+
+        validator.validate(overtimeForm, errors);
+
+        if (errors.hasErrors()) {
+            model.addAttribute("overtime", overtimeForm);
+
+            return "overtime/overtime_form";
+        }
 
         redirectAttributes.addFlashAttribute("overtimeRecord", "CREATED");
 

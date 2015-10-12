@@ -35,6 +35,7 @@
                             </label>
                             <div class="col-md-9">
                                 <form:input path="startDate" cssClass="form-control" cssErrorClass="form-control error"/>
+                                <span class="help-inline"><form:errors path="startDate" cssClass="error"/></span>
                             </div>
                         </div><%-- End of start date form group --%>
                         <div class="form-group is-required">
@@ -43,6 +44,7 @@
                             </label>
                             <div class="col-md-9">
                                 <form:input path="endDate" cssClass="form-control" cssErrorClass="form-control error"/>
+                                <span class="help-inline"><form:errors path="endDate" cssClass="error"/></span>
                             </div>
                         </div><%-- End of end date form group --%>
                         <div class="form-group is-required">
@@ -51,6 +53,7 @@
                             </label>
                             <div class="col-md-9">
                                 <form:input path="numberOfHours" cssClass="form-control" cssErrorClass="form-control error"/>
+                                <span class="help-inline"><form:errors path="numberOfHours" cssClass="error"/></span>
                             </div>
                         </div><%-- End of number of overtime form group --%>
                         <div class="form-group">
@@ -61,6 +64,7 @@
                                 <span id="char-counter"></span><spring:message code="action.comment.maxChars"/>
                                 <form:textarea path="comment" cssClass="form-control" rows="2"
                                           onkeydown="maxChars(this,200); count(this.value, 'char-counter');"/>
+                                <span class="help-inline"><form:errors path="comment" cssClass="error"/></span>
                             </div>
                         </div><%-- End of comment form group --%>
                     </div>
