@@ -12,7 +12,7 @@ import org.synyx.urlaubsverwaltung.core.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.core.settings.ExchangeCalendarSettings;
 import org.synyx.urlaubsverwaltung.core.settings.MailSettings;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
-import org.synyx.urlaubsverwaltung.web.validator.MailAddressValidationUtil;
+import org.synyx.urlaubsverwaltung.web.MailAddressValidationUtil;
 
 
 /**

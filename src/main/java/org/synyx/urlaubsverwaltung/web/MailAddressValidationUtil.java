@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.validator;
+package org.synyx.urlaubsverwaltung.web;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
