@@ -65,10 +65,8 @@ public class SickNote extends AbstractPersistable<Integer> {
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date lastEdited;
 
-    /**
-     * If a sick note has been converted to vacation or has been cancelled, the sick note is inactive.
-     */
-    private boolean active;
+    @Enumerated(EnumType.STRING)
+    private SickNoteStatus status;
 
     public Person getPerson() {
 
@@ -214,13 +212,19 @@ public class SickNote extends AbstractPersistable<Integer> {
 
     public boolean isActive() {
 
-        return active;
+        return SickNoteStatus.ACTIVE.equals(getStatus());
     }
 
 
-    public void setActive(boolean active) {
+    public SickNoteStatus getStatus() {
 
-        this.active = active;
+        return status;
+    }
+
+
+    public void setStatus(SickNoteStatus status) {
+
+        this.status = status;
     }
 
 

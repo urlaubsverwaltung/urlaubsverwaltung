@@ -1,13 +1,13 @@
-package org.synyx.urlaubsverwaltung.core.sicknote.comment;
+package org.synyx.urlaubsverwaltung.core.sicknote;
 
 /**
+ * Represents status of sick note.
+ *
  * @author  Aljona Murygina - murygina@synyx.de
  */
 public enum SickNoteStatus {
 
-    CREATED,
-    EDITED,
+    ACTIVE,
     CONVERTED_TO_VACATION,
-    CANCELLED,
-    COMMENTED
+    CANCELLED
 }

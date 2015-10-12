@@ -16,7 +16,7 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteCommentService;
-import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteStatus;
+import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteCommentStatus;
 import org.synyx.urlaubsverwaltung.core.sync.CalendarSyncService;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceMapping;
@@ -68,6 +68,7 @@ public class SickNoteInteractionServiceImplTest {
                 applicationInteractionService, calendarSyncService, absenceMappingService, settingsService);
 
         sickNote = new SickNote();
+        sickNote.setStatus(SickNoteStatus.ACTIVE);
         sickNote.setStartDate(DateMidnight.now());
         sickNote.setEndDate(DateMidnight.now());
         sickNote.setDayLength(DayLength.FULL);
@@ -82,12 +83,13 @@ public class SickNoteInteractionServiceImplTest {
         SickNote createdSickNote = sickNoteInteractionService.create(sickNote, person);
 
         Mockito.verify(sickNoteService).save(sickNote);
-        Mockito.verify(commentService).create(sickNote, SickNoteStatus.CREATED, Optional.<String>empty(), person);
+        Mockito.verify(commentService)
+            .create(sickNote, SickNoteCommentStatus.CREATED, Optional.<String>empty(), person);
 
         Assert.assertNotNull("Should not be null", createdSickNote);
 
         Assert.assertNotNull("Last edited date should be set", createdSickNote.getLastEdited());
-        Assert.assertTrue("Should be active", createdSickNote.isActive());
+        Assert.assertEquals("Wrong status", SickNoteStatus.ACTIVE, createdSickNote.getStatus());
     }
 
 
@@ -107,12 +109,12 @@ public class SickNoteInteractionServiceImplTest {
         SickNote updatedSickNote = sickNoteInteractionService.update(sickNote, person);
 
         Mockito.verify(sickNoteService).save(sickNote);
-        Mockito.verify(commentService).create(sickNote, SickNoteStatus.EDITED, Optional.<String>empty(), person);
+        Mockito.verify(commentService).create(sickNote, SickNoteCommentStatus.EDITED, Optional.<String>empty(), person);
 
         Assert.assertNotNull("Should not be null", updatedSickNote);
 
         Assert.assertNotNull("Last edited date should be set", updatedSickNote.getLastEdited());
-        Assert.assertTrue("Should be active", updatedSickNote.isActive());
+        Assert.assertEquals("Status should not be changed", sickNote.getStatus(), updatedSickNote.getStatus());
     }
 
 
@@ -132,12 +134,13 @@ public class SickNoteInteractionServiceImplTest {
         SickNote cancelledSickNote = sickNoteInteractionService.cancel(sickNote, person);
 
         Mockito.verify(sickNoteService).save(sickNote);
-        Mockito.verify(commentService).create(sickNote, SickNoteStatus.CANCELLED, Optional.<String>empty(), person);
+        Mockito.verify(commentService)
+            .create(sickNote, SickNoteCommentStatus.CANCELLED, Optional.<String>empty(), person);
 
         Assert.assertNotNull("Should not be null", cancelledSickNote);
 
         Assert.assertNotNull("Last edited date should be set", cancelledSickNote.getLastEdited());
-        Assert.assertFalse("Should be inactive", cancelledSickNote.isActive());
+        Assert.assertEquals("Wrong status", SickNoteStatus.CANCELLED, cancelledSickNote.getStatus());
     }
 
 
@@ -167,12 +170,12 @@ public class SickNoteInteractionServiceImplTest {
 
         Mockito.verify(sickNoteService).save(sickNote);
         Mockito.verify(commentService)
-            .create(sickNote, SickNoteStatus.CONVERTED_TO_VACATION, Optional.<String>empty(), person);
+            .create(sickNote, SickNoteCommentStatus.CONVERTED_TO_VACATION, Optional.<String>empty(), person);
 
         Assert.assertNotNull("Should not be null", convertedSickNote);
 
         Assert.assertNotNull("Last edited date should be set", convertedSickNote.getLastEdited());
-        Assert.assertFalse("Should be inactive", convertedSickNote.isActive());
+        Assert.assertEquals("Wrong status", SickNoteStatus.CONVERTED_TO_VACATION, convertedSickNote.getStatus());
 
         // assert application for leave correctly created
         Mockito.verify(applicationInteractionService).createFromConvertedSickNote(applicationForLeave, person);

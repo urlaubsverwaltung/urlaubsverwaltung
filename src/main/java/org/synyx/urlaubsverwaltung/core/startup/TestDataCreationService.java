@@ -24,6 +24,7 @@ import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.person.Role;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteInteractionService;
+import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
 import org.synyx.urlaubsverwaltung.core.util.CalcUtil;
 import org.synyx.urlaubsverwaltung.security.CryptoUtil;
@@ -318,7 +319,7 @@ public class TestDataCreationService {
             sickNote.setPerson(person);
             sickNote.setStartDate(startDate);
             sickNote.setEndDate(endDate);
-            sickNote.setActive(true);
+            sickNote.setStatus(SickNoteStatus.ACTIVE);
             sickNote.setType(type);
             sickNote.setDayLength(dayLength);
 

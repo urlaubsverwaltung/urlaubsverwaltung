@@ -1,10 +1,11 @@
 package org.synyx.urlaubsverwaltung.core.sicknote;
 
-import org.junit.Assert;
-
 import org.joda.time.DateMidnight;
 
+import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.function.Consumer;
 
 
 /**
@@ -49,5 +50,34 @@ public class SickNoteTest {
     public void ensureAUBIsNotPresentIfNoAUBPeriodIsSet() {
 
         Assert.assertFalse("AUB should not be present", new SickNote().isAubPresent());
+    }
+
+
+    @Test
+    public void ensureIsNotActiveForInactiveStatus() {
+
+        Consumer<SickNoteStatus> assertNotActive = (status) -> {
+            SickNote sickNote = new SickNote();
+            sickNote.setStatus(status);
+
+            Assert.assertFalse("Should be inactive for status " + status, sickNote.isActive());
+        };
+
+        assertNotActive.accept(SickNoteStatus.CANCELLED);
+        assertNotActive.accept(SickNoteStatus.CONVERTED_TO_VACATION);
+    }
+
+
+    @Test
+    public void ensureIsActiveForActiveStatus() {
+
+        Consumer<SickNoteStatus> assertActive = (status) -> {
+            SickNote sickNote = new SickNote();
+            sickNote.setStatus(status);
+
+            Assert.assertTrue("Should be active for status " + status, sickNote.isActive());
+        };
+
+        assertActive.accept(SickNoteStatus.ACTIVE);
     }
 }

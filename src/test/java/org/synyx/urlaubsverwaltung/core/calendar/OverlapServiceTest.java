@@ -17,6 +17,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteDAO;
+import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteStatus;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -198,7 +199,7 @@ public class OverlapServiceTest {
         inactiveSickNote.setDayLength(DayLength.FULL);
         inactiveSickNote.setStartDate(startDate);
         inactiveSickNote.setEndDate(endDate);
-        inactiveSickNote.setActive(false);
+        inactiveSickNote.setStatus(SickNoteStatus.CANCELLED);
 
         Mockito.when(sickNoteDAO.findByPersonAndPeriod(Mockito.any(Person.class), Mockito.any(Date.class),
                     Mockito.any(Date.class)))
@@ -245,7 +246,7 @@ public class OverlapServiceTest {
         sickNote.setDayLength(DayLength.FULL);
         sickNote.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 16));
         sickNote.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 19));
-        sickNote.setActive(true);
+        sickNote.setStatus(SickNoteStatus.ACTIVE);
 
         Mockito.when(sickNoteDAO.findByPersonAndPeriod(Mockito.any(Person.class), Mockito.any(Date.class),
                     Mockito.any(Date.class)))
@@ -272,7 +273,7 @@ public class OverlapServiceTest {
         sickNote.setDayLength(DayLength.FULL);
         sickNote.setStartDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 16));
         sickNote.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 18));
-        sickNote.setActive(true);
+        sickNote.setStatus(SickNoteStatus.ACTIVE);
 
         Mockito.when(sickNoteDAO.findByPersonAndPeriod(Mockito.any(Person.class), Mockito.any(Date.class),
                     Mockito.any(Date.class)))
@@ -300,7 +301,7 @@ public class OverlapServiceTest {
         existentSickNote.setDayLength(DayLength.FULL);
         existentSickNote.setStartDate(new DateMidnight(2015, DateTimeConstants.MARCH, 16));
         existentSickNote.setEndDate(new DateMidnight(2015, DateTimeConstants.MARCH, 16));
-        existentSickNote.setActive(true);
+        existentSickNote.setStatus(SickNoteStatus.ACTIVE);
 
         Mockito.when(sickNoteDAO.findByPersonAndPeriod(Mockito.any(Person.class), Mockito.any(Date.class),
                     Mockito.any(Date.class)))
@@ -312,7 +313,7 @@ public class OverlapServiceTest {
         sickNote.setDayLength(DayLength.FULL);
         sickNote.setStartDate(new DateMidnight(2015, DateTimeConstants.MARCH, 16));
         sickNote.setEndDate(new DateMidnight(2015, DateTimeConstants.MARCH, 17));
-        sickNote.setActive(true);
+        sickNote.setStatus(SickNoteStatus.ACTIVE);
 
         // edit sick note to: 16.03. - 17.03.
         OverlapCase overlapCase = service.checkOverlap(sickNote);
@@ -422,7 +423,7 @@ public class OverlapServiceTest {
         sickNote.setDayLength(DayLength.FULL);
         sickNote.setStartDate(vacationDate);
         sickNote.setEndDate(vacationDate);
-        sickNote.setActive(true);
+        sickNote.setStatus(SickNoteStatus.ACTIVE);
 
         OverlapCase overlapCase = service.checkOverlap(sickNote);
 

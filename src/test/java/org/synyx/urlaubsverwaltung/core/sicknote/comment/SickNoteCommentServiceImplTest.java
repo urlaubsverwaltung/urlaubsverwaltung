@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.core.sicknote.comment;
 
 import org.junit.Assert;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -39,7 +38,7 @@ public class SickNoteCommentServiceImplTest {
         Person author = new Person();
         SickNote sickNote = new SickNote();
 
-        SickNoteComment comment = sickNoteCommentService.create(sickNote, SickNoteStatus.EDITED,
+        SickNoteComment comment = sickNoteCommentService.create(sickNote, SickNoteCommentStatus.EDITED,
                 Optional.<String>empty(), author);
 
         Assert.assertNotNull("Should not be null", comment);
@@ -50,7 +49,7 @@ public class SickNoteCommentServiceImplTest {
         Assert.assertNotNull("Author should be set", comment.getPerson());
 
         Assert.assertEquals("Wrong sick note", sickNote, comment.getSickNote());
-        Assert.assertEquals("Wrong status", SickNoteStatus.EDITED, comment.getStatus());
+        Assert.assertEquals("Wrong status", SickNoteCommentStatus.EDITED, comment.getStatus());
         Assert.assertEquals("Wrong author", author, comment.getPerson());
 
         Assert.assertNull("Text should not be set", comment.getText());
@@ -65,7 +64,7 @@ public class SickNoteCommentServiceImplTest {
         Person author = new Person();
         SickNote sickNote = new SickNote();
 
-        SickNoteComment comment = sickNoteCommentService.create(sickNote, SickNoteStatus.CONVERTED_TO_VACATION,
+        SickNoteComment comment = sickNoteCommentService.create(sickNote, SickNoteCommentStatus.CONVERTED_TO_VACATION,
                 Optional.of("Foo"), author);
 
         Assert.assertNotNull("Should not be null", comment);
@@ -77,7 +76,7 @@ public class SickNoteCommentServiceImplTest {
         Assert.assertNotNull("Text should be set", comment.getText());
 
         Assert.assertEquals("Wrong sick note", sickNote, comment.getSickNote());
-        Assert.assertEquals("Wrong status", SickNoteStatus.CONVERTED_TO_VACATION, comment.getStatus());
+        Assert.assertEquals("Wrong status", SickNoteCommentStatus.CONVERTED_TO_VACATION, comment.getStatus());
         Assert.assertEquals("Wrong author", author, comment.getPerson());
         Assert.assertEquals("Wrong text", "Foo", comment.getText());
 

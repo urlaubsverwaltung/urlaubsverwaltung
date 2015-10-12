@@ -1,0 +1,35 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="murygina" id="add_status_to_sick_note">
+
+        <preConditions>
+            <tableExists tableName="SickNote"/>
+        </preConditions>
+
+        <addColumn tableName="SickNote">
+            <column name="status" type="VARCHAR(30)"/>
+        </addColumn>
+
+        <sql>
+            UPDATE SickNote sickNote SET sickNote.status = (
+            SELECT comment.status FROM SickNoteComment comment
+            WHERE comment.sickNote_id = sickNote.id
+            ORDER BY comment.id DESC LIMIT 1
+            );
+        </sql>
+
+    </changeSet>
+
+    <changeSet author="murygina" id="remove_active_column_of_sick_note">
+        <preConditions>
+            <tableExists tableName="SickNote"/>
+            <columnExists tableName="SickNote" columnName="active"/>
+        </preConditions>
+
+        <dropColumn tableName="SickNote" columnName="active"/>
+    </changeSet>
+
+</databaseChangeLog>

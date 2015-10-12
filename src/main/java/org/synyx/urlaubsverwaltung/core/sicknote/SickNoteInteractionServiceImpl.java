@@ -14,7 +14,7 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteCommentService;
-import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteStatus;
+import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteCommentStatus;
 import org.synyx.urlaubsverwaltung.core.sync.CalendarSyncService;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceMapping;
@@ -60,11 +60,11 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
     @Override
     public SickNote create(SickNote sickNote, Person creator) {
 
-        sickNote.setActive(ACTIVE);
+        sickNote.setStatus(SickNoteStatus.ACTIVE);
         sickNote.setLastEdited(DateMidnight.now());
 
         sickNoteService.save(sickNote);
-        commentService.create(sickNote, SickNoteStatus.CREATED, Optional.<String>empty(), creator);
+        commentService.create(sickNote, SickNoteCommentStatus.CREATED, Optional.<String>empty(), creator);
 
         CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
         AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
@@ -82,11 +82,10 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
     @Override
     public SickNote update(SickNote sickNote, Person editor) {
 
-        sickNote.setActive(ACTIVE);
         sickNote.setLastEdited(DateMidnight.now());
 
         sickNoteService.save(sickNote);
-        commentService.create(sickNote, SickNoteStatus.EDITED, Optional.<String>empty(), editor);
+        commentService.create(sickNote, SickNoteCommentStatus.EDITED, Optional.<String>empty(), editor);
 
         Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(sickNote.getId(),
                 AbsenceType.SICKNOTE);
@@ -105,11 +104,12 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
     public SickNote convert(SickNote sickNote, Application application, Person converter) {
 
         // make sick note inactive
-        sickNote.setActive(INACTIVE);
+        sickNote.setStatus(SickNoteStatus.CONVERTED_TO_VACATION);
         sickNote.setLastEdited(DateMidnight.now());
 
         sickNoteService.save(sickNote);
-        commentService.create(sickNote, SickNoteStatus.CONVERTED_TO_VACATION, Optional.<String>empty(), converter);
+        commentService.create(sickNote, SickNoteCommentStatus.CONVERTED_TO_VACATION, Optional.<String>empty(),
+            converter);
 
         applicationInteractionService.createFromConvertedSickNote(application, converter);
 
@@ -133,11 +133,11 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
     @Override
     public SickNote cancel(SickNote sickNote, Person canceller) {
 
-        sickNote.setActive(INACTIVE);
+        sickNote.setStatus(SickNoteStatus.CANCELLED);
         sickNote.setLastEdited(DateMidnight.now());
 
         sickNoteService.save(sickNote);
-        commentService.create(sickNote, SickNoteStatus.CANCELLED, Optional.<String>empty(), canceller);
+        commentService.create(sickNote, SickNoteCommentStatus.CANCELLED, Optional.<String>empty(), canceller);
 
         Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(sickNote.getId(),
                 AbsenceType.SICKNOTE);

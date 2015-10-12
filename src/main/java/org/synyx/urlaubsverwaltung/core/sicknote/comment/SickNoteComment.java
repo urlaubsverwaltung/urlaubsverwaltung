@@ -37,7 +37,7 @@ public class SickNoteComment extends AbstractPersistable<Integer> {
     private String text;
 
     @Enumerated(EnumType.STRING)
-    private SickNoteStatus status;
+    private SickNoteCommentStatus status;
 
     public SickNote getSickNote() {
 
@@ -83,13 +83,13 @@ public class SickNoteComment extends AbstractPersistable<Integer> {
     }
 
 
-    public SickNoteStatus getStatus() {
+    public SickNoteCommentStatus getStatus() {
 
         return status;
     }
 
 
-    public void setStatus(SickNoteStatus status) {
+    public void setStatus(SickNoteCommentStatus status) {
 
         this.status = status;
     }

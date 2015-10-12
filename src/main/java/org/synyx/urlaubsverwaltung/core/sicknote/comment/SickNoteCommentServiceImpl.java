@@ -30,7 +30,8 @@ public class SickNoteCommentServiceImpl implements SickNoteCommentService {
     }
 
     @Override
-    public SickNoteComment create(SickNote sickNote, SickNoteStatus status, Optional<String> text, Person author) {
+    public SickNoteComment create(SickNote sickNote, SickNoteCommentStatus status, Optional<String> text,
+        Person author) {
 
         SickNoteComment comment = new SickNoteComment();
 
