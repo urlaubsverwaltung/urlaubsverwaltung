@@ -42,12 +42,10 @@
 
             <div class="col-xs-12">
 
-                <div class="header">
-                    <legend class="is-sticky">
-                        <spring:message code="applications.statistics"/>
-                        <uv:print/>
-                    </legend>
-                </div>
+                <legend class="is-sticky">
+                    <spring:message code="applications.statistics"/>
+                    <uv:print/>
+                </legend>
 
                 <p class="is-inline-block">
                     <c:choose>

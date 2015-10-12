@@ -6,11 +6,9 @@
 
 <c:if test="${not empty comments}">
 
-<div class="header">
-  <legend>
+<legend>
     <spring:message code="application.progress.title" />
-  </legend>
-</div>
+</legend>
 
 <table class="list-table striped-table bordered-table">
     <tbody>

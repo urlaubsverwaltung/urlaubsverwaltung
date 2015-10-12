@@ -41,8 +41,6 @@
 
             <div class="col-xs-12">
 
-            <div class="header">
-
                 <legend class="is-sticky">
                     <spring:message code="sicknotes.title" />
                     <uv:print />
@@ -56,11 +54,8 @@
                     </a>
                 </legend>
 
-            </div>
+                <uv:filter-modal id="filterModal" actionUrl="${URL_PREFIX}/sicknote/filter" />
 
-            <uv:filter-modal id="filterModal" actionUrl="${URL_PREFIX}/sicknote/filter" />
-
-            <div>
                 <p class="is-inline-block">
                     <a href="#filterModal" data-toggle="modal">
                         <spring:message code="filter.period"/>:&nbsp;<uv:date date="${from}"/> - <uv:date date="${to}"/>
@@ -69,7 +64,7 @@
                 <p class="pull-right visible-print">
                     <spring:message code="filter.validity"/> <uv:date date="${today}" />
                 </p>
-            </div>
+
                 <table class="list-table selectable-table sortable tablesorter" cellspacing="0">
                     <thead class="hidden-xs hidden-sm">
                     <tr>

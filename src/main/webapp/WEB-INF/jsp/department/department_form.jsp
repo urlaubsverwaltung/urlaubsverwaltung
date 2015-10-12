@@ -40,7 +40,7 @@
 <div class="row">
 
     <div class="form-section">
-        <div class="col-xs-12 header">
+        <div class="col-xs-12">
             <legend><spring:message code="department.data"/></legend>
         </div>
 
@@ -80,7 +80,7 @@
     </div>
 
     <div class="form-section">
-        <div class="col-xs-12 header">
+        <div class="col-xs-12">
             <legend><spring:message code="department.members"/></legend>
         </div>
 

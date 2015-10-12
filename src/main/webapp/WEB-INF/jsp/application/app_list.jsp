@@ -29,27 +29,23 @@
 
                     <div class="col-xs-12">
 
-                        <div class="header">
-  
-                          <legend>
-  
-                            <spring:message code="applications.waiting"/>
+                        <legend>
 
-                            <a href="${URL_PREFIX}/application/statistics" class="fa-action pull-right"
-                                data-title="<spring:message code="action.applications.statistics"/>">
-                              <i class="fa fa-fw fa-bar-chart"></i>
-                            </a>
+                          <spring:message code="applications.waiting"/>
 
-                            <sec:authorize access="hasRole('OFFICE')">
-                            <a href="${URL_PREFIX}/application/new?appliesOnOnesBehalf=true" class="fa-action pull-right"
-                                data-title="<spring:message code="action.apply.vacation"/>">
-                              <i class="fa fa-fw fa-plus-circle"></i>
-                            </a>
-                            </sec:authorize>
-  
-                          </legend>
-  
-                        </div>
+                          <a href="${URL_PREFIX}/application/statistics" class="fa-action pull-right"
+                              data-title="<spring:message code="action.applications.statistics"/>">
+                            <i class="fa fa-fw fa-bar-chart"></i>
+                          </a>
+
+                          <sec:authorize access="hasRole('OFFICE')">
+                          <a href="${URL_PREFIX}/application/new?appliesOnOnesBehalf=true" class="fa-action pull-right"
+                              data-title="<spring:message code="action.apply.vacation"/>">
+                            <i class="fa fa-fw fa-plus-circle"></i>
+                          </a>
+                          </sec:authorize>
+
+                        </legend>
 
                         <div class="feedback">
                             <c:choose>

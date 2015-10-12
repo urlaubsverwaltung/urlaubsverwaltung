@@ -26,9 +26,7 @@
         <div class="row">
 
             <div class="col-xs-12 col-sm-12 col-md-6">
-                <div class="header">
-                    <legend><spring:message code="person.form.data.title"/></legend>
-                </div>
+                <legend><spring:message code="person.form.data.title"/></legend>
                 <div class="box">
                     <img class="box-image img-circle hidden-print" src="<c:out value='${gravatarUrl}?d=mm&s=60'/>"/>
                     <span class="box-text">
@@ -126,7 +124,6 @@
             </div>
 
             <div class="col-xs-12 col-sm-12 col-md-6">
-                <div class="header">
                     <legend>
                         <spring:message code="person.account.vacation.title"/>
                         <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/staff/${person.id}?year="/>
@@ -182,7 +179,6 @@
                             </c:choose>
                         </span>
                     </div>
-                </div>
             </div>
 
         </div>

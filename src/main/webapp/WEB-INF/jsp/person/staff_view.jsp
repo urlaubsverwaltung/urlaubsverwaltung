@@ -28,53 +28,49 @@
 
                     <div class="col-xs-12">
 
-                    <div class="header">
+                    <legend>
 
-                        <legend>
+                        <div class="legend-dropdown dropdown">
+                            <a id="active-state" data-target="#" href="#" data-toggle="dropdown"
+                               aria-haspopup="true" role="button" aria-expanded="false">
+                                <c:choose>
+                                    <c:when test="${param.active}">
+                                        <spring:message code="persons.active" /><span class="caret"></span>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <spring:message code="persons.inactive" /><span class="caret"></span>
+                                    </c:otherwise>
+                                </c:choose>
+                            </a>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="active-state">
+                                <li>
+                                    <a href="${URL_PREFIX}/staff?active=true&year=${year}">
+                                        <i class="fa fa-toggle-on"></i>
+                                        <spring:message code="persons.active" />
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="${URL_PREFIX}/staff?active=false&year=${year}">
+                                        <i class="fa fa-toggle-off"></i>
+                                        <spring:message code="persons.inactive" />
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
 
-                            <div class="legend-dropdown dropdown">
-                                <a id="active-state" data-target="#" href="#" data-toggle="dropdown"
-                                   aria-haspopup="true" role="button" aria-expanded="false">
-                                    <c:choose>
-                                        <c:when test="${param.active}">
-                                            <spring:message code="persons.active" /><span class="caret"></span>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <spring:message code="persons.inactive" /><span class="caret"></span>
-                                        </c:otherwise>
-                                    </c:choose>
-                                </a>
-                                <ul class="dropdown-menu" role="menu" aria-labelledby="active-state">
-                                    <li>
-                                        <a href="${URL_PREFIX}/staff?active=true&year=${year}">
-                                            <i class="fa fa-toggle-on"></i>
-                                            <spring:message code="persons.active" />
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="${URL_PREFIX}/staff?active=false&year=${year}">
-                                            <i class="fa fa-toggle-off"></i>
-                                            <spring:message code="persons.inactive" />
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
+                        <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/staff?active=${param.active}&year=" />
 
-                            <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/staff?active=${param.active}&year=" />
+                        <uv:print />
 
-                            <uv:print />
+                        <sec:authorize access="hasRole('OFFICE')">
+                            <a href="${URL_PREFIX}/staff/new" class="fa-action pull-right"
+                               data-title="<spring:message code="action.staff.create"/>">
+                                <i class="fa fa-fw fa-user-plus"></i>
+                            </a>
+                        </sec:authorize>
 
-                            <sec:authorize access="hasRole('OFFICE')">
-                                <a href="${URL_PREFIX}/staff/new" class="fa-action pull-right"
-                                   data-title="<spring:message code="action.staff.create"/>">
-                                    <i class="fa fa-fw fa-user-plus"></i>
-                                </a>
-                            </sec:authorize>
-                            
-                        </legend>
+                    </legend>
 
-                    </div>
-                    
                     <c:choose>
 
                         <c:when test="${empty persons}">

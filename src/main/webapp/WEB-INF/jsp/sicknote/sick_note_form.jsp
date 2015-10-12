@@ -83,7 +83,7 @@
         <form:form method="${METHOD}" action="${ACTION}" modelAttribute="sickNote" class="form-horizontal">
         <div class="form-section">
 
-            <div class="col-xs-12 header">
+            <div class="col-xs-12">
                 <legend>
                     <c:choose>
                         <c:when test="${sickNote.id == null}">
@@ -207,7 +207,7 @@
         </div>
 
         <div class="form-section">
-            <div class="col-xs-12 header">
+            <div class="col-xs-12">
                 <legend>
                     <spring:message code="sicknote.data.aub.short"/>
                 </legend>

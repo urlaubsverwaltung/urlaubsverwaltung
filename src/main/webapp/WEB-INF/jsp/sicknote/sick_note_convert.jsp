@@ -27,11 +27,9 @@
         <div class="row">
 
             <div class="col-xs-12 col-sm-12 col-md-6">
-                <div class="header">
                     <legend>
                         <spring:message code="sicknote.convert.title" />
                     </legend>
-                </div>
     
                     <div class="form-group">
                         <form:hidden path="person" value="${sickNoteConvertForm.person.id}" />
@@ -93,11 +91,9 @@
 
             <div class="col-xs-12 col-sm-12 col-md-6">
 
-                <div class="header">
-                    <legend>
-                        <spring:message code="sicknote.title" />
-                    </legend>
-                </div>
+                <legend>
+                    <spring:message code="sicknote.title" />
+                </legend>
 
                 <div class="box">
                     <span class="box-icon bg-red">

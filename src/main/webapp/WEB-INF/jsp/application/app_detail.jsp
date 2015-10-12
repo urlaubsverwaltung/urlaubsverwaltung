@@ -31,14 +31,10 @@
 
                 <div class="col-xs-12 col-sm-12 col-md-6">
 
-                    <div class="header">
-
-                        <legend>
-                            <spring:message code="application.data.title" />
-                            <jsp:include page="./include/app-detail-elements/action-buttons.jsp" />
-                        </legend>
-
-                    </div>
+                    <legend>
+                        <spring:message code="application.data.title" />
+                        <jsp:include page="./include/app-detail-elements/action-buttons.jsp" />
+                    </legend>
 
                     <div class="feedback">
                         <c:choose>
@@ -100,12 +96,10 @@
 
                 <div class="col-xs-12 col-sm-12 col-md-6 hidden-print">
 
-                    <div class="header">
-                      <legend>
+                    <legend>
                         <spring:message code="person.account.vacation.title"/>
                         <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/application/${application.id}?year="/>
-                      </legend>
-                    </div>
+                    </legend>
 
                     <div class="box">
                         <img class="box-image img-circle" src="<c:out value='${gravatarUrl}?d=mm&s=60'/>"/>
@@ -168,11 +162,9 @@
                 </div>
 
                 <div class="col-xs-12 col-sm-12 col-md-6 hidden-print">
-                    <div class="header">
-                        <legend>
-                            <spring:message code="application.department.title" />
-                        </legend>
-                    </div>
+                    <legend>
+                        <spring:message code="application.department.title" />
+                    </legend>
                     <table class="list-table striped-table bordered-table">
                         <tbody>
                         <c:choose>

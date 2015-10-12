@@ -36,7 +36,7 @@
             </div>
             
             <div class="form-section">
-                <div class="col-xs-12 header">
+                <div class="col-xs-12">
                     <legend><spring:message code="settings.vacation.title" /></legend>
                 </div>
                 <div class="col-md-4 col-md-push-8">
@@ -68,7 +68,7 @@
             </div>
 
             <div class="form-section">
-                <div class="col-xs-12 header">
+                <div class="col-xs-12">
                     <legend><spring:message code="settings.sickDays.title" /></legend>
                 </div>
                 <div class="col-md-4 col-md-push-8">
@@ -100,7 +100,7 @@
             </div>
             
             <div class="form-section">
-                <div class="col-xs-12 header">
+                <div class="col-xs-12">
                     <legend><spring:message code="settings.publicHolidays.title" /></legend>
                 </div>
                 <div class="col-md-4 col-md-push-8">
@@ -153,7 +153,7 @@
             </div>
 
             <div class="form-section">
-                <div class="col-xs-12 header">
+                <div class="col-xs-12">
                     <legend><spring:message code="settings.mail.title" /></legend>
                 </div>
                 <div class="col-md-4 col-md-push-8">
@@ -236,7 +236,7 @@
             </div>
 
             <div class="form-section">
-                <div class="col-xs-12 header">
+                <div class="col-xs-12">
                     <legend><spring:message code="settings.calendar.title" /></legend>
                 </div>
                 <div class="col-md-4 col-md-push-8">
@@ -268,7 +268,7 @@
             </div>
 
             <div class="form-section">
-                <div class="col-xs-12 header">
+                <div class="col-xs-12">
                     <legend><spring:message code="settings.calendar.ews.title" /></legend>
                 </div>
                 <div class="col-md-4 col-md-push-8">

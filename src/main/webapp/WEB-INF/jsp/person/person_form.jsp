@@ -43,7 +43,7 @@
 
 <div class="form-section">
 
-    <div class="header col-xs-12">
+    <div class="col-xs-12">
         <legend><spring:message code="person.form.data.title"/></legend>
     </div>
 
@@ -113,7 +113,7 @@
 
 <div class="form-section">
 
-    <div class="header col-xs-12">
+    <div class="col-xs-12">
         <legend><spring:message code="person.form.permissions.title"/></legend>
     </div>
 
@@ -224,7 +224,7 @@
 
 <div class="form-section">
 
-    <div class="header col-xs-12">
+    <div class="col-xs-12">
         <legend><spring:message code="person.form.workingTime.title"/></legend>
     </div>
 
@@ -318,7 +318,7 @@
 
 <div class="form-section">
 
-    <div class="header col-xs-12">
+    <div class="col-xs-12">
         <legend>
             <spring:message code="person.form.annualVacation.title"/>
             <c:choose>

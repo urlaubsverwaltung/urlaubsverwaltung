@@ -26,17 +26,11 @@
         <div class="row">
 
             <div class="col-xs-12">
-
-            <div class="header">
-
                 <legend>
                     <spring:message code="sicknotes.statistics.title" />
                     <uv:year-selector year="${statistics.year}" hrefPrefix="${URL_PREFIX}/sicknote/statistics?year=" />
                     <uv:print />
                 </legend>
-
-            </div>
-
             </div>
 
         </div>

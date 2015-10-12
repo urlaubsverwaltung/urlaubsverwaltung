@@ -222,30 +222,25 @@
 
         <div class="row">
             <div class="col-xs-12">
-
-                <div class="header">
-
-                    <legend id="vacation">
-                        <spring:message code="applications.title" />
-                        <c:choose>
-                            <c:when test="${person.id == signedInUser.id}">
-                                <a class="fa-action pull-right" href="${URL_PREFIX}/application/new" data-title="<spring:message code="action.apply.vacation"/>">
+                <legend id="vacation">
+                    <spring:message code="applications.title" />
+                    <c:choose>
+                        <c:when test="${person.id == signedInUser.id}">
+                            <a class="fa-action pull-right" href="${URL_PREFIX}/application/new" data-title="<spring:message code="action.apply.vacation"/>">
+                                <i class="fa fa-plus-circle"></i>
+                            </a>
+                        </c:when>
+                        <c:otherwise>
+                            <sec:authorize access="hasRole('OFFICE')">
+                                <a class="fa-action pull-right" href="${URL_PREFIX}/application/new?personId=${person.id}&appliesOnOnesBehalf=true"
+                                    data-title="<spring:message code="action.apply.vacation"/>">
                                     <i class="fa fa-plus-circle"></i>
                                 </a>
-                            </c:when>
-                            <c:otherwise>
-                                <sec:authorize access="hasRole('OFFICE')">
-                                    <a class="fa-action pull-right" href="${URL_PREFIX}/application/new?personId=${person.id}&appliesOnOnesBehalf=true"
-                                        data-title="<spring:message code="action.apply.vacation"/>">
-                                        <i class="fa fa-plus-circle"></i>
-                                    </a>
-                                </sec:authorize>
-                            </c:otherwise>
-                        </c:choose>
+                            </sec:authorize>
+                        </c:otherwise>
+                    </c:choose>
 
-                    </legend>
-
-                </div>
+                </legend>
             </div>
         </div>
 
@@ -294,17 +289,15 @@
 
             <div class="row">
                 <div class="col-xs-12">
-                    <div class="header">
-                        <legend id="anchorSickNotes">
-                            <spring:message code="sicknotes.title" />
-                            <c:if test="${IS_OFFICE}">
-                                <a class="fa-action pull-right" href="${URL_PREFIX}/sicknote/new?person=${person.id}"
-                                   data-title="<spring:message code="action.apply.sicknote" />">
-                                    <i class="fa fa-plus-circle"></i>
-                                </a>
-                            </c:if>
-                        </legend>
-                    </div>
+                    <legend id="anchorSickNotes">
+                        <spring:message code="sicknotes.title" />
+                        <c:if test="${IS_OFFICE}">
+                            <a class="fa-action pull-right" href="${URL_PREFIX}/sicknote/new?person=${person.id}"
+                               data-title="<spring:message code="action.apply.sicknote" />">
+                                <i class="fa fa-plus-circle"></i>
+                            </a>
+                        </c:if>
+                    </legend>
                 </div>
             </div>
             

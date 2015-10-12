@@ -103,7 +103,7 @@
 <div class="row">
 
     <div class="form-section">
-        <div class="col-xs-12 header">
+        <div class="col-xs-12">
             <legend><spring:message code="application.data.title" /></legend>
         </div>
 
@@ -266,7 +266,7 @@
     </div>
 
     <div class="form-section">
-        <div class="col-xs-12 header">
+        <div class="col-xs-12">
             <legend><spring:message code="application.data.furtherInformation.title" /></legend>
         </div>
         <div class="col-md-4 col-md-push-8">

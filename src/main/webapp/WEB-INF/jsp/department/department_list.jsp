@@ -29,18 +29,16 @@
 
                     <div class="col-xs-12">
 
-                    <div class="header">
-                        <legend>
-                            <spring:message code="departments.title" />
-                            <uv:print />
-                            <sec:authorize access="hasRole('OFFICE')">
-                                <a href="${URL_PREFIX}/department/new" class="fa-action pull-right"
-                                data-title="<spring:message code="action.department.create"/>">
-                                    <i class="fa fa-fw fa-plus-circle"></i>
-                                </a>
-                            </sec:authorize>
-                        </legend>
-                    </div>
+                    <legend>
+                        <spring:message code="departments.title" />
+                        <uv:print />
+                        <sec:authorize access="hasRole('OFFICE')">
+                            <a href="${URL_PREFIX}/department/new" class="fa-action pull-right"
+                            data-title="<spring:message code="action.department.create"/>">
+                                <i class="fa fa-fw fa-plus-circle"></i>
+                            </a>
+                        </sec:authorize>
+                    </legend>
 
                     <div class="feedback">
                         <c:choose>

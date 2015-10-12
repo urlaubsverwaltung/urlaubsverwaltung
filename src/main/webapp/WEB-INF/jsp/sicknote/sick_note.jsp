@@ -28,28 +28,26 @@
 
             <div class="col-xs-12 col-sm-12 col-md-6">
 
-                <div class="header">
-                    <legend>
-                        <spring:message code="sicknote.title" />
-                        <sec:authorize access="hasRole('OFFICE')">
-                          <c:if test="${sickNote.active}">
-                            <uv:print/>
-                            <a href="#modal-cancel" role="button" data-toggle="modal" class="fa-action pull-right"
-                               data-title="<spring:message code="action.delete"/>">
-                              <i class="fa fa-trash"></i>
-                            </a>
-                            <a href="${URL_PREFIX}/sicknote/${sickNote.id}/convert" class="fa-action pull-right"
-                               data-title="<spring:message code="action.convert"/>">
-                              <i class="fa fa-retweet"></i>
-                            </a>
-                            <a href="${URL_PREFIX}/sicknote/${sickNote.id}/edit" class="fa-action pull-right"
-                               data-title="<spring:message code="action.edit"/>">
-                              <i class="fa fa-pencil"></i>
-                            </a>
-                          </c:if>
-                        </sec:authorize>
-                    </legend>
-                </div>
+                <legend>
+                    <spring:message code="sicknote.title" />
+                    <sec:authorize access="hasRole('OFFICE')">
+                      <c:if test="${sickNote.active}">
+                        <uv:print/>
+                        <a href="#modal-cancel" role="button" data-toggle="modal" class="fa-action pull-right"
+                           data-title="<spring:message code="action.delete"/>">
+                          <i class="fa fa-trash"></i>
+                        </a>
+                        <a href="${URL_PREFIX}/sicknote/${sickNote.id}/convert" class="fa-action pull-right"
+                           data-title="<spring:message code="action.convert"/>">
+                          <i class="fa fa-retweet"></i>
+                        </a>
+                        <a href="${URL_PREFIX}/sicknote/${sickNote.id}/edit" class="fa-action pull-right"
+                           data-title="<spring:message code="action.edit"/>">
+                          <i class="fa fa-pencil"></i>
+                        </a>
+                      </c:if>
+                    </sec:authorize>
+                </legend>
 
                 <form:form method="POST" action="${URL_PREFIX}/sicknote/${sickNote.id}/cancel">
                 <div id="modal-cancel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -152,19 +150,17 @@
             </div><%-- End of first column --%>
 
             <div class="col-xs-12 col-sm-12 col-md-6">
-
-                <div class="header">
-                    <legend>
-                        <spring:message code="sicknote.progress.title" />
-                        <sec:authorize access="hasRole('OFFICE')">
-                          <a href="#" class="fa-action pull-right" onclick="$('div#comment-form').show();"
-                             data-title="<spring:message code="action.comment.new" />">
-                            <i class="fa fa-comments"></i>
-                          </a>
-                        </sec:authorize>
-                    </legend>
-                </div>
                 
+                <legend>
+                    <spring:message code="sicknote.progress.title" />
+                    <sec:authorize access="hasRole('OFFICE')">
+                      <a href="#" class="fa-action pull-right" onclick="$('div#comment-form').show();"
+                         data-title="<spring:message code="action.comment.new" />">
+                        <i class="fa fa-comments"></i>
+                      </a>
+                    </sec:authorize>
+                </legend>
+
                 <table class="list-table striped-table bordered-table">
                     <tbody>
                         <c:forEach items="${comments}" var="comment" varStatus="loopStatus">
@@ -224,11 +220,9 @@
                 
                 </sec:authorize>
 
-                <div class="header hidden-print">
-                    <legend>
-                        <spring:message code="sicknote.data.staff" />
-                    </legend>
-                </div>
+                <legend class="hidden-print">
+                    <spring:message code="sicknote.data.staff" />
+                </legend>
 
                 <div class="box hidden-print">
                     <img class="box-image img-circle" src="<c:out value='${gravatar}?d=mm&s=60'/>"/>
