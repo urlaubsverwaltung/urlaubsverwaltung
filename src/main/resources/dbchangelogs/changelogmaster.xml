@@ -31,6 +31,6 @@
     <include file="dbchangelogs/changelog-2.9.4-add-column-dayLength-to-sick-note.xml"/>
     <include file="dbchangelogs/changelog-2.10.0-add-password-column.xml"/>
     <include file="dbchangelogs/changelog-2.11.0-add-overtime-table.xml"/>
-    <include file="dbchangelogs/changelog-2.11.1-clean-up-comment-tables.xml"/>
+    <include file="dbchangelogs/changelog-2.11.0-clean-up-comment-tables.xml"/>
 
 </databaseChangeLog>
