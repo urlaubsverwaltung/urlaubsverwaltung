@@ -8,6 +8,7 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
@@ -26,6 +27,7 @@ public abstract class AbstractComment extends AbstractPersistable<Integer> {
     private Person person;
 
     // When has the comment be written?
+    @Column(nullable = false)
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date date;
 
@@ -51,7 +53,11 @@ public abstract class AbstractComment extends AbstractPersistable<Integer> {
 
     public DateMidnight getDate() {
 
-        return date == null ? null : new DateMidnight(date.getTime());
+        if (date == null) {
+            throw new IllegalStateException("Date of comment can never be null!");
+        }
+
+        return new DateMidnight(date.getTime());
     }
 
 

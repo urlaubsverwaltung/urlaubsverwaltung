@@ -68,4 +68,14 @@
         </sql>
     </changeSet>
 
+    <changeSet author="murygina" id="add_nullable_constraints_to_comment_tables">
+        <preConditions>
+            <tableExists tableName="ApplicationComment"/>
+            <tableExists tableName="SickNoteComment"/>
+        </preConditions>
+
+        <addNotNullConstraint tableName="ApplicationComment" columnName="date" columnDataType="date"/>
+        <addNotNullConstraint tableName="SickNoteComment" columnName="date" columnDataType="date"/>
+    </changeSet>
+
 </databaseChangeLog>
