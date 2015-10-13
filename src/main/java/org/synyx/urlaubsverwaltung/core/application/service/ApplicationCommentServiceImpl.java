@@ -38,12 +38,12 @@ class ApplicationCommentServiceImpl implements ApplicationCommentService {
     }
 
     @Override
-    public ApplicationComment create(Application application, ApplicationAction status, Optional<String> text,
+    public ApplicationComment create(Application application, ApplicationAction action, Optional<String> text,
         Person author) {
 
         ApplicationComment comment = new ApplicationComment(author);
 
-        comment.setAction(status);
+        comment.setAction(action);
         comment.setApplication(application);
 
         if (text.isPresent()) {

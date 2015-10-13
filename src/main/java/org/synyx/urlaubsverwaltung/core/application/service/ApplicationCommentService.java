@@ -17,17 +17,17 @@ import java.util.Optional;
 public interface ApplicationCommentService {
 
     /**
-     * Creates a comment for the given application for leave with the given status. The given person defines the author
+     * Creates a comment for the given application for leave with the given action. The given person defines the author
      * of the comment.
      *
      * @param  application  to create the comment for
-     * @param  status  describes the lifecycle status of the application for leave
+     * @param  action  describes the lifecycle action of the application for leave
      * @param  text  of the comment (is optional)
      * @param  author  of the comment
      *
      * @return  the created comment
      */
-    ApplicationComment create(Application application, ApplicationAction status, Optional<String> text, Person author);
+    ApplicationComment create(Application application, ApplicationAction action, Optional<String> text, Person author);
 
 
     /**

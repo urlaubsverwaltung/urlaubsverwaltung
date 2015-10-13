@@ -15,17 +15,17 @@ import java.util.Optional;
 public interface SickNoteCommentService {
 
     /**
-     * Creates a comment for the given sick note with the given status. The given person defines the author of the
+     * Creates a comment for the given sick note with the given action. The given person defines the author of the
      * comment.
      *
      * @param  sickNote  to create the comment for
-     * @param  status  describes the lifecycle status of the sick note that will be saved in the comment
+     * @param  action  describes the lifecycle action of the sick note that will be saved in the comment
      * @param  text  of the comment (is optional)
      * @param  author  of the comment
      *
      * @return  the created comment
      */
-    SickNoteComment create(SickNote sickNote, SickNoteAction status, Optional<String> text, Person author);
+    SickNoteComment create(SickNote sickNote, SickNoteAction action, Optional<String> text, Person author);
 
 
     /**

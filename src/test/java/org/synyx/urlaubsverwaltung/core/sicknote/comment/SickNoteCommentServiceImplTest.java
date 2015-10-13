@@ -45,11 +45,11 @@ public class SickNoteCommentServiceImplTest {
 
         Assert.assertNotNull("Sick note should be set", comment.getSickNote());
         Assert.assertNotNull("Date should be set", comment.getDate());
-        Assert.assertNotNull("Status should be set", comment.getAction());
+        Assert.assertNotNull("Action should be set", comment.getAction());
         Assert.assertNotNull("Author should be set", comment.getPerson());
 
         Assert.assertEquals("Wrong sick note", sickNote, comment.getSickNote());
-        Assert.assertEquals("Wrong status", SickNoteAction.EDITED, comment.getAction());
+        Assert.assertEquals("Wrong action", SickNoteAction.EDITED, comment.getAction());
         Assert.assertEquals("Wrong author", author, comment.getPerson());
 
         Assert.assertNull("Text should not be set", comment.getText());
@@ -71,12 +71,12 @@ public class SickNoteCommentServiceImplTest {
 
         Assert.assertNotNull("Sick note should be set", comment.getSickNote());
         Assert.assertNotNull("Date should be set", comment.getDate());
-        Assert.assertNotNull("Status should be set", comment.getAction());
+        Assert.assertNotNull("Action should be set", comment.getAction());
         Assert.assertNotNull("Author should be set", comment.getPerson());
         Assert.assertNotNull("Text should be set", comment.getText());
 
         Assert.assertEquals("Wrong sick note", sickNote, comment.getSickNote());
-        Assert.assertEquals("Wrong status", SickNoteAction.CONVERTED_TO_VACATION, comment.getAction());
+        Assert.assertEquals("Wrong action", SickNoteAction.CONVERTED_TO_VACATION, comment.getAction());
         Assert.assertEquals("Wrong author", author, comment.getPerson());
         Assert.assertEquals("Wrong text", "Foo", comment.getText());
 
