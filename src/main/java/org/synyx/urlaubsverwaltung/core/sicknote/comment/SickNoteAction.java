@@ -1,9 +1,11 @@
 package org.synyx.urlaubsverwaltung.core.sicknote.comment;
 
 /**
+ * Executed action on a sick note.
+ *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public enum SickNoteCommentStatus {
+public enum SickNoteAction {
 
     CREATED,
     EDITED,

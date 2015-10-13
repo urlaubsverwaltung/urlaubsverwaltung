@@ -22,16 +22,16 @@
                 <c:out value="${comment.person.niceName}"/>
             </td>
             <td>
-                <spring:message code="application.progress.${comment.status}"/>
+                <spring:message code="application.progress.${comment.action}"/>
 
                 <c:choose>
-                    <c:when test="${comment.status == 'APPLIED'}">
+                    <c:when test="${comment.action == 'APPLIED'}">
                         <uv:date date="${application.applicationDate}"/>
                     </c:when>
-                    <c:when test="${comment.status == 'ALLOWED' || comment.status == 'REJECTED' || comment.status == 'CONVERTED'}">
+                    <c:when test="${comment.action == 'ALLOWED' || comment.action == 'REJECTED' || comment.action == 'CONVERTED'}">
                         <uv:date date="${application.editedDate}"/>
                     </c:when>
-                    <c:when test="${comment.status == 'CANCELLED' || comment.status == 'REVOKED'}">
+                    <c:when test="${comment.action == 'CANCELLED' || comment.action == 'REVOKED'}">
                         <uv:date date="${application.cancelDate}"/>
                     </c:when>
                 </c:choose>

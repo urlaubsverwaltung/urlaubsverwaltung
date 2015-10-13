@@ -24,7 +24,7 @@ public class ApplicationComment extends AbstractComment {
     private Application application;
 
     @Enumerated(EnumType.STRING)
-    private ApplicationCommentStatus status;
+    private ApplicationAction action;
 
     ApplicationComment() {
 
@@ -49,14 +49,14 @@ public class ApplicationComment extends AbstractComment {
     }
 
 
-    public ApplicationCommentStatus getStatus() {
+    public ApplicationAction getAction() {
 
-        return status;
+        return action;
     }
 
 
-    public void setStatus(ApplicationCommentStatus status) {
+    public void setAction(ApplicationAction action) {
 
-        this.status = status;
+        this.action = action;
     }
 }

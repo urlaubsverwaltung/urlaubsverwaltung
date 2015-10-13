@@ -32,6 +32,24 @@
         <dropColumn tableName="SickNote" columnName="active"/>
     </changeSet>
 
+    <changeSet author="murygina" id="rename_column_status_of_sick_note_comment_table">
+        <preConditions>
+            <tableExists tableName="SickNoteComment"/>
+            <columnExists tableName="SickNoteComment" columnName="status"/>
+        </preConditions>
+
+        <renameColumn tableName="SickNoteComment" oldColumnName="status" newColumnName="action"/>
+    </changeSet>
+
+    <changeSet author="murygina" id="rename_column_status_of_comment_table">
+        <preConditions>
+            <tableExists tableName="Comment"/>
+            <columnExists tableName="Comment" columnName="status"/>
+        </preConditions>
+
+        <renameColumn tableName="Comment" oldColumnName="status" newColumnName="action"/>
+    </changeSet>
+
     <changeSet author="murygina" id="rename_application_comment_table">
         <preConditions>
             <tableExists tableName="Comment"/>
@@ -46,7 +64,7 @@
         </preConditions>
 
         <sql>
-            UPDATE ApplicationComment SET status = 'APPLIED' WHERE status = 'WAITING';
+            UPDATE ApplicationComment SET action = 'APPLIED' WHERE action = 'WAITING';
         </sql>
     </changeSet>
 

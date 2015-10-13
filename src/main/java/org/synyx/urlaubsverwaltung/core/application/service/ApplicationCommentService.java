@@ -1,8 +1,8 @@
 package org.synyx.urlaubsverwaltung.core.application.service;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
+import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationAction;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationComment;
-import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationCommentStatus;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.util.List;
@@ -27,8 +27,7 @@ public interface ApplicationCommentService {
      *
      * @return  the created comment
      */
-    ApplicationComment create(Application application, ApplicationCommentStatus status, Optional<String> text,
-        Person author);
+    ApplicationComment create(Application application, ApplicationAction status, Optional<String> text, Person author);
 
 
     /**

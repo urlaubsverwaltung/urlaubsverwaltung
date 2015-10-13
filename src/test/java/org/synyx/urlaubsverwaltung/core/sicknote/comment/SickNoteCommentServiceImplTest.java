@@ -38,18 +38,18 @@ public class SickNoteCommentServiceImplTest {
         Person author = new Person();
         SickNote sickNote = new SickNote();
 
-        SickNoteComment comment = sickNoteCommentService.create(sickNote, SickNoteCommentStatus.EDITED,
+        SickNoteComment comment = sickNoteCommentService.create(sickNote, SickNoteAction.EDITED,
                 Optional.<String>empty(), author);
 
         Assert.assertNotNull("Should not be null", comment);
 
         Assert.assertNotNull("Sick note should be set", comment.getSickNote());
         Assert.assertNotNull("Date should be set", comment.getDate());
-        Assert.assertNotNull("Status should be set", comment.getStatus());
+        Assert.assertNotNull("Status should be set", comment.getAction());
         Assert.assertNotNull("Author should be set", comment.getPerson());
 
         Assert.assertEquals("Wrong sick note", sickNote, comment.getSickNote());
-        Assert.assertEquals("Wrong status", SickNoteCommentStatus.EDITED, comment.getStatus());
+        Assert.assertEquals("Wrong status", SickNoteAction.EDITED, comment.getAction());
         Assert.assertEquals("Wrong author", author, comment.getPerson());
 
         Assert.assertNull("Text should not be set", comment.getText());
@@ -64,19 +64,19 @@ public class SickNoteCommentServiceImplTest {
         Person author = new Person();
         SickNote sickNote = new SickNote();
 
-        SickNoteComment comment = sickNoteCommentService.create(sickNote, SickNoteCommentStatus.CONVERTED_TO_VACATION,
+        SickNoteComment comment = sickNoteCommentService.create(sickNote, SickNoteAction.CONVERTED_TO_VACATION,
                 Optional.of("Foo"), author);
 
         Assert.assertNotNull("Should not be null", comment);
 
         Assert.assertNotNull("Sick note should be set", comment.getSickNote());
         Assert.assertNotNull("Date should be set", comment.getDate());
-        Assert.assertNotNull("Status should be set", comment.getStatus());
+        Assert.assertNotNull("Status should be set", comment.getAction());
         Assert.assertNotNull("Author should be set", comment.getPerson());
         Assert.assertNotNull("Text should be set", comment.getText());
 
         Assert.assertEquals("Wrong sick note", sickNote, comment.getSickNote());
-        Assert.assertEquals("Wrong status", SickNoteCommentStatus.CONVERTED_TO_VACATION, comment.getStatus());
+        Assert.assertEquals("Wrong status", SickNoteAction.CONVERTED_TO_VACATION, comment.getAction());
         Assert.assertEquals("Wrong author", author, comment.getPerson());
         Assert.assertEquals("Wrong text", "Foo", comment.getText());
 

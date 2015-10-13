@@ -28,13 +28,12 @@ public class SickNoteCommentServiceImpl implements SickNoteCommentService {
     }
 
     @Override
-    public SickNoteComment create(SickNote sickNote, SickNoteCommentStatus status, Optional<String> text,
-        Person author) {
+    public SickNoteComment create(SickNote sickNote, SickNoteAction status, Optional<String> text, Person author) {
 
         SickNoteComment comment = new SickNoteComment();
 
         comment.setSickNote(sickNote);
-        comment.setStatus(status);
+        comment.setAction(status);
         comment.setPerson(author);
 
         if (text.isPresent()) {

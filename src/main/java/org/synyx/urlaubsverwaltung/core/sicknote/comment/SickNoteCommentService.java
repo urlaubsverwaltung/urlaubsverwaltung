@@ -25,7 +25,7 @@ public interface SickNoteCommentService {
      *
      * @return  the created comment
      */
-    SickNoteComment create(SickNote sickNote, SickNoteCommentStatus status, Optional<String> text, Person author);
+    SickNoteComment create(SickNote sickNote, SickNoteAction status, Optional<String> text, Person author);
 
 
     /**

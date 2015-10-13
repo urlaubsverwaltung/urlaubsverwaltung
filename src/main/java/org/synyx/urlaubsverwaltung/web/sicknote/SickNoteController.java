@@ -31,9 +31,9 @@ import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteInteractionService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
+import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteAction;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteComment;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteCommentService;
-import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteCommentStatus;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
@@ -223,7 +223,7 @@ public class SickNoteController {
             if (errors.hasErrors()) {
                 redirectAttributes.addFlashAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
             } else {
-                sickNoteCommentService.create(sickNote.get(), SickNoteCommentStatus.COMMENTED,
+                sickNoteCommentService.create(sickNote.get(), SickNoteAction.COMMENTED,
                     Optional.ofNullable(comment.getText()), sessionService.getSignedInUser());
             }
 

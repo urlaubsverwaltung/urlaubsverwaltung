@@ -21,7 +21,7 @@ public class SickNoteComment extends AbstractComment {
     private SickNote sickNote;
 
     @Enumerated(EnumType.STRING)
-    private SickNoteCommentStatus status;
+    private SickNoteAction action;
 
     public SickNoteComment() {
 
@@ -40,14 +40,14 @@ public class SickNoteComment extends AbstractComment {
     }
 
 
-    public SickNoteCommentStatus getStatus() {
+    public SickNoteAction getAction() {
 
-        return status;
+        return action;
     }
 
 
-    public void setStatus(SickNoteCommentStatus status) {
+    public void setAction(SickNoteAction action) {
 
-        this.status = status;
+        this.action = action;
     }
 }
