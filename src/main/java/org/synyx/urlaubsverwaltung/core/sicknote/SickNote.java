@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.sicknote;
 
+import com.google.common.base.MoreObjects;
+
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 
@@ -232,5 +234,22 @@ public class SickNote extends AbstractPersistable<Integer> {
     public void setId(Integer id) {
 
         super.setId(id);
+    }
+
+
+    @Override
+    public String toString() {
+
+        MoreObjects.ToStringHelper toStringHelper = MoreObjects.toStringHelper(this);
+
+        toStringHelper.add("id", getId());
+        toStringHelper.add("startDate", getStartDate());
+        toStringHelper.add("endDate", getEndDate());
+        toStringHelper.add("dayLength", getDayLength());
+        toStringHelper.add("type", getType());
+        toStringHelper.add("person", getPerson());
+        toStringHelper.add("status", getStatus());
+
+        return toStringHelper.toString();
     }
 }
