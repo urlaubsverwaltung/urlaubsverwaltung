@@ -1,6 +1,9 @@
 package org.synyx.urlaubsverwaltung.core.overtime;
 
+import org.springframework.util.Assert;
+
 import org.synyx.urlaubsverwaltung.core.comment.AbstractComment;
+import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,6 +16,7 @@ import javax.persistence.ManyToOne;
  * Recorded comment after executed an overtime action, e.g. create a new overtime record.
  *
  * @author  Aljona Murygina - murygina@synyx.de
+ * @since  2.11.0
  */
 @Entity
 public class OvertimeComment extends AbstractComment {
@@ -23,6 +27,24 @@ public class OvertimeComment extends AbstractComment {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private OvertimeAction action;
+
+    OvertimeComment() {
+
+        // OK
+    }
+
+
+    public OvertimeComment(Person author, Overtime overtime, OvertimeAction action) {
+
+        Assert.notNull(author, "Author must be given.");
+        Assert.notNull(overtime, "Overtime record must be given.");
+        Assert.notNull(action, "Action must be given.");
+
+        super.setPerson(author);
+
+        this.overtime = overtime;
+        this.action = action;
+    }
 
     public Overtime getOvertime() {
 

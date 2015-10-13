@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import org.synyx.urlaubsverwaltung.core.overtime.OvertimeInteractionService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.security.SessionService;
@@ -27,6 +28,7 @@ import org.synyx.urlaubsverwaltung.web.PersonPropertyEditor;
 import java.math.BigDecimal;
 
 import java.util.Locale;
+import java.util.Optional;
 
 
 /**
@@ -36,6 +38,9 @@ import java.util.Locale;
  */
 @Controller
 public class OvertimeController {
+
+    @Autowired
+    private OvertimeInteractionService overtimeService;
 
     @Autowired
     private PersonService personService;
@@ -82,6 +87,9 @@ public class OvertimeController {
 
             return "overtime/overtime_form";
         }
+
+        overtimeService.record(overtimeForm.generateOvertime(), Optional.ofNullable(overtimeForm.getComment()),
+            sessionService.getSignedInUser());
 
         redirectAttributes.addFlashAttribute("overtimeRecord", "CREATED");
 
