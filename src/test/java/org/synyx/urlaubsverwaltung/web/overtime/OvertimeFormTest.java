@@ -54,7 +54,7 @@ public class OvertimeFormTest {
         Assert.assertEquals("Wrong person", overtimeForm.getPerson(), overtime.getPerson());
         Assert.assertEquals("Wrong start date", overtimeForm.getStartDate(), overtime.getStartDate());
         Assert.assertEquals("Wrong end date", overtimeForm.getEndDate(), overtime.getEndDate());
-        Assert.assertEquals("Wrong number of hours", overtimeForm.getNumberOfHours(), overtime.getNumberOfHours());
+        Assert.assertEquals("Wrong number of hours", overtimeForm.getNumberOfHours(), overtime.getHours());
     }
 
 

@@ -90,7 +90,7 @@ public class Overtime extends AbstractPersistable<Integer> {
     }
 
 
-    public BigDecimal getNumberOfHours() {
+    public BigDecimal getHours() {
 
         return hours;
     }
@@ -104,7 +104,7 @@ public class Overtime extends AbstractPersistable<Integer> {
         toStringHelper.add("id", getId());
         toStringHelper.add("startDate", getStartDate());
         toStringHelper.add("endDate", getEndDate());
-        toStringHelper.add("hours", getNumberOfHours());
+        toStringHelper.add("hours", getHours());
         toStringHelper.add("person", getPerson());
 
         return toStringHelper.toString();

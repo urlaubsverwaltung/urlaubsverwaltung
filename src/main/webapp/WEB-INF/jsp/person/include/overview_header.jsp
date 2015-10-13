@@ -31,4 +31,10 @@
         </a>
     </span>
 
+    <span>
+        <a href="${URL_PREFIX}/overtime" class="fa-action pull-right" data-title="<spring:message code="action.overtime.list"/>">
+            <i class="fa fa-clock-o"></i>
+        </a>
+    </span>
+
 </legend>

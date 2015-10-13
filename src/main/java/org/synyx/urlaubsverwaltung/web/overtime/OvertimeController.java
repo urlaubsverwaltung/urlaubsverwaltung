@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import org.synyx.urlaubsverwaltung.core.overtime.OvertimeInteractionService;
+import org.synyx.urlaubsverwaltung.core.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.security.SessionService;
@@ -40,7 +40,7 @@ import java.util.Optional;
 public class OvertimeController {
 
     @Autowired
-    private OvertimeInteractionService overtimeService;
+    private OvertimeService overtimeService;
 
     @Autowired
     private PersonService personService;
@@ -61,7 +61,11 @@ public class OvertimeController {
 
 
     @RequestMapping(value = "/overtime", method = RequestMethod.GET)
-    public String showOvertime() {
+    public String showOvertime(Model model) {
+
+        Person signedInUser = sessionService.getSignedInUser();
+
+        model.addAttribute("records", overtimeService.getOvertimeRecordsForPerson(signedInUser));
 
         return "overtime/overtime_list";
     }

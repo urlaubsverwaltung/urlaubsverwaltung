@@ -25,9 +25,38 @@
                     </c:if>
                 </div>
 
-                <legend><spring:message code="overtime.title"/></legend>
+                <legend>
+                    <spring:message code="overtime.title"/>
+                    <span>
+                        <a href="${URL_PREFIX}/overtime/new" class="fa-action pull-right" data-title="<spring:message code="action.overtime.new"/>">
+                            <i class="fa fa-plus-circle"></i>
+                        </a>
+                    </span>
+                </legend>
 
-                <p><spring:message code="overtime.none"/></p>
+                <c:choose>
+                    <c:when test="${empty records}">
+                        <p><spring:message code="overtime.none"/></p>
+                    </c:when>
+                    <c:otherwise>
+                        <table class="list-table bordered-table" cellspacing="0">
+                            <tbody>
+                                <c:forEach items="${records}" var="record">
+                                    <tr>
+                                        <td>
+                                            <a href="TODO"><h4><spring:message code="overtime.title"/></h4></a>
+                                            <p><uv:date date="${record.startDate}"/> - <uv:date date="${record.endDate}"/></p>
+                                        </td>
+                                        <td class="is-centered">
+                                            <c:out value="${record.hours}" /> <spring:message code="overtime.data.hours"/>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                            </tbody>
+                        </table>
+                    </c:otherwise>
+                </c:choose>
+
             </div>
         </div><%-- End of row --%>
     </div><%-- End of container --%>

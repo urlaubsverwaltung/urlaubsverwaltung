@@ -2,6 +2,10 @@ package org.synyx.urlaubsverwaltung.core.overtime;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import org.synyx.urlaubsverwaltung.core.person.Person;
+
+import java.util.List;
+
 
 /**
  * Allows access to overtime records.
@@ -11,5 +15,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface OvertimeDAO extends JpaRepository<Overtime, Integer> {
 
-    // OK
+    List<Overtime> findByPerson(Person person);
 }
