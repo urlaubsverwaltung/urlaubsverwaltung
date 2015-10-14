@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.util;
+package org.synyx.urlaubsverwaltung.core.person;
 
 import org.apache.log4j.Logger;
 
@@ -9,29 +9,39 @@ import java.security.NoSuchAlgorithmException;
 
 
 /**
- * Util class for encryption.
+ * This class creates a Gravatar URL for a mail address.
  *
- * @author  Aljona Murygina - murygina@synyx.de
+ * @author  Aljona Murygina
  */
-public final class EncryptionUtil {
+public final class GravatarUtil {
 
-    private static final Logger LOG = Logger.getLogger(GravatarUtil.class);
+    static final String BASE_URL = "https://www.gravatar.com/avatar/";
 
     private static final String DIGEST_ALGORITHM = "MD5";
 
-    private EncryptionUtil() {
+    private static final Logger LOG = Logger.getLogger(GravatarUtil.class);
+
+    private GravatarUtil() {
 
         // Hide constructor for util classes
     }
 
     /**
-     * This method creates a md5 hash of the given string.
+     * This method generates the complete Gravatar URL to the given mail address.
      *
-     * @param  string  to be encrypted
+     * @param  email  String
      *
-     * @return  encrypted string
+     * @return  complete Gravatar URL
      */
-    public static String createHash(String string) {
+    public static String createImgURL(String email) {
+
+        String normalizedEmail = email == null ? "" : email.trim().toLowerCase();
+
+        return BASE_URL + createHash(normalizedEmail);
+    }
+
+
+    private static String createHash(String string) {
 
         Assert.notNull("String to be encrypted may not be null", string);
 
@@ -50,13 +60,6 @@ public final class EncryptionUtil {
     }
 
 
-    /**
-     * This method converts the given bytes to hex.
-     *
-     * @param  data  to be converted to hex
-     *
-     * @return  converted data
-     */
     private static String convertToHex(byte[] data) {
 
         StringBuffer buf = new StringBuffer();

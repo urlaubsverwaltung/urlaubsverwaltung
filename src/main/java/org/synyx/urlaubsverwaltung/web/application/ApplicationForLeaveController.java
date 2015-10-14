@@ -16,13 +16,13 @@ import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.core.person.GravatarUtil;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.Role;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.FilterRequest;
 import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
-import org.synyx.urlaubsverwaltung.web.util.GravatarUtil;
 
 import java.util.HashMap;
 import java.util.List;

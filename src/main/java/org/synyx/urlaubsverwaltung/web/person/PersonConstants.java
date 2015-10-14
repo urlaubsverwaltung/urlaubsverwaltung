@@ -1,8 +1,8 @@
 
 package org.synyx.urlaubsverwaltung.web.person;
 
+import org.synyx.urlaubsverwaltung.core.person.GravatarUtil;
 import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.web.util.GravatarUtil;
 
 import java.util.HashMap;
 import java.util.List;

@@ -24,6 +24,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
+import org.synyx.urlaubsverwaltung.core.person.GravatarUtil;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.person.Role;
@@ -40,7 +41,6 @@ import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.DateMidnightPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
-import org.synyx.urlaubsverwaltung.web.util.GravatarUtil;
 
 import java.util.Comparator;
 import java.util.HashMap;

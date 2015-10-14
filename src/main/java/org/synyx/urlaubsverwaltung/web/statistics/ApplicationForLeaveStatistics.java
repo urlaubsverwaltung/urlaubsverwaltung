@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.web.statistics;
 
+import org.synyx.urlaubsverwaltung.core.person.GravatarUtil;
 import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.web.util.GravatarUtil;
 
 import java.math.BigDecimal;
 

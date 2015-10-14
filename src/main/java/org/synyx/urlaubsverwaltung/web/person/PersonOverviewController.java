@@ -29,6 +29,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.core.person.GravatarUtil;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.person.Role;
@@ -41,7 +42,6 @@ import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.application.ApplicationForLeave;
 import org.synyx.urlaubsverwaltung.web.sicknote.ExtendedSickNote;
 import org.synyx.urlaubsverwaltung.web.statistics.UsedDaysOverview;
-import org.synyx.urlaubsverwaltung.web.util.GravatarUtil;
 
 import java.math.BigDecimal;
 

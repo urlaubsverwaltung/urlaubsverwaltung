@@ -21,6 +21,7 @@ import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
 import org.synyx.urlaubsverwaltung.core.account.service.VacationDaysService;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.core.person.GravatarUtil;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.person.Role;
@@ -29,7 +30,6 @@ import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.department.DepartmentConstants;
-import org.synyx.urlaubsverwaltung.web.util.GravatarUtil;
 
 import java.util.HashMap;
 import java.util.List;
