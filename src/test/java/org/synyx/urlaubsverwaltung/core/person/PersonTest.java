@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 
 /**
@@ -43,7 +44,7 @@ public class PersonTest {
     public void ensureReturnsFalseIfPersonHasNotTheGivenRole() {
 
         Person person = new Person();
-        person.setPermissions(Arrays.asList(Role.USER));
+        person.setPermissions(Collections.singletonList(Role.USER));
 
         Assert.assertFalse("Should return false if the person has not the given role", person.hasRole(Role.BOSS));
     }
@@ -64,9 +65,33 @@ public class PersonTest {
     public void ensureReturnsFalseIfPersonHasNotTheGivenNotificationType() {
 
         Person person = new Person();
-        person.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER));
+        person.setNotifications(Collections.singletonList(MailNotification.NOTIFICATION_USER));
 
         Assert.assertFalse("Should return false if the person has not the given notification type",
             person.hasNotificationType(MailNotification.NOTIFICATION_BOSS));
+    }
+
+
+    @Test
+    public void ensureReturnsEmptyStringAsGravatarURLIfEmailIsEmpty() {
+
+        Person person = new Person();
+        person.setEmail(null);
+
+        Assert.assertNotNull("Should not be null", person.getGravatarURL());
+        Assert.assertEquals("Wrong Gravatar URL", "", person.getGravatarURL());
+    }
+
+
+    @Test
+    public void ensureCanReturnGravatarURL() {
+
+        Person person = new Person();
+        person.setEmail("muster@test.de");
+
+        Assert.assertNotNull("Should not be null", person.getGravatarURL());
+        Assert.assertNotEquals("Gravatar URL should not be empty", "", person.getGravatarURL());
+        Assert.assertNotEquals("Gravatar URL should differ from mail address", person.getEmail(),
+            person.getGravatarURL());
     }
 }

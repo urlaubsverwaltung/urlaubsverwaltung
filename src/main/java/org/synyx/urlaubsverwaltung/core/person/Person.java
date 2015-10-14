@@ -224,6 +224,16 @@ public class Person extends AbstractPersistable<Integer> {
     }
 
 
+    public String getGravatarURL() {
+
+        if (StringUtils.hasText(this.email)) {
+            return GravatarUtil.createImgURL(this.email);
+        }
+
+        return "";
+    }
+
+
     @Override
     public String toString() {
 
