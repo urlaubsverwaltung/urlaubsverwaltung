@@ -80,7 +80,7 @@
 
             <div class="col-xs-12 col-sm-12 col-md-4">
                 <div class="box">
-                    <div class="box-image gravatar img-circle hidden-print" data-gravatar="<c:out value='${gravatarUrl}?d=mm&s=60'/>"></div>
+                    <div class="box-image gravatar img-circle hidden-print" data-gravatar="<c:out value='${person.gravatarURL}?d=mm&s=60'/>"></div>
                     <span class="box-text">
                         <i class="fa fa-at"></i> <c:out value="${person.loginName}"/>
                         <h4><c:out value="${person.niceName}"/></h4>

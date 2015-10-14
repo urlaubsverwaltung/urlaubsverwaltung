@@ -105,7 +105,6 @@ public class SickDaysOverviewController {
         model.addAttribute("filterRequest", new FilterRequest());
 
         List<Person> persons = personService.getActivePersons();
-        Map<Person, String> gravatarURLs = PersonConstants.getGravatarURLs(persons);
 
         List<SickNote> sickNotesOfActivePersons = sickNotes.stream().filter(sickNote ->
                     persons.contains(sickNote.getPerson()) && sickNote.isActive()).collect(Collectors.toList());
@@ -162,6 +161,5 @@ public class SickDaysOverviewController {
         model.addAttribute("childSickDaysWithAUB", childSickDaysWithAUB);
 
         model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, persons);
-        model.addAttribute(PersonConstants.GRAVATAR_URLS_ATTRIBUTE, gravatarURLs);
     }
 }

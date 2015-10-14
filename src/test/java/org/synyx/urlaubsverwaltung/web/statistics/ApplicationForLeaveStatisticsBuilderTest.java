@@ -133,7 +133,6 @@ public class ApplicationForLeaveStatisticsBuilderTest {
 
         Assert.assertNotNull("Person should not be null", statistics.getPerson());
         Assert.assertEquals("Wrong person", person, statistics.getPerson());
-        Assert.assertNotNull("Gravatar URL should not be null", statistics.getGravatarUrl());
 
         // VACATION DAYS
 

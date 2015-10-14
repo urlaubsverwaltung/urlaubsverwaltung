@@ -29,7 +29,6 @@ import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
-import org.synyx.urlaubsverwaltung.core.person.GravatarUtil;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.person.Role;
@@ -120,7 +119,6 @@ public class PersonOverviewController {
         }
 
         model.addAttribute(PersonConstants.PERSON_ATTRIBUTE, person);
-        model.addAttribute(PersonConstants.GRAVATAR_URL_ATTRIBUTE, GravatarUtil.createImgURL(person.getEmail()));
 
         Integer yearToShow = parseYearParameter(year);
         prepareApplications(person, yearToShow, model);

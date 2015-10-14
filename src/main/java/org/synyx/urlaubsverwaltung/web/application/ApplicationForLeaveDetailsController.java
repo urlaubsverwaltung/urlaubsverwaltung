@@ -32,7 +32,6 @@ import org.synyx.urlaubsverwaltung.core.application.service.exception.ImpatientA
 import org.synyx.urlaubsverwaltung.core.application.service.exception.RemindAlreadySentException;
 import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
-import org.synyx.urlaubsverwaltung.core.person.GravatarUtil;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.person.Role;
@@ -42,9 +41,7 @@ import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 
@@ -126,7 +123,6 @@ public class ApplicationForLeaveDetailsController {
 
         model.addAttribute("comment", new ApplicationCommentForm());
         model.addAttribute("comments", comments);
-        model.addAttribute("commentGravatarURLs", getGravatarURLsForComments(comments));
 
         // SPECIAL ATTRIBUTES FOR BOSSES / DEPARTMENT HEADS
         Person signedInUser = sessionService.getSignedInUser();
@@ -145,11 +141,6 @@ public class ApplicationForLeaveDetailsController {
             departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(application.getPerson(),
                 application.getStartDate(), application.getEndDate());
         model.addAttribute("departmentApplications", departmentApplications);
-        model.addAttribute("applicationGravatarURLs", getGravatarURLsForDepartmentApplications(departmentApplications));
-
-        // PERSON'S GRAVATAR
-        model.addAttribute(PersonConstants.GRAVATAR_URL_ATTRIBUTE,
-            GravatarUtil.createImgURL(application.getPerson().getEmail()));
 
         // HOLIDAY ACCOUNT
         Optional<Account> account = accountService.getHolidaysAccount(year, application.getPerson());
@@ -164,39 +155,6 @@ public class ApplicationForLeaveDetailsController {
         model.addAttribute(ControllerConstants.YEAR_ATTRIBUTE, year);
         model.addAttribute("action", action);
         model.addAttribute("shortcut", shortcut);
-    }
-
-
-    private Map<ApplicationComment, String> getGravatarURLsForComments(List<ApplicationComment> comments) {
-
-        Map<ApplicationComment, String> gravatarURLs = new HashMap<>();
-
-        for (ApplicationComment comment : comments) {
-            String gravatarUrl = GravatarUtil.createImgURL(comment.getPerson().getEmail());
-
-            if (gravatarUrl != null) {
-                gravatarURLs.put(comment, gravatarUrl);
-            }
-        }
-
-        return gravatarURLs;
-    }
-
-
-    private Map<Application, String> getGravatarURLsForDepartmentApplications(
-        List<Application> departmentApplications) {
-
-        Map<Application, String> gravatarURLs = new HashMap<>();
-
-        for (Application application : departmentApplications) {
-            String gravatarUrl = GravatarUtil.createImgURL(application.getPerson().getEmail());
-
-            if (gravatarUrl != null) {
-                gravatarURLs.put(application, gravatarUrl);
-            }
-        }
-
-        return gravatarURLs;
     }
 
 

@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.web.statistics;
 
-import org.synyx.urlaubsverwaltung.core.person.GravatarUtil;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.math.BigDecimal;
@@ -15,7 +14,6 @@ import java.math.BigDecimal;
 public class ApplicationForLeaveStatistics {
 
     private final Person person;
-    private final String gravatarUrl;
 
     private BigDecimal waitingVacationDays = BigDecimal.ZERO;
     private BigDecimal allowedVacationDays = BigDecimal.ZERO;
@@ -24,18 +22,11 @@ public class ApplicationForLeaveStatistics {
     public ApplicationForLeaveStatistics(Person person) {
 
         this.person = person;
-        this.gravatarUrl = GravatarUtil.createImgURL(person.getEmail());
     }
 
     public Person getPerson() {
 
         return person;
-    }
-
-
-    public String getGravatarUrl() {
-
-        return gravatarUrl;
     }
 
 

@@ -5,8 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import org.synyx.urlaubsverwaltung.core.person.GravatarUtil;
-import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,11 +38,7 @@ public class UserInterceptor implements HandlerInterceptor {
         ModelAndView modelAndView) {
 
         if (modelAndView != null && !modelAndView.getViewName().startsWith("redirect:")) {
-            Person signedInUser = sessionService.getSignedInUser();
-            String gravatar = GravatarUtil.createImgURL(signedInUser.getEmail());
-
-            modelAndView.addObject("signedInUser", signedInUser);
-            modelAndView.addObject("signedInUserGravatar", gravatar);
+            modelAndView.addObject("signedInUser", sessionService.getSignedInUser());
         }
     }
 

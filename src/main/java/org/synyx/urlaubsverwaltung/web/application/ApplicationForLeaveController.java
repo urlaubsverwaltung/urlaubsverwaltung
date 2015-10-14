@@ -16,17 +16,13 @@ import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
-import org.synyx.urlaubsverwaltung.core.person.GravatarUtil;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.Role;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.FilterRequest;
-import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -64,9 +60,6 @@ public class ApplicationForLeaveController {
         model.addAttribute("applications", applicationsForLeave);
         model.addAttribute("filterRequest", new FilterRequest());
 
-        Map<Application, String> gravatarUrls = getAllRelevantGravatarUrls(applicationsForLeave);
-        model.addAttribute(PersonConstants.GRAVATAR_URLS_ATTRIBUTE, gravatarUrls);
-
         return "application/app_list";
     }
 
@@ -88,28 +81,5 @@ public class ApplicationForLeaveController {
         return applications.stream()
             .map(application -> new ApplicationForLeave(application, calendarService))
             .collect(Collectors.toList());
-    }
-
-
-    /**
-     * Get all gravatar urls for the persons of the given applications for leave.
-     *
-     * @param  applications  of the persons for that gravatar urls should be fetched for
-     *
-     * @return  gravatar urls mapped to applications for leave
-     */
-    private Map<Application, String> getAllRelevantGravatarUrls(List<ApplicationForLeave> applications) {
-
-        Map<Application, String> gravatarUrls = new HashMap<>();
-
-        for (Application application : applications) {
-            String gravatarUrl = GravatarUtil.createImgURL(application.getPerson().getEmail());
-
-            if (gravatarUrl != null) {
-                gravatarUrls.put(application, gravatarUrl);
-            }
-        }
-
-        return gravatarUrls;
     }
 }

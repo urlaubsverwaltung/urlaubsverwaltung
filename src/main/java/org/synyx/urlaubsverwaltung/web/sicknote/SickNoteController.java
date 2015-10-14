@@ -24,7 +24,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
-import org.synyx.urlaubsverwaltung.core.person.GravatarUtil;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.person.Role;
@@ -43,9 +42,7 @@ import org.synyx.urlaubsverwaltung.web.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
 
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 
@@ -99,22 +96,9 @@ public class SickNoteController {
                 && (signedInUser.hasRole(Role.OFFICE) || sickNote.get().getPerson().equals(signedInUser))) {
             model.addAttribute("sickNote", new ExtendedSickNote(sickNote.get(), calendarService));
             model.addAttribute("comment", new SickNoteComment());
-            model.addAttribute("gravatar", GravatarUtil.createImgURL(sickNote.get().getPerson().getEmail()));
 
             List<SickNoteComment> comments = sickNoteCommentService.getCommentsBySickNote(sickNote.get());
             model.addAttribute("comments", comments);
-
-            Map<SickNoteComment, String> gravatarURLs = new HashMap<>();
-
-            for (SickNoteComment comment : comments) {
-                String gravatarUrl = GravatarUtil.createImgURL(comment.getPerson().getEmail());
-
-                if (gravatarUrl != null) {
-                    gravatarURLs.put(comment, gravatarUrl);
-                }
-            }
-
-            model.addAttribute(PersonConstants.GRAVATAR_URLS_ATTRIBUTE, gravatarURLs);
 
             return "sicknote/sick_note";
         }

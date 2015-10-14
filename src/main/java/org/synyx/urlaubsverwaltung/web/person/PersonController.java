@@ -21,7 +21,6 @@ import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
 import org.synyx.urlaubsverwaltung.core.account.service.VacationDaysService;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
-import org.synyx.urlaubsverwaltung.core.person.GravatarUtil;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.person.Role;
@@ -88,7 +87,6 @@ public class PersonController {
 
             model.addAttribute(ControllerConstants.YEAR_ATTRIBUTE, year);
             model.addAttribute(PersonConstants.PERSON_ATTRIBUTE, person);
-            model.addAttribute(PersonConstants.GRAVATAR_URL_ATTRIBUTE, GravatarUtil.createImgURL(person.getEmail()));
 
             model.addAttribute(DepartmentConstants.DEPARTMENTS_ATTRIBUTE,
                 departmentService.getAssignedDepartmentsOfMember(person));
@@ -168,7 +166,6 @@ public class PersonController {
 
     private void prepareStaffView(List<Person> persons, int year, Model model) {
 
-        Map<Person, String> gravatarUrls = PersonConstants.getGravatarURLs(persons);
         Map<Person, Account> accounts = new HashMap<>();
         Map<Person, VacationDaysLeft> vacationDaysLeftMap = new HashMap<>();
 
@@ -184,7 +181,6 @@ public class PersonController {
         }
 
         model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, persons);
-        model.addAttribute(PersonConstants.GRAVATAR_URLS_ATTRIBUTE, gravatarUrls);
         model.addAttribute("accounts", accounts);
         model.addAttribute("vacationDaysLeftMap", vacationDaysLeftMap);
         model.addAttribute(PersonConstants.BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(DateMidnight.now()));

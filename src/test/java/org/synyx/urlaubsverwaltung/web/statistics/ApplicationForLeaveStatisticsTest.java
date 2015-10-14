@@ -26,7 +26,6 @@ public class ApplicationForLeaveStatisticsTest {
         ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person);
 
         Assert.assertNotNull("Person should not be null", statistics.getPerson());
-        Assert.assertNotNull("Gravatar URL should not be null", statistics.getGravatarUrl());
         Assert.assertNotNull("Waiting vacation days should not be null", statistics.getWaitingVacationDays());
         Assert.assertNotNull("Allowed vacation days should not be null", statistics.getAllowedVacationDays());
         Assert.assertNotNull("Left vacation days should not be null", statistics.getLeftVacationDays());

@@ -29,7 +29,6 @@ import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -73,11 +72,9 @@ public class DepartmentController {
     public String newDepartmentForm(Model model) {
 
         List<Person> persons = getPersons();
-        Map<Person, String> gravatarUrls = PersonConstants.getGravatarURLs(persons);
 
         model.addAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE, new Department());
         model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, persons);
-        model.addAttribute(PersonConstants.GRAVATAR_URLS_ATTRIBUTE, gravatarUrls);
 
         return DepartmentConstants.DEPARTMENT_FORM_JSP;
     }
@@ -104,11 +101,9 @@ public class DepartmentController {
 
         if (errors.hasErrors()) {
             List<Person> persons = getPersons();
-            Map<Person, String> gravatarUrls = PersonConstants.getGravatarURLs(persons);
 
             model.addAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE, department);
             model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, persons);
-            model.addAttribute(PersonConstants.GRAVATAR_URLS_ATTRIBUTE, gravatarUrls);
 
             return DepartmentConstants.DEPARTMENT_FORM_JSP;
         }
@@ -133,11 +128,9 @@ public class DepartmentController {
 
         Department department = optionalDepartment.get();
         List<Person> persons = getPersons();
-        Map<Person, String> gravatarUrls = PersonConstants.getGravatarURLs(persons);
 
         model.addAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE, department);
         model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, persons);
-        model.addAttribute(PersonConstants.GRAVATAR_URLS_ATTRIBUTE, gravatarUrls);
 
         return DepartmentConstants.DEPARTMENT_FORM_JSP;
     }
@@ -163,11 +156,9 @@ public class DepartmentController {
 
         if (errors.hasErrors()) {
             List<Person> persons = getPersons();
-            Map<Person, String> gravatarUrls = PersonConstants.getGravatarURLs(persons);
 
             model.addAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE, department);
             model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, persons);
-            model.addAttribute(PersonConstants.GRAVATAR_URLS_ATTRIBUTE, gravatarUrls);
 
             return DepartmentConstants.DEPARTMENT_FORM_JSP;
         }

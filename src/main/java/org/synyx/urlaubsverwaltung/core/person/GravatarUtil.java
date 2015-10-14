@@ -33,7 +33,7 @@ public final class GravatarUtil {
      *
      * @return  complete Gravatar URL
      */
-    public static String createImgURL(String email) {
+    static String createImgURL(String email) {
 
         String normalizedEmail = email == null ? "" : email.trim().toLowerCase();
 

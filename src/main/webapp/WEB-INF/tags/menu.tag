@@ -36,7 +36,7 @@
         <sec:authorize access="hasRole('USER')">
           <li>
             <a href="${URL_PREFIX}/overview">
-              <span class="img-circle gravatar gravatar--small hidden-print" data-gravatar="<c:out value='${signedInUserGravatar}?d=mm&s=20'/>"></span> <spring:message code="nav.home.title"/>
+              <span class="img-circle gravatar gravatar--small hidden-print" data-gravatar="<c:out value='${signedInUser.gravatarURL}?d=mm&s=20'/>"></span> <spring:message code="nav.home.title"/>
             </a>
           </li>
         </sec:authorize>

@@ -166,7 +166,7 @@
                         <c:forEach items="${comments}" var="comment" varStatus="loopStatus">
                             <tr>
                                 <td>
-                                    <div class="gravatar gravatar--medium img-circle hidden-print center-block" data-gravatar="<c:out value='${gravatarUrls[comment]}?d=mm&s=40'/>"></div>
+                                    <div class="gravatar gravatar--medium img-circle hidden-print center-block" data-gravatar="<c:out value='${comment.person.gravatarURL}?d=mm&s=40'/>"></div>
                                 </td>
                                 <td>
                                     <c:out value="${comment.person.niceName}" />
@@ -225,7 +225,7 @@
                 </legend>
 
                 <div class="box hidden-print">
-                    <div class="box-image gravatar img-circle" data-gravatar="<c:out value='${gravatar}?d=mm&s=60'/>"></div>
+                    <div class="box-image gravatar img-circle" data-gravatar="<c:out value='${sickNote.person.gravatarURL}?d=mm&s=60'/>"></div>
                     <span class="box-text">
                         <i class="fa fa-at"></i> <c:out value="${sickNote.person.loginName}"/>
                         <h4>

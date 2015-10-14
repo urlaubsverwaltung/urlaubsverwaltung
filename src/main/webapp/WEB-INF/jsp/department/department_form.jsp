@@ -114,7 +114,7 @@
 
                             <div class="department--member ${MEMBER_CSS_CLASS}">
                                 <div class="department--member-image">
-                                    <div class="gravatar gravatar--medium img-circle" data-gravatar="<c:out value='${gravatarUrls[person]}?d=mm&s=40'/>"></div>
+                                    <div class="gravatar gravatar--medium img-circle" data-gravatar="<c:out value='${person.gravatarURL}?d=mm&s=40'/>"></div>
                                 </div>
                                 <div class="department--member-assignment">
                                     <p class="department--member-info">
