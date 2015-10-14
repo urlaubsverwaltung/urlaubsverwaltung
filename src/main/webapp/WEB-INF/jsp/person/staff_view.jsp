@@ -14,7 +14,7 @@
 
     <head>
         <uv:head />
-        <script src="<spring:url value='/js/list.min.js' />" type="text/javascript"></script>
+        <script src="<spring:url value='/lib/list.min.js' />" type="text/javascript"></script>
     </head>
 
     <body>

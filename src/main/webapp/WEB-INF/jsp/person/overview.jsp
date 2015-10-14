@@ -146,7 +146,7 @@
                 function addMomentScript() {
                     return addScript({
                         src: '//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js',
-                        fallback: '<spring:url value='/moment.min.js' />'
+                        fallback: '<spring:url value='/lib/moment/moment.min.js' />'
                     });
                 }
 
@@ -155,7 +155,7 @@
                 function addMomentLangScript() {
                     return addScript({
                         src: '//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/lang/' + datepickerLocale + '.js',
-                        fallback: '<spring:url value='/js/moment.lang.de.js' />'
+                        fallback: '<spring:url value='/lib/moment/moment.lang.de.js' />'
                     });
                 }
 
