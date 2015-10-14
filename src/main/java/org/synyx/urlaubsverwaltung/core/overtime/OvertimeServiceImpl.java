@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
+import org.springframework.util.Assert;
+
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.util.List;
@@ -37,6 +39,8 @@ public class OvertimeServiceImpl implements OvertimeService {
     @Override
     public List<Overtime> getOvertimeRecordsForPerson(Person person) {
 
+        Assert.notNull(person, "Person to get overtime records for must be given.");
+
         return overtimeDAO.findByPerson(person);
     }
 
@@ -56,5 +60,23 @@ public class OvertimeServiceImpl implements OvertimeService {
         LOG.info("Created overtime record: " + overtime.toString());
 
         return overtime;
+    }
+
+
+    @Override
+    public Optional<Overtime> getOvertimeById(Integer id) {
+
+        Assert.notNull(id, "ID must be given.");
+
+        return Optional.ofNullable(overtimeDAO.findOne(id));
+    }
+
+
+    @Override
+    public List<OvertimeComment> getCommentsForOvertime(Overtime overtime) {
+
+        Assert.notNull(overtime, "Overtime record to get comments for must be given.");
+
+        return commentDAO.findByOvertime(overtime);
     }
 }

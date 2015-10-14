@@ -111,4 +111,61 @@ public class OvertimeServiceImplTest {
 
         Mockito.verify(overtimeDAO).findByPerson(person);
     }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfTryingToGetOvertimeForNullPerson() {
+
+        overtimeService.getOvertimeRecordsForPerson(null);
+    }
+
+
+    // Get overtime record by ID ---------------------------------------------------------------------------------------
+
+    @Test
+    public void ensureGetByIDCallsCorrectDAOMethod() {
+
+        overtimeService.getOvertimeById(42);
+
+        Mockito.verify(overtimeDAO).findOne(42);
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfTryingToGetOvertimeByEmptyID() {
+
+        overtimeService.getOvertimeById(null);
+    }
+
+
+    @Test
+    public void ensureReturnsEmptyOptionalIfNoOvertimeFoundForID() {
+
+        Mockito.when(overtimeDAO.findOne(Mockito.anyInt())).thenReturn(null);
+
+        Optional<Overtime> overtimeOptional = overtimeService.getOvertimeById(42);
+
+        Assert.assertNotNull("Should not be null", overtimeOptional);
+        Assert.assertEquals("Should be empty", Optional.empty(), overtimeOptional);
+    }
+
+
+    // Get overtime comments -------------------------------------------------------------------------------------------
+
+    @Test
+    public void ensureGetCommentsCorrectDAOMethod() {
+
+        Overtime overtime = Mockito.mock(Overtime.class);
+
+        overtimeService.getCommentsForOvertime(overtime);
+
+        Mockito.verify(commentDAO).findByOvertime(overtime);
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfTryingToGetCommentsForNullOvertime() {
+
+        overtimeService.getCommentsForOvertime(null);
+    }
 }

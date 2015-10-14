@@ -39,12 +39,12 @@
                         <p><spring:message code="overtime.none"/></p>
                     </c:when>
                     <c:otherwise>
-                        <table class="list-table bordered-table" cellspacing="0">
+                        <table class="list-table bordered-table selectable-table" cellspacing="0">
                             <tbody>
                                 <c:forEach items="${records}" var="record">
-                                    <tr>
+                                    <tr onclick="navigate('${URL_PREFIX}/overtime/${record.id}');">
                                         <td>
-                                            <a href="TODO"><h4><spring:message code="overtime.title"/></h4></a>
+                                            <a href="${URL_PREFIX}/overtime/${record.id}"><h4><spring:message code="overtime.title"/></h4></a>
                                             <p><uv:date date="${record.startDate}"/> - <uv:date date="${record.endDate}"/></p>
                                         </td>
                                         <td class="is-centered">

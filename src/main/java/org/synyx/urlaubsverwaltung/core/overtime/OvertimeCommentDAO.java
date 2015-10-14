@@ -2,6 +2,8 @@ package org.synyx.urlaubsverwaltung.core.overtime;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 
 /**
  * Allows access to overtime comments.
@@ -11,5 +13,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface OvertimeCommentDAO extends JpaRepository<OvertimeComment, Integer> {
 
-    // OK
+    List<OvertimeComment> findByOvertime(Overtime overtime);
 }
