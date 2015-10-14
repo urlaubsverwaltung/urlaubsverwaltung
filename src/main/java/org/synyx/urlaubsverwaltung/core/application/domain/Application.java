@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.application.domain;
 
-import com.google.common.base.MoreObjects;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
@@ -406,30 +407,29 @@ public class Application extends AbstractPersistable<Integer> {
     @Override
     public String toString() {
 
-        MoreObjects.ToStringHelper toStringHelper = MoreObjects.toStringHelper(this);
-
-        toStringHelper.add("id", getId());
-        toStringHelper.add("startDate", getStartDate());
-        toStringHelper.add("endDate", getEndDate());
-        toStringHelper.add("vacationType", getVacationType());
-        toStringHelper.add("dayLength", getDayLength());
+        ToStringBuilder toStringBuilder = new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE);
+        toStringBuilder.append("id", getId());
+        toStringBuilder.append("startDate", getStartDate());
+        toStringBuilder.append("endDate", getEndDate());
+        toStringBuilder.append("vacationType", getVacationType());
+        toStringBuilder.append("dayLength", getDayLength());
 
         if (getPerson() != null && getApplier() != null && getPerson().equals(getApplier())) {
-            toStringHelper.add("person", getPerson());
+            toStringBuilder.append("person", getPerson());
         } else {
-            toStringHelper.add("person", getPerson());
-            toStringHelper.add("applier", getApplier());
+            toStringBuilder.append("person", getPerson());
+            toStringBuilder.append("applier", getApplier());
         }
 
         if (getBoss() != null) {
-            toStringHelper.add("boss", getBoss());
+            toStringBuilder.append("boss", getBoss());
         }
 
         if (getCanceller() != null) {
-            toStringHelper.add("canceller", getCanceller());
+            toStringBuilder.append("canceller", getCanceller());
         }
 
-        return toStringHelper.toString();
+        return toStringBuilder.toString();
     }
 
 

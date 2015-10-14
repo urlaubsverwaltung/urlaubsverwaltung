@@ -77,14 +77,6 @@
 
     <dependencies>
 
-        <!-- UTIL DEPENDENCIES -->
-
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${guava.version}</version>
-        </dependency>
-
         <!-- REST API DEPENDENCIES -->
 
         <dependency>
@@ -363,11 +355,6 @@
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>${guava.version}</version>
             </dependency>
             <dependency>
                 <groupId>joda-time</groupId>

@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.overtime;
 
-import com.google.common.base.MoreObjects;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import org.joda.time.DateMidnight;
 
@@ -99,14 +100,12 @@ public class Overtime extends AbstractPersistable<Integer> {
     @Override
     public String toString() {
 
-        MoreObjects.ToStringHelper toStringHelper = MoreObjects.toStringHelper(this);
-
-        toStringHelper.add("id", getId());
-        toStringHelper.add("startDate", getStartDate());
-        toStringHelper.add("endDate", getEndDate());
-        toStringHelper.add("hours", getHours());
-        toStringHelper.add("person", getPerson());
-
-        return toStringHelper.toString();
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) // NOSONAR - Formatting issue
+            .append("id", getId())
+            .append("startDate", getStartDate())
+            .append("endDate", getEndDate())
+            .append("hours", getHours())
+            .append("person", getPerson())
+            .toString();
     }
 }

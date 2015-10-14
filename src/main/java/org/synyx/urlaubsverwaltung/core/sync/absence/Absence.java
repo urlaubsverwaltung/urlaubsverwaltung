@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.sync.absence;
 
-import com.google.common.base.MoreObjects;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeZone;
@@ -157,13 +158,10 @@ public class Absence {
     @Override
     public String toString() {
 
-        MoreObjects.ToStringHelper toStringHelper = MoreObjects.toStringHelper(this);
-
-        toStringHelper.add("person", getPerson().getLoginName());
-        toStringHelper.add("startDate", getStartDate());
-        toStringHelper.add("endDate", getEndDate());
-        toStringHelper.add("isAllDay", isAllDay());
-
-        return toStringHelper.toString();
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("person", getPerson().getLoginName())
+            .append("startDate", getStartDate())
+            .append("endDate", getEndDate())
+            .append("isAllDay", isAllDay())
+            .toString();
     }
 }

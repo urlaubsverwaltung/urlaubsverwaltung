@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.person;
 
-import com.google.common.base.MoreObjects;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
@@ -226,15 +227,12 @@ public class Person extends AbstractPersistable<Integer> {
     @Override
     public String toString() {
 
-        MoreObjects.ToStringHelper toStringHelper = MoreObjects.toStringHelper(this);
-
-        toStringHelper.add("id", getId());
-        toStringHelper.add("loginName", getLoginName());
-        toStringHelper.add("lastName", getLastName());
-        toStringHelper.add("firstName", getFirstName());
-        toStringHelper.add("email", getEmail());
-        toStringHelper.add("permissions", getPermissions());
-
-        return toStringHelper.toString();
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("id", getId())
+            .append("loginName", getLoginName())
+            .append("lastName", getLastName())
+            .append("firstName", getFirstName())
+            .append("email", getEmail())
+            .append("permissions", getPermissions())
+            .toString();
     }
 }
