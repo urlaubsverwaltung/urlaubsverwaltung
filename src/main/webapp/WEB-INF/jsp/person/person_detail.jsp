@@ -30,7 +30,7 @@
                     <legend><spring:message code="person.form.data.title"/></legend>
                 </div>
                 <div class="box">
-                    <img class="box-image img-circle hidden-print" src="<c:out value='${gravatarUrl}?d=mm&s=60'/>"/>
+                    <div class="box-image gravatar img-circle hidden-print" data-gravatar="<c:out value='${gravatarUrl}?d=mm&s=60'/>"></div>
                     <span class="box-text">
                         <i class="fa fa-at"></i> <c:out value="${person.loginName}"/>
                         <h4>
