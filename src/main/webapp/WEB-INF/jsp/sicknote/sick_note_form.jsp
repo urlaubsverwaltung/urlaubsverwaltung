@@ -8,7 +8,7 @@
 <head>
     <uv:head />
 
-    <script src="<spring:url value='/js/datepicker.js' />" type="text/javascript" ></script>
+    <script src="<spring:url value='/lib/datepicker.js' />" type="text/javascript" ></script>
 
     <script type="text/javascript">
         $(document).ready(function() {
