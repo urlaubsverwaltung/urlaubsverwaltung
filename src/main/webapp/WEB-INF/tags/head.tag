@@ -12,8 +12,6 @@
 <script src="<spring:url value='/lib/jquery/js/jquery-1.9.1.js' />" type="text/javascript" ></script>
 <script src="<spring:url value='/lib/jquery/js/jquery-ui-1.10.3.custom.js' />" type="text/javascript" ></script>
 <script src="<spring:url value='/lib/jquery/js/jquery.tablesorter.js' />" type="text/javascript" ></script>
-<%-- TODO: Is this lib obsolete? --%>
-<script type="text/javascript" src="<spring:url value='/lib/date-de-DE.js' />"></script>
 <script src="<spring:url value='/lib/bootstrap/bootstrap.min.js' />" type="text/javascript" ></script>
 <script src="<spring:url value='/js/custom.js' />" type="text/javascript" ></script>
 <script src="<spring:url value='/js/actions.js' />" type="text/javascript" ></script>

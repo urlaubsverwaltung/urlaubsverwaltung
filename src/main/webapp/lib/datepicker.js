@@ -118,8 +118,8 @@ function getPersonalHolidays(data) {
 
   var personalHolidays = new Array();
 
-  for(var i = 0; i < data.length; i++) {
-    var value = data[i];
+  for(var i = 0; i < data.response.absences.length; i++) {
+    var value = data.response.absences[i];
     if($.inArray(value, personalHolidays) == -1) {
       personalHolidays.push(value);
     }

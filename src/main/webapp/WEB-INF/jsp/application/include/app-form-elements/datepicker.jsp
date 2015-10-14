@@ -4,9 +4,8 @@
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
+<script src="<spring:url value='/lib/date-de-DE.js' />" type="text/javascript"></script>
 <script src="<spring:url value='/lib/datepicker.js'/>" type="text/javascript"></script>
-<script src="<spring:url value='/lib/moment/moment.min.js'/>" type="text/javascript"></script>
-<script src="<spring:url value='/lib/moment/moment.lang.de.js'/>" type="text/javascript"></script>
 
 <script type="text/javascript">
     $(document).ready(function() {
