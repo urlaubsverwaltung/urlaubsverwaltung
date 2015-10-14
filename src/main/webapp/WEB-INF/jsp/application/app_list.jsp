@@ -77,7 +77,7 @@
                               <c:forEach items="${applications}" var="application" varStatus="loopStatus">
                                 <tr class="active" onclick="navigate('${URL_PREFIX}/application/${application.id}');">
                                   <td class="hidden-print is-centered">
-                                    <img class="img-circle" src="<c:out value='${gravatarUrls[application]}?d=mm&s=60'/>"/>&nbsp;
+                                    <div class="gravatar img-circle" data-gravatar="<c:out value='${gravatarUrls[application]}?d=mm&s=60'/>"></div>
                                   </td>
                                   <td class="hidden-xs">
                                     <h5><c:out value="${application.person.niceName}"/></h5>

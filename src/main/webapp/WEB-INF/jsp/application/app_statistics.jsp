@@ -88,8 +88,7 @@
                             <c:forEach items="${statistics}" var="statistic">
                                 <tr>
                                     <td class="is-centered">
-                                        <img class="img-circle hidden-print"
-                                             src="<c:out value='${statistic.gravatarUrl}?d=mm&s=60'/>"/>
+                                        <div class="gravatar img-circle hidden-print" data-gravatar="<c:out value='${statistic.gravatarUrl}?d=mm&s=60'/>"></div>
                                     </td>
                                     <td class="hidden-xs"><c:out value="${statistic.person.firstName}"/></td>
                                     <td class="hidden-xs"><c:out value="${statistic.person.lastName}"/></td>

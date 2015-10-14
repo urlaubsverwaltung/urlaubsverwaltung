@@ -68,7 +68,7 @@
     <c:forEach items="${persons}" var="person" varStatus="loopStatus">
         <tr onclick="navigate('${URL_PREFIX}/staff/${person.id}/overview');">
             <td class="is-centered">
-                <img class="img-circle hidden-print" src="<c:out value='${gravatarUrls[person]}?d=mm&s=60'/>"/>
+                <div class="gravatar img-circle hidden-print" data-gravatar="<c:out value='${gravatarUrls[person]}?d=mm&s=60'/>"></div>
             </td>
             <td class="firstname">
                 <c:out value="${person.firstName}"/>

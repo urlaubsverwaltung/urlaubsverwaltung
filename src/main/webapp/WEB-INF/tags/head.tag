@@ -22,4 +22,4 @@
 <script src="<spring:url value='/js/sortable.js' />" type="text/javascript" ></script>
 <script src="<spring:url value='/js/textarea.js' />" type="text/javascript" ></script>
 <script src="<spring:url value='/js/popover.js' />" type="text/javascript" ></script>
-
+<script src="<spring:url value='/js/gravatar.js' />" type="text/javascript" ></script>

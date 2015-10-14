@@ -102,7 +102,7 @@
                     </legend>
 
                     <div class="box">
-                        <img class="box-image img-circle" src="<c:out value='${gravatarUrl}?d=mm&s=60'/>"/>
+                        <div class="box-image img-circle gravatar" data-gravatar="<c:out value='${gravatarUrl}?d=mm&s=60'/>"></div>
                         <span class="box-text">
                             <i class="fa fa-at"></i> <c:out value="${application.person.loginName}"/>
                             <h4>
@@ -175,7 +175,7 @@
                                 <c:forEach items="${departmentApplications}" var="application">
                                     <tr>
                                         <td>
-                                            <img class="img-circle hidden-print center-block" src="<c:out value='${applicationGravatarURLs[application]}?d=mm&s=40'/>"/>
+                                            <div class="gravatar gravatar--medium img-circle hidden-print center-block" data-gravatar="<c:out value='${applicationGravatarURLs[application]}?d=mm&s=40'/>"></div>
                                         </td>
                                         <td>
                                             <c:out value="${application.person.niceName}"/>
