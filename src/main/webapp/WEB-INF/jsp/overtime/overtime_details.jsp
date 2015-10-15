@@ -77,7 +77,7 @@
                     <spring:message code="overtime.data.staff"/>
                 </legend>
                 <uv:person person="${record.person}" cssClass="hidden-print"/>
-                <%-- TODO: Show total number of overtime for person here --%>
+                <uv:overtime-total hours="${overtimeTotal}"/>
             </div>
         </div><%-- End of row --%>
     </div><%-- End of container --%>

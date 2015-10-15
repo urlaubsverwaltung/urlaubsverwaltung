@@ -97,6 +97,7 @@ public class OvertimeController {
 
         model.addAttribute("record", overtime);
         model.addAttribute("comments", overtimeService.getCommentsForOvertime(overtime));
+        model.addAttribute("overtimeTotal", overtimeService.getTotalOvertimeForPerson(signedInUser));
 
         return "overtime/overtime_details";
     }
