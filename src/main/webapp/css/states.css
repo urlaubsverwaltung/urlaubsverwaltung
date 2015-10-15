@@ -30,6 +30,7 @@
 
 .state {
     font-size: 25px;
+    color: #6F6F6F;
 }
 
 .state.pull-right {
@@ -50,13 +51,4 @@
 
 .state.CANCELLED {
     color: #3B3B3B !important;
-}
-
-/**************************************************************************
-  COLORS FOR SICK NOTE STATES
-**************************************************************************/
-
-.state.SICK_NOTE,
-.state.SICK_NOTE_CHILD {
-    color: #6F6F6F;
 }

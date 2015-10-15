@@ -46,6 +46,10 @@ public class Overtime extends AbstractPersistable<Integer> {
     @Column(nullable = false)
     private BigDecimal hours;
 
+    @Column(nullable = false)
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date lastModificationDate;
+
     Overtime() {
 
         // OK
@@ -63,6 +67,8 @@ public class Overtime extends AbstractPersistable<Integer> {
         this.startDate = startDate.toDate();
         this.endDate = endDate.toDate();
         this.hours = numberOfHours;
+
+        this.lastModificationDate = DateMidnight.now().toDate();
     }
 
     public Person getPerson() {
@@ -94,6 +100,16 @@ public class Overtime extends AbstractPersistable<Integer> {
     public BigDecimal getHours() {
 
         return hours;
+    }
+
+
+    public DateMidnight getLastModificationDate() {
+
+        if (lastModificationDate == null) {
+            throw new IllegalStateException("Missing last modification date!");
+        }
+
+        return new DateMidnight(lastModificationDate.getTime());
     }
 
 

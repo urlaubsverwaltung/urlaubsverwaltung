@@ -43,12 +43,25 @@
                             <tbody>
                                 <c:forEach items="${records}" var="record">
                                     <tr onclick="navigate('${URL_PREFIX}/overtime/${record.id}');">
+                                        <td class="is-centered state">
+                                            <span class="hidden-print"><i class="fa fa-history"></i></span>
+                                        </td>
                                         <td>
-                                            <a href="${URL_PREFIX}/overtime/${record.id}"><h4><spring:message code="overtime.title"/></h4></a>
+                                            <h4 class="visible-print">
+                                                <spring:message code="overtime.title" />
+                                            </h4>
+                                            <a class="hidden-print" href="${URL_PREFIX}/overtime/${record.id}">
+                                                <h4><spring:message code="overtime.title"/></h4>
+                                            </a>
                                             <p><uv:date date="${record.startDate}"/> - <uv:date date="${record.endDate}"/></p>
                                         </td>
-                                        <td class="is-centered">
-                                            <c:out value="${record.hours}" /> <spring:message code="overtime.data.hours"/>
+                                        <td class="is-centered hidden-xs">
+                                            <uv:number number="${record.hours}"/> <spring:message code="overtime.data.hours"/>
+                                        </td>
+                                        <td class="hidden-print is-centered hidden-xs">
+                                            <i class="fa fa-clock-o"></i>
+                                            <spring:message code="overtime.progress.lastEdited"/>
+                                            <uv:date date="${record.lastModificationDate}"/>
                                         </td>
                                     </tr>
                                 </c:forEach>

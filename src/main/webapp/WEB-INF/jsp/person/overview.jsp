@@ -152,7 +152,7 @@
             </div>
             <div class="col-xs-12 col-md-6">
                 <div class="box">
-                    <span class="box-icon bg-green"><i class="fa fa-clock-o"></i></span>
+                    <span class="box-icon bg-green"><i class="fa fa-history"></i></span>
                     <span class="box-text">
                         <spring:message code="overtime.person.total" arguments="${overtimeTotal}"/>
                     </span>
@@ -161,7 +161,7 @@
             <div class="col-xs-12 col-md-6">
                 <div class="box">
                     <span class="box-icon bg-green">
-                        <i class="fa fa-history"></i>
+                        <i class="fa fa-sort-amount-desc"></i>
                     </span>
                     <span class="box-text">
                         <spring:message code="overtime.person.left" arguments="${overtimeLeft}"/>
