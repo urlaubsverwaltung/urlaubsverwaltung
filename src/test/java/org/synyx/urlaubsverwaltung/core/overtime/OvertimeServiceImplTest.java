@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.overtime;
 
+import org.joda.time.DateMidnight;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -186,6 +188,29 @@ public class OvertimeServiceImplTest {
 
         Assert.assertNotNull("Should not be null", overtimeOptional);
         Assert.assertEquals("Should be empty", Optional.empty(), overtimeOptional);
+    }
+
+
+    // Get overtime records for person and year ------------------------------------------------------------------------
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfTryingToGetRecordsByPersonAndYearWithNullPerson() {
+
+        overtimeService.getOvertimeRecordsForPersonAndYear(null, 2015);
+    }
+
+
+    @Test
+    public void ensureGetRecordsByPersonAndYearCallsCorrectDAOMethod() {
+
+        Person person = TestDataCreator.createPerson();
+
+        overtimeService.getOvertimeRecordsForPersonAndYear(person, 2015);
+
+        DateMidnight firstDay = new DateMidnight(2015, 1, 1);
+        DateMidnight lastDay = new DateMidnight(2015, 12, 31);
+
+        Mockito.verify(overtimeDAO).findByPersonAndPeriod(person, firstDay.toDate(), lastDay.toDate());
     }
 
 

@@ -21,6 +21,8 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.math.BigDecimal;
 
+import java.util.List;
+
 
 /**
  * @author  Aljona Murygina - murygina@synyx.de
@@ -91,5 +93,34 @@ public class OvertimeDAOIT {
         BigDecimal totalHours = overtimeDAO.calculateTotalHoursForPerson(person);
 
         Assert.assertNull("Should be null", totalHours);
+    }
+
+
+    @Test
+    public void ensureReturnsAllRecordsWithStartOrEndDateInTheGivenYear() {
+
+        Person person = TestDataCreator.createPerson();
+        personDAO.save(person);
+
+        // records for 2015
+        overtimeDAO.save(new Overtime(person, new DateMidnight(2014, 12, 30), new DateMidnight(2015, 1, 3),
+                new BigDecimal("1")));
+        overtimeDAO.save(new Overtime(person, new DateMidnight(2015, 10, 5), new DateMidnight(2015, 10, 20),
+                new BigDecimal("2")));
+        overtimeDAO.save(new Overtime(person, new DateMidnight(2015, 12, 28), new DateMidnight(2016, 1, 6),
+                new BigDecimal("3")));
+
+        // record for 2014
+        overtimeDAO.save(new Overtime(person, new DateMidnight(2014, 12, 5), new DateMidnight(2014, 12, 31),
+                new BigDecimal("4")));
+
+        List<Overtime> records = overtimeDAO.findByPersonAndPeriod(person, new DateMidnight(2015, 1, 1).toDate(),
+                new DateMidnight(2015, 12, 31).toDate());
+
+        Assert.assertNotNull("Should not be null", records);
+        Assert.assertEquals("Wrong number of records", 3, records.size());
+        Assert.assertEquals("Wrong record", new BigDecimal("1"), records.get(0).getHours());
+        Assert.assertEquals("Wrong record", new BigDecimal("2"), records.get(1).getHours());
+        Assert.assertEquals("Wrong record", new BigDecimal("3"), records.get(2).getHours());
     }
 }

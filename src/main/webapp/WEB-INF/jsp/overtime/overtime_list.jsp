@@ -36,9 +36,17 @@
             </div>
 
             <div class="col-xs-12">
-                <c:if test="${!empty records}">
-                    <table class="list-table bordered-table selectable-table" cellspacing="0">
-                        <tbody>
+                <legend>
+                    <spring:message code="overtime.list"/>
+                    <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/overtime?year="/>
+                </legend>
+                <c:choose>
+                    <c:when test="${empty records}">
+                        <p><spring:message code="overtime.none"/></p>
+                    </c:when>
+                    <c:otherwise>
+                        <table class="list-table bordered-table selectable-table" cellspacing="0">
+                            <tbody>
                             <c:forEach items="${records}" var="record">
                                 <tr onclick="navigate('${URL_PREFIX}/overtime/${record.id}');">
                                     <td class="is-centered state">
@@ -63,9 +71,10 @@
                                     </td>
                                 </tr>
                             </c:forEach>
-                        </tbody>
-                    </table>
-                </c:if>
+                            </tbody>
+                        </table>
+                    </c:otherwise>
+                </c:choose>
             </div>
 
         </div><%-- End of row --%>

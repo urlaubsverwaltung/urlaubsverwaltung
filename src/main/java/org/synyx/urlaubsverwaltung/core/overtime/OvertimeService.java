@@ -27,6 +27,17 @@ public interface OvertimeService {
 
 
     /**
+     * Fetch all the overtime records for a certain person and year.
+     *
+     * @param  person  to fetch the overtime records for
+     * @param  year  to fetch the overtime records for
+     *
+     * @return  list of matchingo vertime records
+     */
+    List<Overtime> getOvertimeRecordsForPersonAndYear(Person person, int year);
+
+
+    /**
      * Saves an overtime record.
      *
      * @param  overtime  to be saved

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import org.synyx.urlaubsverwaltung.core.overtime.Overtime;
@@ -65,12 +66,17 @@ public class OvertimeController {
 
 
     @RequestMapping(value = "/overtime", method = RequestMethod.GET)
-    public String showOvertime(Model model) {
+    public String showOvertime(
+        @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Integer requestedYear,
+        Model model) {
+
+        Integer year = requestedYear == null ? DateMidnight.now().getYear() : requestedYear;
 
         Person signedInUser = sessionService.getSignedInUser();
 
+        model.addAttribute("year", year);
         model.addAttribute("person", signedInUser);
-        model.addAttribute("records", overtimeService.getOvertimeRecordsForPerson(signedInUser));
+        model.addAttribute("records", overtimeService.getOvertimeRecordsForPersonAndYear(signedInUser, year));
         model.addAttribute("overtimeTotal", overtimeService.getTotalOvertimeForPerson(signedInUser));
 
         // TODO: Subtract hours of applications for leave because of having overtime due from total overtime

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 
 import java.math.BigDecimal;
 
@@ -44,6 +45,16 @@ public class OvertimeServiceImpl implements OvertimeService {
         Assert.notNull(person, "Person to get overtime records for must be given.");
 
         return overtimeDAO.findByPerson(person);
+    }
+
+
+    @Override
+    public List<Overtime> getOvertimeRecordsForPersonAndYear(Person person, int year) {
+
+        Assert.notNull(person, "Person to get overtime records for must be given.");
+
+        return overtimeDAO.findByPersonAndPeriod(person, DateUtil.getFirstDayOfYear(year).toDate(),
+                DateUtil.getLastDayOfYear(year).toDate());
     }
 
 
