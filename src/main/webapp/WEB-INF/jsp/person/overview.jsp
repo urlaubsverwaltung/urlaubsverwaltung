@@ -154,22 +154,10 @@
                 </legend>
             </div>
             <div class="col-xs-12 col-md-6">
-                <div class="box">
-                    <span class="box-icon bg-green"><i class="fa fa-history"></i></span>
-                    <span class="box-text">
-                        <spring:message code="overtime.person.total" arguments="${overtimeTotal}"/>
-                    </span>
-                </div>
+                <uv:overtime-total hours="${overtimeTotal}"/>
             </div>
             <div class="col-xs-12 col-md-6">
-                <div class="box">
-                    <span class="box-icon bg-green">
-                        <i class="fa fa-sort-amount-desc"></i>
-                    </span>
-                    <span class="box-text">
-                        <spring:message code="overtime.person.left" arguments="${overtimeLeft}"/>
-                    </span>
-                </div>
+                <uv:overtime-left hours="${overtimeLeft}"/>
             </div>
         </div>
 

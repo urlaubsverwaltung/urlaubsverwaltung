@@ -25,44 +25,51 @@
                         </a>
                     </span>
                 </legend>
-
-                <c:choose>
-                    <c:when test="${empty records}">
-                        <p><spring:message code="overtime.none"/></p>
-                    </c:when>
-                    <c:otherwise>
-                        <table class="list-table bordered-table selectable-table" cellspacing="0">
-                            <tbody>
-                                <c:forEach items="${records}" var="record">
-                                    <tr onclick="navigate('${URL_PREFIX}/overtime/${record.id}');">
-                                        <td class="is-centered state">
-                                            <span class="hidden-print"><i class="fa fa-history"></i></span>
-                                        </td>
-                                        <td>
-                                            <h4 class="visible-print">
-                                                <spring:message code="overtime.title" />
-                                            </h4>
-                                            <a class="hidden-print" href="${URL_PREFIX}/overtime/${record.id}">
-                                                <h4><spring:message code="overtime.title"/></h4>
-                                            </a>
-                                            <p><uv:date date="${record.startDate}"/> - <uv:date date="${record.endDate}"/></p>
-                                        </td>
-                                        <td class="is-centered hidden-xs">
-                                            <uv:number number="${record.hours}"/> <spring:message code="overtime.data.hours"/>
-                                        </td>
-                                        <td class="hidden-print is-centered hidden-xs">
-                                            <i class="fa fa-clock-o"></i>
-                                            <spring:message code="overtime.progress.lastEdited"/>
-                                            <uv:date date="${record.lastModificationDate}"/>
-                                        </td>
-                                    </tr>
-                                </c:forEach>
-                            </tbody>
-                        </table>
-                    </c:otherwise>
-                </c:choose>
-
             </div>
+
+            <div class="col-xs-12 col-sm-12 col-md-4">
+                <uv:person person="${person}"/>
+            </div>
+            <div class="col-xs-12 col-md-4">
+                <uv:overtime-total hours="${overtimeTotal}"/>
+            </div>
+            <div class="col-xs-12 col-md-4">
+                <uv:overtime-left hours="${overtimeLeft}"/>
+            </div>
+
+            <div class="col-xs-12">
+                <c:if test="${!empty records}">
+                    <table class="list-table bordered-table selectable-table" cellspacing="0">
+                        <tbody>
+                            <c:forEach items="${records}" var="record">
+                                <tr onclick="navigate('${URL_PREFIX}/overtime/${record.id}');">
+                                    <td class="is-centered state">
+                                        <span class="hidden-print"><i class="fa fa-history"></i></span>
+                                    </td>
+                                    <td>
+                                        <h4 class="visible-print">
+                                            <spring:message code="overtime.title" />
+                                        </h4>
+                                        <a class="hidden-print" href="${URL_PREFIX}/overtime/${record.id}">
+                                            <h4><spring:message code="overtime.title"/></h4>
+                                        </a>
+                                        <p><uv:date date="${record.startDate}"/> - <uv:date date="${record.endDate}"/></p>
+                                    </td>
+                                    <td class="is-centered hidden-xs">
+                                        <uv:number number="${record.hours}"/> <spring:message code="overtime.data.hours"/>
+                                    </td>
+                                    <td class="hidden-print is-centered hidden-xs">
+                                        <i class="fa fa-clock-o"></i>
+                                        <spring:message code="overtime.progress.lastEdited"/>
+                                        <uv:date date="${record.lastModificationDate}"/>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                        </tbody>
+                    </table>
+                </c:if>
+            </div>
+
         </div><%-- End of row --%>
     </div><%-- End of container --%>
 </div><%-- End of content --%>

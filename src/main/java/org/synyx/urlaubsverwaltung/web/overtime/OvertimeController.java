@@ -68,7 +68,12 @@ public class OvertimeController {
 
         Person signedInUser = sessionService.getSignedInUser();
 
+        model.addAttribute("person", signedInUser);
         model.addAttribute("records", overtimeService.getOvertimeRecordsForPerson(signedInUser));
+        model.addAttribute("overtimeTotal", overtimeService.getTotalOvertimeForPerson(signedInUser));
+
+        // TODO: Subtract hours of applications for leave because of having overtime due from total overtime
+        model.addAttribute("overtimeLeft", BigDecimal.ZERO);
 
         return "overtime/overtime_list";
     }
