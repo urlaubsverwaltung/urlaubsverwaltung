@@ -22,7 +22,7 @@
             <column name="endDate" type="date">
                 <constraints nullable="false"/>
             </column>
-            <column name="hours" type="INT(10)">
+            <column name="hours" type="DECIMAL(19, 2)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -36,6 +36,12 @@
                                  onUpdate="NO ACTION"
                                  referencedColumnNames="id"
                                  referencedTableName="Person"/>
+
+        <!-- Enable better performance for calculation of total overtime for person -->
+        <createIndex tableName="Overtime" indexName="Index_Overtime_person_hours">
+            <column name="person_id"/>
+            <column name="hours"/>
+        </createIndex>
 
     </changeSet>
 
