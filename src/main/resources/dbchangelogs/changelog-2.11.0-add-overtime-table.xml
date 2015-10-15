@@ -46,6 +46,12 @@
             <column name="hours"/>
         </createIndex>
 
+        <createIndex tableName="Overtime" indexName="Index_Overtime_person_startDate_endDate">
+            <column name="person_id"/>
+            <column name="startDate"/>
+            <column name="endDate"/>
+        </createIndex>
+
     </changeSet>
 
 </databaseChangeLog>
