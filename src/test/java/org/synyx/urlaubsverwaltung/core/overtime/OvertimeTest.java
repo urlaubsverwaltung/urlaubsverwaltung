@@ -138,10 +138,60 @@ public class OvertimeTest {
 
         Overtime overtime = new Overtime(person, now.minusDays(2), now, BigDecimal.ONE);
 
-        Field endDateField = ReflectionUtils.findField(Overtime.class, "lastModificationDate");
-        endDateField.setAccessible(true);
-        endDateField.set(overtime, null);
+        Field lastModificationDateField = ReflectionUtils.findField(Overtime.class, "lastModificationDate");
+        lastModificationDateField.setAccessible(true);
+        lastModificationDateField.set(overtime, null);
 
         overtime.getLastModificationDate();
+    }
+
+
+    @Test
+    public void ensureCallingOnUpdateChangesLastModificationDate() throws IllegalAccessException {
+
+        Person person = TestDataCreator.createPerson();
+        DateMidnight now = DateMidnight.now();
+
+        Overtime overtime = new Overtime(person, now.minusDays(2), now, BigDecimal.ONE);
+
+        // Simulate that the overtime record has been created to an earlier time
+        Field lastModificationDateField = ReflectionUtils.findField(Overtime.class, "lastModificationDate");
+        lastModificationDateField.setAccessible(true);
+        lastModificationDateField.set(overtime, now.minusDays(3).toDate());
+
+        Assert.assertEquals("Wrong initial last modification date", now.minusDays(3),
+            overtime.getLastModificationDate());
+
+        overtime.onUpdate();
+
+        Assert.assertEquals("Last modification date should be set to now", now, overtime.getLastModificationDate());
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfTryingToSetStartDateToNull() {
+
+        new Overtime().setStartDate(null);
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfTryingToSetEndDateToNull() {
+
+        new Overtime().setEndDate(null);
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfTryingToSetHoursToNull() {
+
+        new Overtime().setHours(null);
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfTryingToSetPersonToNull() {
+
+        new Overtime().setPerson(null);
     }
 }

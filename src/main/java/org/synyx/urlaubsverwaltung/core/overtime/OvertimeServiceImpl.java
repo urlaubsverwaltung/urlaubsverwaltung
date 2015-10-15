@@ -50,16 +50,21 @@ public class OvertimeServiceImpl implements OvertimeService {
     @Override
     public Overtime record(Overtime overtime, Optional<String> comment, Person author) {
 
+        boolean isNewOvertime = overtime.isNew();
+
         // save overtime record
+        overtime.onUpdate();
         overtimeDAO.save(overtime);
 
         // save comment
-        OvertimeComment overtimeComment = new OvertimeComment(author, overtime, OvertimeAction.CREATED);
+        OvertimeAction action = isNewOvertime ? OvertimeAction.CREATED : OvertimeAction.EDITED;
+        OvertimeComment overtimeComment = new OvertimeComment(author, overtime, action);
         comment.ifPresent((text) -> overtimeComment.setText(text));
 
         commentDAO.save(overtimeComment);
 
-        LOG.info("Created overtime record: " + overtime.toString());
+        String loggingAction = isNewOvertime ? "Created" : "Updated";
+        LOG.info(loggingAction + " overtime record: " + overtime.toString());
 
         return overtime;
     }

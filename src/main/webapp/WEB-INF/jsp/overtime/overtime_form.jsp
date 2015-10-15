@@ -2,6 +2,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <html>
 <head>
@@ -16,7 +17,18 @@
 <div class="content">
     <div class="container">
         <div class="row">
-            <form:form method="POST" action="${URL_PREFIX}/overtime" modelAttribute="overtime" cssClass="form-horizontal">
+            <c:choose>
+                <c:when test="${overtime.id == null}">
+                    <c:set var="METHOD" value="POST"/>
+                    <c:set var="ACTION" value="${URL_PREFIX}/overtime"/>
+                </c:when>
+                <c:otherwise>
+                    <c:set var="METHOD" value="PUT"/>
+                    <c:set var="ACTION" value="${URL_PREFIX}/overtime/${overtime.id}"/>
+                </c:otherwise>
+            </c:choose>
+
+            <form:form method="${METHOD}" action="${ACTION}" modelAttribute="overtime" cssClass="form-horizontal">
                 <form:hidden path="person" value="${overtime.person.id}" />
                 <div class="form-section">
                     <div class="col-xs-12">

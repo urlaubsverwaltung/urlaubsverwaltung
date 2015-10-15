@@ -8,5 +8,6 @@ package org.synyx.urlaubsverwaltung.core.overtime;
  */
 public enum OvertimeAction {
 
-    CREATED
+    CREATED,
+    EDITED
 }

@@ -103,6 +103,38 @@ public class Overtime extends AbstractPersistable<Integer> {
     }
 
 
+    public void setPerson(Person person) {
+
+        Assert.notNull(person, "Person must be given.");
+
+        this.person = person;
+    }
+
+
+    public void setStartDate(DateMidnight startDate) {
+
+        Assert.notNull(startDate, "Start date must be given.");
+
+        this.startDate = startDate.toDate();
+    }
+
+
+    public void setEndDate(DateMidnight endDate) {
+
+        Assert.notNull(endDate, "End date must be given.");
+
+        this.endDate = endDate.toDate();
+    }
+
+
+    public void setHours(BigDecimal hours) {
+
+        Assert.notNull(hours, "Hours must be given.");
+
+        this.hours = hours;
+    }
+
+
     public DateMidnight getLastModificationDate() {
 
         if (lastModificationDate == null) {
@@ -110,6 +142,15 @@ public class Overtime extends AbstractPersistable<Integer> {
         }
 
         return new DateMidnight(lastModificationDate.getTime());
+    }
+
+
+    /**
+     * Should be called whenever an overtime entity is updated.
+     */
+    public void onUpdate() {
+
+        this.lastModificationDate = DateMidnight.now().toDate();
     }
 
 

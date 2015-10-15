@@ -28,6 +28,10 @@
             <div class="col-xs-12 col-md-6">
                 <legend>
                     <spring:message code="overtime.title"/>
+                    <a href="${URL_PREFIX}/overtime/${record.id}/edit" class="fa-action pull-right"
+                       data-title="<spring:message code="action.edit"/>">
+                        <i class="fa fa-pencil"></i>
+                    </a>
                 </legend>
                 <div class="box">
                     <span class="box-icon bg-green">

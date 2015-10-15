@@ -17,6 +17,8 @@ import java.math.BigDecimal;
  */
 public class OvertimeForm {
 
+    private Integer id;
+
     private Person person;
 
     private DateMidnight startDate;
@@ -39,6 +41,24 @@ public class OvertimeForm {
 
         this.person = person;
     }
+
+
+    public OvertimeForm(Overtime overtime) {
+
+        Assert.notNull(overtime, "Overtime must be given.");
+
+        this.id = overtime.getId();
+        this.person = overtime.getPerson();
+        this.startDate = overtime.getStartDate();
+        this.endDate = overtime.getEndDate();
+        this.numberOfHours = overtime.getHours();
+    }
+
+    public Integer getId() {
+
+        return id;
+    }
+
 
     public Person getPerson() {
 
@@ -103,5 +123,14 @@ public class OvertimeForm {
     public Overtime generateOvertime() {
 
         return new Overtime(getPerson(), getStartDate(), getEndDate(), getNumberOfHours());
+    }
+
+
+    public void updateOvertime(Overtime overtime) {
+
+        overtime.setPerson(getPerson());
+        overtime.setHours(getNumberOfHours());
+        overtime.setStartDate(getStartDate());
+        overtime.setEndDate(getEndDate());
     }
 }

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import org.synyx.urlaubsverwaltung.core.overtime.Overtime;
+import org.synyx.urlaubsverwaltung.core.overtime.OvertimeAction;
 import org.synyx.urlaubsverwaltung.core.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
@@ -127,8 +128,54 @@ public class OvertimeController {
         Overtime recordedOvertime = overtimeService.record(overtimeForm.generateOvertime(),
                 Optional.ofNullable(overtimeForm.getComment()), sessionService.getSignedInUser());
 
-        redirectAttributes.addFlashAttribute("overtimeRecord", "CREATED");
+        redirectAttributes.addFlashAttribute("overtimeRecord", OvertimeAction.CREATED.name());
 
         return "redirect:/web/overtime/" + recordedOvertime.getId();
+    }
+
+
+    @RequestMapping(value = "/overtime/{id}/edit", method = RequestMethod.GET)
+    public String editOvertime(@PathVariable("id") Integer id, Model model) {
+
+        Optional<Overtime> overtimeOptional = overtimeService.getOvertimeById(id);
+
+        if (!overtimeOptional.isPresent()) {
+            return ControllerConstants.ERROR_JSP;
+        }
+
+        model.addAttribute("overtime", new OvertimeForm(overtimeOptional.get()));
+
+        return "overtime/overtime_form";
+    }
+
+
+    @RequestMapping(value = "/overtime/{id}", method = RequestMethod.PUT)
+    public String updateOvertime(@PathVariable("id") Integer id,
+        @ModelAttribute("overtime") OvertimeForm overtimeForm, Errors errors, Model model,
+        RedirectAttributes redirectAttributes) {
+
+        Optional<Overtime> optionalOvertime = overtimeService.getOvertimeById(id);
+
+        if (!optionalOvertime.isPresent()) {
+            return ControllerConstants.ERROR_JSP;
+        }
+
+        validator.validate(overtimeForm, errors);
+
+        if (errors.hasErrors()) {
+            model.addAttribute("overtime", overtimeForm);
+
+            return "overtime/overtime_form";
+        }
+
+        Overtime overtime = optionalOvertime.get();
+        overtimeForm.updateOvertime(overtime);
+
+        overtimeService.record(overtime, Optional.ofNullable(overtimeForm.getComment()),
+            sessionService.getSignedInUser());
+
+        redirectAttributes.addFlashAttribute("overtimeRecord", OvertimeAction.EDITED.name());
+
+        return "redirect:/web/overtime/" + id;
     }
 }

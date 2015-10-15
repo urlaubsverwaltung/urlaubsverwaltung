@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.core.overtime;
 
-import org.joda.time.DateMidnight;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,8 +25,8 @@ public class OvertimeServiceImplTest {
     private OvertimeDAO overtimeDAO;
     private OvertimeCommentDAO commentDAO;
 
-    private Overtime overtime;
-    private Person author;
+    private Overtime overtimeMock;
+    private Person authorMock;
 
     @Before
     public void setUp() {
@@ -38,12 +36,8 @@ public class OvertimeServiceImplTest {
 
         overtimeService = new OvertimeServiceImpl(overtimeDAO, commentDAO);
 
-        Person person = TestDataCreator.createPerson();
-        DateMidnight startDate = DateMidnight.now();
-        DateMidnight endDate = startDate.plusDays(3);
-
-        overtime = new Overtime(person, startDate, endDate, BigDecimal.ONE);
-        author = TestDataCreator.createPerson();
+        overtimeMock = Mockito.mock(Overtime.class);
+        authorMock = Mockito.mock(Person.class);
     }
 
 
@@ -52,10 +46,57 @@ public class OvertimeServiceImplTest {
     @Test
     public void ensurePersistsOvertimeAndComment() {
 
-        overtimeService.record(overtime, Optional.of("Foo Bar"), author);
+        overtimeService.record(overtimeMock, Optional.of("Foo Bar"), authorMock);
 
-        Mockito.verify(overtimeDAO).save(overtime);
+        Mockito.verify(overtimeDAO).save(overtimeMock);
         Mockito.verify(commentDAO).save(Mockito.any(OvertimeComment.class));
+    }
+
+
+    @Test
+    public void ensureRecordingUpdatesLastModificationDate() {
+
+        overtimeService.record(overtimeMock, Optional.empty(), authorMock);
+
+        Mockito.verify(overtimeMock).onUpdate();
+    }
+
+
+    @Test
+    public void ensureCreatesCommentWithCorrectActionForNewOvertime() {
+
+        Mockito.when(overtimeMock.isNew()).thenReturn(true);
+
+        ArgumentCaptor<OvertimeComment> commentCaptor = ArgumentCaptor.forClass(OvertimeComment.class);
+
+        overtimeService.record(overtimeMock, Optional.empty(), authorMock);
+
+        Mockito.verify(overtimeMock).isNew();
+        Mockito.verify(commentDAO).save(commentCaptor.capture());
+
+        OvertimeComment comment = commentCaptor.getValue();
+
+        Assert.assertNotNull("Should not be null", comment);
+        Assert.assertEquals("Wrong action", OvertimeAction.CREATED, comment.getAction());
+    }
+
+
+    @Test
+    public void ensureCreatesCommentWithCorrectActionForExistentOvertime() {
+
+        Mockito.when(overtimeMock.isNew()).thenReturn(false);
+
+        ArgumentCaptor<OvertimeComment> commentCaptor = ArgumentCaptor.forClass(OvertimeComment.class);
+
+        overtimeService.record(overtimeMock, Optional.empty(), authorMock);
+
+        Mockito.verify(overtimeMock).isNew();
+        Mockito.verify(commentDAO).save(commentCaptor.capture());
+
+        OvertimeComment comment = commentCaptor.getValue();
+
+        Assert.assertNotNull("Should not be null", comment);
+        Assert.assertEquals("Wrong action", OvertimeAction.EDITED, comment.getAction());
     }
 
 
@@ -64,7 +105,7 @@ public class OvertimeServiceImplTest {
 
         ArgumentCaptor<OvertimeComment> commentCaptor = ArgumentCaptor.forClass(OvertimeComment.class);
 
-        overtimeService.record(overtime, Optional.empty(), author);
+        overtimeService.record(overtimeMock, Optional.empty(), authorMock);
 
         Mockito.verify(commentDAO).save(commentCaptor.capture());
 
@@ -72,9 +113,8 @@ public class OvertimeServiceImplTest {
 
         Assert.assertNotNull("Should not be null", comment);
 
-        Assert.assertEquals("Wrong action", OvertimeAction.CREATED, comment.getAction());
-        Assert.assertEquals("Wrong author", author, comment.getPerson());
-        Assert.assertEquals("Wrong overtime", overtime, comment.getOvertime());
+        Assert.assertEquals("Wrong author", authorMock, comment.getPerson());
+        Assert.assertEquals("Wrong overtime", overtimeMock, comment.getOvertime());
 
         Assert.assertNull("Text should not be set", comment.getText());
     }
@@ -85,7 +125,7 @@ public class OvertimeServiceImplTest {
 
         ArgumentCaptor<OvertimeComment> commentCaptor = ArgumentCaptor.forClass(OvertimeComment.class);
 
-        overtimeService.record(overtime, Optional.of("Foo"), author);
+        overtimeService.record(overtimeMock, Optional.of("Foo"), authorMock);
 
         Mockito.verify(commentDAO).save(commentCaptor.capture());
 
@@ -93,9 +133,8 @@ public class OvertimeServiceImplTest {
 
         Assert.assertNotNull("Should not be null", comment);
 
-        Assert.assertEquals("Wrong action", OvertimeAction.CREATED, comment.getAction());
-        Assert.assertEquals("Wrong author", author, comment.getPerson());
-        Assert.assertEquals("Wrong overtime", overtime, comment.getOvertime());
+        Assert.assertEquals("Wrong author", authorMock, comment.getPerson());
+        Assert.assertEquals("Wrong overtime", overtimeMock, comment.getOvertime());
         Assert.assertEquals("Wrong text", "Foo", comment.getText());
     }
 
