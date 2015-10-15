@@ -19,11 +19,9 @@
             <div class="col-xs-12">
                 <legend>
                     <spring:message code="overtime.title"/>
-                    <span>
-                        <a href="${URL_PREFIX}/overtime/new" class="fa-action pull-right" data-title="<spring:message code="action.overtime.new"/>">
-                            <i class="fa fa-plus-circle"></i>
-                        </a>
-                    </span>
+                    <a href="${URL_PREFIX}/overtime/new" class="fa-action pull-right" data-title="<spring:message code="action.overtime.new"/>">
+                        <i class="fa fa-plus-circle"></i>
+                    </a>
                 </legend>
             </div>
 

@@ -141,16 +141,12 @@
             <div class="col-xs-12">
                 <legend>
                     <spring:message code="overtime.title"/>
-                    <span>
-                        <a href="${URL_PREFIX}/overtime" class="fa-action pull-right" style="margin-top: 1px" data-title="<spring:message code="action.overtime.list"/>">
-                            <i class="fa fa-th"></i>
-                        </a>
-                    </span>
-                    <span>
-                        <a href="${URL_PREFIX}/overtime/new" class="fa-action pull-right" data-title="<spring:message code="action.overtime.new"/>">
-                            <i class="fa fa-plus-circle"></i>
-                        </a>
-                    </span>
+                    <a href="${URL_PREFIX}/overtime" class="fa-action pull-right" style="margin-top: 1px" data-title="<spring:message code="action.overtime.list"/>">
+                        <i class="fa fa-th"></i>
+                    </a>
+                    <a href="${URL_PREFIX}/overtime/new" class="fa-action pull-right" data-title="<spring:message code="action.overtime.new"/>">
+                        <i class="fa fa-plus-circle"></i>
+                    </a>
                 </legend>
             </div>
             <div class="col-xs-12 col-md-6">
