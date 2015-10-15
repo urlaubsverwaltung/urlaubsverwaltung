@@ -119,6 +119,34 @@ public class OvertimeValidatorTest {
     }
 
 
+    @Test
+    public void ensureNoErrorMessageForMandatoryIfStartDateIsNullBecauseOfTypeMismatch() {
+
+        Mockito.when(errors.hasFieldErrors("startDate")).thenReturn(true);
+
+        overtimeForm.setStartDate(null);
+
+        validator.validate(overtimeForm, errors);
+
+        Mockito.verify(errors).hasFieldErrors("startDate");
+        Mockito.verify(errors, Mockito.never()).rejectValue("startDate", "error.entry.mandatory");
+    }
+
+
+    @Test
+    public void ensureNoErrorMessageForMandatoryIfEndDateIsNullBecauseOfTypeMismatch() {
+
+        Mockito.when(errors.hasFieldErrors("endDate")).thenReturn(true);
+
+        overtimeForm.setEndDate(null);
+
+        validator.validate(overtimeForm, errors);
+
+        Mockito.verify(errors).hasFieldErrors("endDate");
+        Mockito.verify(errors, Mockito.never()).rejectValue("endDate", "error.entry.mandatory");
+    }
+
+
     // Validate number of hours ----------------------------------------------------------------------------------------
 
     @Test
@@ -162,6 +190,20 @@ public class OvertimeValidatorTest {
         validator.validate(overtimeForm, errors);
 
         Mockito.verifyZeroInteractions(errors);
+    }
+
+
+    @Test
+    public void ensureNoErrorMessageForMandatoryIfNumberOfHoursIsNullBecauseOfTypeMismatch() {
+
+        Mockito.when(errors.hasFieldErrors("numberOfHours")).thenReturn(true);
+
+        overtimeForm.setNumberOfHours(null);
+
+        validator.validate(overtimeForm, errors);
+
+        Mockito.verify(errors).hasFieldErrors("numberOfHours");
+        Mockito.verify(errors, Mockito.never()).rejectValue("endDate", "error.entry.mandatory");
     }
 
 

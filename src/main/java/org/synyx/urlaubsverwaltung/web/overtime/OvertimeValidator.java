@@ -52,16 +52,20 @@ public class OvertimeValidator implements Validator {
         DateMidnight startDate = overtimeForm.getStartDate();
         DateMidnight endDate = overtimeForm.getEndDate();
 
-        if (startDate == null) {
-            errors.rejectValue("startDate", ERROR_MANDATORY);
-        }
-
-        if (endDate == null) {
-            errors.rejectValue("endDate", ERROR_MANDATORY);
-        }
+        validateDateNotNull(startDate, "startDate", errors);
+        validateDateNotNull(endDate, "endDate", errors);
 
         if (startDate != null && endDate != null && endDate.isBefore(startDate)) {
             errors.rejectValue("endDate", ERROR_INVALID_PERIOD);
+        }
+    }
+
+
+    private void validateDateNotNull(DateMidnight date, String field, Errors errors) {
+
+        // may be that date field is null because of cast exception, than there is already a field error
+        if (date == null && !errors.hasFieldErrors(field)) {
+            errors.rejectValue(field, ERROR_MANDATORY);
         }
     }
 
@@ -70,13 +74,12 @@ public class OvertimeValidator implements Validator {
 
         BigDecimal numberOfHours = overtimeForm.getNumberOfHours();
 
-        if (numberOfHours == null) {
+        // may be that number of hours field is null because of cast exception, than there is already a field error
+        if (numberOfHours == null && !errors.hasFieldErrors("numberOfHours")) {
             errors.rejectValue("numberOfHours", ERROR_MANDATORY);
-
-            return;
         }
 
-        if (!CalcUtil.isPositive(numberOfHours)) {
+        if (numberOfHours != null && !CalcUtil.isPositive(numberOfHours)) {
             errors.rejectValue("numberOfHours", ERROR_NUMBER_OF_HOURS);
         }
     }
