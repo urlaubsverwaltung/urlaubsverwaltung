@@ -10,6 +10,8 @@ import org.springframework.util.Assert;
 
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
+import java.math.BigDecimal;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -78,5 +80,20 @@ public class OvertimeServiceImpl implements OvertimeService {
         Assert.notNull(overtime, "Overtime record to get comments for must be given.");
 
         return commentDAO.findByOvertime(overtime);
+    }
+
+
+    @Override
+    public BigDecimal getTotalOvertimeForPerson(Person person) {
+
+        Assert.notNull(person, "Person to get total overtime for must be given.");
+
+        Optional<BigDecimal> totalOvertime = Optional.ofNullable(overtimeDAO.calculateTotalHoursForPerson(person));
+
+        if (totalOvertime.isPresent()) {
+            return totalOvertime.get();
+        }
+
+        return BigDecimal.ZERO;
     }
 }

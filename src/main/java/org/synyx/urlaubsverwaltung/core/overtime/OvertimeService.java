@@ -2,6 +2,8 @@ package org.synyx.urlaubsverwaltung.core.overtime;
 
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
+import java.math.BigDecimal;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -54,4 +56,14 @@ public interface OvertimeService {
      * @return  comments to the given overtime record
      */
     List<OvertimeComment> getCommentsForOvertime(Overtime overtime);
+
+
+    /**
+     * Get the total hours summing up all overtime records of person.
+     *
+     * @param  person  to get the total overtime for
+     *
+     * @return  the total overtime, never {@code null}
+     */
+    BigDecimal getTotalOvertimeForPerson(Person person);
 }

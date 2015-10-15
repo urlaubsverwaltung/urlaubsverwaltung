@@ -29,6 +29,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.core.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.person.Role;
@@ -81,6 +82,9 @@ public class PersonOverviewController {
 
     @Autowired
     private DepartmentService departmentService;
+
+    @Autowired
+    private OvertimeService overtimeService;
 
     @RequestMapping(value = "/overview", method = RequestMethod.GET)
     public String showOverview(
@@ -230,7 +234,9 @@ public class PersonOverviewController {
             model.addAttribute("usedDaysOverview", usedDaysOverview);
         }
 
-        model.addAttribute("overtimeTotal", BigDecimal.ZERO);
+        model.addAttribute("overtimeTotal", overtimeService.getTotalOvertimeForPerson(person));
+
+        // TODO: Subtract hours of applications for leave because of having overtime due from total overtime
         model.addAttribute("overtimeLeft", BigDecimal.ZERO);
     }
 

@@ -79,4 +79,17 @@ public class OvertimeDAOIT {
         Assert.assertEquals("Total hours calculated wrongly", new BigDecimal("2.5").setScale(1,
                 BigDecimal.ROUND_UNNECESSARY), totalHours.setScale(1, BigDecimal.ROUND_UNNECESSARY));
     }
+
+
+    @Test
+    @Rollback
+    public void ensureReturnsNullAsTotalOvertimeIfPersonHasNoOvertimeRecords() {
+
+        Person person = TestDataCreator.createPerson();
+        personDAO.save(person);
+
+        BigDecimal totalHours = overtimeDAO.calculateTotalHoursForPerson(person);
+
+        Assert.assertNull("Should be null", totalHours);
+    }
 }

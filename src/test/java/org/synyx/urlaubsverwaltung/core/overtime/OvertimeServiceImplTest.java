@@ -168,4 +168,45 @@ public class OvertimeServiceImplTest {
 
         overtimeService.getCommentsForOvertime(null);
     }
+
+
+    // Get total overtime ----------------------------------------------------------------------------------------------
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfTryingToGetTotalOvertimeForNullPerson() {
+
+        overtimeService.getTotalOvertimeForPerson(null);
+    }
+
+
+    @Test
+    public void ensureReturnsZeroIfPersonHasNoOvertimeRecordsYet() {
+
+        Person person = TestDataCreator.createPerson();
+
+        Mockito.when(overtimeDAO.calculateTotalHoursForPerson(person)).thenReturn(null);
+
+        BigDecimal totalHours = overtimeService.getTotalOvertimeForPerson(person);
+
+        Mockito.verify(overtimeDAO).calculateTotalHoursForPerson(person);
+
+        Assert.assertNotNull("Should not be null", totalHours);
+        Assert.assertEquals("Wrong total overtime", BigDecimal.ZERO, totalHours);
+    }
+
+
+    @Test
+    public void ensureReturnsCorrectTotalOvertimeForPerson() {
+
+        Person person = TestDataCreator.createPerson();
+
+        Mockito.when(overtimeDAO.calculateTotalHoursForPerson(person)).thenReturn(BigDecimal.ONE);
+
+        BigDecimal totalHours = overtimeService.getTotalOvertimeForPerson(person);
+
+        Mockito.verify(overtimeDAO).calculateTotalHoursForPerson(person);
+
+        Assert.assertNotNull("Should not be null", totalHours);
+        Assert.assertEquals("Wrong total overtime", BigDecimal.ONE, totalHours);
+    }
 }
