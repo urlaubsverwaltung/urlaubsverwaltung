@@ -134,6 +134,42 @@
 
         </div>
 
+        <div class="row">
+            <div class="col-xs-12">
+                <legend>
+                    <spring:message code="overtime.title"/>
+                    <span>
+                        <a href="${URL_PREFIX}/overtime" class="fa-action pull-right" style="margin-top: 1px" data-title="<spring:message code="action.overtime.list"/>">
+                            <i class="fa fa-th"></i>
+                        </a>
+                    </span>
+                    <span>
+                        <a href="${URL_PREFIX}/overtime/new" class="fa-action pull-right" data-title="<spring:message code="action.overtime.new"/>">
+                            <i class="fa fa-plus-circle"></i>
+                        </a>
+                    </span>
+                </legend>
+            </div>
+            <div class="col-xs-12 col-md-6">
+                <div class="box">
+                    <span class="box-icon bg-green"><i class="fa fa-clock-o"></i></span>
+                    <span class="box-text">
+                        <spring:message code="overtime.person.total" arguments="${overtimeTotal}"/>
+                    </span>
+                </div>
+            </div>
+            <div class="col-xs-12 col-md-6">
+                <div class="box">
+                    <span class="box-icon bg-green">
+                        <i class="fa fa-history"></i>
+                    </span>
+                    <span class="box-text">
+                        <spring:message code="overtime.person.left" arguments="${overtimeLeft}"/>
+                    </span>
+                </div>
+            </div>
+        </div>
+
         <script src="<spring:url value='/js/calendar.js' />" type="text/javascript" ></script>
         <script>
             $(function() {

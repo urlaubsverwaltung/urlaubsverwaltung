@@ -229,6 +229,9 @@ public class PersonOverviewController {
             UsedDaysOverview usedDaysOverview = new UsedDaysOverview(applications, year, calendarService);
             model.addAttribute("usedDaysOverview", usedDaysOverview);
         }
+
+        model.addAttribute("overtimeTotal", BigDecimal.ZERO);
+        model.addAttribute("overtimeLeft", BigDecimal.ZERO);
     }
 
 
