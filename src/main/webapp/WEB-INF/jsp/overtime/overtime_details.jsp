@@ -16,6 +16,15 @@
 <div class="content">
     <div class="container">
         <div class="row">
+            <div class="col-xs-12">
+                <div class="feedback">
+                    <c:if test="${overtimeRecord != null}">
+                        <div class="alert alert-success">
+                            <spring:message code="overtime.feedback.${overtimeRecord}"/>
+                        </div>
+                    </c:if>
+                </div>
+            </div>
             <div class="col-xs-12 col-md-6">
                 <legend>
                     <spring:message code="overtime.title"/>

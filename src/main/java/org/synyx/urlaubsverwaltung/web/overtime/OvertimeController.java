@@ -118,11 +118,11 @@ public class OvertimeController {
             return "overtime/overtime_form";
         }
 
-        overtimeService.record(overtimeForm.generateOvertime(), Optional.ofNullable(overtimeForm.getComment()),
-            sessionService.getSignedInUser());
+        Overtime recordedOvertime = overtimeService.record(overtimeForm.generateOvertime(),
+                Optional.ofNullable(overtimeForm.getComment()), sessionService.getSignedInUser());
 
         redirectAttributes.addFlashAttribute("overtimeRecord", "CREATED");
 
-        return "redirect:/web/overtime";
+        return "redirect:/web/overtime/" + recordedOvertime.getId();
     }
 }
