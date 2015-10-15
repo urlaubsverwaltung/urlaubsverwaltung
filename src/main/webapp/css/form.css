@@ -63,7 +63,7 @@ textarea.error {
 
 **************************************************************************/
 
-.form-section:not(:first-child) legend {
+.form-section:not(:first-of-type) legend {
   margin-top: 36px;
 }
 
