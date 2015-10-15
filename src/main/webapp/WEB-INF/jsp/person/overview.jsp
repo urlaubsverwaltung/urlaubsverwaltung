@@ -85,7 +85,10 @@
                         <i class="fa fa-at"></i> <c:out value="${person.loginName}"/>
                         <h4><c:out value="${person.niceName}"/></h4>
                         <c:if test="${person.email != null}">
-                            <i class="fa fa-envelope-o"></i> <a href="mailto:<c:out value='${person.email}'/>"><c:out value="${person.email}"/></a>
+                            <i class="fa fa-envelope-o"></i>
+                            <a href="mailto:<c:out value='${person.email}'/>">
+                                <span class="hidden-print"><c:out value="${person.email}"/></span>
+                            </a>
                         </c:if>
                     </span>
                 </div>
