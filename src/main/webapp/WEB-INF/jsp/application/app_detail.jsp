@@ -101,18 +101,7 @@
                         <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/application/${application.id}?year="/>
                     </legend>
 
-                    <div class="box">
-                        <div class="box-image img-circle gravatar" data-gravatar="<c:out value='${application.person.gravatarURL}?d=mm&s=60'/>"></div>
-                        <span class="box-text">
-                            <i class="fa fa-at"></i> <c:out value="${application.person.loginName}"/>
-                            <h4>
-                                <a href="${URL_PREFIX}/staff/${application.person.id}/overview">
-                                    <c:out value="${application.person.niceName}"/>
-                                </a>
-                            </h4>
-                            <i class="fa fa-envelope-o"></i> <c:out value="${application.person.email}"/>
-                        </span>
-                    </div>
+                    <uv:person person="${application.person}"/>
 
                     <div class="box">
                         <span class="box-icon bg-green"><i class="fa fa-calendar"></i></span>

@@ -223,20 +223,8 @@
                 <legend class="hidden-print">
                     <spring:message code="sicknote.data.staff" />
                 </legend>
-
-                <div class="box hidden-print">
-                    <div class="box-image gravatar img-circle" data-gravatar="<c:out value='${sickNote.person.gravatarURL}?d=mm&s=60'/>"></div>
-                    <span class="box-text">
-                        <i class="fa fa-at"></i> <c:out value="${sickNote.person.loginName}"/>
-                        <h4>
-                            <a href="${URL_PREFIX}/staff/${sickNote.person.id}/overview">
-                                <c:out value="${sickNote.person.niceName}"/>
-                            </a>
-                        </h4>
-                        <i class="fa fa-envelope-o"></i> <c:out value="${sickNote.person.email}"/>
-                    </span>
-                </div>
                 
+                <uv:person person="${sickNote.person}" cssClass="hidden-print"/>
             </div><%-- End of second column --%>
 
         </div><%-- End of row --%>

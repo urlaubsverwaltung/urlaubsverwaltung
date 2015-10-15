@@ -76,18 +76,7 @@
                 <legend class="hidden-print">
                     <spring:message code="overtime.data.staff"/>
                 </legend>
-                <div class="box hidden-print">
-                    <img class="box-image img-circle" src="<c:out value='${record.person.gravatarURL}?d=mm&s=60'/>"/>
-                    <span class="box-text">
-                        <i class="fa fa-at"></i> <c:out value="${record.person.loginName}"/>
-                        <h4>
-                            <a href="${URL_PREFIX}/staff/${record.person.id}/overview">
-                                <c:out value="${record.person.niceName}"/>
-                            </a>
-                        </h4>
-                        <i class="fa fa-envelope-o"></i> <c:out value="${record.person.email}"/>
-                    </span>
-                </div>
+                <uv:person person="${record.person}" cssClass="hidden-print"/>
                 <%-- TODO: Show total number of overtime for person here --%>
             </div>
         </div><%-- End of row --%>

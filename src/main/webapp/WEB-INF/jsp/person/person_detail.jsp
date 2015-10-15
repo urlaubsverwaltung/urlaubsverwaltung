@@ -27,18 +27,7 @@
 
             <div class="col-xs-12 col-sm-12 col-md-6">
                 <legend><spring:message code="person.form.data.title"/></legend>
-                <div class="box">
-                    <div class="box-image gravatar img-circle hidden-print" data-gravatar="<c:out value='${person.gravatarURL}?d=mm&s=60'/>"></div>
-                    <span class="box-text">
-                        <i class="fa fa-at"></i> <c:out value="${person.loginName}"/>
-                        <h4>
-                            <a href="${URL_PREFIX}/staff/${person.id}/overview">
-                                <c:out value="${person.niceName}"/>
-                            </a>
-                        </h4>
-                        <i class="fa fa-envelope-o"></i> <c:out value="${person.email}"/>
-                    </span>
-                </div>
+                <uv:person person="${person}"/>
 
                 <div class="box">
                     <span class="box-icon bg-blue"><i class="fa fa-key"></i></span>
