@@ -69,8 +69,9 @@ public class OvertimeDAOIT {
         DateMidnight now = DateMidnight.now();
 
         // Overtime for person
-        overtimeDAO.save(new Overtime(person, now, now.plusDays(2), new BigDecimal("2")));
+        overtimeDAO.save(new Overtime(person, now, now.plusDays(2), new BigDecimal("3")));
         overtimeDAO.save(new Overtime(person, now.plusDays(5), now.plusDays(10), new BigDecimal("0.5")));
+        overtimeDAO.save(new Overtime(person, now.minusDays(8), now.minusDays(4), new BigDecimal("-1")));
 
         // Overtime for other person
         overtimeDAO.save(new Overtime(otherPerson, now.plusDays(5), now.plusDays(10), new BigDecimal("5")));

@@ -161,29 +161,29 @@ public class OvertimeValidatorTest {
 
 
     @Test
-    public void ensureNumberOfHoursCanNotBeNegative() {
+    public void ensureNumberOfHoursCanBeNegative() {
 
         overtimeForm.setNumberOfHours(BigDecimal.ONE.negate());
 
         validator.validate(overtimeForm, errors);
 
-        Mockito.verify(errors).rejectValue("numberOfHours", "overtime.data.numberOfHours.error");
+        Mockito.verifyZeroInteractions(errors);
     }
 
 
     @Test
-    public void ensureNumberOfHoursCanNotBeZero() {
+    public void ensureNumberOfHoursCanBeZero() {
 
         overtimeForm.setNumberOfHours(BigDecimal.ZERO);
 
         validator.validate(overtimeForm, errors);
 
-        Mockito.verify(errors).rejectValue("numberOfHours", "overtime.data.numberOfHours.error");
+        Mockito.verifyZeroInteractions(errors);
     }
 
 
     @Test
-    public void ensureNumberOfHoursMustBePositive() {
+    public void ensureNumberOfHoursCanBeADecimalNumber() {
 
         overtimeForm.setNumberOfHours(new BigDecimal("0.5"));
 

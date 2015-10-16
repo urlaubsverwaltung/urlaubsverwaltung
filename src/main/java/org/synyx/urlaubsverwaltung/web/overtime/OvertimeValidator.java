@@ -9,8 +9,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import org.synyx.urlaubsverwaltung.core.util.CalcUtil;
-
 import java.math.BigDecimal;
 
 
@@ -27,7 +25,6 @@ public class OvertimeValidator implements Validator {
     private static final String ERROR_MANDATORY = "error.entry.mandatory";
     private static final String ERROR_MAX_CHARS = "error.entry.tooManyChars";
     private static final String ERROR_INVALID_PERIOD = "error.entry.invalidPeriod";
-    private static final String ERROR_NUMBER_OF_HOURS = "overtime.data.numberOfHours.error";
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -77,10 +74,6 @@ public class OvertimeValidator implements Validator {
         // may be that number of hours field is null because of cast exception, than there is already a field error
         if (numberOfHours == null && !errors.hasFieldErrors("numberOfHours")) {
             errors.rejectValue("numberOfHours", ERROR_MANDATORY);
-        }
-
-        if (numberOfHours != null && !CalcUtil.isPositive(numberOfHours)) {
-            errors.rejectValue("numberOfHours", ERROR_NUMBER_OF_HOURS);
         }
     }
 
