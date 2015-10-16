@@ -35,7 +35,7 @@
                 </legend>
                 <div class="box">
                     <span class="box-icon bg-green">
-                        <i class="fa fa-clock-o"></i>
+                        <i class="fa fa-history"></i>
                     </span>
                     <span class="box-text">
                         <h5 class="is-inline-block is-sticky"><c:out value="${record.person.niceName}"/></h5>
