@@ -54,7 +54,16 @@
                 <form:hidden path="person" value="${overtime.person.id}" />
                 <div class="form-section">
                     <div class="col-xs-12">
-                        <legend><spring:message code="overtime.data"/></legend>
+                        <legend>
+                            <c:choose>
+                                <c:when test="${overtime.id == null}">
+                                    <spring:message code="overtime.record.new"/>
+                                </c:when>
+                                <c:otherwise>
+                                    <spring:message code="overtime.record.edit"/>
+                                </c:otherwise>
+                            </c:choose>
+                        </legend>
                     </div>
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block">
