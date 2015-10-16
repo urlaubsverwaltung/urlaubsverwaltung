@@ -110,6 +110,14 @@ public class PersonController {
 
     @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
     @RequestMapping(value = "/staff", method = RequestMethod.GET)
+    public String showStaff() {
+
+        return "redirect:/web/staff?active=true";
+    }
+
+
+    @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
+    @RequestMapping(value = "/staff", method = RequestMethod.GET, params = "active")
     public String showStaff(@RequestParam(value = "active", required = true) Boolean active,
         @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Integer requestedYear,
         Model model) {
