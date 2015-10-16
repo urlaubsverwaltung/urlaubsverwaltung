@@ -8,9 +8,6 @@ package org.synyx.urlaubsverwaltung.web;
  */
 public final class ControllerConstants {
 
-    // JSPs
-    public static final String ERROR_JSP = "error";
-
     // Attributes
     public static final String YEAR_ATTRIBUTE = "year";
     public static final String ERRORS_ATTRIBUTE = "errors";

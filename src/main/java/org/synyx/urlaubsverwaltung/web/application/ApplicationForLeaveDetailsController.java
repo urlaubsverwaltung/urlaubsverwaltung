@@ -4,6 +4,7 @@ import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import org.springframework.stereotype.Controller;
@@ -40,6 +41,7 @@ import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
+import org.synyx.urlaubsverwaltung.web.person.UnknownPersonException;
 
 import java.util.List;
 import java.util.Optional;
@@ -88,16 +90,13 @@ public class ApplicationForLeaveDetailsController {
     public String showApplicationDetail(@PathVariable("applicationId") Integer applicationId,
         @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Integer requestedYear,
         @RequestParam(value = "action", required = false) String action,
-        @RequestParam(value = "shortcut", required = false) boolean shortcut, Model model) {
+        @RequestParam(value = "shortcut", required = false) boolean shortcut, Model model)
+        throws UnknownApplicationForLeaveException, AccessDeniedException {
 
-        Optional<Application> applicationOptional = applicationService.getApplicationById(applicationId);
-
-        if (!applicationOptional.isPresent()) {
-            return ControllerConstants.ERROR_JSP;
-        }
+        Application application = applicationService.getApplicationById(applicationId).orElseThrow(() ->
+                    new UnknownApplicationForLeaveException(applicationId));
 
         Person signedInUser = sessionService.getSignedInUser();
-        Application application = applicationOptional.get();
         Person person = application.getPerson();
 
         boolean samePerson = signedInUser.equals(person);
@@ -112,7 +111,8 @@ public class ApplicationForLeaveDetailsController {
             return "application/app_detail";
         }
 
-        return ControllerConstants.ERROR_JSP;
+        throw new AccessDeniedException("User " + signedInUser.getLoginName()
+            + " has not the correct permissions to see application for leave of user " + person.getLoginName());
     }
 
 
@@ -166,16 +166,13 @@ public class ApplicationForLeaveDetailsController {
     public String allowApplication(@PathVariable("applicationId") Integer applicationId,
         @ModelAttribute("comment") ApplicationCommentForm comment,
         @RequestParam(value = "redirect", required = false) String redirectUrl, Errors errors,
-        RedirectAttributes redirectAttributes) {
+        RedirectAttributes redirectAttributes) throws UnknownApplicationForLeaveException, AccessDeniedException {
 
-        Optional<Application> application = applicationService.getApplicationById(applicationId);
-
-        if (!application.isPresent()) {
-            return ControllerConstants.ERROR_JSP;
-        }
+        Application application = applicationService.getApplicationById(applicationId).orElseThrow(() ->
+                    new UnknownApplicationForLeaveException(applicationId));
 
         Person signedInUser = sessionService.getSignedInUser();
-        Person person = application.get().getPerson();
+        Person person = application.getPerson();
 
         boolean isBoss = signedInUser.hasRole(Role.BOSS);
         boolean isDepartmentHead = departmentService.isDepartmentHeadOfPerson(signedInUser, person);
@@ -190,8 +187,7 @@ public class ApplicationForLeaveDetailsController {
                 return "redirect:/web/application/" + applicationId + "?action=allow";
             }
 
-            applicationInteractionService.allow(application.get(), signedInUser,
-                Optional.ofNullable(comment.getText()));
+            applicationInteractionService.allow(application, signedInUser, Optional.ofNullable(comment.getText()));
 
             redirectAttributes.addFlashAttribute("allowSuccess", true);
 
@@ -202,7 +198,8 @@ public class ApplicationForLeaveDetailsController {
             return "redirect:/web/application/" + applicationId;
         }
 
-        return ControllerConstants.ERROR_JSP;
+        throw new AccessDeniedException("User " + signedInUser.getLoginName()
+            + " has not the correct permissions to allow application for leave of user " + person.getLoginName());
     }
 
 
@@ -213,28 +210,31 @@ public class ApplicationForLeaveDetailsController {
     @PreAuthorize(SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD)
     @RequestMapping(value = "/{applicationId}/refer", method = RequestMethod.PUT)
     public String referApplication(@PathVariable("applicationId") Integer applicationId,
-        @ModelAttribute("personToRefer") Person personToRefer, RedirectAttributes redirectAttributes) {
+        @ModelAttribute("personToRefer") Person personToRefer, RedirectAttributes redirectAttributes)
+        throws UnknownApplicationForLeaveException, UnknownPersonException, AccessDeniedException {
 
-        Optional<Application> application = applicationService.getApplicationById(applicationId);
-        java.util.Optional<Person> recipient = personService.getPersonByLogin(personToRefer.getLoginName());
+        Application application = applicationService.getApplicationById(applicationId).orElseThrow(() ->
+                    new UnknownApplicationForLeaveException(applicationId));
 
-        if (application.isPresent() && recipient.isPresent()) {
-            Person sender = sessionService.getSignedInUser();
+        String referLoginName = personToRefer.getLoginName();
+        Person recipient = personService.getPersonByLogin(referLoginName).orElseThrow(() ->
+                    new UnknownPersonException(referLoginName));
 
-            boolean isBoss = sender.hasRole(Role.BOSS);
-            boolean isDepartmentHead = departmentService.isDepartmentHeadOfPerson(sender,
-                    application.get().getPerson());
+        Person sender = sessionService.getSignedInUser();
 
-            if (isBoss || isDepartmentHead) {
-                applicationInteractionService.refer(application.get(), recipient.get(), sender);
+        boolean isBoss = sender.hasRole(Role.BOSS);
+        boolean isDepartmentHead = departmentService.isDepartmentHeadOfPerson(sender, application.getPerson());
 
-                redirectAttributes.addFlashAttribute("referSuccess", true);
+        if (isBoss || isDepartmentHead) {
+            applicationInteractionService.refer(application, recipient, sender);
 
-                return "redirect:/web/application/" + applicationId;
-            }
+            redirectAttributes.addFlashAttribute("referSuccess", true);
+
+            return "redirect:/web/application/" + applicationId;
         }
 
-        return ControllerConstants.ERROR_JSP;
+        throw new AccessDeniedException("User " + sender.getLoginName()
+            + " has not the correct permissions to refer application for leave to user " + referLoginName);
     }
 
 
@@ -246,44 +246,43 @@ public class ApplicationForLeaveDetailsController {
     public String rejectApplication(@PathVariable("applicationId") Integer applicationId,
         @ModelAttribute("comment") ApplicationCommentForm comment,
         @RequestParam(value = "redirect", required = false) String redirectUrl, Errors errors,
-        RedirectAttributes redirectAttributes) {
+        RedirectAttributes redirectAttributes) throws UnknownApplicationForLeaveException, AccessDeniedException {
 
-        Optional<Application> application = applicationService.getApplicationById(applicationId);
+        Application application = applicationService.getApplicationById(applicationId).orElseThrow(() ->
+                    new UnknownApplicationForLeaveException(applicationId));
 
-        if (application.isPresent()) {
-            Person person = application.get().getPerson();
-            Person signedInUser = sessionService.getSignedInUser();
+        Person person = application.getPerson();
+        Person signedInUser = sessionService.getSignedInUser();
 
-            boolean isBoss = signedInUser.hasRole(Role.BOSS);
-            boolean isDepartmentHead = departmentService.isDepartmentHeadOfPerson(signedInUser, person);
+        boolean isBoss = signedInUser.hasRole(Role.BOSS);
+        boolean isDepartmentHead = departmentService.isDepartmentHeadOfPerson(signedInUser, person);
 
-            if (isBoss || isDepartmentHead) {
-                comment.setMandatory(true);
-                commentValidator.validate(comment, errors);
+        if (isBoss || isDepartmentHead) {
+            comment.setMandatory(true);
+            commentValidator.validate(comment, errors);
 
-                if (errors.hasErrors()) {
-                    redirectAttributes.addFlashAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
-
-                    if (redirectUrl != null) {
-                        return "redirect:/web/application/" + applicationId + "?action=reject&shortcut=true";
-                    }
-
-                    return "redirect:/web/application/" + applicationId + "?action=reject";
-                }
-
-                applicationInteractionService.reject(application.get(), signedInUser,
-                    Optional.ofNullable(comment.getText()));
-                redirectAttributes.addFlashAttribute("rejectSuccess", true);
+            if (errors.hasErrors()) {
+                redirectAttributes.addFlashAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
 
                 if (redirectUrl != null) {
-                    return "redirect:" + redirectUrl;
+                    return "redirect:/web/application/" + applicationId + "?action=reject&shortcut=true";
                 }
 
-                return "redirect:/web/application/" + applicationId;
+                return "redirect:/web/application/" + applicationId + "?action=reject";
             }
+
+            applicationInteractionService.reject(application, signedInUser, Optional.ofNullable(comment.getText()));
+            redirectAttributes.addFlashAttribute("rejectSuccess", true);
+
+            if (redirectUrl != null) {
+                return "redirect:" + redirectUrl;
+            }
+
+            return "redirect:/web/application/" + applicationId;
         }
 
-        return ControllerConstants.ERROR_JSP;
+        throw new AccessDeniedException("User " + signedInUser.getLoginName()
+            + " has not the correct permissions to reject application for leave of user " + person.getLoginName());
     }
 
 
@@ -293,17 +292,13 @@ public class ApplicationForLeaveDetailsController {
      */
     @RequestMapping(value = "/{applicationId}/cancel", method = RequestMethod.PUT)
     public String cancelApplication(@PathVariable("applicationId") Integer applicationId,
-        @ModelAttribute("comment") ApplicationCommentForm comment, Errors errors,
-        RedirectAttributes redirectAttributes) {
+        @ModelAttribute("comment") ApplicationCommentForm comment, Errors errors, RedirectAttributes redirectAttributes)
+        throws UnknownApplicationForLeaveException, AccessDeniedException {
 
-        Optional<Application> optionalApplication = applicationService.getApplicationById(applicationId);
-
-        if (!optionalApplication.isPresent()) {
-            return ControllerConstants.ERROR_JSP;
-        }
+        Application application = applicationService.getApplicationById(applicationId).orElseThrow(() ->
+                    new UnknownApplicationForLeaveException(applicationId));
 
         Person signedInUser = sessionService.getSignedInUser();
-        Application application = optionalApplication.get();
 
         boolean isWaiting = application.hasStatus(ApplicationStatus.WAITING);
         boolean isAllowed = application.hasStatus(ApplicationStatus.ALLOWED);
@@ -318,7 +313,9 @@ public class ApplicationForLeaveDetailsController {
             // office cancels application of other users, state can be waiting or allowed, so the comment is mandatory
             comment.setMandatory(true);
         } else {
-            return ControllerConstants.ERROR_JSP;
+            throw new AccessDeniedException("User " + signedInUser.getLoginName()
+                + " has not the correct permissions to cancel application for leave of user "
+                + application.getPerson().getLoginName());
         }
 
         commentValidator.validate(comment, errors);
@@ -340,15 +337,10 @@ public class ApplicationForLeaveDetailsController {
      */
     @RequestMapping(value = "/{applicationId}/remind", method = RequestMethod.PUT)
     public String remindBoss(@PathVariable("applicationId") Integer applicationId,
-        RedirectAttributes redirectAttributes) {
+        RedirectAttributes redirectAttributes) throws UnknownApplicationForLeaveException {
 
-        Optional<Application> optionalApplication = applicationService.getApplicationById(applicationId);
-
-        if (!optionalApplication.isPresent()) {
-            return ControllerConstants.ERROR_JSP;
-        }
-
-        Application application = optionalApplication.get();
+        Application application = applicationService.getApplicationById(applicationId).orElseThrow(() ->
+                    new UnknownApplicationForLeaveException(applicationId));
 
         try {
             applicationInteractionService.remind(application);

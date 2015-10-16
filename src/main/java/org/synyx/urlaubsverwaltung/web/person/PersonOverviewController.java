@@ -10,6 +10,8 @@ import org.joda.time.chrono.GregorianChronology;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.security.access.AccessDeniedException;
+
 import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
@@ -102,15 +104,10 @@ public class PersonOverviewController {
 
     @RequestMapping(value = "/staff/{personId}/overview", method = RequestMethod.GET)
     public String showOverview(@PathVariable("personId") Integer personId,
-        @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) String year, Model model) {
+        @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) String year, Model model)
+        throws UnknownPersonException, AccessDeniedException {
 
-        java.util.Optional<Person> optionalPerson = personService.getPersonByID(personId);
-
-        if (!optionalPerson.isPresent()) {
-            return ControllerConstants.ERROR_JSP;
-        }
-
-        Person person = optionalPerson.get();
+        Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
         Person signedInUser = sessionService.getSignedInUser();
 
         boolean isOwnOverviewPage = person.getId().equals(signedInUser.getId());
@@ -119,7 +116,8 @@ public class PersonOverviewController {
         boolean isDepartmentHead = departmentService.isDepartmentHeadOfPerson(signedInUser, person);
 
         if (!isOwnOverviewPage && !isOffice && !isBoss && !isDepartmentHead) {
-            return ControllerConstants.ERROR_JSP;
+            throw new AccessDeniedException("User " + signedInUser.getLoginName()
+                + " has not the correct permissions to access the overview page of user " + person.getLoginName());
         }
 
         model.addAttribute(PersonConstants.PERSON_ATTRIBUTE, person);

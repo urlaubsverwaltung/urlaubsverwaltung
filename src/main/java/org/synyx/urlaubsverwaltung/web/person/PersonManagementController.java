@@ -111,23 +111,13 @@ public class PersonManagementController {
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @RequestMapping(value = "/staff/{personId}/edit", method = RequestMethod.GET)
     public String editPersonForm(@PathVariable("personId") Integer personId,
-        @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Integer year, Model model) {
+        @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Integer year, Model model)
+        throws UnknownPersonException {
 
-        int yearOfHolidaysAccount;
+        int yearOfHolidaysAccount = year != null ? year : DateMidnight.now().getYear();
 
-        if (year != null) {
-            yearOfHolidaysAccount = year;
-        } else {
-            yearOfHolidaysAccount = DateMidnight.now().getYear();
-        }
+        Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
 
-        java.util.Optional<Person> optionalPerson = personService.getPersonByID(personId);
-
-        if (!optionalPerson.isPresent()) {
-            return ControllerConstants.ERROR_JSP;
-        }
-
-        Person person = optionalPerson.get();
         Optional<Account> account = accountService.getHolidaysAccount(yearOfHolidaysAccount, person);
         Optional<WorkingTime> workingTime = workingTimeService.getCurrentOne(person);
 
@@ -146,13 +136,10 @@ public class PersonManagementController {
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @RequestMapping(value = "/staff/{personId}", method = RequestMethod.PUT)
     public String editPerson(@PathVariable("personId") Integer personId,
-        @ModelAttribute("personForm") PersonForm personForm, Errors errors, Model model) {
+        @ModelAttribute("personForm") PersonForm personForm, Errors errors, Model model) throws UnknownPersonException {
 
-        java.util.Optional<Person> personToUpdate = personService.getPersonByID(personId);
-
-        if (!personToUpdate.isPresent()) {
-            return ControllerConstants.ERROR_JSP;
-        }
+        Person personToUpdate = personService.getPersonByID(personId).orElseThrow(() ->
+                    new UnknownPersonException(personId));
 
         validator.validate(personForm, errors);
 
@@ -163,7 +150,7 @@ public class PersonManagementController {
         if (errors.hasErrors()) {
             model.addAttribute("personForm", personForm);
             model.addAttribute("weekDays", Day.values());
-            model.addAttribute("workingTimes", workingTimeService.getByPerson(personToUpdate.get()));
+            model.addAttribute("workingTimes", workingTimeService.getByPerson(personToUpdate));
 
             return PersonConstants.PERSON_FORM_JSP;
         }

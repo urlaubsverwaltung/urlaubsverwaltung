@@ -21,12 +21,30 @@
             <div class="content">
                 <div class="row">
                     <div class="col-xs-12">
-                        <h1 class="error-code"><i class="fa fa-frown-o"></i></h1>
+                        <h1 class="error-code" title="${exception.message}">
+                            <c:choose>
+                                <c:when test="${statusCode == 403}">
+                                    403
+                                </c:when>
+                                <c:otherwise>
+                                    <i class="fa fa-frown-o"></i>
+                                </c:otherwise>
+                            </c:choose>
+                        </h1>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-xs-12">
-                        <h2 class="error-description">Hier hat sich ein Fehler eingeschlichen...</h2>
+                        <h2 class="error-description">
+                            <c:choose>
+                                <c:when test="${statusCode == 403}">
+                                    Dir fehlen die Berechtigungen für die angeforderte Seite.
+                                </c:when>
+                                <c:otherwise>
+                                    Hier hat sich ein Fehler eingeschlichen...
+                                </c:otherwise>
+                            </c:choose>
+                        </h2>
                         <p class="error-link">
                             <a href="${URL_PREFIX}/overview">Zurück zur Übersicht</a>
                         </p>

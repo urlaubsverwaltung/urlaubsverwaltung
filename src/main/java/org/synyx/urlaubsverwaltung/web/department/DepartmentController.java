@@ -118,15 +118,12 @@ public class DepartmentController {
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @RequestMapping(value = "/department/{departmentId}/edit", method = RequestMethod.GET)
-    public String editDepartment(@PathVariable("departmentId") Integer departmentId, Model model) {
+    public String editDepartment(@PathVariable("departmentId") Integer departmentId, Model model)
+        throws UnknownDepartmentException {
 
-        Optional<Department> optionalDepartment = departmentService.getDepartmentById(departmentId);
+        Department department = departmentService.getDepartmentById(departmentId).orElseThrow(() ->
+                    new UnknownDepartmentException(departmentId));
 
-        if (!optionalDepartment.isPresent()) {
-            return ControllerConstants.ERROR_JSP;
-        }
-
-        Department department = optionalDepartment.get();
         List<Person> persons = getPersons();
 
         model.addAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE, department);
@@ -140,13 +137,11 @@ public class DepartmentController {
     @RequestMapping(value = "/department/{departmentId}", method = RequestMethod.PUT)
     public String updateDepartment(@PathVariable("departmentId") Integer departmentId,
         @ModelAttribute(DepartmentConstants.DEPARTMENT_ATTRIBUTE) Department department, Errors errors, Model model,
-        RedirectAttributes redirectAttributes) {
+        RedirectAttributes redirectAttributes) throws UnknownDepartmentException {
 
-        Optional<Department> departmentToUpdate = departmentService.getDepartmentById(departmentId);
-
-        if (!departmentToUpdate.isPresent()) {
-            return ControllerConstants.ERROR_JSP;
-        }
+        // Check if department exists
+        departmentService.getDepartmentById(departmentId).orElseThrow(() ->
+                new UnknownDepartmentException(departmentId));
 
         validator.validate(department, errors);
 

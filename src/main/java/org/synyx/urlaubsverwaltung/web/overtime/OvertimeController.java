@@ -4,6 +4,8 @@ import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.security.access.AccessDeniedException;
+
 import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
@@ -87,19 +89,16 @@ public class OvertimeController {
 
 
     @RequestMapping(value = "/overtime/{id}", method = RequestMethod.GET)
-    public String showOvertimeDetails(@PathVariable("id") Integer id, Model model) {
+    public String showOvertimeDetails(@PathVariable("id") Integer id, Model model) throws UnknownOvertimeException,
+        AccessDeniedException {
 
-        Optional<Overtime> overtimeOptional = overtimeService.getOvertimeById(id);
-
-        if (!overtimeOptional.isPresent()) {
-            return ControllerConstants.ERROR_JSP;
-        }
-
-        Overtime overtime = overtimeOptional.get();
+        Overtime overtime = overtimeService.getOvertimeById(id).orElseThrow(() -> new UnknownOvertimeException(id));
         Person signedInUser = sessionService.getSignedInUser();
 
         if (!overtime.getPerson().equals(signedInUser)) {
-            return ControllerConstants.ERROR_JSP;
+            throw new AccessDeniedException("User " + signedInUser.getLoginName()
+                + " has not the correct permissions to access overtime record of user "
+                + overtime.getPerson().getLoginName());
         }
 
         model.addAttribute("record", overtime);
@@ -141,15 +140,11 @@ public class OvertimeController {
 
 
     @RequestMapping(value = "/overtime/{id}/edit", method = RequestMethod.GET)
-    public String editOvertime(@PathVariable("id") Integer id, Model model) {
+    public String editOvertime(@PathVariable("id") Integer id, Model model) throws UnknownOvertimeException {
 
-        Optional<Overtime> overtimeOptional = overtimeService.getOvertimeById(id);
+        Overtime overtime = overtimeService.getOvertimeById(id).orElseThrow(() -> new UnknownOvertimeException(id));
 
-        if (!overtimeOptional.isPresent()) {
-            return ControllerConstants.ERROR_JSP;
-        }
-
-        model.addAttribute("overtime", new OvertimeForm(overtimeOptional.get()));
+        model.addAttribute("overtime", new OvertimeForm(overtime));
 
         return "overtime/overtime_form";
     }
@@ -158,13 +153,9 @@ public class OvertimeController {
     @RequestMapping(value = "/overtime/{id}", method = RequestMethod.PUT)
     public String updateOvertime(@PathVariable("id") Integer id,
         @ModelAttribute("overtime") OvertimeForm overtimeForm, Errors errors, Model model,
-        RedirectAttributes redirectAttributes) {
+        RedirectAttributes redirectAttributes) throws UnknownOvertimeException {
 
-        Optional<Overtime> optionalOvertime = overtimeService.getOvertimeById(id);
-
-        if (!optionalOvertime.isPresent()) {
-            return ControllerConstants.ERROR_JSP;
-        }
+        Overtime overtime = overtimeService.getOvertimeById(id).orElseThrow(() -> new UnknownOvertimeException(id));
 
         validator.validate(overtimeForm, errors);
 
@@ -174,7 +165,6 @@ public class OvertimeController {
             return "overtime/overtime_form";
         }
 
-        Overtime overtime = optionalOvertime.get();
         overtimeForm.updateOvertime(overtime);
 
         overtimeService.record(overtime, Optional.ofNullable(overtimeForm.getComment()),

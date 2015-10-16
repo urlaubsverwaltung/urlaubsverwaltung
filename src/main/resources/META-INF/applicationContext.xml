@@ -43,7 +43,6 @@
             </list>
         </property>
     </bean>
-
     <!-- END:PROPERTIES -->
 
     <!-- SCHEDULING -->

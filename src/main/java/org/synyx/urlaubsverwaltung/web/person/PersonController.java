@@ -4,6 +4,7 @@ import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import org.springframework.stereotype.Controller;
@@ -65,46 +66,42 @@ public class PersonController {
 
     @RequestMapping(value = "/staff/{personId}", method = RequestMethod.GET)
     public String showStaffInformation(@PathVariable("personId") Integer personId,
-        @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Integer requestedYear,
-        Model model) {
+        @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Integer requestedYear, Model model)
+        throws UnknownPersonException, AccessDeniedException {
 
-        Optional<Person> optionalPerson = personService.getPersonByID(personId);
+        Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
 
-        if (optionalPerson.isPresent()) {
-            Person person = optionalPerson.get();
-            Person signedInUser = sessionService.getSignedInUser();
+        Person signedInUser = sessionService.getSignedInUser();
 
-            boolean isOwnDataPage = person.getId().equals(signedInUser.getId());
-            boolean isOffice = signedInUser.hasRole(Role.OFFICE);
-            boolean isBoss = signedInUser.hasRole(Role.BOSS);
-            boolean isDepartmentHead = departmentService.isDepartmentHeadOfPerson(signedInUser, person);
+        boolean isOwnDataPage = person.getId().equals(signedInUser.getId());
+        boolean isOffice = signedInUser.hasRole(Role.OFFICE);
+        boolean isBoss = signedInUser.hasRole(Role.BOSS);
+        boolean isDepartmentHead = departmentService.isDepartmentHeadOfPerson(signedInUser, person);
 
-            if (!isOwnDataPage && !isOffice && !isBoss && !isDepartmentHead) {
-                return ControllerConstants.ERROR_JSP;
-            }
-
-            Integer year = requestedYear == null ? DateMidnight.now().getYear() : requestedYear;
-
-            model.addAttribute(ControllerConstants.YEAR_ATTRIBUTE, year);
-            model.addAttribute(PersonConstants.PERSON_ATTRIBUTE, person);
-
-            model.addAttribute(DepartmentConstants.DEPARTMENTS_ATTRIBUTE,
-                departmentService.getAssignedDepartmentsOfMember(person));
-
-            model.addAttribute("workingTimes", workingTimeService.getByPerson(person));
-
-            Optional<Account> account = accountService.getHolidaysAccount(year, person);
-
-            if (account.isPresent()) {
-                model.addAttribute("vacationDaysLeft", vacationDaysService.getVacationDaysLeft(account.get()));
-                model.addAttribute("account", account.get());
-                model.addAttribute(PersonConstants.BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(DateMidnight.now()));
-            }
-
-            return PersonConstants.PERSON_DETAIL_JSP;
+        if (!isOwnDataPage && !isOffice && !isBoss && !isDepartmentHead) {
+            throw new AccessDeniedException("User " + signedInUser.getLoginName()
+                + " has not the correct permissions to access data of user " + person.getLoginName());
         }
 
-        return ControllerConstants.ERROR_JSP;
+        Integer year = requestedYear == null ? DateMidnight.now().getYear() : requestedYear;
+
+        model.addAttribute(ControllerConstants.YEAR_ATTRIBUTE, year);
+        model.addAttribute(PersonConstants.PERSON_ATTRIBUTE, person);
+
+        model.addAttribute(DepartmentConstants.DEPARTMENTS_ATTRIBUTE,
+            departmentService.getAssignedDepartmentsOfMember(person));
+
+        model.addAttribute("workingTimes", workingTimeService.getByPerson(person));
+
+        Optional<Account> account = accountService.getHolidaysAccount(year, person);
+
+        if (account.isPresent()) {
+            model.addAttribute("vacationDaysLeft", vacationDaysService.getVacationDaysLeft(account.get()));
+            model.addAttribute("account", account.get());
+            model.addAttribute(PersonConstants.BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(DateMidnight.now()));
+        }
+
+        return PersonConstants.PERSON_DETAIL_JSP;
     }
 
 

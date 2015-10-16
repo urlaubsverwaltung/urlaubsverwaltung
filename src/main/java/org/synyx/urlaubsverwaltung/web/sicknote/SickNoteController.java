@@ -6,6 +6,7 @@ import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import org.springframework.stereotype.Controller;
@@ -87,23 +88,24 @@ public class SickNoteController {
 
 
     @RequestMapping(value = "/sicknote/{id}", method = RequestMethod.GET)
-    public String sickNoteDetails(@PathVariable("id") Integer id, Model model) {
+    public String sickNoteDetails(@PathVariable("id") Integer id, Model model) throws UnknownSickNoteException {
 
         Person signedInUser = sessionService.getSignedInUser();
-        Optional<SickNote> sickNote = sickNoteService.getById(id);
 
-        if (sickNote.isPresent()
-                && (signedInUser.hasRole(Role.OFFICE) || sickNote.get().getPerson().equals(signedInUser))) {
-            model.addAttribute("sickNote", new ExtendedSickNote(sickNote.get(), calendarService));
+        SickNote sickNote = sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));
+
+        if (signedInUser.hasRole(Role.OFFICE) || sickNote.getPerson().equals(signedInUser)) {
+            model.addAttribute("sickNote", new ExtendedSickNote(sickNote, calendarService));
             model.addAttribute("comment", new SickNoteComment());
 
-            List<SickNoteComment> comments = sickNoteCommentService.getCommentsBySickNote(sickNote.get());
+            List<SickNoteComment> comments = sickNoteCommentService.getCommentsBySickNote(sickNote);
             model.addAttribute("comments", comments);
 
             return "sicknote/sick_note";
         }
 
-        return ControllerConstants.ERROR_JSP;
+        throw new AccessDeniedException("User " + signedInUser.getLoginName()
+            + " has not the correct permissions to see the sick note of user " + sickNote.getPerson().getLoginName());
     }
 
 
@@ -158,18 +160,19 @@ public class SickNoteController {
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @RequestMapping(value = "/sicknote/{id}/edit", method = RequestMethod.GET)
-    public String editSickNote(@PathVariable("id") Integer id, Model model) {
+    public String editSickNote(@PathVariable("id") Integer id, Model model) throws UnknownSickNoteException,
+        SickNoteAlreadyInactiveException {
 
-        Optional<SickNote> sickNote = sickNoteService.getById(id);
+        SickNote sickNote = sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));
 
-        if (sickNote.isPresent() && sickNote.get().isActive()) {
-            model.addAttribute("sickNote", sickNote.get());
-            model.addAttribute("sickNoteTypes", SickNoteType.values());
-
-            return "sicknote/sick_note_form";
+        if (!sickNote.isActive()) {
+            throw new SickNoteAlreadyInactiveException(id);
         }
 
-        return ControllerConstants.ERROR_JSP;
+        model.addAttribute("sickNote", sickNote);
+        model.addAttribute("sickNoteTypes", SickNoteType.values());
+
+        return "sicknote/sick_note_form";
     }
 
 
@@ -197,86 +200,77 @@ public class SickNoteController {
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @RequestMapping(value = "/sicknote/{id}/comment", method = RequestMethod.POST)
     public String addComment(@PathVariable("id") Integer id,
-        @ModelAttribute("comment") SickNoteComment comment, RedirectAttributes redirectAttributes, Errors errors) {
+        @ModelAttribute("comment") SickNoteComment comment, RedirectAttributes redirectAttributes, Errors errors)
+        throws UnknownSickNoteException {
 
-        Optional<SickNote> sickNote = sickNoteService.getById(id);
+        SickNote sickNote = sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));
 
-        if (sickNote.isPresent()) {
-            validator.validateComment(comment, errors);
+        validator.validateComment(comment, errors);
 
-            if (errors.hasErrors()) {
-                redirectAttributes.addFlashAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
-            } else {
-                sickNoteCommentService.create(sickNote.get(), SickNoteAction.COMMENTED,
-                    Optional.ofNullable(comment.getText()), sessionService.getSignedInUser());
-            }
-
-            return "redirect:/web/sicknote/" + id;
+        if (errors.hasErrors()) {
+            redirectAttributes.addFlashAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
+        } else {
+            sickNoteCommentService.create(sickNote, SickNoteAction.COMMENTED, Optional.ofNullable(comment.getText()),
+                sessionService.getSignedInUser());
         }
 
-        return ControllerConstants.ERROR_JSP;
+        return "redirect:/web/sicknote/" + id;
     }
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @RequestMapping(value = "/sicknote/{id}/convert", method = RequestMethod.GET)
-    public String convertSickNoteToVacation(@PathVariable("id") Integer id, Model model) {
+    public String convertSickNoteToVacation(@PathVariable("id") Integer id, Model model)
+        throws UnknownSickNoteException, SickNoteAlreadyInactiveException {
 
-        Optional<SickNote> sickNote = sickNoteService.getById(id);
+        SickNote sickNote = sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));
 
-        if (sickNote.isPresent() && sickNote.get().isActive()) {
-            model.addAttribute("sickNote", new ExtendedSickNote(sickNote.get(), calendarService));
-            model.addAttribute("sickNoteConvertForm", new SickNoteConvertForm(sickNote.get()));
-            model.addAttribute("vacationTypes", VacationType.values());
-
-            return "sicknote/sick_note_convert";
+        if (!sickNote.isActive()) {
+            throw new SickNoteAlreadyInactiveException(id);
         }
 
-        return ControllerConstants.ERROR_JSP;
+        model.addAttribute("sickNote", new ExtendedSickNote(sickNote, calendarService));
+        model.addAttribute("sickNoteConvertForm", new SickNoteConvertForm(sickNote));
+        model.addAttribute("vacationTypes", VacationType.values());
+
+        return "sicknote/sick_note_convert";
     }
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @RequestMapping(value = "/sicknote/{id}/convert", method = RequestMethod.POST)
     public String convertSickNoteToVacation(@PathVariable("id") Integer id,
-        @ModelAttribute("sickNoteConvertForm") SickNoteConvertForm sickNoteConvertForm, Errors errors, Model model) {
+        @ModelAttribute("sickNoteConvertForm") SickNoteConvertForm sickNoteConvertForm, Errors errors, Model model)
+        throws UnknownSickNoteException {
 
-        Optional<SickNote> sickNote = sickNoteService.getById(id);
+        SickNote sickNote = sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));
 
-        if (sickNote.isPresent()) {
-            sickNoteConvertFormValidator.validate(sickNoteConvertForm, errors);
+        sickNoteConvertFormValidator.validate(sickNoteConvertForm, errors);
 
-            if (errors.hasErrors()) {
-                model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
-                model.addAttribute("sickNote", new ExtendedSickNote(sickNote.get(), calendarService));
-                model.addAttribute("sickNoteConvertForm", sickNoteConvertForm);
-                model.addAttribute("vacationTypes", VacationType.values());
+        if (errors.hasErrors()) {
+            model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
+            model.addAttribute("sickNote", new ExtendedSickNote(sickNote, calendarService));
+            model.addAttribute("sickNoteConvertForm", sickNoteConvertForm);
+            model.addAttribute("vacationTypes", VacationType.values());
 
-                return "sicknote/sick_note_convert";
-            }
-
-            sickNoteInteractionService.convert(sickNote.get(), sickNoteConvertForm.generateApplicationForLeave(),
-                sessionService.getSignedInUser());
-
-            return "redirect:/web/sicknote/" + id;
+            return "sicknote/sick_note_convert";
         }
 
-        return ControllerConstants.ERROR_JSP;
+        sickNoteInteractionService.convert(sickNote, sickNoteConvertForm.generateApplicationForLeave(),
+            sessionService.getSignedInUser());
+
+        return "redirect:/web/sicknote/" + id;
     }
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @RequestMapping(value = "/sicknote/{id}/cancel", method = RequestMethod.POST)
-    public String cancelSickNote(@PathVariable("id") Integer id) {
+    public String cancelSickNote(@PathVariable("id") Integer id) throws UnknownSickNoteException {
 
-        Optional<SickNote> sickNote = sickNoteService.getById(id);
+        SickNote sickNote = sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));
 
-        if (sickNote.isPresent()) {
-            sickNoteInteractionService.cancel(sickNote.get(), sessionService.getSignedInUser());
+        sickNoteInteractionService.cancel(sickNote, sessionService.getSignedInUser());
 
-            return "redirect:/web/sicknote/" + id;
-        }
-
-        return ControllerConstants.ERROR_JSP;
+        return "redirect:/web/sicknote/" + id;
     }
 }

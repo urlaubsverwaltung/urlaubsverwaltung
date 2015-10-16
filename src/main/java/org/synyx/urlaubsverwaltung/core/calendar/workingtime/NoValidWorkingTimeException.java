@@ -5,7 +5,7 @@ package org.synyx.urlaubsverwaltung.core.calendar.workingtime;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public class NoValidWorkingTimeException extends RuntimeException {
+public class NoValidWorkingTimeException extends IllegalStateException {
 
     private final String message;
 

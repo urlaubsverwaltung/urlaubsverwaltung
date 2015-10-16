@@ -4,6 +4,8 @@ import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.security.access.AccessDeniedException;
+
 import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
@@ -31,6 +33,7 @@ import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.DateMidnightPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
+import org.synyx.urlaubsverwaltung.web.person.UnknownPersonException;
 
 import java.util.Comparator;
 import java.util.List;
@@ -81,7 +84,8 @@ public class ApplyForLeaveController {
      */
     @RequestMapping(value = "/new", method = RequestMethod.GET)
     public String newApplicationForm(@RequestParam(value = "personId", required = false) Integer personId,
-        @RequestParam(value = "appliesOnOnesBehalf", required = false) Boolean applyingOnBehalfOfSomeOne, Model model) {
+        @RequestParam(value = "appliesOnOnesBehalf", required = false) Boolean applyingOnBehalfOfSomeOne, Model model)
+        throws UnknownPersonException, AccessDeniedException {
 
         Person person;
         Person applier;
@@ -92,13 +96,7 @@ public class ApplyForLeaveController {
             person = signedInUser;
             applier = person;
         } else {
-            java.util.Optional<Person> personByID = personService.getPersonByID(personId);
-
-            if (!personByID.isPresent()) {
-                return ControllerConstants.ERROR_JSP;
-            }
-
-            person = personByID.get();
+            person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
             applier = signedInUser;
         }
 
@@ -107,7 +105,8 @@ public class ApplyForLeaveController {
         // only office may apply for leave on behalf of other users
         if ((!isApplyingForOneSelf && !signedInUser.hasRole(Role.OFFICE))
                 || (applyingOnBehalfOfSomeOne != null && !signedInUser.hasRole(Role.OFFICE))) {
-            return ControllerConstants.ERROR_JSP;
+            throw new AccessDeniedException("User " + signedInUser.getLoginName()
+                + " has not the correct permissions to apply for leave for user " + person.getLoginName());
         }
 
         Optional<Account> holidaysAccount = accountService.getHolidaysAccount(DateMidnight.now().getYear(), person);
@@ -146,21 +145,17 @@ public class ApplyForLeaveController {
     @RequestMapping(value = "/new", method = RequestMethod.POST)
     public String newApplication(@RequestParam(value = "personId", required = false) Integer personId,
         @ModelAttribute("application") ApplicationForLeaveForm appForm, RedirectAttributes redirectAttributes,
-        Errors errors, Model model) {
+        Errors errors, Model model) throws UnknownPersonException {
 
         Person applier = sessionService.getSignedInUser();
+
         Person personToApplyForLeave;
 
         if (personId == null) {
             personToApplyForLeave = applier;
         } else {
-            java.util.Optional<Person> optionalPerson = personService.getPersonByID(personId);
-
-            if (!optionalPerson.isPresent()) {
-                return ControllerConstants.ERROR_JSP;
-            }
-
-            personToApplyForLeave = optionalPerson.get();
+            personToApplyForLeave = personService.getPersonByID(personId).orElseThrow(() ->
+                        new UnknownPersonException(personId));
         }
 
         applicationValidator.validate(appForm, errors);
