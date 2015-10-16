@@ -7,6 +7,28 @@
 <html>
 <head>
     <uv:head/>
+    <script src="<spring:url value='/lib/date-de-DE.js' />" type="text/javascript"></script>
+    <script src="<spring:url value='/js/datepicker.js' />" type="text/javascript" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var locale = "${pageContext.response.locale.language}";
+            var urlPrefix = "<spring:url value='/api' />";
+
+            var onSelect = function (selectedDate) {
+                var $endDate = $("#endDate");
+                if (this.id == "startDate" && $endDate.val() === "") {
+                    $endDate.datepicker("setDate", selectedDate);
+                }
+            };
+
+            var getPersonId = function () {
+                return "<c:out value="${overtime.person.id}" />";
+            };
+
+            createDatepickerInstances(["#startDate", "#endDate"], locale, urlPrefix, getPersonId, onSelect);
+        });
+    </script>
 </head>
 <body>
 
