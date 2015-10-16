@@ -56,7 +56,7 @@ function getHighlighted(url, callback) {
 function createDatepickerInstances(selectors, regional, urlPrefix, getPerson, onSelect) {
 
     var highlighted;
-    var highlightedVacation;
+    var highlightedAbsences;
 
     var selector = selectors.join(",");
 
@@ -88,8 +88,9 @@ function createDatepickerInstances(selectors, regional, urlPrefix, getPerson, on
             });
 
             var personId = getPerson();
-            getHighlighted(urlPrefix + "/absences?type=VACATION&year=" + year + "&month=" + month + "&person=" + personId, function(data) {
-                highlightedVacation = getPersonalHolidays(data);
+
+            getHighlighted(urlPrefix + "/absences?year=" + year + "&month=" + month + "&person=" + personId, function(data) {
+                highlightedAbsences = getAbsences(data);
             });
 
         },
@@ -100,38 +101,39 @@ function createDatepickerInstances(selectors, regional, urlPrefix, getPerson, on
             });
 
             var personId = getPerson();
-            getHighlighted(urlPrefix + "/absences?type=VACATION&year=" + year + "&month=" + month + "&person=" + personId, function(data) {
-                highlightedVacation = getPersonalHolidays(data);
+
+            getHighlighted(urlPrefix + "/absences?year=" + year + "&month=" + month + "&person=" + personId, function(data) {
+                highlightedAbsences = getAbsences(data);
             });
             
         },
         beforeShowDay: function (date) {
 
-            return colorizeDate(date, highlighted, highlightedVacation);
+            return colorizeDate(date, highlighted, highlightedAbsences);
 
         },
         onSelect: onSelect
     });
 }
 
-function getPersonalHolidays(data) {
+function getAbsences(data) {
 
-  var personalHolidays = new Array();
+  var absences = [];
 
   for(var i = 0; i < data.response.absences.length; i++) {
     var value = data.response.absences[i];
-    if($.inArray(value, personalHolidays) == -1) {
-      personalHolidays.push(value);
+    if($.inArray(value, absences) == -1) {
+        absences.push(value);
     }
   }
 
-  return personalHolidays;
+  return absences;
 
 }
 
 function getPublicHolidays(data) {
 
-    var publicHolidayDates = new Array();
+    var publicHolidayDates = [];
 
     for(var i = 0; i < data.response.publicHolidays.length; i++) {
         var value = data.response.publicHolidays[i];
@@ -142,44 +144,64 @@ function getPublicHolidays(data) {
     
 }
 
-function colorizeDate(date, publicHolidays, vacation) {
+function colorizeDate(date, publicHolidays, absences) {
 
     // if day is saturday or sunday, highlight it
     if (date.getDay() == 6 || date.getDay() == 0) {
         return [true, "notworkday"];
     } else {
-      var dateString = $.datepicker.formatDate("yy-mm-dd", date);
 
-      var isPublicHoliday = isHoliday(dateString, publicHolidays);
-      var isPersonalHoliday = isHoliday(dateString, vacation);
-      var isHalfWorkDay = isHalfWorkday(dateString, publicHolidays) || isHalfWorkday(dateString, vacation);
+        var dateString = $.datepicker.formatDate("yy-mm-dd", date);
 
-        var cssClass = "";
+        var isPublicHoliday = isSpecialDay(dateString, publicHolidays);
 
-        if(isPublicHoliday) {
-            cssClass += " notworkday";
+        var absenceType;
+        if (isSpecialDay(dateString, absences)) {
+            absenceType = getAbsenceType(dateString, absences);
         }
 
-        if(isHalfWorkDay) {
-            cssClass += " halfworkday";
+        var isSickDay = absenceType === "SICK_NOTE";
+        var isPersonalHoliday = absenceType === "VACATION";
+
+        var isHalfWorkDay = isHalfWorkday(dateString, publicHolidays) || isHalfWorkday(dateString, absences);
+
+        var cssClasses = [];
+
+        if (isPublicHoliday) {
+            cssClasses.push("notworkday");
         }
 
-        if(isPersonalHoliday) {
-            cssClass += " holiday";
+        if (isHalfWorkDay) {
+            cssClasses.push("halfworkday");
         }
 
-        return [true, cssClass];
+        if (isSickDay) {
+            cssClasses.push("sickday");
+        }
+
+        if (isPersonalHoliday) {
+            cssClasses.push("holiday");
+        }
+
+        return [true, cssClasses.join(" ")];
 
     }
 
 }
 
-function isHoliday(formattedDate, holidays) {
+function isSpecialDay(formattedDate, specialDays) {
 
-  var holiday = _.findWhere(holidays, {date: formattedDate});
+    var day = _.findWhere(specialDays, {date: formattedDate});
 
-  return holiday !== undefined && holiday.dayLength <= 1;
+    return day !== undefined && day.dayLength <= 1;
 
+}
+
+function getAbsenceType(formattedDate, absences) {
+
+    var absence = _.findWhere(absences, {date: formattedDate});
+
+    return absence.type;
 }
 
 function isHalfWorkday(formattedDate, holidays) {

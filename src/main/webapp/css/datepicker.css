@@ -73,6 +73,17 @@
   background: linear-gradient(-45deg, #FFEDA0 50%, #FAFAFA 50%) !important;
 }
 
+/* SICK DAY */
+.ui-datepicker-calendar td.sickday a {
+  color: #DF4737 !important;
+  background: #FFC5BF !important;
+}
+
+.ui-datepicker-calendar td.sickday.halfworkday a {
+  color: #DF4737 !important;
+  background: linear-gradient(-45deg, #FFC5BF 50%, #FAFAFA 50%) !important;
+}
+
 /* INTERACTION / HOVER */
 .ui-datepicker-calendar td a:hover,
 .ui-datepicker-calendar td.halfworkday a:hover,
