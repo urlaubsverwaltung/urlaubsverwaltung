@@ -113,7 +113,7 @@ public class SickNoteInteractionServiceImplTest {
         Assert.assertNotNull("Should not be null", updatedSickNote);
 
         Assert.assertNotNull("Last edited date should be set", updatedSickNote.getLastEdited());
-        Assert.assertEquals("Status should not be changed", sickNote.getStatus(), updatedSickNote.getStatus());
+        Assert.assertEquals("Wrong status", SickNoteStatus.ACTIVE, updatedSickNote.getStatus());
     }
 
 

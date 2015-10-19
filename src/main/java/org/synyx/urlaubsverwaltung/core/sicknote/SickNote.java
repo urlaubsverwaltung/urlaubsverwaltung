@@ -246,8 +246,8 @@ public class SickNote extends AbstractPersistable<Integer> {
             .append("endDate", getEndDate())
             .append("dayLength", getDayLength())
             .append("type", getType())
-            .append("person", getPerson())
             .append("status", getStatus())
+            .append("person", getPerson())
             .toString();
     }
 }

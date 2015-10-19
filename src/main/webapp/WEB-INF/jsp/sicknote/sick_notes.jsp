@@ -94,29 +94,29 @@
                         </td>
                         <td class="hidden-xs">
                             <i class="fa fa-medkit hidden-print"></i>
-                            <span class="sortable"><uv:number number="${sickDays[person]}"/></span>
+                            <span class="sortable"><uv:number number="${sickDays[person].days['TOTAL']}"/></span>
                             <spring:message code="sicknotes.daysOverview.sickDays.number"/>
-                            <c:if test="${sickDaysWithAUB[person] > 0}">
+                            <c:if test="${sickDays[person].days['WITH_AUB'] > 0}">
                                 <p class="list-table--second-row">
                                     <i class="fa fa-check positive"></i> <spring:message
-                                        code="overview.sicknotes.sickdays.aub" arguments="${sickDaysWithAUB[person]}"/>
+                                        code="overview.sicknotes.sickdays.aub" arguments="${sickDays[person].days['WITH_AUB']}"/>
                                 </p>
                             </c:if>
                         </td>
                         <td class="hidden-xs">
-                            <i class="fa fa-child hidden-print"></i> <uv:number number="${childSickDays[person]}"/>
+                            <i class="fa fa-child hidden-print"></i> <uv:number number="${childSickDays[person].days['TOTAL']}"/>
                                 <spring:message code="sicknotes.daysOverview.sickDays.child.number"/>
-                            <c:if test="${childSickDaysWithAUB[person] > 0}">
+                            <c:if test="${childSickDays[person].days['WITH_AUB'] > 0}">
                                 <p class="list-table--second-row">
                                     <i class="fa fa-check positive"></i> <spring:message
                                             code="overview.sicknotes.sickdays.aub"
-                                            arguments="${childSickDaysWithAUB[person]}"/>
+                                            arguments="${childSickDays[person].days['WITH_AUB']}"/>
                                 </p>
                             </c:if>
                         </td>
                         <td class="visible-xs">
-                            <i class="fa fa-medkit hidden-print"></i> <uv:number number="${sickDays[person]}"/>
-                            <i class="fa fa-child hidden-print"></i> <uv:number number="${childSickDays[person]}"/>
+                            <i class="fa fa-medkit hidden-print"></i> <uv:number number="${sickDays[person].days['TOTAL']}"/>
+                            <i class="fa fa-child hidden-print"></i> <uv:number number="${childSickDays[person].days['TOTAL']}"/>
                         </td>
                         </c:forEach>
                     </tbody>

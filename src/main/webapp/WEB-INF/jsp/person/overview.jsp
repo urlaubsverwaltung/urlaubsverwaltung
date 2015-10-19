@@ -322,8 +322,9 @@
                     <div class="box">
                         <span class="box-icon bg-red"><i class="fa fa-medkit"></i></span>
                     <span class="box-text">
-                        <spring:message code="overview.sicknotes.sickdays" arguments="${sickDays}" />
-                        <i class="fa fa-check positive"></i> <spring:message code="overview.sicknotes.sickdays.aub" arguments="${sickDaysWithAUB}" />
+                        <spring:message code="overview.sicknotes.sickdays" arguments="${sickDaysOverview.sickDays.days['TOTAL']}" />
+                        <i class="fa fa-check positive"></i>
+                        <spring:message code="overview.sicknotes.sickdays.aub" arguments="${sickDaysOverview.sickDays.days['WITH_AUB']}" />
                     </span>
                     </div>
                 </div>
@@ -331,8 +332,9 @@
                     <div class="box">
                         <span class="box-icon bg-red"><i class="fa fa-child"></i></span>
                     <span class="box-text">
-                        <spring:message code="overview.sicknotes.sickdays.child" arguments="${childSickDays}" />
-                        <i class="fa fa-check positive"></i> <spring:message code="overview.sicknotes.sickdays.aub" arguments="${childSickDaysWithAUB}" />
+                        <spring:message code="overview.sicknotes.sickdays.child" arguments="${sickDaysOverview.childSickDays.days['TOTAL']}" />
+                        <i class="fa fa-check positive"></i>
+                        <spring:message code="overview.sicknotes.sickdays.aub" arguments="${sickDaysOverview.childSickDays.days['WITH_AUB']}" />
                     </span>
                     </div>
                 </div>

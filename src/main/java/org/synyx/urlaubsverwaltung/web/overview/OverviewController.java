@@ -32,7 +32,6 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteService;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
@@ -40,6 +39,7 @@ import org.synyx.urlaubsverwaltung.web.application.ApplicationForLeave;
 import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
 import org.synyx.urlaubsverwaltung.web.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.web.sicknote.ExtendedSickNote;
+import org.synyx.urlaubsverwaltung.web.statistics.SickDaysOverview;
 import org.synyx.urlaubsverwaltung.web.statistics.UsedDaysOverview;
 
 import java.math.BigDecimal;
@@ -133,42 +133,10 @@ public class OverviewController {
                 return o2.getStartDate().compareTo(o1.getStartDate());
             });
 
-        BigDecimal sickDays = BigDecimal.ZERO;
-        BigDecimal sickDaysWithAUB = BigDecimal.ZERO;
-        BigDecimal childSickDays = BigDecimal.ZERO;
-        BigDecimal childSickDaysWithAUB = BigDecimal.ZERO;
-
-        for (SickNote sickNote : sickNotes) {
-            if (!sickNote.isActive()) {
-                continue;
-            }
-
-            if (sickNote.getType().equals(SickNoteType.SICK_NOTE_CHILD)) {
-                childSickDays = childSickDays.add(calendarService.getWorkDays(sickNote.getDayLength(),
-                            sickNote.getStartDate(), sickNote.getEndDate(), person));
-
-                if (sickNote.isAubPresent()) {
-                    BigDecimal workDays = calendarService.getWorkDays(sickNote.getDayLength(),
-                            sickNote.getAubStartDate(), sickNote.getAubEndDate(), person);
-                    childSickDaysWithAUB = childSickDaysWithAUB.add(workDays);
-                }
-            } else {
-                sickDays = sickDays.add(calendarService.getWorkDays(sickNote.getDayLength(), sickNote.getStartDate(),
-                            sickNote.getEndDate(), person));
-
-                if (sickNote.isAubPresent()) {
-                    BigDecimal workDays = calendarService.getWorkDays(sickNote.getDayLength(),
-                            sickNote.getAubStartDate(), sickNote.getAubEndDate(), person);
-                    sickDaysWithAUB = sickDaysWithAUB.add(workDays);
-                }
-            }
-        }
-
-        model.addAttribute("sickDays", sickDays);
-        model.addAttribute("sickDaysWithAUB", sickDaysWithAUB);
-        model.addAttribute("childSickDays", childSickDays);
-        model.addAttribute("childSickDaysWithAUB", childSickDaysWithAUB);
         model.addAttribute("sickNotes", extendedSickNotes);
+
+        SickDaysOverview sickDaysOverview = new SickDaysOverview(sickNotes, calendarService);
+        model.addAttribute("sickDaysOverview", sickDaysOverview);
     }
 
 

@@ -85,6 +85,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
     @Override
     public SickNote update(SickNote sickNote, Person editor) {
 
+        sickNote.setStatus(SickNoteStatus.ACTIVE);
         sickNote.setLastEdited(DateMidnight.now());
 
         sickNoteService.save(sickNote);

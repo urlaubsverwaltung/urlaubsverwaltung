@@ -28,6 +28,7 @@ import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.web.FilterRequest;
 import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
+import org.synyx.urlaubsverwaltung.web.statistics.SickDays;
 
 import java.math.BigDecimal;
 
@@ -109,56 +110,42 @@ public class SickDaysOverviewController {
         List<SickNote> sickNotesOfActivePersons = sickNotes.stream().filter(sickNote ->
                     persons.contains(sickNote.getPerson()) && sickNote.isActive()).collect(Collectors.toList());
 
-        Map<Person, BigDecimal> sickDays = new HashMap<>();
-        Map<Person, BigDecimal> sickDaysWithAUB = new HashMap<>();
-        Map<Person, BigDecimal> childSickDays = new HashMap<>();
-        Map<Person, BigDecimal> childSickDaysWithAUB = new HashMap<>();
+        Map<Person, SickDays> sickDays = new HashMap<>();
+        Map<Person, SickDays> childSickDays = new HashMap<>();
 
         for (Person person : persons) {
-            sickDays.put(person, BigDecimal.ZERO);
-            sickDaysWithAUB.put(person, BigDecimal.ZERO);
-            childSickDays.put(person, BigDecimal.ZERO);
-            childSickDaysWithAUB.put(person, BigDecimal.ZERO);
+            sickDays.put(person, new SickDays());
+            childSickDays.put(person, new SickDays());
         }
 
         for (SickNote sickNote : sickNotesOfActivePersons) {
             Person person = sickNote.getPerson();
+            BigDecimal workDays = calendarService.getWorkDays(sickNote.getDayLength(), sickNote.getStartDate(),
+                    sickNote.getEndDate(), person);
 
             if (sickNote.getType().equals(SickNoteType.SICK_NOTE_CHILD)) {
-                BigDecimal currentChildSickDays = childSickDays.get(person);
-                childSickDays.put(person,
-                    currentChildSickDays.add(
-                        calendarService.getWorkDays(sickNote.getDayLength(), sickNote.getStartDate(),
-                            sickNote.getEndDate(), person)));
+                childSickDays.get(person).addDays(SickDays.SickDayType.TOTAL, workDays);
 
                 if (sickNote.isAubPresent()) {
-                    BigDecimal workDays = calendarService.getWorkDays(sickNote.getDayLength(),
+                    BigDecimal workDaysWithAUB = calendarService.getWorkDays(sickNote.getDayLength(),
                             sickNote.getAubStartDate(), sickNote.getAubEndDate(), person);
 
-                    BigDecimal currentChildSickDaysWithAUB = childSickDaysWithAUB.get(person);
-                    childSickDaysWithAUB.put(person, currentChildSickDaysWithAUB.add(workDays));
+                    childSickDays.get(person).addDays(SickDays.SickDayType.WITH_AUB, workDaysWithAUB);
                 }
             } else {
-                BigDecimal currentSickDays = sickDays.get(person);
-                sickDays.put(person,
-                    currentSickDays.add(
-                        calendarService.getWorkDays(sickNote.getDayLength(), sickNote.getStartDate(),
-                            sickNote.getEndDate(), person)));
+                sickDays.get(person).addDays(SickDays.SickDayType.TOTAL, workDays);
 
                 if (sickNote.isAubPresent()) {
-                    BigDecimal workDays = calendarService.getWorkDays(sickNote.getDayLength(),
+                    BigDecimal workDaysWithAUB = calendarService.getWorkDays(sickNote.getDayLength(),
                             sickNote.getAubStartDate(), sickNote.getAubEndDate(), person);
 
-                    BigDecimal currentSickDaysWithAUB = sickDaysWithAUB.get(person);
-                    sickDaysWithAUB.put(person, currentSickDaysWithAUB.add(workDays));
+                    sickDays.get(person).addDays(SickDays.SickDayType.WITH_AUB, workDaysWithAUB);
                 }
             }
         }
 
         model.addAttribute("sickDays", sickDays);
-        model.addAttribute("sickDaysWithAUB", sickDaysWithAUB);
         model.addAttribute("childSickDays", childSickDays);
-        model.addAttribute("childSickDaysWithAUB", childSickDaysWithAUB);
 
         model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, persons);
     }
