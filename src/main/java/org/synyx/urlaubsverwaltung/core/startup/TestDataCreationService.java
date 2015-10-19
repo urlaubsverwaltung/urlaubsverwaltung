@@ -232,7 +232,7 @@ public class TestDataCreationService {
         Application application = null;
 
         if (startAndEndDatesAreInCurrentYear(startDate, endDate)
-                && isMoreThanOneWorkDayDuration(startDate, endDate, person)) {
+                && durationIsGreaterThanZero(startDate, endDate, person)) {
             application = new Application();
             application.setPerson(person);
             application.setStartDate(startDate);
@@ -243,6 +243,16 @@ public class TestDataCreationService {
                 "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt"
                 + "ut labore et dolore magna aliquyam erat, sed diam voluptua."
                 + "At vero eos et accusam et justo duo dolores");
+
+            if (vacationType.equals(VacationType.OVERTIME)) {
+                switch (dayLength) {
+                    case FULL:
+                        application.setHours(new BigDecimal("8"));
+
+                    default:
+                        application.setHours(new BigDecimal("4"));
+                }
+            }
 
             applicationInteractionService.apply(application, person, Optional.of("Ich hätte gerne Urlaub"));
         }
@@ -259,7 +269,7 @@ public class TestDataCreationService {
     }
 
 
-    private boolean isMoreThanOneWorkDayDuration(DateMidnight start, DateMidnight end, Person person) {
+    private boolean durationIsGreaterThanZero(DateMidnight start, DateMidnight end, Person person) {
 
         BigDecimal workDays = calendarService.getWorkDays(DayLength.FULL, start, end, person);
 
@@ -314,7 +324,7 @@ public class TestDataCreationService {
         SickNote sickNote = null;
 
         if (startAndEndDatesAreInCurrentYear(startDate, endDate)
-                && isMoreThanOneWorkDayDuration(startDate, endDate, person)) {
+                && durationIsGreaterThanZero(startDate, endDate, person)) {
             sickNote = new SickNote();
             sickNote.setPerson(person);
             sickNote.setStartDate(startDate);

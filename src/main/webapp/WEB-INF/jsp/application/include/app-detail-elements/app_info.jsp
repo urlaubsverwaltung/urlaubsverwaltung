@@ -98,6 +98,16 @@
             </script>
         </td>
     </tr>
+    <c:if test="${application.vacationType == 'OVERTIME'}">
+        <tr>
+            <td>
+                <spring:message code="application.data.hours"/>
+            </td>
+            <td>
+                <uv:number number="${application.hours}"/>
+            </td>
+        </tr>
+    </c:if>
     <tr class="visible-print">
         <td><spring:message code="application.data.status" /></td>
         <td><spring:message code="${application.status}" /></td>
