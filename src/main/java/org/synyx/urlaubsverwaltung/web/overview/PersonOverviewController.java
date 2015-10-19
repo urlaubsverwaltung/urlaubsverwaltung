@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.person;
+package org.synyx.urlaubsverwaltung.web.overview;
 
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
@@ -40,6 +40,8 @@ import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.application.ApplicationForLeave;
+import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
+import org.synyx.urlaubsverwaltung.web.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.web.sicknote.ExtendedSickNote;
 import org.synyx.urlaubsverwaltung.web.statistics.UsedDaysOverview;
 
