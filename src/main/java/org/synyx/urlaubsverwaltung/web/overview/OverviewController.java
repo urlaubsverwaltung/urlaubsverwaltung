@@ -3,10 +3,7 @@ package org.synyx.urlaubsverwaltung.web.overview;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 
-import org.apache.log4j.Logger;
-
 import org.joda.time.DateMidnight;
-import org.joda.time.chrono.GregorianChronology;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -52,14 +49,13 @@ import java.util.Optional;
 
 
 /**
- * Controller for the different ways of displaying the personal overview page.
+ * Controller to display the personal overview page with basic information about overtime, applications for leave and
+ * sick notes.
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Controller
 public class OverviewController {
-
-    private static final Logger LOG = Logger.getLogger(OverviewController.class);
 
     @Autowired
     private PersonService personService;
@@ -101,7 +97,7 @@ public class OverviewController {
 
     @RequestMapping(value = "/staff/{personId}/overview", method = RequestMethod.GET)
     public String showOverview(@PathVariable("personId") Integer personId,
-        @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) String year, Model model)
+        @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Integer year, Model model)
         throws UnknownPersonException, AccessDeniedException {
 
         Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
@@ -115,7 +111,7 @@ public class OverviewController {
 
         model.addAttribute(PersonConstants.PERSON_ATTRIBUTE, person);
 
-        Integer yearToShow = parseYearParameter(year);
+        Integer yearToShow = year == null ? DateMidnight.now().getYear() : year;
         prepareApplications(person, yearToShow, model);
         prepareHolidayAccounts(person, yearToShow, model);
         prepareSickNoteList(person, yearToShow, model);
@@ -123,30 +119,6 @@ public class OverviewController {
         model.addAttribute(ControllerConstants.YEAR_ATTRIBUTE, DateMidnight.now().getYear());
 
         return "person/overview";
-    }
-
-
-    /**
-     * Parses the year of the given String, if parsing fails, the current year is returned.
-     *
-     * @param  input
-     *
-     * @return  parsed Integer of the given String, if parsing failed the current year is returned
-     */
-    private Integer parseYearParameter(String input) {
-
-        // default value for year is the current year
-        Integer year = DateMidnight.now(GregorianChronology.getInstance()).getYear();
-
-        if (StringUtils.hasText(input)) {
-            try {
-                year = Integer.parseInt(input);
-            } catch (NumberFormatException ex) {
-                LOG.warn("Tried to show overview for an invalid year entry: " + input, ex);
-            }
-        }
-
-        return year;
     }
 
 

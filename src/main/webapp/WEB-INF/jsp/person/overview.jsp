@@ -66,15 +66,6 @@
         <div class="row">
 
             <div class="col-xs-12">
-                <c:choose>
-                    <c:when test="${!empty param.year}">
-                        <c:set var="displayYear" value="${param.year}"/>
-                    </c:when>
-                    <c:otherwise>
-                        <c:set var="displayYear" value="${year}"/>
-                    </c:otherwise>
-                </c:choose>
-
                 <%@include file="./include/overview_header.jsp" %>
             </div>
             
@@ -193,7 +184,7 @@
                     var year = getUrlParam("year");
                     var date = moment();
 
-                    if (year.length > 0) {
+                    if (year.length > 0 && year != date.year()) {
                         date.year(year).month(0).date(1);
                     }
 

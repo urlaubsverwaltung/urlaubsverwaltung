@@ -1,7 +1,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
-<%@attribute name="year" type="java.lang.Integer" required="true" %>
+<%@attribute name="year" type="java.lang.String" required="true" %>
 <%@attribute name="hrefPrefix" type="java.lang.String" required="true" %>
 
 <script type="text/javascript">

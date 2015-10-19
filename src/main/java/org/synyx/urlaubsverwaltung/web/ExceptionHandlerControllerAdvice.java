@@ -40,7 +40,9 @@ public class ExceptionHandlerControllerAdvice {
 
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler({ AbstractNoResultFoundException.class, SickNoteAlreadyInactiveException.class })
+    @ExceptionHandler(
+        { AbstractNoResultFoundException.class, SickNoteAlreadyInactiveException.class, NumberFormatException.class }
+    )
     public ModelAndView handleException(AbstractNoResultFoundException exception) {
 
         return ExceptionHandlerControllerAdvice.getErrorPage(exception, HttpStatus.BAD_REQUEST);

@@ -9,6 +9,15 @@
 
     <spring:message code="overview.title"/>
 
+    <c:choose>
+        <c:when test="${!empty param.year}">
+            <c:set var="displayYear" value="${param.year}"/>
+        </c:when>
+        <c:otherwise>
+            <c:set var="displayYear" value="${year}"/>
+        </c:otherwise>
+    </c:choose>
+
     <uv:year-selector year="${displayYear}" hrefPrefix="${URL_PREFIX}/staff/${person.id}/overview?year="/>
 
     <uv:print/>
