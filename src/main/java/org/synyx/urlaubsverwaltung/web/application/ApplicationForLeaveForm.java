@@ -11,6 +11,8 @@ import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
+import java.math.BigDecimal;
+
 
 /**
  * View class representing an application for leave.
@@ -33,6 +35,9 @@ public class ApplicationForLeaveForm {
 
     // length of day: contains time of day (morning, noon or full day) and value (1.0 or 0.5 - as BigDecimal)
     private DayLength dayLength;
+
+    // hours are relevant if having overtime due
+    private BigDecimal hours;
 
     // For special and unpaid leave a reason is required
     private String reason;
@@ -92,6 +97,18 @@ public class ApplicationForLeaveForm {
     public void setDayLength(DayLength dayLength) {
 
         this.dayLength = dayLength;
+    }
+
+
+    public BigDecimal getHours() {
+
+        return hours;
+    }
+
+
+    public void setHours(BigDecimal hours) {
+
+        this.hours = hours;
     }
 
 
@@ -191,6 +208,7 @@ public class ApplicationForLeaveForm {
         applicationForLeave.setHolidayReplacement(holidayReplacement);
         applicationForLeave.setAddress(address);
         applicationForLeave.setTeamInformed(teamInformed);
+        applicationForLeave.setHours(hours);
 
         if (dayLength == DayLength.FULL) {
             applicationForLeave.setStartDate(startDate);

@@ -263,6 +263,26 @@
                 </div>
             </div>
         </div>
+
+        <div class="col-md-4 col-md-push-8">
+            <span class="help-block">
+                <i class="fa fa-fw fa-info-circle"></i>
+                <spring:message code="application.data.hours.description"/>
+            </span>
+        </div>
+
+        <div class="col-md-8 col-md-pull-4">
+            <div class="form-group">
+                <label class="control-label col-md-3" for="hours">
+                    <spring:message code="application.data.hours" />:
+                </label>
+                <div class="col-md-9">
+                    <form:input path="hours" class="form-control" cssErrorClass="form-control error" />
+                    <form:errors path="hours" cssClass="error"/>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <div class="form-section">
