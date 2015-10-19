@@ -60,10 +60,9 @@ public class SessionService {
     public boolean isSignedInUserAllowedToAccessPersonData(Person signedInUser, Person person) {
 
         boolean isOwnData = person.getId().equals(signedInUser.getId());
-        boolean isOffice = signedInUser.hasRole(Role.OFFICE);
-        boolean isBoss = signedInUser.hasRole(Role.BOSS);
+        boolean isBossOrOffice = signedInUser.hasRole(Role.OFFICE) || signedInUser.hasRole(Role.BOSS);
         boolean isDepartmentHeadOfPerson = departmentService.isDepartmentHeadOfPerson(signedInUser, person);
 
-        return isOwnData || isOffice || isBoss || isDepartmentHeadOfPerson;
+        return isOwnData || isBossOrOffice || isDepartmentHeadOfPerson;
     }
 }

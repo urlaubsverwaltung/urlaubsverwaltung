@@ -23,11 +23,6 @@ public class SickNoteComment extends AbstractComment {
     @Enumerated(EnumType.STRING)
     private SickNoteAction action;
 
-    public SickNoteComment() {
-
-        super();
-    }
-
     public SickNote getSickNote() {
 
         return sickNote;

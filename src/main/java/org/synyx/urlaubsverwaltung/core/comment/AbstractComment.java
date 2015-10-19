@@ -29,7 +29,7 @@ public abstract class AbstractComment extends AbstractPersistable<Integer> {
     // When has the comment be written?
     @Column(nullable = false)
     @Temporal(javax.persistence.TemporalType.DATE)
-    private Date date;
+    private final Date date;
 
     // What is the content of the comment?
     private String text;
