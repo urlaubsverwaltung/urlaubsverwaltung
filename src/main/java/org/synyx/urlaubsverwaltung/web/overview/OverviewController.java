@@ -57,9 +57,9 @@ import java.util.Optional;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Controller
-public class PersonOverviewController {
+public class OverviewController {
 
-    private static final Logger LOG = Logger.getLogger(PersonOverviewController.class);
+    private static final Logger LOG = Logger.getLogger(OverviewController.class);
 
     @Autowired
     private PersonService personService;
