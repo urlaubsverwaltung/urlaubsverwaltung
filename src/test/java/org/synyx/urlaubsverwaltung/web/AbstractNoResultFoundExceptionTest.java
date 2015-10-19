@@ -7,7 +7,7 @@ import org.junit.Test;
 /**
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public class NoResultForIDFoundExceptionTest {
+public class AbstractNoResultFoundExceptionTest {
 
     @Test
     public void ensureCorrectExceptionMessage() {
@@ -27,7 +27,7 @@ public class NoResultForIDFoundExceptionTest {
             exception.getMessage());
     }
 
-    private class TestException extends NoResultForIDFoundException {
+    private class TestException extends AbstractNoResultFoundException {
 
         public TestException(Integer id, String type) {
 

@@ -40,8 +40,8 @@ public class ExceptionHandlerControllerAdvice {
 
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler({ NoResultForIDFoundException.class, SickNoteAlreadyInactiveException.class })
-    public ModelAndView handleException(NoResultForIDFoundException exception) {
+    @ExceptionHandler({ AbstractNoResultFoundException.class, SickNoteAlreadyInactiveException.class })
+    public ModelAndView handleException(AbstractNoResultFoundException exception) {
 
         return ExceptionHandlerControllerAdvice.getErrorPage(exception, HttpStatus.BAD_REQUEST);
     }

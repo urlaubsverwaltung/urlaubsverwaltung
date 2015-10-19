@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.web.person;
 
-import org.synyx.urlaubsverwaltung.web.NoResultForIDFoundException;
+import org.synyx.urlaubsverwaltung.web.AbstractNoResultFoundException;
 
 
 /**
@@ -8,7 +8,7 @@ import org.synyx.urlaubsverwaltung.web.NoResultForIDFoundException;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public class UnknownPersonException extends NoResultForIDFoundException {
+public class UnknownPersonException extends AbstractNoResultFoundException {
 
     public UnknownPersonException(Integer id) {
 

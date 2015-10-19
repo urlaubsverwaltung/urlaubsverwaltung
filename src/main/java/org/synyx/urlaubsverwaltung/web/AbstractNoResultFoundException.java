@@ -5,15 +5,15 @@ package org.synyx.urlaubsverwaltung.web;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public abstract class NoResultForIDFoundException extends Exception {
+public abstract class AbstractNoResultFoundException extends Exception {
 
-    public NoResultForIDFoundException(Integer id, String type) {
+    public AbstractNoResultFoundException(Integer id, String type) {
 
         super("No " + type + " found for ID = " + id);
     }
 
 
-    public NoResultForIDFoundException(String identifier, String type) {
+    public AbstractNoResultFoundException(String identifier, String type) {
 
         super("No " + type + " found for identifier = " + identifier);
     }
