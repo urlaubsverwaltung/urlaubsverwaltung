@@ -19,6 +19,9 @@
             WHERE comment.sickNote_id = sickNote.id
             ORDER BY comment.id DESC LIMIT 1
             );
+
+            UPDATE SickNote sickNote SET sickNote.status = 'ACTIVE'
+            WHERE sickNote.status = 'CREATED' OR sickNote.status = 'EDITED' OR sickNote.status = 'COMMENTED';
         </sql>
 
     </changeSet>
