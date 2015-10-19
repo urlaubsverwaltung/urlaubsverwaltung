@@ -61,6 +61,9 @@
 <body>
 
 <spring:url var="URL_PREFIX" value="/web"/>
+<sec:authorize access="hasRole('OFFICE')">
+    <c:set var="IS_OFFICE" value="${true}"/>
+</sec:authorize>
 
 <uv:menu/>
 
@@ -77,17 +80,6 @@
 </c:when>
 
 <c:otherwise>
-
-<c:choose>
-    <c:when test="${person.id == signedInUser.id && !appliesOnOnesBehalf}">
-        <c:set var="appliesOnOnesBehalf" value="false"/>
-    </c:when>
-    <c:otherwise>
-        <sec:authorize access="hasRole('OFFICE')">
-            <c:set var="appliesOnOnesBehalf" value="true"/>
-        </sec:authorize>
-    </c:otherwise>
-</c:choose>
 
 <form:form method="POST" action="${URL_PREFIX}/application" modelAttribute="application" class="form-horizontal" role="form">
 <form:hidden path="person" value="${person.id}" />
@@ -116,29 +108,27 @@
         </div>
 
         <div class="col-md-8 col-md-pull-4">
-            <c:if test="${appliesOnOnesBehalf}">
+            <c:if test="${IS_OFFICE}">
                 <%-- office applies for a user --%>
                 <div class="form-group">
                     <label class="control-label col-md-3">
                         <spring:message code="application.data.staff"/>
                     </label>
                     <div class="col-md-9">
-                        <select id="person-select" class="form-control" onchange="window.location.href=this.options
-                                                            [this.selectedIndex].value">
+                        <select id="person-select" class="form-control"
+                                onchange="window.location.href=this.options[this.selectedIndex].value">
                             <c:forEach items="${persons}" var="p">
                                 <c:choose>
                                     <c:when test="${person.id == p.id}">
-                                        <option value="${URL_PREFIX}/application/new?personId=${person.id}&appliesOnOnesBehalf=true"
-                                                selected="selected">
-                                            <c:out value="${person.niceName}"/>
-                                        </option>
+                                        <c:set var="SELECTED_ATTRIBUTE" value="selected='selected'"/>
                                     </c:when>
                                     <c:otherwise>
-                                        <option value="${URL_PREFIX}/application/new?personId=${p.id}&appliesOnOnesBehalf=true">
-                                            <c:out value="${p.niceName}"/>
-                                        </option>
+                                        <c:set var="SELECTED_ATTRIBUTE" value=""/>
                                     </c:otherwise>
                                 </c:choose>
+                                <option value="${URL_PREFIX}/application/new?person=${p.id}" ${SELECTED_ATTRIBUTE}>
+                                    <c:out value="${p.niceName}"/>
+                                </option>
                             </c:forEach>
                         </select>
                     </div>

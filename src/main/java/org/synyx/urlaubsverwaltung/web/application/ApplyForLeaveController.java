@@ -81,34 +81,29 @@ public class ApplyForLeaveController {
      * Show form to apply for leave.
      *
      * @param  personId  of the person that applies for leave
-     * @param  applyingOnBehalfOfSomeOne  defines if applying for leave on behalf for somebody
      * @param  model  to be filled
      *
      * @return  form to apply for leave
      */
     @RequestMapping(value = "/application/new", method = RequestMethod.GET)
-    public String newApplicationForm(@RequestParam(value = "personId", required = false) Integer personId,
-        @RequestParam(value = "appliesOnOnesBehalf", required = false) Boolean applyingOnBehalfOfSomeOne, Model model)
+    public String newApplicationForm(
+        @RequestParam(value = PersonConstants.PERSON_ATTRIBUTE, required = false) Integer personId, Model model)
         throws UnknownPersonException, AccessDeniedException {
-
-        Person person;
-        Person applier;
 
         Person signedInUser = sessionService.getSignedInUser();
 
+        Person person;
+
         if (personId == null) {
             person = signedInUser;
-            applier = person;
         } else {
             person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
-            applier = signedInUser;
         }
 
-        boolean isApplyingForOneSelf = person.equals(applier);
+        boolean isApplyingForOneSelf = person.equals(signedInUser);
 
         // only office may apply for leave on behalf of other users
-        if ((!isApplyingForOneSelf && !signedInUser.hasRole(Role.OFFICE))
-                || (applyingOnBehalfOfSomeOne != null && !signedInUser.hasRole(Role.OFFICE))) {
+        if (!isApplyingForOneSelf && !signedInUser.hasRole(Role.OFFICE)) {
             throw new AccessDeniedException("User " + signedInUser.getLoginName()
                 + " has not the correct permissions to apply for leave for user " + person.getLoginName());
         }
@@ -120,7 +115,6 @@ public class ApplyForLeaveController {
         }
 
         model.addAttribute("noHolidaysAccount", !holidaysAccount.isPresent());
-        model.addAttribute("appliesOnOnesBehalf", applyingOnBehalfOfSomeOne);
 
         return "application/app_form";
     }

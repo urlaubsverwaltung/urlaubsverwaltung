@@ -261,7 +261,7 @@
                         </c:when>
                         <c:otherwise>
                             <c:if test="${IS_OFFICE}">
-                                <a class="fa-action pull-right" href="${URL_PREFIX}/application/new?personId=${person.id}&appliesOnOnesBehalf=true"
+                                <a class="fa-action pull-right" href="${URL_PREFIX}/application/new?person=${person.id}"
                                     data-title="<spring:message code="action.apply.vacation"/>">
                                     <i class="fa fa-plus-circle"></i>
                                 </a>

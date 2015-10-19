@@ -39,7 +39,7 @@
                           </a>
 
                           <sec:authorize access="hasRole('OFFICE')">
-                          <a href="${URL_PREFIX}/application/new?appliesOnOnesBehalf=true" class="fa-action pull-right"
+                          <a href="${URL_PREFIX}/application/new" class="fa-action pull-right"
                               data-title="<spring:message code="action.apply.vacation"/>">
                             <i class="fa fa-fw fa-plus-circle"></i>
                           </a>
