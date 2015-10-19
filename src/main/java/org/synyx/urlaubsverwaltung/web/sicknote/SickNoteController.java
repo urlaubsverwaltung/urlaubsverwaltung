@@ -104,8 +104,9 @@ public class SickNoteController {
             return "sicknote/sick_note";
         }
 
-        throw new AccessDeniedException("User " + signedInUser.getLoginName()
-            + " has not the correct permissions to see the sick note of user " + sickNote.getPerson().getLoginName());
+        throw new AccessDeniedException(String.format(
+                "User '%s' has not the correct permissions to see the sick note of user '%s'",
+                signedInUser.getLoginName(), sickNote.getPerson().getLoginName()));
     }
 
 

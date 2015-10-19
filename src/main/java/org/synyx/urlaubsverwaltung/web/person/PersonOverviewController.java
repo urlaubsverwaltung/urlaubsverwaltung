@@ -106,8 +106,9 @@ public class PersonOverviewController {
         Person signedInUser = sessionService.getSignedInUser();
 
         if (!sessionService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
-            throw new AccessDeniedException("User " + signedInUser.getLoginName()
-                + " has not the correct permissions to access the overview page of user " + person.getLoginName());
+            throw new AccessDeniedException(String.format(
+                    "User '%s' has not the correct permissions to access the overview page of user '%s'",
+                    signedInUser.getLoginName(), person.getLoginName()));
         }
 
         model.addAttribute(PersonConstants.PERSON_ATTRIBUTE, person);

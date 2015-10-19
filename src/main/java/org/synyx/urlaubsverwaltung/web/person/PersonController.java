@@ -73,8 +73,9 @@ public class PersonController {
         Person signedInUser = sessionService.getSignedInUser();
 
         if (!sessionService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
-            throw new AccessDeniedException("User " + signedInUser.getLoginName()
-                + " has not the correct permissions to access data of user " + person.getLoginName());
+            throw new AccessDeniedException(String.format(
+                    "User '%s' has not the correct permissions to access data of user '%s'",
+                    signedInUser.getLoginName(), person.getLoginName()));
         }
 
         Integer year = requestedYear == null ? DateMidnight.now().getYear() : requestedYear;

@@ -100,8 +100,9 @@ public class ApplicationForLeaveDetailsController {
         Person person = application.getPerson();
 
         if (!sessionService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
-            throw new AccessDeniedException("User " + signedInUser.getLoginName()
-                + " has not the correct permissions to see application for leave of user " + person.getLoginName());
+            throw new AccessDeniedException(String.format(
+                    "User '%s' has not the correct permissions to see application for leave of user '%s'",
+                    signedInUser.getLoginName(), person.getLoginName()));
         }
 
         Integer year = requestedYear == null ? application.getEndDate().getYear() : requestedYear;
@@ -194,8 +195,9 @@ public class ApplicationForLeaveDetailsController {
             return "redirect:/web/application/" + applicationId;
         }
 
-        throw new AccessDeniedException("User " + signedInUser.getLoginName()
-            + " has not the correct permissions to allow application for leave of user " + person.getLoginName());
+        throw new AccessDeniedException(String.format(
+                "User '%s' has not the correct permissions to allow application for leave of user '%s'",
+                signedInUser.getLoginName(), person.getLoginName()));
     }
 
 
@@ -229,8 +231,9 @@ public class ApplicationForLeaveDetailsController {
             return "redirect:/web/application/" + applicationId;
         }
 
-        throw new AccessDeniedException("User " + sender.getLoginName()
-            + " has not the correct permissions to refer application for leave to user " + referLoginName);
+        throw new AccessDeniedException(String.format(
+                "User '%s' has not the correct permissions to refer application for leave to user '%s'",
+                sender.getLoginName(), referLoginName));
     }
 
 
@@ -277,8 +280,9 @@ public class ApplicationForLeaveDetailsController {
             return "redirect:/web/application/" + applicationId;
         }
 
-        throw new AccessDeniedException("User " + signedInUser.getLoginName()
-            + " has not the correct permissions to reject application for leave of user " + person.getLoginName());
+        throw new AccessDeniedException(String.format(
+                "User '%s' has not the correct permissions to reject application for leave of user '%s'",
+                signedInUser.getLoginName(), person.getLoginName()));
     }
 
 
@@ -309,9 +313,9 @@ public class ApplicationForLeaveDetailsController {
             // office cancels application of other users, state can be waiting or allowed, so the comment is mandatory
             comment.setMandatory(true);
         } else {
-            throw new AccessDeniedException("User " + signedInUser.getLoginName()
-                + " has not the correct permissions to cancel application for leave of user "
-                + application.getPerson().getLoginName());
+            throw new AccessDeniedException(String.format(
+                    "User '%s' has not the correct permissions to cancel application for leave of user '%s'",
+                    signedInUser.getLoginName(), application.getPerson().getLoginName()));
         }
 
         commentValidator.validate(comment, errors);

@@ -90,8 +90,9 @@ public class OvertimeController {
         Person signedInUser = sessionService.getSignedInUser();
 
         if (!sessionService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
-            throw new AccessDeniedException("User " + signedInUser.getLoginName()
-                + " has not the correct permissions to overtime records of user " + person.getLoginName());
+            throw new AccessDeniedException(String.format(
+                    "User '%s' has not the correct permissions to see overtime records of user '%s'",
+                    signedInUser.getLoginName(), person.getLoginName()));
         }
 
         model.addAttribute("year", year);
@@ -116,8 +117,9 @@ public class OvertimeController {
         Person signedInUser = sessionService.getSignedInUser();
 
         if (!sessionService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
-            throw new AccessDeniedException("User " + signedInUser.getLoginName()
-                + " has not the correct permissions to overtime records of user " + person.getLoginName());
+            throw new AccessDeniedException(String.format(
+                    "User '%s' has not the correct permissions to see overtime records of user '%s'",
+                    signedInUser.getLoginName(), person.getLoginName()));
         }
 
         model.addAttribute("record", overtime);
@@ -143,8 +145,9 @@ public class OvertimeController {
         }
 
         if (!signedInUser.equals(person) && !signedInUser.hasRole(Role.OFFICE)) {
-            throw new AccessDeniedException("User " + signedInUser.getLoginName()
-                + " has not the correct permissions to record overtime for user " + person.getLoginName());
+            throw new AccessDeniedException(String.format(
+                    "User '%s' has not the correct permissions to record overtime for user '%s'",
+                    signedInUser.getLoginName(), person.getLoginName()));
         }
 
         model.addAttribute("overtime", new OvertimeForm(person));
@@ -161,8 +164,9 @@ public class OvertimeController {
         Person person = overtimeForm.getPerson();
 
         if (!signedInUser.equals(person) && !signedInUser.hasRole(Role.OFFICE)) {
-            throw new AccessDeniedException("User " + signedInUser.getLoginName()
-                + " has not the correct permissions to record overtime for user " + person.getLoginName());
+            throw new AccessDeniedException(String.format(
+                    "User '%s' has not the correct permissions to record overtime for user '%s'",
+                    signedInUser.getLoginName(), person.getLoginName()));
         }
 
         validator.validate(overtimeForm, errors);
@@ -191,8 +195,9 @@ public class OvertimeController {
         Person person = overtime.getPerson();
 
         if (!signedInUser.equals(person) && !signedInUser.hasRole(Role.OFFICE)) {
-            throw new AccessDeniedException("User " + signedInUser.getLoginName()
-                + " has not the correct permissions to edit overtime record of user " + person.getLoginName());
+            throw new AccessDeniedException(String.format(
+                    "User '%s' has not the correct permissions to edit overtime record of user '%s'",
+                    signedInUser.getLoginName(), person.getLoginName()));
         }
 
         model.addAttribute("overtime", new OvertimeForm(overtime));
@@ -212,8 +217,9 @@ public class OvertimeController {
         Person person = overtime.getPerson();
 
         if (!signedInUser.equals(person) && !signedInUser.hasRole(Role.OFFICE)) {
-            throw new AccessDeniedException("User " + signedInUser.getLoginName()
-                + " has not the correct permissions to edit overtime record of user " + person.getLoginName());
+            throw new AccessDeniedException(String.format(
+                    "User '%s' has not the correct permissions to edit overtime record of user '%s'",
+                    signedInUser.getLoginName(), person.getLoginName()));
         }
 
         validator.validate(overtimeForm, errors);

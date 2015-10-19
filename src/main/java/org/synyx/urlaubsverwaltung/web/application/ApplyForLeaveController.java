@@ -104,8 +104,9 @@ public class ApplyForLeaveController {
 
         // only office may apply for leave on behalf of other users
         if (!isApplyingForOneSelf && !signedInUser.hasRole(Role.OFFICE)) {
-            throw new AccessDeniedException("User " + signedInUser.getLoginName()
-                + " has not the correct permissions to apply for leave for user " + person.getLoginName());
+            throw new AccessDeniedException(String.format(
+                    "User '%s' has not the correct permissions to apply for leave for user '%s'",
+                    signedInUser.getLoginName(), person.getLoginName()));
         }
 
         Optional<Account> holidaysAccount = accountService.getHolidaysAccount(DateMidnight.now().getYear(), person);
