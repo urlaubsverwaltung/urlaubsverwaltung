@@ -2,8 +2,12 @@ package org.synyx.urlaubsverwaltung.test;
 
 import org.joda.time.DateMidnight;
 
+import org.springframework.util.ReflectionUtils;
+
 import org.synyx.urlaubsverwaltung.core.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+
+import java.lang.reflect.Field;
 
 import java.math.BigDecimal;
 
@@ -19,6 +23,24 @@ public final class TestDataCreator {
 
         // Hide constructor for util class
     }
+
+    public static Person createPerson(Integer id, String username) throws IllegalAccessException {
+
+        Person person = createPerson(username);
+
+        Field dateField = ReflectionUtils.findField(Person.class, "id");
+        dateField.setAccessible(true);
+        dateField.set(person, id);
+
+        return person;
+    }
+
+
+    public static Person createPerson(String username) {
+
+        return new Person(username, "Muster", "Marlene", username + "@test.de");
+    }
+
 
     public static Person createPerson() {
 

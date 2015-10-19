@@ -99,20 +99,16 @@ public class ApplicationForLeaveDetailsController {
         Person signedInUser = sessionService.getSignedInUser();
         Person person = application.getPerson();
 
-        boolean samePerson = signedInUser.equals(person);
-        boolean isBossOrOffice = signedInUser.hasRole(Role.BOSS) || signedInUser.hasRole(Role.OFFICE);
-        boolean isDepartmentHead = departmentService.isDepartmentHeadOfPerson(signedInUser, person);
-
-        if (samePerson || isBossOrOffice || isDepartmentHead) {
-            Integer year = requestedYear == null ? application.getEndDate().getYear() : requestedYear;
-
-            prepareDetailView(application, year, action, shortcut, model);
-
-            return "application/app_detail";
+        if (!sessionService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
+            throw new AccessDeniedException("User " + signedInUser.getLoginName()
+                + " has not the correct permissions to see application for leave of user " + person.getLoginName());
         }
 
-        throw new AccessDeniedException("User " + signedInUser.getLoginName()
-            + " has not the correct permissions to see application for leave of user " + person.getLoginName());
+        Integer year = requestedYear == null ? application.getEndDate().getYear() : requestedYear;
+
+        prepareDetailView(application, year, action, shortcut, model);
+
+        return "application/app_detail";
     }
 
 

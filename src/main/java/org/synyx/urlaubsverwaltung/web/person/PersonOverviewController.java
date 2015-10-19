@@ -34,7 +34,6 @@ import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
-import org.synyx.urlaubsverwaltung.core.person.Role;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
@@ -110,12 +109,7 @@ public class PersonOverviewController {
         Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
         Person signedInUser = sessionService.getSignedInUser();
 
-        boolean isOwnOverviewPage = person.getId().equals(signedInUser.getId());
-        boolean isOffice = signedInUser.hasRole(Role.OFFICE);
-        boolean isBoss = signedInUser.hasRole(Role.BOSS);
-        boolean isDepartmentHead = departmentService.isDepartmentHeadOfPerson(signedInUser, person);
-
-        if (!isOwnOverviewPage && !isOffice && !isBoss && !isDepartmentHead) {
+        if (!sessionService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
             throw new AccessDeniedException("User " + signedInUser.getLoginName()
                 + " has not the correct permissions to access the overview page of user " + person.getLoginName());
         }

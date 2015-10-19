@@ -70,15 +70,9 @@ public class PersonController {
         throws UnknownPersonException, AccessDeniedException {
 
         Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
-
         Person signedInUser = sessionService.getSignedInUser();
 
-        boolean isOwnDataPage = person.getId().equals(signedInUser.getId());
-        boolean isOffice = signedInUser.hasRole(Role.OFFICE);
-        boolean isBoss = signedInUser.hasRole(Role.BOSS);
-        boolean isDepartmentHead = departmentService.isDepartmentHeadOfPerson(signedInUser, person);
-
-        if (!isOwnDataPage && !isOffice && !isBoss && !isDepartmentHead) {
+        if (!sessionService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
             throw new AccessDeniedException("User " + signedInUser.getLoginName()
                 + " has not the correct permissions to access data of user " + person.getLoginName());
         }
