@@ -262,7 +262,8 @@
         </div>
 
         <div class="col-md-8 col-md-pull-4">
-            <div class="form-group">
+            <c:set var="HOURS_IS_REQUIRED" value="${application.vacationType == 'OVERTIME' ? 'is-required' : ''}"/>
+            <div class="form-group ${HOURS_IS_REQUIRED}" id="form-group--hours">
                 <label class="control-label col-md-3" for="hours">
                     <spring:message code="application.data.hours" />:
                 </label>
