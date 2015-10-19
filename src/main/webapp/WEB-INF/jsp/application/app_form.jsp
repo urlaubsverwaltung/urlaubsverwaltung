@@ -89,7 +89,7 @@
     </c:otherwise>
 </c:choose>
 
-<form:form method="POST" action="${URL_PREFIX}/application/new?personId=${person.id}" modelAttribute="application" class="form-horizontal" role="form">
+<form:form method="POST" action="${URL_PREFIX}/application" modelAttribute="application" class="form-horizontal" role="form">
 <form:hidden path="person" value="${person.id}" />
 
 <c:if test="${not empty errors}">

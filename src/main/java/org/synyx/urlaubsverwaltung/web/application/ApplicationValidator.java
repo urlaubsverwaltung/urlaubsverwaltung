@@ -46,6 +46,8 @@ public class ApplicationValidator implements Validator {
     private static final String ERROR_ZERO_DAYS = "application.error.zeroDays";
     private static final String ERROR_OVERLAP = "application.error.overlap";
     private static final String ERROR_NOT_ENOUGH_DAYS = "application.error.notEnoughVacationDays";
+    private static final String ERROR_MISSING_HOURS = "application.error.missingHoursForOvertime";
+    private static final String ERROR_INVALID_HOURS = "application.error.invalidHoursForOvertime";
 
     private static final String ATTRIBUTE_START_DATE = "startDate";
     private static final String ATTRIBUTE_END_DATE = "endDate";
@@ -53,6 +55,7 @@ public class ApplicationValidator implements Validator {
     private static final String ATTRIBUTE_REASON = "reason";
     private static final String ATTRIBUTE_ADDRESS = "address";
     private static final String ATTRIBUTE_COMMENT = "comment";
+    private static final String ATTRIBUTE_HOURS = "hours";
 
     private final WorkDaysService calendarService;
     private final OverlapService overlapService;
@@ -83,6 +86,9 @@ public class ApplicationValidator implements Validator {
 
         // check if date fields are valid
         validateDateFields(applicationForm, errors);
+
+        // check hours
+        validateHours(applicationForm, errors);
 
         // check if reason is not filled
         if (applicationForm.getVacationType() == VacationType.SPECIALLEAVE
@@ -171,6 +177,21 @@ public class ApplicationValidator implements Validator {
 
         if (date.isBefore(past)) {
             errors.reject(ERROR_PAST);
+        }
+    }
+
+
+    private void validateHours(ApplicationForLeaveForm applicationForLeave, Errors errors) {
+
+        BigDecimal hours = applicationForLeave.getHours();
+        boolean isOvertime = VacationType.OVERTIME.equals(applicationForLeave.getVacationType());
+
+        if (isOvertime && hours == null && !errors.hasFieldErrors(ATTRIBUTE_HOURS)) {
+            errors.rejectValue(ATTRIBUTE_HOURS, ERROR_MISSING_HOURS);
+        }
+
+        if (hours != null && !CalcUtil.isPositive(hours)) {
+            errors.rejectValue(ATTRIBUTE_HOURS, ERROR_INVALID_HOURS);
         }
     }
 

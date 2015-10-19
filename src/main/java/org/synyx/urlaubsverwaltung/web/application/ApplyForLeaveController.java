@@ -50,7 +50,6 @@ import java.util.stream.Collectors;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-@RequestMapping("/application")
 @Controller
 public class ApplyForLeaveController {
 
@@ -87,7 +86,7 @@ public class ApplyForLeaveController {
      *
      * @return  form to apply for leave
      */
-    @RequestMapping(value = "/new", method = RequestMethod.GET)
+    @RequestMapping(value = "/application/new", method = RequestMethod.GET)
     public String newApplicationForm(@RequestParam(value = "personId", required = false) Integer personId,
         @RequestParam(value = "appliesOnOnesBehalf", required = false) Boolean applyingOnBehalfOfSomeOne, Model model)
         throws UnknownPersonException, AccessDeniedException {
@@ -147,26 +146,16 @@ public class ApplyForLeaveController {
     }
 
 
-    @RequestMapping(value = "/new", method = RequestMethod.POST)
-    public String newApplication(@RequestParam(value = "personId", required = false) Integer personId,
-        @ModelAttribute("application") ApplicationForLeaveForm appForm, RedirectAttributes redirectAttributes,
-        Errors errors, Model model) throws UnknownPersonException {
+    @RequestMapping(value = "/application", method = RequestMethod.POST)
+    public String newApplication(@ModelAttribute("application") ApplicationForLeaveForm appForm, Errors errors,
+        Model model, RedirectAttributes redirectAttributes) throws UnknownPersonException {
 
         Person applier = sessionService.getSignedInUser();
-
-        Person personToApplyForLeave;
-
-        if (personId == null) {
-            personToApplyForLeave = applier;
-        } else {
-            personToApplyForLeave = personService.getPersonByID(personId).orElseThrow(() ->
-                        new UnknownPersonException(personId));
-        }
 
         applicationValidator.validate(appForm, errors);
 
         if (errors.hasErrors()) {
-            prepareApplicationForLeaveForm(personToApplyForLeave, appForm, model);
+            prepareApplicationForLeaveForm(appForm.getPerson(), appForm, model);
 
             if (errors.hasGlobalErrors()) {
                 model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);

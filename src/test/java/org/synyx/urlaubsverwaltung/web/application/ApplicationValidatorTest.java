@@ -22,6 +22,8 @@ import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 
 import java.math.BigDecimal;
 
+import java.util.function.Consumer;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -65,10 +67,18 @@ public class ApplicationValidatorTest {
         appForm.setStartDate(DateMidnight.now());
         appForm.setEndDate(DateMidnight.now().plusDays(2));
 
-        // if the positive case is tested, override this condition in the test
-        Mockito.when(errors.hasErrors()).thenReturn(Boolean.TRUE);
+        // Default: everything is alright, override for negative cases
+        Mockito.when(errors.hasErrors()).thenReturn(Boolean.FALSE);
+        Mockito.when(calendarService.getWorkDays(Mockito.any(DayLength.class), Mockito.any(DateMidnight.class),
+                    Mockito.any(DateMidnight.class), Mockito.any(Person.class)))
+            .thenReturn(BigDecimal.ONE);
+        Mockito.when(overlapService.checkOverlap(Mockito.any(Application.class)))
+            .thenReturn(OverlapCase.NO_OVERLAPPING);
+        Mockito.when(calculationService.checkApplication(Mockito.any(Application.class))).thenReturn(Boolean.TRUE);
     }
 
+
+    // Supports --------------------------------------------------------------------------------------------------------
 
     @Test
     public void ensureSupportsAppFormClass() {
@@ -90,6 +100,8 @@ public class ApplicationValidatorTest {
         assertFalse(validator.supports(Person.class));
     }
 
+
+    // Validate period -------------------------------------------------------------------------------------------------
 
     @Test
     public void ensureStartDateIsMandatory() {
@@ -118,14 +130,6 @@ public class ApplicationValidatorTest {
     @Test
     public void ensureStartDateIsNotMandatoryForHalfDays() {
 
-        Mockito.when(errors.hasErrors()).thenReturn(Boolean.FALSE);
-        Mockito.when(calendarService.getWorkDays(Mockito.any(DayLength.class), Mockito.any(DateMidnight.class),
-                    Mockito.any(DateMidnight.class), Mockito.any(Person.class)))
-            .thenReturn(BigDecimal.ONE);
-        Mockito.when(overlapService.checkOverlap(Mockito.any(Application.class)))
-            .thenReturn(OverlapCase.NO_OVERLAPPING);
-        Mockito.when(calculationService.checkApplication(Mockito.any(Application.class))).thenReturn(Boolean.TRUE);
-
         appForm.setDayLength(DayLength.MORNING);
         appForm.setStartDateHalf(DateMidnight.now());
 
@@ -141,14 +145,6 @@ public class ApplicationValidatorTest {
     @Test
     public void ensureStartDateHalfIsNotMandatoryForFullDays() {
 
-        Mockito.when(errors.hasErrors()).thenReturn(Boolean.FALSE);
-        Mockito.when(calendarService.getWorkDays(Mockito.any(DayLength.class), Mockito.any(DateMidnight.class),
-                    Mockito.any(DateMidnight.class), Mockito.any(Person.class)))
-            .thenReturn(BigDecimal.ONE);
-        Mockito.when(overlapService.checkOverlap(Mockito.any(Application.class)))
-            .thenReturn(OverlapCase.NO_OVERLAPPING);
-        Mockito.when(calculationService.checkApplication(Mockito.any(Application.class))).thenReturn(Boolean.TRUE);
-
         appForm.setDayLength(DayLength.FULL);
         appForm.setStartDateHalf(null);
 
@@ -156,73 +152,6 @@ public class ApplicationValidatorTest {
 
         Mockito.verify(errors, Mockito.never()).reject(Mockito.anyString());
         Mockito.verify(errors, Mockito.never()).rejectValue(Mockito.anyString(), Mockito.anyString());
-    }
-
-
-    @Test
-    public void ensureReasonIsNotMandatoryForHoliday() {
-
-        assertNoValidationErrorForEmptyReason(VacationType.HOLIDAY);
-    }
-
-
-    private void assertNoValidationErrorForEmptyReason(VacationType vacationType) {
-
-        Mockito.when(errors.hasErrors()).thenReturn(Boolean.FALSE);
-        Mockito.when(calendarService.getWorkDays(Mockito.any(DayLength.class), Mockito.any(DateMidnight.class),
-                    Mockito.any(DateMidnight.class), Mockito.any(Person.class)))
-            .thenReturn(BigDecimal.ONE);
-        Mockito.when(overlapService.checkOverlap(Mockito.any(Application.class)))
-            .thenReturn(OverlapCase.NO_OVERLAPPING);
-        Mockito.when(calculationService.checkApplication(Mockito.any(Application.class))).thenReturn(Boolean.TRUE);
-
-        appForm.setVacationType(vacationType);
-        appForm.setReason("");
-
-        validator.validate(appForm, errors);
-
-        Mockito.verify(errors, Mockito.never()).reject(Mockito.anyString());
-        Mockito.verify(errors, Mockito.never()).rejectValue(Mockito.anyString(), Mockito.anyString());
-    }
-
-
-    @Test
-    public void ensureReasonIsNotMandatoryForUnpaidLeave() {
-
-        assertNoValidationErrorForEmptyReason(VacationType.UNPAIDLEAVE);
-    }
-
-
-    @Test
-    public void ensureReasonIsNotMandatoryForOvertime() {
-
-        assertNoValidationErrorForEmptyReason(VacationType.OVERTIME);
-    }
-
-
-    @Test
-    public void ensureReasonIsMandatoryForSpecialLeave() {
-
-        appForm.setVacationType(VacationType.SPECIALLEAVE);
-        appForm.setReason("");
-
-        validator.validate(appForm, errors);
-
-        Mockito.verify(errors).rejectValue("reason", "application.error.missingReasonForSpecialLeave");
-    }
-
-
-    @Test
-    public void ensureThereIsAMaximumCharLength() {
-
-        appForm.setAddress(
-            "Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt"
-            + " ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud "
-            + "exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. ");
-
-        validator.validate(appForm, errors);
-
-        Mockito.verify(errors).rejectValue("address", "error.entry.tooManyChars");
     }
 
 
@@ -301,6 +230,77 @@ public class ApplicationValidatorTest {
     }
 
 
+    // Validate reason -------------------------------------------------------------------------------------------------
+
+    @Test
+    public void ensureReasonIsNotMandatoryForHoliday() {
+
+        appForm.setVacationType(VacationType.HOLIDAY);
+        appForm.setReason("");
+
+        validator.validate(appForm, errors);
+
+        Mockito.verify(errors, Mockito.never()).reject(Mockito.anyString());
+        Mockito.verify(errors, Mockito.never()).rejectValue(Mockito.eq("reason"), Mockito.anyString());
+    }
+
+
+    @Test
+    public void ensureReasonIsNotMandatoryForUnpaidLeave() {
+
+        appForm.setVacationType(VacationType.UNPAIDLEAVE);
+        appForm.setReason("");
+
+        validator.validate(appForm, errors);
+
+        Mockito.verify(errors, Mockito.never()).reject(Mockito.anyString());
+        Mockito.verify(errors, Mockito.never()).rejectValue(Mockito.eq("reason"), Mockito.anyString());
+    }
+
+
+    @Test
+    public void ensureReasonIsNotMandatoryForOvertime() {
+
+        appForm.setVacationType(VacationType.OVERTIME);
+        appForm.setReason("");
+
+        validator.validate(appForm, errors);
+
+        Mockito.verify(errors, Mockito.never()).reject(Mockito.anyString());
+        Mockito.verify(errors, Mockito.never()).rejectValue(Mockito.eq("reason"), Mockito.anyString());
+    }
+
+
+    @Test
+    public void ensureReasonIsMandatoryForSpecialLeave() {
+
+        appForm.setVacationType(VacationType.SPECIALLEAVE);
+        appForm.setReason("");
+
+        validator.validate(appForm, errors);
+
+        Mockito.verify(errors).rejectValue("reason", "application.error.missingReasonForSpecialLeave");
+    }
+
+
+    // Validate address ------------------------------------------------------------------------------------------------
+
+    @Test
+    public void ensureThereIsAMaximumCharLength() {
+
+        appForm.setAddress(
+            "Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt"
+            + " ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud "
+            + "exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. ");
+
+        validator.validate(appForm, errors);
+
+        Mockito.verify(errors).rejectValue("address", "error.entry.tooManyChars");
+    }
+
+
+    // Validate vacation days ------------------------------------------------------------------------------------------
+
     @Test
     public void ensureApplicationForLeaveWithZeroVacationDaysIsNotValid() {
 
@@ -315,26 +315,6 @@ public class ApplicationValidatorTest {
         Mockito.verify(errors).reject("application.error.zeroDays");
 
         Mockito.verifyZeroInteractions(overlapService);
-        Mockito.verifyZeroInteractions(calculationService);
-    }
-
-
-    @Test
-    public void ensureOverlappingApplicationForLeaveIsNotValid() {
-
-        Mockito.when(errors.hasErrors()).thenReturn(Boolean.FALSE);
-
-        Mockito.when(calendarService.getWorkDays(Mockito.any(DayLength.class), Mockito.any(DateMidnight.class),
-                    Mockito.any(DateMidnight.class), Mockito.any(Person.class)))
-            .thenReturn(BigDecimal.ONE);
-
-        Mockito.when(overlapService.checkOverlap(Mockito.any(Application.class)))
-            .thenReturn(OverlapCase.FULLY_OVERLAPPING);
-
-        validator.validate(appForm, errors);
-
-        Mockito.verify(errors).reject("application.error.overlap");
-
         Mockito.verifyZeroInteractions(calculationService);
     }
 
@@ -380,5 +360,108 @@ public class ApplicationValidatorTest {
         validator.validate(appForm, errors);
 
         Mockito.verify(errors).reject("application.error.notEnoughVacationDays");
+    }
+
+
+    // Validate overlapping --------------------------------------------------------------------------------------------
+
+    @Test
+    public void ensureOverlappingApplicationForLeaveIsNotValid() {
+
+        Mockito.when(errors.hasErrors()).thenReturn(Boolean.FALSE);
+
+        Mockito.when(calendarService.getWorkDays(Mockito.any(DayLength.class), Mockito.any(DateMidnight.class),
+                    Mockito.any(DateMidnight.class), Mockito.any(Person.class)))
+            .thenReturn(BigDecimal.ONE);
+
+        Mockito.when(overlapService.checkOverlap(Mockito.any(Application.class)))
+            .thenReturn(OverlapCase.FULLY_OVERLAPPING);
+
+        validator.validate(appForm, errors);
+
+        Mockito.verify(errors).reject("application.error.overlap");
+
+        Mockito.verifyZeroInteractions(calculationService);
+    }
+
+
+    // Validate hours --------------------------------------------------------------------------------------------------
+
+    @Test
+    public void ensureHoursIsMandatoryForOvertime() {
+
+        appForm.setVacationType(VacationType.OVERTIME);
+        appForm.setHours(null);
+
+        validator.validate(appForm, errors);
+
+        Mockito.verify(errors).rejectValue("hours", "application.error.missingHoursForOvertime");
+    }
+
+
+    @Test
+    public void ensureHoursIsNotMandatoryForOtherTypesOfVacation() {
+
+        Consumer<VacationType> assertHoursNotMandatory = (type) -> {
+            appForm.setVacationType(type);
+            appForm.setHours(null);
+
+            validator.validate(appForm, errors);
+
+            Mockito.verify(errors, Mockito.never()).rejectValue(Mockito.eq("hours"), Mockito.anyString());
+        };
+
+        assertHoursNotMandatory.accept(VacationType.HOLIDAY);
+        assertHoursNotMandatory.accept(VacationType.SPECIALLEAVE);
+        assertHoursNotMandatory.accept(VacationType.UNPAIDLEAVE);
+    }
+
+
+    @Test
+    public void ensureHoursCanNotBeZero() {
+
+        appForm.setHours(BigDecimal.ZERO);
+
+        validator.validate(appForm, errors);
+
+        Mockito.verify(errors).rejectValue("hours", "application.error.invalidHoursForOvertime");
+    }
+
+
+    @Test
+    public void ensureHoursCanNotBeNegative() {
+
+        appForm.setHours(BigDecimal.ONE.negate());
+
+        validator.validate(appForm, errors);
+
+        Mockito.verify(errors).rejectValue("hours", "application.error.invalidHoursForOvertime");
+    }
+
+
+    @Test
+    public void ensureDecimalHoursAreValid() {
+
+        appForm.setVacationType(VacationType.OVERTIME);
+        appForm.setHours(new BigDecimal("0.5"));
+
+        validator.validate(appForm, errors);
+
+        Mockito.verify(errors, Mockito.never()).rejectValue(Mockito.eq("hours"), Mockito.anyString());
+    }
+
+
+    @Test
+    public void ensureNoErrorMessageForMandatoryIfHoursIsNullBecauseOfTypeMismatch() {
+
+        appForm.setVacationType(VacationType.OVERTIME);
+        appForm.setHours(null);
+
+        Mockito.when(errors.hasFieldErrors("hours")).thenReturn(true);
+
+        validator.validate(appForm, errors);
+
+        Mockito.verify(errors).hasFieldErrors("hours");
+        Mockito.verify(errors, Mockito.never()).rejectValue("hours", "application.error.missingHoursForOvertime");
     }
 }
