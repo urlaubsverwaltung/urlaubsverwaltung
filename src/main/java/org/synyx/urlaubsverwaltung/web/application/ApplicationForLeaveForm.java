@@ -208,9 +208,12 @@ public class ApplicationForLeaveForm {
         applicationForLeave.setHolidayReplacement(holidayReplacement);
         applicationForLeave.setAddress(address);
         applicationForLeave.setTeamInformed(teamInformed);
-        applicationForLeave.setHours(hours);
 
-        if (dayLength == DayLength.FULL) {
+        if (VacationType.OVERTIME.equals(vacationType)) {
+            applicationForLeave.setHours(hours);
+        }
+
+        if (DayLength.FULL.equals(dayLength)) {
             applicationForLeave.setStartDate(startDate);
             applicationForLeave.setEndDate(endDate);
         } else {

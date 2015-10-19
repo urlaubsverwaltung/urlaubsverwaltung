@@ -13,6 +13,8 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.math.BigDecimal;
 
+import java.util.function.Consumer;
+
 
 /**
  * @author  Aljona Murygina - murygina@synyx.de
@@ -87,5 +89,24 @@ public class ApplicationForLeaveFormTest {
         Assert.assertEquals("Wrong type", VacationType.OVERTIME, application.getVacationType());
         Assert.assertEquals("Wrong hours", BigDecimal.ONE, application.getHours());
         Assert.assertTrue("Team should be informed", application.isTeamInformed());
+    }
+
+
+    @Test
+    public void ensureGeneratedApplicationForLeaveHasNullHoursForOtherVacationTypeThanOvertime() {
+
+        Consumer<VacationType> assertHoursAreNotSet = (type) -> {
+            ApplicationForLeaveForm form = new ApplicationForLeaveForm();
+            form.setVacationType(type);
+            form.setHours(BigDecimal.ONE);
+
+            Application application = form.generateApplicationForLeave();
+
+            Assert.assertNull("Hours should not be set", application.getHours());
+        };
+
+        assertHoursAreNotSet.accept(VacationType.HOLIDAY);
+        assertHoursAreNotSet.accept(VacationType.SPECIALLEAVE);
+        assertHoursAreNotSet.accept(VacationType.UNPAIDLEAVE);
     }
 }
