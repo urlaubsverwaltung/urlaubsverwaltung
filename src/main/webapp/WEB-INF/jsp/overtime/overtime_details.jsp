@@ -1,6 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
 <html>
@@ -10,6 +11,10 @@
 <body>
 
 <spring:url var="URL_PREFIX" value="/web"/>
+
+<sec:authorize access="hasRole('OFFICE')">
+    <c:set var="IS_OFFICE" value="true"/>
+</sec:authorize>
 
 <uv:menu/>
 
@@ -28,10 +33,12 @@
             <div class="col-xs-12 col-md-6">
                 <legend>
                     <spring:message code="overtime.title"/>
-                    <a href="${URL_PREFIX}/overtime/${record.id}/edit" class="fa-action pull-right"
-                       data-title="<spring:message code="action.edit"/>">
-                        <i class="fa fa-pencil"></i>
-                    </a>
+                    <c:if test="${record.person.id == signedInUser.id || IS_OFFICE}">
+                        <a href="${URL_PREFIX}/overtime/${record.id}/edit" class="fa-action pull-right"
+                           data-title="<spring:message code="action.edit"/>">
+                            <i class="fa fa-pencil"></i>
+                        </a>
+                    </c:if>
                 </legend>
                 <div class="box">
                     <span class="box-icon bg-green">

@@ -49,6 +49,10 @@
 <body>
 <spring:url var="URL_PREFIX" value="/web"/>
 
+<sec:authorize access="hasRole('OFFICE')">
+    <c:set var="IS_OFFICE" value="true"/>
+</sec:authorize>
+
 <uv:menu />
 
 <div class="print-info--only-portrait">
@@ -141,12 +145,14 @@
             <div class="col-xs-12">
                 <legend>
                     <spring:message code="overtime.title"/>
-                    <a href="${URL_PREFIX}/overtime" class="fa-action pull-right" style="margin-top: 1px" data-title="<spring:message code="action.overtime.list"/>">
+                    <a href="${URL_PREFIX}/overtime?person=${person.id}" class="fa-action pull-right" style="margin-top: 1px" data-title="<spring:message code="action.overtime.list"/>">
                         <i class="fa fa-th"></i>
                     </a>
-                    <a href="${URL_PREFIX}/overtime/new" class="fa-action pull-right" data-title="<spring:message code="action.overtime.new"/>">
-                        <i class="fa fa-plus-circle"></i>
-                    </a>
+                    <c:if test="${person.id == signedInUser.id || IS_OFFICE}">
+                        <a href="${URL_PREFIX}/overtime/new?person=${person.id}" class="fa-action pull-right" data-title="<spring:message code="action.overtime.new"/>">
+                            <i class="fa fa-plus-circle"></i>
+                        </a>
+                    </c:if>
                 </legend>
             </div>
             <div class="col-xs-12 col-md-6">
@@ -254,12 +260,12 @@
                             </a>
                         </c:when>
                         <c:otherwise>
-                            <sec:authorize access="hasRole('OFFICE')">
+                            <c:if test="${IS_OFFICE}">
                                 <a class="fa-action pull-right" href="${URL_PREFIX}/application/new?personId=${person.id}&appliesOnOnesBehalf=true"
                                     data-title="<spring:message code="action.apply.vacation"/>">
                                     <i class="fa fa-plus-circle"></i>
                                 </a>
-                            </sec:authorize>
+                            </c:if>
                         </c:otherwise>
                     </c:choose>
 
@@ -303,10 +309,6 @@
             </div>
 
         </div>
-
-        <sec:authorize access="hasRole('OFFICE')">
-            <c:set var="IS_OFFICE" value="${true}"/>
-        </sec:authorize>
 
         <c:if test="${person.id == signedInUser.id || IS_OFFICE}">
 

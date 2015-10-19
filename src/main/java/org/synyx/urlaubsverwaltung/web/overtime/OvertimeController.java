@@ -26,11 +26,14 @@ import org.synyx.urlaubsverwaltung.core.overtime.OvertimeAction;
 import org.synyx.urlaubsverwaltung.core.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
+import org.synyx.urlaubsverwaltung.core.person.Role;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.DateMidnightPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.PersonPropertyEditor;
+import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
+import org.synyx.urlaubsverwaltung.web.person.UnknownPersonException;
 
 import java.math.BigDecimal;
 
@@ -68,18 +71,33 @@ public class OvertimeController {
 
 
     @RequestMapping(value = "/overtime", method = RequestMethod.GET)
-    public String showOvertime(
-        @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Integer requestedYear,
-        Model model) {
-
-        Integer year = requestedYear == null ? DateMidnight.now().getYear() : requestedYear;
+    public String showPersonalOvertime() {
 
         Person signedInUser = sessionService.getSignedInUser();
 
+        return "redirect:/web/overtime?person=" + signedInUser.getId();
+    }
+
+
+    @RequestMapping(value = "/overtime", method = RequestMethod.GET, params = PersonConstants.PERSON_ATTRIBUTE)
+    public String showOvertime(
+        @RequestParam(value = PersonConstants.PERSON_ATTRIBUTE, required = true) Integer personId,
+        @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Integer requestedYear, Model model)
+        throws UnknownPersonException {
+
+        Integer year = requestedYear == null ? DateMidnight.now().getYear() : requestedYear;
+        Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
+        Person signedInUser = sessionService.getSignedInUser();
+
+        if (!sessionService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
+            throw new AccessDeniedException("User " + signedInUser.getLoginName()
+                + " has not the correct permissions to overtime records of user " + person.getLoginName());
+        }
+
         model.addAttribute("year", year);
-        model.addAttribute("person", signedInUser);
-        model.addAttribute("records", overtimeService.getOvertimeRecordsForPersonAndYear(signedInUser, year));
-        model.addAttribute("overtimeTotal", overtimeService.getTotalOvertimeForPerson(signedInUser));
+        model.addAttribute("person", person);
+        model.addAttribute("records", overtimeService.getOvertimeRecordsForPersonAndYear(person, year));
+        model.addAttribute("overtimeTotal", overtimeService.getTotalOvertimeForPerson(person));
 
         // TODO: Subtract hours of applications for leave because of having overtime due from total overtime
         model.addAttribute("overtimeLeft", BigDecimal.ZERO);
@@ -93,26 +111,43 @@ public class OvertimeController {
         AccessDeniedException {
 
         Overtime overtime = overtimeService.getOvertimeById(id).orElseThrow(() -> new UnknownOvertimeException(id));
+
+        Person person = overtime.getPerson();
         Person signedInUser = sessionService.getSignedInUser();
 
-        if (!overtime.getPerson().equals(signedInUser)) {
+        if (!sessionService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
             throw new AccessDeniedException("User " + signedInUser.getLoginName()
-                + " has not the correct permissions to access overtime record of user "
-                + overtime.getPerson().getLoginName());
+                + " has not the correct permissions to overtime records of user " + person.getLoginName());
         }
 
         model.addAttribute("record", overtime);
         model.addAttribute("comments", overtimeService.getCommentsForOvertime(overtime));
-        model.addAttribute("overtimeTotal", overtimeService.getTotalOvertimeForPerson(signedInUser));
+        model.addAttribute("overtimeTotal", overtimeService.getTotalOvertimeForPerson(overtime.getPerson()));
 
         return "overtime/overtime_details";
     }
 
 
     @RequestMapping(value = "/overtime/new", method = RequestMethod.GET)
-    public String recordOvertime(Model model) {
+    public String recordOvertime(
+        @RequestParam(value = PersonConstants.PERSON_ATTRIBUTE, required = false) Integer personId, Model model)
+        throws UnknownPersonException {
 
-        model.addAttribute("overtime", new OvertimeForm(sessionService.getSignedInUser()));
+        Person signedInUser = sessionService.getSignedInUser();
+        Person person;
+
+        if (personId != null) {
+            person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
+        } else {
+            person = signedInUser;
+        }
+
+        if (!signedInUser.equals(person) && !signedInUser.hasRole(Role.OFFICE)) {
+            throw new AccessDeniedException("User " + signedInUser.getLoginName()
+                + " has not the correct permissions to record overtime for user " + person.getLoginName());
+        }
+
+        model.addAttribute("overtime", new OvertimeForm(person));
 
         return "overtime/overtime_form";
     }
@@ -121,6 +156,14 @@ public class OvertimeController {
     @RequestMapping(value = "/overtime", method = RequestMethod.POST)
     public String recordOvertime(@ModelAttribute("overtime") OvertimeForm overtimeForm, Errors errors, Model model,
         RedirectAttributes redirectAttributes) {
+
+        Person signedInUser = sessionService.getSignedInUser();
+        Person person = overtimeForm.getPerson();
+
+        if (!signedInUser.equals(person) && !signedInUser.hasRole(Role.OFFICE)) {
+            throw new AccessDeniedException("User " + signedInUser.getLoginName()
+                + " has not the correct permissions to record overtime for user " + person.getLoginName());
+        }
 
         validator.validate(overtimeForm, errors);
 
@@ -144,6 +187,14 @@ public class OvertimeController {
 
         Overtime overtime = overtimeService.getOvertimeById(id).orElseThrow(() -> new UnknownOvertimeException(id));
 
+        Person signedInUser = sessionService.getSignedInUser();
+        Person person = overtime.getPerson();
+
+        if (!signedInUser.equals(person) && !signedInUser.hasRole(Role.OFFICE)) {
+            throw new AccessDeniedException("User " + signedInUser.getLoginName()
+                + " has not the correct permissions to edit overtime record of user " + person.getLoginName());
+        }
+
         model.addAttribute("overtime", new OvertimeForm(overtime));
 
         return "overtime/overtime_form";
@@ -156,6 +207,14 @@ public class OvertimeController {
         RedirectAttributes redirectAttributes) throws UnknownOvertimeException {
 
         Overtime overtime = overtimeService.getOvertimeById(id).orElseThrow(() -> new UnknownOvertimeException(id));
+
+        Person signedInUser = sessionService.getSignedInUser();
+        Person person = overtime.getPerson();
+
+        if (!signedInUser.equals(person) && !signedInUser.hasRole(Role.OFFICE)) {
+            throw new AccessDeniedException("User " + signedInUser.getLoginName()
+                + " has not the correct permissions to edit overtime record of user " + person.getLoginName());
+        }
 
         validator.validate(overtimeForm, errors);
 

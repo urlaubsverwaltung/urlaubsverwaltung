@@ -72,6 +72,16 @@
                         </span>
                     </div>
                     <div class="col-md-8 col-md-pull-4">
+                        <c:if test="${signedInUser.id != overtime.person.id}">
+                        <div class="form-group">
+                            <label class="control-label col-md-3">
+                                <spring:message code="overtime.data.staff"/>:
+                            </label>
+                            <div class="col-md-9">
+                                <p class="form-control-static"><c:out value="${overtime.person.niceName}"/></p>
+                            </div>
+                        </div><%-- End of person form group --%>
+                        </c:if>
                         <div class="form-group is-required">
                             <label class="control-label col-md-3" for="startDate">
                                 <spring:message code="overtime.data.startDate"/>:

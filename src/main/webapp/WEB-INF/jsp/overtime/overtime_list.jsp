@@ -1,6 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
 <html>
@@ -11,6 +12,10 @@
 
 <spring:url var="URL_PREFIX" value="/web"/>
 
+<sec:authorize access="hasRole('OFFICE')">
+    <c:set var="IS_OFFICE" value="${true}"/>
+</sec:authorize>
+
 <uv:menu/>
 
 <div class="content">
@@ -19,9 +24,12 @@
             <div class="col-xs-12">
                 <legend>
                     <spring:message code="overtime.title"/>
-                    <a href="${URL_PREFIX}/overtime/new" class="fa-action pull-right" data-title="<spring:message code="action.overtime.new"/>">
-                        <i class="fa fa-plus-circle"></i>
-                    </a>
+
+                    <c:if test="${IS_OFFICE || signedInUser.id == person.id}">
+                        <a href="${URL_PREFIX}/overtime/new?person=${person.id}" class="fa-action pull-right" data-title="<spring:message code="action.overtime.new"/>">
+                            <i class="fa fa-plus-circle"></i>
+                        </a>
+                    </c:if>
                 </legend>
             </div>
 
@@ -38,7 +46,7 @@
             <div class="col-xs-12">
                 <legend>
                     <spring:message code="overtime.list"/>
-                    <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/overtime?year="/>
+                    <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/overtime?person=${person.id}&year="/>
                 </legend>
                 <c:choose>
                     <c:when test="${empty records}">
