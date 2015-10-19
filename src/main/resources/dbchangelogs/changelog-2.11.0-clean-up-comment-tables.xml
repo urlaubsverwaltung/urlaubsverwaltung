@@ -38,7 +38,7 @@
             <columnExists tableName="SickNoteComment" columnName="status"/>
         </preConditions>
 
-        <renameColumn tableName="SickNoteComment" oldColumnName="status" newColumnName="action"/>
+        <renameColumn tableName="SickNoteComment" oldColumnName="status" newColumnName="action" columnDataType="VARCHAR(255)"/>
     </changeSet>
 
     <changeSet author="murygina" id="rename_column_status_of_comment_table">
@@ -47,7 +47,7 @@
             <columnExists tableName="Comment" columnName="status"/>
         </preConditions>
 
-        <renameColumn tableName="Comment" oldColumnName="status" newColumnName="action"/>
+        <renameColumn tableName="Comment" oldColumnName="status" newColumnName="action" columnDataType="VARCHAR(20)"/>
     </changeSet>
 
     <changeSet author="murygina" id="rename_application_comment_table">
