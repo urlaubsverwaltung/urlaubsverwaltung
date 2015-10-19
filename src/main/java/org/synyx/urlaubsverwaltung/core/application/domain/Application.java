@@ -10,6 +10,8 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
+import java.math.BigDecimal;
+
 import java.util.Arrays;
 import java.util.Date;
 
@@ -105,6 +107,9 @@ public class Application extends AbstractPersistable<Integer> {
 
     // team informed about holidays?
     private boolean teamInformed;
+
+    // How many hours of overtime are used for this application for leave?
+    private BigDecimal hours;
 
     public String getAddress() {
 
@@ -401,6 +406,18 @@ public class Application extends AbstractPersistable<Integer> {
     public void setTeamInformed(boolean teamInformed) {
 
         this.teamInformed = teamInformed;
+    }
+
+
+    public BigDecimal getHours() {
+
+        return hours;
+    }
+
+
+    public void setHours(BigDecimal hours) {
+
+        this.hours = hours;
     }
 
 
