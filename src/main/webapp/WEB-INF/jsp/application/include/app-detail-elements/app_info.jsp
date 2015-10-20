@@ -30,7 +30,7 @@
                 <c:when test="${application.status == 'REJECTED'}">
                     <i class="fa fa-ban"></i>
                 </c:when>
-                <c:when test="${application.status == 'CANCELLED'}">
+                <c:when test="${application.status == 'CANCELLED' || application.status == 'REVOKED'}">
                     <i class="fa fa-trash"></i>
                 </c:when>
                 <c:otherwise>
@@ -71,13 +71,11 @@
             <b>
               <uv:number number="${application.workDays}" /> <spring:message code="duration.days" />
             </b>
-            <b class="days">
+            <span class="text-muted days">
                 <%-- filled by javascript --%>
-            </b>
+            </span>
             <script type="text/javascript">
-
                 $(document).ready(function () {
-
                   <c:if test="${application.startDate.year != application.endDate.year}">
 
                     var dayLength = '<c:out value="${application.dayLength}" />';
@@ -92,22 +90,17 @@
                     sendGetDaysRequestForTurnOfTheYear("<spring:url value='/api' />", from, to, dayLength, personId, ".days");
 
                   </c:if>
-
                 });
-
             </script>
+            <c:if test="${application.vacationType == 'OVERTIME'}">
+                <span class="text-muted">
+                    <br/>
+                    <uv:number number="${application.hours}"/>
+                    <spring:message code="application.data.hours.number"/>
+                </span>
+            </c:if>
         </td>
     </tr>
-    <c:if test="${application.vacationType == 'OVERTIME'}">
-        <tr>
-            <td>
-                <spring:message code="application.data.hours"/>
-            </td>
-            <td>
-                <uv:number number="${application.hours}"/>
-            </td>
-        </tr>
-    </c:if>
     <tr class="visible-print">
         <td><spring:message code="application.data.status" /></td>
         <td><spring:message code="${application.status}" /></td>
