@@ -16,8 +16,12 @@
         display: none !important;
     }
 
+    .container {
+        width: 100% !important;
+    }
+
     .content {
-        margin-top: 0;
+        margin-top: 0 !important;
     }
 
     .fa {
