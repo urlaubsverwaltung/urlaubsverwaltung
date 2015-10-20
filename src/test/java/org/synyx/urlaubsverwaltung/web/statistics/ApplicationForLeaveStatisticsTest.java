@@ -18,6 +18,15 @@ import java.math.BigDecimal;
  */
 public class ApplicationForLeaveStatisticsTest {
 
+    // Initialization --------------------------------------------------------------------------------------------------
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfInitializedWithNull() {
+
+        new ApplicationForLeaveStatistics(null);
+    }
+
+
     @Test
     public void ensureHasDefaultValues() {
 
@@ -31,6 +40,7 @@ public class ApplicationForLeaveStatisticsTest {
         Assert.assertNotNull("Total allowed vacation days should not be null",
             statistics.getTotalAllowedVacationDays());
         Assert.assertNotNull("Left vacation days should not be null", statistics.getLeftVacationDays());
+        Assert.assertNotNull("Left overtime should not be null", statistics.getLeftOvertime());
         Assert.assertNotNull("Waiting vacation days per type should not be null", statistics.getWaitingVacationDays());
         Assert.assertNotNull("Allowed vacation days per type should not be null", statistics.getAllowedVacationDays());
 
@@ -39,8 +49,11 @@ public class ApplicationForLeaveStatisticsTest {
             statistics.getTotalWaitingVacationDays());
         Assert.assertEquals("Total allowed vacation days should have default value", BigDecimal.ZERO,
             statistics.getTotalAllowedVacationDays());
+
+        // Left
         Assert.assertEquals("Left vacation days should have default value", BigDecimal.ZERO,
             statistics.getLeftVacationDays());
+        Assert.assertEquals("Left overtime should have default value", BigDecimal.ZERO, statistics.getLeftOvertime());
 
         // Per vacation type
         Assert.assertEquals("Wrong number of elements", VacationType.values().length,
@@ -57,6 +70,8 @@ public class ApplicationForLeaveStatisticsTest {
     }
 
 
+    // Total left vacation days ----------------------------------------------------------------------------------------
+
     @Test
     public void ensureCanSetTotalLeftVacationDays() {
 
@@ -67,6 +82,63 @@ public class ApplicationForLeaveStatisticsTest {
         statistics.setLeftVacationDays(BigDecimal.ONE);
 
         Assert.assertEquals("Wrong number of days", BigDecimal.ONE, statistics.getLeftVacationDays());
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfSettingTotalLeftVacationDaysToNull() {
+
+        Person person = Mockito.mock(Person.class);
+
+        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person);
+
+        statistics.setLeftVacationDays(null);
+    }
+
+
+    // Adding vacation days --------------------------------------------------------------------------------------------
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfAddingWaitingVacationDaysWithNullVacationType() {
+
+        Person person = Mockito.mock(Person.class);
+
+        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person);
+
+        statistics.addWaitingVacationDays(null, BigDecimal.ONE);
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfAddingWaitingVacationDaysWithNullDays() {
+
+        Person person = Mockito.mock(Person.class);
+
+        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person);
+
+        statistics.addWaitingVacationDays(VacationType.HOLIDAY, null);
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfAddingAllowedVacationDaysWithNullVacationType() {
+
+        Person person = Mockito.mock(Person.class);
+
+        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person);
+
+        statistics.addAllowedVacationDays(null, BigDecimal.ONE);
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfAddingAllowedVacationDaysWithNullDays() {
+
+        Person person = Mockito.mock(Person.class);
+
+        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person);
+
+        statistics.addAllowedVacationDays(VacationType.HOLIDAY, null);
     }
 
 
@@ -116,6 +188,8 @@ public class ApplicationForLeaveStatisticsTest {
     }
 
 
+    // Total waiting vacation days -------------------------------------------------------------------------------------
+
     @Test
     public void ensureCanCalculateTotalWaitingVacationDays() {
 
@@ -139,6 +213,8 @@ public class ApplicationForLeaveStatisticsTest {
     }
 
 
+    // Total allowed vacation days -------------------------------------------------------------------------------------
+
     @Test
     public void ensureCanCalculateTotalAllowedVacationDays() {
 
@@ -159,5 +235,31 @@ public class ApplicationForLeaveStatisticsTest {
 
         Assert.assertEquals("Wrong total allowed vacation days", new BigDecimal("16"),
             statistics.getTotalAllowedVacationDays());
+    }
+
+
+    // Total left overtime ---------------------------------------------------------------------------------------------
+
+    @Test
+    public void ensureCanSetTotalLeftOvertime() {
+
+        Person person = Mockito.mock(Person.class);
+
+        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person);
+
+        statistics.setLeftOvertime(BigDecimal.ONE);
+
+        Assert.assertEquals("Wrong number of hours", BigDecimal.ONE, statistics.getLeftOvertime());
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfSettingTotalLeftOvertimeToNull() {
+
+        Person person = Mockito.mock(Person.class);
+
+        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person);
+
+        statistics.setLeftOvertime(null);
     }
 }

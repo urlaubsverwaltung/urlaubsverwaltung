@@ -17,6 +17,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
+import org.synyx.urlaubsverwaltung.core.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.math.BigDecimal;
@@ -37,6 +38,7 @@ public class ApplicationForLeaveStatisticsBuilderTest {
     private ApplicationService applicationService;
     private WorkDaysService calendarService;
     private VacationDaysService vacationDaysService;
+    private OvertimeService overtimeService;
 
     private ApplicationForLeaveStatisticsBuilder builder;
 
@@ -47,16 +49,38 @@ public class ApplicationForLeaveStatisticsBuilderTest {
         applicationService = Mockito.mock(ApplicationService.class);
         calendarService = Mockito.mock(WorkDaysService.class);
         vacationDaysService = Mockito.mock(VacationDaysService.class);
+        overtimeService = Mockito.mock(OvertimeService.class);
 
         builder = new ApplicationForLeaveStatisticsBuilder(accountService, applicationService, calendarService,
-                vacationDaysService);
+                vacationDaysService, overtimeService);
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfTheGivenPersonIsNull() {
+
+        builder.build(null, new DateMidnight(2015, 1, 1), new DateMidnight(2015, 12, 31));
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfTheGivenFromDateIsNull() {
+
+        builder.build(Mockito.mock(Person.class), null, new DateMidnight(2015, 12, 31));
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfTheGivenToDateIsNull() {
+
+        builder.build(Mockito.mock(Person.class), new DateMidnight(2014, 1, 1), null);
     }
 
 
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsIfTheGivenFromAndToDatesAreNotInTheSameYear() {
 
-        builder.build(null, new DateMidnight(2014, 1, 1), new DateMidnight(2015, 1, 1));
+        builder.build(Mockito.mock(Person.class), new DateMidnight(2014, 1, 1), new DateMidnight(2015, 1, 1));
     }
 
 
@@ -73,6 +97,8 @@ public class ApplicationForLeaveStatisticsBuilderTest {
         Mockito.when(accountService.getHolidaysAccount(2014, person)).thenReturn(Optional.of(account));
         Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(Mockito.eq(account)))
             .thenReturn(BigDecimal.TEN);
+        Mockito.when(overtimeService.getTotalOvertimeForPerson(person)).thenReturn(BigDecimal.TEN);
+        Mockito.when(applicationService.getTotalOvertimeReductionOfPerson(person)).thenReturn(BigDecimal.ONE);
 
         Application holidayWaiting = new Application();
         holidayWaiting.setVacationType(VacationType.HOLIDAY);
@@ -161,6 +187,8 @@ public class ApplicationForLeaveStatisticsBuilderTest {
         Mockito.when(accountService.getHolidaysAccount(2015, person)).thenReturn(Optional.of(account));
         Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(Mockito.eq(account)))
             .thenReturn(BigDecimal.TEN);
+        Mockito.when(overtimeService.getTotalOvertimeForPerson(person)).thenReturn(BigDecimal.TEN);
+        Mockito.when(applicationService.getTotalOvertimeReductionOfPerson(person)).thenReturn(BigDecimal.ONE);
 
         Application holidayAllowed = new Application();
         holidayAllowed.setVacationType(VacationType.HOLIDAY);
@@ -203,5 +231,30 @@ public class ApplicationForLeaveStatisticsBuilderTest {
         Assert.assertEquals("Wrong number of allowed vacation days", new BigDecimal("5"),
             statistics.getTotalAllowedVacationDays());
         Assert.assertEquals("Wrong number of left vacation days", BigDecimal.TEN, statistics.getLeftVacationDays());
+    }
+
+
+    @Test
+    public void ensureCalculatesLeftVacationDaysAndLeftOvertimeCorrectly() {
+
+        DateMidnight from = new DateMidnight(2015, 1, 1);
+        DateMidnight to = new DateMidnight(2015, 12, 31);
+
+        Person person = Mockito.mock(Person.class);
+        Account account = Mockito.mock(Account.class);
+
+        Mockito.when(accountService.getHolidaysAccount(2015, person)).thenReturn(Optional.of(account));
+        Mockito.when(applicationService.getTotalOvertimeReductionOfPerson(person)).thenReturn(new BigDecimal("3.5"));
+        Mockito.when(overtimeService.getTotalOvertimeForPerson(person)).thenReturn(BigDecimal.TEN);
+        Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(account)).thenReturn(new BigDecimal("8.5"));
+
+        ApplicationForLeaveStatistics statistics = builder.build(person, from, to);
+
+        Assert.assertEquals("Wrong left overtime", new BigDecimal("6.5"), statistics.getLeftOvertime());
+        Assert.assertEquals("Wrong left vacation days", new BigDecimal("8.5"), statistics.getLeftVacationDays());
+
+        Mockito.verify(applicationService).getTotalOvertimeReductionOfPerson(person);
+        Mockito.verify(overtimeService).getTotalOvertimeForPerson(person);
+        Mockito.verify(vacationDaysService).calculateTotalLeftVacationDays(account);
     }
 }

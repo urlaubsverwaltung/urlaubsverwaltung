@@ -143,6 +143,9 @@
                                     <td class="hidden-xs">
                                         <b class="sortable"><uv:number number="${statistic.leftVacationDays}"/></b>
                                         <spring:message code="applications.statistics.left.vacationDays"/>
+                                        <br />
+                                        <b><uv:number number="${statistic.leftOvertime}"/></b>
+                                        <spring:message code="applications.statistics.left.overtime"/>
                                     </td>
                                 </tr>
                             </c:forEach>

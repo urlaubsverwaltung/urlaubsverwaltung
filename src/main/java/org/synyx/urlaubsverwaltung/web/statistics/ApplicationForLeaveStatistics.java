@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.web.statistics;
 
+import org.springframework.util.Assert;
+
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
@@ -23,8 +25,11 @@ public class ApplicationForLeaveStatistics {
     private Map<VacationType, BigDecimal> allowedVacationDays = new HashMap<>();
 
     private BigDecimal leftVacationDays = BigDecimal.ZERO;
+    private BigDecimal leftOvertime = BigDecimal.ZERO;
 
     public ApplicationForLeaveStatistics(Person person) {
+
+        Assert.notNull(person, "Person must be given.");
 
         this.person = person;
 
@@ -84,11 +89,16 @@ public class ApplicationForLeaveStatistics {
 
     public void setLeftVacationDays(BigDecimal leftVacationDays) {
 
+        Assert.notNull(leftVacationDays, "Days must be given.");
+
         this.leftVacationDays = leftVacationDays;
     }
 
 
     public void addWaitingVacationDays(VacationType vacationType, BigDecimal waitingVacationDays) {
+
+        Assert.notNull(vacationType, "Vacation type must be given.");
+        Assert.notNull(waitingVacationDays, "Days must be given.");
 
         BigDecimal currentWaitingVacationDays = getWaitingVacationDays().get(vacationType);
 
@@ -98,8 +108,25 @@ public class ApplicationForLeaveStatistics {
 
     public void addAllowedVacationDays(VacationType vacationType, BigDecimal allowedVacationDays) {
 
+        Assert.notNull(vacationType, "Vacation type must be given.");
+        Assert.notNull(allowedVacationDays, "Days must be given.");
+
         BigDecimal currentAllowedVacationDays = getAllowedVacationDays().get(vacationType);
 
         getAllowedVacationDays().put(vacationType, currentAllowedVacationDays.add(allowedVacationDays));
+    }
+
+
+    public void setLeftOvertime(BigDecimal hours) {
+
+        Assert.notNull(hours, "Hours must be given.");
+
+        this.leftOvertime = hours;
+    }
+
+
+    public BigDecimal getLeftOvertime() {
+
+        return leftOvertime;
     }
 }

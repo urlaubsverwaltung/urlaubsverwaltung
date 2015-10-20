@@ -16,6 +16,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
+import org.synyx.urlaubsverwaltung.core.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 
@@ -38,18 +39,24 @@ public class ApplicationForLeaveStatisticsBuilder {
     private final ApplicationService applicationService;
     private final WorkDaysService calendarService;
     private final VacationDaysService vacationDaysService;
+    private final OvertimeService overtimeService;
 
     @Autowired
     public ApplicationForLeaveStatisticsBuilder(AccountService accountService, ApplicationService applicationService,
-        WorkDaysService calendarService, VacationDaysService vacationDaysService) {
+        WorkDaysService calendarService, VacationDaysService vacationDaysService, OvertimeService overtimeService) {
 
         this.accountService = accountService;
         this.applicationService = applicationService;
         this.calendarService = calendarService;
         this.vacationDaysService = vacationDaysService;
+        this.overtimeService = overtimeService;
     }
 
     public ApplicationForLeaveStatistics build(Person person, DateMidnight from, DateMidnight to) {
+
+        Assert.notNull(person, "Person must be given");
+        Assert.notNull(from, "From must be given");
+        Assert.notNull(to, "To must be given");
 
         Assert.isTrue(from.getYear() == to.getYear(), "From and to must be in the same year");
 
@@ -73,6 +80,11 @@ public class ApplicationForLeaveStatisticsBuilder {
                     getVacationDays(application, from.getYear()));
             }
         }
+
+        BigDecimal totalOvertime = overtimeService.getTotalOvertimeForPerson(person);
+        BigDecimal totalOvertimeReduction = applicationService.getTotalOvertimeReductionOfPerson(person);
+
+        statistics.setLeftOvertime(totalOvertime.subtract(totalOvertimeReduction));
 
         return statistics;
     }
