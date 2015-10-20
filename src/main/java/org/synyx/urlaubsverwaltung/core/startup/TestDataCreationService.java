@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -17,6 +18,8 @@ import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.Day;
 import org.synyx.urlaubsverwaltung.core.department.Department;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.core.overtime.Overtime;
+import org.synyx.urlaubsverwaltung.core.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.core.person.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonInteractionService;
@@ -74,6 +77,9 @@ public class TestDataCreationService {
 
     @Autowired
     private DepartmentService departmentService;
+
+    @Autowired
+    private OvertimeService overtimeService;
 
     private Person boss;
     private Person office;
@@ -202,7 +208,7 @@ public class TestDataCreationService {
 
         // FUTURE APPLICATIONS FOR LEAVE
         createWaitingApplication(person, VacationType.HOLIDAY, DayLength.FULL, now.plusDays(10), now.plusDays(16)); // NOSONAR
-        createWaitingApplication(person, VacationType.OVERTIME, DayLength.FULL, now.plusDays(1), now.plusDays(2)); // NOSONAR
+        createWaitingApplication(person, VacationType.OVERTIME, DayLength.FULL, now.plusDays(1), now.plusDays(1)); // NOSONAR
         createWaitingApplication(person, VacationType.SPECIALLEAVE, DayLength.FULL, now.plusDays(4), now.plusDays(6)); // NOSONAR
 
         // PAST APPLICATIONS FOR LEAVE
@@ -223,6 +229,21 @@ public class TestDataCreationService {
             true); // NOSONAR
         createSickNote(person, DayLength.FULL, now.minusDays(44), now.minusDays(44), SickNoteType.SICK_NOTE_CHILD, // NOSONAR
             false); // NOSONAR
+
+        // OVERTIME RECORDS
+
+        DateMidnight lastWeek = now.minusWeeks(1);
+        DateMidnight weekBeforeLast = now.minusWeeks(2);
+        DateMidnight lastYear = now.minusYears(1);
+
+        createOvertimeRecord(person, lastWeek.withDayOfWeek(DateTimeConstants.MONDAY),
+            lastWeek.withDayOfWeek(DateTimeConstants.FRIDAY), new BigDecimal("2.5")); // NOSONAR
+
+        createOvertimeRecord(person, weekBeforeLast.withDayOfWeek(DateTimeConstants.MONDAY),
+            weekBeforeLast.withDayOfWeek(DateTimeConstants.FRIDAY), new BigDecimal("3")); // NOSONAR
+
+        createOvertimeRecord(person, lastYear.withDayOfWeek(DateTimeConstants.MONDAY),
+            lastYear.withDayOfWeek(DateTimeConstants.FRIDAY), new BigDecimal("4")); // NOSONAR
     }
 
 
@@ -248,9 +269,11 @@ public class TestDataCreationService {
                 switch (dayLength) {
                     case FULL:
                         application.setHours(new BigDecimal("8"));
+                        break;
 
                     default:
                         application.setHours(new BigDecimal("4"));
+                        break;
                 }
             }
 
@@ -342,5 +365,14 @@ public class TestDataCreationService {
         }
 
         return sickNote;
+    }
+
+
+    private Overtime createOvertimeRecord(Person person, DateMidnight startDate, DateMidnight endDate,
+        BigDecimal hours) {
+
+        Overtime overtime = new Overtime(person, startDate, endDate, hours);
+
+        return overtimeService.record(overtime, Optional.of("Ich habe ganz viel gearbeitet"), person);
     }
 }
