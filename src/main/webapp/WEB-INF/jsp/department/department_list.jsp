@@ -22,7 +22,11 @@
 
         <uv:menu />
 
-        <div class="content">
+        <div class="print-info--only-landscape">
+            <h4><spring:message code="print.info.landscape" /></h4>
+        </div>
+
+        <div class="content print--only-landscape">
             <div class="container">
 
                 <div class="row">
@@ -60,10 +64,6 @@
                         </c:choose>
                     </div>
 
-                    <div class="print-info--only-landscape">
-                        <h4><spring:message code="print.info.landscape" /></h4>
-                    </div>
-
                     <script type="text/javascript">
                         $(document).ready(function() {
 
@@ -80,7 +80,7 @@
                             <spring:message code="departments.none"/>
                         </c:when>
                         <c:otherwise>
-                            <table cellspacing="0" class="list-table sortable tablesorter print--only-landscape">
+                            <table cellspacing="0" class="list-table sortable tablesorter">
                                 <thead class="hidden-xs hidden-sm">
                                 <tr>
                                     <th class="sortable-field"><spring:message code="department.data.name" /></th>

@@ -5,11 +5,7 @@
 
 <spring:url var="URL_PREFIX" value="/web" />
 
-<div class="print-info--only-landscape">
-    <h4><spring:message code="print.info.landscape" /></h4>
-</div>
-
-<p class="pull-right visible-print">
+<p class="text-right visible-print">
     <spring:message code="filter.validity"/> <uv:date date="${now}" />
 </p>
 
@@ -48,7 +44,7 @@
         </div>
     </form>
 
-    <table cellspacing="0" class="list-table selectable-table sortable tablesorter print--only-landscape">
+    <table cellspacing="0" class="list-table selectable-table sortable tablesorter">
     <thead class="hidden-xs hidden-sm">
     <tr>
         <th><%-- placeholder to ensure correct number of th --%></th>
