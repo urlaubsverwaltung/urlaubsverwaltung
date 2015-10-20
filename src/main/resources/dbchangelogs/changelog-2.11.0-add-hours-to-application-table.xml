@@ -20,6 +20,12 @@
             WHERE application.vacationType = 'OVERTIME';
         </sql>
 
+        <createIndex tableName="Application" indexName="Index_Application_person_hours_vacationType">
+            <column name="person_id"/>
+            <column name="hours"/>
+            <column name="vacationType"/>
+        </createIndex>
+
     </changeSet>
 
 </databaseChangeLog>

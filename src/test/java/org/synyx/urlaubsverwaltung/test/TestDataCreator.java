@@ -4,6 +4,10 @@ import org.joda.time.DateMidnight;
 
 import org.springframework.util.ReflectionUtils;
 
+import org.synyx.urlaubsverwaltung.core.application.domain.Application;
+import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
+import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
@@ -54,5 +58,20 @@ public final class TestDataCreator {
         DateMidnight endDate = startDate.plusDays(7);
 
         return new Overtime(createPerson(), startDate, endDate, BigDecimal.ONE);
+    }
+
+
+    public static Application createApplication(Person person, VacationType vacationType, DateMidnight startDate,
+        DateMidnight endDate, DayLength dayLength) {
+
+        Application application = new Application();
+        application.setPerson(person);
+        application.setStartDate(startDate);
+        application.setEndDate(endDate);
+        application.setDayLength(dayLength);
+        application.setVacationType(vacationType);
+        application.setStatus(ApplicationStatus.WAITING);
+
+        return application;
     }
 }

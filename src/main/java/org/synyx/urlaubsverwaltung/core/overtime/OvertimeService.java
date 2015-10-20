@@ -32,7 +32,7 @@ public interface OvertimeService {
      * @param  person  to fetch the overtime records for
      * @param  year  to fetch the overtime records for
      *
-     * @return  list of matchingo vertime records
+     * @return  list of matching overtime records
      */
     List<Overtime> getOvertimeRecordsForPersonAndYear(Person person, int year);
 

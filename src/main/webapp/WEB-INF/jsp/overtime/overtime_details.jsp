@@ -89,6 +89,7 @@
                 </legend>
                 <uv:person person="${record.person}" cssClass="hidden-print"/>
                 <uv:overtime-total hours="${overtimeTotal}"/>
+                <uv:overtime-left hours="${overtimeLeft}"/>
             </div>
         </div><%-- End of row --%>
     </div><%-- End of container --%>

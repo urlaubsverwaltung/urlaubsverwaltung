@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.core.overtime.OvertimeAction;
 import org.synyx.urlaubsverwaltung.core.overtime.OvertimeService;
@@ -51,6 +52,9 @@ public class OvertimeController {
 
     @Autowired
     private OvertimeService overtimeService;
+
+    @Autowired
+    private ApplicationService applicationService;
 
     @Autowired
     private PersonService personService;
@@ -98,10 +102,11 @@ public class OvertimeController {
         model.addAttribute("year", year);
         model.addAttribute("person", person);
         model.addAttribute("records", overtimeService.getOvertimeRecordsForPersonAndYear(person, year));
-        model.addAttribute("overtimeTotal", overtimeService.getTotalOvertimeForPerson(person));
 
-        // TODO: Subtract hours of applications for leave because of having overtime due from total overtime
-        model.addAttribute("overtimeLeft", BigDecimal.ZERO);
+        BigDecimal totalOvertime = overtimeService.getTotalOvertimeForPerson(person);
+        BigDecimal totalOvertimeReduction = applicationService.getTotalOvertimeReductionOfPerson(person);
+        model.addAttribute("overtimeTotal", totalOvertime);
+        model.addAttribute("overtimeLeft", totalOvertime.subtract(totalOvertimeReduction));
 
         return "overtime/overtime_list";
     }
@@ -124,7 +129,11 @@ public class OvertimeController {
 
         model.addAttribute("record", overtime);
         model.addAttribute("comments", overtimeService.getCommentsForOvertime(overtime));
-        model.addAttribute("overtimeTotal", overtimeService.getTotalOvertimeForPerson(overtime.getPerson()));
+
+        BigDecimal totalOvertime = overtimeService.getTotalOvertimeForPerson(person);
+        BigDecimal totalOvertimeReduction = applicationService.getTotalOvertimeReductionOfPerson(person);
+        model.addAttribute("overtimeTotal", totalOvertime);
+        model.addAttribute("overtimeLeft", totalOvertime.subtract(totalOvertimeReduction));
 
         return "overtime/overtime_details";
     }

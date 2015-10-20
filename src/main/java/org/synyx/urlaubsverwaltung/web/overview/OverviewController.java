@@ -165,10 +165,11 @@ public class OverviewController {
             model.addAttribute("usedDaysOverview", usedDaysOverview);
         }
 
-        model.addAttribute("overtimeTotal", overtimeService.getTotalOvertimeForPerson(person));
+        BigDecimal totalOvertime = overtimeService.getTotalOvertimeForPerson(person);
+        BigDecimal totalOvertimeReduction = applicationService.getTotalOvertimeReductionOfPerson(person);
 
-        // TODO: Subtract hours of applications for leave because of having overtime due from total overtime
-        model.addAttribute("overtimeLeft", BigDecimal.ZERO);
+        model.addAttribute("overtimeTotal", totalOvertime);
+        model.addAttribute("overtimeLeft", totalOvertime.subtract(totalOvertimeReduction));
     }
 
 

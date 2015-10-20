@@ -36,7 +36,7 @@ public class ApplicationForLeaveForm {
     // length of day: contains time of day (morning, noon or full day) and value (1.0 or 0.5 - as BigDecimal)
     private DayLength dayLength;
 
-    // hours are relevant if having overtime due
+    // hours are relevant for overtime reduction
     private BigDecimal hours;
 
     // For special and unpaid leave a reason is required

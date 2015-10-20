@@ -7,10 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
+import org.springframework.util.Assert;
+
 import org.synyx.urlaubsverwaltung.core.application.dao.ApplicationDAO;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+
+import java.math.BigDecimal;
 
 import java.util.List;
 import java.util.Optional;
@@ -75,5 +79,21 @@ class ApplicationServiceImpl implements ApplicationService {
 
         return applicationDAO.getApplicationsForACertainTimeAndPersonAndState(startDate.toDate(), endDate.toDate(),
                 person, status);
+    }
+
+
+    @Override
+    public BigDecimal getTotalOvertimeReductionOfPerson(Person person) {
+
+        Assert.notNull(person, "Person to get overtime reduction for must be given.");
+
+        Optional<BigDecimal> overtimeReduction = Optional.ofNullable(applicationDAO.calculateTotalOvertimeOfPerson(
+                    person));
+
+        if (overtimeReduction.isPresent()) {
+            return overtimeReduction.get();
+        }
+
+        return BigDecimal.ZERO;
     }
 }
