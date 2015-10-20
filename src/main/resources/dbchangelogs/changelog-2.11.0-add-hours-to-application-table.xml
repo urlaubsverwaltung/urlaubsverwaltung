@@ -15,6 +15,11 @@
             </column>
         </addColumn>
 
+        <sql>
+            UPDATE Application application SET application.hours = 0
+            WHERE application.vacationType = 'OVERTIME';
+        </sql>
+
     </changeSet>
 
 </databaseChangeLog>
