@@ -136,14 +136,14 @@ public class ApplicationForLeaveStatisticsBuilderTest {
 
         // VACATION DAYS
 
-        Assert.assertNotNull("Waiting vacation days should not be null", statistics.getWaitingVacationDays());
-        Assert.assertNotNull("Allowed vacation days should not be null", statistics.getAllowedVacationDays());
+        Assert.assertNotNull("Waiting vacation days should not be null", statistics.getTotalWaitingVacationDays());
+        Assert.assertNotNull("Allowed vacation days should not be null", statistics.getTotalAllowedVacationDays());
         Assert.assertNotNull("Left vacation days should not be null", statistics.getLeftVacationDays());
 
         Assert.assertEquals("Wrong number of waiting vacation days", new BigDecimal("3"),
-            statistics.getWaitingVacationDays());
+            statistics.getTotalWaitingVacationDays());
         Assert.assertEquals("Wrong number of allowed vacation days", new BigDecimal("2"),
-            statistics.getAllowedVacationDays());
+            statistics.getTotalAllowedVacationDays());
         Assert.assertEquals("Wrong number of left vacation days", BigDecimal.TEN, statistics.getLeftVacationDays());
     }
 
@@ -194,14 +194,14 @@ public class ApplicationForLeaveStatisticsBuilderTest {
 
         // VACATION DAYS
 
-        Assert.assertNotNull("Waiting vacation days should not be null", statistics.getWaitingVacationDays());
-        Assert.assertNotNull("Allowed vacation days should not be null", statistics.getAllowedVacationDays());
+        Assert.assertNotNull("Waiting vacation days should not be null", statistics.getTotalWaitingVacationDays());
+        Assert.assertNotNull("Allowed vacation days should not be null", statistics.getTotalAllowedVacationDays());
         Assert.assertNotNull("Left vacation days should not be null", statistics.getLeftVacationDays());
 
         Assert.assertEquals("Wrong number of waiting vacation days", new BigDecimal("7"),
-            statistics.getWaitingVacationDays());
+            statistics.getTotalWaitingVacationDays());
         Assert.assertEquals("Wrong number of allowed vacation days", new BigDecimal("5"),
-            statistics.getAllowedVacationDays());
+            statistics.getTotalAllowedVacationDays());
         Assert.assertEquals("Wrong number of left vacation days", BigDecimal.TEN, statistics.getLeftVacationDays());
     }
 }

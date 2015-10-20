@@ -64,19 +64,15 @@ public class ApplicationForLeaveStatisticsBuilder {
 
         List<Application> applications = applicationService.getApplicationsForACertainPeriodAndPerson(from, to, person);
 
-        BigDecimal waitingVacationDays = BigDecimal.ZERO;
-        BigDecimal allowedVacationDays = BigDecimal.ZERO;
-
         for (Application application : applications) {
             if (application.hasStatus(ApplicationStatus.WAITING)) {
-                waitingVacationDays = waitingVacationDays.add(getVacationDays(application, from.getYear()));
+                statistics.addWaitingVacationDays(application.getVacationType(),
+                    getVacationDays(application, from.getYear()));
             } else if (application.hasStatus(ApplicationStatus.ALLOWED)) {
-                allowedVacationDays = allowedVacationDays.add(getVacationDays(application, from.getYear()));
+                statistics.addAllowedVacationDays(application.getVacationType(),
+                    getVacationDays(application, from.getYear()));
             }
         }
-
-        statistics.setWaitingVacationDays(waitingVacationDays);
-        statistics.setAllowedVacationDays(allowedVacationDays);
 
         return statistics;
     }

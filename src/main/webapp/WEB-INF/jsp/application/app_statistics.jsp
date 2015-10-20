@@ -15,11 +15,23 @@
         $(document).ready(function() {
 
             $("table.sortable").tablesorter({
-                sortList: [[1,0]],
+                sortList: [[1, 0]],
                 headers: {
-                    3: { sorter: 'commaNumber' },
-                    4: { sorter: 'commaNumber' },
-                    5: { sorter: 'commaNumber' }
+                    0: {sorter: false},
+                    3: {sorter: false},
+                    4: {sorter: false},
+                    5: {sorter: 'commaNumber'},
+                    6: {sorter: 'commaNumber'},
+                    7: {sorter: 'commaNumber'}
+                },
+                textExtraction: function (node) {
+                    var sortable = $(node).find('.sortable');
+
+                    if (sortable.length > 0) {
+                        return sortable[0].innerHTML;
+                    }
+
+                    return node.innerHTML;
                 }
             });
 
@@ -34,7 +46,11 @@
 
 <uv:menu/>
 
-<div class="content">
+<div class="print-info--only-landscape">
+    <h4><spring:message code="print.info.landscape" /></h4>
+</div>
+
+<div class="content print--only-landscape">
 
     <div class="container">
 
@@ -79,9 +95,9 @@
                                 <th class="sortable-field"><spring:message code="person.data.lastName"/></th>
                                 <th class="hidden"><%-- placeholder to ensure correct number of th --%></th>
                                 <th class="hidden"><%-- placeholder to ensure correct number of th --%></th>
-                                <th class="sortable-field is-centered"><spring:message code="applications.statistics.allowed"/></th>
-                                <th class="sortable-field is-centered"><spring:message code="applications.statistics.waiting"/></th>
-                                <th class="sortable-field is-centered"><spring:message code="applications.statistics.left"/> (<c:out value="${from.year}" />)</th>
+                                <th class="sortable-field"><spring:message code="applications.statistics.allowed"/></th>
+                                <th class="sortable-field"><spring:message code="applications.statistics.waiting"/></th>
+                                <th class="sortable-field"><spring:message code="applications.statistics.left"/> (<c:out value="${from.year}" />)</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -96,18 +112,37 @@
                                         <c:out value="${statistic.person.niceName}"/>
                                     </td>
                                     <td class="visible-xs hidden-print">
-                                        <i class="fa fa-fw fa-check"></i><uv:number number="${statistic.allowedVacationDays}"/>
+                                        <i class="fa fa-fw fa-check"></i>
+                                        <uv:number number="${statistic.totalAllowedVacationDays}"/>
                                         <br/>
-                                        <i class="fa fa-fw fa-question hidden-print"></i><uv:number number="${statistic.waitingVacationDays}"/>
+                                        <i class="fa fa-fw fa-question hidden-print"></i>
+                                        <uv:number number="${statistic.totalWaitingVacationDays}"/>
                                     </td>
-                                    <td class="is-centered hidden-xs">
-                                        <uv:number number="${statistic.allowedVacationDays}"/>
+                                    <td class="hidden-xs">
+                                        <spring:message code="applications.statistics.total"/>:
+                                        <b class="sortable"><uv:number number="${statistic.totalAllowedVacationDays}"/></b>
+                                        <c:forEach items="${vacationTypes}" var="type">
+                                            <br/>
+                                            <small>
+                                                <spring:message code="${type}"/>:
+                                                <uv:number number="${statistic.allowedVacationDays[type]}"/>
+                                            </small>
+                                        </c:forEach>
                                     </td>
-                                    <td class="is-centered hidden-xs">
-                                        <uv:number number="${statistic.waitingVacationDays}"/>
+                                    <td class="hidden-xs">
+                                        <spring:message code="applications.statistics.total"/>:
+                                        <b class="sortable"><uv:number number="${statistic.totalWaitingVacationDays}"/></b>
+                                        <c:forEach items="${vacationTypes}" var="type">
+                                            <br/>
+                                            <small>
+                                                <spring:message code="${type}"/>:
+                                                <uv:number number="${statistic.waitingVacationDays[type]}"/>
+                                            </small>
+                                        </c:forEach>
                                     </td>
-                                    <td class="is-centered hidden-xs">
-                                        <uv:number number="${statistic.leftVacationDays}"/>
+                                    <td class="hidden-xs">
+                                        <b class="sortable"><uv:number number="${statistic.leftVacationDays}"/></b>
+                                        <spring:message code="applications.statistics.left.vacationDays"/>
                                     </td>
                                 </tr>
                             </c:forEach>

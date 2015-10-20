@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import org.synyx.urlaubsverwaltung.DateFormat;
+import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
@@ -90,6 +91,7 @@ public class ApplicationForLeaveStatisticsController {
         model.addAttribute("to", toDate);
         model.addAttribute("statistics", statistics);
         model.addAttribute("filterRequest", new FilterRequest());
+        model.addAttribute("vacationTypes", VacationType.values());
 
         return "application/app_statistics";
     }
