@@ -121,6 +121,7 @@
                                     <td class="hidden-xs">
                                         <spring:message code="applications.statistics.total"/>:
                                         <b class="sortable"><uv:number number="${statistic.totalAllowedVacationDays}"/></b>
+                                        <spring:message code="duration.days"/>
                                         <c:forEach items="${vacationTypes}" var="type">
                                             <br/>
                                             <small>
@@ -132,6 +133,7 @@
                                     <td class="hidden-xs">
                                         <spring:message code="applications.statistics.total"/>:
                                         <b class="sortable"><uv:number number="${statistic.totalWaitingVacationDays}"/></b>
+                                        <spring:message code="duration.days"/>
                                         <c:forEach items="${vacationTypes}" var="type">
                                             <br/>
                                             <small>
@@ -142,10 +144,10 @@
                                     </td>
                                     <td class="hidden-xs">
                                         <b class="sortable"><uv:number number="${statistic.leftVacationDays}"/></b>
-                                        <spring:message code="applications.statistics.left.vacationDays"/>
+                                        <spring:message code="duration.vacationDays"/>
                                         <br />
                                         <b><uv:number number="${statistic.leftOvertime}"/></b>
-                                        <spring:message code="applications.statistics.left.overtime"/>
+                                        <spring:message code="duration.overtime"/>
                                     </td>
                                 </tr>
                             </c:forEach>

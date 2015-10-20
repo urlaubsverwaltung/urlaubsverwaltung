@@ -70,7 +70,8 @@
                                         <p><uv:date date="${record.startDate}"/> - <uv:date date="${record.endDate}"/></p>
                                     </td>
                                     <td class="is-centered hidden-xs">
-                                        <uv:number number="${record.hours}"/> <spring:message code="overtime.data.hours"/>
+                                        <uv:number number="${record.hours}"/>
+                                        <spring:message code="duration.hours"/>
                                     </td>
                                     <td class="hidden-print is-centered hidden-xs">
                                         <i class="fa fa-clock-o"></i>
