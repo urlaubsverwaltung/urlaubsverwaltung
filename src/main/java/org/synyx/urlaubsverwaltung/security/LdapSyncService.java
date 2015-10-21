@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.core.startup;
+package org.synyx.urlaubsverwaltung.security;
 
 import org.apache.log4j.Logger;
 
@@ -7,11 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Conditional;
 
 import org.springframework.stereotype.Service;
-
-import org.synyx.urlaubsverwaltung.security.Authentication;
-import org.synyx.urlaubsverwaltung.security.LdapAuthenticationCondition;
-import org.synyx.urlaubsverwaltung.security.LdapUser;
-import org.synyx.urlaubsverwaltung.security.LdapUserService;
 
 import java.util.List;
 

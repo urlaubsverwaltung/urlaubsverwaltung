@@ -1,13 +1,10 @@
-package org.synyx.urlaubsverwaltung.core.startup;
+package org.synyx.urlaubsverwaltung.security;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import org.mockito.Mockito;
-
-import org.synyx.urlaubsverwaltung.security.Authentication;
-import org.synyx.urlaubsverwaltung.security.LdapUserService;
 
 import java.util.function.Consumer;
 
