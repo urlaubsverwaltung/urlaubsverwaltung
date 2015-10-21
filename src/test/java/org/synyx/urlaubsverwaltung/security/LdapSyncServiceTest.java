@@ -51,7 +51,7 @@ public class LdapSyncServiceTest {
 
 
     @Test
-    public void ensureThrowsIfSyncIsCalledAndAuthenticationTypeIsNotLdap() {
+    public void ensureThrowsIfSyncIsCalledAndAuthenticationTypeIsNotLdapOrActiveDirectory() {
 
         Consumer<String> assertThrows = (auth) -> {
             System.getProperties().put(Authentication.PROPERTY_KEY, auth);
@@ -65,15 +65,25 @@ public class LdapSyncServiceTest {
         };
 
         assertThrows.accept(Authentication.Type.DEFAULT.getName());
-        assertThrows.accept(Authentication.Type.ACTIVE_DIRECTORY.getName());
         assertThrows.accept("foo");
     }
 
 
     @Test
-    public void ensureFetchesLdapUsers() {
+    public void ensureFetchesLdapUsersForLdapAuthentication() {
 
         System.getProperties().put(Authentication.PROPERTY_KEY, Authentication.Type.LDAP.getName());
+
+        ldapSyncService.sync();
+
+        Mockito.verify(ldapUserService).getLdapUsers();
+    }
+
+
+    @Test
+    public void ensureFetchesLdapUsersForActiveDirectoryAuthentication() {
+
+        System.getProperties().put(Authentication.PROPERTY_KEY, Authentication.Type.ACTIVE_DIRECTORY.getName());
 
         ldapSyncService.sync();
 

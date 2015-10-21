@@ -35,7 +35,7 @@ import javax.annotation.PostConstruct;
  */
 @Service
 @Transactional
-@Conditional(LdapAuthenticationCondition.class)
+@Conditional(LdapOrActiveDirectoryAuthenticationCondition.class)
 public class LdapSyncService {
 
     private static final Logger LOG = Logger.getLogger(LdapSyncService.class);
@@ -63,7 +63,8 @@ public class LdapSyncService {
             throw new IllegalStateException("LDAP sync is not possible if authentication type is not set!");
         }
 
-        if (!authentication.toLowerCase().equals(Authentication.Type.LDAP.getName())) {
+        if (!authentication.toLowerCase().equals(Authentication.Type.LDAP.getName().toLowerCase())
+                && !authentication.toLowerCase().equals(Authentication.Type.ACTIVE_DIRECTORY.getName().toLowerCase())) {
             throw new IllegalStateException("LDAP sync is not possible for authentication type '" + authentication
                 + "'!");
         }

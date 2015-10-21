@@ -15,7 +15,7 @@ import java.util.List;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Service
-@Conditional(LdapAuthenticationCondition.class)
+@Conditional(LdapOrActiveDirectoryAuthenticationCondition.class)
 public class LdapUserServiceImpl implements LdapUserService {
 
     private final LdapTemplate ldapTemplate;

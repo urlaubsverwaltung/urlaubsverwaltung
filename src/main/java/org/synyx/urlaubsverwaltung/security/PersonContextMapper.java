@@ -1,11 +1,18 @@
 package org.synyx.urlaubsverwaltung.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+
+import org.springframework.context.annotation.Conditional;
+
 import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
+
+import org.springframework.stereotype.Component;
 
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
@@ -21,6 +28,8 @@ import java.util.Optional;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
+@Component
+@Conditional(LdapOrActiveDirectoryAuthenticationCondition.class)
 public class PersonContextMapper implements UserDetailsContextMapper {
 
     private final PersonService personService;
@@ -31,8 +40,12 @@ public class PersonContextMapper implements UserDetailsContextMapper {
     private final String lastNameAttribute;
     private final String mailAddressAttribute;
 
-    public PersonContextMapper(PersonService personService, LdapSyncService ldapSyncService, String identifierAttribute,
-        String firstNameAttribute, String lastNameAttribute, String mailAddressAttribute) {
+    @Autowired
+    public PersonContextMapper(PersonService personService, LdapSyncService ldapSyncService,
+        @Value("${security.identifier}") String identifierAttribute,
+        @Value("${security.firstName}") String firstNameAttribute,
+        @Value("${security.lastName}") String lastNameAttribute,
+        @Value("${security.mailAddress}") String mailAddressAttribute) {
 
         this.personService = personService;
         this.ldapSyncService = ldapSyncService;

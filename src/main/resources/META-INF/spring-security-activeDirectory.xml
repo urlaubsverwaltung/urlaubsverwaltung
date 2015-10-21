@@ -7,15 +7,6 @@
 
     <!-- AUTHENTICATION VIA ACTIVE DIRECTORY -->
 
-    <bean id="personContextMapper" class="org.synyx.urlaubsverwaltung.security.PersonContextMapper">
-        <constructor-arg ref="personService"/>
-        <constructor-arg ref="ldapSyncService"/>
-        <constructor-arg value="${security.identifier}"/>
-        <constructor-arg value="${security.firstName}"/>
-        <constructor-arg value="${security.lastName}"/>
-        <constructor-arg value="${security.mailAddress}"/>
-    </bean>
-
     <bean id="activeDirectoryAuthenticationProvider"
           class="org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider">
         <constructor-arg value="${security.activeDirectory.domain}"/>
@@ -26,5 +17,20 @@
     <security:authentication-manager alias="authenticationManager">
         <security:authentication-provider ref="activeDirectoryAuthenticationProvider"/>
     </security:authentication-manager>
+
+    <!-- SYNC LDAP DATA -->
+
+    <bean id="ldapTemplate" class="org.springframework.ldap.core.LdapTemplate">
+        <constructor-arg ref="contextSource"/>
+        <property name="ignorePartialResultException" value="true"/>
+        <property name="ignoreNameNotFoundException" value="true"/>
+    </bean>
+
+    <bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource">
+        <property name="url" value="${security.activeDirectory.url}"/>
+        <property name="base" value="${security.activeDirectory.sync.userSearchBase}"/>
+        <property name="userDn" value="${security.activeDirectory.sync.userDn}"/>
+        <property name="password" value="${security.activeDirectory.sync.password}"/>
+    </bean>
 
 </beans>

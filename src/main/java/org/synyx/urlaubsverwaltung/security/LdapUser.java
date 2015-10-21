@@ -15,7 +15,7 @@ import javax.naming.Name;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-@Entry(objectClasses = { "inetOrgPerson" })
+@Entry(objectClasses = { "User" })
 public final class LdapUser {
 
     @Id
@@ -23,6 +23,7 @@ public final class LdapUser {
 
     // TODO: Attribute names should be configurable!
     @Attribute(name = "uid")
+//    @Attribute(name = "cn")
     private String username;
 
     @Attribute(name = "givenName")
