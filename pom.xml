@@ -435,10 +435,6 @@
                             <name>env</name>
                             <value>dev</value>
                         </systemProperty>
-                        <systemProperty>
-                            <name>auth</name>
-                            <value>default</value>
-                        </systemProperty>
                     </systemProperties>
                     <stopKey/>
                     <stopPort/>

@@ -12,13 +12,13 @@ import java.util.function.Consumer;
 public class DefaultAuthenticationConditionTest {
 
     @Test
-    public void ensureConditionDoesNotMatchIfNoAuthenticationSet() {
+    public void ensureConditionMatchesIfNoAuthenticationSet() {
 
         System.getProperties().remove(Authentication.PROPERTY_KEY);
 
         DefaultAuthenticationCondition condition = new DefaultAuthenticationCondition();
 
-        Assert.assertFalse("Condition should not match for " + Authentication.PROPERTY_KEY + "=<null>",
+        Assert.assertTrue("Condition should match if no authentication type is specified",
             condition.matches(null, null));
     }
 

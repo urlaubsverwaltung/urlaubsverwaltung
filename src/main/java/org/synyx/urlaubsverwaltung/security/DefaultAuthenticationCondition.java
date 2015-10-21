@@ -1,6 +1,9 @@
 package org.synyx.urlaubsverwaltung.security;
 
-import org.synyx.urlaubsverwaltung.core.util.SystemPropertyCondition;
+import org.springframework.context.annotation.Condition;
+import org.springframework.context.annotation.ConditionContext;
+
+import org.springframework.core.type.AnnotatedTypeMetadata;
 
 
 /**
@@ -8,10 +11,13 @@ import org.synyx.urlaubsverwaltung.core.util.SystemPropertyCondition;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public class DefaultAuthenticationCondition extends SystemPropertyCondition {
+public class DefaultAuthenticationCondition implements Condition {
 
-    public DefaultAuthenticationCondition() {
+    @Override
+    public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
 
-        super(Authentication.PROPERTY_KEY, Authentication.Type.DEFAULT.getName());
+        String authentication = System.getProperties().getProperty(Authentication.PROPERTY_KEY);
+
+        return authentication == null || authentication.toLowerCase().equals(Authentication.Type.DEFAULT.getName());
     }
 }
