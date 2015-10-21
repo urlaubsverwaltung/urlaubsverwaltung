@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import org.mockito.Matchers;
 import org.mockito.Mockito;
 
 import org.springframework.ldap.core.DirContextOperations;
@@ -11,7 +12,6 @@ import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.person.Role;
@@ -38,14 +38,16 @@ public class PersonContextMapperTest {
 
     private PersonContextMapper personContextMapper;
     private PersonService personService;
+    private LdapSyncService ldapSyncService;
 
     @Before
     public void setUp() {
 
         personService = Mockito.mock(PersonService.class);
+        ldapSyncService = Mockito.mock(LdapSyncService.class);
 
-        personContextMapper = new PersonContextMapper(personService, Mockito.mock(MailService.class),
-                IDENTIFIER_ATTRIBUTE, LAST_NAME_ATTRIBUTE, FIRST_NAME_ATTRIBUTE, MAIL_ADDRESS_ATTRIBUTE);
+        personContextMapper = new PersonContextMapper(personService, ldapSyncService, IDENTIFIER_ATTRIBUTE,
+                FIRST_NAME_ATTRIBUTE, LAST_NAME_ATTRIBUTE, MAIL_ADDRESS_ATTRIBUTE);
     }
 
 
@@ -76,84 +78,14 @@ public class PersonContextMapperTest {
 
 
     @Test
-    public void ensureFirstCreatedPersonHasTheCorrectRoles() {
-
-        Person person = personContextMapper.createPerson("murygina", Optional.of("Aljona"), Optional.of("Murygina"),
-                Optional.of("murygina@synyx.de"), true);
-
-        Collection<Role> roles = person.getPermissions();
-
-        Assert.assertEquals("Wrong number of roles", 2, roles.size());
-        Assert.assertTrue("Does not contain user role", roles.contains(Role.USER));
-        Assert.assertTrue("Does not contain office role", roles.contains(Role.OFFICE));
-    }
-
-
-    @Test
-    public void ensureFurtherCreatedPersonHasTheCorrectRoles() {
-
-        Person person = personContextMapper.createPerson("murygina", Optional.of("Aljona"), Optional.of("Murygina"),
-                Optional.of("murygina@synyx.de"), false);
-
-        Collection<Role> roles = person.getPermissions();
-
-        Assert.assertEquals("Wrong number of roles", 1, roles.size());
-        Assert.assertTrue("Does not contain user role", roles.contains(Role.USER));
-    }
-
-
-    @Test
-    public void ensurePersonCanBeCreatedWithOnlyLoginName() {
-
-        Person person = personContextMapper.createPerson("murygina", Optional.empty(), Optional.empty(),
-                Optional.empty(), true);
-
-        Mockito.verify(personService).save(Mockito.eq(person));
-
-        Assert.assertNotNull("Missing login name", person.getLoginName());
-        Assert.assertEquals("Wrong login name", "murygina", person.getLoginName());
-
-        Assert.assertNull("First name should be not set", person.getFirstName());
-        Assert.assertNull("Last name should be not set", person.getLastName());
-        Assert.assertNull("Mail address should be not set", person.getEmail());
-    }
-
-
-    @Test
-    public void ensureCreatedPersonHasCorrectAttributes() {
-
-        Person person = personContextMapper.createPerson("murygina", Optional.of("Aljona"), Optional.of("Murygina"),
-                Optional.of("murygina@synyx.de"), true);
-
-        Mockito.verify(personService).save(Mockito.eq(person));
-
-        Assert.assertNotNull("Missing login name", person.getLoginName());
-        Assert.assertNotNull("Missing first name", person.getFirstName());
-        Assert.assertNotNull("Missing last name", person.getLastName());
-        Assert.assertNotNull("Missing mail address", person.getEmail());
-
-        Assert.assertEquals("Wrong login name", "murygina", person.getLoginName());
-        Assert.assertEquals("Wrong first name", "Aljona", person.getFirstName());
-        Assert.assertEquals("Wrong last name", "Murygina", person.getLastName());
-        Assert.assertEquals("Wrong mail address", "murygina@synyx.de", person.getEmail());
-    }
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfNoLoginNameIsGiven() {
-
-        personContextMapper.createPerson(null, Optional.of("Aljona"), Optional.of("Murygina"),
-            Optional.of("murygina@synyx.de"), true);
-    }
-
-
-    @Test
     public void ensureCreatesPersonUsingLDAPAttributesIfPersonDoesNotExist() {
 
         DirContextOperations ctx = Mockito.mock(DirContextOperations.class);
         Mockito.when(ctx.getDn()).thenReturn(Mockito.mock(Name.class));
         Mockito.when(ctx.getStringAttributes("cn")).thenReturn(new String[] { "First", "Last" });
-        Mockito.when(ctx.getStringAttribute(Mockito.anyString())).thenReturn("Foo");
+        Mockito.when(ctx.getStringAttribute(FIRST_NAME_ATTRIBUTE)).thenReturn("Aljona");
+        Mockito.when(ctx.getStringAttribute(LAST_NAME_ATTRIBUTE)).thenReturn("Murygina");
+        Mockito.when(ctx.getStringAttribute(MAIL_ADDRESS_ATTRIBUTE)).thenReturn("murygina@synyx.de");
 
         Mockito.when(personService.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.empty());
 
@@ -164,7 +96,9 @@ public class PersonContextMapperTest {
         Mockito.verify(ctx, Mockito.atLeastOnce()).getStringAttribute(FIRST_NAME_ATTRIBUTE);
         Mockito.verify(ctx, Mockito.atLeastOnce()).getStringAttribute(MAIL_ADDRESS_ATTRIBUTE);
 
-        Mockito.verify(personService).save(Mockito.any(Person.class));
+        Mockito.verify(ldapSyncService)
+            .createPerson(Mockito.eq("murygina"), Mockito.eq(Optional.of("Aljona")),
+                Mockito.eq(Optional.of("Murygina")), Mockito.eq(Optional.of("murygina@synyx.de")));
     }
 
 
@@ -177,9 +111,14 @@ public class PersonContextMapperTest {
         DirContextOperations ctx = Mockito.mock(DirContextOperations.class);
         Mockito.when(ctx.getDn()).thenReturn(Mockito.mock(Name.class));
         Mockito.when(ctx.getStringAttributes("cn")).thenReturn(new String[] { "First", "Last" });
-        Mockito.when(ctx.getStringAttribute(Mockito.anyString())).thenReturn("Foo");
+        Mockito.when(ctx.getStringAttribute(FIRST_NAME_ATTRIBUTE)).thenReturn("Aljona");
+        Mockito.when(ctx.getStringAttribute(LAST_NAME_ATTRIBUTE)).thenReturn("Murygina");
+        Mockito.when(ctx.getStringAttribute(MAIL_ADDRESS_ATTRIBUTE)).thenReturn("murygina@synyx.de");
 
         Mockito.when(personService.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.of(person));
+        Mockito.when(ldapSyncService.syncPerson(Mockito.any(Person.class), Matchers.<Optional<String>>any(),
+                    Matchers.<Optional<String>>any(), Matchers.<Optional<String>>any()))
+            .thenReturn(person);
 
         personContextMapper.mapUserFromContext(ctx, "murygina", null);
 
@@ -188,54 +127,9 @@ public class PersonContextMapperTest {
         Mockito.verify(ctx, Mockito.atLeastOnce()).getStringAttribute(FIRST_NAME_ATTRIBUTE);
         Mockito.verify(ctx, Mockito.atLeastOnce()).getStringAttribute(MAIL_ADDRESS_ATTRIBUTE);
 
-        Mockito.verify(personService).save(Mockito.any(Person.class));
-    }
-
-
-    @Test
-    public void ensureSyncedPersonHasCorrectAttributes() {
-
-        Person person = new Person();
-        person.setFirstName("Marlene");
-        person.setLastName("Muster");
-        person.setEmail("marlene@muster.de");
-        person.setLoginName("muster");
-
-        Person syncedPerson = personContextMapper.syncPerson(person, Optional.of("Aljona"), Optional.of("Murygina"),
-                Optional.of("murygina@synyx.de"));
-
-        Mockito.verify(personService).save(Mockito.eq(person));
-
-        Assert.assertNotNull("Missing login name", syncedPerson.getLoginName());
-        Assert.assertNotNull("Missing first name", syncedPerson.getFirstName());
-        Assert.assertNotNull("Missing last name", syncedPerson.getLastName());
-        Assert.assertNotNull("Missing mail address", syncedPerson.getEmail());
-
-        Assert.assertEquals("Wrong login name", "muster", syncedPerson.getLoginName());
-        Assert.assertEquals("Wrong first name", "Aljona", syncedPerson.getFirstName());
-        Assert.assertEquals("Wrong last name", "Murygina", syncedPerson.getLastName());
-        Assert.assertEquals("Wrong mail address", "murygina@synyx.de", syncedPerson.getEmail());
-    }
-
-
-    @Test
-    public void ensureSyncDoesNotEmptyAttributes() {
-
-        Person person = new Person();
-        person.setFirstName("Marlene");
-        person.setLastName("Muster");
-        person.setEmail("marlene@muster.de");
-        person.setLoginName("muster");
-
-        Person syncedPerson = personContextMapper.syncPerson(person, Optional.empty(), Optional.empty(),
-                Optional.empty());
-
-        Mockito.verify(personService).save(Mockito.eq(person));
-
-        Assert.assertEquals("Wrong login name", "muster", syncedPerson.getLoginName());
-        Assert.assertEquals("Wrong first name", "Marlene", syncedPerson.getFirstName());
-        Assert.assertEquals("Wrong last name", "Muster", syncedPerson.getLastName());
-        Assert.assertEquals("Wrong mail address", "marlene@muster.de", syncedPerson.getEmail());
+        Mockito.verify(ldapSyncService)
+            .syncPerson(Mockito.eq(person), Mockito.eq(Optional.of("Aljona")), Mockito.eq(Optional.of("Murygina")),
+                Mockito.eq(Optional.of("murygina@synyx.de")));
     }
 
 
@@ -294,6 +188,9 @@ public class PersonContextMapperTest {
         Mockito.when(ctx.getStringAttribute(Mockito.anyString())).thenReturn("Foo");
 
         Mockito.when(personService.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.of(person));
+        Mockito.when(ldapSyncService.syncPerson(Mockito.any(Person.class), Matchers.<Optional<String>>any(),
+                    Matchers.<Optional<String>>any(), Matchers.<Optional<String>>any()))
+            .thenReturn(person);
 
         UserDetails userDetails = personContextMapper.mapUserFromContext(ctx, "user", null);
 
@@ -304,5 +201,29 @@ public class PersonContextMapperTest {
             SecurityTestUtil.authorityForRoleExists(authorities, Role.USER));
         Assert.assertTrue("Missing authority for boss role",
             SecurityTestUtil.authorityForRoleExists(authorities, Role.BOSS));
+    }
+
+
+    @Test
+    public void ensureAddsOfficeRoleToSignedInUserIfNoUserWithOfficeRoleExistsYet() {
+
+        Person person = new Person();
+        person.setPermissions(Collections.singletonList(Role.USER));
+
+        DirContextOperations ctx = Mockito.mock(DirContextOperations.class);
+        Mockito.when(ctx.getDn()).thenReturn(Mockito.mock(Name.class));
+        Mockito.when(ctx.getStringAttributes("cn")).thenReturn(new String[] { "First", "Last" });
+        Mockito.when(ctx.getStringAttribute(Mockito.anyString())).thenReturn("Foo");
+
+        Mockito.when(personService.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.of(person));
+        Mockito.when(personService.getPersonsByRole(Role.OFFICE)).thenReturn(Collections.emptyList());
+        Mockito.when(ldapSyncService.syncPerson(Mockito.any(Person.class), Matchers.<Optional<String>>any(),
+                    Matchers.<Optional<String>>any(), Matchers.<Optional<String>>any()))
+            .thenReturn(person);
+
+        personContextMapper.mapUserFromContext(ctx, "user", null);
+
+        Mockito.verify(personService).getPersonsByRole(Role.OFFICE);
+        Mockito.verify(ldapSyncService).appointPersonAsOfficeUser(person);
     }
 }

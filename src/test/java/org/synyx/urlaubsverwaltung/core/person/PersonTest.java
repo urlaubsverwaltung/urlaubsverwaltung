@@ -3,8 +3,10 @@ package org.synyx.urlaubsverwaltung.core.person;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 
 /**
@@ -93,5 +95,41 @@ public class PersonTest {
         Assert.assertNotEquals("Gravatar URL should not be empty", "", person.getGravatarURL());
         Assert.assertNotEquals("Gravatar URL should differ from mail address", person.getEmail(),
             person.getGravatarURL());
+    }
+
+
+    @Test
+    public void ensurePermissionsAreUnmodifiable() {
+
+        List<Role> modifiableList = new ArrayList<>();
+        modifiableList.add(Role.USER);
+
+        Person person = new Person();
+        person.setPermissions(modifiableList);
+
+        try {
+            person.getPermissions().add(Role.BOSS);
+            Assert.fail("Permissions should be unmodifiable!");
+        } catch (UnsupportedOperationException ex) {
+            // Expected
+        }
+    }
+
+
+    @Test
+    public void ensureNotificationsAreUnmodifiable() {
+
+        List<MailNotification> modifiableList = new ArrayList<>();
+        modifiableList.add(MailNotification.NOTIFICATION_USER);
+
+        Person person = new Person();
+        person.setNotifications(modifiableList);
+
+        try {
+            person.getNotifications().add(MailNotification.NOTIFICATION_BOSS);
+            Assert.fail("Notifications should be unmodifiable!");
+        } catch (UnsupportedOperationException ex) {
+            // Expected
+        }
     }
 }

@@ -10,9 +10,9 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 import javax.persistence.*;
 
@@ -182,7 +182,11 @@ public class Person extends AbstractPersistable<Integer> {
 
     public Collection<Role> getPermissions() {
 
-        return permissions;
+        if (permissions == null) {
+            return Collections.emptyList();
+        }
+
+        return Collections.unmodifiableCollection(permissions);
     }
 
 
@@ -195,10 +199,10 @@ public class Person extends AbstractPersistable<Integer> {
     public Collection<MailNotification> getNotifications() {
 
         if (notifications == null) {
-            notifications = new ArrayList<>();
+            notifications = Collections.emptyList();
         }
 
-        return notifications;
+        return Collections.unmodifiableCollection(notifications);
     }
 
 
