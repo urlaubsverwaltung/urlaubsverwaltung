@@ -389,8 +389,6 @@
                 <version>2.18.1</version>
                 <configuration>
                     <systemPropertyVariables>
-                        <!-- TODO: make Spring Security better instead of doing this! -->
-                        <auth>default</auth>
                         <log4j.configuration>log4j-dev.properties</log4j.configuration>
                     </systemPropertyVariables>
                 </configuration>
@@ -410,8 +408,6 @@
                 </executions>
                 <configuration>
                     <systemPropertyVariables>
-                        <!-- TODO: make Spring Security better instead of doing this! -->
-                        <auth>default</auth>
                         <log4j.configuration>log4j-dev.properties</log4j.configuration>
                     </systemPropertyVariables>
                 </configuration>

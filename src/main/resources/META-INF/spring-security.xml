@@ -27,8 +27,6 @@
         <security:logout logout-success-url="/login.jsp"/>
     </security:http>
 
-    <import resource="spring-security-${auth}.xml"/>
-
     <!-- BASIC AUTHENTICATION CONFIG -->
     <bean id="delegatingAuthenticationEntryPoint"
           class="org.springframework.security.web.authentication.DelegatingAuthenticationEntryPoint">
