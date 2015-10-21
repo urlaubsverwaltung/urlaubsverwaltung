@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.core.startup;
+package org.synyx.urlaubsverwaltung.dev;
 
 import org.synyx.urlaubsverwaltung.core.person.Role;
 

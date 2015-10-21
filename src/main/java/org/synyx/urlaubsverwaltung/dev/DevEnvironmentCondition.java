@@ -1,5 +1,6 @@
-package org.synyx.urlaubsverwaltung.core.startup;
+package org.synyx.urlaubsverwaltung.dev;
 
+import org.synyx.urlaubsverwaltung.core.startup.Environment;
 import org.synyx.urlaubsverwaltung.core.util.SystemPropertyCondition;
 
 

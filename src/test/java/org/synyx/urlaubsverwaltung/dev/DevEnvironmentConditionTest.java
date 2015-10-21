@@ -1,7 +1,9 @@
-package org.synyx.urlaubsverwaltung.core.startup;
+package org.synyx.urlaubsverwaltung.dev;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import org.synyx.urlaubsverwaltung.core.startup.Environment;
 
 import java.util.function.Consumer;
 
