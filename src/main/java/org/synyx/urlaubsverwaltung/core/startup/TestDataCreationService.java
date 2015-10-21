@@ -8,6 +8,8 @@ import org.joda.time.DateTimeConstants;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.context.annotation.Conditional;
+
 import org.springframework.stereotype.Service;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
@@ -50,10 +52,8 @@ import javax.annotation.PostConstruct;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Service
+@Conditional(DevEnvironmentCondition.class)
 public class TestDataCreationService {
-
-    private static final String ENVIRONMENT_PROPERTY = "env";
-    private static final String DEV_ENVIRONMENT = "dev";
 
     private static final String PASSWORD = "secret";
     private static final String NO_PASSWORD = "";
@@ -87,9 +87,9 @@ public class TestDataCreationService {
     @PostConstruct
     public void createTestData() throws NoSuchAlgorithmException {
 
-        String environment = System.getProperties().getProperty(ENVIRONMENT_PROPERTY);
+        String environment = System.getProperties().getProperty(Environment.PROPERTY_KEY);
 
-        if (DEV_ENVIRONMENT.equals(environment)) {
+        if (Environment.Type.DEV.getName().equals(environment)) {
             LOG.info("Test data will be created...");
 
             // Users to be able to sign in with

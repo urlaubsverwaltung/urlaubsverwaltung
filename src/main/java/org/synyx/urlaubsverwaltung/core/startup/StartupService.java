@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.stereotype.Service;
 
+import org.synyx.urlaubsverwaltung.security.Authentication;
+
 import javax.annotation.PostConstruct;
 
 
@@ -22,9 +24,6 @@ public class StartupService {
 
     private static final Logger LOG = Logger.getLogger(StartupService.class);
 
-    private static final String AUTHENTICATION = "auth";
-    private static final String ENVIRONMENT = "env";
-
     private final String dbUser;
     private final String dbUrl;
     private final String authentication;
@@ -36,8 +35,8 @@ public class StartupService {
 
         this.dbUser = dbUser;
         this.dbUrl = dbUrl;
-        this.authentication = System.getProperty(AUTHENTICATION);
-        this.environment = System.getProperty(ENVIRONMENT);
+        this.authentication = System.getProperty(Authentication.PROPERTY_KEY);
+        this.environment = System.getProperty(Environment.PROPERTY_KEY);
     }
 
     @PostConstruct

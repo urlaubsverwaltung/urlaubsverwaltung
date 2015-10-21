@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.security;
+package org.synyx.urlaubsverwaltung.core.util;
 
 import org.junit.Assert;
 import org.junit.Test;

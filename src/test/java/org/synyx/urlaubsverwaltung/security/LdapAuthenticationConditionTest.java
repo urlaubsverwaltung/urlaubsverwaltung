@@ -11,16 +11,14 @@ import java.util.function.Consumer;
  */
 public class LdapAuthenticationConditionTest {
 
-    private static final String AUTH_PROPERTY = "auth";
-
     @Test
     public void ensureConditionDoesNotMatchIfNoAuthenticationSet() {
 
-        System.getProperties().remove(AUTH_PROPERTY);
+        System.getProperties().remove(Authentication.PROPERTY_KEY);
 
         LdapAuthenticationCondition condition = new LdapAuthenticationCondition();
 
-        Assert.assertFalse("Condition should not match for " + AUTH_PROPERTY + "=<null>",
+        Assert.assertFalse("Condition should not match for " + Authentication.PROPERTY_KEY + "=<null>",
             condition.matches(null, null));
     }
 
@@ -29,16 +27,16 @@ public class LdapAuthenticationConditionTest {
     public void ensureConditionMatchesIfAuthenticationIsSetToLdap() {
 
         Consumer<String> assertDoesMatch = (auth) -> {
-            System.getProperties().put(AUTH_PROPERTY, auth);
+            System.getProperties().put(Authentication.PROPERTY_KEY, auth);
 
             LdapAuthenticationCondition condition = new LdapAuthenticationCondition();
 
-            Assert.assertTrue("Condition should match for " + AUTH_PROPERTY + "=" + auth,
+            Assert.assertTrue("Condition should match for " + Authentication.PROPERTY_KEY + "=" + auth,
                 condition.matches(null, null));
         };
 
-        assertDoesMatch.accept("ldap");
-        assertDoesMatch.accept("lDaP");
+        assertDoesMatch.accept(Authentication.Type.LDAP.getName());
+        assertDoesMatch.accept(Authentication.Type.LDAP.getName().toUpperCase());
     }
 
 
@@ -46,16 +44,16 @@ public class LdapAuthenticationConditionTest {
     public void ensureConditionDoesNotMatchForOtherAuthentication() {
 
         Consumer<String> assertDoesNotMatch = (auth) -> {
-            System.getProperties().put(AUTH_PROPERTY, auth);
+            System.getProperties().put(Authentication.PROPERTY_KEY, auth);
 
             LdapAuthenticationCondition condition = new LdapAuthenticationCondition();
 
-            Assert.assertFalse("Condition should not match for " + AUTH_PROPERTY + "=" + auth,
+            Assert.assertFalse("Condition should not match for " + Authentication.PROPERTY_KEY + "=" + auth,
                 condition.matches(null, null));
         };
 
-        assertDoesNotMatch.accept("default");
-        assertDoesNotMatch.accept("activeDirectory");
+        assertDoesNotMatch.accept(Authentication.Type.DEFAULT.getName());
+        assertDoesNotMatch.accept(Authentication.Type.ACTIVE_DIRECTORY.getName());
         assertDoesNotMatch.accept("foo");
     }
 }

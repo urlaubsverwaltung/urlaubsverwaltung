@@ -1,5 +1,8 @@
 package org.synyx.urlaubsverwaltung.security;
 
+import org.synyx.urlaubsverwaltung.core.util.SystemPropertyCondition;
+
+
 /**
  * Condition matching if default authentication is used.
  *
@@ -7,11 +10,8 @@ package org.synyx.urlaubsverwaltung.security;
  */
 public class DefaultAuthenticationCondition extends SystemPropertyCondition {
 
-    private static final String AUTH_PROPERTY = "auth";
-    private static final String AUTH_VALUE = "default";
-
     public DefaultAuthenticationCondition() {
 
-        super(AUTH_PROPERTY, AUTH_VALUE);
+        super(Authentication.PROPERTY_KEY, Authentication.Type.DEFAULT.getName());
     }
 }

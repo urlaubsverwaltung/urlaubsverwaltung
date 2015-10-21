@@ -13,6 +13,8 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import org.synyx.urlaubsverwaltung.security.Authentication;
+
 import java.util.List;
 
 
@@ -44,8 +46,8 @@ public class StartupServiceTest {
     @Test
     public void ensureSystemInformationIsLoggedCorrectly() {
 
-        System.getProperties().put("auth", "ldap");
-        System.getProperties().put("env", "test");
+        System.getProperties().put(Authentication.PROPERTY_KEY, Authentication.Type.LDAP.getName());
+        System.getProperties().put(Environment.PROPERTY_KEY, Environment.Type.TEST.getName());
 
         StartupService startupService = new StartupService("myDbUser", "myDbUrl");
 
