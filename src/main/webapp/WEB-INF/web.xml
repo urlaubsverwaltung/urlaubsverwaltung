@@ -9,20 +9,6 @@
         <param-value>classpath*:META-INF/**/applicationContext.xml</param-value>
     </context-param>
 
-    <context-param>
-        <param-name>log4jConfigLocation</param-name>
-        <param-value>classpath:log4j-${env}.properties</param-value>
-    </context-param>
-
-    <context-param>
-        <param-name>webAppRootKey</param-name>
-        <param-value>178328</param-value>
-    </context-param>
-
-    <listener>
-        <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
-    </listener>
-
 
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>

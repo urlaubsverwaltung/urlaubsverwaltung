@@ -416,6 +416,10 @@
                 <configuration>
                     <systemProperties>
                         <systemProperty>
+                            <name>log4j.configuration</name>
+                            <value>log4j-dev.properties</value>
+                        </systemProperty>
+                        <systemProperty>
                             <name>spring.profiles.active</name>
                             <value>dev</value>
                         </systemProperty>
