@@ -23,7 +23,7 @@ public class LdapUserServiceImplTest {
 
         ldapTemplate = Mockito.mock(LdapTemplate.class);
         ldapUserMapper = Mockito.mock(LdapUserMapper.class);
-        ldapUserService = new LdapUserServiceImpl(ldapTemplate, ldapUserMapper, "searchAttribute");
+        ldapUserService = new LdapUserServiceImpl(ldapTemplate, ldapUserMapper, "objectClassFilter", "memberOfFilter");
     }
 
 

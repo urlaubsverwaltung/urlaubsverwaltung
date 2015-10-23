@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
 
-import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
@@ -25,6 +25,8 @@ import org.synyx.urlaubsverwaltung.core.person.Role;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
+
+import javax.naming.NamingException;
 
 
 /**
@@ -59,8 +61,9 @@ public class PersonContextMapper implements UserDetailsContextMapper {
 
         try {
             ldapUser = ldapUserMapper.mapFromContext(ctx);
-        } catch (InvalidSecurityConfigurationException ex) {
-            throw new AccessDeniedException("No authentication possible for user = " + username, ex);
+        } catch (InvalidSecurityConfigurationException | NamingException | UnsupportedMemberAffiliationException ex) {
+            LOG.info("User '" + username + "' can not sign in because: " + ex.getMessage());
+            throw new BadCredentialsException("No authentication possible for user = " + username, ex);
         }
 
         String login = ldapUser.getUsername();

@@ -9,7 +9,7 @@ import org.mockito.Mockito;
 
 import org.springframework.ldap.core.DirContextOperations;
 
-import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -93,7 +93,8 @@ public class PersonContextMapperTest {
 
 
     @Test
-    public void ensureCreatesPersonIfPersonDoesNotExist() throws NamingException {
+    public void ensureCreatesPersonIfPersonDoesNotExist() throws NamingException,
+        UnsupportedMemberAffiliationException {
 
         Mockito.when(ldapUserMapper.mapFromContext(Mockito.eq(context)))
             .thenReturn(new LdapUser("murygina", Optional.of("Aljona"), Optional.of("Murygina"),
@@ -113,7 +114,8 @@ public class PersonContextMapperTest {
 
 
     @Test
-    public void ensureSyncsPersonDataUsingLDAPAttributes() {
+    public void ensureSyncsPersonDataUsingLDAPAttributes() throws NamingException,
+        UnsupportedMemberAffiliationException {
 
         Person person = new Person();
         person.setPermissions(Collections.singletonList(Role.USER));
@@ -136,7 +138,7 @@ public class PersonContextMapperTest {
 
 
     @Test
-    public void ensureUsernameIsBasedOnLdapUsername() {
+    public void ensureUsernameIsBasedOnLdapUsername() throws NamingException, UnsupportedMemberAffiliationException {
 
         String userIdentifier = "mgroehning";
         String userNameSignedInWith = "mgroehning@simpsons.com";
@@ -156,20 +158,31 @@ public class PersonContextMapperTest {
     }
 
 
-    @Test(expected = AccessDeniedException.class)
-    public void ensureLoginIsNotPossibleIfLdapUserCanNotBeCreatedBecauseOfInvalidUserIdentifier() {
-
-        String userNameSignedInWith = "mgroehning@simpsons.com";
+    @Test(expected = BadCredentialsException.class)
+    public void ensureLoginIsNotPossibleIfLdapUserCanNotBeCreatedBecauseOfInvalidUserIdentifier()
+        throws NamingException, UnsupportedMemberAffiliationException {
 
         Mockito.when(ldapUserMapper.mapFromContext(Mockito.eq(context)))
             .thenThrow(new InvalidSecurityConfigurationException("Bad!"));
 
-        personContextMapper.mapUserFromContext(context, userNameSignedInWith, null);
+        personContextMapper.mapUserFromContext(context, "username", null);
+    }
+
+
+    @Test(expected = BadCredentialsException.class)
+    public void ensureLoginIsNotPossibleIfLdapUserHasNotSupportedMemberOfAttribute() throws NamingException,
+        UnsupportedMemberAffiliationException {
+
+        Mockito.when(ldapUserMapper.mapFromContext(Mockito.eq(context)))
+            .thenThrow(new UnsupportedMemberAffiliationException("Bad!"));
+
+        personContextMapper.mapUserFromContext(context, "username", null);
     }
 
 
     @Test
-    public void ensureAuthoritiesAreBasedOnRolesOfTheSignedInPerson() {
+    public void ensureAuthoritiesAreBasedOnRolesOfTheSignedInPerson() throws NamingException,
+        UnsupportedMemberAffiliationException {
 
         Person person = new Person();
         person.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
@@ -195,7 +208,8 @@ public class PersonContextMapperTest {
 
 
     @Test
-    public void ensureAddsOfficeRoleToSignedInUserIfNoUserWithOfficeRoleExistsYet() {
+    public void ensureAddsOfficeRoleToSignedInUserIfNoUserWithOfficeRoleExistsYet() throws NamingException,
+        UnsupportedMemberAffiliationException {
 
         Person person = new Person();
         person.setPermissions(Collections.singletonList(Role.USER));

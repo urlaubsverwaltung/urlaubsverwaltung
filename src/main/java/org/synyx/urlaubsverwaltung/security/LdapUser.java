@@ -5,7 +5,12 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import org.springframework.util.StringUtils;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 /**
@@ -20,7 +25,10 @@ public final class LdapUser {
     private String lastName;
     private String email;
 
-    public LdapUser(String username, Optional<String> firstName, Optional<String> lastName, Optional<String> email) {
+    private Set<String> memberOf = new HashSet<>();
+
+    public LdapUser(String username, Optional<String> firstName, Optional<String> lastName, Optional<String> email,
+        String... memberOf) {
 
         if (!StringUtils.hasText(username)) {
             throw new IllegalArgumentException("Username must be given.");
@@ -39,6 +47,8 @@ public final class LdapUser {
         if (email.isPresent()) {
             this.email = email.get();
         }
+
+        Collections.addAll(this.memberOf, memberOf);
     }
 
     public String getUsername() {
@@ -69,5 +79,11 @@ public final class LdapUser {
     public String toString() {
 
         return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+    }
+
+
+    public List<String> getMemberOf() {
+
+        return Collections.unmodifiableList(memberOf.stream().collect(Collectors.toList()));
     }
 }

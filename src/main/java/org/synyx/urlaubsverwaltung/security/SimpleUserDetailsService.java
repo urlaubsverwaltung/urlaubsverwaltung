@@ -62,6 +62,7 @@ public class SimpleUserDetailsService implements UserDetailsService {
 
             return new User(person.getLoginName(), person.getPassword(), grantedAuthorities);
         } else {
+            LOG.info("No user with username '" + username + "' found");
             throw new UsernameNotFoundException("No authentication possible for user = " + username);
         }
     }

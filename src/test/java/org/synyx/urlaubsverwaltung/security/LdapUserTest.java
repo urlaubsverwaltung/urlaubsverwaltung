@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.security;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -42,6 +43,53 @@ public class LdapUserTest {
         assertIsSet.accept(ldapUser.getFirstName(), "Max");
         assertIsSet.accept(ldapUser.getLastName(), "Mustermann");
         assertIsSet.accept(ldapUser.getEmail(), "max@muster.de");
+    }
+
+
+    @Test
+    public void ensureMemberOfInformationIsOptional() {
+
+        LdapUser ldapUser = new LdapUser("username", Optional.of("Max"), Optional.of("Mustermann"),
+                Optional.of("max@muster.de"));
+
+        List<String> memberOf = ldapUser.getMemberOf();
+
+        Assert.assertNotNull("Should not be null", memberOf);
+        Assert.assertTrue("Should be empty", memberOf.isEmpty());
+    }
+
+
+    @Test
+    public void ensureCanBeInitializedWithAttributesAndMemberOfInformation() {
+
+        LdapUser ldapUser = new LdapUser("username", Optional.of("Max"), Optional.of("Mustermann"),
+                Optional.of("max@muster.de"), "GroupA", "GroupB");
+
+        List<String> memberOf = ldapUser.getMemberOf();
+
+        Assert.assertNotNull("Should not be null", memberOf);
+        Assert.assertEquals("Wrong number of memberOf elements", 2, memberOf.size());
+        Assert.assertTrue("Missing memberOf element", memberOf.contains("GroupA"));
+        Assert.assertTrue("Missing memberOf element", memberOf.contains("GroupB"));
+    }
+
+
+    @Test
+    public void ensureMemberOfListIsUnmodifiable() {
+
+        LdapUser ldapUser = new LdapUser("username", Optional.of("Max"), Optional.of("Mustermann"),
+                Optional.of("max@muster.de"), "GroupA", "GroupB");
+
+        List<String> memberOf = ldapUser.getMemberOf();
+
+        Assert.assertNotNull("Should not be null", memberOf);
+
+        try {
+            memberOf.add("Foo");
+            Assert.fail("List should be unmodifiable!");
+        } catch (UnsupportedOperationException ex) {
+            // Expected
+        }
     }
 
 
