@@ -46,8 +46,34 @@ public class AbsenceTest {
     @Test
     public void ensureCanBeInstantiatedWithAnApplication() {
 
-        DateMidnight start = DateMidnight.now();
-        DateMidnight end = start.plusDays(2);
+        DateMidnight start = new DateMidnight(2015, 9, 21);
+        DateMidnight end = new DateMidnight(2015, 9, 23);
+
+        Application application = new Application();
+        application.setStartDate(start);
+        application.setEndDate(end);
+        application.setPerson(person);
+        application.setDayLength(DayLength.FULL);
+        application.setStatus(ApplicationStatus.ALLOWED);
+
+        Absence absence = new Absence(application, timeConfiguration);
+
+        Assert.assertNotNull("Start date must not be null", absence.getStartDate());
+        Assert.assertNotNull("End date must not be null", absence.getEndDate());
+        Assert.assertNotNull("Person must not be null", absence.getPerson());
+
+        Assert.assertEquals("Wrong start date", start.toDate(), absence.getStartDate());
+        Assert.assertEquals("Wrong end date", end.plusDays(1).toDate(), absence.getEndDate());
+        Assert.assertEquals("Wrong person", person, absence.getPerson());
+    }
+
+
+    @Test
+    public void ensureCanBeInstantiatedWithAnApplicationConsideringDaylightSavingTime() {
+
+        // Date where daylight saving time is relevant
+        DateMidnight start = new DateMidnight(2015, 10, 23);
+        DateMidnight end = new DateMidnight(2015, 10, 25);
 
         Application application = new Application();
         application.setStartDate(start);
@@ -172,8 +198,33 @@ public class AbsenceTest {
     @Test
     public void ensureCanBeInstantiatedWithASickNote() {
 
-        DateMidnight start = DateMidnight.now();
-        DateMidnight end = start.plusDays(2);
+        DateMidnight start = new DateMidnight(2015, 9, 21);
+        DateMidnight end = new DateMidnight(2015, 9, 23);
+
+        SickNote sickNote = new SickNote();
+        sickNote.setStartDate(start);
+        sickNote.setEndDate(end);
+        sickNote.setPerson(person);
+        sickNote.setDayLength(DayLength.FULL);
+
+        Absence absence = new Absence(sickNote, timeConfiguration);
+
+        Assert.assertNotNull("Start date must not be null", absence.getStartDate());
+        Assert.assertNotNull("End date must not be null", absence.getEndDate());
+        Assert.assertNotNull("Person must not be null", absence.getPerson());
+
+        Assert.assertEquals("Wrong start date", start.toDate(), absence.getStartDate());
+        Assert.assertEquals("Wrong end date", end.plusDays(1).toDate(), absence.getEndDate());
+        Assert.assertEquals("Wrong person", person, absence.getPerson());
+        Assert.assertTrue("Should be all day", absence.isAllDay());
+    }
+
+
+    @Test
+    public void ensureCanBeInstantiatedWithASickNoteConsideringDaylightSavingTime() {
+
+        DateMidnight start = new DateMidnight(2015, 10, 23);
+        DateMidnight end = new DateMidnight(2015, 10, 25);
 
         SickNote sickNote = new SickNote();
         sickNote.setStartDate(start);

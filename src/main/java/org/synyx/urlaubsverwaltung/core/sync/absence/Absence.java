@@ -15,7 +15,6 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -85,7 +84,7 @@ public class Absence {
         switch (dayLength) {
             case FULL:
                 this.startDate = new Date(startDateInMilliseconds);
-                this.endDate = new Date(endDateInMilliseconds + TimeUnit.DAYS.toMillis(1));
+                this.endDate = new Date(end.plusDays(1).toDateTime(DateTimeZone.UTC).getMillis());
                 this.isAllDay = true;
                 break;
 
