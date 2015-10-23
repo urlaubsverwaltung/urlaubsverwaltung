@@ -90,21 +90,21 @@
                         <table cellspacing="0" class="list-table sortable tablesorter">
                             <thead class="hidden-xs hidden-sm">
                             <tr>
-                                <th><%-- placeholder to ensure correct number of th --%></th>
+                                <th class="hidden-print"><%-- placeholder to ensure correct number of th --%></th>
                                 <th class="sortable-field"><spring:message code="person.data.firstName"/></th>
                                 <th class="sortable-field"><spring:message code="person.data.lastName"/></th>
                                 <th><%-- placeholder to ensure correct number of th --%></th>
                                 <th class="hidden"><%-- placeholder to ensure correct number of th --%></th>
                                 <th class="hidden"><%-- placeholder to ensure correct number of th --%></th>
-                                <th class="sortable-field is-centered"><spring:message code="applications.statistics.allowed"/></th>
-                                <th class="sortable-field is-centered"><spring:message code="applications.statistics.waiting"/></th>
+                                <th class="sortable-field"><spring:message code="applications.statistics.allowed"/></th>
+                                <th class="sortable-field"><spring:message code="applications.statistics.waiting"/></th>
                                 <th class="sortable-field"><spring:message code="applications.statistics.left"/> (<c:out value="${from.year}" />)</th>
                             </tr>
                             </thead>
                             <tbody>
                             <c:forEach items="${statistics}" var="statistic">
                                 <tr>
-                                    <td class="is-centered">
+                                    <td class="hidden-print is-centered">
                                         <div class="gravatar img-circle hidden-print" data-gravatar="<c:out value='${statistic.person.gravatarURL}?d=mm&s=60'/>"></div>
                                     </td>
                                     <td class="hidden-xs"><c:out value="${statistic.person.firstName}"/></td>
@@ -119,14 +119,14 @@
                                         <i class="fa fa-fw fa-question hidden-print"></i>
                                         <uv:number number="${statistic.totalWaitingVacationDays}"/>
                                     </td>
-                                    <td class="hidden-xs">
+                                    <td class="hidden-xs hidden-sm">
                                         <spring:message code="applications.statistics.total"/>:
                                         <c:forEach items="${vacationTypes}" var="type">
                                             <br/>
                                             <small><spring:message code="${type}"/>:</small>
                                         </c:forEach>
                                     </td>
-                                    <td class="hidden-xs is-centered">
+                                    <td class="hidden-xs hidden-sm number">
                                         <b class="sortable"><uv:number number="${statistic.totalAllowedVacationDays}"/></b>
                                         <spring:message code="duration.days"/>
                                         <c:forEach items="${vacationTypes}" var="type">
@@ -136,7 +136,7 @@
                                             </small>
                                         </c:forEach>
                                     </td>
-                                    <td class="hidden-xs is-centered">
+                                    <td class="hidden-xs hidden-sm number">
                                         <b class="sortable"><uv:number number="${statistic.totalWaitingVacationDays}"/></b>
                                         <spring:message code="duration.days"/>
                                         <c:forEach items="${vacationTypes}" var="type">

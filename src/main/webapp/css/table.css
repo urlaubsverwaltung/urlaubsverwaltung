@@ -32,6 +32,10 @@ tr.inactive td > * {
     border-top: 1px solid #DDDDDD;
 }
 
+.list-table td.number {
+  padding-left: 24px;
+}
+
 .list-table tr:last-child td {
     border-bottom: 1px solid #DDDDDD;
 }
