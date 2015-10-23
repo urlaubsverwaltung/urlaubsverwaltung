@@ -5,7 +5,7 @@ package org.synyx.urlaubsverwaltung.core.startup;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public class Environment {
+public final class Environment {
 
     public static final String PROPERTY_KEY = "env";
 
@@ -26,5 +26,10 @@ public class Environment {
 
             return name;
         }
+    }
+
+    private Environment() {
+
+        // Hide constructor of util class
     }
 }

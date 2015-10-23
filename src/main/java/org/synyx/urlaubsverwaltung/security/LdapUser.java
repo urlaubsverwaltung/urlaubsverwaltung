@@ -20,12 +20,13 @@ import java.util.stream.Collectors;
  */
 public final class LdapUser {
 
-    private String username;
+    private final String username;
+
     private String firstName;
     private String lastName;
     private String email;
 
-    private Set<String> memberOf = new HashSet<>();
+    private final Set<String> memberOf = new HashSet<>();
 
     public LdapUser(String username, Optional<String> firstName, Optional<String> lastName, Optional<String> email,
         String... memberOf) {

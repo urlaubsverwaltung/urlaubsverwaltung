@@ -21,8 +21,8 @@ public class ApplicationForLeaveStatistics {
 
     private final Person person;
 
-    private Map<VacationType, BigDecimal> waitingVacationDays = new HashMap<>();
-    private Map<VacationType, BigDecimal> allowedVacationDays = new HashMap<>();
+    private final Map<VacationType, BigDecimal> waitingVacationDays = new HashMap<>();
+    private final Map<VacationType, BigDecimal> allowedVacationDays = new HashMap<>();
 
     private BigDecimal leftVacationDays = BigDecimal.ZERO;
     private BigDecimal leftOvertime = BigDecimal.ZERO;

@@ -5,7 +5,7 @@ package org.synyx.urlaubsverwaltung.security;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public class Authentication {
+public final class Authentication {
 
     public static final String PROPERTY_KEY = "auth";
 
@@ -26,5 +26,10 @@ public class Authentication {
 
             return name;
         }
+    }
+
+    private Authentication() {
+
+        // Hide constructor of util class
     }
 }
