@@ -18,6 +18,6 @@ public class DefaultAuthenticationCondition implements Condition {
 
         String authentication = System.getProperties().getProperty(Authentication.PROPERTY_KEY);
 
-        return authentication == null || authentication.toLowerCase().equals(Authentication.Type.DEFAULT.getName());
+        return authentication == null || authentication.equalsIgnoreCase(Authentication.Type.DEFAULT.getName());
     }
 }

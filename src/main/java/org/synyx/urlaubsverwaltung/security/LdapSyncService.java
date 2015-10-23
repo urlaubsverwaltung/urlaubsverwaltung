@@ -67,8 +67,8 @@ public class LdapSyncService {
             throw new IllegalStateException("LDAP sync is not possible if authentication type is not set!");
         }
 
-        if (!authentication.toLowerCase().equals(Authentication.Type.LDAP.getName().toLowerCase())
-                && !authentication.toLowerCase().equals(Authentication.Type.ACTIVE_DIRECTORY.getName().toLowerCase())) {
+        if (!authentication.equalsIgnoreCase(Authentication.Type.LDAP.getName())
+                && !authentication.equalsIgnoreCase(Authentication.Type.ACTIVE_DIRECTORY.getName())) {
             throw new IllegalStateException("LDAP sync is not possible for authentication type '" + authentication
                 + "'!");
         }

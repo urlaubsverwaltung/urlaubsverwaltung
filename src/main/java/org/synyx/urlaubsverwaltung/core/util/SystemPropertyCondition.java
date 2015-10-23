@@ -37,6 +37,6 @@ public class SystemPropertyCondition implements Condition {
 
         String property = System.getProperties().getProperty(propertyKey);
 
-        return property != null && property.toLowerCase().equals(propertyValue.toLowerCase());
+        return property != null && property.equalsIgnoreCase(propertyValue);
     }
 }

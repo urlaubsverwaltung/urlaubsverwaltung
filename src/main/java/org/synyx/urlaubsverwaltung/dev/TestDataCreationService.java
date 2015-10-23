@@ -90,7 +90,7 @@ public class TestDataCreationService {
 
         String environment = System.getProperties().getProperty(Environment.PROPERTY_KEY);
 
-        if (environment == null || !environment.toLowerCase().equals(Environment.Type.DEV.getName())) {
+        if (environment == null || !environment.equalsIgnoreCase(Environment.Type.DEV.getName())) {
             throw new IllegalStateException("Test data may only created in DEV environment!");
         }
 
