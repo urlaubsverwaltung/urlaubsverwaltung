@@ -3,11 +3,9 @@ package org.synyx.urlaubsverwaltung.security;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import org.springframework.ldap.odm.annotations.Attribute;
-import org.springframework.ldap.odm.annotations.Entry;
-import org.springframework.ldap.odm.annotations.Id;
+import org.springframework.util.StringUtils;
 
-import javax.naming.Name;
+import java.util.Optional;
 
 
 /**
@@ -15,31 +13,33 @@ import javax.naming.Name;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-@Entry(objectClasses = { "User" })
 public final class LdapUser {
 
-    @Id
-    private Name dn;
-
-    // TODO: Attribute names should be configurable!
-    @Attribute(name = "uid")
-//    @Attribute(name = "cn")
     private String username;
-
-    @Attribute(name = "givenName")
     private String firstName;
-
-    @Attribute(name = "sn")
     private String lastName;
-
-    @Attribute(name = "mail")
     private String email;
 
-    public Name getDn() {
+    public LdapUser(String username, Optional<String> firstName, Optional<String> lastName, Optional<String> email) {
 
-        return dn;
+        if (!StringUtils.hasText(username)) {
+            throw new IllegalArgumentException("Username must be given.");
+        }
+
+        this.username = username;
+
+        if (firstName.isPresent()) {
+            this.firstName = firstName.get();
+        }
+
+        if (lastName.isPresent()) {
+            this.lastName = lastName.get();
+        }
+
+        if (email.isPresent()) {
+            this.email = email.get();
+        }
     }
-
 
     public String getUsername() {
 
@@ -47,21 +47,21 @@ public final class LdapUser {
     }
 
 
-    public String getFirstName() {
+    public Optional<String> getFirstName() {
 
-        return firstName;
+        return Optional.ofNullable(firstName);
     }
 
 
-    public String getLastName() {
+    public Optional<String> getLastName() {
 
-        return lastName;
+        return Optional.ofNullable(lastName);
     }
 
 
-    public String getEmail() {
+    public Optional<String> getEmail() {
 
-        return email;
+        return Optional.ofNullable(email);
     }
 
 

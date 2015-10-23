@@ -71,20 +71,20 @@ public class LdapSyncService {
 
         List<LdapUser> users = ldapUserService.getLdapUsers();
 
-        LOG.info("Found " + users.size() + " users");
+        LOG.info("Found " + users.size() + " user(s)");
 
         for (LdapUser user : users) {
             String username = user.getUsername();
-            Optional<String> firstName = Optional.ofNullable(user.getFirstName());
-            Optional<String> lastName = Optional.ofNullable(user.getLastName());
-            Optional<String> mailAddress = Optional.ofNullable(user.getEmail());
+            Optional<String> firstName = user.getFirstName();
+            Optional<String> lastName = user.getLastName();
+            Optional<String> email = user.getEmail();
 
             Optional<Person> optionalPerson = personService.getPersonByLogin(username);
 
             if (optionalPerson.isPresent()) {
-                syncPerson(optionalPerson.get(), firstName, lastName, mailAddress);
+                syncPerson(optionalPerson.get(), firstName, lastName, email);
             } else {
-                createPerson(username, firstName, lastName, mailAddress);
+                createPerson(username, firstName, lastName, email);
             }
         }
 

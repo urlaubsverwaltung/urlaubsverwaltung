@@ -1,10 +1,18 @@
 package org.synyx.urlaubsverwaltung.security;
 
+import org.apache.log4j.Logger;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.context.annotation.Conditional;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+import org.springframework.stereotype.Service;
 
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
@@ -20,10 +28,15 @@ import java.util.Optional;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
+@Service("userDetailsService")
+@Conditional(DefaultAuthenticationCondition.class)
 public class SimpleUserDetailsService implements UserDetailsService {
+
+    private static final Logger LOG = Logger.getLogger(SimpleUserDetailsService.class);
 
     private final PersonService personService;
 
+    @Autowired
     public SimpleUserDetailsService(PersonService personService) {
 
         this.personService = personService;
@@ -42,9 +55,10 @@ public class SimpleUserDetailsService implements UserDetailsService {
 
             Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 
-            for (final Role role : person.getPermissions()) {
-                grantedAuthorities.add(role::name);
-            }
+            Collection<Role> permissions = person.getPermissions();
+            permissions.stream().forEach(role -> grantedAuthorities.add(role::name));
+
+            LOG.info("User '" + username + "' has signed in with roles: " + permissions);
 
             return new User(person.getLoginName(), person.getPassword(), grantedAuthorities);
         } else {

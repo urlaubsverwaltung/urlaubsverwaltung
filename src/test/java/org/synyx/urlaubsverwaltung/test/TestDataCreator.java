@@ -10,10 +10,13 @@ import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.person.Role;
 
 import java.lang.reflect.Field;
 
 import java.math.BigDecimal;
+
+import java.util.Collections;
 
 
 /**
@@ -30,7 +33,7 @@ public final class TestDataCreator {
 
     public static Person createPerson(Integer id, String username) throws IllegalAccessException {
 
-        Person person = createPerson(username);
+        Person person = TestDataCreator.createPerson(username);
 
         Field dateField = ReflectionUtils.findField(Person.class, "id");
         dateField.setAccessible(true);
@@ -42,13 +45,22 @@ public final class TestDataCreator {
 
     public static Person createPerson(String username) {
 
-        return new Person(username, "Muster", "Marlene", username + "@test.de");
+        return TestDataCreator.createPerson(username, "Muster", "Marlene", username + "@test.de");
     }
 
 
     public static Person createPerson() {
 
-        return new Person("muster", "Muster", "Marlene", "muster@test.de");
+        return TestDataCreator.createPerson("muster", "Muster", "Marlene", "muster@test.de");
+    }
+
+
+    private static Person createPerson(String username, String firstName, String lastName, String email) {
+
+        Person person = new Person(username, lastName, firstName, email);
+        person.setPermissions(Collections.singletonList(Role.USER));
+
+        return person;
     }
 
 
