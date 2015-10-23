@@ -65,25 +65,16 @@ Die folgende Anleitung beschreibt die Installation der Urlaubsverwaltung auf ein
 
 * Apache Tomcat Version 7
 * JDK 8
-* Maven 3.3
 * MySQL Datenbank
 
 #### Download
 
-Die Anwendung steht auf Github als ZIP oder Tarball zum Download zur Verfügung. Am Besten [hier](https://github.com/synyx/urlaubsverwaltung/releases) die aktuellste Version auswählen und downloaden.
-
-#### Erstellen der WAR-Datei
-
-Nach dem Entpacken der Zip oder Tarball Datei kann die [WAR-Datei](http://de.wikipedia.org/wiki/Web_Application_Archive) mithilfe von [Maven](http://maven.apache.org/) erstellt werden.
-Dies erfolgt durch Ausführen folgenden Befehls im entpackten Root-Verzeichnis der Anwendung:
-
-<pre>mvn clean install</pre>
-
-Die erstellte WAR-Datei `urlaubsverwaltung-X.X.X-SNAPSHOT.war` findet man im neu erstellten `target/` Verzeichnis des Projekts.
+Die Anwendung steht auf Github bereits als deploybare WAR-Datei zum Download zur Verfügung.
+Einfach die WAR-Datei der aktuellsten Version [hier](https://github.com/synyx/urlaubsverwaltung/releases/latest) downloaden.
 
 #### Deployment unter Tomcat
 
-Die erstellte WAR-Datei kann nun im installierten Tomcat Server deployed werden.
+Die heruntergeladene WAR-Datei kann nun im installierten Tomcat Server deployed werden.
 Dazu kopiert man die WAR-Datei in das Tomcat Verzeichnis `/webapps` und benennt sie in `urlaubsverwaltung.war` um ([weiterführende Informationen zum Tomcat Deployment](http://tomcat.apache.org/tomcat-6.0-doc/deployer-howto.html)).
 
 #### Starten der Anwendung
