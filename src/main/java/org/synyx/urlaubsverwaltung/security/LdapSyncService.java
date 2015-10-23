@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.context.annotation.Conditional;
 
+import org.springframework.scheduling.annotation.Scheduled;
+
 import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -52,7 +54,9 @@ public class LdapSyncService {
         this.mailService = mailService;
     }
 
+    // Sync LDAP/AD data during startup and every night at 01:00 am
     @PostConstruct
+    @Scheduled(cron = "0 0 1 * * ?")
     public void sync() {
 
         LOG.info("STARTING LDAP SYNC --------------------------------------------------------------------------------");
