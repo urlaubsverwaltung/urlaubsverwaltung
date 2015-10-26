@@ -150,7 +150,7 @@ Die Anwendung besitzt im Verzeichnis `src/main/resources` jeweils eine `.propert
 
 Diese beinhalten gewisse Grundeinstellungen und Standardwerte. Diese allein reichen für die Produktivnahme der Anwendung allerdings noch nicht aus.
 Spezifische Konfigurationen wie z.B. die Datenbank Einstellungen müssen durch eine eigene Properties-Datei hinterlegt werden.
-Dazu kann die Beispieldatei im Root-Verzeichnis der Anwendung `urlaubsverwaltung.properties` als Vorlage verwendet werden, um die gewünschten Einstellungen zu überschreiben.
+Welche Konfigurationen überschrieben werden können/müssen, sind in der standardmäßigen `application.properties` des Projekts einsehbar.
 
 Damit die eigene Konfigurationsdatei benutzt wird, gibt es zwei Möglichkeiten:
 
