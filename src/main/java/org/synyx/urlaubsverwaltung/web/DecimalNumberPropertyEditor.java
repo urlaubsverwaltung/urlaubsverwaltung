@@ -38,9 +38,9 @@ public class DecimalNumberPropertyEditor extends PropertyEditorSupport {
         try {
             BigDecimal number = (BigDecimal) this.getValue();
             NumberFormat numberFormat = NumberFormat.getNumberInstance(locale);
-            numberFormat.setMaximumFractionDigits(1);
+            numberFormat.setMaximumFractionDigits(2);
 
-            return numberFormat.format(number.setScale(1, RoundingMode.HALF_UP).doubleValue());
+            return numberFormat.format(number.setScale(2, RoundingMode.HALF_UP).doubleValue());
         } catch (ClassCastException ex) {
             throw new IllegalArgumentException("The provided value is of invalid type", ex);
         }
@@ -58,7 +58,7 @@ public class DecimalNumberPropertyEditor extends PropertyEditorSupport {
 
             String normalizedNumberToParse = text.replace(sep, '.');
 
-            this.setValue(new BigDecimal(normalizedNumberToParse).setScale(1, RoundingMode.HALF_UP));
+            this.setValue(new BigDecimal(normalizedNumberToParse).setScale(2, RoundingMode.HALF_UP));
         }
     }
 }
