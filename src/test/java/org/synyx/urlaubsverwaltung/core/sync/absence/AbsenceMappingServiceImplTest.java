@@ -32,14 +32,11 @@ public class AbsenceMappingServiceImplTest {
 
 
     @Test
-    public void shouldCreateAbsenceMappingByApplicationForLeave() throws Exception {
-
-        Application application = Mockito.mock(Application.class);
-        Mockito.when(application.getId()).thenReturn(42);
+    public void shouldCreateAbsenceMappingForVacation() throws Exception {
 
         String eventId = "eventId";
 
-        AbsenceMapping result = sut.create(application, eventId);
+        AbsenceMapping result = sut.create(42, AbsenceType.VACATION, eventId);
 
         assertThat(result.getAbsenceId(), is(42));
         assertThat(result.getAbsenceType(), is(AbsenceType.VACATION));
@@ -49,14 +46,11 @@ public class AbsenceMappingServiceImplTest {
 
 
     @Test
-    public void shouldCreateAbsenceMappingBySicknote() throws Exception {
-
-        SickNote sicknote = Mockito.mock(SickNote.class);
-        Mockito.when(sicknote.getId()).thenReturn(21);
+    public void shouldCreateAbsenceMappingForSickDay() throws Exception {
 
         String eventId = "eventId";
 
-        AbsenceMapping result = sut.create(sicknote, eventId);
+        AbsenceMapping result = sut.create(21, AbsenceType.SICKNOTE, eventId);
 
         assertThat(result.getAbsenceId(), is(21));
         assertThat(result.getAbsenceType(), is(AbsenceType.SICKNOTE));
@@ -78,7 +72,7 @@ public class AbsenceMappingServiceImplTest {
     @Test
     public void shouldCallAbsenceMappingDaoFind() {
 
-        Optional<AbsenceMapping> absenceMapping = sut.getAbsenceByIdAndType(21, AbsenceType.SICKNOTE);
+        sut.getAbsenceByIdAndType(21, AbsenceType.SICKNOTE);
 
         Mockito.verify(absenceMappingDAO).findAbsenceMappingByAbsenceIdAndAbsenceType(21, AbsenceType.SICKNOTE);
     }

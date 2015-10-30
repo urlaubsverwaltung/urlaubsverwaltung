@@ -72,7 +72,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
                     sickNote.getPeriod(), EventType.SICKNOTE, timeConfiguration));
 
         if (eventId.isPresent()) {
-            absenceMappingService.create(sickNote, eventId.get());
+            absenceMappingService.create(sickNote.getId(), AbsenceType.SICKNOTE, eventId.get());
         }
 
         return sickNote;
@@ -128,7 +128,7 @@ public class SickNoteInteractionServiceImpl implements SickNoteInteractionServic
             calendarSyncService.update(new Absence(application.getPerson(), application.getPeriod(),
                     EventType.ALLOWED_APPLICATION, new AbsenceTimeConfiguration(calendarSettings)), eventId);
             absenceMappingService.delete(absenceMapping.get());
-            absenceMappingService.create(application, eventId);
+            absenceMappingService.create(application.getId(), AbsenceType.VACATION, eventId);
         }
 
         return sickNote;

@@ -108,7 +108,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
                     application.getPeriod(), EventType.WAITING_APPLICATION, timeConfiguration));
 
         if (eventId.isPresent()) {
-            absenceMappingService.create(application, eventId.get());
+            absenceMappingService.create(application.getId(), AbsenceType.VACATION, eventId.get());
         }
 
         return application;

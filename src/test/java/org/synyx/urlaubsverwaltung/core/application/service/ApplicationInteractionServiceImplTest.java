@@ -123,7 +123,7 @@ public class ApplicationInteractionServiceImplTest {
         service.apply(applicationForLeave, applier, comment);
 
         Mockito.verify(calendarSyncService).addAbsence(any(Absence.class));
-        Mockito.verify(absenceMappingService).create(eq(applicationForLeave), anyString());
+        Mockito.verify(absenceMappingService).create(anyInt(), eq(AbsenceType.VACATION), anyString());
     }
 
 

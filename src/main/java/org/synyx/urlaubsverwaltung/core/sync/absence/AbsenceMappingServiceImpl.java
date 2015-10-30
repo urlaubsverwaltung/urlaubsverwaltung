@@ -4,9 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
-import org.synyx.urlaubsverwaltung.core.application.domain.Application;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
-
 import java.util.Optional;
 
 
@@ -25,19 +22,9 @@ public class AbsenceMappingServiceImpl implements AbsenceMappingService {
     }
 
     @Override
-    public AbsenceMapping create(Application application, String eventId) {
+    public AbsenceMapping create(Integer id, AbsenceType absenceType, String eventId) {
 
-        AbsenceMapping absenceMapping = new AbsenceMapping(application.getId(), AbsenceType.VACATION, eventId);
-        absenceMappingDAO.save(absenceMapping);
-
-        return absenceMapping;
-    }
-
-
-    @Override
-    public AbsenceMapping create(SickNote sickNote, String eventId) {
-
-        AbsenceMapping absenceMapping = new AbsenceMapping(sickNote.getId(), AbsenceType.SICKNOTE, eventId);
+        AbsenceMapping absenceMapping = new AbsenceMapping(id, absenceType, eventId);
         absenceMappingDAO.save(absenceMapping);
 
         return absenceMapping;

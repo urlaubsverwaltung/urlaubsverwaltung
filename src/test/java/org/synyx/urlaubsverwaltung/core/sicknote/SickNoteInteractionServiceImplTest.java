@@ -69,6 +69,7 @@ public class SickNoteInteractionServiceImplTest {
                 applicationInteractionService, calendarSyncService, absenceMappingService, settingsService);
 
         sickNote = new SickNote();
+        sickNote.setId(42);
         sickNote.setStatus(SickNoteStatus.ACTIVE);
         sickNote.setStartDate(DateMidnight.now());
         sickNote.setEndDate(DateMidnight.now());
@@ -97,10 +98,11 @@ public class SickNoteInteractionServiceImplTest {
     @Test
     public void ensureCreatingSickNoteAddsEventToCalendar() throws Exception {
 
-        SickNote createdSickNote = sickNoteInteractionService.create(sickNote, person);
+        sickNoteInteractionService.create(sickNote, person);
 
         Mockito.verify(calendarSyncService).addAbsence(Mockito.any(Absence.class));
-        Mockito.verify(absenceMappingService).create(eq(createdSickNote), Mockito.anyString());
+        Mockito.verify(absenceMappingService)
+            .create(Mockito.eq(sickNote.getId()), eq(AbsenceType.SICKNOTE), Mockito.anyString());
     }
 
 
@@ -202,6 +204,7 @@ public class SickNoteInteractionServiceImplTest {
         Mockito.verify(absenceMappingService).getAbsenceByIdAndType(Mockito.anyInt(), Mockito.eq(AbsenceType.SICKNOTE));
         Mockito.verify(calendarSyncService).update(Mockito.any(Absence.class), Mockito.anyString());
         Mockito.verify(absenceMappingService).delete(Mockito.eq(absenceMapping));
-        Mockito.verify(absenceMappingService).create(Mockito.eq(applicationForLeave), Mockito.anyString());
+        Mockito.verify(absenceMappingService)
+            .create(Mockito.anyInt(), Mockito.eq(AbsenceType.VACATION), Mockito.anyString());
     }
 }

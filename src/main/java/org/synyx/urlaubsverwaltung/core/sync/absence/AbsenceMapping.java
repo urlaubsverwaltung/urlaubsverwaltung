@@ -9,7 +9,7 @@ import javax.persistence.Enumerated;
 
 
 /**
- * Mapping object between absence (application or sicknote) and sync calendar event.
+ * Mapping object between absence (application for leave or sick note) and sync calendar event.
  *
  * <p>Daniel Hammann - <hammann@synyx.de>.</p>
  */

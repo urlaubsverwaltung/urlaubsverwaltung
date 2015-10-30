@@ -1,8 +1,5 @@
 package org.synyx.urlaubsverwaltung.core.sync.absence;
 
-import org.synyx.urlaubsverwaltung.core.application.domain.Application;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
-
 import java.util.Optional;
 
 
@@ -14,39 +11,29 @@ import java.util.Optional;
 public interface AbsenceMappingService {
 
     /**
-     * Creates mapping between application for leave and calendar sync event.
+     * Creates mapping between absence and calendar sync event.
      *
-     * @param  application
-     * @param  eventId
-     *
-     * @return  created absence mapping
-     */
-    AbsenceMapping create(Application application, String eventId);
-
-
-    /**
-     * Creates mapping between sick note and calendar sync event.
-     *
-     * @param  sickNote
-     * @param  eventId
+     * @param  id  of the absence, may be either an application for leave or a sick note
+     * @param  absenceType  describes the reason of the absence, either vacation or sick day
+     * @param  eventId  identifies the calendar event
      *
      * @return  created absence mapping
      */
-    AbsenceMapping create(SickNote sickNote, String eventId);
+    AbsenceMapping create(Integer id, AbsenceType absenceType, String eventId);
 
 
     /**
      * Deletes an absence mapping.
      *
-     * @param  absenceMapping
+     * @param  absenceMapping  to be deleted
      */
     void delete(AbsenceMapping absenceMapping);
 
 
     /**
-     * Returns an absence mapping between application id or sicknote id and event.
+     * Returns an absence mapping between application id or sick note id and event.
      *
-     * @param  id  of application or id of sicknote
+     * @param  id  of application for leave or id of sick note
      * @param  absenceType  type ob absence
      *
      * @return  mapping between absence and event
