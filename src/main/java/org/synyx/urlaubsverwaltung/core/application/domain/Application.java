@@ -8,6 +8,7 @@ import org.joda.time.DateTime;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
+import org.synyx.urlaubsverwaltung.core.period.Period;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.math.BigDecimal;
@@ -460,5 +461,16 @@ public class Application extends AbstractPersistable<Integer> {
     public boolean hasStatus(ApplicationStatus status) {
 
         return getStatus() == status;
+    }
+
+
+    /**
+     * Return period of time of the application for leave.
+     *
+     * @return  period of time, never {@code null}
+     */
+    public Period getPeriod() {
+
+        return new Period(getStartDate(), getEndDate(), getDayLength());
     }
 }

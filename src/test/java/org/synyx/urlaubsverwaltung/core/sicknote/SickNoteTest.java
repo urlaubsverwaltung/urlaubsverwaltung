@@ -5,6 +5,9 @@ import org.joda.time.DateMidnight;
 import org.junit.Assert;
 import org.junit.Test;
 
+import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
+import org.synyx.urlaubsverwaltung.core.period.Period;
+
 import java.util.function.Consumer;
 
 
@@ -79,5 +82,61 @@ public class SickNoteTest {
         };
 
         assertActive.accept(SickNoteStatus.ACTIVE);
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfTryingToGetPeriodForSickNoteWithoutStartDate() {
+
+        SickNote sickNote = new SickNote();
+        sickNote.setStartDate(null);
+        sickNote.setEndDate(DateMidnight.now());
+        sickNote.setDayLength(DayLength.FULL);
+
+        sickNote.getPeriod();
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfTryingToGetPeriodForSickNoteWithoutEndDate() {
+
+        SickNote sickNote = new SickNote();
+        sickNote.setStartDate(DateMidnight.now());
+        sickNote.setEndDate(null);
+        sickNote.setDayLength(DayLength.FULL);
+
+        sickNote.getPeriod();
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfTryingToGetPeriodForSickNoteWithoutDayLength() {
+
+        SickNote sickNote = new SickNote();
+        sickNote.setStartDate(DateMidnight.now());
+        sickNote.setEndDate(DateMidnight.now());
+        sickNote.setDayLength(null);
+
+        sickNote.getPeriod();
+    }
+
+
+    @Test
+    public void ensureGetPeriodReturnsCorrectPeriod() {
+
+        DateMidnight startDate = DateMidnight.now();
+        DateMidnight endDate = startDate.plusDays(2);
+
+        SickNote sickNote = new SickNote();
+        sickNote.setStartDate(startDate);
+        sickNote.setEndDate(endDate);
+        sickNote.setDayLength(DayLength.FULL);
+
+        Period period = sickNote.getPeriod();
+
+        Assert.assertNotNull("Period should not be null", period);
+        Assert.assertEquals("Wrong period start date", startDate, period.getStartDate());
+        Assert.assertEquals("Wrong period end date", endDate, period.getEndDate());
+        Assert.assertEquals("Wrong period day length", DayLength.FULL, period.getDayLength());
     }
 }

@@ -606,7 +606,8 @@ public class MailServiceIntegrationTest {
         application.setPerson(person);
         application.setStatus(ApplicationStatus.ALLOWED);
 
-        Absence absence = new Absence(application, new AbsenceTimeConfiguration(settings.getCalendarSettings()));
+        Absence absence = Mockito.mock(Absence.class);
+        Mockito.when(absence.getPerson()).thenReturn(person);
 
         mailService.sendCalendarSyncErrorNotification("Kalendername", absence, "Calendar sync failed");
 
@@ -659,7 +660,8 @@ public class MailServiceIntegrationTest {
         application.setPerson(person);
         application.setStatus(ApplicationStatus.ALLOWED);
 
-        Absence absence = new Absence(application, new AbsenceTimeConfiguration(settings.getCalendarSettings()));
+        Absence absence = Mockito.mock(Absence.class);
+        Mockito.when(absence.getPerson()).thenReturn(person);
 
         mailService.sendCalendarUpdateErrorNotification("Kalendername", absence, "eventId", "event update failed");
 

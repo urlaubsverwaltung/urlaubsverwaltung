@@ -22,6 +22,7 @@ import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceMappingService;
 import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceType;
+import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.util.Optional;
 
@@ -72,6 +73,7 @@ public class SickNoteInteractionServiceImplTest {
         sickNote.setStartDate(DateMidnight.now());
         sickNote.setEndDate(DateMidnight.now());
         sickNote.setDayLength(DayLength.FULL);
+        sickNote.setPerson(TestDataCreator.createPerson());
 
         person = new Person();
     }
@@ -161,6 +163,7 @@ public class SickNoteInteractionServiceImplTest {
         applicationForLeave.setEndDate(DateMidnight.now());
         applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
         applicationForLeave.setDayLength(DayLength.FULL);
+        applicationForLeave.setPerson(TestDataCreator.createPerson());
 
         SickNote convertedSickNote = sickNoteInteractionService.convert(sickNote, applicationForLeave, person);
 
@@ -188,6 +191,7 @@ public class SickNoteInteractionServiceImplTest {
         applicationForLeave.setEndDate(DateMidnight.now());
         applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
         applicationForLeave.setDayLength(DayLength.FULL);
+        applicationForLeave.setPerson(TestDataCreator.createPerson());
 
         AbsenceMapping absenceMapping = new AbsenceMapping();
         Mockito.when(absenceMappingService.getAbsenceByIdAndType(Mockito.anyInt(), Mockito.eq(AbsenceType.SICKNOTE)))

@@ -9,11 +9,15 @@ import org.junit.Test;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
+import org.synyx.urlaubsverwaltung.core.period.Period;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 
+import java.awt.*;
+
 import java.util.Date;
+import java.util.function.BiConsumer;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -44,53 +48,47 @@ public class AbsenceTest {
 
 
     @Test
-    public void ensureCanBeInstantiatedWithAnApplication() {
+    public void ensureCanBeInstantiatedWithCorrectProperties() {
 
         DateMidnight start = new DateMidnight(2015, 9, 21);
         DateMidnight end = new DateMidnight(2015, 9, 23);
 
-        Application application = new Application();
-        application.setStartDate(start);
-        application.setEndDate(end);
-        application.setPerson(person);
-        application.setDayLength(DayLength.FULL);
-        application.setStatus(ApplicationStatus.ALLOWED);
+        Period period = new Period(start, end, DayLength.FULL);
 
-        Absence absence = new Absence(application, timeConfiguration);
+        Absence absence = new Absence(person, period, EventType.WAITING_APPLICATION, timeConfiguration);
 
         Assert.assertNotNull("Start date must not be null", absence.getStartDate());
         Assert.assertNotNull("End date must not be null", absence.getEndDate());
         Assert.assertNotNull("Person must not be null", absence.getPerson());
+        Assert.assertNotNull("Event type must not be null", absence.getEventType());
 
         Assert.assertEquals("Wrong start date", start.toDate(), absence.getStartDate());
         Assert.assertEquals("Wrong end date", end.plusDays(1).toDate(), absence.getEndDate());
         Assert.assertEquals("Wrong person", person, absence.getPerson());
+        Assert.assertEquals("Wrong event type", EventType.WAITING_APPLICATION, absence.getEventType());
     }
 
 
     @Test
-    public void ensureCanBeInstantiatedWithAnApplicationConsideringDaylightSavingTime() {
+    public void ensureCanBeInstantiatedWithCorrectPropertiesConsideringDaylightSavingTime() {
 
         // Date where daylight saving time is relevant
         DateMidnight start = new DateMidnight(2015, 10, 23);
         DateMidnight end = new DateMidnight(2015, 10, 25);
 
-        Application application = new Application();
-        application.setStartDate(start);
-        application.setEndDate(end);
-        application.setPerson(person);
-        application.setDayLength(DayLength.FULL);
-        application.setStatus(ApplicationStatus.ALLOWED);
+        Period period = new Period(start, end, DayLength.FULL);
 
-        Absence absence = new Absence(application, timeConfiguration);
+        Absence absence = new Absence(person, period, EventType.ALLOWED_APPLICATION, timeConfiguration);
 
         Assert.assertNotNull("Start date must not be null", absence.getStartDate());
         Assert.assertNotNull("End date must not be null", absence.getEndDate());
         Assert.assertNotNull("Person must not be null", absence.getPerson());
+        Assert.assertNotNull("Event type must not be null", absence.getEventType());
 
         Assert.assertEquals("Wrong start date", start.toDate(), absence.getStartDate());
         Assert.assertEquals("Wrong end date", end.plusDays(1).toDate(), absence.getEndDate());
         Assert.assertEquals("Wrong person", person, absence.getPerson());
+        Assert.assertEquals("Wrong event type", EventType.ALLOWED_APPLICATION, absence.getEventType());
     }
 
 
@@ -102,14 +100,9 @@ public class AbsenceTest {
         Date start = today.toDateTime().withHourOfDay(8).toDate();
         Date end = today.toDateTime().withHourOfDay(12).toDate();
 
-        Application application = new Application();
-        application.setDayLength(DayLength.MORNING);
-        application.setPerson(person);
-        application.setStartDate(today);
-        application.setEndDate(today);
-        application.setStatus(ApplicationStatus.ALLOWED);
+        Period period = new Period(today, today, DayLength.MORNING);
 
-        Absence absence = new Absence(application, timeConfiguration);
+        Absence absence = new Absence(person, period, EventType.ALLOWED_APPLICATION, timeConfiguration);
 
         Assert.assertEquals("Should start at 8 am", start, absence.getStartDate());
         Assert.assertEquals("Should end at 12 pm", end, absence.getEndDate());
@@ -124,14 +117,9 @@ public class AbsenceTest {
         Date start = today.toDateTime().withHourOfDay(12).toDate();
         Date end = today.toDateTime().withHourOfDay(16).toDate();
 
-        Application application = new Application();
-        application.setDayLength(DayLength.NOON);
-        application.setPerson(person);
-        application.setStartDate(today);
-        application.setEndDate(today);
-        application.setStatus(ApplicationStatus.ALLOWED);
+        Period period = new Period(today, today, DayLength.NOON);
 
-        Absence absence = new Absence(application, timeConfiguration);
+        Absence absence = new Absence(person, period, EventType.ALLOWED_APPLICATION, timeConfiguration);
 
         Assert.assertEquals("Should start at 12 pm", start, absence.getStartDate());
         Assert.assertEquals("Should end at 4 pm", end, absence.getEndDate());
@@ -139,391 +127,94 @@ public class AbsenceTest {
 
 
     @Test
-    public void ensureIsAllDayIfApplicationIsFullDay() {
+    public void ensureIsAllDayForFullDayPeriod() {
 
         DateMidnight start = DateMidnight.now();
         DateMidnight end = start.plusDays(2);
 
-        Application application = new Application();
-        application.setStartDate(start);
-        application.setEndDate(end);
-        application.setDayLength(DayLength.FULL);
-        application.setPerson(person);
-        application.setStatus(ApplicationStatus.ALLOWED);
+        Period period = new Period(start, end, DayLength.FULL);
 
-        Absence absence = new Absence(application, timeConfiguration);
+        Absence absence = new Absence(person, period, EventType.ALLOWED_APPLICATION, timeConfiguration);
 
         Assert.assertTrue("Should be all day", absence.isAllDay());
     }
 
 
     @Test
-    public void ensureIsNotAllDayIfApplicationIsInTheMorning() {
+    public void ensureIsNotAllDayForMorningPeriod() {
 
-        DateMidnight start = DateMidnight.now();
-        DateMidnight end = start.plusDays(2);
+        DateMidnight today = DateMidnight.now();
 
-        Application application = new Application();
-        application.setStartDate(start);
-        application.setEndDate(end);
-        application.setDayLength(DayLength.MORNING);
-        application.setPerson(person);
-        application.setStatus(ApplicationStatus.ALLOWED);
+        Period period = new Period(today, today, DayLength.MORNING);
 
-        Absence absence = new Absence(application, timeConfiguration);
+        Absence absence = new Absence(person, period, EventType.ALLOWED_APPLICATION, timeConfiguration);
 
         Assert.assertFalse("Should be not all day", absence.isAllDay());
     }
 
 
     @Test
-    public void ensureIsNotAllDayIfApplicationIsAfternoons() {
+    public void ensureIsNotAllDayForNoonPeriod() {
 
-        DateMidnight start = DateMidnight.now();
-        DateMidnight end = start.plusDays(2);
+        DateMidnight today = DateMidnight.now();
 
-        Application application = new Application();
-        application.setStartDate(start);
-        application.setEndDate(end);
-        application.setDayLength(DayLength.NOON);
-        application.setPerson(person);
-        application.setStatus(ApplicationStatus.ALLOWED);
+        Period period = new Period(today, today, DayLength.NOON);
 
-        Absence absence = new Absence(application, timeConfiguration);
+        Absence absence = new Absence(person, period, EventType.ALLOWED_APPLICATION, timeConfiguration);
 
         Assert.assertFalse("Should be not all day", absence.isAllDay());
     }
 
 
-    @Test
-    public void ensureCanBeInstantiatedWithASickNote() {
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsOnNullPeriod() {
 
-        DateMidnight start = new DateMidnight(2015, 9, 21);
-        DateMidnight end = new DateMidnight(2015, 9, 23);
-
-        SickNote sickNote = new SickNote();
-        sickNote.setStartDate(start);
-        sickNote.setEndDate(end);
-        sickNote.setPerson(person);
-        sickNote.setDayLength(DayLength.FULL);
-
-        Absence absence = new Absence(sickNote, timeConfiguration);
-
-        Assert.assertNotNull("Start date must not be null", absence.getStartDate());
-        Assert.assertNotNull("End date must not be null", absence.getEndDate());
-        Assert.assertNotNull("Person must not be null", absence.getPerson());
-
-        Assert.assertEquals("Wrong start date", start.toDate(), absence.getStartDate());
-        Assert.assertEquals("Wrong end date", end.plusDays(1).toDate(), absence.getEndDate());
-        Assert.assertEquals("Wrong person", person, absence.getPerson());
-        Assert.assertTrue("Should be all day", absence.isAllDay());
-    }
-
-
-    @Test
-    public void ensureCanBeInstantiatedWithASickNoteConsideringDaylightSavingTime() {
-
-        DateMidnight start = new DateMidnight(2015, 10, 23);
-        DateMidnight end = new DateMidnight(2015, 10, 25);
-
-        SickNote sickNote = new SickNote();
-        sickNote.setStartDate(start);
-        sickNote.setEndDate(end);
-        sickNote.setPerson(person);
-        sickNote.setDayLength(DayLength.FULL);
-
-        Absence absence = new Absence(sickNote, timeConfiguration);
-
-        Assert.assertNotNull("Start date must not be null", absence.getStartDate());
-        Assert.assertNotNull("End date must not be null", absence.getEndDate());
-        Assert.assertNotNull("Person must not be null", absence.getPerson());
-
-        Assert.assertEquals("Wrong start date", start.toDate(), absence.getStartDate());
-        Assert.assertEquals("Wrong end date", end.plusDays(1).toDate(), absence.getEndDate());
-        Assert.assertEquals("Wrong person", person, absence.getPerson());
-        Assert.assertTrue("Should be all day", absence.isAllDay());
-    }
-
-
-    @Test
-    public void ensureIsAllDayIfSickNoteIsFullDay() {
-
-        DateMidnight start = DateMidnight.now();
-        DateMidnight end = start.plusDays(2);
-
-        SickNote sickNote = new SickNote();
-        sickNote.setStartDate(start);
-        sickNote.setEndDate(end);
-        sickNote.setPerson(person);
-        sickNote.setDayLength(DayLength.FULL);
-
-        Absence absence = new Absence(sickNote, timeConfiguration);
-
-        Assert.assertTrue("Should be all day", absence.isAllDay());
-    }
-
-
-    @Test
-    public void ensureIsNotAllDayIfSickNoteIsInTheMorning() {
-
-        DateMidnight today = DateMidnight.now();
-
-        SickNote sickNote = new SickNote();
-        sickNote.setStartDate(today);
-        sickNote.setEndDate(today);
-        sickNote.setPerson(person);
-        sickNote.setDayLength(DayLength.MORNING);
-
-        Absence absence = new Absence(sickNote, timeConfiguration);
-
-        Assert.assertFalse("Should be not all day", absence.isAllDay());
-    }
-
-
-    @Test
-    public void ensureIsNotAllDayIfSickNoteIsAfternoons() {
-
-        DateMidnight today = DateMidnight.now();
-
-        SickNote sickNote = new SickNote();
-        sickNote.setStartDate(today);
-        sickNote.setEndDate(today);
-        sickNote.setPerson(person);
-        sickNote.setDayLength(DayLength.NOON);
-
-        Absence absence = new Absence(sickNote, timeConfiguration);
-
-        Assert.assertFalse("Should be not all day", absence.isAllDay());
-    }
-
-
-    @Test
-    public void ensureCorrectTimeForMorningAbsenceDueToSickNote() {
-
-        DateMidnight today = DateMidnight.now();
-
-        Date start = today.toDateTime().withHourOfDay(8).toDate();
-        Date end = today.toDateTime().withHourOfDay(12).toDate();
-
-        SickNote sickNote = new SickNote();
-        sickNote.setStartDate(today);
-        sickNote.setEndDate(today);
-        sickNote.setPerson(person);
-        sickNote.setDayLength(DayLength.MORNING);
-
-        Absence absence = new Absence(sickNote, timeConfiguration);
-
-        Assert.assertEquals("Should start at 8 am", start, absence.getStartDate());
-        Assert.assertEquals("Should end at 12 pm", end, absence.getEndDate());
-    }
-
-
-    @Test
-    public void ensureCorrectTimeForNoonAbsenceDueToSickNote() {
-
-        DateMidnight today = DateMidnight.now();
-
-        Date start = today.toDateTime().withHourOfDay(12).toDate();
-        Date end = today.toDateTime().withHourOfDay(16).toDate();
-
-        SickNote sickNote = new SickNote();
-        sickNote.setStartDate(today);
-        sickNote.setEndDate(today);
-        sickNote.setPerson(person);
-        sickNote.setDayLength(DayLength.NOON);
-
-        Absence absence = new Absence(sickNote, timeConfiguration);
-
-        Assert.assertEquals("Should start at 12 pm", start, absence.getStartDate());
-        Assert.assertEquals("Should end at 4 pm", end, absence.getEndDate());
+        new Absence(person, null, EventType.ALLOWED_APPLICATION, timeConfiguration);
     }
 
 
     @Test(expected = IllegalArgumentException.class)
-    public void ensureExceptionOnNonSetDayLength() {
+    public void ensureThrowsOnNullPerson() {
 
-        DateMidnight today = DateMidnight.now();
+        Period period = new Period(DateMidnight.now(), DateMidnight.now(), DayLength.FULL);
 
-        Application application = new Application();
-        application.setPerson(person);
-        application.setStartDate(today);
-        application.setEndDate(today);
-        application.setStatus(ApplicationStatus.ALLOWED);
-
-        new Absence(application, timeConfiguration);
+        new Absence(null, period, EventType.ALLOWED_APPLICATION, timeConfiguration);
     }
 
 
     @Test(expected = IllegalArgumentException.class)
-    public void ensureExceptionOnZeroDayLength() {
+    public void ensureThrowsOnNullEventType() {
 
-        DateMidnight today = DateMidnight.now();
+        Period period = new Period(DateMidnight.now(), DateMidnight.now(), DayLength.FULL);
 
-        Application application = new Application();
-        application.setPerson(person);
-        application.setStartDate(today);
-        application.setEndDate(today);
-        application.setStatus(ApplicationStatus.ALLOWED);
-
-        application.setDayLength(DayLength.ZERO);
-
-        new Absence(application, timeConfiguration);
+        new Absence(person, period, null, timeConfiguration);
     }
 
 
     @Test(expected = IllegalArgumentException.class)
-    public void ensureExceptionOnNonSetApplicationStartDate() {
+    public void ensureThrowsOnNullConfiguration() {
 
-        DateMidnight today = DateMidnight.now();
+        Period period = new Period(DateMidnight.now(), DateMidnight.now(), DayLength.FULL);
 
-        Application application = new Application();
-        application.setPerson(person);
-        application.setEndDate(today);
-        application.setDayLength(DayLength.FULL);
-        application.setStatus(ApplicationStatus.ALLOWED);
-
-        new Absence(application, timeConfiguration);
-    }
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureExceptionOnNonSetApplicationEndDate() {
-
-        DateMidnight today = DateMidnight.now();
-
-        Application application = new Application();
-        application.setPerson(person);
-        application.setStartDate(today);
-        application.setDayLength(DayLength.FULL);
-        application.setStatus(ApplicationStatus.ALLOWED);
-
-        new Absence(application, timeConfiguration);
-    }
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureExceptionOnNonSetSickNoteDayLength() {
-
-        DateMidnight today = DateMidnight.now();
-
-        SickNote sickNote = new SickNote();
-        sickNote.setStartDate(today);
-        sickNote.setEndDate(today);
-        sickNote.setPerson(person);
-
-        new Absence(sickNote, timeConfiguration);
-    }
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureExceptionOnSickNoteZeroDayLength() {
-
-        DateMidnight today = DateMidnight.now();
-
-        SickNote sickNote = new SickNote();
-        sickNote.setStartDate(today);
-        sickNote.setEndDate(today);
-        sickNote.setPerson(person);
-        sickNote.setDayLength(DayLength.ZERO);
-
-        new Absence(sickNote, timeConfiguration);
-    }
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureExceptionOnNonSetSickNoteStartDate() {
-
-        DateMidnight today = DateMidnight.now();
-
-        SickNote sickNote = new SickNote();
-        sickNote.setEndDate(today);
-        sickNote.setPerson(person);
-
-        new Absence(sickNote, timeConfiguration);
-    }
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureExceptionOnNonSetSickNoteEndDate() {
-
-        DateMidnight today = DateMidnight.now();
-
-        SickNote sickNote = new SickNote();
-        sickNote.setStartDate(today);
-        sickNote.setPerson(person);
-
-        new Absence(sickNote, timeConfiguration);
+        new Absence(person, period, EventType.ALLOWED_APPLICATION, null);
     }
 
 
     @Test
-    public void ensureThatEventTypeIsSetForWaitingApplication() {
+    public void ensureCorrectEventSubject() {
 
         DateMidnight today = DateMidnight.now();
+        Period period = new Period(today, today, DayLength.FULL);
 
-        Application application = new Application();
-        application.setPerson(person);
-        application.setStartDate(today);
-        application.setEndDate(today);
-        application.setDayLength(DayLength.FULL);
-        application.setStatus(ApplicationStatus.WAITING);
+        BiConsumer<EventType, String> assertCorrectEventSubject = (type, subject) -> {
+            Absence absence = new Absence(person, period, type, timeConfiguration);
 
-        Absence absence = new Absence(application, timeConfiguration);
+            assertThat(absence.getEventType(), is(type));
+            assertThat(absence.getEventSubject(), is(subject));
+        };
 
-        assertThat(absence.getEventType(), is(EventType.WAITING_APPLICATION));
-        assertThat(absence.getEventSubject(), is("Antrag auf Urlaub Marlene Muster"));
-    }
-
-
-    @Test
-    public void ensureThatEventTypeIsSetForAllowedApplication() {
-
-        DateMidnight today = DateMidnight.now();
-
-        Application application = new Application();
-        application.setPerson(person);
-        application.setStartDate(today);
-        application.setEndDate(today);
-        application.setDayLength(DayLength.FULL);
-        application.setStatus(ApplicationStatus.ALLOWED);
-
-        Absence absence = new Absence(application, timeConfiguration);
-
-        assertThat(absence.getEventType(), is(EventType.ALLOWED_APPLICATION));
-        assertThat(absence.getEventSubject(), is("Urlaub Marlene Muster"));
-    }
-
-
-    @Test
-    public void ensureThatEventTypeIsSetForSickNote() {
-
-        DateMidnight today = DateMidnight.now();
-
-        SickNote sickNote = new SickNote();
-        sickNote.setStartDate(today);
-        sickNote.setEndDate(today);
-        sickNote.setPerson(person);
-        sickNote.setDayLength(DayLength.FULL);
-
-        Absence absence = new Absence(sickNote, timeConfiguration);
-
-        assertThat(absence.getEventType(), is(EventType.SICKNOTE));
-        assertThat(absence.getEventSubject(), is("Marlene Muster krank"));
-    }
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureExceptionOnNonExpectedApplicationStatus() {
-
-        DateMidnight today = DateMidnight.now();
-
-        Application application = new Application();
-        application.setPerson(person);
-        application.setStartDate(today);
-        application.setEndDate(today);
-        application.setDayLength(DayLength.FULL);
-        application.setStatus(ApplicationStatus.CANCELLED);
-
-        new Absence(application, timeConfiguration);
+        assertCorrectEventSubject.accept(EventType.WAITING_APPLICATION, "Antrag auf Urlaub Marlene Muster");
+        assertCorrectEventSubject.accept(EventType.ALLOWED_APPLICATION, "Urlaub Marlene Muster");
+        assertCorrectEventSubject.accept(EventType.SICKNOTE, "Marlene Muster krank");
     }
 }

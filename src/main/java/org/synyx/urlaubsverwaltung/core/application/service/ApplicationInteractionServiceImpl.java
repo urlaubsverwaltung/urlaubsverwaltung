@@ -22,11 +22,7 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.sync.CalendarSyncService;
-import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
-import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceMapping;
-import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceMappingService;
-import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceTimeConfiguration;
-import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceType;
+import org.synyx.urlaubsverwaltung.core.sync.absence.*;
 
 import java.util.Optional;
 
@@ -108,7 +104,8 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
         AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
 
-        Optional<String> eventId = calendarSyncService.addAbsence(new Absence(application, timeConfiguration));
+        Optional<String> eventId = calendarSyncService.addAbsence(new Absence(application.getPerson(),
+                    application.getPeriod(), EventType.WAITING_APPLICATION, timeConfiguration));
 
         if (eventId.isPresent()) {
             absenceMappingService.create(application, eventId.get());
@@ -146,7 +143,8 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         if (absenceMapping.isPresent()) {
             CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
             AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
-            calendarSyncService.update(new Absence(application, timeConfiguration), absenceMapping.get().getEventId());
+            calendarSyncService.update(new Absence(application.getPerson(), application.getPeriod(),
+                    EventType.ALLOWED_APPLICATION, timeConfiguration), absenceMapping.get().getEventId());
         }
 
         return application;

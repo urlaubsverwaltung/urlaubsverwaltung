@@ -8,11 +8,8 @@ import org.joda.time.DateTimeZone;
 
 import org.springframework.util.Assert;
 
-import org.synyx.urlaubsverwaltung.core.application.domain.Application;
-import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
+import org.synyx.urlaubsverwaltung.core.period.Period;
 import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 
 import java.util.Date;
 
@@ -24,79 +21,42 @@ import java.util.Date;
  */
 public class Absence {
 
-    private Date startDate;
-
-    private Date endDate;
-
+    private final Date startDate;
+    private final Date endDate;
     private final Person person;
-
     private final EventType eventType;
-
     private boolean isAllDay;
 
-    public Absence(Application application, AbsenceTimeConfiguration absenceTimeConfiguration) {
+    public Absence(Person person, Period period, EventType eventType,
+        AbsenceTimeConfiguration absenceTimeConfiguration) {
 
-        Assert.notNull(application.getDayLength(), "No day length set for application");
-        Assert.notNull(application.getStartDate(), "No start date set for application");
-        Assert.notNull(application.getEndDate(), "No end date set for application");
-        Assert.isTrue(application.hasStatus(ApplicationStatus.ALLOWED)
-            || application.hasStatus(ApplicationStatus.WAITING),
-            "Non expected application status. Application must have status WAITING or ALLOWED.");
+        Assert.notNull(person, "Person must be given");
+        Assert.notNull(period, "Period must be given");
+        Assert.notNull(eventType, "Type of absence must be given");
+        Assert.notNull(absenceTimeConfiguration, "Time configuration must be given");
 
-        switch (application.getStatus()) {
-            case ALLOWED:
-                eventType = EventType.ALLOWED_APPLICATION;
-                break;
+        this.person = person;
+        this.eventType = eventType;
 
-            case WAITING:
-                eventType = EventType.WAITING_APPLICATION;
-                break;
+        long startDateInMilliseconds = period.getStartDate().toDateTime(DateTimeZone.UTC).getMillis();
+        long endDateInMilliseconds = period.getEndDate().toDateTime(DateTimeZone.UTC).getMillis();
 
-            default:
-                throw new IllegalStateException("Status of application is in an unexpected state.");
-        }
-
-        this.person = application.getPerson();
-
-        setPeriod(application.getStartDate(), application.getEndDate(), application.getDayLength(),
-            absenceTimeConfiguration);
-    }
-
-
-    public Absence(SickNote sickNote, AbsenceTimeConfiguration absenceTimeConfiguration) {
-
-        Assert.notNull(sickNote.getDayLength(), "No day length set for sick note");
-        Assert.notNull(sickNote.getStartDate(), "No start date set for sick note");
-        Assert.notNull(sickNote.getEndDate(), "No end date set for sick note");
-
-        this.eventType = EventType.SICKNOTE;
-        this.person = sickNote.getPerson();
-
-        setPeriod(sickNote.getStartDate(), sickNote.getEndDate(), sickNote.getDayLength(), absenceTimeConfiguration);
-    }
-
-    private void setPeriod(DateMidnight start, DateMidnight end, DayLength dayLength,
-        AbsenceTimeConfiguration timeConfiguration) {
-
-        long startDateInMilliseconds = start.toDateTime(DateTimeZone.UTC).getMillis();
-        long endDateInMilliseconds = end.toDateTime(DateTimeZone.UTC).getMillis();
-
-        switch (dayLength) {
+        switch (period.getDayLength()) {
             case FULL:
                 this.startDate = new Date(startDateInMilliseconds);
-                this.endDate = new Date(end.plusDays(1).toDateTime(DateTimeZone.UTC).getMillis());
+                this.endDate = new Date(period.getEndDate().plusDays(1).toDateTime(DateTimeZone.UTC).getMillis());
                 this.isAllDay = true;
                 break;
 
             case MORNING:
-                this.startDate = new Date(startDateInMilliseconds + timeConfiguration.getMorningStartAsMillis());
-                this.endDate = new Date(endDateInMilliseconds + timeConfiguration.getMorningEndAsMillis());
+                this.startDate = new Date(startDateInMilliseconds + absenceTimeConfiguration.getMorningStartAsMillis());
+                this.endDate = new Date(endDateInMilliseconds + absenceTimeConfiguration.getMorningEndAsMillis());
                 this.isAllDay = false;
                 break;
 
             case NOON:
-                this.startDate = new Date(startDateInMilliseconds + timeConfiguration.getNoonStartAsMillis());
-                this.endDate = new Date(endDateInMilliseconds + timeConfiguration.getNoonEndAsMillis());
+                this.startDate = new Date(startDateInMilliseconds + absenceTimeConfiguration.getNoonStartAsMillis());
+                this.endDate = new Date(endDateInMilliseconds + absenceTimeConfiguration.getNoonEndAsMillis());
                 this.isAllDay = false;
                 break;
 
@@ -104,7 +64,6 @@ public class Absence {
                 throw new IllegalArgumentException("Invalid day length!");
         }
     }
-
 
     public EventType getEventType() {
 

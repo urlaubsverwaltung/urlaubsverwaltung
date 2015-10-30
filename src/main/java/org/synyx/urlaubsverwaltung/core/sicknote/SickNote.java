@@ -9,6 +9,7 @@ import org.joda.time.DateTime;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
+import org.synyx.urlaubsverwaltung.core.period.Period;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.util.Date;
@@ -228,6 +229,12 @@ public class SickNote extends AbstractPersistable<Integer> {
     public void setStatus(SickNoteStatus status) {
 
         this.status = status;
+    }
+
+
+    public Period getPeriod() {
+
+        return new Period(getStartDate(), getEndDate(), getDayLength());
     }
 
 
