@@ -23,7 +23,6 @@ import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
-import org.synyx.urlaubsverwaltung.restapi.wrapper.ResponseWrapper;
 
 import java.util.ArrayList;
 import java.util.List;

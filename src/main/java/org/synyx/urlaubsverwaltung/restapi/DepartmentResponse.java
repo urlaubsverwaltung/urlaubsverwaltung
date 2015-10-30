@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 /**
  * @author  Daniel Hammann - <hammann@synyx.de>
  */
-public class DepartmentResponse {
+class DepartmentResponse {
 
     private String name;
     private String description;
@@ -17,7 +17,7 @@ public class DepartmentResponse {
     private PersonListResponse members;
     private PersonListResponse departmentHeads;
 
-    public DepartmentResponse(Department department) {
+    DepartmentResponse(Department department) {
 
         this.name = department.getName();
         this.description = department.getName();

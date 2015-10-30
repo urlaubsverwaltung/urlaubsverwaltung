@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
-import org.synyx.urlaubsverwaltung.restapi.wrapper.ResponseWrapper;
 
 import java.util.ArrayList;
 import java.util.List;

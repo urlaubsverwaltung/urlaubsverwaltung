@@ -3,15 +3,19 @@ package org.synyx.urlaubsverwaltung.restapi;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
+
 import de.jollyday.Holiday;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.util.StringUtils;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
 import org.synyx.urlaubsverwaltung.core.calendar.PublicHolidaysService;
-import org.synyx.urlaubsverwaltung.restapi.wrapper.ResponseWrapper;
 
 import java.util.HashSet;
 import java.util.List;
@@ -33,7 +37,7 @@ public class PublicHolidayController {
     private PublicHolidaysService publicHolidaysService;
 
     @ApiOperation(
-            value = "Get all public holidays for a certain period", notes = "Get all public holidays for a certain period"
+        value = "Get all public holidays for a certain period", notes = "Get all public holidays for a certain period"
     )
     @RequestMapping(value = ROOT_URL, method = RequestMethod.GET)
     public ResponseWrapper<PublicHolidayListResponse> getPublicHolidays(
@@ -67,9 +71,11 @@ public class PublicHolidayController {
             }
         }
 
-        List<PublicHolidayResponse> publicHolidayResponses = holidays.stream().
-                map(holiday -> new PublicHolidayResponse(holiday, publicHolidaysService.getWorkingDurationOfDate(holiday.getDate().toDateMidnight()))).
-                collect(Collectors.toList());
+        List<PublicHolidayResponse> publicHolidayResponses = holidays.stream()
+            .map(holiday ->
+                        new PublicHolidayResponse(holiday,
+                            publicHolidaysService.getWorkingDurationOfDate(holiday.getDate().toDateMidnight())))
+            .collect(Collectors.toList());
 
         return new ResponseWrapper<>(new PublicHolidayListResponse(publicHolidayResponses));
     }

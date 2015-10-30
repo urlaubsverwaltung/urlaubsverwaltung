@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteService;
-import org.synyx.urlaubsverwaltung.restapi.wrapper.ResponseWrapper;
 
 import java.util.List;
 import java.util.stream.Collectors;

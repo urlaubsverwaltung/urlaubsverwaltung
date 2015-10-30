@@ -3,11 +3,11 @@ package org.synyx.urlaubsverwaltung.restapi;
 /**
  * @author  David Schilling - schilling@synyx.de
  */
-public class WorkDayResponse {
+class WorkDayResponse {
 
     private final String workDays;
 
-    public WorkDayResponse(String workDays) {
+    WorkDayResponse(String workDays) {
 
         this.workDays = workDays;
     }
