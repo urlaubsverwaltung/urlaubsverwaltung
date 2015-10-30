@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung;
+package org.synyx.urlaubsverwaltung.core.util;
 
 /**
  * @author  Aljona Murygina - murygina@synyx.de

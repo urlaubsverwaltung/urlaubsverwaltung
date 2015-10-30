@@ -11,7 +11,7 @@ import org.joda.time.format.DateTimeFormatter;
 
 import org.springframework.util.StringUtils;
 
-import org.synyx.urlaubsverwaltung.DateFormat;
+import org.synyx.urlaubsverwaltung.core.util.DateFormat;
 
 import java.beans.PropertyEditorSupport;
 
