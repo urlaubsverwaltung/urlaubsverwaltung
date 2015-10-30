@@ -5,10 +5,6 @@ import org.joda.time.DateMidnight;
 import org.junit.Assert;
 import org.junit.Test;
 
-import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
-
-import static org.junit.Assert.*;
-
 
 /**
  * @author  Aljona Murygina - murygina@synyx.de

@@ -5,9 +5,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
-import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
+import org.synyx.urlaubsverwaltung.core.period.DayLength;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;

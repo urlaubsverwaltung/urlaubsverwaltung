@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.core.sync.absence;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeZone;
 
 import org.springframework.util.Assert;

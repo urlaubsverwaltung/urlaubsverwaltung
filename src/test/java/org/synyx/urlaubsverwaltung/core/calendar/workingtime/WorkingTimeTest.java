@@ -5,7 +5,7 @@ import org.joda.time.DateTimeConstants;
 import org.junit.Assert;
 import org.junit.Test;
 
-import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
+import org.synyx.urlaubsverwaltung.core.period.DayLength;
 
 import java.util.Arrays;
 import java.util.List;

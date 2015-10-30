@@ -2,17 +2,20 @@
 package org.synyx.urlaubsverwaltung.web.person;
 
 import org.joda.time.DateMidnight;
+
 import org.springframework.util.Assert;
+
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
-import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.Day;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;
+import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.Role;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 
 import java.math.BigDecimal;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -73,7 +76,7 @@ public class PersonForm {
 
 
     public PersonForm(Person person, int year, Optional<Account> holidaysAccountOptional,
-                      Optional<WorkingTime> workingTimeOptional, Collection<Role> roles, Collection<MailNotification> notifications) {
+        Optional<WorkingTime> workingTimeOptional, Collection<Role> roles, Collection<MailNotification> notifications) {
 
         Assert.notNull(person, "Person must not be null");
 

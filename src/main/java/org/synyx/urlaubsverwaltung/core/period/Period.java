@@ -4,8 +4,6 @@ import org.joda.time.DateMidnight;
 
 import org.springframework.util.Assert;
 
-import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
-
 
 /**
  * Represents a period of time.

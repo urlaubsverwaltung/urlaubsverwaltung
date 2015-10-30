@@ -4,19 +4,24 @@
  */
 package org.synyx.urlaubsverwaltung.core.calendar;
 
-
 import de.jollyday.Holiday;
 import de.jollyday.HolidayManager;
+
 import org.joda.time.DateMidnight;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Component;
-import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
+
+import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 
 import java.math.BigDecimal;
+
 import java.net.URL;
+
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -58,7 +63,6 @@ public class PublicHolidaysService {
         Settings settings = settingsService.getSettings();
 
         return manager.isHoliday(date.toLocalDate(), settings.getFederalState().getCodes());
-
     }
 
 
@@ -101,13 +105,12 @@ public class PublicHolidaysService {
 
         Set<Holiday> holidays = getHolidays(year);
 
-        return holidays.stream().
-                filter(byMonth(month)).
-                collect(Collectors.toSet());
-
+        return holidays.stream().filter(byMonth(month)).collect(Collectors.toSet());
     }
 
+
     private Predicate<Holiday> byMonth(int month) {
+
         return holiday -> holiday.getDate().getMonthOfYear() == month;
     }
 }

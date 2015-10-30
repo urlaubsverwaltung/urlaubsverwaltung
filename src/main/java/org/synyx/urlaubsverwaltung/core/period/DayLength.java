@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.core.application.domain;
+package org.synyx.urlaubsverwaltung.core.period;
 
 import java.math.BigDecimal;
 

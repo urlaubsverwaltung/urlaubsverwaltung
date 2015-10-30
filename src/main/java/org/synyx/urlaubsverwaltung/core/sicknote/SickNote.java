@@ -8,7 +8,7 @@ import org.joda.time.DateTime;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
-import org.synyx.urlaubsverwaltung.core.application.domain.DayLength;
+import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.period.Period;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
