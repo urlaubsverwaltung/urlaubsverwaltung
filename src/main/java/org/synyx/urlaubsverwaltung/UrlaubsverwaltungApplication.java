@@ -17,9 +17,20 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication(exclude = { VelocityAutoConfiguration.class })
 @EnableScheduling
 @ImportResource({ "classpath:spring-security.xml", "classpath:spring-mail.xml", "classpath:h2.xml" })
-public class UrlaubsverwaltungApplication {
+public final class UrlaubsverwaltungApplication {
 
+    private UrlaubsverwaltungApplication() {
+
+        // OK
+    }
+
+    /**
+     * Start the Urlaubsverwaltung Spring Boot application.
+     *
+     * @param  args  arguments
+     */
     public static void main(String[] args) {
+
         SpringApplication.run(UrlaubsverwaltungApplication.class, args);
     }
 }

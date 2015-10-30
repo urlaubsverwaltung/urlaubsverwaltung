@@ -24,7 +24,7 @@ public class Absence {
     private final Date endDate;
     private final Person person;
     private final EventType eventType;
-    private boolean isAllDay;
+    private final boolean isAllDay;
 
     public Absence(Person person, Period period, EventType eventType,
         AbsenceTimeConfiguration absenceTimeConfiguration) {
