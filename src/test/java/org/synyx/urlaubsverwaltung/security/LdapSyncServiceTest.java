@@ -16,7 +16,6 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 
 /**
@@ -41,38 +40,8 @@ public class LdapSyncServiceTest {
     }
 
 
-    @Test(expected = IllegalStateException.class)
-    public void ensureThrowsIfSyncIsCalledAndNoAuthenticationSet() {
-
-        System.getProperties().remove(Authentication.PROPERTY_KEY);
-
-        ldapSyncService.sync();
-    }
-
-
-    @Test
-    public void ensureThrowsIfSyncIsCalledAndAuthenticationTypeIsNotLdapOrActiveDirectory() {
-
-        Consumer<String> assertThrows = (auth) -> {
-            System.getProperties().put(Authentication.PROPERTY_KEY, auth);
-
-            try {
-                ldapSyncService.sync();
-                Assert.fail("Sync should throw for " + Authentication.PROPERTY_KEY + "=" + auth);
-            } catch (IllegalStateException ex) {
-                // Expected
-            }
-        };
-
-        assertThrows.accept(Authentication.Type.DEFAULT.getName());
-        assertThrows.accept("foo");
-    }
-
-
     @Test
     public void ensureFetchesLdapUsersForLdapAuthentication() {
-
-        System.getProperties().put(Authentication.PROPERTY_KEY, Authentication.Type.LDAP.getName());
 
         ldapSyncService.sync();
 
@@ -82,8 +51,6 @@ public class LdapSyncServiceTest {
 
     @Test
     public void ensureFetchesLdapUsersForActiveDirectoryAuthentication() {
-
-        System.getProperties().put(Authentication.PROPERTY_KEY, Authentication.Type.ACTIVE_DIRECTORY.getName());
 
         ldapSyncService.sync();
 

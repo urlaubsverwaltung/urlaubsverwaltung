@@ -1,15 +1,10 @@
 package org.synyx.urlaubsverwaltung.core.person;
 
 import org.apache.log4j.Logger;
-
 import org.joda.time.DateMidnight;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
-
 import org.springframework.transaction.annotation.Transactional;
-
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
@@ -21,10 +16,8 @@ import org.synyx.urlaubsverwaltung.security.CryptoUtil;
 import org.synyx.urlaubsverwaltung.web.person.PersonForm;
 
 import java.math.BigDecimal;
-
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -48,8 +41,8 @@ public class PersonInteractionServiceImpl implements PersonInteractionService {
 
     @Autowired
     public PersonInteractionServiceImpl(PersonService personService, WorkingTimeService workingTimeService,
-        AccountService accountService, AccountInteractionService accountInteractionService,
-        DepartmentService departmentService, MailService mailService) {
+                                        AccountService accountService, AccountInteractionService accountInteractionService,
+                                        DepartmentService departmentService, MailService mailService) {
 
         this.personService = personService;
         this.workingTimeService = workingTimeService;
@@ -116,7 +109,7 @@ public class PersonInteractionServiceImpl implements PersonInteractionService {
     @Override
     public Person update(PersonForm personForm) {
 
-        java.util.Optional<Person> optionalPersonToUpdate = personService.getPersonByID(personForm.getId());
+        Optional<Person> optionalPersonToUpdate = personService.getPersonByID(personForm.getId());
 
         if (!optionalPersonToUpdate.isPresent()) {
             throw new IllegalArgumentException("Can not find a person for ID = " + personForm.getId());

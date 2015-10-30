@@ -20,7 +20,7 @@ import org.synyx.urlaubsverwaltung.web.sicknote.SickNoteAlreadyInactiveException
 @ControllerAdvice
 public class ExceptionHandlerControllerAdvice {
 
-    private static final String ERROR_PAGE_NAME = "error";
+    private static final String ERROR_PAGE_NAME = "errors";
 
     /**
      * Get the common error page.

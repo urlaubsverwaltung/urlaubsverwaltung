@@ -1,16 +1,11 @@
 package org.synyx.urlaubsverwaltung.web.application;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.security.access.prepost.PreAuthorize;
-
 import org.springframework.stereotype.Controller;
-
 import org.springframework.ui.Model;
-
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
@@ -32,6 +27,7 @@ import java.util.stream.Collectors;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Controller
+@RequestMapping("/web")
 public class ApplicationForLeaveController {
 
     @Autowired

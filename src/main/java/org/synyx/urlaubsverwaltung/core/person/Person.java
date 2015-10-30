@@ -7,14 +7,16 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
-
 import org.springframework.util.StringUtils;
 
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-
-import javax.persistence.*;
 
 
 /**

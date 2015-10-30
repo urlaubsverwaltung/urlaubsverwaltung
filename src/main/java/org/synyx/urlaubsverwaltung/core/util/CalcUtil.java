@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 
 /**
- * Contains helper methods for handling {@link java.math.BigDecimal}s.
+ * Contains helper methods for handling {@link BigDecimal}s.
  *
  * @author  Aljona Murygina
  */
@@ -18,7 +18,7 @@ public final class CalcUtil {
     public static boolean isZero(BigDecimal number) {
 
         /**
-         * NOTE: {@link java.math.BigDecimal#signum()} returns:
+         * NOTE: {@link BigDecimal#signum()} returns:
          * -1 if the number is negative,
          * 0 if the number is zero,
          * 1 if the number is positive

@@ -14,6 +14,7 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;

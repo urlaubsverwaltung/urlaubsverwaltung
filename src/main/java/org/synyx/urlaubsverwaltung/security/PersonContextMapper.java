@@ -4,7 +4,7 @@ import org.apache.log4j.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.context.annotation.Conditional;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 
 import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
@@ -35,7 +35,7 @@ import javax.naming.NamingException;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Component
-@Conditional(LdapOrActiveDirectoryAuthenticationCondition.class)
+@ConditionalOnExpression("'${auth}'=='activeDirectory' or '${auth}'=='ldap'")
 public class PersonContextMapper implements UserDetailsContextMapper {
 
     private static final Logger LOG = Logger.getLogger(PersonContextMapper.class);

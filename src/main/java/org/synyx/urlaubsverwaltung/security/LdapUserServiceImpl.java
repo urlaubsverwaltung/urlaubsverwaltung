@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
-import org.springframework.context.annotation.Conditional;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 
 import org.springframework.ldap.core.LdapTemplate;
 
@@ -20,7 +20,7 @@ import static org.springframework.ldap.query.LdapQueryBuilder.query;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Service
-@Conditional(LdapOrActiveDirectoryAuthenticationCondition.class)
+@ConditionalOnExpression("'${auth}'=='activeDirectory' or '${auth}'=='ldap'")
 public class LdapUserServiceImpl implements LdapUserService {
 
     private static final String OBJECT_CLASS_ATTRIBUTE = "objectClass";
@@ -33,8 +33,8 @@ public class LdapUserServiceImpl implements LdapUserService {
 
     @Autowired
     public LdapUserServiceImpl(LdapTemplate ldapTemplate, LdapUserMapper ldapUserMapper,
-        @Value("${security.filter.objectClass}") String objectClass,
-        @Value("${security.filter.memberOf}") String memberOf) {
+        @Value("${uv.security.filter.objectClass}") String objectClass,
+        @Value("${uv.security.filter.memberOf}") String memberOf) {
 
         this.ldapTemplate = ldapTemplate;
         this.ldapUserMapper = ldapUserMapper;

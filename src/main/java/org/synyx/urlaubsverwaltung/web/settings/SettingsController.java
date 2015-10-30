@@ -27,6 +27,7 @@ import org.synyx.urlaubsverwaltung.security.SecurityRules;
  * Daniel Hammann - <hammann@synyx.de>.
  */
 @Controller
+@RequestMapping("/web")
 public class SettingsController {
 
     @Autowired

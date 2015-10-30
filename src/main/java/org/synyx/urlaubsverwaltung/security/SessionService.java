@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import org.springframework.stereotype.Service;
@@ -37,7 +38,12 @@ public class SessionService {
      */
     public Person getSignedInUser() {
 
-        String user = SecurityContextHolder.getContext().getAuthentication().getName();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        
+        if(authentication == null) {
+            throw new IllegalStateException("No authentication found in context.");
+        }
+        String user = authentication.getName();
 
         Optional<Person> person = personService.getPersonByLogin(user);
 

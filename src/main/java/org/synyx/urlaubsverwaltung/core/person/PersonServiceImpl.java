@@ -1,8 +1,8 @@
 package org.synyx.urlaubsverwaltung.core.person;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
+
 
 import java.util.List;
 import java.util.Optional;
@@ -38,14 +38,14 @@ class PersonServiceImpl implements PersonService {
     @Override
     public Optional<Person> getPersonByID(Integer id) {
 
-        return java.util.Optional.ofNullable(personDAO.findOne(id));
+        return Optional.ofNullable(personDAO.findOne(id));
     }
 
 
     @Override
     public Optional<Person> getPersonByLogin(String loginName) {
 
-        return java.util.Optional.ofNullable(personDAO.findByLoginName(loginName));
+        return Optional.ofNullable(personDAO.findByLoginName(loginName));
     }
 
 

@@ -22,16 +22,18 @@ public class VacationDaysLeftTest {
     @Before
     public void setUp() {
 
-        builder = VacationDaysLeft.builder().withAnnualVacation(new BigDecimal("28")).withRemainingVacation(
-                new BigDecimal("5")).notExpiring(new BigDecimal("2"));
+        builder = VacationDaysLeft.builder().withAnnualVacation(new BigDecimal("28"))
+            .withRemainingVacation(new BigDecimal("5"))
+            .notExpiring(new BigDecimal("2"));
     }
 
 
     @Test
     public void ensureBuildsCorrectVacationDaysLeftObject() {
 
-        VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("5")).forUsedDaysAfterApril(
-                new BigDecimal("10")).get();
+        VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("5"))
+            .forUsedDaysAfterApril(new BigDecimal("10"))
+            .get();
 
         Assert.assertNotNull("Should not be null", vacationDaysLeft);
     }
@@ -40,8 +42,9 @@ public class VacationDaysLeftTest {
     @Test
     public void ensureCorrectVacationDaysLeftWithUsedDaysBeforeAndAfterApril() {
 
-        VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("5")).forUsedDaysAfterApril(
-                new BigDecimal("10")).get();
+        VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("5"))
+            .forUsedDaysAfterApril(new BigDecimal("10"))
+            .get();
 
         Assert.assertNotNull("Should not be null", vacationDaysLeft.getVacationDays());
         Assert.assertNotNull("Should not be null", vacationDaysLeft.getRemainingVacationDays());
@@ -59,8 +62,9 @@ public class VacationDaysLeftTest {
     @Test
     public void ensureCorrectVacationDaysLeftWithOnlyUsedDaysAfterApril() {
 
-        VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(BigDecimal.ZERO).forUsedDaysAfterApril(
-                new BigDecimal("10")).get();
+        VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(BigDecimal.ZERO)
+            .forUsedDaysAfterApril(new BigDecimal("10"))
+            .get();
 
         Assert.assertNotNull("Should not be null", vacationDaysLeft.getVacationDays());
         Assert.assertNotNull("Should not be null", vacationDaysLeft.getRemainingVacationDays());
@@ -78,8 +82,9 @@ public class VacationDaysLeftTest {
     @Test
     public void ensureCorrectVacationDaysLeftWithUsedDaysBeforeAprilGreaterThanRemainingVacationDays() {
 
-        VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("10")).forUsedDaysAfterApril(
-                new BigDecimal("5")).get();
+        VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("10"))
+            .forUsedDaysAfterApril(new BigDecimal("5"))
+            .get();
 
         Assert.assertNotNull("Should not be null", vacationDaysLeft.getVacationDays());
         Assert.assertNotNull("Should not be null", vacationDaysLeft.getRemainingVacationDays());
@@ -97,8 +102,9 @@ public class VacationDaysLeftTest {
     @Test
     public void ensureCorrectVacationDaysLeftWithUsedDaysLessThanRemainingVacationDays() {
 
-        VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("2")).forUsedDaysAfterApril(
-                new BigDecimal("2")).get();
+        VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("2"))
+            .forUsedDaysAfterApril(new BigDecimal("2"))
+            .get();
 
         Assert.assertNotNull("Should not be null", vacationDaysLeft.getVacationDays());
         Assert.assertNotNull("Should not be null", vacationDaysLeft.getRemainingVacationDays());
@@ -116,8 +122,9 @@ public class VacationDaysLeftTest {
     @Test
     public void ensureCorrectVacationDaysLeftWithOnlyUsedDaysBeforeAprilLessThanRemainingVacationDays() {
 
-        VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("3")).forUsedDaysAfterApril(
-                BigDecimal.ZERO).get();
+        VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("3"))
+            .forUsedDaysAfterApril(BigDecimal.ZERO)
+            .get();
 
         Assert.assertNotNull("Should not be null", vacationDaysLeft.getVacationDays());
         Assert.assertNotNull("Should not be null", vacationDaysLeft.getRemainingVacationDays());
@@ -135,8 +142,9 @@ public class VacationDaysLeftTest {
     @Test
     public void ensureCorrectVacationDaysLeftWithUsingDifferenceOfNotExpiringRemainingVacationDays() {
 
-        VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("4")).forUsedDaysAfterApril(
-                BigDecimal.ZERO).get();
+        VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("4"))
+            .forUsedDaysAfterApril(BigDecimal.ZERO)
+            .get();
 
         Assert.assertNotNull("Should not be null", vacationDaysLeft.getVacationDays());
         Assert.assertNotNull("Should not be null", vacationDaysLeft.getRemainingVacationDays());
@@ -154,8 +162,9 @@ public class VacationDaysLeftTest {
     @Test
     public void ensureCorrectVacationDaysLeftWithUsingNotExpiringRemainingVacationDays() {
 
-        VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("4")).forUsedDaysAfterApril(
-                new BigDecimal("2")).get();
+        VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("4"))
+            .forUsedDaysAfterApril(new BigDecimal("2"))
+            .get();
 
         Assert.assertNotNull("Should not be null", vacationDaysLeft.getVacationDays());
         Assert.assertNotNull("Should not be null", vacationDaysLeft.getRemainingVacationDays());
@@ -173,8 +182,9 @@ public class VacationDaysLeftTest {
     @Test
     public void ensureCorrectVacationDaysLeftWithUsingAllRemainingVacationDaysBeforeApril() {
 
-        VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("5")).forUsedDaysAfterApril(
-                new BigDecimal("2")).get();
+        VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("5"))
+            .forUsedDaysAfterApril(new BigDecimal("2"))
+            .get();
 
         Assert.assertNotNull("Should not be null", vacationDaysLeft.getVacationDays());
         Assert.assertNotNull("Should not be null", vacationDaysLeft.getRemainingVacationDays());
@@ -192,8 +202,9 @@ public class VacationDaysLeftTest {
     @Test
     public void ensureCorrectVacationDaysLeftWithUsingAllRemainingVacationDaysBeforeAprilWithoutUsedDaysAfterApril() {
 
-        VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("5")).forUsedDaysAfterApril(
-                BigDecimal.ZERO).get();
+        VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("5"))
+            .forUsedDaysAfterApril(BigDecimal.ZERO)
+            .get();
 
         Assert.assertNotNull("Should not be null", vacationDaysLeft.getVacationDays());
         Assert.assertNotNull("Should not be null", vacationDaysLeft.getRemainingVacationDays());
@@ -211,8 +222,9 @@ public class VacationDaysLeftTest {
     @Test
     public void ensureCorrectVacationDaysLeftWithUsingAllRemainingVacationDaysExpiringAndNotExpiring() {
 
-        VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("4")).forUsedDaysAfterApril(
-                new BigDecimal("1")).get();
+        VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("4"))
+            .forUsedDaysAfterApril(new BigDecimal("1"))
+            .get();
 
         Assert.assertNotNull("Should not be null", vacationDaysLeft.getVacationDays());
         Assert.assertNotNull("Should not be null", vacationDaysLeft.getRemainingVacationDays());

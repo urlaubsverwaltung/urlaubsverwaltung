@@ -53,6 +53,7 @@ import java.util.Optional;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Controller
+@RequestMapping("/web")
 public class SickNoteController {
 
     @Autowired

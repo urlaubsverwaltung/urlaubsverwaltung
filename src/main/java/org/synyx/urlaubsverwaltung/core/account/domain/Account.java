@@ -47,6 +47,7 @@ public class Account extends AbstractPersistable<Integer> {
 
     // remaining vacation days from the last year, if it's after 1st April, only the not expiring remaining vacation
     // days may be used
+
     private BigDecimal remainingVacationDays;
     private BigDecimal remainingVacationDaysNotExpiring;
 

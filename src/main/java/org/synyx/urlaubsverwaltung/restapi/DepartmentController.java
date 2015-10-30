@@ -5,15 +5,14 @@ import com.wordnik.swagger.annotations.ApiOperation;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.stereotype.Controller;
-
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.restapi.wrapper.DepartmentsListWrapper;
+import org.synyx.urlaubsverwaltung.restapi.wrapper.ResponseWrapper;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 
@@ -21,7 +20,8 @@ import java.util.stream.Collectors;
  * @author  Daniel Hammann - <hammann@synyx.de>
  */
 @Api(value = "Departments", description = "Get information about the departments of the application")
-@Controller("restApiDepartmentController")
+@RestController("restApiDepartmentController")
+@RequestMapping("/api")
 public class DepartmentController {
 
     private static final String ROOT_URL = "/departments";
@@ -31,14 +31,12 @@ public class DepartmentController {
 
     @ApiOperation(value = "Get all departments of the application", notes = "Get all departments of the application")
     @RequestMapping(value = ROOT_URL, method = RequestMethod.GET)
-    @ModelAttribute("response")
-    public DepartmentListResponse departments() {
+    public ResponseWrapper<DepartmentsListWrapper> departments() {
 
-        List<DepartmentResponse> departments = departmentService.getAllDepartments()
-            .stream()
-            .map(DepartmentResponse::new)
-            .collect(Collectors.toList());
-
-        return new DepartmentListResponse(departments);
+        return new ResponseWrapper<>(new DepartmentsListWrapper(
+                    departmentService.getAllDepartments()
+                        .stream()
+                        .map(DepartmentResponse::new)
+                        .collect(Collectors.toList())));
     }
 }
