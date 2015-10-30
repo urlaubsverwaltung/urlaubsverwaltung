@@ -44,6 +44,7 @@ import java.util.stream.Collectors;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Controller
+@RequestMapping("/web")
 public class SickDaysOverviewController {
 
     @Autowired

@@ -3,21 +3,15 @@ package org.synyx.urlaubsverwaltung.restapi;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
-
 import de.jollyday.Holiday;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
-import org.springframework.stereotype.Controller;
-
 import org.springframework.util.StringUtils;
-
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-
+import org.springframework.web.bind.annotation.RestController;
 import org.synyx.urlaubsverwaltung.core.calendar.PublicHolidaysService;
+import org.synyx.urlaubsverwaltung.restapi.wrapper.ResponseWrapper;
 
 import java.util.HashSet;
 import java.util.List;
@@ -29,7 +23,8 @@ import java.util.stream.Collectors;
  * @author  Aljona Murygina <murygina@synyx.de>
  */
 @Api(value = "Public Holidays", description = "Get information about public holidays")
-@Controller("restApiCalendarController")
+@RestController("restApiCalendarController")
+@RequestMapping("/api")
 public class PublicHolidayController {
 
     private static final String ROOT_URL = "/holidays";
@@ -38,11 +33,10 @@ public class PublicHolidayController {
     private PublicHolidaysService publicHolidaysService;
 
     @ApiOperation(
-        value = "Get all public holidays for a certain period", notes = "Get all public holidays for a certain period"
+            value = "Get all public holidays for a certain period", notes = "Get all public holidays for a certain period"
     )
     @RequestMapping(value = ROOT_URL, method = RequestMethod.GET)
-    @ModelAttribute("response")
-    public PublicHolidayListResponse getPublicHolidays(
+    public ResponseWrapper<PublicHolidayListResponse> getPublicHolidays(
         @ApiParam(value = "Year to get the public holidays for", defaultValue = "2015")
         @RequestParam("year")
         String year,
@@ -61,7 +55,7 @@ public class PublicHolidayController {
             try {
                 holidays = publicHolidaysService.getHolidays(Integer.parseInt(year));
             } catch (NumberFormatException ex) {
-                return emptyResponse;
+                return new ResponseWrapper<>(emptyResponse);
             }
         }
 
@@ -69,7 +63,7 @@ public class PublicHolidayController {
             try {
                 holidays = publicHolidaysService.getHolidays(Integer.parseInt(year), Integer.parseInt(month));
             } catch (NumberFormatException ex) {
-                return emptyResponse;
+                return new ResponseWrapper<>(emptyResponse);
             }
         }
 
@@ -77,6 +71,6 @@ public class PublicHolidayController {
                 map(holiday -> new PublicHolidayResponse(holiday, publicHolidaysService.getWorkingDurationOfDate(holiday.getDate().toDateMidnight()))).
                 collect(Collectors.toList());
 
-        return new PublicHolidayListResponse(publicHolidayResponses);
+        return new ResponseWrapper<>(new PublicHolidayListResponse(publicHolidayResponses));
     }
 }

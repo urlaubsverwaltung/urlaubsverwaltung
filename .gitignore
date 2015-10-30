@@ -4,6 +4,7 @@ nbactions.xml
 /target/
 /lib/~/
 *.dump.sql
+logs
 
 # Ignore log
 velocity.log*
@@ -15,3 +16,4 @@ velocity.log*
 # Eclipse ignores
 .classpath
 .project
+

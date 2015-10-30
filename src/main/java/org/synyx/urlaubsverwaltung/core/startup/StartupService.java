@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.stereotype.Service;
 
-import org.synyx.urlaubsverwaltung.security.Authentication;
+import java.util.Arrays;
 
 import javax.annotation.PostConstruct;
 
@@ -27,16 +27,17 @@ public class StartupService {
     private final String dbUser;
     private final String dbUrl;
     private final String authentication;
-    private final String environment;
+    private final String[] activeProfiles;
 
     @Autowired
-    public StartupService(@Value("${db.username}") String dbUser,
-        @Value("${db.url}") String dbUrl) {
+    public StartupService(@Value("${spring.datasource.username}") String dbUser,
+        @Value("${spring.datasource.url}") String dbUrl,
+        @Value("${auth}") String authentication, org.springframework.core.env.Environment env) {
 
         this.dbUser = dbUser;
         this.dbUrl = dbUrl;
-        this.authentication = System.getProperty(Authentication.PROPERTY_KEY);
-        this.environment = System.getProperty(Environment.PROPERTY_KEY);
+        this.authentication = authentication;
+        this.activeProfiles = env.getActiveProfiles();
     }
 
     @PostConstruct
@@ -45,6 +46,6 @@ public class StartupService {
         LOG.info("DATABASE=" + dbUrl);
         LOG.info("DATABASE USER=" + dbUser);
         LOG.info("AUTHENTICATION=" + authentication);
-        LOG.info("ENVIRONMENT=" + environment);
+        LOG.info("ACTIVE PROFILES=" + Arrays.toString(activeProfiles));
     }
 }

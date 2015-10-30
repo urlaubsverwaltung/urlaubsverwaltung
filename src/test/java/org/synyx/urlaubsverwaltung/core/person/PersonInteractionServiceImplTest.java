@@ -67,7 +67,7 @@ public class PersonInteractionServiceImplTest {
         examplePersonForm.setPermissions(Arrays.asList(Role.USER));
 
         Mockito.when(accountService.getHolidaysAccount(Mockito.anyInt(), Mockito.any(Person.class)))
-            .thenReturn(java.util.Optional.<Account>empty());
+            .thenReturn(Optional.<Account>empty());
     }
 
 

@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.DirContextOperations;
 
@@ -27,6 +28,7 @@ import javax.naming.directory.Attributes;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Component
+@ConditionalOnExpression("'${auth}'=='activeDirectory' or '${auth}'=='ldap'")
 public class LdapUserMapper implements AttributesMapper<LdapUser> {
 
     private static final String MEMBER_OF_ATTRIBUTE = "memberOf";
@@ -39,11 +41,11 @@ public class LdapUserMapper implements AttributesMapper<LdapUser> {
     private final String memberOfFilter;
 
     @Autowired
-    public LdapUserMapper(@Value("${security.identifier}") String identifierAttribute,
-        @Value("${security.firstName}") String firstNameAttribute,
-        @Value("${security.lastName}") String lastNameAttribute,
-        @Value("${security.mailAddress}") String mailAddressAttribute,
-        @Value("${security.filter.memberOf}") String memberOfFilter) {
+    public LdapUserMapper(@Value("${uv.security.identifier}") String identifierAttribute,
+        @Value("${uv.security.firstName}") String firstNameAttribute,
+        @Value("${uv.security.lastName}") String lastNameAttribute,
+        @Value("${uv.security.mailAddress}") String mailAddressAttribute,
+        @Value("${uv.security.filter.memberOf}") String memberOfFilter) {
 
         this.identifierAttribute = identifierAttribute;
         this.firstNameAttribute = firstNameAttribute;

@@ -3,20 +3,14 @@ package org.synyx.urlaubsverwaltung.web.statistics;
 import org.joda.time.DateMidnight;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.security.access.prepost.PreAuthorize;
-
 import org.springframework.stereotype.Controller;
-
 import org.springframework.ui.Model;
-
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import org.synyx.urlaubsverwaltung.DateFormat;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
@@ -38,7 +32,7 @@ import java.util.stream.Collectors;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-@RequestMapping("/application")
+@RequestMapping("/web/application")
 @Controller
 public class ApplicationForLeaveStatisticsController {
 

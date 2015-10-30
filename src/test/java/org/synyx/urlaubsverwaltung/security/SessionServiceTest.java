@@ -32,6 +32,7 @@ public class SessionServiceTest {
 
     private PersonService personService;
     private DepartmentService departmentService;
+    private SecurityContext securityContext;
 
     @Before
     public void setUp() {
@@ -45,7 +46,7 @@ public class SessionServiceTest {
         Authentication authentication = Mockito.mock(Authentication.class);
         Mockito.when(authentication.getName()).thenReturn(USER_NAME);
 
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        securityContext = Mockito.mock(SecurityContext.class);
         Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
 
         SecurityContextHolder.setContext(securityContext);
@@ -80,6 +81,12 @@ public class SessionServiceTest {
         Assert.assertEquals("Wrong person", person, signedInUser);
     }
 
+    @Test(expected = IllegalStateException.class)
+    public void ensureThrowsIllegalOnNullAuthentication() {
+
+        Mockito.when(securityContext.getAuthentication()).thenReturn(null);
+        sessionService.getSignedInUser();
+    }
 
     // Access person data ----------------------------------------------------------------------------------------------
 

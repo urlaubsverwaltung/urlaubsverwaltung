@@ -6,15 +6,14 @@ import com.wordnik.swagger.annotations.ApiParam;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.stereotype.Controller;
-
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
+import org.synyx.urlaubsverwaltung.restapi.wrapper.ResponseWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +25,8 @@ import java.util.stream.Collectors;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Api(value = "Persons", description = "Get information about the persons of the application")
-@Controller("restApiPersonController")
+@RestController("restApiPersonController")
+@RequestMapping("/api")
 public class PersonController {
 
     private static final String ROOT_URL = "/persons";
@@ -38,8 +38,7 @@ public class PersonController {
         value = "Get all active persons of the application", notes = "Get all active persons of the application"
     )
     @RequestMapping(value = ROOT_URL, method = RequestMethod.GET)
-    @ModelAttribute("response")
-    public PersonListResponse persons(
+    public ResponseWrapper<PersonListResponse> persons(
         @ApiParam(value = "LDAP Login")
         @RequestParam(value = "ldap", required = false)
         String ldapName) {
@@ -58,6 +57,6 @@ public class PersonController {
 
         List<PersonResponse> personResponses = persons.stream().map(PersonResponse::new).collect(Collectors.toList());
 
-        return new PersonListResponse(personResponses);
+        return new ResponseWrapper<>(new PersonListResponse(personResponses));
     }
 }

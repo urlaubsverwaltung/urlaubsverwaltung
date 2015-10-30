@@ -2,24 +2,16 @@ package org.synyx.urlaubsverwaltung.web.overview;
 
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
-
 import org.joda.time.DateMidnight;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.security.access.AccessDeniedException;
-
 import org.springframework.stereotype.Controller;
-
 import org.springframework.ui.Model;
-
 import org.springframework.util.StringUtils;
-
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
 import org.synyx.urlaubsverwaltung.core.account.service.VacationDaysService;
@@ -43,7 +35,6 @@ import org.synyx.urlaubsverwaltung.web.statistics.SickDaysOverview;
 import org.synyx.urlaubsverwaltung.web.statistics.UsedDaysOverview;
 
 import java.math.BigDecimal;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -55,6 +46,7 @@ import java.util.Optional;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Controller
+@RequestMapping("/web")
 public class OverviewController {
 
     @Autowired

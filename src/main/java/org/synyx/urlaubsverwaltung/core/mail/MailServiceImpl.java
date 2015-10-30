@@ -67,7 +67,6 @@ class MailServiceImpl implements MailService {
 
     private final JavaMailSenderImpl mailSender;
     private final VelocityEngine velocityEngine;
-
     private final PersonService personService;
     private final DepartmentService departmentService;
     private final SettingsService settingsService;
@@ -83,7 +82,6 @@ class MailServiceImpl implements MailService {
 
         this.mailSender = mailSender;
         this.velocityEngine = velocityEngine;
-
         this.personService = personService;
         this.departmentService = departmentService;
         this.settingsService = settingsService;

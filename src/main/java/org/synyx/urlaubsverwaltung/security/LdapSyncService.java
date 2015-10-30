@@ -4,7 +4,7 @@ import org.apache.log4j.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.context.annotation.Conditional;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 
 import org.springframework.scheduling.annotation.Scheduled;
 
@@ -37,7 +37,7 @@ import javax.annotation.PostConstruct;
  */
 @Service
 @Transactional
-@Conditional(LdapOrActiveDirectoryAuthenticationCondition.class)
+@ConditionalOnExpression("'${auth}'=='activeDirectory' or '${auth}'=='ldap'")
 public class LdapSyncService {
 
     private static final Logger LOG = Logger.getLogger(LdapSyncService.class);
@@ -60,18 +60,6 @@ public class LdapSyncService {
     public void sync() {
 
         LOG.info("STARTING LDAP SYNC --------------------------------------------------------------------------------");
-
-        String authentication = System.getProperty(Authentication.PROPERTY_KEY);
-
-        if (authentication == null) {
-            throw new IllegalStateException("LDAP sync is not possible if authentication type is not set!");
-        }
-
-        if (!authentication.equalsIgnoreCase(Authentication.Type.LDAP.getName())
-                && !authentication.equalsIgnoreCase(Authentication.Type.ACTIVE_DIRECTORY.getName())) {
-            throw new IllegalStateException("LDAP sync is not possible for authentication type '" + authentication
-                + "'!");
-        }
 
         List<LdapUser> users = ldapUserService.getLdapUsers();
 

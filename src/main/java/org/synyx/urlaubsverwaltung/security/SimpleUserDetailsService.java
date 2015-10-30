@@ -4,7 +4,7 @@ import org.apache.log4j.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.context.annotation.Conditional;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -29,7 +29,7 @@ import java.util.Optional;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Service("userDetailsService")
-@Conditional(DefaultAuthenticationCondition.class)
+@ConditionalOnProperty(name = "auth", havingValue = "default")
 public class SimpleUserDetailsService implements UserDetailsService {
 
     private static final Logger LOG = Logger.getLogger(SimpleUserDetailsService.class);

@@ -8,7 +8,7 @@ import org.joda.time.DateTimeConstants;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.context.annotation.Conditional;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 import org.springframework.stereotype.Service;
 
@@ -31,7 +31,6 @@ import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteInteractionService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
-import org.synyx.urlaubsverwaltung.core.startup.Environment;
 import org.synyx.urlaubsverwaltung.core.util.CalcUtil;
 import org.synyx.urlaubsverwaltung.security.CryptoUtil;
 import org.synyx.urlaubsverwaltung.web.person.PersonForm;
@@ -53,7 +52,7 @@ import javax.annotation.PostConstruct;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Service
-@Conditional(DevEnvironmentCondition.class)
+@ConditionalOnProperty("testdata.create")
 public class TestDataCreationService {
 
     private static final String PASSWORD = "secret";
@@ -87,12 +86,6 @@ public class TestDataCreationService {
 
     @PostConstruct
     public void createTestData() throws NoSuchAlgorithmException {
-
-        String environment = System.getProperties().getProperty(Environment.PROPERTY_KEY);
-
-        if (environment == null || !environment.equalsIgnoreCase(Environment.Type.DEV.getName())) {
-            throw new IllegalStateException("Test data may only created in DEV environment!");
-        }
 
         LOG.info("Test data will be created...");
 

@@ -52,7 +52,7 @@ import java.util.Optional;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-@RequestMapping("/application")
+@RequestMapping("/web/application")
 @Controller
 public class ApplicationForLeaveDetailsController {
 

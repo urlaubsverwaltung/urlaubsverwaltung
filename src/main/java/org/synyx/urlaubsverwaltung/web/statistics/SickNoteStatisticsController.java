@@ -25,6 +25,7 @@ import org.synyx.urlaubsverwaltung.security.SecurityRules;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Controller
+@RequestMapping("/web")
 public class SickNoteStatisticsController {
 
     @Autowired

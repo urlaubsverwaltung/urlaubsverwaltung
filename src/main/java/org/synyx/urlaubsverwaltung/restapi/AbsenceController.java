@@ -8,15 +8,12 @@ import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.stereotype.Controller;
-
 import org.springframework.util.StringUtils;
 
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
@@ -27,6 +24,7 @@ import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
+import org.synyx.urlaubsverwaltung.restapi.wrapper.ResponseWrapper;
 
 import java.math.BigDecimal;
 
@@ -41,7 +39,8 @@ import java.util.stream.Collectors;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Api(value = "Absences", description = "Get all absences for a certain period")
-@Controller("restApiAbsenceController")
+@RestController("restApiAbsenceController")
+@RequestMapping("/api")
 public class AbsenceController {
 
     private enum AbsenceType {
@@ -64,9 +63,7 @@ public class AbsenceController {
         notes = "Get all absences for a certain period and person"
     )
     @RequestMapping(value = "/absences", method = RequestMethod.GET)
-    @ResponseBody
-    @ModelAttribute("response")
-    public AbsenceList personsVacations(
+    public ResponseWrapper<AbsenceList> personsVacations(
         @ApiParam(value = "Year to get the absences for", defaultValue = "2015")
         @RequestParam("year")
         String year,
@@ -88,7 +85,7 @@ public class AbsenceController {
                 Optional<Person> personOptional = personService.getPersonByID(personId);
 
                 if (!personOptional.isPresent()) {
-                    return new AbsenceList(Collections.emptyList());
+                    return new ResponseWrapper<>(new AbsenceList(Collections.emptyList()));
                 }
 
                 DateMidnight periodStart;
@@ -132,8 +129,7 @@ public class AbsenceController {
                 if (type == null || type.equals(AbsenceType.SICK_NOTE.name())) {
                     List<SickNote> sickNotes = sickNoteService.getByPersonAndPeriod(person, periodStart, periodEnd)
                         .stream()
-                        .filter(sickNote ->
-                                sickNote.isActive())
+                        .filter(SickNote::isActive)
                         .collect(Collectors.toList());
 
                     for (SickNote sickNote : sickNotes) {
@@ -151,13 +147,13 @@ public class AbsenceController {
                     }
                 }
 
-                return new AbsenceList(absences);
+                return new ResponseWrapper<>(new AbsenceList(absences));
             } catch (NumberFormatException ex) {
-                return new AbsenceList(Collections.emptyList());
+                return new ResponseWrapper<>(new AbsenceList(Collections.emptyList()));
             }
         }
 
-        return new AbsenceList(Collections.emptyList());
+        return new ResponseWrapper<>(new AbsenceList(Collections.emptyList()));
     }
 
     private class Absence {
