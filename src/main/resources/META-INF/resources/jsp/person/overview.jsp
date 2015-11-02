@@ -66,7 +66,7 @@
         <div class="row">
 
             <div class="col-xs-12">
-                <%@include file="./include/overview_header.jsp" %>
+                <%@include file="include/overview_header.jsp" %>
             </div>
             
         </div>
@@ -296,7 +296,7 @@
         <div class="row">
 
             <div class="col-xs-12">
-                <%@include file="./include/overview_app_list.jsp" %>
+                <%@include file="include/overview_app_list.jsp" %>
             </div>
 
         </div>
@@ -342,7 +342,7 @@
 
             <div class="row">
                 <div class="col-xs-12">
-                    <%@include file="./include/sick_notes.jsp" %>
+                    <%@include file="include/sick_notes.jsp" %>
                 </div>
             </div>
 

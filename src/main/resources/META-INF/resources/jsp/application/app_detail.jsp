@@ -33,7 +33,7 @@
 
                     <legend>
                         <spring:message code="application.data.title" />
-                        <jsp:include page="./include/app-detail-elements/action-buttons.jsp" />
+                        <jsp:include page="include/app-detail-elements/action-buttons.jsp" />
                     </legend>
 
                     <div class="feedback">
@@ -87,10 +87,10 @@
                     </div>
 
                     <div class="actions">
-                        <jsp:include page="./include/app-detail-elements/actions.jsp" />
+                        <jsp:include page="include/app-detail-elements/actions.jsp" />
                     </div>
 
-                    <%@include file="./include/app-detail-elements/app_info.jsp" %>
+                    <%@include file="include/app-detail-elements/app_info.jsp" %>
 
                 </div><%--End of first column--%>
 
@@ -147,7 +147,7 @@
             <div class="row">
 
                 <div class="col-xs-12 col-sm-12 col-md-6">
-                    <%@include file="./include/app-detail-elements/app_progress.jsp" %>
+                    <%@include file="include/app-detail-elements/app_progress.jsp" %>
                 </div>
 
                 <div class="col-xs-12 col-sm-12 col-md-6 hidden-print">

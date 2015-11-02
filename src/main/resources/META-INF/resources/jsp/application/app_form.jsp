@@ -14,8 +14,8 @@
 <head>
     <uv:head/>
 
-    <%@include file="./include/app-form-elements/datepicker.jsp" %>
-    <%@include file="./include/app-form-elements/day-length-selector.jsp" %>
+    <%@include file="include/app-form-elements/datepicker.jsp" %>
+    <%@include file="include/app-form-elements/day-length-selector.jsp" %>
 
     <script type="text/javascript">
         $(function() {
