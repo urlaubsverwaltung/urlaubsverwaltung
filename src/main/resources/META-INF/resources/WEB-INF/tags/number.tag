@@ -3,4 +3,4 @@
 
 <%@attribute name="number" type="java.math.BigDecimal" required="true" %>
 
-<fmt:formatNumber maxFractionDigits="1" value="${number}" />
+<fmt:formatNumber maxFractionDigits="2" value="${number}" />
