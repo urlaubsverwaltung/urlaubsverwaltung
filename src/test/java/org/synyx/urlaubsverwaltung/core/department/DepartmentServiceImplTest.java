@@ -14,6 +14,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.Role;
+import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -49,22 +50,11 @@ public class DepartmentServiceImplTest {
     @Test
     public void ensureCallDepartmentDAOSave() throws Exception {
 
-        Department dummyDepartment = createDummyDepartment();
+        Department department = TestDataCreator.createDepartment();
 
-        sut.create(dummyDepartment);
+        sut.create(department);
 
-        Mockito.verify(departmentDAO).save(eq(dummyDepartment));
-    }
-
-
-    private Department createDummyDepartment() {
-
-        Department department = new Department();
-        department.setName("FooDepartment");
-        department.setDescription("This is the foo department.");
-        department.setLastModification(DateTime.now());
-
-        return department;
+        Mockito.verify(departmentDAO).save(eq(department));
     }
 
 
@@ -79,11 +69,11 @@ public class DepartmentServiceImplTest {
     @Test
     public void ensureUpdateCallDepartmentDAOUpdate() throws Exception {
 
-        Department dummyDepartment = createDummyDepartment();
+        Department department = TestDataCreator.createDepartment();
 
-        sut.update(dummyDepartment);
+        sut.update(department);
 
-        Mockito.verify(departmentDAO).save(eq(dummyDepartment));
+        Mockito.verify(departmentDAO).save(eq(department));
     }
 
 
@@ -118,13 +108,15 @@ public class DepartmentServiceImplTest {
     }
 
 
-    @Test(expected = IllegalStateException.class)
-    public void ensureExceptionOnDeletionOfNonPersistedId() throws Exception {
+    @Test
+    public void ensureDeletionIsNotExecutedIfDepartmentWithGivenIDDoesNotExist() throws Exception {
 
         int id = 0;
         Mockito.when(departmentDAO.findOne(id)).thenReturn(null);
 
         sut.delete(id);
+
+        Mockito.verify(departmentDAO, Mockito.never()).delete(Mockito.anyInt());
     }
 
 
@@ -132,42 +124,23 @@ public class DepartmentServiceImplTest {
     public void ensureDeleteCallFindOneAndDelete() throws Exception {
 
         int id = 0;
-        Mockito.when(departmentDAO.getOne(id)).thenReturn(new Department());
+        Mockito.when(departmentDAO.findOne(id)).thenReturn(TestDataCreator.createDepartment());
 
         sut.delete(id);
 
-        Mockito.verify(departmentDAO).getOne(eq(id));
+        Mockito.verify(departmentDAO).findOne(eq(id));
         Mockito.verify(departmentDAO).delete(eq(id));
-    }
-
-
-    @Test
-    public void ensureSetLastModificationOnCreate() throws Exception {
-
-        Department department = new Department();
-        department.setName("Test Department");
-        department.setDescription("Test Description");
-
-        assertNull(department.getLastModification());
-
-        sut.create(department);
-
-        assertNotNull(department.getLastModification());
     }
 
 
     @Test
     public void ensureSetLastModificationOnUpdate() throws Exception {
 
-        Department department = new Department();
-        department.setName("Test Department");
-        department.setDescription("Test Description");
-
-        assertNull(department.getLastModification());
+        Department department = Mockito.mock(Department.class);
 
         sut.update(department);
 
-        assertNotNull(department.getLastModification());
+        Mockito.verify(department).setLastModification(Mockito.any(DateTime.class));
     }
 
 
@@ -183,10 +156,10 @@ public class DepartmentServiceImplTest {
         Person marketing2 = new Person();
         Person marketing3 = new Person();
 
-        Department admins = new Department();
+        Department admins = TestDataCreator.createDepartment("admins");
         admins.setMembers(Arrays.asList(admin1, admin2, departmentHead));
 
-        Department marketing = new Department();
+        Department marketing = TestDataCreator.createDepartment("marketing");
         marketing.setMembers(Arrays.asList(marketing1, marketing2, marketing3, departmentHead));
 
         Mockito.when(departmentDAO.getManagedDepartments(departmentHead)).thenReturn(Arrays.asList(admins, marketing));
@@ -221,7 +194,7 @@ public class DepartmentServiceImplTest {
         Person admin1 = new Person();
         Person admin2 = new Person();
 
-        Department admins = new Department();
+        Department admins = TestDataCreator.createDepartment("admins");
         admins.setMembers(Arrays.asList(admin1, admin2, departmentHead));
 
         Mockito.when(departmentDAO.getManagedDepartments(departmentHead)).thenReturn(Collections.singletonList(admins));
@@ -241,7 +214,7 @@ public class DepartmentServiceImplTest {
         Person admin1 = new Person();
         Person admin2 = new Person();
 
-        Department admins = new Department();
+        Department admins = TestDataCreator.createDepartment("admins");
         admins.setMembers(Arrays.asList(admin1, admin2, departmentHead));
 
         Person marketing1 = new Person();
@@ -260,10 +233,10 @@ public class DepartmentServiceImplTest {
         Person noDepartmentHead = Mockito.mock(Person.class);
         Mockito.when(noDepartmentHead.hasRole(Role.DEPARTMENT_HEAD)).thenReturn(false);
 
-        Person admin1 = new Person();
-        Person admin2 = new Person();
+        Person admin1 = TestDataCreator.createPerson("admin1");
+        Person admin2 = TestDataCreator.createPerson("admin2");
 
-        Department admins = new Department();
+        Department admins = TestDataCreator.createDepartment("admins");
         admins.setMembers(Arrays.asList(admin1, admin2, noDepartmentHead));
 
         Mockito.when(departmentDAO.getManagedDepartments(noDepartmentHead))
@@ -299,17 +272,17 @@ public class DepartmentServiceImplTest {
         Person person = Mockito.mock(Person.class);
         DateMidnight date = DateMidnight.now();
 
-        Person admin1 = new Person();
-        Person admin2 = new Person();
+        Person admin1 = TestDataCreator.createPerson("admin1");
+        Person admin2 = TestDataCreator.createPerson("admin2");
 
-        Person marketing1 = new Person();
-        Person marketing2 = new Person();
-        Person marketing3 = new Person();
+        Person marketing1 = TestDataCreator.createPerson("marketing1");
+        Person marketing2 = TestDataCreator.createPerson("marketing2");
+        Person marketing3 = TestDataCreator.createPerson("marketing3");
 
-        Department admins = new Department();
+        Department admins = TestDataCreator.createDepartment("admins");
         admins.setMembers(Arrays.asList(admin1, admin2, person));
 
-        Department marketing = new Department();
+        Department marketing = TestDataCreator.createDepartment("marketing");
         marketing.setMembers(Arrays.asList(marketing1, marketing2, marketing3, person));
 
         Mockito.when(departmentDAO.getAssignedDepartments(person)).thenReturn(Arrays.asList(admins, marketing));
@@ -350,13 +323,13 @@ public class DepartmentServiceImplTest {
         Person person = Mockito.mock(Person.class);
         DateMidnight date = DateMidnight.now();
 
-        Person admin1 = new Person();
-        Person marketing1 = new Person();
+        Person admin1 = TestDataCreator.createPerson("admin1");
+        Person marketing1 = TestDataCreator.createPerson("marketing1");
 
-        Department admins = new Department();
+        Department admins = TestDataCreator.createDepartment("admins");
         admins.setMembers(Arrays.asList(admin1, person));
 
-        Department marketing = new Department();
+        Department marketing = TestDataCreator.createDepartment("marketing");
         marketing.setMembers(Arrays.asList(marketing1, person));
 
         Application waitingApplication = Mockito.mock(Application.class);

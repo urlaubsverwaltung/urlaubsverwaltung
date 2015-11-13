@@ -1,5 +1,8 @@
 package org.synyx.urlaubsverwaltung.core.department;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -12,6 +15,7 @@ import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -50,6 +54,11 @@ public class Department extends AbstractPersistable<Integer> {
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<Person> departmentHeads = new ArrayList<>();
 
+    public Department() {
+
+        this.lastModification = DateTime.now().toDate();
+    }
+
     public String getName() {
 
         return name;
@@ -76,12 +85,7 @@ public class Department extends AbstractPersistable<Integer> {
 
     public DateTime getLastModification() {
 
-        if (lastModification == null) {
-            // because DateTime creates DateTime.now() if new DateTime(null) is called
-            return null;
-        } else {
-            return new DateTime(lastModification);
-        }
+        return new DateTime(lastModification);
     }
 
 
@@ -101,7 +105,11 @@ public class Department extends AbstractPersistable<Integer> {
 
     public List<Person> getMembers() {
 
-        return members;
+        if (members == null) {
+            members = Collections.emptyList();
+        }
+
+        return Collections.unmodifiableList(members);
     }
 
 
@@ -113,12 +121,27 @@ public class Department extends AbstractPersistable<Integer> {
 
     public List<Person> getDepartmentHeads() {
 
-        return departmentHeads;
+        if (departmentHeads == null) {
+            departmentHeads = Collections.emptyList();
+        }
+
+        return Collections.unmodifiableList(departmentHeads);
     }
 
 
     public void setDepartmentHeads(List<Person> departmentHeads) {
 
         this.departmentHeads = departmentHeads;
+    }
+
+
+    @Override
+    public String toString() {
+
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("id", getId())
+            .append("name", getName())
+            .append("members", getMembers().size())
+            .append("departmentHeads", getDepartmentHeads().size())
+            .toString();
     }
 }

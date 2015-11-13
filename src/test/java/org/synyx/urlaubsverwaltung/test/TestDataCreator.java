@@ -7,6 +7,7 @@ import org.springframework.util.ReflectionUtils;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
+import org.synyx.urlaubsverwaltung.core.department.Department;
 import org.synyx.urlaubsverwaltung.core.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -85,5 +86,27 @@ public final class TestDataCreator {
         application.setStatus(ApplicationStatus.WAITING);
 
         return application;
+    }
+
+
+    public static Department createDepartment() {
+
+        return createDepartment("Abteilung");
+    }
+
+
+    public static Department createDepartment(String name) {
+
+        return createDepartment(name, "Dies ist eine Abteilung");
+    }
+
+
+    public static Department createDepartment(String name, String description) {
+
+        Department department = new Department();
+        department.setName(name);
+        department.setDescription(description);
+
+        return department;
     }
 }
