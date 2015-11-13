@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.core.sicknote;
 
 import org.joda.time.DateMidnight;
+import org.joda.time.DateTime;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -17,6 +18,17 @@ import java.util.function.Consumer;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 public class SickNoteTest {
+
+    @Test
+    public void ensureLastModificationDateIsSetOnInitialization() {
+
+        SickNote sickNote = new SickNote();
+
+        Assert.assertNotNull("Last modification date should be set", sickNote.getLastEdited());
+        Assert.assertEquals("Wrong last modification date", DateTime.now().withTimeAtStartOfDay(),
+            sickNote.getLastEdited());
+    }
+
 
     @Test
     public void ensureAUBIsPresentIfAUBStartDateAndAUBEndDateAreSet() {

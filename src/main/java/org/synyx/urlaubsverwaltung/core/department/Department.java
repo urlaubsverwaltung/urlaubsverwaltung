@@ -56,7 +56,7 @@ public class Department extends AbstractPersistable<Integer> {
 
     public Department() {
 
-        this.lastModification = DateTime.now().toDate();
+        this.lastModification = DateTime.now().withTimeAtStartOfDay().toDate();
     }
 
     public String getName() {

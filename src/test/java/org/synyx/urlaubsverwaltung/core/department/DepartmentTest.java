@@ -23,6 +23,8 @@ public class DepartmentTest {
         Department department = new Department();
 
         Assert.assertNotNull("Last modification date should be set", department.getLastModification());
+        Assert.assertEquals("Wrong last modification date", DateTime.now().withTimeAtStartOfDay(),
+            department.getLastModification());
     }
 
 

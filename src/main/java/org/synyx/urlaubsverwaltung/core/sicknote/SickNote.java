@@ -72,6 +72,11 @@ public class SickNote extends AbstractPersistable<Integer> {
     @Enumerated(EnumType.STRING)
     private SickNoteStatus status;
 
+    public SickNote() {
+
+        this.lastEdited = DateTime.now().withTimeAtStartOfDay().toDate();
+    }
+
     public Person getPerson() {
 
         return person;
