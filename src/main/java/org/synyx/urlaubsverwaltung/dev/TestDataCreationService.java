@@ -11,23 +11,11 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 import org.springframework.stereotype.Service;
 
-import org.synyx.urlaubsverwaltung.core.account.service.AccountInteractionService;
-import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
-import org.synyx.urlaubsverwaltung.core.application.service.ApplicationInteractionService;
-import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
-import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
-import org.synyx.urlaubsverwaltung.core.overtime.Overtime;
-import org.synyx.urlaubsverwaltung.core.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.person.Role;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteInteractionService;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
-import org.synyx.urlaubsverwaltung.core.util.CalcUtil;
 
 import java.math.BigDecimal;
 
@@ -35,7 +23,6 @@ import java.security.NoSuchAlgorithmException;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 
