@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.core.calendar;
+package org.synyx.urlaubsverwaltung.core.period;
 
 import org.joda.time.DateMidnight;
 

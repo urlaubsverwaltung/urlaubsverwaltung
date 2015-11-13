@@ -11,11 +11,10 @@ import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
-import org.synyx.urlaubsverwaltung.core.calendar.workingtime.Day;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.department.Department;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
-import org.synyx.urlaubsverwaltung.core.mail.MailService;
+import org.synyx.urlaubsverwaltung.core.period.WeekDay;
 import org.synyx.urlaubsverwaltung.core.person.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
@@ -65,7 +64,7 @@ public class PersonFormProcessorImplTest {
         examplePersonForm.setRemainingVacationDays(new BigDecimal("4"));
         examplePersonForm.setRemainingVacationDaysNotExpiring(new BigDecimal("3"));
         examplePersonForm.setValidFrom(DateMidnight.now());
-        examplePersonForm.setWorkingDays(Arrays.asList(Day.MONDAY.getDayOfWeek(), Day.TUESDAY.getDayOfWeek()));
+        examplePersonForm.setWorkingDays(Arrays.asList(WeekDay.MONDAY.getDayOfWeek(), WeekDay.TUESDAY.getDayOfWeek()));
         examplePersonForm.setPermissions(Collections.singletonList(Role.USER));
         examplePersonForm.setNotifications(Collections.singletonList(MailNotification.NOTIFICATION_USER));
 

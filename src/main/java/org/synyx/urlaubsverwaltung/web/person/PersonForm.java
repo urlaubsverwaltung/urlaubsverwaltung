@@ -6,9 +6,9 @@ import org.joda.time.DateMidnight;
 import org.springframework.util.Assert;
 
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
-import org.synyx.urlaubsverwaltung.core.calendar.workingtime.Day;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
+import org.synyx.urlaubsverwaltung.core.period.WeekDay;
 import org.synyx.urlaubsverwaltung.core.person.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.Role;
@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-
-import static org.synyx.urlaubsverwaltung.core.person.Role.INACTIVE;
 
 
 /**
@@ -104,7 +102,7 @@ public class PersonForm {
         if (workingTimeOptional.isPresent()) {
             WorkingTime workingTime = workingTimeOptional.get();
 
-            for (Day day : Day.values()) {
+            for (WeekDay day : WeekDay.values()) {
                 Integer dayOfWeek = day.getDayOfWeek();
 
                 DayLength dayLength = workingTime.getDayLengthForWeekDay(dayOfWeek);

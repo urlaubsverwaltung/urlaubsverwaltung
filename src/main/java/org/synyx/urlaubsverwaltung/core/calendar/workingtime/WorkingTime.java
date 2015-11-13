@@ -9,6 +9,7 @@ import org.joda.time.DateTimeConstants;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
+import org.synyx.urlaubsverwaltung.core.period.WeekDay;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.util.Date;
@@ -70,7 +71,7 @@ public class WorkingTime extends AbstractPersistable<Integer> {
 
     public boolean hasWorkingDays(List<Integer> workingDays) {
 
-        for (Day day : Day.values()) {
+        for (WeekDay day : WeekDay.values()) {
             int dayOfWeek = day.getDayOfWeek();
 
             DayLength dayLength = getDayLengthForWeekDay(dayOfWeek);

@@ -1,12 +1,14 @@
-package org.synyx.urlaubsverwaltung.core.calendar.workingtime;
+package org.synyx.urlaubsverwaltung.core.period;
 
 import org.joda.time.DateTimeConstants;
 
 
 /**
+ * Represents a day of week.
+ *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public enum Day {
+public enum WeekDay {
 
     MONDAY(DateTimeConstants.MONDAY),
     TUESDAY(DateTimeConstants.TUESDAY),
@@ -18,7 +20,7 @@ public enum Day {
 
     private Integer dayOfWeek;
 
-    Day(Integer dayOfWeek) {
+    WeekDay(Integer dayOfWeek) {
 
         this.dayOfWeek = dayOfWeek;
     }

@@ -2,20 +2,24 @@ package org.synyx.urlaubsverwaltung.core.account.service;
 
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
+
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.domain.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
-import org.synyx.urlaubsverwaltung.core.calendar.NowService;
 import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
+import org.synyx.urlaubsverwaltung.core.period.NowService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 
 import java.math.BigDecimal;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,7 +38,7 @@ public class VacationDaysService {
 
     @Autowired
     public VacationDaysService(WorkDaysService calendarService, NowService nowService,
-                               ApplicationService applicationService) {
+        ApplicationService applicationService) {
 
         this.calendarService = calendarService;
         this.nowService = nowService;
@@ -48,7 +52,7 @@ public class VacationDaysService {
      * relevant for calculation and if it's after April, only the not expiring remaining vacation days are relevant for
      * calculation.</p>
      *
-     * @param  account {@link org.synyx.urlaubsverwaltung.core.account.domain.Account}
+     * @param  account  {@link org.synyx.urlaubsverwaltung.core.account.domain.Account}
      *
      * @return  total number of left vacation days
      */
