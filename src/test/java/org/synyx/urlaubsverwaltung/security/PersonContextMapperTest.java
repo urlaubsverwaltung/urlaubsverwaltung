@@ -69,7 +69,7 @@ public class PersonContextMapperTest {
     @Test(expected = IllegalStateException.class)
     public void ensureThrowsIfTryingToGetAuthoritiesOfPersonWithNoRoles() {
 
-        Person person = new Person();
+        Person person = TestDataCreator.createPerson();
         person.setPermissions(Collections.emptyList());
 
         personContextMapper.getGrantedAuthorities(person);
@@ -79,7 +79,7 @@ public class PersonContextMapperTest {
     @Test
     public void ensureReturnsCorrectListOfAuthoritiesUsingTheRolesOfTheGivenPerson() {
 
-        Person person = new Person();
+        Person person = TestDataCreator.createPerson();
         person.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
 
         Collection<GrantedAuthority> authorities = personContextMapper.getGrantedAuthorities(person);
@@ -117,7 +117,7 @@ public class PersonContextMapperTest {
     public void ensureSyncsPersonDataUsingLDAPAttributes() throws NamingException,
         UnsupportedMemberAffiliationException {
 
-        Person person = new Person();
+        Person person = TestDataCreator.createPerson();
         person.setPermissions(Collections.singletonList(Role.USER));
 
         Mockito.when(ldapUserMapper.mapFromContext(Mockito.eq(context)))
@@ -184,7 +184,7 @@ public class PersonContextMapperTest {
     public void ensureAuthoritiesAreBasedOnRolesOfTheSignedInPerson() throws NamingException,
         UnsupportedMemberAffiliationException {
 
-        Person person = new Person();
+        Person person = TestDataCreator.createPerson("username");
         person.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
 
         Mockito.when(ldapUserMapper.mapFromContext(Mockito.eq(context)))
@@ -211,7 +211,7 @@ public class PersonContextMapperTest {
     public void ensureAddsOfficeRoleToSignedInUserIfNoUserWithOfficeRoleExistsYet() throws NamingException,
         UnsupportedMemberAffiliationException {
 
-        Person person = new Person();
+        Person person = TestDataCreator.createPerson("username");
         person.setPermissions(Collections.singletonList(Role.USER));
 
         Mockito.when(ldapUserMapper.mapFromContext(Mockito.eq(context)))

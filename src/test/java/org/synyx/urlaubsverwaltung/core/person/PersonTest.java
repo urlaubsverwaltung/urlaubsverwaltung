@@ -3,6 +3,8 @@ package org.synyx.urlaubsverwaltung.core.person;
 import org.junit.Assert;
 import org.junit.Test;
 
+import org.synyx.urlaubsverwaltung.test.TestDataCreator;
+
 import java.util.*;
 
 
@@ -32,7 +34,7 @@ public class PersonTest {
     @Test
     public void ensureReturnsTrueIfPersonHasTheGivenRole() {
 
-        Person person = new Person();
+        Person person = TestDataCreator.createPerson();
         person.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
 
         Assert.assertTrue("Should return true if the person has the given role", person.hasRole(Role.BOSS));
@@ -42,7 +44,7 @@ public class PersonTest {
     @Test
     public void ensureReturnsFalseIfPersonHasNotTheGivenRole() {
 
-        Person person = new Person();
+        Person person = TestDataCreator.createPerson();
         person.setPermissions(Collections.singletonList(Role.USER));
 
         Assert.assertFalse("Should return false if the person has not the given role", person.hasRole(Role.BOSS));
@@ -52,7 +54,7 @@ public class PersonTest {
     @Test
     public void ensureReturnsTrueIfPersonHasTheGivenNotificationType() {
 
-        Person person = new Person();
+        Person person = TestDataCreator.createPerson();
         person.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS));
 
         Assert.assertTrue("Should return true if the person has the given notification type",
@@ -63,7 +65,7 @@ public class PersonTest {
     @Test
     public void ensureReturnsFalseIfPersonHasNotTheGivenNotificationType() {
 
-        Person person = new Person();
+        Person person = TestDataCreator.createPerson();
         person.setNotifications(Collections.singletonList(MailNotification.NOTIFICATION_USER));
 
         Assert.assertFalse("Should return false if the person has not the given notification type",
@@ -74,7 +76,7 @@ public class PersonTest {
     @Test
     public void ensureReturnsEmptyStringAsGravatarURLIfEmailIsEmpty() {
 
-        Person person = new Person();
+        Person person = TestDataCreator.createPerson();
         person.setEmail(null);
 
         Assert.assertNotNull("Should not be null", person.getGravatarURL());
@@ -85,7 +87,7 @@ public class PersonTest {
     @Test
     public void ensureCanReturnGravatarURL() {
 
-        Person person = new Person();
+        Person person = TestDataCreator.createPerson();
         person.setEmail("muster@test.de");
 
         Assert.assertNotNull("Should not be null", person.getGravatarURL());
@@ -101,7 +103,7 @@ public class PersonTest {
         List<Role> modifiableList = new ArrayList<>();
         modifiableList.add(Role.USER);
 
-        Person person = new Person();
+        Person person = TestDataCreator.createPerson();
         person.setPermissions(modifiableList);
 
         try {
@@ -119,7 +121,7 @@ public class PersonTest {
         List<MailNotification> modifiableList = new ArrayList<>();
         modifiableList.add(MailNotification.NOTIFICATION_USER);
 
-        Person person = new Person();
+        Person person = TestDataCreator.createPerson();
         person.setNotifications(modifiableList);
 
         try {
@@ -134,7 +136,7 @@ public class PersonTest {
     @Test(expected = IllegalArgumentException.class)
     public void ensureThrowsIfSettingPermissionsContainingInactiveRoleAndAnyOtherRole() {
 
-        Person person = new Person();
+        Person person = TestDataCreator.createPerson();
 
         person.setPermissions(Arrays.asList(Role.INACTIVE, Role.BOSS));
     }
@@ -143,7 +145,7 @@ public class PersonTest {
     @Test
     public void ensureSettingPermissionsContainingOnlyInactiveRoleIsPossible() {
 
-        Person person = new Person();
+        Person person = TestDataCreator.createPerson();
 
         person.setPermissions(Collections.singletonList(Role.INACTIVE));
 
@@ -157,7 +159,7 @@ public class PersonTest {
     @Test
     public void ensureSettingPermissionsContainingMultipleRolesIsPossible() {
 
-        Person person = new Person();
+        Person person = TestDataCreator.createPerson();
 
         person.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
 

@@ -22,6 +22,7 @@ import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.io.IOException;
 
@@ -76,8 +77,7 @@ public class CalculationServiceTest {
     @Test
     public void testCheckApplication() {
 
-        Person person = new Person();
-        person.setLoginName("horscht");
+        Person person = TestDataCreator.createPerson("horscht");
 
         Application applicationForLeaveToCheck = new Application();
         applicationForLeaveToCheck.setStartDate(new DateMidnight(2012, DateTimeConstants.AUGUST, 20));

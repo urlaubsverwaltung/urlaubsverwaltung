@@ -116,7 +116,7 @@ public class PersonFormProcessorImplTest {
                     Mockito.anyListOf(Role.class)))
             .thenReturn(person);
 
-        Department department = new Department();
+        Department department = TestDataCreator.createDepartment();
         department.setDepartmentHeads(Collections.singletonList(person));
 
         Assert.assertEquals("Wrong number of department heads", 1, department.getDepartmentHeads().size());
@@ -142,7 +142,7 @@ public class PersonFormProcessorImplTest {
                     Mockito.anyListOf(Role.class)))
             .thenReturn(person);
 
-        Department department = new Department();
+        Department department = TestDataCreator.createDepartment();
 
         Assert.assertEquals("Wrong number of department heads", 0, department.getDepartmentHeads().size());
 

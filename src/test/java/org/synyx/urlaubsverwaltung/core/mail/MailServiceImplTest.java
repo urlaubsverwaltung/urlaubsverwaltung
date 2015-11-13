@@ -55,7 +55,7 @@ public class MailServiceImplTest {
         mailService = new MailServiceImpl(mailSender, velocityEngine, personService, departmentService, settingsService,
                 "");
 
-        Person person = new Person();
+        Person person = TestDataCreator.createPerson();
 
         application = new Application();
         application.setPerson(person);

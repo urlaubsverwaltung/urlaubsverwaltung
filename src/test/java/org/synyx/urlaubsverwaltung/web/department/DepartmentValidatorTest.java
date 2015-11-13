@@ -11,6 +11,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.department.Department;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.Role;
+import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.util.Collections;
 
@@ -46,7 +47,7 @@ public class DepartmentValidatorTest {
     @Test
     public void ensureNameMustNotBeNull() throws Exception {
 
-        sut.validate(new Department(), errors);
+        sut.validate(TestDataCreator.createDepartment(null), errors);
         Mockito.verify(errors).rejectValue("name", "error.entry.mandatory");
     }
 
@@ -54,8 +55,7 @@ public class DepartmentValidatorTest {
     @Test
     public void ensureNameMustNotBeEmpty() throws Exception {
 
-        Department department = new Department();
-        department.setName("");
+        Department department = TestDataCreator.createDepartment("");
 
         sut.validate(department, errors);
         Mockito.verify(errors).rejectValue("name", "error.entry.mandatory");
@@ -65,8 +65,8 @@ public class DepartmentValidatorTest {
     @Test
     public void ensureNameMustNotBeTooLong() throws Exception {
 
-        Department department = new Department();
-        department.setName("AAAAAAAAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+        Department department = TestDataCreator.createDepartment(
+                "AAAAAAAAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 
         sut.validate(department, errors);
         Mockito.verify(errors).rejectValue("name", "error.entry.tooManyChars");
@@ -76,8 +76,7 @@ public class DepartmentValidatorTest {
     @Test
     public void ensureValidNameHasNoValidationError() {
 
-        Department department = new Department();
-        department.setName("Foobar Department");
+        Department department = TestDataCreator.createDepartment("Foobar Department");
 
         sut.validate(department, errors);
         Mockito.verifyZeroInteractions(errors);
@@ -87,8 +86,7 @@ public class DepartmentValidatorTest {
     @Test
     public void ensureDescriptionMustNotBeTooLong() throws Exception {
 
-        Department department = new Department();
-        department.setName("Foobar Department");
+        Department department = TestDataCreator.createDepartment("Foobar Department");
         department.setDescription(
             "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut "
             + "labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo"
@@ -110,10 +108,8 @@ public class DepartmentValidatorTest {
     @Test
     public void ensureValidDescriptionHasNoValidationError() {
 
-        Department department = new Department();
-        department.setName("Foobar Department");
-        department.setDescription(
-            "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut");
+        Department department = TestDataCreator.createDepartment("Foobar Department",
+                "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut");
 
         sut.validate(department, errors);
 
@@ -124,8 +120,7 @@ public class DepartmentValidatorTest {
     @Test
     public void ensureSettingNeitherMembersNorDepartmentHeadsHasNoValidationError() {
 
-        Department department = new Department();
-        department.setName("Admins");
+        Department department = TestDataCreator.createDepartment("Admins");
         department.setMembers(null);
         department.setDepartmentHeads(null);
 
@@ -138,11 +133,10 @@ public class DepartmentValidatorTest {
     @Test
     public void ensureCanNotSetAPersonAsDepartmentHeadWithoutSettingAnyMember() {
 
-        Person person = new Person();
+        Person person = TestDataCreator.createPerson();
         person.setPermissions(Collections.singletonList(Role.DEPARTMENT_HEAD));
 
-        Department department = new Department();
-        department.setName("Admins");
+        Department department = TestDataCreator.createDepartment("Admins");
         department.setDepartmentHeads(Collections.singletonList(person));
         department.setMembers(null);
 
@@ -155,13 +149,12 @@ public class DepartmentValidatorTest {
     @Test
     public void ensureCanNotSetAPersonAsDepartmentHeadWithoutSettingThePersonAsMember() {
 
-        Person person = new Person();
+        Person person = TestDataCreator.createPerson("muster");
         person.setPermissions(Collections.singletonList(Role.DEPARTMENT_HEAD));
 
-        Department department = new Department();
-        department.setName("Admins");
+        Department department = TestDataCreator.createDepartment("Admins");
         department.setDepartmentHeads(Collections.singletonList(person));
-        department.setMembers(Collections.singletonList(new Person()));
+        department.setMembers(Collections.singletonList(TestDataCreator.createPerson("member")));
 
         sut.validate(department, errors);
 
@@ -172,11 +165,10 @@ public class DepartmentValidatorTest {
     @Test
     public void ensureCanNotSetAPersonWithoutDepartmentHeadRoleAsDepartmentHead() {
 
-        Person person = new Person();
+        Person person = TestDataCreator.createPerson();
         person.setPermissions(Collections.singletonList(Role.USER));
 
-        Department department = new Department();
-        department.setName("Admins");
+        Department department = TestDataCreator.createDepartment("Admins");
         department.setDepartmentHeads(Collections.singletonList(person));
 
         sut.validate(department, errors);

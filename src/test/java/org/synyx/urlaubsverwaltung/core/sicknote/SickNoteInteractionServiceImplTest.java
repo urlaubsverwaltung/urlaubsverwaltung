@@ -76,7 +76,7 @@ public class SickNoteInteractionServiceImplTest {
         sickNote.setDayLength(DayLength.FULL);
         sickNote.setPerson(TestDataCreator.createPerson());
 
-        person = new Person();
+        person = TestDataCreator.createPerson();
     }
 
 

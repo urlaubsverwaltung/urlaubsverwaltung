@@ -14,10 +14,12 @@ import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.math.BigDecimal;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -46,7 +48,7 @@ public class UsedDaysOverviewTest {
         application.setEndDate(new DateMidnight(2014, 10, 13));
         application.setStatus(ApplicationStatus.WAITING);
 
-        new UsedDaysOverview(Arrays.asList(application), 2015, calendarService);
+        new UsedDaysOverview(Collections.singletonList(application), 2015, calendarService);
     }
 
 
@@ -130,29 +132,20 @@ public class UsedDaysOverviewTest {
     @Test
     public void ensureCalculatesDaysForGivenYearForApplicationsSpanningTwoYears() {
 
-        Person person = new Person();
+        Person person = TestDataCreator.createPerson();
         DayLength fullDay = DayLength.FULL;
         DateMidnight startDate = new DateMidnight(2013, 12, 24);
         DateMidnight endDate = new DateMidnight(2014, 1, 6);
 
-        Application holiday = new Application();
-        holiday.setVacationType(VacationType.HOLIDAY);
-
-        // 3 days in 2013
-        holiday.setStartDate(startDate);
-
-        // 2 days in 2014
-        holiday.setEndDate(endDate);
-
-        // sum is 5 days
-        holiday.setStatus(ApplicationStatus.WAITING);
-        holiday.setPerson(person);
-        holiday.setDayLength(fullDay);
+        // 3 days in 2013, 2 days in 2014
+        Application holiday = TestDataCreator.createApplication(person, VacationType.HOLIDAY, startDate, endDate,
+                fullDay);
 
         Mockito.when(calendarService.getWorkDays(fullDay, new DateMidnight(2014, 1, 1), endDate, person))
             .thenReturn(BigDecimal.valueOf(2));
 
-        UsedDaysOverview usedDaysOverview = new UsedDaysOverview(Arrays.asList(holiday), 2014, calendarService);
+        UsedDaysOverview usedDaysOverview = new UsedDaysOverview(Collections.singletonList(holiday), 2014,
+                calendarService);
 
         UsedDays holidayDays = usedDaysOverview.getHolidayDays();
         Assert.assertNotNull("Should not be null", holidayDays.getDays());

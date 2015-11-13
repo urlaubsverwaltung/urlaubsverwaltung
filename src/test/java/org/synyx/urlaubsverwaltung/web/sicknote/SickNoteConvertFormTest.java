@@ -11,6 +11,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 
 /**
@@ -23,15 +24,11 @@ public class SickNoteConvertFormTest {
     @Test
     public void ensureCorrectProvidedValuesFromSickNote() {
 
-        Person person = new Person();
+        Person person = TestDataCreator.createPerson();
         DateMidnight startDate = new DateMidnight(2014, 1, 1);
         DateMidnight endDate = new DateMidnight(2014, 1, 10);
 
-        SickNote sickNote = new SickNote();
-        sickNote.setPerson(person);
-        sickNote.setDayLength(DayLength.NOON);
-        sickNote.setStartDate(startDate);
-        sickNote.setEndDate(endDate);
+        SickNote sickNote = TestDataCreator.createSickNote(person, startDate, endDate, DayLength.NOON);
 
         SickNoteConvertForm convertForm = new SickNoteConvertForm(sickNote);
 
@@ -50,15 +47,11 @@ public class SickNoteConvertFormTest {
     @Test
     public void ensureGeneratesCorrectApplicationForLeave() {
 
-        Person person = new Person();
+        Person person = TestDataCreator.createPerson();
         DateMidnight startDate = new DateMidnight(2014, 1, 1);
         DateMidnight endDate = new DateMidnight(2014, 1, 10);
 
-        SickNote sickNote = new SickNote();
-        sickNote.setPerson(person);
-        sickNote.setDayLength(DayLength.FULL);
-        sickNote.setStartDate(startDate);
-        sickNote.setEndDate(endDate);
+        SickNote sickNote = TestDataCreator.createSickNote(person, startDate, endDate, DayLength.FULL);
 
         String reason = "Foo";
         VacationType vacationType = VacationType.UNPAIDLEAVE;

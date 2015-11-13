@@ -8,6 +8,7 @@ import org.mockito.Mockito;
 
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.util.Optional;
 
@@ -35,8 +36,8 @@ public class SickNoteCommentServiceImplTest {
     @Test
     public void ensureCreatesACommentAndPersistsIt() {
 
-        Person author = new Person();
-        SickNote sickNote = new SickNote();
+        Person author = TestDataCreator.createPerson("author");
+        SickNote sickNote = TestDataCreator.createSickNote(author);
 
         SickNoteComment comment = sickNoteCommentService.create(sickNote, SickNoteAction.EDITED,
                 Optional.<String>empty(), author);
@@ -61,8 +62,8 @@ public class SickNoteCommentServiceImplTest {
     @Test
     public void ensureCreationOfCommentWithTextWorks() {
 
-        Person author = new Person();
-        SickNote sickNote = new SickNote();
+        Person author = TestDataCreator.createPerson("author");
+        SickNote sickNote = TestDataCreator.createSickNote(author);
 
         SickNoteComment comment = sickNoteCommentService.create(sickNote, SickNoteAction.CONVERTED_TO_VACATION,
                 Optional.of("Foo"), author);

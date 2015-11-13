@@ -14,6 +14,7 @@ import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -175,7 +176,7 @@ public class PersonServiceImplTest {
     @Test
     public void ensureSaveCallsCorrectDaoMethod() {
 
-        Person personToSave = new Person();
+        Person personToSave = TestDataCreator.createPerson();
         sut.save(personToSave);
         Mockito.verify(personDAO).save(personToSave);
     }
@@ -203,16 +204,16 @@ public class PersonServiceImplTest {
     @Test
     public void ensureGetActivePersonsReturnsOnlyPersonsThatHaveNotInactiveRole() {
 
-        Person inactive = new Person();
-        inactive.setPermissions(Arrays.asList(Role.INACTIVE));
+        Person inactive = TestDataCreator.createPerson("inactive");
+        inactive.setPermissions(Collections.singletonList(Role.INACTIVE));
 
-        Person user = new Person();
-        user.setPermissions(Arrays.asList(Role.USER));
+        Person user = TestDataCreator.createPerson("user");
+        user.setPermissions(Collections.singletonList(Role.USER));
 
-        Person boss = new Person();
+        Person boss = TestDataCreator.createPerson("boss");
         boss.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
 
-        Person office = new Person();
+        Person office = TestDataCreator.createPerson("office");
         office.setPermissions(Arrays.asList(Role.USER, Role.BOSS, Role.OFFICE));
 
         List<Person> allPersons = Arrays.asList(inactive, user, boss, office);
@@ -232,16 +233,16 @@ public class PersonServiceImplTest {
     @Test
     public void ensureGetInactivePersonsReturnsOnlyPersonsThatHaveInactiveRole() {
 
-        Person inactive = new Person();
-        inactive.setPermissions(Arrays.asList(Role.INACTIVE));
+        Person inactive = TestDataCreator.createPerson("inactive");
+        inactive.setPermissions(Collections.singletonList(Role.INACTIVE));
 
-        Person user = new Person();
-        user.setPermissions(Arrays.asList(Role.USER));
+        Person user = TestDataCreator.createPerson("user");
+        user.setPermissions(Collections.singletonList(Role.USER));
 
-        Person boss = new Person();
+        Person boss = TestDataCreator.createPerson("boss");
         boss.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
 
-        Person office = new Person();
+        Person office = TestDataCreator.createPerson("office");
         office.setPermissions(Arrays.asList(Role.USER, Role.BOSS, Role.OFFICE));
 
         List<Person> allPersons = Arrays.asList(inactive, user, boss, office);
@@ -259,13 +260,13 @@ public class PersonServiceImplTest {
     @Test
     public void ensureGetPersonsByRoleReturnsOnlyPersonsWithTheGivenRole() {
 
-        Person user = new Person();
-        user.setPermissions(Arrays.asList(Role.USER));
+        Person user = TestDataCreator.createPerson("user");
+        user.setPermissions(Collections.singletonList(Role.USER));
 
-        Person boss = new Person();
+        Person boss = TestDataCreator.createPerson("boss");
         boss.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
 
-        Person office = new Person();
+        Person office = TestDataCreator.createPerson("office");
         office.setPermissions(Arrays.asList(Role.USER, Role.BOSS, Role.OFFICE));
 
         List<Person> allPersons = Arrays.asList(user, boss, office);
@@ -284,15 +285,15 @@ public class PersonServiceImplTest {
     @Test
     public void ensureGetPersonsByNotificationTypeReturnsOnlyPersonsWithTheGivenNotificationType() {
 
-        Person user = new Person();
-        user.setPermissions(Arrays.asList(Role.USER));
-        user.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER));
+        Person user = TestDataCreator.createPerson("user");
+        user.setPermissions(Collections.singletonList(Role.USER));
+        user.setNotifications(Collections.singletonList(MailNotification.NOTIFICATION_USER));
 
-        Person boss = new Person();
+        Person boss = TestDataCreator.createPerson("boss");
         boss.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
         boss.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS));
 
-        Person office = new Person();
+        Person office = TestDataCreator.createPerson("office");
         office.setPermissions(Arrays.asList(Role.USER, Role.BOSS, Role.OFFICE));
         office.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS,
                 MailNotification.NOTIFICATION_OFFICE));

@@ -24,6 +24,7 @@ import org.synyx.urlaubsverwaltung.core.period.NowService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.io.IOException;
 
@@ -77,8 +78,7 @@ public class VacationDaysServiceTest {
     @Test
     public void testGetDaysBeforeApril() {
 
-        Person person = new Person();
-        person.setLoginName("horscht");
+        Person person = TestDataCreator.createPerson("horscht");
 
         DateMidnight firstMilestone = new DateMidnight(2012, DateTimeConstants.JANUARY, 1);
         DateMidnight lastMilestone = new DateMidnight(2012, DateTimeConstants.MARCH, 31);
@@ -134,8 +134,7 @@ public class VacationDaysServiceTest {
     @Test
     public void testGetDaysAfterApril() {
 
-        Person person = new Person();
-        person.setLoginName("horscht");
+        Person person = TestDataCreator.createPerson("horscht");
 
         DateMidnight firstMilestone = new DateMidnight(2012, DateTimeConstants.APRIL, 1);
         DateMidnight lastMilestone = new DateMidnight(2012, DateTimeConstants.DECEMBER, 31);
@@ -182,8 +181,7 @@ public class VacationDaysServiceTest {
     @Test
     public void testGetDaysBetweenMilestonesWithInactiveApplicationsForLeaveAndOfOtherVacationTypeThanHoliday() {
 
-        Person person = new Person();
-        person.setLoginName("horscht");
+        Person person = TestDataCreator.createPerson("horscht");
 
         DateMidnight firstMilestone = new DateMidnight(2012, DateTimeConstants.APRIL, 1);
         DateMidnight lastMilestone = new DateMidnight(2012, DateTimeConstants.DECEMBER, 31);

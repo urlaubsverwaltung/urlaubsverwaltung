@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.core.account.service;
 
 import org.junit.Assert;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -10,6 +9,7 @@ import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.core.account.dao.AccountDAO;
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.util.Optional;
 
@@ -37,8 +37,8 @@ public class HolidaysAccountServiceImplTest {
     @Test
     public void ensureReturnsOptionalWithHolidaysAccountIfExists() {
 
-        Person person = new Person();
-        Account account = new Account();
+        Person person = TestDataCreator.createPerson();
+        Account account = TestDataCreator.createHolidaysAccount(person, 2012);
         Mockito.when(accountDAO.getHolidaysAccountByYearAndPerson(2012, person)).thenReturn(account);
 
         Optional<Account> optionalHolidaysAccount = accountService.getHolidaysAccount(2012, person);

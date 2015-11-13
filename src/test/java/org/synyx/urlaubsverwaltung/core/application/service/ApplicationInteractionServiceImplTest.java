@@ -25,6 +25,7 @@ import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceMappingService;
 import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceType;
+import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.util.Optional;
 
@@ -77,8 +78,8 @@ public class ApplicationInteractionServiceImplTest {
     @Test
     public void ensureApplyForLeaveChangesStateAndOtherAttributesAndSavesTheApplicationForLeave() {
 
-        Person person = new Person();
-        Person applier = new Person();
+        Person person = TestDataCreator.createPerson("muster");
+        Person applier = TestDataCreator.createPerson("applier");
         Optional<String> comment = Optional.of("Foo");
 
         Application applicationForLeave = getDummyApplication(person);
@@ -114,8 +115,8 @@ public class ApplicationInteractionServiceImplTest {
     @Test
     public void ensureApplyingForLeaveAddsCalendarEvent() {
 
-        Person person = new Person();
-        Person applier = new Person();
+        Person person = TestDataCreator.createPerson("muster");
+        Person applier = TestDataCreator.createPerson("applier");
         Optional<String> comment = Optional.of("Foo");
 
         Application applicationForLeave = getDummyApplication(person);
@@ -130,7 +131,7 @@ public class ApplicationInteractionServiceImplTest {
     @Test
     public void ensureSendsConfirmationEmailToPersonAndNotificationEmailToBossesWhenApplyingForOneself() {
 
-        Person person = new Person();
+        Person person = TestDataCreator.createPerson();
 
         Application applicationForLeave = getDummyApplication(person);
 
@@ -148,8 +149,8 @@ public class ApplicationInteractionServiceImplTest {
     @Test
     public void ensureSendsNotificationToPersonIfApplicationForLeaveNotAppliedByOneself() {
 
-        Person person = new Person();
-        Person applier = new Person();
+        Person person = TestDataCreator.createPerson("muster");
+        Person applier = TestDataCreator.createPerson("applier");
 
         Application applicationForLeave = getDummyApplication(person);
 
@@ -168,8 +169,8 @@ public class ApplicationInteractionServiceImplTest {
     @Test
     public void ensureApplyingForLeaveUpdatesTheRemainingVacationDays() {
 
-        Person person = new Person();
-        Person applier = new Person();
+        Person person = TestDataCreator.createPerson("muster");
+        Person applier = TestDataCreator.createPerson("applier");
         Optional<String> comment = Optional.of("Foo");
 
         Application applicationForLeave = getDummyApplication(person);
@@ -187,8 +188,8 @@ public class ApplicationInteractionServiceImplTest {
     @Test
     public void ensureAllowingApplicationForLeaveChangesStateAndOtherAttributesAndSavesTheApplicationForLeave() {
 
-        Person person = new Person();
-        Person boss = new Person();
+        Person person = TestDataCreator.createPerson("muster");
+        Person boss = TestDataCreator.createPerson("boss");
         Optional<String> comment = Optional.of("Foo");
 
         Application applicationForLeave = getDummyApplication(person);
@@ -213,8 +214,8 @@ public class ApplicationInteractionServiceImplTest {
     @Test
     public void ensureAllowingApplicationForLeaveUpdatesCalendarEvent() {
 
-        Person person = new Person();
-        Person boss = new Person();
+        Person person = TestDataCreator.createPerson("muster");
+        Person boss = TestDataCreator.createPerson("boss");
         Optional<String> comment = Optional.of("Foo");
 
         Application applicationForLeave = getDummyApplication(person);
@@ -230,8 +231,8 @@ public class ApplicationInteractionServiceImplTest {
     @Test
     public void ensureAllowingApplicationForLeaveSendsEmailToPerson() {
 
-        Person person = new Person();
-        Person boss = new Person();
+        Person person = TestDataCreator.createPerson("muster");
+        Person boss = TestDataCreator.createPerson("boss");
 
         Application applicationForLeave = getDummyApplication(person);
 
@@ -244,12 +245,12 @@ public class ApplicationInteractionServiceImplTest {
     @Test
     public void ensureAllowingApplicationForLeaveWithRepresentativeSendsEmailToRepresentative() {
 
-        Person person = new Person();
-        Person rep = new Person();
-        Person boss = new Person();
+        Person person = TestDataCreator.createPerson("muster");
+        Person boss = TestDataCreator.createPerson("boss");
+        Person replacement = TestDataCreator.createPerson("replacement");
 
         Application applicationForLeave = getDummyApplication(person);
-        applicationForLeave.setHolidayReplacement(rep);
+        applicationForLeave.setHolidayReplacement(replacement);
 
         service.allow(applicationForLeave, boss, Optional.of("Foo"));
 
@@ -260,8 +261,8 @@ public class ApplicationInteractionServiceImplTest {
     @Test
     public void ensureAllowingApplicationForLeaveExecutesCalendarSync() {
 
-        Person person = new Person();
-        Person boss = new Person();
+        Person person = TestDataCreator.createPerson("muster");
+        Person boss = TestDataCreator.createPerson("boss");
 
         Application applicationForLeave = getDummyApplication(person);
 
@@ -279,8 +280,9 @@ public class ApplicationInteractionServiceImplTest {
     @Test
     public void ensureRejectingApplicationForLeaveChangesStateAndOtherAttributesAndSavesTheApplicationForLeave() {
 
-        Person person = new Person();
-        Person boss = new Person();
+        Person person = TestDataCreator.createPerson("muster");
+        Person boss = TestDataCreator.createPerson("boss");
+
         Optional<String> comment = Optional.of("Foo");
 
         Application applicationForLeave = getDummyApplication(person);
@@ -305,8 +307,9 @@ public class ApplicationInteractionServiceImplTest {
     @Test
     public void ensureRejectingApplicationForLeaveDeletesCalendarEvent() {
 
-        Person person = new Person();
-        Person boss = new Person();
+        Person person = TestDataCreator.createPerson("muster");
+        Person boss = TestDataCreator.createPerson("boss");
+
         Optional<String> comment = Optional.of("Foo");
 
         Application applicationForLeave = getDummyApplication(person);
@@ -322,8 +325,8 @@ public class ApplicationInteractionServiceImplTest {
     @Test
     public void ensureRejectingApplicationForLeaveSendsEmailToPerson() {
 
-        Person person = new Person();
-        Person boss = new Person();
+        Person person = TestDataCreator.createPerson("muster");
+        Person boss = TestDataCreator.createPerson("boss");
 
         Application applicationForLeave = getDummyApplication(person);
 
@@ -340,7 +343,7 @@ public class ApplicationInteractionServiceImplTest {
     @Test
     public void ensureCancellingNotYetAllowedApplicationForLeaveChangesStateAndOtherAttributesButSendsNoEmail() {
 
-        Person person = new Person();
+        Person person = TestDataCreator.createPerson();
         Optional<String> comment = Optional.of("Foo");
 
         Application applicationForLeave = getDummyApplication(person);
@@ -366,13 +369,15 @@ public class ApplicationInteractionServiceImplTest {
     @Test
     public void ensureCancellingApplicationForLeaveDeletesCalendarEvent() {
 
-        Person person = new Person();
+        Person person = TestDataCreator.createPerson("muster");
+        Person canceller = TestDataCreator.createPerson("canceller");
+
         Optional<String> comment = Optional.of("Foo");
 
         Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(ApplicationStatus.WAITING);
 
-        service.cancel(applicationForLeave, person, comment);
+        service.cancel(applicationForLeave, canceller, comment);
 
         Mockito.verify(calendarSyncService).deleteAbsence(anyString());
         Mockito.verify(absenceMappingService).delete(any(AbsenceMapping.class));
@@ -382,8 +387,9 @@ public class ApplicationInteractionServiceImplTest {
     @Test
     public void ensureCancellingAllowedApplicationForLeaveChangesStateAndOtherAttributesAndSendsAnEmail() {
 
-        Person person = new Person();
-        Person canceller = new Person();
+        Person person = TestDataCreator.createPerson("muster");
+        Person canceller = TestDataCreator.createPerson("canceller");
+
         Optional<String> comment = Optional.of("Foo");
 
         Application applicationForLeave = getDummyApplication(person);
@@ -410,8 +416,9 @@ public class ApplicationInteractionServiceImplTest {
     @Test
     public void ensureCancellingNotYetAllowedApplicationForLeaveOnBehalfForSomeOneChangesStateAndOtherAttributesAndSendsAnEmail() {
 
-        Person person = new Person();
-        Person canceller = new Person();
+        Person person = TestDataCreator.createPerson("muster");
+        Person canceller = TestDataCreator.createPerson("canceller");
+
         Optional<String> comment = Optional.of("Foo");
 
         Application applicationForLeave = getDummyApplication(person);
@@ -438,8 +445,9 @@ public class ApplicationInteractionServiceImplTest {
     @Test
     public void ensureCancellingApplicationForLeaveUpdatesRemainingVacationDaysWithTheYearOfTheStartDateAsStartYear() {
 
-        Person person = new Person();
-        Person canceller = new Person();
+        Person person = TestDataCreator.createPerson("muster");
+        Person canceller = TestDataCreator.createPerson("canceller");
+
         Optional<String> comment = Optional.of("Foo");
 
         Application applicationForLeave = new Application();
@@ -462,8 +470,8 @@ public class ApplicationInteractionServiceImplTest {
     @Test
     public void ensureCreatedApplicationForLeaveFromConvertedSickNoteIsAllowedDirectly() {
 
-        Person person = new Person();
-        Person creator = new Person();
+        Person person = TestDataCreator.createPerson("muster");
+        Person creator = TestDataCreator.createPerson("creator");
 
         Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
@@ -531,8 +539,8 @@ public class ApplicationInteractionServiceImplTest {
     public void ensureUpdatesRemindDateAndSendsMail() throws RemindAlreadySentException,
         ImpatientAboutApplicationForLeaveProcessException {
 
-        Application applicationForLeave = new Application();
-        applicationForLeave.setPerson(new Person());
+        Person person = TestDataCreator.createPerson();
+        Application applicationForLeave = TestDataCreator.createApplication(person);
         applicationForLeave.setApplicationDate(DateMidnight.now().minusDays(3));
         applicationForLeave.setRemindDate(DateMidnight.now().minusDays(1));
 
@@ -553,11 +561,11 @@ public class ApplicationInteractionServiceImplTest {
     @Test
     public void ensureReferMailIsSent() {
 
-        Person recipient = new Person();
-        Person sender = new Person();
+        Person recipient = TestDataCreator.createPerson("recipient");
+        Person sender = TestDataCreator.createPerson("sender");
 
         Application applicationForLeave = Mockito.mock(Application.class);
-        Mockito.when(applicationForLeave.getPerson()).thenReturn(new Person());
+        Mockito.when(applicationForLeave.getPerson()).thenReturn(TestDataCreator.createPerson());
 
         service.refer(applicationForLeave, recipient, sender);
 

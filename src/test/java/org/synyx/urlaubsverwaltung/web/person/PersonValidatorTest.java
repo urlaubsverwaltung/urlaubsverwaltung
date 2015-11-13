@@ -17,6 +17,7 @@ import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.person.Role;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.math.BigDecimal;
 
@@ -259,7 +260,7 @@ public class PersonValidatorTest {
     @Test
     public void ensureUsernameMustBeUnique() {
 
-        Mockito.when(personService.getPersonByLogin("foo")).thenReturn(Optional.of(new Person()));
+        Mockito.when(personService.getPersonByLogin("foo")).thenReturn(Optional.of(TestDataCreator.createPerson()));
         validator.validateLogin("foo", errors);
         Mockito.verify(errors).rejectValue("loginName", "person.form.data.login.error");
     }

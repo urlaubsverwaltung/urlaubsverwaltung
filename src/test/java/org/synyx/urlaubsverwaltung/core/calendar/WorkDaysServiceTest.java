@@ -16,6 +16,7 @@ import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.io.IOException;
 
@@ -54,13 +55,10 @@ public class WorkDaysServiceTest {
 
         instance = new WorkDaysService(publicHolidaysService, workingTimeService);
 
-        application = new Application();
-        person = new Person();
-        workingTime = new WorkingTime();
+        person = TestDataCreator.createPerson();
+        application = TestDataCreator.createApplication(person);
 
-        List<Integer> workingDays = Arrays.asList(DateTimeConstants.MONDAY, DateTimeConstants.TUESDAY,
-                DateTimeConstants.WEDNESDAY, DateTimeConstants.THURSDAY, DateTimeConstants.FRIDAY);
-        workingTime.setWorkingDays(workingDays, DayLength.FULL);
+        workingTime = TestDataCreator.createWorkingTime();
 
         Mockito.when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(Mockito.eq(person),
                     Mockito.any(DateMidnight.class)))

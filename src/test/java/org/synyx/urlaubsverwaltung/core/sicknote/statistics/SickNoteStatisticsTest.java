@@ -14,6 +14,7 @@ import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteDAO;
+import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -41,25 +42,15 @@ public class SickNoteStatisticsTest {
         sickNoteDAO = Mockito.mock(SickNoteDAO.class);
         sickNotes = new ArrayList<>();
 
-        Person person = new Person();
+        Person person = TestDataCreator.createPerson();
 
-        SickNote sickNote1 = new SickNote();
-        sickNote1.setDayLength(DayLength.FULL);
-        sickNote1.setStartDate(new DateMidnight(2013, DateTimeConstants.OCTOBER, 7));
-        sickNote1.setEndDate(new DateMidnight(2013, DateTimeConstants.OCTOBER, 11));
-        sickNote1.setPerson(person);
+        SickNote sickNote1 = TestDataCreator.createSickNote(person,
+                new DateMidnight(2013, DateTimeConstants.OCTOBER, 7),
+                new DateMidnight(2013, DateTimeConstants.OCTOBER, 11), DayLength.FULL);
 
-        SickNote sickNote2 = new SickNote();
-        sickNote2.setDayLength(DayLength.FULL);
-        sickNote2.setStartDate(new DateMidnight(2013, DateTimeConstants.DECEMBER, 18));
-        sickNote2.setEndDate(new DateMidnight(2014, DateTimeConstants.JANUARY, 3));
-        sickNote2.setPerson(person);
-
-        SickNote sickNote3 = new SickNote();
-        sickNote3.setDayLength(DayLength.MORNING);
-        sickNote3.setStartDate(new DateMidnight(2013, DateTimeConstants.SEPTEMBER, 2));
-        sickNote3.setEndDate(new DateMidnight(2013, DateTimeConstants.SEPTEMBER, 2));
-        sickNote3.setPerson(person);
+        SickNote sickNote2 = TestDataCreator.createSickNote(person,
+                new DateMidnight(2013, DateTimeConstants.DECEMBER, 18),
+                new DateMidnight(2014, DateTimeConstants.JANUARY, 3), DayLength.FULL);
 
         sickNotes.add(sickNote1);
         sickNotes.add(sickNote2);

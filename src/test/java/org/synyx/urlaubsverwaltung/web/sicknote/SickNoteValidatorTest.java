@@ -16,6 +16,7 @@ import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteComment;
+import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 
 /**
@@ -38,14 +39,12 @@ public class SickNoteValidatorTest {
         overlapService = Mockito.mock(OverlapService.class);
 
         validator = new SickNoteValidator(overlapService);
-        sickNote = new SickNote();
         errors = Mockito.mock(Errors.class);
         Mockito.reset(errors);
 
-        sickNote.setPerson(new Person());
-        sickNote.setDayLength(DayLength.FULL);
-        sickNote.setStartDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 19));
-        sickNote.setEndDate(new DateMidnight(2013, DateTimeConstants.NOVEMBER, 20));
+        sickNote = TestDataCreator.createSickNote(TestDataCreator.createPerson(),
+                new DateMidnight(2013, DateTimeConstants.NOVEMBER, 19),
+                new DateMidnight(2013, DateTimeConstants.NOVEMBER, 20), DayLength.FULL);
     }
 
 

@@ -1,10 +1,9 @@
 package org.synyx.urlaubsverwaltung.core.account.service;
 
-import org.junit.Assert;
-
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,6 +16,7 @@ import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.io.IOException;
 
@@ -54,8 +54,7 @@ public class HolidaysAccountInteractionServiceImplTest {
 
         service = new AccountInteractionServiceImpl(accountService, calendarService, vacationDaysService);
 
-        person = new Person();
-        person.setLoginName("horscht");
+        person = TestDataCreator.createPerson("horscht");
     }
 
 

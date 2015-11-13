@@ -149,12 +149,12 @@ public class DepartmentServiceImplTest {
 
         Person departmentHead = Mockito.mock(Person.class);
 
-        Person admin1 = new Person();
-        Person admin2 = new Person();
+        Person admin1 = TestDataCreator.createPerson("admin1");
+        Person admin2 = TestDataCreator.createPerson("admin2");
 
-        Person marketing1 = new Person();
-        Person marketing2 = new Person();
-        Person marketing3 = new Person();
+        Person marketing1 = TestDataCreator.createPerson("marketing1");
+        Person marketing2 = TestDataCreator.createPerson("marketing2");
+        Person marketing3 = TestDataCreator.createPerson("marketing3");
 
         Department admins = TestDataCreator.createDepartment("admins");
         admins.setMembers(Arrays.asList(admin1, admin2, departmentHead));
@@ -191,8 +191,8 @@ public class DepartmentServiceImplTest {
         Person departmentHead = Mockito.mock(Person.class);
         Mockito.when(departmentHead.hasRole(Role.DEPARTMENT_HEAD)).thenReturn(true);
 
-        Person admin1 = new Person();
-        Person admin2 = new Person();
+        Person admin1 = TestDataCreator.createPerson("admin1");
+        Person admin2 = TestDataCreator.createPerson("admin2");
 
         Department admins = TestDataCreator.createDepartment("admins");
         admins.setMembers(Arrays.asList(admin1, admin2, departmentHead));
@@ -211,13 +211,13 @@ public class DepartmentServiceImplTest {
         Person departmentHead = Mockito.mock(Person.class);
         Mockito.when(departmentHead.hasRole(Role.DEPARTMENT_HEAD)).thenReturn(true);
 
-        Person admin1 = new Person();
-        Person admin2 = new Person();
+        Person admin1 = TestDataCreator.createPerson("admin1");
+        Person admin2 = TestDataCreator.createPerson("admin2");
 
         Department admins = TestDataCreator.createDepartment("admins");
         admins.setMembers(Arrays.asList(admin1, admin2, departmentHead));
 
-        Person marketing1 = new Person();
+        Person marketing1 = TestDataCreator.createPerson("marketing1");
 
         Mockito.when(departmentDAO.getManagedDepartments(departmentHead)).thenReturn(Collections.singletonList(admins));
 

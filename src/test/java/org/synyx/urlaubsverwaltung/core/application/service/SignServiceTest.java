@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.util.CryptoUtil;
+import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.security.NoSuchAlgorithmException;
 
@@ -34,8 +35,8 @@ public class SignServiceTest {
     @Test
     public void ensureSigningApplicationByUserGeneratesPersonSignature() throws NoSuchAlgorithmException {
 
-        Person person = new Person();
-        Application application = new Application();
+        Person person = TestDataCreator.createPerson();
+        Application application = TestDataCreator.createApplication(person);
 
         // person needs some info: private key, last name
         person.setPrivateKey(CryptoUtil.generateKeyPair().getPrivate().getEncoded());
@@ -54,10 +55,10 @@ public class SignServiceTest {
 
 
     @Test
-    public void ensureSigningApplicationByUserGeneratesBossSignature() throws NoSuchAlgorithmException {
+    public void ensureSigningApplicationByBossGeneratesBossSignature() throws NoSuchAlgorithmException {
 
-        Person person = new Person();
-        Application application = new Application();
+        Person person = TestDataCreator.createPerson();
+        Application application = TestDataCreator.createApplication(person);
 
         // person needs some info: private key, last name
         person.setPrivateKey(CryptoUtil.generateKeyPair().getPrivate().getEncoded());

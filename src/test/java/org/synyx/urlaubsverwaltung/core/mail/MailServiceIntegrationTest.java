@@ -349,9 +349,7 @@ public class MailServiceIntegrationTest {
         person.setFirstName("Muster");
         person.setEmail("muster@mann.de");
 
-        Person office = new Person();
-        office.setLastName("Musteroffice");
-        office.setFirstName("Magdalena");
+        Person office = TestDataCreator.createPerson("office", "Magdalena", "Office", "office@test.de");
 
         application.setCanceller(office);
 

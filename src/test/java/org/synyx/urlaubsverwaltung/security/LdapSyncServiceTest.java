@@ -103,11 +103,7 @@ public class LdapSyncServiceTest {
     @Test
     public void ensureSyncedPersonHasCorrectAttributes() {
 
-        Person person = new Person();
-        person.setFirstName("Marlene");
-        person.setLastName("Muster");
-        person.setEmail("marlene@muster.de");
-        person.setLoginName("muster");
+        Person person = TestDataCreator.createPerson("muster", "Marlene", "Muster", "marlene@muster.de");
 
         Person syncedPerson = ldapSyncService.syncPerson(person, Optional.of("Aljona"), Optional.of("Murygina"),
                 Optional.of("murygina@synyx.de"));
@@ -129,11 +125,7 @@ public class LdapSyncServiceTest {
     @Test
     public void ensureSyncDoesNotEmptyAttributes() {
 
-        Person person = new Person();
-        person.setFirstName("Marlene");
-        person.setLastName("Muster");
-        person.setEmail("marlene@muster.de");
-        person.setLoginName("muster");
+        Person person = TestDataCreator.createPerson("muster", "Marlene", "Muster", "marlene@muster.de");
 
         Person syncedPerson = ldapSyncService.syncPerson(person, Optional.empty(), Optional.empty(), Optional.empty());
 
