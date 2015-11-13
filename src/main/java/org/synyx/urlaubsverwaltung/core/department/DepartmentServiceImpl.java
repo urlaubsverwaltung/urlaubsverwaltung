@@ -56,7 +56,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
         departmentDAO.save(department);
 
-        LOG.info("Created: " + department.toString());
+        LOG.info("Created department: " + department.toString());
     }
 
 
@@ -67,7 +67,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
         departmentDAO.save(department);
 
-        LOG.info("Updated: " + department.toString());
+        LOG.info("Updated department: " + department.toString());
     }
 
 

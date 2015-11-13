@@ -51,7 +51,7 @@ class PersonServiceImpl implements PersonService {
 
         save(person);
 
-        LOG.info("Created: " + person.toString());
+        LOG.info("Created person: " + person.toString());
 
         return person;
     }
@@ -74,7 +74,7 @@ class PersonServiceImpl implements PersonService {
 
         save(person);
 
-        LOG.info("Updated: " + person.toString());
+        LOG.info("Updated person: " + person.toString());
 
         return person;
     }
