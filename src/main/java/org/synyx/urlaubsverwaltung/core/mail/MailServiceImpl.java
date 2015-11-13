@@ -343,19 +343,6 @@ class MailServiceImpl implements MailService {
     }
 
 
-    @Override
-    public void sendKeyGeneratingErrorNotification(String loginName, String exception) {
-
-        Map<String, Object> model = new HashMap<>();
-        model.put("loginName", loginName);
-        model.put("exception", exception);
-
-        String text = buildMailBody("error_key_generation", model);
-
-        sendTechnicalNotification("subject.error.keys.generate", text);
-    }
-
-
     /**
      * Sends an email to the manager of the application to inform about a technical event, e.g. if an error occurred.
      *

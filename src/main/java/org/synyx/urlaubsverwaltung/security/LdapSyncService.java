@@ -15,12 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
+import org.synyx.urlaubsverwaltung.core.person.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.person.Role;
-
-import java.security.KeyPair;
-import java.security.NoSuchAlgorithmException;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,14 +42,12 @@ public class LdapSyncService {
 
     private final LdapUserService ldapUserService;
     private final PersonService personService;
-    private final MailService mailService;
 
     @Autowired
-    public LdapSyncService(LdapUserService ldapUserService, PersonService personService, MailService mailService) {
+    public LdapSyncService(LdapUserService ldapUserService, PersonService personService) {
 
         this.ldapUserService = ldapUserService;
         this.personService = personService;
-        this.mailService = mailService;
     }
 
     // Sync LDAP/AD data during startup and every night at 01:00 am
@@ -125,26 +121,9 @@ public class LdapSyncService {
 
         Assert.notNull(login, "Missing login name!");
 
-        Person person = new Person();
-        person.setLoginName(login);
-
-        firstName.ifPresent(person::setFirstName);
-        lastName.ifPresent(person::setLastName);
-        mailAddress.ifPresent(person::setEmail);
-
-        person.setPermissions(Collections.singletonList(Role.USER));
-
-        // TODO: Refactor PersonInteractionService to be able to just call 'create' instead of doing this fuckup...
-        try {
-            KeyPair keyPair = CryptoUtil.generateKeyPair();
-            person.setPrivateKey(keyPair.getPrivate().getEncoded());
-            person.setPublicKey(keyPair.getPublic().getEncoded());
-        } catch (NoSuchAlgorithmException ex) {
-            LOG.error("An error occurred while trying to create key pair for user with login " + login, ex);
-            mailService.sendKeyGeneratingErrorNotification(login, ex.getMessage());
-        }
-
-        personService.save(person);
+        Person person = personService.create(login, lastName.orElse(null), firstName.orElse(null),
+                mailAddress.orElse(null), Collections.singletonList(MailNotification.NOTIFICATION_USER),
+                Collections.singletonList(Role.USER));
 
         LOG.info("Successfully auto-created person: " + person.toString());
 

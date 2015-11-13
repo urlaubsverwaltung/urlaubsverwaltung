@@ -45,17 +45,17 @@ public final class TestDataCreator {
 
     public static Person createPerson(String username) {
 
-        return TestDataCreator.createPerson(username, "Muster", "Marlene", username + "@test.de");
+        return TestDataCreator.createPerson(username, "Marlene", "Muster", username + "@test.de");
     }
 
 
     public static Person createPerson() {
 
-        return TestDataCreator.createPerson("muster", "Muster", "Marlene", "muster@test.de");
+        return TestDataCreator.createPerson("muster", "Marlene", "Muster", "muster@test.de");
     }
 
 
-    private static Person createPerson(String username, String firstName, String lastName, String email) {
+    public static Person createPerson(String username, String firstName, String lastName, String email) {
 
         Person person = new Person(username, lastName, firstName, email);
         person.setPermissions(Collections.singletonList(Role.USER));

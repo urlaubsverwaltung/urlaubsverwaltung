@@ -299,38 +299,4 @@ public class PersonForm {
 
         this.notifications = notifications;
     }
-
-
-    public Person generatePerson() {
-
-        Person person = new Person();
-        fillPersonAttributes(person);
-
-        return person;
-    }
-
-
-    public void fillPersonAttributes(Person person) {
-
-        person.setLoginName(loginName);
-        person.setLastName(lastName);
-        person.setFirstName(firstName);
-        person.setEmail(email);
-
-        person.setNotifications(notifications);
-
-        if (personShouldBeSetToInactive(permissions)) {
-            List<Role> onlyInactive = new ArrayList<>();
-            onlyInactive.add(INACTIVE);
-            person.setPermissions(onlyInactive);
-        } else {
-            person.setPermissions(permissions);
-        }
-    }
-
-
-    private boolean personShouldBeSetToInactive(Collection<Role> permissions) {
-
-        return permissions.stream().filter(permission -> permission.equals(INACTIVE)).findFirst().isPresent();
-    }
 }

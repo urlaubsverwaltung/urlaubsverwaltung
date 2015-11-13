@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.security;
+package org.synyx.urlaubsverwaltung.core.util;
 
 import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.security.crypto.keygen.StringKeyGenerator;
@@ -18,15 +18,15 @@ import java.security.spec.PKCS8EncodedKeySpec;
 
 
 /**
- * this class contains all methods that deal with private and public keys and signature it is able to: generate private
- * and public keys get in database as byte[] saved keys and convert them back to rsa keys sign data with private key and
- * verify signed data with public key
+ * Contains all crypto relevant util methods, like generating key pair for person or signing with key pair.
  *
  * @author  Aljona Murygina
  */
 public final class CryptoUtil {
 
-    private static final int KEYSIZE = 2048;
+    private static final int KEY_SIZE = 2048;
+    private static final String KEY_ALGORITHM = "RSA";
+    private static final String SIGNATURE_ALGORITHM = "SHA256withRSA";
 
     private CryptoUtil() {
 
@@ -34,81 +34,73 @@ public final class CryptoUtil {
     }
 
     /**
-     * generates a key pair (private key, public key).
+     * Generates a key pair: private key and public key.
      *
-     * @return  KeyPair
+     * @return  created key pair
      *
-     * @throws  NoSuchAlgorithmException
+     * @throws  NoSuchAlgorithmException  in case the chosen algorithm does not exist
      */
     public static KeyPair generateKeyPair() throws NoSuchAlgorithmException {
 
-        KeyPairGenerator pairgen = KeyPairGenerator.getInstance("RSA");
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(KEY_ALGORITHM);
         SecureRandom random = new SecureRandom();
-        pairgen.initialize(KEYSIZE, random);
+        keyPairGenerator.initialize(KEY_SIZE, random);
 
-        return pairgen.generateKeyPair();
+        return keyPairGenerator.generateKeyPair();
     }
 
 
     /**
-     * A Signature object may have three states: UNINITIALIZED SIGN VERIFY
+     * Signs the given data with the given private key.
      *
-     * <p>First created: a Signature object is in the UNINITIALIZED state. There are two initialization methods:
-     * initSign and initVerify, which change the state to SIGN or to VERIFY.</p>
+     * <p>NOTE: With the private key you sign the data, with the public key you verify the signed data.</p>
      *
-     * <p>With the private key you sign the data, with the public key you verify the signed data.</p>
+     * @param  privateKey  to sign the data with
+     * @param  originData  to be signed
      *
-     * @param  privKey
-     * @param  originData
+     * @return  signed data as {@link byte[]}
      *
-     * @return  signed data {byte[]}
-     *
-     * @throws  NoSuchAlgorithmException
+     * @throws  NoSuchAlgorithmException  in case the chosen algorithm does not exist
      */
-    public static byte[] sign(PrivateKey privKey, byte[] originData) throws NoSuchAlgorithmException,
+    public static byte[] sign(PrivateKey privateKey, byte[] originData) throws NoSuchAlgorithmException,
         InvalidKeyException, SignatureException {
 
-        Signature sign = Signature.getInstance("SHA256withRSA");
-        byte[] updatedData = null;
+        Signature signature = Signature.getInstance(SIGNATURE_ALGORITHM);
 
         /* Initializing the object with a private key */
-        sign.initSign(privKey);
+        signature.initSign(privateKey);
 
         /* Update and sign the data */
-        sign.update(originData);
+        signature.update(originData);
 
-        updatedData = sign.sign();
-
-        return updatedData;
+        return signature.sign();
     }
 
 
     /**
-     * takes bytes of PrivateKey saved in database and converts back to PrivateKey.
+     * Converts bytes back to private key object.
      *
-     * @param  savedKey
+     * @param  privateKeyBytes  representing the private key in bytes
      *
-     * @return
+     * @return  the private key
      *
-     * @throws  NoSuchAlgorithmException
-     * @throws  InvalidKeySpecException
+     * @throws  NoSuchAlgorithmException  in case the chosen algorithm does not exist
+     * @throws  InvalidKeySpecException  in case the key spec. is invalid
      */
-    public static PrivateKey getPrivateKeyByBytes(byte[] savedKey) throws NoSuchAlgorithmException,
+    public static PrivateKey getPrivateKeyByBytes(byte[] privateKeyBytes) throws NoSuchAlgorithmException,
         InvalidKeySpecException {
 
-        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(savedKey);
+        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateKeyBytes);
 
-        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM);
 
-        PrivateKey privKey = keyFactory.generatePrivate(keySpec);
-
-        return privKey;
+        return keyFactory.generatePrivate(keySpec);
     }
 
 
     // TODO: To be used as soon as all missing features for database authentication are implemented!
     /**
-     * Generates password with 16 characters length with spring standard key generator.
+     * Generates password with 16 characters length with Spring standard key generator.
      *
      * @return  password with 16 characters
      */
@@ -121,7 +113,7 @@ public final class CryptoUtil {
 
 
     /**
-     * Encodes a given raw password with random salt via Spring StandardPasswordEncoder.
+     * Encodes a given raw password with random salt via Spring {@link StandardPasswordEncoder}.
      *
      * @param  rawPassword  plaintext password
      *

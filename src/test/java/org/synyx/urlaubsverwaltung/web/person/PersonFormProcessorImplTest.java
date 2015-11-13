@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.core.person;
+package org.synyx.urlaubsverwaltung.web.person;
 
 import org.joda.time.DateMidnight;
 
@@ -16,7 +16,11 @@ import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.department.Department;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
-import org.synyx.urlaubsverwaltung.web.person.PersonForm;
+import org.synyx.urlaubsverwaltung.core.person.MailNotification;
+import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.person.PersonService;
+import org.synyx.urlaubsverwaltung.core.person.Role;
+import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.math.BigDecimal;
 
@@ -28,9 +32,9 @@ import java.util.Optional;
 /**
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public class PersonInteractionServiceImplTest {
+public class PersonFormProcessorImplTest {
 
-    private PersonInteractionService service;
+    private PersonFormProcessor service;
 
     private PersonService personService;
     private WorkingTimeService workingTimeService;
@@ -49,10 +53,8 @@ public class PersonInteractionServiceImplTest {
         accountInteractionService = Mockito.mock(AccountInteractionService.class);
         departmentService = Mockito.mock(DepartmentService.class);
 
-        MailService mailService = Mockito.mock(MailService.class);
-
-        service = new PersonInteractionServiceImpl(personService, workingTimeService, accountService,
-                accountInteractionService, departmentService, mailService);
+        service = new PersonFormProcessorImpl(personService, workingTimeService, accountService,
+                accountInteractionService, departmentService);
 
         examplePersonForm = new PersonForm(2014);
         examplePersonForm.setLoginName("muster");
@@ -64,7 +66,8 @@ public class PersonInteractionServiceImplTest {
         examplePersonForm.setRemainingVacationDaysNotExpiring(new BigDecimal("3"));
         examplePersonForm.setValidFrom(DateMidnight.now());
         examplePersonForm.setWorkingDays(Arrays.asList(Day.MONDAY.getDayOfWeek(), Day.TUESDAY.getDayOfWeek()));
-        examplePersonForm.setPermissions(Arrays.asList(Role.USER));
+        examplePersonForm.setPermissions(Collections.singletonList(Role.USER));
+        examplePersonForm.setNotifications(Collections.singletonList(MailNotification.NOTIFICATION_USER));
 
         Mockito.when(accountService.getHolidaysAccount(Mockito.anyInt(), Mockito.any(Person.class)))
             .thenReturn(Optional.<Account>empty());
@@ -72,31 +75,31 @@ public class PersonInteractionServiceImplTest {
 
 
     @Test
-    public void ensurePersonHasKeyPairAfterCreating() {
-
-        Person person = service.create(examplePersonForm);
-
-        Assert.assertNotNull(person.getPrivateKey());
-        Assert.assertNotNull(person.getPublicKey());
-    }
-
-
-    @Test
-    public void ensurePersonIsPersistedOnCreating() {
+    public void ensurePersonWillBeCreatedByPersonFormAttributes() {
 
         service.create(examplePersonForm);
 
-        Mockito.verify(personService).save(Mockito.any(Person.class));
+        Mockito.verify(personService)
+            .create("muster", "Muster", "Marlene", "muster@synyx.de",
+                Collections.singletonList(MailNotification.NOTIFICATION_USER), Collections.singletonList(Role.USER));
     }
 
 
     @Test
-    public void ensurePersonHasValidWorkingTimeAndAccountAfterCreating() {
+    public void ensurePersonHasValidWorkingTimeAfterCreation() {
 
         Person person = service.create(examplePersonForm);
 
         Mockito.verify(workingTimeService)
             .touch(Mockito.anyListOf(Integer.class), Mockito.any(DateMidnight.class), Mockito.eq(person));
+    }
+
+
+    @Test
+    public void ensurePersonHasValidAccountAfterCreation() {
+
+        Person person = service.create(examplePersonForm);
+
         Mockito.verify(accountInteractionService)
             .createHolidaysAccount(Mockito.eq(person), Mockito.eq(new DateMidnight(2014, 1, 1)),
                 Mockito.eq(new DateMidnight(2014, 12, 31)), Mockito.eq(new BigDecimal("28")),
@@ -107,9 +110,12 @@ public class PersonInteractionServiceImplTest {
     @Test
     public void ensureDepartmentHeadsAreUpdatedIfPersonLosesDepartmentHeadRole() {
 
-        Person person = Mockito.mock(Person.class);
+        Person person = TestDataCreator.createPerson();
 
-        Mockito.when(personService.getPersonByID(Mockito.anyInt())).thenReturn(Optional.of(person));
+        Mockito.when(personService.update(Mockito.anyInt(), Mockito.anyString(), Mockito.anyString(),
+                    Mockito.anyString(), Mockito.anyString(), Mockito.anyListOf(MailNotification.class),
+                    Mockito.anyListOf(Role.class)))
+            .thenReturn(person);
 
         Department department = new Department();
         department.setDepartmentHeads(Collections.singletonList(person));
@@ -130,9 +136,12 @@ public class PersonInteractionServiceImplTest {
     @Test
     public void ensureDepartmentHeadsAreNotUpdatedIfPersonHaveNotBeenDepartmentHead() {
 
-        Person person = Mockito.mock(Person.class);
+        Person person = TestDataCreator.createPerson();
 
-        Mockito.when(personService.getPersonByID(Mockito.anyInt())).thenReturn(Optional.of(person));
+        Mockito.when(personService.update(Mockito.anyInt(), Mockito.anyString(), Mockito.anyString(),
+                    Mockito.anyString(), Mockito.anyString(), Mockito.anyListOf(MailNotification.class),
+                    Mockito.anyListOf(Role.class)))
+            .thenReturn(person);
 
         Department department = new Department();
 
@@ -152,10 +161,13 @@ public class PersonInteractionServiceImplTest {
     @Test
     public void ensureDepartmentHeadsAreNotUpdatedIfPersonIsStillDepartmentHead() {
 
-        Person person = Mockito.mock(Person.class);
-        Mockito.when(person.hasRole(Role.DEPARTMENT_HEAD)).thenReturn(true);
+        Person person = TestDataCreator.createPerson();
+        person.setPermissions(Arrays.asList(Role.USER, Role.DEPARTMENT_HEAD));
 
-        Mockito.when(personService.getPersonByID(Mockito.anyInt())).thenReturn(Optional.of(person));
+        Mockito.when(personService.update(Mockito.anyInt(), Mockito.anyString(), Mockito.anyString(),
+                    Mockito.anyString(), Mockito.anyString(), Mockito.anyListOf(MailNotification.class),
+                    Mockito.anyListOf(Role.class)))
+            .thenReturn(person);
 
         service.update(examplePersonForm);
 

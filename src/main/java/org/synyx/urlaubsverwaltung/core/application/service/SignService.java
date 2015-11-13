@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.security.CryptoUtil;
+import org.synyx.urlaubsverwaltung.core.util.CryptoUtil;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -71,8 +71,8 @@ public class SignService {
     /**
      * Generates signature (byte[]) by private key of {@link Person}.
      *
-     * @param  application {@link Application}
-     * @param  person {@link Person}
+     * @param  application  {@link Application}
+     * @param  person  {@link Person}
      *
      * @return  data (=signature) if using cryptoService was successful or null if there was any mistake
      */

@@ -10,6 +10,7 @@ import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.period.Period;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.CalendarSettings;
+import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.util.Date;
 import java.util.function.BiConsumer;
@@ -32,7 +33,7 @@ public class AbsenceTest {
     @Before
     public void setUp() {
 
-        person = new Person("foo", "Muster", "Marlene", "muster@muster.de");
+        person = TestDataCreator.createPerson();
 
         CalendarSettings calendarSettings = new CalendarSettings();
         calendarSettings.setWorkDayBeginHour(8);

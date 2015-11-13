@@ -1,5 +1,5 @@
 
-package org.synyx.urlaubsverwaltung.core.startup;
+package org.synyx.urlaubsverwaltung.core.util;
 
 import org.apache.log4j.Logger;
 

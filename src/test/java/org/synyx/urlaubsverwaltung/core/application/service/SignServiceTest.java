@@ -12,7 +12,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.security.CryptoUtil;
+import org.synyx.urlaubsverwaltung.core.util.CryptoUtil;
 
 import java.security.NoSuchAlgorithmException;
 

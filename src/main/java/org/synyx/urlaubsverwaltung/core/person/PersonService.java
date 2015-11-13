@@ -14,9 +14,42 @@ import java.util.Optional;
 public interface PersonService {
 
     /**
+     * Create a new person using the given attributes, generating and setting key pair.
+     *
+     * @param  loginName  with that the person can sign in
+     * @param  lastName  of the person
+     * @param  firstName  of the person
+     * @param  email  address to get mail notifications
+     * @param  notifications  contains types of mail notifications the person will get
+     * @param  permissions  contains the roles of the person
+     *
+     * @return  created person
+     */
+    Person create(String loginName, String lastName, String firstName, String email,
+        List<MailNotification> notifications, List<Role> permissions);
+
+
+    /**
+     * Updates a person using the given attributes.
+     *
+     * @param  id  identifies the person to be updated
+     * @param  loginName  with that the person can sign in
+     * @param  lastName  of the person
+     * @param  firstName  of the person
+     * @param  email  address to get mail notifications
+     * @param  notifications  contains types of mail notifications the person will get
+     * @param  permissions  contains the roles of the person
+     *
+     * @return  updated person
+     */
+    Person update(Integer id, String loginName, String lastName, String firstName, String email,
+        List<MailNotification> notifications, List<Role> permissions);
+
+
+    /**
      * saves a {@link Person}.
      *
-     * @param  person {@link Person}
+     * @param  person  {@link Person}
      */
     void save(Person person);
 
@@ -44,7 +77,7 @@ public interface PersonService {
     /**
      * finds all {@link Person}s in the database that have the given {@link Role}.
      *
-     * @param  role {@link Role}
+     * @param  role  {@link Role}
      *
      * @return  {@link List} of {@link Person}
      */

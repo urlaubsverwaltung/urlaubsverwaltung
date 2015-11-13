@@ -3,10 +3,7 @@ package org.synyx.urlaubsverwaltung.core.person;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 
 /**
@@ -131,5 +128,43 @@ public class PersonTest {
         } catch (UnsupportedOperationException ex) {
             // Expected
         }
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfSettingPermissionsContainingInactiveRoleAndAnyOtherRole() {
+
+        Person person = new Person();
+
+        person.setPermissions(Arrays.asList(Role.INACTIVE, Role.BOSS));
+    }
+
+
+    @Test
+    public void ensureSettingPermissionsContainingOnlyInactiveRoleIsPossible() {
+
+        Person person = new Person();
+
+        person.setPermissions(Collections.singletonList(Role.INACTIVE));
+
+        Collection<Role> permissions = person.getPermissions();
+
+        Assert.assertEquals("Wrong number of permissions", 1, permissions.size());
+        Assert.assertTrue("Should contain role", permissions.contains(Role.INACTIVE));
+    }
+
+
+    @Test
+    public void ensureSettingPermissionsContainingMultipleRolesIsPossible() {
+
+        Person person = new Person();
+
+        person.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
+
+        Collection<Role> permissions = person.getPermissions();
+
+        Assert.assertEquals("Wrong number of permissions", 2, permissions.size());
+        Assert.assertTrue("Should contain role", permissions.contains(Role.USER));
+        Assert.assertTrue("Should contain role", permissions.contains(Role.BOSS));
     }
 }

@@ -7,16 +7,18 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
+
 import org.springframework.util.StringUtils;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 
 
 /**
@@ -177,6 +179,15 @@ public class Person extends AbstractPersistable<Integer> {
 
 
     public void setPermissions(Collection<Role> permissions) {
+
+        boolean inactiveRolePresent = permissions.stream()
+            .filter(permission -> permission.equals(Role.INACTIVE))
+            .findFirst()
+            .isPresent();
+
+        if (inactiveRolePresent && permissions.size() != 1) {
+            throw new IllegalArgumentException("Can not set inactive role and other role at the same time!");
+        }
 
         this.permissions = permissions;
     }

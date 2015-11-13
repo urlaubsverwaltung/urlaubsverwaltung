@@ -1,16 +1,15 @@
-package org.synyx.urlaubsverwaltung.core.person;
+package org.synyx.urlaubsverwaltung.web.person;
 
-import org.synyx.urlaubsverwaltung.web.person.PersonForm;
+import org.synyx.urlaubsverwaltung.core.person.Person;
 
 
 /**
- * Provides possibility to create/edit {@link Person}s.
+ * Process {@link PersonForm} to create/edit {@link Person} with holidays account, working time etc.
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public interface PersonInteractionService {
+public interface PersonFormProcessor {
 
-    // TODO: Instead of PersonForm, only Person should be provided here to avoid package cycles
     /**
      * Creates a {@link Person} with the values of the given {@link org.synyx.urlaubsverwaltung.web.person.PersonForm}
      * incl. creating/updating {@link org.synyx.urlaubsverwaltung.core.account.domain.Account} and
@@ -22,7 +21,6 @@ public interface PersonInteractionService {
     Person create(PersonForm personForm);
 
 
-    // TODO: Instead of PersonForm, only Person should be provided here to avoid package cycles
     /**
      * Updates a person with the values of the given {@link org.synyx.urlaubsverwaltung.web.person.PersonForm} incl.
      * creating/updating {@link org.synyx.urlaubsverwaltung.core.account.domain.Account} and

@@ -8,6 +8,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
+import org.synyx.urlaubsverwaltung.core.person.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.person.Role;
@@ -27,16 +28,14 @@ public class LdapSyncServiceTest {
 
     private LdapSyncService ldapSyncService;
     private PersonService personService;
-    private MailService mailService;
 
     @Before
     public void setUp() {
 
         ldapUserService = Mockito.mock(LdapUserService.class);
         personService = Mockito.mock(PersonService.class);
-        mailService = Mockito.mock(MailService.class);
 
-        ldapSyncService = new LdapSyncService(ldapUserService, personService, mailService);
+        ldapSyncService = new LdapSyncService(ldapUserService, personService);
     }
 
 
@@ -59,51 +58,37 @@ public class LdapSyncServiceTest {
 
 
     @Test
-    public void ensureCreatedPersonHasTheCorrectRole() {
+    public void ensurePersonIsCreatedWithCorrectAttributes() {
 
-        Person person = ldapSyncService.createPerson("murygina", Optional.of("Aljona"), Optional.of("Murygina"),
-                Optional.of("murygina@synyx.de"));
+        Person person = TestDataCreator.createPerson();
 
-        Collection<Role> roles = person.getPermissions();
+        Mockito.when(personService.create(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(),
+                    Mockito.anyString(), Mockito.anyListOf(MailNotification.class), Mockito.anyListOf(Role.class)))
+            .thenReturn(person);
 
-        Assert.assertEquals("Wrong number of roles", 1, roles.size());
-        Assert.assertTrue("Does not contain user role", roles.contains(Role.USER));
+        ldapSyncService.createPerson("murygina", Optional.of("Aljona"), Optional.of("Murygina"),
+            Optional.of("murygina@synyx.de"));
+
+        Mockito.verify(personService)
+            .create("murygina", "Murygina", "Aljona", "murygina@synyx.de",
+                Collections.singletonList(MailNotification.NOTIFICATION_USER), Collections.singletonList(Role.USER));
     }
 
 
     @Test
     public void ensurePersonCanBeCreatedWithOnlyLoginName() {
 
-        Person person = ldapSyncService.createPerson("murygina", Optional.empty(), Optional.empty(), Optional.empty());
+        Person person = TestDataCreator.createPerson();
 
-        Mockito.verify(personService).save(Mockito.eq(person));
+        Mockito.when(personService.create(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(),
+                    Mockito.anyString(), Mockito.anyListOf(MailNotification.class), Mockito.anyListOf(Role.class)))
+            .thenReturn(person);
 
-        Assert.assertNotNull("Missing login name", person.getLoginName());
-        Assert.assertEquals("Wrong login name", "murygina", person.getLoginName());
+        ldapSyncService.createPerson("murygina", Optional.empty(), Optional.empty(), Optional.empty());
 
-        Assert.assertNull("First name should be not set", person.getFirstName());
-        Assert.assertNull("Last name should be not set", person.getLastName());
-        Assert.assertNull("Mail address should be not set", person.getEmail());
-    }
-
-
-    @Test
-    public void ensureCreatedPersonHasCorrectAttributes() {
-
-        Person person = ldapSyncService.createPerson("murygina", Optional.of("Aljona"), Optional.of("Murygina"),
-                Optional.of("murygina@synyx.de"));
-
-        Mockito.verify(personService).save(Mockito.eq(person));
-
-        Assert.assertNotNull("Missing login name", person.getLoginName());
-        Assert.assertNotNull("Missing first name", person.getFirstName());
-        Assert.assertNotNull("Missing last name", person.getLastName());
-        Assert.assertNotNull("Missing mail address", person.getEmail());
-
-        Assert.assertEquals("Wrong login name", "murygina", person.getLoginName());
-        Assert.assertEquals("Wrong first name", "Aljona", person.getFirstName());
-        Assert.assertEquals("Wrong last name", "Murygina", person.getLastName());
-        Assert.assertEquals("Wrong mail address", "murygina@synyx.de", person.getEmail());
+        Mockito.verify(personService)
+            .create("murygina", null, null, null, Collections.singletonList(MailNotification.NOTIFICATION_USER),
+                Collections.singletonList(Role.USER));
     }
 
 

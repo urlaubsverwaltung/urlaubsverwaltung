@@ -30,6 +30,7 @@ import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.sync.CalendarType;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
+import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.io.IOException;
 
@@ -85,7 +86,7 @@ public class MailServiceIntegrationTest {
 
         DateMidnight now = DateMidnight.now();
 
-        person = new Person();
+        person = TestDataCreator.createPerson();
         application = new Application();
         application.setPerson(person);
         application.setVacationType(VacationType.HOLIDAY);
@@ -116,10 +117,10 @@ public class MailServiceIntegrationTest {
         person.setEmail("misterhorst@test.com");
 
         String bossEmailAddress = "boss@boss.de";
-        Person boss = new Person("boss", "Muster", "Max", bossEmailAddress);
+        Person boss = TestDataCreator.createPerson("boss", "Max", "Muster", bossEmailAddress);
 
         String departmentHeadEmailAddress = "head@muster.de";
-        Person departmentHead = new Person("head", "Muster", "Michel", departmentHeadEmailAddress);
+        Person departmentHead = TestDataCreator.createPerson("head", "Michel", "Muster", departmentHeadEmailAddress);
 
         Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS))
             .thenReturn(Collections.singletonList(boss));
@@ -172,21 +173,15 @@ public class MailServiceIntegrationTest {
         person.setEmail("misterhorst@test.com");
 
         String bossEmailAddress = "boss@boss.de";
-        Person boss = new Person("boss", "Muster", "Max", bossEmailAddress);
+        Person boss = TestDataCreator.createPerson("boss", "Max", "Muster", bossEmailAddress);
 
-        Person departmentMember = new Person("muster", "Muster", "Marlene", "");
-        Application departmentApplication = new Application();
-        departmentApplication.setStartDate(new DateMidnight(2015, 11, 5));
-        departmentApplication.setEndDate(new DateMidnight(2015, 11, 6));
-        departmentApplication.setDayLength(DayLength.FULL);
-        departmentApplication.setPerson(departmentMember);
+        Person departmentMember = TestDataCreator.createPerson("muster", "Marlene", "Muster", "mmuster@foo.de");
+        Application departmentApplication = TestDataCreator.createApplication(departmentMember, VacationType.HOLIDAY,
+                new DateMidnight(2015, 11, 5), new DateMidnight(2015, 11, 6), DayLength.FULL);
 
-        Person otherDepartmentMember = new Person("schmidt", "Schmidt", "Niko", "");
-        Application otherDepartmentApplication = new Application();
-        otherDepartmentApplication.setStartDate(new DateMidnight(2015, 11, 4));
-        otherDepartmentApplication.setEndDate(new DateMidnight(2015, 11, 4));
-        otherDepartmentApplication.setDayLength(DayLength.MORNING);
-        otherDepartmentApplication.setPerson(otherDepartmentMember);
+        Person otherDepartmentMember = TestDataCreator.createPerson("schmidt", "Niko", "Schmidt", "nschmidt@foo.de");
+        Application otherDepartmentApplication = TestDataCreator.createApplication(otherDepartmentMember,
+                VacationType.HOLIDAY, new DateMidnight(2015, 11, 4), new DateMidnight(2015, 11, 4), DayLength.MORNING);
 
         Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS))
             .thenReturn(Collections.singletonList(boss));
@@ -216,10 +211,10 @@ public class MailServiceIntegrationTest {
         person.setEmail("berndo@test.com");
 
         String officeEmailAddress = "office@synyx.de";
-        Person office = new Person("office", "Muster", "Max", officeEmailAddress);
+        Person office = TestDataCreator.createPerson("office", "Max", "Muster", officeEmailAddress);
 
         String bossEmailAddress = "boss@boss.de";
-        Person boss = new Person("boss", "Muster", "Max", bossEmailAddress);
+        Person boss = TestDataCreator.createPerson("boss", "Max", "Muster", bossEmailAddress);
 
         Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_OFFICE))
             .thenReturn(Arrays.asList(office));
@@ -282,7 +277,7 @@ public class MailServiceIntegrationTest {
         person.setEmail("franzi@test.com");
 
         String bossEmailAddress = "boss@boss.de";
-        Person boss = new Person("boss", "Muster", "Max", bossEmailAddress);
+        Person boss = TestDataCreator.createPerson("boss", "Max", "Muster", bossEmailAddress);
 
         String commentMessage = "Das ist ein Kommentar.";
         ApplicationComment comment = new ApplicationComment(boss);
@@ -395,7 +390,7 @@ public class MailServiceIntegrationTest {
         person.setFirstName("Heinrich");
 
         String officeEmailAddress = "office@office.de";
-        Person office = new Person("office", "Office", "Marlene", officeEmailAddress);
+        Person office = TestDataCreator.createPerson("office", "Marlene", "Office", officeEmailAddress);
 
         Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_OFFICE))
             .thenReturn(Arrays.asList(office));
@@ -421,26 +416,6 @@ public class MailServiceIntegrationTest {
         assertTrue(content.contains("wurde storniert"));
         assertTrue("No comment in mail content", content.contains(commentMessage));
         assertTrue("Wrong comment author", content.contains(comment.getPerson().getNiceName()));
-    }
-
-
-    @Test
-    public void ensureAdministratorGetsANotificationIfAKeyGeneratingErrorOccurred() throws MessagingException,
-        IOException {
-
-        mailService.sendKeyGeneratingErrorNotification("horscht", "Message of exception");
-
-        List<Message> inbox = Mailbox.get(settings.getMailSettings().getAdministrator());
-        assertTrue(inbox.size() > 0);
-
-        Message msg = inbox.get(0);
-
-        assertEquals("Fehler beim Generieren der Keys", msg.getSubject());
-
-        String content = (String) msg.getContent();
-
-        assertTrue(content.contains("ist ein Fehler aufgetreten"));
-        assertTrue(content.contains("Message of exception"));
     }
 
 
@@ -473,7 +448,7 @@ public class MailServiceIntegrationTest {
         person.setEmail("bla@test.com");
 
         String officeEmailAddress = "office@office.de";
-        Person office = new Person("office", "Office", "Marlene", officeEmailAddress);
+        Person office = TestDataCreator.createPerson("office", "Marlene", "Office", officeEmailAddress);
 
         String commentMessage = "Das ist ein Kommentar.";
         ApplicationComment comment = new ApplicationComment(office);
@@ -528,18 +503,18 @@ public class MailServiceIntegrationTest {
 
         Account accountOne = new Account();
         accountOne.setRemainingVacationDays(new BigDecimal("3"));
-        accountOne.setPerson(new Person("muster", "Muster", "Marlene", ""));
+        accountOne.setPerson(TestDataCreator.createPerson("muster", "Marlene", "Muster", "marlene@muster.de"));
 
         Account accountTwo = new Account();
         accountTwo.setRemainingVacationDays(new BigDecimal("5.5"));
-        accountTwo.setPerson(new Person("mustermann", "Mustermann", "Max", ""));
+        accountTwo.setPerson(TestDataCreator.createPerson("mustermann", "Max", "Mustermann", "max@mustermann.de"));
 
         Account accountThree = new Account();
         accountThree.setRemainingVacationDays(new BigDecimal("-1"));
-        accountThree.setPerson(new Person("horst", "Horst", "Dieter", ""));
+        accountThree.setPerson(TestDataCreator.createPerson("dings", "Horst", "Dings", "horst@dings.de"));
 
         String officeEmailAddress = "office@office.de";
-        Person office = new Person("", "", "", officeEmailAddress);
+        Person office = TestDataCreator.createPerson("office", "Office", "Office", officeEmailAddress);
 
         Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_OFFICE))
             .thenReturn(Arrays.asList(office));
@@ -561,14 +536,14 @@ public class MailServiceIntegrationTest {
                 .now().getYear()));
         assertTrue(content.contains("Marlene Muster: 3"));
         assertTrue(content.contains("Max Mustermann: 5"));
-        assertTrue(content.contains("Dieter Horst: -1"));
+        assertTrue(content.contains("Horst Dings: -1"));
     }
 
 
     @Test
     public void ensureCorrectHolidayReplacementMailIsSent() throws MessagingException, IOException {
 
-        Person holidayReplacement = new Person("muster", "Muster", "Marlene", "mmuster@test.de");
+        Person holidayReplacement = TestDataCreator.createPerson("muster", "Marlene", "Muster", "marlene@muster.de");
         application.setHolidayReplacement(holidayReplacement);
 
         mailService.notifyHolidayReplacement(application);
@@ -596,7 +571,7 @@ public class MailServiceIntegrationTest {
     public void ensureAdministratorGetsANotificationIfACalendarSyncErrorOccurred() throws MessagingException,
         IOException {
 
-        Person person = new Person("muster", "Muster", "Marlene", "marlene@muster.de");
+        Person person = TestDataCreator.createPerson("muster", "Marlene", "Muster", "marlene@muster.de");
 
         Application application = new Application();
         application.setDayLength(DayLength.FULL);
@@ -650,7 +625,7 @@ public class MailServiceIntegrationTest {
     public void ensureAdministratorGetsANotificationIfAEventUpdateErrorOccurred() throws MessagingException,
         IOException {
 
-        Person person = new Person("muster", "Muster", "Marlene", "marlene@muster.de");
+        Person person = TestDataCreator.createPerson("muster", "Marlene", "Muster", "marlene@muster.de");
 
         Application application = new Application();
         application.setDayLength(DayLength.FULL);
@@ -746,7 +721,7 @@ public class MailServiceIntegrationTest {
     @Test
     public void ensureThatSendUserCreationNotification() throws MessagingException, IOException {
 
-        Person person = new Person("muster", "Muster", "Marlene", "mmuster@test.de");
+        Person person = TestDataCreator.createPerson("muster", "Marlene", "Muster", "mmuster@test.de");
         String rawPassword = "secret";
 
         mailService.sendUserCreationNotification(person, rawPassword);

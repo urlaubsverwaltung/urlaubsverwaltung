@@ -102,16 +102,6 @@ public interface MailService {
 
 
     /**
-     * this method sends an email to the tool's manager to inform if an error occurred while generating private and
-     * public key for a new user with the given login name.
-     *
-     * @param  loginName
-     * @param  exception
-     */
-    void sendKeyGeneratingErrorNotification(String loginName, String exception);
-
-
-    /**
      * this method sends an email to the tool's manager to inform if an error occurred while signing an application with
      * the given id.
      *

@@ -13,7 +13,7 @@ import java.util.Optional;
 
 
 /**
- * Unit test for.{@link org.synyx.urlaubsverwaltung.web.person.PersonForm}
+ * Unit test for {@link org.synyx.urlaubsverwaltung.web.person.PersonForm}.
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */

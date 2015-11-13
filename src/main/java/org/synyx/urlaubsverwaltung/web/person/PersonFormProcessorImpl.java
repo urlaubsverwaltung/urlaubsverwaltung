@@ -1,23 +1,25 @@
-package org.synyx.urlaubsverwaltung.core.person;
+package org.synyx.urlaubsverwaltung.web.person;
 
-import org.apache.log4j.Logger;
 import org.joda.time.DateMidnight;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
+
 import org.springframework.transaction.annotation.Transactional;
+
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.department.Department;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
-import org.synyx.urlaubsverwaltung.core.mail.MailService;
-import org.synyx.urlaubsverwaltung.security.CryptoUtil;
-import org.synyx.urlaubsverwaltung.web.person.PersonForm;
+import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.person.PersonService;
+import org.synyx.urlaubsverwaltung.core.person.Role;
 
 import java.math.BigDecimal;
-import java.security.KeyPair;
-import java.security.NoSuchAlgorithmException;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -28,51 +30,36 @@ import java.util.stream.Collectors;
  */
 @Service
 @Transactional
-public class PersonInteractionServiceImpl implements PersonInteractionService {
-
-    private static final Logger LOG = Logger.getLogger(PersonInteractionServiceImpl.class);
+public class PersonFormProcessorImpl implements PersonFormProcessor {
 
     private final PersonService personService;
     private final WorkingTimeService workingTimeService;
     private final AccountService accountService;
     private final AccountInteractionService accountInteractionService;
     private final DepartmentService departmentService;
-    private final MailService mailService;
 
     @Autowired
-    public PersonInteractionServiceImpl(PersonService personService, WorkingTimeService workingTimeService,
-                                        AccountService accountService, AccountInteractionService accountInteractionService,
-                                        DepartmentService departmentService, MailService mailService) {
+    public PersonFormProcessorImpl(PersonService personService, WorkingTimeService workingTimeService,
+        AccountService accountService, AccountInteractionService accountInteractionService,
+        DepartmentService departmentService) {
 
         this.personService = personService;
         this.workingTimeService = workingTimeService;
         this.accountService = accountService;
         this.accountInteractionService = accountInteractionService;
         this.departmentService = departmentService;
-        this.mailService = mailService;
     }
 
     @Override
     public Person create(PersonForm personForm) {
 
-        Person person = personForm.generatePerson();
-
-        try {
-            KeyPair keyPair = CryptoUtil.generateKeyPair();
-            person.setPrivateKey(keyPair.getPrivate().getEncoded());
-            person.setPublicKey(keyPair.getPublic().getEncoded());
-        } catch (NoSuchAlgorithmException ex) {
-            LOG.error("An error occurred while trying to generate a key pair for the person " + person.toString(), ex);
-            mailService.sendKeyGeneratingErrorNotification(personForm.getLoginName(), ex.getMessage());
-        }
-
-        personService.save(person);
+        Person person = personService.create(personForm.getLoginName(), personForm.getLastName(),
+                personForm.getFirstName(), personForm.getEmail(), personForm.getNotifications(),
+                personForm.getPermissions());
 
         touchWorkingTime(person, personForm);
 
         touchAccount(person, personForm);
-
-        LOG.info("Created: " + person.toString());
 
         return person;
     }
@@ -109,27 +96,17 @@ public class PersonInteractionServiceImpl implements PersonInteractionService {
     @Override
     public Person update(PersonForm personForm) {
 
-        Optional<Person> optionalPersonToUpdate = personService.getPersonByID(personForm.getId());
+        Person person = personService.update(personForm.getId(), personForm.getLoginName(), personForm.getLastName(),
+                personForm.getFirstName(), personForm.getEmail(), personForm.getNotifications(),
+                personForm.getPermissions());
 
-        if (!optionalPersonToUpdate.isPresent()) {
-            throw new IllegalArgumentException("Can not find a person for ID = " + personForm.getId());
-        }
+        touchWorkingTime(person, personForm);
 
-        Person personToUpdate = optionalPersonToUpdate.get();
+        touchAccount(person, personForm);
 
-        personForm.fillPersonAttributes(personToUpdate);
+        touchDepartmentHeads(person);
 
-        personService.save(personToUpdate);
-
-        touchWorkingTime(personToUpdate, personForm);
-
-        touchAccount(personToUpdate, personForm);
-
-        touchDepartmentHeads(personToUpdate);
-
-        LOG.info("Updated " + personToUpdate.toString());
-
-        return personToUpdate;
+        return person;
     }
 
 

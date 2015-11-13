@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.person.Role;
+import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -55,7 +56,7 @@ public class SimpleUserDetailsServiceTest {
         String login = "user";
         String password = "password";
 
-        Person user = new Person(login, "Max", "Muster", "max.muster@test.de");
+        Person user = TestDataCreator.createPerson(login);
         user.setPermissions(Arrays.asList(Role.USER, Role.OFFICE));
         user.setPassword(password);
 

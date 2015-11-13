@@ -12,11 +12,13 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 import org.springframework.stereotype.Service;
 
+import org.synyx.urlaubsverwaltung.core.account.service.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationInteractionService;
 import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.Day;
+import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.department.Department;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.overtime.Overtime;
@@ -24,7 +26,6 @@ import org.synyx.urlaubsverwaltung.core.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.person.PersonInteractionService;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.person.Role;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
@@ -32,8 +33,8 @@ import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteInteractionService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
 import org.synyx.urlaubsverwaltung.core.util.CalcUtil;
-import org.synyx.urlaubsverwaltung.security.CryptoUtil;
-import org.synyx.urlaubsverwaltung.web.person.PersonForm;
+import org.synyx.urlaubsverwaltung.core.util.CryptoUtil;
+import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 
 import java.math.BigDecimal;
 
@@ -64,13 +65,16 @@ public class TestDataCreationService {
     private PersonService personService;
 
     @Autowired
-    private PersonInteractionService personInteractionService;
-
-    @Autowired
     private ApplicationInteractionService applicationInteractionService;
 
     @Autowired
     private SickNoteInteractionService sickNoteInteractionService;
+
+    @Autowired
+    private WorkingTimeService workingTimeService;
+
+    @Autowired
+    private AccountInteractionService accountInteractionService;
 
     @Autowired
     private WorkDaysService calendarService;
@@ -149,50 +153,46 @@ public class TestDataCreationService {
     private Person createTestPerson(String login, String password, String firstName, String lastName, String email,
         Role... roles) throws NoSuchAlgorithmException {
 
+        List<Role> permissions = Arrays.asList(roles);
+        List<MailNotification> notifications = getNotificationsForRoles(permissions);
+
+        Person person = personService.create(login, lastName, firstName, email, notifications, permissions);
+
+        // workaround for non generated password
+        person.setPassword(CryptoUtil.encodePassword(password));
+        personService.save(person);
+
         int currentYear = DateMidnight.now().getYear();
+        workingTimeService.touch(Arrays.asList(Day.MONDAY.getDayOfWeek(), Day.TUESDAY.getDayOfWeek(),
+                Day.WEDNESDAY.getDayOfWeek(), Day.THURSDAY.getDayOfWeek(), Day.FRIDAY.getDayOfWeek()),
+            new DateMidnight(currentYear - 1, 1, 1), person);
 
-        PersonForm personForm = new PersonForm(DateMidnight.now().getYear());
-        personForm.setLoginName(login);
-        personForm.setLastName(lastName);
-        personForm.setFirstName(firstName);
-        personForm.setEmail(email);
+        accountInteractionService.createHolidaysAccount(person, DateUtil.getFirstDayOfYear(currentYear),
+            DateUtil.getLastDayOfYear(currentYear), new BigDecimal("28.5"), new BigDecimal("5"), BigDecimal.ZERO);
 
-        personForm.setAnnualVacationDays(new BigDecimal("28.5"));
-        personForm.setRemainingVacationDays(new BigDecimal("5"));
-        personForm.setRemainingVacationDaysNotExpiring(BigDecimal.ZERO);
-        personForm.setValidFrom(new DateMidnight(currentYear - 1, 1, 1));
+        return person;
+    }
 
-        personForm.setWorkingDays(Arrays.asList(Day.MONDAY.getDayOfWeek(), Day.TUESDAY.getDayOfWeek(),
-                Day.WEDNESDAY.getDayOfWeek(), Day.THURSDAY.getDayOfWeek(), Day.FRIDAY.getDayOfWeek()));
 
-        personForm.setPermissions(Arrays.asList(roles));
+    private List<MailNotification> getNotificationsForRoles(List<Role> roles) {
 
         List<MailNotification> notifications = new ArrayList<>();
 
         notifications.add(MailNotification.NOTIFICATION_USER);
 
-        if (personForm.getPermissions().contains(Role.DEPARTMENT_HEAD)) {
+        if (roles.contains(Role.DEPARTMENT_HEAD)) {
             notifications.add(MailNotification.NOTIFICATION_DEPARTMENT_HEAD);
         }
 
-        if (personForm.getPermissions().contains(Role.BOSS)) {
+        if (roles.contains(Role.BOSS)) {
             notifications.add(MailNotification.NOTIFICATION_BOSS);
         }
 
-        if (personForm.getPermissions().contains(Role.OFFICE)) {
+        if (roles.contains(Role.OFFICE)) {
             notifications.add(MailNotification.NOTIFICATION_OFFICE);
         }
 
-        personForm.setNotifications(notifications);
-
-        Person person = personInteractionService.create(personForm);
-
-        // TODO: Solve this in a better way!
-        // workaround for non generated password
-        person.setPassword(CryptoUtil.encodePassword(password));
-        personService.save(person);
-
-        return person;
+        return notifications;
     }
 
 

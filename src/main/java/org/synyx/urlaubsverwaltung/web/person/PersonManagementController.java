@@ -28,7 +28,6 @@ import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.person.PersonInteractionService;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
@@ -49,7 +48,7 @@ import java.util.Optional;
 public class PersonManagementController {
 
     @Autowired
-    private PersonInteractionService personInteractionService;
+    private PersonFormProcessor personFormProcessor;
 
     @Autowired
     private PersonService personService;
@@ -103,7 +102,7 @@ public class PersonManagementController {
             return PersonConstants.PERSON_FORM_JSP;
         }
 
-        personInteractionService.create(personForm);
+        personFormProcessor.create(personForm);
 
         return "redirect:/web/staff?active=true";
     }
@@ -156,7 +155,7 @@ public class PersonManagementController {
             return PersonConstants.PERSON_FORM_JSP;
         }
 
-        personInteractionService.update(personForm);
+        personFormProcessor.update(personForm);
 
         return "redirect:/web/staff?active=true";
     }

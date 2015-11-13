@@ -83,7 +83,7 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
 
         accountService.save(account);
 
-        LOG.info("Edited holidays account: " + account);
+        LOG.info("Updated holidays account: " + account);
 
         return account;
     }
