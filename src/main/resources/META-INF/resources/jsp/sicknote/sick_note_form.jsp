@@ -72,16 +72,14 @@
 
         <c:choose>
             <c:when test="${sickNote.id == null}">
-                <c:set var="METHOD" value="POST" />
                 <c:set var="ACTION" value="${URL_PREFIX}/sicknote" />
             </c:when>
             <c:otherwise>
-                <c:set var="METHOD" value="PUT" />
                 <c:set var="ACTION" value="${URL_PREFIX}/sicknote/${sickNote.id}/edit" />
             </c:otherwise>
         </c:choose>
 
-        <form:form method="${METHOD}" action="${ACTION}" modelAttribute="sickNote" class="form-horizontal">
+        <form:form method="POST" action="${ACTION}" modelAttribute="sickNote" class="form-horizontal">
         <div class="form-section">
 
             <div class="col-xs-12">

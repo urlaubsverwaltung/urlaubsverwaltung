@@ -6,6 +6,6 @@
 
 <spring:url var="URL_PREFIX" value="/web" />
 
-<form:form method="PUT" id="remind" action="${URL_PREFIX}/application/${application.id}/remind" style="display:inline;"></form:form>
+<form:form method="POST" id="remind" action="${URL_PREFIX}/application/${application.id}/remind" style="display:inline;"></form:form>
 
         

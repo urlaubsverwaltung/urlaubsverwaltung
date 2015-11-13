@@ -28,7 +28,7 @@
       </c:otherwise>
 </c:choose>
 
-<form:form id="allow" cssClass="form action-form confirm alert alert-success" method="PUT"
+<form:form id="allow" cssClass="form action-form confirm alert alert-success" method="POST"
            action="${ACTION_URL}" modelAttribute="comment">
 
     <div class="form-group">

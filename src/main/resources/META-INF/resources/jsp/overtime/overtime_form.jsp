@@ -41,16 +41,14 @@
         <div class="row">
             <c:choose>
                 <c:when test="${overtime.id == null}">
-                    <c:set var="METHOD" value="POST"/>
                     <c:set var="ACTION" value="${URL_PREFIX}/overtime"/>
                 </c:when>
                 <c:otherwise>
-                    <c:set var="METHOD" value="PUT"/>
                     <c:set var="ACTION" value="${URL_PREFIX}/overtime/${overtime.id}"/>
                 </c:otherwise>
             </c:choose>
 
-            <form:form method="${METHOD}" action="${ACTION}" modelAttribute="overtime" cssClass="form-horizontal">
+            <form:form method="POST" action="${ACTION}" modelAttribute="overtime" cssClass="form-horizontal">
                 <form:hidden path="person" value="${overtime.person.id}" />
                 <div class="form-section">
                     <div class="col-xs-12">

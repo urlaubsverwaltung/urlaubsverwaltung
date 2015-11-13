@@ -15,7 +15,7 @@
 
 <spring:url var="URL_PREFIX" value="/web"/>
 
-<form:form id="cancel" cssClass="form action-form confirm alert alert-danger" method="PUT"
+<form:form id="cancel" cssClass="form action-form confirm alert alert-danger" method="POST"
            action="${URL_PREFIX}/application/${application.id}/cancel" modelAttribute="comment">
 
     <div class="form-group">

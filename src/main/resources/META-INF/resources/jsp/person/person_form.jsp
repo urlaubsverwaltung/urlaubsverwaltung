@@ -27,16 +27,14 @@
 
 <c:choose>
     <c:when test="${personForm.id == null}">
-        <c:set var="METHOD" value="POST"/>
         <c:set var="ACTION" value="${URL_PREFIX}/staff"/>
     </c:when>
     <c:otherwise>
-        <c:set var="METHOD" value="PUT"/>
         <c:set var="ACTION" value="${URL_PREFIX}/staff/${personForm.id}"/>
     </c:otherwise>
 </c:choose>
 
-<form:form method="${METHOD}" action="${ACTION}" modelAttribute="personForm" class="form-horizontal person--form">
+<form:form method="POST" action="${ACTION}" modelAttribute="personForm" class="form-horizontal person--form">
 <form:hidden path="id" />
 
 <div class="row">

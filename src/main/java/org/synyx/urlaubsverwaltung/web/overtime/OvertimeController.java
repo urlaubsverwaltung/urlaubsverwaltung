@@ -216,7 +216,7 @@ public class OvertimeController {
     }
 
 
-    @RequestMapping(value = "/overtime/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/overtime/{id}", method = RequestMethod.POST)
     public String updateOvertime(@PathVariable("id") Integer id,
         @ModelAttribute("overtime") OvertimeForm overtimeForm, Errors errors, Model model,
         RedirectAttributes redirectAttributes) throws UnknownOvertimeException {

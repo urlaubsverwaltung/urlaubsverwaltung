@@ -52,7 +52,7 @@ public class SettingsController {
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @RequestMapping(value = "/settings", method = RequestMethod.PUT)
+    @RequestMapping(value = "/settings", method = RequestMethod.POST)
     public String settingsSaved(@ModelAttribute("settings") Settings settings, Errors errors, Model model,
         RedirectAttributes redirectAttributes) {
 

@@ -159,7 +159,7 @@ public class ApplicationForLeaveDetailsController {
      * Allow a not yet allowed application for leave (Boss only!).
      */
     @PreAuthorize(SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD)
-    @RequestMapping(value = "/{applicationId}/allow", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{applicationId}/allow", method = RequestMethod.POST)
     public String allowApplication(@PathVariable("applicationId") Integer applicationId,
         @ModelAttribute("comment") ApplicationCommentForm comment,
         @RequestParam(value = "redirect", required = false) String redirectUrl, Errors errors,
@@ -206,7 +206,7 @@ public class ApplicationForLeaveDetailsController {
      * to decide about this application (an email is sent).
      */
     @PreAuthorize(SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD)
-    @RequestMapping(value = "/{applicationId}/refer", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{applicationId}/refer", method = RequestMethod.POST)
     public String referApplication(@PathVariable("applicationId") Integer applicationId,
         @ModelAttribute("referredPerson") ReferredPerson referredPerson, RedirectAttributes redirectAttributes)
         throws UnknownApplicationForLeaveException, UnknownPersonException, AccessDeniedException {
@@ -241,7 +241,7 @@ public class ApplicationForLeaveDetailsController {
      * Reject an application for leave (Boss only!).
      */
     @PreAuthorize(SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD)
-    @RequestMapping(value = "/{applicationId}/reject", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{applicationId}/reject", method = RequestMethod.POST)
     public String rejectApplication(@PathVariable("applicationId") Integer applicationId,
         @ModelAttribute("comment") ApplicationCommentForm comment,
         @RequestParam(value = "redirect", required = false) String redirectUrl, Errors errors,
@@ -290,7 +290,7 @@ public class ApplicationForLeaveDetailsController {
      * Cancel an application for leave. Cancelling an application for leave on behalf for someone is allowed only for
      * Office.
      */
-    @RequestMapping(value = "/{applicationId}/cancel", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{applicationId}/cancel", method = RequestMethod.POST)
     public String cancelApplication(@PathVariable("applicationId") Integer applicationId,
         @ModelAttribute("comment") ApplicationCommentForm comment, Errors errors, RedirectAttributes redirectAttributes)
         throws UnknownApplicationForLeaveException, AccessDeniedException {
@@ -335,7 +335,7 @@ public class ApplicationForLeaveDetailsController {
     /**
      * Remind the bosses about the decision of an application for leave.
      */
-    @RequestMapping(value = "/{applicationId}/remind", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{applicationId}/remind", method = RequestMethod.POST)
     public String remindBoss(@PathVariable("applicationId") Integer applicationId,
         RedirectAttributes redirectAttributes) throws UnknownApplicationForLeaveException {
 

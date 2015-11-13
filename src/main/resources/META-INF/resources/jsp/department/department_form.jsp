@@ -25,16 +25,14 @@
 
 <c:choose>
     <c:when test="${department.id == null}">
-        <c:set var="METHOD" value="POST"/>
         <c:set var="ACTION" value="${URL_PREFIX}/department"/>
     </c:when>
     <c:otherwise>
-        <c:set var="METHOD" value="PUT"/>
         <c:set var="ACTION" value="${URL_PREFIX}/department/${department.id}"/>
     </c:otherwise>
 </c:choose>
 
-<form:form method="${METHOD}" action="${ACTION}" modelAttribute="department" class="form-horizontal">
+<form:form method="POST" action="${ACTION}" modelAttribute="department" class="form-horizontal">
 <form:hidden path="id" />
 
 <div class="row">

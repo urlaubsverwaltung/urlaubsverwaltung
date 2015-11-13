@@ -179,7 +179,7 @@ public class SickNoteController {
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
-    @RequestMapping(value = "/sicknote/{id}/edit", method = RequestMethod.PUT)
+    @RequestMapping(value = "/sicknote/{id}/edit", method = RequestMethod.POST)
     public String editSickNote(@PathVariable("id") Integer id,
         @ModelAttribute("sickNote") SickNote sickNote, Errors errors, Model model) {
 

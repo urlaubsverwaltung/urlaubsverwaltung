@@ -23,7 +23,7 @@
 <div class="content">
     <div class="container">
 
-        <form:form method="PUT" action="${URL_PREFIX}/settings" modelAttribute="settings" class="form-horizontal" role="form">
+        <form:form method="POST" action="${URL_PREFIX}/settings" modelAttribute="settings" class="form-horizontal" role="form">
         <form:hidden path="id" />
     
         <div class="row">
