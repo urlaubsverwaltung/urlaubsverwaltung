@@ -30,7 +30,7 @@ import java.util.Optional;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public class HolidaysAccountInteractionServiceImplTest {
+public class AccountInteractionServiceImplTest {
 
     private AccountInteractionServiceImpl service;
 

@@ -19,7 +19,7 @@ import java.util.Optional;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public class HolidaysAccountServiceImplTest {
+public class AccountServiceImplTest {
 
     private AccountService accountService;
 
