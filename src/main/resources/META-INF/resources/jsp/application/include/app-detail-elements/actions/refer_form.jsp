@@ -7,7 +7,7 @@
 <spring:url var="URL_PREFIX" value="/web"/>
 
 <form:form id="refer" cssClass="form action-form confirm alert alert-info" method="PUT"
-           action="${URL_PREFIX}/application/${application.id}/refer" modelAttribute="personToRefer">
+           action="${URL_PREFIX}/application/${application.id}/refer" modelAttribute="referredPerson">
 
     <div class="form-group">
         <div class="control-label">

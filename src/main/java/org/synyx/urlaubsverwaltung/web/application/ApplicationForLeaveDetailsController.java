@@ -127,7 +127,7 @@ public class ApplicationForLeaveDetailsController {
         if (application.getStatus() == ApplicationStatus.WAITING
                 && (signedInUser.hasRole(Role.BOSS) || signedInUser.hasRole(Role.DEPARTMENT_HEAD))) {
             model.addAttribute("bosses", personService.getPersonsByRole(Role.BOSS));
-            model.addAttribute("personToRefer", new Person());
+            model.addAttribute("referredPerson", new ReferredPerson());
         }
 
         // APPLICATION FOR LEAVE
@@ -208,13 +208,13 @@ public class ApplicationForLeaveDetailsController {
     @PreAuthorize(SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD)
     @RequestMapping(value = "/{applicationId}/refer", method = RequestMethod.PUT)
     public String referApplication(@PathVariable("applicationId") Integer applicationId,
-        @ModelAttribute("personToRefer") Person personToRefer, RedirectAttributes redirectAttributes)
+        @ModelAttribute("referredPerson") ReferredPerson referredPerson, RedirectAttributes redirectAttributes)
         throws UnknownApplicationForLeaveException, UnknownPersonException, AccessDeniedException {
 
         Application application = applicationService.getApplicationById(applicationId).orElseThrow(() ->
                     new UnknownApplicationForLeaveException(applicationId));
 
-        String referLoginName = personToRefer.getLoginName();
+        String referLoginName = referredPerson.getLoginName();
         Person recipient = personService.getPersonByLogin(referLoginName).orElseThrow(() ->
                     new UnknownPersonException(referLoginName));
 
