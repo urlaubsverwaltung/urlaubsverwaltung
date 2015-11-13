@@ -37,7 +37,7 @@ public class KeyPairService {
                 + username, ex);
 
             throw new IllegalStateException(
-                "Could not generate key pair. Check the algorithm used for key pair generation!");
+                "Could not generate key pair. Check the algorithm used for key pair generation!", ex);
         }
     }
 }
