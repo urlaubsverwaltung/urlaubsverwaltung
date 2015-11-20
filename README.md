@@ -57,7 +57,10 @@ Eine aktive Person kann eine oder mehrere Rollen innehaben.
 
 ## Installation
 
-Eine Anleitung zur Installation und Konfiguration der Urlaubsverwaltung findet sich [hier](INSTALLATION.md)
+Um eine aktuelle Version der Urlaubsverwaltung zu installieren, bitte [diese Anleitung](INSTALLATION_AS_JAR.md) befolgen.
+
+Falls noch eine ältere Version (< 2.12.0) der Urlaubsverwaltung verwendet hier, können Details zur Installation und
+Konfiguration [hier](INSTALLATION_AS_WAR.md) nachgelesen werden.
 
 ---
 
@@ -98,7 +101,7 @@ Die Urlaubsverwaltung verfügt über eine API, die unter `http://localhost:8080/
 
 #### Environments
 
-Siehe [Umgebungen](INSTALLATION.md#umgebungen)
+Siehe [Umgebungen](INSTALLATION_AS_WAR.md#umgebungen)
 
 Standardmäßig ohne jegliche Angabe wird als Environment `dev` genutzt. Möchte man ein anderes Environment nutzen,
 muss man beim Starten die Environment System Property `env` setzen, z.B.
@@ -107,7 +110,7 @@ muss man beim Starten die Environment System Property `env` setzen, z.B.
 
 #### Authentifizierung
 
-Siehe [Authentifizierung](INSTALLATION.md#authentifizierung)
+Siehe [Authentifizierung](INSTALLATION_AS_WAR.md#authentifizierung)
 
 Möchte man LDAP oder Active Directory zur Authentifizierung nutzen, setzt man die Property `auth` entweder als System
 oder man konfiguriert diese in den `application.properties`.
