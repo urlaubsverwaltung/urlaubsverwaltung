@@ -56,6 +56,7 @@ Eine aktive Person kann eine oder mehrere Rollen innehaben.
 
 Eine Anleitung zur Installation und Konfiguration der Urlaubsverwaltung findet sich [hier](INSTALLATION.md)
 
+---
 
 ## Entwicklung
 
@@ -67,15 +68,26 @@ Im Folgenden werden die durchzuführenden Schritte beschrieben, wenn man an der 
 
 #### Anwendung starten
 
-Man kann die Anwendung lokal mit dem Maven Jetty Plugin starten.
-Ohne weitere Angabe wird das Development-Environment genutzt, d.h. es wird eine H2-Datenbank verwendet.
+Die Urlaubsverwaltung ist eine Spring Boot Anwendung und kann mit dem Maven Plugin gestartet werden.
+Ohne weitere Angabe wird das Development-Environment genutzt, d.h. es wird eine H2-Datenbank verwendet und es werden
+Testdaten angelegt.
 
-<pre>mvn jetty:run</pre>
-
-Im Development-Environment werden für Entwicklungszwecke Benutzer, Urlaubsanträge und Krankmeldungen angelegt.
-Man kann sich in dieser Umgebung ebenfalls mit dem Testbenutzer `test/secret` anmelden.
+<pre>mvn clean spring-boot:run</pre>
 
 Im Browser lässt sich die Anwendung dann über `http://localhost:8080/` ansteuern.
+
+Im Development-Environment werden standardmäßig für Entwicklungszwecke Benutzer, Urlaubsanträge und Krankmeldungen
+angelegt. Daher kann man sich nun mit verschiedenen Testbenutzern anmelden:
+
+* `testUser/secret`: Benutzer mit der Rolle `User`
+* `testBoss/secret`: Benutzer mit der Rolle `Boss`
+* `testHead/secret`: Benutzer mit der Rolle `DepartmentHead`
+* `test/secret`: Benutzer mit der Rolle `Office`
+
+#### Anlegen von Testdaten deaktivieren
+
+Möchte man, dass beim Starten der Anwendung keine Testdaten generiert werden, muss man die Property `testdata.create`
+auf `false` setzen.
 
 #### API
 
@@ -85,44 +97,40 @@ Die Urlaubsverwaltung verfügt über eine API, die unter `http://localhost:8080/
 
 Siehe [Umgebungen](INSTALLATION.md#umgebungen)
 
-Standardmäßig ohne jegliche Angabe wird als Environment `dev` genutzt. Möchte man ein anderes Environment nutzen, muss man beim Starten des Maven Jetty Plugins die `env` Property mitgeben, z.B.:
+Standardmäßig ohne jegliche Angabe wird als Environment `dev` genutzt. Möchte man ein anderes Environment nutzen,
+muss man beim Starten die Environment System Property `env` setzen, z.B.
 
-<pre>mvn jetty:run -Denv=test</pre>
+<pre>mvn clean spring-boot:run -Denv=prod</pre>
 
 #### Authentifizierung
 
 Siehe [Authentifizierung](INSTALLATION.md#authentifizierung)
 
-##### Authentifizierung für lokale Entwicklungsumgebung
+Möchte man LDAP oder Active Directory zur Authentifizierung nutzen, setzt man die Property `auth` entweder als System
+oder man konfiguriert diese in den `application.properties`.
 
-Möchte man die Anwendung lokal mit generierten Testdaten bei sich laufen lassen, reicht es folgenden Befehl auszuführen:
-
-<pre>mvn jetty:run</pre>
-
-Man kann man sich nun mit verschiedenen Testbenutzern anmelden:
-
-* `testUser/secret`: Benutzer mit der Rolle `User`
-* `testBoss/secret`: Benutzer mit der Rolle `Boss`
-* `testHead/secret`: Benutzer mit der Rolle `DepartmentHead`
-* `test/secret`: Benutzer mit der Rolle `Office`
+Hinweis: Die Verbindung zum LDAP / Active Directory muss dafür selbstverständlich korrekt in den
+`application.properties` konfiguriert sein.
 
 ##### LDAP
 
 Die Anwendung mit dem Parameter `-Dauth=ldap` starten:
 
-<pre>mvn jetty:run -Dauth=ldap</pre>
+<pre>mvn clean spring-boot:run -Dauth=ldap</pre>
+
+Oder die Property `auth` in den `application.properties` setzen:
+
+<pre>auth=ldap</pre>
 
 ##### Active Directory
 
 Die Anwendung mit dem Parameter `-Dauth=activeDirectory` starten:
 
-<pre>mvn jetty:run -Dauth=activeDirectory</pre>
+<pre>mvn clean spring-boot:run -Dauth=activeDirectory</pre>
 
-##### Kombination
+Oder die Property `auth` in den `application.properties` setzen:
 
-Selbstverständlich können beide Properties gleichzeitig gesetzt werden, zum Beispiel:
-
-<pre>mvn jetty:run -Denv=test -Dauth=ldap</pre>
+<pre>auth=activeDirectory</pre>
 
 ---
 
