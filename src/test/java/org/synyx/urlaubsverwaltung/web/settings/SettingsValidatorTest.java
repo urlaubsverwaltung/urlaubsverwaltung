@@ -360,7 +360,7 @@ public class SettingsValidatorTest {
             .getExchangeCalendarSettings();
 
         exchangeCalendarSettings.setActive(false);
-        exchangeCalendarSettings.setEmail(null);
+        exchangeCalendarSettings.setUsername(null);
         exchangeCalendarSettings.setPassword(null);
         exchangeCalendarSettings.setCalendar(null);
 
@@ -380,7 +380,7 @@ public class SettingsValidatorTest {
 
         exchangeCalendarSettings.setActive(true);
         exchangeCalendarSettings.setDomain(null);
-        exchangeCalendarSettings.setEmail(null);
+        exchangeCalendarSettings.setUsername(null);
         exchangeCalendarSettings.setPassword(null);
         exchangeCalendarSettings.setCalendar(null);
 
@@ -390,7 +390,7 @@ public class SettingsValidatorTest {
         Mockito.verify(mockError)
             .rejectValue("calendarSettings.exchangeCalendarSettings.domain", "error.entry.mandatory");
         Mockito.verify(mockError)
-            .rejectValue("calendarSettings.exchangeCalendarSettings.email", "error.entry.mandatory");
+            .rejectValue("calendarSettings.exchangeCalendarSettings.username", "error.entry.mandatory");
         Mockito.verify(mockError)
             .rejectValue("calendarSettings.exchangeCalendarSettings.password", "error.entry.mandatory");
         Mockito.verify(mockError)
