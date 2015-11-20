@@ -25,6 +25,9 @@ public class SettingsValidator implements Validator {
     private static final String ERROR_INVALID_ENTRY = "error.entry.invalid";
     private static final String ERROR_INVALID_EMAIL = "error.entry.mail";
     private static final String ERROR_LENGTH = "error.entry.tooManyChars";
+    private static final String ERROR_USERNAME = "settings.calendar.ews.username.error.email";
+
+    private static final String AT_CHAR = "@";
 
     private static final int DAYS_PER_YEAR = 366;
     private static final int HOURS_PER_DAY = 24;
@@ -324,6 +327,8 @@ public class SettingsValidator implements Validator {
         } else {
             if (!validStringLength(username)) {
                 errors.rejectValue(usernameAttribute, ERROR_LENGTH);
+            } else if (username.contains(AT_CHAR)) {
+                errors.rejectValue(usernameAttribute, ERROR_USERNAME);
             }
         }
     }
