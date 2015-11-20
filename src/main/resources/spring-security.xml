@@ -24,7 +24,7 @@
         <security:intercept-url pattern="/login" access="permitAll"/>
         <security:form-login login-page="/login" always-use-default-target="false"
                              default-target-url="/web/overview" authentication-failure-url="/login?login_error=1"/>
-        <security:logout logout-success-url="/login"/>
+        <security:logout logout-success-url="/login" logout-url="/logout"/>
         <security:csrf disabled="true"/>
     </security:http>
 
