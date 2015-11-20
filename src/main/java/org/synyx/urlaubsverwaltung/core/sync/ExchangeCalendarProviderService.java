@@ -94,7 +94,7 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
     private void connectToExchange(ExchangeCalendarSettings settings) {
 
         String domain = settings.getDomain();
-        String username = settings.getEmail();
+        String username = settings.getUsername();
         String email = username + "@" + domain;
         String password = settings.getPassword();
 
@@ -105,7 +105,9 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
                 exchangeService.autodiscoverUrl(email, new RedirectionUrlCallback());
                 exchangeService.setTraceEnabled(true);
             } catch (Exception ex) {
-                LOG.info("No connection could be established to the Exchange calendar for username=" + username);
+                LOG.info(String.format(
+                        "No connection could be established to the Exchange calendar for username=%s, cause=%s",
+                        username, ex.getMessage()));
 
                 try {
                     exchangeService.setCredentials(new WebCredentials(email, password, domain));

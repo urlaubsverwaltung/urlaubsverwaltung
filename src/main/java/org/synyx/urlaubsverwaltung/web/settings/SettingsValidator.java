@@ -314,16 +314,16 @@ public class SettingsValidator implements Validator {
 
     private void validateExchangeEmailOrUserName(ExchangeCalendarSettings exchangeCalendarSettings, Errors errors) {
 
-        String emailAttribute = "calendarSettings.exchangeCalendarSettings.email";
-        String email = exchangeCalendarSettings.getEmail();
+        String usernameAttribute = "calendarSettings.exchangeCalendarSettings.username";
+        String username = exchangeCalendarSettings.getUsername();
 
-        if (!StringUtils.hasText(email)) {
+        if (!StringUtils.hasText(username)) {
             if (exchangeCalendarSettings.isActive()) {
-                errors.rejectValue(emailAttribute, ERROR_MANDATORY_FIELD);
+                errors.rejectValue(usernameAttribute, ERROR_MANDATORY_FIELD);
             }
         } else {
-            if (!validStringLength(email)) {
-                errors.rejectValue(emailAttribute, ERROR_LENGTH);
+            if (!validStringLength(username)) {
+                errors.rejectValue(usernameAttribute, ERROR_LENGTH);
             }
         }
     }

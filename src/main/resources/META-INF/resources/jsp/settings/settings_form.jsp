@@ -303,12 +303,12 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="control-label col-md-4" for="calendarSettings.exchangeCalendarSettings.email">
-                            <spring:message code='settings.calendar.ews.email'/>:
+                        <label class="control-label col-md-4" for="calendarSettings.exchangeCalendarSettings.username">
+                            <spring:message code='settings.calendar.ews.username'/>:
                         </label>
                         <div class="col-md-8">
-                            <form:input id="calendarSettings.exchangeCalendarSettings.email" path="calendarSettings.exchangeCalendarSettings.email" class="form-control" cssErrorClass="form-control error" />
-                            <span class="help-inline"><form:errors path="calendarSettings.exchangeCalendarSettings.email" cssClass="error"/></span>
+                            <form:input id="calendarSettings.exchangeCalendarSettings.username" path="calendarSettings.exchangeCalendarSettings.username" class="form-control" cssErrorClass="form-control error" />
+                            <span class="help-inline"><form:errors path="calendarSettings.exchangeCalendarSettings.username" cssClass="error"/></span>
                         </div>
                     </div>
                     <div class="form-group">
