@@ -4,6 +4,9 @@
 ## Urlaubsverwaltung
 
 * [Übersicht](#übersicht)
+    * [Demo System](#demo-system)
+    * [Blog Posts](#blog-posts)
+    * [Berechtigungen](#berechtigungen)
 * [Installation](#installation)
 * [Entwicklung](#entwicklung)
 * [Hinweise zu Versionen](#hinweise-zu-versionen)
@@ -30,7 +33,7 @@ Zum Ausprobieren der Anwendung gibt es ein [Demo System](http://urlaubsverwaltun
 | Abteilungsleiter  | testHead      | secret   |
 | Benutzer          | testUser      | secret   |
 
-#### Blogposts
+#### Blog Posts
 
 Weitere Informationen zur Geschichte und Entwicklung der Urlaubsverwaltung findet man im [synyx Blog](http://blog.synyx.de):
 
