@@ -50,7 +50,7 @@ Weitere Informationen zur Geschichte und Entwicklung der Urlaubsverwaltung finde
 #### FAQ
 
 Für Fragen, die bei der Benutzung der Urlaubsverwaltung aufkommen können, gibt es ein
-[FAQ](https://github.com/synyx/urlaubsverwaltung/wiki/FAQ).
+[FAQ](https://github.com/synyx/urlaubsverwaltung/wiki).
 Der Fragenkatalog erhebt keinen Anspruch auf Vollständigkeit und befindet sich im ständigen Wachstum und in Veränderung.
 
 #### Berechtigungen
