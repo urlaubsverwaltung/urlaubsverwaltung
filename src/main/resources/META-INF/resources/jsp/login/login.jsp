@@ -53,20 +53,20 @@
 
                     <div class="login">
 
-                        <form method="post" class="login--form" action="j_spring_security_check">
+                        <form method="post" class="login--form" action="/login">
 
                             <div id="login--error" class="alert alert-danger" style="display: none;">
                                 Der eingegebene Nutzername oder das Passwort ist falsch.
                             </div>
 
                             <div class="form-group">
-                                <label for="j_username">Username</label>
-                                <input class="form-control" type="text" name="j_username" id="j_username" autofocus="autofocus">
+                                <label for="username">Username</label>
+                                <input class="form-control" type="text" name="username" id="username" autofocus="autofocus">
                             </div>
 
                             <div class="form-group">
-                                <label for="j_password">Passwort</label>
-                                <input class="form-control" type="password" name="j_password" id="j_password">
+                                <label for="password">Passwort</label>
+                                <input class="form-control" type="password" name="password" id="password">
                             </div>
 
                             <div class="form-group">

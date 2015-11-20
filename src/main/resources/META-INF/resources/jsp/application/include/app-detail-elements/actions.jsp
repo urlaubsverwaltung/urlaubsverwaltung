@@ -18,15 +18,15 @@
 <c:if test="${application.status == 'WAITING' || application.status == 'ALLOWED'}">
 
     <c:if test="${application.status == 'WAITING'}">
-        <sec:authorize access="hasRole('USER')">
+        <sec:authorize access="hasAuthority('USER')">
             <jsp:include page="actions/remind_form.jsp"/>
         </sec:authorize>
-        <sec:authorize access="hasAnyRole('DEPARTMENT_HEAD', 'BOSS')">
+        <sec:authorize access="hasAnyAuthority('DEPARTMENT_HEAD', 'BOSS')">
             <jsp:include page="actions/allow_form.jsp"/>
             <jsp:include page="actions/reject_form.jsp"/>
             <jsp:include page="actions/refer_form.jsp"/>
         </sec:authorize>
-        <sec:authorize access="hasRole('USER')">
+        <sec:authorize access="hasAuthority('USER')">
             <jsp:include page="actions/cancel_form.jsp"/>
         </sec:authorize>
     </c:if>
