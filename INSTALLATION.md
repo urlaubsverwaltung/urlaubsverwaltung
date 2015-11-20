@@ -1,13 +1,17 @@
 ## Installation der Urlaubsverwaltung
 
-* [Installation](https://github.com/synyx/urlaubsverwaltung#installation)
-* [Konfiguration](https://github.com/synyx/urlaubsverwaltung#konfiguration)
-    * [Umgebungen](https://github.com/synyx/urlaubsverwaltung#umgebungen)
-    * [Authentifizierung](https://github.com/synyx/urlaubsverwaltung#authentifizierung)
-    * [Konfiguration ab Version 2.7.0](https://github.com/synyx/urlaubsverwaltung#konfiguration-ab-version-270)
-    * [Konfiguration bis Version 2.6.4](https://github.com/synyx/urlaubsverwaltung#konfiguration-bis-version-264)
+* [Installation](#installation)
+* [Konfiguration](#konfiguration)
+    * [Umgebungen](#umgebungen)
+    * [Authentifizierung](#authentifizierung)
+    * [Konfiguration ab Version 2.7.0](#konfiguration-ab-version-270)
+    * [Konfiguration bis Version 2.6.4](#konfiguration-bis-version-264)
 
 Die folgende Anleitung beschreibt die Installation der Urlaubsverwaltung auf einem [Tomcat Server](http://tomcat.apache.org/).
+
+---
+
+## Installation
 
 #### Systemvoraussetzungen
 

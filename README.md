@@ -3,12 +3,12 @@
 
 ## Urlaubsverwaltung
 
-* [Übersicht](https://github.com/synyx/urlaubsverwaltung#übersicht)
-* [Installation](https://github.com/synyx/urlaubsverwaltung#installation)
-* [Entwicklung](https://github.com/synyx/urlaubsverwaltung#entwicklung)
-* [Hinweise zu Versionen](https://github.com/synyx/urlaubsverwaltung#hinweise-zu-versionen)
-* [Technologien](https://github.com/synyx/urlaubsverwaltung#technologien)
-* [Lizenz](https://github.com/synyx/urlaubsverwaltung#lizenz)
+* [Übersicht](#übersicht)
+* [Installation](#installation)
+* [Entwicklung](#entwicklung)
+* [Hinweise zu Versionen](#hinweise-zu-versionen)
+* [Technologien](#technologien)
+* [Lizenz](#lizenz)
 
 ---
 
@@ -83,7 +83,7 @@ Die Urlaubsverwaltung verfügt über eine API, die unter `http://localhost:8080/
 
 #### Environments
 
-Siehe [Umgebungen](https://github.com/synyx/urlaubsverwaltung#umgebungen)
+Siehe [Umgebungen](INSTALLATION.md#umgebungen)
 
 Standardmäßig ohne jegliche Angabe wird als Environment `dev` genutzt. Möchte man ein anderes Environment nutzen, muss man beim Starten des Maven Jetty Plugins die `env` Property mitgeben, z.B.:
 
@@ -91,7 +91,7 @@ Standardmäßig ohne jegliche Angabe wird als Environment `dev` genutzt. Möchte
 
 #### Authentifizierung
 
-Siehe [Authentifizierung](https://github.com/synyx/urlaubsverwaltung#authentifizierung)
+Siehe [Authentifizierung](INSTALLATION.md#authentifizierung)
 
 ##### Authentifizierung für lokale Entwicklungsumgebung
 
