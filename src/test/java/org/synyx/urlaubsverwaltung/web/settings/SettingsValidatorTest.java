@@ -396,4 +396,26 @@ public class SettingsValidatorTest {
         Mockito.verify(mockError)
             .rejectValue("calendarSettings.exchangeCalendarSettings.calendar", "error.entry.mandatory");
     }
+
+
+    @Test
+    public void ensureExchangeCalendarUsernameMustNotContainAtChar() {
+
+        Settings settings = new Settings();
+        ExchangeCalendarSettings exchangeCalendarSettings = settings.getCalendarSettings()
+            .getExchangeCalendarSettings();
+
+        exchangeCalendarSettings.setActive(true);
+        exchangeCalendarSettings.setDomain("local.domain");
+        exchangeCalendarSettings.setUsername("synyx@local.domain");
+        exchangeCalendarSettings.setPassword("top-secret");
+        exchangeCalendarSettings.setCalendar("Urlaub");
+
+        Errors mockError = Mockito.mock(Errors.class);
+        settingsValidator.validate(settings, mockError);
+
+        Mockito.verify(mockError)
+            .rejectValue("calendarSettings.exchangeCalendarSettings.username",
+                "settings.calendar.ews.username.error.email");
+    }
 }
