@@ -95,7 +95,7 @@
 
         <sec:authorize access="hasAuthority('USER')">
           <li>
-            <a href="<spring:url value='/j_spring_security_logout' />">
+            <a href="<spring:url value='/logout' />">
               <i class="fa fa-fw fa-sign-out"></i> <spring:message code="nav.signout.title"/>
             </a>
           </li>
