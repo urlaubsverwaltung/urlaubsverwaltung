@@ -94,21 +94,33 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
     private void connectToExchange(ExchangeCalendarSettings settings) {
 
         String domain = settings.getDomain();
-        String emailAddress = settings.getEmail();
+        String username = settings.getEmail();
+        String email = username + "@" + domain;
         String password = settings.getPassword();
 
-        if (!domain.equals(credentialsDomain) || !emailAddress.equals(credentialsMailAddress)
+        if (!domain.equals(credentialsDomain) || !username.equals(credentialsMailAddress)
                 || !password.equals(credentialsPassword)) {
             try {
-                exchangeService.setCredentials(new WebCredentials(emailAddress, password, domain));
-                exchangeService.autodiscoverUrl(emailAddress, new RedirectionUrlCallback());
+                exchangeService.setCredentials(new WebCredentials(username, password, domain));
+                exchangeService.autodiscoverUrl(email, new RedirectionUrlCallback());
                 exchangeService.setTraceEnabled(true);
-                credentialsDomain = domain;
-                credentialsMailAddress = emailAddress;
-                credentialsPassword = password;
             } catch (Exception ex) {
-                LOG.warn("No connection could be established to the Exchange calendar.", ex);
+                LOG.info("No connection could be established to the Exchange calendar for username=" + username);
+
+                try {
+                    exchangeService.setCredentials(new WebCredentials(email, password, domain));
+                    exchangeService.autodiscoverUrl(email, new RedirectionUrlCallback());
+                    exchangeService.setTraceEnabled(true);
+                } catch (Exception e) {
+                    LOG.warn(String.format(
+                            "No connection could be established to the Exchange calendar for email=%s, cause=%s", email,
+                            ex.getMessage()));
+                }
             }
+
+            credentialsDomain = domain;
+            credentialsMailAddress = username;
+            credentialsPassword = password;
         }
     }
 
