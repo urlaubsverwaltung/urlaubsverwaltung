@@ -4,8 +4,7 @@
 * [Konfiguration](#konfiguration)
     * [Umgebungen](#umgebungen)
     * [Authentifizierung](#authentifizierung)
-    * [Konfiguration ab Version 2.7.0](#konfiguration-ab-version-270)
-    * [Konfiguration bis Version 2.6.4](#konfiguration-bis-version-264)
+    * [Konfigurationsdatei](#konfigurationsdatei)
 
 Die folgende Anleitung beschreibt die Installation der Urlaubsverwaltung als
 [Spring Boot](http://projects.spring.io/spring-boot/) Anwendung.
@@ -88,7 +87,7 @@ Die Anwendung verfügt über **drei** verschiedene Authentifizierungsmöglichkei
 Der erste Benutzer, der sich erfolgreich im System einloggt, wird in der Urlaubsverwaltung mit der Rolle Office angelegt.
 Dies ermöglicht Benutzer- und Rechteverwaltung innerhalb der Anwendung und das Pflegen der Einstellungen für die Anwendung.
 
-##### Überschreiben der Properties
+#### Konfigurationsdatei
 
 Die Anwendung besitzt im Verzeichnis `src/main/resources` jeweils eine `.properties` Datei zur Konfiguration der
 jeweiligen [Umgebung](#umgebungen).
@@ -112,20 +111,20 @@ Die Anwendung mit dem Parameter `-Denv=prod` starten:
 
 <pre>java -jar urlaubsverwaltung.jar -Denv=prod</pre>
 
-###### LDAP
+##### LDAP
 
 Um LDAP zur Authentifizierung zu nutzen, muss die Property `auth` in der eigenen Konfigurationsdatei auf `ldap` gesetzt
 werden:
 
 <pre>auth=ldap</pre>
 
-###### Active Directory
+##### Active Directory
 
 Um Active Directory zur Authentifizierung zu nutzen, muss die Property `auth` in der eigenen Konfigurationsdatei auf
 `activeDirectory` gesetzt werden:
 
 <pre>auth=activeDirectory</pre>
 
-###### Datenbank
+##### Datenbank
 
 Hinweis: Die in der Konfigurationsdatei konfigurierte Datenbank muss existieren.
