@@ -6,6 +6,7 @@
 * [Übersicht](#übersicht)
     * [Demo System](#demo-system)
     * [Blog Posts](#blog-posts)
+    * [FAQ](#faq)
     * [Berechtigungen](#berechtigungen)
 * [Installation](#installation)
 * [Entwicklung](#entwicklung)
@@ -45,6 +46,12 @@ Weitere Informationen zur Geschichte und Entwicklung der Urlaubsverwaltung finde
 * [Stand November 2011](http://blog.synyx.de/2011/11/elektronische-urlaubsverwaltung-made-by-youngsters/)
 * [Stand November 2012](http://blog.synyx.de/2012/11/urlaubsverwaltung-was-hat-sich-getan/)
 * [Stand Oktober 2014](http://blog.synyx.de/2014/10/urlaubsverwaltung-goes-mobile/)
+
+#### FAQ
+
+Für Fragen, die bei der Benutzung der Urlaubsverwaltung aufkommen können, gibt es ein
+[FAQ](https://github.com/synyx/urlaubsverwaltung/wiki/FAQ)
+Der Fragenkatalog erhebt keinen Anspruch auf Vollständigkeit und befindet sich im ständigen Wachstum und in Veränderung.
 
 #### Berechtigungen
 
