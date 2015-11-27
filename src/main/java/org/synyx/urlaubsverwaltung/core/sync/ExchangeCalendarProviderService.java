@@ -16,6 +16,8 @@ import microsoft.exchange.webservices.data.property.complex.ItemId;
 import microsoft.exchange.webservices.data.search.FindFoldersResults;
 import microsoft.exchange.webservices.data.search.FolderView;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
+
 import org.apache.log4j.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,7 +86,7 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
             return Optional.ofNullable(appointment.getId().getUniqueId());
         } catch (Exception ex) { // NOSONAR - EWS Java API throws Exception, that's life
             LOG.warn("An error occurred while trying to add appointment to Exchange calendar");
-            mailService.sendCalendarSyncErrorNotification(calendarName, absence, ex.getMessage());
+            mailService.sendCalendarSyncErrorNotification(calendarName, absence, ExceptionUtils.getStackTrace(ex));
         }
 
         return Optional.empty();
@@ -127,32 +129,29 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
     }
 
 
-    private CalendarFolder findOrCreateCalendar(String calendarName) {
+    private CalendarFolder findOrCreateCalendar(String calendarName) throws Exception {
 
         Optional<CalendarFolder> calendarOptional = findCalendar(calendarName);
 
         if (calendarOptional.isPresent()) {
             return calendarOptional.get();
         } else {
+            LOG.info(String.format("No exchange calendar found with name '%s'", calendarName));
+
             return createCalendar(calendarName);
         }
     }
 
 
-    private Optional<CalendarFolder> findCalendar(String calendarName) {
+    private Optional<CalendarFolder> findCalendar(String calendarName) throws Exception {
 
-        try {
-            FindFoldersResults calendarRoot = exchangeService.findFolders(WellKnownFolderName.Calendar,
-                    new FolderView(Integer.MAX_VALUE));
+        FindFoldersResults calendarRoot = exchangeService.findFolders(WellKnownFolderName.Calendar,
+                new FolderView(Integer.MAX_VALUE));
 
-            for (Folder folder : calendarRoot.getFolders()) {
-                if (folder.getDisplayName().equals(calendarName)) {
-                    return Optional.of((CalendarFolder) folder);
-                }
+        for (Folder folder : calendarRoot.getFolders()) {
+            if (folder.getDisplayName().equals(calendarName)) {
+                return Optional.of((CalendarFolder) folder);
             }
-        } catch (Exception ex) { // NOSONAR - EWS Java API throws Exception, that's life
-            LOG.warn(String.format("No exchange calendar found with name '%s'", calendarName));
-            throw new CalendarNotFoundException(String.format("No calendar found with name '%s'", calendarName), ex);
         }
 
         return Optional.empty();
@@ -162,6 +161,8 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
     private CalendarFolder createCalendar(String calendarName) {
 
         try {
+            LOG.info(String.format("Trying to create new calendar with name '%s'", calendarName));
+
             CalendarFolder folder = new CalendarFolder(exchangeService);
             folder.setDisplayName(calendarName);
             folder.save(WellKnownFolderName.Calendar);
@@ -170,8 +171,6 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
 
             return CalendarFolder.bind(exchangeService, folder.getId());
         } catch (Exception ex) { // NOSONAR - EWS Java API throws Exception, that's life
-            LOG.warn(String.format("An error occurred during creation of exchange calendar with name '%s'",
-                    calendarName));
             throw new CalendarNotCreatedException(String.format("Exchange calendar '%s' could not be created",
                     calendarName), ex);
         }
@@ -214,7 +213,8 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
                     calendarName));
         } catch (Exception ex) { // NOSONAR - EWS Java API throws Exception, that's life
             LOG.warn(String.format("Could not update appointment %s in exchange calendar '%s'", eventId, calendarName));
-            mailService.sendCalendarUpdateErrorNotification(calendarName, absence, eventId, ex.getMessage());
+            mailService.sendCalendarUpdateErrorNotification(calendarName, absence, eventId,
+                ExceptionUtils.getStackTrace(ex));
         }
     }
 
@@ -241,7 +241,7 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
                     calendarName));
         } catch (Exception ex) { // NOSONAR - EWS Java API throws Exception, that's life
             LOG.warn(String.format("Could not delete appointment %s in exchange calendar '%s'", eventId, calendarName));
-            mailService.sendCalendarDeleteErrorNotification(calendarName, eventId, ex.getMessage());
+            mailService.sendCalendarDeleteErrorNotification(calendarName, eventId, ExceptionUtils.getStackTrace(ex));
         }
     }
 
