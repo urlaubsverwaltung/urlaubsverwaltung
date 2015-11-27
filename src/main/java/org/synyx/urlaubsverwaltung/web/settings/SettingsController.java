@@ -20,6 +20,7 @@ import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.settings.FederalState;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.core.sync.CalendarProviderService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.web.validator.SettingsValidator;
 
@@ -32,6 +33,9 @@ public class SettingsController {
 
     @Autowired
     private SettingsService settingsService;
+
+    @Autowired
+    private CalendarProviderService calendarProviderService;
 
     @Autowired
     private MailService mailService;
@@ -58,19 +62,20 @@ public class SettingsController {
 
         settingsValidator.validate(settings, errors);
 
-        if (!errors.hasErrors()) {
-            settingsService.save(settings);
-            mailService.sendSuccessfullyUpdatedSettingsNotification(settings);
-
-            redirectAttributes.addFlashAttribute("success", true);
-
-            return "redirect:/web/settings";
-        } else {
+        if (errors.hasErrors()) {
             model.addAttribute("settings", settings);
             model.addAttribute("federalStateTypes", FederalState.values());
             model.addAttribute("dayLengthTypes", DayLength.values());
 
             return "settings/settings_form";
         }
+
+        settingsService.save(settings);
+        mailService.sendSuccessfullyUpdatedSettingsNotification(settings);
+        calendarProviderService.checkCalendarSyncSettings(settings.getCalendarSettings());
+
+        redirectAttributes.addFlashAttribute("success", true);
+
+        return "redirect:/web/settings";
     }
 }

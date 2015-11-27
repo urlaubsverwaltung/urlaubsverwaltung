@@ -243,6 +243,33 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
         }
     }
 
+
+    @Override
+    public void checkCalendarSyncSettings(CalendarSettings calendarSettings) {
+
+        ExchangeCalendarSettings exchangeCalendarSettings = calendarSettings.getExchangeCalendarSettings();
+        connectToExchange(exchangeCalendarSettings);
+        discover();
+    }
+
+
+    private void discover() {
+
+        for (WellKnownFolderName folderName : WellKnownFolderName.values()) {
+            try {
+                FindFoldersResults folders = exchangeService.findFolders(folderName, new FolderView(Integer.MAX_VALUE));
+
+                for (Folder folder : folders.getFolders()) {
+                    LOG.info("Found folder: " + folderName.name() + " - " + folder.getDisplayName());
+                }
+            } catch (Exception ex) {
+                LOG.info(String.format(
+                        "An error occurred while trying to get folders for well known folder name: %s, cause: %s",
+                        folderName.name(), ex.getMessage()));
+            }
+        }
+    }
+
     private class RedirectionUrlCallback implements IAutodiscoverRedirectionUrl {
 
         @Override
