@@ -16,7 +16,7 @@ import org.synyx.urlaubsverwaltung.core.calendar.OverlapCase;
 import org.synyx.urlaubsverwaltung.core.calendar.OverlapService;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteComment;
+import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteComment;
 
 
 /**

@@ -1,18 +1,17 @@
-package org.synyx.urlaubsverwaltung.core.sicknote.comment;
+package org.synyx.urlaubsverwaltung.core.sicknote;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
 import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 
 import java.util.List;
 import java.util.Optional;
 
 
 /**
- * Implementation for {@link org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteCommentService}.
+ * Implementation for {@link SickNoteCommentService}.
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */

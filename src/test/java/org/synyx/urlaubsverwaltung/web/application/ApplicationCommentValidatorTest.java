@@ -7,7 +7,7 @@ import org.mockito.Mockito;
 
 import org.springframework.validation.Errors;
 
-import org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteComment;
+import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteComment;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

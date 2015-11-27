@@ -1,7 +1,6 @@
-package org.synyx.urlaubsverwaltung.core.sicknote.comment;
+package org.synyx.urlaubsverwaltung.core.sicknote;
 
 import org.synyx.urlaubsverwaltung.core.comment.AbstractComment;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;

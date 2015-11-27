@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.core.sicknote.comment;
+package org.synyx.urlaubsverwaltung.core.sicknote;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -7,14 +7,14 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.core.sicknote.*;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.util.Optional;
 
 
 /**
- * Unit test for {@link org.synyx.urlaubsverwaltung.core.sicknote.comment.SickNoteCommentServiceImpl}.
+ * Unit test for {@link SickNoteCommentServiceImpl}.
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */

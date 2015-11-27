@@ -1,7 +1,6 @@
-package org.synyx.urlaubsverwaltung.core.sicknote.comment;
+package org.synyx.urlaubsverwaltung.core.sicknote;
 
 import org.synyx.urlaubsverwaltung.core.person.Person;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 
 import java.util.List;
 import java.util.Optional;

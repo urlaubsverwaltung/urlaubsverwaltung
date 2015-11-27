@@ -1,9 +1,7 @@
-package org.synyx.urlaubsverwaltung.core.sicknote.comment;
+package org.synyx.urlaubsverwaltung.core.sicknote;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 
 import java.util.List;
 

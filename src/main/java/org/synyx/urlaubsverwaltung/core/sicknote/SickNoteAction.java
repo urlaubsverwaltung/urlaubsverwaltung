@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.core.sicknote.comment;
+package org.synyx.urlaubsverwaltung.core.sicknote;
 
 /**
  * Executed action on a sick note.
