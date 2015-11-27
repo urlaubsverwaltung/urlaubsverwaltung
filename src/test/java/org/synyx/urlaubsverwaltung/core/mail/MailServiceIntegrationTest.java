@@ -654,49 +654,6 @@ public class MailServiceIntegrationTest {
 
 
     @Test
-    public void ensureAdministratorGetsANotificationIfConnectionToExchangeCalendarFailed() throws MessagingException,
-        IOException {
-
-        mailService.sendCalendarConnectionErrorNotification(CalendarType.EWS, "Kalendername", "exception description");
-
-        String administrator1 = settings.getMailSettings().getAdministrator();
-        List<Message> inbox = Mailbox.get(administrator1);
-        assertTrue(inbox.size() > 0);
-
-        Message msg = inbox.get(0);
-
-        assertEquals("Verbindung zum Kalender konnte nicht hergestellt werden", msg.getSubject());
-
-        String content = (String) msg.getContent();
-
-        assertTrue(content.contains("Verbindung zum Exchange Kalender 'Kalendername'"));
-        assertTrue(content.contains("exception description"));
-    }
-
-
-    @Test
-    public void ensureAdministratorGetsANotificationIfConnectionToGoogleCalendarFailed() throws MessagingException,
-        IOException {
-
-        mailService.sendCalendarConnectionErrorNotification(CalendarType.GOOGLE, "Kalendername",
-            "exception description");
-
-        String administrator1 = settings.getMailSettings().getAdministrator();
-        List<Message> inbox = Mailbox.get(administrator1);
-        assertTrue(inbox.size() > 0);
-
-        Message msg = inbox.get(0);
-
-        assertEquals("Verbindung zum Kalender konnte nicht hergestellt werden", msg.getSubject());
-
-        String content = (String) msg.getContent();
-
-        assertTrue(content.contains("Verbindung zum Google Kalender 'Kalendername'"));
-        assertTrue(content.contains("exception description"));
-    }
-
-
-    @Test
     public void ensureAdministratorGetsANotificationIfSettingsGetUpdated() throws MessagingException, IOException {
 
         mailService.sendSuccessfullyUpdatedSettingsNotification(settings);

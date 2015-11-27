@@ -112,16 +112,6 @@ public interface MailService {
 
 
     /**
-     * Send an email to the tool's manager if connection to calendar could not be established.
-     *
-     * @param  calendarType  describes the calendar provider
-     * @param  calendarName  of the calendar tried to connect to
-     * @param  exception  describes the error
-     */
-    void sendCalendarConnectionErrorNotification(CalendarType calendarType, String calendarName, String exception);
-
-
-    /**
      * Send an email to the tool's manager if an error occurs during adding calendar event.
      *
      * @param  calendarName  that is used for syncing

@@ -378,21 +378,6 @@ class MailServiceImpl implements MailService {
 
 
     @Override
-    public void sendCalendarConnectionErrorNotification(CalendarType calendarType, String calendarName,
-        String exception) {
-
-        Map<String, Object> model = new HashMap<>();
-        model.put("calendar", calendarName);
-        model.put("calendarType", calendarType.getName());
-        model.put("exception", exception);
-
-        String text = buildMailBody("error_calendar_connection", model);
-
-        sendTechnicalNotification("subject.error.calendar.connection", text);
-    }
-
-
-    @Override
     public void sendCalendarSyncErrorNotification(String calendarName, Absence absence, String exception) {
 
         Map<String, Object> model = new HashMap<>();
