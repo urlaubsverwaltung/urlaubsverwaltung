@@ -4,7 +4,6 @@ import org.apache.log4j.Logger;
 
 import org.springframework.stereotype.Service;
 
-import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.util.CryptoUtil;
 
 import java.security.KeyPair;
@@ -12,7 +11,7 @@ import java.security.NoSuchAlgorithmException;
 
 
 /**
- * Service to generate key pair (private key and public key) for {@link Person}s.
+ * Service to generate key pair (private key and public key) for {@link org.synyx.urlaubsverwaltung.core.person.Person}s.
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */

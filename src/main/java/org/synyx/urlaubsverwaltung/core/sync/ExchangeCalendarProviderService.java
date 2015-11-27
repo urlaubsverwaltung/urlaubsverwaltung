@@ -82,7 +82,7 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
                     absence.getPerson().getNiceName(), calendarFolder.getDisplayName()));
 
             return Optional.ofNullable(appointment.getId().getUniqueId());
-        } catch (Exception ex) {
+        } catch (Exception ex) { // NOSONAR - EWS Java API throws Exception, that's life
             LOG.warn("An error occurred while trying to add appointment to Exchange calendar");
             mailService.sendCalendarSyncErrorNotification(calendarName, absence, ex.getMessage());
         }
@@ -104,7 +104,7 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
                 exchangeService.setCredentials(new WebCredentials(username, password, domain));
                 exchangeService.autodiscoverUrl(email, new RedirectionUrlCallback());
                 exchangeService.setTraceEnabled(true);
-            } catch (Exception ex) {
+            } catch (Exception ex) { // NOSONAR - EWS Java API throws Exception, that's life
                 LOG.info(String.format(
                         "No connection could be established to the Exchange calendar for username=%s, cause=%s",
                         username, ex.getMessage()));
@@ -113,7 +113,7 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
                     exchangeService.setCredentials(new WebCredentials(email, password, domain));
                     exchangeService.autodiscoverUrl(email, new RedirectionUrlCallback());
                     exchangeService.setTraceEnabled(true);
-                } catch (Exception e) {
+                } catch (Exception e) { // NOSONAR - EWS Java API throws Exception, that's life
                     LOG.warn(String.format(
                             "No connection could be established to the Exchange calendar for email=%s, cause=%s", email,
                             ex.getMessage()));
@@ -150,7 +150,7 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
                     return Optional.of((CalendarFolder) folder);
                 }
             }
-        } catch (Exception ex) {
+        } catch (Exception ex) { // NOSONAR - EWS Java API throws Exception, that's life
             LOG.warn(String.format("No exchange calendar found with name '%s'", calendarName));
             throw new CalendarNotFoundException(String.format("No calendar found with name '%s'", calendarName), ex);
         }
@@ -169,7 +169,7 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
             LOG.info(String.format("New calendar folder '%s' created.", calendarName));
 
             return CalendarFolder.bind(exchangeService, folder.getId());
-        } catch (Exception ex) {
+        } catch (Exception ex) { // NOSONAR - EWS Java API throws Exception, that's life
             LOG.warn(String.format("An error occurred during creation of exchange calendar with name '%s'",
                     calendarName));
             throw new CalendarNotCreatedException(String.format("Exchange calendar '%s' could not be created",
@@ -212,7 +212,7 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
 
             LOG.info(String.format("Appointment %s has been updated in exchange calendar '%s'.", eventId,
                     calendarName));
-        } catch (Exception ex) {
+        } catch (Exception ex) { // NOSONAR - EWS Java API throws Exception, that's life
             LOG.warn(String.format("Could not update appointment %s in exchange calendar '%s'", eventId, calendarName));
             mailService.sendCalendarUpdateErrorNotification(calendarName, absence, eventId, ex.getMessage());
         }
@@ -239,7 +239,7 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
 
             LOG.info(String.format("Appointment %s has been deleted in exchange calendar '%s'.", eventId,
                     calendarName));
-        } catch (Exception ex) {
+        } catch (Exception ex) { // NOSONAR - EWS Java API throws Exception, that's life
             LOG.warn(String.format("Could not delete appointment %s in exchange calendar '%s'", eventId, calendarName));
             mailService.sendCalendarDeleteErrorNotification(calendarName, eventId, ex.getMessage());
         }

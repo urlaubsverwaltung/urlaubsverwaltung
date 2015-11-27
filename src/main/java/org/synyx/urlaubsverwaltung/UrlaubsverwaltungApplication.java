@@ -24,7 +24,7 @@ public class UrlaubsverwaltungApplication {
      *
      * @param  args  arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) { // NOSONAR - yes, this main method really should be uncommented!
 
         SpringApplication.run(UrlaubsverwaltungApplication.class, args);
     }
