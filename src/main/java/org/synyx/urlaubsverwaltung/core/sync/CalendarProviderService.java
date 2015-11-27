@@ -41,4 +41,12 @@ public interface CalendarProviderService {
      * @param  calendarSettings  contains configuration for calendar provider
      */
     void deleteAbsence(String eventId, CalendarSettings calendarSettings);
+
+
+    /**
+     * Check the settings for calendar sync.
+     *
+     * @param  calendarSettings  to be checked, containing configuration for calendar provider
+     */
+    void checkCalendarSyncSettings(CalendarSettings calendarSettings);
 }
