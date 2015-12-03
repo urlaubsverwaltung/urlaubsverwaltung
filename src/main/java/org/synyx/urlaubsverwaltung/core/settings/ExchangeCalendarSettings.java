@@ -17,6 +17,7 @@ public class ExchangeCalendarSettings {
     @Column(name = "calendar_ews_active")
     private boolean active = false;
 
+    // TODO: Remove!
     @Column(name = "calendar_ews_domain")
     private String domain;
 
@@ -41,18 +42,6 @@ public class ExchangeCalendarSettings {
     public void setActive(boolean active) {
 
         this.active = active;
-    }
-
-
-    public String getDomain() {
-
-        return domain;
-    }
-
-
-    public void setDomain(String domain) {
-
-        this.domain = domain;
     }
 
 

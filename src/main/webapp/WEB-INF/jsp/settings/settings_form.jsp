@@ -294,15 +294,6 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="control-label col-md-4" for="calendarSettings.exchangeCalendarSettings.domain">
-                            <spring:message code='settings.calendar.ews.domain'/>:
-                        </label>
-                        <div class="col-md-8">
-                            <form:input id="calendarSettings.exchangeCalendarSettings.domain" path="calendarSettings.exchangeCalendarSettings.domain" class="form-control" cssErrorClass="form-control error" />
-                            <span class="help-inline"><form:errors path="calendarSettings.exchangeCalendarSettings.domain" cssClass="error"/></span>
-                        </div>
-                    </div>
-                    <div class="form-group">
                         <label class="control-label col-md-4" for="calendarSettings.exchangeCalendarSettings.email">
                             <spring:message code='settings.calendar.ews.email'/>:
                         </label>

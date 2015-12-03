@@ -47,7 +47,6 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
     private final MailService mailService;
     private final ExchangeService exchangeService;
 
-    private String credentialsDomain;
     private String credentialsMailAddress;
     private String credentialsPassword;
 
@@ -95,24 +94,25 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
 
     private void connectToExchange(ExchangeCalendarSettings settings) {
 
-        String domain = settings.getDomain();
-        String username = settings.getEmail();
-        String email = username + "@" + domain;
+        String email = settings.getEmail();
+        String username = email.split("[@._]")[0];
+
         String password = settings.getPassword();
 
-        if (!domain.equals(credentialsDomain) || !username.equals(credentialsMailAddress)
-                || !password.equals(credentialsPassword)) {
+        if (!email.equals(credentialsMailAddress) || !password.equals(credentialsPassword)) {
             try {
-                exchangeService.setCredentials(new WebCredentials(username, password, domain));
-                exchangeService.autodiscoverUrl(email, new RedirectionUrlCallback());
+                exchangeService.setCredentials(new WebCredentials(username, password));
                 exchangeService.setTraceEnabled(true);
+                exchangeService.setEnableScpLookup(true);
+                exchangeService.autodiscoverUrl(email, new RedirectionUrlCallback());
             } catch (Exception ex) {
                 LOG.info("No connection could be established to the Exchange calendar for username=" + username);
 
                 try {
-                    exchangeService.setCredentials(new WebCredentials(email, password, domain));
-                    exchangeService.autodiscoverUrl(email, new RedirectionUrlCallback());
+                    exchangeService.setCredentials(new WebCredentials(email, password));
                     exchangeService.setTraceEnabled(true);
+                    exchangeService.setEnableScpLookup(true);
+                    exchangeService.autodiscoverUrl(email, new RedirectionUrlCallback());
                 } catch (Exception e) {
                     LOG.warn(String.format(
                             "No connection could be established to the Exchange calendar for email=%s, cause=%s", email,
@@ -120,8 +120,7 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
                 }
             }
 
-            credentialsDomain = domain;
-            credentialsMailAddress = username;
+            credentialsMailAddress = email;
             credentialsPassword = password;
         }
     }

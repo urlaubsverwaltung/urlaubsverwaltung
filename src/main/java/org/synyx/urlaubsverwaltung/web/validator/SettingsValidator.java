@@ -287,27 +287,9 @@ public class SettingsValidator implements Validator {
 
     private void validateExchangeCalendarSettings(ExchangeCalendarSettings exchangeCalendarSettings, Errors errors) {
 
-        validateExchangeDomain(exchangeCalendarSettings, errors);
         validateExchangeEmailOrUserName(exchangeCalendarSettings, errors);
         validateExchangePassword(exchangeCalendarSettings, errors);
         validateExchangeCalendarName(exchangeCalendarSettings, errors);
-    }
-
-
-    private void validateExchangeDomain(ExchangeCalendarSettings exchangeCalendarSettings, Errors errors) {
-
-        String domainAttribute = "calendarSettings.exchangeCalendarSettings.domain";
-        String domain = exchangeCalendarSettings.getDomain();
-
-        if (!StringUtils.hasText(domain)) {
-            if (exchangeCalendarSettings.isActive()) {
-                errors.rejectValue(domainAttribute, ERROR_MANDATORY_FIELD);
-            }
-        } else {
-            if (!validStringLength(domain)) {
-                errors.rejectValue(domainAttribute, ERROR_LENGTH);
-            }
-        }
     }
 
 
