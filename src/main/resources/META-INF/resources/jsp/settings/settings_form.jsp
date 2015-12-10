@@ -41,19 +41,48 @@
             </div>
         </div>
 
+        <c:set var="absenceError">
+            <form:errors path="absenceSettings.*"/>
+        </c:set>
+        <c:if test="${not empty absenceError}">
+            <c:set var="ABSENCE_ERROR_CSS_CLASS" value="error"/>
+        </c:if>
+
+        <c:set var="workingTimeError">
+            <form:errors path="workingTimeSettings.*"/>
+        </c:set>
+        <c:if test="${not empty workingTimeError}">
+            <c:set var="WORKING_TIME_ERROR_CSS_CLASS" value="error"/>
+        </c:if>
+
+        <c:set var="mailError">
+            <form:errors path="mailSettings.*"/>
+        </c:set>
+
+        <c:if test="${not empty mailError}">
+            <c:set var="MAIL_ERROR_CSS_CLASS" value="error"/>
+        </c:if>
+
+        <c:set var="calendarError">
+            <form:errors path="calendarSettings.*"/>
+        </c:set>
+        <c:if test="${not empty calendarError}">
+            <c:set var="CALENDAR_ERROR_CSS_CLASS" value="error"/>
+        </c:if>
+
         <div class="row">
             <div class="col-xs-12">
                 <ul class="nav nav-tabs" role="tablist">
-                    <li role="presentation" class="active">
+                    <li role="presentation" class="active ${ABSENCE_ERROR_CSS_CLASS}">
                         <a href="#absence" aria-controls="absence" role="tab" data-toggle="tab"><spring:message code="settings.tabs.absence" /></a>
                     </li>
-                    <li role="presentation">
+                    <li role="presentation" class="${WORKING_TIME_ERROR_CSS_CLASS}">
                         <a href="#publicHolidays" aria-controls="publicHolidays" role="tab" data-toggle="tab"><spring:message code="settings.tabs.workingTime" /></a>
                     </li>
-                    <li role="presentation">
+                    <li role="presentation" class="${MAIL_ERROR_CSS_CLASS}">
                         <a href="#mail" aria-controls="mail" role="tab" data-toggle="tab"><spring:message code="settings.tabs.mail" /></a>
                     </li>
-                    <li role="presentation">
+                    <li role="presentation" class="${CALENDAR_ERROR_CSS_CLASS}">
                         <a href="#calendar" aria-controls="calendar" role="tab" data-toggle="tab"><spring:message code="settings.tabs.calendar" /></a>
                     </li>
                 </ul>
