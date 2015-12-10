@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.core.sync;
 
+import org.synyx.urlaubsverwaltung.core.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 
 import java.util.Optional;
@@ -37,4 +38,10 @@ public interface CalendarSyncService {
      * @param  eventId  id of absence event, which should be deleted.
      */
     void deleteAbsence(String eventId);
+
+
+    /**
+     * Check the settings for calendar sync. (only if sync is active)
+     */
+    void checkCalendarSyncSettings();
 }

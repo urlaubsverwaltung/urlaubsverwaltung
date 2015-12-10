@@ -40,7 +40,7 @@ import java.util.Optional;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Service
-public class ExchangeCalendarProviderService implements CalendarProviderService {
+class ExchangeCalendarProviderService implements CalendarProviderService {
 
     private static final Logger LOG = Logger.getLogger(ExchangeCalendarProviderService.class);
 
@@ -51,7 +51,7 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
     private String credentialsPassword;
 
     @Autowired
-    public ExchangeCalendarProviderService(MailService mailService) {
+    ExchangeCalendarProviderService(MailService mailService) {
 
         this.mailService = mailService;
         this.exchangeService = new ExchangeService();

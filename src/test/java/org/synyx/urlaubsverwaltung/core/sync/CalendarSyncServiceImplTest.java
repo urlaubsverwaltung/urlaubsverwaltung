@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import org.mockito.Mockito;
 
+import org.synyx.urlaubsverwaltung.core.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.core.settings.ExchangeCalendarSettings;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
@@ -127,6 +128,30 @@ public class CalendarSyncServiceImplTest {
         String eventId = "event-1";
 
         calendarSyncService.deleteAbsence(eventId);
+
+        Mockito.verifyZeroInteractions(exchangeCalendarProviderService);
+    }
+
+
+    @Test
+    public void ensureChecksExchangeCalendarSettingsIfActivated() {
+
+        ExchangeCalendarSettings calendarSettings = settings.getCalendarSettings().getExchangeCalendarSettings();
+        calendarSettings.setActive(true);
+
+        calendarSyncService.checkCalendarSyncSettings();
+
+        Mockito.verify(exchangeCalendarProviderService).checkCalendarSyncSettings(Mockito.any(CalendarSettings.class));
+    }
+
+
+    @Test
+    public void ensureDoesNotCheckExchangeCalendarSettingsIfNotActivated() {
+
+        ExchangeCalendarSettings calendarSettings = settings.getCalendarSettings().getExchangeCalendarSettings();
+        calendarSettings.setActive(false);
+
+        calendarSyncService.checkCalendarSyncSettings();
 
         Mockito.verifyZeroInteractions(exchangeCalendarProviderService);
     }

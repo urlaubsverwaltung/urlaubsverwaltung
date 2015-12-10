@@ -20,7 +20,7 @@ import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.settings.FederalState;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.core.sync.CalendarProviderService;
+import org.synyx.urlaubsverwaltung.core.sync.CalendarSyncService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 
@@ -36,7 +36,7 @@ public class SettingsController {
     private SettingsService settingsService;
 
     @Autowired
-    private CalendarProviderService calendarProviderService;
+    private CalendarSyncService calendarSyncService;
 
     @Autowired
     private MailService mailService;
@@ -74,7 +74,7 @@ public class SettingsController {
 
         settingsService.save(settings);
         mailService.sendSuccessfullyUpdatedSettingsNotification(settings);
-        calendarProviderService.checkCalendarSyncSettings(settings.getCalendarSettings());
+        calendarSyncService.checkCalendarSyncSettings();
 
         redirectAttributes.addFlashAttribute("success", true);
 

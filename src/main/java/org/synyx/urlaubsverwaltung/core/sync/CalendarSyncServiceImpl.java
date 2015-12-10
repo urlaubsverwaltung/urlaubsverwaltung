@@ -81,4 +81,20 @@ public class CalendarSyncServiceImpl implements CalendarSyncService {
 
         LOG.info(String.format("No calendar provider configured to delete event '%s'", eventId));
     }
+
+
+    @Override
+    public void checkCalendarSyncSettings() {
+
+        CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
+        ExchangeCalendarSettings exchangeCalendarSettings = calendarSettings.getExchangeCalendarSettings();
+
+        if (exchangeCalendarSettings.isActive()) {
+            exchangeCalendarProviderService.checkCalendarSyncSettings(calendarSettings);
+
+            return;
+        }
+
+        LOG.info("No calendar provider is activated to check settings for");
+    }
 }
