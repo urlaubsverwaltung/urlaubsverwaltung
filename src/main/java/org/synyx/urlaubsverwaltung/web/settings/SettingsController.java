@@ -22,6 +22,7 @@ import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.sync.CalendarProviderService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
+import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 
 
 /**
@@ -66,6 +67,7 @@ public class SettingsController {
             model.addAttribute("settings", settings);
             model.addAttribute("federalStateTypes", FederalState.values());
             model.addAttribute("dayLengthTypes", DayLength.values());
+            model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
 
             return "settings/settings_form";
         }
