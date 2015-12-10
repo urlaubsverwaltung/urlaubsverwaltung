@@ -1,0 +1,81 @@
+package org.synyx.urlaubsverwaltung.core.settings;
+
+import javax.persistence.Embeddable;
+
+
+/**
+ * Settings concerning absence of persons because of vacation or sick days.
+ *
+ * @author  Aljona Murygina - murygina@synyx.de
+ */
+@Embeddable
+public class AbsenceSettings {
+
+    /**
+     * Specifies the maximal number of annual vacation days a person can have.
+     */
+    private Integer maximumAnnualVacationDays = 40;
+
+    /**
+     * Specifies how many months in advance a person can apply for leave.
+     */
+    private Integer maximumMonthsToApplyForLeaveInAdvance = 12;
+
+    /**
+     * Specifies the maximal period of sick pay in days.
+     */
+    private Integer maximumSickPayDays = 42;
+
+    /**
+     * Specifies when a notification about the end of sick pay should be sent to the affected person and office. (number
+     * of days before the end of sick pay)
+     */
+    private Integer daysBeforeEndOfSickPayNotification = 7;
+
+    public Integer getMaximumAnnualVacationDays() {
+
+        return maximumAnnualVacationDays;
+    }
+
+
+    public Integer getMaximumMonthsToApplyForLeaveInAdvance() {
+
+        return maximumMonthsToApplyForLeaveInAdvance;
+    }
+
+
+    public Integer getMaximumSickPayDays() {
+
+        return maximumSickPayDays;
+    }
+
+
+    public Integer getDaysBeforeEndOfSickPayNotification() {
+
+        return daysBeforeEndOfSickPayNotification;
+    }
+
+
+    public void setMaximumAnnualVacationDays(Integer maximumAnnualVacationDays) {
+
+        this.maximumAnnualVacationDays = maximumAnnualVacationDays;
+    }
+
+
+    public void setMaximumMonthsToApplyForLeaveInAdvance(Integer maximumMonthsToApplyForLeaveInAdvance) {
+
+        this.maximumMonthsToApplyForLeaveInAdvance = maximumMonthsToApplyForLeaveInAdvance;
+    }
+
+
+    public void setMaximumSickPayDays(Integer maximumSickPayDays) {
+
+        this.maximumSickPayDays = maximumSickPayDays;
+    }
+
+
+    public void setDaysBeforeEndOfSickPayNotification(Integer daysBeforeEndOfSickPayNotification) {
+
+        this.daysBeforeEndOfSickPayNotification = daysBeforeEndOfSickPayNotification;
+    }
+}

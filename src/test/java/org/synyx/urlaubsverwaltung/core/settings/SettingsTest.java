@@ -18,20 +18,13 @@ public class SettingsTest {
 
         Settings settings = new Settings();
 
-        Assert.assertNotNull("Should not be null", settings.getMaximumAnnualVacationDays());
-        Assert.assertNotNull("Should not be null", settings.getMaximumMonthsToApplyForLeaveInAdvance());
-        Assert.assertNotNull("Should not be null", settings.getMaximumSickPayDays());
-        Assert.assertNotNull("Should not be null", settings.getDaysBeforeEndOfSickPayNotification());
         Assert.assertNotNull("Should not be null", settings.getWorkingDurationForChristmasEve());
         Assert.assertNotNull("Should not be null", settings.getWorkingDurationForNewYearsEve());
         Assert.assertNotNull("Should not be null", settings.getFederalState());
+        Assert.assertNotNull("Should not be null", settings.getAbsenceSettings());
         Assert.assertNotNull("Should not be null", settings.getMailSettings());
         Assert.assertNotNull("Should not be null", settings.getCalendarSettings());
 
-        Assert.assertEquals("Wrong default value", (Integer) 40, settings.getMaximumAnnualVacationDays());
-        Assert.assertEquals("Wrong default value", (Integer) 12, settings.getMaximumMonthsToApplyForLeaveInAdvance());
-        Assert.assertEquals("Wrong default value", (Integer) 42, settings.getMaximumSickPayDays());
-        Assert.assertEquals("Wrong default value", (Integer) 7, settings.getDaysBeforeEndOfSickPayNotification());
         Assert.assertEquals("Wrong default value", DayLength.MORNING, settings.getWorkingDurationForChristmasEve());
         Assert.assertEquals("Wrong default value", DayLength.MORNING, settings.getWorkingDurationForNewYearsEve());
         Assert.assertEquals("Wrong default value", FederalState.BADEN_WUERTTEMBERG, settings.getFederalState());

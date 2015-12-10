@@ -19,6 +19,7 @@ import org.synyx.urlaubsverwaltung.core.calendar.OverlapService;
 import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.settings.AbsenceSettings;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.util.CalcUtil;
@@ -157,13 +158,14 @@ public class ApplicationValidator implements Validator {
     private void validateNotTooFarInTheFuture(DateMidnight date, Errors errors) {
 
         Settings settings = settingsService.getSettings();
+        AbsenceSettings absenceSettings = settings.getAbsenceSettings();
 
-        Integer maximumMonths = settings.getMaximumMonthsToApplyForLeaveInAdvance();
+        Integer maximumMonths = absenceSettings.getMaximumMonthsToApplyForLeaveInAdvance();
         DateMidnight future = DateMidnight.now().plusMonths(maximumMonths);
 
         if (date.isAfter(future)) {
             errors.reject(ERROR_TOO_LONG,
-                new Object[] { settings.getMaximumMonthsToApplyForLeaveInAdvance().toString() }, null);
+                new Object[] { absenceSettings.getMaximumMonthsToApplyForLeaveInAdvance().toString() }, null);
         }
     }
 
@@ -171,8 +173,9 @@ public class ApplicationValidator implements Validator {
     private void validateNotTooFarInThePast(DateMidnight date, Errors errors) {
 
         Settings settings = settingsService.getSettings();
+        AbsenceSettings absenceSettings = settings.getAbsenceSettings();
 
-        Integer maximumMonths = settings.getMaximumMonthsToApplyForLeaveInAdvance();
+        Integer maximumMonths = absenceSettings.getMaximumMonthsToApplyForLeaveInAdvance();
         DateMidnight past = DateMidnight.now().minusMonths(maximumMonths);
 
         if (date.isBefore(past)) {

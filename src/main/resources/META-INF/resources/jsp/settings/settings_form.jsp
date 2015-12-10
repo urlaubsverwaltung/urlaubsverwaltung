@@ -76,21 +76,21 @@
                     </div>
                     <div class="col-md-8 col-md-pull-4">
                         <div class="form-group is-required">
-                            <label class="control-label col-md-4" for="maximumAnnualVacationDays">
+                            <label class="control-label col-md-4" for="absenceSettings.maximumAnnualVacationDays">
                                 <spring:message code='settings.vacation.maximumAnnualVacationDays'/>:
                             </label>
                             <div class="col-md-8">
-                                <form:input id="maximumAnnualVacationDays" path="maximumAnnualVacationDays" class="form-control" cssErrorClass="form-control error" />
-                                <span class="help-inline"><form:errors path="maximumAnnualVacationDays" cssClass="error"/></span>
+                                <form:input id="absenceSettings.maximumAnnualVacationDays" path="absenceSettings.maximumAnnualVacationDays" class="form-control" cssErrorClass="form-control error" />
+                                <span class="help-inline"><form:errors path="absenceSettings.maximumAnnualVacationDays" cssClass="error"/></span>
                             </div>
                         </div>
                         <div class="form-group is-required">
-                            <label class="control-label col-md-4" for="maximumMonthsToApplyForLeaveInAdvance">
+                            <label class="control-label col-md-4" for="absenceSettings.maximumMonthsToApplyForLeaveInAdvance">
                                 <spring:message code='settings.vacation.maximumMonthsToApplyForLeaveInAdvance'/>:
                             </label>
                             <div class="col-md-8">
-                                <form:input id="maximumMonthsToApplyForLeaveInAdvance" path="maximumMonthsToApplyForLeaveInAdvance" class="form-control" cssErrorClass="form-control error" />
-                                <span class="help-inline"><form:errors path="maximumMonthsToApplyForLeaveInAdvance" cssClass="error"/></span>
+                                <form:input id="absenceSettings.maximumMonthsToApplyForLeaveInAdvance" path="absenceSettings.maximumMonthsToApplyForLeaveInAdvance" class="form-control" cssErrorClass="form-control error" />
+                                <span class="help-inline"><form:errors path="absenceSettings.maximumMonthsToApplyForLeaveInAdvance" cssClass="error"/></span>
                             </div>
                         </div>
                     </div>
@@ -108,21 +108,21 @@
                     </div>
                     <div class="col-md-8 col-md-pull-4">
                         <div class="form-group is-required">
-                            <label class="control-label col-md-4" for="maximumSickPayDays">
+                            <label class="control-label col-md-4" for="absenceSettings.maximumSickPayDays">
                                 <spring:message code='settings.sickDays.maximumSickPayDays'/>:
                             </label>
                             <div class="col-md-8">
-                                <form:input id="maximumSickPayDays" path="maximumSickPayDays" class="form-control" cssErrorClass="form-control error" />
-                                <span class="help-inline"><form:errors path="maximumSickPayDays" cssClass="error"/></span>
+                                <form:input id="absenceSettings.maximumSickPayDays" path="absenceSettings.maximumSickPayDays" class="form-control" cssErrorClass="form-control error" />
+                                <span class="help-inline"><form:errors path="absenceSettings.maximumSickPayDays" cssClass="error"/></span>
                             </div>
                         </div>
                         <div class="form-group is-required">
-                            <label class="control-label col-md-4" for="daysBeforeEndOfSickPayNotification">
+                            <label class="control-label col-md-4" for="absenceSettings.daysBeforeEndOfSickPayNotification">
                                 <spring:message code='settings.sickDays.daysBeforeEndOfSickPayNotification'/>:
                             </label>
                             <div class="col-md-8">
-                                <form:input id="daysBeforeEndOfSickPayNotification" path="daysBeforeEndOfSickPayNotification" class="form-control" cssErrorClass="form-control error" />
-                                <span class="help-inline"><form:errors path="daysBeforeEndOfSickPayNotification" cssClass="error"/></span>
+                                <form:input id="absenceSettings.daysBeforeEndOfSickPayNotification" path="absenceSettings.daysBeforeEndOfSickPayNotification" class="form-control" cssErrorClass="form-control error" />
+                                <span class="help-inline"><form:errors path="absenceSettings.daysBeforeEndOfSickPayNotification" cssClass="error"/></span>
                             </div>
                         </div>
                     </div>

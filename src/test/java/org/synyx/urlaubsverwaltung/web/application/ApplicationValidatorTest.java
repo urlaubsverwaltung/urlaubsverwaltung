@@ -196,7 +196,8 @@ public class ApplicationValidatorTest {
 
         Mockito.verify(errors)
             .reject("application.error.tooFarInTheFuture",
-                new Object[] { settings.getMaximumMonthsToApplyForLeaveInAdvance().toString() }, null);
+                new Object[] { settings.getAbsenceSettings().getMaximumMonthsToApplyForLeaveInAdvance().toString() },
+                null);
     }
 
 
@@ -226,7 +227,8 @@ public class ApplicationValidatorTest {
 
         Mockito.verify(errors)
             .reject("application.error.tooFarInTheFuture",
-                new Object[] { settings.getMaximumMonthsToApplyForLeaveInAdvance().toString() }, null);
+                new Object[] { settings.getAbsenceSettings().getMaximumMonthsToApplyForLeaveInAdvance().toString() },
+                null);
     }
 
 

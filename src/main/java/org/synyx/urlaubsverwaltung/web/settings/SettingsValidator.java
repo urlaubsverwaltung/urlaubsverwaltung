@@ -8,10 +8,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import org.synyx.urlaubsverwaltung.core.settings.CalendarSettings;
-import org.synyx.urlaubsverwaltung.core.settings.ExchangeCalendarSettings;
-import org.synyx.urlaubsverwaltung.core.settings.MailSettings;
-import org.synyx.urlaubsverwaltung.core.settings.Settings;
+import org.synyx.urlaubsverwaltung.core.settings.*;
 import org.synyx.urlaubsverwaltung.web.MailAddressValidationUtil;
 
 
@@ -74,44 +71,48 @@ public class SettingsValidator implements Validator {
 
     private void validateVacationSettings(Settings settings, Errors errors) {
 
-        Integer maximumAnnualVacationDays = settings.getMaximumAnnualVacationDays();
+        AbsenceSettings absenceSettings = settings.getAbsenceSettings();
+
+        Integer maximumAnnualVacationDays = absenceSettings.getMaximumAnnualVacationDays();
 
         if (maximumAnnualVacationDays == null) {
-            errors.rejectValue("maximumAnnualVacationDays", ERROR_MANDATORY_FIELD);
+            errors.rejectValue("absenceSettings.maximumAnnualVacationDays", ERROR_MANDATORY_FIELD);
         } else if (maximumAnnualVacationDays < 0 || maximumAnnualVacationDays > DAYS_PER_YEAR) {
-            errors.rejectValue("maximumAnnualVacationDays", ERROR_INVALID_ENTRY);
+            errors.rejectValue("absenceSettings.maximumAnnualVacationDays", ERROR_INVALID_ENTRY);
         }
 
-        Integer maximumMonthsToApplyForLeaveInAdvance = settings.getMaximumMonthsToApplyForLeaveInAdvance();
+        Integer maximumMonthsToApplyForLeaveInAdvance = absenceSettings.getMaximumMonthsToApplyForLeaveInAdvance();
 
         if (maximumMonthsToApplyForLeaveInAdvance == null) {
-            errors.rejectValue("maximumMonthsToApplyForLeaveInAdvance", ERROR_MANDATORY_FIELD);
+            errors.rejectValue("absenceSettings.maximumMonthsToApplyForLeaveInAdvance", ERROR_MANDATORY_FIELD);
         } else if (maximumMonthsToApplyForLeaveInAdvance <= 0) {
-            errors.rejectValue("maximumMonthsToApplyForLeaveInAdvance", ERROR_INVALID_ENTRY);
+            errors.rejectValue("absenceSettings.maximumMonthsToApplyForLeaveInAdvance", ERROR_INVALID_ENTRY);
         }
     }
 
 
     private void validateSickNoteSettings(Settings settings, Errors errors) {
 
-        Integer maximumSickPayDays = settings.getMaximumSickPayDays();
-        Integer daysBeforeEndOfSickPayNotification = settings.getDaysBeforeEndOfSickPayNotification();
+        AbsenceSettings absenceSettings = settings.getAbsenceSettings();
+
+        Integer maximumSickPayDays = absenceSettings.getMaximumSickPayDays();
+        Integer daysBeforeEndOfSickPayNotification = absenceSettings.getDaysBeforeEndOfSickPayNotification();
 
         if (maximumSickPayDays == null) {
-            errors.rejectValue("maximumSickPayDays", ERROR_MANDATORY_FIELD);
+            errors.rejectValue("absenceSettings.maximumSickPayDays", ERROR_MANDATORY_FIELD);
         } else if (maximumSickPayDays < 0) {
-            errors.rejectValue("maximumSickPayDays", ERROR_INVALID_ENTRY);
+            errors.rejectValue("absenceSettings.maximumSickPayDays", ERROR_INVALID_ENTRY);
         }
 
         if (daysBeforeEndOfSickPayNotification == null) {
-            errors.rejectValue("daysBeforeEndOfSickPayNotification", ERROR_MANDATORY_FIELD);
+            errors.rejectValue("absenceSettings.daysBeforeEndOfSickPayNotification", ERROR_MANDATORY_FIELD);
         } else if (daysBeforeEndOfSickPayNotification < 0) {
-            errors.rejectValue("daysBeforeEndOfSickPayNotification", ERROR_INVALID_ENTRY);
+            errors.rejectValue("absenceSettings.daysBeforeEndOfSickPayNotification", ERROR_INVALID_ENTRY);
         }
 
         if (maximumSickPayDays != null && daysBeforeEndOfSickPayNotification != null
                 && daysBeforeEndOfSickPayNotification > maximumSickPayDays) {
-            errors.rejectValue("daysBeforeEndOfSickPayNotification",
+            errors.rejectValue("absenceSettings.daysBeforeEndOfSickPayNotification",
                 "settings.sickDays.daysBeforeEndOfSickPayNotification.error");
         }
     }

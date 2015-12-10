@@ -16,6 +16,7 @@ import org.synyx.urlaubsverwaltung.core.person.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.person.Role;
+import org.synyx.urlaubsverwaltung.core.settings.AbsenceSettings;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.web.MailAddressValidationUtil;
@@ -197,7 +198,8 @@ public class PersonValidator implements Validator {
 
         BigDecimal annualVacationDays = form.getAnnualVacationDays();
         Settings settings = settingsService.getSettings();
-        BigDecimal maxDays = BigDecimal.valueOf(settings.getMaximumAnnualVacationDays());
+        AbsenceSettings absenceSettings = settings.getAbsenceSettings();
+        BigDecimal maxDays = BigDecimal.valueOf(absenceSettings.getMaximumAnnualVacationDays());
 
         validateNumberNotNull(annualVacationDays, ATTRIBUTE_ANNUAL_VACATION_DAYS, errors);
 
@@ -219,7 +221,8 @@ public class PersonValidator implements Validator {
     protected void validateRemainingVacationDays(PersonForm form, Errors errors) {
 
         Settings settings = settingsService.getSettings();
-        BigDecimal maxDays = BigDecimal.valueOf(settings.getMaximumAnnualVacationDays());
+        AbsenceSettings absenceSettings = settings.getAbsenceSettings();
+        BigDecimal maxDays = BigDecimal.valueOf(absenceSettings.getMaximumAnnualVacationDays());
 
         BigDecimal remainingVacationDays = form.getRemainingVacationDays();
         BigDecimal remainingVacationDaysNotExpiring = form.getRemainingVacationDaysNotExpiring();
