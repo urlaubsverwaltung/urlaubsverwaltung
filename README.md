@@ -89,15 +89,15 @@ Im Folgenden werden die durchzuführenden Schritte beschrieben, wenn man an der 
 #### Anwendung starten
 
 Die Urlaubsverwaltung ist eine [Spring Boot](http://projects.spring.io/spring-boot/) Anwendung und kann mit dem Maven
-Plugin gestartet werden. Ohne weitere Angabe wird das Development-Environment genutzt, d.h. es wird eine H2-Datenbank
-verwendet und es werden Testdaten angelegt.
+Plugin gestartet werden:
 
 <pre>mvn clean spring-boot:run</pre>
 
 Im Browser lässt sich die Anwendung dann über `http://localhost:8080/` ansteuern.
 
-Im Development-Environment werden standardmäßig für Entwicklungszwecke Benutzer, Urlaubsanträge und Krankmeldungen
-angelegt. Daher kann man sich nun mit verschiedenen Testbenutzern anmelden:
+Ohne weitere Anpassung der Standardkonfiguration wird eine H2-Datenbank verwendet und es werden Testdaten angelegt,
+d.h. Benutzer, Urlaubsanträge und Krankmeldungen. Daher kann man sich in der Weboberfläche nun mit verschiedenen
+Testbenutzern anmelden:
 
 * `testUser/secret`: Benutzer mit der Rolle `User`
 * `testBoss/secret`: Benutzer mit der Rolle `Boss`
@@ -109,18 +109,18 @@ angelegt. Daher kann man sich nun mit verschiedenen Testbenutzern anmelden:
 Möchte man, dass beim Starten der Anwendung keine Testdaten generiert werden, muss man die Property `testdata.create`
 in den `application.properties` auf `false` setzen.
 
+#### H2 Web Konsole
+
+Die Standardkonfiguration sorgt dafür, dass eine H2 Web Konsole aktiv ist. Diese kann standardmäßig erreicht werden
+unter:
+
+<pre>localhost:11115</pre>
+
+Die H2 Konfigurationen können in der `application.properties` überschrieben werden.
+
 #### API
 
 Die Urlaubsverwaltung verfügt über eine API, die unter `http://localhost:8080/api` erreichbar ist.
-
-#### Environments
-
-Siehe [Umgebungen](INSTALLATION_AS_JAR.md#umgebungen)
-
-Standardmäßig ohne jegliche Angabe wird als Environment `dev` genutzt. Möchte man ein anderes Environment nutzen,
-muss man beim Starten die Environment System Property `env` setzen, z.B.
-
-<pre>mvn clean spring-boot:run -Denv=prod</pre>
 
 #### Authentifizierung
 
