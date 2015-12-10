@@ -25,7 +25,7 @@
 
         <form:form method="POST" action="${URL_PREFIX}/settings" modelAttribute="settings" class="form-horizontal" role="form">
         <form:hidden path="id" />
-    
+
         <div class="row">
             <div class="col-xs-12 col-sm-12 col-md-12 feedback">
                 <c:if test="${success}">
@@ -34,7 +34,9 @@
                     </div>
                 </c:if>
             </div>
-            
+        </div>
+
+        <div class="row">
             <div class="form-section">
                 <div class="col-xs-12">
                     <legend><spring:message code="settings.vacation.title" /></legend>
