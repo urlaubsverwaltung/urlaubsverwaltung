@@ -379,7 +379,6 @@ public class SettingsValidatorTest {
             .getExchangeCalendarSettings();
 
         exchangeCalendarSettings.setActive(true);
-        exchangeCalendarSettings.setDomain(null);
         exchangeCalendarSettings.setEmail(null);
         exchangeCalendarSettings.setPassword(null);
         exchangeCalendarSettings.setCalendar(null);
@@ -388,12 +387,29 @@ public class SettingsValidatorTest {
         settingsValidator.validate(settings, mockError);
 
         Mockito.verify(mockError)
-            .rejectValue("calendarSettings.exchangeCalendarSettings.domain", "error.entry.mandatory");
-        Mockito.verify(mockError)
             .rejectValue("calendarSettings.exchangeCalendarSettings.email", "error.entry.mandatory");
         Mockito.verify(mockError)
             .rejectValue("calendarSettings.exchangeCalendarSettings.password", "error.entry.mandatory");
         Mockito.verify(mockError)
             .rejectValue("calendarSettings.exchangeCalendarSettings.calendar", "error.entry.mandatory");
+    }
+
+
+    @Test
+    public void ensureExchangeCalendarEmailMustHaveValidFormat() {
+
+        Settings settings = new Settings();
+        ExchangeCalendarSettings exchangeCalendarSettings = settings.getCalendarSettings()
+            .getExchangeCalendarSettings();
+
+        exchangeCalendarSettings.setActive(true);
+        exchangeCalendarSettings.setEmail("synyx");
+        exchangeCalendarSettings.setPassword("top-secret");
+        exchangeCalendarSettings.setCalendar("Urlaub");
+
+        Errors mockError = Mockito.mock(Errors.class);
+        settingsValidator.validate(settings, mockError);
+
+        Mockito.verify(mockError).rejectValue("calendarSettings.exchangeCalendarSettings.email", "error.entry.mail");
     }
 }

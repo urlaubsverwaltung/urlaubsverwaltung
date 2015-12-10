@@ -16,4 +16,13 @@
 
     </changeSet>
 
+    <changeSet author="murygina" id="remove_column_calendar_ews_domain">
+        <preConditions>
+            <tableExists tableName="Settings"/>
+            <columnExists tableName="Settings" columnName="calendar_ews_domain"/>
+        </preConditions>
+
+        <dropColumn tableName="Settings" columnName="calendar_ews_domain"/>
+    </changeSet>
+
 </databaseChangeLog>

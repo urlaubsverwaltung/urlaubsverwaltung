@@ -47,7 +47,6 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
     private final MailService mailService;
     private final ExchangeService exchangeService;
 
-    private String credentialsDomain;
     private String credentialsMailAddress;
     private String credentialsPassword;
 
@@ -95,26 +94,28 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
 
     private void connectToExchange(ExchangeCalendarSettings settings) {
 
-        String domain = settings.getDomain();
         String email = settings.getEmail();
-        String username = email.split("[@._]")[0];
         String password = settings.getPassword();
 
-        if (!domain.equals(credentialsDomain) || !email.equals(credentialsMailAddress)
-                || !password.equals(credentialsPassword)) {
+        String username = email.split("[@._]")[0];
+
+        if (!email.equals(credentialsMailAddress) || !password.equals(credentialsPassword)) {
             try {
+                String domain = email.split("[@._]")[1];
                 exchangeService.setCredentials(new WebCredentials(username, password, domain));
-                exchangeService.autodiscoverUrl(email, new RedirectionUrlCallback());
                 exchangeService.setTraceEnabled(true);
+                exchangeService.setEnableScpLookup(true);
+                exchangeService.autodiscoverUrl(email, new RedirectionUrlCallback());
             } catch (Exception ex) { // NOSONAR - EWS Java API throws Exception, that's life
                 LOG.info(String.format(
                         "No connection could be established to the Exchange calendar for username=%s, cause=%s",
                         username, ex.getMessage()));
 
                 try {
-                    exchangeService.setCredentials(new WebCredentials(email, password, domain));
-                    exchangeService.autodiscoverUrl(email, new RedirectionUrlCallback());
+                    exchangeService.setCredentials(new WebCredentials(email, password));
                     exchangeService.setTraceEnabled(true);
+                    exchangeService.setEnableScpLookup(true);
+                    exchangeService.autodiscoverUrl(email, new RedirectionUrlCallback());
                 } catch (Exception e) { // NOSONAR - EWS Java API throws Exception, that's life
                     LOG.warn(String.format(
                             "No connection could be established to the Exchange calendar for email=%s, cause=%s", email,
@@ -122,7 +123,6 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
                 }
             }
 
-            credentialsDomain = domain;
             credentialsMailAddress = email;
             credentialsPassword = password;
         }
@@ -257,18 +257,34 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
 
     private void discover() {
 
-        for (WellKnownFolderName folderName : WellKnownFolderName.values()) {
-            try {
-                FindFoldersResults folders = exchangeService.findFolders(folderName, new FolderView(Integer.MAX_VALUE));
+        try {
+            discoverFolders(WellKnownFolderName.Calendar);
+        } catch (Exception ex) { // NOSONAR - EWS Java API throws Exception, that's life
+            LOG.info(String.format("An error occurred while trying to get calendar folders, cause: %s",
+                    ex.getMessage()));
 
-                for (Folder folder : folders.getFolders()) {
-                    LOG.info("Found folder: " + folderName.name() + " - " + folder.getDisplayName());
+            LOG.info("Trying to discover which folders exist at all...");
+
+            for (WellKnownFolderName folderName : WellKnownFolderName.values()) {
+                try {
+                    discoverFolders(folderName);
+                } catch (Exception e) { // NOSONAR - EWS Java API throws Exception, that's life
+                    LOG.info(String.format(
+                            "An error occurred while trying to get folders for well known folder name: %s, cause: %s",
+                            folderName.name(), ex.getMessage()));
                 }
-            } catch (Exception ex) {
-                LOG.info(String.format(
-                        "An error occurred while trying to get folders for well known folder name: %s, cause: %s",
-                        folderName.name(), ex.getMessage()));
             }
+        }
+    }
+
+
+    private void discoverFolders(WellKnownFolderName wellKnownFolderName) throws Exception {
+
+        FindFoldersResults folders = exchangeService.findFolders(wellKnownFolderName,
+                new FolderView(Integer.MAX_VALUE));
+
+        for (Folder folder : folders.getFolders()) {
+            LOG.info("Found folder: " + wellKnownFolderName.name() + " - " + folder.getDisplayName());
         }
     }
 

@@ -288,42 +288,28 @@ public class SettingsValidator implements Validator {
 
     private void validateExchangeCalendarSettings(ExchangeCalendarSettings exchangeCalendarSettings, Errors errors) {
 
-        validateExchangeDomain(exchangeCalendarSettings, errors);
-        validateExchangeEmailOrUserName(exchangeCalendarSettings, errors);
+        validateExchangeEmail(exchangeCalendarSettings, errors);
         validateExchangePassword(exchangeCalendarSettings, errors);
         validateExchangeCalendarName(exchangeCalendarSettings, errors);
     }
 
 
-    private void validateExchangeDomain(ExchangeCalendarSettings exchangeCalendarSettings, Errors errors) {
+    private void validateExchangeEmail(ExchangeCalendarSettings exchangeCalendarSettings, Errors errors) {
 
-        String domainAttribute = "calendarSettings.exchangeCalendarSettings.domain";
-        String domain = exchangeCalendarSettings.getDomain();
-
-        if (!StringUtils.hasText(domain)) {
-            if (exchangeCalendarSettings.isActive()) {
-                errors.rejectValue(domainAttribute, ERROR_MANDATORY_FIELD);
-            }
-        } else {
-            if (!validStringLength(domain)) {
-                errors.rejectValue(domainAttribute, ERROR_LENGTH);
-            }
-        }
-    }
-
-
-    private void validateExchangeEmailOrUserName(ExchangeCalendarSettings exchangeCalendarSettings, Errors errors) {
-
-        String usernameAttribute = "calendarSettings.exchangeCalendarSettings.email";
+        String emailAttribute = "calendarSettings.exchangeCalendarSettings.email";
         String email = exchangeCalendarSettings.getEmail();
 
         if (!StringUtils.hasText(email)) {
             if (exchangeCalendarSettings.isActive()) {
-                errors.rejectValue(usernameAttribute, ERROR_MANDATORY_FIELD);
+                errors.rejectValue(emailAttribute, ERROR_MANDATORY_FIELD);
             }
         } else {
             if (!validStringLength(email)) {
-                errors.rejectValue(usernameAttribute, ERROR_LENGTH);
+                errors.rejectValue(emailAttribute, ERROR_LENGTH);
+            }
+
+            if (!MailAddressValidationUtil.hasValidFormat(email)) {
+                errors.rejectValue(emailAttribute, ERROR_INVALID_EMAIL);
             }
         }
     }
