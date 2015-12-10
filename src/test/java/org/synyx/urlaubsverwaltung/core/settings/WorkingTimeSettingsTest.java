@@ -19,9 +19,11 @@ public class WorkingTimeSettingsTest {
         Assert.assertNotNull("Should not be null", settings.getWorkingDurationForChristmasEve());
         Assert.assertNotNull("Should not be null", settings.getWorkingDurationForNewYearsEve());
         Assert.assertNotNull("Should not be null", settings.getFederalState());
+        Assert.assertNotNull("Should not be null", settings.getMaximumOvertime());
 
         Assert.assertEquals("Wrong default value", DayLength.MORNING, settings.getWorkingDurationForChristmasEve());
         Assert.assertEquals("Wrong default value", DayLength.MORNING, settings.getWorkingDurationForNewYearsEve());
         Assert.assertEquals("Wrong default value", FederalState.BADEN_WUERTTEMBERG, settings.getFederalState());
+        Assert.assertEquals("Wrong default value", (Integer) 100, settings.getMaximumOvertime());
     }
 }

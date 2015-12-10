@@ -211,6 +211,29 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="form-section">
+                    <div class="col-xs-12">
+                        <legend><spring:message code="settings.overtime.title"/></legend>
+                    </div>
+                    <div class="col-md-4 col-md-push-8">
+                        <span class="help-block">
+                            <i class="fa fa-fw fa-info-circle"></i>
+                            <spring:message code="settings.overtime.description"/>
+                        </span>
+                    </div>
+                    <div class="col-md-8 col-md-pull-4">
+                        <div class="form-group is-required">
+                            <label class="control-label col-md-4" for="workingTimeSettings.maximumOvertime">
+                                <spring:message code="settings.overtime.maximum"/>:
+                            </label>
+                            <div class="col-md-8">
+                                <form:input id="workingTimeSettings.maximumOvertime" path="workingTimeSettings.maximumOvertime" class="form-control" cssErrorClass="form-control error" />
+                                <span class="help-inline"><form:errors path="workingTimeSettings.maximumOvertime" cssClass="error"/></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="tab-pane" id="mail">

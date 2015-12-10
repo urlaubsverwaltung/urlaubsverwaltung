@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.core.settings;
 
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -33,6 +34,12 @@ public class WorkingTimeSettings {
      */
     @Enumerated(EnumType.STRING)
     private FederalState federalState = FederalState.BADEN_WUERTTEMBERG;
+
+    /**
+     * Defines the maximum number of overtime a person can have.
+     */
+    @Column(name = "overtime_maximum")
+    private Integer maximumOvertime = 100;
 
     public DayLength getWorkingDurationForChristmasEve() {
 
@@ -67,5 +74,17 @@ public class WorkingTimeSettings {
     public void setFederalState(FederalState federalState) {
 
         this.federalState = federalState;
+    }
+
+
+    public Integer getMaximumOvertime() {
+
+        return maximumOvertime;
+    }
+
+
+    public void setMaximumOvertime(Integer maximumOvertime) {
+
+        this.maximumOvertime = maximumOvertime;
     }
 }
