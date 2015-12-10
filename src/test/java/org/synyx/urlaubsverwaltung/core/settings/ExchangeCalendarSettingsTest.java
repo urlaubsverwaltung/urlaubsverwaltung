@@ -18,7 +18,7 @@ public class ExchangeCalendarSettingsTest {
 
         // No default values
         Assert.assertNull("Should be null", calendarSettings.getDomain());
-        Assert.assertNull("Should be null", calendarSettings.getUsername());
+        Assert.assertNull("Should be null", calendarSettings.getEmail());
         Assert.assertNull("Should be null", calendarSettings.getPassword());
 
         // Default values

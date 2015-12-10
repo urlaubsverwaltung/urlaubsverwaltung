@@ -20,8 +20,8 @@ public class ExchangeCalendarSettings {
     @Column(name = "calendar_ews_domain")
     private String domain;
 
-    @Column(name = "calendar_ews_username")
-    private String username;
+    @Column(name = "calendar_ews_email")
+    private String email;
 
     @Column(name = "calendar_ews_password")
     private String password;
@@ -56,15 +56,15 @@ public class ExchangeCalendarSettings {
     }
 
 
-    public String getUsername() {
+    public String getEmail() {
 
-        return username;
+        return email;
     }
 
 
-    public void setUsername(String username) {
+    public void setEmail(String email) {
 
-        this.username = username;
+        this.email = email;
     }
 
 

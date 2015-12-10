@@ -360,7 +360,7 @@ public class SettingsValidatorTest {
             .getExchangeCalendarSettings();
 
         exchangeCalendarSettings.setActive(false);
-        exchangeCalendarSettings.setUsername(null);
+        exchangeCalendarSettings.setEmail(null);
         exchangeCalendarSettings.setPassword(null);
         exchangeCalendarSettings.setCalendar(null);
 
@@ -380,7 +380,7 @@ public class SettingsValidatorTest {
 
         exchangeCalendarSettings.setActive(true);
         exchangeCalendarSettings.setDomain(null);
-        exchangeCalendarSettings.setUsername(null);
+        exchangeCalendarSettings.setEmail(null);
         exchangeCalendarSettings.setPassword(null);
         exchangeCalendarSettings.setCalendar(null);
 
@@ -390,32 +390,10 @@ public class SettingsValidatorTest {
         Mockito.verify(mockError)
             .rejectValue("calendarSettings.exchangeCalendarSettings.domain", "error.entry.mandatory");
         Mockito.verify(mockError)
-            .rejectValue("calendarSettings.exchangeCalendarSettings.username", "error.entry.mandatory");
+            .rejectValue("calendarSettings.exchangeCalendarSettings.email", "error.entry.mandatory");
         Mockito.verify(mockError)
             .rejectValue("calendarSettings.exchangeCalendarSettings.password", "error.entry.mandatory");
         Mockito.verify(mockError)
             .rejectValue("calendarSettings.exchangeCalendarSettings.calendar", "error.entry.mandatory");
-    }
-
-
-    @Test
-    public void ensureExchangeCalendarUsernameMustNotContainAtChar() {
-
-        Settings settings = new Settings();
-        ExchangeCalendarSettings exchangeCalendarSettings = settings.getCalendarSettings()
-            .getExchangeCalendarSettings();
-
-        exchangeCalendarSettings.setActive(true);
-        exchangeCalendarSettings.setDomain("local.domain");
-        exchangeCalendarSettings.setUsername("synyx@local.domain");
-        exchangeCalendarSettings.setPassword("top-secret");
-        exchangeCalendarSettings.setCalendar("Urlaub");
-
-        Errors mockError = Mockito.mock(Errors.class);
-        settingsValidator.validate(settings, mockError);
-
-        Mockito.verify(mockError)
-            .rejectValue("calendarSettings.exchangeCalendarSettings.username",
-                "settings.calendar.ews.username.error.email");
     }
 }

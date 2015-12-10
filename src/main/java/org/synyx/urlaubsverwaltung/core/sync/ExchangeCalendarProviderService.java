@@ -96,11 +96,11 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
     private void connectToExchange(ExchangeCalendarSettings settings) {
 
         String domain = settings.getDomain();
-        String username = settings.getUsername();
-        String email = username + "@" + domain;
+        String email = settings.getEmail();
+        String username = email.split("[@._]")[0];
         String password = settings.getPassword();
 
-        if (!domain.equals(credentialsDomain) || !username.equals(credentialsMailAddress)
+        if (!domain.equals(credentialsDomain) || !email.equals(credentialsMailAddress)
                 || !password.equals(credentialsPassword)) {
             try {
                 exchangeService.setCredentials(new WebCredentials(username, password, domain));
@@ -123,7 +123,7 @@ public class ExchangeCalendarProviderService implements CalendarProviderService 
             }
 
             credentialsDomain = domain;
-            credentialsMailAddress = username;
+            credentialsMailAddress = email;
             credentialsPassword = password;
         }
     }

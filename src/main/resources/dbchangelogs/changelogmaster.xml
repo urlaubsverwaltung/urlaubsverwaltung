@@ -35,5 +35,6 @@
     <include file="dbchangelogs/changelog-2.11.0-add-overtime-comment-table.xml"/>
     <include file="dbchangelogs/changelog-2.11.0-add-hours-to-application-table.xml"/>
     <include file="dbchangelogs/changelog-2.11.3-rename-exchange-calendar-settings-username-column.xml"/>
+    <include file="dbchangelogs/changelog-2.11.4-simplify-exchange-calendar-settings.xml"/>
 
 </databaseChangeLog>
