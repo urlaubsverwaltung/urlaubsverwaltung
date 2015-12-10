@@ -9,6 +9,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import org.synyx.urlaubsverwaltung.core.settings.*;
+import org.synyx.urlaubsverwaltung.core.util.CalcUtil;
 import org.synyx.urlaubsverwaltung.web.MailAddressValidationUtil;
 
 
@@ -43,6 +44,8 @@ public class SettingsValidator implements Validator {
 
         validatePublicHolidaysSettings(settings, errors);
 
+        validateOvertimeSettings(settings, errors);
+
         validateVacationSettings(settings, errors);
 
         validateSickNoteSettings(settings, errors);
@@ -67,6 +70,24 @@ public class SettingsValidator implements Validator {
 
         if (workingTimeSettings.getWorkingDurationForNewYearsEve() == null) {
             errors.rejectValue("workingTimeSettings.workingDurationForNewYearsEve", ERROR_MANDATORY_FIELD);
+        }
+    }
+
+
+    private void validateOvertimeSettings(Settings settings, Errors errors) {
+
+        WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
+
+        Integer maximumOvertime = workingTimeSettings.getMaximumOvertime();
+
+        if (maximumOvertime == null) {
+            errors.rejectValue("workingTimeSettings.maximumOvertime", ERROR_MANDATORY_FIELD);
+
+            return;
+        }
+
+        if (maximumOvertime < 0) {
+            errors.rejectValue("workingTimeSettings.maximumOvertime", ERROR_INVALID_ENTRY);
         }
     }
 

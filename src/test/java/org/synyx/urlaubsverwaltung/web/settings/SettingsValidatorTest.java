@@ -57,6 +57,7 @@ public class SettingsValidatorTest {
         workingTimeSettings.setFederalState(null);
         workingTimeSettings.setWorkingDurationForChristmasEve(null);
         workingTimeSettings.setWorkingDurationForNewYearsEve(null);
+        workingTimeSettings.setMaximumOvertime(null);
 
         Errors mockError = Mockito.mock(Errors.class);
         settingsValidator.validate(settings, mockError);
@@ -65,6 +66,22 @@ public class SettingsValidatorTest {
             .rejectValue("workingTimeSettings.workingDurationForChristmasEve", "error.entry.mandatory");
         Mockito.verify(mockError)
             .rejectValue("workingTimeSettings.workingDurationForNewYearsEve", "error.entry.mandatory");
+        Mockito.verify(mockError).rejectValue("workingTimeSettings.maximumOvertime", "error.entry.mandatory");
+    }
+
+
+    @Test
+    public void ensureMaximumOvertimeCanNotBeNegative() {
+
+        Settings settings = new Settings();
+        WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
+        workingTimeSettings.setMaximumOvertime(-1);
+
+        Errors mockError = Mockito.mock(Errors.class);
+
+        settingsValidator.validate(settings, mockError);
+
+        Mockito.verify(mockError).rejectValue("workingTimeSettings.maximumOvertime", "error.entry.invalid");
     }
 
 
