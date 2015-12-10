@@ -2,7 +2,6 @@
 
 * [Installation](#installation)
 * [Konfiguration](#konfiguration)
-    * [Umgebungen](#umgebungen)
     * [Authentifizierung](#authentifizierung)
     * [Konfigurationsdatei](#konfigurationsdatei)
 
@@ -47,30 +46,6 @@ Die Spring Boot Dokumentation enthält Anleitungen, wie man Spring Boot Anwendun
 
 ## Konfiguration
 
-#### Umgebungen
-
-Die Anwendung verfügt über **drei** verschiedene Umgebungsmöglichkeiten:
-
-* `dev`
-    * zum lokalen Entwickeln
-    * nutzt eine H2-Datenbank
-    * legt Testdaten an
-* `test`
-    * zum Testen der Anwendung
-    * nutzt eine MySQL-Datenbank
-    * legt keine Testdaten an
-* `prod`
-    * zum Ausführen der produktiven Anwendung
-    * nutzt eine MySQL-Datenbank
-    * legt keine Testdaten an
-
-##### Umgebung aktivieren
-
-Damit die Anwendung in einer Umgebung gestartet wird, muss die System-Property `env` auf `dev`, `test` oder `prod`
-gesetzt werden:
-
-<pre>java -jar urlaubsverwaltung.jar -Denv=UMGEBUNG</pre>
-
 #### Authentifizierung
 
 Die Anwendung verfügt über **drei** verschiedene Authentifizierungsmöglichkeiten:
@@ -89,27 +64,15 @@ Dies ermöglicht Benutzer- und Rechteverwaltung innerhalb der Anwendung und das 
 
 #### Konfigurationsdatei
 
-Die Anwendung besitzt im Verzeichnis `src/main/resources` jeweils eine `.properties` Datei zur Konfiguration der
-jeweiligen [Umgebung](#umgebungen).
-
-* eine standardmäßige `application.properties`
-* `application-test.properties`
-* `application-prod.properties`
-
-Diese beinhalten gewisse Grundeinstellungen und Standardwerte. Diese allein reichen für die Produktivnahme der
-Anwendung allerdings noch nicht aus. Spezifische Konfigurationen wie z.B. die Datenbank Einstellungen müssen durch eine
+Die Anwendung besitzt im Verzeichnis `src/main/resources` eine `application.properties` Datei zur Konfiguration.
+Diese beinhaltet gewisse Grundeinstellungen und Standardwerte. Diese allein reichen für die Produktivnahme der
+Anwendung allerdings nicht aus. Spezifische Konfigurationen wie z.B. die Datenbank Einstellungen müssen durch eine
 eigene Properties-Datei hinterlegt werden. Welche Konfigurationen überschrieben werden können/müssen, sind in der
-standardmäßigen `application.properties` des Projekts einsehbar.
+`application.properties` des Projekts einsehbar.
 
 Welche Möglichkeiten es bei Spring Boot gibt, damit die eigene Konfigurationsdatei genutzt wird, kann
 [hier](http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html#boot-features-external-config-application-property-files)
 nachgelesen werden.
-
-##### Produktivumgebung aktivieren
-
-Die Anwendung mit dem Parameter `-Denv=prod` starten:
-
-<pre>java -jar urlaubsverwaltung.jar -Denv=prod</pre>
 
 ##### LDAP
 
