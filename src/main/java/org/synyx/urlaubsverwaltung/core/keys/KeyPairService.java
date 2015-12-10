@@ -11,7 +11,8 @@ import java.security.NoSuchAlgorithmException;
 
 
 /**
- * Service to generate key pair (private key and public key) for {@link org.synyx.urlaubsverwaltung.core.person.Person}s.
+ * Service to generate key pair (private key and public key) for a
+ * {@link org.synyx.urlaubsverwaltung.core.person.Person}s.
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */

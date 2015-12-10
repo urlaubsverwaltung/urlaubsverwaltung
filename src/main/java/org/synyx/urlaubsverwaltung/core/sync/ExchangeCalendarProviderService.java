@@ -129,7 +129,7 @@ class ExchangeCalendarProviderService implements CalendarProviderService {
     }
 
 
-    private CalendarFolder findOrCreateCalendar(String calendarName) throws Exception {
+    private CalendarFolder findOrCreateCalendar(String calendarName) throws Exception { // NOSONAR - EWS Java API throws Exception, that's life
 
         Optional<CalendarFolder> calendarOptional = findCalendar(calendarName);
 
@@ -143,7 +143,7 @@ class ExchangeCalendarProviderService implements CalendarProviderService {
     }
 
 
-    private Optional<CalendarFolder> findCalendar(String calendarName) throws Exception {
+    private Optional<CalendarFolder> findCalendar(String calendarName) throws Exception { // NOSONAR - EWS Java API throws Exception, that's life
 
         FindFoldersResults calendarRoot = exchangeService.findFolders(WellKnownFolderName.Calendar,
                 new FolderView(Integer.MAX_VALUE));
