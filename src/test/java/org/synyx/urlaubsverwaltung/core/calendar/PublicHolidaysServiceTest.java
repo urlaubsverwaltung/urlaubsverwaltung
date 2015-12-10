@@ -121,7 +121,7 @@ public class PublicHolidaysServiceTest {
     public void ensureWorkingDurationForChristmasEveCanBeConfiguredToAWorkingDurationOfFullDay() {
 
         Settings settings = new Settings();
-        settings.setWorkingDurationForChristmasEve(DayLength.FULL);
+        settings.getWorkingTimeSettings().setWorkingDurationForChristmasEve(DayLength.FULL);
 
         Mockito.when(settingsService.getSettings()).thenReturn(settings);
 
@@ -137,7 +137,7 @@ public class PublicHolidaysServiceTest {
     public void ensureWorkingDurationForNewYearsEveCanBeConfiguredToAWorkingDurationOfFullDay() {
 
         Settings settings = new Settings();
-        settings.setWorkingDurationForNewYearsEve(DayLength.FULL);
+        settings.getWorkingTimeSettings().setWorkingDurationForNewYearsEve(DayLength.FULL);
 
         Mockito.when(settingsService.getSettings()).thenReturn(settings);
 
@@ -153,7 +153,7 @@ public class PublicHolidaysServiceTest {
     public void ensureWorkingDurationForChristmasEveCanBeConfiguredToAWorkingDurationOfMorning() {
 
         Settings settings = new Settings();
-        settings.setWorkingDurationForChristmasEve(DayLength.MORNING);
+        settings.getWorkingTimeSettings().setWorkingDurationForChristmasEve(DayLength.MORNING);
 
         Mockito.when(settingsService.getSettings()).thenReturn(settings);
 
@@ -169,7 +169,7 @@ public class PublicHolidaysServiceTest {
     public void ensureWorkingDurationForNewYearsEveCanBeConfiguredToAWorkingDurationOfNoon() {
 
         Settings settings = new Settings();
-        settings.setWorkingDurationForNewYearsEve(DayLength.NOON);
+        settings.getWorkingTimeSettings().setWorkingDurationForNewYearsEve(DayLength.NOON);
 
         Mockito.when(settingsService.getSettings()).thenReturn(settings);
 
@@ -185,7 +185,7 @@ public class PublicHolidaysServiceTest {
     public void ensureWorkingDurationForChristmasEveCanBeConfiguredToAWorkingDurationOfZero() {
 
         Settings settings = new Settings();
-        settings.setWorkingDurationForChristmasEve(DayLength.ZERO);
+        settings.getWorkingTimeSettings().setWorkingDurationForChristmasEve(DayLength.ZERO);
 
         Mockito.when(settingsService.getSettings()).thenReturn(settings);
 
@@ -201,7 +201,7 @@ public class PublicHolidaysServiceTest {
     public void ensureWorkingDurationForNewYearsEveCanBeConfiguredToAWorkingDurationOfZero() {
 
         Settings settings = new Settings();
-        settings.setWorkingDurationForNewYearsEve(DayLength.ZERO);
+        settings.getWorkingTimeSettings().setWorkingDurationForNewYearsEve(DayLength.ZERO);
 
         Mockito.when(settingsService.getSettings()).thenReturn(settings);
 
@@ -217,7 +217,7 @@ public class PublicHolidaysServiceTest {
     public void ensureAssumptionDayIsAPublicHolidayForBayernMuenchen() {
 
         Settings settings = new Settings();
-        settings.setFederalState(FederalState.BAYERN_MUENCHEN);
+        settings.getWorkingTimeSettings().setFederalState(FederalState.BAYERN_MUENCHEN);
 
         Mockito.when(settingsService.getSettings()).thenReturn(settings);
 
@@ -232,7 +232,7 @@ public class PublicHolidaysServiceTest {
     public void ensureAssumptionDayIsNoPublicHolidayForBerlin() {
 
         Settings settings = new Settings();
-        settings.setFederalState(FederalState.BERLIN);
+        settings.getWorkingTimeSettings().setFederalState(FederalState.BERLIN);
 
         Mockito.when(settingsService.getSettings()).thenReturn(settings);
 
@@ -247,7 +247,7 @@ public class PublicHolidaysServiceTest {
     public void ensureAssumptionDayIsNoPublicHolidayForBadenWuerttemberg() {
 
         Settings settings = new Settings();
-        settings.setFederalState(FederalState.BADEN_WUERTTEMBERG);
+        settings.getWorkingTimeSettings().setFederalState(FederalState.BADEN_WUERTTEMBERG);
 
         Mockito.when(settingsService.getSettings()).thenReturn(settings);
 
@@ -262,7 +262,7 @@ public class PublicHolidaysServiceTest {
     public void ensureCorrectWorkingDurationForAssumptionDayForBerlin() {
 
         Settings settings = new Settings();
-        settings.setFederalState(FederalState.BERLIN);
+        settings.getWorkingTimeSettings().setFederalState(FederalState.BERLIN);
 
         Mockito.when(settingsService.getSettings()).thenReturn(settings);
 
@@ -277,7 +277,7 @@ public class PublicHolidaysServiceTest {
     public void ensureCorrectWorkingDurationForAssumptionDayForBadenWuerttemberg() {
 
         Settings settings = new Settings();
-        settings.setFederalState(FederalState.BADEN_WUERTTEMBERG);
+        settings.getWorkingTimeSettings().setFederalState(FederalState.BADEN_WUERTTEMBERG);
 
         Mockito.when(settingsService.getSettings()).thenReturn(settings);
 
@@ -292,7 +292,7 @@ public class PublicHolidaysServiceTest {
     public void ensureCorrectWorkingDurationForAssumptionDayForBayernMuenchen() {
 
         Settings settings = new Settings();
-        settings.setFederalState(FederalState.BAYERN_MUENCHEN);
+        settings.getWorkingTimeSettings().setFederalState(FederalState.BAYERN_MUENCHEN);
 
         Mockito.when(settingsService.getSettings()).thenReturn(settings);
 

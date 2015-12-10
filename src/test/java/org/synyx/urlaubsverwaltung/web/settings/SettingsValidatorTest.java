@@ -50,18 +50,21 @@ public class SettingsValidatorTest {
 
 
     @Test
-    public void ensureThatMembersNotNull() throws Exception {
+    public void ensureWorkingTimeSettingsCanNotBeNull() throws Exception {
 
         Settings settings = new Settings();
-        settings.setFederalState(null);
-        settings.setWorkingDurationForChristmasEve(null);
-        settings.setWorkingDurationForNewYearsEve(null);
+        WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
+        workingTimeSettings.setFederalState(null);
+        workingTimeSettings.setWorkingDurationForChristmasEve(null);
+        workingTimeSettings.setWorkingDurationForNewYearsEve(null);
 
         Errors mockError = Mockito.mock(Errors.class);
         settingsValidator.validate(settings, mockError);
-        Mockito.verify(mockError).rejectValue("federalState", "error.entry.mandatory");
-        Mockito.verify(mockError).rejectValue("workingDurationForChristmasEve", "error.entry.mandatory");
-        Mockito.verify(mockError).rejectValue("workingDurationForNewYearsEve", "error.entry.mandatory");
+        Mockito.verify(mockError).rejectValue("workingTimeSettings.federalState", "error.entry.mandatory");
+        Mockito.verify(mockError)
+            .rejectValue("workingTimeSettings.workingDurationForChristmasEve", "error.entry.mandatory");
+        Mockito.verify(mockError)
+            .rejectValue("workingTimeSettings.workingDurationForNewYearsEve", "error.entry.mandatory");
     }
 
 

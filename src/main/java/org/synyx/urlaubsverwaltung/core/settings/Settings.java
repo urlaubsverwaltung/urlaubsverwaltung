@@ -22,64 +22,11 @@ public class Settings extends AbstractPersistable<Integer> {
 
     private AbsenceSettings absenceSettings;
 
-    /**
-     * Defines the working duration for Christmas Eve and New Years Eve.
-     *
-     * <p>Options: {@link DayLength#FULL} means that the day is fully counted as work day, {@link DayLength#MORNING} and
-     * {@link DayLength#NOON} means that only half of the day is counted as work day, {@link DayLength#ZERO} means that
-     * the day is fully counted as public holiday</p>
-     */
-    @Enumerated(EnumType.STRING)
-    private DayLength workingDurationForChristmasEve = DayLength.MORNING;
-
-    @Enumerated(EnumType.STRING)
-    private DayLength workingDurationForNewYearsEve = DayLength.MORNING;
-
-    /**
-     * Defines the federal state of Germany to be able to check correctly if a day is a public holiday or not.
-     */
-    @Enumerated(EnumType.STRING)
-    private FederalState federalState = FederalState.BADEN_WUERTTEMBERG;
+    private WorkingTimeSettings workingTimeSettings;
 
     private MailSettings mailSettings;
 
     private CalendarSettings calendarSettings;
-
-    public DayLength getWorkingDurationForChristmasEve() {
-
-        return workingDurationForChristmasEve;
-    }
-
-
-    public DayLength getWorkingDurationForNewYearsEve() {
-
-        return workingDurationForNewYearsEve;
-    }
-
-
-    public FederalState getFederalState() {
-
-        return federalState;
-    }
-
-
-    public void setWorkingDurationForChristmasEve(DayLength workingDurationForChristmasEve) {
-
-        this.workingDurationForChristmasEve = workingDurationForChristmasEve;
-    }
-
-
-    public void setWorkingDurationForNewYearsEve(DayLength workingDurationForNewYearsEve) {
-
-        this.workingDurationForNewYearsEve = workingDurationForNewYearsEve;
-    }
-
-
-    public void setFederalState(FederalState federalState) {
-
-        this.federalState = federalState;
-    }
-
 
     public AbsenceSettings getAbsenceSettings() {
 
@@ -94,6 +41,22 @@ public class Settings extends AbstractPersistable<Integer> {
     public void setAbsenceSettings(AbsenceSettings absenceSettings) {
 
         this.absenceSettings = absenceSettings;
+    }
+
+
+    public WorkingTimeSettings getWorkingTimeSettings() {
+
+        if (workingTimeSettings == null) {
+            workingTimeSettings = new WorkingTimeSettings();
+        }
+
+        return workingTimeSettings;
+    }
+
+
+    public void setWorkingTimeSettings(WorkingTimeSettings workingTimeSettings) {
+
+        this.workingTimeSettings = workingTimeSettings;
     }
 
 

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.core.settings.WorkingTimeSettings;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 
 import java.math.BigDecimal;
@@ -61,8 +62,9 @@ public class PublicHolidaysService {
     boolean isPublicHoliday(DateMidnight date) {
 
         Settings settings = settingsService.getSettings();
+        WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
 
-        return manager.isHoliday(date.toLocalDate(), settings.getFederalState().getCodes());
+        return manager.isHoliday(date.toLocalDate(), workingTimeSettings.getFederalState().getCodes());
     }
 
 
@@ -78,12 +80,13 @@ public class PublicHolidaysService {
     public BigDecimal getWorkingDurationOfDate(DateMidnight date) {
 
         Settings settings = settingsService.getSettings();
+        WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
 
         if (isPublicHoliday(date)) {
             if (DateUtil.isChristmasEve(date)) {
-                return settings.getWorkingDurationForChristmasEve().getDuration();
+                return workingTimeSettings.getWorkingDurationForChristmasEve().getDuration();
             } else if (DateUtil.isNewYearsEve(date)) {
-                return settings.getWorkingDurationForNewYearsEve().getDuration();
+                return workingTimeSettings.getWorkingDurationForNewYearsEve().getDuration();
             } else {
                 return DayLength.ZERO.getDuration();
             }
@@ -96,8 +99,9 @@ public class PublicHolidaysService {
     public Set<Holiday> getHolidays(int year) {
 
         Settings settings = settingsService.getSettings();
+        WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
 
-        return manager.getHolidays(year, settings.getFederalState().getCodes());
+        return manager.getHolidays(year, workingTimeSettings.getFederalState().getCodes());
     }
 
 

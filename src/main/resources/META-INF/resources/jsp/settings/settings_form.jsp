@@ -142,12 +142,12 @@
                     </div>
                     <div class="col-md-8 col-md-pull-4">
                         <div class="form-group is-required">
-                            <label class="control-label col-md-4" for="workingDurationForChristmasEve">
+                            <label class="control-label col-md-4" for="workingTimeSettings.workingDurationForChristmasEve">
                                 <spring:message code='settings.publicHolidays.workingDuration.christmasEve'/>:
                             </label>
 
                             <div class="col-md-8">
-                                <form:select path="workingDurationForChristmasEve" id="dayLengthTypes" class="form-control" cssErrorClass="form-control error">
+                                <form:select path="workingTimeSettings.workingDurationForChristmasEve" id="dayLengthTypes" class="form-control" cssErrorClass="form-control error">
                                     <c:forEach items="${dayLengthTypes}" var="dayLengthType">
                                         <form:option value="${dayLengthType}"><spring:message code="${dayLengthType}" /></form:option>
                                     </c:forEach>
@@ -155,12 +155,12 @@
                             </div>
                         </div>
                         <div class="form-group is-required">
-                            <label class="control-label col-md-4" for="workingDurationForNewYearsEve">
+                            <label class="control-label col-md-4" for="workingTimeSettings.workingDurationForNewYearsEve">
                                 <spring:message code='settings.publicHolidays.workingDuration.newYearsEve'/>:
                             </label>
 
                             <div class="col-md-8">
-                                <form:select path="workingDurationForNewYearsEve" id="dayLengthTypes" class="form-control" cssErrorClass="form-control error">
+                                <form:select path="workingTimeSettings.workingDurationForNewYearsEve" id="dayLengthTypes" class="form-control" cssErrorClass="form-control error">
                                     <c:forEach items="${dayLengthTypes}" var="dayLengthType">
                                         <form:option value="${dayLengthType}"><spring:message code="${dayLengthType}" /></form:option>
                                     </c:forEach>
@@ -173,7 +173,7 @@
                             </label>
 
                             <div class="col-md-8">
-                                <form:select path="federalState" id="federalStateType" class="form-control" cssErrorClass="form-control error">
+                                <form:select path="workingTimeSettings.federalState" id="federalStateType" class="form-control" cssErrorClass="form-control error">
                                     <c:forEach items="${federalStateTypes}" var="federalStateType">
                                         <form:option value="${federalStateType}"><spring:message code="federalState.${federalStateType}" /></form:option>
                                     </c:forEach>

@@ -3,8 +3,6 @@ package org.synyx.urlaubsverwaltung.core.settings;
 import org.junit.Assert;
 import org.junit.Test;
 
-import org.synyx.urlaubsverwaltung.core.period.DayLength;
-
 
 /**
  * Unit test for {@link org.synyx.urlaubsverwaltung.core.settings.Settings}.
@@ -18,15 +16,9 @@ public class SettingsTest {
 
         Settings settings = new Settings();
 
-        Assert.assertNotNull("Should not be null", settings.getWorkingDurationForChristmasEve());
-        Assert.assertNotNull("Should not be null", settings.getWorkingDurationForNewYearsEve());
-        Assert.assertNotNull("Should not be null", settings.getFederalState());
         Assert.assertNotNull("Should not be null", settings.getAbsenceSettings());
+        Assert.assertNotNull("Should not be null", settings.getWorkingTimeSettings());
         Assert.assertNotNull("Should not be null", settings.getMailSettings());
         Assert.assertNotNull("Should not be null", settings.getCalendarSettings());
-
-        Assert.assertEquals("Wrong default value", DayLength.MORNING, settings.getWorkingDurationForChristmasEve());
-        Assert.assertEquals("Wrong default value", DayLength.MORNING, settings.getWorkingDurationForNewYearsEve());
-        Assert.assertEquals("Wrong default value", FederalState.BADEN_WUERTTEMBERG, settings.getFederalState());
     }
 }

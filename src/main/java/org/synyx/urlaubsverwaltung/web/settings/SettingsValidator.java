@@ -55,16 +55,18 @@ public class SettingsValidator implements Validator {
 
     private void validatePublicHolidaysSettings(Settings settings, Errors errors) {
 
-        if (settings.getFederalState() == null) {
-            errors.rejectValue("federalState", ERROR_MANDATORY_FIELD);
+        WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
+
+        if (workingTimeSettings.getFederalState() == null) {
+            errors.rejectValue("workingTimeSettings.federalState", ERROR_MANDATORY_FIELD);
         }
 
-        if (settings.getWorkingDurationForChristmasEve() == null) {
-            errors.rejectValue("workingDurationForChristmasEve", ERROR_MANDATORY_FIELD);
+        if (workingTimeSettings.getWorkingDurationForChristmasEve() == null) {
+            errors.rejectValue("workingTimeSettings.workingDurationForChristmasEve", ERROR_MANDATORY_FIELD);
         }
 
-        if (settings.getWorkingDurationForNewYearsEve() == null) {
-            errors.rejectValue("workingDurationForNewYearsEve", ERROR_MANDATORY_FIELD);
+        if (workingTimeSettings.getWorkingDurationForNewYearsEve() == null) {
+            errors.rejectValue("workingTimeSettings.workingDurationForNewYearsEve", ERROR_MANDATORY_FIELD);
         }
     }
 
