@@ -36,6 +36,12 @@ public class OvertimeValidator implements Validator {
     private static final String ERROR_MAX_CHARS = "error.entry.tooManyChars";
     private static final String ERROR_INVALID_PERIOD = "error.entry.invalidPeriod";
     private static final String ERROR_MAX_OVERTIME = "overtime.data.numberOfHours.error.maxOvertime";
+    private static final String ERROR_MAX_OVERTIME_ZERO = "overtime.data.numberOfHours.error.maxOvertimeZero";
+
+    private static final String ATTRIBUTE_START_DATE = "startDate";
+    private static final String ATTRIBUTE_END_DATE = "endDate";
+    private static final String ATTRIBUTE_NUMBER_OF_HOURS = "numberOfHours";
+    private static final String ATTRIBUTE_COMMENT = "comment";
 
     private final OvertimeService overtimeService;
     private final SettingsService settingsService;
@@ -71,11 +77,11 @@ public class OvertimeValidator implements Validator {
         DateMidnight startDate = overtimeForm.getStartDate();
         DateMidnight endDate = overtimeForm.getEndDate();
 
-        validateDateNotNull(startDate, "startDate", errors);
-        validateDateNotNull(endDate, "endDate", errors);
+        validateDateNotNull(startDate, ATTRIBUTE_START_DATE, errors);
+        validateDateNotNull(endDate, ATTRIBUTE_END_DATE, errors);
 
         if (startDate != null && endDate != null && endDate.isBefore(startDate)) {
-            errors.rejectValue("endDate", ERROR_INVALID_PERIOD);
+            errors.rejectValue(ATTRIBUTE_END_DATE, ERROR_INVALID_PERIOD);
         }
     }
 
@@ -94,8 +100,8 @@ public class OvertimeValidator implements Validator {
         BigDecimal numberOfHours = overtimeForm.getNumberOfHours();
 
         // may be that number of hours field is null because of cast exception, than there is already a field error
-        if (numberOfHours == null && !errors.hasFieldErrors("numberOfHours")) {
-            errors.rejectValue("numberOfHours", ERROR_MANDATORY);
+        if (numberOfHours == null && !errors.hasFieldErrors(ATTRIBUTE_NUMBER_OF_HOURS)) {
+            errors.rejectValue(ATTRIBUTE_NUMBER_OF_HOURS, ERROR_MANDATORY);
         }
     }
 
@@ -109,7 +115,7 @@ public class OvertimeValidator implements Validator {
             BigDecimal maximumOvertime = new BigDecimal(settings.getMaximumOvertime());
 
             if (CalcUtil.isZero(maximumOvertime)) {
-                errors.rejectValue("numberOfHours", "overtime.data.numberOfHours.error.maxOvertimeZero");
+                errors.rejectValue(ATTRIBUTE_NUMBER_OF_HOURS, ERROR_MAX_OVERTIME_ZERO);
             } else {
                 BigDecimal leftOvertime = overtimeService.getLeftOvertimeForPerson(overtimeForm.getPerson());
 
@@ -125,7 +131,7 @@ public class OvertimeValidator implements Validator {
 
                 // left overtime + overtime record must not be greater than maximum overtime
                 if (leftOvertime.add(numberOfHours).compareTo(maximumOvertime) > 0) {
-                    errors.rejectValue("numberOfHours", ERROR_MAX_OVERTIME,
+                    errors.rejectValue(ATTRIBUTE_NUMBER_OF_HOURS, ERROR_MAX_OVERTIME,
                         new Object[] { leftOvertime.toString(), maximumOvertime.toString() }, null);
                 }
             }
@@ -138,7 +144,7 @@ public class OvertimeValidator implements Validator {
         String comment = overtimeForm.getComment();
 
         if (StringUtils.hasText(comment) && comment.length() > MAX_CHARS) {
-            errors.rejectValue("comment", ERROR_MAX_CHARS);
+            errors.rejectValue(ATTRIBUTE_COMMENT, ERROR_MAX_CHARS);
         }
     }
 }

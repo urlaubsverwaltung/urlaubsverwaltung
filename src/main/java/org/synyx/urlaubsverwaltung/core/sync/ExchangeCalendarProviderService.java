@@ -278,7 +278,7 @@ class ExchangeCalendarProviderService implements CalendarProviderService {
     }
 
 
-    private void discoverFolders(WellKnownFolderName wellKnownFolderName) throws Exception {
+    private void discoverFolders(WellKnownFolderName wellKnownFolderName) throws Exception { // NOSONAR - EWS Java API throws Exception, that's life
 
         FindFoldersResults folders = exchangeService.findFolders(wellKnownFolderName,
                 new FolderView(Integer.MAX_VALUE));

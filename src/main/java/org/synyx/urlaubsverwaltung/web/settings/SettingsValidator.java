@@ -9,7 +9,6 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import org.synyx.urlaubsverwaltung.core.settings.*;
-import org.synyx.urlaubsverwaltung.core.util.CalcUtil;
 import org.synyx.urlaubsverwaltung.web.MailAddressValidationUtil;
 
 

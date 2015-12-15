@@ -37,6 +37,8 @@ public class WorkingTimeSettings {
 
     /**
      * Defines the maximum number of overtime a person can have.
+     *
+     * @since  2.13.0
      */
     @Column(name = "overtime_maximum")
     private Integer maximumOvertime = 100;

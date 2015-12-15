@@ -86,6 +86,8 @@ public interface OvertimeService {
      * @param  person  to get the left overtime for
      *
      * @return  the left overtime, never {@code null}
+     *
+     * @since  2.13.0
      */
     BigDecimal getLeftOvertimeForPerson(Person person);
 }
