@@ -30,6 +30,7 @@ import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
+import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
@@ -82,6 +83,9 @@ public class OverviewController {
     @Autowired
     private OvertimeService overtimeService;
 
+    @Autowired
+    private SettingsService settingsService;
+
     @RequestMapping(value = "/overview", method = RequestMethod.GET)
     public String showOverview(
         @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) String year) {
@@ -116,6 +120,7 @@ public class OverviewController {
         prepareApplications(person, yearToShow, model);
         prepareHolidayAccounts(person, yearToShow, model);
         prepareSickNoteList(person, yearToShow, model);
+        prepareSettings(model);
 
         model.addAttribute(ControllerConstants.YEAR_ATTRIBUTE, DateMidnight.now().getYear());
 
@@ -179,5 +184,11 @@ public class OverviewController {
             model.addAttribute("account", account.get());
             model.addAttribute(PersonConstants.BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(DateMidnight.now()));
         }
+    }
+
+
+    private void prepareSettings(Model model) {
+
+        model.addAttribute("settings", settingsService.getSettings());
     }
 }

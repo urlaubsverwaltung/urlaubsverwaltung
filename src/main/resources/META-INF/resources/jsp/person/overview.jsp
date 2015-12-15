@@ -132,6 +132,7 @@
 
         </div>
 
+        <c:if test="${settings.workingTimeSettings.maximumOvertime > 0}">
         <div class="row">
             <div class="col-xs-12">
                 <legend>
@@ -153,6 +154,7 @@
                 <uv:overtime-left hours="${overtimeLeft}"/>
             </div>
         </div>
+        </c:if>
 
         <script src="<spring:url value='/js/calendar.js' />" type="text/javascript" ></script>
         <script>
