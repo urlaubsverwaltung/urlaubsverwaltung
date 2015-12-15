@@ -55,9 +55,6 @@ public class OvertimeController {
     private OvertimeService overtimeService;
 
     @Autowired
-    private ApplicationService applicationService;
-
-    @Autowired
     private PersonService personService;
 
     @Autowired
