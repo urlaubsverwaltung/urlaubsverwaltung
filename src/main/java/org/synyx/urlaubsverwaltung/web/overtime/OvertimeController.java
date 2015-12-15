@@ -104,10 +104,8 @@ public class OvertimeController {
         model.addAttribute("person", person);
         model.addAttribute("records", overtimeService.getOvertimeRecordsForPersonAndYear(person, year));
 
-        BigDecimal totalOvertime = overtimeService.getTotalOvertimeForPerson(person);
-        BigDecimal totalOvertimeReduction = applicationService.getTotalOvertimeReductionOfPerson(person);
-        model.addAttribute("overtimeTotal", totalOvertime);
-        model.addAttribute("overtimeLeft", totalOvertime.subtract(totalOvertimeReduction));
+        model.addAttribute("overtimeTotal", overtimeService.getTotalOvertimeForPerson(person));
+        model.addAttribute("overtimeLeft", overtimeService.getLeftOvertimeForPerson(person));
 
         return "overtime/overtime_list";
     }
@@ -131,10 +129,8 @@ public class OvertimeController {
         model.addAttribute("record", overtime);
         model.addAttribute("comments", overtimeService.getCommentsForOvertime(overtime));
 
-        BigDecimal totalOvertime = overtimeService.getTotalOvertimeForPerson(person);
-        BigDecimal totalOvertimeReduction = applicationService.getTotalOvertimeReductionOfPerson(person);
-        model.addAttribute("overtimeTotal", totalOvertime);
-        model.addAttribute("overtimeLeft", totalOvertime.subtract(totalOvertimeReduction));
+        model.addAttribute("overtimeTotal", overtimeService.getTotalOvertimeForPerson(person));
+        model.addAttribute("overtimeLeft", overtimeService.getLeftOvertimeForPerson(person));
 
         return "overtime/overtime_details";
     }

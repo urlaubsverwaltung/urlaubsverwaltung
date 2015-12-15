@@ -2,16 +2,24 @@ package org.synyx.urlaubsverwaltung.web.overview;
 
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
+
 import org.joda.time.DateMidnight;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.security.access.AccessDeniedException;
+
 import org.springframework.stereotype.Controller;
+
 import org.springframework.ui.Model;
+
 import org.springframework.util.StringUtils;
+
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
 import org.synyx.urlaubsverwaltung.core.account.service.VacationDaysService;
@@ -35,6 +43,7 @@ import org.synyx.urlaubsverwaltung.web.statistics.SickDaysOverview;
 import org.synyx.urlaubsverwaltung.web.statistics.UsedDaysOverview;
 
 import java.math.BigDecimal;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -138,14 +147,12 @@ public class OverviewController {
         List<Application> applications = FluentIterable.from(
                     applicationService.getApplicationsForACertainPeriodAndPerson(DateUtil.getFirstDayOfYear(year),
                         DateUtil.getLastDayOfYear(year), person))
-            .filter(input ->
-                    !input.hasStatus(ApplicationStatus.REVOKED))
+            .filter(input -> !input.hasStatus(ApplicationStatus.REVOKED))
             .toList();
 
         if (!applications.isEmpty()) {
             ImmutableList<ApplicationForLeave> applicationsForLeave = FluentIterable.from(applications)
-                .transform(input ->
-                            new ApplicationForLeave(input, calendarService))
+                .transform(input -> new ApplicationForLeave(input, calendarService))
                 .toSortedList((o1, o2) -> {
                     // show latest applications at first
                     return o2.getStartDate().compareTo(o1.getStartDate());
@@ -157,11 +164,8 @@ public class OverviewController {
             model.addAttribute("usedDaysOverview", usedDaysOverview);
         }
 
-        BigDecimal totalOvertime = overtimeService.getTotalOvertimeForPerson(person);
-        BigDecimal totalOvertimeReduction = applicationService.getTotalOvertimeReductionOfPerson(person);
-
-        model.addAttribute("overtimeTotal", totalOvertime);
-        model.addAttribute("overtimeLeft", totalOvertime.subtract(totalOvertimeReduction));
+        model.addAttribute("overtimeTotal", overtimeService.getTotalOvertimeForPerson(person));
+        model.addAttribute("overtimeLeft", overtimeService.getLeftOvertimeForPerson(person));
     }
 
 

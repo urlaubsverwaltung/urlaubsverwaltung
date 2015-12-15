@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.util.Assert;
 
+import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 
@@ -31,12 +32,15 @@ public class OvertimeServiceImpl implements OvertimeService {
 
     private final OvertimeDAO overtimeDAO;
     private final OvertimeCommentDAO commentDAO;
+    private final ApplicationService applicationService;
 
     @Autowired
-    public OvertimeServiceImpl(OvertimeDAO overtimeDAO, OvertimeCommentDAO commentDAO) {
+    public OvertimeServiceImpl(OvertimeDAO overtimeDAO, OvertimeCommentDAO commentDAO,
+        ApplicationService applicationService) {
 
         this.overtimeDAO = overtimeDAO;
         this.commentDAO = commentDAO;
+        this.applicationService = applicationService;
     }
 
     @Override
@@ -111,5 +115,17 @@ public class OvertimeServiceImpl implements OvertimeService {
         }
 
         return BigDecimal.ZERO;
+    }
+
+
+    @Override
+    public BigDecimal getLeftOvertimeForPerson(Person person) {
+
+        Assert.notNull(person, "Person to get left overtime for must be given.");
+
+        BigDecimal totalOvertime = getTotalOvertimeForPerson(person);
+        BigDecimal overtimeReduction = applicationService.getTotalOvertimeReductionOfPerson(person);
+
+        return totalOvertime.subtract(overtimeReduction);
     }
 }

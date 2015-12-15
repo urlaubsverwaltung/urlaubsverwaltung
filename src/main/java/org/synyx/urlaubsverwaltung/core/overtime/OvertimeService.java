@@ -77,4 +77,15 @@ public interface OvertimeService {
      * @return  the total overtime, never {@code null}
      */
     BigDecimal getTotalOvertimeForPerson(Person person);
+
+
+    /**
+     * Get the left overtime hours of the given person: the difference between the total overtime and the overtime
+     * reduction.
+     *
+     * @param  person  to get the left overtime for
+     *
+     * @return  the left overtime, never {@code null}
+     */
+    BigDecimal getLeftOvertimeForPerson(Person person);
 }

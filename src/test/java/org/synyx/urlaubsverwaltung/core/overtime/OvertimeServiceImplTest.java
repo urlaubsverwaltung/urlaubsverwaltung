@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
@@ -26,6 +27,7 @@ public class OvertimeServiceImplTest {
 
     private OvertimeDAO overtimeDAO;
     private OvertimeCommentDAO commentDAO;
+    private ApplicationService applicationService;
 
     private Overtime overtimeMock;
     private Person authorMock;
@@ -35,8 +37,9 @@ public class OvertimeServiceImplTest {
 
         commentDAO = Mockito.mock(OvertimeCommentDAO.class);
         overtimeDAO = Mockito.mock(OvertimeDAO.class);
+        applicationService = Mockito.mock(ApplicationService.class);
 
-        overtimeService = new OvertimeServiceImpl(overtimeDAO, commentDAO);
+        overtimeService = new OvertimeServiceImpl(overtimeDAO, commentDAO, applicationService);
 
         overtimeMock = Mockito.mock(Overtime.class);
         authorMock = Mockito.mock(Person.class);
@@ -272,5 +275,47 @@ public class OvertimeServiceImplTest {
 
         Assert.assertNotNull("Should not be null", totalHours);
         Assert.assertEquals("Wrong total overtime", BigDecimal.ONE, totalHours);
+    }
+
+
+    // Get left overtime -----------------------------------------------------------------------------------------------
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThrowsIfTryingToGetLeftOvertimeForNullPerson() {
+
+        overtimeService.getLeftOvertimeForPerson(null);
+    }
+
+
+    @Test
+    public void ensureTheLeftOvertimeIsTheDifferenceBetweenTotalOvertimeAndOvertimeReduction() {
+
+        Person person = TestDataCreator.createPerson();
+
+        Mockito.when(overtimeDAO.calculateTotalHoursForPerson(person)).thenReturn(BigDecimal.TEN);
+        Mockito.when(applicationService.getTotalOvertimeReductionOfPerson(person)).thenReturn(BigDecimal.ONE);
+
+        BigDecimal leftOvertime = overtimeService.getLeftOvertimeForPerson(person);
+
+        Mockito.verify(overtimeDAO).calculateTotalHoursForPerson(person);
+        Mockito.verify(applicationService).getTotalOvertimeReductionOfPerson(person);
+
+        Assert.assertNotNull("Should not be null", leftOvertime);
+        Assert.assertEquals("Wrong left overtime", new BigDecimal("9"), leftOvertime);
+    }
+
+
+    @Test
+    public void ensureTheLeftOvertimeIsZeroIfPersonHasNeitherOvertimeRecordsNorOvertimeReduction() {
+
+        Person person = TestDataCreator.createPerson();
+
+        Mockito.when(overtimeDAO.calculateTotalHoursForPerson(person)).thenReturn(null);
+        Mockito.when(applicationService.getTotalOvertimeReductionOfPerson(person)).thenReturn(BigDecimal.ZERO);
+
+        BigDecimal leftOvertime = overtimeService.getLeftOvertimeForPerson(person);
+
+        Assert.assertNotNull("Should not be null", leftOvertime);
+        Assert.assertEquals("Wrong left overtime", BigDecimal.ZERO, leftOvertime);
     }
 }
