@@ -1,8 +1,6 @@
 package org.synyx.urlaubsverwaltung.web.sicknote;
 
 import org.joda.time.DateMidnight;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -12,10 +10,9 @@ import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
 
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.DataBinder;
+
+import org.springframework.web.bind.annotation.*;
 
 import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -23,10 +20,9 @@ import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
-import org.synyx.urlaubsverwaltung.core.util.DateFormat;
-import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
-import org.synyx.urlaubsverwaltung.web.FilterRequest;
+import org.synyx.urlaubsverwaltung.web.DateMidnightPropertyEditor;
+import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
 import org.synyx.urlaubsverwaltung.web.statistics.SickDays;
 
@@ -35,6 +31,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -56,15 +53,18 @@ public class SickDaysOverviewController {
     @Autowired
     private WorkDaysService calendarService;
 
+    @InitBinder
+    public void initBinder(DataBinder binder) {
+
+        binder.registerCustomEditor(DateMidnight.class, new DateMidnightPropertyEditor());
+    }
+
+
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @RequestMapping(value = "/sicknote/filter", method = RequestMethod.POST)
-    public String filterSickNotes(@ModelAttribute("filterRequest") FilterRequest filterRequest) {
+    public String filterSickNotes(@ModelAttribute("period") FilterPeriod period) {
 
-        DateMidnight from = filterRequest.getStartDate();
-        DateMidnight to = filterRequest.getEndDate();
-
-        return "redirect:/web/sicknote?from=" + from.toString(DateFormat.PATTERN) + "&to="
-            + to.toString(DateFormat.PATTERN);
+        return "redirect:/web/sicknote?from=" + period.getStartDateAsString() + "&to=" + period.getEndDateAsString();
     }
 
 
@@ -73,38 +73,22 @@ public class SickDaysOverviewController {
     public String periodsSickNotes(@RequestParam(value = "from", required = false) String from,
         @RequestParam(value = "to", required = false) String to, Model model) {
 
-        DateTimeFormatter formatter = DateTimeFormat.forPattern(DateFormat.PATTERN);
-        int currentYear = DateMidnight.now().getYear();
+        FilterPeriod period = new FilterPeriod(Optional.ofNullable(from), Optional.ofNullable(to));
 
-        DateMidnight fromDate;
-        DateMidnight toDate;
+        List<SickNote> sickNoteList = sickNoteService.getByPeriod(period.getStartDate(), period.getEndDate());
 
-        if (from == null) {
-            fromDate = DateUtil.getFirstDayOfYear(currentYear);
-        } else {
-            fromDate = DateMidnight.parse(from, formatter);
-        }
-
-        if (to == null) {
-            toDate = DateUtil.getLastDayOfYear(currentYear);
-        } else {
-            toDate = DateMidnight.parse(to, formatter);
-        }
-
-        List<SickNote> sickNoteList = sickNoteService.getByPeriod(fromDate, toDate);
-
-        fillModel(model, sickNoteList, fromDate, toDate);
+        fillModel(model, sickNoteList, period);
 
         return "sicknote/sick_notes";
     }
 
 
-    private void fillModel(Model model, List<SickNote> sickNotes, DateMidnight fromDate, DateMidnight toDate) {
+    private void fillModel(Model model, List<SickNote> sickNotes, FilterPeriod period) {
 
         model.addAttribute("today", DateMidnight.now());
-        model.addAttribute("from", fromDate);
-        model.addAttribute("to", toDate);
-        model.addAttribute("filterRequest", new FilterRequest());
+        model.addAttribute("from", period.getStartDate());
+        model.addAttribute("to", period.getEndDate());
+        model.addAttribute("period", period);
 
         List<Person> persons = personService.getActivePersons();
 

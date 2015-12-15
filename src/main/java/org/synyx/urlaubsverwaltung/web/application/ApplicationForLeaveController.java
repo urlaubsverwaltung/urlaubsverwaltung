@@ -1,11 +1,16 @@
 package org.synyx.urlaubsverwaltung.web.application;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.security.access.prepost.PreAuthorize;
+
 import org.springframework.stereotype.Controller;
+
 import org.springframework.ui.Model;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
@@ -15,7 +20,6 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.Role;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.security.SessionService;
-import org.synyx.urlaubsverwaltung.web.FilterRequest;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,7 +58,6 @@ public class ApplicationForLeaveController {
         List<ApplicationForLeave> applicationsForLeave = getAllRelevantApplicationsForLeave();
 
         model.addAttribute("applications", applicationsForLeave);
-        model.addAttribute("filterRequest", new FilterRequest());
 
         return "application/app_list";
     }
