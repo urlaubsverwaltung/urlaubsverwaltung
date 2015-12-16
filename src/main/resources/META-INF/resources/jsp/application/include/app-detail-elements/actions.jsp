@@ -7,6 +7,14 @@
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
+<sec:authorize access="hasRole('USER')">
+  <c:set var="IS_USER" value="${true}"/>
+</sec:authorize>
+
+<sec:authorize access="hasRole('OFFICE')">
+  <c:set var="IS_OFFICE" value="${true}"/>
+</sec:authorize>
+
 <c:if test="${application.status == 'WAITING' || application.status == 'ALLOWED'}">
 
     <c:if test="${application.status == 'WAITING'}">
@@ -24,9 +32,9 @@
     </c:if>
 
     <c:if test="${application.status == 'ALLOWED'}">
-        <sec:authorize access="hasRole('OFFICE')">
+        <c:if test="${IS_OFFICE || (IS_USER && application.person.id == signedInUser.id)}">
             <jsp:include page="actions/cancel_form.jsp"/>
-        </sec:authorize>
+        </c:if>
     </c:if>
 
 </c:if>

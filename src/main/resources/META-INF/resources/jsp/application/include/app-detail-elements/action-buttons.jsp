@@ -26,7 +26,7 @@
 </sec:authorize>
 
 
-<c:if test="${application.status == 'WAITING' || (application.status == 'ALLOWED' && IS_OFFICE)}">
+<c:if test="${application.status == 'WAITING' || (application.status == 'ALLOWED' && (IS_OFFICE || (IS_USER && application.person.id == signedInUser.id)))}">
 
   <c:if test="${application.status == 'WAITING'}">
     <c:if test="${(IS_USER && application.person.id == signedInUser.id) || IS_OFFICE}">
@@ -58,7 +58,7 @@
       </a>
     </c:if>
   </c:if>
-  <c:if test="${application.status == 'ALLOWED' && IS_OFFICE}">
+  <c:if test="${application.status == 'ALLOWED' && (IS_OFFICE || (IS_USER && application.person.id == signedInUser.id))}">
     <a href="#" class="fa-action negative pull-right" data-title="<spring:message code='action.delete'/>"
        onclick="$('#reject').hide(); $('#allow').hide(); $('#refer').hide(); $('#cancel').show();">
       <i class="fa fa-trash"></i>
