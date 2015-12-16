@@ -42,6 +42,9 @@ Die Spring Boot Dokumentation enthält Anleitungen, wie man Spring Boot Anwendun
 * [Linux Service](http://docs.spring.io/spring-boot/docs/current/reference/html/deployment-install.html#deployment-service)
 * [Windows Service](http://docs.spring.io/spring-boot/docs/current/reference/html/deployment-windows.html)
 
+_Anmerkung: Momentan muss man noch selbst ein (init.d) Skript erstellen, um die Anwendung als Service zu installieren. (siehe [#134](https://github.com/synyx/urlaubsverwaltung/issues/134)) In einer zukünftigen Version soll die Installation als Service dank neuer Spring Boot Version einfacher werden._
+
+
 ---
 
 ## Konfiguration
