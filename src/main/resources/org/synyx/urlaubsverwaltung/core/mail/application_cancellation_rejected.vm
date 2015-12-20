@@ -1,0 +1,7 @@
+Hallo ${application.person.niceName},
+
+Dein Stornierungsantrag für den bereits genehmigten Urlaub von ${application.startDate.toString("dd.MM.yyyy")} bis
+${application.endDate.toString("dd.MM.yyyy")} wurde von ${comment.person.niceName} mit der Begründung
+"${comment.text}" abgelehnt.
+
+Link zum Antrag: ${link}
