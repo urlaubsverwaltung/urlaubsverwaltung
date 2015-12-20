@@ -499,4 +499,15 @@ class MailServiceImpl implements MailService {
 
         sendEmail(Arrays.asList(person), "subject.userCreation", text);
     }
+
+    @Override
+    public void sendCancellationRequest(Application application, ApplicationComment createdComment) {
+
+    }
+
+    @Override
+    public void sendRejectedCancellationRequest(Application application, ApplicationComment createdComment) {
+
+    }
+
 }
