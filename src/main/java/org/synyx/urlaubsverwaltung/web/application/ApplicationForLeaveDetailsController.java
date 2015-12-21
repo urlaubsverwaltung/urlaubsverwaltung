@@ -304,8 +304,9 @@ public class ApplicationForLeaveDetailsController {
         boolean isAllowed = application.hasStatus(ApplicationStatus.ALLOWED);
 
         // security check: only two cases where cancelling is possible
-        // 1: user can cancel her own applications for leave
-        // 2: office can cancel all applications for leave that has the state waiting or allowed, even for other persons
+        // 1: user can cancel her own applications for leave if it has not been allowed yet
+        // 2: user can request cancellation if the application is already allowed.
+        // 3: office can cancel all applications for leave that has the state waiting or allowed, even for other persons
         if (signedInUser.equals(application.getPerson())) {
             // user can cancel only her own waiting applications, so the comment is NOT mandatory
             comment.setMandatory(false);
