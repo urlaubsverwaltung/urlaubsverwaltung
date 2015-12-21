@@ -13,5 +13,6 @@ public enum ApplicationAction {
     ALLOWED,
     REJECTED,
     CANCELLED,
+    CANCELLATION_REQUESTED,
     REVOKED
 }
