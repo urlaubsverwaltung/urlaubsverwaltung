@@ -21,6 +21,7 @@ import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 /**
@@ -55,7 +56,7 @@ public class TurnOfTheYearAccountUpdaterService {
     @Scheduled(cron = "0 0 5 1 1 *")
     void updateHolidaysAccounts() {
 
-        LOG.info("Starting updating users' accounts to calculate the remaining vacation days.");
+        LOG.info("Starting update of holidays accounts to calculate the remaining vacation days.");
 
         // what's the new year?
         int year = DateMidnight.now().getYear();
@@ -72,7 +73,8 @@ public class TurnOfTheYearAccountUpdaterService {
             Optional<Account> accountLastYear = accountService.getHolidaysAccount(year - 1, person);
 
             if (accountLastYear.isPresent() && accountLastYear.get().getAnnualVacationDays() != null) {
-                Account holidaysAccount = accountInteractionService.autoCreateHolidaysAccount(accountLastYear.get());
+                Account holidaysAccount = accountInteractionService.autoCreateOrUpdateNextYearsHolidaysAccount(
+                        accountLastYear.get());
 
                 LOG.info("Setting remaining vacation days of " + person.getLoginName() + " to "
                     + holidaysAccount.getRemainingVacationDays() + " for " + year);
