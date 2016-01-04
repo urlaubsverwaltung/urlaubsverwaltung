@@ -37,5 +37,6 @@
     <include file="dbchangelogs/changelog-2.11.3-rename-exchange-calendar-settings-username-column.xml"/>
     <include file="dbchangelogs/changelog-2.11.4-simplify-exchange-calendar-settings.xml"/>
     <include file="dbchangelogs/changelog-2.13.0-add-overtime-settings.xml"/>
+    <include file="dbchangelogs/changelog-2.13.1-remove-duplicated-accounts.xml"/>
 
 </databaseChangeLog>

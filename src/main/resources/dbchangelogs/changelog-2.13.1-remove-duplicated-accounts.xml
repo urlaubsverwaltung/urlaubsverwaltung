@@ -1,0 +1,22 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="murygina" id="remove_duplicated_accounts">
+
+        <preConditions>
+            <tableExists tableName="Account"/>
+            <columnExists tableName="Account" columnName="person_id"/>
+            <columnExists tableName="Account" columnName="validFrom"/>
+            <columnExists tableName="Account" columnName="validTo"/>
+        </preConditions>
+
+        <sql>
+            DELETE FROM Account WHERE id IN (SELECT tmp.id FROM (SELECT account.id FROM Account account GROUP BY
+            account.person_id, account.validFrom, account.validTo HAVING COUNT(1) > 1) as tmp)
+        </sql>
+
+    </changeSet>
+
+</databaseChangeLog>
