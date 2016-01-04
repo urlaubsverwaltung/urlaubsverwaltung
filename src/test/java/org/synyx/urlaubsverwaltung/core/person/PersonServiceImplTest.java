@@ -16,6 +16,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 
 /**
@@ -308,5 +310,89 @@ public class PersonServiceImplTest {
 
         Assert.assertTrue("Missing person", filteredList.contains(boss));
         Assert.assertTrue("Missing person", filteredList.contains(office));
+    }
+
+
+    @Test
+    public void ensureGetActivePersonsReturnSortedList() {
+
+        Person shane = TestDataCreator.createPerson("shane");
+        Person carl = TestDataCreator.createPerson("carl");
+        Person rick = TestDataCreator.createPerson("rick");
+
+        List<Person> unsortedPersons = Arrays.asList(shane, carl, rick);
+
+        Mockito.when(personDAO.findAll()).thenReturn(unsortedPersons);
+
+        List<Person> sortedList = sut.getActivePersons();
+
+        Assert.assertEquals("Wrong number of persons", 3, sortedList.size());
+        Assert.assertEquals("Wrong first person", carl, sortedList.get(0));
+        Assert.assertEquals("Wrong second person", rick, sortedList.get(1));
+        Assert.assertEquals("Wrong third person", shane, sortedList.get(2));
+    }
+
+
+    @Test
+    public void ensureGetInactivePersonsReturnSortedList() {
+
+        Person shane = TestDataCreator.createPerson("shane");
+        Person carl = TestDataCreator.createPerson("carl");
+        Person rick = TestDataCreator.createPerson("rick");
+
+        List<Person> unsortedPersons = Arrays.asList(shane, carl, rick);
+        unsortedPersons.forEach(person -> person.setPermissions(Collections.singletonList(Role.INACTIVE)));
+
+        Mockito.when(personDAO.findAll()).thenReturn(unsortedPersons);
+
+        List<Person> sortedList = sut.getInactivePersons();
+
+        Assert.assertEquals("Wrong number of persons", 3, sortedList.size());
+        Assert.assertEquals("Wrong first person", carl, sortedList.get(0));
+        Assert.assertEquals("Wrong second person", rick, sortedList.get(1));
+        Assert.assertEquals("Wrong third person", shane, sortedList.get(2));
+    }
+
+
+    @Test
+    public void ensureGetPersonsByRoleReturnSortedList() {
+
+        Person shane = TestDataCreator.createPerson("shane");
+        Person carl = TestDataCreator.createPerson("carl");
+        Person rick = TestDataCreator.createPerson("rick");
+
+        List<Person> unsortedPersons = Arrays.asList(shane, carl, rick);
+        unsortedPersons.forEach(person -> person.setPermissions(Collections.singletonList(Role.USER)));
+
+        Mockito.when(personDAO.findAll()).thenReturn(unsortedPersons);
+
+        List<Person> sortedList = sut.getPersonsByRole(Role.USER);
+
+        Assert.assertEquals("Wrong number of persons", 3, sortedList.size());
+        Assert.assertEquals("Wrong first person", carl, sortedList.get(0));
+        Assert.assertEquals("Wrong second person", rick, sortedList.get(1));
+        Assert.assertEquals("Wrong third person", shane, sortedList.get(2));
+    }
+
+
+    @Test
+    public void ensureGetPersonsByNotificationTypeReturnSortedList() {
+
+        Person shane = TestDataCreator.createPerson("shane");
+        Person carl = TestDataCreator.createPerson("carl");
+        Person rick = TestDataCreator.createPerson("rick");
+
+        List<Person> unsortedPersons = Arrays.asList(shane, carl, rick);
+        unsortedPersons.forEach(person ->
+                person.setNotifications(Collections.singletonList(MailNotification.NOTIFICATION_USER)));
+
+        Mockito.when(personDAO.findAll()).thenReturn(unsortedPersons);
+
+        List<Person> sortedList = sut.getPersonsWithNotificationType(MailNotification.NOTIFICATION_USER);
+
+        Assert.assertEquals("Wrong number of persons", 3, sortedList.size());
+        Assert.assertEquals("Wrong first person", carl, sortedList.get(0));
+        Assert.assertEquals("Wrong second person", rick, sortedList.get(1));
+        Assert.assertEquals("Wrong third person", shane, sortedList.get(2));
     }
 }

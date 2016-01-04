@@ -16,6 +16,7 @@ import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.core.department.Department;
 import org.synyx.urlaubsverwaltung.core.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
+import org.synyx.urlaubsverwaltung.core.person.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.Role;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
@@ -79,6 +80,7 @@ public final class TestDataCreator {
 
         Person person = new Person(username, lastName, firstName, email);
         person.setPermissions(Collections.singletonList(Role.USER));
+        person.setNotifications(Collections.singletonList(MailNotification.NOTIFICATION_USER));
 
         return person;
     }

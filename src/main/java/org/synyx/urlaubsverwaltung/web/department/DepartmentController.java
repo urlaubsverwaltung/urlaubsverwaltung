@@ -83,13 +83,7 @@ public class DepartmentController {
 
     private List<Person> getPersons() {
 
-        return personService.getActivePersons().stream().sorted(personComparator()).collect(Collectors.toList());
-    }
-
-
-    private Comparator<Person> personComparator() {
-
-        return (p1, p2) -> p1.getNiceName().toLowerCase().compareTo(p2.getNiceName().toLowerCase());
+        return personService.getActivePersons();
     }
 
 

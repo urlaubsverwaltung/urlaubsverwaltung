@@ -124,21 +124,12 @@ public class ApplyForLeaveController {
 
     private void prepareApplicationForLeaveForm(Person person, ApplicationForLeaveForm appForm, Model model) {
 
-        List<Person> persons = personService.getActivePersons()
-            .stream()
-            .sorted(personComparator())
-            .collect(Collectors.toList());
+        List<Person> persons = personService.getActivePersons();
 
         model.addAttribute(PersonConstants.PERSON_ATTRIBUTE, person);
         model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, persons);
         model.addAttribute("application", appForm);
         model.addAttribute("vacationTypes", VacationType.values());
-    }
-
-
-    private Comparator<Person> personComparator() {
-
-        return (p1, p2) -> p1.getNiceName().toLowerCase().compareTo(p2.getNiceName().toLowerCase());
     }
 
 

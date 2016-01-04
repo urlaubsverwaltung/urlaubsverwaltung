@@ -116,26 +116,10 @@ public class SickNoteController {
     public String newSickNote(Model model) {
 
         model.addAttribute("sickNote", new SickNote());
-        model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, getPersons());
+        model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, personService.getActivePersons());
         model.addAttribute("sickNoteTypes", SickNoteType.values());
 
         return "sicknote/sick_note_form";
-    }
-
-
-    private List<Person> getPersons() {
-
-        return FluentIterable.from(personService.getActivePersons()).toSortedList(new Comparator<Person>() {
-
-                    @Override
-                    public int compare(Person p1, Person p2) {
-
-                        String niceName1 = p1.getNiceName();
-                        String niceName2 = p2.getNiceName();
-
-                        return niceName1.toLowerCase().compareTo(niceName2.toLowerCase());
-                    }
-                });
     }
 
 
@@ -148,7 +132,7 @@ public class SickNoteController {
         if (errors.hasErrors()) {
             model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
             model.addAttribute("sickNote", sickNote);
-            model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, getPersons());
+            model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, personService.getActivePersons());
             model.addAttribute("sickNoteTypes", SickNoteType.values());
 
             return "sicknote/sick_note_form";

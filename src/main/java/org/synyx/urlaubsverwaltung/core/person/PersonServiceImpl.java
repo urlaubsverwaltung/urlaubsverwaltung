@@ -10,6 +10,7 @@ import org.synyx.urlaubsverwaltung.core.keys.KeyPairService;
 
 import java.security.KeyPair;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -107,14 +108,24 @@ class PersonServiceImpl implements PersonService {
         return personDAO.findAll()
             .stream()
             .filter(person -> !person.hasRole(Role.INACTIVE))
+            .sorted(personComparator())
             .collect(Collectors.toList());
+    }
+
+
+    private Comparator<Person> personComparator() {
+
+        return (p1, p2) -> p1.getNiceName().toLowerCase().compareTo(p2.getNiceName().toLowerCase());
     }
 
 
     @Override
     public List<Person> getInactivePersons() {
 
-        return personDAO.findAll().stream().filter(person -> person.hasRole(Role.INACTIVE))
+        return personDAO.findAll()
+            .stream()
+            .filter(person -> person.hasRole(Role.INACTIVE))
+            .sorted(personComparator())
             .collect(Collectors.toList());
     }
 
