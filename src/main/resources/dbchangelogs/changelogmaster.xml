@@ -29,6 +29,8 @@
     <include file="dbchangelogs/changelog-2.9.2-add-ews-calendar-settings.xml"/>
     <include file="dbchangelogs/changelog-2.9.3-add-domain-to-ews-calendar-settings.xml"/>
     <include file="dbchangelogs/changelog-2.9.4-add-column-dayLength-to-sick-note.xml"/>
+    <!-- Fix for very critical Bug, found in version 2.13.0 -->
+    <include file="dbchangelogs/changelog-2.13.1-remove-duplicated-accounts.xml"/>
 
 
 </databaseChangeLog>

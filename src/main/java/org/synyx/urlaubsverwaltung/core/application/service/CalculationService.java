@@ -111,6 +111,7 @@ public class CalculationService {
             return Optional.empty();
         }
 
-        return Optional.of(accountInteractionService.autoCreateHolidaysAccount(lastYearsHolidaysAccount.get()));
+        return Optional.of(accountInteractionService.autoCreateOrUpdateNextYearsHolidaysAccount(
+                    lastYearsHolidaysAccount.get()));
     }
 }

@@ -51,13 +51,14 @@ public interface AccountInteractionService {
 
 
     /**
-     * Auto-creates a new {@link Account} based on the information of the given reference account.
+     * Auto-creates a new {@link Account} or updates the existing {@link Account} for the next year, based on the
+     * information of the given reference account.
      *
      * @param  referenceAccount  to get the information about annual vacation days, left vacation days etc.
      *
-     * @return  the created holidays account
+     * @return  the created/updated holidays account
      */
-    Account autoCreateHolidaysAccount(Account referenceAccount);
+    Account autoCreateOrUpdateNextYearsHolidaysAccount(Account referenceAccount);
 
 
     /**
