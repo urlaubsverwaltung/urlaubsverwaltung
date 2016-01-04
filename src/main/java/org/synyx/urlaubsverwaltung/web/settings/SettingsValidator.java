@@ -144,17 +144,19 @@ public class SettingsValidator implements Validator {
 
         MailSettings mailSettings = settings.getMailSettings();
 
-        validateMailHost(mailSettings, errors);
+        if (mailSettings.isActive()) {
+            validateMailHost(mailSettings, errors);
 
-        validateMailPort(mailSettings, errors);
+            validateMailPort(mailSettings, errors);
 
-        validateMailUsername(mailSettings, errors);
+            validateMailUsername(mailSettings, errors);
 
-        validateMailPassword(mailSettings, errors);
+            validateMailPassword(mailSettings, errors);
 
-        validateMailFrom(mailSettings, errors);
+            validateMailFrom(mailSettings, errors);
 
-        validateMailAdministrator(mailSettings, errors);
+            validateMailAdministrator(mailSettings, errors);
+        }
     }
 
 
@@ -163,13 +165,17 @@ public class SettingsValidator implements Validator {
         String hostAttribute = "mailSettings.host";
         String host = mailSettings.getHost();
 
-        if (!StringUtils.hasText(host)) {
-            if (mailSettings.isActive()) {
-                errors.rejectValue(hostAttribute, ERROR_MANDATORY_FIELD);
-            }
+        validateMandatoryTextField(host, hostAttribute, errors);
+    }
+
+
+    private void validateMandatoryTextField(String input, String attributeName, Errors errors) {
+
+        if (!StringUtils.hasText(input)) {
+            errors.rejectValue(attributeName, ERROR_MANDATORY_FIELD);
         } else {
-            if (!validStringLength(host)) {
-                errors.rejectValue(hostAttribute, ERROR_LENGTH);
+            if (!validStringLength(input)) {
+                errors.rejectValue(attributeName, ERROR_LENGTH);
             }
         }
     }
@@ -187,9 +193,7 @@ public class SettingsValidator implements Validator {
         Integer port = mailSettings.getPort();
 
         if (port == null) {
-            if (mailSettings.isActive()) {
-                errors.rejectValue(portAttribute, ERROR_MANDATORY_FIELD);
-            }
+            errors.rejectValue(portAttribute, ERROR_MANDATORY_FIELD);
         } else {
             if (port <= 0) {
                 errors.rejectValue(portAttribute, ERROR_INVALID_ENTRY);
@@ -223,17 +227,21 @@ public class SettingsValidator implements Validator {
         String fromAttribute = "mailSettings.from";
         String from = mailSettings.getFrom();
 
-        if (!StringUtils.hasText(from)) {
-            if (mailSettings.isActive()) {
-                errors.rejectValue(fromAttribute, ERROR_MANDATORY_FIELD);
-            }
+        validateMandatoryMailAddress(from, fromAttribute, errors);
+    }
+
+
+    private void validateMandatoryMailAddress(String mailAddress, String attributeName, Errors errors) {
+
+        if (!StringUtils.hasText(mailAddress)) {
+            errors.rejectValue(attributeName, ERROR_MANDATORY_FIELD);
         } else {
-            if (!validStringLength(from)) {
-                errors.rejectValue(fromAttribute, ERROR_LENGTH);
+            if (!validStringLength(mailAddress)) {
+                errors.rejectValue(attributeName, ERROR_LENGTH);
             }
 
-            if (!MailAddressValidationUtil.hasValidFormat(from)) {
-                errors.rejectValue(fromAttribute, ERROR_INVALID_EMAIL);
+            if (!MailAddressValidationUtil.hasValidFormat(mailAddress)) {
+                errors.rejectValue(attributeName, ERROR_INVALID_EMAIL);
             }
         }
     }
@@ -244,19 +252,7 @@ public class SettingsValidator implements Validator {
         String administratorAttribute = "mailSettings.administrator";
         String administrator = mailSettings.getAdministrator();
 
-        if (!StringUtils.hasText(administrator)) {
-            if (mailSettings.isActive()) {
-                errors.rejectValue(administratorAttribute, ERROR_MANDATORY_FIELD);
-            }
-        } else {
-            if (!validStringLength(administrator)) {
-                errors.rejectValue(administratorAttribute, ERROR_LENGTH);
-            }
-
-            if (!MailAddressValidationUtil.hasValidFormat(administrator)) {
-                errors.rejectValue(administratorAttribute, ERROR_INVALID_EMAIL);
-            }
-        }
+        validateMandatoryMailAddress(administrator, administratorAttribute, errors);
     }
 
 
@@ -311,9 +307,11 @@ public class SettingsValidator implements Validator {
 
     private void validateExchangeCalendarSettings(ExchangeCalendarSettings exchangeCalendarSettings, Errors errors) {
 
-        validateExchangeEmail(exchangeCalendarSettings, errors);
-        validateExchangePassword(exchangeCalendarSettings, errors);
-        validateExchangeCalendarName(exchangeCalendarSettings, errors);
+        if (exchangeCalendarSettings.isActive()) {
+            validateExchangeEmail(exchangeCalendarSettings, errors);
+            validateExchangePassword(exchangeCalendarSettings, errors);
+            validateExchangeCalendarName(exchangeCalendarSettings, errors);
+        }
     }
 
 
@@ -322,19 +320,7 @@ public class SettingsValidator implements Validator {
         String emailAttribute = "calendarSettings.exchangeCalendarSettings.email";
         String email = exchangeCalendarSettings.getEmail();
 
-        if (!StringUtils.hasText(email)) {
-            if (exchangeCalendarSettings.isActive()) {
-                errors.rejectValue(emailAttribute, ERROR_MANDATORY_FIELD);
-            }
-        } else {
-            if (!validStringLength(email)) {
-                errors.rejectValue(emailAttribute, ERROR_LENGTH);
-            }
-
-            if (!MailAddressValidationUtil.hasValidFormat(email)) {
-                errors.rejectValue(emailAttribute, ERROR_INVALID_EMAIL);
-            }
-        }
+        validateMandatoryMailAddress(email, emailAttribute, errors);
     }
 
 
@@ -343,15 +329,7 @@ public class SettingsValidator implements Validator {
         String passwordAttribute = "calendarSettings.exchangeCalendarSettings.password";
         String password = exchangeCalendarSettings.getPassword();
 
-        if (!StringUtils.hasText(password)) {
-            if (exchangeCalendarSettings.isActive()) {
-                errors.rejectValue(passwordAttribute, ERROR_MANDATORY_FIELD);
-            }
-        } else {
-            if (!validStringLength(password)) {
-                errors.rejectValue(passwordAttribute, ERROR_LENGTH);
-            }
-        }
+        validateMandatoryTextField(password, passwordAttribute, errors);
     }
 
 
@@ -360,14 +338,6 @@ public class SettingsValidator implements Validator {
         String calendarAttribute = "calendarSettings.exchangeCalendarSettings.calendar";
         String calendar = exchangeCalendarSettings.getPassword();
 
-        if (!StringUtils.hasText(calendar)) {
-            if (exchangeCalendarSettings.isActive()) {
-                errors.rejectValue(calendarAttribute, ERROR_MANDATORY_FIELD);
-            }
-        } else {
-            if (!validStringLength(calendar)) {
-                errors.rejectValue(calendarAttribute, ERROR_LENGTH);
-            }
-        }
+        validateMandatoryTextField(calendar, calendarAttribute, errors);
     }
 }

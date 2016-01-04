@@ -241,6 +241,7 @@ public class SettingsValidatorTest {
         MailSettings mailSettings = new MailSettings();
         settings.setMailSettings(mailSettings);
 
+        mailSettings.setActive(true);
         mailSettings.setAdministrator("foo");
         mailSettings.setFrom("bar");
 
@@ -258,6 +259,7 @@ public class SettingsValidatorTest {
         MailSettings mailSettings = new MailSettings();
         settings.setMailSettings(mailSettings);
 
+        mailSettings.setActive(true);
         mailSettings.setPort(-1);
 
         Errors mockError = Mockito.mock(Errors.class);
@@ -273,6 +275,7 @@ public class SettingsValidatorTest {
         MailSettings mailSettings = new MailSettings();
         settings.setMailSettings(mailSettings);
 
+        mailSettings.setActive(true);
         mailSettings.setPort(0);
 
         Errors mockError = Mockito.mock(Errors.class);

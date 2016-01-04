@@ -313,7 +313,7 @@
                                 <spring:message code='settings.mail.password'/>:
                             </label>
                             <div class="col-md-8">
-                                <form:input id="mailSettings.password" path="mailSettings.password" class="form-control" cssErrorClass="form-control error" />
+                                <form:password showPassword="true" id="mailSettings.password" path="mailSettings.password" class="form-control" cssErrorClass="form-control error" />
                                 <span class="help-inline"><form:errors path="mailSettings.password" cssClass="error"/></span>
                             </div>
                         </div>
