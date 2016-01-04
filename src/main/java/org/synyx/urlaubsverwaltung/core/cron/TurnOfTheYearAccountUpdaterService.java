@@ -21,7 +21,6 @@ import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 
 /**
@@ -49,11 +48,7 @@ public class TurnOfTheYearAccountUpdaterService {
         this.mailService = mailService;
     }
 
-    /**
-     * This cronjob is executed every 1st January at 05:00 am, it calculates for every user how many vacation days
-     * he/she has left from last year, this number is set as number of remaining vacation days for the new year.
-     */
-    @Scheduled(cron = "0 0 5 1 1 *")
+    @Scheduled(cron = "${uv.cron.updateHolidaysAccounts}")
     void updateHolidaysAccounts() {
 
         LOG.info("Starting update of holidays accounts to calculate the remaining vacation days.");

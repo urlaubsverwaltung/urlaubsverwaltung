@@ -32,8 +32,7 @@ public class CronMailService {
         this.mailService = mailService;
     }
 
-    // executed every day at 06:00 am
-    @Scheduled(cron = "0 0 6 * * ?")
+    @Scheduled(cron = "${uv.cron.endOfSickPayNotification}")
     void sendEndOfSickPayNotification() {
 
         List<SickNote> sickNotes = sickNoteService.getSickNotesReachingEndOfSickPay();
