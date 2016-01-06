@@ -383,6 +383,25 @@ public class ApplicationInteractionServiceImplTest {
         Mockito.verify(absenceMappingService).delete(any(AbsenceMapping.class));
     }
 
+    @Test
+    public void ensureRejectingRequestedCancellationChangesAttributesAndSendsAnEmail() {
+        Person person = TestDataCreator.createPerson("muster");
+        Person canceller = TestDataCreator.createPerson("canceller");
+        Optional<String> comment = Optional.of("Foo");
+
+        Application applicationForLeave = getDummyApplication(person);
+        applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
+        service.rejectRequestedCancellation(applicationForLeave, canceller, comment);
+        Mockito.verify(commentService)
+                .create(eq(applicationForLeave), eq(ApplicationAction.REJECTED), eq(comment), eq(canceller));
+
+        Mockito.verify(applicationService).save(applicationForLeave);
+
+        Mockito.verify(mailService)
+                .sendRejectedCancellationRequest(eq(applicationForLeave), any(ApplicationComment.class));
+    }
+
+    //TODO: write test for extended behavior of cancel()
 
     @Test
     public void ensureCancellingAllowedApplicationForLeaveChangesStateAndOtherAttributesAndSendsAnEmail() {

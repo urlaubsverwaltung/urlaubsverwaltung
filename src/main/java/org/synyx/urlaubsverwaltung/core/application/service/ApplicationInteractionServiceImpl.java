@@ -180,6 +180,24 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         return application;
     }
 
+    @Override
+    public Application rejectRequestedCancellation(Application application, Person canceller, Optional<String> comment) {
+        application.setStatus(ApplicationStatus.ALLOWED);
+
+        /*
+         * TODO: Check whether the last comment is ApplicationAction.CANCELLATION_REQUESTED
+         *       and throw an IllegalStateException if not.
+         */
+        ApplicationComment createdComment = commentService.create(application, ApplicationAction.REJECTED, comment,
+                canceller);
+
+        applicationService.save(application);
+        LOG.info("Rejected cancellation request for already approved application for leave: " + application.toString());
+
+        mailService.sendRejectedCancellationRequest(application, createdComment);
+        return application;
+    }
+
 
     @Override
     public Application cancel(Application application, Person canceller, Optional<String> comment) {
@@ -193,16 +211,21 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         application.setCanceller(canceller);
         application.setCancelDate(DateMidnight.now());
 
+        /*
+         * Updating applicationAction and applicationStatus according
+         * to parameters
+         */
         if (cancellingAllowedApplication) {
             /*
              * Security is handled up the call stack. If the
              * canceller is not the owner of the application
-             * it is OK to cance ldirectly.
+             * it is OK to cancel directly.
              */
             if(!isUserCancellingOwnApplication) {
                 application.setStatus(ApplicationStatus.CANCELLED);
                 commentStatus = ApplicationAction.CANCELLED;
             }
+
             /*
              * Users cannot cancel already allowed applications
              * directly. Their commentStatus will be CANCELLATION_REQUESTED
@@ -212,7 +235,8 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
             else {
                 commentStatus = ApplicationAction.CANCELLATION_REQUESTED;
             }
-        } else {
+        }
+        else {
             application.setStatus(ApplicationStatus.REVOKED);
             commentStatus = ApplicationAction.REVOKED;
         }
@@ -223,9 +247,8 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         ApplicationComment createdComment = commentService.create(application, commentStatus, comment, canceller);
 
-        //mailing for already allowed applications
+        //handling mails only after created comment and application have been saved
         if (cancellingAllowedApplication) {
-            // if allowed application has been cancelled, office and bosses get an email
             if (!isUserCancellingOwnApplication) {
                 mailService.sendCancelledNotification(application, false, createdComment);
             }
@@ -233,12 +256,10 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
                 mailService.sendCancellationRequest(application, createdComment);
             }
         }
-
-
-        if (!isUserCancellingOwnApplication) {
-            // if application has been cancelled for someone on behalf,
-            // the person gets an email regardless of application status
-            mailService.sendCancelledNotification(application, true, createdComment);
+        else {
+            if(!isUserCancellingOwnApplication) {
+                mailService.sendCancelledNotification(application, true, createdComment);
+            }
         }
 
         accountInteractionService.updateRemainingVacationDays(application.getStartDate().getYear(), person);
