@@ -502,12 +502,23 @@ class MailServiceImpl implements MailService {
 
     @Override
     public void sendCancellationRequest(Application application, ApplicationComment createdComment) {
+        Map<String, Object> model = new HashMap<>();
+        model.put("application", application);
+        model.put("comment", createdComment);
+        model.put("link", applicationUrl + "web/application/" + application.getId());
 
+        String text = buildMailBody("application_cancellation_request", model);
+
+        sendEmail(getOfficeMembers(), "subject.application.cancellation_request", text);
     }
 
     @Override
     public void sendRejectedCancellationRequest(Application application, ApplicationComment createdComment) {
-
+        Map<String, Object> model = new HashMap<>();
+        model.put("application", application);
+        model.put("comment", createdComment);
+        String text = buildMailBody("application_cancellation_rejected", model);
+        sendEmail(getOfficeMembers(), "subject.application.cancellation_rejected", text);
     }
 
 }
