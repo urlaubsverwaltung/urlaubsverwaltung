@@ -401,7 +401,25 @@ public class ApplicationInteractionServiceImplTest {
                 .sendRejectedCancellationRequest(eq(applicationForLeave), any(ApplicationComment.class));
     }
 
-    //TODO: write test for extended behavior of cancel()
+    @Test
+    public void ensureCancellingAllowedApplicationByOwnerCreatesACancellationRequest() {
+        Person person = TestDataCreator.createPerson("muster");
+
+        Optional<String> comment = Optional.of("Foo");
+
+        Application applicationForLeave = getDummyApplication(person);
+        applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
+
+        service.cancel(applicationForLeave, person, comment);
+
+        Mockito.verify(applicationService).save(applicationForLeave);
+
+        Mockito.verify(commentService)
+                .create(eq(applicationForLeave), eq(ApplicationAction.CANCELLATION_REQUESTED), eq(comment), eq(person));
+
+        Mockito.verify(mailService)
+                .sendCancellationRequest(eq(applicationForLeave), any(ApplicationComment.class));
+    }
 
     @Test
     public void ensureCancellingAllowedApplicationForLeaveChangesStateAndOtherAttributesAndSendsAnEmail() {
