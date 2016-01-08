@@ -415,7 +415,7 @@ public class ApplicationInteractionServiceImplTest {
         Mockito.verify(applicationService).save(applicationForLeave);
 
         Mockito.verify(commentService)
-                .create(eq(applicationForLeave), eq(ApplicationAction.CANCELLATION_REQUESTED), eq(comment), eq(person));
+                .create(eq(applicationForLeave), eq(ApplicationAction.CANCEL_REQUESTED), eq(comment), eq(person));
 
         Mockito.verify(mailService)
                 .sendCancellationRequest(eq(applicationForLeave), any(ApplicationComment.class));
