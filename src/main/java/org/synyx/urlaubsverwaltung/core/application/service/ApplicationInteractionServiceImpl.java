@@ -185,7 +185,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         application.setStatus(ApplicationStatus.ALLOWED);
 
         /*
-         * TODO: Check whether the last comment is ApplicationAction.CANCELLATION_REQUESTED
+         * TODO: Check whether the last comment is ApplicationAction.CANCEL_REQUESTED
          *       and throw an IllegalStateException if not.
          */
         ApplicationComment createdComment = commentService.create(application, ApplicationAction.REJECTED, comment,
@@ -228,12 +228,12 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
             /*
              * Users cannot cancel already allowed applications
-             * directly. Their commentStatus will be CANCELLATION_REQUESTED
+             * directly. Their commentStatus will be CANCEL_REQUESTED
              * and the application.status will remain ALLOWED until
              * the office or a boss approves the request.
              */
             else {
-                commentStatus = ApplicationAction.CANCELLATION_REQUESTED;
+                commentStatus = ApplicationAction.CANCEL_REQUESTED;
             }
         }
         else {
