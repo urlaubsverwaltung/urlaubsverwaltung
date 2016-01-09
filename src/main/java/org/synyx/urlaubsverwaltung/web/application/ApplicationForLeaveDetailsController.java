@@ -120,6 +120,7 @@ public class ApplicationForLeaveDetailsController {
 
         model.addAttribute("comment", new ApplicationCommentForm());
         model.addAttribute("comments", comments);
+        model.addAttribute("lastComment", comments.get(comments.size()-1));
 
         // SPECIAL ATTRIBUTES FOR BOSSES / DEPARTMENT HEADS
         Person signedInUser = sessionService.getSignedInUser();
