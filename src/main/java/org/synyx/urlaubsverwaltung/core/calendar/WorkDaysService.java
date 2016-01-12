@@ -93,8 +93,8 @@ public class WorkDaysService {
 
         if (!workingTime.isPresent()) {
             throw new NoValidWorkingTimeException("No working time found for User '" + person.getLoginName()
-                + "' in period " + startDate.toString(DateFormat.PATTERN) + " - " + endDate.toString(DateFormat.PATTERN)
-                + ". Please contact the application manager.");
+                + "' in period " + startDate.toString(DateFormat.PATTERN) + " - "
+                + endDate.toString(DateFormat.PATTERN));
         }
 
         BigDecimal vacationDays = BigDecimal.ZERO;

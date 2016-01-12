@@ -15,13 +15,16 @@ import org.synyx.urlaubsverwaltung.core.application.service.CalculationService;
 import org.synyx.urlaubsverwaltung.core.calendar.OverlapCase;
 import org.synyx.urlaubsverwaltung.core.calendar.OverlapService;
 import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
+import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.math.BigDecimal;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import static org.junit.Assert.assertFalse;
@@ -36,6 +39,8 @@ import static org.junit.Assert.assertTrue;
 public class ApplicationValidatorTest {
 
     private ApplicationValidator validator;
+
+    private WorkingTimeService workingTimeService;
     private WorkDaysService calendarService;
     private OverlapService overlapService;
     private CalculationService calculationService;
@@ -56,8 +61,10 @@ public class ApplicationValidatorTest {
         calendarService = Mockito.mock(WorkDaysService.class);
         overlapService = Mockito.mock(OverlapService.class);
         calculationService = Mockito.mock(CalculationService.class);
+        workingTimeService = Mockito.mock(WorkingTimeService.class);
 
-        validator = new ApplicationValidator(calendarService, overlapService, calculationService, settingsService);
+        validator = new ApplicationValidator(workingTimeService, calendarService, overlapService, calculationService,
+                settingsService);
         errors = Mockito.mock(Errors.class);
 
         appForm = new ApplicationForLeaveForm();
@@ -69,6 +76,10 @@ public class ApplicationValidatorTest {
 
         // Default: everything is alright, override for negative cases
         Mockito.when(errors.hasErrors()).thenReturn(Boolean.FALSE);
+
+        Mockito.when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(Mockito.any(Person.class),
+                    Mockito.any(DateMidnight.class)))
+            .thenReturn(Optional.of(TestDataCreator.createWorkingTime()));
         Mockito.when(calendarService.getWorkDays(Mockito.any(DayLength.class), Mockito.any(DateMidnight.class),
                     Mockito.any(DateMidnight.class), Mockito.any(Person.class)))
             .thenReturn(BigDecimal.ONE);
@@ -465,5 +476,26 @@ public class ApplicationValidatorTest {
 
         Mockito.verify(errors).hasFieldErrors("hours");
         Mockito.verify(errors, Mockito.never()).rejectValue("hours", "application.error.missingHoursForOvertime");
+    }
+
+
+    // Validate working time exists ------------------------------------------------------------------------------------
+
+    @Test
+    public void ensureWorkingTimeConfigurationMustExistForPeriodOfSickNote() {
+
+        Mockito.when(errors.hasErrors()).thenReturn(Boolean.FALSE);
+
+        Mockito.when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(Mockito.any(Person.class),
+                    Mockito.any(DateMidnight.class)))
+            .thenReturn(Optional.empty());
+
+        validator.validate(appForm, errors);
+
+        Mockito.verify(errors).reject("application.error.noValidWorkingTime");
+
+        Mockito.verifyZeroInteractions(calendarService);
+        Mockito.verifyZeroInteractions(overlapService);
+        Mockito.verifyZeroInteractions(calculationService);
     }
 }

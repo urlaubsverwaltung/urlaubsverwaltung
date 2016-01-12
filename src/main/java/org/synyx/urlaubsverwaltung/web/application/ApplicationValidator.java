@@ -17,6 +17,8 @@ import org.synyx.urlaubsverwaltung.core.application.service.CalculationService;
 import org.synyx.urlaubsverwaltung.core.calendar.OverlapCase;
 import org.synyx.urlaubsverwaltung.core.calendar.OverlapService;
 import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
+import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;
+import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.AbsenceSettings;
@@ -25,6 +27,8 @@ import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.util.CalcUtil;
 
 import java.math.BigDecimal;
+
+import java.util.Optional;
 
 
 /**
@@ -46,6 +50,7 @@ public class ApplicationValidator implements Validator {
     private static final String ERROR_TOO_LONG = "application.error.tooFarInTheFuture";
     private static final String ERROR_ZERO_DAYS = "application.error.zeroDays";
     private static final String ERROR_OVERLAP = "application.error.overlap";
+    private static final String ERROR_WORKING_TIME = "application.error.noValidWorkingTime";
     private static final String ERROR_NOT_ENOUGH_DAYS = "application.error.notEnoughVacationDays";
     private static final String ERROR_MISSING_HOURS = "application.error.missingHoursForOvertime";
     private static final String ERROR_INVALID_HOURS = "application.error.invalidHoursForOvertime";
@@ -58,15 +63,17 @@ public class ApplicationValidator implements Validator {
     private static final String ATTRIBUTE_COMMENT = "comment";
     private static final String ATTRIBUTE_HOURS = "hours";
 
+    private final WorkingTimeService workingTimeService;
     private final WorkDaysService calendarService;
     private final OverlapService overlapService;
     private final CalculationService calculationService;
     private final SettingsService settingsService;
 
     @Autowired
-    public ApplicationValidator(WorkDaysService calendarService, OverlapService overlapService,
-        CalculationService calculationService, SettingsService settingsService) {
+    public ApplicationValidator(WorkingTimeService workingTimeService, WorkDaysService calendarService,
+        OverlapService overlapService, CalculationService calculationService, SettingsService settingsService) {
 
+        this.workingTimeService = workingTimeService;
         this.calendarService = calendarService;
         this.overlapService = overlapService;
         this.calculationService = calculationService;
@@ -209,9 +216,24 @@ public class ApplicationValidator implements Validator {
 
     private void validateIfApplyingForLeaveIsPossible(ApplicationForLeaveForm applicationForm, Errors errors) {
 
-        DayLength dayLength = applicationForm.getDayLength();
         Person person = applicationForm.getPerson();
 
+        /**
+         * Ensure the person has a working time for the period of the application for leave
+         */
+        Optional<WorkingTime> workingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(person,
+                applicationForm.getStartDate());
+
+        if (!workingTime.isPresent()) {
+            errors.reject(ERROR_WORKING_TIME);
+
+            return;
+        }
+
+        /**
+         * Calculate the work days
+         */
+        DayLength dayLength = applicationForm.getDayLength();
         BigDecimal days;
 
         if (dayLength == DayLength.FULL) {

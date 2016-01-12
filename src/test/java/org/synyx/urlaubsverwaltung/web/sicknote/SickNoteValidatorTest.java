@@ -12,10 +12,14 @@ import org.springframework.validation.Errors;
 
 import org.synyx.urlaubsverwaltung.core.calendar.OverlapCase;
 import org.synyx.urlaubsverwaltung.core.calendar.OverlapService;
+import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
+import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteComment;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
+
+import java.util.Optional;
 
 
 /**
@@ -28,6 +32,7 @@ public class SickNoteValidatorTest {
     private SickNoteValidator validator;
 
     private OverlapService overlapService;
+    private WorkingTimeService workingTimeService;
 
     private SickNote sickNote;
     private Errors errors;
@@ -36,14 +41,20 @@ public class SickNoteValidatorTest {
     public void setUp() throws Exception {
 
         overlapService = Mockito.mock(OverlapService.class);
+        workingTimeService = Mockito.mock(WorkingTimeService.class);
 
-        validator = new SickNoteValidator(overlapService);
+        validator = new SickNoteValidator(overlapService, workingTimeService);
         errors = Mockito.mock(Errors.class);
         Mockito.reset(errors);
 
         sickNote = TestDataCreator.createSickNote(TestDataCreator.createPerson(),
                 new DateMidnight(2013, DateTimeConstants.NOVEMBER, 19),
                 new DateMidnight(2013, DateTimeConstants.NOVEMBER, 20), DayLength.FULL);
+
+        Mockito.when(overlapService.checkOverlap(Mockito.any(SickNote.class))).thenReturn(OverlapCase.NO_OVERLAPPING);
+        Mockito.when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(Mockito.any(Person.class),
+                    Mockito.any(DateMidnight.class)))
+            .thenReturn(Optional.of(TestDataCreator.createWorkingTime()));
     }
 
 
@@ -214,5 +225,25 @@ public class SickNoteValidatorTest {
         validator.validate(sickNote, errors);
 
         Mockito.verify(errors).reject("application.error.overlap");
+    }
+
+
+    @Test
+    public void ensureWorkingTimeConfigurationMustExistForPeriodOfSickNote() {
+
+        DateMidnight startDate = new DateMidnight(2015, DateTimeConstants.MARCH, 1);
+        DateMidnight endDate = new DateMidnight(2015, DateTimeConstants.MARCH, 10);
+
+        sickNote.setStartDate(startDate);
+        sickNote.setEndDate(endDate);
+
+        Mockito.when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(Mockito.any(Person.class),
+                    Mockito.any(DateMidnight.class)))
+            .thenReturn(Optional.empty());
+
+        validator.validate(sickNote, errors);
+
+        Mockito.verify(workingTimeService).getByPersonAndValidityDateEqualsOrMinorDate(sickNote.getPerson(), startDate);
+        Mockito.verify(errors).reject("sicknote.error.noValidWorkingTime");
     }
 }

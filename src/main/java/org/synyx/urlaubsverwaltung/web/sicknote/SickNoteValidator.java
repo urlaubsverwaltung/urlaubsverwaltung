@@ -14,9 +14,13 @@ import org.springframework.validation.Validator;
 
 import org.synyx.urlaubsverwaltung.core.calendar.OverlapCase;
 import org.synyx.urlaubsverwaltung.core.calendar.OverlapService;
+import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;
+import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteComment;
+
+import java.util.Optional;
 
 
 /**
@@ -33,6 +37,7 @@ public class SickNoteValidator implements Validator {
     private static final String ERROR_PERIOD_SICK_NOTE = "sicknote.error.aubInvalidPeriod";
     private static final String ERROR_HALF_DAY_PERIOD_SICK_NOTE = "sicknote.error.halfDayPeriod";
     private static final String ERROR_OVERLAP = "application.error.overlap";
+    private static final String ERROR_WORKING_TIME = "sicknote.error.noValidWorkingTime";
 
     private static final String ATTRIBUTE_DAY_LENGTH = "dayLength";
     private static final String ATTRIBUTE_START_DATE = "startDate";
@@ -44,11 +49,13 @@ public class SickNoteValidator implements Validator {
     private static final int MAX_CHARS = 200;
 
     private final OverlapService overlapService;
+    private final WorkingTimeService workingTimeService;
 
     @Autowired
-    public SickNoteValidator(OverlapService overlapService) {
+    public SickNoteValidator(OverlapService overlapService, WorkingTimeService workingTimeService) {
 
         this.overlapService = overlapService;
+        this.workingTimeService = workingTimeService;
     }
 
     @Override
@@ -150,6 +157,18 @@ public class SickNoteValidator implements Validator {
 
 
     private void validateNoOverlapping(SickNote sickNote, Errors errors) {
+
+        /**
+         * Ensure the person has a working time for the period of the sick note
+         */
+        Optional<WorkingTime> workingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(
+                sickNote.getPerson(), sickNote.getStartDate());
+
+        if (!workingTime.isPresent()) {
+            errors.reject(ERROR_WORKING_TIME);
+
+            return;
+        }
 
         /**
          * Ensure that there is no application for leave and no sick note in the same period
