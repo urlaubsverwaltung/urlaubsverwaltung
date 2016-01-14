@@ -19,18 +19,17 @@ import java.util.List;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Component
-public class DepartmentDataProvider {
+class DepartmentDataProvider {
 
     private final DepartmentService departmentService;
 
     @Autowired
-    public DepartmentDataProvider(DepartmentService departmentService) {
+    DepartmentDataProvider(DepartmentService departmentService) {
 
         this.departmentService = departmentService;
     }
 
-    public void createTestDepartment(String name, String description, List<Person> members,
-        List<Person> departmentHeads) {
+    void createTestDepartment(String name, String description, List<Person> members, List<Person> departmentHeads) {
 
         Department department = new Department();
         department.setName(name);

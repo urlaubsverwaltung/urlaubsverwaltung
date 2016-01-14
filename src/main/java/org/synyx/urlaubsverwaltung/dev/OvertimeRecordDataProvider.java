@@ -21,18 +21,17 @@ import java.util.Optional;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Component
-public class OvertimeRecordDataProvider {
+class OvertimeRecordDataProvider {
 
     private final OvertimeService overtimeService;
 
     @Autowired
-    public OvertimeRecordDataProvider(OvertimeService overtimeService) {
+    OvertimeRecordDataProvider(OvertimeService overtimeService) {
 
         this.overtimeService = overtimeService;
     }
 
-    public Overtime createOvertimeRecord(Person person, DateMidnight startDate, DateMidnight endDate,
-        BigDecimal hours) {
+    Overtime createOvertimeRecord(Person person, DateMidnight startDate, DateMidnight endDate, BigDecimal hours) {
 
         Overtime overtime = new Overtime(person, startDate, endDate, hours);
 
