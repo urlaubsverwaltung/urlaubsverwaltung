@@ -8,7 +8,7 @@ import org.synyx.urlaubsverwaltung.core.person.Role;
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-public enum TestUser {
+enum TestUser {
 
     USER("testUser"),
     DEPARTMENT_HEAD("testHead"),
@@ -22,7 +22,7 @@ public enum TestUser {
         this.login = login;
     }
 
-    public String getLogin() {
+    String getLogin() {
 
         return login;
     }
@@ -33,7 +33,7 @@ public enum TestUser {
      *
      * @return  array of roles of the test user
      */
-    public Role[] getRoles() {
+    Role[] getRoles() {
 
         switch (this) {
             case DEPARTMENT_HEAD:

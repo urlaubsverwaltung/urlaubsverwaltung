@@ -23,20 +23,20 @@ import java.util.Optional;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Component
-public class ApplicationForLeaveDataProvider {
+class ApplicationForLeaveDataProvider {
 
     private final ApplicationInteractionService applicationInteractionService;
     private final DurationChecker durationChecker;
 
     @Autowired
-    public ApplicationForLeaveDataProvider(ApplicationInteractionService applicationInteractionService,
+    ApplicationForLeaveDataProvider(ApplicationInteractionService applicationInteractionService,
         DurationChecker durationChecker) {
 
         this.applicationInteractionService = applicationInteractionService;
         this.durationChecker = durationChecker;
     }
 
-    public Application createWaitingApplication(Person person, VacationType vacationType, DayLength dayLength,
+    Application createWaitingApplication(Person person, VacationType vacationType, DayLength dayLength,
         DateMidnight startDate, DateMidnight endDate) {
 
         Application application = null;
@@ -73,8 +73,8 @@ public class ApplicationForLeaveDataProvider {
     }
 
 
-    public Application createAllowedApplication(Person person, Person boss, VacationType vacationType,
-        DayLength dayLength, DateMidnight startDate, DateMidnight endDate) {
+    Application createAllowedApplication(Person person, Person boss, VacationType vacationType, DayLength dayLength,
+        DateMidnight startDate, DateMidnight endDate) {
 
         Application application = createWaitingApplication(person, vacationType, dayLength, startDate, endDate);
 
@@ -86,8 +86,8 @@ public class ApplicationForLeaveDataProvider {
     }
 
 
-    public Application createRejectedApplication(Person person, Person boss, VacationType vacationType,
-        DayLength dayLength, DateMidnight startDate, DateMidnight endDate) {
+    Application createRejectedApplication(Person person, Person boss, VacationType vacationType, DayLength dayLength,
+        DateMidnight startDate, DateMidnight endDate) {
 
         Application application = createWaitingApplication(person, vacationType, dayLength, startDate, endDate);
 
@@ -100,8 +100,8 @@ public class ApplicationForLeaveDataProvider {
     }
 
 
-    public Application createCancelledApplication(Person person, Person office, VacationType vacationType,
-        DayLength dayLength, DateMidnight startDate, DateMidnight endDate) {
+    Application createCancelledApplication(Person person, Person office, VacationType vacationType, DayLength dayLength,
+        DateMidnight startDate, DateMidnight endDate) {
 
         Application application = createAllowedApplication(person, office, vacationType, dayLength, startDate, endDate);
 

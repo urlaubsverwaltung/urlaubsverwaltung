@@ -20,20 +20,19 @@ import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Component
-public class SickNoteDataProvider {
+class SickNoteDataProvider {
 
     private final SickNoteInteractionService sickNoteInteractionService;
     private final DurationChecker durationChecker;
 
     @Autowired
-    public SickNoteDataProvider(SickNoteInteractionService sickNoteInteractionService,
-        DurationChecker durationChecker) {
+    SickNoteDataProvider(SickNoteInteractionService sickNoteInteractionService, DurationChecker durationChecker) {
 
         this.sickNoteInteractionService = sickNoteInteractionService;
         this.durationChecker = durationChecker;
     }
 
-    public SickNote createSickNote(Person person, Person office, DayLength dayLength, DateMidnight startDate,
+    SickNote createSickNote(Person person, Person office, DayLength dayLength, DateMidnight startDate,
         DateMidnight endDate, SickNoteType type, boolean withAUB) {
 
         SickNote sickNote = null;
