@@ -19,19 +19,4 @@
 
     </security:authentication-manager>
 
-    <!-- SYNC LDAP DATA -->
-
-    <bean id="ldapTemplate" class="org.springframework.ldap.core.LdapTemplate">
-        <constructor-arg ref="contextSource"/>
-        <property name="ignorePartialResultException" value="true"/>
-        <property name="ignoreNameNotFoundException" value="true"/>
-    </bean>
-
-    <bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource">
-        <property name="url" value="${uv.security.ldap.url}"/>
-        <property name="base" value="${uv.security.ldap.sync.userSearchBase},${uv.security.ldap.base}"/>
-        <property name="userDn" value="${uv.security.ldap.sync.userDn}"/>
-        <property name="password" value="${uv.security.ldap.sync.password}"/>
-    </bean>
-
 </beans>
