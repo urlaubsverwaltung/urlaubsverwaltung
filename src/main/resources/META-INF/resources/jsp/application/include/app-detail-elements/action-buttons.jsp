@@ -61,13 +61,13 @@
   <c:if test="${application.status == 'ALLOWED'}">
     <c:choose>
       <c:when test="${IS_OFFICE}">
-        <a href="#" class="fa-action negative pull-right" data-title="<spring:message code='action.delete.request'/>"
+        <a href="#" class="fa-action negative pull-right" data-title="<spring:message code='action.delete'/>"
            onclick="$('#reject').hide(); $('#allow').hide(); $('#refer').hide(); $('#cancel').show();">
           <i class="fa fa-trash"></i>
         </a>
       </c:when>
       <c:when test="${IS_USER && application.person.id == signedInUser.id}">
-        <a href="#" class="fa-action negative pull-right" data-title="<spring:message code='action.delete.request'/>"
+        <a href="#" class="fa-action negative pull-right" data-title="<spring:message code='action.delete'/>"
            onclick="$('#reject').hide(); $('#allow').hide(); $('#refer').hide(); $('#cancel').show();">
           <i class="fa fa-question"></i>&nbsp;<i class="fa fa-trash"></i>
         </a>
