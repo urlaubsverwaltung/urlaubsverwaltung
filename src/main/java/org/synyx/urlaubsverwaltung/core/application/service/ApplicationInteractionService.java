@@ -56,6 +56,17 @@ public interface ApplicationInteractionService {
 
 
     /**
+     * Reject an request for cancellation of an already approved application
+     *
+     * @param  application  for leave
+     * @param  canceller  executes the application's cancellation
+     * @param  comment  giving further information to cancellation of application for leave (is optional)
+     *
+     * @return  the cancelled application for leave
+     */
+    Application rejectRequestedCancellation(Application application, Person canceller, Optional<String> comment);
+
+    /**
      * Sets the application's state to cancelled.
      *
      * @param  application  for leave

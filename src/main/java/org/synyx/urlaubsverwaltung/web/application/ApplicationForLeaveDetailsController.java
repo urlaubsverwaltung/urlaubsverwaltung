@@ -120,6 +120,7 @@ public class ApplicationForLeaveDetailsController {
 
         model.addAttribute("comment", new ApplicationCommentForm());
         model.addAttribute("comments", comments);
+        model.addAttribute("lastComment", comments.get(comments.size()-1));
 
         // SPECIAL ATTRIBUTES FOR BOSSES / DEPARTMENT HEADS
         Person signedInUser = sessionService.getSignedInUser();
@@ -285,6 +286,54 @@ public class ApplicationForLeaveDetailsController {
                 signedInUser.getLoginName(), person.getLoginName()));
     }
 
+    /**
+     * Reject the cancellation request for an already approved application. Only for
+     * Office.
+     */
+    @RequestMapping(value = "/{applicationId}/reject_requested_cancellation", method = RequestMethod.POST)
+    public String rejectRequestedCancellation(@PathVariable("applicationId") Integer applicationId,
+                                    @ModelAttribute("comment") ApplicationCommentForm comment,
+                                    Errors errors, RedirectAttributes redirectAttributes)
+            throws UnknownApplicationForLeaveException, AccessDeniedException {
+
+        Application application = applicationService.getApplicationById(applicationId).orElseThrow(() ->
+                new UnknownApplicationForLeaveException(applicationId));
+
+        Person signedInUser = sessionService.getSignedInUser();
+
+        boolean isApplicationAllowed = application.hasStatus(ApplicationStatus.ALLOWED);
+        boolean isOfficeUser = signedInUser.hasRole(Role.OFFICE);
+
+        //only office users may reject cancellation requests
+        if(!isOfficeUser) {
+            throw new AccessDeniedException(String.format(
+                    "User '%s' does not have the correct permissions to reject the cancellation request for" +
+                            " applications for leave of user '%s'",
+                    signedInUser.getLoginName(), application.getPerson().getLoginName()));
+        }
+
+        //only already allowed applications can be cancelled via request
+        if(!isApplicationAllowed) {
+            throw new IllegalArgumentException(String.format("Only applications with state '%s' can (and have to be) cancelled" +
+                    " via cancellation request. The application with ID %s has state '%s'", ApplicationStatus.ALLOWED,
+            applicationId, application.getStatus()));
+        }
+
+
+        //comment is mandatory in any case
+        comment.setMandatory(true);
+        commentValidator.validate(comment, errors);
+
+        if (errors.hasErrors()) {
+            redirectAttributes.addFlashAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
+
+            return "redirect:/web/application/" + applicationId + "?action=reject_requested_cancellation";
+        }
+        Optional<String> commentText = Optional.of(comment.getText());
+        applicationInteractionService.rejectRequestedCancellation(application, signedInUser, commentText);
+
+        return "redirect:/web/application/" + applicationId;
+    }
 
     /**
      * Cancel an application for leave. Cancelling an application for leave on behalf for someone is allowed only for
@@ -304,10 +353,11 @@ public class ApplicationForLeaveDetailsController {
         boolean isAllowed = application.hasStatus(ApplicationStatus.ALLOWED);
 
         // security check: only two cases where cancelling is possible
-        // 1: user can cancel his own applications for leave if they have the state waiting
-        // 2: office can cancel all applications for leave that has the state waiting or allowed, even for other persons
-        if (signedInUser.equals(application.getPerson()) && isWaiting) {
-            // user can cancel only his own waiting applications, so the comment is NOT mandatory
+        // 1: user can cancel her own applications for leave if it has not been allowed yet
+        // 2: user can request cancellation if the application is already allowed.
+        // 3: office can cancel all applications for leave that has the state waiting or allowed, even for other persons
+        if (signedInUser.equals(application.getPerson())) {
+            // user can cancel only her own waiting applications, so the comment is NOT mandatory
             comment.setMandatory(false);
         } else if (signedInUser.hasRole(Role.OFFICE) && (isWaiting || isAllowed)) {
             // office cancels application of other users, state can be waiting or allowed, so the comment is mandatory
