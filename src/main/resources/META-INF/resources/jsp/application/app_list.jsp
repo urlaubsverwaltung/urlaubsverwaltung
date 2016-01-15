@@ -38,7 +38,7 @@
                             <i class="fa fa-fw fa-bar-chart"></i>
                           </a>
 
-                          <sec:authorize access="hasRole('OFFICE')">
+                          <sec:authorize access="hasAuthority('OFFICE')">
                           <a href="${URL_PREFIX}/application/new" class="fa-action pull-right"
                               data-title="<spring:message code="action.apply.vacation"/>">
                             <i class="fa fa-fw fa-plus-circle"></i>
@@ -133,7 +133,7 @@
                                     </c:choose>
                                   </td>
                                   <td class="hidden-xs hidden-sm">
-                                      <sec:authorize access="hasAnyRole('DEPARTMENT_HEAD', 'BOSS')">
+                                      <sec:authorize access="hasAnyAuthority('DEPARTMENT_HEAD', 'BOSS')">
                                           <a class="fa-action positive" href="${URL_PREFIX}/application/${application.id}?action=allow&shortcut=true"
                                              data-title="<spring:message code='action.allow'/>">
                                               <i class="fa fa-check"></i>
@@ -141,7 +141,7 @@
                                       </sec:authorize>
                                   </td>
                                   <td class="hidden-xs hidden-sm">
-                                      <sec:authorize access="hasAnyRole('DEPARTMENT_HEAD', 'BOSS')">
+                                      <sec:authorize access="hasAnyAuthority('DEPARTMENT_HEAD', 'BOSS')">
                                           <a class="fa-action negative" href="${URL_PREFIX}/application/${application.id}?action=reject&shortcut=true"
                                              data-title="<spring:message code='action.reject'/>">
                                               <i class="fa fa-ban"></i>

@@ -3,7 +3,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:security="http://www.springframework.org/schema/security"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-                            http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+                            http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.0.xsd">
 
     <!-- AUTHENTICATION VIA LDAP -->
 
@@ -18,20 +18,5 @@
                 user-search-filter="${uv.security.ldap.userSearchFilter}" />
 
     </security:authentication-manager>
-
-    <!-- SYNC LDAP DATA -->
-
-    <bean id="ldapTemplate" class="org.springframework.ldap.core.LdapTemplate">
-        <constructor-arg ref="contextSource"/>
-        <property name="ignorePartialResultException" value="true"/>
-        <property name="ignoreNameNotFoundException" value="true"/>
-    </bean>
-
-    <bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource">
-        <property name="url" value="${uv.security.ldap.url}"/>
-        <property name="base" value="${uv.security.ldap.sync.userSearchBase},${uv.security.ldap.base}"/>
-        <property name="userDn" value="${uv.security.ldap.sync.userDn}"/>
-        <property name="password" value="${uv.security.ldap.sync.password}"/>
-    </bean>
 
 </beans>

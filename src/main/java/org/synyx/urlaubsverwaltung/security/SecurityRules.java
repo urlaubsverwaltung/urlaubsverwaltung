@@ -8,10 +8,10 @@ package org.synyx.urlaubsverwaltung.security;
  */
 public final class SecurityRules {
 
-    public static final String IS_OFFICE = "hasRole('OFFICE')";
-    public static final String IS_BOSS_OR_OFFICE = "hasAnyRole('BOSS', 'OFFICE')";
-    public static final String IS_BOSS_OR_DEPARTMENT_HEAD = "hasAnyRole('BOSS', 'DEPARTMENT_HEAD')";
-    public static final String IS_PRIVILEGED_USER = "hasAnyRole('DEPARTMENT_HEAD', 'BOSS', 'OFFICE')";
+    public static final String IS_OFFICE = "hasAuthority('OFFICE')";
+    public static final String IS_BOSS_OR_OFFICE = "hasAnyAuthority('BOSS', 'OFFICE')";
+    public static final String IS_BOSS_OR_DEPARTMENT_HEAD = "hasAnyAuthority('BOSS', 'DEPARTMENT_HEAD')";
+    public static final String IS_PRIVILEGED_USER = "hasAnyAuthority('DEPARTMENT_HEAD', 'BOSS', 'OFFICE')";
 
     private SecurityRules() {
 

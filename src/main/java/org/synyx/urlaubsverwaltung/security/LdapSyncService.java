@@ -6,15 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 
-import org.springframework.scheduling.annotation.Scheduled;
-
 import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
 
 import org.springframework.util.Assert;
 
-import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
@@ -24,8 +21,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-
-import javax.annotation.PostConstruct;
 
 
 /**
@@ -40,45 +35,13 @@ public class LdapSyncService {
 
     private static final Logger LOG = Logger.getLogger(LdapSyncService.class);
 
-    private final LdapUserService ldapUserService;
     private final PersonService personService;
 
     @Autowired
-    public LdapSyncService(LdapUserService ldapUserService, PersonService personService) {
+    public LdapSyncService(PersonService personService) {
 
-        this.ldapUserService = ldapUserService;
         this.personService = personService;
     }
-
-    // Sync LDAP/AD data during startup and every night at 01:00 am
-    @PostConstruct
-    @Scheduled(cron = "0 0 1 * * ?")
-    public void sync() {
-
-        LOG.info("STARTING LDAP SYNC --------------------------------------------------------------------------------");
-
-        List<LdapUser> users = ldapUserService.getLdapUsers();
-
-        LOG.info("Found " + users.size() + " user(s)");
-
-        for (LdapUser user : users) {
-            String username = user.getUsername();
-            Optional<String> firstName = user.getFirstName();
-            Optional<String> lastName = user.getLastName();
-            Optional<String> email = user.getEmail();
-
-            Optional<Person> optionalPerson = personService.getPersonByLogin(username);
-
-            if (optionalPerson.isPresent()) {
-                syncPerson(optionalPerson.get(), firstName, lastName, email);
-            } else {
-                createPerson(username, firstName, lastName, email);
-            }
-        }
-
-        LOG.info("DONE LDAP SYNC ------------------------------------------------------------------------------------");
-    }
-
 
     /**
      * Sync the data of the given {@link Person}.

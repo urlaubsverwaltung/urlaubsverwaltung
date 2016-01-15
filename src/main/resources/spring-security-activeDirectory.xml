@@ -3,7 +3,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:security="http://www.springframework.org/schema/security"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-                            http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+                            http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.0.xsd">
 
     <!-- AUTHENTICATION VIA ACTIVE DIRECTORY -->
 
@@ -17,20 +17,5 @@
     <security:authentication-manager alias="authenticationManager">
         <security:authentication-provider ref="activeDirectoryAuthenticationProvider"/>
     </security:authentication-manager>
-
-    <!-- SYNC LDAP DATA -->
-
-    <bean id="ldapTemplate" class="org.springframework.ldap.core.LdapTemplate">
-        <constructor-arg ref="contextSource"/>
-        <property name="ignorePartialResultException" value="true"/>
-        <property name="ignoreNameNotFoundException" value="true"/>
-    </bean>
-
-    <bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource">
-        <property name="url" value="${uv.security.activeDirectory.url}"/>
-        <property name="base" value="${uv.security.activeDirectory.sync.userSearchBase}"/>
-        <property name="userDn" value="${uv.security.activeDirectory.sync.userDn}"/>
-        <property name="password" value="${uv.security.activeDirectory.sync.password}"/>
-    </bean>
 
 </beans>

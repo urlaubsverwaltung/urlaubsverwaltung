@@ -31,14 +31,14 @@ import java.util.List;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Component
-public class PersonDataProvider {
+class PersonDataProvider {
 
     private final PersonService personService;
     private final WorkingTimeService workingTimeService;
     private final AccountInteractionService accountInteractionService;
 
     @Autowired
-    public PersonDataProvider(PersonService personService, WorkingTimeService workingTimeService,
+    PersonDataProvider(PersonService personService, WorkingTimeService workingTimeService,
         AccountInteractionService accountInteractionService) {
 
         this.personService = personService;
@@ -46,7 +46,7 @@ public class PersonDataProvider {
         this.accountInteractionService = accountInteractionService;
     }
 
-    public Person createTestPerson(String login, String password, String firstName, String lastName, String email,
+    Person createTestPerson(String login, String password, String firstName, String lastName, String email,
         Role... roles) throws NoSuchAlgorithmException {
 
         List<Role> permissions = Arrays.asList(roles);
@@ -70,7 +70,7 @@ public class PersonDataProvider {
     }
 
 
-    private List<MailNotification> getNotificationsForRoles(List<Role> roles) {
+    List<MailNotification> getNotificationsForRoles(List<Role> roles) {
 
         List<MailNotification> notifications = new ArrayList<>();
 

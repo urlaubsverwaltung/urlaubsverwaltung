@@ -20,12 +20,12 @@ import java.math.BigDecimal;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Component
-public class DurationChecker {
+class DurationChecker {
 
     private final WorkDaysService workDaysService;
 
     @Autowired
-    public DurationChecker(WorkDaysService workDaysService) {
+    DurationChecker(WorkDaysService workDaysService) {
 
         this.workDaysService = workDaysService;
     }
@@ -38,7 +38,7 @@ public class DurationChecker {
      *
      * @return  {@code true} if both dates are in the current year, else {@code false}
      */
-    public boolean startAndEndDatesAreInCurrentYear(DateMidnight start, DateMidnight end) {
+    boolean startAndEndDatesAreInCurrentYear(DateMidnight start, DateMidnight end) {
 
         int currentYear = DateMidnight.now().getYear();
 
@@ -56,7 +56,7 @@ public class DurationChecker {
      *
      * @return  {@code true} if the period duration is greater than zero, else {@code false}
      */
-    public boolean durationIsGreaterThanZero(DateMidnight start, DateMidnight end, Person person) {
+    boolean durationIsGreaterThanZero(DateMidnight start, DateMidnight end, Person person) {
 
         BigDecimal workDays = workDaysService.getWorkDays(DayLength.FULL, start, end, person);
 

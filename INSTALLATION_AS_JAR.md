@@ -38,12 +38,11 @@ Die Anwendung ist nun erreichbar unter
 
 #### Anwendung als Service
 
-Die Spring Boot Dokumentation enthält Anleitungen, wie man Spring Boot Anwendungen als Services installieren kann:
-* [Linux Service](http://docs.spring.io/spring-boot/docs/current/reference/html/deployment-install.html#deployment-service)
-* [Windows Service](http://docs.spring.io/spring-boot/docs/current/reference/html/deployment-windows.html)
+Da die Anwendung auf Spring Boot basiert, lässt sie sich sehr komfortabel als Service installieren. Wie genau dies
+funktioniert, kann den entsprechenden Kapiteln in der Spring Boot Dokumentation nachgelesen werden:
 
-_Anmerkung: Momentan muss man noch selbst ein (init.d) Skript erstellen, um die Anwendung als Service zu installieren. (siehe [#134](https://github.com/synyx/urlaubsverwaltung/issues/134)) In einer zukünftigen Version soll die Installation als Service dank neuer Spring Boot Version einfacher werden._
-
+* [Linux Service](http://docs.spring.io/spring-boot/docs/1.3.1.RELEASE/reference/html/deployment-install.html#deployment-service)
+* [Windows Service](http://docs.spring.io/spring-boot/docs/1.3.1.RELEASE/reference/html/deployment-windows.html)
 
 ---
 

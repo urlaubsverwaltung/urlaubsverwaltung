@@ -54,7 +54,7 @@
         <th class="sortable-field is-centered"><spring:message code='persons.account.vacation.entitlement.actual' /></th>
         <th class="sortable-field is-centered"><spring:message code='persons.account.vacation.entitlement.remaining' /></th>
         <th class="sortable-field is-centered"><spring:message code="persons.account.vacation.vacationDaysLeft"/></th>
-        <sec:authorize access="hasRole('OFFICE')">
+        <sec:authorize access="hasAuthority('OFFICE')">
             <th><%-- placeholder to ensure correct number of th --%></th>
         </sec:authorize>    
     </tr>
@@ -129,7 +129,7 @@
                     </c:otherwise>
                 </c:choose>
             </td>
-            <sec:authorize access="hasRole('OFFICE')">
+            <sec:authorize access="hasAuthority('OFFICE')">
             <td class="hidden-print hidden-xs">
               <a class="fa-action pull-right" href="${URL_PREFIX}/staff/${person.id}/edit"
                   data-title="<spring:message code="action.edit" />">
