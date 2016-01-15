@@ -9,19 +9,19 @@
 
 <spring:url var="URL_PREFIX" value="/web"/>
 
-<sec:authorize access="hasRole('USER')">
+<sec:authorize access="hasAuthority('USER')">
   <uv:print/>
 </sec:authorize>
 
-<sec:authorize access="hasRole('USER')">
+<sec:authorize access="hasAuthority('USER')">
   <c:set var="IS_USER" value="${true}"/>
 </sec:authorize>
 
-<sec:authorize access="hasAnyRole('DEPARTMENT_HEAD', 'BOSS')">
+<sec:authorize access="hasAnyAuthority('DEPARTMENT_HEAD', 'BOSS')">
   <c:set var="IS_BOSS" value="${true}"/>
 </sec:authorize>
 
-<sec:authorize access="hasRole('OFFICE')">
+<sec:authorize access="hasAuthority('OFFICE')">
   <c:set var="IS_OFFICE" value="${true}"/>
 </sec:authorize>
 
