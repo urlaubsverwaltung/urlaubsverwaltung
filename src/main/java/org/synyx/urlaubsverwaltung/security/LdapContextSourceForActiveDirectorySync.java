@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Component("ldapContextSource")
-@ConditionalOnExpression("'${auth}'=='activeDirectory'")
+@ConditionalOnExpression("'${auth}'=='activeDirectory' and '${uv.security.activeDirectory.sync}'=='true'")
 public class LdapContextSourceForActiveDirectorySync extends LdapContextSource {
 
     @Autowired

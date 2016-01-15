@@ -16,7 +16,9 @@ import org.springframework.stereotype.Component;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Component
-@ConditionalOnExpression("'${auth}'=='activeDirectory' or '${auth}'=='ldap'")
+@ConditionalOnExpression(
+    "('${auth}'=='activeDirectory' and '${uv.security.activeDirectory.sync}'=='true') or ('${auth}'=='ldap' and '${uv.security.ldap.sync}'=='true')"
+)
 public class LdapTemplate extends org.springframework.ldap.core.LdapTemplate {
 
     @Autowired
