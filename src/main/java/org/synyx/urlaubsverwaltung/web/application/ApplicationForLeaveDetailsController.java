@@ -287,55 +287,6 @@ public class ApplicationForLeaveDetailsController {
     }
 
     /**
-     * Reject the cancellation request for an already approved application. Only for
-     * Office.
-     */
-    @RequestMapping(value = "/{applicationId}/reject_requested_cancellation", method = RequestMethod.POST)
-    public String rejectRequestedCancellation(@PathVariable("applicationId") Integer applicationId,
-                                    @ModelAttribute("comment") ApplicationCommentForm comment,
-                                    Errors errors, RedirectAttributes redirectAttributes)
-            throws UnknownApplicationForLeaveException, AccessDeniedException {
-
-        Application application = applicationService.getApplicationById(applicationId).orElseThrow(() ->
-                new UnknownApplicationForLeaveException(applicationId));
-
-        Person signedInUser = sessionService.getSignedInUser();
-
-        boolean isApplicationAllowed = application.hasStatus(ApplicationStatus.ALLOWED);
-        boolean isOfficeUser = signedInUser.hasRole(Role.OFFICE);
-
-        //only office users may reject cancellation requests
-        if(!isOfficeUser) {
-            throw new AccessDeniedException(String.format(
-                    "User '%s' does not have the correct permissions to reject the cancellation request for" +
-                            " applications for leave of user '%s'",
-                    signedInUser.getLoginName(), application.getPerson().getLoginName()));
-        }
-
-        //only already allowed applications can be cancelled via request
-        if(!isApplicationAllowed) {
-            throw new IllegalArgumentException(String.format("Only applications with state '%s' can (and have to be) cancelled" +
-                    " via cancellation request. The application with ID %s has state '%s'", ApplicationStatus.ALLOWED,
-            applicationId, application.getStatus()));
-        }
-
-
-        //comment is mandatory in any case
-        comment.setMandatory(true);
-        commentValidator.validate(comment, errors);
-
-        if (errors.hasErrors()) {
-            redirectAttributes.addFlashAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
-
-            return "redirect:/web/application/" + applicationId + "?action=reject_requested_cancellation";
-        }
-        Optional<String> commentText = Optional.of(comment.getText());
-        applicationInteractionService.rejectRequestedCancellation(application, signedInUser, commentText);
-
-        return "redirect:/web/application/" + applicationId;
-    }
-
-    /**
      * Cancel an application for leave. Cancelling an application for leave on behalf for someone is allowed only for
      * Office.
      */
