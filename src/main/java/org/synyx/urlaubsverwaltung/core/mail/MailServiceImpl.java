@@ -510,6 +510,6 @@ class MailServiceImpl implements MailService {
 
         String text = buildMailBody("application_cancellation_request", model);
 
-        sendEmail(getOfficeMembers(), "subject.application.cancellation_request", text);
+        sendEmail(getOfficeMembers(), "subject.application.cancellationRequest", text);
     }
 }
