@@ -198,11 +198,4 @@ public interface MailService {
      */
     void sendCancellationRequest(Application application, ApplicationComment createdComment);
 
-    /**
-     * Sends mail to office and bosses to inform about a cancellation request
-     * of an already allowed application.
-     * @param application
-     * @param createdComment
-     */
-    void sendRejectedCancellationRequest(Application application, ApplicationComment createdComment);
 }

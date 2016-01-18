@@ -180,24 +180,6 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         return application;
     }
 
-    @Override
-    public Application rejectRequestedCancellation(Application application, Person canceller, Optional<String> comment) {
-        application.setStatus(ApplicationStatus.ALLOWED);
-
-        /*
-         * TODO: Check whether the last comment is ApplicationAction.CANCEL_REQUESTED
-         *       and throw an IllegalStateException if not.
-         */
-        ApplicationComment createdComment = commentService.create(application, ApplicationAction.REJECTED, comment,
-                canceller);
-
-        applicationService.save(application);
-        LOG.info("Rejected cancellation request for already approved application for leave: " + application.toString());
-
-        mailService.sendRejectedCancellationRequest(application, createdComment);
-        return application;
-    }
-
 
     @Override
     public Application cancel(Application application, Person canceller, Optional<String> comment) {

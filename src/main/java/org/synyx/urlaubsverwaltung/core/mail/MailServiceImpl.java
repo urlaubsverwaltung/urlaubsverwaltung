@@ -33,7 +33,6 @@ import org.synyx.urlaubsverwaltung.core.settings.MailSettings;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.core.sync.CalendarType;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 import org.synyx.urlaubsverwaltung.core.util.DateFormat;
 import org.synyx.urlaubsverwaltung.core.util.PropertiesUtil;
@@ -500,8 +499,10 @@ class MailServiceImpl implements MailService {
         sendEmail(Arrays.asList(person), "subject.userCreation", text);
     }
 
+
     @Override
     public void sendCancellationRequest(Application application, ApplicationComment createdComment) {
+
         Map<String, Object> model = new HashMap<>();
         model.put("application", application);
         model.put("comment", createdComment);
@@ -511,14 +512,4 @@ class MailServiceImpl implements MailService {
 
         sendEmail(getOfficeMembers(), "subject.application.cancellation_request", text);
     }
-
-    @Override
-    public void sendRejectedCancellationRequest(Application application, ApplicationComment createdComment) {
-        Map<String, Object> model = new HashMap<>();
-        model.put("application", application);
-        model.put("comment", createdComment);
-        String text = buildMailBody("application_cancellation_rejected", model);
-        sendEmail(getOfficeMembers(), "subject.application.cancellation_rejected", text);
-    }
-
 }
