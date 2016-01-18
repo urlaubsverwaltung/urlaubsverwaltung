@@ -180,20 +180,63 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         return application;
     }
 
+    @Override
+    public Application rejectRequestedCancellation(Application application, Person canceller, Optional<String> comment) {
+        application.setStatus(ApplicationStatus.ALLOWED);
+
+        /*
+         * TODO: Check whether the last comment is ApplicationAction.CANCEL_REQUESTED
+         *       and throw an IllegalStateException if not.
+         */
+        ApplicationComment createdComment = commentService.create(application, ApplicationAction.REJECTED, comment,
+                canceller);
+
+        applicationService.save(application);
+        LOG.info("Rejected cancellation request for already approved application for leave: " + application.toString());
+
+        mailService.sendRejectedCancellationRequest(application, createdComment);
+        return application;
+    }
+
 
     @Override
     public Application cancel(Application application, Person canceller, Optional<String> comment) {
 
-        boolean cancellingAllowedApplication = application.hasStatus(ApplicationStatus.ALLOWED);
         ApplicationAction commentStatus;
+        Person person = application.getPerson();
+
+        boolean cancellingAllowedApplication = application.hasStatus(ApplicationStatus.ALLOWED);
+        boolean isUserCancellingOwnApplication = canceller.equals(person);
 
         application.setCanceller(canceller);
         application.setCancelDate(DateMidnight.now());
 
+        /*
+         * Updating applicationAction and applicationStatus according
+         * to parameters
+         */
         if (cancellingAllowedApplication) {
-            application.setStatus(ApplicationStatus.CANCELLED);
-            commentStatus = ApplicationAction.CANCELLED;
-        } else {
+            /*
+             * Security is handled up the call stack. If the
+             * canceller is not the owner of the application
+             * it is OK to cancel directly.
+             */
+            if(!isUserCancellingOwnApplication) {
+                application.setStatus(ApplicationStatus.CANCELLED);
+                commentStatus = ApplicationAction.CANCELLED;
+            }
+
+            /*
+             * Users cannot cancel already allowed applications
+             * directly. Their commentStatus will be CANCEL_REQUESTED
+             * and the application.status will remain ALLOWED until
+             * the office or a boss approves the request.
+             */
+            else {
+                commentStatus = ApplicationAction.CANCEL_REQUESTED;
+            }
+        }
+        else {
             application.setStatus(ApplicationStatus.REVOKED);
             commentStatus = ApplicationAction.REVOKED;
         }
@@ -204,17 +247,19 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         ApplicationComment createdComment = commentService.create(application, commentStatus, comment, canceller);
 
+        //handling mails only after created comment and application have been saved
         if (cancellingAllowedApplication) {
-            // if allowed application has been cancelled, office and bosses get an email
-            mailService.sendCancelledNotification(application, false, createdComment);
+            if (!isUserCancellingOwnApplication) {
+                mailService.sendCancelledNotification(application, false, createdComment);
+            }
+            else {
+                mailService.sendCancellationRequest(application, createdComment);
+            }
         }
-
-        Person person = application.getPerson();
-
-        if (!person.equals(canceller)) {
-            // if application has been cancelled for someone on behalf,
-            // the person gets an email regardless of application status
-            mailService.sendCancelledNotification(application, true, createdComment);
+        else {
+            if(!isUserCancellingOwnApplication) {
+                mailService.sendCancelledNotification(application, true, createdComment);
+            }
         }
 
         accountInteractionService.updateRemainingVacationDays(application.getStartDate().getYear(), person);

@@ -120,6 +120,7 @@ public class ApplicationForLeaveDetailsController {
 
         model.addAttribute("comment", new ApplicationCommentForm());
         model.addAttribute("comments", comments);
+        model.addAttribute("lastComment", comments.get(comments.size()-1));
 
         // SPECIAL ATTRIBUTES FOR BOSSES / DEPARTMENT HEADS
         Person signedInUser = sessionService.getSignedInUser();
@@ -285,7 +286,6 @@ public class ApplicationForLeaveDetailsController {
                 signedInUser.getLoginName(), person.getLoginName()));
     }
 
-
     /**
      * Cancel an application for leave. Cancelling an application for leave on behalf for someone is allowed only for
      * Office.
@@ -304,10 +304,11 @@ public class ApplicationForLeaveDetailsController {
         boolean isAllowed = application.hasStatus(ApplicationStatus.ALLOWED);
 
         // security check: only two cases where cancelling is possible
-        // 1: user can cancel his own applications for leave if they have the state waiting
-        // 2: office can cancel all applications for leave that has the state waiting or allowed, even for other persons
-        if (signedInUser.equals(application.getPerson()) && isWaiting) {
-            // user can cancel only his own waiting applications, so the comment is NOT mandatory
+        // 1: user can cancel her own applications for leave if it has not been allowed yet
+        // 2: user can request cancellation if the application is already allowed.
+        // 3: office can cancel all applications for leave that has the state waiting or allowed, even for other persons
+        if (signedInUser.equals(application.getPerson())) {
+            // user can cancel only her own waiting applications, so the comment is NOT mandatory
             comment.setMandatory(false);
         } else if (signedInUser.hasRole(Role.OFFICE) && (isWaiting || isAllowed)) {
             // office cancels application of other users, state can be waiting or allowed, so the comment is mandatory
