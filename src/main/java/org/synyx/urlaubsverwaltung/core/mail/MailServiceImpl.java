@@ -318,27 +318,14 @@ class MailServiceImpl implements MailService {
 
 
     @Override
-    public void sendCancelledNotification(Application application, boolean cancelledByOffice,
-        ApplicationComment comment) {
+    public void sendCancelledByOfficeNotification(Application application, ApplicationComment comment) {
 
-        String text;
         Map<String, Object> model = createModelForApplicationStatusChangeMail(application,
                 Optional.ofNullable(comment));
 
-        if (cancelledByOffice) {
-            // mail to applicant anyway
-            // not only if application was allowed before cancelling
-            text = buildMailBody("cancelled_by_office", model);
+        String text = buildMailBody("cancelled_by_office", model);
 
-            sendEmail(Arrays.asList(application.getPerson()), "subject.application.cancelled.user", text);
-        } else {
-            // application was allowed before cancelling
-            // only then office gets an email
-            text = buildMailBody("cancelled", model);
-
-            // mail to office
-            sendEmail(getOfficeMembers(), "subject.application.cancelled.office", text);
-        }
+        sendEmail(Arrays.asList(application.getPerson()), "subject.application.cancelled.user", text);
     }
 
 

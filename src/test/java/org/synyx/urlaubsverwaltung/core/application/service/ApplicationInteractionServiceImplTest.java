@@ -428,11 +428,7 @@ public class ApplicationInteractionServiceImplTest {
         Mockito.verify(commentService)
             .create(eq(applicationForLeave), eq(ApplicationAction.CANCELLED), eq(comment), eq(person));
 
-        Mockito.verify(mailService)
-            .sendCancelledNotification(eq(applicationForLeave), eq(true), any(ApplicationComment.class));
-
-        Mockito.verify(mailService, Mockito.never())
-            .sendCancellationRequest(any(Application.class), any(ApplicationComment.class));
+        Mockito.verifyZeroInteractions(mailService);
     }
 
 
@@ -462,7 +458,7 @@ public class ApplicationInteractionServiceImplTest {
             .create(eq(applicationForLeave), eq(ApplicationAction.CANCELLED), eq(comment), eq(canceller));
 
         Mockito.verify(mailService)
-            .sendCancelledNotification(eq(applicationForLeave), eq(true), any(ApplicationComment.class));
+            .sendCancelledByOfficeNotification(eq(applicationForLeave), any(ApplicationComment.class));
     }
 
 
@@ -492,7 +488,7 @@ public class ApplicationInteractionServiceImplTest {
             .create(eq(applicationForLeave), eq(ApplicationAction.REVOKED), eq(comment), eq(canceller));
 
         Mockito.verify(mailService)
-            .sendCancelledNotification(eq(applicationForLeave), eq(true), any(ApplicationComment.class));
+            .sendCancelledByOfficeNotification(eq(applicationForLeave), any(ApplicationComment.class));
     }
 
 

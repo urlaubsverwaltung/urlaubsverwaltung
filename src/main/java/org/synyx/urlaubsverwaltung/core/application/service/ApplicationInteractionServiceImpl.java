@@ -185,54 +185,15 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
     @Override
     public Application cancel(Application application, Person canceller, Optional<String> comment) {
 
-        ApplicationAction commentStatus;
         Person person = application.getPerson();
 
         application.setCanceller(canceller);
         application.setCancelDate(DateMidnight.now());
 
-        /*
-         * Updating applicationAction and applicationStatus according
-         * to parameters
-         */
         if (application.hasStatus(ApplicationStatus.ALLOWED)) {
-            /*
-             * Only Office can cancel allowed applications for leave directly,
-             * users have to request cancellation
-             */
-            if (canceller.hasRole(Role.OFFICE)) {
-                application.setStatus(ApplicationStatus.CANCELLED);
-                commentStatus = ApplicationAction.CANCELLED;
-            }
-
-            /*
-             * Users cannot cancel already allowed applications
-             * directly. Their commentStatus will be CANCEL_REQUESTED
-             * and the application.status will remain ALLOWED until
-             * the office or a boss approves the request.
-             */
-            else {
-                commentStatus = ApplicationAction.CANCEL_REQUESTED;
-            }
+            cancelApplication(application, canceller, comment);
         } else {
-            application.setStatus(ApplicationStatus.REVOKED);
-            commentStatus = ApplicationAction.REVOKED;
-        }
-
-        applicationService.save(application);
-
-        LOG.info("Cancelled application for leave: " + application);
-
-        ApplicationComment createdComment = commentService.create(application, commentStatus, comment, canceller);
-
-        // handling mails only after created comment and application have been saved
-
-        if (canceller.hasRole(Role.OFFICE)) {
-            mailService.sendCancelledNotification(application, true, createdComment);
-        }
-
-        if (canceller.equals(person) && application.hasStatus(ApplicationStatus.ALLOWED)) {
-            mailService.sendCancellationRequest(application, createdComment);
+            revokeApplication(application, canceller, comment);
         }
 
         accountInteractionService.updateRemainingVacationDays(application.getStartDate().getYear(), person);
@@ -243,6 +204,66 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         if (absenceMapping.isPresent()) {
             calendarSyncService.deleteAbsence(absenceMapping.get().getEventId());
             absenceMappingService.delete(absenceMapping.get());
+        }
+
+        return application;
+    }
+
+
+    private Application revokeApplication(Application application, Person canceller, Optional<String> comment) {
+
+        application.setStatus(ApplicationStatus.REVOKED);
+
+        applicationService.save(application);
+
+        LOG.info("Revoked application for leave: " + application);
+
+        ApplicationComment createdComment = commentService.create(application, ApplicationAction.REVOKED, comment,
+                canceller);
+
+        if (canceller.hasRole(Role.OFFICE) && !canceller.equals(application.getPerson())) {
+            mailService.sendCancelledByOfficeNotification(application, createdComment);
+        }
+
+        return application;
+    }
+
+
+    private Application cancelApplication(Application application, Person canceller, Optional<String> comment) {
+
+        /*
+         * Only Office can cancel allowed applications for leave directly,
+         * users have to request cancellation
+         */
+        if (canceller.hasRole(Role.OFFICE)) {
+            application.setStatus(ApplicationStatus.CANCELLED);
+
+            applicationService.save(application);
+
+            LOG.info("Cancelled application for leave: " + application);
+
+            ApplicationComment createdComment = commentService.create(application, ApplicationAction.CANCELLED, comment,
+                    canceller);
+
+            if (!canceller.equals(application.getPerson())) {
+                mailService.sendCancelledByOfficeNotification(application, createdComment);
+            }
+        } else {
+            /*
+             * Users cannot cancel already allowed applications
+             * directly. Their commentStatus will be CANCEL_REQUESTED
+             * and the application.status will remain ALLOWED until
+             * the office or a boss approves the request.
+             */
+
+            applicationService.save(application);
+
+            LOG.info("Request cancellation of application for leave: " + application);
+
+            ApplicationComment createdComment = commentService.create(application, ApplicationAction.CANCEL_REQUESTED,
+                    comment, canceller);
+
+            mailService.sendCancellationRequest(application, createdComment);
         }
 
         return application;
