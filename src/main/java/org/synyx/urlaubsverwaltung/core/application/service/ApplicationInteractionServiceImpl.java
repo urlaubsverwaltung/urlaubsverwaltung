@@ -19,6 +19,7 @@ import org.synyx.urlaubsverwaltung.core.application.service.exception.ImpatientA
 import org.synyx.urlaubsverwaltung.core.application.service.exception.RemindAlreadySentException;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.person.Role;
 import org.synyx.urlaubsverwaltung.core.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.sync.CalendarSyncService;
@@ -187,9 +188,6 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         ApplicationAction commentStatus;
         Person person = application.getPerson();
 
-        boolean cancellingAllowedApplication = application.hasStatus(ApplicationStatus.ALLOWED);
-        boolean isUserCancellingOwnApplication = canceller.equals(person);
-
         application.setCanceller(canceller);
         application.setCancelDate(DateMidnight.now());
 
@@ -197,13 +195,12 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
          * Updating applicationAction and applicationStatus according
          * to parameters
          */
-        if (cancellingAllowedApplication) {
+        if (application.hasStatus(ApplicationStatus.ALLOWED)) {
             /*
-             * Security is handled up the call stack. If the
-             * canceller is not the owner of the application
-             * it is OK to cancel directly.
+             * Only Office can cancel allowed applications for leave directly,
+             * users have to request cancellation
              */
-            if(!isUserCancellingOwnApplication) {
+            if (canceller.hasRole(Role.OFFICE)) {
                 application.setStatus(ApplicationStatus.CANCELLED);
                 commentStatus = ApplicationAction.CANCELLED;
             }
@@ -217,8 +214,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
             else {
                 commentStatus = ApplicationAction.CANCEL_REQUESTED;
             }
-        }
-        else {
+        } else {
             application.setStatus(ApplicationStatus.REVOKED);
             commentStatus = ApplicationAction.REVOKED;
         }
@@ -229,19 +225,14 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         ApplicationComment createdComment = commentService.create(application, commentStatus, comment, canceller);
 
-        //handling mails only after created comment and application have been saved
-        if (cancellingAllowedApplication) {
-            if (!isUserCancellingOwnApplication) {
-                mailService.sendCancelledNotification(application, false, createdComment);
-            }
-            else {
-                mailService.sendCancellationRequest(application, createdComment);
-            }
+        // handling mails only after created comment and application have been saved
+
+        if (canceller.hasRole(Role.OFFICE)) {
+            mailService.sendCancelledNotification(application, true, createdComment);
         }
-        else {
-            if(!isUserCancellingOwnApplication) {
-                mailService.sendCancelledNotification(application, true, createdComment);
-            }
+
+        if (canceller.equals(person) && application.hasStatus(ApplicationStatus.ALLOWED)) {
+            mailService.sendCancellationRequest(application, createdComment);
         }
 
         accountInteractionService.updateRemainingVacationDays(application.getStartDate().getYear(), person);

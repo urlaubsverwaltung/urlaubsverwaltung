@@ -18,6 +18,7 @@ import org.synyx.urlaubsverwaltung.core.application.service.exception.RemindAlre
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.person.Role;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.sync.CalendarSyncService;
@@ -27,12 +28,10 @@ import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceMappingService;
 import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceType;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
+import java.util.Arrays;
 import java.util.Optional;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.*;
 
 
 /**
@@ -386,6 +385,7 @@ public class ApplicationInteractionServiceImplTest {
 
     @Test
     public void ensureCancellingAllowedApplicationByOwnerCreatesACancellationRequest() {
+
         Person person = TestDataCreator.createPerson("muster");
 
         Optional<String> comment = Optional.of("Foo");
@@ -398,17 +398,50 @@ public class ApplicationInteractionServiceImplTest {
         Mockito.verify(applicationService).save(applicationForLeave);
 
         Mockito.verify(commentService)
-                .create(eq(applicationForLeave), eq(ApplicationAction.CANCEL_REQUESTED), eq(comment), eq(person));
+            .create(eq(applicationForLeave), eq(ApplicationAction.CANCEL_REQUESTED), eq(comment), eq(person));
 
-        Mockito.verify(mailService)
-                .sendCancellationRequest(eq(applicationForLeave), any(ApplicationComment.class));
+        Mockito.verify(mailService).sendCancellationRequest(eq(applicationForLeave), any(ApplicationComment.class));
     }
 
+
     @Test
-    public void ensureCancellingAllowedApplicationForLeaveChangesStateAndOtherAttributesAndSendsAnEmail() {
+    public void ensureCancellingAllowedApplicationByOwnerThatIsOfficeCancelsTheApplicationForLeaveDirectly() {
+
+        Person person = TestDataCreator.createPerson("muster");
+        person.setPermissions(Arrays.asList(Role.USER, Role.OFFICE));
+
+        Optional<String> comment = Optional.of("Foo");
+
+        Application applicationForLeave = getDummyApplication(person);
+        applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
+
+        service.cancel(applicationForLeave, person, comment);
+
+        Assert.assertEquals("Wrong state", ApplicationStatus.CANCELLED, applicationForLeave.getStatus());
+        Assert.assertEquals("Wrong person", person, applicationForLeave.getPerson());
+        Assert.assertEquals("Wrong canceller", person, applicationForLeave.getCanceller());
+        Assert.assertEquals("Wrong cancelled date", DateMidnight.now(), applicationForLeave.getCancelDate());
+        Assert.assertTrue("Must be formerly allowed", applicationForLeave.isFormerlyAllowed());
+
+        Mockito.verify(applicationService).save(applicationForLeave);
+
+        Mockito.verify(commentService)
+            .create(eq(applicationForLeave), eq(ApplicationAction.CANCELLED), eq(comment), eq(person));
+
+        Mockito.verify(mailService)
+            .sendCancelledNotification(eq(applicationForLeave), eq(true), any(ApplicationComment.class));
+
+        Mockito.verify(mailService, Mockito.never())
+            .sendCancellationRequest(any(Application.class), any(ApplicationComment.class));
+    }
+
+
+    @Test
+    public void ensureCancellingAllowedApplicationForLeaveOnBehalfForSomeOneChangesStateAndOtherAttributesAndSendsAnEmail() {
 
         Person person = TestDataCreator.createPerson("muster");
         Person canceller = TestDataCreator.createPerson("canceller");
+        canceller.setPermissions(Arrays.asList(Role.USER, Role.OFFICE));
 
         Optional<String> comment = Optional.of("Foo");
 
@@ -429,7 +462,7 @@ public class ApplicationInteractionServiceImplTest {
             .create(eq(applicationForLeave), eq(ApplicationAction.CANCELLED), eq(comment), eq(canceller));
 
         Mockito.verify(mailService)
-            .sendCancelledNotification(eq(applicationForLeave), eq(false), any(ApplicationComment.class));
+            .sendCancelledNotification(eq(applicationForLeave), eq(true), any(ApplicationComment.class));
     }
 
 
@@ -438,6 +471,7 @@ public class ApplicationInteractionServiceImplTest {
 
         Person person = TestDataCreator.createPerson("muster");
         Person canceller = TestDataCreator.createPerson("canceller");
+        canceller.setPermissions(Arrays.asList(Role.USER, Role.OFFICE));
 
         Optional<String> comment = Optional.of("Foo");
 
@@ -467,6 +501,7 @@ public class ApplicationInteractionServiceImplTest {
 
         Person person = TestDataCreator.createPerson("muster");
         Person canceller = TestDataCreator.createPerson("canceller");
+        canceller.setPermissions(Arrays.asList(Role.USER, Role.OFFICE));
 
         Optional<String> comment = Optional.of("Foo");
 
