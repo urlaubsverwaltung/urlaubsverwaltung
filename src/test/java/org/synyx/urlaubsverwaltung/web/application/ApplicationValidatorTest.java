@@ -482,18 +482,48 @@ public class ApplicationValidatorTest {
     // Validate working time exists ------------------------------------------------------------------------------------
 
     @Test
-    public void ensureWorkingTimeConfigurationMustExistForPeriodOfSickNote() {
+    public void ensureWorkingTimeConfigurationMustExistForPeriodOfApplicationForLeave() {
 
         Mockito.when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
         Mockito.when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(Mockito.any(Person.class),
-                    Mockito.any(DateMidnight.class)))
+                    Mockito.eq(appForm.getStartDate())))
             .thenReturn(Optional.empty());
 
         validator.validate(appForm, errors);
 
         Mockito.verify(errors).reject("application.error.noValidWorkingTime");
 
+        Mockito.verify(workingTimeService)
+            .getByPersonAndValidityDateEqualsOrMinorDate(appForm.getPerson(), appForm.getStartDate());
+        Mockito.verifyZeroInteractions(calendarService);
+        Mockito.verifyZeroInteractions(overlapService);
+        Mockito.verifyZeroInteractions(calculationService);
+    }
+
+
+    @Test
+    public void ensureWorkingTimeConfigurationMustExistForHalfDayApplicationForLeave() {
+
+        // Yes, this can really happen...
+        appForm.setStartDate(null);
+        appForm.setEndDate(null);
+
+        appForm.setStartDateHalf(DateMidnight.now());
+        appForm.setDayLength(DayLength.MORNING);
+
+        Mockito.when(errors.hasErrors()).thenReturn(Boolean.FALSE);
+
+        Mockito.when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(Mockito.any(Person.class),
+                    Mockito.eq(appForm.getStartDateHalf())))
+            .thenReturn(Optional.empty());
+
+        validator.validate(appForm, errors);
+
+        Mockito.verify(errors).reject("application.error.noValidWorkingTime");
+
+        Mockito.verify(workingTimeService)
+            .getByPersonAndValidityDateEqualsOrMinorDate(appForm.getPerson(), appForm.getStartDateHalf());
         Mockito.verifyZeroInteractions(calendarService);
         Mockito.verifyZeroInteractions(overlapService);
         Mockito.verifyZeroInteractions(calculationService);
