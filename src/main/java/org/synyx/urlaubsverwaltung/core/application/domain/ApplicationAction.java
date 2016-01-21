@@ -10,7 +10,9 @@ public enum ApplicationAction {
 
     APPLIED,
     CONVERTED,
+    TEMPORARY_ALLOWED,
     ALLOWED,
+    RELEASED,
     REJECTED,
     CANCELLED,
     REVOKED

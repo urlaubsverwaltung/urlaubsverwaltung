@@ -4,7 +4,7 @@
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
-<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 
 <!DOCTYPE html>
@@ -54,9 +54,19 @@
                                         <spring:message code="application.action.allow.success" />
                                     </div>
                                 </c:when>
+                                <c:when test="${temporaryAllowSuccess}">
+                                    <div class="alert alert-success">
+                                        <spring:message code="application.action.temporary_allow.success" />
+                                    </div>
+                                </c:when>
                                 <c:when test="${rejectSuccess}">
                                     <div class="alert alert-success">
                                         <spring:message code="application.action.reject.success" />
+                                    </div>
+                                </c:when>
+                                <c:when test="${releaseSuccess}">
+                                    <div class="alert alert-success">
+                                        <spring:message code="application.action.release.success" />
                                     </div>
                                 </c:when>
                             </c:choose>
@@ -148,6 +158,26 @@
                                           </a>
                                       </sec:authorize>
                                   </td>
+                                    <td class="hidden-xs hidden-sm">
+                                        <c:if test="${application.status == 'TEMPORARY_ALLOWED'}">
+                                            <sec:authorize access="hasAnyAuthority('SECOND_STAGE_AUTHORITY', 'BOSS')">
+                                                <a class="fa-action positive" href="${URL_PREFIX}/application/${application.id}?action=allow&shortcut=true"
+                                                   data-title="<spring:message code='action.allow'/>">
+                                                    <i class="fa fa-check-circle"></i>
+                                                </a>
+                                            </sec:authorize>
+                                        </c:if>
+                                    </td>
+                                    <td class="hidden-xs hidden-sm">
+                                        <c:if test="${application.status == 'TEMPORARY_ALLOWED'}">
+                                            <sec:authorize access="hasAnyAuthority('SECOND_STAGE_AUTHORITY', 'BOSS')">
+                                                <a class="fa-action positive" href="${URL_PREFIX}/application/${application.id}?action=reject&shortcut=true"
+                                                   data-title="<spring:message code='action.reject'/>">
+                                                    <i class="fa fa-ban"></i>
+                                                </a>
+                                            </sec:authorize>
+                                        </c:if>
+                                    </td>
                                 </tr>
                               </c:forEach>
                               </tbody>

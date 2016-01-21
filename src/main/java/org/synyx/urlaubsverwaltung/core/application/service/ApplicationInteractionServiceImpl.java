@@ -17,13 +17,21 @@ import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.service.exception.ImpatientAboutApplicationForLeaveProcessException;
 import org.synyx.urlaubsverwaltung.core.application.service.exception.RemindAlreadySentException;
+import org.synyx.urlaubsverwaltung.core.department.Department;
+import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.sync.CalendarSyncService;
-import org.synyx.urlaubsverwaltung.core.sync.absence.*;
+import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
+import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceMapping;
+import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceMappingService;
+import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceTimeConfiguration;
+import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceType;
+import org.synyx.urlaubsverwaltung.core.sync.absence.EventType;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -46,12 +54,14 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
     private final CalendarSyncService calendarSyncService;
     private final AbsenceMappingService absenceMappingService;
     private final SettingsService settingsService;
+    private final DepartmentService departmentService;
 
     @Autowired
     public ApplicationInteractionServiceImpl(ApplicationService applicationService,
         ApplicationCommentService commentService, AccountInteractionService accountInteractionService,
         SignService signService, MailService mailService, CalendarSyncService calendarSyncService,
-        AbsenceMappingService absenceMappingService, SettingsService settingsService) {
+        AbsenceMappingService absenceMappingService, SettingsService settingsService,
+        DepartmentService departmentService) {
 
         this.applicationService = applicationService;
         this.commentService = commentService;
@@ -61,12 +71,19 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         this.calendarSyncService = calendarSyncService;
         this.absenceMappingService = absenceMappingService;
         this.settingsService = settingsService;
+        this.departmentService = departmentService;
     }
 
     @Override
     public Application apply(Application application, Person applier, Optional<String> comment) {
 
         Person person = application.getPerson();
+
+        List<Department> departments = departmentService.getAssignedDepartmentsOfMember(person);
+
+        // check if a two stage approval is set for the Department
+        departments.stream().filter(Department::isTwostageapproval).forEach(department ->
+                application.setTwostageapproval(true));
 
         application.setStatus(ApplicationStatus.WAITING);
         application.setApplier(applier);
@@ -118,6 +135,50 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
     @Override
     public Application allow(Application application, Person boss, Optional<String> comment) {
 
+        ApplicationAction applicationAction;
+
+        if (application.isTwostageapproval()) {
+            application.setStatus(ApplicationStatus.TEMPORARY_ALLOWED);
+            applicationAction = ApplicationAction.TEMPORARY_ALLOWED;
+        } else {
+            application.setStatus(ApplicationStatus.ALLOWED);
+            applicationAction = ApplicationAction.ALLOWED;
+        }
+
+        application.setBoss(boss);
+        application.setEditedDate(DateMidnight.now());
+
+        signService.signApplicationByBoss(application, boss);
+
+        applicationService.save(application);
+
+        LOG.info(applicationAction + " application for leave: " + application.toString());
+
+        ApplicationComment createdComment = commentService.create(application, applicationAction, comment, boss);
+
+        mailService.sendAllowedNotification(application, createdComment);
+
+        if (application.getHolidayReplacement() != null) {
+            mailService.notifyHolidayReplacement(application);
+        }
+
+        Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(application.getId(),
+                AbsenceType.VACATION);
+
+        if (absenceMapping.isPresent()) {
+            CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
+            AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
+            calendarSyncService.update(new Absence(application.getPerson(), application.getPeriod(),
+                    EventType.ALLOWED_APPLICATION, timeConfiguration), absenceMapping.get().getEventId());
+        }
+
+        return application;
+    }
+
+
+    @Override
+    public Application release(Application application, Person boss, Optional<String> comment) {
+
         application.setStatus(ApplicationStatus.ALLOWED);
         application.setBoss(boss);
         application.setEditedDate(DateMidnight.now());
@@ -126,7 +187,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         applicationService.save(application);
 
-        LOG.info("Allowed application for leave: " + application.toString());
+        LOG.info("Released application for leave: " + application.toString());
 
         ApplicationComment createdComment = commentService.create(application, ApplicationAction.ALLOWED, comment,
                 boss);

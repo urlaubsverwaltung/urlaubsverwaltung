@@ -30,8 +30,8 @@ public interface ApplicationInteractionService {
 
 
     /**
-     * Sets the application's state to allowed (only by boss) and informs the person of the application for leave that
-     * his vacation has been allowed.
+     * Sets the application's state to allowed or to preliminary allowed (in case of two step approval) and informs the
+     * person of the application for leave that his vacation has been allowed.
      *
      * @param  application  for leave
      * @param  boss  that allowed the application for leave
@@ -40,6 +40,19 @@ public interface ApplicationInteractionService {
      * @return  the allowed application for leave
      */
     Application allow(Application application, Person boss, Optional<String> comment);
+
+
+    /**
+     * Sets the application's state from preliminary Allowed to allowed and informs the person of the application for
+     * leave that his vacation has been allowed.
+     *
+     * @param  application  for leave
+     * @param  boss  that allowed the application for leave
+     * @param  comment  giving further information to allowing of application for leave (is optional)
+     *
+     * @return  the released application for leave
+     */
+    Application release(Application application, Person boss, Optional<String> comment);
 
 
     /**

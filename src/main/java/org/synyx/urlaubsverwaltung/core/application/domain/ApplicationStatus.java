@@ -14,12 +14,20 @@ public enum ApplicationStatus {
     WAITING,
 
     /**
-     * Status after a boss has allowed the application for leave.
+     * After the HeadOf has allowed the application in a two stage approval process.
+     *
+     * @since  2.15.0
+     */
+    TEMPORARY_ALLOWED,
+
+    /**
+     * Status after a boss has allowed the application for leave or after HeadOf has allowed the application in a one
+     * stage approval process or after a SECOND_STAGE_AUTHORITY (Role) has released a TEMPORARY_ALLOWED application.
      */
     ALLOWED,
 
     /**
-     * Status after a boss has rejected the application for leave.
+     * Status after a boss has rejected application for leave.
      */
     REJECTED,
 

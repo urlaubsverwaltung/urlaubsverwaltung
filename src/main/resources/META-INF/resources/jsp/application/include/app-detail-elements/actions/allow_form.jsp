@@ -33,7 +33,12 @@
 
     <div class="form-group">
         <div class="control-label">
-            <b><spring:message code='action.allow.confirm'/></b>
+            <c:if test="${application.twostageapproval == true && application.status == 'WAITING'}">
+            <b><spring:message code='action.temporary_allow.confirm'/></b>
+            </c:if>
+            <c:if test="${application.twostageapproval == false || application.status == 'TEMPORARY_ALLOWED'}">
+                <b><spring:message code='action.allow.confirm'/></b>
+            </c:if>
         </div>
     </div>
 

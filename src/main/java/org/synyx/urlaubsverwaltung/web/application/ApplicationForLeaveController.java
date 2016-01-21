@@ -21,6 +21,7 @@ import org.synyx.urlaubsverwaltung.core.person.Role;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -65,20 +66,40 @@ public class ApplicationForLeaveController {
 
     private List<ApplicationForLeave> getAllRelevantApplicationsForLeave() {
 
-        List<Application> applications = applicationService.getApplicationsForACertainState(ApplicationStatus.WAITING);
+        List<Application> applications = new ArrayList<>();
+        List<Person> members = new ArrayList<>();
 
-        if (sessionService.getSignedInUser().hasRole(Role.DEPARTMENT_HEAD)) {
-            List<Person> members = departmentService.getManagedMembersOfDepartmentHead(
-                    sessionService.getSignedInUser());
+        List<Application> waitingApplications = applicationService.getApplicationsForACertainState(
+                ApplicationStatus.WAITING);
 
+        List<Application> temporaryAllowedApplications = applicationService.getApplicationsForACertainState(
+                ApplicationStatus.TEMPORARY_ALLOWED);
+
+        Person user = sessionService.getSignedInUser();
+
+        boolean isHeadOf = user.hasRole(Role.DEPARTMENT_HEAD);
+        boolean isSecondStage = user.hasRole(Role.SECOND_STAGE_AUTHORITY);
+        boolean isBoss = user.hasRole(Role.BOSS);
+
+        if (isHeadOf || isBoss) {
+            applications.addAll(waitingApplications);
+            members.addAll(departmentService.getManagedMembersOfDepartmentHead(user));
+        }
+
+        if (isSecondStage || isBoss) {
+            applications.addAll(temporaryAllowedApplications);
+            members.addAll(departmentService.getMembersForSecondStageAuthority(user));
+        }
+
+        if (members.isEmpty()) {
+            return applications.stream()
+                .map(application -> new ApplicationForLeave(application, calendarService))
+                .collect(Collectors.toList());
+        } else {
             return applications.stream()
                 .filter(application -> members.contains(application.getPerson()))
                 .map(application -> new ApplicationForLeave(application, calendarService))
                 .collect(Collectors.toList());
         }
-
-        return applications.stream()
-            .map(application -> new ApplicationForLeave(application, calendarService))
-            .collect(Collectors.toList());
     }
 }

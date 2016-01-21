@@ -73,6 +73,17 @@ class ApplicationForLeaveDataProvider {
     }
 
 
+    Application createPremilinaryAllowedApplication(Person person, Person headOf, VacationType vacationType,
+        DayLength dayLength, DateMidnight startDate, DateMidnight endDate) {
+
+        Application application = createWaitingApplication(person, vacationType, dayLength, startDate, endDate);
+        application.setTwostageapproval(true);
+        application = applicationInteractionService.allow(application, headOf, Optional.of("Erst mal OK"));
+
+        return application;
+    }
+
+
     Application createAllowedApplication(Person person, Person boss, VacationType vacationType, DayLength dayLength,
         DateMidnight startDate, DateMidnight endDate) {
 

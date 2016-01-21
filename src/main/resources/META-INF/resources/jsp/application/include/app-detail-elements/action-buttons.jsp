@@ -25,8 +25,12 @@
   <c:set var="IS_OFFICE" value="${true}"/>
 </sec:authorize>
 
+<sec:authorize access="hasAuthority('SECOND_STAGE_AUTHORITY')">
+  <c:set var="IS_SECOND_STAGE_AUTHORITY" value="${true}"/>
+</sec:authorize>
 
-<c:if test="${application.status == 'WAITING' || (application.status == 'ALLOWED' && IS_OFFICE)}">
+
+<c:if test="${application.status == 'WAITING' || (application.status == 'ALLOWED' && IS_OFFICE) || (application.status == 'TEMPORARY_ALLOWED' && IS_SECOND_STAGE_AUTHORITY)}">
 
   <c:if test="${application.status == 'WAITING'}">
     <c:if test="${(IS_USER && application.person.id == signedInUser.id) || IS_OFFICE}">
@@ -62,6 +66,16 @@
     <a href="#" class="fa-action negative pull-right" data-title="<spring:message code='action.delete'/>"
        onclick="$('#reject').hide(); $('#allow').hide(); $('#refer').hide(); $('#cancel').show();">
       <i class="fa fa-trash"></i>
+    </a>
+  </c:if>
+  <c:if test="${application.status == 'TEMPORARY_ALLOWED' && IS_SECOND_STAGE_AUTHORITY}">
+    <a href="#" class="fa-action negative pull-right" data-title="<spring:message code='action.reject'/>"
+    onclick="$('#refer').hide(); $('#allow').hide(); $('#cancel').hide(); $('#reject').show();">
+    <i class="fa fa-ban"></i>
+    </a>
+    <a href="#" class="fa-action positive pull-right" data-title="<spring:message code='action.allow'/>"
+       onclick="$('#reject').hide(); $('#refer').hide(); $('#cancel').hide(); $('#allow').show();">
+      <i class="fa fa-check"></i>
     </a>
   </c:if>
 </c:if>

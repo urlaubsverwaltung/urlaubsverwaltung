@@ -24,6 +24,9 @@
                 <c:when test="${application.status == 'WAITING'}">
                     <i class="fa fa-question"></i>
                 </c:when>
+                <c:when test="${application.status == 'TEMPORARY_ALLOWED'}">
+                    <i class="fa fa-check"></i>
+                </c:when>
                 <c:when test="${application.status == 'ALLOWED'}">
                     <i class="fa fa-check"></i>
                 </c:when>

@@ -15,6 +15,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.service.exception.ImpatientAboutApplicationForLeaveProcessException;
 import org.synyx.urlaubsverwaltung.core.application.service.exception.RemindAlreadySentException;
+import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -50,6 +51,7 @@ public class ApplicationInteractionServiceImplTest {
     private CalendarSyncService calendarSyncService;
     private AbsenceMappingService absenceMappingService;
     private SettingsService settingsService;
+    private DepartmentService departmentService;
 
     @Before
     public void setUp() {
@@ -62,6 +64,7 @@ public class ApplicationInteractionServiceImplTest {
         calendarSyncService = Mockito.mock(CalendarSyncService.class);
         absenceMappingService = Mockito.mock(AbsenceMappingService.class);
         settingsService = Mockito.mock(SettingsService.class);
+        departmentService = Mockito.mock(DepartmentService.class);
 
         Mockito.when(calendarSyncService.addAbsence(any(Absence.class))).thenReturn(Optional.of("42"));
         Mockito.when(absenceMappingService.getAbsenceByIdAndType(anyInt(), eq(AbsenceType.VACATION)))
@@ -69,7 +72,8 @@ public class ApplicationInteractionServiceImplTest {
         Mockito.when(settingsService.getSettings()).thenReturn(new Settings());
 
         service = new ApplicationInteractionServiceImpl(applicationService, commentService, accountInteractionService,
-                signService, mailService, calendarSyncService, absenceMappingService, settingsService);
+                signService, mailService, calendarSyncService, absenceMappingService, settingsService,
+                departmentService);
     }
 
 
