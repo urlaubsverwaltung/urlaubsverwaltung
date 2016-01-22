@@ -20,7 +20,9 @@ import static org.springframework.ldap.query.LdapQueryBuilder.query;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Service
-@ConditionalOnExpression("'${auth}'=='activeDirectory' or '${auth}'=='ldap'")
+@ConditionalOnExpression(
+    "('${auth}'=='activeDirectory' and '${uv.security.activeDirectory.sync}'=='true') or ('${auth}'=='ldap' and '${uv.security.ldap.sync}'=='true')"
+)
 public class LdapUserServiceImpl implements LdapUserService {
 
     private static final String OBJECT_CLASS_ATTRIBUTE = "objectClass";

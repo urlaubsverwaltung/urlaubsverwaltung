@@ -49,6 +49,7 @@ public class ExceptionHandlerControllerAdvice {
     )
     public ModelAndView handleException(AbstractNoResultFoundException exception) {
 
+        LOG.debug("An exception was thrown: " + exception.getClass().getName());
         LOG.debug("An error occurred: " + exception.getMessage());
 
         return ExceptionHandlerControllerAdvice.getErrorPage(exception, HttpStatus.BAD_REQUEST);
@@ -59,6 +60,7 @@ public class ExceptionHandlerControllerAdvice {
     @ExceptionHandler(AccessDeniedException.class)
     public ModelAndView handleException(AccessDeniedException exception) {
 
+        LOG.debug("An exception was thrown: " + exception.getClass().getName());
         LOG.debug("An error occurred: " + exception.getMessage());
 
         return ExceptionHandlerControllerAdvice.getErrorPage(exception, HttpStatus.FORBIDDEN);
@@ -69,6 +71,7 @@ public class ExceptionHandlerControllerAdvice {
     @ExceptionHandler(Exception.class)
     public ModelAndView handleException(Exception exception) {
 
+        LOG.info("An exception was thrown: " + exception.getClass().getName());
         LOG.info("An error occurred: " + exception.getMessage());
 
         return ExceptionHandlerControllerAdvice.getErrorPage(exception, HttpStatus.INTERNAL_SERVER_ERROR);

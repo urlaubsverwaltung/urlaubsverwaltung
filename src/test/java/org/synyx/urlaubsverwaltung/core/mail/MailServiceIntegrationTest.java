@@ -28,7 +28,6 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.core.sync.CalendarType;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
@@ -357,7 +356,7 @@ public class MailServiceIntegrationTest {
         ApplicationComment comment = new ApplicationComment(office);
         comment.setText(commentMessage);
 
-        mailService.sendCancelledNotification(application, true, comment);
+        mailService.sendCancelledByOfficeNotification(application, comment);
 
         // was email sent?
         List<Message> inboxApplicant = Mailbox.get("muster@mann.de");
@@ -375,43 +374,6 @@ public class MailServiceIntegrationTest {
         String content = (String) msg.getContent();
         assertTrue(content.contains("dein Urlaubsantrag wurde von Magdalena"));
         assertTrue(content.contains("wende dich bitte direkt an Magdalena"));
-        assertTrue("No comment in mail content", content.contains(commentMessage));
-        assertTrue("Wrong comment author", content.contains(comment.getPerson().getNiceName()));
-    }
-
-
-    @Test
-    public void ensureOfficeMembersGetANotificationIfAPersonCancelsAnAllowedApplication() throws MessagingException,
-        IOException {
-
-        person.setLastName("Test");
-        person.setFirstName("Heinrich");
-
-        String officeEmailAddress = "office@office.de";
-        Person office = TestDataCreator.createPerson("office", "Marlene", "Office", officeEmailAddress);
-
-        Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_OFFICE))
-            .thenReturn(Arrays.asList(office));
-
-        String commentMessage = "Das ist ein Kommentar.";
-        ApplicationComment comment = new ApplicationComment(person);
-        comment.setText(commentMessage);
-
-        mailService.sendCancelledNotification(application, false, comment);
-
-        // ENSURE OFFICE MEMBERS HAVE GOT CORRECT EMAIL
-        List<Message> inboxOffice = Mailbox.get(officeEmailAddress);
-        assertTrue(inboxOffice.size() > 0);
-
-        Message msg = inboxOffice.get(0);
-
-        assertEquals("Ein Antrag wurde storniert", msg.getSubject());
-
-        assertEquals(new InternetAddress(officeEmailAddress), msg.getAllRecipients()[0]);
-
-        String content = (String) msg.getContent();
-        assertTrue(content.contains("Der Urlaubsantrag von Heinrich Test"));
-        assertTrue(content.contains("wurde storniert"));
         assertTrue("No comment in mail content", content.contains(commentMessage));
         assertTrue("Wrong comment author", content.contains(comment.getPerson().getNiceName()));
     }

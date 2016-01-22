@@ -88,16 +88,12 @@ public interface MailService {
 
 
     /**
-     * This method sends an email if an application got cancelled. If the application had the status allowed and was
-     * cancelled by the applicant, the office gets an email. If the application was cancelled by the office (regardless
-     * of which status), the applicant gets an email.
+     * Send an email to the applicant if an application for leave got cancelled by office.
      *
-     * @param  application  the application which got canceled
-     * @param  cancelledByOffice  describes if chefs (param is true) or office (param is false) get the email (dependent
-     *                            on application's state: waiting-chefs, allowed-office
-     * @param  comment
+     * @param  application  the application which got cancelled
+     * @param  comment  describes the reason of the cancellation
      */
-    void sendCancelledNotification(Application application, boolean cancelledByOffice, ApplicationComment comment);
+    void sendCancelledByOfficeNotification(Application application, ApplicationComment comment);
 
 
     /**
@@ -189,4 +185,13 @@ public interface MailService {
      * @param  rawPassword  First time usage password
      */
     void sendUserCreationNotification(Person person, String rawPassword);
+
+
+    /**
+     * Sends mail to office and informs about a cancellation request of an already allowed application.
+     *
+     * @param  application
+     * @param  createdComment
+     */
+    void sendCancellationRequest(Application application, ApplicationComment createdComment);
 }

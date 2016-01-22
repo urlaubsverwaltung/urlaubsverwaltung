@@ -7,7 +7,6 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
-import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
@@ -24,36 +23,16 @@ import java.util.Optional;
  */
 public class LdapSyncServiceTest {
 
-    private LdapUserService ldapUserService;
+    private PersonService personService;
 
     private LdapSyncService ldapSyncService;
-    private PersonService personService;
 
     @Before
     public void setUp() {
 
-        ldapUserService = Mockito.mock(LdapUserService.class);
         personService = Mockito.mock(PersonService.class);
 
-        ldapSyncService = new LdapSyncService(ldapUserService, personService);
-    }
-
-
-    @Test
-    public void ensureFetchesLdapUsersForLdapAuthentication() {
-
-        ldapSyncService.sync();
-
-        Mockito.verify(ldapUserService).getLdapUsers();
-    }
-
-
-    @Test
-    public void ensureFetchesLdapUsersForActiveDirectoryAuthentication() {
-
-        ldapSyncService.sync();
-
-        Mockito.verify(ldapUserService).getLdapUsers();
+        ldapSyncService = new LdapSyncService(personService);
     }
 
 

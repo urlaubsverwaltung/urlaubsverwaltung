@@ -33,7 +33,6 @@ import org.synyx.urlaubsverwaltung.core.settings.MailSettings;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.core.sync.CalendarType;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 import org.synyx.urlaubsverwaltung.core.util.DateFormat;
 import org.synyx.urlaubsverwaltung.core.util.PropertiesUtil;
@@ -319,27 +318,14 @@ class MailServiceImpl implements MailService {
 
 
     @Override
-    public void sendCancelledNotification(Application application, boolean cancelledByOffice,
-        ApplicationComment comment) {
+    public void sendCancelledByOfficeNotification(Application application, ApplicationComment comment) {
 
-        String text;
         Map<String, Object> model = createModelForApplicationStatusChangeMail(application,
                 Optional.ofNullable(comment));
 
-        if (cancelledByOffice) {
-            // mail to applicant anyway
-            // not only if application was allowed before cancelling
-            text = buildMailBody("cancelled_by_office", model);
+        String text = buildMailBody("cancelled_by_office", model);
 
-            sendEmail(Arrays.asList(application.getPerson()), "subject.application.cancelled.user", text);
-        } else {
-            // application was allowed before cancelling
-            // only then office gets an email
-            text = buildMailBody("cancelled", model);
-
-            // mail to office
-            sendEmail(getOfficeMembers(), "subject.application.cancelled.office", text);
-        }
+        sendEmail(Arrays.asList(application.getPerson()), "subject.application.cancelled.user", text);
     }
 
 
@@ -498,5 +484,19 @@ class MailServiceImpl implements MailService {
         String text = buildMailBody("user_creation", model);
 
         sendEmail(Arrays.asList(person), "subject.userCreation", text);
+    }
+
+
+    @Override
+    public void sendCancellationRequest(Application application, ApplicationComment createdComment) {
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("application", application);
+        model.put("comment", createdComment);
+        model.put("link", applicationUrl + "web/application/" + application.getId());
+
+        String text = buildMailBody("application_cancellation_request", model);
+
+        sendEmail(getOfficeMembers(), "subject.application.cancellationRequest", text);
     }
 }

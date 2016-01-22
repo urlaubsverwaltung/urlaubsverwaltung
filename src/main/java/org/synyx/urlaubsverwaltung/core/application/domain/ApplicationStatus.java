@@ -37,7 +37,7 @@ public enum ApplicationStatus {
     CANCELLED,
 
     /**
-     * If an application for leave has not been allowed yer and is cancelled, it gets this status.
+     * If an application for leave has not been allowed yet and is cancelled, it gets this status.
      *
      * @since  2.5.2
      */

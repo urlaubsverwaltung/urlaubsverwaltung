@@ -21,7 +21,7 @@ public class LoginController {
     private final String applicationVersion;
 
     @Autowired
-    public LoginController(@Value("${application.version}") String applicationVersion) {
+    public LoginController(@Value("${info.app.version}") String applicationVersion) {
 
         this.applicationVersion = applicationVersion;
     }

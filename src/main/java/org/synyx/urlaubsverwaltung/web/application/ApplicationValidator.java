@@ -216,13 +216,14 @@ public class ApplicationValidator implements Validator {
 
     private void validateIfApplyingForLeaveIsPossible(ApplicationForLeaveForm applicationForm, Errors errors) {
 
-        Person person = applicationForm.getPerson();
+        Application application = applicationForm.generateApplicationForLeave();
+        Person person = application.getPerson();
 
         /**
          * Ensure the person has a working time for the period of the application for leave
          */
         Optional<WorkingTime> workingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(person,
-                applicationForm.getStartDate());
+                application.getStartDate());
 
         if (!workingTime.isPresent()) {
             errors.reject(ERROR_WORKING_TIME);
@@ -233,16 +234,8 @@ public class ApplicationValidator implements Validator {
         /**
          * Calculate the work days
          */
-        DayLength dayLength = applicationForm.getDayLength();
-        BigDecimal days;
-
-        if (dayLength == DayLength.FULL) {
-            days = calendarService.getWorkDays(dayLength, applicationForm.getStartDate(), applicationForm.getEndDate(),
-                    person);
-        } else {
-            days = calendarService.getWorkDays(dayLength, applicationForm.getStartDateHalf(),
-                    applicationForm.getStartDateHalf(), person);
-        }
+        BigDecimal days = calendarService.getWorkDays(application.getDayLength(), application.getStartDate(),
+                application.getEndDate(), person);
 
         /**
          * Ensure that no one applies for leave for a vacation of 0 days
@@ -256,7 +249,6 @@ public class ApplicationValidator implements Validator {
         /**
          * Ensure that there is no application for leave and no sick note in the same period
          */
-        Application application = applicationForm.generateApplicationForLeave();
         OverlapCase overlap = overlapService.checkOverlap(application);
 
         boolean isOverlapping = overlap == OverlapCase.FULLY_OVERLAPPING || overlap == OverlapCase.PARTLY_OVERLAPPING;
@@ -272,11 +264,10 @@ public class ApplicationValidator implements Validator {
          * {@link org.synyx.urlaubsverwaltung.core.application.domain.VacationType.HOLIDAY}
          */
 
-        boolean isHoliday = applicationForm.getVacationType() == VacationType.HOLIDAY;
+        boolean isHoliday = application.getVacationType() == VacationType.HOLIDAY;
 
         if (isHoliday) {
-            boolean enoughVacationDaysLeft = calculationService.checkApplication(
-                    applicationForm.generateApplicationForLeave());
+            boolean enoughVacationDaysLeft = calculationService.checkApplication(application);
 
             if (!enoughVacationDaysLeft) {
                 errors.reject(ERROR_NOT_ENOUGH_DAYS);

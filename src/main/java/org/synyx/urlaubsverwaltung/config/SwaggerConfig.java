@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableSwagger
 public class SwaggerConfig {
 
-    @Value(value = "${application.version}")
+    @Value(value = "${info.app.version}")
     private String version;
 
     private SpringSwaggerConfig springSwaggerConfig;
