@@ -30,7 +30,7 @@
 </sec:authorize>
 
 
-<c:if test="${application.status == 'WAITING' || (application.status == 'ALLOWED' && (IS_OFFICE || (application.status == 'TEMPORARY_ALLOWED' && IS_SECOND_STAGE_AUTHORITY) || (IS_USER && application.person.id == signedInUser.id)))}">
+<c:if test="${application.status == 'WAITING' || (application.status == 'ALLOWED' && (IS_OFFICE || (IS_USER && application.person.id == signedInUser.id))) || (application.status == 'TEMPORARY_ALLOWED' && IS_SECOND_STAGE_AUTHORITY)}">
 
   <c:if test="${application.status == 'WAITING'}">
     <c:if test="${(IS_USER && application.person.id == signedInUser.id) || IS_OFFICE}">
