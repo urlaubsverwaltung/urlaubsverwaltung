@@ -86,8 +86,8 @@
                     <spring:message code='department.data.twoStageApproval'/>
                 </label>
                 <div class="col-md-9">
-                    <div class="checkbox-inline">
-                        <span class="help-inline"><form:errors path="twoStageApproval" cssClass="error"/></span>
+                    <span class="help-inline"><form:errors path="twoStageApproval" cssClass="error"/></span>
+                    <div class="checkbox-inline text-left">
                         <form:checkbox id="twoStageApproval" path="twoStageApproval" class="form-control" cssErrorClass="form-control error"/>
                     </div>
                 </div>

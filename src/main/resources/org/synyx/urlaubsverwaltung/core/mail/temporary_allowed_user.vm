@@ -1,0 +1,14 @@
+Hallo ${application.person.niceName},
+
+dein am ${application.applicationDate.toString("dd.MM.yyyy")} gestellter Antrag wurde von ${application.boss.niceName} vorläufig genehmigt.
+
+Er sollte in Kürze von dem ensprechenden Verantwortlichen freigegeben werden.
+
+Es handelt sich um den Zeitraum von ${application.startDate.toString("dd.MM.yyyy")} bis ${application.endDate.toString("dd.MM.yyyy")}, ${dayLength}
+
+
+#if($comment.text && $comment.text != "")
+Kommentar von ${comment.person.niceName} zum Antrag: ${comment.text}
+#end 
+
+Link zum Antrag: ${link}

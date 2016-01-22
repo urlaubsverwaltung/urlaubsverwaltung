@@ -196,6 +196,10 @@
                         <form:checkbox path="permissions" value="SECOND_STAGE_AUTHORITY"/><spring:message code="person.form.permissions.roles.SECOND_STAGE_AUTHORITY"/>:
                         <spring:message code="person.form.permissions.roles.SECOND_STAGE_AUTHORITY.description"/>
                     </label>
+                    <label class="person--mail-notification">
+                        <form:checkbox path="notifications" value="NOTIFICATION_SECOND_STAGE_AUTHORITY"/>
+                        <spring:message code="person.form.notifications.SECOND_STAGE_AUTHORITY"/>
+                    </label>
                         <%-- It's obligatory for now that users get mail notifications about progress of their own applications for leave --%>
                     <form:hidden path="notifications" value="NOTIFICATION_USER" />
                 </div>

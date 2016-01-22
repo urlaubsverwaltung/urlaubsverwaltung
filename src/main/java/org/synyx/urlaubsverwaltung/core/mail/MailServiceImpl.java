@@ -25,6 +25,7 @@ import org.springframework.util.StringUtils;
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationComment;
+import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.person.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -182,6 +183,17 @@ class MailServiceImpl implements MailService {
     }
 
 
+    private List<Person> getSecondStageAuthorities(Application application) {
+
+        List<Person> secondStageAuthorities = personService.getPersonsWithNotificationType(
+                MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY);
+
+        return secondStageAuthorities.stream()
+            .filter(person -> departmentService.isSecondStageAuthorityOfPerson(person, application.getPerson()))
+            .collect(Collectors.toList());
+    }
+
+
     protected void sendEmail(final List<Person> recipients, final String subject, final String text) {
 
         final String internationalizedSubject = properties.getProperty(subject);
@@ -250,19 +262,36 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendAllowedNotification(Application application, ApplicationComment comment) {
 
-        // if application has been allowed, two emails must be sent
-        // the applicant gets an email and the office gets an email
+        // TODO: refactor
 
-        // email to office
-        Map<String, Object> modelForOffice = createModelForApplicationStatusChangeMail(application,
-                Optional.ofNullable(comment));
-        String textOffice = buildMailBody("allowed_office", modelForOffice);
-        sendEmail(getOfficeMembers(), "subject.application.allowed.office", textOffice);
+        boolean temporary = application.isTwoStageApproval()
+            && ApplicationStatus.TEMPORARY_ALLOWED.equals(application.getStatus());
+
+        // if application has been allowed, two emails must be sent
+        // if application has been temporary allowed, office receives the mail after final approvement
 
         // email to applicant
-        Map<String, Object> modelForUser = createModelForApplicationStatusChangeMail(application,
+        Map<String, Object> model = createModelForApplicationStatusChangeMail(application,
                 Optional.ofNullable(comment));
-        String textUser = buildMailBody("allowed_user", modelForUser);
+        String textUser;
+
+        if (temporary) {
+            List<Person> secondStageAuthorities = getSecondStageAuthorities(application);
+
+            String textSecondStageAuthority = buildMailBody("temporary_allowed_second_stage_authority", model);
+
+            textUser = buildMailBody("temporary_allowed_user", model);
+            sendEmail(secondStageAuthorities, "subject.application.temporary_allowed.user", textSecondStageAuthority);
+        } else {
+            // email to office
+            Map<String, Object> modelForOffice = createModelForApplicationStatusChangeMail(application,
+                    Optional.ofNullable(comment));
+            String textOffice = buildMailBody("allowed_office", modelForOffice);
+            sendEmail(getOfficeMembers(), "subject.application.allowed.office", textOffice);
+
+            textUser = buildMailBody("allowed_user", model);
+        }
+
         sendEmail(Arrays.asList(application.getPerson()), "subject.application.allowed.user", textUser);
     }
 

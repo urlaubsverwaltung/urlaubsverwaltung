@@ -1,0 +1,30 @@
+Hallo,
+
+es liegt ein neuer zu genehmigender Antrag vor: ${link}
+Der Antrag wurde bereits vorläufig genehmigt.
+
+Mitarbeiter: ${application.person.niceName}
+Datum der Antragsstellung: ${application.applicationDate.toString("dd.MM.yyyy")}
+Zeitraum des beantragten Urlaubs: ${application.startDate.toString("dd.MM.yyyy")} bis ${application.endDate.toString("dd.MM.yyyy")}, ${dayLength}
+Art des Urlaubs: ${vacationType}
+#if($application.reason && $application.reason != "")
+Grund: ${application.reason}
+#end
+#if($application.holidayReplacement.niceName && $application.holidayReplacement.niceName != "")
+Vertreter: ${application.holidayReplacement.niceName}
+#end
+#if($application.address && $application.address != "")
+Anschrift/Telefon während des Urlaubs: ${application.address}
+#end
+#if($comment.text && $comment.text != "")
+Kommentar: ${comment.text}
+#end
+
+Überschneidende Anträge in der Abteilung des Antragsstellers:
+#if($departmentVacations.isEmpty())
+Keine
+#else
+    #foreach( $vacation in $departmentVacations )
+        ${vacation.person.niceName}: ${vacation.startDate.toString("dd.MM.yyyy")} bis ${vacation.endDate.toString("dd.MM.yyyy")}
+    #end
+#end
