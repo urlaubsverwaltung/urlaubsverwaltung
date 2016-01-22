@@ -48,7 +48,6 @@
                 <spring:message code="department.data.description"/>
             </span>
         </div>
-
         <div class="col-md-8 col-md-pull-4">
             <div class="form-group is-required">
                 <label class="control-label col-md-3" for="name">
@@ -72,32 +71,29 @@
                 </div>
             </div>
         </div>
-
     </div>
-
 
     <div class="form-section">
         <div class="col-md-4 col-md-push-8">
             <span class="help-block">
                 <i class="fa fa-fw fa-info-circle"></i>
-                <spring:message code="department.data.twostageapproval.help"/>
+                <spring:message code="department.data.twoStageApproval.help"/>
             </span>
         </div>
         <div class="col-md-8 col-md-pull-4">
             <div class="form-group">
-                <label class="control-label col-md-3" for="twostageapproval">
-                    <spring:message code='department.data.twostageapproval'/>
+                <label class="control-label col-md-3" for="twoStageApproval">
+                    <spring:message code='department.data.twoStageApproval'/>
                 </label>
                 <div class="col-md-9">
                     <div class="checkbox-inline">
-                        <form:checkbox id="twostageapproval" path="twostageapproval" class="form-control" cssErrorClass="form-control error"/>
-                        <span class="help-inline"><form:errors path="twostageapproval" cssClass="error"/></span>
+                        <span class="help-inline"><form:errors path="twoStageApproval" cssClass="error"/></span>
+                        <form:checkbox id="twoStageApproval" path="twoStageApproval" class="form-control" cssErrorClass="form-control error"/>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
 
     <div class="form-section">
         <div class="col-xs-12">
@@ -107,12 +103,21 @@
         <c:set var="departmentHeadsError">
             <form:errors path="departmentHeads" cssClass="error"/>
         </c:set>
+        <c:set var="secondStageAuthoritiesError">
+            <form:errors path="secondStageAuthorities" cssClass="error"/>
+        </c:set>
 
         <c:if test="${not empty departmentHeadsError}">
             <div class="col-xs-12">
                 <div class="alert alert-danger">${departmentHeadsError}</div>
             </div>
         </c:if>
+        <c:if test="${not empty secondStageAuthoritiesError}">
+            <div class="col-xs-12">
+                <div class="alert alert-danger">${secondStageAuthoritiesError}</div>
+            </div>
+        </c:if>
+
 
         <div class="col-md-4 col-md-push-8">
             <span class="help-block">

@@ -26,7 +26,7 @@
         </preConditions>
 
         <addColumn tableName="Department">
-            <column name="twostageapproval" type="BIT(1)">
+            <column name="twoStageApproval" type="BIT(1)">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
@@ -40,7 +40,7 @@
         </preConditions>
 
         <addColumn tableName="Application">
-            <column name="twostageapproval" type="BIT(1)">
+            <column name="twoStageApproval" type="BIT(1)">
                 <constraints nullable="false"/>
             </column>
         </addColumn>

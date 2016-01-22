@@ -192,7 +192,7 @@ public class ApplicationForLeaveDetailsController {
         if ((isDepartmentHead || isBoss) && waiting) {
             applicationInteractionService.allow(application, signedInUser, Optional.ofNullable(comment.getText()));
 
-            if (application.isTwostageapproval()) {
+            if (application.isTwoStageApproval()) {
                 redirectAttributes.addFlashAttribute("temporaryAllowSuccess", true);
             } else {
                 redirectAttributes.addFlashAttribute("allowSuccess", true);

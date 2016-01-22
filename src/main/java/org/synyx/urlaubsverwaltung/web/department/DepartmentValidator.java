@@ -28,12 +28,20 @@ public class DepartmentValidator implements Validator {
     private static final String ATTRIBUTE_NAME = "name";
     private static final String ATTRIBUTE_DESCRIPTION = "description";
     private static final String ATTRIBUTE_DEPARTMENT_HEADS = "departmentHeads";
+    private static final String ATTRIBUTE_SECOND_STAGE_AUTHORITIES = "secondStageAuthorities";
+    private static final String ATTRIBUTE_TWO_STAGE_APPROVAL = "twoStageApproval";
 
     private static final String ERROR_REASON = "error.entry.mandatory";
     private static final String ERROR_LENGTH = "error.entry.tooManyChars";
     private static final String ERROR_DEPARTMENT_HEAD_NOT_ASSIGNED =
         "department.members.error.departmentHeadNotAssigned";
     private static final String ERROR_DEPARTMENT_HEAD_NO_ACCESS = "department.members.error.departmentHeadHasNoAccess";
+
+    private static final String ERROR_SECOND_STAGE_AUTHORITY_MISSING =
+        "department.members.error.secondStageAuthorityMissing";
+
+    private static final String ERROR_TWO_STAGE_APPROVAL_FLAG_MISSING =
+        "department.members.error.twoStageApprovalFlagMissing";
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -56,6 +64,7 @@ public class DepartmentValidator implements Validator {
         validateName(errors, department.getName());
         validateDescription(errors, department.getDescription());
         validateDepartmentHeads(errors, department.getMembers(), department.getDepartmentHeads());
+        validateSecondStageAuthorities(errors, department.isTwoStageApproval(), department.getSecondStageAuthorities());
     }
 
 
@@ -95,6 +104,19 @@ public class DepartmentValidator implements Validator {
                     errors.rejectValue(ATTRIBUTE_DEPARTMENT_HEADS, ERROR_DEPARTMENT_HEAD_NO_ACCESS);
                 }
             }
+        }
+    }
+
+
+    private void validateSecondStageAuthorities(Errors errors, boolean twoStageApproval,
+        List<Person> secondStageAuthorities) {
+
+        if (twoStageApproval && (secondStageAuthorities == null || secondStageAuthorities.isEmpty())) {
+            errors.rejectValue(ATTRIBUTE_SECOND_STAGE_AUTHORITIES, ERROR_SECOND_STAGE_AUTHORITY_MISSING);
+        }
+
+        if (!twoStageApproval && secondStageAuthorities != null && !secondStageAuthorities.isEmpty()) {
+            errors.rejectValue(ATTRIBUTE_TWO_STAGE_APPROVAL, ERROR_TWO_STAGE_APPROVAL_FLAG_MISSING);
         }
     }
 }

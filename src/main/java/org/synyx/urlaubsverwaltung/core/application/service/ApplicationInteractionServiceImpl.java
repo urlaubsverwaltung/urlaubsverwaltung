@@ -82,8 +82,8 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         List<Department> departments = departmentService.getAssignedDepartmentsOfMember(person);
 
         // check if a two stage approval is set for the Department
-        departments.stream().filter(Department::isTwostageapproval).forEach(department ->
-                application.setTwostageapproval(true));
+        departments.stream().filter(Department::isTwoStageApproval).forEach(department ->
+                application.setTwoStageApproval(true));
 
         application.setStatus(ApplicationStatus.WAITING);
         application.setApplier(applier);
@@ -137,7 +137,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         ApplicationAction applicationAction;
 
-        if (application.isTwostageapproval()) {
+        if (application.isTwoStageApproval()) {
             application.setStatus(ApplicationStatus.TEMPORARY_ALLOWED);
             applicationAction = ApplicationAction.TEMPORARY_ALLOWED;
         } else {
@@ -165,7 +165,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(application.getId(),
                 AbsenceType.VACATION);
 
-        if (absenceMapping.isPresent()) {
+        if (absenceMapping.isPresent() && applicationAction.equals(ApplicationAction.ALLOWED)) {
             CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
             AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
             calendarSyncService.update(new Absence(application.getPerson(), application.getPeriod(),

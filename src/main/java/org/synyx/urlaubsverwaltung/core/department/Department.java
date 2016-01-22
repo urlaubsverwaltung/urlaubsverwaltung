@@ -44,7 +44,8 @@ public class Department extends AbstractPersistable<Integer> {
     @Temporal(TemporalType.DATE)
     private Date lastModification;
 
-    private boolean twostageapproval;
+    // flag for two stage approval process
+    private boolean twoStageApproval;
 
     @CollectionTable(name = "Department_Member")
     @ElementCollection
@@ -110,15 +111,15 @@ public class Department extends AbstractPersistable<Integer> {
     }
 
 
-    public boolean isTwostageapproval() {
+    public boolean isTwoStageApproval() {
 
-        return twostageapproval;
+        return twoStageApproval;
     }
 
 
-    public void setTwostageapproval(boolean twostageapproval) {
+    public void setTwoStageApproval(boolean twoStageApproval) {
 
-        this.twostageapproval = twostageapproval;
+        this.twoStageApproval = twoStageApproval;
     }
 
 

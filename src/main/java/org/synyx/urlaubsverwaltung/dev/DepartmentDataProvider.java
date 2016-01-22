@@ -41,7 +41,7 @@ class DepartmentDataProvider {
         department.setSecondStageAuthorities(secondStageAuthorities);
 
         if (!secondStageAuthorities.isEmpty()) {
-            department.setTwostageapproval(true);
+            department.setTwoStageApproval(true);
         }
 
         departmentService.create(department);

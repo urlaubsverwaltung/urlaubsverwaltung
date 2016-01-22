@@ -77,7 +77,7 @@ class ApplicationForLeaveDataProvider {
         DayLength dayLength, DateMidnight startDate, DateMidnight endDate) {
 
         Application application = createWaitingApplication(person, vacationType, dayLength, startDate, endDate);
-        application.setTwostageapproval(true);
+        application.setTwoStageApproval(true);
         application = applicationInteractionService.allow(application, headOf, Optional.of("Erst mal OK"));
 
         return application;
