@@ -71,9 +71,7 @@
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="form-section">
         <div class="col-md-4 col-md-push-8">
             <span class="help-block">
                 <i class="fa fa-fw fa-info-circle"></i>
@@ -83,13 +81,14 @@
         <div class="col-md-8 col-md-pull-4">
             <div class="form-group">
                 <label class="control-label col-md-3" for="twoStageApproval">
-                    <spring:message code='department.data.twoStageApproval'/>
+                    <spring:message code="department.data.twoStageApproval"/>:
                 </label>
-                <div class="col-md-9">
+                <div class="col-md-9 checkbox">
                     <span class="help-inline"><form:errors path="twoStageApproval" cssClass="error"/></span>
-                    <div class="checkbox-inline text-left">
-                        <form:checkbox id="twoStageApproval" path="twoStageApproval" class="form-control" cssErrorClass="form-control error"/>
-                    </div>
+                   <label>
+                       <form:checkbox id="twoStageApproval" path="twoStageApproval" cssErrorClass="error"/>
+                       <spring:message code="department.data.twoStageApproval.activate"/>
+                   </label>
                 </div>
             </div>
         </div>
