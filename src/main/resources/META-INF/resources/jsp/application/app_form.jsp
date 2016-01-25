@@ -43,7 +43,9 @@
                 var urlPrefix = "<spring:url value='/api' />";
                 var personId = "<c:out value='${person.id}' />";
                 var startDate = $("#from").datepicker("getDate");
+                var startTime = $("#startTime").datepicker("getTime");
                 var endDate = $("#to").datepicker("getDate");
+                var endTime = $("#endTime").datepicker("getTime");
 
                 sendGetDaysRequest(urlPrefix,
                         startDate,
@@ -205,6 +207,21 @@
                 <div class="col-md-9">
                     <form:input id="at" path="startDateHalf" class="form-control" cssErrorClass="form-control error" />
                     <span class="help-block info days"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-3" for="startTime">
+                    <spring:message code="absence.period.startTime" />:
+                </label>
+                <div class="col-md-3">
+                    <form:input id="startTime" path="startTime" class="form-control" cssErrorClass="form-control error" />
+                </div>
+                <label class="control-label col-md-3" for="endTime">
+                    <spring:message code="absence.period.endTime" />:
+                </label>
+                <div class="col-md-3">
+                    <form:input id="endTime" path="endTime" class="form-control" cssErrorClass="form-control error" />
                 </div>
             </div>
 

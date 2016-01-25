@@ -30,6 +30,8 @@
             var $from = $("#from");
             var $to = $("#to");
             var $at = $("#at");
+            var $startTime = $("#startTime");
+            var $endTime = $("#endTime");
 
             if (this.id === "from" && $to.val() === "") {
                 $to.datepicker("setDate", selectedDate);
@@ -38,6 +40,8 @@
             var dayLength = $('input:radio[name=dayLength]:checked').val();
             var startDate = "";
             var toDate = "";
+            var startTime = "";
+            var endTime = "";
 
             if (dayLength === "FULL") {
                 startDate = $from.datepicker("getDate");
@@ -47,12 +51,16 @@
                 toDate = $at.datepicker("getDate");
             }
 
+            startTime = $startTime.datepicker("getTime");
+            endTime = $endTime.datepicker("getTime");
+
+
             sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, getPersonId(), ".days");
             sendGetDepartmentVacationsRequest(urlPrefix, startDate, toDate, personId, "#departmentVacations");
 
         };
 
-        var selectors = ["#from", "#to", "#at"];
+        var selectors = ["#from", "#to", "#at", "#startTime", "#endTime"];
 
         createDatepickerInstances(selectors, datepickerLocale, urlPrefix, getPersonId, onSelect);
         

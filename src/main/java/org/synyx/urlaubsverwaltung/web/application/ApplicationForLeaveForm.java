@@ -13,6 +13,8 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.math.BigDecimal;
 
+import java.time.LocalTime;
+
 
 /**
  * View class representing an application for leave.
@@ -26,9 +28,13 @@ public class ApplicationForLeaveForm {
 
     private DateMidnight startDate;
 
+    private LocalTime startTime;
+
     private DateMidnight startDateHalf;
 
     private DateMidnight endDate;
+
+    private LocalTime endTime;
 
     // Type of holiday, e.g. holiday, special leave, etc.
     private VacationType vacationType;
@@ -145,6 +151,30 @@ public class ApplicationForLeaveForm {
     public void setStartDate(DateMidnight startDate) {
 
         this.startDate = startDate;
+    }
+
+
+    public LocalTime getStartTime() {
+
+        return startTime;
+    }
+
+
+    public void setStartTime(LocalTime startTime) {
+
+        this.startTime = startTime;
+    }
+
+
+    public LocalTime getEndTime() {
+
+        return endTime;
+    }
+
+
+    public void setEndTime(LocalTime endTime) {
+
+        this.endTime = endTime;
     }
 
 
