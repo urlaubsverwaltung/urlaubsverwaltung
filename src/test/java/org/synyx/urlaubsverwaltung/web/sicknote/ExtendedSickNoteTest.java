@@ -31,7 +31,7 @@ public class ExtendedSickNoteTest {
         DayLength dayLength = DayLength.MORNING;
         DateMidnight startDate = new DateMidnight(2015, 3, 3);
         DateMidnight endDate = new DateMidnight(2015, 3, 6);
-        SickNoteType type = SickNoteType.SICK_NOTE_CHILD;
+        String type = SickNoteType.SICK_NOTE_CHILD;
 
         SickNote sickNote = new SickNote();
         sickNote.setDayLength(dayLength);

@@ -11,7 +11,6 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteInteractionService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteStatus;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
 
 
 /**
@@ -33,7 +32,7 @@ class SickNoteDataProvider {
     }
 
     SickNote createSickNote(Person person, Person office, DayLength dayLength, DateMidnight startDate,
-        DateMidnight endDate, SickNoteType type, boolean withAUB) {
+        DateMidnight endDate, String type, boolean withAUB) {
 
         SickNote sickNote = null;
 

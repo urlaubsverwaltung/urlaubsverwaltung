@@ -1,0 +1,29 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="Sommer" id="add_SickNoteType">
+        <createTable tableName="SickNoteType">
+            <column name="id" autoIncrement="true" type="INT(10)">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="typeName" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <sql>
+            INSERT INTO SickNoteType (typeName) VALUES ('SICK_NOTE');
+            INSERT INTO SickNoteType (typeName) VALUES ('SICK_NOTE_CHILD');
+            INSERT INTO SickNoteType (typeName) VALUES ('SICK_NOTE_WITH_CERTIFICATE');
+        </sql>
+    </changeSet>
+
+    <changeSet author="Sommer" id="change_SickNote_Type_column">
+        <preConditions>
+            <tableExists tableName="SickNote"/>
+        </preConditions>
+        <modifyDataType tableName="SickNote" columnName="type" newDataType="VARCHAR(255)"/>
+    </changeSet>
+
+</databaseChangeLog>

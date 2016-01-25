@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.web.sicknote;
 
-import com.google.common.collect.FluentIterable;
-
 import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +32,7 @@ import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteComment;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteCommentService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteInteractionService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteService;
-import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
+import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteTypeService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
@@ -42,7 +40,6 @@ import org.synyx.urlaubsverwaltung.web.DateMidnightPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,6 +61,9 @@ public class SickNoteController {
 
     @Autowired
     private SickNoteCommentService sickNoteCommentService;
+
+    @Autowired
+    private SickNoteTypeService sickNoteTypeService;
 
     @Autowired
     private PersonService personService;
@@ -117,7 +117,7 @@ public class SickNoteController {
 
         model.addAttribute("sickNote", new SickNote());
         model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, personService.getActivePersons());
-        model.addAttribute("sickNoteTypes", SickNoteType.values());
+        model.addAttribute("sickNoteTypes", sickNoteTypeService.getSickNoteTypes());
 
         return "sicknote/sick_note_form";
     }
@@ -133,7 +133,7 @@ public class SickNoteController {
             model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
             model.addAttribute("sickNote", sickNote);
             model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, personService.getActivePersons());
-            model.addAttribute("sickNoteTypes", SickNoteType.values());
+            model.addAttribute("sickNoteTypes", sickNoteTypeService.getSickNoteTypes());
 
             return "sicknote/sick_note_form";
         }
@@ -156,7 +156,7 @@ public class SickNoteController {
         }
 
         model.addAttribute("sickNote", sickNote);
-        model.addAttribute("sickNoteTypes", SickNoteType.values());
+        model.addAttribute("sickNoteTypes", sickNoteTypeService.getSickNoteTypes());
 
         return "sicknote/sick_note_form";
     }
@@ -172,7 +172,7 @@ public class SickNoteController {
         if (errors.hasErrors()) {
             model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
             model.addAttribute("sickNote", sickNote);
-            model.addAttribute("sickNoteTypes", SickNoteType.values());
+            model.addAttribute("sickNoteTypes", sickNoteTypeService.getSickNoteTypes());
 
             return "sicknote/sick_note_form";
         }
