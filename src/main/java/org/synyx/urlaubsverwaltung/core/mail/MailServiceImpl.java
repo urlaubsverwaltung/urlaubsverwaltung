@@ -25,6 +25,7 @@ import org.springframework.util.StringUtils;
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationComment;
+import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.person.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -257,19 +258,25 @@ class MailServiceImpl implements MailService {
         Map<String, Object> modelForOffice = createModelForApplicationStatusChangeMail(application,
                 Optional.ofNullable(comment));
         String textOffice = buildMailBody("allowed_office", modelForOffice);
-        sendEmail(getOfficeMembers(), "subject.application.allowed.office", textOffice);
+        sendEmail(getRecipients(MailNotification.NOTIFICATION_OFFICE), "subject.application.allowed.office",
+            textOffice);
 
         // email to applicant
         Map<String, Object> modelForUser = createModelForApplicationStatusChangeMail(application,
                 Optional.ofNullable(comment));
         String textUser = buildMailBody("allowed_user", modelForUser);
         sendEmail(Arrays.asList(application.getPerson()), "subject.application.allowed.user", textUser);
+
+        if (VacationType.OVERTIME.equals(application.getVacationType())) {
+            sendEmail(getRecipients(MailNotification.OVERTIME_NOTIFICATION_OFFICE),
+                "subject.application.allowed.office", textOffice);
+        }
     }
 
 
-    private List<Person> getOfficeMembers() {
+    private List<Person> getRecipients(MailNotification mailNotification) {
 
-        return personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_OFFICE);
+        return personService.getPersonsWithNotificationType(mailNotification);
     }
 
 
@@ -417,7 +424,7 @@ class MailServiceImpl implements MailService {
         String text = buildMailBody("updated_accounts", model);
 
         // send email to office for printing statistic
-        sendEmail(getOfficeMembers(), "subject.account.updatedRemainingDays", text);
+        sendEmail(getRecipients(MailNotification.NOTIFICATION_OFFICE), "subject.account.updatedRemainingDays", text);
 
         // send email to manager to notify about update of accounts
         sendTechnicalNotification("subject.account.updatedRemainingDays", text);
@@ -456,7 +463,7 @@ class MailServiceImpl implements MailService {
         String text = buildMailBody("sicknote_end_of_sick_pay", model);
 
         sendEmail(Arrays.asList(sickNote.getPerson()), "subject.sicknote.endOfSickPay", text);
-        sendEmail(getOfficeMembers(), "subject.sicknote.endOfSickPay", text);
+        sendEmail(getRecipients(MailNotification.NOTIFICATION_OFFICE), "subject.sicknote.endOfSickPay", text);
     }
 
 
@@ -497,6 +504,6 @@ class MailServiceImpl implements MailService {
 
         String text = buildMailBody("application_cancellation_request", model);
 
-        sendEmail(getOfficeMembers(), "subject.application.cancellationRequest", text);
+        sendEmail(getRecipients(MailNotification.NOTIFICATION_OFFICE), "subject.application.cancellationRequest", text);
     }
 }
