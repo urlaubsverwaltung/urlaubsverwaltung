@@ -4,6 +4,8 @@ package org.synyx.urlaubsverwaltung.core.mail;
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationComment;
+import org.synyx.urlaubsverwaltung.core.overtime.Overtime;
+import org.synyx.urlaubsverwaltung.core.overtime.OvertimeComment;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
@@ -194,4 +196,12 @@ public interface MailService {
      * @param  createdComment
      */
     void sendCancellationRequest(Application application, ApplicationComment createdComment);
+
+
+    /**
+     * Sends a mail to the office after someone added an overtime record.
+     *
+     * @param  overtime
+     */
+    void sendOvertimeNotification(Overtime overtime, OvertimeComment overtimeComment);
 }

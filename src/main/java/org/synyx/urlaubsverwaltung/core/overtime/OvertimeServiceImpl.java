@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
+import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 
@@ -33,14 +34,16 @@ public class OvertimeServiceImpl implements OvertimeService {
     private final OvertimeDAO overtimeDAO;
     private final OvertimeCommentDAO commentDAO;
     private final ApplicationService applicationService;
+    private final MailService mailService;
 
     @Autowired
     public OvertimeServiceImpl(OvertimeDAO overtimeDAO, OvertimeCommentDAO commentDAO,
-        ApplicationService applicationService) {
+        ApplicationService applicationService, MailService mailService) {
 
         this.overtimeDAO = overtimeDAO;
         this.commentDAO = commentDAO;
         this.applicationService = applicationService;
+        this.mailService = mailService;
     }
 
     @Override
@@ -77,6 +80,8 @@ public class OvertimeServiceImpl implements OvertimeService {
         comment.ifPresent((text) -> overtimeComment.setText(text));
 
         commentDAO.save(overtimeComment);
+
+        mailService.sendOvertimeNotification(overtime, overtimeComment);
 
         String loggingAction = isNewOvertime ? "Created" : "Updated";
         LOG.info(loggingAction + " overtime record: " + overtime.toString());

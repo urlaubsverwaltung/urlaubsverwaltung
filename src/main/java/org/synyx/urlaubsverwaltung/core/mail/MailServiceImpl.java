@@ -25,8 +25,9 @@ import org.springframework.util.StringUtils;
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationComment;
-import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.core.overtime.Overtime;
+import org.synyx.urlaubsverwaltung.core.overtime.OvertimeComment;
 import org.synyx.urlaubsverwaltung.core.person.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
@@ -266,11 +267,6 @@ class MailServiceImpl implements MailService {
                 Optional.ofNullable(comment));
         String textUser = buildMailBody("allowed_user", modelForUser);
         sendEmail(Arrays.asList(application.getPerson()), "subject.application.allowed.user", textUser);
-
-        if (VacationType.OVERTIME.equals(application.getVacationType())) {
-            sendEmail(getRecipients(MailNotification.OVERTIME_NOTIFICATION_OFFICE),
-                "subject.application.allowed.office", textOffice);
-        }
     }
 
 
@@ -505,5 +501,19 @@ class MailServiceImpl implements MailService {
         String text = buildMailBody("application_cancellation_request", model);
 
         sendEmail(getRecipients(MailNotification.NOTIFICATION_OFFICE), "subject.application.cancellationRequest", text);
+    }
+
+
+    @Override
+    public void sendOvertimeNotification(Overtime overtime, OvertimeComment overtimeComment) {
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("overtime", overtime);
+        model.put("comment", overtimeComment);
+
+        String textOffice = buildMailBody("allowed_office", model);
+
+        sendEmail(getRecipients(MailNotification.NOTIFICATION_OFFICE), "subject.application.allowed.office",
+            textOffice);
     }
 }
