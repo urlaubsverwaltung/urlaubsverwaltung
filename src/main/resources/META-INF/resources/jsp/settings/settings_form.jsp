@@ -232,6 +232,15 @@
                                 <span class="help-inline"><form:errors path="workingTimeSettings.maximumOvertime" cssClass="error"/></span>
                             </div>
                         </div>
+                        <div class="form-group is-required">
+                            <label class="control-label col-md-4" for="workingTimeSettings.minimumOvertime">
+                                <spring:message code="settings.overtime.minimum"/>:
+                            </label>
+                            <div class="col-md-8">
+                                <form:input id="workingTimeSettings.minimumOvertime" path="workingTimeSettings.minimumOvertime" class="form-control" cssErrorClass="form-control error" />
+                                <span class="help-inline"><form:errors path="workingTimeSettings.minimumOvertime" cssClass="error"/></span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -43,6 +43,14 @@ public class WorkingTimeSettings {
     @Column(name = "overtime_maximum")
     private Integer maximumOvertime = 100;
 
+    /**
+     * Defines the minimum number of overtime a person can have.
+     *
+     * @since  2.15.0
+     */
+    @Column(name = "overtime_minimum")
+    private Integer minimumOvertime = 100;
+
     public DayLength getWorkingDurationForChristmasEve() {
 
         return workingDurationForChristmasEve;
@@ -88,5 +96,17 @@ public class WorkingTimeSettings {
     public void setMaximumOvertime(Integer maximumOvertime) {
 
         this.maximumOvertime = maximumOvertime;
+    }
+
+
+    public Integer getMinimumOvertime() {
+
+        return minimumOvertime;
+    }
+
+
+    public void setMinimumOvertime(Integer minimumOvertime) {
+
+        this.minimumOvertime = minimumOvertime;
     }
 }

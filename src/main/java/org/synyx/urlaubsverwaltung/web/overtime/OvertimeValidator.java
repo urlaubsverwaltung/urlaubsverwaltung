@@ -36,6 +36,7 @@ public class OvertimeValidator implements Validator {
     private static final String ERROR_MAX_CHARS = "error.entry.tooManyChars";
     private static final String ERROR_INVALID_PERIOD = "error.entry.invalidPeriod";
     private static final String ERROR_MAX_OVERTIME = "overtime.data.numberOfHours.error.maxOvertime";
+    private static final String ERROR_MIN_OVERTIME = "overtime.data.numberOfHours.error.minOvertime";
     private static final String ERROR_MAX_OVERTIME_ZERO = "overtime.data.numberOfHours.error.maxOvertimeZero";
 
     private static final String ATTRIBUTE_START_DATE = "startDate";
@@ -113,6 +114,7 @@ public class OvertimeValidator implements Validator {
         if (numberOfHours != null) {
             WorkingTimeSettings settings = settingsService.getSettings().getWorkingTimeSettings();
             BigDecimal maximumOvertime = new BigDecimal(settings.getMaximumOvertime());
+            BigDecimal minimumOvertime = new BigDecimal(settings.getMinimumOvertime());
 
             if (CalcUtil.isZero(maximumOvertime)) {
                 errors.rejectValue(ATTRIBUTE_NUMBER_OF_HOURS, ERROR_MAX_OVERTIME_ZERO);
@@ -133,6 +135,12 @@ public class OvertimeValidator implements Validator {
                 if (leftOvertime.add(numberOfHours).compareTo(maximumOvertime) > 0) {
                     errors.rejectValue(ATTRIBUTE_NUMBER_OF_HOURS, ERROR_MAX_OVERTIME,
                         new Object[] { leftOvertime.toString(), maximumOvertime.toString() }, null);
+                }
+
+                // left overtime - overtime record must be greater than minimum overtime
+                if (leftOvertime.subtract(numberOfHours).compareTo(minimumOvertime) > 0) {
+                    errors.rejectValue(ATTRIBUTE_NUMBER_OF_HOURS, ERROR_MIN_OVERTIME,
+                        new Object[] { leftOvertime.toString(), minimumOvertime.toString() }, null);
                 }
             }
         }
