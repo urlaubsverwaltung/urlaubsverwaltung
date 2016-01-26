@@ -31,13 +31,16 @@ public class ExtendedSickNoteTest {
         DayLength dayLength = DayLength.MORNING;
         DateMidnight startDate = new DateMidnight(2015, 3, 3);
         DateMidnight endDate = new DateMidnight(2015, 3, 6);
-        String type = SickNoteType.SICK_NOTE_CHILD;
+
+        SickNoteType sickNoteType = new SickNoteType();
+        sickNoteType.setTypeName(SickNoteType.SICK_NOTE);
+        sickNoteType.setTypeDisplayName("Krankmeldung");
 
         SickNote sickNote = new SickNote();
         sickNote.setDayLength(dayLength);
         sickNote.setStartDate(startDate);
         sickNote.setEndDate(endDate);
-        sickNote.setType(type);
+        sickNote.setSickNoteType(sickNoteType);
 
         Mockito.when(calendarService.getWorkDays(Mockito.eq(dayLength), Mockito.eq(startDate), Mockito.eq(endDate),
                     Mockito.any(Person.class)))
@@ -48,12 +51,12 @@ public class ExtendedSickNoteTest {
         Assert.assertNotNull("Should not be null", extendedSickNote.getDayLength());
         Assert.assertNotNull("Should not be null", extendedSickNote.getStartDate());
         Assert.assertNotNull("Should not be null", extendedSickNote.getEndDate());
-        Assert.assertNotNull("Should not be null", extendedSickNote.getType());
+        Assert.assertNotNull("Should not be null", extendedSickNote.getSickNoteType());
 
         Assert.assertEquals("Wrong day length", dayLength, extendedSickNote.getDayLength());
         Assert.assertEquals("Wrong start date", startDate, extendedSickNote.getStartDate());
         Assert.assertEquals("Wrong end date", endDate, extendedSickNote.getEndDate());
-        Assert.assertEquals("Wrong type", type, extendedSickNote.getType());
+        Assert.assertEquals("Wrong type", sickNoteType, extendedSickNote.getSickNoteType());
 
         Assert.assertNotNull("Should not be null", extendedSickNote.getWorkDays());
         Assert.assertEquals("Wrong number of work days", BigDecimal.TEN, extendedSickNote.getWorkDays());

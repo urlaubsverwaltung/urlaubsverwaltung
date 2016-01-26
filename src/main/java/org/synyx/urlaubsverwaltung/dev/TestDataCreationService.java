@@ -16,6 +16,7 @@ import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.Role;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
+import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteTypeService;
 
 import java.math.BigDecimal;
 
@@ -23,6 +24,7 @@ import java.security.NoSuchAlgorithmException;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 
@@ -47,6 +49,9 @@ public class TestDataCreationService {
 
     @Autowired
     private SickNoteDataProvider sickNoteDataProvider;
+
+    @Autowired
+    private SickNoteTypeService sickNoteTypeService;
 
     @Autowired
     private OvertimeRecordDataProvider overtimeRecordDataProvider;
@@ -148,19 +153,33 @@ public class TestDataCreationService {
 
         DateMidnight now = DateMidnight.now();
 
+        SickNoteType sickNoteTypeStandard = null;
+        SickNoteType sickNoteTypeChild = null;
+        List<SickNoteType> sickNoteTypes = sickNoteTypeService.getSickNoteTypes();
+
+        for (SickNoteType sickNoteType : sickNoteTypes) {
+            if (SickNoteType.SICK_NOTE.equals(sickNoteType.getTypeName())) {
+                sickNoteTypeStandard = sickNoteType;
+            }
+
+            if (SickNoteType.SICK_NOTE_CHILD.equals(sickNoteType.getTypeName())) {
+                sickNoteTypeChild = sickNoteType;
+            }
+        }
+
         // SICK NOTES
         sickNoteDataProvider.createSickNote(person, office, DayLength.NOON, now.minusDays(10), now.minusDays(10), // NOSONAR
-            SickNoteType.SICK_NOTE, false);
+            sickNoteTypeStandard, false);
         sickNoteDataProvider.createSickNote(person, office, DayLength.FULL, now.minusDays(2), now.minusDays(2), // NOSONAR
-            SickNoteType.SICK_NOTE, false);
+            sickNoteTypeStandard, false);
         sickNoteDataProvider.createSickNote(person, office, DayLength.FULL, now.minusDays(30), now.minusDays(25), // NOSONAR
-            SickNoteType.SICK_NOTE, true);
+            sickNoteTypeStandard, true);
 
         // CHILD SICK NOTES
-        sickNoteDataProvider.createSickNote(person, office, DayLength.FULL, now.minusDays(60), now.minusDays(55), // NOSONAR
-            SickNoteType.SICK_NOTE_CHILD, true);
-        sickNoteDataProvider.createSickNote(person, office, DayLength.FULL, now.minusDays(44), now.minusDays(44), // NOSONAR
-            SickNoteType.SICK_NOTE_CHILD, false);
+        sickNoteDataProvider.createSickNote(person, office, DayLength.FULL, now.minusDays(15), now.minusDays(13), // NOSONAR
+            sickNoteTypeChild, true);
+        sickNoteDataProvider.createSickNote(person, office, DayLength.FULL, now.minusDays(20), now.minusDays(19), // NOSONAR
+            sickNoteTypeChild, false);
     }
 
 

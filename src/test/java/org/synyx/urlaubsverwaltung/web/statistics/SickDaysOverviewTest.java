@@ -38,14 +38,22 @@ public class SickDaysOverviewTest {
     @Test
     public void ensureGeneratesCorrectSickDaysOverview() {
 
+        SickNoteType sickNoteType = new SickNoteType();
+        sickNoteType.setTypeName(SickNoteType.SICK_NOTE);
+        sickNoteType.setTypeDisplayName("Krankmeldung");
+
+        SickNoteType sickNoteTypeChild = new SickNoteType();
+        sickNoteTypeChild.setTypeName(SickNoteType.SICK_NOTE_CHILD);
+        sickNoteTypeChild.setTypeDisplayName("Kind-Krankmeldung");
+
         SickNote sickNoteWithoutAUB = new SickNote();
-        sickNoteWithoutAUB.setType(SickNoteType.SICK_NOTE);
+        sickNoteWithoutAUB.setSickNoteType(sickNoteType);
         sickNoteWithoutAUB.setStatus(SickNoteStatus.ACTIVE);
         sickNoteWithoutAUB.setStartDate(new DateMidnight(2014, 10, 13));
         sickNoteWithoutAUB.setEndDate(new DateMidnight(2014, 10, 13));
 
         SickNote sickNoteWithAUB = new SickNote();
-        sickNoteWithAUB.setType(SickNoteType.SICK_NOTE);
+        sickNoteWithAUB.setSickNoteType(sickNoteType);
         sickNoteWithAUB.setStatus(SickNoteStatus.ACTIVE);
         sickNoteWithAUB.setStartDate(new DateMidnight(2014, 10, 14));
         sickNoteWithAUB.setEndDate(new DateMidnight(2014, 10, 14));
@@ -53,13 +61,13 @@ public class SickDaysOverviewTest {
         sickNoteWithAUB.setAubEndDate(new DateMidnight(2014, 10, 14));
 
         SickNote childSickNoteWithoutAUB = new SickNote();
-        childSickNoteWithoutAUB.setType(SickNoteType.SICK_NOTE_CHILD);
+        childSickNoteWithoutAUB.setSickNoteType(sickNoteTypeChild);
         childSickNoteWithoutAUB.setStatus(SickNoteStatus.ACTIVE);
         childSickNoteWithoutAUB.setStartDate(new DateMidnight(2014, 10, 15));
         childSickNoteWithoutAUB.setEndDate(new DateMidnight(2014, 10, 15));
 
         SickNote childSickNoteWithAUB = new SickNote();
-        childSickNoteWithAUB.setType(SickNoteType.SICK_NOTE_CHILD);
+        childSickNoteWithAUB.setSickNoteType(sickNoteTypeChild);
         childSickNoteWithAUB.setStatus(SickNoteStatus.ACTIVE);
         childSickNoteWithAUB.setStartDate(new DateMidnight(2014, 10, 16));
         childSickNoteWithAUB.setEndDate(new DateMidnight(2014, 10, 16));
@@ -67,13 +75,13 @@ public class SickDaysOverviewTest {
         childSickNoteWithAUB.setAubEndDate(new DateMidnight(2014, 10, 16));
 
         SickNote inactiveSickNote = new SickNote();
-        inactiveSickNote.setType(SickNoteType.SICK_NOTE);
+        inactiveSickNote.setSickNoteType(sickNoteTypeChild);
         inactiveSickNote.setStatus(SickNoteStatus.CANCELLED);
         inactiveSickNote.setStartDate(new DateMidnight(2014, 10, 17));
         inactiveSickNote.setEndDate(new DateMidnight(2014, 10, 17));
 
         SickNote inactiveChildSickNote = new SickNote();
-        inactiveChildSickNote.setType(SickNoteType.SICK_NOTE_CHILD);
+        inactiveChildSickNote.setSickNoteType(sickNoteTypeChild);
         inactiveChildSickNote.setStatus(SickNoteStatus.CANCELLED);
         inactiveChildSickNote.setStartDate(new DateMidnight(2014, 10, 18));
         inactiveChildSickNote.setEndDate(new DateMidnight(2014, 10, 18));

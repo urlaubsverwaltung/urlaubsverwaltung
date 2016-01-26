@@ -3,27 +3,51 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-    <changeSet author="Sommer" id="add_SickNoteType">
+    <changeSet author="Sommer" id="add_SickNoteType_table">
         <createTable tableName="SickNoteType">
-            <column name="id" autoIncrement="true" type="INT(10)">
+            <column name="id" autoIncrement="false" type="INT(10)">
                 <constraints primaryKey="true"/>
             </column>
             <column name="typeName" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
+            <column name="typeDisplayName" type="VARCHAR(255)" />
         </createTable>
         <sql>
-            INSERT INTO SickNoteType (typeName) VALUES ('SICK_NOTE');
-            INSERT INTO SickNoteType (typeName) VALUES ('SICK_NOTE_CHILD');
-            INSERT INTO SickNoteType (typeName) VALUES ('SICK_NOTE_WITH_CERTIFICATE');
+            INSERT INTO SickNoteType (id, typeName, typeDisplayName) VALUES (1000, 'SICK_NOTE', 'Krankmeldung');
+            INSERT INTO SickNoteType (id, typeName, typeDisplayName) VALUES (2000, 'SICK_NOTE_CHILD', 'Kind-Krankmeldung');
+            INSERT INTO SickNoteType (id, typeName, typeDisplayName) VALUES (3000, 'SICK_NOTE_WITH_CERTIFICATE', 'Krankmeldung mit Bescheinigung');
         </sql>
     </changeSet>
 
-    <changeSet author="Sommer" id="change_SickNote_Type_column">
+    <changeSet author="Sommer" id="add_SickNote_sickNoteTypeId_column">
+
         <preConditions>
+            <tableExists tableName="SickNoteType"/>
             <tableExists tableName="SickNote"/>
         </preConditions>
-        <modifyDataType tableName="SickNote" columnName="type" newDataType="VARCHAR(255)"/>
+
+        <addColumn tableName="SickNote">
+            <column name="SickNoteType_id" type="INT(10)"/>
+        </addColumn>
+
+        <sql>
+            UPDATE SickNote SET SickNoteType_id = 1000 WHERE type = 'SICK_NOTE';
+            UPDATE SickNote SET SickNoteType_id = 2000 WHERE type = 'SICK_NOTE_CHILD';
+        </sql>
+
+    </changeSet>
+
+    <changeSet author="Sommer" id="remove_SickNote_type_column">
+
+        <preConditions>
+            <tableExists tableName="SickNoteType"/>
+            <tableExists tableName="SickNote"/>
+            <columnExists tableName="SickNote" columnName="SickNoteType_id"/>
+        </preConditions>
+
+        <dropColumn tableName="SickNote" columnName="type"/>
+
     </changeSet>
 
 </databaseChangeLog>

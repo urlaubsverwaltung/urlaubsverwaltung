@@ -11,6 +11,7 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteInteractionService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteStatus;
+import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
 
 
 /**
@@ -32,18 +33,17 @@ class SickNoteDataProvider {
     }
 
     SickNote createSickNote(Person person, Person office, DayLength dayLength, DateMidnight startDate,
-        DateMidnight endDate, String type, boolean withAUB) {
+        DateMidnight endDate, SickNoteType type, boolean withAUB) {
 
         SickNote sickNote = null;
 
-        if (durationChecker.startAndEndDatesAreInCurrentYear(startDate, endDate)
-                && durationChecker.durationIsGreaterThanZero(startDate, endDate, person)) {
+        if (durationChecker.durationIsGreaterThanZero(startDate, endDate, person)) {
             sickNote = new SickNote();
             sickNote.setPerson(person);
             sickNote.setStartDate(startDate);
             sickNote.setEndDate(endDate);
             sickNote.setStatus(SickNoteStatus.ACTIVE);
-            sickNote.setType(type);
+            sickNote.setSickNoteType(type);
             sickNote.setDayLength(dayLength);
 
             if (withAUB) {
@@ -51,7 +51,7 @@ class SickNoteDataProvider {
                 sickNote.setAubEndDate(endDate);
             }
 
-            sickNoteInteractionService.create(sickNote, office);
+            sickNote = sickNoteInteractionService.create(sickNote, office);
         }
 
         return sickNote;

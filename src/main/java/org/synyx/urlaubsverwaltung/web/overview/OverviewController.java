@@ -43,8 +43,6 @@ import org.synyx.urlaubsverwaltung.web.sicknote.ExtendedSickNote;
 import org.synyx.urlaubsverwaltung.web.statistics.SickDaysOverview;
 import org.synyx.urlaubsverwaltung.web.statistics.UsedDaysOverview;
 
-import java.math.BigDecimal;
-
 import java.util.List;
 import java.util.Optional;
 

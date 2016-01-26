@@ -5,5 +5,5 @@ import java.util.List;
 
 public interface SickNoteTypeService {
 
-    List<String> getSickNoteTypes();
+    List<SickNoteType> getSickNoteTypes();
 }

@@ -16,6 +16,8 @@ public class SickNoteType extends AbstractPersistable<Integer> {
 
     private String typeName;
 
+    private String typeDisplayName;
+
     @Override
     public void setId(Integer id) {
 
@@ -32,6 +34,18 @@ public class SickNoteType extends AbstractPersistable<Integer> {
     public void setTypeName(String typeName) {
 
         this.typeName = typeName;
+    }
+
+
+    public String getTypeDisplayName() {
+
+        return typeDisplayName;
+    }
+
+
+    public void setTypeDisplayName(String typeDisplayName) {
+
+        this.typeDisplayName = typeDisplayName;
     }
 
 
