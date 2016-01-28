@@ -1,0 +1,12 @@
+Hallo Office,
+
+es wurden Überstunden erfasst: ${link}
+
+Mitarbeiter: ${overtime.person.niceName}
+
+Datum: ${overtime.startDate.toString("dd.MM.yyyy")} - ${overtime.endDate.toString("dd.MM.yyyy")}
+Anzahl der Stunden: ${overtime.hours}
+
+#if($comment.text && $comment.text != "")
+Kommentar von ${comment.person.niceName} zum Antrag: ${comment.text}
+#end

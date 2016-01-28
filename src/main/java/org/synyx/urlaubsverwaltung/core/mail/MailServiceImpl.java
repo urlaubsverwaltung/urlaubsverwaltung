@@ -510,8 +510,9 @@ class MailServiceImpl implements MailService {
         Map<String, Object> model = new HashMap<>();
         model.put("overtime", overtime);
         model.put("comment", overtimeComment);
+        model.put("link", applicationUrl + "web/overtime/" + overtime.getId());
 
-        String textOffice = buildMailBody("allowed_office", model);
+        String textOffice = buildMailBody("overtime_office", model);
 
         sendEmail(getRecipients(MailNotification.NOTIFICATION_OFFICE), "subject.application.allowed.office",
             textOffice);
