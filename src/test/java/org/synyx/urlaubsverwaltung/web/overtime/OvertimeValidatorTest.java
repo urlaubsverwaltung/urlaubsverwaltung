@@ -12,7 +12,6 @@ import org.springframework.util.ReflectionUtils;
 
 import org.springframework.validation.Errors;
 
-import org.synyx.urlaubsverwaltung.core.comment.AbstractComment;
 import org.synyx.urlaubsverwaltung.core.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.core.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -279,6 +278,27 @@ public class OvertimeValidatorTest {
 
         Mockito.verify(errors)
             .rejectValue("numberOfHours", "overtime.data.numberOfHours.error.maxOvertime", new Object[] { "8", "16" },
+                null);
+
+        Mockito.verify(settingsServiceMock).getSettings();
+        Mockito.verify(overtimeServiceMock).getLeftOvertimeForPerson(overtimeForm.getPerson());
+    }
+
+
+    @Test
+    public void ensureCanNotRecordOvertimeIfMinimumOvertimeExceeded() {
+
+        settings.getWorkingTimeSettings().setMinimumOvertime(10);
+
+        Mockito.when(overtimeServiceMock.getLeftOvertimeForPerson(Mockito.any(Person.class)))
+            .thenReturn(new BigDecimal("-9"));
+
+        overtimeForm.setNumberOfHours(new BigDecimal("-1.5"));
+
+        validator.validate(overtimeForm, errors);
+
+        Mockito.verify(errors)
+            .rejectValue("numberOfHours", "overtime.data.numberOfHours.error.minOvertime", new Object[] { "-9", "10" },
                 null);
 
         Mockito.verify(settingsServiceMock).getSettings();

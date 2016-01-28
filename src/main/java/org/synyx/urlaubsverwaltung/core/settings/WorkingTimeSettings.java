@@ -44,12 +44,13 @@ public class WorkingTimeSettings {
     private Integer maximumOvertime = 100;
 
     /**
-     * Defines the minimum number of overtime a person can have.
+     * Defines the minimum number of overtime a person can have. Minimum overtime means missing hours (equates to
+     * negative)
      *
      * @since  2.15.0
      */
     @Column(name = "overtime_minimum")
-    private Integer minimumOvertime = 100;
+    private Integer minimumOvertime = 5;
 
     public DayLength getWorkingDurationForChristmasEve() {
 

@@ -137,8 +137,9 @@ public class OvertimeValidator implements Validator {
                         new Object[] { leftOvertime.toString(), maximumOvertime.toString() }, null);
                 }
 
-                // left overtime - overtime record must be greater than minimum overtime
-                if (leftOvertime.subtract(numberOfHours).compareTo(minimumOvertime) > 0) {
+                // left overtime + overtime record must be greater than minimum overtime
+                // minimum overtime are missing hours (means negative)
+                if (leftOvertime.add(numberOfHours).compareTo(minimumOvertime.negate()) < 0) {
                     errors.rejectValue(ATTRIBUTE_NUMBER_OF_HOURS, ERROR_MIN_OVERTIME,
                         new Object[] { leftOvertime.toString(), minimumOvertime.toString() }, null);
                 }
