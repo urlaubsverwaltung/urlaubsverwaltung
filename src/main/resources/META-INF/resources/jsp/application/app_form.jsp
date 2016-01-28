@@ -8,11 +8,14 @@
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
 
+
 <!DOCTYPE html>
 <html>
 
 <head>
     <uv:head/>
+    <link rel="stylesheet" type="text/css" href="<spring:url value='/css/timepicker.css' />" />
+    <script src="<spring:url value='/js/timepicker.js' />" type="text/javascript" ></script>
 
     <%@include file="include/app-form-elements/datepicker.jsp" %>
     <%@include file="include/app-form-elements/day-length-selector.jsp" %>
@@ -43,9 +46,7 @@
                 var urlPrefix = "<spring:url value='/api' />";
                 var personId = "<c:out value='${person.id}' />";
                 var startDate = $("#from").datepicker("getDate");
-                var startTime = $("#startTime").datepicker("getTime");
                 var endDate = $("#to").datepicker("getDate");
-                var endTime = $("#endTime").datepicker("getTime");
 
                 sendGetDaysRequest(urlPrefix,
                         startDate,
@@ -55,6 +56,18 @@
 
                 sendGetDepartmentVacationsRequest(urlPrefix, startDate, endDate, personId, "#departmentVacations");
             }
+
+            <%-- Timepicker for optional startTime and endTime --%>
+
+            $('#startTime').timepicker({
+                'step': 15 ,
+                'timeFormat': 'H:i',
+                'forceRoundTime': true});
+            $('#endTime').timepicker({
+                'step': 15 ,
+                'timeFormat': 'H:i',
+                'forceRoundTime': true});
+
         });
     </script>
 
