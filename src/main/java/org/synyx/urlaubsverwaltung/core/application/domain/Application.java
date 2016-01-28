@@ -14,7 +14,7 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.math.BigDecimal;
 
-import java.time.LocalTime;
+import java.sql.Time;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -59,12 +59,12 @@ public class Application extends AbstractPersistable<Integer> {
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date startDate;
 
-    private LocalTime startTime;
+    private Time startTime;
 
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date endDate;
 
-    private LocalTime endTime;
+    private Time endTime;
 
     // Type of holiday, e.g. holiday, special leave, etc.
     @Enumerated(EnumType.STRING)
@@ -247,25 +247,25 @@ public class Application extends AbstractPersistable<Integer> {
     }
 
 
-    public LocalTime getStartTime() {
+    public Time getStartTime() {
 
         return startTime;
     }
 
 
-    public void setStartTime(LocalTime startTime) {
+    public void setStartTime(Time startTime) {
 
         this.startTime = startTime;
     }
 
 
-    public LocalTime getEndTime() {
+    public Time getEndTime() {
 
         return endTime;
     }
 
 
-    public void setEndTime(LocalTime endTime) {
+    public void setEndTime(Time endTime) {
 
         this.endTime = endTime;
     }

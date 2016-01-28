@@ -60,6 +60,16 @@
                 <spring:message code="absence.period.multipleDays" arguments="${APPLICATION_START_DATE};${APPLICATION_END_DATE}" argumentSeparator=";"/>
             </c:otherwise>
         </c:choose>
+        <c:if test="${application.startTime != null || application.endTime != null}">
+            <p>
+            <c:if test="${application.startTime != null}">
+                <c:out value="${application.startTime}"/>
+            </c:if>
+            <c:if test="${application.endTime != null}">
+                - <c:out value="${application.endTime}"/>
+            </c:if>
+            </p>
+        </c:if>
     </span>
 </div>
 

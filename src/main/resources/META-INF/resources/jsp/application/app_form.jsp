@@ -62,11 +62,13 @@
             $('#startTime').timepicker({
                 'step': 15 ,
                 'timeFormat': 'H:i',
-                'forceRoundTime': true});
+                'forceRoundTime': true,
+                'scrollDefault': 'now'});
             $('#endTime').timepicker({
                 'step': 15 ,
                 'timeFormat': 'H:i',
-                'forceRoundTime': true});
+                'forceRoundTime': true,
+                'scrollDefault': 'now'});
 
         });
     </script>
@@ -198,8 +200,11 @@
                 <label class="col-md-3 control-label" for="from">
                     <spring:message code="absence.period.startDate" />:
                 </label>
-                <div class="col-md-9">
+                <div class="col-md-5">
                     <form:input id="from" path="startDate" class="form-control" cssErrorClass="form-control error" />
+                </div>
+                <div class="col-md-4">
+                    <form:input id="startTime" path="startTime" class="form-control" cssErrorClass="form-control error" />
                 </div>
             </div>
 
@@ -207,9 +212,12 @@
                 <label class="control-label col-md-3" for="to">
                     <spring:message code="absence.period.endDate" />:
                 </label>
-                <div class="col-md-9">
+                <div class="col-md-5">
                     <form:input id="to" path="endDate" class="form-control" cssErrorClass="form-control error" />
                     <span class="help-block info days"></span>
+                </div>
+                <div class="col-md-4">
+                    <form:input id="endTime" path="endTime" class="form-control" cssErrorClass="form-control error" />
                 </div>
             </div>
 
@@ -220,21 +228,6 @@
                 <div class="col-md-9">
                     <form:input id="at" path="startDateHalf" class="form-control" cssErrorClass="form-control error" />
                     <span class="help-block info days"></span>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="control-label col-md-3" for="startTime">
-                    <spring:message code="absence.period.startTime" />:
-                </label>
-                <div class="col-md-3">
-                    <form:input id="startTime" path="startTime" class="form-control" cssErrorClass="form-control error" />
-                </div>
-                <label class="control-label col-md-3" for="endTime">
-                    <spring:message code="absence.period.endTime" />:
-                </label>
-                <div class="col-md-3">
-                    <form:input id="endTime" path="endTime" class="form-control" cssErrorClass="form-control error" />
                 </div>
             </div>
 
