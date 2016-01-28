@@ -44,6 +44,7 @@ public interface SickNoteDAO extends JpaRepository<SickNote, Integer> {
 
 
     // NOTE: Only needed to send email after certain duration of a sick note
+    // TODO: replace DATEDIFF because it is db specific (MS SQL)
     @Query(
         "SELECT x FROM SickNote x WHERE DATEDIFF(x.endDate, x.startDate) >= ?1 AND x.endDate = ?2) "
         + "AND x.status = 'ACTIVE'"
