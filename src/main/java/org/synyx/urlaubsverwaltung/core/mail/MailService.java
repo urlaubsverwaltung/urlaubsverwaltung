@@ -9,6 +9,8 @@ import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 
+import scala.App;
+
 import java.util.List;
 
 
@@ -50,10 +52,20 @@ public interface MailService {
 
 
     /**
-     * sends an email to the applicant and to the office that the application has been allowed.
+     * Sends an email to the applicant and to the second stage authorities that the application for leave has been
+     * allowed temporary.
      *
-     * @param  application  the application which got allowed
-     * @param  comment  made during allowing application
+     * @param  application  that has been allowed temporary by a department head
+     * @param  comment  contains reason why application for leave has been allowed temporary
+     */
+    void sendTemporaryAllowedNotification(Application application, ApplicationComment comment);
+
+
+    /**
+     * /** Sends an email to the applicant and to the office that the application for leave has been allowed.
+     *
+     * @param  application  that has been allowed by a privileged user
+     * @param  comment  contains reason why application for leave has been allowed
      */
     void sendAllowedNotification(Application application, ApplicationComment comment);
 

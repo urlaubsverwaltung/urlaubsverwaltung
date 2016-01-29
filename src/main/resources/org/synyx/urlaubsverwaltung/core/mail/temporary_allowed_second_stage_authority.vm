@@ -1,7 +1,15 @@
 Hallo,
 
 es liegt ein neuer zu genehmigender Antrag vor: ${link}
-Der Antrag wurde bereits vorläufig genehmigt.
+
+Der Antrag wurde bereits vorläufig genehmigt und muss nun noch endgültig freigegeben werden.
+#if($comment.text && $comment.text != "")
+Kommentar von ${comment.person.niceName} zum Antrag: ${comment.text}
+#end
+
+----------------------------------------------------------------------------------------------
+
+Informationen zum Urlaubsantrag:
 
 Mitarbeiter: ${application.person.niceName}
 Datum der Antragsstellung: ${application.applicationDate.toString("dd.MM.yyyy")}
@@ -15,9 +23,6 @@ Vertreter: ${application.holidayReplacement.niceName}
 #end
 #if($application.address && $application.address != "")
 Anschrift/Telefon während des Urlaubs: ${application.address}
-#end
-#if($comment.text && $comment.text != "")
-Kommentar: ${comment.text}
 #end
 
 Überschneidende Anträge in der Abteilung des Antragsstellers:

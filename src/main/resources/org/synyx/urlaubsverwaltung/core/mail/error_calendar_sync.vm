@@ -1,4 +1,5 @@
 Der Termin für folgende Abwesenheit konnte nicht angelegt werden:
+
 ${absence.person.niceName}
 ${absence.startDate} - ${absence.endDate}
 

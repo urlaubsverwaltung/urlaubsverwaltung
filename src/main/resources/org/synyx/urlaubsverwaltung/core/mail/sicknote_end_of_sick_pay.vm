@@ -1,5 +1,4 @@
-Hallo ${sickNote.person.niceName},
-Hallo Office,
+Hallo ${sickNote.person.niceName}, hallo Office,
 
 Hinweis:
 Der Anspruch auf Lohnfortzahlung durch den Arbeitgeber im Krankheitsfall besteht für maximal sechs Wochen.

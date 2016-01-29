@@ -1,6 +1,6 @@
 Hallo liebe Chefs,
 
 ${application.person.niceName} bittet darum, dass sich einer von euch um den am ${application.applicationDate.toString("dd.MM.yyyy")} gestellten Urlaubsantrag kümmert,
-andernfalls kann es passieren, dass ihr weitere Benachrichtigung-Spam-Emails bekommt ;-)
+andernfalls kann es passieren, dass ihr weitere Erinnerungen erhaltet ;-)
 
 Den Urlaubsantrag findet ihr hier: ${link}

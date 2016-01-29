@@ -1,7 +1,10 @@
 Hallo ${application.person.niceName},
 
 dein Urlaubsantrag wurde erfolgreich eingereicht und wird in Kürze von einem der Chefs bearbeitet werden.
-Link zum Antrag: ${link}
+
+---------------------------------------------------------------------------------------------------------
+
+Informationen zum Urlaubsantrag:
 
 Antragsdatum: ${application.applicationDate.toString("dd.MM.yyyy")}
 Zeitraum des beantragten Urlaubs: ${application.startDate.toString("dd.MM.yyyy")} bis ${application.endDate.toString("dd.MM.yyyy")}, ${dayLength}
@@ -18,3 +21,5 @@ Anschrift/Telefon während des Urlaubs: ${application.address}
 #if($comment.text && $comment.text != "")
 Kommentar: ${comment.text}
 #end
+
+Link zum Antrag: ${link}

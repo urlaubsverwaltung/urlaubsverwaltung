@@ -2,6 +2,10 @@ Hallo Chefs,
 
 es liegt ein neuer zu genehmigender Antrag vor: ${link}
 
+----------------------------------------------------------------------------------------------
+
+Informationen zum Urlaubsantrag:
+
 Mitarbeiter: ${application.person.niceName}
 Datum der Antragsstellung: ${application.applicationDate.toString("dd.MM.yyyy")}
 Zeitraum des beantragten Urlaubs: ${application.startDate.toString("dd.MM.yyyy")} bis ${application.endDate.toString("dd.MM.yyyy")}, ${dayLength}

@@ -1,4 +1,5 @@
 Der Termin (${eventId}) für folgende Abwesenheit konnte nicht aktualisiert werden:
+
 ${absence.person.niceName}
 ${absence.startDate} - ${absence.endDate}
 
