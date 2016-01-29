@@ -178,12 +178,12 @@
                     </label>
                     <label>
                         <c:choose>
-                            <c:when test="${empty departments}">
+                            <c:when test="${empty headOfDepartments}">
                                 <spring:message code="person.form.permissions.roles.DEPARTMENT_HEAD.departments.none"/>
                             </c:when>
                             <c:otherwise>
                                 <spring:message code="person.form.permissions.roles.DEPARTMENT_HEAD.departments"/>
-                                <c:forEach items="${departments}" var="department">
+                                <c:forEach items="${headOfDepartments}" var="department">
                                     <c:out value="${department.name}"/>
                                 </c:forEach>
                             </c:otherwise>
@@ -200,8 +200,19 @@
                         <form:checkbox path="notifications" value="NOTIFICATION_SECOND_STAGE_AUTHORITY"/>
                         <spring:message code="person.form.notifications.SECOND_STAGE_AUTHORITY"/>
                     </label>
-                        <%-- It's obligatory for now that users get mail notifications about progress of their own applications for leave --%>
-                    <form:hidden path="notifications" value="NOTIFICATION_USER" />
+                    <label>
+                        <c:choose>
+                            <c:when test="${empty secondStageDepartments}">
+                                <spring:message code="person.form.permissions.roles.SECOND_STAGE_AUTHORITY.departments.none"/>
+                            </c:when>
+                            <c:otherwise>
+                                <spring:message code="person.form.permissions.roles.SECOND_STAGE_AUTHORITY.departments"/>
+                                <c:forEach items="${secondStageDepartments}" var="department">
+                                    <c:out value="${department.name}"/>
+                                </c:forEach>
+                            </c:otherwise>
+                        </c:choose>
+                    </label>
                 </div>
 
                 <div class="person--role checkbox">

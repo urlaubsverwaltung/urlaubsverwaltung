@@ -76,6 +76,16 @@ public interface DepartmentService {
 
 
     /**
+     * Finds all departments the given person is set as second stage authority.
+     *
+     * @param  secondStageAuthority  to get the departments of
+     *
+     * @return  list of departments the second stage authority manages
+     */
+    List<Department> getManagedDepartmentsOfSecondStageAuthority(Person secondStageAuthority);
+
+
+    /**
      * Get all active (waiting or allowed) applications for leave of the members of the departments of the given person
      * for the provided period.
      *

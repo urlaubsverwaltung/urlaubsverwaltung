@@ -104,6 +104,13 @@ public class DepartmentServiceImpl implements DepartmentService {
 
 
     @Override
+    public List<Department> getManagedDepartmentsOfSecondStageAuthority(Person secondStageAuthority) {
+
+        return departmentDAO.getDepartmentsForSecondStageAuthority(secondStageAuthority);
+    }
+
+
+    @Override
     public List<Application> getApplicationsForLeaveOfMembersInDepartmentsOfPerson(Person member,
         DateMidnight startDate, DateMidnight endDate) {
 
@@ -160,7 +167,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     public List<Person> getMembersForSecondStageAuthority(Person secondStageAuthority) {
 
         Set<Person> relevantPersons = new HashSet<>();
-        List<Department> departments = departmentDAO.getDepartmentsForSecondStageAuthority(secondStageAuthority);
+        List<Department> departments = getManagedDepartmentsOfSecondStageAuthority(secondStageAuthority);
 
         for (Department department : departments) {
             List<Person> members = department.getMembers();
