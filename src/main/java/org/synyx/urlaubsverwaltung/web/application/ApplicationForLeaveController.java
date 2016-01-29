@@ -22,6 +22,7 @@ import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -66,8 +67,34 @@ public class ApplicationForLeaveController {
 
     private List<ApplicationForLeave> getAllRelevantApplicationsForLeave() {
 
+        Person user = sessionService.getSignedInUser();
+
+        boolean isHeadOf = user.hasRole(Role.DEPARTMENT_HEAD);
+        boolean isSecondStage = user.hasRole(Role.SECOND_STAGE_AUTHORITY);
+        boolean isBoss = user.hasRole(Role.BOSS);
+
+        if (isBoss) {
+            // Boss can see all waiting and temporary allowed applications leave
+            return getApplicationsForLeaveForBoss();
+        }
+
+        if (isHeadOf) {
+            // Department head can see only waiting applications for leave of certain department(s)
+            return getApplicationsForLeaveForDepartmentHead(user);
+        }
+
+        if (isSecondStage) {
+            // Department head can see waiting and temporary allowed applications for leave of certain department(s)
+            return getApplicationsForLeaveForSecondStageAuthority(user);
+        }
+
+        return Collections.<ApplicationForLeave>emptyList();
+    }
+
+
+    private List<ApplicationForLeave> getApplicationsForLeaveForBoss() {
+
         List<Application> applications = new ArrayList<>();
-        List<Person> members = new ArrayList<>();
 
         List<Application> waitingApplications = applicationService.getApplicationsForACertainState(
                 ApplicationStatus.WAITING);
@@ -75,31 +102,47 @@ public class ApplicationForLeaveController {
         List<Application> temporaryAllowedApplications = applicationService.getApplicationsForACertainState(
                 ApplicationStatus.TEMPORARY_ALLOWED);
 
-        Person user = sessionService.getSignedInUser();
+        applications.addAll(waitingApplications);
+        applications.addAll(temporaryAllowedApplications);
 
-        boolean isHeadOf = user.hasRole(Role.DEPARTMENT_HEAD);
-        boolean isSecondStage = user.hasRole(Role.SECOND_STAGE_AUTHORITY);
-        boolean isBoss = user.hasRole(Role.BOSS);
+        return applications.stream()
+            .map(application -> new ApplicationForLeave(application, calendarService))
+            .collect(Collectors.toList());
+    }
 
-        if (isHeadOf || isBoss) {
-            applications.addAll(waitingApplications);
-            members.addAll(departmentService.getManagedMembersOfDepartmentHead(user));
-        }
 
-        if (isSecondStage || isBoss) {
-            applications.addAll(temporaryAllowedApplications);
-            members.addAll(departmentService.getMembersForSecondStageAuthority(user));
-        }
+    private List<ApplicationForLeave> getApplicationsForLeaveForDepartmentHead(Person head) {
 
-        if (members.isEmpty()) {
-            return applications.stream()
-                .map(application -> new ApplicationForLeave(application, calendarService))
-                .collect(Collectors.toList());
-        } else {
-            return applications.stream()
-                .filter(application -> members.contains(application.getPerson()))
-                .map(application -> new ApplicationForLeave(application, calendarService))
-                .collect(Collectors.toList());
-        }
+        List<Application> waitingApplications = applicationService.getApplicationsForACertainState(
+                ApplicationStatus.WAITING);
+
+        List<Person> members = departmentService.getManagedMembersOfDepartmentHead(head);
+
+        return waitingApplications.stream()
+            .filter(application -> members.contains(application.getPerson()))
+            .map(application -> new ApplicationForLeave(application, calendarService))
+            .collect(Collectors.toList());
+    }
+
+
+    private List<ApplicationForLeave> getApplicationsForLeaveForSecondStageAuthority(Person secondStage) {
+
+        List<Application> applications = new ArrayList<>();
+
+        List<Application> waitingApplications = applicationService.getApplicationsForACertainState(
+                ApplicationStatus.WAITING);
+
+        List<Application> temporaryAllowedApplications = applicationService.getApplicationsForACertainState(
+                ApplicationStatus.TEMPORARY_ALLOWED);
+
+        applications.addAll(waitingApplications);
+        applications.addAll(temporaryAllowedApplications);
+
+        List<Person> members = departmentService.getMembersForSecondStageAuthority(secondStage);
+
+        return applications.stream()
+            .filter(application -> members.contains(application.getPerson()))
+            .map(application -> new ApplicationForLeave(application, calendarService))
+            .collect(Collectors.toList());
     }
 }
