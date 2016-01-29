@@ -72,6 +72,9 @@ public class TestDataCreationService {
         office = personDataProvider.createTestPerson(TestUser.OFFICE.getLogin(), PASSWORD, "Marlene", "Muster",
                 "mmuster@muster.de", TestUser.OFFICE.getRoles());
 
+        Person manager = personDataProvider.createTestPerson(TestUser.SECOND_STAGE_AUTHORITY.getLogin(), PASSWORD,
+                "Peter", "Huber", "huber@muster.de", TestUser.SECOND_STAGE_AUTHORITY.getRoles());
+
         // Users
         Person hans = personDataProvider.createTestPerson("hdampf", NO_PASSWORD, "Hans", "Dampf", "dampf@muster.de",
                 Role.USER);
@@ -87,23 +90,29 @@ public class TestDataCreationService {
         personDataProvider.createTestPerson("horst", NO_PASSWORD, "Horst", "Dieter", "hdieter@muster.de",
             Role.INACTIVE);
 
+        // Departments
+        departmentDataProvider.createTestDepartment("Admins", "Das sind die, die so Admin Sachen machen",
+            Arrays.asList(hans, brigitte, departmentHead, manager), Collections.singletonList(departmentHead),
+            Collections.singletonList(manager));
+        departmentDataProvider.createTestDepartment("Entwicklung", "Das sind die, die so entwickeln",
+            Arrays.asList(user, niko, departmentHead), Collections.emptyList(), Collections.emptyList());
+        departmentDataProvider.createTestDepartment("Marketing", "Das sind die, die so Marketing Sachen machen",
+            Arrays.asList(guenther, elena), Collections.emptyList(), Collections.emptyList());
+        departmentDataProvider.createTestDepartment("Geschäftsführung",
+            "Das sind die, die so Geschäftsführung Sachen machen", Arrays.asList(boss, office), Collections.emptyList(),
+            Collections.emptyList());
+
         // Applications for leave and sick notes
         createTestData(user);
         createTestData(boss);
         createTestData(office);
         createTestData(hans);
         createTestData(niko);
+        createTestData(manager);
 
-        // Departments
-        departmentDataProvider.createTestDepartment("Admins", "Das sind die, die so Admin Sachen machen",
-            Arrays.asList(hans, brigitte, departmentHead), Collections.singletonList(departmentHead));
-        departmentDataProvider.createTestDepartment("Entwicklung", "Das sind die, die so entwickeln",
-            Arrays.asList(user, niko, departmentHead), Collections.emptyList());
-        departmentDataProvider.createTestDepartment("Marketing", "Das sind die, die so Marketing Sachen machen",
-            Arrays.asList(guenther, elena), Collections.emptyList());
-        departmentDataProvider.createTestDepartment("Geschäftsführung",
-            "Das sind die, die so Geschäftsführung Sachen machen", Arrays.asList(boss, office),
-            Collections.emptyList());
+        DateMidnight now = DateMidnight.now();
+        applicationForLeaveDataProvider.createPremilinaryAllowedApplication(hans, departmentHead, VacationType.HOLIDAY,
+            DayLength.FULL, now.plusDays(5), now.plusDays(8));
     }
 
 

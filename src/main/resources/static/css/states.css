@@ -45,6 +45,10 @@
     color: #43C83C !important;
 }
 
+.state.TEMPORARY_ALLOWED {
+    color: #6F6F6F !important;
+}
+
 .state.REJECTED {
     color: #FA3031 !important;
 }

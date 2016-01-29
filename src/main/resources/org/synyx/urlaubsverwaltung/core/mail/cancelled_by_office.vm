@@ -5,6 +5,6 @@ Falls Klärungsbedarf bestehen sollte, wende dich bitte direkt an ${application.
 
 #if($comment.text && $comment.text != "")
 Kommentar zur Stornierung von ${comment.person.niceName} zum Antrag: ${comment.text}
-#end 
 
+#end
 Es handelt sich um folgenden Urlaubsantrag: ${link}

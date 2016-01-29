@@ -70,6 +70,18 @@ public final class TestDataCreator {
     }
 
 
+    public static Person createPerson(String username, Role... roles) {
+
+        String name = StringUtils.capitalizeFirstLetter(username);
+
+        Person person = TestDataCreator.createPerson(username, name, name, username + "@test.de");
+
+        person.setPermissions(Arrays.asList(roles));
+
+        return person;
+    }
+
+
     public static Person createPerson() {
 
         return TestDataCreator.createPerson("muster", "Marlene", "Muster", "muster@test.de");

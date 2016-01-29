@@ -107,6 +107,13 @@ public class ApplicationForLeaveStatisticsBuilderTest {
         holidayWaiting.setStatus(ApplicationStatus.WAITING);
         holidayWaiting.setPerson(person);
 
+        Application holidayTemporaryAllowed = new Application();
+        holidayTemporaryAllowed.setVacationType(VacationType.HOLIDAY);
+        holidayTemporaryAllowed.setStartDate(new DateMidnight(2014, 10, 12));
+        holidayTemporaryAllowed.setEndDate(new DateMidnight(2014, 10, 12));
+        holidayTemporaryAllowed.setStatus(ApplicationStatus.TEMPORARY_ALLOWED);
+        holidayTemporaryAllowed.setPerson(person);
+
         Application holidayAllowed = new Application();
         holidayAllowed.setVacationType(VacationType.HOLIDAY);
         holidayAllowed.setStartDate(new DateMidnight(2014, 10, 14));
@@ -142,8 +149,8 @@ public class ApplicationForLeaveStatisticsBuilderTest {
         overTimeWaiting.setStatus(ApplicationStatus.WAITING);
         overTimeWaiting.setPerson(person);
 
-        List<Application> applications = Arrays.asList(holidayWaiting, holidayAllowed, holidayRejected,
-                specialLeaveWaiting, unpaidLeaveAllowed, overTimeWaiting);
+        List<Application> applications = Arrays.asList(holidayWaiting, holidayTemporaryAllowed, holidayAllowed,
+                holidayRejected, specialLeaveWaiting, unpaidLeaveAllowed, overTimeWaiting);
 
         Mockito.when(applicationService.getApplicationsForACertainPeriodAndPerson(from, to, person))
             .thenReturn(applications);
@@ -166,7 +173,7 @@ public class ApplicationForLeaveStatisticsBuilderTest {
         Assert.assertNotNull("Allowed vacation days should not be null", statistics.getTotalAllowedVacationDays());
         Assert.assertNotNull("Left vacation days should not be null", statistics.getLeftVacationDays());
 
-        Assert.assertEquals("Wrong number of waiting vacation days", new BigDecimal("3"),
+        Assert.assertEquals("Wrong number of waiting vacation days", new BigDecimal("4"),
             statistics.getTotalWaitingVacationDays());
         Assert.assertEquals("Wrong number of allowed vacation days", new BigDecimal("2"),
             statistics.getTotalAllowedVacationDays());

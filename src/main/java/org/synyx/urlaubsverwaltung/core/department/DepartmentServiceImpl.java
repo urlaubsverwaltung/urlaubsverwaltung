@@ -104,6 +104,13 @@ public class DepartmentServiceImpl implements DepartmentService {
 
 
     @Override
+    public List<Department> getManagedDepartmentsOfSecondStageAuthority(Person secondStageAuthority) {
+
+        return departmentDAO.getDepartmentsForSecondStageAuthority(secondStageAuthority);
+    }
+
+
+    @Override
     public List<Application> getApplicationsForLeaveOfMembersInDepartmentsOfPerson(Person member,
         DateMidnight startDate, DateMidnight endDate) {
 
@@ -119,6 +126,7 @@ public class DepartmentServiceImpl implements DepartmentService {
                             .stream()
                             .filter(application ->
                                         application.hasStatus(ApplicationStatus.ALLOWED)
+                                        || application.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED)
                                         || application.hasStatus(ApplicationStatus.WAITING))
                             .collect(Collectors.toList())));
 
@@ -156,10 +164,40 @@ public class DepartmentServiceImpl implements DepartmentService {
 
 
     @Override
+    public List<Person> getMembersForSecondStageAuthority(Person secondStageAuthority) {
+
+        Set<Person> relevantPersons = new HashSet<>();
+        List<Department> departments = getManagedDepartmentsOfSecondStageAuthority(secondStageAuthority);
+
+        for (Department department : departments) {
+            List<Person> members = department.getMembers();
+            relevantPersons.addAll(members);
+        }
+
+        return new ArrayList<>(relevantPersons);
+    }
+
+
+    @Override
     public boolean isDepartmentHeadOfPerson(Person departmentHead, Person person) {
 
         if (departmentHead.hasRole(Role.DEPARTMENT_HEAD)) {
             List<Person> members = getManagedMembersOfDepartmentHead(departmentHead);
+
+            if (members.contains(person)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+    @Override
+    public boolean isSecondStageAuthorityOfPerson(Person secondStageAuthority, Person person) {
+
+        if (secondStageAuthority.hasRole(Role.SECOND_STAGE_AUTHORITY)) {
+            List<Person> members = getMembersForSecondStageAuthority(secondStageAuthority);
 
             if (members.contains(person)) {
                 return true;

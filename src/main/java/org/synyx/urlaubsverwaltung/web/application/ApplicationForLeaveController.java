@@ -1,5 +1,8 @@
 package org.synyx.urlaubsverwaltung.web.application;
 
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.ImmutableList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,6 +24,9 @@ import org.synyx.urlaubsverwaltung.core.person.Role;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -65,20 +71,91 @@ public class ApplicationForLeaveController {
 
     private List<ApplicationForLeave> getAllRelevantApplicationsForLeave() {
 
-        List<Application> applications = applicationService.getApplicationsForACertainState(ApplicationStatus.WAITING);
+        Person user = sessionService.getSignedInUser();
 
-        if (sessionService.getSignedInUser().hasRole(Role.DEPARTMENT_HEAD)) {
-            List<Person> members = departmentService.getManagedMembersOfDepartmentHead(
-                    sessionService.getSignedInUser());
+        boolean isHeadOf = user.hasRole(Role.DEPARTMENT_HEAD);
+        boolean isSecondStage = user.hasRole(Role.SECOND_STAGE_AUTHORITY);
+        boolean isBoss = user.hasRole(Role.BOSS);
 
-            return applications.stream()
-                .filter(application -> members.contains(application.getPerson()))
-                .map(application -> new ApplicationForLeave(application, calendarService))
-                .collect(Collectors.toList());
+        if (isBoss) {
+            // Boss can see all waiting and temporary allowed applications leave
+            return getApplicationsForLeaveForBoss();
         }
+
+        if (isHeadOf) {
+            // Department head can see only waiting applications for leave of certain department(s)
+            return getApplicationsForLeaveForDepartmentHead(user);
+        }
+
+        if (isSecondStage) {
+            // Department head can see waiting and temporary allowed applications for leave of certain department(s)
+            return getApplicationsForLeaveForSecondStageAuthority(user);
+        }
+
+        return Collections.<ApplicationForLeave>emptyList();
+    }
+
+
+    private List<ApplicationForLeave> getApplicationsForLeaveForBoss() {
+
+        List<Application> applications = new ArrayList<>();
+
+        List<Application> waitingApplications = applicationService.getApplicationsForACertainState(
+                ApplicationStatus.WAITING);
+
+        List<Application> temporaryAllowedApplications = applicationService.getApplicationsForACertainState(
+                ApplicationStatus.TEMPORARY_ALLOWED);
+
+        applications.addAll(waitingApplications);
+        applications.addAll(temporaryAllowedApplications);
 
         return applications.stream()
             .map(application -> new ApplicationForLeave(application, calendarService))
+            .sorted(dateComparator())
+            .collect(Collectors.toList());
+    }
+
+
+    private Comparator<ApplicationForLeave> dateComparator() {
+
+        return (o1, o2) -> o1.getStartDate().compareTo(o2.getStartDate());
+    }
+
+
+    private List<ApplicationForLeave> getApplicationsForLeaveForDepartmentHead(Person head) {
+
+        List<Application> waitingApplications = applicationService.getApplicationsForACertainState(
+                ApplicationStatus.WAITING);
+
+        List<Person> members = departmentService.getManagedMembersOfDepartmentHead(head);
+
+        return waitingApplications.stream()
+            .filter(application -> members.contains(application.getPerson()))
+            .map(application -> new ApplicationForLeave(application, calendarService))
+            .sorted(dateComparator())
+            .collect(Collectors.toList());
+    }
+
+
+    private List<ApplicationForLeave> getApplicationsForLeaveForSecondStageAuthority(Person secondStage) {
+
+        List<Application> applications = new ArrayList<>();
+
+        List<Application> waitingApplications = applicationService.getApplicationsForACertainState(
+                ApplicationStatus.WAITING);
+
+        List<Application> temporaryAllowedApplications = applicationService.getApplicationsForACertainState(
+                ApplicationStatus.TEMPORARY_ALLOWED);
+
+        applications.addAll(waitingApplications);
+        applications.addAll(temporaryAllowedApplications);
+
+        List<Person> members = departmentService.getMembersForSecondStageAuthority(secondStage);
+
+        return applications.stream()
+            .filter(application -> members.contains(application.getPerson()))
+            .map(application -> new ApplicationForLeave(application, calendarService))
+            .sorted(dateComparator())
             .collect(Collectors.toList());
     }
 }

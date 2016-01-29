@@ -35,13 +35,16 @@ public class UsedDaysOverview {
     public UsedDaysOverview(List<Application> applications, int year, WorkDaysService calendarService) {
 
         this.year = year;
-        this.holidayDays = new UsedDays(ApplicationStatus.WAITING, ApplicationStatus.ALLOWED);
-        this.otherDays = new UsedDays(ApplicationStatus.WAITING, ApplicationStatus.ALLOWED);
+        this.holidayDays = new UsedDays(ApplicationStatus.WAITING, ApplicationStatus.ALLOWED,
+                ApplicationStatus.TEMPORARY_ALLOWED);
+        this.otherDays = new UsedDays(ApplicationStatus.WAITING, ApplicationStatus.ALLOWED,
+                ApplicationStatus.TEMPORARY_ALLOWED);
 
         for (Application application : applications) {
             ApplicationStatus status = application.getStatus();
 
-            if (application.hasStatus(ApplicationStatus.WAITING) || application.hasStatus(ApplicationStatus.ALLOWED)) {
+            if (application.hasStatus(ApplicationStatus.WAITING) || application.hasStatus(ApplicationStatus.ALLOWED)
+                    || application.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED)) {
                 BigDecimal days = getVacationDays(application, calendarService);
 
                 if (VacationType.HOLIDAY.equals(application.getVacationType())) {

@@ -48,30 +48,47 @@
                 <spring:message code="department.data.description"/>
             </span>
         </div>
-
         <div class="col-md-8 col-md-pull-4">
             <div class="form-group is-required">
                 <label class="control-label col-md-3" for="name">
                     <spring:message code='department.data.name'/>:
                 </label>
-
                 <div class="col-md-9">
                     <form:input id="name" path="name" class="form-control" cssErrorClass="form-control error" />
                     <span class="help-inline"><form:errors path="name" cssClass="error"/></span>
                 </div>
             </div>
-
             <div class="form-group">
                 <label class="control-label col-md-3" for="description">
                     <spring:message code='department.data.info'/>:
                 </label>
-
                 <div class="col-md-9">
                     <span id="text-description"></span><spring:message code='action.comment.maxChars'/>
                     <form:textarea id="description" rows="3" path="description" class="form-control" cssErrorClass="form-control error"
                           onkeyup="count(this.value, 'text-description');"
                           onkeydown="maxChars(this,200); count(this.value, 'text-description');"/>
                     <form:errors path="description" cssClass="error"/>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-md-push-8">
+            <span class="help-block">
+                <i class="fa fa-fw fa-info-circle"></i>
+                <spring:message code="department.data.twoStageApproval.help"/>
+            </span>
+        </div>
+        <div class="col-md-8 col-md-pull-4">
+            <div class="form-group">
+                <label class="control-label col-md-3" for="twoStageApproval">
+                    <spring:message code="department.data.twoStageApproval"/>:
+                </label>
+                <div class="col-md-9 checkbox">
+                    <span class="help-inline"><form:errors path="twoStageApproval" cssClass="error"/></span>
+                   <label>
+                       <form:checkbox id="twoStageApproval" path="twoStageApproval" cssErrorClass="error"/>
+                       <spring:message code="department.data.twoStageApproval.activate"/>
+                   </label>
                 </div>
             </div>
         </div>
@@ -85,17 +102,30 @@
         <c:set var="departmentHeadsError">
             <form:errors path="departmentHeads" cssClass="error"/>
         </c:set>
+        <c:set var="secondStageAuthoritiesError">
+            <form:errors path="secondStageAuthorities" cssClass="error"/>
+        </c:set>
 
         <c:if test="${not empty departmentHeadsError}">
             <div class="col-xs-12">
                 <div class="alert alert-danger">${departmentHeadsError}</div>
             </div>
         </c:if>
+        <c:if test="${not empty secondStageAuthoritiesError}">
+            <div class="col-xs-12">
+                <div class="alert alert-danger">${secondStageAuthoritiesError}</div>
+            </div>
+        </c:if>
+
 
         <div class="col-md-4 col-md-push-8">
             <span class="help-block">
                 <i class="fa fa-fw fa-info-circle"></i>
                 <spring:message code="department.members.description"/>
+            </span>
+            <span class="help-block">
+                <i class="fa fa-fw fa-info-circle"></i>
+                <spring:message code="department.members.secondStageAuthority.description"/>
             </span>
         </div>
 
@@ -131,6 +161,14 @@
                                             <spring:message code="department.members.departmentHead"/>
                                         </label>
                                     </div>
+                                    </c:if>
+                                    <c:if test="${fn:contains(person.permissions, 'SECOND_STAGE_AUTHORITY')}">
+                                        <div class="checkbox">
+                                            <label>
+                                                <form:checkbox path="secondStageAuthorities" value="${person}"/>
+                                                <spring:message code="department.members.secondStageAuthority"/>
+                                            </label>
+                                        </div>
                                     </c:if>
                                 </div>
                             </div>

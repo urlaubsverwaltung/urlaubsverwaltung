@@ -151,12 +151,53 @@ public class UsedDaysOverviewTest {
         Assert.assertNotNull("Should not be null", holidayDays.getDays());
         Assert.assertEquals("Wrong number of waiting holiday days", BigDecimal.valueOf(2),
             holidayDays.getDays().get("WAITING"));
-        Assert.assertEquals("Wrong number of waiting holiday days", BigDecimal.ZERO,
+        Assert.assertEquals("Wrong number of allowed holiday days", BigDecimal.ZERO,
             holidayDays.getDays().get("ALLOWED"));
 
         UsedDays otherDays = usedDaysOverview.getOtherDays();
         Assert.assertNotNull("Should not be null", otherDays.getDays());
         Assert.assertEquals("Wrong number of waiting other days", BigDecimal.ZERO, otherDays.getDays().get("WAITING"));
         Assert.assertEquals("Wrong number of allowed other days", BigDecimal.ZERO, otherDays.getDays().get("ALLOWED"));
+    }
+
+
+    @Test
+    public void ensureGeneratesCorrectUsedDaysOverviewConsideringTemporaryAllowedApplicationsForLeave() {
+
+        Application holiday = new Application();
+        holiday.setVacationType(VacationType.HOLIDAY);
+        holiday.setStartDate(new DateMidnight(2014, 10, 13));
+        holiday.setEndDate(new DateMidnight(2014, 10, 13));
+        holiday.setStatus(ApplicationStatus.WAITING);
+
+        Application holidayAllowed = new Application();
+        holidayAllowed.setVacationType(VacationType.HOLIDAY);
+        holidayAllowed.setStartDate(new DateMidnight(2014, 10, 14));
+        holidayAllowed.setEndDate(new DateMidnight(2014, 10, 14));
+        holidayAllowed.setStatus(ApplicationStatus.ALLOWED);
+
+        Application holidayTemporaryAllowed = new Application();
+        holidayTemporaryAllowed.setVacationType(VacationType.HOLIDAY);
+        holidayTemporaryAllowed.setStartDate(new DateMidnight(2014, 10, 15));
+        holidayTemporaryAllowed.setEndDate(new DateMidnight(2014, 10, 15));
+        holidayTemporaryAllowed.setStatus(ApplicationStatus.TEMPORARY_ALLOWED);
+
+        List<Application> applications = Arrays.asList(holiday, holidayTemporaryAllowed, holidayAllowed);
+
+        // just return 1 day for each application for leave
+        Mockito.when(calendarService.getWorkDays(Mockito.any(DayLength.class), Mockito.any(DateMidnight.class),
+                    Mockito.any(DateMidnight.class), Mockito.any(Person.class)))
+            .thenReturn(BigDecimal.ONE);
+
+        UsedDaysOverview usedDaysOverview = new UsedDaysOverview(applications, 2014, calendarService);
+
+        UsedDays holidayDays = usedDaysOverview.getHolidayDays();
+        Assert.assertNotNull("Should not be null", holidayDays.getDays());
+        Assert.assertEquals("Wrong number of waiting holiday days", BigDecimal.ONE,
+            holidayDays.getDays().get("WAITING"));
+        Assert.assertEquals("Wrong number of waiting holiday days", BigDecimal.ONE,
+            holidayDays.getDays().get("TEMPORARY_ALLOWED"));
+        Assert.assertEquals("Wrong number of allowed holiday days", BigDecimal.ONE,
+            holidayDays.getDays().get("ALLOWED"));
     }
 }

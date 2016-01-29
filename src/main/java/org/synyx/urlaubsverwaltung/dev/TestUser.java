@@ -12,6 +12,7 @@ enum TestUser {
 
     USER("testUser"),
     DEPARTMENT_HEAD("testHead"),
+    SECOND_STAGE_AUTHORITY("testManager"),
     BOSS("testBoss"),
     OFFICE("test");
 
@@ -38,6 +39,9 @@ enum TestUser {
         switch (this) {
             case DEPARTMENT_HEAD:
                 return new Role[] { Role.USER, Role.DEPARTMENT_HEAD };
+
+            case SECOND_STAGE_AUTHORITY:
+                return new Role[] { Role.USER, Role.SECOND_STAGE_AUTHORITY };
 
             case BOSS:
                 return new Role[] { Role.USER, Role.BOSS };

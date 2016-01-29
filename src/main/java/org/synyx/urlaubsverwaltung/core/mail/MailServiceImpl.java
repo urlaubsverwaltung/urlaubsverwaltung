@@ -25,6 +25,7 @@ import org.springframework.util.StringUtils;
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationComment;
+import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.person.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -248,22 +249,52 @@ class MailServiceImpl implements MailService {
 
 
     @Override
+    public void sendTemporaryAllowedNotification(Application application, ApplicationComment comment) {
+
+        Map<String, Object> model = createModelForApplicationStatusChangeMail(application,
+                Optional.ofNullable(comment));
+        model.put("departmentVacations",
+            departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(application.getPerson(),
+                application.getStartDate(), application.getEndDate()));
+
+        // Inform user that the application for leave has been allowed temporary
+
+        String textUser = buildMailBody("temporary_allowed_user", model);
+        sendEmail(Arrays.asList(application.getPerson()), "subject.application.temporaryAllowed.user", textUser);
+
+        // Inform second stage authorities that there is an application for leave that must be allowed
+
+        String textSecondStageAuthority = buildMailBody("temporary_allowed_second_stage_authority", model);
+        sendEmail(getSecondStageAuthorities(application), "subject.application.temporaryAllowed.secondStage",
+            textSecondStageAuthority);
+    }
+
+
+    private List<Person> getSecondStageAuthorities(Application application) {
+
+        List<Person> secondStageAuthorities = personService.getPersonsWithNotificationType(
+                MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY);
+
+        return secondStageAuthorities.stream()
+            .filter(person -> departmentService.isSecondStageAuthorityOfPerson(person, application.getPerson()))
+            .collect(Collectors.toList());
+    }
+
+
+    @Override
     public void sendAllowedNotification(Application application, ApplicationComment comment) {
 
-        // if application has been allowed, two emails must be sent
-        // the applicant gets an email and the office gets an email
-
-        // email to office
-        Map<String, Object> modelForOffice = createModelForApplicationStatusChangeMail(application,
+        Map<String, Object> model = createModelForApplicationStatusChangeMail(application,
                 Optional.ofNullable(comment));
-        String textOffice = buildMailBody("allowed_office", modelForOffice);
-        sendEmail(getOfficeMembers(), "subject.application.allowed.office", textOffice);
 
-        // email to applicant
-        Map<String, Object> modelForUser = createModelForApplicationStatusChangeMail(application,
-                Optional.ofNullable(comment));
-        String textUser = buildMailBody("allowed_user", modelForUser);
+        // Inform user that the application for leave has been allowed
+        String textUser = buildMailBody("allowed_user", model);
         sendEmail(Arrays.asList(application.getPerson()), "subject.application.allowed.user", textUser);
+
+        // Inform office that there is a new allowed application for leave
+
+        String textOffice = buildMailBody("allowed_office", model);
+        sendEmail(getOfficeMembers(), "subject.application.allowed.office", textOffice);
     }
 
 

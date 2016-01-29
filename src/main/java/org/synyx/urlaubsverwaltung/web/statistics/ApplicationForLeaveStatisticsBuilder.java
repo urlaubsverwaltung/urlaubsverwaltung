@@ -72,7 +72,8 @@ public class ApplicationForLeaveStatisticsBuilder {
         List<Application> applications = applicationService.getApplicationsForACertainPeriodAndPerson(from, to, person);
 
         for (Application application : applications) {
-            if (application.hasStatus(ApplicationStatus.WAITING)) {
+            if (application.hasStatus(ApplicationStatus.WAITING)
+                    || application.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED)) {
                 statistics.addWaitingVacationDays(application.getVacationType(),
                     getVacationDays(application, from.getYear()));
             } else if (application.hasStatus(ApplicationStatus.ALLOWED)) {

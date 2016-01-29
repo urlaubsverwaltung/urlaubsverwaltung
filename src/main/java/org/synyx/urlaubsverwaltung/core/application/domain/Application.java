@@ -53,6 +53,9 @@ public class Application extends AbstractPersistable<Integer> {
     @ManyToOne
     private Person canceller;
 
+    // flag for 2 stage approval process
+    private boolean twoStageApproval;
+
     // Period of holiday
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date startDate;
@@ -218,6 +221,18 @@ public class Application extends AbstractPersistable<Integer> {
     public void setCanceller(Person canceller) {
 
         this.canceller = canceller;
+    }
+
+
+    public boolean isTwoStageApproval() {
+
+        return twoStageApproval;
+    }
+
+
+    public void setTwoStageApproval(boolean twoStageApproval) {
+
+        this.twoStageApproval = twoStageApproval;
     }
 
 
@@ -431,6 +446,8 @@ public class Application extends AbstractPersistable<Integer> {
         toStringBuilder.append("startDate", getStartDate());
         toStringBuilder.append("endDate", getEndDate());
         toStringBuilder.append("vacationType", getVacationType());
+        toStringBuilder.append("twoStageApproval", isTwoStageApproval());
+        toStringBuilder.append("status", getStatus().toString());
         toStringBuilder.append("dayLength", getDayLength());
 
         if (getPerson() != null && getApplier() != null && getPerson().equals(getApplier())) {

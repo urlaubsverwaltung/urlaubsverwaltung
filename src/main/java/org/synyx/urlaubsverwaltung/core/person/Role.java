@@ -10,6 +10,7 @@ public enum Role {
 
     USER,
     DEPARTMENT_HEAD,
+    SECOND_STAGE_AUTHORITY,
     BOSS,
     OFFICE,
     INACTIVE

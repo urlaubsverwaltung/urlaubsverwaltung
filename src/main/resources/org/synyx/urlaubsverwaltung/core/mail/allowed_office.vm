@@ -2,11 +2,15 @@ Hallo Office,
 
 es liegt ein neuer genehmigter Antrag vor: ${link}
 
+#if($comment.text && $comment.text != "")
+Kommentar von ${comment.person.niceName} zum Antrag: ${comment.text}
+
+#end
+----------------------------------------------------------------------------------------------
+
+Informationen zum Urlaubsantrag:
+
 Mitarbeiter: ${application.person.niceName}
-
-Antragsteller: ${application.applier.niceName}
-Genehmigender: ${application.boss.niceName}
-
 Antragsdatum: ${application.applicationDate.toString("dd.MM.yyyy")}
 Zeitraum des beantragten Urlaubs: ${application.startDate.toString("dd.MM.yyyy")} bis ${application.endDate.toString("dd.MM.yyyy")}, ${dayLength}
 Art des Urlaubs: ${vacationType} 
@@ -18,7 +22,4 @@ Vertreter: ${application.holidayReplacement.niceName}
 #end
 #if($application.address && $application.address != "")
 Anschrift/Telefon während des Urlaubs: ${application.address}
-#end
-#if($comment.text && $comment.text != "")
-Kommentar von ${comment.person.niceName} zum Antrag: ${comment.text}
 #end

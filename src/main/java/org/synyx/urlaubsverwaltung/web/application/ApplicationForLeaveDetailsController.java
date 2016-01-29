@@ -120,13 +120,17 @@ public class ApplicationForLeaveDetailsController {
 
         model.addAttribute("comment", new ApplicationCommentForm());
         model.addAttribute("comments", comments);
-        model.addAttribute("lastComment", comments.get(comments.size()-1));
+        model.addAttribute("lastComment", comments.get(comments.size() - 1));
 
         // SPECIAL ATTRIBUTES FOR BOSSES / DEPARTMENT HEADS
         Person signedInUser = sessionService.getSignedInUser();
 
-        if (application.getStatus() == ApplicationStatus.WAITING
-                && (signedInUser.hasRole(Role.BOSS) || signedInUser.hasRole(Role.DEPARTMENT_HEAD))) {
+        boolean isNotYetAllowed = application.hasStatus(ApplicationStatus.WAITING)
+            || application.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED);
+        boolean isPrivilegedUser = signedInUser.hasRole(Role.BOSS) || signedInUser.hasRole(Role.DEPARTMENT_HEAD)
+            || signedInUser.hasRole(Role.SECOND_STAGE_AUTHORITY);
+
+        if (isNotYetAllowed && isPrivilegedUser) {
             model.addAttribute("bosses", personService.getPersonsByRole(Role.BOSS));
             model.addAttribute("referredPerson", new ReferredPerson());
         }
@@ -157,9 +161,9 @@ public class ApplicationForLeaveDetailsController {
 
 
     /**
-     * Allow a not yet allowed application for leave (Boss only!).
+     * Allow a not yet allowed application for leave (Privileged user only!).
      */
-    @PreAuthorize(SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD)
+    @PreAuthorize(SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD_OR_SECOND_STAGE_AUTHORITY)
     @RequestMapping(value = "/{applicationId}/allow", method = RequestMethod.POST)
     public String allowApplication(@PathVariable("applicationId") Integer applicationId,
         @ModelAttribute("comment") ApplicationCommentForm comment,
@@ -173,32 +177,40 @@ public class ApplicationForLeaveDetailsController {
         Person person = application.getPerson();
 
         boolean isBoss = signedInUser.hasRole(Role.BOSS);
-        boolean isDepartmentHead = departmentService.isDepartmentHeadOfPerson(signedInUser, person);
+        boolean isDepartmentHead = signedInUser.hasRole(Role.DEPARTMENT_HEAD)
+            && departmentService.isDepartmentHeadOfPerson(signedInUser, person);
+        boolean isSecondStageAuthority = signedInUser.hasRole(Role.SECOND_STAGE_AUTHORITY)
+            && departmentService.isSecondStageAuthorityOfPerson(signedInUser, person);
 
-        if (isBoss || isDepartmentHead) {
-            comment.setMandatory(false);
-            commentValidator.validate(comment, errors);
-
-            if (errors.hasErrors()) {
-                redirectAttributes.addFlashAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
-
-                return "redirect:/web/application/" + applicationId + "?action=allow";
-            }
-
-            applicationInteractionService.allow(application, signedInUser, Optional.ofNullable(comment.getText()));
-
-            redirectAttributes.addFlashAttribute("allowSuccess", true);
-
-            if (redirectUrl != null) {
-                return "redirect:" + redirectUrl;
-            }
-
-            return "redirect:/web/application/" + applicationId;
+        if (!isBoss && !isDepartmentHead && !isSecondStageAuthority) {
+            throw new AccessDeniedException(String.format(
+                    "User '%s' has not the correct permissions to allow application for leave of user '%s'",
+                    signedInUser.getLoginName(), person.getLoginName()));
         }
 
-        throw new AccessDeniedException(String.format(
-                "User '%s' has not the correct permissions to allow application for leave of user '%s'",
-                signedInUser.getLoginName(), person.getLoginName()));
+        comment.setMandatory(false);
+        commentValidator.validate(comment, errors);
+
+        if (errors.hasErrors()) {
+            redirectAttributes.addFlashAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
+
+            return "redirect:/web/application/" + applicationId + "?action=allow";
+        }
+
+        Application allowedApplicationForLeave = applicationInteractionService.allow(application, signedInUser,
+                Optional.ofNullable(comment.getText()));
+
+        if (allowedApplicationForLeave.hasStatus(ApplicationStatus.ALLOWED)) {
+            redirectAttributes.addFlashAttribute("allowSuccess", true);
+        } else if (allowedApplicationForLeave.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED)) {
+            redirectAttributes.addFlashAttribute("temporaryAllowSuccess", true);
+        }
+
+        if (redirectUrl != null) {
+            return "redirect:" + redirectUrl;
+        }
+
+        return "redirect:/web/application/" + applicationId;
     }
 
 
@@ -241,7 +253,7 @@ public class ApplicationForLeaveDetailsController {
     /**
      * Reject an application for leave (Boss only!).
      */
-    @PreAuthorize(SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD)
+    @PreAuthorize(SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD_OR_SECOND_STAGE_AUTHORITY)
     @RequestMapping(value = "/{applicationId}/reject", method = RequestMethod.POST)
     public String rejectApplication(@PathVariable("applicationId") Integer applicationId,
         @ModelAttribute("comment") ApplicationCommentForm comment,
@@ -256,8 +268,9 @@ public class ApplicationForLeaveDetailsController {
 
         boolean isBoss = signedInUser.hasRole(Role.BOSS);
         boolean isDepartmentHead = departmentService.isDepartmentHeadOfPerson(signedInUser, person);
+        boolean isSecondStageAuthority = departmentService.isSecondStageAuthorityOfPerson(signedInUser, person);
 
-        if (isBoss || isDepartmentHead) {
+        if (isBoss || isDepartmentHead | isSecondStageAuthority) {
             comment.setMandatory(true);
             commentValidator.validate(comment, errors);
 
@@ -285,6 +298,7 @@ public class ApplicationForLeaveDetailsController {
                 "User '%s' has not the correct permissions to reject application for leave of user '%s'",
                 signedInUser.getLoginName(), person.getLoginName()));
     }
+
 
     /**
      * Cancel an application for leave. Cancelling an application for leave on behalf for someone is allowed only for

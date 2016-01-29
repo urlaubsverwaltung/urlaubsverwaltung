@@ -4,7 +4,7 @@
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
-<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 
 <!DOCTYPE html>
@@ -52,6 +52,11 @@
                                 <c:when test="${allowSuccess}">
                                     <div class="alert alert-success">
                                         <spring:message code="application.action.allow.success" />
+                                    </div>
+                                </c:when>
+                                <c:when test="${temporaryAllowSuccess}">
+                                    <div class="alert alert-success">
+                                        <spring:message code="application.action.temporary_allow.success" />
                                     </div>
                                 </c:when>
                                 <c:when test="${rejectSuccess}">
@@ -133,7 +138,7 @@
                                     </c:choose>
                                   </td>
                                   <td class="hidden-xs hidden-sm">
-                                      <sec:authorize access="hasAnyAuthority('DEPARTMENT_HEAD', 'BOSS')">
+                                      <sec:authorize access="hasAnyAuthority('DEPARTMENT_HEAD', 'SECOND_STAGE_AUTHORITY', 'BOSS')">
                                           <a class="fa-action positive" href="${URL_PREFIX}/application/${application.id}?action=allow&shortcut=true"
                                              data-title="<spring:message code='action.allow'/>">
                                               <i class="fa fa-check"></i>
@@ -141,7 +146,7 @@
                                       </sec:authorize>
                                   </td>
                                   <td class="hidden-xs hidden-sm">
-                                      <sec:authorize access="hasAnyAuthority('DEPARTMENT_HEAD', 'BOSS')">
+                                      <sec:authorize access="hasAnyAuthority('DEPARTMENT_HEAD', 'SECOND_STAGE_AUTHORITY', 'BOSS')">
                                           <a class="fa-action negative" href="${URL_PREFIX}/application/${application.id}?action=reject&shortcut=true"
                                              data-title="<spring:message code='action.reject'/>">
                                               <i class="fa fa-ban"></i>

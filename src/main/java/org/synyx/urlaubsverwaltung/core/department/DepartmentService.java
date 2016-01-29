@@ -76,6 +76,16 @@ public interface DepartmentService {
 
 
     /**
+     * Finds all departments the given person is set as second stage authority.
+     *
+     * @param  secondStageAuthority  to get the departments of
+     *
+     * @return  list of departments the second stage authority manages
+     */
+    List<Department> getManagedDepartmentsOfSecondStageAuthority(Person secondStageAuthority);
+
+
+    /**
      * Get all active (waiting or allowed) applications for leave of the members of the departments of the given person
      * for the provided period.
      *
@@ -100,6 +110,16 @@ public interface DepartmentService {
 
 
     /**
+     * Get all members of the departments where the given person is the secondStageAuthority.
+     *
+     * @param  secondStageAuthority  responsible for releases of the members to be fetched
+     *
+     * @return  all unique members of the departments where the given person is the secondStageAuthority
+     */
+    List<Person> getMembersForSecondStageAuthority(Person secondStageAuthority);
+
+
+    /**
      * Check if the given department head manages a department that the given person is assigned to.
      *
      * @param  departmentHead  to be checked if he is the department head of a department that the given person is
@@ -110,4 +130,17 @@ public interface DepartmentService {
      *          else {@code false}
      */
     boolean isDepartmentHeadOfPerson(Person departmentHead, Person person);
+
+
+    /**
+     * Check if the given secondStageAuthority is responsible for the department that the given person is assigned to.
+     *
+     * @param  secondStageAuthority  to be checked if he is responsible for a department that the given person is
+     *                               assigned to
+     * @param  person  to be checked if he is assigned to a department that has the given secondStageAuthority
+     *
+     * @return  {@code true} if the given secondStageAuthority is responsible for a department that the given person is
+     *          assigned to, else {@code false}
+     */
+    boolean isSecondStageAuthorityOfPerson(Person secondStageAuthority, Person person);
 }

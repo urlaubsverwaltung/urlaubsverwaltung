@@ -44,6 +44,9 @@ public class Department extends AbstractPersistable<Integer> {
     @Temporal(TemporalType.DATE)
     private Date lastModification;
 
+    // flag for two stage approval process
+    private boolean twoStageApproval;
+
     @CollectionTable(name = "Department_Member")
     @ElementCollection
     @LazyCollection(LazyCollectionOption.FALSE)
@@ -53,6 +56,11 @@ public class Department extends AbstractPersistable<Integer> {
     @ElementCollection
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<Person> departmentHeads = new ArrayList<>();
+
+    @CollectionTable(name = "Department_SecondStageAuthority")
+    @ElementCollection
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private List<Person> secondStageAuthorities = new ArrayList<>();
 
     public Department() {
 
@@ -103,6 +111,18 @@ public class Department extends AbstractPersistable<Integer> {
     }
 
 
+    public boolean isTwoStageApproval() {
+
+        return twoStageApproval;
+    }
+
+
+    public void setTwoStageApproval(boolean twoStageApproval) {
+
+        this.twoStageApproval = twoStageApproval;
+    }
+
+
     public List<Person> getMembers() {
 
         if (members == null) {
@@ -135,6 +155,22 @@ public class Department extends AbstractPersistable<Integer> {
     }
 
 
+    public List<Person> getSecondStageAuthorities() {
+
+        if (secondStageAuthorities == null) {
+            secondStageAuthorities = Collections.emptyList();
+        }
+
+        return Collections.unmodifiableList(secondStageAuthorities);
+    }
+
+
+    public void setSecondStageAuthorities(List<Person> secondStageAuthorities) {
+
+        this.secondStageAuthorities = secondStageAuthorities;
+    }
+
+
     @Override
     public String toString() {
 
@@ -142,6 +178,7 @@ public class Department extends AbstractPersistable<Integer> {
             .append("name", getName())
             .append("members", getMembers().size())
             .append("departmentHeads", getDepartmentHeads().size())
+            .append("secondStageAuthorities", getSecondStageAuthorities().size())
             .toString();
     }
 }

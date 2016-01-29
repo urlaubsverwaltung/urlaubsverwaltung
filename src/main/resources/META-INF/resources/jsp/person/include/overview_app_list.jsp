@@ -31,6 +31,9 @@
                          <c:when test="${app.status == 'ALLOWED'}">
                              <i class="fa fa-check"></i>
                          </c:when>
+                         <c:when test="${app.status == 'TEMPORARY_ALLOWED'}">
+                             <i class="fa fa-check"></i>
+                         </c:when>
                          <c:when test="${app.status == 'REJECTED'}">
                              <i class="fa fa-ban"></i>
                          </c:when>
@@ -97,6 +100,9 @@
                     <c:choose>
                         <c:when test="${app.status == 'WAITING'}">
                             <spring:message code="application.progress.APPLIED" /> <uv:date date="${app.applicationDate}" />
+                        </c:when>
+                        <c:when test="${app.status == 'TEMPORARY_ALLOWED'}">
+                            <spring:message code="application.progress.TEMPORARY_ALLOWED" /> <uv:date date="${app.editedDate}" />
                         </c:when>
                         <c:when test="${app.status == 'ALLOWED'}">
                             <spring:message code="application.progress.ALLOWED" /> <uv:date date="${app.editedDate}" />

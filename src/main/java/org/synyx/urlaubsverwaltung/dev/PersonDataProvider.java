@@ -80,6 +80,10 @@ class PersonDataProvider {
             notifications.add(MailNotification.NOTIFICATION_DEPARTMENT_HEAD);
         }
 
+        if (roles.contains(Role.SECOND_STAGE_AUTHORITY)) {
+            notifications.add(MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY);
+        }
+
         if (roles.contains(Role.BOSS)) {
             notifications.add(MailNotification.NOTIFICATION_BOSS);
         }

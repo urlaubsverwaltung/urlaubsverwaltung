@@ -1,15 +1,21 @@
 package org.synyx.urlaubsverwaltung.web.person;
 
 import org.joda.time.DateMidnight;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
+
 import org.springframework.stereotype.Controller;
+
 import org.springframework.ui.Model;
+
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.domain.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
@@ -25,10 +31,7 @@ import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.department.DepartmentConstants;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -127,35 +130,57 @@ public class PersonController {
 
     private List<Person> getRelevantActivePersons() {
 
-        List<Person> persons = personService.getActivePersons();
+        Person signedInUser = sessionService.getSignedInUser();
+
+        if (signedInUser.hasRole(Role.BOSS)) {
+            return personService.getActivePersons();
+        }
 
         // NOTE: If the signed in user is only department head, he wants to see only the persons of his departments
-        if (sessionService.getSignedInUser().hasRole(Role.DEPARTMENT_HEAD)) {
-            List<Person> members = departmentService.getManagedMembersOfDepartmentHead(
-                    sessionService.getSignedInUser());
+        if (signedInUser.hasRole(Role.DEPARTMENT_HEAD)) {
+            List<Person> members = departmentService.getManagedMembersOfDepartmentHead(signedInUser);
 
             // NOTE: Only persons without inactive role are relevant
             return members.stream().filter(person -> !person.hasRole(Role.INACTIVE)).collect(Collectors.toList());
         }
 
-        return persons;
+        // NOTE: If the signed in user is second stage authority, he wants to see only the persons of his departments
+        if (signedInUser.hasRole(Role.SECOND_STAGE_AUTHORITY)) {
+            List<Person> members = departmentService.getMembersForSecondStageAuthority(signedInUser);
+
+            // NOTE: Only persons without inactive role are relevant
+            return members.stream().filter(person -> !person.hasRole(Role.INACTIVE)).collect(Collectors.toList());
+        }
+
+        return Collections.<Person>emptyList();
     }
 
 
     private List<Person> getRelevantInactivePersons() {
 
-        List<Person> persons = personService.getInactivePersons();
+        Person signedInUser = sessionService.getSignedInUser();
+
+        if (signedInUser.hasRole(Role.BOSS)) {
+            return personService.getInactivePersons();
+        }
 
         // NOTE: If the signed in user is only department head, he wants to see only the persons of his departments
-        if (sessionService.getSignedInUser().hasRole(Role.DEPARTMENT_HEAD)) {
-            List<Person> members = departmentService.getManagedMembersOfDepartmentHead(
-                    sessionService.getSignedInUser());
+        if (signedInUser.hasRole(Role.DEPARTMENT_HEAD)) {
+            List<Person> members = departmentService.getManagedMembersOfDepartmentHead(signedInUser);
 
             // NOTE: Only persons with inactive role are relevant
             return members.stream().filter(person -> person.hasRole(Role.INACTIVE)).collect(Collectors.toList());
         }
 
-        return persons;
+        // NOTE: If the signed in user is second stage authority, he wants to see only the persons of his departments
+        if (signedInUser.hasRole(Role.SECOND_STAGE_AUTHORITY)) {
+            List<Person> members = departmentService.getMembersForSecondStageAuthority(signedInUser);
+
+            // NOTE: Only persons with inactive role are relevant
+            return members.stream().filter(person -> person.hasRole(Role.INACTIVE)).collect(Collectors.toList());
+        }
+
+        return Collections.<Person>emptyList();
     }
 
 

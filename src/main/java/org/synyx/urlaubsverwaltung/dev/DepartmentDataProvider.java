@@ -29,7 +29,8 @@ class DepartmentDataProvider {
         this.departmentService = departmentService;
     }
 
-    void createTestDepartment(String name, String description, List<Person> members, List<Person> departmentHeads) {
+    void createTestDepartment(String name, String description, List<Person> members, List<Person> departmentHeads,
+        List<Person> secondStageAuthorities) {
 
         Department department = new Department();
         department.setName(name);
@@ -37,6 +38,11 @@ class DepartmentDataProvider {
         department.setLastModification(DateTime.now());
         department.setMembers(members);
         department.setDepartmentHeads(departmentHeads);
+        department.setSecondStageAuthorities(secondStageAuthorities);
+
+        if (!secondStageAuthorities.isEmpty()) {
+            department.setTwoStageApproval(true);
+        }
 
         departmentService.create(department);
     }

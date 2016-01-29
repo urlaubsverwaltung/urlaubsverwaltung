@@ -107,6 +107,7 @@ public class AbsenceController {
                         .stream()
                         .filter(application ->
                                     application.hasStatus(ApplicationStatus.WAITING)
+                                    || application.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED)
                                     || application.hasStatus(ApplicationStatus.ALLOWED))
                         .collect(Collectors.toList());
 

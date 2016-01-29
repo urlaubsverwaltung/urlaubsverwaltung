@@ -39,10 +39,11 @@ public class SessionService {
     public Person getSignedInUser() {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        
-        if(authentication == null) {
+
+        if (authentication == null) {
             throw new IllegalStateException("No authentication found in context.");
         }
+
         String user = authentication.getName();
 
         Optional<Person> person = personService.getPersonByLogin(user);
@@ -68,7 +69,8 @@ public class SessionService {
         boolean isOwnData = person.getId().equals(signedInUser.getId());
         boolean isBossOrOffice = signedInUser.hasRole(Role.OFFICE) || signedInUser.hasRole(Role.BOSS);
         boolean isDepartmentHeadOfPerson = departmentService.isDepartmentHeadOfPerson(signedInUser, person);
+        boolean isSecondStageAuthorityOfPerson = departmentService.isSecondStageAuthorityOfPerson(signedInUser, person);
 
-        return isOwnData || isBossOrOffice || isDepartmentHeadOfPerson;
+        return isOwnData || isBossOrOffice || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson;
     }
 }

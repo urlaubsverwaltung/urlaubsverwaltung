@@ -37,6 +37,18 @@ public class TestUserTest {
 
 
     @Test
+    public void ensureReturnsCorrectRolesForTestDepartmentHeadSecondStageAuthority() {
+
+        Role[] roles = TestUser.SECOND_STAGE_AUTHORITY.getRoles();
+
+        Assert.assertNotNull("Should not be null", roles);
+        Assert.assertEquals("Wrong number of roles", 2, roles.length);
+        Assert.assertEquals("Wrong role", Role.USER, roles[0]);
+        Assert.assertEquals("Wrong role", Role.SECOND_STAGE_AUTHORITY, roles[1]);
+    }
+
+
+    @Test
     public void ensureReturnsCorrectRolesForTestBoss() {
 
         Role[] roles = TestUser.BOSS.getRoles();

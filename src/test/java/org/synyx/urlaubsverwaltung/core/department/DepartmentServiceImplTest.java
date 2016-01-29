@@ -98,6 +98,17 @@ public class DepartmentServiceImplTest {
 
 
     @Test
+    public void ensureGetManagedDepartmentsOfSecondStageAuthorityCallCorrectDAOMethod() throws Exception {
+
+        Person person = Mockito.mock(Person.class);
+
+        sut.getManagedDepartmentsOfSecondStageAuthority(person);
+
+        Mockito.verify(departmentDAO).getDepartmentsForSecondStageAuthority(person);
+    }
+
+
+    @Test
     public void ensureGetAssignedDepartmentsOfMemberCallCorrectDAOMethod() throws Exception {
 
         Person person = Mockito.mock(Person.class);
