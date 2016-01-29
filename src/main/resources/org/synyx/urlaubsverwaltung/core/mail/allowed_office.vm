@@ -4,8 +4,8 @@ es liegt ein neuer genehmigter Antrag vor: ${link}
 
 #if($comment.text && $comment.text != "")
 Kommentar von ${comment.person.niceName} zum Antrag: ${comment.text}
-#end
 
+#end
 ----------------------------------------------------------------------------------------------
 
 Informationen zum Urlaubsantrag:

@@ -6,6 +6,6 @@ Einen schönen Urlaub!
 
 #if($comment.text && $comment.text != "")
 Kommentar von ${comment.person.niceName} zum Antrag: ${comment.text}
-#end 
 
+#end
 Link zum Antrag: ${link}

@@ -29,7 +29,7 @@ Anschrift/Telefon während des Urlaubs: ${application.address}
 #if($departmentVacations.isEmpty())
 Keine
 #else
-    #foreach( $vacation in $departmentVacations )
-        ${vacation.person.niceName}: ${vacation.startDate.toString("dd.MM.yyyy")} bis ${vacation.endDate.toString("dd.MM.yyyy")}
-    #end
+#foreach( $vacation in $departmentVacations )
+${vacation.person.niceName}: ${vacation.startDate.toString("dd.MM.yyyy")} bis ${vacation.endDate.toString("dd.MM.yyyy")}
+#end
 #end

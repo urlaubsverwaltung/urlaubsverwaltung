@@ -1,8 +1,9 @@
 Hallo ${application.person.niceName},
 
-dein am ${application.applicationDate.toString("dd.MM.yyyy")} gestellter Antrag wurde leider von ${comment.person.niceName} abgelehnt
-mit folgender Begründung:
+dein am ${application.applicationDate.toString("dd.MM.yyyy")} gestellter Antrag wurde leider von ${comment.person.niceName} abgelehnt.
 
-${comment.text}
+#if($comment.text && $comment.text != "")
+Begründung: ${comment.text}
 
+#end
 Link zum Antrag: ${link}
