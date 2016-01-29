@@ -223,6 +223,23 @@
                         </span>
                     </div>
                     <div class="col-md-8 col-md-pull-4">
+
+                        <div class="form-group is-required">
+                            <label class="control-label col-md-4" for="workingTimeSettings.overtimeActive">
+                                <spring:message code='settings.overtime.overtimeActive'/>:
+                            </label>
+                            <div class="col-md-8 radio">
+                                <label class="halves">
+                                    <form:radiobutton id="workingTimeSettings.overtimeActive" path="workingTimeSettings.overtimeActive" value="true"/>
+                                    <spring:message code="settings.overtime.overtimeActive.true"/>
+                                </label>
+                                <label class="halves">
+                                    <form:radiobutton id="workingTimeSettings.overtimeActive" path="workingTimeSettings.overtimeActive" value="false"/>
+                                    <spring:message code="settings.overtime.overtimeActive.false"/>
+                                </label>
+                            </div>
+                        </div>
+
                         <div class="form-group is-required">
                             <label class="control-label col-md-4" for="workingTimeSettings.maximumOvertime">
                                 <spring:message code="settings.overtime.maximum"/>:
@@ -440,7 +457,7 @@
                     </button>
                 </div>
             </div>
-        
+
         </div>
         </div>
         </form:form>

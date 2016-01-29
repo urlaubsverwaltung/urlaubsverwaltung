@@ -36,6 +36,14 @@ public class WorkingTimeSettings {
     private FederalState federalState = FederalState.BADEN_WUERTTEMBERG;
 
     /**
+     * Activates or deactivates overtime settings
+     *
+     * @since  2.15.0
+     */
+    @Column(name = "overtime_active")
+    private Boolean overtimeActive = false;
+
+    /**
      * Defines the maximum number of overtime a person can have.
      *
      * @since  2.13.0
@@ -85,6 +93,16 @@ public class WorkingTimeSettings {
     public void setFederalState(FederalState federalState) {
 
         this.federalState = federalState;
+    }
+
+
+    public Boolean getOvertimeActive() {
+        return overtimeActive;
+    }
+
+
+    public void setOvertimeActive(Boolean overtimeActive) {
+        this.overtimeActive = overtimeActive;
     }
 
 

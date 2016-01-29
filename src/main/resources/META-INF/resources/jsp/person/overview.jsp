@@ -68,9 +68,9 @@
             <div class="col-xs-12">
                 <%@include file="include/overview_header.jsp" %>
             </div>
-            
+
         </div>
-        
+
         <div class="row">
 
             <div class="col-xs-12 col-sm-12 col-md-4">
@@ -132,7 +132,7 @@
 
         </div>
 
-        <c:if test="${settings.workingTimeSettings.maximumOvertime > 0}">
+        <c:if test="${settings.workingTimeSettings.overtimeActive}">
         <div class="row">
             <div class="col-xs-12">
                 <legend>
@@ -218,7 +218,7 @@
                 addMomentScript().then(addMomentLangScript).then(initCalendar);
 
                 var resizeTimer = null;
-                
+
                 $(window).on('resize', function () {
 
                     if (resizeTimer !== null) {
@@ -231,7 +231,7 @@
                     }, 30)
 
                 });
-                
+
             });
         </script>
 
@@ -318,7 +318,7 @@
                     </legend>
                 </div>
             </div>
-            
+
             <div class="row">
                 <div class="col-xs-12 col-sm-12 col-md-6">
                     <div class="box">

@@ -10,6 +10,9 @@
         </preConditions>
 
         <addColumn tableName="Settings">
+            <column name="overtime_active" type="BIT(1)" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
             <column name="overtime_minimum" type="INT(10)" valueNumeric="100"/>
         </addColumn>
 
