@@ -29,7 +29,12 @@ import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceMappingService;
 import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceType;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
+import scala.App;
+
+import java.nio.file.AccessDeniedException;
+
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.mockito.Matchers.*;
@@ -76,7 +81,7 @@ public class ApplicationInteractionServiceImplTest {
     }
 
 
-    // START: APPLY
+    // APPLY FOR LEAVE -------------------------------------------------------------------------------------------------
 
     @Test
     public void ensureApplyForLeaveChangesStateAndOtherAttributesAndSavesTheApplicationForLeave() {
@@ -110,6 +115,7 @@ public class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStartDate(new DateMidnight(2013, 2, 1));
         applicationForLeave.setEndDate(new DateMidnight(2013, 2, 5));
         applicationForLeave.setDayLength(DayLength.FULL);
+        applicationForLeave.setHolidayReplacement(TestDataCreator.createPerson());
 
         return applicationForLeave;
     }
@@ -183,16 +189,15 @@ public class ApplicationInteractionServiceImplTest {
         Mockito.verify(accountInteractionService).updateRemainingVacationDays(2013, person);
     }
 
-    // END: APPLY
+    // ALLOW APPLICATION FOR LEAVE -------------------------------------------------------------------------------------
 
 
-    // START: ALLOW
-
+    // ALLOWING - BOSS
     @Test
-    public void ensureAllowingApplicationForLeaveChangesStateAndOtherAttributesAndSavesTheApplicationForLeave() {
+    public void ensureWaitingApplicationForLeaveCanBeAllowedByBoss() {
 
         Person person = TestDataCreator.createPerson("muster");
-        Person boss = TestDataCreator.createPerson("boss");
+        Person boss = TestDataCreator.createPerson("boss", Role.USER, Role.BOSS);
         Optional<String> comment = Optional.of("Foo");
 
         Application applicationForLeave = getDummyApplication(person);
@@ -200,59 +205,256 @@ public class ApplicationInteractionServiceImplTest {
 
         service.allow(applicationForLeave, boss, comment);
 
-        Assert.assertEquals("Wrong state", ApplicationStatus.ALLOWED, applicationForLeave.getStatus());
-        Assert.assertEquals("Wrong person", person, applicationForLeave.getPerson());
-        Assert.assertEquals("Wrong boss", boss, applicationForLeave.getBoss());
-        Assert.assertEquals("Wrong edited date", DateMidnight.now(), applicationForLeave.getEditedDate());
-
-        Mockito.verify(applicationService).save(applicationForLeave);
-
-        Mockito.verify(signService).signApplicationByBoss(eq(applicationForLeave), eq(boss));
-
-        Mockito.verify(commentService)
-            .create(eq(applicationForLeave), eq(ApplicationAction.ALLOWED), eq(comment), eq(boss));
+        assertApplicationForLeaveHasChangedStatus(applicationForLeave, ApplicationStatus.ALLOWED, person, boss);
+        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment, boss);
+        assertCalendarSyncIsExecuted();
+        assertAllowedNotificationIsSent(applicationForLeave);
     }
 
 
-    @Test
-    public void ensureAllowingApplicationForLeaveUpdatesCalendarEvent() {
+    private void assertApplicationForLeaveHasChangedStatus(Application applicationForLeave, ApplicationStatus status,
+        Person person, Person privilegedUser) {
 
-        Person person = TestDataCreator.createPerson("muster");
-        Person boss = TestDataCreator.createPerson("boss");
-        Optional<String> comment = Optional.of("Foo");
+        Assert.assertEquals("Wrong state", status, applicationForLeave.getStatus());
+        Assert.assertEquals("Wrong person", person, applicationForLeave.getPerson());
+        Assert.assertEquals("Wrong privileged user", privilegedUser, applicationForLeave.getBoss());
+        Assert.assertEquals("Wrong edited date", DateMidnight.now(), applicationForLeave.getEditedDate());
+    }
 
-        Application applicationForLeave = getDummyApplication(person);
-        applicationForLeave.setStatus(ApplicationStatus.WAITING);
 
-        service.allow(applicationForLeave, boss, comment);
+    private void assertApplicationForLeaveAndCommentAreSaved(Application applicationForLeave, ApplicationAction action,
+        Optional<String> optionalComment, Person privilegedUser) {
+
+        Mockito.verify(applicationService).save(applicationForLeave);
+
+        Mockito.verify(signService).signApplicationByBoss(eq(applicationForLeave), eq(privilegedUser));
+
+        Mockito.verify(commentService)
+            .create(eq(applicationForLeave), eq(action), eq(optionalComment), eq(privilegedUser));
+    }
+
+
+    private void assertCalendarSyncIsExecuted() {
 
         Mockito.verify(calendarSyncService).update(any(Absence.class), anyString());
         Mockito.verify(absenceMappingService).getAbsenceByIdAndType(anyInt(), eq(AbsenceType.VACATION));
     }
 
 
-    @Test
-    public void ensureAllowingApplicationForLeaveSendsEmailToPerson() {
-
-        Person person = TestDataCreator.createPerson("muster");
-        Person boss = TestDataCreator.createPerson("boss");
-
-        Application applicationForLeave = getDummyApplication(person);
-
-        service.allow(applicationForLeave, boss, Optional.of("Foo"));
+    private void assertAllowedNotificationIsSent(Application applicationForLeave) {
 
         Mockito.verify(mailService).sendAllowedNotification(eq(applicationForLeave), any(ApplicationComment.class));
+
+        Mockito.verify(mailService, Mockito.never())
+            .sendTemporaryAllowedNotification(any(Application.class), any(ApplicationComment.class));
     }
 
 
     @Test
-    public void ensureAllowingApplicationForLeaveWithRepresentativeSendsEmailToRepresentative() {
+    public void ensureTemporaryAllowedApplicationForLeaveCanBeAllowedByBoss() {
 
         Person person = TestDataCreator.createPerson("muster");
-        Person boss = TestDataCreator.createPerson("boss");
-        Person replacement = TestDataCreator.createPerson("replacement");
+        Person boss = TestDataCreator.createPerson("boss", Role.USER, Role.BOSS);
+        Optional<String> comment = Optional.of("Foo");
 
         Application applicationForLeave = getDummyApplication(person);
+        applicationForLeave.setStatus(ApplicationStatus.TEMPORARY_ALLOWED);
+        applicationForLeave.setTwoStageApproval(true);
+
+        service.allow(applicationForLeave, boss, comment);
+
+        assertApplicationForLeaveHasChangedStatus(applicationForLeave, ApplicationStatus.ALLOWED, person, boss);
+        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment, boss);
+        assertCalendarSyncIsExecuted();
+        assertAllowedNotificationIsSent(applicationForLeave);
+    }
+
+
+    // ALLOWING - DEPARTMENT HEAD
+
+    @Test(expected = IllegalStateException.class)
+    public void ensureThrowsWhenExecutingAllowProcessWithNotPrivilegedUser() {
+
+        Person person = TestDataCreator.createPerson("muster");
+        Person user = TestDataCreator.createPerson("user");
+        user.setPermissions(Collections.singletonList(Role.USER));
+
+        Mockito.when(departmentService.isDepartmentHeadOfPerson(eq(user), eq(person))).thenReturn(false);
+        Mockito.when(departmentService.isSecondStageAuthorityOfPerson(eq(user), eq(person))).thenReturn(false);
+
+        Optional<String> comment = Optional.of("Foo");
+
+        Application applicationForLeave = getDummyApplication(person);
+        applicationForLeave.setStatus(ApplicationStatus.WAITING);
+
+        service.allow(applicationForLeave, user, comment);
+    }
+
+
+    @Test
+    public void ensureWaitingApplicationForLeaveCanBeAllowedByDepartmentHead() {
+
+        Person person = TestDataCreator.createPerson("muster");
+        Person departmentHead = TestDataCreator.createPerson("head", Role.USER, Role.DEPARTMENT_HEAD);
+        Mockito.when(departmentService.isDepartmentHeadOfPerson(eq(departmentHead), eq(person))).thenReturn(true);
+
+        Optional<String> comment = Optional.of("Foo");
+
+        Application applicationForLeave = getDummyApplication(person);
+        applicationForLeave.setStatus(ApplicationStatus.WAITING);
+
+        service.allow(applicationForLeave, departmentHead, comment);
+
+        assertApplicationForLeaveHasChangedStatus(applicationForLeave, ApplicationStatus.ALLOWED, person,
+            departmentHead);
+        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment,
+            departmentHead);
+        assertCalendarSyncIsExecuted();
+        assertAllowedNotificationIsSent(applicationForLeave);
+    }
+
+
+    @Test
+    public void ensureWaitingApplicationForLeaveCanOnlyBeAllowedTemporaryByDepartmentHeadIfTwoStageApprovalIsActive() {
+
+        Person person = TestDataCreator.createPerson("muster");
+        Person departmentHead = TestDataCreator.createPerson("head", Role.USER, Role.DEPARTMENT_HEAD);
+        Mockito.when(departmentService.isDepartmentHeadOfPerson(eq(departmentHead), eq(person))).thenReturn(true);
+
+        Optional<String> comment = Optional.of("Foo");
+
+        Application applicationForLeave = getDummyApplication(person);
+        applicationForLeave.setStatus(ApplicationStatus.WAITING);
+        applicationForLeave.setTwoStageApproval(true);
+
+        service.allow(applicationForLeave, departmentHead, comment);
+
+        assertApplicationForLeaveHasChangedStatus(applicationForLeave, ApplicationStatus.TEMPORARY_ALLOWED, person,
+            departmentHead);
+        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.TEMPORARY_ALLOWED, comment,
+            departmentHead);
+        assertNoCalendarSyncOccurs();
+        assertTemporaryAllowedNotificationIsSent(applicationForLeave);
+    }
+
+
+    private void assertNoCalendarSyncOccurs() {
+
+        Mockito.verifyZeroInteractions(calendarSyncService);
+        Mockito.verifyZeroInteractions(absenceMappingService);
+    }
+
+
+    private void assertTemporaryAllowedNotificationIsSent(Application applicationForLeave) {
+
+        Mockito.verify(mailService)
+            .sendTemporaryAllowedNotification(eq(applicationForLeave), any(ApplicationComment.class));
+
+        Mockito.verify(mailService, Mockito.never())
+            .sendAllowedNotification(any(Application.class), any(ApplicationComment.class));
+    }
+
+
+    @Test
+    public void ensureTemporaryAllowedApplicationForLeaveCanNotBeAllowedByDepartmentHeadIfTwoStageApprovalIsActive() {
+
+        Person person = TestDataCreator.createPerson("muster");
+        Person departmentHead = TestDataCreator.createPerson("head", Role.USER, Role.DEPARTMENT_HEAD);
+        Mockito.when(departmentService.isDepartmentHeadOfPerson(eq(departmentHead), eq(person))).thenReturn(true);
+
+        Optional<String> comment = Optional.of("Foo");
+
+        Application applicationForLeave = getDummyApplication(person);
+        applicationForLeave.setStatus(ApplicationStatus.TEMPORARY_ALLOWED);
+        applicationForLeave.setTwoStageApproval(true);
+
+        service.allow(applicationForLeave, departmentHead, comment);
+
+        // TODO: Expect Exception here!
+    }
+
+
+    // ALLOWING - SECOND STAGE AUTHORITY
+
+    @Test
+    public void ensureWaitingApplicationForLeaveCanBeAllowedBySecondStageAuthority() {
+
+        Person person = TestDataCreator.createPerson("muster");
+        Person secondStage = TestDataCreator.createPerson("manager", Role.USER, Role.SECOND_STAGE_AUTHORITY);
+        Mockito.when(departmentService.isSecondStageAuthorityOfPerson(eq(secondStage), eq(person))).thenReturn(true);
+
+        Optional<String> comment = Optional.of("Foo");
+
+        Application applicationForLeave = getDummyApplication(person);
+        applicationForLeave.setStatus(ApplicationStatus.WAITING);
+
+        service.allow(applicationForLeave, secondStage, comment);
+
+        assertApplicationForLeaveHasChangedStatus(applicationForLeave, ApplicationStatus.ALLOWED, person, secondStage);
+        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment,
+            secondStage);
+        assertCalendarSyncIsExecuted();
+        assertAllowedNotificationIsSent(applicationForLeave);
+    }
+
+
+    @Test
+    public void ensureWaitingApplicationForLeaveCanBeAllowedBySecondStageAuthorityIfTwoStageApprovalIsActive() {
+
+        Person person = TestDataCreator.createPerson("muster");
+        Person secondStage = TestDataCreator.createPerson("manager", Role.USER, Role.SECOND_STAGE_AUTHORITY);
+        Mockito.when(departmentService.isSecondStageAuthorityOfPerson(eq(secondStage), eq(person))).thenReturn(true);
+
+        Optional<String> comment = Optional.of("Foo");
+
+        Application applicationForLeave = getDummyApplication(person);
+        applicationForLeave.setStatus(ApplicationStatus.WAITING);
+        applicationForLeave.setTwoStageApproval(true);
+
+        service.allow(applicationForLeave, secondStage, comment);
+
+        assertApplicationForLeaveHasChangedStatus(applicationForLeave, ApplicationStatus.ALLOWED, person, secondStage);
+        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment,
+            secondStage);
+        assertCalendarSyncIsExecuted();
+        assertAllowedNotificationIsSent(applicationForLeave);
+    }
+
+
+    @Test
+    public void ensureTemporaryAllowedApplicationForLeaveCanBeAllowedBySecondStageAuthorityIfTwoStageApprovalIsActive() {
+
+        Person person = TestDataCreator.createPerson("muster");
+        Person secondStage = TestDataCreator.createPerson("manager", Role.USER, Role.SECOND_STAGE_AUTHORITY);
+        Mockito.when(departmentService.isSecondStageAuthorityOfPerson(eq(secondStage), eq(person))).thenReturn(true);
+
+        Optional<String> comment = Optional.of("Foo");
+
+        Application applicationForLeave = getDummyApplication(person);
+        applicationForLeave.setStatus(ApplicationStatus.TEMPORARY_ALLOWED);
+        applicationForLeave.setTwoStageApproval(true);
+
+        service.allow(applicationForLeave, secondStage, comment);
+
+        assertApplicationForLeaveHasChangedStatus(applicationForLeave, ApplicationStatus.ALLOWED, person, secondStage);
+        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment,
+            secondStage);
+        assertCalendarSyncIsExecuted();
+        assertAllowedNotificationIsSent(applicationForLeave);
+    }
+
+
+    // ALLOWING - HOLIDAY REPLACEMENT NOTIFICATION
+
+    @Test
+    public void ensureAllowingApplicationForLeaveWithHolidayReplacementSendsNotificationToReplacement() {
+
+        Person person = TestDataCreator.createPerson("muster");
+        Person replacement = TestDataCreator.createPerson("replacement");
+        Person boss = TestDataCreator.createPerson("boss", Role.USER, Role.BOSS);
+
+        Application applicationForLeave = getDummyApplication(person);
+        applicationForLeave.setStatus(ApplicationStatus.WAITING);
         applicationForLeave.setHolidayReplacement(replacement);
 
         service.allow(applicationForLeave, boss, Optional.of("Foo"));
@@ -262,23 +464,41 @@ public class ApplicationInteractionServiceImplTest {
 
 
     @Test
-    public void ensureAllowingApplicationForLeaveExecutesCalendarSync() {
+    public void ensureAllowingApplicationForLeaveWithoutHolidayReplacementDoesNotSendNotification() {
 
         Person person = TestDataCreator.createPerson("muster");
-        Person boss = TestDataCreator.createPerson("boss");
+        Person boss = TestDataCreator.createPerson("boss", Role.USER, Role.BOSS);
 
         Application applicationForLeave = getDummyApplication(person);
+        applicationForLeave.setStatus(ApplicationStatus.WAITING);
+        applicationForLeave.setHolidayReplacement(null);
 
         service.allow(applicationForLeave, boss, Optional.of("Foo"));
 
-        Mockito.verify(calendarSyncService).update(any(Absence.class), anyString());
-        Mockito.verify(absenceMappingService).getAbsenceByIdAndType(anyInt(), eq(AbsenceType.VACATION));
+        Mockito.verify(mailService, Mockito.never()).notifyHolidayReplacement(any(Application.class));
     }
 
 
-    // END: ALLOW
+    @Test
+    public void ensureTemporaryAllowingApplicationForLeaveWithHolidayReplacementDoesNotSendNotification() {
 
-    // START: REJECT
+        Person person = TestDataCreator.createPerson("muster");
+        Person replacement = TestDataCreator.createPerson("replacement");
+        Person departmentHead = TestDataCreator.createPerson("head", Role.USER, Role.DEPARTMENT_HEAD);
+        Mockito.when(departmentService.isDepartmentHeadOfPerson(eq(departmentHead), eq(person))).thenReturn(true);
+
+        Application applicationForLeave = getDummyApplication(person);
+        applicationForLeave.setStatus(ApplicationStatus.WAITING);
+        applicationForLeave.setHolidayReplacement(replacement);
+        applicationForLeave.setTwoStageApproval(true);
+
+        service.allow(applicationForLeave, departmentHead, Optional.of("Foo"));
+
+        Mockito.verify(mailService, Mockito.never()).notifyHolidayReplacement(any(Application.class));
+    }
+
+
+    // REJECT APPLICATION FOR LEAVE ------------------------------------------------------------------------------------
 
     @Test
     public void ensureRejectingApplicationForLeaveChangesStateAndOtherAttributesAndSavesTheApplicationForLeave() {
@@ -339,9 +559,7 @@ public class ApplicationInteractionServiceImplTest {
     }
 
 
-    // END: REJECT
-
-    // START: CANCEL
+    // CANCEL APPLICATION FOR LEAVE ------------------------------------------------------------------------------------
 
     @Test
     public void ensureCancellingNotYetAllowedApplicationForLeaveChangesStateAndOtherAttributesButSendsNoEmail() {
@@ -518,9 +736,7 @@ public class ApplicationInteractionServiceImplTest {
     }
 
 
-    // END: CANCEL
-
-    // START: CREATE FROM CONVERTED SICK NOTE
+    // CREATE APPLICATION FOR LEAVE FROM CONVERTED SICK NOTE -----------------------------------------------------------
 
     @Test
     public void ensureCreatedApplicationForLeaveFromConvertedSickNoteIsAllowedDirectly() {
@@ -554,9 +770,7 @@ public class ApplicationInteractionServiceImplTest {
     }
 
 
-    // END: CREATE FROM CONVERTED SICK NOTE
-
-    // START: REMIND
+    // REMIND ----------------------------------------------------------------------------------------------------------
 
     @Test(expected = RemindAlreadySentException.class)
     public void ensureThrowsIfAlreadySentRemindToday() throws RemindAlreadySentException,
@@ -609,9 +823,7 @@ public class ApplicationInteractionServiceImplTest {
     }
 
 
-    // END: REMIND
-
-    // START: REFER
+    // REFER -----------------------------------------------------------------------------------------------------------
 
     @Test
     public void ensureReferMailIsSent() {
@@ -626,6 +838,4 @@ public class ApplicationInteractionServiceImplTest {
 
         Mockito.verify(mailService).sendReferApplicationNotification(applicationForLeave, recipient, sender);
     }
-
-    // END: REFER
 }

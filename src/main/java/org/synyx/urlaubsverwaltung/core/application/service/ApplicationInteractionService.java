@@ -43,19 +43,6 @@ public interface ApplicationInteractionService {
 
 
     /**
-     * Sets the application's state from preliminary allowed to allowed and informs the person of the application for
-     * leave that his vacation has been allowed.
-     *
-     * @param  application  for leave
-     * @param  privilegedUser  that allowed the application for leave
-     * @param  comment  giving further information to allowing of application for leave (is optional)
-     *
-     * @return  the released application for leave
-     */
-    Application release(Application application, Person privilegedUser, Optional<String> comment);
-
-
-    /**
      * Sets the application's state to rejected (only by privileged user) and informs the person of the application for
      * leave that his vacation has been rejected.
      *

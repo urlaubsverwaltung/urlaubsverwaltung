@@ -175,11 +175,16 @@ public class ApplicationForLeaveDetailsController {
         Person person = application.getPerson();
 
         boolean isBoss = signedInUser.hasRole(Role.BOSS);
-        boolean hasSecondStageAuthorityRole = signedInUser.hasRole(Role.SECOND_STAGE_AUTHORITY);
-        boolean isSecondStageAuthority = departmentService.isSecondStageAuthorityOfPerson(signedInUser, person);
-        boolean isDepartmentHead = departmentService.isDepartmentHeadOfPerson(signedInUser, person);
-        boolean temporaryAllowed = ApplicationStatus.TEMPORARY_ALLOWED.equals(application.getStatus());
-        boolean waiting = ApplicationStatus.WAITING.equals(application.getStatus());
+        boolean isDepartmentHead = signedInUser.hasRole(Role.DEPARTMENT_HEAD)
+            && departmentService.isDepartmentHeadOfPerson(signedInUser, person);
+        boolean isSecondStageAuthority = signedInUser.hasRole(Role.SECOND_STAGE_AUTHORITY)
+            && departmentService.isSecondStageAuthorityOfPerson(signedInUser, person);
+
+        if (!isBoss && !isDepartmentHead && !isSecondStageAuthority) {
+            throw new AccessDeniedException(String.format(
+                    "User '%s' has not the correct permissions to allow application for leave of user '%s'",
+                    signedInUser.getLoginName(), person.getLoginName()));
+        }
 
         comment.setMandatory(false);
         commentValidator.validate(comment, errors);
@@ -190,21 +195,13 @@ public class ApplicationForLeaveDetailsController {
             return "redirect:/web/application/" + applicationId + "?action=allow";
         }
 
-        if ((isDepartmentHead || isBoss) && waiting) {
-            applicationInteractionService.allow(application, signedInUser, Optional.ofNullable(comment.getText()));
+        Application allowedApplicationForLeave = applicationInteractionService.allow(application, signedInUser,
+                Optional.ofNullable(comment.getText()));
 
-            if (application.isTwoStageApproval()) {
-                redirectAttributes.addFlashAttribute("temporaryAllowSuccess", true);
-            } else {
-                redirectAttributes.addFlashAttribute("allowSuccess", true);
-            }
-        } else if (((hasSecondStageAuthorityRole && isSecondStageAuthority) || isBoss) && temporaryAllowed) {
-            applicationInteractionService.release(application, signedInUser, Optional.ofNullable(comment.getText()));
+        if (allowedApplicationForLeave.hasStatus(ApplicationStatus.ALLOWED)) {
             redirectAttributes.addFlashAttribute("allowSuccess", true);
-        } else {
-            throw new AccessDeniedException(String.format(
-                    "User '%s' has not the correct permissions to allow application for leave of user '%s'",
-                    signedInUser.getLoginName(), person.getLoginName()));
+        } else if (allowedApplicationForLeave.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED)) {
+            redirectAttributes.addFlashAttribute("temporaryAllowSuccess", true);
         }
 
         if (redirectUrl != null) {

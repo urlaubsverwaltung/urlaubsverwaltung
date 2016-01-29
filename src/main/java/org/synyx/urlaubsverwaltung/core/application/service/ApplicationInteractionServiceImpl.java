@@ -136,81 +136,90 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
     @Override
     public Application allow(Application application, Person privilegedUser, Optional<String> comment) {
 
-        ApplicationAction applicationAction;
-
-        if (application.isTwoStageApproval()) {
-            application.setStatus(ApplicationStatus.TEMPORARY_ALLOWED);
-            applicationAction = ApplicationAction.TEMPORARY_ALLOWED;
-        } else {
-            application.setStatus(ApplicationStatus.ALLOWED);
-            applicationAction = ApplicationAction.ALLOWED;
+        // Boss is a very might dude
+        if (privilegedUser.hasRole(Role.BOSS)) {
+            return allowFinally(application, privilegedUser, comment);
         }
 
-        application.setBoss(privilegedUser);
-        application.setEditedDate(DateMidnight.now());
+        // Second stage authority has almost the same power
+        boolean isSecondStageAuthority = privilegedUser.hasRole(Role.SECOND_STAGE_AUTHORITY);
+        boolean responsibleForDepartment = departmentService.isSecondStageAuthorityOfPerson(privilegedUser,
+                application.getPerson());
 
-        signService.signApplicationByBoss(application, privilegedUser);
-
-        applicationService.save(application);
-
-        LOG.info(applicationAction + " application for leave: " + application.toString());
-
-        ApplicationComment createdComment = commentService.create(application, applicationAction, comment,
-                privilegedUser);
-
-        mailService.sendAllowedNotification(application, createdComment);
-
-        if (application.getHolidayReplacement() != null) {
-            mailService.notifyHolidayReplacement(application);
+        if (isSecondStageAuthority && responsibleForDepartment) {
+            return allowFinally(application, privilegedUser, comment);
         }
 
-        Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(application.getId(),
-                AbsenceType.VACATION);
+        // Department head can be mighty only in some cases
+        boolean isDepartmentHead = privilegedUser.hasRole(Role.DEPARTMENT_HEAD)
+            && departmentService.isDepartmentHeadOfPerson(privilegedUser, application.getPerson());
 
-        if (absenceMapping.isPresent() && applicationAction.equals(ApplicationAction.ALLOWED)) {
-            CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
-            AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
-            calendarSyncService.update(new Absence(application.getPerson(), application.getPeriod(),
-                    EventType.ALLOWED_APPLICATION, timeConfiguration), absenceMapping.get().getEventId());
+        if (isDepartmentHead) {
+            if (application.isTwoStageApproval()) {
+                return allowTemporary(application, privilegedUser, comment);
+            }
+
+            return allowFinally(application, privilegedUser, comment);
         }
 
-        return application;
+        throw new IllegalStateException("Applications for leave can be allowed only by a privileged user!");
     }
 
 
-    @Override
-    public Application release(Application application, Person privilegedUser, Optional<String> comment) {
+    private Application allowTemporary(Application applicationForLeave, Person privilegedUser,
+        Optional<String> comment) {
 
-        application.setStatus(ApplicationStatus.ALLOWED);
-        application.setBoss(privilegedUser);
-        application.setEditedDate(DateMidnight.now());
+        applicationForLeave.setStatus(ApplicationStatus.TEMPORARY_ALLOWED);
+        applicationForLeave.setBoss(privilegedUser);
+        applicationForLeave.setEditedDate(DateMidnight.now());
 
-        signService.signApplicationByBoss(application, privilegedUser);
+        signService.signApplicationByBoss(applicationForLeave, privilegedUser);
 
-        applicationService.save(application);
+        applicationService.save(applicationForLeave);
 
-        LOG.info("Released application for leave: " + application.toString());
+        LOG.info("Temporary allowed application for leave: " + applicationForLeave.toString());
 
-        ApplicationComment createdComment = commentService.create(application, ApplicationAction.ALLOWED, comment,
-                privilegedUser);
+        ApplicationComment createdComment = commentService.create(applicationForLeave,
+                ApplicationAction.TEMPORARY_ALLOWED, comment, privilegedUser);
 
-        mailService.sendAllowedNotification(application, createdComment);
+        mailService.sendTemporaryAllowedNotification(applicationForLeave, createdComment);
 
-        if (application.getHolidayReplacement() != null) {
-            mailService.notifyHolidayReplacement(application);
+        return applicationForLeave;
+    }
+
+
+    private Application allowFinally(Application applicationForLeave, Person privilegedUser, Optional<String> comment) {
+
+        applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
+        applicationForLeave.setBoss(privilegedUser);
+        applicationForLeave.setEditedDate(DateMidnight.now());
+
+        signService.signApplicationByBoss(applicationForLeave, privilegedUser);
+
+        applicationService.save(applicationForLeave);
+
+        LOG.info("Allowed application for leave: " + applicationForLeave.toString());
+
+        ApplicationComment createdComment = commentService.create(applicationForLeave, ApplicationAction.ALLOWED,
+                comment, privilegedUser);
+
+        mailService.sendAllowedNotification(applicationForLeave, createdComment);
+
+        if (applicationForLeave.getHolidayReplacement() != null) {
+            mailService.notifyHolidayReplacement(applicationForLeave);
         }
 
-        Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(application.getId(),
-                AbsenceType.VACATION);
+        Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(
+                applicationForLeave.getId(), AbsenceType.VACATION);
 
         if (absenceMapping.isPresent()) {
             CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
             AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
-            calendarSyncService.update(new Absence(application.getPerson(), application.getPeriod(),
+            calendarSyncService.update(new Absence(applicationForLeave.getPerson(), applicationForLeave.getPeriod(),
                     EventType.ALLOWED_APPLICATION, timeConfiguration), absenceMapping.get().getEventId());
         }
 
-        return application;
+        return applicationForLeave;
     }
 
 

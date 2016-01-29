@@ -64,11 +64,6 @@
                                         <spring:message code="application.action.reject.success" />
                                     </div>
                                 </c:when>
-                                <c:when test="${releaseSuccess}">
-                                    <div class="alert alert-success">
-                                        <spring:message code="application.action.release.success" />
-                                    </div>
-                                </c:when>
                             </c:choose>
                         </div>
 
@@ -142,73 +137,22 @@
                                         </c:when>
                                     </c:choose>
                                   </td>
-
-                                    <sec:authorize access="hasAnyAuthority('DEPARTMENT_HEAD')">
-                                    <c:if test="${application.twoStageApproval == false}">
-                                        <td class="hidden-xs hidden-sm">
-                                            <a class="fa-action positive" href="${URL_PREFIX}/application/${application.id}?action=allow&shortcut=true"
-                                               data-title="<spring:message code='action.allow'/>">
-                                                <i class="fa fa-check"></i>
-                                            </a>
-                                        </td>
-                                    </c:if>
-                                    <c:if test="${application.twoStageApproval == true && application.status == 'WAITING'}">
-                                        <td class="hidden-xs hidden-sm">
-                                            <a class="fa-action positive" href="${URL_PREFIX}/application/${application.id}?action=allow&shortcut=true"
-                                               data-title="<spring:message code='action.temporary_allow'/>">
-                                                <i class="fa fa-check-circle"></i>
-                                            </a>
-                                        </td>
-                                    </c:if>
-                                        <td class="hidden-xs hidden-sm">
-                                            <a class="fa-action negative" href="${URL_PREFIX}/application/${application.id}?action=reject&shortcut=true"
-                                               data-title="<spring:message code='action.reject'/>">
-                                                <i class="fa fa-ban"></i>
-                                            </a>
-                                        </td>
-                                    </sec:authorize>
-
-                                    <sec:authorize access="hasAnyAuthority('SECOND_STAGE_AUTHORITY')">
-                                    <c:if test="${application.twoStageApproval == true && application.status == 'TEMPORARY_ALLOWED'}">
-                                        <td class="hidden-xs hidden-sm">
-                                            <a class="fa-action positive" href="${URL_PREFIX}/application/${application.id}?action=allow&shortcut=true"
-                                               data-title="<spring:message code='action.allow'/>">
-                                                <i class="fa fa-check"></i>
-                                            </a>
-                                        </td>
-                                        <td class="hidden-xs hidden-sm">
-                                            <a class="fa-action positive" href="${URL_PREFIX}/application/${application.id}?action=reject&shortcut=true"
-                                               data-title="<spring:message code='action.reject'/>">
-                                                <i class="fa fa-ban"></i>
-                                            </a>
-                                        </td>
-                                    </c:if>
-                                    </sec:authorize>
-
-                                    <sec:authorize access="hasAnyAuthority('BOSS')">
-                                        <td class="hidden-xs hidden-sm">
-                                            <c:if test="${application.twoStageApproval == true && application.status == 'WAITING'}">
-                                                <a class="fa-action positive" href="${URL_PREFIX}/application/${application.id}?action=allow&shortcut=true"
-                                                   data-title="<spring:message code='action.temporary_allow'/>">
-                                                    <i class="fa fa-check-circle"></i>
-                                                </a>
-                                            </c:if>
-                                            <c:if test="${application.twoStageApproval == false || application.status == 'TEMPORARY_ALLOWED'}">
-                                                <a class="fa-action positive" href="${URL_PREFIX}/application/${application.id}?action=allow&shortcut=true"
-                                                   data-title="<spring:message code='action.allow'/>">
-                                                    <i class="fa fa-check"></i>
-                                                </a>
-                                            </c:if>
-
-                                        </td>
-                                        <td class="hidden-xs hidden-sm">
-                                            <a class="fa-action positive" href="${URL_PREFIX}/application/${application.id}?action=reject&shortcut=true"
-                                               data-title="<spring:message code='action.reject'/>">
-                                                <i class="fa fa-ban"></i>
-                                            </a>
-                                        </td>
-                                    </sec:authorize>
-
+                                  <td class="hidden-xs hidden-sm">
+                                      <sec:authorize access="hasAnyAuthority('DEPARTMENT_HEAD', 'SECOND_STAGE_AUTHORITY', 'BOSS')">
+                                          <a class="fa-action positive" href="${URL_PREFIX}/application/${application.id}?action=allow&shortcut=true"
+                                             data-title="<spring:message code='action.allow'/>">
+                                              <i class="fa fa-check"></i>
+                                          </a>
+                                      </sec:authorize>
+                                  </td>
+                                  <td class="hidden-xs hidden-sm">
+                                      <sec:authorize access="hasAnyAuthority('DEPARTMENT_HEAD', 'SECOND_STAGE_AUTHORITY', 'BOSS')">
+                                          <a class="fa-action negative" href="${URL_PREFIX}/application/${application.id}?action=reject&shortcut=true"
+                                             data-title="<spring:message code='action.reject'/>">
+                                              <i class="fa fa-ban"></i>
+                                          </a>
+                                      </sec:authorize>
+                                  </td>
                                 </tr>
                               </c:forEach>
                               </tbody>
