@@ -134,7 +134,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
 
     @Override
-    public Application allow(Application application, Person boss, Optional<String> comment) {
+    public Application allow(Application application, Person privilegedUser, Optional<String> comment) {
 
         ApplicationAction applicationAction;
 
@@ -146,16 +146,17 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
             applicationAction = ApplicationAction.ALLOWED;
         }
 
-        application.setBoss(boss);
+        application.setBoss(privilegedUser);
         application.setEditedDate(DateMidnight.now());
 
-        signService.signApplicationByBoss(application, boss);
+        signService.signApplicationByBoss(application, privilegedUser);
 
         applicationService.save(application);
 
         LOG.info(applicationAction + " application for leave: " + application.toString());
 
-        ApplicationComment createdComment = commentService.create(application, applicationAction, comment, boss);
+        ApplicationComment createdComment = commentService.create(application, applicationAction, comment,
+                privilegedUser);
 
         mailService.sendAllowedNotification(application, createdComment);
 
@@ -178,20 +179,20 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
 
     @Override
-    public Application release(Application application, Person boss, Optional<String> comment) {
+    public Application release(Application application, Person privilegedUser, Optional<String> comment) {
 
         application.setStatus(ApplicationStatus.ALLOWED);
-        application.setBoss(boss);
+        application.setBoss(privilegedUser);
         application.setEditedDate(DateMidnight.now());
 
-        signService.signApplicationByBoss(application, boss);
+        signService.signApplicationByBoss(application, privilegedUser);
 
         applicationService.save(application);
 
         LOG.info("Released application for leave: " + application.toString());
 
         ApplicationComment createdComment = commentService.create(application, ApplicationAction.ALLOWED, comment,
-                boss);
+                privilegedUser);
 
         mailService.sendAllowedNotification(application, createdComment);
 
@@ -214,20 +215,20 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
 
     @Override
-    public Application reject(Application application, Person boss, Optional<String> comment) {
+    public Application reject(Application application, Person privilegedUser, Optional<String> comment) {
 
         application.setStatus(ApplicationStatus.REJECTED);
-        application.setBoss(boss);
+        application.setBoss(privilegedUser);
         application.setEditedDate(DateMidnight.now());
 
-        signService.signApplicationByBoss(application, boss);
+        signService.signApplicationByBoss(application, privilegedUser);
 
         applicationService.save(application);
 
         LOG.info("Rejected application for leave: " + application.toString());
 
         ApplicationComment createdComment = commentService.create(application, ApplicationAction.REJECTED, comment,
-                boss);
+                privilegedUser);
 
         mailService.sendRejectedNotification(application, createdComment);
 

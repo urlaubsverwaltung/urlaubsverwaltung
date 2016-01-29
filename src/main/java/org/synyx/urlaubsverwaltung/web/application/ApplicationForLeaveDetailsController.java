@@ -120,7 +120,7 @@ public class ApplicationForLeaveDetailsController {
 
         model.addAttribute("comment", new ApplicationCommentForm());
         model.addAttribute("comments", comments);
-        model.addAttribute("lastComment", comments.get(comments.size()-1));
+        model.addAttribute("lastComment", comments.get(comments.size() - 1));
 
         // SPECIAL ATTRIBUTES FOR BOSSES / DEPARTMENT HEADS
         Person signedInUser = sessionService.getSignedInUser();
@@ -159,7 +159,7 @@ public class ApplicationForLeaveDetailsController {
 
 
     /**
-     * Allow a not yet allowed application for leave (Boss only!).
+     * Allow a not yet allowed application for leave (Privileged user only!).
      */
     @PreAuthorize(SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD_OR_SECOND_STAGE_AUTHORITY)
     @RequestMapping(value = "/{applicationId}/allow", method = RequestMethod.POST)
@@ -299,6 +299,7 @@ public class ApplicationForLeaveDetailsController {
                 "User '%s' has not the correct permissions to reject application for leave of user '%s'",
                 signedInUser.getLoginName(), person.getLoginName()));
     }
+
 
     /**
      * Cancel an application for leave. Cancelling an application for leave on behalf for someone is allowed only for

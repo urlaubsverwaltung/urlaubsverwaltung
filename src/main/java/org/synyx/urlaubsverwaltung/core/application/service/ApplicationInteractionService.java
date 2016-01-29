@@ -34,38 +34,38 @@ public interface ApplicationInteractionService {
      * person of the application for leave that his vacation has been allowed.
      *
      * @param  application  for leave
-     * @param  boss  that allowed the application for leave
+     * @param  privilegedUser  that allowed the application for leave
      * @param  comment  giving further information to allowing of application for leave (is optional)
      *
      * @return  the allowed application for leave
      */
-    Application allow(Application application, Person boss, Optional<String> comment);
+    Application allow(Application application, Person privilegedUser, Optional<String> comment);
 
 
     /**
-     * Sets the application's state from preliminary Allowed to allowed and informs the person of the application for
+     * Sets the application's state from preliminary allowed to allowed and informs the person of the application for
      * leave that his vacation has been allowed.
      *
      * @param  application  for leave
-     * @param  boss  that allowed the application for leave
+     * @param  privilegedUser  that allowed the application for leave
      * @param  comment  giving further information to allowing of application for leave (is optional)
      *
      * @return  the released application for leave
      */
-    Application release(Application application, Person boss, Optional<String> comment);
+    Application release(Application application, Person privilegedUser, Optional<String> comment);
 
 
     /**
-     * Sets the application's state to rejected (only by boss) and informs the person of the application for leave that
-     * his vacation has been rejected.
+     * Sets the application's state to rejected (only by privileged user) and informs the person of the application for
+     * leave that his vacation has been rejected.
      *
      * @param  application  for leave
-     * @param  boss  that rejected the application for leave
+     * @param  privilegedUser  that rejected the application for leave
      * @param  comment  giving further information to rejecting of application for leave (is optional)
      *
      * @return  the rejected application for leave
      */
-    Application reject(Application application, Person boss, Optional<String> comment);
+    Application reject(Application application, Person privilegedUser, Optional<String> comment);
 
 
     /**
