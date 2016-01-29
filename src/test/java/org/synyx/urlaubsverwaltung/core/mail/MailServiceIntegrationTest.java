@@ -21,6 +21,9 @@ import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.core.overtime.Overtime;
+import org.synyx.urlaubsverwaltung.core.overtime.OvertimeAction;
+import org.synyx.urlaubsverwaltung.core.overtime.OvertimeComment;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -804,5 +807,36 @@ public class MailServiceIntegrationTest {
         assertTrue(content.contains("Hallo Lieschen Müller, hallo Office"));
         assertTrue(content.contains(
                 "Der Anspruch auf Lohnfortzahlung durch den Arbeitgeber im Krankheitsfall besteht für maximal sechs Wochen"));
+    }
+
+
+    @Test
+    public void ensureOfficeWithOvertimeNotificationGetMailIfOvertimeRecorded() throws MessagingException, IOException {
+
+        Overtime overtimeRecord = TestDataCreator.createOvertimeRecord(person);
+        OvertimeComment overtimeComment = new OvertimeComment(person, overtimeRecord, OvertimeAction.CREATED);
+
+        Mockito.when(personService.getPersonsWithNotificationType(MailNotification.OVERTIME_NOTIFICATION_OFFICE))
+            .thenReturn(Collections.singletonList(office));
+
+        mailService.sendOvertimeNotification(overtimeRecord, overtimeComment);
+
+        // was email sent to office?
+        List<Message> inboxOffice = Mailbox.get(office.getEmail());
+        assertTrue("Person should get email", inboxOffice.size() > 0);
+
+        // has mail correct attributes?
+        Message msg = inboxOffice.get(0);
+
+        // check subject
+        assertTrue("Wrong subject", msg.getSubject().contains("Es wurden Überstunden eingetragen"));
+
+        // check from and recipient
+        assertEquals(new InternetAddress(office.getEmail()), msg.getAllRecipients()[0]);
+
+        // check content of email
+        String content = (String) msg.getContent();
+        assertTrue(content.contains("Hallo Office"));
+        assertTrue(content.contains("es wurden Überstunden erfasst"));
     }
 }

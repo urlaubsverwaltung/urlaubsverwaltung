@@ -25,8 +25,9 @@ import org.springframework.util.StringUtils;
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationComment;
-import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.core.overtime.Overtime;
+import org.synyx.urlaubsverwaltung.core.overtime.OvertimeComment;
 import org.synyx.urlaubsverwaltung.core.person.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
@@ -529,5 +530,22 @@ class MailServiceImpl implements MailService {
         String text = buildMailBody("application_cancellation_request", model);
 
         sendEmail(getOfficeMembers(), "subject.application.cancellationRequest", text);
+    }
+
+
+    @Override
+    public void sendOvertimeNotification(Overtime overtime, OvertimeComment overtimeComment) {
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("overtime", overtime);
+        model.put("comment", overtimeComment);
+        model.put("link", applicationUrl + "web/overtime/" + overtime.getId());
+
+        String textOffice = buildMailBody("overtime_office", model);
+
+        List<Person> recipients = personService.getPersonsWithNotificationType(
+                MailNotification.OVERTIME_NOTIFICATION_OFFICE);
+
+        sendEmail(recipients, "subject.overtime.created", textOffice);
     }
 }

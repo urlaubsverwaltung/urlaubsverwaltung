@@ -235,6 +235,10 @@
                         <form:checkbox path="notifications" value="NOTIFICATION_OFFICE"/>
                         <spring:message code="person.form.notifications.OFFICE"/>
                     </label>
+                    <label class="person--mail-notification">
+                        <form:checkbox path="notifications" value="OVERTIME_NOTIFICATION_OFFICE"/>
+                        <spring:message code="person.form.notifications.OFFICE.overtime"/>
+                    </label>
                 </div>
 
             </div>

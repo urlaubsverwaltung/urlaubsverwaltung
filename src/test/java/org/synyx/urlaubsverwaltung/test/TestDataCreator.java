@@ -109,6 +109,15 @@ public final class TestDataCreator {
     }
 
 
+    public static Overtime createOvertimeRecord(Person person) {
+
+        DateMidnight startDate = DateMidnight.now();
+        DateMidnight endDate = startDate.plusDays(7);
+
+        return new Overtime(person, startDate, endDate, BigDecimal.ONE);
+    }
+
+
     // Application for leave -------------------------------------------------------------------------------------------
 
     public static Application createApplication(Person person) {

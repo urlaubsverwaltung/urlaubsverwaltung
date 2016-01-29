@@ -10,6 +10,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
+import org.synyx.urlaubsverwaltung.core.mail.MailService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
@@ -28,6 +29,7 @@ public class OvertimeServiceImplTest {
     private OvertimeDAO overtimeDAO;
     private OvertimeCommentDAO commentDAO;
     private ApplicationService applicationService;
+    private MailService mailService;
 
     private Overtime overtimeMock;
     private Person authorMock;
@@ -38,8 +40,9 @@ public class OvertimeServiceImplTest {
         commentDAO = Mockito.mock(OvertimeCommentDAO.class);
         overtimeDAO = Mockito.mock(OvertimeDAO.class);
         applicationService = Mockito.mock(ApplicationService.class);
+        mailService = Mockito.mock(MailService.class);
 
-        overtimeService = new OvertimeServiceImpl(overtimeDAO, commentDAO, applicationService);
+        overtimeService = new OvertimeServiceImpl(overtimeDAO, commentDAO, applicationService, mailService);
 
         overtimeMock = Mockito.mock(Overtime.class);
         authorMock = Mockito.mock(Person.class);
