@@ -175,4 +175,35 @@ public class DepartmentValidatorTest {
 
         Mockito.verify(errors).rejectValue("departmentHeads", "department.members.error.departmentHeadHasNoAccess");
     }
+
+
+    @Test
+    public void ensureCanNotSetAPersonAsSecondStageAuthorityWithoutSettingThePersonAsMember() {
+
+        Person person = TestDataCreator.createPerson("muster");
+        person.setPermissions(Collections.singletonList(Role.SECOND_STAGE_AUTHORITY));
+
+        Department department = TestDataCreator.createDepartment("Admins");
+        department.setSecondStageAuthorities(Collections.singletonList(person));
+        department.setMembers(Collections.singletonList(TestDataCreator.createPerson("member")));
+
+        sut.validate(department, errors);
+
+        Mockito.verify(errors).rejectValue("secondStageAuthorities", "department.members.error.secondStageNotAssigned");
+    }
+
+
+    @Test
+    public void ensureCanNotSetAPersonWithoutSecondStageAuthorityRoleAsDepartmentHead() {
+
+        Person person = TestDataCreator.createPerson();
+        person.setPermissions(Collections.singletonList(Role.USER));
+
+        Department department = TestDataCreator.createDepartment("Admins");
+        department.setSecondStageAuthorities(Collections.singletonList(person));
+
+        sut.validate(department, errors);
+
+        Mockito.verify(errors).rejectValue("secondStageAuthorities", "department.members.error.secondStageHasNoAccess");
+    }
 }

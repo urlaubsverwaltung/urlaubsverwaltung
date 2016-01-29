@@ -39,9 +39,12 @@ public class DepartmentValidator implements Validator {
 
     private static final String ERROR_SECOND_STAGE_AUTHORITY_MISSING =
         "department.members.error.secondStageAuthorityMissing";
-
     private static final String ERROR_TWO_STAGE_APPROVAL_FLAG_MISSING =
         "department.members.error.twoStageApprovalFlagMissing";
+    private static final String ERROR_SECOND_STAGE_AUTHORITY_NOT_ASSIGNED =
+        "department.members.error.secondStageNotAssigned";
+    private static final String ERROR_SECOND_STAGE_AUTHORITY_NO_ACCESS =
+        "department.members.error.secondStageHasNoAccess";
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -64,7 +67,8 @@ public class DepartmentValidator implements Validator {
         validateName(errors, department.getName());
         validateDescription(errors, department.getDescription());
         validateDepartmentHeads(errors, department.getMembers(), department.getDepartmentHeads());
-        validateSecondStageAuthorities(errors, department.isTwoStageApproval(), department.getSecondStageAuthorities());
+        validateSecondStageAuthorities(errors, department.isTwoStageApproval(), department.getMembers(),
+            department.getSecondStageAuthorities());
     }
 
 
@@ -108,7 +112,7 @@ public class DepartmentValidator implements Validator {
     }
 
 
-    private void validateSecondStageAuthorities(Errors errors, boolean twoStageApproval,
+    private void validateSecondStageAuthorities(Errors errors, boolean twoStageApproval, List<Person> members,
         List<Person> secondStageAuthorities) {
 
         if (twoStageApproval && (secondStageAuthorities == null || secondStageAuthorities.isEmpty())) {
@@ -117,6 +121,18 @@ public class DepartmentValidator implements Validator {
 
         if (!twoStageApproval && secondStageAuthorities != null && !secondStageAuthorities.isEmpty()) {
             errors.rejectValue(ATTRIBUTE_TWO_STAGE_APPROVAL, ERROR_TWO_STAGE_APPROVAL_FLAG_MISSING);
+        }
+
+        if (secondStageAuthorities != null) {
+            for (Person secondStage : secondStageAuthorities) {
+                if (members == null || (members != null && !members.contains(secondStage))) {
+                    errors.rejectValue(ATTRIBUTE_SECOND_STAGE_AUTHORITIES, ERROR_SECOND_STAGE_AUTHORITY_NOT_ASSIGNED);
+                }
+
+                if (!secondStage.hasRole(Role.SECOND_STAGE_AUTHORITY)) {
+                    errors.rejectValue(ATTRIBUTE_SECOND_STAGE_AUTHORITIES, ERROR_SECOND_STAGE_AUTHORITY_NO_ACCESS);
+                }
+            }
         }
     }
 }
