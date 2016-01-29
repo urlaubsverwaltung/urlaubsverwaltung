@@ -391,6 +391,17 @@ public class PersonValidatorTest {
 
 
     @Test
+    public void ensureSecondStageRoleAndBossRoleCanNotBeSelectedBoth() {
+
+        form.setPermissions(Arrays.asList(Role.BOSS, Role.SECOND_STAGE_AUTHORITY));
+
+        validator.validatePermissions(form, errors);
+
+        Mockito.verify(errors).rejectValue("permissions", "person.form.permissions.error.secondStage");
+    }
+
+
+    @Test
     public void ensureValidBossRoleSelectionHasNoValidationError() {
 
         form.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
@@ -423,6 +434,17 @@ public class PersonValidatorTest {
     }
 
 
+    @Test
+    public void ensureSecondStageRoleAndDepartmentHeadRolesCanBeSelectedBoth() {
+
+        form.setPermissions(Arrays.asList(Role.DEPARTMENT_HEAD, Role.SECOND_STAGE_AUTHORITY));
+
+        validator.validatePermissions(form, errors);
+
+        Mockito.verifyZeroInteractions(errors);
+    }
+
+
     // VALIDATION OF MAIL NOTIFICATIONS
 
     @Test
@@ -431,6 +453,19 @@ public class PersonValidatorTest {
         form.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
         form.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER,
                 MailNotification.NOTIFICATION_DEPARTMENT_HEAD));
+
+        validator.validateNotifications(form, errors);
+
+        Mockito.verify(errors).rejectValue("notifications", "person.form.notifications.error.combination");
+    }
+
+
+    @Test
+    public void ensureSecondStageMailNotificationIsOnlyValidIfSecondStageRoleSelected() {
+
+        form.setPermissions(Arrays.asList(Role.USER, Role.DEPARTMENT_HEAD));
+        form.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER,
+                MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY));
 
         validator.validateNotifications(form, errors);
 
@@ -469,6 +504,19 @@ public class PersonValidatorTest {
         form.setPermissions(Arrays.asList(Role.USER, Role.DEPARTMENT_HEAD));
         form.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER,
                 MailNotification.NOTIFICATION_DEPARTMENT_HEAD));
+
+        validator.validatePermissions(form, errors);
+
+        Mockito.verifyZeroInteractions(errors);
+    }
+
+
+    @Test
+    public void ensureValidNotificationSelectionForSecondStageHasNoValidationError() {
+
+        form.setPermissions(Arrays.asList(Role.USER, Role.SECOND_STAGE_AUTHORITY));
+        form.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER,
+                MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY));
 
         validator.validatePermissions(form, errors);
 

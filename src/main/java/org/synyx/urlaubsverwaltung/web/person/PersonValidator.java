@@ -293,6 +293,10 @@ public class PersonValidator implements Validator {
             if (roles.contains(Role.DEPARTMENT_HEAD) && roles.contains(Role.BOSS)) {
                 errors.rejectValue(ATTRIBUTE_PERMISSIONS, "person.form.permissions.error.departmentHead");
             }
+
+            if (roles.contains(Role.SECOND_STAGE_AUTHORITY) && roles.contains(Role.BOSS)) {
+                errors.rejectValue(ATTRIBUTE_PERMISSIONS, "person.form.permissions.error.secondStage");
+            }
         }
     }
 
@@ -305,12 +309,16 @@ public class PersonValidator implements Validator {
         if (roles != null) {
             boolean departmentHeadNotificationsSelectedButNotDepartmentHeadRole = notifications.contains(
                     MailNotification.NOTIFICATION_DEPARTMENT_HEAD) && !roles.contains(Role.DEPARTMENT_HEAD);
+            boolean secondStageNotificationsSelectedButNotSecondStageRole = notifications.contains(
+                    MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY)
+                && !roles.contains(Role.SECOND_STAGE_AUTHORITY);
             boolean bossNotificationsSelectedButNotBossRole = notifications.contains(MailNotification.NOTIFICATION_BOSS)
                 && !roles.contains(Role.BOSS);
             boolean officeNotificationsSelectedButNotOfficeRole = notifications.contains(
                     MailNotification.NOTIFICATION_OFFICE) && !roles.contains(Role.OFFICE);
 
-            if (departmentHeadNotificationsSelectedButNotDepartmentHeadRole || bossNotificationsSelectedButNotBossRole
+            if (departmentHeadNotificationsSelectedButNotDepartmentHeadRole
+                    || secondStageNotificationsSelectedButNotSecondStageRole || bossNotificationsSelectedButNotBossRole
                     || officeNotificationsSelectedButNotOfficeRole) {
                 errors.rejectValue("notifications", "person.form.notifications.error.combination");
             }
