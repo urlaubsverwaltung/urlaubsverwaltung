@@ -125,10 +125,12 @@ public class ApplicationForLeaveDetailsController {
         // SPECIAL ATTRIBUTES FOR BOSSES / DEPARTMENT HEADS
         Person signedInUser = sessionService.getSignedInUser();
 
-        if (application.getStatus() == ApplicationStatus.WAITING && (signedInUser.hasRole(Role.BOSS)
-                    || signedInUser.hasRole(Role.DEPARTMENT_HEAD))
-                || (signedInUser.hasRole(Role.SECOND_STAGE_AUTHORITY)
-                    && application.getStatus() == ApplicationStatus.TEMPORARY_ALLOWED)) {
+        boolean isNotYetAllowed = application.hasStatus(ApplicationStatus.WAITING)
+            || application.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED);
+        boolean isPrivilegedUser = signedInUser.hasRole(Role.BOSS) || signedInUser.hasRole(Role.DEPARTMENT_HEAD)
+            || signedInUser.hasRole(Role.SECOND_STAGE_AUTHORITY);
+
+        if (isNotYetAllowed && isPrivilegedUser) {
             model.addAttribute("bosses", personService.getPersonsByRole(Role.BOSS));
             model.addAttribute("referredPerson", new ReferredPerson());
         }

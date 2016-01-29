@@ -259,6 +259,26 @@ public class ApplicationInteractionServiceImplTest {
 
         Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(ApplicationStatus.TEMPORARY_ALLOWED);
+        applicationForLeave.setTwoStageApproval(false);
+
+        service.allow(applicationForLeave, boss, comment);
+
+        assertApplicationForLeaveHasChangedStatus(applicationForLeave, ApplicationStatus.ALLOWED, person, boss);
+        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment, boss);
+        assertCalendarSyncIsExecuted();
+        assertAllowedNotificationIsSent(applicationForLeave);
+    }
+
+
+    @Test
+    public void ensureTemporaryAllowedApplicationForLeaveCanBeAllowedByBossEvenWithTwoStageApprovalActive() {
+
+        Person person = TestDataCreator.createPerson("muster");
+        Person boss = TestDataCreator.createPerson("boss", Role.USER, Role.BOSS);
+        Optional<String> comment = Optional.of("Foo");
+
+        Application applicationForLeave = getDummyApplication(person);
+        applicationForLeave.setStatus(ApplicationStatus.TEMPORARY_ALLOWED);
         applicationForLeave.setTwoStageApproval(true);
 
         service.allow(applicationForLeave, boss, comment);
@@ -267,6 +287,28 @@ public class ApplicationInteractionServiceImplTest {
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment, boss);
         assertCalendarSyncIsExecuted();
         assertAllowedNotificationIsSent(applicationForLeave);
+    }
+
+
+    @Test
+    public void ensureIfAllowedApplicationForLeaveIsAllowedAgainNothingHappens() {
+
+        Person person = TestDataCreator.createPerson("muster");
+        Person boss = TestDataCreator.createPerson("boss", Role.USER, Role.BOSS);
+        Optional<String> comment = Optional.of("Foo");
+
+        Application applicationForLeave = getDummyApplication(person);
+        applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
+
+        service.allow(applicationForLeave, boss, comment);
+
+        Assert.assertEquals("Status should not be changed", ApplicationStatus.ALLOWED, applicationForLeave.getStatus());
+
+        Mockito.verifyZeroInteractions(applicationService);
+        Mockito.verifyZeroInteractions(commentService);
+        Mockito.verifyZeroInteractions(mailService);
+        Mockito.verifyZeroInteractions(calendarSyncService);
+        Mockito.verifyZeroInteractions(absenceMappingService);
     }
 
 
@@ -356,7 +398,7 @@ public class ApplicationInteractionServiceImplTest {
 
 
     @Test
-    public void ensureTemporaryAllowedApplicationForLeaveCanNotBeAllowedByDepartmentHeadIfTwoStageApprovalIsActive() {
+    public void ensureIfTemporaryAllowedApplicationForLeaveIsAllowedByDepartmentHeadWithTwoStageApprovalIsActiveNothingHappens() {
 
         Person person = TestDataCreator.createPerson("muster");
         Person departmentHead = TestDataCreator.createPerson("head", Role.USER, Role.DEPARTMENT_HEAD);
@@ -370,7 +412,38 @@ public class ApplicationInteractionServiceImplTest {
 
         service.allow(applicationForLeave, departmentHead, comment);
 
-        // TODO: Expect Exception here!
+        Assert.assertEquals("Status should not be changed", ApplicationStatus.TEMPORARY_ALLOWED,
+            applicationForLeave.getStatus());
+
+        Mockito.verifyZeroInteractions(applicationService);
+        Mockito.verifyZeroInteractions(commentService);
+        Mockito.verifyZeroInteractions(mailService);
+        Mockito.verifyZeroInteractions(calendarSyncService);
+        Mockito.verifyZeroInteractions(absenceMappingService);
+    }
+
+
+    @Test
+    public void ensureIfTemporaryAllowedApplicationForLeaveIsAllowedByDepartmentHeadWithTwoStageApprovalNotActiveStatusIsChanged() {
+
+        Person person = TestDataCreator.createPerson("muster");
+        Person departmentHead = TestDataCreator.createPerson("head", Role.USER, Role.DEPARTMENT_HEAD);
+        Mockito.when(departmentService.isDepartmentHeadOfPerson(eq(departmentHead), eq(person))).thenReturn(true);
+
+        Optional<String> comment = Optional.of("Foo");
+
+        Application applicationForLeave = getDummyApplication(person);
+        applicationForLeave.setStatus(ApplicationStatus.TEMPORARY_ALLOWED);
+        applicationForLeave.setTwoStageApproval(false);
+
+        service.allow(applicationForLeave, departmentHead, comment);
+
+        assertApplicationForLeaveHasChangedStatus(applicationForLeave, ApplicationStatus.ALLOWED, person,
+            departmentHead);
+        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment,
+            departmentHead);
+        assertCalendarSyncIsExecuted();
+        assertAllowedNotificationIsSent(applicationForLeave);
     }
 
 

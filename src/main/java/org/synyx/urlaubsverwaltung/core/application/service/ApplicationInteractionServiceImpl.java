@@ -169,6 +169,18 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
     private Application allowTemporary(Application applicationForLeave, Person privilegedUser,
         Optional<String> comment) {
 
+        boolean alreadyAllowed = applicationForLeave.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED)
+            || applicationForLeave.hasStatus(ApplicationStatus.ALLOWED);
+
+        if (alreadyAllowed) {
+            // Early return - do nothing if expected status already set
+
+            LOG.info("Application for leave is already in an allowed status, do nothing: "
+                + applicationForLeave.toString());
+
+            return applicationForLeave;
+        }
+
         applicationForLeave.setStatus(ApplicationStatus.TEMPORARY_ALLOWED);
         applicationForLeave.setBoss(privilegedUser);
         applicationForLeave.setEditedDate(DateMidnight.now());
@@ -189,6 +201,15 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
 
     private Application allowFinally(Application applicationForLeave, Person privilegedUser, Optional<String> comment) {
+
+        if (applicationForLeave.hasStatus(ApplicationStatus.ALLOWED)) {
+            // Early return - do nothing if expected status already set
+
+            LOG.info("Application for leave is already in an allowed status, do nothing: "
+                + applicationForLeave.toString());
+
+            return applicationForLeave;
+        }
 
         applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
         applicationForLeave.setBoss(privilegedUser);
