@@ -19,6 +19,8 @@ import org.synyx.urlaubsverwaltung.core.calendar.OverlapService;
 import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.core.overtime.Overtime;
+import org.synyx.urlaubsverwaltung.core.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.AbsenceSettings;
@@ -55,6 +57,7 @@ public class ApplicationValidator implements Validator {
     private static final String ERROR_OVERLAP = "application.error.overlap";
     private static final String ERROR_WORKING_TIME = "application.error.noValidWorkingTime";
     private static final String ERROR_NOT_ENOUGH_DAYS = "application.error.notEnoughVacationDays";
+    private static final String ERROR_NOT_ENOUGH_OVERTIME = "application.error.notEnoughOvertime";
     private static final String ERROR_MISSING_HOURS = "application.error.missingHoursForOvertime";
     private static final String ERROR_INVALID_HOURS = "application.error.invalidHoursForOvertime";
 
@@ -70,16 +73,19 @@ public class ApplicationValidator implements Validator {
     private final OverlapService overlapService;
     private final CalculationService calculationService;
     private final SettingsService settingsService;
+    private final OvertimeService overtimeService;
 
     @Autowired
     public ApplicationValidator(WorkingTimeService workingTimeService, WorkDaysService calendarService,
-        OverlapService overlapService, CalculationService calculationService, SettingsService settingsService) {
+        OverlapService overlapService, CalculationService calculationService, SettingsService settingsService,
+                                OvertimeService overtimeService) {
 
         this.workingTimeService = workingTimeService;
         this.calendarService = calendarService;
         this.overlapService = overlapService;
         this.calculationService = calculationService;
         this.settingsService = settingsService;
+        this.overtimeService = overtimeService;
     }
 
     @Override
@@ -294,5 +300,33 @@ public class ApplicationValidator implements Validator {
                 errors.reject(ERROR_NOT_ENOUGH_DAYS);
             }
         }
+
+
+        /**
+         * Check overtime of given user
+         */
+        Boolean overtimeActive = settingsService.getSettings().getWorkingTimeSettings().getOvertimeActive();
+        Boolean isOvertime = VacationType.OVERTIME.equals(application.getVacationType());
+
+        if (isOvertime && overtimeActive) {
+            boolean enoughOvertimeHours = checkOvertimeHours(application);
+
+            if (!enoughOvertimeHours) {
+                errors.reject(ERROR_NOT_ENOUGH_OVERTIME);
+            }
+        }
+
+
+    }
+
+    private boolean checkOvertimeHours(Application application) {
+
+        Settings settings = settingsService.getSettings();
+        BigDecimal minimumOvertime = new BigDecimal(settings.getWorkingTimeSettings().getMinimumOvertime());
+        BigDecimal leftOvertimeForPerson = overtimeService.getLeftOvertimeForPerson(application.getPerson());
+
+        BigDecimal temporaryOvertimeForPerson = leftOvertimeForPerson.subtract(application.getHours());
+
+        return (temporaryOvertimeForPerson.compareTo(minimumOvertime.negate()) >= 0);
     }
 }
