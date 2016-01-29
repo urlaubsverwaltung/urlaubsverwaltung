@@ -1,5 +1,8 @@
 package org.synyx.urlaubsverwaltung.web.application;
 
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.ImmutableList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,6 +26,7 @@ import org.synyx.urlaubsverwaltung.security.SessionService;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -107,7 +111,14 @@ public class ApplicationForLeaveController {
 
         return applications.stream()
             .map(application -> new ApplicationForLeave(application, calendarService))
+            .sorted(dateComparator())
             .collect(Collectors.toList());
+    }
+
+
+    private Comparator<ApplicationForLeave> dateComparator() {
+
+        return (o1, o2) -> o1.getStartDate().compareTo(o2.getStartDate());
     }
 
 
@@ -121,6 +132,7 @@ public class ApplicationForLeaveController {
         return waitingApplications.stream()
             .filter(application -> members.contains(application.getPerson()))
             .map(application -> new ApplicationForLeave(application, calendarService))
+            .sorted(dateComparator())
             .collect(Collectors.toList());
     }
 
@@ -143,6 +155,7 @@ public class ApplicationForLeaveController {
         return applications.stream()
             .filter(application -> members.contains(application.getPerson()))
             .map(application -> new ApplicationForLeave(application, calendarService))
+            .sorted(dateComparator())
             .collect(Collectors.toList());
     }
 }
