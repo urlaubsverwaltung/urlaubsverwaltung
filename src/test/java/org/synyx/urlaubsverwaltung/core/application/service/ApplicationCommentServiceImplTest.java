@@ -10,6 +10,7 @@ import org.synyx.urlaubsverwaltung.core.application.dao.ApplicationCommentDAO;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationAction;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationComment;
+import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
@@ -39,7 +40,8 @@ public class ApplicationCommentServiceImplTest {
     public void ensureCreatesACommentAndPersistsIt() {
 
         Person author = TestDataCreator.createPerson("author");
-        Application application = TestDataCreator.createApplication(TestDataCreator.createPerson("person"));
+        Application application = TestDataCreator.createApplication(TestDataCreator.createPerson("person"),
+                TestDataCreator.getVacationType(VacationType.HOLIDAY));
 
         ApplicationComment comment = commentService.create(application, ApplicationAction.ALLOWED,
                 Optional.<String>empty(), author);
@@ -64,7 +66,8 @@ public class ApplicationCommentServiceImplTest {
     public void ensureCreationOfCommentWithTextWorks() {
 
         Person author = TestDataCreator.createPerson("author");
-        Application application = TestDataCreator.createApplication(TestDataCreator.createPerson("person"));
+        Application application = TestDataCreator.createApplication(TestDataCreator.createPerson("person"),
+                TestDataCreator.getVacationType(VacationType.HOLIDAY));
 
         ApplicationComment comment = commentService.create(application, ApplicationAction.REJECTED, Optional.of("Foo"),
                 author);

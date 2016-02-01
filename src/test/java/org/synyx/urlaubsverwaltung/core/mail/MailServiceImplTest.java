@@ -59,7 +59,7 @@ public class MailServiceImplTest {
 
         application = new Application();
         application.setPerson(person);
-        application.setVacationType(VacationType.HOLIDAY);
+        application.setVacationType(TestDataCreator.getVacationType(VacationType.HOLIDAY));
         application.setDayLength(DayLength.FULL);
 
         settings = new Settings();

@@ -116,7 +116,7 @@ public class VacationDaysService {
         // filter them since only waiting and allowed applications for leave of type holiday are relevant
         List<Application> applicationsForLeave = allApplicationsForLeave.stream()
             .filter(input ->
-                        input.getVacationType() == VacationType.HOLIDAY
+                        VacationType.HOLIDAY.equals(input.getVacationType().getTypeName())
                         && (input.hasStatus(ApplicationStatus.WAITING) || input.hasStatus(ApplicationStatus.ALLOWED)))
             .collect(Collectors.toList());
 

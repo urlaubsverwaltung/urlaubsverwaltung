@@ -99,7 +99,7 @@ public class ApplicationValidator implements Validator {
         validateHours(applicationForm, errors);
 
         // check if reason is not filled
-        if (applicationForm.getVacationType() == VacationType.SPECIALLEAVE
+        if (VacationType.SPECIALLEAVE.equals(applicationForm.getVacationType().getTypeName())
                 && !StringUtils.hasText(applicationForm.getReason())) {
             errors.rejectValue(ATTRIBUTE_REASON, ERROR_MISSING_REASON);
         }
@@ -194,7 +194,7 @@ public class ApplicationValidator implements Validator {
     private void validateHours(ApplicationForLeaveForm applicationForLeave, Errors errors) {
 
         BigDecimal hours = applicationForLeave.getHours();
-        boolean isOvertime = VacationType.OVERTIME.equals(applicationForLeave.getVacationType());
+        boolean isOvertime = VacationType.OVERTIME.equals(applicationForLeave.getVacationType().getTypeName());
 
         if (isOvertime && hours == null && !errors.hasFieldErrors(ATTRIBUTE_HOURS)) {
             errors.rejectValue(ATTRIBUTE_HOURS, ERROR_MISSING_HOURS);
@@ -264,7 +264,7 @@ public class ApplicationValidator implements Validator {
          * {@link org.synyx.urlaubsverwaltung.core.application.domain.VacationType.HOLIDAY}
          */
 
-        boolean isHoliday = application.getVacationType() == VacationType.HOLIDAY;
+        boolean isHoliday = VacationType.HOLIDAY.equals(application.getVacationType().getTypeName());
 
         if (isHoliday) {
             boolean enoughVacationDaysLeft = calculationService.checkApplication(application);

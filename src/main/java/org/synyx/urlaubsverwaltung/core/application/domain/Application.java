@@ -64,7 +64,7 @@ public class Application extends AbstractPersistable<Integer> {
     private Date endDate;
 
     // Type of holiday, e.g. holiday, special leave, etc.
-    @Enumerated(EnumType.STRING)
+    @ManyToOne
     private VacationType vacationType;
 
     // length of day: contains time of day (morning, noon or full day) and value (1.0 or 0.5 - as BigDecimal)

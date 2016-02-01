@@ -209,7 +209,7 @@ public class ApplicationForLeaveForm {
         applicationForLeave.setAddress(address);
         applicationForLeave.setTeamInformed(teamInformed);
 
-        if (VacationType.OVERTIME.equals(vacationType)) {
+        if (VacationType.OVERTIME.equals(vacationType.getTypeName())) {
             applicationForLeave.setHours(hours);
         }
 

@@ -28,6 +28,7 @@ import java.lang.reflect.Field;
 
 import java.math.BigDecimal;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -118,9 +119,9 @@ public final class TestDataCreator {
 
     // Application for leave -------------------------------------------------------------------------------------------
 
-    public static Application createApplication(Person person) {
+    public static Application createApplication(Person person, VacationType vacationType) {
 
-        return createApplication(person, VacationType.HOLIDAY, DateMidnight.now(), DateMidnight.now().plusDays(3),
+        return createApplication(person, vacationType, DateMidnight.now(), DateMidnight.now().plusDays(3),
                 DayLength.FULL);
     }
 
@@ -227,5 +228,51 @@ public final class TestDataCreator {
         workingTime.setWorkingDays(workingDays, DayLength.FULL);
 
         return workingTime;
+    }
+
+
+    public static VacationType getVacationType(String typeName) {
+
+        VacationType result = null;
+
+        for (VacationType vacationType : getVacationTypes()) {
+            if (typeName.equalsIgnoreCase(vacationType.getTypeName())) {
+                result = vacationType;
+            }
+        }
+
+        return result;
+    }
+
+
+    public static List<VacationType> getVacationTypes() {
+
+        ArrayList<VacationType> vacationTypes = new ArrayList<>();
+
+        VacationType vacationType1 = new VacationType();
+        vacationType1.setId(1000);
+        vacationType1.setTypeName(VacationType.HOLIDAY);
+        vacationType1.setTypeDisplayName("Erholungsurlaub");
+        vacationTypes.add(vacationType1);
+
+        VacationType vacationType2 = new VacationType();
+        vacationType2.setTypeName(VacationType.SPECIALLEAVE);
+        vacationType2.setTypeDisplayName("Sonderurlaub");
+        vacationType2.setId(2000);
+        vacationTypes.add(vacationType2);
+
+        VacationType vacationType3 = new VacationType();
+        vacationType3.setTypeName(VacationType.UNPAIDLEAVE);
+        vacationType3.setTypeDisplayName("Unbezahlter Urlaub");
+        vacationType3.setId(3000);
+        vacationTypes.add(vacationType3);
+
+        VacationType vacationType4 = new VacationType();
+        vacationType4.setTypeName(VacationType.OVERTIME);
+        vacationType4.setTypeDisplayName("Überstundenabbau");
+        vacationType4.setId(4000);
+        vacationTypes.add(vacationType4);
+
+        return vacationTypes;
     }
 }

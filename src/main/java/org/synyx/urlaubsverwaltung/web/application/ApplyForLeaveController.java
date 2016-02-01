@@ -23,8 +23,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
-import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationInteractionService;
+import org.synyx.urlaubsverwaltung.core.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.person.Role;
@@ -38,11 +38,9 @@ import org.synyx.urlaubsverwaltung.web.person.UnknownPersonException;
 
 import java.math.BigDecimal;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 
 /**
@@ -62,6 +60,9 @@ public class ApplyForLeaveController {
 
     @Autowired
     private AccountService accountService;
+
+    @Autowired
+    private VacationTypeService vacationTypeService;
 
     @Autowired
     private ApplicationInteractionService applicationInteractionService;
@@ -129,7 +130,7 @@ public class ApplyForLeaveController {
         model.addAttribute(PersonConstants.PERSON_ATTRIBUTE, person);
         model.addAttribute(PersonConstants.PERSONS_ATTRIBUTE, persons);
         model.addAttribute("application", appForm);
-        model.addAttribute("vacationTypes", VacationType.values());
+        model.addAttribute("vacationTypes", vacationTypeService.getVacationTypes());
     }
 
 

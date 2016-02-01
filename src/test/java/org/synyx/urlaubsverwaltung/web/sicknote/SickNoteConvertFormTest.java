@@ -54,7 +54,7 @@ public class SickNoteConvertFormTest {
         SickNote sickNote = TestDataCreator.createSickNote(person, startDate, endDate, DayLength.FULL);
 
         String reason = "Foo";
-        VacationType vacationType = VacationType.UNPAIDLEAVE;
+        VacationType vacationType = TestDataCreator.getVacationType(VacationType.UNPAIDLEAVE);
 
         SickNoteConvertForm convertForm = new SickNoteConvertForm(sickNote);
 

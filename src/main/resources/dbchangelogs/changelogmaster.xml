@@ -40,4 +40,5 @@
     <include file="dbchangelogs/changelog-2.13.1-remove-duplicated-accounts.xml"/>
     <include file="dbchangelogs/changelog-2.15.0-add-second-stage-authority.xml"/>
     <include file="dbchangelogs/changelog-2.15.0-add-SickNoteType.xml"/>
+    <include file="dbchangelogs/changelog-2.15.0-add-VacationType.xml"/>
 </databaseChangeLog>

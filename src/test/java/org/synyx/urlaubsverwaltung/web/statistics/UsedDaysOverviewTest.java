@@ -43,7 +43,7 @@ public class UsedDaysOverviewTest {
     public void ensureThrowsIfOneOfTheGivenApplicationsDoesNotMatchTheGivenYear() {
 
         Application application = new Application();
-        application.setVacationType(VacationType.HOLIDAY);
+        application.setVacationType(TestDataCreator.getVacationType(VacationType.HOLIDAY));
         application.setStartDate(new DateMidnight(2014, 10, 13));
         application.setEndDate(new DateMidnight(2014, 10, 13));
         application.setStatus(ApplicationStatus.WAITING);
@@ -56,49 +56,49 @@ public class UsedDaysOverviewTest {
     public void ensureGeneratesCorrectUsedDaysOverview() {
 
         Application holiday = new Application();
-        holiday.setVacationType(VacationType.HOLIDAY);
+        holiday.setVacationType(TestDataCreator.getVacationType(VacationType.HOLIDAY));
         holiday.setStartDate(new DateMidnight(2014, 10, 13));
         holiday.setEndDate(new DateMidnight(2014, 10, 13));
         holiday.setStatus(ApplicationStatus.WAITING);
 
         Application holidayAllowed = new Application();
-        holidayAllowed.setVacationType(VacationType.HOLIDAY);
+        holidayAllowed.setVacationType(TestDataCreator.getVacationType(VacationType.HOLIDAY));
         holidayAllowed.setStartDate(new DateMidnight(2014, 10, 14));
         holidayAllowed.setEndDate(new DateMidnight(2014, 10, 14));
         holidayAllowed.setStatus(ApplicationStatus.ALLOWED);
 
         Application specialLeave = new Application();
-        specialLeave.setVacationType(VacationType.SPECIALLEAVE);
+        specialLeave.setVacationType(TestDataCreator.getVacationType(VacationType.SPECIALLEAVE));
         specialLeave.setStartDate(new DateMidnight(2014, 10, 15));
         specialLeave.setEndDate(new DateMidnight(2014, 10, 15));
         specialLeave.setStatus(ApplicationStatus.WAITING);
 
         Application specialLeaveAllowed = new Application();
-        specialLeaveAllowed.setVacationType(VacationType.SPECIALLEAVE);
+        specialLeaveAllowed.setVacationType(TestDataCreator.getVacationType(VacationType.SPECIALLEAVE));
         specialLeaveAllowed.setStartDate(new DateMidnight(2014, 10, 16));
         specialLeaveAllowed.setEndDate(new DateMidnight(2014, 10, 16));
         specialLeaveAllowed.setStatus(ApplicationStatus.ALLOWED);
 
         Application unpaidLeave = new Application();
-        unpaidLeave.setVacationType(VacationType.UNPAIDLEAVE);
+        unpaidLeave.setVacationType(TestDataCreator.getVacationType(VacationType.UNPAIDLEAVE));
         unpaidLeave.setStartDate(new DateMidnight(2014, 10, 17));
         unpaidLeave.setEndDate(new DateMidnight(2014, 10, 17));
         unpaidLeave.setStatus(ApplicationStatus.WAITING);
 
         Application unpaidLeaveAllowed = new Application();
-        unpaidLeaveAllowed.setVacationType(VacationType.UNPAIDLEAVE);
+        unpaidLeaveAllowed.setVacationType(TestDataCreator.getVacationType(VacationType.UNPAIDLEAVE));
         unpaidLeaveAllowed.setStartDate(new DateMidnight(2014, 10, 20));
         unpaidLeaveAllowed.setEndDate(new DateMidnight(2014, 10, 20));
         unpaidLeaveAllowed.setStatus(ApplicationStatus.ALLOWED);
 
         Application overtimeLeave = new Application();
-        overtimeLeave.setVacationType(VacationType.OVERTIME);
+        overtimeLeave.setVacationType(TestDataCreator.getVacationType(VacationType.OVERTIME));
         overtimeLeave.setStartDate(new DateMidnight(2014, 10, 21));
         overtimeLeave.setEndDate(new DateMidnight(2014, 10, 21));
         overtimeLeave.setStatus(ApplicationStatus.WAITING);
 
         Application overtimeLeaveAllowed = new Application();
-        overtimeLeaveAllowed.setVacationType(VacationType.OVERTIME);
+        overtimeLeaveAllowed.setVacationType(TestDataCreator.getVacationType(VacationType.OVERTIME));
         overtimeLeaveAllowed.setStartDate(new DateMidnight(2014, 10, 22));
         overtimeLeaveAllowed.setEndDate(new DateMidnight(2014, 10, 22));
         overtimeLeaveAllowed.setStatus(ApplicationStatus.ALLOWED);
@@ -138,8 +138,8 @@ public class UsedDaysOverviewTest {
         DateMidnight endDate = new DateMidnight(2014, 1, 6);
 
         // 3 days in 2013, 2 days in 2014
-        Application holiday = TestDataCreator.createApplication(person, VacationType.HOLIDAY, startDate, endDate,
-                fullDay);
+        Application holiday = TestDataCreator.createApplication(person,
+                TestDataCreator.getVacationType(VacationType.HOLIDAY), startDate, endDate, fullDay);
 
         Mockito.when(calendarService.getWorkDays(fullDay, new DateMidnight(2014, 1, 1), endDate, person))
             .thenReturn(BigDecimal.valueOf(2));
@@ -165,19 +165,19 @@ public class UsedDaysOverviewTest {
     public void ensureGeneratesCorrectUsedDaysOverviewConsideringTemporaryAllowedApplicationsForLeave() {
 
         Application holiday = new Application();
-        holiday.setVacationType(VacationType.HOLIDAY);
+        holiday.setVacationType(TestDataCreator.getVacationType(VacationType.HOLIDAY));
         holiday.setStartDate(new DateMidnight(2014, 10, 13));
         holiday.setEndDate(new DateMidnight(2014, 10, 13));
         holiday.setStatus(ApplicationStatus.WAITING);
 
         Application holidayAllowed = new Application();
-        holidayAllowed.setVacationType(VacationType.HOLIDAY);
+        holidayAllowed.setVacationType(TestDataCreator.getVacationType(VacationType.HOLIDAY));
         holidayAllowed.setStartDate(new DateMidnight(2014, 10, 14));
         holidayAllowed.setEndDate(new DateMidnight(2014, 10, 14));
         holidayAllowed.setStatus(ApplicationStatus.ALLOWED);
 
         Application holidayTemporaryAllowed = new Application();
-        holidayTemporaryAllowed.setVacationType(VacationType.HOLIDAY);
+        holidayTemporaryAllowed.setVacationType(TestDataCreator.getVacationType(VacationType.HOLIDAY));
         holidayTemporaryAllowed.setStartDate(new DateMidnight(2014, 10, 15));
         holidayTemporaryAllowed.setEndDate(new DateMidnight(2014, 10, 15));
         holidayTemporaryAllowed.setStatus(ApplicationStatus.TEMPORARY_ALLOWED);

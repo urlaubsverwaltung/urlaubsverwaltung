@@ -117,9 +117,9 @@ class MailServiceImpl implements MailService {
         Map<String, Object> model = new HashMap<>();
         model.put("application", application);
 
-        String vacType = application.getVacationType().name();
+        String vacType = application.getVacationType().getTypeDisplayName();
         String length = application.getDayLength().name();
-        model.put("vacationType", properties.getProperty(vacType));
+        model.put("vacationType", vacType);
         model.put("dayLength", properties.getProperty(length));
         model.put("link", applicationUrl + "web/application/" + application.getId());
 

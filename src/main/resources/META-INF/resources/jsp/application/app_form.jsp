@@ -144,13 +144,13 @@
                         <c:forEach items="${vacationTypes}" var="vacationType">
                             <c:choose>
                                 <c:when test="${vacationType == application.vacationType}">
-                                    <option value="${vacationType}" selected="selected">
-                                        <spring:message code="${vacationType}"/>
+                                    <option value="${vacationType.id}" selected="selected">
+                                        <c:out value="${vacationType.typeDisplayName}"/>
                                     </option>
                                 </c:when>
                                 <c:otherwise>
-                                    <option value="${vacationType}">
-                                        <spring:message code="${vacationType}"/>
+                                    <option value="${vacationType.id}">
+                                        <c:out value="${vacationType.typeDisplayName}"/>
                                     </option>
                                 </c:otherwise>
                             </c:choose>
@@ -262,7 +262,7 @@
         </div>
 
         <div class="col-md-8 col-md-pull-4">
-            <c:set var="HOURS_IS_REQUIRED" value="${application.vacationType == 'OVERTIME' ? 'is-required' : ''}"/>
+            <c:set var="HOURS_IS_REQUIRED" value="${application.vacationType.typeName == 'OVERTIME' ? 'is-required' : ''}"/>
             <div class="form-group ${HOURS_IS_REQUIRED}" id="form-group--hours">
                 <label class="control-label col-md-3" for="hours">
                     <spring:message code="application.data.hours" />:
@@ -287,7 +287,7 @@
             </span>
         </div>
         <div class="col-md-8 col-md-pull-4">
-            <c:set var="REASON_IS_REQUIRED" value="${application.vacationType == 'SPECIALLEAVE' ? 'is-required' : ''}"/>
+            <c:set var="REASON_IS_REQUIRED" value="${application.vacationType.typeName == 'SPECIALLEAVE' ? 'is-required' : ''}"/>
 
             <div class="form-group ${REASON_IS_REQUIRED}" id="form-group--reason">
                 <label class="control-label col-md-3" for="reason">

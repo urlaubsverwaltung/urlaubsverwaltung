@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationAction;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.exception.ImpatientAboutApplicationForLeaveProcessException;
 import org.synyx.urlaubsverwaltung.core.application.service.exception.RemindAlreadySentException;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
@@ -29,15 +30,14 @@ import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceMappingService;
 import org.synyx.urlaubsverwaltung.core.sync.absence.AbsenceType;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
-import scala.App;
-
-import java.nio.file.AccessDeniedException;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 
 
 /**
@@ -882,7 +882,8 @@ public class ApplicationInteractionServiceImplTest {
         ImpatientAboutApplicationForLeaveProcessException {
 
         Person person = TestDataCreator.createPerson();
-        Application applicationForLeave = TestDataCreator.createApplication(person);
+        Application applicationForLeave = TestDataCreator.createApplication(person,
+                TestDataCreator.getVacationType(VacationType.HOLIDAY));
         applicationForLeave.setApplicationDate(DateMidnight.now().minusDays(3));
         applicationForLeave.setRemindDate(DateMidnight.now().minusDays(1));
 

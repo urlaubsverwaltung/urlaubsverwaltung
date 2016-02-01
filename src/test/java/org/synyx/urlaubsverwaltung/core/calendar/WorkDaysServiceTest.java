@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
+import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
@@ -56,7 +57,7 @@ public class WorkDaysServiceTest {
         instance = new WorkDaysService(publicHolidaysService, workingTimeService);
 
         person = TestDataCreator.createPerson();
-        application = TestDataCreator.createApplication(person);
+        application = TestDataCreator.createApplication(person, TestDataCreator.getVacationType(VacationType.HOLIDAY));
 
         workingTime = TestDataCreator.createWorkingTime();
 

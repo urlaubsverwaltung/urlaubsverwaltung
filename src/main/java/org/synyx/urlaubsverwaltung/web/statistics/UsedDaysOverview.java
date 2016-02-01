@@ -47,7 +47,7 @@ public class UsedDaysOverview {
                     || application.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED)) {
                 BigDecimal days = getVacationDays(application, calendarService);
 
-                if (VacationType.HOLIDAY.equals(application.getVacationType())) {
+                if (VacationType.HOLIDAY.equals(application.getVacationType().getTypeName())) {
                     this.holidayDays.addDays(status, days);
                 } else {
                     this.otherDays.addDays(status, days);

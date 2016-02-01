@@ -24,7 +24,7 @@ class AbsenceResponse {
         this.to = application.getEndDate().toString(RestApiDateFormat.PATTERN);
         this.dayLength = application.getDayLength().getDuration();
         this.person = new PersonResponse(application.getPerson());
-        this.type = application.getVacationType().name();
+        this.type = application.getVacationType().getTypeName();
         this.status = application.getStatus().name();
     }
 

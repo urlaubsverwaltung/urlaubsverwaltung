@@ -12,9 +12,13 @@ import org.springframework.ui.Model;
 
 import org.springframework.validation.DataBinder;
 
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
+import org.synyx.urlaubsverwaltung.core.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
@@ -47,6 +51,9 @@ public class ApplicationForLeaveStatisticsController {
 
     @Autowired
     private DepartmentService departmentService;
+
+    @Autowired
+    private VacationTypeService vacationTypeService;
 
     @Autowired
     private ApplicationForLeaveStatisticsBuilder applicationForLeaveStatisticsBuilder;
@@ -94,7 +101,7 @@ public class ApplicationForLeaveStatisticsController {
         model.addAttribute("to", toDate);
         model.addAttribute("statistics", statistics);
         model.addAttribute("period", period);
-        model.addAttribute("vacationTypes", VacationType.values());
+        model.addAttribute("vacationTypes", vacationTypeService.getVacationTypes());
 
         return "application/app_statistics";
     }

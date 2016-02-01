@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.web.statistics;
 import org.springframework.util.Assert;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
+import org.synyx.urlaubsverwaltung.core.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.math.BigDecimal;
@@ -27,13 +28,13 @@ public class ApplicationForLeaveStatistics {
     private BigDecimal leftVacationDays = BigDecimal.ZERO;
     private BigDecimal leftOvertime = BigDecimal.ZERO;
 
-    public ApplicationForLeaveStatistics(Person person) {
+    public ApplicationForLeaveStatistics(Person person, VacationTypeService vacationTypeService) {
 
         Assert.notNull(person, "Person must be given.");
 
         this.person = person;
 
-        for (VacationType vacationType : VacationType.values()) {
+        for (VacationType vacationType : vacationTypeService.getVacationTypes()) {
             waitingVacationDays.put(vacationType, BigDecimal.ZERO);
             allowedVacationDays.put(vacationType, BigDecimal.ZERO);
         }

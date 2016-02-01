@@ -50,8 +50,8 @@
                         <div class="col-md-7">
                             <form:select path="vacationType" size="1" cssClass="form-control" cssErrorClass="form-control error">
                                 <c:forEach items="${vacationTypes}" var="vacationType">
-                                    <option value="${vacationType}">
-                                        <spring:message code='${vacationType}' />
+                                    <option value="${vacationType.id}">
+                                        <c:out value='${vacationType.typeDisplayName}' />
                                     </option>
                                 </c:forEach>
                             </form:select>

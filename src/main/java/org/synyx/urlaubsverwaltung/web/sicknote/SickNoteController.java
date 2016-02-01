@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
+import org.synyx.urlaubsverwaltung.core.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
@@ -64,6 +64,9 @@ public class SickNoteController {
 
     @Autowired
     private SickNoteTypeService sickNoteTypeService;
+
+    @Autowired
+    private VacationTypeService vacationTypeService;
 
     @Autowired
     private PersonService personService;
@@ -217,7 +220,7 @@ public class SickNoteController {
 
         model.addAttribute("sickNote", new ExtendedSickNote(sickNote, calendarService));
         model.addAttribute("sickNoteConvertForm", new SickNoteConvertForm(sickNote));
-        model.addAttribute("vacationTypes", VacationType.values());
+        model.addAttribute("vacationTypes", vacationTypeService.getVacationTypes());
 
         return "sicknote/sick_note_convert";
     }
@@ -237,7 +240,7 @@ public class SickNoteController {
             model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
             model.addAttribute("sickNote", new ExtendedSickNote(sickNote, calendarService));
             model.addAttribute("sickNoteConvertForm", sickNoteConvertForm);
-            model.addAttribute("vacationTypes", VacationType.values());
+            model.addAttribute("vacationTypes", vacationTypeService.getVacationTypes());
 
             return "sicknote/sick_note_convert";
         }

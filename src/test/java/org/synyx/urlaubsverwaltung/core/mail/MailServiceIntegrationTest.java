@@ -46,7 +46,6 @@ import java.util.Properties;
 import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
 import static org.junit.Assert.assertEquals;
@@ -97,7 +96,7 @@ public class MailServiceIntegrationTest {
 
         application = new Application();
         application.setPerson(person);
-        application.setVacationType(VacationType.HOLIDAY);
+        application.setVacationType(TestDataCreator.getVacationType(VacationType.HOLIDAY));
         application.setDayLength(DayLength.FULL);
         application.setApplicationDate(now);
         application.setStartDate(now);
@@ -197,12 +196,14 @@ public class MailServiceIntegrationTest {
         throws MessagingException, IOException {
 
         Person departmentMember = TestDataCreator.createPerson("muster", "Marlene", "Muster", "mmuster@foo.de");
-        Application departmentApplication = TestDataCreator.createApplication(departmentMember, VacationType.HOLIDAY,
-                new DateMidnight(2015, 11, 5), new DateMidnight(2015, 11, 6), DayLength.FULL);
+        Application departmentApplication = TestDataCreator.createApplication(departmentMember,
+                TestDataCreator.getVacationType(VacationType.HOLIDAY), new DateMidnight(2015, 11, 5),
+                new DateMidnight(2015, 11, 6), DayLength.FULL);
 
         Person otherDepartmentMember = TestDataCreator.createPerson("schmidt", "Niko", "Schmidt", "nschmidt@foo.de");
         Application otherDepartmentApplication = TestDataCreator.createApplication(otherDepartmentMember,
-                VacationType.HOLIDAY, new DateMidnight(2015, 11, 4), new DateMidnight(2015, 11, 4), DayLength.MORNING);
+                TestDataCreator.getVacationType(VacationType.HOLIDAY), new DateMidnight(2015, 11, 4),
+                new DateMidnight(2015, 11, 4), DayLength.MORNING);
 
         Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS))
             .thenReturn(Collections.singletonList(boss));

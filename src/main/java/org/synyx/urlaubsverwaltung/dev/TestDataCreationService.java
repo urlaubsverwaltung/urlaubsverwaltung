@@ -12,6 +12,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
+import org.synyx.urlaubsverwaltung.core.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.Role;
@@ -52,6 +53,9 @@ public class TestDataCreationService {
 
     @Autowired
     private SickNoteTypeService sickNoteTypeService;
+
+    @Autowired
+    private VacationTypeService vacationTypeService;
 
     @Autowired
     private OvertimeRecordDataProvider overtimeRecordDataProvider;
@@ -114,47 +118,68 @@ public class TestDataCreationService {
         createTestData(hans);
         createTestData(niko);
         createTestData(manager);
-
-        DateMidnight now = DateMidnight.now();
-        applicationForLeaveDataProvider.createPremilinaryAllowedApplication(hans, departmentHead, VacationType.HOLIDAY,
-            DayLength.FULL, now.plusDays(5), now.plusDays(8));
     }
 
 
     private void createTestData(Person person) {
 
-        createApplicationsForLeave(person);
+        createApplicationsForLeave(person, null);
         createSickNotes(person);
         createOvertimeRecords(person);
     }
 
 
-    private void createApplicationsForLeave(Person person) {
+    private void createApplicationsForLeave(Person person, Person headOf) {
 
         DateMidnight now = DateMidnight.now();
 
+        VacationType holiday = null;
+        VacationType overtime = null;
+        VacationType specialLeave = null;
+
+        List<VacationType> vacationTypes = vacationTypeService.getVacationTypes();
+
+        for (VacationType vacationType : vacationTypes) {
+            if (VacationType.HOLIDAY.equals(vacationType.getTypeName())) {
+                holiday = vacationType;
+            }
+
+            if (VacationType.OVERTIME.equals(vacationType.getTypeName())) {
+                overtime = vacationType;
+            }
+
+            if (VacationType.SPECIALLEAVE.equals(vacationType.getTypeName())) {
+                specialLeave = vacationType;
+            }
+        }
+
         // FUTURE APPLICATIONS FOR LEAVE
-        applicationForLeaveDataProvider.createWaitingApplication(person, VacationType.HOLIDAY, DayLength.FULL,
-            now.plusDays(10), now.plusDays(16)); // NOSONAR
-        applicationForLeaveDataProvider.createWaitingApplication(person, VacationType.OVERTIME, DayLength.FULL,
-            now.plusDays(1), now.plusDays(1)); // NOSONAR
-        applicationForLeaveDataProvider.createWaitingApplication(person, VacationType.SPECIALLEAVE, DayLength.FULL,
-            now.plusDays(4), now.plusDays(6)); // NOSONAR
+        applicationForLeaveDataProvider.createWaitingApplication(person, holiday, DayLength.FULL, now.plusDays(10),
+            now.plusDays(16)); // NOSONAR
+        applicationForLeaveDataProvider.createWaitingApplication(person, overtime, DayLength.FULL, now.plusDays(1),
+            now.plusDays(1)); // NOSONAR
+        applicationForLeaveDataProvider.createWaitingApplication(person, specialLeave, DayLength.FULL, now.plusDays(4),
+            now.plusDays(6)); // NOSONAR
 
         // PAST APPLICATIONS FOR LEAVE
-        applicationForLeaveDataProvider.createAllowedApplication(person, boss, VacationType.HOLIDAY, DayLength.FULL,
+        applicationForLeaveDataProvider.createAllowedApplication(person, boss, holiday, DayLength.FULL,
             now.minusDays(20), now.minusDays(13)); // NOSONAR
-        applicationForLeaveDataProvider.createAllowedApplication(person, boss, VacationType.HOLIDAY, DayLength.MORNING,
+        applicationForLeaveDataProvider.createAllowedApplication(person, boss, holiday, DayLength.MORNING,
             now.minusDays(5), now.minusDays(5)); // NOSONAR
-        applicationForLeaveDataProvider.createAllowedApplication(person, boss, VacationType.SPECIALLEAVE,
-            DayLength.MORNING, now.minusDays(9), // NOSONAR
+        applicationForLeaveDataProvider.createAllowedApplication(person, boss, specialLeave, DayLength.MORNING,
+            now.minusDays(9), // NOSONAR
             now.minusDays(9)); // NOSONAR
 
-        applicationForLeaveDataProvider.createRejectedApplication(person, boss, VacationType.HOLIDAY, DayLength.FULL,
+        applicationForLeaveDataProvider.createRejectedApplication(person, boss, holiday, DayLength.FULL,
             now.minusDays(33), now.minusDays(30)); // NOSONAR
 
-        applicationForLeaveDataProvider.createCancelledApplication(person, office, VacationType.HOLIDAY, DayLength.FULL,
+        applicationForLeaveDataProvider.createCancelledApplication(person, office, holiday, DayLength.FULL,
             now.minusDays(11), now.minusDays(10)); // NOSONAR
+
+        if ("hdampf".equals(person.getLoginName()) && headOf != null) {
+            applicationForLeaveDataProvider.createPremilinaryAllowedApplication(person, headOf, holiday, DayLength.FULL,
+                now.plusDays(5), now.plusDays(8));
+        }
     }
 
 

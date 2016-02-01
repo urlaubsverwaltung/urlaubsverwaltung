@@ -69,7 +69,10 @@ public class ApplicationValidatorTest {
 
         appForm = new ApplicationForLeaveForm();
 
-        appForm.setVacationType(VacationType.HOLIDAY);
+        VacationType holiday = Mockito.mock(VacationType.class);
+        holiday.setTypeName(VacationType.HOLIDAY);
+
+        appForm.setVacationType(holiday);
         appForm.setDayLength(DayLength.FULL);
         appForm.setStartDate(DateMidnight.now());
         appForm.setEndDate(DateMidnight.now().plusDays(2));
@@ -248,7 +251,10 @@ public class ApplicationValidatorTest {
     @Test
     public void ensureReasonIsNotMandatoryForHoliday() {
 
-        appForm.setVacationType(VacationType.HOLIDAY);
+        VacationType holiday = Mockito.mock(VacationType.class);
+        holiday.setTypeName(VacationType.HOLIDAY);
+
+        appForm.setVacationType(holiday);
         appForm.setReason("");
 
         validator.validate(appForm, errors);
@@ -261,7 +267,10 @@ public class ApplicationValidatorTest {
     @Test
     public void ensureReasonIsNotMandatoryForUnpaidLeave() {
 
-        appForm.setVacationType(VacationType.UNPAIDLEAVE);
+        VacationType unpaidLeave = Mockito.mock(VacationType.class);
+        unpaidLeave.setTypeName(VacationType.UNPAIDLEAVE);
+
+        appForm.setVacationType(unpaidLeave);
         appForm.setReason("");
 
         validator.validate(appForm, errors);
@@ -274,7 +283,10 @@ public class ApplicationValidatorTest {
     @Test
     public void ensureReasonIsNotMandatoryForOvertime() {
 
-        appForm.setVacationType(VacationType.OVERTIME);
+        VacationType overtime = Mockito.mock(VacationType.class);
+        overtime.setTypeName(VacationType.OVERTIME);
+
+        appForm.setVacationType(overtime);
         appForm.setReason("");
 
         validator.validate(appForm, errors);
@@ -287,7 +299,7 @@ public class ApplicationValidatorTest {
     @Test
     public void ensureReasonIsMandatoryForSpecialLeave() {
 
-        appForm.setVacationType(VacationType.SPECIALLEAVE);
+        appForm.setVacationType(TestDataCreator.getVacationType(VacationType.SPECIALLEAVE));
         appForm.setReason("");
 
         validator.validate(appForm, errors);
@@ -335,6 +347,8 @@ public class ApplicationValidatorTest {
     @Test
     public void ensureApplyingForLeaveWithNotEnoughVacationDaysIsNotValid() {
 
+        appForm.setVacationType(TestDataCreator.getVacationType(VacationType.HOLIDAY));
+
         Mockito.when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
         Mockito.when(calendarService.getWorkDays(Mockito.any(DayLength.class), Mockito.any(DateMidnight.class),
@@ -357,6 +371,7 @@ public class ApplicationValidatorTest {
 
         appForm.setDayLength(DayLength.NOON);
         appForm.setStartDateHalf(DateMidnight.now());
+        appForm.setVacationType(TestDataCreator.getVacationType(VacationType.HOLIDAY));
 
         Mockito.when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
@@ -403,7 +418,7 @@ public class ApplicationValidatorTest {
     @Test
     public void ensureHoursIsMandatoryForOvertime() {
 
-        appForm.setVacationType(VacationType.OVERTIME);
+        appForm.setVacationType(TestDataCreator.getVacationType(VacationType.OVERTIME));
         appForm.setHours(null);
 
         validator.validate(appForm, errors);
@@ -424,9 +439,18 @@ public class ApplicationValidatorTest {
             Mockito.verify(errors, Mockito.never()).rejectValue(Mockito.eq("hours"), Mockito.anyString());
         };
 
-        assertHoursNotMandatory.accept(VacationType.HOLIDAY);
-        assertHoursNotMandatory.accept(VacationType.SPECIALLEAVE);
-        assertHoursNotMandatory.accept(VacationType.UNPAIDLEAVE);
+        VacationType holiday = Mockito.mock(VacationType.class);
+        holiday.setTypeName(VacationType.HOLIDAY);
+
+        VacationType specialLeave = Mockito.mock(VacationType.class);
+        specialLeave.setTypeName(VacationType.SPECIALLEAVE);
+
+        VacationType unpaidLeave = Mockito.mock(VacationType.class);
+        unpaidLeave.setTypeName(VacationType.UNPAIDLEAVE);
+
+        assertHoursNotMandatory.accept(holiday);
+        assertHoursNotMandatory.accept(specialLeave);
+        assertHoursNotMandatory.accept(unpaidLeave);
     }
 
 
@@ -455,7 +479,10 @@ public class ApplicationValidatorTest {
     @Test
     public void ensureDecimalHoursAreValid() {
 
-        appForm.setVacationType(VacationType.OVERTIME);
+        VacationType overtime = Mockito.mock(VacationType.class);
+        overtime.setTypeName(VacationType.OVERTIME);
+
+        appForm.setVacationType(overtime);
         appForm.setHours(new BigDecimal("0.5"));
 
         validator.validate(appForm, errors);
@@ -467,7 +494,7 @@ public class ApplicationValidatorTest {
     @Test
     public void ensureNoErrorMessageForMandatoryIfHoursIsNullBecauseOfTypeMismatch() {
 
-        appForm.setVacationType(VacationType.OVERTIME);
+        appForm.setVacationType(TestDataCreator.getVacationType(VacationType.OVERTIME));
         appForm.setHours(null);
 
         Mockito.when(errors.hasFieldErrors("hours")).thenReturn(true);
