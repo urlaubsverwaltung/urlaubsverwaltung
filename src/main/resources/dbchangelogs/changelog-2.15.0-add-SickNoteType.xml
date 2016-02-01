@@ -16,7 +16,6 @@
         <sql>
             INSERT INTO SickNoteType (id, category, displayName) VALUES (1000, 'SICK_NOTE', 'Krankmeldung');
             INSERT INTO SickNoteType (id, category, displayName) VALUES (2000, 'SICK_NOTE_CHILD', 'Kind-Krankmeldung');
-            INSERT INTO SickNoteType (id, category, displayName) VALUES (3000, 'OTHER', 'Krankmeldung ohne Krankenschein');
         </sql>
     </changeSet>
 
