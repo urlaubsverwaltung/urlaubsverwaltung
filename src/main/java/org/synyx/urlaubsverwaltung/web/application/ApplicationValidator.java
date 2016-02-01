@@ -28,6 +28,8 @@ import org.synyx.urlaubsverwaltung.core.util.CalcUtil;
 
 import java.math.BigDecimal;
 
+import java.sql.Time;
+
 import java.util.Optional;
 
 
@@ -45,6 +47,7 @@ public class ApplicationValidator implements Validator {
     private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
     private static final String ERROR_LENGTH = "error.entry.tooManyChars";
     private static final String ERROR_PERIOD = "error.entry.invalidPeriod";
+    private static final String ERROR_HALF_DAY_PERIOD = "application.error.halfDayPeriod";
     private static final String ERROR_MISSING_REASON = "application.error.missingReasonForSpecialLeave";
     private static final String ERROR_PAST = "application.error.tooFarInThePast";
     private static final String ERROR_TOO_LONG = "application.error.tooFarInTheFuture";
@@ -57,7 +60,6 @@ public class ApplicationValidator implements Validator {
 
     private static final String ATTRIBUTE_START_DATE = "startDate";
     private static final String ATTRIBUTE_END_DATE = "endDate";
-    private static final String ATTRIBUTE_START_DATE_HALF = "startDateHalf";
     private static final String ATTRIBUTE_REASON = "reason";
     private static final String ATTRIBUTE_ADDRESS = "address";
     private static final String ATTRIBUTE_COMMENT = "comment";
@@ -119,24 +121,15 @@ public class ApplicationValidator implements Validator {
 
     private void validateDateFields(ApplicationForLeaveForm applicationForLeave, Errors errors) {
 
-        if (applicationForLeave.getDayLength() == DayLength.FULL) {
-            DateMidnight startDate = applicationForLeave.getStartDate();
-            DateMidnight endDate = applicationForLeave.getEndDate();
+        DateMidnight startDate = applicationForLeave.getStartDate();
+        DateMidnight endDate = applicationForLeave.getEndDate();
 
-            validateNotNull(startDate, ATTRIBUTE_START_DATE, errors);
-            validateNotNull(endDate, ATTRIBUTE_END_DATE, errors);
+        validateNotNull(startDate, ATTRIBUTE_START_DATE, errors);
+        validateNotNull(endDate, ATTRIBUTE_END_DATE, errors);
 
-            if (startDate != null && endDate != null) {
-                validatePeriod(startDate, endDate, errors);
-            }
-        } else {
-            DateMidnight date = applicationForLeave.getStartDateHalf();
-
-            validateNotNull(date, ATTRIBUTE_START_DATE_HALF, errors);
-
-            if (date != null) {
-                validatePeriod(date, date, errors);
-            }
+        if (startDate != null && endDate != null) {
+            validatePeriod(startDate, endDate, applicationForLeave.getDayLength(), errors);
+            validateTime(applicationForLeave.getStartTime(), applicationForLeave.getEndTime(), errors);
         }
     }
 
@@ -150,43 +143,71 @@ public class ApplicationValidator implements Validator {
     }
 
 
-    private void validatePeriod(DateMidnight startDate, DateMidnight endDate, Errors errors) {
+    private void validatePeriod(DateMidnight startDate, DateMidnight endDate, DayLength dayLength, Errors errors) {
 
         // ensure that startDate < endDate
         if (startDate.isAfter(endDate)) {
             errors.reject(ERROR_PERIOD);
         } else {
-            validateNotTooFarInTheFuture(endDate, errors);
-            validateNotTooFarInThePast(startDate, errors);
+            Settings settings = settingsService.getSettings();
+            AbsenceSettings absenceSettings = settings.getAbsenceSettings();
+
+            validateNotTooFarInTheFuture(endDate, absenceSettings, errors);
+            validateNotTooFarInThePast(startDate, absenceSettings, errors);
+            validateSameDayIfHalfDayPeriod(startDate, endDate, dayLength, errors);
         }
     }
 
 
-    private void validateNotTooFarInTheFuture(DateMidnight date, Errors errors) {
+    private void validateNotTooFarInTheFuture(DateMidnight date, AbsenceSettings settings, Errors errors) {
 
-        Settings settings = settingsService.getSettings();
-        AbsenceSettings absenceSettings = settings.getAbsenceSettings();
-
-        Integer maximumMonths = absenceSettings.getMaximumMonthsToApplyForLeaveInAdvance();
+        Integer maximumMonths = settings.getMaximumMonthsToApplyForLeaveInAdvance();
         DateMidnight future = DateMidnight.now().plusMonths(maximumMonths);
 
         if (date.isAfter(future)) {
             errors.reject(ERROR_TOO_LONG,
-                new Object[] { absenceSettings.getMaximumMonthsToApplyForLeaveInAdvance().toString() }, null);
+                new Object[] { settings.getMaximumMonthsToApplyForLeaveInAdvance().toString() }, null);
         }
     }
 
 
-    private void validateNotTooFarInThePast(DateMidnight date, Errors errors) {
+    private void validateNotTooFarInThePast(DateMidnight date, AbsenceSettings settings, Errors errors) {
 
-        Settings settings = settingsService.getSettings();
-        AbsenceSettings absenceSettings = settings.getAbsenceSettings();
-
-        Integer maximumMonths = absenceSettings.getMaximumMonthsToApplyForLeaveInAdvance();
+        Integer maximumMonths = settings.getMaximumMonthsToApplyForLeaveInAdvance();
         DateMidnight past = DateMidnight.now().minusMonths(maximumMonths);
 
         if (date.isBefore(past)) {
             errors.reject(ERROR_PAST);
+        }
+    }
+
+
+    private void validateSameDayIfHalfDayPeriod(DateMidnight startDate, DateMidnight endDate, DayLength dayLength,
+        Errors errors) {
+
+        boolean isHalfDay = dayLength == DayLength.MORNING || dayLength == DayLength.NOON;
+
+        if (isHalfDay && !startDate.isEqual(endDate)) {
+            errors.reject(ERROR_HALF_DAY_PERIOD);
+        }
+    }
+
+
+    private void validateTime(Time startTime, Time endTime, Errors errors) {
+
+        boolean startTimeIsProvided = startTime != null;
+        boolean endTimeIsProvided = endTime != null;
+
+        if ((startTimeIsProvided && !endTimeIsProvided) || (!startTimeIsProvided && endTimeIsProvided)) {
+            errors.reject(ERROR_PERIOD);
+        }
+
+        if (startTimeIsProvided && endTimeIsProvided) {
+            long timeDifference = endTime.getTime() - startTime.getTime();
+
+            if (timeDifference <= 0) {
+                errors.reject(ERROR_PERIOD);
+            }
         }
     }
 

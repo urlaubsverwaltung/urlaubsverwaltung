@@ -14,6 +14,8 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.math.BigDecimal;
 
+import java.sql.Time;
+
 import java.util.Arrays;
 import java.util.Date;
 
@@ -60,8 +62,12 @@ public class Application extends AbstractPersistable<Integer> {
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date startDate;
 
+    private Time startTime;
+
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date endDate;
+
+    private Time endTime;
 
     // Type of holiday, e.g. holiday, special leave, etc.
     @Enumerated(EnumType.STRING)
@@ -253,6 +259,30 @@ public class Application extends AbstractPersistable<Integer> {
         } else {
             this.endDate = endDate.toDate();
         }
+    }
+
+
+    public Time getStartTime() {
+
+        return startTime;
+    }
+
+
+    public void setStartTime(Time startTime) {
+
+        this.startTime = startTime;
+    }
+
+
+    public Time getEndTime() {
+
+        return endTime;
+    }
+
+
+    public void setEndTime(Time endTime) {
+
+        this.endTime = endTime;
     }
 
 
@@ -490,5 +520,41 @@ public class Application extends AbstractPersistable<Integer> {
     public Period getPeriod() {
 
         return new Period(getStartDate(), getEndDate(), getDayLength());
+    }
+
+
+    /**
+     * Get start of application for leave as date with time.
+     *
+     * @return  start date with time or {@code null} if start date or start time is missing
+     */
+    public DateTime getStartDateWithTime() {
+
+        DateMidnight startDate = getStartDate();
+        Time startTime = getStartTime();
+
+        if (startDate != null && startTime != null) {
+            return startDate.toDateTime().withHourOfDay(startTime.getHours()).withMinuteOfHour(startTime.getMinutes());
+        }
+
+        return null;
+    }
+
+
+    /**
+     * Get end of application for leave as date with time.
+     *
+     * @return  end date with time or {@code null} if end date or end time is missing
+     */
+    public DateTime getEndDateWithTime() {
+
+        DateMidnight endDate = getEndDate();
+        Time endTime = getEndTime();
+
+        if (endDate != null && endTime != null) {
+            return endDate.toDateTime().withHourOfDay(endTime.getHours()).withMinuteOfHour(endTime.getMinutes());
+        }
+
+        return null;
     }
 }

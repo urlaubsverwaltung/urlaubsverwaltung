@@ -8,11 +8,14 @@
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
 
+
 <!DOCTYPE html>
 <html>
 
 <head>
     <uv:head/>
+    <link rel="stylesheet" type="text/css" href="<spring:url value='/lib/jquery/css/ui-lightness/timepicker.css' />" />
+    <script src="<spring:url value='/lib/jquery/js/timepicker.js' />" type="text/javascript" ></script>
 
     <%@include file="include/app-form-elements/datepicker.jsp" %>
     <%@include file="include/app-form-elements/day-length-selector.jsp" %>
@@ -38,7 +41,6 @@
             if (from) {
                 preset('#from', from);
                 preset('#to'  , to || from);
-                preset('#at', from);
 
                 var urlPrefix = "<spring:url value='/api' />";
                 var personId = "<c:out value='${person.id}' />";
@@ -53,6 +55,20 @@
 
                 sendGetDepartmentVacationsRequest(urlPrefix, startDate, endDate, personId, "#departmentVacations");
             }
+
+            <%-- Timepicker for optional startTime and endTime --%>
+
+            $('#startTime').timepicker({
+                'step': 15 ,
+                'timeFormat': 'H:i',
+                'forceRoundTime': true,
+                'scrollDefault': 'now'});
+            $('#endTime').timepicker({
+                'step': 15 ,
+                'timeFormat': 'H:i',
+                'forceRoundTime': true,
+                'scrollDefault': 'now'});
+
         });
     </script>
 
@@ -61,9 +77,18 @@
 <body>
 
 <spring:url var="URL_PREFIX" value="/web"/>
+
 <sec:authorize access="hasAuthority('OFFICE')">
     <c:set var="IS_OFFICE" value="${true}"/>
 </sec:authorize>
+
+<c:set var="DATE_PATTERN">
+    <spring:message code="pattern.date"/>
+</c:set>
+
+<c:set var="TIME_PATTERN">
+    <spring:message code="pattern.time"/>
+</c:set>
 
 <uv:menu/>
 
@@ -179,31 +204,32 @@
                 </div>
             </div>
 
-            <div class="form-group is-required full-day">
+            <div class="form-group is-required">
                 <label class="col-md-3 control-label" for="from">
                     <spring:message code="absence.period.startDate" />:
                 </label>
-                <div class="col-md-9">
-                    <form:input id="from" path="startDate" class="form-control" cssErrorClass="form-control error" />
+                <div class="col-md-5">
+                    <form:input id="from" path="startDate" class="form-control" cssErrorClass="form-control error" placeholder="${DATE_PATTERN}" />
+                </div>
+                <div class="col-md-4">
+                    <form:input id="startTime" path="startTime" class="form-control" cssErrorClass="form-control error" placeholder="${TIME_PATTERN}" />
                 </div>
             </div>
 
-            <div class="form-group is-required full-day">
+            <div class="form-group is-required">
                 <label class="control-label col-md-3" for="to">
                     <spring:message code="absence.period.endDate" />:
                 </label>
-                <div class="col-md-9">
-                    <form:input id="to" path="endDate" class="form-control" cssErrorClass="form-control error" />
-                    <span class="help-block info days"></span>
+                <div class="col-md-5">
+                    <form:input id="to" path="endDate" class="form-control" cssErrorClass="form-control error" placeholder="${DATE_PATTERN}" />
+                </div>
+                <div class="col-md-4">
+                    <form:input id="endTime" path="endTime" class="form-control" cssErrorClass="form-control error" placeholder="${TIME_PATTERN}" />
                 </div>
             </div>
 
-            <div class="form-group is-required half-day">
-                <label class="control-label col-md-3" for="at">
-                    <spring:message code="absence.period.startAndEndDate" />:
-                </label>
-                <div class="col-md-9">
-                    <form:input id="at" path="startDateHalf" class="form-control" cssErrorClass="form-control error" />
+            <div class="form-group">
+                <div class="col-md-9 col-md-offset-3">
                     <span class="help-block info days"></span>
                 </div>
             </div>

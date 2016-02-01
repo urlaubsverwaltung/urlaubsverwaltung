@@ -4,8 +4,8 @@
 
 <%@attribute name="dateTime" type="org.joda.time.DateTime" required="true" %>
 
-<c:set var="FORMAT_DATE_PATTERN">
-    <spring:message code="pattern.date"/>
+<c:set var="FORMAT_TIME_PATTERN">
+    <spring:message code="pattern.time"/>
 </c:set>
 
-<joda:format pattern="${FORMAT_DATE_PATTERN}" value="${dateTime}" />
+<joda:format pattern="${FORMAT_TIME_PATTERN}" value="${dateTime}" />

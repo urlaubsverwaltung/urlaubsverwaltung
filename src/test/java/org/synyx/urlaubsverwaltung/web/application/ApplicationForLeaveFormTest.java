@@ -26,19 +26,18 @@ public class ApplicationForLeaveFormTest {
 
         DateMidnight startDate = DateMidnight.now();
         DateMidnight endDate = startDate.plusDays(3);
-        DateMidnight someOtherDate = startDate.minusDays(10);
 
         ApplicationForLeaveForm form = new ApplicationForLeaveForm();
 
         form.setDayLength(DayLength.FULL);
         form.setStartDate(startDate);
         form.setEndDate(endDate);
-        form.setStartDateHalf(someOtherDate);
 
         Application application = form.generateApplicationForLeave();
 
         Assert.assertEquals("Wrong start date", startDate, application.getStartDate());
         Assert.assertEquals("Wrong end date", endDate, application.getEndDate());
+        Assert.assertEquals("Wrong day length", DayLength.FULL, application.getDayLength());
     }
 
 
@@ -46,19 +45,18 @@ public class ApplicationForLeaveFormTest {
     public void ensureGeneratedHalfDayApplicationForLeaveHasCorrectPeriod() {
 
         DateMidnight now = DateMidnight.now();
-        DateMidnight someOtherDate = now.minusDays(10);
 
         ApplicationForLeaveForm form = new ApplicationForLeaveForm();
 
         form.setDayLength(DayLength.MORNING);
-        form.setStartDateHalf(now);
-        form.setStartDate(someOtherDate);
-        form.setEndDate(someOtherDate);
+        form.setStartDate(now);
+        form.setEndDate(now);
 
         Application application = form.generateApplicationForLeave();
 
         Assert.assertEquals("Wrong start date", now, application.getStartDate());
         Assert.assertEquals("Wrong end date", now, application.getEndDate());
+        Assert.assertEquals("Wrong day length", DayLength.MORNING, application.getDayLength());
     }
 
 
