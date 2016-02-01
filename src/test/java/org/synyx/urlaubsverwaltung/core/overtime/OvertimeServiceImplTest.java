@@ -71,6 +71,16 @@ public class OvertimeServiceImplTest {
 
 
     @Test
+    public void ensureRecordingOvertimeSendsNotification() {
+
+        overtimeService.record(overtimeMock, Optional.of("Foo Bar"), authorMock);
+
+        Mockito.verify(mailService)
+            .sendOvertimeNotification(Mockito.eq(overtimeMock), Mockito.any(OvertimeComment.class));
+    }
+
+
+    @Test
     public void ensureCreatesCommentWithCorrectActionForNewOvertime() {
 
         Mockito.when(overtimeMock.isNew()).thenReturn(true);
