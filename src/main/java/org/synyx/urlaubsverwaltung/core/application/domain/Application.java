@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.period.Period;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.util.DateFormat;
 
 import java.math.BigDecimal;
 
@@ -530,8 +531,8 @@ public class Application extends AbstractPersistable<Integer> {
 
         ToStringBuilder toStringBuilder = new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE);
         toStringBuilder.append("id", getId());
-        toStringBuilder.append("startDate", getStartDate());
-        toStringBuilder.append("endDate", getEndDate());
+        toStringBuilder.append("startDate", getStartDate().toString(DateFormat.PATTERN));
+        toStringBuilder.append("endDate", getEndDate().toString(DateFormat.PATTERN));
         toStringBuilder.append("vacationType", getVacationType());
         toStringBuilder.append("twoStageApproval", isTwoStageApproval());
         toStringBuilder.append("status", getStatus().toString());

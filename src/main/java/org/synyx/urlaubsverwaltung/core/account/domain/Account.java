@@ -9,6 +9,7 @@ import org.joda.time.DateTime;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.util.DateFormat;
 
 import java.math.BigDecimal;
 
@@ -179,8 +180,8 @@ public class Account extends AbstractPersistable<Integer> {
 
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) // NOSONAR - Formatting issues
             .append("person", getPerson().getLoginName())
-            .append("validFrom", getValidFrom())
-            .append("validTo", getValidTo())
+            .append("validFrom", getValidFrom().toString(DateFormat.PATTERN))
+            .append("validTo", getValidTo().toString(DateFormat.PATTERN))
             .append("annualVacationDays", getAnnualVacationDays())
             .append("vacationDays", getVacationDays())
             .append("remainingVacationDays", getRemainingVacationDays())

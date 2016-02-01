@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.period.Period;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.util.DateFormat;
 
 import java.util.Date;
 
@@ -254,8 +255,8 @@ public class SickNote extends AbstractPersistable<Integer> {
     public String toString() {
 
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("id", getId())
-            .append("startDate", getStartDate())
-            .append("endDate", getEndDate())
+            .append("startDate", getStartDate().toString(DateFormat.PATTERN))
+            .append("endDate", getEndDate().toString(DateFormat.PATTERN))
             .append("dayLength", getDayLength())
             .append("sickNoteType", getSickNoteType())
             .append("status", getStatus())
