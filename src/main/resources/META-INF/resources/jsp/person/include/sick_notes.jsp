@@ -19,7 +19,7 @@
         <td class="is-centered state ${sickNote.sickNoteType}">
             <span class="hidden-print">
                 <c:choose>
-                    <c:when test="${sickNote.sickNoteType.typeName == 'SICK_NOTE_CHILD'}">
+                    <c:when test="${sickNote.sickNoteType.category == 'SICK_NOTE_CHILD'}">
                         <i class="fa fa-child"></i>
                     </c:when>
                     <c:otherwise>
@@ -31,12 +31,12 @@
         <td>
             <a href="${URL_PREFIX}/sicknote/${sickNote.id}" class="hidden-print">
                 <h4>
-                    <spring:message code="sicknote.title" />
+                    <c:out value="${sickNote.sickNoteType.displayName}"/>
                 </h4>
             </a>
 
             <h4 class="visible-print">
-                <spring:message code="sicknote.title" />
+                <c:out value="${sickNote.sickNoteType.displayName}"/>
             </h4>
 
             <p>

@@ -11,6 +11,7 @@ import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteCategory;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
 
 import java.math.BigDecimal;
@@ -33,8 +34,8 @@ public class ExtendedSickNoteTest {
         DateMidnight endDate = new DateMidnight(2015, 3, 6);
 
         SickNoteType sickNoteType = new SickNoteType();
-        sickNoteType.setTypeName(SickNoteType.SICK_NOTE);
-        sickNoteType.setTypeDisplayName("Krankmeldung");
+        sickNoteType.setCategory(SickNoteCategory.SICK_NOTE);
+        sickNoteType.setDisplayName("Krankmeldung");
 
         SickNote sickNote = new SickNote();
         sickNote.setDayLength(dayLength);

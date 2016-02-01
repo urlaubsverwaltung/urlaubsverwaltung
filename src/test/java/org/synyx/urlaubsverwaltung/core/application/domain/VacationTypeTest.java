@@ -32,6 +32,6 @@ public class VacationTypeTest {
         VacationType vacationType = new VacationType();
         vacationType.setCategory(VacationCategory.HOLIDAY);
 
-        Assert.assertFalse("Categories should match", vacationType.isOfCategory(VacationCategory.OVERTIME));
+        Assert.assertFalse("Categories should not match", vacationType.isOfCategory(VacationCategory.OVERTIME));
     }
 }

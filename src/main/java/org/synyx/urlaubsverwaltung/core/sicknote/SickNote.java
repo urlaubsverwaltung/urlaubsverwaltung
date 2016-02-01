@@ -38,6 +38,11 @@ public class SickNote extends AbstractPersistable<Integer> {
     @ManyToOne
     private Person person;
 
+    /**
+     * Type of sick note.
+     *
+     * @since  2.15.0
+     */
     @ManyToOne
     private SickNoteType sickNoteType;
 

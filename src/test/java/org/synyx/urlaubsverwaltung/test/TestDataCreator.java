@@ -21,6 +21,7 @@ import org.synyx.urlaubsverwaltung.core.person.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.Role;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteCategory;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
@@ -154,8 +155,8 @@ public final class TestDataCreator {
         DayLength dayLength) {
 
         SickNoteType sickNoteType = new SickNoteType();
-        sickNoteType.setTypeName(SickNoteType.SICK_NOTE);
-        sickNoteType.setTypeDisplayName("Krankmeldung");
+        sickNoteType.setCategory(SickNoteCategory.SICK_NOTE);
+        sickNoteType.setDisplayName("Krankmeldung");
 
         SickNote sickNote = new SickNote();
         sickNote.setPerson(person);

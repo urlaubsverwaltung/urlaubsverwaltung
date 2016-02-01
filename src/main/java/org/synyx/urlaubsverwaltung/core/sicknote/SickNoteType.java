@@ -5,18 +5,20 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
+import org.springframework.util.Assert;
+
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 
 
 @Entity
 public class SickNoteType extends AbstractPersistable<Integer> {
 
-    public static final String SICK_NOTE = "SICK_NOTE";
-    public static final String SICK_NOTE_CHILD = "SICK_NOTE_CHILD";
+    @Enumerated(EnumType.STRING)
+    private SickNoteCategory category;
 
-    private String typeName;
-
-    private String typeDisplayName;
+    private String displayName;
 
     @Override
     public void setId(Integer id) {
@@ -25,27 +27,35 @@ public class SickNoteType extends AbstractPersistable<Integer> {
     }
 
 
-    public String getTypeName() {
+    public SickNoteCategory getCategory() {
 
-        return this.typeName;
+        return this.category;
     }
 
 
-    public void setTypeName(String typeName) {
+    public boolean isOfCategory(SickNoteCategory category) {
 
-        this.typeName = typeName;
+        Assert.notNull(category, "Sick note category must be given");
+
+        return getCategory().equals(category);
     }
 
 
-    public String getTypeDisplayName() {
+    public void setCategory(SickNoteCategory category) {
 
-        return typeDisplayName;
+        this.category = category;
     }
 
 
-    public void setTypeDisplayName(String typeDisplayName) {
+    public String getDisplayName() {
 
-        this.typeDisplayName = typeDisplayName;
+        return displayName;
+    }
+
+
+    public void setDisplayName(String displayName) {
+
+        this.displayName = displayName;
     }
 
 

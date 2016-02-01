@@ -17,6 +17,7 @@ import org.synyx.urlaubsverwaltung.core.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.Role;
+import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteCategory;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteTypeService;
 
@@ -195,11 +196,11 @@ public class TestDataCreationService {
         List<SickNoteType> sickNoteTypes = sickNoteTypeService.getSickNoteTypes();
 
         for (SickNoteType sickNoteType : sickNoteTypes) {
-            if (SickNoteType.SICK_NOTE.equals(sickNoteType.getTypeName())) {
+            if (sickNoteType.isOfCategory(SickNoteCategory.SICK_NOTE)) {
                 sickNoteTypeStandard = sickNoteType;
             }
 
-            if (SickNoteType.SICK_NOTE_CHILD.equals(sickNoteType.getTypeName())) {
+            if (sickNoteType.isOfCategory(SickNoteCategory.SICK_NOTE_CHILD)) {
                 sickNoteTypeChild = sickNoteType;
             }
         }

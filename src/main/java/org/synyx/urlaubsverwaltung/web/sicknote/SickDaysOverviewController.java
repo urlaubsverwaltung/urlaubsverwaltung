@@ -22,6 +22,7 @@ import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteCategory;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
@@ -112,7 +113,7 @@ public class SickDaysOverviewController {
             BigDecimal workDays = calendarService.getWorkDays(sickNote.getDayLength(), sickNote.getStartDate(),
                     sickNote.getEndDate(), person);
 
-            if (SickNoteType.SICK_NOTE_CHILD.equals(sickNote.getSickNoteType().getTypeName())) {
+            if (sickNote.getSickNoteType().isOfCategory(SickNoteCategory.SICK_NOTE_CHILD)) {
                 childSickDays.get(person).addDays(SickDays.SickDayType.TOTAL, workDays);
 
                 if (sickNote.isAubPresent()) {

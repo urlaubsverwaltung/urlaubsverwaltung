@@ -8,15 +8,15 @@
             <column name="id" autoIncrement="false" type="INT(10)">
                 <constraints primaryKey="true"/>
             </column>
-            <column name="typeName" type="VARCHAR(255)">
+            <column name="category" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="typeDisplayName" type="VARCHAR(255)" />
+            <column name="displayName" type="VARCHAR(255)" />
         </createTable>
         <sql>
-            INSERT INTO SickNoteType (id, typeName, typeDisplayName) VALUES (1000, 'SICK_NOTE', 'Krankmeldung');
-            INSERT INTO SickNoteType (id, typeName, typeDisplayName) VALUES (2000, 'SICK_NOTE_CHILD', 'Kind-Krankmeldung');
-            INSERT INTO SickNoteType (id, typeName, typeDisplayName) VALUES (3000, 'SICK_NOTE_WITH_CERTIFICATE', 'Krankmeldung mit Bescheinigung');
+            INSERT INTO SickNoteType (id, category, displayName) VALUES (1000, 'SICK_NOTE', 'Krankmeldung');
+            INSERT INTO SickNoteType (id, category, displayName) VALUES (2000, 'SICK_NOTE_CHILD', 'Kind-Krankmeldung');
+            INSERT INTO SickNoteType (id, category, displayName) VALUES (3000, 'OTHER', 'Krankmeldung ohne Krankenschein');
         </sql>
     </changeSet>
 

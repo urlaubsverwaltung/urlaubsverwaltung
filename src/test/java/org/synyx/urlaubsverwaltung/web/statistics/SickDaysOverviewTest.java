@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteCategory;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
 
@@ -39,12 +40,12 @@ public class SickDaysOverviewTest {
     public void ensureGeneratesCorrectSickDaysOverview() {
 
         SickNoteType sickNoteType = new SickNoteType();
-        sickNoteType.setTypeName(SickNoteType.SICK_NOTE);
-        sickNoteType.setTypeDisplayName("Krankmeldung");
+        sickNoteType.setCategory(SickNoteCategory.SICK_NOTE);
+        sickNoteType.setDisplayName("Krankmeldung");
 
         SickNoteType sickNoteTypeChild = new SickNoteType();
-        sickNoteTypeChild.setTypeName(SickNoteType.SICK_NOTE_CHILD);
-        sickNoteTypeChild.setTypeDisplayName("Kind-Krankmeldung");
+        sickNoteTypeChild.setCategory(SickNoteCategory.SICK_NOTE_CHILD);
+        sickNoteTypeChild.setDisplayName("Kind-Krankmeldung");
 
         SickNote sickNoteWithoutAUB = new SickNote();
         sickNoteWithoutAUB.setSickNoteType(sickNoteType);

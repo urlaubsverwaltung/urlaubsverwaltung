@@ -51,7 +51,7 @@
                             <form:select path="vacationType" size="1" cssClass="form-control" cssErrorClass="form-control error">
                                 <c:forEach items="${vacationTypes}" var="vacationType">
                                     <option value="${vacationType.id}">
-                                        <c:out value='${vacationType.typeDisplayName}' />
+                                        <c:out value='${vacationType.displayName}' />
                                     </option>
                                 </c:forEach>
                             </form:select>
@@ -108,15 +108,7 @@
                     </span>
                     <span class="box-text">
                         <h5 class="is-inline-block is-sticky"><c:out value="${sickNote.person.niceName}"/></h5>
-
-                        <c:choose>
-                            <c:when test="${sickNote.type == 'SICK_NOTE_CHILD'}">
-                                <spring:message code="sicknotes.details.title.child" />
-                            </c:when>
-                            <c:otherwise>
-                                <spring:message code="sicknotes.details.title" />
-                            </c:otherwise>
-                        </c:choose>
+                        <spring:message code="sicknotes.details.title" arguments="${sickNote.sickNoteType.displayName}"/>
 
                         <c:choose>
                             <c:when test="${sickNote.startDate == sickNote.endDate}">

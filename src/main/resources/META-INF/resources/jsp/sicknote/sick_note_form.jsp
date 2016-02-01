@@ -152,7 +152,7 @@
                     <div class="col-md-9">
                         <form:select path="sickNoteType" id="sickNoteType" class="form-control" cssErrorClass="form-control error">
                             <c:forEach items="${sickNoteTypes}" var="sickNoteType">
-                                <form:option value="${sickNoteType.id}">${sickNoteType.typeDisplayName}</form:option>
+                                <form:option value="${sickNoteType.id}">${sickNoteType.displayName}</form:option>
                             </c:forEach>
                         </form:select>
                     </div>
