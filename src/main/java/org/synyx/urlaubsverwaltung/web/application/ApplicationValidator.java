@@ -19,7 +19,6 @@ import org.synyx.urlaubsverwaltung.core.calendar.OverlapService;
 import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
-import org.synyx.urlaubsverwaltung.core.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.core.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -78,7 +77,7 @@ public class ApplicationValidator implements Validator {
     @Autowired
     public ApplicationValidator(WorkingTimeService workingTimeService, WorkDaysService calendarService,
         OverlapService overlapService, CalculationService calculationService, SettingsService settingsService,
-                                OvertimeService overtimeService) {
+        OvertimeService overtimeService) {
 
         this.workingTimeService = workingTimeService;
         this.calendarService = calendarService;
@@ -301,11 +300,10 @@ public class ApplicationValidator implements Validator {
             }
         }
 
-
         /**
          * Check overtime of given user
          */
-        Boolean overtimeActive = settingsService.getSettings().getWorkingTimeSettings().getOvertimeActive();
+        Boolean overtimeActive = settingsService.getSettings().getWorkingTimeSettings().isOvertimeActive();
         Boolean isOvertime = VacationType.OVERTIME.equals(application.getVacationType());
 
         if (isOvertime && overtimeActive) {
@@ -315,9 +313,8 @@ public class ApplicationValidator implements Validator {
                 errors.reject(ERROR_NOT_ENOUGH_OVERTIME);
             }
         }
-
-
     }
+
 
     private boolean checkOvertimeHours(Application application) {
 

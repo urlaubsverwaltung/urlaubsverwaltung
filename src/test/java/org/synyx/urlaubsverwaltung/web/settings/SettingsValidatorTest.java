@@ -12,7 +12,8 @@ import org.synyx.urlaubsverwaltung.core.settings.*;
 
 
 /**
- * Daniel Hammann - <hammann@synyx.de>.
+ * @author  Daniel Hammann - <hammann@synyx.de>
+ * @author  Aljona Murygina - <murygina@synyx.de>
  */
 public class SettingsValidatorTest {
 
@@ -24,6 +25,8 @@ public class SettingsValidatorTest {
         settingsValidator = new SettingsValidator();
     }
 
+
+    // Supported class -------------------------------------------------------------------------------------------------
 
     @Test
     public void ensureSettingsClassIsSupported() throws Exception {
@@ -49,6 +52,8 @@ public class SettingsValidatorTest {
     }
 
 
+    // Working time settings: Public holidays --------------------------------------------------------------------------
+
     @Test
     public void ensureWorkingTimeSettingsCanNotBeNull() throws Exception {
 
@@ -66,7 +71,43 @@ public class SettingsValidatorTest {
             .rejectValue("workingTimeSettings.workingDurationForChristmasEve", "error.entry.mandatory");
         Mockito.verify(mockError)
             .rejectValue("workingTimeSettings.workingDurationForNewYearsEve", "error.entry.mandatory");
+    }
+
+
+    // Working time settings: Overtime settings ------------------------------------------------------------------------
+
+    @Test
+    public void ensureOvertimeSettingsAreMandatoryIfOvertimeManagementIsActive() {
+
+        Settings settings = new Settings();
+        WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
+        workingTimeSettings.setOvertimeActive(true);
+        workingTimeSettings.setMaximumOvertime(null);
+        workingTimeSettings.setMinimumOvertime(null);
+
+        Errors mockError = Mockito.mock(Errors.class);
+
+        settingsValidator.validate(settings, mockError);
+
         Mockito.verify(mockError).rejectValue("workingTimeSettings.maximumOvertime", "error.entry.mandatory");
+        Mockito.verify(mockError).rejectValue("workingTimeSettings.minimumOvertime", "error.entry.mandatory");
+    }
+
+
+    @Test
+    public void ensureOvertimeSettingsAreNotMandatoryIfOvertimeManagementIsInactive() {
+
+        Settings settings = new Settings();
+        WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
+        workingTimeSettings.setOvertimeActive(false);
+        workingTimeSettings.setMaximumOvertime(null);
+        workingTimeSettings.setMinimumOvertime(null);
+
+        Errors mockError = Mockito.mock(Errors.class);
+
+        settingsValidator.validate(settings, mockError);
+
+        Mockito.verifyZeroInteractions(mockError);
     }
 
 
@@ -75,6 +116,7 @@ public class SettingsValidatorTest {
 
         Settings settings = new Settings();
         WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
+        workingTimeSettings.setOvertimeActive(true);
         workingTimeSettings.setMaximumOvertime(-1);
 
         Errors mockError = Mockito.mock(Errors.class);
@@ -84,6 +126,24 @@ public class SettingsValidatorTest {
         Mockito.verify(mockError).rejectValue("workingTimeSettings.maximumOvertime", "error.entry.invalid");
     }
 
+
+    @Test
+    public void ensureMinimumOvertimeCanNotBeNegative() {
+
+        Settings settings = new Settings();
+        WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
+        workingTimeSettings.setOvertimeActive(true);
+        workingTimeSettings.setMinimumOvertime(-1);
+
+        Errors mockError = Mockito.mock(Errors.class);
+
+        settingsValidator.validate(settings, mockError);
+
+        Mockito.verify(mockError).rejectValue("workingTimeSettings.minimumOvertime", "error.entry.invalid");
+    }
+
+
+    // Absence settings ------------------------------------------------------------------------------------------------
 
     @Test
     public void ensureAbsenceSettingsCanNotBeNull() {
@@ -192,6 +252,8 @@ public class SettingsValidatorTest {
     }
 
 
+    // Mail settings ---------------------------------------------------------------------------------------------------
+
     @Test
     public void ensureMailSettingsAreNotMandatoryIfDeactivated() {
 
@@ -283,6 +345,8 @@ public class SettingsValidatorTest {
         Mockito.verify(mockError).rejectValue("mailSettings.port", "error.entry.invalid");
     }
 
+
+    // Calendar settings -----------------------------------------------------------------------------------------------
 
     @Test
     public void ensureCalendarSettingsAreMandatory() {
@@ -396,6 +460,8 @@ public class SettingsValidatorTest {
     }
 
 
+    // Exchange calendar settings --------------------------------------------------------------------------------------
+
     @Test
     public void ensureExchangeCalendarSettingsAreNotMandatoryIfDeactivated() {
 
@@ -456,4 +522,7 @@ public class SettingsValidatorTest {
 
         Mockito.verify(mockError).rejectValue("calendarSettings.exchangeCalendarSettings.email", "error.entry.mail");
     }
+
+    // To be continued ----------------------------------------------------------------------------------------------
+
 }

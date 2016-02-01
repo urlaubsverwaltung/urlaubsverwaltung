@@ -77,16 +77,25 @@ public class SettingsValidator implements Validator {
 
         WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
 
-        Integer maximumOvertime = workingTimeSettings.getMaximumOvertime();
+        if (!workingTimeSettings.isOvertimeActive()) {
+            return;
+        }
 
-        if (maximumOvertime == null) {
-            errors.rejectValue("workingTimeSettings.maximumOvertime", ERROR_MANDATORY_FIELD);
+        validateOvertimeLimit(workingTimeSettings.getMaximumOvertime(), "workingTimeSettings.maximumOvertime", errors);
+        validateOvertimeLimit(workingTimeSettings.getMinimumOvertime(), "workingTimeSettings.minimumOvertime", errors);
+    }
+
+
+    private void validateOvertimeLimit(Integer limit, String field, Errors errors) {
+
+        if (limit == null) {
+            errors.rejectValue(field, ERROR_MANDATORY_FIELD);
 
             return;
         }
 
-        if (maximumOvertime < 0) {
-            errors.rejectValue("workingTimeSettings.maximumOvertime", ERROR_INVALID_ENTRY);
+        if (limit < 0) {
+            errors.rejectValue(field, ERROR_INVALID_ENTRY);
         }
     }
 
