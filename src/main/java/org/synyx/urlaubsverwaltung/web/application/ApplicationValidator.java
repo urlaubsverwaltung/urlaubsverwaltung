@@ -45,6 +45,7 @@ public class ApplicationValidator implements Validator {
     private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
     private static final String ERROR_LENGTH = "error.entry.tooManyChars";
     private static final String ERROR_PERIOD = "error.entry.invalidPeriod";
+    private static final String ERROR_HALF_DAY_PERIOD = "application.error.halfDayPeriod";
     private static final String ERROR_MISSING_REASON = "application.error.missingReasonForSpecialLeave";
     private static final String ERROR_PAST = "application.error.tooFarInThePast";
     private static final String ERROR_TOO_LONG = "application.error.tooFarInTheFuture";
@@ -125,7 +126,7 @@ public class ApplicationValidator implements Validator {
         validateNotNull(endDate, ATTRIBUTE_END_DATE, errors);
 
         if (startDate != null && endDate != null) {
-            validatePeriod(startDate, endDate, errors);
+            validatePeriod(startDate, endDate, applicationForLeave.getDayLength(), errors);
         }
 
         // TODO: Validate time
@@ -141,43 +142,52 @@ public class ApplicationValidator implements Validator {
     }
 
 
-    private void validatePeriod(DateMidnight startDate, DateMidnight endDate, Errors errors) {
+    private void validatePeriod(DateMidnight startDate, DateMidnight endDate, DayLength dayLength, Errors errors) {
 
         // ensure that startDate < endDate
         if (startDate.isAfter(endDate)) {
             errors.reject(ERROR_PERIOD);
         } else {
-            validateNotTooFarInTheFuture(endDate, errors);
-            validateNotTooFarInThePast(startDate, errors);
+            Settings settings = settingsService.getSettings();
+            AbsenceSettings absenceSettings = settings.getAbsenceSettings();
+
+            validateNotTooFarInTheFuture(endDate, absenceSettings, errors);
+            validateNotTooFarInThePast(startDate, absenceSettings, errors);
+            validateSameDayIfHalfDayPeriod(startDate, endDate, dayLength, errors);
         }
     }
 
 
-    private void validateNotTooFarInTheFuture(DateMidnight date, Errors errors) {
+    private void validateNotTooFarInTheFuture(DateMidnight date, AbsenceSettings settings, Errors errors) {
 
-        Settings settings = settingsService.getSettings();
-        AbsenceSettings absenceSettings = settings.getAbsenceSettings();
-
-        Integer maximumMonths = absenceSettings.getMaximumMonthsToApplyForLeaveInAdvance();
+        Integer maximumMonths = settings.getMaximumMonthsToApplyForLeaveInAdvance();
         DateMidnight future = DateMidnight.now().plusMonths(maximumMonths);
 
         if (date.isAfter(future)) {
             errors.reject(ERROR_TOO_LONG,
-                new Object[] { absenceSettings.getMaximumMonthsToApplyForLeaveInAdvance().toString() }, null);
+                new Object[] { settings.getMaximumMonthsToApplyForLeaveInAdvance().toString() }, null);
         }
     }
 
 
-    private void validateNotTooFarInThePast(DateMidnight date, Errors errors) {
+    private void validateNotTooFarInThePast(DateMidnight date, AbsenceSettings settings, Errors errors) {
 
-        Settings settings = settingsService.getSettings();
-        AbsenceSettings absenceSettings = settings.getAbsenceSettings();
-
-        Integer maximumMonths = absenceSettings.getMaximumMonthsToApplyForLeaveInAdvance();
+        Integer maximumMonths = settings.getMaximumMonthsToApplyForLeaveInAdvance();
         DateMidnight past = DateMidnight.now().minusMonths(maximumMonths);
 
         if (date.isBefore(past)) {
             errors.reject(ERROR_PAST);
+        }
+    }
+
+
+    private void validateSameDayIfHalfDayPeriod(DateMidnight startDate, DateMidnight endDate, DayLength dayLength,
+        Errors errors) {
+
+        boolean isHalfDay = dayLength == DayLength.MORNING || dayLength == DayLength.NOON;
+
+        if (isHalfDay && !startDate.isEqual(endDate)) {
+            errors.reject(ERROR_HALF_DAY_PERIOD);
         }
     }
 

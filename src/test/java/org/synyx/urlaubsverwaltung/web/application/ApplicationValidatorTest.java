@@ -112,7 +112,7 @@ public class ApplicationValidatorTest {
     }
 
 
-    // Validate period -------------------------------------------------------------------------------------------------
+    // Validate period (date) ------------------------------------------------------------------------------------------
 
     @Test
     public void ensureStartDateIsMandatory() {
@@ -182,6 +182,34 @@ public class ApplicationValidatorTest {
                 new Object[] { settings.getAbsenceSettings().getMaximumMonthsToApplyForLeaveInAdvance().toString() },
                 null);
     }
+
+
+    @Test
+    public void ensureMorningApplicationForLeaveMustBeOnSameDate() {
+
+        appForm.setDayLength(DayLength.MORNING);
+        appForm.setStartDate(DateMidnight.now());
+        appForm.setEndDate(DateMidnight.now().plusDays(1));
+
+        validator.validate(appForm, errors);
+
+        Mockito.verify(errors).reject("application.error.halfDayPeriod");
+    }
+
+
+    @Test
+    public void ensureNoonApplicationForLeaveMustBeOnSameDate() {
+
+        appForm.setDayLength(DayLength.NOON);
+        appForm.setStartDate(DateMidnight.now());
+        appForm.setEndDate(DateMidnight.now().plusDays(1));
+
+        validator.validate(appForm, errors);
+
+        Mockito.verify(errors).reject("application.error.halfDayPeriod");
+    }
+
+    // Validate period (time) ------------------------------------------------------------------------------------------
 
 
     // Validate reason -------------------------------------------------------------------------------------------------
