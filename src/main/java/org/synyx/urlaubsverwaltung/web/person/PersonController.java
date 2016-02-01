@@ -132,7 +132,7 @@ public class PersonController {
 
         Person signedInUser = sessionService.getSignedInUser();
 
-        if (signedInUser.hasRole(Role.BOSS)) {
+        if (signedInUser.hasRole(Role.BOSS) || signedInUser.hasRole(Role.OFFICE)) {
             return personService.getActivePersons();
         }
 
@@ -160,7 +160,7 @@ public class PersonController {
 
         Person signedInUser = sessionService.getSignedInUser();
 
-        if (signedInUser.hasRole(Role.BOSS)) {
+        if (signedInUser.hasRole(Role.BOSS) || signedInUser.hasRole(Role.OFFICE)) {
             return personService.getInactivePersons();
         }
 

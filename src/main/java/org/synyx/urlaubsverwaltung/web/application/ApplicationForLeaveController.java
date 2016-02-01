@@ -1,8 +1,5 @@
 package org.synyx.urlaubsverwaltung.web.application;
 
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.ImmutableList;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -76,10 +73,11 @@ public class ApplicationForLeaveController {
         boolean isHeadOf = user.hasRole(Role.DEPARTMENT_HEAD);
         boolean isSecondStage = user.hasRole(Role.SECOND_STAGE_AUTHORITY);
         boolean isBoss = user.hasRole(Role.BOSS);
+        boolean isOffice = user.hasRole(Role.OFFICE);
 
-        if (isBoss) {
-            // Boss can see all waiting and temporary allowed applications leave
-            return getApplicationsForLeaveForBoss();
+        if (isBoss || isOffice) {
+            // Boss and Office can see all waiting and temporary allowed applications leave
+            return getApplicationsForLeaveForBossOrOffice();
         }
 
         if (isHeadOf) {
@@ -96,7 +94,7 @@ public class ApplicationForLeaveController {
     }
 
 
-    private List<ApplicationForLeave> getApplicationsForLeaveForBoss() {
+    private List<ApplicationForLeave> getApplicationsForLeaveForBossOrOffice() {
 
         List<Application> applications = new ArrayList<>();
 
