@@ -69,7 +69,7 @@ public class TestDataCreationService {
     @PostConstruct
     public void createTestData() throws NoSuchAlgorithmException {
 
-        LOG.info("Test data will be created...");
+        LOG.info("STARTING CREATION OF TEST DATA --------------------------------------------------------------------");
 
         // Users to be able to sign in with
         Person user = personDataProvider.createTestPerson(TestUser.USER.getLogin(), PASSWORD, "Klaus", "Müller",
@@ -118,6 +118,8 @@ public class TestDataCreationService {
         createTestData(hans);
         createTestData(niko);
         createTestData(manager);
+
+        LOG.info("DONE CREATION OF TEST DATA ------------------------------------------------------------------------");
     }
 
 
