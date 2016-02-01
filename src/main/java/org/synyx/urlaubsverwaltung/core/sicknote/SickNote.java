@@ -37,8 +37,8 @@ public class SickNote extends AbstractPersistable<Integer> {
     @ManyToOne
     private Person person;
 
-    @Enumerated(EnumType.STRING)
-    private SickNoteType type;
+    @ManyToOne
+    private SickNoteType sickNoteType;
 
     /**
      * Sick note period: start and end date of the period, the employee is sick.
@@ -89,15 +89,15 @@ public class SickNote extends AbstractPersistable<Integer> {
     }
 
 
-    public SickNoteType getType() {
+    public SickNoteType getSickNoteType() {
 
-        return type;
+        return sickNoteType;
     }
 
 
-    public void setType(SickNoteType type) {
+    public void setSickNoteType(SickNoteType sickNoteType) {
 
-        this.type = type;
+        this.sickNoteType = sickNoteType;
     }
 
 
@@ -257,7 +257,7 @@ public class SickNote extends AbstractPersistable<Integer> {
             .append("startDate", getStartDate())
             .append("endDate", getEndDate())
             .append("dayLength", getDayLength())
-            .append("type", getType())
+            .append("sickNoteType", getSickNoteType())
             .append("status", getStatus())
             .append("person", getPerson())
             .toString();

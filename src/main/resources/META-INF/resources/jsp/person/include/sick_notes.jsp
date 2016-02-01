@@ -16,10 +16,10 @@
         </c:otherwise>
     </c:choose>
     <tr class="${CSS_CLASS}" onclick="navigate('${URL_PREFIX}/sicknote/${sickNote.id}');">
-        <td class="is-centered state ${sickNote.type}">
+        <td class="is-centered state ${sickNote.sickNoteType}">
             <span class="hidden-print">
                 <c:choose>
-                    <c:when test="${sickNote.type == 'SICK_NOTE_CHILD'}">
+                    <c:when test="${sickNote.sickNoteType.typeName == 'SICK_NOTE_CHILD'}">
                         <i class="fa fa-child"></i>
                     </c:when>
                     <c:otherwise>

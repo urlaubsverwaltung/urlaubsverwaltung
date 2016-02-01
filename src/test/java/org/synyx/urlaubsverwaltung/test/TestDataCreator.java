@@ -28,8 +28,6 @@ import java.lang.reflect.Field;
 
 import java.math.BigDecimal;
 
-import java.security.SecureRandom;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -153,12 +151,16 @@ public final class TestDataCreator {
     public static SickNote createSickNote(Person person, DateMidnight startDate, DateMidnight endDate,
         DayLength dayLength) {
 
+        SickNoteType sickNoteType = new SickNoteType();
+        sickNoteType.setTypeName(SickNoteType.SICK_NOTE);
+        sickNoteType.setTypeDisplayName("Krankmeldung");
+
         SickNote sickNote = new SickNote();
         sickNote.setPerson(person);
         sickNote.setStartDate(startDate);
         sickNote.setEndDate(endDate);
         sickNote.setDayLength(dayLength);
-        sickNote.setType(SickNoteType.SICK_NOTE);
+        sickNote.setSickNoteType(sickNoteType);
         sickNote.setStatus(SickNoteStatus.ACTIVE);
 
         return sickNote;

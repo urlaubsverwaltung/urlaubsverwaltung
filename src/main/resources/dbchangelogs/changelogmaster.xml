@@ -39,5 +39,5 @@
     <include file="dbchangelogs/changelog-2.13.0-add-overtime-settings.xml"/>
     <include file="dbchangelogs/changelog-2.13.1-remove-duplicated-accounts.xml"/>
     <include file="dbchangelogs/changelog-2.15.0-add-second-stage-authority.xml"/>
-
+    <include file="dbchangelogs/changelog-2.15.0-add-SickNoteType.xml"/>
 </databaseChangeLog>

@@ -12,7 +12,11 @@ import org.springframework.ui.Model;
 
 import org.springframework.validation.DataBinder;
 
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -108,7 +112,7 @@ public class SickDaysOverviewController {
             BigDecimal workDays = calendarService.getWorkDays(sickNote.getDayLength(), sickNote.getStartDate(),
                     sickNote.getEndDate(), person);
 
-            if (sickNote.getType().equals(SickNoteType.SICK_NOTE_CHILD)) {
+            if (SickNoteType.SICK_NOTE_CHILD.equals(sickNote.getSickNoteType().getTypeName())) {
                 childSickDays.get(person).addDays(SickDays.SickDayType.TOTAL, workDays);
 
                 if (sickNote.isAubPresent()) {

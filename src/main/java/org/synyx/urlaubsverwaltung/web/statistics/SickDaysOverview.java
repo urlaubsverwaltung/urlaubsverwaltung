@@ -30,7 +30,7 @@ public class SickDaysOverview {
                 continue;
             }
 
-            if (sickNote.getType().equals(SickNoteType.SICK_NOTE_CHILD)) {
+            if (sickNote.getSickNoteType().getTypeName().equals(SickNoteType.SICK_NOTE_CHILD)) {
                 this.childSickDays.addDays(SickDays.SickDayType.TOTAL, getTotalDays(sickNote, calendarService));
 
                 if (sickNote.isAubPresent()) {

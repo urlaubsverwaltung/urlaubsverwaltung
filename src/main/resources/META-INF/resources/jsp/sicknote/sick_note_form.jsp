@@ -150,9 +150,9 @@
                     </label>
 
                     <div class="col-md-9">
-                        <form:select path="type" id="sickNoteType" class="form-control" cssErrorClass="form-control error">
-                            <c:forEach items="${sickNoteTypes}" var="type">
-                                <form:option value="${type}"><spring:message code="sicknote.type.${type}" /></form:option>
+                        <form:select path="sickNoteType" id="sickNoteType" class="form-control" cssErrorClass="form-control error">
+                            <c:forEach items="${sickNoteTypes}" var="sickNoteType">
+                                <form:option value="${sickNoteType.id}">${sickNoteType.typeDisplayName}</form:option>
                             </c:forEach>
                         </form:select>
                     </div>

@@ -37,14 +37,13 @@ class SickNoteDataProvider {
 
         SickNote sickNote = null;
 
-        if (durationChecker.startAndEndDatesAreInCurrentYear(startDate, endDate)
-                && durationChecker.durationIsGreaterThanZero(startDate, endDate, person)) {
+        if (durationChecker.durationIsGreaterThanZero(startDate, endDate, person)) {
             sickNote = new SickNote();
             sickNote.setPerson(person);
             sickNote.setStartDate(startDate);
             sickNote.setEndDate(endDate);
             sickNote.setStatus(SickNoteStatus.ACTIVE);
-            sickNote.setType(type);
+            sickNote.setSickNoteType(type);
             sickNote.setDayLength(dayLength);
 
             if (withAUB) {
@@ -52,7 +51,7 @@ class SickNoteDataProvider {
                 sickNote.setAubEndDate(endDate);
             }
 
-            sickNoteInteractionService.create(sickNote, office);
+            sickNote = sickNoteInteractionService.create(sickNote, office);
         }
 
         return sickNote;

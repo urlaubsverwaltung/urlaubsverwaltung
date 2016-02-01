@@ -72,7 +72,7 @@
                 <div class="box">
                     <span class="box-icon bg-red">
                         <c:choose>
-                            <c:when test="${sickNote.type == 'SICK_NOTE_CHILD'}">
+                            <c:when test="${sickNote.sickNoteType.typeName == 'SICK_NOTE_CHILD'}">
                                 <i class="fa fa-child"></i>
                             </c:when>
                             <c:otherwise>
@@ -83,7 +83,7 @@
                     <span class="box-text">
                         <h5 class="is-inline-block is-sticky"><c:out value="${sickNote.person.niceName}"/></h5>
                         <c:choose>
-                            <c:when test="${sickNote.type == 'SICK_NOTE_CHILD'}">
+                            <c:when test="${sickNote.sickNoteType.typeName == 'SICK_NOTE_CHILD'}">
                                 <spring:message code="sicknotes.details.title.child" />
                             </c:when>
                             <c:otherwise>

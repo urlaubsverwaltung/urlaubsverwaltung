@@ -35,7 +35,7 @@ class AbsenceResponse {
         this.to = sickNote.getEndDate().toString(RestApiDateFormat.PATTERN);
         this.dayLength = sickNote.getDayLength().getDuration();
         this.person = new PersonResponse(sickNote.getPerson());
-        this.type = sickNote.getType().name();
+        this.type = sickNote.getSickNoteType().getTypeName();
         this.status = sickNote.isActive() ? "ACTIVE" : "INACTIVE";
     }
 
