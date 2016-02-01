@@ -24,6 +24,8 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.math.BigDecimal;
 
+import java.sql.Time;
+
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -115,7 +117,7 @@ public class ApplicationValidatorTest {
     }
 
 
-    // Validate period -------------------------------------------------------------------------------------------------
+    // Validate period (date) ------------------------------------------------------------------------------------------
 
     @Test
     public void ensureStartDateIsMandatory() {
@@ -138,34 +140,6 @@ public class ApplicationValidatorTest {
         validator.validate(appForm, errors);
 
         Mockito.verify(errors).rejectValue("endDate", "error.entry.mandatory");
-    }
-
-
-    @Test
-    public void ensureStartDateIsNotMandatoryForHalfDays() {
-
-        appForm.setDayLength(DayLength.MORNING);
-        appForm.setStartDateHalf(DateMidnight.now());
-
-        appForm.setStartDate(null);
-
-        validator.validate(appForm, errors);
-
-        Mockito.verify(errors, Mockito.never()).reject(Mockito.anyString());
-        Mockito.verify(errors, Mockito.never()).rejectValue(Mockito.anyString(), Mockito.anyString());
-    }
-
-
-    @Test
-    public void ensureStartDateHalfIsNotMandatoryForFullDays() {
-
-        appForm.setDayLength(DayLength.FULL);
-        appForm.setStartDateHalf(null);
-
-        validator.validate(appForm, errors);
-
-        Mockito.verify(errors, Mockito.never()).reject(Mockito.anyString());
-        Mockito.verify(errors, Mockito.never()).rejectValue(Mockito.anyString(), Mockito.anyString());
     }
 
 
@@ -216,33 +190,146 @@ public class ApplicationValidatorTest {
 
 
     @Test
-    public void ensureVeryPastDateForHalfDayIsNotValid() {
-
-        DateMidnight pastDate = DateMidnight.now().minusYears(10);
+    public void ensureMorningApplicationForLeaveMustBeOnSameDate() {
 
         appForm.setDayLength(DayLength.MORNING);
-        appForm.setStartDateHalf(pastDate);
+        appForm.setStartDate(DateMidnight.now());
+        appForm.setEndDate(DateMidnight.now().plusDays(1));
 
         validator.validate(appForm, errors);
 
-        Mockito.verify(errors).reject("application.error.tooFarInThePast");
+        Mockito.verify(errors).reject("application.error.halfDayPeriod");
     }
 
 
     @Test
-    public void ensureVeryFutureDateForHalfDayIsNotValid() {
-
-        DateMidnight futureDate = DateMidnight.now().plusYears(10);
+    public void ensureNoonApplicationForLeaveMustBeOnSameDate() {
 
         appForm.setDayLength(DayLength.NOON);
-        appForm.setStartDateHalf(futureDate);
+        appForm.setStartDate(DateMidnight.now());
+        appForm.setEndDate(DateMidnight.now().plusDays(1));
 
         validator.validate(appForm, errors);
 
-        Mockito.verify(errors)
-            .reject("application.error.tooFarInTheFuture",
-                new Object[] { settings.getAbsenceSettings().getMaximumMonthsToApplyForLeaveInAdvance().toString() },
-                null);
+        Mockito.verify(errors).reject("application.error.halfDayPeriod");
+    }
+
+
+    @Test
+    public void ensureSameDateAsStartAndEndDateIsValidForFullDayPeriod() {
+
+        DateMidnight date = DateMidnight.now();
+
+        appForm.setDayLength(DayLength.FULL);
+        appForm.setStartDate(date);
+        appForm.setEndDate(date);
+
+        validator.validate(appForm, errors);
+
+        Mockito.verify(errors, Mockito.never()).reject(Mockito.anyString());
+    }
+
+
+    @Test
+    public void ensureSameDateAsStartAndEndDateIsValidForMorningPeriod() {
+
+        DateMidnight date = DateMidnight.now();
+
+        appForm.setDayLength(DayLength.MORNING);
+        appForm.setStartDate(date);
+        appForm.setEndDate(date);
+
+        validator.validate(appForm, errors);
+
+        Mockito.verify(errors, Mockito.never()).reject(Mockito.anyString());
+    }
+
+
+    @Test
+    public void ensureSameDateAsStartAndEndDateIsValidForNoonPeriod() {
+
+        DateMidnight date = DateMidnight.now();
+
+        appForm.setDayLength(DayLength.NOON);
+        appForm.setStartDate(date);
+        appForm.setEndDate(date);
+
+        validator.validate(appForm, errors);
+
+        Mockito.verify(errors, Mockito.never()).reject(Mockito.anyString());
+    }
+
+
+    // Validate period (time) ------------------------------------------------------------------------------------------
+
+    @Test
+    public void ensureTimeIsNotMandatory() {
+
+        appForm.setStartTime(null);
+        appForm.setEndTime(null);
+
+        validator.validate(appForm, errors);
+
+        Mockito.verify(errors, Mockito.never()).reject(Mockito.anyString());
+    }
+
+
+    @Test
+    public void ensureProvidingStartTimeWithoutEndTimeIsInvalid() {
+
+        appForm.setStartTime(Time.valueOf("09:15:00"));
+        appForm.setEndTime(null);
+
+        validator.validate(appForm, errors);
+
+        Mockito.verify(errors).reject("error.entry.invalidPeriod");
+    }
+
+
+    @Test
+    public void ensureProvidingEndTimeWithoutStartTimeIsInvalid() {
+
+        appForm.setStartTime(null);
+        appForm.setEndTime(Time.valueOf("09:15:00"));
+
+        validator.validate(appForm, errors);
+
+        Mockito.verify(errors).reject("error.entry.invalidPeriod");
+    }
+
+
+    @Test
+    public void ensureStartTimeMustBeBeforeEndTime() {
+
+        DateMidnight date = DateMidnight.now();
+
+        appForm.setDayLength(DayLength.MORNING);
+        appForm.setStartDate(date);
+        appForm.setEndDate(date);
+        appForm.setStartTime(Time.valueOf("13:30:00"));
+        appForm.setEndTime(Time.valueOf("09:15:00"));
+
+        validator.validate(appForm, errors);
+
+        Mockito.verify(errors).reject("error.entry.invalidPeriod");
+    }
+
+
+    @Test
+    public void ensureStartTimeAndEndTimeMustNotBeEquals() {
+
+        DateMidnight date = DateMidnight.now();
+        Time time = Time.valueOf("13:30:00");
+
+        appForm.setDayLength(DayLength.MORNING);
+        appForm.setStartDate(date);
+        appForm.setEndDate(date);
+        appForm.setStartTime(time);
+        appForm.setEndTime(time);
+
+        validator.validate(appForm, errors);
+
+        Mockito.verify(errors).reject("error.entry.invalidPeriod");
     }
 
 
@@ -370,14 +457,14 @@ public class ApplicationValidatorTest {
     public void ensureApplyingHalfDayForLeaveWithNotEnoughVacationDaysIsNotValid() {
 
         appForm.setDayLength(DayLength.NOON);
-        appForm.setStartDateHalf(DateMidnight.now());
+        appForm.setStartDate(DateMidnight.now());
+        appForm.setEndDate(DateMidnight.now());
         appForm.setVacationType(TestDataCreator.getVacationType(VacationType.HOLIDAY));
 
         Mockito.when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
-        Mockito.when(calendarService.getWorkDays(Mockito.eq(appForm.getDayLength()),
-                    Mockito.eq(appForm.getStartDateHalf()), Mockito.eq(appForm.getStartDateHalf()),
-                    Mockito.eq(appForm.getPerson())))
+        Mockito.when(calendarService.getWorkDays(Mockito.eq(appForm.getDayLength()), Mockito.eq(appForm.getStartDate()),
+                    Mockito.eq(appForm.getEndDate()), Mockito.eq(appForm.getPerson())))
             .thenReturn(BigDecimal.ONE);
 
         Mockito.when(overlapService.checkOverlap(Mockito.any(Application.class)))
@@ -536,13 +623,14 @@ public class ApplicationValidatorTest {
         appForm.setStartDate(null);
         appForm.setEndDate(null);
 
-        appForm.setStartDateHalf(DateMidnight.now());
+        appForm.setStartDate(DateMidnight.now());
+        appForm.setEndDate(DateMidnight.now());
         appForm.setDayLength(DayLength.MORNING);
 
         Mockito.when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
         Mockito.when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(Mockito.any(Person.class),
-                    Mockito.eq(appForm.getStartDateHalf())))
+                    Mockito.eq(appForm.getStartDate())))
             .thenReturn(Optional.empty());
 
         validator.validate(appForm, errors);
@@ -550,7 +638,7 @@ public class ApplicationValidatorTest {
         Mockito.verify(errors).reject("application.error.noValidWorkingTime");
 
         Mockito.verify(workingTimeService)
-            .getByPersonAndValidityDateEqualsOrMinorDate(appForm.getPerson(), appForm.getStartDateHalf());
+            .getByPersonAndValidityDateEqualsOrMinorDate(appForm.getPerson(), appForm.getStartDate());
         Mockito.verifyZeroInteractions(calendarService);
         Mockito.verifyZeroInteractions(overlapService);
         Mockito.verifyZeroInteractions(calculationService);

@@ -21,6 +21,10 @@
 
 <spring:url var="URL_PREFIX" value="/web"/>
 
+<c:set var="DATE_PATTERN">
+    <spring:message code="pattern.date"/>
+</c:set>
+
 
 <div class="content">
 <div class="container">
@@ -318,7 +322,7 @@
                 <spring:message code="person.form.workingTime.validityPeriod" />:
             </label>
             <div class="col-md-9">
-                <form:input id="validFrom" path="validFrom" class="form-control" cssErrorClass="form-control error" placeholder="dd.MM.yyyy" />
+                <form:input id="validFrom" path="validFrom" class="form-control" cssErrorClass="form-control error" placeholder="${DATE_PATTERN}" />
                 <span class="help-inline"><form:errors path="validFrom" cssClass="error"/></span>
             </div>
         </div>
@@ -381,7 +385,7 @@
 
             <div class="col-md-9">
                 <form:input id="holidaysAccountValidFrom" path="holidaysAccountValidFrom" class="form-control"
-                            cssErrorClass="form-control error" placeholder="dd.MM.yyyy"/>
+                            cssErrorClass="form-control error" placeholder="${DATE_PATTERN}"/>
                 <span class="help-inline"><form:errors path="holidaysAccountValidFrom" cssClass="error"/></span>
             </div>
         </div>
@@ -393,7 +397,7 @@
 
             <div class="col-md-9">
                 <form:input id="holidaysAccountValidTo" path="holidaysAccountValidTo" class="form-control"
-                            cssErrorClass="form-control error" placeholder="dd.MM.yyyy"/>
+                            cssErrorClass="form-control error" placeholder="${DATE_PATTERN}"/>
                 <span class="help-inline"><form:errors path="holidaysAccountValidTo" cssClass="error"/></span>
             </div>
         </div>

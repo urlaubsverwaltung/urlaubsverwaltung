@@ -33,10 +33,13 @@ import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.DateMidnightPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.PersonPropertyEditor;
+import org.synyx.urlaubsverwaltung.web.TimePropertyEditor;
 import org.synyx.urlaubsverwaltung.web.person.PersonConstants;
 import org.synyx.urlaubsverwaltung.web.person.UnknownPersonException;
 
 import java.math.BigDecimal;
+
+import java.sql.Time;
 
 import java.util.List;
 import java.util.Locale;
@@ -74,6 +77,7 @@ public class ApplyForLeaveController {
     public void initBinder(DataBinder binder, Locale locale) {
 
         binder.registerCustomEditor(DateMidnight.class, new DateMidnightPropertyEditor());
+        binder.registerCustomEditor(Time.class, new TimePropertyEditor());
         binder.registerCustomEditor(BigDecimal.class, new DecimalNumberPropertyEditor(locale));
         binder.registerCustomEditor(Person.class, new PersonPropertyEditor(personService));
     }

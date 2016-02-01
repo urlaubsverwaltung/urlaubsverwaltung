@@ -29,23 +29,14 @@
 
             var $from = $("#from");
             var $to = $("#to");
-            var $at = $("#at");
 
             if (this.id === "from" && $to.val() === "") {
                 $to.datepicker("setDate", selectedDate);
             }
 
             var dayLength = $('input:radio[name=dayLength]:checked').val();
-            var startDate = "";
-            var toDate = "";
-
-            if (dayLength === "FULL") {
-                startDate = $from.datepicker("getDate");
-                toDate = $to.datepicker("getDate");
-            } else {
-                startDate = $at.datepicker("getDate");
-                toDate = $at.datepicker("getDate");
-            }
+            var startDate = $from.datepicker("getDate");
+            var toDate = $to.datepicker("getDate");
 
             sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, getPersonId(), ".days");
             sendGetDepartmentVacationsRequest(urlPrefix, startDate, toDate, personId, "#departmentVacations");

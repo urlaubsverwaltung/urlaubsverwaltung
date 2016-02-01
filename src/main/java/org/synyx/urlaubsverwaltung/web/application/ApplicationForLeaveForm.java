@@ -1,7 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package org.synyx.urlaubsverwaltung.web.application;
 
 import org.joda.time.DateMidnight;
@@ -12,6 +9,8 @@ import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 
 import java.math.BigDecimal;
+
+import java.sql.Time;
 
 
 /**
@@ -24,11 +23,14 @@ public class ApplicationForLeaveForm {
     // person of the application for leave
     private Person person;
 
+    // period: date and time
     private DateMidnight startDate;
 
-    private DateMidnight startDateHalf;
+    private Time startTime;
 
     private DateMidnight endDate;
+
+    private Time endTime;
 
     // Type of holiday, e.g. holiday, special leave, etc.
     private VacationType vacationType;
@@ -148,15 +150,27 @@ public class ApplicationForLeaveForm {
     }
 
 
-    public DateMidnight getStartDateHalf() {
+    public Time getStartTime() {
 
-        return startDateHalf;
+        return startTime;
     }
 
 
-    public void setStartDateHalf(DateMidnight startDateHalf) {
+    public void setStartTime(Time startTime) {
 
-        this.startDateHalf = startDateHalf;
+        this.startTime = startTime;
+    }
+
+
+    public Time getEndTime() {
+
+        return endTime;
+    }
+
+
+    public void setEndTime(Time endTime) {
+
+        this.endTime = endTime;
     }
 
 
@@ -201,7 +215,12 @@ public class ApplicationForLeaveForm {
         Application applicationForLeave = new Application();
 
         applicationForLeave.setPerson(person);
-        applicationForLeave.setAddress(address);
+
+        applicationForLeave.setStartDate(startDate);
+        applicationForLeave.setEndDate(endDate);
+        applicationForLeave.setStartTime(startTime);
+        applicationForLeave.setEndTime(endTime);
+
         applicationForLeave.setVacationType(vacationType);
         applicationForLeave.setDayLength(dayLength);
         applicationForLeave.setReason(reason);
@@ -211,14 +230,6 @@ public class ApplicationForLeaveForm {
 
         if (VacationType.OVERTIME.equals(vacationType.getTypeName())) {
             applicationForLeave.setHours(hours);
-        }
-
-        if (DayLength.FULL.equals(dayLength)) {
-            applicationForLeave.setStartDate(startDate);
-            applicationForLeave.setEndDate(endDate);
-        } else {
-            applicationForLeave.setStartDate(startDateHalf);
-            applicationForLeave.setEndDate(startDateHalf);
         }
 
         return applicationForLeave;

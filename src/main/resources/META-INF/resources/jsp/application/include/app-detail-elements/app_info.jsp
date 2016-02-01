@@ -111,6 +111,29 @@
     <tr><%-- needed for correct altering of table rows: there is a problem because the only in print visible row is altered too --%></tr>
     <tr>
         <td>
+            <spring:message code="application.data.time"/>
+        </td>
+        <td>
+            <c:choose>
+                <c:when test="${application.startTime != null && application.endTime != null}">
+                    <p>
+                        <c:set var="APPLICATION_START_TIME">
+                            <uv:time dateTime="${application.startDateWithTime}" />
+                        </c:set>
+                        <c:set var="APPLICATION_END_TIME">
+                            <uv:time dateTime="${application.endDateWithTime}" />
+                        </c:set>
+                        <spring:message code="absence.period.time" arguments="${APPLICATION_START_TIME};${APPLICATION_END_TIME}" argumentSeparator=";"/>
+                    </p>
+                </c:when>
+                <c:otherwise>
+                    <spring:message code="application.data.furtherInformation.notSpecified"/>
+                </c:otherwise>
+            </c:choose>
+        </td>
+    </tr>
+    <tr>
+        <td>
             <spring:message code='application.data.reason'/>
         </td>
         <td>
@@ -119,7 +142,7 @@
                     <c:out value="${application.reason}"/>
                 </c:when>
                 <c:otherwise>
-                    <spring:message code="application.data.furtherInformation.comment.none"/>
+                    <spring:message code="application.data.furtherInformation.notSpecified"/>
                 </c:otherwise>
             </c:choose>
         </td>
@@ -135,7 +158,7 @@
                     <c:out value="${application.holidayReplacement.niceName}"/>
                 </c:when>
                 <c:otherwise>
-                    <spring:message code="application.data.furtherInformation.comment.none"/>
+                    <spring:message code="application.data.furtherInformation.notSpecified"/>
                 </c:otherwise>
             </c:choose>
         </td>
@@ -150,7 +173,7 @@
                     <c:out value="${application.address}"/>
                 </c:when>
                 <c:otherwise>
-                    <spring:message code="application.data.furtherInformation.comment.none"/>
+                    <spring:message code="application.data.furtherInformation.notSpecified"/>
                 </c:otherwise>
             </c:choose>
         </td>
