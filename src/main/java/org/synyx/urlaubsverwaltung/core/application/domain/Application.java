@@ -39,87 +39,144 @@ public class Application extends AbstractPersistable<Integer> {
 
     private static final long serialVersionUID = 1234589209309L;
 
-    // One person may own multiple applications for leave
+    /**
+     * Person that will be on vacation if this application for leave is allowed.
+     */
     @ManyToOne
     private Person person;
 
-    // The person that applied the application
+    /**
+     * Person that made the application - can be different to the person that will be on vacation.
+     */
     @ManyToOne
     private Person applier;
 
-    // The person that allowed/rejected the application
+    /**
+     * Person that allowed or rejected the application for leave.
+     */
     @ManyToOne
     private Person boss;
 
-    // The person that cancelled the application
+    /**
+     * Person that cancelled the application.
+     */
     @ManyToOne
     private Person canceller;
 
-    // flag for 2 stage approval process
+    /**
+     * Flag for two stage approval process.
+     *
+     * @since  2.15.0
+     */
     private boolean twoStageApproval;
 
-    // Period of holiday
+    /**
+     * Start date of the application for leave.
+     */
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date startDate;
 
+    /**
+     * Start time of the application for leave.
+     *
+     * @since  2.15.0
+     */
     private Time startTime;
 
+    /**
+     * End date of the application for leave.
+     */
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date endDate;
 
+    /**
+     * End time of the application for leave.
+     *
+     * @since  2.15.0
+     */
     private Time endTime;
 
-    // Type of holiday, e.g. holiday, special leave, etc.
+    /**
+     * Type of vacation, e.g. holiday, special leave etc.
+     */
     @ManyToOne
     private VacationType vacationType;
 
-    // length of day: contains time of day (morning, noon or full day) and value (1.0 or 0.5 - as BigDecimal)
+    /**
+     * Day length of the vacation period, e.g. full day, morning, noon.
+     */
     @Enumerated(EnumType.STRING)
     private DayLength dayLength;
 
-    // For special and unpaid leave a reason is required
+    /**
+     * Reason for the vacation, is required for some types of vacation, e.g. for special leave.
+     */
     private String reason;
 
-    // Holiday replacement: stands in while the person is on holiday
+    /**
+     * Person that is the holiday replacement during the vacation.
+     */
     @ManyToOne
     @JoinColumn(name = "rep_id")
     private Person holidayReplacement;
 
-    // Address and phone number during holiday
+    /**
+     * Further information: address, phone number etc.
+     */
     private String address;
 
-    // Date of applying for leave
+    /**
+     * Date of application for leave creation.
+     */
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date applicationDate;
 
-    // Date of cancelling an application for leave
+    /**
+     * Date of application for leave cancellation.
+     */
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date cancelDate;
 
-    // Date of editing (allow or reject) an application for leave
+    /**
+     * Date of application for leave processing (allow or reject).
+     */
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date editedDate;
 
-    // Last date of sending a reminding email to boss
+    /**
+     * Last date of sending a remind notification that application for leave has to be processed.
+     */
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date remindDate;
 
-    // State of application (e.g. waiting, allowed, ...)
+    /**
+     * Describes the current status of the application for leave (e.g. allowed, rejected etc.)
+     */
     @Enumerated(EnumType.STRING)
     private ApplicationStatus status;
 
-    // Signature of applicant
+    /**
+     * Signature that identifies the applicant.
+     */
     @Column(columnDefinition = "longblob")
     private byte[] signaturePerson;
 
-    // Signature of boss
+    /**
+     * Signature that identifies the person that processed (allowed/rejected) the application for leave.
+     */
     @Column(columnDefinition = "longblob")
     private byte[] signatureBoss;
 
-    // team informed about holidays?
+    /**
+     * Flag if team is informed about vacation or not.
+     */
     private boolean teamInformed;
 
-    // How many hours of overtime are used for this application for leave?
+    /**
+     * The number of overtime hours that are used for this application for leave.
+     *
+     * @since  2.11.0
+     */
     private BigDecimal hours;
 
     public String getAddress() {
