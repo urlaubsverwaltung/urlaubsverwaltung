@@ -41,7 +41,33 @@
 
     </changeSet>
 
-    <!--changeSet author="Sommer" id="remove_Application_type_column">
+    <changeSet author="Sommer" id="alter_Application_Index">
+
+        <preConditions>
+            <columnExists tableName="Application" columnName="VacationType_id"/>
+            <indexExists tableName="Application" indexName="Index_Application_person_status_vacationType_startDate_endDate"/>
+            <indexExists tableName="Application" indexName="Index_Application_person_hours_vacationType"/>
+        </preConditions>
+
+        <dropIndex tableName="Application" indexName="Index_Application_person_status_vacationType_startDate_endDate"/>
+        <dropIndex tableName="Application" indexName="Index_Application_person_hours_vacationType"/>
+
+        <createIndex tableName="Application" indexName="Index_Application_person_status_startDate_endDate">
+            <column name="person_id"/>
+            <column name="status"/>
+            <column name="startDate"/>
+            <column name="endDate"/>
+        </createIndex>
+
+        <createIndex tableName="Application" indexName="Index_Application_person_hours">
+            <column name="person_id"/>
+            <column name="hours"/>
+        </createIndex>
+
+    </changeSet>
+
+
+    <changeSet author="Sommer" id="remove_Application_type_column">
 
         <preConditions>
             <tableExists tableName="VacationType"/>
@@ -51,6 +77,6 @@
 
         <dropColumn tableName="Application" columnName="VacationType"/>
 
-    </changeSet-->
+    </changeSet>
 
 </databaseChangeLog>
