@@ -24,6 +24,8 @@ import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.math.BigDecimal;
 
+import java.sql.Time;
+
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -209,7 +211,123 @@ public class ApplicationValidatorTest {
         Mockito.verify(errors).reject("application.error.halfDayPeriod");
     }
 
+
+    @Test
+    public void ensureSameDateAsStartAndEndDateIsValidForFullDayPeriod() {
+
+        DateMidnight date = DateMidnight.now();
+
+        appForm.setDayLength(DayLength.FULL);
+        appForm.setStartDate(date);
+        appForm.setEndDate(date);
+
+        validator.validate(appForm, errors);
+
+        Mockito.verify(errors, Mockito.never()).reject(Mockito.anyString());
+    }
+
+
+    @Test
+    public void ensureSameDateAsStartAndEndDateIsValidForMorningPeriod() {
+
+        DateMidnight date = DateMidnight.now();
+
+        appForm.setDayLength(DayLength.MORNING);
+        appForm.setStartDate(date);
+        appForm.setEndDate(date);
+
+        validator.validate(appForm, errors);
+
+        Mockito.verify(errors, Mockito.never()).reject(Mockito.anyString());
+    }
+
+
+    @Test
+    public void ensureSameDateAsStartAndEndDateIsValidForNoonPeriod() {
+
+        DateMidnight date = DateMidnight.now();
+
+        appForm.setDayLength(DayLength.NOON);
+        appForm.setStartDate(date);
+        appForm.setEndDate(date);
+
+        validator.validate(appForm, errors);
+
+        Mockito.verify(errors, Mockito.never()).reject(Mockito.anyString());
+    }
+
+
     // Validate period (time) ------------------------------------------------------------------------------------------
+
+    @Test
+    public void ensureTimeIsNotMandatory() {
+
+        appForm.setStartTime(null);
+        appForm.setEndTime(null);
+
+        validator.validate(appForm, errors);
+
+        Mockito.verify(errors, Mockito.never()).reject(Mockito.anyString());
+    }
+
+
+    @Test
+    public void ensureProvidingStartTimeWithoutEndTimeIsInvalid() {
+
+        appForm.setStartTime(Time.valueOf("09:15:00"));
+        appForm.setEndTime(null);
+
+        validator.validate(appForm, errors);
+
+        Mockito.verify(errors).reject("error.entry.invalidPeriod");
+    }
+
+
+    @Test
+    public void ensureProvidingEndTimeWithoutStartTimeIsInvalid() {
+
+        appForm.setStartTime(null);
+        appForm.setEndTime(Time.valueOf("09:15:00"));
+
+        validator.validate(appForm, errors);
+
+        Mockito.verify(errors).reject("error.entry.invalidPeriod");
+    }
+
+
+    @Test
+    public void ensureStartTimeMustBeBeforeEndTime() {
+
+        DateMidnight date = DateMidnight.now();
+
+        appForm.setDayLength(DayLength.MORNING);
+        appForm.setStartDate(date);
+        appForm.setEndDate(date);
+        appForm.setStartTime(Time.valueOf("13:30:00"));
+        appForm.setEndTime(Time.valueOf("09:15:00"));
+
+        validator.validate(appForm, errors);
+
+        Mockito.verify(errors).reject("error.entry.invalidPeriod");
+    }
+
+
+    @Test
+    public void ensureStartTimeAndEndTimeMustNotBeEquals() {
+
+        DateMidnight date = DateMidnight.now();
+        Time time = Time.valueOf("13:30:00");
+
+        appForm.setDayLength(DayLength.MORNING);
+        appForm.setStartDate(date);
+        appForm.setEndDate(date);
+        appForm.setStartTime(time);
+        appForm.setEndTime(time);
+
+        validator.validate(appForm, errors);
+
+        Mockito.verify(errors).reject("error.entry.invalidPeriod");
+    }
 
 
     // Validate reason -------------------------------------------------------------------------------------------------

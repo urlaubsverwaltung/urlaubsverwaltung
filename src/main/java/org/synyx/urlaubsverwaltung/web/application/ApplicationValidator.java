@@ -28,6 +28,8 @@ import org.synyx.urlaubsverwaltung.core.util.CalcUtil;
 
 import java.math.BigDecimal;
 
+import java.sql.Time;
+
 import java.util.Optional;
 
 
@@ -127,9 +129,8 @@ public class ApplicationValidator implements Validator {
 
         if (startDate != null && endDate != null) {
             validatePeriod(startDate, endDate, applicationForLeave.getDayLength(), errors);
+            validateTime(applicationForLeave.getStartTime(), applicationForLeave.getEndTime(), errors);
         }
-
-        // TODO: Validate time
     }
 
 
@@ -188,6 +189,25 @@ public class ApplicationValidator implements Validator {
 
         if (isHalfDay && !startDate.isEqual(endDate)) {
             errors.reject(ERROR_HALF_DAY_PERIOD);
+        }
+    }
+
+
+    private void validateTime(Time startTime, Time endTime, Errors errors) {
+
+        boolean startTimeIsProvided = startTime != null;
+        boolean endTimeIsProvided = endTime != null;
+
+        if ((startTimeIsProvided && !endTimeIsProvided) || (!startTimeIsProvided && endTimeIsProvided)) {
+            errors.reject(ERROR_PERIOD);
+        }
+
+        if (startTimeIsProvided && endTimeIsProvided) {
+            long timeDifference = endTime.getTime() - startTime.getTime();
+
+            if (timeDifference <= 0) {
+                errors.reject(ERROR_PERIOD);
+            }
         }
     }
 
