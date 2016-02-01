@@ -60,6 +60,12 @@ public class OvertimeForm {
     }
 
 
+    public void setId(Integer id) {
+
+        this.id = id;
+    }
+
+
     public Person getPerson() {
 
         return person;

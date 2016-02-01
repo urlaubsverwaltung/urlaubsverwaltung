@@ -49,6 +49,7 @@
             </c:choose>
 
             <form:form method="POST" action="${ACTION}" modelAttribute="overtime" cssClass="form-horizontal">
+                <form:hidden path="id" value="${overtime.id}" />
                 <form:hidden path="person" value="${overtime.person.id}" />
                 <div class="form-section">
                     <div class="col-xs-12">
