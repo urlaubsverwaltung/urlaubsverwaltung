@@ -194,19 +194,3 @@ function vacationTypeChanged(value) {
   }
 
 }
-
-// toggling of full/half day in app form
-$(document).ready(function()
-    {
-        $(".dayLength-full").click(function() {
-            $('.full-day').show();
-            $('.half-day').hide();
-        });
-
-        $(".dayLength-half").click(function() {
-            $('.full-day').hide();
-            $('.half-day').show();
-        });
-
-    }
-);

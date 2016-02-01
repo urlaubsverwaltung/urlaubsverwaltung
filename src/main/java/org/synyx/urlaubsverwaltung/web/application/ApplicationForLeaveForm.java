@@ -1,7 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package org.synyx.urlaubsverwaltung.web.application;
 
 import org.joda.time.DateMidnight;
@@ -26,11 +23,10 @@ public class ApplicationForLeaveForm {
     // person of the application for leave
     private Person person;
 
+    // period: date and time
     private DateMidnight startDate;
 
     private Time startTime;
-
-    private DateMidnight startDateHalf;
 
     private DateMidnight endDate;
 
@@ -178,18 +174,6 @@ public class ApplicationForLeaveForm {
     }
 
 
-    public DateMidnight getStartDateHalf() {
-
-        return startDateHalf;
-    }
-
-
-    public void setStartDateHalf(DateMidnight startDateHalf) {
-
-        this.startDateHalf = startDateHalf;
-    }
-
-
     public VacationType getVacationType() {
 
         return vacationType;
@@ -231,7 +215,12 @@ public class ApplicationForLeaveForm {
         Application applicationForLeave = new Application();
 
         applicationForLeave.setPerson(person);
-        applicationForLeave.setAddress(address);
+
+        applicationForLeave.setStartDate(startDate);
+        applicationForLeave.setEndDate(endDate);
+        applicationForLeave.setStartTime(startTime);
+        applicationForLeave.setEndTime(endTime);
+
         applicationForLeave.setVacationType(vacationType);
         applicationForLeave.setDayLength(dayLength);
         applicationForLeave.setReason(reason);
@@ -242,17 +231,6 @@ public class ApplicationForLeaveForm {
         if (VacationType.OVERTIME.equals(vacationType)) {
             applicationForLeave.setHours(hours);
         }
-
-        if (DayLength.FULL.equals(dayLength)) {
-            applicationForLeave.setStartDate(startDate);
-            applicationForLeave.setEndDate(endDate);
-        } else {
-            applicationForLeave.setStartDate(startDateHalf);
-            applicationForLeave.setEndDate(startDateHalf);
-        }
-
-        applicationForLeave.setStartTime(startTime);
-        applicationForLeave.setEndTime(endTime);
 
         return applicationForLeave;
     }

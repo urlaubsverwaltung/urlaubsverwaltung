@@ -41,7 +41,6 @@
             if (from) {
                 preset('#from', from);
                 preset('#to'  , to || from);
-                preset('#at', from);
 
                 var urlPrefix = "<spring:url value='/api' />";
                 var personId = "<c:out value='${person.id}' />";
@@ -205,7 +204,7 @@
                 </div>
             </div>
 
-            <div class="form-group is-required full-day">
+            <div class="form-group is-required">
                 <label class="col-md-3 control-label" for="from">
                     <spring:message code="absence.period.startDate" />:
                 </label>
@@ -217,7 +216,7 @@
                 </div>
             </div>
 
-            <div class="form-group is-required full-day">
+            <div class="form-group is-required">
                 <label class="control-label col-md-3" for="to">
                     <spring:message code="absence.period.endDate" />:
                 </label>
@@ -227,16 +226,6 @@
                 </div>
                 <div class="col-md-4">
                     <form:input id="endTime" path="endTime" class="form-control" cssErrorClass="form-control error" placeholder="${TIME_PATTERN}" />
-                </div>
-            </div>
-
-            <div class="form-group is-required half-day">
-                <label class="control-label col-md-3" for="at">
-                    <spring:message code="absence.period.startAndEndDate" />:
-                </label>
-                <div class="col-md-9">
-                    <form:input id="at" path="startDateHalf" class="form-control" cssErrorClass="form-control error" placeholder="${DATE_PATTERN}" />
-                    <span class="help-block info days"></span>
                 </div>
             </div>
 

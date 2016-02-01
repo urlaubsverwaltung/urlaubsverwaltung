@@ -7,27 +7,6 @@
 <script type="text/javascript">
     $(document).ready(function () {
 
-        var dayLength = $('input[name="dayLength"]:checked').val();
-
-        var $fullDay = $('.full-day');
-        var $halfDay = $('.half-day');
-
-        if (dayLength === 'FULL') {
-            $fullDay.show();
-            $halfDay.hide();
-        }
-
-        if (dayLength === 'MORNING') {
-            $halfDay.show();
-            $fullDay.hide();
-        }
-
-        if (dayLength === 'NOON') {
-            $halfDay.show();
-            $fullDay.hide();
-        }
-
-
         // re-calculate vacation days when changing the day length
 
         var urlPrefix = '<spring:url value="/api" />';
@@ -36,17 +15,8 @@
         $('input[name="dayLength"]').on('change', function () {
 
             var dayLength = this.value;
-            var startDate;
-            var toDate;
-
-            if (dayLength === 'FULL') {
-                startDate = $('input#from').datepicker("getDate");
-                toDate = $('input#to').datepicker("getDate");
-            } else {
-                var atDate = $('input#at').datepicker("getDate");
-                startDate = atDate;
-                toDate = atDate;
-            }
+            var startDate = $('input#from').datepicker("getDate");
+            var toDate = $('input#to').datepicker("getDate");
 
             sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, ".days");
             sendGetDepartmentVacationsRequest(urlPrefix, startDate, toDate, personId, "#departmentVacations");

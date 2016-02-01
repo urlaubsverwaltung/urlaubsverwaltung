@@ -57,7 +57,6 @@ public class ApplicationValidator implements Validator {
 
     private static final String ATTRIBUTE_START_DATE = "startDate";
     private static final String ATTRIBUTE_END_DATE = "endDate";
-    private static final String ATTRIBUTE_START_DATE_HALF = "startDateHalf";
     private static final String ATTRIBUTE_REASON = "reason";
     private static final String ATTRIBUTE_ADDRESS = "address";
     private static final String ATTRIBUTE_COMMENT = "comment";
@@ -119,25 +118,17 @@ public class ApplicationValidator implements Validator {
 
     private void validateDateFields(ApplicationForLeaveForm applicationForLeave, Errors errors) {
 
-        if (applicationForLeave.getDayLength() == DayLength.FULL) {
-            DateMidnight startDate = applicationForLeave.getStartDate();
-            DateMidnight endDate = applicationForLeave.getEndDate();
+        DateMidnight startDate = applicationForLeave.getStartDate();
+        DateMidnight endDate = applicationForLeave.getEndDate();
 
-            validateNotNull(startDate, ATTRIBUTE_START_DATE, errors);
-            validateNotNull(endDate, ATTRIBUTE_END_DATE, errors);
+        validateNotNull(startDate, ATTRIBUTE_START_DATE, errors);
+        validateNotNull(endDate, ATTRIBUTE_END_DATE, errors);
 
-            if (startDate != null && endDate != null) {
-                validatePeriod(startDate, endDate, errors);
-            }
-        } else {
-            DateMidnight date = applicationForLeave.getStartDateHalf();
-
-            validateNotNull(date, ATTRIBUTE_START_DATE_HALF, errors);
-
-            if (date != null) {
-                validatePeriod(date, date, errors);
-            }
+        if (startDate != null && endDate != null) {
+            validatePeriod(startDate, endDate, errors);
         }
+
+        // TODO: Validate time
     }
 
 
