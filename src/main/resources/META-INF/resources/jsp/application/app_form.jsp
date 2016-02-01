@@ -222,10 +222,15 @@
                 </label>
                 <div class="col-md-5">
                     <form:input id="to" path="endDate" class="form-control" cssErrorClass="form-control error" placeholder="${DATE_PATTERN}" />
-                    <span class="help-block info days"></span>
                 </div>
                 <div class="col-md-4">
                     <form:input id="endTime" path="endTime" class="form-control" cssErrorClass="form-control error" placeholder="${TIME_PATTERN}" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-9 col-md-offset-3">
+                    <span class="help-block info days"></span>
                 </div>
             </div>
 
