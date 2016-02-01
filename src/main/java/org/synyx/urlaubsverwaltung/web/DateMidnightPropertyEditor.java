@@ -1,7 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package org.synyx.urlaubsverwaltung.web;
 
 import org.joda.time.DateTime;
@@ -17,7 +14,9 @@ import java.beans.PropertyEditorSupport;
 
 
 /**
- * @author  Aljona Murygina
+ * Converts a {@link String} to {@link org.joda.time.DateMidnight} and vice versa.
+ *
+ * @author  Aljona Murygina - murygina@synyx.de
  */
 public class DateMidnightPropertyEditor extends PropertyEditorSupport {
 
