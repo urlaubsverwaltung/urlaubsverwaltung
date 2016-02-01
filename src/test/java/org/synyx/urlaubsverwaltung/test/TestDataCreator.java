@@ -11,6 +11,7 @@ import org.springframework.util.ReflectionUtils;
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.core.department.Department;
@@ -231,17 +232,20 @@ public final class TestDataCreator {
     }
 
 
-    public static VacationType getVacationType(String typeName) {
+    public static VacationType createVacationType(VacationCategory category) {
 
-        VacationType result = null;
+        return createVacationType(category, category.toString());
+    }
 
-        for (VacationType vacationType : getVacationTypes()) {
-            if (typeName.equalsIgnoreCase(vacationType.getTypeName())) {
-                result = vacationType;
-            }
-        }
 
-        return result;
+    public static VacationType createVacationType(VacationCategory category, String displayName) {
+
+        VacationType vacationType = new VacationType();
+
+        vacationType.setCategory(category);
+        vacationType.setDisplayName(displayName);
+
+        return vacationType;
     }
 
 
@@ -251,25 +255,25 @@ public final class TestDataCreator {
 
         VacationType vacationType1 = new VacationType();
         vacationType1.setId(1000);
-        vacationType1.setTypeName(VacationType.HOLIDAY);
-        vacationType1.setTypeDisplayName("Erholungsurlaub");
+        vacationType1.setCategory(VacationCategory.HOLIDAY);
+        vacationType1.setDisplayName("Erholungsurlaub");
         vacationTypes.add(vacationType1);
 
         VacationType vacationType2 = new VacationType();
-        vacationType2.setTypeName(VacationType.SPECIALLEAVE);
-        vacationType2.setTypeDisplayName("Sonderurlaub");
+        vacationType2.setCategory(VacationCategory.SPECIALLEAVE);
+        vacationType2.setDisplayName("Sonderurlaub");
         vacationType2.setId(2000);
         vacationTypes.add(vacationType2);
 
         VacationType vacationType3 = new VacationType();
-        vacationType3.setTypeName(VacationType.UNPAIDLEAVE);
-        vacationType3.setTypeDisplayName("Unbezahlter Urlaub");
+        vacationType3.setCategory(VacationCategory.UNPAIDLEAVE);
+        vacationType3.setDisplayName("Unbezahlter Urlaub");
         vacationType3.setId(3000);
         vacationTypes.add(vacationType3);
 
         VacationType vacationType4 = new VacationType();
-        vacationType4.setTypeName(VacationType.OVERTIME);
-        vacationType4.setTypeDisplayName("Überstundenabbau");
+        vacationType4.setCategory(VacationCategory.OVERTIME);
+        vacationType4.setDisplayName("Überstundenabbau");
         vacationType4.setId(4000);
         vacationTypes.add(vacationType4);
 

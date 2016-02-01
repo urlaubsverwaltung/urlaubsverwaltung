@@ -20,7 +20,8 @@
 
 .SPECIALLEAVE,
 .UNPAIDLEAVE,
-.OVERTIME {
+.OVERTIME,
+.OTHER {
     color: #DF771B;
 }
 

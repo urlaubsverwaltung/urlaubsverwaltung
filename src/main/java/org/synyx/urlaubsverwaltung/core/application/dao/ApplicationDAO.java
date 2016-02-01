@@ -55,7 +55,7 @@ public interface ApplicationDAO extends JpaRepository<Application, Integer> {
 
     @Query(
         "SELECT SUM(application.hours) FROM Application application WHERE application.person = :person "
-        + "AND application.vacationType.typeName = 'OVERTIME' "
+        + "AND application.vacationType.category = 'OVERTIME' "
         + "AND (application.status = 'WAITING' OR application.status = 'ALLOWED')"
     )
     BigDecimal calculateTotalOvertimeOfPerson(@Param("person") Person person);

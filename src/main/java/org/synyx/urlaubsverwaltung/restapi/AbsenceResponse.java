@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.restapi;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
+import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 
 import java.math.BigDecimal;
@@ -16,6 +17,7 @@ class AbsenceResponse {
     private BigDecimal dayLength;
     private PersonResponse person;
     private String type;
+    private String category;
     private String status;
 
     AbsenceResponse(Application application) {
@@ -24,8 +26,11 @@ class AbsenceResponse {
         this.to = application.getEndDate().toString(RestApiDateFormat.PATTERN);
         this.dayLength = application.getDayLength().getDuration();
         this.person = new PersonResponse(application.getPerson());
-        this.type = application.getVacationType().getTypeName();
         this.status = application.getStatus().name();
+
+        VacationType vacationType = application.getVacationType();
+        this.type = vacationType.getDisplayName();
+        this.category = vacationType.getCategory().toString();
     }
 
 
@@ -96,6 +101,18 @@ class AbsenceResponse {
     public void setType(String type) {
 
         this.type = type;
+    }
+
+
+    public String getCategory() {
+
+        return category;
+    }
+
+
+    public void setCategory(String category) {
+
+        this.category = category;
     }
 
 

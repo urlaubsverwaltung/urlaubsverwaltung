@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
 import org.synyx.urlaubsverwaltung.core.account.service.VacationDaysService;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.application.service.VacationTypeService;
@@ -27,6 +28,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 
 /**
@@ -44,6 +46,7 @@ public class ApplicationForLeaveStatisticsBuilderTest {
     private VacationTypeService vacationTypeService;
 
     private ApplicationForLeaveStatisticsBuilder builder;
+    private List<VacationType> vacationTypes;
 
     @Before
     public void setUp() {
@@ -55,7 +58,8 @@ public class ApplicationForLeaveStatisticsBuilderTest {
         overtimeService = Mockito.mock(OvertimeService.class);
         vacationTypeService = Mockito.mock(VacationTypeService.class);
 
-        Mockito.when(vacationTypeService.getVacationTypes()).thenReturn(TestDataCreator.getVacationTypes());
+        vacationTypes = TestDataCreator.getVacationTypes();
+        Mockito.when(vacationTypeService.getVacationTypes()).thenReturn(vacationTypes);
 
         builder = new ApplicationForLeaveStatisticsBuilder(accountService, applicationService, calendarService,
                 vacationDaysService, overtimeService, vacationTypeService);
@@ -107,49 +111,49 @@ public class ApplicationForLeaveStatisticsBuilderTest {
         Mockito.when(applicationService.getTotalOvertimeReductionOfPerson(person)).thenReturn(BigDecimal.ONE);
 
         Application holidayWaiting = new Application();
-        holidayWaiting.setVacationType(TestDataCreator.getVacationType(VacationType.HOLIDAY));
+        holidayWaiting.setVacationType(vacationTypes.get(0));
         holidayWaiting.setStartDate(new DateMidnight(2014, 10, 13));
         holidayWaiting.setEndDate(new DateMidnight(2014, 10, 13));
         holidayWaiting.setStatus(ApplicationStatus.WAITING);
         holidayWaiting.setPerson(person);
 
         Application holidayTemporaryAllowed = new Application();
-        holidayTemporaryAllowed.setVacationType(TestDataCreator.getVacationType(VacationType.HOLIDAY));
+        holidayTemporaryAllowed.setVacationType(vacationTypes.get(0));
         holidayTemporaryAllowed.setStartDate(new DateMidnight(2014, 10, 12));
         holidayTemporaryAllowed.setEndDate(new DateMidnight(2014, 10, 12));
         holidayTemporaryAllowed.setStatus(ApplicationStatus.TEMPORARY_ALLOWED);
         holidayTemporaryAllowed.setPerson(person);
 
         Application holidayAllowed = new Application();
-        holidayAllowed.setVacationType(TestDataCreator.getVacationType(VacationType.HOLIDAY));
+        holidayAllowed.setVacationType(vacationTypes.get(0));
         holidayAllowed.setStartDate(new DateMidnight(2014, 10, 14));
         holidayAllowed.setEndDate(new DateMidnight(2014, 10, 14));
         holidayAllowed.setStatus(ApplicationStatus.ALLOWED);
         holidayAllowed.setPerson(person);
 
         Application holidayRejected = new Application();
-        holidayRejected.setVacationType(TestDataCreator.getVacationType(VacationType.HOLIDAY));
+        holidayRejected.setVacationType(vacationTypes.get(0));
         holidayRejected.setStartDate(new DateMidnight(2014, 11, 6));
         holidayRejected.setEndDate(new DateMidnight(2014, 11, 6));
         holidayRejected.setStatus(ApplicationStatus.REJECTED);
         holidayRejected.setPerson(person);
 
         Application specialLeaveWaiting = new Application();
-        specialLeaveWaiting.setVacationType(TestDataCreator.getVacationType(VacationType.SPECIALLEAVE));
+        specialLeaveWaiting.setVacationType(vacationTypes.get(1));
         specialLeaveWaiting.setStartDate(new DateMidnight(2014, 10, 15));
         specialLeaveWaiting.setEndDate(new DateMidnight(2014, 10, 15));
         specialLeaveWaiting.setStatus(ApplicationStatus.WAITING);
         specialLeaveWaiting.setPerson(person);
 
         Application unpaidLeaveAllowed = new Application();
-        unpaidLeaveAllowed.setVacationType(TestDataCreator.getVacationType(VacationType.UNPAIDLEAVE));
+        unpaidLeaveAllowed.setVacationType(vacationTypes.get(2));
         unpaidLeaveAllowed.setStartDate(new DateMidnight(2014, 10, 16));
         unpaidLeaveAllowed.setEndDate(new DateMidnight(2014, 10, 16));
         unpaidLeaveAllowed.setStatus(ApplicationStatus.ALLOWED);
         unpaidLeaveAllowed.setPerson(person);
 
         Application overTimeWaiting = new Application();
-        overTimeWaiting.setVacationType(TestDataCreator.getVacationType(VacationType.OVERTIME));
+        overTimeWaiting.setVacationType(vacationTypes.get(3));
         overTimeWaiting.setStartDate(new DateMidnight(2014, 11, 3));
         overTimeWaiting.setEndDate(new DateMidnight(2014, 11, 3));
         overTimeWaiting.setStatus(ApplicationStatus.WAITING);
@@ -204,7 +208,7 @@ public class ApplicationForLeaveStatisticsBuilderTest {
         Mockito.when(applicationService.getTotalOvertimeReductionOfPerson(person)).thenReturn(BigDecimal.ONE);
 
         Application holidayAllowed = new Application();
-        holidayAllowed.setVacationType(TestDataCreator.getVacationType(VacationType.HOLIDAY));
+        holidayAllowed.setVacationType(vacationTypes.get(0));
         holidayAllowed.setStartDate(new DateMidnight(2014, 12, 29));
         holidayAllowed.setEndDate(new DateMidnight(2015, 1, 9));
         holidayAllowed.setStatus(ApplicationStatus.ALLOWED);
@@ -212,7 +216,7 @@ public class ApplicationForLeaveStatisticsBuilderTest {
         holidayAllowed.setPerson(person);
 
         Application holidayWaiting = new Application();
-        holidayWaiting.setVacationType(TestDataCreator.getVacationType(VacationType.HOLIDAY));
+        holidayWaiting.setVacationType(vacationTypes.get(0));
         holidayWaiting.setStartDate(new DateMidnight(2015, 12, 21));
         holidayWaiting.setEndDate(new DateMidnight(2016, 1, 4));
         holidayWaiting.setStatus(ApplicationStatus.WAITING);

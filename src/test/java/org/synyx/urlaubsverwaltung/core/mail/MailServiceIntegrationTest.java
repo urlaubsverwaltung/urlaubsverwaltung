@@ -19,6 +19,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationComment;
+import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.overtime.Overtime;
@@ -96,7 +97,7 @@ public class MailServiceIntegrationTest {
 
         application = new Application();
         application.setPerson(person);
-        application.setVacationType(TestDataCreator.getVacationType(VacationType.HOLIDAY));
+        application.setVacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
         application.setDayLength(DayLength.FULL);
         application.setApplicationDate(now);
         application.setStartDate(now);
@@ -197,12 +198,12 @@ public class MailServiceIntegrationTest {
 
         Person departmentMember = TestDataCreator.createPerson("muster", "Marlene", "Muster", "mmuster@foo.de");
         Application departmentApplication = TestDataCreator.createApplication(departmentMember,
-                TestDataCreator.getVacationType(VacationType.HOLIDAY), new DateMidnight(2015, 11, 5),
+                TestDataCreator.createVacationType(VacationCategory.HOLIDAY), new DateMidnight(2015, 11, 5),
                 new DateMidnight(2015, 11, 6), DayLength.FULL);
 
         Person otherDepartmentMember = TestDataCreator.createPerson("schmidt", "Niko", "Schmidt", "nschmidt@foo.de");
         Application otherDepartmentApplication = TestDataCreator.createApplication(otherDepartmentMember,
-                TestDataCreator.getVacationType(VacationType.HOLIDAY), new DateMidnight(2015, 11, 4),
+                TestDataCreator.createVacationType(VacationCategory.HOLIDAY), new DateMidnight(2015, 11, 4),
                 new DateMidnight(2015, 11, 4), DayLength.MORNING);
 
         Mockito.when(personService.getPersonsWithNotificationType(MailNotification.NOTIFICATION_BOSS))
@@ -229,6 +230,7 @@ public class MailServiceIntegrationTest {
         IOException {
 
         application.setBoss(boss);
+        application.setVacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY, "Erholungsurlaub"));
 
         ApplicationComment comment = createDummyComment(boss, "OK, Urlaub kann genommen werden");
 
@@ -280,6 +282,8 @@ public class MailServiceIntegrationTest {
     @Test
     public void ensureNotificationAboutTemporaryAllowedApplicationIsSentToSecondStageAuthoritiesAndToPerson()
         throws MessagingException, IOException {
+
+        application.setVacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY, "Erholungsurlaub"));
 
         ApplicationComment comment = createDummyComment(secondStage, "OK, spricht von meiner Seite aus nix dagegen");
 

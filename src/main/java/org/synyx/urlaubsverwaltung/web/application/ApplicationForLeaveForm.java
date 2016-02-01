@@ -4,6 +4,7 @@ package org.synyx.urlaubsverwaltung.web.application;
 import org.joda.time.DateMidnight;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
+import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -228,7 +229,7 @@ public class ApplicationForLeaveForm {
         applicationForLeave.setAddress(address);
         applicationForLeave.setTeamInformed(teamInformed);
 
-        if (VacationType.OVERTIME.equals(vacationType.getTypeName())) {
+        if (VacationCategory.OVERTIME.equals(vacationType.getCategory())) {
             applicationForLeave.setHours(hours);
         }
 

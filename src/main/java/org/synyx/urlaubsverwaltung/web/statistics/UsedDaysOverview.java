@@ -6,6 +6,7 @@ import org.springframework.util.Assert;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
@@ -47,7 +48,7 @@ public class UsedDaysOverview {
                     || application.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED)) {
                 BigDecimal days = getVacationDays(application, calendarService);
 
-                if (VacationType.HOLIDAY.equals(application.getVacationType().getTypeName())) {
+                if (application.getVacationType().isOfCategory(VacationCategory.HOLIDAY)) {
                     this.holidayDays.addDays(status, days);
                 } else {
                     this.otherDays.addDays(status, days);

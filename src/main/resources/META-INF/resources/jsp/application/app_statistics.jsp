@@ -123,7 +123,7 @@
                                         <spring:message code="applications.statistics.total"/>:
                                         <c:forEach items="${vacationTypes}" var="type">
                                             <br/>
-                                            <small><c:out value="${type.typeDisplayName}"/>:</small>
+                                            <small><c:out value="${type.displayName}"/>:</small>
                                         </c:forEach>
                                     </td>
                                     <td class="hidden-xs hidden-sm number">

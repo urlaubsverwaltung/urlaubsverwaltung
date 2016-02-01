@@ -12,7 +12,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
-import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
+import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.core.application.service.CalculationService;
 import org.synyx.urlaubsverwaltung.core.calendar.OverlapCase;
 import org.synyx.urlaubsverwaltung.core.calendar.OverlapService;
@@ -106,7 +106,7 @@ public class ApplicationValidator implements Validator {
         validateHours(applicationForm, errors);
 
         // check if reason is not filled
-        if (VacationType.SPECIALLEAVE.equals(applicationForm.getVacationType().getTypeName())
+        if (VacationCategory.SPECIALLEAVE.equals(applicationForm.getVacationType().getCategory())
                 && !StringUtils.hasText(applicationForm.getReason())) {
             errors.rejectValue(ATTRIBUTE_REASON, ERROR_MISSING_REASON);
         }
@@ -219,7 +219,7 @@ public class ApplicationValidator implements Validator {
     private void validateHours(ApplicationForLeaveForm applicationForLeave, Errors errors) {
 
         BigDecimal hours = applicationForLeave.getHours();
-        boolean isOvertime = VacationType.OVERTIME.equals(applicationForLeave.getVacationType().getTypeName());
+        boolean isOvertime = VacationCategory.OVERTIME.equals(applicationForLeave.getVacationType().getCategory());
 
         if (isOvertime && hours == null && !errors.hasFieldErrors(ATTRIBUTE_HOURS)) {
             errors.rejectValue(ATTRIBUTE_HOURS, ERROR_MISSING_HOURS);
@@ -289,7 +289,7 @@ public class ApplicationValidator implements Validator {
          * {@link org.synyx.urlaubsverwaltung.core.application.domain.VacationType.HOLIDAY}
          */
 
-        boolean isHoliday = VacationType.HOLIDAY.equals(application.getVacationType().getTypeName());
+        boolean isHoliday = VacationCategory.HOLIDAY.equals(application.getVacationType().getCategory());
 
         if (isHoliday) {
             boolean enoughVacationDaysLeft = calculationService.checkApplication(application);
@@ -303,7 +303,7 @@ public class ApplicationValidator implements Validator {
          * Check overtime of given user
          */
         Boolean overtimeActive = settingsService.getSettings().getWorkingTimeSettings().isOvertimeActive();
-        Boolean isOvertime = VacationType.OVERTIME.equals(application.getVacationType().getTypeName());
+        Boolean isOvertime = VacationCategory.OVERTIME.equals(application.getVacationType().getCategory());
 
         if (isOvertime && overtimeActive) {
             boolean enoughOvertimeHours = checkOvertimeHours(application);

@@ -1,16 +1,20 @@
 package org.synyx.urlaubsverwaltung.web.statistics;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import org.mockito.Mockito;
 
+import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.math.BigDecimal;
+
+import java.util.List;
 
 
 /**
@@ -24,14 +28,14 @@ public class ApplicationForLeaveStatisticsTest {
 
     private VacationTypeService vacationTypeService;
 
-    private VacationTypeService getVacationTypeService() {
+    private List<VacationType> vacationTypes;
 
-        if (vacationTypeService == null) {
-            vacationTypeService = Mockito.mock(VacationTypeService.class);
-            Mockito.when(vacationTypeService.getVacationTypes()).thenReturn(TestDataCreator.getVacationTypes());
-        }
+    @Before
+    public void setUp() {
 
-        return vacationTypeService;
+        vacationTypeService = Mockito.mock(VacationTypeService.class);
+        vacationTypes = TestDataCreator.getVacationTypes();
+        Mockito.when(vacationTypeService.getVacationTypes()).thenReturn(vacationTypes);
     }
 
 
@@ -47,7 +51,7 @@ public class ApplicationForLeaveStatisticsTest {
 
         Person person = Mockito.mock(Person.class);
 
-        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, getVacationTypeService());
+        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
 
         Assert.assertNotNull("Person should not be null", statistics.getPerson());
         Assert.assertNotNull("Total waiting vacation days should not be null",
@@ -77,9 +81,9 @@ public class ApplicationForLeaveStatisticsTest {
             statistics.getAllowedVacationDays().size());
 
         for (VacationType type : TestDataCreator.getVacationTypes()) {
-            Assert.assertEquals("Waiting vacation days for " + type.getTypeName() + " should be zero", BigDecimal.ZERO,
+            Assert.assertEquals("Waiting vacation days for " + type.getCategory() + " should be zero", BigDecimal.ZERO,
                 statistics.getWaitingVacationDays().get(type));
-            Assert.assertEquals("Allowed vacation days for " + type.getTypeName() + " should be zero", BigDecimal.ZERO,
+            Assert.assertEquals("Allowed vacation days for " + type.getCategory() + " should be zero", BigDecimal.ZERO,
                 statistics.getAllowedVacationDays().get(type));
         }
     }
@@ -92,7 +96,7 @@ public class ApplicationForLeaveStatisticsTest {
 
         Person person = Mockito.mock(Person.class);
 
-        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, getVacationTypeService());
+        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
 
         statistics.setLeftVacationDays(BigDecimal.ONE);
 
@@ -105,7 +109,7 @@ public class ApplicationForLeaveStatisticsTest {
 
         Person person = Mockito.mock(Person.class);
 
-        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, getVacationTypeService());
+        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
 
         statistics.setLeftVacationDays(null);
     }
@@ -118,7 +122,7 @@ public class ApplicationForLeaveStatisticsTest {
 
         Person person = Mockito.mock(Person.class);
 
-        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, getVacationTypeService());
+        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
 
         statistics.addWaitingVacationDays(null, BigDecimal.ONE);
     }
@@ -129,9 +133,9 @@ public class ApplicationForLeaveStatisticsTest {
 
         Person person = Mockito.mock(Person.class);
 
-        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, getVacationTypeService());
+        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
 
-        statistics.addWaitingVacationDays(TestDataCreator.getVacationType(VacationType.HOLIDAY), null);
+        statistics.addWaitingVacationDays(TestDataCreator.createVacationType(VacationCategory.HOLIDAY), null);
     }
 
 
@@ -140,7 +144,7 @@ public class ApplicationForLeaveStatisticsTest {
 
         Person person = Mockito.mock(Person.class);
 
-        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, getVacationTypeService());
+        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
 
         statistics.addAllowedVacationDays(null, BigDecimal.ONE);
     }
@@ -151,9 +155,9 @@ public class ApplicationForLeaveStatisticsTest {
 
         Person person = Mockito.mock(Person.class);
 
-        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, getVacationTypeService());
+        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
 
-        statistics.addAllowedVacationDays(TestDataCreator.getVacationType(VacationType.HOLIDAY), null);
+        statistics.addAllowedVacationDays(TestDataCreator.createVacationType(VacationCategory.HOLIDAY), null);
     }
 
 
@@ -162,21 +166,21 @@ public class ApplicationForLeaveStatisticsTest {
 
         Person person = Mockito.mock(Person.class);
 
-        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, getVacationTypeService());
+        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
 
-        statistics.addWaitingVacationDays(TestDataCreator.getVacationType(VacationType.HOLIDAY), BigDecimal.ONE);
-        statistics.addWaitingVacationDays(TestDataCreator.getVacationType(VacationType.HOLIDAY), BigDecimal.ONE);
+        statistics.addWaitingVacationDays(vacationTypes.get(0), BigDecimal.ONE);
+        statistics.addWaitingVacationDays(vacationTypes.get(0), BigDecimal.ONE);
 
-        statistics.addWaitingVacationDays(TestDataCreator.getVacationType(VacationType.OVERTIME), BigDecimal.ONE);
+        statistics.addWaitingVacationDays(vacationTypes.get(1), BigDecimal.ONE);
 
         Assert.assertEquals("Wrong number of days", new BigDecimal("2"),
-            statistics.getWaitingVacationDays().get(TestDataCreator.getVacationType(VacationType.HOLIDAY)));
+            statistics.getWaitingVacationDays().get(vacationTypes.get(0)));
         Assert.assertEquals("Wrong number of days", BigDecimal.ONE,
-            statistics.getWaitingVacationDays().get(TestDataCreator.getVacationType(VacationType.OVERTIME)));
+            statistics.getWaitingVacationDays().get(vacationTypes.get(1)));
         Assert.assertEquals("Wrong number of days", BigDecimal.ZERO,
-            statistics.getWaitingVacationDays().get(TestDataCreator.getVacationType(VacationType.SPECIALLEAVE)));
+            statistics.getWaitingVacationDays().get(vacationTypes.get(2)));
         Assert.assertEquals("Wrong number of days", BigDecimal.ZERO,
-            statistics.getWaitingVacationDays().get(TestDataCreator.getVacationType(VacationType.UNPAIDLEAVE)));
+            statistics.getWaitingVacationDays().get(vacationTypes.get(3)));
     }
 
 
@@ -185,21 +189,21 @@ public class ApplicationForLeaveStatisticsTest {
 
         Person person = Mockito.mock(Person.class);
 
-        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, getVacationTypeService());
+        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
 
-        statistics.addAllowedVacationDays(TestDataCreator.getVacationType(VacationType.SPECIALLEAVE), BigDecimal.ONE);
-        statistics.addAllowedVacationDays(TestDataCreator.getVacationType(VacationType.SPECIALLEAVE), BigDecimal.ONE);
+        statistics.addAllowedVacationDays(vacationTypes.get(2), BigDecimal.ONE);
+        statistics.addAllowedVacationDays(vacationTypes.get(2), BigDecimal.ONE);
 
-        statistics.addAllowedVacationDays(TestDataCreator.getVacationType(VacationType.UNPAIDLEAVE), BigDecimal.ONE);
+        statistics.addAllowedVacationDays(vacationTypes.get(3), BigDecimal.ONE);
 
         Assert.assertEquals("Wrong number of days", BigDecimal.ZERO,
-            statistics.getAllowedVacationDays().get(TestDataCreator.getVacationType(VacationType.HOLIDAY)));
+            statistics.getAllowedVacationDays().get(vacationTypes.get(0)));
         Assert.assertEquals("Wrong number of days", BigDecimal.ZERO,
-            statistics.getAllowedVacationDays().get(TestDataCreator.getVacationType(VacationType.OVERTIME)));
+            statistics.getAllowedVacationDays().get(vacationTypes.get(1)));
         Assert.assertEquals("Wrong number of days", new BigDecimal("2"),
-            statistics.getAllowedVacationDays().get(TestDataCreator.getVacationType(VacationType.SPECIALLEAVE)));
+            statistics.getAllowedVacationDays().get(vacationTypes.get(2)));
         Assert.assertEquals("Wrong number of days", BigDecimal.ONE,
-            statistics.getAllowedVacationDays().get(TestDataCreator.getVacationType(VacationType.UNPAIDLEAVE)));
+            statistics.getAllowedVacationDays().get(vacationTypes.get(3)));
     }
 
 
@@ -210,18 +214,18 @@ public class ApplicationForLeaveStatisticsTest {
 
         Person person = Mockito.mock(Person.class);
 
-        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, getVacationTypeService());
+        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
 
-        statistics.addWaitingVacationDays(TestDataCreator.getVacationType(VacationType.HOLIDAY), BigDecimal.ONE);
-        statistics.addWaitingVacationDays(TestDataCreator.getVacationType(VacationType.HOLIDAY), BigDecimal.ONE);
-        statistics.addWaitingVacationDays(TestDataCreator.getVacationType(VacationType.HOLIDAY), BigDecimal.ONE);
+        statistics.addWaitingVacationDays(vacationTypes.get(0), BigDecimal.ONE);
+        statistics.addWaitingVacationDays(vacationTypes.get(0), BigDecimal.ONE);
+        statistics.addWaitingVacationDays(vacationTypes.get(0), BigDecimal.ONE);
 
-        statistics.addWaitingVacationDays(TestDataCreator.getVacationType(VacationType.OVERTIME), BigDecimal.ONE);
-        statistics.addWaitingVacationDays(TestDataCreator.getVacationType(VacationType.OVERTIME), BigDecimal.ONE);
+        statistics.addWaitingVacationDays(vacationTypes.get(1), BigDecimal.ONE);
+        statistics.addWaitingVacationDays(vacationTypes.get(1), BigDecimal.ONE);
 
-        statistics.addWaitingVacationDays(TestDataCreator.getVacationType(VacationType.SPECIALLEAVE), BigDecimal.ONE);
+        statistics.addWaitingVacationDays(vacationTypes.get(2), BigDecimal.ONE);
 
-        statistics.addWaitingVacationDays(TestDataCreator.getVacationType(VacationType.UNPAIDLEAVE), BigDecimal.TEN);
+        statistics.addWaitingVacationDays(vacationTypes.get(3), BigDecimal.TEN);
 
         Assert.assertEquals("Wrong total waiting vacation days", new BigDecimal("16"),
             statistics.getTotalWaitingVacationDays());
@@ -235,18 +239,18 @@ public class ApplicationForLeaveStatisticsTest {
 
         Person person = Mockito.mock(Person.class);
 
-        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, getVacationTypeService());
+        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
 
-        statistics.addAllowedVacationDays(TestDataCreator.getVacationType(VacationType.HOLIDAY), BigDecimal.ONE);
-        statistics.addAllowedVacationDays(TestDataCreator.getVacationType(VacationType.HOLIDAY), BigDecimal.ONE);
-        statistics.addAllowedVacationDays(TestDataCreator.getVacationType(VacationType.HOLIDAY), BigDecimal.ONE);
+        statistics.addAllowedVacationDays(vacationTypes.get(0), BigDecimal.ONE);
+        statistics.addAllowedVacationDays(vacationTypes.get(0), BigDecimal.ONE);
+        statistics.addAllowedVacationDays(vacationTypes.get(0), BigDecimal.ONE);
 
-        statistics.addAllowedVacationDays(TestDataCreator.getVacationType(VacationType.OVERTIME), BigDecimal.ONE);
-        statistics.addAllowedVacationDays(TestDataCreator.getVacationType(VacationType.OVERTIME), BigDecimal.ONE);
+        statistics.addAllowedVacationDays(vacationTypes.get(1), BigDecimal.ONE);
+        statistics.addAllowedVacationDays(vacationTypes.get(1), BigDecimal.ONE);
 
-        statistics.addAllowedVacationDays(TestDataCreator.getVacationType(VacationType.SPECIALLEAVE), BigDecimal.ONE);
+        statistics.addAllowedVacationDays(vacationTypes.get(2), BigDecimal.ONE);
 
-        statistics.addAllowedVacationDays(TestDataCreator.getVacationType(VacationType.UNPAIDLEAVE), BigDecimal.TEN);
+        statistics.addAllowedVacationDays(vacationTypes.get(3), BigDecimal.TEN);
 
         Assert.assertEquals("Wrong total allowed vacation days", new BigDecimal("16"),
             statistics.getTotalAllowedVacationDays());
@@ -260,7 +264,7 @@ public class ApplicationForLeaveStatisticsTest {
 
         Person person = Mockito.mock(Person.class);
 
-        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, getVacationTypeService());
+        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
 
         statistics.setLeftOvertime(BigDecimal.ONE);
 
@@ -273,7 +277,7 @@ public class ApplicationForLeaveStatisticsTest {
 
         Person person = Mockito.mock(Person.class);
 
-        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, getVacationTypeService());
+        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);
 
         statistics.setLeftOvertime(null);
     }

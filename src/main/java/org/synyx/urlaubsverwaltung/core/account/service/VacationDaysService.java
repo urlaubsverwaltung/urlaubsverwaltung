@@ -11,6 +11,7 @@ import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.domain.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
@@ -116,7 +117,7 @@ public class VacationDaysService {
         // filter them since only waiting and allowed applications for leave of type holiday are relevant
         List<Application> applicationsForLeave = allApplicationsForLeave.stream()
             .filter(input ->
-                        VacationType.HOLIDAY.equals(input.getVacationType().getTypeName())
+                        VacationCategory.HOLIDAY.equals(input.getVacationType().getCategory())
                         && (input.hasStatus(ApplicationStatus.WAITING) || input.hasStatus(ApplicationStatus.ALLOWED)))
             .collect(Collectors.toList());
 

@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.domain.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.calendar.PublicHolidaysService;
@@ -89,7 +90,7 @@ public class VacationDaysServiceTest {
         a1.setEndDate(new DateMidnight(2012, DateTimeConstants.JANUARY, 3));
         a1.setDayLength(DayLength.FULL);
         a1.setStatus(ApplicationStatus.ALLOWED);
-        a1.setVacationType(getVacationType(VacationType.HOLIDAY));
+        a1.setVacationType(getVacationType(VacationCategory.HOLIDAY));
         a1.setPerson(person);
 
         // 5 days
@@ -98,7 +99,7 @@ public class VacationDaysServiceTest {
         a2.setEndDate(new DateMidnight(2012, DateTimeConstants.MARCH, 16));
         a2.setDayLength(DayLength.FULL);
         a2.setStatus(ApplicationStatus.ALLOWED);
-        a2.setVacationType(getVacationType(VacationType.HOLIDAY));
+        a2.setVacationType(getVacationType(VacationCategory.HOLIDAY));
         a2.setPerson(person);
 
         // 4 days
@@ -107,7 +108,7 @@ public class VacationDaysServiceTest {
         a3.setEndDate(new DateMidnight(2012, DateTimeConstants.FEBRUARY, 9));
         a3.setDayLength(DayLength.FULL);
         a3.setStatus(ApplicationStatus.WAITING);
-        a3.setVacationType(getVacationType(VacationType.HOLIDAY));
+        a3.setVacationType(getVacationType(VacationCategory.HOLIDAY));
         a3.setPerson(person);
 
         // 6 days at all: 2 before April + 4 after April
@@ -116,7 +117,7 @@ public class VacationDaysServiceTest {
         a4.setEndDate(new DateMidnight(2012, DateTimeConstants.APRIL, 5));
         a4.setDayLength(DayLength.FULL);
         a4.setStatus(ApplicationStatus.WAITING);
-        a4.setVacationType(getVacationType(VacationType.HOLIDAY));
+        a4.setVacationType(getVacationType(VacationCategory.HOLIDAY));
         a4.setPerson(person);
 
         Mockito.when(applicationService.getApplicationsForACertainPeriodAndPerson(Mockito.any(DateMidnight.class),
@@ -146,7 +147,7 @@ public class VacationDaysServiceTest {
         a1.setDayLength(DayLength.FULL);
         a1.setPerson(person);
         a1.setStatus(ApplicationStatus.ALLOWED);
-        a1.setVacationType(getVacationType(VacationType.HOLIDAY));
+        a1.setVacationType(getVacationType(VacationCategory.HOLIDAY));
 
         // 5 days
         Application a2 = new Application();
@@ -155,7 +156,7 @@ public class VacationDaysServiceTest {
         a2.setDayLength(DayLength.FULL);
         a2.setPerson(person);
         a2.setStatus(ApplicationStatus.ALLOWED);
-        a2.setVacationType(getVacationType(VacationType.HOLIDAY));
+        a2.setVacationType(getVacationType(VacationCategory.HOLIDAY));
 
         // 6 days at all: 2 before April + 4 after April
         Application a4 = new Application();
@@ -164,7 +165,7 @@ public class VacationDaysServiceTest {
         a4.setDayLength(DayLength.FULL);
         a4.setPerson(person);
         a4.setStatus(ApplicationStatus.WAITING);
-        a4.setVacationType(getVacationType(VacationType.HOLIDAY));
+        a4.setVacationType(getVacationType(VacationCategory.HOLIDAY));
 
         Mockito.when(applicationService.getApplicationsForACertainPeriodAndPerson(Mockito.any(DateMidnight.class),
                     Mockito.any(DateMidnight.class), Mockito.any(Person.class)))
@@ -187,35 +188,35 @@ public class VacationDaysServiceTest {
         DateMidnight lastMilestone = new DateMidnight(2012, DateTimeConstants.DECEMBER, 31);
 
         Application cancelledHoliday = new Application();
-        cancelledHoliday.setVacationType(getVacationType(VacationType.HOLIDAY));
+        cancelledHoliday.setVacationType(getVacationType(VacationCategory.HOLIDAY));
         cancelledHoliday.setStatus(ApplicationStatus.CANCELLED);
 
         Application rejectedHoliday = new Application();
-        rejectedHoliday.setVacationType(getVacationType(VacationType.HOLIDAY));
+        rejectedHoliday.setVacationType(getVacationType(VacationCategory.HOLIDAY));
         rejectedHoliday.setStatus(ApplicationStatus.REJECTED);
 
         Application waitingSpecialLeave = new Application();
-        waitingSpecialLeave.setVacationType(getVacationType(VacationType.SPECIALLEAVE));
+        waitingSpecialLeave.setVacationType(getVacationType(VacationCategory.SPECIALLEAVE));
         waitingSpecialLeave.setStatus(ApplicationStatus.WAITING);
 
         Application allowedSpecialLeave = new Application();
-        allowedSpecialLeave.setVacationType(getVacationType(VacationType.SPECIALLEAVE));
+        allowedSpecialLeave.setVacationType(getVacationType(VacationCategory.SPECIALLEAVE));
         allowedSpecialLeave.setStatus(ApplicationStatus.ALLOWED);
 
         Application waitingUnpaidLeave = new Application();
-        waitingUnpaidLeave.setVacationType(getVacationType(VacationType.UNPAIDLEAVE));
+        waitingUnpaidLeave.setVacationType(getVacationType(VacationCategory.UNPAIDLEAVE));
         waitingUnpaidLeave.setStatus(ApplicationStatus.WAITING);
 
         Application allowedUnpaidLeave = new Application();
-        allowedUnpaidLeave.setVacationType(getVacationType(VacationType.UNPAIDLEAVE));
+        allowedUnpaidLeave.setVacationType(getVacationType(VacationCategory.UNPAIDLEAVE));
         allowedUnpaidLeave.setStatus(ApplicationStatus.ALLOWED);
 
         Application waitingOvertime = new Application();
-        waitingOvertime.setVacationType(getVacationType(VacationType.OVERTIME));
+        waitingOvertime.setVacationType(getVacationType(VacationCategory.OVERTIME));
         waitingOvertime.setStatus(ApplicationStatus.WAITING);
 
         Application allowedOvertime = new Application();
-        allowedOvertime.setVacationType(getVacationType(VacationType.OVERTIME));
+        allowedOvertime.setVacationType(getVacationType(VacationCategory.OVERTIME));
         allowedOvertime.setStatus(ApplicationStatus.ALLOWED);
 
         Mockito.when(applicationService.getApplicationsForACertainPeriodAndPerson(Mockito.any(DateMidnight.class),
@@ -350,8 +351,8 @@ public class VacationDaysServiceTest {
     }
 
 
-    private VacationType getVacationType(String typeName) {
+    private VacationType getVacationType(VacationCategory category) {
 
-        return TestDataCreator.getVacationType(typeName);
+        return TestDataCreator.createVacationType(category);
     }
 }

@@ -10,6 +10,7 @@ import org.mockito.Mockito;
 import org.springframework.validation.Errors;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
+import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.CalculationService;
 import org.synyx.urlaubsverwaltung.core.calendar.OverlapCase;
@@ -78,7 +79,7 @@ public class ApplicationValidatorTest {
 
         appForm = new ApplicationForLeaveForm();
 
-        appForm.setVacationType(TestDataCreator.getVacationType(VacationType.HOLIDAY));
+        appForm.setVacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
         appForm.setDayLength(DayLength.FULL);
         appForm.setStartDate(DateMidnight.now());
         appForm.setEndDate(DateMidnight.now().plusDays(2));
@@ -338,7 +339,7 @@ public class ApplicationValidatorTest {
     @Test
     public void ensureReasonIsNotMandatoryForHoliday() {
 
-        VacationType vacationType = TestDataCreator.getVacationType(VacationType.HOLIDAY);
+        VacationType vacationType = TestDataCreator.createVacationType(VacationCategory.HOLIDAY);
 
         appForm.setVacationType(vacationType);
         appForm.setReason("");
@@ -353,7 +354,7 @@ public class ApplicationValidatorTest {
     @Test
     public void ensureReasonIsNotMandatoryForUnpaidLeave() {
 
-        VacationType vacationType = TestDataCreator.getVacationType(VacationType.UNPAIDLEAVE);
+        VacationType vacationType = TestDataCreator.createVacationType(VacationCategory.UNPAIDLEAVE);
 
         appForm.setVacationType(vacationType);
         appForm.setReason("");
@@ -368,7 +369,7 @@ public class ApplicationValidatorTest {
     @Test
     public void ensureReasonIsNotMandatoryForOvertime() {
 
-        VacationType vacationType = TestDataCreator.getVacationType(VacationType.OVERTIME);
+        VacationType vacationType = TestDataCreator.createVacationType(VacationCategory.OVERTIME);
 
         appForm.setVacationType(vacationType);
         appForm.setReason("");
@@ -383,7 +384,7 @@ public class ApplicationValidatorTest {
     @Test
     public void ensureReasonIsMandatoryForSpecialLeave() {
 
-        VacationType vacationType = TestDataCreator.getVacationType(VacationType.SPECIALLEAVE);
+        VacationType vacationType = TestDataCreator.createVacationType(VacationCategory.SPECIALLEAVE);
 
         appForm.setVacationType(vacationType);
         appForm.setReason("");
@@ -435,7 +436,7 @@ public class ApplicationValidatorTest {
         appForm.setDayLength(DayLength.FULL);
         appForm.setStartDate(DateMidnight.now());
         appForm.setEndDate(DateMidnight.now());
-        appForm.setVacationType(TestDataCreator.getVacationType(VacationType.HOLIDAY));
+        appForm.setVacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
 
         Mockito.when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
@@ -458,7 +459,7 @@ public class ApplicationValidatorTest {
         appForm.setDayLength(DayLength.NOON);
         appForm.setStartDate(DateMidnight.now());
         appForm.setEndDate(DateMidnight.now());
-        appForm.setVacationType(TestDataCreator.getVacationType(VacationType.HOLIDAY));
+        appForm.setVacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
 
         when(errors.hasErrors()).thenReturn(Boolean.FALSE);
 
@@ -501,7 +502,7 @@ public class ApplicationValidatorTest {
     @Test
     public void ensureHoursIsMandatoryForOvertime() {
 
-        appForm.setVacationType(TestDataCreator.getVacationType(VacationType.OVERTIME));
+        appForm.setVacationType(TestDataCreator.createVacationType(VacationCategory.OVERTIME));
         appForm.setHours(null);
 
         validator.validate(appForm, errors);
@@ -522,9 +523,9 @@ public class ApplicationValidatorTest {
             Mockito.verify(errors, Mockito.never()).rejectValue(Mockito.eq("hours"), Mockito.anyString());
         };
 
-        VacationType holiday = TestDataCreator.getVacationType(VacationType.HOLIDAY);
-        VacationType specialLeave = TestDataCreator.getVacationType(VacationType.SPECIALLEAVE);
-        VacationType unpaidLeave = TestDataCreator.getVacationType(VacationType.UNPAIDLEAVE);
+        VacationType holiday = TestDataCreator.createVacationType(VacationCategory.HOLIDAY);
+        VacationType specialLeave = TestDataCreator.createVacationType(VacationCategory.SPECIALLEAVE);
+        VacationType unpaidLeave = TestDataCreator.createVacationType(VacationCategory.UNPAIDLEAVE);
 
         assertHoursNotMandatory.accept(holiday);
         assertHoursNotMandatory.accept(specialLeave);
@@ -557,7 +558,7 @@ public class ApplicationValidatorTest {
     @Test
     public void ensureDecimalHoursAreValid() {
 
-        appForm.setVacationType(TestDataCreator.getVacationType(VacationType.OVERTIME));
+        appForm.setVacationType(TestDataCreator.createVacationType(VacationCategory.OVERTIME));
         appForm.setHours(new BigDecimal("0.5"));
 
         validator.validate(appForm, errors);
@@ -569,7 +570,7 @@ public class ApplicationValidatorTest {
     @Test
     public void ensureNoErrorMessageForMandatoryIfHoursIsNullBecauseOfTypeMismatch() {
 
-        appForm.setVacationType(TestDataCreator.getVacationType(VacationType.OVERTIME));
+        appForm.setVacationType(TestDataCreator.createVacationType(VacationCategory.OVERTIME));
         appForm.setHours(null);
 
         when(errors.hasFieldErrors("hours")).thenReturn(true);
@@ -668,7 +669,7 @@ public class ApplicationValidatorTest {
 
     private void overtimeMinimumTest(BigDecimal hours) {
 
-        VacationType vacationType = TestDataCreator.getVacationType(VacationType.OVERTIME);
+        VacationType vacationType = TestDataCreator.createVacationType(VacationCategory.OVERTIME);
 
         appForm.setHours(hours);
         appForm.setVacationType(vacationType);

@@ -18,7 +18,7 @@
     <span class="box-text">
         <h5 class="is-inline-block is-sticky"><c:out value="${application.person.niceName}" /></h5> <spring:message code="application.applier.applied" />
         <h4>
-            <c:out value="${application.vacationType.typeDisplayName}"/>
+            <c:out value="${application.vacationType.displayName}"/>
             <span class="state ${application.status} pull-right hidden-print hidden-xs" title="<spring:message code='${application.status}' />">
             <c:choose>
                 <c:when test="${application.status == 'WAITING'}">
@@ -95,7 +95,7 @@
                   </c:if>
                 });
             </script>
-            <c:if test="${application.vacationType.typeName == 'OVERTIME'}">
+            <c:if test="${application.vacationType.category == 'OVERTIME'}">
                 <span class="text-muted">
                     <br/>
                     <uv:number number="${application.hours}"/>

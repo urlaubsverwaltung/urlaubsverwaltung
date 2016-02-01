@@ -5,26 +5,27 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
+import org.springframework.util.Assert;
+
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 
 
 /**
- * Enum describing which possible types of vacation exist.
+ * Describes a type of vacation.
  *
  * @author  Johannes Reuter
  * @author  Aljona Murygina
+ * @since  2.15.0
  */
 @Entity
 public class VacationType extends AbstractPersistable<Integer> {
 
-    public static final String HOLIDAY = "HOLIDAY";
-    public static final String SPECIALLEAVE = "SPECIALLEAVE";
-    public static final String UNPAIDLEAVE = "UNPAIDLEAVE";
-    public static final String OVERTIME = "OVERTIME";
+    @Enumerated(EnumType.STRING)
+    private VacationCategory category;
 
-    private String typeName;
-
-    private String typeDisplayName;
+    private String displayName;
 
     @Override
     public void setId(Integer id) {
@@ -33,27 +34,35 @@ public class VacationType extends AbstractPersistable<Integer> {
     }
 
 
-    public String getTypeName() {
+    public VacationCategory getCategory() {
 
-        return this.typeName;
+        return category;
     }
 
 
-    public void setTypeName(String typeName) {
+    public void setCategory(VacationCategory category) {
 
-        this.typeName = typeName;
+        this.category = category;
     }
 
 
-    public String getTypeDisplayName() {
+    public boolean isOfCategory(VacationCategory category) {
 
-        return typeDisplayName;
+        Assert.notNull(category, "Vacation category must be given");
+
+        return getCategory().equals(category);
     }
 
 
-    public void setTypeDisplayName(String typeDisplayName) {
+    public String getDisplayName() {
 
-        this.typeDisplayName = typeDisplayName;
+        return displayName;
+    }
+
+
+    public void setDisplayName(String displayName) {
+
+        this.displayName = displayName;
     }
 
 

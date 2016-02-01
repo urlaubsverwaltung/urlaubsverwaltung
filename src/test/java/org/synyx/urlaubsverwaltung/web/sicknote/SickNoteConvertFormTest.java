@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -54,7 +55,7 @@ public class SickNoteConvertFormTest {
         SickNote sickNote = TestDataCreator.createSickNote(person, startDate, endDate, DayLength.FULL);
 
         String reason = "Foo";
-        VacationType vacationType = TestDataCreator.getVacationType(VacationType.UNPAIDLEAVE);
+        VacationType vacationType = TestDataCreator.createVacationType(VacationCategory.UNPAIDLEAVE);
 
         SickNoteConvertForm convertForm = new SickNoteConvertForm(sickNote);
 

@@ -11,6 +11,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 import org.springframework.stereotype.Service;
 
+import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
@@ -142,15 +143,15 @@ public class TestDataCreationService {
         List<VacationType> vacationTypes = vacationTypeService.getVacationTypes();
 
         for (VacationType vacationType : vacationTypes) {
-            if (VacationType.HOLIDAY.equals(vacationType.getTypeName())) {
+            if (vacationType.isOfCategory(VacationCategory.HOLIDAY)) {
                 holiday = vacationType;
             }
 
-            if (VacationType.OVERTIME.equals(vacationType.getTypeName())) {
+            if (vacationType.isOfCategory(VacationCategory.OVERTIME)) {
                 overtime = vacationType;
             }
 
-            if (VacationType.SPECIALLEAVE.equals(vacationType.getTypeName())) {
+            if (vacationType.isOfCategory(VacationCategory.SPECIALLEAVE)) {
                 specialLeave = vacationType;
             }
         }

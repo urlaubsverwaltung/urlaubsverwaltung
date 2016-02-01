@@ -89,8 +89,8 @@
                                     <p><spring:message code="application.applier.applied"/></p>
                                   </td>
                                   <td class="halves">
-                                    <a class="vacation ${application.vacationType.typeName} hidden-print" href="${URL_PREFIX}/application/${application.id}">
-                                      <h4><uv:number number="${application.workDays}" /> <spring:message code="duration.days" /> <c:out value="${application.vacationType.typeDisplayName}"/></h4>
+                                    <a class="vacation ${application.vacationType.category} hidden-print" href="${URL_PREFIX}/application/${application.id}">
+                                      <h4><uv:number number="${application.workDays}" /> <spring:message code="duration.days" /> <c:out value="${application.vacationType.displayName}"/></h4>
                                     </a>
                                     <p>
                                       <c:choose>

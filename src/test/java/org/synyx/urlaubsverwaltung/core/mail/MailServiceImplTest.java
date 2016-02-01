@@ -13,6 +13,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
+import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
@@ -59,7 +60,7 @@ public class MailServiceImplTest {
 
         application = new Application();
         application.setPerson(person);
-        application.setVacationType(TestDataCreator.getVacationType(VacationType.HOLIDAY));
+        application.setVacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
         application.setDayLength(DayLength.FULL);
 
         settings = new Settings();

@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
+import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -31,7 +32,7 @@ public class ApplicationForLeaveFormTest {
 
         ApplicationForLeaveForm form = new ApplicationForLeaveForm();
 
-        form.setVacationType(TestDataCreator.getVacationType(VacationType.HOLIDAY));
+        form.setVacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
         form.setDayLength(DayLength.FULL);
         form.setStartDate(startDate);
         form.setEndDate(endDate);
@@ -50,7 +51,7 @@ public class ApplicationForLeaveFormTest {
         DateMidnight now = DateMidnight.now();
 
         ApplicationForLeaveForm form = new ApplicationForLeaveForm();
-        form.setVacationType(TestDataCreator.getVacationType(VacationType.HOLIDAY));
+        form.setVacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
         form.setDayLength(DayLength.MORNING);
         form.setStartDate(now);
         form.setEndDate(now);
@@ -66,7 +67,7 @@ public class ApplicationForLeaveFormTest {
     @Test
     public void ensureGeneratedApplicationForLeaveHasCorrectProperties() {
 
-        VacationType overtime = TestDataCreator.getVacationType(VacationType.OVERTIME);
+        VacationType overtime = TestDataCreator.createVacationType(VacationCategory.OVERTIME);
 
         Person person = TestDataCreator.createPerson();
         Person holidayReplacement = TestDataCreator.createPerson("vertretung");
@@ -89,7 +90,7 @@ public class ApplicationForLeaveFormTest {
         Assert.assertEquals("Wrong day length", DayLength.FULL, application.getDayLength());
         Assert.assertEquals("Wrong address", "Musterstr. 39", application.getAddress());
         Assert.assertEquals("Wrong reason", "Deshalb", application.getReason());
-        Assert.assertEquals("Wrong type", overtime.getTypeName(), application.getVacationType().getTypeName());
+        Assert.assertEquals("Wrong type", overtime.getDisplayName(), application.getVacationType().getDisplayName());
         Assert.assertEquals("Wrong hours", BigDecimal.ONE, application.getHours());
         Assert.assertTrue("Team should be informed", application.isTeamInformed());
     }
@@ -108,14 +109,9 @@ public class ApplicationForLeaveFormTest {
             Assert.assertNull("Hours should not be set", application.getHours());
         };
 
-        VacationType holiday = Mockito.mock(VacationType.class);
-        holiday.setTypeName(VacationType.HOLIDAY);
-
-        VacationType specialLeave = Mockito.mock(VacationType.class);
-        holiday.setTypeName(VacationType.SPECIALLEAVE);
-
-        VacationType unpaidLeave = Mockito.mock(VacationType.class);
-        holiday.setTypeName(VacationType.UNPAIDLEAVE);
+        VacationType holiday = TestDataCreator.createVacationType(VacationCategory.HOLIDAY);
+        VacationType specialLeave = TestDataCreator.createVacationType(VacationCategory.SPECIALLEAVE);
+        VacationType unpaidLeave = TestDataCreator.createVacationType(VacationCategory.UNPAIDLEAVE);
 
         assertHoursAreNotSet.accept(holiday);
         assertHoursAreNotSet.accept(specialLeave);

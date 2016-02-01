@@ -9,11 +9,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import org.synyx.urlaubsverwaltung.core.account.service.AccountInteractionService;
-import org.synyx.urlaubsverwaltung.core.application.domain.Application;
-import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationAction;
-import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationComment;
-import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
+import org.synyx.urlaubsverwaltung.core.application.domain.*;
 import org.synyx.urlaubsverwaltung.core.application.service.exception.ImpatientAboutApplicationForLeaveProcessException;
 import org.synyx.urlaubsverwaltung.core.application.service.exception.RemindAlreadySentException;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
@@ -883,7 +879,7 @@ public class ApplicationInteractionServiceImplTest {
 
         Person person = TestDataCreator.createPerson();
         Application applicationForLeave = TestDataCreator.createApplication(person,
-                TestDataCreator.getVacationType(VacationType.HOLIDAY));
+                TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
         applicationForLeave.setApplicationDate(DateMidnight.now().minusDays(3));
         applicationForLeave.setRemindDate(DateMidnight.now().minusDays(1));
 

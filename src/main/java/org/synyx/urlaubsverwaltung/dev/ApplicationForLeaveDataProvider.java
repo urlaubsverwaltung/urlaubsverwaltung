@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
+import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationInteractionService;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
@@ -54,7 +55,7 @@ class ApplicationForLeaveDataProvider {
                 + "ut labore et dolore magna aliquyam erat, sed diam voluptua."
                 + "At vero eos et accusam et justo duo dolores");
 
-            if (vacationType.equals(VacationType.OVERTIME)) {
+            if (vacationType.getCategory().equals(VacationCategory.OVERTIME)) {
                 switch (dayLength) {
                     case FULL:
                         application.setHours(new BigDecimal("8"));
