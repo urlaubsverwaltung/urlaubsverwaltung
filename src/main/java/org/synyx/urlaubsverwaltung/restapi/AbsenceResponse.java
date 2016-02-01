@@ -18,7 +18,7 @@ class AbsenceResponse {
     private BigDecimal dayLength;
     private PersonResponse person;
     private String type;
-    private String category;
+    private String typeName;
     private String status;
 
     AbsenceResponse(Application application) {
@@ -30,8 +30,8 @@ class AbsenceResponse {
         this.status = application.getStatus().name();
 
         VacationType vacationType = application.getVacationType();
-        this.type = vacationType.getDisplayName();
-        this.category = vacationType.getCategory().toString();
+        this.type = vacationType.getCategory().toString();
+        this.typeName = vacationType.getDisplayName();
     }
 
 
@@ -45,8 +45,8 @@ class AbsenceResponse {
 
         SickNoteType sickNoteType = sickNote.getSickNoteType();
 
-        this.type = sickNoteType.getDisplayName();
-        this.category = sickNoteType.getCategory().toString();
+        this.type = sickNoteType.getCategory().toString();
+        this.typeName = sickNoteType.getDisplayName();
     }
 
     public String getFrom() {
@@ -109,15 +109,15 @@ class AbsenceResponse {
     }
 
 
-    public String getCategory() {
+    public String getTypeName() {
 
-        return category;
+        return typeName;
     }
 
 
-    public void setCategory(String category) {
+    public void setTypeName(String typeName) {
 
-        this.category = category;
+        this.typeName = typeName;
     }
 
 
