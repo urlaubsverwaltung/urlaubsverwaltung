@@ -170,8 +170,7 @@ public class ApplicationValidator implements Validator {
         DateMidnight future = DateMidnight.now().plusMonths(maximumMonths);
 
         if (date.isAfter(future)) {
-            errors.reject(ERROR_TOO_LONG,
-                new Object[] { settings.getMaximumMonthsToApplyForLeaveInAdvance().toString() }, null);
+            errors.reject(ERROR_TOO_LONG, new Object[] { settings.getMaximumMonthsToApplyForLeaveInAdvance() }, null);
         }
     }
 

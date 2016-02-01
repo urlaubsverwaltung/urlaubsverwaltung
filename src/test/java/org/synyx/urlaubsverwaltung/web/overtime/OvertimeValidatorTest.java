@@ -292,8 +292,8 @@ public class OvertimeValidatorTest {
         validator.validate(overtimeForm, errors);
 
         Mockito.verify(errors)
-            .rejectValue("numberOfHours", "overtime.data.numberOfHours.error.maxOvertime", new Object[] { "8", "16" },
-                null);
+            .rejectValue("numberOfHours", "overtime.data.numberOfHours.error.maxOvertime",
+                new Object[] { new BigDecimal("8"), new BigDecimal("16") }, null);
 
         Mockito.verify(settingsServiceMock).getSettings();
         Mockito.verify(overtimeServiceMock).getLeftOvertimeForPerson(overtimeForm.getPerson());
@@ -313,8 +313,8 @@ public class OvertimeValidatorTest {
         validator.validate(overtimeForm, errors);
 
         Mockito.verify(errors)
-            .rejectValue("numberOfHours", "overtime.data.numberOfHours.error.minOvertime", new Object[] { "-9", "10" },
-                null);
+            .rejectValue("numberOfHours", "overtime.data.numberOfHours.error.minOvertime",
+                new Object[] { new BigDecimal("-9"), new BigDecimal("10") }, null);
 
         Mockito.verify(settingsServiceMock).getSettings();
         Mockito.verify(overtimeServiceMock).getLeftOvertimeForPerson(overtimeForm.getPerson());
