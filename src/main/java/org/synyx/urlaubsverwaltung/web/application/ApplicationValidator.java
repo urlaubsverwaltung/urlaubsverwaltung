@@ -303,7 +303,7 @@ public class ApplicationValidator implements Validator {
          * Check overtime of given user
          */
         Boolean overtimeActive = settingsService.getSettings().getWorkingTimeSettings().isOvertimeActive();
-        Boolean isOvertime = VacationType.OVERTIME.equals(application.getVacationType());
+        Boolean isOvertime = VacationType.OVERTIME.equals(application.getVacationType().getTypeName());
 
         if (isOvertime && overtimeActive) {
             boolean enoughOvertimeHours = checkOvertimeHours(application);
