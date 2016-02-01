@@ -78,9 +78,18 @@
 <body>
 
 <spring:url var="URL_PREFIX" value="/web"/>
+
 <sec:authorize access="hasAuthority('OFFICE')">
     <c:set var="IS_OFFICE" value="${true}"/>
 </sec:authorize>
+
+<c:set var="DATE_PATTERN">
+    <spring:message code="pattern.date"/>
+</c:set>
+
+<c:set var="TIME_PATTERN">
+    <spring:message code="pattern.time"/>
+</c:set>
 
 <uv:menu/>
 
@@ -201,10 +210,10 @@
                     <spring:message code="absence.period.startDate" />:
                 </label>
                 <div class="col-md-5">
-                    <form:input id="from" path="startDate" class="form-control" cssErrorClass="form-control error" />
+                    <form:input id="from" path="startDate" class="form-control" cssErrorClass="form-control error" placeholder="${DATE_PATTERN}" />
                 </div>
                 <div class="col-md-4">
-                    <form:input id="startTime" path="startTime" class="form-control" cssErrorClass="form-control error" />
+                    <form:input id="startTime" path="startTime" class="form-control" cssErrorClass="form-control error" placeholder="${TIME_PATTERN}" />
                 </div>
             </div>
 
@@ -213,11 +222,11 @@
                     <spring:message code="absence.period.endDate" />:
                 </label>
                 <div class="col-md-5">
-                    <form:input id="to" path="endDate" class="form-control" cssErrorClass="form-control error" />
+                    <form:input id="to" path="endDate" class="form-control" cssErrorClass="form-control error" placeholder="${DATE_PATTERN}" />
                     <span class="help-block info days"></span>
                 </div>
                 <div class="col-md-4">
-                    <form:input id="endTime" path="endTime" class="form-control" cssErrorClass="form-control error" />
+                    <form:input id="endTime" path="endTime" class="form-control" cssErrorClass="form-control error" placeholder="${TIME_PATTERN}" />
                 </div>
             </div>
 
@@ -226,7 +235,7 @@
                     <spring:message code="absence.period.startAndEndDate" />:
                 </label>
                 <div class="col-md-9">
-                    <form:input id="at" path="startDateHalf" class="form-control" cssErrorClass="form-control error" />
+                    <form:input id="at" path="startDateHalf" class="form-control" cssErrorClass="form-control error" placeholder="${DATE_PATTERN}" />
                     <span class="help-block info days"></span>
                 </div>
             </div>
