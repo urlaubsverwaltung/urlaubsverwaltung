@@ -53,6 +53,14 @@
                 <form:hidden path="person" value="${overtime.person.id}" />
                 <div class="form-section">
                     <div class="col-xs-12">
+                        <c:set var="formErrors"><form:errors/></c:set>
+                        <c:if test="${not empty formErrors}">
+                            <div class="alert alert-danger">
+                                <form:errors/>
+                            </div>
+                        </c:if>
+                    </div>
+                    <div class="col-xs-12">
                         <legend>
                             <c:choose>
                                 <c:when test="${overtime.id == null}">

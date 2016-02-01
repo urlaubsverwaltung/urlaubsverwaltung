@@ -54,6 +54,8 @@ public class OvertimeValidatorTest {
         overtimeForm = new OvertimeForm(overtimeRecord);
 
         settings = new Settings();
+        settings.getWorkingTimeSettings().setOvertimeActive(true);
+
         Mockito.when(settingsServiceMock.getSettings()).thenReturn(settings);
 
         Mockito.when(overtimeServiceMock.getLeftOvertimeForPerson(Mockito.any(Person.class)))
@@ -225,6 +227,19 @@ public class OvertimeValidatorTest {
     }
 
 
+    // Validate using overtime settings --------------------------------------------------------------------------------
+
+    @Test
+    public void ensureCanNotRecordOvertimeIfOvertimeManagementIsDeactivated() {
+
+        settings.getWorkingTimeSettings().setOvertimeActive(false);
+
+        validator.validate(overtimeForm, errors);
+
+        Mockito.verify(errors).reject("overtime.record.error.deactivated");
+    }
+
+
     @Test
     public void ensureCanNotRecordOvertimeIfMaximumOvertimeIsZero() {
 
@@ -238,7 +253,7 @@ public class OvertimeValidatorTest {
 
         validator.validate(overtimeForm, errors);
 
-        Mockito.verify(errors).rejectValue("numberOfHours", "overtime.data.numberOfHours.error.maxOvertimeZero");
+        Mockito.verify(errors).reject("overtime.record.error.deactivated");
 
         Mockito.verify(settingsServiceMock).getSettings();
         Mockito.verifyZeroInteractions(overtimeServiceMock);
@@ -306,8 +321,41 @@ public class OvertimeValidatorTest {
     }
 
 
+    // Validate changes in existing overtime record --------------------------------------------------------------------
+
     @Test
-    public void ensureCanEditOvertimeRecord() throws IllegalAccessException {
+    public void foo() throws IllegalAccessException {
+
+        settings.getWorkingTimeSettings().setMaximumOvertime(100);
+
+        Mockito.when(overtimeServiceMock.getLeftOvertimeForPerson(Mockito.any(Person.class)))
+            .thenReturn(new BigDecimal("99.5"));
+
+        overtimeForm.setNumberOfHours(new BigDecimal("2"));
+
+        // ensure overtime form has ID
+        Field idField = ReflectionUtils.findField(OvertimeForm.class, "id");
+        idField.setAccessible(true);
+        idField.set(overtimeForm, 42);
+
+        Overtime originalOvertimeRecord = TestDataCreator.createOvertimeRecord();
+        originalOvertimeRecord.setHours(new BigDecimal("3"));
+
+        Mockito.when(overtimeServiceMock.getOvertimeById(Mockito.anyInt()))
+            .thenReturn(Optional.of(originalOvertimeRecord));
+
+        validator.validate(overtimeForm, errors);
+
+        Mockito.verifyZeroInteractions(errors);
+
+        Mockito.verify(overtimeServiceMock).getOvertimeById(overtimeForm.getId());
+        Mockito.verify(settingsServiceMock).getSettings();
+        Mockito.verify(overtimeServiceMock).getLeftOvertimeForPerson(overtimeForm.getPerson());
+    }
+
+
+    @Test
+    public void ensureCanEditOvertimeRecordChangingPositiveHours() throws IllegalAccessException {
 
         settings.getWorkingTimeSettings().setMaximumOvertime(4);
 
@@ -323,6 +371,37 @@ public class OvertimeValidatorTest {
 
         Overtime originalOvertimeRecord = TestDataCreator.createOvertimeRecord();
         originalOvertimeRecord.setHours(new BigDecimal("2.5"));
+
+        Mockito.when(overtimeServiceMock.getOvertimeById(Mockito.anyInt()))
+            .thenReturn(Optional.of(originalOvertimeRecord));
+
+        validator.validate(overtimeForm, errors);
+
+        Mockito.verifyZeroInteractions(errors);
+
+        Mockito.verify(overtimeServiceMock).getOvertimeById(overtimeForm.getId());
+        Mockito.verify(settingsServiceMock).getSettings();
+        Mockito.verify(overtimeServiceMock).getLeftOvertimeForPerson(overtimeForm.getPerson());
+    }
+
+
+    @Test
+    public void ensureCanEditOvertimeRecordChangingNegativeHours() throws IllegalAccessException {
+
+        settings.getWorkingTimeSettings().setMinimumOvertime(4);
+
+        Mockito.when(overtimeServiceMock.getLeftOvertimeForPerson(Mockito.any(Person.class)))
+            .thenReturn(new BigDecimal("-3.5"));
+
+        overtimeForm.setNumberOfHours(new BigDecimal("-3"));
+
+        // ensure overtime form has ID
+        Field idField = ReflectionUtils.findField(OvertimeForm.class, "id");
+        idField.setAccessible(true);
+        idField.set(overtimeForm, 42);
+
+        Overtime originalOvertimeRecord = TestDataCreator.createOvertimeRecord();
+        originalOvertimeRecord.setHours(new BigDecimal("-2.5"));
 
         Mockito.when(overtimeServiceMock.getOvertimeById(Mockito.anyInt()))
             .thenReturn(Optional.of(originalOvertimeRecord));
