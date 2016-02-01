@@ -21,7 +21,15 @@ public class TimePropertyEditor extends PropertyEditorSupport {
             return "";
         }
 
-        return this.getValue().toString();
+        String text = this.getValue().toString();
+
+        String[] timeParts = text.split(":");
+
+        if (timeParts.length == 3) {
+            text = timeParts[0] + ':' + timeParts[1];
+        }
+
+        return text;
     }
 
 
