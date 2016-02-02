@@ -87,7 +87,7 @@
 </c:set>
 
 <c:set var="TIME_PATTERN">
-    <spring:message code="pattern.time"/>
+    <spring:message code="pattern.time"/> <spring:message code="application.data.time.placeholder"/>
 </c:set>
 
 <uv:menu/>
