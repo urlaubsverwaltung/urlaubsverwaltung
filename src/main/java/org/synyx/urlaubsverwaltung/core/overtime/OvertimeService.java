@@ -70,13 +70,14 @@ public interface OvertimeService {
 
 
     /**
-     * Get the total hours summing up all overtime records of person.
+     * Get the total hours of all overtime records of the given person and year.
      *
      * @param  person  to get the total overtime for
+     * @param  year  to get the total overtime for
      *
-     * @return  the total overtime, never {@code null}
+     * @return  the total overtime for the given year, never {@code null}
      */
-    BigDecimal getTotalOvertimeForPerson(Person person);
+    BigDecimal getTotalOvertimeForPersonAndYear(Person person, int year);
 
 
     /**

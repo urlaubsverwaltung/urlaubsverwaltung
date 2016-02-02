@@ -86,10 +86,7 @@ public class ApplicationForLeaveStatisticsBuilder {
             }
         }
 
-        BigDecimal totalOvertime = overtimeService.getTotalOvertimeForPerson(person);
-        BigDecimal totalOvertimeReduction = applicationService.getTotalOvertimeReductionOfPerson(person);
-
-        statistics.setLeftOvertime(totalOvertime.subtract(totalOvertimeReduction));
+        statistics.setLeftOvertime(overtimeService.getLeftOvertimeForPerson(person));
 
         return statistics;
     }

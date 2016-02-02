@@ -109,17 +109,20 @@ public class OvertimeServiceImpl implements OvertimeService {
 
 
     @Override
-    public BigDecimal getTotalOvertimeForPerson(Person person) {
+    public BigDecimal getTotalOvertimeForPersonAndYear(Person person, int year) {
 
         Assert.notNull(person, "Person to get total overtime for must be given.");
+        Assert.isTrue(year > 0, "Year must be a valid number.");
 
-        Optional<BigDecimal> totalOvertime = Optional.ofNullable(overtimeDAO.calculateTotalHoursForPerson(person));
+        List<Overtime> overtimeRecords = getOvertimeRecordsForPersonAndYear(person, year);
 
-        if (totalOvertime.isPresent()) {
-            return totalOvertime.get();
+        BigDecimal totalHours = BigDecimal.ZERO;
+
+        for (Overtime record : overtimeRecords) {
+            totalHours = totalHours.add(record.getHours());
         }
 
-        return BigDecimal.ZERO;
+        return totalHours;
     }
 
 
@@ -132,5 +135,17 @@ public class OvertimeServiceImpl implements OvertimeService {
         BigDecimal overtimeReduction = applicationService.getTotalOvertimeReductionOfPerson(person);
 
         return totalOvertime.subtract(overtimeReduction);
+    }
+
+
+    private BigDecimal getTotalOvertimeForPerson(Person person) {
+
+        Optional<BigDecimal> totalOvertime = Optional.ofNullable(overtimeDAO.calculateTotalHoursForPerson(person));
+
+        if (totalOvertime.isPresent()) {
+            return totalOvertime.get();
+        }
+
+        return BigDecimal.ZERO;
     }
 }

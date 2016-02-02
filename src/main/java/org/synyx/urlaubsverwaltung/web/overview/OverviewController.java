@@ -167,7 +167,7 @@ public class OverviewController {
             model.addAttribute("usedDaysOverview", usedDaysOverview);
         }
 
-        model.addAttribute("overtimeTotal", overtimeService.getTotalOvertimeForPerson(person));
+        model.addAttribute("overtimeTotal", overtimeService.getTotalOvertimeForPersonAndYear(person, year));
         model.addAttribute("overtimeLeft", overtimeService.getLeftOvertimeForPerson(person));
     }
 

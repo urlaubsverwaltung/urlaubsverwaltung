@@ -24,6 +24,7 @@
             <div class="col-xs-12">
                 <legend>
                     <spring:message code="overtime.title"/>
+                    <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/overtime?person=${person.id}&year="/>
 
                     <c:if test="${IS_OFFICE || signedInUser.id == person.id}">
                         <a href="${URL_PREFIX}/overtime/new?person=${person.id}" class="fa-action pull-right" data-title="<spring:message code="action.overtime.new"/>">
@@ -46,7 +47,6 @@
             <div class="col-xs-12">
                 <legend>
                     <spring:message code="overtime.list"/>
-                    <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/overtime?person=${person.id}&year="/>
                 </legend>
                 <c:choose>
                     <c:when test="${empty records}">

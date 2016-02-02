@@ -107,8 +107,7 @@ public class ApplicationForLeaveStatisticsBuilderTest {
         Mockito.when(accountService.getHolidaysAccount(2014, person)).thenReturn(Optional.of(account));
         Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(Mockito.eq(account)))
             .thenReturn(BigDecimal.TEN);
-        Mockito.when(overtimeService.getTotalOvertimeForPerson(person)).thenReturn(BigDecimal.TEN);
-        Mockito.when(applicationService.getTotalOvertimeReductionOfPerson(person)).thenReturn(BigDecimal.ONE);
+        Mockito.when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(new BigDecimal("9"));
 
         Application holidayWaiting = new Application();
         holidayWaiting.setVacationType(vacationTypes.get(0));
@@ -204,8 +203,7 @@ public class ApplicationForLeaveStatisticsBuilderTest {
         Mockito.when(accountService.getHolidaysAccount(2015, person)).thenReturn(Optional.of(account));
         Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(Mockito.eq(account)))
             .thenReturn(BigDecimal.TEN);
-        Mockito.when(overtimeService.getTotalOvertimeForPerson(person)).thenReturn(BigDecimal.TEN);
-        Mockito.when(applicationService.getTotalOvertimeReductionOfPerson(person)).thenReturn(BigDecimal.ONE);
+        Mockito.when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(new BigDecimal("9"));
 
         Application holidayAllowed = new Application();
         holidayAllowed.setVacationType(vacationTypes.get(0));
@@ -261,8 +259,7 @@ public class ApplicationForLeaveStatisticsBuilderTest {
         Account account = Mockito.mock(Account.class);
 
         Mockito.when(accountService.getHolidaysAccount(2015, person)).thenReturn(Optional.of(account));
-        Mockito.when(applicationService.getTotalOvertimeReductionOfPerson(person)).thenReturn(new BigDecimal("3.5"));
-        Mockito.when(overtimeService.getTotalOvertimeForPerson(person)).thenReturn(BigDecimal.TEN);
+        Mockito.when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(new BigDecimal("6.5"));
         Mockito.when(vacationDaysService.calculateTotalLeftVacationDays(account)).thenReturn(new BigDecimal("8.5"));
 
         ApplicationForLeaveStatistics statistics = builder.build(person, from, to);
@@ -270,8 +267,7 @@ public class ApplicationForLeaveStatisticsBuilderTest {
         Assert.assertEquals("Wrong left overtime", new BigDecimal("6.5"), statistics.getLeftOvertime());
         Assert.assertEquals("Wrong left vacation days", new BigDecimal("8.5"), statistics.getLeftVacationDays());
 
-        Mockito.verify(applicationService).getTotalOvertimeReductionOfPerson(person);
-        Mockito.verify(overtimeService).getTotalOvertimeForPerson(person);
+        Mockito.verify(overtimeService).getLeftOvertimeForPerson(person);
         Mockito.verify(vacationDaysService).calculateTotalLeftVacationDays(account);
     }
 }
