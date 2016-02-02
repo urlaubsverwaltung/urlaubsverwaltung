@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.web.overtime;
 
 import org.joda.time.DateMidnight;
-import org.joda.time.tz.CachedDateTimeZone;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -146,15 +145,15 @@ public class OvertimeValidator implements Validator {
 
             // left overtime + overtime record must not be greater than maximum overtime
             if (leftOvertime.add(numberOfHours).compareTo(maximumOvertime) > 0) {
-                errors.rejectValue(ATTRIBUTE_NUMBER_OF_HOURS, ERROR_MAX_OVERTIME,
-                    new Object[] { leftOvertime, maximumOvertime }, null);
+                errors.rejectValue(ATTRIBUTE_NUMBER_OF_HOURS, ERROR_MAX_OVERTIME, new Object[] { maximumOvertime },
+                    null);
             }
 
             // left overtime + overtime record must be greater than minimum overtime
             // minimum overtime are missing hours (means negative)
             if (leftOvertime.add(numberOfHours).compareTo(minimumOvertime.negate()) < 0) {
-                errors.rejectValue(ATTRIBUTE_NUMBER_OF_HOURS, ERROR_MIN_OVERTIME,
-                    new Object[] { leftOvertime, minimumOvertime }, null);
+                errors.rejectValue(ATTRIBUTE_NUMBER_OF_HOURS, ERROR_MIN_OVERTIME, new Object[] { minimumOvertime },
+                    null);
             }
         }
     }
