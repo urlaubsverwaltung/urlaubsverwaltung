@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.dev;
 
-import org.apache.log4j.Logger;
-
 import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;

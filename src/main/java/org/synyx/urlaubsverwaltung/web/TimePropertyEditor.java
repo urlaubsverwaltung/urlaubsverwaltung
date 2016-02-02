@@ -13,6 +13,9 @@ import java.sql.Time;
  */
 public class TimePropertyEditor extends PropertyEditorSupport {
 
+    private static final String SECONDS = ":00";
+    private static final String TIME_SEPARATOR = ":";
+
     // Time to String
     @Override
     public String getAsText() {
@@ -23,10 +26,10 @@ public class TimePropertyEditor extends PropertyEditorSupport {
 
         String text = this.getValue().toString();
 
-        String[] timeParts = text.split(":");
+        String[] timeParts = text.split(TIME_SEPARATOR);
 
         if (timeParts.length == 3) {
-            text = timeParts[0] + ':' + timeParts[1];
+            return timeParts[0] + TIME_SEPARATOR + timeParts[1];
         }
 
         return text;
@@ -40,8 +43,8 @@ public class TimePropertyEditor extends PropertyEditorSupport {
         if (text == null || text.length() < 1) {
             this.setValue(null);
         } else {
-            if (text.split(":").length == 2) {
-                text = text.concat(":00");
+            if (text.split(TIME_SEPARATOR).length == 2) {
+                text = text.concat(SECONDS);
             }
 
             Time time = Time.valueOf(text);

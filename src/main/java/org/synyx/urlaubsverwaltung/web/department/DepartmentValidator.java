@@ -125,7 +125,7 @@ public class DepartmentValidator implements Validator {
 
         if (secondStageAuthorities != null) {
             for (Person secondStage : secondStageAuthorities) {
-                if (members == null || (members != null && !members.contains(secondStage))) {
+                if (members == null || !members.contains(secondStage)) {
                     errors.rejectValue(ATTRIBUTE_SECOND_STAGE_AUTHORITIES, ERROR_SECOND_STAGE_AUTHORITY_NOT_ASSIGNED);
                 }
 

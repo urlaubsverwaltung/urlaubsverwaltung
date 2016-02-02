@@ -588,11 +588,11 @@ public class Application extends AbstractPersistable<Integer> {
      */
     public DateTime getStartDateWithTime() {
 
-        DateMidnight startDate = getStartDate();
-        Time startTime = getStartTime();
+        DateMidnight date = getStartDate();
+        Time time = getStartTime();
 
-        if (startDate != null && startTime != null) {
-            return startDate.toDateTime().withHourOfDay(startTime.getHours()).withMinuteOfHour(startTime.getMinutes());
+        if (date != null && time != null) {
+            return date.toDateTime().withHourOfDay(time.getHours()).withMinuteOfHour(time.getMinutes());
         }
 
         return null;
@@ -606,11 +606,11 @@ public class Application extends AbstractPersistable<Integer> {
      */
     public DateTime getEndDateWithTime() {
 
-        DateMidnight endDate = getEndDate();
-        Time endTime = getEndTime();
+        DateMidnight date = getEndDate();
+        Time time = getEndTime();
 
-        if (endDate != null && endTime != null) {
-            return endDate.toDateTime().withHourOfDay(endTime.getHours()).withMinuteOfHour(endTime.getMinutes());
+        if (date != null && time != null) {
+            return date.toDateTime().withHourOfDay(time.getHours()).withMinuteOfHour(time.getMinutes());
         }
 
         return null;

@@ -11,8 +11,6 @@ import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sync.absence.Absence;
 
-import scala.App;
-
 import java.util.List;
 
 

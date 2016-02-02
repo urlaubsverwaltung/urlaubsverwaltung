@@ -13,7 +13,7 @@ import java.util.List;
 @Service
 public class VacationTypeServiceImpl implements VacationTypeService {
 
-    private VacationTypeDAO vacationTypeDAO;
+    private final VacationTypeDAO vacationTypeDAO;
 
     @Autowired
     public VacationTypeServiceImpl(VacationTypeDAO vacationTypeDAO) {

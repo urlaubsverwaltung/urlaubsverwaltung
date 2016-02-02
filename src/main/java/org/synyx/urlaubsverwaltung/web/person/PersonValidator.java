@@ -284,19 +284,22 @@ public class PersonValidator implements Validator {
 
         if (roles == null || roles.isEmpty()) {
             errors.rejectValue(ATTRIBUTE_PERMISSIONS, "person.form.permissions.error.mandatory");
-        } else {
-            // if role inactive set, then only this role may be selected
-            if (roles.contains(Role.INACTIVE) && roles.size() != 1) {
-                errors.rejectValue(ATTRIBUTE_PERMISSIONS, "person.form.permissions.error.inactive");
-            }
 
-            if (roles.contains(Role.DEPARTMENT_HEAD) && roles.contains(Role.BOSS)) {
-                errors.rejectValue(ATTRIBUTE_PERMISSIONS, "person.form.permissions.error.departmentHead");
-            }
+            return;
+        }
 
-            if (roles.contains(Role.SECOND_STAGE_AUTHORITY) && roles.contains(Role.BOSS)) {
-                errors.rejectValue(ATTRIBUTE_PERMISSIONS, "person.form.permissions.error.secondStage");
-            }
+        // if role inactive set, then only this role may be selected
+        if (roles.contains(Role.INACTIVE) && roles.size() != 1) {
+            errors.rejectValue(ATTRIBUTE_PERMISSIONS, "person.form.permissions.error.inactive");
+        }
+
+        // Boss and department head / second stage authority doesn't make sense
+        if (roles.contains(Role.DEPARTMENT_HEAD) && roles.contains(Role.BOSS)) {
+            errors.rejectValue(ATTRIBUTE_PERMISSIONS, "person.form.permissions.error.departmentHead");
+        }
+
+        if (roles.contains(Role.SECOND_STAGE_AUTHORITY) && roles.contains(Role.BOSS)) {
+            errors.rejectValue(ATTRIBUTE_PERMISSIONS, "person.form.permissions.error.secondStage");
         }
     }
 
@@ -307,21 +310,26 @@ public class PersonValidator implements Validator {
         List<MailNotification> notifications = personForm.getNotifications();
 
         if (roles != null) {
-            boolean departmentHeadNotificationsSelectedButNotDepartmentHeadRole = notifications.contains(
-                    MailNotification.NOTIFICATION_DEPARTMENT_HEAD) && !roles.contains(Role.DEPARTMENT_HEAD);
-            boolean secondStageNotificationsSelectedButNotSecondStageRole = notifications.contains(
-                    MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY)
-                && !roles.contains(Role.SECOND_STAGE_AUTHORITY);
-            boolean bossNotificationsSelectedButNotBossRole = notifications.contains(MailNotification.NOTIFICATION_BOSS)
-                && !roles.contains(Role.BOSS);
-            boolean officeNotificationsSelectedButNotOfficeRole = notifications.contains(
-                    MailNotification.NOTIFICATION_OFFICE) && !roles.contains(Role.OFFICE);
+            validateCombinationOfNotificationAndRole(roles, notifications, Role.DEPARTMENT_HEAD,
+                MailNotification.NOTIFICATION_DEPARTMENT_HEAD, errors);
 
-            if (departmentHeadNotificationsSelectedButNotDepartmentHeadRole
-                    || secondStageNotificationsSelectedButNotSecondStageRole || bossNotificationsSelectedButNotBossRole
-                    || officeNotificationsSelectedButNotOfficeRole) {
-                errors.rejectValue("notifications", "person.form.notifications.error.combination");
-            }
+            validateCombinationOfNotificationAndRole(roles, notifications, Role.SECOND_STAGE_AUTHORITY,
+                MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY, errors);
+
+            validateCombinationOfNotificationAndRole(roles, notifications, Role.BOSS,
+                MailNotification.NOTIFICATION_BOSS, errors);
+
+            validateCombinationOfNotificationAndRole(roles, notifications, Role.OFFICE,
+                MailNotification.NOTIFICATION_OFFICE, errors);
+        }
+    }
+
+
+    private void validateCombinationOfNotificationAndRole(List<Role> roles, List<MailNotification> notifications,
+        Role role, MailNotification notification, Errors errors) {
+
+        if (notifications.contains(notification) && !roles.contains(role)) {
+            errors.rejectValue("notifications", "person.form.notifications.error.combination");
         }
     }
 

@@ -10,7 +10,7 @@ import java.util.List;
 @Service
 public class SickNoteTypeServiceImpl implements SickNoteTypeService {
 
-    private SickNoteTypeDAO sickNoteTypeDAO;
+    private final SickNoteTypeDAO sickNoteTypeDAO;
 
     @Autowired
     public SickNoteTypeServiceImpl(SickNoteTypeDAO sickNoteTypeDAO) {
