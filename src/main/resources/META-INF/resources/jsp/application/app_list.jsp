@@ -111,6 +111,16 @@
                                                 <spring:message code="${application.dayLength}"/>
                                             </c:set>
                                             <spring:message code="absence.period.singleDay" arguments="${APPLICATION_DATE};${APPLICATION_DAY_LENGTH}" argumentSeparator=";"/>
+
+                                            <c:if test="${application.startTime != null && application.endTime != null}">
+                                                <c:set var="APPLICATION_START_TIME">
+                                                    <uv:time dateTime="${application.startDateWithTime}" />
+                                                </c:set>
+                                                <c:set var="APPLICATION_END_TIME">
+                                                    <uv:time dateTime="${application.endDateWithTime}" />
+                                                </c:set>
+                                                (<spring:message code="absence.period.time" arguments="${APPLICATION_START_TIME};${APPLICATION_END_TIME}" argumentSeparator=";"/>)
+                                            </c:if>
                                         </c:when>
                                         <c:otherwise>
                                             <c:set var="APPLICATION_START_DATE">
@@ -122,13 +132,6 @@
                                             <spring:message code="absence.period.multipleDays" arguments="${APPLICATION_START_DATE};${APPLICATION_END_DATE}" argumentSeparator=";"/>
                                         </c:otherwise>
                                       </c:choose>
-                                        <c:if test="${application.startTime != null}">
-                                            <br><c:out value="${application.startTime}"/>
-                                        </c:if>
-                                        <c:if test="${application.endTime != null}">
-                                            <c:out value="${application.endTime}"/>
-                                        </c:if>
-
                                     </p>
                                   </td>
                                   <td class="hidden-print hidden-xs hidden-sm">
