@@ -67,7 +67,14 @@
             </td>
           <td class="is-centered hidden-xs">
             <span>
-              <uv:number number="${app.workDays}" /> <spring:message code="duration.days"/>
+                <c:choose>
+                    <c:when test="${app.hours != null}">
+                        <uv:number number="${app.hours}" /> <spring:message code="duration.overtime" />
+                    </c:when>
+                    <c:otherwise>
+                        <uv:number number="${app.workDays}" /> <spring:message code="duration.days" />
+                    </c:otherwise>
+                </c:choose>
             </span>
 
             <c:if test="${app.startDate.year != app.endDate.year}">

@@ -90,7 +90,16 @@
                                   </td>
                                   <td class="halves">
                                     <a class="vacation ${application.vacationType.category} hidden-print" href="${URL_PREFIX}/application/${application.id}">
-                                      <h4><uv:number number="${application.workDays}" /> <spring:message code="duration.days" /> <c:out value="${application.vacationType.displayName}"/></h4>
+                                      <h4>
+                                          <c:choose>
+                                              <c:when test="${application.hours != null}">
+                                                  <uv:number number="${application.hours}" /> <spring:message code="duration.hours" /> <c:out value="${application.vacationType.displayName}"/>
+                                              </c:when>
+                                              <c:otherwise>
+                                                  <uv:number number="${application.workDays}" /> <spring:message code="duration.days" /> <c:out value="${application.vacationType.displayName}"/>
+                                              </c:otherwise>
+                                          </c:choose>
+                                      </h4>
                                     </a>
                                     <p>
                                       <c:choose>
