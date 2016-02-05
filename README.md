@@ -61,6 +61,7 @@ In der Urlaubsverwaltung gibt es aktuell folgende Arten von Berechtigungen:
 * **inaktiv**: hat keinen Zugang mehr zur Urlaubsverwaltung (Daten des Benutzers bleiben zur Archivierung bestehen)
 * **User**: darf Urlaub für sich selbst beantragen
 * **Abteilungsleiter**: darf Urlaubsanträge für die Benutzer seiner Abteilungen einsehen, genehmigen und ablehnen
+* **Freigabe Verantwortlicher**: ist bei der zweistufigen Genehmigung von Anträgen verantwortlich für die endgültige Freigabe
 * **Chef**: darf Urlaubsanträge aller Benutzer einsehen, genehmigen und ablehnen
 * **Office**: darf Einstellungen zur Anwendung vornehmen, Mitarbeiter verwalten, Urlaub für Mitarbeiter
 beantragen/stornieren und Krankmeldungen pflegen
@@ -103,6 +104,7 @@ Testbenutzern anmelden:
 * `testUser/secret`: Benutzer mit der Rolle `User`
 * `testBoss/secret`: Benutzer mit der Rolle `Boss`
 * `testHead/secret`: Benutzer mit der Rolle `DepartmentHead`
+* `testManager/secret`: Benutzer mit der Rolle `SecondStageAuthority`
 * `test/secret`: Benutzer mit der Rolle `Office`
 
 #### Anlegen von Testdaten deaktivieren
