@@ -20,7 +20,6 @@ import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
-import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.core.overtime.OvertimeAction;
@@ -88,8 +87,8 @@ public class MailServiceIntegrationTest {
 
         SettingsService settingsService = Mockito.mock(SettingsService.class);
 
-        mailService = new MailServiceImpl(mailSender, velocityEngine, personService, departmentService, settingsService,
-                "localhorscht/");
+        mailService = new MailServiceImpl(mailSender, velocityEngine, personService, departmentService,
+                settingsService);
 
         DateMidnight now = DateMidnight.now();
 
@@ -106,6 +105,7 @@ public class MailServiceIntegrationTest {
 
         settings = new Settings();
         settings.getMailSettings().setActive(true);
+        settings.getMailSettings().setBaseLinkURL("http://urlaubsverwaltung/");
         Mockito.when(settingsService.getSettings()).thenReturn(settings);
 
         // BOSS
@@ -178,6 +178,7 @@ public class MailServiceIntegrationTest {
         assertTrue(content.contains("Hallo Chefs"));
         assertTrue(content.contains("Lieschen Müller"));
         assertTrue(content.contains("es liegt ein neuer zu genehmigender Antrag vor"));
+        assertTrue(content.contains("http://urlaubsverwaltung/web/application/"));
         assertTrue("No comment in mail content", content.contains(comment.getText()));
         assertTrue("Wrong comment author", content.contains(comment.getPerson().getNiceName()));
     }
@@ -719,6 +720,7 @@ public class MailServiceIntegrationTest {
         String content = (String) msg.getContent();
         assertTrue(content.contains("Hallo Max Muster"));
         assertTrue(content.contains("Rick Grimes bittet dich um Hilfe bei der Entscheidung über einen Urlaubsantrag"));
+        assertTrue(content.contains("http://urlaubsverwaltung/web/application/"));
     }
 
 
@@ -843,5 +845,6 @@ public class MailServiceIntegrationTest {
         String content = (String) msg.getContent();
         assertTrue(content.contains("Hallo Office"));
         assertTrue(content.contains("es wurden Überstunden erfasst"));
+        assertTrue(content.contains("http://urlaubsverwaltung/web/overtime/"));
     }
 }

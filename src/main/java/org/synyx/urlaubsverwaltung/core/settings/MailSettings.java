@@ -33,6 +33,14 @@ public class MailSettings {
     @Column(name = "mail_administrator")
     private String administrator = "admin@uv.de";
 
+    /**
+     * Is used as base URL for links within sent mails.
+     *
+     * @since  2.16.0
+     */
+    @Column(name = "mail_base_link_url")
+    private String baseLinkURL = "http://localhost:8080/";
+
     public boolean isActive() {
 
         return active;
@@ -114,5 +122,17 @@ public class MailSettings {
     public void setAdministrator(String administrator) {
 
         this.administrator = administrator;
+    }
+
+
+    public String getBaseLinkURL() {
+
+        return baseLinkURL;
+    }
+
+
+    public void setBaseLinkURL(String baseLinkURL) {
+
+        this.baseLinkURL = baseLinkURL;
     }
 }

@@ -10,7 +10,6 @@ import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
@@ -72,22 +71,17 @@ class MailServiceImpl implements MailService {
     private final DepartmentService departmentService;
     private final SettingsService settingsService;
 
-    private final String applicationUrl;
-
     private Properties properties;
 
     @Autowired
     public MailServiceImpl(@Qualifier("mailSender") JavaMailSenderImpl mailSender, VelocityEngine velocityEngine,
-        PersonService personService, DepartmentService departmentService, SettingsService settingsService,
-        @Value("${application.url}") String applicationUrl) {
+        PersonService personService, DepartmentService departmentService, SettingsService settingsService) {
 
         this.mailSender = mailSender;
         this.velocityEngine = velocityEngine;
         this.personService = personService;
         this.departmentService = departmentService;
         this.settingsService = settingsService;
-
-        this.applicationUrl = applicationUrl;
 
         try {
             this.properties = PropertiesUtil.load(PROPERTIES_FILE);
@@ -100,24 +94,32 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendNewApplicationNotification(Application application, ApplicationComment comment) {
 
-        Map<String, Object> model = createModelForApplicationStatusChangeMail(application,
+        MailSettings mailSettings = getMailSettings();
+
+        Map<String, Object> model = createModelForApplicationStatusChangeMail(mailSettings, application,
                 Optional.ofNullable(comment));
         model.put("departmentVacations",
             departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(application.getPerson(),
                 application.getStartDate(), application.getEndDate()));
 
         String text = buildMailBody("new_applications", model);
-        sendEmail(getBossesAndDepartmentHeads(application), "subject.application.applied.boss", text);
+        sendEmail(mailSettings, getBossesAndDepartmentHeads(application), "subject.application.applied.boss", text);
     }
 
 
-    private Map<String, Object> createModelForApplicationStatusChangeMail(Application application,
-        Optional<ApplicationComment> optionalComment) {
+    private MailSettings getMailSettings() {
+
+        return settingsService.getSettings().getMailSettings();
+    }
+
+
+    private Map<String, Object> createModelForApplicationStatusChangeMail(MailSettings mailSettings,
+        Application application, Optional<ApplicationComment> optionalComment) {
 
         Map<String, Object> model = new HashMap<>();
         model.put("application", application);
         model.put("dayLength", properties.getProperty(application.getDayLength().name()));
-        model.put("link", applicationUrl + "web/application/" + application.getId());
+        model.put("link", mailSettings.getBaseLinkURL() + "web/application/" + application.getId());
 
         if (optionalComment.isPresent()) {
             model.put("comment", optionalComment.get());
@@ -180,7 +182,8 @@ class MailServiceImpl implements MailService {
     }
 
 
-    protected void sendEmail(final List<Person> recipients, final String subject, final String text) {
+    protected void sendEmail(final MailSettings mailSettings, final List<Person> recipients, final String subject,
+        final String text) {
 
         final String internationalizedSubject = properties.getProperty(subject);
 
@@ -197,7 +200,6 @@ class MailServiceImpl implements MailService {
                 addressTo[i] = recipient.getEmail();
             }
 
-            MailSettings mailSettings = settingsService.getSettings().getMailSettings();
             mailMessage.setFrom(mailSettings.getFrom());
             mailMessage.setTo(addressTo);
             mailMessage.setSubject(internationalizedSubject);
@@ -238,17 +240,19 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendRemindBossNotification(Application application) {
 
-        Map<String, Object> model = createModelForApplicationStatusChangeMail(application,
+        MailSettings mailSettings = getMailSettings();
+        Map<String, Object> model = createModelForApplicationStatusChangeMail(mailSettings, application,
                 Optional.<ApplicationComment>empty());
         String text = buildMailBody("remind", model);
-        sendEmail(getBossesAndDepartmentHeads(application), "subject.application.remind", text);
+        sendEmail(mailSettings, getBossesAndDepartmentHeads(application), "subject.application.remind", text);
     }
 
 
     @Override
     public void sendTemporaryAllowedNotification(Application application, ApplicationComment comment) {
 
-        Map<String, Object> model = createModelForApplicationStatusChangeMail(application,
+        MailSettings mailSettings = getMailSettings();
+        Map<String, Object> model = createModelForApplicationStatusChangeMail(mailSettings, application,
                 Optional.ofNullable(comment));
         model.put("departmentVacations",
             departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(application.getPerson(),
@@ -257,13 +261,14 @@ class MailServiceImpl implements MailService {
         // Inform user that the application for leave has been allowed temporary
 
         String textUser = buildMailBody("temporary_allowed_user", model);
-        sendEmail(Arrays.asList(application.getPerson()), "subject.application.temporaryAllowed.user", textUser);
+        sendEmail(mailSettings, Arrays.asList(application.getPerson()), "subject.application.temporaryAllowed.user",
+            textUser);
 
         // Inform second stage authorities that there is an application for leave that must be allowed
 
         String textSecondStageAuthority = buildMailBody("temporary_allowed_second_stage_authority", model);
-        sendEmail(getSecondStageAuthorities(application), "subject.application.temporaryAllowed.secondStage",
-            textSecondStageAuthority);
+        sendEmail(mailSettings, getSecondStageAuthorities(application),
+            "subject.application.temporaryAllowed.secondStage", textSecondStageAuthority);
     }
 
 
@@ -281,17 +286,18 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendAllowedNotification(Application application, ApplicationComment comment) {
 
-        Map<String, Object> model = createModelForApplicationStatusChangeMail(application,
+        MailSettings mailSettings = getMailSettings();
+        Map<String, Object> model = createModelForApplicationStatusChangeMail(mailSettings, application,
                 Optional.ofNullable(comment));
 
         // Inform user that the application for leave has been allowed
         String textUser = buildMailBody("allowed_user", model);
-        sendEmail(Arrays.asList(application.getPerson()), "subject.application.allowed.user", textUser);
+        sendEmail(mailSettings, Arrays.asList(application.getPerson()), "subject.application.allowed.user", textUser);
 
         // Inform office that there is a new allowed application for leave
 
         String textOffice = buildMailBody("allowed_office", model);
-        sendEmail(getOfficeMembers(), "subject.application.allowed.office", textOffice);
+        sendEmail(mailSettings, getOfficeMembers(), "subject.application.allowed.office", textOffice);
     }
 
 
@@ -304,56 +310,62 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendRejectedNotification(Application application, ApplicationComment comment) {
 
-        Map<String, Object> model = createModelForApplicationStatusChangeMail(application,
+        MailSettings mailSettings = getMailSettings();
+        Map<String, Object> model = createModelForApplicationStatusChangeMail(mailSettings, application,
                 Optional.ofNullable(comment));
         String text = buildMailBody("rejected", model);
-        sendEmail(Arrays.asList(application.getPerson()), "subject.application.rejected", text);
+        sendEmail(mailSettings, Arrays.asList(application.getPerson()), "subject.application.rejected", text);
     }
 
 
     @Override
     public void sendReferApplicationNotification(Application application, Person recipient, Person sender) {
 
+        MailSettings mailSettings = getMailSettings();
+
         Map<String, Object> model = new HashMap<>();
         model.put("application", application);
-        model.put("link", applicationUrl + "web/application/" + application.getId());
+        model.put("link", mailSettings.getBaseLinkURL() + "web/application/" + application.getId());
         model.put("recipient", recipient);
         model.put("sender", sender);
 
         String text = buildMailBody("refer", model);
-        sendEmail(Arrays.asList(recipient), "subject.application.refer", text);
+        sendEmail(mailSettings, Arrays.asList(recipient), "subject.application.refer", text);
     }
 
 
     @Override
     public void sendConfirmation(Application application, ApplicationComment comment) {
 
-        Map<String, Object> model = createModelForApplicationStatusChangeMail(application,
+        MailSettings mailSettings = getMailSettings();
+        Map<String, Object> model = createModelForApplicationStatusChangeMail(mailSettings, application,
                 Optional.ofNullable(comment));
         String text = buildMailBody("confirm", model);
-        sendEmail(Arrays.asList(application.getPerson()), "subject.application.applied.user", text);
+        sendEmail(mailSettings, Arrays.asList(application.getPerson()), "subject.application.applied.user", text);
     }
 
 
     @Override
     public void sendAppliedForLeaveByOfficeNotification(Application application, ApplicationComment comment) {
 
-        Map<String, Object> model = createModelForApplicationStatusChangeMail(application,
+        MailSettings mailSettings = getMailSettings();
+        Map<String, Object> model = createModelForApplicationStatusChangeMail(mailSettings, application,
                 Optional.ofNullable(comment));
         String text = buildMailBody("new_application_by_office", model);
-        sendEmail(Arrays.asList(application.getPerson()), "subject.application.appliedByOffice", text);
+        sendEmail(mailSettings, Arrays.asList(application.getPerson()), "subject.application.appliedByOffice", text);
     }
 
 
     @Override
     public void sendCancelledByOfficeNotification(Application application, ApplicationComment comment) {
 
-        Map<String, Object> model = createModelForApplicationStatusChangeMail(application,
+        MailSettings mailSettings = getMailSettings();
+        Map<String, Object> model = createModelForApplicationStatusChangeMail(mailSettings, application,
                 Optional.ofNullable(comment));
 
         String text = buildMailBody("cancelled_by_office", model);
 
-        sendEmail(Arrays.asList(application.getPerson()), "subject.application.cancelled.user", text);
+        sendEmail(mailSettings, Arrays.asList(application.getPerson()), "subject.application.cancelled.user", text);
     }
 
 
@@ -445,7 +457,7 @@ class MailServiceImpl implements MailService {
         String text = buildMailBody("updated_accounts", model);
 
         // send email to office for printing statistic
-        sendEmail(getOfficeMembers(), "subject.account.updatedRemainingDays", text);
+        sendEmail(getMailSettings(), getOfficeMembers(), "subject.account.updatedRemainingDays", text);
 
         // send email to manager to notify about update of accounts
         sendTechnicalNotification("subject.account.updatedRemainingDays", text);
@@ -466,12 +478,14 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendSickNoteConvertedToVacationNotification(Application application) {
 
+        MailSettings mailSettings = getMailSettings();
+
         Map<String, Object> model = new HashMap<>();
         model.put("application", application);
-        model.put("link", applicationUrl + "web/application/" + application.getId());
+        model.put("link", mailSettings.getBaseLinkURL() + "web/application/" + application.getId());
 
         String text = buildMailBody("sicknote_converted", model);
-        sendEmail(Arrays.asList(application.getPerson()), "subject.sicknote.converted", text);
+        sendEmail(mailSettings, Arrays.asList(application.getPerson()), "subject.sicknote.converted", text);
     }
 
 
@@ -483,8 +497,8 @@ class MailServiceImpl implements MailService {
 
         String text = buildMailBody("sicknote_end_of_sick_pay", model);
 
-        sendEmail(Arrays.asList(sickNote.getPerson()), "subject.sicknote.endOfSickPay", text);
-        sendEmail(getOfficeMembers(), "subject.sicknote.endOfSickPay", text);
+        sendEmail(getMailSettings(), Arrays.asList(sickNote.getPerson()), "subject.sicknote.endOfSickPay", text);
+        sendEmail(getMailSettings(), getOfficeMembers(), "subject.sicknote.endOfSickPay", text);
     }
 
 
@@ -497,7 +511,8 @@ class MailServiceImpl implements MailService {
 
         String text = buildMailBody("notify_holiday_replacement", model);
 
-        sendEmail(Arrays.asList(application.getHolidayReplacement()), "subject.application.holidayReplacement", text);
+        sendEmail(getMailSettings(), Arrays.asList(application.getHolidayReplacement()),
+            "subject.application.holidayReplacement", text);
     }
 
 
@@ -507,41 +522,45 @@ class MailServiceImpl implements MailService {
         Map<String, Object> model = new HashMap<>();
         model.put("person", person);
         model.put("rawPassword", rawPassword);
-        model.put("applicationUrl", applicationUrl);
+        model.put("applicationUrl", "");
 
         String text = buildMailBody("user_creation", model);
 
-        sendEmail(Arrays.asList(person), "subject.userCreation", text);
+        sendEmail(getMailSettings(), Arrays.asList(person), "subject.userCreation", text);
     }
 
 
     @Override
     public void sendCancellationRequest(Application application, ApplicationComment createdComment) {
 
+        MailSettings mailSettings = getMailSettings();
+
         Map<String, Object> model = new HashMap<>();
         model.put("application", application);
         model.put("comment", createdComment);
-        model.put("link", applicationUrl + "web/application/" + application.getId());
+        model.put("link", mailSettings.getBaseLinkURL() + "web/application/" + application.getId());
 
         String text = buildMailBody("application_cancellation_request", model);
 
-        sendEmail(getOfficeMembers(), "subject.application.cancellationRequest", text);
+        sendEmail(mailSettings, getOfficeMembers(), "subject.application.cancellationRequest", text);
     }
 
 
     @Override
     public void sendOvertimeNotification(Overtime overtime, OvertimeComment overtimeComment) {
 
+        MailSettings mailSettings = getMailSettings();
+
         Map<String, Object> model = new HashMap<>();
         model.put("overtime", overtime);
         model.put("comment", overtimeComment);
-        model.put("link", applicationUrl + "web/overtime/" + overtime.getId());
+        model.put("link", mailSettings.getBaseLinkURL() + "web/overtime/" + overtime.getId());
 
         String textOffice = buildMailBody("overtime_office", model);
 
         List<Person> recipients = personService.getPersonsWithNotificationType(
                 MailNotification.OVERTIME_NOTIFICATION_OFFICE);
 
-        sendEmail(recipients, "subject.overtime.created", textOffice);
+        sendEmail(mailSettings, recipients, "subject.overtime.created", textOffice);
     }
 }

@@ -53,8 +53,8 @@ public class MailServiceImplTest {
 
         SettingsService settingsService = Mockito.mock(SettingsService.class);
 
-        mailService = new MailServiceImpl(mailSender, velocityEngine, personService, departmentService, settingsService,
-                "");
+        mailService = new MailServiceImpl(mailSender, velocityEngine, personService, departmentService,
+                settingsService);
 
         Person person = TestDataCreator.createPerson();
 
@@ -77,7 +77,7 @@ public class MailServiceImplTest {
 
         Person person = TestDataCreator.createPerson();
 
-        mailService.sendEmail(Collections.singletonList(person), "subject", "text");
+        mailService.sendEmail(settings.getMailSettings(), Collections.singletonList(person), "subject", "text");
 
         Mockito.verifyZeroInteractions(mailSender);
     }
@@ -90,7 +90,7 @@ public class MailServiceImplTest {
 
         Person person = TestDataCreator.createPerson();
 
-        mailService.sendEmail(Collections.singletonList(person), "subject", "text");
+        mailService.sendEmail(mailSettings, Collections.singletonList(person), "subject", "text");
 
         Mockito.verify(mailSender).setHost(mailSettings.getHost());
         Mockito.verify(mailSender).setPort(mailSettings.getPort());
@@ -110,7 +110,8 @@ public class MailServiceImplTest {
 
         String subject = "subject.application.applied.boss";
         String body = "Mail Body";
-        mailService.sendEmail(Arrays.asList(person, anotherPerson, personWithoutMailAddress), subject, body);
+        mailService.sendEmail(settings.getMailSettings(),
+            Arrays.asList(person, anotherPerson, personWithoutMailAddress), subject, body);
 
         Mockito.verify(mailSender).send(mailMessageArgumentCaptor.capture());
 
@@ -129,7 +130,8 @@ public class MailServiceImplTest {
         Person person = TestDataCreator.createPerson();
         person.setEmail(null);
 
-        mailService.sendEmail(Collections.singletonList(person), "Mail Subject", "Mail Body");
+        mailService.sendEmail(settings.getMailSettings(), Collections.singletonList(person), "Mail Subject",
+            "Mail Body");
 
         Mockito.verifyZeroInteractions(mailSender);
     }
