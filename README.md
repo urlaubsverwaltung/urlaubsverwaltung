@@ -128,9 +128,9 @@ nachgelesen werden.
 
 #### Datenbank
 
-Hinweis: Die in der Konfigurationsdatei konfigurierte Datenbank muss existieren.
+Die in der Konfigurationsdatei konfigurierte Datenbank muss existieren.
 
-#### Hinweis
+####  Achtung! Produktives Starten der Anwendung
 
 Wenn eine eigene Konfigurationsdatei hinterlegt ist, darf die Anwendung natürlich **nicht** mehr im Entwicklungsmodus
 gestartet werden, d.h. die Anwendung muss ohne `-Dspring.profiles.active=dev` gestartet werden:
