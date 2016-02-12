@@ -93,7 +93,7 @@ downloaden.
 Damit man die Anwendung möglichst schnell ausprobieren kann, bietet es sich an die Anwendung im Entwicklungsmodus
 zu starten:
 
-<pre>java -jar urlaubsverwaltung.jar -Dspring.profiles.active=dev</pre>
+<pre>java -jar -Dspring.profiles.active=dev urlaubsverwaltung.jar</pre>
 
 Auf diese Weise wird die Anwendung mit einer In-Memory-Datenbank und Testdaten gestartet.
 Man kann sich mit den gleichen Benutzerdaten wie beim [Demo System](#demo-system) anmelden.
