@@ -253,19 +253,6 @@ Oder die Property `auth` in den `application.properties` setzen:
 Ab dieser Version ist die Anwendung eine [Spring Boot](http://projects.spring.io/spring-boot/) Anwendung, d.h. sie wird
 nicht mehr als WAR in einem Tomcat installiert, sondern als JAR ausgeführt.
 
-#### Version 2.7.0
-
-Die Anwendung hat nicht mehr mehrere unterschiedliche Properties-Dateien, sondern je eine `application.properties` pro
-Umgebung. Außerdem heißt die System Property für die Authentifizierungsmethode nicht mehr `spring.profiles.active`,
-sondern `auth`. Die fachlichen Einstellungen werden nicht mehr in einer Properties-Datei gepflegt, sondern innerhalb
-der Anwendung selbst unter dem Menüpunkt "Einstellungen".
-
-#### Version 2.2.1
-
-Wenn man die Urlaubsverwaltung schon länger nutzt und auf Version 2.2.1 oder höher updaten möchte, muss sichergestellt
-sein, dass in der Datenbank keine Person mit gleichem Vor- und Nachnamen existiert. Dies führt ansonsten zu einem
-Problem beim Update des Datenbankschemas und die Anwendung kann nicht starten.
-
 ---
 
 ## Technologien
