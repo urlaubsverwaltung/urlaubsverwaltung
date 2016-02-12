@@ -308,6 +308,15 @@
                             </div>
                         </div>
                         <div class="form-group">
+                            <label class="control-label col-md-4" for="mailSettings.baseLinkURL">
+                                <spring:message code='settings.mail.baseURL'/>:
+                            </label>
+                            <div class="col-md-8">
+                                <form:input id="mailSettings.baseLinkURL" path="mailSettings.baseLinkURL" class="form-control" cssErrorClass="form-control error" />
+                                <span class="help-inline"><form:errors path="mailSettings.baseLinkURL" cssClass="error"/></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <label class="control-label col-md-4" for="mailSettings.host">
                                 <spring:message code='settings.mail.host'/>:
                             </label>
