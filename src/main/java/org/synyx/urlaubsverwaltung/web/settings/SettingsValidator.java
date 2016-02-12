@@ -165,6 +165,8 @@ public class SettingsValidator implements Validator {
             validateMailFrom(mailSettings, errors);
 
             validateMailAdministrator(mailSettings, errors);
+
+            validateMailBaseLinkURL(mailSettings, errors);
         }
     }
 
@@ -262,6 +264,15 @@ public class SettingsValidator implements Validator {
         String administrator = mailSettings.getAdministrator();
 
         validateMandatoryMailAddress(administrator, administratorAttribute, errors);
+    }
+
+
+    private void validateMailBaseLinkURL(MailSettings mailSettings, Errors errors) {
+
+        String baseLinkURLAttribute = "mailSettings.baseLinkURL";
+        String baseLinkURL = mailSettings.getBaseLinkURL();
+
+        validateMandatoryTextField(baseLinkURL, baseLinkURLAttribute, errors);
     }
 
 

@@ -266,6 +266,7 @@ public class SettingsValidatorTest {
         mailSettings.setPort(null);
         mailSettings.setAdministrator(null);
         mailSettings.setFrom(null);
+        mailSettings.setBaseLinkURL(null);
 
         Errors mockError = Mockito.mock(Errors.class);
         settingsValidator.validate(settings, mockError);
@@ -286,6 +287,7 @@ public class SettingsValidatorTest {
         mailSettings.setPort(null);
         mailSettings.setAdministrator(null);
         mailSettings.setFrom(null);
+        mailSettings.setBaseLinkURL(null);
 
         Errors mockError = Mockito.mock(Errors.class);
         settingsValidator.validate(settings, mockError);
@@ -293,6 +295,7 @@ public class SettingsValidatorTest {
         Mockito.verify(mockError).rejectValue("mailSettings.port", "error.entry.mandatory");
         Mockito.verify(mockError).rejectValue("mailSettings.administrator", "error.entry.mandatory");
         Mockito.verify(mockError).rejectValue("mailSettings.from", "error.entry.mandatory");
+        Mockito.verify(mockError).rejectValue("mailSettings.baseLinkURL", "error.entry.mandatory");
     }
 
 
