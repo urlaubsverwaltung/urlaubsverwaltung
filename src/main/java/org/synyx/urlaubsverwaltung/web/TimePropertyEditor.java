@@ -13,8 +13,10 @@ import java.sql.Time;
  */
 public class TimePropertyEditor extends PropertyEditorSupport {
 
-    private static final String SECONDS = ":00";
+    private static final String SECONDS = ":00"; // NOSONAR - dear Sonar, this is really not an IP address
     private static final String TIME_SEPARATOR = ":";
+    private static final int TWO_DIGIT = 2;
+    private static final int THREE_DIGIT = 3;
 
     // Time to String
     @Override
@@ -28,7 +30,7 @@ public class TimePropertyEditor extends PropertyEditorSupport {
 
         String[] timeParts = text.split(TIME_SEPARATOR);
 
-        if (timeParts.length == 3) {
+        if (timeParts.length == THREE_DIGIT) {
             return timeParts[0] + TIME_SEPARATOR + timeParts[1];
         }
 
@@ -40,14 +42,17 @@ public class TimePropertyEditor extends PropertyEditorSupport {
     @Override
     public void setAsText(String text) {
 
-        if (text == null || text.length() < 1) {
+        if (text == null || text.isEmpty()) {
             this.setValue(null);
         } else {
-            if (text.split(TIME_SEPARATOR).length == 2) {
-                text = text.concat(SECONDS);
+            String timeAsString = text;
+            String[] timeParts = text.split(TIME_SEPARATOR);
+
+            if (timeParts.length == TWO_DIGIT) {
+                timeAsString = timeAsString.concat(SECONDS);
             }
 
-            Time time = Time.valueOf(text);
+            Time time = Time.valueOf(timeAsString);
             this.setValue(time);
         }
     }

@@ -21,7 +21,7 @@ public class SickNoteType extends AbstractPersistable<Integer> {
     private String displayName;
 
     @Override
-    public void setId(Integer id) {
+    public void setId(Integer id) { // NOSONAR - override is important here
 
         super.setId(id);
     }

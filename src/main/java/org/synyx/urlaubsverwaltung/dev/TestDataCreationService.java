@@ -158,11 +158,11 @@ public class TestDataCreationService {
         }
 
         // FUTURE APPLICATIONS FOR LEAVE
-        applicationForLeaveDataProvider.createWaitingApplication(person, holiday, DayLength.FULL, now.plusDays(10),
+        applicationForLeaveDataProvider.createWaitingApplication(person, holiday, DayLength.FULL, now.plusDays(10), // NOSONAR
             now.plusDays(16)); // NOSONAR
-        applicationForLeaveDataProvider.createWaitingApplication(person, overtime, DayLength.FULL, now.plusDays(1),
+        applicationForLeaveDataProvider.createWaitingApplication(person, overtime, DayLength.FULL, now.plusDays(1), // NOSONAR
             now.plusDays(1)); // NOSONAR
-        applicationForLeaveDataProvider.createWaitingApplication(person, specialLeave, DayLength.FULL, now.plusDays(4),
+        applicationForLeaveDataProvider.createWaitingApplication(person, specialLeave, DayLength.FULL, now.plusDays(4), // NOSONAR
             now.plusDays(6)); // NOSONAR
 
         // PAST APPLICATIONS FOR LEAVE
@@ -182,7 +182,7 @@ public class TestDataCreationService {
 
         if ("hdampf".equals(person.getLoginName()) && headOf != null) {
             applicationForLeaveDataProvider.createPremilinaryAllowedApplication(person, headOf, holiday, DayLength.FULL,
-                now.plusDays(5), now.plusDays(8));
+                now.plusDays(5), now.plusDays(8)); // NOSONAR
         }
     }
 

@@ -29,7 +29,7 @@ import javax.annotation.PostConstruct;
 @Service
 @Transactional
 @ConditionalOnExpression(
-    "('${auth}'=='activeDirectory' and '${uv.security.activeDirectory.sync}'=='true') or ('${auth}'=='ldap' and '${uv.security.ldap.sync}'=='true')"
+    "('${auth}'=='activeDirectory' and '${uv.security.activeDirectory.sync}'=='true') or ('${auth}'=='ldap' and '${uv.security.ldap.sync}'=='true')" // NOSONAR
 )
 public class LdapUserDataImporter {
 

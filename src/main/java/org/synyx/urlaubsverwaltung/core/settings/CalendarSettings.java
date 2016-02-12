@@ -15,10 +15,10 @@ public class CalendarSettings {
     private ExchangeCalendarSettings exchangeCalendarSettings;
 
     @Column(name = "calendar_workDayBeginHour")
-    private Integer workDayBeginHour = 8;
+    private Integer workDayBeginHour = 8; // NOSONAR
 
     @Column(name = "calendar_workDayEndHour")
-    private Integer workDayEndHour = 16;
+    private Integer workDayEndHour = 16; // NOSONAR
 
     public ExchangeCalendarSettings getExchangeCalendarSettings() {
 

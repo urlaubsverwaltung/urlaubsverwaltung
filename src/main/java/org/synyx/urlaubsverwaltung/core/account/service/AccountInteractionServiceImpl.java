@@ -182,9 +182,9 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
             days = new BigDecimal(bdIntValue);
         } else {
             if (referenceValue >= ROUNDING_LOWER_BOUND && referenceValue < ROUNDING_UPPER_BOUND) {
-                days = new BigDecimal(bdIntValue + 0.5);
+                days = new BigDecimal(bdIntValue + 0.5); // NOSONAR
             } else if (referenceValue > ROUNDING_UPPER_BOUND) {
-                days = new BigDecimal(bdIntValue + 1);
+                days = new BigDecimal(bdIntValue + 1); // NOSONAR
             } else {
                 // default fallback because I'm a chicken
                 days = new BigDecimal(notRoundedVacationDays).setScale(2);

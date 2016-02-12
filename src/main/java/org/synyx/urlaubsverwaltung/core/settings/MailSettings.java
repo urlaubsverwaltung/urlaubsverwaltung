@@ -19,7 +19,7 @@ public class MailSettings {
     private String host = "localhost";
 
     @Column(name = "mail_port")
-    private Integer port = 25;
+    private Integer port = 25; // NOSONAR
 
     @Column(name = "mail_username")
     private String username;

@@ -14,23 +14,23 @@ public class AbsenceSettings {
     /**
      * Specifies the maximal number of annual vacation days a person can have.
      */
-    private Integer maximumAnnualVacationDays = 40;
+    private Integer maximumAnnualVacationDays = 40; // NOSONAR
 
     /**
      * Specifies how many months in advance a person can apply for leave.
      */
-    private Integer maximumMonthsToApplyForLeaveInAdvance = 12;
+    private Integer maximumMonthsToApplyForLeaveInAdvance = 12; // NOSONAR
 
     /**
      * Specifies the maximal period of sick pay in days.
      */
-    private Integer maximumSickPayDays = 42;
+    private Integer maximumSickPayDays = 42; // NOSONAR
 
     /**
      * Specifies when a notification about the end of sick pay should be sent to the affected person and office. (number
      * of days before the end of sick pay)
      */
-    private Integer daysBeforeEndOfSickPayNotification = 7;
+    private Integer daysBeforeEndOfSickPayNotification = 7; // NOSONAR
 
     public Integer getMaximumAnnualVacationDays() {
 

@@ -21,7 +21,7 @@ import static org.springframework.ldap.query.LdapQueryBuilder.query;
  */
 @Service
 @ConditionalOnExpression(
-    "('${auth}'=='activeDirectory' and '${uv.security.activeDirectory.sync}'=='true') or ('${auth}'=='ldap' and '${uv.security.ldap.sync}'=='true')"
+    "('${auth}'=='activeDirectory' and '${uv.security.activeDirectory.sync}'=='true') or ('${auth}'=='ldap' and '${uv.security.ldap.sync}'=='true')" // NOSONAR
 )
 public class LdapUserServiceImpl implements LdapUserService {
 

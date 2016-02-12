@@ -242,13 +242,12 @@ public class ApplicationValidator implements Validator {
     private void validateIfApplyingForLeaveIsPossible(ApplicationForLeaveForm applicationForm, Errors errors) {
 
         Application application = applicationForm.generateApplicationForLeave();
-        Person person = application.getPerson();
 
         /**
          * Ensure the person has a working time for the period of the application for leave
          */
-        Optional<WorkingTime> workingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(person,
-                application.getStartDate());
+        Optional<WorkingTime> workingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(
+                application.getPerson(), application.getStartDate());
 
         if (!workingTime.isPresent()) {
             errors.reject(ERROR_WORKING_TIME);
@@ -260,7 +259,7 @@ public class ApplicationValidator implements Validator {
          * Calculate the work days
          */
         BigDecimal days = calendarService.getWorkDays(application.getDayLength(), application.getStartDate(),
-                application.getEndDate(), person);
+                application.getEndDate(), application.getPerson());
 
         /**
          * Ensure that no one applies for leave for a vacation of 0 days
@@ -292,9 +291,7 @@ public class ApplicationValidator implements Validator {
         boolean isHoliday = VacationCategory.HOLIDAY.equals(application.getVacationType().getCategory());
 
         if (isHoliday) {
-            boolean enoughVacationDaysLeft = calculationService.checkApplication(application);
-
-            if (!enoughVacationDaysLeft) {
+            if (!calculationService.checkApplication(application)) {
                 errors.reject(ERROR_NOT_ENOUGH_DAYS);
             }
         }
@@ -306,9 +303,7 @@ public class ApplicationValidator implements Validator {
         Boolean isOvertime = VacationCategory.OVERTIME.equals(application.getVacationType().getCategory());
 
         if (isOvertime && overtimeActive) {
-            boolean enoughOvertimeHours = checkOvertimeHours(application);
-
-            if (!enoughOvertimeHours) {
+            if (!checkOvertimeHours(application)) {
                 errors.reject(ERROR_NOT_ENOUGH_OVERTIME);
             }
         }
@@ -323,6 +318,6 @@ public class ApplicationValidator implements Validator {
 
         BigDecimal temporaryOvertimeForPerson = leftOvertimeForPerson.subtract(application.getHours());
 
-        return (temporaryOvertimeForPerson.compareTo(minimumOvertime.negate()) >= 0);
+        return temporaryOvertimeForPerson.compareTo(minimumOvertime.negate()) >= 0;
     }
 }
