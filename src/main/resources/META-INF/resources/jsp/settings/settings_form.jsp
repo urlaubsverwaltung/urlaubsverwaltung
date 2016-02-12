@@ -312,7 +312,7 @@
                                 <spring:message code='settings.mail.baseURL'/>:
                             </label>
                             <div class="col-md-8">
-                                <form:input id="mailSettings.baseLinkURL" path="mailSettings.baseLinkURL" class="form-control" cssErrorClass="form-control error" />
+                                <form:input id="mailSettings.baseLinkURL" path="mailSettings.baseLinkURL" placeholder="http://urlaubsverwaltung.mydomain.com/" class="form-control" cssErrorClass="form-control error" />
                                 <span class="help-inline"><form:errors path="mailSettings.baseLinkURL" cssClass="error"/></span>
                             </div>
                         </div>
