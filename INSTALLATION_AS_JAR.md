@@ -2,8 +2,10 @@
 
 * [Installation](#installation)
 * [Konfiguration](#konfiguration)
-    * [Authentifizierung](#authentifizierung)
     * [Konfigurationsdatei](#konfigurationsdatei)
+    * [Datenbank](#datenbank)
+    * [Hinweis](#hinweis)
+    * [Authentifizierung](#authentifizierung)
 
 Die folgende Anleitung beschreibt die Installation der Urlaubsverwaltung als
 [Spring Boot](http://projects.spring.io/spring-boot/) Anwendung.
@@ -25,10 +27,12 @@ downloaden.
 
 #### Starten der Anwendung
 
-Damit man die Anwendung möglichst schnell ausprobieren kann, bietet es sich an die Anwendung mit den
-Standardeinstellungen zu starten:
+Damit man die Anwendung möglichst schnell ausprobieren kann, bietet es sich an die Anwendung im Entwicklungsmodus
+zu starten:
 
-<pre>java -jar urlaubsverwaltung.jar</pre>
+<pre>java -jar urlaubsverwaltung.jar -Dspring.profiles.active=dev</pre>
+
+Auf diese Weise wird die Anwendung mit einer In-Memory-Datenbank und Testdaten gestartet.
 
 #### Aufrufen der Anwendung
 
@@ -48,12 +52,37 @@ funktioniert, kann den entsprechenden Kapiteln in der Spring Boot Dokumentation 
 
 ## Konfiguration
 
+#### Konfigurationsdatei
+
+Die Anwendung besitzt im Verzeichnis `src/main/resources` eine `application.properties` Datei zur Konfiguration.
+Diese beinhaltet gewisse Grundeinstellungen und Standardwerte. Diese allein reichen für die Produktivnahme der
+Anwendung allerdings noch nicht aus. Spezifische Konfigurationen wie z.B. die Datenbank Einstellungen müssen durch eine
+eigene Properties-Datei hinterlegt werden. Welche Konfigurationen überschrieben werden können/müssen, sind in der
+[`application-example.properties`](https://raw.githubusercontent.com/synyx/urlaubsverwaltung/master/src/main/resources/example.properties)
+des Projekts einsehbar. Diese kann einfach als Grundlage genommen werden, um eine eigene Konfigurationsdatei zu
+erstellen.
+
+Welche Möglichkeiten es bei Spring Boot gibt, damit die eigene Konfigurationsdatei genutzt wird, kann
+[hier](http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html#boot-features-external-config-application-property-files)
+nachgelesen werden.
+
+#### Datenbank
+
+Hinweis: Die in der Konfigurationsdatei konfigurierte Datenbank muss existieren.
+
+#### Hinweis
+
+Wenn eine eigene Konfigurationsdatei hinterlegt ist, darf die Anwendung natürlich **nicht** mehr im Entwicklungsmodus
+gestartet werden, d.h. die Anwendung muss ohne `-Dspring.profiles.active=dev` gestartet werden:
+
+<pre>java -jar urlaubsverwaltung.jar</pre>
+
 #### Authentifizierung
 
 Die Anwendung verfügt über **drei** verschiedene Authentifizierungsmöglichkeiten:
 
 * `default`
-    * für lokale Entwicklungsumgebung
+    * für lokalen Entwicklungsmodus
 * `ldap`
     * Authentifizierung via LDAP
     * Es müssen die LDAP URL, die LDAP Base und LDAP User DN Patterns konfiguriert sein, damit eine Authentifizierung via LDAP möglich ist.
@@ -63,18 +92,6 @@ Die Anwendung verfügt über **drei** verschiedene Authentifizierungsmöglichkei
 
 Der erste Benutzer, der sich erfolgreich im System einloggt, wird in der Urlaubsverwaltung mit der Rolle Office angelegt.
 Dies ermöglicht Benutzer- und Rechteverwaltung innerhalb der Anwendung und das Pflegen der Einstellungen für die Anwendung.
-
-#### Konfigurationsdatei
-
-Die Anwendung besitzt im Verzeichnis `src/main/resources` eine `application.properties` Datei zur Konfiguration.
-Diese beinhaltet gewisse Grundeinstellungen und Standardwerte. Diese allein reichen für die Produktivnahme der
-Anwendung allerdings nicht aus. Spezifische Konfigurationen wie z.B. die Datenbank Einstellungen müssen durch eine
-eigene Properties-Datei hinterlegt werden. Welche Konfigurationen überschrieben werden können/müssen, sind in der
-`application.properties` des Projekts einsehbar.
-
-Welche Möglichkeiten es bei Spring Boot gibt, damit die eigene Konfigurationsdatei genutzt wird, kann
-[hier](http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html#boot-features-external-config-application-property-files)
-nachgelesen werden.
 
 ##### LDAP
 
@@ -89,7 +106,3 @@ Um Active Directory zur Authentifizierung zu nutzen, muss die Property `auth` in
 `activeDirectory` gesetzt werden:
 
 <pre>auth=activeDirectory</pre>
-
-##### Datenbank
-
-Hinweis: Die in der Konfigurationsdatei konfigurierte Datenbank muss existieren.
