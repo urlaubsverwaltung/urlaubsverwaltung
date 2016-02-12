@@ -199,7 +199,7 @@ Testbenutzern anmelden:
 #### Anlegen von Testdaten deaktivieren
 
 Möchte man, dass beim Starten der Anwendung keine Testdaten generiert werden, muss man die Property `testdata.create`
-in den `application.properties` auf `false` setzen.
+in den `application-dev.properties` auf `false` setzen.
 
 #### H2 Web Konsole
 
@@ -208,7 +208,7 @@ unter:
 
 <pre>localhost:11115</pre>
 
-Die H2 Konfigurationen können in der `application.properties` überschrieben werden.
+Die H2 Konfigurationen können in der `application-dev.properties` überschrieben werden.
 
 #### API
 
@@ -219,10 +219,10 @@ Die Urlaubsverwaltung verfügt über eine API, die unter `http://localhost:8080/
 Siehe [Authentifizierung](#authentifizierung)
 
 Möchte man LDAP oder Active Directory zur Authentifizierung nutzen, setzt man die Property `auth` entweder als System
-Property oder man konfiguriert diese in den `application.properties`.
+Property oder man konfiguriert diese in den `application.properties` bzw. in den `application-dev.properties`.
 
 Hinweis: Die Verbindung zum LDAP / Active Directory muss dafür selbstverständlich korrekt in den
-`application.properties` konfiguriert sein.
+`application.properties` bzw. in den `application-dev.properties` konfiguriert sein.
 
 ##### LDAP
 
@@ -230,7 +230,7 @@ Die Anwendung mit dem Parameter `-Dauth=ldap` starten:
 
 <pre>mvn clean spring-boot:run -Dauth=ldap</pre>
 
-Oder die Property `auth` in den `application.properties` setzen:
+Oder die Property `auth` in den `application.properties` bzw. in den `application-dev.properties` setzen:
 
 <pre>auth=ldap</pre>
 
@@ -240,7 +240,7 @@ Die Anwendung mit dem Parameter `-Dauth=activeDirectory` starten:
 
 <pre>mvn clean spring-boot:run -Dauth=activeDirectory</pre>
 
-Oder die Property `auth` in den `application.properties` setzen:
+Oder die Property `auth` in den `application.properties` bzw. in den `application-dev.properties` setzen:
 
 <pre>auth=activeDirectory</pre>
 
