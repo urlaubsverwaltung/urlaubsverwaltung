@@ -46,7 +46,7 @@ GRANT ALL ON uvdb.* TO 'uv'@'%' IDENTIFIED BY 'password' WITH GRANT OPTION;
 
 Danach ist die Datenbank für die Urlaubsverwaltung verfügbar und kann in der Spring Konfiguration eingetragen werden. Am
 besten legt man sich ein eigenes Properties-File dafür an und überschreibt die Datenbank Konfiguration. Die neue
-Konfiguration lässt sich dann über ihren Namen als Spring Profile ansprechen. Wie das geht, steht [hier beschrieben](README#mvn-profiles).
+Konfiguration lässt sich dann über ihren Namen als Spring Profile ansprechen. Wie das geht, steht [hier beschrieben](README.md#mvn_profiles).
 
 #### OpenLDAP
 https://hub.docker.com/r/osixia/openldap/
