@@ -49,8 +49,48 @@ besten legt man sich ein eigenes Properties-File dafür an und überschreibt die
 Konfiguration lässt sich dann über ihren Namen als Spring Profile ansprechen. Wie das geht, steht [hier beschrieben](README.md#mvn_profiles).
 
 #### OpenLDAP
-https://hub.docker.com/r/osixia/openldap/
-tbw
+Docker Image für OpenLDAP ziehen. Hier der Link in die Docker Registry: https://hub.docker.com/r/osixia/openldap/
+```
+$ docker pull osixia/openldap
+```
+
+Nun kann der OpenLDAP Container mit entsprechenden parametern gestartet werden.
+```
+$ docker run -p 389:389 --name openldap -e LDAP_TLS=false -e LDAP_ORGANISATION=acme -e LDAP_DOMAIN=corp -d osixia/openldap
+```
+Zu den Umgebungsvariablen:
+    * "LDAP_TLS=false" - Deaktiviert TLS. Damit muss man sich nicht um Zertifikate usw. kümmern. 
+    * "LDAP_ORGANISATION=acme" - Die Firma oder Organisation für die der LDAP Server betrieben wird.
+    * "LDAP_DOMAIN=corp" - Die Domain der Firma.
+Sowohl DOMAIN als auch ORGANISATION müssen zum Wert des Parameters uv.security.ldap.sync.userSearchBase in den
+application.properties passen.
+Es empfiehlt sich, den Container-internen Port des OpenLDAD Servers auf einen festen externen Port zu mappen, da dieser
+sowohl vom phpLDAPadmin Tool als auch von der Urlaubsverwaltungs Applikation selbst angesprochen wird und stabil bleiben
+sollte.
+
 #### phpLDAPadmin
+Der OpenLDAP Server an sich reicht noch nicht, um sinnvoll damit zu arbeiten. Es müssen also Daten erzeugt werden.  Es
+gibt sicherlich viele gute Frontends für LDAP. Da Docker ja bereits installiert ist, kann man hier auch gleich einen
+Docker Container nehmen. phpLDAPadmin bietet sich hier an.
+
+So besorgt man sich das Image für phpLDAPadmin(https://hub.docker.com/r/osixia/phpldapadmin/):
+```
+$ docker pull osixia/phpldapadmin
+```
+
+Der Container bekommt beim Start die IP-Adresse und den Port (falls er nicht dem Standardwert 389 entspricht) als
+Umgebungsvariable mitgegeben.
+```
+docker run -p 6443:443 -e PHPLDAPADMIN_LDAP_HOSTS=<IP_OF_LDAP_SERVER> -d osixia/phpldapadmin:latest
+```
+
+Beim nun kann das phpLDAPadmin UI über https://<DOCKER_VM_IP>:6443 aufgerufen werden. Als Loginname muss folgendes
+verwendet werden:
+```
+cn=admin,dc=acme,dc=corp
+```
+
+Das Passwort ist admin.
+
+
 https://hub.docker.com/r/osixia/phpldapadmin/
-tbw
