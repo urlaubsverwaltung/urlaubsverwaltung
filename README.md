@@ -188,6 +188,12 @@ Plugin gestartet werden:
 
 <pre>mvn clean spring-boot:run</pre>
 
+Wenn mit einer eigenen Konfigurationsdatei gearbeitet werden soll, kann diese als Spring profile Parameter beim Start angegeben
+werden. Zum Beispiel kann eine Konfiguration für MariaDB unter application-mariadb.properties angelegt und mit folgendem
+Maven Aufruf gestartet werden:
+<pre>mvn clean spring-boot:run -Drun.profiles=mariadb</pre>
+Einzelne Parameter lassen sich mit -D<parameterName>=<parameterWert> überschreiben.
+
 Im Browser lässt sich die Anwendung dann über `http://localhost:8080/` ansteuern.
 
 Ohne weitere Anpassung der Standardkonfiguration wird eine H2-Datenbank verwendet und es werden Testdaten angelegt,
