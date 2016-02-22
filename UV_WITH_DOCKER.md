@@ -59,10 +59,11 @@ Nun kann der OpenLDAP Container mit entsprechenden parametern gestartet werden.
 $ docker run -p 389:389 --name openldap -e LDAP_TLS=false -e LDAP_ORGANISATION=acme -e LDAP_DOMAIN=corp -d osixia/openldap
 ```
 Zu den Umgebungsvariablen:
-    * "LDAP_TLS=false" - Deaktiviert TLS. Damit muss man sich nicht um Zertifikate usw. kümmern. 
-    * "LDAP_ORGANISATION=example" - Die Firma oder Organisation für die der LDAP Server betrieben wird.
-    * "LDAP_DOMAIN=example.org" - Die Domain der Firma.
-    * "LDAP_ADMIN_PASSWORD" - das passwort für das Benutzerkonto "admin"
+* "LDAP_TLS=false" - Deaktiviert TLS. Damit muss man sich nicht um Zertifikate usw. kümmern. 
+* "LDAP_ORGANISATION=example" - Die Firma oder Organisation für die der LDAP Server betrieben wird.
+* "LDAP_DOMAIN=example.org" - Die Domain der Firma.
+* "LDAP_ADMIN_PASSWORD" - das passwort für das Benutzerkonto "admin"
+
 Sowohl DOMAIN als auch ORGANISATION müssen zum Wert des Parameters uv.security.ldap.sync.userSearchBase in den
 application.properties passen.
 Es empfiehlt sich, den Container-internen Port des OpenLDAD Servers auf einen festen externen Port zu mappen, da dieser
