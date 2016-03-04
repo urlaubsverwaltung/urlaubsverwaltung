@@ -157,15 +157,13 @@
 
                 <div class="person--role checkbox">
                     <label>
-                        <form:checkbox path="permissions" value="INACTIVE"/><spring:message code="person.form.permissions.roles.INACTIVE"/>:
-                        <spring:message code="person.form.permissions.roles.INACTIVE.description"/>
+                        <form:checkbox path="permissions" value="INACTIVE"/><spring:message code="person.form.permissions.roles.INACTIVE"/>
                     </label>
                 </div>
 
                 <div class="person--role checkbox">
                     <label>
-                        <form:checkbox path="permissions" value="USER"/><spring:message code="person.form.permissions.roles.USER"/>:
-                        <spring:message code="person.form.permissions.roles.USER.description"/>
+                        <form:checkbox path="permissions" value="USER"/><spring:message code="person.form.permissions.roles.USER"/>
                     </label>
                     <%-- It's obligatory for now that users get mail notifications about progress of their own applications for leave --%>
                     <form:hidden path="notifications" value="NOTIFICATION_USER" />
@@ -173,8 +171,7 @@
 
                 <div class="person--role checkbox">
                     <label>
-                        <form:checkbox path="permissions" value="DEPARTMENT_HEAD"/><spring:message code="person.form.permissions.roles.DEPARTMENT_HEAD"/>:
-                        <spring:message code="person.form.permissions.roles.DEPARTMENT_HEAD.description"/>
+                        <form:checkbox path="permissions" value="DEPARTMENT_HEAD"/><spring:message code="person.form.permissions.roles.DEPARTMENT_HEAD"/>
                     </label>
                     <label class="person--mail-notification">
                         <form:checkbox path="notifications" value="NOTIFICATION_DEPARTMENT_HEAD"/>
@@ -197,8 +194,7 @@
 
                 <div class="person--role checkbox">
                     <label>
-                        <form:checkbox path="permissions" value="SECOND_STAGE_AUTHORITY"/><spring:message code="person.form.permissions.roles.SECOND_STAGE_AUTHORITY"/>:
-                        <spring:message code="person.form.permissions.roles.SECOND_STAGE_AUTHORITY.description"/>
+                        <form:checkbox path="permissions" value="SECOND_STAGE_AUTHORITY"/><spring:message code="person.form.permissions.roles.SECOND_STAGE_AUTHORITY"/>
                     </label>
                     <label class="person--mail-notification">
                         <form:checkbox path="notifications" value="NOTIFICATION_SECOND_STAGE_AUTHORITY"/>
@@ -221,8 +217,7 @@
 
                 <div class="person--role checkbox">
                     <label>
-                        <form:checkbox path="permissions" value="BOSS"/><spring:message code="person.form.permissions.roles.BOSS"/>:
-                        <spring:message code="person.form.permissions.roles.BOSS.description"/>
+                        <form:checkbox path="permissions" value="BOSS"/><spring:message code="person.form.permissions.roles.BOSS"/>
                     </label>
                     <label class="person--mail-notification">
                         <form:checkbox path="notifications" value="NOTIFICATION_BOSS"/>
@@ -232,8 +227,7 @@
 
                 <div class="person--role checkbox">
                     <label>
-                        <form:checkbox path="permissions" value="OFFICE"/><spring:message code="person.form.permissions.roles.OFFICE"/>:
-                        <spring:message code="person.form.permissions.roles.OFFICE.description"/>
+                        <form:checkbox path="permissions" value="OFFICE"/><spring:message code="person.form.permissions.roles.OFFICE"/>
                     </label>
                     <label class="person--mail-notification">
                         <form:checkbox path="notifications" value="NOTIFICATION_OFFICE"/>

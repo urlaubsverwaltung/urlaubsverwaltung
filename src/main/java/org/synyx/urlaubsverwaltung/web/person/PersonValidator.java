@@ -291,15 +291,42 @@ public class PersonValidator implements Validator {
         // if role inactive set, then only this role may be selected
         if (roles.contains(Role.INACTIVE) && roles.size() != 1) {
             errors.rejectValue(ATTRIBUTE_PERMISSIONS, "person.form.permissions.error.inactive");
+
+            return;
+        }
+
+        // user role must always be selected for active user
+        if (!roles.contains(Role.USER)) {
+            errors.rejectValue(ATTRIBUTE_PERMISSIONS, "person.form.permissions.error.user");
+
+            return;
         }
 
         // Boss and department head / second stage authority doesn't make sense
         if (roles.contains(Role.DEPARTMENT_HEAD) && roles.contains(Role.BOSS)) {
-            errors.rejectValue(ATTRIBUTE_PERMISSIONS, "person.form.permissions.error.departmentHead");
+            errors.rejectValue(ATTRIBUTE_PERMISSIONS, "person.form.permissions.error.combination");
+
+            return;
         }
 
         if (roles.contains(Role.SECOND_STAGE_AUTHORITY) && roles.contains(Role.BOSS)) {
-            errors.rejectValue(ATTRIBUTE_PERMISSIONS, "person.form.permissions.error.secondStage");
+            errors.rejectValue(ATTRIBUTE_PERMISSIONS, "person.form.permissions.error.combination");
+
+            return;
+        }
+
+        // Neither does department head / second stage authority and office
+
+        if (roles.contains(Role.DEPARTMENT_HEAD) && roles.contains(Role.OFFICE)) {
+            errors.rejectValue(ATTRIBUTE_PERMISSIONS, "person.form.permissions.error.combination");
+
+            return;
+        }
+
+        if (roles.contains(Role.SECOND_STAGE_AUTHORITY) && roles.contains(Role.OFFICE)) {
+            errors.rejectValue(ATTRIBUTE_PERMISSIONS, "person.form.permissions.error.combination");
+
+            return;
         }
     }
 

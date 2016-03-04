@@ -380,24 +380,57 @@ public class PersonValidatorTest {
 
 
     @Test
-    public void ensureDepartmentHeadRoleAndBossRoleCanNotBeSelectedBoth() {
+    public void ensureUserRoleMustBeSelectedIfUserShouldNotBeDeactivated() {
 
-        form.setPermissions(Arrays.asList(Role.BOSS, Role.DEPARTMENT_HEAD));
+        form.setPermissions(Collections.singletonList(Role.OFFICE));
 
         validator.validatePermissions(form, errors);
 
-        Mockito.verify(errors).rejectValue("permissions", "person.form.permissions.error.departmentHead");
+        Mockito.verify(errors).rejectValue("permissions", "person.form.permissions.error.user");
+    }
+
+
+    @Test
+    public void ensureDepartmentHeadRoleAndOfficeRoleCanNotBeSelectedBoth() {
+
+        form.setPermissions(Arrays.asList(Role.USER, Role.OFFICE, Role.DEPARTMENT_HEAD));
+
+        validator.validatePermissions(form, errors);
+
+        Mockito.verify(errors).rejectValue("permissions", "person.form.permissions.error.combination");
+    }
+
+
+    @Test
+    public void ensureSecondStageRoleAndOfficeRoleCanNotBeSelectedBoth() {
+
+        form.setPermissions(Arrays.asList(Role.USER, Role.OFFICE, Role.SECOND_STAGE_AUTHORITY));
+
+        validator.validatePermissions(form, errors);
+
+        Mockito.verify(errors).rejectValue("permissions", "person.form.permissions.error.combination");
+    }
+
+
+    @Test
+    public void ensureDepartmentHeadRoleAndBossRoleCanNotBeSelectedBoth() {
+
+        form.setPermissions(Arrays.asList(Role.USER, Role.BOSS, Role.DEPARTMENT_HEAD));
+
+        validator.validatePermissions(form, errors);
+
+        Mockito.verify(errors).rejectValue("permissions", "person.form.permissions.error.combination");
     }
 
 
     @Test
     public void ensureSecondStageRoleAndBossRoleCanNotBeSelectedBoth() {
 
-        form.setPermissions(Arrays.asList(Role.BOSS, Role.SECOND_STAGE_AUTHORITY));
+        form.setPermissions(Arrays.asList(Role.USER, Role.BOSS, Role.SECOND_STAGE_AUTHORITY));
 
         validator.validatePermissions(form, errors);
 
-        Mockito.verify(errors).rejectValue("permissions", "person.form.permissions.error.secondStage");
+        Mockito.verify(errors).rejectValue("permissions", "person.form.permissions.error.combination");
     }
 
 
@@ -437,7 +470,7 @@ public class PersonValidatorTest {
     @Test
     public void ensureSecondStageRoleAndDepartmentHeadRolesCanBeSelectedBoth() {
 
-        form.setPermissions(Arrays.asList(Role.DEPARTMENT_HEAD, Role.SECOND_STAGE_AUTHORITY));
+        form.setPermissions(Arrays.asList(Role.USER, Role.DEPARTMENT_HEAD, Role.SECOND_STAGE_AUTHORITY));
 
         validator.validatePermissions(form, errors);
 
