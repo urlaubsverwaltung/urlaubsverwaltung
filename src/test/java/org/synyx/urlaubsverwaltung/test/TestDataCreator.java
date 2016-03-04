@@ -250,7 +250,7 @@ public final class TestDataCreator {
     }
 
 
-    public static List<VacationType> getVacationTypes() {
+    public static List<VacationType> createVacationTypes() {
 
         ArrayList<VacationType> vacationTypes = new ArrayList<>();
 
