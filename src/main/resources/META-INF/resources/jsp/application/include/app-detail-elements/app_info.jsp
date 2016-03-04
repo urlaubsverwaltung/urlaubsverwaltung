@@ -7,7 +7,7 @@
 <div class="box">
     <span class="box-icon bg-yellow">
         <c:choose>
-            <c:when test="${application.vacationType == 'HOLIDAY'}">
+            <c:when test="${application.vacationType.category == 'HOLIDAY'}">
                 <i class="fa fa-sun-o"></i>
             </c:when>
             <c:otherwise>
@@ -46,7 +46,10 @@
         <c:choose>
             <c:when test="${application.startDate == application.endDate}">
                 <c:set var="APPLICATION_DATE">
-                    <h5 class="is-inline-block is-sticky"><uv:date date="${application.startDate}"/></h5>
+                    <h5 class="is-inline-block is-sticky">
+                        <spring:message code="${application.weekDayOfStartDate}.short"/>,
+                        <uv:date date="${application.startDate}"/>
+                    </h5>
                 </c:set>
                 <c:set var="APPLICATION_DAY_LENGTH">
                     <spring:message code="${application.dayLength}"/>
@@ -55,10 +58,16 @@
             </c:when>
             <c:otherwise>
                 <c:set var="APPLICATION_START_DATE">
-                    <h5 class="is-inline-block is-sticky"><uv:date date="${application.startDate}"/></h5>
+                    <h5 class="is-inline-block is-sticky">
+                        <spring:message code="${application.weekDayOfStartDate}.short"/>,
+                        <uv:date date="${application.startDate}"/>
+                    </h5>
                 </c:set>
                 <c:set var="APPLICATION_END_DATE">
-                    <h5 class="is-inline-block is-sticky"><uv:date date="${application.endDate}"/></h5>
+                    <h5 class="is-inline-block is-sticky">
+                        <spring:message code="${application.weekDayOfEndDate}.short"/>,
+                        <uv:date date="${application.endDate}"/>
+                    </h5>
                 </c:set>
                 <spring:message code="absence.period.multipleDays" arguments="${APPLICATION_START_DATE};${APPLICATION_END_DATE}" argumentSeparator=";"/>
             </c:otherwise>

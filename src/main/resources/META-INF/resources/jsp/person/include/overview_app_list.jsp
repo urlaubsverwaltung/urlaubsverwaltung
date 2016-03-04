@@ -57,26 +57,27 @@
                 <p>
                     <c:choose>
                         <c:when test="${app.startDate == app.endDate}">
-                            <c:set var="APPLICATION_DATE">
-                                <uv:date date="${app.startDate}"/>
-                            </c:set>
-                            <c:set var="APPLICATION_DAY_LENGTH">
-                                <spring:message code="${app.dayLength}"/>
-                            </c:set>
-                            <spring:message code="absence.period.singleDay" arguments="${APPLICATION_DATE};${APPLICATION_DAY_LENGTH}" argumentSeparator=";"/>
-
-                            <c:if test="${app.startTime != null && app.endTime != null}">
-                                <c:set var="APPLICATION_START_TIME">
-                                    <uv:time dateTime="${app.startDateWithTime}" />
-                                </c:set>
-                                <c:set var="APPLICATION_END_TIME">
-                                    <uv:time dateTime="${app.endDateWithTime}" />
-                                </c:set>
-                                (<spring:message code="absence.period.time" arguments="${APPLICATION_START_TIME};${APPLICATION_END_TIME}" argumentSeparator=";"/>)
-                            </c:if>
+                            <spring:message code="${app.weekDayOfStartDate}.short"/>,
+                            <uv:date date="${app.startDate}"/>,
+                            <c:choose>
+                                <c:when test="${app.startTime != null && app.endTime != null}">
+                                    <c:set var="APPLICATION_START_TIME">
+                                        <uv:time dateTime="${app.startDateWithTime}" />
+                                    </c:set>
+                                    <c:set var="APPLICATION_END_TIME">
+                                        <uv:time dateTime="${app.endDateWithTime}" />
+                                    </c:set>
+                                    <spring:message code="absence.period.time" arguments="${APPLICATION_START_TIME};${APPLICATION_END_TIME}" argumentSeparator=";"/>
+                                </c:when>
+                                <c:otherwise>
+                                    <spring:message code="${app.dayLength}"/>
+                                </c:otherwise>
+                            </c:choose>
                         </c:when>
                         <c:otherwise>
-                            <uv:date date="${app.startDate}"/> - <uv:date date="${app.endDate}"/>
+                            <spring:message code="${app.weekDayOfStartDate}.short"/>, <uv:date date="${app.startDate}"/>
+                            -
+                            <spring:message code="${app.weekDayOfEndDate}.short"/>, <uv:date date="${app.endDate}"/>
                         </c:otherwise>
                     </c:choose>
                 </p>

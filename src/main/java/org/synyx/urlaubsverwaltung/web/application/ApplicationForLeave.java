@@ -4,6 +4,7 @@ import org.springframework.beans.BeanUtils;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
+import org.synyx.urlaubsverwaltung.core.period.WeekDay;
 
 import java.math.BigDecimal;
 
@@ -33,5 +34,17 @@ public class ApplicationForLeave extends Application {
     public BigDecimal getWorkDays() {
 
         return workDays;
+    }
+
+
+    public WeekDay getWeekDayOfStartDate() {
+
+        return WeekDay.getByDayOfWeek(getStartDate().getDayOfWeek());
+    }
+
+
+    public WeekDay getWeekDayOfEndDate() {
+
+        return WeekDay.getByDayOfWeek(getEndDate().getDayOfWeek());
     }
 }
