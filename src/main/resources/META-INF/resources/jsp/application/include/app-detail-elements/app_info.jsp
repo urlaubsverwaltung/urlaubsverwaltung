@@ -5,7 +5,7 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <div class="box">
-    <span class="box-icon bg-yellow">
+    <span class="box-icon bg-yellow hidden-print">
         <c:choose>
             <c:when test="${application.vacationType.category == 'HOLIDAY'}">
                 <i class="fa fa-sun-o"></i>

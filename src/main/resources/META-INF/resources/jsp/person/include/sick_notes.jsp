@@ -16,17 +16,15 @@
         </c:otherwise>
     </c:choose>
     <tr class="${CSS_CLASS}" onclick="navigate('${URL_PREFIX}/sicknote/${sickNote.id}');">
-        <td class="is-centered state ${sickNote.sickNoteType}">
-            <span class="hidden-print">
-                <c:choose>
-                    <c:when test="${sickNote.sickNoteType.category == 'SICK_NOTE_CHILD'}">
-                        <i class="fa fa-child"></i>
-                    </c:when>
-                    <c:otherwise>
-                        <i class="fa fa-medkit"></i>
-                    </c:otherwise>
-                </c:choose>
-            </span>
+        <td class="is-centered hidden-print state ${sickNote.sickNoteType}">
+            <c:choose>
+                <c:when test="${sickNote.sickNoteType.category == 'SICK_NOTE_CHILD'}">
+                    <i class="fa fa-child"></i>
+                </c:when>
+                <c:otherwise>
+                    <i class="fa fa-medkit"></i>
+                </c:otherwise>
+            </c:choose>
         </td>
         <td>
             <a href="${URL_PREFIX}/sicknote/${sickNote.id}" class="hidden-print">

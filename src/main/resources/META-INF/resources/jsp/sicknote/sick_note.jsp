@@ -70,7 +70,7 @@
                 </form:form>
 
                 <div class="box">
-                    <span class="box-icon bg-red">
+                    <span class="box-icon bg-red hidden-print">
                         <c:choose>
                             <c:when test="${sickNote.sickNoteType.category == 'SICK_NOTE_CHILD'}">
                                 <i class="fa fa-child"></i>
@@ -165,8 +165,8 @@
                     <tbody>
                         <c:forEach items="${comments}" var="comment" varStatus="loopStatus">
                             <tr>
-                                <td>
-                                    <div class="gravatar gravatar--medium img-circle hidden-print center-block" data-gravatar="<c:out value='${comment.person.gravatarURL}?d=mm&s=40'/>"></div>
+                                <td class="hidden-print">
+                                    <div class="gravatar gravatar--medium img-circle center-block" data-gravatar="<c:out value='${comment.person.gravatarURL}?d=mm&s=40'/>"></div>
                                 </td>
                                 <td>
                                     <c:out value="${comment.person.niceName}" />

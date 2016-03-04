@@ -91,7 +91,7 @@
 
             <div class="col-xs-12 col-sm-12 col-md-4">
                 <div class="box">
-                    <span class="box-icon bg-green"><i class="fa fa-calendar"></i></span>
+                    <span class="box-icon bg-green hidden-print"><i class="fa fa-calendar"></i></span>
                     <span class="box-text">
                         <c:choose>
                             <c:when test="${account != null}">
@@ -108,7 +108,7 @@
 
             <div class="col-xs-12 col-sm-12 col-md-4">
                 <div class="box">
-                    <span class="box-icon bg-green"><i class="fa fa-bar-chart"></i></span>
+                    <span class="box-icon bg-green hidden-print"><i class="fa fa-bar-chart"></i></span>
                     <span class="box-text">
                         <c:choose>
                             <c:when test="${account != null}">
@@ -275,7 +275,7 @@
 
             <div class="col-xs-12 col-sm-12 col-md-6">
                 <div class="box">
-                    <span class="box-icon bg-yellow"><i class="fa fa-sun-o"></i></span>
+                    <span class="box-icon bg-yellow hidden-print"><i class="fa fa-sun-o"></i></span>
                     <span class="box-text">
                         <spring:message code="overview.vacations.holidayLeave" arguments="${holidayLeave}" />
                         <i class="fa fa-check positive"></i> <spring:message code="overview.vacations.holidayLeaveAllowed" arguments="${holidayLeaveAllowed}" />
@@ -285,7 +285,7 @@
 
             <div class="col-xs-12 col-sm-12 col-md-6">
                 <div class="box">
-                    <span class="box-icon bg-yellow"><i class="fa fa-flag-o"></i></span>
+                    <span class="box-icon bg-yellow hidden-print"><i class="fa fa-flag-o"></i></span>
                     <span class="box-text">
                         <spring:message code="overview.vacations.otherLeave" arguments="${otherLeave}" />
                         <i class="fa fa-check positive"></i> <spring:message code="overview.vacations.otherLeaveAllowed" arguments="${otherLeaveAllowed}" />
@@ -322,7 +322,7 @@
             <div class="row">
                 <div class="col-xs-12 col-sm-12 col-md-6">
                     <div class="box">
-                        <span class="box-icon bg-red"><i class="fa fa-medkit"></i></span>
+                        <span class="box-icon bg-red hidden-print"><i class="fa fa-medkit"></i></span>
                     <span class="box-text">
                         <spring:message code="overview.sicknotes.sickdays" arguments="${sickDaysOverview.sickDays.days['TOTAL']}" />
                         <i class="fa fa-check positive"></i>
@@ -332,7 +332,7 @@
                 </div>
                 <div class="col-xs-12 col-sm-12 col-md-6">
                     <div class="box">
-                        <span class="box-icon bg-red"><i class="fa fa-child"></i></span>
+                        <span class="box-icon bg-red hidden-print"><i class="fa fa-child"></i></span>
                     <span class="box-text">
                         <spring:message code="overview.sicknotes.sickdays.child" arguments="${sickDaysOverview.childSickDays.days['TOTAL']}" />
                         <i class="fa fa-check positive"></i>
