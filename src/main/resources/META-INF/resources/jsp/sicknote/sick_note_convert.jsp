@@ -98,7 +98,7 @@
                 <div class="box">
                     <span class="box-icon bg-red">
                         <c:choose>
-                            <c:when test="${sickNote.type == 'SICK_NOTE_CHILD'}">
+                            <c:when test="${sickNote.sickNoteType == 'SICK_NOTE_CHILD'}">
                                 <i class="fa fa-child"></i>
                             </c:when>
                             <c:otherwise>
