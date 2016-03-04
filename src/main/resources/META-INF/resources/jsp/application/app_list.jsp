@@ -143,37 +143,13 @@
                                       </c:choose>
                                     </p>
                                   </td>
-                                  <td class="hidden-print hidden-xs hidden-sm">
-                                    <p>
-                                       <c:choose>
-                                           <c:when test="${application.teamInformed == true}">
-                                               <i class="fa fa-check hidden-print"></i>
-                                               <spring:message code="applications.waiting.teamInformed.true" />
-                                           </c:when>
-                                           <c:otherwise>
-                                               <i class="fa fa-remove hidden-print"></i>
-                                               <spring:message code="applications.waiting.teamInformed.false" />
-                                           </c:otherwise>
-                                       </c:choose>
-                                    </p>
-                                    <c:choose>
-                                        <c:when test="${application.reason != null && !empty application.reason}">
-                                            <div class="overflow" data-toggle="popover" data-trigger="hover" data-placement="right" title="<spring:message code='application.data.reason'/>" data-content="${application.reason}">                                    
-                                                <i class="fa fa-comments"></i>
-                                                ${application.reason}
-                                            </div>
-                                        </c:when>
-                                    </c:choose>
-                                  </td>
-                                  <td class="hidden-xs hidden-sm">
+                                  <td class="hidden-xs hidden-sm text-right">
                                       <sec:authorize access="hasAnyAuthority('DEPARTMENT_HEAD', 'SECOND_STAGE_AUTHORITY', 'BOSS')">
                                           <a class="fa-action positive" href="${URL_PREFIX}/application/${application.id}?action=allow&shortcut=true"
                                              data-title="<spring:message code='action.allow'/>">
                                               <i class="fa fa-check"></i>
                                           </a>
                                       </sec:authorize>
-                                  </td>
-                                  <td class="hidden-xs hidden-sm">
                                       <sec:authorize access="hasAnyAuthority('DEPARTMENT_HEAD', 'SECOND_STAGE_AUTHORITY', 'BOSS')">
                                           <a class="fa-action negative" href="${URL_PREFIX}/application/${application.id}?action=reject&shortcut=true"
                                              data-title="<spring:message code='action.reject'/>">
