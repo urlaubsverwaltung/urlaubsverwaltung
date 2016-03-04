@@ -65,6 +65,7 @@ public class ApplicationValidatorTest {
 
         settingsService = Mockito.mock(SettingsService.class);
         settings = new Settings();
+        settings.getWorkingTimeSettings().setOvertimeActive(true);
         when(settingsService.getSettings()).thenReturn(settings);
 
         calendarService = Mockito.mock(WorkDaysService.class);
@@ -93,6 +94,7 @@ public class ApplicationValidatorTest {
                     any(Person.class))).thenReturn(BigDecimal.ONE);
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(OverlapCase.NO_OVERLAPPING);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(Boolean.TRUE);
+        when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(BigDecimal.TEN);
     }
 
 
@@ -534,6 +536,20 @@ public class ApplicationValidatorTest {
 
 
     @Test
+    public void ensureHoursIsNotMandatoryForOvertimeIfOvertimeFunctionIsDeactivated() {
+
+        settings.getWorkingTimeSettings().setOvertimeActive(false);
+
+        appForm.setVacationType(TestDataCreator.createVacationType(VacationCategory.OVERTIME));
+        appForm.setHours(null);
+
+        validator.validate(appForm, errors);
+
+        Mockito.verify(errors, Mockito.never()).rejectValue(Mockito.eq("hours"), Mockito.anyString());
+    }
+
+
+    @Test
     public void ensureHoursCanNotBeZero() {
 
         appForm.setHours(BigDecimal.ZERO);
@@ -569,6 +585,8 @@ public class ApplicationValidatorTest {
 
     @Test
     public void ensureNoErrorMessageForMandatoryIfHoursIsNullBecauseOfTypeMismatch() {
+
+        settings.getWorkingTimeSettings().setOvertimeActive(true);
 
         appForm.setVacationType(TestDataCreator.createVacationType(VacationCategory.OVERTIME));
         appForm.setHours(null);
