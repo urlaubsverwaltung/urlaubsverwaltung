@@ -40,7 +40,17 @@
             </h4>
 
             <p>
-                <uv:date date="${sickNote.startDate}"/> - <uv:date date="${sickNote.endDate}"/>
+                <c:choose>
+                    <c:when test="${sickNote.startDate == sickNote.endDate}">
+                        <spring:message code="${sickNote.weekDayOfStartDate}.short"/>,
+                        <uv:date date="${sickNote.startDate}"/>, <spring:message code="${sickNote.dayLength}"/>
+                    </c:when>
+                    <c:otherwise>
+                        <spring:message code="${sickNote.weekDayOfStartDate}.short"/>, <uv:date date="${sickNote.startDate}"/>
+                        -
+                        <spring:message code="${sickNote.weekDayOfEndDate}.short"/>, <uv:date date="${sickNote.endDate}"/>
+                    </c:otherwise>
+                </c:choose>
 
                 <c:if test="${sickNote.aubPresent == true}">
                     <span class="visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block">

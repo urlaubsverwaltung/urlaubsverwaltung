@@ -87,6 +87,7 @@
                         <c:choose>
                             <c:when test="${sickNote.startDate == sickNote.endDate}">
                                 <c:set var="SICK_NOTE_DATE">
+                                    <spring:message code="${sickNote.weekDayOfStartDate}.short"/>,
                                     <h5 class="is-inline-block is-sticky"><uv:date date="${sickNote.startDate}"/></h5>
                                 </c:set>
                                 <c:set var="SICK_NOTE_DAY_LENGTH">
@@ -96,10 +97,16 @@
                             </c:when>
                             <c:otherwise>
                                 <c:set var="SICK_NOTE_START_DATE">
-                                    <h5 class="is-inline-block is-sticky"><uv:date date="${sickNote.startDate}"/></h5>
+                                    <h5 class="is-inline-block is-sticky">
+                                        <spring:message code="${sickNote.weekDayOfStartDate}.short"/>,
+                                        <uv:date date="${sickNote.startDate}"/>
+                                    </h5>
                                 </c:set>
                                 <c:set var="SICK_NOTE_END_DATE">
-                                    <h5 class="is-inline-block is-sticky"><uv:date date="${sickNote.endDate}"/></h5>
+                                    <h5 class="is-inline-block is-sticky">
+                                        <spring:message code="${sickNote.weekDayOfEndDate}.short"/>,
+                                        <uv:date date="${sickNote.endDate}"/>
+                                    </h5>
                                 </c:set>
                                 <spring:message code="absence.period.multipleDays" arguments="${SICK_NOTE_START_DATE};${SICK_NOTE_END_DATE}" argumentSeparator=";"/>
                             </c:otherwise>
