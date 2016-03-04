@@ -187,7 +187,14 @@ Die Urlaubsverwaltung ist eine [Spring Boot](http://projects.spring.io/spring-bo
 Plugin gestartet werden:
 
 <pre>mvn clean spring-boot:run</pre>
+<a name="mvn_profiles" />
+Wenn mit einer eigenen Konfigurationsdatei gearbeitet werden soll, kann diese als Spring profile Parameter beim Start angegeben
+werden. Zum Beispiel kann eine Konfiguration für MariaDB unter application-mariadb.properties angelegt und mit folgendem
+Maven Aufruf gestartet werden:
+<pre>mvn clean spring-boot:run -Drun.profiles=mariadb</pre>
+Einzelne Parameter lassen sich mit -D<parameterName>=<parameterWert> überschreiben.
 
+#### Anwendung nutzen
 Im Browser lässt sich die Anwendung dann über `http://localhost:8080/` ansteuern.
 
 Ohne weitere Anpassung der Standardkonfiguration wird eine H2-Datenbank verwendet und es werden Testdaten angelegt,
@@ -247,6 +254,12 @@ Die Anwendung mit dem Parameter `-Dauth=activeDirectory` starten:
 Oder die Property `auth` in den `application.properties` bzw. in den `application-dev.properties` setzen:
 
 <pre>auth=activeDirectory</pre>
+
+#### Externe Systeme mit Docker virtualisieren
+
+Wenn man in einer produktions-nahen Umgebung entwickeln oder Probleme nachstellen will, bietet es sich an, die extenen
+Systeme wie die Datenbank oder den LDAP-Server zu virtualisieren. [Hier wird gezeigt, wie man das mit Docker
+tun kann.](UV_WITH_DOCKER.md)
 
 ---
 
