@@ -5,7 +5,7 @@
 
     <groupId>org.synyx</groupId>
     <artifactId>urlaubsverwaltung</artifactId>
-    <version>2.17.1</version>
+    <version>2.17.2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Urlaubsverwaltung</name>
