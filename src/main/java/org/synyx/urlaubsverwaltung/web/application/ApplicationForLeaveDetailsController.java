@@ -32,6 +32,8 @@ import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.application.service.exception.ImpatientAboutApplicationForLeaveProcessException;
 import org.synyx.urlaubsverwaltung.core.application.service.exception.RemindAlreadySentException;
 import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
+import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;
+import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
@@ -86,6 +88,9 @@ public class ApplicationForLeaveDetailsController {
     @Autowired
     private DepartmentService departmentService;
 
+    @Autowired
+    private WorkingTimeService workingTimeService;
+
     @RequestMapping(value = "/{applicationId}", method = RequestMethod.GET)
     public String showApplicationDetail(@PathVariable("applicationId") Integer applicationId,
         @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Integer requestedYear,
@@ -137,6 +142,14 @@ public class ApplicationForLeaveDetailsController {
 
         // APPLICATION FOR LEAVE
         model.addAttribute("application", new ApplicationForLeave(application, workDaysService));
+
+        // WORKING TIME FOR VACATION PERIOD
+        Optional<WorkingTime> optionalWorkingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(
+                application.getPerson(), application.getStartDate());
+
+        if (optionalWorkingTime.isPresent()) {
+            model.addAttribute("workingTime", optionalWorkingTime.get());
+        }
 
         // DEPARTMENT APPLICATIONS FOR LEAVE
         List<Application> departmentApplications =
