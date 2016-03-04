@@ -22,15 +22,16 @@ public interface AccountInteractionService {
      * @param  person  defines the owner of the holidays account
      * @param  validFrom  defines the start of the validity period, e.g. 1.1.2012
      * @param  validTo  defines the end of the validity period, e.g. 31.12.2012
-     * @param  days  defines number of annual vacation days (the actual vacation days are calculated using the validity
-     *               period)
+     * @param  annualVacationDays  defines number of annual vacation days
+     * @param  actualVacationDays  the actual vacation days for the period
      * @param  remainingDays  defines the number of remaining vacation days from the last year
      * @param  remainingDaysNotExpiring  defines the number of remaining vacation days that do not expire on 1st April
      *
      * @return  the created holidays account
      */
-    Account createHolidaysAccount(Person person, DateMidnight validFrom, DateMidnight validTo, BigDecimal days,
-        BigDecimal remainingDays, BigDecimal remainingDaysNotExpiring);
+    Account createHolidaysAccount(Person person, DateMidnight validFrom, DateMidnight validTo,
+        BigDecimal annualVacationDays, BigDecimal actualVacationDays, BigDecimal remainingDays,
+        BigDecimal remainingDaysNotExpiring);
 
 
     /**
@@ -39,15 +40,16 @@ public interface AccountInteractionService {
      * @param  account  to be edited
      * @param  validFrom  defines the start of the validity period, e.g. 1.1.2012
      * @param  validTo  defines the end of the validity period, e.g. 31.12.2012
-     * @param  days  defines number of annual vacation days (the actual vacation days are calculated using the validity
-     *               period)
+     * @param  annualVacationDays  defines number of annual vacation days
+     * @param  actualVacationDays  the actual vacation days for the period
      * @param  remainingDays  defines the number of remaining vacation days from the last year
      * @param  remainingDaysNotExpiring  defines the number of remaining vacation days that do not expire on 1st April
      *
      * @return  the updated holidays account
      */
-    Account editHolidaysAccount(Account account, DateMidnight validFrom, DateMidnight validTo, BigDecimal days,
-        BigDecimal remainingDays, BigDecimal remainingDaysNotExpiring);
+    Account editHolidaysAccount(Account account, DateMidnight validFrom, DateMidnight validTo,
+        BigDecimal annualVacationDays, BigDecimal actualVacationDays, BigDecimal remainingDays,
+        BigDecimal remainingDaysNotExpiring);
 
 
     /**

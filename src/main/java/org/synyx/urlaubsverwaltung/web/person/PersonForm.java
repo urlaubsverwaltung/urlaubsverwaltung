@@ -47,6 +47,8 @@ public class PersonForm {
 
     private BigDecimal annualVacationDays;
 
+    private BigDecimal actualVacationDays;
+
     private BigDecimal remainingVacationDays;
 
     private BigDecimal remainingVacationDaysNotExpiring;
@@ -91,6 +93,7 @@ public class PersonForm {
             this.holidaysAccountValidFrom = holidaysAccount.getValidFrom();
             this.holidaysAccountValidTo = holidaysAccount.getValidTo();
             this.annualVacationDays = holidaysAccount.getAnnualVacationDays();
+            this.actualVacationDays = holidaysAccount.getVacationDays();
             this.remainingVacationDays = holidaysAccount.getRemainingVacationDays();
             this.remainingVacationDaysNotExpiring = holidaysAccount.getRemainingVacationDaysNotExpiring();
         } else {
@@ -152,6 +155,18 @@ public class PersonForm {
     public void setAnnualVacationDays(BigDecimal annualVacationDays) {
 
         this.annualVacationDays = annualVacationDays;
+    }
+
+
+    public BigDecimal getActualVacationDays() {
+
+        return actualVacationDays;
+    }
+
+
+    public void setActualVacationDays(BigDecimal actualVacationDays) {
+
+        this.actualVacationDays = actualVacationDays;
     }
 
 

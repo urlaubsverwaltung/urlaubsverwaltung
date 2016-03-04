@@ -60,7 +60,8 @@ public class PersonFormProcessorImplTest {
         examplePersonForm.setLastName("Muster");
         examplePersonForm.setFirstName("Marlene");
         examplePersonForm.setEmail("muster@synyx.de");
-        examplePersonForm.setAnnualVacationDays(new BigDecimal("28"));
+        examplePersonForm.setAnnualVacationDays(new BigDecimal("30"));
+        examplePersonForm.setActualVacationDays(new BigDecimal("28"));
         examplePersonForm.setRemainingVacationDays(new BigDecimal("4"));
         examplePersonForm.setRemainingVacationDaysNotExpiring(new BigDecimal("3"));
         examplePersonForm.setValidFrom(DateMidnight.now());
@@ -101,8 +102,8 @@ public class PersonFormProcessorImplTest {
 
         Mockito.verify(accountInteractionService)
             .createHolidaysAccount(Mockito.eq(person), Mockito.eq(new DateMidnight(2014, 1, 1)),
-                Mockito.eq(new DateMidnight(2014, 12, 31)), Mockito.eq(new BigDecimal("28")),
-                Mockito.eq(new BigDecimal("4")), Mockito.eq(new BigDecimal("3")));
+                Mockito.eq(new DateMidnight(2014, 12, 31)), Mockito.eq(new BigDecimal("30")),
+                Mockito.eq(new BigDecimal("28")), Mockito.eq(new BigDecimal("4")), Mockito.eq(new BigDecimal("3")));
     }
 
 

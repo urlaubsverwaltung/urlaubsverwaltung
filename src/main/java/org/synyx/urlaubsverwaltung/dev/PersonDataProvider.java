@@ -64,7 +64,8 @@ class PersonDataProvider {
             new DateMidnight(currentYear - 1, 1, 1), person);
 
         accountInteractionService.createHolidaysAccount(person, DateUtil.getFirstDayOfYear(currentYear),
-            DateUtil.getLastDayOfYear(currentYear), new BigDecimal("28.5"), new BigDecimal("5"), BigDecimal.ZERO);
+            DateUtil.getLastDayOfYear(currentYear), new BigDecimal("30"), new BigDecimal("30"), new BigDecimal("5"),
+            BigDecimal.ZERO);
 
         return person;
     }

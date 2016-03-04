@@ -77,6 +77,7 @@ public class PersonFormProcessorImpl implements PersonFormProcessor {
         DateMidnight validTo = personForm.getHolidaysAccountValidTo();
 
         BigDecimal annualVacationDays = personForm.getAnnualVacationDays();
+        BigDecimal actualVacationDays = personForm.getActualVacationDays();
         BigDecimal remainingVacationDays = personForm.getRemainingVacationDays();
         BigDecimal remainingVacationDaysNotExpiring = personForm.getRemainingVacationDaysNotExpiring();
 
@@ -85,10 +86,10 @@ public class PersonFormProcessorImpl implements PersonFormProcessor {
 
         if (account.isPresent()) {
             accountInteractionService.editHolidaysAccount(account.get(), validFrom, validTo, annualVacationDays,
-                remainingVacationDays, remainingVacationDaysNotExpiring);
+                actualVacationDays, remainingVacationDays, remainingVacationDaysNotExpiring);
         } else {
             accountInteractionService.createHolidaysAccount(person, validFrom, validTo, annualVacationDays,
-                remainingVacationDays, remainingVacationDaysNotExpiring);
+                actualVacationDays, remainingVacationDays, remainingVacationDaysNotExpiring);
         }
     }
 

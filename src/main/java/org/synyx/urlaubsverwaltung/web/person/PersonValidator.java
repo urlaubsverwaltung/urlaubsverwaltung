@@ -46,6 +46,7 @@ public class PersonValidator implements Validator {
     private static final String ATTRIBUTE_FIRST_NAME = "firstName";
     private static final String ATTRIBUTE_LAST_NAME = "lastName";
     private static final String ATTRIBUTE_ANNUAL_VACATION_DAYS = "annualVacationDays";
+    private static final String ATTRIBUTE_ACTUAL_VACATION_DAYS = "actualVacationDays";
     private static final String ATTRIBUTE_REMAINING_VACATION_DAYS = "remainingVacationDays";
     private static final String ATTRIBUTE_REMAINING_VACATION_DAYS_NOT_EXPIRING = "remainingVacationDaysNotExpiring";
     private static final String ATTRIBUTE_EMAIL = "email";
@@ -86,6 +87,8 @@ public class PersonValidator implements Validator {
         validateValidFrom(form, errors);
 
         validateAnnualVacation(form, errors);
+
+        validateActualVacation(form, errors);
 
         validateRemainingVacationDays(form, errors);
 
@@ -205,6 +208,20 @@ public class PersonValidator implements Validator {
 
         if (annualVacationDays != null) {
             validateNumberOfDays(annualVacationDays, ATTRIBUTE_ANNUAL_VACATION_DAYS, maxDays, errors);
+        }
+    }
+
+
+    protected void validateActualVacation(PersonForm form, Errors errors) {
+
+        BigDecimal actualVacationDays = form.getActualVacationDays();
+
+        validateNumberNotNull(actualVacationDays, ATTRIBUTE_ACTUAL_VACATION_DAYS, errors);
+
+        if (actualVacationDays != null) {
+            BigDecimal annualVacationDays = form.getAnnualVacationDays();
+
+            validateNumberOfDays(actualVacationDays, ATTRIBUTE_ACTUAL_VACATION_DAYS, annualVacationDays, errors);
         }
     }
 

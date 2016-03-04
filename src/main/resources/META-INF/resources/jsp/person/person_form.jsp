@@ -408,6 +408,17 @@
         </div>
 
         <div class="form-group is-required">
+            <label class="control-label col-md-3" for="actualVacationDays">
+                <spring:message code='person.form.annualVacation.actualVacation'/>:
+            </label>
+
+            <div class="col-md-9">
+                <form:input path="actualVacationDays" class="form-control" cssErrorClass="form-control error" size="1" id="actualVacationDays"/>
+                <span class="help-inline"><form:errors path="actualVacationDays" cssClass="error"/></span>
+            </div>
+        </div>
+
+        <div class="form-group is-required">
             <label class="control-label col-md-3" for="remainingVacationDays">
                 <spring:message code="person.form.annualVacation.remainingVacation"/>:
             </label>

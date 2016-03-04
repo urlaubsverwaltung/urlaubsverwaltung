@@ -38,21 +38,28 @@ import static org.junit.Assert.assertTrue;
 public class PersonValidatorTest {
 
     private PersonValidator validator;
-    private PersonForm form;
-    private Errors errors = Mockito.mock(Errors.class);
 
-    private PersonService personService = Mockito.mock(PersonService.class);
-    private SettingsService settingsService = Mockito.mock(SettingsService.class);
+    private PersonService personService;
+    private SettingsService settingsService;
+
+    private PersonForm form;
+    private Errors errors;
+    private Settings settings;
 
     @Before
     public void setUp() {
 
-        Mockito.when(settingsService.getSettings()).thenReturn(new Settings());
+        personService = Mockito.mock(PersonService.class);
+        settingsService = Mockito.mock(SettingsService.class);
 
         validator = new PersonValidator(personService, settingsService);
+
+        settings = new Settings();
+        Mockito.when(settingsService.getSettings()).thenReturn(settings);
+
         form = new PersonForm(2013);
 
-        Mockito.reset(errors);
+        errors = Mockito.mock(Errors.class);
     }
 
 
@@ -187,9 +194,14 @@ public class PersonValidatorTest {
 
 
     @Test
-    public void ensureAnnualVacationMustNotBeGreaterThanOneYear() {
+    public void ensureAnnualVacationMustNotBeGreaterThanMaximumDaysConfiguredInSettings() {
 
-        form.setAnnualVacationDays(new BigDecimal("367"));
+        int maxDays = 40;
+
+        settings.getAbsenceSettings().setMaximumAnnualVacationDays(maxDays);
+
+        form.setAnnualVacationDays(new BigDecimal(maxDays + 1));
+
         validator.validateAnnualVacation(form, errors);
         Mockito.verify(errors).rejectValue("annualVacationDays", "error.entry.invalid");
     }
@@ -200,6 +212,39 @@ public class PersonValidatorTest {
 
         form.setAnnualVacationDays(new BigDecimal("28"));
         validator.validateAnnualVacation(form, errors);
+        Mockito.verifyZeroInteractions(errors);
+    }
+
+
+    // VALIDATION OF ACTUAL VACATION FIELD
+
+    @Test
+    public void ensureActualVacationMustNotBeNull() {
+
+        form.setActualVacationDays(null);
+        validator.validateActualVacation(form, errors);
+        Mockito.verify(errors).rejectValue("actualVacationDays", "error.entry.mandatory");
+    }
+
+
+    @Test
+    public void ensureActualVacationMustNotBeGreaterThanAnnualVacation() {
+
+        form.setAnnualVacationDays(new BigDecimal("30"));
+        form.setActualVacationDays(new BigDecimal("31"));
+
+        validator.validateActualVacation(form, errors);
+        Mockito.verify(errors).rejectValue("actualVacationDays", "error.entry.invalid");
+    }
+
+
+    @Test
+    public void ensureValidActualVacationHasNoValidationError() {
+
+        form.setAnnualVacationDays(new BigDecimal("30"));
+        form.setActualVacationDays(new BigDecimal("28"));
+
+        validator.validateActualVacation(form, errors);
         Mockito.verifyZeroInteractions(errors);
     }
 
