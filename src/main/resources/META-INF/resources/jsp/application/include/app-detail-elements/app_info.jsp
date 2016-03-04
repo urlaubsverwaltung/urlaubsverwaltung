@@ -104,7 +104,7 @@
                   </c:if>
                 });
             </script>
-            <c:if test="${application.vacationType.category == 'OVERTIME'}">
+            <c:if test="${application.vacationType.category == 'OVERTIME' && application.hours != null}">
                 <span class="text-muted">
                     <br/>
                     <uv:number number="${application.hours}"/>
