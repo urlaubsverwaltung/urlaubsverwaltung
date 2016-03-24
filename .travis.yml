@@ -2,6 +2,9 @@ language: java
 
 script: mvn verify
 
+after_success:
+  - mvn clean verify jacoco:report coveralls:report
+
 jdk:
   - oraclejdk8
 
