@@ -11,39 +11,8 @@
 
 <head>
     <uv:head />
-    <script type="text/javascript">
-        /**
-         * @param {string|{}} data
-         * @param {string} [data.src]
-         * @param {string} [data.fallback]
-         * @return {$.Deferred}
-         */
-        function addScript(data) {
-
-            var deferred = $.Deferred();
-            var isFallback = typeof data === 'string';
-
-            var script  = document.createElement('script');
-            script.src  = isFallback ? data : data.src;
-            script.type = 'text/javascript';
-
-            script.onload  = function() {
-                deferred.resolve();
-            };
-
-            script.onerror = function() {
-                if (isFallback) {
-                    deferred.reject();
-                } else {
-                    addScript(data.fallback).then(deferred.resolve);
-                }
-            };
-
-            document.getElementsByTagName('head')[0].appendChild(script);
-
-            return deferred.promise();
-        }
-    </script>
+    <script type="text/javascript" src="<spring:url value='/lib/moment/moment.min.js' />"></script>
+    <script type="text/javascript" src="<spring:url value='/lib/moment/moment.lang.de.js' />"></script>
 </head>
 
 <body>
@@ -165,22 +134,6 @@
                 var webPrefix = "<spring:url value='/web' />";
                 var apiPrefix = "<spring:url value='/api' />";
 
-                function addMomentScript() {
-                    return addScript({
-                        src: '//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js',
-                        fallback: '<spring:url value='/lib/moment/moment.min.js' />'
-                    });
-                }
-
-                // dependently of the locale a specific language file is fetched for momentjs
-                // fallback is a german language file
-                function addMomentLangScript() {
-                    return addScript({
-                        src: '//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/lang/' + datepickerLocale + '.js',
-                        fallback: '<spring:url value='/lib/moment/moment.lang.de.js' />'
-                    });
-                }
-
                 // calendar is initialised when moment.js AND moment.language.js are loaded
                 function initCalendar() {
                     var year = getUrlParam("year");
@@ -215,7 +168,7 @@
                     });
                 }
 
-                addMomentScript().then(addMomentLangScript).then(initCalendar);
+                initCalendar();
 
                 var resizeTimer = null;
 
