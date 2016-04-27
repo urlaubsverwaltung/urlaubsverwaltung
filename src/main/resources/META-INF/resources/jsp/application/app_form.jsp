@@ -15,7 +15,9 @@
 <head>
     <uv:head/>
     <link rel="stylesheet" type="text/css" href="<spring:url value='/lib/jquery/css/ui-lightness/timepicker.css' />" />
-    <script src="<spring:url value='/lib/jquery/js/timepicker.js' />" type="text/javascript" ></script>
+    <script type="text/javascript" src="<spring:url value='/lib/jquery/js/timepicker.js' />"></script>
+    <script type="text/javascript" src="<spring:url value='/lib/moment/moment.min.js' />"></script>
+    <script type="text/javascript" src="<spring:url value='/lib/moment/moment.lang.de.js' />"></script>
 
     <%@include file="include/app-form-elements/datepicker.jsp" %>
     <%@include file="include/app-form-elements/day-length-selector.jsp" %>
