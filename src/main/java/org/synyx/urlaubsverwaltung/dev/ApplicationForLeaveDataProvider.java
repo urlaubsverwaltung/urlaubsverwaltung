@@ -4,6 +4,8 @@ import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 import org.springframework.stereotype.Component;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
@@ -24,6 +26,7 @@ import java.util.Optional;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Component
+@ConditionalOnProperty("testdata.create")
 class ApplicationForLeaveDataProvider {
 
     private final ApplicationInteractionService applicationInteractionService;

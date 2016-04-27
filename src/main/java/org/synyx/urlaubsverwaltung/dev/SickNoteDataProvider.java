@@ -4,6 +4,8 @@ import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 import org.springframework.stereotype.Component;
 
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
@@ -20,6 +22,7 @@ import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteType;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Component
+@ConditionalOnProperty("testdata.create")
 class SickNoteDataProvider {
 
     private final SickNoteInteractionService sickNoteInteractionService;
