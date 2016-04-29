@@ -104,6 +104,46 @@ public class DecimalNumberPropertyEditorTest {
 
 
     @Test
+    public void ensureNumberParsingWorksWithCommaSeparatedNumberForGermanLocale() {
+
+        DecimalNumberPropertyEditor propertyEditor = new DecimalNumberPropertyEditor(Locale.GERMAN);
+
+        propertyEditor.setAsText("6,75");
+        Assert.assertEquals("Wrong number", new BigDecimal("6.75"), propertyEditor.getValue());
+    }
+
+
+    @Test
+    public void ensureNumberParsingWorksWithDotSeparatedNumberForGermanLocale() {
+
+        DecimalNumberPropertyEditor propertyEditor = new DecimalNumberPropertyEditor(Locale.GERMAN);
+
+        propertyEditor.setAsText("6.75");
+        Assert.assertEquals("Wrong number", new BigDecimal("6.75"), propertyEditor.getValue());
+    }
+
+
+    @Test
+    public void ensureNumberParsingWorksWithCommaSeparatedNumberForEnglishLocale() {
+
+        DecimalNumberPropertyEditor propertyEditor = new DecimalNumberPropertyEditor(Locale.ENGLISH);
+
+        propertyEditor.setAsText("6,75");
+        Assert.assertEquals("Wrong number", new BigDecimal("6.75"), propertyEditor.getValue());
+    }
+
+
+    @Test
+    public void ensureNumberParsingWorksWithDotSeparatedNumberForEnglishLocale() {
+
+        DecimalNumberPropertyEditor propertyEditor = new DecimalNumberPropertyEditor(Locale.ENGLISH);
+
+        propertyEditor.setAsText("6.75");
+        Assert.assertEquals("Wrong number", new BigDecimal("6.75"), propertyEditor.getValue());
+    }
+
+
+    @Test
     public void ensureEmptyTextForNullNumber() {
 
         DecimalNumberPropertyEditor propertyEditor = new DecimalNumberPropertyEditor(Locale.GERMAN);
