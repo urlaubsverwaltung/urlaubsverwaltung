@@ -313,7 +313,7 @@ public class PersonValidator implements Validator {
         }
 
         // user role must always be selected for active user
-        if (!roles.contains(Role.USER)) {
+        if (!roles.contains(Role.INACTIVE) && !roles.contains(Role.USER)) {
             errors.rejectValue(ATTRIBUTE_PERMISSIONS, "person.form.permissions.error.user");
 
             return;
@@ -333,7 +333,6 @@ public class PersonValidator implements Validator {
         }
 
         // Neither does department head / second stage authority and office
-
         if (roles.contains(Role.DEPARTMENT_HEAD) && roles.contains(Role.OFFICE)) {
             errors.rejectValue(ATTRIBUTE_PERMISSIONS, "person.form.permissions.error.combination");
 

@@ -425,6 +425,17 @@ public class PersonValidatorTest {
 
 
     @Test
+    public void ensureSelectingOnlyInactiveRoleIsValid() {
+
+        form.setPermissions(Collections.singletonList(Role.INACTIVE));
+
+        validator.validatePermissions(form, errors);
+
+        Mockito.verifyZeroInteractions(errors);
+    }
+
+
+    @Test
     public void ensureUserRoleMustBeSelectedIfUserShouldNotBeDeactivated() {
 
         form.setPermissions(Collections.singletonList(Role.OFFICE));
