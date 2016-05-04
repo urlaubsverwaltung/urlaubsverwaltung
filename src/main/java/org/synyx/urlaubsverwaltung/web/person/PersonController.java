@@ -21,6 +21,7 @@ import org.synyx.urlaubsverwaltung.core.account.domain.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
 import org.synyx.urlaubsverwaltung.core.account.service.VacationDaysService;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.core.department.Department;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
@@ -30,6 +31,7 @@ import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.department.DepartmentConstants;
+import org.synyx.urlaubsverwaltung.web.department.UnknownDepartmentException;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -109,28 +111,38 @@ public class PersonController {
     @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
     @RequestMapping(value = "/staff", method = RequestMethod.GET, params = "active")
     public String showStaff(@RequestParam(value = "active", required = true) Boolean active,
+        @RequestParam(value = ControllerConstants.DEPARTMENT_ATTRIBUTE, required = false) Optional<Integer> requestedDepartmentId,
         @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Integer requestedYear,
-        Model model) {
+        Model model) throws UnknownDepartmentException {
 
         Integer year = requestedYear == null ? DateMidnight.now().getYear() : requestedYear;
 
-        List<Person> persons;
-
-        if (active) {
-            persons = getRelevantActivePersons();
-        } else {
-            persons = getRelevantInactivePersons();
+        Optional<Department> department = requestedDepartmentId.flatMap(id -> departmentService.getDepartmentById(id));
+        if (requestedDepartmentId.isPresent() && !department.isPresent()) {
+            // have to use "get" here because we cannot throw checked exceptions from map
+            throw new UnknownDepartmentException(requestedDepartmentId.get());
         }
 
-        prepareStaffView(persons, year, model);
+        Optional<List<Person>> filter = department.map(d -> d.getMembers());
+
+        List<Person> persons;
+        Person signedInUser = sessionService.getSignedInUser();
+
+        if (active) {
+            persons = getRelevantActivePersons(signedInUser);
+        } else {
+            persons = getRelevantInactivePersons(signedInUser);
+        }
+
+        filter.map(members -> persons.retainAll(members));
+
+        prepareStaffView(signedInUser, persons, department, year, model);
 
         return PersonConstants.STAFF_JSP;
     }
 
 
-    private List<Person> getRelevantActivePersons() {
-
-        Person signedInUser = sessionService.getSignedInUser();
+    private List<Person> getRelevantActivePersons(Person signedInUser) {
 
         if (signedInUser.hasRole(Role.BOSS) || signedInUser.hasRole(Role.OFFICE)) {
             return personService.getActivePersons();
@@ -156,10 +168,8 @@ public class PersonController {
     }
 
 
-    private List<Person> getRelevantInactivePersons() {
-
-        Person signedInUser = sessionService.getSignedInUser();
-
+    private List<Person> getRelevantInactivePersons(Person signedInUser) {
+        
         if (signedInUser.hasRole(Role.BOSS) || signedInUser.hasRole(Role.OFFICE)) {
             return personService.getInactivePersons();
         }
@@ -183,8 +193,28 @@ public class PersonController {
         return Collections.<Person>emptyList();
     }
 
+    private List<Department> getRelevantDepartments(Person signedInUser){
 
-    private void prepareStaffView(List<Person> persons, int year, Model model) {
+        if (signedInUser.hasRole(Role.BOSS) || signedInUser.hasRole(Role.OFFICE)) {
+            return departmentService.getAllDepartments();
+        }
+
+        // NOTE: If the signed in user is only department head, he wants to see only the persons of his departments
+        if (signedInUser.hasRole(Role.DEPARTMENT_HEAD)) {
+            return departmentService.getManagedDepartmentsOfDepartmentHead(signedInUser);
+        }
+
+        // NOTE: If the signed in user is second stage authority, he wants to see only the persons of his departments
+        if (signedInUser.hasRole(Role.SECOND_STAGE_AUTHORITY)){
+            return departmentService.getManagedDepartmentsOfSecondStageAuthority(signedInUser);
+        }
+
+        // normal users can see their own departments only
+        return departmentService.getAssignedDepartmentsOfMember(signedInUser);
+    }
+
+
+    private void prepareStaffView(Person signedInUser, List<Person> persons, Optional<Department> department, int year, Model model) {
 
         Map<Person, Account> accounts = new HashMap<>();
         Map<Person, VacationDaysLeft> vacationDaysLeftMap = new HashMap<>();
@@ -206,5 +236,11 @@ public class PersonController {
         model.addAttribute(PersonConstants.BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(DateMidnight.now()));
         model.addAttribute(ControllerConstants.YEAR_ATTRIBUTE, year);
         model.addAttribute("now", DateMidnight.now());
+
+        List<Department> deps = getRelevantDepartments(signedInUser);
+        Collections.sort(deps, (a, b) -> a.getName().compareTo(b.getName()));
+        model.addAttribute("departments", deps);
+        department.ifPresent( d -> model.addAttribute(ControllerConstants.DEPARTMENT_ATTRIBUTE, d));
+
     }
 }
