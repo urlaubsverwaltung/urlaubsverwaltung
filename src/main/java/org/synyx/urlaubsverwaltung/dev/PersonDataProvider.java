@@ -25,6 +25,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 
 /**
@@ -63,7 +64,7 @@ class PersonDataProvider {
 
         int currentYear = DateMidnight.now().getYear();
         workingTimeService.touch(Arrays.asList(WeekDay.MONDAY.getDayOfWeek(), WeekDay.TUESDAY.getDayOfWeek(),
-                WeekDay.WEDNESDAY.getDayOfWeek(), WeekDay.THURSDAY.getDayOfWeek(), WeekDay.FRIDAY.getDayOfWeek()),
+                WeekDay.WEDNESDAY.getDayOfWeek(), WeekDay.THURSDAY.getDayOfWeek(), WeekDay.FRIDAY.getDayOfWeek()), Optional.empty(),
             new DateMidnight(currentYear - 1, 1, 1), person);
 
         accountInteractionService.createHolidaysAccount(person, DateUtil.getFirstDayOfYear(currentYear),

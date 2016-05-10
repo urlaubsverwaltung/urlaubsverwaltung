@@ -259,4 +259,9 @@ public class WorkingTime extends AbstractPersistable<Integer> {
 
         return Optional.ofNullable(federalStateOverride);
     }
+
+    public void setFederalStateOverride(Optional<FederalState> state){
+
+        this.federalStateOverride = state.orElse(null);
+    }
 }

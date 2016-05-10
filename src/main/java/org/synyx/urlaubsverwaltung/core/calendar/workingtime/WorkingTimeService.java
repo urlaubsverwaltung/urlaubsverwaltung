@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.settings.FederalState;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,7 +33,7 @@ public class WorkingTimeService {
         this.workingTimeDAO = workingTimeDAO;
     }
 
-    public void touch(List<Integer> workingDays, DateMidnight validFrom, Person person) {
+    public void touch(List<Integer> workingDays, Optional<FederalState> federalState, DateMidnight validFrom, Person person) {
 
         WorkingTime workingTime = workingTimeDAO.findByPersonAndValidityDate(person, validFrom.toDate());
 
@@ -49,6 +50,8 @@ public class WorkingTimeService {
          * else just change the working days of the current working time object
          */
         workingTime.setWorkingDays(workingDays, DayLength.FULL);
+
+        workingTime.setFederalStateOverride(federalState);
 
         workingTimeDAO.save(workingTime);
     }
