@@ -3,22 +3,22 @@ package org.synyx.urlaubsverwaltung.restapi;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
-
 import de.jollyday.Holiday;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.util.StringUtils;
-
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import org.synyx.urlaubsverwaltung.core.calendar.PublicHolidaysService;
+import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
+import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.person.PersonService;
+import org.synyx.urlaubsverwaltung.core.settings.FederalState;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -36,6 +36,12 @@ public class PublicHolidayController {
     @Autowired
     private PublicHolidaysService publicHolidaysService;
 
+    @Autowired
+    private PersonService personService;
+
+    @Autowired
+    private WorkDaysService workDaysService;
+
     @ApiOperation(
         value = "Get all public holidays for a certain period", notes = "Get all public holidays for a certain period"
     )
@@ -46,9 +52,19 @@ public class PublicHolidayController {
         String year,
         @ApiParam(value = "Month of year to get the public holidays for")
         @RequestParam(value = "month", required = false)
-        String month) {
+        String month,
+        @ApiParam(value = "ID of the person to get the public holidays for. Can be missing to get system defaults.")
+        @RequestParam(value = "person", required = false)
+        Integer personId
+        ) {
 
         PublicHolidayListResponse emptyResponse = new PublicHolidayListResponse();
+
+        Optional<Person> person = personId != null ? personService.getPersonByID(personId): Optional.empty();
+        if (personId != null && !person.isPresent())
+            return new ResponseWrapper<>(emptyResponse);  // maybe this should be an error page instead?
+
+        FederalState federalState = workDaysService.getFederalStateForOptionalPerson(person);
 
         boolean hasYear = StringUtils.hasText(year);
         boolean hasMonth = StringUtils.hasText(month);
@@ -57,7 +73,7 @@ public class PublicHolidayController {
 
         if (hasYear && !hasMonth) {
             try {
-                holidays = publicHolidaysService.getHolidays(Integer.parseInt(year));
+                holidays = publicHolidaysService.getHolidays(Integer.parseInt(year), federalState);
             } catch (NumberFormatException ex) {
                 return new ResponseWrapper<>(emptyResponse);
             }
@@ -65,7 +81,7 @@ public class PublicHolidayController {
 
         if (hasYear && hasMonth) {
             try {
-                holidays = publicHolidaysService.getHolidays(Integer.parseInt(year), Integer.parseInt(month));
+                holidays = publicHolidaysService.getHolidays(Integer.parseInt(year), Integer.parseInt(month), federalState);
             } catch (NumberFormatException ex) {
                 return new ResponseWrapper<>(emptyResponse);
             }
@@ -74,7 +90,7 @@ public class PublicHolidayController {
         List<PublicHolidayResponse> publicHolidayResponses = holidays.stream()
             .map(holiday ->
                         new PublicHolidayResponse(holiday,
-                            publicHolidaysService.getWorkingDurationOfDate(holiday.getDate().toDateMidnight())))
+                            publicHolidaysService.getWorkingDurationOfDate(holiday.getDate().toDateMidnight(), federalState)))
             .collect(Collectors.toList());
 
         return new ResponseWrapper<>(new PublicHolidayListResponse(publicHolidayResponses));

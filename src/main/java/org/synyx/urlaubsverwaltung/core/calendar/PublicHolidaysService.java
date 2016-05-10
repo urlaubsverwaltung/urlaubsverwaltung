@@ -6,23 +6,18 @@ package org.synyx.urlaubsverwaltung.core.calendar;
 
 import de.jollyday.Holiday;
 import de.jollyday.HolidayManager;
-
 import org.joda.time.DateMidnight;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Component;
-
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
+import org.synyx.urlaubsverwaltung.core.settings.FederalState;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.settings.WorkingTimeSettings;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 
 import java.math.BigDecimal;
-
 import java.net.URL;
-
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -56,15 +51,13 @@ public class PublicHolidaysService {
      * Checks if the given date is a public holiday by lookup in the given set of public holidays.
      *
      * @param  date
+     * @param  federalState the federal state to consider holiday settings for
      *
      * @return  true if the given date is a public holiday, else false
      */
-    boolean isPublicHoliday(DateMidnight date) {
+    boolean isPublicHoliday(DateMidnight date, FederalState federalState) {
 
-        Settings settings = settingsService.getSettings();
-        WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
-
-        return manager.isHoliday(date.toLocalDate(), workingTimeSettings.getFederalState().getCodes());
+        return manager.isHoliday(date.toLocalDate(), federalState.getCodes());
     }
 
 
@@ -74,15 +67,16 @@ public class PublicHolidaysService {
      * properties; normally the working duration for these holidays is a half day (0.5)
      *
      * @param  date  to get working duration for
+     * @param  federalState the federal state to consider holiday settings for
      *
      * @return  working duration of the given date
      */
-    public BigDecimal getWorkingDurationOfDate(DateMidnight date) {
+    public BigDecimal getWorkingDurationOfDate(DateMidnight date, FederalState federalState) {
 
         Settings settings = settingsService.getSettings();
         WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
 
-        if (isPublicHoliday(date)) {
+        if (isPublicHoliday(date, federalState)) {
             if (DateUtil.isChristmasEve(date)) {
                 return workingTimeSettings.getWorkingDurationForChristmasEve().getDuration();
             } else if (DateUtil.isNewYearsEve(date)) {
@@ -96,18 +90,15 @@ public class PublicHolidaysService {
     }
 
 
-    public Set<Holiday> getHolidays(int year) {
+    public Set<Holiday> getHolidays(int year, FederalState federalState) {
 
-        Settings settings = settingsService.getSettings();
-        WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
-
-        return manager.getHolidays(year, workingTimeSettings.getFederalState().getCodes());
+        return manager.getHolidays(year, federalState.getCodes());
     }
 
 
-    public Set<Holiday> getHolidays(int year, final int month) {
+    public Set<Holiday> getHolidays(int year, final int month, FederalState federalState) {
 
-        Set<Holiday> holidays = getHolidays(year);
+        Set<Holiday> holidays = getHolidays(year, federalState);
 
         return holidays.stream().filter(byMonth(month)).collect(Collectors.toSet());
     }
@@ -117,4 +108,13 @@ public class PublicHolidaysService {
 
         return holiday -> holiday.getDate().getMonthOfYear() == month;
     }
+
+    public FederalState getSystemDefaultFederalState() {
+
+        return settingsService.getSettings().getWorkingTimeSettings().getFederalState();
+    }
+
+
+
+
 }

@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.settings.FederalState;
 import org.synyx.urlaubsverwaltung.core.util.DateFormat;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 
@@ -97,13 +98,15 @@ public class WorkDaysService {
                 + endDate.toString(DateFormat.PATTERN));
         }
 
+        FederalState federalState = getFederalStateForPerson(workingTime);
+
         BigDecimal vacationDays = BigDecimal.ZERO;
 
         DateMidnight day = startDate;
 
         while (!day.isAfter(endDate)) {
             // value may be 1 for public holiday, 0 for not public holiday or 0.5 for Christmas Eve or New Year's Eve
-            BigDecimal duration = publicHolidaysService.getWorkingDurationOfDate(day);
+            BigDecimal duration = publicHolidaysService.getWorkingDurationOfDate(day, federalState);
 
             int dayOfWeek = day.getDayOfWeek();
             BigDecimal workingDuration = workingTime.get().getDayLengthForWeekDay(dayOfWeek).getDuration();
@@ -121,5 +124,18 @@ public class WorkDaysService {
         }
 
         return vacationDays.multiply(dayLength.getDuration()).setScale(1);
+    }
+
+
+    public FederalState getFederalStateForOptionalPerson(Optional<Person> person) {
+
+        return getFederalStateForPerson(person.flatMap(
+                workingTimeService::getCurrentOne));
+    }
+
+    private FederalState getFederalStateForPerson(Optional<WorkingTime> personWorkingTime) {
+
+        return personWorkingTime.flatMap(WorkingTime::getFederalStateOverride)
+                .orElseGet(publicHolidaysService::getSystemDefaultFederalState);
     }
 }
