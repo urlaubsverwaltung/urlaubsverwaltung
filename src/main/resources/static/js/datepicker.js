@@ -85,11 +85,11 @@ function createDatepickerInstances(selectors, regional, urlPrefix, getPerson, on
       var year = date.getFullYear();
       var month = date.getMonth() + 1;
 
-      getHighlighted(urlPrefix + "/holidays?year=" + year + "&month=" + month, function (data) {
+      var personId = getPerson();
+
+      getHighlighted(urlPrefix + "/holidays?year=" + year + "&month=" + month+ "&person=" + personId, function (data) {
         highlighted = getPublicHolidays(data);
       });
-
-      var personId = getPerson();
 
       getHighlighted(urlPrefix + "/absences?year=" + year + "&month=" + month + "&person=" + personId, function (data) {
         highlightedAbsences = getAbsences(data);
@@ -98,11 +98,12 @@ function createDatepickerInstances(selectors, regional, urlPrefix, getPerson, on
     },
     onChangeMonthYear: function (year, month) {
 
-      getHighlighted(urlPrefix + "/holidays?year=" + year + "&month=" + month, function (data) {
+      var personId = getPerson();
+
+      getHighlighted(urlPrefix + "/holidays?year=" + year + "&month=" + month+ "&person=" + personId, function (data) {
         highlighted = getPublicHolidays(data);
       });
 
-      var personId = getPerson();
 
       getHighlighted(urlPrefix + "/absences?year=" + year + "&month=" + month + "&person=" + personId, function (data) {
         highlightedAbsences = getAbsences(data);
