@@ -39,7 +39,7 @@
                                aria-haspopup="true" role="button" aria-expanded="false">
                                 <c:choose>
                                     <c:when test="${param.active}">
-                                        <spring:message code="persons.active" /><span class="caret"></span>
+                                        <spring:message code="persons.active" /> <c:out value="${department.name}" /><span class="caret"></span>
                                     </c:when>
                                     <c:otherwise>
                                         <spring:message code="persons.inactive" /><span class="caret"></span>
@@ -52,6 +52,13 @@
                                         <i class="fa fa-toggle-on"></i>
                                         <spring:message code="persons.active" />
                                     </a>
+                                    <c:if test="${departments.size() > 1}" >
+                                    <ul>
+                                        <c:forEach items="${departments}" var="d" >
+                                        <li><a href='${URL_PREFIX}/staff?active=true&year=${year}&department=${d.id}'><c:out value="${d.name}" /></a></li>
+                                        </c:forEach>
+                                    </ul>
+                                    </c:if>
                                 </li>
                                 <li>
                                     <a href="${URL_PREFIX}/staff?active=false&year=${year}">
@@ -62,7 +69,7 @@
                             </ul>
                         </div>
 
-                        <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/staff?active=${param.active}&year=" />
+                        <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/staff?active=${param.active}&department=${department.id}&year=" />
 
                         <uv:print />
 
