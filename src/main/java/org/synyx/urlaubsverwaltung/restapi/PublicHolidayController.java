@@ -73,8 +73,9 @@ public class PublicHolidayController {
 
         Optional<Person> optionalPerson = personId != null ? personService.getPersonByID(personId) : Optional.empty();
 
-        if (personId != null && !optionalPerson.isPresent())
+        if (personId != null && !optionalPerson.isPresent()) {
             return new ResponseWrapper<>(emptyResponse); // maybe this should be an error page instead?
+        }
 
         boolean hasYear = StringUtils.hasText(year);
         boolean hasMonth = StringUtils.hasText(month);
