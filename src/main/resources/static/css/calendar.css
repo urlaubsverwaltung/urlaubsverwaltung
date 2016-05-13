@@ -86,6 +86,51 @@
     color: #7B7B7B;
 }
 
+/* Week (for timeline view) */
+
+.datepicker-person {
+    width: 100px;
+    padding-top: 55px;
+}
+
+.datepicker-person div {
+    height: 40px;
+}
+
+.datepicker-person div span {
+    height: 40px;
+    display: table-cell;
+    vertical-align: middle;
+    line-height: 1.1;
+}
+
+.datepicker-week {
+    position: absolute;
+    width: 320px;
+    height: 100%;
+    transition: left 0.4s ease-in-out;
+}
+
+.datepicker-week:nth-child(1) { left: -960px; }
+.datepicker-week:nth-child(2) { left: -640px; }
+.datepicker-week:nth-child(3) { left: -320px; }
+.datepicker-week:nth-child(4) { left: 100; }
+.datepicker-week:nth-child(5) { left: 400px; }
+.datepicker-week:nth-child(6) { left: 700px; }
+.datepicker-week:nth-child(7) { left: 1000px; }
+.datepicker-week:nth-child(8) { left: 1300px; }
+.datepicker-week:nth-child(9) { left: 1600px; }
+.datepicker-week:nth-child(10) { left: 1900px; }
+
+.datepicker-week h3 {
+    margin : 0;
+    padding: 8px;
+    font-size: 12px;
+    text-align: center;
+    color: #7B7B7B;
+}
+
+
 .datepicker-table {
     border: none;
     border-spacing: 0;

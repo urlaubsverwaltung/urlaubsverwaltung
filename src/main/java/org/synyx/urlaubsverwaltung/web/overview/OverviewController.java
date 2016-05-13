@@ -27,6 +27,8 @@ import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
+import org.synyx.urlaubsverwaltung.core.department.Department;
+import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
@@ -84,6 +86,9 @@ public class OverviewController {
     @Autowired
     private SettingsService settingsService;
 
+    @Autowired
+    private DepartmentService departmentService;
+
     @RequestMapping(value = "/overview", method = RequestMethod.GET)
     public String showOverview(
         @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) String year) {
@@ -100,7 +105,9 @@ public class OverviewController {
 
     @RequestMapping(value = "/staff/{personId}/overview", method = RequestMethod.GET)
     public String showOverview(@PathVariable("personId") Integer personId,
-        @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Integer year, Model model)
+        @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Integer year,
+        @RequestParam(value = ControllerConstants.TIMELINE_DEPARTMENT_ATTRIBUTE, required = false) Integer timelineDepartment,
+        Model model)
         throws UnknownPersonException, AccessDeniedException {
 
         Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
@@ -110,6 +117,20 @@ public class OverviewController {
             throw new AccessDeniedException(String.format(
                     "User '%s' has not the correct permissions to access the overview page of user '%s'",
                     signedInUser.getLoginName(), person.getLoginName()));
+        }
+
+        List<Department> relevantDepartments = departmentService.getRelevantDepartments(signedInUser);
+        model.addAttribute("departments", relevantDepartments);
+
+        if (timelineDepartment != null){
+            Optional<Department> department = relevantDepartments.stream().filter(d -> d.getId().equals(timelineDepartment)).findFirst();
+            if (department.isPresent()){
+                model.addAttribute(ControllerConstants.TIMELINE_DEPARTMENT_ATTRIBUTE, department.get());
+            }else{
+                throw new AccessDeniedException(String.format(
+                        "User '%s' has not the correct permissions to access the department timeline of department '%d'",
+                        signedInUser.getLoginName(), timelineDepartment));
+            }
         }
 
         model.addAttribute(PersonConstants.PERSON_ATTRIBUTE, person);

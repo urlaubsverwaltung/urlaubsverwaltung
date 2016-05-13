@@ -125,7 +125,7 @@
         </div>
         </c:if>
 
-        <script src="<spring:url value='/js/calendar.js' />" type="text/javascript" ></script>
+        <script src=<spring:url value='${ timelineDepartment != null ? "/js/timeline.js" : "/js/calendar.js" }' /> type="text/javascript" ></script>
         <script>
             $(function() {
 
@@ -143,7 +143,7 @@
                         date.year(year).month(0).date(1);
                     }
 
-                    var holidayService = Urlaubsverwaltung.HolidayService.create(webPrefix, apiPrefix, +personId);
+                    var holidayService = Urlaubsverwaltung.HolidayService.create(webPrefix, apiPrefix, +personId, +'${timelineDepartment.id}');
 
                     // NOTE: All moments are mutable!
                     var startDateToCalculate = date.clone();
@@ -185,7 +185,17 @@
 
                 });
 
+        <c:if test="${timelineDepartment != null}">
+
+           var t = Urlaubsverwaltung.Calendar.timelinePersons = {};
+           <c:forEach items="${timelineDepartment.members}" var="p" >t[${p.id}] = '<spring:escapeBody>${p.niceName}</spring:escapeBody>';
+           </c:forEach>
+        </c:if>
+
+
             });
+
+
         </script>
 
         <div class="row">

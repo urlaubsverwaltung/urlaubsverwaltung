@@ -28,6 +28,7 @@ $(function() {
         daySickDay            : 'datepicker-day-sick-note',
         next                  : 'datepicker-next',
         prev                  : 'datepicker-prev',
+        week                  : 'datepicker-week',
         month                 : 'datepicker-month',
         mousedown             : 'mousedown'
     };
@@ -57,26 +58,26 @@ $(function() {
                 /* NOTE: Today is not in the past! */
                 return date.isBefore( moment(), 'day' );
             },
-            isPublicHoliday: function(date) {
-                return holidayService.isPublicHoliday(date);
+            isPublicHoliday: function(date, personId) {
+                return holidayService.isPublicHoliday(date, personId);
             },
-            isPersonalHoliday: function(date) {
-                return holidayService.isPersonalHoliday(date);
+            isPersonalHoliday: function(date, personId) {
+                return holidayService.isPersonalHoliday(date, personId);
             },
-            isSickDay: function(date) {
-                return holidayService.isSickDay(date);
+            isSickDay: function(date, personId) {
+                return holidayService.isSickDay(date, personId);
             },
-            isHalfDay: function(date) {
-              return holidayService.isHalfDay(date);
+            isHalfDay: function(date, personId) {
+              return holidayService.isHalfDay(date, personId);
             },
-            title: function(date) {
-              return holidayService.getDescription(date);
+            title: function(date, personId) {
+              return holidayService.getDescription(date, personId);
             },
-            absenceId: function(date) {
-              return holidayService.getAbsenceId(date);
+            absenceId: function(date, personId) {
+              return holidayService.getAbsenceId(date, personId);
             },
-            absenceType: function(date) {
-                return holidayService.getAbsenceType(date);
+            absenceType: function(date, personId) {
+                return holidayService.getAbsenceType(date, personId);
             }
         };
 
@@ -96,7 +97,6 @@ $(function() {
 
         var webPrefix;
         var apiPrefix;
-        var personId;
         var departmentId;
 
         function paramize(p) {
@@ -134,12 +134,12 @@ $(function() {
 
 
         function isOfType(type) {
-          return function (date) {
+          return function (date, personId) {
 
             var year = date.year();
             var formattedDate = date.format('YYYY-MM-DD');
 
-            var holiday = CACHE_findDate(type, year, formattedDate);
+            var holiday = CACHE_findDate(type, year, formattedDate, personId);
             if (type === 'publicHoliday') {
                 return holiday && holiday.dayLength < 1;
             } else {
@@ -148,7 +148,7 @@ $(function() {
           };
         }
 
-        function CACHE_findDate(type, year, formattedDate){
+        function CACHE_findDate(type, year, formattedDate, personId){
             var c = _CACHE[year];
             if (!c) return null;
             if (type === 'publicHoliday') {
@@ -178,23 +178,23 @@ $(function() {
 
             isPublicHoliday: isOfType('publicHoliday'),
 
-            isHalfDay: function (date) {
+            isHalfDay: function (date, personId) {
 
                 var year = date.year();
                 var formattedDate = date.format('YYYY-MM-DD');
 
-                var publicHoliday = CACHE_findDate('publicHoliday', year, formattedDate)
+                var publicHoliday = CACHE_findDate('publicHoliday', year, formattedDate, personId)
                 if(publicHoliday && publicHoliday.dayLength === 0.5) {
                   return true;
                 }
 
-                var personalHoliday = CACHE_findDate('holiday', year, formattedDate);
+                var personalHoliday = CACHE_findDate('holiday', year, formattedDate, personId);
                 if(personalHoliday && personalHoliday.dayLength === 0.5) {
                   return true;
                 }
 
 
-                var sickDay = CACHE_findDate('sick', year, formattedDate);
+                var sickDay = CACHE_findDate('sick', year, formattedDate, personId);
                 if(sickDay && sickDay.dayLength === 0.5) {
                   return true;
                 }
@@ -202,31 +202,31 @@ $(function() {
                 return false;
             },
 
-            getDescription: function (date) {
+            getDescription: function (date, personId) {
 
               var year = date.year();
               var formattedDate = date.format('YYYY-MM-DD');
 
-               var publicHoliday = CACHE_findDate('publicHoliday', year, formattedDate)
+               var publicHoliday = CACHE_findDate('publicHoliday', year, formattedDate, personId)
 
                return publicHoliday ? publicHoliday.description : '';
 
             },
 
-            getAbsenceId: function (date) {
+            getAbsenceId: function (date, personId) {
 
               var year = date.year();
               var formattedDate = date.format('YYYY-MM-DD');
 
 
-                var holiday = CACHE_findDate('holiday', year, formattedDate);
+                var holiday = CACHE_findDate('holiday', year, formattedDate, personId);
 
                 if(holiday) {
                   return holiday.href;
                 }
 
 
-                  var sickDay = CACHE_findDate('sick', year, formattedDate);
+                  var sickDay = CACHE_findDate('sick', year, formattedDate, personId);
 
                   if(sickDay) {
                       return sickDay.href;
@@ -237,17 +237,17 @@ $(function() {
 
             },
 
-            getAbsenceType: function (date) {
+            getAbsenceType: function (date, personId) {
 
                 var year = date.year();
                 var formattedDate = date.format('YYYY-MM-DD');
-                 var holiday = CACHE_findDate('holiday', year, formattedDate);
+                 var holiday = CACHE_findDate('holiday', year, formattedDate, personId);
 
                 if(holiday) {
                   return holiday.type;
                 }
 
-                 var sickDay = CACHE_findDate('sick', year, formattedDate);
+                 var sickDay = CACHE_findDate('sick', year, formattedDate, personId);
 
                   if(sickDay) {
                       return sickDay.type;
@@ -262,7 +262,7 @@ $(function() {
              * @param {moment} from
              * @param {moment} [to]
              */
-            bookHoliday: function(from, to) {
+            bookHoliday: function(from, to, personId) {
 
                 var params = {
                     personId: personId,
@@ -315,7 +315,6 @@ $(function() {
             create: function(_webPrefix, _apiPrefix, _personId, _departmentId) {
                 webPrefix = _webPrefix;
                 apiPrefix = _apiPrefix;
-                personId = _personId;
                 departmentId  = _departmentId;
                 return HolidayService;
             }
@@ -330,19 +329,19 @@ $(function() {
 
         var TMPL = {
 
-            container: '{{prevBtn}}<div class="datepicker-months-container" style="height: {{height}};">{{weeks}}</div>{{nextBtn}}',
+            container: '{{prevBtn}}<div class="datepicker-months-container" style="height: {{height}};">{{weeks}}<div class="datepicker-person">{{names}}</div></div>{{nextBtn}}',
 
             button: '<button class="{{css}}">{{text}}</button>',
 
-            week: '<div class="datepicker-month {{css}}" data-datepicker-start="{{startDate}}">{{title}}<table class="datepicker-table"><thead>{{weekdays}}</thead><tbody>{{persons}}</tbody></table></div>',
+            name: '<div><span>{{name}}</span></div>',
+
+            week: '<div class="datepicker-week {{css}}" data-datepicker-start="{{startDate}}">{{title}}<table class="datepicker-table"><thead>{{weekdays}}</thead><tbody>{{persons}}</tbody></table></div>',
 
             title: '<h3>{{title}}</h3>',
 
-            // <tr><th>{{0}}</th>......<th>{{6}}</th></tr>
             weekdays: '<tr><th>{{' + [0,1,2,3,4,5,6].join('}}</th><th>{{') + '}}</th></tr>',
 
-            // <tr><td>{{0}}</td>......<td>{{6}}</td></tr>
-            personWeek: '<tr><td>{{' + [0,1,2,3,4,5,6].join('}}</td><td>{{') + '}}</td></tr>',
+            personWeek: '<tr data-datepicker-person="{{id}}"><td>{{' + [0,1,2,3,4,5,6].join('}}</td><td>{{') + '}}</td></tr>',
 
             day: '<span class="datepicker-day {{css}}" data-title="{{title}}" data-datepicker-absence-id={{absenceId}} data-datepicker-absence-type="{{absenceType}}" data-datepicker-date="{{date}}" data-datepicker-selectable="{{selectable}}">{{day}}</span>'
         };
@@ -359,13 +358,13 @@ $(function() {
             });
         }
 
-        function renderCalendar(date) {
+        function renderCalendar(date, personIds) {
 
             var weeksToShow = numberOfWeeks;
 
             return render(TMPL.container, {
 
-                height: '140px',
+                height:  90 + personIds.length * 40  ,
 
                 prevBtn   : renderButton ( CSS.prev, '<i class="fa fa-chevron-left"></i>'),
                 nextBtn   : renderButton ( CSS.next, '<i class="fa fa-chevron-right"></i>'),
@@ -375,8 +374,19 @@ $(function() {
                     var d = moment(date).subtract ('d', 28);
                     d.weekday(0);
                     while(weeksToShow--) {
-                        html += renderWeekBox(d)
+                        html += renderWeekBox(d, personIds)
                         d.add('d', 7);
+                    }
+                    return html;
+                },
+
+                names: function(){
+                    var html = '';
+                    for (var i =0; i<personIds.length; i++) {
+                        html += render(
+                            TMPL.name,
+                            {name : Urlaubsverwaltung.Calendar.timelinePersons[personIds[i]]}
+                        )
                     }
                     return html;
                 }
@@ -390,26 +400,32 @@ $(function() {
             });
         }
 
-        function renderWeekBox(date){
+        function renderWeekBox(date, personIds){
+            var p = "";
+            for (var i=0; i<personIds.length; i++){
+                p += renderWeek(date, personIds[i])
+            }
             return render(TMPL.week, {
                 startDate: date.format('YYYY-MM-DD'),
                 weekdays: renderWeekdaysHeader(date),
-                persons: renderWeek(date) ,
+                persons:  p,
                 title: renderWeekTitle(date)
             });
         }
 
 
-        function renderWeek(date) {
+        function renderWeek(date, personId) {
 
             var d = moment(date);
 
             return render(TMPL.personWeek, function(_, dayIdx) {
 
+                if (dayIdx === 'id') return personId;
+
                 var html = '&nbsp;';
 
                 if (Number (dayIdx) === d.weekday() ) {
-                    html = renderDay(d);
+                    html = renderDay(d, personId);
                     d.add('d', 1);
                 }
 
@@ -448,17 +464,17 @@ $(function() {
         }
 
 
-        function renderDay(date) {
+        function renderDay(date, personId) {
 
             function classes() {
                 return [
                     assert.isToday           (date) ? CSS.dayToday           : '',
                     assert.isWeekend         (date) ? CSS.dayWeekend         : '',
                     assert.isPast            (date) ? CSS.dayPast            : '',
-                    assert.isPublicHoliday   (date) ? CSS.dayPublicHoliday   : '',
-                    assert.isPersonalHoliday (date) ? CSS.dayPersonalHoliday : '',
-                    assert.isSickDay         (date) ? CSS.daySickDay         : '',
-                    assert.isHalfDay         (date) ? CSS.dayHalf            : ''
+                    assert.isPublicHoliday   (date, personId) ? CSS.dayPublicHoliday   : '',
+                    assert.isPersonalHoliday (date, personId) ? CSS.dayPersonalHoliday : '',
+                    assert.isSickDay         (date, personId) ? CSS.daySickDay         : '',
+                    assert.isHalfDay         (date, personId) ? CSS.dayHalf            : ''
                 ].join(' ');
             }
 
@@ -466,8 +482,8 @@ $(function() {
 
                 // NOTE: Order is important here!
 
-                var isPersonalHoliday = assert.isPersonalHoliday(date);
-                var isSickDay = assert.isSickDay(date);
+                var isPersonalHoliday = assert.isPersonalHoliday(date, personId);
+                var isSickDay = assert.isSickDay(date, personId);
 
                 if(isPersonalHoliday || isSickDay) {
                   return true;
@@ -480,7 +496,7 @@ $(function() {
                     return false;
                 }
 
-                return assert.isHalfDay(date) || !assert.isPublicHoliday(date);
+                return assert.isHalfDay(date, personId) || !assert.isPublicHoliday(date, personId);
             }
 
             return render(TMPL.day, {
@@ -488,22 +504,23 @@ $(function() {
                 day : date.format('DD'),
                 css : classes(),
                 selectable: isSelectable(),
-                title: assert.title(date),
-                absenceId: assert.absenceId(date),
-                absenceType: assert.absenceType(date)
+                title: assert.title(date, personId),
+                absenceId: assert.absenceId(date, personId),
+                absenceType: assert.absenceType(date, personId)
             });
         }
 
         var View = {
 
-            display: function(date) {
-                $datepicker.html( renderCalendar(date)).addClass('unselectable');
+            display: function(date, personIds) {
+                View.personIds = personIds;
+                $datepicker.html( renderCalendar(date, personIds)).addClass('unselectable');
                 tooltip();
             },
 
             displayNext: function() {
 
-                var elements = $datepicker.find('.' + CSS.month).get();
+                var elements = $datepicker.find('.' + CSS.week).get();
                 var len      = elements.length;
 
                 $(elements[0]).remove();
@@ -511,7 +528,7 @@ $(function() {
                 var $lastWeek = $(elements[len - 1]);
                 var start = moment($lastWeek.data(DATA.startDate), 'YYYY-MM-DD');
 
-                var $nextWeek = $(renderWeekBox( start.add('d', 7)));
+                var $nextWeek = $(renderWeekBox( start.add('d', 7), View.personIds));
 
                 $lastWeek.after($nextWeek);
                 tooltip();
@@ -519,7 +536,7 @@ $(function() {
 
             displayPrev: function() {
 
-                var elements = $datepicker.find('.' + CSS.month).get();
+                var elements = $datepicker.find('.' + CSS.week).get();
                 var len = elements.length;
 
                 $(elements[len - 1]).remove();
@@ -527,7 +544,7 @@ $(function() {
                 var $firstWeek = $(elements[0]);
                 var start = moment($firstWeek.data(DATA.startDate), 'YYYY-MM-DD');
 
-                var $prevWeek = $(renderWeekBox( start.subtract('d', 7)));
+                var $prevWeek = $(renderWeekBox( start.subtract('d', 7), View.personIds));
 
                 $firstWeek.before($prevWeek);
                 tooltip();
@@ -598,13 +615,14 @@ $(function() {
                 var isSelectable = $(this).attr("data-datepicker-selectable");
                 var absenceId = $(this).attr('data-datepicker-absence-id');
                 var absenceType = $(this).attr('data-datepicker-absence-type');
+                var personId = $(this).closest('tr').attr('data-datepicker-person')
 
                 if(isSelectable === "true" && absenceType === "VACATION" && absenceId !== "-1") {
                     holidayService.navigateToApplicationForLeave(absenceId);
                 } else if(isSelectable === "true" && absenceType === "SICK_NOTE" && absenceId !== "-1") {
                     holidayService.navigateToSickNote(absenceId);
                 } else if(isSelectable === "true" && sameOrBetween(dateThis, dateFrom, dateTo)) {
-                    holidayService.bookHoliday(dateFrom, dateTo);
+                    holidayService.bookHoliday(dateFrom, dateTo, personId);
                 }
 
             },
@@ -612,7 +630,7 @@ $(function() {
             clickNext: function() {
 
                 // last week of calendar
-                var $week = $( $datepicker.find('.' + CSS.month)[numberOfWeeks-1] );
+                var $week = $( $datepicker.find('.' + CSS.week)[numberOfWeeks-1] );
 
                 // to load data for the new (invisible) next week
                 var date = moment($week.data(DATA.startDate), 'YYYY-MM-DD')
@@ -626,7 +644,7 @@ $(function() {
             clickPrev: function() {
 
                 // first week of calendar
-                var $week = $( $datepicker.find('.' + CSS.month)[0] );
+                var $week = $( $datepicker.find('.' + CSS.week)[0] );
 
                 // to load data for the new (invisible) prev week
                 var date = moment($week.data(DATA.startDate), 'YYYY-MM-DD')
@@ -734,9 +752,13 @@ $(function() {
 
         var view;
         var date;
+        var personIds;
+
 
         return {
             init: function(holidayService, referenceDate) {
+
+                personIds = $.map( Urlaubsverwaltung.Calendar.timelinePersons, function(x, k){ return k; } )
 
                 date = referenceDate;
 
@@ -744,12 +766,12 @@ $(function() {
                 view = View.create(a);
                 var c = Controller.create(holidayService, view);
 
-                view.display(date);
+                view.display(date, personIds);
                 c.bind();
             },
 
             reRender: function() {
-                view.display(date);
+                view.display(date, personIds);
             }
         }
     })();

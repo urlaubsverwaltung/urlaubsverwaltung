@@ -143,4 +143,12 @@ public interface DepartmentService {
      *          assigned to, else {@code false}
      */
     boolean isSecondStageAuthorityOfPerson(Person secondStageAuthority, Person person);
+
+    /**
+     * Get all the "relevant" departments for a given Person.
+     *
+     * This includes memberships, managed departments, etc.
+     * It is used to populate the department selector pulldown.
+     */
+    public List<Department> getRelevantDepartments(Person person);
 }
