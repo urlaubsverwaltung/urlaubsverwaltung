@@ -66,8 +66,8 @@ public class PersonController {
 
     @RequestMapping(value = "/staff/{personId}", method = RequestMethod.GET)
     public String showStaffInformation(@PathVariable("personId") Integer personId,
-        @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Integer requestedYear, Model model)
-        throws UnknownPersonException, AccessDeniedException {
+        @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Optional<Integer> requestedYear,
+        Model model) throws UnknownPersonException, AccessDeniedException {
 
         Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
         Person signedInUser = sessionService.getSignedInUser();
@@ -78,7 +78,7 @@ public class PersonController {
                     signedInUser.getLoginName(), person.getLoginName()));
         }
 
-        Integer year = requestedYear == null ? DateMidnight.now().getYear() : requestedYear;
+        Integer year = requestedYear.isPresent() ? requestedYear.get() : DateMidnight.now().getYear();
 
         model.addAttribute(ControllerConstants.YEAR_ATTRIBUTE, year);
         model.addAttribute(PersonConstants.PERSON_ATTRIBUTE, person);
@@ -112,31 +112,27 @@ public class PersonController {
     @RequestMapping(value = "/staff", method = RequestMethod.GET, params = "active")
     public String showStaff(@RequestParam(value = "active", required = true) Boolean active,
         @RequestParam(value = ControllerConstants.DEPARTMENT_ATTRIBUTE, required = false) Optional<Integer> requestedDepartmentId,
-        @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Integer requestedYear,
+        @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Optional<Integer> requestedYear,
         Model model) throws UnknownDepartmentException {
 
-        Integer year = requestedYear == null ? DateMidnight.now().getYear() : requestedYear;
+        Integer year = requestedYear.isPresent() ? requestedYear.get() : DateMidnight.now().getYear();
 
-        Optional<Department> department = requestedDepartmentId.flatMap(id -> departmentService.getDepartmentById(id));
-        if (requestedDepartmentId.isPresent() && !department.isPresent()) {
-            // have to use "get" here because we cannot throw checked exceptions from map
-            throw new UnknownDepartmentException(requestedDepartmentId.get());
-        }
-
-        Optional<List<Person>> filter = department.map(d -> d.getMembers());
-
-        List<Person> persons;
         Person signedInUser = sessionService.getSignedInUser();
+        final List<Person> persons = active ? getRelevantActivePersons(signedInUser)
+                                            : getRelevantInactivePersons(signedInUser);
 
-        if (active) {
-            persons = getRelevantActivePersons(signedInUser);
-        } else {
-            persons = getRelevantInactivePersons(signedInUser);
+        if (requestedDepartmentId.isPresent()) {
+            Integer departmentId = requestedDepartmentId.get();
+            Department department = departmentService.getDepartmentById(departmentId).orElseThrow(() ->
+                        new UnknownDepartmentException(departmentId));
+
+            // if department filter is active, only department members are relevant
+            persons.retainAll(department.getMembers());
+
+            model.addAttribute(ControllerConstants.DEPARTMENT_ATTRIBUTE, department);
         }
 
-        filter.map(members -> persons.retainAll(members));
-
-        prepareStaffView(signedInUser, persons, department, year, model);
+        prepareStaffView(signedInUser, persons, year, model);
 
         return PersonConstants.STAFF_JSP;
     }
@@ -169,7 +165,7 @@ public class PersonController {
 
 
     private List<Person> getRelevantInactivePersons(Person signedInUser) {
-        
+
         if (signedInUser.hasRole(Role.BOSS) || signedInUser.hasRole(Role.OFFICE)) {
             return personService.getInactivePersons();
         }
@@ -193,7 +189,8 @@ public class PersonController {
         return Collections.<Person>emptyList();
     }
 
-    private List<Department> getRelevantDepartments(Person signedInUser){
+
+    private List<Department> getRelevantDepartments(Person signedInUser) {
 
         if (signedInUser.hasRole(Role.BOSS) || signedInUser.hasRole(Role.OFFICE)) {
             return departmentService.getAllDepartments();
@@ -205,7 +202,7 @@ public class PersonController {
         }
 
         // NOTE: If the signed in user is second stage authority, he wants to see only the persons of his departments
-        if (signedInUser.hasRole(Role.SECOND_STAGE_AUTHORITY)){
+        if (signedInUser.hasRole(Role.SECOND_STAGE_AUTHORITY)) {
             return departmentService.getManagedDepartmentsOfSecondStageAuthority(signedInUser);
         }
 
@@ -214,7 +211,7 @@ public class PersonController {
     }
 
 
-    private void prepareStaffView(Person signedInUser, List<Person> persons, Optional<Department> department, int year, Model model) {
+    private void prepareStaffView(Person signedInUser, List<Person> persons, int year, Model model) {
 
         Map<Person, Account> accounts = new HashMap<>();
         Map<Person, VacationDaysLeft> vacationDaysLeftMap = new HashMap<>();
@@ -237,10 +234,8 @@ public class PersonController {
         model.addAttribute(ControllerConstants.YEAR_ATTRIBUTE, year);
         model.addAttribute("now", DateMidnight.now());
 
-        List<Department> deps = getRelevantDepartments(signedInUser);
-        Collections.sort(deps, (a, b) -> a.getName().compareTo(b.getName()));
-        model.addAttribute("departments", deps);
-        department.ifPresent( d -> model.addAttribute(ControllerConstants.DEPARTMENT_ATTRIBUTE, d));
-
+        List<Department> departments = getRelevantDepartments(signedInUser);
+        Collections.sort(departments, (a, b) -> a.getName().compareTo(b.getName()));
+        model.addAttribute("departments", departments);
     }
 }
