@@ -8,7 +8,7 @@
     <!-- AUTHENTICATION VIA TEST USER -->
 
     <bean id="simpleAuthenticationProvider" class="org.synyx.urlaubsverwaltung.security.SimpleAuthenticationProvider">
-        <constructor-arg ref="userDetailsService"/>
+        <constructor-arg ref="personService"/>
     </bean>
 
     <security:authentication-manager alias="authenticationManager">
