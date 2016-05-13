@@ -352,7 +352,7 @@ $(function() {
                 if (_CACHE['publicHoliday'][year]) {
                     return deferred.resolve( _CACHE[year] );
                 } else {
-                    return fetch('/holidays', {year: year}).success( cachePublicHoliday(year) );
+                    return fetch('/holidays', {year: year, person: personId}).success( cachePublicHoliday(year) );
                 }
             },
 

@@ -23,12 +23,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
+import org.synyx.urlaubsverwaltung.core.calendar.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.period.WeekDay;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
+import org.synyx.urlaubsverwaltung.core.settings.FederalState;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.DateMidnightPropertyEditor;
@@ -64,6 +66,9 @@ public class PersonManagementController {
 
     @Autowired
     private DepartmentService departmentService;
+
+    @Autowired
+    private PublicHolidaysService publicHolidaysService;
 
     @InitBinder
     public void initBinder(DataBinder binder, Locale locale) {
@@ -130,6 +135,8 @@ public class PersonManagementController {
         model.addAttribute("headOfDepartments", departmentService.getManagedDepartmentsOfDepartmentHead(person));
         model.addAttribute("secondStageDepartments",
             departmentService.getManagedDepartmentsOfSecondStageAuthority(person));
+        model.addAttribute("federalStateTypes", FederalState.values());
+        model.addAttribute("defaultFederalState", publicHolidaysService.getSystemDefaultFederalState());
 
         return PersonConstants.PERSON_FORM_JSP;
     }

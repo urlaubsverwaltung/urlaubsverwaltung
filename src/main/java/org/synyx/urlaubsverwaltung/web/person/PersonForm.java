@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.core.period.WeekDay;
 import org.synyx.urlaubsverwaltung.core.person.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.Role;
+import org.synyx.urlaubsverwaltung.core.settings.FederalState;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 
 import java.math.BigDecimal;
@@ -60,6 +61,8 @@ public class PersonForm {
     private List<Role> permissions = new ArrayList<>();
 
     private List<MailNotification> notifications = new ArrayList<>();
+
+    private FederalState federalState;
 
     public PersonForm() {
 
@@ -116,6 +119,7 @@ public class PersonForm {
             }
 
             this.validFrom = workingTime.getValidFrom();
+            this.federalState = workingTime.getFederalStateOverride().orElse(null);
         }
 
         this.permissions = new ArrayList<>(roles);
@@ -311,5 +315,13 @@ public class PersonForm {
     public void setNotifications(List<MailNotification> notifications) {
 
         this.notifications = notifications;
+    }
+
+    public FederalState getFederalState() {
+        return federalState;
+    }
+
+    public void setFederalState(FederalState federalState) {
+        this.federalState = federalState;
     }
 }

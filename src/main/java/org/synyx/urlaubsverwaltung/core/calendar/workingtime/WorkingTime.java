@@ -11,9 +11,11 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.period.WeekDay;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.settings.FederalState;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -56,6 +58,14 @@ public class WorkingTime extends AbstractPersistable<Integer> {
 
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date validFrom;
+
+    /**
+     * If set, override the system-wide FederalState setting for this person.
+     * TODO: Maybe we should embed the whole WorkingTimeSettings to allow overriding all of them?
+     */
+    @Enumerated(EnumType.STRING)
+    private FederalState federalStateOverride;
+
 
     public void setWorkingDays(List<Integer> workingDays, DayLength dayLength) {
 
@@ -243,5 +253,15 @@ public class WorkingTime extends AbstractPersistable<Integer> {
     public DayLength getSunday() {
 
         return sunday;
+    }
+
+    public Optional<FederalState> getFederalStateOverride(){
+
+        return Optional.ofNullable(federalStateOverride);
+    }
+
+    public void setFederalStateOverride(Optional<FederalState> state){
+
+        this.federalStateOverride = state.orElse(null);
     }
 }
