@@ -66,7 +66,6 @@ public class WorkingTime extends AbstractPersistable<Integer> {
     @Enumerated(EnumType.STRING)
     private FederalState federalStateOverride;
 
-
     public void setWorkingDays(List<Integer> workingDays, DayLength dayLength) {
 
         setAllDayLengthsToZero();
@@ -255,13 +254,15 @@ public class WorkingTime extends AbstractPersistable<Integer> {
         return sunday;
     }
 
-    public Optional<FederalState> getFederalStateOverride(){
+
+    public Optional<FederalState> getFederalStateOverride() {
 
         return Optional.ofNullable(federalStateOverride);
     }
 
-    public void setFederalStateOverride(Optional<FederalState> state){
 
-        this.federalStateOverride = state.orElse(null);
+    public void setFederalStateOverride(FederalState federalState) {
+
+        this.federalStateOverride = federalState;
     }
 }

@@ -1,14 +1,14 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.synyx.urlaubsverwaltung.core.calendar;
 
 import de.jollyday.Holiday;
 import de.jollyday.HolidayManager;
+
 import org.joda.time.DateMidnight;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Component;
+
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.settings.FederalState;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
@@ -17,7 +17,9 @@ import org.synyx.urlaubsverwaltung.core.settings.WorkingTimeSettings;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 
 import java.math.BigDecimal;
+
 import java.net.URL;
+
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -50,8 +52,8 @@ public class PublicHolidaysService {
     /**
      * Checks if the given date is a public holiday by lookup in the given set of public holidays.
      *
-     * @param  date
-     * @param  federalState the federal state to consider holiday settings for
+     * @param  date  to check if it is a public holiday
+     * @param  federalState  the federal state to consider holiday settings for
      *
      * @return  true if the given date is a public holiday, else false
      */
@@ -67,7 +69,7 @@ public class PublicHolidaysService {
      * properties; normally the working duration for these holidays is a half day (0.5)
      *
      * @param  date  to get working duration for
-     * @param  federalState the federal state to consider holiday settings for
+     * @param  federalState  the federal state to consider holiday settings for
      *
      * @return  working duration of the given date
      */
@@ -108,13 +110,4 @@ public class PublicHolidaysService {
 
         return holiday -> holiday.getDate().getMonthOfYear() == month;
     }
-
-    public FederalState getSystemDefaultFederalState() {
-
-        return settingsService.getSettings().getWorkingTimeSettings().getFederalState();
-    }
-
-
-
-
 }

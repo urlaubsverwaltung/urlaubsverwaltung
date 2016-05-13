@@ -70,7 +70,7 @@ public class VacationDaysServiceTest {
         Mockito.when(settingsService.getSettings()).thenReturn(new Settings());
 
         WorkDaysService calendarService = new WorkDaysService(new PublicHolidaysService(settingsService),
-                workingTimeService);
+                workingTimeService, settingsService);
 
         vacationDaysService = new VacationDaysService(calendarService, nowService, applicationService);
     }
