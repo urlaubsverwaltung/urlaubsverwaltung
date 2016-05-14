@@ -39,7 +39,14 @@
                                aria-haspopup="true" role="button" aria-expanded="false">
                                 <c:choose>
                                     <c:when test="${param.active}">
-                                        <spring:message code="persons.active" /><span class="caret"></span>
+                                        <c:choose>
+                                            <c:when test="${param.department != null}">
+                                                <c:out value="${department.name}" /><span class="caret"></span>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <spring:message code="persons.active" /><span class="caret"></span>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </c:when>
                                     <c:otherwise>
                                         <spring:message code="persons.inactive" /><span class="caret"></span>
@@ -49,20 +56,31 @@
                             <ul class="dropdown-menu" role="menu" aria-labelledby="active-state">
                                 <li>
                                     <a href="${URL_PREFIX}/staff?active=true&year=${year}">
-                                        <i class="fa fa-toggle-on"></i>
+                                        <i class="fa fa-fw fa-toggle-on"></i>
                                         <spring:message code="persons.active" />
                                     </a>
                                 </li>
+                                <c:if test="${departments.size() > 1}">
+                                    <c:forEach items="${departments}" var="department">
+                                        <li>
+                                            <a href='${URL_PREFIX}/staff?active=true&year=${year}&department=${department.id}'>
+                                                <i class="fa fa-fw"></i>
+                                                <c:out value="${department.name}" />
+                                            </a>
+                                        </li>
+                                    </c:forEach>
+                                    <li role="separator" class="divider"></li>
+                                </c:if>
                                 <li>
                                     <a href="${URL_PREFIX}/staff?active=false&year=${year}">
-                                        <i class="fa fa-toggle-off"></i>
+                                        <i class="fa fa-fw fa-toggle-off"></i>
                                         <spring:message code="persons.inactive" />
                                     </a>
                                 </li>
                             </ul>
                         </div>
 
-                        <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/staff?active=${param.active}&year=" />
+                        <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/staff?active=${param.active}&department=${department.id}&year=" />
 
                         <uv:print />
 

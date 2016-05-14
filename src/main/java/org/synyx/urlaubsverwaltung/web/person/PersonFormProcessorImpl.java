@@ -67,7 +67,8 @@ public class PersonFormProcessorImpl implements PersonFormProcessor {
 
     private void touchWorkingTime(Person person, PersonForm personForm) {
 
-        workingTimeService.touch(personForm.getWorkingDays(), personForm.getValidFrom(), person);
+        workingTimeService.touch(personForm.getWorkingDays(), Optional.ofNullable(personForm.getFederalState()),
+            personForm.getValidFrom(), person);
     }
 
 

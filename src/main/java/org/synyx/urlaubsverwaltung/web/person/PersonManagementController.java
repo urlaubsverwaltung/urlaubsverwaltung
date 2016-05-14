@@ -29,6 +29,8 @@ import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.period.WeekDay;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
+import org.synyx.urlaubsverwaltung.core.settings.FederalState;
+import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.DateMidnightPropertyEditor;
@@ -64,6 +66,9 @@ public class PersonManagementController {
 
     @Autowired
     private DepartmentService departmentService;
+
+    @Autowired
+    private SettingsService settingsService;
 
     @InitBinder
     public void initBinder(DataBinder binder, Locale locale) {
@@ -130,6 +135,9 @@ public class PersonManagementController {
         model.addAttribute("headOfDepartments", departmentService.getManagedDepartmentsOfDepartmentHead(person));
         model.addAttribute("secondStageDepartments",
             departmentService.getManagedDepartmentsOfSecondStageAuthority(person));
+        model.addAttribute("federalStateTypes", FederalState.values());
+        model.addAttribute("defaultFederalState",
+            settingsService.getSettings().getWorkingTimeSettings().getFederalState());
 
         return PersonConstants.PERSON_FORM_JSP;
     }

@@ -57,7 +57,8 @@ public class CalculationServiceTest {
         SettingsService settingsService = Mockito.mock(SettingsService.class);
         Mockito.when(settingsService.getSettings()).thenReturn(new Settings());
 
-        calendarService = new WorkDaysService(new PublicHolidaysService(settingsService), workingTimeService);
+        calendarService = new WorkDaysService(new PublicHolidaysService(settingsService), workingTimeService,
+                settingsService);
 
         // create working time object (MON-FRI)
         WorkingTime workingTime = new WorkingTime();

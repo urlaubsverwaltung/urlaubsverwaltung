@@ -11,11 +11,11 @@ import org.mockito.Mockito;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
-import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.settings.FederalState;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
@@ -42,6 +42,8 @@ public class WorkDaysServiceTest {
     private WorkDaysService instance;
     private PublicHolidaysService publicHolidaysService;
     private WorkingTimeService workingTimeService;
+    private SettingsService settingsService;
+
     private Application application;
     private WorkingTime workingTime;
     private Person person;
@@ -49,13 +51,13 @@ public class WorkDaysServiceTest {
     @Before
     public void setUp() throws IOException {
 
-        SettingsService settingsService = Mockito.mock(SettingsService.class);
+        settingsService = Mockito.mock(SettingsService.class);
         Mockito.when(settingsService.getSettings()).thenReturn(new Settings());
 
         publicHolidaysService = new PublicHolidaysService(settingsService);
         workingTimeService = Mockito.mock(WorkingTimeService.class);
 
-        instance = new WorkDaysService(publicHolidaysService, workingTimeService);
+        instance = new WorkDaysService(publicHolidaysService, workingTimeService, settingsService);
 
         person = TestDataCreator.createPerson();
         application = TestDataCreator.createApplication(person,
@@ -296,5 +298,35 @@ public class WorkDaysServiceTest {
         BigDecimal returnValue = instance.getWorkDays(DayLength.MORNING, from, to, person);
 
         assertEquals(new BigDecimal("2.5"), returnValue);
+    }
+
+
+    @Test
+    public void ensureCorrectWorkDaysForAssumptionDayForSystemDefaultFederalState() {
+
+        DateMidnight from = new DateMidnight(2016, DateTimeConstants.AUGUST, 15);
+        DateMidnight to = new DateMidnight(2016, DateTimeConstants.AUGUST, 15);
+
+        BigDecimal workDays = instance.getWorkDays(DayLength.FULL, from, to, person);
+
+        assertEquals(new BigDecimal("1.0"), workDays);
+    }
+
+
+    @Test
+    public void ensureCorrectWorkDaysForAssumptionDayForOverriddenFederalState() {
+
+        DateMidnight from = new DateMidnight(2016, DateTimeConstants.AUGUST, 15);
+        DateMidnight to = new DateMidnight(2016, DateTimeConstants.AUGUST, 15);
+
+        workingTime.setFederalStateOverride(FederalState.BAYERN_AUGSBURG);
+
+        Mockito.when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(Mockito.eq(person),
+                    Mockito.any(DateMidnight.class)))
+            .thenReturn(Optional.of(workingTime));
+
+        BigDecimal workDays = instance.getWorkDays(DayLength.FULL, from, to, person);
+
+        assertEquals(new BigDecimal("0.0"), workDays);
     }
 }

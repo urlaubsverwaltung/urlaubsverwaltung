@@ -44,5 +44,6 @@
     <include file="dbchangelogs/changelog-2.15.0-add_application_startTime_and_endTime.xml"/>
     <include file="dbchangelogs/changelog-2.15.0-add_settings_minimum_overtime.xml"/>
     <include file="dbchangelogs/changelog-2.16.0-add_base_link_url_to_mail_settings.xml"/>
+    <include file="dbchangelogs/changelog-2.18.0-add_federal_state_override.xml"/>
 
 </databaseChangeLog>

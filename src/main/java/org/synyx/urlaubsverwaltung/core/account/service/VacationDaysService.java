@@ -12,7 +12,6 @@ import org.synyx.urlaubsverwaltung.core.account.domain.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
-import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.period.NowService;
@@ -119,7 +118,7 @@ public class VacationDaysService {
             .filter(input ->
                         VacationCategory.HOLIDAY.equals(input.getVacationType().getCategory())
                         && (input.hasStatus(ApplicationStatus.WAITING) || input.hasStatus(ApplicationStatus.ALLOWED)))
-            .collect(Collectors.toList());
+                .collect(Collectors.toList());
 
         BigDecimal usedDays = BigDecimal.ZERO;
 

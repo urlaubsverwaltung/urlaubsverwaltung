@@ -171,16 +171,16 @@ public class OverviewController {
         List<Application> applications = FluentIterable.from(
                     applicationService.getApplicationsForACertainPeriodAndPerson(DateUtil.getFirstDayOfYear(year),
                         DateUtil.getLastDayOfYear(year), person))
-            .filter(input -> !input.hasStatus(ApplicationStatus.REVOKED))
-            .toList();
+                .filter(input -> !input.hasStatus(ApplicationStatus.REVOKED))
+                .toList();
 
         if (!applications.isEmpty()) {
             ImmutableList<ApplicationForLeave> applicationsForLeave = FluentIterable.from(applications)
                 .transform(input -> new ApplicationForLeave(input, calendarService))
-                .toSortedList((o1, o2) -> {
-                    // show latest applications at first
-                    return o2.getStartDate().compareTo(o1.getStartDate());
-                });
+                    .toSortedList((o1, o2) -> {
+                        // show latest applications at first
+                        return o2.getStartDate().compareTo(o1.getStartDate());
+                    });
 
             model.addAttribute("applications", applicationsForLeave);
 

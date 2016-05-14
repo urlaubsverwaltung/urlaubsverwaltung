@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.restapi;
 
-import com.google.common.collect.ImmutableMap;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 
+import de.jollyday.Holiday;
 import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +19,14 @@ import org.springframework.web.bind.annotation.RestController;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
+import org.synyx.urlaubsverwaltung.core.calendar.PublicHolidaysService;
+import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.department.Department;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
+import org.synyx.urlaubsverwaltung.core.settings.FederalState;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
@@ -61,7 +64,10 @@ public class AbsenceController {
     private SickNoteService sickNoteService;
 
     @Autowired
-    private PublicHolidayController publicHolidayController;
+    private PublicHolidaysService publicHolidayService;
+
+    @Autowired
+    private WorkingTimeService workingTimeService;
 
     @ApiOperation(
         value = "Get all absences for a certain period and person",
@@ -219,6 +225,8 @@ public class AbsenceController {
 
                 Map<Integer, List<Absence>> absenceMap = new HashMap<>();
                 Map<Integer, String> calendars = new HashMap<>();
+                Map<String, List<PublicHolidayResponse>> catalog = new HashMap<>();
+
                 for (Person person: persons) {
 
                     List<Absence> absences = new ArrayList<>();
@@ -226,15 +234,26 @@ public class AbsenceController {
                     addVacation(absences, periodStart, periodEnd, person);
                     addSickNotes(absences, periodStart, periodEnd, person);
                     absenceMap.put(person.getId(), absences);
-                    // everyone shares the same "system" holiday calendar for now
-                    calendars.put(person.getId(), "system");
+                    // A person's federal state might have changed during the period. We use the one
+                    // as of periodEnd. Since this is used for display only and not vacation days calculation
+                    // (and unlikely anyway) that should not be a problem.
+                    FederalState state = workingTimeService.getFederalStateForPerson(person, periodEnd);
+                    calendars.put(person.getId(), state.name() );
+                    if (!catalog.containsKey(state.name())){
+                        Collection<Holiday> holidays =
+                                hasMonth ? publicHolidayService.getHolidays(periodStart.getYear(), periodStart.getMonthOfYear(), state)
+                                        :  publicHolidayService.getHolidays(periodStart.getYear(), state);
+
+                        catalog.put(state.name(), holidays.stream().map(holiday ->
+                                    new PublicHolidayResponse(holiday,
+                                        publicHolidayService.getWorkingDurationOfDate(holiday.getDate().toDateMidnight(),
+                                                state))).collect(Collectors.toList()));
+
+                    }
                 }
 
 
-
-                return new ResponseWrapper<>(new DepartmentAbsences(
-                        ImmutableMap.of("system", publicHolidayController.getPublicHolidays(year, month).getResponse().getPublicHolidays()),
-                        absenceMap, calendars));
+                return new ResponseWrapper<>(new DepartmentAbsences(catalog, absenceMap, calendars));
             } catch (NumberFormatException ex) {
                 return new ResponseWrapper<>(new DepartmentAbsences(null, null, null));
             }
