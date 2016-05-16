@@ -198,12 +198,48 @@
 
         </script>
 
+
         <div class="row">
             <div class="col-xs-12">
-                <hr/>
+                <legend >
+                     <div class="legend-dropdown dropdown">
+                            <a id="calendar-selector" name="calendar-selector" data-target="#" href="#" data-toggle="dropdown"
+                               aria-haspopup="true" role="button" aria-expanded="false">
+                                 <c:choose>
+                                    <c:when test="${timelineDepartment == null}">
+                                        <spring:message code="overview.calendar.title" /> <c:out value="${person.niceName}" /><span class="caret"></span>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <spring:message code="overview.calendar.title" /> <c:out value="${timelineDepartment.name}" /><span class="caret"></span>
+                                    </c:otherwise>
+                                </c:choose>
+                            </a>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="calendar-selector">
+                                <li>
+                                    <a href="?year=${displayYear}#calendar-selector">
+                                         <i class="fa fa-fw fa-user"></i>
+                                         <c:out value="${person.niceName}" />
+                                    </a>
+                                </li>
+                                <li role="separator" class="divider"></li>
+                                <c:forEach items="${departments}" var="d">
+                                <li>
+                                    <a href="?year=${displayYear}&timelineDepartment=${d.id}#calendar-selector">
+                                         <i class="fa fa-fw fa-group"></i>
+                                         <c:out value="${d.name}" />
+                                    </a>
+                                </li>
+                                </c:forEach>
+                            </ul>
+                    </div>
+                </legend>
+
                 <div id="datepicker"></div>
             </div>
+
         </div>
+
+
 
         <div class="row">
             <div class="col-xs-12">

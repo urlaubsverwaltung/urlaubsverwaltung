@@ -45,6 +45,7 @@ import org.synyx.urlaubsverwaltung.web.sicknote.ExtendedSickNote;
 import org.synyx.urlaubsverwaltung.web.statistics.SickDaysOverview;
 import org.synyx.urlaubsverwaltung.web.statistics.UsedDaysOverview;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -120,7 +121,6 @@ public class OverviewController {
         }
 
         List<Department> relevantDepartments = departmentService.getRelevantDepartments(signedInUser);
-        model.addAttribute("departments", relevantDepartments);
 
         if (timelineDepartment != null){
             Optional<Department> department = relevantDepartments.stream().filter(d -> d.getId().equals(timelineDepartment)).findFirst();
@@ -132,6 +132,13 @@ public class OverviewController {
                         signedInUser.getLoginName(), timelineDepartment));
             }
         }
+
+        // if we are looking at someone else's page, show that person's department (not ours)
+        if (!signedInUser.getId().equals(personId)){
+            relevantDepartments = departmentService.getRelevantDepartments(person);
+        }
+        Collections.sort(relevantDepartments, (a, b) -> a.getName().compareTo(b.getName()));
+        model.addAttribute("departments", relevantDepartments);
 
         model.addAttribute(PersonConstants.PERSON_ATTRIBUTE, person);
 
