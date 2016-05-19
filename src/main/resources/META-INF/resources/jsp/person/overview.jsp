@@ -188,6 +188,9 @@
         <c:if test="${timelineDepartment != null}">
 
            var t = Urlaubsverwaltung.Calendar.timelinePersons = {};
+           <% /* how to do this without a scriptlet? */ pageContext.setAttribute("umlaute", java.text.Collator.getInstance(java.util.Locale.GERMANY)) ; %>
+           <c:set var="sortedMembers" value="${timelineDepartment.members.stream().sorted((a,b) -> umlaute.compare(a.lastName, b.lastName)).map(x -> x.id).toArray()}" />
+           t.byName = <%= /* how to do this without a scriptlet? */ java.util.Arrays.toString((Object[])pageContext.getAttribute("sortedMembers")) %>;
            <c:forEach items="${timelineDepartment.members}" var="p" >t[${p.id}] = '<spring:escapeBody>${p.niceName}</spring:escapeBody>';
            </c:forEach>
         </c:if>

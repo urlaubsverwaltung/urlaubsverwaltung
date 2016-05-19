@@ -758,7 +758,7 @@ $(function() {
         return {
             init: function(holidayService, referenceDate) {
 
-                personIds = $.map( Urlaubsverwaltung.Calendar.timelinePersons, function(x, k){ return k; } )
+                personIds = Urlaubsverwaltung.Calendar.timelinePersons.byName
 
                 date = referenceDate;
 
