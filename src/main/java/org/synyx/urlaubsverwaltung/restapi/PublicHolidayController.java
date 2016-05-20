@@ -59,7 +59,7 @@ public class PublicHolidayController {
     )
     @RequestMapping(value = ROOT_URL, method = RequestMethod.GET)
     public ResponseWrapper<PublicHolidayListResponse> getPublicHolidays(
-        @ApiParam(value = "Year to get the public holidays for", defaultValue = "2015")
+        @ApiParam(value = "Year to get the public holidays for", defaultValue = "2016")
         @RequestParam("year")
         String year,
         @ApiParam(value = "Month of year to get the public holidays for")

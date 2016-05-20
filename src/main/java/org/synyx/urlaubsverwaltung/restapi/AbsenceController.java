@@ -62,8 +62,8 @@ public class AbsenceController {
         notes = "Get all absences for a certain period and person"
     )
     @RequestMapping(value = "/absences", method = RequestMethod.GET)
-    public ResponseWrapper<AbsenceList> personsVacations(
-        @ApiParam(value = "Year to get the absences for", defaultValue = "2015")
+    public ResponseWrapper<DayAbsenceList> personsVacations(
+        @ApiParam(value = "Year to get the absences for", defaultValue = "2016")
         @RequestParam("year")
         String year,
         @ApiParam(value = "Month of year to get the absences for")
