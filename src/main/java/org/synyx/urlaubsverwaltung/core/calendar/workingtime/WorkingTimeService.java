@@ -91,7 +91,7 @@ public class WorkingTimeService {
         Optional<WorkingTime> optionalWorkingTime = getByPersonAndValidityDateEqualsOrMinorDate(person, date);
 
         if (!optionalWorkingTime.isPresent()) {
-            LOG.info(String.format(
+            LOG.debug(String.format(
                     "No working time found for user '%s' equals or minor %s, thus using system federal state as fallback",
                     person.getLoginName(), date.toString(DateFormat.PATTERN)));
 
