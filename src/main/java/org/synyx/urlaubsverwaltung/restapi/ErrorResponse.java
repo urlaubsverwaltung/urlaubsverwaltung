@@ -10,11 +10,11 @@ import org.springframework.http.HttpStatus;
  */
 class ErrorResponse {
 
-    private long timestamp;
-    private int status;
-    private String error;
-    private String exception;
-    private String message;
+    private final long timestamp;
+    private final int status;
+    private final String error;
+    private final String exception;
+    private final String message;
 
     ErrorResponse(HttpStatus status, Exception exception) {
 

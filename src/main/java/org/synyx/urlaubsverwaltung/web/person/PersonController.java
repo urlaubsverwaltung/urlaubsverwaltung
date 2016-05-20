@@ -114,7 +114,7 @@ public class PersonController {
 
     @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
     @RequestMapping(value = "/staff", method = RequestMethod.GET, params = "active")
-    public String showStaff(@RequestParam(value = "active", required = true) Boolean active,
+    public String showStaff(@RequestParam(value = "active") Boolean active,
         @RequestParam(value = ControllerConstants.DEPARTMENT_ATTRIBUTE, required = false) Optional<Integer> requestedDepartmentId,
         @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Optional<Integer> requestedYear,
         Model model) throws UnknownDepartmentException {

@@ -43,7 +43,7 @@ public class SwaggerConfig {
         return swaggerSpringMvcPlugin;
     }
 
-    private class ProjectApiInfo extends ApiInfo {
+    private final class ProjectApiInfo extends ApiInfo {
 
         private ProjectApiInfo() {
 
