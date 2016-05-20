@@ -51,7 +51,8 @@ public class VacationController {
         notes = "Get all allowed vacations for a certain period. "
             + "If a person is specified, only the allowed vacations of the person are fetched. "
             + "If a person and the department members flag is specified, "
-            + "then all the waiting and allowed vacations of the departments the person is assigned to, are fetched."
+            + "then all the waiting and allowed vacations of the departments the person is assigned to, are fetched. "
+            + "Information only reachable for users with role office."
     )
     @RequestMapping(value = "/vacations", method = RequestMethod.GET)
     public ResponseWrapper<VacationListResponse> vacations(
@@ -59,10 +60,10 @@ public class VacationController {
         @RequestParam(value = "departmentMembers", required = false)
         Boolean departmentMembers,
         @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = "2016-01-01")
-        @RequestParam(value = "from", required = true)
+        @RequestParam(value = "from")
         String from,
         @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = "2016-12-31")
-        @RequestParam(value = "to", required = true)
+        @RequestParam(value = "to")
         String to,
         @ApiParam(value = "ID of the person")
         @RequestParam(value = "person", required = false)
