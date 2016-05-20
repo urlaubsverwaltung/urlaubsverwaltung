@@ -10,8 +10,6 @@ import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.util.StringUtils;
-
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,7 +23,7 @@ import org.synyx.urlaubsverwaltung.core.settings.FederalState;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -71,65 +69,71 @@ public class PublicHolidayController {
 
         PublicHolidayListResponse emptyResponse = new PublicHolidayListResponse();
 
-        Optional<Person> optionalPerson = personId != null ? personService.getPersonByID(personId) : Optional.empty();
+        Optional<Person> optionalPerson = personId == null ? Optional.empty() : personService.getPersonByID(personId);
 
         if (personId != null && !optionalPerson.isPresent()) {
-            return new ResponseWrapper<>(emptyResponse); // maybe this should be an error page instead?
+            // TODO: maybe this should be an error page instead?
+            return new ResponseWrapper<>(emptyResponse);
         }
 
-        boolean hasYear = StringUtils.hasText(year);
-        boolean hasMonth = StringUtils.hasText(month);
+        Optional<String> optionalMonth = Optional.ofNullable(month);
 
-        FederalState federalState = getSystemDefaultFederalState();
-        Set<Holiday> holidays = new HashSet<>();
-
-        int holidaysYear = Integer.parseInt(year);
-
-        if (hasYear && !hasMonth) {
-            try {
-                // NOTE: Yes, this is not so accurate...
-                DateMidnight validFrom = DateUtil.getFirstDayOfYear(holidaysYear);
-                federalState = getFederalState(optionalPerson, validFrom);
-                holidays = publicHolidaysService.getHolidays(holidaysYear, federalState);
-            } catch (NumberFormatException ex) {
-                return new ResponseWrapper<>(emptyResponse);
-            }
-        }
-
-        if (hasYear && hasMonth) {
-            try {
-                int holidaysMonth = Integer.parseInt(month);
-                DateMidnight validFrom = new DateMidnight(holidaysYear, holidaysMonth, 1);
-                federalState = getFederalState(optionalPerson, validFrom);
-                holidays = publicHolidaysService.getHolidays(holidaysYear, holidaysMonth, federalState);
-            } catch (NumberFormatException ex) {
-                return new ResponseWrapper<>(emptyResponse);
-            }
-        }
-
-        final FederalState finalFederalState = federalState;
+        FederalState federalState = getFederalState(year, optionalMonth, optionalPerson);
+        Set<Holiday> holidays = getHolidays(year, optionalMonth, federalState);
 
         List<PublicHolidayResponse> publicHolidayResponses = holidays.stream().map(holiday ->
                         new PublicHolidayResponse(holiday,
                             publicHolidaysService.getWorkingDurationOfDate(holiday.getDate().toDateMidnight(),
-                                finalFederalState))).collect(Collectors.toList());
+                                federalState))).collect(Collectors.toList());
 
         return new ResponseWrapper<>(new PublicHolidayListResponse(publicHolidayResponses));
     }
 
 
-    private FederalState getFederalState(Optional<Person> optionalPerson, DateMidnight validFrom) {
+    private FederalState getFederalState(String year, Optional<String> optionalMonth, Optional<Person> optionalPerson) {
 
-        if (optionalPerson.isPresent()) {
-            return workingTimeService.getFederalStateForPerson(optionalPerson.get(), validFrom);
+        Optional<DateMidnight> optionalValidFrom = getValidFrom(year, optionalMonth);
+
+        if (optionalValidFrom.isPresent() && optionalPerson.isPresent()) {
+            return workingTimeService.getFederalStateForPerson(optionalPerson.get(), optionalValidFrom.get());
         }
 
-        return getSystemDefaultFederalState();
+        return settingsService.getSettings().getWorkingTimeSettings().getFederalState();
     }
 
 
-    private FederalState getSystemDefaultFederalState() {
+    private Optional<DateMidnight> getValidFrom(String year, Optional<String> optionalMonth) {
 
-        return settingsService.getSettings().getWorkingTimeSettings().getFederalState();
+        try {
+            int holidaysYear = Integer.parseInt(year);
+
+            if (optionalMonth.isPresent()) {
+                int holidaysMonth = Integer.parseInt(optionalMonth.get());
+
+                return Optional.of(new DateMidnight(holidaysYear, holidaysMonth, 1));
+            } else {
+                return Optional.of(DateUtil.getFirstDayOfYear(holidaysYear));
+            }
+        } catch (NumberFormatException ex) {
+            return Optional.empty();
+        }
+    }
+
+
+    private Set<Holiday> getHolidays(String year, Optional<String> optionalMonth, FederalState federalState) {
+
+        try {
+            int holidaysYear = Integer.parseInt(year);
+
+            if (optionalMonth.isPresent()) {
+                int holidaysMonth = Integer.parseInt(optionalMonth.get());
+
+                return publicHolidaysService.getHolidays(holidaysYear, holidaysMonth, federalState);
+            } else {
+                return publicHolidaysService.getHolidays(holidaysYear, federalState);
+            }
+        } catch (NumberFormatException ex) {
+            return Collections.emptySet();
+        }
     }
 }

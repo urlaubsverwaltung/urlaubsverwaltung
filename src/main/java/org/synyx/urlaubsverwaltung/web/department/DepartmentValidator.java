@@ -53,12 +53,6 @@ public class DepartmentValidator implements Validator {
     }
 
 
-    /**
-     * Department name is mandatory Department name and description must have less than 200 characters.
-     *
-     * @param  target
-     * @param  errors
-     */
     @Override
     public void validate(Object target, Errors errors) {
 
@@ -100,7 +94,7 @@ public class DepartmentValidator implements Validator {
 
         if (departmentHeads != null) {
             for (Person departmentHead : departmentHeads) {
-                if (members == null || (members != null && !members.contains(departmentHead))) {
+                if (members == null || !members.contains(departmentHead)) {
                     errors.rejectValue(ATTRIBUTE_DEPARTMENT_HEADS, ERROR_DEPARTMENT_HEAD_NOT_ASSIGNED);
                 }
 
@@ -115,20 +109,45 @@ public class DepartmentValidator implements Validator {
     private void validateSecondStageAuthorities(Errors errors, boolean twoStageApproval, List<Person> members,
         List<Person> secondStageAuthorities) {
 
-        if (twoStageApproval && (secondStageAuthorities == null || secondStageAuthorities.isEmpty())) {
-            errors.rejectValue(ATTRIBUTE_SECOND_STAGE_AUTHORITIES, ERROR_SECOND_STAGE_AUTHORITY_MISSING);
+        if (twoStageApproval) {
+            validateAtLeastOneSecondStageAuthoritySet(secondStageAuthorities, errors);
+        } else {
+            validateNoSecondStageAuthoritiesSet(secondStageAuthorities, errors);
         }
 
-        if (!twoStageApproval && secondStageAuthorities != null && !secondStageAuthorities.isEmpty()) {
+        validateSecondStageAuthoritiesArePartOfDepartment(secondStageAuthorities, members, errors);
+    }
+
+
+    private void validateAtLeastOneSecondStageAuthoritySet(List<Person> secondStageAuthorities, Errors errors) {
+
+        // there must be at least one second stage authority
+        if (secondStageAuthorities == null || secondStageAuthorities.isEmpty()) {
+            errors.rejectValue(ATTRIBUTE_SECOND_STAGE_AUTHORITIES, ERROR_SECOND_STAGE_AUTHORITY_MISSING);
+        }
+    }
+
+
+    private void validateNoSecondStageAuthoritiesSet(List<Person> secondStageAuthorities, Errors errors) {
+
+        // there must not be any second stage authority
+        if (secondStageAuthorities != null && !secondStageAuthorities.isEmpty()) {
             errors.rejectValue(ATTRIBUTE_TWO_STAGE_APPROVAL, ERROR_TWO_STAGE_APPROVAL_FLAG_MISSING);
         }
+    }
+
+
+    private void validateSecondStageAuthoritiesArePartOfDepartment(List<Person> secondStageAuthorities,
+        List<Person> members, Errors errors) {
 
         if (secondStageAuthorities != null) {
             for (Person secondStage : secondStageAuthorities) {
+                // second stage authority must be member of department
                 if (members == null || !members.contains(secondStage)) {
                     errors.rejectValue(ATTRIBUTE_SECOND_STAGE_AUTHORITIES, ERROR_SECOND_STAGE_AUTHORITY_NOT_ASSIGNED);
                 }
 
+                // second stage authority must have required role
                 if (!secondStage.hasRole(Role.SECOND_STAGE_AUTHORITY)) {
                     errors.rejectValue(ATTRIBUTE_SECOND_STAGE_AUTHORITIES, ERROR_SECOND_STAGE_AUTHORITY_NO_ACCESS);
                 }
