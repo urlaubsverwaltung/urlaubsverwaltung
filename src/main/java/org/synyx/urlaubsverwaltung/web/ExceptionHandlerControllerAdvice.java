@@ -19,7 +19,7 @@ import org.synyx.urlaubsverwaltung.web.sicknote.SickNoteAlreadyInactiveException
  *
  * @author  Aljona Murygina - murygina@synyx.de
  */
-@ControllerAdvice
+@ControllerAdvice(basePackages = "org.synyx.urlaubsverwaltung.web")
 public class ExceptionHandlerControllerAdvice {
 
     private static final Logger LOG = Logger.getLogger(ExceptionHandlerControllerAdvice.class);
@@ -33,7 +33,7 @@ public class ExceptionHandlerControllerAdvice {
      *
      * @return  the error page as {@link ModelAndView}
      */
-    public static ModelAndView getErrorPage(Exception exception, HttpStatus httpStatus) {
+    private static ModelAndView getErrorPage(Exception exception, HttpStatus httpStatus) {
 
         ModelAndView modelAndView = new ModelAndView(ERROR_PAGE_NAME);
         modelAndView.addObject("exception", exception);
