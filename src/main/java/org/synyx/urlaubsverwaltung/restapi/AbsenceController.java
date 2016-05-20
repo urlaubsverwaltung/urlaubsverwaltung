@@ -37,14 +37,18 @@ import java.util.stream.Collectors;
 @RequestMapping("/api")
 public class AbsenceController {
 
-    @Autowired
-    private PersonService personService;
+    private final PersonService personService;
+    private final ApplicationService applicationService;
+    private final SickNoteService sickNoteService;
 
     @Autowired
-    private ApplicationService applicationService;
+    AbsenceController(PersonService personService, ApplicationService applicationService,
+        SickNoteService sickNoteService) {
 
-    @Autowired
-    private SickNoteService sickNoteService;
+        this.personService = personService;
+        this.applicationService = applicationService;
+        this.sickNoteService = sickNoteService;
+    }
 
     @ApiOperation(
         value = "Get all absences for a certain period and person",
@@ -136,8 +140,10 @@ public class AbsenceController {
             DateMidnight day = startDate;
 
             while (!day.isAfter(endDate)) {
-                absences.add(new DayAbsence(day, application.getDayLength(), DayAbsence.Type.VACATION,
-                        application.getStatus().name(), application.getId()));
+                if (!day.isBefore(start) && !day.isAfter(end)) {
+                    absences.add(new DayAbsence(day, application.getDayLength(), DayAbsence.Type.VACATION,
+                            application.getStatus().name(), application.getId()));
+                }
 
                 day = day.plusDays(1);
             }
@@ -163,8 +169,10 @@ public class AbsenceController {
             DateMidnight day = startDate;
 
             while (!day.isAfter(endDate)) {
-                absences.add(new DayAbsence(day, sickNote.getDayLength(), DayAbsence.Type.SICK_NOTE, "ACTIVE",
-                        sickNote.getId()));
+                if (!day.isBefore(start) && !day.isAfter(end)) {
+                    absences.add(new DayAbsence(day, sickNote.getDayLength(), DayAbsence.Type.SICK_NOTE, "ACTIVE",
+                            sickNote.getId()));
+                }
 
                 day = day.plusDays(1);
             }

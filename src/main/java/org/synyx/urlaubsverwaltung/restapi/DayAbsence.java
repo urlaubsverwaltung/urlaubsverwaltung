@@ -32,7 +32,7 @@ class DayAbsence {
         this.dayLength = dayLength.getDuration();
         this.type = type.name();
         this.status = status;
-        this.href = id.toString();
+        this.href = id == null ? "" : id.toString();
     }
 
     public String getDate() {
