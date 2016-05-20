@@ -31,7 +31,7 @@ class PersonServiceImpl implements PersonService {
     private final KeyPairService keyPairService;
 
     @Autowired
-    public PersonServiceImpl(PersonDAO personDAO, KeyPairService keyPairService) {
+    PersonServiceImpl(PersonDAO personDAO, KeyPairService keyPairService) {
 
         this.personDAO = personDAO;
         this.keyPairService = keyPairService;

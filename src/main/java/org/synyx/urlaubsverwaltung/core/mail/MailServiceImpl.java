@@ -74,7 +74,7 @@ class MailServiceImpl implements MailService {
     private Properties properties;
 
     @Autowired
-    public MailServiceImpl(@Qualifier("mailSender") JavaMailSenderImpl mailSender, VelocityEngine velocityEngine,
+    MailServiceImpl(@Qualifier("mailSender") JavaMailSenderImpl mailSender, VelocityEngine velocityEngine,
         PersonService personService, DepartmentService departmentService, SettingsService settingsService) {
 
         this.mailSender = mailSender;

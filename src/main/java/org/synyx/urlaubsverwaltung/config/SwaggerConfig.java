@@ -45,7 +45,7 @@ public class SwaggerConfig {
 
     private class ProjectApiInfo extends ApiInfo {
 
-        public ProjectApiInfo() {
+        private ProjectApiInfo() {
 
             super("Urlaubsverwaltung API: " + version,
                 "This Rest API provides the possibility to fetch information about the persons "

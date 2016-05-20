@@ -70,7 +70,8 @@ public class SessionService {
         boolean isBossOrOffice = signedInUser.hasRole(Role.OFFICE) || signedInUser.hasRole(Role.BOSS);
         boolean isDepartmentHeadOfPerson = departmentService.isDepartmentHeadOfPerson(signedInUser, person);
         boolean isSecondStageAuthorityOfPerson = departmentService.isSecondStageAuthorityOfPerson(signedInUser, person);
+        boolean isPrivilegedUser = isBossOrOffice || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson;
 
-        return isOwnData || isBossOrOffice || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson;
+        return isOwnData || isPrivilegedUser;
     }
 }

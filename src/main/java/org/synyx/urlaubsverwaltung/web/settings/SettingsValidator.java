@@ -303,9 +303,9 @@ public class SettingsValidator implements Validator {
 
         boolean beginHourValid = workDayBeginHour != null && isValidWorkDayHour(workDayBeginHour);
         boolean endHourValid = workDayEndHour != null && isValidWorkDayHour(workDayEndHour);
+        boolean beginAndEndValid = beginHourValid && endHourValid;
 
-        if (beginHourValid && endHourValid
-                && (workDayBeginHour.equals(workDayEndHour) || workDayBeginHour > workDayEndHour)) {
+        if (beginAndEndValid && workDayBeginHour >= workDayEndHour) {
             errors.rejectValue(workDayBeginHourAttribute, ERROR_INVALID_ENTRY);
             errors.rejectValue(workDayEndHourAttribute, ERROR_INVALID_ENTRY);
         }
