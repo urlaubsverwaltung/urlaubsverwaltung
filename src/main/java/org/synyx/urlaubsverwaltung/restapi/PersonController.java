@@ -30,8 +30,13 @@ public class PersonController {
 
     private static final String ROOT_URL = "/persons";
 
+    private final PersonService personService;
+
     @Autowired
-    private PersonService personService;
+    PersonController(PersonService personService) {
+
+        this.personService = personService;
+    }
 
     @ApiOperation(
         value = "Get all active persons of the application", notes = "Get all active persons of the application"

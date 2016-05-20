@@ -49,7 +49,7 @@ public class AbsenceControllerTest {
         sickNoteServiceMock = Mockito.mock(SickNoteService.class);
 
         mockMvc = MockMvcBuilders.standaloneSetup(new AbsenceController(personServiceMock, applicationServiceMock,
-                    sickNoteServiceMock)).build();
+                        sickNoteServiceMock)).setControllerAdvice(new ApiExceptionHandlerControllerAdvice()).build();
     }
 
 
@@ -172,5 +172,72 @@ public class AbsenceControllerTest {
             .andExpect(jsonPath("$.response.absences[0].type", is("VACATION")))
             .andExpect(jsonPath("$.response.absences[1].date", is("2016-06-30")))
             .andExpect(jsonPath("$.response.absences[1].type", is("SICK_NOTE")));
+    }
+
+
+    @Test
+    public void ensureBadRequestForMissingYearParameter() throws Exception {
+
+        mockMvc.perform(get("/api/absences").param("person", "23")).andExpect(status().isBadRequest());
+    }
+
+
+    @Test
+    public void ensureBadRequestForInvalidYearParameter() throws Exception {
+
+        mockMvc.perform(get("/api/absences").param("year", "foo").param("person", "23"))
+            .andExpect(status().isBadRequest());
+    }
+
+
+    @Test
+    public void ensureBadRequestForInvalidMonthParameter() throws Exception {
+
+        mockMvc.perform(get("/api/absences").param("year", "2016").param("month", "foo").param("person", "23"))
+            .andExpect(status().isBadRequest());
+    }
+
+
+    @Test
+    public void ensureBadRequestForOtherInvalidMonthParameter() throws Exception {
+
+        mockMvc.perform(get("/api/absences").param("year", "2016").param("month", "30").param("person", "23"))
+            .andExpect(status().isBadRequest());
+    }
+
+
+    @Test
+    public void ensureBadRequestForMissingPersonParameter() throws Exception {
+
+        mockMvc.perform(get("/api/absences").param("year", "2016")).andExpect(status().isBadRequest());
+    }
+
+
+    @Test
+    public void ensureBadRequestForInvalidPersonParameter() throws Exception {
+
+        mockMvc.perform(get("/api/absences").param("year", "2016").param("person", "foo"))
+            .andExpect(status().isBadRequest());
+    }
+
+
+    @Test
+    public void ensureBadRequestIfThereIsNoPersonForGivenID() throws Exception {
+
+        Mockito.when(personServiceMock.getPersonByID(Mockito.anyInt())).thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/api/absences").param("year", "2016").param("person", "23"))
+            .andExpect(status().isBadRequest());
+    }
+
+
+    @Test
+    public void ensureBadRequestForInvalidTypeParameter() throws Exception {
+
+        Mockito.when(personServiceMock.getPersonByID(Mockito.anyInt()))
+            .thenReturn(Optional.of(TestDataCreator.createPerson()));
+
+        mockMvc.perform(get("/api/absences").param("year", "2016").param("person", "23").param("type", "FOO"))
+            .andExpect(status().isBadRequest());
     }
 }

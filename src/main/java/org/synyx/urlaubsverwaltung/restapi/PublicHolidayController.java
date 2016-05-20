@@ -23,7 +23,6 @@ import org.synyx.urlaubsverwaltung.core.settings.FederalState;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -38,24 +37,25 @@ import java.util.stream.Collectors;
 @RequestMapping("/api")
 public class PublicHolidayController {
 
-    private static final String ROOT_URL = "/holidays";
+    private final PublicHolidaysService publicHolidaysService;
+    private final PersonService personService;
+    private final WorkingTimeService workingTimeService;
+    private final SettingsService settingsService;
 
     @Autowired
-    private PublicHolidaysService publicHolidaysService;
+    public PublicHolidayController(PublicHolidaysService publicHolidaysService, PersonService personService,
+        WorkingTimeService workingTimeService, SettingsService settingsService) {
 
-    @Autowired
-    private PersonService personService;
-
-    @Autowired
-    private WorkingTimeService workingTimeService;
-
-    @Autowired
-    private SettingsService settingsService;
+        this.publicHolidaysService = publicHolidaysService;
+        this.personService = personService;
+        this.workingTimeService = workingTimeService;
+        this.settingsService = settingsService;
+    }
 
     @ApiOperation(
         value = "Get all public holidays for a certain period", notes = "Get all public holidays for a certain period"
     )
-    @RequestMapping(value = ROOT_URL, method = RequestMethod.GET)
+    @RequestMapping(value = "/holidays", method = RequestMethod.GET)
     public ResponseWrapper<PublicHolidayListResponse> getPublicHolidays(
         @ApiParam(value = "Year to get the public holidays for", defaultValue = "2016")
         @RequestParam("year")
@@ -67,13 +67,10 @@ public class PublicHolidayController {
         @RequestParam(value = "person", required = false)
         Integer personId) {
 
-        PublicHolidayListResponse emptyResponse = new PublicHolidayListResponse();
-
         Optional<Person> optionalPerson = personId == null ? Optional.empty() : personService.getPersonByID(personId);
 
         if (personId != null && !optionalPerson.isPresent()) {
-            // TODO: maybe this should be an error page instead?
-            return new ResponseWrapper<>(emptyResponse);
+            throw new IllegalArgumentException("No person found for ID=" + personId);
         }
 
         Optional<String> optionalMonth = Optional.ofNullable(month);
@@ -92,48 +89,40 @@ public class PublicHolidayController {
 
     private FederalState getFederalState(String year, Optional<String> optionalMonth, Optional<Person> optionalPerson) {
 
-        Optional<DateMidnight> optionalValidFrom = getValidFrom(year, optionalMonth);
+        if (optionalPerson.isPresent()) {
+            DateMidnight validFrom = getValidFrom(year, optionalMonth);
 
-        if (optionalValidFrom.isPresent() && optionalPerson.isPresent()) {
-            return workingTimeService.getFederalStateForPerson(optionalPerson.get(), optionalValidFrom.get());
+            return workingTimeService.getFederalStateForPerson(optionalPerson.get(), validFrom);
         }
 
         return settingsService.getSettings().getWorkingTimeSettings().getFederalState();
     }
 
 
-    private Optional<DateMidnight> getValidFrom(String year, Optional<String> optionalMonth) {
+    private DateMidnight getValidFrom(String year, Optional<String> optionalMonth) {
 
-        try {
-            int holidaysYear = Integer.parseInt(year);
+        int holidaysYear = Integer.parseInt(year);
 
-            if (optionalMonth.isPresent()) {
-                int holidaysMonth = Integer.parseInt(optionalMonth.get());
+        if (optionalMonth.isPresent()) {
+            int holidaysMonth = Integer.parseInt(optionalMonth.get());
 
-                return Optional.of(new DateMidnight(holidaysYear, holidaysMonth, 1));
-            } else {
-                return Optional.of(DateUtil.getFirstDayOfYear(holidaysYear));
-            }
-        } catch (NumberFormatException ex) {
-            return Optional.empty();
+            return new DateMidnight(holidaysYear, holidaysMonth, 1);
         }
+
+        return DateUtil.getFirstDayOfYear(holidaysYear);
     }
 
 
     private Set<Holiday> getHolidays(String year, Optional<String> optionalMonth, FederalState federalState) {
 
-        try {
-            int holidaysYear = Integer.parseInt(year);
+        int holidaysYear = Integer.parseInt(year);
 
-            if (optionalMonth.isPresent()) {
-                int holidaysMonth = Integer.parseInt(optionalMonth.get());
+        if (optionalMonth.isPresent()) {
+            int holidaysMonth = Integer.parseInt(optionalMonth.get());
 
-                return publicHolidaysService.getHolidays(holidaysYear, holidaysMonth, federalState);
-            } else {
-                return publicHolidaysService.getHolidays(holidaysYear, federalState);
-            }
-        } catch (NumberFormatException ex) {
-            return Collections.emptySet();
+            return publicHolidaysService.getHolidays(holidaysYear, holidaysMonth, federalState);
         }
+
+        return publicHolidaysService.getHolidays(holidaysYear, federalState);
     }
 }

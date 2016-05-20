@@ -37,14 +37,18 @@ import java.util.Optional;
 @RequestMapping("/api")
 public class VacationController {
 
-    @Autowired
-    private PersonService personService;
+    private final PersonService personService;
+    private final ApplicationService applicationService;
+    private final DepartmentService departmentService;
 
     @Autowired
-    private ApplicationService applicationService;
+    VacationController(PersonService personService, ApplicationService applicationService,
+        DepartmentService departmentService) {
 
-    @Autowired
-    private DepartmentService departmentService;
+        this.personService = personService;
+        this.applicationService = applicationService;
+        this.departmentService = departmentService;
+    }
 
     @ApiOperation(
         value = "Get all allowed vacations for a certain period",
@@ -72,6 +76,10 @@ public class VacationController {
         DateTimeFormatter formatter = DateTimeFormat.forPattern(RestApiDateFormat.PATTERN);
         DateMidnight startDate = formatter.parseDateTime(from).toDateMidnight();
         DateMidnight endDate = formatter.parseDateTime(to).toDateMidnight();
+
+        if (startDate.isAfter(endDate)) {
+            throw new IllegalArgumentException("Parameter 'from' must be before or equals to 'to' parameter");
+        }
 
         List<Application> applications = new ArrayList<>();
 

@@ -10,8 +10,6 @@ import org.joda.time.format.DateTimeFormatter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.util.StringUtils;
-
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,13 +33,15 @@ import java.util.Optional;
 @RequestMapping("/api")
 public class WorkDayController {
 
-    private static final String ROOT_URL = "/workdays";
+    private final PersonService personService;
+    private final WorkDaysService workDaysService;
 
     @Autowired
-    private PersonService personService;
+    WorkDayController(PersonService personService, WorkDaysService workDaysService) {
 
-    @Autowired
-    private WorkDaysService workDaysService;
+        this.personService = personService;
+        this.workDaysService = workDaysService;
+    }
 
     /**
      * Calculate number of work days for the given period and person.
@@ -57,7 +57,7 @@ public class WorkDayController {
         value = "Calculate the work days for a certain period and person",
         notes = "The calculation depends on the working time of the person."
     )
-    @RequestMapping(value = ROOT_URL, method = RequestMethod.GET)
+    @RequestMapping(value = "/workdays", method = RequestMethod.GET)
     public ResponseWrapper<WorkDayResponse> workDays(
         @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = "2016-01-01")
         @RequestParam("from")
@@ -72,25 +72,23 @@ public class WorkDayController {
         @RequestParam("person")
         Integer personId) {
 
-        if (StringUtils.hasText(from) && StringUtils.hasText(to) && StringUtils.hasText(length)) {
-            DateTimeFormatter fmt = DateTimeFormat.forPattern(RestApiDateFormat.PATTERN);
-            DateMidnight startDate = DateMidnight.parse(from, fmt);
-            DateMidnight endDate = DateMidnight.parse(to, fmt);
+        DateTimeFormatter fmt = DateTimeFormat.forPattern(RestApiDateFormat.PATTERN);
+        DateMidnight startDate = DateMidnight.parse(from, fmt);
+        DateMidnight endDate = DateMidnight.parse(to, fmt);
 
-            if (startDate.isBefore(endDate) || startDate.isEqual(endDate)) {
-                DayLength howLong = DayLength.valueOf(length);
-                Optional<Person> person = personService.getPersonByID(personId);
-
-                if (!person.isPresent()) {
-                    return new ResponseWrapper<>(new WorkDayResponse("N/A"));
-                }
-
-                BigDecimal days = workDaysService.getWorkDays(howLong, startDate, endDate, person.get());
-
-                return new ResponseWrapper<>(new WorkDayResponse(days.toString()));
-            }
+        if (startDate.isAfter(endDate)) {
+            throw new IllegalArgumentException("Parameter 'from' must be before or equals to 'to' parameter");
         }
 
-        return new ResponseWrapper<>(new WorkDayResponse("N/A"));
+        DayLength howLong = DayLength.valueOf(length);
+        Optional<Person> person = personService.getPersonByID(personId);
+
+        if (!person.isPresent()) {
+            throw new IllegalArgumentException("No person found for ID=" + personId);
+        }
+
+        BigDecimal days = workDaysService.getWorkDays(howLong, startDate, endDate, person.get());
+
+        return new ResponseWrapper<>(new WorkDayResponse(days.toString()));
     }
 }

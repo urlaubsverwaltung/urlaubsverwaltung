@@ -64,6 +64,10 @@ public class SickNoteController {
         DateMidnight startDate = formatter.parseDateTime(from).toDateMidnight();
         DateMidnight endDate = formatter.parseDateTime(to).toDateMidnight();
 
+        if (startDate.isAfter(endDate)) {
+            throw new IllegalArgumentException("Parameter 'from' must be before or equals to 'to' parameter");
+        }
+
         Optional<Person> optionalPerson = personId == null ? Optional.empty() : personService.getPersonByID(personId);
 
         List<SickNote> sickNotes;

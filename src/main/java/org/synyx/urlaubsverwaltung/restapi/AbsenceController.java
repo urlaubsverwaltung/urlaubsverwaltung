@@ -8,6 +8,8 @@ import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.http.MediaType;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,7 +25,6 @@ import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -69,30 +70,23 @@ public class AbsenceController {
         @RequestParam(value = "type", required = false)
         String type) {
 
-        DateMidnight startDate;
-        DateMidnight endDate;
-
-        try {
-            startDate = getStartDate(year, Optional.ofNullable(month));
-            endDate = getEndDate(year, Optional.ofNullable(month));
-        } catch (NumberFormatException ex) {
-            return new ResponseWrapper<>(new DayAbsenceList(Collections.emptyList()));
-        }
+        DateMidnight startDate = getStartDate(year, Optional.ofNullable(month));
+        DateMidnight endDate = getEndDate(year, Optional.ofNullable(month));
 
         Optional<Person> optionalPerson = personService.getPersonByID(personId);
 
         if (!optionalPerson.isPresent()) {
-            return new ResponseWrapper<>(new DayAbsenceList(Collections.emptyList()));
+            throw new IllegalArgumentException("No person found for ID=" + personId);
         }
 
         List<DayAbsence> absences = new ArrayList<>();
         Person person = optionalPerson.get();
 
-        if (type == null || type.equals(DayAbsence.Type.VACATION.name())) {
+        if (type == null || DayAbsence.Type.valueOf(type).equals(DayAbsence.Type.VACATION)) {
             absences.addAll(getVacations(startDate, endDate, person));
         }
 
-        if (type == null || type.equals(DayAbsence.Type.SICK_NOTE.name())) {
+        if (type == null || DayAbsence.Type.valueOf(type).equals(DayAbsence.Type.SICK_NOTE)) {
             absences.addAll(getSickNotes(startDate, endDate, person));
         }
 
