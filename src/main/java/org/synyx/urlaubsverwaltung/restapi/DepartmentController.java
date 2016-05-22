@@ -24,8 +24,13 @@ public class DepartmentController {
 
     private static final String ROOT_URL = "/departments";
 
+    private final DepartmentService departmentService;
+
     @Autowired
-    private DepartmentService departmentService;
+    DepartmentController(DepartmentService departmentService) {
+
+        this.departmentService = departmentService;
+    }
 
     @ApiOperation(value = "Get all departments of the application", notes = "Get all departments of the application")
     @RequestMapping(value = ROOT_URL, method = RequestMethod.GET)

@@ -32,7 +32,7 @@ class ApplicationCommentServiceImpl implements ApplicationCommentService {
     private final ApplicationCommentDAO commentDAO;
 
     @Autowired
-    public ApplicationCommentServiceImpl(ApplicationCommentDAO commentDAO) {
+    ApplicationCommentServiceImpl(ApplicationCommentDAO commentDAO) {
 
         this.commentDAO = commentDAO;
     }

@@ -37,32 +37,37 @@ import java.util.Optional;
 @RequestMapping("/api")
 public class VacationController {
 
-    @Autowired
-    private PersonService personService;
+    private final PersonService personService;
+    private final ApplicationService applicationService;
+    private final DepartmentService departmentService;
 
     @Autowired
-    private ApplicationService applicationService;
+    VacationController(PersonService personService, ApplicationService applicationService,
+        DepartmentService departmentService) {
 
-    @Autowired
-    private DepartmentService departmentService;
+        this.personService = personService;
+        this.applicationService = applicationService;
+        this.departmentService = departmentService;
+    }
 
     @ApiOperation(
         value = "Get all allowed vacations for a certain period",
         notes = "Get all allowed vacations for a certain period. "
             + "If a person is specified, only the allowed vacations of the person are fetched. "
             + "If a person and the department members flag is specified, "
-            + "then all the waiting and allowed vacations of the departments the person is assigned to, are fetched."
+            + "then all the waiting and allowed vacations of the departments the person is assigned to, are fetched. "
+            + "Information only reachable for users with role office."
     )
     @RequestMapping(value = "/vacations", method = RequestMethod.GET)
     public ResponseWrapper<VacationListResponse> vacations(
         @ApiParam(value = "Get vacations for department members of person")
         @RequestParam(value = "departmentMembers", required = false)
         Boolean departmentMembers,
-        @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = "2015-01-01")
-        @RequestParam(value = "from", required = true)
+        @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = "2016-01-01")
+        @RequestParam(value = "from")
         String from,
-        @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = "2015-12-31")
-        @RequestParam(value = "to", required = true)
+        @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = "2016-12-31")
+        @RequestParam(value = "to")
         String to,
         @ApiParam(value = "ID of the person")
         @RequestParam(value = "person", required = false)
@@ -71,6 +76,10 @@ public class VacationController {
         DateTimeFormatter formatter = DateTimeFormat.forPattern(RestApiDateFormat.PATTERN);
         DateMidnight startDate = formatter.parseDateTime(from).toDateMidnight();
         DateMidnight endDate = formatter.parseDateTime(to).toDateMidnight();
+
+        if (startDate.isAfter(endDate)) {
+            throw new IllegalArgumentException("Parameter 'from' must be before or equals to 'to' parameter");
+        }
 
         List<Application> applications = new ArrayList<>();
 

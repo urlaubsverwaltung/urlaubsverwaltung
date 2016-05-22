@@ -33,7 +33,11 @@ import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.department.DepartmentConstants;
 import org.synyx.urlaubsverwaltung.web.department.UnknownDepartmentException;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -110,7 +114,7 @@ public class PersonController {
 
     @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
     @RequestMapping(value = "/staff", method = RequestMethod.GET, params = "active")
-    public String showStaff(@RequestParam(value = "active", required = true) Boolean active,
+    public String showStaff(@RequestParam(value = "active") Boolean active,
         @RequestParam(value = ControllerConstants.DEPARTMENT_ATTRIBUTE, required = false) Optional<Integer> requestedDepartmentId,
         @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Optional<Integer> requestedYear,
         Model model) throws UnknownDepartmentException {

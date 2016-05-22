@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.core.overtime.OvertimeAction;
 import org.synyx.urlaubsverwaltung.core.overtime.OvertimeService;

@@ -64,8 +64,8 @@ class PersonDataProvider {
 
         int currentYear = DateMidnight.now().getYear();
         workingTimeService.touch(Arrays.asList(WeekDay.MONDAY.getDayOfWeek(), WeekDay.TUESDAY.getDayOfWeek(),
-                WeekDay.WEDNESDAY.getDayOfWeek(), WeekDay.THURSDAY.getDayOfWeek(), WeekDay.FRIDAY.getDayOfWeek()), Optional.empty(),
-            new DateMidnight(currentYear - 1, 1, 1), person);
+                WeekDay.WEDNESDAY.getDayOfWeek(), WeekDay.THURSDAY.getDayOfWeek(), WeekDay.FRIDAY.getDayOfWeek()),
+            Optional.empty(), new DateMidnight(currentYear - 1, 1, 1), person);
 
         accountInteractionService.createHolidaysAccount(person, DateUtil.getFirstDayOfYear(currentYear),
             DateUtil.getLastDayOfYear(currentYear), new BigDecimal("30"), new BigDecimal("30"), new BigDecimal("5"),

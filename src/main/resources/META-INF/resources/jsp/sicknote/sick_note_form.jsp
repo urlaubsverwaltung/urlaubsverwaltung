@@ -152,7 +152,14 @@
                     <div class="col-md-9">
                         <form:select path="sickNoteType" id="sickNoteType" class="form-control" cssErrorClass="form-control error">
                             <c:forEach items="${sickNoteTypes}" var="sickNoteType">
-                                <form:option value="${sickNoteType.id}">${sickNoteType.displayName}</form:option>
+                                <c:choose>
+                                    <c:when test="${sickNoteType == sickNote.sickNoteType}">
+                                        <form:option value="${sickNoteType.id}" selected="selected">${sickNoteType.displayName}</form:option>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <form:option value="${sickNoteType.id}">${sickNoteType.displayName}</form:option>
+                                    </c:otherwise>
+                                </c:choose>
                             </c:forEach>
                         </form:select>
                     </div>

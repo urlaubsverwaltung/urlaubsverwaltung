@@ -204,7 +204,10 @@ public class ApplicationValidator implements Validator {
         boolean startTimeIsProvided = startTime != null;
         boolean endTimeIsProvided = endTime != null;
 
-        if ((startTimeIsProvided && !endTimeIsProvided) || (!startTimeIsProvided && endTimeIsProvided)) {
+        boolean onlyStartTimeProvided = startTimeIsProvided && !endTimeIsProvided;
+        boolean onlyEndTimeProvided = !startTimeIsProvided && endTimeIsProvided;
+
+        if (onlyStartTimeProvided || onlyEndTimeProvided) {
             errors.reject(ERROR_PERIOD);
         }
 
@@ -223,8 +226,9 @@ public class ApplicationValidator implements Validator {
         BigDecimal hours = applicationForLeave.getHours();
         boolean isOvertime = VacationCategory.OVERTIME.equals(applicationForLeave.getVacationType().getCategory());
         boolean overtimeFunctionIsActive = settings.getWorkingTimeSettings().isOvertimeActive();
+        boolean hoursRequiredButNotProvided = isOvertime && overtimeFunctionIsActive && hours == null;
 
-        if (isOvertime && overtimeFunctionIsActive && hours == null && !errors.hasFieldErrors(ATTRIBUTE_HOURS)) {
+        if (hoursRequiredButNotProvided && !errors.hasFieldErrors(ATTRIBUTE_HOURS)) {
             errors.rejectValue(ATTRIBUTE_HOURS, ERROR_MISSING_HOURS);
         }
 
@@ -250,25 +254,16 @@ public class ApplicationValidator implements Validator {
         /**
          * Ensure the person has a working time for the period of the application for leave
          */
-        Optional<WorkingTime> workingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(
-                application.getPerson(), application.getStartDate());
-
-        if (!workingTime.isPresent()) {
+        if (!personHasWorkingTime(application)) {
             errors.reject(ERROR_WORKING_TIME);
 
             return;
         }
 
         /**
-         * Calculate the work days
-         */
-        BigDecimal days = calendarService.getWorkDays(application.getDayLength(), application.getStartDate(),
-                application.getEndDate(), application.getPerson());
-
-        /**
          * Ensure that no one applies for leave for a vacation of 0 days
          */
-        if (CalcUtil.isZero(days)) {
+        if (vacationOfZeroDays(application)) {
             errors.reject(ERROR_ZERO_DAYS);
 
             return;
@@ -277,11 +272,7 @@ public class ApplicationValidator implements Validator {
         /**
          * Ensure that there is no application for leave and no sick note in the same period
          */
-        OverlapCase overlap = overlapService.checkOverlap(application);
-
-        boolean isOverlapping = overlap == OverlapCase.FULLY_OVERLAPPING || overlap == OverlapCase.PARTLY_OVERLAPPING;
-
-        if (isOverlapping) {
+        if (vacationIsOverlapping(application)) {
             errors.reject(ERROR_OVERLAP);
 
             return;
@@ -289,29 +280,74 @@ public class ApplicationValidator implements Validator {
 
         /**
          * Ensure that the person has enough vacation days left if the vacation type is
-         * {@link org.synyx.urlaubsverwaltung.core.application.domain.VacationType.HOLIDAY}
+         * {@link org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory.HOLIDAY}
          */
+        if (!enoughVacationDaysLeft(application)) {
+            errors.reject(ERROR_NOT_ENOUGH_DAYS);
+        }
+
+        /**
+         * Ensure that the person has enough overtime hours left if the vacation type is
+         * {@link org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory.OVERTIME}
+         */
+        if (!enoughOvertimeHoursLeft(application, settings)) {
+            errors.reject(ERROR_NOT_ENOUGH_OVERTIME);
+        }
+    }
+
+
+    private boolean personHasWorkingTime(Application application) {
+
+        Optional<WorkingTime> workingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(
+                application.getPerson(), application.getStartDate());
+
+        return workingTime.isPresent();
+    }
+
+
+    private boolean vacationOfZeroDays(Application application) {
+
+        BigDecimal days = calendarService.getWorkDays(application.getDayLength(), application.getStartDate(),
+                application.getEndDate(), application.getPerson());
+
+        return CalcUtil.isZero(days);
+    }
+
+
+    private boolean vacationIsOverlapping(Application application) {
+
+        OverlapCase overlap = overlapService.checkOverlap(application);
+
+        return overlap == OverlapCase.FULLY_OVERLAPPING || overlap == OverlapCase.PARTLY_OVERLAPPING;
+    }
+
+
+    private boolean enoughVacationDaysLeft(Application application) {
 
         boolean isHoliday = VacationCategory.HOLIDAY.equals(application.getVacationType().getCategory());
 
         if (isHoliday) {
-            if (!calculationService.checkApplication(application)) {
-                errors.reject(ERROR_NOT_ENOUGH_DAYS);
-            }
+            return calculationService.checkApplication(application);
         }
 
-        /**
-         * Check overtime of given user
-         */
-        WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
-        Boolean overtimeActive = workingTimeSettings.isOvertimeActive();
+        return true;
+    }
+
+
+    private boolean enoughOvertimeHoursLeft(Application application, Settings settings) {
+
         Boolean isOvertime = VacationCategory.OVERTIME.equals(application.getVacationType().getCategory());
 
-        if (isOvertime && overtimeActive && application.getHours() != null) {
-            if (!checkOvertimeHours(application, workingTimeSettings)) {
-                errors.reject(ERROR_NOT_ENOUGH_OVERTIME);
+        if (isOvertime) {
+            WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
+            Boolean overtimeActive = workingTimeSettings.isOvertimeActive();
+
+            if (overtimeActive && application.getHours() != null) {
+                return checkOvertimeHours(application, workingTimeSettings);
             }
         }
+
+        return true;
     }
 
 

@@ -43,9 +43,9 @@ public class SwaggerConfig {
         return swaggerSpringMvcPlugin;
     }
 
-    private class ProjectApiInfo extends ApiInfo {
+    private final class ProjectApiInfo extends ApiInfo {
 
-        public ProjectApiInfo() {
+        private ProjectApiInfo() {
 
             super("Urlaubsverwaltung API: " + version,
                 "This Rest API provides the possibility to fetch information about the persons "

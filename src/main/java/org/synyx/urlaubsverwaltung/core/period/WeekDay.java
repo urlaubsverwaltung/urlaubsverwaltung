@@ -20,6 +20,9 @@ public enum WeekDay {
     SATURDAY(DateTimeConstants.SATURDAY),
     SUNDAY(DateTimeConstants.SUNDAY);
 
+    private static final int MIN_WEEK_DAY = 1;
+    private static final int MAX_WEEK_DAY = 7;
+
     private Integer dayOfWeek;
 
     WeekDay(Integer dayOfWeek) {
@@ -42,7 +45,7 @@ public enum WeekDay {
      */
     public static WeekDay getByDayOfWeek(int dayOfWeek) {
 
-        Assert.isTrue(dayOfWeek > 0 && dayOfWeek < 8, "Day of week must be between 1 and 7");
+        Assert.isTrue(dayOfWeek >= MIN_WEEK_DAY && dayOfWeek <= MAX_WEEK_DAY, "Day of week must be between 1 and 7");
 
         for (WeekDay weekDay : WeekDay.values()) {
             if (dayOfWeek == weekDay.getDayOfWeek()) {
