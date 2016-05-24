@@ -220,20 +220,23 @@
             <div class="col-xs-12">
                 <legend >
                      <div class="legend-dropdown dropdown">
-                            <a id="calendar-selector" name="calendar-selector" data-target="#" href="#" data-toggle="dropdown"
-                               aria-haspopup="true" role="button" aria-expanded="false">
-                                 <c:choose>
-                                    <c:when test="${timelineDepartment == null}">
+                             <c:choose>
+                                <c:when test="${timelineDepartment == null}">
+                                    <a id="calendar-selector" name="calendar-selector" data-target="#" href="#" data-toggle="dropdown"
+                                                             aria-haspopup="true" role="button" aria-expanded="false">
                                         <spring:message code="overview.calendar.title" /> <c:out value="${person.niceName}" /><span class="caret"></span>
-                                    </c:when>
-                                    <c:otherwise>
+                                    </a>
+                                </c:when>
+                                <c:otherwise>
+                                    <a id="calendar-selector" name="calendar-selector" data-target="#" href="#" data-toggle="dropdown"
+                                                                                                 aria-haspopup="true" role="button" aria-expanded="false">
                                         <spring:message code="overview.calendar.title" /> <c:out value="${timelineDepartment.name}" /><span class="caret"></span>
-                                        <uv:month-selector month="Monat" />  <%-- Month named filled in by Javascript on pageReady --%>
-                                         &nbsp;
-                                        <button type="button" class="btn btn-default btn-sm" id='jumpToToday'><spring:message code="overview.calendar.button.today" /></button>
-                                    </c:otherwise>
-                                </c:choose>
-                            </a>
+                                    </a>
+                                    <uv:month-selector month="Monat" />  <%-- Month named filled in by Javascript on pageReady --%>
+                                     &nbsp;
+                                    <button type="button" class="btn btn-default btn-sm" id='jumpToToday'><spring:message code="overview.calendar.button.today" /></button>
+                                </c:otherwise>
+                            </c:choose>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="calendar-selector">
                                 <li>
                                     <a href="?year=${displayYear}#calendar-selector">

@@ -11,7 +11,7 @@
 
     <ul class="dropdown-menu" role="menu" aria-labelledby="monthDropdownLabel">
     <c:forEach begin="1" end="12" var="month">
-        <li><a href="#" data-month='${month}'><spring:message code="month.${month}" /></a><li>
+        <li><a href="#" data-month='${month}'><spring:message code="month.${month}" /></a></li>
     </c:forEach>
     </ul>
 </div>

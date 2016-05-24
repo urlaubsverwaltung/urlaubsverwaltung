@@ -762,7 +762,7 @@ $(function() {
                 });
             },
 
-            jumpTo(date, personIds){
+            jumpTo: function(date, personIds){
                  $.when( holidayService.fetchAbsences   ( date.year() ))
                  .then(function(){ view.display(date, personIds); });
             }
