@@ -26,6 +26,7 @@ $(function() {
         dayPersonalHoliday    : 'datepicker-day-personal-holiday',
         dayHalfPersonalHoliday: 'datepicker-day-half-personal-holiday',
         daySickDay            : 'datepicker-day-sick-note',
+        dayStatus             : 'datepicker-day-status-{{status}}',
         next                  : 'datepicker-next',
         prev                  : 'datepicker-prev',
         week                  : 'datepicker-week',
@@ -78,6 +79,9 @@ $(function() {
             },
             absenceType: function(date, personId) {
                 return holidayService.getAbsenceType(date, personId);
+            },
+            status : function(date, personId) {
+                return holidayService.getStatus(date, personId);
             }
         };
 
@@ -212,6 +216,23 @@ $(function() {
                return publicHoliday ? publicHoliday.description : '';
 
             },
+
+            getStatus: function (date, personId) {
+
+              var year = date.year();
+              var formattedDate = date.format('YYYY-MM-DD');
+
+              var holiday = CACHE_findDate('holiday', year, formattedDate, personId);
+
+                if(holiday) {
+                  return holiday.status;
+                }
+
+
+              return null;
+
+            },
+
 
             getAbsenceId: function (date, personId) {
 
@@ -467,6 +488,7 @@ $(function() {
         function renderDay(date, personId) {
 
             function classes() {
+                var status = assert.status(date, personId)
                 return [
                     assert.isToday           (date) ? CSS.dayToday           : '',
                     assert.isWeekend         (date) ? CSS.dayWeekend         : '',
@@ -474,9 +496,12 @@ $(function() {
                     assert.isPublicHoliday   (date, personId) ? CSS.dayPublicHoliday   : '',
                     assert.isPersonalHoliday (date, personId) ? CSS.dayPersonalHoliday : '',
                     assert.isSickDay         (date, personId) ? CSS.daySickDay         : '',
-                    assert.isHalfDay         (date, personId) ? CSS.dayHalf            : ''
+                    assert.isHalfDay         (date, personId) ? CSS.dayHalf            : '',
+                    status             ? CSS.dayStatus.replace("{{status}}", status)   : ''
                 ].join(' ');
             }
+
+
 
             function isSelectable() {
 
