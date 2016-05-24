@@ -201,6 +201,12 @@
                 Urlaubsverwaltung.Calendar.jumpToMonth(${displayYear}, $(this).data('month'));
                 event.preventDefault();
            });
+
+           $('#jumpToToday').on('click', function(){
+                $('#month-selection span.labelText').text(moment().format('MMMM'));
+                Urlaubsverwaltung.Calendar.jumpToToday();
+           });
+
         </c:if>
 
 
@@ -223,6 +229,8 @@
                                     <c:otherwise>
                                         <spring:message code="overview.calendar.title" /> <c:out value="${timelineDepartment.name}" /><span class="caret"></span>
                                         <uv:month-selector month="Monat" />  <%-- Month named filled in by Javascript on pageReady --%>
+                                         &nbsp;
+                                        <button type="button" class="btn btn-default btn-sm" id='jumpToToday'><spring:message code="overview.calendar.button.today" /></button>
                                     </c:otherwise>
                                 </c:choose>
                             </a>

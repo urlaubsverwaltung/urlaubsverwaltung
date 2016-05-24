@@ -760,6 +760,11 @@ $(function() {
                 $(document.body).on('mouseup', function() {
                     $(document.body).removeClass(CSS.mousedown);
                 });
+            },
+
+            jumpTo(date, personIds){
+                 $.when( holidayService.fetchAbsences   ( date.year() ))
+                 .then(function(){ view.display(date, personIds); });
             }
         };
 
@@ -778,6 +783,7 @@ $(function() {
         var view;
         var date;
         var personIds;
+        var c;
 
 
         return {
@@ -789,7 +795,7 @@ $(function() {
 
                 var a = Assertion.create (holidayService);
                 view = View.create(a);
-                var c = Controller.create(holidayService, view);
+                c = Controller.create(holidayService, view);
 
                 view.display(date, personIds);
                 c.bind();
@@ -804,8 +810,13 @@ $(function() {
                date.month(month-1);
                date.date(8);
 
-               view.display(date, personIds);
+               c.jumpTo(date, personIds);
+            },
+
+            jumpToToday: function(year, month){
+               c.jumpTo(date = moment(), personIds);
             }
+
         }
     })();
 
