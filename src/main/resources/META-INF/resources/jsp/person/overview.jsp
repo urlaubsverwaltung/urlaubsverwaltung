@@ -143,6 +143,8 @@
                         date.year(year).month(0).date(1);
                     }
 
+                    $('#month-selection span.labelText').text(date.format('MMMM'));
+
                     var holidayService = Urlaubsverwaltung.HolidayService.create(webPrefix, apiPrefix, +personId, +'${timelineDepartment.id}');
 
                     // NOTE: All moments are mutable!
@@ -193,6 +195,12 @@
            t.byName = <%= /* how to do this without a scriptlet? */ java.util.Arrays.toString((Object[])pageContext.getAttribute("sortedMembers")) %>;
            <c:forEach items="${timelineDepartment.members}" var="p" >t[${p.id}] = '<spring:escapeBody>${p.niceName}</spring:escapeBody>';
            </c:forEach>
+
+           $('#month-selection ul a').on('click', function(event){
+                $('#month-selection span.labelText').text(this.text);
+                Urlaubsverwaltung.Calendar.jumpToMonth(${displayYear}, $(this).data('month'));
+                event.preventDefault();
+           });
         </c:if>
 
 
@@ -214,6 +222,7 @@
                                     </c:when>
                                     <c:otherwise>
                                         <spring:message code="overview.calendar.title" /> <c:out value="${timelineDepartment.name}" /><span class="caret"></span>
+                                        <uv:month-selector month="Monat" />  <%-- Month named filled in by Javascript on pageReady --%>
                                     </c:otherwise>
                                 </c:choose>
                             </a>

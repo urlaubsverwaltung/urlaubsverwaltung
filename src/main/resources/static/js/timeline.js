@@ -772,6 +772,14 @@ $(function() {
 
             reRender: function() {
                 view.display(date, personIds);
+            },
+
+            jumpToMonth: function(year, month){
+               date.year(year);
+               date.month(month-1);
+               date.date(8);
+
+               view.display(date, personIds);
             }
         }
     })();
