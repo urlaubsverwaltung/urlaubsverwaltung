@@ -204,7 +204,11 @@
 
            $('#jumpToToday').on('click', function(){
                 $('#month-selection span.labelText').text(moment().format('MMMM'));
-                Urlaubsverwaltung.Calendar.jumpToToday();
+                if (moment().year() == ${displayYear}){
+                    Urlaubsverwaltung.Calendar.jumpToToday();
+                } else {
+                    location.href = "${URL_PREFIX}/staff/${person.id}/overview?timelineDepartment=${timelineDepartment.id}&year=#calendar-selector";
+                }
            });
 
         </c:if>
