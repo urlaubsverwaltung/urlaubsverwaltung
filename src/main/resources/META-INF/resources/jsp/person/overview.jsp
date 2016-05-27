@@ -125,7 +125,7 @@
         </div>
         </c:if>
 
-        <script src="<spring:url value='/js/calendar.js' />" type="text/javascript" ></script>
+        <script src=<spring:url value='${ timelineDepartment != null ? "/js/timeline.js" : "/js/calendar.js" }' /> type="text/javascript" ></script>
         <script>
             $(function() {
 
@@ -143,7 +143,9 @@
                         date.year(year).month(0).date(1);
                     }
 
-                    var holidayService = Urlaubsverwaltung.HolidayService.create(webPrefix, apiPrefix, +personId);
+                    $('#month-selection span.labelText').text(date.format('MMMM'));
+
+                    var holidayService = Urlaubsverwaltung.HolidayService.create(webPrefix, apiPrefix, +personId, +'${timelineDepartment.id}');
 
                     // NOTE: All moments are mutable!
                     var startDateToCalculate = date.clone();
@@ -185,15 +187,86 @@
 
                 });
 
+        <c:if test="${timelineDepartment != null}">
+
+           var t = Urlaubsverwaltung.Calendar.timelinePersons = {};
+           <% /* how to do this without a scriptlet? */ pageContext.setAttribute("umlaute", java.text.Collator.getInstance(java.util.Locale.GERMANY)) ; %>
+           <c:set var="sortedMembers" value="${timelineDepartment.members.stream().sorted((a,b) -> umlaute.compare(a.lastName, b.lastName)).map(x -> x.id).toArray()}" />
+           t.byName = <%= /* how to do this without a scriptlet? */ java.util.Arrays.toString((Object[])pageContext.getAttribute("sortedMembers")) %>;
+           <c:forEach items="${timelineDepartment.members}" var="p" >t[${p.id}] = '<spring:escapeBody>${p.niceName}</spring:escapeBody>';
+           </c:forEach>
+
+           $('#month-selection ul a').on('click', function(event){
+                $('#month-selection span.labelText').text(this.text);
+                Urlaubsverwaltung.Calendar.jumpToMonth(${displayYear}, $(this).data('month'));
+                event.preventDefault();
+           });
+
+           $('#jumpToToday').on('click', function(){
+                $('#month-selection span.labelText').text(moment().format('MMMM'));
+                if (moment().year() == ${displayYear}){
+                    Urlaubsverwaltung.Calendar.jumpToToday();
+                } else {
+                    location.href = "${URL_PREFIX}/staff/${person.id}/overview?timelineDepartment=${timelineDepartment.id}&year=#calendar-selector";
+                }
+           });
+
+        </c:if>
+
+
             });
+
+
         </script>
+
 
         <div class="row">
             <div class="col-xs-12">
-                <hr/>
+                <legend >
+                     <div class="legend-dropdown dropdown">
+                             <c:choose>
+                                <c:when test="${timelineDepartment == null}">
+                                    <a id="calendar-selector" name="calendar-selector" data-target="#" href="#" data-toggle="dropdown"
+                                                             aria-haspopup="true" role="button" aria-expanded="false">
+                                        <spring:message code="overview.calendar.title" /> <c:out value="${person.niceName}" /><span class="caret"></span>
+                                    </a>
+                                </c:when>
+                                <c:otherwise>
+                                    <a id="calendar-selector" name="calendar-selector" data-target="#" href="#" data-toggle="dropdown"
+                                                                                                 aria-haspopup="true" role="button" aria-expanded="false">
+                                        <spring:message code="overview.calendar.title" /> <c:out value="${timelineDepartment.name}" /><span class="caret"></span>
+                                    </a>
+                                    <uv:month-selector month="Monat" />  <%-- Month named filled in by Javascript on pageReady --%>
+                                     &nbsp;
+                                    <button type="button" class="btn btn-default btn-sm" id='jumpToToday'><spring:message code="overview.calendar.button.today" /></button>
+                                </c:otherwise>
+                            </c:choose>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="calendar-selector">
+                                <li>
+                                    <a href="?year=${displayYear}#calendar-selector">
+                                         <i class="fa fa-fw fa-user"></i>
+                                         <c:out value="${person.niceName}" />
+                                    </a>
+                                </li>
+                                <li role="separator" class="divider"></li>
+                                <c:forEach items="${departments}" var="d">
+                                <li>
+                                    <a href="?year=${displayYear}&timelineDepartment=${d.id}#calendar-selector">
+                                         <i class="fa fa-fw fa-group"></i>
+                                         <c:out value="${d.name}" />
+                                    </a>
+                                </li>
+                                </c:forEach>
+                            </ul>
+                    </div>
+                </legend>
+
                 <div id="datepicker"></div>
             </div>
+
         </div>
+
+
 
         <div class="row">
             <div class="col-xs-12">

@@ -86,6 +86,51 @@
     color: #7B7B7B;
 }
 
+/* Week (for timeline view) */
+
+.datepicker-person {
+    width: 100px;
+    padding-top: 55px;
+}
+
+.datepicker-person div {
+    height: 40px;
+}
+
+.datepicker-person div span {
+    height: inherit;
+    display: table-cell;
+    vertical-align: middle;
+    line-height: 1.1;
+}
+
+.datepicker-week {
+    position: absolute;
+    width: 320px;
+    height: 100%;
+    transition: left 0.4s ease-in-out;
+}
+
+.datepicker-week:nth-child(1) { left: -960px; }
+.datepicker-week:nth-child(2) { left: -640px; }
+.datepicker-week:nth-child(3) { left: -320px; }
+.datepicker-week:nth-child(4) { left: 100; }
+.datepicker-week:nth-child(5) { left: 400px; }
+.datepicker-week:nth-child(6) { left: 700px; }
+.datepicker-week:nth-child(7) { left: 1000px; }
+.datepicker-week:nth-child(8) { left: 1300px; }
+.datepicker-week:nth-child(9) { left: 1600px; }
+.datepicker-week:nth-child(10) { left: 1900px; }
+
+.datepicker-week h3 {
+    margin : 0;
+    padding: 8px;
+    font-size: 12px;
+    text-align: center;
+    color: #7B7B7B;
+}
+
+
 .datepicker-table {
     border: none;
     border-spacing: 0;
@@ -155,6 +200,12 @@
     background: linear-gradient(-36deg, #FFEDA0 50%, #EFEFEF 50%);
 }
 
+.datepicker-day-personal-holiday.datepicker-day-half.datepicker-day-status-ALLOWED,
+.datepicker-day-personal-holiday.datepicker-day-half.datepicker-day-past.datepicker-day-status-ALLOWED {
+    background: linear-gradient(-36deg, #43C83C 50%, #EFEFEF 50%);
+}
+
+
 .datepicker-day:not([data-datepicker-selectable=false]) {
     cursor: pointer;
 }
@@ -177,23 +228,36 @@
     background-color: #FFEDA0;
 }
 
+.datepicker-day-personal-holiday:not(.datepicker-day-sick-note).datepicker-day-status-ALLOWED {
+    background-color: #43C83C;
+    color: #7B7B7B;
+}
+
 .datepicker-day:not([data-datepicker-selectable=false]).datepicker-day-personal-holiday:hover {
     color: #FF881F;
     background-color: #FFDF5F;
 }
 
-.datepicker-day-personal-holiday.datepicker-day-half:hover {
-    background: none;
-    color: #FF881F;
-    background-color: #FFDF5F;
+.datepicker-day:not([data-datepicker-selectable=false]):not(.datepicker-day-sick-note).datepicker-day-personal-holiday.datepicker-day-status-ALLOWED:hover {
+    background-color: #43C01C;
 }
 
+.datepicker-day-personal-holiday.datepicker-day-half:hover,
 .datepicker-day-selected.datepicker-day-personal-holiday,
 .datepicker-day-selected.datepicker-day-personal-holiday.datepicker-day-half {
     background: none;
-    color: #FF881F;
     background-color: #FFDF5F;
 }
+
+.datepicker-day-personal-holiday:not(.datepicker-day-sick-note).datepicker-day-half.datepicker-day-status-ALLOWED:hover,
+.datepicker-day-selected.datepicker-day-personal-holiday.datepicker-day-status-ALLOWED,
+.datepicker-day-selected.datepicker-day-personal-holiday.datepicker-day-half.datepicker-day-status-ALLOWED {
+    background: none;
+    background-color: #43C83C;
+}
+
+
+
 
 .datepicker-day-sick-note.datepicker-day-half {
     background: linear-gradient(-36deg, #FFC5BF 50%, #EFEFEF 50%);
@@ -219,6 +283,17 @@
     background-color: #FFA89F;
 }
 
+
+
+.datepicker-day-personal-holiday:not(.datepicker-day-sick-note).datepicker-day-half.datepicker-day-status-ALLOWED {
+    background: linear-gradient(-36deg, #43C83C 50%, #EFEFEF 50%);
+}
+
+.datepicker-day-personal-holiday:not(.datepicker-day-sick-note).datepicker-day-half.datepicker-day-past.datepicker-day-status-ALLOWED {
+    background: linear-gradient(-36deg, #43C83C 50%, #EFEFEF 50%);
+}
+
+
 /**************************************************************************
 
   RESPONSIVNESS
@@ -230,6 +305,10 @@
 
     .datepicker-day {
         padding: 9px;
+    }
+
+    .datepicker-person div {
+        height: 34px;
     }
 
     .datepicker-table {
@@ -244,6 +323,8 @@
         left: 0;
         width: 100%;
     }
+
+    .datepicker-week:nth-child(5) { left: 421px; }
 
 }
 

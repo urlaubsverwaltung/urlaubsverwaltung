@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
+import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
@@ -40,6 +41,7 @@ public class AbsenceControllerTest {
     private PersonService personServiceMock;
     private SickNoteService sickNoteServiceMock;
     private ApplicationService applicationServiceMock;
+    private DepartmentService departmentServiceMock;
 
     @Before
     public void setUp() {
@@ -47,9 +49,10 @@ public class AbsenceControllerTest {
         personServiceMock = Mockito.mock(PersonService.class);
         applicationServiceMock = Mockito.mock(ApplicationService.class);
         sickNoteServiceMock = Mockito.mock(SickNoteService.class);
+        departmentServiceMock = Mockito.mock(DepartmentService.class);
 
         mockMvc = MockMvcBuilders.standaloneSetup(new AbsenceController(personServiceMock, applicationServiceMock,
-                        sickNoteServiceMock)).setControllerAdvice(new ApiExceptionHandlerControllerAdvice()).build();
+                        sickNoteServiceMock, departmentServiceMock)).setControllerAdvice(new ApiExceptionHandlerControllerAdvice()).build();
     }
 
 
