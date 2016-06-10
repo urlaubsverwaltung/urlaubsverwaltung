@@ -82,10 +82,19 @@ public class PersonManagementController {
     @RequestMapping(value = "/staff/new", method = RequestMethod.GET)
     public String newPersonForm(Model model) {
 
-        model.addAttribute("personForm", new PersonForm());
-        model.addAttribute("weekDays", WeekDay.values());
+        prepareModelForNewPerson(model, new PersonForm());
 
         return PersonConstants.PERSON_FORM_JSP;
+    }
+
+
+    private void prepareModelForNewPerson(Model model, PersonForm personForm) {
+
+        model.addAttribute("personForm", personForm);
+        model.addAttribute("weekDays", WeekDay.values());
+        model.addAttribute("federalStateTypes", FederalState.values());
+        model.addAttribute("defaultFederalState",
+            settingsService.getSettings().getWorkingTimeSettings().getFederalState());
     }
 
 
@@ -101,8 +110,7 @@ public class PersonManagementController {
         }
 
         if (errors.hasErrors()) {
-            model.addAttribute("personForm", personForm);
-            model.addAttribute("weekDays", WeekDay.values());
+            prepareModelForNewPerson(model, personForm);
 
             return PersonConstants.PERSON_FORM_JSP;
         }
@@ -129,17 +137,23 @@ public class PersonManagementController {
         PersonForm personForm = new PersonForm(person, yearOfHolidaysAccount, account, workingTime,
                 person.getPermissions(), person.getNotifications());
 
+        prepareModelForExistingPerson(model, personForm, person);
+
+        return PersonConstants.PERSON_FORM_JSP;
+    }
+
+
+    private void prepareModelForExistingPerson(Model model, PersonForm personForm, Person person) {
+
         model.addAttribute("personForm", personForm);
         model.addAttribute("weekDays", WeekDay.values());
+        model.addAttribute("federalStateTypes", FederalState.values());
+        model.addAttribute("defaultFederalState",
+            settingsService.getSettings().getWorkingTimeSettings().getFederalState());
         model.addAttribute("workingTimes", workingTimeService.getByPerson(person));
         model.addAttribute("headOfDepartments", departmentService.getManagedDepartmentsOfDepartmentHead(person));
         model.addAttribute("secondStageDepartments",
             departmentService.getManagedDepartmentsOfSecondStageAuthority(person));
-        model.addAttribute("federalStateTypes", FederalState.values());
-        model.addAttribute("defaultFederalState",
-            settingsService.getSettings().getWorkingTimeSettings().getFederalState());
-
-        return PersonConstants.PERSON_FORM_JSP;
     }
 
 
@@ -158,9 +172,7 @@ public class PersonManagementController {
         }
 
         if (errors.hasErrors()) {
-            model.addAttribute("personForm", personForm);
-            model.addAttribute("weekDays", WeekDay.values());
-            model.addAttribute("workingTimes", workingTimeService.getByPerson(personToUpdate));
+            prepareModelForExistingPerson(model, personForm, personToUpdate);
 
             return PersonConstants.PERSON_FORM_JSP;
         }
