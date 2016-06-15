@@ -16,17 +16,15 @@
         </c:otherwise>
     </c:choose>
     <tr class="${CSS_CLASS}" onclick="navigate('${URL_PREFIX}/sicknote/${sickNote.id}');">
-        <td class="is-centered state ${sickNote.sickNoteType}">
-            <span class="hidden-print">
-                <c:choose>
-                    <c:when test="${sickNote.sickNoteType.category == 'SICK_NOTE_CHILD'}">
-                        <i class="fa fa-child"></i>
-                    </c:when>
-                    <c:otherwise>
-                        <i class="fa fa-medkit"></i>
-                    </c:otherwise>
-                </c:choose>
-            </span>
+        <td class="is-centered hidden-print state ${sickNote.sickNoteType}">
+            <c:choose>
+                <c:when test="${sickNote.sickNoteType.category == 'SICK_NOTE_CHILD'}">
+                    <i class="fa fa-child"></i>
+                </c:when>
+                <c:otherwise>
+                    <i class="fa fa-medkit"></i>
+                </c:otherwise>
+            </c:choose>
         </td>
         <td>
             <a href="${URL_PREFIX}/sicknote/${sickNote.id}" class="hidden-print">
@@ -40,7 +38,17 @@
             </h4>
 
             <p>
-                <uv:date date="${sickNote.startDate}"/> - <uv:date date="${sickNote.endDate}"/>
+                <c:choose>
+                    <c:when test="${sickNote.startDate == sickNote.endDate}">
+                        <spring:message code="${sickNote.weekDayOfStartDate}.short"/>,
+                        <uv:date date="${sickNote.startDate}"/>, <spring:message code="${sickNote.dayLength}"/>
+                    </c:when>
+                    <c:otherwise>
+                        <spring:message code="${sickNote.weekDayOfStartDate}.short"/>, <uv:date date="${sickNote.startDate}"/>
+                        -
+                        <spring:message code="${sickNote.weekDayOfEndDate}.short"/>, <uv:date date="${sickNote.endDate}"/>
+                    </c:otherwise>
+                </c:choose>
 
                 <c:if test="${sickNote.aubPresent == true}">
                     <span class="visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block">

@@ -29,6 +29,8 @@ import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.period.WeekDay;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
+import org.synyx.urlaubsverwaltung.core.settings.FederalState;
+import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.DateMidnightPropertyEditor;
@@ -65,6 +67,9 @@ public class PersonManagementController {
     @Autowired
     private DepartmentService departmentService;
 
+    @Autowired
+    private SettingsService settingsService;
+
     @InitBinder
     public void initBinder(DataBinder binder, Locale locale) {
 
@@ -77,10 +82,19 @@ public class PersonManagementController {
     @RequestMapping(value = "/staff/new", method = RequestMethod.GET)
     public String newPersonForm(Model model) {
 
-        model.addAttribute("personForm", new PersonForm());
-        model.addAttribute("weekDays", WeekDay.values());
+        prepareModelForNewPerson(model, new PersonForm());
 
         return PersonConstants.PERSON_FORM_JSP;
+    }
+
+
+    private void prepareModelForNewPerson(Model model, PersonForm personForm) {
+
+        model.addAttribute("personForm", personForm);
+        model.addAttribute("weekDays", WeekDay.values());
+        model.addAttribute("federalStateTypes", FederalState.values());
+        model.addAttribute("defaultFederalState",
+            settingsService.getSettings().getWorkingTimeSettings().getFederalState());
     }
 
 
@@ -96,8 +110,7 @@ public class PersonManagementController {
         }
 
         if (errors.hasErrors()) {
-            model.addAttribute("personForm", personForm);
-            model.addAttribute("weekDays", WeekDay.values());
+            prepareModelForNewPerson(model, personForm);
 
             return PersonConstants.PERSON_FORM_JSP;
         }
@@ -124,14 +137,23 @@ public class PersonManagementController {
         PersonForm personForm = new PersonForm(person, yearOfHolidaysAccount, account, workingTime,
                 person.getPermissions(), person.getNotifications());
 
+        prepareModelForExistingPerson(model, personForm, person);
+
+        return PersonConstants.PERSON_FORM_JSP;
+    }
+
+
+    private void prepareModelForExistingPerson(Model model, PersonForm personForm, Person person) {
+
         model.addAttribute("personForm", personForm);
         model.addAttribute("weekDays", WeekDay.values());
+        model.addAttribute("federalStateTypes", FederalState.values());
+        model.addAttribute("defaultFederalState",
+            settingsService.getSettings().getWorkingTimeSettings().getFederalState());
         model.addAttribute("workingTimes", workingTimeService.getByPerson(person));
         model.addAttribute("headOfDepartments", departmentService.getManagedDepartmentsOfDepartmentHead(person));
         model.addAttribute("secondStageDepartments",
             departmentService.getManagedDepartmentsOfSecondStageAuthority(person));
-
-        return PersonConstants.PERSON_FORM_JSP;
     }
 
 
@@ -150,9 +172,7 @@ public class PersonManagementController {
         }
 
         if (errors.hasErrors()) {
-            model.addAttribute("personForm", personForm);
-            model.addAttribute("weekDays", WeekDay.values());
-            model.addAttribute("workingTimes", workingTimeService.getByPerson(personToUpdate));
+            prepareModelForExistingPerson(model, personForm, personToUpdate);
 
             return PersonConstants.PERSON_FORM_JSP;
         }

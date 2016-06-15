@@ -34,7 +34,7 @@ public class ApplicationForLeaveStatisticsTest {
     public void setUp() {
 
         vacationTypeService = Mockito.mock(VacationTypeService.class);
-        vacationTypes = TestDataCreator.getVacationTypes();
+        vacationTypes = TestDataCreator.createVacationTypes();
         Mockito.when(vacationTypeService.getVacationTypes()).thenReturn(vacationTypes);
     }
 
@@ -75,12 +75,12 @@ public class ApplicationForLeaveStatisticsTest {
         Assert.assertEquals("Left overtime should have default value", BigDecimal.ZERO, statistics.getLeftOvertime());
 
         // Per vacation type
-        Assert.assertEquals("Wrong number of elements", TestDataCreator.getVacationTypes().size(),
+        Assert.assertEquals("Wrong number of elements", TestDataCreator.createVacationTypes().size(),
             statistics.getWaitingVacationDays().size());
-        Assert.assertEquals("Wrong number of elements", TestDataCreator.getVacationTypes().size(),
+        Assert.assertEquals("Wrong number of elements", TestDataCreator.createVacationTypes().size(),
             statistics.getAllowedVacationDays().size());
 
-        for (VacationType type : TestDataCreator.getVacationTypes()) {
+        for (VacationType type : TestDataCreator.createVacationTypes()) {
             Assert.assertEquals("Waiting vacation days for " + type.getCategory() + " should be zero", BigDecimal.ZERO,
                 statistics.getWaitingVacationDays().get(type));
             Assert.assertEquals("Allowed vacation days for " + type.getCategory() + " should be zero", BigDecimal.ZERO,

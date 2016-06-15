@@ -8,7 +8,6 @@ import java.beans.PropertyEditorSupport;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 
 import java.util.Locale;
@@ -53,10 +52,8 @@ public class DecimalNumberPropertyEditor extends PropertyEditorSupport {
         if (!StringUtils.hasText(text)) {
             this.setValue(null);
         } else {
-            DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols(locale);
-            char sep = decimalFormatSymbols.getDecimalSeparator();
-
-            String normalizedNumberToParse = text.replace(sep, '.');
+            // Don't worry: if dot is used instead of comma, nothing will happen
+            String normalizedNumberToParse = text.replace(',', '.');
 
             this.setValue(new BigDecimal(normalizedNumberToParse).setScale(2, RoundingMode.HALF_UP));
         }

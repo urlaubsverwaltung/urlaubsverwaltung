@@ -26,6 +26,7 @@ $(function() {
         dayPersonalHoliday    : 'datepicker-day-personal-holiday',
         dayHalfPersonalHoliday: 'datepicker-day-half-personal-holiday',
         daySickDay            : 'datepicker-day-sick-note',
+        dayStatus             : 'datepicker-day-status-{{status}}',
         next                  : 'datepicker-next',
         prev                  : 'datepicker-prev',
         month                 : 'datepicker-month',
@@ -78,6 +79,9 @@ $(function() {
             },
             absenceType: function(date) {
                 return holidayService.getAbsenceType(date);
+            },
+            status : function(date) {
+                return holidayService.getStatus(date);
             }
         };
 
@@ -252,6 +256,27 @@ $(function() {
 
             },
 
+            getStatus: function (date) {
+
+              var year = date.year();
+              var formattedDate = date.format('YYYY-MM-DD');
+
+              if(_CACHE['holiday'][year]) {
+
+                var holiday = _.findWhere(_CACHE['holiday'][year], {date: formattedDate});
+
+                if(holiday) {
+                  return holiday.status;
+                }
+
+              }
+
+              return null;
+
+            },
+
+
+
             getAbsenceId: function (date) {
 
               var year = date.year();
@@ -352,7 +377,7 @@ $(function() {
                 if (_CACHE['publicHoliday'][year]) {
                     return deferred.resolve( _CACHE[year] );
                 } else {
-                    return fetch('/holidays', {year: year}).success( cachePublicHoliday(year) );
+                    return fetch('/holidays', {year: year, person: personId}).success( cachePublicHoliday(year) );
                 }
             },
 
@@ -535,14 +560,16 @@ $(function() {
         function renderDay(date) {
 
             function classes() {
+                var status = assert.status(date)
                 return [
-                    assert.isToday           (date) ? CSS.dayToday           : '',
-                    assert.isWeekend         (date) ? CSS.dayWeekend         : '',
-                    assert.isPast            (date) ? CSS.dayPast            : '',
-                    assert.isPublicHoliday   (date) ? CSS.dayPublicHoliday   : '',
-                    assert.isPersonalHoliday (date) ? CSS.dayPersonalHoliday : '',
-                    assert.isSickDay         (date) ? CSS.daySickDay         : '',
-                    assert.isHalfDay         (date) ? CSS.dayHalf            : ''
+                    assert.isToday           (date) ? CSS.dayToday                                  : '',
+                    assert.isWeekend         (date) ? CSS.dayWeekend                                : '',
+                    assert.isPast            (date) ? CSS.dayPast                                   : '',
+                    assert.isPublicHoliday   (date) ? CSS.dayPublicHoliday                          : '',
+                    assert.isPersonalHoliday (date) ? CSS.dayPersonalHoliday                        : '',
+                    assert.isSickDay         (date) ? CSS.daySickDay                                : '',
+                    assert.isHalfDay         (date) ? CSS.dayHalf                                   : '',
+                    status                          ? CSS.dayStatus.replace("{{status}}", status)   : ""
                 ].join(' ');
             }
 

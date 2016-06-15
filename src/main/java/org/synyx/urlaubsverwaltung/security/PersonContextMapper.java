@@ -10,6 +10,7 @@ import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
 
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
@@ -73,9 +74,19 @@ public class PersonContextMapper implements UserDetailsContextMapper {
         Person person;
 
         if (optionalPerson.isPresent()) {
-            person = ldapSyncService.syncPerson(optionalPerson.get(), ldapUser.getFirstName(), ldapUser.getLastName(),
+            Person existentPerson = optionalPerson.get();
+
+            if (existentPerson.hasRole(Role.INACTIVE)) {
+                LOG.info("User '" + username + "' has been deactivated and can not sign in therefore");
+
+                throw new DisabledException("User '" + username + "' has been deactivated");
+            }
+
+            person = ldapSyncService.syncPerson(existentPerson, ldapUser.getFirstName(), ldapUser.getLastName(),
                     ldapUser.getEmail());
         } else {
+            LOG.info("No user found for username '" + username + "'");
+
             person = ldapSyncService.createPerson(login, ldapUser.getFirstName(), ldapUser.getLastName(),
                     ldapUser.getEmail());
         }

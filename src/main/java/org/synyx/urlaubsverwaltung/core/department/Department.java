@@ -105,7 +105,7 @@ public class Department extends AbstractPersistable<Integer> {
 
 
     @Override
-    public void setId(Integer id) {
+    public void setId(Integer id) { // NOSONAR - make it public instead of protected
 
         super.setId(id);
     }

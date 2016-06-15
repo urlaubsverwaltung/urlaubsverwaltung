@@ -31,7 +31,7 @@ class ApplicationServiceImpl implements ApplicationService {
     private final ApplicationDAO applicationDAO;
 
     @Autowired
-    public ApplicationServiceImpl(ApplicationDAO applicationDAO) {
+    ApplicationServiceImpl(ApplicationDAO applicationDAO) {
 
         this.applicationDAO = applicationDAO;
     }

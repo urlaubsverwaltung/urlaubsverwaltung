@@ -23,8 +23,8 @@
                     <div class="col-xs-12">
                         <h1 class="error-code" title="${exception.message}">
                             <c:choose>
-                                <c:when test="${statusCode == 403}">
-                                    403
+                                <c:when test="${statusCode == 403 || statusCode == 404}">
+                                    <c:out value="${statusCode}"/>
                                 </c:when>
                                 <c:otherwise>
                                     <i class="fa fa-frown-o"></i>
@@ -39,6 +39,9 @@
                             <c:choose>
                                 <c:when test="${statusCode == 403}">
                                     Dir fehlen die Berechtigungen für die angeforderte Seite.
+                                </c:when>
+                                <c:when test="${statusCode == 404}">
+                                    Die angeforderte Seite existiert nicht.
                                 </c:when>
                                 <c:otherwise>
                                     Hier hat sich ein Fehler eingeschlichen...

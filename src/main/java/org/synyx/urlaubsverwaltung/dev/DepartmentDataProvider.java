@@ -4,6 +4,8 @@ import org.joda.time.DateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 import org.springframework.stereotype.Component;
 
 import org.synyx.urlaubsverwaltung.core.department.Department;
@@ -19,6 +21,7 @@ import java.util.List;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Component
+@ConditionalOnProperty("testdata.create")
 class DepartmentDataProvider {
 
     private final DepartmentService departmentService;

@@ -4,7 +4,7 @@
 <%@attribute name="cssClass" type="java.lang.String" required="false" %>
 
 <div class="box ${cssClass}">
-    <span class="box-icon bg-green">
+    <span class="box-icon bg-green hidden-print">
         <i class="fa fa-history"></i>
     </span>
     <span class="box-text">

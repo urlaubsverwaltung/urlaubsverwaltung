@@ -12,6 +12,8 @@ import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.settings.FederalState;
+import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.util.DateFormat;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 
@@ -30,12 +32,15 @@ public class WorkDaysService {
 
     private final PublicHolidaysService publicHolidaysService;
     private final WorkingTimeService workingTimeService;
+    private final SettingsService settingsService;
 
     @Autowired
-    public WorkDaysService(PublicHolidaysService publicHolidaysService, WorkingTimeService workingTimeService) {
+    public WorkDaysService(PublicHolidaysService publicHolidaysService, WorkingTimeService workingTimeService,
+        SettingsService settingsService) {
 
         this.publicHolidaysService = publicHolidaysService;
         this.workingTimeService = workingTimeService;
+        this.settingsService = settingsService;
     }
 
     /**
@@ -88,14 +93,18 @@ public class WorkDaysService {
      */
     public BigDecimal getWorkDays(DayLength dayLength, DateMidnight startDate, DateMidnight endDate, Person person) {
 
-        Optional<WorkingTime> workingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(person,
-                startDate);
+        Optional<WorkingTime> optionalWorkingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(
+                person, startDate);
 
-        if (!workingTime.isPresent()) {
+        if (!optionalWorkingTime.isPresent()) {
             throw new NoValidWorkingTimeException("No working time found for User '" + person.getLoginName()
                 + "' in period " + startDate.toString(DateFormat.PATTERN) + " - "
                 + endDate.toString(DateFormat.PATTERN));
         }
+
+        WorkingTime workingTime = optionalWorkingTime.get();
+
+        FederalState federalState = getFederalState(workingTime);
 
         BigDecimal vacationDays = BigDecimal.ZERO;
 
@@ -103,10 +112,10 @@ public class WorkDaysService {
 
         while (!day.isAfter(endDate)) {
             // value may be 1 for public holiday, 0 for not public holiday or 0.5 for Christmas Eve or New Year's Eve
-            BigDecimal duration = publicHolidaysService.getWorkingDurationOfDate(day);
+            BigDecimal duration = publicHolidaysService.getWorkingDurationOfDate(day, federalState);
 
             int dayOfWeek = day.getDayOfWeek();
-            BigDecimal workingDuration = workingTime.get().getDayLengthForWeekDay(dayOfWeek).getDuration();
+            BigDecimal workingDuration = workingTime.getDayLengthForWeekDay(dayOfWeek).getDuration();
 
             BigDecimal result = duration.multiply(workingDuration);
 
@@ -121,5 +130,15 @@ public class WorkDaysService {
         }
 
         return vacationDays.multiply(dayLength.getDuration()).setScale(1);
+    }
+
+
+    private FederalState getFederalState(WorkingTime workingTime) {
+
+        if (workingTime.getFederalStateOverride().isPresent()) {
+            return workingTime.getFederalStateOverride().get();
+        }
+
+        return settingsService.getSettings().getWorkingTimeSettings().getFederalState();
     }
 }

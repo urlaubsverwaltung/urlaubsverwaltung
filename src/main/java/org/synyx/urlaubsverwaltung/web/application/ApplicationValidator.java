@@ -21,10 +21,10 @@ import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
-import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.AbsenceSettings;
 import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.core.settings.WorkingTimeSettings;
 import org.synyx.urlaubsverwaltung.core.util.CalcUtil;
 
 import java.math.BigDecimal;
@@ -99,11 +99,13 @@ public class ApplicationValidator implements Validator {
 
         ApplicationForLeaveForm applicationForm = (ApplicationForLeaveForm) target;
 
+        Settings settings = settingsService.getSettings();
+
         // check if date fields are valid
-        validateDateFields(applicationForm, errors);
+        validateDateFields(applicationForm, settings, errors);
 
         // check hours
-        validateHours(applicationForm, errors);
+        validateHours(applicationForm, settings, errors);
 
         // check if reason is not filled
         if (VacationCategory.SPECIALLEAVE.equals(applicationForm.getVacationType().getCategory())
@@ -119,12 +121,12 @@ public class ApplicationValidator implements Validator {
         if (!errors.hasErrors()) {
             // validate if applying for leave is possible
             // (check overlapping applications for leave, vacation days of the person etc.)
-            validateIfApplyingForLeaveIsPossible(applicationForm, errors);
+            validateIfApplyingForLeaveIsPossible(applicationForm, settings, errors);
         }
     }
 
 
-    private void validateDateFields(ApplicationForLeaveForm applicationForLeave, Errors errors) {
+    private void validateDateFields(ApplicationForLeaveForm applicationForLeave, Settings settings, Errors errors) {
 
         DateMidnight startDate = applicationForLeave.getStartDate();
         DateMidnight endDate = applicationForLeave.getEndDate();
@@ -133,7 +135,7 @@ public class ApplicationValidator implements Validator {
         validateNotNull(endDate, ATTRIBUTE_END_DATE, errors);
 
         if (startDate != null && endDate != null) {
-            validatePeriod(startDate, endDate, applicationForLeave.getDayLength(), errors);
+            validatePeriod(startDate, endDate, applicationForLeave.getDayLength(), settings, errors);
             validateTime(applicationForLeave.getStartTime(), applicationForLeave.getEndTime(), errors);
         }
     }
@@ -148,13 +150,13 @@ public class ApplicationValidator implements Validator {
     }
 
 
-    private void validatePeriod(DateMidnight startDate, DateMidnight endDate, DayLength dayLength, Errors errors) {
+    private void validatePeriod(DateMidnight startDate, DateMidnight endDate, DayLength dayLength, Settings settings,
+        Errors errors) {
 
         // ensure that startDate < endDate
         if (startDate.isAfter(endDate)) {
             errors.reject(ERROR_PERIOD);
         } else {
-            Settings settings = settingsService.getSettings();
             AbsenceSettings absenceSettings = settings.getAbsenceSettings();
 
             validateNotTooFarInTheFuture(endDate, absenceSettings, errors);
@@ -202,7 +204,10 @@ public class ApplicationValidator implements Validator {
         boolean startTimeIsProvided = startTime != null;
         boolean endTimeIsProvided = endTime != null;
 
-        if ((startTimeIsProvided && !endTimeIsProvided) || (!startTimeIsProvided && endTimeIsProvided)) {
+        boolean onlyStartTimeProvided = startTimeIsProvided && !endTimeIsProvided;
+        boolean onlyEndTimeProvided = !startTimeIsProvided && endTimeIsProvided;
+
+        if (onlyStartTimeProvided || onlyEndTimeProvided) {
             errors.reject(ERROR_PERIOD);
         }
 
@@ -216,12 +221,14 @@ public class ApplicationValidator implements Validator {
     }
 
 
-    private void validateHours(ApplicationForLeaveForm applicationForLeave, Errors errors) {
+    private void validateHours(ApplicationForLeaveForm applicationForLeave, Settings settings, Errors errors) {
 
         BigDecimal hours = applicationForLeave.getHours();
         boolean isOvertime = VacationCategory.OVERTIME.equals(applicationForLeave.getVacationType().getCategory());
+        boolean overtimeFunctionIsActive = settings.getWorkingTimeSettings().isOvertimeActive();
+        boolean hoursRequiredButNotProvided = isOvertime && overtimeFunctionIsActive && hours == null;
 
-        if (isOvertime && hours == null && !errors.hasFieldErrors(ATTRIBUTE_HOURS)) {
+        if (hoursRequiredButNotProvided && !errors.hasFieldErrors(ATTRIBUTE_HOURS)) {
             errors.rejectValue(ATTRIBUTE_HOURS, ERROR_MISSING_HOURS);
         }
 
@@ -239,32 +246,24 @@ public class ApplicationValidator implements Validator {
     }
 
 
-    private void validateIfApplyingForLeaveIsPossible(ApplicationForLeaveForm applicationForm, Errors errors) {
+    private void validateIfApplyingForLeaveIsPossible(ApplicationForLeaveForm applicationForm, Settings settings,
+        Errors errors) {
 
         Application application = applicationForm.generateApplicationForLeave();
 
         /**
          * Ensure the person has a working time for the period of the application for leave
          */
-        Optional<WorkingTime> workingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(
-                application.getPerson(), application.getStartDate());
-
-        if (!workingTime.isPresent()) {
+        if (!personHasWorkingTime(application)) {
             errors.reject(ERROR_WORKING_TIME);
 
             return;
         }
 
         /**
-         * Calculate the work days
-         */
-        BigDecimal days = calendarService.getWorkDays(application.getDayLength(), application.getStartDate(),
-                application.getEndDate(), application.getPerson());
-
-        /**
          * Ensure that no one applies for leave for a vacation of 0 days
          */
-        if (CalcUtil.isZero(days)) {
+        if (vacationOfZeroDays(application)) {
             errors.reject(ERROR_ZERO_DAYS);
 
             return;
@@ -273,11 +272,7 @@ public class ApplicationValidator implements Validator {
         /**
          * Ensure that there is no application for leave and no sick note in the same period
          */
-        OverlapCase overlap = overlapService.checkOverlap(application);
-
-        boolean isOverlapping = overlap == OverlapCase.FULLY_OVERLAPPING || overlap == OverlapCase.PARTLY_OVERLAPPING;
-
-        if (isOverlapping) {
+        if (vacationIsOverlapping(application)) {
             errors.reject(ERROR_OVERLAP);
 
             return;
@@ -285,35 +280,80 @@ public class ApplicationValidator implements Validator {
 
         /**
          * Ensure that the person has enough vacation days left if the vacation type is
-         * {@link org.synyx.urlaubsverwaltung.core.application.domain.VacationType.HOLIDAY}
+         * {@link org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory.HOLIDAY}
          */
-
-        boolean isHoliday = VacationCategory.HOLIDAY.equals(application.getVacationType().getCategory());
-
-        if (isHoliday) {
-            if (!calculationService.checkApplication(application)) {
-                errors.reject(ERROR_NOT_ENOUGH_DAYS);
-            }
+        if (!enoughVacationDaysLeft(application)) {
+            errors.reject(ERROR_NOT_ENOUGH_DAYS);
         }
 
         /**
-         * Check overtime of given user
+         * Ensure that the person has enough overtime hours left if the vacation type is
+         * {@link org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory.OVERTIME}
          */
-        Boolean overtimeActive = settingsService.getSettings().getWorkingTimeSettings().isOvertimeActive();
-        Boolean isOvertime = VacationCategory.OVERTIME.equals(application.getVacationType().getCategory());
-
-        if (isOvertime && overtimeActive) {
-            if (!checkOvertimeHours(application)) {
-                errors.reject(ERROR_NOT_ENOUGH_OVERTIME);
-            }
+        if (!enoughOvertimeHoursLeft(application, settings)) {
+            errors.reject(ERROR_NOT_ENOUGH_OVERTIME);
         }
     }
 
 
-    private boolean checkOvertimeHours(Application application) {
+    private boolean personHasWorkingTime(Application application) {
 
-        Settings settings = settingsService.getSettings();
-        BigDecimal minimumOvertime = new BigDecimal(settings.getWorkingTimeSettings().getMinimumOvertime());
+        Optional<WorkingTime> workingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(
+                application.getPerson(), application.getStartDate());
+
+        return workingTime.isPresent();
+    }
+
+
+    private boolean vacationOfZeroDays(Application application) {
+
+        BigDecimal days = calendarService.getWorkDays(application.getDayLength(), application.getStartDate(),
+                application.getEndDate(), application.getPerson());
+
+        return CalcUtil.isZero(days);
+    }
+
+
+    private boolean vacationIsOverlapping(Application application) {
+
+        OverlapCase overlap = overlapService.checkOverlap(application);
+
+        return overlap == OverlapCase.FULLY_OVERLAPPING || overlap == OverlapCase.PARTLY_OVERLAPPING;
+    }
+
+
+    private boolean enoughVacationDaysLeft(Application application) {
+
+        boolean isHoliday = VacationCategory.HOLIDAY.equals(application.getVacationType().getCategory());
+
+        if (isHoliday) {
+            return calculationService.checkApplication(application);
+        }
+
+        return true;
+    }
+
+
+    private boolean enoughOvertimeHoursLeft(Application application, Settings settings) {
+
+        Boolean isOvertime = VacationCategory.OVERTIME.equals(application.getVacationType().getCategory());
+
+        if (isOvertime) {
+            WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
+            Boolean overtimeActive = workingTimeSettings.isOvertimeActive();
+
+            if (overtimeActive && application.getHours() != null) {
+                return checkOvertimeHours(application, workingTimeSettings);
+            }
+        }
+
+        return true;
+    }
+
+
+    private boolean checkOvertimeHours(Application application, WorkingTimeSettings settings) {
+
+        BigDecimal minimumOvertime = new BigDecimal(settings.getMinimumOvertime());
         BigDecimal leftOvertimeForPerson = overtimeService.getLeftOvertimeForPerson(application.getPerson());
 
         BigDecimal temporaryOvertimeForPerson = leftOvertimeForPerson.subtract(application.getHours());

@@ -157,15 +157,13 @@
 
                 <div class="person--role checkbox">
                     <label>
-                        <form:checkbox path="permissions" value="INACTIVE"/><spring:message code="person.form.permissions.roles.INACTIVE"/>:
-                        <spring:message code="person.form.permissions.roles.INACTIVE.description"/>
+                        <form:checkbox path="permissions" value="INACTIVE"/><spring:message code="person.form.permissions.roles.INACTIVE"/>
                     </label>
                 </div>
 
                 <div class="person--role checkbox">
                     <label>
-                        <form:checkbox path="permissions" value="USER"/><spring:message code="person.form.permissions.roles.USER"/>:
-                        <spring:message code="person.form.permissions.roles.USER.description"/>
+                        <form:checkbox path="permissions" value="USER"/><spring:message code="person.form.permissions.roles.USER"/>
                     </label>
                     <%-- It's obligatory for now that users get mail notifications about progress of their own applications for leave --%>
                     <form:hidden path="notifications" value="NOTIFICATION_USER" />
@@ -173,8 +171,7 @@
 
                 <div class="person--role checkbox">
                     <label>
-                        <form:checkbox path="permissions" value="DEPARTMENT_HEAD"/><spring:message code="person.form.permissions.roles.DEPARTMENT_HEAD"/>:
-                        <spring:message code="person.form.permissions.roles.DEPARTMENT_HEAD.description"/>
+                        <form:checkbox path="permissions" value="DEPARTMENT_HEAD"/><spring:message code="person.form.permissions.roles.DEPARTMENT_HEAD"/>
                     </label>
                     <label class="person--mail-notification">
                         <form:checkbox path="notifications" value="NOTIFICATION_DEPARTMENT_HEAD"/>
@@ -197,8 +194,7 @@
 
                 <div class="person--role checkbox">
                     <label>
-                        <form:checkbox path="permissions" value="SECOND_STAGE_AUTHORITY"/><spring:message code="person.form.permissions.roles.SECOND_STAGE_AUTHORITY"/>:
-                        <spring:message code="person.form.permissions.roles.SECOND_STAGE_AUTHORITY.description"/>
+                        <form:checkbox path="permissions" value="SECOND_STAGE_AUTHORITY"/><spring:message code="person.form.permissions.roles.SECOND_STAGE_AUTHORITY"/>
                     </label>
                     <label class="person--mail-notification">
                         <form:checkbox path="notifications" value="NOTIFICATION_SECOND_STAGE_AUTHORITY"/>
@@ -221,8 +217,7 @@
 
                 <div class="person--role checkbox">
                     <label>
-                        <form:checkbox path="permissions" value="BOSS"/><spring:message code="person.form.permissions.roles.BOSS"/>:
-                        <spring:message code="person.form.permissions.roles.BOSS.description"/>
+                        <form:checkbox path="permissions" value="BOSS"/><spring:message code="person.form.permissions.roles.BOSS"/>
                     </label>
                     <label class="person--mail-notification">
                         <form:checkbox path="notifications" value="NOTIFICATION_BOSS"/>
@@ -232,8 +227,7 @@
 
                 <div class="person--role checkbox">
                     <label>
-                        <form:checkbox path="permissions" value="OFFICE"/><spring:message code="person.form.permissions.roles.OFFICE"/>:
-                        <spring:message code="person.form.permissions.roles.OFFICE.description"/>
+                        <form:checkbox path="permissions" value="OFFICE"/><spring:message code="person.form.permissions.roles.OFFICE"/>
                     </label>
                     <label class="person--mail-notification">
                         <form:checkbox path="notifications" value="NOTIFICATION_OFFICE"/>
@@ -271,11 +265,33 @@
     <div class="col-md-4 col-md-push-8">
     <span class="help-block">
         <i class="fa fa-fw fa-info-circle"></i>
+        <spring:message code="federalState.${defaultFederalState}" var="defaultFederalStateName" />
+        <spring:message code="person.form.workingTime.federalState.description" arguments="${defaultFederalStateName}" />
+    </span>
+    <span class="help-block">
+        <i class="fa fa-fw fa-info-circle"></i>
         <spring:message code="person.form.workingTime.description"/>
     </span>
     </div>
 
     <div class="col-md-8 col-md-pull-4">
+        <div class="form-group">
+            <label class="control-label col-md-3" for="federalStateType">
+                <spring:message code='settings.publicHolidays.federalState'/>:
+            </label>
+
+            <div class="col-md-9">
+                <form:select path="federalState" id="federalStateType" class="form-control" cssErrorClass="form-control error">
+                    <form:option value=""><spring:message code="person.form.workingTime.federalState.default" arguments="${defaultFederalStateName}" /></form:option>
+                    <option disabled='true' >---------------</option>
+                    <c:forEach items="${federalStateTypes}" var="federalStateType">
+                        <form:option value="${federalStateType}"><spring:message code="federalState.${federalStateType}" /></form:option>
+                    </c:forEach>
+                </form:select>
+            </div>
+        </div>
+
+
         <c:if test="${fn:length(workingTimes) > 1}">
 
             <div class="form-group">
@@ -410,6 +426,17 @@
             <div class="col-md-9">
                 <form:input path="annualVacationDays" class="form-control" cssErrorClass="form-control error" size="1" id="annualVacationDays"/>
                 <span class="help-inline"><form:errors path="annualVacationDays" cssClass="error"/></span>
+            </div>
+        </div>
+
+        <div class="form-group is-required">
+            <label class="control-label col-md-3" for="actualVacationDays">
+                <spring:message code='person.form.annualVacation.actualVacation'/>:
+            </label>
+
+            <div class="col-md-9">
+                <form:input path="actualVacationDays" class="form-control" cssErrorClass="form-control error" size="1" id="actualVacationDays"/>
+                <span class="help-inline"><form:errors path="actualVacationDays" cssClass="error"/></span>
             </div>
         </div>
 

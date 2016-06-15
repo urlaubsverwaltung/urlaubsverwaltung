@@ -128,6 +128,23 @@ public final class TestDataCreator {
     }
 
 
+    public static Application createApplication(Person person, DateMidnight startDate, DateMidnight endDate,
+        DayLength dayLength) {
+
+        VacationType vacationType = TestDataCreator.createVacationType(VacationCategory.HOLIDAY, "Erholungsurlaub");
+
+        Application application = new Application();
+        application.setPerson(person);
+        application.setStartDate(startDate);
+        application.setEndDate(endDate);
+        application.setDayLength(dayLength);
+        application.setVacationType(vacationType);
+        application.setStatus(ApplicationStatus.WAITING);
+
+        return application;
+    }
+
+
     public static Application createApplication(Person person, VacationType vacationType, DateMidnight startDate,
         DateMidnight endDate, DayLength dayLength) {
 
@@ -250,7 +267,7 @@ public final class TestDataCreator {
     }
 
 
-    public static List<VacationType> getVacationTypes() {
+    public static List<VacationType> createVacationTypes() {
 
         ArrayList<VacationType> vacationTypes = new ArrayList<>();
 

@@ -4,9 +4,11 @@ $(function () {
   tooltip();
 
   // do avoid clickable table cell if there is an action within
-  $('table.selectable-table td').click(function () {
+  $('table.selectable-table td').click(function (event) {
 
-    var href = $(this).find('a').attr('href');
+    var target = event.target;
+    var href = $(target).attr('href');
+
     if (href) {
       window.location = href;
       return false;

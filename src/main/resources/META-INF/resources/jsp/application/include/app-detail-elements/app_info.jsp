@@ -5,9 +5,9 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <div class="box">
-    <span class="box-icon bg-yellow">
+    <span class="box-icon bg-yellow hidden-print">
         <c:choose>
-            <c:when test="${application.vacationType == 'HOLIDAY'}">
+            <c:when test="${application.vacationType.category == 'HOLIDAY'}">
                 <i class="fa fa-sun-o"></i>
             </c:when>
             <c:otherwise>
@@ -46,7 +46,10 @@
         <c:choose>
             <c:when test="${application.startDate == application.endDate}">
                 <c:set var="APPLICATION_DATE">
-                    <h5 class="is-inline-block is-sticky"><uv:date date="${application.startDate}"/></h5>
+                    <h5 class="is-inline-block is-sticky">
+                        <spring:message code="${application.weekDayOfStartDate}.short"/>,
+                        <uv:date date="${application.startDate}"/>
+                    </h5>
                 </c:set>
                 <c:set var="APPLICATION_DAY_LENGTH">
                     <spring:message code="${application.dayLength}"/>
@@ -55,10 +58,16 @@
             </c:when>
             <c:otherwise>
                 <c:set var="APPLICATION_START_DATE">
-                    <h5 class="is-inline-block is-sticky"><uv:date date="${application.startDate}"/></h5>
+                    <h5 class="is-inline-block is-sticky">
+                        <spring:message code="${application.weekDayOfStartDate}.short"/>,
+                        <uv:date date="${application.startDate}"/>
+                    </h5>
                 </c:set>
                 <c:set var="APPLICATION_END_DATE">
-                    <h5 class="is-inline-block is-sticky"><uv:date date="${application.endDate}"/></h5>
+                    <h5 class="is-inline-block is-sticky">
+                        <spring:message code="${application.weekDayOfEndDate}.short"/>,
+                        <uv:date date="${application.endDate}"/>
+                    </h5>
                 </c:set>
                 <spring:message code="absence.period.multipleDays" arguments="${APPLICATION_START_DATE};${APPLICATION_END_DATE}" argumentSeparator=";"/>
             </c:otherwise>
@@ -95,7 +104,7 @@
                   </c:if>
                 });
             </script>
-            <c:if test="${application.vacationType.category == 'OVERTIME'}">
+            <c:if test="${application.vacationType.category == 'OVERTIME' && application.hours != null}">
                 <span class="text-muted">
                     <br/>
                     <uv:number number="${application.hours}"/>
@@ -193,6 +202,34 @@
                     <spring:message code='application.data.teamInformed.false'/>
                 </c:otherwise>
             </c:choose>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <spring:message code="application.data.workingTime"/>
+        </td>
+        <td>
+            <c:if test="${workingTime.monday.duration > 0}">
+                <spring:message code="MONDAY.short"/>
+            </c:if>
+            <c:if test="${workingTime.tuesday.duration > 0}">
+                <spring:message code="TUESDAY.short"/>
+            </c:if>
+            <c:if test="${workingTime.wednesday.duration > 0}">
+                <spring:message code="WEDNESDAY.short"/>
+            </c:if>
+            <c:if test="${workingTime.thursday.duration > 0}">
+                <spring:message code="THURSDAY.short"/>
+            </c:if>
+            <c:if test="${workingTime.friday.duration > 0}">
+                <spring:message code="FRIDAY.short"/>
+            </c:if>
+            <c:if test="${workingTime.saturday.duration > 0}">
+                <spring:message code="SATURDAY.short"/>
+            </c:if>
+            <c:if test="${workingTime.sunday.duration > 0}">
+                <spring:message code="SUNDAY.short"/>
+            </c:if>
         </td>
     </tr>
 </table>

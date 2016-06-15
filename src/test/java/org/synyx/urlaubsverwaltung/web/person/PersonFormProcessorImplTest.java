@@ -19,6 +19,7 @@ import org.synyx.urlaubsverwaltung.core.person.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.person.Role;
+import org.synyx.urlaubsverwaltung.core.settings.FederalState;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.math.BigDecimal;
@@ -60,7 +61,8 @@ public class PersonFormProcessorImplTest {
         examplePersonForm.setLastName("Muster");
         examplePersonForm.setFirstName("Marlene");
         examplePersonForm.setEmail("muster@synyx.de");
-        examplePersonForm.setAnnualVacationDays(new BigDecimal("28"));
+        examplePersonForm.setAnnualVacationDays(new BigDecimal("30"));
+        examplePersonForm.setActualVacationDays(new BigDecimal("28"));
         examplePersonForm.setRemainingVacationDays(new BigDecimal("4"));
         examplePersonForm.setRemainingVacationDaysNotExpiring(new BigDecimal("3"));
         examplePersonForm.setValidFrom(DateMidnight.now());
@@ -90,7 +92,7 @@ public class PersonFormProcessorImplTest {
         Person person = service.create(examplePersonForm);
 
         Mockito.verify(workingTimeService)
-            .touch(Mockito.anyListOf(Integer.class), Mockito.any(DateMidnight.class), Mockito.eq(person));
+            .touch(Mockito.anyListOf(Integer.class), Mockito.eq(Optional.empty()),Mockito.any(DateMidnight.class), Mockito.eq(person));
     }
 
 
@@ -101,8 +103,8 @@ public class PersonFormProcessorImplTest {
 
         Mockito.verify(accountInteractionService)
             .createHolidaysAccount(Mockito.eq(person), Mockito.eq(new DateMidnight(2014, 1, 1)),
-                Mockito.eq(new DateMidnight(2014, 12, 31)), Mockito.eq(new BigDecimal("28")),
-                Mockito.eq(new BigDecimal("4")), Mockito.eq(new BigDecimal("3")));
+                Mockito.eq(new DateMidnight(2014, 12, 31)), Mockito.eq(new BigDecimal("30")),
+                Mockito.eq(new BigDecimal("28")), Mockito.eq(new BigDecimal("4")), Mockito.eq(new BigDecimal("3")));
     }
 
 

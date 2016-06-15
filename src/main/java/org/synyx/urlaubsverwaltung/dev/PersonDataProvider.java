@@ -4,6 +4,8 @@ import org.joda.time.DateMidnight;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 import org.springframework.stereotype.Component;
 
 import org.synyx.urlaubsverwaltung.core.account.service.AccountInteractionService;
@@ -23,6 +25,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 
 /**
@@ -31,6 +34,7 @@ import java.util.List;
  * @author  Aljona Murygina - murygina@synyx.de
  */
 @Component
+@ConditionalOnProperty("testdata.create")
 class PersonDataProvider {
 
     private final PersonService personService;
@@ -61,10 +65,11 @@ class PersonDataProvider {
         int currentYear = DateMidnight.now().getYear();
         workingTimeService.touch(Arrays.asList(WeekDay.MONDAY.getDayOfWeek(), WeekDay.TUESDAY.getDayOfWeek(),
                 WeekDay.WEDNESDAY.getDayOfWeek(), WeekDay.THURSDAY.getDayOfWeek(), WeekDay.FRIDAY.getDayOfWeek()),
-            new DateMidnight(currentYear - 1, 1, 1), person);
+            Optional.empty(), new DateMidnight(currentYear - 1, 1, 1), person);
 
         accountInteractionService.createHolidaysAccount(person, DateUtil.getFirstDayOfYear(currentYear),
-            DateUtil.getLastDayOfYear(currentYear), new BigDecimal("28.5"), new BigDecimal("5"), BigDecimal.ZERO);
+            DateUtil.getLastDayOfYear(currentYear), new BigDecimal("30"), new BigDecimal("30"), new BigDecimal("5"),
+            BigDecimal.ZERO);
 
         return person;
     }

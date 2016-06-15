@@ -246,4 +246,46 @@ public class SickNoteValidatorTest {
         Mockito.verify(workingTimeService).getByPersonAndValidityDateEqualsOrMinorDate(sickNote.getPerson(), startDate);
         Mockito.verify(errors).reject("sicknote.error.noValidWorkingTime");
     }
+
+
+    @Test
+    public void ensureInvalidPeriodWithValidAUBPeriodIsNotValid() {
+
+        DateMidnight startDate = new DateMidnight(2016, DateTimeConstants.MARCH, 16);
+        DateMidnight endDate = new DateMidnight(2016, DateTimeConstants.MARCH, 14);
+
+        DateMidnight aubStartDate = new DateMidnight(2016, DateTimeConstants.MARCH, 14);
+        DateMidnight aubEndDate = new DateMidnight(2016, DateTimeConstants.MARCH, 16);
+
+        sickNote.setStartDate(startDate);
+        sickNote.setEndDate(endDate);
+
+        sickNote.setAubStartDate(aubStartDate);
+        sickNote.setAubEndDate(aubEndDate);
+
+        validator.validate(sickNote, errors);
+
+        Mockito.verify(errors).rejectValue("endDate", "error.entry.invalidPeriod");
+    }
+
+
+    @Test
+    public void ensureInvalidAUBPeriodWithValidPeriodIsNotValid() {
+
+        DateMidnight startDate = new DateMidnight(2016, DateTimeConstants.MARCH, 14);
+        DateMidnight endDate = new DateMidnight(2016, DateTimeConstants.MARCH, 16);
+
+        DateMidnight aubStartDate = new DateMidnight(2016, DateTimeConstants.MARCH, 16);
+        DateMidnight aubEndDate = new DateMidnight(2016, DateTimeConstants.MARCH, 14);
+
+        sickNote.setStartDate(startDate);
+        sickNote.setEndDate(endDate);
+
+        sickNote.setAubStartDate(aubStartDate);
+        sickNote.setAubEndDate(aubEndDate);
+
+        validator.validate(sickNote, errors);
+
+        Mockito.verify(errors).rejectValue("aubEndDate", "error.entry.invalidPeriod");
+    }
 }

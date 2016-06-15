@@ -30,6 +30,9 @@ public class WorkingTimeTest {
         Assert.assertEquals("Wrong day length for friday", DayLength.ZERO, workingTime.getFriday());
         Assert.assertEquals("Wrong day length for saturday", DayLength.ZERO, workingTime.getSaturday());
         Assert.assertEquals("Wrong day length for sunday", DayLength.ZERO, workingTime.getSunday());
+
+        Assert.assertFalse("There should be no federal state override",
+            workingTime.getFederalStateOverride().isPresent());
     }
 
 

@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.core.period.WeekDay;
 import org.synyx.urlaubsverwaltung.core.person.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.Role;
+import org.synyx.urlaubsverwaltung.core.settings.FederalState;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 
 import java.math.BigDecimal;
@@ -47,6 +48,8 @@ public class PersonForm {
 
     private BigDecimal annualVacationDays;
 
+    private BigDecimal actualVacationDays;
+
     private BigDecimal remainingVacationDays;
 
     private BigDecimal remainingVacationDaysNotExpiring;
@@ -58,6 +61,8 @@ public class PersonForm {
     private List<Role> permissions = new ArrayList<>();
 
     private List<MailNotification> notifications = new ArrayList<>();
+
+    private FederalState federalState;
 
     public PersonForm() {
 
@@ -91,6 +96,7 @@ public class PersonForm {
             this.holidaysAccountValidFrom = holidaysAccount.getValidFrom();
             this.holidaysAccountValidTo = holidaysAccount.getValidTo();
             this.annualVacationDays = holidaysAccount.getAnnualVacationDays();
+            this.actualVacationDays = holidaysAccount.getVacationDays();
             this.remainingVacationDays = holidaysAccount.getRemainingVacationDays();
             this.remainingVacationDaysNotExpiring = holidaysAccount.getRemainingVacationDaysNotExpiring();
         } else {
@@ -113,6 +119,7 @@ public class PersonForm {
             }
 
             this.validFrom = workingTime.getValidFrom();
+            this.federalState = workingTime.getFederalStateOverride().orElse(null);
         }
 
         this.permissions = new ArrayList<>(roles);
@@ -152,6 +159,18 @@ public class PersonForm {
     public void setAnnualVacationDays(BigDecimal annualVacationDays) {
 
         this.annualVacationDays = annualVacationDays;
+    }
+
+
+    public BigDecimal getActualVacationDays() {
+
+        return actualVacationDays;
+    }
+
+
+    public void setActualVacationDays(BigDecimal actualVacationDays) {
+
+        this.actualVacationDays = actualVacationDays;
     }
 
 
@@ -296,5 +315,13 @@ public class PersonForm {
     public void setNotifications(List<MailNotification> notifications) {
 
         this.notifications = notifications;
+    }
+
+    public FederalState getFederalState() {
+        return federalState;
+    }
+
+    public void setFederalState(FederalState federalState) {
+        this.federalState = federalState;
     }
 }

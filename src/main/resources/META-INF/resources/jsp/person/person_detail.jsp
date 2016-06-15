@@ -35,8 +35,7 @@
                         <h5><spring:message code="person.form.permissions.roles"/></h5>
                         <c:forEach items="${person.permissions}" var="role">
                             <p>
-                                <spring:message code="person.form.permissions.roles.${role}"/>:
-                                <spring:message code="person.form.permissions.roles.${role}.description"/>
+                                <spring:message code="person.form.permissions.roles.${role}"/>
                             </p>
                         </c:forEach>
                     </span>

@@ -10,6 +10,7 @@ import org.mockito.Mockito;
 import org.springframework.ldap.core.DirContextOperations;
 
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -155,6 +156,25 @@ public class PersonContextMapperTest {
 
         Assert.assertNotNull("Username should be set", userDetails.getUsername());
         Assert.assertEquals("Wrong username", userIdentifier, userDetails.getUsername());
+    }
+
+
+    @Test(expected = DisabledException.class)
+    public void ensureLoginIsNotPossibleIfUserIsDeactivated() throws UnsupportedMemberAffiliationException,
+        NamingException {
+
+        Person person = TestDataCreator.createPerson();
+        person.setPermissions(Collections.singletonList(Role.INACTIVE));
+
+        Mockito.when(personService.getPersonByLogin(Mockito.anyString())).thenReturn(Optional.of(person));
+        Mockito.when(ldapUserMapper.mapFromContext(Mockito.eq(context)))
+            .thenReturn(new LdapUser(person.getLoginName(), Optional.of(person.getFirstName()),
+                    Optional.of(person.getLastName()), Optional.of(person.getEmail())));
+        Mockito.when(ldapSyncService.syncPerson(Mockito.any(Person.class), Matchers.<Optional<String>>any(),
+                    Matchers.<Optional<String>>any(), Matchers.<Optional<String>>any()))
+            .thenReturn(person);
+
+        personContextMapper.mapUserFromContext(context, person.getLoginName(), null);
     }
 
 

@@ -70,7 +70,7 @@
                 </form:form>
 
                 <div class="box">
-                    <span class="box-icon bg-red">
+                    <span class="box-icon bg-red hidden-print">
                         <c:choose>
                             <c:when test="${sickNote.sickNoteType.category == 'SICK_NOTE_CHILD'}">
                                 <i class="fa fa-child"></i>
@@ -87,6 +87,7 @@
                         <c:choose>
                             <c:when test="${sickNote.startDate == sickNote.endDate}">
                                 <c:set var="SICK_NOTE_DATE">
+                                    <spring:message code="${sickNote.weekDayOfStartDate}.short"/>,
                                     <h5 class="is-inline-block is-sticky"><uv:date date="${sickNote.startDate}"/></h5>
                                 </c:set>
                                 <c:set var="SICK_NOTE_DAY_LENGTH">
@@ -96,10 +97,16 @@
                             </c:when>
                             <c:otherwise>
                                 <c:set var="SICK_NOTE_START_DATE">
-                                    <h5 class="is-inline-block is-sticky"><uv:date date="${sickNote.startDate}"/></h5>
+                                    <h5 class="is-inline-block is-sticky">
+                                        <spring:message code="${sickNote.weekDayOfStartDate}.short"/>,
+                                        <uv:date date="${sickNote.startDate}"/>
+                                    </h5>
                                 </c:set>
                                 <c:set var="SICK_NOTE_END_DATE">
-                                    <h5 class="is-inline-block is-sticky"><uv:date date="${sickNote.endDate}"/></h5>
+                                    <h5 class="is-inline-block is-sticky">
+                                        <spring:message code="${sickNote.weekDayOfEndDate}.short"/>,
+                                        <uv:date date="${sickNote.endDate}"/>
+                                    </h5>
                                 </c:set>
                                 <spring:message code="absence.period.multipleDays" arguments="${SICK_NOTE_START_DATE};${SICK_NOTE_END_DATE}" argumentSeparator=";"/>
                             </c:otherwise>
@@ -158,8 +165,8 @@
                     <tbody>
                         <c:forEach items="${comments}" var="comment" varStatus="loopStatus">
                             <tr>
-                                <td>
-                                    <div class="gravatar gravatar--medium img-circle hidden-print center-block" data-gravatar="<c:out value='${comment.person.gravatarURL}?d=mm&s=40'/>"></div>
+                                <td class="hidden-print">
+                                    <div class="gravatar gravatar--medium img-circle center-block" data-gravatar="<c:out value='${comment.person.gravatarURL}?d=mm&s=40'/>"></div>
                                 </td>
                                 <td>
                                     <c:out value="${comment.person.niceName}" />

@@ -67,7 +67,8 @@ public class PersonFormProcessorImpl implements PersonFormProcessor {
 
     private void touchWorkingTime(Person person, PersonForm personForm) {
 
-        workingTimeService.touch(personForm.getWorkingDays(), personForm.getValidFrom(), person);
+        workingTimeService.touch(personForm.getWorkingDays(), Optional.ofNullable(personForm.getFederalState()),
+            personForm.getValidFrom(), person);
     }
 
 
@@ -77,6 +78,7 @@ public class PersonFormProcessorImpl implements PersonFormProcessor {
         DateMidnight validTo = personForm.getHolidaysAccountValidTo();
 
         BigDecimal annualVacationDays = personForm.getAnnualVacationDays();
+        BigDecimal actualVacationDays = personForm.getActualVacationDays();
         BigDecimal remainingVacationDays = personForm.getRemainingVacationDays();
         BigDecimal remainingVacationDaysNotExpiring = personForm.getRemainingVacationDaysNotExpiring();
 
@@ -85,10 +87,10 @@ public class PersonFormProcessorImpl implements PersonFormProcessor {
 
         if (account.isPresent()) {
             accountInteractionService.editHolidaysAccount(account.get(), validFrom, validTo, annualVacationDays,
-                remainingVacationDays, remainingVacationDaysNotExpiring);
+                actualVacationDays, remainingVacationDays, remainingVacationDaysNotExpiring);
         } else {
             accountInteractionService.createHolidaysAccount(person, validFrom, validTo, annualVacationDays,
-                remainingVacationDays, remainingVacationDaysNotExpiring);
+                actualVacationDays, remainingVacationDays, remainingVacationDaysNotExpiring);
         }
     }
 

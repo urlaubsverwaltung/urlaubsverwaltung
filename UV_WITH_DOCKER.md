@@ -7,7 +7,7 @@ In den meisten Fällen reicht es aus, diese Abhängigkeit intern, also mit H2 al
 default-Authentifizierung über die Datenbank, zu befriedigen. Für Fälle, in denen man das System mit den externen
 Abhängigkeiten betreiben will, bietet es sich an diese externen Systeme mit Docker zu virtualisieren.
 
-Dieses Dokument beschreibt wie man Docker Container für MariaDB und OpenLDAP für die Urlaubsverwaltung aufsetzen lassen.
+Dieses Dokument beschreibt wie man Docker Container für MariaDB und OpenLDAP für die Urlaubsverwaltung aufsetzen kann.
 
 ### Docker Installation
 #### Linux/Mac OS und Windows

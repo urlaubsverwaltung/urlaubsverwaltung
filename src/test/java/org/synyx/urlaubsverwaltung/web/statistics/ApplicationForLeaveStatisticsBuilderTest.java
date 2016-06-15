@@ -13,7 +13,6 @@ import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
 import org.synyx.urlaubsverwaltung.core.account.service.VacationDaysService;
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.application.service.VacationTypeService;
@@ -28,7 +27,6 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Predicate;
 
 
 /**
@@ -58,7 +56,7 @@ public class ApplicationForLeaveStatisticsBuilderTest {
         overtimeService = Mockito.mock(OvertimeService.class);
         vacationTypeService = Mockito.mock(VacationTypeService.class);
 
-        vacationTypes = TestDataCreator.getVacationTypes();
+        vacationTypes = TestDataCreator.createVacationTypes();
         Mockito.when(vacationTypeService.getVacationTypes()).thenReturn(vacationTypes);
 
         builder = new ApplicationForLeaveStatisticsBuilder(accountService, applicationService, calendarService,
