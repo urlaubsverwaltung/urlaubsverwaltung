@@ -3,6 +3,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <script type="text/javascript">
     $(document).ready(function () {
@@ -28,13 +29,17 @@
       </c:otherwise>
 </c:choose>
 
+<sec:authorize access="hasAuthority('DEPARTMENT_HEAD')">
+    <c:set var="IS_DEPARTMENT_HEAD" value="${true}"/>
+</sec:authorize>
+
 <form:form id="allow" cssClass="form action-form confirm alert alert-success" method="POST"
            action="${ACTION_URL}" modelAttribute="comment">
 
     <div class="form-group">
         <div class="control-label">
             <c:choose>
-                <c:when test="${application.twoStageApproval == true && application.status == 'WAITING'}">
+                <c:when test="${IS_DEPARTMENT_HEAD && application.twoStageApproval && application.status == 'WAITING'}">
                     <b><spring:message code='action.temporary_allow.confirm'/></b>
                 </c:when>
                 <c:otherwise>
