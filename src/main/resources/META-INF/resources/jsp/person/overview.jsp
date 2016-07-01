@@ -47,20 +47,7 @@
             </div>
 
             <div class="col-xs-12 col-sm-12 col-md-4">
-                <div class="box">
-                    <span class="box-icon bg-green hidden-print"><i class="fa fa-calendar"></i></span>
-                    <span class="box-text">
-                        <c:choose>
-                            <c:when test="${account != null}">
-                                <spring:message code="person.account.vacation.entitlement" arguments="${account.vacationDays}" />
-                                <spring:message code="person.account.vacation.entitlement.remaining" arguments="${account.remainingVacationDays}" />
-                            </c:when>
-                            <c:otherwise>
-                                <spring:message code='person.account.vacation.noInformation'/>
-                            </c:otherwise>
-                        </c:choose>
-                    </span>
-                </div>
+                <uv:account-entitlement account="${account}"/>
             </div>
 
             <div class="col-xs-12 col-sm-12 col-md-4">
