@@ -18,6 +18,9 @@
                 <c:out value="${person.niceName}"/>
             </span>
         </h4>
-        <i class="fa fa-envelope-o"></i> <c:out value="${person.email}"/>
+        <i class="fa fa-envelope-o"></i>
+        <a href="mailto:<c:out value='${person.email}'/>">
+            <span class="hidden-print"><c:out value="${person.email}"/></span>
+        </a>
     </span>
 </div>
