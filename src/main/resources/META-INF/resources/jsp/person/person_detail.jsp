@@ -19,9 +19,23 @@
 <div class="content">
     <div class="container">
 
+        <div class="feedback">
+            <c:if test="${updateSuccess}">
+                <div class="alert alert-success">
+                    <spring:message code="person.details.action.update.success" />
+                </div>
+            </c:if>
+        </div>
+
         <div class="row">
             <div class="col-xs-12 col-sm-12 col-md-6">
-                <legend><spring:message code="person.details.masterData.title"/></legend>
+                <legend>
+                    <spring:message code="person.details.masterData.title"/>
+                    <a href="${URL_PREFIX}/staff/${person.id}/data" class="fa-action pull-right"
+                       data-title="<spring:message code="action.edit"/>">
+                        <i class="fa fa-pencil"></i>
+                    </a>
+                </legend>
                 <uv:person person="${person}"/>
                 <div class="box">
                     <span class="box-icon bg-blue"><i class="fa fa-key"></i></span>

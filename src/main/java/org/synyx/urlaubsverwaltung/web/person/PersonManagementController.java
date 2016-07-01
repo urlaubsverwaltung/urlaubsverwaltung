@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
@@ -60,6 +61,9 @@ public class PersonManagementController {
 
     @Autowired
     private PersonValidator validator;
+
+    @Autowired
+    private PersonDataValidator dataValidator;
 
     @Autowired
     private WorkingTimeService workingTimeService;
@@ -180,5 +184,38 @@ public class PersonManagementController {
         personFormProcessor.update(personForm);
 
         return "redirect:/web/staff?active=true";
+    }
+
+
+    @PreAuthorize(SecurityRules.IS_OFFICE)
+    @RequestMapping(value = "/staff/{personId}/data", method = RequestMethod.GET)
+    public String editPersonData(@PathVariable("personId") Integer personId, Model model)
+        throws UnknownPersonException {
+
+        Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
+
+        model.addAttribute(PersonConstants.PERSON_ATTRIBUTE, person);
+
+        return PersonConstants.PERSON_DATA_JSP;
+    }
+
+
+    @PreAuthorize(SecurityRules.IS_OFFICE)
+    @RequestMapping(value = "/staff/{personId}/data", method = RequestMethod.POST)
+    public String editPersonData(@PathVariable("personId") Integer personId,
+        @ModelAttribute(PersonConstants.PERSON_ATTRIBUTE) Person person, Errors errors,
+        RedirectAttributes redirectAttributes) {
+
+        dataValidator.validate(person, errors);
+
+        if (errors.hasErrors()) {
+            return PersonConstants.PERSON_DATA_JSP;
+        }
+
+        personService.update(person);
+
+        redirectAttributes.addFlashAttribute("updateSuccess", true);
+
+        return "redirect:/web/staff/" + personId;
     }
 }

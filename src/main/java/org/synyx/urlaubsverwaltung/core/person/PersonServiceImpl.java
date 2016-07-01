@@ -82,6 +82,21 @@ class PersonServiceImpl implements PersonService {
 
 
     @Override
+    public Person update(Person person) {
+
+        if (person.getId() == null) {
+            throw new IllegalArgumentException("Can not update a person that is not persisted yet");
+        }
+
+        save(person);
+
+        LOG.info("Updated person: " + person.toString());
+
+        return person;
+    }
+
+
+    @Override
     public void save(Person person) {
 
         personDAO.save(person);

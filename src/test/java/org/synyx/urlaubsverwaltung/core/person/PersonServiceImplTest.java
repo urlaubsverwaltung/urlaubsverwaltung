@@ -134,12 +134,9 @@ public class PersonServiceImplTest {
     public void ensureUpdatedPersonIsPersisted() {
 
         Person person = TestDataCreator.createPerson();
+        person.setId(1);
 
-        Mockito.when(personDAO.findOne(Mockito.anyInt())).thenReturn(person);
-
-        sut.update(42, "rick", "Grimes", "Rick", "rick@grimes.de",
-            Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS),
-            Arrays.asList(Role.USER, Role.BOSS));
+        sut.update(person);
 
         Mockito.verify(personDAO).save(person);
     }
@@ -149,12 +146,9 @@ public class PersonServiceImplTest {
     public void ensureDoesNotGenerateKeyPairOnUpdateOfPerson() {
 
         Person person = TestDataCreator.createPerson();
+        person.setId(1);
 
-        Mockito.when(personDAO.findOne(Mockito.anyInt())).thenReturn(person);
-
-        Person updatedPerson = sut.update(42, "rick", "Grimes", "Rick", "rick@grimes.de",
-                Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS),
-                Arrays.asList(Role.USER, Role.BOSS));
+        Person updatedPerson = sut.update(person);
 
         Mockito.verifyZeroInteractions(keyPairService);
 
@@ -165,13 +159,12 @@ public class PersonServiceImplTest {
 
 
     @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfNoPersonWithIDForPersonToBeUpdatedExists() {
+    public void ensureThrowsIfPersonToBeUpdatedHasNoID() {
 
-        Mockito.when(personDAO.findOne(Mockito.anyInt())).thenReturn(null);
+        Person person = TestDataCreator.createPerson();
+        person.setId(null);
 
-        sut.update(42, "rick", "Grimes", "Rick", "rick@grimes.de",
-            Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS),
-            Arrays.asList(Role.USER, Role.BOSS));
+        sut.update(person);
     }
 
 

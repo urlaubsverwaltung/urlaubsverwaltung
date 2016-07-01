@@ -180,15 +180,6 @@ public class Person extends AbstractPersistable<Integer> {
 
     public void setPermissions(Collection<Role> permissions) {
 
-        boolean inactiveRolePresent = permissions.stream()
-            .filter(permission -> permission.equals(Role.INACTIVE))
-            .findFirst()
-            .isPresent();
-
-        if (inactiveRolePresent && permissions.size() != 1) {
-            throw new IllegalArgumentException("Can not set inactive role and other role at the same time!");
-        }
-
         this.permissions = permissions;
     }
 
@@ -248,6 +239,13 @@ public class Person extends AbstractPersistable<Integer> {
         }
 
         return "";
+    }
+
+
+    @Override
+    public void setId(Integer id) { // NOSONAR - needed for setting ID in form
+
+        super.setId(id);
     }
 
 

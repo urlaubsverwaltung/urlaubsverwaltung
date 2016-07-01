@@ -47,6 +47,16 @@ public interface PersonService {
 
 
     /**
+     * Updates the given person.
+     *
+     * @param  person  to be saved
+     *
+     * @return  updated person
+     */
+    Person update(Person person);
+
+
+    /**
      * saves a {@link Person}.
      *
      * @param  person  {@link Person}
