@@ -22,13 +22,6 @@
 
     <uv:print/>
 
-    <sec:authorize access="hasAuthority('OFFICE')">
-        <a href="${URL_PREFIX}/staff/${person.id}/edit" class="fa-action pull-right"
-           data-title="<spring:message code="action.edit"/>">
-            <i class="fa fa-pencil"></i>
-        </a>
-    </sec:authorize>
-
     <a href="${URL_PREFIX}/staff/${person.id}" class="fa-action pull-right" style="margin-top: 1px"
        data-title="<spring:message code="action.details"/>">
         <i class="fa fa-list-alt"></i>
