@@ -43,19 +43,7 @@
         <div class="row">
 
             <div class="col-xs-12 col-sm-12 col-md-4">
-                <div class="box">
-                    <div class="box-image gravatar img-circle hidden-print" data-gravatar="<c:out value='${person.gravatarURL}?d=mm&s=60'/>"></div>
-                    <span class="box-text">
-                        <i class="fa fa-at"></i> <c:out value="${person.loginName}"/>
-                        <h4><c:out value="${person.niceName}"/></h4>
-                        <c:if test="${person.email != null}">
-                            <i class="fa fa-envelope-o"></i>
-                            <a href="mailto:<c:out value='${person.email}'/>">
-                                <span class="hidden-print"><c:out value="${person.email}"/></span>
-                            </a>
-                        </c:if>
-                    </span>
-                </div>
+                <uv:person person="${person}"/>
             </div>
 
             <div class="col-xs-12 col-sm-12 col-md-4">
