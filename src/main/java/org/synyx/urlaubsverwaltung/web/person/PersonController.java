@@ -69,9 +69,8 @@ public class PersonController {
     private SessionService sessionService;
 
     @RequestMapping(value = "/staff/{personId}", method = RequestMethod.GET)
-    public String showStaffInformation(@PathVariable("personId") Integer personId,
-        @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Optional<Integer> requestedYear,
-        Model model) throws UnknownPersonException, AccessDeniedException {
+    public String showStaffInformation(@PathVariable("personId") Integer personId, Model model)
+        throws UnknownPersonException, AccessDeniedException {
 
         Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
         Person signedInUser = sessionService.getSignedInUser();
@@ -82,7 +81,7 @@ public class PersonController {
                     signedInUser.getLoginName(), person.getLoginName()));
         }
 
-        Integer year = requestedYear.isPresent() ? requestedYear.get() : DateMidnight.now().getYear();
+        Integer year = DateMidnight.now().getYear();
 
         model.addAttribute(ControllerConstants.YEAR_ATTRIBUTE, year);
         model.addAttribute(PersonConstants.PERSON_ATTRIBUTE, person);
@@ -95,9 +94,7 @@ public class PersonController {
         Optional<Account> account = accountService.getHolidaysAccount(year, person);
 
         if (account.isPresent()) {
-            model.addAttribute("vacationDaysLeft", vacationDaysService.getVacationDaysLeft(account.get()));
             model.addAttribute("account", account.get());
-            model.addAttribute(PersonConstants.BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(DateMidnight.now()));
         }
 
         return PersonConstants.PERSON_DETAIL_JSP;
