@@ -21,6 +21,17 @@
   /* Fallback for browsers not supporting flex */
   display: table-cell;
   vertical-align: middle;
+  flex-grow: 1;
+}
+
+.box-text ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.box-text ul > li:last-child > p {
+  margin-bottom: 0;
 }
 
 .box-icon {

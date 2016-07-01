@@ -20,6 +20,7 @@ import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.domain.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
 import org.synyx.urlaubsverwaltung.core.account.service.VacationDaysService;
+import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.department.Department;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
@@ -69,8 +70,9 @@ public class PersonController {
     private SessionService sessionService;
 
     @RequestMapping(value = "/staff/{personId}", method = RequestMethod.GET)
-    public String showStaffInformation(@PathVariable("personId") Integer personId, Model model)
-        throws UnknownPersonException, AccessDeniedException {
+    public String showStaffInformation(@PathVariable("personId") Integer personId,
+        @RequestParam(value = ControllerConstants.YEAR_ATTRIBUTE, required = false) Optional<Integer> requestedYear,
+        Model model) throws UnknownPersonException, AccessDeniedException {
 
         Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
         Person signedInUser = sessionService.getSignedInUser();
@@ -81,7 +83,7 @@ public class PersonController {
                     signedInUser.getLoginName(), person.getLoginName()));
         }
 
-        Integer year = DateMidnight.now().getYear();
+        Integer year = requestedYear.isPresent() ? requestedYear.get() : DateMidnight.now().getYear();
 
         model.addAttribute(ControllerConstants.YEAR_ATTRIBUTE, year);
         model.addAttribute(PersonConstants.PERSON_ATTRIBUTE, person);
@@ -89,7 +91,11 @@ public class PersonController {
         model.addAttribute(DepartmentConstants.DEPARTMENTS_ATTRIBUTE,
             departmentService.getAssignedDepartmentsOfMember(person));
 
-        model.addAttribute("workingTimes", workingTimeService.getByPerson(person));
+        Optional<WorkingTime> workingTime = workingTimeService.getCurrentOne(person);
+
+        if (workingTime.isPresent()) {
+            model.addAttribute("workingTime", workingTime.get());
+        }
 
         Optional<Account> account = accountService.getHolidaysAccount(year, person);
 
