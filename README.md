@@ -186,12 +186,12 @@ Im Folgenden werden die durchzuführenden Schritte beschrieben, wenn man an der 
 Die Urlaubsverwaltung ist eine [Spring Boot](http://projects.spring.io/spring-boot/) Anwendung und kann mit dem Maven
 Plugin gestartet werden:
 
-<pre>mvn clean spring-boot:run</pre>
+<pre>./mvnw clean spring-boot:run</pre>
 <a name="mvn_profiles" />
 Wenn mit einer eigenen Konfigurationsdatei gearbeitet werden soll, kann diese als Spring profile Parameter beim Start angegeben
 werden. Zum Beispiel kann eine Konfiguration für MariaDB unter application-mariadb.properties angelegt und mit folgendem
 Maven Aufruf gestartet werden:
-<pre>mvn clean spring-boot:run -Drun.profiles=mariadb</pre>
+<pre>./mvnw clean spring-boot:run -Drun.profiles=mariadb</pre>
 Einzelne Parameter lassen sich mit -D<parameterName>=<parameterWert> überschreiben.
 
 #### Anwendung nutzen
@@ -239,7 +239,7 @@ Hinweis: Die Verbindung zum LDAP / Active Directory muss dafür selbstverständl
 
 Die Anwendung mit dem Parameter `-Dauth=ldap` starten:
 
-<pre>mvn clean spring-boot:run -Dauth=ldap</pre>
+<pre>./mvnw clean spring-boot:run -Dauth=ldap</pre>
 
 Oder die Property `auth` in den `application.properties` bzw. in den `application-dev.properties` setzen:
 
@@ -249,7 +249,7 @@ Oder die Property `auth` in den `application.properties` bzw. in den `applicatio
 
 Die Anwendung mit dem Parameter `-Dauth=activeDirectory` starten:
 
-<pre>mvn clean spring-boot:run -Dauth=activeDirectory</pre>
+<pre>./mvnw clean spring-boot:run -Dauth=activeDirectory</pre>
 
 Oder die Property `auth` in den `application.properties` bzw. in den `application-dev.properties` setzen:
 
