@@ -93,7 +93,9 @@ downloaden.
 Damit man die Anwendung möglichst schnell ausprobieren kann, bietet es sich an die Anwendung im Entwicklungsmodus
 zu starten:
 
-<pre>java -jar -Dspring.profiles.active=dev urlaubsverwaltung.jar</pre>
+```bash
+java -jar -Dspring.profiles.active=dev urlaubsverwaltung.jar
+```
 
 Auf diese Weise wird die Anwendung mit einer In-Memory-Datenbank und Testdaten gestartet.
 Man kann sich mit den gleichen Benutzerdaten wie beim [Demo System](#demo-system) anmelden.
@@ -139,7 +141,9 @@ Die in der Konfigurationsdatei konfigurierte Datenbank muss existieren.
 Wenn eine eigene Konfigurationsdatei hinterlegt ist, darf die Anwendung natürlich **nicht** mehr im Entwicklungsmodus
 gestartet werden, d.h. die Anwendung muss ohne `-Dspring.profiles.active=dev` gestartet werden:
 
-<pre>java -jar urlaubsverwaltung.jar</pre>
+```bash
+java -jar urlaubsverwaltung.jar
+```
 
 #### Authentifizierung
 
@@ -179,20 +183,27 @@ Im Folgenden werden die durchzuführenden Schritte beschrieben, wenn man an der 
 
 #### Repository clonen
 
-<pre>git clone git@github.com:synyx/urlaubsverwaltung.git</pre>
+```bash
+git clone git@github.com:synyx/urlaubsverwaltung.git
+```
 
 #### Anwendung starten
 
 Die Urlaubsverwaltung ist eine [Spring Boot](http://projects.spring.io/spring-boot/) Anwendung und kann mit dem Maven
 Plugin gestartet werden:
 
-<pre>./mvnw clean spring-boot:run</pre>
+```bash
+./mvnw clean spring-boot:run
+```
 <a name="mvn_profiles" />
 Wenn mit einer eigenen Konfigurationsdatei gearbeitet werden soll, kann diese als Spring profile Parameter beim Start angegeben
 werden. Zum Beispiel kann eine Konfiguration für MariaDB unter application-mariadb.properties angelegt und mit folgendem
 Maven Aufruf gestartet werden:
-<pre>./mvnw clean spring-boot:run -Drun.profiles=mariadb</pre>
-Einzelne Parameter lassen sich mit -D<parameterName>=<parameterWert> überschreiben.
+
+```bash
+./mvnw clean spring-boot:run -Drun.profiles=mariadb
+```
+Einzelne Parameter lassen sich mit `-D<parameterName>=<parameterWert>` überschreiben.
 
 #### Anwendung nutzen
 Im Browser lässt sich die Anwendung dann über `http://localhost:8080/` ansteuern.
@@ -239,7 +250,9 @@ Hinweis: Die Verbindung zum LDAP / Active Directory muss dafür selbstverständl
 
 Die Anwendung mit dem Parameter `-Dauth=ldap` starten:
 
-<pre>./mvnw clean spring-boot:run -Dauth=ldap</pre>
+```bash
+./mvnw clean spring-boot:run -Dauth=ldap
+```
 
 Oder die Property `auth` in den `application.properties` bzw. in den `application-dev.properties` setzen:
 
@@ -249,7 +262,9 @@ Oder die Property `auth` in den `application.properties` bzw. in den `applicatio
 
 Die Anwendung mit dem Parameter `-Dauth=activeDirectory` starten:
 
-<pre>./mvnw clean spring-boot:run -Dauth=activeDirectory</pre>
+```bash
+./mvnw clean spring-boot:run -Dauth=activeDirectory
+```
 
 Oder die Property `auth` in den `application.properties` bzw. in den `application-dev.properties` setzen:
 
