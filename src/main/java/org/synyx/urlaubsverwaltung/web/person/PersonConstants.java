@@ -10,7 +10,6 @@ public final class PersonConstants {
 
     // JPSs
     public static final String STAFF_JSP = "person/staff_view";
-    public static final String PERSON_FORM_JSP = "person/person_form";
     public static final String PERSON_DATA_JSP = "person/person_data";
     public static final String PERSON_DETAIL_JSP = "person/person_detail";
 
