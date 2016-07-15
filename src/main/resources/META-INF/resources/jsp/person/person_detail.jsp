@@ -79,6 +79,10 @@
                 <legend>
                     <spring:message code="person.details.annualVacation.title"/>
                     <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/staff/${person.id}?year="/>
+                    <a href="${URL_PREFIX}/staff/${person.id}/account?year=${param.year}" class="fa-action pull-right"
+                       data-title="<spring:message code="action.edit"/>">
+                        <i class="fa fa-pencil"></i>
+                    </a>
                 </legend>
                 <uv:account-entitlement account="${account}"/>
 
@@ -92,10 +96,10 @@
                 <div class="box">
                     <span class="box-icon bg-green"><i class="fa fa-clock-o"></i></span>
                     <span class="box-text">
-                            <spring:message code="person.details.workingTime.validity" />
-                            <h5 class="is-inline-block"><uv:date date="${workingTime.validFrom}" /></h5>:
                             <c:choose>
                                 <c:when test="${workingTime != null}">
+                                    <spring:message code="person.details.workingTime.validity" />
+                                    <h5 class="is-inline-block"><uv:date date="${workingTime.validFrom}" /></h5>:
                                     <ul>
                                     <c:if test="${workingTime.monday.duration > 0}">
                                         <li>
