@@ -27,6 +27,8 @@ import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.person.Role;
+import org.synyx.urlaubsverwaltung.core.settings.FederalState;
+import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.security.SessionService;
@@ -67,6 +69,9 @@ public class PersonController {
     private WorkingTimeService workingTimeService;
 
     @Autowired
+    private SettingsService settingsService;
+
+    @Autowired
     private SessionService sessionService;
 
     @RequestMapping(value = "/staff/{personId}", method = RequestMethod.GET)
@@ -92,9 +97,18 @@ public class PersonController {
             departmentService.getAssignedDepartmentsOfMember(person));
 
         Optional<WorkingTime> workingTime = workingTimeService.getCurrentOne(person);
+        Optional<FederalState> optionalFederalState = Optional.empty();
 
         if (workingTime.isPresent()) {
             model.addAttribute("workingTime", workingTime.get());
+            optionalFederalState = workingTime.get().getFederalStateOverride();
+        }
+
+        if (optionalFederalState.isPresent()) {
+            model.addAttribute("federalState", optionalFederalState.get());
+        } else {
+            model.addAttribute("federalState",
+                settingsService.getSettings().getWorkingTimeSettings().getFederalState());
         }
 
         Optional<Account> account = accountService.getHolidaysAccount(year, person);

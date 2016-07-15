@@ -86,6 +86,8 @@
                 <div class="box">
                     <span class="box-icon bg-green"><i class="fa fa-clock-o"></i></span>
                     <span class="box-text">
+                            <spring:message code="person.details.workingTime.validity" />
+                            <h5 class="is-inline-block"><uv:date date="${workingTime.validFrom}" /></h5>:
                             <c:choose>
                                 <c:when test="${workingTime != null}">
                                     <ul>
@@ -130,6 +132,13 @@
                                     <spring:message code='person.details.workingTime.none'/>
                                 </c:otherwise>
                             </c:choose>
+                    </span>
+                </div>
+                <div class="box">
+                    <span class="box-icon bg-green"><i class="fa fa-map"></i></span>
+                    <span class="box-text">
+                        <spring:message code="person.details.workingTime.federalState" />
+                        <h5><spring:message code="federalState.${federalState}"/></h5>
                     </span>
                 </div>
             </div>
