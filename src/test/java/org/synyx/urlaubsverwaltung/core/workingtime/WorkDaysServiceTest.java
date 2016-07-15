@@ -1,5 +1,5 @@
 
-package org.synyx.urlaubsverwaltung.core.calendar;
+package org.synyx.urlaubsverwaltung.core.workingtime;
 
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
@@ -11,8 +11,6 @@ import org.mockito.Mockito;
 
 import org.synyx.urlaubsverwaltung.core.application.domain.Application;
 import org.synyx.urlaubsverwaltung.core.application.domain.VacationCategory;
-import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;
-import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.FederalState;
@@ -33,7 +31,7 @@ import static org.junit.Assert.assertNotNull;
 
 
 /**
- * Unit test for {@link org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService}.
+ * Unit test for {@link WorkDaysService}.
  *
  * @author  Aljona Murygina
  */

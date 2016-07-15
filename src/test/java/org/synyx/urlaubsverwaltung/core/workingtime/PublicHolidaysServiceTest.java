@@ -1,5 +1,5 @@
 
-package org.synyx.urlaubsverwaltung.core.calendar;
+package org.synyx.urlaubsverwaltung.core.workingtime;
 
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
@@ -21,16 +21,16 @@ import java.math.BigDecimal;
 
 
 /**
- * Unit test for {@link org.synyx.urlaubsverwaltung.core.calendar.PublicHolidaysService}.
+ * Unit test for {@link PublicHolidaysService}.
  *
  * @author  Aljona Murygina
  */
 public class PublicHolidaysServiceTest {
 
+    private static final FederalState state = FederalState.BADEN_WUERTTEMBERG;
+
     private PublicHolidaysService publicHolidaysService;
     private SettingsService settingsService;
-
-    private final static FederalState state = FederalState.BADEN_WUERTTEMBERG;
 
     @Before
     public void setUp() throws IOException {

@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import org.synyx.urlaubsverwaltung.core.application.service.VacationTypeService;
-import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.person.Role;
@@ -33,6 +32,7 @@ import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteCommentService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteInteractionService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteTypeService;
+import org.synyx.urlaubsverwaltung.core.workingtime.WorkDaysService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;

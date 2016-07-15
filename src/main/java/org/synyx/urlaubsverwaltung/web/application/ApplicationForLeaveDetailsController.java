@@ -31,14 +31,14 @@ import org.synyx.urlaubsverwaltung.core.application.service.ApplicationInteracti
 import org.synyx.urlaubsverwaltung.core.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.core.application.service.exception.ImpatientAboutApplicationForLeaveProcessException;
 import org.synyx.urlaubsverwaltung.core.application.service.exception.RemindAlreadySentException;
-import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
-import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;
-import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.person.Role;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
+import org.synyx.urlaubsverwaltung.core.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTime;
+import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;

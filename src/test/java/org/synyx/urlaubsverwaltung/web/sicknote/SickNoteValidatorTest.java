@@ -10,13 +10,13 @@ import org.mockito.Mockito;
 
 import org.springframework.validation.Errors;
 
-import org.synyx.urlaubsverwaltung.core.calendar.OverlapCase;
-import org.synyx.urlaubsverwaltung.core.calendar.OverlapService;
-import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteComment;
+import org.synyx.urlaubsverwaltung.core.workingtime.OverlapCase;
+import org.synyx.urlaubsverwaltung.core.workingtime.OverlapService;
+import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.util.Optional;

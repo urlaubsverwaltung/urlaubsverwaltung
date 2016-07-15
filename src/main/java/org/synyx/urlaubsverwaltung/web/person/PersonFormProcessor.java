@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.web.person;
 
 import org.synyx.urlaubsverwaltung.core.person.Person;
+import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTime;
 
 
 /**
@@ -12,8 +13,7 @@ public interface PersonFormProcessor {
 
     /**
      * Creates a {@link Person} with the values of the given {@link org.synyx.urlaubsverwaltung.web.person.PersonForm}
-     * incl. creating/updating {@link org.synyx.urlaubsverwaltung.core.account.domain.Account} and
-     * {@link org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime}.
+     * incl. creating/updating {@link org.synyx.urlaubsverwaltung.core.account.domain.Account} and {@link WorkingTime}.
      *
      * @param  personForm  contains information about person attributes and working time and holidays account
      *                     information
@@ -23,8 +23,7 @@ public interface PersonFormProcessor {
 
     /**
      * Updates a person with the values of the given {@link org.synyx.urlaubsverwaltung.web.person.PersonForm} incl.
-     * creating/updating {@link org.synyx.urlaubsverwaltung.core.account.domain.Account} and
-     * {@link org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime}.
+     * creating/updating {@link org.synyx.urlaubsverwaltung.core.account.domain.Account} and {@link WorkingTime}.
      *
      * @param  personForm  contains information about person attributes and working time and holidays account
      *                     information

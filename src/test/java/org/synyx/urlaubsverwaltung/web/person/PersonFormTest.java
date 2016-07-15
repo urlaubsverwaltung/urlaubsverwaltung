@@ -6,7 +6,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
-import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;
+import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTime;
 
 import java.util.ArrayList;
 import java.util.Optional;

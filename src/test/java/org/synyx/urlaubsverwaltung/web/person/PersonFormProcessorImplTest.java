@@ -11,7 +11,6 @@ import org.mockito.Mockito;
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
-import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.department.Department;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.period.WeekDay;
@@ -19,7 +18,7 @@ import org.synyx.urlaubsverwaltung.core.person.MailNotification;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.person.Role;
-import org.synyx.urlaubsverwaltung.core.settings.FederalState;
+import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
 import java.math.BigDecimal;
@@ -92,7 +91,8 @@ public class PersonFormProcessorImplTest {
         Person person = service.create(examplePersonForm);
 
         Mockito.verify(workingTimeService)
-            .touch(Mockito.anyListOf(Integer.class), Mockito.eq(Optional.empty()),Mockito.any(DateMidnight.class), Mockito.eq(person));
+            .touch(Mockito.anyListOf(Integer.class), Mockito.eq(Optional.empty()), Mockito.any(DateMidnight.class),
+                Mockito.eq(person));
     }
 
 

@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.core.calendar;
+package org.synyx.urlaubsverwaltung.core.workingtime;
 
 import de.jollyday.Holiday;
 import de.jollyday.HolidayManager;

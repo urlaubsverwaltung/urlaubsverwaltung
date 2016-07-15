@@ -24,14 +24,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
 import org.synyx.urlaubsverwaltung.core.account.service.AccountService;
-import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;
-import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.core.period.WeekDay;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
 import org.synyx.urlaubsverwaltung.core.settings.FederalState;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTime;
+import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.web.ControllerConstants;
 import org.synyx.urlaubsverwaltung.web.DateMidnightPropertyEditor;

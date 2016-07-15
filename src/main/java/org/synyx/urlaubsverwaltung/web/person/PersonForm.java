@@ -6,7 +6,6 @@ import org.joda.time.DateMidnight;
 import org.springframework.util.Assert;
 
 import org.synyx.urlaubsverwaltung.core.account.domain.Account;
-import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.period.WeekDay;
 import org.synyx.urlaubsverwaltung.core.person.MailNotification;
@@ -14,6 +13,7 @@ import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.Role;
 import org.synyx.urlaubsverwaltung.core.settings.FederalState;
 import org.synyx.urlaubsverwaltung.core.util.DateUtil;
+import org.synyx.urlaubsverwaltung.core.workingtime.WorkingTime;
 
 import java.math.BigDecimal;
 
@@ -317,11 +317,15 @@ public class PersonForm {
         this.notifications = notifications;
     }
 
+
     public FederalState getFederalState() {
+
         return federalState;
     }
 
+
     public void setFederalState(FederalState federalState) {
+
         this.federalState = federalState;
     }
 }

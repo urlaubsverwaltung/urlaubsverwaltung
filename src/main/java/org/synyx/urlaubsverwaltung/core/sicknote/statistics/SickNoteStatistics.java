@@ -4,9 +4,9 @@ import org.joda.time.DateMidnight;
 
 import org.springframework.util.Assert;
 
-import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteDAO;
+import org.synyx.urlaubsverwaltung.core.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
 

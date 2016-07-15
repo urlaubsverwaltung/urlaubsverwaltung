@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.core.calendar.workingtime;
+package org.synyx.urlaubsverwaltung.core.workingtime;
 
 import org.apache.log4j.Logger;
 
@@ -104,8 +104,10 @@ public class WorkingTimeService {
 
     private FederalState getFederalState(WorkingTime workingTime) {
 
-        if (workingTime.getFederalStateOverride().isPresent()) {
-            return workingTime.getFederalStateOverride().get();
+        Optional<FederalState> optionalFederalStateOverride = workingTime.getFederalStateOverride();
+
+        if (optionalFederalStateOverride.isPresent()) {
+            return optionalFederalStateOverride.get();
         }
 
         return getSystemDefaultFederalState();

@@ -8,10 +8,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 import org.springframework.stereotype.Component;
 
-import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.util.CalcUtil;
+import org.synyx.urlaubsverwaltung.core.workingtime.WorkDaysService;
 
 import java.math.BigDecimal;
 

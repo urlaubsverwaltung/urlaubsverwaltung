@@ -1,5 +1,4 @@
-
-package org.synyx.urlaubsverwaltung.core.calendar;
+package org.synyx.urlaubsverwaltung.core.workingtime;
 
 import org.joda.time.DateMidnight;
 
@@ -7,9 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
-import org.synyx.urlaubsverwaltung.core.calendar.workingtime.NoValidWorkingTimeException;
-import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTime;
-import org.synyx.urlaubsverwaltung.core.calendar.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.core.period.DayLength;
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.settings.FederalState;

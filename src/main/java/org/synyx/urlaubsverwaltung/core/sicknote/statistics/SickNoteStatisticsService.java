@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import org.synyx.urlaubsverwaltung.core.calendar.WorkDaysService;
 import org.synyx.urlaubsverwaltung.core.sicknote.SickNoteDAO;
+import org.synyx.urlaubsverwaltung.core.workingtime.WorkDaysService;
 
 
 /**

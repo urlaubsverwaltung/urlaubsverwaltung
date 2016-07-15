@@ -1,8 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package org.synyx.urlaubsverwaltung.core.calendar;
+package org.synyx.urlaubsverwaltung.core.workingtime;
 
 /**
  * @author  Aljona Murygina
