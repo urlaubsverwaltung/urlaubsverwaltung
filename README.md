@@ -195,6 +195,13 @@ Plugin gestartet werden:
 ```bash
 ./mvnw clean spring-boot:run
 ```
+
+bzw. für Windows Benutzer über:
+
+```cmd
+./mvnw.cmd clean spring-boot:run
+```
+
 <a name="mvn_profiles" />
 Wenn mit einer eigenen Konfigurationsdatei gearbeitet werden soll, kann diese als Spring profile Parameter beim Start angegeben
 werden. Zum Beispiel kann eine Konfiguration für MariaDB unter application-mariadb.properties angelegt und mit folgendem
