@@ -86,42 +86,28 @@ public class PersonManagementController {
     @RequestMapping(value = "/staff/new", method = RequestMethod.GET)
     public String newPersonForm(Model model) {
 
-        prepareModelForNewPerson(model, new PersonForm());
+        model.addAttribute(PersonConstants.PERSON_ATTRIBUTE, new Person());
 
-        return PersonConstants.PERSON_FORM_JSP;
-    }
-
-
-    private void prepareModelForNewPerson(Model model, PersonForm personForm) {
-
-        model.addAttribute("personForm", personForm);
-        model.addAttribute("weekDays", WeekDay.values());
-        model.addAttribute("federalStateTypes", FederalState.values());
-        model.addAttribute("defaultFederalState",
-            settingsService.getSettings().getWorkingTimeSettings().getFederalState());
+        return PersonConstants.PERSON_DATA_JSP;
     }
 
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
     @RequestMapping(value = "/staff", method = RequestMethod.POST)
-    public String newPerson(@ModelAttribute("personForm") PersonForm personForm, Errors errors, Model model) {
+    public String newPerson(@ModelAttribute(PersonConstants.PERSON_ATTRIBUTE) Person person, Errors errors,
+        RedirectAttributes redirectAttributes) {
 
-        validator.validateLogin(personForm.getLoginName(), errors);
-        validator.validate(personForm, errors);
-
-        if (errors.hasGlobalErrors()) {
-            model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
-        }
+        dataValidator.validate(person, errors);
 
         if (errors.hasErrors()) {
-            prepareModelForNewPerson(model, personForm);
-
-            return PersonConstants.PERSON_FORM_JSP;
+            return PersonConstants.PERSON_DATA_JSP;
         }
 
-        personFormProcessor.create(personForm);
+        Person createdPerson = personService.create(person);
 
-        return "redirect:/web/staff?active=true";
+        redirectAttributes.addFlashAttribute("createSuccess", true);
+
+        return "redirect:/web/staff/" + createdPerson.getId();
     }
 
 

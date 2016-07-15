@@ -66,6 +66,10 @@ public class PersonDataValidator implements Validator {
 
         Person person = (Person) target;
 
+        if (person.getId() == null) {
+            validateLogin(person.getLoginName(), errors);
+        }
+
         validateName(person.getFirstName(), ATTRIBUTE_FIRST_NAME, errors);
 
         validateName(person.getLastName(), ATTRIBUTE_LAST_NAME, errors);
@@ -78,20 +82,7 @@ public class PersonDataValidator implements Validator {
     }
 
 
-    void validateName(String name, String field, Errors errors) {
-
-        if (StringUtils.hasText(name)) {
-            if (!validateStringLength(name)) {
-                errors.rejectValue(field, ERROR_LENGTH);
-            }
-        } else {
-            errors.rejectValue(field, ERROR_MANDATORY_FIELD);
-        }
-    }
-
-
-    // TODO: To be used?
-    public void validateLogin(String login, Errors errors) {
+    void validateLogin(String login, Errors errors) {
 
         validateName(login, ATTRIBUTE_LOGIN_NAME, errors);
 
@@ -102,6 +93,18 @@ public class PersonDataValidator implements Validator {
             if (person.isPresent()) {
                 errors.rejectValue(ATTRIBUTE_LOGIN_NAME, ERROR_LOGIN_UNIQUE);
             }
+        }
+    }
+
+
+    void validateName(String name, String field, Errors errors) {
+
+        if (StringUtils.hasText(name)) {
+            if (!validateStringLength(name)) {
+                errors.rejectValue(field, ERROR_LENGTH);
+            }
+        } else {
+            errors.rejectValue(field, ERROR_MANDATORY_FIELD);
         }
     }
 

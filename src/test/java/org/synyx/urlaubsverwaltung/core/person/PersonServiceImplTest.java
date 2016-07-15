@@ -49,52 +49,54 @@ public class PersonServiceImplTest {
     @Test
     public void ensureCreatedPersonHasCorrectAttributes() {
 
-        Person person = sut.create("rick", "Grimes", "Rick", "rick@grimes.de",
-                Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS),
-                Arrays.asList(Role.USER, Role.BOSS));
+        Person person = new Person("rick", "Grimes", "Rick", "rick@grimes.de");
+        person.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
+        person.setNotifications(Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS));
 
-        Assert.assertEquals("Wrong login name", "rick", person.getLoginName());
-        Assert.assertEquals("Wrong first name", "Rick", person.getFirstName());
-        Assert.assertEquals("Wrong last name", "Grimes", person.getLastName());
-        Assert.assertEquals("Wrong email", "rick@grimes.de", person.getEmail());
+        Person createdPerson = sut.create(person);
 
-        Assert.assertEquals("Wrong number of notifications", 2, person.getNotifications().size());
+        Assert.assertEquals("Wrong login name", "rick", createdPerson.getLoginName());
+        Assert.assertEquals("Wrong first name", "Rick", createdPerson.getFirstName());
+        Assert.assertEquals("Wrong last name", "Grimes", createdPerson.getLastName());
+        Assert.assertEquals("Wrong email", "rick@grimes.de", createdPerson.getEmail());
+
+        Assert.assertEquals("Wrong number of notifications", 2, createdPerson.getNotifications().size());
         Assert.assertTrue("Missing notification",
-            person.getNotifications().contains(MailNotification.NOTIFICATION_USER));
+            createdPerson.getNotifications().contains(MailNotification.NOTIFICATION_USER));
         Assert.assertTrue("Missing notification",
-            person.getNotifications().contains(MailNotification.NOTIFICATION_BOSS));
+            createdPerson.getNotifications().contains(MailNotification.NOTIFICATION_BOSS));
 
-        Assert.assertEquals("Wrong number of permissions", 2, person.getPermissions().size());
-        Assert.assertTrue("Missing permission", person.getPermissions().contains(Role.USER));
-        Assert.assertTrue("Missing permission", person.getPermissions().contains(Role.BOSS));
+        Assert.assertEquals("Wrong number of permissions", 2, createdPerson.getPermissions().size());
+        Assert.assertTrue("Missing permission", createdPerson.getPermissions().contains(Role.USER));
+        Assert.assertTrue("Missing permission", createdPerson.getPermissions().contains(Role.BOSS));
     }
 
 
     @Test
     public void ensureCreatedPersonIsPersisted() {
 
-        Person person = sut.create("rick", "Grimes", "Rick", "rick@grimes.de",
-                Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS),
-                Arrays.asList(Role.USER, Role.BOSS));
+        Person person = TestDataCreator.createPerson();
 
-        Mockito.verify(personDAO).save(person);
+        Person createdPerson = sut.create(person);
+
+        Mockito.verify(personDAO).save(createdPerson);
     }
 
 
     @Test
     public void ensureGeneratesKeyPairOnCreationOfPerson() throws Exception {
 
-        Person person = sut.create("rick", "Grimes", "Rick", "rick@grimes.de",
-                Arrays.asList(MailNotification.NOTIFICATION_USER, MailNotification.NOTIFICATION_BOSS),
-                Arrays.asList(Role.USER, Role.BOSS));
+        Person person = TestDataCreator.createPerson("rick", "Rick", "Grimes", "rick@grimes.de");
+
+        Person createdPerson = sut.create(person);
 
         Mockito.verify(keyPairService).generate("rick");
 
-        Assert.assertNotNull("Should have private key", person.getPrivateKey());
-        Assert.assertNotNull("Should have public key", person.getPublicKey());
+        Assert.assertNotNull("Should have private key", createdPerson.getPrivateKey());
+        Assert.assertNotNull("Should have public key", createdPerson.getPublicKey());
 
         Assert.assertEquals("Wrong private key", generatedKeyPair.getPrivate(),
-            CryptoUtil.getPrivateKeyByBytes(person.getPrivateKey()));
+            CryptoUtil.getPrivateKeyByBytes(createdPerson.getPrivateKey()));
     }
 
 

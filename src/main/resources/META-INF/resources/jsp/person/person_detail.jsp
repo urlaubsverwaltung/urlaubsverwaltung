@@ -20,6 +20,11 @@
     <div class="container">
 
         <div class="feedback">
+            <c:if test="${createSuccess}">
+                <div class="alert alert-success">
+                    <spring:message code="person.details.action.create.success" />
+                </div>
+            </c:if>
             <c:if test="${updateSuccess}">
                 <div class="alert alert-success">
                     <spring:message code="person.details.action.update.success" />
