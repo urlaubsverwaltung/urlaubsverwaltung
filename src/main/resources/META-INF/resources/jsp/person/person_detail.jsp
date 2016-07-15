@@ -82,7 +82,13 @@
                 </legend>
                 <uv:account-entitlement account="${account}"/>
 
-                <legend><spring:message code="person.details.workingTime.title"/></legend>
+                <legend>
+                    <spring:message code="person.details.workingTime.title"/>
+                    <a href="${URL_PREFIX}/staff/${person.id}/workingtime" class="fa-action pull-right"
+                       data-title="<spring:message code="action.edit"/>">
+                        <i class="fa fa-pencil"></i>
+                    </a>
+                </legend>
                 <div class="box">
                     <span class="box-icon bg-green"><i class="fa fa-clock-o"></i></span>
                     <span class="box-text">

@@ -6,6 +6,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import org.synyx.urlaubsverwaltung.core.person.Person;
@@ -14,7 +15,9 @@ import org.synyx.urlaubsverwaltung.core.settings.Settings;
 import org.synyx.urlaubsverwaltung.core.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.test.TestDataCreator;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.Optional;
 
 
 /**
@@ -112,5 +115,47 @@ public class WorkingTimeServiceTest {
 
         Assert.assertNotNull("Missing federal state", federalState);
         Assert.assertEquals("Wrong federal state", FederalState.BADEN_WUERTTEMBERG, federalState);
+    }
+
+
+    @Test
+    public void ensureSetsFederalStateOverrideIfGiven() {
+
+        ArgumentCaptor<WorkingTime> workingTimeArgumentCaptor = ArgumentCaptor.forClass(WorkingTime.class);
+
+        Person person = TestDataCreator.createPerson();
+
+        workingTimeService.touch(Arrays.asList(1, 2), Optional.of(FederalState.BAYERN), DateMidnight.now(), person);
+
+        Mockito.verify(workingTimeDAOMock).save(workingTimeArgumentCaptor.capture());
+
+        WorkingTime workingTime = workingTimeArgumentCaptor.getValue();
+
+        Optional<FederalState> optionalFederalState = workingTime.getFederalStateOverride();
+        Assert.assertTrue("Missing federal state", optionalFederalState.isPresent());
+        Assert.assertEquals("Wrong federal state", FederalState.BAYERN, optionalFederalState.get());
+    }
+
+
+    @Test
+    public void ensureRemovesFederalStateOverrideIfNull() {
+
+        WorkingTime existentWorkingTime = TestDataCreator.createWorkingTime();
+        existentWorkingTime.setFederalStateOverride(FederalState.BAYERN);
+
+        Mockito.when(workingTimeDAOMock.findByPersonAndValidityDate(Mockito.any(Person.class), Mockito.any(Date.class)))
+            .thenReturn(existentWorkingTime);
+
+        ArgumentCaptor<WorkingTime> workingTimeArgumentCaptor = ArgumentCaptor.forClass(WorkingTime.class);
+
+        Person person = TestDataCreator.createPerson();
+
+        workingTimeService.touch(Arrays.asList(1, 2), Optional.empty(), DateMidnight.now(), person);
+
+        Mockito.verify(workingTimeDAOMock).save(workingTimeArgumentCaptor.capture());
+
+        WorkingTime workingTime = workingTimeArgumentCaptor.getValue();
+
+        Assert.assertFalse("Federal state should be missing", workingTime.getFederalStateOverride().isPresent());
     }
 }

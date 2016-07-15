@@ -29,7 +29,7 @@
     </c:otherwise>
 </c:choose>
 
-<form:form method="POST" action="${ACTION}" modelAttribute="person" class="form-horizontal person--form">
+<form:form method="POST" action="${ACTION}" modelAttribute="person" class="form-horizontal">
 <form:hidden path="id" />
 <form:hidden path="password" />
 <form:hidden path="privateKey" />

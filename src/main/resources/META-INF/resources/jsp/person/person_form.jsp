@@ -38,7 +38,7 @@
     </c:otherwise>
 </c:choose>
 
-<form:form method="POST" action="${ACTION}" modelAttribute="personForm" class="form-horizontal person--form">
+<form:form method="POST" action="${ACTION}" modelAttribute="personForm" class="form-horizontal">
 <form:hidden path="id" />
 
 <div class="row">

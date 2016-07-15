@@ -62,6 +62,9 @@ public class WorkingTimeService {
 
         if (federalState.isPresent()) {
             workingTime.setFederalStateOverride(federalState.get());
+        } else {
+            // reset federal state override, use system default federal state for this user
+            workingTime.setFederalStateOverride(null);
         }
 
         workingTimeDAO.save(workingTime);
