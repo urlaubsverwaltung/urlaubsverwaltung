@@ -1,6 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
 <!DOCTYPE html>
@@ -36,10 +37,12 @@
             <div class="col-xs-12 col-sm-12 col-md-6">
                 <legend>
                     <spring:message code="person.details.masterData.title"/>
+                    <sec:authorize access="hasAuthority('OFFICE')">
                     <a href="${URL_PREFIX}/staff/${person.id}/data" class="fa-action pull-right"
                        data-title="<spring:message code="action.edit"/>">
                         <i class="fa fa-pencil"></i>
                     </a>
+                    </sec:authorize>
                 </legend>
                 <uv:person person="${person}"/>
                 <div class="box">
@@ -79,19 +82,23 @@
                 <legend>
                     <spring:message code="person.details.annualVacation.title"/>
                     <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/staff/${person.id}?year="/>
+                    <sec:authorize access="hasAuthority('OFFICE')">
                     <a href="${URL_PREFIX}/staff/${person.id}/account?year=${param.year}" class="fa-action pull-right"
                        data-title="<spring:message code="action.edit"/>">
                         <i class="fa fa-pencil"></i>
                     </a>
+                    </sec:authorize>
                 </legend>
                 <uv:account-entitlement account="${account}"/>
 
                 <legend>
                     <spring:message code="person.details.workingTime.title"/>
+                    <sec:authorize access="hasAuthority('OFFICE')">
                     <a href="${URL_PREFIX}/staff/${person.id}/workingtime" class="fa-action pull-right"
                        data-title="<spring:message code="action.edit"/>">
                         <i class="fa fa-pencil"></i>
                     </a>
+                    </sec:authorize>
                 </legend>
                 <div class="box">
                     <span class="box-icon bg-green"><i class="fa fa-clock-o"></i></span>
